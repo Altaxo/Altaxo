@@ -31,7 +31,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <summary>Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!</summary>
 		protected int _numberOfMinorTicks = 2;
 
-
+    /// <summary>Maximum allowed number of ticks in case manual tick input will produce a big amount of ticks.</summary>
+    protected static readonly int _maxSafeNumberOfTicks=10000;
 
 
 
@@ -608,20 +609,24 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		void InternalCalculateMajorTicks()
 		{
-			double i, beg, end;
-			beg = System.Math.Ceiling(_axisOrgByMajor);
-			end = System.Math.Floor(_axisEndByMajor);
-			for (i = beg; i <= end; i += 1)
+			double beg = System.Math.Ceiling(_axisOrgByMajor);
+			double end = System.Math.Floor(_axisEndByMajor);
+      double llen = end - beg;
+      // limit the length to 10000 to limit the amount of space required
+      llen = Math.Max(0,Math.Min(llen, _maxSafeNumberOfTicks));
+      int len = (int)llen;
+
+			for (int i = 0; i <= len; i++)
 			{
-				double v = i * _majorSpan;
+				double v = (i+beg) * _majorSpan;
 
 				if (!_suppressedMajorTicks.IsEmpty)
 				{
           if (_suppressedMajorTicks.ByValues.Contains(v))
 						continue;
-          if (_suppressedMajorTicks.ByNumbers.Contains((int)(i - beg)))
+          if (_suppressedMajorTicks.ByNumbers.Contains(i))
 						continue;
-					if (_suppressedMajorTicks.ByNumbers.Contains((int)(i - end - 1)))
+					if (_suppressedMajorTicks.ByNumbers.Contains(i - len - 1))
 						continue;
 				}
 
@@ -640,30 +645,35 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		void InternalCalculateMinorTicks()
 		{
-			double i, beg, end;
 			if (_numberOfMinorTicks < 2)
 				return; // below 2 there are no minor ticks per definition
 
-
-			beg = System.Math.Ceiling(_axisOrgByMajor);
-			end = System.Math.Floor(_axisEndByMajor);
+			double beg = System.Math.Ceiling(_axisOrgByMajor);
+			double end = System.Math.Floor(_axisEndByMajor);
 			int majorticks = 1 + (int)(end - beg);
 			beg = System.Math.Ceiling(_axisOrgByMajor * _numberOfMinorTicks);
 			end = System.Math.Floor(_axisEndByMajor * _numberOfMinorTicks);
-			for (i = beg; i <= end; i += 1)
+      double llen = end - beg;
+      // limit the length to 10000 to limit the amount of space and time required
+      llen = Math.Max(0, Math.Min(llen, _maxSafeNumberOfTicks));
+      int len = (int)llen;
+
+      int shift = (int)(beg % _numberOfMinorTicks);
+
+			for (int i = 0; i <= len; i++)
 			{
-				if (i % _numberOfMinorTicks == 0)
+				if ((i+shift) % _numberOfMinorTicks == 0)
 					continue;
 
-				double v = i * _majorSpan / _numberOfMinorTicks;
+				double v = (i+beg) * _majorSpan / _numberOfMinorTicks;
 
 				if (!_suppressedMinorTicks.IsEmpty)
 				{
           if (_suppressedMinorTicks.ByValues.Contains(v))
 						continue;
-          if (_suppressedMinorTicks.ByNumbers.Contains((int)(i - beg)))
+          if (_suppressedMinorTicks.ByNumbers.Contains(i))
 						continue;
-          if (_suppressedMinorTicks.ByNumbers.Contains((int)(i - end - 1)))
+          if (_suppressedMinorTicks.ByNumbers.Contains(i - len - 1))
 						continue;
 				}
 				_minorTicks.Add(v);

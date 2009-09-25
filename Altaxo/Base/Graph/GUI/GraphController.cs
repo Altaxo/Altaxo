@@ -1188,7 +1188,7 @@ namespace Altaxo.Graph.GUI
       }
 			if (dao.GetDataPresent("Altaxo.Graph.GraphDocumentAsXml"))
 			{
-				Doc.PasteFromClipboardAsGraphStyle();
+				Doc.PasteFromClipboardAsGraphStyle(true);
 				return;
 			}
       if (dao.GetDataPresent("Altaxo.Graph.GraphLayerAsXml"))

@@ -467,6 +467,7 @@ namespace Altaxo.Graph.Plot.Data
 
     }
     #endregion
+
     #endregion
 
 

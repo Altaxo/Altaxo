@@ -470,6 +470,11 @@ namespace Altaxo.Data
       theTable.ParentObject = null;
     }
 
+		/// <summary>
+		/// Removes the table from the collection and disposes it. Only tables that belong to this collection will be removed and disposed.
+		/// </summary>
+		/// <param name="theTable">The table to remove and dispose.</param>
+		/// <returns>True if the table was found in the collection and thus removed successfully.</returns>
     public bool Remove(DataTable theTable)
     {
       if (!_tablesByName.ContainsValue(theTable))
@@ -477,6 +482,7 @@ namespace Altaxo.Data
 
       _tablesByName.Remove(theTable.Name);
       Detach(theTable);
+			theTable.Dispose();
       this.SelfChanged(ChangedEventArgs.IfTableRemoved);
 
       return true;

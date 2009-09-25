@@ -34,6 +34,12 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public abstract class WorksheetAnalysis
   {
+    public class OriginalDataTableNotFoundException : ApplicationException
+    {
+      public OriginalDataTableNotFoundException() { }
+      public OriginalDataTableNotFoundException(string msg) : base(msg) { }
+    }
+
   
     #region Column Naming
     
@@ -445,6 +451,14 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>Instance of the calibration model (in more handy format).</returns>
     public abstract IMultivariateCalibrationModel GetCalibrationModel(DataTable calibTable);
 
+
+    public static MultivariateContentMemento GetContentAsMultivariateContentMemento(DataTable table)
+    {
+      var result = table.GetTableProperty("Content") as MultivariateContentMemento;
+      return result;
+    }
+
+
     /// <summary>
     /// Calculates the leverage of the spectral data.
     /// </summary>
@@ -453,7 +467,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public virtual void CalculateXLeverage(
       DataTable table, int numberOfFactors)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = GetContentAsMultivariateContentMemento(table);
 
       if(plsMemo==null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
@@ -569,7 +583,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The matrix of the original spectra.</returns>
     public static IMatrix GetRawSpectra(MultivariateContentMemento plsMemo)
     {
-      string tablename = plsMemo.TableName;
+      string tablename = plsMemo.OriginalDataTableName;
+      if (!Current.Project.DataTableCollection.Contains(tablename))
+        throw new OriginalDataTableNotFoundException(string.Format("The original data table <<{0}>> does not exist, was it renamed?", tablename));
 
       Altaxo.Data.DataTable srctable = Current.Project.DataTableCollection[tablename];
 
@@ -683,7 +699,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>Matrix of orignal Y (concentration) data.</returns>
     public static IMatrix GetOriginalY(MultivariateContentMemento plsMemo)
     {
-      string tablename = plsMemo.TableName;
+      string tablename = plsMemo.OriginalDataTableName;
 
       Altaxo.Data.DataTable srctable = Current.Project.DataTableCollection[tablename];
 
@@ -763,7 +779,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       plsContent.MeasurementIndices   = measurementIndices;
       plsContent.SpectralIndices      = spectralIndices;
       plsContent.SpectrumIsRow        = bHorizontalOrientedSpectrum;
-      plsContent.TableName            = srctable.Name;
+      plsContent.OriginalDataTableName            = srctable.Name;
 
       bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
       // this is the number of columns (for now), but it can be less than this in case
@@ -1299,7 +1315,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       bool saveYResidual,
       bool saveXResidual)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = GetContentAsMultivariateContentMemento(table);
 
       if(plsMemo==null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
@@ -1376,7 +1392,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       bool saveYResidual,
       bool saveXResidual)
     {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = GetContentAsMultivariateContentMemento(table);
 
       if(plsMemo==null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
@@ -1471,7 +1487,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       IMultivariateCalibrationModel calibModel = GetCalibrationModel(modelTable);
       //      Export(modelTable, out calibModel);
-      MultivariateContentMemento memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
+      var memento = GetContentAsMultivariateContentMemento(modelTable);
 
       // Fill matrixX with spectra
       Altaxo.Collections.AscendingIntegerCollection spectralIndices;
@@ -1546,7 +1562,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       Altaxo.Data.DataTable calibtable, 
       Altaxo.Data.DataTable desttable)
     {
-      MultivariateContentMemento plsMemo = calibtable.GetTableProperty("Content") as MultivariateContentMemento;
+      var plsMemo = GetContentAsMultivariateContentMemento(calibtable);
 
       if(plsMemo==null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
@@ -1602,7 +1618,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       IMatrix matrixX, matrixY;
       IROVector xOfX;
-      MultivariateContentMemento plsContent = new MultivariateContentMemento();
+      var plsContent = new MultivariateContentMemento();
       plsContent.Analysis = this;
 
       // now we have to create a new table where to place the calculated factors and loads
@@ -1614,7 +1630,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // Fill the Table
       table.Suspend();
       table.SetTableProperty("Content",plsContent);
-      plsContent.TableName = srctable.Name;
+      plsContent.OriginalDataTableName = srctable.Name;
 
      
 

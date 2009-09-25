@@ -16,6 +16,19 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public static class GraphDocumentClipboardActions
 	{
+		public static readonly GraphCopyOptions DefaultGraphDocumentPasteOptions;
+		public static readonly GraphCopyOptions DefaultGraphLayerPasteOptions;
+		static GraphCopyOptions _lastChoosenGraphDocumentPasteOptions;
+		static GraphCopyOptions _lastChoosenGraphLayerPasteOptions;
+
+		static GraphDocumentClipboardActions()
+		{
+			DefaultGraphDocumentPasteOptions = GraphCopyOptions.All & ~GraphCopyOptions.CopyLayerPlotItems;
+			DefaultGraphLayerPasteOptions = GraphCopyOptions.CopyLayerAll & ~GraphCopyOptions.CopyLayerPlotItems;
+			_lastChoosenGraphDocumentPasteOptions = DefaultGraphDocumentPasteOptions;
+			_lastChoosenGraphLayerPasteOptions = DefaultGraphLayerPasteOptions;
+		}
+
 		#region Image formats
 
 		public static GraphExportOptions CopyPageOptions = new GraphExportOptions();
@@ -106,22 +119,6 @@ namespace Altaxo.Graph.Gdi
 
 		#region native formats
 
-
-		public class PasteLayerOptions
-		{
-			public bool PastePlotItems { get; set; }
-			public bool PastePlotStyles { get; set; }
-			public GraphCopyOptions GetCopyOptions()
-			{
-				GraphCopyOptions co = GraphCopyOptions.None;
-				if (PastePlotItems)
-					co |= GraphCopyOptions.ClonePlotItems;
-				if (PastePlotStyles)
-					co |= GraphCopyOptions.CopyPlotStyles;
-				return co;
-			}
-		}
-
 		/// <summary>
 		/// Puts the entire graph to the clipboard in XML format.
 		/// </summary>
@@ -131,17 +128,42 @@ namespace Altaxo.Graph.Gdi
 			Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphDocumentAsXml", doc);
 		}
 
-
-
-		public static void PasteFromClipboardAsGraphStyle(this GraphDocument doc)
+		/// <summary>
+		/// Try to paste the entire GraphDocument from the clipboard using the specified paste options.
+		/// </summary>
+		/// <param name="doc">The graph document to paste into.</param>
+		/// <param name="options">The options used for paste into that graph.</param>
+		public static void PasteFromClipboard(this GraphDocument doc, GraphCopyOptions options)
 		{
-			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
-			if (!(o is GraphDocument))
-				return;
+			object from = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
+			if (from is GraphDocument)
+			{
+				doc.CopyFrom((GraphDocument)from, options);
+				doc.RescaleAxes();
+			}
+		}
 
-			GraphDocument from = (GraphDocument)o;
-			doc.CopyFrom(from, GraphCopyOptions.CopyFromLayers | GraphCopyOptions.CopyPlotStyles);
-			doc.RescaleAxes();
+
+		/// <summary>
+		/// Try to paste the entire GraphDocument from the clipboard.
+		/// </summary>
+		/// <param name="doc">The graph document to paste into.</param>
+		public static void PasteFromClipboardAsGraphStyle(this GraphDocument doc, bool showOptionsDialog)
+		{
+			object from = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
+      if (from is GraphDocument)
+      {
+				GraphCopyOptions options = DefaultGraphDocumentPasteOptions;
+				if (showOptionsDialog)
+				{
+					System.Enum o = _lastChoosenGraphDocumentPasteOptions;
+					if (!Current.Gui.ShowDialogForEnumFlag(ref o, "Choose options for pasting"))
+						return;
+					_lastChoosenGraphDocumentPasteOptions = (GraphCopyOptions)o;
+					options = _lastChoosenGraphDocumentPasteOptions;
+				}
+				PasteFromClipboard(doc, options);
+      }
 		}
 
 
@@ -172,11 +194,23 @@ namespace Altaxo.Graph.Gdi
 
 		public static void PasteFromClipboardAsTemplateForLayer(this GraphDocument doc, int layerNumber)
 		{
+      /*
 			object options = new PasteLayerOptions() { PastePlotStyles = true, PastePlotItems = true };
 			if (false == Current.Gui.ShowDialog(ref options, "Choose what to paste"))
 				return;
-			PasteFromClipboardAsTemplateForLayer(doc, layerNumber, (options as PasteLayerOptions).GetCopyOptions());
-		}
+  			PasteFromClipboardAsTemplateForLayer(doc, layerNumber, (options as PasteLayerOptions).GetCopyOptions());
+       * 
+      */
+
+			GraphCopyOptions options = _lastChoosenGraphLayerPasteOptions;
+      System.Enum options1 = options;
+      if (Current.Gui.ShowDialogForEnumFlag(ref options1, "Choose paste options"))
+      {
+        options = (GraphCopyOptions)options1;
+				_lastChoosenGraphLayerPasteOptions = options;
+        PasteFromClipboardAsTemplateForLayer(doc, layerNumber, options);
+      }
+    }
 
 		public static void PasteFromClipboardAsNewLayer(this GraphDocument doc)
 		{

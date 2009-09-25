@@ -275,6 +275,20 @@ namespace Altaxo.Graph.Gdi.Plot
       this._styles = null == from._styles ? null : from._styles.Clone();
     }
 
+		public void CopyFrom(PlotItemCollection from, GraphCopyOptions options)
+		{
+			if (GraphCopyOptions.CopyLayerPlotStyles == (GraphCopyOptions.CopyLayerPlotStyles & options))
+			{
+        var thisFlat = this.Flattened;
+        var fromFlat = from.Flattened;
+				int len = Math.Min(thisFlat.Length, fromFlat.Length);
+				for (int i = 0; i < len; i++)
+				{
+          thisFlat[i].SetPlotStyleFromTemplate(fromFlat[i], PlotGroupStrictness.Strict);
+				}
+			}
+		}
+
     object ICloneable.Clone()
     {
       return new PlotItemCollection(this);

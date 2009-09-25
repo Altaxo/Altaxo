@@ -306,7 +306,7 @@ namespace Altaxo.Data
             info.CreateElement("e");
             info.AddValue("Key",propkey);
             object val = s._tableProperties[propkey];
-            info.AddValue("Value",info.IsSerializable(val) ? val : null);
+            info.AddValue("Value", info.IsSerializable(val) ? val : null);
             info.CommitElement();
           }
         }
@@ -1152,10 +1152,29 @@ namespace Altaxo.Data
       if(_tableProperties ==null)
         _tableProperties = new System.Collections.Hashtable();
 
-      if(_tableProperties[key]==null)
-        _tableProperties.Add(key,val);
-      else
+      if(_tableProperties.ContainsKey(key))
         _tableProperties[key]=val;
+      else
+        _tableProperties.Add(key,val);
+    }
+
+
+    /// <summary>
+    /// Remove a table property, key is a string
+    /// </summary>
+    /// <returns>True if the property was found (and removed). False if there was no such property to remove.</returns>
+    /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
+    /// If the property you want to store is only temporary, the property name should therefore
+    /// start with "tmp/".</remarks>
+    public bool RemoveTableProperty(string key)
+    {
+      if (null != _tableProperties && _tableProperties.ContainsKey(key))
+      {
+        _tableProperties.Remove(key);
+        return true;
+      }
+      else
+        return false;
     }
 
     /// <summary>

@@ -53,7 +53,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Get/sets the name of the table containing the original data.
     /// </summary>
-    public string TableName;
+    public string OriginalDataTableName;
 
     /// <summary>
     /// Number of factors for calculation and plotting.
@@ -120,7 +120,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
         MultivariateContentMemento s = (MultivariateContentMemento)obj;
-        info.AddValue("TableName",s.TableName); // name of the Table
+        info.AddValue("TableName",s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
         info.AddValue("SpectralIndices",s.SpectralIndices);
         info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         MultivariateContentMemento s = null!=o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
 
-        s.TableName = info.GetString("Name");
+        s.OriginalDataTableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
         s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices",s);
         s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);
@@ -153,7 +153,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
         MultivariateContentMemento s = (MultivariateContentMemento)obj;
-        info.AddValue("TableName",s.TableName); // name of the Table
+        info.AddValue("TableName",s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
         info.AddValue("SpectralIndices",s.SpectralIndices);
         info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
@@ -171,7 +171,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         MultivariateContentMemento s = null!=o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
 
-        s.TableName = info.GetString("Name");
+        s.OriginalDataTableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
         s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices",s);
         s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);
@@ -202,7 +202,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
         MultivariateContentMemento s = (MultivariateContentMemento)obj;
-        info.AddValue("TableName",s.TableName); // name of the Table
+        info.AddValue("TableName",s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
         info.AddValue("SpectralIndices",s.SpectralIndices);
         info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
@@ -225,7 +225,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         MultivariateContentMemento s = null!=o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
 
-        s.TableName = info.GetString("Name");
+        s.OriginalDataTableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
         s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices",s);
         s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);

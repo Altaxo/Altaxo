@@ -913,15 +913,46 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
-    /// <summary>
-    /// Plots the cross prediction values of all y components invidually in a  graph.
+
+     /// <summary>
+    /// Plots the cross prediction values of all y components invidually in a  graph (without allowing a Gui to catch some errors).
     /// </summary>
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table)
     {
+      PlotCrossPredictedVersusActualY(table, false);
+    }
+    /// <summary>
+    /// Plots the cross prediction values of all y components invidually in a  graph.
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, bool allowGuiForMessages)
+    {
       MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if(plsMemo==null)
+      if (plsMemo == null)
+      {
+        string msg = string.Format("The table <<{0}>> does not seem to contain multivariate analysis data (content memento is missing)", table.Name);
+        if (allowGuiForMessages)
+          Current.Gui.ErrorMessageBox(msg);
+        else 
+          throw new ApplicationException(msg);
         return;
+      }
+      while (!Current.Project.DataTableCollection.Contains(plsMemo.OriginalDataTableName))
+      {
+        string msg = string.Format("The table of the original spectral data <<{0}>> does not exist (renamed?)", plsMemo.OriginalDataTableName);
+        if (allowGuiForMessages)
+        {
+          Current.Gui.ErrorMessageBox(msg);
+          string newName = plsMemo.OriginalDataTableName;
+          // TODO replace by a TableChoiceDialogBox
+          if (Current.Gui.ShowDialog(ref newName, "Please enter the table name of original spectral data", false))
+            plsMemo.OriginalDataTableName = newName;
+        }
+        else
+          throw new WorksheetAnalysis.OriginalDataTableNotFoundException(msg);
+      }
+
       if(plsMemo.PreferredNumberOfFactors<=0)
         QuestPreferredNumberOfFactors(plsMemo);
 

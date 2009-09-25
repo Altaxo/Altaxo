@@ -105,7 +105,8 @@ namespace Altaxo.Main
 
 
     /// <summary>
-    /// Decrease the suspend level by disposing of the object. The object can not be 
+    /// Decrease the suspend level by disposing the suppress token. The token will fire the Resume event
+		/// if the suppress level falls to zero.
     /// </summary>
     /// <param name="token"></param>
     public void Resume(ref IDisposable token)
@@ -118,7 +119,8 @@ namespace Altaxo.Main
     }
 
 		/// <summary>
-		/// Decrease the suspend level by disposing of the object. The object can not be 
+		/// Decrease the suspend level by disposing the suppress token. The token will fire the Resume event
+		/// if the suppress level falls to zero. You can suppress the resume event by setting argument 'suppressResumeEvent' to true.
 		/// </summary>
 		/// <param name="token"></param>
 		/// <param name="suppressResumeEvent">If true, the resume event is suppressed.</param>

@@ -332,6 +332,13 @@ namespace Altaxo.Main.Services
 
       if (null == controller)
       {
+        if (args[0] is System.Enum)
+        {
+          System.Enum arge = (System.Enum)args[0];
+          return ShowDialog(ref arge, title);
+        }
+
+
         // we can try to use a property grid
         controller = new PropertyController(args[0]);
         FindAndAttachControlTo(controller);
@@ -371,6 +378,27 @@ namespace Altaxo.Main.Services
         return false;
     }
 
+    public bool ShowDialogForEnumFlag(ref System.Enum arg, string title)
+    {
+      System.Type type = arg.GetType();
+      System.Array arr = System.Enum.GetValues(type);
+      int i;
+
+      var ctrl = new Altaxo.Gui.Common.EnumFlagController();
+      ctrl.InitializeDocument(new object[] { arg });
+
+
+      if (ShowDialog(ctrl,title))
+      {
+        arg = (System.Enum)ctrl.ModelObject;
+        return true;
+      }
+      else
+        return false;
+    }
+
+  
+
     /// <summary>
     /// Shows a configuration dialog for an object.
     /// </summary>
@@ -406,6 +434,12 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(ref object arg, string title, bool showApplyButton)
     {
+      if (arg is System.Enum)
+      {
+        System.Enum arge = (System.Enum)arg;
+        return ShowDialog(ref arge, title);
+      }
+
       object[] args = new object[1];
       args[0] = arg;
       bool result = ShowDialog(args, title, showApplyButton);

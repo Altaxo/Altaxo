@@ -77,12 +77,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			var locker = _changeEventSuppressor.Suspend();
 
+			this._fillToPrevPlotItem = from._fillToPrevPlotItem;
+			this._fillToNextPlotItem = from._fillToNextPlotItem;
+
 			this.FillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
 
 			this._parentObject = from._parentObject;
 
 			_changeEventSuppressor.Resume(ref locker, suppressChangeEvent);
-
 		}
 		#endregion
 

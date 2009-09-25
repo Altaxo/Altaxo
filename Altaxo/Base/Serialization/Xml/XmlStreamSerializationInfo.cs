@@ -380,7 +380,7 @@ namespace Altaxo.Serialization.Xml
 
     public bool IsSerializable(object o)
     {
-      return null!=m_SurrogateSelector.GetSurrogate(o.GetType());
+      return null==o || null!=m_SurrogateSelector.GetSurrogate(o.GetType());
     }
 
     public void AddValue(string name, object o)

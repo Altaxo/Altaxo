@@ -377,7 +377,6 @@ namespace Altaxo.Data
 
       this.ParentObject = null;
       this.Clear();
-
     }
 
     /// <summary>

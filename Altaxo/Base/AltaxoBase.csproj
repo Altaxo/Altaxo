@@ -884,6 +884,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\EnumFlagControl.resx">
+      <DependentUpon>EnumFlagControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\EquallySpacedIntervalControl.resx">
       <DependentUpon>EquallySpacedIntervalControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1391,6 +1394,13 @@
     <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Common\EnumFlagControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\EnumFlagControl.Designer.cs">
+      <DependentUpon>EnumFlagControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\EnumFlagController.cs" />
     <Compile Include="Gui\Common\EquallySpacedIntervalControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1603,6 +1613,7 @@
     <Compile Include="Main\InstanceChangedEvent.cs" />
     <Compile Include="Main\NameHelper.cs" />
     <Compile Include="Main\Services\IPropertyService.cs" />
+    <Compile Include="Main\TunnelingAndBubblingEvents.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
     <Compile Include="Serialization\Ascii\AsciiExportOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiGlobalStructureAnalysis.cs" />
