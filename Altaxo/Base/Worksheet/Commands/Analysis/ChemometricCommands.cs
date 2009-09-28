@@ -24,6 +24,7 @@ using System;
 
 using Altaxo.Collections;
 using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Data;
@@ -599,8 +600,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <returns>True if OK, false if the users pressed Cancel.</returns>
     public static bool QuestCalibrationModelAndDestinationTable(out string modelTableName, out string destinationTableName)
     {
-      Altaxo.Worksheet.GUI.PLSPredictValueController ctrl = new Altaxo.Worksheet.GUI.PLSPredictValueController();
-      Altaxo.Worksheet.GUI.PLSPredictValueControl viewctrl = new PLSPredictValueControl();
+      PLSPredictValueController ctrl = new PLSPredictValueController();
+      PLSPredictValueControl viewctrl = new PLSPredictValueControl();
       ctrl.View = viewctrl;
 
       DialogShellController dlgctrl = new DialogShellController(

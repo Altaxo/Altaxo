@@ -21,43 +21,47 @@
 #endregion
 
 using System;
-using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Gui;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
-  /// Controls the SpectralPreprocessingControl GUI for choosing <see cref="SpectralPreprocessingOptions" />
+  /// Summary description for PLSPredictValueController.
   /// </summary>
-  public class SpectralPreprocessingController : IApplyController
-  {
-    SpectralPreprocessingControl _view;
-    SpectralPreprocessingOptions _doc;
-    
+  public class PLSPredictValueController : IApplyController
 
-    /// <summary>
-    /// Constructor. Supply a document to control here.
-    /// </summary>
-    /// <param name="doc">The instance of option to set-up.</param>
-    public SpectralPreprocessingController(SpectralPreprocessingOptions doc)
-    {
-      _doc = doc;
-    }
+  {
+    PLSPredictValueControl _view;
+    string[] _calibrationTables;
+    string[] _destinationTables;
+
+    public string SelectedDestinationTableName;
+    public string SelectedCalibrationTableName;
 
     void SetElements(bool bInit)
     {
+      _calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
+      _destinationTables = GetAvailableDestinationTables();
+
       if(null!=_view)
       {
-        _view.InitializeMethod(_doc.Method);
-        _view.InitializeDetrending(_doc.DetrendingOrder);
-        _view.InitializeEnsembleScale(_doc.EnsembleScale);
+        _view.InitializeCalibrationModelTables(_calibrationTables);
+        _view.InitializeDestinationTables(_destinationTables);
       }
     }
 
-    /// <summary>
-    /// Get/sets the GUI element that this controller controls.
-    /// </summary>
-    public SpectralPreprocessingControl View
+
+    string[] GetAvailableDestinationTables()
+    {
+      System.Collections.ArrayList result = new System.Collections.ArrayList();
+      result.Add("New table");
+      foreach(Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
+        result.Add(table.Name);
+
+      return (string[])result.ToArray(typeof(string));
+    }
+   
+    public PLSPredictValueControl View
     {
       get { return _view; }
       set
@@ -75,37 +79,29 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-    /// <summary>
-    /// Returns the document.
-    /// </summary>
-    public SpectralPreprocessingOptions Doc
-    {
-      get { return _doc; }
-    }
-
-    public void EhView_MethodChanged(SpectralPreprocessingMethod newvalue)
-    {
-      _doc.Method = newvalue;
-    }
-
-    public void EhView_DetrendingChanged(int newvalue)
-    {
-      _doc.DetrendingOrder = newvalue;
-    }
-
-    public void EhView_EnsembleScaleChanged(bool newvalue)
-    {
-      _doc.EnsembleScale = newvalue;
-    }
-
     #region IApplyController Members
 
     public bool Apply()
     {
-      // nothing to do since all is done
+      int sel;
+      sel = _view.GetCalibrationTableChoice();
+      if(sel<0)
+        this.SelectedCalibrationTableName = null;
+      else
+        this.SelectedCalibrationTableName = this._calibrationTables[sel];
+
+      sel = _view.GetDestinationTableChoice();
+      if(sel==0)
+        this.SelectedDestinationTableName = null;
+      else
+        this.SelectedDestinationTableName = this._destinationTables[sel];
+
+
       return true;
     }
 
     #endregion
+
+
   }
 }

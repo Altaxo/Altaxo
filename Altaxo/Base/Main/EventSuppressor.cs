@@ -26,8 +26,6 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-  public delegate void VoidVoidEventHandler();
-
   /// <summary>
   /// Helper class to suspend and resume change events (or other events).
   /// </summary>
@@ -77,7 +75,7 @@ namespace Altaxo.Main
     }
     #endregion
     private int _suppressLevel;
-    VoidVoidEventHandler _resumeEventHandler;
+    Action _resumeEventHandler;
     int _eventCount;
 
     /// <summary>
@@ -88,7 +86,7 @@ namespace Altaxo.Main
     /// and (ii) in that moment the _eventCount is &gt;0.
     /// To get the _eventCount&gt;0, someone must call either GetEnabledWithCounting or GetDisabledWithCounting
     /// during the suspend period.</remarks>
-    public EventSuppressor(VoidVoidEventHandler resumeEventHandler)
+    public EventSuppressor(Action resumeEventHandler)
     {
       _resumeEventHandler = resumeEventHandler;
     }

@@ -21,16 +21,21 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Worksheet
 {
   /// <summary>
   /// Summary description for WorksheetLayoutCollection.
   /// </summary>
-  public class WorksheetLayoutCollection : Main.IDocumentNode, Main.INamedObjectCollection
+  public class WorksheetLayoutCollection 
+		:
+		Main.IDocumentNode, 
+		Main.INamedObjectCollection,
+		ICollection<WorksheetLayout>
   {
-    protected object m_DocumentParent;
-    protected System.Collections.Hashtable m_TableLayouts;
+    protected object _documentParent;
+    protected Dictionary<string, WorksheetLayout> _items;
 
 
 
@@ -43,8 +48,8 @@ namespace Altaxo.Worksheet
       {
         WorksheetLayoutCollection s = (WorksheetLayoutCollection)obj;
 
-        info.CreateArray("TableLayoutArray",s.m_TableLayouts.Count);
-        foreach(object style in s.m_TableLayouts.Values)
+        info.CreateArray("TableLayoutArray",s._items.Count);
+        foreach(object style in s._items.Values)
           info.AddValue("WorksheetLayout",style);
         info.CommitArray();
       }
@@ -59,7 +64,7 @@ namespace Altaxo.Worksheet
         for(int i=0;i<count;i++)
         {
           WorksheetLayout style = (WorksheetLayout)info.GetValue("WorksheetLayout",s);
-          s.m_TableLayouts.Add(style.Guid,style);
+          s._items.Add(style.Guid.ToString(),style);
         }
         info.CloseArray(count);
 
@@ -73,22 +78,22 @@ namespace Altaxo.Worksheet
     
     public WorksheetLayoutCollection()
     {
-      m_TableLayouts = new System.Collections.Hashtable();
+			_items = new Dictionary<string, WorksheetLayout>();
     }
 
     public WorksheetLayoutCollection(object documentParent)
       : this()
     {
-      m_DocumentParent = documentParent;
+      _documentParent = documentParent;
     }
 
     public WorksheetLayout this[System.Guid guid]
     {
-      get { return (WorksheetLayout)m_TableLayouts[guid.ToString()]; }    
+      get { return _items[guid.ToString()]; }    
     }
     public WorksheetLayout this[string guidAsString]
     {
-      get { return (WorksheetLayout)m_TableLayouts[guidAsString]; }   
+      get { return _items[guidAsString]; }   
     }
 
     public void Add(WorksheetLayout layout)
@@ -96,54 +101,26 @@ namespace Altaxo.Worksheet
       layout.ParentObject = this;
 
       // Test if this Guid is already present
-      object o = this[layout.Guid];
+			WorksheetLayout o = null;
+			_items.TryGetValue(layout.Guid.ToString(), out o);
       if(o!=null && !object.ReferenceEquals(o,layout))
         layout.NewGuid();
 
-      m_TableLayouts[layout.Guid.ToString()] = layout;
+      _items[layout.Guid.ToString()] = layout;
     }
 
-    #region "ICollection support"
-
-    public void CopyTo(Array array, int index)
-    {
-      this.m_TableLayouts.Values.CopyTo(array,index);
-    }
-
-    public int Count 
-    {
-      get { return this.m_TableLayouts.Count; }
-    }
-
-    public bool IsSynchronized
-    {
-      get { return this.m_TableLayouts.IsSynchronized; }
-    }
-
-    public object SyncRoot
-    {
-      get { return this.m_TableLayouts.SyncRoot; }
-    }
-
-    public System.Collections.IEnumerator GetEnumerator()
-    {
-      return this.m_TableLayouts.Values.GetEnumerator();
-    }
-
-    #endregion
-
-
+	
     #region IDocumentNode Members
 
     public object ParentObject
     {
       get
       {
-        return m_DocumentParent;
+        return _documentParent;
       }
       set
       {
-        m_DocumentParent = value;
+        _documentParent = value;
       }
     }
 
@@ -175,5 +152,58 @@ namespace Altaxo.Worksheet
     }
 
     #endregion
-  }
+
+		#region ICollection<WorksheetLayout> Members
+
+
+		public void Clear()
+		{
+			_items.Clear();
+		}
+
+		public bool Contains(WorksheetLayout item)
+		{
+			return _items.ContainsKey(item.Guid.ToString());
+		}
+
+		public void CopyTo(WorksheetLayout[] array, int arrayIndex)
+		{
+			_items.Values.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return _items.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(WorksheetLayout item)
+		{
+			return _items.Remove(item.Guid.ToString());
+		}
+
+		#endregion
+
+		#region IEnumerable<WorksheetLayout> Members
+
+		public IEnumerator<WorksheetLayout> GetEnumerator()
+		{
+			return _items.Values.GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _items.Values.GetEnumerator();
+		}
+
+		#endregion
+	}
 }

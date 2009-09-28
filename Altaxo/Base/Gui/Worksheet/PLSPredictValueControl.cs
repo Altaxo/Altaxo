@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// Summary description for PLSPredictValueControl.

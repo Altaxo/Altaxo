@@ -26,7 +26,7 @@ using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   [UserControllerForObject(typeof(MultivariateLinearFitParameters),100)]
   public class MultivariateLinearRegressionController : Altaxo.Gui.Common.MultiChildController

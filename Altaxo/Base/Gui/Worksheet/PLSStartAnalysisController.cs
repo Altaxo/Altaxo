@@ -24,7 +24,7 @@ using System;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Gui;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// Summary description for PLSStartAnalysisController.

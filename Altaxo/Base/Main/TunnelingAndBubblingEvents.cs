@@ -9,9 +9,7 @@ namespace Altaxo.Main
     {
     }
 
-    public class TunnelingEventArgs : EventArgs
-    {
-    }
+   
 
   public interface ISupportsTunnelingAndBubblingEvents
   {
@@ -36,8 +34,27 @@ namespace Altaxo.Main
    // event Action<object, TunnelingEventArgs> TunnelingEvent;
   }
 
-  public class BeforeDisposeEventArgs : TunnelingEventArgs
+
+  public class TunnelingEventArgs 
   {
   }
+
+  public class PreviewDisposeEventArgs : TunnelingEventArgs
+  {
+    public static readonly PreviewDisposeEventArgs Empty = new PreviewDisposeEventArgs();
+    private PreviewDisposeEventArgs() { }
+  }
+
+	public class DisposeEventArgs : TunnelingEventArgs
+	{
+    public static readonly DisposeEventArgs Empty = new DisposeEventArgs();
+    private DisposeEventArgs() { }
+	}
+
+	public class DocumentPathChangedEventArgs : TunnelingEventArgs
+	{
+		public static readonly DocumentPathChangedEventArgs Empty = new DocumentPathChangedEventArgs();
+    private DocumentPathChangedEventArgs() { }
+	}
 
 }

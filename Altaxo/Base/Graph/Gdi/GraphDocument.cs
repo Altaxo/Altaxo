@@ -467,7 +467,7 @@ namespace Altaxo.Graph.Gdi
     public virtual void OnNameChanged(object sender, string oldValue, string newValue)
     {
       if (NameChanged != null)
-        NameChanged(sender, new Altaxo.Main.NameChangedEventArgs(oldValue, newValue));
+        NameChanged(sender, new Altaxo.Main.NameChangedEventArgs(this, oldValue, newValue));
     }
 
     /// <summary>

@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Pads
           case ".txt":
           case ".csv":
           {
-            Worksheet.Commands.FileCommands.ImportAsciiToMultipleWorksheets(
+            Altaxo.Worksheet.Commands.FileCommands.ImportAsciiToMultipleWorksheets(
               null,
               new string[] { item.FullName });
           }

@@ -28,7 +28,7 @@ using System.Data;
 using System.Windows.Forms;
 using Altaxo.Gui;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// Summary description for SavitzkyGolayParameterControl.

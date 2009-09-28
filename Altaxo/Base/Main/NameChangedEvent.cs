@@ -25,24 +25,17 @@ using System;
 namespace Altaxo.Main
 {
 
-  public class NameChangedEventArgs : System.EventArgs
+  public class NameChangedEventArgs : TunnelingEventArgs
   {
-    protected string _oldName, _newName;
+		public object Source { get; private set; }
+		public string OldName { get; private set; }
+		public string NewName { get; private set; }
 
-    public NameChangedEventArgs(string oldName, string newName)
+    public NameChangedEventArgs(object source, string oldName, string newName)
     {
-      this._oldName = oldName;
-      this._newName = newName;
-    }
-
-    public string NewName
-    {
-      get { return this._newName; }
-    }
-
-    public string OldName
-    {
-      get { return this._oldName; }
+			this.Source = source;
+      this.OldName = oldName;
+      this.NewName = newName;
     }
   }
 

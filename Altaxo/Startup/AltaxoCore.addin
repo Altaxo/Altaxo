@@ -44,6 +44,7 @@
     </Import>
     <Import assembly=":ICSharpCode.TextEditor"/>
     <Import assembly=":AltaxoBase"/>
+    <Import assembly=":AltaxoBase.WinForms"/>
     <Import assembly=":AltaxoSDGui">
       <ConditionEvaluator name="SelectedDataColumns" class="Altaxo.Worksheet.Commands.SelectedDataConditionEvaluator"/>
       <ConditionEvaluator name="SelectedPropertyColumns" class="Altaxo.Worksheet.Commands.SelectedPropertyConditionEvaluator"/>

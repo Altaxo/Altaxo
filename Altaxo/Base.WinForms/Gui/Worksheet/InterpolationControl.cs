@@ -30,7 +30,7 @@ using System.Windows.Forms;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// Summary description for InterpolationControl.

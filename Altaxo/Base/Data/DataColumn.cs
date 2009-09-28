@@ -74,12 +74,13 @@ namespace Altaxo.Data
     /// </summary>
     protected ChangeEventArgs _changeData;
 
-    /// <summary>This element is fired when the column is to be disposed.</summary><remarks>All instances, which have a reference
+    /// <summary>This element is fired when the column is disposed, or the name of the column or of a parent element has changed.</summary>
+		/// <remarks>All instances, which have a reference
     /// to this column, should have a wire to this event. In case the event is fired, it indicates
     /// that the column should be disposed, so they have to unreference this column by setting the
     /// reference to null.
     /// </remarks>
-    public event EventHandler Disposed;
+		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
     /// <summary>
     /// This event is fired if the data of the column or anything else changed.
@@ -371,8 +372,8 @@ namespace Altaxo.Data
     /// </summary>
     public void Dispose()
     {
-      if (null != Disposed)
-        Disposed(this, EventArgs.Empty);
+			if (null != TunneledEvent)
+				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
 
       this.ParentObject = null;
       this.Clear();
@@ -443,6 +444,12 @@ namespace Altaxo.Data
         }
       }
     }
+
+		public void EhTunnelingEvent(object sender, object source, Main.TunnelingEventArgs e)
+		{
+			if (null != TunneledEvent)
+				TunneledEvent(this, source, e);
+		}
 
     #endregion
 

@@ -32,6 +32,6 @@ namespace Altaxo.Main
     /// <summary>
     /// The event that is fired when the object is disposed.
     /// </summary>
-    event EventHandler Disposed;
+    event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
   }
 }

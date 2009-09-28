@@ -24,7 +24,7 @@ using System;
 using Altaxo.Calc.Regression;
 using Altaxo.Gui;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
   

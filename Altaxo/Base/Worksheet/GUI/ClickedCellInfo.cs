@@ -30,7 +30,41 @@ namespace Altaxo.Worksheet.GUI
   /// </remarks>
   public class ClickedCellInfo : System.EventArgs
   {
-    private System.Windows.Forms.MouseButtons m_LastMouseButtons;
+    /// <summary>Gets which mouse buttons were pressed on the last mouseup/mousedown event</summary>
+    private System.Windows.Forms.MouseButtons _lastMouseButtons;
+
+    /// <summary>Gets the mouse position of the first mousedown event (after all buttons were up).</summary>
+    private Point _mousePositionFirstDown;
+
+    /// <summary>
+    /// Gets the mouse position of the last mouseup event (so that all buttons are up afterwards).
+    /// </summary>
+    private Point _mousePositionLastUp;
+
+
+    /// <summary>
+    /// Gets the mouse button that was first pressed down
+    /// </summary>
+    private MouseButtons _mouseButtonFirstDown;
+
+
+    /// <summary>
+    /// Gets the mouse button that was release last (before all mouse buttons were up).
+    /// </summary>
+    private MouseButtons _mouseButtonLastUp;
+
+    /// <summary>The enclosing Rectangle of the clicked cell</summary>
+    private Rectangle _clickedCellRectangle;
+
+    /// <summary>The data row clicked onto.</summary>
+    private int _clickedRow;
+    /// <summary>The data column number clicked onto.</summary>
+    private int _clickedColumn;
+
+    /// <summary>What have been clicked onto.</summary>
+    private ClickedAreaType _clickedAreaType;
+
+
     /// <summary>
     /// Gets which mouse buttons were pressed on the last mouseup/mousedown event
     /// </summary>
@@ -38,11 +72,9 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_LastMouseButtons;
+        return _lastMouseButtons;
       }
     }
-
-    private Point m_MousePositionFirstDown;
 
     /// <summary>
     /// Gets the mouse position of the first mousedown event (after all buttons were up).
@@ -51,20 +83,18 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_MousePositionFirstDown;
+        return _mousePositionFirstDown;
       }
     }
 
-    private MouseButtons m_MouseButtonFirstDown;
     /// <summary>
     /// Gets the mouse button that was first pressed down
     /// </summary>
     public MouseButtons MouseButtonFirstDown
     {
-      get { return m_MouseButtonFirstDown; }
+      get { return _mouseButtonFirstDown; }
     }
 
-    private Point m_MousePositionLastUp;
     /// <summary>
     /// Gets the mouse position of the last mouseup event (so that all buttons are up afterwards).
     /// </summary>
@@ -72,68 +102,59 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_MousePositionLastUp;
+        return _mousePositionLastUp;
       }
     }
 
-    private MouseButtons m_MouseButtonLastUp;
     /// <summary>
     /// Gets the mouse button that was release last (before all mouse buttons were up).
     /// </summary>
     public MouseButtons MouseButtonLastUp
     {
-      get { return m_MouseButtonLastUp; }
+      get { return _mouseButtonLastUp; }
     }
 
     public void MouseDown(MouseEventArgs e)
     {
-      if(m_LastMouseButtons==MouseButtons.None)
+      if(_lastMouseButtons==MouseButtons.None)
       {
-        this.m_MousePositionFirstDown = new Point(e.X,e.Y);
-        this.m_MouseButtonFirstDown = e.Button;
+        this._mousePositionFirstDown = new Point(e.X,e.Y);
+        this._mouseButtonFirstDown = e.Button;
       }
-      m_LastMouseButtons = e.Button;
+      _lastMouseButtons = e.Button;
     }
 
     public void MouseUp(MouseEventArgs e, MouseButtons buttonsAfterwards)
     {
       if(buttonsAfterwards==MouseButtons.None)
       {
-        this.m_MousePositionLastUp = new Point(e.X,e.Y);
-        this.m_MouseButtonLastUp = e.Button;
+        this._mousePositionLastUp = new Point(e.X,e.Y);
+        this._mouseButtonLastUp = e.Button;
       }
-      m_LastMouseButtons = buttonsAfterwards;
+      _lastMouseButtons = buttonsAfterwards;
     }
 
 
-    /// <summary>The enclosing Rectangle of the clicked cell</summary>
-    private Rectangle m_CellRectangle;
-
-    /// <summary>The data row clicked onto.</summary>
-    private int m_Row;
-    /// <summary>The data column number clicked onto.</summary>
-    private int m_Column;
-
-    /// <summary>What have been clicked onto.</summary>
-    private ClickedAreaType m_ClickedArea;
+   
 
 
     /// <value>The enclosing Rectangle of the clicked cell</value>
-    public Rectangle CellRectangle { get { return m_CellRectangle; }}
+    public Rectangle CellRectangle { get { return _clickedCellRectangle; }}
+
     /// <value>The row number clicked onto.</value>
     public int Row 
     {
-      get { return m_Row; }
-      set { m_Row = value; }
+      get { return _clickedRow; }
+      set { _clickedRow = value; }
     }
     /// <value>The column number clicked onto.</value>
     public int Column 
     {
-      get { return m_Column; }
-      set { m_Column = value; }
+      get { return _clickedColumn; }
+      set { _clickedColumn = value; }
     }
     /// <value>The type of area clicked onto.</value>
-    public ClickedAreaType ClickedArea { get { return m_ClickedArea; }}
+    public ClickedAreaType ClickedArea { get { return _clickedAreaType; }}
  
     /// <summary>
     /// Retrieves the column number clicked onto 
@@ -227,33 +248,33 @@ namespace Altaxo.Worksheet.GUI
     {
 
       bool bIsPropertyColumn=false;
-      m_CellRectangle = new Rectangle(0,0,0,0);
-      m_Column = GetColumnNumber(dg,mouseCoord, ref m_CellRectangle);
-      m_Row    = GetRowNumber(dg,mouseCoord,ref m_CellRectangle, out bIsPropertyColumn);
+      _clickedCellRectangle = new Rectangle(0,0,0,0);
+      _clickedColumn = GetColumnNumber(dg,mouseCoord, ref _clickedCellRectangle);
+      _clickedRow    = GetRowNumber(dg,mouseCoord,ref _clickedCellRectangle, out bIsPropertyColumn);
 
       if(bIsPropertyColumn)
       {
-        if(m_Column==-1)
-          m_ClickedArea = ClickedAreaType.PropertyColumnHeader;
-        else if(m_Column>=0)
-          m_ClickedArea = ClickedAreaType.PropertyCell;
+        if(_clickedColumn==-1)
+          _clickedAreaType = ClickedAreaType.PropertyColumnHeader;
+        else if(_clickedColumn>=0)
+          _clickedAreaType = ClickedAreaType.PropertyCell;
         else
-          m_ClickedArea = ClickedAreaType.OutsideAll;
+          _clickedAreaType = ClickedAreaType.OutsideAll;
 
-        int h=m_Column; m_Column = m_Row; m_Row = h; // Swap columns and rows since it is a property column
+        int h=_clickedColumn; _clickedColumn = _clickedRow; _clickedRow = h; // Swap columns and rows since it is a property column
       }
       else // it is not a property related cell
       {
-        if(m_Row==-1 && m_Column==-1)
-          m_ClickedArea = ClickedAreaType.TableHeader;
-        else if(m_Row==-1 && m_Column>=0)
-          m_ClickedArea = ClickedAreaType.DataColumnHeader;
-        else if(m_Row>=0 && m_Column==-1)
-          m_ClickedArea = ClickedAreaType.DataRowHeader;
-        else if(m_Row>=0 && m_Column>=0)
-          m_ClickedArea = ClickedAreaType.DataCell;
+        if(_clickedRow==-1 && _clickedColumn==-1)
+          _clickedAreaType = ClickedAreaType.TableHeader;
+        else if(_clickedRow==-1 && _clickedColumn>=0)
+          _clickedAreaType = ClickedAreaType.DataColumnHeader;
+        else if(_clickedRow>=0 && _clickedColumn==-1)
+          _clickedAreaType = ClickedAreaType.DataRowHeader;
+        else if(_clickedRow>=0 && _clickedColumn>=0)
+          _clickedAreaType = ClickedAreaType.DataCell;
         else
-          m_ClickedArea = ClickedAreaType.OutsideAll;
+          _clickedAreaType = ClickedAreaType.OutsideAll;
       }
     }
   } // end of class ClickedCellInfo

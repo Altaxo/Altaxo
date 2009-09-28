@@ -21,46 +21,53 @@
 #endregion
 
 using System;
-
-using Altaxo.Calc.Interpolation;
 using Altaxo.Gui;
-using Altaxo.Gui.Common;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// Summary description for TransposeWorksheetController.
   /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalInterpolation),100)]
-  public class RationalInterpolationController : NumericDoubleValueController
+  public class TransposeWorksheetController : IMVCAController
   {
-    RationalInterpolation _spline;
-    public RationalInterpolationController(RationalInterpolation spline)
-      : base(spline.NumeratorDegree)
+    Altaxo.Data.DataTable _table;
+    TransposeWorksheetControl _view;
+
+    public TransposeWorksheetController(Altaxo.Data.DataTable table)
     {
-      base._minimumValue = 0;
-      base._isMinimumValueIncluded=false;
-      _descriptionText = "Numerator degree N (N>(n-1)/2, where n is the original number of points for this interpolation) :";
-      _spline = spline;
+      _table = table;
+    }
+    #region IApplyController Members
+
+   
+
+    public bool Apply()
+    {
+      Altaxo.Worksheet.Commands.Transpose.DoTranspose(_table, _view.DataColumnsMoveToPropertyColumns, _view.PropertyColumnsMoveToDataColumns, true);
+      return true;
     }
 
-    public override object ModelObject
+    #endregion
+
+    #region IMVCController Members
+
+    public object ViewObject
     {
       get
       {
-        return _spline;
+        return _view;
+      }
+      set
+      {
+        _view = value as TransposeWorksheetControl;
       }
     }
 
-    public override bool Apply()
+    public object ModelObject
     {
-      if(base.Apply())
-      {
-        this._spline.NumeratorDegree = (int)base._value1Double;
-        return true;
-      }
-      else
-        return false;
+      get { return null; }
     }
+
+    #endregion
   }
 }

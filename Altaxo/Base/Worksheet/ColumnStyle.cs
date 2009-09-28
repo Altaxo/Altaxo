@@ -52,19 +52,19 @@ namespace Altaxo.Worksheet
 
     protected ColumnStyleType _columnStyleType;
 
-    protected int m_Size=80;
-    protected StringFormat m_TextFormat = new StringFormat();
+    protected int _columnSize=80;
+    protected StringFormat _textFormat = new StringFormat();
 
     protected bool _isCellPenCustom;
-    protected PenX m_CellPen = new PenX(SystemColors.InactiveBorder,1);
+    protected PenX _cellPen = new PenX(SystemColors.InactiveBorder,1);
     
-    protected Font m_TextFont = new Font("Arial",8);
+    protected Font _textFont = new Font("Arial",8);
 
     protected bool _isTextBrushCustom;
-    protected BrushX m_TextBrush = new BrushX(SystemColors.WindowText);
+    protected BrushX _textBrush = new BrushX(SystemColors.WindowText);
 
     protected bool _isBackgroundBrushCustom;
-    protected BrushX m_BackgroundBrush = new BrushX(SystemColors.Window);
+    protected BrushX _backgroundBrush = new BrushX(SystemColors.Window);
 
     
 
@@ -74,14 +74,14 @@ namespace Altaxo.Worksheet
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         ColumnStyle s = (ColumnStyle)obj;
-        info.AddValue("Size",(float)s.m_Size);
-        info.AddValue("Pen",s.m_CellPen);
-        info.AddValue("TextBrush",s.m_TextBrush);
-        info.AddValue("BkgBrush",s.m_BackgroundBrush);
-        info.AddValue("Alignment",s.m_TextFormat.Alignment);
+        info.AddValue("Size",(float)s._columnSize);
+        info.AddValue("Pen",s._cellPen);
+        info.AddValue("TextBrush",s._textBrush);
+        info.AddValue("BkgBrush",s._backgroundBrush);
+        info.AddValue("Alignment",s._textFormat.Alignment);
         
 
-        info.AddValue("Font",s.m_TextFont); // Serialization is possible in NET1SP2, but deserialization fails (Tested with SOAP formatter)
+        info.AddValue("Font",s._textFont); // Serialization is possible in NET1SP2, but deserialization fails (Tested with SOAP formatter)
         
        
 
@@ -92,16 +92,16 @@ namespace Altaxo.Worksheet
 
        
         
-        s.m_Size = (int)info.GetSingle("Size");
-        s.m_CellPen = (PenX)info.GetValue("Pen",typeof(PenX));
-        s.m_TextBrush = (BrushX)info.GetValue("TextBrush",typeof(BrushX));
-        s.m_BackgroundBrush = (BrushX)info.GetValue("BkgBrush",typeof(BrushX));
-        s.m_TextFormat = new StringFormat();
-        s.m_TextFormat.Alignment = (StringAlignment)info.GetValue("Alignment",typeof(StringAlignment));
+        s._columnSize = (int)info.GetSingle("Size");
+        s._cellPen = (PenX)info.GetValue("Pen",typeof(PenX));
+        s._textBrush = (BrushX)info.GetValue("TextBrush",typeof(BrushX));
+        s._backgroundBrush = (BrushX)info.GetValue("BkgBrush",typeof(BrushX));
+        s._textFormat = new StringFormat();
+        s._textFormat.Alignment = (StringAlignment)info.GetValue("Alignment",typeof(StringAlignment));
 
 
         // Deserialising a font with SoapFormatter raises an error at least in Net1SP2, so I had to circuumvent this
-        s.m_TextFont = (Font)info.GetValue("Font",typeof(Font)); 
+        s._textFont = (Font)info.GetValue("Font",typeof(Font)); 
         //  s.m_TextFont = new Font("Arial",8);               
 
 
@@ -131,7 +131,7 @@ namespace Altaxo.Worksheet
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         ColumnStyle s = (ColumnStyle)o ;
-        s.m_Size = (int)info.GetSingle("Size");
+        s._columnSize = (int)info.GetSingle("Size");
 
         object notneeded;
         notneeded = info.GetValue("Pen",s);
@@ -142,8 +142,8 @@ namespace Altaxo.Worksheet
         notneeded = info.GetValue("BkgBrush", s);
 
         notneeded = info.GetValue("SelBkgBrush",s);
-        s.m_TextFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment),info.GetString("Alignment"));
-        s.m_TextFont = (Font)info.GetValue("Font",s);
+        s._textFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment),info.GetString("Alignment"));
+        s._textFont = (Font)info.GetValue("Font",s);
         return s;
       }
     }
@@ -155,24 +155,24 @@ namespace Altaxo.Worksheet
       {
         ColumnStyle s = (ColumnStyle)obj;
         info.AddEnum("Type", s._columnStyleType);
-        info.AddValue("Size", (float)s.m_Size);
-        info.AddValue("Alignment", Enum.GetName(typeof(System.Drawing.StringAlignment), s.m_TextFormat.Alignment));
+        info.AddValue("Size", (float)s._columnSize);
+        info.AddValue("Alignment", Enum.GetName(typeof(System.Drawing.StringAlignment), s._textFormat.Alignment));
 
         info.AddValue("CustomPen", s._isCellPenCustom);
         if(s._isCellPenCustom) 
-          info.AddValue("Pen", s.m_CellPen);
+          info.AddValue("Pen", s._cellPen);
         
         info.AddValue("CustomText", s._isTextBrushCustom);
         if(s._isTextBrushCustom)
-          info.AddValue("TextBrush", s.m_TextBrush);
+          info.AddValue("TextBrush", s._textBrush);
 
         info.AddValue("CustomBkg", s._isBackgroundBrushCustom);
         if(s._isBackgroundBrushCustom)
-          info.AddValue("BkgBrush", s.m_BackgroundBrush);
+          info.AddValue("BkgBrush", s._backgroundBrush);
 
         info.AddValue("CustomFont", s.IsCustomFont);
         if(s.IsCustomFont)
-          info.AddValue("Font", s.m_TextFont);
+          info.AddValue("Font", s._textFont);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -182,8 +182,8 @@ namespace Altaxo.Worksheet
           return new XmlSerializationSurrogate0().Deserialize(o, info, parent);
         
         s._columnStyleType = (ColumnStyleType)info.GetEnum("Type", typeof(ColumnStyleType));
-        s.m_Size = (int)info.GetSingle("Size");
-        s.m_TextFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment), info.GetString("Alignment"));
+        s._columnSize = (int)info.GetSingle("Size");
+        s._textFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment), info.GetString("Alignment"));
         s._isCellPenCustom = info.GetBoolean("CustomPen");
         if (s._isCellPenCustom)
         {
@@ -268,18 +268,18 @@ namespace Altaxo.Worksheet
     public ColumnStyle(ColumnStyle s)
     {
       _columnStyleType = s._columnStyleType;
-      m_Size = s.m_Size;
+      _columnSize = s._columnSize;
 
       _isCellPenCustom = s._isCellPenCustom;
-      m_CellPen = (PenX)s.m_CellPen.Clone();
-      m_TextFormat = (StringFormat)s.m_TextFormat.Clone();
-      m_TextFont = (Font)s.m_TextFont.Clone();
+      _cellPen = (PenX)s._cellPen.Clone();
+      _textFormat = (StringFormat)s._textFormat.Clone();
+      _textFont = (Font)s._textFont.Clone();
       
       _isTextBrushCustom = s._isTextBrushCustom;
-      m_TextBrush = (BrushX)s.m_TextBrush.Clone();
+      _textBrush = (BrushX)s._textBrush.Clone();
 
       _isBackgroundBrushCustom = s._isBackgroundBrushCustom;
-      m_BackgroundBrush = (BrushX)s.m_BackgroundBrush.Clone();
+      _backgroundBrush = (BrushX)s._backgroundBrush.Clone();
     }
 
     /// <summary>
@@ -343,11 +343,11 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_Size;
+        return _columnSize;
       }
       set
       {
-        m_Size=value;
+        _columnSize=value;
       } 
     }
 
@@ -355,7 +355,7 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_CellPen;
+        return _cellPen;
       }
       set
       {
@@ -363,8 +363,8 @@ namespace Altaxo.Worksheet
         if (value == null)
           throw new ArgumentNullException();
 
-        PenX oldValue = m_CellPen;
-        m_CellPen = value;
+        PenX oldValue = _cellPen;
+        _cellPen = value;
         if(!object.ReferenceEquals(value,oldValue))
         {
           oldValue.Changed -= EhCellPenChanged;
@@ -382,14 +382,14 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_BackgroundBrush;
+        return _backgroundBrush;
       }
       set
       {
         if (value == null)
           throw new ArgumentNullException();
-        BrushX oldValue = m_BackgroundBrush;
-        m_BackgroundBrush = value;
+        BrushX oldValue = _backgroundBrush;
+        _backgroundBrush = value;
         if (!object.ReferenceEquals(value, oldValue))
         {
           oldValue.Changed -= EhBackgroundBrushChanged;
@@ -407,14 +407,14 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_TextBrush;
+        return _textBrush;
       }
       set
       {
         if (value == null)
           throw new ArgumentNullException();
-        BrushX oldValue = m_TextBrush;
-        m_TextBrush = value;
+        BrushX oldValue = _textBrush;
+        _textBrush = value;
         if (!object.ReferenceEquals(value, oldValue))
         {
           oldValue.Changed -= EhTextBrushChanged;
@@ -432,14 +432,14 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_TextFont;
+        return _textFont;
       }
       set
       {
-        if (null == m_TextFont)
+        if (null == _textFont)
           throw new ArgumentNullException();
 
-        m_TextFont = value;
+        _textFont = value;
       }
     }
 
@@ -447,7 +447,7 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_TextFont == _defaultTextFont;
+        return _textFont == _defaultTextFont;
       }
     }
 
@@ -458,11 +458,11 @@ namespace Altaxo.Worksheet
       if (bSelected)
         dc.FillRectangle(_defaultSelectedBackgroundBrush, cellRectangle);
       else
-        dc.FillRectangle(m_BackgroundBrush, cellRectangle);
+        dc.FillRectangle(_backgroundBrush, cellRectangle);
 
-      m_CellPen.Cached = true;
-      dc.DrawLine(m_CellPen.Pen, cellRectangle.Left, cellRectangle.Bottom-1, cellRectangle.Right-1, cellRectangle.Bottom-1);
-      dc.DrawLine(m_CellPen.Pen, cellRectangle.Right-1, cellRectangle.Bottom-1, cellRectangle.Right-1, cellRectangle.Top);
+      _cellPen.Cached = true;
+      dc.DrawLine(_cellPen.Pen, cellRectangle.Left, cellRectangle.Bottom-1, cellRectangle.Right-1, cellRectangle.Bottom-1);
+      dc.DrawLine(_cellPen.Pen, cellRectangle.Right-1, cellRectangle.Bottom-1, cellRectangle.Right-1, cellRectangle.Top);
     }
 
   

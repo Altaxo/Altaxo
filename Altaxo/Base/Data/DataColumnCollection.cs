@@ -1325,6 +1325,9 @@ namespace Altaxo.Data
 
           this.EhChildChanged(null,ChangeEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
 
+					// Inform also the data column itself that the name has changed
+          datac.EhTunnelingEvent(this, datac, Main.DocumentPathChangedEventArgs.Empty);
+
           // reset the TriedOutRegularNames flag, maybe one of the regular columns has been renamed
           this._triedOutRegularNaming = false;
         }
@@ -2155,6 +2158,13 @@ namespace Altaxo.Data
 
       return false;
     }
+
+
+		public void EhTunnelingEvent(object sender, object source, Main.TunnelingEventArgs e)
+		{
+			foreach (DataColumn c in _columnsByNumber)
+				c.EhTunnelingEvent(this, source, e);
+		}
 
 
     /// <summary>

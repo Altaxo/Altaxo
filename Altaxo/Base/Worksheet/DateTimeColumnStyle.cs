@@ -87,7 +87,7 @@ namespace Altaxo.Worksheet
     public override void OnDeserialization(object obj)
     {
       base.OnDeserialization(obj);
-      m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+      _textFormat.FormatFlags=StringFormatFlags.LineLimit;
     }
 
     #endregion
@@ -100,8 +100,8 @@ namespace Altaxo.Worksheet
     public DateTimeColumnStyle()
       : base(ColumnStyleType.DataCell)
     {
-      m_TextFormat.Alignment=StringAlignment.Far;
-      m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+      _textFormat.Alignment=StringAlignment.Far;
+      _textFormat.FormatFlags=StringFormatFlags.LineLimit;
     }
 
     public DateTimeColumnStyle(DateTimeColumnStyle dtcs)
@@ -139,9 +139,9 @@ namespace Altaxo.Worksheet
         t.ToString("o");
     
       if(bSelected)
-        dc.DrawString(myString, m_TextFont, _defaultSelectedTextBrush, cellRectangle, m_TextFormat);
+        dc.DrawString(myString, _textFont, _defaultSelectedTextBrush, cellRectangle, _textFormat);
       else
-        dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+        dc.DrawString(myString,_textFont,_textBrush,cellRectangle,_textFormat);
     }
   } // end of class Altaxo.Worksheet.DateTimeColumnStyle
 

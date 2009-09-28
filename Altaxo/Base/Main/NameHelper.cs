@@ -90,5 +90,27 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Prepends a string to a full name (by prepending to the name part only).
+		/// </summary>
+		/// <param name="oldFullName">The full original name.</param>
+		/// <param name="prependString">A string that is to be prepended to the name part of the original name.</param>
+		/// <returns></returns>
+		public static string PrependToName(string oldFullName, string prependString)
+		{
+			return CreateFullName(oldFullName, prependString + GetNamePart(oldFullName));
+		}
+
+		/// <summary>
+		/// Appends a string to a full name (by appending to the name part only).
+		/// </summary>
+		/// <param name="oldFullName">The full original name.</param>
+		/// <param name="prependString">A string that is to be prepended to the name part of the original name.</param>
+		/// <returns></returns>
+		public static string AppendToName(string oldFullName, string prependString)
+		{
+			return CreateFullName(oldFullName, GetNamePart(oldFullName)+prependString);
+		}
+
 	}
 }

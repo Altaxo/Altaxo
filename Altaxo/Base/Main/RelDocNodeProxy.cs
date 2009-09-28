@@ -189,7 +189,7 @@ namespace Altaxo.Main
         _docNodePath = Main.DocumentPath.GetRelativePathFromTo(parentNode, _docNode);
 
       if (_docNode is Main.IEventIndicatedDisposable)
-        ((Main.IEventIndicatedDisposable)_docNode).Disposed += new EventHandler(EhDocNode_Disposed);
+        ((Main.IEventIndicatedDisposable)_docNode).TunneledEvent += EhDocNode_TunneledEvent;
 
       if (_docNode is Main.IChangedEventSource)
         ((Main.IChangedEventSource)_docNode).Changed += new EventHandler(EhDocNode_Changed);
@@ -212,7 +212,7 @@ namespace Altaxo.Main
       OnBeforeClearDocNode();
 
       if (_docNode is Main.IEventIndicatedDisposable)
-        ((Main.IEventIndicatedDisposable)_docNode).Disposed -= new EventHandler(EhDocNode_Disposed);
+        ((Main.IEventIndicatedDisposable)_docNode).TunneledEvent -= EhDocNode_TunneledEvent;
 
       if (_docNode is Main.IChangedEventSource)
         ((Main.IChangedEventSource)_docNode).Changed -= new EventHandler(EhDocNode_Changed);
@@ -223,16 +223,33 @@ namespace Altaxo.Main
       OnDocumentInstanceChanged(oldvalue,_docNode);
     }
 
-    /// <summary>
-    /// Event handler that is called when the document is disposed. In this case the doc node is set to null, but the path is kept.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void EhDocNode_Disposed(object sender, EventArgs e)
+		/// <summary>
+		/// Event handler that is called when the document node has disposed or name changed. Because the path to the node can have changed too,
+		/// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+    void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
     {
-      ClearDocNode();
+			if (e is DisposeEventArgs)
+			{
+				if(object.ReferenceEquals(source, sender))
+				{
+					ClearDocNode();
+					OnChanged();
+					return;
+				}
+			}
+			else if (e is DocumentPathChangedEventArgs)
+			{
+				if (_docNode is Main.IDocumentNode)
+					_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parentNode, (Main.IDocumentNode)_docNode);
+				else
+					_docNodePath = null;
 
-      OnChanged();
+				OnChanged();
+				return;
+			}
     }
 
     /// <summary>

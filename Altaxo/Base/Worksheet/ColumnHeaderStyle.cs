@@ -32,9 +32,9 @@ namespace Altaxo.Worksheet
   public class ColumnHeaderStyle : ColumnStyle
   {
     [NonSerialized]
-    private StringFormat m_LeftUpperFormat = new StringFormat();
+    private StringFormat _leftUpperTextFormat = new StringFormat();
     [NonSerialized]
-    private StringFormat m_RightUpperFormat = new StringFormat();
+    private StringFormat _rightUpperTextFormat = new StringFormat();
 
 
     #region Serialization
@@ -102,35 +102,35 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_Size;
+        return _columnSize;
       }
       set
       {
-        m_Size = value;
+        _columnSize = value;
       } 
     }
 
     public ColumnHeaderStyle()
       : base(ColumnStyleType.ColumnHeader)
     {
-      m_Size = 40;
+      _columnSize = 40;
 
-      m_TextFormat.Alignment=StringAlignment.Center;
-      m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
-      m_TextFormat.LineAlignment=StringAlignment.Near;
+      _textFormat.Alignment=StringAlignment.Center;
+      _textFormat.FormatFlags=StringFormatFlags.LineLimit;
+      _textFormat.LineAlignment=StringAlignment.Near;
 
-      m_LeftUpperFormat.Alignment = StringAlignment.Near;
-      m_LeftUpperFormat.LineAlignment = StringAlignment.Far;
+      _leftUpperTextFormat.Alignment = StringAlignment.Near;
+      _leftUpperTextFormat.LineAlignment = StringAlignment.Far;
 
-      m_RightUpperFormat.Alignment = StringAlignment.Far;
-      m_RightUpperFormat.LineAlignment = StringAlignment.Far;
+      _rightUpperTextFormat.Alignment = StringAlignment.Far;
+      _rightUpperTextFormat.LineAlignment = StringAlignment.Far;
     }
 
     public ColumnHeaderStyle(ColumnHeaderStyle chs)
       : base(chs)
     {
-      m_LeftUpperFormat = (StringFormat)chs.m_LeftUpperFormat.Clone();
-      m_RightUpperFormat = (StringFormat)chs.m_RightUpperFormat.Clone();
+      _leftUpperTextFormat = (StringFormat)chs._leftUpperTextFormat.Clone();
+      _rightUpperTextFormat = (StringFormat)chs._rightUpperTextFormat.Clone();
     }
 
    
@@ -142,7 +142,7 @@ namespace Altaxo.Worksheet
       Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
       string columnnumber = dataColCol.GetColumnNumber(data).ToString();
       string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(),dataColCol.GetColumnGroup(data));
-      int fontheight = m_TextFont.Height;
+      int fontheight = _textFont.Height;
       Rectangle nameRectangle = cellRectangle;
       nameRectangle.Height = Math.Max(fontheight,cellRectangle.Height-fontheight);
       Rectangle numRectangle = cellRectangle;
@@ -151,15 +151,15 @@ namespace Altaxo.Worksheet
       
       if(bSelected)
       {
-        dc.DrawString(columnnumber,m_TextFont,_defaultSelectedTextBrush,numRectangle,m_LeftUpperFormat);
-        dc.DrawString(kindandgroup, m_TextFont, _defaultSelectedTextBrush, numRectangle, m_RightUpperFormat);
-        dc.DrawString(data.Name, m_TextFont, _defaultSelectedTextBrush, nameRectangle, m_TextFormat);
+        dc.DrawString(columnnumber,_textFont,_defaultSelectedTextBrush,numRectangle,_leftUpperTextFormat);
+        dc.DrawString(kindandgroup, _textFont, _defaultSelectedTextBrush, numRectangle, _rightUpperTextFormat);
+        dc.DrawString(data.Name, _textFont, _defaultSelectedTextBrush, nameRectangle, _textFormat);
       }
       else
       {
-        dc.DrawString(columnnumber,m_TextFont,m_TextBrush,numRectangle,m_LeftUpperFormat);
-        dc.DrawString(kindandgroup,m_TextFont,m_TextBrush,numRectangle,m_RightUpperFormat);
-        dc.DrawString(data.Name,m_TextFont,m_TextBrush,nameRectangle,m_TextFormat);
+        dc.DrawString(columnnumber,_textFont,_textBrush,numRectangle,_leftUpperTextFormat);
+        dc.DrawString(kindandgroup,_textFont,_textBrush,numRectangle,_rightUpperTextFormat);
+        dc.DrawString(data.Name,_textFont,_textBrush,nameRectangle,_textFormat);
       }
     
     

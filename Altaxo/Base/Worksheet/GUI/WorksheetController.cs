@@ -56,94 +56,94 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// Used to indicate that deserialization has not finished, and holds some deserialized values.
     /// </summary>
-    private object m_DeserializationSurrogate;
+    private object _deserializationMemento;
 
     /// <summary>Holds the data table cached from the layout.</summary>
-    protected Altaxo.Data.DataTable m_Table;
+    protected Altaxo.Data.DataTable _table;
 
 
-    protected Altaxo.Worksheet.WorksheetLayout m_TableLayout;
+    protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
     /// <summary>Holds the view (the window where the graph is visualized).</summary>
-    protected IWorksheetView m_View;
+    protected IWorksheetView _view;
     
 
     /// <summary>Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
-    protected SelectionType m_LastSelectionType;
+    protected SelectionType _lastSelectionType;
 
     
     /// <summary>
     /// holds the positions (int) of the right boundarys of the __visible__ (!) columns
     /// i.e. columnBordersCache[0] is the with of the rowHeader plus the width of column[0]
     /// </summary>
-    protected ColumnStyleCache m_ColumnStyleCache;
+    protected ColumnStyleCache _columnStyleCache;
     
     
     /// <summary>
     /// Horizontal scroll position; number of first column that is shown.
     /// </summary>
-    private int m_HorzScrollPos;
+    private int _scrollHorzPos;
     /// <summary>
     /// Vertical scroll position; Positive values: number of first data column
     /// that is shown. Negative Values scroll more up in case of property columns.
     /// </summary>
-    private int m_VertScrollPos;
-    private int m_HorzScrollMax;
-    private int m_VertScrollMax;
+    private int _scrollVertPos;
+    private int _scrollHorzMax;
+    private int _scrollVertMax;
 
-    private int  m_LastVisibleColumn;
-    private int  m_LastFullyVisibleColumn;
+    private int  _lastVisibleColumn;
+    private int  _lastFullyVisibleColumn;
 
     
     /// <summary>
     /// Holds the indizes to the selected data columns.
     /// </summary>
-    protected IndexSelection m_SelectedDataColumns; // holds the selected columns
+    protected IndexSelection _selectedDataColumns; // holds the selected columns
     
     /// <summary>
     /// Holds the indizes to the selected rows.
     /// </summary>
-    protected IndexSelection m_SelectedDataRows; // holds the selected rows
+    protected IndexSelection _selectedDataRows; // holds the selected rows
     
     /// <summary>
     /// Holds the indizes to the selected property columns.
     /// </summary>
-    protected IndexSelection m_SelectedPropertyColumns; // holds the selected property columns
+    protected IndexSelection _selectedPropertyColumns; // holds the selected property columns
 
 
     /// <summary>
     /// Holds the indizes to the selected property rows (but only in case property cells are selected alone).
     /// </summary>
-    protected IndexSelection m_SelectedPropertyRows; // holds the selected property rows
+    protected IndexSelection _selectedPropertyRows; // holds the selected property rows
 
 
     /// <summary>
     /// Cached number of table rows.
     /// </summary>
-    protected int m_NumberOfTableRows; // cached number of rows of the table
+    protected int _numberOfTableRows; // cached number of rows of the table
     /// <summary>
     /// Cached number of table columns.
     /// </summary>
-    protected int m_NumberOfTableCols;
+    protected int _numberOfTableCols;
     
     /// <summary>
     /// Cached number of property columns.
     /// </summary>
-    protected int m_NumberOfPropertyCols; // cached number of property  columnsof the table
+    protected int _numberOfPropertyCols; // cached number of property  columnsof the table
     
   
-    private ClickedCellInfo m_MouseInfo = new ClickedCellInfo();
+    private ClickedCellInfo _mouseInfo = new ClickedCellInfo();
 
-    private Point m_MouseDownPosition; // holds the position of a double click
-    private int  m_DragColumnWidth_ColumnNumber; // stores the column number if mouse hovers over separator
-    private int  m_DragColumnWidth_OriginalPos;
-    private int  m_DragColumnWidth_OriginalWidth;
-    private bool m_DragColumnWidth_InCapture;
+    private Point _mouseDownPosition; // holds the position of a double click
+    private int  _dragColumnWidth_ColumnNumber; // stores the column number if mouse hovers over separator
+    private int  _dragColumnWidth_OriginalPos;
+    private int  _dragColumnWidth_OriginalWidth;
+    private bool _dragColumnWidth_InCapture;
   
 
-    protected bool                         m_CellEdit_IsArmed;
-    private ClickedCellInfo              m_CellEdit_EditedCell;
-    protected System.Windows.Forms.TextBox m_CellEditControl; 
+    protected bool                         _cellEdit_IsArmed;
+    private ClickedCellInfo              _cellEdit_EditedCell;
+    protected System.Windows.Forms.TextBox _cellEditControl; 
 
 
     /// <summary>
@@ -151,11 +151,11 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     protected virtual void SetMemberVariablesToDefault()
     {
-      m_DeserializationSurrogate=null;
+      _deserializationMemento=null;
 
-      m_Table=null;
-      m_TableLayout=null;
-      m_View = null;
+      _table=null;
+      _worksheetLayout=null;
+      _view = null;
     
       // The main menu of this controller.
       m_MainMenu = null; 
@@ -163,71 +163,71 @@ namespace Altaxo.Worksheet.GUI
       m_MenuItemColumnSetColumnValues = null;
 
       // Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
-      m_LastSelectionType = SelectionType.Nothing;
+      _lastSelectionType = SelectionType.Nothing;
 
     
       // holds the positions (int) of the right boundarys of the __visible__ (!) columns
-      m_ColumnStyleCache = new ColumnStyleCache();
+      _columnStyleCache = new ColumnStyleCache();
     
     
       // Horizontal scroll position; number of first column that is shown.
-      m_HorzScrollPos=0;
+      _scrollHorzPos=0;
     
       // Vertical scroll position; Positive values: number of first data column
-      m_VertScrollPos=0;
-      m_HorzScrollMax=1;
-      m_VertScrollMax=1;
+      _scrollVertPos=0;
+      _scrollHorzMax=1;
+      _scrollVertMax=1;
 
-      m_LastVisibleColumn=0;
-      m_LastFullyVisibleColumn=0;
+      _lastVisibleColumn=0;
+      _lastFullyVisibleColumn=0;
 
     
       // Holds the indizes to the selected data columns.
-      m_SelectedDataColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
+      _selectedDataColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
     
       // Holds the indizes to the selected rows.
-      m_SelectedDataRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
+      _selectedDataRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
     
       // Holds the indizes to the selected property columns.
-      m_SelectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+      _selectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
 
       // Holds the indizes to the selected property columns.
-      m_SelectedPropertyRows = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+      _selectedPropertyRows = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
 
       // Cached number of table rows.
-      m_NumberOfTableRows=0; // cached number of rows of the table
+      _numberOfTableRows=0; // cached number of rows of the table
 
       // Cached number of table columns.
-      m_NumberOfTableCols=0;
+      _numberOfTableCols=0;
     
       // Cached number of property columns.
-      m_NumberOfPropertyCols=0; // cached number of property  columnsof the table
+      _numberOfPropertyCols=0; // cached number of property  columnsof the table
     
         
 
-      m_MouseDownPosition = new Point(0,0); // holds the position of a double click
-      m_DragColumnWidth_ColumnNumber=int.MinValue; // stores the column number if mouse hovers over separator
-      m_DragColumnWidth_OriginalPos = 0;
-      m_DragColumnWidth_OriginalWidth=0;
-      m_DragColumnWidth_InCapture=false;
+      _mouseDownPosition = new Point(0,0); // holds the position of a double click
+      _dragColumnWidth_ColumnNumber=int.MinValue; // stores the column number if mouse hovers over separator
+      _dragColumnWidth_OriginalPos = 0;
+      _dragColumnWidth_OriginalWidth=0;
+      _dragColumnWidth_InCapture=false;
   
 
-      m_CellEdit_IsArmed=false;
-      m_CellEdit_EditedCell = new ClickedCellInfo();
+      _cellEdit_IsArmed=false;
+      _cellEdit_EditedCell = new ClickedCellInfo();
 
 
-      m_CellEditControl = new System.Windows.Forms.TextBox();
-      m_CellEditControl.AcceptsTab = true;
-      m_CellEditControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      m_CellEditControl.Location = new System.Drawing.Point(392, 0);
-      m_CellEditControl.Multiline = true;
-      m_CellEditControl.Name = "m_CellEditControl";
-      m_CellEditControl.TabIndex = 0;
-      m_CellEditControl.Text = "";
-      m_CellEditControl.Hide();
-      m_CellEdit_IsArmed = false;
-      m_CellEditControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnCellEditControl_KeyDown);
-      m_CellEditControl.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnCellEditControl_KeyPress);
+      _cellEditControl = new System.Windows.Forms.TextBox();
+      _cellEditControl.AcceptsTab = true;
+      _cellEditControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      _cellEditControl.Location = new System.Drawing.Point(392, 0);
+      _cellEditControl.Multiline = true;
+      _cellEditControl.Name = "m_CellEditControl";
+      _cellEditControl.TabIndex = 0;
+      _cellEditControl.Text = "";
+      _cellEditControl.Hide();
+      _cellEdit_IsArmed = false;
+      _cellEditControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnCellEditControl_KeyDown);
+      _cellEditControl.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnCellEditControl_KeyPress);
       //m_View.TableViewWindow.Controls.Add(m_CellEditControl);
 
     }
@@ -249,8 +249,8 @@ namespace Altaxo.Worksheet.GUI
       {
         WorksheetController s = (WorksheetController)obj;
 
-        info.AddValue("DataTable",s.m_Table);
-        info.AddValue("WorksheetLayout",s.m_TableLayout);
+        info.AddValue("DataTable",s._table);
+        info.AddValue("WorksheetLayout",s._worksheetLayout);
         //info.AddValue("DefColumnStyles",s.m_TableLayout.DefaultColumnStyles);
         //info.AddValue("ColumnStyles",s.m_TableLayout.ColumnStyles);
         //info.AddValue("RowHeaderStyle",s.m_TableLayout.RowHeaderStyle);
@@ -270,8 +270,8 @@ namespace Altaxo.Worksheet.GUI
         WorksheetController s = (WorksheetController)obj;
         s.SetMemberVariablesToDefault();
 
-        s.m_Table = (Altaxo.Data.DataTable)info.GetValue("DataTable",typeof(Altaxo.Data.DataTable));
-        s.m_TableLayout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("WorksheetLayout",typeof(Altaxo.Worksheet.WorksheetLayout)); 
+        s._table = (Altaxo.Data.DataTable)info.GetValue("DataTable",typeof(Altaxo.Data.DataTable));
+        s._worksheetLayout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("WorksheetLayout",typeof(Altaxo.Worksheet.WorksheetLayout)); 
         //s.m_TableLayout.DefaultColumnStyles= (System.Collections.Hashtable)info.GetValue("DefColumnStyles",typeof(System.Collections.Hashtable));
         //s.m_TableLayout.ColumnStyles = (System.Collections.Hashtable)info.GetValue("ColumnStyles",typeof(System.Collections.Hashtable));
         //s.m_TableLayout.RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle",typeof(RowHeaderStyle));
@@ -279,7 +279,7 @@ namespace Altaxo.Worksheet.GUI
         //s.m_TableLayout.PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle",typeof(ColumnHeaderStyle));
 
 
-        s.m_DeserializationSurrogate = this;
+        s._deserializationMemento = this;
         return s;
       }
     }
@@ -290,22 +290,22 @@ namespace Altaxo.Worksheet.GUI
     /// <param name="obj">Not used.</param>
     public virtual void OnDeserialization(object obj)
     {
-      if(null!=this.m_DeserializationSurrogate && obj is DeserializationFinisher)
+      if(null!=this._deserializationMemento && obj is DeserializationFinisher)
       {
-        m_DeserializationSurrogate=null;
+        _deserializationMemento=null;
 
         // first finish the document
         DeserializationFinisher finisher = new DeserializationFinisher(this);
         
-        m_Table.OnDeserialization(finisher);
+        _table.OnDeserialization(finisher);
 
 
         // create the menu
         this.InitializeMenu();
 
         // set the menu of this class
-        m_View.TableViewMenu = this.m_MainMenu;
-        m_View.TableViewTitle = this.m_Table.Name;
+        _view.TableViewMenu = this.m_MainMenu;
+        _view.TableViewTitle = this._table.Name;
 
 
         // restore the event chain to the Table
@@ -324,7 +324,7 @@ namespace Altaxo.Worksheet.GUI
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         WorksheetController s = (WorksheetController)obj;
-        info.AddValue("Layout",Main.DocumentPath.GetAbsolutePath(s.m_TableLayout));
+        info.AddValue("Layout",Main.DocumentPath.GetAbsolutePath(s._worksheetLayout));
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -977,20 +977,20 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return this.m_Table;
+        return this._table;
       }
     }
 
 
     public WorksheetLayout WorksheetLayout
     {
-      get { return m_TableLayout; }
+      get { return _worksheetLayout; }
       set 
       {
-        m_TableLayout = value; 
+        _worksheetLayout = value; 
       
-        Altaxo.Data.DataTable oldTable = m_Table;
-        Altaxo.Data.DataTable newTable = null==m_TableLayout ? null : m_TableLayout.DataTable;
+        Altaxo.Data.DataTable oldTable = _table;
+        Altaxo.Data.DataTable newTable = null==_worksheetLayout ? null : _worksheetLayout.DataTable;
       
         if(null!=oldTable)
         {
@@ -999,7 +999,7 @@ namespace Altaxo.Worksheet.GUI
           oldTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
         }
 
-        m_Table = newTable;
+        _table = newTable;
         if(null!=newTable)
         {
           newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
@@ -1012,10 +1012,10 @@ namespace Altaxo.Worksheet.GUI
         }
         else // Data table is null
         {
-          this.m_NumberOfTableCols = 0;
-          this.m_NumberOfTableRows = 0;
-          this.m_NumberOfPropertyCols = 0;
-          m_ColumnStyleCache.Clear();
+          this._numberOfTableCols = 0;
+          this._numberOfTableRows = 0;
+          this._numberOfPropertyCols = 0;
+          _columnStyleCache.Clear();
           SetScrollPositionTo(0,0);
           this.View.TableAreaInvalidate();
         }
@@ -1043,7 +1043,7 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public IndexSelection SelectedDataColumns
     {
-      get { return m_SelectedDataColumns; }
+      get { return _selectedDataColumns; }
     }
 
     /// <summary>
@@ -1051,7 +1051,7 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public IndexSelection SelectedDataRows
     {
-      get { return m_SelectedDataRows; }
+      get { return _selectedDataRows; }
     }
 
     /// <summary>
@@ -1059,7 +1059,7 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public IndexSelection SelectedPropertyColumns
     {
-      get { return m_SelectedPropertyColumns; }
+      get { return _selectedPropertyColumns; }
     }
 
     /// <summary>
@@ -1070,7 +1070,7 @@ namespace Altaxo.Worksheet.GUI
     /// SelectedColumns, but in SelectedPropertyRows, and SelectedColumns.Count returns 0.</remarks>
     public IndexSelection SelectedPropertyRows
     {
-      get { return m_SelectedPropertyRows.Count>0 ? m_SelectedPropertyRows : m_SelectedDataColumns; }
+      get { return _selectedPropertyRows.Count>0 ? _selectedPropertyRows : _selectedDataColumns; }
     }
 
 
@@ -1082,7 +1082,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return this.DataTable.PropCols.ColumnCount>0 && (SelectedPropertyColumns.Count>0 || m_SelectedPropertyRows.Count>0); 
+        return this.DataTable.PropCols.ColumnCount>0 && (SelectedPropertyColumns.Count>0 || _selectedPropertyRows.Count>0); 
       }
     }
 
@@ -1153,8 +1153,7 @@ namespace Altaxo.Worksheet.GUI
       Altaxo.Worksheet.ColumnStyle colstyle;
 
       // first look at the column styles hash table, column itself is the key
-      colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[dc];
-      if(null!=colstyle)
+      if(_worksheetLayout.ColumnStyles.TryGetValue(dc, out colstyle))
         return colstyle;
       
       // second look to the defaultcolumnstyles hash table, key is the type of the column style
@@ -1166,12 +1165,12 @@ namespace Altaxo.Worksheet.GUI
       }
       else
       {
-        if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.DefaultColumnStyles[searchstyletype]))
+        if(_worksheetLayout.DefaultColumnStyles.TryGetValue(searchstyletype, out colstyle))
           return colstyle;
 
         // if not successfull yet, we will create a new defaultColumnStyle
         colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
-        m_TableLayout.DefaultColumnStyles.Add(searchstyletype,colstyle);
+        _worksheetLayout.DefaultColumnStyles.Add(searchstyletype,colstyle);
         return colstyle;
       }
     }
@@ -1191,8 +1190,7 @@ namespace Altaxo.Worksheet.GUI
       Altaxo.Worksheet.ColumnStyle colstyle;
 
       // first look at the column styles hash table, column itself is the key
-      colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[dc];
-      if(null!=colstyle)
+      if(_worksheetLayout.ColumnStyles.TryGetValue(dc, out colstyle))
         return colstyle;
       
       // second look to the defaultcolumnstyles hash table, key is the type of the column style
@@ -1204,12 +1202,12 @@ namespace Altaxo.Worksheet.GUI
       }
       else
       {
-        if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.DefaultPropertyColumnStyles[searchstyletype]))
+        if(_worksheetLayout.DefaultPropertyColumnStyles.TryGetValue(searchstyletype, out colstyle))
           return colstyle;
 
         // if not successfull yet, we will create a new defaultColumnStyle
         colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
-        m_TableLayout.DefaultPropertyColumnStyles.Add(searchstyletype,colstyle);
+        _worksheetLayout.DefaultPropertyColumnStyles.Add(searchstyletype,colstyle);
         colstyle.ChangeTypeTo(ColumnStyleType.PropertyCell);
         return colstyle;
       }
@@ -1222,10 +1220,10 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhTableDataChanged(object sender, EventArgs e)
     {
-      if(this.m_NumberOfTableRows!=DataTable.DataColumns.RowCount)
+      if(this._numberOfTableRows!=DataTable.DataColumns.RowCount)
         this.SetCachedNumberOfDataRows();
       
-      if(this.m_NumberOfTableCols!=DataTable.DataColumns.ColumnCount)
+      if(this._numberOfTableCols!=DataTable.DataColumns.ColumnCount)
         this.SetCachedNumberOfDataColumns();
 
       if(View!=null)
@@ -1236,10 +1234,10 @@ namespace Altaxo.Worksheet.GUI
 
     public void AdjustYScrollBarMaximum()
     {
-      VertScrollMaximum = m_NumberOfTableRows>0 ? m_NumberOfTableRows-1 : 0;
+      VertScrollMaximum = _numberOfTableRows>0 ? _numberOfTableRows-1 : 0;
 
-      if(this.VertScrollPos>=m_NumberOfTableRows)
-        VertScrollPos = m_NumberOfTableRows>0 ? m_NumberOfTableRows-1 : 0;
+      if(this.VertScrollPos>=_numberOfTableRows)
+        VertScrollPos = _numberOfTableRows>0 ? _numberOfTableRows-1 : 0;
 
       if(View!=null)
         View.TableAreaInvalidate();
@@ -1248,14 +1246,14 @@ namespace Altaxo.Worksheet.GUI
     public void AdjustXScrollBarMaximum()
     {
 
-      this.HorzScrollMaximum = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
+      this.HorzScrollMaximum = _numberOfTableCols>0 ? _numberOfTableCols-1 : 0;
 
-      if(HorzScrollPos+1>m_NumberOfTableCols)
-        HorzScrollPos = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
+      if(HorzScrollPos+1>_numberOfTableCols)
+        HorzScrollPos = _numberOfTableCols>0 ? _numberOfTableCols-1 : 0;
   
       if(View!=null)
       {
-        m_ColumnStyleCache.ForceUpdate(this);
+        _columnStyleCache.ForceUpdate(this);
         View.TableAreaInvalidate();
       }
     }
@@ -1265,9 +1263,9 @@ namespace Altaxo.Worksheet.GUI
     {
       // ask for table dimensions, compare with cached dimensions
       // and adjust the scroll bars appropriate
-      int oldDataCols = this.m_NumberOfTableCols;
-      this.m_NumberOfTableCols = DataTable.DataColumns.ColumnCount;
-      if(this.m_NumberOfTableCols!=oldDataCols)
+      int oldDataCols = this._numberOfTableCols;
+      this._numberOfTableCols = DataTable.DataColumns.ColumnCount;
+      if(this._numberOfTableCols!=oldDataCols)
       {
         AdjustXScrollBarMaximum();
       }
@@ -1278,10 +1276,10 @@ namespace Altaxo.Worksheet.GUI
     {
       // ask for table dimensions, compare with cached dimensions
       // and adjust the scroll bars appropriate
-      int oldDataRows = this.m_NumberOfTableRows;
-      this.m_NumberOfTableRows = DataTable.DataColumns.RowCount;
+      int oldDataRows = this._numberOfTableRows;
+      this._numberOfTableRows = DataTable.DataColumns.RowCount;
 
-      if(m_NumberOfTableRows != oldDataRows)
+      if(_numberOfTableRows != oldDataRows)
       {
         AdjustYScrollBarMaximum();
       }
@@ -1292,10 +1290,10 @@ namespace Altaxo.Worksheet.GUI
     {
       // ask for table dimensions, compare with cached dimensions
       // and adjust the scroll bars appropriate
-      int oldPropCols = this.m_NumberOfPropertyCols;
-      this.m_NumberOfPropertyCols=m_Table.PropCols.ColumnCount;
+      int oldPropCols = this._numberOfPropertyCols;
+      this._numberOfPropertyCols=_table.PropCols.ColumnCount;
 
-      if(oldPropCols!=this.m_NumberOfPropertyCols)
+      if(oldPropCols!=this._numberOfPropertyCols)
       {
         // if we was scrolled to the most upper position, we later scroll
         // to the most upper position again
@@ -1313,7 +1311,7 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhPropertyDataChanged(object sender, EventArgs e)
     {
-      if(this.m_NumberOfPropertyCols != DataTable.PropCols.ColumnCount)
+      if(this._numberOfPropertyCols != DataTable.PropCols.ColumnCount)
         SetCachedNumberOfPropertyColumns();
 
       if(View!=null)
@@ -1362,8 +1360,8 @@ namespace Altaxo.Worksheet.GUI
     private void OnTextBoxLostControl(object sender, System.EventArgs e)
     {
       this.ReadCellEditContent();
-      m_CellEditControl.Hide();
-      m_CellEdit_IsArmed = false;
+      _cellEditControl.Hide();
+      _cellEdit_IsArmed = false;
     }
 
     private void OnCellEditControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -1374,7 +1372,7 @@ namespace Altaxo.Worksheet.GUI
       }
       else if(e.KeyChar == (char)9) // Tab key pressed
       {
-        if(m_CellEditControl.SelectionStart+m_CellEditControl.SelectionLength>=m_CellEditControl.TextLength)
+        if(_cellEditControl.SelectionStart+_cellEditControl.SelectionLength>=_cellEditControl.TextLength)
         {
           e.Handled=true;
           // Navigate to the right
@@ -1390,7 +1388,7 @@ namespace Altaxo.Worksheet.GUI
       {
         // Navigate to the left if the cursor is already left
         //if(m_CellEditControl.SelectionStart==0 && (m_CellEdit_EditedCell.Row>0 || m_CellEdit_EditedCell.Column>0) )
-        if(m_CellEditControl.SelectionStart==0)
+        if(_cellEditControl.SelectionStart==0)
         {
           e.Handled=true;
           // Navigate to the left
@@ -1399,7 +1397,7 @@ namespace Altaxo.Worksheet.GUI
       }
       else if(e.KeyData==System.Windows.Forms.Keys.Right)
       {
-        if(m_CellEditControl.SelectionStart+m_CellEditControl.SelectionLength>=m_CellEditControl.TextLength)
+        if(_cellEditControl.SelectionStart+_cellEditControl.SelectionLength>=_cellEditControl.TextLength)
         {
           e.Handled=true;
           // Navigate to the right
@@ -1423,10 +1421,10 @@ namespace Altaxo.Worksheet.GUI
         // if some text is selected, deselect it and move the cursor to the end
         // else same action like keys.Down
         e.Handled=true;
-        if(m_CellEditControl.SelectionLength>0)
+        if(_cellEditControl.SelectionLength>0)
         {
-          m_CellEditControl.SelectionLength=0;
-          m_CellEditControl.SelectionStart=m_CellEditControl.TextLength;
+          _cellEditControl.SelectionLength=0;
+          _cellEditControl.SelectionStart=_cellEditControl.TextLength;
         }
         else
         {
@@ -1436,48 +1434,48 @@ namespace Altaxo.Worksheet.GUI
       else if(e.KeyData==System.Windows.Forms.Keys.Escape)
       {
         e.Handled=true;
-        m_CellEdit_IsArmed=false;
-        m_CellEditControl.Hide();
+        _cellEdit_IsArmed=false;
+        _cellEditControl.Hide();
       }
     }
 
     private void ReadCellEditContent()
     {
-      if(this.m_CellEdit_IsArmed && this.m_CellEditControl.Modified)
+      if(this._cellEdit_IsArmed && this._cellEditControl.Modified)
       {
-        if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+        if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
         {
-          GetDataColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,DataTable[m_CellEdit_EditedCell.Column]);
+          GetDataColumnStyle(_cellEdit_EditedCell.Column).SetColumnValueAtRow(_cellEditControl.Text,_cellEdit_EditedCell.Row,DataTable[_cellEdit_EditedCell.Column]);
         }
-        else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+        else if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
         {
-          GetPropertyColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,DataTable.PropCols[m_CellEdit_EditedCell.Column]);
+          GetPropertyColumnStyle(_cellEdit_EditedCell.Column).SetColumnValueAtRow(_cellEditControl.Text,_cellEdit_EditedCell.Row,DataTable.PropCols[_cellEdit_EditedCell.Column]);
         }
-        this.m_CellEditControl.Hide();
-        this.m_CellEdit_IsArmed=false;
+        this._cellEditControl.Hide();
+        this._cellEdit_IsArmed=false;
       }
     }
 
     private void SetCellEditContent()
     {
       
-      if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+      if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
       {
-        m_CellEditControl.Text = GetDataColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,DataTable[m_CellEdit_EditedCell.Column]);
+        _cellEditControl.Text = GetDataColumnStyle(_cellEdit_EditedCell.Column).GetColumnValueAtRow(_cellEdit_EditedCell.Row,DataTable[_cellEdit_EditedCell.Column]);
       }
-      else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+      else if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
       {
-        m_CellEditControl.Text = this.GetPropertyColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,DataTable.PropCols[m_CellEdit_EditedCell.Column]);
+        _cellEditControl.Text = this.GetPropertyColumnStyle(_cellEdit_EditedCell.Column).GetColumnValueAtRow(_cellEdit_EditedCell.Row,DataTable.PropCols[_cellEdit_EditedCell.Column]);
       }
 
-      m_CellEditControl.Parent = this.View.TableViewWindow;
-      m_CellEditControl.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      m_CellEditControl.SelectAll();
-      m_CellEditControl.Modified=false;
-      m_CellEditControl.BringToFront();
-      m_CellEditControl.Show();
-      m_CellEditControl.Focus();
-      this.m_CellEdit_IsArmed=true;
+      _cellEditControl.Parent = this.View.TableViewWindow;
+      _cellEditControl.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      _cellEditControl.SelectAll();
+      _cellEditControl.Modified=false;
+      _cellEditControl.BringToFront();
+      _cellEditControl.Show();
+      _cellEditControl.Focus();
+      this._cellEdit_IsArmed=true;
     }
 
 
@@ -1489,11 +1487,11 @@ namespace Altaxo.Worksheet.GUI
     /// <returns>True when the cell was moved to a new position, false if moving was not possible.</returns>
     protected bool NavigateCellEdit(int dx, int dy)
     {
-      if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+      if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
       {
         return NavigateTableCellEdit(dx,dy);
       }
-      else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+      else if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
       {
         return NavigatePropertyCellEdit(dx,dy);
       }
@@ -1511,7 +1509,7 @@ namespace Altaxo.Worksheet.GUI
       bool bScrolled = false;
 
       // Calculate the position of the new cell   
-      int newCellCol = this.m_CellEdit_EditedCell.Column + dx;
+      int newCellCol = this._cellEdit_EditedCell.Column + dx;
       if(newCellCol>=DataTable.DataColumns.ColumnCount)
       {
         newCellCol=0;
@@ -1519,7 +1517,7 @@ namespace Altaxo.Worksheet.GUI
       }
       else if(newCellCol<0)
       {
-        if(this.m_CellEdit_EditedCell.Row>0) // move to the last cell only if not on cell 0
+        if(this._cellEdit_EditedCell.Row>0) // move to the last cell only if not on cell 0
         {
           newCellCol=DataTable.DataColumns.ColumnCount-1;
           dy-=1;
@@ -1530,14 +1528,14 @@ namespace Altaxo.Worksheet.GUI
         }
       }
 
-      int newCellRow = m_CellEdit_EditedCell.Row + dy;
+      int newCellRow = _cellEdit_EditedCell.Row + dy;
       if(newCellRow<0)
         newCellRow=0;
       // note: we do not catch the condition newCellRow>rowCount here since we want to add new rows
   
     
       // look if the cell position has changed
-      if(newCellRow==m_CellEdit_EditedCell.Row && newCellCol==m_CellEdit_EditedCell.Column)
+      if(newCellRow==_cellEdit_EditedCell.Row && newCellCol==_cellEdit_EditedCell.Column)
         return false; // moving was not possible, so returning false, and do nothing
 
       // if the cell position has changed, read the old cell content
@@ -1567,12 +1565,12 @@ namespace Altaxo.Worksheet.GUI
         bScrolled=true;
       }
       // 3. Fill the cell edit control with new content
-      m_CellEdit_EditedCell.Column=newCellCol;
-      m_CellEdit_EditedCell.Row=newCellRow;
-      m_CellEditControl.Parent = View.TableViewWindow;
-      Rectangle cellRect = this.GetCoordinatesOfDataCell(m_CellEdit_EditedCell.Column,m_CellEdit_EditedCell.Row);
-      m_CellEditControl.Location = cellRect.Location;
-      m_CellEditControl.Size = cellRect.Size;
+      _cellEdit_EditedCell.Column=newCellCol;
+      _cellEdit_EditedCell.Row=newCellRow;
+      _cellEditControl.Parent = View.TableViewWindow;
+      Rectangle cellRect = this.GetCoordinatesOfDataCell(_cellEdit_EditedCell.Column,_cellEdit_EditedCell.Row);
+      _cellEditControl.Location = cellRect.Location;
+      _cellEditControl.Size = cellRect.Size;
       SetCellEditContent();
 
       // 4. Invalidate the client area if scrolled in step (2)
@@ -1596,10 +1594,10 @@ namespace Altaxo.Worksheet.GUI
     
       // 2. look whether the new cell coordinates lie inside the client area, if
       // not scroll the worksheet appropriate
-      int newCellCol = this.m_CellEdit_EditedCell.Column + dy;
+      int newCellCol = this._cellEdit_EditedCell.Column + dy;
       if(newCellCol>=DataTable.PropCols.ColumnCount)
       {
-        if(m_CellEdit_EditedCell.Row+1<DataTable.DataColumns.ColumnCount)
+        if(_cellEdit_EditedCell.Row+1<DataTable.DataColumns.ColumnCount)
         {
           newCellCol=0;
           dx+=1;
@@ -1612,7 +1610,7 @@ namespace Altaxo.Worksheet.GUI
       }
       else if(newCellCol<0)
       {
-        if(this.m_CellEdit_EditedCell.Row>0) // move to the last cell only if not on cell 0
+        if(this._cellEdit_EditedCell.Row>0) // move to the last cell only if not on cell 0
         {
           newCellCol=DataTable.PropCols.ColumnCount-1;
           dx-=1;
@@ -1623,7 +1621,7 @@ namespace Altaxo.Worksheet.GUI
         }
       }
 
-      int newCellRow = m_CellEdit_EditedCell.Row + dx;
+      int newCellRow = _cellEdit_EditedCell.Row + dx;
       if(newCellRow>=DataTable.DataColumns.ColumnCount)
       {
         if(newCellCol+1<DataTable.PropCols.ColumnCount) // move to the first cell only if not on the very last cell
@@ -1639,7 +1637,7 @@ namespace Altaxo.Worksheet.GUI
       }
       else if(newCellRow<0)
       {
-        if(this.m_CellEdit_EditedCell.Column>0) // move to the last cell only if not on cell 0
+        if(this._cellEdit_EditedCell.Column>0) // move to the last cell only if not on cell 0
         {
           newCellRow=DataTable.DataColumns.ColumnCount-1;
           newCellCol-=1;
@@ -1657,7 +1655,7 @@ namespace Altaxo.Worksheet.GUI
         newCellCol=DataTable.PropCols.ColumnCount-1;
       
       // look if the cell position has changed
-      if(newCellRow==m_CellEdit_EditedCell.Row && newCellCol==m_CellEdit_EditedCell.Column)
+      if(newCellRow==_cellEdit_EditedCell.Row && newCellCol==_cellEdit_EditedCell.Column)
         return false; // moving was not possible, so returning false, and do nothing
 
       // 1. Read content of the cell edit, if neccessary write data back
@@ -1670,9 +1668,9 @@ namespace Altaxo.Worksheet.GUI
 
 
       if(newCellCol<FirstVisiblePropertyColumn)
-        navigateToCol = newCellCol-m_NumberOfPropertyCols;
+        navigateToCol = newCellCol-_numberOfPropertyCols;
       else if (newCellCol>LastFullyVisiblePropertyColumn)
-        navigateToCol = newCellCol - this.FullyVisiblePropertyColumns + 1-m_NumberOfPropertyCols;
+        navigateToCol = newCellCol - this.FullyVisiblePropertyColumns + 1-_numberOfPropertyCols;
       else
         navigateToCol = this.VertScrollPos;
 
@@ -1690,12 +1688,12 @@ namespace Altaxo.Worksheet.GUI
         bScrolled=true;
       }
       // 3. Fill the cell edit control with new content
-      m_CellEdit_EditedCell.Column=newCellCol;
-      m_CellEdit_EditedCell.Row=newCellRow;
-      m_CellEditControl.Parent = View.TableViewWindow;
-      Rectangle cellRect = this.GetCoordinatesOfPropertyCell(m_CellEdit_EditedCell.Column,m_CellEdit_EditedCell.Row);
-      m_CellEditControl.Location = cellRect.Location;
-      m_CellEditControl.Size = cellRect.Size;
+      _cellEdit_EditedCell.Column=newCellCol;
+      _cellEdit_EditedCell.Row=newCellRow;
+      _cellEditControl.Parent = View.TableViewWindow;
+      Rectangle cellRect = this.GetCoordinatesOfPropertyCell(_cellEdit_EditedCell.Column,_cellEdit_EditedCell.Row);
+      _cellEditControl.Location = cellRect.Location;
+      _cellEditControl.Size = cellRect.Size;
       SetCellEditContent();
 
       // 4. Invalidate the client area if scrolled in step (2)
@@ -1720,22 +1718,22 @@ namespace Altaxo.Worksheet.GUI
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int VertScrollPos
     {
-      get { return m_VertScrollPos; }
+      get { return _scrollVertPos; }
       set
       {
-        int oldValue = m_VertScrollPos;
+        int oldValue = _scrollVertPos;
         int newValue = value;
-        newValue = Math.Min(this.m_VertScrollMax,newValue);
+        newValue = Math.Min(this._scrollVertMax,newValue);
         newValue = Math.Max(-this.TotalEnabledPropertyColumns,newValue);
-        m_VertScrollPos=newValue;
+        _scrollVertPos=newValue;
 
         if(newValue!=oldValue)
         {
-          if(m_CellEditControl.Visible)
+          if(_cellEditControl.Visible)
           {
             this.ReadCellEditContent();
-            m_CellEditControl.Hide();
-            m_CellEdit_IsArmed = false;
+            _cellEditControl.Hide();
+            _cellEdit_IsArmed = false;
           }
 
           // The value of the ScrollBar in the view has an offset, since he
@@ -1751,10 +1749,10 @@ namespace Altaxo.Worksheet.GUI
 
     public int VertScrollMaximum
     {
-      get { return this.m_VertScrollMax; }
+      get { return this._scrollVertMax; }
       set 
       {
-        this.m_VertScrollMax = value;
+        this._scrollVertMax = value;
         
         if(View!=null)
           View.TableViewVertScrollMaximum = value + this.TotalEnabledPropertyColumns;
@@ -1782,7 +1780,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get 
       {
-        return this.m_TableLayout.ColumnHeaderStyle.Height + (VertScrollPos>=0 ? 0 : -VertScrollPos*this.m_TableLayout.PropertyColumnHeaderStyle.Height); 
+        return this._worksheetLayout.ColumnHeaderStyle.Height + (VertScrollPos>=0 ? 0 : -VertScrollPos*this._worksheetLayout.PropertyColumnHeaderStyle.Height); 
       }
     }
     /// <summary>
@@ -1796,7 +1794,7 @@ namespace Altaxo.Worksheet.GUI
 
       //int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.RowHeaderStyle.Height));
       //return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
-      int firstVis = (int)Math.Floor((top-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height);
+      int firstVis = (int)Math.Floor((top-posOfDataRow0)/(double)_worksheetLayout.RowHeaderStyle.Height);
       return (firstVis<0? 0 : firstVis ) + FirstVisibleTableRow;
     }
 
@@ -1813,8 +1811,8 @@ namespace Altaxo.Worksheet.GUI
       if(top<posOfDataRow0)
         top = posOfDataRow0;
 
-      int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height);
-      int lastRow  = (int)Math.Ceiling((bottom-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height)-1;
+      int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)_worksheetLayout.RowHeaderStyle.Height);
+      int lastRow  = (int)Math.Ceiling((bottom-posOfDataRow0)/(double)_worksheetLayout.RowHeaderStyle.Height)-1;
       return Math.Max(0,1 + lastRow - firstRow);
     }
 
@@ -1825,14 +1823,14 @@ namespace Altaxo.Worksheet.GUI
       if(top<posOfDataRow0)
         top = posOfDataRow0;
 
-      int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height);
-      int lastRow  = (int)Math.Floor((bottom-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height)-1;
+      int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)_worksheetLayout.RowHeaderStyle.Height);
+      int lastRow  = (int)Math.Floor((bottom-posOfDataRow0)/(double)_worksheetLayout.RowHeaderStyle.Height)-1;
       return Math.Max(0, 1+ lastRow - firstRow);
     }
 
     public int GetTopCoordinateOfTableRow(int nRow)
     {
-      return  this.VerticalPositionOfFirstVisibleDataRow + (nRow- (VertScrollPos<0?0:VertScrollPos)) * m_TableLayout.RowHeaderStyle.Height;
+      return  this.VerticalPositionOfFirstVisibleDataRow + (nRow- (VertScrollPos<0?0:VertScrollPos)) * _worksheetLayout.RowHeaderStyle.Height;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1877,7 +1875,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_TableLayout.ShowPropertyColumns ? Math.Max(0,-VertScrollPos) : 0;
+        return _worksheetLayout.ShowPropertyColumns ? Math.Max(0,-VertScrollPos) : 0;
       }
     }
 
@@ -1885,7 +1883,7 @@ namespace Altaxo.Worksheet.GUI
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int TotalEnabledPropertyColumns
     {
-      get { return m_TableLayout.ShowPropertyColumns ? this.m_NumberOfPropertyCols : 0; }
+      get { return _worksheetLayout.ShowPropertyColumns ? this._numberOfPropertyCols : 0; }
     }
 
 
@@ -1895,7 +1893,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        if (m_TableLayout.ShowPropertyColumns && VertScrollPos < 0)
+        if (_worksheetLayout.ShowPropertyColumns && VertScrollPos < 0)
         {
           // make sure that VertScrollPos does not exceed TotalEnabledPropertyColumns
           if (VertScrollPos < -TotalEnabledPropertyColumns)
@@ -1910,8 +1908,8 @@ namespace Altaxo.Worksheet.GUI
 
     public int GetFirstVisiblePropertyColumn(int top)
     {
-      int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height));
-      int result = m_TableLayout.ShowPropertyColumns ? firstTotRow+FirstVisiblePropertyColumn : 0;
+      int firstTotRow = (int)Math.Max(0,Math.Floor((top-_worksheetLayout.ColumnHeaderStyle.Height)/(double)_worksheetLayout.PropertyColumnHeaderStyle.Height));
+      int result = _worksheetLayout.ShowPropertyColumns ? firstTotRow+FirstVisiblePropertyColumn : 0;
       return result;
     }
 
@@ -1927,15 +1925,15 @@ namespace Altaxo.Worksheet.GUI
 
     public int GetTopCoordinateOfPropertyColumn(int nCol)
     {
-      return m_TableLayout.ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*m_TableLayout.PropertyColumnHeaderStyle.Height;
+      return _worksheetLayout.ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*_worksheetLayout.PropertyColumnHeaderStyle.Height;
     }
 
     public int GetVisiblePropertyColumns(int top, int bottom)
     {
-      if(this.m_TableLayout.ShowPropertyColumns)
+      if(this._worksheetLayout.ShowPropertyColumns)
       {
-        int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height));
-        int lastTotRow  = (int)Math.Ceiling((bottom-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height)-1;
+        int firstTotRow = (int)Math.Max(0,Math.Floor((top-_worksheetLayout.ColumnHeaderStyle.Height)/(double)_worksheetLayout.PropertyColumnHeaderStyle.Height));
+        int lastTotRow  = (int)Math.Ceiling((bottom-_worksheetLayout.ColumnHeaderStyle.Height)/(double)_worksheetLayout.PropertyColumnHeaderStyle.Height)-1;
         int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
         return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
       }
@@ -1945,10 +1943,10 @@ namespace Altaxo.Worksheet.GUI
 
     public int GetFullyVisiblePropertyColumns(int top, int bottom)
     {
-      if(m_TableLayout.ShowPropertyColumns)
+      if(_worksheetLayout.ShowPropertyColumns)
       {
-        int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height));
-        int lastTotRow  = (int)Math.Floor((bottom-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height)-1;
+        int firstTotRow = (int)Math.Max(0,Math.Floor((top-_worksheetLayout.ColumnHeaderStyle.Height)/(double)_worksheetLayout.PropertyColumnHeaderStyle.Height));
+        int lastTotRow  = (int)Math.Floor((bottom-_worksheetLayout.ColumnHeaderStyle.Height)/(double)_worksheetLayout.PropertyColumnHeaderStyle.Height)-1;
         int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
         return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
       }
@@ -1985,26 +1983,26 @@ namespace Altaxo.Worksheet.GUI
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int HorzScrollPos
     {
-      get { return m_HorzScrollPos; }
+      get { return _scrollHorzPos; }
       set
       {
-        int oldValue = m_HorzScrollPos;
-        m_HorzScrollPos=value;
+        int oldValue = _scrollHorzPos;
+        _scrollHorzPos=value;
 
         if(value!=oldValue)
         {
 
-          if(m_CellEditControl.Visible)
+          if(_cellEditControl.Visible)
           {
             this.ReadCellEditContent();
-            m_CellEditControl.Hide();
-            m_CellEdit_IsArmed = false;
+            _cellEditControl.Hide();
+            _cellEdit_IsArmed = false;
           }
           
           if(View!=null)
             View.TableViewHorzScrollValue = value;
           
-          this.m_ColumnStyleCache.ForceUpdate(this);
+          this._columnStyleCache.ForceUpdate(this);
           
           if(View!=null)
             View.TableAreaInvalidate();
@@ -2014,10 +2012,10 @@ namespace Altaxo.Worksheet.GUI
 
     public int HorzScrollMaximum
     {
-      get { return this.m_HorzScrollMax; }
+      get { return this._scrollHorzMax; }
       set 
       {
-        this.m_HorzScrollMax = value;
+        this._scrollHorzMax = value;
         if(View!=null)
           View.TableViewHorzScrollMaximum = value;
       }
@@ -2041,7 +2039,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return this.m_LastVisibleColumn>=FirstVisibleColumn ? 1+m_LastVisibleColumn-FirstVisibleColumn : 0;
+        return this._lastVisibleColumn>=FirstVisibleColumn ? 1+_lastVisibleColumn-FirstVisibleColumn : 0;
       }
     }
 
@@ -2050,7 +2048,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_LastFullyVisibleColumn>=FirstVisibleColumn ? 1+m_LastFullyVisibleColumn-FirstVisibleColumn : 0;
+        return _lastFullyVisibleColumn>=FirstVisibleColumn ? 1+_lastFullyVisibleColumn-FirstVisibleColumn : 0;
       }
     }
 
@@ -2076,12 +2074,12 @@ namespace Altaxo.Worksheet.GUI
     private int GetFirstAndNumberOfVisibleColumn(int left, int right, out int numVisibleColumns)
     {
       int nFirstCol = -1;
-      int nLastCol = m_NumberOfTableCols;
+      int nLastCol = _numberOfTableCols;
       ColumnStyleCacheItem csci;
       
-      for(int nCol=FirstVisibleColumn,i=0 ; i<m_ColumnStyleCache.Count ; nCol++,i++)
+      for(int nCol=FirstVisibleColumn,i=0 ; i<_columnStyleCache.Count ; nCol++,i++)
       {
-        csci = ((ColumnStyleCacheItem)m_ColumnStyleCache[i]);
+        csci = ((ColumnStyleCacheItem)_columnStyleCache[i]);
         if(csci.rightBorderPosition>left && nFirstCol<0)
           nFirstCol = nCol;
       
@@ -2101,8 +2099,8 @@ namespace Altaxo.Worksheet.GUI
     private Rectangle GetXCoordinatesOfColumn(int nCol, Rectangle cellRect)
     {
       int colOffs = nCol-FirstVisibleColumn;
-      cellRect.X = ((ColumnStyleCacheItem)m_ColumnStyleCache[colOffs]).leftBorderPosition;
-      cellRect.Width = ((ColumnStyleCacheItem)m_ColumnStyleCache[colOffs]).rightBorderPosition - cellRect.X;
+      cellRect.X = ((ColumnStyleCacheItem)_columnStyleCache[colOffs]).leftBorderPosition;
+      cellRect.Width = ((ColumnStyleCacheItem)_columnStyleCache[colOffs]).rightBorderPosition - cellRect.X;
       return cellRect;
     }
 
@@ -2117,7 +2115,7 @@ namespace Altaxo.Worksheet.GUI
       Rectangle cellRect = GetXCoordinatesOfColumn(nCol);
 
       cellRect.Y = this.GetTopCoordinateOfTableRow(nRow);
-      cellRect.Height = this.m_TableLayout.RowHeaderStyle.Height;
+      cellRect.Height = this._worksheetLayout.RowHeaderStyle.Height;
       return cellRect;
     }
   
@@ -2126,7 +2124,7 @@ namespace Altaxo.Worksheet.GUI
       Rectangle cellRect = GetXCoordinatesOfColumn(nRow);
 
       cellRect.Y = this.GetTopCoordinateOfPropertyColumn(nCol);
-      cellRect.Height = this.m_TableLayout.PropertyColumnHeaderStyle.Height;
+      cellRect.Height = this._worksheetLayout.PropertyColumnHeaderStyle.Height;
       return cellRect;
     }
 
@@ -2141,7 +2139,7 @@ namespace Altaxo.Worksheet.GUI
       
       int i = nForLastCol;
       int retv = nForLastCol;
-      int horzSize = this.TableAreaWidth-m_TableLayout.RowHeaderStyle.Width;
+      int horzSize = this.TableAreaWidth-_worksheetLayout.RowHeaderStyle.Width;
       while(i>=0)
       {
         horzSize -= GetDataColumnStyle(i).Width;
@@ -2170,7 +2168,7 @@ namespace Altaxo.Worksheet.GUI
         this.HorzScrollMaximum = nCol;
       this.HorzScrollPos=nCol;
 
-      m_ColumnStyleCache.Update(this);
+      _columnStyleCache.Update(this);
 
       if(this.VertScrollMaximum<nRow)
         this.VertScrollMaximum=nRow;
@@ -2186,7 +2184,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return this.m_Table;
+        return this._table;
       }
     }
 
@@ -2194,34 +2192,34 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_View;
+        return _view;
       }
       set
       {
-        IWorksheetView oldView = m_View;
-        m_View = value;
+        IWorksheetView oldView = _view;
+        _view = value;
 
         if(null!=oldView)
         {
           oldView.TableViewMenu = null; // don't let the old view have the menu
           oldView.WorksheetController = null; // no longer the controller of this view
-          oldView.TableViewWindow.Controls.Remove(m_CellEditControl);
+          oldView.TableViewWindow.Controls.Remove(_cellEditControl);
         }
 
-        if(null!=m_View)
+        if(null!=_view)
         {
-          m_View.WorksheetController = this;
-          m_View.TableViewMenu = m_MainMenu;
-          m_View.TableViewWindow.Controls.Add(m_CellEditControl);
+          _view.WorksheetController = this;
+          _view.TableViewMenu = m_MainMenu;
+          _view.TableViewWindow.Controls.Add(_cellEditControl);
 
       
           // Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
       
-          this.VertScrollMaximum = this.m_VertScrollMax;
-          this.HorzScrollMaximum = this.m_HorzScrollMax;
+          this.VertScrollMaximum = this._scrollVertMax;
+          this.HorzScrollMaximum = this._scrollHorzMax;
 
-          this.VertScrollPos     = this.m_VertScrollPos;
-          this.HorzScrollPos     = this.m_HorzScrollPos;
+          this.VertScrollPos     = this._scrollVertPos;
+          this.HorzScrollPos     = this._scrollHorzPos;
 
       
           
@@ -2229,7 +2227,7 @@ namespace Altaxo.Worksheet.GUI
           this.EhView_TableAreaSizeChanged(new EventArgs());
 
           // set the menu of this class
-          m_View.TableViewMenu = this.m_MainMenu;
+          _view.TableViewMenu = this.m_MainMenu;
 
         }
       }
@@ -2247,34 +2245,34 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_TableAreaMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
-      this.m_MouseInfo.MouseUp(e,Control.MouseButtons);
+      this._mouseInfo.MouseUp(e,Control.MouseButtons);
       
-      if(this.m_DragColumnWidth_InCapture)
+      if(this._dragColumnWidth_InCapture)
       {
-        int sizediff = e.X - this.m_DragColumnWidth_OriginalPos;
+        int sizediff = e.X - this._dragColumnWidth_OriginalPos;
         Altaxo.Worksheet.ColumnStyle cs;
-        if(-1==m_DragColumnWidth_ColumnNumber)
+        if(-1==_dragColumnWidth_ColumnNumber)
         {
-          cs = this.m_TableLayout.RowHeaderStyle;
+          cs = this._worksheetLayout.RowHeaderStyle;
         }
         else
         {
-          cs = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[DataTable[m_DragColumnWidth_ColumnNumber]];
+          cs = (Altaxo.Worksheet.ColumnStyle)_worksheetLayout.ColumnStyles[DataTable[_dragColumnWidth_ColumnNumber]];
           if(null==cs)
           {
-            Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this.m_DragColumnWidth_ColumnNumber);
+            Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this._dragColumnWidth_ColumnNumber);
             cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
-            m_TableLayout.ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
+            _worksheetLayout.ColumnStyles.Add(DataTable[_dragColumnWidth_ColumnNumber],cs);
           }
         }
-        int newWidth = this.m_DragColumnWidth_OriginalWidth + sizediff;
+        int newWidth = this._dragColumnWidth_OriginalWidth + sizediff;
         if(newWidth<10)
           newWidth=10;
         cs.Width=newWidth;
-        this.m_ColumnStyleCache.ForceUpdate(this);
+        this._columnStyleCache.ForceUpdate(this);
 
-        this.m_DragColumnWidth_InCapture = false;
-        this.m_DragColumnWidth_ColumnNumber = int.MinValue;
+        this._dragColumnWidth_InCapture = false;
+        this._dragColumnWidth_ColumnNumber = int.MinValue;
         this.View.TableAreaCapture=false;
         this.View.TableAreaCursor = System.Windows.Forms.Cursors.Default;
         this.View.TableAreaInvalidate();
@@ -2284,19 +2282,19 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_TableAreaMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
-      this.m_MouseInfo.MouseDown(e);
+      this._mouseInfo.MouseDown(e);
 
       // base.OnMouseDown(e);
-      this.m_MouseDownPosition = new Point(e.X, e.Y);
+      this._mouseDownPosition = new Point(e.X, e.Y);
       this.ReadCellEditContent();
-      m_CellEditControl.Hide();
-      m_CellEdit_IsArmed = false;
+      _cellEditControl.Hide();
+      _cellEdit_IsArmed = false;
 
-      if(this.m_DragColumnWidth_ColumnNumber>=-1)
+      if(this._dragColumnWidth_ColumnNumber>=-1)
       {
         this.View.TableAreaCapture=true;
-        m_DragColumnWidth_OriginalPos = e.X;
-        m_DragColumnWidth_InCapture=true;
+        _dragColumnWidth_OriginalPos = e.X;
+        _dragColumnWidth_InCapture=true;
       }
     }
 
@@ -2318,59 +2316,59 @@ namespace Altaxo.Worksheet.GUI
       int Y = e.Y;
       int X = e.X;
 
-      if(this.m_DragColumnWidth_InCapture)
+      if(this._dragColumnWidth_InCapture)
       {
-        int sizediff = X - this.m_DragColumnWidth_OriginalPos;
+        int sizediff = X - this._dragColumnWidth_OriginalPos;
         
         Altaxo.Worksheet.ColumnStyle cs;
-        if(-1==m_DragColumnWidth_ColumnNumber)
-          cs = this.m_TableLayout.RowHeaderStyle;
+        if(-1==_dragColumnWidth_ColumnNumber)
+          cs = this._worksheetLayout.RowHeaderStyle;
         else
         {
-          cs = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[DataTable[m_DragColumnWidth_ColumnNumber]];
+          cs = (Altaxo.Worksheet.ColumnStyle)_worksheetLayout.ColumnStyles[DataTable[_dragColumnWidth_ColumnNumber]];
         
           if(null==cs)
           {
-            Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this.m_DragColumnWidth_ColumnNumber);
+            Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this._dragColumnWidth_ColumnNumber);
             cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
-            m_TableLayout.ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
+            _worksheetLayout.ColumnStyles.Add(DataTable[_dragColumnWidth_ColumnNumber],cs);
           }
         }
 
-        int newWidth = this.m_DragColumnWidth_OriginalWidth + sizediff;
+        int newWidth = this._dragColumnWidth_OriginalWidth + sizediff;
         if(newWidth<10)
           newWidth=10;
         cs.Width=newWidth;
-        this.m_ColumnStyleCache.ForceUpdate(this);
+        this._columnStyleCache.ForceUpdate(this);
         this.View.TableAreaInvalidate();
       }
       else // not in Capture mode
       {
-        if(Y<this.m_TableLayout.ColumnHeaderStyle.Height)
+        if(Y<this._worksheetLayout.ColumnHeaderStyle.Height)
         {
-          for(int i=this.m_ColumnStyleCache.Count-1;i>=0;i--)
+          for(int i=this._columnStyleCache.Count-1;i>=0;i--)
           {
-            ColumnStyleCacheItem csc = (ColumnStyleCacheItem)m_ColumnStyleCache[i];
+            ColumnStyleCacheItem csc = (ColumnStyleCacheItem)_columnStyleCache[i];
 
             if(csc.rightBorderPosition-5 < X && X < csc.rightBorderPosition+5)
             {
               this.View.TableAreaCursor = System.Windows.Forms.Cursors.VSplit;
-              this.m_DragColumnWidth_ColumnNumber = i+FirstVisibleColumn;
-              this.m_DragColumnWidth_OriginalWidth = csc.columnStyle.Width;
+              this._dragColumnWidth_ColumnNumber = i+FirstVisibleColumn;
+              this._dragColumnWidth_OriginalWidth = csc.columnStyle.Width;
               return;
             }
           } // end for
 
-          if(this.m_TableLayout.RowHeaderStyle.Width -5 < X && X < m_TableLayout.RowHeaderStyle.Width+5)
+          if(this._worksheetLayout.RowHeaderStyle.Width -5 < X && X < _worksheetLayout.RowHeaderStyle.Width+5)
           {
             this.View.TableAreaCursor = System.Windows.Forms.Cursors.VSplit;
-            this.m_DragColumnWidth_ColumnNumber = -1;
-            this.m_DragColumnWidth_OriginalWidth = this.m_TableLayout.RowHeaderStyle.Width;
+            this._dragColumnWidth_ColumnNumber = -1;
+            this._dragColumnWidth_OriginalWidth = this._worksheetLayout.RowHeaderStyle.Width;
             return;
           }
         }
 
-        this.m_DragColumnWidth_ColumnNumber=int.MinValue;
+        this._dragColumnWidth_ColumnNumber=int.MinValue;
         this.View.TableAreaCursor = System.Windows.Forms.Cursors.Default;
       } // end else
     }
@@ -2379,27 +2377,27 @@ namespace Altaxo.Worksheet.GUI
     protected virtual void OnLeftClickDataCell(ClickedCellInfo clickedCell)
     {
       //m_CellEditControl = new TextBox();
-      m_CellEdit_EditedCell=clickedCell;
-      m_CellEditControl.Parent = View.TableViewWindow;
-      m_CellEditControl.Location = clickedCell.CellRectangle.Location;
-      m_CellEditControl.Size = clickedCell.CellRectangle.Size;
-      m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
+      _cellEdit_EditedCell=clickedCell;
+      _cellEditControl.Parent = View.TableViewWindow;
+      _cellEditControl.Location = clickedCell.CellRectangle.Location;
+      _cellEditControl.Size = clickedCell.CellRectangle.Size;
+      _cellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
       this.SetCellEditContent();
     }
 
     protected virtual void OnLeftClickPropertyCell(ClickedCellInfo clickedCell)
     {
-      m_CellEdit_EditedCell=clickedCell;
-      m_CellEditControl.Parent = View.TableViewWindow;
-      m_CellEditControl.Location = clickedCell.CellRectangle.Location;
-      m_CellEditControl.Size = clickedCell.CellRectangle.Size;
-      m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
+      _cellEdit_EditedCell=clickedCell;
+      _cellEditControl.Parent = View.TableViewWindow;
+      _cellEditControl.Location = clickedCell.CellRectangle.Location;
+      _cellEditControl.Size = clickedCell.CellRectangle.Size;
+      _cellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
       this.SetCellEditContent();
     }
 
     protected virtual void OnLeftClickDataColumnHeader(ClickedCellInfo clickedCell)
     {
-      if(!this.m_DragColumnWidth_InCapture)
+      if(!this._dragColumnWidth_InCapture)
       {
         bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
         bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
@@ -2411,30 +2409,30 @@ namespace Altaxo.Worksheet.GUI
               m_SelectedRows.Clear(); // if we click a column, we remove row selections
             */
 
-        if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataColumnSelection && m_LastSelectionType!=SelectionType.PropertyRowSelection && !bControlKey))
+        if((!bControlKey && !bShiftKey) || (_lastSelectionType!=SelectionType.DataColumnSelection && _lastSelectionType!=SelectionType.PropertyRowSelection && !bControlKey))
         {
-          m_SelectedDataColumns.Clear();
-          m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
-          m_SelectedPropertyColumns.Clear();
-          m_SelectedPropertyRows.Clear();
+          _selectedDataColumns.Clear();
+          _selectedDataRows.Clear(); // if we click a column, we remove row selections
+          _selectedPropertyColumns.Clear();
+          _selectedPropertyRows.Clear();
         }
 
-        if(m_LastSelectionType==SelectionType.PropertyRowSelection)
+        if(_lastSelectionType==SelectionType.PropertyRowSelection)
         {
-          m_SelectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
-          m_LastSelectionType=SelectionType.PropertyRowSelection;
+          _selectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
+          _lastSelectionType=SelectionType.PropertyRowSelection;
         }
           // if the last selection has only selected any property cells then add the current selection to the property rows
         else if(!this.AreDataCellsSelected && this.ArePropertyCellsSelected && bControlKey)
         {
-          m_SelectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
-          m_LastSelectionType = SelectionType.PropertyRowSelection;
+          _selectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
+          _lastSelectionType = SelectionType.PropertyRowSelection;
         }
         else
         {
           if(this.SelectedDataColumns.Count!=0 || !bWasSelectedBefore)
-            m_SelectedDataColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
-          m_LastSelectionType = SelectionType.DataColumnSelection;
+            _selectedDataColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+          _lastSelectionType = SelectionType.DataColumnSelection;
         }
 
         this.View.TableAreaInvalidate();
@@ -2452,28 +2450,28 @@ namespace Altaxo.Worksheet.GUI
           if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
             m_SelectedColumns.Clear(); // if we click a column, we remove row selections
           */
-      if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataRowSelection && !bControlKey))
+      if((!bControlKey && !bShiftKey) || (_lastSelectionType!=SelectionType.DataRowSelection && !bControlKey))
       {
-        m_SelectedDataColumns.Clear(); // if we click a column, we remove row selections
-        m_SelectedDataRows.Clear();
-        m_SelectedPropertyColumns.Clear();
-        m_SelectedPropertyRows.Clear();
+        _selectedDataColumns.Clear(); // if we click a column, we remove row selections
+        _selectedDataRows.Clear();
+        _selectedPropertyColumns.Clear();
+        _selectedPropertyRows.Clear();
       }
 
       // if we had formerly selected property rows, we clear them but add them before as column selection
-      if(m_SelectedPropertyRows.Count>0)
+      if(_selectedPropertyRows.Count>0)
       {
-        if(m_SelectedDataColumns.Count==0)
+        if(_selectedDataColumns.Count==0)
         {
-          for(int kk=0;kk<m_SelectedPropertyRows.Count;kk++)
-            m_SelectedDataColumns.Add(m_SelectedPropertyRows[kk]);
+          for(int kk=0;kk<_selectedPropertyRows.Count;kk++)
+            _selectedDataColumns.Add(_selectedPropertyRows[kk]);
         }
-        m_SelectedPropertyRows.Clear();
+        _selectedPropertyRows.Clear();
       }
           
       if(this.SelectedDataRows.Count!=0 || !bWasSelectedBefore)
-        m_SelectedDataRows.Select(clickedCell.Row,bShiftKey,bControlKey);
-      m_LastSelectionType = SelectionType.DataRowSelection;
+        _selectedDataRows.Select(clickedCell.Row,bShiftKey,bControlKey);
+      _lastSelectionType = SelectionType.DataRowSelection;
       this.View.TableAreaInvalidate();
     }
 
@@ -2484,12 +2482,12 @@ namespace Altaxo.Worksheet.GUI
           
       bool bWasSelectedBefore = this.SelectedPropertyColumns.IsSelected(clickedCell.Column);
 
-      if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey))
+      if((!bControlKey && !bShiftKey) || (_lastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey))
       {
-        m_SelectedDataColumns.Clear();
-        m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
-        m_SelectedPropertyColumns.Clear();
-        m_SelectedPropertyRows.Clear();
+        _selectedDataColumns.Clear();
+        _selectedDataRows.Clear(); // if we click a column, we remove row selections
+        _selectedPropertyColumns.Clear();
+        _selectedPropertyRows.Clear();
       }
 
       /*
@@ -2502,9 +2500,9 @@ namespace Altaxo.Worksheet.GUI
           */
 
       if(this.SelectedPropertyColumns.Count!=0 || !bWasSelectedBefore)
-        m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+        _selectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
           
-      m_LastSelectionType = SelectionType.PropertyColumnSelection;
+      _lastSelectionType = SelectionType.PropertyColumnSelection;
       this.View.TableAreaInvalidate();
     }
 
@@ -2583,61 +2581,61 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_TableAreaMouseClick(EventArgs e)
     {
-      m_MouseInfo.MouseClick(this, this.m_MouseDownPosition);
+      _mouseInfo.MouseClick(this, this._mouseDownPosition);
 
       //ClickedCellInfo clickedCell = new ClickedCellInfo(this,this.m_MouseDownPosition);
 
-      if(m_MouseInfo.MouseButtonFirstDown==MouseButtons.Left)
+      if(_mouseInfo.MouseButtonFirstDown==MouseButtons.Left)
       {
-        switch(m_MouseInfo.ClickedArea)
+        switch(_mouseInfo.ClickedArea)
         {
           case ClickedAreaType.DataCell:
-            OnLeftClickDataCell(m_MouseInfo);
+            OnLeftClickDataCell(_mouseInfo);
             break;
           case ClickedAreaType.PropertyCell:
-            OnLeftClickPropertyCell(m_MouseInfo);
+            OnLeftClickPropertyCell(_mouseInfo);
             break;
           case ClickedAreaType.PropertyColumnHeader:
-            OnLeftClickPropertyColumnHeader(m_MouseInfo);
+            OnLeftClickPropertyColumnHeader(_mouseInfo);
             break;
           case ClickedAreaType.DataColumnHeader:
-            OnLeftClickDataColumnHeader(m_MouseInfo);
+            OnLeftClickDataColumnHeader(_mouseInfo);
             break;
           case ClickedAreaType.DataRowHeader:
-            OnLeftClickDataRowHeader(m_MouseInfo);
+            OnLeftClickDataRowHeader(_mouseInfo);
             break;
           case ClickedAreaType.TableHeader:
-            OnLeftClickTableHeader(m_MouseInfo);
+            OnLeftClickTableHeader(_mouseInfo);
             break;
           case ClickedAreaType.OutsideAll:
-            OnLeftClickOutsideAll(m_MouseInfo);
+            OnLeftClickOutsideAll(_mouseInfo);
             break;
         }
       }
-      else if(m_MouseInfo.MouseButtonFirstDown==MouseButtons.Right)
+      else if(_mouseInfo.MouseButtonFirstDown==MouseButtons.Right)
       {
-        switch(m_MouseInfo.ClickedArea)
+        switch(_mouseInfo.ClickedArea)
         {
           case ClickedAreaType.DataCell:
-            OnRightClickDataCell(m_MouseInfo);
+            OnRightClickDataCell(_mouseInfo);
             break;
           case ClickedAreaType.PropertyCell:
-            OnRightClickPropertyCell(m_MouseInfo);
+            OnRightClickPropertyCell(_mouseInfo);
             break;
           case ClickedAreaType.PropertyColumnHeader:
-            OnRightClickPropertyColumnHeader(m_MouseInfo);
+            OnRightClickPropertyColumnHeader(_mouseInfo);
             break;
           case ClickedAreaType.DataColumnHeader:
-            OnRightClickDataColumnHeader(m_MouseInfo);
+            OnRightClickDataColumnHeader(_mouseInfo);
             break;
           case ClickedAreaType.DataRowHeader:
-            OnRightClickDataRowHeader(m_MouseInfo);
+            OnRightClickDataRowHeader(_mouseInfo);
             break;
           case ClickedAreaType.TableHeader:
-            OnRightClickTableHeader(m_MouseInfo);
+            OnRightClickTableHeader(_mouseInfo);
             break;
           case ClickedAreaType.OutsideAll:
-            OnRightClickOutsideAll(m_MouseInfo);
+            OnRightClickOutsideAll(_mouseInfo);
             break;
         }
       }
@@ -2660,11 +2658,11 @@ namespace Altaxo.Worksheet.GUI
       int firstPropertyColumnToDraw = this.GetFirstVisiblePropertyColumn(e.ClipRectangle.Top);
       int numberOfPropertyColumnsToDraw = this.GetVisiblePropertyColumns(e.ClipRectangle.Top,e.ClipRectangle.Bottom);
 
-      bool bAreColumnsSelected = m_SelectedDataColumns.Count>0;
-      bool bAreRowsSelected =    m_SelectedDataRows.Count>0;
+      bool bAreColumnsSelected = _selectedDataColumns.Count>0;
+      bool bAreRowsSelected =    _selectedDataRows.Count>0;
       bool bAreCellsSelected =  bAreRowsSelected || bAreColumnsSelected;
       
-      bool bArePropertyColsSelected = m_SelectedPropertyColumns.Count>0;
+      bool bArePropertyColsSelected = _selectedPropertyColumns.Count>0;
       bool bArePropertyRowsSelected = SelectedPropertyRows.Count>0;
       bool bArePropertyCellsSelected = this.ArePropertyCellsSelected;
 
@@ -2681,47 +2679,47 @@ namespace Altaxo.Worksheet.GUI
       Rectangle cellRectangle = new Rectangle();
 
 
-      if(e.ClipRectangle.Top<m_TableLayout.ColumnHeaderStyle.Height)
+      if(e.ClipRectangle.Top<_worksheetLayout.ColumnHeaderStyle.Height)
       {
         bDrawColumnHeader = true;
       }
 
       // if neccessary, draw the row header (the most left column)
-      if(e.ClipRectangle.Left<m_TableLayout.RowHeaderStyle.Width)
+      if(e.ClipRectangle.Left<_worksheetLayout.RowHeaderStyle.Width)
       {
-        cellRectangle.Height = m_TableLayout.ColumnHeaderStyle.Height;
-        cellRectangle.Width = m_TableLayout.RowHeaderStyle.Width;
+        cellRectangle.Height = _worksheetLayout.ColumnHeaderStyle.Height;
+        cellRectangle.Width = _worksheetLayout.RowHeaderStyle.Width;
         cellRectangle.X=0;
         
         // if visible, draw the top left corner of the table
         if (bDrawColumnHeader)
         {
           cellRectangle.Y = 0;
-          m_TableLayout.RowHeaderStyle.PaintBackground(dc, cellRectangle, false);
+          _worksheetLayout.RowHeaderStyle.PaintBackground(dc, cellRectangle, false);
         }
 
         // if visible, draw property column header items
         yShift=this.GetTopCoordinateOfPropertyColumn(firstPropertyColumnToDraw);
-        cellRectangle.Height = m_TableLayout.PropertyColumnHeaderStyle.Height;
+        cellRectangle.Height = _worksheetLayout.PropertyColumnHeaderStyle.Height;
         for(int nPropCol=firstPropertyColumnToDraw, nInc=0;nInc<numberOfPropertyColumnsToDraw;nPropCol++,nInc++)
         {
-          cellRectangle.Y = yShift+nInc*m_TableLayout.PropertyColumnHeaderStyle.Height;
-          bool bPropColSelected = bArePropertyColsSelected && m_SelectedPropertyColumns.Contains(nPropCol);
-          this.m_TableLayout.PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nPropCol,this.DataTable.PropCols[nPropCol],bPropColSelected);
+          cellRectangle.Y = yShift+nInc*_worksheetLayout.PropertyColumnHeaderStyle.Height;
+          bool bPropColSelected = bArePropertyColsSelected && _selectedPropertyColumns.Contains(nPropCol);
+          this._worksheetLayout.PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nPropCol,this.DataTable.PropCols[nPropCol],bPropColSelected);
         }
       }
 
       // draw the table row Header Items
       yShift=this.GetTopCoordinateOfTableRow(firstTableRowToDraw);
-      cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
+      cellRectangle.Height = _worksheetLayout.RowHeaderStyle.Height;
       for(int nRow = firstTableRowToDraw,nInc=0; nInc<numberOfTableRowsToDraw; nRow++,nInc++)
       {
-        cellRectangle.Y = yShift+nInc*m_TableLayout.RowHeaderStyle.Height;
-        m_TableLayout.RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && m_SelectedDataRows.Contains(nRow));
+        cellRectangle.Y = yShift+nInc*_worksheetLayout.RowHeaderStyle.Height;
+        _worksheetLayout.RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && _selectedDataRows.Contains(nRow));
       }
       
 
-      if(e.ClipRectangle.Bottom>=m_TableLayout.ColumnHeaderStyle.Height || e.ClipRectangle.Right>=m_TableLayout.RowHeaderStyle.Width)   
+      if(e.ClipRectangle.Bottom>=_worksheetLayout.ColumnHeaderStyle.Height || e.ClipRectangle.Right>=_worksheetLayout.RowHeaderStyle.Width)   
       {
         int numberOfColumnsToDraw;
         int firstColToDraw =this.GetFirstAndNumberOfVisibleColumn(e.ClipRectangle.Left,e.ClipRectangle.Right, out numberOfColumnsToDraw);
@@ -2731,11 +2729,11 @@ namespace Altaxo.Worksheet.GUI
         for(int nPropCol=firstPropertyColumnToDraw, nIncPropCol=0; nIncPropCol<numberOfPropertyColumnsToDraw; nPropCol++, nIncPropCol++)
         {
           Altaxo.Worksheet.ColumnStyle cs = GetPropertyColumnStyle(nPropCol);
-          bool bPropColSelected = bArePropertyColsSelected && m_SelectedPropertyColumns.Contains(nPropCol);
+          bool bPropColSelected = bArePropertyColsSelected && _selectedPropertyColumns.Contains(nPropCol);
           bool bPropColIncluded = bArePropertyColsSelected  ? bPropColSelected : true; // Property cells are only included if the column is explicite selected
 
           cellRectangle.Y=this.GetTopCoordinateOfPropertyColumn(nPropCol);
-          cellRectangle.Height = m_TableLayout.PropertyColumnHeaderStyle.Height;
+          cellRectangle.Height = _worksheetLayout.PropertyColumnHeaderStyle.Height;
           
           for(int nCol=firstColToDraw, nIncCol=0; nIncCol<numberOfColumnsToDraw; nCol++,nIncCol++)
           {
@@ -2757,25 +2755,25 @@ namespace Altaxo.Worksheet.GUI
           Altaxo.Worksheet.ColumnStyle cs = GetDataColumnStyle(nCol);
           cellRectangle = this.GetXCoordinatesOfColumn(nCol,cellRectangle);
 
-          bool bColumnSelected = bAreColumnsSelected && m_SelectedDataColumns.Contains(nCol);
+          bool bColumnSelected = bAreColumnsSelected && _selectedDataColumns.Contains(nCol);
           bool bDataColumnIncluded = bAreColumnsSelected  ? bColumnSelected : true;
-          bool bPropertyRowSelected = bArePropertyRowsSelected && m_SelectedPropertyRows.Contains(nCol);
+          bool bPropertyRowSelected = bArePropertyRowsSelected && _selectedPropertyRows.Contains(nCol);
 
           if(bDrawColumnHeader) // must the column Header been drawn?
           {
-            cellRectangle.Height = m_TableLayout.ColumnHeaderStyle.Height;
+            cellRectangle.Height = _worksheetLayout.ColumnHeaderStyle.Height;
             cellRectangle.Y=0;
-            m_TableLayout.ColumnHeaderStyle.Paint(dc,cellRectangle,0,DataTable[nCol],bColumnSelected || bPropertyRowSelected);
+            _worksheetLayout.ColumnHeaderStyle.Paint(dc,cellRectangle,0,DataTable[nCol],bColumnSelected || bPropertyRowSelected);
           }
 
   
           yShift=this.GetTopCoordinateOfTableRow(firstTableRowToDraw);
-          cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
+          cellRectangle.Height = _worksheetLayout.RowHeaderStyle.Height;
           for(int nRow=firstTableRowToDraw, nIncRow=0;nIncRow<numberOfTableRowsToDraw;nRow++,nIncRow++)
           {
-            bool bRowSelected = bAreRowsSelected && m_SelectedDataRows.Contains(nRow);
+            bool bRowSelected = bAreRowsSelected && _selectedDataRows.Contains(nRow);
             bool bDataRowIncluded = bAreRowsSelected ? bRowSelected : true;
-            cellRectangle.Y= yShift+nIncRow*m_TableLayout.RowHeaderStyle.Height;
+            cellRectangle.Y= yShift+nIncRow*_worksheetLayout.RowHeaderStyle.Height;
             cs.Paint(dc,cellRectangle,nRow,DataTable[nCol],bAreCellsSelected && bDataColumnIncluded && bDataRowIncluded);
           }
         }
@@ -2784,7 +2782,7 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_TableAreaSizeChanged(EventArgs e)
     {
-      m_ColumnStyleCache.Update(this);
+      _columnStyleCache.Update(this);
     }
 
     public void EhView_Closed(EventArgs e)
@@ -2883,8 +2881,8 @@ namespace Altaxo.Worksheet.GUI
 
       public void ForceUpdate(WorksheetController dg)
       {
-        dg.m_LastVisibleColumn=0;
-        dg.m_LastFullyVisibleColumn = 0;
+        dg._lastVisibleColumn=0;
+        dg._lastFullyVisibleColumn = 0;
 
         this.Clear(); // clear all items
 
@@ -2892,10 +2890,10 @@ namespace Altaxo.Worksheet.GUI
           return;
     
         int actualColumnLeft = 0; 
-        int actualColumnRight = dg.m_TableLayout.RowHeaderStyle.Width;
+        int actualColumnRight = dg._worksheetLayout.RowHeaderStyle.Width;
       
         this._cachedWidthOfPaintingArea = dg.TableAreaWidth;
-        dg.m_LastFullyVisibleColumn = dg.FirstVisibleColumn;
+        dg._lastFullyVisibleColumn = dg.FirstVisibleColumn;
 
         for(int i=dg.FirstVisibleColumn;i<dg.DataTable.DataColumns.ColumnCount && actualColumnLeft<this._cachedWidthOfPaintingArea;i++)
         {
@@ -2905,10 +2903,10 @@ namespace Altaxo.Worksheet.GUI
           this.Add(new ColumnStyleCacheItem(cs,actualColumnLeft,actualColumnRight));
 
           if(actualColumnLeft<this._cachedWidthOfPaintingArea)
-            dg.m_LastVisibleColumn = i;
+            dg._lastVisibleColumn = i;
 
           if(actualColumnRight<=this._cachedWidthOfPaintingArea)
-            dg.m_LastFullyVisibleColumn = i;
+            dg._lastFullyVisibleColumn = i;
         }
       }
 
@@ -3071,7 +3069,7 @@ namespace Altaxo.Worksheet.GUI
 
     public bool EnableCut
     {
-      get { return m_CellEdit_IsArmed; }
+      get { return _cellEdit_IsArmed; }
     }
 
     public bool EnableCopy
@@ -3086,7 +3084,7 @@ namespace Altaxo.Worksheet.GUI
 
     public bool EnableDelete
     {
-      get { return !m_CellEdit_IsArmed; }
+      get { return !_cellEdit_IsArmed; }
     }
 
     public bool EnableSelectAll
@@ -3096,9 +3094,9 @@ namespace Altaxo.Worksheet.GUI
 
     public void Cut()
     {
-      if (this.m_CellEdit_IsArmed)
+      if (this._cellEdit_IsArmed)
       {
-        this.m_CellEditControl.Cut();
+        this._cellEditControl.Cut();
       }
       else if (this.AreColumnsOrRowsSelected)
       {
@@ -3109,9 +3107,9 @@ namespace Altaxo.Worksheet.GUI
 
     public void Copy()
     {
-      if (this.m_CellEdit_IsArmed)
+      if (this._cellEdit_IsArmed)
       {
-        this.m_CellEditControl.Copy();
+        this._cellEditControl.Copy();
       }
       else if (this.AreColumnsOrRowsSelected)
       {
@@ -3123,9 +3121,9 @@ namespace Altaxo.Worksheet.GUI
 
     public void Paste()
     {
-      if (this.m_CellEdit_IsArmed)
+      if (this._cellEdit_IsArmed)
       {
-        this.m_CellEditControl.Paste();
+        this._cellEditControl.Paste();
       }
       else
       {
@@ -3135,9 +3133,9 @@ namespace Altaxo.Worksheet.GUI
 
     public void Delete()
     {
-      if (this.m_CellEdit_IsArmed)
+      if (this._cellEdit_IsArmed)
       {
-        this.m_CellEditControl.Clear();
+        this._cellEditControl.Clear();
       }
       else if (this.AreColumnsOrRowsSelected)
       {

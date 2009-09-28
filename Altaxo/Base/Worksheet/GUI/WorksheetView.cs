@@ -40,17 +40,17 @@ namespace Altaxo.Worksheet.GUI
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
-    private System.Windows.Forms.VScrollBar m_VertScrollBar;
-    private System.Windows.Forms.HScrollBar m_HorzScrollBar;
-    private Altaxo.Worksheet.GUI.WorksheetPanel m_GridPanel;
+    private System.Windows.Forms.VScrollBar _vertScrollBar;
+    private System.Windows.Forms.HScrollBar _horzScrollBar;
+    private Altaxo.Worksheet.GUI.WorksheetPanel _worksheetPanel;
 
     [Browsable(false)]
-    private MainMenu m_Menu;
+    private MainMenu _menu;
 
     /// <summary>
     /// The controller that controls this view
     /// </summary>
-    private IWorksheetController m_Ctrl;
+    private IWorksheetController _controller;
 
 
     #region Serialization
@@ -74,7 +74,7 @@ namespace Altaxo.Worksheet.GUI
         WorksheetView s = (WorksheetView)obj;
         info.AddValue("Location",s.Location);
         info.AddValue("Size",s.Size);
-        info.AddValue("Controller",s.m_Ctrl);
+        info.AddValue("Controller",s._controller);
       }
 
       public SerializationSurrogate0(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
@@ -145,44 +145,44 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     private void InitializeComponent()
     {
-      this.m_VertScrollBar = new System.Windows.Forms.VScrollBar();
-      this.m_HorzScrollBar = new System.Windows.Forms.HScrollBar();
-      this.m_GridPanel = new Altaxo.Worksheet.GUI.WorksheetPanel();
+      this._vertScrollBar = new System.Windows.Forms.VScrollBar();
+      this._horzScrollBar = new System.Windows.Forms.HScrollBar();
+      this._worksheetPanel = new Altaxo.Worksheet.GUI.WorksheetPanel();
       this.SuspendLayout();
       // 
       // m_VertScrollBar
       // 
-      this.m_VertScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
-      this.m_VertScrollBar.Location = new System.Drawing.Point(276, 0);
-      this.m_VertScrollBar.Name = "m_VertScrollBar";
-      this.m_VertScrollBar.Size = new System.Drawing.Size(16, 266);
-      this.m_VertScrollBar.TabIndex = 2;
-      this.m_VertScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhVertScrollBar_Scroll);
+      this._vertScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
+      this._vertScrollBar.Location = new System.Drawing.Point(276, 0);
+      this._vertScrollBar.Name = "m_VertScrollBar";
+      this._vertScrollBar.Size = new System.Drawing.Size(16, 266);
+      this._vertScrollBar.TabIndex = 2;
+      this._vertScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhVertScrollBar_Scroll);
       // 
       // m_HorzScrollBar
       // 
-      this.m_HorzScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.m_HorzScrollBar.Location = new System.Drawing.Point(0, 250);
-      this.m_HorzScrollBar.Name = "m_HorzScrollBar";
-      this.m_HorzScrollBar.Size = new System.Drawing.Size(276, 16);
-      this.m_HorzScrollBar.TabIndex = 3;
-      this.m_HorzScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhHorzScrollBar_Scroll);
+      this._horzScrollBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this._horzScrollBar.Location = new System.Drawing.Point(0, 250);
+      this._horzScrollBar.Name = "m_HorzScrollBar";
+      this._horzScrollBar.Size = new System.Drawing.Size(276, 16);
+      this._horzScrollBar.TabIndex = 3;
+      this._horzScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhHorzScrollBar_Scroll);
       // 
       // m_GridPanel
       // 
-      this.m_GridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.m_GridPanel.Location = new System.Drawing.Point(0, 0);
-      this.m_GridPanel.Name = "m_GridPanel";
-      this.m_GridPanel.Size = new System.Drawing.Size(276, 250);
-      this.m_GridPanel.TabIndex = 4;
-      this.m_GridPanel.Click += new System.EventHandler(this.EhTableArea_Click);
-      this.m_GridPanel.SizeChanged += new System.EventHandler(this.EhTableArea_SizeChanged);
-      this.m_GridPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseUp);
-      this.m_GridPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.EhTableArea_Paint);
-      this.m_GridPanel.DoubleClick += new System.EventHandler(this.EhTableArea_DoubleClick);
-      this.m_GridPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseMove);
-      this.m_GridPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseDown);
-      this.m_GridPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
+      this._worksheetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._worksheetPanel.Location = new System.Drawing.Point(0, 0);
+      this._worksheetPanel.Name = "m_GridPanel";
+      this._worksheetPanel.Size = new System.Drawing.Size(276, 250);
+      this._worksheetPanel.TabIndex = 4;
+      this._worksheetPanel.Click += new System.EventHandler(this.EhTableArea_Click);
+      this._worksheetPanel.SizeChanged += new System.EventHandler(this.EhTableArea_SizeChanged);
+      this._worksheetPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseUp);
+      this._worksheetPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.EhTableArea_Paint);
+      this._worksheetPanel.DoubleClick += new System.EventHandler(this.EhTableArea_DoubleClick);
+      this._worksheetPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseMove);
+      this._worksheetPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseDown);
+      this._worksheetPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
       this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
       //this.ParentForm.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
       
@@ -191,9 +191,9 @@ namespace Altaxo.Worksheet.GUI
       // 
       //this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(292, 266);
-      this.Controls.Add(this.m_GridPanel);
-      this.Controls.Add(this.m_HorzScrollBar);
-      this.Controls.Add(this.m_VertScrollBar);
+      this.Controls.Add(this._worksheetPanel);
+      this.Controls.Add(this._horzScrollBar);
+      this.Controls.Add(this._vertScrollBar);
       this.Name = "WorksheetView";
       this.Text = "WorksheetView";
       this.ResumeLayout(false);
@@ -207,71 +207,71 @@ namespace Altaxo.Worksheet.GUI
     {
       base.OnParentChanged (e);
 
-      if(m_Menu != null)
-        this.TableViewMenu = m_Menu;
+      if(_menu != null)
+        this.TableViewMenu = _menu;
     }
 
 
 
     private void EhVertScrollBar_Scroll(object sender, System.Windows.Forms.ScrollEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_VertScrollBarScroll(e);
+      if(null!=_controller)
+        _controller.EhView_VertScrollBarScroll(e);
     }
 
     private void EhHorzScrollBar_Scroll(object sender, System.Windows.Forms.ScrollEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_HorzScrollBarScroll(e);
+      if(null!=_controller)
+        _controller.EhView_HorzScrollBarScroll(e);
     }
 
 
     private void EhTableArea_Click(object sender, System.EventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaMouseClick(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaMouseClick(e);
     }
 
     private void EhTableArea_DoubleClick(object sender, System.EventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaMouseDoubleClick(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaMouseDoubleClick(e);
     }
 
     private void EhTableArea_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaPaint(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaPaint(e);
     }
 
     private void EhTableArea_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaMouseDown(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaMouseDown(e);
     }
 
     private void EhTableArea_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaMouseMove(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaMouseMove(e);
     }
 
     private void EhTableArea_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaMouseUp(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaMouseUp(e);
     }
 
     private void EhTableArea_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaMouseWheel(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaMouseWheel(e);
     }
 
     private void EhTableArea_SizeChanged(object sender, System.EventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_TableAreaSizeChanged(e);
+      if(null!=_controller)
+        _controller.EhView_TableAreaSizeChanged(e);
     }
   
   
@@ -302,11 +302,11 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_Ctrl;
+        return _controller;
       }
       set
       {
-        m_Ctrl = value;
+        _controller = value;
       }
     }
 
@@ -322,7 +322,7 @@ namespace Altaxo.Worksheet.GUI
     {
       set
       {
-        m_Menu = value;
+        _menu = value;
 #if FormerGuiState
         if(this.ParentForm is WorkbenchForm && null!=m_Menu)
         {
@@ -339,14 +339,14 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_HorzScrollBar.Maximum;
+        return _horzScrollBar.Maximum;
       }
       set
       {
         // A issue in Windows: if I set the maximum to 100 and LargeChange is 10 (default),
         // the ScrollBar scrolls only till 91. To fix this, I added LargeScale-1 to the intended maximum.
-        m_HorzScrollBar.Maximum = value + m_HorzScrollBar.LargeChange-1;
-        m_HorzScrollBar.Refresh();
+        _horzScrollBar.Maximum = value + _horzScrollBar.LargeChange-1;
+        _horzScrollBar.Refresh();
       }
     }
 
@@ -362,14 +362,14 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_VertScrollBar.Maximum;
+        return _vertScrollBar.Maximum;
       }
       set
       {
         // A issue in Windows: if I set the maximum to 100 and LargeChange is 10 (default),
         // the ScrollBar scrolls only till 91. To fix this, I added LargeScale-1 to the intended maximum.
-        m_VertScrollBar.Maximum = value + m_VertScrollBar.LargeChange-1;
-        m_VertScrollBar.Refresh();
+        _vertScrollBar.Maximum = value + _vertScrollBar.LargeChange-1;
+        _vertScrollBar.Refresh();
       }
     }
 
@@ -377,11 +377,11 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_HorzScrollBar.Value;
+        return _horzScrollBar.Value;
       }
       set
       {
-        m_HorzScrollBar.Value = value;
+        _horzScrollBar.Value = value;
       }
     }
 
@@ -389,22 +389,22 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_VertScrollBar.Value;
+        return _vertScrollBar.Value;
       }
       set
       {
-        m_VertScrollBar.Value = value;
+        _vertScrollBar.Value = value;
       }
     }
 
     public Graphics TableAreaCreateGraphics()
     {
-      return m_GridPanel.CreateGraphics();
+      return _worksheetPanel.CreateGraphics();
     }
 
     public void TableAreaInvalidate()
     {
-      m_GridPanel.Invalidate();
+      _worksheetPanel.Invalidate();
     }
 
 
@@ -412,20 +412,20 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return m_GridPanel.Size;
+        return _worksheetPanel.Size;
       }
     }
 
     public bool TableAreaCapture
     {
-      get { return this.m_GridPanel.Capture; }
-      set { this.m_GridPanel.Capture = value; }
+      get { return this._worksheetPanel.Capture; }
+      set { this._worksheetPanel.Capture = value; }
     }
 
     public System.Windows.Forms.Cursor TableAreaCursor
     {
-      get { return this.m_GridPanel.Cursor; }
-      set { this.m_GridPanel.Cursor = value; }
+      get { return this._worksheetPanel.Cursor; }
+      set { this._worksheetPanel.Cursor = value; }
     }
 
     #endregion

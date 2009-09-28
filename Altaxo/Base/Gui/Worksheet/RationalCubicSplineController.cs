@@ -26,7 +26,7 @@ using Altaxo.Calc.Interpolation;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// Controls the Smoothing parameter of a rational cubic spline.

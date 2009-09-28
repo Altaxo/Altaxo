@@ -21,6 +21,7 @@
 #endregion
 
 using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.Commands
@@ -117,8 +118,8 @@ namespace Altaxo.Worksheet.Commands
 
     public static void Transpose(WorksheetController ctrl)
     {
-      Worksheet.GUI.TransposeWorksheetControl transposeview = new Worksheet.GUI.TransposeWorksheetControl();
-      Worksheet.GUI.TransposeWorksheetController transposectrl = new Worksheet.GUI.TransposeWorksheetController(ctrl.DataTable);
+      TransposeWorksheetControl transposeview = new TransposeWorksheetControl();
+      TransposeWorksheetController transposectrl = new TransposeWorksheetController(ctrl.DataTable);
       transposectrl.ViewObject = transposeview;
       Current.Gui.ShowDialog(transposectrl, "Transpose worksheet", false);
     }

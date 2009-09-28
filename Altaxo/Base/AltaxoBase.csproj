@@ -738,61 +738,43 @@
     <Compile Include="Worksheet\GUI\ClickedCellInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\ColumnScriptController.cs">
+    <Compile Include="Gui\Worksheet\CrossValidatedCubicSplineController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\CrossValidatedCubicSplineController.cs">
+    <Compile Include="Gui\Worksheet\ExponentialSplineController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\ExponentialSplineController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\InterpolationControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\InterpolationController.cs">
+    <Compile Include="Gui\Worksheet\InterpolationController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Worksheet\GUI\IWorksheetDocumentView.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\MultivariateLinearRegressionController.cs">
+    <Compile Include="Gui\Worksheet\MultivariateLinearRegressionController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\PLSPredictValueControl.cs">
+    <Compile Include="Gui\Worksheet\PLSPredictValueController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\PLSStartAnalysisController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\RationalCubicSplineController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\RationalInterpolationController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\SavitzkyGolayParameterControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\PLSPredictValueController.cs">
+    <Compile Include="Gui\Worksheet\SavitzkyGolayParameterController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\PLSStartAnalysisControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\PLSStartAnalysisController.cs">
+    <Compile Include="Gui\Worksheet\SpectralPreprocessingController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\RationalCubicSplineController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\RationalInterpolationController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\SavitzkyGolayParameterControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\SavitzkyGolayParameterController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\SpectralPreprocessingControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\SpectralPreprocessingController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\TransposeWorksheetControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\TransposeWorksheetController.cs">
+    <Compile Include="Gui\Worksheet\TransposeWorksheetController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Worksheet\GUI\WorksheetController.cs">
@@ -1090,6 +1072,22 @@
       <DependentUpon>ScriptExecutionDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\PLSPredictValueControl.resx">
+      <DependentUpon>PLSPredictValueControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\PLSStartAnalysisControl.resx">
+      <DependentUpon>PLSStartAnalysisControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\SpectralPreprocessingControl.resx">
+      <DependentUpon>SpectralPreprocessingControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\TransposeWorksheetControl.resx">
+      <DependentUpon>TransposeWorksheetControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1109,28 +1107,8 @@
     <EmbeddedResource Include="Textures.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\InterpolationControl.resx">
-      <DependentUpon>InterpolationControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\PLSPredictValueControl.resx">
-      <DependentUpon>PLSPredictValueControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\PLSStartAnalysisControl.resx">
-      <DependentUpon>PLSStartAnalysisControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\SavitzkyGolayParameterControl.resx">
+    <EmbeddedResource Include="Gui\Worksheet\SavitzkyGolayParameterControl.resx">
       <DependentUpon>SavitzkyGolayParameterControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\SpectralPreprocessingControl.resx">
-      <DependentUpon>SpectralPreprocessingControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\TransposeWorksheetControl.resx">
-      <DependentUpon>TransposeWorksheetControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\WorksheetPanel.resx">
@@ -1158,6 +1136,7 @@
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
+    <Compile Include="Data\Actions\StatisticCommands.cs" />
     <Compile Include="Graph\CSAxisInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
     <Compile Include="Graph\CSPlaneID.cs" />
@@ -1602,6 +1581,18 @@
     <Compile Include="Gui\ModelViewController.cs" />
     <Compile Include="Gui\UserControlForControllerAttribute.cs" />
     <Compile Include="Gui\UserControllerForObjectAttribute.cs" />
+    <Compile Include="Gui\Worksheet\PLSPredictValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\PLSStartAnalysisControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\SpectralPreprocessingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\TransposeWorksheetControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Main\DocumentInformation.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />

@@ -753,8 +753,13 @@ namespace Altaxo.Data
     /// <param name="newName">The name of the table after the change.</param>
     protected virtual void OnNameChanged(string oldName, string newName)
     {
+			var e = new Main.NameChangedEventArgs(this, oldName, newName);
+
+			_dataColumns.EhTunnelingEvent(this, this, Main.DocumentPathChangedEventArgs.Empty);
+			_propertyColumns.EhTunnelingEvent(this, this, Main.DocumentPathChangedEventArgs.Empty);
+
       if(NameChanged != null)
-        NameChanged(this, new Main.NameChangedEventArgs(oldName,newName));
+        NameChanged(this, new Main.NameChangedEventArgs(this, oldName, newName));
     }
 
     /// <summary>

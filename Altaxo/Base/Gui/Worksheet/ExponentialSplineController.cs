@@ -21,25 +21,26 @@
 #endregion
 
 using System;
+
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.CrossValidatedCubicSpline),100)]
-  public class CrossValidatedCubicSplineController : NumericDoubleValueController
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.ExponentialSpline),100)]
+  public class ExponentialSplineController : NumericDoubleValueController
   {
-    CrossValidatedCubicSpline _spline;
-    public CrossValidatedCubicSplineController(CrossValidatedCubicSpline spline)
-      : base(spline.ErrorVariance)
+    ExponentialSpline _spline;
+    public ExponentialSplineController(ExponentialSpline spline)
+      : base(spline.Smoothing)
     {
       base._minimumValue = 0;
       base._isMinimumValueIncluded=false;
-      _descriptionText = "Error variance (if unknown, set it to -1) :";
+      _descriptionText = "Smoothing parameter p (p>0; default is 1) :";
       _spline = spline;
     }
 
@@ -55,7 +56,7 @@ namespace Altaxo.Worksheet.GUI
     {
       if(base.Apply())
       {
-        this._spline.ErrorVariance = base._value1Double;
+        this._spline.Smoothing = base._value1Double;
         return true;
       }
       else

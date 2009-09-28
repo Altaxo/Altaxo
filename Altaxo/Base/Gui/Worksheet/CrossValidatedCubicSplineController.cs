@@ -21,53 +21,45 @@
 #endregion
 
 using System;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Gui;
+using Altaxo.Gui.Common;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
-  /// Summary description for TransposeWorksheetController.
+  /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
-  public class TransposeWorksheetController : IMVCAController
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.CrossValidatedCubicSpline),100)]
+  public class CrossValidatedCubicSplineController : NumericDoubleValueController
   {
-    Altaxo.Data.DataTable _table;
-    TransposeWorksheetControl _view;
-
-    public TransposeWorksheetController(Altaxo.Data.DataTable table)
+    CrossValidatedCubicSpline _spline;
+    public CrossValidatedCubicSplineController(CrossValidatedCubicSpline spline)
+      : base(spline.ErrorVariance)
     {
-      _table = table;
-    }
-    #region IApplyController Members
-
-   
-
-    public bool Apply()
-    {
-      Altaxo.Worksheet.Commands.Transpose.DoTranspose(_table, _view.DataColumnsMoveToPropertyColumns, _view.PropertyColumnsMoveToDataColumns, true);
-      return true;
+      base._minimumValue = 0;
+      base._isMinimumValueIncluded=false;
+      _descriptionText = "Error variance (if unknown, set it to -1) :";
+      _spline = spline;
     }
 
-    #endregion
-
-    #region IMVCController Members
-
-    public object ViewObject
+    public override object ModelObject
     {
       get
       {
-        return _view;
-      }
-      set
-      {
-        _view = value as TransposeWorksheetControl;
+        return _spline;
       }
     }
 
-    public object ModelObject
+    public override bool Apply()
     {
-      get { return null; }
+      if(base.Apply())
+      {
+        this._spline.ErrorVariance = base._value1Double;
+        return true;
+      }
+      else
+        return false;
     }
-
-    #endregion
   }
 }

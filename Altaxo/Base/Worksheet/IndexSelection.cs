@@ -32,15 +32,15 @@ namespace Altaxo.Worksheet
   /// </summary>
   public class IndexSelection : Altaxo.Collections.AscendingIntegerCollection
   {
-    protected int lastSelectedIndex=0;
-    protected bool m_ExtendedSelectionBehaviour=true;
+    protected int _lastSelectedIndex=0;
+    protected bool _useExtendedSelectionBehaviour=true;
 
   
     public int LastSelection
     {
       get
       {
-        return this.Count>0 ? lastSelectedIndex : 0;
+        return this.Count>0 ? _lastSelectedIndex : 0;
       }
     }
 
@@ -61,9 +61,9 @@ namespace Altaxo.Worksheet
       else if(bShiftKey)
       {
         if(0==this.Count)
-          lastSelectedIndex=0;
+          _lastSelectedIndex=0;
 
-        if(!m_ExtendedSelectionBehaviour && 0!=this.Count) // standard behaviour : clear the selection list before selecting the new range
+        if(!_useExtendedSelectionBehaviour && 0!=this.Count) // standard behaviour : clear the selection list before selecting the new range
         {
           // if standard behaviour, clear the list before selecting the new area
           // but keep lastSelectedIndex !
@@ -73,9 +73,9 @@ namespace Altaxo.Worksheet
 
         int beg, end;
         if(nIndex>=LastSelection)
-        { beg = lastSelectedIndex; end = nIndex;  }
+        { beg = _lastSelectedIndex; end = nIndex;  }
         else 
-        { beg=nIndex; end=lastSelectedIndex;  }
+        { beg=nIndex; end=_lastSelectedIndex;  }
 
         // select all from lastSelectionIndex to here
         for(int i=beg;i<=end;i++)
@@ -98,7 +98,7 @@ namespace Altaxo.Worksheet
           this.Add(nIndex);
         }
       }
-      lastSelectedIndex = nIndex;
+      _lastSelectedIndex = nIndex;
     }
   }
 }

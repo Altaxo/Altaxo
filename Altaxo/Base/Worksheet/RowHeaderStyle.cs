@@ -31,7 +31,7 @@ namespace Altaxo.Worksheet
   [SerializationVersion(0)]
   public class RowHeaderStyle : Altaxo.Worksheet.ColumnStyle
   {
-    protected int m_RowHeight=20;
+    protected int _rowHeight=20;
 
     #region Serialization
     public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet
           throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
         }   
         RowHeaderStyle s = (RowHeaderStyle)obj;
-        info.AddValue("Height",(float)s.m_RowHeight);
+        info.AddValue("Height",(float)s._rowHeight);
       }
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
@@ -69,7 +69,7 @@ namespace Altaxo.Worksheet
         }   
         // now the class itself
         RowHeaderStyle s = (RowHeaderStyle)obj;
-        s.m_RowHeight = (int)info.GetSingle("Height");
+        s._rowHeight = (int)info.GetSingle("Height");
         return obj;
       }
     }
@@ -81,13 +81,13 @@ namespace Altaxo.Worksheet
       {
         RowHeaderStyle s = (RowHeaderStyle)obj;
         info.AddBaseValueEmbedded(s,typeof(RowHeaderStyle).BaseType);
-        info.AddValue("Height",s.m_RowHeight);
+        info.AddValue("Height",s._rowHeight);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         RowHeaderStyle s = null!=o ? (RowHeaderStyle)o : new RowHeaderStyle();
         info.GetBaseValueEmbedded(s,typeof(RowHeaderStyle).BaseType,parent);
-        s.m_RowHeight = info.GetInt32("Height");
+        s._rowHeight = info.GetInt32("Height");
         return s;
       }
     }
@@ -102,14 +102,14 @@ namespace Altaxo.Worksheet
     public RowHeaderStyle()
       : base(ColumnStyleType.RowHeader)
     {
-      m_TextFormat.Alignment=StringAlignment.Center;
-      m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+      _textFormat.Alignment=StringAlignment.Center;
+      _textFormat.FormatFlags=StringFormatFlags.LineLimit;
     }
 
     public RowHeaderStyle(RowHeaderStyle rhs)
       : base(rhs)
     {
-      m_RowHeight = rhs.m_RowHeight;
+      _rowHeight = rhs._rowHeight;
     }
 
 
@@ -117,11 +117,11 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return m_RowHeight;
+        return _rowHeight;
       }
       set
       {
-        m_RowHeight = value;
+        _rowHeight = value;
       } 
     }
 
@@ -147,9 +147,9 @@ namespace Altaxo.Worksheet
       PaintBackground(dc, cellRectangle, bSelected);
     
       if(bSelected)
-        dc.DrawString("[" + nRow + "]", m_TextFont, _defaultSelectedTextBrush, cellRectangle, m_TextFormat);
+        dc.DrawString("[" + nRow + "]", _textFont, _defaultSelectedTextBrush, cellRectangle, _textFormat);
       else
-        dc.DrawString("["+nRow+"]",m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+        dc.DrawString("["+nRow+"]",_textFont,_textBrush,cellRectangle,_textFormat);
     }
     
   }

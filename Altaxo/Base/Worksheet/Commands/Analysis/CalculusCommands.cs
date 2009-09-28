@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 
 using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Calc.LinearAlgebra;
