@@ -2325,9 +2325,7 @@ namespace Altaxo.Worksheet.GUI
           cs = this._worksheetLayout.RowHeaderStyle;
         else
         {
-          cs = (Altaxo.Worksheet.ColumnStyle)_worksheetLayout.ColumnStyles[DataTable[_dragColumnWidth_ColumnNumber]];
-        
-          if(null==cs)
+					if(!_worksheetLayout.ColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs))
           {
             Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this._dragColumnWidth_ColumnNumber);
             cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
