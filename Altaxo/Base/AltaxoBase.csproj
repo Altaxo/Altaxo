@@ -194,26 +194,11 @@
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\PlotColors.cs" />
-    <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementController.cs" />
-    <Compile Include="Gui\Analysis\NonLinearFitting\FitEnsembleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Analysis\NonLinearFitting\FitEnsembleController.cs" />
-    <Compile Include="Gui\Analysis\NonLinearFitting\FitFunctionSelectionControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Analysis\NonLinearFitting\FitFunctionSelectionController.cs" />
-    <Compile Include="Gui\Analysis\NonLinearFitting\NonlinearFitControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Analysis\NonLinearFitting\NonlinearFitController.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetController.cs" />
-    <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetElementController.cs" />
     <Compile Include="Gui\Common\BackgroundCancelDialog.cs">
       <SubType>Form</SubType>
@@ -812,30 +797,6 @@
       <DependentUpon>GraphView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\FitElementControl.resx">
-      <DependentUpon>FitElementControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\FitEnsembleControl.resx">
-      <DependentUpon>FitEnsembleControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\FitFunctionSelectionControl.resx">
-      <DependentUpon>FitFunctionSelectionControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\NonlinearFitControl.resx">
-      <DependentUpon>NonlinearFitControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ParameterSetControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.resx">
-      <DependentUpon>ParameterSetElementControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\BackgroundCancelDialog.resx">
       <DependentUpon>BackgroundCancelDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1329,12 +1290,6 @@
     <Compile Include="Graph\TextureManager.cs" />
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
-    <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.Designer.cs">
-      <DependentUpon>ParameterSetControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Common\BooleanValueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
