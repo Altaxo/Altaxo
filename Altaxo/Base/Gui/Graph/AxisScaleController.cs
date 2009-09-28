@@ -62,6 +62,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for AxisScaleController.
   /// </summary>
+	[ExpectedTypeOfView(typeof(IAxisScaleView))]
   public class AxisScaleController : IAxisScaleController
   {
     protected IAxisScaleView _view;

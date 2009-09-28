@@ -73,6 +73,36 @@
     <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Graph\ArrangeLayersControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisLineStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisLineStyleControl.Designer.cs">
+      <DependentUpon>AxisLineStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisLinkControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\BackgroundStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\BackgroundStyleControl.Designer.cs">
+      <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.Designer.cs">
+      <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -90,6 +120,9 @@
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.Designer.cs">
       <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\TitleFormatLayerControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Worksheet\InterpolationControl.cs">
       <SubType>UserControl</SubType>
@@ -114,6 +147,27 @@
     <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.resx">
       <DependentUpon>ParameterSetElementControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
+      <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\AxisLineStyleControl.resx">
+      <DependentUpon>AxisLineStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\AxisLinkControl.resx">
+      <DependentUpon>AxisLinkControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\AxisScaleControl.resx">
+      <DependentUpon>AxisScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\BackgroundStyleControl.resx">
+      <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\BarGraphPlotStyleControl.resx">
+      <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\DensityImagePlotStyleControl.resx">
+      <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.resx">
       <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -122,6 +176,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.resx">
       <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\TitleFormatLayerControl.resx">
+      <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Worksheet\InterpolationControl.resx">
       <DependentUpon>InterpolationControl.cs</DependentUpon>

@@ -290,16 +290,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Common\TabbedElementController.cs" />
-    <Compile Include="Gui\Graph\ArrangeLayersControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
-    <Compile Include="Gui\Graph\BackgroundStyleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\BackgroundStyleControl.Designer.cs">
-      <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs">
@@ -857,39 +848,11 @@
       <DependentUpon>TabbedElementControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
-      <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\AxisLineStyleControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AxisLineStyleControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\AxisLinkControl.resx">
-      <DependentUpon>AxisLinkControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\AxisScaleControl.resx">
-      <DependentUpon>AxisScaleControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\BackgroundStyleControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\BarGraphPlotStyleControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\FillToCurvePlotStyleControl.resx">
       <DependentUpon>FillToCurvePlotStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ImageGraphicControl.resx">
       <DependentUpon>ImageGraphicControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\DensityImagePlotStyleControl.resx">
-      <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ErrorBarPlotStyleControl.resx">
@@ -965,10 +928,6 @@
     <EmbeddedResource Include="Gui\Graph\TextGraphicControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TextGraphicControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\TitleFormatLayerControl.resx">
-      <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\WaterfallTransformControl.resx">
       <SubType>Designer</SubType>
@@ -1356,29 +1315,11 @@
     <Compile Include="Gui\Common\TextValueInputController.cs" />
     <Compile Include="Gui\Common\ViewDescriptionElement.cs" />
     <Compile Include="Gui\ExpectedTypeOfView.cs" />
-    <Compile Include="Gui\Graph\AxisLineStyleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\AxisLineStyleControl.Designer.cs">
-      <DependentUpon>AxisLineStyleControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph\AxisLineStyleController.cs" />
-    <Compile Include="Gui\Graph\AxisLinkControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\AxisLinkController.cs" />
-    <Compile Include="Gui\Graph\AxisScaleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\AxisScaleController.cs" />
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.Designer.cs">
-      <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
@@ -1397,9 +1338,6 @@
     </Compile>
     <Compile Include="Gui\Graph\ImageGraphicController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotItemController.cs" />
-    <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotStyleController.cs" />
     <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.cs">
       <SubType>UserControl</SubType>
@@ -1491,9 +1429,6 @@
       <DependentUpon>TextGraphicControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\TextGraphicController.cs" />
-    <Compile Include="Gui\Graph\TitleFormatLayerControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\TitleFormatLayerController.cs" />
     <Compile Include="Gui\Graph\WaterfallTransformControl.cs">
       <SubType>UserControl</SubType>

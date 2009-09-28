@@ -25,11 +25,28 @@ using System.Collections.Generic;
 using System.Text;
 
 using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
 
 namespace Altaxo.Gui.Graph
 {
-  [UserControllerForObject(typeof(AxisLineStyle))]
+	#region Interfaces
+
+	public interface IAxisLineStyleView
+	{
+		bool ShowLine { get; set; }
+		PenX LinePen { get; set; }
+		PenX MajorPen { get; set; }
+		PenX MinorPen { get; set; }
+		float MajorTickLength { get; set; }
+		float MinorTickLength { get; set; }
+		SelectableListNodeList MajorPenTicks { get; set; }
+		SelectableListNodeList MinorPenTicks { get; set; }
+	}
+
+	#endregion
+
+	[UserControllerForObject(typeof(AxisLineStyle))]
   [ExpectedTypeOfView(typeof(IAxisLineStyleView))]
   public class AxisLineStyleController : IMVCAController
   {

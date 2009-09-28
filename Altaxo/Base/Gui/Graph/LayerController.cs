@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Graph
           if (_axisScaleController[_currentScale] == null)
           {
             _axisScaleController[_currentScale] = new AxisScaleController(_doc, _currentScale);
-            _axisScaleController[_currentScale].ViewObject = new AxisScaleControl();
+						Current.Gui.FindAndAttachControlTo(_axisScaleController[_currentScale]);
           }
           _currentController = _axisScaleController[_currentScale];
           View.CurrentContent = _currentController.ViewObject;
@@ -314,8 +314,8 @@ namespace Altaxo.Gui.Graph
           }
 
           _currentController = _TitleFormatController.ContainsKey(_currentAxisID) ? _TitleFormatController[_currentAxisID] : null;
-          if (null != _currentController && null == _currentController.ViewObject)
-            _currentController.ViewObject = new TitleFormatLayerControl();
+					if (null != _currentController && null == _currentController.ViewObject)
+						Current.Gui.FindAndAttachControlTo(_currentController);
 
 
           View.SetCurrentContentWithEnable(

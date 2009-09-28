@@ -265,15 +265,5 @@ namespace Altaxo.Gui.Graph
     }
   }
 
-  public interface IAxisLineStyleView
-  {
-    bool ShowLine { get; set; }
-    PenX LinePen { get; set; }
-    PenX MajorPen{get; set; }
-    PenX MinorPen{ get; set; }
-    float MajorTickLength { get; set; }
-    float MinorTickLength { get; set; }
-    SelectableListNodeList MajorPenTicks { get; set; }
-    SelectableListNodeList MinorPenTicks { get; set; }
-  }
+ 
 }
