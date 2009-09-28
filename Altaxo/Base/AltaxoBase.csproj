@@ -954,17 +954,6 @@
     <EmbeddedResource Include="Gui\Graph\PrintableAreaSetupControl.resx">
       <DependentUpon>PrintableAreaSetupControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.resx">
-      <DependentUpon>AngularTickSpacingControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.resx">
-      <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ShapeGraphicControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ShapeGraphicControl.cs</DependentUpon>
@@ -1485,29 +1474,11 @@
       <DependentUpon>PrintableAreaSetupControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PrintableAreaSetupController.cs" />
-    <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.Designer.cs">
-      <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
-    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.Designer.cs">
-      <DependentUpon>AngularTickSpacingControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingController.cs" />
-    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.Designer.cs">
-      <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingController.cs" />
     <Compile Include="Gui\Graph\SingleColumnChoiceControl.cs">
       <SubType>UserControl</SubType>

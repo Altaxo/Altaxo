@@ -73,6 +73,24 @@
     <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.Designer.cs">
+      <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.Designer.cs">
+      <DependentUpon>AngularTickSpacingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.Designer.cs">
+      <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Worksheet\InterpolationControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -96,6 +114,15 @@
     <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.resx">
       <DependentUpon>ParameterSetElementControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.resx">
+      <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.resx">
+      <DependentUpon>AngularTickSpacingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.resx">
+      <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Worksheet\InterpolationControl.resx">
       <DependentUpon>InterpolationControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -114,8 +141,6 @@
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />
     <Folder Include="Gui\Common\Drawing\" />
-    <Folder Include="Gui\Graph\Scales\Rescaling\" />
-    <Folder Include="Gui\Graph\Scales\Ticks\" />
     <Folder Include="Gui\Scripting\" />
     <Folder Include="Properties\" />
   </ItemGroup>
