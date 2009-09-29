@@ -20,8 +20,11 @@ namespace Altaxo.Gui.Graph
 		void SetExportArea(SelectableListNodeList list);
 		void SetSourceDpi(SelectableListNodeList list);
 		void SetDestinationDpi(SelectableListNodeList list);
+    void SetClipboardFormat(SelectableListNodeList list);
+    bool EnableClipboardFormat { set; }
 		string SourceDpiResolution { get; }
 		string DestinationDpiResolution { get; }
+    BrushX BackgroundBrush { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IGraphExportOptionsView))]
@@ -37,7 +40,8 @@ namespace Altaxo.Gui.Graph
 		SelectableListNodeList _exportArea;
 		SelectableListNodeList _sourceDpi;
 		SelectableListNodeList _destinationDpi;
-		static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
+    SelectableListNodeList _clipboardFormat;
+    static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
 		static readonly ImageFormat[] ImageFormats = new ImageFormat[]
 		{ ImageFormat.Bmp,
 			ImageFormat.Emf,
@@ -135,17 +139,24 @@ namespace Altaxo.Gui.Graph
 				foreach (GraphExportArea item in Enum.GetValues(typeof(GraphExportArea)))
 					_exportArea.Add(new SelectableListNode(item.ToString(), item, _doc.ExportArea == item));
 
+        _clipboardFormat = new SelectableListNodeList();
+        foreach (GraphCopyPageClipboardFormat item in Enum.GetValues(typeof(GraphCopyPageClipboardFormat)))
+          _clipboardFormat.Add(new SelectableListNode(item.ToString(), item, _doc.ClipboardFormat == item));
+
 				_sourceDpi = GetResolutions(_doc.SourceDpiResolution);
 				_destinationDpi = GetResolutions(_doc.DestinationDpiResolution);
 			}
 
 			if (null != _view)
 			{
+        _view.EnableClipboardFormat = _doc.IsIntentedForClipboardOperation;
+        _view.SetClipboardFormat(_clipboardFormat);
 				_view.SetImageFormat(_imageFormat);
 				_view.SetPixelFormat(_pixelFormat);
 				_view.SetExportArea(_exportArea);
 				_view.SetSourceDpi(_sourceDpi);
 				_view.SetDestinationDpi(_destinationDpi);
+        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(Color.Transparent) : _doc.BackgroundBrush;
 			}
 		}
 
@@ -219,8 +230,14 @@ namespace Altaxo.Gui.Graph
 			}
 			
 			_doc.ExportArea = (GraphExportArea)_exportArea.FirstSelectedNode.Item;
+      _doc.ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormat.FirstSelectedNode.Item;
 			_doc.SourceDpiResolution = sr;
 			_doc.DestinationDpiResolution = dr;
+
+      if (_view.BackgroundBrush.IsVisible)
+        _doc.BackgroundBrush = _view.BackgroundBrush;
+      else
+        _doc.BackgroundBrush = null;
 
 			return true;
 		}

@@ -35,11 +35,17 @@ namespace Altaxo.Graph.Gdi
 
 
 	
-
+    /// <summary>
+    /// Shows the copy page options dialog and stores the result as the static field <see cref="CopyPageOptions"/> here in this class
+    /// </summary>
+    /// <param name="doc">Ignored. Can be set to null.</param>
+    /// <returns>True when the dialog was successfully closed, false otherwise.</returns>
 		public static bool ShowCopyPageOptionsDialog(this GraphDocument doc)
 		{
 			if (null == CopyPageOptions)
 				CopyPageOptions = new GraphExportOptions();
+
+      CopyPageOptions.IsIntentedForClipboardOperation = true;
 
 			object resultobj = CopyPageOptions;
 			if (Current.Gui.ShowDialog(ref resultobj, "Set copy page options"))
@@ -50,6 +56,10 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
+    /// <summary>
+    /// Copies the current graph as image to the clipboard using the <see cref="CopyPageOptions"/> stored here in this class.
+    /// </summary>
+    /// <param name="doc"></param>
 		static public void CopyToClipboardAsImage(this GraphDocument doc)
 		{
 			var opt = CopyPageOptions;
@@ -64,7 +74,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Copies the current graph as an bitmap image to the clipboard.
+		/// Copies the current graph as an bitmap image to the clipboard in native bmp format.
 		/// </summary>
 		/// <param name="ctrl">Controller controlling the current graph.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
@@ -78,39 +88,78 @@ namespace Altaxo.Graph.Gdi
 			System.Windows.Forms.Clipboard.SetDataObject(dao);
 		}
 
-
-		public static void CopyToClipboardAsBitmap(this GraphDocument doc, Brush backbrush, GraphExportOptions options)
+    /// <summary>
+    /// Copies the current graph as an bitmap either in native format or as DropDownList or both to the clipboard.
+    /// </summary>
+    /// <param name="doc">The graph document to copy.</param>
+    /// <param name="options">Graph copy options.</param>
+		public static void CopyToClipboardAsBitmap(this GraphDocument doc, GraphExportOptions options)
 		{
 			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
-			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, backbrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
-			dao.SetImage(bitmap);
+			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+
+      if(GraphCopyPageClipboardFormat.AsNative == (options.ClipboardFormat & GraphCopyPageClipboardFormat.AsNative))
+  			dao.SetImage(bitmap);
+      if (GraphCopyPageClipboardFormat.AsDropDownList == (options.ClipboardFormat & GraphCopyPageClipboardFormat.AsDropDownList))
+        InternalAddClipboardDropDownList(dao, bitmap, options);
+
 			System.Windows.Forms.Clipboard.SetDataObject(dao);
 		}
 
+
+    static string InternalAddClipboardDropDownList(System.Windows.Forms.DataObject dao, System.Drawing.Bitmap bmp, GraphExportOptions options)
+    {
+
+      string filepath = System.IO.Path.GetTempPath();
+      string filename = filepath + "AltaxoGraphCopyPage" + options.GetDefaultFileNameExtension(); ;
+      if (System.IO.File.Exists(filename))
+        System.IO.File.Delete(filename);
+
+      bmp.Save(filename, options.ImageFormat);
+
+      System.Collections.Specialized.StringCollection coll = new System.Collections.Specialized.StringCollection();
+      coll.Add(filename);
+      dao.SetFileDropList(coll);
+
+      return filename;
+    }
+
 		static public void CopyToClipboardAsBitmap(this GraphDocument doc)
 		{
-			CopyToClipboardAsBitmap(doc, Brushes.White, CopyPageOptions);
+			CopyToClipboardAsBitmap(doc, CopyPageOptions);
 		}
 
 
+    static public void CopyToClipboardAsMetafile(this GraphDocument doc)
+    {
+      CopyToClipboardAsMetafile(doc, CopyPageOptions);
+    }
 
-		static public void CopyToClipboardAsMetafile(this GraphDocument doc)
+		static public void CopyToClipboardAsMetafile(this GraphDocument doc, GraphExportOptions options)
 		{
-			// System.Drawing.Imaging.Metafile mf = Altaxo.Graph.Procedures.Export.GetMetafile(ctrl.Doc);
-			// PutEnhMetafileOnClipboard(ctrl.View.Form.Handle, mf);
-
 			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
 			string filepath = System.IO.Path.GetTempPath();
 			string filename = filepath + "AltaxoClipboardMetafile.emf";
 			if (System.IO.File.Exists(filename))
 				System.IO.File.Delete(filename);
-			Metafile mf = GraphDocumentExportActions.RenderAsMetafile(doc, filename, CopyPageOptions);
-			System.Collections.Specialized.StringCollection coll = new System.Collections.Specialized.StringCollection();
-			coll.Add(filename);
-			dao.SetFileDropList(coll);
-			dao.SetData(typeof(Metafile), mf);
-			System.Windows.Forms.Clipboard.SetDataObject(dao);
+			Metafile mf = GraphDocumentExportActions.RenderAsMetafile(doc, filename, options);
+
+      if (GraphCopyPageClipboardFormat.AsNative == (options.ClipboardFormat & GraphCopyPageClipboardFormat.AsNative))
+      {
+        dao.SetData(typeof(Metafile), mf);
+      }
+
+      if (GraphCopyPageClipboardFormat.AsDropDownList == (options.ClipboardFormat & GraphCopyPageClipboardFormat.AsDropDownList))
+      {
+        System.Collections.Specialized.StringCollection coll = new System.Collections.Specialized.StringCollection();
+        coll.Add(filename);
+        dao.SetFileDropList(coll);
+      }
+			
+      
+      System.Windows.Forms.Clipboard.SetDataObject(dao);
 		}
+   
 
 
 	

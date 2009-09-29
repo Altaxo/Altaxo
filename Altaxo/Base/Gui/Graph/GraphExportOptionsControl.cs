@@ -44,8 +44,22 @@ namespace Altaxo.Gui.Graph
 		public void SetDestinationDpi(Altaxo.Collections.SelectableListNodeList list)
 		{
 			GUIFactoryService.InitComboBox(_cbDestinationResolution, list);
-
 		}
+
+    public bool EnableClipboardFormat
+    {
+      set
+      {
+        _cbClipboardFormat.Enabled = value;
+        _lblClipboardFormat.Enabled = value;
+      }
+    }
+
+
+    public void SetClipboardFormat(Altaxo.Collections.SelectableListNodeList list)
+    {
+      GUIFactoryService.InitComboBox(_cbClipboardFormat, list);
+    }
 
 		public string SourceDpiResolution
 		{
@@ -56,6 +70,18 @@ namespace Altaxo.Gui.Graph
 		{
 			get { return _cbDestinationResolution.Text; }
 		}
+
+    public Altaxo.Graph.Gdi.BrushX BackgroundBrush
+    {
+      get
+      {
+        return _cbBackgroundBrush.Brush;
+      }
+      set
+      {
+        _cbBackgroundBrush.Brush = value;
+      }
+    }
 
 		#endregion
 
@@ -73,5 +99,10 @@ namespace Altaxo.Gui.Graph
 		{
 			GUIFactoryService.SynchronizeSelectableListNodes(_cbExportArea);
 		}
+
+    private void EhClipboardFormatSelected(object sender, EventArgs e)
+    {
+      GUIFactoryService.SynchronizeSelectableListNodes(_cbClipboardFormat);
+    }
 	}
 }
