@@ -451,17 +451,15 @@ namespace Altaxo.Worksheet.Commands
         return;
       m_Column = dataTable.DataColumns[ctrl.SelectedDataColumns[0]];
 
-      IScriptText script = (IScriptText)dataTable.DataColumns.ColumnScripts[m_Column];
+      IColumnScriptText script=null;
+      dataTable.DataColumns.ColumnScripts.TryGetValue(m_Column, out script);
       if(script==null)
         script = new DataColumnScript();
 
       object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
       if(Current.Gui.ShowDialog(args, "DataColumnScript of " + m_Column.Name))
       {
-        if(null != dataTable.DataColumns.ColumnScripts[m_Column])
-          dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
-        else
-          dataTable.DataColumns.ColumnScripts.Add(m_Column, (IColumnScriptText)args[0]);
+        dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
       }
       this.m_Column = null;
     }
@@ -481,7 +479,8 @@ namespace Altaxo.Worksheet.Commands
         return;
       m_Column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
 
-      IScriptText script = (IScriptText)dataTable.PropertyColumns.ColumnScripts[m_Column];
+      IColumnScriptText script;
+      dataTable.PropertyColumns.ColumnScripts.TryGetValue(m_Column, out script);
       if(script==null)
         script = new PropertyColumnScript();
 
@@ -490,7 +489,6 @@ namespace Altaxo.Worksheet.Commands
       {
 				dataTable.PropCols.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
       }
-
       this.m_Column = null;
     }
 

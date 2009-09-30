@@ -966,7 +966,7 @@ namespace Altaxo.Worksheet.Commands
       if (clipboardobject is System.IO.MemoryStream)
         table = Altaxo.Serialization.Ascii.AsciiImporter.Import((System.IO.Stream)clipboardobject);
       else if (clipboardobject is string)
-        table = Altaxo.Serialization.Ascii.AsciiImporter.Import((string)clipboardobject);
+        table = Altaxo.Serialization.Ascii.AsciiImporter.ImportText((string)clipboardobject);
 
 
       return table;

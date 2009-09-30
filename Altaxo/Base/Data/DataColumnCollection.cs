@@ -928,7 +928,8 @@ namespace Altaxo.Data
         oldCol.ParentObject = null;
         newCol.ParentObject = this;
         
-        var script = _columnScripts[oldCol];
+        IColumnScriptText script;
+        _columnScripts.TryGetValue(oldCol, out script);
         if(null!=script)
         {
           _columnScripts.Remove(oldCol);
@@ -1204,6 +1205,67 @@ namespace Altaxo.Data
           destination._columnScripts.Add(tmpColumn[i],tmpScript[i]);
       }
     }
+
+    /// <summary>
+    /// Appends a cloned column from another DataColumnCollection to this collection.
+    /// </summary>
+    /// <param name="from">The DataColumnCollection to copy from.</param>
+    /// <param name="idx">Index of the source column to clone and then append.</param>
+    /// <param name="doCopyData">If true, the original source column data a preserved. Otherwise, the column will be cleared after cloning.</param>
+    /// <param name="doCopyProperties">If true, the column script will be cloned too.</param>
+    /// <returns>The index of the newly appended column.</returns>
+    public int AppendCopiedColumnFrom(DataColumnCollection from, int idx, bool doCopyData, bool doCopyProperties)
+    {
+      string name = from.GetColumnName(idx);
+      DataColumn newCol = (DataColumn)from[idx].Clone();
+
+      if (!doCopyData)
+      {
+        newCol.Clear();
+      }
+
+      int newIdx = this.ColumnCount;
+      this.Add(newCol, name, from.GetColumnKind(idx), from.GetColumnGroup(idx));
+
+      if (doCopyProperties)
+      {
+        IColumnScriptText script = null;
+        from.ColumnScripts.TryGetValue(from[idx], out script);
+        if (null != script)
+          this.ColumnScripts.Add(newCol, (IColumnScriptText)script.Clone());
+      }
+
+      return newIdx;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="from"></param>
+    /// <returns></returns>
+    public IAscendingIntegerCollection MergeColumnTypesFrom(DataColumnCollection from)
+    {
+      AscendingIntegerCollection coll = new AscendingIntegerCollection();
+
+      for (int i = 0; i < from.ColumnCount; i++)
+      {
+        string name = from.GetColumnName(i);
+        System.Type coltype = from[i].GetType();
+
+        if (this.ContainsColumn(name) && (this[name].GetType() == from[i].GetType()))
+        {
+           // then the column is already present with the right name and can be used
+            coll.Add(this.GetColumnNumber(this[name]));
+        }
+        else // name is there - but type is different, or name is not here at all
+          {
+            int idx = AppendCopiedColumnFrom(from, i, false, true);
+            coll.Add(idx);
+          }
+        }
+      return coll;
+    }
+
 
     #endregion
 

@@ -125,21 +125,31 @@ namespace Altaxo.Serialization.Ascii
       AsciiGlobalStructureAnalysis globalStructure = new AsciiGlobalStructureAnalysis(firstFewLines);
       List<IAsciiSeparationStrategy> separationStrategies = new List<IAsciiSeparationStrategy>();
 
-      if (globalStructure.ContainsTabs)
-        separationStrategies.Add(new SingleCharSeparationStrategy('\t'));
-      if (globalStructure.ContainsCommas)
-        separationStrategies.Add(new SingleCharSeparationStrategy(','));
-      if (globalStructure.ContainsSemicolons)
-        separationStrategies.Add(new SingleCharSeparationStrategy(';'));
-      if (globalStructure.FixedBoundaries != null)
+      if (defaultImportOptions.SeparationStrategy != null) // if a separation strategy is given use only this
       {
-        if (globalStructure.RecognizedTabSize == 1)
-          separationStrategies.Add(new FixedColumnWidthWithoutTabSeparationStrategy(globalStructure.FixedBoundaries));
-        else
-          separationStrategies.Add(new FixedColumnWidthWithTabSeparationStrategy(globalStructure.FixedBoundaries, globalStructure.RecognizedTabSize));
+        separationStrategies.Add(defaultImportOptions.SeparationStrategy);
       }
-      if (separationStrategies.Count == 0)
-        separationStrategies.Add(new SkipWhiteSpaceSeparationStrategy());
+      else // no separation strategy given - we include the possible strategies here
+      {
+        if (globalStructure.ContainsTabs)
+          separationStrategies.Add(new SingleCharSeparationStrategy('\t'));
+        if (globalStructure.ContainsCommas)
+          separationStrategies.Add(new SingleCharSeparationStrategy(','));
+        if (globalStructure.ContainsSemicolons)
+          separationStrategies.Add(new SingleCharSeparationStrategy(';'));
+        if (globalStructure.FixedBoundaries != null)
+        {
+          if (globalStructure.RecognizedTabSize == 1)
+            separationStrategies.Add(new FixedColumnWidthWithoutTabSeparationStrategy(globalStructure.FixedBoundaries));
+          else
+            separationStrategies.Add(new FixedColumnWidthWithTabSeparationStrategy(globalStructure.FixedBoundaries, globalStructure.RecognizedTabSize));
+        }
+        if (separationStrategies.Count == 0)
+          separationStrategies.Add(new SkipWhiteSpaceSeparationStrategy());
+      }
+
+
+
 
       for (int i = 0; i < firstFewLines.Count; i++)
         result.Add(new AsciiLineAnalysis(i, firstFewLines[i], separationStrategies));
@@ -430,7 +440,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="text">The text to import as ascii.</param>
     /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
-    public static Altaxo.Data.DataTable Import(string text)
+    public static Altaxo.Data.DataTable ImportText(string text)
     {
       System.IO.MemoryStream memstream = new System.IO.MemoryStream();
       System.IO.TextWriter textwriter = new System.IO.StreamWriter(memstream);
@@ -454,16 +464,27 @@ namespace Altaxo.Serialization.Ascii
     }
 
 
-    /// <summary>
+        /// <summary>
     /// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
     /// </summary>
     /// <param name="stream">The stream to import ascii from. Is not (!) closed at the end of this function.</param>
     /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
     public static Altaxo.Data.DataTable Import(System.IO.Stream stream)
     {
+      var defaultImportOptions = new Altaxo.Serialization.Ascii.AsciiImportOptions();
+      return Import(stream, defaultImportOptions);
+    }
+
+    /// <summary>
+    /// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
+    /// </summary>
+    /// <param name="stream">The stream to import ascii from. Is not (!) closed at the end of this function.</param>
+    /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
+    public static Altaxo.Data.DataTable Import(System.IO.Stream stream, Altaxo.Serialization.Ascii.AsciiImportOptions defaultImportOptions)
+    {
       Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
       Altaxo.Serialization.Ascii.AsciiImporter importer = new Altaxo.Serialization.Ascii.AsciiImporter(stream);
-      Altaxo.Serialization.Ascii.AsciiImportOptions options = importer.Analyze(20, new Altaxo.Serialization.Ascii.AsciiImportOptions());
+      Altaxo.Serialization.Ascii.AsciiImportOptions options = importer.Analyze(20, defaultImportOptions);
       if (options != null)
       {
         importer.ImportAscii(options, table);
@@ -472,6 +493,35 @@ namespace Altaxo.Serialization.Ascii
       else
       {
         return null;
+      }
+    }
+
+     /// <summary>
+    /// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
+    /// </summary>
+    /// <param name="filename">The file name of the file from which to import.</param>
+    /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
+    public static Altaxo.Data.DataTable ImportFile(string filename)
+    {
+      using (System.IO.FileStream str = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+      {
+        return Import(str);
+      }
+    }
+
+    /// <summary>
+    /// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
+    /// </summary>
+    /// <param name="filename">The file name of the file from which to import.</param>
+    /// <param name="separatorChar">The character used to separate the columns</param>
+    /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
+    public static Altaxo.Data.DataTable ImportFile(string filename, char separatorChar)
+    {
+      var defaultImportOptions = new Altaxo.Serialization.Ascii.AsciiImportOptions();
+      defaultImportOptions.SeparationStrategy = new SingleCharSeparationStrategy(separatorChar);
+      using (System.IO.FileStream str = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+      {
+        return Import(str,defaultImportOptions);
       }
     }
 
@@ -556,38 +606,40 @@ namespace Altaxo.Serialization.Ascii
             }
           }
         }
-
-        // create a new x column if the last one does not match
-        if (!bMatchsXColumn)
-        {
-          xcol = (Altaxo.Data.DataColumn)xvalues.Clone();
-          lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
-          table.DataColumns.Add(xcol, newtable.DataColumns.GetColumnName(0), Altaxo.Data.ColumnKind.X, lastColumnGroup);
-        }
-
-        for (int i = 1; i < newtable.DataColumns.ColumnCount; i++)
-        {
-          // now add the y-values
-          Altaxo.Data.DataColumn ycol = (Altaxo.Data.DataColumn)newtable.DataColumns[i].Clone();
-          table.DataColumns.Add(ycol,
-          table.DataColumns.FindUniqueColumnName(newtable.DataColumns.GetColumnName(i)),
-            Altaxo.Data.ColumnKind.V,
-            lastColumnGroup);
-
-
-          // now set the file name property cell
-          int destcolnumber = table.DataColumns.GetColumnNumber(ycol);
-          filePathPropCol[destcolnumber] = filename;
-
-          // now set the imported property cells
-          for (int s = 0; s < newtable.PropCols.ColumnCount; s++)
+       
+          // create a new x column if the last one does not match
+          if (!bMatchsXColumn)
           {
-            Altaxo.Data.DataColumn dest = table.PropCols.EnsureExistence(newtable.PropCols.GetColumnName(i), newtable.PropCols[i].GetType(), Altaxo.Data.ColumnKind.V, 0);
-            dest.SetValueAt(destcolnumber, table.PropCols[s][i]);
+            xcol = (Altaxo.Data.DataColumn)xvalues.Clone();
+            lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
+            table.DataColumns.Add(xcol, newtable.DataColumns.GetColumnName(0), Altaxo.Data.ColumnKind.X, lastColumnGroup);
           }
-        }
-      } // foreache file
 
+          for (int i = 1; i < newtable.DataColumns.ColumnCount; i++)
+          {
+            // now add the y-values
+            Altaxo.Data.DataColumn ycol = (Altaxo.Data.DataColumn)newtable.DataColumns[i].Clone();
+            table.DataColumns.Add(ycol,
+            table.DataColumns.FindUniqueColumnName(newtable.DataColumns.GetColumnName(i)),
+              Altaxo.Data.ColumnKind.V,
+              lastColumnGroup);
+
+
+            // now set the file name property cell
+            int destcolnumber = table.DataColumns.GetColumnNumber(ycol);
+            filePathPropCol[destcolnumber] = filename;
+
+            // now set the imported property cells
+            for (int s = 0; s < newtable.PropCols.ColumnCount; s++)
+            {
+              Altaxo.Data.DataColumn dest = table.PropCols.EnsureExistence(newtable.PropCols.GetColumnName(i), newtable.PropCols[i].GetType(), Altaxo.Data.ColumnKind.V, 0);
+              dest.SetValueAt(destcolnumber, table.PropCols[s][i]);
+            }
+          }
+        
+        } // foreache file
+      
+      
       return errorList.Length == 0 ? null : errorList.ToString();
     }
 

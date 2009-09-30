@@ -1045,6 +1045,8 @@
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
+    <Compile Include="Data\Actions\ColumnMath.cs" />
+    <Compile Include="Data\Actions\MergeTables.cs" />
     <Compile Include="Data\Actions\StatisticCommands.cs" />
     <Compile Include="Graph\CSAxisInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
