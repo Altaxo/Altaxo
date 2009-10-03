@@ -45,14 +45,9 @@ namespace Altaxo.Gui.Common
       set { _lblCSType.Text = value; }
     }
 
-    public void InitializeTypeNames(List<ListNode> names, int selection)
+    public void InitializeTypeNames(SelectableListNodeList names)
     {
-      _cbTypeChoice.Items.Clear();
-      foreach (ListNode n in names)
-        _cbTypeChoice.Items.Add(n);
-
-      if (selection >= 0)
-        _cbTypeChoice.SelectedIndex = selection;
+			GuiHelper.UpdateList(_cbTypeChoice,names);
     }
 
     public void SetInstanceControl(object instanceControl)
@@ -72,25 +67,11 @@ namespace Altaxo.Gui.Common
     public event EventHandler TypeChoiceChanged;
     private void EhSelectionChangeCommitted(object sender, EventArgs e)
     {
+			GuiHelper.SynchronizeSelectionFromGui(_cbTypeChoice);
       if (null != TypeChoiceChanged)
         TypeChoiceChanged(this, EventArgs.Empty);
     }
-    public ListNode SelectedNode
-    {
-      get
-      {
-        return _cbTypeChoice.SelectedItem as ListNode;
-      }
-    }
   }
 
-  public interface ITypeAndInstanceView
-  {
-    string TypeLabel { set; }
-    void InitializeTypeNames(List<ListNode> names, int selection);
-    void SetInstanceControl(object instanceControl);
 
-    event EventHandler TypeChoiceChanged;
-    ListNode SelectedNode { get; }
-  }
 }

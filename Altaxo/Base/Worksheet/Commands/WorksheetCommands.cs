@@ -154,9 +154,7 @@ namespace Altaxo.Worksheet.Commands
       IntegerAndComboBoxController ct = new IntegerAndComboBoxController(
         "Number of colums to add:", 1, int.MaxValue, 1,
         "Type of columns to add:", lbitems, 0);
-
-      SpinAndComboBoxControl panel = new SpinAndComboBoxControl();
-      ct.View = panel;
+			Current.Gui.FindAndAttachControlTo(ct);
 
       if (true == Current.Gui.ShowDialog(ct,"Add new column(s)",false))
       {

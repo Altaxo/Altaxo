@@ -85,6 +85,51 @@
     <Compile Include="Gui\Analysis\SavitzkyGolayParameterControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Common\BooleanValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\EnumFlagControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\EnumFlagControl.Designer.cs">
+      <DependentUpon>EnumFlagControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\EquallySpacedIntervalControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\EquallySpacedIntervalControl.Designer.cs">
+      <DependentUpon>EquallySpacedIntervalControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\MinMaxIntegerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\MultiChildControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\PropertyControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\PropertyControl.Designer.cs">
+      <DependentUpon>PropertyControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SingleChoiceComboBoxControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\SingleValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\SpinAndComboBoxControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\TabbedElementControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\TypeAndInstanceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\TypeAndInstanceControl.Designer.cs">
+      <DependentUpon>TypeAndInstanceControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -265,6 +310,7 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\GuiHelper.cs" />
     <Compile Include="Gui\Scripting\FitFunctionScriptControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -311,6 +357,40 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Analysis\SavitzkyGolayParameterControl.resx">
       <DependentUpon>SavitzkyGolayParameterControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\BooleanValueControl.resx">
+      <DependentUpon>BooleanValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\EnumFlagControl.resx">
+      <DependentUpon>EnumFlagControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\EquallySpacedIntervalControl.resx">
+      <DependentUpon>EquallySpacedIntervalControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\MinMaxIntegerControl.resx">
+      <DependentUpon>MinMaxIntegerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
+      <DependentUpon>MultiChildControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\PropertyControl.resx">
+      <DependentUpon>PropertyControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\SingleChoiceComboBoxControl.resx">
+      <DependentUpon>SingleChoiceComboBoxControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\SingleInstanceChoiceControl.resx" />
+    <EmbeddedResource Include="Gui\Common\SingleValueControl.resx">
+      <DependentUpon>SingleValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\SpinAndComboBoxControl.resx">
+      <DependentUpon>SpinAndComboBoxControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\TabbedElementControl.resx">
+      <DependentUpon>TabbedElementControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\TypeAndInstanceControl.resx">
+      <DependentUpon>TypeAndInstanceControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
       <DependentUpon>ArrangeLayersControl.cs</DependentUpon>

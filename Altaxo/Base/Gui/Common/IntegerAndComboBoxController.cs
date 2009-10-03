@@ -26,7 +26,7 @@ using Altaxo.Collections;
 namespace Altaxo.Gui.Common
 {
   #region Interfaces
-  public interface IIntegerAndComboBoxController : IMVCAController
+  public interface IIntegerAndComboBoxController
   {
     /// <summary>
     /// Get/sets the view this controller controls.
@@ -63,7 +63,8 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Summary description for IntegerAndComboBoxController.
   /// </summary>
-  public class IntegerAndComboBoxController : IIntegerAndComboBoxController
+	[ExpectedTypeOfView(typeof(IIntegerAndComboBoxView))]
+  public class IntegerAndComboBoxController :  IMVCAController, IIntegerAndComboBoxController
   {
     protected IIntegerAndComboBoxView m_View;
     protected string m_IntegerLabelText;

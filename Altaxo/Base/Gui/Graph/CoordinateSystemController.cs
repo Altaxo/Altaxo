@@ -40,6 +40,8 @@ namespace Altaxo.Gui.Graph
 
     IMVCAController _instanceController;
 
+		SelectableListNodeList _choiceList;
+
     public CoordinateSystemController(G2DCoordinateSystem doc)
     {
       _doc = doc;
@@ -58,13 +60,13 @@ namespace Altaxo.Gui.Graph
         // look for coordinate system types
         Type[] subtypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
 
-        ListNodeList list = new ListNodeList();
+				_choiceList = new SelectableListNodeList();
         foreach(Type t in subtypes)
-          list.Add(new ListNode(Current.Gui.GetUserFriendlyClassName(t), t));
+					_choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _tempdoc.GetType()));
 
         // look for a controller-control
         _view.TypeLabel="Type";
-        _view.InitializeTypeNames(list, list.IndexOfObject(_tempdoc.GetType()));
+				_view.InitializeTypeNames(_choiceList);
 
         // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
         _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _tempdoc }, typeof(IMVCAController));
@@ -84,7 +86,7 @@ namespace Altaxo.Gui.Graph
 
     void EhTypeChoiceChanged(object sender, EventArgs e)
     {
-      ListNode sel = _view.SelectedNode;
+			var sel = _choiceList.FirstSelectedNode;
 
       if (sel != null)
       {
