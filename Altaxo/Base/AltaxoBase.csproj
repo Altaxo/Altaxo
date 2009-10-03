@@ -223,15 +223,6 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
-    <Compile Include="Main\GUI\MWControls\EditorHatchStyle.cs" />
-    <Compile Include="Main\GUI\MWControls\EditorHatchStyleUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\MWControls\MWRubberbandGradientBlend.cs" />
-    <Compile Include="Main\GUI\MWControls\MWRubberbandGradientColorBlend.cs" />
-    <Compile Include="Main\GUI\MWControls\MWStringMethods.cs" />
-    <Compile Include="Main\GUI\MWControls\MWTreeViewEnums.cs" />
-    <Compile Include="Main\GUI\MWControls\MWTreeViewEventArgs.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
     <Compile Include="Main\RelDocNodeProxy.cs" />
     <Compile Include="Main\Services\FitFunctionService.cs" />
@@ -397,12 +388,6 @@
     </Compile>
     <Compile Include="Main\Exceptions.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\MWControls\MWTreeNodeWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\MWControls\MWTreeView.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Main\ICompressedFileContainerStream.cs">
       <SubType>Code</SubType>
@@ -586,12 +571,6 @@
     <Compile Include="Gui\Worksheet\MultivariateLinearRegressionController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Gui\Worksheet\PLSPredictValueController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Gui\Worksheet\PLSStartAnalysisController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Gui\Worksheet\RationalCubicSplineController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -599,9 +578,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\Worksheet\SavitzkyGolayParameterController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Gui\Worksheet\SpectralPreprocessingController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\Worksheet\TransposeWorksheetController.cs">
@@ -656,14 +632,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Main\GUI\MWControls\EditorHatchStyleUI.resx">
-      <DependentUpon>EditorHatchStyleUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Main\GUI\MWControls\MWTreeView.resx">
-      <DependentUpon>MWTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Serialization\Galactic\ExportGalacticSpcFileDialog.resx">
@@ -893,6 +861,9 @@
     <Compile Include="Graph\TextureManager.cs" />
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
+    <Compile Include="Gui\Analysis\Multivariate\PLSPredictValueController.cs" />
+    <Compile Include="Gui\Analysis\Multivariate\PLSStartAnalysisController.cs" />
+    <Compile Include="Gui\Analysis\Multivariate\SpectralPreprocessingController.cs" />
     <Compile Include="Gui\Common\BooleanValueController.cs" />
     <Compile Include="Gui\Common\DialogShellController.cs" />
     <Compile Include="Gui\Common\DialogShellView.cs">
@@ -991,6 +962,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />
+    <Folder Include="Main\GUI\MWControls\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

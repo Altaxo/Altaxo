@@ -91,12 +91,18 @@
     <Compile Include="Gui\Common\CheckableGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Gui\Common\CollapsibleGroupBox.cs" />
+    <Compile Include="Gui\Common\CollapsibleGroupBox.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Gui\Common\CustomColorDialog\AlphaSlider.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Common\CustomColorDialog\CustomColorDialog.cs" />
-    <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs" />
+    <Compile Include="Gui\Common\CustomColorDialog\CustomColorDialog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -205,6 +211,19 @@
     <Compile Include="Gui\Common\MultiChildControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Common\MWTreeView\EditorHatchStyle.cs" />
+    <Compile Include="Gui\Common\MWTreeView\EditorHatchStyleUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\MWTreeView\MWRubberbandGradientBlend.cs" />
+    <Compile Include="Gui\Common\MWTreeView\MWRubberbandGradientColorBlend.cs" />
+    <Compile Include="Gui\Common\MWTreeView\MWStringMethods.cs" />
+    <Compile Include="Gui\Common\MWTreeView\MWTreeNodeWrapper.cs" />
+    <Compile Include="Gui\Common\MWTreeView\MWTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\MWTreeView\MWTreeViewEnums.cs" />
+    <Compile Include="Gui\Common\MWTreeView\MWTreeViewEventArgs.cs" />
     <Compile Include="Gui\Common\PropertyControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -486,6 +505,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\MWTreeView\EditorHatchStyleUI.resx">
+      <DependentUpon>EditorHatchStyleUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\MWTreeView\MWTreeView.resx">
+      <DependentUpon>MWTreeView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\PropertyControl.resx">
       <DependentUpon>PropertyControl.cs</DependentUpon>
