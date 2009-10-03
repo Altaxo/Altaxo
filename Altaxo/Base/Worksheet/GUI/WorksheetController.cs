@@ -158,9 +158,6 @@ namespace Altaxo.Worksheet.GUI
       _view = null;
     
       // The main menu of this controller.
-      m_MainMenu = null; 
-      m_MenuItemEditRemove = null;
-      m_MenuItemColumnSetColumnValues = null;
 
       // Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
       _lastSelectionType = SelectionType.Nothing;
@@ -301,10 +298,9 @@ namespace Altaxo.Worksheet.GUI
 
 
         // create the menu
-        this.InitializeMenu();
+        //this.InitializeMenu();
 
         // set the menu of this class
-        _view.TableViewMenu = this.m_MainMenu;
         _view.TableViewTitle = this._table.Name;
 
 
@@ -384,368 +380,19 @@ namespace Altaxo.Worksheet.GUI
       else if(!bDeserializationConstructor)
         throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
 
-      this.InitializeMenu();
+      //this.InitializeMenu();
     }
 
     #endregion // Constructors
 
-    #region Menu member variables
-    /// <summary>The main menu of this controller.</summary>
-    protected System.Windows.Forms.MainMenu m_MainMenu;
-    protected System.Windows.Forms.MenuItem m_MenuItemEditRemove;
-    protected System.Windows.Forms.MenuItem m_MenuItemColumnRename;
-    protected System.Windows.Forms.MenuItem m_MenuItemColumnSetGroupNumber;
-    protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
-
-
-
-    #endregion
-
-    #region Menu Definition
-
-
-    /// <summary>
-    /// Creates the default menu of a graph view.
-    /// </summary>
-    /// <remarks>In case there is already a menu here, the old menu is overwritten.</remarks>
-    public void InitializeMenu()
-    {
-      int index=0, index2=0;
-      MenuItem mi;
-
-      m_MainMenu = new MainMenu();
-      // ******************************************************************
-      // ******************************************************************
-      // File Menu
-      // ******************************************************************
-      // ******************************************************************
-      mi = new MenuItem("&File");
-      mi.Index=0;
-      mi.MergeOrder=0;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-
-      // ------------------------------------------------------------------
-      // File - New (Popup)
-      // ------------------------------------------------------------------
-      mi = new MenuItem("New");
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-      index2 = m_MainMenu.MenuItems[index].MenuItems.Count-1;
-
-      // File - Page Setup
-      mi = new MenuItem("Page Setup..");
-      mi.Click += new EventHandler(EhMenuFilePageSetup_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // File - Print Preview
-      mi = new MenuItem("Print Preview..");
-      mi.Click += new EventHandler(EhMenuFilePrintPreview_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // File - Print 
-      mi = new MenuItem("Print..");
-      mi.Click += new EventHandler(EhMenuFilePrint_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // File - Save Table As
-      mi = new MenuItem("Save Table As..");
-      mi.Click += new EventHandler(EhMenuFileSaveTableAs_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-
-      // ------------------------------------------------------------------
-      // File - Import (Popup)
-      // ------------------------------------------------------------------
-      mi = new MenuItem("Import");
-      //mi.Popup += new EventHandler(MenuFileExport_OnPopup);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-      index2 = m_MainMenu.MenuItems[index].MenuItems.Count-1;
-
-      // File - Import - Ascii 
-      mi = new MenuItem("Ascii...");
-      mi.Click += new EventHandler(EhMenuFileImportAscii_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // File - Import - Picture 
-      mi = new MenuItem("Picture as data...");
-      mi.Click += new EventHandler(EhMenuFileImportPicture_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // File - Import - Galactic SPC 
-      mi = new MenuItem("Galactic SPC...");
-      mi.Click += new EventHandler(EhMenuFileImportGalacticSPC_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // ------------------------------------------------------------------
-      // File - Export (Popup)
-      // ------------------------------------------------------------------
-      mi = new MenuItem("Export");
-      //mi.Popup += new EventHandler(MenuFileExport_OnPopup);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-      index2 = m_MainMenu.MenuItems[index].MenuItems.Count-1;
-
-      // File - Export - Ascii 
-      mi = new MenuItem("Ascii...");
-      mi.Click += new EventHandler(EhMenuFileExportAscii_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // File - Export - Galactic SPC 
-      mi = new MenuItem("Galactic SPC...");
-      mi.Click += new EventHandler(EhMenuFileExportGalacticSPC_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // ******************************************************************
-      // ******************************************************************
-      // Edit (Popup)
-      // ******************************************************************
-      // ****************************************************************** 
-      mi = new MenuItem("Edit");
-      mi.Index=1;
-      mi.MergeOrder=1;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      mi.Popup += new System.EventHandler(this.EhMenuEdit_OnPopup);
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-      // Edit - Remove
-      mi = new MenuItem("Remove");
-      mi.Click += new EventHandler(EhMenuEditRemove_OnClick);
-      m_MenuItemEditRemove = mi;
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Edit - Copy
-      mi = new MenuItem("Copy");
-      mi.Click += new EventHandler(EhMenuEditCopy_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Edit - Paste
-      mi = new MenuItem("Paste");
-      mi.Click += new EventHandler(EhMenuEditPaste_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-
-      // ******************************************************************
-      // ******************************************************************
-      // Plot (Popup)
-      // ******************************************************************
-      // ******************************************************************
-      mi = new MenuItem("Plot");
-      mi.Index=2;
-      mi.MergeOrder=2;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-      // Plot - Line&Scatter
-      mi = new MenuItem("Line");
-      mi.Click += new EventHandler(EhMenuPlotLine_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Plot - Line&Scatter
-      mi = new MenuItem("Scatter");
-      mi.Click += new EventHandler(EhMenuPlotScatter_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Plot - Line&Scatter
-      mi = new MenuItem("Line+Scatter");
-      mi.Click += new EventHandler(EhMenuPlotLineAndScatter_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Plot - Density Image
-      mi = new MenuItem("Density Image");
-      mi.Click += new EventHandler(EhMenuPlotDensityImage_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-
-      // ******************************************************************
-      // ******************************************************************
-      // Worksheet (Popup)
-      // ******************************************************************
-      // ******************************************************************
-      mi = new MenuItem("Worksheet");
-      mi.Index=3;
-      mi.MergeOrder=3;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-      // Worksheet - Rename Worksheet
-      mi = new MenuItem("Rename Worksheet..");
-      mi.Click += new EventHandler(EhMenuWorksheetRename_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Worksheet - Duplicate Worksheet
-      mi = new MenuItem("Duplicate Worksheet");
-      mi.Click += new EventHandler(EhMenuWorksheetDuplicate_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Worksheet - Transpose
-      mi = new MenuItem("Transpose");
-      mi.Click += new EventHandler(EhMenuWorksheetTranspose_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Worksheet - AddColumn
-      mi = new MenuItem("Add data columns...");
-      mi.Click += new EventHandler(EhMenuWorksheetAddColumns_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Worksheet - AddPropertyColumns
-      mi = new MenuItem("Add property columns...");
-      mi.Click += new EventHandler(EhMenuWorksheetAddPropertyColumns_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-    
-      // ******************************************************************
-      // ******************************************************************
-      // Column (Popup)
-      // ******************************************************************
-      // ******************************************************************
-      mi = new MenuItem("Column");
-      mi.Index=4;
-      mi.MergeOrder=4;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      mi.Popup += new System.EventHandler(this.EhMenuColumn_OnPopup);
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-      
-      // Column - Rename column
-      mi = new MenuItem("Rename column..");
-      mi.Click += new EventHandler(EhMenuColumnRename_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MenuItemColumnRename=mi;
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Column - Set group number
-      mi = new MenuItem("Set group number..");
-      mi.Click += new EventHandler(EhMenuColumnSetGroupNumber_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MenuItemColumnSetGroupNumber=mi;
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Column - SetColumnValues
-      mi = new MenuItem("Set column values");
-      mi.Click += new EventHandler(EhMenuColumnSetColumnValues_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MenuItemColumnSetColumnValues=mi;
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Column - SetAsX
-      mi = new MenuItem("Set column as X");
-      mi.Click += new EventHandler(EhMenuColumnSetColumnAsX_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
   
-      // Column - Extract Property values
-      mi = new MenuItem("Extract property values");
-      mi.Click += new EventHandler(EhMenuColumnExtractPropertyValues_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
-      // ******************************************************************
-      // ******************************************************************
-      // Analysis (Popup)
-      // ******************************************************************
-      // ******************************************************************
-      mi = new MenuItem("Analysis");
-      mi.Index=5;
-      mi.MergeOrder=5;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      mi.Popup += new System.EventHandler(this.EhMenuAnalysis_OnPopup);
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-      // Analysis - FFT
-      mi = new MenuItem("FFT");
-      mi.Click += new EventHandler(EhMenuAnalysisFFT_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-
-      // Analysis - 2 Dimensional FFT
-      mi = new MenuItem("2-dimensional FFT");
-      mi.Click += new EventHandler(EhMenuAnalysis2DFFT_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Analysis - StatisticsOnColumns
-      mi = new MenuItem("Statistics on columns");
-      mi.Click += new EventHandler(EhMenuAnalysisStatisticsOnColumns_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Analysis - StatisticsOnRows
-      mi = new MenuItem("Statistics on rows");
-      mi.Click += new EventHandler(EhMenuAnalysisStatisticsOnRows_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-  
-      // Analysis - Multiply Columns to Matrix
-      mi = new MenuItem("Multiply columns to matrix");
-      mi.Click += new EventHandler(EhMenuAnalysisMultiplyColumnsToMatrix_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-
-      // Analysis -PCAOnRows
-      mi = new MenuItem("PCA on rows");
-      mi.Click += new EventHandler(EhMenuAnalysisPCAOnRows_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-      
-      // Analysis -PCAOnCols
-      mi = new MenuItem("PCA on columns");
-      mi.Click += new EventHandler(EhMenuAnalysisPCAOnCols_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Analysis -PLSOnRows
-      mi = new MenuItem("PLS on rows");
-      mi.Click += new EventHandler(EhMenuAnalysisPLSOnRows_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-      
-      // Analysis -PLSOnCols
-      mi = new MenuItem("PLS on columns");
-      mi.Click += new EventHandler(EhMenuAnalysisPLSOnCols_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-    }
-
-    #endregion // Menu definition
-
-    #region Menu functions
-
-
-  
-    #endregion
+ 
+   
 
     #region Menu Handler
 
-    // ******************************************************************
-    // ******************************************************************
-    // File Menu
-    // ******************************************************************
-    // ******************************************************************
-  
-    protected void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
-    {
-    }
-
-    protected void EhMenuFilePrintPreview_OnClick(object sender, System.EventArgs e)
-    {
-    }
-
-    protected void EhMenuFilePrint_OnClick(object sender, System.EventArgs e)
-    {
-    }
+   
 
     protected void EhMenuFileSaveTableAs_OnClick(object sender, System.EventArgs e)
     {
@@ -792,10 +439,6 @@ namespace Altaxo.Worksheet.GUI
     // Edit (Popup)
     // ******************************************************************
     // ****************************************************************** 
-    protected void EhMenuEdit_OnPopup(object sender, System.EventArgs e)
-    {
-      this.m_MenuItemEditRemove.Enabled = (this.SelectedDataColumns.Count>0 || this.SelectedDataRows.Count>0);
-    }
 
     protected void EhMenuEditRemove_OnClick(object sender, System.EventArgs e)
     {
@@ -875,12 +518,7 @@ namespace Altaxo.Worksheet.GUI
     // Column (Popup)
     // ******************************************************************
     // ******************************************************************
-    protected void EhMenuColumn_OnPopup(object sender, System.EventArgs e)
-    {
-      this.m_MenuItemColumnSetColumnValues.Enabled = 1==this.SelectedDataColumns.Count;
-      this.m_MenuItemColumnRename.Enabled = 1==this.SelectedDataColumns.Count;
-      this.m_MenuItemColumnSetGroupNumber.Enabled = this.SelectedDataColumns.Count>=1;
-    }
+   
 
     protected void EhMenuColumnSetColumnValues_OnClick(object sender, System.EventArgs e)
     {
@@ -2209,7 +1847,6 @@ namespace Altaxo.Worksheet.GUI
         if(null!=_view)
         {
           _view.WorksheetController = this;
-          _view.TableViewMenu = m_MainMenu;
           _view.TableViewWindow.Controls.Add(_cellEditControl);
 
       
@@ -2225,10 +1862,6 @@ namespace Altaxo.Worksheet.GUI
           
           // Simulate a SizeChanged event 
           this.EhView_TableAreaSizeChanged(new EventArgs());
-
-          // set the menu of this class
-          _view.TableViewMenu = this.m_MainMenu;
-
         }
       }
     }

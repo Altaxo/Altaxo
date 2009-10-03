@@ -962,7 +962,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />
-    <Folder Include="Main\GUI\MWControls\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
