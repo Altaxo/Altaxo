@@ -27,7 +27,18 @@ using Altaxo.Graph.Gdi.CS;
 
 namespace Altaxo.Gui.Graph
 {
-  [UserControllerForObject(typeof(G2DCartesicCoordinateSystem),101)]
+	#region Interfaces
+
+	public interface IG2DCartesicCSView
+	{
+		bool ExchangeXY { get; set; }
+		bool ReverseX { get; set; }
+		bool ReverseY { get; set; }
+	}
+
+	#endregion
+
+	[UserControllerForObject(typeof(G2DCartesicCoordinateSystem),101)]
   [ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
   public class G2DCartesicCSController : IMVCAController
   {

@@ -32,10 +32,8 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Summary description for PLSPredictValueControl.
   /// </summary>
-  public class PLSPredictValueControl : System.Windows.Forms.UserControl
+	public class PLSPredictValueControl : System.Windows.Forms.UserControl, IPLSPredictValueView
   {
-    PLSPredictValueController _controller;
-
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.ComboBox cbCalibrationModelTable;
@@ -126,10 +124,6 @@ namespace Altaxo.Gui.Worksheet
     #endregion
 
 
-    public PLSPredictValueController Controller
-    {
-      set { _controller = value; }
-    }
 
     public void InitializeCalibrationModelTables(string[] tables)
     {

@@ -25,13 +25,26 @@ using Altaxo.Gui;
 
 namespace Altaxo.Gui.Worksheet
 {
-  /// <summary>
+	#region Interfaces
+
+	public interface IPLSPredictValueView
+	{
+		void InitializeCalibrationModelTables(string[] tables);
+		void InitializeDestinationTables(string[] tables);
+		int GetCalibrationTableChoice();
+		int GetDestinationTableChoice();
+	}
+
+	#endregion
+
+	/// <summary>
   /// Summary description for PLSPredictValueController.
   /// </summary>
-  public class PLSPredictValueController : IApplyController
+	[ExpectedTypeOfView(typeof(IPLSPredictValueView))]
+  public class PLSPredictValueController : IMVCAController
 
   {
-    PLSPredictValueControl _view;
+    IPLSPredictValueView _view;
     string[] _calibrationTables;
     string[] _destinationTables;
 
@@ -61,19 +74,15 @@ namespace Altaxo.Gui.Worksheet
       return (string[])result.ToArray(typeof(string));
     }
    
-    public PLSPredictValueControl View
+    public IPLSPredictValueView View
     {
       get { return _view; }
       set
       {
-        if(null!=_view)
-          _view.Controller = null;
-        
         _view = value;
 
         if(null!=_view)
         {
-          _view.Controller = this;
           SetElements(false); // set only the view elements, dont't initialize the variables
         }
       }
@@ -103,5 +112,26 @@ namespace Altaxo.Gui.Worksheet
     #endregion
 
 
-  }
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				this.View = value as IPLSPredictValueView;
+			}
+		}
+
+		public object ModelObject
+		{
+			get { return null; }
+		}
+
+		#endregion
+	}
 }

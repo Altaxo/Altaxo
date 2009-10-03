@@ -28,6 +28,8 @@ using System.Data;
 using System.Windows.Forms;
 using Altaxo.Gui;
 
+using Altaxo.Gui.Graph.Scales.Rescaling;
+
 namespace Altaxo.Gui.Graph
 {
   /// <summary>
@@ -326,38 +328,5 @@ namespace Altaxo.Gui.Graph
     }
   }
 
-  public interface IOrgEndSpanView
-  {
-    IOrgEndSpanViewEventReceiver Controller { get; set; }
-
-    void SetLabel1(string txt);
-    void SetLabel2(string txt);
-    void SetLabel3(string txt);
-    void SetChoice1(string[] choices, int selected);
-    void SetChoice2(string[] choices, int selected);
-    void SetChoice3(string[] choices, int selected);
-    void SetValue1(string txt);
-    void SetValue2(string txt);
-    void SetValue3(string txt);
-
-    void EnableChoice1(bool enable);
-    void EnableChoice2(bool enable);
-    void EnableChoice3(bool enable);
-
-    void EnableValue1(bool enable);
-    void EnableValue2(bool enable);
-    void EnableValue3(bool enable);
-
-  }
-  public interface IOrgEndSpanViewEventReceiver
-  {
-    void EhChoice1Changed(string txt, int selected);
-    void EhChoice2Changed(string txt, int selected);
-    void EhChoice3Changed(string txt, int selected);
-    bool EhValue1Changed(string txt);
-    bool EhValue2Changed(string txt);
-    bool EhValue3Changed(string txt);
-    bool EhValue4Changed(string txt);
-    bool EhValue5Changed(string txt);
-  }
+ 
 }

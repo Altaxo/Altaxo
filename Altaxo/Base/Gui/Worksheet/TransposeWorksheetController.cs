@@ -25,13 +25,32 @@ using Altaxo.Gui;
 
 namespace Altaxo.Gui.Worksheet
 {
-  /// <summary>
+	#region Interfaces
+
+	public interface ITransposeWorksheetView
+	{
+		
+    /// <summary>
+    /// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
+    /// </summary>
+		int DataColumnsMoveToPropertyColumns { get; set; }
+
+		 /// <summary>
+    /// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
+    /// </summary>
+		int PropertyColumnsMoveToDataColumns { get; set; }
+	}
+
+	#endregion
+
+	/// <summary>
   /// Summary description for TransposeWorksheetController.
   /// </summary>
+	[ExpectedTypeOfView(typeof(ITransposeWorksheetView))]
   public class TransposeWorksheetController : IMVCAController
   {
     Altaxo.Data.DataTable _table;
-    TransposeWorksheetControl _view;
+    ITransposeWorksheetView _view;
 
     public TransposeWorksheetController(Altaxo.Data.DataTable table)
     {
@@ -59,7 +78,7 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        _view = value as TransposeWorksheetControl;
+        _view = value as ITransposeWorksheetView;
       }
     }
 

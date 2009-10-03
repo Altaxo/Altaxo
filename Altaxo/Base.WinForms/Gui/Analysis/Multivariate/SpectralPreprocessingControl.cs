@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Summary description for SpectralPreprocessingControl.
   /// </summary>
-  public class SpectralPreprocessingControl : System.Windows.Forms.UserControl
+	public class SpectralPreprocessingControl : System.Windows.Forms.UserControl, ISpectralPreprocessingView
   {
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
@@ -53,7 +53,11 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public SpectralPreprocessingController Controller;
+		public event Action<SpectralPreprocessingMethod> MethodChanged;
+
+		public event Action<int> DetrendingChanged;
+
+		public event Action<bool> EnsembleScaleChanged;
 
     public SpectralPreprocessingControl()
     {
@@ -288,64 +292,71 @@ namespace Altaxo.Gui.Worksheet
 
     private void _rbMethodNone_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbMethodNone.Checked)
-        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.None);
+      if(MethodChanged!=null && _rbMethodNone.Checked)
+        MethodChanged(SpectralPreprocessingMethod.None);
     }
 
     private void _rbMethodMSC_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbMethodMSC.Checked)
-        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.MultiplicativeScatteringCorrection);
+			if (MethodChanged != null && _rbMethodMSC.Checked)
+        MethodChanged(SpectralPreprocessingMethod.MultiplicativeScatteringCorrection);
     }
 
     private void _rbMethodSNV_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbMethodSNV.Checked)
-        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.StandardNormalVariate);
+			if (MethodChanged != null && _rbMethodSNV.Checked)
+        MethodChanged(SpectralPreprocessingMethod.StandardNormalVariate);
     }
 
     private void _rbMethod1stDer_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbMethod1stDer.Checked)
-        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.FirstDerivative);
+			if (MethodChanged != null && _rbMethod1stDer.Checked)
+        MethodChanged(SpectralPreprocessingMethod.FirstDerivative);
     }
 
     private void _rbMethod2ndDer_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbMethod2ndDer.Checked)
-        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.SecondDerivative);
+			if (MethodChanged != null && _rbMethod2ndDer.Checked)
+        MethodChanged(SpectralPreprocessingMethod.SecondDerivative);
     }
 
     private void _rbDetrendingNone_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbDetrendingNone.Checked)
-        Controller.EhView_DetrendingChanged(-1);
+      if(DetrendingChanged!=null && _rbDetrendingNone.Checked)
+        DetrendingChanged(-1);
     }
 
     private void _rbDetrendingZero_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbDetrendingZero.Checked)
-        Controller.EhView_DetrendingChanged(0);
+			if (DetrendingChanged != null && _rbDetrendingZero.Checked)
+        DetrendingChanged(0);
     }
 
     private void _rbDetrending1st_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbDetrending1st.Checked)
-        Controller.EhView_DetrendingChanged(1);
+			if (DetrendingChanged != null && _rbDetrending1st.Checked)
+        DetrendingChanged(1);
     }
 
     private void _rbDetrending2nd_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null && _rbDetrending2nd.Checked)
-        Controller.EhView_DetrendingChanged(2);
+			if (DetrendingChanged != null && _rbDetrending2nd.Checked)
+        DetrendingChanged(2);
     }
 
     private void _chkEnsembleScale_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(Controller!=null)
-        Controller.EhView_EnsembleScaleChanged(_chkEnsembleScale.Checked);
+			if (EnsembleScaleChanged != null)
+        EnsembleScaleChanged(_chkEnsembleScale.Checked);
     }
 
     #endregion
-  }
+
+		#region ISpectralPreprocessingView Members
+
+
+	
+
+		#endregion
+	}
 }

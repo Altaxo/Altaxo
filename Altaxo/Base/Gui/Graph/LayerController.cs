@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Graph
           if (null == _layerPositionController)
           {
             _layerPositionController = new LayerPositionController(_doc);
-            _layerPositionController.ViewObject = new LayerPositionControl();
+						Current.Gui.FindAndAttachControlTo(_layerPositionController);
           }
           _currentController = _layerPositionController;
           View.CurrentContent = _layerPositionController.ViewObject;
@@ -647,9 +647,6 @@ namespace Altaxo.Gui.Graph
     public static bool ShowDialog(XYPlotLayer layer, string currentPage, CSLineID currentEdge)
     {
       LayerController ctrl = new LayerController(layer, currentPage, currentEdge);
-      LayerControl view = new LayerControl();
-      ctrl.View = view;
-
       return Current.Gui.ShowDialog(ctrl, layer.Name, true);
     }
 

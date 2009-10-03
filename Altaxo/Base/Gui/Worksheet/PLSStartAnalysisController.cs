@@ -26,13 +26,32 @@ using Altaxo.Gui;
 
 namespace Altaxo.Gui.Worksheet
 {
-  /// <summary>
+	#region Interfaces
+
+	public interface IPLSStartAnalysisView
+	{
+		void InitializeNumberOfFactors(int numFactors);
+		void InitializeAnalysisMethod(string[] methods, int actMethod);
+		void InitializeCrossPressCalculation(CrossPRESSCalculationType val);
+
+
+		event Action<int> MaxNumberOfFactorsChanged;
+		event Action<CrossPRESSCalculationType>	CrossValidationSelected;
+		event Action<int> AnalysisMethodChanged;
+
+
+	}
+
+	#endregion
+
+	/// <summary>
   /// Summary description for PLSStartAnalysisController.
   /// </summary>
-  public class PLSStartAnalysisController : IApplyController
+	[ExpectedTypeOfView(typeof(IPLSStartAnalysisView))]
+  public class PLSStartAnalysisController : IMVCAController
   {
     MultivariateAnalysisOptions _doc;
-    PLSStartAnalysisControl _view;
+    IPLSStartAnalysisView _view;
 
     System.Collections.ArrayList _methoddictionary = new System.Collections.ArrayList();
 
@@ -51,22 +70,29 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
-    public PLSStartAnalysisControl View
+    public IPLSStartAnalysisView View
     {
       get { return _view; }
       set 
       {
-        
-        if(null!=_view)
-          _view.Controller = null;
+
+				if (null != _view)
+				{
+					_view.AnalysisMethodChanged -= EhView_AnalysisMethodChanged;
+					_view.CrossValidationSelected -= EhView_CrossValidationSelected;
+					_view.MaxNumberOfFactorsChanged -= EhView_MaxNumberOfFactorsChanged;
+				}
         
         _view = value;
 
         if(null!=_view)
         {
-          _view.Controller = this;
           SetElements(false); // set only the view elements, dont't initialize the variables
-        }
+
+					_view.AnalysisMethodChanged += EhView_AnalysisMethodChanged;
+					_view.CrossValidationSelected += EhView_CrossValidationSelected;
+					_view.MaxNumberOfFactorsChanged += EhView_MaxNumberOfFactorsChanged;
+				}
       }
     }
 
@@ -80,6 +106,7 @@ namespace Altaxo.Gui.Worksheet
     {
       _doc.MaxNumberOfFactors = numFactors;
     }
+
     public void EhView_CrossValidationSelected(CrossPRESSCalculationType val)
     {
       _doc.CrossPRESSCalculation = val; 
@@ -148,5 +175,26 @@ namespace Altaxo.Gui.Worksheet
     }
 
     #endregion
-  }
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				this.View = value as IPLSStartAnalysisView;
+			}
+		}
+
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
+
+		#endregion
+	}
 }

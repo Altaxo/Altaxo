@@ -26,12 +26,27 @@ using Altaxo.Gui;
 
 namespace Altaxo.Gui.Worksheet
 {
-  /// <summary>
+	#region Interfaces
+
+	public interface ISpectralPreprocessingView
+	{
+		void InitializeMethod(SpectralPreprocessingMethod method);
+		void InitializeDetrending(int detrending);
+		void InitializeEnsembleScale(bool ensScale);
+
+		event Action<SpectralPreprocessingMethod> MethodChanged;
+		event Action<int> DetrendingChanged;
+		event Action<bool> EnsembleScaleChanged;
+	}
+
+	#endregion
+	/// <summary>
   /// Controls the SpectralPreprocessingControl GUI for choosing <see cref="SpectralPreprocessingOptions" />
   /// </summary>
-  public class SpectralPreprocessingController : IApplyController
+	[ExpectedTypeOfView(typeof(ISpectralPreprocessingView))]
+  public class SpectralPreprocessingController : IMVCAController
   {
-    SpectralPreprocessingControl _view;
+    ISpectralPreprocessingView _view;
     SpectralPreprocessingOptions _doc;
     
 
@@ -57,21 +72,28 @@ namespace Altaxo.Gui.Worksheet
     /// <summary>
     /// Get/sets the GUI element that this controller controls.
     /// </summary>
-    public SpectralPreprocessingControl View
+    public ISpectralPreprocessingView View
     {
       get { return _view; }
       set
       {
-        if(null!=_view)
-          _view.Controller = null;
+				if (null != _view)
+				{
+					_view.MethodChanged -= EhView_MethodChanged;
+					_view.DetrendingChanged -= EhView_DetrendingChanged;
+					_view.EnsembleScaleChanged -= EhView_EnsembleScaleChanged;
+				}
         
         _view = value;
 
         if(null!=_view)
         {
-          _view.Controller = this;
           SetElements(false); // set only the view elements, dont't initialize the variables
-        }
+				
+					_view.MethodChanged += EhView_MethodChanged;
+					_view.DetrendingChanged += EhView_DetrendingChanged;
+					_view.EnsembleScaleChanged += EhView_EnsembleScaleChanged;
+				}
       }
     }
 
@@ -107,5 +129,26 @@ namespace Altaxo.Gui.Worksheet
     }
 
     #endregion
-  }
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				this.View = value as ISpectralPreprocessingView;
+			}
+		}
+
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
+
+		#endregion
+	}
 }

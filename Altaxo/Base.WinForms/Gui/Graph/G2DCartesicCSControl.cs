@@ -78,10 +78,5 @@ namespace Altaxo.Gui.Graph
     #endregion
   }
 
-  public interface IG2DCartesicCSView
-  {
-    bool ExchangeXY { get; set; }
-    bool ReverseX { get; set; }
-    bool ReverseY { get; set; }
-  }
+ 
 }

@@ -52,6 +52,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Gui\Analysis\Multivariate\PLSPredictValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Analysis\Multivariate\PLSStartAnalysisControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Analysis\Multivariate\SpectralPreprocessingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -71,6 +80,9 @@
       <DependentUpon>ParameterSetControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Analysis\SavitzkyGolayParameterControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersControl.cs">
@@ -103,6 +115,90 @@
     <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.Designer.cs">
+      <DependentUpon>ErrorBarPlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\FillToCurvePlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\FillToCurvePlotStyleControl.Designer.cs">
+      <DependentUpon>FillToCurvePlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\FitPolynomialDialogControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\FunctionPlotDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\FunctionPlotDataControl.Designer.cs">
+      <DependentUpon>FunctionPlotDataControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\G2DCartesicCSControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\G2DCartesicCSControl.Designer.cs">
+      <DependentUpon>G2DCartesicCSControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\GraphExportOptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\GraphExportOptionsControl.Designer.cs">
+      <DependentUpon>GraphExportOptionsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ImageGraphicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ImageGraphicControl.Designer.cs">
+      <DependentUpon>ImageGraphicControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LayerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\LayerPositionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\LineGraphicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\LineGraphicControl.Designer.cs">
+      <DependentUpon>LineGraphicControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LineScatterLayerContentsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\LineScatterPlotDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\OrgEndSpanControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PlotGroupCollectionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PlotGroupCollectionControl.Designer.cs">
+      <DependentUpon>PlotGroupCollectionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PlottingRangeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PlottingRangeControl.Designer.cs">
+      <DependentUpon>PlottingRangeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.Designer.cs">
+      <DependentUpon>PositionSizeRotationScaleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PrintableAreaSetupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PrintableAreaSetupControl.Designer.cs">
+      <DependentUpon>PrintableAreaSetupControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -121,14 +217,71 @@
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.Designer.cs">
       <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\ShapeGraphicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ShapeGraphicControl.Designer.cs">
+      <DependentUpon>ShapeGraphicControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\SingleColumnChoiceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\TextGraphicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\TextGraphicControl.Designer.cs">
+      <DependentUpon>TextGraphicControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\TitleFormatLayerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\WaterfallTransformControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\WaterfallTransformControl.Designer.cs">
+      <DependentUpon>WaterfallTransformControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYAxisLabelStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYColumnPlotDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYGridStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotGroupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotLabelStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotLineStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotScatterStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Worksheet\InterpolationControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Worksheet\TransposeWorksheetControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Gui\Analysis\Multivariate\PLSPredictValueControl.resx">
+      <DependentUpon>PLSPredictValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Analysis\Multivariate\PLSStartAnalysisControl.resx">
+      <DependentUpon>PLSStartAnalysisControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Analysis\Multivariate\SpectralPreprocessingControl.resx">
+      <DependentUpon>SpectralPreprocessingControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\FitElementControl.resx">
       <DependentUpon>FitElementControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -146,6 +299,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.resx">
       <DependentUpon>ParameterSetElementControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Analysis\SavitzkyGolayParameterControl.resx">
+      <DependentUpon>SavitzkyGolayParameterControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
       <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
@@ -168,6 +324,57 @@
     <EmbeddedResource Include="Gui\Graph\DensityImagePlotStyleControl.resx">
       <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ErrorBarPlotStyleControl.resx">
+      <DependentUpon>ErrorBarPlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\FillToCurvePlotStyleControl.resx">
+      <DependentUpon>FillToCurvePlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\FitPolynomialDialogControl.resx">
+      <DependentUpon>FitPolynomialDialogControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\FunctionPlotDataControl.resx">
+      <DependentUpon>FunctionPlotDataControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\G2DCartesicCSControl.resx">
+      <DependentUpon>G2DCartesicCSControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\GraphExportOptionsControl.resx">
+      <DependentUpon>GraphExportOptionsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ImageGraphicControl.resx">
+      <DependentUpon>ImageGraphicControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\LayerControl.resx">
+      <DependentUpon>LayerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\LayerPositionControl.resx">
+      <DependentUpon>LayerPositionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\LineGraphicControl.resx">
+      <DependentUpon>LineGraphicControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\LineScatterLayerContentsControl.resx">
+      <DependentUpon>LineScatterLayerContentsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\LineScatterPlotDataControl.resx">
+      <DependentUpon>LineScatterPlotDataControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\OrgEndSpanControl.resx">
+      <DependentUpon>OrgEndSpanControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PlotGroupCollectionControl.resx">
+      <DependentUpon>PlotGroupCollectionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PlottingRangeControl.resx">
+      <DependentUpon>PlottingRangeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PositionSizeRotationScaleControl.resx">
+      <DependentUpon>PositionSizeRotationScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PrintableAreaSetupControl.resx">
+      <DependentUpon>PrintableAreaSetupControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.resx">
       <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -177,12 +384,51 @@
     <EmbeddedResource Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.resx">
       <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ShapeGraphicControl.resx">
+      <DependentUpon>ShapeGraphicControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\SingleColumnChoiceControl.resx">
+      <DependentUpon>SingleColumnChoiceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\TextGraphicControl.resx">
+      <DependentUpon>TextGraphicControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\TitleFormatLayerControl.resx">
       <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\WaterfallTransformControl.resx">
+      <DependentUpon>WaterfallTransformControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYAxisLabelStyleControl.resx">
+      <DependentUpon>XYAxisLabelStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYColumnPlotDataControl.resx">
+      <DependentUpon>XYColumnPlotDataControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYGridStyleControl.resx">
+      <DependentUpon>XYGridStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotGroupControl.resx">
+      <DependentUpon>XYPlotGroupControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotLabelStyleControl.resx">
+      <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotLineStyleControl.resx">
+      <DependentUpon>XYPlotLineStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotScatterStyleControl.resx">
+      <DependentUpon>XYPlotScatterStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotStyleCollectionControl.resx">
+      <DependentUpon>XYPlotStyleCollectionControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Worksheet\InterpolationControl.resx">
       <DependentUpon>InterpolationControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\TransposeWorksheetControl.resx">
+      <DependentUpon>TransposeWorksheetControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

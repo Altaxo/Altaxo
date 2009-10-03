@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Summary description for TransposeWorksheetControl.
   /// </summary>
-  public class TransposeWorksheetControl : System.Windows.Forms.UserControl
+	public class TransposeWorksheetControl : System.Windows.Forms.UserControl, ITransposeWorksheetView
   {
     private MinMaxIntegerControl ctrlNumMovedDataCols;
     private MinMaxIntegerControl ctrlNumMovedPropCols;

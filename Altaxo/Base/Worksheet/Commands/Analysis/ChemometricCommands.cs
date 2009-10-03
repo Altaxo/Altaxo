@@ -557,37 +557,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
       options.CrossPRESSCalculation = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
 
       PLSStartAnalysisController ctrlAA = new PLSStartAnalysisController(options);
-      PLSStartAnalysisControl    viewAA = new PLSStartAnalysisControl();
-      ctrlAA.View = viewAA;
+			Current.Gui.FindAndAttachControlTo(ctrlAA);
 
       preprocessOptions = new SpectralPreprocessingOptions();
       SpectralPreprocessingController  ctrlBB = new SpectralPreprocessingController(preprocessOptions);
-      SpectralPreprocessingControl     viewBB = new SpectralPreprocessingControl();
-      ctrlBB.View = viewBB;
+			Current.Gui.FindAndAttachControlTo(ctrlBB);
 
       TabbedElementController tabController = new TabbedElementController();
-      tabController.AddTab("Factors",ctrlAA,viewAA);
-      tabController.AddTab("Preprocessing", ctrlBB, viewBB);
+      tabController.AddTab("Factors",ctrlAA, ctrlAA.ViewObject);
+      tabController.AddTab("Preprocessing", ctrlBB, ctrlBB.ViewObject);
       if (Current.Gui.ShowDialog(tabController, "Enter analysis parameters", false))
       {
         options = ctrlAA.Doc;
         return true;
       }
-
-      /*
-      TabbedDialogController dialogctrl = new TabbedDialogController("PLS Analysis",false);
-      dialogctrl.AddTab("Factors",ctrlAA,viewAA);
-      dialogctrl.AddTab("Preprocessing",ctrlBB,viewBB);
-      TabbedDialogView  dialogview = new TabbedDialogView();
-      dialogctrl.View = dialogview;
-
-      if(dialogctrl.ShowDialog(Current.MainWindow))
-      {
-        options = ctrlAA.Doc;
-
-        return true;
-      }
-      */
       return false;
     }
 
@@ -601,13 +584,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static bool QuestCalibrationModelAndDestinationTable(out string modelTableName, out string destinationTableName)
     {
       PLSPredictValueController ctrl = new PLSPredictValueController();
-      PLSPredictValueControl viewctrl = new PLSPredictValueControl();
-      ctrl.View = viewctrl;
 
-      DialogShellController dlgctrl = new DialogShellController(
-        new DialogShellView(viewctrl),ctrl);
-
-      if(dlgctrl.ShowDialog(Current.MainWindow))
+      if(Current.Gui.ShowDialog(ctrl, "Select model and calibration table"))
       {
         modelTableName = ctrl.SelectedCalibrationTableName;
         destinationTableName = ctrl.SelectedDestinationTableName;

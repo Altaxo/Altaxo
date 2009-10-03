@@ -118,9 +118,7 @@ namespace Altaxo.Worksheet.Commands
 
     public static void Transpose(WorksheetController ctrl)
     {
-      TransposeWorksheetControl transposeview = new TransposeWorksheetControl();
       TransposeWorksheetController transposectrl = new TransposeWorksheetController(ctrl.DataTable);
-      transposectrl.ViewObject = transposeview;
       Current.Gui.ShowDialog(transposectrl, "Transpose worksheet", false);
     }
     
