@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Scripting
       if(bInit)
       {
         _scriptController = new ScriptController(m_TempScript);
-        _scriptController.ViewObject = new ScriptControl();
+				Current.Gui.FindAndAttachControlTo(_scriptController);
 
         //View.ScriptName = m_TempScript.ScriptName;
         //_scriptController.ScriptCursorLocation = m_TempScript.UserAreaScriptOffset;

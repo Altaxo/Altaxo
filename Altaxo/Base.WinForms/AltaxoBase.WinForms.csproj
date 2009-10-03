@@ -265,6 +265,15 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Scripting\FitFunctionScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Scripting\PureScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Scripting\ScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Gui\Worksheet\InterpolationControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -423,6 +432,15 @@
     <EmbeddedResource Include="Gui\Graph\XYPlotStyleCollectionControl.resx">
       <DependentUpon>XYPlotStyleCollectionControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\FitFunctionScriptControl.resx">
+      <DependentUpon>FitFunctionScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\PureScriptControl.resx">
+      <DependentUpon>PureScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\ScriptControl.resx">
+      <DependentUpon>ScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Worksheet\InterpolationControl.resx">
       <DependentUpon>InterpolationControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -444,7 +462,6 @@
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />
     <Folder Include="Gui\Common\Drawing\" />
-    <Folder Include="Gui\Scripting\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

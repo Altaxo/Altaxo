@@ -466,17 +466,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\Scripting\FitFunctionNameAndCategoryController.cs" />
-    <Compile Include="Gui\Scripting\FitFunctionScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Scripting\FitFunctionScriptController.cs" />
-    <Compile Include="Gui\Scripting\PureScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Scripting\PureScriptController.cs" />
-    <Compile Include="Gui\Scripting\ScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Scripting\ScriptController.cs" />
     <Compile Include="Gui\Scripting\ScriptExecutionDialog.cs">
       <SubType>Form</SubType>
@@ -800,18 +791,6 @@
     <EmbeddedResource Include="Gui\Common\TypeAndInstanceControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TypeAndInstanceControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Scripting\FitFunctionScriptControl.resx">
-      <DependentUpon>FitFunctionScriptControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Scripting\PureScriptControl.resx">
-      <DependentUpon>PureScriptControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Scripting\ScriptControl.resx">
-      <DependentUpon>ScriptControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\ScriptExecutionDialog.resx">
       <DependentUpon>ScriptExecutionDialog.cs</DependentUpon>
