@@ -33,8 +33,6 @@ namespace Altaxo.Gui.Common.Drawing
 {
   public partial class PenAllPropertiesControl : UserControl, IMVCAController
   {
-    
-
     public PenAllPropertiesControl()
     {
       InitializeComponent();

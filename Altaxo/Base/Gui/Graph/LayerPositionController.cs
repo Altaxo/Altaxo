@@ -74,6 +74,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for LayerPositionController.
   /// </summary>
+	[ExpectedTypeOfView(typeof(ILayerPositionView))]
   public class LayerPositionController : ILayerPositionViewEventSink,  IMVCAController
   {
     // the view

@@ -73,8 +73,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public void EhView_ShowFullPenDialog()
     {
-      PenAllPropertiesControl ctrl = new PenAllPropertiesControl();
-      ctrl.Pen = _tempDoc;
+      var ctrl = new PenAllPropertiesController(_tempDoc);
       Current.Gui.ShowDialog(ctrl, "Pen properties");
     }
 

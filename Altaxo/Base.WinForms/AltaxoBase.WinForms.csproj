@@ -88,6 +88,105 @@
     <Compile Include="Gui\Common\BooleanValueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Common\CheckableGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\CollapsibleGroupBox.cs" />
+    <Compile Include="Gui\Common\CustomColorDialog\AlphaSlider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\CustomColorDialog\CustomColorDialog.cs" />
+    <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs" />
+    <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.Designer.cs">
+      <DependentUpon>BrushAllPropertiesControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushColorComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushTypeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\DashCapComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\DashStyleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontControlsGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontFamilyComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontSizeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\GradientFocusComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\GradientScaleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LinearGradientModeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LinearGradientShapeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineCapComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineCapSizeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineJoinComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineThicknessComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\MiterLimitComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.Designer.cs">
+      <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenControlsGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\RotationComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\TextureImageComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\WrapModeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\EnumFlagControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -144,6 +243,9 @@
     </Compile>
     <Compile Include="Gui\Graph\AxisScaleControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Graph\BackgroundStyleControl.cs">
       <SubType>UserControl</SubType>
@@ -216,6 +318,9 @@
     </Compile>
     <Compile Include="Gui\Graph\LineScatterPlotDataControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Graph\OrgEndSpanControl.cs">
       <SubType>UserControl</SubType>
@@ -360,6 +465,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\BooleanValueControl.resx">
       <DependentUpon>BooleanValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\Drawing\BrushAllPropertiesControl.resx">
+      <DependentUpon>BrushAllPropertiesControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.resx">
+      <DependentUpon>ColorTypeThicknessPenControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\Drawing\PenAllPropertiesControl.resx">
+      <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\EnumFlagControl.resx">
       <DependentUpon>EnumFlagControl.cs</DependentUpon>
@@ -540,8 +654,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Gui\Common\CustomColorDialog\" />
-    <Folder Include="Gui\Common\Drawing\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

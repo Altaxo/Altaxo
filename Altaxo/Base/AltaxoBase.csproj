@@ -204,92 +204,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Common\ControlViewElement.cs" />
-    <Compile Include="Gui\Common\CustomColorDialog\AlphaSlider.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\CustomColorDialog\CustomColorDialog.cs" />
-    <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs" />
-    <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.Designer.cs">
-      <DependentUpon>BrushAllPropertiesControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\GradientFocusComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\GradientScaleComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\LinearGradientShapeComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\LineCapSizeComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\BrushColorComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenController.cs" />
-    <Compile Include="Gui\Common\Drawing\DashCapComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\DashStyleComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\ColorComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\LineCapComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\LineJoinComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\LineThicknessComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\MiterLimitComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.Designer.cs">
-      <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\PenControlsGlue.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\BrushTypeComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\RotationComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\TextureImageComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\WrapModeComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\TabbedElementController.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
     <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
-    <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
     <Compile Include="Gui\Graph\ShapeGraphicController.cs" />
     <Compile Include="Gui\Graph\XYAxisLabelStyleController.cs" />
@@ -730,18 +650,6 @@
       <DependentUpon>DialogShellView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Common\Drawing\BrushAllPropertiesControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BrushAllPropertiesControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ColorTypeThicknessPenControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Common\Drawing\PenAllPropertiesControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\ScriptExecutionDialog.resx">
       <DependentUpon>ScriptExecutionDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -986,34 +894,12 @@
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
     <Compile Include="Gui\Common\BooleanValueController.cs" />
-    <Compile Include="Gui\Common\CheckableGroupBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\CollapsibleGroupBox.cs">
-    </Compile>
     <Compile Include="Gui\Common\DialogShellController.cs" />
     <Compile Include="Gui\Common\DialogShellView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\BrushController.cs" />
-    <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\FontControlsGlue.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\FontFamilyComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\FontSizeComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\LinearGradientModeComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Common\EnumFlagController.cs" />
     <Compile Include="Gui\Common\EquallySpacedIntervalController.cs" />
     <Compile Include="Gui\Common\IntegerAndComboBoxController.cs" />
@@ -1033,9 +919,6 @@
     <Compile Include="Gui\Graph\AxisLineStyleController.cs" />
     <Compile Include="Gui\Graph\AxisLinkController.cs" />
     <Compile Include="Gui\Graph\AxisScaleController.cs" />
-    <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
     <Compile Include="Gui\Graph\FillToCurvePlotStyleController.cs" />
@@ -1105,6 +988,9 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Gui\Common\CustomColorDialog\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
