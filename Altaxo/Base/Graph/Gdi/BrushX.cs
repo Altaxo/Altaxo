@@ -668,6 +668,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+		private Bitmap GetDefaultTextureBitmap()
+		{
+			Bitmap result = new Bitmap(3, 3, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			result.SetPixel(1, 1, Color.Black);
+			return result;
+		}
 
     public Brush Brush
     {
@@ -722,7 +728,7 @@ namespace Altaxo.Graph.Gdi
               Image img = null != _textureImage ? _textureImage.GetImage() : null;
               if (img == null)
               {
-                img = Current.MainWindow.Icon.ToBitmap();
+								img = GetDefaultTextureBitmap();
               }
               TextureBrush tb = new TextureBrush(img);
               tb.WrapMode = this._wrapMode;

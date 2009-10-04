@@ -45,27 +45,12 @@ namespace Altaxo.Graph.Gdi
 		{
 			GraphDocumentPrintTask printTask = new GraphDocumentPrintTask(doc);
 			printTask.IsPrintPreview = true;
-			try
-			{
-				System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-				Current.PrintingService.PrintDocument.PrintPage += printTask.EhPrintPage;
-				Current.PrintingService.PrintDocument.QueryPageSettings += printTask.EhQueryPageSettings;
-				dlg.Document = Current.PrintingService.PrintDocument;
-				dlg.ShowDialog(Current.MainWindow);
-				dlg.Dispose();
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Current.Gui.ErrorMessageBox(ex.ToString());
-			}
-			finally
-			{
-				Current.PrintingService.PrintDocument.PrintPage -= printTask.EhPrintPage;
-				Current.PrintingService.PrintDocument.QueryPageSettings -= printTask.EhQueryPageSettings;
-			}
-			return false;
+			return Current.Gui.ShowPrintPreviewDialog(new PrintPageEventHandler(printTask.EhPrintPage), new QueryPageSettingsEventHandler(printTask.EhQueryPageSettings));
 		}
+
+	
+
+
 		/// <summary>
 		/// Shows the dialog to set the printable size of the graph.
 		/// </summary>

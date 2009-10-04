@@ -22,28 +22,28 @@ namespace Altaxo.Gui.Graph
 
 		public void SetImageFormat(Altaxo.Collections.SelectableListNodeList list)
 		{
-			GUIFactoryService.InitComboBox(_cbImageFormat, list);
+			GuiHelper.UpdateList(_cbImageFormat, list);
 		}
 
 		public void SetPixelFormat(Altaxo.Collections.SelectableListNodeList list)
 		{
-			GUIFactoryService.InitComboBox(_cbPixelFormat, list);
+			GuiHelper.UpdateList(_cbPixelFormat, list);
 		}
 
 		public void SetExportArea(Altaxo.Collections.SelectableListNodeList list)
 		{
-			GUIFactoryService.InitComboBox(_cbExportArea, list);
+			GuiHelper.UpdateList(_cbExportArea, list);
 		}
 
 		public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
 		{
-			GUIFactoryService.InitComboBox(_cbSourceResolution, list);
+			GuiHelper.UpdateList(_cbSourceResolution, list);
 
 		}
 
 		public void SetDestinationDpi(Altaxo.Collections.SelectableListNodeList list)
 		{
-			GUIFactoryService.InitComboBox(_cbDestinationResolution, list);
+			GuiHelper.UpdateList(_cbDestinationResolution, list);
 		}
 
     public bool EnableClipboardFormat
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetClipboardFormat(Altaxo.Collections.SelectableListNodeList list)
     {
-      GUIFactoryService.InitComboBox(_cbClipboardFormat, list);
+			GuiHelper.UpdateList(_cbClipboardFormat, list);
     }
 
 		public string SourceDpiResolution
@@ -87,22 +87,22 @@ namespace Altaxo.Gui.Graph
 
 		private void EhImageFormatSelected(object sender, EventArgs e)
 		{
-			GUIFactoryService.SynchronizeSelectableListNodes(_cbImageFormat);
+			GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
 		}
 
 		private void EhPixelFormatSelected(object sender, EventArgs e)
 		{
-			GUIFactoryService.SynchronizeSelectableListNodes(_cbPixelFormat);
+			GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
 		}
 
 		private void EhExportAreaSelected(object sender, EventArgs e)
 		{
-			GUIFactoryService.SynchronizeSelectableListNodes(_cbExportArea);
+			GuiHelper.SynchronizeSelectionFromGui(_cbExportArea);
 		}
 
     private void EhClipboardFormatSelected(object sender, EventArgs e)
     {
-      GUIFactoryService.SynchronizeSelectableListNodes(_cbClipboardFormat);
+			GuiHelper.SynchronizeSelectionFromGui(_cbClipboardFormat);
     }
 	}
 }

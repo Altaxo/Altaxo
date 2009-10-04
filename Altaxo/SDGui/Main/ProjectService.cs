@@ -289,7 +289,7 @@ namespace Altaxo.Main
       catch (Exception exc)
       {
         errorText.Append(exc.ToString());
-        System.Windows.Forms.MessageBox.Show(Current.MainWindow, errorText.ToString(), "An error occured");
+				Current.Gui.ErrorMessageBox(errorText.ToString());
       }
       finally
       {

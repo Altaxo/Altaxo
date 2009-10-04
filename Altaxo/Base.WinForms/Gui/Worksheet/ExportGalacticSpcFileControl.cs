@@ -28,27 +28,24 @@ using System.Windows.Forms;
 
 using Altaxo.Collections;
 
-namespace Altaxo.Serialization.Galactic
+namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// ExportGalacticSpcFileDialog asks for the options to export files in the Galactic SPC format (<see ref="http://www.galactic.com"/> for details about the file format).
   /// </summary>
-  public class ExportGalacticSpcFileDialog : System.Windows.Forms.Form
+  public class ExportGalacticSpcFileControl : System.Windows.Forms.UserControl, IExportGalacticSpcFileView
   {
     private System.Windows.Forms.Label m_lbl_BasicFileNameAndPath;
     private System.Windows.Forms.TextBox m_edBasicFileNameAndPath;
     private System.Windows.Forms.Button m_btChooseBasicFileNameAndPath;
     private System.Windows.Forms.GroupBox m_grpXValues;
     private System.Windows.Forms.GroupBox m_grpExtendFileName;
-    private System.Windows.Forms.Button m_btOK;
-    private System.Windows.Forms.Button m_btCancel;
     private System.Windows.Forms.RadioButton m_rbXValuesContinuousNumber;
     private System.Windows.Forms.RadioButton m_rbXValues_FromColumn;
     private System.Windows.Forms.RadioButton m_rbExtFileName_ContinuousNumber;
     private System.Windows.Forms.RadioButton m_rbFileName_FromColumn;
     private System.Windows.Forms.ComboBox m_cbXValues_Column;
     private System.Windows.Forms.ComboBox m_cbExtFileName_Column;
-    private ExportGalacticSpcFileDialogController m_Controller;
     private System.Windows.Forms.GroupBox m_grpCreateSpectrum;
     private System.Windows.Forms.RadioButton m_rbCreateSpectrum_FromRow;
     private System.Windows.Forms.RadioButton m_rbCreateSpectrum_FromColumn;
@@ -58,10 +55,13 @@ namespace Altaxo.Serialization.Galactic
     private System.ComponentModel.Container components = null;
 
 
+		public IExportGalacticSpcFileEventSink Controller { get; set; }
+
+
     /// <summary>
     /// Creates the export dialog for Galactic SPC file export.
     /// </summary>
-    public ExportGalacticSpcFileDialog()
+    public ExportGalacticSpcFileControl()
     {
       //
       // Required for Windows Form Designer support
@@ -78,7 +78,7 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="selectedColumns">The columns selected in the table.</param>
     public void Initialize(Altaxo.Data.DataTable table, IAscendingIntegerCollection selectedRows, IAscendingIntegerCollection selectedColumns)
     {
-      m_Controller = new ExportGalacticSpcFileDialogController(this,table,selectedRows,selectedColumns);
+     
     }
 
 
@@ -244,8 +244,6 @@ namespace Altaxo.Serialization.Galactic
       this.m_cbExtFileName_Column = new System.Windows.Forms.ComboBox();
       this.m_rbFileName_FromColumn = new System.Windows.Forms.RadioButton();
       this.m_rbExtFileName_ContinuousNumber = new System.Windows.Forms.RadioButton();
-      this.m_btOK = new System.Windows.Forms.Button();
-      this.m_btCancel = new System.Windows.Forms.Button();
       this.m_grpCreateSpectrum = new System.Windows.Forms.GroupBox();
       this.m_rbCreateSpectrum_FromColumn = new System.Windows.Forms.RadioButton();
       this.m_rbCreateSpectrum_FromRow = new System.Windows.Forms.RadioButton();
@@ -360,24 +358,7 @@ namespace Altaxo.Serialization.Galactic
       this.m_rbExtFileName_ContinuousNumber.TabStop = true;
       this.m_rbExtFileName_ContinuousNumber.Text = "Continuous number";
       this.m_rbExtFileName_ContinuousNumber.CheckedChanged += new System.EventHandler(this.EhFileNameExtendOptions1_CheckedChanged);
-      // 
-      // m_btOK
-      // 
-      this.m_btOK.Location = new System.Drawing.Point(208, 344);
-      this.m_btOK.Name = "m_btOK";
-      this.m_btOK.Size = new System.Drawing.Size(80, 24);
-      this.m_btOK.TabIndex = 5;
-      this.m_btOK.Text = "OK";
-      this.m_btOK.Click += new System.EventHandler(this.EhOkButton_Click);
-      // 
-      // m_btCancel
-      // 
-      this.m_btCancel.Location = new System.Drawing.Point(296, 344);
-      this.m_btCancel.Name = "m_btCancel";
-      this.m_btCancel.Size = new System.Drawing.Size(80, 24);
-      this.m_btCancel.TabIndex = 6;
-      this.m_btCancel.Text = "Cancel";
-      this.m_btCancel.Click += new System.EventHandler(this.EhCancelButton_Click);
+     
       // 
       // m_grpCreateSpectrum
       // 
@@ -412,11 +393,8 @@ namespace Altaxo.Serialization.Galactic
       // 
       // ExportGalacticSpcFileDialog
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(384, 386);
       this.Controls.Add(this.m_grpCreateSpectrum);
-      this.Controls.Add(this.m_btCancel);
-      this.Controls.Add(this.m_btOK);
       this.Controls.Add(this.m_grpExtendFileName);
       this.Controls.Add(this.m_grpXValues);
       this.Controls.Add(this.m_btChooseBasicFileNameAndPath);
@@ -434,40 +412,27 @@ namespace Altaxo.Serialization.Galactic
 
     private void EhChooseBasicFileNameAndPath_Click(object sender, System.EventArgs e)
     {
-      if(null!=m_Controller)
-        m_Controller.ChooseBasicFileNameAndPath();    
+      if(null!=Controller)
+        Controller.ChooseBasicFileNameAndPath();    
     }
 
     private void EhCreateSpectrumFrom_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=m_Controller)
-        m_Controller.EhChange_CreateSpectrumFrom();
+      if(null!=Controller)
+        Controller.EhChange_CreateSpectrumFrom();
     }
 
     private void EhXValuesChooseOptions_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=m_Controller)
-        m_Controller.EhChange_XValuesFromOptions();
+      if(null!=Controller)
+        Controller.EhChange_XValuesFromOptions();
     }
 
     private void EhFileNameExtendOptions1_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=m_Controller)
-        m_Controller.EhChange_ExtendFileNameOptions();
+      if(null!=Controller)
+        Controller.EhChange_ExtendFileNameOptions();
     }
-
-    private void EhOkButton_Click(object sender, System.EventArgs e)
-    {
-      if(null!=m_Controller)
-        m_Controller.EhOk();
-    }
-
-    private void EhCancelButton_Click(object sender, System.EventArgs e)
-    {
-      if(null!=m_Controller)
-        m_Controller.EhCancel();
-    }
-
   } // end of class ExportGalacticSpcFileDialog
 
 

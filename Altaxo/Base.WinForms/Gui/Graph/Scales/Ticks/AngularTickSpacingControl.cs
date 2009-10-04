@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       set
       {
-        Main.Services.GUIFactoryService.InitComboBox(_cbOrigin, value);
+				GuiHelper.UpdateList(_cbOrigin, value);
       }
     }
 
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       set
       {
-        Main.Services.GUIFactoryService.InitComboBox(_cbMajorTicks, value);
+				GuiHelper.UpdateList(_cbMajorTicks, value);
       }
     }
 
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       set
       {
-        Main.Services.GUIFactoryService.InitComboBox(_cbMinorTicks, value);
+				GuiHelper.UpdateList(_cbMinorTicks, value);
       }
     }
 
@@ -96,19 +96,19 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private void _cbOrigin_SelectionChangeCommitted(object sender, EventArgs e)
     {
-      Main.Services.GUIFactoryService.SynchronizeSelectableListNodes(_cbOrigin);
+			GuiHelper.SynchronizeSelectionFromGui(_cbOrigin);
     }
 
     private void _cbMajorTicks_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Main.Services.GUIFactoryService.SynchronizeSelectableListNodes(_cbMajorTicks);
+			GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
       if (null != MajorTicksChanged)
         MajorTicksChanged(sender, e);
     }
 
     private void _cbMinorTicks_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Main.Services.GUIFactoryService.SynchronizeSelectableListNodes(_cbMinorTicks);
+			GuiHelper.SynchronizeSelectionFromGui(_cbMinorTicks);
     }
   }
 }

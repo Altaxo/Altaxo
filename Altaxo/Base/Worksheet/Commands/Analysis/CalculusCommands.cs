@@ -80,14 +80,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				}
 				if (calcspace.RelativeSpaceDeviation > 1E-2)
 				{
-					System.Windows.Forms.DialogResult dlgresult =
-						System.Windows.Forms.MessageBox.Show(Current.MainWindow,
+					if(!Current.Gui.YesNoMessageBox(
 						string.Format("The x-column {0} is not equally spaced, the deviation is {1}, the mean spacing is {2}. Continue anyway?", xCol.Name, calcspace.RelativeSpaceDeviation, calcspace.SpaceMeanValue),
-						"Continue?", System.Windows.Forms.MessageBoxButtons.YesNo,
-						System.Windows.Forms.MessageBoxIcon.Question,
-						System.Windows.Forms.MessageBoxDefaultButton.Button1);
-
-					if (dlgresult == System.Windows.Forms.DialogResult.No)
+						"Continue?", true))
 						return;
 				}
 

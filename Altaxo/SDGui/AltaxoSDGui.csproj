@@ -116,6 +116,10 @@
       <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <ProjectReference Include="..\Base.WinForms\AltaxoBase.WinForms.csproj">
+      <Project>{35576625-F69C-4142-AF4A-D55E507E1CFE}</Project>
+      <Name>AltaxoBase.WinForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Base\AltaxoBase.csproj">
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
       <Name>AltaxoBase</Name>

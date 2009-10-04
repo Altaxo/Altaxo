@@ -23,6 +23,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 
@@ -31,14 +32,13 @@ namespace Altaxo.Main.Services
   /// <summary>
   /// Creates the appropriate GUI object for a given document type.
   /// </summary>
-  public class GUIFactoryService
+  public abstract class GUIFactoryService
   {
-    private System.Windows.Forms.PageSetupDialog _pageSetupDialog;
-    private System.Windows.Forms.PrintDialog _printDialog;
+    protected abstract System.Type GuiControlType { get; } 
 
 
 
-    /// <summary>
+		/// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type.
     /// </summary>
     /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
@@ -147,16 +147,17 @@ namespace Altaxo.Main.Services
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
       IMVCController controller = GetController(args, overrideArg0Type, typeof(IMVCController), copyDocument);
-      if (controller != null)
-      {
+      if (controller == null)
+      return null;
+
         FindAndAttachControlTo(controller);
         return controller;
-      }
-      else
-      {
-        return null;
-      }
     }
+
+
+
+
+
 
 
     /// <summary>
@@ -166,13 +167,11 @@ namespace Altaxo.Main.Services
     /// <param name="controller">The controller a control is searched for.</param>
     /// <param name="expectedType">The expected type of the control.</param>
     /// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
-    /// <remarks>This function is used externally, so we add the restriction here that the expected type
-    /// has to be a System.Windows.Forms.Control.</remarks>
     public object FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
     {
       return ReflectionService.GetClassForClassInstanceByAttribute(
         typeof(UserControlForControllerAttribute),
-        new Type[] { typeof(System.Windows.Forms.Control), expectedType },
+        new Type[] { GuiControlType, expectedType },
         new object[] { controller });
     }
 
@@ -196,7 +195,7 @@ namespace Altaxo.Main.Services
 
         foreach (ExpectedTypeOfViewAttribute attr in viewattributes)
         {
-          Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { typeof(System.Windows.Forms.Control), attr.TargetType });
+          Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { GuiControlType, attr.TargetType });
           foreach (Type controltype in controltypes)
           {
             // test if the control has a special preference for a controller...
@@ -232,10 +231,10 @@ namespace Altaxo.Main.Services
       }
       else // Controller has no ExpectedTypeOfView attribute
       {
-        System.Windows.Forms.UserControl control =
-          (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(
+        object control =
+          ReflectionService.GetClassForClassInstanceByAttribute(
           typeof(UserControlForControllerAttribute),
-          new System.Type[] { typeof(System.Windows.Forms.UserControl) },
+          new System.Type[] { GuiControlType },
           new object[] { controller });
 
         if (control == null)
@@ -264,28 +263,7 @@ namespace Altaxo.Main.Services
     /// <param name="title">The title of the dialog to show.</param>
     /// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    public bool ShowDialog(IMVCAController controller, string title, bool showApplyButton)
-    {
-
-      if (controller.ViewObject == null)
-      {
-        FindAndAttachControlTo(controller);
-      }
-
-      if (controller.ViewObject == null)
-        throw new ArgumentException("Can't find a view object for controller of type " + controller.GetType());
-
-      if (controller is Altaxo.Gui.Scripting.IScriptController)
-      {
-        System.Windows.Forms.Form dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
-        return (System.Windows.Forms.DialogResult.OK == dlgctrl.ShowDialog(Current.MainWindow));
-      }
-      else
-      {
-        DialogShellController dlgctrl = new DialogShellController(new DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject), controller, title, showApplyButton);
-        return (dlgctrl.ShowDialog(Current.MainWindow));
-      }
-    }
+    public abstract bool ShowDialog(IMVCAController controller, string title, bool showApplyButton);
 
 
 
@@ -354,6 +332,11 @@ namespace Altaxo.Main.Services
         return false;
       }
     }
+
+    public abstract bool InvokeRequired();
+    public abstract void Invoke(Delegate inv);
+		public abstract void Invoke(Action act);
+
 
 
     public bool ShowDialog(ref System.Enum arg, string title)
@@ -478,10 +461,13 @@ namespace Altaxo.Main.Services
     /// Shows a message box with the error text.
     /// </summary>
     /// <param name="errortxt">The error text.</param>
-    public void ErrorMessageBox(string errortxt)
-    {
-      System.Windows.Forms.MessageBox.Show(Current.MainWindow, errortxt, "Error(s)!", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-    }
+    public abstract void ErrorMessageBox(string errortxt);
+
+		/// <summary>
+		/// Shows a message box with an informational text.
+		/// </summary>
+		/// <param name="infotxt">The info text.</param>
+		public abstract void InfoMessageBox(string infotxt);
 
     /// <summary>
     /// Shows a message box with a question to be answered either yes or no.
@@ -490,92 +476,36 @@ namespace Altaxo.Main.Services
     /// <param name="caption">The caption of the dialog box.</param>
     /// <param name="defaultanswer">If true, the default answer is "yes", otherwise "no".</param>
     /// <returns>True if the user answered with Yes, otherwise false.</returns>
-    public bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
+    public abstract bool YesNoMessageBox(string txt, string caption, bool defaultanswer);
+
+    public bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
     {
-      return System.Windows.Forms.DialogResult.Yes == System.Windows.Forms.MessageBox.Show(Current.MainWindow, txt, caption, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question, defaultanswer ? System.Windows.Forms.MessageBoxDefaultButton.Button1 : System.Windows.Forms.MessageBoxDefaultButton.Button2);
+      System.Threading.Thread t = new System.Threading.Thread(threadstart);
+      t.Start();
+      return ShowBackgroundCancelDialog(millisecondsDelay, t, monitor);
     }
 
 
-    public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.ThreadStart threadstart)
-    {
-      Altaxo.Gui.Common.BackgroundCancelDialog dlg = new Altaxo.Gui.Common.BackgroundCancelDialog(threadstart, monitor);
-      System.Threading.Thread thread = dlg.Thread;
-
-      for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
-        System.Threading.Thread.Sleep(10);
-
-      if (thread.IsAlive)
-      {
-          System.Windows.Forms.DialogResult r = dlg.ShowDialog(Current.MainWindow);
-          if (dlg.ThreadException != null)
-          {
-            throw dlg.ThreadException;
-          }
-          return r == System.Windows.Forms.DialogResult.OK ? false : true;
-      }
-
-      if (dlg.ThreadException != null)
-      {
-        throw dlg.ThreadException;
-      }
-
-      return false;
-    }
-
-    public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread)
-    {
-      for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
-        System.Threading.Thread.Sleep(10);
-
-      if (thread.IsAlive)
-      {
-        Altaxo.Gui.Common.BackgroundCancelDialog dlg = new Altaxo.Gui.Common.BackgroundCancelDialog(thread, monitor);
-
-        if (thread.IsAlive)
-        {
-          System.Windows.Forms.DialogResult r = dlg.ShowDialog(Current.MainWindow);
-          return r == System.Windows.Forms.DialogResult.OK ? false : true;
-        }
-      }
-      return false;
-    }
+    public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor);
 
     /// <summary>
     /// Shows a page setup dialog.
     /// </summary>
     /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
-    public bool ShowPageSetupDialog()
-      {
-      bool result = System.Windows.Forms.DialogResult.OK == _pageSetupDialog.ShowDialog(Current.MainWindow);
-      if (true==result)
-      {
-        Current.PrintingService.UpdateBoundsAndMargins();
-      }
-      return result;
-    }
+    public abstract bool ShowPageSetupDialog();
+
     /// <summary>
     /// Shows a print dialog.
     /// </summary>
     /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
-    public bool ShowPrintDialog()
-    {
-      return System.Windows.Forms.DialogResult.OK == _printDialog.ShowDialog(Current.MainWindow);
-    }
+    public abstract bool ShowPrintDialog();
+
 
     /// <summary>
     /// Sets the print document for both the page setup dialog and the print dialog.
     /// </summary>
     /// <param name="printDocument">The document to set.</param>
-    public void SetPrintDocument(System.Drawing.Printing.PrintDocument printDocument)
-    {
-      if (_pageSetupDialog == null)
-        _pageSetupDialog = new System.Windows.Forms.PageSetupDialog();
-      if (_printDialog == null)
-        _printDialog = new System.Windows.Forms.PrintDialog();
-
-      _pageSetupDialog.Document = printDocument;
-      _printDialog.Document = printDocument;
-    }
+    public abstract void SetPrintDocument(System.Drawing.Printing.PrintDocument printDocument);
 
 
     /// <summary>
@@ -676,34 +606,14 @@ namespace Altaxo.Main.Services
     }
 
 
+		public abstract bool ShowOpenFileDialog(OpenFileOptions options);
+		public abstract bool ShowSaveFileDialog(SaveFileOptions options);
+
+		public abstract bool ShowPrintPreviewDialog(System.Drawing.Printing.PrintPageEventHandler printPageEventHandler, System.Drawing.Printing.QueryPageSettingsEventHandler queryPageSettingsEventHandler);
+
     #region static Windows Form methods
 
-    public static void InitComboBox(System.Windows.Forms.ComboBox box, Altaxo.Collections.SelectableListNodeList names)
-    {
-      box.BeginUpdate();
-      box.Items.Clear();
-      foreach (Altaxo.Collections.SelectableListNode node in names)
-      {
-        box.Items.Add(node);
-      }
-      foreach (Altaxo.Collections.SelectableListNode node in names)
-      {
-        if (node.Selected)
-        {
-          box.SelectedItem = node;
-          break;
-        }
-      }
-      box.EndUpdate();
-    }
-    public static void SynchronizeSelectableListNodes(System.Windows.Forms.ComboBox box)
-    {
-      object sel = box.SelectedItem;
-      foreach (Altaxo.Collections.SelectableListNode node in box.Items)
-      {
-        node.Selected = object.ReferenceEquals(sel, node);
-      }
-    }
+   
 
 		/// <summary>
 		/// Used to register a function that can create context menues out of add in tree paths.

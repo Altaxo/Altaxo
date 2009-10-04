@@ -163,10 +163,10 @@ namespace Altaxo.Gui.Pads
 
     public void Write(string text)
     {
-      if (Current.MainWindow.InvokeRequired)
+      if (Current.Gui.InvokeRequired())
       {
         System.Windows.Forms.MethodInvoker i = delegate { WriteInternal(text); };
-        Current.MainWindow.Invoke(i);
+        Current.Gui.Invoke(i);
       }
       else
       {

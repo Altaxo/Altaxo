@@ -49,7 +49,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       Altaxo.Current.SetPropertyService(new PropertyServiceWrapper());
       Altaxo.Current.SetResourceService(new ResourceServiceWrapper());      
       Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
-      Altaxo.Current.SetGUIFactoryService(new Altaxo.Main.Services.GUIFactoryService());
+      Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.WinFormsGuiFactoryService());
 			Altaxo.Main.Services.GUIFactoryService.ContextMenuProvider = ICSharpCode.Core.WinForms.MenuService.CreateContextMenu;
 
       Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());

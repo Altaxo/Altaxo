@@ -7,6 +7,8 @@ using System.Reflection;
 
 namespace Altaxo.Settings.Scripting
 {
+	using Altaxo.Gui;
+
   /// <summary>
   /// Contains commands related to addition/removal of referenced assemblies
   /// </summary>
@@ -17,18 +19,18 @@ namespace Altaxo.Settings.Scripting
     /// </summary>
     public static void ShowAddTemporaryAssemblyDialog()
     {
-      System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-      dlg.Title = "Add a temporary assembly to be referenced";
-      dlg.DefaultExt = "asm";
-      dlg.Filter = "Libary files (*.dll)|*.dll|All files (*.*)|*.*";
-      dlg.FilterIndex = 0;
-      dlg.Multiselect = true;
-      dlg.InitialDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-      if (DialogResult.OK == dlg.ShowDialog(Current.MainWindow))
+			OpenFileOptions options = new OpenFileOptions();
+			options.DialogTitle = "Add a temporary assembly to be referenced";
+			options.AddFilter("*.dll", "Libary files (*.dll)");
+			options.AddFilter("*.*", "All files (*.*)");
+      options.FilterIndex = 0;
+      options.Multiselect = true;
+      options.InitialDirectory = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			if(Current.Gui.ShowOpenFileDialog(options))
       {
         StringBuilder stb = new StringBuilder();
         // try to create an assembly out of the filename(s)
-        foreach (string filename in dlg.FileNames)
+        foreach (string filename in options.FileNames)
         {
           Assembly asm=null;
           try

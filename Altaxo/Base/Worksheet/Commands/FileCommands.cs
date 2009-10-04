@@ -160,7 +160,7 @@ namespace Altaxo.Worksheet.Commands
           }
           catch(Exception ex)
           {
-            System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewWindow,"There was an error during ascii export, details follow:\n" + ex.ToString());
+						Current.Gui.ErrorMessageBox("There was an error during ascii export, details follow:\n" + ex.ToString());
           }
           finally
           {
@@ -184,12 +184,8 @@ namespace Altaxo.Worksheet.Commands
 
     public static void ExportGalacticSPC(WorksheetController ctrl)
     {
-      Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog dlg =
-        new Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog();
-
-      dlg.Initialize(ctrl.DataTable,ctrl.SelectedDataRows,ctrl.SelectedDataColumns);
-
-      dlg.ShowDialog(ctrl.View.TableViewWindow);
+			var exportCtrl = new Altaxo.Gui.Worksheet.ExportGalacticSpcFileDialogController(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
+			Current.Gui.ShowDialog(exportCtrl, "Export Galactic SPC format");
     }
  
 

@@ -25,7 +25,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi;

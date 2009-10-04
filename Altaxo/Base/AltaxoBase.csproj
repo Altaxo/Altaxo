@@ -451,9 +451,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Serialization\FileIOHelper.cs" />
-    <Compile Include="Serialization\Galactic\ExportGalacticSpcFileDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Serialization\Galactic\ExportGalacticSpcFiles.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -632,10 +629,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Serialization\Galactic\ExportGalacticSpcFileDialog.resx">
-      <DependentUpon>ExportGalacticSpcFileDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Textures.resx">
@@ -922,8 +915,11 @@
     <Compile Include="Gui\IApplyController.cs" />
     <Compile Include="Gui\IClassForClassAttribute.cs" />
     <Compile Include="Gui\ModelViewController.cs" />
+    <Compile Include="Gui\MouseRelated.cs" />
+    <Compile Include="Gui\OpenSaveFileDialogRelated.cs" />
     <Compile Include="Gui\UserControlForControllerAttribute.cs" />
     <Compile Include="Gui\UserControllerForObjectAttribute.cs" />
+    <Compile Include="Gui\Worksheet\ExportGalacticSpcFileController.cs" />
     <Compile Include="Main\DocumentInformation.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />

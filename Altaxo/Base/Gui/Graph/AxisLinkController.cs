@@ -79,11 +79,6 @@ namespace Altaxo.Gui.Graph
     IAxisLinkController Controller { get; set; }
 
     /// <summary>
-    /// Gets the hosting parent form of this view.
-    /// </summary>
-    System.Windows.Forms.Form Form  { get; }
-
-    /// <summary>
     /// Initializes the type of the link.
     /// </summary>
     /// <param name="linktype"></param>

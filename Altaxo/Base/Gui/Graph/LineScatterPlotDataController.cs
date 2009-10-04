@@ -56,12 +56,6 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     ILineScatterPlotDataController Controller { get; set; }
 
-    /// <summary>
-    /// Gets the hosting parent form of this view.
-    /// </summary>
-    System.Windows.Forms.Form Form  { get; }
-
-
     void Tables_Initialize(string[] tables, int selectedTable);
 
     void Columns_Initialize(string[] colnames, int selectedColumn);

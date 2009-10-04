@@ -373,25 +373,6 @@ namespace Altaxo.Graph.GUI
       {
 				var menu = Main.Services.GUIFactoryService.CreateContextMenu(parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu");
 				menu.Show(parent, pt);
-
-/*				
-				ToolStripItem item0 = menu.Items[0];
-        // then append the plot associations of the actual layer
-        ContextMenu contextMenu = new ContextMenu();
-
-        int actPA = CurrentPlotNumber;
-        int len = ActiveLayer.PlotItems.Flattened.Length;
-        for(int i = 0; i<len; i++)
-        {
-          IGPlotItem pa = ActiveLayer.PlotItems.Flattened[i];
-          DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(EhMenuData_Data));
-          mi.Checked = (i==actPA);
-          mi.PlotItemNumber = i;
-          contextMenu.MenuItems.Add(mi);
-            
-        }
-        contextMenu.Show(parent,pt);
-*/			
       }
     }
 

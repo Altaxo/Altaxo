@@ -24,7 +24,6 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Data;
 using System.Reflection;
 
@@ -68,6 +67,14 @@ namespace Altaxo
     {
       get { return sm_theWorkbench; }
     }
+
+		public static System.Windows.Forms.Form MainWindow
+		{
+			get
+			{
+				return (System.Windows.Forms.Form)(sm_theWorkbench.ViewObject);
+			}
+		}
 
     /// <summary>
     /// Returns the project service, which provides methods to add worksheet and graphs, or open and close the document.
@@ -155,21 +162,6 @@ namespace Altaxo
       get { return sm_theApplicationIsClosing; }
       set { sm_theApplicationIsClosing = value; }
     }
-
-    /// <summary>
-    /// Returns the main windows form.
-    /// </summary>
-    public static Form MainWindow
-    {
-      get 
-      {
-        if(Current.Workbench is Form)
-          return (Form)Current.Workbench;
-        else
-          return (Form)Current.Workbench.ViewObject;        
-      }
-    }
-  
 
     /// <summary>
     /// Sets the main workbench.

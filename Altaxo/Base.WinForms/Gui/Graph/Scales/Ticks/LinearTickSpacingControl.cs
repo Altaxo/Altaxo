@@ -233,7 +233,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       set
       {
-        GUIFactoryService.InitComboBox(_cbSnapTicksToOrg, value);
+				GuiHelper.UpdateList(_cbSnapTicksToOrg, value);
       }
     }
 
@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       set
       {
-        GUIFactoryService.InitComboBox(_cbSnapTicksToEnd, value);
+				GuiHelper.UpdateList(_cbSnapTicksToEnd, value);
       }
     }
 
@@ -249,12 +249,12 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     private void _cbSnapTicksToOrg_SelectionChangeCommitted(object sender, EventArgs e)
     {
-      GUIFactoryService.SynchronizeSelectableListNodes(_cbSnapTicksToOrg);
+			GuiHelper.SynchronizeSelectionFromGui(_cbSnapTicksToOrg);
     }
 
     private void _cbSnapTicksToEnd_SelectionChangeCommitted(object sender, EventArgs e)
     {
-      GUIFactoryService.SynchronizeSelectableListNodes(_cbSnapTicksToEnd);
+			GuiHelper.SynchronizeSelectionFromGui(_cbSnapTicksToEnd);
     }
 	}
 }

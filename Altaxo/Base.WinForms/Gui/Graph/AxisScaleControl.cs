@@ -255,17 +255,17 @@ namespace Altaxo.Gui.Graph
 
     public void InitializeAxisType(SelectableListNodeList names)
     {
-			Altaxo.Main.Services.GUIFactoryService.InitComboBox(this.m_Scale_cbType, names);
+			GuiHelper.UpdateList(this.m_Scale_cbType, names);
     }
 
 		public void InitializeTickSpacingType(SelectableListNodeList names)
 		{
-			Altaxo.Main.Services.GUIFactoryService.InitComboBox(_cbTickSpacingType, names);
+			GuiHelper.UpdateList(_cbTickSpacingType, names);
 		}
 
 		public void InitializeLinkTargets(SelectableListNodeList names)
 		{
-			Altaxo.Main.Services.GUIFactoryService.InitComboBox(this._cbLinkTarget, names);
+			GuiHelper.UpdateList(this._cbLinkTarget, names);
 		}
 
 		public bool ScaleIsLinked
@@ -356,7 +356,7 @@ namespace Altaxo.Gui.Graph
     {
 			if (null != m_Ctrl)
 			{
-				Altaxo.Main.Services.GUIFactoryService.SynchronizeSelectableListNodes(this.m_Scale_cbType);
+				GuiHelper.SynchronizeSelectionFromGui(this.m_Scale_cbType);
 				m_Ctrl.EhView_AxisTypeChanged();
 			}
     }
@@ -365,7 +365,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != m_Ctrl)
 			{
-				Altaxo.Main.Services.GUIFactoryService.SynchronizeSelectableListNodes(_cbTickSpacingType);
+				GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
 				m_Ctrl.EhView_TickSpacingTypeChanged();
 			}
 		}
@@ -374,7 +374,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != m_Ctrl)
 			{
-				Altaxo.Main.Services.GUIFactoryService.SynchronizeSelectableListNodes(this._cbLinkTarget);
+				GuiHelper.SynchronizeSelectionFromGui(this._cbLinkTarget);
 				m_Ctrl.EhView_LinkTargetChanged();
 			}
 		}

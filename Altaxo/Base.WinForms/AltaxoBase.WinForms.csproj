@@ -434,6 +434,7 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\WinFormsGuiFactoryService.cs" />
     <Compile Include="Gui\GuiHelper.cs" />
     <Compile Include="Gui\Scripting\FitFunctionScriptControl.cs">
       <SubType>UserControl</SubType>
@@ -442,6 +443,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Scripting\ScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\ExportGalacticSpcFileControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Worksheet\InterpolationControl.cs">
@@ -659,6 +663,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\ScriptControl.resx">
       <DependentUpon>ScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\ExportGalacticSpcFileControl.resx">
+      <DependentUpon>ExportGalacticSpcFileControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Worksheet\InterpolationControl.resx">
       <DependentUpon>InterpolationControl.cs</DependentUpon>

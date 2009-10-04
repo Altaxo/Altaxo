@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
@@ -70,11 +69,6 @@ namespace Altaxo.Gui.Graph
     /// Get/sets the controller of this view.
     /// </summary>
     ILineScatterLayerContentsController Controller { get; set; }
-
-    /// <summary>
-    /// Gets the hosting parent form of this view.
-    /// </summary>
-    System.Windows.Forms.Form Form  { get; }
 
     /// <summary>
     /// Initializes the treeview of available data with content.

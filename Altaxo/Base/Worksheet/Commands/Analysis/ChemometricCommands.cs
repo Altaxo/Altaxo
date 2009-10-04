@@ -28,6 +28,7 @@ using Altaxo.Gui.Worksheet;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Data;
+using Altaxo.Gui;
 using Altaxo.Gui.Common;
 
 using Altaxo.Graph.Plot.Data;
@@ -485,13 +486,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     
       // quest the filename
-      System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
-      dlg.DefaultExt="xml";
-      if(System.Windows.Forms.DialogResult.OK!=dlg.ShowDialog(Current.MainWindow))
+			SaveFileOptions options = new SaveFileOptions();
+			options.AddFilter("*.xml", "Xml files (*.xml)");
+			options.FilterIndex=0;
+			if(!Current.Gui.ShowSaveFileDialog(options))
         return;
 
       PredictionModelExporter exporter = new PredictionModelExporter(table,ivictrl.EnteredContents);
-      exporter.Export(dlg.FileName);
+      exporter.Export(options.FileName);
     }
 
    
