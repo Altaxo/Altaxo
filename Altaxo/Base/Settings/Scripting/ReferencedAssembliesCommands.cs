@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using System.Windows.Forms;
 using System.Reflection;
 
 namespace Altaxo.Settings.Scripting
@@ -20,7 +19,7 @@ namespace Altaxo.Settings.Scripting
     public static void ShowAddTemporaryAssemblyDialog()
     {
 			OpenFileOptions options = new OpenFileOptions();
-			options.DialogTitle = "Add a temporary assembly to be referenced";
+			options.Title = "Add a temporary assembly to be referenced";
 			options.AddFilter("*.dll", "Libary files (*.dll)");
 			options.AddFilter("*.*", "All files (*.*)");
       options.FilterIndex = 0;

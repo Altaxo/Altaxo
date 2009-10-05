@@ -409,9 +409,7 @@ namespace Altaxo.Graph.GUI
       if(!Current.ApplicationIsClosing)
       {
 
-        System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this._view.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
-
-        if(dlgres==System.Windows.Forms.DialogResult.No)
+        if(false==Current.Gui.YesNoMessageBox("Do you really want to close this graph?","Attention",false))
         {
           return true; // cancel the closing
         }
@@ -905,8 +903,6 @@ namespace Altaxo.Graph.GUI
       {
         g.PageUnit = GraphicsUnit.Point;
         g.PageScale=1;
-
-        // System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
       
         g.DrawString(ex.ToString(),
           new System.Drawing.Font("Arial",10),
@@ -1146,7 +1142,7 @@ namespace Altaxo.Graph.GUI
     public void PasteObjectsFromClipboard()
     {
       GraphDocument gd = this.Doc;
-      System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
+			var dao = Current.Gui.OpenClipboardDataObject();
 
       string[] formats = dao.GetFormats();
       System.Diagnostics.Trace.WriteLine("Available formats:");

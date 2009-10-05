@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       string err = MultiplyColumnsToMatrix(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns);
       if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+        Current.Gui.ErrorMessageBox(err,"An error occured");
     }
 
 
@@ -379,7 +379,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       string err= analysis.ExecuteAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,true,options,preprocessOptions);
       if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+        Current.Gui.ErrorMessageBox(err,"An error occured");
     }
     public static void PLSOnColumns(WorksheetController ctrl)
     {
@@ -392,7 +392,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       string err= analysis.ExecuteAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,false,options,preprocessOptions);
       if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+				Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
 

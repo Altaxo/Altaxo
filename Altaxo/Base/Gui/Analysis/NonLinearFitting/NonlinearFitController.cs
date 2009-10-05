@@ -494,7 +494,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			if (true == this._parameterController.Apply())
 			{
-				System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+				var dao = Current.Gui.GetNewClipboardDataObject();
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 				for (int i = 0; i < _doc.CurrentParameters.Count; i++)
 					col[i] = _doc.CurrentParameters[i].Parameter;
@@ -506,7 +506,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					new Altaxo.Collections.AscendingIntegerCollection(),
 					new Altaxo.Collections.AscendingIntegerCollection(),
 					dao);
-				System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+				Current.Gui.SetClipboardDataObject(dao, true);
 			}
 			else
 			{
@@ -518,7 +518,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			if (true == this._parameterController.Apply())
 			{
-				System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+				var dao = Current.Gui.GetNewClipboardDataObject();
 				System.Text.StringBuilder stb = new System.Text.StringBuilder();
 				for (int i = 0; i < _doc.CurrentParameters.Count; i++)
 				{
@@ -528,8 +528,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					stb.Append(Altaxo.Serialization.NumberConversion.ToString(_doc.CurrentParameters[i].Parameter));
 					stb.Append(";\r\n");
 				}
-				dao.SetText(stb.ToString(), System.Windows.Forms.TextDataFormat.Text);
-				System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+				dao.SetData(typeof(string), stb.ToString());
+				Current.Gui.SetClipboardDataObject(dao, true);
 			}
 			else
 			{
@@ -541,7 +541,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			if (true == this._parameterController.Apply())
 			{
-				System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+				var dao = Current.Gui.GetNewClipboardDataObject();
 				Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
@@ -559,7 +559,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					new Altaxo.Collections.AscendingIntegerCollection(),
 					new Altaxo.Collections.AscendingIntegerCollection(),
 					dao);
-				System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+				Current.Gui.SetClipboardDataObject(dao, true);
 			}
 			else
 			{
@@ -570,7 +570,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			if (true == this._parameterController.Apply())
 			{
-				System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+				var dao = Current.Gui.GetNewClipboardDataObject();
 				Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 				Altaxo.Data.DoubleColumn var = new Altaxo.Data.DoubleColumn();
@@ -591,7 +591,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					new Altaxo.Collections.AscendingIntegerCollection(),
 					new Altaxo.Collections.AscendingIntegerCollection(),
 					dao);
-				System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+				Current.Gui.SetClipboardDataObject(dao, true);
 			}
 			else
 			{

@@ -54,10 +54,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     void EhLoadFromFile(object sender, EventArgs e)
     {
-      OpenFileDialog dlg = new OpenFileDialog();
-      if (DialogResult.OK == dlg.ShowDialog(Current.MainWindow))
+      OpenFileOptions options = new OpenFileOptions();
+      options.AddFilter("*.*", "All files (*.*");
+      options.FilterIndex = 0;
+      if (Current.Gui.ShowOpenFileDialog(options))
       {
-        ImageProxy img = ImageProxy.FromFile(dlg.FileName);
+        ImageProxy img = ImageProxy.FromFile(options.FileName);
         if (img.IsValid)
         {
           TextureManager.UserTextures.Add(img);

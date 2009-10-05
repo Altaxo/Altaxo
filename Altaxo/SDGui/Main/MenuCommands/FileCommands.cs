@@ -220,47 +220,6 @@ namespace Altaxo.Main.Commands
     {
       Current.ProjectService.SaveProjectAs();
     }
-
-    public  void RunOld1()
-    {
-      SaveFileDialog dlg = this.GetSaveAsDialog();
-      if(dlg.ShowDialog(Current.MainWindow) == DialogResult.OK)
-      {
-        System.IO.Stream myStream;
-        if((myStream = dlg.OpenFile()) != null)
-        {
-          try
-          {
-            Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-            ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-            Current.Project.SaveToZippedFile(new ZipOutputStreamWrapper(zippedStream), info);
-            Current.ProjectService.SaveWindowStateToZippedFile(new ZipOutputStreamWrapper(zippedStream), info);
-            zippedStream.Close();
-            Current.Project.IsDirty=false;
-
-          }
-          catch(Exception exc)
-          {
-            System.Windows.Forms.MessageBox.Show(Current.MainWindow,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-          }
-          finally
-          {
-            myStream.Close();
-          }
-        }
-      }
-    }
-
-    protected SaveFileDialog GetSaveAsDialog()
-    {
-      SaveFileDialog saveFileDialog1 = new SaveFileDialog();
- 
-      saveFileDialog1.Filter = "Altaxo project files (*.axoprj)|*.axoprj|All files (*.*)|*.*"  ;
-      saveFileDialog1.FilterIndex = 1 ;
-      saveFileDialog1.RestoreDirectory = true ;
-  
-      return saveFileDialog1;
-    }
   }
 
   public class FileSave : AbstractMenuCommand
@@ -406,15 +365,15 @@ namespace Altaxo.Main.Commands
 
       if (script == null)
         script = new Altaxo.Scripting.ProgramInstanceScript();
-
-      OpenFileDialog odlg = new OpenFileDialog();
-      odlg.Title = "Open a script or press Cancel to create a new script";
-      odlg.Filter = "C# files (*.cs)|*.cs|All files (*.*)|*.*";
-      odlg.FilterIndex = 1;
-      if (DialogResult.OK == odlg.ShowDialog(Current.MainWindow))
+      var options = new Altaxo.Gui.OpenFileOptions();
+      options.Title = "Open a script or press Cancel to create a new script";
+      options.AddFilter("*.cs", "C# files (*.cs)");
+      options.AddFilter("*.*", "All files (*.*)");
+      options.FilterIndex = 0;
+      if (Current.Gui.ShowOpenFileDialog(options))
       {
         string scripttext;
-        string err = OpenScriptText(odlg.FileName, out scripttext);
+        string err = OpenScriptText(options.FileName, out scripttext);
         if (null != err)
           MessageBox.Show(err);
         else
@@ -431,15 +390,16 @@ namespace Altaxo.Main.Commands
         {
           errors = null;
           // store the script somewhere m_Table.TableScript = (TableScript)args[0];
-          SaveFileDialog dlg = new SaveFileDialog();
-          dlg.Title = "Save your script";
-          dlg.Filter = "C# files (*.cs)|*.cs|All files (*.*)|*.*";
-          dlg.FilterIndex = 1;
-          if (DialogResult.OK == dlg.ShowDialog(Current.MainWindow))
+          var saveOptions = new Altaxo.Gui.SaveFileOptions();
+          saveOptions.Title = "Save your script";
+          saveOptions.AddFilter("*.cs", "C# files (*.cs)");
+					saveOptions.AddFilter("*.*", "All files (*.*)");
+          saveOptions.FilterIndex = 0;
+          if (Current.Gui.ShowSaveFileDialog(saveOptions))
           {
-            errors = SaveScriptText(dlg.FileName, script.ScriptText);
+            errors = SaveScriptText(saveOptions.FileName, script.ScriptText);
             if (null != errors)
-              MessageBox.Show(Current.MainWindow, errors);
+              Current.Gui.ErrorMessageBox(errors);
           }
         } while (null != errors);
       }

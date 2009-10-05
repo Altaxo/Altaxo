@@ -309,18 +309,19 @@ namespace Altaxo.Serialization.Galactic
     /// </summary>
     /// <param name="owner">The windows owner of this dialog box.</param>
     /// <param name="table">The table to import the SPC files to.</param>
-    public static void ShowDialog(System.Windows.Forms.Form owner, Altaxo.Data.DataTable table)
+    public static void ShowDialog(Altaxo.Data.DataTable table)
     {
 
-      System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-      dlg.Filter = "Galactic SPC files (*.spc)|*.spc|All files (*.*)|*.*"  ;
-      dlg.FilterIndex = 1 ;
-      dlg.Multiselect = true; // allow selecting more than one file
+			var options = new Altaxo.Gui.OpenFileOptions();
+      options.AddFilter("*.spc", "Galactic SPC files (*.spc)");
+			options.AddFilter("*.*", "All files (*.*)");
+      options.FilterIndex = 0 ;
+      options.Multiselect = true; // allow selecting more than one file
 
-      if(System.Windows.Forms.DialogResult.OK==dlg.ShowDialog(owner))
+      if(Current.Gui.ShowOpenFileDialog(options))
       {
         // if user has clicked ok, import all selected files into Altaxo
-        string [] filenames = dlg.FileNames;
+        string [] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
       
         
@@ -328,7 +329,7 @@ namespace Altaxo.Serialization.Galactic
 
         if(errors!=null)
         {
-          System.Windows.Forms.MessageBox.Show(owner,errors,"Some errors occured during import!",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
+					Current.Gui.ErrorMessageBox(errors);
         }
       }
     }

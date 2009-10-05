@@ -326,7 +326,7 @@ namespace Altaxo.Worksheet.Commands
     public static void CopyToClipboard(GUI.WorksheetController dg)
     {
       Altaxo.Data.DataTable dt = dg.DataTable;
-      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			var dao = Current.Gui.GetNewClipboardDataObject();
     
       if(dg.AreDataCellsSelected)
       {
@@ -345,7 +345,7 @@ namespace Altaxo.Worksheet.Commands
         dao.SetData("Altaxo.Data.DataTable.ClipboardMemento",tablememento);
 
         // now copy the data object to the clipboard
-        System.Windows.Forms.Clipboard.SetDataObject(dao,true);
+        Current.Gui.SetClipboardDataObject(dao,true);
       
       
   
@@ -360,7 +360,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="dg">The worksheet controller</param>
     /// <param name="dao">The clipboard data object</param>
-    protected static void WriteAsciiToClipBoardIfDataCellsSelected(GUI.WorksheetController dg, System.Windows.Forms.DataObject dao)
+    protected static void WriteAsciiToClipBoardIfDataCellsSelected(GUI.WorksheetController dg, Altaxo.Gui.IClipboardSetDataObject dao)
     {
       // columns are selected
       DataTable dt = dg.DataTable;
@@ -384,7 +384,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Collections.AscendingIntegerCollection selCols,
       Altaxo.Collections.AscendingIntegerCollection selRows,
       Altaxo.Collections.AscendingIntegerCollection selPropCols,
-      System.Windows.Forms.DataObject dao)
+      Altaxo.Gui.IClipboardSetDataObject dao)
     {
       if(selCols.Count==0)
       {
@@ -427,7 +427,7 @@ namespace Altaxo.Worksheet.Commands
             str.WriteLine();
         }
       }
-      dao.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, str.ToString());
+      dao.SetCommaSeparatedValues(str.ToString());
 
 
       // now also as tab separated text
@@ -455,7 +455,7 @@ namespace Altaxo.Worksheet.Commands
             sw.WriteLine();
         }
       }
-      dao.SetData(sw.ToString());
+      dao.SetData(typeof(string),sw.ToString());
     }
   
 
@@ -464,7 +464,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="dg">The worksheet controller</param>
     /// <param name="dao">The clipboard data object</param>
-    protected static void WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(GUI.WorksheetController dg, System.Windows.Forms.DataObject dao)
+    protected static void WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(GUI.WorksheetController dg, Altaxo.Gui.IClipboardSetDataObject dao)
     {
       // columns are selected
       DataTable dt = dg.DataTable;
@@ -488,7 +488,7 @@ namespace Altaxo.Worksheet.Commands
             str.WriteLine();
         }
       }
-      dao.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, str.ToString());
+      dao.SetCommaSeparatedValues(str.ToString());
 
 
       // now also as tab separated text
@@ -505,7 +505,7 @@ namespace Altaxo.Worksheet.Commands
             sw.WriteLine();
         }
       }
-      dao.SetData(sw.ToString());
+      dao.SetData(typeof(string),sw.ToString());
     }
   
 
@@ -943,7 +943,7 @@ namespace Altaxo.Worksheet.Commands
 
     public static DataTable GetTableFromClipboard()
     {
-      System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
+			var dao = Current.Gui.OpenClipboardDataObject();
       string[] formats = dao.GetFormats();
       //System.Diagnostics.Trace.WriteLine("Available formats:");
       //foreach(string format in formats) System.Diagnostics.Trace.WriteLine(format);

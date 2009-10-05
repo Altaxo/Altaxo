@@ -435,11 +435,16 @@ namespace Altaxo.Main
     {
       string text = ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
       string caption = ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
-      System.Windows.Forms.DialogResult dlgresult = System.Windows.Forms.MessageBox.Show(Current.MainWindow, text, caption, System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+      bool? dlgresult = Current.Gui.YesNoCancelMessageBox(text, caption, null);
 
-      switch (dlgresult)
+
+      if (null == dlgresult) // Cancel
       {
-        case System.Windows.Forms.DialogResult.Yes:
+        e.Cancel = true;
+      }
+      else if(true==dlgresult) // Yes
+      {
+        
           if (this.CurrentProjectFileName != null)
             this.SaveProject();
           else
@@ -447,15 +452,7 @@ namespace Altaxo.Main
 
           if (this.CurrentOpenProject.IsDirty)
             e.Cancel = true; // Cancel if the saving was not successfull
-          break;
-
-        case System.Windows.Forms.DialogResult.No:
-          break;
-        case System.Windows.Forms.DialogResult.Cancel:
-          e.Cancel = true; // Cancel if the user pressed cancel
-          break;
       }
-
     }
 
 
@@ -653,7 +650,7 @@ namespace Altaxo.Main
     public void DeleteTable(Altaxo.Data.DataTable table, bool force)
     {
       if (!force &&
-        System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(Current.MainWindow, "Are you sure to remove the table and the corresponding views?", "Attention", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning))
+        false == Current.Gui.YesNoMessageBox("Are you sure to remove the table and the corresponding views?", "Attention", false))
         return;
 
       // close all windows
@@ -772,9 +769,7 @@ namespace Altaxo.Main
     {
      
       if (!force &&
-        System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(
-        Current.MainWindow,
-        "Are you sure to remove the graph document and the corresponding views?", "Attention", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning))
+        false == Current.Gui.YesNoMessageBox("Are you sure to remove the graph document and the corresponding views?", "Attention", false))
         return;
       
       // close all windows

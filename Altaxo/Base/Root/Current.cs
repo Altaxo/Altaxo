@@ -68,14 +68,7 @@ namespace Altaxo
       get { return sm_theWorkbench; }
     }
 
-		public static System.Windows.Forms.Form MainWindow
-		{
-			get
-			{
-				return (System.Windows.Forms.Form)(sm_theWorkbench.ViewObject);
-			}
-		}
-
+		
     /// <summary>
     /// Returns the project service, which provides methods to add worksheet and graphs, or open and close the document.
     /// </summary>
@@ -278,41 +271,6 @@ namespace Altaxo
 
     }
 
-#if FormerGuiState
-    /// <summary>
-    /// The main entry point for the application. This function has to be called to
-    /// run the application.
-    /// </summary>
-    [STAThread]
-    public static void Main() 
-    {
-      if(null==sm_theProjectService)
-      {
-        sm_theProjectService  = new Altaxo.Main.ProjectService();
 
-        sm_thePrintingService = new Altaxo.Main.PrintingService();
-
-        // we construct the main document
-        sm_theProjectService.CurrentOpenProject = new AltaxoDocument();
-
-        MainController ctrl = new MainController();
-
-        sm_theWorkbench = new AltaxoWorkbench(new MainView());
-        
-        ctrl.SetMenuToMainWindow();
-
-        // InitializeMainController(ctrl);
-
-      }
-      try
-      {
-        System.Windows.Forms.Application.Run(Current.MainWindow);
-      }
-      catch(Exception e)
-      {
-        System.Windows.Forms.MessageBox.Show(e.ToString());
-      }
-    }
-#endif
   }
 }

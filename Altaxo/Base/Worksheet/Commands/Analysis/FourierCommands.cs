@@ -62,7 +62,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       string err =  TwoDimFFT(Current.Project, ctrl);
       if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+				Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
     protected static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg, out double[] rePart, out double[] imPart)
@@ -153,7 +153,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       string err =  TwoDimCenteredFFT(Current.Project, ctrl);
       if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+				Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
     public static string TwoDimCenteredFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)

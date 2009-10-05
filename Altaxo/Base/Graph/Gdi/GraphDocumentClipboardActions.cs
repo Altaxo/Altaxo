@@ -82,10 +82,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
 		public static void CopyToClipboardAsBitmap(this GraphDocument doc, int dpiResolution, Brush backbrush, PixelFormat pixelformat, GraphExportArea areaToExport)
 		{
-			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			var dao = Current.Gui.GetNewClipboardDataObject();
 			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, backbrush, pixelformat, areaToExport, dpiResolution, dpiResolution);
 			dao.SetImage(bitmap);
-			System.Windows.Forms.Clipboard.SetDataObject(dao);
+			Current.Gui.SetClipboardDataObject(dao);
 		}
 
     /// <summary>
@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="options">Graph copy options.</param>
 		public static void CopyToClipboardAsBitmap(this GraphDocument doc, GraphExportOptions options)
 		{
-			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			var dao = Current.Gui.GetNewClipboardDataObject();
 			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
 
       if(GraphCopyPageClipboardFormat.AsNative == (options.ClipboardFormat & GraphCopyPageClipboardFormat.AsNative))
@@ -103,11 +103,11 @@ namespace Altaxo.Graph.Gdi
       if (GraphCopyPageClipboardFormat.AsDropDownList == (options.ClipboardFormat & GraphCopyPageClipboardFormat.AsDropDownList))
         InternalAddClipboardDropDownList(dao, bitmap, options);
 
-			System.Windows.Forms.Clipboard.SetDataObject(dao);
+			Current.Gui.SetClipboardDataObject(dao);
 		}
 
 
-    static string InternalAddClipboardDropDownList(System.Windows.Forms.DataObject dao, System.Drawing.Bitmap bmp, GraphExportOptions options)
+    static string InternalAddClipboardDropDownList(Altaxo.Gui.IClipboardSetDataObject dao, System.Drawing.Bitmap bmp, GraphExportOptions options)
     {
 
       string filepath = System.IO.Path.GetTempPath();
@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Gdi
 
 		static public void CopyToClipboardAsMetafile(this GraphDocument doc, GraphExportOptions options)
 		{
-			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			var dao = Current.Gui.GetNewClipboardDataObject();
 			string filepath = System.IO.Path.GetTempPath();
 			string filename = filepath + "AltaxoClipboardMetafile.emf";
 			if (System.IO.File.Exists(filename))
@@ -155,9 +155,7 @@ namespace Altaxo.Graph.Gdi
         coll.Add(filename);
         dao.SetFileDropList(coll);
       }
-			
-      
-      System.Windows.Forms.Clipboard.SetDataObject(dao);
+      Current.Gui.SetClipboardDataObject(dao);
 		}
    
 

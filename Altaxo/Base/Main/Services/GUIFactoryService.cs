@@ -461,13 +461,33 @@ namespace Altaxo.Main.Services
     /// Shows a message box with the error text.
     /// </summary>
     /// <param name="errortxt">The error text.</param>
-    public abstract void ErrorMessageBox(string errortxt);
+		/// <param name="title">The title of the message box.</param>
+		public abstract void ErrorMessageBox(string errortxt, string title);
+
+		/// <summary>
+		/// Shows a message box with the error text.
+		/// </summary>
+		/// <param name="errortxt">The error text.</param>
+		public void ErrorMessageBox(string errortxt)
+			{
+			ErrorMessageBox(errortxt, null);
+			}
 
 		/// <summary>
 		/// Shows a message box with an informational text.
 		/// </summary>
 		/// <param name="infotxt">The info text.</param>
-		public abstract void InfoMessageBox(string infotxt);
+		/// <param name="title">The title of the message box.</param>
+		public abstract void InfoMessageBox(string infotxt, string title);
+
+		/// <summary>
+		/// Shows a message box with an informational text.
+		/// </summary>
+		/// <param name="infotxt">The info text.</param>
+		public void InfoMessageBox(string infotxt)
+		{
+			InfoMessageBox(infotxt, null);
+		}
 
     /// <summary>
     /// Shows a message box with a question to be answered either yes or no.
@@ -477,6 +497,15 @@ namespace Altaxo.Main.Services
     /// <param name="defaultanswer">If true, the default answer is "yes", otherwise "no".</param>
     /// <returns>True if the user answered with Yes, otherwise false.</returns>
     public abstract bool YesNoMessageBox(string txt, string caption, bool defaultanswer);
+
+    /// <summary>
+    /// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
+    /// </summary>
+    /// <param name="txt">The question text.</param>
+    /// <param name="caption">The caption of the dialog box.</param>
+    /// <param name="defaultAnswer">If true, the default answer is "yes", if false the default answer is "no", if null the default answer is "Cancel".</param>
+    /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
+    public abstract bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer);
 
     public bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
     {
@@ -610,6 +639,35 @@ namespace Altaxo.Main.Services
 		public abstract bool ShowSaveFileDialog(SaveFileOptions options);
 
 		public abstract bool ShowPrintPreviewDialog(System.Drawing.Printing.PrintPageEventHandler printPageEventHandler, System.Drawing.Printing.QueryPageSettingsEventHandler queryPageSettingsEventHandler);
+
+		/// <summary>
+		/// Get a new clipboard data object. You can use this to put data on the clipboard.
+		/// </summary>
+		/// <returns>A newly created data object.</returns>
+		public abstract IClipboardSetDataObject GetNewClipboardDataObject();
+
+		/// <summary>
+		/// Opens the clipboard data object. You can use this to see which data are on the clipboard.
+		/// </summary>
+		/// <returns>A data object to see which data are on the clipboard.</returns>
+		public abstract IClipboardGetDataObject OpenClipboardDataObject();
+
+		/// <summary>
+		/// Sets the data stored in the dataObject on the clipboard for temporary usage.
+		/// </summary>
+		/// <param name="dataObject">Object used to store the data.</param>
+		public virtual void SetClipboardDataObject(IClipboardSetDataObject dataObject)
+		{
+			SetClipboardDataObject(dataObject, false);
+		}
+
+		/// <summary>
+		/// Sets the data stored in the dataObject on the clipboard for temporary or permanent usage.
+		/// </summary>
+		/// <param name="dataObject">Object used to store the data.</param>
+		/// <param name="value">If true, the data remains on the clipboard when the application is closed. If false, the data will be removed from the clipboard when the application is closed.</param>
+		public abstract void SetClipboardDataObject(IClipboardSetDataObject dataObject, bool value);
+
 
     #region static Windows Form methods
 

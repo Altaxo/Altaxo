@@ -468,7 +468,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     public void CopySelectedObjectsToClipboard()
     {
-      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			var dao = Current.Gui.GetNewClipboardDataObject();
 
       ArrayList objectList = new ArrayList();
 
@@ -483,27 +483,15 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
 
       // Test code to test if the object list can be serialized
-#if false
-      {
-      System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binform = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-        System.IO.MemoryStream stream = new System.IO.MemoryStream();
-        binform.Serialize(stream, objectList);
 
-        stream.Flush();
-        stream.Seek(0, System.IO.SeekOrigin.Begin);
-        object obj = binform.Deserialize(stream);
-        stream.Close();
-        stream.Dispose();
-      }
-#endif
 
       // now copy the data object to the clipboard
-      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+      Current.Gui.SetClipboardDataObject(dao, true);
     }
 
     public void CutSelectedObjectsToClipboard()
     {
-      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			var dao = Current.Gui.GetNewClipboardDataObject();
 
       ArrayList objectList = new ArrayList();
       System.Collections.Generic.List<IHitTestObject> notSerialized = new System.Collections.Generic.List<IHitTestObject>();
@@ -523,7 +511,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
 
       // now copy the data object to the clipboard
-      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+      Current.Gui.SetClipboardDataObject(dao, true);
 
       // Remove the not serialized objects from the selection, so they are not removed from the graph..
       foreach (IHitTestObject o in notSerialized)

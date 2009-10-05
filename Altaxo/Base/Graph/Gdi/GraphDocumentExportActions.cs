@@ -4,37 +4,36 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Windows.Forms;
-
+using System.IO;
 
 namespace Altaxo.Graph.Gdi
 {
 	public static class GraphDocumentExportActions
 	{
-		static string GetFileFilterString(ImageFormat fmt)
+		static IList<KeyValuePair<string,string>> GetFileFilterString(ImageFormat fmt)
 		{
-			string filter;
+			List<KeyValuePair<string, string>> filter = new List<KeyValuePair<string, string>>();
 
 			if (fmt == ImageFormat.Bmp)
-				filter = "Bitmap files (*.bmp)|*.bmp|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.bmp", "Bitmap files (*.bmp)"));
 			else if (fmt == ImageFormat.Emf)
-				filter = "Enhances metafiles (*.emf)|*.emf|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.emf", "Enhanced metafiles (*.emf)"));
 			else if (ImageFormat.Exif == fmt)
-				filter = "Exif files (*.exi)|*.exi|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.exi", "Exif files (*.exi)"));
 			else if (ImageFormat.Gif == fmt)
-				filter = "Gif files (*.gif)|*.gif|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.gif", "Gif files (*.gif)"));
 			else if (ImageFormat.Icon == fmt)
-				filter = "Icon files (*.ico)|*.ico|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.ico", "Icon files (*.ico)"));
 			else if (ImageFormat.Jpeg == fmt)
-				filter = "Jpeg files (*.jpg)|*.jpf|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.jpg", "Jpeg files (*.jpg)"));
 			else if (ImageFormat.Png == fmt)
-				filter = "Png files (*.png)|*.png|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.png", "Png files (*.png)"));
 			else if (ImageFormat.Tiff == fmt)
-				filter = "Tiff files (*.tif)|*.tif|All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.tif", "Tiff files (*.tif)"));
 			else if (ImageFormat.Wmf == fmt)
-				filter = "Windows metafiles (*.wmf)|*.wmf|All files (*.*)|*.*";
-			else
-				filter = "All files (*.*)|*.*";
+				filter.Add(new KeyValuePair<string,string>("*.wmf", "Windows metafiles (*.wmf)"));
+
+			filter.Add(new KeyValuePair<string,string>("*.*", "All files (*.*)"));
 
 			return filter;
 		}
@@ -53,16 +52,16 @@ namespace Altaxo.Graph.Gdi
 				return;
 			}
 
-			System.IO.Stream myStream;
-			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+			var saveOptions = new Altaxo.Gui.SaveFileOptions();
+			var list = GetFileFilterString(_graphExportOptionsToFile.ImageFormat);
+			foreach (var entry in list)
+				saveOptions.AddFilter(entry.Key, entry.Value);
+			saveOptions.FilterIndex = 0;
+			saveOptions.RestoreDirectory = true;
 
-			saveFileDialog1.Filter = GetFileFilterString(_graphExportOptionsToFile.ImageFormat);
-			saveFileDialog1.FilterIndex = 1;
-			saveFileDialog1.RestoreDirectory = true;
-
-			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+			if (Current.Gui.ShowSaveFileDialog(saveOptions))
 			{
-				if ((myStream = saveFileDialog1.OpenFile()) != null)
+				using(Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
 					doc.Render(myStream, _graphExportOptionsToFile);
 					myStream.Close();

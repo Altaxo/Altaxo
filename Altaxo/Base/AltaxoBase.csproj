@@ -857,6 +857,7 @@
     <Compile Include="Gui\Analysis\Multivariate\PLSPredictValueController.cs" />
     <Compile Include="Gui\Analysis\Multivariate\PLSStartAnalysisController.cs" />
     <Compile Include="Gui\Analysis\Multivariate\SpectralPreprocessingController.cs" />
+    <Compile Include="Gui\ClipboardRelated.cs" />
     <Compile Include="Gui\Common\BooleanValueController.cs" />
     <Compile Include="Gui\Common\DialogShellController.cs" />
     <Compile Include="Gui\Common\DialogShellView.cs">
