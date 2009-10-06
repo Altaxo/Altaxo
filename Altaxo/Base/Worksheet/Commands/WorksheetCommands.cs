@@ -20,7 +20,8 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
+using Altaxo.Worksheet;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Common;
 
@@ -31,7 +32,7 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class WorksheetCommands
   {
-    public static void Rename(WorksheetController ctrl)
+    public static void Rename(IWorksheetController ctrl)
     {
       TextValueInputController tvctrl = new TextValueInputController(ctrl.Doc.Name,"Enter a name for the worksheet:");
       tvctrl.Validator = new WorksheetRenameValidator(ctrl.Doc,ctrl);
@@ -42,9 +43,9 @@ namespace Altaxo.Worksheet.Commands
     protected class WorksheetRenameValidator : TextValueInputController.NonEmptyStringValidator
     {
       Altaxo.Data.DataTable m_Table;
-      WorksheetController m_Ctrl;
+      IWorksheetController m_Ctrl;
       
-      public WorksheetRenameValidator(Altaxo.Data.DataTable tab, WorksheetController ctrl)
+      public WorksheetRenameValidator(Altaxo.Data.DataTable tab, IWorksheetController ctrl)
         : base("The worksheet name must not be empty! Please enter a valid name.")
       {
         m_Table = tab;
@@ -70,7 +71,7 @@ namespace Altaxo.Worksheet.Commands
     
 
 
-    public static void Duplicate(WorksheetController ctrl)
+    public static void Duplicate(IWorksheetController ctrl)
     {
       Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();
      
@@ -85,7 +86,7 @@ namespace Altaxo.Worksheet.Commands
     /// This will create a property column as text column with the names of the data columns.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
-    public static void CreatePropertyColumnOfColumnNames(WorksheetController ctrl)
+    public static void CreatePropertyColumnOfColumnNames(IWorksheetController ctrl)
     {
       CreatePropertyColumnOfColumnNames(ctrl.Doc);
     }
@@ -116,24 +117,24 @@ namespace Altaxo.Worksheet.Commands
     }
 
 
-    public static void Transpose(WorksheetController ctrl)
+    public static void Transpose(IWorksheetController ctrl)
     {
       TransposeWorksheetController transposectrl = new TransposeWorksheetController(ctrl.DataTable);
       Current.Gui.ShowDialog(transposectrl, "Transpose worksheet", false);
     }
     
 
-    public static void AddDataColumns(WorksheetController ctrl)
+    public static void AddDataColumns(IWorksheetController ctrl)
     {
       ShowAddColumnsDialog(ctrl.DataTable,false);
     }
 
-    public static void AddPropertyColumns(WorksheetController ctrl)
+    public static void AddPropertyColumns(IWorksheetController ctrl)
     {
       ShowAddColumnsDialog(ctrl.DataTable,true);
     }
 
-    public static void WorksheetClearData(WorksheetController ctrl)
+    public static void WorksheetClearData(IWorksheetController ctrl)
     {
       ctrl.DataTable.DataColumns.ClearData();
       ctrl.DataTable.PropCols.ClearData();

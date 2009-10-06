@@ -558,7 +558,7 @@ namespace Altaxo.Main
     /// <param name="worksheetName">The name of the table to create.</param>
     /// <param name="bCreateDefaultColumns">If true, a default x and a y column is created.</param>
     /// <returns>The view content for the provided table.</returns>
-    public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
+    public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
     {
 
       Altaxo.Data.DataTable dt1 = this.CurrentOpenProject.CreateNewTable(worksheetName, bCreateDefaultColumns);
@@ -570,7 +570,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="bCreateDefaultColumns">If true, a default x column and a default value column are created in the table.</param>
     /// <returns>The view content for the provided table.</returns>
-    public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(bool bCreateDefaultColumns)
+    public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(bool bCreateDefaultColumns)
     {
       return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(), bCreateDefaultColumns);
     }
@@ -579,7 +579,7 @@ namespace Altaxo.Main
     /// Creates a new table and the view content for that table.
     /// </summary>
     /// <returns>The content controller for that table.</returns>
-    public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet()
+    public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet()
     {
       return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(), false);
     }
@@ -590,7 +590,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="table">The table which should be viewed.</param>
     /// <returns>The view content for the provided table.</returns>
-    public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
+    public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
     {
       if (table.ParentObject == null)
         this.CurrentOpenProject.DataTableCollection.Add(table);
@@ -605,7 +605,7 @@ namespace Altaxo.Main
     /// <param name="table">The table which should be viewed.</param>
     /// <param name="layout">The layout for the table.</param>
     /// <returns>The view content for the provided table.</returns>
-    public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
+    public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
     {
       layout.DataTable = table;
       Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(layout);
@@ -672,7 +672,7 @@ namespace Altaxo.Main
     /// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
     /// <param name="ctrl">The Worksheet to remove.</param>
     /// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
-    public void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public void RemoveWorksheet(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl)
     {
       foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
       {

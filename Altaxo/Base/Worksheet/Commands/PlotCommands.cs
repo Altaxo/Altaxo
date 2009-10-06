@@ -33,7 +33,7 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.GUI;
 using Altaxo.Graph.Scales;
-
+using Altaxo.Gui.Worksheet.Viewing;
 
 
 
@@ -401,7 +401,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
     /// <param name="bLine">If true, a line is plotted.</param>
     /// <param name="bScatter">If true, scatter symbols are plotted.</param>
-    public static void PlotLine(GUI.WorksheetController dg, bool bLine, bool bScatter)
+    public static void PlotLine(IWorksheetController dg, bool bLine, bool bScatter)
     {
       PlotLine(dg.DataTable,dg.SelectedDataColumns,bLine,bScatter, null);
     }
@@ -428,7 +428,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotLineArea(GUI.WorksheetController dg)
+    public static void PlotLineArea(IWorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_LineArea, GroupStyle_Color_Line);
     }
@@ -436,7 +436,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotLineStack(GUI.WorksheetController dg)
+    public static void PlotLineStack(IWorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Stack_Color_Line);
     }
@@ -445,7 +445,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotLineRelativeStack(GUI.WorksheetController dg)
+    public static void PlotLineRelativeStack(IWorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_RelativeStack_Color_Line);
     }
@@ -454,7 +454,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotLineWaterfall(GUI.WorksheetController dg)
+    public static void PlotLineWaterfall(IWorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Waterfall_Color_Line);
     }
@@ -463,7 +463,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotLinePolar(GUI.WorksheetController dg)
+    public static void PlotLinePolar(IWorksheetController dg)
     {
       Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
       Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition,graph.DefaultLayerSize,new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
@@ -477,7 +477,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotBarChartNormal(GUI.WorksheetController dg)
+    public static void PlotBarChartNormal(IWorksheetController dg)
     {
       IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
       ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
@@ -487,7 +487,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotBarChartStack(GUI.WorksheetController dg)
+    public static void PlotBarChartStack(IWorksheetController dg)
     {
       IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
       ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
@@ -497,7 +497,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotBarChartRelativeStack(GUI.WorksheetController dg)
+    public static void PlotBarChartRelativeStack(IWorksheetController dg)
     {
       IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
       ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
@@ -508,7 +508,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotColumnChartNormal(GUI.WorksheetController dg)
+    public static void PlotColumnChartNormal(IWorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
     }
@@ -517,7 +517,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotColumnChartStack(GUI.WorksheetController dg)
+    public static void PlotColumnChartStack(IWorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
     }
@@ -526,7 +526,7 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotColumnChartRelativeStack(GUI.WorksheetController dg)
+    public static void PlotColumnChartRelativeStack(IWorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
     }
@@ -538,7 +538,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="dg"></param>
     /// <param name="bLine"></param>
     /// <param name="bScatter"></param>
-    public static void PlotDensityImage(GUI.WorksheetController dg, bool bLine, bool bScatter)
+    public static void PlotDensityImage(IWorksheetController dg, bool bLine, bool bScatter)
     {
       Altaxo.Data.DataTable table = dg.Doc;
       DensityImagePlotStyle plotStyle = new DensityImagePlotStyle();

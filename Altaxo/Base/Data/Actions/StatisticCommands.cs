@@ -23,7 +23,7 @@
 using System;
 
 using Altaxo.Collections;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Data;
 
 namespace Altaxo.Data

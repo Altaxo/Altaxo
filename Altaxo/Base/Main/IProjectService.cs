@@ -190,14 +190,14 @@ namespace Altaxo.Main
     /// Creates a new table and the view content for the newly created table.
     /// </summary>
     /// <returns>The content controller for that table.</returns>
-    Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet();
+    Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet();
 
     /// <summary>
     /// Creates a view content for a table.
     /// </summary>
     /// <param name="table">The table which should be viewed.</param>
     /// <returns>The view content for the provided table.</returns>
-    Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table);
+    Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table);
 
     /// <summary>
     /// Creates a view content for a table.
@@ -205,7 +205,7 @@ namespace Altaxo.Main
     /// <param name="table">The table which should be viewed.</param>
     /// <param name="layout">The layout for the table.</param>
     /// <returns>The view content for the provided table.</returns>
-    Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout);
+    Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout);
 
 
     /// <summary>
@@ -220,7 +220,7 @@ namespace Altaxo.Main
     /// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
     /// <param name="ctrl">The Worksheet to remove.</param>
     /// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
-    void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl);
+    void RemoveWorksheet(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl);
 
     /// <summary>
     /// Creates a new graph document and the view for this newly created graph document.

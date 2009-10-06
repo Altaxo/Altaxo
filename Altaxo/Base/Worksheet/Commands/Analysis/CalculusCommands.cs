@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Generic;
 
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
@@ -43,7 +43,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region SavitzkyGolay
 
-    public static void SavitzkyGolayFiltering(WorksheetController ctrl)
+    public static void SavitzkyGolayFiltering(IWorksheetController ctrl)
     {
       if(ctrl.SelectedDataColumns.Count==0)
         return;
@@ -107,7 +107,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Interpolation
 
-    public static void Interpolation(WorksheetController ctrl)
+    public static void Interpolation(IWorksheetController ctrl)
     {
       if(ctrl.SelectedDataColumns.Count==0)
         return;
@@ -122,7 +122,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Interpolation(ctrl, parameters);
     }
 
-    public static void Interpolation(WorksheetController ctrl, InterpolationParameters parameters)
+    public static void Interpolation(IWorksheetController ctrl, InterpolationParameters parameters)
     {
       Dictionary<DataColumn, int> _columnToGroupNumber = new Dictionary<DataColumn, int>();
 
@@ -199,7 +199,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
  
 
-    public static LinearFitBySvd MultivariateLinearFit(WorksheetController ctrl)
+    public static LinearFitBySvd MultivariateLinearFit(IWorksheetController ctrl)
     {
       return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.Doc.DataColumns,ctrl.SelectedDataColumns);
     }

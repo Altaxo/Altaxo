@@ -23,7 +23,7 @@
 using System;
 using Altaxo.Collections;
 using Altaxo.Data;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -38,7 +38,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="ctrl">Controller where the columns are selected in.</param>
     /// <returns>Null if no error occurs, or an error message.</returns>
-    public static string XYVToMatrix(WorksheetController ctrl)
+    public static string XYVToMatrix(IWorksheetController ctrl)
     {
       DataColumn xcol=null, ycol=null, vcol=null;
 
@@ -193,7 +193,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Remove the selected columns, rows or property columns.
     /// </summary>
-    public static void RemoveSelected(WorksheetController ctrl)
+    public static void RemoveSelected(IWorksheetController ctrl)
     {
       ctrl.DataTable.Suspend();
 
@@ -229,7 +229,7 @@ namespace Altaxo.Worksheet.Commands
 
       // end code for the selected rows
       ctrl.DataTable.Resume();
-      ctrl.View.TableAreaInvalidate(); // necessary because we changed the selections
+      ctrl.UpdateTableView(); // necessary because we changed the selections
 
 
 
@@ -239,7 +239,7 @@ namespace Altaxo.Worksheet.Commands
     /// This commands clean all selected cells.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
-    public static void CleanSelected(WorksheetController ctrl)
+    public static void CleanSelected(IWorksheetController ctrl)
     {
       ctrl.DataTable.Suspend();
 
@@ -319,11 +319,11 @@ namespace Altaxo.Worksheet.Commands
 
       // end code for the selected rows
       ctrl.DataTable.Resume();
-      ctrl.View.TableAreaInvalidate(); // necessary because we changed the selections
+      ctrl.UpdateTableView(); // necessary because we changed the selections
     }
 
 
-    public static void CopyToClipboard(GUI.WorksheetController dg)
+    public static void CopyToClipboard(IWorksheetController dg)
     {
       Altaxo.Data.DataTable dt = dg.DataTable;
 			var dao = Current.Gui.GetNewClipboardDataObject();
@@ -360,7 +360,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="dg">The worksheet controller</param>
     /// <param name="dao">The clipboard data object</param>
-    protected static void WriteAsciiToClipBoardIfDataCellsSelected(GUI.WorksheetController dg, Altaxo.Gui.IClipboardSetDataObject dao)
+    protected static void WriteAsciiToClipBoardIfDataCellsSelected(IWorksheetController dg, Altaxo.Gui.IClipboardSetDataObject dao)
     {
       // columns are selected
       DataTable dt = dg.DataTable;
@@ -464,7 +464,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="dg">The worksheet controller</param>
     /// <param name="dao">The clipboard data object</param>
-    protected static void WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(GUI.WorksheetController dg, Altaxo.Gui.IClipboardSetDataObject dao)
+    protected static void WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(IWorksheetController dg, Altaxo.Gui.IClipboardSetDataObject dao)
     {
       // columns are selected
       DataTable dt = dg.DataTable;
@@ -524,7 +524,7 @@ namespace Altaxo.Worksheet.Commands
     /// the paste is done column by row.
     /// 
     /// </remarks>
-    public static void PasteFromTable(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    public static void PasteFromTable(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       dg.DataTable.Suspend();
 
@@ -572,7 +572,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="dg">The worksheet to paste into.</param>
     /// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
-    protected static void PasteFromTableToUnselected(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    protected static void PasteFromTableToUnselected(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       Altaxo.Data.DataTable desttable = dg.DataTable;
       Altaxo.Data.DataColumn[] propertycolumnmap = MapOrCreatePropertyColumns(desttable,sourcetable);
@@ -623,7 +623,7 @@ namespace Altaxo.Worksheet.Commands
     /// No exception is thrown if a column type does not match the corresponding source column type.
     /// The columns to paste into do not change their name, kind or group number. But property columns in the source table
     /// are pasted into the destination table.</remarks>
-    protected static void PasteFromTableColumnsToSelectedColumns(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    protected static void PasteFromTableColumnsToSelectedColumns(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       Altaxo.Data.DataTable desttable = dg.DataTable;
 
@@ -685,7 +685,7 @@ namespace Altaxo.Worksheet.Commands
     /// No exception is thrown if a column type does not match the corresponding source column type.
     /// The columns to paste into do not change their name, kind or group number. But property columns in the source table
     /// are pasted into the destination table.</remarks>
-    protected static void PasteFromTableColumnsToSelectedPropertyColumns(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    protected static void PasteFromTableColumnsToSelectedPropertyColumns(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       Altaxo.Data.DataTable desttable = dg.DataTable;
 
@@ -739,7 +739,7 @@ namespace Altaxo.Worksheet.Commands
     /// No exception is thrown if a column type does not match the corresponding source column type.
     /// The columns to paste into do not change their name, kind or group number. Property columns in the source table
     /// are pasted into the destination table.</remarks>
-    protected static void PasteFromTableRowsToSelectedRows(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    protected static void PasteFromTableRowsToSelectedRows(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       Altaxo.Data.DataTable desttable = dg.DataTable;
 
@@ -783,7 +783,7 @@ namespace Altaxo.Worksheet.Commands
     /// No exception is thrown if a cell type does not match the corresponding source cell type.
     /// The columns to paste into do not change their name, kind or group number. Property columns in the source table
     /// are not used for this operation.</remarks>
-    protected static void PasteFromTableColumnsToSelectedRows(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    protected static void PasteFromTableColumnsToSelectedRows(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       Altaxo.Data.DataTable desttable = dg.DataTable;
       Altaxo.Data.DataColumn[] destdatacolumnmap = MapOrCreateDataColumnsToRows(desttable,dg.SelectedDataColumns,sourcetable);
@@ -804,7 +804,7 @@ namespace Altaxo.Worksheet.Commands
     }
 
 
-    protected static void PasteFromTableRowsToSelectedColumns(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    protected static void PasteFromTableRowsToSelectedColumns(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       PasteFromTableColumnsToSelectedRows(dg,sourcetable);
     }
@@ -972,7 +972,7 @@ namespace Altaxo.Worksheet.Commands
       return table;
     }
 
-    public static void PasteFromClipboard(GUI.WorksheetController dg)
+    public static void PasteFromClipboard(IWorksheetController dg)
     {
       DataTable table = GetTableFromClipboard();
       

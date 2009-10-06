@@ -147,17 +147,9 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Interface for all classes that can control a IWorksheetView to show data from a DataTable. 
   /// </summary>
-  public interface IWorksheetController : 
-    IMVCControllerEx
-    // IWorkbenchContentController,
-    //ICSharpCode.SharpDevelop.Gui.IEditable,
-    //ICSharpCode.SharpDevelop.Gui.IClipboardHandler
-  
+  public interface IWorksheetController : Altaxo.Gui.Worksheet.Viewing.IWorksheetController,    IMVCControllerEx
   {
-    /// <summary>
-    /// This returns the Table that is managed by this controller.
-    /// </summary>
-    Altaxo.Data.DataTable Doc { get; }
+    
 
     /// <summary>
     /// Returns the view that this controller controls.

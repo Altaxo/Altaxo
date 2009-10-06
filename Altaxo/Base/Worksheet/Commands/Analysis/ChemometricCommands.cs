@@ -23,7 +23,7 @@
 using System;
 
 using Altaxo.Collections;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Multivariate;
@@ -47,7 +47,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
   {
    
     #region MultiplyColumnsToMatrix
-    public static void MultiplyColumnsToMatrix(WorksheetController ctrl)
+    public static void MultiplyColumnsToMatrix(IWorksheetController ctrl)
     {
       string err = MultiplyColumnsToMatrix(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns);
       if(null!=err)
@@ -161,7 +161,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     #endregion
 
     #region PCA
-    public static void PCAOnRows(WorksheetController ctrl)
+    public static void PCAOnRows(IWorksheetController ctrl)
     {
       int maxFactors = 3;
       IntegerValueInputController ivictrl = new IntegerValueInputController(maxFactors,"Please enter the maximum number of factors to calculate:");
@@ -175,7 +175,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
-    public static void PCAOnColumns(WorksheetController ctrl)
+    public static void PCAOnColumns(IWorksheetController ctrl)
     {
       int maxFactors = 3;
       IntegerValueInputController ivictrl = new IntegerValueInputController(maxFactors,"Please enter the maximum number of factors to calculate:");
@@ -368,7 +368,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Analysis
 
-    public static void PLSOnRows(WorksheetController ctrl)
+    public static void PLSOnRows(IWorksheetController ctrl)
     {
       MultivariateAnalysisOptions options;
       SpectralPreprocessingOptions preprocessOptions;
@@ -381,7 +381,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(null!=err)
         Current.Gui.ErrorMessageBox(err,"An error occured");
     }
-    public static void PLSOnColumns(WorksheetController ctrl)
+    public static void PLSOnColumns(IWorksheetController ctrl)
     {
       MultivariateAnalysisOptions options;
       SpectralPreprocessingOptions preprocessOptions;
@@ -401,7 +401,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// The spectra are presumed to be horizontally oriented, i.e. each spectrum is in one row.
     /// </summary>
     /// <param name="ctrl">The worksheet controller containing the selected data.</param>
-    public static void PredictOnRows(WorksheetController ctrl)
+    public static void PredictOnRows(IWorksheetController ctrl)
     {
       PredictValues(ctrl,true);
     }
@@ -410,7 +410,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// The spectra are presumed to be vertically oriented, i.e. each spectrum is in one column.
     /// </summary>
     /// <param name="ctrl">The worksheet controller containing the selected data.</param>
-    public static void PredictOnColumns(WorksheetController ctrl)
+    public static void PredictOnColumns(IWorksheetController ctrl)
     {
       PredictValues(ctrl,false);
     }
@@ -422,7 +422,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="ctrl">The worksheet controller containing the selected data.</param>
     /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
-    public static void PredictValues(WorksheetController ctrl, bool spectrumIsRow)
+    public static void PredictValues(IWorksheetController ctrl, bool spectrumIsRow)
     {
       string modelName, destName;
       if(false==QuestCalibrationModelAndDestinationTable(out modelName, out destName) || null==modelName)

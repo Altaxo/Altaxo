@@ -538,12 +538,6 @@
     <Compile Include="Worksheet\DoubleColumnStyle.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\ClickedAreaType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\ClickedCellInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Gui\Worksheet\CrossValidatedCubicSplineController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -551,9 +545,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\Worksheet\InterpolationController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\IWorksheetDocumentView.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\Worksheet\MultivariateLinearRegressionController.cs">
@@ -570,15 +561,6 @@
     </Compile>
     <Compile Include="Gui\Worksheet\TransposeWorksheetController.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\WorksheetController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\WorksheetPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\WorksheetView.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Worksheet\IndexSelection.cs">
       <SubType>Code</SubType>
@@ -607,14 +589,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Textures.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\WorksheetPanel.resx">
-      <DependentUpon>WorksheetPanel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\WorksheetView.resx">
-      <DependentUpon>WorksheetView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="Main\App.ico" />
@@ -893,6 +867,7 @@
     <Compile Include="Gui\UserControlForControllerAttribute.cs" />
     <Compile Include="Gui\UserControllerForObjectAttribute.cs" />
     <Compile Include="Gui\Worksheet\ExportGalacticSpcFileController.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\IWorksheetController.cs" />
     <Compile Include="Main\DocumentInformation.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />
@@ -931,6 +906,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />
+    <Folder Include="Worksheet\GUI\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

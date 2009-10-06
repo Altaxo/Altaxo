@@ -466,6 +466,16 @@
     <Compile Include="Gui\Worksheet\TransposeWorksheetControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Worksheet\Viewing\ClickedAreaType.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\ClickedCellInfo.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\IWorksheetDocumentView.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\WorksheetController.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\WorksheetPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Worksheet\Viewing\WorksheetView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Gui\Analysis\Multivariate\PLSPredictValueControl.resx">
@@ -697,6 +707,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Worksheet\TransposeWorksheetControl.resx">
       <DependentUpon>TransposeWorksheetControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\Viewing\WorksheetPanel.resx">
+      <DependentUpon>WorksheetPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Worksheet\Viewing\WorksheetView.resx">
+      <DependentUpon>WorksheetView.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

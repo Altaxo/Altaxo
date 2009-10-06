@@ -22,7 +22,7 @@
 
 using System;
 using System.Text.RegularExpressions;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.Commands
@@ -38,7 +38,7 @@ namespace Altaxo.Worksheet.Commands
     /// Moves the selected row(s) to a new position. The new position must be entered by the user.
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
-    public static string SetSelectedRowPosition(WorksheetController ctrl)
+    public static string SetSelectedRowPosition(IWorksheetController ctrl)
     {
       if(ctrl.SelectedDataRows.Count==0)
         return null; // nothing to do
@@ -67,7 +67,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
     /// <param name="nPosition">The new position for the selected rows.</param>
-    public static void SetSelectedRowPosition(WorksheetController ctrl, int nPosition)
+    public static void SetSelectedRowPosition(IWorksheetController ctrl, int nPosition)
     {
       if(ctrl.SelectedDataRows.Count>0)
       {
@@ -86,7 +86,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="ctrl">The worksheet controller.</param>
     /// <param name="rowBeforeToInsert">Number of the row before which to insert the additional rows.</param>
     /// <param name="numberOfRows">Number of rows to insert.</param>
-    public static void InsertDataRows(WorksheetController ctrl, int rowBeforeToInsert, int numberOfRows)
+    public static void InsertDataRows(IWorksheetController ctrl, int rowBeforeToInsert, int numberOfRows)
     {
       if (numberOfRows <= 0 || rowBeforeToInsert<0)
         return;
@@ -101,7 +101,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
     /// <param name="rowBeforeToInsert">Number of the row before which to insert the rows.</param>
-    public static void InsertDataRows(WorksheetController ctrl,int rowBeforeToInsert)
+    public static void InsertDataRows(IWorksheetController ctrl,int rowBeforeToInsert)
     {
       // ask for the number of rows to insert
       Altaxo.Gui.Common.IntegerValueInputController ictrl = new IntegerValueInputController(1, "Enter the number of rows to insert:");
@@ -114,7 +114,7 @@ namespace Altaxo.Worksheet.Commands
     /// If no row is selected, the row is inserted before the first row.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
-    public static void InsertOneDataRow(WorksheetController ctrl)
+    public static void InsertOneDataRow(IWorksheetController ctrl)
     {
       if (ctrl.SelectedDataRows.Count > 0)
         InsertDataRows(ctrl, ctrl.SelectedDataRows[0], 1);
@@ -127,7 +127,7 @@ namespace Altaxo.Worksheet.Commands
     /// If no row is selected, the row is inserted before the first row.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
-    public static void InsertDataRows(WorksheetController ctrl)
+    public static void InsertDataRows(IWorksheetController ctrl)
     {
       if (ctrl.SelectedDataRows.Count > 0)
         InsertDataRows(ctrl, ctrl.SelectedDataRows[0]);

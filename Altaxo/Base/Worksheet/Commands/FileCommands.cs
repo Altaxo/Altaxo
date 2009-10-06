@@ -23,7 +23,7 @@
 using System;
 using System.IO;
 using Altaxo.Serialization.Ascii;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -32,7 +32,7 @@ namespace Altaxo.Worksheet.Commands
 	/// </summary>
 	public class FileCommands
 	{
-		public static void Save(WorksheetController ctrl, System.IO.Stream myStream, bool saveAsTemplate)
+		public static void Save(IWorksheetController ctrl, System.IO.Stream myStream, bool saveAsTemplate)
 		{
 			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 			if (saveAsTemplate)
@@ -54,7 +54,7 @@ namespace Altaxo.Worksheet.Commands
 			info.EndWriting();
 		}
 
-		public static void SaveAs(WorksheetController ctrl, bool saveAsTemplate)
+		public static void SaveAs(IWorksheetController ctrl, bool saveAsTemplate)
 		{
 			var options = new Altaxo.Gui.SaveFileOptions();
 			options.AddFilter("*.axowks", "Altaxo worksheet files (*.axowks)");
@@ -79,7 +79,7 @@ namespace Altaxo.Worksheet.Commands
 			importer.ImportAscii(recognizedOptions, ctrl.Doc);
 		}
 
-		public static void ImportAsciiToMultipleWorksheets(WorksheetController ctrl, string[] filenames)
+		public static void ImportAsciiToMultipleWorksheets(IWorksheetController ctrl, string[] filenames)
 		{
 			int startrest = 0;
 
@@ -100,7 +100,7 @@ namespace Altaxo.Worksheet.Commands
 			{
 				using (System.IO.Stream myStream = new System.IO.FileStream(filenames[i], System.IO.FileMode.Open, System.IO.FileAccess.Read))
 				{
-					Altaxo.Worksheet.GUI.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
+					Altaxo.Gui.Worksheet.Viewing.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
 					ImportAscii(newwkscontroller, myStream);
 					myStream.Close();
 				}
@@ -108,19 +108,19 @@ namespace Altaxo.Worksheet.Commands
 
 		}
 
-		public static void ImportAsciiToSingleWorksheet(WorksheetController ctrl, string[] filenames)
+		public static void ImportAsciiToSingleWorksheet(IWorksheetController ctrl, string[] filenames)
 		{
 			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 			AsciiImporter.ImportMultipleAscii(filenames, ctrl.Doc);
 		}
 
 
-		public static void ImportAscii(WorksheetController ctrl)
+		public static void ImportAscii(IWorksheetController ctrl)
 		{
 			ImportAscii(ctrl, true);
 		}
 
-		public static void ImportAscii(WorksheetController ctrl, bool toMultipleWorksheets)
+		public static void ImportAscii(IWorksheetController ctrl, bool toMultipleWorksheets)
 		{
 			var options = new Altaxo.Gui.OpenFileOptions();
 			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
@@ -140,7 +140,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 
 
-		public static void ExportAscii(WorksheetController ctrl)
+		public static void ExportAscii(IWorksheetController ctrl)
 		{
 
 			var options = new Altaxo.Gui.SaveFileOptions();
@@ -170,18 +170,18 @@ namespace Altaxo.Worksheet.Commands
 		}
 
 
-		public static void ImportGalacticSPC(WorksheetController ctrl)
+		public static void ImportGalacticSPC(IWorksheetController ctrl)
 		{
 			Altaxo.Serialization.Galactic.Import.ShowDialog(ctrl.DataTable);
 		}
 
-		public static void ImportJcamp(WorksheetController ctrl)
+		public static void ImportJcamp(IWorksheetController ctrl)
 		{
 			Altaxo.Serialization.Jcamp.Import.ShowDialog(ctrl.DataTable);
 		}
 
 
-		public static void ExportGalacticSPC(WorksheetController ctrl)
+		public static void ExportGalacticSPC(IWorksheetController ctrl)
 		{
 			var exportCtrl = new Altaxo.Gui.Worksheet.ExportGalacticSpcFileDialogController(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
 			Current.Gui.ShowDialog(exportCtrl, "Export Galactic SPC format");
@@ -196,7 +196,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 
 
-		public static void ImportImage(WorksheetController ctrl)
+		public static void ImportImage(IWorksheetController ctrl)
 		{
 			ImportImage(ctrl.DataTable);
 		}

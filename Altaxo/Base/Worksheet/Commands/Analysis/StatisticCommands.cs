@@ -23,7 +23,7 @@
 using System;
 
 using Altaxo.Collections;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Data;
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -35,7 +35,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
   {
     #region Statistical commands
 
-    public static void StatisticsOnColumns(WorksheetController ctrl)
+    public static void StatisticsOnColumns(IWorksheetController ctrl)
     {
 			var table = ctrl.DataTable.DoStatisticsOnColumns(ctrl.SelectedDataColumns,ctrl.SelectedDataRows);
 
@@ -45,7 +45,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
-    public static void StatisticsOnRows(WorksheetController ctrl)
+    public static void StatisticsOnRows(IWorksheetController ctrl)
     {
       var table = ctrl.DataTable.DoStatisticsOnRows(ctrl.SelectedDataColumns,ctrl.SelectedDataRows);
 

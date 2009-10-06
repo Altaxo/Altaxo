@@ -22,7 +22,7 @@
 
 using System;
 
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Calc;
 using Altaxo.Calc.Fourier;
 
@@ -34,7 +34,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
   public class FourierCommands
   {
 
-    public static void FFT(WorksheetController dg)
+    public static void FFT(IWorksheetController dg)
     {
       int len = dg.SelectedDataColumns.Count;
       if(len==0)
@@ -58,14 +58,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
-    public static void TwoDimensionalFFT(WorksheetController ctrl)
+    public static void TwoDimensionalFFT(IWorksheetController ctrl)
     {
       string err =  TwoDimFFT(Current.Project, ctrl);
       if(null!=err)
 				Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
-    protected static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg, out double[] rePart, out double[] imPart)
+    protected static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg, out double[] rePart, out double[] imPart)
     {
       int rows = dg.Doc.DataColumns.RowCount;
       int cols = dg.Doc.DataColumns.ColumnCount;
@@ -112,7 +112,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 
 
-    public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+    public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
       int rows = dg.Doc.DataColumns.RowCount;
       int cols = dg.Doc.DataColumns.ColumnCount;
@@ -149,14 +149,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
-    public static void TwoDimensionalCenteredFFT(WorksheetController ctrl)
+    public static void TwoDimensionalCenteredFFT(IWorksheetController ctrl)
     {
       string err =  TwoDimCenteredFFT(Current.Project, ctrl);
       if(null!=err)
 				Current.Gui.ErrorMessageBox(err, "An error occured");
     }
 
-    public static string TwoDimCenteredFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+    public static string TwoDimCenteredFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
       int rows = dg.Doc.DataColumns.RowCount;
       int cols = dg.Doc.DataColumns.ColumnCount;
@@ -205,14 +205,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		#region Convolution
 
-		public static void Convolution(WorksheetController ctrl)
+		public static void Convolution(IWorksheetController ctrl)
 		{
 			string err = Convolution(Current.Project, ctrl);
 			if (null != err)
 				Current.Gui.ErrorMessageBox(err);
 		}
 
-		public static string Convolution(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+		public static string Convolution(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
 		{
       int len = dg.SelectedDataColumns.Count;
       if(len==0)
@@ -250,14 +250,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region Correlation
 
-    public static void Correlation(WorksheetController ctrl)
+    public static void Correlation(IWorksheetController ctrl)
     {
       string err = Correlation(Current.Project, ctrl);
       if (null != err)
         Current.Gui.ErrorMessageBox(err);
     }
 
-    public static string Correlation(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+    public static string Correlation(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
       int len = dg.SelectedDataColumns.Count;
       if (len == 0)

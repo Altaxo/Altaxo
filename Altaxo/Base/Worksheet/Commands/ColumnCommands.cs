@@ -22,7 +22,7 @@
 
 using System;
 using System.Text.RegularExpressions;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.Commands
@@ -38,7 +38,7 @@ namespace Altaxo.Worksheet.Commands
     /// Renames the selected data column or property column.
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
-    public static void RenameSelectedColumn(WorksheetController ctrl)
+    public static void RenameSelectedColumn(IWorksheetController ctrl)
     {
       if(ctrl.SelectedDataColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
       {
@@ -65,9 +65,9 @@ namespace Altaxo.Worksheet.Commands
     public class DataColumnRenameValidator : TextValueInputController.NonEmptyStringValidator
     {
       Altaxo.Data.DataColumn m_Col;
-      WorksheetController m_Ctrl;
+      IWorksheetController m_Ctrl;
       
-      public DataColumnRenameValidator(Altaxo.Data.DataColumn col, WorksheetController ctrl)
+      public DataColumnRenameValidator(Altaxo.Data.DataColumn col, IWorksheetController ctrl)
         : base("The column name must not be empty! Please enter a valid name.")
       {
         m_Col = col;
@@ -97,9 +97,9 @@ namespace Altaxo.Worksheet.Commands
     public class PropertyColumnRenameValidator : TextValueInputController.NonEmptyStringValidator
     {
       Altaxo.Data.DataColumn m_Col;
-      WorksheetController m_Ctrl;
+      IWorksheetController m_Ctrl;
       
-      public PropertyColumnRenameValidator(Altaxo.Data.DataColumn col, WorksheetController ctrl)
+      public PropertyColumnRenameValidator(Altaxo.Data.DataColumn col, IWorksheetController ctrl)
         : base("The column name must not be empty! Please enter a valid name.")
       {
         m_Col = col;
@@ -131,7 +131,7 @@ namespace Altaxo.Worksheet.Commands
     /// Sets the group number of the selected column
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
-    public static void SetSelectedColumnGroupNumber(WorksheetController ctrl)
+    public static void SetSelectedColumnGroupNumber(IWorksheetController ctrl)
     {
       if(ctrl.SelectedDataColumns.Count>0 || ctrl.SelectedPropertyColumns.Count>0)
       {
@@ -156,7 +156,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
     /// <param name="nGroup">The group number to set for the selected columns.</param>
-    public static void SetSelectedColumnGroupNumber(WorksheetController ctrl, int nGroup)
+    public static void SetSelectedColumnGroupNumber(IWorksheetController ctrl, int nGroup)
     {
       for(int i=0;i<ctrl.SelectedDataColumns.Count;i++)
       {
@@ -179,7 +179,7 @@ namespace Altaxo.Worksheet.Commands
     /// Moves the selected column to a new position. The new position must be entered by the user.
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
-    public static string SetSelectedColumnPosition(WorksheetController ctrl)
+    public static string SetSelectedColumnPosition(IWorksheetController ctrl)
     {
       // check condition - either DataColumns or propertycolumns can be selected - but not both
       if(ctrl.SelectedDataColumns.Count>0 && ctrl.SelectedPropertyColumns.Count>0)
@@ -210,7 +210,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>
     /// <param name="nPosition">The new position for the selected columns.</param>
-    public static void SetSelectedColumnPosition(WorksheetController ctrl, int nPosition)
+    public static void SetSelectedColumnPosition(IWorksheetController ctrl, int nPosition)
     {
       if(ctrl.SelectedDataColumns.Count>0)
       {
@@ -238,7 +238,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the first selected column or property column to a X column.
     /// </summary>
-    public static void SetSelectedColumnAsX(WorksheetController ctrl)
+    public static void SetSelectedColumnAsX(IWorksheetController ctrl)
     {
       bool bChanged = false;
       if(ctrl.SelectedDataColumns.Count>0)
@@ -259,7 +259,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the first selected column or property column to a X column.
     /// </summary>
-    public static void SetSelectedColumnAsY(WorksheetController ctrl)
+    public static void SetSelectedColumnAsY(IWorksheetController ctrl)
     {
       bool bChanged = false;
       if (ctrl.SelectedDataColumns.Count > 0)
@@ -279,7 +279,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of all selected columns or property columns to a label column.
     /// </summary>
-    public static void SetSelectedColumnAsLabel(WorksheetController ctrl)
+    public static void SetSelectedColumnAsLabel(IWorksheetController ctrl)
     {
       bool bChanged = false;
       if(ctrl.SelectedDataColumns.Count>0)
@@ -303,7 +303,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the first selected column to a value column.
     /// </summary>
-    public static void SetSelectedColumnAsValue(WorksheetController ctrl)
+    public static void SetSelectedColumnAsValue(IWorksheetController ctrl)
     {
       bool bChanged = false;
       if(ctrl.SelectedDataColumns.Count>0)
@@ -326,7 +326,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the column kind of the first selected column to the specified column kind
     /// </summary>
-    public static void SetSelectedColumnAsKind(WorksheetController ctrl, Altaxo.Data.ColumnKind kind)
+    public static void SetSelectedColumnAsKind(IWorksheetController ctrl, Altaxo.Data.ColumnKind kind)
     {
       bool bChanged = false;
       if (ctrl.SelectedDataColumns.Count > 0)
@@ -353,7 +353,7 @@ namespace Altaxo.Worksheet.Commands
     /// Extracts the property values of the selected property columns.
     /// </summary>
     /// <param name="ctrl">The controller that controls the table.</param>
-    public static void ExtractPropertyValues(WorksheetController ctrl)
+    public static void ExtractPropertyValues(IWorksheetController ctrl)
     {
       for(int i=0;i<ctrl.SelectedPropertyColumns.Count;i++)
       {
@@ -421,7 +421,7 @@ namespace Altaxo.Worksheet.Commands
     #region Set column values
 
     /*
-    public static void SetColumnValues(WorksheetController ctrl)
+    public static void SetColumnValues(IWorksheetController ctrl)
     {
       if(ctrl.SelectedDataColumns.Count<=0)
         return; // no column selected
