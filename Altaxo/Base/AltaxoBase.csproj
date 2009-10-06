@@ -118,12 +118,6 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
-      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -309,51 +303,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\FunctionEvaluationScript.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\AbstractMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\TextToolMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\GraphView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\IGraphDocumentView.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\FitFunctionScript.cs" />
@@ -580,14 +529,6 @@
     <Compile Include="Worksheet\WorksheetLayoutCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="Graph\GUI\GraphPanel.resx">
-      <DependentUpon>GraphPanel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Graph\GUI\GraphView.resx">
-      <DependentUpon>GraphView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Textures.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -651,7 +592,6 @@
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_TreeWalker.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Parser.cs" />
-    <Compile Include="Graph\GUI\GraphControllerActions.cs" />
     <Compile Include="Graph\IRoutedProperty.cs" />
     <Compile Include="Graph\SingleGraphPrintOptions.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />
@@ -678,7 +618,6 @@
     <Compile Include="Graph\Gdi\Plot\Styles\FillToCurvePlotStyle.cs" />
     <Compile Include="Graph\Gdi\Shapes\CurlyBraceShape.cs" />
     <Compile Include="Graph\Gdi\Shapes\ShapeGroup.cs" />
-    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
     <Compile Include="Graph\I3DPhysicalVariantAccessor.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\Processed2DPlotData.cs" />
     <Compile Include="Graph\Gdi\Plot\DensityImagePlotItem.cs" />
@@ -858,6 +797,7 @@
     <Compile Include="Gui\Graph\SingleColumnChoiceController.cs" />
     <Compile Include="Gui\Graph\TextGraphicController.cs" />
     <Compile Include="Gui\Graph\TitleFormatLayerController.cs" />
+    <Compile Include="Gui\Graph\Viewing\IGraphController.cs" />
     <Compile Include="Gui\Graph\WaterfallTransformController.cs" />
     <Compile Include="Gui\IApplyController.cs" />
     <Compile Include="Gui\IClassForClassAttribute.cs" />
@@ -905,6 +845,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Graph\GUI\GraphControllerMouseHandlers\" />
     <Folder Include="Gui\Common\CustomColorDialog\" />
     <Folder Include="Worksheet\GUI\" />
   </ItemGroup>

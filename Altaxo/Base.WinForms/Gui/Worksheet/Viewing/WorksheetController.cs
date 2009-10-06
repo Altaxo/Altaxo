@@ -45,7 +45,7 @@ namespace Altaxo.Worksheet.GUI
   [Altaxo.Gui.UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
   [Altaxo.Gui.ExpectedTypeOfView(typeof(IWorksheetView))]
   public class WorksheetController :
-    IWorksheetController,
+    IWorksheetViewEventSink, Altaxo.Gui.Worksheet.Viewing.IWorksheetController,Altaxo.Gui.IMVCController,
     System.Runtime.Serialization.IDeserializationCallback
   {
     public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
@@ -2786,5 +2786,6 @@ namespace Altaxo.Worksheet.GUI
     }
 
     #endregion
+
   }
 }

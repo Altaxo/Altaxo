@@ -330,5 +330,30 @@ namespace Altaxo.Gui
 		#endregion
 
 
+		#region Context menu
+
+		/// <summary>
+		/// Creates and shows a context menu.
+		/// </summary>
+		/// <param name="x">The x coordinate of the location where to show the context menu.</param>
+		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
+		/// <param name="owner">The object that will be owner of this context menu.</param>
+		/// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
+		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
+		public override void ShowContextMenu(double x, double y, object owner, string addInTreePath)
+		{
+			object menu = null;
+			if (null != ContextMenuProvider)
+				menu = ContextMenuProvider(owner, addInTreePath);
+
+			
+			var menu1 = menu as ContextMenuStrip;
+
+			if (null != menu1)
+				menu1.Show((Control)owner, (int)x, (int)y);
+		}
+
+		#endregion
+
 	}
 }

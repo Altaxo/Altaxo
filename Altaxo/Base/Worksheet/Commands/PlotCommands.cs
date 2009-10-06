@@ -31,7 +31,6 @@ using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
-using Altaxo.Graph.GUI;
 using Altaxo.Graph.Scales;
 using Altaxo.Gui.Worksheet.Viewing;
 
@@ -311,7 +310,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
     /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
     /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-		public static IGraphController Plot(DataTable table,
+		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(DataTable table,
 			IAscendingIntegerCollection selectedColumns,
 			 G2DPlotStyleCollection templatePlotStyle,
 			PlotGroupStyleCollection groupStyles)
@@ -327,7 +326,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
     /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
     /// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
-		public static IGraphController Plot(DataTable table, 
+		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(DataTable table, 
       IAscendingIntegerCollection selectedColumns,
        G2DPlotStyleCollection templatePlotStyle,
       PlotGroupStyleCollection groupStyles,
@@ -354,7 +353,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="graph">The graph document to plot into.</param>
     /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
     /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-    public static IGraphController Plot(DataTable table,
+		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(DataTable table,
       IAscendingIntegerCollection selectedColumns,
       Graph.Gdi.GraphDocument graph,
       G2DPlotStyleCollection templatePlotStyle,
@@ -362,7 +361,7 @@ namespace Altaxo.Worksheet.Commands
     {
       List<IGPlotItem> pilist = CreatePlotItems(table, selectedColumns, templatePlotStyle);
       // now create a new Graph with this plot associations
-      Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph(graph);
+      var gc = Current.ProjectService.CreateNewGraph(graph);
       // Set x and y axes according to the first plot item in the list
       if (pilist.Count > 0 && (pilist[0] is XYColumnPlotItem))
       {
@@ -470,7 +469,7 @@ namespace Altaxo.Worksheet.Commands
       layer.CreateDefaultAxes();
       graph.Layers.Add(layer);
       Current.Project.GraphDocumentCollection.Add(graph);
-      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line, GroupStyle_Color_Line);
+      var gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line, GroupStyle_Color_Line);
     }
 
     /// <summary>
@@ -479,7 +478,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
     public static void PlotBarChartNormal(IWorksheetController dg)
     {
-      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
+      var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
       ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
     }
 
@@ -489,7 +488,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
     public static void PlotBarChartStack(IWorksheetController dg)
     {
-      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
+      var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
       ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
     }
 
@@ -499,7 +498,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
     public static void PlotBarChartRelativeStack(IWorksheetController dg)
     {
-      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
+      var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
       ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
     }
 
@@ -577,7 +576,7 @@ namespace Altaxo.Worksheet.Commands
       
       // now create a new Graph with this plot associations
 
-      Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
+      var gc = Current.ProjectService.CreateNewGraph();
 
       IGPlotItem pi = new DensityImagePlotItem(assoc,plotStyle);
       gc.Doc.Layers[0].PlotItems.Add(pi);

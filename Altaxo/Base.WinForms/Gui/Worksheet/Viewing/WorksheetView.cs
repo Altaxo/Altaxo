@@ -32,8 +32,6 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// WorksheetView is our class for visualizing data tables.
   /// </summary>
-  [SerializationSurrogate(0,typeof(WorksheetView.SerializationSurrogate0))]
-  [SerializationVersion(0,"Initial version.")]
   public class WorksheetView : System.Windows.Forms.UserControl, IWorksheetView
   {
     /// <summary>
@@ -50,66 +48,7 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// The controller that controls this view
     /// </summary>
-    private IWorksheetController _controller;
-
-
-    #region Serialization
-    public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
-    {
-      protected Point   m_Location;
-      protected Size    m_Size;
-      protected object  m_Controller=null;
-
-      // we need a empty constructor
-      public SerializationSurrogate0() {}
-
-      // not used for deserialization, since the ISerializable constructor is used for that
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector){return obj;}
-      // not used for serialization, instead the ISerializationSurrogate is used for that
-      public void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context ) {}
-
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        info.SetType(this.GetType());
-        WorksheetView s = (WorksheetView)obj;
-        info.AddValue("Location",s.Location);
-        info.AddValue("Size",s.Size);
-        info.AddValue("Controller",s._controller);
-      }
-
-      public SerializationSurrogate0(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
-      {
-        m_Location = (Point)info.GetValue("Location",typeof(Point));
-        m_Size     = (Size)info.GetValue("Size",typeof(Size));
-        m_Controller = info.GetValue("Controller",typeof(object));
-      }
-
-      public void OnDeserialization(object o)
-      {
-      }
-
-      public object GetRealObject(object parent)
-      {
-        // We create the view firstly without controller to have the creation finished
-        // before the controler is set
-        // otherwise we will have callbacks to not initialized variables
-        WorksheetView frm = new WorksheetView();
-        frm.Location = m_Location;
-        frm.Size = m_Size;
-        frm.Dock = DockStyle.Fill;
-
-        ((IWorksheetController)m_Controller).View = frm;
-
-        if(m_Controller is System.Runtime.Serialization.IDeserializationCallback)
-        {
-          DeserializationFinisher finisher = new DeserializationFinisher(frm);
-          ((System.Runtime.Serialization.IDeserializationCallback)m_Controller).OnDeserialization(finisher);
-        }
-        return frm;
-      }
-    }
-    #endregion
-
+    private IWorksheetViewEventSink _controller;
     
     public WorksheetView()
     {
@@ -298,7 +237,7 @@ namespace Altaxo.Worksheet.GUI
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public IWorksheetController WorksheetController
+    public IWorksheetViewEventSink WorksheetController
     {
       get
       {

@@ -226,21 +226,21 @@ namespace Altaxo.Main
     /// Creates a new graph document and the view for this newly created graph document.
     /// </summary>
     /// <returns>The view content for the newly created graph.</returns>
-    Altaxo.Graph.GUI.IGraphController CreateNewGraph();
+    Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph();
 
 		/// <summary>
 		/// Creates a new graph document and the view for this newly created graph document.
 		/// </summary>
 		/// <param name="preferredName">The preferred name the new graph document should have.</param>
 		/// <returns>The view content for the newly created graph.</returns>
-		Altaxo.Graph.GUI.IGraphController CreateNewGraph(string preferredName);
+		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(string preferredName);
 
     /// <summary>
     /// Creates a new view content for a graph document.
     /// </summary>
     /// <param name="graph">The graph document.</param>
     /// <returns>The view content for the provided graph document.</returns>
-    Altaxo.Graph.GUI.IGraphController CreateNewGraph(GraphDocument graph);
+		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(GraphDocument graph);
 
     /// <summary>
     /// Opens a view that shows the graph <code>graph</code>. If no view for the graph can be found,
@@ -253,7 +253,7 @@ namespace Altaxo.Main
     /// <summary>This will remove the Graph <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
     /// <param name="ctrl">The Graph to remove.</param>
     /// <remarks>No exception is thrown if the Form frm is not a member of the workbench views collection.</remarks>
-    void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl);
+		void RemoveGraph(Altaxo.Gui.Graph.Viewing.IGraphController ctrl);
 
 
     /// <summary>

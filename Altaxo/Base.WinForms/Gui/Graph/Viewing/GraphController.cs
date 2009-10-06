@@ -46,7 +46,7 @@ namespace Altaxo.Graph.GUI
   /// </summary>
   [Altaxo.Gui.UserControllerForObject(typeof(GraphDocument))]
   [Altaxo.Gui.ExpectedTypeOfView(typeof(IGraphView))]
-  public class GraphController : IGraphController
+  public class GraphController : IGraphController, Altaxo.Gui.Graph.Viewing.IGraphController
   {
 
     #region Member variables
@@ -371,8 +371,7 @@ namespace Altaxo.Graph.GUI
 
       if(null!=this.ActiveLayer)
       {
-				var menu = Main.Services.GUIFactoryService.CreateContextMenu(parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu");
-				menu.Show(parent, pt);
+				Current.Gui.ShowContextMenu(pt.X, pt.Y, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu");
       }
     }
 

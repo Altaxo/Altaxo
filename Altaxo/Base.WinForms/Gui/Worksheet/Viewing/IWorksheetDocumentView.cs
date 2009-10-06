@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// Returns the controller that controls this view. Sets the controller to this value.
     /// </summary>
-    IWorksheetController WorksheetController { get; set;}
+    IWorksheetViewEventSink WorksheetController { get; set;}
 
     /// <summary>
     /// This sets the menu. The menu itself is created and controlled by the controller.</summary>
@@ -147,17 +147,8 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Interface for all classes that can control a IWorksheetView to show data from a DataTable. 
   /// </summary>
-  public interface IWorksheetController : Altaxo.Gui.Worksheet.Viewing.IWorksheetController,    IMVCControllerEx
+  public interface IWorksheetViewEventSink 
   {
-    
-
-    /// <summary>
-    /// Returns the view that this controller controls.
-    /// </summary>
-    /// <remarks>Setting the view is only neccessary on deserialization, so the controller
-    /// can restrict setting the view only if the own view variable is still null.</remarks>
-    IWorksheetView View { get; set; }
-
     /// <summary>
     /// Handles the scroll event of the vertical scroll bar.
     /// </summary>

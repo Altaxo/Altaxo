@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Graph
       {
         var arr = new List<NGTreeNode>();
         NGTreeNode node = null;
-        if(_doc.Environment is Altaxo.Graph.GUI.GraphController)
+				if (_doc.Environment is Altaxo.Gui.Graph.Viewing.IGraphController)
         {
           node = new NGTreeNode("Graph",new NGTreeNode[1]{new NGTreeNode()});
           node.Tag = _doc.Environment;

@@ -292,10 +292,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			if (_view != null)
 				_view.SetChiSquare(this._chiSquare);
 
-			if (_doc.FitContext is Altaxo.Graph.GUI.GraphController)
+			if (_doc.FitContext is Altaxo.Gui.Graph.Viewing.IGraphController)
 			{
 				// for every dependent variable in the FitEnsemble, create a function graph
-				Altaxo.Graph.GUI.GraphController graph = _doc.FitContext as Altaxo.Graph.GUI.GraphController;
+				var graph = _doc.FitContext as Altaxo.Gui.Graph.Viewing.IGraphController;
 
 				int funcNumber = 0;
 				for (int i = 0; i < _doc.FitEnsemble.Count; i++)

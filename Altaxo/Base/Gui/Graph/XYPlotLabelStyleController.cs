@@ -26,7 +26,6 @@ using Altaxo.Collections;
 using Altaxo.Serialization;
 using System.Drawing;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.GUI;
 
 using Altaxo.Data;
 

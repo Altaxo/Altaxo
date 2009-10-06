@@ -697,7 +697,7 @@ namespace Altaxo.Main
     /// Creates a new graph document and the view content..
     /// </summary>
     /// <returns>The view content for the newly created graph.</returns>
-    public Altaxo.Graph.GUI.IGraphController CreateNewGraph()
+		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph()
     {
       return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument());
     }
@@ -707,7 +707,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="preferredName">The preferred name the new graph document should have.</param>
 		/// <returns>The view content for the newly created graph.</returns>
-		public Altaxo.Graph.GUI.IGraphController CreateNewGraph(string preferredName)
+		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(string preferredName)
 		{
 			return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument(preferredName));
 		}
@@ -719,7 +719,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="graph">The graph document.</param>
     /// <returns>The view content for the provided graph document.</returns>
-    public Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
+		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
     {
       if (graph == null)
         graph = this.CurrentOpenProject.CreateNewGraphDocument();
@@ -796,7 +796,7 @@ namespace Altaxo.Main
     /// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
     /// <param name="ctrl">The GraphController to remove.</param>
     /// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
-    public void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl)
+		public void RemoveGraph(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
     {
       foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
       {

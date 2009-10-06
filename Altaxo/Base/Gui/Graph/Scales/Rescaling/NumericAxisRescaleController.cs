@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using Altaxo.Graph.GUI;
 using Altaxo.Serialization;
 
 using Altaxo.Graph.Scales;

@@ -671,25 +671,23 @@ namespace Altaxo.Main.Services
 
     #region static Windows Form methods
 
-   
-
 		/// <summary>
 		/// Used to register a function that can create context menues out of add in tree paths.
+		/// The function arguments function are an owner and an addInPathString. The return value is a context menu strip.
 		/// </summary>
-		public static Func<object, string, System.Windows.Forms.ContextMenuStrip> ContextMenuProvider;
+		public Func<object, string, object> ContextMenuProvider;
+
 		/// <summary>
-		/// Creates a context menu.
+		/// Creates and shows a context menu.
 		/// </summary>
+		/// <param name="x">The x coordinate of the location where to show the context menu.</param>
+		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
 		/// <param name="owner">The object that will be owner of this context menu.</param>
 		/// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
 		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
-		public static System.Windows.Forms.ContextMenuStrip CreateContextMenu(object owner, string addInTreePath)
-		{
-			if(null!=ContextMenuProvider)
-				return ContextMenuProvider(owner,addInTreePath);
-			else
-				return null;
-		}
+		public abstract void ShowContextMenu(double x, double y, object owner, string addInTreePath);
+
+	
 
     #endregion
   }

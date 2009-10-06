@@ -203,18 +203,12 @@ namespace Altaxo.Graph.GUI
   public interface IGraphController : /* IWorkbenchContentController, */ IMVCControllerEx
   {
 
-    /// <summary>
-    /// This returns the GraphDocument that is managed by this controller.
-    /// </summary>
-    GraphDocument Doc { get; }
-
-    /// <summary>
-    /// Returns the view that this controller controls.
-    /// </summary>
-    /// <remarks>Setting the view is only neccessary on deserialization, so the controller
-    /// can restrict setting the view only the own view is still null.</remarks>
-    IGraphView View { get; set; }
-
+		/// <summary>
+		/// Returns the view that this controller controls.
+		/// </summary>
+		/// <remarks>Setting the view is only neccessary on deserialization, so the controller
+		/// can restrict setting the view only the own view is still null.</remarks>
+		IGraphView View { get; set; }
 
     /// <summary>
     /// This event will be fired if the current graph tool has changed, either by the user
