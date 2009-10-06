@@ -26,7 +26,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+
 using Altaxo.Gui;
+using Altaxo.Collections;
 
 
 
@@ -116,21 +118,44 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public void Initialize(TreeNode[] nodes)
+   
+
+
+    public void Initialize(NGTreeNode[] nodes)
     {
       this._tvColumns.BeginUpdate();
       // Clear the TreeView each time the method is called.
       this._tvColumns.Nodes.Clear();
 
-      this._tvColumns.Nodes.AddRange(nodes);
+      this._tvColumns.Nodes.AddRange(GuiHelper.MirrorTreeNodesAdded(nodes));
 
       this._tvColumns.EndUpdate();
     }
 
-    public void SelectNode(TreeNode node)
+    public void SelectNode(NGTreeNode node)
     {
-      node.EnsureVisible();
-      this._tvColumns.SelectedNode = node;
+      var guiNode = (TreeNode)node.GuiTag;
+      guiNode.EnsureVisible();
+      this._tvColumns.SelectedNode = guiNode;
+    }
+
+    public void ExpandNode(NGTreeNode node)
+    {
+      var guiNode = (TreeNode)node.GuiTag;
+      guiNode.Expand();
+    }
+
+    public void InitializeNewNodes(NGTreeNode[] nodes)
+    {
+      GuiHelper.MirrorTreeNodesAdded(nodes);
+    }
+
+    
+    public void EhNodesCleared(NGTreeNodeCollection orgNodes)
+    {
+      foreach (var orgNode in orgNodes)
+        GuiHelper.MirrorTreeNodeRemoved(orgNode);
+
     }
 
     #endregion
@@ -138,13 +163,13 @@ namespace Altaxo.Gui.Graph
     private void _tvColumns_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
     {
       if(_controller != null)
-        _controller.EhView_AfterSelectNode(e.Node);
+        _controller.EhView_AfterSelectNode((NGTreeNode)e.Node.Tag);
     }
 
     private void _tvColumns_BeforeExpand(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
     {
       if(_controller != null)
-        _controller.EhView_BeforeExpand(e.Node);
+        _controller.EhView_BeforeExpand((NGTreeNode)e.Node.Tag);
     }
   }
 }

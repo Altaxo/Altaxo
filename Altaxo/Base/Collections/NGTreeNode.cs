@@ -100,6 +100,17 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Tests for childs without creating a child collection.
+    /// </summary>
+    public bool HasChilds
+    {
+      get
+      {
+        return _nodes != null && _nodes.Count > 0;
+      }
+    }
+
+    /// <summary>
     /// Collection of the child nodes of this node.
     /// </summary>
     public NGTreeNodeCollection Nodes

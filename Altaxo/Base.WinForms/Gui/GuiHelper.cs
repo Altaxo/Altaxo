@@ -44,9 +44,73 @@ namespace Altaxo.Gui
 
 		#endregion
 
-		#region New collection interfaces
+    #region TreeNode
+
+    /// <summary>
+    /// Mirrors a Non-Gui-TreeNode to a gui dependent tree node - including all childs and including the parent relation (the parent node has to be already mirrored.
+    /// </summary>
+    /// <param name="orgNode"></param>
+    /// <returns></returns>
+    public static TreeNode MirrorTreeNodeAdded(NGTreeNode orgNode)
+    {
+      // Do not change the order of the creation - it is essential for recursive operation
+
+      // First create the GuiNode itself
+      TreeNode guiNode = new TreeNode(orgNode.Text);
+      guiNode.Tag = orgNode;
+      orgNode.GuiTag = guiNode;
+
+      // second - create the relation to the parent node
+      if (null != orgNode.Parent && null == guiNode.Parent && (orgNode.Parent.GuiTag is TreeNode))
+        (orgNode.Parent.GuiTag as TreeNode).Nodes.Add(guiNode);
+
+      // third - create the children - they will already see the created parent
+      if (orgNode.HasChilds)
+      {
+        foreach (var childNode in orgNode.Nodes)
+          MirrorTreeNodeAdded(childNode);
+      }
+      return guiNode;
+    }
+
+    /// <summary>
+    /// Mirrors an array of Non-Gui-TreeNode to a gui dependent tree node - including all childs and including the parent relation (the parent node has to be already mirrored.
+    /// </summary>
+    /// <param name="orgNodes">Array of Non-Gui-TreeNodes.</param>
+    /// <returns>Array of Gui-TreeNodes</returns>
+    public static TreeNode[] MirrorTreeNodesAdded(NGTreeNode[] orgNodes)
+    {
+      TreeNode[] guiNodes = new TreeNode[orgNodes.Length];
+      for (int i = 0; i < guiNodes.Length; i++)
+        guiNodes[i] = MirrorTreeNodeAdded(orgNodes[i]);
+
+      return guiNodes;
+    }
+
+    public static void MirrorTreeNodeRemoved(NGTreeNode orgNode)
+    {
+      if (orgNode.HasChilds)
+      {
+        foreach (NGTreeNode child in orgNode.Nodes)
+          MirrorTreeNodeRemoved(child);
+      }
+
+      var guiNode = (orgNode.GuiTag as TreeNode);
+      if (null != guiNode)
+      {
+        orgNode.GuiTag = null;
+        guiNode.Tag = null;
+        guiNode.Remove();
+      }
+    }
+
+
+
+    #endregion
+
+    #region New collection interfaces
 #if(false)
-		#region Combobox
+    #region Combobox
 
 		public static void UpdateList(ComboBox comboBox, SelectableListNodeList<SelectableListNode> items)
 		{
@@ -74,9 +138,9 @@ namespace Altaxo.Gui
 			SynchronizeSelectionFromGui((ComboBox)sender);
 		}
 
-		#endregion
+    #endregion
 
-		#region ListBox
+    #region ListBox
 
 		public static void UpdateList(ListBox listView, SelectableListNodeList<SelectableListNode> items)
 		{
@@ -115,9 +179,9 @@ namespace Altaxo.Gui
 			}
 		}
 
-		#endregion
+    #endregion
 
-		#region ListView
+    #region ListView
 
 		public static void UpdateList( ListView listView, SelectableListNodeList<SelectableListNode> items)
     {
@@ -183,10 +247,10 @@ namespace Altaxo.Gui
       }
 		}
 
-		#endregion
+    #endregion
 
 #endif
 
-		#endregion
-	}
+    #endregion
+  }
 }
