@@ -32,71 +32,17 @@ using Altaxo.Gui;
 
 namespace Altaxo.Graph.GUI
 {
-  /*
-  /// <summary>
-  /// This enumeration declares the current choosen tool for the GraphControl
-  /// The numeric values have to match the icon positions in the corresponding toolbar
-  /// </summary>
-  public enum GraphTools 
-  {
-    /// <summary>The tool to click to the objects, dragging them, and open the object dialogs by doubleclicking on them</summary>
-    ObjectPointer=0,
-    /// <summary>The tool to write text, i.e. to create ExtendedTextGraphObjects</summary>
-    Text=1,
+	#region IGraphView
 
-    /// <summary>
-    /// Tool to snap in to a plot items points and read out the data
-    /// </summary>
-    ReadPlotItemData,
-
-    /// <summary>
-    /// Tool to draw a single line.
-    /// </summary>
-    SingleLine,
-
-    /// <summary>
-    /// Tool to zoom the axes, i.e. to change the values of the axes boundaries.
-    /// </summary>
-    ZoomAxes
-
-  }
-*/
-
-
-
-
-
-
-  // **************************************************************************
-  // **************************************************************************
-  // **************************************************************************
-  //
-  //                              IGraphView
-  //
-  // **************************************************************************
-  // **************************************************************************
-  // **************************************************************************
-
-
-  /// <summary>
+	/// <summary>
   /// Interface to be implemented by a form or a control to be able to show a graph. This can either be a control or a form.
   /// </summary>
-  public interface IGraphView /* : IWorkbenchContentView */
+  public interface IGraphView 
   {
-    /// <summary>Returns the windows of this view. In case the view is a Form, it returns the form. But if the view is only a control
-    /// on a form, it returns the control window.
-    /// </summary>
-    System.Windows.Forms.Control Window { get; }
-    /// <summary>
-    /// Returns the form of this view. In case the view is a Form, it returns that form itself. In case the view is a control on a form,
-    /// it returns not the control but the hosting form of this control.
-    /// </summary>
-    System.Windows.Forms.Form    Form   { get; }
-
     /// <summary>
     /// Returns the controller that controls this view. Sets the controller to this value.
     /// </summary>
-    IGraphController Controller { get; set;}
+    IGraphViewEventSink Controller { set;}
 
     /// <summary>
     /// This sets the menu. The menu itself is created and controlled by the controller.</summary>
@@ -179,42 +125,18 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     /// <param name="cursor"></param>
     void SetPanelCursor(Cursor cursor);
-  }
+	}
 
+	#endregion
 
+	#region IGraphViewEventSink
 
-  
-
-  // **************************************************************************
-  // **************************************************************************
-  // **************************************************************************
-  //
-  //                              IGraphController
-  //
-  // **************************************************************************
-  // **************************************************************************
-  // **************************************************************************
-
-
-
-  /// <summary>
+	/// <summary>
   /// This interface has to be implemented by any controller that wants to control a GraphView
   /// </summary>
-  public interface IGraphController : /* IWorkbenchContentController, */ IMVCControllerEx
+  public interface IGraphViewEventSink : /* IWorkbenchContentController, */ IMVCControllerEx
   {
-
-		/// <summary>
-		/// Returns the view that this controller controls.
-		/// </summary>
-		/// <remarks>Setting the view is only neccessary on deserialization, so the controller
-		/// can restrict setting the view only the own view is still null.</remarks>
-		IGraphView View { get; set; }
-
-    /// <summary>
-    /// This event will be fired if the current graph tool has changed, either by the user
-    /// or by the program.
-    /// </summary>
-    event EventHandler CurrentGraphToolChanged;
+    
 
 
     /// <summary>
@@ -297,10 +219,10 @@ namespace Altaxo.Graph.GUI
 		/// </summary>
 		void EhView_Scroll();
 
-  }
+	}
 
 
-
+	#endregion
 
 
 }

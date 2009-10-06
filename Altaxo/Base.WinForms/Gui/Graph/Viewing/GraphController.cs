@@ -46,7 +46,7 @@ namespace Altaxo.Graph.GUI
   /// </summary>
   [Altaxo.Gui.UserControllerForObject(typeof(GraphDocument))]
   [Altaxo.Gui.ExpectedTypeOfView(typeof(IGraphView))]
-  public class GraphController : IGraphController, Altaxo.Gui.Graph.Viewing.IGraphController
+  public class GraphController : IGraphViewEventSink, Altaxo.Gui.Graph.Viewing.IGraphController
   {
 
     #region Member variables
@@ -917,8 +917,11 @@ namespace Altaxo.Graph.GUI
     #endregion // Methods
 
     #region Properties
-    public event EventHandler CurrentGraphToolChanged;
-
+		/// <summary>
+		/// This event will be fired if the current graph tool has changed, either by the user
+		/// or by the program.
+		/// </summary>
+		public event EventHandler CurrentGraphToolChanged;
 
     /// <summary>
     /// Get/sets the currently active GraphTool.

@@ -32,8 +32,6 @@ namespace Altaxo.Graph.GUI
   /// <summary>
   /// Summary description for GraphView.
   /// </summary>
-  [SerializationSurrogate(0,typeof(GraphView.SerializationSurrogate0))]
-  [SerializationVersion(0,"Initial version.")]
   public class GraphView : System.Windows.Forms.UserControl, IGraphView
   {
     private System.Windows.Forms.ImageList m_GraphToolsImages;
@@ -42,7 +40,7 @@ namespace Altaxo.Graph.GUI
     private GraphPanel m_GraphPanel;
     // private System.Windows.Forms.TextBox m_TextBox;
     private System.ComponentModel.IContainer components;
-    private IGraphController m_Ctrl;
+    private IGraphViewEventSink m_Ctrl;
 
     [Browsable(false)]
     private MainMenu m_Menu;
@@ -56,63 +54,6 @@ namespace Altaxo.Graph.GUI
 
     [Browsable(false)]
     private int        m_CachedCurrentLayer = -1;
-
-
-    #region Serialization
-    public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
-    {
-      protected Point   m_Location;
-      protected Size    m_Size;
-      protected object  m_Controller=null;
-
-      // we need a empty constructor
-      public SerializationSurrogate0() {}
-
-      // not used for deserialization, since the ISerializable constructor is used for that
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector){return obj;}
-      // not used for serialization, instead the ISerializationSurrogate is used for that
-      public void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context ) {}
-
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        info.SetType(this.GetType());
-        GraphView s = (GraphView)obj;
-        info.AddValue("Location",s.Location);
-        info.AddValue("Size",s.Size);
-        info.AddValue("Controller",s.m_Ctrl);
-      }
-
-      public SerializationSurrogate0(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
-      {
-        m_Location = (Point)info.GetValue("Location",typeof(Point));
-        m_Size     = (Size)info.GetValue("Size",typeof(Size));
-        m_Controller = info.GetValue("Controller",typeof(object));
-      }
-
-      public void OnDeserialization(object o)
-      {
-      }
-
-      public object GetRealObject(object parent)
-      {
-        // We create the view firstly without controller to have the creation finished
-        // before the controler is set
-        // otherwise we will have callbacks to not initialized variables
-        GraphView frm = new GraphView();
-        frm.Location = m_Location;
-        frm.Size = m_Size;
-      
-        ((IGraphController)m_Controller).View = frm;
-
-        if(m_Controller is System.Runtime.Serialization.IDeserializationCallback)
-        {
-          DeserializationFinisher finisher = new DeserializationFinisher(frm);
-          ((System.Runtime.Serialization.IDeserializationCallback)m_Controller).OnDeserialization(finisher);
-        }
-        return frm;
-      }
-    }
-    #endregion
 
 
     public GraphView()
@@ -239,7 +180,7 @@ namespace Altaxo.Graph.GUI
 
   
     
-    public IGraphController Controller
+    public IGraphViewEventSink Controller
     {
       get { return m_Ctrl; }
       set { m_Ctrl = value; }
@@ -360,24 +301,7 @@ namespace Altaxo.Graph.GUI
   
 
     #region IGraphView Members
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Control Window
-    {
-      get
-      {
-        return this;
-      }
-    }
-
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Form Form
-    {
-      get
-      {
-        return this.ParentForm;
-      }
-    }
-
+ 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public MainMenu GraphMenu
     {
