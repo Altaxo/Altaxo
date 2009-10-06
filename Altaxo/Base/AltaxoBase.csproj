@@ -845,9 +845,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Graph\GUI\GraphControllerMouseHandlers\" />
     <Folder Include="Gui\Common\CustomColorDialog\" />
-    <Folder Include="Worksheet\GUI\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

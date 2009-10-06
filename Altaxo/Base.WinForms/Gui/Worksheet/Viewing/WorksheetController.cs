@@ -311,8 +311,8 @@ namespace Altaxo.Worksheet.GUI
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetController),0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Worksheet.GUI.WorksheetController",0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       Main.DocumentPath _PathToLayout;
       WorksheetController   _TableController;

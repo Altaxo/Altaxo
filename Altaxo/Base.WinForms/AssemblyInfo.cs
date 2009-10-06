@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -6,13 +6,13 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AltaxoBase.WinForms")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Windows forms library for Altaxo")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("DKI")]
-[assembly: AssemblyProduct("AltaxoBase.WinForms")]
-[assembly: AssemblyCopyright("Copyright © DKI 2009")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
+[assembly: AssemblyProduct("Altaxo")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2009")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2009")]
+[assembly: AssemblyCulture("")]   
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.54.0.642")]
+[assembly: Altaxo.Serialization.SupportsSerializationVersioningAttribute()]
