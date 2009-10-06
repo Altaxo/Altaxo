@@ -32,16 +32,6 @@ namespace Altaxo.Gui.Common
   public interface IDialogShellView
   {
     /// <summary>
-    /// Returns either the view itself if the view is a form, or the form where this view is contained into, if it is a control or so.
-    /// </summary>
-    System.Windows.Forms.Form Form { get; }
-
-    /// <summary>
-    /// Get / sets the controler of this view.
-    /// </summary>
-    IDialogShellController Controller { get; set; }
-
-    /// <summary>
     /// Sets if the Apply button should be visible.
     /// </summary>
     bool ApplyVisible { set; }
@@ -50,37 +40,21 @@ namespace Altaxo.Gui.Common
     /// Sets the title
     /// </summary>
     string Title { set; }
+
+
+    event Action<System.ComponentModel.CancelEventArgs> ButtonOKPressed;
+    event Action ButtonCancelPressed;
+    event Action ButtonApplyPressed;
+
   }
 
-  
-
-  /// <summary>
-  /// Interface to the DialogShellController.
-  /// </summary>
-  public interface IDialogShellController
-  {
-    /// <summary>
-    /// Called when the user presses the OK button. 
-    /// </summary>
-    void EhOK();
-    
-    /// <summary>
-    /// Called when the user presses the Cancel button.
-    /// </summary>
-    void EhCancel();
-    
-    /// <summary>
-    /// Called when the user presses the Apply button.
-    /// </summary>
-    void EhApply();
-  }
-
+ 
   #endregion
 
   /// <summary>
   /// Controls the <see cref="DialogShellView"/>.
   /// </summary>
-  public class DialogShellController : IDialogShellController
+  public class DialogShellController 
   {
     private IDialogShellView m_View;
     private IApplyController m_HostedController;
@@ -128,15 +102,21 @@ namespace Altaxo.Gui.Common
       get { return m_View; }
       set
       {
-        if(null!=m_View)
-          m_View.Controller = null;
+        if (null != m_View)
+        {
+          m_View.ButtonOKPressed -= EhOK;
+          m_View.ButtonCancelPressed -= EhCancel;
+          m_View.ButtonApplyPressed -= EhApply;
+        }
 
         m_View = value;
         
         if(null!=m_View)
         {
-          m_View.Controller = this;
           SetElements(false);
+          m_View.ButtonOKPressed += EhOK;
+          m_View.ButtonCancelPressed += EhCancel;
+          m_View.ButtonApplyPressed += EhApply;
         }
       }
     }
@@ -151,34 +131,20 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    /// <summary>
-    /// Shows the form as modal dialog.
-    /// </summary>
-    /// <param name="owner">The owner of this form.</param>
-    /// <returns>True onto success (the user presses OK).</returns>
-    public bool ShowDialog(System.Windows.Forms.Form owner)
-    {
-      return System.Windows.Forms.DialogResult.OK==m_View.Form.ShowDialog(owner);
-    }
-
-
     #region IDialogShellController Members
 
     /// <summary>
     /// Called when the user presses the OK button. Calls the Apply method of the
     /// hosted controller, then closes the form.
     /// </summary>
-    public void EhOK()
+    public void EhOK(System.ComponentModel.CancelEventArgs e)
     {
       bool bSuccess = true;
       if(null!=m_HostedController)
         bSuccess = m_HostedController.Apply();
 
-      if(bSuccess) // if successfull applied, close the form
-      {
-        View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
-        View.Form.Close();
-      }
+      if (!bSuccess)
+        e.Cancel = true;
     }
 
     /// <summary>
@@ -186,8 +152,6 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public void EhCancel()
     {
-      View.Form.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      View.Form.Close();
     }
 
     /// <summary>
@@ -196,9 +160,8 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public void EhApply()
     {
-      bool bSuccess = true;
       if(null!=m_HostedController)
-        bSuccess = m_HostedController.Apply();
+        m_HostedController.Apply();
     }
 
     #endregion

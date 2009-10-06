@@ -35,7 +35,6 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class DialogShellView : System.Windows.Forms.Form, IDialogShellView
   {
-    private IDialogShellController m_Controller;
     private System.Windows.Forms.UserControl m_HostedControl;
     private System.Windows.Forms.Panel m_ButtonPanel;
     private System.Windows.Forms.Button m_btOK;
@@ -45,6 +44,10 @@ namespace Altaxo.Gui.Common
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
+
+    public event Action<System.ComponentModel.CancelEventArgs> ButtonOKPressed;
+    public event Action ButtonCancelPressed;
+    public event Action ButtonApplyPressed;
 
     public DialogShellView(System.Windows.Forms.UserControl hostedControl)
     {
@@ -158,21 +161,30 @@ namespace Altaxo.Gui.Common
   
     private void EhButtonOK_Click(object sender, System.EventArgs e)
     {
-      if(null!=m_Controller)
-        m_Controller.EhOK();
+      var eventArgs = new System.ComponentModel.CancelEventArgs();
+      if (null != ButtonOKPressed)
+        ButtonOKPressed(eventArgs);
+
+      if (!eventArgs.Cancel)
+      {
+        this.DialogResult = DialogResult.OK;
+        this.Close();
+      }
     }
 
     private void EhButtonCancel_Click(object sender, System.EventArgs e)
     {
-      if(null!=m_Controller)
-        m_Controller.EhCancel();
+      if (null != ButtonCancelPressed)
+        ButtonCancelPressed();
+
+      this.DialogResult = DialogResult.Cancel;
+      this.Close();
     }
 
     private void EhButtonApply_Click(object sender, System.EventArgs e)
     {
-      if(null!=m_Controller)
-        m_Controller.EhApply();
-
+      if (null != ButtonApplyPressed)
+        ButtonApplyPressed();
     }
 
     private void EhView_Load(object sender, System.EventArgs e)
@@ -186,18 +198,6 @@ namespace Altaxo.Gui.Common
       get
       {
         return this;
-      }
-    }
-
-    public IDialogShellController Controller
-    {
-      get
-      {
-        return m_Controller;
-      }
-      set
-      {
-        m_Controller = value;
       }
     }
 

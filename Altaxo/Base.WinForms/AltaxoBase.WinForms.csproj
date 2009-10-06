@@ -85,6 +85,12 @@
     <Compile Include="Gui\Analysis\SavitzkyGolayParameterControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Common\AboutDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\BackgroundCancelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Gui\Common\BooleanValueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -102,6 +108,9 @@
     </Compile>
     <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\DialogShellView.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.cs">
       <SubType>UserControl</SubType>
@@ -434,6 +443,9 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Scripting\ScriptExecutionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Gui\WinFormsGuiFactoryService.cs" />
     <Compile Include="Gui\GuiHelper.cs" />
     <Compile Include="Gui\Scripting\FitFunctionScriptControl.cs">
@@ -486,8 +498,17 @@
     <EmbeddedResource Include="Gui\Analysis\SavitzkyGolayParameterControl.resx">
       <DependentUpon>SavitzkyGolayParameterControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\AboutDialog.resx">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\BackgroundCancelDialog.resx">
+      <DependentUpon>BackgroundCancelDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\BooleanValueControl.resx">
       <DependentUpon>BooleanValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\DialogShellView.resx">
+      <DependentUpon>DialogShellView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\Drawing\BrushAllPropertiesControl.resx">
       <DependentUpon>BrushAllPropertiesControl.cs</DependentUpon>
@@ -663,6 +684,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\ScriptControl.resx">
       <DependentUpon>ScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\ScriptExecutionDialog.resx">
+      <DependentUpon>ScriptExecutionDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Worksheet\ExportGalacticSpcFileControl.resx">
       <DependentUpon>ExportGalacticSpcFileControl.cs</DependentUpon>
