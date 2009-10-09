@@ -687,8 +687,14 @@ namespace Altaxo.Main.Services
 		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
 		public abstract void ShowContextMenu(double x, double y, object owner, string addInTreePath);
 
-	
-
+		/// <summary>
+		/// Some controllers need to be instrumented with Gui dependent functions. Those are the WorksheetController
+		/// and the GraphController. If the provided object can not be instrumented, an <see cref="System.ArgumentException"/>
+		/// should be thrown to allow debugging.
+		/// </summary>
+		/// <param name="controller">The controller that should be instrumented.</param>
+		public abstract void InstrumentControllerWithGuiDependentFunctions(object controller);
+		
     #endregion
   }
 }

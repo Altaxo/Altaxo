@@ -333,8 +333,15 @@ namespace Altaxo.Worksheet.Commands
 			string preferredGraphName)
     {
       Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
-			if(!string.IsNullOrEmpty(preferredGraphName))
+			if (string.IsNullOrEmpty(preferredGraphName))
+			{
+				string newnamebase = Altaxo.Main.NameHelper.CreateFullName(table.Name, "GRAPH");
+				graph.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
+			}
+			else
+			{
 				graph.Name = preferredGraphName;
+			}
   
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
       layer.CreateDefaultAxes();

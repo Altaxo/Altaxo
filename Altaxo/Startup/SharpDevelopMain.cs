@@ -169,6 +169,7 @@ namespace ICSharpCode.SharpDevelop
 					}
 				};
 #if ModifiedForAltaxo
+				Altaxo.Main.Commands.AutostartCommand.EarlyRun();
 				Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
 				WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.SdiWorkbenchLayout());
         Altaxo.Current.SetWorkbench((Altaxo.Gui.Common.IWorkbench)WorkbenchSingleton.Workbench);

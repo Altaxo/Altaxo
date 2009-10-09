@@ -40,19 +40,20 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Default controller which implements IWorksheetController.
   /// </summary>
-  [SerializationSurrogate(0,typeof(WorksheetController.SerializationSurrogate0))]
-  [SerializationVersion(0)]
   [Altaxo.Gui.UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
   [Altaxo.Gui.ExpectedTypeOfView(typeof(IWorksheetView))]
   public class WorksheetController :
-    IWorksheetViewEventSink, Altaxo.Gui.Worksheet.Viewing.IWorksheetController,Altaxo.Gui.IMVCController,
-    System.Runtime.Serialization.IDeserializationCallback
+		Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController,
+		IWorksheetViewEventSink, 
+		Altaxo.Gui.IMVCController
   {
     public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
 
 
     #region Member variables
-    
+
+		Altaxo.Gui.Worksheet.Viewing.WorksheetController _guiIndependentController;
+
     /// <summary>
     /// Used to indicate that deserialization has not finished, and holds some deserialized values.
     /// </summary>
@@ -231,157 +232,26 @@ namespace Altaxo.Worksheet.GUI
 
 
     #endregion
-
-    #region Serialization
-    /// <summary>Used to serialize the WorksheetController Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes the WorksheetController (version 0).
-      /// </summary>
-      /// <param name="obj">The WorksheetController to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        WorksheetController s = (WorksheetController)obj;
-
-        info.AddValue("DataTable",s._table);
-        info.AddValue("WorksheetLayout",s._worksheetLayout);
-        //info.AddValue("DefColumnStyles",s.m_TableLayout.DefaultColumnStyles);
-        //info.AddValue("ColumnStyles",s.m_TableLayout.ColumnStyles);
-        //info.AddValue("RowHeaderStyle",s.m_TableLayout.RowHeaderStyle);
-        //info.AddValue("ColumnHeaderStyle",s.m_TableLayout.ColumnHeaderStyle);
-        //info.AddValue("PropertyColumnHeaderStyle",s.m_TableLayout.PropertyColumnHeaderStyle);
-      }
-      /// <summary>
-      /// Deserializes the WorksheetController (version 0).
-      /// </summary>
-      /// <param name="obj">The empty WorksheetController object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized WorksheetController.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        WorksheetController s = (WorksheetController)obj;
-        s.SetMemberVariablesToDefault();
-
-        s._table = (Altaxo.Data.DataTable)info.GetValue("DataTable",typeof(Altaxo.Data.DataTable));
-        s._worksheetLayout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("WorksheetLayout",typeof(Altaxo.Worksheet.WorksheetLayout)); 
-        //s.m_TableLayout.DefaultColumnStyles= (System.Collections.Hashtable)info.GetValue("DefColumnStyles",typeof(System.Collections.Hashtable));
-        //s.m_TableLayout.ColumnStyles = (System.Collections.Hashtable)info.GetValue("ColumnStyles",typeof(System.Collections.Hashtable));
-        //s.m_TableLayout.RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle",typeof(RowHeaderStyle));
-        //s.m_TableLayout.ColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle",typeof(ColumnHeaderStyle));
-        //s.m_TableLayout.PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle",typeof(ColumnHeaderStyle));
-
-
-        s._deserializationMemento = this;
-        return s;
-      }
-    }
-
-    /// <summary>
-    /// Finale measures after deserialization.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public virtual void OnDeserialization(object obj)
-    {
-      if(null!=this._deserializationMemento && obj is DeserializationFinisher)
-      {
-        _deserializationMemento=null;
-
-        // first finish the document
-        DeserializationFinisher finisher = new DeserializationFinisher(this);
-        
-        _table.OnDeserialization(finisher);
-
-
-        // create the menu
-        //this.InitializeMenu();
-
-        // set the menu of this class
-        _view.TableViewTitle = this._table.Name;
-
-
-        // restore the event chain to the Table
-        //this.DataTable = this.m_Table;
-
-      }
-    }
-
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Worksheet.GUI.WorksheetController",0)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      Main.DocumentPath _PathToLayout;
-      WorksheetController   _TableController;
-
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        WorksheetController s = (WorksheetController)obj;
-        info.AddValue("Layout",Main.DocumentPath.GetAbsolutePath(s._worksheetLayout));
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        WorksheetController s = null!=o ? (WorksheetController)o : new WorksheetController(null,true);
-        
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr._TableController = s;
-        surr._PathToLayout = (Main.DocumentPath)info.GetValue("Layout",s);
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-        
-        return s;
-      }
-
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-      {
-
-        if(null!=_PathToLayout)
-        {
-          object o = Main.DocumentPath.GetObject(_PathToLayout,documentRoot,_TableController);
-          if(o is Altaxo.Worksheet.WorksheetLayout)
-          {
-            _TableController.WorksheetLayout = o as Altaxo.Worksheet.WorksheetLayout;
-            _PathToLayout=null;
-          }
-        }
-        
-        if(null==_PathToLayout)
-        {
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-        }
-      }
-    }
-
-    #endregion
-
+  
     #region Constructors
 
+		public WorksheetController(Altaxo.Gui.Worksheet.Viewing.WorksheetController worksheet)
+		{
+			SetMemberVariablesToDefault();
+			_guiIndependentController = worksheet;
+			worksheet.InternalSetGuiController(this);
+		}
 
-    public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
-      : this(layout, false)
-    {
-    }
-  
-    /// <summary>
-    /// Creates a WorksheetController which shows the table data into the 
-    /// View <paramref name="view"/>.
-    /// </summary>
-    /// <param name="layout">The worksheet layout.</param>
-    /// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
-    public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
-    {
-      SetMemberVariablesToDefault();
+		public void InternalInitializeWorksheetLayout(WorksheetLayout layout)
+		{
+			if (null == layout)
+				throw new ArgumentNullException("layout");
+			if (null != _worksheetLayout)
+				throw new ApplicationException("This Gui controller has already a layout!");
 
-      if(null!=layout)
-        this.WorksheetLayout = layout; // Using DataTable here wires the event chain also
-      else if(!bDeserializationConstructor)
-        throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
+			this.WorksheetLayout = layout;
+		}
 
-      //this.InitializeMenu();
-    }
 
     #endregion // Constructors
 
@@ -1890,7 +1760,7 @@ namespace Altaxo.Worksheet.GUI
         }
         else
         {
-          cs = (Altaxo.Worksheet.ColumnStyle)_worksheetLayout.ColumnStyles[DataTable[_dragColumnWidth_ColumnNumber]];
+					_worksheetLayout.ColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs);
           if(null==cs)
           {
             Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this._dragColumnWidth_ColumnNumber);

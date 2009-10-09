@@ -355,5 +355,26 @@ namespace Altaxo.Gui
 
 		#endregion
 
+
+		/// <summary>
+		/// Some controllers need to be instrumented with Gui dependent functions. Those are the WorksheetController
+		/// and the GraphController. If the provided object can not be instrumented, an <see cref="System.ArgumentException"/>
+		/// should be thrown to allow debugging.
+		/// </summary>
+		/// <param name="controller">The controller that should be instrumented.</param>
+		public override void InstrumentControllerWithGuiDependentFunctions(object controller)
+		{
+			if (null == controller)
+				throw new ArgumentNullException("controller");
+
+			if (controller is Altaxo.Gui.Worksheet.Viewing.WorksheetController)
+			{
+				new Altaxo.Worksheet.GUI.WorksheetController(controller as Altaxo.Gui.Worksheet.Viewing.WorksheetController);
+			}
+			else
+			{
+				throw new ArgumentException("The type of the provided controller is unkown to this function: " + controller.GetType().ToString());
+			}
+		}
 	}
 }

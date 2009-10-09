@@ -34,9 +34,11 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.SharpDevelop
 {
+
   public class SDWorksheetViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
   {
-    Altaxo.Worksheet.GUI.WorksheetController _controller;
+    WorksheetController _controller;
+		Altaxo.Gui.Worksheet.Viewing.WorksheetController _guiIndependentController;
 
 
     #region Serialization
@@ -51,7 +53,7 @@ namespace Altaxo.Gui.SharpDevelop
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        WorksheetController s = new WorksheetController(null, true);
+        var s = new Altaxo.Gui.Worksheet.Viewing.WorksheetController(null, true);
         info.GetBaseValueEmbedded(s, typeof(WorksheetController), parent);
 
         return new SDWorksheetViewContent(s);
@@ -64,13 +66,14 @@ namespace Altaxo.Gui.SharpDevelop
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SDWorksheetViewContent s = (SDWorksheetViewContent)obj;
-        info.AddValue("Controller", s._controller);
+        info.AddValue("Controller", s._guiIndependentController);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-       WorksheetController wc = (WorksheetController)info.GetValue("Controller",parent);
+       var wc = (Altaxo.Gui.Worksheet.Viewing.WorksheetController)info.GetValue("Controller",parent);
        SDWorksheetViewContent s = null != o ? (SDWorksheetViewContent)o : new SDWorksheetViewContent(wc);
-       s._controller = wc;
+			 s._guiIndependentController = wc;
+			 s._controller = (WorksheetController)wc.InternalGetGuiController();
        return s;
       }
     }
@@ -96,13 +99,14 @@ namespace Altaxo.Gui.SharpDevelop
     /// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
     protected SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
     :
-      this(new WorksheetController(layout))
+      this(new Altaxo.Gui.Worksheet.Viewing.WorksheetController(layout))
     {
     }
 
-    protected SDWorksheetViewContent(WorksheetController ctrl)
+		protected SDWorksheetViewContent(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      _controller = ctrl;
+			_guiIndependentController = ctrl;
+      _controller = (WorksheetController)ctrl.InternalGetGuiController();
       _controller.DataColumnHeaderRightClicked += EhDataColumnHeaderRightClicked;
       _controller.DataRowHeaderRightClicked += EhDataRowHeaderRightClicked;
       _controller.PropertyColumnHeaderRightClicked += EhPropertyColumnHeaderRightClicked;
@@ -142,8 +146,10 @@ namespace Altaxo.Gui.SharpDevelop
       get { return _controller; }
     }
 
+
     #region Context menu handlers
-    protected void EhDataColumnHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+
+    protected void EhDataColumnHeaderRightClicked(object sender, Altaxo.Worksheet.GUI.ClickedCellInfo clickedCell)
     {
       if (!(_controller.SelectedDataColumns.Contains(clickedCell.Column)) &&
           !(Controller.SelectedPropertyRows.Contains(clickedCell.Column)))
@@ -155,7 +161,8 @@ namespace Altaxo.Gui.SharpDevelop
       ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
       mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
     }
-    protected void EhDataRowHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+		
+		protected void EhDataRowHeaderRightClicked(object sender, Altaxo.Worksheet.GUI.ClickedCellInfo clickedCell)
     {
       if (!(_controller.SelectedDataRows.Contains(clickedCell.Row)))
       {
@@ -167,7 +174,7 @@ namespace Altaxo.Gui.SharpDevelop
       mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
     }
 
-    protected void EhPropertyColumnHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+		protected void EhPropertyColumnHeaderRightClicked(object sender, Altaxo.Worksheet.GUI.ClickedCellInfo clickedCell)
     {
       if (!(_controller.SelectedPropertyColumns.Contains(clickedCell.Column)))
       {
@@ -179,13 +186,13 @@ namespace Altaxo.Gui.SharpDevelop
       mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
     }
 
-    protected void EhTableHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+		protected void EhTableHeaderRightClicked(object sender, Altaxo.Worksheet.GUI.ClickedCellInfo clickedCell)
     {
       ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu");
       mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
     }
 
-    protected void EhOutsideAllRightClicked(object sender, ClickedCellInfo clickedCell)
+		protected void EhOutsideAllRightClicked(object sender, Altaxo.Worksheet.GUI.ClickedCellInfo clickedCell)
     {
       ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu");
       mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);

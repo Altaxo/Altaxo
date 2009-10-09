@@ -70,4 +70,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
    void UpdateTableView();
 
   }
+
+	public interface IGuiDependentWorksheetController : IWorksheetController
+	{
+		void InternalInitializeWorksheetLayout(WorksheetLayout layout);
+	}
 }

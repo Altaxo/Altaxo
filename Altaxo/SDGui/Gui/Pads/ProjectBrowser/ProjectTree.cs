@@ -76,6 +76,7 @@ namespace Altaxo.Gui.Pads
       _graphsNode.SelectedImageIndex = 8;
       _graphsNode.Tag = "Graphs";
 
+		
 
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
       {

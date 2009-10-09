@@ -43,20 +43,24 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
   public class AutostartCommand : AbstractCommand
   {
     const string workbenchMemento = "SharpDevelop.Workbench.WorkbenchMemento";
-    
+
+		public static void EarlyRun()
+		{
+			Altaxo.Current.SetPropertyService(new PropertyServiceWrapper());
+			Altaxo.Current.SetResourceService(new ResourceServiceWrapper());
+			Altaxo.Current.SetProjectService(new Altaxo.Main.ProjectService());
+			Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.WinFormsGuiFactoryService());
+			Altaxo.Current.Gui.ContextMenuProvider = ICSharpCode.Core.WinForms.MenuService.CreateContextMenu;
+			Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
+
+			// we construct the main document (for now)
+			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
+
+		}
+
     public override void Run()
     {
-      Altaxo.Current.SetPropertyService(new PropertyServiceWrapper());
-      Altaxo.Current.SetResourceService(new ResourceServiceWrapper());      
-      Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
-      Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.WinFormsGuiFactoryService());
-			Altaxo.Current.Gui.ContextMenuProvider = ICSharpCode.Core.WinForms.MenuService.CreateContextMenu;
-
-      Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
-      Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(((AltaxoSDWorkbench)Altaxo.Current.Workbench).EhProjectChanged);
-      
-      // we construct the main document (for now)
-      Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
+			Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(((AltaxoSDWorkbench)Altaxo.Current.Workbench).EhProjectChanged);
       // less important services follow now
       Altaxo.Main.Services.FitFunctionService fitFunctionService = new Altaxo.Main.Services.FitFunctionService();
       Altaxo.Current.SetFitFunctionService(fitFunctionService);

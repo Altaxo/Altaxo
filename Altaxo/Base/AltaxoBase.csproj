@@ -808,6 +808,7 @@
     <Compile Include="Gui\UserControllerForObjectAttribute.cs" />
     <Compile Include="Gui\Worksheet\ExportGalacticSpcFileController.cs" />
     <Compile Include="Gui\Worksheet\Viewing\IWorksheetController.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\WorksheetController.cs" />
     <Compile Include="Main\DocumentInformation.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />
