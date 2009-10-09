@@ -38,7 +38,8 @@ namespace Altaxo.Gui.SharpDevelop
 {
   public class SDGraphViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
   {
-    Altaxo.Graph.GUI.GraphController _controller;
+    Altaxo.Graph.GUI.WinFormsGraphController _controller;
+		Altaxo.Gui.Graph.Viewing.GraphController _guiIndependentController;
 
 
     #region Serialization
@@ -53,8 +54,8 @@ namespace Altaxo.Gui.SharpDevelop
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        GraphController s = new GraphController(null,true);
-        info.GetBaseValueEmbedded(s,typeof(GraphController),parent);
+       var s = new Altaxo.Gui.Graph.Viewing.GraphController(null,true);
+        info.GetBaseValueEmbedded(s,typeof(WinFormsGraphController),parent);
 
         return new SDGraphViewContent(s);
       }
@@ -66,13 +67,14 @@ namespace Altaxo.Gui.SharpDevelop
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SDGraphViewContent s = (SDGraphViewContent)obj;
-        info.AddValue("Controller", s._controller);
+        info.AddValue("Controller", s._guiIndependentController);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        GraphController wc = (GraphController)info.GetValue("Controller", parent);
+        var wc = (Altaxo.Gui.Graph.Viewing.GraphController)info.GetValue("Controller", parent);
         SDGraphViewContent s = null != o ? (SDGraphViewContent)o : new SDGraphViewContent(wc);
-        s._controller = wc;
+				s._guiIndependentController = wc;
+        s._controller = (WinFormsGraphController)wc.InternalGetGuiController();
         return s;
       }
     }
@@ -94,13 +96,14 @@ namespace Altaxo.Gui.SharpDevelop
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     /// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
     protected SDGraphViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
-      : this(new GraphController(graphdoc))
+      : this(new Altaxo.Gui.Graph.Viewing.GraphController(graphdoc))
     {
     }
 
-    protected SDGraphViewContent(GraphController ctrl)
+    protected SDGraphViewContent(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
     {
-      _controller = ctrl;
+			_guiIndependentController = ctrl;
+      _controller = (WinFormsGraphController)ctrl.InternalGetGuiController();
       _controller.TitleNameChanged += EhTitleNameChanged;
 			SetTitle();
     }
@@ -118,12 +121,12 @@ namespace Altaxo.Gui.SharpDevelop
 
     #endregion
 
-    public static implicit operator Altaxo.Graph.GUI.GraphController(SDGraphViewContent ctrl)
+    public static implicit operator Altaxo.Graph.GUI.WinFormsGraphController(SDGraphViewContent ctrl)
     {
       return ctrl._controller;
     }
 
-    public Altaxo.Graph.GUI.GraphController Controller
+    public Altaxo.Graph.GUI.WinFormsGraphController Controller
     {
       get { return _controller; }
     }

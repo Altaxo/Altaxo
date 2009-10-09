@@ -37,7 +37,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 	/// </summary>
 	public class CurlyBraceDrawingMouseHandler : AbstractRectangularToolMouseHandler
 	{
-		public CurlyBraceDrawingMouseHandler(GraphController grac)
+		public CurlyBraceDrawingMouseHandler(WinFormsGraphController grac)
 			: base(grac)
 		{
 

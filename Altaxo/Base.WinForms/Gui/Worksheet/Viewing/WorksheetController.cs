@@ -42,7 +42,7 @@ namespace Altaxo.Worksheet.GUI
   /// </summary>
   [Altaxo.Gui.UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
   [Altaxo.Gui.ExpectedTypeOfView(typeof(IWorksheetView))]
-  public class WorksheetController :
+  public class WinFormsWorksheetController :
 		Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController,
 		IWorksheetViewEventSink, 
 		Altaxo.Gui.IMVCController
@@ -235,7 +235,7 @@ namespace Altaxo.Worksheet.GUI
   
     #region Constructors
 
-		public WorksheetController(Altaxo.Gui.Worksheet.Viewing.WorksheetController worksheet)
+		public WinFormsWorksheetController(Altaxo.Gui.Worksheet.Viewing.WorksheetController worksheet)
 		{
 			SetMemberVariablesToDefault();
 			_guiIndependentController = worksheet;
@@ -2366,7 +2366,7 @@ namespace Altaxo.Worksheet.GUI
       protected int _cachedWidthOfPaintingArea=0; // cached width of painting area
 			protected List<ColumnStyleCacheItem> _items = new List<ColumnStyleCacheItem>();
  
-      public void Update(WorksheetController dg)
+      public void Update(WinFormsWorksheetController dg)
       {
         if( (this.Count==0)
           ||(dg.TableAreaWidth!=this._cachedWidthOfPaintingArea)
@@ -2376,7 +2376,7 @@ namespace Altaxo.Worksheet.GUI
         }
       }
 
-      public void ForceUpdate(WorksheetController dg)
+      public void ForceUpdate(WinFormsWorksheetController dg)
       {
         dg._lastVisibleColumn=0;
         dg._lastFullyVisibleColumn = 0;

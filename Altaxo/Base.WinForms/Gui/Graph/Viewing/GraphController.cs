@@ -46,7 +46,7 @@ namespace Altaxo.Graph.GUI
   /// </summary>
   [Altaxo.Gui.UserControllerForObject(typeof(GraphDocument))]
   [Altaxo.Gui.ExpectedTypeOfView(typeof(IGraphView))]
-  public class GraphController : IGraphViewEventSink, Altaxo.Gui.Graph.Viewing.IGraphController
+  public class WinFormsGraphController : IGraphViewEventSink, Altaxo.Gui.Graph.Viewing.IGuiDependentGraphController
   {
 
     #region Member variables
@@ -55,6 +55,7 @@ namespace Altaxo.Graph.GUI
     /// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
     protected const float UnitPerInch = 72;
 
+		protected Altaxo.Gui.Graph.Viewing.IGraphController _guiIndependentController;
 
     /// <summary>Holds the Graph document (the place were the layers, plots, graph elements... are stored).</summary>
     protected GraphDocument _doc;
@@ -118,52 +119,6 @@ namespace Altaxo.Graph.GUI
 
     #endregion Member variables
 
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GUI.GraphController",0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      Main.DocumentPath _PathToGraph;
-      GraphController   _GraphController;
-
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        GraphController s = (GraphController)obj;
-        info.AddValue("AutoZoom",s._isAutoZoomActive);
-        info.AddValue("Zoom",s._zoomFactor);
-        info.AddValue("Graph",Main.DocumentPath.GetAbsolutePath(s._doc));
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        GraphController s = null!=o ? (GraphController)o : new GraphController(null,true);
-        s._isAutoZoomActive = info.GetBoolean("AutoZoom");
-        s._zoomFactor = info.GetSingle("Zoom");
-        s._doc = null;
-        
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr._GraphController = s;
-        surr._PathToGraph = (Main.DocumentPath)info.GetValue("Graph",s);
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-        
-        return s;
-      }
-
-      private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-      {
-        object o = Main.DocumentPath.GetObject(_PathToGraph,documentRoot,_GraphController);
-        if(o is GraphDocument)
-        {
-          _GraphController.Doc = o as GraphDocument;
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-        }
-      }
-    }
-
-
-    
-    #endregion
-
     #region Constructors
 
 
@@ -206,37 +161,28 @@ namespace Altaxo.Graph.GUI
       _cachedGraphImage=null;
     }
 
-    /// <summary>
-    /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.    
-    /// </summary>
-    /// <param name="graphdoc">The graph which holds the graphical elements.</param>
-    public GraphController(GraphDocument graphdoc)
-      : this(graphdoc,false)
-    {
-    }
 
-    /// <summary>
-    /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
-    /// </summary>
-    /// <param name="graphdoc">The graph which holds the graphical elements.</param>
-    /// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
-    public GraphController(GraphDocument graphdoc, bool bDeserializationConstructor)
-    {
-      SetMemberVariablesToDefault();
-    
-      if(null!=graphdoc)
-        this.Doc = graphdoc;
-      else if(null==graphdoc && !bDeserializationConstructor)
-        throw new ArgumentNullException("graphdoc","GraphDoc must not be null");
+			public WinFormsGraphController(Altaxo.Gui.Graph.Viewing.GraphController graphController)
+		{
+			SetMemberVariablesToDefault();
+			_guiIndependentController = graphController;
+			graphController.InternalSetGuiController(this);
+		}
 
-      //this.InitializeMenu();
+		public void InternalInitializeGraphDocument(GraphDocument doc)
+		{
+			if (null == doc)
+				throw new ArgumentNullException("doc");
+			if (null != _doc)
+				throw new ApplicationException("This Gui controller has already a document!");
 
-      if(null!=Doc && 0==Doc.Layers.Count)
-        Doc.CreateNewLayerNormalBottomXLeftY();
-    }
+			this.Doc = doc;
 
+			if (0 == Doc.Layers.Count)
+				Doc.CreateNewLayerNormalBottomXLeftY();
+		}
 
-    static GraphController()
+    static WinFormsGraphController()
     {
       // register here editor methods
       LayerController.RegisterEditHandlers();
@@ -326,6 +272,30 @@ namespace Altaxo.Graph.GUI
         }
       }
     }
+
+		public bool IsAutoZoomActive
+		{
+			get
+			{
+				return _isAutoZoomActive;
+			}
+			set
+			{
+				_isAutoZoomActive = value;
+			}
+		}
+
+		public float ZoomFactor
+		{
+			get
+			{
+				return _zoomFactor;
+			}
+			set
+			{
+				_zoomFactor = value;
+			}
+		}
 
     /// <summary>
     /// Creates a default view object.

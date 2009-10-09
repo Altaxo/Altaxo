@@ -59,7 +59,7 @@ namespace Altaxo.Worksheet.Commands
   
   public class PLSQuestPreferredNumberOfFactors : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.QuestPreferredNumberOfFactors(ctrl.DataTable);
     }
@@ -68,7 +68,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPredictedVersusActualY(ctrl.DataTable);
     }
@@ -76,7 +76,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotCrossPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPredictedVersusActualY(ctrl.DataTable, true);
     }
@@ -84,7 +84,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotYResidualsIndividually : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYResiduals(ctrl.DataTable);
     }
@@ -92,7 +92,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotYCrossResidualsIndividually : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYCrossResiduals(ctrl.DataTable);
     }
@@ -100,7 +100,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotXResidualsIndividually : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXResiduals(ctrl.DataTable);
     }
@@ -108,7 +108,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotXCrossResidualsIndividually : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXCrossResiduals(ctrl.DataTable);
     }
@@ -116,7 +116,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotPRESSValue : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPRESSValue(ctrl.DataTable);
     }
@@ -124,7 +124,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotCrossPRESSValue : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPRESSValue(ctrl.DataTable);
     }
@@ -132,7 +132,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotXLeverage : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXLeverage(ctrl.DataTable);
     }
@@ -140,7 +140,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PLSPlotPreprocessedSpectra : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPreprocessedSpectra(ctrl.DataTable);
     }
@@ -149,7 +149,7 @@ namespace Altaxo.Worksheet.Commands
   
   public class PLSPlotPredictionScores : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPredictionScores(ctrl.DataTable);
     }

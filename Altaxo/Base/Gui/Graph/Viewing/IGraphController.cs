@@ -65,4 +65,18 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		void RefreshGraph();
 	}
+
+	public interface IGuiDependentGraphController : IGraphController
+	{
+		void InternalInitializeGraphDocument(GraphDocument doc);
+
+		/// <summary>If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
+		bool IsAutoZoomActive { get; set; }
+
+		/// <summary>Current zoom factor. If AutoZoom is on, this factor is calculated automatically.</summary>
+		float ZoomFactor { get; set; }
+
+
+
+	}
 }

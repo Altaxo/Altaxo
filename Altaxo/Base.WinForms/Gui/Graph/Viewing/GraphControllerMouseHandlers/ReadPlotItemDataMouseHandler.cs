@@ -71,9 +71,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     protected PointF m_Cross;
 
-    protected GraphController _grac;
+    protected WinFormsGraphController _grac;
 
-    public ReadPlotItemDataMouseHandler(GraphController grac)
+    public ReadPlotItemDataMouseHandler(WinFormsGraphController grac)
     {
       _grac = grac;
       if(_grac.View!=null)

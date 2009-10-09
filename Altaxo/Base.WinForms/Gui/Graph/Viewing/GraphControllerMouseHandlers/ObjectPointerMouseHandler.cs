@@ -56,7 +56,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     protected bool m_bObjectsWereMoved=false;
 
     /// <summary>The graph controller this mouse handler belongs to.</summary>
-    protected GraphController _grac;
+    protected WinFormsGraphController _grac;
 
     /// <summary>Locker to suppress changed events during moving of objects.</summary>
     IDisposable _graphDocumentChangedSuppressor;
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     #endregion
 
-    public ObjectPointerMouseHandler(GraphController grac)
+    public ObjectPointerMouseHandler(WinFormsGraphController grac)
     {
       _grac = grac;
       if(_grac.View!=null)

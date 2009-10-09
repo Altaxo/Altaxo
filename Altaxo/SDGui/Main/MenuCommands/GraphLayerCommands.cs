@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class EditActiveLayer : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.ShowLayerDialog(ctrl.CurrentLayerNumber);
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class CopyActiveLayer : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.CopyToClipboardLayerAsNative(ctrl.CurrentLayerNumber);
@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class PasteAsNewLayer : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.Doc.PasteFromClipboardAsNewLayer();
 		}
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class PasteAsNewLayerBefore : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.PasteFromClipboardAsNewLayerBeforeLayerNumber(ctrl.CurrentLayerNumber);
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class PasteAsNewLayerAfter : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.PasteFromClipboardAsNewLayerAfterLayerNumber(ctrl.CurrentLayerNumber);
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class PasteInActiveLayer : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.PasteFromClipboardAsTemplateForLayer(ctrl.CurrentLayerNumber);
@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class DeleteActiveLayer : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.DeleteLayer(ctrl.CurrentLayerNumber, true);
@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class MoveActiveLayer : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		public override void Run(Altaxo.Graph.GUI.WinFormsGraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.ShowMoveLayerToPositionDialog(ctrl.CurrentLayerNumber);

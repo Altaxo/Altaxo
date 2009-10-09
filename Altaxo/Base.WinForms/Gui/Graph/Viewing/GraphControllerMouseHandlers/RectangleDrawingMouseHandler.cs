@@ -37,7 +37,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public RectangleDrawingMouseHandler(GraphController grac)
+    public RectangleDrawingMouseHandler(WinFormsGraphController grac)
       : base(grac)
     {
       

@@ -39,7 +39,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   {
     #region Member variables
 
-    protected GraphController _grac;
+    protected WinFormsGraphController _grac;
 
     protected PointF _currentMousePrintAreaCoord;
 
@@ -59,7 +59,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     #endregion
 
-    public SingleLineDrawingMouseHandler(GraphController grac)
+    public SingleLineDrawingMouseHandler(WinFormsGraphController grac)
     {
       this._grac = grac;
 

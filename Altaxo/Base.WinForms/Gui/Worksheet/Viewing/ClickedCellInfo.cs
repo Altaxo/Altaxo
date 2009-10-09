@@ -163,7 +163,7 @@ namespace Altaxo.Worksheet.GUI
     /// <param name="mouseCoord">The coordinates of the mouse click.</param>
     /// <param name="cellRect">The function sets the x-properties (X and Width) of the cell rectangle.</param>
     /// <returns>Either -1 when clicked on the row header area, column number when clicked in the column range, or int.MinValue when clicked outside of all.</returns>
-    public static int GetColumnNumber(WorksheetController dg, Point mouseCoord, ref Rectangle cellRect)
+    public static int GetColumnNumber(WinFormsWorksheetController dg, Point mouseCoord, ref Rectangle cellRect)
     {
       int firstVisibleColumn = dg.FirstVisibleColumn;
       int actualColumnRight = dg.WorksheetLayout.RowHeaderStyle.Width;
@@ -198,7 +198,7 @@ namespace Altaxo.Worksheet.GUI
     /// <param name="bPropertyCol">True if clicked on either the property column header or a property column, else false.</param>
     /// <returns>The row number of the clicked cell, or -1 if clicked on the column header.</returns>
     /// <remarks>If clicked onto a property cell, the function returns the property column number.</remarks>
-    public static int GetRowNumber(WorksheetController dg, Point mouseCoord, ref Rectangle cellRect, out bool bPropertyCol)
+    public static int GetRowNumber(WinFormsWorksheetController dg, Point mouseCoord, ref Rectangle cellRect, out bool bPropertyCol)
     {
       int firstVisibleColumn = dg.FirstVisibleColumn;
       int actualColumnRight = dg.WorksheetLayout.RowHeaderStyle.Width;
@@ -244,7 +244,7 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     /// <param name="dg">The data grid.</param>
     /// <param name="mouseCoord">The mouse coordinates of the click.</param>
-    public void MouseClick(WorksheetController dg, Point mouseCoord)
+    public void MouseClick(WinFormsWorksheetController dg, Point mouseCoord)
     {
 
       bool bIsPropertyColumn=false;

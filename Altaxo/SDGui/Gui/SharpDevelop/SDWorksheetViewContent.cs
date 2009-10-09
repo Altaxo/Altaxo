@@ -37,7 +37,7 @@ namespace Altaxo.Gui.SharpDevelop
 
   public class SDWorksheetViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
   {
-    WorksheetController _controller;
+    WinFormsWorksheetController _controller;
 		Altaxo.Gui.Worksheet.Viewing.WorksheetController _guiIndependentController;
 
 
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.SharpDevelop
       {
 
         var s = new Altaxo.Gui.Worksheet.Viewing.WorksheetController(null, true);
-        info.GetBaseValueEmbedded(s, typeof(WorksheetController), parent);
+        info.GetBaseValueEmbedded(s, typeof(WinFormsWorksheetController), parent);
 
         return new SDWorksheetViewContent(s);
       }
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.SharpDevelop
        var wc = (Altaxo.Gui.Worksheet.Viewing.WorksheetController)info.GetValue("Controller",parent);
        SDWorksheetViewContent s = null != o ? (SDWorksheetViewContent)o : new SDWorksheetViewContent(wc);
 			 s._guiIndependentController = wc;
-			 s._controller = (WorksheetController)wc.InternalGetGuiController();
+			 s._controller = (WinFormsWorksheetController)wc.InternalGetGuiController();
        return s;
       }
     }
@@ -106,7 +106,7 @@ namespace Altaxo.Gui.SharpDevelop
 		protected SDWorksheetViewContent(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
 			_guiIndependentController = ctrl;
-      _controller = (WorksheetController)ctrl.InternalGetGuiController();
+      _controller = (WinFormsWorksheetController)ctrl.InternalGetGuiController();
       _controller.DataColumnHeaderRightClicked += EhDataColumnHeaderRightClicked;
       _controller.DataRowHeaderRightClicked += EhDataRowHeaderRightClicked;
       _controller.PropertyColumnHeaderRightClicked += EhPropertyColumnHeaderRightClicked;
@@ -131,12 +131,12 @@ namespace Altaxo.Gui.SharpDevelop
 
     #endregion
 
-    public static implicit operator Altaxo.Worksheet.GUI.WorksheetController(SDWorksheetViewContent ctrl)
+    public static implicit operator Altaxo.Worksheet.GUI.WinFormsWorksheetController(SDWorksheetViewContent ctrl)
     {
       return ctrl._controller;
     }
 
-    public Altaxo.Worksheet.GUI.WorksheetController Controller
+    public Altaxo.Worksheet.GUI.WinFormsWorksheetController Controller
     {
       get { return _controller; }
     }

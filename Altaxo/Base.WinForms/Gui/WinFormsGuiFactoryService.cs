@@ -369,7 +369,11 @@ namespace Altaxo.Gui
 
 			if (controller is Altaxo.Gui.Worksheet.Viewing.WorksheetController)
 			{
-				new Altaxo.Worksheet.GUI.WorksheetController(controller as Altaxo.Gui.Worksheet.Viewing.WorksheetController);
+				new Altaxo.Worksheet.GUI.WinFormsWorksheetController(controller as Altaxo.Gui.Worksheet.Viewing.WorksheetController);
+			}
+			else if (controller is Altaxo.Gui.Graph.Viewing.GraphController)
+			{
+				new Altaxo.Graph.GUI.WinFormsGraphController(controller as Altaxo.Gui.Graph.Viewing.GraphController);
 			}
 			else
 			{

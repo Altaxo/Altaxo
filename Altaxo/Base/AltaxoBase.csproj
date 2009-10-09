@@ -797,6 +797,7 @@
     <Compile Include="Gui\Graph\SingleColumnChoiceController.cs" />
     <Compile Include="Gui\Graph\TextGraphicController.cs" />
     <Compile Include="Gui\Graph\TitleFormatLayerController.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphController.cs" />
     <Compile Include="Gui\Graph\Viewing\IGraphController.cs" />
     <Compile Include="Gui\Graph\WaterfallTransformController.cs" />
     <Compile Include="Gui\IApplyController.cs" />

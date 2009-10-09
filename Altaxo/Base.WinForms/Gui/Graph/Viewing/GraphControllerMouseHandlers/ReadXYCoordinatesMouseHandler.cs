@@ -50,7 +50,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// The parent graph controller.
     /// </summary>
-    protected GraphController _grac;
+    protected WinFormsGraphController _grac;
 
     protected float _MovementIncrement=4;
 
@@ -59,7 +59,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     protected bool _showPrintableCoordinates;
 
-    public ReadXYCoordinatesMouseHandler(GraphController grac)
+    public ReadXYCoordinatesMouseHandler(WinFormsGraphController grac)
     {
       _grac = grac;
 
