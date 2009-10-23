@@ -50,7 +50,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// The parent graph controller.
     /// </summary>
-    protected WinFormsGraphController _grac;
+    protected GraphView _grac;
 
     protected float _MovementIncrement=4;
 
@@ -59,15 +59,20 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     protected bool _showPrintableCoordinates;
 
-    public ReadXYCoordinatesMouseHandler(WinFormsGraphController grac)
+    public ReadXYCoordinatesMouseHandler(GraphView grac)
     {
       _grac = grac;
 
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Cross);
+      if(_grac!=null)
+        _grac.SetPanelCursor(Cursors.Cross);
     }
 
-  
+		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
+		{
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ReadXYCoordinates; }
+		}
+
+
     /// <summary>
     /// Handles the MouseDown event when the plot point tool is selected
     /// </summary>
@@ -78,11 +83,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       base.OnMouseDown(e);
 
       PointF mouseXY = new PointF(e.X,e.Y);
-      m_Cross = _grac.PixelToPrintableAreaCoordinates(mouseXY);
+      m_Cross = _grac.WinFormsController.PixelToPrintableAreaCoordinates(mouseXY);
 
       DisplayCrossCoordinates();
       
-      _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.WinFormsController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
          
      
     } // end of function
@@ -115,7 +120,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       {
         Current.DataDisplay.WriteOneLine(string.Format(
         "Layer({0}) XS={1}, YS={2}",
-        _grac.CurrentLayerNumber,
+        _grac.ActiveLayer.Number,
         m_Cross.X,
         m_Cross.Y));
       }
@@ -125,7 +130,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         if (CalculateCrossCoordinates(out xphys, out  yphys))
           Current.DataDisplay.WriteOneLine(string.Format(
          "Layer({0}) X={1}, Y={2}",
-         _grac.CurrentLayerNumber,
+         _grac.ActiveLayer.Number,
          xphys,
          yphys));
       }
@@ -145,7 +150,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       DisplayCrossCoordinates();
 
-      _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.WinFormsController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
     }
 
     /// <summary>
@@ -159,7 +164,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       DisplayCrossCoordinates();
 
-      _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.WinFormsController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
 
       
     }

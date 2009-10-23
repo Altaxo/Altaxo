@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
@@ -56,7 +57,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     protected bool m_bObjectsWereMoved=false;
 
     /// <summary>The graph controller this mouse handler belongs to.</summary>
-    protected WinFormsGraphController _grac;
+    protected GraphView _grac;
 
     /// <summary>Locker to suppress changed events during moving of objects.</summary>
     IDisposable _graphDocumentChangedSuppressor;
@@ -73,12 +74,17 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     #endregion
 
-    public ObjectPointerMouseHandler(WinFormsGraphController grac)
+    public ObjectPointerMouseHandler(GraphView grac)
     {
       _grac = grac;
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Arrow);
+      if(_grac!=null)
+        _grac.SetPanelCursor(Cursors.Arrow);
     }
+
+		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
+		{
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer; }
+		}
 
     /// <summary>
     /// Returns the number of objects selected in this graph.
@@ -88,6 +94,13 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       get { return this.m_SelectedObjects.Count; }
     }
 
+		public IList<IHitTestObject> SelectedObjects
+		{
+			get
+			{
+				return m_SelectedObjects;
+			}
+		}
 
     /// <summary>
     /// Returns the hit test object belonging to the selected object if and only if one single object is selected, else null is returned.
@@ -138,10 +151,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       
       if(null!=_grip.Handle)
       {
-        PointF printAreaCoord = _grac.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
-        PointF newPosition = _grac.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
+        PointF printAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
+        PointF newPosition = _grac.GC.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
         _grip.Handle.MoveGrip(newPosition);
-        _grac.RepaintGraphArea();
+        _grac.WinFormsController.RepaintGraphArea();
         
       }
 
@@ -161,7 +174,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         // converted to Graph coordinates (1/72"), and then transformed for
         // each object to the layer coordinate differences of the layer
     
-        PointF graphDiff = _grac.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
+        PointF graphDiff = _grac.WinFormsController.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
 
         foreach(IHitTestObject graphObject in m_SelectedObjects)
         {
@@ -175,7 +188,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           
          
    
-        _grac.RepaintGraphArea(); // rise a normal paint event
+        _grac.WinFormsController.RepaintGraphArea(); // rise a normal paint event
           
 
       }
@@ -210,7 +223,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
 
       PointF mouseXY = new PointF(e.X,e.Y);                           // Mouse pixel coordinates
-      PointF graphXY = _grac.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
+      PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
 
 
       // if we have exacly one object selected, and the one object is grippable,
@@ -244,7 +257,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
         {
           m_SelectedObjects.Remove(clickedSelectedObject);
-          _grac.RefreshGraph(); // repaint the graph
+          _grac.WinFormsController.RefreshGraph(); // repaint the graph
         }
         else // not shift or control pressed -> so activate the object moving mode
         {
@@ -256,7 +269,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         // search for a object first
         IHitTestObject clickedObject;
         int clickedLayerNumber=0;
-        _grac.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
+        _grac.WinFormsController.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
 
         if(bShiftKey || bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
         {
@@ -265,7 +278,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
             m_SelectedObjects.Add(clickedObject);
             
             StartMovingObjects(mouseXY);
-            _grac.RepaintGraphArea();
+            _grac.WinFormsController.RepaintGraphArea();
           }
         }
         else // no shift or control key pressed
@@ -276,7 +289,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
             m_SelectedObjects.Add(clickedObject);
             
             StartMovingObjects(mouseXY);
-            _grac.RepaintGraphArea();
+            _grac.WinFormsController.RepaintGraphArea();
           }
           else // if clicked to nothing 
           {
@@ -301,7 +314,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(_grip.Handle!=null)
       {
         _grip.Handle=null;
-        _grac.RefreshGraph();
+        _grac.WinFormsController.RefreshGraph();
         return;
       }
 
@@ -328,7 +341,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
         // Set the currently active layer to the layer the clicked object is belonging to.
         if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
-          _grac.CurrentLayerNumber = graphObject.ParentLayer.Number; // Sets the current active layer
+          _grac.SetActiveLayerFromInternal( graphObject.ParentLayer.Number ); // Sets the current active layer
 
         if(graphObject.DoubleClick!=null)
         {
@@ -404,7 +417,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(bRepaint)
       {
         //grac.m_FrozenGraphIsDirty = true;
-        _grac.RefreshGraph(); // redraw the contents
+        _grac.WinFormsController.RefreshGraph(); // redraw the contents
       }
     }
 
@@ -439,327 +452,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       base.AfterPaint (g);
     }
 
-
-    /// <summary>
-    /// Removes the currently selected objects (the <see cref="IHitTestObject" /> of the selected object(s) must provide
-    /// a handler for deleting the object).
-    /// </summary>
-    public void RemoveSelectedObjects()
-    {
-      System.Collections.Generic.List<IHitTestObject> removedObjects = new System.Collections.Generic.List<IHitTestObject>();
-     
-      foreach (IHitTestObject o in this.m_SelectedObjects)
-      {
-        if (o.Remove!=null)
-        {
-          if(true==o.Remove(o))
-            removedObjects.Add(o);
-        }
-      }
-
-      if(removedObjects.Count>0)
-      {
-        foreach(IHitTestObject o in removedObjects)
-          this.m_SelectedObjects.Remove(o);
-
-        _grac.RefreshGraph();
-      }
-    }
-
-    public void CopySelectedObjectsToClipboard()
-    {
-			var dao = Current.Gui.GetNewClipboardDataObject();
-
-      ArrayList objectList = new ArrayList();
-
-      foreach (IHitTestObject o in this.m_SelectedObjects)
-      {
-        if (o.HittedObject is System.Runtime.Serialization.ISerializable)
-        {
-          objectList.Add(o.HittedObject);
-        }
-      }
-
-      dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
-
-      // Test code to test if the object list can be serialized
-
-
-      // now copy the data object to the clipboard
-      Current.Gui.SetClipboardDataObject(dao, true);
-    }
-
-    public void CutSelectedObjectsToClipboard()
-    {
-			var dao = Current.Gui.GetNewClipboardDataObject();
-
-      ArrayList objectList = new ArrayList();
-      System.Collections.Generic.List<IHitTestObject> notSerialized = new System.Collections.Generic.List<IHitTestObject>();
-
-      foreach (IHitTestObject o in this.m_SelectedObjects)
-      {
-        if (o.HittedObject is System.Runtime.Serialization.ISerializable)
-        {
-          objectList.Add(o.HittedObject);
-        }
-        else
-        {
-          notSerialized.Add(o);
-        }
-      }
-
-      dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
-
-      // now copy the data object to the clipboard
-      Current.Gui.SetClipboardDataObject(dao, true);
-
-      // Remove the not serialized objects from the selection, so they are not removed from the graph..
-      foreach (IHitTestObject o in notSerialized)
-        m_SelectedObjects.Remove(o);
-
-      this.RemoveSelectedObjects();
-    }
-
-
-
-    // <summary>
-    /// Groups the selected objects to form a ShapeGroup.
-    /// </summary>
-    public void GroupSelectedObjects()
-    {
-      System.Collections.Generic.List<IHitTestObject> removedObjects = new System.Collections.Generic.List<IHitTestObject>();
-
-      Altaxo.Graph.Gdi.Shapes.ShapeGroup group = new Altaxo.Graph.Gdi.Shapes.ShapeGroup();
-      foreach (IHitTestObject o in this.m_SelectedObjects)
-      {
-        if (o.HittedObject is Altaxo.Graph.Gdi.Shapes.GraphicBase)
-        {
-          group.Add((Altaxo.Graph.Gdi.Shapes.GraphicBase)o.HittedObject);
-          removedObjects.Add(o);
-        }
-      }
-
-      if (removedObjects.Count > 0)
-      {
-        foreach (IHitTestObject o in removedObjects)
-        {
-          o.Remove(o);
-          this.m_SelectedObjects.Remove(o);
-        }
-      }
-
-      _grac.ActiveLayer.GraphObjects.Add(group);
-      _grac.RefreshGraph();
-    }
-
-
-    // <summary>
-    /// Ungroups the selected objects (if they are ShapeGroup objects).
-    /// </summary>
-    public void UngroupSelectedObjects()
-    {
-    }
-
-    public void SetSelectedObjectsProperty(IRoutedSetterProperty property)
-    {
-      foreach (IHitTestObject o in this.m_SelectedObjects)
-      {
-        if (o.HittedObject is IRoutedPropertyReceiver)
-        {
-          ((IRoutedPropertyReceiver)(o.HittedObject)).SetRoutedProperty(property);
-        }
-      }
-    }
-
-    public void GetSelectedObjectsProperty(IRoutedGetterProperty property)
-    {
-      foreach (IHitTestObject o in this.m_SelectedObjects)
-      {
-        if (o.HittedObject is IRoutedPropertyReceiver)
-        {
-          ((IRoutedPropertyReceiver)(o.HittedObject)).GetRoutedProperty(property);
-        }
-      }
-    }
-
-    public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
-
-    /// <summary>
-    /// Arranges the objects so they share a common boundary.
-    /// </summary>
-    /// <param name="arrange">Routine that determines how to arrange the element with respect to the master element.</param>
-    public void Arrange(ArrangeElement arrange)
-    {
-      if (m_SelectedObjects.Count < 2)
-        return;
-
-
-      RectangleF masterbound = m_SelectedObjects[m_SelectedObjects.Count - 1].ObjectPath.GetBounds();
-
-      // now move each object to the new position, which is the difference in the position of the bounds.X
-      for (int i = m_SelectedObjects.Count - 2; i >= 0; i--)
-      {
-        IHitTestObject o = m_SelectedObjects[i];
-        RectangleF bounds = o.ObjectPath.GetBounds();
-
-        arrange(o, bounds, masterbound);
-      }
-
-      _grac.RefreshGraph(); // force a refresh
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the top boundary with the top boundary of the master element.
-    /// </summary>
-    public void ArrangeTopToTop()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition(0, masterbounds.Y - bounds.Y); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the bottom boundary with the top boundary of the master element.
-    /// </summary>
-    public void ArrangeBottomToTop()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition(0, (masterbounds.Y) - (bounds.Y+bounds.Height)); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the top boundary with the bottom boundary of the master element.
-    /// </summary>
-    public void ArrangeTopToBottom()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height) - (bounds.Y)); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the bottom boundary with the bottom boundary of the master element.
-    /// </summary>
-    public void ArrangeBottomToBottom()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height) - (bounds.Y + bounds.Height)); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the left boundary with the left boundary of the master element.
-    /// </summary>
-    public void ArrangeLeftToLeft()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition(masterbounds.X - bounds.X, 0); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the left boundary with the right boundary of the master element.
-    /// </summary>
-    public void ArrangeLeftToRight()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition((masterbounds.X+masterbounds.Width) - bounds.X, 0); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the right boundary with the left boundary of the master element.
-    /// </summary>
-    public void ArrangeRightToLeft()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition( (masterbounds.X) - (bounds.X + bounds.Width), 0); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the right boundary with the right boundary of the master element.
-    /// </summary>
-    public void ArrangeRightToRight()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition((masterbounds.X + masterbounds.Width) - (bounds.X + bounds.Width), 0); }
-      );
-    }
-
-
-    /// <summary>
-    /// Arranges the objects so they share the horizontal middle line of the last selected object.
-    /// </summary>
-    public void ArrangeVertical()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition((masterbounds.X + masterbounds.Width*0.5f) - (bounds.X + bounds.Width*0.5f), 0); }
-      );
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the vertical middle line of the last selected object.
-    /// </summary>
-    public void ArrangeHorizontal()
-    {
-      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height*0.5f) - (bounds.Y + bounds.Height*0.5f)); }
-      );
-    }
-
-
-    /// <summary>
-    /// Arranges the objects so they their vertical middle line is uniform spaced between the first and the last selected object.
-    /// </summary>
-    public void ArrangeHorizontalTable()
-    {
-      if (m_SelectedObjects.Count < 3)
-        return;
-
-
-      RectangleF firstbound = m_SelectedObjects[0].SelectionPath.GetBounds();
-      RectangleF lastbound = m_SelectedObjects[m_SelectedObjects.Count - 1].SelectionPath.GetBounds();
-      float step = (lastbound.X + lastbound.Width * 0.5f) - (firstbound.X + firstbound.Width * 0.5f);
-      step /= (m_SelectedObjects.Count - 1);
-
-      // now move each object to the new position, which is the difference in the position of the bounds.X
-      for (int i = m_SelectedObjects.Count - 2; i > 0; i--)
-      {
-        IHitTestObject o = m_SelectedObjects[i];
-        RectangleF bounds = o.SelectionPath.GetBounds();
-        o.ShiftPosition((firstbound.X + firstbound.Width * 0.5f) + i * step - (bounds.X + bounds.Width * 0.5f),0);
-      }
-
-      _grac.RefreshGraph(); // force a refresh
-    }
-
-    /// <summary>
-    /// Arranges the objects so they their horizontal middle line is uniform spaced between the first and the last selected object.
-    /// </summary>
-    public void ArrangeVerticalTable()
-    {
-      if (m_SelectedObjects.Count < 3)
-        return;
-
-
-      RectangleF firstbound = m_SelectedObjects[0].SelectionPath.GetBounds();
-      RectangleF lastbound = m_SelectedObjects[m_SelectedObjects.Count - 1].SelectionPath.GetBounds();
-      float step = (lastbound.Y + lastbound.Height * 0.5f) - (firstbound.Y + firstbound.Height * 0.5f);
-      step /= (m_SelectedObjects.Count - 1);
-
-      // now move each object to the new position, which is the difference in the position of the bounds.X
-      for (int i = m_SelectedObjects.Count - 2; i > 0; i--)
-      {
-        IHitTestObject o = m_SelectedObjects[i];
-        RectangleF bounds = o.SelectionPath.GetBounds();
-        o.ShiftPosition(0,(firstbound.Y + firstbound.Height * 0.5f) + i * step - (bounds.Y + bounds.Height * 0.5f));
-      }
-
-      _grac.RefreshGraph(); // force a refresh
-    }
-
     /// <summary>
     /// Determines whether or not the pixel position in <paramref name="pixelPos"/> is on a already selected object
     /// </summary>
@@ -768,7 +460,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <returns>True when the pixel position is upon a selected object, else false</returns>
     public bool IsPixelPositionOnAlreadySelectedObject(PointF pixelPos, out IHitTestObject foundObject)
     {
-      PointF graphXY = _grac.PixelToPrintableAreaCoordinates(pixelPos); // Graph area coordinates
+      PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(pixelPos); // Graph area coordinates
 
       // have we clicked on one of the already selected objects
       foreach(IHitTestObject graphObject in m_SelectedObjects)
@@ -798,7 +490,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       // this.m_MouseState = new ObjectPointerMouseHandler();
 
       if(bRepaint)
-        _grac.RepaintGraphArea();
+        _grac.WinFormsController.RepaintGraphArea();
     }
 
 
@@ -812,27 +504,27 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       if (keyData == Keys.Delete)
       {
-        this.RemoveSelectedObjects();
+        _grac.GC.RemoveSelectedObjects();
         return true;
       }
       else if(keyData==Keys.T)
       {
-        ArrangeTopToTop();
+				_grac.GC.ArrangeTopToTop();
         return true;
       }
       else if (keyData == Keys.B)
       {
-        ArrangeBottomToBottom();
+				_grac.GC.ArrangeBottomToBottom();
         return true;
       }
       else if (keyData == Keys.L)
       {
-        ArrangeLeftToLeft();
+				_grac.GC.ArrangeLeftToLeft();
         return true;
       }
       else if (keyData == Keys.R)
       {
-        ArrangeRightToRight();
+				_grac.GC.ArrangeRightToRight();
         return true;
       }
 

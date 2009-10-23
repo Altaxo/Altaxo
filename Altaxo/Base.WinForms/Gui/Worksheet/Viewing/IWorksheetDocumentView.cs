@@ -48,7 +48,7 @@ namespace Altaxo.Worksheet.GUI
   /// one Form or one control can implement more than one view. For instance a form
   /// that want to show a table and a graph has to implement IWorksheetView <b>and</b>
   /// IGraphView.</remarks>
-  public interface IWorksheetView /* : IWorkbenchContentView */
+  public interface IWinFormsWorksheetView /* : IWorkbenchContentView */
   {
     /// <summary>Returns the windows of this view. In case the view is a Form, it returns the form. But if the view is only a control
     /// on a form, it returns the control window.
@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// Returns the controller that controls this view. Sets the controller to this value.
     /// </summary>
-    IWorksheetViewEventSink WorksheetController { get; set;}
+    IWinFormsWorksheetViewEventSink WorksheetController { get; set;}
 
     /// <summary>
     /// This sets the menu. The menu itself is created and controlled by the controller.</summary>
@@ -147,7 +147,7 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Interface for all classes that can control a IWorksheetView to show data from a DataTable. 
   /// </summary>
-  public interface IWorksheetViewEventSink 
+  public interface IWinFormsWorksheetViewEventSink 
   {
     /// <summary>
     /// Handles the scroll event of the vertical scroll bar.

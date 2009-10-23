@@ -433,7 +433,6 @@
     <Compile Include="Gui\Graph\Viewing\GraphView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Graph\Viewing\IGraphDocumentView.cs" />
     <Compile Include="Gui\Graph\WaterfallTransformControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

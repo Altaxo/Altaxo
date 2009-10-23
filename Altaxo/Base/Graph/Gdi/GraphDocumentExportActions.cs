@@ -51,9 +51,13 @@ namespace Altaxo.Graph.Gdi
 			{
 				return;
 			}
+			ShowFileExportDialog(doc, _graphExportOptionsToFile);
+		}
 
+		public static void ShowFileExportDialog(this GraphDocument doc, GraphExportOptions graphExportOptions)
+		{
 			var saveOptions = new Altaxo.Gui.SaveFileOptions();
-			var list = GetFileFilterString(_graphExportOptionsToFile.ImageFormat);
+			var list = GetFileFilterString(graphExportOptions.ImageFormat);
 			foreach (var entry in list)
 				saveOptions.AddFilter(entry.Key, entry.Value);
 			saveOptions.FilterIndex = 0;
@@ -61,12 +65,31 @@ namespace Altaxo.Graph.Gdi
 
 			if (Current.Gui.ShowSaveFileDialog(saveOptions))
 			{
-				using(Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+				using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
-					doc.Render(myStream, _graphExportOptionsToFile);
+					doc.Render(myStream, graphExportOptions);
 					myStream.Close();
 				} // end openfile ok
 			} // end dlgresult ok
+		}
+
+		public static void ShowFileExportMetafileDialog(this GraphDocument doc)
+		{
+			var opt = new GraphExportOptions();
+			opt.IsIntentedForClipboardOperation = false;
+			opt.TrySetImageAndPixelFormat(ImageFormat.Emf, PixelFormat.Format32bppArgb);
+			opt.ExportArea = GraphExportArea.Page;
+			ShowFileExportDialog(doc, opt);
+		}
+		public static void ShowFileExportTiffDialog(this GraphDocument doc)
+		{
+			var opt = new GraphExportOptions();
+			opt.IsIntentedForClipboardOperation = false;
+			opt.TrySetImageAndPixelFormat(ImageFormat.Tiff, PixelFormat.Format32bppArgb);
+			opt.ExportArea = GraphExportArea.Page;
+			opt.SourceDpiResolution = 300;
+			opt.DestinationDpiResolution = 300;
+			ShowFileExportDialog(doc, opt);
 		}
 
 		#region Stream und file

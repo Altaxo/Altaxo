@@ -39,6 +39,8 @@ namespace Altaxo.Graph.GUI
   /// </summary>
   public interface IGraphView 
   {
+		GraphDocument Doc { get; }
+
     /// <summary>
     /// Returns the controller that controls this view. Sets the controller to this value.
     /// </summary>
@@ -125,6 +127,10 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     /// <param name="cursor"></param>
     void SetPanelCursor(Cursor cursor);
+
+
+		XYPlotLayer ActiveLayer { get; }
+		void SetActiveLayer(int layerNumber);
 	}
 
 	#endregion
@@ -134,17 +140,9 @@ namespace Altaxo.Graph.GUI
 	/// <summary>
   /// This interface has to be implemented by any controller that wants to control a GraphView
   /// </summary>
-  public interface IGraphViewEventSink : /* IWorkbenchContentController, */ IMVCControllerEx
+  public interface IGraphViewEventSink 
   {
     
-
-
-    /// <summary>
-    /// This function is called if the user changed the active layer (by a toolbar or similar).
-    /// </summary>
-    /// <param name="currentLayer">The number of the currently active layer (choosen by the user).</param>
-    /// <param name="bAlternative">Normally false, can be set to true if the user clicked for instance with the right mouse button on the layer button.</param>
-    void EhView_CurrentLayerChoosen(int currentLayer, bool bAlternative);
   
     /// <summary>
     /// The controller should show a data context menu (contains all plots of the currentLayer).
@@ -199,11 +197,7 @@ namespace Altaxo.Graph.GUI
     void EhView_GraphPanelPaint(System.Windows.Forms.PaintEventArgs e);
 
   
-    /// <summary>
-    /// Handles the event when the size of the graph area is changed.
-    /// </summary>
-    /// <param name="e">EventArgs.</param>
-    void EhView_GraphPanelSizeChanged(System.EventArgs e);
+  
 
     /// <summary>
     /// Called if a key is pressed in the view.
@@ -214,10 +208,7 @@ namespace Altaxo.Graph.GUI
     bool EhView_ProcessCmdKey(ref Message msg, Keys keyData);
 
 
-		/// <summary>
-		/// A scroll event has occured.
-		/// </summary>
-		void EhView_Scroll();
+	
 
 	}
 

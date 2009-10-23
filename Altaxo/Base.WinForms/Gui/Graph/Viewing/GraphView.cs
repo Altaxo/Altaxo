@@ -23,16 +23,20 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Serialization;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.GUI
 {
   /// <summary>
   /// Summary description for GraphView.
   /// </summary>
-  public class GraphView : System.Windows.Forms.UserControl, IGraphView
+  public class GraphView : System.Windows.Forms.UserControl, 
+		Altaxo.Gui.Graph.Viewing.IGraphView
   {
     private System.Windows.Forms.ImageList m_GraphToolsImages;
     private System.Windows.Forms.ImageList m_LayerButtonImages;
@@ -40,8 +44,9 @@ namespace Altaxo.Graph.GUI
     private GraphPanel m_GraphPanel;
     // private System.Windows.Forms.TextBox m_TextBox;
     private System.ComponentModel.IContainer components;
-    private IGraphViewEventSink m_Ctrl;
-
+    private Altaxo.Graph.GUI.WinFormsGraphController _winFormsController;
+		private Altaxo.Gui.Graph.Viewing.GraphController _controller;
+		
     [Browsable(false)]
     private MainMenu m_Menu;
 
@@ -65,6 +70,8 @@ namespace Altaxo.Graph.GUI
       // Required for Windows Form Designer support
       //
       InitializeComponent();
+
+			_winFormsController = new WinFormsGraphController(this);
     }
 
     /// <summary>
@@ -180,11 +187,19 @@ namespace Altaxo.Graph.GUI
 
   
     
-    public IGraphViewEventSink Controller
+    public Altaxo.Graph.GUI.WinFormsGraphController WinFormsController
     {
-      get { return m_Ctrl; }
-      set { m_Ctrl = value; }
+      get { return _winFormsController; }
+      set { _winFormsController = value; }
     }
+
+		public Altaxo.Gui.Graph.Viewing.GraphController GC
+		{
+			get
+			{
+				return _controller;
+			}
+		}
 
     /// <summary>
     /// Sets the title of this view.
@@ -193,31 +208,21 @@ namespace Altaxo.Graph.GUI
     {
       set { this.Text = value; }
     }
-    
-    protected override void OnParentChanged(EventArgs e)
-    {
-      base.OnParentChanged (e);
-
-      if(m_Menu != null)
-        this.GraphMenu = m_Menu;
-
-      
-    }
 
 
     private void EhLayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
     {
-      if(null!=m_Ctrl)
+      if(null!=_controller)
       {
         int pushedLayerNumber = System.Convert.ToInt32(e.Button.Text);
     
-        m_Ctrl.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
+        _controller.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
       }
     }
 
     private void EhLayerToolbar_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
+      if(null!=_winFormsController)
       {
         if(e.Button == MouseButtons.Right)
         {
@@ -226,7 +231,7 @@ namespace Altaxo.Graph.GUI
           {
             if(m_LayerToolbar.Buttons[i].Rectangle.Contains(pt))
             {
-              m_Ctrl.EhView_ShowDataContextMenu(i,this,pt);
+              _controller.EhView_ShowDataContextMenu(i, this, pt);
               return;
             }
           }
@@ -236,51 +241,51 @@ namespace Altaxo.Graph.GUI
 
     private void EhGraphPanel_Click(object sender, System.EventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_GraphPanelMouseClick(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_GraphPanelMouseClick(e);
     }
 
     private void EhGraphPanel_DoubleClick(object sender, System.EventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_GraphPanelMouseDoubleClick(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_GraphPanelMouseDoubleClick(e);
     }
 
     private void EhGraphPanel_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_GraphPanelPaint(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_GraphPanelPaint(e);
     }
 
     private void EhGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_GraphPanelMouseDown(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_GraphPanelMouseDown(e);
     }
 
     private void EhGraphPanel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_GraphPanelMouseMove(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_GraphPanelMouseMove(e);
     }
 
     private void EhGraphPanel_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_GraphPanelMouseUp(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_GraphPanelMouseUp(e);
     }
 
     private void EhGraphPanel_SizeChanged(object sender, System.EventArgs e)
     {
-      if(null!=m_Ctrl)
-        m_Ctrl.EhView_GraphPanelSizeChanged(e);
+      if(null!=_controller)
+        _controller.EhView_GraphPanelSizeChanged();
     }
 
   
 
     private void EhGraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
     {
-      if(null!=m_Ctrl)
+      if(null!=_winFormsController)
         throw new NotImplementedException("This is not implemented any longer");
     }
 
@@ -353,13 +358,13 @@ namespace Altaxo.Graph.GUI
       }
       set
       {
-				var controller = m_Ctrl;
-				m_Ctrl = null; // suppress scrollbar events
+				var controller = _winFormsController;
+				_winFormsController = null; // suppress scrollbar events
 
 				this._horizontalScrollBar.Value = (int)(value.X*_horizontalScrollBar.Maximum);
 				this._verticalScrollBar.Value = (int)(value.Y * _verticalScrollBar.Maximum);
 
-				m_Ctrl = controller;
+				_winFormsController = controller;
       }
     }
 
@@ -412,31 +417,6 @@ namespace Altaxo.Graph.GUI
 
     #endregion
 
-    /*
-        public ToolBar CreateGraphToolsToolbar()
-        {
-          ToolBar tb = new ToolBar();
-          tb.ImageList = this.m_GraphToolsImages;
-          tb.ButtonSize = new System.Drawing.Size(16, 24);
-          tb.AutoSize = true;
-          tb.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhGraphToolsToolbar_ButtonClick);
-
-          for(int i=0;i<2;i++)
-          {
-            ToolBarButton tbb = new ToolBarButton();
-            tbb.ImageIndex=i;
-            tbb.Tag = (GraphTools)i; 
-            tb.Buttons.Add(tbb);
-          }
-          tb.Dock = DockStyle.Bottom;
-  
-        
-          foreach(ToolBarButton bt in tb.Buttons)
-            bt.Pushed = (((GraphTools)bt.Tag) == m_CachedCurrentGraphTool);
-    
-          return tb;
-        }
-    */
     /// <summary>
     /// This function is to solve the problem, that after selection of the graph window by
     /// clicking in the graphdoc, the View did not receive KeyPressed messages. 
@@ -463,9 +443,9 @@ namespace Altaxo.Graph.GUI
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-      if(null!=this.Controller)
+      if(null!=this.WinFormsController)
       {
-        if(true==Controller.EhView_ProcessCmdKey(ref msg, keyData))
+        if(true==WinFormsController.EhView_ProcessCmdKey(ref msg, keyData))
           return true;
       }
       //      System.Diagnostics.Trace.WriteLine("GraphView CmdKey pressed");
@@ -477,8 +457,8 @@ namespace Altaxo.Graph.GUI
 			if (ScrollEventType.ThumbTrack == e.Type)
 				return;
 
-			if (null != m_Ctrl)
-				m_Ctrl.EhView_Scroll();
+			if (null != _controller)
+				_controller.EhView_Scroll();
 		}
 
 		private void EhHorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
@@ -486,11 +466,107 @@ namespace Altaxo.Graph.GUI
 			if (ScrollEventType.ThumbTrack == e.Type)
 				return;
 
-			if (null != m_Ctrl)
-				m_Ctrl.EhView_Scroll();
+			if (null != _controller)
+				_controller.EhView_Scroll();
 		}
 
-  }
+
+		public void SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType value)
+		{
+			
+				_winFormsController.GraphTool = value;
+				if (null != _controller)
+					_controller.EhView_CurrentGraphToolChanged();
+		}
+
+		public void SetActiveLayerFromInternal(int layerNumber)
+		{
+			_controller.EhView_CurrentLayerChoosen(layerNumber, false);
+		}
+
+
+		#region IGraphView Members
+
+		public Altaxo.Graph.Gdi.GraphDocument Doc
+		{
+			get
+			{
+				return _controller != null ? _controller.Doc : null;
+			}
+		}
+
+		Altaxo.Gui.Graph.Viewing.IGraphViewEventSink Altaxo.Gui.Graph.Viewing.IGraphView.Controller
+		{
+			set
+			{
+				_controller = value as Altaxo.Gui.Graph.Viewing.GraphController;
+			}
+		}
+
+
+		/// <summary>
+		/// Triggers a full redrawing of the graph. If the image is cached, the cache is invalidated.
+		/// </summary>
+		void Altaxo.Gui.Graph.Viewing.IGraphView.RefreshGraph()
+		{
+			_winFormsController.RefreshGraph();
+		}
+
+	
+		public SizeF ViewportSizeInInch
+		{
+			get
+			{
+				float dpix, dpiy;
+				using (Graphics grfx = m_GraphPanel.CreateGraphics())
+				{
+					dpix = grfx.DpiX;
+					dpiy = grfx.DpiY;
+				}
+
+				return new SizeF(m_GraphPanel.Width/dpix, m_GraphPanel.Height/dpiy);
+			}
+		}
+
+		public Altaxo.Graph.Gdi.XYPlotLayer ActiveLayer
+		{
+			get
+			{
+				return _controller.ActiveLayer;
+			}
+		}
+
+	
+
+		public IList<IHitTestObject> SelectedObjects
+		{
+			get
+			{
+				return _winFormsController.SelectedObjects;
+			}
+		}
+
+	
+
+
+		Altaxo.Gui.Graph.Viewing.GraphToolType Altaxo.Gui.Graph.Viewing.IGraphView.GraphTool
+		{
+			get
+			{
+				return _winFormsController.GraphTool;
+			}
+			set
+			{
+				_winFormsController.GraphTool = value;
+			}
+		}
+
+		#endregion
+
+
+
+
+	}
 }
   
 

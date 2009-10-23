@@ -32,7 +32,7 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// WorksheetView is our class for visualizing data tables.
   /// </summary>
-  public class WorksheetView : System.Windows.Forms.UserControl, IWorksheetView
+  public class WorksheetView : System.Windows.Forms.UserControl, IWinFormsWorksheetView
   {
     /// <summary>
     /// Required designer variable.
@@ -48,7 +48,7 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// The controller that controls this view
     /// </summary>
-    private IWorksheetViewEventSink _controller;
+    private IWinFormsWorksheetViewEventSink _controller;
     
     public WorksheetView()
     {
@@ -237,7 +237,7 @@ namespace Altaxo.Worksheet.GUI
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public IWorksheetViewEventSink WorksheetController
+    public IWinFormsWorksheetViewEventSink WorksheetController
     {
       get
       {

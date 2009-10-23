@@ -371,10 +371,6 @@ namespace Altaxo.Gui
 			{
 				new Altaxo.Worksheet.GUI.WinFormsWorksheetController(controller as Altaxo.Gui.Worksheet.Viewing.WorksheetController);
 			}
-			else if (controller is Altaxo.Gui.Graph.Viewing.GraphController)
-			{
-				new Altaxo.Graph.GUI.WinFormsGraphController(controller as Altaxo.Gui.Graph.Viewing.GraphController);
-			}
 			else
 			{
 				throw new ArgumentException("The type of the provided controller is unkown to this function: " + controller.GetType().ToString());

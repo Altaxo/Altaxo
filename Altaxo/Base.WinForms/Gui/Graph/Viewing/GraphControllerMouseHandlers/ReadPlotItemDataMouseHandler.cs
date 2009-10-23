@@ -71,16 +71,20 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     protected PointF m_Cross;
 
-    protected WinFormsGraphController _grac;
+    protected GraphView _grac;
 
-    public ReadPlotItemDataMouseHandler(WinFormsGraphController grac)
+    public ReadPlotItemDataMouseHandler(GraphView grac)
     {
       _grac = grac;
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Cross);
+      if(_grac!=null)
+        _grac.SetPanelCursor(Cursors.Cross);
     }
 
-   
+		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
+		{
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ReadPlotItemData; }
+		}
+
 
     /// <summary>
     /// Handles the MouseDown event when the plot point tool is selected
@@ -92,12 +96,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       base.OnMouseDown(e);
 
       PointF mouseXY = new PointF(e.X,e.Y);
-      PointF graphXY = _grac.PixelToPrintableAreaCoordinates(mouseXY);
+      PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(mouseXY);
        
       // search for a object first
       IHitTestObject clickedObject;
       int clickedLayerNumber=0;
-      _grac.FindGraphObjectAtPixelPosition(mouseXY, true, out clickedObject, out clickedLayerNumber);
+      _grac.WinFormsController.FindGraphObjectAtPixelPosition(mouseXY, true, out clickedObject, out clickedLayerNumber);
       if(null!=clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
       {
         m_PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
@@ -121,7 +125,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 					// m_Cross.X -= _grac.GraphViewOffset.X;
 					// m_Cross.Y -= _grac.GraphViewOffset.Y;
            
-          PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
+          PointF newPixelCoord = _grac.WinFormsController.PrintableAreaToPixelCoordinates(printableCoord);
           Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
             
 
@@ -134,7 +138,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           
           // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
           // of the grac
-          _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+          _grac.WinFormsController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
         }
       }
        
@@ -152,12 +156,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       this._PlotIndex = scatterPoint.PlotIndex;
       this._RowIndex = scatterPoint.RowIndex;
       // convert this layer coordinates first to PrintableAreaCoordinates
-      PointF printableCoord = _grac.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+      PointF printableCoord = _grac.GC.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
       m_Cross = printableCoord;
 			// m_Cross.X -= _grac.GraphViewOffset.X;
 			// m_Cross.Y -= _grac.GraphViewOffset.Y;
            
-      PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
+      PointF newPixelCoord = _grac.WinFormsController.PrintableAreaToPixelCoordinates(printableCoord);
       //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
       //Cursor.Position = ((Control)_grac.View).PointToScreen(newPixelCoord);
           
@@ -171,7 +175,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           
       // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
       // of the grac
-      _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.WinFormsController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
        
     }
 
@@ -227,7 +231,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(!TestMovementPresumtions())
         return;
 
-      int numlayers = _grac.Layers.Count;
+      int numlayers = _grac.GC.Layers.Count;
       int nextlayer = _LayerNumber;
       int nextplotitemnumber = this._PlotItemNumber;
 
@@ -239,9 +243,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         if(nextplotitemnumber<0)
         {
           nextlayer-=1;
-          nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.Layers[nextlayer].PlotItems.Flattened.Length-1;
+          nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.GC.Layers[nextlayer].PlotItems.Flattened.Length-1;
         }
-        else if(nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
+        else if(nextplotitemnumber>=_grac.GC.Layers[nextlayer].PlotItems.Flattened.Length)
         {
           nextlayer+=1;
           nextplotitemnumber=0;
@@ -250,14 +254,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         if(nextlayer<0 || nextlayer>=numlayers)
           break;
           
-        if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
+        if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.GC.Layers[nextlayer].PlotItems.Flattened.Length)
           continue;
   
-        plotitem =  _grac.Layers[nextlayer].PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
+        plotitem =  _grac.GC.Layers[nextlayer].PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
         if(null==plotitem)
           continue;
   
-        scatterPoint = plotitem.GetNextPlotPoint(_grac.Layers[nextlayer],this._PlotIndex,0);
+        scatterPoint = plotitem.GetNextPlotPoint(_grac.GC.Layers[nextlayer],this._PlotIndex,0);
       } while(scatterPoint==null);
       
       if(null!=scatterPoint)

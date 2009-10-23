@@ -43,6 +43,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>Stores the mouse position of the last mouse down event.</summary>
     protected PointF m_LastMouseDown;
 
+		public abstract Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType { get; }
+
     /// <summary>
     /// Handles the mouse move event.
     /// </summary>

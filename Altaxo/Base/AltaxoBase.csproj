@@ -798,6 +798,7 @@
     <Compile Include="Gui\Graph\TextGraphicController.cs" />
     <Compile Include="Gui\Graph\TitleFormatLayerController.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphController.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphToolType.cs" />
     <Compile Include="Gui\Graph\Viewing\IGraphController.cs" />
     <Compile Include="Gui\Graph\WaterfallTransformController.cs" />
     <Compile Include="Gui\IApplyController.cs" />
@@ -848,6 +849,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />
+    <Folder Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

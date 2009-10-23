@@ -128,6 +128,16 @@ namespace Altaxo.Main
       int i = 0;
       foreach (IViewContent ctrl in Current.Workbench.ViewContentCollection)
       {
+				object mvc = null;
+				var mvcc = ctrl as Altaxo.Gui.IMVCControllerWrapper;
+				if (null != mvcc)
+					mvc = mvcc.MVCController;
+
+				if (mvc != null && info.IsSerializable(mvc))
+				{
+				}
+
+
         if (info.IsSerializable(ctrl))
         {
           i++;
@@ -166,8 +176,10 @@ namespace Altaxo.Main
           System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
           info.BeginReading(zipinpstream);
           object readedobject = info.GetValue("Table", this);
-          if (readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
-            restoredControllers.Add(readedobject);
+					if (readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
+						restoredControllers.Add(readedobject);
+					else if (readedobject is Altaxo.Gui.Graph.Viewing.GraphController)
+						restoredControllers.Add(new Altaxo.Gui.SharpDevelop.SDGraphViewContent((Altaxo.Gui.Graph.Viewing.GraphController)readedobject));
           info.EndReading();
         }
       }
@@ -308,7 +320,7 @@ namespace Altaxo.Main
     private void Save(string filename)
     {
       Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-
+			
       bool fileAlreadyExists = System.IO.File.Exists(filename);
 
 
@@ -728,7 +740,7 @@ namespace Altaxo.Main
 
       Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
       
-      ctrl.Controller.View = view;
+      ctrl.Controller.ViewObject = view;
 
       if (null != Current.Workbench)
         Current.Workbench.ShowView(ctrl);

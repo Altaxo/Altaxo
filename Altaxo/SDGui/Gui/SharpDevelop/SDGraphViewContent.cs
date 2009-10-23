@@ -38,10 +38,9 @@ namespace Altaxo.Gui.SharpDevelop
 {
   public class SDGraphViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
   {
-    Altaxo.Graph.GUI.WinFormsGraphController _controller;
-		Altaxo.Gui.Graph.Viewing.GraphController _guiIndependentController;
+		Altaxo.Gui.Graph.Viewing.GraphController _controller;
 
-
+/*
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui","Altaxo.Graph.GUI.SDGraphController",0)]
       class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -53,12 +52,14 @@ namespace Altaxo.Gui.SharpDevelop
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-
+				throw new NotImplementedException();
+			
        var s = new Altaxo.Gui.Graph.Viewing.GraphController(null,true);
         info.GetBaseValueEmbedded(s,typeof(WinFormsGraphController),parent);
-
+				
         return new SDGraphViewContent(s);
-      }
+			
+			}
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SDGraphViewContent), 1)]
@@ -79,6 +80,7 @@ namespace Altaxo.Gui.SharpDevelop
       }
     }
     #endregion
+		*/
 
     #region Constructors
     /// <summary>
@@ -100,11 +102,10 @@ namespace Altaxo.Gui.SharpDevelop
     {
     }
 
-    protected SDGraphViewContent(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+    public SDGraphViewContent(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
     {
-			_guiIndependentController = ctrl;
-      _controller = (WinFormsGraphController)ctrl.InternalGetGuiController();
-      _controller.TitleNameChanged += EhTitleNameChanged;
+			_controller = ctrl;
+			_controller.TitleNameChanged += EhTitleNameChanged;
 			SetTitle();
     }
 
@@ -121,14 +122,14 @@ namespace Altaxo.Gui.SharpDevelop
 
     #endregion
 
-    public static implicit operator Altaxo.Graph.GUI.WinFormsGraphController(SDGraphViewContent ctrl)
+    public static implicit operator Altaxo.Gui.Graph.Viewing.GraphController(SDGraphViewContent ctrl)
     {
       return ctrl._controller;
     }
 
-    public Altaxo.Graph.GUI.WinFormsGraphController Controller
+    public Altaxo.Gui.Graph.Viewing.GraphController Controller
     {
-      get { return _controller; }
+			get { return _controller; }
     }
    
     public Altaxo.Gui.IMVCController MVCController 
@@ -206,7 +207,7 @@ namespace Altaxo.Gui.SharpDevelop
 
     public void Delete()
     {
-      if (_controller.NumberOfSelectedObjects > 0)
+      if (_controller.SelectedObjects.Count > 0)
       {
         _controller.RemoveSelectedObjects();
       }

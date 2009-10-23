@@ -36,12 +36,18 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
   {
-    public ArrowLineDrawingMouseHandler(WinFormsGraphController grac)
+    public ArrowLineDrawingMouseHandler(GraphView grac)
       : base(grac)
     {
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Arrow);
+      if(_grac!=null)
+        _grac.SetPanelCursor(Cursors.Arrow);
     }
+
+		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
+		{
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing;  }
+		}
+
 
     protected override void FinishDrawing()
     {
@@ -52,9 +58,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       go.Pen.EndCap = cap;
      
       // deselect the text tool
-      this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-      _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
-      _grac.RefreshGraph();
+			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+      _grac.ActiveLayer.GraphObjects.Add(go);
+      _grac.WinFormsController.RefreshGraph();
       
     }
   }

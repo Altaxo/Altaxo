@@ -38,15 +38,19 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class ZoomAxesMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public ZoomAxesMouseHandler(WinFormsGraphController grac)
+    public ZoomAxesMouseHandler(GraphView grac)
       : base(grac)
     {
-      NextMouseHandlerType = this.GetType();
+			NextMouseHandlerType = this.GraphToolType;
 
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Arrow);
+      if(_grac!=null)
+        _grac.SetPanelCursor(Cursors.Arrow);
     }
-   
+
+		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
+		{
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ZoomAxes; }
+		}
 
 
     void Swap(ref double a, ref double b)
@@ -92,7 +96,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       // deselect the text tool
       // this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-      _grac.RefreshGraph();
+      _grac.WinFormsController.RefreshGraph();
       
     }
 

@@ -41,10 +41,10 @@ namespace Altaxo.Worksheet.GUI
   /// Default controller which implements IWorksheetController.
   /// </summary>
   [Altaxo.Gui.UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
-  [Altaxo.Gui.ExpectedTypeOfView(typeof(IWorksheetView))]
+  [Altaxo.Gui.ExpectedTypeOfView(typeof(IWinFormsWorksheetView))]
   public class WinFormsWorksheetController :
 		Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController,
-		IWorksheetViewEventSink, 
+		IWinFormsWorksheetViewEventSink, 
 		Altaxo.Gui.IMVCController
   {
     public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
@@ -66,7 +66,7 @@ namespace Altaxo.Worksheet.GUI
     protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
     /// <summary>Holds the view (the window where the graph is visualized).</summary>
-    protected IWorksheetView _view;
+    protected IWinFormsWorksheetView _view;
     
 
     /// <summary>Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
@@ -1696,7 +1696,7 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-    public IWorksheetView View
+    public IWinFormsWorksheetView View
     {
       get
       {
@@ -1704,7 +1704,7 @@ namespace Altaxo.Worksheet.GUI
       }
       set
       {
-        IWorksheetView oldView = _view;
+        IWinFormsWorksheetView oldView = _view;
         _view = value;
 
         if(null!=oldView)
@@ -2505,7 +2505,7 @@ namespace Altaxo.Worksheet.GUI
     public object ViewObject
     {
       get { return View; }
-      set { View = value as IWorksheetView; }
+      set { View = value as IWinFormsWorksheetView; }
     }
     /// <summary>
     /// Returns the model (document) that this controller controls

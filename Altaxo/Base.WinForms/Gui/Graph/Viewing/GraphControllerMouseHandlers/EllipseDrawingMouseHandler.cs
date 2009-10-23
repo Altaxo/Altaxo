@@ -37,11 +37,17 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public EllipseDrawingMouseHandler(WinFormsGraphController grac)
+    public EllipseDrawingMouseHandler(GraphView grac)
       : base(grac)
     {
       
     }
+
+		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
+		{
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.EllipseDrawing; }
+		}
+
 
     protected override void FinishDrawing()
     {
@@ -49,9 +55,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       EllipseShape go =  new EllipseShape(rect.X,rect.Y,rect.Width,rect.Height);
 
       // deselect the text tool
-      this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-      _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
-      _grac.RefreshGraph();
+			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+      _grac.ActiveLayer.GraphObjects.Add(go);
+      _grac.WinFormsController.RefreshGraph();
     }
  
     /// <summary>

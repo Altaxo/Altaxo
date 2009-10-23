@@ -40,14 +40,21 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class TextToolMouseHandler : MouseStateHandler
   {
-    WinFormsGraphController _grac;
+    GraphView _grac;
 
-    public TextToolMouseHandler(WinFormsGraphController grac)
+    public TextToolMouseHandler(GraphView grac)
     {
       _grac = grac;
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Arrow);
+      if(_grac!=null)
+        _grac.SetPanelCursor(Cursors.Arrow);
     }
+
+		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
+		{
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.TextDrawing; }
+		}
+
+
     /// <summary>
     /// Handles the click event by opening the text tool dialog.
     /// </summary>
@@ -58,16 +65,16 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       base.OnClick(e);
 
       // get the page coordinates (in Point (1/72") units)
-      PointF printAreaCoord = _grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
+      PointF printAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(m_LastMouseDown);
       // with knowledge of the current active layer, calculate the layer coordinates from them
-      PointF layerCoord = _grac.Layers[_grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
+      PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
 
       TextGraphic tgo = new TextGraphic();
       tgo.Position = layerCoord;
-      tgo.ParentObject = _grac.Layers[_grac.CurrentLayerNumber].GraphObjects;
+      tgo.ParentObject = _grac.ActiveLayer.GraphObjects;
 
       // deselect the text tool
-      _grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
+			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 
       object tgoo = tgo;
       if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
@@ -75,8 +82,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         tgo = (TextGraphic)tgoo;
         if (tgo!=null && !tgo.Empty)
         {
-          _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(tgo);
-          _grac.RefreshGraph();
+          _grac.ActiveLayer.GraphObjects.Add(tgo);
+          _grac.WinFormsController.RefreshGraph();
         }
       }
 
@@ -92,7 +99,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         }
       }
       */
-      _grac.CurrentGraphToolType = typeof(ObjectPointerMouseHandler);
+			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
     }
   }
 }

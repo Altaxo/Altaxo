@@ -39,11 +39,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   
     #region Member variables
 
-    protected WinFormsGraphController _grac;
+    protected GraphView _grac;
 
     protected PointF _currentMousePrintAreaCoord;
 
-    protected System.Type NextMouseHandlerType = typeof(ObjectPointerMouseHandler);
+		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
     
 
@@ -59,13 +59,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     #endregion
 
-    public AbstractRectangularToolMouseHandler(WinFormsGraphController grac)
-     
+    public AbstractRectangularToolMouseHandler(GraphView view)
     {
-      _grac = grac;
+      _grac = view;
 
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Arrow);
+      if(_grac!=null)
+        _grac.SetPanelCursor(Cursors.Arrow);
     }
    
 
@@ -80,7 +79,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         //PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
         PointF printAreaCoord = _currentMousePrintAreaCoord;
         // with knowledge of the current active layer, calculate the layer coordinates from them
-        PointF layerCoord = _grac.Layers[_grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
+        PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
 
         _Points[_currentPoint].layerCoord = layerCoord;
         _Points[_currentPoint].printAreaCoord = printAreaCoord;
@@ -95,17 +94,17 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
      
       base.OnMouseMove ( e);
      
-      _currentMousePrintAreaCoord = _grac.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
+      _currentMousePrintAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
 
       if(e.Button==MouseButtons.Left)
       {
         ModifyCurrentMousePrintAreaCoordinate();
-        _grac.RepaintGraphArea();
+        _grac.WinFormsController.RepaintGraphArea();
       }
       else if(_currentPoint!=0)
       {
         _currentPoint=0;
-        _grac.RepaintGraphArea();
+        _grac.WinFormsController.RepaintGraphArea();
       }
 
     }
@@ -120,7 +119,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         //PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
         PointF printAreaCoord = _currentMousePrintAreaCoord;
         // with knowledge of the current active layer, calculate the layer coordinates from them
-        PointF layerCoord = _grac.Layers[_grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
+        PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
 
         _Points[_currentPoint].layerCoord = layerCoord;
         _Points[_currentPoint].printAreaCoord = printAreaCoord;
@@ -130,7 +129,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         {
           FinishDrawing();
           _currentPoint=0;
-          _grac.CurrentGraphToolType = NextMouseHandlerType;
+          _grac.SetGraphToolFromInternal( NextMouseHandlerType );
         }
       }
     }

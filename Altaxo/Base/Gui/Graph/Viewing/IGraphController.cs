@@ -24,20 +24,98 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 namespace Altaxo.Gui.Graph.Viewing
 {
-	public interface IGraphController
+	public interface IGraphView
+	{
+		/// <summary>
+		/// Sets the controller of the view;
+		/// </summary>
+		IGraphViewEventSink Controller { set; }
+
+		/// <summary>Causes a full redrawing of the plot. If the image is cached, the cache will be invalidated.</summary>
+		void RefreshGraph();
+
+		/// <summary>
+		/// This sets the title of the graph view.
+		/// </summary>
+		string GraphViewTitle { set; }
+
+		/// <summary>
+		/// If true, scrollbars will be shown on the graph.
+		/// </summary>
+		bool ShowGraphScrollBars { set; }
+
+		/// <summary>
+		/// Get /sets the scroll position of the graph
+		/// </summary>
+		PointF GraphScrollPosition { get; set; }
+
+		/// <summary>
+		/// Sets the number of layers that are in the graph. The view has to reflect the change in the number of layers
+		/// by adjusting the number of layer buttons or similar. The current layer number should be preserved.
+		/// </summary>
+		int NumberOfLayers { set; }
+
+		/// <summary>
+		/// Sets the currently active layer. If the view has some means to show the
+		/// currently active layer (like a toolbar or so), it has to indicate the current
+		/// active layer by setting the state of this indicator.
+		/// </summary>
+		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
+		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
+		int CurrentLayer { set; }
+
+
+		/// <summary>
+		/// Returns the size (in inch) of the area, wherein the graph is painted.
+		/// </summary>
+		SizeF ViewportSizeInInch { get; }
+
+		IList<IHitTestObject> SelectedObjects { get; }
+
+		GraphToolType GraphTool { get; set; }
+	}
+
+	public interface IGraphViewEventSink
+	{
+		GraphDocument Doc { get; }
+
+		XYPlotLayer ActiveLayer { get; }
+
+
+			/// <summary>
+		/// Handles the selection of the current layer by the <b>user</b>.
+		/// </summary>
+		/// <param name="currLayer">The current layer number as selected by the user.</param>
+		/// <param name="bAlternative">Normally false, can be set to true if the user clicked for instance with the right mouse button on the layer button.</param>
+		void EhView_CurrentLayerChoosen(int currLayer, bool bAlternative);
+
+		
+		/// <summary>
+		/// Handles the event when the size of the graph area is changed.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
+		void EhView_GraphPanelSizeChanged();
+
+		void EhView_Scroll();
+
+		void EhView_CurrentGraphToolChanged();
+
+		void EhView_ShowDataContextMenu(int layerNumber, object guiParent, Point pt);
+
+	}
+
+	public interface IGraphController : IMVCController
 	{
 		/// <summary>
 		/// This returns the GraphDocument that is managed by this controller.
 		/// </summary>
 		GraphDocument Doc { get; }
-
-		
-
 
 		/// <summary>
 		/// Returns the currently active layer, or null if there is no active layer.
@@ -64,19 +142,5 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Does a complete new drawing of the graph, even if the graph is cached in a bitmap.
 		/// </summary>
 		void RefreshGraph();
-	}
-
-	public interface IGuiDependentGraphController : IGraphController
-	{
-		void InternalInitializeGraphDocument(GraphDocument doc);
-
-		/// <summary>If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
-		bool IsAutoZoomActive { get; set; }
-
-		/// <summary>Current zoom factor. If AutoZoom is on, this factor is calculated automatically.</summary>
-		float ZoomFactor { get; set; }
-
-
-
 	}
 }
