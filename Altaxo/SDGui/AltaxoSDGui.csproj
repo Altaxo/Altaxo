@@ -151,7 +151,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
-    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs" />
+    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectScout.cs">
       <SubType>UserControl</SubType>
     </Compile>

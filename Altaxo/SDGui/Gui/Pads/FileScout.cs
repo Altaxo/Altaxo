@@ -179,9 +179,9 @@ namespace Altaxo.Gui.Pads
             Current.ProjectService.OpenProject(item.FullName);
             break;
           case ".spc":
-            if(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.WinFormsWorksheetController)
+            if(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
             {
-              Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl = (Altaxo.Worksheet.GUI.WinFormsWorksheetController)Current.Workbench.ActiveViewContent;
+              var ctrl = (Altaxo.Gui.Worksheet.Viewing.WorksheetController)Current.Workbench.ActiveViewContent;
               string [] files = new string[] { item.FullName };
               Altaxo.Serialization.Galactic.Import.ImportSpcFiles(files,ctrl.DataTable);
             }

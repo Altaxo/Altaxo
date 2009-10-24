@@ -473,7 +473,7 @@ namespace Altaxo.Worksheet.Commands
       if(selRows.Count==0)
       {
         selRows = new Altaxo.Collections.AscendingIntegerCollection();
-        selRows.AddRange(0,dg.Doc.PropertyRowCount);
+        selRows.AddRange(0,dg.DataTable.PropertyRowCount);
       }
 
       System.IO.StringWriter str = new System.IO.StringWriter();

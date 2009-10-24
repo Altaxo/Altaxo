@@ -34,10 +34,10 @@ namespace Altaxo.Worksheet.Commands
   {
     public static void Rename(IWorksheetController ctrl)
     {
-      TextValueInputController tvctrl = new TextValueInputController(ctrl.Doc.Name,"Enter a name for the worksheet:");
-      tvctrl.Validator = new WorksheetRenameValidator(ctrl.Doc,ctrl);
+      TextValueInputController tvctrl = new TextValueInputController(ctrl.DataTable.Name,"Enter a name for the worksheet:");
+      tvctrl.Validator = new WorksheetRenameValidator(ctrl.DataTable,ctrl);
       if(Current.Gui.ShowDialog(tvctrl,"Rename worksheet",false))
-        ctrl.Doc.Name = tvctrl.InputText.Trim();
+        ctrl.DataTable.Name = tvctrl.InputText.Trim();
     }
 
     protected class WorksheetRenameValidator : TextValueInputController.NonEmptyStringValidator
@@ -60,9 +60,9 @@ namespace Altaxo.Worksheet.Commands
 
         if(m_Table.Name==wksname)
           return null;
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc)==null)
+        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.DataTable)==null)
           return null; // if there is no parent data set we can enter anything
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc).Contains(wksname))
+        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.DataTable).Contains(wksname))
           return "This worksheet name already exists, please choose another name!";
         else
           return null;
@@ -89,7 +89,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="ctrl">The worksheet controller.</param>
     public static void CreatePropertyColumnOfColumnNames(IWorksheetController ctrl)
     {
-      CreatePropertyColumnOfColumnNames(ctrl.Doc);
+      CreatePropertyColumnOfColumnNames(ctrl.DataTable);
     }
 
     /// <summary>

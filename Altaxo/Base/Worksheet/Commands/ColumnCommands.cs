@@ -42,19 +42,19 @@ namespace Altaxo.Worksheet.Commands
     {
       if(ctrl.SelectedDataColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
       {
-        Altaxo.Data.DataColumn col = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]];
+        Altaxo.Data.DataColumn col = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
         TextValueInputController tvctrl = new TextValueInputController(col.Name,"new column name:");
         tvctrl.Validator = new DataColumnRenameValidator(col,ctrl);
         if(Current.Gui.ShowDialog(tvctrl,"Rename column",false))
-          ctrl.Doc.DataColumns.SetColumnName(col,tvctrl.InputText);
+          ctrl.DataTable.DataColumns.SetColumnName(col,tvctrl.InputText);
       }
       if(ctrl.SelectedDataColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
       {
-        Altaxo.Data.DataColumn col = ctrl.Doc.PropCols[ctrl.SelectedPropertyColumns[0]];
+        Altaxo.Data.DataColumn col = ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]];
         TextValueInputController tvctrl = new TextValueInputController(col.Name,"new property column name:");
         tvctrl.Validator = new PropertyColumnRenameValidator(col,ctrl);
         if(Current.Gui.ShowDialog(tvctrl,"Rename property column",false))
-          ctrl.Doc.PropCols.SetColumnName(col,tvctrl.InputText);
+          ctrl.DataTable.PropCols.SetColumnName(col,tvctrl.InputText);
       }
     }
 
@@ -82,7 +82,7 @@ namespace Altaxo.Worksheet.Commands
 
         if(m_Col.Name==name)
           return null;
-        else if(m_Ctrl.Doc.DataColumns.ContainsColumn(name))
+        else if(m_Ctrl.DataTable.DataColumns.ContainsColumn(name))
           return "This column name already exists, please choose another name!";
         else
           return null;
@@ -114,7 +114,7 @@ namespace Altaxo.Worksheet.Commands
 
         if(m_Col.Name==name)
           return null;
-        else if(m_Ctrl.Doc.PropCols.ContainsColumn(name))
+        else if(m_Ctrl.DataTable.PropCols.ContainsColumn(name))
           return "This column name already exists, please choose another name!";
         else
           return null;

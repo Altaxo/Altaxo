@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Worksheet
+namespace Altaxo.Collections
 {
   
 

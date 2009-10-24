@@ -27,12 +27,12 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Serialization;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet.Viewing
 {
   /// <summary>
   /// WorksheetView is our class for visualizing data tables.
   /// </summary>
-  public class WorksheetView : System.Windows.Forms.UserControl, IWinFormsWorksheetView
+  public class WorksheetView : System.Windows.Forms.UserControl, Altaxo.Gui.Worksheet.Viewing.IWorksheetView
   {
     /// <summary>
     /// Required designer variable.
@@ -40,7 +40,7 @@ namespace Altaxo.Worksheet.GUI
     private System.ComponentModel.Container components = null;
     private System.Windows.Forms.VScrollBar _vertScrollBar;
     private System.Windows.Forms.HScrollBar _horzScrollBar;
-    private Altaxo.Worksheet.GUI.WorksheetPanel _worksheetPanel;
+    private WorksheetPanel _worksheetPanel;
 
     [Browsable(false)]
     private MainMenu _menu;
@@ -48,7 +48,12 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// The controller that controls this view
     /// </summary>
-    private IWinFormsWorksheetViewEventSink _controller;
+    private WinFormsWorksheetController _winFormsController;
+
+		private Altaxo.Gui.Worksheet.Viewing.IWorksheetController _controller;
+
+		/// <summary>Function that creates the Gui dependent controller.</summary>
+		Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetView, WinFormsWorksheetController> _createGuiDependentController;
     
     public WorksheetView()
     {
@@ -57,8 +62,17 @@ namespace Altaxo.Worksheet.GUI
       //
       InitializeComponent();
 
-    
+			_createGuiDependentController = (x, y) => new WinFormsWorksheetController(x, y);
     }
+
+		public WorksheetView(Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetView, WinFormsWorksheetController> createController)
+		{
+			if (null == createController)
+				throw new ArgumentNullException("createController");
+
+			InitializeComponent();
+			_createGuiDependentController = createController;
+		}
 
     /// <summary>
     /// Clean up any resources being used.
@@ -86,7 +100,7 @@ namespace Altaxo.Worksheet.GUI
     {
       this._vertScrollBar = new System.Windows.Forms.VScrollBar();
       this._horzScrollBar = new System.Windows.Forms.HScrollBar();
-      this._worksheetPanel = new Altaxo.Worksheet.GUI.WorksheetPanel();
+      this._worksheetPanel = new WorksheetPanel();
       this.SuspendLayout();
       // 
       // m_VertScrollBar
@@ -154,63 +168,63 @@ namespace Altaxo.Worksheet.GUI
 
     private void EhVertScrollBar_Scroll(object sender, System.Windows.Forms.ScrollEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_VertScrollBarScroll(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_VertScrollBarScroll(e);
     }
 
     private void EhHorzScrollBar_Scroll(object sender, System.Windows.Forms.ScrollEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_HorzScrollBarScroll(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_HorzScrollBarScroll(e);
     }
 
 
     private void EhTableArea_Click(object sender, System.EventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaMouseClick(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaMouseClick(e);
     }
 
     private void EhTableArea_DoubleClick(object sender, System.EventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaMouseDoubleClick(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaMouseDoubleClick(e);
     }
 
     private void EhTableArea_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaPaint(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaPaint(e);
     }
 
     private void EhTableArea_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaMouseDown(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaMouseDown(e);
     }
 
     private void EhTableArea_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaMouseMove(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaMouseMove(e);
     }
 
     private void EhTableArea_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaMouseUp(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaMouseUp(e);
     }
 
     private void EhTableArea_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaMouseWheel(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaMouseWheel(e);
     }
 
     private void EhTableArea_SizeChanged(object sender, System.EventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_TableAreaSizeChanged(e);
+      if(null!=_winFormsController)
+        _winFormsController.EhView_TableAreaSizeChanged(e);
     }
   
   
@@ -236,18 +250,7 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public IWinFormsWorksheetViewEventSink WorksheetController
-    {
-      get
-      {
-        return _controller;
-      }
-      set
-      {
-        _controller = value;
-      }
-    }
+  
 
     public void TakeFocus()
     {
@@ -368,5 +371,29 @@ namespace Altaxo.Worksheet.GUI
     }
 
     #endregion
-  }
+
+		#region New IWorksheetView members
+
+		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller
+		{
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				_controller = value;
+				_winFormsController = _createGuiDependentController(_controller, this);
+			}
+		}
+
+		public Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController GuiDependentController
+		{
+			get
+			{
+				return _winFormsController;
+			}
+		}
+
+		#endregion
+	}
 }

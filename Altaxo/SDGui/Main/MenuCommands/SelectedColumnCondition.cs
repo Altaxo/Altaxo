@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet.Commands
         case "two":
           return val == 2;
         case "all":
-          return val == ctrl.Controller.Doc.DataColumnCount;
+          return val == ctrl.Controller.DataTable.DataColumnCount;
         case "any":
           return val > 0;
         case "*":
@@ -116,7 +116,7 @@ namespace Altaxo.Worksheet.Commands
         case "two":
           return val == 2;
         case "all":
-          return val == ctrl.Controller.Doc.PropertyColumnCount;
+          return val == ctrl.Controller.DataTable.PropertyColumnCount;
         case "any":
           return val > 0;
         case "*":

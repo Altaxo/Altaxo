@@ -27,7 +27,7 @@ using System.Windows.Forms;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Worksheet;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpDevelop;

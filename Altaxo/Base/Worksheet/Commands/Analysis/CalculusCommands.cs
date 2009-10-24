@@ -55,8 +55,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       SavitzkyGolayParameters parameters = (SavitzkyGolayParameters)paramobject;
 
-      Altaxo.Data.DataColumn yCol = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]];
-      Altaxo.Data.DataColumn xCol = ctrl.Doc.DataColumns.FindXColumnOf(yCol);
+      Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+      Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
 
 			SavitzkyGolay(parameters, yCol, xCol);
     }
@@ -128,8 +128,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       for (int nSel = 0; nSel < ctrl.SelectedDataColumns.Count; nSel++)
       {
-        Altaxo.Data.DataColumn yCol = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[nSel]];
-        Altaxo.Data.DataColumn xCol = ctrl.Doc.DataColumns.FindXColumnOf(yCol);
+        Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[nSel]];
+        Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
 
         if (!(yCol is INumericColumn))
         {
@@ -201,7 +201,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static LinearFitBySvd MultivariateLinearFit(IWorksheetController ctrl)
     {
-      return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.Doc.DataColumns,ctrl.SelectedDataColumns);
+      return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.DataTable.DataColumns,ctrl.SelectedDataColumns);
     }
 
 

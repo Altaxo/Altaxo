@@ -49,7 +49,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     #region MultiplyColumnsToMatrix
     public static void MultiplyColumnsToMatrix(IWorksheetController ctrl)
     {
-      string err = MultiplyColumnsToMatrix(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns);
+      string err = MultiplyColumnsToMatrix(Current.Project,ctrl.DataTable,ctrl.SelectedDataColumns);
       if(null!=err)
         Current.Gui.ErrorMessageBox(err,"An error occured");
     }
@@ -169,7 +169,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(Current.Gui.ShowDialog(ivictrl,"Set maximum number of factors",false))
       {
-        string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,true,ivictrl.EnteredContents);
+        string err= PrincipalComponentAnalysis(Current.Project,ctrl.DataTable,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,true,ivictrl.EnteredContents);
         if(null!=err)
           Current.Gui.ErrorMessageBox(err);
       }
@@ -184,7 +184,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(Current.Gui.ShowDialog(ivictrl,"Set maximum number of factors",false))
       {
-        string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,false,ivictrl.EnteredContents);
+        string err= PrincipalComponentAnalysis(Current.Project,ctrl.DataTable,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,false,ivictrl.EnteredContents);
         if(null!=err)
           Current.Gui.ErrorMessageBox(err);
       }
@@ -377,7 +377,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       WorksheetAnalysis analysis = new PLS2WorksheetAnalysis();
 
-      string err= analysis.ExecuteAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,true,options,preprocessOptions);
+      string err= analysis.ExecuteAnalysis(Current.Project,ctrl.DataTable,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,true,options,preprocessOptions);
       if(null!=err)
         Current.Gui.ErrorMessageBox(err,"An error occured");
     }
@@ -390,7 +390,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       WorksheetAnalysis analysis = (WorksheetAnalysis)System.Activator.CreateInstance(options.AnalysisMethod);
 
-      string err= analysis.ExecuteAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,false,options,preprocessOptions);
+      string err= analysis.ExecuteAnalysis(Current.Project,ctrl.DataTable,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,false,options,preprocessOptions);
       if(null!=err)
 				Current.Gui.ErrorMessageBox(err, "An error occured");
     }

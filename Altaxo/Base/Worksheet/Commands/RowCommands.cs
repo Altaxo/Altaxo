@@ -91,7 +91,7 @@ namespace Altaxo.Worksheet.Commands
       if (numberOfRows <= 0 || rowBeforeToInsert<0)
         return;
 
-      ctrl.Doc.DataColumns.InsertRows(rowBeforeToInsert, numberOfRows);
+      ctrl.DataTable.DataColumns.InsertRows(rowBeforeToInsert, numberOfRows);
       ctrl.ClearAllSelections();
       ctrl.UpdateTableView();
     }

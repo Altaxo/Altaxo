@@ -23,7 +23,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet.Viewing
 {
   /// <remarks>
   /// ClickedCellInfo retrieves (from mouse coordinates of a click), which cell has clicked onto. 

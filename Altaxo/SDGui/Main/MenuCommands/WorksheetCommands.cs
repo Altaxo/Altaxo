@@ -26,7 +26,7 @@ using ICSharpCode.Core;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Worksheet;
-using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
 
@@ -52,7 +52,7 @@ namespace Altaxo.Worksheet.Commands
         as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 
       if(null!=ctrl)
-        Run(ctrl.Controller);
+        Run((Altaxo.Gui.Worksheet.Viewing.WorksheetController)ctrl.MVCController);
     }
   
     /// <summary>
@@ -60,7 +60,7 @@ namespace Altaxo.Worksheet.Commands
     /// the worksheet controller in the parameter.
     /// </summary>
     /// <param name="ctrl">The worksheet controller this command is applied to.</param>
-    public abstract void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl);
+    public abstract void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl);
   }
 
   #endregion
@@ -69,7 +69,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SaveAs : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.SaveAs(ctrl,false);
     }
@@ -77,7 +77,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SaveAsTemplate : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.SaveAs(ctrl,true);
     }
@@ -85,7 +85,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ImportAscii : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.ImportAscii(ctrl);
     }
@@ -93,7 +93,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ImportAsciiInSingleWorksheet : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.ImportAscii(ctrl,false);
     }
@@ -101,7 +101,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ImportImage : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.ImportImage(ctrl);
     }
@@ -109,7 +109,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ImportGalacticSPC : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.ImportGalacticSPC(ctrl);
     }
@@ -117,7 +117,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ImportJcamp : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.ImportJcamp(ctrl);
     }
@@ -125,7 +125,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ExportAscii : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.ExportAscii(ctrl);
     }
@@ -133,7 +133,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ExportGalacticSPC : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.FileCommands.ExportGalacticSPC(ctrl);
     }
@@ -145,28 +145,28 @@ namespace Altaxo.Worksheet.Commands
 
   public class EditRemove : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.RemoveSelected(ctrl);
     }
   }
   public class EditClean : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.CleanSelected(ctrl);
     }
   }
   public class EditCopy : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.CopyToClipboard(ctrl);
     }
   }
   public class EditPaste : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.EditCommands.PasteFromClipboard(ctrl);
     }
@@ -174,7 +174,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class XYVToMatrix : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       string msg = Altaxo.Worksheet.Commands.EditCommands.XYVToMatrix(ctrl);
       if (msg != null)
@@ -188,42 +188,42 @@ namespace Altaxo.Worksheet.Commands
 
   public class PlotLine : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, false);
     }
   }
   public class PlotLineArea : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineArea(ctrl);
     }
   }
   public class PlotLineStack : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineStack(ctrl);
     }
   }
   public class PlotLineRelativeStack : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineRelativeStack(ctrl);
     }
   }
   public class PlotLineWaterfall : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLineWaterfall(ctrl);
     }
   }
   public class PlotLinePolar : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLinePolar(ctrl);
     }
@@ -231,7 +231,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PlotScatter : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, false, true);
     }
@@ -239,7 +239,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PlotLineAndScatter : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, true);
     }
@@ -249,21 +249,21 @@ namespace Altaxo.Worksheet.Commands
 
   public class PlotBarChartNormal : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartNormal(ctrl);
     }
   }
   public class PlotBarChartStack : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartStack(ctrl);
     }
   }
   public class PlotBarChartRelativeStack : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartRelativeStack(ctrl);
     }
@@ -271,21 +271,21 @@ namespace Altaxo.Worksheet.Commands
 
   public class PlotColumnChartNormal : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartNormal(ctrl);
     }
   }
   public class PlotColumnChartStack : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartStack(ctrl);
     }
   }
   public class PlotColumnChartRelativeStack : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartRelativeStack(ctrl);
     }
@@ -294,7 +294,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class PlotDensityImage : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImage(ctrl, true, true);
     }
@@ -308,7 +308,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class WorksheetRename : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.Rename(ctrl);
     }
@@ -317,7 +317,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class WorksheetDuplicate : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.Duplicate(ctrl);
     }
@@ -325,7 +325,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class WorksheetTranspose : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.Transpose(ctrl);
     }
@@ -333,7 +333,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AddDataColumns : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.AddDataColumns(ctrl);
     }
@@ -341,7 +341,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AddPropertyColumns : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.AddPropertyColumns(ctrl);
     }
@@ -349,7 +349,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class CreatePropertyColumnOfColumnNames : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.CreatePropertyColumnOfColumnNames(ctrl);
     }
@@ -357,7 +357,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class WorksheetClearData : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.WorksheetClearData(ctrl);
     }
@@ -369,7 +369,7 @@ namespace Altaxo.Worksheet.Commands
     const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";
     Altaxo.Data.DataTable m_Table;
 
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       m_Table = ctrl.DataTable;
       ExtractTableDataScript script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as ExtractTableDataScript;
@@ -397,7 +397,7 @@ namespace Altaxo.Worksheet.Commands
   {
     Altaxo.Data.DataTable m_Table;
 
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       m_Table = ctrl.DataTable;
       
@@ -430,7 +430,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnValues : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       if(ctrl.SelectedDataColumns.Count>0)
         new OpenDataColumnScriptDialog().Run(ctrl); // Altaxo.Worksheet.Commands.ColumnCommands.SetColumnValues(ctrl);
@@ -444,7 +444,7 @@ namespace Altaxo.Worksheet.Commands
   {
     Altaxo.Data.DataColumn m_Column;
 
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.DataTable dataTable = ctrl.DataTable;
       if(ctrl.SelectedDataColumns.Count==0)
@@ -472,7 +472,7 @@ namespace Altaxo.Worksheet.Commands
   {
     Altaxo.Data.DataColumn m_Column;
 
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Data.DataTable dataTable = ctrl.DataTable;
       if(ctrl.SelectedPropertyColumns.Count==0)
@@ -502,7 +502,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnAsX : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsX(ctrl);
     }
@@ -510,7 +510,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnAsY : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsY(ctrl);
     }
@@ -518,7 +518,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnAsLabel : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsLabel(ctrl);
     }
@@ -526,7 +526,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnAsValue : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsValue(ctrl);
     }
@@ -534,7 +534,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnAsError : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl,Altaxo.Data.ColumnKind.Err);
     }
@@ -542,7 +542,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnAsPositiveError : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl, Altaxo.Data.ColumnKind.pErr);
     }
@@ -550,7 +550,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnAsNegativeError : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl, Altaxo.Data.ColumnKind.mErr);
     }
@@ -559,7 +559,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class RenameColumn : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.RenameSelectedColumn(ctrl);
     }
@@ -569,7 +569,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnGroupNumber : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnGroupNumber(ctrl);
     }
@@ -578,7 +578,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetColumnPosition : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnPosition(ctrl);
     }
@@ -590,7 +590,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class ExtractPropertyValues : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.ExtractPropertyValues(ctrl);
     }
@@ -598,22 +598,22 @@ namespace Altaxo.Worksheet.Commands
 
   public class SortTableAscending : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Sort(ctrl, true);
     }
 
-    public static void Sort(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl, bool ascending)
+    public static void Sort(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, bool ascending)
     {
       if (ctrl.SelectedDataColumns.Count == 1)
-        Altaxo.Worksheet.Commands.Sorting.SortDataRows(ctrl.Doc, ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]], ascending);
+        Altaxo.Worksheet.Commands.Sorting.SortDataRows(ctrl.DataTable, ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]], ascending);
       else if (ctrl.SelectedPropertyColumns.Count == 1)
-        Altaxo.Worksheet.Commands.Sorting.SortColumnsByPropertyColumn(ctrl.Doc, ctrl.Doc.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+        Altaxo.Worksheet.Commands.Sorting.SortColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
     }
   }
   public class SortTableDescending : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       SortTableAscending.Sort(ctrl, false);
     }
@@ -625,7 +625,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class SetRowPosition : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.RowCommands.SetSelectedRowPosition(ctrl);
     }
@@ -633,7 +633,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class InsertOneDataRow : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.RowCommands.InsertOneDataRow(ctrl);
     }
@@ -641,7 +641,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class InsertDataRows : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.RowCommands.InsertDataRows(ctrl);
     }
@@ -653,7 +653,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisFFT : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.FFT(ctrl);
     }
@@ -661,7 +661,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class Analysis2DFFT : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.TwoDimensionalFFT(ctrl);
     }
@@ -669,7 +669,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class Analysis2DCenteredFFT : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.TwoDimensionalCenteredFFT(ctrl);
     }
@@ -677,7 +677,7 @@ namespace Altaxo.Worksheet.Commands
 
 	public class Convolute : AbstractWorksheetControllerCommand
 	{
-		public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
 			Altaxo.Worksheet.Commands.Analysis.FourierCommands.Convolution(ctrl);
 		}
@@ -685,7 +685,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class Correlate : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.FourierCommands.Correlation(ctrl);
     }
@@ -694,7 +694,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisStatisticsOnColumns : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.StatisticCommands.StatisticsOnColumns(ctrl);
     }
@@ -703,7 +703,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisStatisticsOnRows : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.StatisticCommands.StatisticsOnRows(ctrl);
     }
@@ -711,7 +711,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisMultiplyColumnsToMatrix : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.MultiplyColumnsToMatrix(ctrl);
     }
@@ -719,42 +719,42 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisPCAOnRows : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnRows(ctrl);
     }
   }
   public class AnalysisPCAOnCols : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
     }
   }
   public class AnalysisPLSOnRows : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnRows(ctrl);
     }
   }
   public class AnalysisPLSOnCols : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
     }
   }
   public class AnalysisPLSPredictOnRows : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnRows(ctrl);
     }
   }
   public class AnalysisPLSPredictOnCols : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnColumns(ctrl);
     }
@@ -763,7 +763,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisExportPLSCalibration : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.ExportPLSCalibration(ctrl.DataTable);
     }
@@ -771,7 +771,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisDifferentiateSmooth : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.SavitzkyGolayFiltering(ctrl);
     }
@@ -779,7 +779,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisInterpolation : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.Interpolation(ctrl);
     }
@@ -787,7 +787,7 @@ namespace Altaxo.Worksheet.Commands
 
   public class AnalysisMultivariateLinearRegression : AbstractWorksheetControllerCommand
   {
-    public override void Run(Altaxo.Worksheet.GUI.WinFormsWorksheetController ctrl)
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.CalculusCommands.MultivariateLinearFit(ctrl);
     }

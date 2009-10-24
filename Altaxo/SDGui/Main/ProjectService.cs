@@ -135,17 +135,13 @@ namespace Altaxo.Main
 
 				if (mvc != null && info.IsSerializable(mvc))
 				{
-				}
-
-
-        if (info.IsSerializable(ctrl))
-        {
+				
           i++;
           zippedStream.StartFile("Workbench/Views/View" + i.ToString() + ".xml", 0);
           try
           {
             info.BeginWriting(zippedStream.Stream);
-            info.AddValue("WorkbenchViewContent", ctrl);
+            info.AddValue("WorkbenchViewContent", mvc);
             info.EndWriting();
           }
           catch (Exception exc)
@@ -180,6 +176,9 @@ namespace Altaxo.Main
 						restoredControllers.Add(readedobject);
 					else if (readedobject is Altaxo.Gui.Graph.Viewing.GraphController)
 						restoredControllers.Add(new Altaxo.Gui.SharpDevelop.SDGraphViewContent((Altaxo.Gui.Graph.Viewing.GraphController)readedobject));
+					else if(readedobject is Altaxo.Gui.Worksheet.Viewing.WorksheetController)
+						restoredControllers.Add(new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent((Altaxo.Gui.Worksheet.Viewing.WorksheetController)readedobject));
+
           info.EndReading();
         }
       }
@@ -621,8 +620,8 @@ namespace Altaxo.Main
     {
       layout.DataTable = table;
       Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(layout);
-      Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
-      ctrl.Controller.View = view;
+      var view = new Altaxo.Gui.SharpDevelop.SDWorksheetView();
+      ctrl.Controller.ViewObject = view;
 
 
       if (null != Current.Workbench)

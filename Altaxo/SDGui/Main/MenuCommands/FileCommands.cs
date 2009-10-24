@@ -78,8 +78,8 @@ namespace Altaxo.Main.Commands
     public override void Run()
     {
       var controller = Current.ProjectService.CreateNewWorksheet();
-      controller.Doc.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"A",Altaxo.Data.ColumnKind.X);
-      controller.Doc.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"B",Altaxo.Data.ColumnKind.V);
+      controller.DataTable.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"A",Altaxo.Data.ColumnKind.X);
+      controller.DataTable.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"B",Altaxo.Data.ColumnKind.V);
     }
   }
   

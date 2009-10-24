@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Pads
 			bool enable = true;
 			if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
 			{
-				_view.Text = ((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.Doc.Notes;
+				_view.Text = ((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.DataTable.Notes;
 				// this. = "Notes for " + ((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)obj).Controller.Doc.Name;
 			}
 			else if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Pads
 			if (null != _view)
 			{
 				if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
-					((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.Doc.Notes = _view.Text;
+					((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.DataTable.Notes = _view.Text;
 				else if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
 					((Altaxo.Gui.SharpDevelop.SDGraphViewContent)_currentActiveViewContent).Controller.Doc.Notes = _view.Text;
 			}

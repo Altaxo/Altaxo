@@ -511,9 +511,6 @@
     <Compile Include="Gui\Worksheet\TransposeWorksheetController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\IndexSelection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Worksheet\RowHeaderStyle.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -547,6 +544,7 @@
     <Compile Include="Calc\Regression\Nonlinear\SimpleNonlinearFit.cs" />
     <Compile Include="Collections\AltaxoSet.cs" />
     <Compile Include="Collections\IArray.cs" />
+    <Compile Include="Collections\IndexSelection.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
     <Compile Include="Data\Actions\ColumnMath.cs" />

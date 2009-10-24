@@ -76,7 +76,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			AsciiImporter importer = new AsciiImporter(myStream);
 			AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
-			importer.ImportAscii(recognizedOptions, ctrl.Doc);
+			importer.ImportAscii(recognizedOptions, ctrl.DataTable);
 		}
 
 		public static void ImportAsciiToMultipleWorksheets(IWorksheetController ctrl, string[] filenames)
@@ -111,7 +111,7 @@ namespace Altaxo.Worksheet.Commands
 		public static void ImportAsciiToSingleWorksheet(IWorksheetController ctrl, string[] filenames)
 		{
 			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportMultipleAscii(filenames, ctrl.Doc);
+			AsciiImporter.ImportMultipleAscii(filenames, ctrl.DataTable);
 		}
 
 

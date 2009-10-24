@@ -32,27 +32,24 @@ using Altaxo.Data;
 using Altaxo.Serialization;
 using Altaxo.Serialization.Ascii;
 using Altaxo.Collections;
-//using ICSharpCode.SharpDevelop.Gui;
+using Altaxo.Worksheet;
+using Altaxo.Worksheet.Commands;
 
 
-namespace Altaxo.Worksheet.GUI
+
+namespace Altaxo.Gui.Worksheet.Viewing
 {
   /// <summary>
   /// Default controller which implements IWorksheetController.
   /// </summary>
-  [Altaxo.Gui.UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
-  [Altaxo.Gui.ExpectedTypeOfView(typeof(IWinFormsWorksheetView))]
-  public class WinFormsWorksheetController :
-		Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController,
-		IWinFormsWorksheetViewEventSink, 
-		Altaxo.Gui.IMVCController
+  public class WinFormsWorksheetController : Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController
   {
     public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
 
 
     #region Member variables
 
-		Altaxo.Gui.Worksheet.Viewing.WorksheetController _guiIndependentController;
+		Altaxo.Gui.Worksheet.Viewing.IWorksheetController _guiIndependentController;
 
     /// <summary>
     /// Used to indicate that deserialization has not finished, and holds some deserialized values.
@@ -66,7 +63,7 @@ namespace Altaxo.Worksheet.GUI
     protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
     /// <summary>Holds the view (the window where the graph is visualized).</summary>
-    protected IWinFormsWorksheetView _view;
+    protected WorksheetView _view;
     
 
     /// <summary>Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
@@ -181,16 +178,16 @@ namespace Altaxo.Worksheet.GUI
 
     
       // Holds the indizes to the selected data columns.
-      _selectedDataColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
+      _selectedDataColumns = new IndexSelection(); // holds the selected columns
     
       // Holds the indizes to the selected rows.
-      _selectedDataRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
+      _selectedDataRows    = new IndexSelection(); // holds the selected rows
     
       // Holds the indizes to the selected property columns.
-      _selectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+      _selectedPropertyColumns = new IndexSelection(); // holds the selected property columns
 
       // Holds the indizes to the selected property columns.
-      _selectedPropertyRows = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+      _selectedPropertyRows = new IndexSelection(); // holds the selected property columns
 
       // Cached number of table rows.
       _numberOfTableRows=0; // cached number of rows of the table
@@ -235,34 +232,58 @@ namespace Altaxo.Worksheet.GUI
   
     #region Constructors
 
-		public WinFormsWorksheetController(Altaxo.Gui.Worksheet.Viewing.WorksheetController worksheet)
+		public WinFormsWorksheetController(Altaxo.Gui.Worksheet.Viewing.IWorksheetController controller, WorksheetView view)
 		{
+
 			SetMemberVariablesToDefault();
-			_guiIndependentController = worksheet;
-			worksheet.InternalSetGuiController(this);
+			_guiIndependentController = controller;
+			InternalInitializeWorksheetLayout(controller.WorksheetLayout);
+			View = view;
 		}
 
-		public void InternalInitializeWorksheetLayout(WorksheetLayout layout)
+
+		private void InternalInitializeWorksheetLayout(WorksheetLayout layout)
 		{
 			if (null == layout)
 				throw new ArgumentNullException("layout");
 			if (null != _worksheetLayout)
 				throw new ApplicationException("This Gui controller has already a layout!");
 
-			this.WorksheetLayout = layout;
-		}
+			_worksheetLayout = layout;
+			_table = layout.DataTable;
 
+			_table.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
+			_table.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
+			_table.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
+			this.SetCachedNumberOfDataColumns();
+			this.SetCachedNumberOfDataRows();
+			this.SetCachedNumberOfPropertyColumns();
+			OnTitleNameChanged(EventArgs.Empty);
+		}
 
     #endregion // Constructors
 
-  
+		public Altaxo.Data.DataTable DataTable
+		{
+			get
+			{
+				return this._table;
+			}
+		}
 
- 
-   
+		public Altaxo.Worksheet.WorksheetLayout WorksheetLayout
+		{
+			get
+			{
+				return this._worksheetLayout;
+			}
+		}
 
     #region Menu Handler
 
-   
+#if(false)
+
+
 
     protected void EhMenuFileSaveTableAs_OnClick(object sender, System.EventArgs e)
     {
@@ -475,60 +496,13 @@ namespace Altaxo.Worksheet.GUI
     {
       Commands.Analysis.ChemometricCommands.PLSOnColumns(this);
     }
+#endif
 
-    #endregion
-  
-    #region public properties
+		#endregion
 
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Altaxo.Data.DataTable DataTable
-    {
-      get
-      {
-        return this._table;
-      }
-    }
+		#region public properties
 
-
-    public WorksheetLayout WorksheetLayout
-    {
-      get { return _worksheetLayout; }
-      set 
-      {
-        _worksheetLayout = value; 
-      
-        Altaxo.Data.DataTable oldTable = _table;
-        Altaxo.Data.DataTable newTable = null==_worksheetLayout ? null : _worksheetLayout.DataTable;
-      
-        if(null!=oldTable)
-        {
-          oldTable.DataColumns.Changed -= new EventHandler(this.EhTableDataChanged);
-          oldTable.PropCols.Changed -= new EventHandler(this.EhPropertyDataChanged);
-          oldTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
-        }
-
-        _table = newTable;
-        if(null!=newTable)
-        {
-          newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
-          newTable.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
-          newTable.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
-          this.SetCachedNumberOfDataColumns();
-          this.SetCachedNumberOfDataRows();
-          this.SetCachedNumberOfPropertyColumns();
-          OnTitleNameChanged(EventArgs.Empty);
-        }
-        else // Data table is null
-        {
-          this._numberOfTableCols = 0;
-          this._numberOfTableRows = 0;
-          this._numberOfPropertyCols = 0;
-          _columnStyleCache.Clear();
-          SetScrollPositionTo(0,0);
-          this.View.TableAreaInvalidate();
-        }
-      }
-    }   
+   
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int TableAreaWidth
@@ -626,14 +600,7 @@ namespace Altaxo.Worksheet.GUI
         this.View.TableAreaInvalidate();
     }
 
-    /// <summary>
-    /// Remove the selected columns, rows or property columns.
-    /// </summary>
-    public void RemoveSelected()
-    {
-      Commands.EditCommands.RemoveSelected(this);
-    }
-
+   
 
     #endregion
 
@@ -829,9 +796,9 @@ namespace Altaxo.Worksheet.GUI
     public void EhTableNameChanged(object sender, Main.NameChangedEventArgs e)
     {
       if(View!=null)
-        View.TableViewTitle = Doc.Name;
+        View.TableViewTitle = _table.Name;
 
-      this.TitleName = Doc.Name;
+      this.TitleName = _table.Name;
     }
 
     /// <summary>
@@ -842,7 +809,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get 
       { 
-        return this.Doc.Name; 
+        return _table.Name; 
       }
       set 
       {
@@ -1687,36 +1654,22 @@ namespace Altaxo.Worksheet.GUI
     #endregion
 
     #region IWorksheetController Members
-
-    public Altaxo.Data.DataTable Doc
+   
+    private WorksheetView View
     {
       get
       {
-        return this._table;
-      }
-    }
-
-    public IWinFormsWorksheetView View
-    {
-      get
-      {
-        return _view;
+        return _guiIndependentController==null ? null : _view;
       }
       set
       {
-        IWinFormsWorksheetView oldView = _view;
-        _view = value;
+				if (null != _view)
+					throw new ApplicationException("_view should be null");
+				if (null == value)
+					throw new ArgumentNullException("value");
 
-        if(null!=oldView)
-        {
-          oldView.TableViewMenu = null; // don't let the old view have the menu
-          oldView.WorksheetController = null; // no longer the controller of this view
-          oldView.TableViewWindow.Controls.Remove(_cellEditControl);
-        }
+				_view = value;
 
-        if(null!=_view)
-        {
-          _view.WorksheetController = this;
           _view.TableViewWindow.Controls.Add(_cellEditControl);
 
       
@@ -1732,7 +1685,6 @@ namespace Altaxo.Worksheet.GUI
           
           // Simulate a SizeChanged event 
           this.EhView_TableAreaSizeChanged(new EventArgs());
-        }
       }
     }
 
@@ -2286,16 +2238,7 @@ namespace Altaxo.Worksheet.GUI
       _columnStyleCache.Update(this);
     }
 
-    public void EhView_Closed(EventArgs e)
-    {
-      // if the view is closed, we delete the corresponding table
-      if(null!=Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable))
-        Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable).Remove(DataTable);
-      DataTable.Dispose();
-
-      // we then remove the view from the list of windows
-      Current.ProjectService.RemoveWorksheet(this);
-    }
+  
 
     /// <summary>
     /// Called if the host window is about to be closed.
@@ -2313,31 +2256,6 @@ namespace Altaxo.Worksheet.GUI
       return false;
     }
 
-    /// <summary>
-    /// Called by the host window after the host window was closed.
-    /// </summary>
-    public void HostWindowClosed()
-    {
-      // if the view is closed, we delete the corresponding table
-      if(null!=Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable))
-        Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable).Remove(DataTable);
-      DataTable.Dispose();
-
-      
-      // we then remove the view from the list of windows
-      Current.ProjectService.RemoveWorksheet(this);
-    }
-
-    public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
-    {
-      if(!Current.ApplicationIsClosing)
-      {
-				if(false == Current.Gui.YesNoMessageBox("Do you really want to close this worksheet and delete the corresponding table?","Attention", false))
-        {
-          e.Cancel = true;
-        }
-      }
-    }
 
     #endregion
 
@@ -2505,7 +2423,7 @@ namespace Altaxo.Worksheet.GUI
     public object ViewObject
     {
       get { return View; }
-      set { View = value as IWinFormsWorksheetView; }
+      set { View = value as WorksheetView; }
     }
     /// <summary>
     /// Returns the model (document) that this controller controls
@@ -2598,7 +2516,7 @@ namespace Altaxo.Worksheet.GUI
       else if (this.AreColumnsOrRowsSelected)
       {
         // Copy the selected Columns to the clipboard
-        Commands.EditCommands.CopyToClipboard(this);
+        EditCommands.CopyToClipboard(_guiIndependentController);
       }
     }
 
@@ -2611,7 +2529,7 @@ namespace Altaxo.Worksheet.GUI
       else if (this.AreColumnsOrRowsSelected)
       {
         // Copy the selected Columns to the clipboard
-        Commands.EditCommands.CopyToClipboard(this);
+        EditCommands.CopyToClipboard(_guiIndependentController);
       }
 
     }
@@ -2624,9 +2542,18 @@ namespace Altaxo.Worksheet.GUI
       }
       else
       {
-        Commands.EditCommands.PasteFromClipboard(this);
+        EditCommands.PasteFromClipboard(_guiIndependentController);
       }
     }
+
+
+		/// <summary>
+		/// Remove the selected columns, rows or property columns.
+		/// </summary>
+		public void RemoveSelected()
+		{
+			EditCommands.RemoveSelected(_guiIndependentController);
+		}
 
     public void Delete()
     {

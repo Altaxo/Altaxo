@@ -24,16 +24,28 @@ using System;
 using System.ComponentModel;
 
 using Altaxo.Worksheet;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
+	[UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
+	[ExpectedTypeOfView(typeof(IWorksheetView))]
 	public class WorksheetController : IWorksheetController
 	{
+		IWorksheetView _view;
+
 		IGuiDependentWorksheetController _guiDependentController;
+
+
+		/// <summary>Holds the data table cached from the layout.</summary>
+		protected Altaxo.Data.DataTable _table;
+		protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 		
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Worksheet.GUI.WorksheetController", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetController),1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.SharpDevelop.SDWorksheetViewContent", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.SharpDevelop.SDWorksheetViewContent", 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetController), 1)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			Main.DocumentPath _PathToLayout;
@@ -47,11 +59,20 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 
-				WorksheetController s = null != o ? (WorksheetController)o : new WorksheetController(null, true);
+				WorksheetController s = null != o ? (WorksheetController)o : new WorksheetController();
 
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
 				surr._TableController = s;
-				surr._PathToLayout = (Main.DocumentPath)info.GetValue("Layout", s);
+				if (info.CurrentElementName == "Controller")
+				{
+					info.OpenElement();
+					surr._PathToLayout = (Main.DocumentPath)info.GetValue("Layout", s);
+					info.CloseElement();
+				}
+				else
+				{
+					surr._PathToLayout = (Main.DocumentPath)info.GetValue("Layout", s);
+				}
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 				return s;
@@ -65,7 +86,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					object o = Main.DocumentPath.GetObject(_PathToLayout, documentRoot, _TableController);
 					if (o is Altaxo.Worksheet.WorksheetLayout)
 					{
-						_TableController._guiDependentController.InternalInitializeWorksheetLayout( o as Altaxo.Worksheet.WorksheetLayout );
+						_TableController.WorksheetLayout =  (Altaxo.Worksheet.WorksheetLayout)o;
 						_PathToLayout = null;
 					}
 				}
@@ -81,8 +102,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		#region Constructors
 
 
-		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
-			: this(layout, false)
+		private WorksheetController()
 		{
 		}
 
@@ -92,75 +112,80 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// </summary>
 		/// <param name="layout">The worksheet layout.</param>
 		/// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
-		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
+		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
 		{
-			Current.Gui.InstrumentControllerWithGuiDependentFunctions(this);
-			if (null == _guiDependentController)
-				throw new ApplicationException("Gui dependent worksheet controller was not set - it is null!");
-
-			if (null != layout)
-				this._guiDependentController.InternalInitializeWorksheetLayout( layout ); // Using DataTable here wires the event chain also
-			else if (!bDeserializationConstructor)
+			if(null==layout)
 				throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
+
+				this.WorksheetLayout = layout;
+
 		}
 
-		/// <summary>
-		/// This function is intended for internal purposes only. It sets the Gui dependent controller instance that will do all the work.
-		/// </summary>
-		/// <param name="guiController">The gui dependent controller.</param>
-		public void InternalSetGuiController(IGuiDependentWorksheetController guiController)
-		{
-			if (null == guiController)
-				throw new ArgumentNullException("guiController");
-
-			_guiDependentController = guiController;
-		}
-
-		public IGuiDependentWorksheetController InternalGetGuiController()
-		{
-			return _guiDependentController;
-		}
+	
 
 		#endregion // Constructors
 
 		#region IWorksheetController Members
 
-		public Altaxo.Data.DataTable Doc
-		{
-			get { return _guiDependentController.Doc; }
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Altaxo.Data.DataTable DataTable
 		{
 			get
 			{
-				return _guiDependentController.DataTable;
+				return this._table;
 			}
 		}
 
+
 		public WorksheetLayout WorksheetLayout
 		{
-			get { return _guiDependentController.WorksheetLayout; }
+			get { return _worksheetLayout; }
+			
+			set
+			{
+				if (null != _worksheetLayout)
+					throw new ApplicationException("This controller is already controlling a layout");
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				_worksheetLayout = value;
+
+				Altaxo.Data.DataTable oldTable = _table;
+				Altaxo.Data.DataTable newTable = null == _worksheetLayout ? null : _worksheetLayout.DataTable;
+
+				if (null != oldTable)
+				{
+					//oldTable.DataColumns.Changed -= new EventHandler(this.EhTableDataChanged);
+					//oldTable.PropCols.Changed -= new EventHandler(this.EhPropertyDataChanged);
+					//oldTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
+				}
+
+				_table = newTable;
+				if (null != newTable)
+				{
+					//newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
+					//newTable.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
+					//newTable.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
+					OnTitleNameChanged();
+				}
+			}
 		}   
 
-
-		public Altaxo.Worksheet.IndexSelection SelectedDataColumns
+		public IndexSelection SelectedDataColumns
 		{
 			get { return _guiDependentController.SelectedDataColumns; }
 		}
 
-		public Altaxo.Worksheet.IndexSelection SelectedDataRows
+		public IndexSelection SelectedDataRows
 		{
 			get { return _guiDependentController.SelectedDataRows; }
 		}
 
-		public Altaxo.Worksheet.IndexSelection SelectedPropertyColumns
+		public IndexSelection SelectedPropertyColumns
 		{
 			get { return _guiDependentController.SelectedPropertyColumns; }
 		}
 
-		public Altaxo.Worksheet.IndexSelection SelectedPropertyRows
+		public IndexSelection SelectedPropertyRows
 		{
 			get { return _guiDependentController.SelectedPropertyRows; }
 		}
@@ -188,6 +213,111 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		public void UpdateTableView()
 		{
 			_guiDependentController.UpdateTableView();
+		}
+
+		public bool EnableCut
+		{
+			get
+			{
+				return _guiDependentController.EnableCut;
+			}
+		}
+		public bool EnableCopy
+		{
+			get
+			{
+				return _guiDependentController.EnableCopy;
+			}
+		}
+		public bool EnablePaste
+		{
+			get
+			{
+				return _guiDependentController.EnablePaste;
+			}
+		}
+		public bool EnableDelete
+		{
+			get
+			{
+				return _guiDependentController.EnableDelete;
+			}
+		}
+		public bool EnableSelectAll
+		{
+			get
+			{
+				return _guiDependentController.EnableSelectAll;
+			}
+		}
+
+		public void Cut()
+		{
+			_guiDependentController.Cut();
+		}
+		public void Copy()
+		{
+			_guiDependentController.Copy();
+		}
+		public void Paste()
+		{
+			_guiDependentController.Paste();
+		}
+		public void Delete()
+		{
+			_guiDependentController.Delete();
+		}
+		public void SelectAll()
+		{
+			_guiDependentController.SelectAll();
+		}
+
+		public event EventHandler TitleNameChanged;
+
+		void OnTitleNameChanged()
+		{
+			if (null != TitleNameChanged)
+				TitleNameChanged(this,EventArgs.Empty);
+		}
+
+		void EhTitleNameChanged(object sender, EventArgs e)
+		{
+			if (null != TitleNameChanged)
+				TitleNameChanged(this, e);
+		}
+
+		#endregion
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (null != _view)
+				{
+					_guiDependentController = null;
+					_view.Controller = null;
+				}
+
+				_view = value as IWorksheetView;
+
+				if (null != _view)
+				{
+					_view.Controller = this;
+					_guiDependentController = _view.GuiDependentController;
+					_guiDependentController.TitleNameChanged += EhTitleNameChanged;
+				}
+			}
+		}
+
+		public object ModelObject
+		{
+			get { return _worksheetLayout; }
 		}
 
 		#endregion

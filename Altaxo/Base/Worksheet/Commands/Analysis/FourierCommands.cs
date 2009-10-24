@@ -67,8 +67,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     protected static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg, out double[] rePart, out double[] imPart)
     {
-      int rows = dg.Doc.DataColumns.RowCount;
-      int cols = dg.Doc.DataColumns.ColumnCount;
+      int rows = dg.DataTable.DataColumns.RowCount;
+      int cols = dg.DataTable.DataColumns.ColumnCount;
 
       // reserve two arrays (one for real part, which is filled with the table contents)
       // and the imaginary part - which is left zero here)
@@ -79,10 +79,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       // fill the real part with the table contents
       for(int i=0;i<cols;i++)
       {
-        Altaxo.Data.INumericColumn col = dg.Doc[i] as Altaxo.Data.INumericColumn;
+        Altaxo.Data.INumericColumn col = dg.DataTable[i] as Altaxo.Data.INumericColumn;
         if(null==col)
         {
-          return string.Format("Can't apply fourier transform, since column number {0}, name:{1} is not numeric",i,dg.Doc[i].FullName); 
+          return string.Format("Can't apply fourier transform, since column number {0}, name:{1} is not numeric",i,dg.DataTable[i].FullName); 
         }
 
         for(int j=0;j<rows;j++)
@@ -114,8 +114,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
-      int rows = dg.Doc.DataColumns.RowCount;
-      int cols = dg.Doc.DataColumns.ColumnCount;
+      int rows = dg.DataTable.DataColumns.RowCount;
+      int cols = dg.DataTable.DataColumns.ColumnCount;
 
       // reserve two arrays (one for real part, which is filled with the table contents)
       // and the imaginary part - which is left zero here)
@@ -128,7 +128,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(stringresult!=null)
         return stringresult;
 
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.Name);
+      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.DataTable.Name);
 
       // Fill the Table
       table.Suspend();
@@ -158,8 +158,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static string TwoDimCenteredFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
     {
-      int rows = dg.Doc.DataColumns.RowCount;
-      int cols = dg.Doc.DataColumns.ColumnCount;
+      int rows = dg.DataTable.DataColumns.RowCount;
+      int cols = dg.DataTable.DataColumns.ColumnCount;
 
       // reserve two arrays (one for real part, which is filled with the table contents)
       // and the imaginary part - which is left zero here)
@@ -172,7 +172,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(stringresult!=null)
         return stringresult;
 
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.Name);
+      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.DataTable.Name);
 
       // Fill the Table so that the zero frequency point is in the middle
       // this means for the point order:
@@ -241,7 +241,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 			col.Array = result;
 
-			dg.Doc.DataColumns.Add(col, "Convolute");
+			dg.DataTable.DataColumns.Add(col, "Convolute");
 
 			return null;
 		}
@@ -286,7 +286,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       col.Array = result;
 
-      dg.Doc.DataColumns.Add(col, "Correlate");
+      dg.DataTable.DataColumns.Add(col, "Correlate");
 
       return null;
     }

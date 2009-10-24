@@ -21,7 +21,7 @@
 #endregion
 using System;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet.Viewing
 {
   
 

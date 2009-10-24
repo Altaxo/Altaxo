@@ -23,7 +23,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Worksheet.Viewing
 {
   public class WorksheetPanel : System.Windows.Forms.Panel
   {

@@ -546,7 +546,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter"></param>
     public static void PlotDensityImage(IWorksheetController dg, bool bLine, bool bScatter)
     {
-      Altaxo.Data.DataTable table = dg.Doc;
+      Altaxo.Data.DataTable table = dg.DataTable;
       DensityImagePlotStyle plotStyle = new DensityImagePlotStyle();
 
       // if nothing is selected, assume that the whole table should be plotted
@@ -578,7 +578,7 @@ namespace Altaxo.Worksheet.Commands
       }
 
 
-       XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(xColumn, yColumn, dg.Doc.DataColumns,len==0 ? null : dg.SelectedDataColumns);
+       XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(xColumn, yColumn, dg.DataTable.DataColumns,len==0 ? null : dg.SelectedDataColumns);
 
       
       // now create a new Graph with this plot associations
