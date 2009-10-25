@@ -59,6 +59,13 @@ namespace ICSharpCode.Core.WinForms
 				if (isEnabled && menuCommand != null && menuCommand is IMenuCommand) {
 					isEnabled = ((IMenuCommand)menuCommand).IsEnabled;
 				}
+#if ModifiedForAltaxo
+				// set/reset the Checked state of a item (a ToolStripMenuItem can not (!) show the Checked state, one has to use a ToolStripButton
+				if (isEnabled && menuCommand != null && menuCommand is ICheckableMenuCommand)
+				{
+					base.Checked = ((ICheckableMenuCommand)menuCommand).IsChecked;
+				}
+#endif
 				this.Enabled = isEnabled;
 				
 				if (this.Visible && codon.Properties.Contains("icon")) {

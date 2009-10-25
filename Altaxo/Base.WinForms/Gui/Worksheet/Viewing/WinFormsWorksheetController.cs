@@ -50,11 +50,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     #region Member variables
 
 		Altaxo.Gui.Worksheet.Viewing.IWorksheetController _guiIndependentController;
-
-    /// <summary>
-    /// Used to indicate that deserialization has not finished, and holds some deserialized values.
-    /// </summary>
-    private object _deserializationMemento;
+    
 
     /// <summary>Holds the data table cached from the layout.</summary>
     protected Altaxo.Data.DataTable _table;
@@ -149,8 +145,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// </summary>
     protected virtual void SetMemberVariablesToDefault()
     {
-      _deserializationMemento=null;
-
       _table=null;
       _worksheetLayout=null;
       _view = null;
@@ -254,11 +248,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			_table.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
 			_table.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
-			_table.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
 			this.SetCachedNumberOfDataColumns();
 			this.SetCachedNumberOfDataRows();
 			this.SetCachedNumberOfPropertyColumns();
-			OnTitleNameChanged(EventArgs.Empty);
 		}
 
     #endregion // Constructors
@@ -793,41 +785,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
         View.TableAreaInvalidate();
     }
 
-    public void EhTableNameChanged(object sender, Main.NameChangedEventArgs e)
-    {
-      if(View!=null)
-        View.TableViewTitle = _table.Name;
 
-      this.TitleName = _table.Name;
-    }
-
-    /// <summary>
-    /// This is the whole name of the content, e.g. the file name or
-    /// the url depending on the type of the content.
-    /// </summary>
-    public string TitleName 
-    {
-      get 
-      { 
-        return _table.Name; 
-      }
-      set 
-      {
-        OnTitleNameChanged(EventArgs.Empty);
-      }
-    }
-
-    /// <summary>
-    /// Is called each time the name for the content has changed.
-    /// </summary>
-    public event EventHandler TitleNameChanged;
-
-    protected virtual void OnTitleNameChanged(System.EventArgs e)
-    {
-      if(null!=TitleNameChanged)
-        TitleNameChanged(this,e);
-    }
-
+  
     #endregion
 
     #region Edit box event handlers

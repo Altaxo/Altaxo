@@ -12,6 +12,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 	{
 		Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller { set; }
 		Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController GuiDependentController { get; }
+		void TableAreaInvalidate();
+		string TableViewTitle { set; }
 	}
 
   public interface IWorksheetController : IMVCController
@@ -152,6 +154,5 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		void Delete();
 		void SelectAll();
 
-		event EventHandler TitleNameChanged;
 	}
 }

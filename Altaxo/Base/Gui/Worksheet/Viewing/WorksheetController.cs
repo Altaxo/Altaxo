@@ -40,7 +40,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>Holds the data table cached from the layout.</summary>
 		protected Altaxo.Data.DataTable _table;
 		protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
-		
+
+		/// <summary>Fired if the title name changed.</summary>
+		public event EventHandler TitleNameChanged;
+
+
+		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Worksheet.GUI.WorksheetController", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.SharpDevelop.SDWorksheetViewContent", 0)]
@@ -98,10 +103,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
+		#endregion
 
 		#region Constructors
 
-
+		/// <summary>Deserialization constructor.</summary>
 		private WorksheetController()
 		{
 		}
@@ -111,7 +117,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// View <paramref name="view"/>.
 		/// </summary>
 		/// <param name="layout">The worksheet layout.</param>
-		/// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
 		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
 		{
 			if(null==layout)
@@ -156,7 +161,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				{
 					//oldTable.DataColumns.Changed -= new EventHandler(this.EhTableDataChanged);
 					//oldTable.PropCols.Changed -= new EventHandler(this.EhPropertyDataChanged);
-					//oldTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
+					oldTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
 				}
 
 				_table = newTable;
@@ -164,7 +169,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				{
 					//newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
 					//newTable.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
-					//newTable.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
+					newTable.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
 					OnTitleNameChanged();
 				}
 			}
@@ -272,7 +277,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			_guiDependentController.SelectAll();
 		}
 
-		public event EventHandler TitleNameChanged;
 
 		void OnTitleNameChanged()
 		{
@@ -284,6 +288,29 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			if (null != TitleNameChanged)
 				TitleNameChanged(this, e);
+		}
+
+		public void EhTableNameChanged(object sender, Main.NameChangedEventArgs e)
+		{
+			if (_view != null)
+				_view.TableViewTitle = _table.Name;
+
+			this.TitleName = _table.Name;
+		}
+		/// <summary>
+		/// This is the whole name of the content, e.g. the file name or
+		/// the url depending on the type of the content.
+		/// </summary>
+		public string TitleName
+		{
+			get
+			{
+				return _table.Name;
+			}
+			set
+			{
+				OnTitleNameChanged();
+			}
 		}
 
 		#endregion
@@ -310,7 +337,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				{
 					_view.Controller = this;
 					_guiDependentController = _view.GuiDependentController;
-					_guiDependentController.TitleNameChanged += EhTitleNameChanged;
+					_view.TableViewTitle = this.TitleName;
 				}
 			}
 		}
