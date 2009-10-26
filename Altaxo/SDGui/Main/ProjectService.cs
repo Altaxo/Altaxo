@@ -517,9 +517,14 @@ namespace Altaxo.Main
       {
         if (content is Altaxo.Gui.IMVCControllerWrapper)
         {
-          if (object.ReferenceEquals(((Altaxo.Gui.IMVCControllerWrapper)content).MVCController.ModelObject, document))
+          object modelobject = ((Altaxo.Gui.IMVCControllerWrapper)content).MVCController.ModelObject;
+
+          if (object.ReferenceEquals(modelobject, document))
+            contentList.Add(content);
+          else if ((modelobject is Altaxo.Worksheet.WorksheetLayout) && object.ReferenceEquals((modelobject as Altaxo.Worksheet.WorksheetLayout).DataTable, document))
             contentList.Add(content);
         }
+
           // TODO can be removed after WorksheetController has also wrapper class
         else if (content is Altaxo.Gui.IMVCController)
         {

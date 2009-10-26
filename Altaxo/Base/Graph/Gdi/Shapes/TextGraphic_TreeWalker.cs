@@ -442,6 +442,13 @@ namespace Altaxo.Graph.Gdi.Shapes
               {
                 parent.Add(new PlotName(context, plotNumber, plotLayer));
               }
+              else if (int.TryParse(s1, out plotNumber))
+              {
+                var label = new PlotName(context, plotNumber);
+                label.SetPropertyColumnName(s2);
+                parent.Add(label);
+              }
+
             }
             break;
         }
