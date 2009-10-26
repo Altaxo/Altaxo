@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Data;
 
-namespace Altaxo.Worksheet.Commands
+namespace Altaxo.Data
 {
   /// <summary>
   /// Contains methods to transpose a worksheet.
   /// </summary>
-  public static class Transpose
+  public static class Transposing
   {
     /// <summary>
     /// Tests if the transpose of a table is possible.
@@ -18,7 +17,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="numConvertedDataColumns">Number of data columns (beginning from index 0) that will be converted to property columns.</param>
     /// <param name="indexOfProblematicColumn">On return, if transpose is not possible, will give the index of the first column which differs in type from the first transposed data column.</param>
     /// <returns>True when the transpose is possible without problems, false otherwise.</returns>
-    public static bool IsTransposePossible(DataTable table, int numConvertedDataColumns, out int indexOfProblematicColumn)
+    public static bool TransposeIsPossible(this DataTable table, int numConvertedDataColumns, out int indexOfProblematicColumn)
     {
       if (numConvertedDataColumns < 0)
         throw new ArgumentOutOfRangeException("numConvertedDataColumns is less than zero");
@@ -50,14 +49,14 @@ namespace Altaxo.Worksheet.Commands
     /// If set to false, the transpose will be performed anyway. (But you can ask if transpose is possible by calling <c>IsTransposePossible</c>.
     /// </param>
     /// <returns>Null if the transpose was performed without problems, otherwise a error message would be given.</returns>
-    static public string DoTranspose(DataTable table, int numConvertedDataColumns, int numConvertedPropertyColumns, bool allowUserInteraction)
+    static public string Transpose(this DataTable table, int numConvertedDataColumns, int numConvertedPropertyColumns, bool allowUserInteraction)
     {
       int datacols = Math.Min(table.DataColumnCount, numConvertedDataColumns);
       int propcols = Math.Min(table.PropertyColumnCount, numConvertedPropertyColumns);
 
       // test if the transpose is possible
       int indexDifferentColumn;
-      if (!IsTransposePossible(table, datacols, out indexDifferentColumn))
+      if (!TransposeIsPossible(table, datacols, out indexDifferentColumn))
       {
        
 

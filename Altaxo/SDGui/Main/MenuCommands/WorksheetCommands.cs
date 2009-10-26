@@ -71,7 +71,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.SaveAs(ctrl,false);
+      ctrl.WorksheetLayout.ShowSaveAsDialog(false);
     }
   }
 
@@ -79,7 +79,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.SaveAs(ctrl,true);
+			ctrl.WorksheetLayout.ShowSaveAsDialog(true);
     }
   }
 
@@ -87,7 +87,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.ImportAscii(ctrl);
+      Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable);
     }
   }
 
@@ -95,7 +95,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.ImportAscii(ctrl,false);
+			Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable, false);
     }
   }
 
@@ -103,7 +103,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.ImportImage(ctrl);
+			Altaxo.Data.FileCommands.ShowImportImageDialog(ctrl.DataTable);
     }
   }
 
@@ -111,7 +111,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.ImportGalacticSPC(ctrl);
+			Altaxo.Data.FileCommands.ShowImportGalacticSPCDialog(ctrl.DataTable);
     }
   }
 
@@ -119,7 +119,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.ImportJcamp(ctrl);
+			Altaxo.Data.FileCommands.ShowImportJcampDialog(ctrl.DataTable);
     }
   }
 
@@ -127,7 +127,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.ExportAscii(ctrl);
+			Altaxo.Data.FileCommands.ShowExportAsciiDialog(ctrl.DataTable);
     }
   }
 
@@ -135,7 +135,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.FileCommands.ExportGalacticSPC(ctrl);
+			Altaxo.Data.FileCommands.ShowExportGalacticSPCDialog(ctrl.DataTable,ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
     }
   }
 
@@ -606,9 +606,9 @@ namespace Altaxo.Worksheet.Commands
     public static void Sort(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, bool ascending)
     {
       if (ctrl.SelectedDataColumns.Count == 1)
-        Altaxo.Worksheet.Commands.Sorting.SortDataRows(ctrl.DataTable, ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]], ascending);
+        Altaxo.Data.Sorting.SortDataRows(ctrl.DataTable, ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]], ascending);
       else if (ctrl.SelectedPropertyColumns.Count == 1)
-        Altaxo.Worksheet.Commands.Sorting.SortColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+        Altaxo.Data.Sorting.SortColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
     }
   }
   public class SortTableDescending : AbstractWorksheetControllerCommand

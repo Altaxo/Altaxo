@@ -25,14 +25,20 @@ using System.IO;
 using Altaxo.Serialization.Ascii;
 using Altaxo.Gui.Worksheet.Viewing;
 
-namespace Altaxo.Worksheet.Commands
+namespace Altaxo.Worksheet
 {
 	/// <summary>
-	/// Summary description for FileCommands.
+	/// Routines for saving the worksheet layout and corresponding table.
 	/// </summary>
-	public class FileCommands
+	public static class FileCommands
 	{
-		public static void Save(IWorksheetController ctrl, System.IO.Stream myStream, bool saveAsTemplate)
+		/// <summary>
+		/// Saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
+		/// </summary>
+		/// <param name="worksheet">The worksheet to save.</param>
+		/// <param name="myStream">The stream where the xml data are to save into.</param>
+		/// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
+		public static void Save(this WorksheetLayout worksheet, System.IO.Stream myStream, bool saveAsTemplate)
 		{
 			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 			if (saveAsTemplate)
@@ -49,12 +55,17 @@ namespace Altaxo.Worksheet.Commands
 			// deserialized. Also, the GUID isn't unique if the template is deserialized more than one time.
 
 			Altaxo.Worksheet.TablePlusLayout tableAndLayout =
-				new Altaxo.Worksheet.TablePlusLayout(ctrl.DataTable, ctrl.WorksheetLayout);
+				new Altaxo.Worksheet.TablePlusLayout(worksheet.DataTable, worksheet);
 			info.AddValue("TablePlusLayout", tableAndLayout);
 			info.EndWriting();
 		}
 
-		public static void SaveAs(IWorksheetController ctrl, bool saveAsTemplate)
+		/// <summary>
+		/// Shows the SaveAs dialog and then saves the worksheet (data table and the corresponding layout, including scripts) into a xml file.
+		/// </summary>
+		/// <param name="worksheet">The worksheet to save.</param>
+		/// <param name="saveAsTemplate">If true, the data are not saved, but only the layout of the worksheet (columns, property columns, scripts). If false, everything including the data is saved.</param>
+		public static void ShowSaveAsDialog(this WorksheetLayout worksheet, bool saveAsTemplate)
 		{
 			var options = new Altaxo.Gui.SaveFileOptions();
 			options.AddFilter("*.axowks", "Altaxo worksheet files (*.axowks)");
@@ -66,185 +77,10 @@ namespace Altaxo.Worksheet.Commands
 			{
 				using (Stream myStream = new System.IO.FileStream(options.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
-					Save(ctrl, myStream, saveAsTemplate);
+					Save(worksheet, myStream, saveAsTemplate);
 					myStream.Close();
 				}
 			}
 		}
-
-		public static void ImportAscii(IWorksheetController ctrl, System.IO.Stream myStream)
-		{
-			AsciiImporter importer = new AsciiImporter(myStream);
-			AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
-			importer.ImportAscii(recognizedOptions, ctrl.DataTable);
-		}
-
-		public static void ImportAsciiToMultipleWorksheets(IWorksheetController ctrl, string[] filenames)
-		{
-			int startrest = 0;
-
-			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-			if (ctrl != null)
-			{
-				using (System.IO.Stream myStream = new System.IO.FileStream(filenames[0], System.IO.FileMode.Open, System.IO.FileAccess.Read))
-				{
-					ImportAscii(ctrl, myStream);
-					myStream.Close();
-					startrest = 1;
-				}
-			}
-
-			// import also the other files, but this time we create new tables
-			for (int i = startrest; i < filenames.Length; i++)
-			{
-				using (System.IO.Stream myStream = new System.IO.FileStream(filenames[i], System.IO.FileMode.Open, System.IO.FileAccess.Read))
-				{
-					Altaxo.Gui.Worksheet.Viewing.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
-					ImportAscii(newwkscontroller, myStream);
-					myStream.Close();
-				}
-			} // for all files
-
-		}
-
-		public static void ImportAsciiToSingleWorksheet(IWorksheetController ctrl, string[] filenames)
-		{
-			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportMultipleAscii(filenames, ctrl.DataTable);
-		}
-
-
-		public static void ImportAscii(IWorksheetController ctrl)
-		{
-			ImportAscii(ctrl, true);
-		}
-
-		public static void ImportAscii(IWorksheetController ctrl, bool toMultipleWorksheets)
-		{
-			var options = new Altaxo.Gui.OpenFileOptions();
-			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
-			options.AddFilter("*.*", "All files (*.*)");
-			options.FilterIndex = 0;
-			options.RestoreDirectory = true;
-			options.Multiselect = true;
-
-			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
-			{
-				if (toMultipleWorksheets)
-					ImportAsciiToMultipleWorksheets(ctrl, options.FileNames);
-				else
-					ImportAsciiToSingleWorksheet(ctrl, options.FileNames);
-			}
-
-		}
-
-
-		public static void ExportAscii(IWorksheetController ctrl)
-		{
-
-			var options = new Altaxo.Gui.SaveFileOptions();
-			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
-			options.AddFilter("*.*", "All files (*.*)");
-			options.FilterIndex = 0;
-			options.RestoreDirectory = true;
-
-			if (Current.Gui.ShowSaveFileDialog(options))
-			{
-				using (Stream myStream = new FileStream(options.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
-				{
-					try
-					{
-						Altaxo.Serialization.Ascii.AsciiExporter.ExportAscii(myStream, ctrl.DataTable, '\t');
-					}
-					catch (Exception ex)
-					{
-						Current.Gui.ErrorMessageBox("There was an error during ascii export, details follow:\n" + ex.ToString());
-					}
-					finally
-					{
-						myStream.Close();
-					}
-				}
-			}
-		}
-
-
-		public static void ImportGalacticSPC(IWorksheetController ctrl)
-		{
-			Altaxo.Serialization.Galactic.Import.ShowDialog(ctrl.DataTable);
-		}
-
-		public static void ImportJcamp(IWorksheetController ctrl)
-		{
-			Altaxo.Serialization.Jcamp.Import.ShowDialog(ctrl.DataTable);
-		}
-
-
-		public static void ExportGalacticSPC(IWorksheetController ctrl)
-		{
-			var exportCtrl = new Altaxo.Gui.Worksheet.ExportGalacticSpcFileDialogController(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
-			Current.Gui.ShowDialog(exportCtrl, "Export Galactic SPC format");
-		}
-
-
-
-		public delegate double ColorAmplitudeFunction(System.Drawing.Color c);
-		public static double ColorToBrightness(System.Drawing.Color c)
-		{
-			return c.GetBrightness();
-		}
-
-
-		public static void ImportImage(IWorksheetController ctrl)
-		{
-			ImportImage(ctrl.DataTable);
-		}
-
-
-		public static void ImportImage(Altaxo.Data.DataTable table)
-		{
-			ColorAmplitudeFunction colorfunc;
-			var options = new Altaxo.Gui.OpenFileOptions();
-			options.AddFilter("*.bmp;*.jpg;*.png,*.tif", "Image files (*.bmp;*.jpg;*.png,*.tif)");
-			options.AddFilter("*.*", "All files (*.*)");
-			options.FilterIndex = 0;
-			options.RestoreDirectory = true;
-
-			if (Current.Gui.ShowOpenFileDialog(options))
-			{
-				using (Stream myStream = new FileStream(options.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-				{
-					System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(myStream);
-
-					int sizex = bmp.Width;
-					int sizey = bmp.Height;
-					//if(Format16bppGrayScale==bmp.PixelFormat)
-
-					colorfunc = new ColorAmplitudeFunction(ColorToBrightness);
-					// add here other function or the result of a dialog box
-
-					// now add new columns to the worksheet, 
-					// the name of the columns should preferabbly simply
-					// the index in x direction
-
-					table.Suspend();
-					for (int i = 0; i < sizex; i++)
-					{
-						Altaxo.Data.DoubleColumn dblcol = new Altaxo.Data.DoubleColumn();
-						for (int j = sizey - 1; j >= 0; j--)
-							dblcol[j] = colorfunc(bmp.GetPixel(i, j));
-
-						table.DataColumns.Add(dblcol, table.DataColumns.FindUniqueColumnName(i.ToString())); // Spalte hinzufügen
-					} // end for all x coordinaates
-
-					table.Resume();
-
-					myStream.Close();
-				} // end using myStream
-			}
-		}
-
 	}
-
 }

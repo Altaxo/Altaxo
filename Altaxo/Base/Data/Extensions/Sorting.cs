@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Data;
 
-namespace Altaxo.Worksheet.Commands
+namespace Altaxo.Data
 {
-  public class Sorting
-  {
-    #region Sorting foundation
-    public delegate int RowComparismMethod(int i, int j);
+  public static class Sorting
+	{
+		#region Helper classes
+
+		#region Sorting foundation
+		public delegate int RowComparismMethod(int i, int j);
     public delegate void RowSwapMethod(int i, int j);
 
 
@@ -166,24 +167,50 @@ namespace Altaxo.Worksheet.Commands
         else
           return _ascendingOrder ? +1 : -1;
       }
-    }
+		}
 
-    public static void SortDataRows(DataTable table, DataColumn col, bool inAscendingOrder)
+		#endregion
+
+
+		/// <summary>
+		/// Sorts the data rows of a table, using a specified column.
+		/// </summary>
+		/// <param name="table">The table where the data columns should be sorted.</param>
+		/// <param name="col">The column which is used for determining the order of the entries.</param>
+		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
+		public static void SortDataRows(this DataTable table, DataColumn col, bool inAscendingOrder)
     {
-      if (!table.DataColumns.ContainsColumn(col))
-        throw new ArgumentException("The sorting column provided must be part of the table.DataColumnCollection (otherwise the swap algorithm can not sort this column)");
-
-      if (col is DoubleColumn)
-      {
-        HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table.DataColumns).Swap);
-      }
-      else
-      {
-        HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table.DataColumns).Swap);
-      }
+			SortRows(table.DataColumns, col, inAscendingOrder);
     }
 
-    public static void SortColumnsByPropertyColumn(DataTable table, DataColumn propCol, bool inAscendingOrder)
+		/// <summary>
+		/// Sorts the data rows of a DataColumnCollection, using a specified column.
+		/// </summary>
+		/// <param name="table">The DataColumnCollection where the data columns should be sorted.</param>
+		/// <param name="col">The column which is used for determining the order of the entries.</param>
+		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
+		public static void SortRows(this DataColumnCollection table, DataColumn col, bool inAscendingOrder)
+		{
+			if (!table.ContainsColumn(col))
+				throw new ArgumentException("The sorting column provided must be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
+
+			if (col is DoubleColumn)
+			{
+				HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table).Swap);
+			}
+			else
+			{
+				HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table).Swap);
+			}
+		}
+
+		/// <summary>
+		/// Sort the order of the data columns (not rows!) of a table based on a specified property column. The relationship of property data to data columns is maintained.
+		/// </summary>
+		/// <param name="table">The table where to sort the columns.</param>
+		/// <param name="propCol">The property column where the sorting order is based on.</param>
+		/// <param name="inAscendingOrder">If true, the sorting is in ascending order. If false, the sorting is in descending order.</param>
+    public static void SortColumnsByPropertyColumn(this DataTable table, DataColumn propCol, bool inAscendingOrder)
     {
       if (!table.PropCols.ContainsColumn(propCol))
         throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");

@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Worksheet
 
     public bool Apply()
     {
-      Altaxo.Worksheet.Commands.Transpose.DoTranspose(_table, _view.DataColumnsMoveToPropertyColumns, _view.PropertyColumnsMoveToDataColumns, true);
+      Altaxo.Data.Transposing.Transpose(_table, _view.DataColumnsMoveToPropertyColumns, _view.PropertyColumnsMoveToDataColumns, true);
       return true;
     }
 

@@ -469,9 +469,6 @@
     <Compile Include="Worksheet\Commands\EditCommands.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\Commands\FileCommands.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Worksheet\Commands\PlotCommands.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -547,9 +544,12 @@
     <Compile Include="Collections\IndexSelection.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
-    <Compile Include="Data\Actions\ColumnMath.cs" />
-    <Compile Include="Data\Actions\MergeTables.cs" />
-    <Compile Include="Data\Actions\StatisticCommands.cs" />
+    <Compile Include="Data\Extensions\ColumnMath.cs" />
+    <Compile Include="Data\Extensions\FileCommands.cs" />
+    <Compile Include="Data\Extensions\MergeTables.cs" />
+    <Compile Include="Data\Extensions\Sorting.cs" />
+    <Compile Include="Data\Extensions\StatisticCommands.cs" />
+    <Compile Include="Data\Extensions\Transpose.cs" />
     <Compile Include="Graph\CSAxisInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
     <Compile Include="Graph\CSPlaneID.cs" />
@@ -825,8 +825,9 @@
     <Compile Include="Serialization\LengthUnit.cs" />
     <Compile Include="Settings\Scripting\ReferencedAssemblies.cs" />
     <Compile Include="Settings\Scripting\ReferencedAssembliesCommands.cs" />
-    <Compile Include="Worksheet\Commands\Sorting.cs" />
-    <Compile Include="Worksheet\Commands\Transpose.cs" />
+    <Compile Include="Worksheet\Commands\FileCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
