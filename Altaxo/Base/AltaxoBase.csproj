@@ -544,6 +544,7 @@
     <Compile Include="Collections\IndexSelection.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
+    <Compile Include="Data\Extensions\ColumnCommands.cs" />
     <Compile Include="Data\Extensions\ColumnMath.cs" />
     <Compile Include="Data\Extensions\FileCommands.cs" />
     <Compile Include="Data\Extensions\MergeTables.cs" />
@@ -816,6 +817,7 @@
     <Compile Include="Main\Services\IPropertyService.cs" />
     <Compile Include="Main\TunnelingAndBubblingEvents.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
+    <Compile Include="Serialization\Ascii\AsciiDocumentAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiExportOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiGlobalStructureAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysis.cs" />

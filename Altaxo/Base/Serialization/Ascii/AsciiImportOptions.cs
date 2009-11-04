@@ -52,6 +52,8 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>Structur of the file (which data type is placed in which column).</summary>
     public AsciiLineStructure RecognizedStructure;
 
+    /// <summary>Returns the number of lines that should be used for analysis of the Ascii file.</summary>
+    public int NumberOfLinesToAnalyze = 30;
 
 
 

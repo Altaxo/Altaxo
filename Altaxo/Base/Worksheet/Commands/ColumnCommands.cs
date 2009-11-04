@@ -24,6 +24,8 @@ using System;
 using System.Text.RegularExpressions;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Gui.Common;
+using Altaxo.Data;
+
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -42,87 +44,13 @@ namespace Altaxo.Worksheet.Commands
     {
       if(ctrl.SelectedDataColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
       {
-        Altaxo.Data.DataColumn col = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
-        TextValueInputController tvctrl = new TextValueInputController(col.Name,"new column name:");
-        tvctrl.Validator = new DataColumnRenameValidator(col,ctrl);
-        if(Current.Gui.ShowDialog(tvctrl,"Rename column",false))
-          ctrl.DataTable.DataColumns.SetColumnName(col,tvctrl.InputText);
+				ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]].ShowRenameColumnDialog();
       }
-      if(ctrl.SelectedDataColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
+      else if(ctrl.SelectedDataColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
       {
-        Altaxo.Data.DataColumn col = ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]];
-        TextValueInputController tvctrl = new TextValueInputController(col.Name,"new property column name:");
-        tvctrl.Validator = new PropertyColumnRenameValidator(col,ctrl);
-        if(Current.Gui.ShowDialog(tvctrl,"Rename property column",false))
-          ctrl.DataTable.PropCols.SetColumnName(col,tvctrl.InputText);
+				ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]].ShowRenameColumnDialog();
       }
     }
-
-
-    /// <summary>
-    /// Helper class to make sure that user choosen data column name does not already exists.
-    /// </summary>
-    public class DataColumnRenameValidator : TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataColumn m_Col;
-      IWorksheetController m_Ctrl;
-      
-      public DataColumnRenameValidator(Altaxo.Data.DataColumn col, IWorksheetController ctrl)
-        : base("The column name must not be empty! Please enter a valid name.")
-      {
-        m_Col = col;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string name)
-      {
-        string err = base.Validate(name);
-        if(null!=err)
-          return err;
-
-        if(m_Col.Name==name)
-          return null;
-        else if(m_Ctrl.DataTable.DataColumns.ContainsColumn(name))
-          return "This column name already exists, please choose another name!";
-        else
-          return null;
-
-      }
-    }
-
-
-    /// <summary>
-    /// Helper class to make sure that user choosen property column name does not already exists.
-    /// </summary>
-    public class PropertyColumnRenameValidator : TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataColumn m_Col;
-      IWorksheetController m_Ctrl;
-      
-      public PropertyColumnRenameValidator(Altaxo.Data.DataColumn col, IWorksheetController ctrl)
-        : base("The column name must not be empty! Please enter a valid name.")
-      {
-        m_Col = col;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string name)
-      {
-        string err = base.Validate(name);
-        if(null!=err)
-          return err;
-
-        if(m_Col.Name==name)
-          return null;
-        else if(m_Ctrl.DataTable.PropCols.ContainsColumn(name))
-          return "This column name already exists, please choose another name!";
-        else
-          return null;
-
-      }
-    }
-
-    
 
     #endregion
 
@@ -131,47 +59,15 @@ namespace Altaxo.Worksheet.Commands
     /// Sets the group number of the selected column
     /// </summary>
     /// <param name="ctrl">The worksheet controller for the table.</param>
-    public static void SetSelectedColumnGroupNumber(IWorksheetController ctrl)
+    public static void ShowSetColumnGroupNumberDialog(IWorksheetController ctrl)
     {
-      if(ctrl.SelectedDataColumns.Count>0 || ctrl.SelectedPropertyColumns.Count>0)
-      {
-        int grpNumber = 0;
-        if(ctrl.SelectedDataColumns.Count>0)
-          grpNumber = ctrl.DataTable.DataColumns.GetColumnGroup(ctrl.SelectedDataColumns[0]);
-        else if(ctrl.SelectedPropertyColumns.Count>0)
-          grpNumber = ctrl.DataTable.PropertyColumns.GetColumnGroup(ctrl.SelectedPropertyColumns[0]);
-        
-        IntegerValueInputController ivictrl = new IntegerValueInputController(grpNumber,"Please enter a group number (>=0):");
-        ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-        if(Current.Gui.ShowDialog(ivictrl,"Set group number",false))
-        {
-          SetSelectedColumnGroupNumber(ctrl,ivictrl.EnteredContents);
-        }
-      }
+			if (ctrl.DataTable.ShowSetColumnGroupNumberDialog(ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns))
+			{
+				ctrl.ClearAllSelections();
+				ctrl.UpdateTableView();
+			}
     }
 
-
-    /// <summary>
-    /// Sets the group number of the currently selected columns to <code>nGroup</code>.
-    /// </summary>
-    /// <param name="ctrl">The worksheet controller.</param>
-    /// <param name="nGroup">The group number to set for the selected columns.</param>
-    public static void SetSelectedColumnGroupNumber(IWorksheetController ctrl, int nGroup)
-    {
-      for(int i=0;i<ctrl.SelectedDataColumns.Count;i++)
-      {
-        ctrl.DataTable.DataColumns.SetColumnGroup(ctrl.SelectedDataColumns[i], nGroup);
-      }
-      
-      for(int i=0;i<ctrl.SelectedPropertyColumns.Count;i++)
-      {
-        ctrl.DataTable.PropertyColumns.SetColumnGroup(ctrl.SelectedPropertyColumns[i], nGroup);
-      }
-
-      ctrl.ClearAllSelections();
-
-      ctrl.UpdateTableView();
-    }
     #endregion
 
     #region Set column position

@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 
+using Altaxo.Data;
+
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
@@ -31,6 +33,7 @@ namespace Altaxo.Serialization.Ascii
   public class AsciiImporter
   {
     protected System.IO.Stream _stream;
+    static AsciiImportOptions _defaultImportOptions = new AsciiImportOptions();
 
     /// <summary>
     /// Constructor. You have to provide a stream here. Afterwards, you must call one of the methods, for instance
@@ -43,195 +46,8 @@ namespace Altaxo.Serialization.Ascii
     }
 
 
-    /// <summary>
-    /// calculates the priority of the result
-    /// </summary>
-    /// <param name="result"></param>
-    /// <param name="bestLine"></param>
-    /// <param name="sep"></param>
-    /// <returns></returns>
-    public static int GetPriorityOf(List<AsciiLineAnalysis> result, IAsciiSeparationStrategy sep, ref AsciiLineStructure bestLine)
-    {
-      Dictionary<int, int> sl = new Dictionary<int, int>();
-      bestLine = null;
-      for (int i = 0; i < result.Count; i++)
-      {
-        AsciiLineAnalysis ala = result[i];
-        int p = ala.Structures[sep].GetHashCode(); // and hash code
-        if (sl.ContainsKey(p))
-          sl[p] = 1 + sl[p];
-        else
-          sl.Add(p, 1);
-      }
-      // get the count with the topmost frequency
-      int nNumberOfMaxSame = 0;
-      int nHashOfMaxSame = 0;
-      foreach (KeyValuePair<int, int> ohash in sl)
-      {
-        int hash = ohash.Key;
-        int cnt = ohash.Value;
-        if (nNumberOfMaxSame < cnt)
-        {
-          nNumberOfMaxSame = cnt;
-          nHashOfMaxSame = hash;
-        }
-      } // for each
-      // search for the max priority of the hash
-      int nMaxPriorityOfMaxSame = 0;
-      for (int i = 0; i < result.Count; i++)
-      {
-        AsciiLineAnalysis ala = result[i];
-        if (nHashOfMaxSame == result[i].Structures[sep].GetHashCode())
-        {
-          int prty = result[i].Structures[sep].Priority;
-          if (prty >= nMaxPriorityOfMaxSame)
-          {
-            nMaxPriorityOfMaxSame = prty;
-            bestLine = result[i].Structures[sep];
-          }
-        }// if
-      } // for
-      return nNumberOfMaxSame;
-    }
-
-
-    /// <summary>
-    /// Analyzes the first <code>nLines</code> of the ascii stream.
-    /// </summary>
-    /// <param name="nLines">The number of lines to analyze. It is no error if the stream contains a less number of lines than provided here.</param>
-    /// <param name="defaultImportOptions">The default import options.</param>
-    /// <returns>Import options that can be used in a following step to read in the ascii stream. Null is returned if the stream contains no data.</returns>
-    public AsciiImportOptions Analyze(int nLines, AsciiImportOptions defaultImportOptions)
-    {
-
-      string sLine;
-
-      _stream.Position = 0;
-      System.IO.StreamReader sr = new System.IO.StreamReader(_stream, System.Text.Encoding.Default, true);
-      List<AsciiLineAnalysis> result = new List<AsciiLineAnalysis>();
-
-      List<string> firstFewLines = new List<string>();
-      for (int i = 0; i < nLines; i++)
-      {
-        sLine = sr.ReadLine();
-        if (null == sLine)
-          break;
-        firstFewLines.Add(sLine);
-      }
-      if (firstFewLines.Count == 0)
-        return null; // there is no line to analyze
-
-      // Analyze the whitespace structure of the lines first, find out if there is a fixed column width
-      AsciiGlobalStructureAnalysis globalStructure = new AsciiGlobalStructureAnalysis(firstFewLines);
-      List<IAsciiSeparationStrategy> separationStrategies = new List<IAsciiSeparationStrategy>();
-
-      if (defaultImportOptions.SeparationStrategy != null) // if a separation strategy is given use only this
-      {
-        separationStrategies.Add(defaultImportOptions.SeparationStrategy);
-      }
-      else // no separation strategy given - we include the possible strategies here
-      {
-        if (globalStructure.ContainsTabs)
-          separationStrategies.Add(new SingleCharSeparationStrategy('\t'));
-        if (globalStructure.ContainsCommas)
-          separationStrategies.Add(new SingleCharSeparationStrategy(','));
-        if (globalStructure.ContainsSemicolons)
-          separationStrategies.Add(new SingleCharSeparationStrategy(';'));
-        if (globalStructure.FixedBoundaries != null)
-        {
-          if (globalStructure.RecognizedTabSize == 1)
-            separationStrategies.Add(new FixedColumnWidthWithoutTabSeparationStrategy(globalStructure.FixedBoundaries));
-          else
-            separationStrategies.Add(new FixedColumnWidthWithTabSeparationStrategy(globalStructure.FixedBoundaries, globalStructure.RecognizedTabSize));
-        }
-        if (separationStrategies.Count == 0)
-          separationStrategies.Add(new SkipWhiteSpaceSeparationStrategy());
-      }
-
-
-
-
-      for (int i = 0; i < firstFewLines.Count; i++)
-        result.Add(new AsciiLineAnalysis(i, firstFewLines[i], separationStrategies));
-
-      if (result.Count == 0)
-        return null; // there is nothing to analyze
-
-
-
-      Dictionary<IAsciiSeparationStrategy, NumberAndStructure> st = new Dictionary<IAsciiSeparationStrategy, NumberAndStructure>();
-
-      foreach (IAsciiSeparationStrategy strat in result[0].Structures.Keys)
-      {
-        NumberAndStructure value = new NumberAndStructure();
-        value.NumberOfLines = GetPriorityOf(result, strat, ref value.LineStructure);
-        st.Add(strat, value);
-      }
-
-      // look for the top index
-      int nMaxLines = int.MinValue;
-      double maxprtylines = 0;
-      IAsciiSeparationStrategy bestSeparationStragegy = null;
-      foreach (KeyValuePair<IAsciiSeparationStrategy, NumberAndStructure> entry in st)
-      {
-        double prtylines = (double)entry.Value.NumberOfLines * entry.Value.LineStructure.Priority;
-        if (prtylines == maxprtylines)
-        {
-          if (entry.Value.NumberOfLines > nMaxLines)
-          {
-            nMaxLines = entry.Value.NumberOfLines;
-            bestSeparationStragegy = entry.Key;
-          }
-        }
-        else if (prtylines > maxprtylines)
-        {
-          maxprtylines = prtylines;
-          bestSeparationStragegy = entry.Key;
-          nMaxLines = entry.Value.NumberOfLines;
-        }
-      }
-
-      AsciiImportOptions opt = defaultImportOptions.Clone();
-
-      opt.SeparationStrategy = bestSeparationStragegy;
-      opt.RecognizedStructure = st[bestSeparationStragegy].LineStructure;
-
-
-      // look how many header lines are in the file by comparing the structure of the first lines  with the recognized structure
-      for (int i = 0; i < result.Count; i++)
-      {
-        opt.NumberOfMainHeaderLines = i;
-        if (result[i].Structures[bestSeparationStragegy].IsCompatibleWith(opt.RecognizedStructure))
-          break;
-      }
-
-      // try to guess which of the header lines is the caption line
-      // we take the caption line to be the first column which has the same number of tokens as the recognized structure
-      // if no line fulfilles this criteria, the IndexOfCaptionLine remain unchanged.
-      for (int i = 0; i < result.Count; i++)
-      {
-        if (result[i].Structures[bestSeparationStragegy].Count == opt.RecognizedStructure.Count)
-        {
-          opt.IndexOfCaptionLine = i;
-          break;
-        }
-      }
-
-      // calculate the total statistics of decimal separators
-      opt.DecimalSeparatorCommaCount = 0;
-      opt.DecimalSeparatorDotCount = 0;
-      for (int i = 0; i < result.Count; i++)
-      {
-        opt.DecimalSeparatorDotCount += result[i].Structures[bestSeparationStragegy].DecimalSeparatorDotCount;
-        opt.DecimalSeparatorCommaCount += result[i].Structures[bestSeparationStragegy].DecimalSeparatorCommaCount;
-      }
-
-
-
-      return opt;
-
-    }
-
+   
+   
 
     public void ImportAscii(AsciiImportOptions impopt, Altaxo.Data.DataTable table)
     {
@@ -435,6 +251,12 @@ namespace Altaxo.Serialization.Ascii
 
 
 
+    public static System.IO.FileStream GetAsciiInputFileStream(string filename)
+    {
+      return new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+    }
+
+
     /// <summary>
     /// Imports ascii from a string into a table. Returns null (!) if nothing is imported.
     /// </summary>
@@ -450,7 +272,7 @@ namespace Altaxo.Serialization.Ascii
 
       Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
       Altaxo.Serialization.Ascii.AsciiImporter importer = new Altaxo.Serialization.Ascii.AsciiImporter(memstream);
-      Altaxo.Serialization.Ascii.AsciiImportOptions options = importer.Analyze(20, new Altaxo.Serialization.Ascii.AsciiImportOptions());
+      Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(memstream, _defaultImportOptions);
 
       if (options != null)
       {
@@ -484,7 +306,7 @@ namespace Altaxo.Serialization.Ascii
     {
       Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
       Altaxo.Serialization.Ascii.AsciiImporter importer = new Altaxo.Serialization.Ascii.AsciiImporter(stream);
-      Altaxo.Serialization.Ascii.AsciiImportOptions options = importer.Analyze(20, defaultImportOptions);
+      Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(stream, defaultImportOptions);
       if (options != null)
       {
         importer.ImportAscii(options, table);
@@ -503,7 +325,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
     public static Altaxo.Data.DataTable ImportFile(string filename)
     {
-      using (System.IO.FileStream str = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+      using (var str = GetAsciiInputFileStream((filename)))
       {
         return Import(str);
       }
@@ -519,11 +341,24 @@ namespace Altaxo.Serialization.Ascii
     {
       var defaultImportOptions = new Altaxo.Serialization.Ascii.AsciiImportOptions();
       defaultImportOptions.SeparationStrategy = new SingleCharSeparationStrategy(separatorChar);
-      using (System.IO.FileStream str = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+      using (var str = GetAsciiInputFileStream(filename))
       {
         return Import(str,defaultImportOptions);
       }
     }
+
+
+    /// <summary>
+    /// Imports Ascii data from a stream into the data table.
+    /// </summary>
+    /// <param name="dataTable">The table where to import into.</param>
+    /// <param name="myStream">The stream to import from.</param>
+    public static void Import(System.IO.Stream myStream, DataTable dataTable)
+		{
+      var importer = new AsciiImporter(myStream);
+			var recognizedOptions = AsciiDocumentAnalysis.Analyze(myStream, _defaultImportOptions);
+      importer.ImportAscii(recognizedOptions, dataTable);
+		}
 
 
     /// <summary>
@@ -572,7 +407,7 @@ namespace Altaxo.Serialization.Ascii
       foreach (string filename in filenames)
       {
         Altaxo.Data.DataTable newtable = null;
-        using (System.IO.Stream stream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+        using (var stream = GetAsciiInputFileStream(filename))
         {
           newtable = null;
           newtable = Import(stream);
@@ -642,6 +477,42 @@ namespace Altaxo.Serialization.Ascii
       
       return errorList.Length == 0 ? null : errorList.ToString();
     }
+
+
+    /// <summary>
+    /// Imports multiple Ascii files into the provided table and additionally created tables.
+    /// </summary>
+    /// <param name="dataTable">The data table where the first ascii file is imported to. Can be null.</param>
+    /// <param name="filenames">The names of the files to import.</param>
+    public static void ImportAsciiToMultipleWorksheets(string[] filenames, DataTable dataTable)
+    {
+      int startrest = 0;
+
+      Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+
+      if (dataTable != null)
+      {
+        using (var myStream = GetAsciiInputFileStream(filenames[0]))
+        {
+          Import(myStream,dataTable);
+          myStream.Close();
+          startrest = 1;
+        }
+      }
+
+      // import also the other files, but this time we create new tables
+      for (int i = startrest; i < filenames.Length; i++)
+      {
+        using (var myStream = GetAsciiInputFileStream(filenames[i]))
+        {
+          Altaxo.Gui.Worksheet.Viewing.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
+          Import(myStream, newwkscontroller.DataTable);
+          myStream.Close();
+        }
+      } // for all files
+    }
+
+
 
   } // end class 
 }

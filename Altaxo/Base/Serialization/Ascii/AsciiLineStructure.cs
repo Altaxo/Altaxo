@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Text;
 using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
@@ -151,35 +152,50 @@ namespace Altaxo.Serialization.Ascii
     protected void CalculateCachedData()
     {
       _isCachedDataInvalid = false;
-
+      
       // Calculate priority and hash
 
       int len = Count;
+      var stb = new StringBuilder(); // for calculating the hash
+      stb.Append(len.ToString());
+
       _priorityValue = 0;
       for(int i=0;i<len;i++)
       {
         Type t = (Type) this[i];
-				if (t == typeof(DateTime))
-					_priorityValue += 15;
-				else if (t == typeof(Double))
-					_priorityValue += 7;
-				else if (t == typeof(long))
-					_priorityValue += 3;
-				else if (t == typeof(String))
-					_priorityValue += 2;
-				else if (t == typeof(DBNull))
-				{
-					_priorityValue += 1;
-					_containsDBNull = true;
-				}
+        if (t == typeof(DateTime))
+        {
+          _priorityValue += 15;
+          stb.Append('T');
+        }
+        else if (t == typeof(Double))
+        {
+          _priorityValue += 7;
+          stb.Append('D');
+        }
+        else if (t == typeof(Int64))
+        {
+          _priorityValue += 3;
+          stb.Append('D'); // note that it shoud have the same marker than Double, since a column can contain both integer and noninteger numeric data
+        }
+        else if (t == typeof(String))
+        {
+          _priorityValue += 2;
+          stb.Append('S');
+        }
+        else if (t == typeof(DBNull))
+        {
+          _priorityValue += 1;
+          stb.Append('N');
+          _containsDBNull = true;
+        }
       } // for
 
       // calculate hash
-
-      _hashValue = Count.GetHashCode();
-      for(int i=0;i<len;i++)
-        _hashValue = ((_hashValue<<1) | 1) ^ this[i].GetHashCode();
+      _hashValue = stb.ToString().GetHashCode();
     }
+
+
 
     public override int GetHashCode()
     {
@@ -254,7 +270,39 @@ namespace Altaxo.Serialization.Ascii
       }
 
     }
-      
+
+
+    static char ShortFormOfType(System.Type type)
+    {
+      if (type == typeof(Double))
+        return 'D';
+      else if (type == typeof(string))
+        return 'S';
+      else if (type == typeof(DateTime))
+        return 'T';
+      else if (type == typeof(DBNull))
+        return 'N';
+      else if(type == typeof(Int64))
+        return 'I';
+      else
+        return '?';
+    }
+
+
+    public override string ToString()
+    {
+      var stb = new StringBuilder();
+
+      stb.AppendFormat("C={0} H={1:X8}", Count, GetHashCode());
+      for (int i = 0; i < Count; i++)
+        {
+          stb.Append(' ');
+          stb.Append(ShortFormOfType(this[i]));
+        }
+      return stb.ToString();
+    }
+
+
   } // end class AsciiLineStructure
 
 

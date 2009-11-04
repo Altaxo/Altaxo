@@ -571,7 +571,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnGroupNumber(ctrl);
+      Altaxo.Worksheet.Commands.ColumnCommands.ShowSetColumnGroupNumberDialog(ctrl);
     }
   }
   

@@ -463,6 +463,7 @@
     <Compile Include="Calc\Regression\QuickQuadraticRegression.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Regression\QuickStatistics.cs" />
     <Compile Include="Calc\Regression\SavitzkyGolay.cs">
       <SubType>Code</SubType>
     </Compile>

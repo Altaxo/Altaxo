@@ -36,7 +36,16 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// The dictionary containing entries for separation stragegies and the corresponding resulting line structure.
     /// </summary>
-    public Dictionary<IAsciiSeparationStrategy,AsciiLineStructure> Structures;
+    Dictionary<IAsciiSeparationStrategy,AsciiLineStructure> _structureForSeparation;
+
+
+    public AsciiLineStructure this[IAsciiSeparationStrategy separationStrategy]
+    {
+      get
+      {
+        return _structureForSeparation[separationStrategy];
+      }
+    }
 
     /// <summary>
     /// Performs the analysis of a line with regard to different separation stragegies.
@@ -46,9 +55,9 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="separationStrategies">List of separation stragegies to test with the provided text line.</param>
     public AsciiLineAnalysis(int nLine,string sLine, List<IAsciiSeparationStrategy> separationStrategies)
     {
-      Structures = new Dictionary<IAsciiSeparationStrategy, AsciiLineStructure>();
+      _structureForSeparation = new Dictionary<IAsciiSeparationStrategy, AsciiLineStructure>();
       foreach (IAsciiSeparationStrategy separation in separationStrategies)
-        Structures.Add(separation, GetStructure(nLine, sLine, separation));
+        _structureForSeparation.Add(separation, GetStructure(nLine, sLine, separation));
     }
 
     /// <summary>

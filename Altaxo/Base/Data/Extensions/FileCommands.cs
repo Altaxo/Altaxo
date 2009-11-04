@@ -40,9 +40,7 @@ namespace Altaxo.Data
 		/// <param name="myStream">The stream to import from.</param>
 		public static void ImportAscii(this DataTable dataTable, System.IO.Stream myStream)
 		{
-			AsciiImporter importer = new AsciiImporter(myStream);
-			AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
-			importer.ImportAscii(recognizedOptions, dataTable);
+      AsciiImporter.Import(myStream, dataTable);
 		}
 
 		/// <summary>
@@ -52,30 +50,7 @@ namespace Altaxo.Data
 		/// <param name="filenames">The names of the files to import.</param>
 		public static void ImportAsciiToMultipleWorksheets(this DataTable dataTable, string[] filenames)
 		{
-			int startrest = 0;
-
-			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-			if (dataTable != null)
-			{
-				using (System.IO.Stream myStream = new System.IO.FileStream(filenames[0], System.IO.FileMode.Open, System.IO.FileAccess.Read))
-				{
-					ImportAscii(dataTable, myStream);
-					myStream.Close();
-					startrest = 1;
-				}
-			}
-
-			// import also the other files, but this time we create new tables
-			for (int i = startrest; i < filenames.Length; i++)
-			{
-				using (System.IO.Stream myStream = new System.IO.FileStream(filenames[i], System.IO.FileMode.Open, System.IO.FileAccess.Read))
-				{
-					Altaxo.Gui.Worksheet.Viewing.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
-					ImportAscii(newwkscontroller.DataTable, myStream);
-					myStream.Close();
-				}
-			} // for all files
+      AsciiImporter.ImportAsciiToMultipleWorksheets(filenames, dataTable);
 		}
 
 		/// <summary>
