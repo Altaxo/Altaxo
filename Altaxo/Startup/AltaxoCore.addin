@@ -380,8 +380,8 @@
 					class="Altaxo.Worksheet.Commands.WorksheetRename" />
         <MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
 					class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
-        <MenuItem id="ClearData" label="${res:XML.MainMenu.WorksheetMenu.ClearData}" description="${res:XML.MainMenu.WorksheetMenu.ClearData.Description}"
-					class="Altaxo.Worksheet.Commands.WorksheetClearData" />
+        <MenuItem id="ClearDataAll" label="${res:XML.MainMenu.WorksheetMenu.ClearDataAll}" description="${res:XML.MainMenu.WorksheetMenu.ClearDataAll.Description}"
+					class="Altaxo.Worksheet.Commands.WorksheetClearDataAll" />
         <MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}"
 					class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
         <MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
@@ -762,6 +762,8 @@
       description="${res:XML.MainMenu.WorksheetMenu.InsertOneRow.Description}" class="Altaxo.Worksheet.Commands.InsertOneDataRow" />
     <MenuItem id="InsertRows" label="${res:XML.MainMenu.WorksheetMenu.InsertDataRows}"
       description="${res:XML.MainMenu.WorksheetMenu.InsertDataRows.Description}" class="Altaxo.Worksheet.Commands.InsertDataRows" />
+    <MenuItem id="ChangeRowsToPropCols" label="${res:XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns}"
+      description="${res:XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.ChangeRowsToPropertyColumns" />
 
     <MenuItem id="CleanSeparator"  type = "Separator"/>
     <MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
@@ -807,8 +809,12 @@
       class="Altaxo.Worksheet.Commands.AddDataColumns" />
     <MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
       description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
-    <MenuItem id="ClearData" label="${res:XML.MainMenu.WorksheetMenu.ClearData}" description="${res:XML.MainMenu.WorksheetMenu.ClearData.Description}"
-      class="Altaxo.Worksheet.Commands.WorksheetClearData" />
+    <MenuItem id="ClearDataAll" label="${res:XML.MainMenu.WorksheetMenu.ClearDataAll}" description="${res:XML.MainMenu.WorksheetMenu.ClearDataAll.Description}"
+      class="Altaxo.Worksheet.Commands.WorksheetClearDataAll" />
+    <MenuItem id="ClearDataOnly" label="${res:XML.MainMenu.WorksheetMenu.ClearDataOnly}" description="${res:XML.MainMenu.WorksheetMenu.ClearDataOnly.Description}"
+      class="Altaxo.Worksheet.Commands.WorksheetClearDataOnly" />
+    <MenuItem id="RemoveDataColumnsOnly" label="${res:XML.MainMenu.WorksheetMenu.RemoveDataColumnsOnly}" description="${res:XML.MainMenu.WorksheetMenu.RemoveDataColumnsOnly.Description}"
+      class="Altaxo.Worksheet.Commands.WorksheetRemoveDataColumnsOnly" />
   </Path>
 
 	<Path name = "/Altaxo/Views/Graph/LayerButton/ContextMenu">

@@ -133,7 +133,7 @@ namespace Altaxo.Gui
     }
 
 
-    public override bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor)
+    public override bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread)
     {
       for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
         System.Threading.Thread.Sleep(10);

@@ -507,15 +507,15 @@ namespace Altaxo.Main.Services
     /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
     public abstract bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer);
 
-    public bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
+    public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.ThreadStart threadstart)
     {
       System.Threading.Thread t = new System.Threading.Thread(threadstart);
       t.Start();
-      return ShowBackgroundCancelDialog(millisecondsDelay, t, monitor);
+      return ShowBackgroundCancelDialog(millisecondsDelay, monitor, t);
     }
 
 
-    public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor);
+    public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread);
 
     /// <summary>
     /// Shows a page setup dialog.

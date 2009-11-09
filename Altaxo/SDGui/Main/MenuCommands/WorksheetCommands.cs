@@ -24,6 +24,7 @@ using System;
 using System.Windows.Forms;
 using ICSharpCode.Core;
 using Altaxo;
+using Altaxo.Data;
 using Altaxo.Main;
 using Altaxo.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
@@ -355,11 +356,27 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-  public class WorksheetClearData : AbstractWorksheetControllerCommand
+  public class WorksheetClearDataAll : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.WorksheetCommands.WorksheetClearData(ctrl);
+    }
+  }
+
+  public class WorksheetClearDataOnly : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      ctrl.DataTable.DataColumns.ClearData();
+    }
+  }
+
+  public class WorksheetRemoveDataColumnsOnly : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      ctrl.DataTable.DataColumns.RemoveColumnsAll();
     }
   }
 
@@ -644,6 +661,15 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.RowCommands.InsertDataRows(ctrl);
+    }
+  }
+
+  public class ChangeRowsToPropertyColumns : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      ctrl.DataTable.ChangeRowsToPropertyColumns(ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
+      ctrl.ClearAllSelections();
     }
   }
 

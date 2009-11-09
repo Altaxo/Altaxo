@@ -26,6 +26,7 @@ using System.ComponentModel;
 namespace Altaxo.Gui.Common
 {
   [ExpectedTypeOfView(typeof(ISingleValueView))]
+  [UserControllerForObject(typeof(int))]
   public class IntegerValueInputController : IMVCAController
   {
     ISingleValueView m_View;
@@ -37,6 +38,11 @@ namespace Altaxo.Gui.Common
     string _description;
 
     private IIntegerValidator m_Validator;
+
+    public IntegerValueInputController(int initialcontents)
+      : this(initialcontents, "Value: ")
+    {
+    }
 
     public IntegerValueInputController(int initialcontents, string description)
     {

@@ -548,6 +548,7 @@
     <Compile Include="Data\Extensions\ColumnMath.cs" />
     <Compile Include="Data\Extensions\FileCommands.cs" />
     <Compile Include="Data\Extensions\MergeTables.cs" />
+    <Compile Include="Data\Extensions\RowCommands.cs" />
     <Compile Include="Data\Extensions\Sorting.cs" />
     <Compile Include="Data\Extensions\StatisticCommands.cs" />
     <Compile Include="Data\Extensions\Transpose.cs" />
