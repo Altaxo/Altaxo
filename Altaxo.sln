@@ -58,6 +58,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Core.WinForms",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBase.WinForms", "Altaxo\Base.WinForms\AltaxoBase.WinForms.csproj", "{35576625-F69C-4142-AF4A-D55E507E1CFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OriginConnector", "AddIns\OriginConnector\OriginConnector.csproj", "{F1FDBA3D-F52A-476E-9000-DF024B25C456}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -197,6 +199,12 @@ Global
 		{35576625-F69C-4142-AF4A-D55E507E1CFE}.DesignTimeDebugging|Any CPU.Build.0 = Debug|Any CPU
 		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.DesignTimeDebugging|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.DesignTimeDebugging|Any CPU.Build.0 = Debug|Any CPU
+		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

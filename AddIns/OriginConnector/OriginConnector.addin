@@ -1,0 +1,34 @@
+<AddIn name        = "Custom View Content Sample"
+       url         = "http://www.icsharpcode.net"
+       version     = "1.0.0">
+	
+	<Manifest>
+		<Identity name="Altaxo.AddIns.OriginConnector"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly="OriginConnector.dll"/>
+	</Runtime>
+
+	<Path name = "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu">
+			<MenuItem id = "SendToOrigin"
+		              label = "Send table to origin" 
+		              class = "Altaxo.Worksheet.Commands.SendTableToOrigin"/>
+    
+      <MenuItem id = "GetFromOrigin"
+		              label = "Get table from origin"
+		              class = "Altaxo.Worksheet.Commands.GetTableFromOrigin"/>
+    </Path>
+
+  <Path name = "/Altaxo/Workbench/MainMenu/File/Import">
+    <MenuItem id = "GetFromOrigin"
+                label = "Get all tables from origin"
+                class = "Altaxo.Worksheet.Commands.GetAllTablesFromOrigin"/>
+  </Path>
+
+  <Path name = "/Altaxo/Workbench/MainMenu/File/Export">
+    <MenuItem id = "PushToOrigin"
+                label = "Push all tables to origin"
+                class = "Altaxo.Worksheet.Commands.PushAllTablesToOrigin"/>
+  </Path>
+</AddIn>

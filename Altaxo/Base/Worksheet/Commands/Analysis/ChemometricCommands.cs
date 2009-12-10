@@ -848,7 +848,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
       {
 				string newName = string.Format("GYResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
-				var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
+				var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
 				PlotYResiduals(table, graphctrl.Doc.Layers[0], nComponent, plsMemo.PreferredNumberOfFactors);
       }
     }
@@ -869,7 +869,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
       {
 				string newName = string.Format("GYCrossResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
-				var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
+				var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
 				PlotYCrossResiduals(table, graphctrl.Doc.Layers[0], nComponent, plsMemo.PreferredNumberOfFactors);
       }
     }
@@ -889,7 +889,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
       {
 				string newName = string.Format("GPredVsActC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
-				var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
+				var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
         PlotPredictedVersusActualY(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
       }
     }
@@ -940,7 +940,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
       {
 				string newName = string.Format("GCrossPredVsActC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
-				var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
+				var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
         PlotCrossPredictedVersusActualY(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
       }
     }
@@ -960,7 +960,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
       {
 				string newName = string.Format("GXResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
-				var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
+				var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
 				PlotXResiduals(table, graphctrl.Doc.Layers[0], nComponent, plsMemo.PreferredNumberOfFactors);
       }
     }
@@ -980,7 +980,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
       {
 				string newName = string.Format("GXCrossResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
-				var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
+				var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
 				PlotXResiduals(table, graphctrl.Doc.Layers[0], nComponent, plsMemo.PreferredNumberOfFactors);
       }
     }
@@ -1010,7 +1010,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotPRESSValue(Altaxo.Data.DataTable table)
     {
 			string newName = string.Format("GPRESS");
-			var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
+			var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
       PlotPRESSValue(table,graphctrl.Doc.Layers[0]);
     }
 
@@ -1039,10 +1039,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotCrossPRESSValue(Altaxo.Data.DataTable table)
     {
 			string newName = string.Format("GCrossPRESS");
-			var graphctrl = Current.ProjectService.CreateNewGraph(Main.NameHelper.CreateFullName(table.Name, newName));
-			PlotCrossPRESSValue(table, graphctrl.Doc.Layers[0]);
+			var graphctrl = CreateNewGraphWithXYLayer(Main.NameHelper.CreateFullName(table.Name, newName));
+      PlotCrossPRESSValue(table, graphctrl.Doc.Layers[0]);
     }
 
+
+    public static Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphWithXYLayer(string preferredName)
+    {
+      var graphctrl = Current.ProjectService.CreateNewGraph(preferredName);
+      var graph = graphctrl.Doc;
+      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
+      layer.CreateDefaultAxes();
+      graph.Layers.Add(layer);
+      return graphctrl;
+    }
 
     /// <summary>
     /// Plots the x (spectral) leverage into a provided layer.
@@ -1081,7 +1091,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			string newName = string.Format("GXLeverage#{0}F", plsMemo.PreferredNumberOfFactors);
 			newName = Main.NameHelper.CreateFullName(table.Name, newName);
 
-      var graphctrl = Current.ProjectService.CreateNewGraph(newName);
+      var graphctrl = CreateNewGraphWithXYLayer(newName);
       PlotXLeverage(table,graphctrl.Doc.Layers[0],plsMemo.PreferredNumberOfFactors);
     }
 

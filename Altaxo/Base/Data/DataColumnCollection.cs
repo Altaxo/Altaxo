@@ -1458,6 +1458,22 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Determines if this collections has Columns only with one group number, or if it has columns with multiple group numbers.
+    /// </summary>
+    /// <returns>False if all the columns have the same group number. True if the columns have more than one group number.</returns>
+    public bool HaveMultipleGroups()
+    {
+      if (ColumnCount <= 1)
+        return false;
+      int firstgroup = this.GetColumnGroup(0);
+      for (int i = 1; i < ColumnCount; i++)
+        if (firstgroup != this.GetColumnGroup(i))
+          return true;
+
+      return false;
+    }
+
+    /// <summary>
     /// Sets the group number of the column with the given column number <code>idx</code>.
     /// </summary>
     /// <param name="idx">The column number of the column.</param>
