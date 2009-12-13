@@ -45,7 +45,10 @@ namespace Altaxo.Graph.Gdi.Plot
     IXBoundsHolder,
     IYBoundsHolder
   {
-    PlotGroupStyleCollection _styles;
+		/// <summary>Local collection of plot group styles of this plot item collection.</summary>
+    PlotGroupStyleCollection _plotGroupStyles;
+
+		/// <summary>Collection of plot items.</summary>
     List<IGPlotItem> _plotItems;
 
     [NonSerialized]
@@ -185,7 +188,7 @@ namespace Altaxo.Graph.Gdi.Plot
           info.AddValue("PlotItem", s[i]);
         info.CommitArray();
 
-        info.AddValue("GroupStyles", s._styles);
+        info.AddValue("GroupStyles", s._plotGroupStyles);
       }
      
 
@@ -202,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Plot
         }
         info.CloseArray(count);
 
-        s._styles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
+        s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
 
         return s;
       }
@@ -228,13 +231,13 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       _parent = owner;
       _plotItems = new List<IGPlotItem>();
-      _styles = new PlotGroupStyleCollection();
+      _plotGroupStyles = new PlotGroupStyleCollection();
     }
 
     public PlotItemCollection()
     {
       _plotItems = new List<IGPlotItem>();
-      _styles = new PlotGroupStyleCollection();
+      _plotGroupStyles = new PlotGroupStyleCollection();
     }
 
     /// <summary>
@@ -242,7 +245,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     protected PlotItemCollection(int x)
     {
-      _styles = new PlotGroupStyleCollection();
+      _plotGroupStyles = new PlotGroupStyleCollection();
     }
 
     /// <summary>
@@ -263,7 +266,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public PlotItemCollection(XYPlotLayer owner, PlotItemCollection from)
     {
       _parent = owner;
-      _styles = new PlotGroupStyleCollection();
+      _plotGroupStyles = new PlotGroupStyleCollection();
       _plotItems = new List<IGPlotItem>();
 
 
@@ -272,7 +275,7 @@ namespace Altaxo.Graph.Gdi.Plot
         Add((IGPlotItem)from[i].Clone()); // clone the items
 
       // special way neccessary to handle plot groups
-      this._styles = null == from._styles ? null : from._styles.Clone();
+      this._plotGroupStyles = null == from._plotGroupStyles ? null : from._plotGroupStyles.Clone();
     }
 
 		public void CopyFrom(PlotItemCollection from, GraphCopyOptions options)
@@ -329,13 +332,13 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       get
       {
-        return this._styles;
+        return this._plotGroupStyles;
       }
       set
       {
         if (value == null)
           throw new ArgumentNullException();
-        this._styles = value;
+        this._plotGroupStyles = value;
       }
     }
 
@@ -365,14 +368,14 @@ namespace Altaxo.Graph.Gdi.Plot
         pi.PrepareScales(layer);
     }
 
-    public void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer)
+    public void PrepareGroupStyles(PlotGroupStyleCollection parentPlotGroupStyles, IPlotArea layer)
     {
-      PrepareStylesForward_HierarchyUpOnly(styles,layer);
+      PrepareGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles,layer);
     }
 
-    public void ApplyStyles(PlotGroupStyleCollection styles)
+    public void ApplyGroupStyles(PlotGroupStyleCollection parentPlotGroupStyles)
     {
-      ApplyStylesForward_HierarchyUpOnly(styles);
+      ApplyGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles);
     }
 
 
@@ -392,8 +395,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
       // now prepare and apply the styles forward normally beginning from the root collection
       // we can set the parent styles to null since rootCollection is the lowest collection that don't inherit from a lower group.
-      rootCollection.PrepareStylesForward_HierarchyUpOnly(null, this.ParentLayer);
-      rootCollection.ApplyStylesForward_HierarchyUpOnly(null);
+      rootCollection.PrepareGroupStylesForward_HierarchyUpOnly(null, this.ParentLayer);
+      rootCollection.ApplyGroupStylesForward_HierarchyUpOnly(null);
     }
 
     /// <summary>
@@ -408,37 +411,37 @@ namespace Altaxo.Graph.Gdi.Plot
       // then from the first item again down the line
       if (pivotidx > 0)
       {
-        _styles.BeginPrepare();
+        _plotGroupStyles.BeginPrepare();
         for (int i = pivotidx; i >= 0; i--)
         {
           IGPlotItem pi = _plotItems[i];
           if (pi is PlotItemCollection)
           {
-            _styles.PrepareStep();
+            _plotGroupStyles.PrepareStep();
             PlotItemCollection pic = (PlotItemCollection)pi;
-            pic.PrepareStylesBackward_HierarchyUpOnly(_styles,layer);
+            pic.PrepareStylesBackward_HierarchyUpOnly(_plotGroupStyles,layer);
           }
           else
           {
-            pi.PrepareStyles(_styles,layer);
-            if (i > 0) _styles.PrepareStep();
+            pi.PrepareGroupStyles(_plotGroupStyles,layer);
+            if (i > 0) _plotGroupStyles.PrepareStep();
           }
         }
-        _styles.EndPrepare();
+        _plotGroupStyles.EndPrepare();
       }
 
 
       // now use this styles to copy to the parent
       bool transferToParentStyles =
       ParentCollection != null &&
-      ParentCollection._styles.Count != 0 &&
-      ParentCollection._styles.DistributeToChildGroups &&
-      this._styles.InheritFromParentGroups;
+      ParentCollection._plotGroupStyles.Count != 0 &&
+      ParentCollection._plotGroupStyles.DistributeToChildGroups &&
+      this._plotGroupStyles.InheritFromParentGroups;
 
       if (transferToParentStyles)
       {
-        PlotGroupStyleCollection.TransferFromTo(_styles, ParentCollection._styles);
-        ParentCollection.ApplyStylesIterativeBackward(ParentCollection._styles.Count - 1);
+        PlotGroupStyleCollection.TransferFromTo(_plotGroupStyles, ParentCollection._plotGroupStyles);
+        ParentCollection.ApplyStylesIterativeBackward(ParentCollection._plotGroupStyles.Count - 1);
       }
     }
 
@@ -455,38 +458,38 @@ namespace Altaxo.Graph.Gdi.Plot
       // then from the first item again down the line
       if (pivotidx > 0)
       {
-        _styles.BeginApply();
+        _plotGroupStyles.BeginApply();
         for (int i = pivotidx; i >= 0; i--)
         {
           IGPlotItem pi = _plotItems[i];
           if (pi is PlotItemCollection)
           {
-            _styles.Step(-1);
+            _plotGroupStyles.Step(-1);
             PlotItemCollection pic = (PlotItemCollection)pi;
-            pic.ApplyStylesBackward_HierarchyUpOnly(_styles);
+            pic.ApplyStylesBackward_HierarchyUpOnly(_plotGroupStyles);
           }
           else
           {
-            pi.ApplyStyles(_styles);
-             if(i>0) _styles.Step(-1);
+            pi.ApplyGroupStyles(_plotGroupStyles);
+             if(i>0) _plotGroupStyles.Step(-1);
           }
         }
-        _styles.EndApply();
+        _plotGroupStyles.EndApply();
       }
      
 
       // now use this styles to copy to the parent
       bool transferToParentStyles =
       ParentCollection != null &&
-      ParentCollection._styles.Count!=0 &&
-      ParentCollection._styles.DistributeToChildGroups &&
-      this._styles.InheritFromParentGroups;
+      ParentCollection._plotGroupStyles.Count!=0 &&
+      ParentCollection._plotGroupStyles.DistributeToChildGroups &&
+      this._plotGroupStyles.InheritFromParentGroups;
 
       PlotItemCollection rootCollection = this;
       if (transferToParentStyles)
       {
-        PlotGroupStyleCollection.TransferFromTo(_styles, ParentCollection._styles);
-        rootCollection = ParentCollection.ApplyStylesIterativeBackward(ParentCollection._styles.Count - 1);
+        PlotGroupStyleCollection.TransferFromTo(_plotGroupStyles, ParentCollection._plotGroupStyles);
+        rootCollection = ParentCollection.ApplyStylesIterativeBackward(ParentCollection._plotGroupStyles.Count - 1);
       }
 
       return rootCollection;
@@ -503,14 +506,14 @@ namespace Altaxo.Graph.Gdi.Plot
         styles != null &&
         styles.Count != 0 &&
         styles.DistributeToChildGroups &&
-        this._styles.InheritFromParentGroups;
+        this._plotGroupStyles.InheritFromParentGroups;
 
       if (!transferToLocalStyles)
         return;
 
-      PlotGroupStyleCollection.TransferFromTo(styles, _styles);
+      PlotGroupStyleCollection.TransferFromTo(styles, _plotGroupStyles);
 
-      _styles.BeginApply();
+      _plotGroupStyles.BeginApply();
       // now distibute the styles from the first item down to the last item
       int last = _plotItems.Count - 1;
       for (int i = last; i >= 0; i--)
@@ -518,18 +521,18 @@ namespace Altaxo.Graph.Gdi.Plot
         IGPlotItem pi = _plotItems[i];
         if (pi is PlotItemCollection)
         {
-          _styles.PrepareStep();
-          ((PlotItemCollection)pi).PrepareStylesBackward_HierarchyUpOnly(_styles,layer);
+          _plotGroupStyles.PrepareStep();
+          ((PlotItemCollection)pi).PrepareStylesBackward_HierarchyUpOnly(_plotGroupStyles,layer);
         }
         else
         {
-          pi.PrepareStyles(_styles,layer);
-          _styles.PrepareStep();
+          pi.PrepareGroupStyles(_plotGroupStyles,layer);
+          _plotGroupStyles.PrepareStep();
         }
       }
-      _styles.EndPrepare();
+      _plotGroupStyles.EndPrepare();
 
-      PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_styles, styles);
+      PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_plotGroupStyles, styles);
     }
 
     /// <summary>
@@ -542,14 +545,14 @@ namespace Altaxo.Graph.Gdi.Plot
         styles != null &&
         styles.Count != 0 &&
         styles.DistributeToChildGroups &&
-        this._styles.InheritFromParentGroups;
+        this._plotGroupStyles.InheritFromParentGroups;
 
       if (!transferToLocalStyles)
         return;
 
-      PlotGroupStyleCollection.TransferFromTo(styles, _styles);
+      PlotGroupStyleCollection.TransferFromTo(styles, _plotGroupStyles);
 
-      _styles.BeginApply();
+      _plotGroupStyles.BeginApply();
       // now distibute the styles from the first item down to the last item
       int last = _plotItems.Count - 1;
       for (int i = last; i >= 0; i--)
@@ -557,113 +560,142 @@ namespace Altaxo.Graph.Gdi.Plot
         IGPlotItem pi = _plotItems[i];
         if (pi is PlotItemCollection)
         {
-          _styles.Step(-1);
-          ((PlotItemCollection)pi).ApplyStylesBackward_HierarchyUpOnly(_styles);
+          _plotGroupStyles.Step(-1);
+          ((PlotItemCollection)pi).ApplyStylesBackward_HierarchyUpOnly(_plotGroupStyles);
         }
         else
         {
-          pi.ApplyStyles(_styles);
-          _styles.Step(-1);
+          pi.ApplyGroupStyles(_plotGroupStyles);
+          _plotGroupStyles.Step(-1);
         }
       }
-      _styles.EndApply();
+      _plotGroupStyles.EndApply();
 
-      PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_styles, styles);
+      PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_plotGroupStyles, styles);
 
     }
 
     /// <summary>
-    /// Prepare styles forward, but only up in the hierarchy.
+    /// Prepare group styles forward, from the first to the last item. 
+		/// The function is called recursively for child PlotItemCollections, but only up in the hierarchy. 
+		/// This function therefore has no influence on items down in hierarchie, i.e. parental PlotItemCollections.
     /// </summary>
-    /// <param name="parentstyles">The parent group style collection.</param>
+		/// <param name="parentGroupStyles">The parent plot group style collection.</param>
     /// <param name="layer">The plot layer.</param>
-    protected void PrepareStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentstyles, IPlotArea layer)
+		/// <remarks>The preparation is used for:
+		/// <para>BarGraph: to count items, calculating the width and position of each item afterwards.</para>
+		/// <para>It is <b>not</b> used to enumerate colors, line styles etc., since this is done during the Apply stage.</para>
+		/// </remarks>
+    protected void PrepareGroupStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentGroupStyles, IPlotArea layer)
     {
       bool transferFromParentStyles =
-       parentstyles != null &&
-       parentstyles.Count != 0 &&
-       parentstyles.DistributeToChildGroups &&
-       this._styles.InheritFromParentGroups;
+       parentGroupStyles != null &&
+       parentGroupStyles.Count != 0 &&
+       parentGroupStyles.DistributeToChildGroups &&
+       this._plotGroupStyles.InheritFromParentGroups;
 
-      _styles.BeginPrepare();
+			// Announce the local plot group styles, that we start preparing 
+      _plotGroupStyles.BeginPrepare();
 
       string thisname = Main.DocumentPath.GetPathString(this, int.MaxValue);
       System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO",thisname));
+
+			// if TransferFromParentStyles was choosen, transfer some of the plot group settings of the parental plot group styles to the local styles
       if (transferFromParentStyles)
       {
-        PlotGroupStyleCollection.TransferFromTo(parentstyles, _styles);
+        PlotGroupStyleCollection.TransferFromTo(parentGroupStyles, _plotGroupStyles);
         System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO (transfer from parent style", thisname));
       }
 
-
-      // now distibute the styles from the first item down to the last item
-      int last = _plotItems.Count - 1;
+			// for each PlotItem in this collection, announce the preparation, using the local plot group style collection
+			// after each item, announce a step to the plot group styles, so that the properties (like color etc.) can be stepped forward
+			int last = _plotItems.Count - 1;
       for (int i = 0; i <= last; i++)
       {
         IGPlotItem pi = _plotItems[i];
         if (pi is PlotItemCollection)
         {
           PlotItemCollection pic = (PlotItemCollection)pi;
-          pic.PrepareStylesForward_HierarchyUpOnly(_styles,layer);
-          _styles.PrepareStepIfForeignSteppingFalse(((PlotItemCollection)pi)._styles);
+          pic.PrepareGroupStylesForward_HierarchyUpOnly(_plotGroupStyles,layer);
+          _plotGroupStyles.PrepareStepIfForeignSteppingFalse(((PlotItemCollection)pi)._plotGroupStyles);
         }
         else
         {
-          pi.PrepareStyles(_styles,layer);
-          _styles.PrepareStep();
+          pi.PrepareGroupStyles(_plotGroupStyles,layer);
+          _plotGroupStyles.PrepareStep();
         }
       }
 
+
+			// after all our own PlotItems are prepared now,
+			// if TransferFromParentStyles was choosen, transfer our own plot group settings back to the parental plot group styles
+			// so that the parental plot group can continue i.e. with the color etc.
       if (transferFromParentStyles)
       {
-        PlotGroupStyleCollection.TransferFromTo(_styles, parentstyles);
+        PlotGroupStyleCollection.TransferFromTo(_plotGroupStyles, parentGroupStyles);
         System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO (transfer back to parent style", thisname));
       }
 
-      _styles.EndPrepare();
+			// after preparation of all plot items is done, announce the end of preparation,
+			// some of the calculations can be done only now.
+      _plotGroupStyles.EndPrepare();
       System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO", thisname));
     }
 
-    /// <summary>
-    /// Apply styles forward, but only up in the hierarchy.
-    /// </summary>
-    /// <param name="parentstyles">The parent group style collection.</param>
-    protected void ApplyStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentstyles)
+		/// <summary>
+		/// Apply plot group styles forward, from the first to the last item. 
+		/// The function is called recursively for child PlotItemCollections, but only up in the hierarchy. 
+		/// This function therefore has no influence on items down in hierarchie, i.e. parental PlotItemCollections.
+		/// </summary>
+		/// <param name="parentGroupStyles">The parent plot group style collection.</param>
+		/// <param name="layer">The plot layer.</param>
+		/// <remarks>The application is used for example:
+		/// <para>BarGraph: to calculate the exact position of each plot item.</para>
+		/// <para>Color: To step forward through the available colors and apply each color to another PlotItem.</para>
+		/// </remarks>
+
+    protected void ApplyGroupStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentGroupStyles)
     {
       bool transferFromParentStyles =
-       parentstyles != null &&
-       parentstyles.Count != 0 &&
-       parentstyles.DistributeToChildGroups &&
-       this._styles.InheritFromParentGroups;
+       parentGroupStyles != null &&
+       parentGroupStyles.Count != 0 &&
+       parentGroupStyles.DistributeToChildGroups &&
+       this._plotGroupStyles.InheritFromParentGroups;
 
-      if (transferFromParentStyles)
-        PlotGroupStyleCollection.TransferFromTo(parentstyles, _styles);
+			// if TransferFromParentStyles was choosen, transfer some of the plot group settings of the parental plot group styles to the local styles
+			if (transferFromParentStyles)
+			{
+				PlotGroupStyleCollection.TransferFromTo(parentGroupStyles, _plotGroupStyles);
+			}
 
-      _styles.BeginApply();
+			// Announce the local plot group styles the begin of the application stage
+      _plotGroupStyles.BeginApply();
 
-      // now distibute the styles from the first item down to the last item
-      int last = _plotItems.Count - 1;
+			// for each PlotItem in this collection, announce the application, using the local plot group style collection
+			// after each item, announce an application step (of stepwidth 1) to the plot group styles, so that the properties (like color etc.) can be stepped forward
+			int last = _plotItems.Count - 1;
       for(int i=0;i<=last;i++)
       {
         IGPlotItem pi = _plotItems[i];
         if (pi is PlotItemCollection)
         {
           PlotItemCollection pic = (PlotItemCollection)pi;
-          pic.ApplyStylesForward_HierarchyUpOnly(_styles);
-          _styles.StepIfForeignSteppingFalse(1,((PlotItemCollection)pi)._styles);
+          pic.ApplyGroupStylesForward_HierarchyUpOnly(_plotGroupStyles);
+          _plotGroupStyles.StepIfForeignSteppingFalse(1,((PlotItemCollection)pi)._plotGroupStyles);
         }
         else
         {
-          pi.ApplyStyles(_styles);
-          _styles.Step(1);
+          pi.ApplyGroupStyles(_plotGroupStyles);
+          _plotGroupStyles.Step(1);
         }
       }
-      _styles.EndApply();
+			// after application of PlotGroupStyles to all the plot items is done, announce the end of application,
+			_plotGroupStyles.EndApply();
 
       if (transferFromParentStyles)
       {
-        PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_styles, parentstyles);
-        parentstyles.SetAllToApplied(); // to indicate that we have applied this styles and so to enable stepping
+        PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_plotGroupStyles, parentGroupStyles);
+        parentGroupStyles.SetAllToApplied(); // to indicate that we have applied this styles and so to enable stepping
       }
     }
 
@@ -718,7 +750,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public void Paint(System.Drawing.Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
     {
       ICoordinateTransformingGroupStyle coordTransStyle;
-      if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
+      if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
       {
         coordTransStyle.Paint(g, layer, this);
       }
@@ -813,7 +845,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public void Clear()
     {
       _plotItems.Clear();
-      _styles.Clear();
+      _plotGroupStyles.Clear();
       OnCollectionChanged();
     }
 
@@ -947,7 +979,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="pg">The plot group style to add.</param>
     public void Add(IPlotGroupStyle pg)
     {
-      this._styles.Add(pg);
+      this._plotGroupStyles.Add(pg);
       OnChanged();
     }
 
@@ -1031,7 +1063,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       ICoordinateTransformingGroupStyle coordTransStyle;
-      if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
+      if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
         coordTransStyle.MergeXBoundsInto(this.ParentLayer, pb, this);
       else
         CoordinateTransformingStyleBase.MergeXBoundsInto(pb, this);
@@ -1047,7 +1079,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       ICoordinateTransformingGroupStyle coordTransStyle;
-      if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
+      if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
         coordTransStyle.MergeYBoundsInto(this.ParentLayer, pb, this);
       else
         CoordinateTransformingStyleBase.MergeYBoundsInto(pb, this);

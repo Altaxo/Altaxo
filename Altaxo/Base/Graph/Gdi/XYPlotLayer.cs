@@ -2439,8 +2439,8 @@ namespace Altaxo.Graph.Gdi
       if (Scales.Y.Scale.DataBoundsObject.IsEmpty)
         RescaleYAxis();
 
-      _plotItems.PrepareStyles(null, this);
-      _plotItems.ApplyStyles(null);
+      _plotItems.PrepareGroupStyles(null, this);
+      _plotItems.ApplyGroupStyles(null);
 
 
     }

@@ -132,26 +132,27 @@ namespace Altaxo.Graph.Gdi.Plot
         sps.CollectExternalGroupStyles(styles);
     }
 
-    public override void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
+    public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
       Processed2DPlotData pdata = GetRangesAndPoints(layer);
       _localGroups = new PlotGroupStyleCollection();
       
       // first add missing local group styles
-      foreach (IG2DPlotStyle sps in _plotStyles)
-        sps.CollectLocalGroupStyles(externalGroups, _localGroups);
+			_plotStyles.CollectLocalGroupStyles(externalGroups, _localGroups);
+
+			// for the newly created group styles BeginPrepare must be called
+			_localGroups.BeginPrepare();
 
       // now prepare the groups
-      
-      foreach (IG2DPlotStyle sps in _plotStyles)
-        sps.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+			_plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+
+			// for the group styles in the local group, EndPrepare must be called
+			_localGroups.EndPrepare();
     }
 
-    public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
+    public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
-      
-      foreach (IG2DPlotStyle sps in _plotStyles)
-        sps.ApplyGroupStyles(externalGroups, _localGroups);
+			_plotStyles.ApplyGroupStyles(externalGroups, _localGroups);
     }
 
     /// <summary>

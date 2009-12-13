@@ -33,7 +33,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   public interface IG2DPlotStyle : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
   {
-
     /// <summary>
     /// Adds all plot group styles that are not already in the externalGroups collection, and that
     /// are appropriate for this plot style. Furthermore, the group style must be intended for use as external group style.
@@ -42,8 +41,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups);
 
     /// <summary>
-    /// Looks in externalGroups and localGroups to find PlotGroupStyles that are appropriate for this style.
-    /// If such PlotGroupStyles where not found, the function adds them to the localGroups collection.
+    /// Looks in externalGroups and localGroups to find PlotGroupStyles that are appropriate for this plot style.
+    /// If such PlotGroupStyles were not found, the function adds them to the localGroups collection.
     /// </summary>
     /// <param name="externalGroups">External plot groups. This collection remains unchanged and is provided here only to check whether or not the group style is already present in the externalGroups.</param>
     /// <param name="localGroups">Local plot groups. To this collection PlotGroupStyles are added if neccessary.</param>
@@ -51,20 +50,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
     /// <summary>
-    /// Applies the Group styles to the plot styles.
+    /// Prepares the group styles by showing them to this plot style.
     /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
-    /// <param name="layer"></param>
-    /// <param name="pdata"></param>
+		/// <param name="externalGroups">External plot group styles, i.e. plot group styles from the plot item collection.</param>
+		/// <param name="localGroups">Internal plot group styles of the plot item this plot style belongs to.</param>
+		/// <param name="layer">Plot layer the plot item belonging to this plot style resides in.</param>
+    /// <param name="pdata">The preprocessed plot data of the plot item.</param>
     void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata);
 
 
     /// <summary>
-    /// Applies the group styles to the plot styles.
+    /// Applies the group styles to this plot styles.
     /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
+    /// <param name="externalGroups">External plot group styles, i.e. plot group styles from the plot item collection.</param>
+    /// <param name="localGroups">Internal plot group styles of this plot item.</param>
     void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
 
     /// <summary>

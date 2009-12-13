@@ -48,11 +48,12 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Determines if this style can have childs, i.e. other plot group
     /// styles that are incremented if this group style swaps over.
-    /// When <see cref="Step" /> can return only zero, you should return here false. Otherwise
-    /// you should return true.
+    /// When <see cref="Step" /> can return only zero, you should return false.
+		/// Otherwise you should return true.
     /// </summary>
     /// <returns></returns>
     bool CanHaveChilds();
+
     /// <summary>
     /// Increments/decrements the style. Returns true when the style was swapped around.
     /// </summary>

@@ -77,14 +77,14 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
     /// <param name="layer">The plot layer.</param>
-    void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer);
+    void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer);
 
     /// <summary>
     /// Applies the group styles to this plot item. This function is called for all plot items in a group before
     /// the next function (for instance PreparePainting) is called.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    void ApplyStyles(PlotGroupStyleCollection styles);
+    void ApplyGroupStyles(PlotGroupStyleCollection styles);
 
     /// <summary>
     /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.

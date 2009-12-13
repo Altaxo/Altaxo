@@ -242,9 +242,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public abstract void CollectStyles(PlotGroupStyleCollection styles);
 
-    public abstract void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
+    public abstract void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
 
-    public abstract void ApplyStyles(PlotGroupStyleCollection externalGroups);
+    public abstract void ApplyGroupStyles(PlotGroupStyleCollection externalGroups);
 
     /// <summary>
     /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.

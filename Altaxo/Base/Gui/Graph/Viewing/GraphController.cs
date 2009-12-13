@@ -1011,9 +1011,9 @@ namespace Altaxo.Gui.Graph.Viewing
 				object obj = dao.GetData("Altaxo.Graph.GraphObjectList");
 
 				// if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
-				if (obj is ArrayList)
+				if (obj is ICollection)
 				{
-					ArrayList list = (ArrayList)obj;
+					ICollection list = (ICollection)obj;
 					foreach (object item in list)
 					{
 						if (item is GraphicBase)

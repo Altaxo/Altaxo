@@ -348,12 +348,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
     }
 
-    public override void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
+    public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
 
     }
 
-    public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
+    public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
 
     }

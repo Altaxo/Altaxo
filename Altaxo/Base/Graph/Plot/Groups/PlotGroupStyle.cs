@@ -26,77 +26,86 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-  using Gdi.Plot.Groups;
+	using Gdi.Plot.Groups;
 
-  public static class PlotGroupStyle
-  {
-    public static bool ShouldAddExternalGroupStyle(
-  IPlotGroupStyleCollection externalGroups,
-  System.Type type)
-    {
-      return !externalGroups.ContainsType(type);
-    }
-
-    
-    public static bool ShouldAddLocalGroupStyle(
-      IPlotGroupStyleCollection externalGroups,
-      IPlotGroupStyleCollection localGroups,
-      System.Type type)
-    {
-      bool found = false;
-      if (externalGroups != null && externalGroups.ContainsType(type))
-        found = true;
-      if (!found && localGroups != null && localGroups.ContainsType(type))
-        found = true;
-
-      return (!found && localGroups != null);
-    }
+	public static class PlotGroupStyle
+	{
+		public static bool ShouldAddExternalGroupStyle(
+	IPlotGroupStyleCollection externalGroups,
+	System.Type type)
+		{
+			return !externalGroups.ContainsType(type);
+		}
 
 
-    public static T GetStyleToInitialize<T>(
-      IPlotGroupStyleCollection externalGroups,
-      IPlotGroupStyleCollection localGroups
-      ) where T: IPlotGroupStyle, new()
-    {
-      if (!externalGroups.ContainsType(typeof(T))
-        && null != localGroups
-        && !localGroups.ContainsType(typeof(T)))
-      {
-        localGroups.Add(new T());
-      }
+		public static bool ShouldAddLocalGroupStyle(
+			IPlotGroupStyleCollection externalGroups,
+			IPlotGroupStyleCollection localGroups,
+			System.Type type)
+		{
+			bool found = false;
+			if (externalGroups != null && externalGroups.ContainsType(type))
+				found = true;
+			if (!found && localGroups != null && localGroups.ContainsType(type))
+				found = true;
 
-      T grpStyle = default(T);
-      if (externalGroups.ContainsType(typeof(T)))
-        grpStyle = (T)externalGroups.GetPlotGroupStyle(typeof(T));
-      else if (localGroups != null)
-        grpStyle = (T)localGroups.GetPlotGroupStyle(typeof(T));
-
-      if (grpStyle != null && !grpStyle.IsInitialized)
-        return grpStyle;
-      else
-        return default(T);
-    }
+			return (!found && localGroups != null);
+		}
 
 
-    public static T GetStyleToApply<T>(
-     IPlotGroupStyleCollection externalGroups,
-     IPlotGroupStyleCollection localGroups
-     ) where T : IPlotGroupStyle
-    {
-      T grpStyle = default(T);
-      IPlotGroupStyleCollection grpColl = null;
-      if (externalGroups.ContainsType(typeof(T)))
-        grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(T)))
-        grpColl = localGroups;
+		public static T GetStyleToInitialize<T>(
+			IPlotGroupStyleCollection externalGroups,
+			IPlotGroupStyleCollection localGroups
+			) where T : IPlotGroupStyle, new()
+		{
+			if (!externalGroups.ContainsType(typeof(T))
+				&& null != localGroups
+				&& !localGroups.ContainsType(typeof(T)))
+			{
+				localGroups.Add(new T());
+			}
 
-      if (null != grpColl)
-      {
-        grpStyle = (T)grpColl.GetPlotGroupStyle(typeof(T));
-        grpColl.OnBeforeApplication(typeof(T));
-      }
+			T grpStyle = default(T);
+			if (externalGroups.ContainsType(typeof(T)))
+				grpStyle = (T)externalGroups.GetPlotGroupStyle(typeof(T));
+			else if (localGroups != null)
+				grpStyle = (T)localGroups.GetPlotGroupStyle(typeof(T));
 
-      return grpStyle;
-    }
-  }
+			if (grpStyle != null && !grpStyle.IsInitialized)
+				return grpStyle;
+			else
+				return default(T);
+		}
+
+
+		/// <summary>
+		/// Looks first in externalGroups, then in localGroups for the type of PlotGroupStyle to apply.
+		/// If an instance of this type is found, this instance is returned. If found, the containig collection
+		/// is informed that this group style will be applied now by calling OnBeforeApplication.
+		/// </summary>
+		/// <typeparam name="T">Type of PlotGroupStyle to look for.</typeparam>
+		/// <param name="externalGroups">First collection to look for the group style.</param>
+		/// <param name="localGroups">Second collection to look for the group style.</param>
+		/// <returns>The instance of the plot group style (if found), or null otherwise.</returns>
+		public static T GetStyleToApply<T>(
+		 IPlotGroupStyleCollection externalGroups,
+		 IPlotGroupStyleCollection localGroups
+		 ) where T : IPlotGroupStyle
+		{
+			T grpStyle = default(T);
+			IPlotGroupStyleCollection grpColl = null;
+			if (externalGroups.ContainsType(typeof(T)))
+				grpColl = externalGroups;
+			else if (localGroups != null && localGroups.ContainsType(typeof(T)))
+				grpColl = localGroups;
+
+			if (null != grpColl)
+			{
+				grpStyle = (T)grpColl.GetPlotGroupStyle(typeof(T));
+				grpColl.OnBeforeApplication(typeof(T));
+			}
+
+			return grpStyle;
+		}
+	}
 }
