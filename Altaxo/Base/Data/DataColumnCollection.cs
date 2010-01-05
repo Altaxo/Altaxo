@@ -1172,7 +1172,7 @@ namespace Altaxo.Data
 
  
     /// <summary>
-    /// Moves some columns of this collection to another collection-
+    /// Moves some columns of this collection to another collection.
     /// </summary>
     /// <param name="destination">The destination collection where the columns are moved to.</param>
     /// <param name="destindex">The index in the destination collection where the columns are moved to.</param>
@@ -1191,7 +1191,7 @@ namespace Altaxo.Data
       {
         tmpColumn[i] = this[selectedColumns[i]];
         tmpInfo[i] = (DataColumnInfo)this._columnInfoByColumn[_columnsByNumber[i]];
-        tmpScript[i] = this._columnScripts[tmpColumn[i]];
+        this._columnScripts.TryGetValue(tmpColumn[i], out tmpScript[i]);
       }
 
       this.RemoveColumns(selectedColumns,false);

@@ -584,6 +584,9 @@ namespace Altaxo.Worksheet.Commands
       // now create a new Graph with this plot associations
 
       var gc = Current.ProjectService.CreateNewGraph();
+      var layer = new Altaxo.Graph.Gdi.XYPlotLayer(gc.Doc.DefaultLayerPosition, gc.Doc.DefaultLayerSize);
+      layer.CreateDefaultAxes();
+      gc.Doc.Layers.Add(layer);
 
       IGPlotItem pi = new DensityImagePlotItem(assoc,plotStyle);
       gc.Doc.Layers[0].PlotItems.Add(pi);

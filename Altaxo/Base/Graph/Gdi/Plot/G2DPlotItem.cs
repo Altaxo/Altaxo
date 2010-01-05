@@ -146,13 +146,20 @@ namespace Altaxo.Graph.Gdi.Plot
       // now prepare the groups
 			_plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
 
-			// for the group styles in the local group, EndPrepare must be called
+			// for the group styles in the local group, PrepareStep and EndPrepare must be called, 
+      _localGroups.PrepareStep();
 			_localGroups.EndPrepare();
     }
 
     public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
     {
+      // for externalGroups, BeginApply was called already in the PlotItemCollection, for localGroups it has to be called here
+      _localGroups.BeginApply();
+
 			_plotStyles.ApplyGroupStyles(externalGroups, _localGroups);
+
+      // for externalGroups, EndApply is called later in the PlotItemCollection, for localGroups it has to be called here
+      _localGroups.EndApply();
     }
 
     /// <summary>

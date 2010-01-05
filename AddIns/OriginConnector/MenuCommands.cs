@@ -36,7 +36,7 @@ namespace Altaxo.Worksheet.Commands
     {
       var comm = new OriginConnection();
       comm.Connect(true);
-      comm.PutTable(ctrl.DataTable, null, false);
+      comm.PutTable(ctrl.DataTable, ctrl.DataTable.Name, false);
       comm.Disconnect(false,null,false);
     }
   }

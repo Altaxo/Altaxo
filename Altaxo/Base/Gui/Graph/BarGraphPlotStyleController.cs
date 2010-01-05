@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Graph
         double basevalue;
         if (!Serialization.GUIConversion.IsDouble(_view.BaseValue, out basevalue))
           return false;
-        _doc.BaseValue = new Altaxo.Data.AltaxoVariant(basevalue);
+        _doc.BaseValue = new Altaxo.Data.AltaxoVariant(basevalue/100);
       }
 
       _doc.StartAtPreviousItem = _view.StartAtPreviousItem;
