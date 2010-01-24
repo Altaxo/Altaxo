@@ -57,6 +57,9 @@ namespace Altaxo.Main
     /// </summary>
     string openProjectFileName = null;
 
+    public ProjectService()
+    {
+    }
 
     //FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
     //ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
@@ -86,7 +89,12 @@ namespace Altaxo.Main
 
 
         if (!object.Equals(oldProject, value))
+        {
+          if(value!=null && oldProject==null)
+            OnProjectOpened(new ProjectEventArgs(openProject));
+
           OnProjectChanged();
+        }
       }
     }
 
@@ -97,8 +105,6 @@ namespace Altaxo.Main
     {
       get { return this.openProjectFileName; }
     }
-
-
 
     /// <summary>
     /// Saves the state of the main window into a zipped file.
@@ -539,6 +545,29 @@ namespace Altaxo.Main
       return contentList;
     }
 
+		/// <summary>
+		/// Gets a set of all open documents, i.e. GraphDocuments, DataTables. (Not Worksheets).
+		/// </summary>
+		/// <returns>The set of all open documents.</returns>
+		public HashSet<object> GetOpenDocuments()
+		{
+			var result = new HashSet<object>();
+			foreach (IViewContent content in Current.Workbench.ViewContentCollection)
+			{
+				object modelobject = null;
+				if (content is Altaxo.Gui.IMVCControllerWrapper)
+				{
+					modelobject = ((Altaxo.Gui.IMVCControllerWrapper)content).MVCController.ModelObject;
+
+					if (modelobject is Altaxo.Worksheet.WorksheetLayout)
+						modelobject = (modelobject as Altaxo.Worksheet.WorksheetLayout).DataTable;
+				}
+				if (null != modelobject && !result.Contains(modelobject))
+					result.Add(modelobject);
+			}
+			return result;
+		}
+
     /// <summary>
     /// Returns true if the given document has at least one open view in the workbench.
     /// </summary>
@@ -548,6 +577,31 @@ namespace Altaxo.Main
     {
       return SearchContentForDocument(document, 1).Count > 0;
     }
+
+    /// <summary>
+    /// Closes all open views for a given document.
+    /// </summary>
+    /// <param name="document"></param>
+    public void CloseDocumentViews(object document)
+    {
+      var list = SearchContentForDocument(document, int.MaxValue);
+      for (int i = list.Count - 1; i >= 0; i--)
+      {
+        list[i].WorkbenchWindow.CloseWindow(true);
+      }
+    }
+
+		/// <summary>
+		/// Shows a view for the given document.
+		/// </summary>
+		/// <param name="document">The document to open.</param>
+		public void ShowDocumentView(object document)
+		{
+			if(document is Altaxo.Data.DataTable)
+				OpenOrCreateWorksheetForTable((Altaxo.Data.DataTable)document);
+			else if (document is Altaxo.Graph.Gdi.GraphDocument)
+				OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)document);
+		}
 
     void SelectFirstAvailableView()
     {
@@ -592,12 +646,21 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Creates a new table and the view content for that table.
+    /// Creates a new table in the root folder and the view content for that table.
     /// </summary>
     /// <returns>The content controller for that table.</returns>
     public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet()
     {
-      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(), false);
+      return CreateNewWorksheetInFolder(Main.ProjectFolder.RootFolderName);
+    }
+
+    /// <summary>
+    /// Creates a new table in a specified folder and the view content for that table.
+    /// </summary>
+    /// <returns>The content controller for that table.</returns>
+    public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheetInFolder(string folder)
+    {
+      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableNameInFolder(folder), false);
     }
 
 
@@ -716,6 +779,16 @@ namespace Altaxo.Main
 		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph()
     {
       return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument());
+    }
+
+    /// <summary>
+    /// Creates a new graph document in a specified folder and the view content.
+    /// </summary>
+    /// <param name="folderName">The folder name where to create the graph.</param>
+    /// <returns>The view content for the newly created graph.</returns>
+    public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder(string folderName)
+    {
+      return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument(folderName));
     }
 
 		/// <summary>

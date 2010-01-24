@@ -158,7 +158,13 @@ namespace Altaxo.Data
     /// Event to signal that the name of this object has changed.
     /// </summary>
     [field: NonSerialized]
-    public event Main.NameChangedEventHandler NameChanged;
+    public event Action<Main.INameOwner, string> NameChanged;
+
+    /// <summary>
+    /// Fired before the name of this table is changed.
+    /// </summary>
+    [field: NonSerialized]
+    public event Action<Main.INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
 
 
     #region "Serialization"
@@ -724,19 +730,25 @@ namespace Altaxo.Data
       }
       set
       {
-        string oldName = _tableName;
-        _tableName = value;
+        if (string.IsNullOrEmpty(value))
+          throw new ArgumentNullException("New name is null or empty");
 
-        if(oldName!=_tableName)
+        if(_tableName!=value)
         {
-          try
+          var e = new System.ComponentModel.CancelEventArgs();
+          if (null != PreviewNameChange)
           {
-            OnNameChanged(oldName,_tableName);
+            PreviewNameChange(this, value, e);
           }
-          catch(Exception ex)
+          if (!e.Cancel)
           {
-            _tableName = oldName;
-            throw ex;
+            string oldName = _tableName;
+            _tableName = value;
+            OnNameChanged(oldName);
+          }
+          else
+          {
+            throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _tableName,value));
           }
         }
       }
@@ -750,16 +762,13 @@ namespace Altaxo.Data
     /// Fires the name change event.
     /// </summary>
     /// <param name="oldName">The name of the table before the change.</param>
-    /// <param name="newName">The name of the table after the change.</param>
-    protected virtual void OnNameChanged(string oldName, string newName)
+    protected virtual void OnNameChanged(string oldName)
     {
-			var e = new Main.NameChangedEventArgs(this, oldName, newName);
-
 			_dataColumns.EhTunnelingEvent(this, this, Main.DocumentPathChangedEventArgs.Empty);
 			_propertyColumns.EhTunnelingEvent(this, this, Main.DocumentPathChangedEventArgs.Empty);
 
       if(NameChanged != null)
-        NameChanged(this, new Main.NameChangedEventArgs(this, oldName, newName));
+        NameChanged(this, oldName);
     }
 
     /// <summary>

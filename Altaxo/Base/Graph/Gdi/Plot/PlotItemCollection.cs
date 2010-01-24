@@ -842,6 +842,21 @@ namespace Altaxo.Graph.Gdi.Plot
       OnChanged();
     }
 
+		public void AddRange(IEnumerable<IGPlotItem> items)
+		{
+			if (items == null)
+				throw new ArgumentNullException();
+
+			foreach (var item in items)
+			{
+				_plotItems.Add(item);
+				WireItem(item);
+			}
+
+			OnCollectionChanged();
+			OnChanged();
+		}
+
     public void Clear()
     {
       _plotItems.Clear();

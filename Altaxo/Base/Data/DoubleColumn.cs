@@ -287,7 +287,9 @@ namespace Altaxo.Data
     #endregion
 
    
-
+    /// <summary>
+    /// Get/sets the data of this DoubleColumn. The data is copied (not directly used) to/from the array.
+    /// </summary>
     public double[] Array
     {
       get 
@@ -403,6 +405,32 @@ namespace Altaxo.Data
       return new RWVector(this, start, count);
     }
 
+
+		/// <summary>
+		/// Gets a copy of the data (of actual row count, starting from position 0).
+		/// </summary>
+		/// <returns>The array with a copy of the data contained in this column.</returns>
+		public double[] ToArray()
+		{
+			return ToArray(0, Count);
+		}
+
+		/// <summary>
+		/// Gets a copy of the data (of actual length, starting from position 0).
+		/// </summary>
+		/// <param name="position">Index of the first row to copy.</param>
+		/// <param name="length">Number of elements to copy.</param>
+		/// <returns>The array with a copy of the data contained in this column.</returns>
+		public double[] ToArray(int position, int length)
+		{
+			if (position < 0)
+				throw new ArgumentOutOfRangeException("position is negative");
+			if (position + length > Count)
+				throw new ArgumentOutOfRangeException("end (position+length) exceeds row count");
+			var result = new double[length];
+			System.Array.Copy(_data, position, result, 0, length);
+			return result;
+		}
 
     /// <summary>
     /// Copies the data from an read-only into the column. The data from index 0 until <c>count-1</c> is copied to the destination.

@@ -77,7 +77,7 @@ namespace Altaxo.Worksheet.Commands
      
 
       // find a new name for the cloned table and add it to the DataTableCollection
-			string newnamebase = Altaxo.Main.NameHelper.CreateFullName(ctrl.DataTable.Name, "WKS");
+			string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.DataTable.Name, "WKS");
       clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).FindNewTableName(newnamebase);
       Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).Add(clonedTable);
       Current.ProjectService.CreateNewWorksheet(clonedTable);

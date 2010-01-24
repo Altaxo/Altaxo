@@ -144,7 +144,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Fired when one or more graphs are added, deleted or renamed. Not fired when content in the graph has changed.
     /// </summary>
-    public event System.EventHandler CollectionChanged;
+    public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
 
     #region IChangedEventSource Members
 
@@ -244,8 +244,9 @@ namespace Altaxo.Graph.Gdi
       // now the table has a unique name in any case
       m_GraphsByName.Add(theGraph.Name,theGraph);
       theGraph.ParentObject = this; 
-      theGraph.NameChanged += new NameChangedEventHandler(this.EhChild_NameChanged);
+      theGraph.NameChanged += EhChild_NameChanged;
       this.OnSelfChanged(ChangedEventArgs.IfItemAdded);
+      OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, theGraph, theGraph.Name);
     }
 
     public void Remove(GraphDocument theGraph)
@@ -257,25 +258,28 @@ namespace Altaxo.Graph.Gdi
         {
           m_GraphsByName.Remove(theGraph.Name);
           theGraph.ParentObject = null;
-          theGraph.NameChanged -= new NameChangedEventHandler(this.EhChild_NameChanged);
+          theGraph.NameChanged -= EhChild_NameChanged;
           this.OnSelfChanged(ChangedEventArgs.IfItemRemoved);
+          OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theGraph, theGraph.Name);
         }
       }
     }
 
-    protected void EhChild_NameChanged(object sender, NameChangedEventArgs e)
+    protected void EhChild_NameChanged(Main.INameOwner item, string oldName)
     {
-      // we remove the old value from the hash and store it under the new value
-      GraphDocument graph = m_GraphsByName[e.OldName];
-      if(graph!=null)
+      if (m_GraphsByName.ContainsKey(item.Name))
       {
-        if(m_GraphsByName.ContainsKey(e.NewName))
-          throw new ApplicationException(string.Format("The GraphDocumentCollection contains already a Graph named {0}, renaming the old graph {1} fails.",e.NewName,e.OldName));
-        m_GraphsByName.Remove(e.OldName);
-        m_GraphsByName[e.NewName] = graph;
-        this.OnSelfChanged(ChangedEventArgs.IfItemRenamed);
+        if (object.ReferenceEquals(m_GraphsByName[item.Name], item))
+          return;
+        else
+          throw new ApplicationException(string.Format("The GraphDocumentCollection contains already a Graph named {0}, renaming the old graph {1} fails.", item.Name, oldName));
       }
+      m_GraphsByName.Remove(oldName);
+      m_GraphsByName[item.Name] = (GraphDocument)item;
+      this.OnSelfChanged(ChangedEventArgs.IfItemRenamed);
+      OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
     }
+
     /// <summary>
     /// Looks for the next free standard  name.
     /// </summary>
@@ -431,9 +435,6 @@ namespace Altaxo.Graph.Gdi
           return;
         }
       }
-      
-      if(m_ChangeData.CollectionChanged)
-        OnCollectionChanged();
 
       OnChanged(); // Fire the changed event
     }
@@ -446,10 +447,10 @@ namespace Altaxo.Graph.Gdi
       m_ChangeData=null;
     }
 
-    protected virtual void OnCollectionChanged()
+    protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)
     {
       if(this.CollectionChanged!=null)
-        CollectionChanged(this,m_ChangeData);
+        CollectionChanged(changeType, item, oldName, item.Name);
     }
 
     #endregion

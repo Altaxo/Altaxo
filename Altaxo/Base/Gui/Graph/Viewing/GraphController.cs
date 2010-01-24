@@ -548,7 +548,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				_view.NumberOfLayers = _doc.Layers.Count;
 		}
 
-		public void EhGraphDocumentNameChanged(object sender, Main.NameChangedEventArgs e)
+		public void EhGraphDocumentNameChanged(Main.INameOwner sender, string oldName)
 		{
 			if (null != _view)
 				_view.GraphViewTitle = Doc.Name;
@@ -1002,9 +1002,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			GraphDocument gd = this.Doc;
 			var dao = Current.Gui.OpenClipboardDataObject();
-
-			string[] formats = dao.GetFormats();
-			System.Diagnostics.Trace.WriteLine("Available formats:");
 
 			if (dao.GetDataPresent("Altaxo.Graph.GraphObjectList"))
 			{

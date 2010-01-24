@@ -328,7 +328,7 @@ namespace Altaxo.Data
 		private static DataTable CreateStatisticalTable(DataTable srcTable, IAscendingIntegerCollection selectedColumns)
 		{
 			DataTable result = new DataTable();
-			result.Name = Altaxo.Main.NameHelper.PrependToName(srcTable.Name,"Statistics of ");
+			result.Name = Altaxo.Main.ProjectFolder.PrependToName(srcTable.Name,"Statistics of ");
 
 
 			result.DataColumns.Add(new TextColumn(), DefaultColumnNameColumnName, ColumnKind.X, 0);

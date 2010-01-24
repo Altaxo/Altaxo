@@ -540,6 +540,7 @@
     <Compile Include="Calc\FitFunctions\Transitions\SmoothedPercolation.cs" />
     <Compile Include="Calc\Regression\Nonlinear\SimpleNonlinearFit.cs" />
     <Compile Include="Collections\AltaxoSet.cs" />
+    <Compile Include="Collections\DictionaryWithNullableKey.cs" />
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\IndexSelection.cs" />
     <Compile Include="Collections\ListNode.cs" />
@@ -551,6 +552,7 @@
     <Compile Include="Data\Extensions\RowCommands.cs" />
     <Compile Include="Data\Extensions\Sorting.cs" />
     <Compile Include="Data\Extensions\StatisticCommands.cs" />
+    <Compile Include="Data\Extensions\DataTableCommands.cs" />
     <Compile Include="Data\Extensions\Transpose.cs" />
     <Compile Include="Graph\CSAxisInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
@@ -755,6 +757,7 @@
     <Compile Include="Gui\Common\IntegerAndComboBoxController.cs" />
     <Compile Include="Gui\Common\IntegerValueInputController.cs" />
     <Compile Include="Gui\Common\IWorkbench.cs" />
+    <Compile Include="Gui\Common\MultiChoiceController.cs" />
     <Compile Include="Gui\Common\MultipleChoiceController.cs" />
     <Compile Include="Gui\Common\NumericDoubleValueController.cs" />
     <Compile Include="Gui\Common\PropertyController.cs" />
@@ -814,7 +817,8 @@
     <Compile Include="Main\DocumentInformation.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />
-    <Compile Include="Main\NameHelper.cs" />
+    <Compile Include="Main\ProjectFolder.cs" />
+    <Compile Include="Main\ProjectFolders.cs" />
     <Compile Include="Main\Services\IPropertyService.cs" />
     <Compile Include="Main\TunnelingAndBubblingEvents.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />

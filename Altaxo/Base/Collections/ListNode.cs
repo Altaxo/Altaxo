@@ -49,6 +49,12 @@ namespace Altaxo.Collections
         return Item.ToString();
       else return base.ToString();
     }
+
+    public virtual int SubItemCount { get { return 0; } }
+    public virtual string SubItemText(int i) { return null; }
+    public virtual string Description { get { return null; } }
+    public virtual System.Drawing.Color? SubItemBackColor(int i) { return null; }
+		public virtual int ImageIndex { get { return 0; } }
   }
 
   public class ListNodeList : List<ListNode>

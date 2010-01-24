@@ -54,8 +54,10 @@ namespace Altaxo.Data
 
     /// <summary>
     /// Fired when one or more tables are added, deleted or renamed. Not fired when content in the table has changed.
+    /// Arguments are the type of change, the item that changed, the old name (if renamed), and the new name (if renamed).
+    /// This event can not be suspended.
     /// </summary>
-    public event System.EventHandler CollectionChanged;
+    public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
 
     [NonSerialized()]
     protected List<Main.ISuspendable> _suspendedChilds = new List<Main.ISuspendable>();
@@ -316,9 +318,6 @@ namespace Altaxo.Data
           }
           if(!IsSuspended)
           {
-            if(_changeData.CollectionChanged)
-              OnCollectionChanged();
-            
             OnDataChanged(); // Fire the changed event
           }   
         }
@@ -359,9 +358,6 @@ namespace Altaxo.Data
           return;
         }
       }
-      
-      if(_changeData.CollectionChanged)
-        OnCollectionChanged();
 
       OnDataChanged(); // Fire the changed event
     }
@@ -371,10 +367,10 @@ namespace Altaxo.Data
       EhChildChanged(null,e);
     }
 
-    protected virtual void OnCollectionChanged()
+    protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)
     {
       if(this.CollectionChanged!=null)
-        CollectionChanged(this,_changeData);
+        CollectionChanged(changeType, item, oldName, item.Name);
     }
 
 
@@ -444,6 +440,7 @@ namespace Altaxo.Data
       Attach(theTable);
 
       // raise data event to all listeners
+      OnCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType.ItemAdded, theTable, theTable.Name);
       this.SelfChanged(ChangedEventArgs.IfTableAdded);
 
     }
@@ -455,7 +452,8 @@ namespace Altaxo.Data
     private void Attach(DataTable theTable)
     {
       theTable.ParentObject = this;
-      theTable.NameChanged += this.EhTableNameChanged;
+      theTable.NameChanged += this.EhItemNameChanged;
+      theTable.PreviewNameChange += this.EhPreviewItemNameChange;
       theTable.ParentChanged += this.EhTableParentChanged;
     }
 
@@ -466,7 +464,8 @@ namespace Altaxo.Data
     private void Detach(DataTable theTable)
     {
       theTable.ParentChanged -= this.EhTableParentChanged;
-      theTable.NameChanged -= this.EhTableNameChanged;
+      theTable.NameChanged -= this.EhItemNameChanged;
+      theTable.PreviewNameChange -= this.EhPreviewItemNameChange;
       theTable.ParentObject = null;
     }
 
@@ -483,8 +482,9 @@ namespace Altaxo.Data
       _tablesByName.Remove(theTable.Name);
       Detach(theTable);
 			theTable.Dispose();
-      this.SelfChanged(ChangedEventArgs.IfTableRemoved);
 
+      OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theTable, theTable.Name);
+      SelfChanged(ChangedEventArgs.IfTableRemoved);
       return true;
     }
 
@@ -497,40 +497,57 @@ namespace Altaxo.Data
         throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
     }
 
-    protected void EhTableNameChanged(object sender, Main.NameChangedEventArgs nce)
+    protected void EhPreviewItemNameChange(Main.INameOwner item, string newName, System.ComponentModel.CancelEventArgs e)
     {
-      if (_tablesByName.ContainsKey(nce.NewName))
+      if (_tablesByName.ContainsKey(newName) && !object.ReferenceEquals(_tablesByName[newName], item))
+          e.Cancel = true;
+    }
+
+    protected void EhItemNameChanged(Main.INameOwner item, string oldName)
+    {
+      if (_tablesByName.ContainsKey(item.Name))
       {
-        if (object.ReferenceEquals(_tablesByName[nce.NewName], sender))
+        if (object.ReferenceEquals(_tablesByName[item.Name], item))
           return; // Table alredy renamed
         else
-          throw new ApplicationException("Table with name " + nce.NewName + " already exists!");
+          throw new ApplicationException("Table with name " + item.Name + " already exists!");
       }
 
-      if (_tablesByName.ContainsKey(nce.OldName))
+      if (_tablesByName.ContainsKey(oldName))
       {
-        if (!object.ReferenceEquals(_tablesByName[nce.OldName], sender))
+        if (!object.ReferenceEquals(_tablesByName[oldName], item))
           throw new ApplicationException("Names between DataTableCollection and Tables not in sync");
 
-        _tablesByName.Remove(nce.OldName);
-        _tablesByName.Add(nce.NewName, (DataTable)sender);
+        _tablesByName.Remove(oldName);
+        _tablesByName.Add(item.Name, (DataTable)item);
 
         SelfChanged(ChangedEventArgs.IfTableRenamed);
+        OnCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
       }
       else
       {
-        throw new ApplicationException("Error renaming table " + nce.OldName + " : this table name was not found in the collection!");
+        throw new ApplicationException("Error renaming table " + oldName + " : this table name was not found in the collection!");
       }
     }
 
     /// <summary>
-    /// Looks for the next free standard table name.
+    /// Looks for the next free standard table name in the root folder.
     /// </summary>
     /// <returns>A new table name unique for this data set.</returns>
     public string FindNewTableName()
     {
-      return FindNewTableName("WKS");
-    } 
+      return FindNewTableNameInFolder(null);
+    }
+
+    /// <summary>
+    /// Looks for the next free standard table name in the specified folder.
+    /// </summary>
+    /// <param name="folder">The folder where to find a unique table name.</param>
+    /// <returns></returns>
+    public string FindNewTableNameInFolder(string folder)
+    {
+      return FindNewTableName(Main.ProjectFolder.Combine(folder, "WKS"));
+    }
 
     /// <summary>
     /// Looks for the next unique table name base on a basic name.

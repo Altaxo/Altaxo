@@ -50,11 +50,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// If true, the selected objects where moved when a MouseMove event is fired
     /// </summary>
-    protected bool m_bMoveObjectsOnMouseMove=false;
+    protected bool _moveObjectsOnMouseMove=false;
     /// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
-    protected PointF m_MoveObjectsLastMovePoint;
+    protected PointF _movedObjectsLastMovePoint;
     /// <summary>If objects where really moved during the moving mode, this value become true</summary>
-    protected bool m_bObjectsWereMoved=false;
+    protected bool _wereObjectsMoved=false;
 
     /// <summary>The graph controller this mouse handler belongs to.</summary>
     protected GraphView _grac;
@@ -70,7 +70,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// The hashtable of the selected objects. The key is the selected object itself,
     /// the data is a int object, which stores the layer number the object belongs to.
     /// </summary>
-    protected System.Collections.Generic.List<IHitTestObject> m_SelectedObjects = new System.Collections.Generic.List<IHitTestObject>();
+    protected List<IHitTestObject> _selectedObjects = new List<IHitTestObject>();
 
     #endregion
 
@@ -91,14 +91,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     public int NumberOfSelectedObjects
     {
-      get { return this.m_SelectedObjects.Count; }
+      get { return this._selectedObjects.Count; }
     }
 
 		public IList<IHitTestObject> SelectedObjects
 		{
 			get
 			{
-				return m_SelectedObjects;
+				return _selectedObjects;
 			}
 		}
 
@@ -109,10 +109,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       get
       {
-        if(m_SelectedObjects.Count!=1)
+        if(_selectedObjects.Count!=1)
           return null;
 
-        foreach(IHitTestObject graphObject in m_SelectedObjects) // foreach is here only for one object!
+        foreach(IHitTestObject graphObject in _selectedObjects) // foreach is here only for one object!
         {
           return graphObject;
         }
@@ -127,10 +127,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       get
       {
-        if(m_SelectedObjects.Count!=1)
+        if(_selectedObjects.Count!=1)
           return null;
 
-        foreach(IHitTestObject graphObject in m_SelectedObjects) // foreach is here only for one object!
+        foreach(IHitTestObject graphObject in _selectedObjects) // foreach is here only for one object!
         {
           return graphObject.HittedObject;
         }
@@ -147,7 +147,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       base.OnMouseMove(e);
         
-      PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - m_MoveObjectsLastMovePoint.Y);
+      PointF mouseDiff = new PointF(e.X - _movedObjectsLastMovePoint.X, e.Y - _movedObjectsLastMovePoint.Y);
       
       if(null!=_grip.Handle)
       {
@@ -159,15 +159,15 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       }
 
       
-      if(m_bMoveObjectsOnMouseMove && 0!= m_SelectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
+      if(_moveObjectsOnMouseMove && 0!= _selectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
       {
         // move all the selected objects to the new position
         // first update the position of the selected objects to reflect the new position
-        m_MoveObjectsLastMovePoint.X = e.X;
-        m_MoveObjectsLastMovePoint.Y = e.Y;
+        _movedObjectsLastMovePoint.X = e.X;
+        _movedObjectsLastMovePoint.Y = e.Y;
 
         // indicate the objects has moved now
-        m_bObjectsWereMoved = true;
+        _wereObjectsMoved = true;
 
 
         // this difference, which is in mouse coordinates, must first be 
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     
         PointF graphDiff = _grac.WinFormsController.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
 
-        foreach(IHitTestObject graphObject in m_SelectedObjects)
+        foreach(IHitTestObject graphObject in _selectedObjects)
         {
           // get the layer number the graphObject belongs to
           //int nLayer = (int)grac.m_SelectedObjects[graphObject];
@@ -256,7 +256,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       {
         if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
         {
-          m_SelectedObjects.Remove(clickedSelectedObject);
+          _selectedObjects.Remove(clickedSelectedObject);
           _grac.WinFormsController.RefreshGraph(); // repaint the graph
         }
         else // not shift or control pressed -> so activate the object moving mode
@@ -275,7 +275,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         {
           if(null!=clickedObject)
           {
-            m_SelectedObjects.Add(clickedObject);
+            _selectedObjects.Add(clickedObject);
             
             StartMovingObjects(mouseXY);
             _grac.WinFormsController.RepaintGraphArea();
@@ -286,7 +286,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           if(null!=clickedObject)
           {
             ClearSelections();
-            m_SelectedObjects.Add(clickedObject);
+            _selectedObjects.Add(clickedObject);
             
             StartMovingObjects(mouseXY);
             _grac.WinFormsController.RepaintGraphArea();
@@ -333,9 +333,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       base.OnDoubleClick(e);
 
       // if there is exactly one object selected, try to open the corresponding configuration dialog
-      if(m_SelectedObjects.Count==1)
+      if(_selectedObjects.Count==1)
       {
-        IEnumerator graphEnum = m_SelectedObjects.GetEnumerator(); // get the enumerator
+        IEnumerator graphEnum = _selectedObjects.GetEnumerator(); // get the enumerator
         graphEnum.MoveNext(); // set the enumerator to the first item
         IHitTestObject graphObject = (IHitTestObject)graphEnum.Current;
 
@@ -377,11 +377,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <param name="currentMousePosition">the current mouse position in pixel</param>
     protected void StartMovingObjects(PointF currentMousePosition)
     {
-      if(!m_bMoveObjectsOnMouseMove)
+      if(!_moveObjectsOnMouseMove)
       {
-        m_bMoveObjectsOnMouseMove=true;
-        m_bObjectsWereMoved=false; // up to now no objects were really moved
-        m_MoveObjectsLastMovePoint = currentMousePosition;
+        _moveObjectsOnMouseMove=true;
+        _wereObjectsMoved=false; // up to now no objects were really moved
+        _movedObjectsLastMovePoint = currentMousePosition;
         _graphDocumentChangedSuppressor = _grac.Doc.BeginUpdate();
 
         // create a frozen bitmap of the graph
@@ -400,11 +400,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     protected void EndMovingObjects()
     {
-      bool bRepaint = m_bObjectsWereMoved; // repaint the graph when objects were really moved
+      bool bRepaint = _wereObjectsMoved; // repaint the graph when objects were really moved
 
-      m_bMoveObjectsOnMouseMove = false;
-      m_bObjectsWereMoved=false;
-      m_MoveObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
+      _moveObjectsOnMouseMove = false;
+      _wereObjectsMoved=false;
+      _movedObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
       _grac.Doc.EndUpdate(ref _graphDocumentChangedSuppressor);        
         
       /*
@@ -439,9 +439,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         }
 
       }
-      else if(m_SelectedObjects.Count>0)
+      else if(_selectedObjects.Count>0)
       {
-        foreach(IHitTestObject graphObject in m_SelectedObjects)
+        foreach(IHitTestObject graphObject in _selectedObjects)
         {
          
           g.DrawPath(Pens.Blue,graphObject.SelectionPath);
@@ -463,7 +463,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(pixelPos); // Graph area coordinates
 
       // have we clicked on one of the already selected objects
-      foreach(IHitTestObject graphObject in m_SelectedObjects)
+      foreach(IHitTestObject graphObject in _selectedObjects)
       {
        
         
@@ -482,8 +482,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     public void ClearSelections()
     {
-      bool bRepaint = (m_SelectedObjects.Count>0); // is a repaint neccessary
-      m_SelectedObjects.Clear();
+      bool bRepaint = (_selectedObjects.Count>0); // is a repaint neccessary
+      _selectedObjects.Clear();
       
       EndMovingObjects();
       

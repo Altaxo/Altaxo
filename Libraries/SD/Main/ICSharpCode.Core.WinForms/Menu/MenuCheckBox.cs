@@ -87,6 +87,10 @@ namespace ICSharpCode.Core.WinForms
 				} else {
 					CreateMenuCommand();
 					if (menuCommand != null) {
+#if ModifiedForAltaxo
+            // Bug
+            menuCommand.Owner = caller;
+#endif
 						Checked = menuCommand.IsChecked;
 					}
 				}

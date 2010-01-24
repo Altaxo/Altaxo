@@ -1624,8 +1624,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are
       // here in horizontal vectors: in our table they are stored in (vertical) columns
-			string newName = this.AnalysisName + " of " + Main.NameHelper.GetNamePart(srctable.Name);
-			newName = Main.NameHelper.CreateFullName(srctable.Name, newName);
+			string newName = this.AnalysisName + " of " + Main.ProjectFolder.GetNamePart(srctable.Name);
+			newName = Main.ProjectFolder.CreateFullName(srctable.Name, newName);
       Altaxo.Data.DataTable table = new Altaxo.Data.DataTable(newName);
       // Fill the Table
       table.Suspend();

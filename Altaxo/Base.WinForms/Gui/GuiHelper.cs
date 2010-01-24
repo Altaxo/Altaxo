@@ -10,40 +10,6 @@ namespace Altaxo.Gui
 {
 	public static class GuiHelper
 	{
-		#region Old collection interfaces
-
-		#region Combobox
-
-		public static void UpdateList(ComboBox comboBox, SelectableListNodeList items)
-		{
-			comboBox.SelectedIndexChanged -= EhComboBoxSelectionChanged;
-			comboBox.BeginUpdate();
-			comboBox.Items.Clear();
-			for (int i = 0; i < items.Count; i++)
-			{
-				comboBox.Items.Add(items[i]);
-				if (items[i].Selected)
-					comboBox.SelectedIndex = i;
-			}
-			comboBox.EndUpdate();
-			comboBox.SelectedIndexChanged += EhComboBoxSelectionChanged;
-		}
-
-		public static void SynchronizeSelectionFromGui(ComboBox comboBox)
-		{
-			for (int i = 0; i < comboBox.Items.Count; i++)
-				((SelectableListNode)comboBox.Items[i]).Selected = (comboBox.SelectedIndex == i);
-		}
-
-		private static void EhComboBoxSelectionChanged(object sender, EventArgs e)
-		{
-			SynchronizeSelectionFromGui((ComboBox)sender);
-		}
-
-		#endregion
-
-		#endregion
-
     #region TreeNode
 
     /// <summary>
@@ -105,14 +71,13 @@ namespace Altaxo.Gui
     }
 
 
-
+ 
     #endregion
 
-    #region New collection interfaces
-#if(false)
+  
     #region Combobox
 
-		public static void UpdateList(ComboBox comboBox, SelectableListNodeList<SelectableListNode> items)
+		public static void UpdateList(ComboBox comboBox, SelectableListNodeList items)
 		{
 			comboBox.SelectedIndexChanged -= EhComboBoxSelectionChanged;
 			comboBox.BeginUpdate();
@@ -142,7 +107,7 @@ namespace Altaxo.Gui
 
     #region ListBox
 
-		public static void UpdateList(ListBox listView, SelectableListNodeList<SelectableListNode> items)
+		public static void UpdateList(ListBox listView, SelectableListNodeList items)
 		{
 			listView.SelectedIndexChanged -= EhListBoxSelectedIndexChanged;
 			listView.BeginUpdate();
@@ -183,7 +148,7 @@ namespace Altaxo.Gui
 
     #region ListView
 
-		public static void UpdateList( ListView listView, SelectableListNodeList<SelectableListNode> items)
+		public static void UpdateList( ListView listView, SelectableListNodeList items)
     {
       listView.BeginUpdate();
 
@@ -213,6 +178,7 @@ namespace Altaxo.Gui
 
         litem.Text = items[i].Name;
 				litem.ToolTipText = items[i].Description;
+				litem.ImageIndex = items[i].ImageIndex;
 				for (int j = 0; j < items[i].SubItemCount; j++)
 				{
 					litem.SubItems[j + 1].Text = items[i].SubItemText(j);
@@ -236,7 +202,7 @@ namespace Altaxo.Gui
 
 	
 
-    public static void SynchronizeSelectionFromGui(ListView listView, object items)
+    public static void SynchronizeSelectionFromGui(ListView listView)
     {
       foreach (ListViewItem lvitem in listView.Items)
       {
@@ -249,8 +215,5 @@ namespace Altaxo.Gui
 
     #endregion
 
-#endif
-
-    #endregion
   }
 }

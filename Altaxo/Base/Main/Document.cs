@@ -49,6 +49,8 @@ namespace Altaxo
 
     private Altaxo.Scripting.FitFunctionScriptCollection _FitFunctionScripts;
 
+		protected ProjectFolders _projectFolders;
+
 		/// <summary>
 		/// A short string to identify the document. This string can be shown for instance in the graph windows.
 		/// </summary>
@@ -70,8 +72,7 @@ namespace Altaxo
       m_GraphSet = new GraphDocumentCollection(this);
       m_TableLayoutList = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
       _FitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
-      //  m_Worksheets = new System.Collections.ArrayList();
-      //  m_GraphForms = new System.Collections.ArrayList();
+			_projectFolders = new ProjectFolders(this);
     }
 
     #region Serialization
@@ -309,10 +310,19 @@ namespace Altaxo
     {
       get { return this.m_TableLayoutList; }
     }
+
     public Altaxo.Scripting.FitFunctionScriptCollection FitFunctionScripts
     {
       get { return _FitFunctionScripts; }
     }
+
+		/// <summary>
+		/// Get information about the folders in this project.
+		/// </summary>
+		public ProjectFolders Folders
+		{
+			get { return _projectFolders; }
+		}
 
 		public string DocumentIdentifier
 		{
@@ -343,7 +353,6 @@ namespace Altaxo
         {
           OnDirtyChanged();
         }
-
       }
     }
 

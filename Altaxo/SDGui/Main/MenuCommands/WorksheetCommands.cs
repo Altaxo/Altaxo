@@ -151,6 +151,13 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.EditCommands.RemoveSelected(ctrl);
     }
   }
+  public class RemoveAllButSelected : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.EditCommands.RemoveAllButSelected(ctrl);
+    }
+  }
   public class EditClean : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

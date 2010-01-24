@@ -236,6 +236,60 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
+    /// Remove all but the selected columns, rows or property columns.
+    /// </summary>
+		public static void RemoveAllButSelected(IWorksheetController ctrl)
+		{
+			ctrl.DataTable.Suspend();
+
+
+			// Property columns are only deleted, if selected alone or in conjunction with data row selection
+			if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyRows.Count == 0 && ctrl.SelectedDataColumns.Count == 0)
+			{
+				for (int i = ctrl.DataTable.PropertyColumnCount - 1; i >= 0; i--)
+				{
+					if (!ctrl.SelectedPropertyColumns.Contains(i))
+						ctrl.DataTable.PropertyColumns.RemoveColumn(i);
+				}
+
+				ctrl.SelectedPropertyColumns.Clear();
+				ctrl.SelectedPropertyRows.Clear();
+			}
+			// note here: Property rows are only removed indirect by removing data columns
+
+
+			// delete the selected columns if there are _only selected columns
+			if (ctrl.SelectedDataColumns.Count > 0)
+			{
+				for (int i = ctrl.DataTable.DataColumnCount - 1; i >= 0; i--)
+				{
+					if (!ctrl.SelectedDataColumns.Contains(i))
+						ctrl.DataTable.RemoveColumns(i, 1);
+				}
+				ctrl.SelectedDataColumns.Clear(); // now the columns are deleted, so they cannot be selected
+			}
+
+			// if rows are selected, remove them in all selected columns or in all columns (if no column selection=
+			if (ctrl.SelectedDataRows.Count > 0)
+			{
+				for (int i = ctrl.DataTable.DataRowCount - 1; i >= 0; i--)
+				{
+					if (!ctrl.SelectedDataRows.Contains(i))
+						ctrl.DataTable.DataColumns.RemoveRow(i);
+				}
+
+					ctrl.SelectedDataColumns.Clear();
+					ctrl.SelectedDataRows.Clear();
+				
+			}
+
+			// end code for the selected rows
+			ctrl.DataTable.Resume();
+			ctrl.UpdateTableView(); // necessary because we changed the selections
+		}
+
+
+    /// <summary>
     /// This commands clean all selected cells.
     /// </summary>
     /// <param name="ctrl">The worksheet controller.</param>

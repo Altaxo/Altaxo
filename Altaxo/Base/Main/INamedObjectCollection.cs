@@ -31,9 +31,31 @@ namespace Altaxo.Main
   /// </summary>
   public interface INameOwner
   {
+    /// <summary>The name of the name owner.</summary>
     string Name { get; }
+    
+    /// <summary>Fired if the name has changed. Arguments are the name owner (which has already the new name), and the old name.</summary>
+    event Action<INameOwner, string> NameChanged;
+
+    /// <summary>Fired before the name will change. Arguments are the name owner (which has still the old name, the new name, and CancelEventArgs.
+    /// If any of the listeners set Cancel to true, the name will not be changed.</summary>
+    event Action<INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
   }
 
+  /// <summary>
+  /// Designates the type of change in an collection of named items.
+  /// </summary>
+  public enum NamedObjectCollectionChangeType
+  {
+    /// <summary>A new item was added to the collection.</summary>
+    ItemAdded,
+    /// <summary>An item was removed from the collection.</summary>
+    ItemRemoved,
+    /// <summary>An item was renamed.</summary>
+    ItemRenamed,
+    /// <summary>More than one item was added, removed or renamed.</summary>
+    MultipleChanges,
+  }
 
   /// <summary>
   /// Summary description for INamedObjectCollection.

@@ -99,6 +99,17 @@ namespace Altaxo.Collections
       Nodes.AddRange(nodes);
     }
 
+		/// <summary>
+		/// Returns an image index, or null if no image is set. The implementation here returns null, but can be overriden.
+		/// </summary>
+		public virtual int? ImageIndex { get { return null; } }
+
+		/// <summary>
+		/// Returns an image index (for the selected node), or null if no image is set. The implementation here returns null, but can be overriden.
+		/// </summary>
+		public virtual int? SelectedImageIndex { get { return null; } }
+
+
     /// <summary>
     /// Tests for childs without creating a child collection.
     /// </summary>

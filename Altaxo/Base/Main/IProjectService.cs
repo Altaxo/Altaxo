@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Main
@@ -125,7 +126,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// </summary>
-    string CurrentProjectFileName { get; } 
+    string CurrentProjectFileName { get; }
 
     /// <summary>
     /// Opens a Altaxo project. If the current project is dirty, the user is ask for saving the current project.
@@ -170,6 +171,26 @@ namespace Altaxo.Main
     /// <returns>True if there is at least one open view for the document.</returns>
     bool HasDocumentAnOpenView(object document);
 
+
+		/// <summary>
+		/// Gets a set of all open documents, i.e. GraphDocuments, DataTables. (Not Worksheets).
+		/// </summary>
+		/// <returns>The set of all open documents.</returns>
+		HashSet<object> GetOpenDocuments();
+
+        /// <summary>
+    /// Closes all open views for a given document.
+    /// </summary>
+    /// <param name="document">The document.</param>
+    void CloseDocumentViews(object document);
+
+		/// <summary>
+		/// Shows a view for the given document.
+		/// </summary>
+		/// <param name="document">The document to open.</param>
+		void ShowDocumentView(object document);
+
+
     /// <summary>
     /// This function will delete a data table and close the corresponding views.
     /// </summary>
@@ -191,6 +212,13 @@ namespace Altaxo.Main
     /// </summary>
     /// <returns>The content controller for that table.</returns>
     Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet();
+
+    /// <summary>
+    /// Creates a new table and the view content for the newly created table.
+    /// </summary>
+    /// <param name="folder">The folder where to create the worksheet. Set null for the root folder.</param>
+    /// <returns>The content controller for that table.</returns>
+    Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheetInFolder(string folder);
 
     /// <summary>
     /// Creates a view content for a table.
@@ -227,6 +255,13 @@ namespace Altaxo.Main
     /// </summary>
     /// <returns>The view content for the newly created graph.</returns>
     Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph();
+
+    /// <summary>
+    /// Creates a new graph document in a specified folder and the view for this newly created graph document.
+    /// </summary>
+    /// <param name="folderName">The folder where to create the new graph.</param>
+    /// <returns>The view content for the newly created graph.</returns>
+    Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder(string folderName);
 
 		/// <summary>
 		/// Creates a new graph document and the view for this newly created graph document.

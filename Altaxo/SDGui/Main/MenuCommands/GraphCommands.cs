@@ -506,7 +506,7 @@ namespace Altaxo.Graph.Commands
     public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
     {
       GraphDocument newDoc = new GraphDocument(ctrl.Doc);
-			string newnamebase = Altaxo.Main.NameHelper.CreateFullName(ctrl.Doc.Name, "GRAPH");
+			string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
 			newDoc.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
       Current.Project.GraphDocumentCollection.Add(newDoc);
       Current.ProjectService.CreateNewGraph(newDoc);

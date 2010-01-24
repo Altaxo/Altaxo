@@ -140,9 +140,20 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Pads\OutputWindowController.cs" />
-    <Compile Include="Gui\Pads\ProjectBrowser\ProjectTree.cs">
-      <SubType>Component</SubType>
+    <Compile Include="Gui\Pads\ProjectBrowser\ConditionEvaluators.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ItemHandler.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ListItemCommands.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\NGuiItems.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.Designer.cs">
+      <DependentUpon>ProjectBrowseControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseController.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowserExtensions.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\TreeItemCommands.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\GuiTreeNodes.cs" />
     <Compile Include="Gui\Scripting\SDPureScriptControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -152,9 +163,6 @@
     </Compile>
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
     <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Pads\ProjectBrowser\ProjectScout.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Main\MenuCommands\AutostartCommands.cs">
@@ -193,9 +201,8 @@
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="Gui\Pads\ProjectBrowser\ProjectScout.resx">
-      <DependentUpon>ProjectScout.cs</DependentUpon>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.resx">
+      <DependentUpon>ProjectBrowseControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\SDPureScriptControl.resx">
       <DependentUpon>SDPureScriptControl.cs</DependentUpon>

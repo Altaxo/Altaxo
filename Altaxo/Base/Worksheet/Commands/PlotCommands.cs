@@ -46,90 +46,110 @@ namespace Altaxo.Worksheet.Commands
 
     public static List<IGPlotItem> CreatePlotItems(DataTable table, IAscendingIntegerCollection selectedColumns, G2DPlotStyleCollection templatePlotStyle)
     {
-      int len = selectedColumns.Count;
-      int numColumns = table.DataColumnCount;
+			var selColumns = new List<DataColumn>(selectedColumns.Count);
+			foreach(int i in selectedColumns)
+				selColumns.Add(table[i]);
 
-      List<IGPlotItem> result = new List<IGPlotItem>();
-      ErrorBarPlotStyle unpairedPositiveError = null;
-      ErrorBarPlotStyle unpairedNegativeError = null;
-      AscendingIntegerCollection processedColumns = new AscendingIntegerCollection();
-
-      int idx;
-      for (int sci = 0; sci < len; sci++)
-      {
-        idx = selectedColumns[sci];
-        if (processedColumns.Contains(idx))
-          continue;
-        else
-          processedColumns.Add(idx);
-
-        Altaxo.Data.DataColumn ycol = table[idx];
-        Altaxo.Data.DataColumn xcol = table.DataColumns.FindXColumnOf(ycol);
-        XYColumnPlotData pa;
-        if (null != xcol)
-          pa = new XYColumnPlotData(xcol, ycol);
-        else
-          pa = new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol);
-
-        G2DPlotStyleCollection ps = templatePlotStyle!=null? (G2DPlotStyleCollection)templatePlotStyle.Clone() : new G2DPlotStyleCollection();
-
-        bool foundMoreColumns = true;
-        for(idx=idx+1;foundMoreColumns && idx<numColumns;idx++)
-        {
-          DataColumn col = table.DataColumns[idx];
-          switch (table.DataColumns.GetColumnKind(idx))
-          {
-            case ColumnKind.Label:
-              LabelPlotStyle labelStyle = new LabelPlotStyle(col);
-              ps.Insert(0, labelStyle);
-              break;
-            case ColumnKind.Err:
-              ErrorBarPlotStyle errStyle = new ErrorBarPlotStyle();
-              errStyle.PositiveErrorColumn = col as INumericColumn;
-              errStyle.NegativeErrorColumn = col as INumericColumn;
-              ps.Add(errStyle);
-              break;
-            case ColumnKind.pErr:
-              if (null != unpairedNegativeError)
-              {
-                unpairedNegativeError.PositiveErrorColumn = col as INumericColumn; ;
-                unpairedNegativeError = null;
-              }
-              else
-              {
-                unpairedPositiveError = new ErrorBarPlotStyle();
-                unpairedPositiveError.PositiveErrorColumn = col as INumericColumn;
-                ps.Add(unpairedPositiveError);
-              }
-              break;
-            case ColumnKind.mErr:
-              if (null != unpairedPositiveError)
-              {
-                unpairedPositiveError.NegativeErrorColumn = col as INumericColumn;
-                unpairedPositiveError = null;
-              }
-              else
-              {
-                unpairedNegativeError = new ErrorBarPlotStyle();
-                unpairedNegativeError.NegativeErrorColumn = col as INumericColumn;
-                ps.Add(unpairedNegativeError);
-              }
-              break;
-            default:
-              foundMoreColumns = false;
-              break;
-          }
-
-          if (foundMoreColumns)
-            processedColumns.Add(idx);
-
-        } 
-
-        result.Add(new XYColumnPlotItem(pa,ps));
-      }
-
-      return result;
+			return CreatePlotItems(selColumns, templatePlotStyle);
     }
+
+		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle)
+		{
+			return CreatePlotItems(selectedColumns, templatePlotStyle, new HashSet<DataColumn>());
+		}
+
+		/// <summary>
+		/// Creates a list of plot items from data columns, using a template plot style.
+		/// </summary>
+		/// <param name="selectedColumns">Columns for which to create plot items.</param>
+		/// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
+		/// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
+		/// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
+		/// labels, yerr, and so on.</param>
+		/// <returns>List of plot items created.</returns>
+		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns)
+		{
+			var result = new List<IGPlotItem>();
+			foreach(DataColumn ycol in selectedColumns)
+			{
+				if (processedColumns.Contains(ycol))
+					continue;
+				else
+					processedColumns.Add(ycol);
+
+				DataColumnCollection table = DataColumnCollection.GetParentDataColumnCollectionOf(ycol);
+				Altaxo.Data.DataColumn xcol = null==table ? null : table.FindXColumnOf(ycol);
+				XYColumnPlotData pa;
+				if (null != xcol)
+					pa = new XYColumnPlotData(xcol, ycol);
+				else
+					pa = new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol);
+
+				G2DPlotStyleCollection ps = templatePlotStyle != null ? (G2DPlotStyleCollection)templatePlotStyle.Clone() : new G2DPlotStyleCollection();
+
+				if (null == table)
+					continue;
+
+				ErrorBarPlotStyle unpairedPositiveError = null;
+				ErrorBarPlotStyle unpairedNegativeError = null;
+
+				bool foundMoreColumns = true;
+				for (int idx = 1+table.GetColumnNumber(ycol); foundMoreColumns && idx < table.ColumnCount; idx++)
+				{
+					DataColumn col = table[idx];
+					switch (table.GetColumnKind(idx))
+					{
+						case ColumnKind.Label:
+							LabelPlotStyle labelStyle = new LabelPlotStyle(col);
+							ps.Insert(0, labelStyle);
+							break;
+						case ColumnKind.Err:
+							ErrorBarPlotStyle errStyle = new ErrorBarPlotStyle();
+							errStyle.PositiveErrorColumn = col as INumericColumn;
+							errStyle.NegativeErrorColumn = col as INumericColumn;
+							ps.Add(errStyle);
+							break;
+						case ColumnKind.pErr:
+							if (null != unpairedNegativeError)
+							{
+								unpairedNegativeError.PositiveErrorColumn = col as INumericColumn; ;
+								unpairedNegativeError = null;
+							}
+							else
+							{
+								unpairedPositiveError = new ErrorBarPlotStyle();
+								unpairedPositiveError.PositiveErrorColumn = col as INumericColumn;
+								ps.Add(unpairedPositiveError);
+							}
+							break;
+						case ColumnKind.mErr:
+							if (null != unpairedPositiveError)
+							{
+								unpairedPositiveError.NegativeErrorColumn = col as INumericColumn;
+								unpairedPositiveError = null;
+							}
+							else
+							{
+								unpairedNegativeError = new ErrorBarPlotStyle();
+								unpairedNegativeError.NegativeErrorColumn = col as INumericColumn;
+								ps.Add(unpairedNegativeError);
+							}
+							break;
+						default:
+							foundMoreColumns = false;
+							break;
+					}
+
+					if (foundMoreColumns)
+						processedColumns.Add(table[idx]);
+				}
+
+				result.Add(new XYColumnPlotItem(pa, ps));
+			}
+			return result;
+		}
+
+
 
     #region Predefined plot style collections
 
@@ -335,7 +355,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
 			if (string.IsNullOrEmpty(preferredGraphName))
 			{
-				string newnamebase = Altaxo.Main.NameHelper.CreateFullName(table.Name, "GRAPH");
+				string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(table.Name, "GRAPH");
 				graph.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
 			}
 			else

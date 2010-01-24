@@ -220,6 +220,12 @@
     <Compile Include="Gui\Common\MultiChildControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Common\MultiChoiceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\MultiChoiceControl.Designer.cs">
+      <DependentUpon>MultiChoiceControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\MWTreeView\EditorHatchStyle.cs" />
     <Compile Include="Gui\Common\MWTreeView\EditorHatchStyleUI.cs">
       <SubType>UserControl</SubType>
@@ -559,6 +565,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\MultiChoiceControl.resx">
+      <DependentUpon>MultiChoiceControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MWTreeView\EditorHatchStyleUI.resx">
       <DependentUpon>EditorHatchStyleUI.cs</DependentUpon>

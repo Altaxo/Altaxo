@@ -114,6 +114,7 @@
     <Compile Include="Data\DoubleColumn_Test.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\ProjectFolder_Test.cs" />
     <Compile Include="Serialization\Xml\XmlStreamSerializationTest.cs">
       <SubType>Code</SubType>
     </Compile>

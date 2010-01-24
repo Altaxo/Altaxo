@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				{
 					//oldTable.DataColumns.Changed -= new EventHandler(this.EhTableDataChanged);
 					//oldTable.PropCols.Changed -= new EventHandler(this.EhPropertyDataChanged);
-					oldTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
+					oldTable.NameChanged -= this.EhTableNameChanged;
 				}
 
 				_table = newTable;
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				{
 					//newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
 					//newTable.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
-					newTable.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
+					newTable.NameChanged += this.EhTableNameChanged;
 					OnTitleNameChanged();
 				}
 			}
@@ -291,7 +291,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				TitleNameChanged(this, e);
 		}
 
-		public void EhTableNameChanged(object sender, Main.NameChangedEventArgs e)
+		public void EhTableNameChanged(Main.INameOwner sender, string oldName)
 		{
 			if (_view != null)
 				_view.TableViewTitle = _table.Name;

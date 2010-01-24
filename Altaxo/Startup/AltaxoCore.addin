@@ -50,6 +50,7 @@
       <ConditionEvaluator name="SelectedPropertyColumns" class="Altaxo.Worksheet.Commands.SelectedPropertyConditionEvaluator"/>
       <ConditionEvaluator name="ContainsPLSModelData" class="Altaxo.Worksheet.Commands.PLSModelConditionEvaluator"/>
       <ConditionEvaluator name="Clipboard" class="Altaxo.Main.Commands.ClipboardContentConditionEvaluator"/>
+			<ConditionEvaluator name="ProjbrowserListItemSelection" class="Altaxo.Gui.Pads.ProjectBrowser.ListItemSelectionEvaluator"/>
       <Doozer name="Texture" class="Altaxo.Main.TextureDoozer"/>
     </Import>
 	</Runtime>
@@ -77,8 +78,8 @@
         title    = "${res:MainWindow.Windows.ProjectScoutLabel}"
         icon     = "PadIcons.ProjectBrowser"
         shortcut = "Control|Alt|P"
-        class    = "Altaxo.Gui.Pads.ProjectScout"/>
-
+        class    = "Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowseControl"/>
+    
     <Pad id       = "AltaxoOutputWindow"
         category = "Main"
         title    = "${res:MainWindow.Windows.OutputWindow}"
@@ -658,7 +659,7 @@
         class="Altaxo.Graph.Commands.RectangleDrawingTool" />
       <ToolbarItem id="EllipseDrawingTool" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
         class="Altaxo.Graph.Commands.EllipseDrawingTool" />
-			<ToolbarItem id="CurlyBraceDrawingTool" icon="Icons.16x16.Rectangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Rectangle.Description}"
+			<ToolbarItem id="CurlyBraceDrawingTool" icon="Icons.16x16.CurlyBrace" tooltip="${res:XML.MainMenu.GraphMenu.Tools.CurlyBrace.Description}"
         class="Altaxo.Graph.Commands.CurlyBraceDrawingTool" />
 			<ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
         class="Altaxo.Graph.Commands.ZoomAxesTool" />
@@ -754,6 +755,8 @@
       description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
     <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
       description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
+    <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.DeleteAllButSelected}" icon="Icons.16x16.DeleteIcon"
+      description="${res:XML.MainMenu.EditMenu.DeleteAllButSelected.Description}" class="Altaxo.Worksheet.Commands.RemoveAllButSelected" />
   </Path>
 
   <Path name = "/Altaxo/Views/Worksheet/DataRowHeader/ContextMenu">
@@ -835,13 +838,81 @@
 			<MenuItem id="PasteHere" label="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer}" description="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer.Description}"
 								class="Altaxo.Graph.Commands.PasteInActiveLayer" />
 		</Condition>
-		<MenuItem id="Delete" label="${res:XML.MainMenu.LayerMenu.MoveActiveLayer}" description="${res:XML.MainMenu.LayerMenu.MoveActiveLayer.Description}"
+		<MenuItem id="Move" label="${res:XML.MainMenu.LayerMenu.MoveActiveLayer}" description="${res:XML.MainMenu.LayerMenu.MoveActiveLayer.Description}"
 							class="Altaxo.Graph.Commands.MoveActiveLayer" />
 		<MenuItem id="Delete" label="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer}" description="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer.Description}"
 							class="Altaxo.Graph.Commands.DeleteActiveLayer" />
 	</Path>
 
-	<Path name = "/Altaxo/BuiltinTextures">
+	<Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
+		<Condition name="ProjbrowserListItemSelection" selcount=">0" action="Exclude">
+			<MenuItem id="Show" label="${res:XML.ProjectBrowserMenu.Show}" description="${res:XML.ProjectBrowserMenu.Show.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemShow" />
+			<MenuItem id="Hide" label="${res:XML.ProjectBrowserMenu.Hide}" description="${res:XML.ProjectBrowserMenu.Hide.Description}"
+								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemHide" />
+			<MenuItem id="Delete" label="${res:XML.ProjectBrowserMenu.Delete}" description="${res:XML.ProjectBrowserMenu.Delete.Description}"
+								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemDelete" />
+		</Condition>
+    <Condition name="ProjbrowserListItemSelection" selcount=">1" selitems="Altaxo.Data.DataTable" action="Disable">
+      <MenuItem id="PlotCommonCols" label="${res:XML.ProjectBrowserMenu.PlotCommonColumns}" description="${res:XML.ProjectBrowserMenu.PlotCommonColumns.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdPlotCommonColumns" />
+    </Condition>
+    <MenuItem id="NewWindow" label="${res:XML.MainMenu.FileMenu.New}" type="Menu">
+      <MenuItem id="NewEmptyWorksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"
+                icon="Icons.16x16.EmptyWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewEmptyWorksheet" />
+      <MenuItem id="NewStandardWorksheet" label="${res:XML.MainMenu.FileMenu.New.StandardWorksheet}" description="${res:XML.MainMenu.FileMenu.New.StandardWorksheet.Description}"
+                icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
+      <MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
+                icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
+    </MenuItem>
+    <MenuItem id="ViewOnSelect" label="${res:XML.ProjectBrowserMenu.ViewOnSelect}" type="Menu">
+      <MenuItem id="ViewOnSelectOff" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOff}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOff.Description}" type="CheckBox"
+                class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectListNodeOff" />
+      <MenuItem id="ViewOnSelectOn" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOn}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOn.Description}" type="CheckBox"
+                class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectListNodeOn" />
+    </MenuItem>
+  </Path>
+
+  <Path name="/Altaxo/Pads/ProjectBrowser/TreeNode/ContextMenu">
+    <MenuItem id="ShowWindows" label="${res:XML.ProjectBrowserMenu.ShowAllWindows}" description="${res:XML.ProjectBrowserMenu.ShowAllWindows.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdTreeNodeShowWindows" />
+    <MenuItem id="ShowWindowsRec" label="${res:XML.ProjectBrowserMenu.ShowAllWindowsRecursively}" description="${res:XML.ProjectBrowserMenu.ShowAllWindowsRecursively.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdTreeNodeShowWindowsRecursively" />
+    <MenuItem id="HideWindows" label="${res:XML.ProjectBrowserMenu.HideAllWindows}" description="${res:XML.ProjectBrowserMenu.HideAllWindows.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdTreeNodeHideWindows" />
+    <MenuItem id="HideWindowsRec" label="${res:XML.ProjectBrowserMenu.HideAllWindowsRecursively}" description="${res:XML.ProjectBrowserMenu.HideAllWindowsRecursively}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdTreeNodeHideWindowsRecursively" />
+    <MenuItem id="Separator1" type = "Separator"/>
+		<MenuItem id="NewWindow" label="${res:XML.MainMenu.FileMenu.New}" type="Menu">
+			<MenuItem id="NewEmptyWorksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"
+                icon="Icons.16x16.EmptyWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewEmptyWorksheet" />
+			<MenuItem id="NewStandardWorksheet" label="${res:XML.MainMenu.FileMenu.New.StandardWorksheet}" description="${res:XML.MainMenu.FileMenu.New.StandardWorksheet.Description}"
+                icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
+			<MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
+                icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
+		</MenuItem>
+		<MenuItem id="Separator2" type = "Separator"/>
+    <MenuItem id="Rename" label="${res:XML.ProjectBrowserMenu.RenameFolder}" description="${res:XML.ProjectBrowserMenu.RenameFolder.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdTreeNodeFolderRename" />
+    <MenuItem id="Delete" label="${res:XML.ProjectBrowserMenu.DeleteFolder}" description="${res:XML.ProjectBrowserMenu.DeleteFolder.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdTreeNodeFolderDelete" />
+
+
+
+  </Path>
+
+  <Path name="/Altaxo/Pads/ProjectBrowser/TreeView/ContextMenu">
+    <MenuItem id="ViewOnSelectOff" label="${res:XML.ProjectBrowserMenu.ViewOnSelectTNOff}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectTNOff.Description}" type="CheckBox"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectOff" />
+    <MenuItem id="ViewOnSelectFolderItems" label="${res:XML.ProjectBrowserMenu.ViewFolderItemsOnSelectTN}" description="${res:XML.ProjectBrowserMenu.ViewFolderItemsOnSelectTN.Description}" type="CheckBox"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectFolderItems" />
+    <MenuItem id="ViewOnSelectFolderAndSubfolderItems" label="${res:XML.ProjectBrowserMenu.ViewFolderAndSubfolderItemsOnSelectTN}" description="${res:XML.ProjectBrowserMenu.ViewFolderAndSubfolderItemsOnSelectTN.Description}" type="CheckBox"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectFolderAndSubfolderItems" />
+  </Path>
+
+
+
+  <Path name = "/Altaxo/BuiltinTextures">
     <Texture id="Caustics/BlueCaustic" resource = "Textures.Caustics.BlueCaustics"/>
     <Texture id="Marbel/DarkMarble1" resource = "Textures.Marble.DarkMarble1"/>
     <Texture id="Marbel/RedMarble1" resource = "Textures.Marble.RedMarble1"/>

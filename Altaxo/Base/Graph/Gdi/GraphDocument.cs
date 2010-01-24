@@ -119,9 +119,17 @@ namespace Altaxo.Graph.Gdi
     [NonSerialized]
     Main.EventSuppressor _changedEventSuppressor;
 
-    /// <summary>Event fired when the name changed.</summary>
+    /// <summary>
+    /// Event to signal that the name of this object has changed.
+    /// </summary>
     [field: NonSerialized]
-    public event NameChangedEventHandler NameChanged;
+    public event Action<Main.INameOwner, string> NameChanged;
+
+    /// <summary>
+    /// Fired before the name of this object is changed.
+    /// </summary>
+    [field: NonSerialized]
+    public event Action<Main.INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
 
     /// <summary>Event fired if either the PageBounds or the PrintableBounds changed.</summary>
     [field: NonSerialized]
@@ -447,6 +455,9 @@ namespace Altaxo.Graph.Gdi
       get { return _name; }
       set
       {
+        if (string.IsNullOrEmpty(value))
+          throw new ArgumentNullException("New name is null or empty");
+
         if (_name != value)
         {
           // test if an object with this name is already in the parent
@@ -456,17 +467,17 @@ namespace Altaxo.Graph.Gdi
 
           string oldValue = _name;
           _name = value;
-          OnNameChanged(this, oldValue, value);
+          OnNameChanged(oldValue);
         }
       }
     }
 
 
 
-    public virtual void OnNameChanged(object sender, string oldValue, string newValue)
+    public virtual void OnNameChanged(string oldValue)
     {
       if (NameChanged != null)
-        NameChanged(sender, new Altaxo.Main.NameChangedEventArgs(this, oldValue, newValue));
+        NameChanged(this, oldValue);
     }
 
     /// <summary>

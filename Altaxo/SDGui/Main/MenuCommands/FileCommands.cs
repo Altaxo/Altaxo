@@ -33,6 +33,8 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Main.Commands
 {
+  using Altaxo.Data;
+
   /// <summary>
   /// Loader for altaxo project files
   /// </summary>
@@ -78,8 +80,7 @@ namespace Altaxo.Main.Commands
     public override void Run()
     {
       var controller = Current.ProjectService.CreateNewWorksheet();
-      controller.DataTable.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"A",Altaxo.Data.ColumnKind.X);
-      controller.DataTable.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"B",Altaxo.Data.ColumnKind.V);
+      controller.DataTable.AddStandardColumns();
     }
   }
   
