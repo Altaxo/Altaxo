@@ -236,12 +236,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           );
 
       var subfolderList = Current.Project.Folders.GetSubfoldersAsStringList(_folderName);
+			subfolderList.Sort();
       foreach (var o in subfolderList)
       {
           _list.Add(new BrowserListItem(Main.ProjectFolder.GetNamePart(o), new Main.ProjectFolder(o), false) { Image = ProjectBrowseItemImage.OpenFolder });
       }
 
       var itemList = Current.Project.Folders.GetItemsInFolder(_folderName);
+			itemList.Sort(CompareItemsByName);
       foreach (var o in itemList)
       {
         if (o is Altaxo.Data.DataTable)
@@ -265,6 +267,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       return _list;
     }
+
+		private static int CompareItemsByName(object a, object b)
+		{
+			string sa = (a is Main.INameOwner)? ((Main.INameOwner)a).Name : string.Empty;
+			string sb = (b is Main.INameOwner)? ((Main.INameOwner)b).Name : string.Empty;
+			return string.Compare(sa, sb);
+		}
 
 		/// <summary>
 		/// Starts monitoring of item changes in the current project folder.

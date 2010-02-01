@@ -505,8 +505,9 @@ namespace Altaxo.Serialization.Ascii
       {
         using (var myStream = GetAsciiInputFileStream(filenames[i]))
         {
-          Altaxo.Gui.Worksheet.Viewing.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
-          Import(myStream, newwkscontroller.DataTable);
+          var newTable = new DataTable(System.IO.Path.GetFileNameWithoutExtension(filenames[i]));
+          Current.ProjectService.CreateNewWorksheet(newTable);
+          Import(myStream, newTable);
           myStream.Close();
         }
       } // for all files

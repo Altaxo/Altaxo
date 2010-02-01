@@ -165,8 +165,8 @@ namespace Altaxo.Graph.Gdi.Plot
       DensityImagePlotItem from = fromb as DensityImagePlotItem;
       if (null != from)
       {
-        this.Data = from.Data;   // also wires the event
-        this.Style = from.Style; // also wires the event
+        this.Data = from.m_PlotAssociation.Clone();   // also wires the event
+        this.Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
       }
     }
 

@@ -24,6 +24,19 @@ using System;
 
 namespace Altaxo.Main
 {
+	/// <summary>
+	/// Interface for instances that are able to copy properties from another object.
+	/// </summary>
+	public interface ICopyFrom
+	{
+		/// <summary>
+		/// Try to copy from another object. Should try to copy even if the object to copy from is not of
+		/// the same type, but a base type. In this case only the base properties should be copied.
+		/// </summary>
+		/// <param name="from"></param>
+		void CopyFrom(object from);
+	}
+
   /// <summary>Designates a object which supports the changed event.</summary>
   public interface IChangedEventSource
   {

@@ -53,10 +53,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     enum CachedImageType { None, LinearEquidistant, Other };
 
     /// <summary>
-    /// The kind of scaling of the values between from and to.
+    /// Deprecated: The kind of scaling of the values between from and to.
     /// </summary>
-    [Serializable]
-    public enum ScalingStyle
+    private enum ScalingStyle
     {
       /// <summary>Linear scale, i.e. color changes linear between from and to.</summary>
       Linear,
@@ -71,25 +70,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [NonSerialized]
     System.Drawing.Bitmap _cachedImage;
 
-    /// <summary>The lower bound of the plot range</summary>
-    double _vRangeFrom = double.NaN;
-
-    /// <summary>The upper bound of the plot range</summary>
-    double _vRangeTo = double.NaN;
-
     /// <summary>If true, the image is clipped to the layer boundaries.</summary>
     bool _clipToLayer = true;
 
-    /// <summary>The color used if the values are below the lower bound.</summary>
-    System.Drawing.Color _colorBelow = System.Drawing.Color.Black;
+		/// <summary>Calculates the color from the relative value.</summary>
+		IColorProvider _colorProvider;
 
-    /// <summary>The color used if the values are above the upper bound.</summary>
-    System.Drawing.Color _colorAbove = System.Drawing.Color.Snow;
-
-    /// <summary>The color used for invalid values (missing values).</summary>
-    System.Drawing.Color _colorInvalid = System.Drawing.Color.Transparent;
-
-    double _vmin, _vscal, _vLowerBound, _vUpperBound;
+		/// <summary>
+		/// Converts the numerical values into logical values.
+		/// </summary>
+		NumericalScale _scale;
 
     /// <summary>The lower bound of the y plot range</summary>
     [NonSerialized]
@@ -108,12 +98,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     [NonSerialized]
     object _imageConditionMemento;
-
-
-
-
-    /// <summary>The style for scaling of the values between from and to.</summary>
-    ScalingStyle _scalingStyle = ScalingStyle.Linear;
 
     [NonSerialized]
     protected object _parent;
@@ -184,6 +168,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+				throw new NotImplementedException("This function should not be called, since a newer serialization version is available");
+        /*
         DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
 
         info.AddEnum("ScalingStyle", s._scalingStyle);
@@ -193,23 +179,63 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("ColorBelow", s._colorBelow);
         info.AddValue("ColorAbove", s._colorAbove);
         info.AddValue("ColorInvalid", s._colorInvalid);
+        */
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
         DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
 
-        s._scalingStyle = (DensityImagePlotStyle.ScalingStyle)info.GetEnum("ScalingStyle", s._scalingStyle.GetType());
-        s._vRangeFrom = info.GetDouble("RangeFrom");
-        s._vRangeTo = info.GetDouble("RangeTo");
+        var scalingStyle = (ScalingStyle)info.GetEnum("ScalingStyle", typeof(ScalingStyle));
+        var vRangeFrom = info.GetDouble("RangeFrom");
+        var vRangeTo = info.GetDouble("RangeTo");
         s._clipToLayer = info.GetBoolean("ClipToLayer");
-        s._colorBelow = (System.Drawing.Color)info.GetValue("ColorBelow", parent);
-        s._colorAbove = (System.Drawing.Color)info.GetValue("ColorAbove", parent);
-        s._colorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid", parent);
+        var colorBelow = (System.Drawing.Color)info.GetValue("ColorBelow", parent);
+        var colorAbove = (System.Drawing.Color)info.GetValue("ColorAbove", parent);
+        var colorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid", parent);
+
+				var colorProvider = new ColorProvider.ColorProviderBGMYR() { ColorBelow = colorBelow, ColorAbove = colorAbove, ColorInvalid = colorInvalid, Transparency = 0 };
+				var scale = scalingStyle== ScalingStyle.Logarithmic ? (NumericalScale)new Log10Scale() : (NumericalScale)new LinearScale();
+
+				scale.Rescaling.SetOrgAndEnd(
+					double.IsNaN(vRangeFrom) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
+					vRangeFrom,
+					double.IsNaN(vRangeTo) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
+					vRangeTo);
+
+				s.Scale = scale;
+				s.ColorProvider = colorProvider;
+			
+
 
         return s;
       }
     }
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle), 3)]
+		class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
+
+				info.AddValue("ClipToLayer", s._clipToLayer);
+				info.AddValue("Scale", s._scale);
+				info.AddValue("Colorization", s._colorProvider);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
+
+				s._clipToLayer = info.GetBoolean("ClipToLayer");
+				s.Scale = (NumericalScale)info.GetValue("Scale", s);
+				s.ColorProvider = (IColorProvider)info.GetValue("Colorization", s);
+
+				return s;
+			}
+		}
+
 
     /// <summary>
     /// Finale measures after deserialization.
@@ -236,6 +262,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     public DensityImagePlotStyle()
     {
+			this.ColorProvider = new ColorProvider.ColorProviderBGMYR();
+			this.Scale = new LinearScale();
       InitializeMembers();
     }
 
@@ -248,12 +276,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       InitializeMembers();
 
       this._clipToLayer = from._clipToLayer;
-      this._vRangeFrom = from._vRangeFrom;
-      this._vRangeTo = from._vRangeTo;
-      this._colorAbove = from._colorAbove;
-      this._colorBelow = from._colorBelow;
-      this._colorInvalid = from._colorInvalid;
-      this._scalingStyle = from._scalingStyle;
+			this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
+			this.Scale = (NumericalScale)from._scale.Clone();
 
       this._parent = from._parent;
 
@@ -267,21 +291,49 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    public ScalingStyle Scaling
-    {
-      get { return _scalingStyle; }
-      set
-      {
-        ScalingStyle oldValue = _scalingStyle;
+		public NumericalScale Scale
+		{
+			get
+			{
+				return _scale;
+			}
+			set
+			{
+				if (null != _scale)
+					_scale.Changed -= EhScaleChanged;
 
-        _scalingStyle = value;
-        if (_scalingStyle != oldValue)
-        {
-          this._imageType = CachedImageType.None;
-          OnChanged();
-        }
-      }
-    }
+				var oldValue = _scale;
+				_scale = value;
+
+				if (null != _scale)
+					_scale.Changed += EhScaleChanged;
+
+				if (!object.ReferenceEquals(oldValue, value))
+					OnChanged();
+			}
+		}
+
+		public IColorProvider ColorProvider
+		{
+			get { return _colorProvider; }
+			set
+			{
+				if(null==value)
+					throw new ArgumentNullException("value");
+
+				if (null != _colorProvider)
+					_colorProvider.Changed -= EhColorProviderChanged;
+
+				var oldValue = _colorProvider;
+				_colorProvider = value;
+
+				if (null != _colorProvider)
+					_colorProvider.Changed += EhColorProviderChanged;
+
+				if (null!=oldValue && !object.ReferenceEquals(oldValue, _colorProvider))
+					EhColorProviderChanged(_colorProvider, EventArgs.Empty);
+			}
+		}
 
 
     public bool ClipToLayer
@@ -309,87 +361,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return a == b;
     }
 
-    public double RangeFrom
-    {
-      get { return _vRangeFrom; }
-      set
-      {
-        double oldValue = _vRangeFrom;
-        _vRangeFrom = value;
-
-        if (!NaNEqual(_vRangeFrom, oldValue))
-        {
-          this._imageType = CachedImageType.None;
-          OnChanged();
-        }
-      }
-    }
-
-    public double RangeTo
-    {
-      get { return _vRangeTo; }
-      set
-      {
-        double oldValue = _vRangeTo;
-        _vRangeTo = value;
-        if (!NaNEqual(_vRangeTo, oldValue))
-        {
-          this._imageType = CachedImageType.None;
-          OnChanged();
-        }
-      }
-    }
-
-
-    public System.Drawing.Color ColorBelow
-    {
-      get { return _colorBelow; }
-      set
-      {
-        Color oldValue = _colorBelow;
-        _colorBelow = value;
-
-        if (_colorBelow != oldValue)
-        {
-          this._imageType = CachedImageType.None;
-          OnChanged();
-        }
-
-      }
-    }
-
-    public System.Drawing.Color ColorAbove
-    {
-      get { return _colorAbove; }
-      set
-      {
-        Color oldValue = _colorAbove;
-
-        _colorAbove = value;
-        if (_colorAbove != oldValue)
-        {
-          this._imageType = CachedImageType.None;
-          OnChanged();
-        }
-
-      }
-    }
-
-    public System.Drawing.Color ColorInvalid
-    {
-      get { return _colorInvalid; }
-      set
-      {
-        Color oldValue = _colorInvalid;
-        _colorInvalid = value;
-        if (_colorInvalid != oldValue)
-        {
-          this._imageType = CachedImageType.None;
-          OnChanged();
-        }
-
-      }
-    }
 
     /// <summary>
     /// Called by the parent plot item to indicate that the associated data has changed. Used to invalidate the cached bitmap to force
@@ -677,28 +648,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       // ---------------- prepare the color scaling -------------------------------------
 
-      NumericalBoundaries pb = _scalingStyle == ScalingStyle.Logarithmic ? (NumericalBoundaries)new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)new FiniteNumericalBoundaries();
+			NumericalBoundaries pb = _scale.DataBounds;
       myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
       myPlotAssociation.MergeVBoundsInto(pb);
-
-      _vmin = double.IsNaN(this._vRangeFrom) ? pb.LowerBound : Math.Max(pb.LowerBound, this._vRangeFrom);
-      double vmax = double.IsNaN(this._vRangeTo) ? pb.UpperBound : Math.Min(pb.UpperBound, this._vRangeTo);
-      _vLowerBound = _vmin;
-      _vUpperBound = vmax;
-
-      if (this._scalingStyle == ScalingStyle.Logarithmic)
-      {
-        // Ensure that min and max >0
-        _vmin = _vLowerBound = Math.Max(_vLowerBound, double.Epsilon);
-        vmax = _vUpperBound = Math.Max(_vLowerBound, _vUpperBound); // lowerBound is ok, to ensure that upperBound>=lowerBound
-
-        _vmin = Math.Log(_vmin);
-        vmax = vmax > 0 ? Math.Log(vmax) : _vmin;
-      }
-
-      // double vmid = (vmin+vmax)*0.5;
-      _vscal = vmax <= _vmin ? 1 : 255.0 / (vmax - _vmin);
-
+   
       // --------------- end preparation of color scaling ------------------------------
 
 
@@ -772,38 +725,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     Color GetColor(double val)
     {
-      if (double.IsNaN(val))
-      {
-        return _colorInvalid; // invalid pixels are transparent
-      }
-      else if (val < _vLowerBound)
-      {
-        return _colorBelow; // below the lower bound
-      }
-      else if (val > _vUpperBound)
-      {
-        return _colorAbove; // above the upper bound
-      }
-      else // a valid value
-      {
-
-        double relval;
-        // calculate a relative value between 0 and 255 from the borders and the scaling style
-        if (this._scalingStyle == ScalingStyle.Logarithmic)
-        {
-          relval = (Math.Log(val) - _vmin) * _vscal;
-        }
-        else // ScalingStyle is linear
-        {
-          relval = (val - _vmin) * _vscal;
-        }
-
-
-        int r = ((int)(Math.Abs(relval))) % 256;
-        int g = ((int)(Math.Abs(relval + relval))) % 256;
-        int b = ((int)(Math.Abs(255 - relval))) % 256;
-        return System.Drawing.Color.FromArgb(r, g, b);
-      }
+        double relval = _scale.PhysicalToNormal(val);
+				return _colorProvider.GetColor(relval);
     }
 
 
@@ -864,6 +787,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         VectorMath.ToROVector(ly),
         DataTableWrapper.ToROColumnMatrix(vcolumns, new Altaxo.Collections.IntegerRangeAsCollection(0, lx.Length)));
 
+      Color colorInvalid = _colorProvider.GetColor(double.NaN);
 
       int addr = 0;
       for (int ny = 0; ny < dimY; ny++)
@@ -877,7 +801,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           if (false == gl.CoordinateSystem.LayerToLogicalCoordinates(px, py, out rel))
           {
-            _cachedImage.SetPixel(nx, ny, _colorInvalid);
+            _cachedImage.SetPixel(nx, ny, colorInvalid);
           }
           else // conversion to relative coordinates was possible
           {
@@ -887,10 +811,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             if (rx < minRX || rx > maxRX || ry < minRY || ry > maxRY)
             {
               //_cachedImage.SetPixel(nx, ny, _colorInvalid);
-              imageBytes[addr + 0] = _colorInvalid.B;
-              imageBytes[addr + 1] = _colorInvalid.G;
-              imageBytes[addr + 2] = _colorInvalid.R;
-              imageBytes[addr + 3] = _colorInvalid.A;
+              imageBytes[addr + 0] = colorInvalid.B;
+              imageBytes[addr + 1] = colorInvalid.G;
+              imageBytes[addr + 2] = colorInvalid.R;
+              imageBytes[addr + 3] = colorInvalid.A;
             }
             else
             {
@@ -898,10 +822,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
               if (double.IsNaN(val))
               {
                 //_cachedImage.SetPixel(nx, ny, _colorInvalid);
-                imageBytes[addr + 0] = _colorInvalid.B;
-                imageBytes[addr + 1] = _colorInvalid.G;
-                imageBytes[addr + 2] = _colorInvalid.R;
-                imageBytes[addr + 3] = _colorInvalid.A;
+                imageBytes[addr + 0] = colorInvalid.B;
+                imageBytes[addr + 1] = colorInvalid.G;
+                imageBytes[addr + 2] = colorInvalid.R;
+                imageBytes[addr + 3] = colorInvalid.A;
 
               }
               else
@@ -963,6 +887,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
     }
+
+		void EhColorProviderChanged(object sender, EventArgs e)
+		{
+			this._imageType = CachedImageType.None;
+			OnChanged();
+		}
+
+		void EhScaleChanged(object sender, EventArgs e)
+		{
+			this._imageType = CachedImageType.None;
+			OnChanged();
+		}
 
     #region IChangedEventSource Members
 

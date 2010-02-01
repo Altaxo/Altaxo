@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public abstract Image GetImage();
 
-		public override IHitTestObject HitTest(PointF pt)
+		public override IHitTestObject HitTest(CrossF pt)
 		{
 			IHitTestObject result = base.HitTest(pt);
 			if (result != null)

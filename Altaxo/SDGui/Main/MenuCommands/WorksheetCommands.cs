@@ -318,7 +318,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.WorksheetCommands.Rename(ctrl);
+      Altaxo.Data.DataTableOtherActions.ShowRenameDialog(ctrl.DataTable);
     }
   }
 
@@ -761,7 +761,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnColumns(ctrl);
     }
   }
   public class AnalysisPLSOnRows : AbstractWorksheetControllerCommand

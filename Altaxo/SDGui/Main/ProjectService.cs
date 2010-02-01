@@ -788,7 +788,7 @@ namespace Altaxo.Main
     /// <returns>The view content for the newly created graph.</returns>
     public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder(string folderName)
     {
-      return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument(folderName));
+      return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument(ProjectFolder.Combine(folderName,"GRAPH")));
     }
 
 		/// <summary>

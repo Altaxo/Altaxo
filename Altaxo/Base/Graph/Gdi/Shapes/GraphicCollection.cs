@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public GraphicBase FindObjectAtPoint(PointF pt)
+    public GraphicBase FindObjectAtPoint(CrossF pt)
     {
       if(null!=this._items)
       {

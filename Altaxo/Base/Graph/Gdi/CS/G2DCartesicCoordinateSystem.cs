@@ -324,16 +324,17 @@ namespace Altaxo.Graph.Gdi.CS
     {
       r = new Logical3D(xlocation / _layerWidth, 1 - ylocation / _layerHeight);
 
-      if (_isXreverse)
-        r.RX = 1 - r.RX;
-      if (_isYreverse)
-        r.RY = 1 - r.RY;
       if (_isXYInterchanged)
       {
         double hr = r.RX;
         r.RX = r.RY;
         r.RY = hr;
       }
+
+      if (_isXreverse)
+        r.RX = 1 - r.RX;
+      if (_isYreverse)
+        r.RY = 1 - r.RY;
 
       return !double.IsNaN(r.RX) && !double.IsNaN(r.RY);
     }

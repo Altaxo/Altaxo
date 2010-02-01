@@ -11,22 +11,22 @@ namespace Altaxo.Main
   /// <summary>
   /// Keeps track of all folder names in the project.
   /// </summary>
-  public class ProjectFolders
-  {
+	public class ProjectFolders
+	{
 		/// <summary>The parent document for which the folder structure is kept.</summary>
-    AltaxoDocument _doc;
+		AltaxoDocument _doc;
 
-    /// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
-    DictionaryWithNullableKey<string, HashSet<object>> _directories = new DictionaryWithNullableKey<string, HashSet<object>>();
+		/// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
+		DictionaryWithNullableKey<string, HashSet<object>> _directories = new DictionaryWithNullableKey<string, HashSet<object>>();
 
-    /// <summary>
-    /// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
-    /// Note that for directories the item is of type string: it is the directory name.
-    /// </summary>
-    public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
-   
+		/// <summary>
+		/// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
+		/// Note that for directories the item is of type string: it is the directory name.
+		/// </summary>
+		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
+
 		/// <summary>True if the events are temporarily suspended.</summary>
-    private bool _suspendEvents;
+		private bool _suspendEvents;
 
 		/// <summary>
 		/// Creates the instance of project folders, tracking the provided Altaxo project.
@@ -37,38 +37,38 @@ namespace Altaxo.Main
 			EhProjectOpened(this, new ProjectEventArgs(doc));
 		}
 
-    #region Access to folders and items
+		#region Access to folders and items
 
 		/// <summary>
 		/// Determines if a given folder name is present.
 		/// </summary>
 		/// <param name="folder">Folder name.</param>
 		/// <returns>True if the given folder name is present, i.e. if at least one item belongs to the folder.</returns>
-    public bool ContainsFolder(string folder)
-    {
-      return null==folder || _directories.ContainsKey(folder);
-    }
+		public bool ContainsFolder(string folder)
+		{
+			return null == folder || _directories.ContainsKey(folder);
+		}
 
 		/// <summary>
 		/// Get a list of subfolders of the provided folder (as string list).
 		/// </summary>
 		/// <param name="parentFolder">Folder for which to get the subfolders.</param>
 		/// <returns>List of subfolders of the provied folder.</returns>
-    public List<string> GetSubfoldersAsStringList(string parentFolder)
-    {
-      var result = new List<string>();
+		public List<string> GetSubfoldersAsStringList(string parentFolder)
+		{
+			var result = new List<string>();
 
-      HashSet<object> items;
-      if (!_directories.TryGetValue(parentFolder, out items))
-        throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
-     
-      foreach (var v in items)
-        {
-          if (v is string)
-            result.Add((string)v);
-        }
-      return result;
-    }
+			HashSet<object> items;
+			if (!_directories.TryGetValue(parentFolder, out items))
+				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
+
+			foreach (var v in items)
+			{
+				if (v is string)
+					result.Add((string)v);
+			}
+			return result;
+		}
 
 		/// <summary>
 		/// Get a list of subfolders of the provided folder (as ProjectFolder list).
@@ -76,45 +76,45 @@ namespace Altaxo.Main
 		/// <param name="parentFolder">Folder for which to get the subfolders.</param>
 		/// <returns>List of subfolders of the provied folder.</returns>
 		public List<ProjectFolder> GetSubfoldersAsProjectFolderList(string parentFolder)
-    {
-      var result = new List<ProjectFolder>();
+		{
+			var result = new List<ProjectFolder>();
 
-      HashSet<object> items;
-      if (!_directories.TryGetValue(parentFolder, out items))
-        throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
+			HashSet<object> items;
+			if (!_directories.TryGetValue(parentFolder, out items))
+				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
 
-      foreach (var v in items)
-      {
-        if (v is string)
-          result.Add(new ProjectFolder((string)v));
-      }
-      return result;
-    }
-
-    /// <summary>
-    /// Get the items (but not the subfolders) of the provided folder.
-    /// </summary>
-    /// <param name="parentFolder">Folder for which to retrieve the items.</param>
-    /// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-    public List<object> GetItemsInFolder(string parentFolder)
-    {
-      var result = new List<object>();
-
-			AddItemsInFolder(parentFolder, result);
-
-      return result;
-    }
+			foreach (var v in items)
+			{
+				if (v is string)
+					result.Add(new ProjectFolder((string)v));
+			}
+			return result;
+		}
 
 		/// <summary>
 		/// Get the items (but not the subfolders) of the provided folder.
 		/// </summary>
-		/// <param name="parentFolder">Folder for which to retrieve the items.</param>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-		public List<object> GetItemsInFolderAndSubfolders(string parentFolder)
+    public List<object> GetItemsInFolder(string folderName)
 		{
 			var result = new List<object>();
 
-			AddItemsInFolderAndSubfolders(parentFolder, result);
+      AddItemsInFolder(folderName, result);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Get the items (but not the subfolders) of the provided folder.
+		/// </summary>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
+		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
+    public List<object> GetItemsInFolderAndSubfolders(string folderName)
+		{
+			var result = new List<object>();
+
+      AddItemsInFolderAndSubfolders(folderName, result);
 
 			return result;
 		}
@@ -122,13 +122,13 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Add the items  of the provided folder (but not of the subfolders) to the list.
 		/// </summary>
-		/// <param name="parentFolder">Folder for which to retrieve the items.</param>
+		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <param name="list">List where to add the items to.</param>
-		public void AddItemsInFolder(string parentFolder, List<object> list)
+    public void AddItemsInFolder(string folderName, List<object> list)
 		{
 			HashSet<object> items;
-			if (!_directories.TryGetValue(parentFolder, out items))
-				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
+      if (!_directories.TryGetValue(folderName, out items))
+        throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
 
 			foreach (var v in items)
 			{
@@ -137,16 +137,16 @@ namespace Altaxo.Main
 			}
 		}
 
-			/// <summary>
+		/// <summary>
 		/// Add the items  of the provided folder and of the subfolders to the list.
 		/// </summary>
-		/// <param name="parentFolder">Folder for which to retrieve the items.</param>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <param name="list">List where to add the items to.</param>
-		public void AddItemsInFolderAndSubfolders(string parentFolder, List<object> list)
+    public void AddItemsInFolderAndSubfolders(string folderName, List<object> list)
 		{
 			HashSet<object> items;
-			if (!_directories.TryGetValue(parentFolder, out items))
-				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
+      if (!_directories.TryGetValue(folderName, out items))
+        throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
 
 			foreach (var v in items)
 			{
@@ -245,143 +245,143 @@ namespace Altaxo.Main
 
 
 
-    #endregion
+		#endregion
 
-    private void Initialize()
-    {
-      _suspendEvents = true;
+		private void Initialize()
+		{
+			_suspendEvents = true;
 
-      _directories.Clear();
-      _directories.Add(null, new HashSet<object>()); // Root folder
+			_directories.Clear();
+			_directories.Add(null, new HashSet<object>()); // Root folder
 
-      foreach (var v in _doc.DataTableCollection)
-        ItemAdded(v, v.Name);
+			foreach (var v in _doc.DataTableCollection)
+				ItemAdded(v, v.Name);
 
-      foreach (Altaxo.Graph.Gdi.GraphDocument v in _doc.GraphDocumentCollection)
-        ItemAdded(v, v.Name);
+			foreach (Altaxo.Graph.Gdi.GraphDocument v in _doc.GraphDocumentCollection)
+				ItemAdded(v, v.Name);
 
-      _suspendEvents = false;
-      OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
-    }
+			_suspendEvents = false;
+			OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
+		}
 
 
 
-    private void EhProjectOpened(object sender, ProjectEventArgs e)
-    {
-      if (!object.ReferenceEquals(_doc, e.Project))
-      {
-        _doc = e.Project;
-        _doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
-        _doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
-        Initialize();
-      }
-    }
+		private void EhProjectOpened(object sender, ProjectEventArgs e)
+		{
+			if (!object.ReferenceEquals(_doc, e.Project))
+			{
+				_doc = e.Project;
+				_doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
+				_doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
+				Initialize();
+			}
+		}
 
-    private void EhProjectClosed(object sender, ProjectEventArgs e)
-    {
-      if (null != _doc)
-      {
-        _doc.DataTableCollection.CollectionChanged -= EhItemCollectionChanged;
-        _doc.GraphDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
-        _doc = null;
-        _directories.Clear();
-        _directories.Add(null, new HashSet<object>());
+		private void EhProjectClosed(object sender, ProjectEventArgs e)
+		{
+			if (null != _doc)
+			{
+				_doc.DataTableCollection.CollectionChanged -= EhItemCollectionChanged;
+				_doc.GraphDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
+				_doc = null;
+				_directories.Clear();
+				_directories.Add(null, new HashSet<object>());
 
-        OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
-      }
-    }
+				OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
+			}
+		}
 
-    private void EhItemCollectionChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
-    {
-      switch (changeType)
-      {
-        case NamedObjectCollectionChangeType.MultipleChanges:
-          Initialize();
-          break;
-        case NamedObjectCollectionChangeType.ItemAdded:
-          ItemAdded(item, newName);
-          break;
-        case NamedObjectCollectionChangeType.ItemRemoved:
-          ItemRemoved(item, oldName);
-          break;
-        case NamedObjectCollectionChangeType.ItemRenamed:
-          ItemRenamed(item, oldName, newName);
-          break;
-      }
-    }
+		private void EhItemCollectionChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		{
+			switch (changeType)
+			{
+				case NamedObjectCollectionChangeType.MultipleChanges:
+					Initialize();
+					break;
+				case NamedObjectCollectionChangeType.ItemAdded:
+					ItemAdded(item, newName);
+					break;
+				case NamedObjectCollectionChangeType.ItemRemoved:
+					ItemRemoved(item, oldName);
+					break;
+				case NamedObjectCollectionChangeType.ItemRenamed:
+					ItemRenamed(item, oldName, newName);
+					break;
+			}
+		}
 
- 
 
-    private void ItemAdded(object item, string itemName)
-    {
-      string itemDir = ProjectFolder.GetDirectoryPart(itemName);
-      DirectoryAdded(itemDir);
-      _directories[itemDir].Add(item);
-      OnCollectionChanged(NamedObjectCollectionChangeType.ItemAdded, item, itemName, itemName);
-    }
 
-    private void ItemRemoved(object item, string itemName)
-    {
-      string itemDir = ProjectFolder.GetDirectoryPart(itemName);
-      var s = _directories[itemDir];
-      s.Remove(item);
-      OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, item, itemName, itemName);
+		private void ItemAdded(object item, string itemName)
+		{
+			string itemDir = ProjectFolder.GetDirectoryPart(itemName);
+			DirectoryAdded(itemDir);
+			_directories[itemDir].Add(item);
+			OnCollectionChanged(NamedObjectCollectionChangeType.ItemAdded, item, itemName, itemName);
+		}
 
-      if (null!=itemDir && 0==s.Count)
-        DirectoryRemoved(itemDir);
-    }
+		private void ItemRemoved(object item, string itemName)
+		{
+			string itemDir = ProjectFolder.GetDirectoryPart(itemName);
+			var s = _directories[itemDir];
+			s.Remove(item);
+			OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, item, itemName, itemName);
 
-    private void ItemRenamed(object item, string oldName, string newName)
-    {
-      string oldDir = ProjectFolder.GetDirectoryPart(oldName);
-      string newDir = ProjectFolder.GetDirectoryPart(newName);
+			if (null != itemDir && 0 == s.Count)
+				DirectoryRemoved(itemDir);
+		}
 
-      if (oldDir != newDir) // only then it is neccessary to do something
-      {
-        ItemAdded(item, newName);
-        ItemRemoved(item, oldName);
-      }
-    }
+		private void ItemRenamed(object item, string oldName, string newName)
+		{
+			string oldDir = ProjectFolder.GetDirectoryPart(oldName);
+			string newDir = ProjectFolder.GetDirectoryPart(newName);
 
-    /// <summary>
-    /// Adds this directory as well as all parent directories.
-    /// </summary>
-    /// <param name="dir"></param>
-    private void DirectoryAdded(string dir)
-    {
-      if (!_directories.ContainsKey(dir))
-      {
-        _directories.Add(dir, new HashSet<object>());
+			if (oldDir != newDir) // only then it is neccessary to do something
+			{
+				ItemAdded(item, newName);
+				ItemRemoved(item, oldName);
+			}
+		}
 
-        string parDir = ProjectFolder.GetParentDirectory(dir);
-        DirectoryAdded(parDir);
-        _directories[parDir].Add(dir);
+		/// <summary>
+		/// Adds this directory as well as all parent directories.
+		/// </summary>
+		/// <param name="dir"></param>
+		private void DirectoryAdded(string dir)
+		{
+			if (!_directories.ContainsKey(dir))
+			{
+				_directories.Add(dir, new HashSet<object>());
 
-        OnCollectionChanged(NamedObjectCollectionChangeType.ItemAdded, dir, dir, dir);
-      }
-    }
+				string parDir = ProjectFolder.GetParentDirectory(dir);
+				DirectoryAdded(parDir);
+				_directories[parDir].Add(dir);
 
-    private void DirectoryRemoved(string dir)
-    {
-      if (null == dir)
-        return;
+				OnCollectionChanged(NamedObjectCollectionChangeType.ItemAdded, dir, dir, dir);
+			}
+		}
 
-      _directories.Remove(dir);
-      string parDir = ProjectFolder.GetParentDirectory(dir);
-      var s = _directories[parDir];
-      s.Remove(dir);
-      OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, dir, dir, dir);
+		private void DirectoryRemoved(string dir)
+		{
+			if (null == dir)
+				return;
 
-      if (null != parDir && 0 == s.Count)
-        DirectoryRemoved(parDir);
+			_directories.Remove(dir);
+			string parDir = ProjectFolder.GetParentDirectory(dir);
+			var s = _directories[parDir];
+			s.Remove(dir);
+			OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, dir, dir, dir);
 
-    }
+			if (null != parDir && 0 == s.Count)
+				DirectoryRemoved(parDir);
 
-    protected void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
-    {
-      if (null != CollectionChanged && !_suspendEvents)
-        CollectionChanged(changeType, item, oldName, newName);
-    }
+		}
+
+		protected void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		{
+			if (null != CollectionChanged && !_suspendEvents)
+				CollectionChanged(changeType, item, oldName, newName);
+		}
 
 		/// <summary>
 		/// Determines if a folder can be renamed.
@@ -424,7 +424,45 @@ namespace Altaxo.Main
 			return true;
 		}
 
-	  }
+		/// <summary>
+		/// Shows a dialog to rename a folder. Note that if the root folder is specified, the function
+		/// returns without showing a dialog.
+		/// </summary>
+		/// <param name="folder">Folder to rename.</param>
+		public void ShowFolderRenameDialog(ProjectFolder folder)
+		{
+			ShowFolderRenameDialog(folder.Name);
+		}
 
-  
+		/// <summary>
+		/// Shows a dialog to rename a folder. Note that if the root folder is specified, the function
+		/// returns without showing a dialog.
+		/// </summary>
+		/// <param name="folderName">Folder to rename.</param>
+		public void ShowFolderRenameDialog(string folderName)
+		{
+			if (folderName == ProjectFolder.RootFolderName)
+				return;
+
+			var tvctrl = new Altaxo.Gui.Common.TextValueInputController(folderName, "Enter the new name of the folder:");
+
+			if (!Current.Gui.ShowDialog(tvctrl, "Rename folder", false))
+				return;
+
+			var newFolderName = tvctrl.InputText.Trim();
+
+			if (newFolderName == string.Empty)
+				newFolderName = null;
+
+			if (!CanRenameFolder(folderName, newFolderName))
+			{
+				if (false == Current.Gui.YesNoMessageBox(
+					"Some of the new item names conflict with existing items. Those items will be renamed with " +
+					"a generated name based on the old name. Do you want to continue?", "Attention", false))
+					return;
+			}
+
+			RenameFolder(folderName, newFolderName);
+		}
+	}
 }

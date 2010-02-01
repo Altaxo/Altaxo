@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         info.AddValue("YScale", s._scaleYInc);
         info.AddValue("UseClipping", s._useClipping);
         info.AddValue("XInc", s._xinc);
-        info.AddValue("YInc", s._xinc);
+        info.AddValue("YInc", s._yinc);
 
       }
 

@@ -603,7 +603,7 @@ namespace Altaxo.Worksheet.Commands
       
       // now create a new Graph with this plot associations
 
-      var gc = Current.ProjectService.CreateNewGraph();
+      var gc = Current.ProjectService.CreateNewGraphInFolder(Main.ProjectFolder.GetDirectoryPart(table.Name));
       var layer = new Altaxo.Graph.Gdi.XYPlotLayer(gc.Doc.DefaultLayerPosition, gc.Doc.DefaultLayerSize);
       layer.CreateDefaultAxes();
       gc.Doc.Layers.Add(layer);

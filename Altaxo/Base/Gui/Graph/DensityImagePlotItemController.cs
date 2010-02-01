@@ -93,7 +93,14 @@ namespace Altaxo.Gui.Graph
       bool result = true;
 
       if (_styleController != null)
-        result &= _styleController.Apply();
+      {
+        if (!_styleController.Apply())
+          return false;
+        else
+        {
+          _doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle)_styleController.ModelObject;
+        }
+      }
 
       return result;
     }

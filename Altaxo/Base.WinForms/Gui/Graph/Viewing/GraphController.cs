@@ -734,6 +734,22 @@ namespace Altaxo.Graph.GUI
 			r.Y += GraphViewOffset.Y;
 			return r;
 		}
+		/// <summary>
+		/// Converts a cross from pixel to printable area coordinates
+		/// </summary>
+		/// <param name="pixelc">Cross in pixel coordinates.</param>
+		/// <returns>Cross converted to printable area coordinates.</returns>
+		public CrossF PixelToPrintableAreaCoordinates(CrossF pixelc)
+		{
+			return new CrossF()
+			{
+				Center = PixelToPrintableAreaCoordinates(pixelc.Center),
+				Top = PixelToPrintableAreaCoordinates(pixelc.Top),
+				Bottom = PixelToPrintableAreaCoordinates(pixelc.Bottom),
+				Left = PixelToPrintableAreaCoordinates(pixelc.Left),
+				Right = PixelToPrintableAreaCoordinates(pixelc.Right),
+			};
+		}
 
 		/// <summary>
 		/// converts printable area  to pixel coordinates
@@ -768,7 +784,16 @@ namespace Altaxo.Graph.GUI
 		public bool FindGraphObjectAtPixelPosition(PointF pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int foundInLayerNumber)
 		{
 			// search for a object first
-			PointF mousePT = PixelToPrintableAreaCoordinates(pixelPos);
+			// TODO: make a cross here designating the tolerance of the mouse hit
+			// The cross shold have arms at least 1 pixel long and depending on the screen resolution 3 points long
+			const float _hitToleranceInPoints = 3;
+			const float _hitToleranceInPixel=1;
+
+			float hitTolerancePixelHorz = Math.Max(_hitToleranceInPixel, _hitToleranceInPoints*_horizontalResolution/72);
+			float hitTolerancePixelVert = Math.Max(_hitToleranceInPixel, _hitToleranceInPoints*_verticalResolution/72);
+			var cross = new CrossF(pixelPos, hitTolerancePixelHorz, hitTolerancePixelVert);
+
+			var mousePT = PixelToPrintableAreaCoordinates(cross);
 
 			for (int nLayer = 0; nLayer < Layers.Count; nLayer++)
 			{

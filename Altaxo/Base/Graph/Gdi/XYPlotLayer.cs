@@ -1591,7 +1591,12 @@ namespace Altaxo.Graph.Gdi
       _cachedReverseMatrix.TransformPoints(pf);
       return pf[0];
     }
-
+		public CrossF GraphToLayerCoordinates(CrossF x)
+		{
+			PointF[] y = { x.Center, x.Top, x.Bottom, x.Left, x.Right };
+			_cachedReverseMatrix.TransformPoints(y);
+			return new CrossF() { Center = y[0], Top = y[1], Bottom = y[2], Left = y[3], Right = y[4] };
+		}
 
     /// <summary>
     /// This switches the graphics context from printable area coordinates to layer coordinates.
@@ -2495,11 +2500,12 @@ namespace Altaxo.Graph.Gdi
       return o;
     }
 
-    public IHitTestObject HitTest(PointF pageC, bool plotItemsOnly)
+    public IHitTestObject HitTest(CrossF pageC, bool plotItemsOnly)
     {
       IHitTestObject hit;
 
-      PointF layerC = GraphToLayerCoordinates(pageC);
+      var layerCross = GraphToLayerCoordinates(pageC);
+			var layerC = layerCross.Center;
 
 
       List<GraphicBase> specObjects = new List<GraphicBase>();
@@ -2516,7 +2522,7 @@ namespace Altaxo.Graph.Gdi
         {
           if (null != go)
           {
-            hit = go.HitTest(layerC);
+            hit = go.HitTest(layerCross);
             if (null != hit)
             {
               if (null == hit.Remove && (hit.HittedObject is GraphicBase))
@@ -2589,7 +2595,7 @@ namespace Altaxo.Graph.Gdi
         // now hit testing the other objects in the layer
         foreach (GraphicBase go in _graphObjects)
         {
-          hit = go.HitTest(layerC);
+          hit = go.HitTest(layerCross);
           if (null != hit)
           {
             if (null == hit.Remove && (hit.HittedObject is GraphicBase))

@@ -6,6 +6,7 @@ using System.Text;
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	using Altaxo.Main;
+	using Altaxo.Gui.Common;
 
 	public static class ProjectBrowserExtensions
 	{
@@ -40,6 +41,76 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					Current.ProjectService.DeleteGraphDocument((Altaxo.Graph.Gdi.GraphDocument)item, true);
 			}
 		}
+
+
+		/// <summary>
+		/// Moves the selected list items to a folder that is asked for by a dialog.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		public static void MoveSelectedListItems(this ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems();
+			MoveDocuments(list);
+		}
+
+		/// <summary>
+		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
+		/// </summary>
+		/// <param name="list">List of items to delete.</param>
+		public static void MoveDocuments(IList<object> list)
+		{
+			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName).ToArray();
+			var choices = new SingleChoiceObject(names,0);
+			if (!Current.Gui.ShowDialog(ref choices, "Choose folder to move the items into", false))
+				return;
+
+			string newFolderName = choices.Choices[choices.Selection];
+
+			foreach (object item in list)
+			{
+				if (item is Altaxo.Data.DataTable)
+				{
+					var table = (Altaxo.Data.DataTable)item;
+					table.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
+				}
+				else if (item is Altaxo.Graph.Gdi.GraphDocument)
+				{
+					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
+					graph.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
+				}
+				else if (item is ProjectFolder)
+				{
+					var folder = (ProjectFolder)item;
+					string moveToFolder = ProjectFolder.Combine(newFolderName, ProjectFolder.GetNamePart(newFolderName));
+					Current.Project.Folders.RenameFolder(folder.Name, moveToFolder);
+				}
+			}
+		}
+
+
+
+		public static void RenameSelectedListItem(this ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems();
+			if (list.Count != 1)
+				return;
+
+			var obj = list[0];
+
+			if (obj is Data.DataTable)
+			{
+				Altaxo.Data.DataTableOtherActions.ShowRenameDialog((Altaxo.Data.DataTable)obj);
+			}
+			else if (obj is Altaxo.Graph.Gdi.GraphDocument)
+			{
+				Altaxo.Graph.Gdi.GraphDocumentOtherActions.ShowRenameDialog((Altaxo.Graph.Gdi.GraphDocument)obj);
+			}
+			else if (obj is ProjectFolder)
+			{
+				ctrl.Project.Folders.ShowFolderRenameDialog((ProjectFolder)obj);
+			}
+		}
+
 
 		/// <summary>
 		/// Show the items currently selected in the document area.
@@ -190,28 +261,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))
 				return;
-			if (folderName == Main.ProjectFolder.RootFolderName)
-				return;
 
-			var tvctrl = new Altaxo.Gui.Common.TextValueInputController(folderName, "Enter the new name of the folder:");
-
-			if (!Current.Gui.ShowDialog(tvctrl, "Rename folder", false))
-				return;
-
-			var newFolderName = tvctrl.InputText.Trim();
-
-			if (newFolderName == string.Empty)
-				newFolderName = null;
-
-			if (!ctrl.Project.Folders.CanRenameFolder(folderName, newFolderName))
-			{
-				if (false == Current.Gui.YesNoMessageBox(
-					"Some of the new item names conflict with existing items. Those items will be renamed with " +
-					"a generated name based on the old name. Do you want to continue?", "Attention", false))
-					return;
-			}
-
-			ctrl.Project.Folders.RenameFolder(folderName, newFolderName);
+			ctrl.Project.Folders.ShowFolderRenameDialog(folderName);
 		}
 
 		#endregion

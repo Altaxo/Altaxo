@@ -293,8 +293,29 @@
     <Compile Include="Gui\Graph\BarGraphPlotStyleControl.Designer.cs">
       <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\ColorProviderBaseControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorProviderBaseControl.Designer.cs">
+      <DependentUpon>ColorProviderBaseControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorProviderControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorProviderControl.Designer.cs">
+      <DependentUpon>ColorProviderControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityImagePlotStyleControl.Designer.cs">
+      <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityScaleControl.Designer.cs">
+      <DependentUpon>DensityScaleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.cs">
       <SubType>UserControl</SubType>
@@ -612,8 +633,17 @@
     <EmbeddedResource Include="Gui\Graph\BarGraphPlotStyleControl.resx">
       <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ColorProviderBaseControl.resx">
+      <DependentUpon>ColorProviderBaseControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ColorProviderControl.resx">
+      <DependentUpon>ColorProviderControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\DensityImagePlotStyleControl.resx">
       <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\DensityScaleControl.resx">
+      <DependentUpon>DensityScaleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ErrorBarPlotStyleControl.resx">
       <DependentUpon>ErrorBarPlotStyleControl.cs</DependentUpon>

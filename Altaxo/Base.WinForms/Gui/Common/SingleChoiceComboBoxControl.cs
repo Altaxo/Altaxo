@@ -144,7 +144,8 @@ namespace Altaxo.Gui.Common
     {
       this._cbChoice.Items.Clear();
       this._cbChoice.Items.AddRange(values);
-      this._cbChoice.SelectedIndex = initialselection;
+      if(initialselection>=0 && initialselection<values.Length)
+        this._cbChoice.SelectedIndex = initialselection;
     }
 
     #endregion

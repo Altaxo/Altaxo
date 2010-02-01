@@ -29,74 +29,74 @@ using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.ColorProvider;
 using Altaxo.Gui;
 
-
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Graph.Scales;
-
 	#region Interfaces
 
-	public interface IDensityImagePlotStyleView
+	/// <summary>
+	/// Interface for Gui elements that show the properties of the <see cref="ColorProviderBase"/> class.
+	/// </summary>
+	public interface IColorProviderBaseView
 	{
-		IDensityScaleView DensityScaleView { get; }
-
-		IColorProviderView ColorProviderView { get; }
+		/// <summary>
+		/// Get/set the content of the ColorBelow combo box.
+		/// </summary>
+		Color ColorBelow { get; set; }
 
 		/// <summary>
-		/// Initializes the content of the ClipToLayer checkbox
+		/// IGet/set the content of the ColorAbove combo box.
 		/// </summary>
-		bool ClipToLayer { get; set; }
-	}
+		Color ColorAbove { get; set; }
 
+		/// <summary>
+		/// Get/set the content of the ColorInvalid combo box.
+		/// </summary>
+		Color ColorInvalid { get; set; }
+
+		/// <summary>
+		/// Get/set the transparency value (0 .. 1).
+		/// </summary>
+		double Transparency { get; set; }
+
+	}
 	#endregion
 
-	/// <summary>
-	/// Controller for the density image plot style
-	/// </summary>
-	[UserControllerForObject(typeof(DensityImagePlotStyle))]
-	[ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
-	public class DensityImagePlotStyleController : IMVCANController
+	[ExpectedTypeOfView(typeof(IColorProviderBaseView))]
+	[UserControllerForObject(typeof(ColorProviderBase))]
+	public class ColorProviderBaseController : IMVCANController
 	{
-		IDensityImagePlotStyleView _view;
-		DensityImagePlotStyle _doc;
-		UseDocument _useDocumentCopy;
-
-		IMVCANController _scaleController;
-		IMVCANController _colorProviderController;
+		ColorProviderBase _originalDoc;
+		ColorProviderBase _doc;
+		IColorProviderBaseView _view;
 
 		void Initialize(bool initData)
 		{
-			if (initData)
+			if (null != _view)
 			{
-				_scaleController = new DensityScaleController();
-				_scaleController.InitializeDocument(_doc.Scale);
-
-				_colorProviderController = new ColorProviderController();
-				_colorProviderController.InitializeDocument(_doc.ColorProvider);
-			}
-
-			if (_view != null)
-			{
-				_scaleController.ViewObject = _view.DensityScaleView;
-				_colorProviderController.ViewObject = _view.ColorProviderView;
-				_view.ClipToLayer = _doc.ClipToLayer;
+				_view.ColorBelow = _doc.ColorBelow;
+				_view.ColorAbove = _doc.ColorAbove;
+				_view.ColorInvalid = _doc.ColorInvalid;
+				_view.Transparency = _doc.Transparency;
 			}
 		}
+
+
 		#region IMVCANController Members
 
 		public bool InitializeDocument(params object[] args)
 		{
-			if (args.Length == 0 || !(args[0] is DensityImagePlotStyle))
+			if (args.Length == 0 || !(args[0] is ColorProviderBase))
 				return false;
-			_doc = (DensityImagePlotStyle)args[0];
-			Initialize(true); 
-			return true;
 
+			_originalDoc = (ColorProviderBase)args[0];
+			_doc = (ColorProviderBase)_originalDoc.Clone();
+			Initialize(true);
+			return true;
 		}
 
 		public UseDocument UseDocumentCopy
 		{
-			set { _useDocumentCopy = value; }
+			set { }
 		}
 
 		#endregion
@@ -111,7 +111,11 @@ namespace Altaxo.Gui.Graph
 			}
 			set
 			{
-				_view = value as IDensityImagePlotStyleView;
+				if (null != _view)
+				{
+				}
+
+				_view = value as IColorProviderBaseView;
 
 				if (null != _view)
 				{
@@ -122,7 +126,7 @@ namespace Altaxo.Gui.Graph
 
 		public object ModelObject
 		{
-			get { return _doc; }
+			get { return _originalDoc; }
 		}
 
 		#endregion
@@ -131,18 +135,10 @@ namespace Altaxo.Gui.Graph
 
 		public bool Apply()
 		{
-
-			if (!_scaleController.Apply())
-				return false;
-
-
-			if (!_colorProviderController.Apply())
-				return false;
-
-			_doc.ClipToLayer = _view.ClipToLayer;
-			_doc.Scale = (NumericalScale)_scaleController.ModelObject;
-			_doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
-
+			_originalDoc.ColorBelow = _view.ColorBelow;
+			_originalDoc.ColorAbove = _view.ColorAbove;
+			_originalDoc.ColorInvalid = _view.ColorInvalid;
+			_originalDoc.Transparency = _view.Transparency;
 			return true;
 		}
 

@@ -6,15 +6,33 @@ using System.Text;
 using Altaxo.Collections;
 namespace Altaxo.Gui.Common
 {
+	/// <summary>
+	/// Document class for the <see cref="MultiChoiceController"/>.
+	/// </summary>
 	public class MultiChoiceList
 	{
+		/// <summary>The description text shown above the list of items.</summary>
 		public string Description { get; set; }
+		/// <summary>List of items. Has to be filled before showing the control.</summary>
 		public SelectableListNodeList List { get; protected set; }
 
-		List<string> _columnNames;
+		/// <summary>List of column names. The number of names must match the number of subitems in the list items.</summary>
 		public List<string> ColumnNameList { get { return _columnNames; } }
-    public string[] ColumnNames { set { _columnNames.Clear(); _columnNames.AddRange(value); } }
+		/// <summary>Set the list of column names (can be used in the initializer of this object).</summary>
+    public string[] ColumnNames 
+		{
+			set
+			{
+				_columnNames.Clear();
+				_columnNames.AddRange(value); 
+			}
+		}
 
+		List<string> _columnNames;
+
+		/// <summary>
+		/// Constructs an empty list with no items and no column names.
+		/// </summary>
 		public MultiChoiceList() 
 		{
 			List = new SelectableListNodeList();
@@ -22,13 +40,29 @@ namespace Altaxo.Gui.Common
 		}
 	}
 
+	/// <summary>Gui view interface for use with the <see cref="MultiChoiceController"/>.</summary>
 	public interface IMultiChoiceView
 	{
+		/// <summary>Initialize the description text.</summary>
+		/// <param name="value">Description text.</param>
 		void InitializeDescription(string value);
+
+		/// <summary>
+		/// Initialize the column names.
+		/// </summary>
+		/// <param name="colNames">Column names.</param>
 		void InitializeListColumns(string[] colNames);
+		
+		/// <summary>
+		/// Initializes the list. 
+		/// </summary>
+		/// <param name="list">List of items shown.</param>
 		void InitializeList(SelectableListNodeList list);
 	}
 
+	/// <summary>
+	/// Controller for the <see cref="MultiChoiceList"/> document type.
+	/// </summary>
 	[ExpectedTypeOfView(typeof(IMultiChoiceView))]
 	[UserControllerForObject(typeof(MultiChoiceList))]
 	public class MultiChoiceController : IMVCANController

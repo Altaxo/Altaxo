@@ -547,6 +547,7 @@
     <Compile Include="Collections\NamedItem.cs" />
     <Compile Include="Data\Extensions\ColumnCommands.cs" />
     <Compile Include="Data\Extensions\ColumnMath.cs" />
+    <Compile Include="Data\Extensions\DataTableOtherActions.cs" />
     <Compile Include="Data\Extensions\FileCommands.cs" />
     <Compile Include="Data\Extensions\MergeTables.cs" />
     <Compile Include="Data\Extensions\RowCommands.cs" />
@@ -590,6 +591,10 @@
     <Compile Include="Graph\Gdi\GraphDocumentLayerCreation.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentOtherActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentPrinting.cs" />
+    <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBGMYR.cs" />
+    <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBGRY.cs" />
+    <Compile Include="Graph\Gdi\Plot\IColorProvider.cs" />
+    <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_PegBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_TreeWalker.cs" />
@@ -758,7 +763,6 @@
     <Compile Include="Gui\Common\IntegerValueInputController.cs" />
     <Compile Include="Gui\Common\IWorkbench.cs" />
     <Compile Include="Gui\Common\MultiChoiceController.cs" />
-    <Compile Include="Gui\Common\MultipleChoiceController.cs" />
     <Compile Include="Gui\Common\NumericDoubleValueController.cs" />
     <Compile Include="Gui\Common\PropertyController.cs" />
     <Compile Include="Gui\Common\SingleChoiceController.cs" />
@@ -773,11 +777,14 @@
     <Compile Include="Gui\Graph\AxisLinkController.cs" />
     <Compile Include="Gui\Graph\AxisScaleController.cs" />
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
+    <Compile Include="Gui\Graph\ColorProviderBaseController.cs" />
+    <Compile Include="Gui\Graph\ColorProviderController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
+    <Compile Include="Gui\Graph\DensityImagePlotStyleController.cs" />
+    <Compile Include="Gui\Graph\DensityScaleController.cs" />
     <Compile Include="Gui\Graph\FillToCurvePlotStyleController.cs" />
     <Compile Include="Gui\Graph\ImageGraphicController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotItemController.cs" />
-    <Compile Include="Gui\Graph\DensityImagePlotStyleController.cs" />
     <Compile Include="Gui\Graph\ErrorBarPlotStyleController.cs" />
     <Compile Include="Gui\Graph\FitPolynomialDialogController.cs" />
     <Compile Include="Gui\Graph\FunctionPlotDataController.cs" />

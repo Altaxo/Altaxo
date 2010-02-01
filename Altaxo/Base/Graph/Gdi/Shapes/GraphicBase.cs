@@ -487,10 +487,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     public abstract object Clone();
 
     #region HitTesting
-    public virtual IHitTestObject HitTest(PointF pt)
+    public virtual IHitTestObject HitTest(CrossF pt)
     {
       GraphicsPath gp = GetObjectPath();
-      if (gp.IsVisible(pt))
+      if (gp.IsVisible(pt.Center))
       {
         return new HitTestObject(gp, this);
       }

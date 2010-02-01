@@ -32,45 +32,6 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class WorksheetCommands
   {
-    public static void Rename(IWorksheetController ctrl)
-    {
-      TextValueInputController tvctrl = new TextValueInputController(ctrl.DataTable.Name,"Enter a name for the worksheet:");
-      tvctrl.Validator = new WorksheetRenameValidator(ctrl.DataTable,ctrl);
-      if(Current.Gui.ShowDialog(tvctrl,"Rename worksheet",false))
-        ctrl.DataTable.Name = tvctrl.InputText.Trim();
-    }
-
-    protected class WorksheetRenameValidator : TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataTable m_Table;
-      IWorksheetController m_Ctrl;
-      
-      public WorksheetRenameValidator(Altaxo.Data.DataTable tab, IWorksheetController ctrl)
-        : base("The worksheet name must not be empty! Please enter a valid name.")
-      {
-        m_Table = tab;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string wksname)
-      {
-        string err = base.Validate(wksname);
-        if(null!=err)
-          return err;
-
-        if(m_Table.Name==wksname)
-          return null;
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.DataTable)==null)
-          return null; // if there is no parent data set we can enter anything
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.DataTable).Contains(wksname))
-          return "This worksheet name already exists, please choose another name!";
-        else
-          return null;
-      }
-    }
-    
-
-
     public static void Duplicate(IWorksheetController ctrl)
     {
       Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();

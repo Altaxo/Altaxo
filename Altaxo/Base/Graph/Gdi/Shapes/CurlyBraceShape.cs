@@ -217,6 +217,50 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			Pen.BrushRectangle = _bounds;
 
+			var path = GetPath();
+
+			g.DrawPath(Pen, path);
+
+			g.Restore(gs);
+		}
+
+		public override IHitTestObject HitTest(CrossF pt)
+		{
+			GraphicsPath gp = GetPath();
+			gp.Widen(new Pen(Color.Black, pt.GetMinExtension()));
+			Matrix myMatrix = new Matrix();
+			myMatrix.Translate(X, Y);
+			if (this.Rotation != 0)
+			{
+				myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
+			}
+			gp.Transform(myMatrix);
+
+
+			if (gp.IsVisible(pt.Center))
+			{
+				return new HitTestObject(gp, this);
+			}
+			else
+				return null;
+		}
+
+    public override GraphicsPath GetObjectPath()
+    {
+      return GetPath();
+    }
+
+    public override GraphicsPath GetSelectionPath()
+    {
+      return GetPath();
+    }
+
+		/// <summary>
+		/// Gets the untranslated and unrotated path of this shape.
+		/// </summary>
+		/// <returns>Untranslated and unrotated path of this shape</returns>
+		private GraphicsPath GetPath()
+		{
 			var path = new GraphicsPath();
 
 			float angle = 90;
@@ -245,12 +289,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_bounds.Right - _bounds.Height, _bounds.Y - 0.5f * _bounds.Height,
 			 _bounds.Height, _bounds.Height,
 			 angle, -angle);
-
-
-
-			g.DrawPath(Pen, path);
-
-			g.Restore(gs);
+			return path;
 		}
 	} // End Class
 

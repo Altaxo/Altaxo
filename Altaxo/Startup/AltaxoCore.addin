@@ -852,8 +852,14 @@
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemHide" />
 			<MenuItem id="Delete" label="${res:XML.ProjectBrowserMenu.Delete}" description="${res:XML.ProjectBrowserMenu.Delete.Description}"
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemDelete" />
+			<MenuItem id="Move" label="${res:XML.ProjectBrowserMenu.MoveToFolder}" description="${res:XML.ProjectBrowserMenu.MoveToFolder.Description}"
+								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemMoveTo" />
 		</Condition>
-    <Condition name="ProjbrowserListItemSelection" selcount=">1" selitems="Altaxo.Data.DataTable" action="Disable">
+		<Condition name="ProjbrowserListItemSelection" selcount="=1" action="Disable">
+			<MenuItem id="Rename" label="${res:XML.ProjectBrowserMenu.Rename}" description="${res:XML.ProjectBrowserMenu.Rename.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemRename" />
+		</Condition>
+		<Condition name="ProjbrowserListItemSelection" selcount=">1" selitems="Altaxo.Data.DataTable" action="Disable">
       <MenuItem id="PlotCommonCols" label="${res:XML.ProjectBrowserMenu.PlotCommonColumns}" description="${res:XML.ProjectBrowserMenu.PlotCommonColumns.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdPlotCommonColumns" />
     </Condition>

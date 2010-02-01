@@ -46,6 +46,22 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+	public class CmdListItemMoveTo : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.MoveSelectedListItems();
+		}
+	}
+
+	public class CmdListItemRename : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.RenameSelectedListItem();
+		}
+	}
+
   public class CmdViewOnSelectListNodeOff : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
   {
     protected override void Run(ProjectBrowseController ctrl)
