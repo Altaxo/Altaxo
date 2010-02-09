@@ -229,7 +229,7 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
-    public void Paint(Graphics g, XYPlotLayer layer)
+    public void Paint(Graphics g, IPlotArea layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].Paint(g, layer);

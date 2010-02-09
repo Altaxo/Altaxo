@@ -212,14 +212,14 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public void Paint(Graphics g, IPlotAreaWithTicks layer, int axisnumber)
+    public void Paint(Graphics g, IPlotArea layer, int axisnumber)
     {
       if (!_showGrid)
         return;
 
 			
-      Scale axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
-			TickSpacing ticking = axisnumber == 0 ? layer.XTicks : layer.YTicks;
+      Scale axis = layer.Scales[axisnumber].Scale;
+			TickSpacing ticking = layer.Scales[ axisnumber].TickSpacing;
 
       RectangleF layerRect = new RectangleF(new PointF(0, 0), layer.Size);
 

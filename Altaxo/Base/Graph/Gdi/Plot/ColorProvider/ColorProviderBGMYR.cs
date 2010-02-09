@@ -32,15 +32,15 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		#endregion
 
 
-		public override Color GetColor(double relVal)
+		/// <summary>
+		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
+		/// </summary>
+		/// <param name="relVal">Value used for color calculation. Guaranteed to be between 0 and 1.</param>
+		/// <returns>A color associated with the relative value.</returns>
+		protected override Color GetColorFrom0To1Continuously(double relVal)
 		{
-			if (relVal >= 0 && relVal <= 1)
-			{
 				int val = (int)(relVal * 255);
 				return System.Drawing.Color.FromArgb(val, (val + val) % 255, (255 - val));
-			}
-			else
-				return GetOutOfBoundsColor(relVal);
 		}
 
 		public override object Clone()

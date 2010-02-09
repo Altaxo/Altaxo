@@ -862,14 +862,37 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       _imageType = CachedImageType.LinearEquidistant;
       // look if the image has the right dimensions
-      if (null == _cachedImage || _cachedImage.Width != cols || _cachedImage.Height != rows)
+      if (null != _cachedImage && (_cachedImage.Width != cols || _cachedImage.Height != rows))
       {
-        if (null != _cachedImage)
           _cachedImage.Dispose();
+          _cachedImage = null;
+      }
 
+      GetPixelwiseImage(myPlotAssociation, cols, rows, ref _cachedImage);      
+    }
+
+    /// <summary>
+    /// Gets a pixelwise image of the data. Horizontal or vertical axes are not taken into accout.
+    /// The horizontal dimension of the image is associated with the columns of the data table. The
+    /// vertical dimension of the image is associated with the rows of the data table.
+    /// </summary>
+    /// <param name="myPlotAssociation">The data to plot.</param>
+    /// <param name="cols">Number of columns (horizontal pixels) to plot.</param>
+    /// <param name="rows">Number of rows (vertical pixels) to plot.</param>
+    /// <param name="image">Bitmap to fill with the plot image. If null, a new image is created.</param>
+    /// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
+    public void GetPixelwiseImage(XYZMeshedColumnPlotData myPlotAssociation, int cols, int rows, ref System.Drawing.Bitmap image)
+    {
+      // look if the image has the right dimensions
+
+      if (null != image && (image.Width < cols || image.Height < rows))
+        throw new ArgumentException("The provided image is smaller than required");
+
+      if(null == image)
+      {
         // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
         // and the vertical direction of the image is related to the column index
-        _cachedImage = new System.Drawing.Bitmap(rows, cols, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        image = new System.Drawing.Bitmap(rows, cols, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
       }
 
       // now we can fill the image with our data
@@ -881,11 +904,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         for (int j = 0; j < rows; j++)
         {
-          _cachedImage.SetPixel(j, cols - i - 1, GetColor(col[j]));
+          image.SetPixel(j, cols - i - 1, GetColor(col[j]));
         } // for all pixel of a column
       } // for all columns
-
-
     }
 
 		void EhColorProviderChanged(object sender, EventArgs e)

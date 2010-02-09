@@ -1000,6 +1000,22 @@ namespace Altaxo.Data
       this.Resume();
     }
 
+		/// <summary>
+		/// Deletes all columns in the collection, and then copy all columns (but without data) from the source table.
+		/// </summary>
+		/// <param name="src">The source collection to copy the columns from.</param>
+		public void CopyAllColumnsWithoutDataFrom(DataColumnCollection src)
+		{
+			this.Suspend();
+			this.RemoveColumnsAll();
+			for (int i = 0; i < src.ColumnCount; i++)
+			{
+				var newCol = (DataColumn)Activator.CreateInstance(src[i].GetType());
+				this.Add(newCol, src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+			}
+			this.Resume();
+		}
+
     /// <summary>
     /// Appends data columns from DataTable src to the data in this table.
     /// </summary>
@@ -1238,12 +1254,30 @@ namespace Altaxo.Data
       return newIdx;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="from"></param>
-    /// <returns></returns>
-    public IAscendingIntegerCollection MergeColumnTypesFrom(DataColumnCollection from)
+		/// <summary>
+		/// Appends a row to this table, which is copied from a source table.
+		/// </summary>
+		/// <param name="src">Source table to copy the row from.</param>
+		/// <param name="srcRow">Index of the row of the source table.</param>
+		public void AppendRowFrom(DataColumnCollection src, int srcRow)
+		{
+			int cols = Math.Min(this.ColumnCount, src.ColumnCount);
+			int destRow = this.RowCount;
+			for (int i = 0; i < cols; i++)
+			{
+				var destCol = this[i];
+				destCol[destRow] = src[i][srcRow];
+				if (destCol.Count > _numberOfRows)
+					_numberOfRows = destCol.Count;		// we silently update the row count here, otherwise we cannot append more columns
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="from"></param>
+		/// <returns></returns>
+		public IAscendingIntegerCollection MergeColumnTypesFrom(DataColumnCollection from)
     {
       AscendingIntegerCollection coll = new AscendingIntegerCollection();
 
@@ -1504,6 +1538,18 @@ namespace Altaxo.Data
       return GetColumnInfo(idx).Kind;
     }
 
+		/// <summary>
+		/// Sets the kind of the column.
+		/// </summary>
+		/// <param name="datac">The column for which to set the kind (have to be member of this collection).</param>
+		/// <param name="columnKind">The new kind of the column.</param>
+		public void SetColumnKind(DataColumn datac, ColumnKind columnKind)
+		{
+			DataColumnInfo info = GetColumnInfo(datac);
+			info.Kind = columnKind;
+			EnsureUniqueColumnKindsForIndependentVariables(info.Group, datac);
+		}
+
     /// <summary>
     /// Sets the kind of the column with column number <code>idx</code>.
     /// </summary>
@@ -1511,10 +1557,17 @@ namespace Altaxo.Data
     /// <param name="columnKind">The new kind of the column.</param>
     public void SetColumnKind(int idx, ColumnKind columnKind)
     {
-      DataColumnInfo info = GetColumnInfo(idx);
-      info.Kind = columnKind;
-      EnsureUniqueColumnKindsForIndependentVariables(info.Group,this[idx]);
+			SetColumnKind(this[idx], columnKind);
     }
+		/// <summary>
+		/// Sets the kind of the column with column name <code>columnName</code>.
+		/// </summary>
+		/// <param name="idx">The column number of the column.</param>
+		/// <param name="columnKind">The new kind of the column.</param>
+		public void SetColumnKind(string columnName, ColumnKind columnKind)
+		{
+			SetColumnKind(this[columnName], columnKind);
+		}
 
     /// <summary>
     /// Ensures that for a given group number there is only one column for each independent variable (X,Y,Z).

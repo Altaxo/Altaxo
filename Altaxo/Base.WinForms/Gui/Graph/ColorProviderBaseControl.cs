@@ -66,6 +66,18 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public int ColorSteps
+		{
+			get
+			{
+				return (int)_edColorSteps.Value; ;
+			}
+			set
+			{
+				_edColorSteps.Value = value;
+			}
+		}
+
 		#endregion
 	}
 }

@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
@@ -109,6 +110,7 @@ namespace Altaxo.Gui.Graph
 		{
 			InitClassTypes(initData);
 			InitDetailController(initData);
+			CreateAndSetPreviewBitmap();
 		}
 
 		public void InitClassTypes(bool bInit)
@@ -166,10 +168,33 @@ namespace Altaxo.Gui.Graph
 					}
 
 					InitDetailController(true);
+					CreateAndSetPreviewBitmap();
 				}
 			}
 			catch (Exception)
 			{
+			}
+		}
+
+		Bitmap _previewBitmap;
+		void CreateAndSetPreviewBitmap()
+		{
+			const int previewWidth=128;
+			const int previewHeight = 16;
+			if (null != _view)
+			{
+				if (null == _previewBitmap)
+					_previewBitmap = new Bitmap(previewWidth, previewHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+				for (int i = 0; i < previewWidth; i++)
+				{
+					double relVal = i / (double)(previewWidth - 1);
+					Color c = _doc.GetColor(relVal);
+					for (int j = 0; j < previewHeight; j++)
+						_previewBitmap.SetPixel(i, j, c);
+				}
+
+				_view.SetPreviewBitmap(_previewBitmap);
 			}
 		}
 
@@ -210,6 +235,12 @@ namespace Altaxo.Gui.Graph
 
 		public bool Apply()
 		{
+			if (null != _detailController)
+			{
+				if (!_detailController.Apply())
+					return false;
+			}
+
 			return true;
 		}
 

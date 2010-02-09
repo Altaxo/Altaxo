@@ -14,6 +14,8 @@ namespace Altaxo.Calc.Regression
     long _n;
 		double _ai;
 		double _qi;
+		double _min = double.PositiveInfinity;
+		double _max = double.NegativeInfinity;
 
     /// <summary>
     /// Initializes the statistics.
@@ -23,6 +25,8 @@ namespace Altaxo.Calc.Regression
       _n = 0;
 			_ai = 0;
 			_qi = 0;
+			_min = double.PositiveInfinity;
+			_max = double.NegativeInfinity;
     }
 
     /// <summary>
@@ -36,6 +40,10 @@ namespace Altaxo.Calc.Regression
 			double qim1 = _qi;
 			_ai = aim1 + (x - aim1) / _n;
 			_qi = qim1 + (x - aim1) * (x - _ai);
+			if (_min>x)
+				_min = x;
+			if (_max < x)
+				_max = x;
     }
 
 		/// <summary>
@@ -45,7 +53,30 @@ namespace Altaxo.Calc.Regression
 		{
 			get
 			{
-				return _ai;
+				return _n > 0 ? _ai : double.NaN;
+			}
+		}
+
+		/// <summary>
+		/// Returns the minimum of the data values.
+		/// </summary>
+		public double Min
+		{
+			get
+			{
+				return _n > 0 ? _min : double.NaN;
+			}
+		}
+
+
+		/// <summary>
+		/// Returns the maximum of the data values.
+		/// </summary>
+		public double Max
+		{
+			get
+			{
+				return _n > 0 ? _max : double.NaN;
 			}
 		}
 

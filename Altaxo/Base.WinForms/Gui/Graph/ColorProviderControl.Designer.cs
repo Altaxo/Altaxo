@@ -32,8 +32,9 @@
 			this._lblColorProvider = new System.Windows.Forms.Label();
 			this._cbColorProvider = new System.Windows.Forms.ComboBox();
 			this._lblPreview = new System.Windows.Forms.Label();
-			this._previewPanel = new System.Windows.Forms.Panel();
+			this._previewPanel = new System.Windows.Forms.PictureBox();
 			this._tableLayoutPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._previewPanel)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _tableLayoutPanel
@@ -52,7 +53,7 @@
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.Size = new System.Drawing.Size(218, 48);
+			this._tableLayoutPanel.Size = new System.Drawing.Size(218, 64);
 			this._tableLayoutPanel.TabIndex = 0;
 			// 
 			// _lblColorProvider
@@ -79,7 +80,7 @@
 			// 
 			this._lblPreview.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this._lblPreview.AutoSize = true;
-			this._lblPreview.Location = new System.Drawing.Point(19, 31);
+			this._lblPreview.Location = new System.Drawing.Point(19, 39);
 			this._lblPreview.Name = "_lblPreview";
 			this._lblPreview.Size = new System.Drawing.Size(48, 13);
 			this._lblPreview.TabIndex = 2;
@@ -87,11 +88,11 @@
 			// 
 			// _previewPanel
 			// 
-			this._previewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this._previewPanel.Location = new System.Drawing.Point(73, 30);
 			this._previewPanel.Name = "_previewPanel";
-			this._previewPanel.Size = new System.Drawing.Size(142, 15);
+			this._previewPanel.Size = new System.Drawing.Size(142, 31);
 			this._previewPanel.TabIndex = 3;
+			this._previewPanel.TabStop = false;
 			// 
 			// ColorProviderControl
 			// 
@@ -100,9 +101,10 @@
 			this.AutoSize = true;
 			this.Controls.Add(this._tableLayoutPanel);
 			this.Name = "ColorProviderControl";
-			this.Size = new System.Drawing.Size(224, 54);
+			this.Size = new System.Drawing.Size(224, 70);
 			this._tableLayoutPanel.ResumeLayout(false);
 			this._tableLayoutPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._previewPanel)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -114,6 +116,6 @@
 		private System.Windows.Forms.Label _lblColorProvider;
 		private System.Windows.Forms.ComboBox _cbColorProvider;
 		private System.Windows.Forms.Label _lblPreview;
-		private System.Windows.Forms.Panel _previewPanel;
+		private System.Windows.Forms.PictureBox _previewPanel;
 	}
 }

@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Graph
 
     IMVCANController _styleController;
 
+		/// <summary>Controls the option view where users can copy the image to disc or save the image.</summary>
+		IMVCANController _optionsController;
+
     public DensityImagePlotItemController()
     {
     }
@@ -59,6 +62,7 @@ namespace Altaxo.Gui.Graph
         _tempdoc = (DensityImagePlotItem)_doc.Clone();
 
       InitializeStyle();
+			InitializeOptionView();
       BringTabToFront(0);
 
       return true;
@@ -75,6 +79,13 @@ namespace Altaxo.Gui.Graph
       this.AddTab("Style", _styleController, _styleController.ViewObject);
     }
 
+		void InitializeOptionView()
+		{
+			_optionsController = new DensityImagePlotItemOptionController();
+			_optionsController.InitializeDocument(_tempdoc);
+			Current.Gui.FindAndAttachControlTo(_optionsController);
+			this.AddTab("Options", _optionsController, _optionsController.ViewObject);
+		}
 
     #region IMVCController Members
 

@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi
     System.ICloneable,
     Altaxo.Main.IDocumentNode,
     Altaxo.Main.IChildChangedEventSink,
-    IPlotAreaWithTicks
+		IPlotArea
   {
 
     #region Cached member variables

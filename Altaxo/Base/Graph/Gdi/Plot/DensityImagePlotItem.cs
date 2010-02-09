@@ -48,8 +48,8 @@ namespace Altaxo.Graph.Gdi.Plot
     IXBoundsHolder,
     IYBoundsHolder
   {
-    protected XYZMeshedColumnPlotData m_PlotAssociation;
-    protected DensityImagePlotStyle m_PlotStyle;
+    protected XYZMeshedColumnPlotData _plotData;
+    protected DensityImagePlotStyle _plotStyle;
 
     [field: NonSerialized]
     public event BoundaryChangedHandler XBoundariesChanged;
@@ -72,8 +72,8 @@ namespace Altaxo.Graph.Gdi.Plot
       public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
       {
         DensityImagePlotItem s = (DensityImagePlotItem)obj;
-        info.AddValue("Data", s.m_PlotAssociation);
-        info.AddValue("Style", s.m_PlotStyle);
+        info.AddValue("Data", s._plotData);
+        info.AddValue("Style", s._plotStyle);
       }
       /// <summary>
       /// Deserializes the DensityImagePlotItem Version 0.
@@ -87,8 +87,8 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         DensityImagePlotItem s = (DensityImagePlotItem)obj;
 
-        s.m_PlotAssociation = (XYZMeshedColumnPlotData)info.GetValue("Data", typeof(XYZMeshedColumnPlotData));
-        s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style", typeof(DensityImagePlotStyle));
+        s._plotData = (XYZMeshedColumnPlotData)info.GetValue("Data", typeof(XYZMeshedColumnPlotData));
+        s._plotStyle = (DensityImagePlotStyle)info.GetValue("Style", typeof(DensityImagePlotStyle));
 
         return s;
       }
@@ -101,8 +101,8 @@ namespace Altaxo.Graph.Gdi.Plot
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         DensityImagePlotItem s = (DensityImagePlotItem)obj;
-        info.AddValue("Data", s.m_PlotAssociation);
-        info.AddValue("Style", s.m_PlotStyle);
+        info.AddValue("Data", s._plotData);
+        info.AddValue("Style", s._plotStyle);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -133,14 +133,14 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       // Restore the event chain
 
-      if (null != m_PlotAssociation)
+      if (null != _plotData)
       {
-        m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
+        _plotData.Changed += new EventHandler(OnDataChangedEventHandler);
       }
 
-      if (null != m_PlotStyle)
+      if (null != _plotStyle)
       {
-        m_PlotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
+        _plotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
       }
     }
     #endregion
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Gdi.Plot
       DensityImagePlotItem from = fromb as DensityImagePlotItem;
       if (null != from)
       {
-        this.Data = from.m_PlotAssociation.Clone();   // also wires the event
+        this.Data = from._plotData.Clone();   // also wires the event
         this.Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
       }
     }
@@ -178,32 +178,32 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public object Data
     {
-      get { return m_PlotAssociation; }
+      get { return _plotData; }
       set
       {
         if (null == value)
           throw new System.ArgumentNullException();
         else if (!(value is XYZMeshedColumnPlotData))
-          throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
+          throw new System.ArgumentException("The provided data object is not of the type " + _plotData.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
-          if (!object.ReferenceEquals(m_PlotAssociation, value))
+          if (!object.ReferenceEquals(_plotData, value))
           {
-            if (null != m_PlotAssociation)
+            if (null != _plotData)
             {
-              m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
-              m_PlotAssociation.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
-              m_PlotAssociation.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
+              _plotData.Changed -= new EventHandler(OnDataChangedEventHandler);
+              _plotData.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
+              _plotData.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
 
             }
 
-            m_PlotAssociation = (XYZMeshedColumnPlotData)value;
+            _plotData = (XYZMeshedColumnPlotData)value;
 
-            if (null != m_PlotAssociation)
+            if (null != _plotData)
             {
-              m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
-              m_PlotAssociation.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
-              m_PlotAssociation.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
+              _plotData.Changed += new EventHandler(OnDataChangedEventHandler);
+              _plotData.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
+              _plotData.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
 
             }
 
@@ -215,32 +215,32 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override object StyleObject
     {
-      get { return m_PlotStyle; }
+      get { return _plotStyle; }
       set { this.Style = (DensityImagePlotStyle)value; }
     }
     public DensityImagePlotStyle Style
     {
-      get { return m_PlotStyle; }
+      get { return _plotStyle; }
       set
       {
         if (null == value)
           throw new System.ArgumentNullException();
         else
         {
-          if (!object.ReferenceEquals(m_PlotStyle, value))
+          if (!object.ReferenceEquals(_plotStyle, value))
           {
             // delete event wiring to old AbstractXYPlotStyle
-            if (null != m_PlotStyle)
+            if (null != _plotStyle)
             {
-              m_PlotStyle.Changed -= new EventHandler(OnStyleChangedEventHandler);
+              _plotStyle.Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
 
-            m_PlotStyle = (DensityImagePlotStyle)value;
+            _plotStyle = (DensityImagePlotStyle)value;
 
             // create event wire to new Plotstyle
-            if (null != m_PlotStyle)
+            if (null != _plotStyle)
             {
-              m_PlotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
+              _plotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
             }
 
             // indicate the style has changed
@@ -253,7 +253,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override string GetName(int level)
     {
-      return m_PlotAssociation.ToString();
+      return _plotData.ToString();
     }
     public override string GetName(string style)
     {
@@ -267,9 +267,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		public override void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
     {
-      if (null != this.m_PlotStyle)
+      if (null != this._plotStyle)
       {
-        m_PlotStyle.Paint(g, layer, m_PlotAssociation);
+        _plotStyle.Paint(g, layer, _plotData);
       }
     }
 
@@ -281,8 +281,8 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if (null != this.m_PlotAssociation)
-        m_PlotAssociation.CalculateCachedData();
+      if (null != this._plotData)
+        _plotData.CalculateCachedData();
     }
 
 
@@ -292,8 +292,8 @@ namespace Altaxo.Graph.Gdi.Plot
     public override void OnDataChanged()
     {
       // first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
-      if (null != this.m_PlotStyle)
-        m_PlotStyle.EhDataChanged(this);
+      if (null != this._plotStyle)
+        _plotStyle.EhDataChanged(this);
 
       base.OnDataChanged();
     }
@@ -309,13 +309,13 @@ namespace Altaxo.Graph.Gdi.Plot
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if (val is NumericalBoundaries)
-        this.m_PlotAssociation.SetXBoundsFromTemplate(val as NumericalBoundaries);
+        this._plotData.SetXBoundsFromTemplate(val as NumericalBoundaries);
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if (pb is NumericalBoundaries)
-        this.m_PlotAssociation.MergeXBoundsInto(pb as NumericalBoundaries);
+        this._plotData.MergeXBoundsInto(pb as NumericalBoundaries);
     }
 
     #endregion
@@ -332,13 +332,13 @@ namespace Altaxo.Graph.Gdi.Plot
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if (val is NumericalBoundaries)
-        this.m_PlotAssociation.SetYBoundsFromTemplate(val as NumericalBoundaries);
+        this._plotData.SetYBoundsFromTemplate(val as NumericalBoundaries);
     }
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if (pb is NumericalBoundaries)
-        this.m_PlotAssociation.MergeYBoundsInto(pb as NumericalBoundaries);
+        this._plotData.MergeYBoundsInto(pb as NumericalBoundaries);
     }
 
     #endregion
@@ -369,6 +369,32 @@ namespace Altaxo.Graph.Gdi.Plot
         return;
       DensityImagePlotItem from = (DensityImagePlotItem)template;
       //      m_PlotStyle.CopyFrom(from.m_PlotStyle);
+    }
+
+
+    /// <summary>
+    /// Gets a pixelwise image of the data. Horizontal or vertical axes are not taken into accout.
+    /// The horizontal dimension of the image is associated with the columns of the data table. The
+    /// vertical dimension of the image is associated with the rows of the data table.
+    /// </summary>
+    /// <returns>Bitmap with the plot image.</returns>
+    public Bitmap GetPixelwiseImage()
+    {
+      Bitmap result = null;
+      GetPixelwiseImage(ref result);
+      return result;
+    }
+
+    /// <summary>
+    /// Gets a pixelwise image of the data. Horizontal or vertical axes are not taken into accout.
+    /// The horizontal dimension of the image is associated with the columns of the data table. The
+    /// vertical dimension of the image is associated with the rows of the data table.
+    /// </summary>
+    /// <param name="image">Bitmap to fill with the plot image. If null, a new image is created.</param>
+    /// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
+    public void GetPixelwiseImage(ref Bitmap image)
+    {
+      _plotStyle.GetPixelwiseImage(_plotData, _plotData.ColumnCount, _plotData.RowCount, ref image);
     }
 
   }

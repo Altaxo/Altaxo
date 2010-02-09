@@ -595,6 +595,7 @@
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBGRY.cs" />
     <Compile Include="Graph\Gdi\Plot\IColorProvider.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBase.cs" />
+    <Compile Include="Graph\Gdi\Shapes\DensityImageLegend.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_PegBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_TreeWalker.cs" />
@@ -780,6 +781,7 @@
     <Compile Include="Gui\Graph\ColorProviderBaseController.cs" />
     <Compile Include="Gui\Graph\ColorProviderController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
+    <Compile Include="Gui\Graph\DensityImagePlotItemOptionController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotStyleController.cs" />
     <Compile Include="Gui\Graph\DensityScaleController.cs" />
     <Compile Include="Gui\Graph\FillToCurvePlotStyleController.cs" />

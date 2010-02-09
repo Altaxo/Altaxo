@@ -58,6 +58,11 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		double Transparency { get; set; }
 
+		/// <summary>
+		/// Get/set the ColorSteps value (0..).
+		/// </summary>
+		int ColorSteps { get; set; }
+
 	}
 	#endregion
 
@@ -77,6 +82,7 @@ namespace Altaxo.Gui.Graph
 				_view.ColorAbove = _doc.ColorAbove;
 				_view.ColorInvalid = _doc.ColorInvalid;
 				_view.Transparency = _doc.Transparency;
+				_view.ColorSteps = _doc.ColorSteps;
 			}
 		}
 
@@ -139,6 +145,7 @@ namespace Altaxo.Gui.Graph
 			_originalDoc.ColorAbove = _view.ColorAbove;
 			_originalDoc.ColorInvalid = _view.ColorInvalid;
 			_originalDoc.Transparency = _view.Transparency;
+			_originalDoc.ColorSteps = _view.ColorSteps;
 			return true;
 		}
 

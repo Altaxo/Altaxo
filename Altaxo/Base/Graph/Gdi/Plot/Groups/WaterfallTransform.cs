@@ -361,7 +361,16 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     class TransformedLayerWrapper : IPlotArea
     {
       IPlotArea _layer;
+			ScaleCollection _scales;
+
+			/// <summary>
+			/// Only a shortcut to _scales[0].Scale
+			/// </summary>
       TransformedScale _xScale;
+
+			/// <summary>
+			/// Only a shortcut to _scales[1].Scale
+			/// </summary>
       TransformedScale _yScale;
 
       public TransformedLayerWrapper(IPlotArea layer, double xinc, double yinc)
@@ -369,7 +378,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         _layer = layer;
         _xScale = new TransformedScale(layer.XAxis, xinc);
         _yScale = new TransformedScale(layer.YAxis, yinc);
-      }
+				_scales = new ScaleCollection();
+				_scales[0] = new ScaleWithTicks(_xScale, new Altaxo.Graph.Scales.Ticks.NoTickSpacing()); ;
+				_scales[1] = new ScaleWithTicks(_yScale, new Altaxo.Graph.Scales.Ticks.NoTickSpacing()); ;
+			}
 
       #region IPlotArea Members
 
@@ -387,6 +399,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       {
         get { return _yScale; }
       }
+
+			public ScaleCollection Scales
+			{
+				get
+				{
+					return _scales;
+				}
+			}
 
       public G2DCoordinateSystem CoordinateSystem
       {

@@ -198,7 +198,7 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
-    public void Paint(Graphics g, IPlotAreaWithTicks layer)
+    public void Paint(Graphics g, IPlotArea layer)
     {
       for (int i = 0; i < _innerList.Count; ++i)
         _innerList[i].Paint(g, layer);

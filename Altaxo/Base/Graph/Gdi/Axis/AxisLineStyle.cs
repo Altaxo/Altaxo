@@ -340,7 +340,7 @@ namespace Altaxo.Graph.Gdi.Axis
         _cachedAxisStyleInfo = value;
       }
     }
-    public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF pt, bool withTicks)
+    public virtual IHitTestObject HitTest(IPlotArea layer, PointF pt, bool withTicks)
     {
 
       GraphicsPath selectionPath = GetSelectionPath(layer,withTicks);
@@ -593,7 +593,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="layer"></param>
     /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
     /// <returns>The graphics path of the axis line.</returns>
-    public virtual GraphicsPath GetObjectPath(XYPlotLayer layer, bool withTicks)
+    public virtual GraphicsPath GetObjectPath(IPlotArea layer, bool withTicks)
     {
       return GetPath(layer, withTicks, 0);
     }
@@ -604,7 +604,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="layer"></param>
     /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
     /// <returns>The graphics path of the selection rectangle.</returns>
-    public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer, bool withTicks)
+    public virtual GraphicsPath GetSelectionPath(IPlotArea layer, bool withTicks)
     {
       return GetPath(layer, withTicks, 3);
     }
@@ -615,7 +615,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="layer"></param>
     /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
     /// <returns>The graphics path of the selection rectangle.</returns>
-    protected GraphicsPath GetPath(XYPlotLayer layer, bool withTicks, float inflateby)
+    protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, float inflateby)
     {
 
       Logical3D r0 = _cachedAxisStyleInfo.Identifier.Begin;
@@ -645,7 +645,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="g">The graphics context painting to.</param>
     /// <param name="layer">The layer the axis belongs to.</param>
     /// <param name="styleInfo">The axis information of the axis to paint.</param>
-    public void Paint(Graphics g, XYPlotLayer layer, CSAxisInformation styleInfo)
+    public void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo)
     {
       CSLineID styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo.Clone();

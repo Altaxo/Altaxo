@@ -30,11 +30,11 @@
 		{
 			this._flowLayoutVerticalMain = new System.Windows.Forms.FlowLayoutPanel();
 			this._grpScale = new System.Windows.Forms.GroupBox();
+			this._ctrlDensityScale = new Altaxo.Gui.Graph.DensityScaleControl();
 			this._grpColorProvider = new System.Windows.Forms.GroupBox();
+			this._ctrlColorProvider = new Altaxo.Gui.Graph.ColorProviderControl();
 			this._grpOtherProperties = new System.Windows.Forms.GroupBox();
 			this._chkClipToLayer = new System.Windows.Forms.CheckBox();
-			this._ctrlDensityScale = new Altaxo.Gui.Graph.DensityScaleControl();
-			this._ctrlColorProvider = new Altaxo.Gui.Graph.ColorProviderControl();
 			this._flowLayoutVerticalMain.SuspendLayout();
 			this._grpScale.SuspendLayout();
 			this._grpColorProvider.SuspendLayout();
@@ -51,7 +51,7 @@
 			this._flowLayoutVerticalMain.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this._flowLayoutVerticalMain.Location = new System.Drawing.Point(0, 0);
 			this._flowLayoutVerticalMain.Name = "_flowLayoutVerticalMain";
-			this._flowLayoutVerticalMain.Size = new System.Drawing.Size(340, 484);
+			this._flowLayoutVerticalMain.Size = new System.Drawing.Size(340, 247);
 			this._flowLayoutVerticalMain.TabIndex = 0;
 			// 
 			// _grpScale
@@ -60,26 +60,42 @@
 			this._grpScale.Controls.Add(this._ctrlDensityScale);
 			this._grpScale.Location = new System.Drawing.Point(3, 3);
 			this._grpScale.Name = "_grpScale";
-			this._grpScale.Size = new System.Drawing.Size(334, 325);
+			this._grpScale.Size = new System.Drawing.Size(334, 88);
 			this._grpScale.TabIndex = 0;
 			this._grpScale.TabStop = false;
 			this._grpScale.Text = "Scale:";
+			// 
+			// _ctrlDensityScale
+			// 
+			this._ctrlDensityScale.AutoSize = true;
+			this._ctrlDensityScale.Location = new System.Drawing.Point(6, 19);
+			this._ctrlDensityScale.Name = "_ctrlDensityScale";
+			this._ctrlDensityScale.Size = new System.Drawing.Size(322, 50);
+			this._ctrlDensityScale.TabIndex = 0;
 			// 
 			// _grpColorProvider
 			// 
 			this._grpColorProvider.AutoSize = true;
 			this._grpColorProvider.Controls.Add(this._ctrlColorProvider);
-			this._grpColorProvider.Location = new System.Drawing.Point(3, 334);
+			this._grpColorProvider.Location = new System.Drawing.Point(3, 97);
 			this._grpColorProvider.Name = "_grpColorProvider";
 			this._grpColorProvider.Size = new System.Drawing.Size(236, 92);
 			this._grpColorProvider.TabIndex = 1;
 			this._grpColorProvider.TabStop = false;
 			this._grpColorProvider.Text = "Colorization:";
 			// 
+			// _ctrlColorProvider
+			// 
+			this._ctrlColorProvider.AutoSize = true;
+			this._ctrlColorProvider.Location = new System.Drawing.Point(6, 19);
+			this._ctrlColorProvider.Name = "_ctrlColorProvider";
+			this._ctrlColorProvider.Size = new System.Drawing.Size(224, 54);
+			this._ctrlColorProvider.TabIndex = 0;
+			// 
 			// _grpOtherProperties
 			// 
 			this._grpOtherProperties.Controls.Add(this._chkClipToLayer);
-			this._grpOtherProperties.Location = new System.Drawing.Point(3, 432);
+			this._grpOtherProperties.Location = new System.Drawing.Point(3, 195);
 			this._grpOtherProperties.Name = "_grpOtherProperties";
 			this._grpOtherProperties.Size = new System.Drawing.Size(256, 49);
 			this._grpOtherProperties.TabIndex = 2;
@@ -96,22 +112,6 @@
 			this._chkClipToLayer.Text = "Clip to layer";
 			this._chkClipToLayer.UseVisualStyleBackColor = true;
 			// 
-			// _ctrlDensityScale
-			// 
-			this._ctrlDensityScale.AutoSize = true;
-			this._ctrlDensityScale.Location = new System.Drawing.Point(6, 19);
-			this._ctrlDensityScale.Name = "_ctrlDensityScale";
-			this._ctrlDensityScale.Size = new System.Drawing.Size(322, 287);
-			this._ctrlDensityScale.TabIndex = 0;
-			// 
-			// _ctrlColorProvider
-			// 
-			this._ctrlColorProvider.AutoSize = true;
-			this._ctrlColorProvider.Location = new System.Drawing.Point(6, 19);
-			this._ctrlColorProvider.Name = "_ctrlColorProvider";
-			this._ctrlColorProvider.Size = new System.Drawing.Size(224, 54);
-			this._ctrlColorProvider.TabIndex = 0;
-			// 
 			// DensityImagePlotStyleControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -119,7 +119,7 @@
 			this.AutoSize = true;
 			this.Controls.Add(this._flowLayoutVerticalMain);
 			this.Name = "DensityImagePlotStyleControl";
-			this.Size = new System.Drawing.Size(340, 484);
+			this.Size = new System.Drawing.Size(340, 247);
 			this._flowLayoutVerticalMain.ResumeLayout(false);
 			this._flowLayoutVerticalMain.PerformLayout();
 			this._grpScale.ResumeLayout(false);

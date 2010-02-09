@@ -39,7 +39,7 @@
 			this._tableLayoutPanel.AutoSize = true;
 			this._tableLayoutPanel.ColumnCount = 2;
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._tableLayoutPanel.Controls.Add(this._lblScale, 0, 0);
 			this._tableLayoutPanel.Controls.Add(this._cbScales, 1, 0);
 			this._tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
@@ -48,7 +48,7 @@
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.Size = new System.Drawing.Size(319, 284);
+			this._tableLayoutPanel.Size = new System.Drawing.Size(319, 27);
 			this._tableLayoutPanel.TabIndex = 0;
 			// 
 			// _lblScale
@@ -80,7 +80,7 @@
 			this.AutoSize = true;
 			this.Controls.Add(this._tableLayoutPanel);
 			this.Name = "DensityScaleControl";
-			this.Size = new System.Drawing.Size(322, 287);
+			this.Size = new System.Drawing.Size(322, 30);
 			this._tableLayoutPanel.ResumeLayout(false);
 			this._tableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);

@@ -341,6 +341,10 @@ namespace Altaxo.Main
 				ItemAdded(item, newName);
 				ItemRemoved(item, oldName);
 			}
+			else
+			{
+				OnCollectionChanged(NamedObjectCollectionChangeType.ItemRenamed, item, oldName, newName);
+			}
 		}
 
 		/// <summary>

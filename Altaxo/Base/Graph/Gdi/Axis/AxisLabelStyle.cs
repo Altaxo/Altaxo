@@ -582,7 +582,7 @@ namespace Altaxo.Graph.Gdi.Axis
         return _cachedStyleID;
       }
     }
-    public override IHitTestObject HitTest(XYPlotLayer layer, PointF pt)
+    public override IHitTestObject HitTest(IPlotArea layer, PointF pt)
     {
       GraphicsPath gp = GetSelectionPath(layer);
       if(gp.IsVisible(pt))
@@ -644,13 +644,13 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     /// <param name="layer"></param>
     /// <returns></returns>
-    public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer)
+    public virtual GraphicsPath GetSelectionPath(IPlotArea layer)
     {
       return (GraphicsPath)_enclosingPath.Clone();
     }
 
     private GraphicsPath _enclosingPath = new GraphicsPath(); // with Winding also overlapping rectangles are selected
-    public override void Paint(Graphics g, XYPlotLayer layer, CSAxisInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
+    public override void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
     {
       _cachedStyleID = styleInfo.Identifier;
       CSLineID styleID = styleInfo.Identifier;

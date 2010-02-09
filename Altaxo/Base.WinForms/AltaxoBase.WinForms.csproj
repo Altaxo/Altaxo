@@ -305,6 +305,12 @@
     <Compile Include="Gui\Graph\ColorProviderControl.Designer.cs">
       <DependentUpon>ColorProviderControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\DensityImagePlotItemOptionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityImagePlotItemOptionControl.Designer.cs">
+      <DependentUpon>DensityImagePlotItemOptionControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -638,6 +644,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ColorProviderControl.resx">
       <DependentUpon>ColorProviderControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\DensityImagePlotItemOptionControl.resx">
+      <DependentUpon>DensityImagePlotItemOptionControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\DensityImagePlotStyleControl.resx">
       <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>

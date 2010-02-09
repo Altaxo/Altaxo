@@ -488,6 +488,25 @@ namespace Altaxo.Data
       return true;
     }
 
+
+		/// <summary>
+		/// Ensures the existence of a DataTable with the given name. Returns the table with the given name if it exists, 
+		/// otherwise a table with that name will be created and returned.
+		/// </summary>
+		/// <param name="tableName">Table name.</param>
+		/// <returns>The data table with the provided name.</returns>
+		public DataTable EnsureExistence(string tableName)
+		{
+			if (Contains(tableName))
+				return this[tableName];
+			else
+			{
+				var newTable = new DataTable(tableName);
+				Add(newTable);
+				return newTable;
+			}
+		}
+
     protected void EhTableParentChanged(object sender, Main.ParentChangedEventArgs pce)
     {
       if(object.ReferenceEquals(this,pce.OldParent) && this.Contains((DataTable)sender))

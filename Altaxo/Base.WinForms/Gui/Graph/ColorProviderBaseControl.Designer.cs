@@ -38,8 +38,11 @@
 			this._cbColorBelow = new Altaxo.Gui.Common.Drawing.ColorComboBox();
 			this._cbColorAbove = new Altaxo.Gui.Common.Drawing.ColorComboBox();
 			this._cbInvalid = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+			this._lblColorSteps = new System.Windows.Forms.Label();
+			this._edColorSteps = new System.Windows.Forms.NumericUpDown();
 			this._tableLayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._edTransparency)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._edColorSteps)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _tableLayoutPanel
@@ -56,14 +59,17 @@
 			this._tableLayoutPanel.Controls.Add(this._cbColorBelow, 1, 0);
 			this._tableLayoutPanel.Controls.Add(this._cbColorAbove, 1, 1);
 			this._tableLayoutPanel.Controls.Add(this._cbInvalid, 1, 2);
+			this._tableLayoutPanel.Controls.Add(this._edColorSteps, 1, 4);
+			this._tableLayoutPanel.Controls.Add(this._lblColorSteps, 0, 4);
 			this._tableLayoutPanel.Location = new System.Drawing.Point(3, 3);
 			this._tableLayoutPanel.Name = "_tableLayoutPanel";
-			this._tableLayoutPanel.RowCount = 4;
+			this._tableLayoutPanel.RowCount = 5;
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.Size = new System.Drawing.Size(238, 101);
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanel.Size = new System.Drawing.Size(238, 127);
 			this._tableLayoutPanel.TabIndex = 0;
 			// 
 			// _lblColorBelow
@@ -153,6 +159,29 @@
 			this._cbInvalid.Size = new System.Drawing.Size(121, 19);
 			this._cbInvalid.TabIndex = 7;
 			// 
+			// _lblColorSteps
+			// 
+			this._lblColorSteps.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._lblColorSteps.AutoSize = true;
+			this._lblColorSteps.Location = new System.Drawing.Point(46, 107);
+			this._lblColorSteps.Name = "_lblColorSteps";
+			this._lblColorSteps.Size = new System.Drawing.Size(62, 13);
+			this._lblColorSteps.TabIndex = 8;
+			this._lblColorSteps.Text = "Color steps:";
+			// 
+			// _edColorSteps
+			// 
+			this._edColorSteps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._edColorSteps.Location = new System.Drawing.Point(114, 104);
+			this._edColorSteps.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+			this._edColorSteps.Name = "_edColorSteps";
+			this._edColorSteps.Size = new System.Drawing.Size(121, 20);
+			this._edColorSteps.TabIndex = 9;
+			// 
 			// ColorProviderBaseControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -160,10 +189,11 @@
 			this.AutoSize = true;
 			this.Controls.Add(this._tableLayoutPanel);
 			this.Name = "ColorProviderBaseControl";
-			this.Size = new System.Drawing.Size(244, 107);
+			this.Size = new System.Drawing.Size(244, 133);
 			this._tableLayoutPanel.ResumeLayout(false);
 			this._tableLayoutPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._edTransparency)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._edColorSteps)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -180,5 +210,7 @@
 		private Altaxo.Gui.Common.Drawing.ColorComboBox _cbColorBelow;
 		private Altaxo.Gui.Common.Drawing.ColorComboBox _cbColorAbove;
 		private Altaxo.Gui.Common.Drawing.ColorComboBox _cbInvalid;
+		private System.Windows.Forms.NumericUpDown _edColorSteps;
+		private System.Windows.Forms.Label _lblColorSteps;
 	}
 }

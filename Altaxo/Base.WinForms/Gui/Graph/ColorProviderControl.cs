@@ -44,6 +44,7 @@ namespace Altaxo.Gui.Graph
 
 		public void SetPreviewBitmap(Bitmap bitmap)
 		{
+			_previewPanel.Image = bitmap;
 		}
 
 		public event Action ColorProviderChanged;

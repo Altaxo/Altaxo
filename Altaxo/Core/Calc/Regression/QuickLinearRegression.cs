@@ -34,6 +34,7 @@ namespace Altaxo.Calc.Regression
     double _sx;
     double _sxx;
     double _sy;
+		double _syy;
     double _syx;
 
     /// <summary>
@@ -45,10 +46,22 @@ namespace Altaxo.Calc.Regression
     {
       _n   += 1;
       _sx  += x;
-      _sxx += x*x;
+      _sxx += x * x;
       _sy  += y;
+			_syy += y * y;
       _syx += y*x;
     }
+
+		/// <summary>
+		/// Returns the number of entries added.
+		/// </summary>
+		public double N
+		{
+			get
+			{
+				return _n;
+			}
+		}
 
     /// <summary>
     /// Gets the intercept value of the linear regression. Returns NaN if not enough data points entered.
@@ -103,5 +116,13 @@ namespace Altaxo.Calc.Regression
         return _sy / _n;
       }
     }
+
+		public double PearsonCorrelationCoefficient
+		{
+			get
+			{
+				return (_n*_syx - _sx * _sy) / Math.Sqrt((_n*_sxx-_sx*_sx)*(_n*_syy-_sy*_sy));
+			}
+		}
   }
 }

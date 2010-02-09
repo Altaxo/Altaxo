@@ -949,6 +949,7 @@ namespace Altaxo.Data
     {
       DataColumns.AppendAllColumnsToPosition(src.DataColumns, ignoreNames, appendPosition);
     }
+
     /// <summary>
     /// Deletes all data and property columns in the table, and then copy all data and property columns from the source table.
     /// </summary>
@@ -960,6 +961,30 @@ namespace Altaxo.Data
       this.PropCols.CopyAllColumnsFrom(src.PropCols);
       this.Resume();
     }
+
+		/// <summary>
+		/// Deletes all data and property columns in the table, and then copy all data and property columns, from the source table.
+		/// As you can specify, this can be done with or without the data.
+		/// </summary>
+		/// <param name="src">The source table to copy the data columns from.</param>
+		/// <param name="copyDataColumnData">If true, the data from the data columns of the source table is also copied.</param>
+		/// <param name="copyPropertyColumnData">If true, the data from the property columns of the source table is also copied.</param>
+		public void CopyDataAndPropertyColumnsFrom(DataTable src, bool copyDataColumnData, bool copyPropertyColumnData)
+		{
+			this.Suspend();
+			
+			if (copyDataColumnData)
+				this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
+			else
+				this.DataColumns.CopyAllColumnsWithoutDataFrom(src.DataColumns);
+
+			if (copyPropertyColumnData)
+				this.PropCols.CopyAllColumnsFrom(src.PropCols);
+			else
+				this.PropCols.CopyAllColumnsWithoutDataFrom(src.PropCols);
+
+			this.Resume();
+		}
 
     /// <summary>
     /// Returns the collection of data columns. Used as simplification in scripts to provide access in the form table["A"].Col[2].

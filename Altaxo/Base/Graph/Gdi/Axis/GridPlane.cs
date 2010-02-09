@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public void Paint(Graphics g, IPlotAreaWithTicks layer)
+    public void Paint(Graphics g, IPlotArea layer)
     {
       Region region = layer.CoordinateSystem.GetRegion();
       if (_background != null)
