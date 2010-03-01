@@ -614,8 +614,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region IGrippableObject Members
 
-		public override void ShowGrips(Graphics g)
+		public override IGripManipulationHandle[] ShowGrips(Graphics g)
     {
+			return ShowGrips(g, false, true, true);
+			/*
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
@@ -624,19 +626,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       DrawRotationGrip(g,new PointF(1,1));
       g.DrawRectangle(Pens.Blue, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);
       g.Restore(gs);
+
+			return null;
+			*/
     }
 
-    public override IGripManipulationHandle GripHitTest(PointF point)
-    {
-      PointF rel;
-
-      rel = new PointF(1, 1);
-      if (IsRotationGripHitted(rel, point))
-        return new RotationGripHandle(this, rel);
-
-      return null;
-    }
-
+ 
     #endregion
 
 

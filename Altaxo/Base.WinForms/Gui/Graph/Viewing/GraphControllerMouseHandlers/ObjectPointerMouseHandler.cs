@@ -38,12 +38,41 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   public class ObjectPointerMouseHandler : MouseStateHandler
   {
     #region Inner structures
-    protected struct Grip
+    protected struct GripManipulationHandles
     {
-      public IGripManipulationHandle Handle;
-      public int Layer;
+			public IGripManipulationHandle Handle;
+      public IGripManipulationHandle[] Handles;
       public IGrippableObject Object;
-    }
+
+			public void ShowGrips(Graphics g)
+			{
+				if (null == Handles || Handles.Length == 0)
+					return;
+
+				var gstate = g.Save();
+				g.PageScale = 1;
+				g.ResetTransform();
+
+				for (int i = 0; i < Handles.Length; i++)
+					Handles[i].Show(g);
+
+
+				g.Restore(gstate);
+			}
+
+			public IGripManipulationHandle HitTest(PointF pt)
+			{
+				if (null == Handles || Handles.Length == 0)
+					return null;
+
+				for (int i = 0; i < Handles.Length; i++)
+				{
+					if (Handles[i].IsGripHitted(pt))
+						return Handles[i];
+				}
+				return null;
+			}
+		}
     #endregion
 
     #region Members
@@ -65,7 +94,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// This is the structure to store information about an object that currently has its grip shown.
     /// </summary>
-    protected Grip _grip;
+    protected GripManipulationHandles _grip;
     /// <summary>
     /// The hashtable of the selected objects. The key is the selected object itself,
     /// the data is a int object, which stores the layer number the object belongs to.
@@ -152,7 +181,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(null!=_grip.Handle)
       {
         PointF printAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
-        PointF newPosition = _grac.GC.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
+        //PointF newPosition = _grac.GC.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
+        var pts = new PointF[] { printAreaCoord };
+        SingleSelectedHitTestObject.InverseTransformation.TransformPoints(pts);
+        PointF newPosition = pts[0];
         _grip.Handle.MoveGrip(newPosition);
         _grac.WinFormsController.RepaintGraphArea();
         
@@ -233,17 +265,29 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         IGrippableObject gripObject = (IGrippableObject)SingleSelectedObject;
         // first switch to the layer graphics context (from printable context)
 
-        PointF layerCoord = SingleSelectedHitTestObject.ParentLayer.GraphToLayerCoordinates(graphXY);
+        //PointF layerCoord = SingleSelectedHitTestObject.ParentLayer.GraphToLayerCoordinates(graphXY);
+        var pts = new PointF[]{graphXY};
+        SingleSelectedHitTestObject.InverseTransformation.TransformPoints(pts);
+        var layerCoord = pts[0];
 
-        _grip.Handle = gripObject.GripHitTest(layerCoord);
+        //_grip.Handle = gripObject.GripHitTest(layerCoord);
+
+				// Calculate unscaled page coordinates
+				pts[0] = _grac.WinFormsController.PixelToUnscaledPageCoordinates(mouseXY); // Graph area coordinates
+				_grip.Handle = _grip.HitTest(pts[0]);
+
 
         if(_grip.Handle!=null)
         {
-          _grip.Layer = SingleSelectedHitTestObject.ParentLayer.Number;
+//          _grip.Layer = SingleSelectedHitTestObject.ParentLayer.Number;
           _grip.Object = gripObject;
           return; // 
-          
         }
+
+			
+
+
+
       }
      
 
@@ -425,28 +469,30 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public override void AfterPaint(Graphics g)
     {
 			// finally, mark the selected objects
-      if(SingleSelectedObject is IGrippableObject)
-      {
-        IGrippableObject gripObject = (IGrippableObject)SingleSelectedObject;
-        if(null!=gripObject)
-        {
-          // first switch to the layer graphics context (from printable context)
-         
+			if (SingleSelectedObject is IGrippableObject)
+			{
+				var gripObject = (IGrippableObject)SingleSelectedObject;
 
-          SingleSelectedHitTestObject.ParentLayer.GraphToLayerCoordinates(g);
+				// first switch to the layer graphics context (from printable context)
 
-          gripObject.ShowGrips(g);
-        }
 
-      }
-      else if(_selectedObjects.Count>0)
-      {
-        foreach(IHitTestObject graphObject in _selectedObjects)
-        {
-         
-          g.DrawPath(Pens.Blue,graphObject.SelectionPath);
-        }
-      }
+				//SingleSelectedHitTestObject.ParentLayer.GraphToLayerCoordinates(g);
+
+				g.MultiplyTransform(SingleSelectedHitTestObject.Transformation);
+
+				_grip.Handles = gripObject.ShowGrips(g);
+				_grip.ShowGrips(g);
+
+
+			}
+			else if (_selectedObjects.Count > 0)
+			{
+				foreach (IHitTestObject graphObject in _selectedObjects)
+				{
+
+					g.DrawPath(Pens.Blue, graphObject.SelectionPath);
+				}
+			}
 
 
       base.AfterPaint (g);

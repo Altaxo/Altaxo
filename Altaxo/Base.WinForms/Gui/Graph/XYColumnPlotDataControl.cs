@@ -50,6 +50,7 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
+    private SplitContainer _splitContainer;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -85,7 +86,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(XYColumnPlotDataControl));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XYColumnPlotDataControl));
       this.m_cbTables = new System.Windows.Forms.ComboBox();
       this.m_lbColumns = new System.Windows.Forms.ListBox();
       this.m_btToX = new System.Windows.Forms.Button();
@@ -99,33 +100,42 @@ namespace Altaxo.Gui.Graph
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
+      this._splitContainer = new System.Windows.Forms.SplitContainer();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).BeginInit();
       this.groupBox1.SuspendLayout();
+      this._splitContainer.Panel1.SuspendLayout();
+      this._splitContainer.Panel2.SuspendLayout();
+      this._splitContainer.SuspendLayout();
       this.SuspendLayout();
       // 
       // m_cbTables
       // 
+      this.m_cbTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.m_cbTables.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.m_cbTables.Location = new System.Drawing.Point(8, 32);
+      this.m_cbTables.Location = new System.Drawing.Point(0, 3);
       this.m_cbTables.Name = "m_cbTables";
-      this.m_cbTables.Size = new System.Drawing.Size(144, 21);
+      this.m_cbTables.Size = new System.Drawing.Size(170, 21);
       this.m_cbTables.TabIndex = 0;
       this.m_cbTables.SelectionChangeCommitted += new System.EventHandler(this.EhTables_SelectionChangeCommit);
       // 
       // m_lbColumns
       // 
-      this.m_lbColumns.Location = new System.Drawing.Point(8, 64);
+      this.m_lbColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_lbColumns.Location = new System.Drawing.Point(0, 28);
       this.m_lbColumns.Name = "m_lbColumns";
-      this.m_lbColumns.Size = new System.Drawing.Size(144, 186);
+      this.m_lbColumns.Size = new System.Drawing.Size(170, 251);
       this.m_lbColumns.TabIndex = 1;
       // 
       // m_btToX
       // 
-      this.m_btToX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToX.Image = ((System.Drawing.Image)(resources.GetObject("m_btToX.Image")));
       this.m_btToX.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.m_btToX.Location = new System.Drawing.Point(160, 64);
+      this.m_btToX.Location = new System.Drawing.Point(3, 28);
       this.m_btToX.Name = "m_btToX";
       this.m_btToX.Size = new System.Drawing.Size(40, 24);
       this.m_btToX.TabIndex = 2;
@@ -135,10 +145,10 @@ namespace Altaxo.Gui.Graph
       // 
       // m_btToY
       // 
-      this.m_btToY.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToY.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToY.Image = ((System.Drawing.Image)(resources.GetObject("m_btToY.Image")));
       this.m_btToY.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.m_btToY.Location = new System.Drawing.Point(160, 104);
+      this.m_btToY.Location = new System.Drawing.Point(3, 74);
       this.m_btToY.Name = "m_btToY";
       this.m_btToY.Size = new System.Drawing.Size(40, 24);
       this.m_btToY.TabIndex = 3;
@@ -148,18 +158,21 @@ namespace Altaxo.Gui.Graph
       // 
       // m_edXColumn
       // 
-      this.m_edXColumn.Location = new System.Drawing.Point(208, 64);
+      this.m_edXColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_edXColumn.Location = new System.Drawing.Point(49, 32);
       this.m_edXColumn.Name = "m_edXColumn";
       this.m_edXColumn.ReadOnly = true;
-      this.m_edXColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edXColumn.Size = new System.Drawing.Size(260, 20);
       this.m_edXColumn.TabIndex = 4;
       this.m_edXColumn.Text = "textBox1";
       this.m_edXColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // m_btEraseX
       // 
+      this.m_btEraseX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseX.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseX.Image")));
-      this.m_btEraseX.Location = new System.Drawing.Point(408, 64);
+      this.m_btEraseX.Location = new System.Drawing.Point(315, 28);
       this.m_btEraseX.Name = "m_btEraseX";
       this.m_btEraseX.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseX.TabIndex = 5;
@@ -167,18 +180,21 @@ namespace Altaxo.Gui.Graph
       // 
       // m_edYColumn
       // 
-      this.m_edYColumn.Location = new System.Drawing.Point(208, 104);
+      this.m_edYColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_edYColumn.Location = new System.Drawing.Point(49, 78);
       this.m_edYColumn.Name = "m_edYColumn";
       this.m_edYColumn.ReadOnly = true;
-      this.m_edYColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edYColumn.Size = new System.Drawing.Size(260, 20);
       this.m_edYColumn.TabIndex = 6;
       this.m_edYColumn.Text = "textBox2";
       this.m_edYColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // m_btEraseY
       // 
+      this.m_btEraseY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseY.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseY.Image")));
-      this.m_btEraseY.Location = new System.Drawing.Point(408, 104);
+      this.m_btEraseY.Location = new System.Drawing.Point(315, 78);
       this.m_btEraseY.Name = "m_btEraseY";
       this.m_btEraseY.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseY.TabIndex = 7;
@@ -202,13 +218,15 @@ namespace Altaxo.Gui.Graph
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.m_nudPlotRangeFrom);
       this.groupBox1.Controls.Add(this.m_nudPlotRangeTo);
-      this.groupBox1.Location = new System.Drawing.Point(16, 304);
+      this.groupBox1.Location = new System.Drawing.Point(3, 229);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(280, 48);
+      this.groupBox1.Size = new System.Drawing.Size(336, 48);
       this.groupBox1.TabIndex = 10;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Plot Range";
@@ -230,22 +248,43 @@ namespace Altaxo.Gui.Graph
       this.label1.Text = "From:";
       this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
+      // _splitContainer
+      // 
+      this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._splitContainer.Location = new System.Drawing.Point(0, 0);
+      this._splitContainer.Name = "_splitContainer";
+      // 
+      // _splitContainer.Panel1
+      // 
+      this._splitContainer.Panel1.Controls.Add(this.m_cbTables);
+      this._splitContainer.Panel1.Controls.Add(this.m_lbColumns);
+      // 
+      // _splitContainer.Panel2
+      // 
+      this._splitContainer.Panel2.Controls.Add(this.m_btToX);
+      this._splitContainer.Panel2.Controls.Add(this.groupBox1);
+      this._splitContainer.Panel2.Controls.Add(this.m_edXColumn);
+      this._splitContainer.Panel2.Controls.Add(this.m_btEraseY);
+      this._splitContainer.Panel2.Controls.Add(this.m_btEraseX);
+      this._splitContainer.Panel2.Controls.Add(this.m_edYColumn);
+      this._splitContainer.Panel2.Controls.Add(this.m_btToY);
+      this._splitContainer.Size = new System.Drawing.Size(519, 280);
+      this._splitContainer.SplitterDistance = 173;
+      this._splitContainer.TabIndex = 11;
+      // 
       // XYColumnPlotDataControl
       // 
-      this.Controls.Add(this.groupBox1);
-      this.Controls.Add(this.m_btEraseY);
-      this.Controls.Add(this.m_edYColumn);
-      this.Controls.Add(this.m_btEraseX);
-      this.Controls.Add(this.m_edXColumn);
-      this.Controls.Add(this.m_btToY);
-      this.Controls.Add(this.m_btToX);
-      this.Controls.Add(this.m_lbColumns);
-      this.Controls.Add(this.m_cbTables);
+      this.AutoSize = true;
+      this.Controls.Add(this._splitContainer);
       this.Name = "XYColumnPlotDataControl";
-      this.Size = new System.Drawing.Size(432, 368);
+      this.Size = new System.Drawing.Size(519, 280);
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).EndInit();
       this.groupBox1.ResumeLayout(false);
+      this._splitContainer.Panel1.ResumeLayout(false);
+      this._splitContainer.Panel2.ResumeLayout(false);
+      this._splitContainer.Panel2.PerformLayout();
+      this._splitContainer.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -304,7 +343,7 @@ namespace Altaxo.Gui.Graph
     {
       this.m_nudPlotRangeTo.Minimum=0;
       this.m_nudPlotRangeTo.Maximum= int.MaxValue;
-      this.m_nudPlotRangeTo.Value = to;
+      this.m_nudPlotRangeTo.Value = Math.Max(0,to);
     }
 
     #endregion

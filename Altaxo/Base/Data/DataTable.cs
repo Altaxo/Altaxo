@@ -1209,7 +1209,7 @@ namespace Altaxo.Data
     /// start with "tmp/".</remarks>
     public bool RemoveTableProperty(string key)
     {
-			return _tableProperties.Remove(key);
+			return null==_tableProperties ? false : _tableProperties.Remove(key);
     }
 
     /// <summary>

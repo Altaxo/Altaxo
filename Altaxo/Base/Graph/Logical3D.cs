@@ -49,6 +49,66 @@ namespace Altaxo.Graph
       RZ = 0;
     }
 
+		/// <summary>
+		/// Returns the coordinate with index idx.
+		/// </summary>
+		/// <param name="idx">Number of the coordinate.</param>
+		/// <returns>If idx is 0, 1, or 2, then RX, RY, or RZ is returned, respectively. Otherwise an <see cref="ArgumentOutOfRangeException"/> is thrown.</returns>
+		public double GetCoordinate(int idx)
+		{
+			switch (idx)
+			{
+				case 0:
+					return RX;
+				case 1:
+					return RY;
+				case 2:
+					return RZ;
+				default:
+					throw new ArgumentOutOfRangeException("idx out of range, it should be in the range [0,2]");
+			}
+		}
+
+		/// <summary>
+		/// Sets the coordinate with index idx.
+		/// </summary>
+		/// <param name="idx">Number of the coordinate.</param>
+		/// <param name="value">Value of the coordinate to set.</param>
+		/// <returns>If idx is 0, 1, or 2, then RX, RY, or RZ is set, respectively. Otherwise an <see cref="ArgumentOutOfRangeException"/> is thrown.</returns>
+		public void SetCoordinate(int idx, double value)
+		{
+			switch (idx)
+			{
+				case 0:
+					RX = value;
+					break;
+				case 1:
+					RY = value;
+					break;
+				case 2:
+					RZ = value;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("idx out of range, it should be in the range [0,2]");
+			}
+		}
+
+		/// <summary>
+		/// Gets/sets the coordinate with index idx.
+		/// </summary>
+		/// <param name="idx">Number of the coordinate.</param>
+		/// <returns>If idx is 0, 1, or 2, then RX, RY, or RZ is accessed, respectively. Otherwise an <see cref="ArgumentOutOfRangeException"/> is thrown.</returns>
+		public double this[int idx]
+		{
+			get
+			{
+				return GetCoordinate(idx);
+			}
+			set
+			{
+				SetCoordinate(idx, value);
+			}
+		}
 
     public Logical3D InterpolateTo(Logical3D to, double t)
     {
@@ -82,6 +142,8 @@ namespace Altaxo.Graph
     {
       return new Logical3D(r.RX + s.RX, r.RY + s.RY, r.RZ + s.RZ);
     }
+
+
 
   }
 }

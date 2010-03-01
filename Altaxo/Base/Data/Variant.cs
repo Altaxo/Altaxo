@@ -585,7 +585,7 @@ namespace Altaxo.Data
       else if(a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object) == ((System.DateTime)b._object));
       else if(a._typeOfContent == Content.VString)
-        return 0==(((String)a._object).CompareTo((string)b._object));
+        return 0==string.Compare((string)a._object,(string)b._object);
       else if(a._typeOfContent==Content.VNull)
         return false;
       else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Equal(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
@@ -614,7 +614,7 @@ namespace Altaxo.Data
       else if(a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object) < ((System.DateTime)b._object));
       else if(a._typeOfContent== Content.VString)
-        return 0>(((String)a._object).CompareTo((string)b._object));
+        return 0>string.Compare((string)a._object,(string)b._object);
       else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Lesser(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
       else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Lesser_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
@@ -636,7 +636,7 @@ namespace Altaxo.Data
       else if(a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object) > ((System.DateTime)b._object));
       else if(a._typeOfContent== Content.VString)
-        return 0<(((String)a._object).CompareTo((string)b._object));
+        return 0<string.Compare((string)a._object,(string)b._object);
       else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Greater(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
       else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Greater_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
@@ -659,7 +659,7 @@ namespace Altaxo.Data
       else if(a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object) <= ((System.DateTime)b._object));
       else if(a._typeOfContent== Content.VString)
-        return 0>=(((String)a._object).CompareTo((string)b._object));
+        return 0>=string.Compare((string)a._object,(string)b._object);
       else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_LesserOrEqual(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
       else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_LesserOrEqual_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
@@ -681,7 +681,7 @@ namespace Altaxo.Data
       else if(a._typeOfContent == Content.VDateTime)
         return (((System.DateTime)a._object) >= ((System.DateTime)b._object));
       else if(a._typeOfContent== Content.VString)
-        return 0>=(((String)a._object).CompareTo((string)b._object));
+        return 0>=string.Compare((string)a._object,(string)b._object);
       else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_GreaterOrEqual(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
       else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_GreaterOrEqual_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
@@ -853,10 +853,10 @@ namespace Altaxo.Data
         case Content.VDateTime:
           return ((DateTime)_object).CompareTo(from._object);
         case Content.VString:
-          return ((string)_object).CompareTo(from._object);
+          return string.Compare((string)_object, (string)from._object);
         default:
           if (this._object is IComparable)
-            return ((IComparable)this).CompareTo(from._object);
+            return ((IComparable)this._object).CompareTo(from._object);
           else
             throw new Exception(string.Format("The inner object of this AltaxoVariant (of typeof: {0}) does not implement IComparable",this._object.GetType().ToString()));
       }

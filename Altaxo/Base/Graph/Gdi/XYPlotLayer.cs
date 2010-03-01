@@ -49,6 +49,7 @@ namespace Altaxo.Graph.Gdi
     System.Runtime.Serialization.IDeserializationCallback,
     System.ICloneable,
     Altaxo.Main.IDocumentNode,
+    Altaxo.Main.INamedObjectCollection,
     Altaxo.Main.IChildChangedEventSink,
 		IPlotArea
   {
@@ -2829,6 +2830,33 @@ namespace Altaxo.Graph.Gdi
     public static string GetDefaultNameOfLayer(int i)
     {
       return "L" + i.ToString(); // do not change it, since the name is used in serialization
+    }
+
+    /// <summary>
+    /// retrieves the object with the name <code>name</code>.
+    /// </summary>
+    /// <param name="name">The objects name.</param>
+    /// <returns>The object with the specified name.</returns>
+    public object GetChildObjectNamed(string name)
+    {
+
+      if (name == _plotItems.Name)
+        return _plotItems;
+
+      return null;
+    }
+
+    /// <summary>
+    /// Retrieves the name of the provided object.
+    /// </summary>
+    /// <param name="o">The object for which the name should be found.</param>
+    /// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
+    public string GetNameOfChildObject(object o)
+    {
+      if (object.ReferenceEquals(_plotItems, o))
+        return _plotItems.Name;
+
+      return null;
     }
 
     #endregion

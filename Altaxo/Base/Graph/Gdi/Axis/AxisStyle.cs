@@ -294,12 +294,14 @@ namespace Altaxo.Graph.Gdi.Axis
       CSAxisInformation styleinfo = layer.CoordinateSystem.GetAxisStyleInformation(_styleID);
       _cachedAxisInfo = styleinfo;
 
+      float outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(styleinfo.PreferedLabelSide);
+
       if (ShowAxisLine)
         _axisLineStyle.Paint(g, layer, styleinfo);
       if (ShowMajorLabels)
-        this._majorLabelStyle.Paint(g, layer, styleinfo, _axisLineStyle, false);
+        this._majorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[styleinfo.Identifier.ParallelAxisNumber], styleinfo, outerDistance, false);
       if (ShowMinorLabels)
-        this._minorLabelStyle.Paint(g, layer, styleinfo, _axisLineStyle, true);
+        this._majorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[styleinfo.Identifier.ParallelAxisNumber], styleinfo, outerDistance, true);
       if (ShowTitle)
         _axisTitle.Paint(g, layer);
     }

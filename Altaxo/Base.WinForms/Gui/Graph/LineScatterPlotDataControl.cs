@@ -51,6 +51,7 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Button m_btToLabel;
     private System.Windows.Forms.TextBox m_edLabelColumn;
     private System.Windows.Forms.Button m_btEraseLabel;
+    private SplitContainer _splitContainer;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -86,7 +87,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(LineScatterPlotDataControl));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LineScatterPlotDataControl));
       this.m_cbTables = new System.Windows.Forms.ComboBox();
       this.m_lbColumns = new System.Windows.Forms.ListBox();
       this.m_btToX = new System.Windows.Forms.Button();
@@ -103,33 +104,42 @@ namespace Altaxo.Gui.Graph
       this.m_btToLabel = new System.Windows.Forms.Button();
       this.m_edLabelColumn = new System.Windows.Forms.TextBox();
       this.m_btEraseLabel = new System.Windows.Forms.Button();
+      this._splitContainer = new System.Windows.Forms.SplitContainer();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).BeginInit();
       this.groupBox1.SuspendLayout();
+      this._splitContainer.Panel1.SuspendLayout();
+      this._splitContainer.Panel2.SuspendLayout();
+      this._splitContainer.SuspendLayout();
       this.SuspendLayout();
       // 
       // m_cbTables
       // 
+      this.m_cbTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.m_cbTables.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.m_cbTables.Location = new System.Drawing.Point(8, 32);
+      this.m_cbTables.Location = new System.Drawing.Point(3, 3);
       this.m_cbTables.Name = "m_cbTables";
-      this.m_cbTables.Size = new System.Drawing.Size(144, 21);
+      this.m_cbTables.Size = new System.Drawing.Size(156, 21);
       this.m_cbTables.TabIndex = 0;
       this.m_cbTables.SelectionChangeCommitted += new System.EventHandler(this.EhTables_SelectionChangeCommit);
       // 
       // m_lbColumns
       // 
-      this.m_lbColumns.Location = new System.Drawing.Point(8, 64);
+      this.m_lbColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_lbColumns.Location = new System.Drawing.Point(3, 27);
       this.m_lbColumns.Name = "m_lbColumns";
-      this.m_lbColumns.Size = new System.Drawing.Size(144, 186);
+      this.m_lbColumns.Size = new System.Drawing.Size(156, 225);
       this.m_lbColumns.TabIndex = 1;
       // 
       // m_btToX
       // 
-      this.m_btToX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToX.Image = ((System.Drawing.Image)(resources.GetObject("m_btToX.Image")));
       this.m_btToX.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.m_btToX.Location = new System.Drawing.Point(160, 64);
+      this.m_btToX.Location = new System.Drawing.Point(3, 3);
       this.m_btToX.Name = "m_btToX";
       this.m_btToX.Size = new System.Drawing.Size(40, 24);
       this.m_btToX.TabIndex = 2;
@@ -139,10 +149,10 @@ namespace Altaxo.Gui.Graph
       // 
       // m_btToY
       // 
-      this.m_btToY.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToY.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToY.Image = ((System.Drawing.Image)(resources.GetObject("m_btToY.Image")));
       this.m_btToY.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.m_btToY.Location = new System.Drawing.Point(160, 104);
+      this.m_btToY.Location = new System.Drawing.Point(3, 33);
       this.m_btToY.Name = "m_btToY";
       this.m_btToY.Size = new System.Drawing.Size(40, 24);
       this.m_btToY.TabIndex = 3;
@@ -152,18 +162,21 @@ namespace Altaxo.Gui.Graph
       // 
       // m_edXColumn
       // 
-      this.m_edXColumn.Location = new System.Drawing.Point(208, 64);
+      this.m_edXColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_edXColumn.Location = new System.Drawing.Point(49, 7);
       this.m_edXColumn.Name = "m_edXColumn";
       this.m_edXColumn.ReadOnly = true;
-      this.m_edXColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edXColumn.Size = new System.Drawing.Size(238, 20);
       this.m_edXColumn.TabIndex = 4;
       this.m_edXColumn.Text = "textBox1";
       this.m_edXColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // m_btEraseX
       // 
+      this.m_btEraseX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseX.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseX.Image")));
-      this.m_btEraseX.Location = new System.Drawing.Point(408, 64);
+      this.m_btEraseX.Location = new System.Drawing.Point(293, 7);
       this.m_btEraseX.Name = "m_btEraseX";
       this.m_btEraseX.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseX.TabIndex = 5;
@@ -171,18 +184,21 @@ namespace Altaxo.Gui.Graph
       // 
       // m_edYColumn
       // 
-      this.m_edYColumn.Location = new System.Drawing.Point(208, 104);
+      this.m_edYColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_edYColumn.Location = new System.Drawing.Point(49, 36);
       this.m_edYColumn.Name = "m_edYColumn";
       this.m_edYColumn.ReadOnly = true;
-      this.m_edYColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edYColumn.Size = new System.Drawing.Size(238, 20);
       this.m_edYColumn.TabIndex = 6;
       this.m_edYColumn.Text = "textBox2";
       this.m_edYColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // m_btEraseY
       // 
+      this.m_btEraseY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseY.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseY.Image")));
-      this.m_btEraseY.Location = new System.Drawing.Point(408, 104);
+      this.m_btEraseY.Location = new System.Drawing.Point(293, 37);
       this.m_btEraseY.Name = "m_btEraseY";
       this.m_btEraseY.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseY.TabIndex = 7;
@@ -210,7 +226,7 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.m_nudPlotRangeFrom);
       this.groupBox1.Controls.Add(this.m_nudPlotRangeTo);
-      this.groupBox1.Location = new System.Drawing.Point(16, 304);
+      this.groupBox1.Location = new System.Drawing.Point(3, 204);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(280, 48);
       this.groupBox1.TabIndex = 10;
@@ -219,7 +235,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(160, 24);
+      this.label2.Location = new System.Drawing.Point(162, 26);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(32, 16);
       this.label2.TabIndex = 11;
@@ -236,10 +252,10 @@ namespace Altaxo.Gui.Graph
       // 
       // m_btToLabel
       // 
-      this.m_btToLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btToLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btToLabel.Image")));
       this.m_btToLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.m_btToLabel.Location = new System.Drawing.Point(160, 144);
+      this.m_btToLabel.Location = new System.Drawing.Point(3, 68);
       this.m_btToLabel.Name = "m_btToLabel";
       this.m_btToLabel.Size = new System.Drawing.Size(40, 24);
       this.m_btToLabel.TabIndex = 11;
@@ -249,42 +265,66 @@ namespace Altaxo.Gui.Graph
       // 
       // m_edLabelColumn
       // 
-      this.m_edLabelColumn.Location = new System.Drawing.Point(208, 144);
+      this.m_edLabelColumn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_edLabelColumn.Location = new System.Drawing.Point(49, 72);
       this.m_edLabelColumn.Name = "m_edLabelColumn";
       this.m_edLabelColumn.ReadOnly = true;
-      this.m_edLabelColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edLabelColumn.Size = new System.Drawing.Size(238, 20);
       this.m_edLabelColumn.TabIndex = 12;
       this.m_edLabelColumn.Text = "textBox2";
       this.m_edLabelColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       // 
       // m_btEraseLabel
       // 
+      this.m_btEraseLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_btEraseLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseLabel.Image")));
-      this.m_btEraseLabel.Location = new System.Drawing.Point(408, 144);
+      this.m_btEraseLabel.Location = new System.Drawing.Point(293, 69);
       this.m_btEraseLabel.Name = "m_btEraseLabel";
       this.m_btEraseLabel.Size = new System.Drawing.Size(24, 24);
       this.m_btEraseLabel.TabIndex = 13;
       this.m_btEraseLabel.Click += new System.EventHandler(this.EhEraseLabel_Click);
       // 
+      // _splitContainer
+      // 
+      this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._splitContainer.Location = new System.Drawing.Point(0, 0);
+      this._splitContainer.Name = "_splitContainer";
+      // 
+      // _splitContainer.Panel1
+      // 
+      this._splitContainer.Panel1.Controls.Add(this.m_cbTables);
+      this._splitContainer.Panel1.Controls.Add(this.m_lbColumns);
+      // 
+      // _splitContainer.Panel2
+      // 
+      this._splitContainer.Panel2.Controls.Add(this.m_btToX);
+      this._splitContainer.Panel2.Controls.Add(this.groupBox1);
+      this._splitContainer.Panel2.Controls.Add(this.m_btEraseLabel);
+      this._splitContainer.Panel2.Controls.Add(this.m_edXColumn);
+      this._splitContainer.Panel2.Controls.Add(this.m_edLabelColumn);
+      this._splitContainer.Panel2.Controls.Add(this.m_btEraseX);
+      this._splitContainer.Panel2.Controls.Add(this.m_btToLabel);
+      this._splitContainer.Panel2.Controls.Add(this.m_btToY);
+      this._splitContainer.Panel2.Controls.Add(this.m_edYColumn);
+      this._splitContainer.Panel2.Controls.Add(this.m_btEraseY);
+      this._splitContainer.Size = new System.Drawing.Size(486, 261);
+      this._splitContainer.SplitterDistance = 162;
+      this._splitContainer.TabIndex = 14;
+      // 
       // LineScatterPlotDataControl
       // 
-      this.Controls.Add(this.m_btEraseLabel);
-      this.Controls.Add(this.m_edLabelColumn);
-      this.Controls.Add(this.m_btToLabel);
-      this.Controls.Add(this.groupBox1);
-      this.Controls.Add(this.m_btEraseY);
-      this.Controls.Add(this.m_edYColumn);
-      this.Controls.Add(this.m_btEraseX);
-      this.Controls.Add(this.m_edXColumn);
-      this.Controls.Add(this.m_btToY);
-      this.Controls.Add(this.m_btToX);
-      this.Controls.Add(this.m_lbColumns);
-      this.Controls.Add(this.m_cbTables);
+      this.AutoSize = true;
+      this.Controls.Add(this._splitContainer);
       this.Name = "LineScatterPlotDataControl";
-      this.Size = new System.Drawing.Size(432, 368);
+      this.Size = new System.Drawing.Size(486, 261);
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).EndInit();
       this.groupBox1.ResumeLayout(false);
+      this._splitContainer.Panel1.ResumeLayout(false);
+      this._splitContainer.Panel2.ResumeLayout(false);
+      this._splitContainer.Panel2.PerformLayout();
+      this._splitContainer.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }

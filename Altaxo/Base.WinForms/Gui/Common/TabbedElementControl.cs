@@ -159,7 +159,6 @@ namespace Altaxo.Gui.Common
       
 
       System.Windows.Forms.Control cc = (System.Windows.Forms.Control)view;
-      
 
 
       tab.Controls.Add(cc);
@@ -176,6 +175,8 @@ namespace Altaxo.Gui.Common
         {
           this.Size = new Size(this.Size.Width + diffx, this.Size.Height + diffy);
         }
+
+        cc.Dock = DockStyle.Fill;
       }
     }
 

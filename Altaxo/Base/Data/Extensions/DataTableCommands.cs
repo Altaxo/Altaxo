@@ -13,14 +13,6 @@ namespace Altaxo.Data
       table.DataColumns.Add(new DoubleColumn(), "B", ColumnKind.V, 0);
     }
 
-		/// <summary>
-		/// Copies the structure of the source table into the destination table.
-		/// All existing property and data columns will be destroyed.
-		/// </summary>
-		/// <param name="destinationTable"></param>
-		/// <param name="srcTable"></param>
-		public static void CopyTableStructureFrom(this DataTable destinationTable, DataTable srcTable)
-		{
-		}
+		
   }
 }

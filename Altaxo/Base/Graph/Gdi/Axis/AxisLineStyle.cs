@@ -649,7 +649,7 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       CSLineID styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo.Clone();
-      Scale axis = styleID.ParallelAxisNumber == 0 ? layer.XAxis : layer.YAxis;
+      Scale axis = layer.Scales[styleID.ParallelAxisNumber].Scale;
 			TickSpacing ticking = layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
       
       Logical3D r0 = styleID.Begin;

@@ -365,7 +365,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				FitElement fitEle = _doc.FitEnsemble[i];
 				int startOfDependentValues = nextStartOfDependentValues;
 				Collections.IAscendingIntegerCollection validRows = fitAdapter.GetValidNumericRows(i);
-				nextStartOfDependentValues += validRows.Count * fitEle.NumberOfDependentVariables;
+				nextStartOfDependentValues += validRows.Count * fitEle.NumberOfUsedDependentVariables;
 
 				Altaxo.Data.DataTable parentTable = fitEle.GetParentDataTable();
 				if (parentTable == null)
@@ -394,7 +394,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 						for (int j = 0; j < validRows.Count; j++)
 							col[validRows[j]] = resultingValues[startOfDependentValues + k + j * inUse.Length];
 
-						parentTable.DataColumns.Add(col, fitEle.FitFunction.DependentVariableName(inUse[k]) + ".Sim", ColumnKind.V);
+            string name=null;
+            int groupNumber = 0;
+            if (fitEle.DependentVariables(inUse[k]) is DataColumn)
+            {
+              var srcCol = (DataColumn)fitEle.DependentVariables(inUse[k]);
+              var srcTable = DataColumnCollection.GetParentDataColumnCollectionOf(srcCol);
+              if(srcTable!=null)
+              {
+                name = srcTable.GetColumnName(srcCol);
+                groupNumber = srcTable.GetColumnGroup(srcCol);
+              }
+            }
+            if (null == name)
+              fitEle.FitFunction.DependentVariableName(inUse[k]);
+
+						parentTable.DataColumns.Add(col, name + ".Sim", ColumnKind.V, groupNumber);
 					}
 				}
 			}

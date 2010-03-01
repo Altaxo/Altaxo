@@ -445,6 +445,13 @@ namespace Altaxo.Graph.Gdi
 
       return new PointF((float)ax, (float)ay);
     }
+
+    /// <summary>
+    /// Gets the logical direction to the sides of an axis.
+    /// </summary>
+    /// <param name="parallelAxisNumber">Number of the axis (0: X, 1: Y, 2: Z).</param>
+    /// <param name="side">Designates the sides of the axis.</param>
+    /// <returns>The logical direction to the given side. The returned vector is normalized.</returns>
     public Logical3D GetLogicalDirection(int parallelAxisNumber, CSAxisSide side)
     {
       switch (side)

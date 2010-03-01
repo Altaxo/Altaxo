@@ -78,7 +78,7 @@ namespace Altaxo.Worksheet.Commands
         string lname = conn.Application.WorksheetPages[i].LongName;
 
         var newTable = new Altaxo.Data.DataTable();
-        newTable.Name = lname;
+        newTable.Name = string.IsNullOrEmpty(lname) ? name : lname;
         string err = conn.GetTable(name, newTable);
         if (null == err)
         {

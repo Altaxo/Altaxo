@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Gdi.Axis
   using Gdi.LabelFormatting;
 
   /// <summary>
-  /// Summary description for AbstractLabelFormatting.
+  /// Responsible for setting position, rotation, font, color etc. of axis labels.
   /// </summary>
   public class AxisLabelStyle : AxisLabelStyleBase,
     ICloneable,
@@ -584,7 +584,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
     public override IHitTestObject HitTest(IPlotArea layer, PointF pt)
     {
-      GraphicsPath gp = GetSelectionPath(layer);
+      GraphicsPath gp = GetSelectionPath();
       if(gp.IsVisible(pt))
         return new HitTestObject(gp,this);
       else
@@ -644,18 +644,34 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     /// <param name="layer"></param>
     /// <returns></returns>
-    public virtual GraphicsPath GetSelectionPath(IPlotArea layer)
+    public virtual GraphicsPath GetSelectionPath()
     {
       return (GraphicsPath)_enclosingPath.Clone();
     }
 
     private GraphicsPath _enclosingPath = new GraphicsPath(); // with Winding also overlapping rectangles are selected
-    public override void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
+
+    /// <summary>
+    /// Paints the axis style labels.
+    /// </summary>
+    /// <param name="g">Graphics environment.</param>
+    /// <param name="coordSyst">The coordinate system. Used to get the path along the axis.</param>
+    /// <param name="scaleWithTicks">Scale and appropriate ticks.</param>
+    /// <param name="styleInfo">Information about begin of axis, end of axis.</param>
+    /// <param name="outerDistance">Distance between axis and labels.</param>
+    /// <param name="useMinorTicks">If true, minor ticks are shown.</param>
+    public override void Paint(
+      Graphics g, 
+      G2DCoordinateSystem coordSyst,
+      ScaleWithTicks scaleWithTicks, 
+      CSAxisInformation styleInfo, 
+      float outerDistance,
+      bool useMinorTicks)
     {
       _cachedStyleID = styleInfo.Identifier;
       CSLineID styleID = styleInfo.Identifier;
-      Scale raxis = styleID.ParallelAxisNumber==0 ? layer.XAxis : layer.YAxis;
-			TickSpacing ticking = layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
+      Scale raxis = scaleWithTicks.Scale;
+      TickSpacing ticking = scaleWithTicks.TickSpacing;
 
       _enclosingPath.Reset();
       _enclosingPath.FillMode = FillMode.Winding; // with Winding also overlapping rectangles are selected
@@ -665,10 +681,9 @@ namespace Altaxo.Graph.Gdi.Axis
       Logical3D r0 = _cachedStyleID.Begin;
       Logical3D r1 = _cachedStyleID.End;
 
-      SizeF layerSize = layer.Size;
       PointF outVector;
       Logical3D outer;
-      float outerDistance = null==axisstyle? 0 : axisstyle.GetOuterDistance(styleInfo.PreferedLabelSide);
+    //  float outerDistance = null == axisLineStyle ? 0 : axisLineStyle.GetOuterDistance(styleInfo.PreferedLabelSide);
       float dist_x = outerDistance; // Distance from axis tick point to label
       float dist_y = outerDistance; // y distance from axis tick point to label
 
@@ -682,10 +697,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
       double[] relpositions;
       AltaxoVariant[] ticks;
-      if(useMinorTicks)
+      if (useMinorTicks)
       {
         relpositions = ticking.GetMinorTicksNormal(raxis);
-				ticks = ticking.GetMinorTicksAsVariant();
+        ticks = ticking.GetMinorTicksAsVariant();
       }
       else
       {
@@ -713,20 +728,20 @@ namespace Altaxo.Graph.Gdi.Axis
         ticks = filteredTicks.ToArray();
         relpositions = filteredRelPositions.ToArray();
       }
-      
-      IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g,_font,_stringFormat,ticks);
+
+      IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
       float emSize = _font.SizeInPoints;
-      for(int i=0;i<ticks.Length;i++)
+      for (int i = 0; i < ticks.Length; i++)
       {
         double r = relpositions[i];
 
-        outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, styleInfo.PreferedLabelSide);
-        PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+        outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, styleInfo.PreferedLabelSide);
+        PointF tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
         PointF tickend = tickorg;
         tickend.X += outVector.X * outerDistance;
         tickend.Y += outVector.Y * outerDistance;
-       
+
 
         SizeF msize = labels[i].Size;
         PointF morg = tickend;
@@ -740,12 +755,12 @@ namespace Altaxo.Graph.Gdi.Axis
         }
         else
         {
-          morg.X += (float)(outVector.X * _font.SizeInPoints/3);
+          morg.X += (float)(outVector.X * _font.SizeInPoints / 3);
         }
 
-       
-        RectangleF mrect = new RectangleF(morg,msize);
-        if(_automaticRotationShift)
+
+        RectangleF mrect = new RectangleF(morg, msize);
+        if (_automaticRotationShift)
           AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
         else
           AdjustRectangle(ref mrect, _horizontalAlignment, _verticalAlignment);
@@ -762,20 +777,22 @@ namespace Altaxo.Graph.Gdi.Axis
         System.Drawing.Drawing2D.GraphicsState gs = g.Save();
         g.MultiplyTransform(math);
 
-        if(this._backgroundStyle!=null)
-          _backgroundStyle.Draw(g,new RectangleF(PointF.Empty,msize));
+        if (this._backgroundStyle != null)
+          _backgroundStyle.Draw(g, new RectangleF(PointF.Empty, msize));
 
-        _brush.Rectangle = new RectangleF(PointF.Empty, msize);      
-        labels[i].Draw(g,_brush,new PointF(0,0));
+        _brush.Rectangle = new RectangleF(PointF.Empty, msize);
+        labels[i].Draw(g, _brush, new PointF(0, 0));
         g.Restore(gs); // Restore the graphics state
 
         helperPath.Reset();
         helperPath.AddRectangle(new RectangleF(PointF.Empty, msize));
         helperPath.Transform(math);
 
-        _enclosingPath.AddPath(helperPath,true);
+        _enclosingPath.AddPath(helperPath, true);
       }
     }
+
+
 
     #region IChangedEventSource Members
 

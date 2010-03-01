@@ -411,6 +411,10 @@
         </MenuItem>
         <MenuItem id="AddCurvePlot" label="${res:XML.MainMenu.GraphMenu.AddCurvePlot}" description="${res:XML.MainMenu.GraphMenu.AddCurvePlot.Description}"
 					class="Altaxo.Graph.Commands.NewUserFunction" />
+				<MenuItem id="AddScale" label="Add scale" description="Adds a scale to the current layer."
+					class="Altaxo.Graph.Commands.AddScale" />
+        <MenuItem id="AddDensityLegend" label="Add density image legend" description="Adds a density image legend to the current layer."
+					class="Altaxo.Graph.Commands.AddDensityImageLegend" />
         <MenuItem id="LayerControl" label="${res:XML.MainMenu.GraphMenu.LayerControl}" description="${res:XML.MainMenu.GraphMenu.LayerControl.Description}"
 					class="Altaxo.Graph.Commands.LayerControl" />
         <MenuItem id="NewLayerLegend" label="${res:XML.MainMenu.GraphMenu.NewLayerLegend}" description="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"

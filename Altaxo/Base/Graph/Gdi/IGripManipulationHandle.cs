@@ -35,5 +35,25 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="newPosition"></param>
     void MoveGrip(PointF newPosition);
+
+		/// <summary>
+		/// Draws the grip in the graphics context.
+		/// </summary>
+		/// <param name="g">Graphics context.</param>
+		void Show(Graphics g);
+
+		/// <summary>
+		/// Tests if the grip is hitted.
+		/// </summary>
+		/// <param name="point">Coordinates of the mouse pointer in unscaled page coordinates (points).</param>
+		/// <returns></returns>
+		bool IsGripHitted(PointF point);
+
+
+		/// <summary>
+		/// Returns the object to manipulate by this manipulation handle.
+		/// </summary>
+		IGrippableObject ManipulatedObject { get; }
+
   }
 }

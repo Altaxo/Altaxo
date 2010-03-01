@@ -58,9 +58,16 @@ namespace Altaxo.Graph.Gdi
     GraphicsPath ObjectPath { get; }
 
     /// <summary>
-    /// This will return the transformation matrix.
+    /// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
     /// </summary>
     Matrix Transformation {get;}
+
+
+    /// <summary>
+    /// This will return the inverse transformation matrix. This matrix translates from global coordinates to coordinates of the object.
+    /// </summary>
+    Matrix InverseTransformation { get; }
+
 
     /// <summary>
     /// Transform the internal positions according to the provided transformation matrix.
@@ -127,10 +134,22 @@ namespace Altaxo.Graph.Gdi
     }
 
 
+    /// <summary>
+    /// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
+    /// </summary>
     public Matrix Transformation
     {
       get { return _matrix; }
     }
+
+    /// <summary>
+    /// This will return the inverse transformation matrix. This matrix translates from global coordinates to coordinates of the object.
+    /// </summary>
+    public Matrix InverseTransformation 
+    {
+      get { return _inversematrix; }
+    }
+
 
     public void Transform(Matrix x)
     {

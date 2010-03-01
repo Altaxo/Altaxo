@@ -339,7 +339,7 @@ namespace Altaxo.Graph.Gdi.CS
       else
       {
         r.RX = Math.Atan2(wy, wx) / (2 * Math.PI);
-        r.RY = 2 * Math.Sqrt(wx * wx + wy * wy) / _radius;
+        r.RY = Math.Sqrt(wx * wx + wy * wy) / _radius;
       }
 
       if (_isXreverse)

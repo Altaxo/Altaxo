@@ -400,6 +400,24 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Returns the number of dependent variables that are currently in use for fitting.
+    /// </summary>
+    public int NumberOfUsedDependentVariables
+    {
+      get
+      {
+        int sum = 0;
+        if (null != _dependentVariables)
+        {
+          for (int i = 0; i < _dependentVariables.Length; i++)
+            if (_dependentVariables[i] != null && _dependentVariables[i].Document != null)
+              sum++;
+        }
+        return this._fitFunction != null ? Math.Min(_fitFunction.NumberOfDependentVariables, sum) : sum;
+      }
+    }
+
     public int NumberOfParameters
     {
       get

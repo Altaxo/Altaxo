@@ -462,9 +462,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             double x0, y0, x1, y1, x2, y2;
             if (gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_left, y_rel_top), out x0, out y0) &&
               gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_left, y_rel_bottom), out x1, out y1) &&
-              gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_right, y_rel_bottom), out x2, out y2)
+              gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_right, y_rel_top), out x2, out y2)
               )
             {
+							/*
               // calculate the parameters of the transformation matrix
               double r0, s0, r1, s1, r2, s2;
               r0 = 0.5;
@@ -488,15 +489,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
               //mat.TransformPoints(transfor);
 
               GraphicsState savedGraphicsState = gfrx.Save();
+							*/
 
               if (this._clipToLayer)
                 gfrx.Clip = gl.CoordinateSystem.GetRegion();
 
+							var pts = new PointF[] { new PointF((float)x0, (float)y0), new PointF((float)x2, (float)y2), new PointF((float)x1, (float)y1) };
+							gfrx.DrawImage(_cachedImage, pts, new RectangleF(0,0,_cachedImage.Width-1,_cachedImage.Height-1),GraphicsUnit.Pixel);
+
+							/*
               gfrx.MultiplyTransform(mat, MatrixOrder.Prepend);
-
               gfrx.DrawImage(_cachedImage, 0, 0, _cachedImage.Width, _cachedImage.Height);
-
               gfrx.Restore(savedGraphicsState);
+							*/
             }
           }
           break;

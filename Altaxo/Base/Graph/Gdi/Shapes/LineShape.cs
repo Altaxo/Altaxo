@@ -253,36 +253,34 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     #region IGrippableObject Members
 
-    public override void ShowGrips(Graphics g)
+    public override IGripManipulationHandle[] ShowGrips(Graphics g)
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
         g.RotateTransform(-_rotation);
 
-      DrawRectangularGrip(g, new PointF(0, 0));
-      DrawRectangularGrip(g, new PointF(1, 1));
+			PointF[] pts = new PointF[2];
+			pts[0] = new PointF(0, 0);
+			pts[1] = new PointF(Width, Height);
 
-      g.DrawLine(Pens.Blue, 0, 0, Width, Height);
+			TransformToUnscaledPageCoordinates(g, pts);
+
+			IGripManipulationHandle[] grips = new IGripManipulationHandle[2];
+
+			grips[0] = new PathNodeGripHandle(this, new PointF(0,0), pts[0]);
+			grips[1] = new PathNodeGripHandle(this, new PointF(1,1), pts[1]);
+
+			g.DrawLine(PathNodeGripHandle.PathOutlinePen, 0, 0, Width, Height);
 
       g.Restore(gs);
+
+			return grips;
     }
 
-    public override IGripManipulationHandle GripHitTest(PointF point)
-    {
-      PointF rel;
+	
 
-      rel = new PointF(0, 0);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(1, 1);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      return null;
-    }
-
+ 
     #endregion
 
   } // End Class

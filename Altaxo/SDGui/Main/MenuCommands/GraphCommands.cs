@@ -497,6 +497,30 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+	public class AddScale : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			var layer = ctrl.ActiveLayer;
+			var scale = new Gdi.Shapes.FloatingScale(layer.Size.Width /2 , layer.Size.Height / 2);
+			layer.GraphObjects.Add(scale);
+		}
+	}
+
+  public class AddDensityImageLegend : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+    {
+      var layer = ctrl.ActiveLayer;
+      if(null==layer || ctrl.CurrentPlotNumber<0 || !(layer.PlotItems[ctrl.CurrentPlotNumber] is DensityImagePlotItem))
+        Current.Gui.ErrorMessageBox("Current plot item should be a density image plot!");
+
+      var plotItem = (DensityImagePlotItem)layer.PlotItems[ctrl.CurrentPlotNumber];
+      var legend = new Gdi.Shapes.DensityImageLegend(plotItem, new PointF(layer.Size.Width / 2, layer.Size.Height / 2), new SizeF(layer.Size.Width/3, layer.Size.Height/2));
+      layer.GraphObjects.Add(legend);
+    }
+  }
+
 
   /// <summary>
   /// Duplicates the Graph and the Graph view to a new one.

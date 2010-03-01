@@ -1043,9 +1043,16 @@ namespace Altaxo.Gui.Graph.Viewing
 						if (img != null)
 						{
 							SizeF size = this.ActiveLayer.Size;
-							size.Width /= 2;
+              size.Width /= 2;
 							size.Height /= 2;
-							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, img);
+
+              var imgSize = img.GetImage().PhysicalDimension;
+
+              float scale = Math.Min(size.Width / imgSize.Width, size.Height / imgSize.Height);
+              imgSize.Width *= scale;
+              imgSize.Height *= scale;
+							
+							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, imgSize, img);
 							this.ActiveLayer.GraphObjects.Add(item);
 							bSuccess = true;
 							continue;

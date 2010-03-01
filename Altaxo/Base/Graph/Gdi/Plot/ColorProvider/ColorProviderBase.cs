@@ -49,15 +49,20 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			CopyFrom(from);	
 		}
 
-		public virtual void CopyFrom(object obj)
+		public virtual bool CopyFrom(object obj)
 		{
-			var from = (ColorProviderBase)obj;
-
-			this._colorBelow = from._colorBelow;
-			this._colorAbove = from._colorAbove;
-			this._colorInvalid = from._colorInvalid;
-			this._alphaChannel = from._alphaChannel;
-			this._colorSteps = from._colorSteps;
+			bool result = false;
+			var from = obj as ColorProviderBase;
+			if (null != from)
+			{
+				this._colorBelow = from._colorBelow;
+				this._colorAbove = from._colorAbove;
+				this._colorInvalid = from._colorInvalid;
+				this._alphaChannel = from._alphaChannel;
+				this._colorSteps = from._colorSteps;
+				result = true;
+			}
+			return result;
 		}
 
 		#region Serialization

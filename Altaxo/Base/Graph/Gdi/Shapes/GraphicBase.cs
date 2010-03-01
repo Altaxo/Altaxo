@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
@@ -74,6 +75,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     public event System.EventHandler Changed;
 
 
+    protected static GraphicsPath _outsideArrow;
+		protected static PointF[] _outsideArrowPoints;
+		protected static GraphicsPath _rotationGripShape;
 
     #region Serialization
 
@@ -183,6 +187,54 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       if(wasUsed)
         OnChanged();
+    }
+
+    static GraphicBase()
+    {
+      // The arrow has a length of 1 and a maximum witdth of 2*arrowWidth and a shaft width of 2*arrowShaft
+      const float arrowShaft=0.15f;
+      const float arrowWidth=0.3f;
+      _outsideArrowPoints = new PointF[] {
+        new PointF(0,arrowShaft),
+        new PointF(1-arrowWidth,arrowShaft),
+        new PointF(1-arrowWidth,arrowWidth),
+        new PointF(1,0),
+        new PointF(1-arrowWidth, -arrowWidth),
+        new PointF(1-arrowWidth, -arrowShaft),
+        new PointF(0,-arrowShaft)
+      };
+      _outsideArrow = new GraphicsPath();
+			_outsideArrow.AddPolygon(_outsideArrowPoints);
+
+
+			const float ra = 2.1f / 2;
+			const float ri = 1.5f / 2;
+			const float rotArrowWidth = 0.6f;
+			float rii = (ra+ri-rotArrowWidth)/2;
+			float raa = (ra+ri+rotArrowWidth)/2;
+			float cos45 = (float)Math.Sqrt(0.5);
+			float sin45 = cos45;
+			_rotationGripShape = new GraphicsPath();
+
+			_rotationGripShape.AddArc(-ri, -ri, 2*ri, 2*ri, -45, 90); // mit Innenradius beginnen
+			
+			_rotationGripShape.AddLines(new PointF[] 
+			{
+				new PointF(rii*cos45, rii*sin45),
+				new PointF(rii*cos45, rii*sin45 + rotArrowWidth*cos45),
+				new PointF(raa*cos45, raa*sin45)
+			});
+			
+			_rotationGripShape.AddArc(-ra, -ra, 2*ra, 2*ra, 45, -90); // Auﬂenradius
+			
+			_rotationGripShape.AddLines(new PointF[] 
+			{
+				new PointF(raa*cos45, -raa*sin45),
+				new PointF(rii*cos45, -rii*sin45 - rotArrowWidth*cos45),
+				new PointF(rii*cos45, -rii*sin45),
+			});
+			
+			_rotationGripShape.CloseFigure();
     }
 
     /// <summary>
@@ -725,12 +777,117 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region IGrippableObject Members
 
-    public virtual void ShowGrips(Graphics g)
+		static readonly PointF[] _gripRelPositions = new PointF[]
+			{
+			new PointF(0.5f, 0.5f),
+			new PointF(0, 0),
+			new PointF(0.5f, 0),
+			new PointF(1, 0), 
+			new PointF(1, 0.5f), 
+			 new PointF(1, 1),
+			new PointF(0.5f, 1),
+			new PointF(0, 1), 
+			new PointF(0, 0.5f), 
+			};
+
+		public virtual IGripManipulationHandle[] ShowGrips(Graphics g)
+		{
+			return ShowGrips(g, true, true, true);
+		}
+
+
+		public static void TransformToUnscaledPageCoordinates(Graphics g, PointF[] pts)
+		{
+			// Transform points to page coordinates
+			g.TransformPoints(CoordinateSpace.Page, CoordinateSpace.World, pts);
+			for (int i = 0; i < pts.Length; i++)
+				pts[i] = pts[i].Scale(g.PageScale); // transform to absolute page coordinates, thus 1 pt is really 1 pt at the monitor
+
+		}
+
+
+    public virtual IGripManipulationHandle[] ShowGrips(Graphics g, bool showResizeGrips, bool showRotationGrips, bool showEnclosingRectangle)
     {
+			List<IGripManipulationHandle> list = new List<IGripManipulationHandle>();
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
         g.RotateTransform(-_rotation);
+
+
+      PointF[] pts = new PointF[_gripRelPositions.Length];
+			for(int i=0;i<pts.Length;i++)
+				pts[i] = RelativeToAbsolutePosition(_gripRelPositions[i], false);
+			
+      // Transform points to page coordinates
+			TransformToUnscaledPageCoordinates(g, pts);
+
+			if (showResizeGrips)
+			{
+				for (int i = 1; i < pts.Length; i++)
+				{
+					PointF outVec = pts[i].Subtract(pts[0]);
+					outVec = outVec.Scale(10 / outVec.VectorLength());
+					PointF altVec = new PointF(-outVec.Y, outVec.X);
+					PointF ptStart = pts[i].AddScaled(outVec, 0.25f);
+					using (Matrix m = new Matrix(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y))
+					{
+						var gripShape = (GraphicsPath)_outsideArrow.Clone();
+						gripShape.Transform(m);
+						list.Add(new SizeMoveGripHandle(this, _gripRelPositions[i], gripShape));
+					}
+				}
+			}
+
+			if (showRotationGrips)
+			{
+				// Rotation grips
+				for (int i = 1; i < pts.Length; i += 2)
+				{
+					PointF outVec = pts[i].Subtract(pts[0]);
+					outVec = outVec.Scale(10 / outVec.VectorLength());
+					PointF altVec = new PointF(-outVec.Y, outVec.X);
+					PointF ptStart = pts[i].AddScaled(outVec, 0.5f);
+					using (Matrix m = new Matrix(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y))
+					{
+						var gripShape = (GraphicsPath)_rotationGripShape.Clone();
+						gripShape.Transform(m);
+						list.Add(new RotationGripHandle(this, _gripRelPositions[i], gripShape));
+					}
+				}
+			}
+
+			if (showEnclosingRectangle)
+			{
+				g.DrawRectangle(Pens.Blue, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);
+			}
+
+			g.Restore(gs);
+/*
+			var g2 = g.Save();
+			g.ResetTransform();
+			g.PageScale = 1;
+      using(var pen = new Pen(Color.Red,0))
+      {
+        for (int i = 1; i < pts.Length; i++)
+        {
+          PointF outVec = pts[i].Subtract(pts[0]);
+          outVec = outVec.Scale(10 / outVec.VectorLength());
+          PointF altVec = new PointF(-outVec.Y, outVec.X);
+          PointF ptStart = pts[i].AddScaled(outVec, 0.25f);
+          using (Matrix m = new Matrix(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y))
+          {
+            //g.Transform = m;
+            //g.FillPath(Brushes.Red, _outsideArrow);
+						//var gripShape = (GraphicsPath)_outsideArrow.Clone();
+						//gripShape.Transform(m);
+						//list.Add(new SizeMoveGripHandle(this, _gripRelPositions[i], gripShape));
+          }
+        }
+      }
+     
+			g.Restore(g2);
+
 
       DrawRectangularGrip(g, new PointF(0, 0));
       DrawRectangularGrip(g, new PointF(0, 1));
@@ -750,63 +907,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       g.DrawRectangle(Pens.Blue, _bounds.X,_bounds.Y,_bounds.Width,_bounds.Height);
 
       g.Restore(gs);
+			*/
+			return list.ToArray();
     }
 
-    public virtual IGripManipulationHandle GripHitTest(PointF point)
-    {
-      PointF rel;
-
-      rel = new PointF(0, 0);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(1, 0);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(0, 1);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(1, 1);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(0.5f, 0);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(1, 0.5f);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(0.5f, 1);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(0, 0.5f);
-      if (IsRectangularGripHitted(rel, point))
-        return new SizeMoveGripHandle(this, rel);
-
-      rel = new PointF(0.2f, 0.2f);
-      if (IsRotationGripHitted(rel, point))
-        return new RotationGripHandle(this, rel);
-
-      rel = new PointF(0.8f, 0.2f);
-      if (IsRotationGripHitted(rel, point))
-        return new RotationGripHandle(this, rel);
-
-      rel = new PointF(0.8f, 0.8f);
-      if (IsRotationGripHitted(rel, point))
-        return new RotationGripHandle(this, rel);
-
-      rel = new PointF(0.2f, 0.8f);
-      if (IsRotationGripHitted(rel, point))
-        return new RotationGripHandle(this, rel);
-
-      return null;
-    }
-
+  
     #endregion
 
     #region GripHandle
@@ -817,13 +922,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       PointF _drawrPosition;
       PointF _fixrPosition;
       PointF _fixaPosition;
+			GraphicsPath _gripPath;
+			static Pen _penForInsidePathTesting = new Pen(Color.Black, 0);
 
-      public SizeMoveGripHandle(GraphicBase parent, PointF relPos)
+
+      public SizeMoveGripHandle(GraphicBase parent, PointF relPos, GraphicsPath path)
       {
         _parent = parent;
         _drawrPosition = relPos;
         _fixrPosition = new PointF(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
         _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
+
+				_gripPath = path;
       }
 
       public void MoveGrip(PointF newPosition)
@@ -831,7 +941,36 @@ namespace Altaxo.Graph.Gdi.Shapes
         SizeF diff = _parent.ToUnrotatedDifference(_fixaPosition, newPosition);
         _parent.SetBoundsFrom(_fixrPosition, _drawrPosition, diff);
       }
-    }
+
+			#region IGripManipulationHandle Members
+
+
+			public void Show(Graphics g)
+			{
+				g.FillPath(Brushes.Blue, _gripPath);
+			}
+
+			public bool IsGripHitted(PointF point)
+			{
+				return _gripPath.IsVisible(point);
+			}
+
+			public IGrippableObject ManipulatedObject
+			{
+				get { return _parent; }
+			}
+
+			#endregion
+
+		
+
+
+			
+
+		
+		}
+
+		
 
     protected class RotationGripHandle : IGripManipulationHandle
     {
@@ -839,13 +978,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       PointF _drawrPosition;
       PointF _fixrPosition;
       PointF _fixaPosition;
+			GraphicsPath _gripPath;
+			static Pen _penForInsidePathTesting = new Pen(Color.Black, 0);
 
-      public RotationGripHandle(GraphicBase parent, PointF relPos)
+			public RotationGripHandle(GraphicBase parent, PointF relPos, GraphicsPath path)
       {
         _parent = parent;
         _drawrPosition = relPos;
         _fixrPosition = new PointF(0.5f, 0.5f);
         _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
+				_gripPath = path;
       }
 
       public void MoveGrip(PointF newPosition)
@@ -856,7 +998,92 @@ namespace Altaxo.Graph.Gdi.Shapes
         diff.Height = newPosition.Y - _fixaPosition.Y;
         _parent.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff);
       }
+
+			public void Show(Graphics g)
+			{
+				g.FillPath(Brushes.Blue, _gripPath);
+			}
+
+			public bool IsGripHitted(PointF point)
+			{
+				return _gripPath.IsVisible(point);
+			}
+
+			public IGrippableObject ManipulatedObject
+			{
+				get { return _parent; }
+			}
     }
+
+
+		/// <summary>
+		/// Shows a single round grip, which can be customized to a move action.
+		/// </summary>
+		protected class PathNodeGripHandle : IGripManipulationHandle
+		{
+			PointF _gripCenter;
+			float _gripRadius=3;
+			GraphicBase _parent;
+			PointF _drawrPosition;
+			PointF _fixrPosition;
+			PointF _fixaPosition;
+
+			Action<PointF> _moveAction;
+
+			public static Pen PathOutlinePen = new Pen(Color.Blue, 0);
+
+			public PathNodeGripHandle(GraphicBase parent, PointF relPos, PointF gripCenter)
+      {
+        _parent = parent;
+        _drawrPosition = relPos;
+        _fixrPosition = new PointF(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
+        _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
+
+				_gripCenter = gripCenter;
+      }
+
+
+			public PathNodeGripHandle(GraphicBase parent, PointF relPos, PointF gripCenter, Action<PointF> moveAction)
+				: this(parent,relPos,gripCenter)
+			{
+				_moveAction = moveAction;
+			}
+
+      
+
+			#region IGripManipulationHandle Members
+
+			public void MoveGrip(PointF newPosition)
+			{
+				if (_moveAction != null)
+				{
+					_moveAction(newPosition);
+				}
+				else
+				{
+					SizeF diff = _parent.ToUnrotatedDifference(_fixaPosition, newPosition);
+					_parent.SetBoundsFrom(_fixrPosition, _drawrPosition, diff);
+				}
+			}
+
+
+			public void Show(Graphics g)
+			{
+				g.FillEllipse(Brushes.Blue, _gripCenter.X - _gripRadius, _gripCenter.Y - _gripRadius, 2 * _gripRadius, 2 * _gripRadius);
+			}
+
+			public bool IsGripHitted(PointF point)
+			{
+				return (Calc.RMath.Pow2(point.X - _gripCenter.X) + Calc.RMath.Pow2(point.Y - _gripCenter.Y)) < Calc.RMath.Pow2(_gripRadius);
+			}
+
+			public IGrippableObject ManipulatedObject
+			{
+				get { return _parent; }
+			}
+
+			#endregion
+		}
 
     #endregion
 

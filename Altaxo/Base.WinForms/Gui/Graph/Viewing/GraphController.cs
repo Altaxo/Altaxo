@@ -695,6 +695,20 @@ namespace Altaxo.Graph.GUI
 		{
 			return new PointF(pixelc.X / HorizFactorPageToPixel(), pixelc.Y / VertFactorPageToPixel());
 		}
+
+		/// <summary>
+		/// Converts pixel coordinates to unscaled page coordinates (in points=1/72 inch). Uses the resolutions <see cref="m_HorizRes"/>
+		/// and <see cref="m_VertRes"/> for calculation. 
+		/// </summary>
+		/// <param name="pixelc">The pixel coordinates to convert.</param>
+		/// <returns>The coordinates as unscaled page coordinates in points=1/72 inch, i.e. the true x and y distance in points from
+		/// the upper left corner of the visible area (ZoomFactor is not taken into account).</returns>
+		public PointF PixelToUnscaledPageCoordinates(PointF pixelc)
+		{
+			return new PointF(UnitPerInch * pixelc.X / _horizontalResolution, UnitPerInch * pixelc.Y / _verticalResolution);
+		}
+
+		
 		public SizeF PixelToPageCoordinates(SizeF pixelc)
 		{
 			return new SizeF(PixelToPageCoordinates(new PointF(pixelc.Width, pixelc.Height)));

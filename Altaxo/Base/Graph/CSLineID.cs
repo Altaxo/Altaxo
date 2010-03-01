@@ -27,12 +27,13 @@ using Altaxo.Data;
 namespace Altaxo.Graph
 {
   /// <summary>
-  /// This is a class used to identify axis line positions in 2D and 3D coordinate systems. 
+  /// Identifier for isolines in 2D and 3D coordinate systems. An isoline is created by varying one logical coordinate, while the other logical coordinates are fixed.
+  /// The position of the isoline in the coordinate space can be specified either by the non-varying logical values (0..1), or by physical values (which are converted into logical values by the scale).
   /// </summary>
   public sealed class CSLineID : ICloneable
   {
     /// <summary>
-    /// Number of axis: 0==X-Axis, 1==Y-Axis
+    /// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
     /// </summary>
     int _parallelAxisNumber;
 
@@ -192,6 +193,32 @@ namespace Altaxo.Graph
       _logicalValueSecondOther = logicalValueOtherSecond;
     }
 
+    /// <summary>
+    /// Constructs the identifier from the axis number, and a set of logical values. The part of the logical value that belongs to the provided axis number is ignored.
+    /// </summary>
+    /// <param name="parallelAxisNumber">Number of the axis (0: X, 1: Y, 2: Z).</param>
+    /// <param name="logicalValuesOther">Set of values that determine the position of the axis line in the coordinate space.</param>
+    public CSLineID(int parallelAxisNumber, Logical3D logicalValuesOther)
+    {
+      _parallelAxisNumber = parallelAxisNumber;
+      switch (_parallelAxisNumber)
+      {
+        case 0:
+          _logicalValueFirstOther = logicalValuesOther[1];
+          _logicalValueSecondOther = logicalValuesOther[2];
+          break;
+        case 1:
+          _logicalValueFirstOther = logicalValuesOther[0];
+          _logicalValueSecondOther = logicalValuesOther[2];
+          break;
+        case 2:
+          _logicalValueFirstOther = logicalValuesOther[0];
+          _logicalValueSecondOther = logicalValuesOther[1];
+          break;
+        default:
+          throw new ArgumentOutOfRangeException("AxisNumber must be either 0, 1, or 2, but you provide: " + parallelAxisNumber.ToString());
+      }
+    }
 
     /// <summary>
     /// Creates an instance from a given template instance and an offset to the first logical value.

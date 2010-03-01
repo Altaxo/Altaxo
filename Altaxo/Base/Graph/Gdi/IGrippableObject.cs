@@ -36,15 +36,7 @@ namespace Altaxo.Graph.Gdi
     /// Shows the grips, i.e. the special areas for manipulation of the object.
     /// </summary>
     /// <param name="g">The graphic context.</param>
-    void ShowGrips(System.Drawing.Graphics g);
-
-    /// <summary>
-    /// Tests if this point hits a grip area. If it hits such a area, the function returns a special handle, by
-    /// which it is possible to manipulate the object.
-    /// </summary>
-    /// <param name="point"></param>
-    /// <returns>Null if the point does not hit a grip area, and a grip manipulation handle if it hits such an area.</returns>
-    IGripManipulationHandle GripHitTest(PointF point);
-
+		/// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
+    IGripManipulationHandle[] ShowGrips(System.Drawing.Graphics g);
   }
 }

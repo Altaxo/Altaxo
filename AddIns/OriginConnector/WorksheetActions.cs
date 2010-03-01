@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Altaxo.Data;
 namespace Altaxo.Addins.OriginConnector
 {
   public static class WorksheetActions
@@ -177,6 +178,13 @@ namespace Altaxo.Addins.OriginConnector
       if (!conn.IsConnected())
         return;
 
+      if (IsColumnReorderingNeccessaryForPuttingTableToOrigin(srcTable))
+      {
+        srcTable = (DataTable)srcTable.Clone();
+        ReorderColumnsInTableForCompatibilityWithOrigin(srcTable);
+      }
+
+
       var stb = new System.Text.StringBuilder();
       string strCMD;
       string strWksName = originWorksheetName;
@@ -338,6 +346,81 @@ namespace Altaxo.Addins.OriginConnector
           }
           conn.Application.PutWorksheet(strWksName, arr2D, nRowStart, nStartColumn); // Finally put the data into the worksheet, beginning  with the row nRowStart and the start column:
         }
+      }
+    }
+
+    /// <summary>
+    /// Tests if column reordering is neccessary in order to put a table to origin. Column reordering is neccessary if the table contains more than
+    /// one column group, and the x column of every column group is not the first column. Origin only supports table with multiple groups if the first column
+    /// of every group is the x-column.
+    /// </summary>
+    /// <param name="table">The table to test.</param>
+    /// <returns>True if column reodering is neccessary, false otherwise.</returns>
+    public static bool IsColumnReorderingNeccessaryForPuttingTableToOrigin(Data.DataTable table)
+    {
+      // Testen, wieviele Gruppen
+      var groupColumns = new Dictionary<int, int>(); // counts the number of columns per group
+      for (int i = 0; i < table.DataColumnCount; i++)
+      {
+        int currentGroup = table.DataColumns.GetColumnGroup(i);
+
+        if (groupColumns.ContainsKey(currentGroup))
+          groupColumns[currentGroup] += 1;
+        else
+          groupColumns.Add(currentGroup, 1);
+
+        var currentKind = table.DataColumns.GetColumnKind(i);
+
+        if (groupColumns.Count > 1 && groupColumns[currentGroup] > 1)
+        {
+          if (currentKind == Altaxo.Data.ColumnKind.X)
+            return true;
+
+          if (currentGroup != table.DataColumns.GetColumnGroup(i - 1))
+            return true;
+        }
+      }
+
+      return false;
+    }
+
+    public static void ReorderColumnsInTableForCompatibilityWithOrigin(Data.DataTable table)
+    {
+      var groupBegin = new Dictionary<int, Data.DataColumn>();
+      var groupEnd = new Dictionary<int, Data.DataColumn>();
+
+      for (int i = 0; i < table.DataColumnCount; i++)
+      {
+        var currentCol = table[i];
+        int currentGroup = table.DataColumns.GetColumnGroup(i);
+
+        if (!groupBegin.ContainsKey(currentGroup))
+        {
+          groupBegin.Add(currentGroup, currentCol);
+          groupEnd.Add(currentGroup, currentCol);
+        }
+
+        var currentKind = table.DataColumns.GetColumnKind(i);
+        // if the column is a x-column, then move it to the begin of the group
+        if (currentKind == Altaxo.Data.ColumnKind.X && !object.ReferenceEquals(currentCol, groupBegin[currentGroup]))
+        {
+          int destIndex = table.DataColumns.GetColumnNumber(groupBegin[currentGroup]);
+          table.ChangeColumnPosition(new Collections.IntegerRangeAsCollection(i, 1), destIndex);
+          groupBegin[currentGroup] = currentCol;
+          continue;
+        }
+
+        // if the column is away from the rest of the group, move it to the end of the group
+        int lastIndex = table.DataColumns.GetColumnNumber(groupEnd[currentGroup]);
+        if (i > 1 + lastIndex)
+        {
+          int destIndex = 1 + lastIndex;
+          table.ChangeColumnPosition(new Collections.IntegerRangeAsCollection(i, 1), destIndex);
+          groupEnd[currentGroup] = currentCol;
+          continue;
+        }
+
+        groupEnd[currentGroup] = currentCol;
       }
     }
 

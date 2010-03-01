@@ -8,6 +8,26 @@ namespace Altaxo.Graph.Gdi
 {
 	public static class GdiExtensionMethods
 	{
+    public static PointF Subtract(this PointF p1, PointF p2)
+    {
+      return new PointF(p1.X - p2.X, p1.Y - p2.Y);
+    }
+
+    public static PointF Add(this PointF p1, PointF p2)
+    {
+      return new PointF(p1.X + p2.X, p1.Y + p2.Y);
+    }
+
+    public static PointF AddScaled(this PointF p1, PointF p2, float s)
+    {
+      return new PointF(p1.X + p2.X*s, p1.Y + p2.Y*s);
+    }
+
+    public static float VectorLength(this PointF p)
+    {
+      return (float)Math.Sqrt(p.X * p.X + p.Y * p.Y);
+    }
+
 		/// <summary>
 		/// Multiply a size structure with a factor.
 		/// </summary>
@@ -105,5 +125,11 @@ namespace Altaxo.Graph.Gdi
 			var vert = sqr(Top.X - Bottom.X) + sqr(Top.Y - Bottom.Y);
 			return (float)Math.Sqrt(Math.Min(horz, vert));
 		}
+
+    public void Translate(float dx, float dy)
+    {
+      Center.X += dx;
+      Center.Y += dy;
+    }
 	}
 }

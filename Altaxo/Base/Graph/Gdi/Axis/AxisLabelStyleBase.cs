@@ -42,16 +42,23 @@ namespace Altaxo.Graph.Gdi.Axis
 
     [NonSerialized]
     object _parent;
-
-    /// <summary>
-    /// Abstract paint function for the AbstractXYAxisLabelStyle.
+   
+     /// <summary>
+    /// Paints the axis style labels.
     /// </summary>
-    /// <param name="g">The graphics context.</param>
-    /// <param name="layer">The layer the lables belongs to.</param>
-    /// <param name="styleInfo">The information which identifies the axis styles.</param>
-    /// <param name="axisstyle">The axis style the axis is formatted with.</param>
-    /// <param name="useMinorTicks">If true, the minor ticks where used instead of the (default) major ticks.</param>
-    public abstract void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks);
+    /// <param name="g">Graphics environment.</param>
+    /// <param name="coordSyst">The coordinate system. Used to get the path along the axis.</param>
+    /// <param name="scaleWithTicks">Scale and appropriate ticks.</param>
+    /// <param name="styleInfo">Information about begin of axis, end of axis.</param>
+    /// <param name="outerDistance">Distance between axis and labels.</param>
+    /// <param name="useMinorTicks">If true, minor ticks are shown.</param>
+    public abstract void Paint(
+      Graphics g,
+      G2DCoordinateSystem coordSyst,
+      ScaleWithTicks scaleWithTicks,
+      CSAxisInformation styleInfo,
+      float outerDistance,
+      bool useMinorTicks);
  
     #region IChangedEventSource Members
 
