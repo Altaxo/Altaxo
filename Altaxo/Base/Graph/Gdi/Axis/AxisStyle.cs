@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Gdi.Axis
       if (ShowMajorLabels)
         this._majorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[styleinfo.Identifier.ParallelAxisNumber], styleinfo, outerDistance, false);
       if (ShowMinorLabels)
-        this._majorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[styleinfo.Identifier.ParallelAxisNumber], styleinfo, outerDistance, true);
+        this._minorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[styleinfo.Identifier.ParallelAxisNumber], styleinfo, outerDistance, true);
       if (ShowTitle)
         _axisTitle.Paint(g, layer);
     }

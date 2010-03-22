@@ -40,11 +40,10 @@ namespace Altaxo.Graph.Gdi
   /// </summary>
   public interface IHitTestObject
   {
-    
-
     /// <summary>
     /// This will return the selection path for the object. This is a closed
     /// path where when hit into with the mouse, the object is selected.
+		/// This path is used for showing if more than one object is selected.
     /// </summary>
     /// <returns>Selection path.</returns>
     GraphicsPath SelectionPath {get;}
@@ -52,7 +51,9 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>
     /// This will return the object path for the object. This is a closed
-    /// path which fully encloses the object. In case of lines, the width of this path is equal to the line width.
+    /// path which best describes the object. In case of lines, it is the line path. In case of area shapes, it is the path
+		/// that encloses the object.
+		/// This path is used for showing the selection if only this single object is selected.
     /// </summary>
     /// <returns>Selection path.</returns>
     GraphicsPath ObjectPath { get; }

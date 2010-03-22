@@ -168,9 +168,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
 
-    public override IHitTestObject HitTest(CrossF pt)
+    public override IHitTestObject HitTest(HitTestData htd)
     {
-      IHitTestObject result = base.HitTest(pt);
+      IHitTestObject result = base.HitTest(htd);
       if (result != null)
         result.DoubleClick = EhHitDoubleClick;
       return result;

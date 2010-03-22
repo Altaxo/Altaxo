@@ -54,8 +54,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     protected RectangleF _bounds = new RectangleF(0,0,0,0);
 
     /// <summary>
-    /// The position of the graphical object, normally the upper left corner. Strictly spoken,
-    /// this is the position of the anchor point of the object.
+    /// The position of the anchor point of the object, normally the upper left corner.
     /// </summary>
     protected PointF _position = new PointF(0, 0);
   
@@ -63,6 +62,20 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// The rotation angle of the graphical object in reference to the layer.
     /// </summary>
     protected float  _rotation = 0;
+
+		/// <summary>
+		/// The shear of the object. This is the deviation of x when y is incremented by 1.
+		/// </summary>
+		protected float _shear = 0;
+
+		/// <summary>X scale factor.</summary>
+		protected float _scaleX = 1;
+
+		/// <summary>Y scale factor.</summary>
+		protected float _scaleY = 1;
+
+		/// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
+		protected TransformationMatrix2D _transfoToLayerCoord = new TransformationMatrix2D();
 
 
     /// <summary>
@@ -91,6 +104,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _bounds = (RectangleF)info.GetValue("Bounds", typeof(RectangleF));
       _rotation = info.GetSingle("Rotation");
       _autoSize = info.GetBoolean("AutoSize");
+			UpdateTransformationMatrices();
       return this;
     }
     public virtual void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -126,6 +140,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         s._bounds = (RectangleF)info.GetValue("Bounds",s);
         s._rotation = -info.GetSingle("Rotation"); // meaning of rotation reversed in version 2
         s._autoSize = info.GetBoolean("AutoSize");
+				s.UpdateTransformationMatrices();
 
         return s;
       }
@@ -152,10 +167,45 @@ namespace Altaxo.Graph.Gdi.Shapes
         s._bounds = (RectangleF)info.GetValue("Bounds", s);
         s._rotation = info.GetSingle("Rotation");
         s._autoSize = info.GetBoolean("AutoSize");
+				s.UpdateTransformationMatrices();
 
         return s;
       }
     }
+
+
+		// 2010-03-16 ScaleX, ScaleY, and Shear added
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase), 3)]
+		class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphicBase s = (GraphicBase)obj;
+				info.AddValue("Position", s._position);
+				info.AddValue("Bounds", s._bounds);
+				info.AddValue("Rotation", s._rotation);
+				info.AddValue("ScaleX", s._scaleX);
+				info.AddValue("ScaleY", s._scaleY);
+				info.AddValue("Shear", s._shear);
+				info.AddValue("AutoSize", s._autoSize);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				GraphicBase s = (GraphicBase)o;
+
+				s._position = (PointF)info.GetValue("Position", s);
+				s._bounds = (RectangleF)info.GetValue("Bounds", s);
+				s._rotation = info.GetSingle("Rotation");
+				s._scaleX = info.GetSingle("ScaleX");
+				s._scaleY = info.GetSingle("ScaleY");
+				s._shear = info.GetSingle("Shear");
+				s._autoSize = info.GetBoolean("AutoSize");
+				s.UpdateTransformationMatrices();
+
+				return s;
+			}
+		}
 
     /// <summary>
     /// Finale measures after deserialization.
@@ -182,8 +232,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       this._bounds = from._bounds;
       this._position = from._position;
       this._rotation = from._rotation;
+			this._scaleX = from._scaleX;
+			this._scaleY = from._scaleY;
+			this._shear = from._shear;
       bool wasUsed = (null != this._parent);
       this._parent = from._parent;
+			this.UpdateTransformationMatrices();
 
       if(wasUsed)
         OnChanged();
@@ -510,6 +564,25 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+
+    protected void TransformGraphics(Graphics g)
+    {
+      g.TranslateTransform(X, Y);
+      if (_rotation!=0)
+        g.RotateTransform(-_rotation);
+      if (_scaleX != 1 || _scaleY != 1)
+        g.ScaleTransform(_scaleX, _scaleY);
+      if(_shear!=0)
+        g.MultiplyTransform(new Matrix(1,0,_shear,1,0,0));
+    }
+
+
+		protected void UpdateTransformationMatrices()
+		{
+      _transfoToLayerCoord.SetTranslationRotationScaleShear(X, Y, -_rotation, _scaleX, _scaleY, _shear);
+		}
+
+
     public abstract void Paint(Graphics g, object obj);
     #region IChangedEventSource Members
 
@@ -523,6 +596,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected virtual void OnChanged()
     {
+			UpdateTransformationMatrices();
+
       if(this._parent is Main.IChildChangedEventSink)
         ((Main.IChildChangedEventSink)_parent).EhChildChanged(this,new Main.ChangedEventArgs(this,null));
 
@@ -539,15 +614,18 @@ namespace Altaxo.Graph.Gdi.Shapes
     public abstract object Clone();
 
     #region HitTesting
-    public virtual IHitTestObject HitTest(CrossF pt)
+    public virtual IHitTestObject HitTest(HitTestData hitData)
     {
+			PointF pt = hitData.GetHittedPointInWorldCoord();
       GraphicsPath gp = GetObjectPath();
-      if (gp.IsVisible(pt.Center))
-      {
-        return new HitTestObject(gp, this);
-      }
-      else
-        return null;
+			if (gp.IsVisible(pt))
+			{
+				return new HitTestObject(gp, this);
+			}
+			else
+			{
+				return null;
+			}
     }
 
 		public virtual IHitTestObject HitTest(RectangleF rect)
@@ -730,6 +808,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       SizeF s = ToRotatedDifference(RelativeToAbsolutePosition(relPivot, false), Point.Empty);
       this._position.X = absPivot.X + s.Width;
       this._position.Y = absPivot.Y + s.Height;
+			UpdateTransformationMatrices();
 
     }
 
@@ -1102,5 +1181,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     #endregion
+
+		
+
   }
 }

@@ -59,15 +59,9 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="table">The data table.</param>
     public static void CreatePropertyColumnOfColumnNames(Altaxo.Data.DataTable table)
     {
-      const string NameColumnName="ColumnName";
-      
-      Altaxo.Data.TextColumn col = table.PropertyColumns[NameColumnName] as Altaxo.Data.TextColumn;
+      const string NameColumnName="LongName";
 
-      if(col==null)
-      {
-        col = new Altaxo.Data.TextColumn();
-        table.PropertyColumns.Add(col,NameColumnName,Altaxo.Data.ColumnKind.Label,0);
-      }
+      Altaxo.Data.TextColumn col = (Altaxo.Data.TextColumn)table.PropertyColumns.EnsureExistence(NameColumnName, typeof(Altaxo.Data.TextColumn), Altaxo.Data.ColumnKind.Label,0);
 
       col.Suspend();
       for(int i=table.DataColumnCount-1;i>=0;i--)

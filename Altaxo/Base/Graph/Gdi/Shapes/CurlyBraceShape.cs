@@ -224,20 +224,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 			g.Restore(gs);
 		}
 
-		public override IHitTestObject HitTest(CrossF pt)
+		public override IHitTestObject HitTest(HitTestData htd)
 		{
+
+			var localHitTestData = htd.NewFromAdditionalTransformation(_transfoToLayerCoord);
 			GraphicsPath gp = GetPath();
-			gp.Widen(new Pen(Color.Black, pt.GetMinExtension()));
-			Matrix myMatrix = new Matrix();
-			myMatrix.Translate(X, Y);
-			if (this.Rotation != 0)
-			{
-				myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
-			}
-			gp.Transform(myMatrix);
+			gp.Transform(localHitTestData.Transformation); // Transform to page coord
+			gp.Widen(new Pen(Color.Black,6 ));
 
-
-			if (gp.IsVisible(pt.Center))
+			if (gp.IsVisible(localHitTestData.HittedPointInPageCoord))
 			{
 				return new HitTestObject(gp, this);
 			}

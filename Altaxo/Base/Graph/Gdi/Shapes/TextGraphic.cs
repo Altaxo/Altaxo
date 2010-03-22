@@ -590,12 +590,15 @@ namespace Altaxo.Graph.Gdi.Shapes
     public static DoubleClickHandler TextGraphicsEditorMethod;
 
 
-    public override IHitTestObject HitTest(CrossF pt)
+    public override IHitTestObject HitTest(HitTestData htd)
     {
       IHitTestObject result;
+
+			var pt = htd.GetHittedPointInWorldCoord(_transfoToLayerCoord);
+
       foreach(GraphicsPath gp in this._cachedSymbolPositions.Keys)
       {
-        if(gp.IsVisible(pt.Center))
+        if(gp.IsVisible(pt))
         {
           result =  new HitTestObject(gp,_cachedSymbolPositions[gp]);
           result.DoubleClick = PlotItemEditorMethod;
@@ -603,7 +606,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
       
-      result = base.HitTest(pt);
+      result = base.HitTest(htd);
       if(null!=result)
         result.DoubleClick = TextGraphicsEditorMethod;
       return result;

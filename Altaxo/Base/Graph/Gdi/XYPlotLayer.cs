@@ -2501,12 +2501,13 @@ namespace Altaxo.Graph.Gdi
       return o;
     }
 
-    public IHitTestObject HitTest(CrossF pageC, bool plotItemsOnly)
+    public IHitTestObject HitTest(HitTestData pageC, bool plotItemsOnly)
     {
       IHitTestObject hit;
 
-      var layerCross = GraphToLayerCoordinates(pageC);
-			var layerC = layerCross.Center;
+			HitTestData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, Rotation, Scale, Scale, 0);
+
+			var layerC = layerHitTestData.GetHittedPointInWorldCoord();
 
 
       List<GraphicBase> specObjects = new List<GraphicBase>();
@@ -2523,7 +2524,7 @@ namespace Altaxo.Graph.Gdi
         {
           if (null != go)
           {
-            hit = go.HitTest(layerCross);
+            hit = go.HitTest(layerHitTestData);
             if (null != hit)
             {
               if (null == hit.Remove && (hit.HittedObject is GraphicBase))
@@ -2596,7 +2597,7 @@ namespace Altaxo.Graph.Gdi
         // now hit testing the other objects in the layer
         foreach (GraphicBase go in _graphObjects)
         {
-          hit = go.HitTest(layerCross);
+          hit = go.HitTest(layerHitTestData);
           if (null != hit)
           {
             if (null == hit.Remove && (hit.HittedObject is GraphicBase))

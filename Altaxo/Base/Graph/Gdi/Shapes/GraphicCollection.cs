@@ -128,14 +128,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public GraphicBase FindObjectAtPoint(CrossF pt)
+    public GraphicBase FindObjectAtPoint(HitTestData htd)
     {
       if(null!=this._items)
       {
         int len = this._items.Count;
         foreach(GraphicBase g in this._items)
         {
-          if(null!=g.HitTest(pt))
+          if(null!=g.HitTest(htd))
             return g;
         }
       }

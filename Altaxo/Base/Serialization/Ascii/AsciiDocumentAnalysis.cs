@@ -159,7 +159,7 @@ namespace Altaxo.Serialization.Ascii
       // try to guess which of the header lines is the caption line
       // we take the caption line to be the first column which has the same number of tokens as the recognized structure
       // if no line fulfilles this criteria, the IndexOfCaptionLine remain unchanged.
-      for (int i = 0; i < result.Count; i++)
+      for (int i = 0; i < opt.NumberOfMainHeaderLines; i++)
       {
         if (result[i][bestSeparationStragegy].Count == opt.RecognizedStructure.Count)
         {

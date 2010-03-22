@@ -169,6 +169,34 @@ namespace Altaxo.Data
       }
 		}
 
+		class MultipleDataColumnComparer
+		{
+			DataColumn[] _col;
+			bool _ascendingOrder;
+
+
+			public MultipleDataColumnComparer(DataColumn[] sortCols, bool ascending)
+			{
+				_col = sortCols;
+				_ascendingOrder = ascending;
+			}
+
+			public int Compare(int i, int j)
+			{
+				for(int k=0;k<_col.Length;k++)
+				{
+				if (_col[k][i] == _col[k][j])
+					continue;
+				else if (_col[k][i] < _col[k][j])
+					return _ascendingOrder ? -1 : 1;
+				else
+					return _ascendingOrder ? +1 : -1;
+				}
+				return 0;
+			}
+		}
+
+
 		#endregion
 
 
@@ -182,6 +210,17 @@ namespace Altaxo.Data
     {
 			SortRows(table.DataColumns, col, inAscendingOrder);
     }
+
+		/// <summary>
+		/// Sorts the data rows of a table, using a specified column.
+		/// </summary>
+		/// <param name="table">The table where the data columns should be sorted.</param>
+		/// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.</param>
+		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
+		public static void SortDataRows(this DataTable table, DataColumn[] cols, bool inAscendingOrder)
+		{
+			SortRows(table.DataColumns, cols, inAscendingOrder);
+		}
 
 		/// <summary>
 		/// Sorts the data rows of a DataColumnCollection, using a specified column.
@@ -202,6 +241,24 @@ namespace Altaxo.Data
 			{
 				HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table).Swap);
 			}
+		}
+
+
+		/// <summary>
+		/// Sorts the data rows of a DataColumnCollection, using a specified column.
+		/// </summary>
+		/// <param name="table">The DataColumnCollection where the data columns should be sorted.</param>
+		/// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.</param>
+		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
+		public static void SortRows(this DataColumnCollection table, DataColumn[] cols, bool inAscendingOrder)
+		{
+			for (int k = 0; k < cols.Length; k++)
+			{
+				if (!table.ContainsColumn(cols[k]))
+					throw new ArgumentException("The sorting columnd provided must all be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
+			}
+
+				HeapSort(cols[0].Count, new MultipleDataColumnComparer(cols, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table).Swap);
 		}
 
 		/// <summary>

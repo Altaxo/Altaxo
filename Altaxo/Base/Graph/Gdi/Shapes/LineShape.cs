@@ -207,11 +207,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
-    public override IHitTestObject HitTest(CrossF pt)
+    public override IHitTestObject HitTest(HitTestData htd)
     {
       HitTestObject result = null;
+			PointF pt = htd.GetHittedPointInWorldCoord();
       GraphicsPath gp = GetSelectionPath();
-      if (gp.IsVisible(pt.Center))
+      if (gp.IsVisible(pt))
       {
         result = new HitTestObject(GetObjectPath(),gp, this);
       }

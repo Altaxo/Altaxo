@@ -362,28 +362,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return false;
 		}
 
-    public override IHitTestObject HitTest(CrossF pt)
+    public override IHitTestObject HitTest(HitTestData htd)
     {
-      CrossF pt1 = pt;
-      pt1.Translate(-X, -Y);
 
-      var mat = new System.Drawing.Drawing2D.Matrix();
-      mat.Translate(X, Y);
-			if (_rotation != -0)
-				mat.Rotate(-_rotation);
+			var myHitTestData = htd.NewFromAdditionalTransformation(_transfoToLayerCoord);
 
       IHitTestObject result=null;
       foreach(var axstyle in _axisStyles)
       {
-        if (null != axstyle.Title && null != (result = axstyle.Title.HitTest(pt1)))
+        if (null != axstyle.Title && null != (result = axstyle.Title.HitTest(myHitTestData)))
         {
 					result.Remove = this.EhAxisTitleRemove;
-          result.Transform(mat);
+          result.Transform(_transfoToLayerCoord);
           return result;
         }
       }
 
-      result = base.HitTest(pt);
+      result = base.HitTest(htd);
       if (result != null)
         result.DoubleClick = EhDoubleClick;
 

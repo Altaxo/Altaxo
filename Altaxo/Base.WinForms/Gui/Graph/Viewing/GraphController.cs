@@ -797,22 +797,13 @@ namespace Altaxo.Graph.GUI
 		/// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
 		public bool FindGraphObjectAtPixelPosition(PointF pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int foundInLayerNumber)
 		{
-			// search for a object first
-			// TODO: make a cross here designating the tolerance of the mouse hit
-			// The cross shold have arms at least 1 pixel long and depending on the screen resolution 3 points long
-			const float _hitToleranceInPoints = 3;
-			const float _hitToleranceInPixel=1;
-
-			float hitTolerancePixelHorz = Math.Max(_hitToleranceInPixel, _hitToleranceInPoints*_horizontalResolution/72);
-			float hitTolerancePixelVert = Math.Max(_hitToleranceInPixel, _hitToleranceInPoints*_verticalResolution/72);
-			var cross = new CrossF(pixelPos, hitTolerancePixelHorz, hitTolerancePixelVert);
-
-			var mousePT = PixelToPrintableAreaCoordinates(cross);
+			var mousePT = PixelToPrintableAreaCoordinates(pixelPos);
+			var hitData = new HitTestData(mousePT, this.ZoomFactor);
 
 			for (int nLayer = 0; nLayer < Layers.Count; nLayer++)
 			{
 				XYPlotLayer layer = Layers[nLayer];
-				foundObject = layer.HitTest(mousePT, plotItemsOnly);
+				foundObject = layer.HitTest(hitData, plotItemsOnly);
 				if (null != foundObject)
 				{
 					foundInLayerNumber = nLayer;
