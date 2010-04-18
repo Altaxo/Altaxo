@@ -38,6 +38,9 @@ namespace Altaxo.Gui.Graph
     System.Drawing.PointF DocPosition { get; set; }
     System.Drawing.SizeF DocSize { get; set; }
     float DocRotation { get; set; }
+    float DocShear { get; set; }
+    float DocScaleX { get; set; }
+    float DocScaleY { get; set; }
   }
   public interface IShapeGraphicViewEventSink
   {
@@ -70,6 +73,9 @@ namespace Altaxo.Gui.Graph
         _view.DocPosition = _tempdoc.Position;
         _view.DocSize = _tempdoc.Size;
         _view.DocRotation = _tempdoc.Rotation;
+        _view.DocShear = _tempdoc.Shear;
+        _view.DocScaleX = _tempdoc.ScaleX;
+        _view.DocScaleY = _tempdoc.ScaleY;
       }
     }
 
@@ -109,6 +115,9 @@ namespace Altaxo.Gui.Graph
       _doc.Position = _view.DocPosition;
       _doc.Size = _view.DocSize;
       _doc.Rotation = _view.DocRotation;
+      _doc.Shear = _view.DocShear;
+      _doc.ScaleX = _view.DocScaleX;
+      _doc.ScaleY = _view.DocScaleY;
       return true;
     }
 

@@ -329,5 +329,176 @@ namespace Altaxo.Gui.Graph
       _rotation = _cbRotation.Rotation;
     }
     #endregion
+
+
+    #region Shear
+
+    double _shear;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public double Shear
+    {
+      get
+      {
+          return _shear;
+      }
+      set
+      {
+        _shear = value;
+        if (_edShear != null)
+          _edShear.Text = Altaxo.Serialization.GUIConversion.ToString(_shear);
+      }
+    }
+
+    System.Windows.Forms.TextBox _edShear;
+    public System.Windows.Forms.TextBox GuiShear
+    {
+      get { return _edShear; }
+      set
+      {
+        if (_edShear != null)
+        {
+          _edShear.Validating -= EhShear_Validating;
+          _edShear.Validated -= EhShear_Validated;
+          //_edShear.SelectionChangeCommitted -= EhRotation_Validated;
+        }
+
+        _edShear = value;
+
+        if (_edShear != null)
+        {
+          _edShear.Validating += EhShear_Validating;
+          _edShear.Validated += EhShear_Validated;
+          //_edShear.SelectionChangeCommitted += EhRotation_Validated;
+
+          _edShear.Text = Altaxo.Serialization.GUIConversion.ToString(_shear);
+        }
+      }
+    }
+    void EhShear_Validating(object sender, CancelEventArgs e)
+    {
+      if (!Altaxo.Serialization.GUIConversion.IsDouble(_edShear.Text))
+        e.Cancel = true;
+    }
+    void EhShear_Validated(object sender, EventArgs e)
+    {
+      double val;
+      if (Altaxo.Serialization.GUIConversion.IsDouble(_edShear.Text, out val))
+        _shear = val;
+    }
+    #endregion
+
+
+    #region ScaleX
+
+    double _scaleX;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public double ScaleX
+    {
+      get
+      {
+          return _scaleX;
+      }
+      set
+      {
+        _scaleX = value;
+        if (_edScaleX != null)
+          _edScaleX.Text = Altaxo.Serialization.GUIConversion.ToString(_scaleX);
+      }
+    }
+
+    System.Windows.Forms.TextBox _edScaleX;
+    public System.Windows.Forms.TextBox GuiScaleX
+    {
+      get { return _edScaleX; }
+      set
+      {
+        if (_edScaleX != null)
+        {
+          _edScaleX.Validating -= EhScaleX_Validating;
+          _edScaleX.Validated -= EhScaleX_Validated;
+          //_edScaleX.SelectionChangeCommitted -= EhRotation_Validated;
+        }
+
+        _edScaleX = value;
+
+        if (_edScaleX != null)
+        {
+          _edScaleX.Validating += EhScaleX_Validating;
+          _edScaleX.Validated += EhScaleX_Validated;
+          //_edScaleX.SelectionChangeCommitted += EhRotation_Validated;
+
+          _edScaleX.Text = Altaxo.Serialization.GUIConversion.ToString(_scaleX);
+        }
+      }
+    }
+    void EhScaleX_Validating(object sender, CancelEventArgs e)
+    {
+      if (!Altaxo.Serialization.GUIConversion.IsDouble(_edScaleX.Text))
+        e.Cancel = true;
+    }
+    void EhScaleX_Validated(object sender, EventArgs e)
+    {
+      double val;
+      if (Altaxo.Serialization.GUIConversion.IsDouble(_edScaleX.Text, out val))
+        _scaleX = val;
+    }
+    #endregion
+
+    #region ScaleY
+
+    double _scaleY;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public double ScaleY
+    {
+      get
+      {
+        return _scaleY;
+      }
+      set
+      {
+       _scaleY = value;
+        if (_edScaleY != null)
+          _edScaleY.Text = Altaxo.Serialization.GUIConversion.ToString(_scaleY);
+      }
+    }
+
+    System.Windows.Forms.TextBox _edScaleY;
+    public System.Windows.Forms.TextBox GuiScaleY
+    {
+      get { return _edScaleY; }
+      set
+      {
+        if (_edScaleY != null)
+        {
+          _edScaleY.Validating -= EhScaleY_Validating;
+          _edScaleY.Validated -= EhScaleY_Validated;
+          //_edScaleY.SelectionChangeCommitted -= EhRotation_Validated;
+        }
+
+        _edScaleY = value;
+
+        if (_edScaleY != null)
+        {
+          _edScaleY.Validating += EhScaleY_Validating;
+          _edScaleY.Validated += EhScaleY_Validated;
+          //_edScaleY.SelectionChangeCommitted += EhRotation_Validated;
+
+          _edScaleY.Text = Altaxo.Serialization.GUIConversion.ToString(_scaleY);
+        }
+      }
+    }
+    void EhScaleY_Validating(object sender, CancelEventArgs e)
+    {
+      if (!Altaxo.Serialization.GUIConversion.IsDouble(_edScaleY.Text))
+        e.Cancel = true;
+    }
+    void EhScaleY_Validated(object sender, EventArgs e)
+    {
+      double val;
+      if (Altaxo.Serialization.GUIConversion.IsDouble(_edScaleY.Text, out val))
+        _scaleY = val;
+    }
+    #endregion
+
   }
 }

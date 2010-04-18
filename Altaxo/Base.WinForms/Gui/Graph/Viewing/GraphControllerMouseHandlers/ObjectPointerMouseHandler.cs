@@ -37,51 +37,71 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class ObjectPointerMouseHandler : MouseStateHandler
   {
-    #region Inner structures
-    protected struct GripManipulationHandles
+    #region Internal classes
+
+    /// <summary>
+    /// Supergrip collects multiple active grips so that they can be moved simultaneously.
+    /// </summary>
+    class SuperGrip : IGripManipulationHandle
     {
-			public IGripManipulationHandle Handle;
-      public IGripManipulationHandle[] Handles;
-      public IGrippableObject Object;
+      /// <summary>List of all collected grips.</summary>
+      public List<IGripManipulationHandle> GripList { get; private set; }
 
-			public void ShowGrips(Graphics g)
+      public SuperGrip()
+      {
+        GripList = new List<IGripManipulationHandle>();
+      }
+
+      #region IGripManipulationHandle Members
+
+			/// <summary>
+			/// Activates this grip, providing the initial position of the mouse.
+			/// </summary>
+			/// <param name="initialPosition">Initial position of the mouse.</param>
+			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
+			/// thie activation is due to a regular mouse click in this grip.</param>
+			public void Activate(PointF initialPosition, bool isActivatedUponCreation)
 			{
-				if (null == Handles || Handles.Length == 0)
-					return;
+        foreach (var ele in GripList)
+          ele.Activate(initialPosition, isActivatedUponCreation);
+      }
 
-				var gstate = g.Save();
-				g.PageScale = 1;
-				g.ResetTransform();
+			public bool Deactivate()
+			{
+				foreach (var ele in GripList)
+					ele.Deactivate();
 
-				for (int i = 0; i < Handles.Length; i++)
-					Handles[i].Show(g);
-
-
-				g.Restore(gstate);
+				return false;
 			}
 
-			public IGripManipulationHandle HitTest(PointF pt)
-			{
-				if (null == Handles || Handles.Length == 0)
-					return null;
+      public void MoveGrip(PointF newPosition)
+      {
+        foreach (var ele in GripList)
+          ele.MoveGrip(newPosition);
+      }
 
-				for (int i = 0; i < Handles.Length; i++)
-				{
-					if (Handles[i].IsGripHitted(pt))
-						return Handles[i];
-				}
-				return null;
-			}
-		}
+      public void Show(Graphics g)
+      {
+        foreach (var ele in GripList)
+          ele.Show(g);
+      }
+
+      public bool IsGripHitted(PointF point)
+      {
+        foreach (var ele in GripList)
+          if (ele.IsGripHitted(point))
+            return true;
+        return false;
+      }
+
+      #endregion
+    }
+
     #endregion
 
+
     #region Members
-    /// <summary>
-    /// If true, the selected objects where moved when a MouseMove event is fired
-    /// </summary>
-    protected bool _moveObjectsOnMouseMove=false;
-    /// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
-    protected PointF _movedObjectsLastMovePoint;
+
     /// <summary>If objects where really moved during the moving mode, this value become true</summary>
     protected bool _wereObjectsMoved=false;
 
@@ -91,14 +111,18 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>Locker to suppress changed events during moving of objects.</summary>
     IDisposable _graphDocumentChangedSuppressor;
 
-    /// <summary>
-    /// This is the structure to store information about an object that currently has its grip shown.
-    /// </summary>
-    protected GripManipulationHandles _grip;
-    /// <summary>
-    /// The hashtable of the selected objects. The key is the selected object itself,
-    /// the data is a int object, which stores the layer number the object belongs to.
-    /// </summary>
+    /// <summary>Grips that are displayed on the screen.</summary>
+    protected IGripManipulationHandle[] DisplayedGrips;
+
+    /// <summary>Grip that is currently dragged.</summary>
+    protected IGripManipulationHandle ActiveGrip;
+
+		/// <summary>
+		/// Current displayed grip level;
+		/// </summary>
+		protected int DisplayedGripLevel;
+
+    /// <summary>List of selected HitTestObjects</summary>
     protected List<IHitTestObject> _selectedObjects = new List<IHitTestObject>();
 
     #endregion
@@ -168,64 +192,41 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
     /// <summary>
-    /// Handles the mouse move event.
+    /// Draws the <see cref="DisplayedGrips"/> on the graphics context.
     /// </summary>
-    /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
-    {
-      base.OnMouseMove(e);
-        
-      PointF mouseDiff = new PointF(e.X - _movedObjectsLastMovePoint.X, e.Y - _movedObjectsLastMovePoint.Y);
-      
-      if(null!=_grip.Handle)
-      {
-        PointF printAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
-        //PointF newPosition = _grac.GC.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
-        var pts = new PointF[] { printAreaCoord };
-        SingleSelectedHitTestObject.InverseTransformation.TransformPoints(pts);
-        PointF newPosition = pts[0];
-        _grip.Handle.MoveGrip(newPosition);
-        _grac.WinFormsController.RepaintGraphArea();
-        
-      }
+    /// <param name="g">Graphics context.</param>
+    public void DisplayGrips(Graphics g)
+			{
+				if (null == DisplayedGrips || DisplayedGrips.Length == 0)
+					return;
 
-      
-      if(_moveObjectsOnMouseMove && 0!= _selectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
-      {
-        // move all the selected objects to the new position
-        // first update the position of the selected objects to reflect the new position
-        _movedObjectsLastMovePoint.X = e.X;
-        _movedObjectsLastMovePoint.Y = e.Y;
-
-        // indicate the objects has moved now
-        _wereObjectsMoved = true;
+				for (int i = 0; i < DisplayedGrips.Length; i++)
+					DisplayedGrips[i].Show(g);
+			}
 
 
-        // this difference, which is in mouse coordinates, must first be 
-        // converted to Graph coordinates (1/72"), and then transformed for
-        // each object to the layer coordinate differences of the layer
-    
-        PointF graphDiff = _grac.WinFormsController.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
+    /// <summary>
+    /// Tests if a grip from the <see cref="DisplayedGrips"/>  is hitted.
+    /// </summary>
+    /// <param name="pt">Mouse location.</param>
+    /// <returns>The grip which was hitted, or null if no grip was hitted.</returns>
+			public IGripManipulationHandle GripHitTest(PointF pt)
+			{
+				if (null == DisplayedGrips || DisplayedGrips.Length == 0)
+					return null;
 
-        foreach(IHitTestObject graphObject in _selectedObjects)
-        {
-          // get the layer number the graphObject belongs to
-          //int nLayer = (int)grac.m_SelectedObjects[graphObject];
-          //PointF layerDiff = grac.Layers[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
-          graphObject.ShiftPosition(graphDiff.X,graphDiff.Y);
-          //System.Diagnostics.Trace.WriteLine(string.Format("Moving mdiff={0}, gdiff={1}", mouseDiff,graphDiff));
-        }
-        // now paint the objects on the new position
-          
-         
+				for (int i = 0; i < DisplayedGrips.Length; i++)
+				{
+					if (DisplayedGrips[i].IsGripHitted(pt))
+						return DisplayedGrips[i];
+				}
+				return null;
+			}
+		
+
    
-        _grac.WinFormsController.RepaintGraphArea(); // rise a normal paint event
-          
 
-      }
-      
-    }
+
 
     /// <summary>
     /// Handles the MouseDown event when the object pointer tool is selected
@@ -258,39 +259,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
 
 
-      // if we have exacly one object selected, and the one object is grippable,
-      // we hit test for the grip areas
-      if(SingleSelectedObject is IGrippableObject)
+      ActiveGrip = GripHitTest(graphXY);
+      if (ActiveGrip != null)
       {
-        IGrippableObject gripObject = (IGrippableObject)SingleSelectedObject;
-        // first switch to the layer graphics context (from printable context)
-
-        //PointF layerCoord = SingleSelectedHitTestObject.ParentLayer.GraphToLayerCoordinates(graphXY);
-        var pts = new PointF[]{graphXY};
-        SingleSelectedHitTestObject.InverseTransformation.TransformPoints(pts);
-        var layerCoord = pts[0];
-
-        //_grip.Handle = gripObject.GripHitTest(layerCoord);
-
-				// Calculate unscaled page coordinates
-				pts[0] = _grac.WinFormsController.PixelToUnscaledPageCoordinates(mouseXY); // Graph area coordinates
-				_grip.Handle = _grip.HitTest(pts[0]);
-
-
-        if(_grip.Handle!=null)
-        {
-//          _grip.Layer = SingleSelectedHitTestObject.ParentLayer.Number;
-          _grip.Object = gripObject;
-          return; // 
-        }
-
-			
-
-
-
+        ActiveGrip.Activate(graphXY, false);
+        return;
       }
-     
-
   
       // have we clicked on one of the already selected objects
       IHitTestObject clickedSelectedObject=null;
@@ -303,10 +277,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           _selectedObjects.Remove(clickedSelectedObject);
           _grac.WinFormsController.RefreshGraph(); // repaint the graph
         }
-        else // not shift or control pressed -> so activate the object moving mode
-        {
-          StartMovingObjects(mouseXY);
-        }
       } // end if bClickedOnAlreadySelectedObjects
       else // not clicked on a already selected object
       {
@@ -315,35 +285,71 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         int clickedLayerNumber=0;
         _grac.WinFormsController.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
 
-        if(bShiftKey || bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
-        {
-          if(null!=clickedObject)
-          {
-            _selectedObjects.Add(clickedObject);
-            
-            StartMovingObjects(mouseXY);
-            _grac.WinFormsController.RepaintGraphArea();
-          }
-        }
-        else // no shift or control key pressed
-        {
-          if(null!=clickedObject)
-          {
-            ClearSelections();
-            _selectedObjects.Add(clickedObject);
-            
-            StartMovingObjects(mouseXY);
-            _grac.WinFormsController.RepaintGraphArea();
-          }
-          else // if clicked to nothing 
-          {
-            ClearSelections(); // clear the selection list
-          }
-        } // end else no shift or control
+        if(!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
+          ClearSelections();
 
+        if(null!=clickedObject)
+            AddSelectedObject(graphXY, clickedObject);
       } // end else (not cklicked on already selected object)
-      
     } // end of function
+
+    private void AddSelectedObject(PointF graphXY, IHitTestObject clickedObject)
+    {
+      _selectedObjects.Add(clickedObject);
+
+			DisplayedGripLevel = 1;
+      DisplayedGrips = GetGripsFromSelectedObjects();
+
+      if (_selectedObjects.Count == 1) // single object selected
+      {
+        ActiveGrip = GripHitTest(graphXY);
+        if (ActiveGrip != null)
+          ActiveGrip.Activate(graphXY, true);
+      }
+      else // multiple objects selected
+      {
+        ActiveGrip = DisplayedGrips[0]; // this is our SuperGrip
+        DisplayedGrips[0].Activate(graphXY, true);
+      }
+
+      _grac.WinFormsController.RepaintGraphArea();
+    }
+
+    private IGripManipulationHandle[] GetGripsFromSelectedObjects()
+    {
+      if (_selectedObjects.Count == 1) // single object selected
+      {
+        return _selectedObjects[0].GetGrips(_grac.GC.ZoomFactor, DisplayedGripLevel);
+      }
+      else // multiple objects selected
+      {
+        var superGrip = new SuperGrip();
+        // now we have multiple selected objects
+        // we get the grips of all objects and collect them in one supergrip
+        foreach (var sel in _selectedObjects)
+          superGrip.GripList.AddRange(sel.GetGrips(_grac.GC.ZoomFactor, 0));
+
+        return new IGripManipulationHandle[] { superGrip };
+      }
+    }
+
+    /// <summary>
+    /// Handles the mouse move event.
+    /// </summary>
+    /// <param name="e">MouseEventArgs as provided by the view.</param>
+    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+    public override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
+    {
+      base.OnMouseMove(e);
+
+      if (null != ActiveGrip)
+      {
+        PointF printAreaCoord = _grac.WinFormsController.PixelToPrintableAreaCoordinates(new Point(e.X, e.Y));
+        ActiveGrip.MoveGrip(printAreaCoord);
+        _wereObjectsMoved = true;
+        _grac.WinFormsController.RepaintGraphArea();
+      }
+    }
 
     /// <summary>
     /// Handles the mouse up event.
@@ -354,17 +360,28 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       base.OnMouseUp(e);
 
-
-      if(_grip.Handle!=null)
+      if(ActiveGrip!=null)
       {
-        _grip.Handle=null;
-        _grac.WinFormsController.RefreshGraph();
-        return;
-      }
+        bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
+				bool bRepaint = false;
+        _wereObjectsMoved = false;
+        _grac.Doc.EndUpdate(ref _graphDocumentChangedSuppressor);
 
-      System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
-      EndMovingObjects();
-      
+				bool chooseNextLevel = ActiveGrip.Deactivate();
+				ActiveGrip = null;
+
+				if (chooseNextLevel && null!=SingleSelectedHitTestObject)
+				{
+					DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
+					bRepaint = true;
+				}
+					
+
+        if (bRefresh)
+          _grac.WinFormsController.RefreshGraph(); // redraw the contents
+				else if(bRepaint)
+					_grac.WinFormsController.RepaintGraphArea();
+      }
     }
 
     /// <summary>
@@ -414,87 +431,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
      
     }
 
-
-    /// <summary>
-    /// Actions neccessary to start the dragging of graph objects
-    /// </summary>
-    /// <param name="currentMousePosition">the current mouse position in pixel</param>
-    protected void StartMovingObjects(PointF currentMousePosition)
-    {
-      if(!_moveObjectsOnMouseMove)
-      {
-        _moveObjectsOnMouseMove=true;
-        _wereObjectsMoved=false; // up to now no objects were really moved
-        _movedObjectsLastMovePoint = currentMousePosition;
-        _graphDocumentChangedSuppressor = _grac.Doc.BeginUpdate();
-
-        // create a frozen bitmap of the graph
-        /*
-          Graphics g = grac.m_View.CreateGraphGraphics(); // do not translate the graphics here!
-          grac.m_FrozenGraph = new Bitmap(grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height,g);
-          Graphics gbmp = Graphics.FromImage(grac.m_FrozenGraph);
-          grac.DoPaint(gbmp,false);
-          gbmp.Dispose();
-          */
-      }
-    }
-
-    /// <summary>
-    /// Actions neccessary to end the dragging of graph objects
-    /// </summary>
-    protected void EndMovingObjects()
-    {
-      bool bRepaint = _wereObjectsMoved; // repaint the graph when objects were really moved
-
-      _moveObjectsOnMouseMove = false;
-      _wereObjectsMoved=false;
-      _movedObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
-      _grac.Doc.EndUpdate(ref _graphDocumentChangedSuppressor);        
-        
-      /*
-        if(null!=grac.m_FrozenGraph) 
-        {
-          grac.m_FrozenGraph.Dispose(); grac.m_FrozenGraph=null;
-        }
-        */
-      
-      if(bRepaint)
-      {
-        //grac.m_FrozenGraphIsDirty = true;
-        _grac.WinFormsController.RefreshGraph(); // redraw the contents
-      }
-    }
-
-
     public override void AfterPaint(Graphics g)
     {
-			// finally, mark the selected objects
-			if (SingleSelectedObject is IGrippableObject)
-			{
-				var gripObject = (IGrippableObject)SingleSelectedObject;
-
-				// first switch to the layer graphics context (from printable context)
-
-
-				//SingleSelectedHitTestObject.ParentLayer.GraphToLayerCoordinates(g);
-
-				g.MultiplyTransform(SingleSelectedHitTestObject.Transformation);
-
-				_grip.Handles = gripObject.ShowGrips(g);
-				_grip.ShowGrips(g);
-
-
-			}
-			else if (_selectedObjects.Count > 0)
-			{
-				foreach (IHitTestObject graphObject in _selectedObjects)
-				{
-
-					g.DrawPath(Pens.Blue, graphObject.SelectionPath);
-				}
-			}
-
-
+			DisplayedGrips = GetGripsFromSelectedObjects(); // Update grip positions according to the move
+      DisplayGrips(g);
       base.AfterPaint (g);
     }
 
@@ -530,10 +470,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       bool bRepaint = (_selectedObjects.Count>0); // is a repaint neccessary
       _selectedObjects.Clear();
-      
-      EndMovingObjects();
-      
-      // this.m_MouseState = new ObjectPointerMouseHandler();
+      DisplayedGrips = null;
+      ActiveGrip = null;
 
       if(bRepaint)
         _grac.WinFormsController.RepaintGraphArea();

@@ -51,16 +51,22 @@ namespace Altaxo.Gui.Graph
     private void InitializeComponent()
     {
       this._tableLayout = new System.Windows.Forms.TableLayoutPanel();
+      this._lblShear = new System.Windows.Forms.Label();
       this._cbRotation = new Altaxo.Gui.Common.Drawing.RotationComboBox();
       this._lblRotation = new System.Windows.Forms.Label();
       this._lblPosX = new System.Windows.Forms.Label();
       this._lblPosY = new System.Windows.Forms.Label();
       this._lblWidth = new System.Windows.Forms.Label();
       this._lblHeight = new System.Windows.Forms.Label();
-      this._edPosX = new System.Windows.Forms.TextBox();
       this._edPosY = new System.Windows.Forms.TextBox();
       this._edWidth = new System.Windows.Forms.TextBox();
       this._edHeight = new System.Windows.Forms.TextBox();
+      this._edPosX = new System.Windows.Forms.TextBox();
+      this._lblScaleX = new System.Windows.Forms.Label();
+      this._lblScaleY = new System.Windows.Forms.Label();
+      this._edScaleX = new System.Windows.Forms.TextBox();
+      this._edShear = new System.Windows.Forms.TextBox();
+      this._edScaleY = new System.Windows.Forms.TextBox();
       this._positionSizeGlue = new Altaxo.Gui.Graph.ObjectPositionAndSizeGlue();
       this._tableLayout.SuspendLayout();
       this.SuspendLayout();
@@ -74,6 +80,7 @@ namespace Altaxo.Gui.Graph
       this._tableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._tableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._tableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._tableLayout.Controls.Add(this._lblShear, 2, 2);
       this._tableLayout.Controls.Add(this._cbRotation, 1, 2);
       this._tableLayout.Controls.Add(this._lblRotation, 0, 2);
       this._tableLayout.Controls.Add(this._lblPosX, 0, 0);
@@ -84,14 +91,30 @@ namespace Altaxo.Gui.Graph
       this._tableLayout.Controls.Add(this._edWidth, 3, 0);
       this._tableLayout.Controls.Add(this._edHeight, 3, 1);
       this._tableLayout.Controls.Add(this._edPosX, 1, 0);
+      this._tableLayout.Controls.Add(this._lblScaleX, 0, 3);
+      this._tableLayout.Controls.Add(this._lblScaleY, 2, 3);
+      this._tableLayout.Controls.Add(this._edScaleX, 1, 3);
+      this._tableLayout.Controls.Add(this._edShear, 3, 2);
+      this._tableLayout.Controls.Add(this._edScaleY, 3, 3);
       this._tableLayout.Location = new System.Drawing.Point(0, 3);
       this._tableLayout.Name = "_tableLayout";
-      this._tableLayout.RowCount = 3;
+      this._tableLayout.RowCount = 4;
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._tableLayout.Size = new System.Drawing.Size(335, 79);
+      this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._tableLayout.Size = new System.Drawing.Size(338, 105);
       this._tableLayout.TabIndex = 0;
+      // 
+      // _lblShear
+      // 
+      this._lblShear.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblShear.AutoSize = true;
+      this._lblShear.Location = new System.Drawing.Point(191, 59);
+      this._lblShear.Name = "_lblShear";
+      this._lblShear.Size = new System.Drawing.Size(38, 13);
+      this._lblShear.TabIndex = 11;
+      this._lblShear.Text = "Shear:";
       // 
       // _cbRotation
       // 
@@ -147,7 +170,7 @@ namespace Altaxo.Gui.Graph
       // 
       this._lblWidth.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblWidth.AutoSize = true;
-      this._lblWidth.Location = new System.Drawing.Point(188, 6);
+      this._lblWidth.Location = new System.Drawing.Point(191, 6);
       this._lblWidth.Name = "_lblWidth";
       this._lblWidth.Size = new System.Drawing.Size(38, 13);
       this._lblWidth.TabIndex = 4;
@@ -157,20 +180,11 @@ namespace Altaxo.Gui.Graph
       // 
       this._lblHeight.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblHeight.AutoSize = true;
-      this._lblHeight.Location = new System.Drawing.Point(185, 32);
+      this._lblHeight.Location = new System.Drawing.Point(188, 32);
       this._lblHeight.Name = "_lblHeight";
       this._lblHeight.Size = new System.Drawing.Size(41, 13);
       this._lblHeight.TabIndex = 5;
       this._lblHeight.Text = "Height:";
-      // 
-      // _edPosX
-      // 
-      this._edPosX.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._edPosX.Location = new System.Drawing.Point(59, 3);
-      this._edPosX.Name = "_edPosX";
-      this._edPosX.Size = new System.Drawing.Size(100, 20);
-      this._edPosX.TabIndex = 7;
-      this._edPosX.Text = "0 pt";
       // 
       // _edPosY
       // 
@@ -183,7 +197,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _edWidth
       // 
-      this._edWidth.Location = new System.Drawing.Point(232, 3);
+      this._edWidth.Location = new System.Drawing.Point(235, 3);
       this._edWidth.Name = "_edWidth";
       this._edWidth.Size = new System.Drawing.Size(100, 20);
       this._edWidth.TabIndex = 9;
@@ -192,11 +206,64 @@ namespace Altaxo.Gui.Graph
       // _edHeight
       // 
       this._edHeight.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._edHeight.Location = new System.Drawing.Point(232, 29);
+      this._edHeight.Location = new System.Drawing.Point(235, 29);
       this._edHeight.Name = "_edHeight";
       this._edHeight.Size = new System.Drawing.Size(100, 20);
       this._edHeight.TabIndex = 10;
       this._edHeight.Text = "0 pt";
+      // 
+      // _edPosX
+      // 
+      this._edPosX.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._edPosX.Location = new System.Drawing.Point(59, 3);
+      this._edPosX.Name = "_edPosX";
+      this._edPosX.Size = new System.Drawing.Size(100, 20);
+      this._edPosX.TabIndex = 7;
+      this._edPosX.Text = "0 pt";
+      // 
+      // _lblScaleX
+      // 
+      this._lblScaleX.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblScaleX.AutoSize = true;
+      this._lblScaleX.Location = new System.Drawing.Point(9, 85);
+      this._lblScaleX.Name = "_lblScaleX";
+      this._lblScaleX.Size = new System.Drawing.Size(44, 13);
+      this._lblScaleX.TabIndex = 12;
+      this._lblScaleX.Text = "ScaleX:";
+      // 
+      // _lblScaleY
+      // 
+      this._lblScaleY.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblScaleY.AutoSize = true;
+      this._lblScaleY.Location = new System.Drawing.Point(185, 85);
+      this._lblScaleY.Name = "_lblScaleY";
+      this._lblScaleY.Size = new System.Drawing.Size(44, 13);
+      this._lblScaleY.TabIndex = 13;
+      this._lblScaleY.Text = "ScaleY:";
+      // 
+      // _edScaleX
+      // 
+      this._edScaleX.Location = new System.Drawing.Point(59, 82);
+      this._edScaleX.Name = "_edScaleX";
+      this._edScaleX.Size = new System.Drawing.Size(100, 20);
+      this._edScaleX.TabIndex = 14;
+      this._edScaleX.Text = "0";
+      // 
+      // _edShear
+      // 
+      this._edShear.Location = new System.Drawing.Point(235, 55);
+      this._edShear.Name = "_edShear";
+      this._edShear.Size = new System.Drawing.Size(100, 20);
+      this._edShear.TabIndex = 15;
+      this._edShear.Text = "0";
+      // 
+      // _edScaleY
+      // 
+      this._edScaleY.Location = new System.Drawing.Point(235, 82);
+      this._edScaleY.Name = "_edScaleY";
+      this._edScaleY.Size = new System.Drawing.Size(100, 20);
+      this._edScaleY.TabIndex = 16;
+      this._edScaleY.Text = "0";
       // 
       // _positionSizeGlue
       // 
@@ -205,6 +272,9 @@ namespace Altaxo.Gui.Graph
       this._positionSizeGlue.EdPositionY = this._edPosY;
       this._positionSizeGlue.EdSizeX = this._edWidth;
       this._positionSizeGlue.EdSizeY = this._edHeight;
+      this._positionSizeGlue.GuiScaleX = this._edScaleX;
+      this._positionSizeGlue.GuiScaleY = this._edScaleY;
+      this._positionSizeGlue.GuiShear = this._edShear;
       // 
       // PositionSizeRotationScaleControl
       // 
@@ -214,7 +284,7 @@ namespace Altaxo.Gui.Graph
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.Controls.Add(this._tableLayout);
       this.Name = "PositionSizeRotationScaleControl";
-      this.Size = new System.Drawing.Size(338, 85);
+      this.Size = new System.Drawing.Size(341, 111);
       this._tableLayout.ResumeLayout(false);
       this._tableLayout.PerformLayout();
       this.ResumeLayout(false);
@@ -236,5 +306,11 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.TextBox _edWidth;
     private System.Windows.Forms.TextBox _edHeight;
     private ObjectPositionAndSizeGlue _positionSizeGlue;
+    private System.Windows.Forms.Label _lblShear;
+    private System.Windows.Forms.Label _lblScaleX;
+    private System.Windows.Forms.Label _lblScaleY;
+    private System.Windows.Forms.TextBox _edScaleX;
+    private System.Windows.Forms.TextBox _edShear;
+    private System.Windows.Forms.TextBox _edScaleY;
   }
 }

@@ -559,12 +559,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Matrix transformmatrix = new Matrix();
 				transformmatrix.Translate(X, Y);
 				transformmatrix.Rotate(-_rotation);
+        transformmatrix.Shear(Shear, 0);
+        transformmatrix.Scale(ScaleX, ScaleY);
 				transformmatrix.Translate(_bounds.X, _bounds.Y);
 
 				if (!bForPreview)
 				{
-					g.TranslateTransform(X, Y);
-					g.RotateTransform(-_rotation);
+          TransformGraphics(g);
 					g.TranslateTransform(_bounds.X, _bounds.Y);
 				}
 
@@ -614,29 +615,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		#endregion
-
-		#region IGrippableObject Members
-
-		public override IGripManipulationHandle[] ShowGrips(Graphics g)
-    {
-			return ShowGrips(g, false, true, true);
-			/*
-      GraphicsState gs = g.Save();
-      g.TranslateTransform(X, Y);
-      if (_rotation != 0)
-        g.RotateTransform(-_rotation);
-
-      DrawRotationGrip(g,new PointF(1,1));
-      g.DrawRectangle(Pens.Blue, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);
-      g.Restore(gs);
-
-			return null;
-			*/
-    }
-
- 
-    #endregion
-
 
     #region Deprecated classes
 

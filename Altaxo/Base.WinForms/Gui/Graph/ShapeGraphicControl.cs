@@ -116,6 +116,40 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    public float DocShear
+    {
+      get
+      {
+        return (float)_ctrlPosSize.PositionSizeGlue.Shear;
+      }
+      set
+      {
+        _ctrlPosSize.PositionSizeGlue.Shear = value;
+      }
+    }
+    public float DocScaleX
+    {
+      get
+      {
+        return (float)_ctrlPosSize.PositionSizeGlue.ScaleX;
+      }
+      set
+      {
+        _ctrlPosSize.PositionSizeGlue.ScaleX = value;
+      }
+    }
+    public float DocScaleY
+    {
+      get
+      {
+        return (float)_ctrlPosSize.PositionSizeGlue.ScaleY;
+      }
+      set
+      {
+        _ctrlPosSize.PositionSizeGlue.ScaleY = value;
+      }
+    }
+
     #endregion
 
     private void EhIsShapedFilled_CheckChanged(object sender, EventArgs e)

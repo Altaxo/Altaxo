@@ -61,14 +61,16 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
     /// </summary>
-    Matrix Transformation {get;}
+   TransformationMatrix2D Transformation {get;}
 
+
+  
 
     /// <summary>
-    /// This will return the inverse transformation matrix. This matrix translates from global coordinates to coordinates of the object.
+    /// Transform the internal positions according to the provided transformation matrix.
     /// </summary>
-    Matrix InverseTransformation { get; }
-
+    /// <param name="x"></param>
+    void Transform(TransformationMatrix2D x);
 
     /// <summary>
     /// Transform the internal positions according to the provided transformation matrix.
@@ -107,141 +109,25 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <returns>False normally, true if this hit test object should be deleted from the list (for instance if the object itself was deleted).</returns>
     bool OnDoubleClick();
+
+
+		/// <summary>
+		/// Shows the grips, i.e. the special areas for manipulation of the object.
+		/// </summary>
+		/// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
+		/// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
+		IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel);
+
+		/// <summary>
+		/// Retrieves the next grip level.
+		/// </summary>
+		/// <param name="currentGripLevel">Current grip level.</param>
+		/// <returns>The next grip level to be used.</returns>
+		int GetNextGripLevel(int currentGripLevel);
+
   }
 
-  public class HitTestObject : IHitTestObject
-  {
-    GraphicsPath _objectPath;
-    GraphicsPath _selectionPath; // can be null, in this case the object path is used
-
-    Matrix _matrix;
-    Matrix _inversematrix;
-    object _hitobject;
-
-    #region IHitTestObject Members
-
-    public HitTestObject(GraphicsPath gp, object hitobject)
-      : this(gp,null,hitobject)
-    {
-    }
-
-    public HitTestObject(GraphicsPath gp, GraphicsPath selectionPath, object hitobject)
-    {
-      _objectPath = gp;
-      _selectionPath = selectionPath;
-      _hitobject = hitobject;
-      _matrix = new Matrix();
-      _inversematrix = new Matrix();
-    }
 
 
-    /// <summary>
-    /// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
-    /// </summary>
-    public Matrix Transformation
-    {
-      get { return _matrix; }
-    }
 
-    /// <summary>
-    /// This will return the inverse transformation matrix. This matrix translates from global coordinates to coordinates of the object.
-    /// </summary>
-    public Matrix InverseTransformation 
-    {
-      get { return _inversematrix; }
-    }
-
-
-    public void Transform(Matrix x)
-    {
-      _matrix.Multiply(x);
-      _inversematrix = (Matrix)_matrix.Clone();
-      _inversematrix.Invert();
-
-      _objectPath.Transform(x);
-      if (_selectionPath != null) _selectionPath.Transform(x);
-    }
-
-    public GraphicsPath SelectionPath
-    {
-      get 
-      {
-        return _selectionPath!=null ? _selectionPath : _objectPath; 
-      }
-    }
-
-    public GraphicsPath ObjectPath
-    {
-      get
-      {
-        return _objectPath;
-      }
-    }
-
-
-    public object HittedObject
-    {
-      get { return _hitobject; }
-      set { _hitobject = value; }
-    }
-
-    public virtual void ShiftPosition(float x, float y)
-    {
-    
-      if(_hitobject is GraphicBase)
-      {
-        Matrix mat = new Matrix();
-        mat.Translate(x,y);
-        _objectPath.Transform(mat);
-        if (null != _selectionPath) _selectionPath.Transform(mat);
-
-        PointF[] pos = new PointF[]{new PointF(x,y)};
-        _inversematrix.TransformVectors(pos);
-
-        ((GraphicBase)_hitobject).X += pos[0].X;
-        ((GraphicBase)_hitobject).Y += pos[0].Y;
-      }
-    }
-
-   
-    DoubleClickHandler _DoubleClick;
-    public DoubleClickHandler DoubleClick
-    {
-      get { return _DoubleClick; }
-      set { _DoubleClick=value; }
-    }
-
-    /// <summary>
-    /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
-    /// </summary>
-    DoubleClickHandler _Remove;
-    /// <summary>
-    /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
-    /// </summary>
-    public DoubleClickHandler Remove
-    {
-      get { return _Remove; }
-      set { _Remove=value; }
-    }
-    /// <summary>
-    /// This handles the double-click event
-    /// </summary>
-    /// <returns>False normally, true if the HitTestObject should be removed from the list of selected objects (i.e. because the object was deleted).</returns>
-    public virtual bool OnDoubleClick()
-    {
-      if(DoubleClick!=null)
-        return DoubleClick(this);
-      else
-        return false;
-    }
-
-    XYPlotLayer _parentLayer;
-    public XYPlotLayer ParentLayer
-    {
-      get { return _parentLayer; }
-      set { _parentLayer = value; }
-    }
-
-    #endregion
-  }
 }

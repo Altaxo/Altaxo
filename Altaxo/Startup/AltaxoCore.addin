@@ -721,9 +721,11 @@
         class="Altaxo.Graph.Commands.ArrangeHorizontalTable" />
       <ToolbarItem id="ArrangeVerticalTable" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVerticalTable.Description}"
         class="Altaxo.Graph.Commands.ArrangeVerticalTable" />
-      <ToolbarItem id="GroupObjects" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.GroupObjects.Description}"
+      <ToolbarItem id="GroupObjects" icon="Icons.16x16.GroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.GroupShapes.Description}"
         class="Altaxo.Graph.Commands.GroupSelectedObjects" />
-    </Condition>
+			<ToolbarItem id="UngroupObjects" icon="Icons.16x16.UngroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.UngroupShapes.Description}"
+        class="Altaxo.Graph.Commands.UngroupSelectedObjects" />
+		</Condition>
   </Path>
 
   <Path name = "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu">

@@ -28,6 +28,34 @@ namespace Altaxo.Graph.Gdi
       return (float)Math.Sqrt(p.X * p.X + p.Y * p.Y);
     }
 
+    public static PointF FlipXY(this PointF p)
+    {
+      return new PointF(p.Y, p.X);
+    }
+
+		public static PointF Rotate90Degree(this PointF p)
+		{
+			return new PointF(-p.Y, p.X);
+		}
+
+    public static PointF FlipSign(this PointF p)
+    {
+      return new PointF(-p.X, -p.Y);
+    }
+
+    public static float DotProduct(this PointF p, PointF q)
+    {
+      return p.X * q.X + p.Y * q.Y;
+    }
+
+		public static PointF Normalize(this PointF p)
+		{
+			var s = 1/Math.Sqrt(p.X * p.X + p.Y * p.Y);
+			return new PointF((float)(p.X * s), (float)(p.Y *s));
+		}
+
+
+
 		/// <summary>
 		/// Multiply a size structure with a factor.
 		/// </summary>
@@ -79,6 +107,39 @@ namespace Altaxo.Graph.Gdi
 		public static PointF Center(this RectangleF r)
 		{
 			return new PointF(r.X + r.Width/2, r.Y +  r.Height/2);
+		}
+
+		/// <summary>
+		/// Expands the rectangle r, so that is contains the point p.
+		/// </summary>
+		/// <param name="r">The rectangle to expand.</param>
+		/// <param name="p">The point that should be contained in this rectangle.</param>
+		/// <returns>The new rectangle that now contains the point p.</returns>
+		public static RectangleF ExpandToInclude(this RectangleF r, PointF p)
+		{
+			if (!(r.Contains(p)))
+			{
+				if (p.X < r.X)
+				{
+					r.Width += r.X - p.X;
+					r.X = p.X;
+				}
+				else if (p.X > r.Right)
+				{
+					r.Width = p.X - r.X;
+				}
+
+				if (p.Y < r.Y)
+				{
+					r.Height += r.Y - p.Y;
+					r.Y = p.Y;
+				}
+				else if (p.Y > r.Bottom)
+				{
+					r.Height = p.Y - r.Y;
+				}
+			}
+			return r;
 		}
 	}
 

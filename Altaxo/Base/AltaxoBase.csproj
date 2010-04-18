@@ -592,6 +592,7 @@
     <Compile Include="Graph\Gdi\GraphDocumentOtherActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentPrinting.cs" />
     <Compile Include="Graph\Gdi\HitTestData.cs" />
+    <Compile Include="Graph\Gdi\HitTestObject.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBGMYR.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBGRY.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\VisibleLightSpectrum.cs" />
@@ -607,7 +608,6 @@
     <Compile Include="Graph\IRoutedProperty.cs" />
     <Compile Include="Graph\SingleGraphPrintOptions.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />
-    <Compile Include="Graph\Gdi\IGrippableObject.cs" />
     <Compile Include="Graph\Gdi\IHitTestObject.cs" />
     <Compile Include="Graph\Gdi\IPlotArea.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\ILabelFormatting.cs" />
@@ -866,6 +866,15 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.HitTestObject.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.MovementGripHandle.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.PathNodeGripHandle.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.RescaleGripHandle.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.ResizeGripHandle.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.RotationGripHandle.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.ShearGripHandle.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />

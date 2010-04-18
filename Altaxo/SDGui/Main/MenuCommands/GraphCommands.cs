@@ -390,6 +390,14 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+	public class UngroupSelectedObjects : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.UngroupSelectedObjects();
+		}
+	}
+
   public class ArrangeTop : AbstractGraphControllerCommand
   {
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)

@@ -2505,7 +2505,7 @@ namespace Altaxo.Graph.Gdi
     {
       IHitTestObject hit;
 
-			HitTestData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, Rotation, Scale, Scale, 0);
+			HitTestData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, Scale, Scale, 0);
 
 			var layerC = layerHitTestData.GetHittedPointInWorldCoord();
 

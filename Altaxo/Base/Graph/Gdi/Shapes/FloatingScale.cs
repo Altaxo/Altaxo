@@ -32,7 +32,7 @@ using Altaxo.Graph.Scales;
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	[Serializable]
-	public class FloatingScale : ShapeGraphic, IGrippableObject
+	public class FloatingScale : ShapeGraphic
 	{
 
 		/// <summary>The span this scale should show.</summary>
@@ -239,7 +239,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			GraphicsPath gp = GetSelectionPath();
 			if (gp.IsVisible(pt))
 			{
-				result = new HitTestObject(GetObjectPath(), gp, this);
+				result = new GraphicBaseHitTestObject(GetObjectPath(), this);
 			}
 
 			if (result != null)
@@ -300,33 +300,6 @@ namespace Altaxo.Graph.Gdi.Shapes
       var axisInfo = new CSAxisInformation(isolineID);
       _labelStyle.Paint(g, layer.CoordinateSystem, swt, axisInfo, _outerDistance, false);
 		}
-
-
-    #region IGrippableObject Members
-
-    public override IGripManipulationHandle[] ShowGrips(Graphics g)
-    {
-      g.DrawPath(Pens.Blue, GetSelectionPath());
-
-      GraphicsState gs = g.Save();
-
-      g.TranslateTransform(X, Y);
-
-			PointF[] pts = new PointF[1];
-			pts[0] = Position;
-			TransformToUnscaledPageCoordinates(g, pts);
-
-      DrawRectangularGrip(g, new PointF(0, 0));
-
-      g.Restore(gs);
-
-			return new IGripManipulationHandle[]{ new PathNodeGripHandle(this,new PointF(0,0),pts[0])};
-    }
-
-   
-
-    #endregion
-
 
     #region Inner classes
 

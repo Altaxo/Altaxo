@@ -30,6 +30,20 @@ namespace Altaxo.Graph.Gdi
   /// </summary>
   public interface IGripManipulationHandle
   {
+		/// <summary>
+		/// Activates this grip, providing the initial position of the mouse.
+		/// </summary>
+		/// <param name="initialPosition">Initial position of the mouse.</param>
+		/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
+		/// thie activation is due to a regular mouse click in this grip.</param>
+		void Activate(PointF initialPosition, bool isActivatedUponCreation);
+
+		/// <summary>
+		/// Announces the deactivation of this grip.
+		/// </summary>
+		/// <returns>True if the nextgrip level should be displayed, otherwise false.</returns>
+		bool Deactivate();
+		
     /// <summary>
     /// Moves the grip to the new position. 
     /// </summary>
@@ -48,12 +62,5 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="point">Coordinates of the mouse pointer in unscaled page coordinates (points).</param>
 		/// <returns></returns>
 		bool IsGripHitted(PointF point);
-
-
-		/// <summary>
-		/// Returns the object to manipulate by this manipulation handle.
-		/// </summary>
-		IGrippableObject ManipulatedObject { get; }
-
   }
 }

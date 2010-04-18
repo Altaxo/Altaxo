@@ -18,6 +18,12 @@ namespace Altaxo.Graph.Gdi
   ///             |dx, dy, 1|
   /// </code>
   /// where (x,y) are the world coordinates, and (x', y') are the page coordinates.
+	/// <para>
+	/// An alternative interpretation of this matrix is a rhombus,
+	/// where the absolute coordinate of its origin is given by (dx, dy), and which is spanned by
+	/// the two basis vectors (sx,ry) and (rx, sy).
+	/// By inverse transformation of a given point one gets the coordinates inside this rhombus in terms of the spanning vectors.
+	/// </para>
   /// </remarks>
   public class TransformationMatrix2D
   {
@@ -77,7 +83,7 @@ namespace Altaxo.Graph.Gdi
       sx = 1; ry = 0; sy = 1; rx = 0; dx = 0; dy = 0; determinant = 1;
     }
 
-    public void SetTranslationRotationScaleShear(double dxf, double dyf, double angle, double scaleX, double scaleY, double shear)
+		public void SetTranslationRotationShearxScale(double dxf, double dyf, double angle, double shear, double scaleX, double scaleY)
     {
       double w = angle * Math.PI / 180;
       double c = Math.Cos(w);
@@ -85,8 +91,8 @@ namespace Altaxo.Graph.Gdi
 
       sx = c * scaleX;
       ry = s * scaleX;
-      rx = c * scaleX * shear - s * scaleY;
-      sy = s * scaleX * shear + c * scaleY;
+      rx = c * scaleY * shear - s * scaleY;
+      sy = s * scaleY * shear + c * scaleY;
       dx = dxf;
       dy = dyf;
 
@@ -210,12 +216,31 @@ namespace Altaxo.Graph.Gdi
 
       determinant *= (sxf * syf - rxf * ryf);
     }
+		public void AppendTransform(TransformationMatrix2D t)
+		{
+			AppendTransform(t.sx, t.ry, t.rx, t.sy, t.dx, t.dy);
+		}
 
 		public void PrependTransform(TransformationMatrix2D t)
 		{
 			PrependTransform(t.sx, t.ry, t.rx, t.sy, t.dx, t.dy);
 		}
 
+    public void PrependInverseTransform(TransformationMatrix2D t)
+    {
+      PrependTransform(t.sy / t.determinant, -t.ry / t.determinant, -t.rx / t.determinant, t.sx / t.determinant, (t.dy * t.rx - t.dx * t.sy) / t.determinant, (t.dx * t.ry - t.dy * t.sx) / t.determinant);
+    }
+
+    public void AppendInverseTransform(TransformationMatrix2D t)
+    {
+      AppendTransform(t.sy / t.determinant, -t.ry / t.determinant, -t.rx / t.determinant, t.sx / t.determinant, (t.dy * t.rx - t.dx * t.sy) / t.determinant, (t.dx * t.ry - t.dy * t.sx) / t.determinant);
+    }
+
+    public void PrependTransform(System.Drawing.Drawing2D.Matrix t)
+    {
+      var e = t.Elements;
+      PrependTransform(e[0], e[1], e[2], e[3], e[4], e[5]);
+    }
     public void PrependTransform(double sxf, double ryf, double rxf, double syf, double dxf, double dyf)
     {
       double h1, h2;
@@ -261,7 +286,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return (rx * sx + sy * ry) / (sx * sx + ry * ry);
+        return (rx * sx + sy * ry) / (sx * sy - rx * ry);
       }
     }
     public double ScaleY
@@ -306,6 +331,19 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+		public void TransformVector(ref double x, ref double y)
+		{
+			double xh = x * sx + y * rx;
+			double yh = x * ry + y * sy;
+			x = xh; y = yh;
+		}
+
+		public PointF TransformVector(PointF pt)
+		{
+			return new PointF((float)(pt.X * sx + pt.Y * rx), (float)(pt.X * ry + pt.Y * sy));
+		}
+
+
 		public void TransformPath(System.Drawing.Drawing2D.GraphicsPath path)
 		{
 			TransformPoints(path.PathPoints);
@@ -320,9 +358,22 @@ namespace Altaxo.Graph.Gdi
       y = yh / determinant;
     }
 
+    public void InverseTransformVector(ref double x, ref double y)
+    {
+      double xh = (x ) * sy + (-y) * rx;
+      double yh = (-x) * ry + (y) * sx;
+      x = xh / determinant;
+      y = yh / determinant;
+    }
+
     public PointF InverseTransformPoint(PointF pt)
     {
       return new PointF((float)(((pt.X - dx) * sy + (dy - pt.Y) * rx) / determinant), (float)(((dx - pt.X) * ry + (pt.Y - dy) * sx) / determinant));
+    }
+
+    public PointF InverseTransformVector(PointF pt)
+    {
+      return new PointF((float)(((pt.X ) * sy + (-pt.Y) * rx) / determinant), (float)(((-pt.X) * ry + (pt.Y) * sx) / determinant));
     }
 
     public static implicit operator System.Drawing.Drawing2D.Matrix(TransformationMatrix2D m)

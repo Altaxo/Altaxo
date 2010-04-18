@@ -205,9 +205,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public override void Paint(Graphics g, object obj)
 		{
 			GraphicsState gs = g.Save();
-			g.TranslateTransform(X, Y);
-			if (_rotation != -0)
-				g.RotateTransform(-_rotation);
+      TransformGraphics(g);
 
 			if (Brush.IsVisible)
 			{
@@ -226,7 +224,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override IHitTestObject HitTest(HitTestData htd)
 		{
-
 			var localHitTestData = htd.NewFromAdditionalTransformation(_transfoToLayerCoord);
 			GraphicsPath gp = GetPath();
 			gp.Transform(localHitTestData.Transformation); // Transform to page coord
@@ -234,7 +231,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (gp.IsVisible(localHitTestData.HittedPointInPageCoord))
 			{
-				return new HitTestObject(gp, this);
+				return new GraphicBaseHitTestObject(gp, this);
 			}
 			else
 				return null;

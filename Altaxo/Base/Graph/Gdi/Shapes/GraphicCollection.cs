@@ -213,6 +213,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     public void Insert(int index, GraphicBase go)
     {
+      go.ParentObject = this;
       _items.Insert(index, go);
       OnChanged();
     }

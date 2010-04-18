@@ -184,9 +184,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public override void Paint(Graphics g, object obj)
     {
       GraphicsState gs = g.Save();
-      g.TranslateTransform(X, Y);
-      if (_rotation != 0)
-        g.RotateTransform(-_rotation);
+      TransformGraphics(g);
 
       Image img = _imageProxy == null ? null : _imageProxy.GetImage();
 

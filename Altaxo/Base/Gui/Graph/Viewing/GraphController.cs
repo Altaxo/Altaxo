@@ -1100,28 +1100,58 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void GroupSelectedObjects()
 		{
-			System.Collections.Generic.List<IHitTestObject> removedObjects = new System.Collections.Generic.List<IHitTestObject>();
-
-			Altaxo.Graph.Gdi.Shapes.ShapeGroup group = new Altaxo.Graph.Gdi.Shapes.ShapeGroup();
-			foreach (IHitTestObject o in SelectedObjects)
+			var objectsToGroup = new List<IHitTestObject>();
+			do
 			{
-				if (o.HittedObject is Altaxo.Graph.Gdi.Shapes.GraphicBase)
+				objectsToGroup.Clear();
+				GraphicCollection currentCollection = null;
+				foreach (IHitTestObject o in SelectedObjects)
 				{
-					group.Add((Altaxo.Graph.Gdi.Shapes.GraphicBase)o.HittedObject);
-					removedObjects.Add(o);
+					var graphObject = o.HittedObject as GraphicBase;
+					if (null == graphObject)
+						continue;
+					var graphCollection = graphObject.ParentObject as GraphicCollection;
+					if (null == graphCollection)
+						continue;
+
+					if (null == currentCollection)
+					{
+						currentCollection = graphCollection;
+						objectsToGroup.Add(o);
+					}
+					else if (object.ReferenceEquals(currentCollection, graphCollection))
+					{
+						objectsToGroup.Add(o);
+					}
+				}
+
+				// if objectsToGroup contains at least two items, we can group them together, using the position of the first item
+				// if objectsToGroup contains only one item, we ignore it, but remove it from selected objects.
+				// if objectsToGroup contains no item, we are done
+
+				if (objectsToGroup.Count >= 2)
+				{
+					var elements = new List<GraphicBase>();
+					foreach (var hit in objectsToGroup)
+						elements.Add(hit.HittedObject as GraphicBase);
+					var group = new Altaxo.Graph.Gdi.Shapes.ShapeGroup(elements);
+					int index = currentCollection.IndexOf(elements[0]);
+					currentCollection.Insert(index, group);
+
+					foreach (var ele in objectsToGroup)
+					{
+						SelectedObjects.Remove(ele);
+						ele.Remove(ele);
+					}
+				}
+				else if (objectsToGroup.Count == 1)
+				{
+					SelectedObjects.Remove(objectsToGroup[0]);
 				}
 			}
+			while (objectsToGroup.Count > 0);
 
-			if (removedObjects.Count > 0)
-			{
-				foreach (IHitTestObject o in removedObjects)
-				{
-					o.Remove(o);
-					SelectedObjects.Remove(o);
-				}
-			}
-
-			ActiveLayer.GraphObjects.Add(group);
+			SelectedObjects.Clear();
 			_view.RefreshGraph();
 		}
 
@@ -1131,6 +1161,23 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void UngroupSelectedObjects()
 		{
+			foreach (IHitTestObject o in SelectedObjects)
+			{
+				var shapeGroup = o.HittedObject as Altaxo.Graph.Gdi.Shapes.ShapeGroup;
+				if (null!=shapeGroup)
+				{
+					var parentColl = shapeGroup.ParentObject as GraphicCollection;
+					if(null!=parentColl)
+					{
+						int idx = parentColl.IndexOf(shapeGroup);
+            parentColl.RemoveAt(idx);
+            var separateObjects = shapeGroup.Ungroup();
+						for(int i=separateObjects.Length-1;i>=0;i--)
+							parentColl.Insert(idx,separateObjects[i]);
+					}
+				}
+			}
+      SelectedObjects.Clear();
 		}
 
 		public void SetSelectedObjectsProperty(IRoutedSetterProperty property)

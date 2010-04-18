@@ -105,11 +105,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(null!=clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
       {
         m_PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
-        PointF[] transXY = new PointF[]{graphXY};
-        Matrix inv = clickedObject.Transformation.Clone();
-        inv.Invert();
-        inv.TransformPoints(transXY);
-        XYScatterPointInformation scatterPoint = m_PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY[0]);
+        PointF transXY = clickedObject.Transformation.InverseTransformPoint(graphXY);
+        XYScatterPointInformation scatterPoint = m_PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY);
 
         this._PlotItemNumber = GetPlotItemNumber(clickedLayerNumber,m_PlotItem);
         this._LayerNumber = clickedLayerNumber;

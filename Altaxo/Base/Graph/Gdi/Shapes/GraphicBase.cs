@@ -34,14 +34,13 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// for instance text elements, lines, pictures, rectangles and so on.
   /// </summary>
   [Serializable]
-  public abstract class GraphicBase 
+  public  abstract partial class GraphicBase 
     :
     System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
     Main.IDocumentNode,
-    System.ICloneable,
-    IGrippableObject
+    System.ICloneable
   {
     /// <summary>
     /// If true, the graphical object sizes itself, for instance simple text objects.
@@ -86,11 +85,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     [field:NonSerialized]
     public event System.EventHandler Changed;
-
-
-    protected static GraphicsPath _outsideArrow;
-		protected static PointF[] _outsideArrowPoints;
-		protected static GraphicsPath _rotationGripShape;
 
     #region Serialization
 
@@ -243,53 +237,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         OnChanged();
     }
 
-    static GraphicBase()
-    {
-      // The arrow has a length of 1 and a maximum witdth of 2*arrowWidth and a shaft width of 2*arrowShaft
-      const float arrowShaft=0.15f;
-      const float arrowWidth=0.3f;
-      _outsideArrowPoints = new PointF[] {
-        new PointF(0,arrowShaft),
-        new PointF(1-arrowWidth,arrowShaft),
-        new PointF(1-arrowWidth,arrowWidth),
-        new PointF(1,0),
-        new PointF(1-arrowWidth, -arrowWidth),
-        new PointF(1-arrowWidth, -arrowShaft),
-        new PointF(0,-arrowShaft)
-      };
-      _outsideArrow = new GraphicsPath();
-			_outsideArrow.AddPolygon(_outsideArrowPoints);
-
-
-			const float ra = 2.1f / 2;
-			const float ri = 1.5f / 2;
-			const float rotArrowWidth = 0.6f;
-			float rii = (ra+ri-rotArrowWidth)/2;
-			float raa = (ra+ri+rotArrowWidth)/2;
-			float cos45 = (float)Math.Sqrt(0.5);
-			float sin45 = cos45;
-			_rotationGripShape = new GraphicsPath();
-
-			_rotationGripShape.AddArc(-ri, -ri, 2*ri, 2*ri, -45, 90); // mit Innenradius beginnen
-			
-			_rotationGripShape.AddLines(new PointF[] 
-			{
-				new PointF(rii*cos45, rii*sin45),
-				new PointF(rii*cos45, rii*sin45 + rotArrowWidth*cos45),
-				new PointF(raa*cos45, raa*sin45)
-			});
-			
-			_rotationGripShape.AddArc(-ra, -ra, 2*ra, 2*ra, 45, -90); // Auﬂenradius
-			
-			_rotationGripShape.AddLines(new PointF[] 
-			{
-				new PointF(raa*cos45, -raa*sin45),
-				new PointF(rii*cos45, -rii*sin45 - rotArrowWidth*cos45),
-				new PointF(rii*cos45, -rii*sin45),
-			});
-			
-			_rotationGripShape.CloseFigure();
-    }
+   
 
     /// <summary>
     /// Initializes with default values.
@@ -565,21 +513,67 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
 
+    public virtual float ScaleX
+    {
+      get
+      {
+        return _scaleX;
+      }
+      set
+      {
+        var oldvalue = _scaleX;
+        _scaleX = value;
+        if (value != oldvalue)
+          OnChanged();
+      }
+    }
+
+    public virtual float ScaleY
+    {
+      get
+      {
+        return _scaleY;
+      }
+      set
+      {
+        var oldvalue = _scaleY;
+        _scaleY = value;
+        if (value != oldvalue)
+          OnChanged();
+      }
+    }
+
+    public virtual float Shear
+    {
+      get
+      {
+        return _shear;
+      }
+      set
+      {
+        var oldvalue = _shear;
+        _shear = value;
+        if (value != oldvalue)
+          OnChanged();
+      }
+    }
+
     protected void TransformGraphics(Graphics g)
     {
       g.TranslateTransform(X, Y);
       if (_rotation!=0)
         g.RotateTransform(-_rotation);
+			if (_shear != 0)
+				g.MultiplyTransform(new Matrix(1, 0, _shear, 1, 0, 0));
       if (_scaleX != 1 || _scaleY != 1)
         g.ScaleTransform(_scaleX, _scaleY);
-      if(_shear!=0)
-        g.MultiplyTransform(new Matrix(1,0,_shear,1,0,0));
+     
     }
 
 
 		protected void UpdateTransformationMatrices()
 		{
-      _transfoToLayerCoord.SetTranslationRotationScaleShear(X, Y, -_rotation, _scaleX, _scaleY, _shear);
+			_transfoToLayerCoord.SetTranslationRotationShearxScale(X, Y, -_rotation, _shear, _scaleX, _scaleY);
 		}
 
 
@@ -620,7 +614,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsPath gp = GetObjectPath();
 			if (gp.IsVisible(pt))
 			{
-				return new HitTestObject(gp, this);
+				return new GraphicBaseHitTestObject(gp, this);
 			}
 			else
 			{
@@ -656,13 +650,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
 
-      gp.AddRectangle(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
-      if (this.Rotation != 0)
-      {
-        myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
-      }
+      gp.AddRectangle(new RectangleF( _bounds.X, _bounds.Y, Width, Height));
 
-      gp.Transform(myMatrix);
+      gp.Transform(_transfoToLayerCoord);
       return gp;
     }
 
@@ -670,6 +660,40 @@ namespace Altaxo.Graph.Gdi.Shapes
     #endregion
 
     #region Hitting Helper functions
+
+
+ 	  /// <summary>
+    /// Converts relative positions (0..1, 0..1) to absolute coordinates in the world coordinate system of the object.
+		/// To convert this to layer coordinates, you have to transform it with the transformation matrix of this object.
+    /// </summary>
+    /// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
+    /// <returns>The absolute object coordinates of this point.</returns>
+		public PointF RelativeLocalToAbsoluteLocalCoordinates(PointF p)
+		{
+			return new PointF(p.X * _bounds.Width + _bounds.X, p.Y * _bounds.Height + _bounds.Y);
+		}
+
+		/// <summary>
+		/// Converts relative positions (0..1, 0..1) to coordinates in the world coordinate system of the parent (normally the layer).
+		/// </summary>
+		/// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
+		/// <returns>The absolute parent coordinates of this point.</returns>
+		public PointF RelativeLocalToAbsoluteParentCoordinates(PointF p)
+		{
+			return _transfoToLayerCoord.TransformPoint(new PointF(p.X * _bounds.Width + _bounds.X, p.Y * _bounds.Height + _bounds.Y));
+		}
+
+
+		/// <summary>
+		/// Converts relative positions (0..1, 0..1) to coordinates in the world coordinate system of the parent (normally the layer).
+		/// </summary>
+		/// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
+		/// <returns>The absolute parent coordinates of this point.</returns>
+		public PointF RelativeLocalToAbsoluteParentVector(PointF p)
+		{
+			return _transfoToLayerCoord.TransformVector(new PointF(p.X * _bounds.Width + _bounds.X, p.Y * _bounds.Height + _bounds.Y));
+		}
+
 
     /// <summary>
     /// Converts relative positions (0..1, 0..1) to absolute position of the rectangle, taking into account
@@ -705,11 +729,14 @@ namespace Altaxo.Graph.Gdi.Shapes
         return new PointF((float)(dx), (float)(dy));
     }
 
-    public SizeF ToUnrotatedDifference(PointF pivot, PointF point)
+    public SizeF ParentCoordinatesToLocalDifference(PointF pivot, PointF point)
     {
       double dx = point.X - pivot.X;
       double dy = point.Y - pivot.Y;
 
+			_transfoToLayerCoord.InverseTransformVector(ref dx, ref dy);
+
+			/*
       if (_rotation != 0)
       {
         double cosphi = Math.Cos(_rotation * Math.PI / 180);
@@ -719,9 +746,64 @@ namespace Altaxo.Graph.Gdi.Shapes
         dy = (-dx * sinphi + dy * cosphi);
         dx = helpdx;
       }
+			*/
 
       return new SizeF((float)dx, (float)dy);
     }
+
+		public SizeF ToUnrotatedDifference(PointF pivot, PointF point)
+		{
+			double dx = point.X - pivot.X;
+			double dy = point.Y - pivot.Y;
+
+			if (_rotation != 0)
+			{
+				double cosphi = Math.Cos(_rotation * Math.PI / 180);
+				double sinphi = Math.Sin(-_rotation * Math.PI / 180);
+				// now we have to rotate backward to get the endpoint
+				double helpdx = (dx * cosphi + dy * sinphi);
+				dy = (-dx * sinphi + dy * cosphi);
+				dx = helpdx;
+			}
+
+			return new SizeF((float)dx, (float)dy);
+		}
+
+		public SizeF ToUnrotatedDifference(SizeF diff)
+		{
+			double dx = diff.Width;
+			double dy = diff.Height;
+
+			if (_rotation != 0)
+			{
+				double cosphi = Math.Cos(_rotation * Math.PI / 180);
+				double sinphi = Math.Sin(-_rotation * Math.PI / 180);
+				// now we have to rotate backward to get the endpoint
+				double helpdx = (dx * cosphi + dy * sinphi);
+				dy = (-dx * sinphi + dy * cosphi);
+				dx = helpdx;
+			}
+
+			return new SizeF((float)dx, (float)dy);
+		}
+
+		public static SizeF ToUnrotatedDifference(double rotation, SizeF diff)
+		{
+			double dx = diff.Width;
+			double dy = diff.Height;
+
+			if (rotation != 0)
+			{
+				double cosphi = Math.Cos(rotation * Math.PI / 180);
+				double sinphi = Math.Sin(-rotation * Math.PI / 180);
+				// now we have to rotate backward to get the endpoint
+				double helpdx = (dx * cosphi + dy * sinphi);
+				dy = (-dx * sinphi + dy * cosphi);
+				dx = helpdx;
+			}
+
+			return new SizeF((float)dx, (float)dy);
+		}
 
     public PointF ToUnrotatedCoordinates(PointF pivot, PointF point)
     {
@@ -758,34 +840,129 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new SizeF((float)(dx), (float)(dy));
     }
 
-    public void SetBoundsFrom(PointF relPivot, PointF relDrawGrip, SizeF diff)
+    public void SetBoundsFrom(PointF fixrPosition, PointF fixaPosition, PointF relDrawGrip, SizeF diff, SizeF initialSize)
     {
-      double dx = relDrawGrip.X - relPivot.X;
-      double dy = relDrawGrip.Y - relPivot.Y;
+      var dx = relDrawGrip.X - fixrPosition.X;
+      var dy = relDrawGrip.Y - fixrPosition.Y;
 
-      if (dx == 1 && (diff.Width > 0 || AllowNegativeSize))
-      {
-        this._bounds.Width = diff.Width;
-      }
-      else if (dx == -1 && (diff.Width < 0 || AllowNegativeSize))
-      {
-        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(diff.Width + _bounds.Width, 0));
-        this._position.X += s.Width;
-        this._position.Y += s.Height;
-        this._bounds.Width = -diff.Width;
-      }
 
-      if (dy == 1 && (diff.Height > 0 || AllowNegativeSize))
-      {
-        this._bounds.Height = diff.Height;
-      }
-      else if (dy == -1 && (diff.Height < 0 || AllowNegativeSize))
-      {
-        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(0, diff.Height + _bounds.Height));
-        this._position.X += s.Width;
-        this._position.Y += s.Height;
-        this._bounds.Height = -diff.Height;
-      }
+      var newWidth = initialSize.Width + diff.Width / (dx);
+			var newHeight = initialSize.Height + diff.Height / (dy);
+
+      if(Math.Abs(dx)==1 && (newWidth>0 || AllowNegativeSize))
+        this._bounds.Width = newWidth;
+			if (Math.Abs(dy)==1 && (newHeight > 0 || AllowNegativeSize))
+				this._bounds.Height = newHeight;
+
+			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
+			this._position.X += fixaPosition.X - currFixaPos.X;
+			this._position.Y += fixaPosition.Y - currFixaPos.Y;
+
+      UpdateTransformationMatrices();
+    }
+
+
+    public void SetScalesFrom(PointF fixrPosition, PointF fixaPosition, PointF relDrawGrip, SizeF diff, double initialScaleX, double initialScaleY)
+    {
+      double newScaleX = this._scaleX;
+      double newScaleY = this._scaleY;
+
+      double initialWidth = this._bounds.Width * initialScaleX;
+      double initialHeight = this._bounds.Height * initialScaleY;
+
+      double dx = relDrawGrip.X - fixrPosition.X;
+      double dy = relDrawGrip.Y - fixrPosition.Y;
+
+
+			if (dy != 0)
+				newScaleY = initialScaleY + diff.Height / (dy * _bounds.Height);
+			if (dx != 0)
+				newScaleX = initialScaleX  + (diff.Width - _shear * diff.Height) / (dx * _bounds.Width);
+
+			this._scaleX = (float)newScaleX;
+      this._scaleY = (float)newScaleY;
+      UpdateTransformationMatrices();
+
+			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
+			this._position.X += fixaPosition.X - currFixaPos.X;
+			this._position.Y += fixaPosition.Y - currFixaPos.Y;
+			UpdateTransformationMatrices();
+    }
+
+
+
+    public void SetShearFrom(PointF fixrPosition, PointF fixaPosition, PointF relDrawGrip, SizeF diff, double initialRotation, double initialShear, double initialScaleX, double initialScaleY)
+    {
+      var newShear = this._shear;
+      var newRot = this._rotation;
+			var newScaleX = this._scaleX;
+			var newScaleY = this._scaleY;
+
+			double dx = relDrawGrip.X - fixrPosition.X;
+			double dy = relDrawGrip.Y - fixrPosition.Y;
+
+			// complicated case
+			if (Math.Abs(dx) == 1)
+			{
+				double shearAngle = Math.Atan(initialShear);
+				var diffHeight = dx*ToUnrotatedDifference(initialRotation + shearAngle*180/Math.PI, diff).Height;
+
+				double b = Width * initialScaleX / Math.Sqrt(1 + initialShear * initialShear); // Width of the object perpendicular to the right side
+
+				newShear = (float)(initialShear + diffHeight / b);
+				newRot = (float)(initialRotation + (shearAngle - Math.Atan(newShear))*180/Math.PI);
+				newScaleX = (float)(initialScaleX / Math.Sqrt((1 + initialShear * initialShear) / (1 + newShear * newShear)));
+				newScaleY = (float)(initialScaleY * Math.Sqrt((1 + initialShear * initialShear) / (1 + newShear * newShear)));
+			}
+
+			// simple case
+			if (Math.Abs(dy) == 1)
+			{
+				var diffWidth = ToUnrotatedDifference(diff).Width;
+				newShear = (float)(initialShear + diffWidth / (dy * _scaleY * _bounds.Height));
+			}
+
+			
+			this._shear = newShear;
+      this._rotation = newRot;
+			this._scaleX = newScaleX;
+			this._scaleY = newScaleY;
+      UpdateTransformationMatrices();
+
+			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
+			this._position.X += fixaPosition.X - currFixaPos.X;
+			this._position.Y += fixaPosition.Y - currFixaPos.Y;
+			UpdateTransformationMatrices();
+    }
+
+		protected internal void SetCoordinatesByAppendTransformation(TransformationMatrix2D transform, bool suppressChangeEvent)
+		{
+			_transfoToLayerCoord.AppendTransform(transform);
+			this._position.X = (float)_transfoToLayerCoord.X;
+      this._position.Y = (float)_transfoToLayerCoord.Y;
+      this._rotation = (float)-_transfoToLayerCoord.Rotation;
+      this._scaleX = (float)_transfoToLayerCoord.ScaleX;
+      this._scaleY = (float)_transfoToLayerCoord.ScaleY;
+      this._shear = (float)_transfoToLayerCoord.Shear;
+		}
+
+    protected internal void SetCoordinatesByAppendInverseTransformation(TransformationMatrix2D transform, bool suppressChangeEvent)
+    {
+      _transfoToLayerCoord.AppendInverseTransform(transform);
+      this._position.X = (float)_transfoToLayerCoord.X;
+      this._position.Y = (float)_transfoToLayerCoord.Y;
+      this._rotation = (float)-_transfoToLayerCoord.Rotation;
+      this._scaleX = (float)_transfoToLayerCoord.ScaleX;
+      this._scaleY = (float)_transfoToLayerCoord.ScaleY;
+      this._shear = (float)_transfoToLayerCoord.Shear;
+    }
+
+
+    protected internal void ShiftPosition(float dx, float dy)
+    {
+      this._position.X += dx;
+      this._position.Y += dy;
+      UpdateTransformationMatrices();
     }
 
     /// <summary>
@@ -797,17 +974,25 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="diff">Difference between absolute grip point and absolute pivot point, in unrotated absolute coordinates.</param>
     public void SetRotationFrom(PointF relPivot, PointF absPivot, PointF relDrawGrip, SizeF diff)
     {
-      double dx = (relDrawGrip.X - relPivot.X) * _bounds.Width;
-      double dy = (relDrawGrip.Y - relPivot.Y) * _bounds.Height;
+      double dx = (relDrawGrip.X - relPivot.X) * _bounds.Width*_scaleX
+								+ (relDrawGrip.Y - relPivot.Y) * _bounds.Height * _scaleY * _shear;
+      double dy = (relDrawGrip.Y - relPivot.Y) * _bounds.Height*_scaleY;
+
+
       double a1 = Math.Atan2(dy, dx);
       double a2 = Math.Atan2(diff.Height, diff.Width);
 
       this._rotation = -(float)(180 * (a2 - a1) / Math.PI);
-
+			/*
       //SizeF s = ToRotatedDifference(PointF.Empty, new PointF(-m_Bounds.Width / 2, -m_Bounds.Height / 2));
       SizeF s = ToRotatedDifference(RelativeToAbsolutePosition(relPivot, false), Point.Empty);
       this._position.X = absPivot.X + s.Width;
       this._position.Y = absPivot.Y + s.Height;
+			*/
+			UpdateTransformationMatrices();
+			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(relPivot);
+			this._position.X += absPivot.X - currFixaPos.X;
+			this._position.Y += absPivot.Y - currFixaPos.Y;
 			UpdateTransformationMatrices();
 
     }
@@ -869,303 +1054,222 @@ namespace Altaxo.Graph.Gdi.Shapes
 			new PointF(0, 0.5f), 
 			};
 
-		public virtual IGripManipulationHandle[] ShowGrips(Graphics g)
-		{
-			return ShowGrips(g, true, true, true);
-		}
+    [Flags]
+    protected enum GripKind { Move=1, Resize=2, Rotate=4, Rescale=8, Shear=16 }
 
 
-		public static void TransformToUnscaledPageCoordinates(Graphics g, PointF[] pts)
-		{
-			// Transform points to page coordinates
-			g.TransformPoints(CoordinateSpace.Page, CoordinateSpace.World, pts);
-			for (int i = 0; i < pts.Length; i++)
-				pts[i] = pts[i].Scale(g.PageScale); // transform to absolute page coordinates, thus 1 pt is really 1 pt at the monitor
-
-		}
-
-
-    public virtual IGripManipulationHandle[] ShowGrips(Graphics g, bool showResizeGrips, bool showRotationGrips, bool showEnclosingRectangle)
+    /// <summary>
+    /// Gets an vector (not normalized), which points outward of the relative point in page coordinates.
+    /// </summary>
+    /// <param name="rel">Relative point. Should be located at an edge or corner.</param>
+    /// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+		/// <param name="pageCoord">Location of point rel in page coordinates.</param>
+    /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
+    private void GetOutVector(PointF rel, IHitTestObject hitTest, out PointF outVec, out PointF pageCoord)
     {
-			List<IGripManipulationHandle> list = new List<IGripManipulationHandle>();
-      GraphicsState gs = g.Save();
-      g.TranslateTransform(X, Y);
-      if (_rotation != 0)
-        g.RotateTransform(-_rotation);
+      // we distinguish between points at the edge and points at the corners of the rectangle
+      // at the edges the outer vector is perpendicular to the edge
+      // at the corner the outer vector is angle bisector of the two edges
+      // inside the rectangle it is a line starting from the mid of the rectangle to the point
 
+      bool isXZeroOrOne = rel.X == 0 || rel.X == 1;
+      bool isYZeroOrOne = rel.Y == 0 || rel.Y == 1;
 
-      PointF[] pts = new PointF[_gripRelPositions.Length];
-			for(int i=0;i<pts.Length;i++)
-				pts[i] = RelativeToAbsolutePosition(_gripRelPositions[i], false);
-			
-      // Transform points to page coordinates
-			TransformToUnscaledPageCoordinates(g, pts);
-
-			if (showResizeGrips)
-			{
-				for (int i = 1; i < pts.Length; i++)
-				{
-					PointF outVec = pts[i].Subtract(pts[0]);
-					outVec = outVec.Scale(10 / outVec.VectorLength());
-					PointF altVec = new PointF(-outVec.Y, outVec.X);
-					PointF ptStart = pts[i].AddScaled(outVec, 0.25f);
-					using (Matrix m = new Matrix(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y))
-					{
-						var gripShape = (GraphicsPath)_outsideArrow.Clone();
-						gripShape.Transform(m);
-						list.Add(new SizeMoveGripHandle(this, _gripRelPositions[i], gripShape));
-					}
-				}
-			}
-
-			if (showRotationGrips)
-			{
-				// Rotation grips
-				for (int i = 1; i < pts.Length; i += 2)
-				{
-					PointF outVec = pts[i].Subtract(pts[0]);
-					outVec = outVec.Scale(10 / outVec.VectorLength());
-					PointF altVec = new PointF(-outVec.Y, outVec.X);
-					PointF ptStart = pts[i].AddScaled(outVec, 0.5f);
-					using (Matrix m = new Matrix(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y))
-					{
-						var gripShape = (GraphicsPath)_rotationGripShape.Clone();
-						gripShape.Transform(m);
-						list.Add(new RotationGripHandle(this, _gripRelPositions[i], gripShape));
-					}
-				}
-			}
-
-			if (showEnclosingRectangle)
-			{
-				g.DrawRectangle(Pens.Blue, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);
-			}
-
-			g.Restore(gs);
-/*
-			var g2 = g.Save();
-			g.ResetTransform();
-			g.PageScale = 1;
-      using(var pen = new Pen(Color.Red,0))
+      if (isXZeroOrOne && isYZeroOrOne) // located at a corner
       {
-        for (int i = 1; i < pts.Length; i++)
+				GetCornerOutVector(rel, hitTest, out outVec, out pageCoord);
+      }
+      else if (isXZeroOrOne || isYZeroOrOne) // located at an edge
+      {
+				GetEdgeOutVector(rel, hitTest, out outVec, out pageCoord);
+      }
+      else // located elsewhere
+      {
+				GetMiddleRayOutVector(rel, hitTest, out outVec, out pageCoord);
+      }
+    }
+
+
+		/// <summary>
+    /// Gets an vector (not normalized), which assumes that the given point is a corner. 
+		/// The calculated vector points in the direction of the angle bisector of the two edges.
+		/// The returned vector and coordinates are in page coordinates.
+    /// </summary>
+    /// <param name="rel">Relative point. Should be located at an edge or corner.</param>
+    /// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+		/// <param name="pageCoord">Location of point rel in page coordinates.</param>
+    /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
+		protected void GetCornerOutVector(PointF rel, IHitTestObject hitTest, out PointF outVec, out PointF pageCoord)
+		{
+			PointF pt1 = RelativeToAbsolutePosition(rel, false);
+			PointF pt2 = new PointF(1-rel.X, rel.Y);
+			PointF pt3 = new PointF(rel.X, 1-rel.Y);
+
+			pt1 = this._transfoToLayerCoord.TransformPoint(pt1);
+			pt1 = pageCoord = hitTest.Transformation.TransformPoint(pt1);
+			pt2 = RelativeToAbsolutePosition(pt2, false);
+			pt2 = this._transfoToLayerCoord.TransformPoint(pt2);
+			pt2 = hitTest.Transformation.TransformPoint(pt2);
+			pt3 = RelativeToAbsolutePosition(pt3, false);
+			pt3 = this._transfoToLayerCoord.TransformPoint(pt3);
+			pt3 = hitTest.Transformation.TransformPoint(pt3);
+
+			outVec = pt1.Subtract(pt2).Normalize().Add(pt1.Subtract(pt3).Normalize());
+		}
+
+		/// <summary>
+    /// Gets an vector (not normalized), which points outward perpendicular to that edge where the given relative point is located.
+		/// The returned vector and coordinates are in page coordinates.
+    /// </summary>
+    /// <param name="rel">Relative point. Should be located at an edge or corner.</param>
+    /// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+		/// <param name="pageCoord">Location of point rel in page coordinates.</param>
+    /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
+		private void GetEdgeOutVector(PointF rel, IHitTestObject hitTest, out PointF outVec, out PointF pageCoord)
+		{
+			// calculate the location of the middle point
+			var pt0 = RelativeToAbsolutePosition(new PointF(0.5f, 0.5f), false);
+			pt0 = this._transfoToLayerCoord.TransformPoint(pt0);
+			pt0 = hitTest.Transformation.TransformPoint(pt0);
+
+
+			PointF pt1 = RelativeToAbsolutePosition(rel, false);
+			PointF pt2 = (0==rel.X || 1==rel.X) ? new PointF(rel.X, rel.Y + 1) : new PointF(rel.X + 1, rel.Y);
+
+			pt1 = this._transfoToLayerCoord.TransformPoint(pt1);
+			pt1 = pageCoord = hitTest.Transformation.TransformPoint(pt1);
+			pt2 = RelativeToAbsolutePosition(pt2, false);
+			pt2 = this._transfoToLayerCoord.TransformPoint(pt2);
+			pt2 = hitTest.Transformation.TransformPoint(pt2);
+			outVec = pt1.Subtract(pt2).Rotate90Degree();
+			PointF otherVec = pt1.Subtract(pt0);
+			if (outVec.DotProduct(otherVec) < 0)
+				outVec = outVec.FlipSign();
+		}
+
+
+		/// <summary>
+		/// Gets an vector (not normalized), which points outward in the direction of a ray
+		/// between the middle point of the rectangle and the given point.
+		/// The returned vector and coordinates are in page coordinates.
+		/// </summary>
+		/// <param name="rel">Relative point. Should be located at an edge or corner.</param>
+		/// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+		/// <param name="pageCoord">Location of point rel in page coordinates.</param>
+		/// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
+		private void GetMiddleRayOutVector(PointF rel, IHitTestObject hitTest, out PointF outVec, out PointF pageCoord)
+		{
+			// calculate the location of the middle point
+			var pt0 = RelativeToAbsolutePosition(new PointF(0.5f, 0.5f), false);
+			pt0 = this._transfoToLayerCoord.TransformPoint(pt0);
+			pt0 = hitTest.Transformation.TransformPoint(pt0);
+
+
+			var pt = RelativeToAbsolutePosition(rel, false);
+			pt = this._transfoToLayerCoord.TransformPoint(pt);
+			pt = pageCoord = hitTest.Transformation.TransformPoint(pt);
+			outVec = pt.Subtract(pt0);
+		}
+
+    protected virtual IGripManipulationHandle[] GetGrips(IHitTestObject hitTest, double pageScale, GripKind gripKind)
+    {
+      List<IGripManipulationHandle> list = new List<IGripManipulationHandle>();
+			const float gripNominalSize = 10; // 10 Points nominal size on the screen
+
+			if ((GripKind.Resize & gripKind) != 0)
+			{
+				double gripSize = gripNominalSize / pageScale; // 10 Points, but we have to consider the current pageScale
+				for (int i = 1; i < _gripRelPositions.Length; i++)
+				{
+					PointF outVec, pos;
+					if(1==i%2)
+						GetCornerOutVector(_gripRelPositions[i],hitTest,out outVec, out pos);
+					else
+						GetMiddleRayOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+
+					outVec = outVec.Scale(gripSize / outVec.VectorLength());
+					PointF altVec = outVec.Rotate90Degree();
+					PointF ptStart = pos;
+					list.Add(new ResizeGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+				}
+			}
+			
+
+      if ((GripKind.Rotate&gripKind)!=0)
+      {
+        double gripSize = 10 / pageScale;
+        // Rotation grips
+				for (int i = 1; i < _gripRelPositions.Length; i += 2)
         {
-          PointF outVec = pts[i].Subtract(pts[0]);
-          outVec = outVec.Scale(10 / outVec.VectorLength());
-          PointF altVec = new PointF(-outVec.Y, outVec.X);
-          PointF ptStart = pts[i].AddScaled(outVec, 0.25f);
-          using (Matrix m = new Matrix(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y))
-          {
-            //g.Transform = m;
-            //g.FillPath(Brushes.Red, _outsideArrow);
-						//var gripShape = (GraphicsPath)_outsideArrow.Clone();
-						//gripShape.Transform(m);
-						//list.Add(new SizeMoveGripHandle(this, _gripRelPositions[i], gripShape));
-          }
+					PointF outVec, pos;
+					GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+
+					outVec = outVec.Scale(gripSize / outVec.VectorLength());
+					PointF altVec = outVec.Rotate90Degree();
+					PointF ptStart = pos;
+					list.Add(new RotationGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
         }
       }
-     
-			g.Restore(g2);
 
 
-      DrawRectangularGrip(g, new PointF(0, 0));
-      DrawRectangularGrip(g, new PointF(0, 1));
-      DrawRectangularGrip(g, new PointF(1, 0));
-      DrawRectangularGrip(g, new PointF(1, 1));
+      if ((GripKind.Rescale & gripKind) != 0)
+      {
+        double gripSize = 10 / pageScale; // 10 Points, but we have to consider the current pageScale
+				for (int i = 1; i < _gripRelPositions.Length; i++)
+        {
+					PointF outVec, pos;
+					if (1 == i % 2)
+						GetCornerOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
+					else
+						GetMiddleRayOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
 
-      DrawRectangularGrip(g, new PointF(0.5f, 0));
-      DrawRectangularGrip(g, new PointF(1, 0.5f));
-      DrawRectangularGrip(g, new PointF(0.5f, 1));
-      DrawRectangularGrip(g, new PointF(0, 0.5f));
+					outVec = outVec.Scale(gripSize / outVec.VectorLength());
+					PointF altVec = outVec.Rotate90Degree();
+					PointF ptStart = pos;
+          list.Add(new RescaleGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+        }
+      }
 
-      DrawRotationGrip(g, new PointF(0.2f, 0.2f));
-      DrawRotationGrip(g, new PointF(0.8f, 0.2f));
-      DrawRotationGrip(g, new PointF(0.8f, 0.8f));
-      DrawRotationGrip(g, new PointF(0.2f, 0.8f));
+      if ((GripKind.Shear & gripKind) != 0)
+      {
+        double gripSize = 10 / pageScale; // 10 Points, but we have to consider the current pageScale
+				for (int i = 2; i < _gripRelPositions.Length; i += 2)
+        {
+					PointF outVec, pos;
+					GetEdgeOutVector(_gripRelPositions[i], hitTest, out outVec, out pos);
 
-      g.DrawRectangle(Pens.Blue, _bounds.X,_bounds.Y,_bounds.Width,_bounds.Height);
+					outVec = outVec.Scale(gripSize / outVec.VectorLength());
+					PointF altVec = outVec.Rotate90Degree();
+					PointF ptStart = pos;
+          list.Add(new ShearGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+        }
+      }
 
-      g.Restore(gs);
-			*/
-			return list.ToArray();
+
+
+      if ((GripKind.Move&gripKind)!=0)
+      {
+				var pts = new PointF[]{ new PointF(0,0), new PointF(1,0), new PointF(1,1), new PointF(0,1)};
+				for (int i = 0; i < pts.Length; i++)
+				{
+					var pt = RelativeToAbsolutePosition(pts[i], false);
+					pt = this._transfoToLayerCoord.TransformPoint(pt);
+					pt = hitTest.Transformation.TransformPoint(pt);
+					pts[i] = pt;
+				}
+        GraphicsPath path = new GraphicsPath();
+        path.AddPolygon(pts);
+        list.Add(new MovementGripHandle(hitTest,path,null));
+      }
+
+  
+      return list.ToArray();
     }
 
   
     #endregion
 
-    #region GripHandle
-
-    protected class SizeMoveGripHandle : IGripManipulationHandle
-    {
-      GraphicBase _parent;
-      PointF _drawrPosition;
-      PointF _fixrPosition;
-      PointF _fixaPosition;
-			GraphicsPath _gripPath;
-			static Pen _penForInsidePathTesting = new Pen(Color.Black, 0);
-
-
-      public SizeMoveGripHandle(GraphicBase parent, PointF relPos, GraphicsPath path)
-      {
-        _parent = parent;
-        _drawrPosition = relPos;
-        _fixrPosition = new PointF(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
-        _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
-
-				_gripPath = path;
-      }
-
-      public void MoveGrip(PointF newPosition)
-      {
-        SizeF diff = _parent.ToUnrotatedDifference(_fixaPosition, newPosition);
-        _parent.SetBoundsFrom(_fixrPosition, _drawrPosition, diff);
-      }
-
-			#region IGripManipulationHandle Members
-
-
-			public void Show(Graphics g)
-			{
-				g.FillPath(Brushes.Blue, _gripPath);
-			}
-
-			public bool IsGripHitted(PointF point)
-			{
-				return _gripPath.IsVisible(point);
-			}
-
-			public IGrippableObject ManipulatedObject
-			{
-				get { return _parent; }
-			}
-
-			#endregion
-
-		
-
-
-			
-
-		
-		}
-
-		
-
-    protected class RotationGripHandle : IGripManipulationHandle
-    {
-      GraphicBase _parent;
-      PointF _drawrPosition;
-      PointF _fixrPosition;
-      PointF _fixaPosition;
-			GraphicsPath _gripPath;
-			static Pen _penForInsidePathTesting = new Pen(Color.Black, 0);
-
-			public RotationGripHandle(GraphicBase parent, PointF relPos, GraphicsPath path)
-      {
-        _parent = parent;
-        _drawrPosition = relPos;
-        _fixrPosition = new PointF(0.5f, 0.5f);
-        _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
-				_gripPath = path;
-      }
-
-      public void MoveGrip(PointF newPosition)
-      {
-        SizeF diff = new SizeF();
-
-        diff.Width = newPosition.X - _fixaPosition.X;
-        diff.Height = newPosition.Y - _fixaPosition.Y;
-        _parent.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff);
-      }
-
-			public void Show(Graphics g)
-			{
-				g.FillPath(Brushes.Blue, _gripPath);
-			}
-
-			public bool IsGripHitted(PointF point)
-			{
-				return _gripPath.IsVisible(point);
-			}
-
-			public IGrippableObject ManipulatedObject
-			{
-				get { return _parent; }
-			}
-    }
-
-
-		/// <summary>
-		/// Shows a single round grip, which can be customized to a move action.
-		/// </summary>
-		protected class PathNodeGripHandle : IGripManipulationHandle
-		{
-			PointF _gripCenter;
-			float _gripRadius=3;
-			GraphicBase _parent;
-			PointF _drawrPosition;
-			PointF _fixrPosition;
-			PointF _fixaPosition;
-
-			Action<PointF> _moveAction;
-
-			public static Pen PathOutlinePen = new Pen(Color.Blue, 0);
-
-			public PathNodeGripHandle(GraphicBase parent, PointF relPos, PointF gripCenter)
-      {
-        _parent = parent;
-        _drawrPosition = relPos;
-        _fixrPosition = new PointF(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
-        _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
-
-				_gripCenter = gripCenter;
-      }
-
-
-			public PathNodeGripHandle(GraphicBase parent, PointF relPos, PointF gripCenter, Action<PointF> moveAction)
-				: this(parent,relPos,gripCenter)
-			{
-				_moveAction = moveAction;
-			}
-
-      
-
-			#region IGripManipulationHandle Members
-
-			public void MoveGrip(PointF newPosition)
-			{
-				if (_moveAction != null)
-				{
-					_moveAction(newPosition);
-				}
-				else
-				{
-					SizeF diff = _parent.ToUnrotatedDifference(_fixaPosition, newPosition);
-					_parent.SetBoundsFrom(_fixrPosition, _drawrPosition, diff);
-				}
-			}
-
-
-			public void Show(Graphics g)
-			{
-				g.FillEllipse(Brushes.Blue, _gripCenter.X - _gripRadius, _gripCenter.Y - _gripRadius, 2 * _gripRadius, 2 * _gripRadius);
-			}
-
-			public bool IsGripHitted(PointF point)
-			{
-				return (Calc.RMath.Pow2(point.X - _gripCenter.X) + Calc.RMath.Pow2(point.Y - _gripCenter.Y)) < Calc.RMath.Pow2(_gripRadius);
-			}
-
-			public IGrippableObject ManipulatedObject
-			{
-				get { return _parent; }
-			}
-
-			#endregion
-		}
-
-    #endregion
-
+   
 
     #region IDocumentNode Members
 
@@ -1181,6 +1285,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     #endregion
+
+
 
 		
 
