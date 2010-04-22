@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the Rotation edit box.
     /// </summary>
-    float Rotation { get; set; }
+    double Rotation { get; set; }
 
 
     /// <summary>

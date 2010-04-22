@@ -27,67 +27,106 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	[Serializable]
-	public class CurlyBraceShape : ShapeGraphic
-	{
-		#region Serialization
+  [Serializable]
+  public class CurlyBraceShape : OpenPathShapeBase
+  {
+    #region Serialization
 
-		#region Clipboard serialization
+    #region Clipboard serialization
 
-		protected CurlyBraceShape(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    protected CurlyBraceShape(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      SetObjectData(this, info, context, null);
+    }
+
+    /// <summary>
+    /// Serializes RectangleGraphic Version 0.
+    /// </summary>
+    /// <param name="info">The serialization info.</param>
+    /// <param name="context">The streaming context.</param>
+    public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      CurlyBraceShape s = this;
+      base.GetObjectData(info, context);
+    }
+
+    /// <summary>
+    /// Deserializes the RectangleGraphic Version 0.
+    /// </summary>
+    /// <param name="obj">The empty RectangleGraphic object to deserialize into.</param>
+    /// <param name="info">The serialization info.</param>
+    /// <param name="context">The streaming context.</param>
+    /// <param name="selector">The deserialization surrogate selector.</param>
+    /// <returns>The deserialized RectangleGraphic.</returns>
+    public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
+    {
+      CurlyBraceShape s = (CurlyBraceShape)base.SetObjectData(obj, info, context, selector);
+      return s;
+    }
+
+
+    /// <summary>
+    /// Finale measures after deserialization.
+    /// </summary>
+    /// <param name="obj">Not used.</param>
+    public override void OnDeserialization(object obj)
+    {
+      base.OnDeserialization(obj);
+    }
+    #endregion
+
+		private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
 		{
-			SetObjectData(this, info, context, null);
+			public override void Paint(Graphics g, object obj)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override object Clone()
+			{
+				throw new NotImplementedException();
+			}
 		}
 
-		/// <summary>
-		/// Serializes RectangleGraphic Version 0.
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			CurlyBraceShape s = this;
-			base.GetObjectData(info, context);
-		}
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.CurlyBraceShape", 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
+        /*
+        CurlyBraceShape s = (CurlyBraceShape)obj;
+        info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
+				*/
 
-		/// <summary>
-		/// Deserializes the RectangleGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty RectangleGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized RectangleGraphic.</returns>
-		public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			CurlyBraceShape s = (CurlyBraceShape)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
 
+				var s = null != o ? (DeprecatedCurlyBraceShape)o : new DeprecatedCurlyBraceShape();
+				info.GetBaseValueEmbedded(s, typeof(DeprecatedCurlyBraceShape).BaseType, parent);
 
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
+				var l = new CurlyBraceShape();
+				l.CopyFrom(s);
+				l.Pen = s.Pen; // we don't need to clone, since it is abandoned anyway
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CurlyBraceShape), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+        return l;
+      }
+    }
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CurlyBraceShape), 1)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				CurlyBraceShape s = (CurlyBraceShape)obj;
+				var s = (CurlyBraceShape)obj;
 				info.AddBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType);
 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 
-				CurlyBraceShape s = null != o ? (CurlyBraceShape)o : new CurlyBraceShape();
+				var s = null != o ? (CurlyBraceShape)o : new CurlyBraceShape();
 				info.GetBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType, parent);
 
 				return s;
@@ -95,195 +134,143 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		#endregion
+    #endregion
 
 
-		#region Constructors
-		public CurlyBraceShape()
-		{
-		}
+    #region Constructors
+    public CurlyBraceShape()
+    {
+    }
 
-		public CurlyBraceShape(PointF graphicPosition)
-			:
-			this()
-		{
-			this.SetPosition(graphicPosition);
-		}
+    public CurlyBraceShape(PointD2D Position, PointD2D Size)
+      :
+      base(Position,Size)
+    {
+    }
 
-		public CurlyBraceShape(float posX, float posY)
-			:
-			this(new PointF(posX, posY))
-		{
-		}
+   
 
+    static void Exchange(ref double x, ref double y)
+    {
+      var h = x;
+      x = y;
+      y = h;
+    }
 
-		public CurlyBraceShape(PointF graphicPosition, SizeF graphicSize)
-			:
-			this(graphicPosition)
-		{
-			this.SetSize(graphicSize);
-			this.AutoSize = false;
-		}
+    public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom)
+    {
+      if (left > right)
+        Exchange(ref left, ref right);
+      if (top > bottom)
+        Exchange(ref top, ref bottom);
 
-		public CurlyBraceShape(float posX, float posY, SizeF graphicSize)
-			:
-			this(new PointF(posX, posY), graphicSize)
-		{
-		}
+      return new CurlyBraceShape(new PointD2D(left, top), new PointD2D(right - left, bottom - top));
+    }
 
-		public CurlyBraceShape(float posX, float posY, float width, float height)
-			:
-			this(new PointF(posX, posY), new SizeF(width, height))
-		{
-		}
+    public CurlyBraceShape(CurlyBraceShape from)
+      :
+      base(from)
+    {
+    }
 
-		public CurlyBraceShape(PointF graphicPosition, float Rotation)
-			:
-			this()
-		{
+    #endregion
 
-			this.SetPosition(graphicPosition);
-			this.Rotation = Rotation;
-		}
-
-		public CurlyBraceShape(float posX, float posY, float Rotation)
-			:
-			this(new PointF(posX, posY), Rotation)
-		{
-		}
-
-		public CurlyBraceShape(PointF graphicPosition, SizeF graphicSize, float Rotation)
-			:
-			this(graphicPosition, Rotation)
-		{
-			this.SetSize(graphicSize);
-			this.AutoSize = false;
-		}
-
-		public CurlyBraceShape(float posX, float posY, SizeF graphicSize, float Rotation)
-			:
-			this(new PointF(posX, posY), graphicSize, Rotation)
-		{
-		}
-
-		public CurlyBraceShape(float posX, float posY, float width, float height, float Rotation)
-			:
-			this(new PointF(posX, posY), new SizeF(width, height), Rotation)
-		{
-		}
-
-		static void Exchange(ref float x, ref float y)
-		{
-			float h = x;
-			x = y;
-			y = h;
-		}
-		public static CurlyBraceShape FromLTRB(float left, float top, float right, float bottom)
-		{
-			if (left > right)
-				Exchange(ref left, ref right);
-			if (top > bottom)
-				Exchange(ref top, ref bottom);
-
-			return new CurlyBraceShape(left, top, right - left, bottom - top);
-		}
-
-		public CurlyBraceShape(CurlyBraceShape from)
-			:
-			base(from)
-		{
-		}
-
-		#endregion
-
-		public override object Clone()
-		{
-			return new CurlyBraceShape(this);
-		}
+    public override object Clone()
+    {
+      return new CurlyBraceShape(this);
+    }
 
 
-		public override void Paint(Graphics g, object obj)
-		{
-			GraphicsState gs = g.Save();
+    public override void Paint(Graphics g, object obj)
+    {
+      GraphicsState gs = g.Save();
       TransformGraphics(g);
 
-			if (Brush.IsVisible)
+      var boundsF = (RectangleF)_bounds;
+
+      Pen.BrushRectangle = boundsF;
+      var path = GetPath();
+      g.DrawPath(Pen, path);
+
+			if (_outlinePen != null && _outlinePen.IsVisible)
 			{
-				Brush.Rectangle = _bounds;
-				g.FillRectangle(Brush, _bounds);
+				path.Widen(Pen);
+				_outlinePen.BrushRectangle = (RectangleF)_bounds;
+				g.DrawPath(_outlinePen, path);
 			}
 
-			Pen.BrushRectangle = _bounds;
 
-			var path = GetPath();
-
-			g.DrawPath(Pen, path);
-
-			g.Restore(gs);
-		}
-
-		public override IHitTestObject HitTest(HitTestData htd)
-		{
-			var localHitTestData = htd.NewFromAdditionalTransformation(_transfoToLayerCoord);
-			GraphicsPath gp = GetPath();
-			gp.Transform(localHitTestData.Transformation); // Transform to page coord
-			gp.Widen(new Pen(Color.Black,6 ));
-
-			if (gp.IsVisible(localHitTestData.HittedPointInPageCoord))
-			{
-				return new GraphicBaseHitTestObject(gp, this);
-			}
-			else
-				return null;
-		}
-
-    public override GraphicsPath GetObjectPath()
-    {
-      return GetPath();
+      g.Restore(gs);
     }
 
-    public override GraphicsPath GetSelectionPath()
+    public override IHitTestObject HitTest(HitTestData htd)
     {
-      return GetPath();
+      var localHitTestData = htd.NewFromAdditionalTransformation(_transformation);
+      GraphicsPath gp = GetPath();
+      gp.Transform(localHitTestData.Transformation); // Transform to page coord
+      gp.Widen(new Pen(Color.Black, 6));
+
+      if (gp.IsVisible(localHitTestData.HittedPointInPageCoord))
+      {
+        return new GraphicBaseHitTestObject(gp, this);
+      }
+      else
+        return null;
     }
 
-		/// <summary>
-		/// Gets the untranslated and unrotated path of this shape.
-		/// </summary>
-		/// <returns>Untranslated and unrotated path of this shape</returns>
-		private GraphicsPath GetPath()
+		protected override GraphicsPath GetObjectPath()
 		{
-			var path = new GraphicsPath();
-
-			float angle = 90;
-			if (_bounds.Height > 0.5 * _bounds.Width)
-			{
-				double dy = 2 - _bounds.Width / _bounds.Height;
-				angle = (float)(180 * Math.Asin(8 / (4 + dy * dy) - 1) / Math.PI);
-			}
-
-			path.AddArc(
-				_bounds.X + 0.5f * _bounds.Width - _bounds.Height, _bounds.Y + 0.5f * _bounds.Height,
-				_bounds.Height, _bounds.Height,
-				0, -angle);
-			path.AddArc(
-				_bounds.X, _bounds.Y - 0.5f * _bounds.Height,
-			 _bounds.Height, _bounds.Height,
-				180 - angle, angle);
-
-			path.StartFigure();
-			path.AddArc(
-		_bounds.X + 0.5f * _bounds.Width, _bounds.Y + 0.5f * _bounds.Height,
-		_bounds.Height, _bounds.Height,
-		180, angle);
-
-			path.AddArc(
-				_bounds.Right - _bounds.Height, _bounds.Y - 0.5f * _bounds.Height,
-			 _bounds.Height, _bounds.Height,
-			 angle, -angle);
-			return path;
+			return GetPath();
 		}
-	} // End Class
+
+    /// <summary>
+    /// Gets the untranslated and unrotated path of this shape.
+    /// </summary>
+    /// <returns>Untranslated and unrotated path of this shape</returns>
+    private GraphicsPath GetPath()
+    {
+      var path = new GraphicsPath();
+
+      float angle = 90;
+      if (_bounds.Height > 0.5 * _bounds.Width)
+      {
+        double dy = 2 - _bounds.Width / _bounds.Height;
+        angle = (float)(180 * Math.Asin(8 / (4 + dy * dy) - 1) / Math.PI);
+      }
+
+      path.AddArc(
+        (float)(_bounds.X + 0.5 * _bounds.Width - _bounds.Height),
+        (float)(_bounds.Y + 0.5 * _bounds.Height),
+        (float)_bounds.Height,
+        (float)_bounds.Height,
+        0,
+        -angle);
+
+      path.AddArc(
+        (float)_bounds.X,
+        (float)(_bounds.Y - 0.5f * _bounds.Height),
+       (float)_bounds.Height,
+       (float)_bounds.Height,
+        180 - angle, angle);
+
+      path.StartFigure();
+
+      path.AddArc(
+    (float)(_bounds.X + 0.5 * _bounds.Width),
+    (float)(_bounds.Y + 0.5f * _bounds.Height),
+    (float)_bounds.Height,
+    (float)_bounds.Height,
+    180, angle);
+
+      path.AddArc(
+        (float)(_bounds.Right - _bounds.Height),
+        (float)(_bounds.Y - 0.5f * _bounds.Height),
+       (float)_bounds.Height,
+       (float)_bounds.Height,
+       angle, -angle);
+      return path;
+    }
+  } // End Class
 
 } // end Namespace
 

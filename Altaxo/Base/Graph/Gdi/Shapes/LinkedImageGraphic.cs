@@ -98,8 +98,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, ImagePath)
     {
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
 
     public LinkedImageGraphic(float posX, float posY, SizeF graphicSize, string ImagePath)
@@ -130,8 +129,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, Rotation, ImagePath)
     {
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
 
     public LinkedImageGraphic(float posX, float posY, SizeF graphicSize, float Rotation, string ImagePath)
@@ -216,7 +214,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           this.Height = myNewHeight;
           this.Width = myNewWidth;
         }
-        g.DrawImage(myImage, 0, 0, Width, Height);
+        g.DrawImage(myImage, 0, 0, (float)Width, (float)Height);
       }
 
       g.Restore(gs);

@@ -28,7 +28,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	[Serializable]
-	public class LineShape : ShapeGraphic
+	public class LineShape : OpenPathShapeBase
 	{
 		#region Serialization
 
@@ -74,26 +74,64 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 		#endregion
 
+		private class DeprecatedLineShape : ClosedPathShapeBase
+		{
+			public override void Paint(Graphics g, object obj)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override object Clone()
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LineGraphic", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineShape), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.LineShape", 1)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+        throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
+        /*
 				LineShape s = (LineShape)obj;
+				info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
+				*/
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				var s = null != o ? (DeprecatedLineShape)o : new DeprecatedLineShape();
+				info.GetBaseValueEmbedded(s, typeof(DeprecatedLineShape).BaseType, parent);
+
+				var l = new LineShape();
+				l.CopyFrom(s);
+				l.Pen = s.Pen; // we don't need to clone, since it is abandoned anyway
+
+				return l;
+			}
+		}
+
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineShape), 2)]
+		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (LineShape)obj;
 				info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 
-				LineShape s = null != o ? (LineShape)o : new LineShape();
+				var s = null != o ? (LineShape)o : new LineShape();
 				info.GetBaseValueEmbedded(s, typeof(LineShape).BaseType, parent);
 
 				return s;
 			}
 		}
-
 
 		#endregion
 
@@ -105,7 +143,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public LineShape(PointF startPosition)
 		{
-			this.SetStartPosition(startPosition);
+			this.Position = startPosition;
 		}
 
 		public LineShape(float posX, float posY)
@@ -117,8 +155,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-			this.SetEndPosition(endPosition);
-			this.AutoSize = false;
+      this._bounds.Width = endPosition.X - startPosition.X;
+      this._bounds.Height = endPosition.Y - startPosition.Y;
 		}
 
 
@@ -138,10 +176,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-			this.SetEndPosition(endPosition);
-			this.Pen.Width = lineWidth;
+      this._bounds.Width = endPosition.X - startPosition.X;
+      this._bounds.Height = endPosition.Y - startPosition.Y;
+      this.Pen.Width = lineWidth;
 			this.Pen.Color = lineColor;
-			this.AutoSize = false;
 		}
 
 		public LineShape(float startX, float startY, float endX, float endY, float lineWidth, Color lineColor)
@@ -150,7 +188,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			this.Pen.Width = lineWidth;
 			this.Pen.Color = lineColor;
-			this.AutoSize = false;
 		}
 
 		public LineShape(LineShape from)
@@ -174,7 +211,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		public override GraphicsPath GetSelectionPath()
+		public GraphicsPath GetSelectionPath()
 		{
 			if (Pen.Width <= 5)
 				return GetPath(5);
@@ -182,7 +219,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return GetPath(Pen.Width);
 		}
 
-		public override GraphicsPath GetObjectPath()
+		protected override GraphicsPath GetObjectPath()
 		{
 			return GetPath(0);
 		}
@@ -190,27 +227,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected GraphicsPath GetPath(float minWidth)
 		{
 			GraphicsPath gp = new GraphicsPath();
-			Matrix myMatrix = new Matrix();
 
-			gp.AddLine(X + _bounds.X, Y + _bounds.Y, X + _bounds.X + Width, Y + _bounds.Y + Height);
+			gp.AddLine((float)(_bounds.X), (float)(_bounds.Y), (float)(_bounds.X + Width), (float)(_bounds.Y + Height));
 			if (Pen.Width != minWidth)
 				gp.Widen(new Pen(Color.Black, minWidth));
 			else
 				gp.Widen(Pen);
 
-			if (this.Rotation != 0)
-			{
-				myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
-			}
-
-			gp.Transform(myMatrix);
 			return gp;
 		}
 
 		public override IHitTestObject HitTest(HitTestData htd)
 		{
 			HitTestObject result = null;
-			PointF pt = htd.GetHittedPointInWorldCoord();
+			PointF pt = htd.GetHittedPointInWorldCoord(_transformation);
 			GraphicsPath gp = GetSelectionPath();
 			if (gp.IsVisible(pt))
 			{
@@ -239,8 +269,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			GraphicsState gs = g.Save();
       TransformGraphics(g);
-			Pen.BrushRectangle = this._bounds;
-			g.DrawLine(Pen, _bounds.X, _bounds.Y, _bounds.Right, _bounds.Bottom);
+			Pen.BrushRectangle = (RectangleF)_bounds;
+			g.DrawLine(Pen, (float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
+
+			if(_outlinePen!=null && _outlinePen.IsVisible)
+			{
+			GraphicsPath p = new GraphicsPath();
+			p.AddLine((float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
+			p.Widen(Pen);
+			OutlinePen.BrushRectangle = (RectangleF)_bounds;
+			g.DrawPath(OutlinePen, p);
+			}
+
 			g.Restore(gs);
 		}
 	
@@ -258,10 +298,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (gripLevel <= 1)
 				{
 					LineShape ls = (LineShape)_hitobject;
-					PointF[] pts = new PointF[] { new PointF(0, 0), new PointF(ls.Width, ls.Height) };
+					PointF[] pts = new PointF[] { new PointF(0, 0), new PointF((float)ls.Width, (float)ls.Height) };
 					for (int i = 0; i < pts.Length; i++)
 					{
-						var pt = ls._transfoToLayerCoord.TransformPoint(pts[i]);
+						var pt = ls._transformation.TransformPoint(pts[i]);
 						pt = this.Transformation.TransformPoint(pt);
 						pts[i] = pt;
 					}

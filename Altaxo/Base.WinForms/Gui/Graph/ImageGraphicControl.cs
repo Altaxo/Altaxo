@@ -28,7 +28,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph
     #region IShapeGraphicView Members
 
    
-    public PointF DocPosition
+    public PointD2D DocPosition
     {
       get
       {
@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public SizeF DocSize
+    public PointD2D DocSize
     {
       get
       {
@@ -66,11 +66,11 @@ namespace Altaxo.Gui.Graph
         _ctrlPosSize.PositionSizeGlue.Size = value;
       }
     }
-    public float DocRotation
+    public double DocRotation
     {
       get
       {
-        return (float)_ctrlPosSize.PositionSizeGlue.Rotation;
+        return _ctrlPosSize.PositionSizeGlue.Rotation;
       }
       set
       {

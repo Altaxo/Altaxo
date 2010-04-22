@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Gdi.Plot
           int hitindex = -1;
           for (int i = 1; i < ptArray.Length; i++)
           {
-            if (Drawing2DRelated.IsPointIntoDistance(ptArray[i - 1], ptArray[i], hitpoint, 5))
+            if (Drawing2DRelated.IsPointIntoDistance(hitpoint, 5, ptArray[i - 1], ptArray[i]))
             {
               hitindex = i;
               break;
@@ -299,7 +299,7 @@ namespace Altaxo.Graph.Gdi.Plot
         int minindex = -1;
         for (int i = 1; i < ptArray.Length; i++)
         {
-          double distance = Drawing2DRelated.SquareDistanceLineToPoint(ptArray[i - 1], ptArray[i], hitpoint);
+          double distance = Drawing2DRelated.SquareDistanceLineToPoint(hitpoint, ptArray[i - 1], ptArray[i]);
           if (distance < mindistance)
           {
             mindistance = distance;

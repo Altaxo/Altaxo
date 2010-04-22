@@ -614,7 +614,7 @@ namespace Altaxo.Gui.Graph
     }
    
 
-    public float Rotation
+    public double Rotation
     {
       get
       {

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using Altaxo.Graph;
 namespace Altaxo.Gui.Graph
 {
 	public partial class PrintableAreaSetupControl : UserControl, IPrintableAreaSetupView
@@ -18,7 +19,7 @@ namespace Altaxo.Gui.Graph
 
 		#region IPrintableAreaSetupView Members
 
-		public SizeF Area
+		public PointD2D AreaSize
 		{
 			get
 			{

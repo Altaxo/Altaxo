@@ -36,21 +36,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 			static readonly PointF[] _outsideArrowPoints;
 
 			IHitTestObject _parent;
-			PointF _drawrPosition;
-			PointF _fixrPosition;
-			PointF _fixaPosition;
-      SizeF _initialMousePosition;
-      SizeF _initialSize;
+			PointD2D _drawrPosition;
+			PointD2D _fixrPosition;
+			PointD2D _fixaPosition;
+      PointD2D _initialMousePosition;
+      PointD2D _initialSize;
 			TransformationMatrix2D _spanningHalfYRhombus;
 
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
-			public ResizeGripHandle(IHitTestObject parent, PointF relPos, TransformationMatrix2D spanningHalfYRhombus)
+			public ResizeGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
 			{
 				_parent = parent;
 				_drawrPosition = relPos;
-				_fixrPosition = new PointF(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
+				_fixrPosition = new PointD2D(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 				_spanningHalfYRhombus = spanningHalfYRhombus;
 			}
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <param name="initialPosition">Initial position of the mouse.</param>
 			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
 			/// thie activation is due to a regular mouse click in this grip.</param>
-			public void Activate(PointF initialPosition, bool isActivatedUponCreation)
+			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 				
@@ -77,10 +77,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return false;
 			}
 
-			public void MoveGrip(PointF newPosition)
+			public void MoveGrip(PointD2D newPosition)
 			{
         newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-        SizeF diff = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, newPosition);
+        var diff = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, newPosition);
         diff -= _initialMousePosition;
 
         GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialSize);
@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				g.FillPolygon(Brushes.Blue, pts);
 			}
 
-			public bool IsGripHitted(PointF point)
+			public bool IsGripHitted(PointD2D point)
 			{
 				point = _spanningHalfYRhombus.InverseTransformPoint(point);
 				return Calc.RMath.IsInIntervalCC(point.X, -0.5, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);

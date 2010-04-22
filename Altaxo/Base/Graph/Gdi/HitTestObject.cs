@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Gdi
 			/// <param name="initialPosition">Initial position of the mouse.</param>
 			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
 			/// thie activation is due to a regular mouse click in this grip.</param>
-			public void Activate(PointF initialPosition, bool isActivatedUponCreation)
+			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
 			}
 
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Gdi
 				return false;
 			}
 
-			public void MoveGrip(PointF newPosition)
+			public void MoveGrip(PointD2D newPosition)
 			{
 			}
 
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi
 				g.DrawPath(Pens.Blue, _displayPath);
 			}
 
-			public bool IsGripHitted(PointF point)
+			public bool IsGripHitted(PointD2D point)
 			{
 				return false;
 			}

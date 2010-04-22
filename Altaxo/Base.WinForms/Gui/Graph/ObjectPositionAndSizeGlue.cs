@@ -88,11 +88,11 @@ namespace Altaxo.Gui.Graph
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public PointF Position
+    public PointD2D Position
     {
       get
       {
-        return new PointF((float)_positionX, (float)_positionY); 
+        return new PointD2D(_positionX, _positionY); 
       }
       set 
       {
@@ -196,16 +196,16 @@ namespace Altaxo.Gui.Graph
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public SizeF Size
+    public PointD2D Size
     {
       get
       {
-        return new SizeF((float)_sizeX, (float)_sizeY);
+        return new PointD2D(_sizeX, _sizeY);
       }
       set
       {
-        SizeX = value.Width;
-        SizeY = value.Height;
+        SizeX = value.X;
+        SizeY = value.Y;
       }
     }
 

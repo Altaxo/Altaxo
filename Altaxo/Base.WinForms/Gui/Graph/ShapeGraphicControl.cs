@@ -28,7 +28,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public PointF DocPosition
+    public PointD2D DocPosition
     {
       get
       {
@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public SizeF DocSize
+    public PointD2D DocSize
     {
       get
       {
@@ -104,11 +104,11 @@ namespace Altaxo.Gui.Graph
         _ctrlPosSize.PositionSizeGlue.Size = value;
       }
     }
-    public float DocRotation
+    public double DocRotation
     {
       get
       {
-        return (float)_ctrlPosSize.PositionSizeGlue.Rotation;
+        return _ctrlPosSize.PositionSizeGlue.Rotation;
       }
       set
       {
@@ -116,33 +116,33 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public float DocShear
+    public double DocShear
     {
       get
       {
-        return (float)_ctrlPosSize.PositionSizeGlue.Shear;
+        return _ctrlPosSize.PositionSizeGlue.Shear;
       }
       set
       {
         _ctrlPosSize.PositionSizeGlue.Shear = value;
       }
     }
-    public float DocScaleX
+    public double DocScaleX
     {
       get
       {
-        return (float)_ctrlPosSize.PositionSizeGlue.ScaleX;
+        return _ctrlPosSize.PositionSizeGlue.ScaleX;
       }
       set
       {
         _ctrlPosSize.PositionSizeGlue.ScaleX = value;
       }
     }
-    public float DocScaleY
+    public double DocScaleY
     {
       get
       {
-        return (float)_ctrlPosSize.PositionSizeGlue.ScaleY;
+        return _ctrlPosSize.PositionSizeGlue.ScaleY;
       }
       set
       {

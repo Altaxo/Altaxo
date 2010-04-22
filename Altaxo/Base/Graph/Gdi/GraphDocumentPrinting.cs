@@ -59,12 +59,12 @@ namespace Altaxo.Graph.Gdi
 		public static bool ShowPrintableSizeSetupDialog(this GraphDocument doc)
 		{
 			var options = new Altaxo.Gui.Graph.PrintableAreaSetupOptions();
-			options.Area = doc.Layers.GraphSize;
+			options.AreaSize = doc.Layers.GraphSize;
 			object resultobj = options;
 			if (Current.Gui.ShowDialog(ref resultobj, "Setup printable area"))
 			{
 				var result = (Altaxo.Gui.Graph.PrintableAreaSetupOptions)resultobj;
-				doc.Layers.SetGraphSize(result.Area, result.Rescale);
+				doc.Layers.SetGraphSize((SizeF)result.AreaSize, result.Rescale);
 				return true;
 			}
 			return false;

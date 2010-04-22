@@ -28,6 +28,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
+using Altaxo.Graph;
 namespace Altaxo.Gui.Graph
 {
   public partial class TextGraphicControl : UserControl, ITextGraphicView
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public PointF Position
+    public PointD2D Position
     {
       get
       {
@@ -88,7 +89,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public float Rotation
+    public double Rotation
     {
       get
       {

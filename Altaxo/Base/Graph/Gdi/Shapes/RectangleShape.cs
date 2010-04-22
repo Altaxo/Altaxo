@@ -28,7 +28,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Gdi.Shapes
 {
   [Serializable]
-  public class RectangleShape : ShapeGraphic
+  public class RectangleShape : ClosedPathShapeBase
   {
     #region Serialization
 
@@ -122,8 +122,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition)
     {
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
 
     public RectangleShape(float posX, float posY, SizeF graphicSize)
@@ -157,8 +156,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, Rotation)
     {
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
 
     public RectangleShape(float posX, float posY, SizeF graphicSize, float Rotation)
@@ -208,14 +206,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
+      var boundsF = (RectangleF)_bounds;
       if (Brush.IsVisible)
       {
-        Brush.Rectangle = _bounds;
-        g.FillRectangle(Brush, _bounds);
+        Brush.Rectangle = boundsF;
+        g.FillRectangle(Brush, boundsF);
       }
 
-      Pen.BrushRectangle = _bounds;
-      g.DrawRectangle(Pen, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);
+      Pen.BrushRectangle = boundsF;
+      g.DrawRectangle(Pen, (float)_bounds.X, (float)_bounds.Y, (float)_bounds.Width, (float)_bounds.Height);
       g.Restore(gs);
     }
   } // End Class

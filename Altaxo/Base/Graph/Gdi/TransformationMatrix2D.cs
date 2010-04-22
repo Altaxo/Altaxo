@@ -25,6 +25,7 @@ namespace Altaxo.Graph.Gdi
 	/// By inverse transformation of a given point one gets the coordinates inside this rhombus in terms of the spanning vectors.
 	/// </para>
   /// </remarks>
+  [Serializable]
   public class TransformationMatrix2D
   {
     double sx, ry, rx, sy, dx, dy, determinant;
@@ -318,6 +319,11 @@ namespace Altaxo.Graph.Gdi
       x = xh; y = yh;
     }
 
+    public PointD2D TransformPoint(PointD2D pt)
+    {
+      return new PointD2D(pt.X * sx + pt.Y * rx + dx, pt.X * ry + pt.Y * sy + dy);
+    }
+
     public PointF TransformPoint(PointF pt)
     {
       return new PointF((float)(pt.X * sx + pt.Y * rx + dx), (float)(pt.X * ry + pt.Y * sy + dy));
@@ -337,6 +343,11 @@ namespace Altaxo.Graph.Gdi
 			double yh = x * ry + y * sy;
 			x = xh; y = yh;
 		}
+
+    public PointD2D TransformVector(PointD2D pt)
+    {
+      return new PointD2D(pt.X * sx + pt.Y * rx, pt.X * ry + pt.Y * sy);
+    }
 
 		public PointF TransformVector(PointF pt)
 		{
@@ -366,9 +377,19 @@ namespace Altaxo.Graph.Gdi
       y = yh / determinant;
     }
 
+    public PointD2D InverseTransformPoint(PointD2D pt)
+    {
+      return new PointD2D(((pt.X - dx) * sy + (dy - pt.Y) * rx) / determinant, ((dx - pt.X) * ry + (pt.Y - dy) * sx) / determinant);
+    }
+
     public PointF InverseTransformPoint(PointF pt)
     {
       return new PointF((float)(((pt.X - dx) * sy + (dy - pt.Y) * rx) / determinant), (float)(((dx - pt.X) * ry + (pt.Y - dy) * sx) / determinant));
+    }
+
+    public PointD2D InverseTransformVector(PointD2D pt)
+    {
+      return new PointD2D(((pt.X) * sy + (-pt.Y) * rx) / determinant, ((-pt.X) * ry + (pt.Y) * sx) / determinant);
     }
 
     public PointF InverseTransformVector(PointF pt)

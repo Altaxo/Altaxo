@@ -178,8 +178,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
 
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
-      g.TranslateTransform(X,Y);
-      g.RotateTransform(-_rotation);
+      TransformGraphics(g);
       
       // Modification of StringFormat is necessary to avoid 
       // too big spaces between successive words
@@ -204,7 +203,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       else
       {
-        System.Drawing.RectangleF rect = new RectangleF(0, 0, this.Width, this.Height);
+        System.Drawing.RectangleF rect = new RectangleF(0, 0, (float)this.Width, (float)this.Height);
         g.DrawString(_text, _font, new SolidBrush(_color), rect, strfmt);
       }
       

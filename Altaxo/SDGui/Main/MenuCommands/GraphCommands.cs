@@ -510,7 +510,7 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			var layer = ctrl.ActiveLayer;
-			var scale = new Gdi.Shapes.FloatingScale(layer.Size.Width /2 , layer.Size.Height / 2);
+      var scale = new Gdi.Shapes.FloatingScale() { Size = new PointD2D(layer.Size.Width / 2, layer.Size.Height / 2) };
 			layer.GraphObjects.Add(scale);
 		}
 	}

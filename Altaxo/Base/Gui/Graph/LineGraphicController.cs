@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 
@@ -33,9 +33,9 @@ namespace Altaxo.Gui.Graph
   public interface ILineGraphicView
   {
     PenX DocPen { get; set; }
-    System.Drawing.PointF DocPosition { get; set; }
-    System.Drawing.SizeF DocSize { get; set; }
-    float DocRotation { get; set; }
+    PointD2D DocPosition { get; set; }
+    PointD2D DocSize { get; set; }
+    double DocRotation { get; set; }
   }
   public interface ILineGraphicViewEventSink
   {

@@ -32,7 +32,7 @@ using Altaxo.Graph.Scales;
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	[Serializable]
-	public class FloatingScale : ShapeGraphic
+	public class FloatingScale : ClosedPathShapeBase
 	{
 
 		/// <summary>The span this scale should show.</summary>
@@ -130,55 +130,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public FloatingScale()
 		{
 		}
-
-		public FloatingScale(PointF startPosition)
+	
+		public FloatingScale(double  lineWidth, Color lineColor)
 		{
-			this.SetStartPosition(startPosition);
-		}
-
-		public FloatingScale(float posX, float posY)
-			: this(new PointF(posX, posY))
-		{
-		}
-
-		public FloatingScale(PointF startPosition, PointF endPosition)
-			:
-			this(startPosition)
-		{
-			this.SetEndPosition(endPosition);
-			this.AutoSize = false;
-		}
-
-
-		public FloatingScale(float startX, float startY, PointF endPosition)
-			:
-			this(new PointF(startX, startY), endPosition)
-		{
-		}
-
-		public FloatingScale(float startX, float startY, float endX, float endY)
-			:
-			this(new PointF(startX, startY), new PointF(endX, endY))
-		{
-		}
-
-		public FloatingScale(PointF startPosition, PointF endPosition, float lineWidth, Color lineColor)
-			:
-			this(startPosition)
-		{
-			this.SetEndPosition(endPosition);
-			this.Pen.Width = lineWidth;
+			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;
-			this.AutoSize = false;
-		}
-
-		public FloatingScale(float startX, float startY, float endX, float endY, float lineWidth, Color lineColor)
-			:
-			this(new PointF(startX, startY), new PointF(endX, endY))
-		{
-			this.Pen.Width = lineWidth;
-			this.Pen.Color = lineColor;
-			this.AutoSize = false;
 		}
 
 		public FloatingScale(FloatingScale from)
@@ -202,7 +158,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		public override GraphicsPath GetSelectionPath()
+		public GraphicsPath GetSelectionPath()
 		{
       GraphicsPath result;
 			if (Pen.Width <= 5)
@@ -215,7 +171,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
 		}
 
-		public override GraphicsPath GetObjectPath()
+		protected override GraphicsPath GetObjectPath()
 		{
 			return _cachedPath;
 		}
@@ -234,7 +190,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override IHitTestObject HitTest(HitTestData htd)
 		{
-			PointF pt = htd.GetHittedPointInWorldCoord(_transfoToLayerCoord);
+			PointF pt = htd.GetHittedPointInWorldCoord(_transformation);
 			HitTestObject result = null;
 			GraphicsPath gp = GetSelectionPath();
 			if (gp.IsVisible(pt))
@@ -285,7 +241,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_cachedPath = new GraphicsPath();
 			layer.CoordinateSystem.GetIsoline(_cachedPath, rBegin, rEnd);
 
-			Pen.BrushRectangle = this._bounds;
+			Pen.BrushRectangle = (RectangleF)_bounds;
 			g.DrawPath(Pen, _cachedPath);
 
       Data.AltaxoVariant span;

@@ -141,10 +141,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 
-    public DensityImageLegend(DensityImagePlotItem plotItem, PointF initialLocation, SizeF initialSize)
+    public DensityImageLegend(DensityImagePlotItem plotItem, PointF initialLocation, SizeF graphicSize)
     {
       this._position = initialLocation;
-      this.SetSize(initialSize);
+      this.SetSize(graphicSize.Width, graphicSize.Height);
 
       PlotItem = plotItem;
 
@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
 
 			// Update the coordinate system size to meet the size of the graph item
-			_cachedArea.CoordinateSystem.UpdateAreaSize(Size);
+			_cachedArea.CoordinateSystem.UpdateAreaSize((SizeF)Size);
 
       Data.AltaxoVariant porg = _plotItem.Style.Scale.OrgAsVariant;
       Data.AltaxoVariant pend = _plotItem.Style.Scale.EndAsVariant;
@@ -334,13 +334,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
       var graphicsState = g.Save();
-      g.TranslateTransform(X, Y);
-			if (_rotation != -0)
-				g.RotateTransform(-_rotation);
+      TransformGraphics(g);
 
 
       g.DrawImage(_bitmap,
-				new RectangleF(0, 0, Size.Width, Size.Height),
+				new RectangleF(0, 0, (float)Size.X, (float)Size.Y),
 				new RectangleF(0,0,pixelH-1,pixelV-1), GraphicsUnit.Pixel);
 
       _axisStyles.Paint(g, _cachedArea);
@@ -365,7 +363,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public override IHitTestObject HitTest(HitTestData htd)
     {
 
-			var myHitTestData = htd.NewFromAdditionalTransformation(_transfoToLayerCoord);
+			var myHitTestData = htd.NewFromAdditionalTransformation(_transformation);
 
       IHitTestObject result=null;
       foreach(var axstyle in _axisStyles)
@@ -373,7 +371,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (null != axstyle.Title && null != (result = axstyle.Title.HitTest(myHitTestData)))
         {
 					result.Remove = this.EhAxisTitleRemove;
-          result.Transform(_transfoToLayerCoord);
+          result.Transform(_transformation);
           return result;
         }
       }
@@ -396,11 +394,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     class DensityLegendArea : IPlotArea
     {
-      SizeF _size;
+      PointD2D _size;
       ScaleCollection _scales;
       CS.G2DCartesicCoordinateSystem _coordinateSystem;
 
-      public DensityLegendArea(SizeF size, bool isXYInterchanged, bool isXReversed, Scale scale, TickSpacing tickSpacing)
+      public DensityLegendArea(PointD2D size, bool isXYInterchanged, bool isXReversed, Scale scale, TickSpacing tickSpacing)
       {
         _size = size;
         _scales = new ScaleCollection();
@@ -409,7 +407,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         _coordinateSystem = new Altaxo.Graph.Gdi.CS.G2DCartesicCoordinateSystem();
         _coordinateSystem.IsXYInterchanged = isXYInterchanged;
         _coordinateSystem.IsXReverse = isXReversed;
-        _coordinateSystem.UpdateAreaSize(_size);
+        _coordinateSystem.UpdateAreaSize((SizeF)_size);
       }
 
       public DensityLegendArea(DensityLegendArea from)
@@ -448,7 +446,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public SizeF Size
       {
-        get { return _size; }
+        get { return (SizeF)_size; }
 				set { _size = value; }
       }
 

@@ -413,6 +413,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Properties
 
+		public override bool AutoSize
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		public Font Font
     {
       get
@@ -557,16 +565,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 				Matrix transformmatrix = new Matrix();
-				transformmatrix.Translate(X, Y);
-				transformmatrix.Rotate(-_rotation);
-        transformmatrix.Shear(Shear, 0);
-        transformmatrix.Scale(ScaleX, ScaleY);
-				transformmatrix.Translate(_bounds.X, _bounds.Y);
+				transformmatrix.Translate((float)X, (float)Y);
+				transformmatrix.Rotate((float)(-_rotation));
+        transformmatrix.Shear((float)Shear, 0);
+        transformmatrix.Scale((float)ScaleX, (float)ScaleY);
+				transformmatrix.Translate((float)_bounds.X, (float)_bounds.Y);
 
 				if (!bForPreview)
 				{
           TransformGraphics(g);
-					g.TranslateTransform(_bounds.X, _bounds.Y);
+					g.TranslateTransform((float)_bounds.X, (float)_bounds.Y);
 				}
 
 				// first of all paint the background
@@ -595,7 +603,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       IHitTestObject result;
 
-			var pt = htd.GetHittedPointInWorldCoord(_transfoToLayerCoord);
+			var pt = htd.GetHittedPointInWorldCoord(_transformation);
 
       foreach(GraphicsPath gp in this._cachedSymbolPositions.Keys)
       {

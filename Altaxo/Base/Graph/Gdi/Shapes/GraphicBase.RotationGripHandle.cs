@@ -36,16 +36,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 			static GraphicsPath _rotationGripShape;
 
 			IHitTestObject _parent;
-			PointF _drawrPosition;
-			PointF _fixrPosition;
-			PointF _fixaPosition;
+			PointD2D _drawrPosition;
+			PointD2D _fixrPosition;
+			PointD2D _fixaPosition;
 			TransformationMatrix2D _spanningHalfYRhombus;
 
-			public RotationGripHandle(IHitTestObject parent, PointF relPos, TransformationMatrix2D spanningHalfYRhombus)
+			public RotationGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
 			{
 				_parent = parent;
 				_drawrPosition = relPos;
-				_fixrPosition = new PointF(0.5f, 0.5f);
+				_fixrPosition = new PointD2D(0.5f, 0.5f);
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 				_spanningHalfYRhombus = spanningHalfYRhombus;
 			}
@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <param name="initialPosition">Initial position of the mouse.</param>
 			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
 			/// thie activation is due to a regular mouse click in this grip.</param>
-			public void Activate(PointF initialPosition, bool isActivatedUponCreation)
+			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 			}
@@ -74,14 +74,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return false;
 			}
 
-			public void MoveGrip(PointF newPosition)
+			public void MoveGrip(PointD2D newPosition)
 			{
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-
-				SizeF diff = new SizeF();
-
-				diff.Width = newPosition.X - _fixaPosition.X;
-				diff.Height = newPosition.Y - _fixaPosition.Y;
+        var diff = new PointD2D(newPosition.X - _fixaPosition.X, newPosition.Y - _fixaPosition.Y);
 				GraphObject.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff);
 			}
 
@@ -92,7 +88,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				g.FillPath(Brushes.Blue, shape);
 			}
 
-			public bool IsGripHitted(PointF point)
+			public bool IsGripHitted(PointD2D point)
 			{
 				point = _spanningHalfYRhombus.InverseTransformPoint(point);
 				return Calc.RMath.IsInIntervalCC(point.X, 0, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);

@@ -28,7 +28,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Gdi.Shapes
 {
   [Serializable]
-  public abstract class ShapeGraphic : GraphicBase
+  public abstract class ClosedPathShapeBase : GraphicBase
   {
     protected BrushX _fillBrush;
     protected PenX _linePen;
@@ -37,14 +37,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Clipboard serialization
 
-    protected ShapeGraphic(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    protected ClosedPathShapeBase(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
       SetObjectData(this, info, context, null);
     }
 
     public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
-      ShapeGraphic s = this;
+      ClosedPathShapeBase s = this;
       base.GetObjectData(info, context);
 
       info.AddValue("LinePen", s._linePen);
@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
     {
-      ShapeGraphic s = (ShapeGraphic)base.SetObjectData(obj, info, context, selector);
+      ClosedPathShapeBase s = (ClosedPathShapeBase)base.SetObjectData(obj, info, context, selector);
 
       s.Pen = (PenX)info.GetValue("LinePen", typeof(PenX));
       s.Brush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
@@ -70,13 +70,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ShapeGraphic", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeGraphic), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ShapeGraphic", 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClosedPathShapeBase), 2)]
     class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ShapeGraphic s = (ShapeGraphic)obj;
-        info.AddBaseValueEmbedded(s, typeof(ShapeGraphic).BaseType);
+        ClosedPathShapeBase s = (ClosedPathShapeBase)obj;
+        info.AddBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType);
 
         info.AddValue("LinePen", s._linePen);
         info.AddValue("Fill", s._fillBrush.IsVisible);
@@ -85,8 +86,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        ShapeGraphic s = (ShapeGraphic)o;
-        info.GetBaseValueEmbedded(s, typeof(ShapeGraphic).BaseType, parent);
+        ClosedPathShapeBase s = (ClosedPathShapeBase)o;
+        info.GetBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType, parent);
 
 
         s.Pen = (PenX)info.GetValue("LinePen", s);
@@ -99,20 +100,25 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion
 
-    public ShapeGraphic()
+    public ClosedPathShapeBase()
     {
       Brush = new BrushX(Color.Transparent);
       Pen = new PenX(Color.Black);
     }
 
-    public ShapeGraphic(ShapeGraphic from)
+		public ClosedPathShapeBase(PointD2D Position, PointD2D Size)
+			: base(Position, Size)	
+		{
+		}
+
+    public ClosedPathShapeBase(ClosedPathShapeBase from)
       :
       base(from) // all is done here, since CopyFrom is virtual!
     {
     }
     protected override void CopyFrom(GraphicBase bfrom)
     {
-      ShapeGraphic from = bfrom as ShapeGraphic;
+      ClosedPathShapeBase from = bfrom as ClosedPathShapeBase;
       if (from != null)
       {
         this._fillBrush = (BrushX)from._fillBrush.Clone();
@@ -188,7 +194,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       object hitted = o.HittedObject;
       Current.Gui.ShowDialog(ref hitted, "Shape properties", true);
-      ((ShapeGraphic)hitted).OnChanged();
+      ((ClosedPathShapeBase)hitted).OnChanged();
       return true;
     }
 

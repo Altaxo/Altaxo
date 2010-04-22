@@ -36,22 +36,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		protected class PathNodeGripHandle : IGripManipulationHandle
 		{
-			PointF _gripCenter;
-			float _gripRadius;
+			PointD2D _gripCenter;
+			double _gripRadius;
 			IHitTestObject _parent;
-			PointF _drawrPosition;
-			PointF _fixrPosition;
-			PointF _fixaPosition;
+			PointD2D _drawrPosition;
+			PointD2D _fixrPosition;
+			PointD2D _fixaPosition;
 
-			Action<PointF> _moveAction;
+			Action<PointD2D> _moveAction;
 
 			public static Pen PathOutlinePen = new Pen(Color.Blue, 0);
 
-			public PathNodeGripHandle(IHitTestObject parent, PointF relPos, PointF gripCenter, float gripRadius)
+			public PathNodeGripHandle(IHitTestObject parent, PointD2D relPos, PointD2D gripCenter, double gripRadius)
 			{
 				_parent = parent;
 				_drawrPosition = relPos;
-				_fixrPosition = new PointF(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
+				_fixrPosition = new PointD2D(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
 				_fixaPosition = GraphObject.RelativeToAbsolutePosition(_fixrPosition, true);
 
 				_gripCenter = gripCenter;
@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 
-			public PathNodeGripHandle(IHitTestObject parent, PointF relPos, PointF gripCenter, float gripRadius, Action<PointF> moveAction)
+			public PathNodeGripHandle(IHitTestObject parent, PointD2D relPos, PointD2D gripCenter, double gripRadius, Action<PointD2D> moveAction)
 				: this(parent, relPos, gripCenter, gripRadius)
 			{
 				_moveAction = moveAction;
@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <param name="initialPosition">Initial position of the mouse.</param>
 			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
 			/// thie activation is due to a regular mouse click in this grip.</param>
-			public void Activate(PointF initialPosition, bool isActivatedUponCreation)
+			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
 			}
 
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return false;
 			}
 
-			public void MoveGrip(PointF newPosition)
+			public void MoveGrip(PointD2D newPosition)
 			{
 				if (_moveAction != null)
 				{
@@ -99,18 +99,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 				else
 				{
 					newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-					SizeF diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
-					GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff,new SizeF(0,0));
+					var diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
+					GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff,new PointD2D(0,0));
 				}
 			}
 
 
 			public void Show(Graphics g)
 			{
-				g.FillEllipse(Brushes.Blue, _gripCenter.X - _gripRadius, _gripCenter.Y - _gripRadius, 2 * _gripRadius, 2 * _gripRadius);
+				g.FillEllipse(Brushes.Blue, 
+          (float)(_gripCenter.X - _gripRadius), 
+          (float)(_gripCenter.Y - _gripRadius),
+          (float)(2 * _gripRadius),
+          (float)(2 * _gripRadius)
+          );
 			}
 
-			public bool IsGripHitted(PointF point)
+			public bool IsGripHitted(PointD2D point)
 			{
 				return (Calc.RMath.Pow2(point.X - _gripCenter.X) + Calc.RMath.Pow2(point.Y - _gripCenter.Y)) < Calc.RMath.Pow2(_gripRadius);
 			}

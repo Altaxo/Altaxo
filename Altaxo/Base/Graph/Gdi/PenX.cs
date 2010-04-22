@@ -986,6 +986,17 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+		/// <summary>
+		/// Determines if this pen is visible. It is visible if it has a visible brush.
+		/// </summary>
+		public bool IsVisible
+		{
+			get
+			{
+				return (m_Brush != null && m_Brush.IsVisible) || m_Color != Color.Transparent;
+			}
+		}
+
 
     public BrushX BrushHolder
     {

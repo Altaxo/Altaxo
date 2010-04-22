@@ -91,8 +91,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, startingImage)
     {
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
 
     public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, ImageProxy startingImage)
@@ -123,8 +122,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, Rotation, startingImage)
     {
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
     public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, float Rotation, ImageProxy startingImage)
       :
@@ -196,7 +194,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           this.Height = (img.Height / img.VerticalResolution) * g.DpiY;
         }
 
-        g.DrawImage(img, 0, 0, Width, Height);
+        g.DrawImage(img, 0, 0, (float)Width, (float)Height);
 
       }
 

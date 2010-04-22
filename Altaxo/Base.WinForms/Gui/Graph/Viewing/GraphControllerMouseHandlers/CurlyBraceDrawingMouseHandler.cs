@@ -51,7 +51,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 		protected override void FinishDrawing()
 		{
 			RectangleF rect = GetNormalRectangle(_Points[0].layerCoord, _Points[1].layerCoord);
-			CurlyBraceShape go = new CurlyBraceShape(rect.X, rect.Y, rect.Width, rect.Height);
+			CurlyBraceShape go = new CurlyBraceShape(new PointD2D(rect.X, rect.Y), new PointD2D(rect.Width, rect.Height));
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);

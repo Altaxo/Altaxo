@@ -60,7 +60,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 			/// <param name="initialPosition">Initial position of the mouse.</param>
 			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
 			/// thie activation is due to a regular mouse click in this grip.</param>
-			public void Activate(PointF initialPosition, bool isActivatedUponCreation)
+			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
         foreach (var ele in GripList)
           ele.Activate(initialPosition, isActivatedUponCreation);
@@ -74,7 +74,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 				return false;
 			}
 
-      public void MoveGrip(PointF newPosition)
+      public void MoveGrip(PointD2D newPosition)
       {
         foreach (var ele in GripList)
           ele.MoveGrip(newPosition);
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           ele.Show(g);
       }
 
-      public bool IsGripHitted(PointF point)
+      public bool IsGripHitted(PointD2D point)
       {
         foreach (var ele in GripList)
           if (ele.IsGripHitted(point))

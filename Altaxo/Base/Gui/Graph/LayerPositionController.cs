@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph
     void EhView_TopChanged(string txt, ref bool bCancel);
     void EhView_WidthChanged(string txt, ref bool bCancel);
     void EhView_HeightChanged(string txt, ref bool bCancel);
-    void EhView_RotationChanged(float newValue);
+    void EhView_RotationChanged(double newValue);
     void EhView_ScaleChanged(string txt, ref bool bCancel);
     void EhView_ClipDataToFrameChanged(bool value);
   }
@@ -466,7 +466,7 @@ namespace Altaxo.Gui.Graph
         bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref m_Height);
     }
 
-    public void EhView_RotationChanged(float newVal)
+    public void EhView_RotationChanged(double newVal)
     {
       m_Rotation = newVal;
     }

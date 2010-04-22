@@ -31,7 +31,7 @@ namespace Altaxo.Gui.Common.Drawing
 {
   public class RotationComboBox : ComboBox
   {
-    static List<float> _rotationValues;
+    static List<double> _rotationValues;
     bool _textIsDirty;
 
     public RotationComboBox()
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Common.Drawing
       ItemHeight = Font.Height;
     }
 
-    public RotationComboBox(float rotation)
+    public RotationComboBox(double rotation)
       : this()
     {
 
@@ -50,11 +50,11 @@ namespace Altaxo.Gui.Common.Drawing
 
     void SetDefaultValues()
     {
-      _rotationValues = new List<float>();
-      _rotationValues.AddRange(new float[] { 0, 45, 90, 135, 180, 225, 270, 315 });
+      _rotationValues = new List<double>();
+      _rotationValues.AddRange(new double[] { 0, 45, 90, 135, 180, 225, 270, 315 });
     }
 
-    void SetDataSource(float rotation, bool manuallyEnteredByUser)
+    void SetDataSource(double rotation, bool manuallyEnteredByUser)
     {
       this.BeginUpdate();
 
@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       Items.Clear();
 
-      rotation = (float)Math.IEEERemainder(rotation, 360);
+      rotation = Math.IEEERemainder(rotation, 360);
 
       if (manuallyEnteredByUser && !_rotationValues.Contains(rotation))
       {
@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Common.Drawing
         _rotationValues.Sort();
       }
 
-      foreach (float val in _rotationValues)
+      foreach (double val in _rotationValues)
         Items.Add(val);
 
       if (_rotationValues.Contains(rotation))
@@ -86,15 +86,15 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public float Rotation
+    public double Rotation
     {
       get
       {
         if (SelectedItem != null)
-          return (float)SelectedItem;
+          return (double)SelectedItem;
         double v;
         if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out v))
-          return (float)v;
+          return v;
         return 1;
       }
       set
@@ -128,12 +128,10 @@ namespace Altaxo.Gui.Common.Drawing
      
       int minSize = Math.Min(rectColor.Height,rectColor.Width);
       PointF middle = new PointF(rectColor.X+minSize/2,rectColor.Y+minSize/2);
-
-
-      float rot = (float)Items[e.Index];
+      double rot = (double)Items[e.Index];
       PointF dest = new PointF(
-        middle.X+(float)(0.5*minSize*Math.Cos(rot*Math.PI/180)),
-        middle.Y-(float)(0.5*minSize*Math.Sin(rot*Math.PI/180)));
+        (float)(middle.X+(0.5*minSize*Math.Cos(rot*Math.PI/180))),
+        (float)(middle.Y-(0.5*minSize*Math.Sin(rot*Math.PI/180))));
       
 
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
@@ -151,7 +149,7 @@ namespace Altaxo.Gui.Common.Drawing
       double w;
       if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out w))
       {
-        this.SetDataSource((float)w, _textIsDirty);
+        this.SetDataSource(w, _textIsDirty);
       }
       else
       {

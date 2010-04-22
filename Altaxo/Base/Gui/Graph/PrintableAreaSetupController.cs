@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 
 using System.Drawing;
+
+using Altaxo.Graph;
 namespace Altaxo.Gui.Graph
 {
 	public class PrintableAreaSetupOptions : ICloneable
 	{
-		public SizeF Area { get; set; }
+		public PointD2D AreaSize { get; set; }
 		public bool Rescale { get; set; }
 
 		#region ICloneable Members
@@ -24,7 +26,7 @@ namespace Altaxo.Gui.Graph
 
 	public interface IPrintableAreaSetupView
 	{
-		SizeF Area { get; set; }
+		PointD2D AreaSize { get; set; }
 		bool Rescale { get; set; }
 	}
 
@@ -59,7 +61,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (_view != null)
 			{
-				_view.Area = _doc.Area;
+				_view.AreaSize = _doc.AreaSize;
 				_view.Rescale = _doc.Rescale;
 			}
 		}
@@ -94,7 +96,7 @@ namespace Altaxo.Gui.Graph
 
 		public bool Apply()
 		{
-			_doc.Area = _view.Area;
+			_doc.AreaSize = _view.AreaSize;
 			_doc.Rescale = _view.Rescale;
 			return true;
 		}

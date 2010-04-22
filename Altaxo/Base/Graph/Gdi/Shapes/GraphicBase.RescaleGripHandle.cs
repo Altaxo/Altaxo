@@ -36,24 +36,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 			static readonly PointF[] _shapePoints;
 
 			IHitTestObject _parent;
-			PointF _drawrPosition;
-      PointF _drawaPosition;
-			PointF _fixrPosition;
-			PointF _fixaPosition;
-      SizeF _initialMousePosition;
+			PointD2D _drawrPosition;
+      PointD2D _drawaPosition;
+			PointD2D _fixrPosition;
+			PointD2D _fixaPosition;
+      PointD2D _initialMousePosition;
       double _initialScaleX, _initialScaleY;
       TransformationMatrix2D _spanningHalfYRhombus;
 
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
-			public RescaleGripHandle(IHitTestObject parent, PointF relPos, TransformationMatrix2D spanningHalfYRhombus)
+			public RescaleGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
 			{
 				_parent = parent;
 				_drawrPosition = relPos;
         _drawaPosition = GraphObject.RelativeToAbsolutePosition(_drawrPosition, true);
 
-        _fixrPosition = new PointF(1- relPos.X, 1-relPos.Y);
+        _fixrPosition = new PointD2D(1- relPos.X, 1-relPos.Y);
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 				
         _spanningHalfYRhombus = spanningHalfYRhombus;
@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			#region IGripManipulationHandle Members
 
-			public void Activate(PointF initialPosition, bool isActivatedUponCreation)
+			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
         initialPosition = _parent.Transformation.InverseTransformPoint(initialPosition);
         _initialMousePosition = GraphObject.ToUnrotatedDifference(_fixaPosition, initialPosition);
@@ -79,10 +79,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return false;
 			}
 
-			public void MoveGrip(PointF newPosition)
+			public void MoveGrip(PointD2D newPosition)
 			{
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-				SizeF diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
+				var diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
         diff -= _initialMousePosition;
 
 
@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				g.FillPolygon(Brushes.Blue, pts);
 			}
 
-			public bool IsGripHitted(PointF point)
+			public bool IsGripHitted(PointD2D point)
 			{
 				point = _spanningHalfYRhombus.InverseTransformPoint(point);
 				return Calc.RMath.IsInIntervalCC(point.X, 0, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);

@@ -1302,7 +1302,7 @@ namespace Altaxo.Gui.Graph
       InitComboBox(this.m_cbAttachedAxis,names,sel);
     }
 
-    public float Rotation
+    public double Rotation
     {
 
       get

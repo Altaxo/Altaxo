@@ -36,7 +36,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="strwr">A stream writer to write the ascii data to.</param>
     /// <param name="table">The data table whichs data column names should be exported.</param>
-    /// <param name="separator">The separator char. If the text to export contains the separator char, it is replaced by a space.</param>
+    /// <param name="options">The options controlling the export process.</param>
     static protected void ExportDataColumnNames(StreamWriter strwr, Altaxo.Data.DataTable table, AsciiExportOptions options)
     {
       int nColumns = table.DataColumns.ColumnCount;

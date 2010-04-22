@@ -26,9 +26,9 @@ namespace Altaxo.Graph.Scales.Ticks
         360  // 1°
       };
 
-		/// <summary>Major tick divider. Should be one of the values of the table <see cref="_possibleDividers /></summary>
+		/// <summary>Major tick divider. Should be one of the values of the table <see cref="_possibleDividers"/></summary>
 		protected int _majorTickDivider = 8;
-		/// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers /></summary>
+		/// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers"/></summary>
 		protected int _minorTickDivider = 24;
 		/// <summary>If true, the scale uses positive and negative values (-180..180°) instead of only positive values (0..360°).</summary>
 		protected bool _usePositiveNegativeAngles;

@@ -665,7 +665,7 @@
     <Compile Include="Graph\Gdi\Shapes\LineShape.cs" />
     <Compile Include="Graph\Gdi\Shapes\LinkedImageGraphic.cs" />
     <Compile Include="Graph\Gdi\Shapes\RectangleShape.cs" />
-    <Compile Include="Graph\Gdi\Shapes\ShapeGraphic.cs" />
+    <Compile Include="Graph\Gdi\Shapes\ClosedPathShapeBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphic.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer.cs" />
@@ -690,7 +690,7 @@
     <Compile Include="Graph\Plot\Groups\PlotGroupStyleCollectionBase.cs" />
     <Compile Include="Graph\Plot\Groups\SkipFrequencyGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\SymbolSizeGroupStyle.cs" />
-    <Compile Include="Graph\PointD.cs" />
+    <Compile Include="Graph\PointD2D.cs" />
     <Compile Include="Graph\Scales\AngularRadianScale.cs" />
     <Compile Include="Graph\Scales\AngularScale.cs" />
     <Compile Include="Graph\Scales\DateTimeScale.cs" />
@@ -868,6 +868,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graph\Gdi\Shapes\OpenPathShapeBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.HitTestObject.cs" />
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.MovementGripHandle.cs" />
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.PathNodeGripHandle.cs" />

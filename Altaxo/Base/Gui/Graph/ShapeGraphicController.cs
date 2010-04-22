@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 
@@ -35,31 +35,31 @@ namespace Altaxo.Gui.Graph
     PenX DocPen { get; set; }
     BrushX DocBrush { get; set; }
     bool IsFilled { get; set; }
-    System.Drawing.PointF DocPosition { get; set; }
-    System.Drawing.SizeF DocSize { get; set; }
-    float DocRotation { get; set; }
-    float DocShear { get; set; }
-    float DocScaleX { get; set; }
-    float DocScaleY { get; set; }
+    PointD2D DocPosition { get; set; }
+    PointD2D DocSize { get; set; }
+    double DocRotation { get; set; }
+    double DocShear { get; set; }
+    double DocScaleX { get; set; }
+    double DocScaleY { get; set; }
   }
   public interface IShapeGraphicViewEventSink
   {
   }
 
-  [UserControllerForObject(typeof(ShapeGraphic))]
+  [UserControllerForObject(typeof(ClosedPathShapeBase))]
   [ExpectedTypeOfView(typeof(IShapeGraphicView))]
   public class ShapeGraphicController : IShapeGraphicViewEventSink, IMVCAController
   {
     IShapeGraphicView _view;
-    ShapeGraphic _doc;
-    ShapeGraphic _tempdoc;
+    ClosedPathShapeBase _doc;
+    ClosedPathShapeBase _tempdoc;
 
     #region IMVCController Members
 
-    public ShapeGraphicController(ShapeGraphic doc)
+    public ShapeGraphicController(ClosedPathShapeBase doc)
     {
       _doc = doc;
-      _tempdoc = (ShapeGraphic)doc.Clone();
+      _tempdoc = (ClosedPathShapeBase)doc.Clone();
       Initialize(true);
     }
 

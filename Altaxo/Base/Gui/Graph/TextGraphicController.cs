@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Shapes;
@@ -40,8 +41,8 @@ namespace Altaxo.Gui.Graph
     ITextGraphicViewEventSink Controller { set; }
     IBackgroundStyle Background { get; set; }
     string EditText { get; set; }
-    System.Drawing.PointF Position { get; set; }
-    float Rotation { get; set; }
+    PointD2D Position { get; set; }
+    double Rotation { get; set; }
     System.Drawing.FontFamily FontFamily { get; set; }
     float FontSize { get; set; }
     BrushX FontColor { get; set; }

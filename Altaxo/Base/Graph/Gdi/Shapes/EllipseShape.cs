@@ -28,7 +28,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Gdi.Shapes
 {
   [Serializable]
-  public class EllipseShape : ShapeGraphic
+  public class EllipseShape : ClosedPathShapeBase
   {
 
     #region Serialization
@@ -121,8 +121,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       this(graphicPosition)
     {
 
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
 
     public EllipseShape(float posX, float posY, SizeF graphicSize)
@@ -155,8 +154,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       this(graphicPosition, Rotation)
     {
-      this.SetSize(graphicSize);
-      this.AutoSize = false;
+      this.SetSize(graphicSize.Width, graphicSize.Height);
     }
 
     public EllipseShape(float posX, float posY, SizeF graphicSize, float Rotation)
@@ -184,15 +182,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new EllipseShape(this);
     }
 
-    public override GraphicsPath GetSelectionPath()
+    public GraphicsPath GetSelectionPath()
     {
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
 
-      gp.AddEllipse(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
+      gp.AddEllipse(new RectangleF((float)(X + _bounds.X), (float)(Y + _bounds.Y), (float)Width, (float)Height));
       if (this.Rotation != 0)
       {
-        myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
+        myMatrix.RotateAt((float)(-this._rotation), (PointF)Position, MatrixOrder.Append);
       }
 
       gp.Transform(myMatrix);
@@ -204,14 +202,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
+      var boundsF = (RectangleF)_bounds;
       if (Brush.IsVisible)
       {
-        Brush.Rectangle = _bounds;
-        g.FillEllipse(Brush, _bounds);
+        Brush.Rectangle = boundsF;
+        g.FillEllipse(Brush, boundsF);
       }
 
-      Pen.BrushRectangle = _bounds;
-      g.DrawEllipse(Pen, _bounds);
+      Pen.BrushRectangle = boundsF;
+      g.DrawEllipse(Pen, boundsF);
       g.Restore(gs);
     }
   } // end class
