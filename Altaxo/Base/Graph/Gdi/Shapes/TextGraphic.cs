@@ -526,6 +526,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_rootNode.Draw(g, dc, y, y + _rootNode.ExtendAboveBaseline);
 		}
 
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      return GetRectangularObjectOutline();
+    }
+
+
 		public override void Paint(Graphics g, object obj)
     {
       Paint(g,obj,false);
@@ -599,7 +609,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public static DoubleClickHandler TextGraphicsEditorMethod;
 
 
-    public override IHitTestObject HitTest(HitTestData htd)
+    public override IHitTestObject HitTest(HitTestPointData htd)
     {
       IHitTestObject result;
 
@@ -607,7 +617,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       foreach(GraphicsPath gp in this._cachedSymbolPositions.Keys)
       {
-        if(gp.IsVisible(pt))
+        if (gp.IsVisible((PointF)pt))
         {
           result =  new HitTestObject(gp,_cachedSymbolPositions[gp]);
           result.DoubleClick = PlotItemEditorMethod;

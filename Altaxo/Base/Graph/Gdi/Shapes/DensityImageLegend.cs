@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -12,8 +13,8 @@ namespace Altaxo.Graph.Gdi.Shapes
   using Altaxo.Graph;
   using Altaxo.Graph.Gdi.Axis;
   
-
-  public class DensityImageLegend : GraphicBase
+  [Serializable]
+  public class DensityImageLegend : GraphicBase, Main.IChildChangedEventSink
   {
     const int _bitmapPixelsAcross = 2;
     const int _bitmapPixelsAlong = 1024;
@@ -25,19 +26,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
     protected AxisStyleCollection _axisStyles;
 
-
-//		bool _orientationIsVertical;
-
-//		bool _scaleIsReversed;
-
 		// Cached members
-
-	
-
 		Bitmap _bitmap;
 
 		/// <summary>The plot item this legend is intended for.</summary>
 		DensityImagePlotItem _plotItem;
+
 
     DensityLegendArea _cachedArea;
 
@@ -116,6 +110,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         var cachedScale = (NumericalScale)info.GetValue("Scale", parent);
         var scaleTickSpacing = (TickSpacing)info.GetValue("TickSpacing", parent);
         s._axisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", parent);
+        s._axisStyles.ParentObject = s;
         s._cachedArea = new DensityLegendArea(s.Size, isOrientationVertical, isScaleReversed, cachedScale, scaleTickSpacing);
         s._axisStyles.UpdateCoordinateSystem(s._cachedArea.CoordinateSystem);
 
@@ -191,6 +186,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       sy0.Title.YAnchor = YAnchorPositionType.Bottom;
       sy0.Title.X = Width / 2;
       sy0.Title.Y = sy0.Title.Height / 2;
+
+    // set the parent objects
+      _axisStyles.ParentObject = this;
+
+    
     }
 
 		public DensityImageLegend(DensityImageLegend from)
@@ -208,6 +208,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				this._axisStyles = (AxisStyleCollection)from._axisStyles.Clone();
         this._axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
+        this._axisStyles.ParentObject = this;
 
 				this._bitmap = (Bitmap)from._bitmap.Clone();
 				this.PlotItem = from._plotItem;
@@ -282,6 +283,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         return ((CS.G2DCartesicCoordinateSystem)_cachedArea.CoordinateSystem).IsXReverse;
       }
+    }
+
+
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      return GetRectangularObjectOutline();
     }
 
     public override void Paint(System.Drawing.Graphics g, object obj)
@@ -360,7 +371,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return false;
 		}
 
-    public override IHitTestObject HitTest(HitTestData htd)
+    public override IHitTestObject HitTest(HitTestPointData htd)
     {
 
 			var myHitTestData = htd.NewFromAdditionalTransformation(_transformation);
@@ -388,6 +399,17 @@ namespace Altaxo.Graph.Gdi.Shapes
       Current.Gui.ShowDialog(new object[] { o.HittedObject }, "Edit density image legend", true);
       return false;
     }
+
+
+    #region IChildChangedEventSink Members
+
+    public new void EhChildChanged(object child, EventArgs e)
+    {
+      OnChanged();
+    }
+
+    #endregion
+
 
 
     #region Inner classes
@@ -479,5 +501,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
     #endregion
+
   }
 }

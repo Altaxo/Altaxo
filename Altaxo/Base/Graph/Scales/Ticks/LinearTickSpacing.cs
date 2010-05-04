@@ -702,6 +702,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		{
 			if (targetNumberOfMajorTicks <= 0)
 				throw new ArgumentOutOfRangeException("targetNumberOfMajorTicks is <= 0");
+      if (!(scaleSpan > 0))
+        throw new ArgumentOutOfRangeException("scaleSpan must be >0");
 
 			double rawMajorSpan = scaleSpan / targetNumberOfMajorTicks;
 			int log10RawMajorSpan = (int)Math.Floor(Math.Log10(rawMajorSpan));
@@ -869,10 +871,16 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <param name="minorTicks">Returns the proposed value of the number of minor ticks.</param>
 		public void CalculateBoundaries(double overrideScaleSpan, double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd, out double majorSpan, out int minorTicks)
 		{
-			if (null != _userDefinedMajorSpan)
-				majorSpan = (double)_userDefinedMajorSpan;
-			else
-				majorSpan = CalculateMajorSpan(overrideScaleSpan, _targetNumberOfMajorTicks);
+      if (null != _userDefinedMajorSpan)
+        majorSpan = (double)_userDefinedMajorSpan;
+      else
+      {
+        if (!(overrideScaleSpan > 0))
+          throw new ArgumentOutOfRangeException("overrideScaleSpan must be >0");
+
+        majorSpan = CalculateMajorSpan(overrideScaleSpan, _targetNumberOfMajorTicks);
+
+      }
 
 			if (null != _userDefinedMinorTicks)
 				minorTicks = (int)_userDefinedMinorTicks;

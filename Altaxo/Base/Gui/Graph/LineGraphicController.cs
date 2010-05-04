@@ -41,20 +41,20 @@ namespace Altaxo.Gui.Graph
   {
   }
 
-  [UserControllerForObject(typeof(LineShape),101)]
+  [UserControllerForObject(typeof(OpenPathShapeBase),101)]
   [ExpectedTypeOfView(typeof(ILineGraphicView))]
   public class LineGraphicController : ILineGraphicViewEventSink, IMVCAController
   {
     ILineGraphicView _view;
-    LineShape _doc;
-    LineShape _tempdoc;
+    OpenPathShapeBase _doc;
+    OpenPathShapeBase _tempdoc;
 
     #region IMVCController Members
 
-    public LineGraphicController(LineShape doc)
+    public LineGraphicController(OpenPathShapeBase doc)
     {
       _doc = doc;
-      _tempdoc = (LineShape)doc.Clone();
+      _tempdoc = (OpenPathShapeBase)doc.Clone();
       Initialize(true);
     }
 

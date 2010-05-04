@@ -114,6 +114,25 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return new ShapeGroup(this);
 		}
 
+		public override bool AutoSize
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      GraphicsPath result = new GraphicsPath();
+      foreach (var ele in _groupedObjects)
+        result.AddPath(ele.GetObjectOutlineForArrangements(), false);
+      return result;
+    }
 
 		/// <summary>
 		/// Paint the shape group in the graphic context.

@@ -96,7 +96,8 @@ namespace Altaxo.Calc
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.Min(x,y); }
     public static Altaxo.Data.DoubleColumn Min(double x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Min(x,y); }
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Pow(x,y); }
-    public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.Pow(x,y); }
+    public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, int y) { return Altaxo.Data.DoubleColumn.Pow(x, y); }
+    public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.Pow(x, y); }
     public static Altaxo.Data.DoubleColumn Pow(double x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Pow(x,y); }
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x) { return Altaxo.Data.DoubleColumn.Round(x); }
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn i) { return Altaxo.Data.DoubleColumn.Round(x,i); }

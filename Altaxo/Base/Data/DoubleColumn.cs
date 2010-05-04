@@ -2307,6 +2307,18 @@ namespace Altaxo.Data
       return c3;  
     }
 
+    public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, int c2)
+    {
+      int len = c1._count;
+      Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+      for (int i = 0; i < len; i++)
+      {
+        c3._data[i] = Altaxo.Calc.RMath.Pow(c1._data[i], c2);
+      }
+      c3._count = len;
+      return c3;
+    }
+
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, double c2)
     {
       int len = c1._count;

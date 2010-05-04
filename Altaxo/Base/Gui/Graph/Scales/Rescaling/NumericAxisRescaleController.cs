@@ -287,6 +287,12 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     public bool Apply()
     {
+      if (!(_end > _org))
+      {
+        Current.Gui.ErrorMessageBox("Please note: End must be greater than org.");
+        return false;
+      }
+
       _doc.SetOrgEndSpan(_orgRescaling,_org,_endRescaling,_end,_spanRescaling,_span,_minorTicks,_majorTick);
       
 

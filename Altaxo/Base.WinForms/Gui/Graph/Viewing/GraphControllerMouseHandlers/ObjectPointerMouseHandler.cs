@@ -45,14 +45,35 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     class SuperGrip : IGripManipulationHandle
     {
       /// <summary>List of all collected grips.</summary>
-      public List<IGripManipulationHandle> GripList { get; private set; }
+			private List<IGripManipulationHandle> GripList;
+			private List<IHitTestObject> HittedList;
 
       public SuperGrip()
       {
         GripList = new List<IGripManipulationHandle>();
+				HittedList = new List<IHitTestObject>();
       }
 
-      #region IGripManipulationHandle Members
+			public void Add(IGripManipulationHandle gripHandle, IHitTestObject hitTestObject)
+			{
+				GripList.Add(gripHandle);
+				HittedList.Add(hitTestObject);
+			}
+
+			public void Remove(IGripManipulationHandle gripHandle)
+			{
+				for (int i = GripList.Count - 1; i >= 0; i--)
+				{
+					if (object.ReferenceEquals(gripHandle, GripList[i]))
+					{
+						GripList.RemoveAt(i);
+						HittedList.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			#region IGripManipulationHandle Members
 
 			/// <summary>
 			/// Activates this grip, providing the initial position of the mouse.
@@ -62,8 +83,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 			/// thie activation is due to a regular mouse click in this grip.</param>
 			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
-        foreach (var ele in GripList)
-          ele.Activate(initialPosition, isActivatedUponCreation);
+				foreach (var ele in GripList)
+					ele.Activate(initialPosition, isActivatedUponCreation);
       }
 
 			public bool Deactivate()
@@ -93,6 +114,23 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
             return true;
         return false;
       }
+
+			public bool GetHittedElement(PointD2D point, out IGripManipulationHandle gripHandle, out IHitTestObject hitObject)
+			{
+				for (int i = GripList.Count - 1; i >= 0; i--)
+				{
+					if (GripList[i].IsGripHitted(point))
+					{
+						gripHandle = GripList[i];
+						hitObject = HittedList[i];
+						return true;
+					}
+				}
+
+				gripHandle = null;
+				hitObject = null;
+				return false;
+			}
 
       #endregion
     }
@@ -242,56 +280,55 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     ///   if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
     ///                                                                                                  if no object was found clear the selection list, deactivate moving mode
     /// </remarks>
-    public override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
-    {
-      base.OnMouseDown( e);
+			public override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+			{
+				base.OnMouseDown(e);
 
-      if(e.Button != MouseButtons.Left)
-        return ; // then there is nothing to do here
+				if (e.Button != MouseButtons.Left)
+					return; // then there is nothing to do here
 
-      // first, if we have a mousedown without shift key and the
-      // position has changed with respect to the last mousedown
-      // we have to deselect all objects
-      bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-      bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+				// first, if we have a mousedown without shift key and the
+				// position has changed with respect to the last mousedown
+				// we have to deselect all objects
+				bool bControlKey = (Keys.Control == (Control.ModifierKeys & Keys.Control)); // Control pressed
+				bool bShiftKey = (Keys.Shift == (Control.ModifierKeys & Keys.Shift));
 
-      PointF mouseXY = new PointF(e.X,e.Y);                           // Mouse pixel coordinates
-      PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
+				PointF mouseXY = new PointF(e.X, e.Y);                           // Mouse pixel coordinates
+				PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
 
 
-      ActiveGrip = GripHitTest(graphXY);
-      if (ActiveGrip != null)
-      {
-        ActiveGrip.Activate(graphXY, false);
-        return;
-      }
-  
-      // have we clicked on one of the already selected objects
-      IHitTestObject clickedSelectedObject=null;
-      bool bClickedOnAlreadySelectedObjects = IsPixelPositionOnAlreadySelectedObject(mouseXY, out clickedSelectedObject);
+				ActiveGrip = GripHitTest(graphXY);
+				if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
+				{
+					var superGrip = ActiveGrip as SuperGrip;
+					IHitTestObject hitTestObj;
+					IGripManipulationHandle gripHandle;
+					if (superGrip.GetHittedElement(graphXY, out gripHandle, out hitTestObj))
+					{
+						_selectedObjects.Remove(hitTestObj);
+						superGrip.Remove(gripHandle);
+						_grac.WinFormsController.RefreshGraph(); // repaint the graph
+						return;
+					}
+				}
+				else if (ActiveGrip != null)
+				{
+					ActiveGrip.Activate(graphXY, false);
+					return;
+				}
 
-      if(bClickedOnAlreadySelectedObjects)
-      {
-        if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
-        {
-          _selectedObjects.Remove(clickedSelectedObject);
-          _grac.WinFormsController.RefreshGraph(); // repaint the graph
-        }
-      } // end if bClickedOnAlreadySelectedObjects
-      else // not clicked on a already selected object
-      {
-        // search for a object first
-        IHitTestObject clickedObject;
-        int clickedLayerNumber=0;
-        _grac.WinFormsController.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
+				// search for a object first
+				IHitTestObject clickedObject;
+				int clickedLayerNumber = 0;
+				_grac.WinFormsController.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
 
-        if(!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
-          ClearSelections();
+				if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
+					ClearSelections();
 
-        if(null!=clickedObject)
-            AddSelectedObject(graphXY, clickedObject);
-      } // end else (not cklicked on already selected object)
-    } // end of function
+				if (null != clickedObject)
+					AddSelectedObject(graphXY, clickedObject);
+
+			} // end of function
 
     private void AddSelectedObject(PointF graphXY, IHitTestObject clickedObject)
     {
@@ -326,8 +363,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         var superGrip = new SuperGrip();
         // now we have multiple selected objects
         // we get the grips of all objects and collect them in one supergrip
-        foreach (var sel in _selectedObjects)
-          superGrip.GripList.AddRange(sel.GetGrips(_grac.GC.ZoomFactor, 0));
+				foreach (var sel in _selectedObjects)
+				{
+					var grips = sel.GetGrips(_grac.GC.ZoomFactor, 0);
+					if(grips.Length>0)
+						superGrip.Add(grips[0], sel);
+				}
 
         return new IGripManipulationHandle[] { superGrip };
       }
@@ -436,31 +477,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 			DisplayedGrips = GetGripsFromSelectedObjects(); // Update grip positions according to the move
       DisplayGrips(g);
       base.AfterPaint (g);
-    }
-
-    /// <summary>
-    /// Determines whether or not the pixel position in <paramref name="pixelPos"/> is on a already selected object
-    /// </summary>
-    /// <param name="pixelPos">The pixel position to test (on the graph panel)</param>
-    /// <param name="foundObject">Returns the object the position <paramref name="pixelPos"/> is pointing to, else null</param>
-    /// <returns>True when the pixel position is upon a selected object, else false</returns>
-    public bool IsPixelPositionOnAlreadySelectedObject(PointF pixelPos, out IHitTestObject foundObject)
-    {
-      PointF graphXY = _grac.WinFormsController.PixelToPrintableAreaCoordinates(pixelPos); // Graph area coordinates
-
-      // have we clicked on one of the already selected objects
-      foreach(IHitTestObject graphObject in _selectedObjects)
-      {
-       
-        
-        if(graphObject.SelectionPath.IsVisible(graphXY))
-        {
-          foundObject = graphObject;
-          return true;
-        }
-      }
-      foundObject = null;
-      return false;
     }
 
     /// <summary>

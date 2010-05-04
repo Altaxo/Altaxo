@@ -27,10 +27,16 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Base class for all open (not closed) shapes, like line, curly brace etc.
+  /// </summary>
   [Serializable]
   public abstract class OpenPathShapeBase : GraphicBase
   {
+    /// <summary>If not null, this pens draw the outline of the shape.</summary>
     protected PenX _outlinePen;
+    
+    /// <summary>Pen to draw the shape.</summary>
     protected PenX _linePen;
 
 		#region Serialization
@@ -104,6 +110,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public OpenPathShapeBase(PointD2D Position, PointD2D Size)
 			: base(Position, Size)	
 		{
+      Pen = new PenX(Color.Black);
 		}
 
     public OpenPathShapeBase(OpenPathShapeBase from)
@@ -167,7 +174,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
 
-    public override IHitTestObject HitTest(HitTestData htd)
+    public override IHitTestObject HitTest(HitTestPointData htd)
     {
       IHitTestObject result = base.HitTest(htd);
       if (result != null)
@@ -175,7 +182,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
-		public override IHitTestObject HitTest(RectangleF rect)
+		public override IHitTestObject HitTest(HitTestRectangularData rect)
 		{
 			IHitTestObject result = base.HitTest(rect);
 			if (result != null)

@@ -75,7 +75,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public abstract Image GetImage();
 
-		public override IHitTestObject HitTest(HitTestData htd)
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      return GetRectangularObjectOutline();
+    }
+
+		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
 			IHitTestObject result = base.HitTest(htd);
 			if (result != null)

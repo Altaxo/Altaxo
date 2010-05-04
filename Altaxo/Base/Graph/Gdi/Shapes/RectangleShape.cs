@@ -201,6 +201,16 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
 
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      return GetRectangularObjectOutline();
+    }
+
+
     public override void Paint(Graphics g, object obj)
     {
       GraphicsState gs = g.Save();

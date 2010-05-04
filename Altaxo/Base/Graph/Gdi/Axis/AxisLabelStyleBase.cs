@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <returns>The cloned copy of this object.</returns>
     public abstract object Clone();
 
-    public abstract IHitTestObject HitTest(IPlotArea layer, PointF pt);
+    public abstract IHitTestObject HitTest(IPlotArea layer, PointD2D pt);
 
     public abstract float FontSize { get; set; }
 

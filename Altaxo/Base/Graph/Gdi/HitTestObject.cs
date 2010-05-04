@@ -30,7 +30,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Gdi
 {
 	using Shapes;
-	public class HitTestObject : IHitTestObject
+	public abstract class HitTestObjectBase : IHitTestObject
 	{
 		#region Internal classes
 
@@ -84,71 +84,46 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion
 
-		protected GraphicsPath _objectPath;
-		protected GraphicsPath _selectionPath; // can be null, in this case the object path is used
-
+		/// <summary>
+		/// Transformation matrix which transforms the coordinates of the parent of the hitted object (i.e. the parent layer)
+		/// into page coordinates.
+		/// </summary>
 		protected TransformationMatrix2D _matrix;
+
+		/// <summary>The hitted object.</summary>
 		protected object _hitobject;
 
 		#region IHitTestObject Members
 
-		public HitTestObject(GraphicsPath gp, object hitobject)
-			: this(gp, null, hitobject)
+		/// <summary>
+		/// Creates a new HitTestObject.
+		/// </summary>
+		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects. 
+		/// You have to provide it in coordinates of the parent layer.</param>
+		/// <param name="hitobject">The hitted object.</param>
+		public HitTestObjectBase(object hitobject)
 		{
-		}
-
-		public HitTestObject(GraphicsPath gp, GraphicsPath selectionPath, object hitobject)
-		{
-			_objectPath = gp;
-			_selectionPath = selectionPath;
 			_hitobject = hitobject;
 			_matrix = new TransformationMatrix2D();
 		}
 
-
 		/// <summary>
-		/// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
+		/// This will return the transformation matrix.
+		/// This matrix translates from coordinates of the parent of the object (i.e. mostly the parent layer) to global coordinates.
 		/// </summary>
 		public TransformationMatrix2D Transformation
 		{
 			get { return _matrix; }
 		}
 
-
-		public void Transform(TransformationMatrix2D x)
+    /// <summary>
+    /// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
+    /// </summary>
+    /// <param name="x">The transformation to append.</param>
+		public virtual void Transform(TransformationMatrix2D x)
 		{
-			_matrix.PrependTransform(x);
-
-			_objectPath.Transform(x);
-			if (_selectionPath != null) _selectionPath.Transform(x);
+			_matrix.AppendTransform(x);
 		}
-
-
-		public void Transform(Matrix x)
-		{
-			_matrix.PrependTransform(x);
-
-			_objectPath.Transform(x);
-			if (_selectionPath != null) _selectionPath.Transform(x);
-		}
-
-
-		public GraphicsPath SelectionPath
-		{
-			get
-			{
-				return _selectionPath != null ? _selectionPath : _objectPath;
-			}
-		}
-
-		public GraphicsPath ObjectPath
-		{
-			get
-			{
-				return _objectPath;
-			}
-		}
-
 
 		public object HittedObject
 		{
@@ -156,39 +131,30 @@ namespace Altaxo.Graph.Gdi
 			set { _hitobject = value; }
 		}
 
+		public abstract GraphicsPath ObjectOutlineForArrangements { get; }
+
+
 
 		/// <summary>
 		/// Shows the grips, i.e. the special areas for manipulation of the object.
 		/// </summary>
 		/// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
 		/// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-		public virtual IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
-		{
-			return new IGripManipulationHandle[] { new NoopGrip(_objectPath) };
-		}
+		public abstract IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel);
 
 		public virtual int GetNextGripLevel(int currentGripLevel)
 		{
 			return currentGripLevel;
 		}
 
-		public virtual void ShiftPosition(float x, float y)
-		{
 
-			if (_hitobject is GraphicBase)
-			{
-				Matrix mat = new Matrix();
-				mat.Translate(x, y);
-				_objectPath.Transform(mat);
-				if (null != _selectionPath) _selectionPath.Transform(mat);
-
-				PointF pos = new PointF(x, y);
-				_matrix.InverseTransformVector(pos);
-
-				((GraphicBase)_hitobject).X += pos.X;
-				((GraphicBase)_hitobject).Y += pos.Y;
-			}
-		}
+		/// <summary>
+		/// Shifts the position of the object by x and y. Used to arrange objects.
+		/// </summary>
+		/// <param name="dx">Shift value of x in page coordinates.</param>
+		/// <param name="dy">Shift value of y in page coordinates.</param>
+		public abstract void ShiftPosition(double dx, double dy);
+	
 
 
 		DoubleClickHandler _DoubleClick;
@@ -227,6 +193,89 @@ namespace Altaxo.Graph.Gdi
 		{
 			get { return _parentLayer; }
 			set { _parentLayer = value; }
+		}
+
+		#endregion
+	}
+
+
+  /// <summary>
+  /// This class holds the arrangement path by itself.
+  /// </summary>
+	public class HitTestObject : HitTestObjectBase
+	{
+		/// <summary>
+		/// Path of the outline of the object. Is used to arrange objects. The path is in page coordinates.
+		/// </summary>
+		protected GraphicsPath _objectPath;
+
+		#region IHitTestObject Members
+
+		/// <summary>
+		/// Creates a new HitTestObject.
+		/// </summary>
+		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects. 
+		/// You have to provide it in coordinates of the parent layer.</param>
+		/// <param name="hitobject">The hitted object.</param>
+		public HitTestObject(GraphicsPath objectPath, object hitobject)
+			: base(hitobject)
+		{
+			_objectPath = objectPath;
+		}
+
+		/// <summary>
+		/// Creates a new HitTestObject.
+		/// </summary>
+		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects. 
+		/// This path is in object world coordinates.</param>
+		/// <param name="transformation">Transformation matrix of the object.</param>
+		/// <param name="hitobject">The hitted object.</param>
+		public HitTestObject(GraphicsPath objectPath, TransformationMatrix2D transformation, object hitobject)
+			: base(hitobject)
+		{
+			_objectPath = objectPath;
+			_objectPath.Transform(transformation);
+		}
+
+    /// <summary>
+    /// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
+    /// </summary>
+    /// <param name="x">The transformation to append.</param>
+		public override void Transform(TransformationMatrix2D x)
+		{
+			base.Transform(x);
+			_objectPath.Transform(x);
+		}
+
+		/// <summary>
+		/// Returns the object path in page coordinates. This path is used for the arrangement of multiple selected objects.
+		/// </summary>
+		public override GraphicsPath ObjectOutlineForArrangements
+		{
+			get
+			{
+				return _objectPath;
+			}
+		}
+
+		/// <summary>
+		/// Shows the grips, i.e. the special areas for manipulation of the object.
+		/// </summary>
+		/// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
+		/// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
+		public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+		{
+			return new IGripManipulationHandle[] { new NoopGrip(_objectPath) };
+		}
+
+		/// <summary>
+		/// Shifts the position of the object by x and y. Used to arrange objects.
+		/// </summary>
+		/// <param name="dx">Shift value of x in page coordinates.</param>
+		/// <param name="dy">Shift value of y in page coordinates.</param>
+		public override void ShiftPosition(double dx, double dy)
+		{
+			// per default: do nothing
 		}
 
 		#endregion

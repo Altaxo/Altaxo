@@ -591,7 +591,7 @@
     <Compile Include="Graph\Gdi\GraphDocumentLayerCreation.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentOtherActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentPrinting.cs" />
-    <Compile Include="Graph\Gdi\HitTestData.cs" />
+    <Compile Include="Graph\Gdi\HitTestPointData.cs" />
     <Compile Include="Graph\Gdi\HitTestObject.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBGMYR.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBGRY.cs" />
@@ -868,6 +868,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graph\Gdi\HitTestRectangularData.cs" />
     <Compile Include="Graph\Gdi\Shapes\OpenPathShapeBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.HitTestObject.cs" />
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.MovementGripHandle.cs" />
@@ -876,6 +877,7 @@
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.ResizeGripHandle.cs" />
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.RotationGripHandle.cs" />
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.ShearGripHandle.cs" />
+    <Compile Include="Graph\Gdi\TranslationRotationShearxScaleTransformation2D.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Common\CustomColorDialog\" />

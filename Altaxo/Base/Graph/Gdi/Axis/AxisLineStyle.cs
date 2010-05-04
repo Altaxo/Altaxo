@@ -340,11 +340,11 @@ namespace Altaxo.Graph.Gdi.Axis
         _cachedAxisStyleInfo = value;
       }
     }
-    public virtual IHitTestObject HitTest(IPlotArea layer, PointF pt, bool withTicks)
+    public virtual IHitTestObject HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
     {
 
       GraphicsPath selectionPath = GetSelectionPath(layer,withTicks);
-      return selectionPath.IsVisible(pt) ? new HitTestObject(GetObjectPath(layer,withTicks),selectionPath,this) : null;
+      return selectionPath.IsVisible((PointF)pt) ? new HitTestObject(GetObjectPath(layer,withTicks),this) : null;
     }
 
     /// <summary>

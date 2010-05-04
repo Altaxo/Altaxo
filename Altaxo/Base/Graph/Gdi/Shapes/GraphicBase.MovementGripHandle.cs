@@ -34,13 +34,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected class MovementGripHandle : IGripManipulationHandle
 		{
 			IHitTestObject _parent;
-			PointD2D _lastPosition;
 			/// <summary>Path active for selection of this grip.</summary>
 			GraphicsPath _gripPath;
 			/// <summary>Path that is shown on the display.</summary>
 			GraphicsPath _displayedPath;
 			bool _hasMoved;
 			bool _wasActivatedUponCreation;
+			PointD2D _initialMousePosition;
+			PointD2D _initialObjectPosition;
 
 			public MovementGripHandle(IHitTestObject parent, GraphicsPath gripPath, GraphicsPath objectPath)
 			{
@@ -61,7 +62,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
 				_wasActivatedUponCreation = isActivatedUponCreation;
-				_lastPosition = initialPosition;
+				_initialMousePosition = initialPosition;
+				_initialObjectPosition = ((GraphicBase)_parent.HittedObject).Position;
 				_hasMoved = false;
 			}
 
@@ -80,18 +82,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public void MoveGrip(PointD2D newPosition)
 			{
-				double dx = newPosition.X - _lastPosition.X;
-				double dy = newPosition.Y - _lastPosition.Y;
+				var diff = newPosition - _initialMousePosition;
 
-				if (dx != 0 || dy != 0)
+				if (!diff.IsEmpty)
 					_hasMoved = true;
 
-				if (_parent.HittedObject is GraphicBase)
-				{
-					_parent.Transformation.InverseTransformVector(ref dx, ref dy);
-					((GraphicBase)_parent.HittedObject).ShiftPosition(dx, dy);
-				}
-				_lastPosition = newPosition;
+				diff = _parent.Transformation.InverseTransformVector(diff);
+				((GraphicBase)_parent.HittedObject).SilentSetPosition(_initialObjectPosition + diff);
+
+				
 			}
 
 			public void Show(Graphics g)
@@ -103,8 +102,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				return _gripPath.IsVisible((PointF)point);
 			}
-
-
 
 			#endregion
 		}

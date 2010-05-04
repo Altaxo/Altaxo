@@ -41,42 +41,24 @@ namespace Altaxo.Graph.Gdi
   public interface IHitTestObject
   {
     /// <summary>
-    /// This will return the selection path for the object. This is a closed
-    /// path where when hit into with the mouse, the object is selected.
-		/// This path is used for showing if more than one object is selected.
+    /// Returns the object outline path in page coordinates used for arrangement of multiple objects together.
+		/// Thus it should describes the object as accurate as possible. 
+		/// In case of lines shapes, it is the line path without widening.
+		/// In case of closed shapes, it is the outline path of the shape.
     /// </summary>
-    /// <returns>Selection path.</returns>
-    GraphicsPath SelectionPath {get;}
-
-
-    /// <summary>
-    /// This will return the object path for the object. This is a closed
-    /// path which best describes the object. In case of lines, it is the line path. In case of area shapes, it is the path
-		/// that encloses the object.
-		/// This path is used for showing the selection if only this single object is selected.
-    /// </summary>
-    /// <returns>Selection path.</returns>
-    GraphicsPath ObjectPath { get; }
+    /// <returns>Object outline.</returns>
+    GraphicsPath ObjectOutlineForArrangements { get; }
 
     /// <summary>
     /// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
     /// </summary>
    TransformationMatrix2D Transformation {get;}
 
-
-  
-
     /// <summary>
     /// Transform the internal positions according to the provided transformation matrix.
     /// </summary>
     /// <param name="x"></param>
     void Transform(TransformationMatrix2D x);
-
-    /// <summary>
-    /// Transform the internal positions according to the provided transformation matrix.
-    /// </summary>
-    /// <param name="x"></param>
-    void Transform(Matrix x);
 
     /// <summary>
     /// This will return the object itself, i.e. the object which corresponds to the selection path.
@@ -87,11 +69,11 @@ namespace Altaxo.Graph.Gdi
     XYPlotLayer ParentLayer { get; set; }
 
     /// <summary>
-    /// Shifts the position of the object according to the x and y values.
+    /// Shifts the position of the hitted object according to the x and y values.
     /// </summary>
-    /// <param name="x">Shift value in x direction.</param>
-    /// <param name="y">Shift value in y direction.</param>
-    void ShiftPosition(float x, float y);
+    /// <param name="dx">Shift value in x direction in page coordinates.</param>
+    /// <param name="dy">Shift value in y direction in page coordinates.</param>
+    void ShiftPosition(double dx, double dy);
 
 
     /// <summary>

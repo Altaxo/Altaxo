@@ -31,16 +31,41 @@ namespace Altaxo.Graph.Gdi.Shapes
 {
 	public  abstract partial class GraphicBase 
 	{
-		protected class GraphicBaseHitTestObject : HitTestObject
+		protected class GraphicBaseHitTestObject : HitTestObjectBase
 		{
-			public GraphicBaseHitTestObject(GraphicsPath objectPath, GraphicBase parent)
-				: base(objectPath, parent)
+			/// <summary>
+			/// Creates a new HitTestObject.
+			/// </summary>
+			/// <param name="parent">The hitted object.</param>
+			public GraphicBaseHitTestObject(GraphicBase parent)
+				: base(parent)
 			{
 			}
 
-			public GraphicBaseHitTestObject(GraphicsPath objectPath, GraphicsPath selectionPath, GraphicBase parent)
-				: base(objectPath, selectionPath, parent)
+			/// <summary>
+			/// Shifts the position of the object by x and y. Used to arrange objects.
+			/// </summary>
+			/// <param name="dx">Shift value of x in page coordinates.</param>
+			/// <param name="dy">Shift value of y in page coordinates.</param>
+			public override void ShiftPosition(double dx, double dy)
 			{
+				if (_hitobject is GraphicBase)
+				{
+					var deltaPos = _matrix.InverseTransformVector(new PointD2D(dx, dy)); // Transform to the object's parent coordinates
+					((GraphicBase)_hitobject).X += deltaPos.X;
+					((GraphicBase)_hitobject).Y += deltaPos.Y;
+				}
+			}
+
+			public override GraphicsPath ObjectOutlineForArrangements
+			{
+				get
+				{
+					var objPath = ((GraphicBase)_hitobject).GetObjectOutlineForArrangements();
+					objPath.Transform(((GraphicBase)_hitobject)._transformation);
+					objPath.Transform(this.Transformation);
+					return objPath;
+				}
 			}
 
 			public override int GetNextGripLevel(int currentGripLevel)

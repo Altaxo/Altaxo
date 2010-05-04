@@ -228,7 +228,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-    public override IHitTestObject HitTest(IPlotArea layer, PointF hitpoint)
+    public override IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
     {
       
 
@@ -244,7 +244,7 @@ namespace Altaxo.Graph.Gdi.Plot
         {
           GraphicsPath gp = new GraphicsPath();
           gp.AddLines(ptArray);
-          if (gp.IsOutlineVisible(hitpoint.X, hitpoint.Y, new Pen(Color.Black, 5)))
+          if (gp.IsOutlineVisible((PointF)hitpoint, new Pen(Color.Black, 5)))
           {
             gp.Widen(new Pen(Color.Black, 5));
             return new HitTestObject(gp, this);
@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Gdi.Plot
           int hitindex = -1;
           for (int i = 1; i < ptArray.Length; i++)
           {
-            if (Drawing2DRelated.IsPointIntoDistance(hitpoint, 5, ptArray[i - 1], ptArray[i]))
+            if (Drawing2DRelated.IsPointIntoDistance((PointF)hitpoint, 5, ptArray[i - 1], ptArray[i]))
             {
               hitindex = i;
               break;

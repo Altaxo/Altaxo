@@ -171,7 +171,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
 		}
 
-		protected override GraphicsPath GetObjectPath()
+    public override GraphicsPath GetObjectOutlineForArrangements()
 		{
 			return _cachedPath;
 		}
@@ -188,14 +188,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return gp;
 		}
 
-		public override IHitTestObject HitTest(HitTestData htd)
+		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
-			PointF pt = htd.GetHittedPointInWorldCoord(_transformation);
-			HitTestObject result = null;
+			var pt = htd.GetHittedPointInWorldCoord(_transformation);
+			HitTestObjectBase result = null;
 			GraphicsPath gp = GetSelectionPath();
-			if (gp.IsVisible(pt))
+			if (gp.IsVisible((PointF)pt))
 			{
-				result = new GraphicBaseHitTestObject(GetObjectPath(), this);
+				result = new GraphicBaseHitTestObject(this);
 			}
 
 			if (result != null)

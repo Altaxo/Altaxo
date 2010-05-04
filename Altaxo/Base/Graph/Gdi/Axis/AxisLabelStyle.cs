@@ -582,10 +582,10 @@ namespace Altaxo.Graph.Gdi.Axis
         return _cachedStyleID;
       }
     }
-    public override IHitTestObject HitTest(IPlotArea layer, PointF pt)
+    public override IHitTestObject HitTest(IPlotArea layer, PointD2D pt)
     {
       GraphicsPath gp = GetSelectionPath();
-      if(gp.IsVisible(pt))
+      if(gp.IsVisible((PointF)pt))
         return new HitTestObject(gp,this);
       else
         return null;

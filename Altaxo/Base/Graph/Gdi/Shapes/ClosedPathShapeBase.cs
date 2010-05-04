@@ -174,7 +174,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
 
-    public override IHitTestObject HitTest(HitTestData htd)
+    public override IHitTestObject HitTest(HitTestPointData htd)
     {
       IHitTestObject result = base.HitTest(htd);
       if (result != null)
@@ -182,7 +182,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
-		public override IHitTestObject HitTest(RectangleF rect)
+		public override IHitTestObject HitTest(HitTestRectangularData rect)
 		{
 			IHitTestObject result = base.HitTest(rect);
 			if (result != null)

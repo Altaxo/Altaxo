@@ -735,13 +735,13 @@ namespace Altaxo.Gui.Graph.Viewing
 				return;
 
 
-			RectangleF masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectPath.GetBounds();
+			RectangleF masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
 
 			// now move each object to the new position, which is the difference in the position of the bounds.X
 			for (int i = SelectedObjects.Count - 2; i >= 0; i--)
 			{
 				IHitTestObject o = SelectedObjects[i];
-				RectangleF bounds = o.ObjectPath.GetBounds();
+				RectangleF bounds = o.ObjectOutlineForArrangements.GetBounds();
 
 				arrange(o, bounds, masterbound);
 			}
@@ -860,8 +860,8 @@ namespace Altaxo.Gui.Graph.Viewing
 				return;
 
 
-			RectangleF firstbound = SelectedObjects[0].SelectionPath.GetBounds();
-			RectangleF lastbound = SelectedObjects[SelectedObjects.Count - 1].SelectionPath.GetBounds();
+			RectangleF firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
+			RectangleF lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
 			float step = (lastbound.X + lastbound.Width * 0.5f) - (firstbound.X + firstbound.Width * 0.5f);
 			step /= (SelectedObjects.Count - 1);
 
@@ -869,7 +869,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			for (int i = SelectedObjects.Count - 2; i > 0; i--)
 			{
 				IHitTestObject o = SelectedObjects[i];
-				RectangleF bounds = o.SelectionPath.GetBounds();
+				RectangleF bounds = o.ObjectOutlineForArrangements.GetBounds();
 				o.ShiftPosition((firstbound.X + firstbound.Width * 0.5f) + i * step - (bounds.X + bounds.Width * 0.5f), 0);
 			}
 
@@ -885,8 +885,8 @@ namespace Altaxo.Gui.Graph.Viewing
 				return;
 
 
-			RectangleF firstbound = SelectedObjects[0].SelectionPath.GetBounds();
-			RectangleF lastbound = SelectedObjects[SelectedObjects.Count - 1].SelectionPath.GetBounds();
+			RectangleF firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
+			RectangleF lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
 			float step = (lastbound.Y + lastbound.Height * 0.5f) - (firstbound.Y + firstbound.Height * 0.5f);
 			step /= (SelectedObjects.Count - 1);
 
@@ -894,7 +894,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			for (int i = SelectedObjects.Count - 2; i > 0; i--)
 			{
 				IHitTestObject o = SelectedObjects[i];
-				RectangleF bounds = o.SelectionPath.GetBounds();
+				RectangleF bounds = o.ObjectOutlineForArrangements.GetBounds();
 				o.ShiftPosition(0, (firstbound.Y + firstbound.Height * 0.5f) + i * step - (bounds.Y + bounds.Height * 0.5f));
 			}
 

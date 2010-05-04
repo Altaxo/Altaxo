@@ -182,20 +182,19 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new EllipseShape(this);
     }
 
-    public GraphicsPath GetSelectionPath()
+  
+
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
     {
       GraphicsPath gp = new GraphicsPath();
-      Matrix myMatrix = new Matrix();
-
-      gp.AddEllipse(new RectangleF((float)(X + _bounds.X), (float)(Y + _bounds.Y), (float)Width, (float)Height));
-      if (this.Rotation != 0)
-      {
-        myMatrix.RotateAt((float)(-this._rotation), (PointF)Position, MatrixOrder.Append);
-      }
-
-      gp.Transform(myMatrix);
+      gp.AddEllipse(new RectangleF((float)(_bounds.X), (float)(_bounds.Y), (float)Width, (float)Height));
       return gp;
     }
+
 
     public override void Paint(Graphics g, object obj)
     {

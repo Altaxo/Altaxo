@@ -22,6 +22,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
@@ -174,6 +175,17 @@ namespace Altaxo.Graph.Gdi.Shapes
         _color = value;
       }
     }
+
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      return GetRectangularObjectOutline();
+    }
+
+
     public override void Paint(Graphics g, object obj)
     {
 

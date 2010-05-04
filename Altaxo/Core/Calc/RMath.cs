@@ -312,7 +312,11 @@ namespace Altaxo.Calc
       if(n < 0) 
       {
         n = -n;
+      
+        if (!(n > 0)) // if n was so big, that it could not be inverted in sign
+          return double.NaN;
       }
+
 
       /* repeated squaring method 
        * returns 0.0^0 = 1.0, so continuous in x

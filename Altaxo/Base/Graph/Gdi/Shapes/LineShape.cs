@@ -76,6 +76,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class DeprecatedLineShape : ClosedPathShapeBase
 		{
+      /// <summary>
+      /// Get the object outline for arrangements in object world coordinates.
+      /// </summary>
+      /// <returns>Object outline for arrangements in object world coordinates</returns>
+      public override GraphicsPath GetObjectOutlineForArrangements()
+      {
+        throw new NotImplementedException();
+      }
+
 			public override void Paint(Graphics g, object obj)
 			{
 				throw new NotImplementedException();
@@ -213,38 +222,44 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public GraphicsPath GetSelectionPath()
 		{
-			if (Pen.Width <= 5)
-				return GetPath(5);
-			else
-				return GetPath(Pen.Width);
+			return GetPath();
 		}
 
-		protected override GraphicsPath GetObjectPath()
+		/// <summary>
+		/// Gets the path of the object in object world coordinates.
+		/// </summary>
+		/// <returns></returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
 		{
-			return GetPath(0);
+			return GetPath();
 		}
 
-		protected GraphicsPath GetPath(float minWidth)
+		/// <summary>
+		/// Gets the path of the object in object world coordinates.
+		/// </summary>
+		/// <returns></returns>
+		protected GraphicsPath GetPath()
 		{
 			GraphicsPath gp = new GraphicsPath();
-
 			gp.AddLine((float)(_bounds.X), (float)(_bounds.Y), (float)(_bounds.X + Width), (float)(_bounds.Y + Height));
-			if (Pen.Width != minWidth)
-				gp.Widen(new Pen(Color.Black, minWidth));
-			else
-				gp.Widen(Pen);
-
 			return gp;
 		}
 
-		public override IHitTestObject HitTest(HitTestData htd)
+		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
-			HitTestObject result = null;
-			PointF pt = htd.GetHittedPointInWorldCoord(_transformation);
-			GraphicsPath gp = GetSelectionPath();
-			if (gp.IsVisible(pt))
+			HitTestObjectBase result = null;
+			GraphicsPath gp = GetPath();
+      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
 			{
 				result = new LineShapeHitTestObject(this);
+			}
+			else
+			{
+				gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
+        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+				{
+					result = new LineShapeHitTestObject(this); 
+				}
 			}
 
 			if (result != null)
@@ -289,7 +304,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected class LineShapeHitTestObject : GraphicBaseHitTestObject
 		{
 			public LineShapeHitTestObject(LineShape parent)
-				: base(parent.GetObjectPath(), parent.GetSelectionPath(), parent)
+				: base(parent)
 			{
 			}
 

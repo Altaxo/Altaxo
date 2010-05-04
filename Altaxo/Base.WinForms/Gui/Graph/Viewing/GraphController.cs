@@ -417,8 +417,8 @@ namespace Altaxo.Graph.GUI
 				}
 				else
 				{
-					if (layer.ParentLayerList != null)
-						layer.ParentLayerList.EhChildChanged(layer, EventArgs.Empty);
+          if (tg.ParentObject is Main.IChildChangedEventSink)
+            ((Main.IChildChangedEventSink)tg.ParentObject).EhChildChanged(tg, EventArgs.Empty);
 				}
 			}
 
@@ -798,7 +798,7 @@ namespace Altaxo.Graph.GUI
 		public bool FindGraphObjectAtPixelPosition(PointF pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int foundInLayerNumber)
 		{
 			var mousePT = PixelToPrintableAreaCoordinates(pixelPos);
-			var hitData = new HitTestData(mousePT, this.ZoomFactor);
+			var hitData = new HitTestPointData(mousePT, this.ZoomFactor);
 
 			for (int nLayer = 0; nLayer < Layers.Count; nLayer++)
 			{

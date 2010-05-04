@@ -72,6 +72,14 @@ namespace Altaxo.Graph
       }
     }
 
+		public bool IsEmpty
+		{
+			get
+			{
+				return 0 == X && 0 == Y;
+			}
+		}
+
     public static bool operator ==(PointD2D p, PointD2D q)
     {
       return p.X == q.X && p.Y == q.Y;

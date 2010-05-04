@@ -77,8 +77,7 @@ namespace Altaxo.Graph.Gdi
     /// </remarks>
     protected SizeF _cachedLayerSize = new SizeF(0, 0);
 
-    protected Matrix _cachedForwardMatrix = new Matrix();  // forward transformation m_ForwardMatrix
-    protected Matrix _cachedReverseMatrix = new Matrix(); // inverse transformation m_ForwardMatrix
+    protected TransformationMatrix2D _transformation = new TransformationMatrix2D();
 
     [NonSerialized]
     protected Main.EventSuppressor _changeEventSuppressor;
@@ -778,8 +777,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="obj">Not used.</param>
     public void OnDeserialization(object obj)
     {
-      _cachedForwardMatrix = new Matrix();
-      _cachedReverseMatrix = new Matrix();
+      _transformation = new TransformationMatrix2D();
       CalculateMatrix();
     }
     #endregion
@@ -864,8 +862,7 @@ namespace Altaxo.Graph.Gdi
 					this.PlotItems.CopyFrom(from._plotItems, options);
         }
 
-        _cachedForwardMatrix = new Matrix();
-        _cachedReverseMatrix = new Matrix();
+        _transformation = new TransformationMatrix2D();
         CalculateMatrix();
 
         OnChanged(); // make sure that the change event is called
@@ -1577,26 +1574,26 @@ namespace Altaxo.Graph.Gdi
 
     protected void CalculateMatrix()
     {
-      _cachedForwardMatrix.Reset();
-      _cachedForwardMatrix.Translate(_cachedLayerPosition.X, _cachedLayerPosition.Y);
-      _cachedForwardMatrix.Scale((float)_location.Scale, (float)_location.Scale);
-      _cachedForwardMatrix.Rotate(-(float)_location.Angle);
-      _cachedReverseMatrix = _cachedForwardMatrix.Clone();
-      _cachedReverseMatrix.Invert();
+      _transformation.Reset();
+      _transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Angle, 0, _location.Scale, _location.Scale);
     }
 
 
     public PointF GraphToLayerCoordinates(PointF pagecoordinates)
     {
-      PointF[] pf = { pagecoordinates };
-      _cachedReverseMatrix.TransformPoints(pf);
-      return pf[0];
+      return _transformation.InverseTransformPoint(pagecoordinates);
     }
-		public CrossF GraphToLayerCoordinates(CrossF x)
+
+    public CrossF GraphToLayerCoordinates(CrossF x)
 		{
-			PointF[] y = { x.Center, x.Top, x.Bottom, x.Left, x.Right };
-			_cachedReverseMatrix.TransformPoints(y);
-			return new CrossF() { Center = y[0], Top = y[1], Bottom = y[2], Left = y[3], Right = y[4] };
+      return new CrossF()
+      {
+        Center = _transformation.InverseTransformPoint(x.Center),
+        Top = _transformation.InverseTransformPoint(x.Top),
+        Bottom = _transformation.InverseTransformPoint(x.Bottom),
+        Left = _transformation.InverseTransformPoint(x.Left),
+        Right = _transformation.InverseTransformPoint(x.Right)
+      };
 		}
 
     /// <summary>
@@ -1605,7 +1602,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="g">The graphics state to change.</param>
     public void GraphToLayerCoordinates(Graphics g)
     {
-      g.MultiplyTransform(_cachedForwardMatrix);
+      //g.MultiplyTransform(_cachedForwardMatrix);
+      g.MultiplyTransform(_transformation);
     }
 
     /// <summary>
@@ -1615,11 +1613,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>the convertes X,Y coordinate differences in layer units</returns>
     public PointF GraphToLayerDifferences(PointF pagediff)
     {
-      // not very intelligent, maybe there is a simpler way to transform without
-      // taking the translation into account
-      PointF[] pf = { new PointF(pagediff.X + this.Position.X, pagediff.Y + this.Position.Y) };
-      _cachedReverseMatrix.TransformPoints(pf);
-      return pf[0];
+      return _transformation.InverseTransformVector(pagediff);
     }
 
 
@@ -1631,7 +1625,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>graphics path now in graph coordinates</returns>
     public GraphicsPath LayerToGraphCoordinates(GraphicsPath gp)
     {
-      gp.Transform(_cachedForwardMatrix);
+      gp.Transform(_transformation);
       return gp;
     }
 
@@ -1643,9 +1637,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>graphics path now in graph coordinates</returns>
     public PointF LayerToGraphCoordinates(PointF layerCoordinates)
     {
-      PointF[] result = new PointF[] { layerCoordinates };
-      _cachedForwardMatrix.TransformPoints(result);
-      return result[0];
+      return _transformation.TransformPoint(layerCoordinates);
     }
 
 
@@ -2467,7 +2459,7 @@ namespace Altaxo.Graph.Gdi
       //g.TranslateTransform(m_LayerPosition.X,m_LayerPosition.Y);
       //g.RotateTransform(m_LayerAngle);
 
-      g.MultiplyTransform(_cachedForwardMatrix);
+      g.MultiplyTransform(_transformation);
 
       RectangleF layerBounds = new RectangleF(_cachedLayerPosition, _cachedLayerSize);
 
@@ -2496,16 +2488,16 @@ namespace Altaxo.Graph.Gdi
 
     private IHitTestObject ForwardTransform(IHitTestObject o)
     {
-      o.Transform(_cachedForwardMatrix);
+      o.Transform(_transformation);
       o.ParentLayer = this;
       return o;
     }
 
-    public IHitTestObject HitTest(HitTestData pageC, bool plotItemsOnly)
+    public IHitTestObject HitTest(HitTestPointData pageC, bool plotItemsOnly)
     {
       IHitTestObject hit;
 
-			HitTestData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, Scale, Scale, 0);
+			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, Scale, Scale, 0);
 
 			var layerC = layerHitTestData.GetHittedPointInWorldCoord();
 
@@ -2542,7 +2534,7 @@ namespace Altaxo.Graph.Gdi
         layercorners.AddEllipse(0 - catchrange, _cachedLayerSize.Height - catchrange, 2 * catchrange, 2 * catchrange);
         layercorners.AddEllipse(_cachedLayerSize.Width - catchrange, _cachedLayerSize.Height - catchrange, 2 * catchrange, 2 * catchrange);
         layercorners.CloseAllFigures();
-        if (layercorners.IsVisible(layerC))
+        if (layercorners.IsVisible((PointF)layerC))
         {
           hit = new HitTestObject(layercorners, this);
           hit.DoubleClick = LayerPositionEditorMethod;

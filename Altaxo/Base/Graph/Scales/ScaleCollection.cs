@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Scales
 
 		public void SetScale(int i, Scale ax)
 		{
-			_scales[i].Scale = ax;
+      SetScaleWithTicks(i, new ScaleWithTicks(ax));
 		}
 
 		public void SetScaleWithTicks(int i, Scale scale, Ticks.TickSpacing ticks)

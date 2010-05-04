@@ -773,7 +773,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region Hit test
 
-    public IHitTestObject HitTest(IPlotArea layer, System.Drawing.PointF hitpoint)
+    public IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
     {
       IHitTestObject result = null;
       foreach (IGPlotItem pi in _plotItems)

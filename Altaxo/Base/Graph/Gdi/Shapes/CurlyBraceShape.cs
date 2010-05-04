@@ -77,6 +77,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
 		{
+      /// <summary>
+      /// Get the object outline for arrangements in object world coordinates.
+      /// </summary>
+      /// <returns>Object outline for arrangements in object world coordinates</returns>
+      public override GraphicsPath GetObjectOutlineForArrangements()
+      {
+        throw new NotImplementedException();
+      }
+
 			public override void Paint(Graphics g, object obj)
 			{
 				throw new NotImplementedException();
@@ -180,6 +189,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new CurlyBraceShape(this);
     }
 
+    /// <summary>
+    /// Get the object outline for arrangements in object world coordinates.
+    /// </summary>
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+    public override GraphicsPath GetObjectOutlineForArrangements()
+    {
+      return GetRectangularObjectOutline();
+    }
 
     public override void Paint(Graphics g, object obj)
     {
@@ -203,24 +220,36 @@ namespace Altaxo.Graph.Gdi.Shapes
       g.Restore(gs);
     }
 
-    public override IHitTestObject HitTest(HitTestData htd)
+    public override IHitTestObject HitTest(HitTestPointData htd)
     {
-      var localHitTestData = htd.NewFromAdditionalTransformation(_transformation);
-      GraphicsPath gp = GetPath();
-      gp.Transform(localHitTestData.Transformation); // Transform to page coord
-      gp.Widen(new Pen(Color.Black, 6));
+			HitTestObjectBase result = null;
+			GraphicsPath gp = GetPath();
+			if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+			{
+				result = new GraphicBaseHitTestObject(this);
+			}
+			else
+			{
+				gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
+        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+				{
+					result = new GraphicBaseHitTestObject(this);
+				}
+			}
 
-      if (gp.IsVisible(localHitTestData.HittedPointInPageCoord))
-      {
-        return new GraphicBaseHitTestObject(gp, this);
-      }
-      else
-        return null;
+			if (result != null)
+				result.DoubleClick = EhHitDoubleClick;
+
+			return result;
     }
 
-		protected override GraphicsPath GetObjectPath()
+
+		static bool EhHitDoubleClick(IHitTestObject o)
 		{
-			return GetPath();
+			object hitted = o.HittedObject;
+			Current.Gui.ShowDialog(ref hitted, "Graphics properties", true);
+			((CurlyBraceShape)hitted).OnChanged();
+			return true;
 		}
 
     /// <summary>

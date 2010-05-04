@@ -665,11 +665,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 		/// <summary>
-		/// Get the object outline for hit testing. If the derived object overrides HitTest,
-		/// there is no need to override this function.
+		/// Get the object outline for arrangements in object world coordinates.
 		/// </summary>
-		/// <returns></returns>
-		protected virtual GraphicsPath GetObjectPath()
+    /// <returns>Object outline for arrangements in object world coordinates</returns>
+		public abstract GraphicsPath GetObjectOutlineForArrangements();
+
+		/// <summary>
+		/// Get the path that is often used in HitTestObject to show the selected outline of the object
+		/// if multiple objects are selected.
+		/// </summary>
+		/// <returns>The object outline in object world coordinates.</returns>
+		public GraphicsPath GetRectangularObjectOutline()
 		{
 			var result = new GraphicsPath();
 			result.AddRectangle((RectangleF)_bounds);
@@ -681,13 +687,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="hitData">Data containing the position of the click and the transformations.</param>
 		/// <returns>Null if the object is not hitted. Otherwise data to further process the hitted object.</returns>
-    public virtual IHitTestObject HitTest(HitTestData hitData)
+    public virtual IHitTestObject HitTest(HitTestPointData hitData)
     {
 			var pt = hitData.GetHittedPointInWorldCoord(_transformation);
-      GraphicsPath gp = GetObjectPath();
-			if (gp.IsVisible(pt))
+      if(_bounds.Contains(pt))
 			{
-				return new GraphicBaseHitTestObject(gp, this);
+				return new GraphicBaseHitTestObject(this);
 			}
 			else
 			{
@@ -695,23 +700,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
     }
 
-		public virtual IHitTestObject HitTest(RectangleF rect)
+		public virtual IHitTestObject HitTest(HitTestRectangularData rectHit)
 		{
-			// is this object contained within the supplied rectangle
-
-			GraphicsPath gp = new GraphicsPath();
-			Matrix myMatrix = new Matrix();
-
-
-			gp.AddRectangle(new RectangleF((float)(X + _bounds.X), (float)(Y + _bounds.Y), (float)Width, (float)Height));
-			if (this.Rotation != 0)
-			{
-				myMatrix.RotateAt((float)(-this._rotation), new PointF((float)X, (float)Y), MatrixOrder.Append);
-			}
-			gp.Transform(myMatrix);
-			RectangleF gpRect = gp.GetBounds();
-
-			return rect.Contains(gpRect) ? new HitTestObject(gp, this) : null;
+      if (rectHit.IsCovering(_bounds))
+        return new GraphicBaseHitTestObject(this);
+      else
+        return null;
 		}
 
    
@@ -893,6 +887,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       return new PointD2D((dx), (dy));
     }
+
+		/// <summary>
+		/// Sets the position of the object without causing a Changed event.
+		/// </summary>
+		/// <param name="newPosition"></param>
+		public void SilentSetPosition(PointD2D newPosition)
+		{
+			this._position = newPosition;
+			UpdateTransformationMatrix();
+		}
 
     public void SetBoundsFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, PointD2D initialSize)
     {
@@ -1111,17 +1115,20 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
 		protected void GetCornerOutVector(PointD2D rel, IHitTestObject hitTest, out PointD2D outVec, out PointD2D pageCoord)
 		{
-			PointD2D pt1 = RelativeLocalToAbsoluteLocalCoordinates(rel);
+			PointD2D pt1 = rel;
 			PointD2D pt2 = new PointD2D(1-rel.X, rel.Y);
 			PointD2D pt3 = new PointD2D(rel.X, 1-rel.Y);
 
-			pt1 = this._transformation.TransformPoint(pt1);
+			pt1 = RelativeLocalToAbsoluteLocalCoordinates(pt1);
+			pt1 = _transformation.TransformPoint(pt1);
 			pt1 = pageCoord = hitTest.Transformation.TransformPoint(pt1);
-      pt2 = RelativeLocalToAbsoluteLocalCoordinates(pt2);
-			pt2 = this._transformation.TransformPoint(pt2);
+
+			pt2 = RelativeLocalToAbsoluteLocalCoordinates(pt2);
+			pt2 = _transformation.TransformPoint(pt2);
 			pt2 = hitTest.Transformation.TransformPoint(pt2);
-      pt3 = RelativeLocalToAbsoluteLocalCoordinates(pt3);
-			pt3 = this._transformation.TransformPoint(pt3);
+
+			pt3 = RelativeLocalToAbsoluteLocalCoordinates(pt3);
+			pt3 = _transformation.TransformPoint(pt3);
 			pt3 = hitTest.Transformation.TransformPoint(pt3);
 
 			outVec = (pt1-pt2).GetNormalized() + (pt1-pt3).GetNormalized();
@@ -1139,18 +1146,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			// calculate the location of the middle point
       var pt0 = RelativeLocalToAbsoluteLocalCoordinates(new PointD2D(0.5, 0.5));
-			pt0 = this._transformation.TransformPoint(pt0);
+			pt0 = _transformation.TransformPoint(pt0);
 			pt0 = hitTest.Transformation.TransformPoint(pt0);
 
-
-      PointD2D pt1 = RelativeLocalToAbsoluteLocalCoordinates(rel);
+			PointD2D pt1 = rel;
 			PointD2D pt2 = (0==rel.X || 1==rel.X) ? new PointD2D(rel.X, rel.Y + 1) : new PointD2D(rel.X + 1, rel.Y);
 
-			pt1 = this._transformation.TransformPoint(pt1);
+			pt1 = RelativeLocalToAbsoluteLocalCoordinates(pt1);
+			pt1 = _transformation.TransformPoint(pt1);
 			pt1 = pageCoord = hitTest.Transformation.TransformPoint(pt1);
-      pt2 = RelativeLocalToAbsoluteLocalCoordinates(pt2);
-			pt2 = this._transformation.TransformPoint(pt2);
+
+			pt2 = RelativeLocalToAbsoluteLocalCoordinates(pt2);
+			pt2 = _transformation.TransformPoint(pt2);
 			pt2 = hitTest.Transformation.TransformPoint(pt2);
+
 			outVec = (pt1-pt2).Get90DegreeRotated();
 			PointD2D otherVec = pt1-pt0;
 			if (outVec.DotProduct(otherVec) < 0)
@@ -1171,12 +1180,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			// calculate the location of the middle point
       var pt0 = RelativeLocalToAbsoluteLocalCoordinates(new PointD2D(0.5, 0.5));
-			pt0 = this._transformation.TransformPoint(pt0);
+			pt0 = _transformation.TransformPoint(pt0);
 			pt0 = hitTest.Transformation.TransformPoint(pt0);
 
 
       var pt = RelativeLocalToAbsoluteLocalCoordinates(rel);
-			pt = this._transformation.TransformPoint(pt);
+			pt = _transformation.TransformPoint(pt);
 			pt = pageCoord = hitTest.Transformation.TransformPoint(pt);
 			outVec = pt-pt0;
 		}
@@ -1264,7 +1273,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				for (int i = 0; i < pts.Length; i++)
 				{
           var pt = RelativeLocalToAbsoluteLocalCoordinates(pts[i]);
-					pt = this._transformation.TransformPoint(pt);
+					pt = _transformation.TransformPoint(pt);
 					pt = hitTest.Transformation.TransformPoint(pt);
 					pathPts[i] = (PointF)pt;
 				}

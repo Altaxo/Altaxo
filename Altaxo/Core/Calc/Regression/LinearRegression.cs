@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="xarr">The array of x values of the data set.</param>
     /// <param name="yarr">The array of y values of the data set.</param>
-    /// <param name="stddev">The array of y standard deviations of the data set.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
     /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
     /// <param name="evaluateFunctionBase">The function base used to fit.</param>
@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="xbase">The matrix of x values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during calculation!</param>
     /// <param name="yarr">The array of y values of the data set.</param>
-    /// <param name="stddev">The array of y standard deviations of the data set.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
     /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
     /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
@@ -436,6 +436,41 @@ namespace Altaxo.Calc.Regression
 
     #region Helper
     double square(double x) { return x*x; }
+    #endregion
+
+    #region Default function bases
+    class PolynomialFunction
+    {
+      int _order;
+      public PolynomialFunction(int order)
+      {
+        _order = order;
+      }
+
+      public void Evaluate(double x, double[] result)
+      {
+        double sum = 1;
+        for (int i = 0; i <= _order; i++)
+        {
+          result[i] = sum;
+          sum *= x;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets a default polynomial function base with intercept, i.e. f(y)=a+b*x+c*x*x ...
+    /// </summary>
+    /// <param name="order">Order of the polynomial (0: only intercept, 1: linear, 2: quadratic ...</param>
+    /// <returns>The function base to use with this fit.</returns>
+    public static FunctionBaseEvaluator GetPolynomialFunctionBase(int order)
+    {
+      if (order < 0)
+        throw new ArgumentOutOfRangeException("Order must be > 0");
+
+      return new PolynomialFunction(order).Evaluate;
+    }
+
     #endregion
 
   }

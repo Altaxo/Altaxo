@@ -26,7 +26,7 @@ namespace Altaxo.Graph.Gdi
 	/// </para>
   /// </remarks>
   [Serializable]
-  public class TransformationMatrix2D
+  public class TransformationMatrix2D : ICloneable
   {
     double sx, ry, rx, sy, dx, dy, determinant;
 
@@ -55,6 +55,16 @@ namespace Altaxo.Graph.Gdi
       this.dy = from.dy;
       this.determinant = from.determinant;
     }
+
+		public TransformationMatrix2D Clone()
+		{
+			return (TransformationMatrix2D)MemberwiseClone();
+		}
+
+		object ICloneable.Clone()
+		{
+			return MemberwiseClone();
+		}
 
     public bool CopyFrom(object o)
     {
@@ -393,7 +403,7 @@ namespace Altaxo.Graph.Gdi
     }
 
     public PointF InverseTransformVector(PointF pt)
-    {
+		{
       return new PointF((float)(((pt.X ) * sy + (-pt.Y) * rx) / determinant), (float)(((-pt.X) * ry + (pt.Y) * sx) / determinant));
     }
 
