@@ -28,8 +28,37 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Fourier
 {
   /// <summary>
-  /// Class to provide convenient access to the result of a real valued fourier transform.
+  /// Class to provide convenient access to the result of a real valued fourier transform. See remarks for learning about different representations of a real valued Fourier transform.
   /// </summary>
+  /// <remarks>
+  /// This class is a wrapper for different representations of the result of a real valued fourier transformation.
+  /// <para>
+  /// <para>1. Real value representation</para>
+  /// <para>----------------------------</para>
+  /// The first value of the array is the real part of the spectrum at zero frequency, followed by the real part of the spectrum at first frequency and so on.
+  /// The last value of the array is the imaginary part of the spectrum at first frequency, the value before this is the imaginary part of the spectrum at second frequency and so on.
+  /// If the length of the fourier transform is even, the value of the array at index of half the length (N/2) is the real part of the spectrum at nyquist frequency. If the length of the fourier
+  /// transform is odd, there is no value of the spectrum at nyquist frequency.
+  /// </para>
+  /// <para></para>
+  /// <para>2. Verbose complex representation</para>
+  /// <para>---------------------------------</para>
+  /// <para>
+  /// The real and imaginary part of the spectrum are properly ordered from zero frequency to nyquist frequency.
+  /// The element at zero frequency contains only the real part, the imaginary part of this element is zero.
+  /// The element at nyquist frequency contains only the real part at nyquist frequency, the imaginary part of this element is zero.
+  /// Note that if the length of the FFT is for instance 1024, there are 513 complex spectral values. If the length of the FFT is 1023 (odd), there are 512 complex spectral values.
+  /// </para>
+  /// </para><para>
+  /// <para>3. Compact complex representation</para>
+  /// <para>---------------------------------</para>
+  /// <para>
+  /// The real and imaginary part of the spectrum are properly ordered from zero frequency to one element below the nyquist frequency. The value at nyquist frequency
+  /// is put into the imaginary part of the spectrum at zero index. If the length of the FFT is odd, there is no value at nyquist frequency, and hence the imaginary part 
+  /// at zero index is set to zero.
+  /// If the length of the FFT is for instance 1024, there are 512 complex spectral values. If the length of the FFT is 1023 (odd), there are still 512 complex spectral values, but the imaginary part of the first value is set to zero.
+  /// </para>
+  /// </remarks>
   public class RealFFTResultWrapper
   {
     double[] _fftresult;
@@ -571,6 +600,121 @@ namespace Altaxo.Calc.Fourier
       for (int i = 0; i < len; i++)
         result[i] = spectrumA[i] + spectrumB[i];
     }
+    #endregion
+
+    #region Static functions
+
+    /// <summary>
+    /// Transforms from the real representation of a spectrum to the compact complex representation (nyquist frequency value put in imaginary part of first element).
+    /// </summary>
+    /// <param name="src">Real representation of the spectrum.</param>
+    /// <param name="destRe">On return, contains the real part of the spectrum.</param>
+    /// <param name="destIm">On return, contains the imaginary part of the spectrum.</param>
+    public static void FromRepresentationRealToCompactComplex(IROVector src, IVector destRe, IVector destIm)
+    {
+      bool isEven = 0 == (src.Length % 2);
+      int destLen2;
+      if (isEven)
+      {
+        destLen2 = src.Length / 2;
+        destRe[0] = src[0];
+        destIm[0] = src[destLen2];
+      }
+      else // odd
+      {
+        destLen2 = (src.Length - 1) / 2;
+        destRe[0] = src[0];
+        destIm[0] = 0;
+      }
+      for (int i = 1, j = src.Length - 1; i < j; i++, j--)
+      {
+        destRe[i] = src[i];
+        destIm[i] = src[j];
+      }
+    }
+
+
+    /// <summary>
+    /// Transforms from the real representation of a spectrum to the compact complex representation (nyquist frequency value put in imaginary part of first element).
+    /// </summary>
+    /// <param name="src">Real representation of the spectrum.</param>
+    /// <param name="destRe">On return, contains the complex spectrum.</param>
+    public static void FromRepresentationRealToCompactComplex(IROVector src, IComplexDoubleVector dest)
+    {
+      bool isEven = 0 == (src.Length % 2);
+      int destLen2;
+      if (isEven)
+      {
+        destLen2 = src.Length / 2;
+        dest[0] = Complex.FromRealImaginary(src[0], src[destLen2]);
+      }
+      else // odd
+      {
+        destLen2 = (src.Length - 1) / 2;
+        dest[0] = Complex.FromRealImaginary(src[0], 0);
+      }
+      for (int i = 1, j = src.Length - 1; i < j; i++, j--)
+      {
+        dest[i] = Complex.FromRealImaginary(src[i], src[j]);
+      }
+    }
+
+    /// <summary>
+    /// Transforms from a compact complex representation (nyquist frequency value put in imaginary part of first element) to real representation.
+    /// </summary>
+    /// <param name="re">Stores the real part of the spectrum.</param>
+    /// <param name="im">Stores the imaginary part of the spectrum.</param>
+    /// <param name="destination">After return, stores the spectrum in normalized real representation. The length of the vector has to be equal to the length of the FFT. </param>
+    public static void FromRepresentationCompactComplexToReal(IROVector re, IROVector im, IVector destination)
+    {
+      bool isEven = 0 == (destination.Length % 2);
+      int destLen2;
+      if (isEven)
+      {
+        destLen2 = destination.Length / 2;
+        destination[0] = re[0];
+        destination[destLen2] = im[0];
+
+      }
+      else // odd
+      {
+        destLen2 = (destination.Length - 1) / 2;
+        destination[0] = re[0];
+      }
+      for (int i = 1, j = destination.Length - 1; i < j; i++, j--)
+      {
+        destination[i] = re[i];
+        destination[j] = im[i];
+      }
+    }
+
+    /// <summary>
+    /// Transforms from a compact complex representation (nyquist frequency value put in imaginary part of first element) to real representation.
+    /// </summary>
+    /// <param name="src">Stores the  complex spectrum.</param>
+    /// <param name="destination">After return, stores the spectrum in normalized real representation. The length of the vector has to be equal to the length of the FFT. </param>
+    public static void FromRepresentationCompactComplexToReal(IROComplexDoubleVector src, IVector destination)
+    {
+      bool isEven = 0 == (destination.Length % 2);
+      int destLen2;
+      if (isEven)
+      {
+        destLen2 = destination.Length / 2;
+        destination[0] = src[0].Re;
+        destination[destLen2] = src[0].Im; ;
+      }
+      else // odd
+      {
+        destLen2 = (destination.Length - 1) / 2;
+        destination[0] = src[0].Re;
+      }
+      for (int i = 1, j = destination.Length - 1; i < j; i++, j--)
+      {
+        destination[i] = src[i].Re;
+        destination[j] = src[i].Im;
+      }
+    }
+
     #endregion
   }
 }

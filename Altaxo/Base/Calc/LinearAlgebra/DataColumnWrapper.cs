@@ -228,6 +228,61 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion
     }
 
+
+    /// <summary>
+    /// Wraps a <see cref="DataColumn" />s into a writable vector.
+    /// </summary>
+    class DoubleColumnToComplexDoubleVectorWrapper : IComplexDoubleVector
+    {
+      DoubleColumn _columnRe;
+      DoubleColumn _columnIm;
+      int _start;
+      int _rows;
+
+
+      /// <summary>
+      /// Constructor
+      /// </summary>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
+      /// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
+      public DoubleColumnToComplexDoubleVectorWrapper(DoubleColumn columnRe, DoubleColumn columnIm, int start, int nRows)
+      {
+        _columnRe = columnRe;
+        _columnIm = columnIm;
+        _start = start;
+        _rows = nRows;
+      }
+      #region IROVector Members
+
+
+      /// <summary>The smallest valid index of this vector</summary>
+      public int LowerBound { get { return 0; } }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound { get { return _rows - 1; } }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length { get { ; return _rows; } }
+
+      /// <summary>
+      /// Element accessor.
+      /// </summary>
+      public Complex this[int row]
+      {
+        get
+        {
+          return new Complex(_columnRe[row + _start], _columnIm[row + _start]);
+        }
+        set
+        {
+          _columnRe[row + _start] = value.Re;
+          _columnIm[row + _start] = value.Im;
+        }
+      }
+
+      #endregion
+    }
+
     #endregion
 
     #region Matrices
@@ -717,6 +772,47 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       return new DoubleColumnSelectedRowsToVectorWrapper(col,(IAscendingIntegerCollection)selectedRows.Clone());
 		}
+
+
+    /// <summary>
+    /// This returns a read and writeable complex vector that wraps two <see cref="DoubleColumn" />s.
+    /// </summary>
+    /// <param name="columnRe">The column that represents the real part of the vector.</param>
+    /// <param name="columnIm">The column that represents the imaginary part of the vector.</param>
+    /// <returns>An <see cref="IDoubleComplexVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
+    public static IComplexDoubleVector ToComplexDoubleVector(this DoubleColumn columnRe, DoubleColumn columnIm)
+    {
+      if (columnIm.Count != columnRe.Count)
+        throw new ArgumentException("The provided columns have different length. Thus the resulting vector length is undetermined.");
+
+      return new DoubleColumnToComplexDoubleVectorWrapper(columnRe, columnIm, 0, columnRe.Count);
+    }
+
+    /// <summary>
+    /// This returns a read and writeable complex vector that wraps two <see cref="DoubleColumn" />s.
+    /// </summary>
+    /// <param name="columnRe">The column that represents the real part of the vector.</param>
+    /// <param name="columnIm">The column that represents the imaginary part of the vector.</param>
+    /// <param name="nRows">The number of rows to use for the vector.</param>
+    /// <returns>An <see cref="IDoubleComplexVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
+    public static IComplexDoubleVector ToComplexDoubleVector(this DoubleColumn columnRe, DoubleColumn columnIm, int nRows)
+    {
+      return new DoubleColumnToComplexDoubleVectorWrapper(columnRe, columnIm, 0, nRows);
+    }
+
+    /// <summary>
+    /// This returns a read and writeable complex vector that wraps two <see cref="DoubleColumn" />s.
+    /// </summary>
+    /// <param name="columnRe">The column that represents the real part of the vector.</param>
+    /// <param name="columnIm">The column that represents the imaginary part of the vector.</param>
+    /// <param name="nStart">The starting index of the wrapped column.</param>
+    /// <param name="nRows">The number of rows to use for the vector.</param>
+    /// <returns>An <see cref="IDoubleComplexVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
+    public static IComplexDoubleVector ToComplexDoubleVector(this DoubleColumn columnRe, DoubleColumn columnIm, int nStart, int nRows)
+    {
+      return new DoubleColumnToComplexDoubleVectorWrapper(columnRe, columnIm, nStart, nRows);
+    }
+
 		#endregion
 		#endregion
 

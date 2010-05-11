@@ -420,6 +420,7 @@
     </Compile>
     <Compile Include="Calc\Probability\Statistics.cs" />
     <Compile Include="Calc\Regression\BurgAlgorithm.cs" />
+    <Compile Include="Calc\Regression\BurgAlgorithmComplex.cs" />
     <Compile Include="Calc\Regression\DynamicParameterEstimation.cs" />
     <Compile Include="Calc\Regression\LinearRegression.cs">
       <SubType>Code</SubType>

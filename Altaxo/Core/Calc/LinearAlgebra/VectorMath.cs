@@ -673,6 +673,20 @@ namespace Altaxo.Calc.LinearAlgebra
       for(int i=x.LowerBound;i<=end;i++) x[i]=val;
     }
 
+    /// <summary>
+    /// Reverses the order of elements in the provided vector.
+    /// </summary>
+    /// <param name="x">Vector. On return, the elements of this vector are in reverse order.</param>
+    public static void Reverse(IVector x)
+    {
+      for (int i = 0, j = x.Length - 1; i < j; i++, j--)
+      {
+        var x_i = x[i];
+        x[i] = x[j];
+        x[j] = x_i;
+      }
+    }
+
     #endregion
 
     #region copy 
@@ -1158,5 +1172,55 @@ namespace Altaxo.Calc.LinearAlgebra
 			firstIndex = -1;
 			return false;
 		}
+
+
+    /// <summary>
+    /// Shifts the element of this vector by moving them <c>increment</c> times to the right. The elements on the rightmost side are shifted back into the left side of the vector. Thus, effectively, the elements are rotated to the right.
+    /// </summary>
+    /// <param name="x">The vector to rotate.</param>
+    /// <param name="increment"></param>
+    public static void Rotate(this IVector x, int increment)
+    {
+      int xLen = x.Length;
+      if (xLen < 2)
+        return; // Nothing to do
+      increment = increment % xLen;
+      if (increment == 0)
+        return;
+      if (increment < 0)
+        increment += xLen;
+
+
+      // first cycle is to measure number of shifts per cycle
+      int shiftsPerCycle = 0;
+      int i=0;
+      int k = i;
+      double prevVal = x[k];
+      do
+      {
+        k = (k + increment) % xLen;
+        double currVal = x[k];
+        x[k] = prevVal;
+        prevVal = currVal;
+        shiftsPerCycle++;
+      } while (i != k);
+
+
+      // now do the rest of the cycles
+      System.Diagnostics.Debug.Assert(0 == xLen % shiftsPerCycle);
+      int numCycles = xLen / shiftsPerCycle;
+      for (i = 1; i < numCycles; i++)
+      {
+        k = i;
+        prevVal = x[k];
+        do
+        {
+          k = (k + increment) % xLen;
+          double currVal = x[k];
+          x[k] = prevVal;
+          prevVal = currVal;
+        } while(i!=k);
+      }
+    }
 	}
 }
