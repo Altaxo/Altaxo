@@ -58,16 +58,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#region IROVector Members
 
-			public int LowerBound
-			{
-				get { return 0; }
-			}
-
-			public int UpperBound
-			{
-				get { return _length - 1; }
-			}
-
 			public int Length
 			{
 				get { return _length; }
@@ -84,6 +74,41 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#endregion
 		}
+
+    /// <summary>
+    /// Provides a read-only vector with equal and constant items.
+    /// </summary>
+    private class ROEquallySpacedVector : IROVector
+    {
+      int _length;
+      double _startValue;
+      double _incrementValue;
+
+      public ROEquallySpacedVector(double start, double increment, int length)
+      {
+        _length = length;
+        _startValue = start;
+        _incrementValue = increment;
+      }
+
+      #region IROVector Members
+
+      public int Length
+      {
+        get { return _length; }
+      }
+
+      #endregion
+
+      #region INumericSequence Members
+
+      public double this[int i]
+      {
+        get { return _startValue + i * _incrementValue; }
+      }
+
+      #endregion
+    }
 
     /// <summary>
     /// Serves as Wrapper for an double array to plug-in where a IROVector is neccessary.
@@ -117,15 +142,9 @@ namespace Altaxo.Calc.LinearAlgebra
         _length = usedlength;
       }
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       public double this[int i] { get { return _x[i]; }}
- 
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound { get { return _x.GetLowerBound(0); }}
-    
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _x.GetUpperBound(0); }}
     
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get { return _length; }}  // change this later to length property
@@ -194,15 +213,9 @@ namespace Altaxo.Calc.LinearAlgebra
         _length = usedlength;
       }
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       public double this[int i] { get { return _x[i+_start]; } }
-
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound { get { return _x.GetLowerBound(0); } }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _x.GetLowerBound(0)+_length-1; } }
 
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get { return _length; } }  // change this later to length property
@@ -257,15 +270,9 @@ namespace Altaxo.Calc.LinearAlgebra
         _length = len;
       }
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       public double this[int i] { get { return _x[i+_start]; } }
-
-      /// <summary>The smallest valid index of this vector.</summary>
-      public int LowerBound { get { return 0; } }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _length - 1; } }
 
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get { return _length; } }  // change this later to length property
@@ -298,19 +305,13 @@ namespace Altaxo.Calc.LinearAlgebra
         _length = len;
       }
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       public double this[int i] 
       {
         get { return _x[i + _start]; }
         set { _x[i + _start] = value; }
       }
-
-      /// <summary>The smallest valid index of this vector.</summary>
-      public int LowerBound { get { return 0; } }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _length - 1; } }
 
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get { return _length; } }  // change this later to length property
@@ -356,24 +357,6 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
-      public int LowerBound
-      {
-        get
-        {
-          
-          return 0;
-        }
-      }
-
-      public int UpperBound
-      {
-        get
-        {
-          
-          return _length-1;
-        }
-      }
-
       public int Length
       {
         get
@@ -393,7 +376,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
         for(int i=0;i<a.Length;i++)
-          _arr[i+_length] = a[i+a.LowerBound];
+          _arr[i+_length] = a[i];
         _length += a.Length;
       }
       #endregion
@@ -424,16 +407,6 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       #region IROVector Members
-
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _len - 1; }
-      }
 
       public int Length
       {
@@ -472,16 +445,6 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       #region IROVector Members
-
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _len - 1; }
-      }
 
       public int Length
       {
@@ -669,8 +632,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="val">The value each element is set to.</param>
     public static void Fill(IVector x, double val)
     {
-      int end = x.UpperBound;
-      for(int i=x.LowerBound;i<=end;i++) x[i]=val;
+      for(int i=x.Length-1;i>=0;--i)
+				x[i]=val;
     }
 
     /// <summary>
@@ -701,7 +664,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if(src.Length!=dest.Length)
         throw new ArgumentException("src and destination vector have unequal length!");
 
-      Copy(src,src.LowerBound,dest,dest.LowerBound,src.Length);
+      Copy(src,0,dest,0,src.Length);
     }
 
     /// <summary>
@@ -734,11 +697,8 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("Length of vectors a and b unequal");
       if(c.Length != b.Length)
         throw new ArgumentException("Length of vectors a and c unequal");
-      if(a.LowerBound != b.LowerBound || a.LowerBound != c.LowerBound)
-        throw new ArgumentException("Vectors a, b, and c have not the same LowerBound property");
 
-      int end = c.UpperBound;
-      for(int i=c.LowerBound;i<=end;i++)
+      for(int i=c.Length-1;i>=0;--i)
         c[i]=a[i]+b[i];
     }
 
@@ -754,11 +714,8 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentException("Length of vectors a and b unequal");
       if (c.Length != b.Length)
         throw new ArgumentException("Length of vectors a and c unequal");
-      if (a.LowerBound != b.LowerBound || a.LowerBound != c.LowerBound)
-        throw new ArgumentException("Vectors a, b, and c have not the same LowerBound property");
 
-      int end = c.UpperBound;
-      for (int i = c.LowerBound; i <= end; i++)
+      for (int i = c.Length-1; i >=0; --i)
         c[i] = a[i] * b[i];
     }
 
@@ -769,7 +726,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="a">The constant to multiply with.</param>
 		public static void Multiply(this IVector v, double a)
 		{
-			for (int i = v.LowerBound; i <= v.UpperBound; i++)
+			for (int i = v.Length-1; i >=0; --i)
 				v[i] *= a;
 		}
 		#endregion
@@ -782,7 +739,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>The used length. Elements with indices greater or equal this until <c>currentlength</c> are NaNs.</returns>
 		static public int GetUsedLength(IROVector values, int currentlength)
     {
-      for (int i = currentlength - 1; i >= 0; i--)
+      for (int i = currentlength - 1; i >= 0; --i)
       {
         if (!Double.IsNaN(values[i]))
           return i + 1;
@@ -800,73 +757,9 @@ namespace Altaxo.Calc.LinearAlgebra
       return GetUsedLength(values, values.Length);
     }
 
-		/// <summary>
-		/// Returns the maximum of the elements in xarray.
-		/// </summary>
-		/// <param name="xarray">The array to search for maximum element.</param>
-		/// <returns>Maximum element of xarray. Returns NaN if the array is empty.</returns>
-		public static double Min(this IROVector xarray)
-		{
-			double min = xarray.Length == 0 ? double.NaN : xarray[xarray.LowerBound];
+	
 
-			int last = xarray.UpperBound;
-			for (int i = xarray.LowerBound + 1; i <= last; i++)
-			{
-				min = Math.Min(min, xarray[i]);
-			}
-			return min;
-		}
-
-		/// <summary>
-		/// Returns the maximum of the elements in xarray.
-		/// </summary>
-		/// <param name="xarray">The array to search for maximum element.</param>
-		/// <returns>Maximum element of xarray. Returns <see cref="Double.NaN" /> if the array is empty.</returns>
-		public static double Min(this double[] xarray)
-		{
-			double min = xarray.Length == 0 ? double.NaN : xarray[xarray.GetLowerBound(0)];
-
-			int last = xarray.GetUpperBound(0);
-			for (int i = xarray.GetLowerBound(0) + 1; i <= last; i++)
-			{
-				min = Math.Min(min, xarray[i]);
-			}
-			return min;
-		}
-
-    /// <summary>
-    /// Returns the maximum of the elements in xarray.
-    /// </summary>
-    /// <param name="xarray">The array to search for maximum element.</param>
-    /// <returns>Maximum element of xarray. Returns NaN if the array is empty.</returns>
-    public static double Max(this IROVector xarray)
-    {
-      double max = xarray.Length==0 ? double.NaN : xarray[xarray.LowerBound];
-
-      int last = xarray.UpperBound;
-      for(int i=xarray.LowerBound+1;i<=last;i++)
-      {
-        max = Math.Max(max,xarray[i]);
-      }
-      return max;
-    }
-
-    /// <summary>
-    /// Returns the maximum of the elements in xarray.
-    /// </summary>
-    /// <param name="xarray">The array to search for maximum element.</param>
-    /// <returns>Maximum element of xarray. Returns <see cref="Double.NaN" /> if the array is empty.</returns>
-    public static double Max(this double[] xarray)
-    {
-      double max = xarray.Length==0 ? double.NaN : xarray[xarray.GetLowerBound(0)];
-
-      int last = xarray.GetUpperBound(0);
-      for(int i=xarray.GetLowerBound(0)+1;i<=last;i++)
-      {
-        max = Math.Max(max,xarray[i]);
-      }
-      return max;
-    }
+   
 
 		/// <summary>
 		/// Gives the parallel maximum of vector v1 and v2. The first element of the resulting vector
@@ -879,22 +772,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static void PMax(IROVector v1, IROVector v2, IVector result)
 		{
 			int maxlen = Math.Max(v1.Length, v2.Length);
-			for (int i = 0; i < maxlen; i++)
+			for (int i = maxlen-1; i >=0; --i)
 			{
-				result[i + result.LowerBound] = Math.Max(v1[i + v1.LowerBound], v2[i + v2.LowerBound]);
+				result[i] = Math.Max(v1[i], v2[i]);
 			}
 		}
 
-		public static IVector Max(this IROVector v, double b, IVector result)
-		{
-			if (null == result)
-				result = _funcCreateNewVector(v.Length);
-
-			for (int i = 0; i < v.Length; i++)
-				result[i + result.LowerBound] = Math.Max(v[i + v.LowerBound], b);
-
-			return result;
-		}
+	
 
 		/// <summary>
 		/// Returns the sum of the elements in xarray.
@@ -1087,6 +971,225 @@ namespace Altaxo.Calc.LinearAlgebra
       return index;
     }
 
+    /// <summary>Return the index of a the (first) element with the maximum absolute value in a vector</summary>
+    /// <param name="X">The input vector.</param>
+    /// <returns>The index of the (first) element with the maximum absolute value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+    public static int IndexOfMaxAbsValue(this IROVector X)
+    {
+      int index = -1;
+      int len = X.Length;
+      if (len > 0)
+      {
+        double max;
+        if (double.IsNaN(Math.Abs(X[0])))
+        {
+          max = double.NegativeInfinity;
+        }
+        else
+        {
+          max = Math.Abs(X[0]);
+          index = 0;
+        }
+       
+        for (int i = 1; i < len; ++i)
+        {
+          double test = Math.Abs(X[i]);
+          if (test > max)
+          {
+            index = i;
+            max = test;
+          }
+        }
+      }
+      return index;
+    }
+
+    /// <summary>Return the index of a the (first) element with the maximum  value in a vector</summary>
+    /// <param name="X">The input vector.</param>
+    /// <returns>The index of the (first) element with the maximum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+    public static int IndexOfMaxValue(this IROVector X)
+    {
+      int index = -1;
+      int len = X.Length;
+      if (len > 0)
+      {
+        double max;
+        if (double.IsNaN(X[0]))
+        {
+          max = double.NegativeInfinity;
+        }
+        else
+        {
+          max = X[0];
+          index = 0;
+        }
+        for (int i = 1; i < len; ++i)
+        {
+          double test = X[i];
+          if (test > max)
+          {
+            index = i;
+            max = test;
+          }
+        }
+      }
+      return index;
+    }
+
+    /// <summary>Return the index of a the (first) element with the minimum value in a vector</summary>
+    /// <param name="X">The input vector.</param>
+    /// <returns>The index of the (first) element with the mimimum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+    public static int IndexOfMinValue(this IROVector X)
+    {
+      int index = -1;
+      int len = X.Length;
+      if (len > 0)
+      {
+        double min;
+        if (double.IsNaN(X[0]))
+        {
+          min = double.PositiveInfinity;
+        }
+        else
+        {
+          min = X[0];
+          index = 0;
+        }
+        for (int i = 1; i < len; ++i)
+        {
+          double test = X[i];
+          if (test < min)
+          {
+            index = i;
+            min = test;
+          }
+        }
+      }
+      return index;
+    }
+
+		/// <summary>
+		/// Returns the maximum value of all the valid elements in x (nonvalid elements, i.e. NaN values are not considered).
+		/// </summary>
+		/// <param name="x">The vector to search for maximum element.</param>
+		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains NaN elements only.</returns>
+		public static double GetMaximumValid(this IROVector x)
+		{
+			double max = double.NaN;
+			int i;
+			for (i = x.Length - 1; i >= 0; --i)
+			{
+				if (!double.IsNaN(max = x[i]))
+					break;
+			}
+			for (i = i - 1; i >= 0; --i)
+			{
+				if (x[i] > max)
+					max = x[i];
+			}
+			return max;
+		}
+
+		/// <summary>
+		/// Returns the maximum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for maximum element.</param>
+		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMaximum(this IROVector x)
+		{
+			double max = double.NaN;
+			if (x.Length > 0)
+			{
+				max = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] < max))
+						max = x[i];
+				}
+			}
+			return max;
+		}
+
+		/// <summary>
+		/// Returns the maximum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for maximum element.</param>
+		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMaximum(this double[] x)
+		{
+			double max = double.NaN;
+			if (x.Length > 0)
+			{
+				max = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] < max))
+						max = x[i];
+				}
+			}
+			return max;
+		}
+
+		/// <summary>
+		/// Creates a new vector, whose elements are the maximum of the elements of a given input vector and a given number.
+		/// </summary>
+		/// <param name="v">Input vector.</param>
+		/// <param name="b">Number.</param>
+		/// <param name="result">Provide a vector whose elements are filled with the result. If null is provided, then a new vector will be allocated and returned.</param>
+		/// <returns>A vector (either the provided result vector or a new one). Each element r[i] is the maximum of v[i] and b.</returns>
+		public static IVector Max(this IROVector v, double b, IVector result)
+		{
+			if (null == result)
+				result = _funcCreateNewVector(v.Length);
+
+			for (int i = 0; i < v.Length; i++)
+				result[i] = Math.Max(v[i], b);
+
+			return result;
+		}
+
+
+		/// <summary>
+		/// Returns the minimum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for minimum element.</param>
+		/// <returns>Minimum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMinimum(this IROVector x)
+		{
+			double min = double.NaN;
+			if (x.Length > 0)
+			{
+				min = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] > min))
+						min = x[i];
+				}
+			}
+			return min;
+		}
+
+		/// <summary>
+		/// Returns the minimum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for minimum element.</param>
+		/// <returns>Minimum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMinimum(this double[] x)
+		{
+			double min = double.NaN;
+			if (x.Length > 0)
+			{
+				min = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] > min))
+						min = x[i];
+				}
+			}
+			return min;
+		}
+
+
 
      /// <summary>
     /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
@@ -1162,8 +1265,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		public static bool Any(this IROVector v, Func<double, bool> func, out int firstIndex)
 		{
-			for(int i = v.LowerBound;i<=v.UpperBound;i++)
-				if(func(v[i]))
+			int len = v.Length;
+			for (int i = 0; i < len; ++i)
+				if (func(v[i]))
 				{
 					firstIndex = i;
 					return true;

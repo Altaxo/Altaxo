@@ -31,6 +31,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Scales
 {
+	[Serializable]
 	public class ScaleCollection
 	:
 	Main.IChangedEventSource,

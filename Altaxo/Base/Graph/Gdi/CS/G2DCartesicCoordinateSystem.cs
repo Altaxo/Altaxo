@@ -27,6 +27,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.CS
 {
+	[Serializable]
   public class G2DCartesicCoordinateSystem : G2DCoordinateSystem
   {
     /// <summary>

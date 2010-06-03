@@ -191,6 +191,8 @@
     </Compile>
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
+    <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderARGBGradient.cs" />
+    <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderAHSBGradient.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementController.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitEnsembleController.cs" />

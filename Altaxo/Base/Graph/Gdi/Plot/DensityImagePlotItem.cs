@@ -368,7 +368,7 @@ namespace Altaxo.Graph.Gdi.Plot
       if (!(template is DensityImagePlotItem))
         return;
       DensityImagePlotItem from = (DensityImagePlotItem)template;
-      //      m_PlotStyle.CopyFrom(from.m_PlotStyle);
+      _plotStyle.CopyFrom(from._plotStyle);
     }
 
 

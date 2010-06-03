@@ -393,7 +393,7 @@ brent_iterate(ref brent_state_t state, ScalarFunctionDD f, out double root, ref 
 
       tolerance = epsabs + epsrel * min_abs;
 
-      if (Math.Abs(x_upper - x_lower) < tolerance)
+      if (Math.Abs(x_upper - x_lower) <= tolerance)
         return null;
 
       return GSL_ERROR.CONTINUE;

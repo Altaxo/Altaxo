@@ -198,6 +198,7 @@
     <Compile Include="Calc\Interpolation\Interpolation.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Interpolation\PolyharmonicSpline.cs" />
     <Compile Include="Calc\IScalarFunction.cs">
       <SubType>Code</SubType>
     </Compile>

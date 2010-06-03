@@ -159,8 +159,9 @@ namespace Altaxo.Calc.Interpolation
     /// <returns>True if both vectors have the same LowerBounds and the same UpperBounds.</returns>
     protected static bool MatchingIndexRange (IROVector a, IROVector b)
     {
-      return (a.LowerBound == b.LowerBound && a.UpperBound == b.UpperBound);
+      return a.Length == b.Length;
     }
+
     #endregion
 
     #region FindInterval
@@ -180,11 +181,11 @@ namespace Altaxo.Calc.Interpolation
     public static int FindInterval (double u, IROVector x) 
     {
       int i, j;
-      int lo =  x.LowerBound;
-      int hi = x.UpperBound;
-      if (u < x[lo]) 
+     
+      int hi = x.Length-1;
+      if (u < x[0]) 
       {
-        i = lo - 1; // attention: return index below smallest index
+        i = - 1; // attention: return index below smallest index
       } 
       else if (u >= x[hi]) 
       {
@@ -192,7 +193,7 @@ namespace Altaxo.Calc.Interpolation
       } 
       else 
       {
-        i = lo;
+        i = 0;
         j = hi;
         do 
         {
@@ -249,11 +250,15 @@ namespace Altaxo.Calc.Interpolation
       IROVector y3)
     {
       // special case that there are no data. Return 0.0.
-      if (x.Length==0) return 0.0;
+      if (x.Length==0) 
+				return 0;
 
       int i = FindInterval(u,x);  
-      if (i  < x.LowerBound) i = x.LowerBound;  // extrapolate to the left
-      if (i == x.UpperBound) i--;   // extrapolate to the right
+      if (i  < 0)
+				i = 0;  // extrapolate to the left
+      if (i == x.Length-1)
+				i--;   // extrapolate to the right
+
       double dx = u - x[i];
       return (y[i] + dx * (y1[i] + dx * (y2[i] + dx * y3[i])));
     }
@@ -270,8 +275,8 @@ namespace Altaxo.Calc.Interpolation
       if (x.Length == 0) return 0.0;
 
       int i = FindInterval(u, x);
-      if (i < x.LowerBound) i = x.LowerBound;  // extrapolate to the left
-      if (i == x.UpperBound) i--;   // extrapolate to the right
+      if (i < 0) i = 0;  // extrapolate to the left
+      if (i == x.Length-1) i--;   // extrapolate to the right
       double dx = u - x[i];
       return (y1[i] + dx * (2*y2[i] + dx * 3*y3[i]));
     }
@@ -299,10 +304,9 @@ namespace Altaxo.Calc.Interpolation
       IVector y2,
       IVector y3)
     {
-      int lo = x.LowerBound, 
-        hi = x.UpperBound;
+      int hi = x.Length-1;
 
-      for (int i = lo; i < hi; i++) 
+      for (int i = 0; i < hi; i++) 
       {
         double h  = x[i+1] - x[i],
           mi = (y[i+1] - y[i]) / h;
@@ -357,9 +361,9 @@ namespace Altaxo.Calc.Interpolation
     /// </code></remarks>
     public virtual void Parametrize (IROVector x, IROVector y, IVector t, Parametrization parametrization)
     {
-      int lo = x.LowerBound,
-        hi = x.UpperBound,
-        i; 
+      const int lo = 0;
+			int hi = x.Length - 1;
+        int i; 
 
       switch (parametrization)
       {
@@ -743,45 +747,45 @@ namespace Altaxo.Calc.Interpolation
         return 0; // ok
       }
 
-      int lo = x.LowerBound,
-        hi = x.UpperBound;
+			int hi = x.Length - 1;
+			int len = x.Length;
   
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vector already has the appropriate dimension.
-      y1.Resize(lo,hi);
-      y2.Resize(lo,hi);
-      y3.Resize(lo,hi);
+      y1.Resize(len);
+      y2.Resize(len);
+      y3.Resize(len);
 
       if (x.Length == 1) 
       {
     
         // default derivative is 0.0
-        y1[lo] = y2[lo] = y3[lo] = 0.0;
+        y1[0] = y2[0] = y3[0] = 0.0;
 
       } 
       else if (x.Length == 2) 
       {
     
         // set derivatives for a line
-        y1[lo] = y1[hi] = (y[hi]-y[lo]) / (x[hi]-x[lo]);
-        y2[lo] = y2[hi] = 
-          y3[lo] = y3[hi] = 0.0;
+        y1[0] = y1[hi] = (y[hi]-y[0]) / (x[hi]-x[0]);
+        y2[0] = y2[hi] = 
+          y3[0] = y3[hi] = 0.0;
 
       } 
       else 
       { // three or more points
     
         // initial guess derivative vector 
-        y1[lo] = deriv1(x,y,lo+1,-1);
+        y1[0] = deriv1(x,y,1,-1);
         y1[hi] = deriv1(x,y,hi-1,1);
-        for (int i = lo+1; i < hi; i++)
+        for (int i = 1; i < hi; i++)
           y1[i] = deriv2(x,y,i);
 
         if (x.Length > 3) 
         {
 
           // adjust derivatives at boundaries
-          if (y1[lo] * y1[lo+1] < 0) y1[lo] = 0;
+          if (y1[0] * y1[1] < 0) y1[0] = 0;
           if (y1[hi] * y1[hi-1] < 0) y1[hi] = 0;
       
           // adjustment of cubic interpolant 
@@ -887,7 +891,8 @@ namespace Altaxo.Calc.Interpolation
       do 
       {
         stop = true;
-        for (i = x.LowerBound; i < x.UpperBound; i++) 
+				int hi = x.Length - 1;
+        for (i =0; i < hi; i++) 
         {
           i1 = i + 1;
           d1 = (y[i1]-y[i]) / (x[i1]-x[i]);
@@ -968,14 +973,14 @@ namespace Altaxo.Calc.Interpolation
         return 0; // ok
       }
      
-      int lo = x.LowerBound, lo1 = lo+1, lo2 = lo+2, 
-        hi = x.UpperBound, hi1 = hi-1, hi2 = hi-2, hi3 = hi-3;
+      const int lo = 0, lo1 = lo+1, lo2 = lo+2;
+      int hi = x.Length-1, hi1 = hi-1, hi2 = hi-2, hi3 = hi-3;
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vectors already have the appropriate dimensions.
-      y1.Resize(lo,hi);
-      y2.Resize(lo,hi);
-      y3.Resize(lo,hi);
+      y1.Resize(x.Length);
+			y2.Resize(x.Length);
+			y3.Resize(x.Length);
 
       if (x.Length == 1) 
       {
@@ -1130,19 +1135,18 @@ namespace Altaxo.Calc.Interpolation
 
     public override double GetXOfU (double t)
     {
-      int lo = x.LowerBound, 
-        hi = x.UpperBound, 
-        i  = FindInterval(t,x);  
+       int hi = x.Length-1;
+       int i  = FindInterval(t,x);  
 
-      if (i < lo || i >= hi || hi-lo == 1) 
+      if (i < 0 || i >= hi || hi == 1) 
       {
         // linear extrapolation and interpolation for 2 points
         return t;
 
       } 
-      else if (i == lo) 
+      else if (0 == i) 
       {
-        i = lo;
+        i = 0;
         double u  = (t - x[i]) / (x[i+1] - x[i]),
           u2 = u*u,
           c1 = 1.0+u*(u2/6.0-1.0),
@@ -1177,19 +1181,18 @@ namespace Altaxo.Calc.Interpolation
     }
     public override double GetYOfU (double t)
     {
-      int lo = x.LowerBound, 
-        hi = x.UpperBound, 
-        i  = FindInterval(t,x);  
+      int  hi = x.Length-1; 
+      int  i  = FindInterval(t,x);  
 
-      if (i < lo || hi-lo == 1) 
+      if (i < 0 || hi == 1) 
       {
         // linear extrapolation and interpolation for 2 points
-        return  y[lo] + (t-x[lo]) * (y[lo+1]-y[lo])/(x[lo+1]-x[lo]);
+        return  y[0] + (t-x[0]) * (y[1]-y[0])/(x[1]-x[0]);
 
       } 
-      else if (i == lo) 
+      else if (i == 0) 
       {
-        i = lo;
+        i = 0;
         double u = (t - x[i]) / (x[i+1] - x[i]),
           u2 = u*u,
           c1 = 1.0+u*(u2/6.0-1.0),
@@ -1365,9 +1368,9 @@ void DrawClosedCurve (Scene &scene)
 
     public override double GetXOfU (double t)
     {
-      int lo = x.LowerBound, 
-        hi = x.UpperBound, 
-        i  = FindInterval(t,x);  
+      const int lo = 0;
+			int hi = x.Length-1;
+      int  i  = FindInterval(t,x);  
 
       if (i < lo || i >= hi || hi-lo == 1) 
       {
@@ -1413,9 +1416,9 @@ void DrawClosedCurve (Scene &scene)
 
     public override double GetYOfU (double t)
     {
-      int lo = x.LowerBound, 
-        hi = x.UpperBound, 
-        i  = FindInterval(t,x);  
+			const int lo = 0;
+      int hi = x.Length-1;
+      int i  = FindInterval(t,x);  
 
       if (i < lo || hi-lo == 1) 
       {
@@ -1679,7 +1682,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return 0.0;
 
       else if (x.Length == 2)
-        return (y[y.UpperBound]-y[y.LowerBound]) / (x[x.UpperBound]-x[x.LowerBound]);
+        return (y[y.Length-1]-y[0]) / (x[x.Length-1]-x[0]);
   
       else 
       {
@@ -1797,8 +1800,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       double t;
 
       // get dimensions
-      int lo = x.LowerBound,
-        hi = x.UpperBound; 
+			const int lo = 0;
+        int hi = x.Length-1; 
 
       if (hi > lo) 
       {
@@ -1827,12 +1830,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     /// <param name="dx">Output vector.</param>
     public static void InverseDifferences (IROVector x, IVector dx)
     {
-      int lo,hi,sgn;
+      int sgn;
       double t;
 
       // get dimensions
-      lo = x.LowerBound; 
-      hi = x.UpperBound; 
+			const int lo = 0;
+			int hi = x.Length - 1;
 
       if (hi > lo) 
       {
@@ -1861,8 +1864,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       double h1,h2,p2;
 
       // get dimensions
-      int lo = dx.LowerBound,
-        hi = dx.UpperBound;
+			const int lo = 0;
+			int hi = dx.Length - 1;
 
       // calculate vector z
       z[lo] = 0.0;
@@ -1897,9 +1900,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       double h,h1=0.0,h2,r1=0.0,r2;
 
       // get dimensions
-      int lo  = dx.LowerBound,
-        hi  = dx.UpperBound,
-        lo1 = lo+1,
+     const  int lo  = 0, lo1 = lo+1;
+        int hi  = dx.Length-1,
         hi1 = hi-1;
 
       // calculate the derivative vector y1
@@ -1950,8 +1952,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       IVector a, IVector b, IVector c, IVector d)
     {
       // get dimensions
-      int lo = x.LowerBound,
-        hi = x.UpperBound; 
+			const int lo = 0;
+      int hi = x.Length-1; 
    
       // auxilliaries
       double p2 = 2.0 + p,
@@ -1998,9 +2000,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       double h,h1 = 0.0,h2,r1=0.0,r2;
 
       // get dimensions
-      int lo  = dx.LowerBound,
-        hi  = dx.UpperBound,
-        lo1 = lo+1,
+      const int lo  = 0, lo1 = lo+1;
+      int hi  = dx.Length-1,
         hi1 = hi-1;
 
       // calculate the derivative vector y2
@@ -2051,8 +2052,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       IVector a, IVector b, IVector c, IVector d)
     {
       // get dimensions
-      int lo = x.LowerBound,
-        hi = x.UpperBound; 
+      const int lo = 0;
+        int hi = x.Length-1; 
    
       // auxilliaries
       double pp = 0.5 / (p*(3.0+p)+3.0);
@@ -2195,15 +2196,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return 0; // ok
       }
 
-      int lo = x.LowerBound,
-        hi = x.UpperBound;
+			const int lo = 0;
+			int hi = x.Length - 1;
 
-      dx.Resize(lo,hi);  // abscissa difference vector
-      dy.Resize(lo,hi);  // vector of derivatives
-      a.Resize(lo,hi);   // spline coefficients
-      b.Resize(lo,hi);   // spline coefficients
-      c.Resize(lo,hi);   // spline coefficients
-      d.Resize(lo,hi);   // spline coefficients
+      dx.Resize(x.Length);  // abscissa difference vector
+			dy.Resize(x.Length);  // vector of derivatives
+			a.Resize(x.Length);   // spline coefficients
+			b.Resize(x.Length);   // spline coefficients
+			c.Resize(x.Length);   // spline coefficients
+			d.Resize(x.Length);   // spline coefficients
 
       if (boundary == BoundaryConditions.FiniteDifferences || boundary == BoundaryConditions.Supply1stDerivative) 
       {
@@ -2282,7 +2283,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
       int i = FindInterval(u,x);  
 
-      if (i < x.LowerBound) 
+      if (i <0) 
       {     // extrapolation
 
         i++;
@@ -2294,7 +2295,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return y0 + dx * (y1 + dx * y2);
     
       } 
-      else if (i == x.UpperBound) 
+      else if (i == x.Length-1) 
       { // extrapolation
 
         i--;
@@ -2374,11 +2375,11 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return 0; // ok
       }
 
-      int lo = x.LowerBound,
-        hi = x.UpperBound,
+      const int lo = 0;
+      int hi = x.Length-1,
         n = x.Length;
 
-      y1.Resize(lo,hi);    // spline coefficients
+      y1.Resize(n);    // spline coefficients
 
       if (n == 1) 
       {
@@ -2386,7 +2387,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return 0; // ok
       }
 
-      tmp.Resize(lo,hi);   // temporary
+      tmp.Resize(n);   // temporary
   
       double slp1 = 0.0, slpn = 0.0;
       double dels, delx1, delx2, delx12, deln, delnm1, delnn, c1, c2, c3,
@@ -2489,8 +2490,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
     public override double GetYOfU (double u)
     {
-      int lo = x.LowerBound, 
-        hi = x.UpperBound, 
+      const int lo = 0; 
+      int  hi = x.Length-1, 
         n  = x.Length,
         i  = lo+1; 
 
@@ -2625,15 +2626,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       // special case that there are no data. Return 0.0.
       if (x.Length==0) return 0.0;
 
-      int lo = x.LowerBound, 
-        hi = x.UpperBound;
+      const int lo = 0; 
+      int hi = x.Length-1;
 
       // allocate (resize) auxilliary vectors - the resize method has the property
       // that no (de-)allocation is done, if the size of the vector is not changed.
       // Thus there is no overhead if GetYOfU() is called many times with the
       // same vectors, for instance, if a whole curve is drawn.
-      C.Resize(lo,hi); 
-      D.Resize(lo,hi); 
+			C.Resize(x.Length);
+			D.Resize(x.Length); 
 
       C.CopyFrom(y);        // initialize // TODO original was C = D = *y; check Vector if this is a copy operation 
       D.CopyFrom(y);
@@ -2769,12 +2770,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return 0;
       }
 
-      int lo = x.LowerBound,
-        hi = x.UpperBound;
+			const int lo = 0;
+        int hi = x.Length-1;
 
-      xr.Resize(lo,hi);
-      yr.Resize(lo,hi);
-      m.Resize(lo,hi);
+				xr.Resize(x.Length);
+				yr.Resize(x.Length);
+				m.Resize(x.Length);
 
       int i, j, j1, denom, nend;
       double xj, yj, x2, y2;
@@ -2908,8 +2909,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     {
       const double SquareEps = DBL_EPSILON * DBL_EPSILON;
 
-      int lo = xr.LowerBound, 
-        hi = yr.UpperBound;
+			const int lo = 0;
+      int hi = yr.Length-1;
 
       double val = yr[lo];
       for (int i = lo+1; i <= hi; i++) 
@@ -2957,7 +2958,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       int j;
       yj = y[nend];
       j = nend;
-      for (int k = x.LowerBound; k < nend; k++)
+      for (int k = 0; k < nend; k++)
         if (Math.Abs(y[k]) < Math.Abs(yj)) 
         {
           j = k;

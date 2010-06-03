@@ -115,16 +115,6 @@ namespace Altaxo.Calc.Fourier
 
       #region IROVector Members
 
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _wlen - 1; }
-      }
-
       public int Length
       {
         get { return _wlen; }
@@ -179,16 +169,6 @@ namespace Altaxo.Calc.Fourier
 
       #region IROVector Members
 
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _wlen - 1; }
-      }
-
       public int Length
       {
         get { return _wlen; }
@@ -241,16 +221,6 @@ namespace Altaxo.Calc.Fourier
       }
 
       #region IROVector Members
-
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _wlen - 1; }
-      }
 
       public int Length
       {
@@ -306,16 +276,6 @@ namespace Altaxo.Calc.Fourier
 
       #region IROVector Members
 
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _wlen - 1; }
-      }
-
       public int Length
       {
         get { return _wlen; }
@@ -367,16 +327,6 @@ namespace Altaxo.Calc.Fourier
       }
 
       #region IROVector Members
-
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _wlen - 1; }
-      }
 
       public int Length
       {
@@ -438,16 +388,6 @@ namespace Altaxo.Calc.Fourier
 
       #region IROVector Members
 
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _wlen - 1; }
-      }
-
       public int Length
       {
         get { return _wlen; }
@@ -502,16 +442,6 @@ namespace Altaxo.Calc.Fourier
       }
 
       #region IROVector Members
-
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _wlen - 1; }
-      }
 
       public int Length
       {

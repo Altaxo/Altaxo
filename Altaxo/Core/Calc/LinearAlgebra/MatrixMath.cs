@@ -426,23 +426,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-
-      public int LowerBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
-      public int UpperBound
-      {
-        get
-        {
-          return m_Array.Length-1;
-        }
-      }
-
       public int Length
       {
         get
@@ -538,24 +521,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion
 
       #region IROVector Members
-
-    
-
-      public int LowerBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
-      public int UpperBound
-      {
-        get
-        {
-          return m_Array.Length-1;
-        }
-      }
 
       public int Length
       {
@@ -679,24 +644,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-     
-
-      public int LowerBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
-      public int UpperBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
       public int Length
       {
         get
@@ -762,31 +709,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
       /// <value>The element at index i.</value>
       double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {
           return _m[_row,i+_coloffset];
-        }
-      }
-
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound
-      {
-        get
-        {
-          return _length-1;
         }
       }
 
@@ -844,8 +773,8 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       #region IVector Members
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       public double this[int i]
       {
         get
@@ -862,31 +791,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {
           return _m[_row,i+_coloffset];
-        }
-      }
-
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound
-      {
-        get
-        {
-          return _length-1;
         }
       }
 
@@ -931,31 +842,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {
           return _m[i,_col];
-        }
-      }
-
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound
-      {
-        get
-        {
-          return _m.Rows-1;
         }
       }
 
@@ -999,8 +892,8 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       #region IVector Members
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       public double this[int i]
       {
         get
@@ -1017,31 +910,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-      /// <value>The element at index i.</value>
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {
           return _m[i,_col];
-        }
-      }
-
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound
-      {
-        get
-        {
-          return 0;
-        }
-      }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound
-      {
-        get
-        {
-          return _m.Rows-1;
         }
       }
 
@@ -1678,6 +1553,36 @@ namespace Altaxo.Calc.LinearAlgebra
         c[i] = sum;
       }
     }
+
+		/// <summary>
+		/// Multiplies matrix a with vector b from left and right: b* A b.
+		/// </summary>
+		/// <param name="a">Matrix. Must be a square matrix with both number of rows and columns the same as the vector length.</param>
+		/// <param name="b">Vector. The vector must have the length as the rows and columns of the matrix.</param>
+		/// <result>The product b* A b.</result>
+		public static double MultiplyVectorFromLeftAndRight(IROMatrix a, IROVector b)
+		{
+			int numil = b.Length; // number of summands for most inner loop
+
+			// Presumtion:
+			// a.Cols == b.Rows;
+			if (a.Rows != a.Columns)
+				throw new ArgumentException("Matrix a has to be a square matrix");
+			if (a.Columns != numil)
+				throw new ArgumentException(string.Format("The length of the vector({2}) has to match the number of columns of the matrix({0},{1}).", a.Rows, a.Columns, b.Length));
+
+			double result = 0;
+			for (int i = 0; i < numil; i++)
+			{
+				double sum = 0;
+				for (int k = 0; k < numil; k++)
+					sum += a[i, k] * b[k];
+
+				result += b[i] * sum;
+			}
+			return result;
+		}
+
 
 
     /// <summary>

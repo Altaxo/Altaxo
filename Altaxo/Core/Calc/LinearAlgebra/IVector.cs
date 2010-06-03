@@ -32,19 +32,12 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
   /// <summary>
-  /// Interface for a read-only vector of double values.
+  /// Interface for a read-only vector of double values. The first valid index of this vector is 0, the last one in (<see cref="Length"/>-1).
   /// </summary>
   public interface IROVector : INumericSequence
   {
-    /// <summary>The smallest valid index of this vector</summary>
-    int LowerBound { get; }
-    
-    /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-    int UpperBound { get; }
-    
     /// <summary>The number of elements of this vector.</summary>
     int Length { get; }  // change this later to length property
-
   }
 
   /// <summary>
@@ -79,19 +72,6 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #region IROVector Members
-
-    public virtual int LowerBound
-    {
-      get { return 0; }
-    }
-
-    public virtual int UpperBound
-    {
-      get
-      {
-        return Length - 1;
-      }
-    }
 
     public abstract int Length
     {
@@ -150,16 +130,6 @@ namespace Altaxo.Calc.LinearAlgebra
     
 
     #region IROVector Members
-
-    public override int LowerBound
-    {
-      get { return 0; }
-    }
-
-    public override int UpperBound
-    {
-      get { return _data.Length-1; }
-    }
 
     public override int Length
     {

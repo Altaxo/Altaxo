@@ -54,6 +54,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       DensityImageLegend s = this;
       base.GetObjectData(info, context);
+			info.AddValue("IsOrientationVertical",IsOrientationVertical);
+			info.AddValue("IsScaleReversed", IsScaleReversed);
+			info.AddValue("Scale", ScaleWithTicks.Scale);
+			info.AddValue("TickSpacing", ScaleWithTicks.TickSpacing);
+			info.AddValue("AxisStyles", _axisStyles);
     }
 
 
@@ -68,6 +73,19 @@ namespace Altaxo.Graph.Gdi.Shapes
     public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
     {
       DensityImageLegend s = (DensityImageLegend)base.SetObjectData(obj, info, context, selector);
+			
+			bool isOrientationVertical = info.GetBoolean("IsOrientationVertical");
+			bool isScaleReversed = info.GetBoolean("IsScaleReversed");
+			var cachedScale = (NumericalScale)info.GetValue("Scale",typeof(NumericalScale));
+			var scaleTickSpacing = (TickSpacing)info.GetValue("TickSpacing", typeof(TickSpacing));
+			_axisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", typeof(AxisStyleCollection));
+			_axisStyles.ParentObject = this;
+			_cachedArea = new DensityLegendArea(Size, isOrientationVertical, isScaleReversed, cachedScale, scaleTickSpacing);
+			_axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
+
+			// now we should use the first plotitem that is a densityPlotItem that we can find
+
+
       return s;
     }
     /// <summary>
@@ -210,7 +228,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         this._axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
         this._axisStyles.ParentObject = this;
 
-				this._bitmap = (Bitmap)from._bitmap.Clone();
+				this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
 				this.PlotItem = from._plotItem;
 			}
 		}
@@ -314,8 +332,43 @@ namespace Altaxo.Graph.Gdi.Shapes
 			// Update the coordinate system size to meet the size of the graph item
 			_cachedArea.CoordinateSystem.UpdateAreaSize((SizeF)Size);
 
-      Data.AltaxoVariant porg = _plotItem.Style.Scale.OrgAsVariant;
-      Data.AltaxoVariant pend = _plotItem.Style.Scale.EndAsVariant;
+			Data.AltaxoVariant porg;
+			Data.AltaxoVariant pend;
+			NumericalScale originalZScale;
+			Plot.IColorProvider colorProvider;
+
+			if (null == _plotItem)
+			{
+				// search for the first density plot item in the layer
+				var layer = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
+				if (null != layer)
+				{
+					foreach (var item in layer.PlotItems)
+					{
+						if (item is DensityImagePlotItem)
+						{
+							_plotItem = item as DensityImagePlotItem;
+							break;
+						}
+					}
+				}
+			}
+
+			if (null != _plotItem)
+			{
+				porg = _plotItem.Style.Scale.OrgAsVariant;
+				pend = _plotItem.Style.Scale.EndAsVariant;
+				originalZScale = _plotItem.Style.Scale;
+				colorProvider = _plotItem.Style.ColorProvider;
+			}
+			else
+			{
+				porg = 0;
+				pend = 1;
+				originalZScale = new LinearScale();
+				colorProvider = new Plot.ColorProvider.ColorProviderBGRY();
+			}
+     
 			var legendScale = (NumericalScale)ScaleWithTicks.Scale;
 			var legendTickSpacing = ScaleWithTicks.TickSpacing;
       legendTickSpacing.PreProcessScaleBoundaries(ref porg, ref pend, true, true);
@@ -324,8 +377,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
       // Fill the bitmap
-      var originalZScale = _plotItem.Style.Scale;
-      var colorProvider = _plotItem.Style.ColorProvider;
+    
       for (int i = 0; i < _bitmapPixelsAlong; i++)
       {
         double r = (scaleIsReversed^orientationIsVertical) ? 1 - i / (double)(_bitmapPixelsAlong - 1) : i / (double)(_bitmapPixelsAlong - 1);
@@ -414,6 +466,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Inner classes
 
+		[Serializable]
     class DensityLegendArea : IPlotArea
     {
       PointD2D _size;

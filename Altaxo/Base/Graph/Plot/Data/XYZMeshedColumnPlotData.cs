@@ -50,15 +50,19 @@ namespace Altaxo.Graph.Plot.Data
     protected Altaxo.Data.ReadableColumnProxy _yColumn;
 
     // cached or temporary data
+		[NonSerialized]
     protected NumericalBoundaries _xBoundaries;
-    protected NumericalBoundaries _yBoundaries;
-    protected NumericalBoundaries _vBoundaries;
+		[NonSerialized]
+		protected NumericalBoundaries _yBoundaries;
+		[NonSerialized]
+		protected NumericalBoundaries _vBoundaries;
 
 
     /// <summary>
     /// Number of rows, here the maximum of the row counts of all columns.
     /// </summary>
     protected int _numberOfRows;
+
     [NonSerialized]
     protected bool _isCachedDataValid = false;
 

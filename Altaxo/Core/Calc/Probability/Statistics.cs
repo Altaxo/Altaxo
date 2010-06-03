@@ -55,7 +55,7 @@ namespace Altaxo.Calc.Probability
 		{
 			double mean = Mean(x);
 			double sum = 0;
-			for (int i = x.LowerBound; i <= x.UpperBound; i++)
+			for (int i = 0; i < x.Length; i++)
 				sum += RMath.Pow2(x[i] - mean);
 
 			return Math.Sqrt(sum/(x.Length-1));
@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Probability
 			if (checkArray)
 			{
 				double prev = double.NegativeInfinity;
-				for (int i = x.LowerBound; i <= x.UpperBound; i++)
+				for (int i = 0; i < x.Length; i++)
 				{
 					double curr = x[i];
 					if (!(curr >= prev))
@@ -113,14 +113,14 @@ namespace Altaxo.Calc.Probability
 			if (n == 0)
 				return 0.0;
 
-			int lowerBound = x.LowerBound;
+		
 			if (lhs == n - 1)
 			{
-				result = x[lowerBound + lhs * stride];
+				result = x[ lhs * stride];
 			}
 			else
 			{
-				result = (1 - delta) * x[lowerBound + lhs * stride] + delta * x[lowerBound + (lhs + 1) * stride];
+				result = (1 - delta) * x[ lhs * stride] + delta * x[ (lhs + 1) * stride];
 			}
 
 			return result;
@@ -273,9 +273,9 @@ namespace Altaxo.Calc.Probability
 				throw new ArithmeticException("Bandwith is not positive");
 
 			if (from.IsNaN())
-				from = x.Min() - cut * bw;
+				from = x.GetMinimum() - cut * bw;
 			if (to.IsNaN())
-				to = x.Max() + cut * bw;
+				to = x.GetMaximum() + cut * bw;
 
 			if (!RMath.IsFinite(from))
 				throw new ArithmeticException("non-finite 'from'");

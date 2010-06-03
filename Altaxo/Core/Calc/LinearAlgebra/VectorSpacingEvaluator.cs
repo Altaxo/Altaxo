@@ -43,11 +43,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="vec">The vector.</param>
     public VectorSpacingEvaluator(IROVector vec)
     {
-      int lower = vec.LowerBound;
-      int upper = vec.UpperBound;
-
-      _numtotalsteps = upper-lower;
-      for(int i=lower;i<upper;i++)
+			_numtotalsteps = vec.Length - 1;
+      for(int i=0;i<_numtotalsteps;i++)
       {
         double step = vec[i+1]-vec[i];
         
@@ -67,7 +64,7 @@ namespace Altaxo.Calc.LinearAlgebra
       // if all steps are valid, we calculate sumsteps from the boundaries
       // to enhance the accuracy.
       if(_numvalidsteps>0 && _numtotalsteps == _numvalidsteps)
-        _sumsteps = vec[upper] - vec[lower];
+				_sumsteps = vec[_numtotalsteps] - vec[0];
     }
 
 

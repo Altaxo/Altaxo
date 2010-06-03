@@ -55,13 +55,6 @@ namespace Altaxo.Calc.LinearAlgebra
         _rows = nRows;
       }
       #region IROVector Members
-
-  
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound { get { return 0; }}
-    
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _rows-1; }}
     
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get {; return _rows; }}
@@ -100,13 +93,6 @@ namespace Altaxo.Calc.LinearAlgebra
         _rows = selectedRows;
       }
       #region IROVector Members
-
-  
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound { get { return 0; }}
-    
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return Length-1; }}
     
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get {; return _rows==null ? 0 : _rows.Count; }}
@@ -151,13 +137,6 @@ namespace Altaxo.Calc.LinearAlgebra
         _rows = nRows;
       }
       #region IROVector Members
-
-  
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound { get { return 0; }}
-    
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _rows-1; }}
     
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get {; return _rows; }}
@@ -199,13 +178,6 @@ namespace Altaxo.Calc.LinearAlgebra
         _rows = selectedRows;
       }
       #region IROVector Members
-
-  
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound { get { return 0; }}
-    
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return Length-1; }}
     
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get {; return _rows==null ? 0 : _rows.Count; }}
@@ -253,13 +225,6 @@ namespace Altaxo.Calc.LinearAlgebra
         _rows = nRows;
       }
       #region IROVector Members
-
-
-      /// <summary>The smallest valid index of this vector</summary>
-      public int LowerBound { get { return 0; } }
-
-      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _rows - 1; } }
 
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get { ; return _rows; } }

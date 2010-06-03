@@ -45,6 +45,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   public class DensityImagePlotStyle
     :
     System.ICloneable,
+    Main.ICopyFrom,
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
     Main.IDocumentNode
@@ -274,14 +275,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public DensityImagePlotStyle(DensityImagePlotStyle from)
     {
       InitializeMembers();
+      CopyFrom(from);
+    }
 
-      this._clipToLayer = from._clipToLayer;
-			this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
-			this.Scale = (NumericalScale)from._scale.Clone();
+    public bool CopyFrom(object obj)
+    {
+      var from = obj as DensityImagePlotStyle;
+      bool hasCopied = false;
+      if (null != from)
+      {
+        this._clipToLayer = from._clipToLayer;
+        this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
+        this.Scale = (NumericalScale)from._scale.Clone();
 
-      this._parent = from._parent;
+        this._parent = from._parent;
 
-      this._imageType = CachedImageType.None;
+        this._imageType = CachedImageType.None;
+        hasCopied = true;
+      }
+      return hasCopied;
     }
 
 

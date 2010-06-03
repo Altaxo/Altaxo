@@ -925,20 +925,6 @@ namespace Altaxo.Calc.LinearAlgebra
       data = newdata;
     }
 
-    #region IROComplexFloatVector Members
-
-    public int LowerBound
-    {
-      get { return 0; }
-    }
-
-    public int UpperBound
-    {
-      get { return data.Length - 1; }
-    }
-
-    #endregion
-
     #region Additions due to adoption to Altaxo
 
     ///<summary>Constructor for <c>ComplexDoubleVector</c> to deep copy from a <see cref="IROComplexDoubleVector" /></summary>

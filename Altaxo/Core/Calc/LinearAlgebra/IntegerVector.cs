@@ -31,8 +31,7 @@ namespace Altaxo.Calc.LinearAlgebra
   public class IntegerVector
   {
     protected int[] x;
-    protected int lo = 0;
-    protected int hi = -1;
+    protected int len = 0;
 
 
     /// <summary>
@@ -50,7 +49,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="val">The value all elements are set to.</param>
     public void SetAllElementsTo(int val)
     {
-      for(int i=lo; i<=hi; i++)
+      for(int i=len-1; i>=0; --i)
         x[i] = val;
     }
 
@@ -60,23 +59,20 @@ namespace Altaxo.Calc.LinearAlgebra
     public void Clear()
     {
       x=null;
-      lo=0;
-      hi=-1;
+      len=0;
     }
 
     /// <summary>
     /// Resizes the vector. Previosly stored data are lost.
     /// </summary>
-    /// <param name="lo">New lower bound (first valid index).</param>
-    /// <param name="hi">New upper bound (last valid index).</param>
-    public void Resize(int lo, int hi)
+    /// <param name="length">New length.</param>
+    public void Resize(int length)
     {
-      if(x==null || hi>=x.Length)
+      if(x==null || length>=x.Length)
       {
-        x = new int[hi+1];
+        x = new int[length];
       }
-      this.lo = lo;
-      this.hi = hi;
+			this.len = length;
     }
   }
 

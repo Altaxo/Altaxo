@@ -960,41 +960,40 @@ namespace Altaxo.Calc.Interpolation
 			base.x = xstore;
 			base.y = ystore;
 
-			int lo = x.LowerBound,
-				hi = x.UpperBound,
-				n = x.Length;
+			
+			var	n = x.Length;
 
 
 			// Resize the auxilliary vectors. Note, that there is no reallocation if the
 			// vector already has the appropriate dimension.
-			y0.Resize(lo, hi);
-			y1.Resize(lo, hi);
-			y2.Resize(lo, hi);
-			y3.Resize(lo, hi);
+			y0.Resize(n);
+			y1.Resize(n);
+			y2.Resize(n);
+			y3.Resize(n);
 			// se.Resize(lo,hi); // currently zero
-			wkr.Resize(0, 3 * (n + 2));
-			wkt.Resize(0, 2 * (n + 2));
-			wku.Resize(0, 1 * (n + 2));
-			wkv.Resize(0, 1 * (n + 2));
+			wkr.Resize(3 * (n + 2));
+			wkt.Resize(2 * (n + 2));
+			wku.Resize(1 * (n + 2));
+			wkv.Resize(1 * (n + 2));
 			if (calculateErrorEstimates)
-				se.Resize(lo, hi);
+				se.Resize(n);
 
 			// set derivatives for a single point
 			if (x.Length == 1)
 			{
-				y0[lo] = y[lo];
-				y1[lo] = y2[lo] = y3[lo] = 0.0;
+				y0[0] = y[0];
+				y1[0] = y2[0] = y3[0] = 0.0;
 				return 0;
 			}
 
 			// set derivatives for a line
 			if (x.Length == 2)
 			{
-				y0[lo] = y[lo];
-				y0[hi] = y[hi];
-				y1[lo] = y1[hi] = (y[hi] - y[lo]) / (x[hi] - x[lo]);
-				y2[lo] = y2[hi] =
-					y3[lo] = y3[hi] = 0.0;
+				y0[0] = y[0];
+				y0[n-1] = y[n-1];
+				y1[0] = y1[n-1] = (y[n-1] - y[0]) / (x[n-1] - x[0]);
+				y2[0] = y2[n-1] =
+					y3[0] = y3[n-1] = 0.0;
 				return 0;
 			}
 
@@ -1004,8 +1003,8 @@ namespace Altaxo.Calc.Interpolation
 			// the wrong length
 			if (dy.Store() == null || dy.Length != xstore.Length)
 			{
-				dy.Resize(lo, hi);
-				for (int k = lo; k <= hi; ++k)
+				dy.Resize(n);
+				for (int k = 0; k < n; ++k)
 					dy[k] = 1;
 			}
 

@@ -133,14 +133,14 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="lo">New lower boundary of the vector (first valid index).</param>
     /// <param name="hi">New upper boundary of the vector (last valid index).</param>
-    public void Resize(int lo, int hi)
+    public void Resize(int length)
     {
-      if (lo != 0)
-        throw new NotSupportedException("Lower bound value other than zero is not supported by DoubleVector class");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException("Length must be nonnegative");
 
-      if (data == null || (hi - lo + 1) != data.Length)
+      if (data == null || length != data.Length)
       {
-        data = new double[hi - lo + 1];
+        data = new double[length];
       }
     }
 
@@ -151,24 +151,6 @@ namespace Altaxo.Calc.LinearAlgebra
       get
       {
         return data.Length;
-      }
-    }
-
-   
-    public int LowerBound
-    {
-      get
-      {
-        return 0;
-      }
-    }
-    
-
-    public int UpperBound
-    {
-      get
-      {
-        return data.Length-1;
       }
     }
 
@@ -916,10 +898,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="a">The vector to copy the data from.</param>
     public void CopyFrom(IROVector a)
     {
-      Resize(a.LowerBound, a.UpperBound);
-      int lo = a.LowerBound;
+      Resize(a.Length);
       for (int i = 0; i < data.Length; ++i)
-        data[i] = a[i+lo];
+        data[i] = a[i];
     }
 
     #region Additions due to adoption to Altaxo

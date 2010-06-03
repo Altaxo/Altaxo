@@ -562,16 +562,6 @@ namespace Altaxo.Data
 
       #region IROVector Members
 
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _count - 1; }
-      }
-
       public int Length
       {
         get { return _count; }
@@ -619,16 +609,6 @@ namespace Altaxo.Data
       #endregion
 
       #region IROVector Members
-
-      public int LowerBound
-      {
-        get { return 0; }
-      }
-
-      public int UpperBound
-      {
-        get { return _count - 1; }
-      }
 
       public int Length
       {

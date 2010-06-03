@@ -36,12 +36,6 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public interface IROComplexDoubleVector : IComplexDoubleSequence
   {
-    /// <summary>The smallest valid index of this vector</summary>
-    int LowerBound { get; }
-    
-    /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-    int UpperBound { get; }
-    
     /// <summary>The number of elements of this vector.</summary>
     int Length { get; }  // change this later to length property
 
