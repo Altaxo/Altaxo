@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Common.Drawing
         r2.Inflate(-r2.Width / 4, -r2.Height / 4);
         grfx.FillRectangle(Brushes.Black, r2);
 
-        _brushGlue.Brush.Rectangle = fullRect;
+        _brushGlue.Brush.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
         grfx.FillRectangle(_brushGlue.Brush, fullRect);
       }
 

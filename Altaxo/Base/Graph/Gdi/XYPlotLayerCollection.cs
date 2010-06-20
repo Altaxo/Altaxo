@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Gdi
 		/// <remarks>The reference point (0,0) of the GraphDocument
 		/// is the top left corner of the printable area (and not of the page area!). The hosting class has to translate the graphics origin
 		/// to the top left corner of the printable area before calling this routine.</remarks>
-		public void DoPaint(Graphics g, bool bForPrinting)
+		public void Paint(Graphics g, bool bForPrinting)
 		{
 			GraphicsState gs = g.Save();
 
@@ -276,12 +276,12 @@ namespace Altaxo.Graph.Gdi
 				this[i].PreparePainting();
 			}
 
-			for (int i = this.Count - 1; i >= 0; i--)
+			for (int i = 0; i < this.Count; i++)
 			{
 				this[i].Paint(g);
 			}
 
-			for (int i = this.Count - 1; i >= 0; i--)
+			for (int i = 0 ; i < this.Count; i++)
 			{
 				this[i].FinishPainting();
 			}

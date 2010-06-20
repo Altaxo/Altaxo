@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Gdi.Background
     {
       if (_brush != null)
       {
-        _brush.Rectangle = innerArea;
+        _brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
         g.FillRectangle(_brush, innerArea);
       }
     }

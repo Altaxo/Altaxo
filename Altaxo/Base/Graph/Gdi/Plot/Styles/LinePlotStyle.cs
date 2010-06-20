@@ -638,7 +638,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (_fillArea)
       {
         if (null != _fillBrush)
-          _fillBrush.Rectangle = new RectangleF(PointF.Empty, layer.Size);
+          _fillBrush.SetEnvironment(new RectangleF(PointF.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
 
         layer.UpdateCSPlaneID(_fillDirection);
       }

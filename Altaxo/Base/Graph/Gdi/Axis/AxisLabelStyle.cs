@@ -780,7 +780,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if (this._backgroundStyle != null)
           _backgroundStyle.Draw(g, new RectangleF(PointF.Empty, msize));
 
-        _brush.Rectangle = new RectangleF(PointF.Empty, msize);
+        _brush.SetEnvironment(new RectangleF(PointF.Empty, msize), BrushX.GetEffectiveMaximumResolution(g,1));
         labels[i].Draw(g, _brush, new PointF(0, 0));
         g.Restore(gs); // Restore the graphics state
 

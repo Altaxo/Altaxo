@@ -16,7 +16,7 @@ namespace Altaxo.Gui.Graph
 			InitializeComponent();
 		}
 
-		#region IDensityImagePlotStyleView2 Members
+		#region IDensityImagePlotStyleView Members
 
 		public IDensityScaleView DensityScaleView
 		{

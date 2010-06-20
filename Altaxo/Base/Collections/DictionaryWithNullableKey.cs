@@ -5,11 +5,19 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+	/// <summary>
+	/// Provides a dictionary, in which one of the keys (and only one) can be null.
+	/// </summary>
+	/// <typeparam name="TKey">Key type.</typeparam>
+	/// <typeparam name="TValue">Value type.</typeparam>
   public class DictionaryWithNullableKey<TKey,TValue> : IDictionary<TKey,TValue>
   {
+		/// <summary>Underlying dictionary for the normal keys (without the null key).</summary>
     Dictionary<TKey, TValue> _dict = new Dictionary<TKey, TValue>();
-    bool _nullValueSet;
-    TValue _nullValue;
+    /// <summary>True if the value for the null key is set.</summary>
+		bool _nullValueSet;
+		/// <summary>Value corresponding to the null key. Only valid if <see cref="_nullValueSet"/> is True.</summary>
+		TValue _nullValue;
 
     #region IDictionary<TKey,TValue> Members
 

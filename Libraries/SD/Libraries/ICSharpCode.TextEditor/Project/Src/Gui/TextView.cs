@@ -201,7 +201,14 @@ namespace ICSharpCode.TextEditor
 			int column = 0;
 			physicalColumn = 0;
 			if (TextEditorProperties.EnableFolding) {
-				while (true) {
+#if ModifiedForAltaxo
+        int secureLelliDownCounter;
+        for (secureLelliDownCounter = 40000; secureLelliDownCounter > 0; --secureLelliDownCounter)
+        {
+#else
+        while (true) {
+#endif
+
 					List<FoldMarker> starts = textArea.Document.FoldingManager.GetFoldedFoldingsWithStartAfterColumn(lineNumber, column - 1);
 					if (starts == null || starts.Count <= 0) {
 						if (lineNumber < textArea.Document.TotalNumberOfLines) {
@@ -231,7 +238,14 @@ namespace ICSharpCode.TextEditor
 					
 					physicalXPos = PaintFoldingText(g, lineNumber, physicalXPos, lineRectangle, firstFolding.FoldText, drawSelected);
 				}
-			} else {
+#if ModifiedForAltaxo
+        if(secureLelliDownCounter<=0) 
+        {
+        TextEditorProperties.EnableFolding = false;
+        System.Diagnostics.Debug.WriteLine("Folding disabled because of bug in TextView.PaintDocumentLine");
+        }
+#endif
+      } else {
 				physicalXPos = PaintLinePart(g, lineNumber, 0, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
 			}
 			

@@ -53,6 +53,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			MoveDocuments(list);
 		}
 
+    /// <summary>
+    /// Moves the selected list items to a folder that is asked for by a dialog.
+    /// </summary>
+    /// <param name="ctrl">Project browse controller.</param>
+    public static void CopySelectedListItemsToFolder(this ProjectBrowseController ctrl)
+    {
+      var list = ctrl.GetSelectedListItems();
+      CopyDocuments(list);
+    }
+
 		/// <summary>
 		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
 		/// </summary>
@@ -66,27 +76,26 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			string newFolderName = choices.Choices[choices.Selection];
 
-			foreach (object item in list)
-			{
-				if (item is Altaxo.Data.DataTable)
-				{
-					var table = (Altaxo.Data.DataTable)item;
-					table.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
-				}
-				else if (item is Altaxo.Graph.Gdi.GraphDocument)
-				{
-					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
-					graph.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
-				}
-				else if (item is ProjectFolder)
-				{
-					var folder = (ProjectFolder)item;
-					string moveToFolder = ProjectFolder.Combine(newFolderName, ProjectFolder.GetNamePart(newFolderName));
-					Current.Project.Folders.RenameFolder(folder.Name, moveToFolder);
-				}
-			}
+			Current.Project.Folders.MoveItemsToFolder(list, newFolderName);
+			
 		}
 
+
+    /// <summary>
+    /// Copy the items given in the list (tables and graphs) to a folder, which is selected by the user via a dialog box.
+    /// </summary>
+    /// <param name="list">List of items to delete.</param>
+    public static void CopyDocuments(IList<object> list)
+    {
+      var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName).ToArray();
+      var choices = new SingleChoiceObject(names, 0);
+      if (!Current.Gui.ShowDialog(ref choices, "Choose folder to move the items into", false))
+        return;
+
+      string newFolderName = choices.Choices[choices.Selection];
+			Current.Project.Folders.CopyItemsToFolder(list,newFolderName);
+      
+    }
 
 
 		public static void RenameSelectedListItem(this ProjectBrowseController ctrl)

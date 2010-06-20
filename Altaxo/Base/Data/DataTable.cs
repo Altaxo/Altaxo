@@ -1246,6 +1246,18 @@ namespace Altaxo.Data
         return null;
     }
 
+    /// <summary>
+    /// Gets the directory part of the table name with trailing DirectorySeparatorChar. 
+    /// If the table is located in the root folder, an empty string is returned.
+    /// </summary>
+    public string Folder
+    {
+      get
+      {
+        return Main.ProjectFolder.GetDirectoryPart(this.Name);
+      }
+    }
+
 
     /// <summary>
     /// Get the parent data table of a DataColumnCollection.
@@ -1285,6 +1297,8 @@ namespace Altaxo.Data
       else
         return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTable));
     }
+
+
     
   } // end class Altaxo.Data.DataTable
   

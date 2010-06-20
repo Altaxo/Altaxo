@@ -169,12 +169,13 @@ namespace Altaxo.Graph.Gdi.Background
       // please note: m_Bounds is already extended to the shadow
 
       // first the shadow
-      _cachedShadowBrush.Rectangle = innerArea;
+      _cachedShadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+
       g.TranslateTransform(_shadowLength, _shadowLength);
       g.FillRectangle(_cachedShadowBrush, innerArea);
       g.TranslateTransform(-_shadowLength, -_shadowLength);
 
-      _brush.Rectangle = innerArea;
+      _brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
       g.FillRectangle(_brush, innerArea);
       g.DrawRectangle(Pens.Black, innerArea.Left, innerArea.Top, innerArea.Width , innerArea.Height );
     }

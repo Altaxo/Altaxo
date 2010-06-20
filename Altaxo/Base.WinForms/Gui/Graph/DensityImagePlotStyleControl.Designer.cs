@@ -51,7 +51,7 @@
 			this._flowLayoutVerticalMain.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this._flowLayoutVerticalMain.Location = new System.Drawing.Point(0, 0);
 			this._flowLayoutVerticalMain.Name = "_flowLayoutVerticalMain";
-			this._flowLayoutVerticalMain.Size = new System.Drawing.Size(340, 247);
+			this._flowLayoutVerticalMain.Size = new System.Drawing.Size(340, 263);
 			this._flowLayoutVerticalMain.TabIndex = 0;
 			// 
 			// _grpScale
@@ -79,7 +79,7 @@
 			this._grpColorProvider.Controls.Add(this._ctrlColorProvider);
 			this._grpColorProvider.Location = new System.Drawing.Point(3, 97);
 			this._grpColorProvider.Name = "_grpColorProvider";
-			this._grpColorProvider.Size = new System.Drawing.Size(236, 92);
+			this._grpColorProvider.Size = new System.Drawing.Size(236, 108);
 			this._grpColorProvider.TabIndex = 1;
 			this._grpColorProvider.TabStop = false;
 			this._grpColorProvider.Text = "Colorization:";
@@ -89,13 +89,13 @@
 			this._ctrlColorProvider.AutoSize = true;
 			this._ctrlColorProvider.Location = new System.Drawing.Point(6, 19);
 			this._ctrlColorProvider.Name = "_ctrlColorProvider";
-			this._ctrlColorProvider.Size = new System.Drawing.Size(224, 54);
+			this._ctrlColorProvider.Size = new System.Drawing.Size(224, 70);
 			this._ctrlColorProvider.TabIndex = 0;
 			// 
 			// _grpOtherProperties
 			// 
 			this._grpOtherProperties.Controls.Add(this._chkClipToLayer);
-			this._grpOtherProperties.Location = new System.Drawing.Point(3, 195);
+			this._grpOtherProperties.Location = new System.Drawing.Point(3, 211);
 			this._grpOtherProperties.Name = "_grpOtherProperties";
 			this._grpOtherProperties.Size = new System.Drawing.Size(256, 49);
 			this._grpOtherProperties.TabIndex = 2;
@@ -119,7 +119,7 @@
 			this.AutoSize = true;
 			this.Controls.Add(this._flowLayoutVerticalMain);
 			this.Name = "DensityImagePlotStyleControl";
-			this.Size = new System.Drawing.Size(340, 247);
+			this.Size = new System.Drawing.Size(340, 263);
 			this._flowLayoutVerticalMain.ResumeLayout(false);
 			this._flowLayoutVerticalMain.PerformLayout();
 			this._grpScale.ResumeLayout(false);

@@ -2479,9 +2479,9 @@ namespace Altaxo.Graph.Gdi
         g.ResetClip();
       }
 
-      _graphObjects.DrawObjects(g, 1, this);
+      _graphObjects.Paint(g, 1, this);
 
-      _legends.DrawObjects(g, 1, this);
+      _legends.Paint(g, 1, this);
 
       g.Restore(savedgstate);
     }

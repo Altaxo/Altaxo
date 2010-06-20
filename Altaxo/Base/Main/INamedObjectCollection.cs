@@ -31,8 +31,8 @@ namespace Altaxo.Main
   /// </summary>
   public interface INameOwner
   {
-    /// <summary>The name of the name owner.</summary>
-    string Name { get; }
+    /// <summary>The name of the name owner. The set operation can throw an InvalidOperation exception if it is not allowed to set the name.</summary>
+		string Name { get; set; }
     
     /// <summary>Fired if the name has changed. Arguments are the name owner (which has already the new name), and the old name.</summary>
     event Action<INameOwner, string> NameChanged;

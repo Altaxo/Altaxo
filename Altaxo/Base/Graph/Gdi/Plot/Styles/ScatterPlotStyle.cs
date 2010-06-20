@@ -220,13 +220,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected int _skipFreq;
 
     // cached values:
+		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
+		[field:NonSerialized]
+		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+		/// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
+		[field:NonSerialized]
+		protected Func<int, Color> _cachedColorForIndexFunction;
     [NonSerialized]
     protected GraphicsPath _cachedPath;
     [NonSerialized]
     protected bool _cachedFillPath;
     [NonSerialized]
     protected BrushX _cachedFillBrush;
-
     [NonSerialized]
     protected object _parent;
 
@@ -847,6 +852,38 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       g.DrawPath(_pen, _cachedPath);
     }
 
+		public void Paint(Graphics g, double symbolSize)
+		{
+			// create the path on-the-fly
+			using (var path = GetPath(_shape, _style, (float)symbolSize))
+			{
+				if (_cachedFillPath)
+					g.FillPath(_cachedFillBrush, path);
+
+				g.DrawPath(_pen, path);
+			}
+		}
+
+		public void Paint(Graphics g, double symbolSize, Color color)
+		{
+			// create the path on-the-fly
+			using (var path = GetPath(_shape, _style, (float)symbolSize))
+			{
+				if (_cachedFillPath)
+				{
+					using (var brush = new SolidBrush(color))
+					{
+						g.FillPath(brush, path);
+					}
+				}
+
+				using (var pen = new Pen(color, _pen.Width))
+				{
+					g.DrawPath(pen, path);
+				}
+			}
+		}
+
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
     {
        PlotRangeList rangeList = pdata.RangeList;
@@ -885,24 +922,55 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // paint the scatter style
       if (this.Shape != XYPlotScatterStyles.Shape.NoSymbol)
       {
-        // save the graphics stat since we have to translate the origin
-        System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+				float xpos = 0, ypos = 0;
+				float xdiff, ydiff;
 
+				if (null == _cachedSymbolSizeForIndexFunction && null==_cachedColorForIndexFunction) // using a constant symbol size
+				{
+					// save the graphics stat since we have to translate the origin
+					System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 
-        float xpos = 0, ypos = 0;
-        float xdiff, ydiff;
-        for (int j = 0; j < ptArray.Length; j += _skipFreq)
-        {
-          xdiff = ptArray[j].X - xpos;
-          ydiff = ptArray[j].Y - ypos;
-          xpos = ptArray[j].X;
-          ypos = ptArray[j].Y;
-          g.TranslateTransform(xdiff, ydiff);
-          this.Paint(g);
-        } // end for
+					for (int j = 0; j < ptArray.Length; j += _skipFreq)
+					{
+						xdiff = ptArray[j].X - xpos;
+						ydiff = ptArray[j].Y - ypos;
+						xpos = ptArray[j].X;
+						ypos = ptArray[j].Y;
+						g.TranslateTransform(xdiff, ydiff);
+						this.Paint(g);
+					} // end for
 
-        g.Restore(gs); // Restore the graphics state
+					g.Restore(gs); // Restore the graphics state
+				}
+				else // using a variable symbol size or variable symbol color
+				{
+					for (int r = 0; r < rangeList.Count; r++)
+					{
+						int lower = rangeList[r].LowerBound;
+						int upper = rangeList[r].UpperBound;
+						int offset = rangeList[r].OffsetToOriginal;
+						for (int j = lower; j < upper; j+= _skipFreq)
+						{
+							xdiff = ptArray[j].X - xpos;
+							ydiff = ptArray[j].Y - ypos;
+							xpos = ptArray[j].X;
+							ypos = ptArray[j].Y;
+							g.TranslateTransform(xdiff, ydiff);
 
+							if (null == _cachedColorForIndexFunction)
+							{
+								double symbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
+								this.Paint(g, symbolSize);
+							}
+							else
+							{
+								double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+								Color color = _cachedColorForIndexFunction(j + offset);
+								this.Paint(g, symbolSize, color);
+							}
+						}
+					}
+				}
       }
     }
 
@@ -959,14 +1027,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
-      if (this.IsColorReceiver)
-        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });
+			if (this.IsColorReceiver)
+			{
+				// try to get a constant color ...
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });
+				// but if there is a color evaluation function, then use that function with higher priority
+				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+			}
 
       SymbolShapeStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(ShapeAndStyle c) { this.ShapeAndStyle = c; });
 
-
-      if(!_independentSymbolSize)
-        SymbolSizeGroupStyle.ApplyStyle(externalGroups,localGroups,delegate(float size) { this.SymbolSize = size; });
+			// per Default, set the symbol size evaluation function to null
+			_cachedSymbolSizeForIndexFunction = null;
+			if (!_independentSymbolSize)
+			{
+				// try to get a constant symbol size ...
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(float size) { this.SymbolSize = size; });
+				// but if there is an symbol size evaluation function, then use this with higher priority.
+				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+			}
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
       SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency=c; });

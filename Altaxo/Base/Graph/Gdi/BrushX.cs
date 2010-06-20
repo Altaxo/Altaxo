@@ -104,6 +104,10 @@ namespace Altaxo.Graph.Gdi
     [NonSerialized]
     protected Brush _cachedBrush;      // this is the cached brush object
 
+    /// <summary>Cached pixel size of the texture. Important for repeateable texture brushes only.</summary>
+    [NonSerialized]
+    protected int _cachedTexturePixelSize=8;
+
     #region "Serialization"
 
 
@@ -643,30 +647,71 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public RectangleF Rectangle
+    /// <summary>
+    /// Sets the environment for the creation of native brush.
+    /// </summary>
+    /// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
+    /// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="GetMaximumEffectiveResolution"/></param>
+    /// <returns>True if changes to the brush were made. False otherwise.</returns>
+    public bool SetEnvironment(RectangleF boundingRectangle, double maxEffectiveResolution)
     {
-      get
+      bool changed = false;
+
+      if (_brushType == BrushType.LinearGradientBrush || _brushType == BrushType.PathGradientBrush)
       {
-        return _brushBoundingRectangle;
+        changed = (_brushBoundingRectangle != boundingRectangle);
+        _brushBoundingRectangle = boundingRectangle;
       }
-      set
+      else
       {
-        if (_brushType == BrushType.LinearGradientBrush || _brushType == BrushType.PathGradientBrush)
+        _brushBoundingRectangle = boundingRectangle; // has no meaning for other brushes, so we set it but dont care
+      }
+
+      if (_brushType == BrushType.TextureBrush && (_textureImage is ISyntheticRepeatableTexture))
+      {
+
+        double s = maxEffectiveResolution * ((_textureImage as ISyntheticRepeatableTexture).Size) / 72.0;
+        int w = Altaxo.Calc.Rounding.RoundUp((int)s,8);
+
+        // Make sure w is not too small nor too big
+        if (!(w >= 8))
+          w = 8;
+        if (!(w <= 8192))
+          w = 8192;
+
+
+        if(w!=_cachedTexturePixelSize)
         {
-          bool bChanged = (_brushBoundingRectangle != value);
-          _brushBoundingRectangle = value;
-          if (bChanged)
-          {
-            _SetBrushVariable(null);
-            OnChanged();
-          }
-        }
-        else
-        {
-          _brushBoundingRectangle = value; // has no meaning for other brushes, so we set it but dont care
+          _cachedTexturePixelSize = w;
+          changed = true;
         }
       }
+
+      if (changed)
+      {
+        _SetBrushVariable(null);
+        OnChanged();
+      }
+
+      return changed;
     }
+
+    public static double GetEffectiveMaximumResolution(Graphics g)
+    {
+      return GetEffectiveMaximumResolution(g, 1);
+    }
+
+    public static double GetEffectiveMaximumResolution(Graphics g, double objectScale)
+    {
+      double maxDpi = Math.Max(g.DpiX, g.DpiY);
+      var e = g.Transform.Elements;
+			var scaleX = e[0] * e[0] + e[1] * e[1];
+			var scaleY = (e[0] * e[3] - e[1] * e[2]) / Math.Sqrt(scaleX);
+      maxDpi *= Math.Max(scaleX,scaleY);
+      maxDpi *= objectScale;
+      return maxDpi;
+    }
+
 
 		private Bitmap GetDefaultTextureBitmap()
 		{
@@ -725,16 +770,32 @@ namespace Altaxo.Graph.Gdi
               br = pgb;
               break;
             case BrushType.TextureBrush:
-              Image img = null != _textureImage ? _textureImage.GetImage() : null;
+              Image img = null;
+              
+              if(_textureImage is ISyntheticRepeatableTexture)
+              {
+                img = (_textureImage as ISyntheticRepeatableTexture).GetImage(_cachedTexturePixelSize);
+              }
+              else if(_textureImage!=null)
+              {
+                img = _textureImage.GetImage();
+              }
+
               if (img == null)
               {
 								img = GetDefaultTextureBitmap();
               }
               TextureBrush tb = new TextureBrush(img);
               tb.WrapMode = this._wrapMode;
-              if (_scale != 1)
-                tb.ScaleTransform(_scale, _scale);
-              br = tb;
+							double scale = _scale;
+							if (_textureImage is ISyntheticRepeatableTexture)
+							{
+								scale *= (_textureImage as ISyntheticRepeatableTexture).Size / img.Width;
+							}
+              if (scale != 1)
+                tb.ScaleTransform((float)scale, (float)scale);
+
+							br = tb;
               break;
           } // end of switch
           this._SetBrushVariable(br);

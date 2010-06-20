@@ -252,7 +252,7 @@ namespace Altaxo.Graph.Gdi
 
 			g.ScaleTransform(zoom, zoom);
 
-			_layers.DoPaint(g, true);
+			_layers.Paint(g, true);
 
 			g.Restore(savedGraphics);
 		}

@@ -154,6 +154,9 @@
     <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\SingleSizeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\DashCapComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -325,6 +328,12 @@
     </Compile>
     <Compile Include="Gui\Graph\ColorProviderControl.Designer.cs">
       <DependentUpon>ColorProviderControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.Designer.cs">
+      <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotItemOptionControl.cs">
       <SubType>UserControl</SubType>
@@ -665,6 +674,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ColorProviderControl.resx">
       <DependentUpon>ColorProviderControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.resx">
+      <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\DensityImagePlotItemOptionControl.resx">
       <DependentUpon>DensityImagePlotItemOptionControl.cs</DependentUpon>

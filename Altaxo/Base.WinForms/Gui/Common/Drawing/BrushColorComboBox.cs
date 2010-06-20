@@ -200,7 +200,7 @@ namespace Altaxo.Gui.Common.Drawing
         else if(objAtIndex is BrushX)
         {
           BrushX itemBrush = (BrushX)objAtIndex;
-          itemBrush.Rectangle = rectColor;
+          itemBrush.SetEnvironment(rectColor, BrushX.GetEffectiveMaximumResolution(grfx));
           grfx.FillRectangle(itemBrush, rectColor);
           text = "Custom Brush";
         }

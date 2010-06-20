@@ -47,7 +47,7 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
-    <DefineConstants>DEBUG;DATACONSISTENCYTEST</DefineConstants>
+    <DefineConstants>DEBUG;DATACONSISTENCYTEST, ModifiedForAltaxo</DefineConstants>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisRules>
     </CodeAnalysisRules>

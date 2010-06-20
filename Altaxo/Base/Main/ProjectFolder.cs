@@ -14,13 +14,13 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Creates a project folder with the given name.
 		/// </summary>
-		/// <param name="name">Name of the project folder. The value null is associated with the root folder.</param>
+		/// <param name="name">Full name of the project folder. The value null is associated with the root folder.</param>
 		public ProjectFolder(string name)
 		{
 			Name = name;
 		}
 
-		/// <summary>Gets the folder name.</summary>
+		/// <summary>Gets the full folder name.</summary>
 		public string Name { get; private set; }
 
 		/// <summary>Returns true if the folder name is the root folder (i.e. is null).</summary>

@@ -468,5 +468,81 @@ namespace Altaxo.Main
 
 			RenameFolder(folderName, newFolderName);
 		}
+
+
+		/// <summary>
+		/// Move items in a list to a other folder.
+		/// </summary>
+		/// <param name="list">List of items to move. Momentarily the item types <see cref="DataTable"/>, <see cref="GraphDocument"/> and <see cref="ProjectFolder"/></param> are supported.
+		/// <param name="newFolderName">Name of the folder where to move the items into.</param>
+		public void MoveItemsToFolder(IList<object> list, string newFolderName)
+		{
+			foreach (object item in list)
+			{
+				if (item is Altaxo.Data.DataTable)
+				{
+					var table = (Altaxo.Data.DataTable)item;
+					table.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
+				}
+				else if (item is Altaxo.Graph.Gdi.GraphDocument)
+				{
+					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
+					graph.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
+				}
+				else if (item is ProjectFolder)
+				{
+					var folder = (ProjectFolder)item;
+					string moveToFolder = ProjectFolder.Combine(newFolderName, ProjectFolder.GetNamePart(newFolderName));
+					RenameFolder(folder.Name, moveToFolder);
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Copies the items given in the list (tables, graphs and folders) to another folder, which is given by newFolderName. The copying
+		/// is done by cloning the items.
+		/// </summary>
+		/// <param name="list">List of items to delete.</param>
+		public void CopyItemsToFolder(IList<object> list, string newFolderName)
+		{
+			foreach (object item in list)
+			{
+				CopyItemToFolder(item, newFolderName);
+			}
+		}
+
+
+		/// <summary>
+		/// Copyies one item to another folder by cloning the item.
+		/// </summary>
+		/// <param name="item">Item to copy.</param>
+		/// <param name="destinationFolderName">Destination folder name.</param>
+		public void CopyItemToFolder(object item, string destinationFolderName)
+		{
+			if (item == null)
+				throw new ArgumentNullException("Item is null");
+
+			if (item is ProjectFolder)
+			{
+				var orgName = (item as ProjectFolder).Name;
+				string subDestination = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
+				foreach(var subitem in this.GetItemsInFolder(orgName))
+				{
+					CopyItemToFolder(subitem, subDestination);
+				}
+			}
+			else if ((item is ICloneable) && (item is INameOwner))
+			{
+				var orgName = (item as INameOwner).Name;
+				var clonedItem = (INameOwner)(item as ICloneable).Clone();
+				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
+				Current.Project.AddItem(clonedItem);
+			}
+			else
+			{
+				throw new NotImplementedException(string.Format("The item of type {0} can not be copied", item.GetType()));
+			}
+		}
 	}
 }

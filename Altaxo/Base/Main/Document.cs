@@ -395,15 +395,36 @@ namespace Altaxo
       return doc;
     }
 
-  
-
-
     public Altaxo.Worksheet.WorksheetLayout CreateNewTableLayout(Altaxo.Data.DataTable table)
     {
       Altaxo.Worksheet.WorksheetLayout layout = new Altaxo.Worksheet.WorksheetLayout(table);
       this.m_TableLayoutList.Add(layout);
       return layout;
     }
+
+		/// <summary>
+		/// Adds an item, for instance a table or a graph, to the project.
+		/// </summary>
+		/// <param name="item">Item to add.</param>
+		public void AddItem(object item)
+		{
+			if (item == null)
+				throw new ArgumentNullException("Can't add a item which is null");
+
+			if (item is Altaxo.Data.DataTable)
+			{
+				m_DataSet.Add(item as Altaxo.Data.DataTable);
+			}
+			else if (item is Altaxo.Graph.Gdi.GraphDocument)
+			{
+				m_GraphSet.Add(item as Altaxo.Graph.Gdi.GraphDocument);
+			}
+			else
+			{
+				throw new NotImplementedException(string.Format("Adding an item of type {0} is currently not implemented",item.GetType()));
+			}
+		}
+
 
     public object GetChildObjectNamed(string name)
     {

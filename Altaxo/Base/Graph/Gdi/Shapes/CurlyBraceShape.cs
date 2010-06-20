@@ -205,14 +205,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       var boundsF = (RectangleF)_bounds;
 
-      Pen.BrushRectangle = boundsF;
+      Pen.SetEnvironment( boundsF, BrushX.GetEffectiveMaximumResolution(g,Math.Max(_scaleX,_scaleY)));
       var path = GetPath();
       g.DrawPath(Pen, path);
 
 			if (_outlinePen != null && _outlinePen.IsVisible)
 			{
 				path.Widen(Pen);
-				_outlinePen.BrushRectangle = (RectangleF)_bounds;
+        _outlinePen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
 				g.DrawPath(_outlinePen, path);
 			}
 

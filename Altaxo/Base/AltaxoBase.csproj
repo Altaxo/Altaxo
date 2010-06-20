@@ -191,9 +191,15 @@
     </Compile>
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\CircleLineCaps.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\TriangleLineCaps.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderARGBGradient.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderAHSBGradient.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ColumnDrivenColorPlotStyle.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ColumnDrivenSymbolSizePlotStyle.cs" />
     <Compile Include="Graph\PlotColors.cs" />
+    <Compile Include="Graph\Plot\Groups\VariableColorGroupStyle.cs" />
+    <Compile Include="Graph\Plot\Groups\VariableSymbolSizeGroupStyle.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementController.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitEnsembleController.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitFunctionSelectionController.cs" />
@@ -206,6 +212,7 @@
     <Compile Include="Gui\Common\TabbedElementController.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
     <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
+    <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleController.cs" />
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
     <Compile Include="Gui\Graph\ShapeGraphicController.cs" />

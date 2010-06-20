@@ -648,7 +648,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         this._backgroundStyle.Draw(g, new RectangleF(x, y, stringsize.Width, stringsize.Height));
       }
 
-      _brush.Rectangle = new RectangleF(new PointF(xpos, ypos), stringsize);
+      _brush.SetEnvironment(new RectangleF(new PointF(xpos, ypos), stringsize), BrushX.GetEffectiveMaximumResolution(g, 1));
       g.DrawString(label, _font, _brush, xpos, ypos, _cachedStringFormat);
     }
 

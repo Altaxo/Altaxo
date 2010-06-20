@@ -1344,27 +1344,31 @@ namespace Altaxo.Graph.Gdi
     #endregion
 
 
-    public RectangleF BrushRectangle
+  
+
+    /// <summary>
+    /// Sets the environment for the creation of the pen's brush.
+    /// </summary>
+    /// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
+    /// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="GetMaximumEffectiveResolution"/></param>
+    /// <returns>True if changes to the pen's brush were made. False otherwise.</returns>
+    public bool SetEnvironment(RectangleF boundingRectangle, double maxEffectiveResolution)
     {
-      get
+      bool changed = false;
+      if (m_Brush != null)
       {
-        return m_Brush == null ? RectangleF.Empty : m_Brush.Rectangle;
+        changed |= m_Brush.SetEnvironment(boundingRectangle, maxEffectiveResolution);
       }
-      set
-      {
-        if (m_Brush != null)
-        {
-          if (value != m_Brush.Rectangle)
-          {
-            m_Brush.Rectangle = value;
-            if (m_Pen != null)
-              m_Pen.Brush = m_Brush.Brush;
-          }
-        }
-      }
+
+      if (changed && null != m_Pen)
+        m_Pen.Brush = m_Brush.Brush;
+
+      return changed;
     }
 
+
   } // end of class PenHolder
+
 
   #endregion
 
@@ -1679,6 +1683,12 @@ namespace Altaxo.Graph.Gdi
       more = new LineCaps.RightBarLineCap();
       _registeredStyles.Add(more.Name, more);
       more = new LineCaps.SymBarLineCap();
+      _registeredStyles.Add(more.Name, more);
+      more = new LineCaps.CircleOLineCap();
+      _registeredStyles.Add(more.Name, more);
+      more = new LineCaps.CircleFLineCap();
+      _registeredStyles.Add(more.Name, more);
+      more = new LineCaps.TriangleOLineCap();
       _registeredStyles.Add(more.Name, more);
     }
 

@@ -359,12 +359,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ynbase), new Logical3D(xln, ynbase));
         path.CloseFigure();
 
-        _fillBrush.Rectangle = path.GetBounds();
+        _fillBrush.SetEnvironment(path.GetBounds(), BrushX.GetEffectiveMaximumResolution(g,1));
         g.FillPath(_fillBrush, path);
 
         if (_framePen != null)
         {
-          _framePen.BrushRectangle = path.GetBounds();
+          _framePen.SetEnvironment(path.GetBounds(), BrushX.GetEffectiveMaximumResolution(g, 1));
           g.DrawPath(_framePen, path);
         }
       }
@@ -377,7 +377,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
     {
       bounds.Inflate(0, -bounds.Height / 4);
-      _fillBrush.Rectangle = bounds;
+      _fillBrush.SetEnvironment(bounds, BrushX.GetEffectiveMaximumResolution(g, 1));
       g.FillRectangle(_fillBrush, bounds);
       return bounds;
     }

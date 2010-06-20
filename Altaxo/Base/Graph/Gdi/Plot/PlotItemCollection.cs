@@ -756,9 +756,10 @@ namespace Altaxo.Graph.Gdi.Plot
       }
       else
       {
-        for (int i = _plotItems.Count - 1; i >= 0; i--)
+				int hi = _plotItems.Count - 1;
+        for (int i = 0; i <= hi; ++i)
         {
-          _plotItems[i].Paint(g, layer, previousPlotItem, i>0 ? _plotItems[i-1] : nextPlotItem);
+          _plotItems[i].Paint(g, layer, previousPlotItem, i<hi ? _plotItems[i+1] : nextPlotItem);
 					previousPlotItem = _plotItems[i];
         }
       }

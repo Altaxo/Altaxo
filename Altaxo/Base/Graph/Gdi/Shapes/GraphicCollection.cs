@@ -119,12 +119,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       this.AddRange(g);
     }
 
-    public void DrawObjects(Graphics g, float Scale, object container)
+    public void Paint(Graphics g, float Scale, object container)
     {
       int len = this._items.Count;
       for(int i=0;i<len;i++)
       {
-        ((GraphicBase)this._items[i]).Paint(g, container);
+        this._items[i].Paint(g, container);
       }
     }
 

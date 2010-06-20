@@ -860,7 +860,9 @@
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemDelete" />
 			<MenuItem id="Move" label="${res:XML.ProjectBrowserMenu.MoveToFolder}" description="${res:XML.ProjectBrowserMenu.MoveToFolder.Description}"
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemMoveTo" />
-		</Condition>
+      <MenuItem id="Copy" label="${res:XML.ProjectBrowserMenu.CopyToFolder}" description="${res:XML.ProjectBrowserMenu.CopyToFolder.Description}"
+								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemCopyTo" />
+    </Condition>
 		<Condition name="ProjbrowserListItemSelection" selcount="=1" action="Disable">
 			<MenuItem id="Rename" label="${res:XML.ProjectBrowserMenu.Rename}" description="${res:XML.ProjectBrowserMenu.Rename.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemRename" />
@@ -932,6 +934,7 @@
     <Texture id="Metal/ScratchedSilver" resource = "Textures.Metal.ScratchedSilver"/>
     <Texture id="Paper/BrownPaper" resource = "Textures.Paper.BrownPaper"/>
     <Texture id="Paper/YellowPaper" resource = "Textures.Paper.YellowPaper"/>
+		<Texture id="Hatch/HorizontalLine" class ="Altaxo.Graph.HorizontalHatchTexture"/>
   </Path>
 
   <!-- End of Altaxo stuff -->

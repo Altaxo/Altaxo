@@ -241,7 +241,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_cachedPath = new GraphicsPath();
 			layer.CoordinateSystem.GetIsoline(_cachedPath, rBegin, rEnd);
 
-			Pen.BrushRectangle = (RectangleF)_bounds;
+      Pen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
 			g.DrawPath(Pen, _cachedPath);
 
       Data.AltaxoVariant span;

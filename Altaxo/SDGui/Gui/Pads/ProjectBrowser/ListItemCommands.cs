@@ -54,6 +54,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+  public class CmdListItemCopyTo : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      ctrl.CopySelectedListItemsToFolder();
+    }
+  }
+
 	public class CmdListItemRename : ProjectBrowseControllerCommand
 	{
 		protected override void Run(ProjectBrowseController ctrl)

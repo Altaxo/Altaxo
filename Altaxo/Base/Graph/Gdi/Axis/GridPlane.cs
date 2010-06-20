@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Gdi.Axis
       if (_background != null)
       {
         RectangleF innerArea = region.GetBounds(g);
-        _background.Rectangle = innerArea;
+        _background.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
         g.FillRegion(_background, region);
       }
 

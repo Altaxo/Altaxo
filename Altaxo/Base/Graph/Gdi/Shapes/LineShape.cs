@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			GraphicsState gs = g.Save();
       TransformGraphics(g);
-			Pen.BrushRectangle = (RectangleF)_bounds;
+      Pen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
 			g.DrawLine(Pen, (float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
 
 			if(_outlinePen!=null && _outlinePen.IsVisible)
@@ -292,7 +292,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			GraphicsPath p = new GraphicsPath();
 			p.AddLine((float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
 			p.Widen(Pen);
-			OutlinePen.BrushRectangle = (RectangleF)_bounds;
+      OutlinePen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
 			g.DrawPath(OutlinePen, p);
 			}
 

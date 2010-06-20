@@ -58,9 +58,20 @@ namespace Altaxo.Main
     {
       string id = codon.Id;
       string resource = codon.Properties["resource"];
-      ImageProxy proxy = ResourceImageProxy.FromResource(id,resource);
-      TextureManager.BuiltinTextures.Add(proxy);
-      return proxy;
+			if (!string.IsNullOrEmpty(resource))
+			{
+				ImageProxy proxy = ResourceImageProxy.FromResource(id, resource);
+				TextureManager.BuiltinTextures.Add(proxy);
+				return proxy;
+			}
+			string classname = codon.Properties["class"];
+			if (!string.IsNullOrEmpty(classname))
+			{
+				ImageProxy proxy = (ImageProxy)System.Activator.CreateInstance("AltaxoBase", classname).Unwrap();
+				TextureManager.BuiltinTextures.Add(proxy);
+				return proxy;
+			}
+			return null;
     }
   }
 }

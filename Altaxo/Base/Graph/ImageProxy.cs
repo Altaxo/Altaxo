@@ -503,4 +503,141 @@ namespace Altaxo.Graph
     #endregion
   }
   #endregion
+
+#region HatchImageProxy
+
+	/// <summary>
+	/// Class that creates images 'on the fly', by using an algorithmus.
+	/// </summary>
+	class SyntheticImageProxy : ImageProxy
+	{
+		public override Image GetImage()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override string ContentHash
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public override bool IsValid
+		{
+			get { return true; }
+		}
+
+		public override string Name
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+
+	interface ISyntheticRepeatableTexture
+	{
+    /// <summary>
+    /// Gets an image of the texture with the provided number of pixels in x and y direction.
+    /// </summary>
+    /// <param name="pixelDim">Number of pixels in x and y direction.</param>
+    /// <returns>The image of the texture.</returns>
+		Image GetImage(int pixelDim);
+
+    /// <summary>
+    /// Physical size of both sides of the texture in points (1 point = 1/72 inch).
+    /// </summary>
+    double Size { get; }
+	}
+
+  abstract class SyntheticRepeatableTexture : ImageProxy, ISyntheticRepeatableTexture
+  {
+    public override Image GetImage()
+    {
+      return GetImage(32);
+    }
+
+    public override bool IsValid
+    {
+      get { return true; }
+    }
+
+    #region ISyntheticRepeatableTexture Members
+
+    public abstract Image GetImage(int pixelDim);
+
+    public abstract double Size { get; }
+
+    #endregion
+  }
+
+	class HorizontalHatchTexture : SyntheticRepeatableTexture
+	{
+    /// <summary>
+    /// Repeatlength in points (1/72 inch).
+    /// </summary>
+		double RepeatLength=10;
+    /// <summary>
+    /// Linewidth in points (1/72 inch).
+    /// </summary>
+		double LineWidth=1;
+
+    Color _colorBack = Color.Transparent;
+    Color _colorFore = Color.Black;
+
+    public override double Size
+    {
+      get
+      {
+        return RepeatLength;
+      }
+    }
+
+		public override Image GetImage(int pixelDim)
+		{
+			Bitmap bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
+			bmp.SetResolution(2000, 2000);
+			using(Graphics g = Graphics.FromImage(bmp))
+			{
+				using (var brush = new SolidBrush(_colorBack))
+				{
+					g.FillRectangle(brush, new Rectangle(Point.Empty, bmp.Size));
+				}
+
+				using (Pen pen = new Pen(_colorFore, (float)( LineWidth / RepeatLength )))
+				{
+				pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
+				//pen.DashPattern = 
+				g.DrawLine(pen, -bmp.Width,bmp.Height*0.5f, bmp.Width*2,bmp.Height*0.5f);
+				}
+			}
+
+			return bmp;
+		}
+
+    public override string ContentHash
+    {
+      get
+			{
+				string result = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}-{1}-{2}-{3}-{4}", GetType(), RepeatLength, LineWidth, _colorFore, _colorBack);
+				return result;
+			}
+    }
+
+    public override string Name
+    {
+			get { return GetType().ToString(); }
+    }
+
+    public override object Clone()
+    {
+			HorizontalHatchTexture result = new HorizontalHatchTexture();
+			return result;
+    }
+  }
+
+#endregion
 }

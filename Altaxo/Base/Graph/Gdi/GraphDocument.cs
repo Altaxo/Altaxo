@@ -640,7 +640,7 @@ namespace Altaxo.Graph.Gdi
     /// to the top left corner of the printable area before calling this routine.</remarks>
     public void DoPaint(Graphics g, bool bForPrinting)
     {
-      Layers.DoPaint(g, bForPrinting);
+      Layers.Paint(g, bForPrinting);
     } // end of function DoPaint
 
 

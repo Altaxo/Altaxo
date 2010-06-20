@@ -204,11 +204,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       var boundsF = (RectangleF)_bounds;
       if (Brush.IsVisible)
       {
-        Brush.Rectangle = boundsF;
+        Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
         g.FillEllipse(Brush, boundsF);
       }
 
-      Pen.BrushRectangle = boundsF;
+      Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
       g.DrawEllipse(Pen, boundsF);
       g.Restore(gs);
     }

@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Gdi.Background
       RectangleF outerArea = innerArea;
       outerArea.Inflate(_shadowLength, _shadowLength);
 
-      _brush.Rectangle = outerArea;
+      _brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g,1));
       g.FillRectangle(_brush, outerArea);
 
       SolidBrush twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));

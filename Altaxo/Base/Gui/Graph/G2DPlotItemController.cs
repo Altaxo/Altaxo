@@ -480,7 +480,8 @@ namespace Altaxo.Gui.Graph
       // now all style controllers must be updated
       for (int i = 0; i < _styleControllerList.Count; i++)
       {
-        _styleControllerList[i].InitializeDocument(_tempdoc.Style[i]);
+        if(null!=_styleControllerList[i])
+					_styleControllerList[i].InitializeDocument(_tempdoc.Style[i]);
       }
 
       if (_additionalPlotStyle != null && _additionalPlotStyleController!=null)
