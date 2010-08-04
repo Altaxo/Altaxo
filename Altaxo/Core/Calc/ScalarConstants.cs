@@ -30,14 +30,30 @@ namespace Altaxo.Calc
   /// </summary>
   public class DoubleConstants
   {
+    static DoubleConstants()
+    {
+      double d, e;
+      for (d = double.Epsilon, e = d / 2; e != 0; d = e, e /= 2) ;
+      DBL_MIN = SmallestPositiveValue = d;
+      if (SmallestPositiveValue == 0)
+        throw new ArithmeticException("SmallestPositiveValue was evaluated to be zero, please check the algorithm");
+    }
+
+
     /// <summary>
     /// Represents the smallest positive number where 1+DBL_EPSILON is not equal to 1.
+    /// In the IEEE representation, this is 2^-52.
     /// </summary>
-    public const double DBL_EPSILON = 2.2204460492503131e-016;
+    public const double DBL_EPSILON = 2.2204460492503130808e-16;
     /// <summary>
     /// The smallest positive double number.
     /// </summary>
-    public const double DBL_MIN     = double.Epsilon;
+    public static readonly double DBL_MIN;
+    /// <summary>
+    /// The smallest positive double number.
+    /// </summary>
+    public static readonly double SmallestPositiveValue;
+
     /// <summary>
     /// The biggest positive double number.
     /// </summary>
@@ -61,9 +77,9 @@ namespace Altaxo.Calc
     private static readonly double sqeps  = Math.Sqrt(DBL_EPSILON);
 
     /// <summary>
-    /// Square root of Epsilon.
+    /// Square root of Epsilon. Since epsilon is 2^-52, this is 2^-26
     /// </summary>
-    public static readonly double SQRT_DBL_EPSILON = Math.Sqrt(DBL_EPSILON);
+    public const double SQRT_DBL_EPSILON = 1.4901161193847656250e-8;
 
   }
 }

@@ -851,6 +851,14 @@ namespace Altaxo.Data
       get { return _propertyColumns; }
     }
 
+    /// <summary>
+    /// Gets access to the property data structured as rows.
+    /// </summary>
+    public IList<DataRow> PropertyRows
+    {
+      get { return _propertyColumns; }
+    }
+
 
     /// <summary>Return the number of data columns.</summary>
     /// <value>The number of data columns in the table.</value>
@@ -1003,6 +1011,14 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Gets access to the data, but structured as rows.
+    /// </summary>
+    public IList<DataRow> DataRows
+    {
+      get { return _dataColumns; }
+    }
+
+    /// <summary>
     /// Get/sets the data column at index i. Setting is done by copying data, if the two columns has the same type. If the two columns are not of
     /// the same type, an exception is thrown.
     /// </summary>
@@ -1098,8 +1114,8 @@ namespace Altaxo.Data
       Altaxo.Data.DataColumnCollection savedDataColumns = new DataColumnCollection();
       Altaxo.Data.DataColumnCollection savedPropColumns = new DataColumnCollection();
 
-      Altaxo.Collections.IAscendingIntegerCollection savedDataColIndices = new Altaxo.Collections.IntegerRangeAsCollection(0,numberOfDataColumnsChangeToPropertyColumns);
-      Altaxo.Collections.IAscendingIntegerCollection savedPropColIndices = new Altaxo.Collections.IntegerRangeAsCollection(0,numberOfPropertyColumnsChangeToDataColumns);
+      Altaxo.Collections.IAscendingIntegerCollection savedDataColIndices = new Altaxo.Collections.ContiguousIntegerRange(0,numberOfDataColumnsChangeToPropertyColumns);
+      Altaxo.Collections.IAscendingIntegerCollection savedPropColIndices = new Altaxo.Collections.ContiguousIntegerRange(0,numberOfPropertyColumnsChangeToDataColumns);
       // store the columns temporarily in another collection and remove them from the original collections
       DataColumns.MoveColumnsTo(savedDataColumns, 0, savedDataColIndices);
       this.PropertyColumns.MoveColumnsTo(savedPropColumns, 0, savedPropColIndices);
@@ -1137,7 +1153,7 @@ namespace Altaxo.Data
     /// <param name="nDelCount">The number of columns to remove.</param>
     public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
     {
-      RemoveColumns(new IntegerRangeAsCollection(nFirstColumn,nDelCount));
+      RemoveColumns(new ContiguousIntegerRange(nFirstColumn,nDelCount));
     }
 
 

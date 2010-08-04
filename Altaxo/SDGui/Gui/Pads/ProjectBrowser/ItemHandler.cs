@@ -235,7 +235,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           }
           );
 
-      var subfolderList = Current.Project.Folders.GetSubfoldersAsStringList(_folderName);
+      var subfolderList = Current.Project.Folders.GetSubfoldersAsStringList(_folderName, false);
 			subfolderList.Sort();
       foreach (var o in subfolderList)
       {

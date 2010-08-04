@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Altaxo.Calc;
-
+using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
@@ -66,25 +66,25 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description.
   /// </summary>
-  [UserControllerForObject(typeof(PositiveIntegerRange))]
+  [UserControllerForObject(typeof(ContiguousNonNegativeIntegerRange))]
   [ExpectedTypeOfView(typeof(IPlottingRangeView))]
   public class PlottingRangeController : IPlottingRangeViewEventSink, IMVCAController
   {
     IPlottingRangeView _view;
-    PositiveIntegerRange _doc;
-    PositiveIntegerRange _tempDoc;
+    ContiguousNonNegativeIntegerRange _doc;
+    ContiguousNonNegativeIntegerRange _tempDoc;
 
-    public PlottingRangeController(PositiveIntegerRange doc)
+    public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
     {
       _doc = doc;
-      _tempDoc = (PositiveIntegerRange)doc.Clone();
+      _tempDoc = doc;
     }
 
     public void Initialize()
     {
       if (_view != null)
       {
-        _view.Initialize(_tempDoc.First, _tempDoc.Last, _tempDoc.IsInfinite);
+        _view.Initialize(_tempDoc.Start, _tempDoc.Last, _tempDoc.IsInfinite);
       }
     }
 
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      _doc.CopyFrom( _tempDoc) ;
+      _doc =  _tempDoc;
       return true;
     }
 
@@ -144,9 +144,9 @@ namespace Altaxo.Gui.Graph
       try
       {
         if (to != int.MaxValue)
-          _tempDoc = PositiveIntegerRange.NewFromFirstAndLast(from, to);
+          _tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(from, to);
         else
-          _tempDoc = PositiveIntegerRange.NewFromFirstToInfinity(from);
+          _tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartToInfinity(from);
       }
       catch (Exception ex)
       {

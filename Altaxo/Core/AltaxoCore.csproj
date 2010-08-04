@@ -504,6 +504,10 @@
     <Compile Include="Calc\VectorCoupling.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Collections\IAscendingIntegerCollection.cs" />
+    <Compile Include="Collections\ContiguousIntegerRange.cs" />
+    <Compile Include="Collections\IROVector.cs" />
+    <Compile Include="Collections\ContiguousNonNegativeIntegerRange.cs" />
     <Compile Include="Science\Energy.cs" />
     <Compile Include="Science\SIConstants.cs" />
     <Compile Include="Science\SIUnit.cs" />

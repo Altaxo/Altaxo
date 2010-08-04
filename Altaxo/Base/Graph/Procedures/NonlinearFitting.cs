@@ -21,6 +21,8 @@
 #endregion
 
 using System;
+
+using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
@@ -93,8 +95,8 @@ namespace Altaxo.Graph.Procedures
         localdoc.FitEnsemble[0].SetIndependentVariable(0,xColumn);
         localdoc.FitEnsemble[0].SetDependentVariable(0,yColumn);
 
-        Altaxo.Calc.PositiveIntegerRange oldRange = localdoc.FitEnsemble[0].GetRowRange();
-        if(hasColumnsChanged || oldRange.First<xyPlotItem.XYColumnPlotData.PlotRangeStart || oldRange.Last>xyPlotItem.XYColumnPlotData.PlotRangeEnd)
+        var oldRange = localdoc.FitEnsemble[0].GetRowRange();
+        if(hasColumnsChanged || oldRange.Start<xyPlotItem.XYColumnPlotData.PlotRangeStart || oldRange.Last>xyPlotItem.XYColumnPlotData.PlotRangeEnd)
           localdoc.FitEnsemble[0].SetRowRange(xyPlotItem.XYColumnPlotData.PlotRangeStart,xyPlotItem.XYColumnPlotData.PlotRangeLength);
       }
         

@@ -238,6 +238,12 @@
     <Compile Include="Gui\Common\EquallySpacedIntervalControl.Designer.cs">
       <DependentUpon>EquallySpacedIntervalControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\FreeTextComboBoxControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\FreeTextComboBoxControl.Designer.cs">
+      <DependentUpon>FreeTextComboBoxControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\MinMaxIntegerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -334,6 +340,12 @@
     </Compile>
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.Designer.cs">
       <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.Designer.cs">
+      <DependentUpon>ColumnDrivenColorPlotStyleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotItemOptionControl.cs">
       <SubType>UserControl</SubType>
@@ -617,6 +629,9 @@
     <EmbeddedResource Include="Gui\Common\EquallySpacedIntervalControl.resx">
       <DependentUpon>EquallySpacedIntervalControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\FreeTextComboBoxControl.resx">
+      <DependentUpon>FreeTextComboBoxControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MinMaxIntegerControl.resx">
       <DependentUpon>MinMaxIntegerControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -677,6 +692,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.resx">
       <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.resx">
+      <DependentUpon>ColumnDrivenColorPlotStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\DensityImagePlotItemOptionControl.resx">
       <DependentUpon>DensityImagePlotItemOptionControl.cs</DependentUpon>

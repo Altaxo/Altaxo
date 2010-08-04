@@ -21,24 +21,15 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Collections
 {
   /// <summary>
   /// The interface of a sorted collection of integers, sorted so that the smallest integers come first.
   /// </summary>
-  public interface IAscendingIntegerCollection : ICloneable, System.Collections.Generic.IEnumerable<int>
+  public interface IAscendingIntegerCollection : ICloneable, IEnumerable<int>, IROVector<int>
   {
-    /// <summary>
-    /// Number of integers stored in this collection.
-    /// </summary>
-    int Count { get; }
-
-    /// <summary>
-    /// The integer value stored at position <code>i</code>.
-    /// </summary>
-    int this[int i] { get; }
-
     /// <summary>
     /// Returns true, if the integer <code>nValue</code> is contained in this collection.
     /// </summary>
@@ -64,7 +55,7 @@ namespace Altaxo.Collections
     ///   // do your things here
     ///   }
     /// </code></remarks>
-    bool GetNextRangeAscending(ref int currentposition, ref int rangestart, ref int rangecount);
+    bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result);
 
 
     /// <summary>
@@ -83,7 +74,7 @@ namespace Altaxo.Collections
     ///   // do your things here
     ///   }
     /// </code></remarks>
-    bool GetNextRangeDescending(ref int currentposition, ref int rangestart, ref int rangecount);
+   bool GetNextRangeDescending(ref int currentposition, out ContiguousIntegerRange result);
   }
 
 }

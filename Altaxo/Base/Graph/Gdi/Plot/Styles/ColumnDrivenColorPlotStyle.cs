@@ -62,6 +62,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		[NonSerialized]
 		private INumericColumn _cachedDataColumn;
 
+		/// <summary>True if the data in the data column changed, but the scale was not updated up to now.</summary>
+		[NonSerialized]
+		private bool _doesScaleNeedsDataUpdate;
+
 		/// <summary>
 		/// Converts the numerical values of the data colum into logical values.
 		/// </summary>
@@ -72,7 +76,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		IColorProvider _colorProvider;
 
-		
+		/// <summary>If true, the color is applied as a fill color for symbols, bar graphs etc.</summary>
+		bool _appliesToFill=true;
+		/// <summary>If true, the color is applied as a stroke color for framing symbols, bar graphs etc.</summary>
+		bool _appliesToStroke;
+		/// <summary>If true, the color is used to color the background, for instance of labels.</summary>
+		bool _appliesToBackground;
 
 		object _parent;
 
@@ -112,8 +121,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var from = obj as ColumnDrivenColorPlotStyle;
 			if (null != from)
 			{
-				InternalSetDataColumnProxy(null == from._dataColumn ? null : (NumericColumnProxy)from._dataColumn.Clone());
+				_appliesToFill = from._appliesToFill;
+				_appliesToStroke = from._appliesToStroke;
+				_appliesToBackground = from._appliesToBackground;
+
 				InternalSetScale(null == from._scale ? null : (NumericalScale)from._scale.Clone());
+				InternalSetDataColumnProxy(null == from._dataColumn ? null : (NumericColumnProxy)from._dataColumn.Clone());
 
 				_colorProvider = null == from._colorProvider ? null : (IColorProvider)from._colorProvider.Clone();
 				_parent = from._parent;
@@ -140,7 +153,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null != _dataColumn)
 				this._dataColumn.Changed += EhDataColumnProxyChanged;
 
-			_cachedDataColumn = null == _dataColumn ? null : _dataColumn.Document;
+			InternalSetCachedDataColumn(null == _dataColumn ? null : _dataColumn.Document);
+		}
+
+
+		protected void InternalSetCachedDataColumn(INumericColumn col)
+		{
+			if (!object.ReferenceEquals(col, _cachedDataColumn))
+			{
+				if (_cachedDataColumn is Altaxo.Main.IChangedEventSource)
+				{
+					((Altaxo.Main.IChangedEventSource)_cachedDataColumn).Changed -= EhDataColumnDataChanged;
+				}
+
+				_cachedDataColumn = col;
+
+				if (_cachedDataColumn is Altaxo.Main.IChangedEventSource)
+				{
+					((Altaxo.Main.IChangedEventSource)_cachedDataColumn).Changed += EhDataColumnDataChanged;
+				}
+
+				// fake a change of the data of the column in order to calculate the boundaries
+				EhDataColumnDataChanged(_cachedDataColumn, EventArgs.Empty);
+
+				OnChanged();
+			}
 		}
 
 		/// <summary>
@@ -150,8 +187,42 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="e">Event args.</param>
 		void EhDataColumnProxyChanged(object sender, EventArgs e)
 		{
-			_cachedDataColumn = null == _dataColumn ? null : _dataColumn.Document;
-			this.OnChanged();
+			InternalSetCachedDataColumn(null == _dataColumn ? null : _dataColumn.Document);
+		}
+
+		/// <summary>
+		/// Called when the data of the data column changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void EhDataColumnDataChanged(object sender, EventArgs e)
+		{
+			_doesScaleNeedsDataUpdate = true;
+		}
+
+		/// <summary>
+		/// Updates the scale if the data of the data column have changed.
+		/// </summary>
+		void InternalUpdateScaleWithNewData()
+		{
+			// in order to set the bounds of the scale, the data column must 
+			// - be set (not null)
+			// - have a defined count.
+
+			if (_cachedDataColumn is IDefinedCount)
+			{
+				int len = ((IDefinedCount)_cachedDataColumn).Count;
+
+				var bounds = _scale.DataBounds;
+
+				bounds.BeginUpdate();
+
+				for (int i = 0; i < len; i++)
+					bounds.Add(_cachedDataColumn, i);
+
+				bounds.EndUpdate();
+				_doesScaleNeedsDataUpdate = false;
+			}
 		}
 
 
@@ -162,7 +233,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return _dataColumn == null ? null : _dataColumn.Document;
+				if (null != _dataColumn && null == _cachedDataColumn)
+					InternalSetCachedDataColumn(_dataColumn.Document);
+				return _cachedDataColumn;
 			}
 			set
 			{
@@ -188,6 +261,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (null != _scale)
 				_scale.Changed += EhChildChanged;
+
+			_doesScaleNeedsDataUpdate = true;
 		}
 
 		#endregion
@@ -231,14 +306,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					_colorProvider.Changed += EhChildChanged;
 				}
 
-				if(changed)
+				if (changed)
 					OnChanged();
 			}
 		}
 
-	
 
-	
+
+
 
 		#endregion
 
@@ -251,13 +326,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			double val = double.NaN;
 			if (null != _cachedDataColumn)
+			{
+				if (_doesScaleNeedsDataUpdate)
+					InternalUpdateScaleWithNewData();
+
 				val = _cachedDataColumn[idx];
+			}
 
 			val = _scale.PhysicalToNormal(val);
 			return _colorProvider.GetColor(val);
 		}
 
-	
+
 
 		public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
 		{

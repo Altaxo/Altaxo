@@ -33,6 +33,7 @@ namespace Altaxo.Data
   [SerializationSurrogate(0,typeof(Altaxo.Data.DataColumnCollection.SerializationSurrogate0))]
   [SerializationVersion(0)]
   public class DataColumnCollection :
+    IList<DataRow>,
     System.Runtime.Serialization.IDeserializationCallback, 
     Altaxo.Main.IDocumentNode,
     IDisposable,
@@ -979,7 +980,7 @@ namespace Altaxo.Data
       }
 
       // then move the columns to the desired position
-      this.ChangeColumnPosition(new Altaxo.Collections.IntegerRangeAsCollection(indexOfAddedColumns,numberToAdd),nDestinationIndex);
+      this.ChangeColumnPosition(new Altaxo.Collections.ContiguousIntegerRange(indexOfAddedColumns,numberToAdd),nDestinationIndex);
       
       this.Resume();
     }
@@ -1118,7 +1119,7 @@ namespace Altaxo.Data
     /// <param name="nDelCount">The number of columns to remove.</param>
     public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
     {
-      RemoveColumns(new IntegerRangeAsCollection(nFirstColumn,nDelCount));
+      RemoveColumns(new ContiguousIntegerRange(nFirstColumn,nDelCount));
     }
 
     /// <summary>
@@ -1126,7 +1127,7 @@ namespace Altaxo.Data
     /// </summary>
     public virtual void RemoveColumnsAll()
     {
-      RemoveColumns(new IntegerRangeAsCollection(0,this.ColumnCount));
+      RemoveColumns(new ContiguousIntegerRange(0,this.ColumnCount));
     }
 
     /// <summary>
@@ -1157,12 +1158,11 @@ namespace Altaxo.Data
       int nOriginalColumnCount = ColumnCount;
 
       int currentPosition = selectedColumns.Count-1;
-      int nFirstColumn=0;
-      int nDelCount=0;
-      while(selectedColumns.GetNextRangeDescending(ref currentPosition, ref nFirstColumn, ref nDelCount))
+      ContiguousIntegerRange range;
+      while(selectedColumns.GetNextRangeDescending(ref currentPosition, out range))
       {
         // first, Dispose the columns and set the places to null
-        for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
+        for(int i=range.Last;i>=range.Start;i--)
         {
           string columnName = GetColumnName(this[i]);
           this._columnScripts.Remove(this[i]);
@@ -1172,15 +1172,15 @@ namespace Altaxo.Data
           if(disposeColumns)
             this[i].Dispose();
         }
-        this._columnsByNumber.RemoveRange(nFirstColumn, nDelCount);
+        this._columnsByNumber.RemoveRange(range.Start, range.Count);
       }
 
       // renumber the remaining columns
-      for(int i=_columnsByNumber.Count-1;i>=nFirstColumn;i--)
+      for(int i=_columnsByNumber.Count-1;i>=range.Start;i--)
         ((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i; 
 
       // raise datachange event that some columns have changed
-      this.EhChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, this._numberOfRows));
+      this.EhChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(range.Start, nOriginalColumnCount, this._numberOfRows));
    
       // reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
       this._triedOutRegularNaming = false;
@@ -1713,6 +1713,15 @@ namespace Altaxo.Data
     #region Row insertion/removal
 
     /// <summary>
+    /// Insert an empty row at the provided row number.
+    /// </summary>
+    /// <param name="atRowNumber">The row number at which to insert.</param>
+    public void InsertRow(int atRowNumber)
+    {
+      InsertRows(atRowNumber, 1);
+    }
+
+    /// <summary>
     /// Insert a number of empty rows in all columns.
     /// </summary>
     /// <param name="nBeforeRow">The row number before which the additional rows should be inserted.</param>
@@ -1734,7 +1743,7 @@ namespace Altaxo.Data
     /// <param name="nCount">Number of rows to remove, starting from nFirstRow.</param>
     public void RemoveRows(int nFirstRow, int nCount)
     {
-      RemoveRows(new IntegerRangeAsCollection(nFirstRow,nCount));
+      RemoveRows(new ContiguousIntegerRange(nFirstRow,nCount));
     }
 
     /// <summary>
@@ -1743,7 +1752,7 @@ namespace Altaxo.Data
     /// <param name="selectedRows">Collection of indizes to the rows that should be removed.</param>
     public void RemoveRows(IAscendingIntegerCollection selectedRows)
     {
-      RemoveRowsInColumns(new IntegerRangeAsCollection(0,ColumnCount),selectedRows);
+      RemoveRowsInColumns(new ContiguousIntegerRange(0,ColumnCount),selectedRows);
     }
 
     /// <summary>
@@ -1776,12 +1785,12 @@ namespace Altaxo.Data
       {
         int colidx = selectedColumns[selcol];
 
-        int rangestart=0, rangecount=0;
+        ContiguousIntegerRange range;
         int i = selectedRows.Count-1;
 
-        while(selectedRows.GetNextRangeDescending(ref i, ref rangestart, ref rangecount))
+        while(selectedRows.GetNextRangeDescending(ref i, out range))
         {
-          this[colidx].RemoveRows(rangestart,rangecount);
+          this[colidx].RemoveRows(range.Start,range.Count);
         }
       }
 
@@ -2653,6 +2662,116 @@ namespace Altaxo.Data
 
     #endregion
 
+    #region IList<DataRow> support
+
+    #region IEnumerable<DataRow> Members
+
+    public IEnumerator<DataRow> GetEnumerator()
+    {
+      for (int i = 0; i < RowCount; i++)
+        yield return new DataRow(this, i);
+    }
+
+    #endregion
+
+    #region IEnumerable Members
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      for (int i = 0; i < RowCount; i++)
+        yield return new DataRow(this, i);
+    }
+
+    #endregion
+
+    #region IList<DataRow> Members
+
+    int IList<DataRow>.IndexOf(DataRow item)
+    {
+      return item.RowIndex;
+    }
+
+    void IList<DataRow>.Insert(int index, DataRow item)
+    {
+      InsertRows(index, 1);
+      
+      // if by insertion of a row we changed to row that was meant for insertion, we have to correct the index;
+      if (index <= item.RowIndex && object.ReferenceEquals(this, item.ColumnCollection))
+        item = new DataRow(item.ColumnCollection, item.RowIndex + 1);
+
+      for (int i = 0; i < ColumnCount; i++)
+        this[i][index] = item[i];
+    }
+
+    void IList<DataRow>.RemoveAt(int index)
+    {
+      RemoveRow(index);
+    }
+
+    DataRow IList<DataRow>.this[int index]
+    {
+      get
+      {
+        return new DataRow(this, index);
+      }
+      set
+      {
+        int nCols = Math.Min(this.ColumnCount, value.ColumnCollection.ColumnCount);
+        for (int i = nCols - 1; i >= 0; i--)
+          this[i][index] = value[i];
+      }
+    }
+
+    #endregion
+
+    #region ICollection<DataRow> Members
+
+    void ICollection<DataRow>.Add(DataRow item)
+    {
+      int nCols = Math.Min(this.ColumnCount, item.ColumnCollection.ColumnCount);
+      int index = this.RowCount;
+      for (int i = nCols - 1; i >= 0; i--)
+        this[i][index] = item[i];
+    }
+
+    void ICollection<DataRow>.Clear()
+    {
+      ClearData();
+    }
+
+    bool ICollection<DataRow>.Contains(DataRow item)
+    {
+      return object.ReferenceEquals(this, item.ColumnCollection);
+    }
+
+    void ICollection<DataRow>.CopyTo(DataRow[] array, int arrayIndex)
+    {
+      for (int i = 0; i < this.RowCount; i++)
+        array[i + arrayIndex] = new DataRow(this, i);
+    }
+
+    int ICollection<DataRow>.Count
+    {
+      get { return RowCount; }
+    }
+
+    bool ICollection<DataRow>.IsReadOnly
+    {
+      get { return false; }
+    }
+
+    bool ICollection<DataRow>.Remove(DataRow item)
+    {
+      RemoveRow(item.RowIndex);
+      return true;
+    }
+
+    #endregion
+
+    #endregion
+
+
+
     /// <summary>
     /// Gets the parent column collection of a column.
     /// </summary>
@@ -2663,6 +2782,8 @@ namespace Altaxo.Data
       else
         return (DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(column,typeof(DataColumnCollection));
     }
+
+
 
   } // end class Altaxo.Data.DataColumnCollection
 }

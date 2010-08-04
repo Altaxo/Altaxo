@@ -53,11 +53,23 @@ namespace Altaxo.Main
 		/// Get a list of subfolders of the provided folder (as string list).
 		/// </summary>
 		/// <param name="parentFolder">Folder for which to get the subfolders.</param>
+		/// <param name="recurseSubdirectories">If true, the function returns not only the direct subfolders, but also all subfolders deeper in the hierarchy.</param>
 		/// <returns>List of subfolders of the provied folder.</returns>
-		public List<string> GetSubfoldersAsStringList(string parentFolder)
+		public List<string> GetSubfoldersAsStringList(string parentFolder, bool recurseSubdirectories)
 		{
 			var result = new List<string>();
+			InternalGetSubfoldersAsStringList(parentFolder, recurseSubdirectories, result);
+			return result;
+		}
 
+		/// <summary>
+		/// Get a list of subfolders of the provided folder (as string list).
+		/// </summary>
+		/// <param name="parentFolder">Folder for which to get the subfolders.</param>
+		/// <param name="recurseSubdirectories">If true, the function returns not only the direct subfolders, but also all subfolders deeper in the hierarchy.</param>
+		/// <param name="result">List that is filled with the subfolders of the provied folder.</param>
+		private void InternalGetSubfoldersAsStringList(string parentFolder, bool recurseSubdirectories, List<string> result)
+		{
 			HashSet<object> items;
 			if (!_directories.TryGetValue(parentFolder, out items))
 				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", parentFolder));
@@ -65,9 +77,12 @@ namespace Altaxo.Main
 			foreach (var v in items)
 			{
 				if (v is string)
+				{
 					result.Add((string)v);
+					if(recurseSubdirectories)
+						InternalGetSubfoldersAsStringList((string)v, recurseSubdirectories, result);
+				}
 			}
-			return result;
 		}
 
 		/// <summary>

@@ -802,7 +802,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BivariateLinearSpline interpol = new BivariateLinearSpline(
         VectorMath.ToROVector(lx),
         VectorMath.ToROVector(ly),
-        DataTableWrapper.ToROColumnMatrix(vcolumns, new Altaxo.Collections.IntegerRangeAsCollection(0, lx.Length)));
+        DataTableWrapper.ToROColumnMatrix(vcolumns, new Altaxo.Collections.ContiguousIntegerRange(0, lx.Length)));
 
       Color colorInvalid = _colorProvider.GetColor(double.NaN);
 

@@ -219,7 +219,7 @@ namespace Altaxo.Worksheet.Commands
       if(ctrl.SelectedDataRows.Count>0)
       {
         ctrl.DataTable.DataColumns.RemoveRowsInColumns(
-          ctrl.SelectedDataColumns.Count>0 ? (IAscendingIntegerCollection)ctrl.SelectedDataColumns : new IntegerRangeAsCollection(0,ctrl.DataTable.DataColumns.ColumnCount),
+          ctrl.SelectedDataColumns.Count>0 ? (IAscendingIntegerCollection)ctrl.SelectedDataColumns : new ContiguousIntegerRange(0,ctrl.DataTable.DataColumns.ColumnCount),
           ctrl.SelectedDataRows);
 
         ctrl.SelectedDataColumns.Clear();

@@ -389,6 +389,8 @@
 					class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
         <MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
 					class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
+        <MenuItem id="DecomposeCyclingVar" label="${res:XML.MainMenu.WorksheetMenu.DecomposeCyclingVariable}" description="${res:XML.MainMenu.WorksheetMenu.DecomposeCyclingVariable.Description}"
+					class="Altaxo.Worksheet.Commands.DecomposeCyclingIndependentVariable" />
         <MenuItem id="MoveRows" label="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows}" description="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description}"
 					class="Altaxo.Worksheet.Commands.SetRowPosition" />
       </MenuItem>

@@ -143,8 +143,7 @@
     <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiSusceptibility.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschModulusRetardation.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschSusceptibility.cs" />
-    <Compile Include="Calc\IntegerRange.cs" />
-    <Compile Include="Calc\PositiveIntegerRange.cs" />
+    <Compile Include="Collections\CoreSerialization.cs" />
     <Compile Include="Collections\NGTreeNode.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschDecay.cs" />
     <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
@@ -189,6 +188,9 @@
     <Compile Include="Calc\ScriptExecutionBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\DataRow.cs" />
+    <Compile Include="Data\Extensions\ExpandCyclingVariableColumn.cs" />
+    <Compile Include="Data\Extensions\MasterCurveCreation.cs" />
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\Gdi\LineCaps\CircleLineCaps.cs" />
@@ -210,9 +212,11 @@
     <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenController.cs" />
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\TabbedElementController.cs" />
+    <Compile Include="Gui\Common\TextChoiceController.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
     <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleController.cs" />
+    <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleController.cs" />
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
     <Compile Include="Gui\Graph\ShapeGraphicController.cs" />
@@ -235,12 +239,6 @@
     <Compile Include="Main\Services\RtfComposerService.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Collections\IAscendingIntegerCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Collections\IntegerRangeAsCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\AbstractScript.cs">

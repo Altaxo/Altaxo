@@ -67,7 +67,7 @@ namespace Altaxo.Data
     {
       Dictionary<System.Type, int> typesToCount = new Dictionary<Type, int>();
       if (null == selectedColumns || 0==selectedColumns.Count)
-        selectedColumns = new Altaxo.Collections.IntegerRangeAsCollection(0, table.ColumnCount);
+        selectedColumns = new Altaxo.Collections.ContiguousIntegerRange(0, table.ColumnCount);
 
 
     
@@ -112,7 +112,7 @@ namespace Altaxo.Data
     public static void CopyRowToDataColumn(this DataColumnCollection table, int rowIdx, IAscendingIntegerCollection selectedDataColumns, DataColumn destinationColumn)
     {
       if (null == selectedDataColumns || 0==selectedDataColumns.Count)
-        selectedDataColumns = new Altaxo.Collections.IntegerRangeAsCollection(0, table.ColumnCount);
+        selectedDataColumns = new Altaxo.Collections.ContiguousIntegerRange(0, table.ColumnCount);
 
       foreach (var colIdx in selectedDataColumns)
       {

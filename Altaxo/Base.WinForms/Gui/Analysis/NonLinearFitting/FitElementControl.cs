@@ -327,8 +327,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       {
         // draw the plot range
-        Calc.PositiveIntegerRange plotRange = _fitElement.GetRowRange();
-        string rangestring = "Range: " + plotRange.First.ToString() + " to " + (plotRange.IsInfinite ? "infinity" : plotRange.Last.ToString());
+        var plotRange = _fitElement.GetRowRange();
+        string rangestring = "Range: " + plotRange.Start.ToString() + " to " + (plotRange.IsInfinite ? "infinity" : plotRange.Last.ToString());
         Rectangle rect = new Rectangle(0, currentY, _IndependentVariablesWidth, _slotHeight);
         System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
           rect.X, rect.Y, rect.Width + 2, rect.Height,

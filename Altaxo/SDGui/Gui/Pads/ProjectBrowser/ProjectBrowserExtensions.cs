@@ -63,21 +63,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       CopyDocuments(list);
     }
 
+    const string rootFolderDisplayName = "<<<root folder>>>";
+
+
 		/// <summary>
 		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
 		/// </summary>
 		/// <param name="list">List of items to delete.</param>
 		public static void MoveDocuments(IList<object> list)
 		{
-			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName).ToArray();
-			var choices = new SingleChoiceObject(names,0);
-			if (!Current.Gui.ShowDialog(ref choices, "Choose folder to move the items into", false))
+			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName, true);
+			names.Insert(0,rootFolderDisplayName);
+			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to move the items into:" };
+			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
 				return;
 
-			string newFolderName = choices.Choices[choices.Selection];
-
-			Current.Project.Folders.MoveItemsToFolder(list, newFolderName);
-			
+      string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
+      Current.Project.Folders.MoveItemsToFolder(list, newFolderName);
 		}
 
 
@@ -87,12 +89,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="list">List of items to delete.</param>
     public static void CopyDocuments(IList<object> list)
     {
-      var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName).ToArray();
-      var choices = new SingleChoiceObject(names, 0);
-      if (!Current.Gui.ShowDialog(ref choices, "Choose folder to move the items into", false))
+			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName, true);
+			names.Insert(0, rootFolderDisplayName);
+			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to copy the items into:" };
+      if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
         return;
 
-      string newFolderName = choices.Choices[choices.Selection];
+			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
 			Current.Project.Folders.CopyItemsToFolder(list,newFolderName);
       
     }

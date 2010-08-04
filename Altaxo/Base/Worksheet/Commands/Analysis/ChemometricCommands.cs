@@ -684,7 +684,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			string newName = string.Format("GPreprocSpectra");
 			newName = Main.ProjectFolder.CreateFullName(table.Name, newName);
 			
-			Worksheet.Commands.PlotCommands.PlotLine(desttable, new IntegerRangeAsCollection(1, desttable.DataColumnCount - 1), true, false, newName);
+			Worksheet.Commands.PlotCommands.PlotLine(desttable, new ContiguousIntegerRange(1, desttable.DataColumnCount - 1), true, false, newName);
     }
 
     /// <summary>

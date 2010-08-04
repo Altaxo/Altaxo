@@ -40,12 +40,13 @@ namespace Altaxo.Collections
         AscendingIntegerCollection s = (AscendingIntegerCollection)obj;
         int count = s.GetRangeCount();
         info.CreateArray("Ranges",count);
-        int currentpos=0, rangestart=0, rangecount=0;
-        while(s.GetNextRangeAscending(ref currentpos, ref rangestart, ref rangecount))
+        int currentpos=0;
+        ContiguousIntegerRange range;
+        while(s.GetNextRangeAscending(ref currentpos, out range))
         {
           info.CreateElement("e");
-          info.AddValue("Start",rangestart);
-          info.AddValue("Count",rangecount);
+          info.AddValue("Start",range.Start);
+          info.AddValue("Count",range.Count);
           info.CommitElement();
         }
         info.CommitArray();
@@ -116,8 +117,9 @@ namespace Altaxo.Collections
     public int GetRangeCount()
     {
       int result=0;
-      int currentpos=0, rangestart=0, rangecount=0;
-      while(GetNextRangeAscending(ref currentpos, ref rangestart, ref rangecount))
+      int currentpos = 0;
+      ContiguousIntegerRange range;
+      while(GetNextRangeAscending(ref currentpos, out range))
         result++;
 
       return result;
@@ -149,10 +151,14 @@ namespace Altaxo.Collections
     ///   // do your things here
     ///   }
     /// </code></remarks>
-    public bool GetNextRangeAscending(ref int currentposition, ref int rangestart, ref int rangecount)
+    public bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result)
     {
+      int rangestart;
+      int rangecount;
+
       if(currentposition<0 || currentposition>=Count)
       {
+        result = ContiguousIntegerRange.Empty;
         return false;
       }
       else
@@ -173,6 +179,7 @@ namespace Altaxo.Collections
           }
         }
 
+        result = new ContiguousIntegerRange(rangestart, rangecount);
         return true;
       }
     }
@@ -193,10 +200,12 @@ namespace Altaxo.Collections
     ///   // do your things here
     ///   }
     /// </code></remarks>
-    public bool GetNextRangeDescending(ref int currentposition, ref int rangestart, ref int rangecount)
+    public bool GetNextRangeDescending(ref int currentposition, out ContiguousIntegerRange result)
     {
+      int rangestart, rangecount;
       if(currentposition<0 || currentposition>=Count)
       {
+        result = ContiguousIntegerRange.Empty;
         return false;
       }
       else
@@ -216,6 +225,7 @@ namespace Altaxo.Collections
           }
         }
 
+        result = new ContiguousIntegerRange(rangestart, rangecount);
         return true;
       }
     }

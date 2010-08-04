@@ -389,7 +389,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
     public static IROMatrix ToROColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
-      return new DataColumnToColumnROMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.IntegerRangeAsCollection(0,nRows));
+      return new DataColumnToColumnROMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0,nRows));
     }
 
 
@@ -414,7 +414,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="nRows">Number of rows of the data table that participate in the matrix (starting from index 0). Remember that this are the columns of the wrapped matrix.</param>
     public static IROMatrix ToRORowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
-      return new DataColumnToRowROMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.IntegerRangeAsCollection(0,nRows));
+      return new DataColumnToRowROMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0,nRows));
     }
 
     #endregion
@@ -439,7 +439,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
     public static IMatrix ToColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
-      return new DataColumnToColumnMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.IntegerRangeAsCollection(0,nRows));
+      return new DataColumnToColumnMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0,nRows));
     }
 
     /// <summary>
@@ -461,7 +461,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="nRows">Number of rows of the data table that participate in the matrix (starting from index 0). Remember that this are the columns of the wrapped matrix.</param>
     public static IMatrix ToRowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
     {
-      return new DataColumnToRowMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.IntegerRangeAsCollection(0,nRows));
+      return new DataColumnToRowMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0,nRows));
     }
 
     #endregion

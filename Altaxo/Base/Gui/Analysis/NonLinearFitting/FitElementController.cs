@@ -21,6 +21,8 @@
 #endregion
 
 using System;
+
+using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
 using Altaxo.Data;
@@ -98,7 +100,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       object range = _doc.GetRowRange();
       if (Current.Gui.ShowDialog(ref range, "Choose fit range"))
       {
-        _doc.SetRowRange((Calc.PositiveIntegerRange)range);
+        _doc.SetRowRange((ContiguousNonNegativeIntegerRange)range);
         _view.Refresh();
       }
     }
