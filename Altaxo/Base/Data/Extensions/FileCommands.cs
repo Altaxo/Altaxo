@@ -54,15 +54,26 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Imports multiple Ascii files into a single data table.
+		/// Imports multiple Ascii files into a single data table, horizontally, i.e. in subsequent columns.
 		/// </summary>
 		/// <param name="dataTable">The data table where to import the data.</param>
 		/// <param name="filenames">The files names. The names will be sorted before use.</param>
-		public static void ImportAsciiToSingleWorksheet(this DataTable dataTable, string[] filenames)
+		public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames)
 		{
 			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportMultipleAscii(filenames, dataTable);
+			AsciiImporter.ImportMultipleAsciiHorizontally(filenames, dataTable);
 		}
+
+    /// <summary>
+    /// Imports multiple Ascii files into a single data table, vertically, i.e. in subsequent rows.
+    /// </summary>
+    /// <param name="dataTable">The data table where to import the data.</param>
+    /// <param name="filenames">The files names. The names will be sorted before use.</param>
+    public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames)
+    {
+      Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+      AsciiImporter.ImportMultipleAsciiVertically(filenames, dataTable);
+    }
 
 		/// <summary>
 		/// Asks for file name(s) and imports the file(s) into multiple worksheets.
@@ -70,7 +81,7 @@ namespace Altaxo.Data
 		/// <param name="dataTable">The data table to import to. Can be null if <see cref="toMultipleWorksheets"/> is set to true.</param>
 		public static void ShowImportAsciiDialog(this DataTable dataTable)
 		{
-			ShowImportAsciiDialog(dataTable, true);
+			ShowImportAsciiDialog(dataTable, true, false);
 		}
 
 		/// <summary>
@@ -78,7 +89,8 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="dataTable">The data table to import to. Can be null if <see cref="toMultipleWorksheets"/> is set to true.</param>
 		/// <param name="toMultipleWorksheets">If true, multiple files are imported into multiple worksheets. New worksheets were then created automatically.</param>
-		public static void ShowImportAsciiDialog(this DataTable dataTable, bool toMultipleWorksheets)
+    /// <param name="vertically">If <c>toMultipleWorksheets</c> is false, and this option is true, the data will be exported vertically (in the same columns) instead of horizontally.</param>
+		public static void ShowImportAsciiDialog(this DataTable dataTable, bool toMultipleWorksheets, bool vertically)
 		{
 			var options = new Altaxo.Gui.OpenFileOptions();
 			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
@@ -89,10 +101,15 @@ namespace Altaxo.Data
 
 			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
 			{
-				if (toMultipleWorksheets)
-					ImportAsciiToMultipleWorksheets(dataTable, options.FileNames);
-				else
-					ImportAsciiToSingleWorksheet(dataTable, options.FileNames);
+        if (toMultipleWorksheets)
+          ImportAsciiToMultipleWorksheets(dataTable, options.FileNames);
+        else
+        {
+          if(vertically)
+            ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames);
+          else
+           ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames);
+        }
 			}
 
 		}

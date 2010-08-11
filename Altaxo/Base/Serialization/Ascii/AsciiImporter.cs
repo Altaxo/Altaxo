@@ -129,7 +129,8 @@ namespace Altaxo.Serialization.Ascii
 
           if (i == impopt.IndexOfCaptionLine) // is it the column name line
           {
-            newcols.SetColumnName(k, ttoken);
+            string newcolname = newcols.FindUniqueColumnName(ttoken);
+            newcols.SetColumnName(k, newcolname);
           }
           else // this are threated as additional properties
           {
@@ -387,7 +388,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the data should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string ImportMultipleAscii(string[] filenames, Altaxo.Data.DataTable table)
+    public static string ImportMultipleAsciiHorizontally(string[] filenames, Altaxo.Data.DataTable table)
     {
       Altaxo.Data.DataColumn xcol = null;
       Altaxo.Data.DataColumn xvalues;
@@ -467,14 +468,86 @@ namespace Altaxo.Serialization.Ascii
             // now set the imported property cells
             for (int s = 0; s < newtable.PropCols.ColumnCount; s++)
             {
-              Altaxo.Data.DataColumn dest = table.PropCols.EnsureExistence(newtable.PropCols.GetColumnName(i), newtable.PropCols[i].GetType(), Altaxo.Data.ColumnKind.V, 0);
-              dest.SetValueAt(destcolnumber, table.PropCols[s][i]);
+              Altaxo.Data.DataColumn dest = table.PropCols.EnsureExistence(newtable.PropCols.GetColumnName(s), newtable.PropCols[s].GetType(), Altaxo.Data.ColumnKind.V, 0);
+              dest.SetValueAt(destcolnumber, newtable.PropCols[s][i]);
             }
           }
         
         } // foreache file
       
       
+      return errorList.Length == 0 ? null : errorList.ToString();
+    }
+
+    /// <summary>
+    /// Imports a couple of ASCII files into one (!) table, vertically. If the names of the subsequently imported table columns match, the data
+    /// will be written in the matching column. Otherwise new columns with the unmatched column names were created.
+    /// Property columns will only be imported from the first table. 
+    /// </summary>
+    /// <param name="filenames">An array of filenames to import.</param>
+    /// <param name="table">The table the data should be imported to.</param>
+    /// <returns>Null if no error occurs, or an error description.</returns>
+    public static string ImportMultipleAsciiVertically(string[] filenames, Altaxo.Data.DataTable table)
+    {
+      System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+      int lastDestinationRow = table.DataColumns.RowCount;
+      int numberOfImportedTables = 0;
+
+    
+
+      // add also a property column named "FilePath" if not existing so far
+      Altaxo.Data.TextColumn filePathCol = (Altaxo.Data.TextColumn)table.Col.EnsureExistence("FilePath", typeof(Altaxo.Data.TextColumn), Altaxo.Data.ColumnKind.Label, 0);
+
+      foreach (string filename in filenames)
+      {
+        Altaxo.Data.DataTable srctable = null;
+        using (var stream = GetAsciiInputFileStream(filename))
+        {
+          srctable = null;
+          srctable = Import(stream);
+          stream.Close();
+        }
+
+        if (srctable.DataColumns.ColumnCount == 0)
+          continue;
+
+        // mark the beginning of the new file with the file path
+        filePathCol[lastDestinationRow] = filename;
+
+        // transfer the data columns
+        for (int srcDataColIdx = 0; srcDataColIdx < srctable.DataColumns.ColumnCount; srcDataColIdx++)
+        {
+          var srcDataCol = srctable.DataColumns[srcDataColIdx];
+
+          var destDataCol = table.DataColumns.EnsureExistence(srctable.DataColumns.GetColumnName(srcDataColIdx), srctable.DataColumns[srcDataColIdx].GetType(), srctable.DataColumns.GetColumnKind(srcDataColIdx), srctable.DataColumns.GetColumnGroup(srcDataColIdx));
+          int destDataColIdx = table.DataColumns.GetColumnNumber(destDataCol);
+
+          // transfer the data of one data column
+          for (int j = 0; j < srcDataCol.Count; j++)
+            destDataCol[lastDestinationRow + j] = srcDataCol[j];
+
+
+          // now also process the property columns
+          for (int srcPropColIdx = 0; srcPropColIdx < srctable.PropCols.ColumnCount; srcPropColIdx++)
+          {
+            var destPropCol = table.PropCols.EnsureExistence(srctable.PropCols.GetColumnName(srcPropColIdx), srctable.PropCols[srcPropColIdx].GetType(), srctable.PropCols.GetColumnKind(srcPropColIdx), srctable.PropCols.GetColumnGroup(srcPropColIdx));
+
+            if (0 == numberOfImportedTables)
+            {
+              destPropCol[destDataColIdx] = srctable.PropCols[srcPropColIdx][srcDataColIdx];
+            }
+            else if (destPropCol[destDataColIdx] != srctable.PropCols[srcPropColIdx][srcDataColIdx])
+            {
+              destPropCol.SetElementEmpty(destDataColIdx);
+            }
+          }
+        }
+
+        lastDestinationRow += srctable.DataColumns.RowCount;
+        numberOfImportedTables++;
+      } // foreache file
+
+
       return errorList.Length == 0 ? null : errorList.ToString();
     }
 

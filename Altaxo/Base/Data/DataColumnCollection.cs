@@ -1393,7 +1393,7 @@ namespace Altaxo.Data
     /// <returns>The name of the column.</returns>
     public string GetColumnName(int idx)
     {
-      if(idx>=0 && idx<=_columnsByNumber.Count)
+      if(idx>=0 && idx<_columnsByNumber.Count)
         return GetColumnInfo(idx).Name;
       else
         throw new ArgumentOutOfRangeException(string.Format("The column [{0}] in table \"{1}\" does not exist. The current number of columns is {2}.", idx, Main.DocumentPath.GetAbsolutePath(this).ToString(), ColumnCount));

@@ -85,4 +85,35 @@ namespace Altaxo.Calc.Optimization
     protected ConstraintDefinition constraint_ = new NoConstraint();
     
   }
+
+
+  public class Simple1DCostFunction : CostFunction
+  {
+    Func<double, double> _func;
+
+    public Simple1DCostFunction(Func<double, double> func)
+    {
+      _func = func;
+    }
+
+    public override double Value(DoubleVector x)
+    {
+      return _func(x[0]);
+    }
+  }
+
+  public class Simple2DCostFunction : CostFunction
+  {
+    Func<double, double, double> _func;
+
+    public Simple2DCostFunction(Func<double, double, double> func)
+    {
+      _func = func;
+    }
+
+    public override double Value(DoubleVector x)
+    {
+      return _func(x[0], x[1]);
+    }
+  }
 }

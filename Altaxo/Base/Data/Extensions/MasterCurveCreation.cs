@@ -53,12 +53,17 @@ namespace Altaxo.Data
       /// <summary>
       /// Resulting list of shift factors (or offsets).
       /// </summary>
-      public List<double> ResultingShiftFactors { get { return _resultingShiftFactors; } }
+      public List<double> ResultingShifts { get { return _resultingShiftFactors; } }
 
       /// <summary>
       /// Gets the resulting interpolation curve for each group of columns.
       /// </summary>
       public InterpolationInformation[] ResultingInterpolation { get; set; }
+
+      /// <summary>
+      /// Determines the method to best fit the data into the master curve.
+      /// </summary>
+      public OptimizationMethod OptimizationMethod { get; set; }
     }
 
     /// <summary>
@@ -70,6 +75,22 @@ namespace Altaxo.Data
       Factor,
       /// <summary>Shifts by adding a constant value to all x values. Use this if your x values are already logarithmized.</summary>
       Offset
+    }
+
+    /// <summary>
+    /// Determines how to best fit the data into the master curve.
+    /// </summary>
+    public enum OptimizationMethod
+    {
+      /// <summary>
+      /// Evaluates the mean difference (signed) between master curve and new data and tries to make this difference zero (root finding).
+      /// </summary>
+      OptimizeSignedDifference,
+
+      /// <summary>
+      /// Evaluates the mean squared difference (always positive) between master curve and new data and tries to minimize this value (minimization method).
+      /// </summary>
+      OptimizeSquaredDifference
     }
 
     #region Interpolation information
@@ -101,7 +122,7 @@ namespace Altaxo.Data
       /// </summary>
       public void Initialize()
       {
-        Interpolation = new CrossValidatedCubicSpline();
+				Interpolation = new LinearInterpolation();
         InterpolationMinimumX = double.MaxValue;
         InterpolationMaximumX = double.MinValue;
         InterpolationValues = new SortedList<double, double>();
@@ -129,9 +150,11 @@ namespace Altaxo.Data
 
         for (int i = 0, j = 0; i < count; i++)
         {
-          double xv = shiftXByOffset ? x[i] + shift : x[i] * shift;
+          double xv;
           if (doLogX)
-            xv = Math.Log(xv);
+            xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
+          else
+            xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
 
           double yv = y[i];
           if (doLogY)
@@ -224,9 +247,9 @@ namespace Altaxo.Data
       var columnGroups = options.ColumnGroups;
       int maxColumns = options.ColumnGroups.Max(x => x.Count);
 
-      options.ResultingShiftFactors.Clear();
+      options.ResultingShifts.Clear();
       for (int i = 0; i < maxColumns; i++)
-        options.ResultingShiftFactors.Add(1);
+        options.ResultingShifts.Add(0);
 
 
       var interpolations = new InterpolationInformation[options.ColumnGroups.Count];
@@ -240,84 +263,112 @@ namespace Altaxo.Data
         var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
         var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
 
-        interpolations[nColumnGroup].AddXYColumnToInterpolation(1, xCol, yCol, options);
+        interpolations[nColumnGroup].AddXYColumnToInterpolation(0, xCol, yCol, options);
       }
 
 
       // now take the other columns, and shift them with respect to the interpolation
-
-      var columnsToProcess = new List<int>();
+      // in each shift group we have a list of columns, the first of those columns is initially processed with a shift of 1
+      // but subsequent columns are then processed with an initial shift factor which is set to the previously calculated shift factor.
+      var shiftGroups = new List<List<int>>();
+      var shiftGroup = new List<int>();
       for (int i = indexOfReferenceColumnInColumnGroup + 1; i < maxColumns; i++)
-        columnsToProcess.Add(i);
+        shiftGroup.Add(i);
+      shiftGroups.Add(shiftGroup);
+      shiftGroup = new List<int>();
       for (int i = indexOfReferenceColumnInColumnGroup - 1; i >= 0; i--)
-        columnsToProcess.Add(i);
+        shiftGroup.Add(i);
+      shiftGroups.Add(shiftGroup);
 
-      foreach (int nIndexOfColumnInColumnGroup in columnsToProcess)
+      foreach (var columnsToProcess in shiftGroups)
       {
-        double minShift = double.MaxValue;
-        double maxShift = double.MinValue;
-        for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
+        double initialShift = 0;
+
+        foreach (int nIndexOfColumnInColumnGroup in columnsToProcess)
         {
-          var yCol = columnGroups[nColumnGroup][nIndexOfColumnInColumnGroup];
-          var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
-          var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
-          currentColumns[nColumnGroup].CurrentXCol = xCol;
-          currentColumns[nColumnGroup].CurrentYCol = yCol;
-
-          double xmin, xmax;
-          GetMinMaxOfFirstColumnForValidSecondColumn(xCol, yCol, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out xmin, out xmax);
-
-          double maxShiftFactor;
-          double minShiftFactor;
-
-          if (options.LogarithmizeXForInterpolation)
-          {
-            maxShiftFactor = interpolations[nColumnGroup].InterpolationMaximumX - xmin;
-            minShiftFactor = interpolations[nColumnGroup].InterpolationMinimumX - xmax;
-          }
-          else
-          {
-            maxShiftFactor = interpolations[nColumnGroup].InterpolationMaximumX / xmin;
-            minShiftFactor = interpolations[nColumnGroup].InterpolationMinimumX / xmax;
-          }
-          if (options.XShiftBy == ShiftXBy.Factor)
-          {
-            maxShiftFactor = Math.Exp(maxShiftFactor);
-            minShiftFactor = Math.Exp(minShiftFactor);
-          }
-
-          minShift = Math.Min(minShift, minShiftFactor);
-          maxShift = Math.Max(maxShift, maxShiftFactor);
-        }
-
-        // we reduce the maximum possible shifts a little in order to get at least one point overlapping
-        if (options.XShiftBy == ShiftXBy.Factor)
-        {
-          double diff = maxShift / minShift;
-          diff = Math.Pow(diff, 1.0 / 100.0); ;
-          maxShift = maxShift / diff;
-          minShift = minShift * diff;
-        }
-        else
-        {
-          double diff = maxShift - minShift;
-          diff /= 100;
-          maxShift = maxShift - diff;
-          minShift = minShift + diff;
-        }
-
-        double currentShiftFactor =
-        RootFinding.ByBrentsAlgorithm(
-          shiftFactor => GetMeanPenalty(interpolations, currentColumns, shiftFactor, options), minShift, maxShift);
-
-        if (currentShiftFactor.IsFinite())
-        {
-          options.ResultingShiftFactors[nIndexOfColumnInColumnGroup] = currentShiftFactor;
-
+          double globalMinShift = double.MaxValue;
+          double globalMaxShift = double.MinValue;
           for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
           {
-            // now build up a new interpolation, where the shifted data is taken into account
-            interpolations[nColumnGroup].AddXYColumnToInterpolation(currentShiftFactor, currentColumns[nColumnGroup].CurrentXCol, currentColumns[nColumnGroup].CurrentYCol, options);
+            var yCol = columnGroups[nColumnGroup][nIndexOfColumnInColumnGroup];
+            var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
+            var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
+            currentColumns[nColumnGroup].CurrentXCol = xCol;
+            currentColumns[nColumnGroup].CurrentYCol = yCol;
+
+            double xmin, xmax;
+            GetMinMaxOfFirstColumnForValidSecondColumn(xCol, yCol, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out xmin, out xmax);
+
+            double localMaxShift;
+            double localMinShift;
+
+            if (options.LogarithmizeXForInterpolation)
+            {
+              localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX - xmin;
+              localMinShift = interpolations[nColumnGroup].InterpolationMinimumX - xmax;
+            }
+            else
+            {
+              localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX / xmin;
+              localMinShift = interpolations[nColumnGroup].InterpolationMinimumX / xmax;
+            }
+            globalMinShift = Math.Min(globalMinShift, localMinShift);
+            globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
+          }
+
+          // we reduce the maximum possible shifts a little in order to get at least one point overlapping
+          double diff = (globalMaxShift - globalMinShift) / 100;
+          globalMaxShift = globalMaxShift - diff;
+          globalMinShift = globalMinShift + diff;
+        
+
+          double currentShiftFactor = initialShift;
+          switch (options.OptimizationMethod)
+          {
+            case OptimizationMethod.OptimizeSignedDifference:
+              {
+                currentShiftFactor =
+                RootFinding.ByBrentsAlgorithm(
+                  shiftFactor => GetMeanSignedPenalty(interpolations, currentColumns, shiftFactor, options), globalMinShift, globalMaxShift);
+              }
+              break;
+            case OptimizationMethod.OptimizeSquaredDifference:
+              {
+                Func<double, double> optFunc = delegate(double shift)
+                {
+                  double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
+                  //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+                  return res;
+                };
+
+                var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
+                var vec = new Calc.LinearAlgebra.DoubleVector(1);
+                vec[0] = initialShift;
+                var dir = new Calc.LinearAlgebra.DoubleVector(1);
+                dir[0] = 1;
+                double initialStep = 0.05;
+                var result = optimizationMethod.Search(vec,dir,initialStep);
+                currentShiftFactor = result[0];
+               // currentShiftFactor = optimizationMethod.SolutionVector[0];
+
+              }
+              break;
+            default:
+              throw new NotImplementedException("OptimizationMethod not implemented: " + options.OptimizationMethod.ToString());
+          }
+
+
+          if (currentShiftFactor.IsFinite())
+          {
+            options.ResultingShifts[nIndexOfColumnInColumnGroup] = currentShiftFactor;
+
+            for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
+            {
+              // now build up a new interpolation, where the shifted data is taken into account
+              interpolations[nColumnGroup].AddXYColumnToInterpolation(currentShiftFactor, currentColumns[nColumnGroup].CurrentXCol, currentColumns[nColumnGroup].CurrentYCol, options);
+            }
+
+            initialShift = currentShiftFactor;
           }
         }
       }
@@ -346,14 +397,14 @@ namespace Altaxo.Data
 
 
     /// <summary>
-    /// Calculates a mean penalty value for the current shift factor of the current column. By minimizing the penalty value, the current column will fit optimally into the so far created master curve.
+    /// Calculates a mean signed penalty value for the current shift factor of the current column. By making the penalty value zero, the current column will fit optimally into the so far created master curve.
     /// </summary>
     /// <param name="interpolations">Current interpolation functions for the column groups (e.g. real and imaginary part).</param>
     /// <param name="currentColumns">Current x and y column.</param>
-    /// <param name="shift">Current shift factor.</param>
+    /// <param name="shift">Current shift (direct or log of shiftFactor).</param>
     /// <param name="options">Options for creating the master curve.</param>
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-    static double GetMeanPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
+    static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
     {
       double penalty;
       int points;
@@ -363,12 +414,44 @@ namespace Altaxo.Data
 
       for(int i=0;i<interpolations.Length;i++)
       {
-        GetMeanYDifference(interpolations[i].Interpolation, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, currentColumns[i].CurrentXCol, currentColumns[i].CurrentYCol, shift,options, out penalty, out points);
+        GetMeanSignedYDifference(interpolations[i].Interpolation, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, currentColumns[i].CurrentXCol, currentColumns[i].CurrentYCol, shift,options, out penalty, out points);
 
         if(points>0)
         {
         penaltySum+=penalty;
         penaltyPoints += points;
+        }
+      }
+
+      //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanPenalty for shift={0} resulted in {1} ({2} points)", shift, penaltySum, penaltyPoints));
+
+      return penaltyPoints > 0 ? penaltySum / penaltyPoints : float.MaxValue;
+    }
+
+    /// <summary>
+    /// Calculates a mean squared penalty value for the current shift factor of the current column. By minimizing the penalty value, the current column will fit optimally into the so far created master curve.
+    /// </summary>
+    /// <param name="interpolations">Current interpolation functions for the column groups (e.g. real and imaginary part).</param>
+    /// <param name="currentColumns">Current x and y column.</param>
+    /// <param name="shift">Current shift (direct or log of shiftFactor).</param>
+    /// <param name="options">Options for creating the master curve.</param>
+    /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
+    static double GetMeanSquaredPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
+    {
+      double penalty;
+      int points;
+
+      double penaltySum = 0;
+      int penaltyPoints = 0;
+
+      for (int i = 0; i < interpolations.Length; i++)
+      {
+        GetMeanSquaredYDifference(interpolations[i].Interpolation, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, currentColumns[i].CurrentXCol, currentColumns[i].CurrentYCol, shift, options, out penalty, out points);
+
+        if (points > 0)
+        {
+          penaltySum += penalty;
+          penaltyPoints += points;
         }
       }
 
@@ -386,11 +469,11 @@ namespace Altaxo.Data
     /// <param name="interpolMax">Maximum valid x value of the interpolation function.</param>
 		/// <param name="x">Column of x values of the new part of the master curve.</param>
     /// <param name="y">Column of y values of the new part of the master curve.</param>
-    /// <param name="shift">Shift factor for the new part of the master curve.</param>
+    /// <param name="shift">Shift offset (direct or log of shiftFactor for the new part of the master curve.</param>
 		/// <param name="options">Information for the master curve creation.</param>
-    /// <param name="penalty">Returns the calculated penalty value.</param>
+    /// <param name="penalty">Returns the calculated penalty value (mean difference between interpolation curve and provided data).</param>
     /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
-		public static void GetMeanYDifference(IInterpolationFunction interpolation, double interpolMin, double interpolMax, DoubleColumn x, DoubleColumn y, double shift, Options options, out double penalty, out int evaluatedPoints)
+		public static void GetMeanSignedYDifference(IInterpolationFunction interpolation, double interpolMin, double interpolMax, DoubleColumn x, DoubleColumn y, double shift, Options options, out double penalty, out int evaluatedPoints)
 		{
 			int len = Math.Min(x.Count, y.Count);
 			int validPoints = 0;
@@ -400,9 +483,11 @@ namespace Altaxo.Data
       double penaltySum = 0;
 			for (int i = 0; i < len; i++)
 			{
-        double xv = shiftXByOffset ? x[i] + shift : x[i] * shift;
+        double xv;
         if (doLogX)
-          xv = Math.Log(xv);
+          xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
+        else
+          xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
 
         double yv = y[i];
         if (doLogY)
@@ -427,6 +512,58 @@ namespace Altaxo.Data
       //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
 		}
 
-   
+
+    /// <summary>
+    /// Gets the mean squared difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
+    /// </summary>
+    /// <param name="interpolation">The interpolating function of the master curve created so far.</param>
+    /// <param name="interpolMin">Minimum valid x value of the interpolation function.</param>
+    /// <param name="interpolMax">Maximum valid x value of the interpolation function.</param>
+    /// <param name="x">Column of x values of the new part of the master curve.</param>
+    /// <param name="y">Column of y values of the new part of the master curve.</param>
+    /// <param name="shift">Shift offset (direct or log of shiftFactor) for the new part of the master curve.</param>
+    /// <param name="options">Information for the master curve creation.</param>
+    /// <param name="penalty">Returns the calculated penalty value (mean squared difference between interpolation curve and provided data).</param>
+    /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
+    public static void GetMeanSquaredYDifference(IInterpolationFunction interpolation, double interpolMin, double interpolMax, DoubleColumn x, DoubleColumn y, double shift, Options options, out double penalty, out int evaluatedPoints)
+    {
+      int len = Math.Min(x.Count, y.Count);
+      int validPoints = 0;
+      bool doLogX = options.LogarithmizeXForInterpolation;
+      bool doLogY = options.LogarithmizeYForInterpolation;
+      bool shiftXByOffset = options.XShiftBy == ShiftXBy.Offset;
+      double penaltySum = 0;
+      for (int i = 0; i < len; i++)
+      {
+        double xv;
+        if(doLogX)
+          xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
+        else
+          xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
+
+        double yv = y[i];
+        if (doLogY)
+          yv = Math.Log(yv);
+
+        if (xv.IsFinite() && yv.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
+        {
+          try
+          {
+            double diff = yv - interpolation.GetYOfX(xv);
+            penaltySum += diff*diff;
+            validPoints++;
+          }
+          catch (Exception)
+          {
+          }
+        }
+      }
+      penalty = penaltySum;
+      evaluatedPoints = validPoints;
+
+      //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
+    }
+
+
 	}
 }

@@ -39,9 +39,8 @@ namespace Altaxo.Calc.Optimization
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
-  public class NelderMead: FunctionMinimizeMethod 
+  public class NelderMead: FunctionMinimizeMethod
   {
-  
     ///<summary>Default constructor for simplex method</summary>
     public NelderMead(ICostFunction costfunction)
       : this(costfunction, new EndCriteria()) {}

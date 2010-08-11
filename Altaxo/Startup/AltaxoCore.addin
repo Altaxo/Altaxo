@@ -172,8 +172,10 @@
         <MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}" type="Menu">
           <MenuItem id="WorksheetImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.ImportAscii"
 						description="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}" class="Altaxo.Worksheet.Commands.ImportAscii" />
-          <MenuItem id="WorksheetImportAsciiSingleWks" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet}" icon="Icons.16x16.ImportAscii"
-						description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheet" />
+          <MenuItem id="WorksheetImportAsciiSingleWksHorz" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet}" icon="Icons.16x16.ImportAscii"
+						description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetHorizontally" />
+          <MenuItem id="WorksheetImportAsciiSingleWksVert" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert}" icon="Icons.16x16.ImportAscii"
+						description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetVertically" />
           <MenuItem id="WorksheetImportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Import.GalacticSPC}"
 						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.GalacticSPC.Description}"
 						class="Altaxo.Worksheet.Commands.ImportGalacticSPC" />

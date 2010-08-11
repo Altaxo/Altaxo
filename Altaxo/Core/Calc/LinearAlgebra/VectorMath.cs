@@ -1189,9 +1189,25 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
+    /// <summary>
+    /// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
+    /// </summary>
+    /// <param name="x">First vector.</param>
+    /// <param name="y">Second vector.</param>
+    /// <returns>True if both vectors contain the same elements.</returns>
+    public static bool AreValuesEqual(IROVector x, IROVector y)
+    {
+      if (x.Length != y.Length)
+        throw new ArgumentException("Length of x and y are unequal");
 
+      for (int i = x.Length - 1; i >= 0; i--)
+        if (!(x[i] == y[i]))
+          return false;
 
-     /// <summary>
+      return true;
+    }
+
+    /// <summary>
     /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
     /// </summary>
     /// <param name="x">Vector (sequence) to test.</param>

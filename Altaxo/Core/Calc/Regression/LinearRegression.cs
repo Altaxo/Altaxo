@@ -107,12 +107,55 @@ namespace Altaxo.Calc.Regression
 
       Calculate(
         u, 
-        yarr,
-        stddev,
+        VectorMath.ToROVector(yarr),
+        VectorMath.ToROVector(stddev),
         numberOfData,
         numberOfParameter,
         threshold);
     }
+
+		/// <summary>
+		/// Fits a data set linear to a given function base.
+		/// </summary>
+		/// <param name="xarr">The array of x values of the data set.</param>
+		/// <param name="yarr">The array of y values of the data set.</param>
+		/// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
+		/// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
+		/// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
+		/// <param name="evaluateFunctionBase">The function base used to fit.</param>
+		/// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
+		public LinearFitBySvd(
+			IROVector xarr,
+			IROVector yarr,
+			IROVector stddev,
+			int numberOfData,
+			int numberOfParameter,
+			FunctionBaseEvaluator evaluateFunctionBase,
+			double threshold)
+		{
+			IMatrix u = new MatrixMath.BEMatrix(numberOfData, numberOfParameter);
+
+			double[] functionBase = new double[numberOfParameter];
+
+			// Fill the function base matrix (rows: numberOfData, columns: numberOfParameter)
+			// and scale also y
+			for (int i = 0; i < numberOfData; i++)
+			{
+				evaluateFunctionBase(xarr[i], functionBase);
+				for (int j = 0; j < numberOfParameter; j++)
+					u[i, j] = functionBase[j];
+			}
+
+			Calculate(
+				u,
+				yarr,
+				stddev,
+				numberOfData,
+				numberOfParameter,
+				threshold);
+		}
+
+
 
     /// <summary>
     /// Fits a data set linear to a given x base.
@@ -131,7 +174,7 @@ namespace Altaxo.Calc.Regression
       int numberOfParameter,
       double threshold)
     {
-      Calculate(xbase,yarr,stddev,numberOfData,numberOfParameter,threshold);
+      Calculate(xbase,VectorMath.ToROVector(yarr),VectorMath.ToROVector(stddev),numberOfData,numberOfParameter,threshold);
     }
 
     /// <summary>
@@ -145,8 +188,8 @@ namespace Altaxo.Calc.Regression
     /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
     public LinearFitBySvd Calculate(
       IROMatrix xbase, // NumberOfData, NumberOfParameters 
-      double[] yarr,
-      double[] stddev,
+      IROVector yarr,
+      IROVector stddev,
       int numberOfData,
       int numberOfParameter,
       double threshold)
@@ -238,7 +281,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="start">First element.</param>
     /// <param name="length">Number of elements used for calculation.</param>
     /// <returns></returns>
-    public static double Mean(double[] x, int start, int length)
+    public static double Mean(IROVector x, int start, int length)
     {
       double sum=0;
       int end = start+length;
@@ -257,7 +300,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="start">Starting index.</param>
     /// <param name="length">Number of elements used for calculation.</param>
     /// <returns></returns>
-    public static double CorrectedSumOfSquares(double[] x, double mean, int start, int length)
+    public static double CorrectedSumOfSquares(IROVector x, double mean, int start, int length)
     {
       int end = start + length;
       double sum=0;

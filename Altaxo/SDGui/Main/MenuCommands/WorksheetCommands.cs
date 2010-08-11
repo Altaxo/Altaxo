@@ -92,13 +92,22 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-  public class ImportAsciiInSingleWorksheet : AbstractWorksheetControllerCommand
+  public class ImportAsciiInSingleWorksheetHorizontally : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-			Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable, false);
+			Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable, false, false);
     }
   }
+
+  public class ImportAsciiInSingleWorksheetVertically : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable, false, true);
+    }
+  }
+
 
   public class ImportImage : AbstractWorksheetControllerCommand
   {

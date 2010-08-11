@@ -509,14 +509,67 @@ namespace Altaxo.Calc.Interpolation
   /// <summary>
   /// Contains static methods for linear interpolation of data.
   /// </summary>
-  public class LinearInterpolation
+  public class LinearInterpolation : IInterpolationFunction
   {
-  
+    #region Members
+
+    DoubleVector x, y;
+
+    #endregion
+
+
+    #region IInterpolationFunction Members
+
+    public double GetYOfX(double xval)
+    {
+			int idx = CurveBase.FindInterval(xval, x);
+			if (idx < 0)
+				throw new ArgumentOutOfRangeException("xval is smaller than the interpolation x range");
+			if (idx + 1 > x.Length)
+				throw new ArgumentOutOfRangeException("xval is greater than the interpolation x range");
+
+			if (idx + 1 == x.Length)
+				idx--;
+
+			return Interpolate(xval, x[idx], x[idx + 1], y[idx], y[idx + 1]);
+    }
+
+    #endregion
+
+    #region IInterpolationCurve Members
+
+    public int Interpolate(IROVector xvec, IROVector yvec)
+    {
+      if (null == x)
+        x = new DoubleVector();
+      if (null == y)
+        y = new DoubleVector();
+
+      x.CopyFrom(xvec);
+      y.CopyFrom(yvec);
+
+			return 0;
+    }
+
+    public double GetYOfU(double u)
+    {
+      return GetYOfX(u);
+    }
+
+    public double GetXOfU(double u)
+    {
+      return u;
+    }
+
+    #endregion
+
+    #region Static methods
+
     public static int GetNextIndexOfValidPair(IROVector xcol, IROVector ycol, int sourceLength, int currentIndex)
     {
-      for(int sourceIndex=currentIndex;sourceIndex<sourceLength;sourceIndex++)
+      for (int sourceIndex = currentIndex; sourceIndex < sourceLength; sourceIndex++)
       {
-        if(!double.IsNaN(xcol[sourceIndex]) && !double.IsNaN(ycol[sourceIndex]))
+        if (!double.IsNaN(xcol[sourceIndex]) && !double.IsNaN(ycol[sourceIndex]))
           return sourceIndex;
       }
 
@@ -525,8 +578,8 @@ namespace Altaxo.Calc.Interpolation
 
     public static double Interpolate(double x, double x0, double x1, double y0, double y1)
     {
-      double r = (x-x0)/(x1-x0);
-      return (1-r)*y0 + r*y1;
+      double r = (x - x0) / (x1 - x0);
+      return (1 - r) * y0 + r * y1;
     }
 
     public static string Interpolate(
@@ -538,47 +591,47 @@ namespace Altaxo.Calc.Interpolation
       out double[] resultCol)
     {
       resultCol = new double[numberOfValues];
-      
-      int currentIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength, 0);
-      if(currentIndex<0)
+
+      int currentIndex = GetNextIndexOfValidPair(xcol, ycol, sourceLength, 0);
+      if (currentIndex < 0)
         return "The two columns don't contain a valid pair of values";
 
-      int nextIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength,currentIndex+1);
-      if(nextIndex<0)
+      int nextIndex = GetNextIndexOfValidPair(xcol, ycol, sourceLength, currentIndex + 1);
+      if (nextIndex < 0)
         return "The two columns contain only one valid pair of values, but at least two valid pairs are neccessary!";
-  
+
 
       double x_current = xcol[currentIndex];
       double x_next = xcol[nextIndex];
 
-      int resultIndex=0;
-      
+      int resultIndex = 0;
+
       // handles values before interpolation range
-      for(resultIndex=0;resultIndex<numberOfValues;resultIndex++)
+      for (resultIndex = 0; resultIndex < numberOfValues; resultIndex++)
       {
-        double x_result = xstart + resultIndex* xincrement;
-        if(x_result>=x_current)
+        double x_result = xstart + resultIndex * xincrement;
+        if (x_result >= x_current)
           break;
 
         resultCol[resultIndex] = yOutsideOfBounds;
       }
 
       // handle values in the interpolation range
-      for(;resultIndex<numberOfValues;resultIndex++)
+      for (; resultIndex < numberOfValues; resultIndex++)
       {
-        double x_result = xstart + resultIndex* xincrement;
+        double x_result = xstart + resultIndex * xincrement;
 
       tryinterpolation:
-        if(x_result>=x_current && x_result<=x_next)
+        if (x_result >= x_current && x_result <= x_next)
         {
-          resultCol[resultIndex] = Interpolate(x_result, x_current, x_next, ycol[currentIndex],ycol[nextIndex]);
+          resultCol[resultIndex] = Interpolate(x_result, x_current, x_next, ycol[currentIndex], ycol[nextIndex]);
         }
         else
         {
           currentIndex = nextIndex;
-          x_current    = x_next;
-          nextIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength, currentIndex+1);
-          if(nextIndex<0)
+          x_current = x_next;
+          nextIndex = GetNextIndexOfValidPair(xcol, ycol, sourceLength, currentIndex + 1);
+          if (nextIndex < 0)
             break;
 
           x_next = xcol[nextIndex];
@@ -587,7 +640,7 @@ namespace Altaxo.Calc.Interpolation
       }
 
       // handle values behind the interplation range
-      for(;resultIndex<numberOfValues;resultIndex++)
+      for (; resultIndex < numberOfValues; resultIndex++)
       {
         resultCol[resultIndex] = yOutsideOfBounds;
       }
@@ -605,47 +658,47 @@ namespace Altaxo.Calc.Interpolation
       out double[] resultCol)
     {
       resultCol = new double[numberOfValues];
-      
-      int currentIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength, 0);
-      if(currentIndex<0)
+
+      int currentIndex = GetNextIndexOfValidPair(xcol, ycol, sourceLength, 0);
+      if (currentIndex < 0)
         return "The two columns don't contain a valid pair of values";
 
-      int nextIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength,currentIndex+1);
-      if(nextIndex<0)
+      int nextIndex = GetNextIndexOfValidPair(xcol, ycol, sourceLength, currentIndex + 1);
+      if (nextIndex < 0)
         return "The two columns contain only one valid pair of values, but at least two valid pairs are neccessary!";
-  
+
 
       double x_current = xcol[currentIndex];
       double x_next = xcol[nextIndex];
 
-      int resultIndex=0;
-      
+      int resultIndex = 0;
+
       // handles values before interpolation range
-      for(resultIndex=0;resultIndex<numberOfValues;resultIndex++)
+      for (resultIndex = 0; resultIndex < numberOfValues; resultIndex++)
       {
         double x_result = xnewsampling[resultIndex];
-        if(x_result>=x_current)
+        if (x_result >= x_current)
           break;
 
         resultCol[resultIndex] = yOutsideOfBounds;
       }
 
       // handle values in the interpolation range
-      for(;resultIndex<numberOfValues;resultIndex++)
+      for (; resultIndex < numberOfValues; resultIndex++)
       {
         double x_result = xnewsampling[resultIndex];
 
       tryinterpolation:
-        if(x_result>=x_current && x_result<=x_next)
+        if (x_result >= x_current && x_result <= x_next)
         {
-          resultCol[resultIndex] = Interpolate(x_result, x_current, x_next, ycol[currentIndex],ycol[nextIndex]);
+          resultCol[resultIndex] = Interpolate(x_result, x_current, x_next, ycol[currentIndex], ycol[nextIndex]);
         }
         else
         {
           currentIndex = nextIndex;
-          x_current    = x_next;
-          nextIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength, currentIndex+1);
-          if(nextIndex<0)
+          x_current = x_next;
+          nextIndex = GetNextIndexOfValidPair(xcol, ycol, sourceLength, currentIndex + 1);
+          if (nextIndex < 0)
             break;
 
           x_next = xcol[nextIndex];
@@ -654,21 +707,77 @@ namespace Altaxo.Calc.Interpolation
       }
 
       // handle values behind the interplation range
-      for(;resultIndex<numberOfValues;resultIndex++)
+      for (; resultIndex < numberOfValues; resultIndex++)
       {
         resultCol[resultIndex] = yOutsideOfBounds;
       }
 
       return null;
     }
+
+    #endregion
+
   }
 
   #endregion
 
-  #region FritschCarlsonCubicSpline
+	#region PolynomialRegressionAsInterpolation
+
+	public class PolynomialRegressionAsInterpolation : IInterpolationFunction
+	{
+		Regression.LinearFitBySvd _fit;
+
+		public int RegressionOrder { get; set; }
 
 
-  /// <summary><para>
+		public PolynomialRegressionAsInterpolation()
+		{
+			RegressionOrder = 2;
+		}
+
+		public PolynomialRegressionAsInterpolation(int regressionOrder)
+		{
+			RegressionOrder = regressionOrder;
+		}
+
+		public int Interpolate(IROVector xvec, IROVector yvec)
+		{
+			IROVector err = VectorMath.GetConstantVector(1,yvec.Length);
+			_fit = new Regression.LinearFitBySvd(xvec, yvec, err, xvec.Length, RegressionOrder+1, Regression.LinearFitBySvd.GetPolynomialFunctionBase(RegressionOrder), 1E-6);
+			return 0;
+		}
+
+
+		public double GetYOfX(double x)
+		{
+			double[] paras = _fit.Parameter;
+
+			double result = 0;
+			for (int i = paras.Length - 1; i >= 0; i--)
+			{
+				result *= x;
+				result += paras[i];
+			}
+			return result;
+		}
+
+		public double GetYOfU(double u)
+		{
+			return GetYOfX(u);
+		}
+
+		public double GetXOfU(double u)
+		{
+			return u;
+		}
+	}
+
+	#endregion
+
+	#region FritschCarlsonCubicSpline
+
+
+	/// <summary><para>
   /// Calculate the Fritsch-Carlson monotone cubic spline interpolation for the 
   /// given abscissa vector x and ordinate vector y. 
   /// All vectors must have conformant dimenions.
