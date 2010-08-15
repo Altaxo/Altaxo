@@ -6,6 +6,9 @@ rmdir /S /Q .\AddIns\OriginConnector\bin
 rmdir /S /Q .\Altaxo\Base\obj
 rmdir /S /Q .\Altaxo\Base\bin
 
+rmdir /S /Q .\Altaxo\Base.Presentation\obj
+rmdir /S /Q .\Altaxo\Base.Presentation\bin
+
 rmdir /S /Q .\Altaxo\Base.WinForms\obj
 rmdir /S /Q .\Altaxo\Base.WinForms\bin
 

@@ -901,10 +901,7 @@
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.ShearGripHandle.cs" />
     <Compile Include="Graph\Gdi\TranslationRotationShearxScaleTransformation2D.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Gui\Common\CustomColorDialog\" />
-    <Folder Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rem ..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs</PreBuildEvent>
