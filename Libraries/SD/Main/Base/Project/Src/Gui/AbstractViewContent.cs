@@ -2,14 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2708 $</version>
+//     <version>$Revision: 6319 $</version>
 // </file>
 
 using System;
+using System.ComponentModel.Design;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
+
+using ICSharpCode.Core;
+using ICSharpCode.Core.Presentation;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -45,8 +49,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.Files.Add(file);
 		}
 		
-		public abstract Control Control {
+		public abstract object Control {
 			get;
+		}
+		
+		public virtual object InitiallyFocusedControl {
+			get { return null; }
 		}
 		
 		IWorkbenchWindow workbenchWindow;
@@ -73,6 +81,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public event EventHandler TabPageTextChanged;
 		
+		/// <summary>
+		/// Gets/Sets the title of the current tab page.
+		/// This value will be passed through the string parser before being displayed.
+		/// </summary>
 		public string TabPageText {
 			get { return tabPageText; }
 			set {
@@ -229,6 +241,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public virtual OpenedFile PrimaryFile {
 			get {
+				WorkbenchSingleton.AssertMainThread();
 				if (files.Count != 0)
 					return files[0];
 				else
@@ -239,7 +252,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Gets the name of the primary file being edited. Might return null if no file is edited.
 		/// </summary>
-		public string PrimaryFileName {
+		public virtual FileName PrimaryFileName {
 			get {
 				OpenedFile file = PrimaryFile;
 				if (file != null)
@@ -335,6 +348,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		string titleName;
+		LanguageDependentExtension titleNameLocalizeExtension;
 		
 		string IViewContent.TitleName {
 			get {
@@ -350,10 +364,34 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public string TitleName {
 			get { return titleName; }
 			protected set {
+				if (titleNameLocalizeExtension != null) {
+					titleNameLocalizeExtension.PropertyChanged -= OnTitleNameLocalizationChanged;
+					titleNameLocalizeExtension = null;
+				}
 				if (titleName != value) {
 					titleName = value;
 					OnTitleNameChanged(EventArgs.Empty);
 				}
+			}
+		}
+		
+		/// <summary>
+		/// Sets a localized title that will update automatically when the language changes.
+		/// </summary>
+		/// <param name="text">The input to the string parser which will localize title.</param>
+		protected void SetLocalizedTitle(string text)
+		{
+			titleNameLocalizeExtension = new StringParseExtension(text) { UsesAccessors = false };
+			titleNameLocalizeExtension.PropertyChanged += OnTitleNameLocalizationChanged;
+			OnTitleNameLocalizationChanged(null, null);
+		}
+		
+		void OnTitleNameLocalizationChanged(object sender, EventArgs e)
+		{
+			string value = titleNameLocalizeExtension.Value;
+			if (titleName != value) {
+				titleName = value;
+				OnTitleNameChanged(EventArgs.Empty);
 			}
 		}
 		#endregion
@@ -429,7 +467,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// Gets if this view content is the active view content.
 		/// </summary>
 		protected bool IsActiveViewContent {
-			get { return WorkbenchSingleton.Workbench.ActiveViewContent == this; }
+			get { return WorkbenchSingleton.Workbench != null && WorkbenchSingleton.Workbench.ActiveViewContent == this; }
 		}
 		
 		/// <summary>
@@ -440,7 +478,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (!registeredOnViewContentChange) {
 					// register WorkbenchSingleton.Workbench.ActiveViewContentChanged only on demand
 					wasActiveViewContent = IsActiveViewContent;
-					WorkbenchSingleton.Workbench.ActiveViewContentChanged += OnActiveViewContentChanged;
+					// null check is required to support running in unit test mode
+					if (WorkbenchSingleton.Workbench != null) {
+						WorkbenchSingleton.Workbench.ActiveViewContentChanged += OnActiveViewContentChanged;
+					}
 					registeredOnViewContentChange = true;
 				}
 				isActiveViewContentChanged += value;
@@ -453,7 +494,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void UnregisterOnActiveViewContentChanged()
 		{
 			if (registeredOnViewContentChange) {
-				WorkbenchSingleton.Workbench.ActiveViewContentChanged -= OnActiveViewContentChanged;
+				// null check is required to support running in unit test mode
+				if (WorkbenchSingleton.Workbench != null) {
+					WorkbenchSingleton.Workbench.ActiveViewContentChanged -= OnActiveViewContentChanged;
+				}
 				registeredOnViewContentChange = false;
 			}
 		}
@@ -469,9 +513,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		#endregion
 		
-		public virtual void RedrawContent()
-		{
+		#region IServiceProvider
+		ServiceContainer _services=new ServiceContainer();
+		
+		public object GetService(Type serviceType){
+			return _services.GetService(serviceType);
 		}
+		
+		public ServiceContainer Services {
+			get { return _services; }
+		}
+		
+		#endregion
 		
 		public virtual void Save(OpenedFile file, Stream stream)
 		{

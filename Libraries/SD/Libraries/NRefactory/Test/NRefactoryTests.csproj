@@ -1,4 +1,5 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,30 +11,37 @@
     <OutputTarget>Library</OutputTarget>
     <NoStdLib>False</NoStdLib>
     <NoConfig>False</NoConfig>
-    <RunPostBuildEvent>OnSuccessfulBuild</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <OutputType>Library</OutputType>
     <OutputPath>..\..\..\..\bin\UnitTests\</OutputPath>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG</DefineConstants>
     <Optimize>False</Optimize>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>Full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>False</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -41,18 +49,30 @@
       <HintPath>..\..\..\Tools\NUnit\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Lexer\CSharp\LexerTests.cs" />
     <Compile Include="General\UnitTest.cs" />
     <Compile Include="Lexer\CSharp\PreprocessingTests.cs" />
+    <Compile Include="Lexer\LATextReaderTests.cs" />
     <Compile Include="Lexer\VBNet\CustomLexerTests.cs" />
+    <Compile Include="Lexer\VBNet\ImplicitLineContinuationTests.cs" />
+    <Compile Include="Lexer\VBNet\LexerContextTests.cs" />
+    <Compile Include="Lexer\VBNet\TokenTests.cs" />
+    <Compile Include="Lexer\VBNet\XmlModeLexerTests.cs" />
+    <Compile Include="Output\CodeDOM\CodeDOMTypeReferenceTest.cs" />
     <Compile Include="Parser\CheckParentVisitor.cs" />
     <Compile Include="Parser\Expressions\AddressOfExpressionTests.cs" />
     <Compile Include="Parser\Expressions\LambdaExpressionTests.cs" />
     <Compile Include="Parser\Expressions\QueryExpressionTests.cs" />
     <Compile Include="Output\SnippetConversion.cs" />
+    <Compile Include="Parser\Expressions\QueryExpressionVBTests.cs" />
+    <Compile Include="Parser\Expressions\XmlExpressionTests.cs" />
+    <Compile Include="Parser\Expressions\XmlMemberAccessExpressionTests.cs" />
     <Compile Include="Parser\GlobalScope\AttributeSectionTests.cs" />
     <Compile Include="Output\CSharp\CSharpOutputTest.cs" />
     <Compile Include="Parser\Expressions\PrimitiveExpressionTests.cs" />
@@ -80,6 +100,7 @@
     <Compile Include="Parser\Expressions\StackAllocExpressionTests.cs" />
     <Compile Include="Parser\GlobalScope\UsingDeclarationTests.cs" />
     <Compile Include="Parser\GlobalScope\TypeDeclarationTests.cs" />
+    <Compile Include="Parser\SnippetParserTests.cs" />
     <Compile Include="Parser\TypeLevel\ConstructorDeclarationTests.cs" />
     <Compile Include="Parser\TypeLevel\EventDeclarationTests.cs" />
     <Compile Include="Parser\TypeLevel\FieldDeclarationTests.cs" />
@@ -134,7 +155,9 @@
     <Compile Include="Output\CodeDOM\CodeDOMParenthesizedExpressionTest.cs" />
     <Compile Include="Parser\Statements\YieldStatementTests.cs" />
     <Compile Include="Lexer\CSharp\NumberLexerTest.cs" />
-    <Compile Include="Lexer\VBNet\LiteralsTests.cs" />
+    <Compile Include="Lexer\VBNet\LiteralsTests.cs">
+      <DependentUpon>LexerTests.cs</DependentUpon>
+    </Compile>
     <Compile Include="Parser\SkipMethodBodiesTest.cs" />
     <Compile Include="Parser\Expressions\AnonymousMethodTests.cs" />
     <Compile Include="Output\CodeDOM\InvocationExpressionTest.cs" />

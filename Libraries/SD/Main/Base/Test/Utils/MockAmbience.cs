@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2397 $</version>
+//     <version>$Revision: 5485 $</version>
 // </file>
 
 using System;
@@ -75,6 +75,11 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		}
 		
 		public override string GetIntrinsicTypeName(string dotNetTypeName)
+		{
+			return String.Empty;
+		}
+		
+		public override string ConvertAccessibility(ModifierEnum accessibility)
 		{
 			return String.Empty;
 		}

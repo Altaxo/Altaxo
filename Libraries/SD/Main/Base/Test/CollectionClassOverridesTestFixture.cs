@@ -2,21 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2625 $</version>
+//     <version>$Revision: 6033 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.DefaultEditor.Commands;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Dom.CSharp;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Tests.Utils;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpDevelop.Tests
@@ -31,9 +26,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		[TestFixtureSetUp]
 		public void SetUpFixture()
 		{
-			if (!PropertyService.Initialized) {
-				PropertyService.InitializeService(String.Empty, String.Empty, String.Empty);
-			}
+			PropertyService.InitializeServiceForUnitTests();
 		}
 		
 		/// <summary>
@@ -99,46 +92,6 @@ namespace ICSharpCode.SharpDevelop.Tests
 			expectedMethodNames.Sort();
 			
 			Assert.AreEqual(expectedMethodNames.ToArray(), methodNames.ToArray());
-		}
-		
-		/// <summary>
-		/// Tests that the OverrideMethodsCodeGenerator returns the correct
-		/// methods for the System.Collections.ObjectModel.Collection type.
-		/// </summary>
-		[Test]
-		public void CodeGeneratorMethods()
-		{
-			ProjectContentRegistry registry = new ProjectContentRegistry();
-			IProjectContent mscorlibProjectContent = registry.Mscorlib;
-			IClass collectionClass = mscorlibProjectContent.GetClass("System.Collections.ObjectModel.Collection", 1);
-			
-			DefaultProjectContent projectContent = new DefaultProjectContent();
-			DefaultCompilationUnit unit = new DefaultCompilationUnit(projectContent);
-			DefaultClass c = new DefaultClass(unit, "MyCollection");
-			c.BaseTypes.Add(new DefaultReturnType(collectionClass));
-			
-			MockProject project = new MockProject();
-			ProjectService.CurrentProject = project;
-			
-			OverrideMethodsCodeGenerator codeGenerator = new OverrideMethodsCodeGenerator();
-			codeGenerator.Initialize(c);
-			
-			List<string> methods = new List<string>();
-			foreach (object o in codeGenerator.Content) {
-				methods.Add(o.ToString());
-			}
-			
-			List<string> expectedMethods = new List<string>();
-			expectedMethods.Add("ClearItems");
-			expectedMethods.Add("Equals");
-			expectedMethods.Add("Finalize");
-			expectedMethods.Add("GetHashCode");
-			expectedMethods.Add("InsertItem");
-			expectedMethods.Add("RemoveItem");
-			expectedMethods.Add("SetItem");
-			expectedMethods.Add("ToString");
-			
-			Assert.AreEqual(expectedMethods.ToArray(), methods.ToArray());
 		}
 	}
 }

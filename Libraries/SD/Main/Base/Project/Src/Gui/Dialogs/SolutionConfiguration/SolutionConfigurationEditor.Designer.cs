@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3757 $</version>
+//     <version>$Revision: 3805 $</version>
 // </file>
 
 namespace ICSharpCode.SharpDevelop.Gui

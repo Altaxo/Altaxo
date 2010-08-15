@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3293 $</version>
+//     <version>$Revision: 6098 $</version>
 // </file>
 
 using System;
@@ -18,11 +18,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			RefactoringMenuContext context = (RefactoringMenuContext)Owner;
 			LocalResolveResult local = (LocalResolveResult)context.ResolveResult;
-			FindReferencesAndRenameHelper.ShowAsSearchResults(
-				StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
-				                   new string[,] {{ "Name", local.VariableName }}),
-				RefactoringService.FindReferences(local, null)
-			);
+			FindReferencesAndRenameHelper.RunFindReferences(local);
 		}
 	}
 	

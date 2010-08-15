@@ -30,128 +30,128 @@ using Altaxo.Gui.Worksheet.Viewing;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Worksheet.Commands
-{ 
+{
 
 
 
 
-  /// <summary>
-  /// This condition is true if the active view content is a worksheet which contains PLS model data.
-  /// </summary>
-  public class PLSModelConditionEvaluator : IConditionEvaluator
-  {
-    public bool IsValid(object caller, Condition condition)
-    {
+	/// <summary>
+	/// This condition is true if the active view content is a worksheet which contains PLS model data.
+	/// </summary>
+	public class PLSModelConditionEvaluator : IConditionEvaluator
+	{
+		public bool IsValid(object caller, Condition condition)
+		{
 
-      string selectedData = condition.Properties["ContainsPLSModelData"];
+			string selectedData = condition.Properties["ContainsPLSModelData"];
 
-      if(Current.Workbench.ActiveViewContent==null)
-        return false;
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent))
-        return false;
+			if (Current.Workbench.ActiveViewContent == null)
+				return false;
+			if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent))
+				return false;
 
-      Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl
-        = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent; 
+			Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl
+				= Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 
-      return ctrl.Controller.DataTable.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
-    }
-  }
-  
-  public class PLSQuestPreferredNumberOfFactors : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.QuestPreferredNumberOfFactors(ctrl.DataTable);
-    }
-  }
+			return ctrl.Controller.DataTable.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
+		}
+	}
+
+	public class PLSQuestPreferredNumberOfFactors : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.QuestPreferredNumberOfFactors(ctrl.DataTable);
+		}
+	}
 
 
-  public class PLSPlotPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPredictedVersusActualY(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPredictedVersusActualY(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotCrossPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPredictedVersusActualY(ctrl.DataTable, true);
-    }
-  }
+	public class PLSPlotCrossPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPredictedVersusActualY(ctrl.DataTable, true);
+		}
+	}
 
-  public class PLSPlotYResidualsIndividually : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYResiduals(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotYResidualsIndividually : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYResiduals(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotYCrossResidualsIndividually : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYCrossResiduals(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotYCrossResidualsIndividually : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYCrossResiduals(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotXResidualsIndividually : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXResiduals(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotXResidualsIndividually : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXResiduals(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotXCrossResidualsIndividually : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXCrossResiduals(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotXCrossResidualsIndividually : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXCrossResiduals(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotPRESSValue : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPRESSValue(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotPRESSValue : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPRESSValue(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotCrossPRESSValue : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPRESSValue(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotCrossPRESSValue : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPRESSValue(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotXLeverage : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXLeverage(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotXLeverage : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXLeverage(ctrl.DataTable);
+		}
+	}
 
-  public class PLSPlotPreprocessedSpectra : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPreprocessedSpectra(ctrl.DataTable);
-    }
-  }
+	public class PLSPlotPreprocessedSpectra : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPreprocessedSpectra(ctrl.DataTable);
+		}
+	}
 
-  
-  public class PLSPlotPredictionScores : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPredictionScores(ctrl.DataTable);
-    }
-  }
+
+	public class PLSPlotPredictionScores : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPredictionScores(ctrl.DataTable);
+		}
+	}
 }

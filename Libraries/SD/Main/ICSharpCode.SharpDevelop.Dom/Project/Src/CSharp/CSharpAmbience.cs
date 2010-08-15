@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1423 $</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -24,18 +24,18 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			return (modifier & query) == query;
 		}
 		
-		string ConvertAccessibility(ModifierEnum modifier)
+		public override string ConvertAccessibility(ModifierEnum accessibility)
 		{
 			if (ShowAccessibility) {
-				if (ModifierIsSet(modifier, ModifierEnum.Public)) {
+				if (ModifierIsSet(accessibility, ModifierEnum.Public)) {
 					return "public ";
-				} else if (ModifierIsSet(modifier, ModifierEnum.Private)) {
+				} else if (ModifierIsSet(accessibility, ModifierEnum.Private)) {
 					return "private ";
-				} else if (ModifierIsSet(modifier, ModifierEnum.ProtectedAndInternal)) {
+				} else if (ModifierIsSet(accessibility, ModifierEnum.ProtectedAndInternal)) {
 					return "protected internal ";
-				} else if (ModifierIsSet(modifier, ModifierEnum.Internal)) {
+				} else if (ModifierIsSet(accessibility, ModifierEnum.Internal)) {
 					return "internal ";
-				} else if (ModifierIsSet(modifier, ModifierEnum.Protected)) {
+				} else if (ModifierIsSet(accessibility, ModifierEnum.Protected)) {
 					return "protected ";
 				}
 			}
@@ -70,7 +70,6 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			return ret;
 		}
 		
-		
 		public override string Convert(IClass c)
 		{
 			CheckThread();
@@ -84,7 +83,9 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			}
 			
 			if (ShowModifiers) {
-				if (c.IsSealed) {
+				if (c.IsStatic) {
+					builder.Append("static ");
+				} else if (c.IsSealed) {
 					switch (c.ClassType) {
 						case ClassType.Delegate:
 						case ClassType.Struct:
@@ -143,27 +144,7 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				}
 			}
 			
-			if (IncludeHtmlMarkup) {
-				builder.Append("<b>");
-			}
-			
-			if (UseFullyQualifiedMemberNames) {
-				builder.Append(c.FullyQualifiedName);
-			} else {
-				builder.Append(c.Name);
-			}
-			
-			if (IncludeHtmlMarkup) {
-				builder.Append("</b>");
-			}
-			if (ShowTypeParameterList && c.TypeParameters.Count > 0) {
-				builder.Append('<');
-				for (int i = 0; i < c.TypeParameters.Count; ++i) {
-					if (i > 0) builder.Append(", ");
-					builder.Append(ConvertTypeParameter(c.TypeParameters[i]));
-				}
-				builder.Append('>');
-			}
+			AppendClassNameWithTypeParameters(builder, c, UseFullyQualifiedMemberNames, true, null);
 			
 			if (ShowParameterList && c.ClassType == ClassType.Delegate) {
 				builder.Append(" (");
@@ -200,6 +181,42 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			}
 			
 			return builder.ToString();
+		}
+
+		void AppendClassNameWithTypeParameters(StringBuilder builder, IClass c, bool fullyQualified, bool isConvertingClassName, IList<IReturnType> typeArguments)
+		{
+			if (isConvertingClassName && IncludeHtmlMarkup) {
+				builder.Append("<b>");
+			}
+			if (fullyQualified) {
+				if (c.DeclaringType != null) {
+					AppendClassNameWithTypeParameters(builder, c.DeclaringType, fullyQualified, false, typeArguments);
+					builder.Append('.');
+					builder.Append(c.Name);
+				} else {
+					builder.Append(c.FullyQualifiedName);
+				}
+			} else {
+				builder.Append(c.Name);
+			}
+			if (isConvertingClassName && IncludeHtmlMarkup) {
+				builder.Append("</b>");
+			}
+			// skip type parameters that belong to declaring types (in DOM, inner classes repeat type parameters from outer classes)
+			int skippedTypeParameterCount = c.DeclaringType != null ? c.DeclaringType.TypeParameters.Count : 0;
+			// show type parameters for classes only if ShowTypeParameterList is set; but always show them in other cases.
+			if ((ShowTypeParameterList || !isConvertingClassName) && c.TypeParameters.Count > skippedTypeParameterCount) {
+				builder.Append('<');
+				for (int i = skippedTypeParameterCount; i < c.TypeParameters.Count; ++i) {
+					if (i > skippedTypeParameterCount)
+						builder.Append(", ");
+					if (typeArguments != null && i < typeArguments.Count)
+						AppendReturnType(builder, typeArguments[i], false);
+					else
+						builder.Append(ConvertTypeParameter(c.TypeParameters[i]));
+				}
+				builder.Append('>');
+			}
 		}
 		
 		public override string ConvertEnd(IClass c)
@@ -246,15 +263,13 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				builder.Append(' ');
 			}
 			
+			AppendTypeNameForFullyQualifiedMemberName(builder, field.DeclaringTypeReference);
+			
 			if (IncludeHtmlMarkup) {
 				builder.Append("<b>");
 			}
 			
-			if (UseFullyQualifiedMemberNames) {
-				builder.Append(field.FullyQualifiedName);
-			} else {
-				builder.Append(field.Name);
-			}
+			builder.Append(field.Name);
 			
 			if (IncludeHtmlMarkup) {
 				builder.Append("</b>");
@@ -282,21 +297,15 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				builder.Append(' ');
 			}
 			
+			AppendTypeNameForFullyQualifiedMemberName(builder, property.DeclaringTypeReference);
+			
 			if (property.IsIndexer) {
-				if (property.DeclaringType != null && UseFullyQualifiedMemberNames) {
-					builder.Append(property.DeclaringType.FullyQualifiedName);
-					builder.Append('.');
-				}
 				builder.Append("this");
 			} else {
 				if (IncludeHtmlMarkup) {
 					builder.Append("<b>");
 				}
-				if (UseFullyQualifiedMemberNames) {
-					builder.Append(property.FullyQualifiedName);
-				} else {
-					builder.Append(property.Name);
-				}
+				builder.Append(property.Name);
 				if (IncludeHtmlMarkup) {
 					builder.Append("</b>");
 				}
@@ -355,15 +364,13 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				builder.Append(' ');
 			}
 			
+			AppendTypeNameForFullyQualifiedMemberName(builder, e.DeclaringTypeReference);
+			
 			if (IncludeHtmlMarkup) {
 				builder.Append("<b>");
 			}
 			
-			if (UseFullyQualifiedMemberNames) {
-				builder.Append(e.FullyQualifiedName);
-			} else {
-				builder.Append(e.Name);
-			}
+			builder.Append(e.Name);
 			
 			if (IncludeHtmlMarkup) {
 				builder.Append("</b>");
@@ -390,22 +397,16 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				builder.Append(' ');
 			}
 			
+			AppendTypeNameForFullyQualifiedMemberName(builder, m.DeclaringTypeReference);
+			
 			if (IncludeHtmlMarkup) {
 				builder.Append("<b>");
 			}
 			
-			if (m.IsConstructor) {
-				if (m.DeclaringType != null) {
-					builder.Append(m.DeclaringType.Name);
-				} else {
-					builder.Append(m.Name);
-				}
+			if (m.IsConstructor && m.DeclaringType != null) {
+				builder.Append(m.DeclaringType.Name);
 			} else {
-				if (UseFullyQualifiedMemberNames) {
-					builder.Append(m.FullyQualifiedName);
-				} else {
-					builder.Append(m.Name);
-				}
+				builder.Append(m.Name);
 			}
 			
 			if (IncludeHtmlMarkup) {
@@ -453,6 +454,14 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			return builder.ToString();
 		}
 		
+		void AppendTypeNameForFullyQualifiedMemberName(StringBuilder builder, IReturnType declaringType)
+		{
+			if (UseFullyQualifiedMemberNames && declaringType != null) {
+				AppendReturnType(builder, declaringType, true);
+				builder.Append('.');
+			}
+		}
+		
 		string ConvertTypeParameter(ITypeParameter tp)
 		{
 			if (tp.BoundTo != null)
@@ -478,24 +487,63 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			
 			StringBuilder builder = new StringBuilder();
 			
-			string fullName = returnType.FullyQualifiedName;
-			string shortName;
-			if (fullName != null && TypeConversionTable.TryGetValue(fullName, out shortName)) {
-				builder.Append(shortName);
-			} else {
-				if (UseFullyQualifiedTypeNames) {
-					builder.Append(fullName);
-				} else {
-					builder.Append(returnType.Name);
-				}
-			}
-			
-			UnpackNestedType(builder, returnType);
+			AppendReturnType(builder, returnType, false);
 			
 			return builder.ToString();
 		}
 		
-		void UnpackNestedType(StringBuilder builder, IReturnType returnType)
+		void AppendReturnType(StringBuilder builder, IReturnType returnType, bool forceFullyQualifiedName)
+		{
+			IReturnType arrayReturnType = returnType;
+			returnType = GetElementType(returnType);
+			
+			if (returnType == null)
+				return;
+			
+			string fullName = returnType.FullyQualifiedName;
+			string shortName;
+			bool isConstructedType = returnType.IsConstructedReturnType;
+			if (fullName != null && !isConstructedType && TypeConversionTable.TryGetValue(fullName, out shortName)) {
+				builder.Append(shortName);
+			} else {
+				IClass c = returnType.GetUnderlyingClass();
+				
+				if (c != null) {
+					IList<IReturnType> ta = isConstructedType ? returnType.CastToConstructedReturnType().TypeArguments : null;
+					AppendClassNameWithTypeParameters(builder, c, forceFullyQualifiedName || UseFullyQualifiedTypeNames, false, ta);
+				} else {
+					if (UseFullyQualifiedTypeNames || forceFullyQualifiedName) {
+						builder.Append(fullName);
+					} else {
+						builder.Append(returnType.Name);
+					}
+					if (isConstructedType) {
+						builder.Append('<');
+						IList<IReturnType> ta = returnType.CastToConstructedReturnType().TypeArguments;
+						for (int i = 0; i < ta.Count; ++i) {
+							if (i > 0) builder.Append(", ");
+							AppendReturnType(builder, ta[i], false);
+						}
+						builder.Append('>');
+					}
+				}
+			}
+			
+			UnpackArrayType(builder, arrayReturnType);
+		}
+		
+		static IReturnType GetElementType(IReturnType potentialArrayType)
+		{
+			if (potentialArrayType == null)
+				return null;
+			ArrayReturnType result;
+			while ((result = potentialArrayType.CastToArrayReturnType()) != null) {
+				potentialArrayType = result.ArrayElementType;
+			}
+			return potentialArrayType;
+		}
+		
+		static void UnpackArrayType(StringBuilder builder, IReturnType returnType)
 		{
 			if (returnType.IsArrayReturnType) {
 				builder.Append('[');
@@ -504,16 +552,7 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 					builder.Append(',');
 				}
 				builder.Append(']');
-				UnpackNestedType(builder, returnType.CastToArrayReturnType().ArrayElementType);
-			} else if (returnType.IsConstructedReturnType) {
-				UnpackNestedType(builder, returnType.CastToConstructedReturnType().UnboundType);
-				builder.Append('<');
-				IList<IReturnType> ta = returnType.CastToConstructedReturnType().TypeArguments;
-				for (int i = 0; i < ta.Count; ++i) {
-					if (i > 0) builder.Append(", ");
-					builder.Append(Convert(ta[i]));
-				}
-				builder.Append('>');
+				UnpackArrayType(builder, returnType.CastToArrayReturnType().ArrayElementType);
 			}
 		}
 		

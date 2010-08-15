@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 2929 $</version>
+//     <version>$Revision: 6292 $</version>
 // </file>
 
 using System;
@@ -80,9 +80,9 @@ namespace CSharpBinding.Parser
 			}
 		}
 		
-		public ICompilationUnit Parse(IProjectContent projectContent, string fileName, string fileContent)
+		public ICompilationUnit Parse(IProjectContent projectContent, string fileName, ITextBuffer fileContent)
 		{
-			using (ICSharpCode.NRefactory.IParser p = ICSharpCode.NRefactory.ParserFactory.CreateParser(ICSharpCode.NRefactory.SupportedLanguage.CSharp, new StringReader(fileContent))) {
+			using (ICSharpCode.NRefactory.IParser p = ICSharpCode.NRefactory.ParserFactory.CreateParser(ICSharpCode.NRefactory.SupportedLanguage.CSharp, fileContent.CreateReader())) {
 				return Parse(p, fileName, projectContent);
 			}
 		}
@@ -93,7 +93,7 @@ namespace CSharpBinding.Parser
 			p.ParseMethodBodies = false;
 			p.Parse();
 			
-			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(projectContent);
+			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(projectContent, ICSharpCode.NRefactory.SupportedLanguage.CSharp);
 			visitor.Specials = p.Lexer.SpecialTracker.CurrentSpecials;
 			visitor.VisitCompilationUnit(p.CompilationUnit, null);
 			visitor.Cu.FileName = fileName;

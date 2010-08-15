@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2999 $</version>
+//     <version>$Revision: 4373 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace ICSharpCode.SharpDevelop.Dom
@@ -75,7 +76,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			if (list == null || list.Count == 0)
 				return EmptyList<T>.Instance;
-			list = new System.Collections.ObjectModel.ReadOnlyCollection<T>(list.ToArray());
+			list = new ReadOnlyCollection<T>(list.ToArray());
 			foreach (T item in list) {
 				item.Freeze();
 			}
@@ -87,7 +88,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (list == null || list.Count == 0)
 				return EmptyList<IReturnType>.Instance;
 			else
-				return new System.Collections.ObjectModel.ReadOnlyCollection<IReturnType>(list.ToArray());
+				return new ReadOnlyCollection<IReturnType>(list.ToArray());
 		}
 		
 		protected static IList<string> FreezeList(IList<string> list)
@@ -95,12 +96,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (list == null || list.Count == 0)
 				return EmptyList<string>.Instance;
 			else
-				return new System.Collections.ObjectModel.ReadOnlyCollection<string>(list.ToArray());
+				return new ReadOnlyCollection<string>(list.ToArray());
 		}
 	}
 	
 	static class EmptyList<T>
 	{
-		public static readonly System.Collections.ObjectModel.ReadOnlyCollection<T> Instance = new List<T>().AsReadOnly();
+		public static readonly ReadOnlyCollection<T> Instance = new ReadOnlyCollection<T>(new T[0]);
 	}
 }

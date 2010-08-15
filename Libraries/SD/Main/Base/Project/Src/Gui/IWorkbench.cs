@@ -2,12 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3556 $</version>
+//     <version>$Revision: 6050 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -18,11 +21,29 @@ namespace ICSharpCode.SharpDevelop.Gui
 	public interface IWorkbench : IMementoCapable
 	{
 		/// <summary>
-		/// Gets the main form for the work bench.
+		/// The main window as IWin32Window.
 		/// </summary>
-		Form MainForm { 
-			get;
-		}
+		IWin32Window MainWin32Window { get; }
+		
+		/// <summary>
+		/// Object for executing methods on the main thread.
+		/// </summary>
+		ISynchronizeInvoke SynchronizingObject { get; }
+		
+		/// <summary>
+		/// The main window.
+		/// </summary>
+		Window MainWindow { get; }
+		
+		/// <summary>
+		/// Gets the status bar.
+		/// </summary>
+		IStatusBarService StatusBar { get; }
+		
+		/// <summary>
+		/// Gets/Sets whether the window is displayed in full-screen mode.
+		/// </summary>
+		bool FullScreen { get; set; }
 		
 		/// <summary>
 		/// The title shown in the title bar.
@@ -142,26 +163,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		PadDescriptor GetPad(Type type);
 		
 		/// <summary>
-		/// Closes the IViewContent content when content is open.
-		/// </summary>
-		void CloseContent(IViewContent content);
-		
-		/// <summary>
 		/// Closes all views inside the workbench.
 		/// </summary>
 		void CloseAllViews();
-		
-		/// <summary>
-		/// Re-initializes all components of the workbench, should be called
-		/// when a special property is changed that affects layout stuff.
-		/// (like language change)
-		/// </summary>
-		void RedrawAllComponents();
-		
-		/// <summary>
-		/// Updates the toolstrip renderer.
-		/// </summary>
-		void UpdateRenderer();
 		
 		/// <summary>
 		/// Is called, when a workbench view was opened
@@ -177,10 +181,5 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// Is called, when a workbench view was closed
 		/// </summary>
 		event ViewContentEventHandler ViewClosed;
-		
-		/// <summary>
-		/// Is called when a key is pressed. Can be used to intercept command keys.
-		/// </summary>
-		event System.Windows.Forms.KeyEventHandler ProcessCommandKey;
 	}
 }

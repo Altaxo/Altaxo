@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3123 $</version>
+//     <version>$Revision: 4483 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,6 @@ using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.NRefactory.AstBuilder
 {
-	#if NET35
 	/// <summary>
 	/// Extension methods for NRefactory.Ast.Expression.
 	/// </summary>
@@ -57,5 +56,4 @@ namespace ICSharpCode.NRefactory.AstBuilder
 			AddStatement(block, new AssignmentExpression(left, AssignmentOperatorType.Assign, right));
 		}
 	}
-	#endif
 }

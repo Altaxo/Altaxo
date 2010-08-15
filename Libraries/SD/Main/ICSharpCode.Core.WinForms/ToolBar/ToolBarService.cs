@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3702 $</version>
+//     <version>$Revision: 3485 $</version>
 // </file>
 
 using System;
@@ -29,7 +29,7 @@ namespace ICSharpCode.Core.WinForms
 					collection.Add((ToolStripItem)item);
 				} else {
 					ISubmenuBuilder submenuBuilder = (ISubmenuBuilder)item;
-					collection.AddRange(submenuBuilder.BuildSubmenu(null, owner));
+					collection.AddRange(submenuBuilder.BuildSubmenu(descriptor.Codon, owner));
 				}
 			}
 			

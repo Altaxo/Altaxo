@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 3773 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -14,7 +14,7 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class Signing : AbstractProjectOptionPanel
+	public class Signing : AbstractXmlFormsProjectOptionPanel
 	{
 		ComboBox keyFile;
 		ConfigurationGuiBinding signAssemblyBinding;
@@ -104,7 +104,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			if (File.Exists(CreateKeyForm.StrongNameTool)) {
 				using (CreateKeyForm createKey = new CreateKeyForm(baseDirectory)) {
 					createKey.KeyFile = project.Name;
-					if (createKey.ShowDialog(WorkbenchSingleton.MainForm) == DialogResult.OK) {
+					if (createKey.ShowDialog(WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 						keyFile.Text = MSBuildInternals.Escape(createKey.KeyFile);
 						return;
 					}

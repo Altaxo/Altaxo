@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2669 $</version>
+//     <version>$Revision: 3815 $</version>
 // </file>
 
 using System;
@@ -17,7 +17,7 @@ namespace ICSharpCode.SharpDevelop
 	/// Display binding for opening a file in an external process.
 	/// </summary>
 	[TypeConverter(typeof(ExternalProcessDisplayBindingConverter))]
-	sealed class ExternalProcessDisplayBinding : IDisplayBinding
+	public sealed class ExternalProcessDisplayBinding : IDisplayBinding
 	{
 		public string FileExtension { get; set; }
 		public string CommandLine { get; set; }

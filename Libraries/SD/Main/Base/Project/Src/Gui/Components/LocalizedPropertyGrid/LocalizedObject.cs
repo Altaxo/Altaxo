@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 3067 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 6107 $</version>
 // </file>
 
 // 
@@ -73,7 +73,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		protected void ReFilterProperties()
 		{
 			globalizedProps = null;
-			WorkbenchSingleton.SafeThreadAsyncCall(delegate { PropertyPad.RefreshItem(this); });
+			if (WorkbenchSingleton.Workbench != null) {
+				WorkbenchSingleton.SafeThreadAsyncCall(delegate { PropertyPad.RefreshItem(this); });
+			}
 		}
 		
 		protected virtual void FilterProperties(PropertyDescriptorCollection globalizedProps)

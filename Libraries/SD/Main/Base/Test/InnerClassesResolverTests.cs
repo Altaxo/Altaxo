@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3525 $</version>
+//     <version>$Revision: 5450 $</version>
 // </file>
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using ICSharpCode.SharpDevelop.Dom;
 using NUnit.Framework;
 
@@ -33,7 +34,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			return nrrt.ResolveVB<T>(program, expression, line);
 		}
 		
-		ArrayList CtrlSpace(string program, int line)
+		List<ICompletionEntry> CtrlSpace(string program, int line)
 		{
 			return nrrt.CtrlSpaceResolveCSharp(program, line, ExpressionContext.Default);
 		}
@@ -199,7 +200,7 @@ class A {
 			ResolveResult result = Resolve(program, "a", 8);
 			Assert.IsNotNull(result, "result");
 			Assert.IsTrue(result is LocalResolveResult, "result is LocalResolveResult");
-			ArrayList arr = result.GetCompletionData(nrrt.lastPC);
+			var arr = result.GetCompletionData(nrrt.lastPC);
 			Assert.IsNotNull(arr, "arr");
 			foreach (object o in arr) {
 				if (o is IField) {
@@ -341,7 +342,7 @@ class C {
 class Outer { private class Inner { } }
 ";
 			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "Outer", 3);
-			ArrayList l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
+			var l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
 			Assert.IsFalse(IsInnerClassVisible(l));
 		}
 		
@@ -355,7 +356,7 @@ class Derived : Outer {
 class Outer { protected class Inner {} }
 ";
 			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "Outer", 3);
-			ArrayList l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
+			var l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
 			Assert.IsTrue(IsInnerClassVisible(l));
 		}
 		
@@ -370,7 +371,7 @@ class Derived2 : Outer { }
 class Outer { protected class Inner {} }
 ";
 			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "Derived2", 3);
-			ArrayList l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
+			var l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
 			Assert.IsTrue(IsInnerClassVisible(l));
 		}
 		
@@ -385,11 +386,11 @@ class Derived : Outer { }
 class Outer { protected class Inner {} }
 ";
 			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "Derived", 3);
-			ArrayList l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
+			var l = trr.GetCompletionData(trr.ResolvedClass.ProjectContent);
 			Assert.IsFalse(IsInnerClassVisible(l));
 		}
 		
-		bool IsInnerClassVisible(ArrayList l)
+		bool IsInnerClassVisible(IEnumerable l)
 		{
 			foreach (object o in l) {
 				IClass c = o as IClass;
@@ -399,6 +400,83 @@ class Outer { protected class Inner {} }
 			return false;
 		}
 		
+		[Test]
+		public void GenericInnerClassOrNonGenericOuterClass()
+		{
+			string program = @"using System;
+class Test {
+	
+	class TheClass<T> {}
+}
+class TheClass { }
+";
+			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "TheClass<string>", 3);
+			Assert.AreEqual("Test.TheClass", trr.ResolvedClass.FullyQualifiedName);
+		}
 		
+		[Test]
+		public void GenericInnerClassOrNonGenericOuterClass2()
+		{
+			string program = @"using System;
+class Test {
+	TheClass<string> x;
+	
+	class TheClass<T> {}
+}
+class TheClass { }
+";
+			MemberResolveResult rr = Resolve<MemberResolveResult>(program, "x", 3);
+			Assert.AreEqual("Test.TheClass", rr.ResolvedType.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void GenericInnerClassOrNonGenericInnerClass()
+		{
+			string program = @"using System;
+class Test {
+	TheClass<string> x1;
+	TheClass x2;
+	Test.TheClass<string> y1;
+	Test.TheClass y2;
+	global::Test.TheClass<string> z1;
+	global::Test.TheClass z2;
+	
+	public class TheClass { }
+	public class TheClass<T> {}
+}
+";
+			MemberResolveResult rr = Resolve<MemberResolveResult>(program, "x1", 3);
+			Assert.AreEqual(1, rr.ResolvedType.GetUnderlyingClass().TypeParameters.Count);
+			
+			rr = Resolve<MemberResolveResult>(program, "y1", 3);
+			Assert.AreEqual(1, rr.ResolvedType.GetUnderlyingClass().TypeParameters.Count);
+			
+			rr = Resolve<MemberResolveResult>(program, "z1", 3);
+			Assert.AreEqual(1, rr.ResolvedType.GetUnderlyingClass().TypeParameters.Count);
+			
+			rr = Resolve<MemberResolveResult>(program, "x2", 3);
+			Assert.AreEqual(0, rr.ResolvedType.GetUnderlyingClass().TypeParameters.Count);
+			
+			rr = Resolve<MemberResolveResult>(program, "y2", 3);
+			Assert.AreEqual(0, rr.ResolvedType.GetUnderlyingClass().TypeParameters.Count);
+			
+			rr = Resolve<MemberResolveResult>(program, "z2", 3);
+			Assert.AreEqual(0, rr.ResolvedType.GetUnderlyingClass().TypeParameters.Count);
+		}
+		
+		[Test]
+		public void SimpleInnerClassInStruct()
+		{
+			string program = @"struct A {
+	void Test() {
+		
+	}
+	class B { }
+}
+";
+			ResolveResult result = Resolve(program, "B", 3);
+			Assert.IsTrue(result is TypeResolveResult);
+			Assert.AreEqual("A.B", result.ResolvedType.FullyQualifiedName);
+		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 4496 $</version>
 // </file>
 
 using System;
@@ -20,7 +20,7 @@ namespace ICSharpCode.SharpDevelop
 	/// "*" to test if any window is active.
 	/// </attribute>
 	/// <example title="Test if the current window is a text editor">
-	/// &lt;Condition name="WindowActive" activewindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider"&gt;
+	/// &lt;Condition name="WindowActive" activewindow="ICSharpCode.SharpDevelop.Editor.ITextEditorProvider"&gt;
 	/// </example>
 	/// <example title="Test if any window is active">
 	/// &lt;Condition name="WindowActive" activewindow="*"&gt;

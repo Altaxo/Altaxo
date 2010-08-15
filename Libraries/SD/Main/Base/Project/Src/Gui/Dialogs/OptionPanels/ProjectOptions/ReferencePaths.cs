@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 2697 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,7 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class ReferencePaths : AbstractProjectOptionPanel
+	public class ReferencePaths : AbstractXmlFormsProjectOptionPanel
 	{
 		public override void LoadPanelContents()
 		{

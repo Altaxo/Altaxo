@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2677 $</version>
+//     <version>$Revision: 4058 $</version>
 // </file>
 
 using System;
@@ -36,7 +36,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				return;
 			}
 			if (node.Project.IsStartable) {
-				BuildProject build = new BuildProject(node.Project);
+				BuildProjectBeforeExecute build = new BuildProjectBeforeExecute(node.Project);
 				build.BuildComplete += delegate {
 					if (build.LastBuildResults.ErrorCount == 0) {
 						node.Project.Start(true);

@@ -1,9 +1,10 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald"/>
-//     <version>$Revision$</version>
+//     <author name="Daniel Grunwald"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
+
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

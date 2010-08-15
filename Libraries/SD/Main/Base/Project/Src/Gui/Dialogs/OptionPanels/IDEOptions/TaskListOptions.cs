@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 4711 $</version>
 // </file>
 
 using System;
@@ -13,7 +13,7 @@ using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class TaskListOptions : AbstractOptionPanel
+	public class TaskListOptions : XmlFormsOptionPanel
 	{
 		const string taskListView        = "taskListView";
 		const string nameTextBox         = "nameTextBox";
@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		{
 			SetupFromXmlStream(this.GetType().Assembly.GetManifestResourceStream("Resources.TaskListOptions.xfrm"));
 			
-			string[] tokens = PropertyService.Get("SharpDevelop.TaskListTokens", ParserService.DefaultTaskListTokens);
+			string[] tokens = ParserService.TaskListTokens;
 			taskList = (ListView)ControlDictionary[taskListView];
 			taskList.BeginUpdate();
 			foreach (string token in tokens) {
@@ -53,7 +53,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 				}
 			}
 			
-			PropertyService.Set("SharpDevelop.TaskListTokens", tokens.ToArray());
+			ParserService.TaskListTokens = tokens.ToArray();
 			
 			return true;
 		}

@@ -5,21 +5,21 @@ using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-  public abstract class ProjectBrowseControllerCommand : ICSharpCode.Core.AbstractCommand
-  {
-    protected abstract void Run(ProjectBrowseController ctrl);
-    public override void Run()
-    {
-      Run((ProjectBrowseController)Owner);
-    }
-    protected ProjectBrowseController Ctrl
-    {
-      get
-      {
-        return (ProjectBrowseController)Owner;
-      }
-    }
-  }
+	public abstract class ProjectBrowseControllerCommand : ICSharpCode.Core.AbstractCommand
+	{
+		protected abstract void Run(ProjectBrowseController ctrl);
+		public override void Run()
+		{
+			Run((ProjectBrowseController)Owner);
+		}
+		protected ProjectBrowseController Ctrl
+		{
+			get
+			{
+				return (ProjectBrowseController)Owner;
+			}
+		}
+	}
 
 	public class CmdListItemShow : ProjectBrowseControllerCommand
 	{
@@ -38,13 +38,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	}
 
 
-  public class CmdListItemDelete : ProjectBrowseControllerCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.DeleteSelectedListItems();
-    }
-  }
+	public class CmdListItemDelete : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.DeleteSelectedListItems();
+		}
+	}
 
 	public class CmdListItemMoveTo : ProjectBrowseControllerCommand
 	{
@@ -54,13 +54,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
-  public class CmdListItemCopyTo : ProjectBrowseControllerCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.CopySelectedListItemsToFolder();
-    }
-  }
+	public class CmdListItemCopyTo : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CopySelectedListItemsToFolder();
+		}
+	}
 
 	public class CmdListItemRename : ProjectBrowseControllerCommand
 	{
@@ -70,114 +70,114 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
-  public class CmdViewOnSelectListNodeOff : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.ViewOnSelectListNodeOn = false;
-    }
+	public class CmdViewOnSelectListNodeOff : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.ViewOnSelectListNodeOn = false;
+		}
 
-    #region ICheckableMenuCommand Members
+		#region ICheckableMenuCommand Members
 
-    public bool IsChecked
-    {
-      get
-      {
-        return !Ctrl.ViewOnSelectListNodeOn;
-      }
-      set
-      {
-      }
-    }
+		public bool IsChecked
+		{
+			get
+			{
+				return !Ctrl.ViewOnSelectListNodeOn;
+			}
+			set
+			{
+			}
+		}
 
-    #endregion
+		#endregion
 
-    #region IMenuCommand Members
+		#region IMenuCommand Members
 
-    public bool IsEnabled
-    {
-      get
-      {
-        return true;
-      }
-      set
-      {
-      }
-    }
+		public bool IsEnabled
+		{
+			get
+			{
+				return true;
+			}
+			set
+			{
+			}
+		}
 
-    #endregion
-  }
+		#endregion
+	}
 
-  public class CmdViewOnSelectListNodeOn : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.ViewOnSelectListNodeOn = true;
-    }
+	public class CmdViewOnSelectListNodeOn : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.ViewOnSelectListNodeOn = true;
+		}
 
-    #region ICheckableMenuCommand Members
+		#region ICheckableMenuCommand Members
 
-    public bool IsChecked
-    {
-      get
-      {
-        return Ctrl.ViewOnSelectListNodeOn;
-      }
-      set
-      {
-      }
-    }
+		public bool IsChecked
+		{
+			get
+			{
+				return Ctrl.ViewOnSelectListNodeOn;
+			}
+			set
+			{
+			}
+		}
 
-    #endregion
+		#endregion
 
-    #region IMenuCommand Members
+		#region IMenuCommand Members
 
-    public bool IsEnabled
-    {
-      get
-      {
-        return true;
-      }
-      set
-      {
-      }
-    }
+		public bool IsEnabled
+		{
+			get
+			{
+				return true;
+			}
+			set
+			{
+			}
+		}
 
-    #endregion
-  }
-
-
-  public class CmdNewEmptyWorksheet : ProjectBrowseControllerCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.CreateNewEmptyWorksheet();
-    }
-  }
-
-  public class CmdNewStandardWorksheet : ProjectBrowseControllerCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.CreateNewStandardWorksheet();
-    }
-  }
-
-  public class CmdNewGraph : ProjectBrowseControllerCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.CreateNewGraph();
-    }
-  }
+		#endregion
+	}
 
 
-  public class CmdPlotCommonColumns : ProjectBrowseControllerCommand
-  {
-    protected override void Run(ProjectBrowseController ctrl)
-    {
-      ctrl.PlotCommonColumns();
-    }
-  }
+	public class CmdNewEmptyWorksheet : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CreateNewEmptyWorksheet();
+		}
+	}
+
+	public class CmdNewStandardWorksheet : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CreateNewStandardWorksheet();
+		}
+	}
+
+	public class CmdNewGraph : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CreateNewGraph();
+		}
+	}
+
+
+	public class CmdPlotCommonColumns : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.PlotCommonColumns();
+		}
+	}
 
 }

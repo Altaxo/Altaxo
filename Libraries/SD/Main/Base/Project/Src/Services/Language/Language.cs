@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5475 $</version>
 // </file>
 
 using System;
@@ -13,7 +13,7 @@ namespace ICSharpCode.SharpDevelop
 	{
 		string name;
 		string code;
-		int    imageIndex;
+		string imagePath;
 		
 		public string Name {
 			get {
@@ -27,17 +27,17 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public int ImageIndex {
+		public string ImagePath {
 			get {
-				return imageIndex;
+				return imagePath;
 			}
-		}
+		}		
 		
-		public Language(string name, string code, int imageIndex)
+		public Language(string name, string code, string imagePath)
 		{
 			this.name       = name;
 			this.code       = code;
-			this.imageIndex = imageIndex;
+			this.imagePath  = imagePath;
 		}
 	}
 }

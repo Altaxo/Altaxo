@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3124 $</version>
+//     <version>$Revision: 5779 $</version>
 // </file>
 
 using System;
@@ -79,6 +79,25 @@ public class Form1 {
 			AttributeSection decl = ParseUtilCSharp.ParseGlobal<AttributeSection>(program);
 			Assert.AreEqual(new Location(1, 1), decl.StartLocation);
 			Assert.AreEqual("assembly", decl.AttributeTarget);
+		}
+		
+		[Test]
+		public void AssemblyAttributeCSharpWithNamedArguments()
+		{
+			string program = @"[assembly: Foo(1, namedArg: 2, prop = 3)]";
+			AttributeSection decl = ParseUtilCSharp.ParseGlobal<AttributeSection>(program);
+			Assert.AreEqual("assembly", decl.AttributeTarget);
+			var a = decl.Attributes[0];
+			Assert.AreEqual("Foo", a.Name);
+			Assert.AreEqual(2, a.PositionalArguments.Count);
+			Assert.AreEqual(1, a.NamedArguments.Count);
+			Assert.AreEqual(1, ((PrimitiveExpression)a.PositionalArguments[0]).Value);
+			NamedArgumentExpression nae = a.PositionalArguments[1] as NamedArgumentExpression;
+			Assert.AreEqual("namedArg", nae.Name);
+			Assert.AreEqual(2, ((PrimitiveExpression)nae.Expression).Value);
+			nae = a.NamedArguments[0];
+			Assert.AreEqual("prop", nae.Name);
+			Assert.AreEqual(3, ((PrimitiveExpression)nae.Expression).Value);
 		}
 		
 		[Test]

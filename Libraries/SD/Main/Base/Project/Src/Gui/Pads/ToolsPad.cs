@@ -2,11 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2952 $</version>
+//     <version>$Revision: 5076 $</version>
 // </file>
 
 using System;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -19,7 +19,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Gets the control to display in the tool box.
 		/// </summary>
-		Control ToolsControl { get; }
+		object ToolsContent { get; }
 	}
 	
 	/// <summary>
@@ -27,44 +27,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// </summary>
 	public class ToolsPad : AbstractPadContent
 	{
-		Panel panel = new Panel();
-		Label noToolsAvailable = new Label();
-		Control child;
+		ContentPresenter contentControl = new ContentPresenter();
 		
-		public override Control Control {
+		public override object Control {
 			get {
-				return panel;
+				return contentControl;
 			}
 		}
 		
 		public ToolsPad()
 		{
-			noToolsAvailable.Text = StringParser.Parse("${res:SharpDevelop.SideBar.NoToolsAvailableForCurrentDocument}");
-			noToolsAvailable.Dock = DockStyle.Fill;
-			panel.Controls.Add(noToolsAvailable);
-			child = noToolsAvailable;
-			
 			WorkbenchSingleton.Workbench.ActiveViewContentChanged += WorkbenchActiveContentChanged;
 			WorkbenchActiveContentChanged(null, null);
-		}
-		
-		void SetChild(Control newChild)
-		{
-			if (child != newChild) {
-				panel.Controls.Clear();
-				newChild.Dock = DockStyle.Fill;
-				panel.Controls.Add(newChild);
-				child = newChild;
-			}
 		}
 		
 		void WorkbenchActiveContentChanged(object sender, EventArgs e)
 		{
 			IToolsHost th = WorkbenchSingleton.Workbench.ActiveViewContent as IToolsHost;
-			if (th != null) {
-				SetChild(th.ToolsControl ?? noToolsAvailable);
+			if (th != null && th.ToolsContent != null) {
+				contentControl.SetContent(th.ToolsContent, th);
 			} else {
-				SetChild(noToolsAvailable);
+				contentControl.SetContent(StringParser.Parse("${res:SharpDevelop.SideBar.NoToolsAvailableForCurrentDocument}"));
 			}
 		}
 	}

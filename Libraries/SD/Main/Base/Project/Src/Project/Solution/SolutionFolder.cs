@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2314 $</version>
+//     <version>$Revision: 4893 $</version>
 // </file>
 
 using System;
@@ -83,11 +83,21 @@ namespace ICSharpCode.SharpDevelop.Project
 				folder.IdGuid = Guid.NewGuid().ToString().ToUpperInvariant();
 			}
 			
+			bool isNew = false;
 			if (folder.Parent != null) {
 				folder.Parent.RemoveFolder(folder);
+			} else {
+				// this is a new project/solution folder
+				isNew = true;
+			}
+			if (isNew) {
+				this.ParentSolution.BeforeAddFolderToSolution(folder);
 			}
 			folder.Parent = this;
 			Folders.Add(folder);
+			if (isNew) {
+				this.ParentSolution.AfterAddFolderToSolution(folder);
+			}
 		}
 		
 		public virtual void RemoveFolder(ISolutionFolder folder)

@@ -1,2 +1,2 @@
 rem Updates all numbers
-Libraries\AssemblySvnVersion\bin\debug\AssemblySvnVersion.exe .\   Altaxo\Core\AssemblyInfo.cs Altaxo\CoreTest\AssemblyInfo.cs Altaxo\Base\AssemblyInfo.cs Altaxo\BaseTest\AssemblyInfo.cs Altaxo\Base.WinForms\AssemblyInfo.cs Altaxo\Startup\Configuration\AssemblyInfo.cs Altaxo\SDGui\AssemblyInfo.cs
+Libraries\bin\AssemblySvnVersion.exe .\   Altaxo\Core\AssemblyInfo.cs Altaxo\CoreTest\AssemblyInfo.cs Altaxo\Base\AssemblyInfo.cs Altaxo\BaseTest\AssemblyInfo.cs Altaxo\Base.WinForms\AssemblyInfo.cs Altaxo\Base.Presentation\Properties\AssemblyInfo.cs Altaxo\Startup\Configuration\AssemblyInfo.cs Altaxo\SDGui\AssemblyInfo.cs

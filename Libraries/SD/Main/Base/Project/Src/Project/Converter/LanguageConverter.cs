@@ -2,24 +2,23 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2679 $</version>
+//     <version>$Revision: 5483 $</version>
 // </file>
 
+using Microsoft.Build.Construction;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
-using System.Runtime.Serialization;
-
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.PrettyPrinter;
-using ICSharpCode.SharpDevelop.Project.Commands;
-using MSBuild = Microsoft.Build.BuildEngine;
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Internal.Templates;
+using ICSharpCode.SharpDevelop.Project.Commands;
 
 namespace ICSharpCode.SharpDevelop.Project.Converter
 {
@@ -40,7 +39,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			info.ProjectName = sourceProject.Name + ".Converted";
 			info.RootNamespace = sourceProject.RootNamespace;
 			
-			LanguageBindingDescriptor descriptor = LanguageBindingService.GetCodonPerLanguageName(TargetLanguageName);
+			ProjectBindingDescriptor descriptor = ProjectBindingService.GetCodonPerLanguageName(TargetLanguageName);
 			if (descriptor == null || descriptor.Binding == null)
 				throw new InvalidOperationException("Cannot get Language Binding for " + TargetLanguageName);
 			
@@ -56,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			}
 		}
 		
-		protected virtual int GetRequiredWork(ProjectItem item)
+		protected virtual double GetRequiredWork(ProjectItem item)
 		{
 			if (item.ItemType == ItemType.Compile) {
 				return 50;
@@ -74,13 +73,16 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			if (sp != null && tp != null) {
 				lock (sp.SyncRoot) {
 					lock (tp.SyncRoot) {
-						tp.MSBuildProject.RemoveAllPropertyGroups();
-						foreach (MSBuild.BuildPropertyGroup spg in sp.MSBuildProject.PropertyGroups) {
-							if (spg.IsImported) continue;
-							MSBuild.BuildPropertyGroup tpg = tp.MSBuildProject.AddNewPropertyGroup(false);
+						// Remove all PropertyGroups in target project:
+						foreach (ProjectPropertyGroupElement tpg in tp.MSBuildProjectFile.PropertyGroups) {
+							tp.MSBuildProjectFile.RemoveChild(tpg);
+						}
+						// Copy all PropertyGroups from source project to target project:
+						foreach (ProjectPropertyGroupElement spg in sp.MSBuildProjectFile.PropertyGroups) {
+							ProjectPropertyGroupElement tpg = tp.MSBuildProjectFile.AddPropertyGroup();
 							tpg.Condition = spg.Condition;
-							foreach (MSBuild.BuildProperty sprop in spg) {
-								MSBuild.BuildProperty tprop = tpg.AddNewProperty(sprop.Name, sprop.Value);
+							foreach (ProjectPropertyElement sprop in spg.Properties) {
+								ProjectPropertyElement tprop = tpg.AddProperty(sprop.Name, sprop.Value);
 								tprop.Condition = sprop.Condition;
 							}
 						}
@@ -92,28 +94,14 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			}
 		}
 		
-		/// <summary>
-		/// Changes all instances of a property in the <paramref name="project"/> by applying a method to its value.
-		/// </summary>
-		protected void FixProperty(MSBuildBasedProject project, string propertyName, Converter<string, string> method)
-		{
-			lock (project.SyncRoot) {
-				foreach (MSBuild.BuildProperty p in project.GetAllProperties(propertyName)) {
-					p.Value = method(p.Value);
-				}
-			}
-		}
-		
 		protected virtual void FixExtensionOfExtraProperties(FileProjectItem item, string sourceExtension, string targetExtension)
 		{
-			sourceExtension = sourceExtension.ToLowerInvariant();
-			
 			List<KeyValuePair<string, string>> replacements = new List<KeyValuePair<string, string>>();
 			foreach (string metadataName in item.MetadataNames) {
 				if ("Include".Equals(metadataName, StringComparison.OrdinalIgnoreCase))
 					continue;
 				string value = item.GetMetadata(metadataName);
-				if (value.ToLowerInvariant().EndsWith(sourceExtension)) {
+				if (value.EndsWith(sourceExtension, StringComparison.OrdinalIgnoreCase)) {
 					replacements.Add(new KeyValuePair<string, string>(metadataName, value));
 				}
 			}
@@ -133,13 +121,11 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 				throw new ArgumentNullException("targetProjectItems");
 			
 			ICollection<ProjectItem> sourceItems = sourceProject.Items;
-			int totalWork = 0;
+			double totalWork = 0;
 			foreach (ProjectItem item in sourceItems) {
 				totalWork += GetRequiredWork(item);
 			}
 			
-			monitor.BeginTask("Converting", totalWork, true);
-			int workDone = 0;
 			foreach (ProjectItem item in sourceItems) {
 				FileProjectItem fileItem = item as FileProjectItem;
 				if (fileItem != null && FileUtility.IsBaseDirectory(sourceProject.Directory, fileItem.FileName)) {
@@ -160,13 +146,9 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 				} else {
 					targetProjectItems.AddProjectItem(item.CloneFor(targetProject));
 				}
-				if (monitor.IsCancelled) {
-					return;
-				}
-				workDone += GetRequiredWork(item);
-				monitor.WorkDone = workDone;
+				monitor.CancellationToken.ThrowIfCancellationRequested();
+				monitor.Progress += GetRequiredWork(item) / totalWork;
 			}
-			monitor.Done();
 		}
 		
 		protected StringBuilder conversionLog;
@@ -190,16 +172,23 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			conversionLog.Append(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.TargetDirectory")).Append(": ");
 			conversionLog.AppendLine(targetProjectDirectory);
 			
+			try {
+				PerformConversion(translatedTitle, sourceProject, targetProjectDirectory);
+			} catch (OperationCanceledException) {
+				// ignore
+			}
+		}
+		
+		void PerformConversion(string translatedTitle, MSBuildBasedProject sourceProject, string targetProjectDirectory)
+		{
 			IProject targetProject;
-			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog(translatedTitle)) {
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog(translatedTitle, "Converting", true)) {
 				Directory.CreateDirectory(targetProjectDirectory);
 				targetProject = CreateProject(targetProjectDirectory, sourceProject);
 				CopyProperties(sourceProject, targetProject);
 				conversionLog.AppendLine();
 				CopyItems(sourceProject, targetProject, monitor);
-				if (monitor.IsCancelled) {
-					return;
-				}
+				monitor.CancellationToken.ThrowIfCancellationRequested();
 				conversionLog.AppendLine();
 				AfterConversion(targetProject);
 				conversionLog.AppendLine(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ConversionComplete"));
@@ -238,8 +227,8 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 		{
 			FixExtensionOfExtraProperties(targetItem, sourceExtension, targetExtension);
 			if (sourceExtension.Equals(Path.GetExtension(sourceItem.FileName), StringComparison.OrdinalIgnoreCase)) {
-				string code = ParserService.GetParseableFileContent(sourceItem.FileName);
-				IParser p = ParserFactory.CreateParser(sourceLanguage, new StringReader(code));
+				ITextBuffer code = ParserService.GetParseableFileContent(sourceItem.FileName);
+				var p = ParserFactory.CreateParser(sourceLanguage, code.CreateReader());
 				p.Parse();
 				if (p.Errors.Count > 0) {
 					conversionLog.AppendLine();

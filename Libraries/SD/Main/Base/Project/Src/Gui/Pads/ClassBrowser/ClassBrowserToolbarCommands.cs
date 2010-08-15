@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3304 $</version>
+//     <version>$Revision: 3805 $</version>
 // </file>
 
 using System;
@@ -163,7 +163,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		protected override void OnOwnerChanged(EventArgs e)
 		{
 			base.OnOwnerChanged(e);
-			ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
+			ToolBarComboBox toolbarItem = (ToolBarComboBox)base.ComboBox;
 			comboBox = toolbarItem.ComboBox;
 			comboBox.DropDownStyle = ComboBoxStyle.DropDown;
 			comboBox.TextChanged  += ComboBoxTextChanged;

@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3160 $</version>
+//     <version>$Revision: 6069 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Xml;
 
@@ -22,7 +23,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		// Either content or contentData is set, the other is null
 		string content;
-		byte[] contentData;
+		string binaryFileName;
 		
 		string itemType;
 		Dictionary<string, string> metadata = new Dictionary<string, string>();
@@ -33,9 +34,9 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
-		static readonly Set<string> knownAttributes = new Set<string>(
+		static readonly string[] knownAttributes = {
 			"name", "language", "buildAction", "src", "binary"
-		);
+		};
 		
 		public FileDescriptionTemplate(XmlElement xml, string hintPath)
 		{
@@ -69,7 +70,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				string fileName = Path.Combine(hintPath, StringParser.Parse(xml.GetAttribute("src")));
 				try {
 					if (xml.HasAttribute("binary") && bool.Parse(xml.GetAttribute("binary"))) {
-						contentData = File.ReadAllBytes(fileName);
+						binaryFileName = fileName;
 					} else {
 						content = File.ReadAllText(fileName);
 					}
@@ -125,9 +126,9 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
-		public byte[] ContentData {
+		public string BinaryFileName {
 			get {
-				return contentData;
+				return binaryFileName;
 			}
 		}
 	}

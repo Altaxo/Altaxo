@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3974 $</version>
 // </file>
 
 using System;
@@ -10,8 +10,8 @@ using System;
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	public delegate void ViewContentEventHandler(object sender, ViewContentEventArgs e);
-		
-	public class ViewContentEventArgs : System.EventArgs
+	
+	public class ViewContentEventArgs : EventArgs
 	{
 		IViewContent content;
 		
@@ -19,13 +19,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			get {
 				return content;
 			}
-			set {
-				content = value;
-			}
 		}
 		
 		public ViewContentEventArgs(IViewContent content)
 		{
+			if (content == null)
+				throw new ArgumentNullException("content");
 			this.content = content;
 		}
 	}

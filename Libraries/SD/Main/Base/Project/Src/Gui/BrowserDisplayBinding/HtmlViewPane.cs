@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 6050 $</version>
 // </file>
 
 using System;
@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 			}
 		}
 		
-		public override Control Control {
+		public override object Control {
 			get {
 				return htmlViewPane;
 			}
@@ -77,7 +77,7 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 			if (title != null)
 				title = title.Trim();
 			if (title == null || title.Length == 0)
-				TitleName = ResourceService.GetString("ICSharpCode.SharpDevelop.BrowserDisplayBinding.Browser");
+				SetLocalizedTitle("${res:ICSharpCode.SharpDevelop.BrowserDisplayBinding.Browser}");
 			else
 				TitleName = title;
 		}
@@ -151,7 +151,7 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 			BrowserPane browser = workbench.ActiveViewContent as BrowserPane;
 			if (browser == null) return;
 			if (browser.HtmlViewPane == this) {
-				StatusBarService.SetMessage(webBrowser.StatusText);
+				WorkbenchSingleton.StatusBar.SetMessage(webBrowser.StatusText);
 			}
 		}
 		
@@ -185,7 +185,7 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 					}
 				}
 			} catch (Exception ex) {
-				MessageService.ShowError(ex);
+				MessageService.ShowException(ex);
 			}
 		}
 		
@@ -200,7 +200,7 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 					extension.DocumentCompleted(this, e);
 				}
 			} catch (Exception ex) {
-				MessageService.ShowError(ex);
+				MessageService.ShowException(ex);
 			}
 		}
 		

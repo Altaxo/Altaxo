@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 3715 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -58,6 +58,14 @@ namespace ICSharpCode.NRefactory.Tests.Lexer.VB
 		{
 			CheckToken("15", Tokens.LiteralInteger, 15);
 			CheckToken("8581", Tokens.LiteralInteger, 8581);
+		}
+		
+		[Test]
+		public void InvalidTypeCharacter()
+		{
+			// just check that we don't get exceptions:
+			GenerateLexer(new StringReader(".5s")).NextToken();
+			GenerateLexer(new StringReader(".5ul")).NextToken();
 		}
 		
 		[Test]

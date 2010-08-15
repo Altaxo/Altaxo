@@ -8,38 +8,38 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-  #region Interfaces
+	#region Interfaces
 
 
-  
+
 
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <remarks>The image indices for the browser tree nodes and list nodes are set as following:
 	/// 0: Project, 1: closed folder, 2: open folder, 3: worksheet, 4: graph.</remarks>
-  public interface IProjectBrowseView
-  {
+	public interface IProjectBrowseView
+	{
 		/// <summary>Sets the browser root node.</summary>
 		/// <param name="root">The root node of the project browser.</param>
-    void InitializeTree(Altaxo.Collections.NGTreeNode root);
+		void InitializeTree(Altaxo.Collections.NGTreeNode root);
 		void SilentSelectTreeNode(Altaxo.Collections.NGTreeNode node);
 		object TreeNodeContextMenu { get; }
 
-    void InitializeList(SelectableListNodeList list);
+		void InitializeList(SelectableListNodeList list);
 		void SynchronizeListSelection();
-  }
-  #endregion
+	}
+	#endregion
 
-  public class ProjectBrowseController : IMVCController
-  {
+	public class ProjectBrowseController : IMVCController
+	{
 		/// <summary>The gui view shown to the user.</summary>
-    IProjectBrowseView _view;
+		IProjectBrowseView _view;
 		/// <summary>The current Altaxo project.</summary>
-    AltaxoDocument _doc;
+		AltaxoDocument _doc;
 
 		/// <summary>Root node. Holds all other nodes in its nodes collection.</summary>
-    NGBrowserTreeNode _rootNode;
+		NGBrowserTreeNode _rootNode;
 		/// <summary>Root node of the project folders.</summary>
 		NGBrowserTreeNode _projectDirectoryRoot;
 		/// <summary>Project node. Equivalent to the whole project</summary>
@@ -67,9 +67,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		/// <summary>Creates the project browse controller.</summary>
 		public ProjectBrowseController()
-    {
-      _rootNode = new NGBrowserTreeNode("Root");
-      _directoryNodesByName = new DictionaryWithNullableKey<string, NGBrowserTreeNode>();
+		{
+			_rootNode = new NGBrowserTreeNode("Root");
+			_directoryNodesByName = new DictionaryWithNullableKey<string, NGBrowserTreeNode>();
 
 			_allItemsNode = new NGBrowserTreeNode("Project") { Image = ProjectBrowseItemImage.Project };
 			_rootNode.Nodes.Add(_allItemsNode);
@@ -81,33 +81,33 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_allItemsNode.Nodes.Add(_allTablesNode);
 
 
-			_projectDirectoryRoot = new NGBrowserTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag=null };
-      _directoryNodesByName.Add(null, _projectDirectoryRoot);
+			_projectDirectoryRoot = new NGBrowserTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = null };
+			_directoryNodesByName.Add(null, _projectDirectoryRoot);
 			_allItemsNode.Nodes.Add(_projectDirectoryRoot);
 
 
 			Current.ProjectService.ProjectOpened += this.EhProjectOpened;
 			Current.ProjectService.ProjectClosed += this.EhProjectClosed;
 
-      Initialize(true);
-    }
+			Initialize(true);
+		}
 
-    void Initialize(bool initData)
-    {
-      if (initData)
-      {
-        EhProjectOpened(this, new ProjectEventArgs(Current.Project));
-      }
+		void Initialize(bool initData)
+		{
+			if (initData)
+			{
+				EhProjectOpened(this, new ProjectEventArgs(Current.Project));
+			}
 
-      if (null != _view)
-      {
+			if (null != _view)
+			{
 				_allGraphsNode.ContextMenu = _view.TreeNodeContextMenu;
 				_allTablesNode.ContextMenu = _view.TreeNodeContextMenu;
 				_projectDirectoryRoot.SetContextMenuRecursively(_view.TreeNodeContextMenu);
 
-        _view.InitializeTree(_rootNode);
-      }
-    }
+				_view.InitializeTree(_rootNode);
+			}
+		}
 
 		/// <summary>
 		/// Gets the project this controller is visualizing.
@@ -151,35 +151,35 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		#region Tree related stuff
 
 		void RecreateDirectoryNodes()
-    {
-      _directoryNodesByName.Clear();
-      _directoryNodesByName.Add(null, _projectDirectoryRoot);
-      _projectDirectoryRoot.Nodes.Clear();
+		{
+			_directoryNodesByName.Clear();
+			_directoryNodesByName.Add(null, _projectDirectoryRoot);
+			_projectDirectoryRoot.Nodes.Clear();
 
-      CreateDirectoryNode(null, _projectDirectoryRoot);
+			CreateDirectoryNode(null, _projectDirectoryRoot);
 
-      if(_view!=null)
-        ((IGuiBrowserTreeNode)_projectDirectoryRoot.GuiTag).OnNodeMultipleChanges();
+			if (_view != null)
+				((IGuiBrowserTreeNode)_projectDirectoryRoot.GuiTag).OnNodeMultipleChanges();
 
-      
-    }
 
-    void CreateDirectoryNode( string dir, NGBrowserTreeNode node)
-    {
-      var subfolders = _doc.Folders.GetSubfoldersAsStringList(dir, false);
-      foreach (var subfolder in subfolders)
-      {
-        var subnode = new NGBrowserTreeNode(ProjectFolder.GetNamePart(subfolder)) 
+		}
+
+		void CreateDirectoryNode(string dir, NGBrowserTreeNode node)
+		{
+			var subfolders = _doc.Folders.GetSubfoldersAsStringList(dir, false);
+			foreach (var subfolder in subfolders)
+			{
+				var subnode = new NGBrowserTreeNode(ProjectFolder.GetNamePart(subfolder))
 				{
 					Image = ProjectBrowseItemImage.OpenFolder,
 					Tag = subfolder,
-					ContextMenu = null==_view? null : _view.TreeNodeContextMenu,
+					ContextMenu = null == _view ? null : _view.TreeNodeContextMenu,
 				};
-        node.Nodes.Add(subnode);
-        _directoryNodesByName.Add(subfolder, subnode);
-        CreateDirectoryNode(subfolder,subnode);
-      }
-    }
+				node.Nodes.Add(subnode);
+				_directoryNodesByName.Add(subfolder, subnode);
+				CreateDirectoryNode(subfolder, subnode);
+			}
+		}
 
 		private void EhProjectDirectoryItemChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
@@ -208,8 +208,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 						var curNode = new NGBrowserTreeNode(ProjectFolder.GetNamePart(dir))
 						{
 							Image = ProjectBrowseItemImage.OpenFolder,
-							Tag=dir ,
-							ContextMenu = null==_view ? null : _view.TreeNodeContextMenu
+							Tag = dir,
+							ContextMenu = null == _view ? null : _view.TreeNodeContextMenu
 						};
 						_directoryNodesByName.Add(dir, curNode);
 						parNode.Nodes.Add(curNode);
@@ -271,13 +271,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// </summary>
 		/// <param name="itemHandler"></param>
 		void SetItemListHandler(AbstractItemHandler itemHandler)
-    {
-      if (null != _listItemHandler)
-        _listItemHandler.ListChange -= EhListItemHandlerListChange;
-      _listItemHandler = itemHandler;
-      if (null != _listItemHandler)
-        _listItemHandler.ListChange += EhListItemHandlerListChange;
-    }
+		{
+			if (null != _listItemHandler)
+				_listItemHandler.ListChange -= EhListItemHandlerListChange;
+			_listItemHandler = itemHandler;
+			if (null != _listItemHandler)
+				_listItemHandler.ListChange += EhListItemHandlerListChange;
+		}
 
 		/// <summary>
 		/// Sets the ItemList handler according to the currently selected tree node.
@@ -304,20 +304,20 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// Called if the list item handler announces a change in the item list.
 		/// </summary>
 		/// <param name="list"></param>
-    void EhListItemHandlerListChange(SelectableListNodeList list)
-    {
-      _listViewItems = list;
-      //_listViewItems.Sort(NameComparism);
+		void EhListItemHandlerListChange(SelectableListNodeList list)
+		{
+			_listViewItems = list;
+			//_listViewItems.Sort(NameComparism);
 			if (_listItemHandler is SpecificProjectFolderHandler)
 			{
-        if (!_directoryNodesByName.TryGetValue(((SpecificProjectFolderHandler)_listItemHandler).CurrentProjectFolder, out _currentSelectedTreeNode))
-          _currentSelectedTreeNode = _projectDirectoryRoot;
+				if (!_directoryNodesByName.TryGetValue(((SpecificProjectFolderHandler)_listItemHandler).CurrentProjectFolder, out _currentSelectedTreeNode))
+					_currentSelectedTreeNode = _projectDirectoryRoot;
 				if (null != _view)
 					_view.SilentSelectTreeNode(_currentSelectedTreeNode);
 			}
 
-      if (null != _view)
-        _view.InitializeList(_listViewItems);
+			if (null != _view)
+				_view.InitializeList(_listViewItems);
 		}
 
 		/// <summary>
@@ -404,17 +404,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 
-   
+
 		/// <summary>
 		/// Called from the view if the selection of items in the list has changed.
 		/// </summary>
 		public void EhListViewAfterSelect()
 		{
 
-      if (_viewOnSelectListNodeOn && 1 == GetNumberOfSelectedListItems())
-      {
-        ProjectBrowserExtensions.ShowSelectedListItem(this);
-      }
+			if (_viewOnSelectListNodeOn && 1 == GetNumberOfSelectedListItems())
+			{
+				ProjectBrowserExtensions.ShowSelectedListItem(this);
+			}
 		}
 
 
@@ -460,79 +460,79 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 
-    #region IMVCController Members
+		#region IMVCController Members
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (null != _view)
-        {
-        }
-        _view = value as IProjectBrowseView;
-        if (null != _view)
-        {
-          Initialize(false);
-        }
-      }
-    }
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (null != _view)
+				{
+				}
+				_view = value as IProjectBrowseView;
+				if (null != _view)
+				{
+					Initialize(false);
+				}
+			}
+		}
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
 
-    #endregion
+		#endregion
 
 
 
 		#region List commands
 
-	
 
 
-	
+
+
 		/// <summary>
 		/// Determines if a project folder is selected in the tree view.
 		/// </summary>
 		/// <param name="folderName">If a project folder is selected, returns the name of the folder.</param>
 		/// <returns>True if a project folder is selected in the tree view.</returns>
-    public bool IsProjectFolderSelected(out string folderName)
-    {
-      if (_currentSelectedTreeNode.Tag is string)
-      {
-        folderName = ((string)_currentSelectedTreeNode.Tag);
-        return true;
-      }
-      else
-      {
-        folderName = Main.ProjectFolder.RootFolderName;
-        return false;
-      }
-    }
+		public bool IsProjectFolderSelected(out string folderName)
+		{
+			if (_currentSelectedTreeNode.Tag is string)
+			{
+				folderName = ((string)_currentSelectedTreeNode.Tag);
+				return true;
+			}
+			else
+			{
+				folderName = Main.ProjectFolder.RootFolderName;
+				return false;
+			}
+		}
 
 		/// <summary>
 		/// Gets/sets the action when selecting a list item. If true, when selection the list item, it is shown in the document area.
 		/// </summary>
-    public bool ViewOnSelectListNodeOn
-    {
-      get { return _viewOnSelectListNodeOn; }
-      set { _viewOnSelectListNodeOn = value; }
-    }
+		public bool ViewOnSelectListNodeOn
+		{
+			get { return _viewOnSelectListNodeOn; }
+			set { _viewOnSelectListNodeOn = value; }
+		}
 
 		/// <summary>
 		/// Gets/sets the action when selecting a tree node.
 		/// </summary>
 		public ViewOnSelect ViewOnSelectTreeNode
-    {
-      get { return _viewOnSelectTreeNode; }
-      set { _viewOnSelectTreeNode = value; }
+		{
+			get { return _viewOnSelectTreeNode; }
+			set { _viewOnSelectTreeNode = value; }
 
-    }
+		}
 
 		#endregion
 	}

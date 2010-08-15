@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2365 $</version>
+//     <version>$Revision: 5704 $</version>
 // </file>
 
 using System;
@@ -17,11 +17,8 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
-			
-			
 			using (NewProjectDialog npdlg = new NewProjectDialog(true)) {
-				npdlg.Owner = WorkbenchSingleton.MainForm;
-				npdlg.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
+				npdlg.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window);
 			}
 		}
 	}
@@ -32,10 +29,10 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			using (OpenFileDialog fdiag  = new OpenFileDialog()) {
 				fdiag.AddExtension    = true;
-				fdiag.Filter          = ProjectService.GetAllProjectsFilter(this);
+				fdiag.Filter          = ProjectService.GetAllProjectsFilter(this, true);
 				fdiag.Multiselect     = false;
 				fdiag.CheckFileExists = true;
-				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
+				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 					ProjectService.LoadSolutionOrProject(fdiag.FileName);
 				}
 			}

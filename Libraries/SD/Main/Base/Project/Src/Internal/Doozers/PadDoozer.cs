@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1963 $</version>
+//     <version>$Revision: 5613 $</version>
 // </file>
 
 using System;
@@ -35,6 +35,9 @@ namespace ICSharpCode.SharpDevelop
 	/// </attribute>
 	/// <attribute name="shortcut" use="optional">
 	/// Shortcut that activates the 'Show pad' command (e.g. "Control|Alt|T").
+	/// </attribute>
+	/// <attribute name="defaultPosition" use="optional">
+	/// Default position of the pad, as a ICSharpCode.SharpDevelop.DefaultPadPositions enum value (e.g. "Bottom, Hidden").
 	/// </attribute>
 	/// <usage>Only in /Workspace/Parser</usage>
 	/// <returns>

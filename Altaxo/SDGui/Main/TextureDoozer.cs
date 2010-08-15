@@ -29,35 +29,35 @@ using Altaxo.Graph;
 
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// Creates builtin textures by associating a unique name of the texture and the corresponding resource.
-  /// </summary>
-  /// <attribute name="resource" use="required">
-  /// The name of a bitmap resource in the resource service.
-  /// </attribute>
-  /// <usage>Only in /Altaxo/BuiltinTextures</usage>
-  /// <returns>
-  /// An ImageProxy object that represents the resource. This ImageProxy is added automatically
-  /// to the TextureManager.BuiltinTextures collection.
-  /// </returns>
-  public class TextureDoozer : IDoozer
-  {
-    /// <summary>
-    /// Gets if the doozer handles codon conditions on its own.
-    /// If this property return false, the item is excluded when the condition is not met.
-    /// </summary>
-    public bool HandleConditions
-    {
-      get
-      {
-        return false;
-      }
-    }
+	/// <summary>
+	/// Creates builtin textures by associating a unique name of the texture and the corresponding resource.
+	/// </summary>
+	/// <attribute name="resource" use="required">
+	/// The name of a bitmap resource in the resource service.
+	/// </attribute>
+	/// <usage>Only in /Altaxo/BuiltinTextures</usage>
+	/// <returns>
+	/// An ImageProxy object that represents the resource. This ImageProxy is added automatically
+	/// to the TextureManager.BuiltinTextures collection.
+	/// </returns>
+	public class TextureDoozer : IDoozer
+	{
+		/// <summary>
+		/// Gets if the doozer handles codon conditions on its own.
+		/// If this property return false, the item is excluded when the condition is not met.
+		/// </summary>
+		public bool HandleConditions
+		{
+			get
+			{
+				return false;
+			}
+		}
 
-    public object BuildItem(object caller, Codon codon, ArrayList subItems)
-    {
-      string id = codon.Id;
-      string resource = codon.Properties["resource"];
+		public object BuildItem(object caller, Codon codon, ArrayList subItems)
+		{
+			string id = codon.Id;
+			string resource = codon.Properties["resource"];
 			if (!string.IsNullOrEmpty(resource))
 			{
 				ImageProxy proxy = ResourceImageProxy.FromResource(id, resource);
@@ -72,6 +72,6 @@ namespace Altaxo.Main
 				return proxy;
 			}
 			return null;
-    }
-  }
+		}
+	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2487 $</version>
+//     <version>$Revision: 5465 $</version>
 // </file>
 
 using System;
@@ -14,23 +14,30 @@ namespace ICSharpCode.SharpDevelop.Commands
 {
 	public class OptionsCommand : AbstractMenuCommand
 	{
-		public static void ShowTabbedOptions(string dialogTitle, AddInTreeNode node)
+		public static bool? ShowTabbedOptions(string dialogTitle, AddInTreeNode node)
 		{
-			TabbedOptions o = new TabbedOptions(dialogTitle, node);
-			o.Width  = 450;
-			o.Height = 425;
-			o.FormBorderStyle = FormBorderStyle.FixedDialog;
-			o.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
-			o.Dispose();
+			TabbedOptionsDialog o = new TabbedOptionsDialog(node.BuildChildItems<IOptionPanelDescriptor>(null));
+			o.Title = dialogTitle;
+			o.Owner = WorkbenchSingleton.MainWindow;
+			return o.ShowDialog();
+		}
+		
+		public static bool? ShowTreeOptions(string dialogTitle, AddInTreeNode node)
+		{
+			TreeViewOptionsDialog o = new TreeViewOptionsDialog(node.BuildChildItems<IOptionPanelDescriptor>(null));
+			o.Title = dialogTitle;
+			o.Owner = WorkbenchSingleton.MainWindow;
+			return o.ShowDialog();
 		}
 		
 		public override void Run()
 		{
-			using (TreeViewOptions optionsDialog = new TreeViewOptions(AddInTree.GetTreeNode("/SharpDevelop/Dialogs/OptionsDialog"))) {
-				optionsDialog.FormBorderStyle = FormBorderStyle.FixedDialog;
-				
-				optionsDialog.Owner = WorkbenchSingleton.MainForm;
-				optionsDialog.ShowDialog(WorkbenchSingleton.MainForm);
+			bool? result = ShowTreeOptions(
+				ResourceService.GetString("Dialog.Options.TreeViewOptions.DialogName"),
+				AddInTree.GetTreeNode("/SharpDevelop/Dialogs/OptionsDialog"));
+			if (result == true) {
+				// save properties after changing options
+				PropertyService.Save();
 			}
 		}
 	}
@@ -39,9 +46,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override void Run()
 		{
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).FullScreen = !((DefaultWorkbench)WorkbenchSingleton.Workbench).FullScreen;
+			WorkbenchSingleton.Workbench.FullScreen = !WorkbenchSingleton.Workbench.FullScreen;
 		}
 	}
-	
-	
 }

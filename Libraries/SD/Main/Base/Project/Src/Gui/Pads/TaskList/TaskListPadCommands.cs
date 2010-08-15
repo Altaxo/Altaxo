@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Siegfried Pammer" email="sie_pam@gmx.at"/>
-//     <version>$Revision: 3023 $</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -23,7 +23,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		protected override void OnOwnerChanged(EventArgs e)
 		{
 			base.OnOwnerChanged(e);
-			ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
+			ToolBarComboBox toolbarItem = (ToolBarComboBox)base.ComboBox;
 			comboBox = toolbarItem.ComboBox;
 			SetItems();
 			comboBox.SelectedIndex = 0;

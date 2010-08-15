@@ -2,13 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3681 $</version>
+//     <version>$Revision: 5552 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 using ICSharpCode.Core;
 using ICSharpCode.Core.WinForms;
@@ -17,72 +18,37 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
-	public class StartWorkbenchCommand
+	/// <summary>
+	/// Runs workbench initialization.
+	/// Is called by ICSharpCode.SharpDevelop.Sda and should not be called manually!
+	/// </summary>
+	public class WorkbenchStartup
 	{
 		const string workbenchMemento = "WorkbenchMemento";
+		App app;
 		
-		class FormKeyHandler : IMessageFilter
+		public void InitializeWorkbench()
 		{
-			const int keyPressedMessage          = 0x100;
-			
-			void SelectActiveWorkbenchWindow()
-			{
-				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
-					if (!WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.ContainsFocus) {
-						if (Form.ActiveForm == WorkbenchSingleton.MainForm) {
-							WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.Focus();
-						}
-					}
-				}
-			}
-			
-			bool PadHasFocus()
-			{
-				foreach (PadDescriptor padContent in WorkbenchSingleton.Workbench.PadContentCollection) {
-					if (padContent.HasFocus) {
-						return true;
-						
-					}
-				}
-				return false;
-			}
-			string oldLayout = "Default";
-			public bool PreFilterMessage(ref Message m)
-			{
-				if (m.Msg != keyPressedMessage) {
-					return false;
-				}
-				Keys keyPressed = (Keys)m.WParam.ToInt32() | Control.ModifierKeys;
-				
-				if (keyPressed == Keys.Escape) {
-					if (PadHasFocus() && !MenuService.IsContextMenuOpen) {
-						SelectActiveWorkbenchWindow();
-						return true;
-					}
-					return false;
-				}
-				
-				if (keyPressed == (Keys.Escape | Keys.Shift)) {
-					if (LayoutConfiguration.CurrentLayoutName == "Plain") {
-						LayoutConfiguration.CurrentLayoutName = oldLayout;
-					} else {
-						WorkbenchSingleton.Workbench.WorkbenchLayout.StoreConfiguration();
-						oldLayout = LayoutConfiguration.CurrentLayoutName;
-						LayoutConfiguration.CurrentLayoutName = "Plain";
-					}
-					SelectActiveWorkbenchWindow();
-					return true;
-				}
-				return false;
-			}
+			app = new App();
+			System.Windows.Forms.Integration.WindowsFormsHost.EnableWindowsFormsInterop();
+			ComponentDispatcher.ThreadIdle -= ComponentDispatcher_ThreadIdle; // ensure we don't register twice
+			ComponentDispatcher.ThreadIdle += ComponentDispatcher_ThreadIdle;
+#if ModifiedForAltaxo
+      System.Diagnostics.Debug.Assert(null != WorkbenchSingleton.Workbench); // Workbench should be already initialized by Altaxo
+#else
+			WorkbenchSingleton.InitializeWorkbench(new WpfWorkbench(), new AvalonDockLayout());
+#endif
+		}
+		
+		static void ComponentDispatcher_ThreadIdle(object sender, EventArgs e)
+		{
+			System.Windows.Forms.Application.RaiseIdle(e);
 		}
 		
 		public void Run(IList<string> fileList)
 		{
-			//WorkbenchSingleton.MainForm.Show();
-			
 			bool didLoadSolutionOrFile = false;
-		
+			
 			NavigationService.SuspendLogging();
 			
 			foreach (string file in fileList) {
@@ -98,14 +64,14 @@ namespace ICSharpCode.SharpDevelop.Commands
 						FileService.OpenFile(fullFileName);
 					}
 				} catch (Exception e) {
-					MessageService.ShowError(e, "unable to open file " + file);
+					MessageService.ShowException(e, "unable to open file " + file);
 				}
 			}
 			
 			// load previous solution
 			if (!didLoadSolutionOrFile && PropertyService.Get("SharpDevelop.LoadPrevProjectOnStartup", false)) {
 				if (FileService.RecentOpen.RecentProject.Count > 0) {
-					ProjectService.LoadSolution(FileService.RecentOpen.RecentProject[0].ToString());
+					ProjectService.LoadSolution(FileService.RecentOpen.RecentProject[0]);
 					didLoadSolutionOrFile = true;
 				}
 			}
@@ -115,26 +81,23 @@ namespace ICSharpCode.SharpDevelop.Commands
 					try {
 						command.Run();
 					} catch (Exception ex) {
-						MessageService.ShowError(ex);
+						MessageService.ShowException(ex);
 					}
 				}
 			}
 			
 			NavigationService.ResumeLogging();
 			
-			//WorkbenchSingleton.MainForm.Focus(); // windows.forms focus workaround
-			
 			ParserService.StartParserThread();
 			
 			// finally run the workbench window ...
-			Application.AddMessageFilter(new FormKeyHandler());
-			Application.Run(WorkbenchSingleton.MainForm);
+			app.Run(WorkbenchSingleton.MainWindow);
 			
 			// save the workbench memento in the ide properties
 			try {
 				PropertyService.Set(workbenchMemento, WorkbenchSingleton.Workbench.CreateMemento());
 			} catch (Exception e) {
-				MessageService.ShowError(e, "Exception while saving workbench state.");
+				MessageService.ShowException(e, "Exception while saving workbench state.");
 			}
 		}
 	}

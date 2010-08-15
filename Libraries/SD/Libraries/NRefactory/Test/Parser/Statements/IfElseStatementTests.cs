@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3717 $</version>
+//     <version>$Revision: 5450 $</version>
 // </file>
 
 using System;
@@ -170,6 +170,19 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.IsFalse(ifElseStatement.Condition.IsNull);
 			Assert.AreEqual(2, ifElseStatement.TrueStatement.Count, "true count");
 			Assert.AreEqual(0, ifElseStatement.FalseStatement.Count, "false count");
+		}
+		
+		[Test]
+		public void VBNetIfWithSingleLineElse()
+		{
+			// This isn't legal according to the VB spec, but the MS VB compiler seems to allow it.
+			IfElseStatement ifElseStatement = ParseUtilVBNet.ParseStatement<IfElseStatement>("If True THEN\n" +
+			                                                                                 " x()\n" +
+			                                                                                 "Else y()\n" +
+			                                                                                 "End If");
+			Assert.IsFalse(ifElseStatement.Condition.IsNull);
+			Assert.AreEqual(1, ifElseStatement.TrueStatement.Count, "true count");
+			Assert.AreEqual(1, ifElseStatement.FalseStatement.Count, "false count");
 		}
 		#endregion
 	}

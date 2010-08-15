@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3735 $</version>
+//     <version>$Revision: 5015 $</version>
 // </file>
 
 using System;
@@ -36,6 +36,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, td.BodyStartLocation.Line, "BodyStartLocation.Y");
 			Assert.AreEqual(14, td.BodyStartLocation.Column, "BodyStartLocation.X");
 			Assert.AreEqual(3, td.EndLocation.Line, "EndLocation.Y");
+			Assert.AreEqual(2, td.EndLocation.Column, "EndLocation.Y");
 		}
 		
 		[Test]
@@ -178,6 +179,28 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 			Assert.AreEqual(ClassType.Enum, td.Type);
 			Assert.AreEqual("MyEnum", td.Name);
 		}
+		
+		[Test]
+		public void ContextSensitiveKeywordTest()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("partial class partial<[partial: where] where> where where : partial<where> { }");
+			
+			Assert.AreEqual(Modifiers.Partial, td.Modifier);
+			Assert.AreEqual("partial", td.Name);
+			
+			Assert.AreEqual(1, td.Templates.Count);
+			TemplateDefinition tp = td.Templates[0];
+			Assert.AreEqual("where", tp.Name);
+			
+			Assert.AreEqual(1, tp.Attributes.Count);
+			Assert.AreEqual("partial", tp.Attributes[0].AttributeTarget);
+			Assert.AreEqual(1, tp.Attributes[0].Attributes.Count);
+			Assert.AreEqual("where", tp.Attributes[0].Attributes[0].Name);
+			
+			Assert.AreEqual(1, tp.Bases.Count);
+			Assert.AreEqual("partial", tp.Bases[0].Type);
+			Assert.AreEqual("where", tp.Bases[0].GenericTypes[0].Type);
+		}
 		#endregion
 		
 		#region VB.NET
@@ -194,6 +217,7 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 			Assert.AreEqual(1, td.BodyStartLocation.Line, "bodystart line");
 			Assert.AreEqual(16, td.BodyStartLocation.Column, "bodystart col");
 			Assert.AreEqual(2, td.EndLocation.Line, "end line");
+			Assert.AreEqual(10, td.EndLocation.Column, "end col");
 		}
 		
 		[Test]

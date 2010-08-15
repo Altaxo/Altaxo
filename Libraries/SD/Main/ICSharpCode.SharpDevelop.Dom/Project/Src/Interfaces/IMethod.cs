@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2657 $</version>
+//     <version>$Revision: 4743 $</version>
 // </file>
 
 using System;
@@ -32,6 +32,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		IList<string> HandlesClauses {
+			get;
+		}
+		
+		bool IsOperator {
 			get;
 		}
 	}

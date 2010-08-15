@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3169 $</version>
+//     <version>$Revision: 4735 $</version>
 // </file>
 
 using System;
@@ -29,7 +29,7 @@ namespace ICSharpCode.SharpDevelop
 			};
 			
 			HostCallback.ShowError = delegate(string message, Exception ex) {
-				MessageService.ShowError(ex, message);
+				MessageService.ShowException(ex, message);
 			};
 			
 			HostCallback.ShowAssemblyLoadError = delegate(string fileName, string include, string message) {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3067 $</version>
+//     <version>$Revision: 5187 $</version>
 // </file>
 
 using System;
@@ -118,7 +118,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		static void ReadProjectCategorySortOrderFiles()
 		{
 			projectCategorySortOrderFiles = new List<TemplateCategorySortOrderFile>();
-			string dataTemplateDir = FileUtility.Combine(PropertyService.DataDirectory, "templates", "project");
+			string dataTemplateDir = Path.Combine(PropertyService.DataDirectory, "templates", "project");
 			List<string> files = FileUtility.SearchDirectory(dataTemplateDir, ProjectCategorySortOrderFileName);
 			foreach (string templateDirectory in AddInTree.BuildItems<string>(ProjectTemplate.TemplatePath, null, false)) {
 				files.AddRange(FileUtility.SearchDirectory(templateDirectory, ProjectCategorySortOrderFileName));
@@ -135,7 +135,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		static void ReadFileCategorySortOrderFiles()
 		{
 			fileCategorySortOrderFiles = new List<TemplateCategorySortOrderFile>();
-			string dataTemplateDir = FileUtility.Combine(PropertyService.DataDirectory, "templates", "file");
+			string dataTemplateDir = Path.Combine(PropertyService.DataDirectory, "templates", "file");
 			List<string> files = FileUtility.SearchDirectory(dataTemplateDir, FileCategorySortOrderFileName);
 			foreach (string templateDirectory in AddInTree.BuildItems<string>(ProjectTemplate.TemplatePath, null, false)) {
 				files.AddRange(FileUtility.SearchDirectory(templateDirectory, FileCategorySortOrderFileName));

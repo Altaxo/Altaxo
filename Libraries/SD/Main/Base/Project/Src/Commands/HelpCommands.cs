@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2365 $</version>
+//     <version>$Revision: 4547 $</version>
 // </file>
 
 using System;
@@ -15,25 +15,6 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
-	public class ShowSensitiveHelp : AbstractMenuCommand
-	{
-		public override void Run()
-		{
-			IWorkbenchWindow window       = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-			IContextHelpProvider    helpProvider = window != null ? window.ActiveViewContent as IContextHelpProvider : null;
-			foreach (PadDescriptor descriptor in WorkbenchSingleton.Workbench.PadContentCollection) {
-				if (descriptor.HasFocus && descriptor.PadContent is IContextHelpProvider) {
-					((IContextHelpProvider)descriptor.PadContent).ShowHelp();
-					return;
-				}
-			}
-			
-			if (helpProvider != null) {
-				helpProvider.ShowHelp();
-			}
-		}
-	}
-	
 	public class LinkCommand : AbstractMenuCommand
 	{
 		string site;
@@ -63,8 +44,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 		public override void Run()
 		{
 			using (CommonAboutDialog ad = new CommonAboutDialog()) {
-				ad.Owner = WorkbenchSingleton.MainForm;
-				ad.ShowDialog(WorkbenchSingleton.MainForm);
+				ad.ShowDialog(WorkbenchSingleton.MainWin32Window);
 			}
 		}
 	}

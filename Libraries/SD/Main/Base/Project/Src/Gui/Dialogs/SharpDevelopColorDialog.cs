@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5572 $</version>
 // </file>
 
 using System;
@@ -81,6 +81,21 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void SaveCustomColors()
 		{
 			PropertyService.Set(CustomColorsPropertyName, CustomColorsToString(CustomColors));
+		}
+		
+		public bool? ShowWpfDialog()
+		{
+			return ShowDialog() == DialogResult.OK;
+		}
+		
+		public System.Windows.Media.Color WpfColor {
+			get {
+				var c = this.Color;
+				return System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
+			}
+			set {
+				this.Color = System.Drawing.Color.FromArgb(value.A, value.R, value.G, value.B);
+			}
 		}
 	}
 }

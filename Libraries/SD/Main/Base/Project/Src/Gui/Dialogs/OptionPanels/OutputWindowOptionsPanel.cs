@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 3568 $</version>
 // </file>
 
 using System.Windows.Forms;
@@ -14,7 +14,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 	/// <summary>
 	/// The Output Window options panel.
 	/// </summary>
-	public class OutputWindowOptionsPanel : AbstractOptionPanel
+	public class OutputWindowOptionsPanel : XmlFormsOptionPanel
 	{
 		public static readonly string OutputWindowsProperty = "SharpDevelop.UI.OutputWindowOptions";
 		FontSelectionPanel fontSelectionPanel;

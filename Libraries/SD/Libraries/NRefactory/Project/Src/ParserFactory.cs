@@ -1,13 +1,14 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 1965 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
 using System.IO;
 using System.Text;
+using ICSharpCode.NRefactory.Parser;
 
 namespace ICSharpCode.NRefactory
 {
@@ -32,6 +33,18 @@ namespace ICSharpCode.NRefactory
 			throw new System.NotSupportedException(language + " not supported.");
 		}
 		
+		public static Parser.ILexer CreateLexer(SupportedLanguage language, TextReader textReader, LexerMemento state)
+		{
+			switch (language) {
+				case SupportedLanguage.CSharp:
+					//return new ICSharpCode.NRefactory.Parser.CSharp.Lexer(textReader, state);
+					throw new System.NotSupportedException("C# Lexer does not support loading a previous state.");
+				case SupportedLanguage.VBNet:
+					return new ICSharpCode.NRefactory.Parser.VB.Lexer(textReader, state);
+			}
+			throw new System.NotSupportedException(language + " not supported.");
+		}
+		
 		public static IParser CreateParser(SupportedLanguage language, TextReader textReader)
 		{
 			Parser.ILexer lexer = CreateLexer(language, textReader);
@@ -52,9 +65,9 @@ namespace ICSharpCode.NRefactory
 		public static IParser CreateParser(string fileName, Encoding encoding)
 		{
 			string ext = Path.GetExtension(fileName);
-			if (ext.Equals(".cs", StringComparison.InvariantCultureIgnoreCase))
+			if (ext.Equals(".cs", StringComparison.OrdinalIgnoreCase))
 				return CreateParser(SupportedLanguage.CSharp, new StreamReader(fileName, encoding));
-			if (ext.Equals(".vb", StringComparison.InvariantCultureIgnoreCase))
+			if (ext.Equals(".vb", StringComparison.OrdinalIgnoreCase))
 				return CreateParser(SupportedLanguage.VBNet, new StreamReader(fileName, encoding));
 			return null;
 		}

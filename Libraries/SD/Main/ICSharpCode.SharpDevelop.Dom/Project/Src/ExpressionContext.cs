@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3786 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -17,7 +17,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public abstract class ExpressionContext
 	{
 		#region Instance members
-		public abstract bool ShowEntry(object o);
+		public abstract bool ShowEntry(ICompletionEntry o);
 		
 		protected bool readOnly = true;
 		object suggestedItem;
@@ -59,65 +59,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		#endregion
 		
-		#region C# specific contexts (public static fields) * MOVE TO ANOTHER CLASS *
-		/// <summary>The context expects a new identifier</summary>
-		/// <example>class *expr* {}; string *expr*;</example>
-		public readonly static ExpressionContext IdentifierExpected = new DefaultExpressionContext("IdentifierExpected");
-		
-		/// <summary>The context is outside of any type declaration, expecting a global-level keyword.</summary>
-		public readonly static ExpressionContext Global = new DefaultExpressionContext("Global");
-		
-		/// <summary>The context is the body of a property declaration.</summary>
-		/// <example>string Name { *expr* }</example>
-		public readonly static ExpressionContext PropertyDeclaration = new DefaultExpressionContext("PropertyDeclaration");
-		
-		/// <summary>The context is the body of a property declaration inside an interface.</summary>
-		/// <example>string Name { *expr* }</example>
-		public readonly static ExpressionContext InterfacePropertyDeclaration = new DefaultExpressionContext("InterfacePropertyDeclaration");
-		
-		/// <summary>The context is the body of a event declaration.</summary>
-		/// <example>event EventHandler NameChanged { *expr* }</example>
-		public readonly static ExpressionContext EventDeclaration = new DefaultExpressionContext("EventDeclaration");
-		
-		/// <summary>The context is the body of a method.</summary>
-		/// <example>void Main () { *expr* }</example>
-		public readonly static ExpressionContext MethodBody = new DefaultExpressionContext("MethodBody");
-		
-		/// <summary>The context is after the type parameters of a type/method declaration.
-		/// The only valid keyword is "where"</summary>
-		/// <example>class &lt;T&gt; *expr*</example>
-		public readonly static ExpressionContext ConstraintsStart = new DefaultExpressionContext("ConstraintsStart");
-		
-		/// <summary>The context is after the 'where' of a constraints list.</summary>
-		/// <example>class &lt;T&gt; where *expr*</example>
-		public readonly static ExpressionContext Constraints = new NonStaticTypeExpressionContext("Constraints", false);
-		
-		
-		/// <summary>The context is the body of a type declaration.</summary>
-		public readonly static ExpressionContext TypeDeclaration = new NonStaticTypeExpressionContext("TypeDeclaration", true);
-		
-		/// <summary>The context is the body of an interface declaration.</summary>
-		public readonly static ExpressionContext InterfaceDeclaration = new NonStaticTypeExpressionContext("InterfaceDeclaration", true);
-		
-		/// <summary>Context expects "base" or "this".</summary>
-		/// <example>public ClassName() : *expr*</example>
-		public readonly static ExpressionContext BaseConstructorCall = new DefaultExpressionContext("BaseConstructorCall");
-		
-		/// <summary>The first parameter</summary>
-		/// <example>void MethodName(*expr*)</example>
-		public readonly static ExpressionContext FirstParameterType = new NonStaticTypeExpressionContext("FirstParameterType", false);
-		
-		/// <summary>Another parameter</summary>
-		/// <example>void MethodName(..., *expr*)</example>
-		public readonly static ExpressionContext ParameterType = new NonStaticTypeExpressionContext("ParameterType", false);
-		
-		/// <summary>Context expects a fully qualified type name.</summary>
-		/// <example>using Alias = *expr*;</example>
-		public readonly static ExpressionContext FullyQualifiedType = new DefaultExpressionContext("FullyQualifiedType");
-		
-		/// <summary>Context expects is a property name in an object initializer.</summary>
-		/// <example>new *type* [(args)] { *expr* = ... }</example>
-		public readonly static ExpressionContext ObjectInitializer = new DefaultExpressionContext("ObjectInitializer");
+		#region VB specific contexts (public static fields) * MOVE TO ANOTHER CLASS *
+		/// <summary>The context expects a new parameter declaration</summary>
+		/// <example>Function Test(*expr*, *expr*, ...)</example>
+		public static readonly ExpressionContext Parameter = new DefaultExpressionContext("Parameter");
 		#endregion
 		
 		#region Default contexts (public static fields)
@@ -179,10 +124,23 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// <example>public event *expr*</example>
 		public readonly static ExpressionContext DelegateType = new ClassTypeExpressionContext(ClassType.Delegate);
 		
+		/// <summary>The context expects a new identifier</summary>
+		/// <example>class *expr* {}; string *expr*;</example>
+		public readonly static ExpressionContext IdentifierExpected = new DefaultExpressionContext("IdentifierExpected");
+		
+		/// <summary>The context is outside of any type declaration, expecting a global-level keyword.</summary>
+		public readonly static ExpressionContext Global = new DefaultExpressionContext("Global");
+		
+		/// <summary>The context is the body of a type declaration.</summary>
+		public readonly static ExpressionContext TypeDeclaration = new ExpressionContext.NonStaticTypeExpressionContext("TypeDeclaration", true);
+		
+		/// <summary>The context is the body of a method.</summary>
+		/// <example>void Main () { *expr* }</example>
+		public readonly static ExpressionContext MethodBody = new ExpressionContext.DefaultExpressionContext("MethodBody");
 		#endregion
 		
 		#region DefaultExpressionContext
-		sealed class DefaultExpressionContext : ExpressionContext
+		internal sealed class DefaultExpressionContext : ExpressionContext
 		{
 			string name;
 			
@@ -191,7 +149,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				this.name = name;
 			}
 			
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
 				return true;
 			}
@@ -213,9 +171,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 				this.allowImportClasses = allowImportClasses;
 			}
 			
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
-				if (o is string)
+				if (!(o is IEntity))
 					return true;
 				IClass c = o as IClass;
 				if (allowImportClasses && c != null) {
@@ -245,9 +203,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 				this.readOnly = readOnly;
 			}
 			
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
-				if (o is string)
+				if (!(o is IEntity))
 					return true;
 				IClass c = o as IClass;
 				if (c == null)
@@ -333,7 +291,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				this.b = b;
 			}
 			
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
 				if (opType == 0)
 					return a.ShowEntry(o) || b.ShowEntry(o);
@@ -377,7 +335,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#region EnumBaseTypeExpressionContext
 		sealed class EnumBaseTypeExpressionContext : ExpressionContext
 		{
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
 				IClass c = o as IClass;
 				if (c != null) {
@@ -414,9 +372,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#region AttributeExpressionContext
 		sealed class AttributeExpressionContext : ExpressionContext
 		{
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
-				if (o is string)
+				if (!(o is IEntity))
 					return true;
 				IClass c = o as IClass;
 				if (c != null && !c.IsAbstract) {
@@ -440,9 +398,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#region InheritableTypeExpressionContext
 		sealed class InheritableTypeExpressionContext : ExpressionContext
 		{
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
-				if (o is string) return true;
+				if (!(o is IEntity)) return true;
 				IClass c = o as IClass;
 				if (c != null) {
 					foreach (IClass innerClass in c.InnerClasses) {
@@ -473,9 +431,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 				this.expectedType = expectedType;
 			}
 			
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
-				if (o is string) return true;
+				if (!(o is IEntity)) return true;
 				IClass c = o as IClass;
 				if (c != null) {
 					foreach (IClass innerClass in c.InnerClasses) {
@@ -494,7 +452,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#endregion
 		
 		#region NonStaticTypeExpressionContext
-		sealed class NonStaticTypeExpressionContext : ExpressionContext
+		internal sealed class NonStaticTypeExpressionContext : ExpressionContext
 		{
 			string name;
 			bool allowVoid;
@@ -505,9 +463,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 				this.allowVoid = allowVoid;
 			}
 			
-			public override bool ShowEntry(object o)
+			public override bool ShowEntry(ICompletionEntry o)
 			{
-				if (o is string) return true;
+				if (!(o is IEntity)) return true;
 				IClass c = o as IClass;
 				if (c != null) {
 					if (!allowVoid) {

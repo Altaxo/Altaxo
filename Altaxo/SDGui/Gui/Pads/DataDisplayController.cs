@@ -27,217 +27,95 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.Pads
 {
-  /// <summary>
-  /// Controls the data display window pad that shows the data obtained from the data reader.
-  /// </summary>
-  public class DataDisplayController :
-    ICSharpCode.SharpDevelop.Gui.IPadContent, 
-    Altaxo.Main.Services.IDataDisplayService,
-    ICSharpCode.SharpDevelop.Gui.IClipboardHandler
-  {
-    System.Windows.Forms.TextBox _view;
-  
+	/// <summary>
+	/// Controls the data display window pad that shows the data obtained from the data reader.
+	/// </summary>
+	public class DataDisplayController :
+		ICSharpCode.SharpDevelop.Gui.IPadContent,
+		Altaxo.Main.Services.IDataDisplayService
+	{
+		System.Windows.Controls.TextBox _view;
+
+		public DataDisplayController()
+		{
+			_view = new System.Windows.Controls.TextBox();
+			_view.TextWrapping = System.Windows.TextWrapping.NoWrap;
+			_view.AcceptsReturn = true;
+			_view.AcceptsTab = true;
+			_view.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+			_view.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+			_view.FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
+
+			Current.SetDataDisplayService(this);
+		}
 
 
-    public DataDisplayController()
-    {
-      _view = new System.Windows.Forms.TextBox();
-      _view.Multiline = true;
-      _view.WordWrap=false;
-      _view.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      _view.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace,8);
-      _view.Dock = System.Windows.Forms.DockStyle.Fill;
-
-      Current.SetDataDisplayService(this);
-    }
+		#region IPadContent Members
 
 
-    #region IPadContent Members
+		public object Control
+		{
+			get
+			{
+				return this._view;
+			}
+		}
 
-    public string Title
-    {
-      get
-      {
-        return ResourceService.GetString("MainWindow.Windows.AltaxoDataDisplayWindowLabel");
-      }
-    }
+		public object InitiallyFocusedControl
+		{
+			get
+			{
+				return null;
+			}
+		}
 
-    public System.Windows.Forms.Control Control
-    {
-      get
-      {
-        return this._view;
-      }
-    }
+		#endregion
 
-    public void BringToFront()
-    {
-      _view.BringToFront();
-    }
 
-    public string Icon
-    {
-      get
-      {
-        return "Icons.16x16.OpenFolderBitmap";
-      }
-    }
+		#region IDisposable Members
 
-    public event System.EventHandler TitleChanged;
+		public void Dispose()
+		{
+			if (_view != null)
+			{
+				_view = null;
+			}
+		}
 
-    public event System.EventHandler IconChanged;
+		#endregion
 
-    string category;
-    public string Category 
-    {
-      get 
-      {
-        return category;
-      }
-      set
-      {
-        category = value;
-      }
-    }
-    string[] shortcut; // TODO: Inherit from AbstractPadContent
-    public string[] Shortcut 
-    {
-      get 
-      {
-        return shortcut;
-      }
-      set 
-      {
-        shortcut = value;
-      }
-    }
+		#region IDataDisplayService Members
 
-    /*
-    public void BringPadToFront()
-    {
-      if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) 
-      {
-        WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
-      }
-      WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
-    }
-    */
+		/// <summary>Writes a string to the output.</summary>
+		/// <param name="text">The text to write to the output.</param>
+		public void WriteOneLine(string text)
+		{
+			_view.Text = text;
+			WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
+		}
 
-    public void RedrawContent()
-    {
-    }
+		/// <summary>
+		/// Writes two lines to the window.
+		/// </summary>
+		/// <param name="line1">First line.</param>
+		/// <param name="line2">Second line.</param>
+		public void WriteTwoLines(string line1, string line2)
+		{
+			_view.Text = line1 + System.Environment.NewLine + line2;
+		}
 
-    #endregion
+		/// <summary>
+		/// Writes three lines to the output.
+		/// </summary>
+		/// <param name="line1">First line.</param>
+		/// <param name="line2">Second line.</param>
+		/// <param name="line3">Three line.</param>
+		public void WriteThreeLines(string line1, string line2, string line3)
+		{
+			_view.Text = line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3;
+		}
 
-    #region IDisposable Members
+		#endregion
 
-    public void Dispose()
-    {
-      if(_view!=null)
-      {
-        _view.Dispose();
-        _view = null;
-      }
-    }
-
-    #endregion
-
-    #region IDataDisplayService Members
-
-    /// <summary>Writes a string to the output.</summary>
-    /// <param name="text">The text to write to the output.</param>
-    public void WriteOneLine(string text)
-    {
-      _view.Text = text;
-      if(!_view.Visible || _view.Parent==null)
-      {
-        ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this.GetType().ToString());
-        // now focus back to the formerly active workbench window.
-        ww.SelectWindow();
-       // ww.ActiveViewContent.Control.Focus();
-
-      }
-    }
-
-    /// <summary>
-    /// Writes two lines to the window.
-    /// </summary>
-    /// <param name="line1">First line.</param>
-    /// <param name="line2">Second line.</param>
-    public void WriteTwoLines(string line1, string line2)
-    {
-      _view.Text = line1 + System.Environment.NewLine + line2;
-    }
-
-    /// <summary>
-    /// Writes three lines to the output.
-    /// </summary>
-    /// <param name="line1">First line.</param>
-    /// <param name="line2">Second line.</param>
-    /// <param name="line3">Three line.</param>
-    public void WriteThreeLines(string line1, string line2, string line3)
-    {
-      _view.Text = line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3;
-    }
-    #endregion
-
-    #region IClipboardHandler Members
-
-    public bool EnableCut
-    {
-      get { return _view.SelectionLength > 0; }
-    }
-
-    public bool EnableCopy
-    {
-      get { return _view.SelectionLength > 0; }
-    }
-
-    public bool EnablePaste
-    {
-      get { return true; }
-    }
-
-    public bool EnableDelete
-    {
-      get { return _view.SelectionLength > 0; }
-    }
-
-    public bool EnableSelectAll
-    {
-      get { return true; }
-    }
-
-    public void Cut()
-    {
-      _view.Cut();
-    }
-
-    public void Copy()
-    {
-      _view.Copy();
-    }
-
-    public void Paste()
-    {
-      _view.Paste();
-    }
-
-    public void Delete()
-    {
-      int start = _view.SelectionStart;
-      int len = _view.SelectionLength;
-      if (len > 0)
-        _view.Text = _view.Text.Substring(0, start) + _view.Text.Substring(start + len);
-
-    }
-
-    public void SelectAll()
-    {
-      _view.SelectAll();
-    }
-
-    #endregion
-  }
+	}
 }

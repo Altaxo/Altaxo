@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3685 $</version>
+//     <version>$Revision: 5187 $</version>
 // </file>
 
 using System;
@@ -22,66 +22,6 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
 {
-	sealed class TargetFramework
-	{
-		public readonly static TargetFramework Net20 = new TargetFramework("v2.0", ".NET Framework 2.0");
-		public readonly static TargetFramework Net30 = new TargetFramework("v3.0", ".NET Framework 3.0") { BasedOn = Net20 };
-		public readonly static TargetFramework Net35 = new TargetFramework("v3.5", ".NET Framework 3.5") { BasedOn = Net30 };
-		public readonly static TargetFramework CF = new TargetFramework("CF", null);
-		public readonly static TargetFramework CF20 = new TargetFramework("CF 2.0", "Compact Framework 2.0") { BasedOn = CF };
-		public readonly static TargetFramework CF35 = new TargetFramework("CF 3.5", "Compact Framework 3.5") { BasedOn = CF20 };
-		
-		public readonly static TargetFramework[] TargetFrameworks = {
-			Net35, Net30, Net20,
-			CF, CF35, CF20
-		};
-		
-		public const string DefaultTargetFrameworkName = "v3.5";
-		
-		public static TargetFramework GetByName(string name)
-		{
-			foreach (TargetFramework tf in TargetFrameworks) {
-				if (tf.Name == name)
-					return tf;
-			}
-			throw new ArgumentException("No target framework '" + name + "' exists");
-		}
-		
-		string name, displayName;
-		
-		public string Name {
-			get { return name; }
-		}
-		
-		public string DisplayName {
-			get { return displayName; }
-		}
-		
-		public TargetFramework BasedOn;
-		
-		public bool IsBasedOn(TargetFramework potentialBase)
-		{
-			TargetFramework tmp = this;
-			while (tmp != null) {
-				if (tmp == potentialBase)
-					return true;
-				tmp = tmp.BasedOn;
-			}
-			return false;
-		}
-		
-		public TargetFramework(string name, string displayName)
-		{
-			this.name = name;
-			this.displayName = displayName;
-		}
-		
-		public override string ToString()
-		{
-			return DisplayName;
-		}
-	}
-	
 	/// <summary>
 	/// This class defines and holds the new project templates.
 	/// </summary>
@@ -117,7 +57,6 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		string languagename;
 		string description;
 		string icon;
-		string wizardpath;
 		string subcategory;
 		TargetFramework[] supportedTargetFrameworks;
 		
@@ -150,12 +89,6 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		ProjectDescriptor projectDescriptor = null;
 		
 		#region Template Properties
-		public string WizardPath {
-			get {
-				return wizardpath;
-			}
-		}
-		
 		public string Originator {
 			get {
 				return originator;
@@ -254,10 +187,6 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			
 			XmlElement config = templateElement["TemplateConfiguration"];
 			
-			if (config["Wizard"] != null) {
-				wizardpath = config["Wizard"].InnerText;
-			}
-			
 			name         = config["Name"].InnerText;
 			category     = config["Category"].InnerText;
 			
@@ -320,7 +249,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 						string fileName = el.GetAttribute("filename");
 						return projectCreateInformation => {
 							string parsedFileName = StringParser.Parse(fileName, new string[,] { {"ProjectName", projectCreateInformation.ProjectName} });
-							string path = FileUtility.Combine(projectCreateInformation.ProjectBasePath, parsedFileName);
+							string path = Path.Combine(projectCreateInformation.ProjectBasePath, parsedFileName);
 							FileService.OpenFile(path);
 						};
 					} else {
@@ -371,15 +300,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 
 		public string CreateProject(ProjectCreateInformation projectCreateInformation)
 		{
-			if (wizardpath != null) {
-				Properties customizer = new Properties();
-				customizer.Set("ProjectCreateInformation", projectCreateInformation);
-				customizer.Set("ProjectTemplate", this);
-				WizardDialog wizard = new WizardDialog("Project Wizard", customizer, wizardpath);
-				if (wizard.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) != DialogResult.OK) {
-					return null;
-				}
-			}
+			LoggingService.Info("Creating project from template '" + this.Category + "/" + this.Subcategory + "/" + this.Name + "'");
 			if (solutionDescriptor != null) {
 				return solutionDescriptor.CreateSolution(projectCreateInformation, this.languagename);
 			} else if (projectDescriptor != null) {
@@ -394,9 +315,12 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 					string solutionLocation = projectCreateInformation.Solution.FileName;
 					if (createNewSolution) {
 						projectCreateInformation.Solution.AddFolder(project);
+						projectCreateInformation.Solution.FixSolutionConfiguration(new IProject[] {project});
 						projectCreateInformation.Solution.Save();
 						ProjectService.OnSolutionCreated(new SolutionEventArgs(projectCreateInformation.Solution));
 						projectCreateInformation.Solution.Dispose();
+					} else {
+						project.Dispose();
 					}
 					return solutionLocation;
 				} else {
@@ -419,7 +343,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		public static void UpdateTemplates()
 		{
 			projectTemplates = new List<ProjectTemplate>();
-			string dataTemplateDir = FileUtility.Combine(PropertyService.DataDirectory, "templates", "project");
+			string dataTemplateDir = Path.Combine(PropertyService.DataDirectory, "templates", "project");
 			List<string> files = FileUtility.SearchDirectory(dataTemplateDir, "*.xpt");
 			foreach (string templateDirectory in AddInTree.BuildItems<string>(TemplatePath, null, false)) {
 				files.AddRange(FileUtility.SearchDirectory(templateDirectory, "*.xpt"));
@@ -432,7 +356,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				} catch (TemplateLoadException e) {
 					MessageService.ShowError(ResourceService.GetString("Internal.Templates.ProjectTemplate.LoadingError") + "\n(" + fileName + ")\n" + e.ToString());
 				} catch (Exception e) {
-					MessageService.ShowError(e, ResourceService.GetString("Internal.Templates.ProjectTemplate.LoadingError") + "\n(" + fileName + ")\n");
+					MessageService.ShowException(e, ResourceService.GetString("Internal.Templates.ProjectTemplate.LoadingError") + "\n(" + fileName + ")\n");
 				}
 			}
 			projectTemplates.Sort();

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3628 $</version>
+//     <version>$Revision: 5679 $</version>
 // </file>
 
 using System;
@@ -70,26 +70,24 @@ namespace ICSharpCode.SharpDevelop
 			protected set { isUntitled = value; }
 		}
 		
-		string fileName;
+		FileName fileName;
 		
 		/// <summary>
 		/// Gets the name of the file.
 		/// </summary>
-		public string FileName {
+		public FileName FileName {
 			get { return fileName; }
 			set {
-				if (fileName == value) return;
-				
-				value = FileUtility.NormalizePath(value);
-				
 				if (fileName != value) {
 					ChangeFileName(value);
 				}
 			}
 		}
 		
-		protected virtual void ChangeFileName(string newValue)
+		protected virtual void ChangeFileName(FileName newValue)
 		{
+			WorkbenchSingleton.AssertMainThread();
+			
 			fileName = newValue;
 			
 			if (FileNameChanged != null) {
@@ -102,12 +100,14 @@ namespace ICSharpCode.SharpDevelop
 		/// </summary>
 		public event EventHandler FileNameChanged;
 		
+		public abstract event EventHandler FileClosed;
+		
 		/// <summary>
 		/// Use this method to save the file to disk using a new name.
 		/// </summary>
 		public void SaveToDisk(string newFileName)
 		{
-			this.FileName = newFileName;
+			this.FileName = new FileName(newFileName);
 			this.IsUntitled = false;
 			SaveToDisk();
 		}
@@ -285,7 +285,9 @@ namespace ICSharpCode.SharpDevelop
 				Properties memento = GetMemento(newView);
 				using (Stream sourceStream = OpenRead()) {
 					currentView = newView;
-					fileData = null;
+					// don't reset fileData if the file is untitled, because OpenRead() wouldn't be able to read it otherwise
+					if (this.IsUntitled == false)
+						fileData = null;
 					newView.Load(this, sourceStream);
 				}
 				RestoreMemento(newView, memento);
@@ -345,13 +347,13 @@ namespace ICSharpCode.SharpDevelop
 		List<IViewContent> registeredViews = new List<IViewContent>();
 		FileChangeWatcher fileChangeWatcher;
 		
-		protected override void ChangeFileName(string newValue)
+		protected override void ChangeFileName(FileName newValue)
 		{
 			FileService.OpenedFileFileNameChange(this, this.FileName, newValue);
 			base.ChangeFileName(newValue);
 		}
 		
-		internal FileServiceOpenedFile(string fileName)
+		internal FileServiceOpenedFile(FileName fileName)
 		{
 			this.FileName = fileName;
 			IsUntitled = false;
@@ -434,6 +436,8 @@ namespace ICSharpCode.SharpDevelop
 			if (registeredViews.Count == 0) {
 				FileService.OpenedFileClosed(this);
 				
+				FileClosed.RaiseEvent(this, EventArgs.Empty);
+				
 				if (fileChangeWatcher != null) {
 					fileChangeWatcher.Dispose();
 					fileChangeWatcher = null;
@@ -469,5 +473,7 @@ namespace ICSharpCode.SharpDevelop
 					fileChangeWatcher.Enabled = true;
 			}
 		}
+		
+		public override event EventHandler FileClosed;
 	}
 }

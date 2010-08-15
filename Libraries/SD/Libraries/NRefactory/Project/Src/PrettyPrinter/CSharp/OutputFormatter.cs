@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 4483 $</version>
 // </file>
 
 using System.Collections;
@@ -40,7 +40,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		Stack braceStack = new Stack();
 		
-		public void BeginBrace(BraceStyle style)
+		public void BeginBrace(BraceStyle style, bool indent)
 		{
 			switch (style) {
 				case BraceStyle.EndOfLine:
@@ -49,25 +49,35 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					}
 					PrintToken(Tokens.OpenCurlyBrace);
 					NewLine();
-					++IndentationLevel;
+					if (indent)
+						++IndentationLevel;
+					break;
+				case BraceStyle.EndOfLineWithoutSpace:
+					PrintToken(Tokens.OpenCurlyBrace);
+					NewLine();
+					if (indent)
+						++IndentationLevel;
 					break;
 				case BraceStyle.NextLine:
 					NewLine();
 					Indent();
 					PrintToken(Tokens.OpenCurlyBrace);
 					NewLine();
-					++IndentationLevel;
+					if (indent)
+						++IndentationLevel;
 					break;
 				case BraceStyle.NextLineShifted:
 					NewLine();
-					++IndentationLevel;
+					if (indent)
+						++IndentationLevel;
 					Indent();
 					PrintToken(Tokens.OpenCurlyBrace);
 					NewLine();
 					break;
 				case BraceStyle.NextLineShifted2:
 					NewLine();
-					++IndentationLevel;
+					if (indent)
+						++IndentationLevel;
 					Indent();
 					PrintToken(Tokens.OpenCurlyBrace);
 					NewLine();
@@ -77,28 +87,40 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			braceStack.Push(style);
 		}
 		
-		public void EndBrace()
+		public void EndBrace (bool indent)
+		{
+			EndBrace (indent, true);
+		}
+		
+		public void EndBrace (bool indent, bool emitNewLine)
 		{
 			BraceStyle style = (BraceStyle)braceStack.Pop();
 			switch (style) {
 				case BraceStyle.EndOfLine:
+				case BraceStyle.EndOfLineWithoutSpace:
 				case BraceStyle.NextLine:
-					--IndentationLevel;
+					if (indent)
+						--IndentationLevel;
 					Indent();
 					PrintToken(Tokens.CloseCurlyBrace);
-					NewLine();
+					if (emitNewLine)
+						NewLine();
 					break;
 				case BraceStyle.NextLineShifted:
 					Indent();
 					PrintToken(Tokens.CloseCurlyBrace);
-					NewLine();
-					--IndentationLevel;
+					if (emitNewLine)
+						NewLine();
+					if (indent)
+						--IndentationLevel;
 					break;
 				case BraceStyle.NextLineShifted2:
-					--IndentationLevel;
+					if (indent)
+						--IndentationLevel;
 					Indent();
 					PrintToken(Tokens.CloseCurlyBrace);
-					NewLine();
+					if (emitNewLine)
+						NewLine();
 					--IndentationLevel;
 					break;
 			}
@@ -115,17 +137,25 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		{
 			switch (comment.CommentType) {
 				case CommentType.Block:
+					bool wasIndented = isIndented;
+					if (!wasIndented) {
+						Indent ();
+					}
 					if (forceWriteInPreviousBlock) {
 						WriteInPreviousLine("/*" + comment.CommentText + "*/", forceWriteInPreviousBlock);
 					} else {
 						PrintSpecialText("/*" + comment.CommentText + "*/");
+					}
+					if (wasIndented) {
+						Indent ();
 					}
 					break;
 				case CommentType.Documentation:
 					WriteLineInPreviousLine("///" + comment.CommentText, forceWriteInPreviousBlock);
 					break;
 				default:
-					WriteLineInPreviousLine("//" + comment.CommentText, forceWriteInPreviousBlock);
+					// 3 because startposition is start of the text (after the tag)
+					WriteLineInPreviousLine("//" + comment.CommentText, forceWriteInPreviousBlock, comment.StartPosition.Column != 3);
 					break;
 			}
 		}

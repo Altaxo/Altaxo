@@ -2,12 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3630 $</version>
+//     <version>$Revision: 5845 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
+using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
@@ -76,15 +78,33 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return this.Clone();
 		}
 		
-		public virtual ArrayList GetCompletionData(IProjectContent projectContent)
+		bool showAllNamespacesContentsInCC = false;
+		/// <summary>
+		/// Gets code completion data for this ResolveResult.
+		/// </summary>
+		/// <param name="projectContent"></param>
+		/// <param name="showItemsFromAllNamespaces">If true, items (e.g. extension methods) from all namespaces are returned, regardless current imports. Default is false.</param>
+		/// <returns></returns>
+		public List<ICompletionEntry> GetCompletionData(IProjectContent projectContent, bool showItemsFromAllNamespaces)
+		{
+			// Little hack - store value in a property to pass it to GetCompletionData(LanguageProperties language, bool showStatic)
+			// Otherwise we would have to add it as a parameter to GetCompletionData(IProjectContent projectContent),
+			// which would change signature in classes overriding this method as well.
+			this.showAllNamespacesContentsInCC = showItemsFromAllNamespaces;
+			var result = GetCompletionData(projectContent);
+			this.showAllNamespacesContentsInCC = false;
+			return result;
+		}
+		
+		public virtual List<ICompletionEntry> GetCompletionData(IProjectContent projectContent)
 		{
 			return GetCompletionData(projectContent.Language, false);
 		}
 		
-		protected ArrayList GetCompletionData(LanguageProperties language, bool showStatic)
+		protected List<ICompletionEntry> GetCompletionData(LanguageProperties language, bool showStatic)
 		{
 			if (resolvedType == null) return null;
-			ArrayList res = new ArrayList();
+			List<ICompletionEntry> res = new List<ICompletionEntry>();
 			
 			foreach (IMember m in MemberLookupHelper.GetAccessibleMembers(resolvedType, callingClass, language)) {
 				if (language.ShowMember(m, showStatic))
@@ -92,7 +112,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			
 			if (!showStatic && callingClass != null) {
-				AddExtensions(language, res, callingClass, resolvedType);
+				AddExtensions(language, res.Add, callingClass, resolvedType, this.showAllNamespacesContentsInCC);
 			}
 			
 			return res;
@@ -101,12 +121,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// <summary>
 		/// Adds extension methods to <paramref name="res"/>.
 		/// </summary>
-		public static void AddExtensions(LanguageProperties language, ArrayList res, IClass callingClass, IReturnType resolvedType)
+		public static void AddExtensions(LanguageProperties language, Action<IMethodOrProperty> methodFound, IClass callingClass, IReturnType resolvedType, bool searchInAllNamespaces = false)
 		{
 			if (language == null)
 				throw new ArgumentNullException("language");
-			if (res == null)
-				throw new ArgumentNullException("res");
+			if (methodFound == null)
+				throw new ArgumentNullException("methodFound");
 			if (resolvedType == null)
 				throw new ArgumentNullException("resolvedType");
 			if (callingClass == null)
@@ -115,12 +135,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			// convert resolvedType into direct type to speed up the IsApplicable lookups
 			resolvedType = resolvedType.GetDirectReturnType();
 			
-			foreach (IMethodOrProperty mp in CtrlSpaceResolveHelper.FindAllExtensions(language, callingClass)) {
-				TryAddExtension(language, res, mp, resolvedType);
+			foreach (IMethodOrProperty mp in CtrlSpaceResolveHelper.FindAllExtensions(language, callingClass, searchInAllNamespaces)) {
+				TryAddExtension(language, methodFound, mp, resolvedType);
 			}
 		}
 		
-		static void TryAddExtension(LanguageProperties language, ArrayList res, IMethodOrProperty ext, IReturnType resolvedType)
+		static void TryAddExtension(LanguageProperties language, Action<IMethodOrProperty> methodFound, IMethodOrProperty ext, IReturnType resolvedType)
 		{
 			// now add the extension method if it fits the type
 			if (MemberLookupHelper.IsApplicable(resolvedType, ext.Parameters[0].ReturnType, ext as IMethod)) {
@@ -139,7 +159,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					}
 				}
-				res.Add(ext);
+				methodFound(ext);
 			}
 		}
 		
@@ -214,13 +234,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return primaryResult.GetDefinitionPosition();
 		}
 		
-		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		public override List<ICompletionEntry> GetCompletionData(IProjectContent projectContent)
 		{
-			ArrayList result = primaryResult.GetCompletionData(projectContent);
-			ArrayList result2 = secondaryResult.GetCompletionData(projectContent);
+			List<ICompletionEntry> result = primaryResult.GetCompletionData(projectContent);
+			List<ICompletionEntry> result2 = secondaryResult.GetCompletionData(projectContent);
 			if (result == null)  return result2;
 			if (result2 == null) return result;
-			foreach (object o in result2) {
+			foreach (ICompletionEntry o in result2) {
 				if (!result.Contains(o))
 					result.Add(o);
 			}
@@ -365,7 +385,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		public override List<ICompletionEntry> GetCompletionData(IProjectContent projectContent)
 		{
 			return projectContent.GetNamespaceContents(name);
 		}
@@ -390,7 +410,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 		}
 		
-		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		public override List<ICompletionEntry> GetCompletionData(IProjectContent projectContent)
 		{
 			return null;
 		}
@@ -450,9 +470,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		public override List<ICompletionEntry> GetCompletionData(IProjectContent projectContent)
 		{
-			ArrayList ar = GetCompletionData(projectContent.Language, true);
+			List<ICompletionEntry> ar = GetCompletionData(projectContent.Language, true);
 			if (resolvedClass != null) {
 				ar.AddRange(resolvedClass.GetCompoundClass().GetAccessibleTypes(CallingClass));
 			}
@@ -478,7 +498,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public override bool IsReferenceTo(IEntity entity)
 		{
 			IClass c = entity as IClass;
-			return c != null
+			return c != null && resolvedClass != null
 				&& resolvedClass.FullyQualifiedName == c.FullyQualifiedName
 				&& resolvedClass.TypeParameters.Count == c.TypeParameters.Count;
 		}
@@ -487,7 +507,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	
 	#region MemberResolveResult
 	/// <summary>
-	/// The TypeResolveResult is used when an expression was a member
+	/// The MemberResolveResult is used when an expression was a member
 	/// (field, property, event or method call).
 	/// </summary>
 	/// <example>
@@ -740,6 +760,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		/// <summary>
 		/// Gets the class that contains the method.
+		/// This property cannot be null.
 		/// </summary>
 		public IReturnType ContainingType {
 			get { return containingType; }
@@ -797,9 +818,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 		}
 		
-		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		public override List<ICompletionEntry> GetCompletionData(IProjectContent projectContent)
 		{
-			ArrayList res = base.GetCompletionData(projectContent);
+			List<ICompletionEntry> res = base.GetCompletionData(projectContent);
 			foreach (IMethod m in this.ResolvedType.GetMethods()) {
 				if (m.IsConstructor && !m.IsStatic && m.IsAccessible(this.CallingClass, true))
 					res.Add(m);
@@ -826,10 +847,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 		}
 		
-		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		public override List<ICompletionEntry> GetCompletionData(IProjectContent projectContent)
 		{
 			if (this.ResolvedType == null) return null;
-			ArrayList res = new ArrayList();
+			List<ICompletionEntry> res = new List<ICompletionEntry>();
 			
 			foreach (IMember m in MemberLookupHelper.GetAccessibleMembers(this.ResolvedType, this.CallingClass, projectContent.Language, true)) {
 				if (projectContent.Language.ShowMember(m, false))
@@ -837,7 +858,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			
 			if (this.CallingClass != null) {
-				AddExtensions(projectContent.Language, res, this.CallingClass, this.ResolvedType);
+				AddExtensions(projectContent.Language, res.Add, this.CallingClass, this.ResolvedType);
 			}
 			
 			return res;
@@ -936,6 +957,53 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public override ResolveResult Clone()
 		{
 			return new UnknownIdentifierResolveResult(this.CallingClass, this.CallingMember, this.Identifier);
+		}
+	}
+	#endregion
+	
+	#region UnknownMethodResolveResult
+	/// <summary>
+	/// Used for calls to unknown methods.
+	/// </summary>
+	public class UnknownMethodResolveResult : ResolveResult
+	{
+		string callName;
+		bool isStaticContext;
+		List<IReturnType> arguments;
+		IReturnType target;
+		
+		public UnknownMethodResolveResult(IClass callingClass, IMember callingMember, IReturnType target, string callName, bool isStaticContext, List<IReturnType> arguments)
+			: base(callingClass, callingMember, null)
+		{
+			this.target = target == null ? (callingClass == null ? null : callingClass.DefaultReturnType) : target;
+			this.callName = callName;
+			this.arguments = arguments;
+			this.isStaticContext = isStaticContext;
+		}
+		
+		public bool IsStaticContext {
+			get { return isStaticContext; }
+		}
+		
+		public string CallName {
+			get { return callName; }
+		}
+		
+		public IReturnType Target {
+			get { return target; }
+		}
+		
+		public List<IReturnType> Arguments {
+			get { return arguments; }
+		}
+		
+		public override bool IsValid {
+			get { return false; }
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new UnknownMethodResolveResult(this.CallingClass, this.CallingMember, this.target, this.callName, this.isStaticContext, this.arguments);
 		}
 	}
 	#endregion

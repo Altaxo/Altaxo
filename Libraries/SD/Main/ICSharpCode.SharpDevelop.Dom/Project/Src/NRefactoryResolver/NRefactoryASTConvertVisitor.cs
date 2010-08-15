@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3793 $</version>
+//     <version>$Revision: 6292 $</version>
 // </file>
 
 // created on 04.08.2003 at 17:49
@@ -10,8 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-
+using System.Linq;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Visitors;
+using ICSharpCode.SharpDevelop.Dom.VBNet;
 using AST = ICSharpCode.NRefactory.Ast;
 using RefParser = ICSharpCode.NRefactory;
 
@@ -30,9 +32,12 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 		}
 		
-		public NRefactoryASTConvertVisitor(IProjectContent projectContent)
+		public NRefactoryASTConvertVisitor(IProjectContent projectContent, SupportedLanguage language)
 		{
-			cu = new DefaultCompilationUnit(projectContent);
+			if (language == SupportedLanguage.VBNet)
+				cu = new VBNetCompilationUnit(projectContent);
+			else
+				cu = new DefaultCompilationUnit(projectContent);
 		}
 		
 		DefaultClass GetCurrentClass()
@@ -221,6 +226,35 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return data;
 		}
 		
+		public override object VisitOptionDeclaration(ICSharpCode.NRefactory.Ast.OptionDeclaration optionDeclaration, object data)
+		{
+			if (cu is VBNetCompilationUnit) {
+				VBNetCompilationUnit provider = cu as VBNetCompilationUnit;
+				
+				switch (optionDeclaration.OptionType) {
+					case ICSharpCode.NRefactory.Ast.OptionType.Explicit:
+						provider.OptionExplicit = optionDeclaration.OptionValue;
+						break;
+					case ICSharpCode.NRefactory.Ast.OptionType.Strict:
+						provider.OptionStrict = optionDeclaration.OptionValue;
+						break;
+					case ICSharpCode.NRefactory.Ast.OptionType.CompareBinary:
+						provider.OptionCompare = CompareKind.Binary;
+						break;
+					case ICSharpCode.NRefactory.Ast.OptionType.CompareText:
+						provider.OptionCompare = CompareKind.Text;
+						break;
+					case ICSharpCode.NRefactory.Ast.OptionType.Infer:
+						provider.OptionInfer = optionDeclaration.OptionValue;
+						break;
+				}
+				
+				return null;
+			}
+			
+			return base.VisitOptionDeclaration(optionDeclaration, data);
+		}
+		
 		void ConvertAttributes(AST.AttributedNode from, AbstractEntity to)
 		{
 			if (from.Attributes.Count == 0) {
@@ -368,14 +402,18 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			DomRegion bodyRegion = GetRegion(typeDeclaration.BodyStartLocation, typeDeclaration.EndLocation);
 			
 			DefaultClass c = new DefaultClass(cu, TranslateClassType(typeDeclaration.Type), ConvertTypeModifier(typeDeclaration.Modifier), region, GetCurrentClass());
+			if (c.IsStatic) {
+				// static classes are also abstract and sealed at the same time
+				c.Modifiers |= ModifierEnum.Abstract | ModifierEnum.Sealed;
+			}
 			c.BodyRegion = bodyRegion;
 			ConvertAttributes(typeDeclaration, c);
 			c.Documentation = GetDocumentation(region.BeginLine, typeDeclaration.Attributes);
 			
-			if (currentClass.Count > 0) {
-				DefaultClass cur = GetCurrentClass();
-				cur.InnerClasses.Add(c);
-				c.FullyQualifiedName = cur.FullyQualifiedName + '.' + typeDeclaration.Name;
+			DefaultClass outerClass = GetCurrentClass();
+			if (outerClass != null) {
+				outerClass.InnerClasses.Add(c);
+				c.FullyQualifiedName = outerClass.FullyQualifiedName + '.' + typeDeclaration.Name;
 			} else {
 				c.FullyQualifiedName = PrependCurrentNamespace(typeDeclaration.Name);
 				cu.Classes.Add(c);
@@ -383,7 +421,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			c.UsingScope = currentNamespace;
 			currentClass.Push(c);
 			
-			ConvertTemplates(typeDeclaration.Templates, c); // resolve constrains in context of the class
+			ConvertTemplates(outerClass, typeDeclaration.Templates, c); // resolve constrains in context of the class
 			// templates must be converted before base types because base types may refer to generic types
 			
 			if (c.ClassType != ClassType.Enum && typeDeclaration.BaseTypes != null) {
@@ -416,14 +454,33 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return ret;
 		}
 		
-		void ConvertTemplates(IList<AST.TemplateDefinition> templateList, DefaultClass c)
+		void ConvertTemplates(DefaultClass outerClass, IList<AST.TemplateDefinition> templateList, DefaultClass c)
 		{
-			int index = 0;
-			if (templateList.Count == 0) {
+			int outerClassTypeParameterCount = outerClass != null ? outerClass.TypeParameters.Count : 0;
+			if (templateList.Count == 0 && outerClassTypeParameterCount == 0) {
 				c.TypeParameters = DefaultTypeParameter.EmptyTypeParameterList;
 			} else {
+				Debug.Assert(c.TypeParameters.Count == 0);
+				
+				int index = 0;
+				if (outerClassTypeParameterCount > 0) {
+					foreach (DefaultTypeParameter outerTypeParamter in outerClass.TypeParameters) {
+						DefaultTypeParameter p = new DefaultTypeParameter(c, outerTypeParamter.Name, index++);
+						p.HasConstructableConstraint = outerTypeParamter.HasConstructableConstraint;
+						p.HasReferenceTypeConstraint = outerTypeParamter.HasReferenceTypeConstraint;
+						p.HasValueTypeConstraint = outerTypeParamter.HasValueTypeConstraint;
+						p.Attributes.AddRange(outerTypeParamter.Attributes);
+						p.Constraints.AddRange(outerTypeParamter.Constraints);
+						c.TypeParameters.Add(p);
+					}
+				}
+				
 				foreach (AST.TemplateDefinition template in templateList) {
-					c.TypeParameters.Add(ConvertConstraints(template, new DefaultTypeParameter(c, template.Name, index++)));
+					c.TypeParameters.Add(new DefaultTypeParameter(c, template.Name, index++));
+				}
+				// converting the constraints requires that the type parameters are already present
+				for (int i = 0; i < templateList.Count; i++) {
+					ConvertConstraints(templateList[i], (DefaultTypeParameter)c.TypeParameters[i + outerClassTypeParameterCount]);
 				}
 			}
 		}
@@ -434,13 +491,18 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (templateList.Count == 0) {
 				m.TypeParameters = DefaultTypeParameter.EmptyTypeParameterList;
 			} else {
+				Debug.Assert(m.TypeParameters.Count == 0);
 				foreach (AST.TemplateDefinition template in templateList) {
-					m.TypeParameters.Add(ConvertConstraints(template, new DefaultTypeParameter(m, template.Name, index++)));
+					m.TypeParameters.Add(new DefaultTypeParameter(m, template.Name, index++));
+				}
+				// converting the constraints requires that the type parameters are already present
+				for (int i = 0; i < templateList.Count; i++) {
+					ConvertConstraints(templateList[i], (DefaultTypeParameter)m.TypeParameters[i]);
 				}
 			}
 		}
 		
-		DefaultTypeParameter ConvertConstraints(AST.TemplateDefinition template, DefaultTypeParameter typeParameter)
+		void ConvertConstraints(AST.TemplateDefinition template, DefaultTypeParameter typeParameter)
 		{
 			foreach (AST.TypeReference typeRef in template.Bases) {
 				if (typeRef == AST.TypeReference.NewConstraint) {
@@ -450,13 +512,12 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				} else if (typeRef == AST.TypeReference.StructConstraint) {
 					typeParameter.HasValueTypeConstraint = true;
 				} else {
-					IReturnType rt = CreateReturnType(typeRef);
+					IReturnType rt = CreateReturnType(typeRef, typeParameter.Method, TypeVisitor.ReturnTypeOptions.None);
 					if (rt != null) {
 						typeParameter.Constraints.Add(rt);
 					}
 				}
 			}
-			return typeParameter;
 		}
 		
 		public override object VisitDelegateDeclaration(AST.DelegateDeclaration delegateDeclaration, object data)
@@ -473,17 +534,17 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		void CreateDelegate(DefaultClass c, string name, AST.TypeReference returnType, IList<AST.TemplateDefinition> templates, IList<AST.ParameterDeclarationExpression> parameters)
 		{
 			c.BaseTypes.Add(c.ProjectContent.SystemTypes.MulticastDelegate);
-			if (currentClass.Count > 0) {
-				DefaultClass cur = GetCurrentClass();
-				cur.InnerClasses.Add(c);
-				c.FullyQualifiedName = cur.FullyQualifiedName + '.' + name;
+			DefaultClass outerClass = GetCurrentClass();
+			if (outerClass != null) {
+				outerClass.InnerClasses.Add(c);
+				c.FullyQualifiedName = outerClass.FullyQualifiedName + '.' + name;
 			} else {
 				c.FullyQualifiedName = PrependCurrentNamespace(name);
 				cu.Classes.Add(c);
 			}
 			c.UsingScope = currentNamespace;
 			currentClass.Push(c); // necessary for CreateReturnType
-			ConvertTemplates(templates, c);
+			ConvertTemplates(outerClass, templates, c);
 			
 			List<IParameter> p = new List<IParameter>();
 			if (parameters != null) {
@@ -521,11 +582,12 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			DefaultClass currentClass = GetCurrentClass();
 			
 			DefaultMethod method = new DefaultMethod(methodDeclaration.Name, null, ConvertModifier(methodDeclaration.Modifier), region, bodyRegion, currentClass);
-			method.IsExtensionMethod = methodDeclaration.IsExtensionMethod;
 			method.Documentation = GetDocumentation(region.BeginLine, methodDeclaration.Attributes);
 			ConvertTemplates(methodDeclaration.Templates, method);
 			method.ReturnType = CreateReturnType(methodDeclaration.TypeReference, method, TypeVisitor.ReturnTypeOptions.None);
 			ConvertAttributes(methodDeclaration, method);
+			method.IsExtensionMethod = methodDeclaration.IsExtensionMethod
+				|| method.Attributes.Any(att => att.AttributeType != null && att.AttributeType.FullyQualifiedName == "System.Runtime.CompilerServices.ExtensionAttribute");
 			if (methodDeclaration.Parameters.Count > 0) {
 				foreach (AST.ParameterDeclarationExpression par in methodDeclaration.Parameters) {
 					method.Parameters.Add(CreateParameter(par, method));
@@ -545,6 +607,8 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			} else {
 				method.HandlesClauses = EmptyList<string>.Instance;
 			}
+
+			AddInterfaceImplementations(method, methodDeclaration);
 			
 			currentClass.Methods.Add(method);
 			return null;
@@ -584,6 +648,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					method.Parameters.Add(CreateParameter(par, method));
 				}
 			}
+			AddInterfaceImplementations(method, operatorDeclaration);
 			c.Methods.Add(method);
 			return null;
 		}
@@ -602,6 +667,10 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					constructor.Parameters.Add(CreateParameter(par));
 				}
 			}
+			
+			if (constructor.Modifiers.HasFlag(ModifierEnum.Static))
+				constructor.Modifiers = ConvertModifier(constructorDeclaration.Modifier, ModifierEnum.None);
+
 			c.Methods.Add(constructor);
 			return null;
 		}
@@ -679,36 +748,39 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 			property.Documentation = GetDocumentation(region.BeginLine, propertyDeclaration.Attributes);
 			ConvertAttributes(propertyDeclaration, property);
+			
+			property.IsIndexer = propertyDeclaration.IsIndexer;
+			
+			if (propertyDeclaration.Parameters != null) {
+				foreach (AST.ParameterDeclarationExpression par in propertyDeclaration.Parameters) {
+					property.Parameters.Add(CreateParameter(par));
+				}
+			}
+			// If an IndexerNameAttribute is specified, use the specified name
+			// for the indexer instead of the default name.
+			IAttribute indexerNameAttribute = property.Attributes.LastOrDefault(this.IsIndexerNameAttribute);
+			if (indexerNameAttribute != null && indexerNameAttribute.PositionalArguments.Count > 0) {
+				string name = indexerNameAttribute.PositionalArguments[0] as string;
+				if (!String.IsNullOrEmpty(name)) {
+					property.FullyQualifiedName = String.Concat(property.DeclaringType.FullyQualifiedName, ".", name);
+				}
+			}
+			
+			AddInterfaceImplementations(property, propertyDeclaration);
 			c.Properties.Add(property);
 			return null;
 		}
 		
-		public override object VisitIndexerDeclaration(AST.IndexerDeclaration indexerDeclaration, object data)
+		bool IsIndexerNameAttribute(IAttribute att)
 		{
-			DomRegion region     = GetRegion(indexerDeclaration.StartLocation, indexerDeclaration.EndLocation);
-			DomRegion bodyRegion = GetRegion(indexerDeclaration.BodyStart,     indexerDeclaration.BodyEnd);
-			DefaultProperty i = new DefaultProperty("Indexer", CreateReturnType(indexerDeclaration.TypeReference), ConvertModifier(indexerDeclaration.Modifier), region, bodyRegion, GetCurrentClass());
-			i.IsIndexer = true;
-			if (indexerDeclaration.HasGetRegion) {
-				i.GetterRegion = GetRegion(indexerDeclaration.GetRegion.StartLocation, indexerDeclaration.GetRegion.EndLocation);
-				i.CanGet = true;
-				i.GetterModifiers = ConvertModifier(indexerDeclaration.GetRegion.Modifier, ModifierEnum.None);
+			if (att == null || att.AttributeType == null)
+				return false;
+			string indexerNameAttributeFullName = typeof(System.Runtime.CompilerServices.IndexerNameAttribute).FullName;
+			IClass indexerNameAttributeClass = this.Cu.ProjectContent.GetClass(indexerNameAttributeFullName, 0, LanguageProperties.CSharp, GetClassOptions.Default | GetClassOptions.ExactMatch);
+			if (indexerNameAttributeClass == null) {
+				return String.Equals(att.AttributeType.FullyQualifiedName, indexerNameAttributeFullName, StringComparison.Ordinal);
 			}
-			if (indexerDeclaration.HasSetRegion) {
-				i.SetterRegion = GetRegion(indexerDeclaration.SetRegion.StartLocation, indexerDeclaration.SetRegion.EndLocation);
-				i.CanSet = true;
-				i.SetterModifiers = ConvertModifier(indexerDeclaration.SetRegion.Modifier, ModifierEnum.None);
-			}
-			i.Documentation = GetDocumentation(region.BeginLine, indexerDeclaration.Attributes);
-			ConvertAttributes(indexerDeclaration, i);
-			if (indexerDeclaration.Parameters != null) {
-				foreach (AST.ParameterDeclarationExpression par in indexerDeclaration.Parameters) {
-					i.Parameters.Add(CreateParameter(par));
-				}
-			}
-			DefaultClass c = GetCurrentClass();
-			c.Properties.Add(i);
-			return null;
+			return att.AttributeType.Equals(indexerNameAttributeClass.DefaultReturnType);
 		}
 		
 		public override object VisitEventDeclaration(AST.EventDeclaration eventDeclaration, object data)
@@ -733,6 +805,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 			DefaultEvent e = new DefaultEvent(eventDeclaration.Name, type, ConvertModifier(eventDeclaration.Modifier), region, bodyRegion, c);
 			ConvertAttributes(eventDeclaration, e);
+			AddInterfaceImplementations(e, eventDeclaration);
 			c.Events.Add(e);
 			
 			e.Documentation = GetDocumentation(region.BeginLine, eventDeclaration.Attributes);
@@ -751,6 +824,17 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				};
 			}
 			return null;
+		}
+
+		void AddInterfaceImplementations(AbstractMember member, AST.MemberNode memberNode)
+		{
+			member.InterfaceImplementations.AddRange(
+				memberNode.InterfaceImplementations
+				.Select(x => new ExplicitInterfaceImplementation(CreateReturnType(x.InterfaceType), x.MemberName))
+			);
+			if (!IsVisualBasic && member.InterfaceImplementations.Any()) {
+				member.Modifiers = ConvertModifier(memberNode.Modifier, ModifierEnum.None);
+			}
 		}
 		
 		IReturnType CreateReturnType(AST.TypeReference reference, IMethod method, TypeVisitor.ReturnTypeOptions options)

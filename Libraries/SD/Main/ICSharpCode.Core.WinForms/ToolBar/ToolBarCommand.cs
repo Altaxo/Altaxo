@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3763 $</version>
+//     <version>$Revision: 4918 $</version>
 // </file>
 
 using System;
@@ -45,7 +45,7 @@ namespace ICSharpCode.Core.WinForms
 			}
 			if (menuCommand != null) {
 				menuCommand.Owner = caller;
-				LoggingService.Info("Run command " + menuCommand.GetType().FullName);
+				AnalyticsMonitorService.TrackFeature(menuCommand.GetType().FullName, "Toolbar");
 				menuCommand.Run();
 			}
 		}
@@ -60,11 +60,11 @@ namespace ICSharpCode.Core.WinForms
 					isEnabled = ((IMenuCommand)menuCommand).IsEnabled;
 				}
 #if ModifiedForAltaxo
-				// set/reset the Checked state of a item (a ToolStripMenuItem can not (!) show the Checked state, one has to use a ToolStripButton
-				if (isEnabled && menuCommand != null && menuCommand is ICheckableMenuCommand)
-				{
-					base.Checked = ((ICheckableMenuCommand)menuCommand).IsChecked;
-				}
+        // set/reset the Checked state of a item (a ToolStripMenuItem can not (!) show the Checked state, one has to use a ToolStripButton
+        if (isEnabled && menuCommand != null && menuCommand is ICheckableMenuCommand)
+        {
+          base.Checked = ((ICheckableMenuCommand)menuCommand).IsChecked;
+        }
 #endif
 				this.Enabled = isEnabled;
 				

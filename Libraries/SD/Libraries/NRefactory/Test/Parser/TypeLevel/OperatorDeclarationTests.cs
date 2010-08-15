@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3660 $</version>
+//     <version>$Revision: 4743 $</version>
 // </file>
 
 using System;
@@ -36,12 +36,25 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		}
 		
 		[Test]
-		public void CSharpPlusOperatorDeclarationTest()
+		public void CSharpBinaryPlusOperatorDeclarationTest()
 		{
 			OperatorDeclaration od = ParseUtilCSharp.ParseTypeMember<OperatorDeclaration>("public static MyObject operator +(MyObject a, MyObject b)  {}");
 			Assert.IsTrue(!od.IsConversionOperator);
+			Assert.AreEqual(OverloadableOperatorType.Add, od.OverloadableOperator);
 			Assert.AreEqual(2, od.Parameters.Count);
 			Assert.AreEqual("MyObject", od.TypeReference.Type);
+			Assert.AreEqual("op_Addition", od.Name);
+		}
+		
+		[Test]
+		public void CSharpUnaryPlusOperatorDeclarationTest()
+		{
+			OperatorDeclaration od = ParseUtilCSharp.ParseTypeMember<OperatorDeclaration>("public static MyObject operator +(MyObject a)  {}");
+			Assert.IsTrue(!od.IsConversionOperator);
+			Assert.AreEqual(OverloadableOperatorType.UnaryPlus, od.OverloadableOperator);
+			Assert.AreEqual(1, od.Parameters.Count);
+			Assert.AreEqual("MyObject", od.TypeReference.Type);
+			Assert.AreEqual("op_UnaryPlus", od.Name);
 		}
 		#endregion
 		

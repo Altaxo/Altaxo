@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2229 $</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -25,6 +25,11 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			pOpt.TabSize = this.Options.IndentString.Length;
 			
 			return v;
+		}
+		
+		public override string GetFieldName(string propertyName)
+		{
+			return "m_" + propertyName;
 		}
 		
 		public override PropertyDeclaration CreateProperty(IField field, bool createGetter, bool createSetter)

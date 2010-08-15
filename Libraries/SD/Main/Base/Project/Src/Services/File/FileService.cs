@@ -2,14 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3668 $</version>
+//     <version>$Revision: 5785 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -60,7 +62,7 @@ namespace ICSharpCode.SharpDevelop
 		}
 		
 		#region OpenedFile
-		static Dictionary<string, OpenedFile> openedFileDict = new Dictionary<string, OpenedFile>(StringComparer.InvariantCultureIgnoreCase);
+		static Dictionary<FileName, OpenedFile> openedFileDict = new Dictionary<FileName, OpenedFile>();
 		
 		/// <summary>
 		/// Gets a collection containing all currently opened files.
@@ -78,10 +80,19 @@ namespace ICSharpCode.SharpDevelop
 		/// </summary>
 		public static OpenedFile GetOpenedFile(string fileName)
 		{
+			return GetOpenedFile(FileName.Create(fileName));
+		}
+		
+		/// <summary>
+		/// Gets an opened file, or returns null if the file is not opened.
+		/// </summary>
+		public static OpenedFile GetOpenedFile(FileName fileName)
+		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
 			
-			fileName = FileUtility.NormalizePath(fileName);
+			WorkbenchSingleton.AssertMainThread();
+			
 			OpenedFile file;
 			openedFileDict.TryGetValue(fileName, out file);
 			return file;
@@ -95,10 +106,20 @@ namespace ICSharpCode.SharpDevelop
 		/// </summary>
 		public static OpenedFile GetOrCreateOpenedFile(string fileName)
 		{
+			return GetOrCreateOpenedFile(FileName.Create(fileName));
+		}
+		
+		/// <summary>
+		/// Gets or creates an opened file.
+		/// Warning: the opened file will be a file without any views attached.
+		/// Make sure to attach a view to it, or call CloseIfAllViewsClosed on the OpenedFile to
+		/// unload the OpenedFile instance if no views were attached to it.
+		/// </summary>
+		public static OpenedFile GetOrCreateOpenedFile(FileName fileName)
+		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
 			
-			fileName = FileUtility.NormalizePath(fileName);
 			OpenedFile file;
 			if (!openedFileDict.TryGetValue(fileName, out file)) {
 				openedFileDict[fileName] = file = new FileServiceOpenedFile(fileName);
@@ -115,13 +136,13 @@ namespace ICSharpCode.SharpDevelop
 				throw new ArgumentNullException("defaultName");
 			
 			OpenedFile file = new FileServiceOpenedFile(content);
-			file.FileName = file.GetHashCode() + "/" + defaultName;
+			file.FileName = new FileName(file.GetHashCode() + "/" + defaultName);
 			openedFileDict[file.FileName] = file;
 			return file;
 		}
 		
 		/// <summary>Called by OpenedFile.set_FileName to update the dictionary.</summary>
-		internal static void OpenedFileFileNameChange(OpenedFile file, string oldName, string newName)
+		internal static void OpenedFileFileNameChange(OpenedFile file, FileName oldName, FileName newName)
 		{
 			if (oldName == null) return; // File just created with NewFile where name is being initialized.
 			
@@ -148,14 +169,26 @@ namespace ICSharpCode.SharpDevelop
 		#endregion
 		
 		/// <summary>
-		/// Checks if the file name is valid <b>and shows a MessageBox if it is not valid</b>.
+		/// Checks if the path is valid <b>and shows a MessageBox if it is not valid</b>.
 		/// Do not use in non-UI methods.
 		/// </summary>
-		public static bool CheckFileName(string fileName)
+		public static bool CheckFileName(string path)
 		{
-			if (FileUtility.IsValidPath(fileName))
+			if (FileUtility.IsValidPath(path))
 				return true;
-			MessageService.ShowMessage(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new string[,] {{"FileName", fileName}}));
+			MessageService.ShowMessage(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new string[,] {{"FileName", path}}));
+			return false;
+		}
+		
+		/// <summary>
+		/// Checks that a single directory entry (file or subdirectory) name is valid.
+		/// </summary>
+		/// <param name="name">A single file name not the full path</param>
+		public static bool CheckDirectoryEntryName(string name)
+		{
+			if (FileUtility.IsValidDirectoryEntryName(name))
+				return true;
+			MessageService.ShowMessage(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new string[,] {{"FileName", name}}));
 			return false;
 		}
 		
@@ -163,12 +196,10 @@ namespace ICSharpCode.SharpDevelop
 		/// Checks that a single directory name is valid.
 		/// </summary>
 		/// <param name="name">A single directory name not the full path</param>
+		[Obsolete("Use CheckDirectoryEntryName instead")]
 		public static bool CheckDirectoryName(string name)
 		{
-			if (FileUtility.IsValidDirectoryName(name))
-				return true;
-			MessageService.ShowMessage(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new string[,] {{"FileName", name}}));
-			return false;
+			return CheckDirectoryEntryName(name);
 		}
 		
 		internal sealed class LoadFileWrapper
@@ -184,7 +215,7 @@ namespace ICSharpCode.SharpDevelop
 			
 			public void Invoke(string fileName)
 			{
-				OpenedFile file = FileService.GetOrCreateOpenedFile(fileName);
+				OpenedFile file = FileService.GetOrCreateOpenedFile(FileName.Create(fileName));
 				IViewContent newContent = binding.CreateContentForFile(file);
 				if (newContent != null) {
 					DisplayBindingService.AttachSubWindows(newContent, false);
@@ -196,12 +227,9 @@ namespace ICSharpCode.SharpDevelop
 		
 		static void ParserServiceLoadSolutionProjectsThreadEnded(object sender, EventArgs e)
 		{
-			WorkbenchSingleton.SafeThreadAsyncCall(
-				delegate {
-					foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection.ToArray()) {
-						DisplayBindingService.AttachSubWindows(content, true);
-					}
-				});
+			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection.ToArray()) {
+				DisplayBindingService.AttachSubWindows(content, true);
+			}
 		}
 		
 		public static bool IsOpen(string fileName)
@@ -242,12 +270,11 @@ namespace ICSharpCode.SharpDevelop
 			
 			IDisplayBinding binding = DisplayBindingService.GetBindingPerFileName(fileName);
 			
-			if (binding != null) {
-				if (FileUtility.ObservedLoad(new NamedFileOperationDelegate(new LoadFileWrapper(binding, switchToOpenedView).Invoke), fileName) == FileOperationResult.OK) {
-					FileService.RecentOpen.AddLastFile(fileName);
-				}
-			} else {
-				throw new ApplicationException("Cannot open " + fileName + ", no display codon found.");
+			if (binding == null) {
+				binding = new ErrorFallbackBinding("Could not find any display binding for " + Path.GetFileName(fileName));
+			}
+			if (FileUtility.ObservedLoad(new NamedFileOperationDelegate(new LoadFileWrapper(binding, switchToOpenedView).Invoke), fileName) == FileOperationResult.OK) {
+				FileService.RecentOpen.AddLastFile(fileName);
 			}
 			return GetOpenFile(fileName);
 		}
@@ -259,7 +286,7 @@ namespace ICSharpCode.SharpDevelop
 		/// <param name="content">Content of the file to create</param>
 		public static IViewContent NewFile(string defaultName, string content)
 		{
-			return NewFile(defaultName, ParserService.DefaultFileEncoding.GetBytes(content));
+			return NewFile(defaultName, ParserService.DefaultFileEncoding.GetBytesWithPreamble(content));
 		}
 		
 		/// <summary>
@@ -276,34 +303,33 @@ namespace ICSharpCode.SharpDevelop
 			
 			IDisplayBinding binding = DisplayBindingService.GetBindingPerFileName(defaultName);
 			
-			if (binding != null) {
-				OpenedFile file = CreateUntitledOpenedFile(defaultName, content);
-				
-				IViewContent newContent = binding.CreateContentForFile(file);
-				if (newContent == null) {
-					LoggingService.Warn("Created view content was null - DefaultName:" + defaultName);
-					file.CloseIfAllViewsClosed();
-					return null;
-				}
-				
-				DisplayBindingService.AttachSubWindows(newContent, false);
-				
-				WorkbenchSingleton.Workbench.ShowView(newContent);
-				return newContent;
-			} else {
-				throw new ApplicationException("Can't create display binding for file " + defaultName);
+			if (binding == null) {
+				binding = new ErrorFallbackBinding("Can't create display binding for file " + defaultName);
 			}
+			OpenedFile file = CreateUntitledOpenedFile(defaultName, content);
+			
+			IViewContent newContent = binding.CreateContentForFile(file);
+			if (newContent == null) {
+				LoggingService.Warn("Created view content was null - DefaultName:" + defaultName);
+				file.CloseIfAllViewsClosed();
+				return null;
+			}
+			
+			DisplayBindingService.AttachSubWindows(newContent, false);
+			
+			WorkbenchSingleton.Workbench.ShowView(newContent);
+			return newContent;
 		}
 		
 		/// <summary>
 		/// Gets a list of the names of the files that are open as primary files
 		/// in view contents.
 		/// </summary>
-		public static IList<string> GetOpenFiles()
+		public static IList<FileName> GetOpenFiles()
 		{
-			List<string> fileNames = new List<string>();
+			List<FileName> fileNames = new List<FileName>();
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				string contentName = content.PrimaryFileName;
+				FileName contentName = content.PrimaryFileName;
 				if (contentName != null && !fileNames.Contains(contentName))
 					fileNames.Add(contentName);
 			}
@@ -342,6 +368,27 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		public static int DefaultFileEncodingCodePage {
+			get { return PropertyService.Get("SharpDevelop.DefaultFileEncoding", 65001); }
+			set { PropertyService.Set("SharpDevelop.DefaultFileEncoding", value); }
+		}
+		
+		static readonly ReadOnlyCollection<EncodingInfo> allEncodings = Encoding.GetEncodings().OrderBy(e => e.DisplayName).ToArray().AsReadOnly();
+		
+		public static ReadOnlyCollection<EncodingInfo> AllEncodings {
+			get { return allEncodings; }
+		}
+		
+		public static EncodingInfo DefaultFileEncoding {
+			get {
+				int cp = FileService.DefaultFileEncodingCodePage;
+				return allEncodings.Single(e => e.CodePage == cp);
+			}
+			set {
+				FileService.DefaultFileEncodingCodePage = value.CodePage;
+			}
+		}
+		
 		/// <summary>
 		/// Removes a file, raising the appropriate events. This method may show message boxes.
 		/// </summary>
@@ -361,7 +408,7 @@ namespace ICSharpCode.SharpDevelop
 								Directory.Delete(fileName, true);
 						}
 					} catch (Exception e) {
-						MessageService.ShowError(e, "Can't remove directory " + fileName);
+						MessageService.ShowException(e, "Can't remove directory " + fileName);
 //					return;
 					}
 				} else {
@@ -373,7 +420,7 @@ namespace ICSharpCode.SharpDevelop
 								File.Delete(fileName);
 						}
 					} catch (Exception e) {
-						MessageService.ShowError(e, "Can't remove file " + fileName);
+						MessageService.ShowException(e, "Can't remove file " + fileName);
 //					return;
 					}
 				}
@@ -388,38 +435,43 @@ namespace ICSharpCode.SharpDevelop
 		{
 			if (FileUtility.IsEqualFileName(oldName, newName))
 				return false;
-			FileRenamingEventArgs eargs = new FileRenamingEventArgs(oldName, newName, isDirectory);
-			OnFileRenaming(eargs);
-			if (eargs.Cancel)
-				return false;
-			if (!eargs.OperationAlreadyDone) {
-				try {
-					if (isDirectory && Directory.Exists(oldName)) {
-						
-						if (Directory.Exists(newName)) {
-							MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
-							return false;
-						}
-						Directory.Move(oldName, newName);
-						
-					} else if (File.Exists(oldName)) {
-						if (File.Exists(newName)) {
-							MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
-							return false;
-						}
-						File.Move(oldName, newName);
-					}
-				} catch (Exception e) {
-					if (isDirectory) {
-						MessageService.ShowError(e, "Can't rename directory " + oldName);
-					} else {
-						MessageService.ShowError(e, "Can't rename file " + oldName);
-					}
+			FileChangeWatcher.DisableAllChangeWatchers();
+			try {
+				FileRenamingEventArgs eargs = new FileRenamingEventArgs(oldName, newName, isDirectory);
+				OnFileRenaming(eargs);
+				if (eargs.Cancel)
 					return false;
+				if (!eargs.OperationAlreadyDone) {
+					try {
+						if (isDirectory && Directory.Exists(oldName)) {
+							
+							if (Directory.Exists(newName)) {
+								MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+								return false;
+							}
+							Directory.Move(oldName, newName);
+							
+						} else if (File.Exists(oldName)) {
+							if (File.Exists(newName)) {
+								MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+								return false;
+							}
+							File.Move(oldName, newName);
+						}
+					} catch (Exception e) {
+						if (isDirectory) {
+							MessageService.ShowException(e, "Can't rename directory " + oldName);
+						} else {
+							MessageService.ShowException(e, "Can't rename file " + oldName);
+						}
+						return false;
+					}
 				}
+				OnFileRenamed(new FileRenameEventArgs(oldName, newName, isDirectory));
+				return true;
+			} finally {
+				FileChangeWatcher.EnableAllChangeWatchers();
 			}
-			OnFileRenamed(new FileRenameEventArgs(oldName, newName, isDirectory));
-			return true;
 		}
 		
 		/// <summary>
@@ -452,9 +504,9 @@ namespace ICSharpCode.SharpDevelop
 					}
 				} catch (Exception e) {
 					if (isDirectory) {
-						MessageService.ShowError(e, "Can't copy directory " + oldName);
+						MessageService.ShowException(e, "Can't copy directory " + oldName);
 					} else {
-						MessageService.ShowError(e, "Can't copy file " + oldName);
+						MessageService.ShowException(e, "Can't copy file " + oldName);
 					}
 					return false;
 				}
@@ -465,7 +517,7 @@ namespace ICSharpCode.SharpDevelop
 		
 		/// <summary>
 		/// Opens the specified file and jumps to the specified file position.
-		/// Warning: Unlike parser coordinates, line and column are 0-based.
+		/// Line and column start counting at 1.
 		/// </summary>
 		public static IViewContent JumpToFilePosition(string fileName, int line, int column)
 		{
@@ -479,14 +531,14 @@ namespace ICSharpCode.SharpDevelop
 			bool loggingResumed = false;
 			
 			try {
-			
+				
 				IViewContent content = OpenFile(fileName);
 				if (content is IPositionable) {
 					// TODO: enable jumping to a particular view
 					content.WorkbenchWindow.ActiveViewContent = content;
 					NavigationService.ResumeLogging();
 					loggingResumed = true;
-					((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
+					((IPositionable)content).JumpTo(Math.Max(1, line), Math.Max(1, column));
 				} else {
 					NavigationService.ResumeLogging();
 					loggingResumed = true;
@@ -633,6 +685,26 @@ namespace ICSharpCode.SharpDevelop
 		public static event EventHandler<FileEventArgs> FileReplaced;
 		
 		#endregion Events
+		
+		sealed class ErrorFallbackBinding : IDisplayBinding
+		{
+			string errorMessage;
+			
+			public ErrorFallbackBinding(string errorMessage)
+			{
+				this.errorMessage = errorMessage;
+			}
+			
+			public bool CanCreateContentForFile(string fileName)
+			{
+				return true;
+			}
+			
+			public IViewContent CreateContentForFile(OpenedFile file)
+			{
+				return new SimpleViewContent(errorMessage) { TitleName = Path.GetFileName(file.FileName) };
+			}
+		}
 	}
 }
 

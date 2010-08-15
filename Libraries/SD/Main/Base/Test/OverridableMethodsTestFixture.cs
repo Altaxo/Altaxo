@@ -2,13 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3073 $</version>
+//     <version>$Revision: 6028 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
 using System;
 using System.Collections.Generic;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Tests.Utils;
 using NUnit.Framework;
 
@@ -38,7 +39,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		
 		IMethod[] GetOverridableMethods(IClass baseClass)
 		{
-			return OverrideCompletionDataProvider.GetOverridableMethods(new MockClass("DerivedClass") { BaseType = baseClass.DefaultReturnType });
+			return OverrideCompletionItemProvider.GetOverridableMethods(new MockClass("DerivedClass") { BaseType = baseClass.DefaultReturnType });
 		}
 		
 		/// <summary>
@@ -72,7 +73,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			method.IsOverridable = true;
 			returnType.Methods.Add(method);
 			
-			IMethod[] methods = OverrideCompletionDataProvider.GetOverridableMethods(c);
+			IMethod[] methods = OverrideCompletionItemProvider.GetOverridableMethods(c);
 			
 			AssertAreMethodsEqual(expectedMethods, methods);
 		}
@@ -115,7 +116,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void NullArgument()
 		{
-			OverrideCompletionDataProvider.GetOverridableMethods(null);
+			OverrideCompletionItemProvider.GetOverridableMethods(null);
 		}
 		
 		void AssertAreMethodsEqual(List<IMethod> expectedMethods, IMethod[] methods)

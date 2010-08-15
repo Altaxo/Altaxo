@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3794 $</version>
+//     <version>$Revision: 4743 $</version>
 // </file>
 
 using System;
@@ -146,7 +146,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		bool LoadFromBinary(string fileName, DateTime fileDate)
 		{
 			keyCacheQueue   = new Queue<string>(cacheLength);
-			fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+			fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
 			int len = (int)fs.Length;
 			loader = new BinaryReader(fs);
 			try {
@@ -164,7 +164,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 				int count = loader.ReadInt32();
 				int indexStartPosition = loader.ReadInt32(); // go to start of index
-				if (indexStartPosition >= len) {
+				if (indexStartPosition <= 0 || indexStartPosition >= len) {
 					LoggingService.Error("XmlDoc: Cannot find index, cache invalid!");
 					return false;
 				}
@@ -254,7 +254,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		static XmlDoc Load(string fileName, string cachePath, bool allowRedirect)
 		{
-			//LoggingService.Debug("Loading XmlDoc for " + fileName);
+			LoggingService.Debug("Loading XmlDoc for " + fileName);
 			XmlDoc doc;
 			string cacheName = null;
 			if (cachePath != null) {

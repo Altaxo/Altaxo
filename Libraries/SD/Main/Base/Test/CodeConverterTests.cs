@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3474 $</version>
+//     <version>$Revision: 6294 $</version>
 // </file>
 
 using System;
@@ -25,7 +25,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 	public class CodeConverterTests
 	{
 		#region TestProgram (converting code)
-		ProjectContentRegistry projectContentRegistry = ParserService.DefaultProjectContentRegistry;
+		ProjectContentRegistry projectContentRegistry = AssemblyParserService.DefaultProjectContentRegistry;
 		
 		void TestProgramCS2VB(string sourceCode, string expectedOutput)
 		{
@@ -57,15 +57,14 @@ namespace ICSharpCode.SharpDevelop.Tests
 			parser.Parse();
 			Assert.AreEqual("", parser.Errors.ErrorOutput);
 			
-			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc);
+			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc, sourceLanguage);
 			visitor.VisitCompilationUnit(parser.CompilationUnit, null);
 			visitor.Cu.FileName = sourceLanguage == SupportedLanguage.CSharp ? "a.cs" : "a.vb";
 			foreach (IClass c in visitor.Cu.Classes) {
 				pc.AddClassToNamespaceList(c);
 			}
 			
-			ParseInformation parseInfo = new ParseInformation();
-			parseInfo.SetCompilationUnit(visitor.Cu);
+			ParseInformation parseInfo = new ParseInformation(visitor.Cu);
 			
 			if (sourceLanguage == SupportedLanguage.CSharp) {
 				CSharpToVBNetConvertVisitor convertVisitor = new CSharpToVBNetConvertVisitor(pc, parseInfo);
@@ -382,6 +381,20 @@ namespace ICSharpCode.SharpDevelop.Tests
 		#endregion
 		
 		[Test]
+		public void FullyQualifyNamespaceReferencesInIdentifiers()
+		{
+			TestStatementsVB2CS("IO.Path.GetTempPath",
+			                    "System.IO.Path.GetTempPath();");
+		}
+		
+		[Test]
+		public void FullyQualifyNamespaceReferencesInTypeName()
+		{
+			TestStatementsVB2CS("Dim a As Collections.ICollection = New Collections.ArrayList",
+			                    "System.Collections.ICollection a = new System.Collections.ArrayList();");
+		}
+		
+		[Test]
 		public void AutomaticInitializeComponentCall()
 		{
 			TestProgramVB2CS("Imports System.Windows.Forms\n" +
@@ -502,7 +515,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			                 "  End Sub\n" +
 			                 "  Public Field As Integer\n" +
 			                 "End Module",
-			                 DefaultUsingsCSharp + 
+			                 DefaultUsingsCSharp +
 			                 "class Test\n" +
 			                 "{\n" +
 			                 "  public void A()\n" +
@@ -584,9 +597,9 @@ namespace ICSharpCode.SharpDevelop.Tests
 			                 "  class Test {}" +
 			                 "}\n",
 			                 "' comment 1\n" +
-			                 "' comment 2\n" +
 			                 "Imports System\n" +
 			                 "Namespace Test\n" +
+			                 "  ' comment 2\n" +
 			                 "  ' comment 3\n" +
 			                 "  Class Test\n" +
 			                 "  End Class\n" +
@@ -751,5 +764,18 @@ namespace ICSharpCode.SharpDevelop.Tests
 			                 "End Class");
 		}
 		#endregion
+		
+		[Test]
+		public void OverloadMembersInBaseClass()
+		{
+			TestProgramCS2VB("class Test : System.Collections.Generic.List<int> {" +
+			                 "   public void RemoveAt(string strangeIndex) {}" +
+			                 "}",
+			                 "Class Test\n" +
+			                 "  Inherits System.Collections.Generic.List(Of Integer)\n" +
+			                 "  Public Overloads Sub RemoveAt(strangeIndex As String)\n" +
+			                 "  End Sub\n" +
+			                 "End Class");
+		}
 	}
 }

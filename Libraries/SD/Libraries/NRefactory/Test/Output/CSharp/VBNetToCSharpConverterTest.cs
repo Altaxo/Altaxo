@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3477 $</version>
+//     <version>$Revision: 6306 $</version>
 // </file>
 
 using System;
@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			outputVisitor.Options.IndentSize = 2;
 			outputVisitor.VisitCompilationUnit(parser.CompilationUnit, null);
 			Assert.AreEqual("", outputVisitor.Errors.ErrorOutput);
-			Assert.AreEqual(expectedOutput, outputVisitor.Text);
+			Assert.AreEqual(expectedOutput.Replace("\r", ""), outputVisitor.Text.Replace("\r", ""));
 		}
 		
 		public void TestMember(string input, string expectedOutput)
@@ -57,7 +57,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 				}
 			}
 			b.AppendLine("}");
-			TestProgram("Class tmp1 \n" + input + "\nEnd Class", b.ToString());
+			TestProgram("Option Strict On \n Class tmp1 \n" + input + "\nEnd Class", b.ToString());
 		}
 		
 		public void TestStatement(string input, string expectedOutput)
@@ -76,7 +76,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			}
 			b.AppendLine("  }");
 			b.AppendLine("}");
-			TestProgram("Class tmp1 \n Sub tmp2() \n" + input + "\n End Sub \n End Class", b.ToString());
+			TestProgram("Option Strict On \n Option Infer On \n Class tmp1 \n Sub tmp2() \n" + input + "\n End Sub \n End Class", b.ToString());
 		}
 		
 		[Test]
@@ -168,21 +168,21 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		public void AbstractProperty1()
 		{
 			TestMember("Public MustOverride Property Salary() As Decimal",
-			           "public abstract decimal Salary {\n  get;\n  set;\n}");
+			           "public abstract decimal Salary { get; set; }");
 		}
 		
 		[Test]
 		public void AbstractProperty2()
 		{
 			TestMember("Public ReadOnly MustOverride Property Salary() As Decimal",
-			           "public abstract decimal Salary {\n  get;\n}");
+			           "public abstract decimal Salary { get; }");
 		}
 		
 		[Test]
 		public void AbstractProperty3()
 		{
 			TestMember("Public WriteOnly MustOverride Property Salary() As Decimal",
-			           "public abstract decimal Salary {\n  set;\n}");
+			           "public abstract decimal Salary { set; }");
 		}
 		
 		[Test]
@@ -351,6 +351,10 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			              "Next",
 			              "for (long l = 10; l >= 0; l += -1) {\n" +
 			              "}");
+			TestStatement("For i As Integer = 0 To 10 Step +2\n" +
+			              "Next",
+			              "for (int i = 0; i <= 10; i += +2) {\n" +
+			              "}");
 		}
 		
 		[Test]
@@ -358,12 +362,10 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		{
 			TestStatement("Do \n Loop",
 			              "do {\n" +
-			              "}\n" +
-			              "while (true);");
+			              "} while (true);");
 			TestStatement("Do \n Loop Until i = 10000",
 			              "do {\n" +
-			              "}\n" +
-			              "while (!(i == 10000));");
+			              "} while (!(i == 10000));");
 		}
 		
 		[Test]
@@ -509,37 +511,112 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		public void StaticMethodVariable()
 		{
 			TestMember(@"Private Sub Test
-	Static j As Integer = 0
+	Static j As Integer
 	j += 1
+End Sub
+Private Shared Sub Test2
+	Static j As Integer
+	j += 2
 End Sub",
-			           @"private void Test()
+			           @"int static_Test_j;
+private void Test()
 {
   static_Test_j += 1;
 }
-static int static_Test_j = 0;");
+static int static_Test2_j;
+private static void Test2()
+{
+  static_Test2_j += 2;
+}");
 		}
 		
 		[Test]
-		public void StaticMethodVariable2()
+		public void StaticMethodVariableWithInitialization()
 		{
 			TestMember(@"Private Sub Test
 	Static j As Integer = 0
 	j += 1
-End Sub
-Private Sub Test2
-	Static j As Integer = 0
-	j += 2
 End Sub",
-			           @"private void Test()
+			           @"readonly Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag static_Test_j_Init = new Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag();
+int static_Test_j;
+private void Test()
 {
+  lock (static_Test_j_Init) {
+    try {
+      if (InitStaticVariableHelper(static_Test_j_Init)) {
+        static_Test_j = 0;
+      }
+    } finally {
+      static_Test_j_Init.State = 1;
+    }
+  }
   static_Test_j += 1;
 }
-static int static_Test_j = 0;
-private void Test2()
+static bool InitStaticVariableHelper(Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag flag)
 {
+  if (flag.State == 0) {
+    flag.State = 2;
+    return true;
+  } else if (flag.State == 2) {
+    throw new Microsoft.VisualBasic.CompilerServices.IncompleteInitialization();
+  } else {
+    return false;
+  }
+}");
+		}
+		
+		[Test]
+		public void StaticMethodVariableWithInitialization2()
+		{
+			TestMember(@"Private Sub Test
+	Static j As Integer = 10
+	j += 1
+End Sub
+Private Shared Sub Test2
+	Static j As Integer = 20
+	j += 2
+End Sub",
+			           @"readonly Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag static_Test_j_Init = new Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag();
+int static_Test_j;
+private void Test()
+{
+  lock (static_Test_j_Init) {
+    try {
+      if (InitStaticVariableHelper(static_Test_j_Init)) {
+        static_Test_j = 10;
+      }
+    } finally {
+      static_Test_j_Init.State = 1;
+    }
+  }
+  static_Test_j += 1;
+}
+static readonly Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag static_Test2_j_Init = new Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag();
+static int static_Test2_j;
+private static void Test2()
+{
+  lock (static_Test2_j_Init) {
+    try {
+      if (InitStaticVariableHelper(static_Test2_j_Init)) {
+        static_Test2_j = 20;
+      }
+    } finally {
+      static_Test2_j_Init.State = 1;
+    }
+  }
   static_Test2_j += 2;
 }
-static int static_Test2_j = 0;");
+static bool InitStaticVariableHelper(Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag flag)
+{
+  if (flag.State == 0) {
+    flag.State = 2;
+    return true;
+  } else if (flag.State == 2) {
+    throw new Microsoft.VisualBasic.CompilerServices.IncompleteInitialization();
+  } else {
+    return false;
+  }
+}");
 		}
 		
 		[Test]
@@ -555,7 +632,7 @@ static int static_Test2_j = 0;");
 			TestStatement("With Ejes\n" +
 			              "  .AddLine(p1, p2)\n" +
 			              "End With",
-			              "{\n  Ejes.AddLine(p1, p2);\n}");
+			              "var _with1 = Ejes;\n_with1.AddLine(p1, p2);");
 		}
 		
 		[Test]
@@ -568,7 +645,7 @@ static int static_Test2_j = 0;");
 				"  End With\n" +
 				"End With",
 				
-				"{\n  {\n    tb1.Font.Italic = true;\n  }\n}");
+				"var _with1 = tb1;\nvar _with2 = _with1.Font;\n_with2.Italic = true;");
 		}
 		
 		[Test]
@@ -581,7 +658,7 @@ static int static_Test2_j = 0;");
 				"  End With\n" +
 				"End With",
 				
-				"{\n  {\n    tb1.Something.Font.Italic = true;\n  }\n}");
+				"var _with1 = tb1;\nvar _with2 = _with1.Something.Font;\n_with2.Italic = true;");
 		}
 		
 		[Test]
@@ -615,17 +692,14 @@ static int static_Test2_j = 0;");
 			           "public interface ITest\n" +
 			           "{\n" +
 			           "  void Test();\n" +
-			           "  string Name {\n" +
-			           "    get;\n" +
-			           "    set;\n" +
-			           "  }\n" +
+			           "  string Name { get; set; }\n" +
 			           "}");
 		}
 		
 		[Test]
 		public void ImportAliasPrimitiveType()
 		{
-			TestProgram("Imports T = System.Boolean", "using T = System.Boolean;\r\n");
+			TestProgram("Imports T = System.Boolean", "using T = System.Boolean;" + Environment.NewLine);
 		}
 		
 		[Test]
@@ -643,11 +717,11 @@ static int static_Test2_j = 0;");
 		[Test]
 		public void ComparisonWithEmptyStringLiteral()
 		{
-			TestStatement("If a = \"\" Then Return", "if (string.IsNullOrEmpty(a)) return; ");
-			TestStatement("If a <> \"\" Then Return", "if (!string.IsNullOrEmpty(a)) return; ");
+			TestStatement("If a = \"\" Then Return", "if (string.IsNullOrEmpty(a))" + Environment.NewLine + "  return;");
+			TestStatement("If a <> \"\" Then Return", "if (!string.IsNullOrEmpty(a))" + Environment.NewLine + "  return;");
 			
-			TestStatement("If \"\" = a Then Return", "if (string.IsNullOrEmpty(a)) return; ");
-			TestStatement("If \"\" <> a Then Return", "if (!string.IsNullOrEmpty(a)) return; ");
+			TestStatement("If \"\" = a Then Return", "if (string.IsNullOrEmpty(a))" + Environment.NewLine + "  return;");
+			TestStatement("If \"\" <> a Then Return", "if (!string.IsNullOrEmpty(a))" + Environment.NewLine + "  return;");
 		}
 		
 		[Test]
@@ -655,10 +729,8 @@ static int static_Test2_j = 0;");
 		{
 			TestStatement("If a Then\nElse If b Then\nElse\nEnd If",
 			              "if (a) {\n" +
-			              "}\n" +
-			              "else if (b) {\n" +
-			              "}\n" +
-			              "else {\n" +
+			              "} else if (b) {\n" +
+			              "} else {\n" +
 			              "}");
 		}
 		
@@ -670,7 +742,10 @@ static int static_Test2_j = 0;");
 			TestStatement("Dim i(1) As String",
 			              "string[] i = new string[2];");
 			TestStatement("Dim i As String() = New String(1) {\"0\", \"1\"}",
-			              "string[] i = new string[2] { \"0\", \"1\" };");
+			              "string[] i = new string[2] {" + Environment.NewLine +
+			              "  \"0\"," + Environment.NewLine +
+			              "  \"1\"" + Environment.NewLine +
+			              "};");
 			TestStatement("Dim i As String(,) = New String(5, 5) {}",
 			              "string[,] i = new string[6, 6];");
 		}
@@ -696,10 +771,253 @@ static int static_Test2_j = 0;");
 		public void ConstModuleMember()
 		{
 			TestProgram("Module Test : Public Const C As Integer = 0 : End Module",
-			            "static class Test\r\n" +
-			            "{\r\n" +
-			            "  public const int C = 0;\r\n" +
-			            "}\r\n");
+			            "static class Test" + Environment.NewLine +
+			            "{" + Environment.NewLine +
+			            "  public const int C = 0;" + Environment.NewLine +
+			            "}" + Environment.NewLine);
+		}
+		
+		[Test]
+		public void CastToInteger()
+		{
+			TestStatement("Dim x As Integer = CInt(obj)", "int x = Convert.ToInt32(obj);");
+		}
+		
+		[Test]
+		public void XmlElement()
+		{
+			TestStatement("Dim xml = <Test />",
+			              @"var xml = new XElement(""Test"");");
+		}
+		
+		[Test]
+		public void XmlElement2()
+		{
+			TestStatement(@"Dim xml = <Test name=""test"" name2=<%= testVal %> />",
+			              @"var xml = new XElement(""Test"", new XAttribute(""name"", ""test""), new XAttribute(""name2"", testVal));");
+		}
+		
+		[Test]
+		public void XmlElement3()
+		{
+			TestStatement(@"Dim xml = <Test name=""test"" name2=<%= testVal %> <%= testVal2 %> />",
+			              @"var xml = new XElement(""Test"", new XAttribute(""name"", ""test""), new XAttribute(""name2"", testVal), testVal2);");
+		}
+		
+		[Test]
+		public void XmlNestedElement()
+		{
+			TestStatement("Dim xml = <Test>      <Test2 />        </Test>",
+			              @"var xml = new XElement(""Test"", new XElement(""Test2""));");
+		}
+		
+		[Test]
+		public void XmlNestedElement2()
+		{
+			TestStatement("Dim xml = <Test>      <Test2 />    hello    </Test>",
+			              @"var xml = new XElement(""Test"", new XElement(""Test2""), ""    hello    "");");
+		}
+		
+		[Test]
+		public void XmlNestedElement3()
+		{
+			TestStatement("Dim xml = <Test>      <Test2 a='b' />    hello    </Test>",
+			              @"var xml = new XElement(""Test"", new XElement(""Test2"", new XAttribute(""a"", ""b"")), ""    hello    "");");
+		}
+		
+		[Test]
+		public void XmlNestedElement4()
+		{
+			TestStatement("Dim xml = <Test>      <Test2 a='b' />    hello    \t<![CDATA[any & <>]]></Test>",
+			              @"var xml = new XElement(""Test"", new XElement(""Test2"", new XAttribute(""a"", ""b"")), ""    hello    \t"", new XCData(""any & <>""));");
+		}
+		
+		[Test]
+		public void XmlComment()
+		{
+			TestStatement("Dim xml = <!-- test -->",
+			              @"var xml = new XComment("" test "");");
+		}
+		
+		[Test]
+		public void XmlCData()
+		{
+			TestStatement("Dim xml = <![CDATA[any & <> char]]>",
+			              @"var xml = new XCData(""any & <> char"");");
+		}
+		
+		[Test]
+		public void XmlProcessingInstruction()
+		{
+			TestStatement("Dim xml = <?target testcontent?>",
+			              @"var xml = new XProcessingInstruction(""target"", "" testcontent"");");
+		}
+		
+		[Test]
+		public void XmlDocumentTest()
+		{
+			TestStatement(@"Dim xml = <?xml version=""1.0""?><!-- test --><Data a='true'><A/></Data><!-- test -->",
+			              @"var xml = new XDocument(new XDeclaration(""1.0"", null, null), new XComment("" test ""), new XElement(""Data"", new XAttribute(""a"", ""true""), new XElement(""A"")), new XComment("" test ""));");
+		}
+		
+		
+		[Test]
+		public void XmlDocumentTest2()
+		{
+			TestStatement(@"Dim xml = <?xml?><!-- test --><Data a='true'><A/></Data><!-- test -->",
+			              @"var xml = new XDocument(new XDeclaration(null, null, null), new XComment("" test ""), new XElement(""Data"", new XAttribute(""a"", ""true""), new XElement(""A"")), new XComment("" test ""));");
+		}
+		
+		[Test]
+		public void XmlDocumentTest3()
+		{
+			TestStatement(@"Dim xml = <?xml version=""1.0"" encoding=""utf-8""?><!-- test --><Data a='true'><A/></Data><!-- test -->",
+			              @"var xml = new XDocument(new XDeclaration(""1.0"", ""utf-8"", null), new XComment("" test ""), new XElement(""Data"", new XAttribute(""a"", ""true""), new XElement(""A"")), new XComment("" test ""));");
+		}
+		
+		[Test]
+		public void XmlDocumentTest4()
+		{
+			TestStatement(@"Dim xml = <?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?><!-- test --><Data a='true'><A <%= content %> /></Data><!-- test -->",
+			              @"var xml = new XDocument(new XDeclaration(""1.0"", ""utf-8"", ""yes""), new XComment("" test ""), new XElement(""Data"", new XAttribute(""a"", ""true""), new XElement(""A"", content)), new XComment("" test ""));");
+		}
+		
+		[Test]
+		public void XmlEmbeddedExpression()
+		{
+			TestStatement(@"Dim xml = <<%= name %>>Test</>",
+			              @"var xml = new XElement(name, ""Test"");");
+		}
+		
+		[Test]
+		public void XmlEmbeddedExpression2()
+		{
+			TestStatement(@"Dim xml = <<%= name %>><%= content %></>",
+			              @"var xml = new XElement(name, content);");
+		}
+		
+		[Test]
+		public void XmlEntityReference()
+		{
+			TestStatement(@"Dim xml = <A b=""&quot;""/>",
+			              @"var xml = new XElement(""A"", new XAttribute(""b"", ""\""""));");
+		}
+		
+		[Test]
+		public void XmlEntityReference2()
+		{
+			TestStatement(@"Dim xml = <A>&quot;</A>",
+			              @"var xml = new XElement(""A"", ""\"""");");
+		}
+		
+		[Test]
+		public void SD2_1500a()
+		{
+			TestProgram(
+				@"Public Class Class1
+    Private PFoo As String
+    Public Property Foo() As String
+        Get
+            Foo = PFoo
+        End Get
+        Set(ByVal Value As String)
+            PFoo = Value
+        End Set
+    End Property
+End Class",
+				@"public class Class1
+{
+  private string PFoo;
+  public string Foo {
+    get { return PFoo; }
+    set { PFoo = value; }
+  }
+}
+"
+			);
+		}
+		
+		[Test]
+		public void SD2_1500b()
+		{
+			TestMember(
+				@"Function Test As Integer
+	Test = 5
+End Function",
+				@"public int Test()
+{
+  return 5;
+}"
+			);
+		}
+		
+		[Test]
+		public void SD2_1500c()
+		{
+			TestMember(
+				@"Function Test As Integer
+	If True Then Test = 3
+	Test = 5
+End Function",
+				@"public int Test()
+{
+  int functionReturnValue = 0;
+  if (true)
+    functionReturnValue = 3;
+  functionReturnValue = 5;
+  return functionReturnValue;
+}"
+			);
+		}
+		
+		[Test]
+		public void SD2_1500d()
+		{
+			TestMember(
+				@"Function Test As Integer
+	If True Then
+		Test = 3
+		Exit Function
+	End If
+	Test = 5
+End Function",
+				@"public int Test()
+{
+  int functionReturnValue = 0;
+  if (true) {
+    functionReturnValue = 3;
+    return functionReturnValue;
+  }
+  functionReturnValue = 5;
+  return functionReturnValue;
+}"
+			);
+		}
+		
+		[Test]
+		public void SD2_1497()
+		{
+			TestMember(
+				@"Public Function Bug() As String
+  With New System.Text.StringBuilder(""Hi! "")
+     .Append(""you "")
+     .Append(""folks "")
+     .Append(""from "")
+     .Append(""sharpdevelop!"")
+     Return .ToString()
+  End With
+End Function",
+				@"public string Bug()
+{
+  var _with1 = new System.Text.StringBuilder(""Hi! "");
+  _with1.Append(""you "");
+  _with1.Append(""folks "");
+  _with1.Append(""from "");
+  _with1.Append(""sharpdevelop!"");
+  return _with1.ToString();
+}
+"
+			);
 		}
 	}
 }

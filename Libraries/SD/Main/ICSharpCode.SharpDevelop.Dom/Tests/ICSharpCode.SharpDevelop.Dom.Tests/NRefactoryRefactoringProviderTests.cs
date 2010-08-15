@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="David Alpert" email="david@spinthemoose.com"/>
-//     <version>$Revision:  $</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -38,7 +38,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Tests
 //     <copyright see=""prj:///doc/copyright.txt""/>
 //     <license see=""prj:///doc/license.txt""/>
 //     <owner name=""David Alpert"" email=""david@spinthemoose.com""/>
-//     <version>$Revision:  $</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -77,26 +77,26 @@ namespace ExtractInterface.Tests {
 		/// </summary>
 		public void SanityCheckTest() {
 			ICompilationUnit cu = helper.Parse(ITestClass.FileName, ITestClass.FileContent);
-			Assert.That(cu.Classes, Has.Count(1));
+			Assert.That(cu.Classes, Has.Count.EqualTo(1));
 			
 			IClass c = cu.Classes[0];
 			Assert.That(c.ClassType, Is.EqualTo(ClassType.Interface));
-			Assert.That(c.BaseTypes, Has.Count(0));
-			Assert.That(c.Attributes, Has.Count(0));
-			Assert.That(c.Events, Has.Count(1));
-			Assert.That(c.Methods, Has.Count(2));
+			Assert.That(c.BaseTypes, Has.Count.EqualTo(0));
+			Assert.That(c.Attributes, Has.Count.EqualTo(0));
+			Assert.That(c.Events, Has.Count.EqualTo(1));
+			Assert.That(c.Methods, Has.Count.EqualTo(2));
 			{
 				IMethod m = c.Methods[0];
 				Assert.That(m.Name, Is.EqualTo("GetRange"));
-				Assert.That(m.Parameters, Has.Count(1));
+				Assert.That(m.Parameters, Has.Count.EqualTo(1));
 				Assert.That(m, HasEmpty.MethodBody);
 				
 				m = c.Methods[1];
 				Assert.That(m.Name, Is.EqualTo("MultiplyBy5"));
-				Assert.That(m.Parameters, Has.Count(2));
+				Assert.That(m.Parameters, Has.Count.EqualTo(2));
 				Assert.That(m, HasEmpty.MethodBody);
 			}
-			Assert.That(c.Properties, Has.Count(3));
+			Assert.That(c.Properties, Has.Count.EqualTo(3));
 			{
 				IProperty p = c.Properties[0];
 				Assert.That(p.Name, Is.EqualTo("Name"));

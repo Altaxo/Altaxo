@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2931 $</version>
+//     <version>$Revision: 5242 $</version>
 // </file>
 
 using System;
@@ -19,6 +19,18 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		public override string DocumentationTag {
 			get {
 				return String.Empty;
+			}
+		}
+		
+		public override ICompilationUnit CompilationUnit {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public override EntityType EntityType {
+			get {
+				throw new NotImplementedException();
 			}
 		}
 	}

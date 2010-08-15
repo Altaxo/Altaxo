@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2657 $</version>
+//     <version>$Revision: 5625 $</version>
 // </file>
 
 using System;
@@ -16,7 +16,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 		{
 			Type type = parameterInfo.ParameterType;
 			
-			this.ReturnType = ReflectionReturnType.Create(member, type, false);
+			this.ReturnType = ReflectionReturnType.Create(member, type, attributeProvider: parameterInfo);
 			
 			if (type.IsByRef && parameterInfo.IsOut) {
 				this.Modifiers = ParameterModifiers.Out;

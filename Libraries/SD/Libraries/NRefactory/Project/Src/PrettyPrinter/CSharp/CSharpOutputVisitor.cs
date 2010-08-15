@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3718 $</version>
+//     <version>$Revision: 6306 $</version>
 // </file>
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,6 +44,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		public PrettyPrintOptions Options {
 			get { return prettyPrintOptions; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				prettyPrintOptions = value;
+			}
 		}
 		
 		public IOutputFormatter OutputFormatter {
@@ -113,6 +119,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.PrintToken(Tokens.LessThan);
 			for (int i = 0; i < templates.Count; i++) {
 				if (i > 0) PrintFormattedComma();
+				if (templates[i].VarianceModifier == VarianceModifier.Contravariant) {
+					outputFormatter.PrintToken(Tokens.In);
+					outputFormatter.Space();
+				} else if (templates[i].VarianceModifier == VarianceModifier.Covariant) {
+					outputFormatter.PrintToken(Tokens.Out);
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintIdentifier(templates[i].Name);
 			}
 			outputFormatter.PrintToken(Tokens.GreaterThan);
@@ -141,13 +154,14 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		{
 			for (int i = startRankIndex; i < rankSpecifier.Length; ++i) {
 				outputFormatter.PrintToken(Tokens.OpenSquareBracket);
-				if (this.prettyPrintOptions.SpacesWithinBrackets) {
+				bool outputSpace = this.prettyPrintOptions.SpacesWithinBrackets && rankSpecifier[i] > 0;
+				if (outputSpace) {
 					outputFormatter.Space();
 				}
 				for (int j = 0; j < rankSpecifier[i]; ++j) {
 					outputFormatter.PrintToken(Tokens.Comma);
 				}
-				if (this.prettyPrintOptions.SpacesWithinBrackets) {
+				if (outputSpace) {
 					outputFormatter.Space();
 				}
 				outputFormatter.PrintToken(Tokens.CloseSquareBracket);
@@ -211,6 +225,15 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 		}
+		void PrintFormattedCommaAndNewLine()
+		{
+			if (this.prettyPrintOptions.SpacesBeforeComma) {
+				outputFormatter.Space();
+			}
+			outputFormatter.PrintToken(Tokens.Comma);
+			outputFormatter.NewLine();
+			outputFormatter.Indent();
+		}
 		
 		public override object TrackedVisitAttributeSection(AttributeSection attributeSection, object data)
 		{
@@ -243,6 +266,9 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		{
 			outputFormatter.PrintIdentifier(attribute.Name);
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+				outputFormatter.Space();
+			}
 			this.AppendCommaSeparatedList(attribute.PositionalArguments);
 			
 			if (attribute.NamedArguments != null && attribute.NamedArguments.Count > 0) {
@@ -250,11 +276,21 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					PrintFormattedComma();
 				}
 				for (int i = 0; i < attribute.NamedArguments.Count; ++i) {
-					TrackVisit((INode)attribute.NamedArguments[i], data);
+					NamedArgumentExpression nae = attribute.NamedArguments[i];
+					outputFormatter.PrintIdentifier(nae.Name);
+					if (prettyPrintOptions.AroundAssignmentParentheses)
+						outputFormatter.Space();
+					outputFormatter.PrintToken(Tokens.Assign);
+					if (prettyPrintOptions.AroundAssignmentParentheses)
+						outputFormatter.Space();
+					nae.Expression.AcceptVisitor(this, data);
 					if (i + 1 < attribute.NamedArguments.Count) {
 						PrintFormattedComma();
 					}
 				}
+			}
+			if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
@@ -263,9 +299,10 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		public override object TrackedVisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, object data)
 		{
 			outputFormatter.PrintIdentifier(namedArgumentExpression.Name);
-			outputFormatter.Space();
-			outputFormatter.PrintToken(Tokens.Assign);
-			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.Colon);
+			if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(namedArgumentExpression.Expression, data);
 			return null;
 		}
@@ -279,9 +316,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.PrintIdentifier(@using.Name);
 			
 			if (@using.IsAlias) {
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.Assign);
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				TrackVisit(@using.Alias, data);
 			}
 			
@@ -315,11 +356,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.Space();
 			outputFormatter.PrintIdentifier(namespaceDeclaration.Name);
 			
-			outputFormatter.BeginBrace(this.prettyPrintOptions.NamespaceBraceStyle);
+			outputFormatter.BeginBrace(this.prettyPrintOptions.NamespaceBraceStyle, this.prettyPrintOptions.IndentNamespaceBody);
 			
 			namespaceDeclaration.AcceptChildren(this, data);
 			
-			outputFormatter.EndBrace();
+			outputFormatter.EndBrace(this.prettyPrintOptions.IndentNamespaceBody);
 			
 			return null;
 		}
@@ -328,16 +369,25 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		void OutputEnumMembers(TypeDeclaration typeDeclaration, object data)
 		{
 			for (int i = 0; i < typeDeclaration.Children.Count; i++) {
-				FieldDeclaration fieldDeclaration = (FieldDeclaration)typeDeclaration.Children[i];
+				FieldDeclaration fieldDeclaration = typeDeclaration.Children[i] as FieldDeclaration;
+				if (fieldDeclaration == null) {
+					// not a field?
+					TrackVisit(typeDeclaration.Children[i], data);
+					continue;
+				}
 				BeginVisit(fieldDeclaration);
 				VariableDeclaration f = (VariableDeclaration)fieldDeclaration.Fields[0];
 				VisitAttributes(fieldDeclaration.Attributes, data);
 				outputFormatter.Indent();
 				outputFormatter.PrintIdentifier(f.Name);
 				if (f.Initializer != null && !f.Initializer.IsNull) {
-					outputFormatter.Space();
+					if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+						outputFormatter.Space();
+					}
 					outputFormatter.PrintToken(Tokens.Assign);
-					outputFormatter.Space();
+					if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+						outputFormatter.Space();
+					}
 					TrackVisit(f.Initializer, data);
 				}
 				if (i < typeDeclaration.Children.Count - 1) {
@@ -392,16 +442,16 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			
 			switch (typeDeclaration.Type) {
 				case ClassType.Enum:
-					outputFormatter.BeginBrace(this.prettyPrintOptions.EnumBraceStyle);
+					outputFormatter.BeginBrace(this.prettyPrintOptions.EnumBraceStyle, this.prettyPrintOptions.IndentEnumBody);
 					break;
 				case ClassType.Interface:
-					outputFormatter.BeginBrace(this.prettyPrintOptions.InterfaceBraceStyle);
+					outputFormatter.BeginBrace(this.prettyPrintOptions.InterfaceBraceStyle, this.prettyPrintOptions.IndentInterfaceBody);
 					break;
 				case ClassType.Struct:
-					outputFormatter.BeginBrace(this.prettyPrintOptions.StructBraceStyle);
+					outputFormatter.BeginBrace(this.prettyPrintOptions.StructBraceStyle, this.prettyPrintOptions.IndentStructBody);
 					break;
 				default:
-					outputFormatter.BeginBrace(this.prettyPrintOptions.ClassBraceStyle);
+					outputFormatter.BeginBrace(this.prettyPrintOptions.ClassBraceStyle, this.prettyPrintOptions.IndentClassBody);
 					break;
 			}
 			
@@ -413,7 +463,20 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				typeDeclaration.AcceptChildren(this, data);
 			}
 			currentType = oldType;
-			outputFormatter.EndBrace();
+			switch (typeDeclaration.Type) {
+				case ClassType.Enum:
+					outputFormatter.EndBrace(this.prettyPrintOptions.IndentEnumBody);
+					break;
+				case ClassType.Interface:
+					outputFormatter.EndBrace(this.prettyPrintOptions.IndentInterfaceBody);
+					break;
+				case ClassType.Struct:
+					outputFormatter.EndBrace(this.prettyPrintOptions.IndentStructBody);
+					break;
+				default:
+					outputFormatter.EndBrace(this.prettyPrintOptions.IndentCaseBody);
+					break;
+			}
 			
 			return null;
 		}
@@ -455,7 +518,14 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			bool withinParentheses = this.prettyPrintOptions.WithinMethodDeclarationParentheses && delegateDeclaration.Parameters.Any ();
+			if (withinParentheses) {
+				outputFormatter.Space();
+			}
 			AppendCommaSeparatedList(delegateDeclaration.Parameters);
+			if (withinParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			foreach (TemplateDefinition templateDefinition in delegateDeclaration.Templates) {
 				TrackVisit(templateDefinition, data);
@@ -467,8 +537,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		public override object TrackedVisitOptionDeclaration(OptionDeclaration optionDeclaration, object data)
 		{
-			if ((optionDeclaration.OptionType == OptionType.Explicit || optionDeclaration.OptionType == OptionType.Strict)
-			    && optionDeclaration.OptionValue == true)
+			if (((optionDeclaration.OptionType == OptionType.Explicit || optionDeclaration.OptionType == OptionType.Strict)
+			     && optionDeclaration.OptionValue == true) || optionDeclaration.OptionType == OptionType.Infer)
 			{
 				// Explicit On/Strict On is what C# does, do not report an error
 			} else {
@@ -514,9 +584,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.PrintToken(Tokens.CloseSquareBracket);
 			}
 			if (!variableDeclaration.Initializer.IsNull) {
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.Assign);
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				TrackVisit(variableDeclaration.Initializer, data);
 			}
 			return null;
@@ -534,15 +608,57 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				TrackVisit(propertyDeclaration.InterfaceImplementations[0].InterfaceType, data);
 				outputFormatter.PrintToken(Tokens.Dot);
 			}
-			outputFormatter.PrintIdentifier(propertyDeclaration.Name);
+			if (propertyDeclaration.IsIndexer) {
+				outputFormatter.PrintToken(Tokens.This);
+				
+				outputFormatter.PrintToken(Tokens.OpenSquareBracket);
+				if (this.prettyPrintOptions.SpacesWithinBrackets) {
+					outputFormatter.Space();
+				}
+				AppendCommaSeparatedList(propertyDeclaration.Parameters);
+				if (this.prettyPrintOptions.SpacesWithinBrackets) {
+					outputFormatter.Space();
+				}
+				outputFormatter.PrintToken(Tokens.CloseSquareBracket);
+			} else
+				outputFormatter.PrintIdentifier(propertyDeclaration.Name);
 			
-			outputFormatter.BeginBrace(this.prettyPrintOptions.PropertyBraceStyle);
+			OutputGetAndSetRegion(propertyDeclaration.GetRegion, propertyDeclaration.SetRegion);
 			
-			TrackVisit(propertyDeclaration.GetRegion, data);
-			TrackVisit(propertyDeclaration.SetRegion, data);
-			
-			outputFormatter.EndBrace();
 			return null;
+		}
+		
+		void OutputGetAndSetRegion(PropertyGetRegion getRegion, PropertySetRegion setRegion)
+		{
+			BraceStyle braceStyle = this.prettyPrintOptions.PropertyBraceStyle;
+			
+			if (getRegion.Block.IsNull && setRegion.Block.IsNull && getRegion.Attributes.Count == 0 && setRegion.Attributes.Count == 0
+			    && (braceStyle == BraceStyle.EndOfLine || braceStyle == BraceStyle.EndOfLineWithoutSpace))
+			{
+				if (braceStyle == BraceStyle.EndOfLine)
+					outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				// automatic property / abstract property:
+				// output in a single line: "string Text { get; set; }"
+				if (!getRegion.IsNull) {
+					outputFormatter.Space();
+					OutputModifier(getRegion.Modifier);
+					outputFormatter.PrintText("get;");
+				}
+				if (!setRegion.IsNull) {
+					outputFormatter.Space();
+					OutputModifier(setRegion.Modifier);
+					outputFormatter.PrintText("set;");
+				}
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+				outputFormatter.NewLine();
+			} else {
+				outputFormatter.BeginBrace(braceStyle, this.prettyPrintOptions.IndentPropertyBody);
+				TrackVisit(getRegion, null);
+				TrackVisit(setRegion, null);
+				outputFormatter.EndBrace(this.prettyPrintOptions.IndentPropertyBody);
+			}
 		}
 		
 		public override object TrackedVisitPropertyGetRegion(PropertyGetRegion propertyGetRegion, object data)
@@ -551,7 +667,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.Indent();
 			OutputModifier(propertyGetRegion.Modifier);
 			outputFormatter.PrintText("get");
-			OutputBlockAllowInline(propertyGetRegion.Block, prettyPrintOptions.PropertyGetBraceStyle);
+			if (prettyPrintOptions.AllowPropertyGetBlockInline) {
+				OutputBlockAllowInline(propertyGetRegion.Block, prettyPrintOptions.PropertyGetBraceStyle);
+			} else {
+				OutputBlock(propertyGetRegion.Block, prettyPrintOptions.PropertyGetBraceStyle);
+			}
 			return null;
 		}
 		
@@ -561,7 +681,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.Indent();
 			OutputModifier(propertySetRegion.Modifier);
 			outputFormatter.PrintText("set");
-			OutputBlockAllowInline(propertySetRegion.Block, prettyPrintOptions.PropertySetBraceStyle);
+			if (prettyPrintOptions.AllowPropertySetBlockInline) {
+				OutputBlockAllowInline(propertySetRegion.Block, prettyPrintOptions.PropertySetBraceStyle);
+			} else {
+				OutputBlock(propertySetRegion.Block, prettyPrintOptions.PropertySetBraceStyle);
+			}
 			return null;
 		}
 		
@@ -583,9 +707,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.PrintIdentifier(eventDeclaration.Name);
 			
 			if (!eventDeclaration.Initializer.IsNull) {
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.Assign);
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				TrackVisit(eventDeclaration.Initializer, data);
 			}
 			
@@ -593,10 +721,10 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.PrintToken(Tokens.Semicolon);
 				outputFormatter.NewLine();
 			} else {
-				outputFormatter.BeginBrace(this.prettyPrintOptions.PropertyBraceStyle);
+				outputFormatter.BeginBrace(this.prettyPrintOptions.EventBraceStyle, this.prettyPrintOptions.IndentEventBody);
 				TrackVisit(eventDeclaration.AddRegion, data);
 				TrackVisit(eventDeclaration.RemoveRegion, data);
-				outputFormatter.EndBrace();
+				outputFormatter.EndBrace(this.prettyPrintOptions.IndentEventBody);
 			}
 			return null;
 		}
@@ -606,7 +734,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			VisitAttributes(eventAddRegion.Attributes, data);
 			outputFormatter.Indent();
 			outputFormatter.PrintText("add");
-			OutputBlockAllowInline(eventAddRegion.Block, prettyPrintOptions.EventAddBraceStyle);
+			if (prettyPrintOptions.AllowEventAddBlockInline) {
+				OutputBlockAllowInline(eventAddRegion.Block, prettyPrintOptions.EventAddBraceStyle);
+			} else {
+				OutputBlock(eventAddRegion.Block, prettyPrintOptions.EventAddBraceStyle);
+			}
 			return null;
 		}
 		
@@ -615,7 +747,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			VisitAttributes(eventRemoveRegion.Attributes, data);
 			outputFormatter.Indent();
 			outputFormatter.PrintText("remove");
-			OutputBlockAllowInline(eventRemoveRegion.Block, prettyPrintOptions.EventRemoveBraceStyle);
+			if (prettyPrintOptions.AllowEventRemoveBlockInline) {
+				OutputBlockAllowInline(eventRemoveRegion.Block, prettyPrintOptions.EventRemoveBraceStyle);
+			} else {
+				OutputBlock(eventRemoveRegion.Block, prettyPrintOptions.EventRemoveBraceStyle);
+			}
 			return null;
 		}
 		
@@ -629,17 +765,18 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		public override object TrackedVisitParameterDeclarationExpression(ParameterDeclarationExpression parameterDeclarationExpression, object data)
 		{
 			VisitAttributes(parameterDeclarationExpression.Attributes, data);
-			if (!parameterDeclarationExpression.DefaultValue.IsNull) {
-				outputFormatter.PrintText("[System.Runtime.InteropServices.OptionalAttribute, System.Runtime.InteropServices.DefaultParameterValueAttribute(");
-				TrackVisit(parameterDeclarationExpression.DefaultValue, data);
-				outputFormatter.PrintText(")] ");
-			}
 			OutputModifier(parameterDeclarationExpression.ParamModifier, parameterDeclarationExpression);
 			if (!parameterDeclarationExpression.TypeReference.IsNull) {
 				TrackVisit(parameterDeclarationExpression.TypeReference, data);
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintIdentifier(parameterDeclarationExpression.ParameterName);
+			if (!parameterDeclarationExpression.DefaultValue.IsNull) {
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.Assign);
+				outputFormatter.Space();
+				TrackVisit(parameterDeclarationExpression.DefaultValue, data);
+			}
 			return null;
 		}
 		
@@ -670,11 +807,18 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			bool withinParentheses = this.prettyPrintOptions.WithinMethodDeclarationParentheses && methodDeclaration.Parameters.Any ();
+			if (withinParentheses) {
+				outputFormatter.Space();
+			}
 			if (methodDeclaration.IsExtensionMethod) {
 				outputFormatter.PrintToken(Tokens.This);
 				outputFormatter.Space();
 			}
 			AppendCommaSeparatedList(methodDeclaration.Parameters);
+			if (withinParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			foreach (TemplateDefinition templateDefinition in methodDeclaration.Templates) {
 				TrackVisit(templateDefinition, null);
@@ -706,6 +850,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			} else {
 				switch (operatorDeclaration.OverloadableOperator) {
 					case OverloadableOperatorType.Add:
+					case OverloadableOperatorType.UnaryPlus:
 						outputFormatter.PrintToken(Tokens.Plus);
 						break;
 					case OverloadableOperatorType.BitNot:
@@ -779,6 +924,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 						outputFormatter.PrintToken(Tokens.GreaterThan);
 						outputFormatter.PrintToken(Tokens.GreaterThan);
 						break;
+					case OverloadableOperatorType.UnaryMinus:
 					case OverloadableOperatorType.Subtract:
 						outputFormatter.PrintToken(Tokens.Minus);
 						break;
@@ -811,7 +957,14 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			bool withinParentheses = this.prettyPrintOptions.WithinMethodDeclarationParentheses && constructorDeclaration.Parameters.Any ();
+			if (withinParentheses) {
+				outputFormatter.Space();
+			}
 			AppendCommaSeparatedList(constructorDeclaration.Parameters);
+			if (withinParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			TrackVisit(constructorDeclaration.ConstructorInitializer, data);
 			OutputBlock(constructorDeclaration.Body, this.prettyPrintOptions.ConstructorBraceStyle);
@@ -832,43 +985,14 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.PrintToken(Tokens.This);
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+				outputFormatter.Space();
+			}
 			AppendCommaSeparatedList(constructorInitializer.Arguments);
+			if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
-			return null;
-		}
-		
-		public override object TrackedVisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, object data)
-		{
-			VisitAttributes(indexerDeclaration.Attributes, data);
-			outputFormatter.Indent();
-			OutputModifier(indexerDeclaration.Modifier);
-			TrackVisit(indexerDeclaration.TypeReference, data);
-			outputFormatter.Space();
-			if (indexerDeclaration.InterfaceImplementations.Count > 0) {
-				TrackVisit(indexerDeclaration.InterfaceImplementations[0].InterfaceType, data);
-				outputFormatter.PrintToken(Tokens.Dot);
-			}
-			outputFormatter.PrintToken(Tokens.This);
-			outputFormatter.PrintToken(Tokens.OpenSquareBracket);
-			if (this.prettyPrintOptions.SpacesWithinBrackets) {
-				outputFormatter.Space();
-			}
-			AppendCommaSeparatedList(indexerDeclaration.Parameters);
-			if (this.prettyPrintOptions.SpacesWithinBrackets) {
-				outputFormatter.Space();
-			}
-			outputFormatter.PrintToken(Tokens.CloseSquareBracket);
-			outputFormatter.NewLine();
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
-			outputFormatter.NewLine();
-			++outputFormatter.IndentationLevel;
-			TrackVisit(indexerDeclaration.GetRegion, data);
-			TrackVisit(indexerDeclaration.SetRegion, data);
-			--outputFormatter.IndentationLevel;
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
-			outputFormatter.NewLine();
 			return null;
 		}
 		
@@ -903,12 +1027,16 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		void OutputBlock(BlockStatement blockStatement, BraceStyle braceStyle)
 		{
+			OutputBlock(blockStatement, braceStyle, true);
+		}
+		void OutputBlock(BlockStatement blockStatement, BraceStyle braceStyle, bool emitEndingNewLine)
+		{
 			BeginVisit(blockStatement);
 			if (blockStatement.IsNull) {
 				outputFormatter.PrintToken(Tokens.Semicolon);
 				outputFormatter.NewLine();
 			} else {
-				outputFormatter.BeginBrace(braceStyle);
+				outputFormatter.BeginBrace(braceStyle, this.prettyPrintOptions.IndentBlocks);
 				foreach (Statement stmt in blockStatement.Children) {
 					outputFormatter.Indent();
 					if (stmt is BlockStatement) {
@@ -919,7 +1047,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					if (!outputFormatter.LastCharacterIsNewLine)
 						outputFormatter.NewLine();
 				}
-				outputFormatter.EndBrace();
+				outputFormatter.EndBrace (this.prettyPrintOptions.IndentBlocks, emitEndingNewLine);
 			}
 			EndVisit(blockStatement);
 		}
@@ -960,7 +1088,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					outputFormatter.NewLine();
 				}
 			} else {
-				OutputBlock(blockStatement, braceStyle);
+				OutputBlock(blockStatement, braceStyle, useNewLine);
 			}
 		}
 		
@@ -1019,7 +1147,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.PrintToken(Tokens.Null);
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
-			outputFormatter.BeginBrace(BraceStyle.EndOfLine);
+			outputFormatter.BeginBrace(BraceStyle.EndOfLine, this.prettyPrintOptions.IndentBlocks);
 			
 			outputFormatter.Indent();
 			outputFormatter.PrintIdentifier(raiseEventStatement.EventName);
@@ -1029,7 +1157,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.PrintToken(Tokens.Semicolon);
 			
 			outputFormatter.NewLine();
-			outputFormatter.EndBrace();
+			outputFormatter.EndBrace(this.prettyPrintOptions.IndentBlocks);
 			
 			return null;
 		}
@@ -1042,9 +1170,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					outputFormatter.Indent();
 				}
 				TrackVisit(eraseStatement.Expressions[i], data);
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.Assign);
-				outputFormatter.Space();
+				if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.Null);
 				outputFormatter.PrintToken(Tokens.Semicolon);
 			}
@@ -1157,17 +1289,32 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinIfParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(ifElseStatement.Condition, data);
+			if (this.prettyPrintOptions.WithinIfParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
 			PrintIfSection(ifElseStatement.TrueStatement);
+			bool wasBlock = false;
+			if (ifElseStatement.TrueStatement != null && ifElseStatement.TrueStatement.Count > 0)
+				wasBlock = ifElseStatement.TrueStatement.Last () is BlockStatement;
 			
 			foreach (ElseIfSection elseIfSection in ifElseStatement.ElseIfSections) {
 				TrackVisit(elseIfSection, data);
+				wasBlock = elseIfSection.EmbeddedStatement is BlockStatement;
 			}
 			
 			if (ifElseStatement.HasElseStatements) {
-				outputFormatter.Indent();
+				if (prettyPrintOptions.PlaceElseOnNewLine || (prettyPrintOptions.PlaceNonBlockElseOnNewLine && !wasBlock)) {
+					outputFormatter.NewLine();
+					outputFormatter.Indent();
+				} else {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.Else);
 				PrintIfSection(ifElseStatement.FalseStatement);
 			}
@@ -1177,26 +1324,44 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		void PrintIfSection(List<Statement> statements)
 		{
-			if (statements.Count != 1 || !(statements[0] is BlockStatement)) {
-				outputFormatter.Space();
+			if (statements.Count == 1 && (statements[0] is BlockStatement)) {
+				OutputBlock((BlockStatement)statements[0],
+				            prettyPrintOptions.StatementBraceStyle,
+				            prettyPrintOptions.PlaceElseOnNewLine);
+				return;
 			}
+			/*			if (statements.Count != 1 || !(statements[0] is BlockStatement)) {
+				outputFormatter.Space();
+			}*/
 			if (statements.Count != 1) {
 				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			} else {
+				outputFormatter.NewLine ();
+				outputFormatter.IndentationLevel++;
+				outputFormatter.Indent ();
 			}
+			
 			foreach (Statement stmt in statements) {
 				TrackVisit(stmt, prettyPrintOptions.StatementBraceStyle);
 			}
-			if (statements.Count != 1) {
+			
+			if (statements.Count == 1) {
+				outputFormatter.IndentationLevel--;
+			} else {
 				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
 			}
-			if (statements.Count != 1 || !(statements[0] is BlockStatement)) {
+			/*			if (statements.Count != 1 || !(statements[0] is BlockStatement)) {
 				outputFormatter.Space();
-			}
+			}*/
 		}
 		
 		public override object TrackedVisitElseIfSection(ElseIfSection elseIfSection, object data)
 		{
-			outputFormatter.Indent();
+			if (prettyPrintOptions.PlaceElseOnNewLine) {
+				outputFormatter.Indent();
+			} else {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.Else);
 			outputFormatter.Space();
 			outputFormatter.PrintToken(Tokens.If);
@@ -1204,10 +1369,16 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinIfParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(elseIfSection.Condition, data);
+			if (this.prettyPrintOptions.WithinIfParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
-			WriteEmbeddedStatement(elseIfSection.EmbeddedStatement);
+			WriteEmbeddedStatement(elseIfSection.EmbeddedStatement, prettyPrintOptions.IfElseBraceForcement, prettyPrintOptions.StatementBraceStyle, false);
 			
 			return null;
 		}
@@ -1219,6 +1390,9 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinForParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.DoIndent = false;
 			outputFormatter.DoNewLine = false;
 			outputFormatter.EmitSemicolon = false;
@@ -1254,26 +1428,70 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					}
 				}
 			}
+			if (this.prettyPrintOptions.WithinForParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			outputFormatter.EmitSemicolon = true;
 			outputFormatter.DoNewLine     = true;
 			outputFormatter.DoIndent      = true;
 			
-			WriteEmbeddedStatement(forStatement.EmbeddedStatement);
+			WriteEmbeddedStatement(forStatement.EmbeddedStatement, prettyPrintOptions.ForBraceForcement, prettyPrintOptions.StatementBraceStyle, true);
 			
 			return null;
 		}
 		
-		void WriteEmbeddedStatement(Statement statement)
+		void WriteEmbeddedStatement (Statement statement)
+		{
+			WriteEmbeddedStatement (statement, true);
+		}
+		
+		void WriteEmbeddedStatement (Statement statement, bool emitEndingNewLine)
 		{
 			if (statement is BlockStatement) {
-				TrackVisit(statement, prettyPrintOptions.StatementBraceStyle);
+				OutputBlock((BlockStatement)statement, prettyPrintOptions.StatementBraceStyle, emitEndingNewLine);
 			} else {
 				++outputFormatter.IndentationLevel;
 				outputFormatter.NewLine();
+				outputFormatter.Indent ();
 				TrackVisit(statement, null);
-				outputFormatter.NewLine();
 				--outputFormatter.IndentationLevel;
+			}
+		}
+		
+		void WriteEmbeddedStatement (Statement statement, BraceForcement forcement, BraceStyle braceStyle, bool emitEndingNewLine)
+		{
+			if (statement is BlockStatement) {
+				BlockStatement block = (BlockStatement)statement;
+				switch (forcement) {
+					case BraceForcement.RemoveBraces:
+						if (block.Children.Count == 1) {
+							++outputFormatter.IndentationLevel;
+							outputFormatter.NewLine();
+							outputFormatter.Indent ();
+							TrackVisit(block.Children[0], null);
+							--outputFormatter.IndentationLevel;
+						} else  {
+							goto default;
+						}
+						break;
+					case BraceForcement.RemoveBracesForSingleLine:
+						goto case BraceForcement.RemoveBraces;
+					default:
+						OutputBlock((BlockStatement)statement, prettyPrintOptions.StatementBraceStyle, emitEndingNewLine);
+						break;
+				}
+			} else {
+				switch (forcement) {
+					case BraceForcement.AddBraces:
+						BlockStatement blockStatement = new BlockStatement ();
+						blockStatement.AddChild (statement);
+						OutputBlock(blockStatement, braceStyle, true);
+						break;
+					default:
+						WriteEmbeddedStatement (statement, emitEndingNewLine);
+						break;
+				}
 			}
 		}
 		
@@ -1300,16 +1518,26 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinSwitchParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(switchStatement.SwitchExpression, data);
+			if (this.prettyPrintOptions.WithinSwitchParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			outputFormatter.Space();
 			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
 			outputFormatter.NewLine();
-			++outputFormatter.IndentationLevel;
+			if (prettyPrintOptions.IndentSwitchBody)
+				++outputFormatter.IndentationLevel;
+			
 			foreach (SwitchSection section in switchStatement.SwitchSections) {
 				TrackVisit(section, data);
 			}
-			--outputFormatter.IndentationLevel;
+			
+			if (prettyPrintOptions.IndentSwitchBody)
+				--outputFormatter.IndentationLevel;
 			outputFormatter.Indent();
 			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
 			return null;
@@ -1320,14 +1548,26 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			foreach (CaseLabel label in switchSection.SwitchLabels) {
 				TrackVisit(label, data);
 			}
-			
-			++outputFormatter.IndentationLevel;
-			foreach (Statement stmt in switchSection.Children) {
+			int standardIndentLevel = outputFormatter.IndentationLevel;
+			if (prettyPrintOptions.IndentCaseBody)
+				++outputFormatter.IndentationLevel;
+			for (int i = 0; i < switchSection.Children.Count; i++) {
+				Statement stmt = switchSection.Children[i] as Statement;
+				int oldIndent = outputFormatter.IndentationLevel;
+				if (i == switchSection.Children.Count - 1) {
+					if (prettyPrintOptions.IndentBreakStatements)
+						outputFormatter.IndentationLevel = standardIndentLevel + 1;
+					else
+						outputFormatter.IndentationLevel = standardIndentLevel;
+				}
 				outputFormatter.Indent();
 				TrackVisit(stmt, data);
 				outputFormatter.NewLine();
+				outputFormatter.IndentationLevel = oldIndent;
 			}
-			--outputFormatter.IndentationLevel;
+			
+			if (prettyPrintOptions.IndentCaseBody)
+				--outputFormatter.IndentationLevel;
 			return null;
 		}
 		
@@ -1429,6 +1669,9 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinWhileParentheses) {
+				outputFormatter.Space();
+			}
 			
 			if (doLoopStatement.ConditionType == ConditionType.Until) {
 				outputFormatter.PrintToken(Tokens.Not);
@@ -1443,6 +1686,9 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			
 			if (doLoopStatement.ConditionType == ConditionType.Until) {
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			}
+			if (this.prettyPrintOptions.WithinWhileParentheses) {
+				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 		}
@@ -1459,10 +1705,14 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.PrintToken(Tokens.Do);
 			}
 			
-			WriteEmbeddedStatement(doLoopStatement.EmbeddedStatement);
+			WriteEmbeddedStatement(doLoopStatement.EmbeddedStatement, prettyPrintOptions.WhileBraceForcement, prettyPrintOptions.StatementBraceStyle, prettyPrintOptions.PlaceWhileOnNewLine);
 			
 			if (doLoopStatement.ConditionPosition == ConditionPosition.End) {
-				outputFormatter.Indent();
+				if (prettyPrintOptions.PlaceWhileOnNewLine) {
+					outputFormatter.Indent();
+				} else {
+					outputFormatter.Space();
+				}
 				PrintLoopCheck(doLoopStatement);
 				outputFormatter.PrintToken(Tokens.Semicolon);
 				outputFormatter.NewLine();
@@ -1478,6 +1728,9 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinForEachParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(foreachStatement.TypeReference, data);
 			outputFormatter.Space();
 			outputFormatter.PrintIdentifier(foreachStatement.VariableName);
@@ -1485,9 +1738,12 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.PrintToken(Tokens.In);
 			outputFormatter.Space();
 			TrackVisit(foreachStatement.Expression, data);
+			if (this.prettyPrintOptions.WithinForEachParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
-			WriteEmbeddedStatement(foreachStatement.EmbeddedStatement);
+			WriteEmbeddedStatement(foreachStatement.EmbeddedStatement, prettyPrintOptions.ForEachBraceForcement, prettyPrintOptions.StatementBraceStyle, true);
 			
 			return null;
 		}
@@ -1499,7 +1755,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinLockParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(lockStatement.LockExpression, data);
+			if (this.prettyPrintOptions.WithinLockParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
 			WriteEmbeddedStatement(lockStatement.EmbeddedStatement);
@@ -1514,10 +1776,16 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (prettyPrintOptions.WithinUsingParentheses) {
+				outputFormatter.Space();
+			}
 			PrintStatementInline(usingStatement.ResourceAcquisition, data);
+			if (prettyPrintOptions.WithinUsingParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
-			WriteEmbeddedStatement(usingStatement.EmbeddedStatement);
+			WriteEmbeddedStatement(usingStatement.EmbeddedStatement, prettyPrintOptions.UsingBraceForcement, prettyPrintOptions.StatementBraceStyle, true);
 			
 			return null;
 		}
@@ -1542,23 +1810,34 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		public override object TrackedVisitTryCatchStatement(TryCatchStatement tryCatchStatement, object data)
 		{
 			outputFormatter.PrintToken(Tokens.Try);
-			WriteEmbeddedStatement(tryCatchStatement.StatementBlock);
 			
-			foreach (CatchClause catchClause in tryCatchStatement.CatchClauses) {
-				TrackVisit(catchClause, data);
+			WriteEmbeddedStatement (tryCatchStatement.StatementBlock, prettyPrintOptions.PlaceCatchOnNewLine);
+			for (int i = 0 ; i < tryCatchStatement.CatchClauses.Count; i++) {
+				TrackVisit(tryCatchStatement.CatchClauses[i], i == tryCatchStatement.CatchClauses.Count - 1);
 			}
 			
 			if (!tryCatchStatement.FinallyBlock.IsNull) {
-				outputFormatter.Indent();
+				if (prettyPrintOptions.PlaceFinallyOnNewLine) {
+					//				if (!prettyPrintOptions.PlaceCatchOnNewLine)
+					//					outputFormatter.NewLine ();
+					outputFormatter.Indent();
+				} else {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.Finally);
 				WriteEmbeddedStatement(tryCatchStatement.FinallyBlock);
 			}
+			
 			return null;
 		}
 		
 		public override object TrackedVisitCatchClause(CatchClause catchClause, object data)
 		{
-			outputFormatter.Indent();
+			if (prettyPrintOptions.PlaceCatchOnNewLine) {
+				outputFormatter.Indent();
+			} else {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.Catch);
 			
 			if (!catchClause.TypeReference.IsNull) {
@@ -1566,14 +1845,20 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					outputFormatter.Space();
 				}
 				outputFormatter.PrintToken(Tokens.OpenParenthesis);
+				if (this.prettyPrintOptions.WithinCatchParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintIdentifier(catchClause.TypeReference.Type);
 				if (catchClause.VariableName.Length > 0) {
 					outputFormatter.Space();
 					outputFormatter.PrintIdentifier(catchClause.VariableName);
 				}
+				if (this.prettyPrintOptions.WithinCatchParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			}
-			WriteEmbeddedStatement(catchClause.StatementBlock);
+			WriteEmbeddedStatement(catchClause.StatementBlock, ((bool)data) ? prettyPrintOptions.PlaceFinallyOnNewLine : prettyPrintOptions.PlaceCatchOnNewLine);
 			return null;
 		}
 		
@@ -1595,10 +1880,16 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinCheckedExpressionParantheses) {
+				outputFormatter.Space();
+			}
 			PrintStatementInline(fixedStatement.PointerDeclaration, data);
+			if (this.prettyPrintOptions.WithinCheckedExpressionParantheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
-			WriteEmbeddedStatement(fixedStatement.EmbeddedStatement);
+			WriteEmbeddedStatement(fixedStatement.EmbeddedStatement, prettyPrintOptions.FixedBraceForcement, prettyPrintOptions.StatementBraceStyle, true);
 			return null;
 		}
 		
@@ -1642,6 +1933,9 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			outputFormatter.PrintToken(Tokens.For);
 			outputFormatter.Space();
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinForParentheses) {
+				outputFormatter.Space();
+			}
 			if (forNextStatement.LoopVariableExpression.IsNull) {
 				if (!forNextStatement.TypeReference.IsNull) {
 					TrackVisit(forNextStatement.TypeReference, data);
@@ -1651,9 +1945,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			} else {
 				TrackVisit(forNextStatement.LoopVariableExpression, data);
 			}
-			outputFormatter.Space();
+			if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.Assign);
-			outputFormatter.Space();
+			if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(forNextStatement.Start, data);
 			outputFormatter.PrintToken(Tokens.Semicolon);
 			outputFormatter.Space();
@@ -1666,8 +1964,12 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			if ((pe == null || !(pe.Value is int) || ((int)pe.Value) >= 0)
 			    && !(forNextStatement.Step is UnaryOperatorExpression))
 				outputFormatter.PrintToken(Tokens.LessEqual);
-			else
-				outputFormatter.PrintToken(Tokens.GreaterEqual);
+			else {
+				if (forNextStatement.Step is UnaryOperatorExpression && ((UnaryOperatorExpression)forNextStatement.Step).Op == UnaryOperatorType.Plus)
+					outputFormatter.PrintToken(Tokens.LessEqual);
+				else
+					outputFormatter.PrintToken(Tokens.GreaterEqual);
+			}
 			outputFormatter.Space();
 			TrackVisit(forNextStatement.End, data);
 			outputFormatter.PrintToken(Tokens.Semicolon);
@@ -1684,9 +1986,12 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 				TrackVisit(forNextStatement.Step, data);
 			}
+			if (this.prettyPrintOptions.WithinForParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
-			WriteEmbeddedStatement(forNextStatement.EmbeddedStatement);
+			WriteEmbeddedStatement(forNextStatement.EmbeddedStatement, prettyPrintOptions.ForBraceForcement, prettyPrintOptions.StatementBraceStyle, true);
 			return null;
 		}
 		#endregion
@@ -1748,69 +2053,68 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		public override object TrackedVisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
 		{
+			outputFormatter.PrintText(ToCSharpString(primitiveExpression));
+			return null;
+		}
+		
+		internal static string ToCSharpString(PrimitiveExpression primitiveExpression)
+		{
 			if (primitiveExpression.Value == null) {
-				outputFormatter.PrintToken(Tokens.Null);
-				return null;
+				return "null";
 			}
 			
 			object val = primitiveExpression.Value;
 			
 			if (val is bool) {
 				if ((bool)val) {
-					outputFormatter.PrintToken(Tokens.True);
+					return "true";
 				} else {
-					outputFormatter.PrintToken(Tokens.False);
+					return "false";
 				}
-				return null;
 			}
 			
 			if (val is string) {
-				outputFormatter.PrintText('"' + ConvertString(val.ToString()) + '"');
-				return null;
+				return "\"" + ConvertString(val.ToString()) + "\"";
 			}
 			
 			if (val is char) {
-				outputFormatter.PrintText("'" + ConvertCharLiteral((char)val) + "'");
-				return null;
+				return "'" + ConvertCharLiteral((char)val) + "'";
 			}
 			
 			if (val is decimal) {
-				outputFormatter.PrintText(((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m");
-				return null;
+				return ((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m";
 			}
 			
 			if (val is float) {
-				outputFormatter.PrintText(((float)val).ToString(NumberFormatInfo.InvariantInfo) + "f");
-				return null;
+				return ((float)val).ToString(NumberFormatInfo.InvariantInfo) + "f";
 			}
 			
 			if (val is double) {
 				string text = ((double)val).ToString(NumberFormatInfo.InvariantInfo);
 				if (text.IndexOf('.') < 0 && text.IndexOf('E') < 0)
-					outputFormatter.PrintText(text + ".0");
+					return text + ".0";
 				else
-					outputFormatter.PrintText(text);
-				return null;
+					return text;
 			}
 			
 			if (val is IFormattable) {
+				StringBuilder b = new StringBuilder();
 				if (primitiveExpression.LiteralFormat == LiteralFormat.HexadecimalNumber) {
-					outputFormatter.PrintText("0x");
-					outputFormatter.PrintText(((IFormattable)val).ToString("x", NumberFormatInfo.InvariantInfo));
+					b.Append("0x");
+					b.Append(((IFormattable)val).ToString("x", NumberFormatInfo.InvariantInfo));
 				} else {
-					outputFormatter.PrintText(((IFormattable)val).ToString(null, NumberFormatInfo.InvariantInfo));
+					b.Append(((IFormattable)val).ToString(null, NumberFormatInfo.InvariantInfo));
 				}
 				if (val is uint || val is ulong) {
-					outputFormatter.PrintText("u");
+					b.Append("u");
 				}
 				if (val is long || val is ulong) {
-					outputFormatter.PrintText("L");
+					b.Append("L");
 				}
+				return b.ToString();
 			} else {
-				outputFormatter.PrintText(val.ToString());
+				return val.ToString();
 			}
-			
-			return null;
 		}
 		
 		static bool IsNullLiteralExpression(Expression expr)
@@ -1850,9 +2154,15 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 						outputFormatter.Space();
 					}
 					outputFormatter.PrintToken(Tokens.OpenParenthesis);
+					if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+						outputFormatter.Space();
+					}
 					TrackVisit(binaryOperatorExpression.Left, data);
 					PrintFormattedComma();
 					TrackVisit(binaryOperatorExpression.Right, data);
+					if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+						outputFormatter.Space();
+					}
 					outputFormatter.PrintToken(Tokens.CloseParenthesis);
 					return null;
 				case BinaryOperatorType.DictionaryAccess:
@@ -1986,11 +2296,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					
 				case BinaryOperatorType.Equality:
 				case BinaryOperatorType.ReferenceEquality:
-					if (prettyPrintOptions.AroundRelationalOperatorParentheses) {
+					if (prettyPrintOptions.AroundEqualityOperatorParentheses) {
 						outputFormatter.Space();
 					}
 					outputFormatter.PrintToken(Tokens.Equal);
-					if (prettyPrintOptions.AroundRelationalOperatorParentheses) {
+					if (prettyPrintOptions.AroundEqualityOperatorParentheses) {
 						outputFormatter.Space();
 					}
 					break;
@@ -2014,11 +2324,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					break;
 				case BinaryOperatorType.InEquality:
 				case BinaryOperatorType.ReferenceInequality:
-					if (prettyPrintOptions.AroundRelationalOperatorParentheses) {
+					if (prettyPrintOptions.AroundEqualityOperatorParentheses) {
 						outputFormatter.Space();
 					}
 					outputFormatter.PrintToken(Tokens.NotEqual);
-					if (prettyPrintOptions.AroundRelationalOperatorParentheses) {
+					if (prettyPrintOptions.AroundEqualityOperatorParentheses) {
 						outputFormatter.Space();
 					}
 					break;
@@ -2061,7 +2371,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		public override object TrackedVisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
 		{
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(parenthesizedExpression.Expression, data);
+			if (this.prettyPrintOptions.WithinParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
@@ -2075,7 +2391,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			}
 			
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+				outputFormatter.Space();
+			}
 			AppendCommaSeparatedList(invocationExpression.Arguments);
+			if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
@@ -2215,7 +2537,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinSizeOfParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(sizeOfExpression.TypeReference, data);
+			if (this.prettyPrintOptions.WithinSizeOfParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
@@ -2227,7 +2555,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinTypeOfParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(typeOfExpression.TypeReference, data);
+			if (this.prettyPrintOptions.WithinTypeOfParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
@@ -2239,7 +2573,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinTypeOfParentheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(defaultValueExpression.TypeReference, data);
+			if (this.prettyPrintOptions.WithinTypeOfParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
@@ -2266,10 +2606,17 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			
 			if (anonymousMethodExpression.Parameters.Count > 0 || anonymousMethodExpression.HasParameterList) {
 				outputFormatter.PrintToken(Tokens.OpenParenthesis);
+				bool withinParentheses = this.prettyPrintOptions.WithinMethodDeclarationParentheses && anonymousMethodExpression.Parameters.Any ();
+				if (withinParentheses) {
+					outputFormatter.Space();
+				}
 				AppendCommaSeparatedList(anonymousMethodExpression.Parameters);
+				if (withinParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			}
-			OutputBlockAllowInline(anonymousMethodExpression.Body, this.prettyPrintOptions.MethodBraceStyle, false);
+			OutputBlockAllowInline(anonymousMethodExpression.Body, this.prettyPrintOptions.AnonymousMethodBraceStyle, false);
 			return null;
 		}
 		
@@ -2280,17 +2627,23 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.PrintIdentifier(lambdaExpression.Parameters[0].ParameterName);
 			} else {
 				outputFormatter.PrintToken(Tokens.OpenParenthesis);
+				if (this.prettyPrintOptions.WithinParentheses) {
+					outputFormatter.Space();
+				}
 				AppendCommaSeparatedList(lambdaExpression.Parameters);
+				if (this.prettyPrintOptions.WithinParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			}
 			outputFormatter.Space();
 			outputFormatter.PrintToken(Tokens.LambdaArrow);
-			outputFormatter.Space();
 			if (!lambdaExpression.ExpressionBody.IsNull) {
+				outputFormatter.Space();
 				TrackVisit(lambdaExpression.ExpressionBody, null);
 			}
-			if (!lambdaExpression.StatementBody.IsNull) {
-				OutputBlockAllowInline(lambdaExpression.StatementBody, this.prettyPrintOptions.MethodBraceStyle, false);
+			if (!lambdaExpression.StatementBody.IsNull && lambdaExpression.StatementBody is BlockStatement) {
+				OutputBlockAllowInline(lambdaExpression.StatementBody as BlockStatement, this.prettyPrintOptions.MethodBraceStyle, false);
 			}
 			return null;
 		}
@@ -2303,7 +2656,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			}
 			
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinCheckedExpressionParantheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(checkedExpression.Expression, data);
+			if (this.prettyPrintOptions.WithinCheckedExpressionParantheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
@@ -2315,7 +2674,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			if (this.prettyPrintOptions.WithinCheckedExpressionParantheses) {
+				outputFormatter.Space();
+			}
 			TrackVisit(uncheckedExpression.Expression, data);
+			if (this.prettyPrintOptions.WithinCheckedExpressionParantheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
@@ -2348,7 +2713,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				TrackVisit(castExpression.CastTo, data);
 			} else {
 				outputFormatter.PrintToken(Tokens.OpenParenthesis);
+				if (prettyPrintOptions.WithinCastParentheses) {
+					outputFormatter.Space();
+				}
 				TrackVisit(castExpression.CastTo, data);
+				if (prettyPrintOptions.WithinCastParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
 				if (this.prettyPrintOptions.SpacesAfterTypecast) {
 					outputFormatter.Space();
@@ -2413,7 +2784,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					outputFormatter.Space();
 				}
 				outputFormatter.PrintToken(Tokens.OpenParenthesis);
+				if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+					outputFormatter.Space();
+				}
 				AppendCommaSeparatedList(objectCreateExpression.Parameters);
+				if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			}
 			if (!objectCreateExpression.ObjectInitializer.IsNull) {
@@ -2435,14 +2812,15 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				
 				if (arrayCreateExpression.Arguments.Count > 0) {
 					outputFormatter.PrintToken(Tokens.OpenSquareBracket);
-					if (this.prettyPrintOptions.SpacesWithinBrackets) {
+					bool outputSpace = this.prettyPrintOptions.SpacesWithinBrackets && arrayCreateExpression.Arguments.Count > 0;
+					if (outputSpace) {
 						outputFormatter.Space();
 					}
 					for (int i = 0; i < arrayCreateExpression.Arguments.Count; ++i) {
 						if (i > 0) PrintFormattedComma();
 						TrackVisit(arrayCreateExpression.Arguments[i], data);
 					}
-					if (this.prettyPrintOptions.SpacesWithinBrackets) {
+					if (outputSpace) {
 						outputFormatter.Space();
 					}
 					outputFormatter.PrintToken(Tokens.CloseSquareBracket);
@@ -2459,15 +2837,31 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			return null;
 		}
 		
+		public override object TrackedVisitMemberInitializerExpression(MemberInitializerExpression memberInitializerExpression, object data)
+		{
+			outputFormatter.PrintIdentifier(memberInitializerExpression.Name);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.Assign);
+			outputFormatter.Space();
+			TrackVisit(memberInitializerExpression.Expression, data);
+			return null;
+		}
+		
 		public override object TrackedVisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
 		{
 			Expression target = memberReferenceExpression.TargetObject;
 			
 			if (target is BinaryOperatorExpression || target is CastExpression) {
 				outputFormatter.PrintToken(Tokens.OpenParenthesis);
+				if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+					outputFormatter.Space();
+				}
 			}
 			TrackVisit(target, data);
 			if (target is BinaryOperatorExpression || target is CastExpression) {
+				if (this.prettyPrintOptions.WithinMethodCallParentheses) {
+					outputFormatter.Space();
+				}
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			}
 			outputFormatter.PrintToken(Tokens.Dot);
@@ -2494,10 +2888,39 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		public override object TrackedVisitCollectionInitializerExpression(CollectionInitializerExpression arrayInitializerExpression, object data)
 		{
-			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
-			outputFormatter.Space();
-			this.AppendCommaSeparatedList(arrayInitializerExpression.CreateExpressions);
-			outputFormatter.Space();
+			outputFormatter.PrintToken (Tokens.OpenCurlyBrace);
+			if (arrayInitializerExpression.CreateExpressions.Count == 1) {
+				outputFormatter.Space ();
+			} else {
+				outputFormatter.IndentationLevel++;
+				outputFormatter.NewLine ();
+				outputFormatter.Indent ();
+			}
+			var createExprs = arrayInitializerExpression.CreateExpressions;
+			for (int i = 0; i < createExprs.Count; i++) {
+				if (i > 0) {
+					PrintFormattedCommaAndNewLine();
+				}
+				NamedArgumentExpression nae = createExprs[i] as NamedArgumentExpression;
+				if (nae != null) {
+					outputFormatter.PrintIdentifier(nae.Name);
+					if (prettyPrintOptions.AroundAssignmentParentheses)
+						outputFormatter.Space();
+					outputFormatter.PrintToken(Tokens.Assign);
+					if (prettyPrintOptions.AroundAssignmentParentheses)
+						outputFormatter.Space();
+					nae.Expression.AcceptVisitor(this, data);
+				} else {
+					createExprs[i].AcceptVisitor(this, data);
+				}
+			}
+			if (arrayInitializerExpression.CreateExpressions.Count == 1) {
+				outputFormatter.Space ();
+			} else {
+				outputFormatter.IndentationLevel--;
+				outputFormatter.NewLine();
+				outputFormatter.Indent();
+			}
 			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
 			return null;
 		}
@@ -2539,9 +2962,6 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			if ((modifier & ParameterModifiers.Params) == ParameterModifiers.Params) {
 				outputFormatter.PrintToken(Tokens.Params);
 				outputFormatter.Space();
-			}
-			if ((modifier & ParameterModifiers.Optional) == ParameterModifiers.Optional) {
-				Error(node, String.Format("Optional parameters aren't supported in C#"));
 			}
 		}
 		
@@ -2608,18 +3028,31 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			return node.AcceptVisitor(this, data);
 		}
 		
+		/// <summary>
+		/// Resets the output formatter, sets Text to string.Empty.
+		/// </summary>
+		public void Reset ()
+		{
+			outputFormatter.Reset ();
+		}
+		
 		public void AppendCommaSeparatedList<T>(ICollection<T> list) where T : class, INode
+		{
+			AppendCommaSeparatedList(list, false);
+		}
+		
+		public void AppendCommaSeparatedList<T>(ICollection<T> list, bool alwaysBreakLine) where T : class, INode
 		{
 			if (list != null) {
 				int i = 0;
 				foreach (T node in list) {
 					node.AcceptVisitor(this, null);
 					if (i + 1 < list.Count) {
-						PrintFormattedComma();
-					}
-					if ((i + 1) % 10 == 0) {
-						outputFormatter.NewLine();
-						outputFormatter.Indent();
+						if (alwaysBreakLine || (i + 1) % 10 == 0) {
+							PrintFormattedCommaAndNewLine();
+						} else {
+							PrintFormattedComma();
+						}
 					}
 					i++;
 				}
@@ -2629,14 +3062,14 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		public override object TrackedVisitQueryExpression(QueryExpression queryExpression, object data)
 		{
 			if (queryExpression.IsQueryContinuation) {
-				queryExpression.FromClause.InExpression.AcceptVisitor(this, data);
+				queryExpression.FromClause.Sources.First().AcceptVisitor(this, data);
 			}
 			outputFormatter.IndentationLevel++;
 			if (queryExpression.IsQueryContinuation) {
 				outputFormatter.Space();
 				outputFormatter.PrintToken(Tokens.Into);
 				outputFormatter.Space();
-				outputFormatter.PrintIdentifier(queryExpression.FromClause.Identifier);
+				outputFormatter.PrintIdentifier(queryExpression.FromClause.Sources.First().Identifier);
 			} else {
 				queryExpression.FromClause.AcceptVisitor(this, data);
 			}
@@ -2657,9 +3090,14 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		public override object TrackedVisitQueryExpressionFromClause(QueryExpressionFromClause fromClause, object data)
 		{
+			CollectionRangeVariable variable = fromClause.Sources.Single();
 			outputFormatter.PrintToken(Tokens.From);
 			outputFormatter.Space();
-			VisitQueryExpressionFromOrJoinClause(fromClause, data);
+			outputFormatter.PrintIdentifier(variable.Identifier);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.In);
+			outputFormatter.Space();
+			variable.Expression.AcceptVisitor(this, data);
 			return null;
 		}
 		
@@ -2667,7 +3105,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		{
 			outputFormatter.PrintToken(Tokens.Join);
 			outputFormatter.Space();
-			VisitQueryExpressionFromOrJoinClause(joinClause, data);
+			outputFormatter.PrintIdentifier(joinClause.Source.Identifier);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.In);
+			outputFormatter.Space();
+			joinClause.Source.Expression.AcceptVisitor(this, data);
 			outputFormatter.Space();
 			outputFormatter.PrintToken(Tokens.On);
 			outputFormatter.Space();
@@ -2685,23 +3127,18 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			return null;
 		}
 		
-		void VisitQueryExpressionFromOrJoinClause(QueryExpressionFromOrJoinClause clause, object data)
-		{
-			outputFormatter.PrintIdentifier(clause.Identifier);
-			outputFormatter.Space();
-			outputFormatter.PrintToken(Tokens.In);
-			outputFormatter.Space();
-			clause.InExpression.AcceptVisitor(this, data);
-		}
-		
 		public override object TrackedVisitQueryExpressionLetClause(QueryExpressionLetClause letClause, object data)
 		{
 			outputFormatter.PrintToken(Tokens.Let);
 			outputFormatter.Space();
 			outputFormatter.PrintIdentifier(letClause.Identifier);
-			outputFormatter.Space();
+			if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+				outputFormatter.Space();
+			}
 			outputFormatter.PrintToken(Tokens.Assign);
-			outputFormatter.Space();
+			if (this.prettyPrintOptions.AroundAssignmentParentheses) {
+				outputFormatter.Space();
+			}
 			return letClause.Expression.AcceptVisitor(this, data);
 		}
 		

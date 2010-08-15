@@ -2,19 +2,21 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3719 $</version>
+//     <version>$Revision: 6292 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.IO;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
+using ICSharpCode.SharpDevelop.Dom.CSharp;
+using ICSharpCode.SharpDevelop.Dom.VBNet;
 using NR = ICSharpCode.NRefactory;
 
 namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
@@ -42,6 +44,8 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		int caretLine;
 		int caretColumn;
+		
+		bool inferAllowed;
 		
 		public NR.SupportedLanguage Language {
 			get {
@@ -105,8 +109,10 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			this.languageProperties = languageProperties;
 			if (languageProperties is LanguageProperties.CSharpProperties) {
 				language = NR.SupportedLanguage.CSharp;
+				inferAllowed = true;
 			} else if (languageProperties is LanguageProperties.VBNetProperties) {
 				language = NR.SupportedLanguage.VBNet;
+				inferAllowed = false;
 			} else {
 				throw new NotSupportedException("The language " + languageProperties.ToString() + " is not supported in the resolver");
 			}
@@ -120,41 +126,13 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				if (language == NR.SupportedLanguage.CSharp && !expression.EndsWith(";"))
 					expression += ";";
 				using (NR.IParser p = NR.ParserFactory.CreateParser(language, new System.IO.StringReader(expression))) {
+					p.Lexer.SetInitialLocation(new NR.Location(caretColumn + caretColumnOffset, caretLine));
 					expr = p.ParseExpression();
-					if (expr != null) {
-						expr.AcceptVisitor(new FixAllNodeLocations(new NR.Location(caretColumn + caretColumnOffset, caretLine)), null);
-					}
 				}
 			}
 			return expr;
 		}
-		
-		sealed class FixAllNodeLocations : NodeTrackingAstVisitor
-		{
-			readonly NR.Location expressionStart;
-			
-			public FixAllNodeLocations(ICSharpCode.NRefactory.Location expressionStart)
-			{
-				this.expressionStart = expressionStart;
-			}
-			
-			protected override void BeginVisit(INode node)
-			{
-				node.StartLocation = FixLocation(node.StartLocation);
-				node.EndLocation = FixLocation(node.EndLocation);
-			}
-			
-			NR.Location FixLocation(NR.Location location)
-			{
-				if (location.IsEmpty) {
-					return expressionStart;
-				} else if (location.Line == 1) {
-					return new NR.Location(location.Column - 1 + expressionStart.Column, expressionStart.Line);
-				} else {
-					return new NR.Location(location.Column, location.Line - 1 + expressionStart.Line);
-				}
-			}
-		}
+
 		
 		string GetFixedExpression(ExpressionResult expressionResult)
 		{
@@ -178,11 +156,17 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				return false;
 			}
 			
-			cu = parseInfo.MostRecentCompilationUnit;
+			cu = parseInfo.CompilationUnit;
 			if (cu == null || cu.ProjectContent == null) {
 				return false;
 			}
 			this.ProjectContent = cu.ProjectContent;
+			
+			if (language == SupportedLanguage.VBNet) {
+				IVBNetOptionProvider provider = (IVBNetOptionProvider)cu;
+				
+				inferAllowed = provider.OptionInfer ?? false;
+			}
 			
 			callingClass = cu.GetInnermostClass(caretLine, caretColumn);
 			callingMember = GetCallingMember();
@@ -200,14 +184,15 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			
 			Expression expr = null;
 			if (language == NR.SupportedLanguage.VBNet) {
-				if (expression.Length == 0 || expression[0] == '.') {
+				if (expression.Length == 0 || expression[0] == '.' && (expression.Length > 1 && !char.IsDigit(expression[1]))) {
 					return WithResolve(expression, fileContent);
 				} else if ("global".Equals(expression, StringComparison.InvariantCultureIgnoreCase)) {
 					return new NamespaceResolveResult(null, null, "");
 				}
 				// array
-			} else if (language == NR.SupportedLanguage.CSharp && expressionResult.Context.IsTypeContext && !expressionResult.Context.IsObjectCreation) {
-				expr = ParseTypeReference(expression);
+			}
+			if (expressionResult.Context.IsTypeContext && !expressionResult.Context.IsObjectCreation) {
+				expr = ParseTypeReference(expression, language);
 			}
 			if (expr == null) {
 				expr = ParseExpression(expression, 0);
@@ -236,7 +221,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			ResolveResult rr;
 			if (expressionResult.Context == ExpressionContext.Attribute) {
 				return ResolveAttribute(expr, new NR.Location(caretColumn, caretLine));
-			} else if (expressionResult.Context == ExpressionContext.ObjectInitializer && expr is IdentifierExpression) {
+			} else if (expressionResult.Context == CSharpExpressionContext.ObjectInitializer && expr is IdentifierExpression) {
 				bool isCollectionInitializer;
 				rr = ResolveObjectInitializer((expr as IdentifierExpression).Identifier, fileContent, out isCollectionInitializer);
 				if (!isCollectionInitializer || rr != null) {
@@ -252,13 +237,19 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return ResolveInternal(expr, expressionResult.Context);
 		}
 		
-		TypeReferenceExpression ParseTypeReference(string typeReference)
+		TypeReferenceExpression ParseTypeReference(string typeReference, SupportedLanguage language)
 		{
-			TypeOfExpression toe = ParseExpression("typeof(" + typeReference + ")", -7) as TypeOfExpression;
+			string typeOfFunc = "typeof";
+			
+			if (language == SupportedLanguage.VBNet)
+				typeOfFunc = "GetType";
+			
+			TypeOfExpression toe = ParseExpression(typeOfFunc + "(" + typeReference + ")", -(typeOfFunc.Length + 1)) as TypeOfExpression;
+			
 			if (toe != null)
 				return new TypeReferenceExpression(toe.TypeReference);
-			else
-				return null;
+			
+			return null;
 		}
 		
 		ResolveResult WithResolve(string expression, string fileContent)
@@ -339,6 +330,8 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		public void RunLookupTableVisitor(INode currentMemberNode)
 		{
+			if (currentMemberNode == null)
+				throw new ArgumentNullException("currentMemberNode");
 			lookupTableVisitor = new LookupTableVisitor(language);
 			currentMemberNode.AcceptVisitor(lookupTableVisitor, null);
 		}
@@ -385,6 +378,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 						return new NamespaceResolveResult(callingClass, callingMember, ns);
 					}
 				}
+				return new UnknownIdentifierResolveResult(callingClass, callingMember, attributeName);
 			} else if (expr is InvocationExpression) {
 				InvocationExpression ie = (InvocationExpression)expr;
 				attributeName = GetAttributeName(ie.TargetObject);
@@ -393,8 +387,48 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					ResolveVisitor resolveVisitor = new ResolveVisitor(this);
 					return resolveVisitor.ResolveConstructorOverload(c, ie.Arguments);
 				}
+				return CreateUnknownMethodResolveResult(expr as InvocationExpression);
 			}
 			return null;
+		}
+		
+		internal UnknownMethodResolveResult CreateUnknownMethodResolveResult(InvocationExpression invocationExpression)
+		{
+			List<IReturnType> arguments = new List<IReturnType>();
+			ResolveVisitor resolveVisitor = new ResolveVisitor(this);
+			
+			foreach (Expression ex in invocationExpression.Arguments) {
+				ResolveResult rr = resolveVisitor.Resolve(ex);
+				if (rr != null)
+					arguments.Add(rr.ResolvedType ?? UnknownReturnType.Instance);
+				else
+					arguments.Add(UnknownReturnType.Instance);
+			}
+
+			IReturnType target = null;
+			
+			if (callingClass != null)
+				target = callingClass.DefaultReturnType;
+			
+			string methodName = "";
+			bool isStatic = false;
+			
+			if (invocationExpression.TargetObject is IdentifierExpression) {
+				IdentifierExpression ie = invocationExpression.TargetObject as IdentifierExpression;
+				methodName = ie.Identifier;
+				isStatic = callingMember != null && callingMember.Modifiers.HasFlag(ModifierEnum.Static);
+			}
+			
+			if (invocationExpression.TargetObject is MemberReferenceExpression) {
+				MemberReferenceExpression mre = invocationExpression.TargetObject as MemberReferenceExpression;
+				var rr = resolveVisitor.Resolve(mre.TargetObject);
+				isStatic = rr is TypeResolveResult;
+				if (rr != null)
+					target = rr.ResolvedType;
+				methodName = mre.MemberName;
+			}
+			
+			return new UnknownMethodResolveResult(callingClass, callingMember, target, methodName, isStatic, arguments);
 		}
 		
 		public ResolveResult ResolveInternal(Expression expr, ExpressionContext context)
@@ -611,10 +645,10 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 			
 			if (languageProperties.ImportModules) {
-				ArrayList list = new ArrayList();
+				List<ICompletionEntry> list = new List<ICompletionEntry>();
 				CtrlSpaceResolveHelper.AddImportedNamespaceContents(list, cu, callingClass);
 				List<IMember> resultMembers = new List<IMember>();
-				foreach (object o in list) {
+				foreach (ICompletionEntry o in list) {
 					IClass c = o as IClass;
 					if (c != null && IsSameName(identifier, c.Name)) {
 						return new TypeResolveResult(callingClass, callingMember, c);
@@ -642,6 +676,11 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		                                     List<TypeReference> typeArguments, bool isInvocation,
 		                                     bool allowExtensionMethods, bool? isAccessThoughReferenceOfCurrentClass)
 		{
+			// in VB everything can be used with invocation syntax (because the same syntax also accesses indexers),
+			// do don't use 'isInvocation'.
+			if (language == NR.SupportedLanguage.VBNet)
+				isInvocation = false;
+			
 			List<IList<IMember>> members = MemberLookupHelper.LookupMember(declaringType, memberName, callingClass, languageProperties, isInvocation, isAccessThoughReferenceOfCurrentClass);
 			List<IReturnType> typeArgs = null;
 			if (members != null && typeArguments != null && typeArguments.Count != 0) {
@@ -772,13 +811,13 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			List<IMember> results = new List<IMember>();
 			if (collectionInitializer != null) {
 				ObjectCreateExpression oce = collectionInitializer.Parent as ObjectCreateExpression;
-				NamedArgumentExpression nae = collectionInitializer.Parent as NamedArgumentExpression;
+				MemberInitializerExpression mie = collectionInitializer.Parent as MemberInitializerExpression;
 				if (oce != null && !oce.IsAnonymousType) {
 					IReturnType resolvedType = TypeVisitor.CreateReturnType(oce.CreateType, this);
 					ObjectInitializerCtrlSpaceInternal(results, resolvedType, out isCollectionInitializer);
 				}
-				else if (nae != null) {
-					IMember member = ResolveNamedArgumentExpressionInObjectInitializer(nae);
+				else if (mie != null) {
+					IMember member = ResolveMemberInitializerExpressionInObjectInitializer(mie);
 					if (member != null) {
 						ObjectInitializerCtrlSpaceInternal(results, member.ReturnType, out isCollectionInitializer);
 					}
@@ -787,11 +826,11 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return results;
 		}
 		
-		IMember ResolveNamedArgumentExpressionInObjectInitializer(NamedArgumentExpression nae)
+		IMember ResolveMemberInitializerExpressionInObjectInitializer(MemberInitializerExpression mie)
 		{
-			CollectionInitializerExpression parentCI = nae.Parent as CollectionInitializerExpression;
+			CollectionInitializerExpression parentCI = mie.Parent as CollectionInitializerExpression;
 			bool tmp;
-			return ObjectInitializerCtrlSpace(parentCI, out tmp).Find(m => IsSameName(m.Name, nae.Name));
+			return ObjectInitializerCtrlSpace(parentCI, out tmp).Find(m => IsSameName(m.Name, mie.Name));
 		}
 		
 		void ObjectInitializerCtrlSpaceInternal(List<IMember> results, IReturnType resolvedType, out bool isCollectionInitializer)
@@ -962,13 +1001,13 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		ReadOnlyCollection<IMethodOrProperty> cachedExtensionMethods;
 		IClass cachedExtensionMethods_LastClass; // invalidate cache when callingClass != LastClass
 		
-		public ReadOnlyCollection<IMethodOrProperty> SearchAllExtensionMethods()
+		public ReadOnlyCollection<IMethodOrProperty> SearchAllExtensionMethods(bool searchInAllNamespaces = false)
 		{
 			if (callingClass == null)
 				return EmptyList<IMethodOrProperty>.Instance;
 			if (callingClass != cachedExtensionMethods_LastClass) {
 				cachedExtensionMethods_LastClass = callingClass;
-				cachedExtensionMethods = new ReadOnlyCollection<IMethodOrProperty>(CtrlSpaceResolveHelper.FindAllExtensions(languageProperties, callingClass));
+				cachedExtensionMethods = new ReadOnlyCollection<IMethodOrProperty>(CtrlSpaceResolveHelper.FindAllExtensions(languageProperties, callingClass, searchInAllNamespaces));
 			}
 			return cachedExtensionMethods;
 		}
@@ -1015,13 +1054,17 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				return rt;
 			
 			if (v.TypeRef == null || v.TypeRef.IsNull || v.TypeRef.Type == "var") {
-				if (v.ParentLambdaExpression != null) {
-					rt = new LambdaParameterReturnType(v.ParentLambdaExpression, v.Name, this);
-				} else {
-					rt = new InferredReturnType(v.Initializer, this);
-					if (v.IsLoopVariable) {
-						rt = new ElementReturnType(this.projectContent, rt);
+				if (inferAllowed) {
+					if (v.ParentLambdaExpression != null) {
+						rt = new LambdaParameterReturnType(v.ParentLambdaExpression, v.Name, this);
+					} else {
+						rt = new InferredReturnType(v.Initializer, this);
+						if (v.IsLoopVariable) {
+							rt = new ElementReturnType(this.projectContent, rt);
+						}
 					}
+				} else {
+					rt = this.projectContent.SystemTypes.Object;
 				}
 			} else {
 				rt = TypeVisitor.CreateReturnType(v.TypeRef, this);
@@ -1065,117 +1108,119 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return c2;
 		}
 		
-		static void AddCSharpKeywords(ArrayList ar, BitArray keywords)
+		static void AddCSharpKeywords(List<ICompletionEntry> ar, BitArray keywords)
 		{
 			for (int i = 0; i < keywords.Length; i++) {
 				if (keywords[i]) {
-					ar.Add(NR.Parser.CSharp.Tokens.GetTokenString(i));
+					ar.Add(new KeywordEntry(NR.Parser.CSharp.Tokens.GetTokenString(i)));
 				}
 			}
 		}
 		
-		public ArrayList CtrlSpace(int caretLine, int caretColumn, ParseInformation parseInfo, string fileContent, ExpressionContext context)
+		/// <summary>
+		/// Returns code completion entries for given context.
+		/// </summary>
+		/// <param name="caretLine"></param>
+		/// <param name="caretColumn"></param>
+		/// <param name="parseInfo"></param>
+		/// <param name="fileContent"></param>
+		/// <param name="context"></param>
+		/// <param name="showEntriesFromAllNamespaces">If true, returns entries from all namespaces, regardless of current imports.</param>
+		/// <returns></returns>
+		public List<ICompletionEntry> CtrlSpace(int caretLine, int caretColumn, ParseInformation parseInfo, string fileContent, ExpressionContext context, bool showEntriesFromAllNamespaces = false)
 		{
 			if (!Initialize(parseInfo, caretLine, caretColumn))
 				return null;
 			
-			ArrayList result = new ArrayList();
+			List<ICompletionEntry> result = new List<ICompletionEntry>();
 			if (language == NR.SupportedLanguage.VBNet) {
-				foreach (KeyValuePair<string, string> pair in TypeReference.PrimitiveTypesVB) {
-					if ("System." + pair.Key != pair.Value) {
-						IClass c = GetPrimitiveClass(pair.Value, pair.Key);
-						if (c != null) result.Add(c);
-					}
-				}
-				result.Add("Global");
-				result.Add("New");
-				CtrlSpaceInternal(result, fileContent);
+				CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
 			} else {
 				if (context == ExpressionContext.TypeDeclaration) {
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.TypeLevel);
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
-				} else if (context == ExpressionContext.InterfaceDeclaration) {
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
+				} else if (context == CSharpExpressionContext.InterfaceDeclaration) {
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.InterfaceLevel);
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
 				} else if (context == ExpressionContext.MethodBody) {
-					result.Add("var");
+					result.Add(new KeywordEntry("var"));
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.StatementStart);
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
 				} else if (context == ExpressionContext.Global) {
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.GlobalLevel);
-				} else if (context == ExpressionContext.InterfacePropertyDeclaration) {
-					result.Add("get");
-					result.Add("set");
-				} else if (context == ExpressionContext.BaseConstructorCall) {
-					result.Add("this");
-					result.Add("base");
-				} else if (context == ExpressionContext.ConstraintsStart) {
-					result.Add("where");
-				} else if (context == ExpressionContext.Constraints) {
-					result.Add("where");
-					result.Add("new");
-					result.Add("struct");
-					result.Add("class");
+				} else if (context == CSharpExpressionContext.InterfacePropertyDeclaration) {
+					result.Add(new KeywordEntry("get"));
+					result.Add(new KeywordEntry("set"));
+				} else if (context == CSharpExpressionContext.BaseConstructorCall) {
+					result.Add(new KeywordEntry("this"));
+					result.Add(new KeywordEntry("base"));
+				} else if (context == CSharpExpressionContext.ConstraintsStart) {
+					result.Add(new KeywordEntry("where"));
+				} else if (context == CSharpExpressionContext.Constraints) {
+					result.Add(new KeywordEntry("where"));
+					result.Add(new KeywordEntry("new"));
+					result.Add(new KeywordEntry("struct"));
+					result.Add(new KeywordEntry("class"));
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
 				} else if (context == ExpressionContext.InheritableType) {
-					result.Add("where"); // the inheritance list can be followed by constraints
+					result.Add(new KeywordEntry("where")); // the inheritance list can be followed by constraints
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
-				} else if (context == ExpressionContext.PropertyDeclaration) {
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
+				} else if (context == CSharpExpressionContext.PropertyDeclaration) {
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.InPropertyDeclaration);
-				} else if (context == ExpressionContext.EventDeclaration) {
+				} else if (context == CSharpExpressionContext.EventDeclaration) {
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.InEventDeclaration);
-				} else if (context == ExpressionContext.FullyQualifiedType) {
+				} else if (context == CSharpExpressionContext.FullyQualifiedType) {
 					cu.ProjectContent.AddNamespaceContents(result, "", languageProperties, true);
-				} else if (context == ExpressionContext.ParameterType || context == ExpressionContext.FirstParameterType) {
-					result.Add("ref");
-					result.Add("out");
-					result.Add("params");
-					if (context == ExpressionContext.FirstParameterType && languageProperties.SupportsExtensionMethods) {
+				} else if (context == CSharpExpressionContext.ParameterType || context == CSharpExpressionContext.FirstParameterType) {
+					result.Add(new KeywordEntry("ref"));
+					result.Add(new KeywordEntry("out"));
+					result.Add(new KeywordEntry("params"));
+					if (context == CSharpExpressionContext.FirstParameterType && languageProperties.SupportsExtensionMethods) {
 						if (callingMember != null && callingMember.IsStatic) {
-							result.Add("this");
+							result.Add(new KeywordEntry("this"));
 						}
 					}
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
-				} else if (context == ExpressionContext.ObjectInitializer) {
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
+				} else if (context == CSharpExpressionContext.ObjectInitializer) {
 					bool isCollectionInitializer;
 					result.AddRange(ObjectInitializerCtrlSpace(fileContent, out isCollectionInitializer));
 					if (isCollectionInitializer) {
 						AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.ExpressionStart);
 						AddCSharpPrimitiveTypes(result);
-						CtrlSpaceInternal(result, fileContent);
+						CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
 					}
 				} else if (context == ExpressionContext.Attribute) {
-					CtrlSpaceInternal(result, fileContent);
-					result.Add("assembly");
-					result.Add("module");
-					result.Add("field");
-					result.Add("event");
-					result.Add("method");
-					result.Add("param");
-					result.Add("property");
-					result.Add("return");
-					result.Add("type");
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
+					result.Add(new KeywordEntry("assembly"));
+					result.Add(new KeywordEntry("module"));
+					result.Add(new KeywordEntry("field"));
+					result.Add(new KeywordEntry("event"));
+					result.Add(new KeywordEntry("method"));
+					result.Add(new KeywordEntry("param"));
+					result.Add(new KeywordEntry("property"));
+					result.Add(new KeywordEntry("return"));
+					result.Add(new KeywordEntry("type"));
 				} else if (context == ExpressionContext.Default) {
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.ExpressionStart);
 					AddCSharpKeywords(result, NR.Parser.CSharp.Tokens.ExpressionContent);
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
 				} else {
 					// e.g. some ExpressionContext.TypeDerivingFrom()
 					AddCSharpPrimitiveTypes(result);
-					CtrlSpaceInternal(result, fileContent);
+					CtrlSpaceInternal(result, fileContent, showEntriesFromAllNamespaces);
 				}
 			}
 			return result;
 		}
 		
-		void AddCSharpPrimitiveTypes(ArrayList result)
+		void AddCSharpPrimitiveTypes(List<ICompletionEntry> result)
 		{
 			foreach (KeyValuePair<string, string> pair in TypeReference.PrimitiveTypesCSharp) {
 				IClass c = GetPrimitiveClass(pair.Value, pair.Key);
@@ -1183,7 +1228,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 		}
 		
-		void CtrlSpaceInternal(ArrayList result, string fileContent)
+		void CtrlSpaceInternal(List<ICompletionEntry> result, string fileContent, bool showEntriesFromAllNamespaces)
 		{
 			lookupTableVisitor = new LookupTableVisitor(language);
 			
@@ -1217,7 +1262,13 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				result.Add(new DefaultField.ParameterField(callingMember.ReturnType, "value", callingMember.Region, callingClass));
 			}
 			
-			CtrlSpaceResolveHelper.AddImportedNamespaceContents(result, cu, callingClass);
+			if (showEntriesFromAllNamespaces) {
+				// CC contains contents of all referenced assemblies
+				CtrlSpaceResolveHelper.AddReferencedProjectsContents(result, cu, callingClass);
+			} else {
+				// CC contains contents of all imported namespaces
+				CtrlSpaceResolveHelper.AddImportedNamespaceContents(result, cu, callingClass);
+			}
 		}
 		
 		sealed class CompareLambdaByLocation : IEqualityComparer<LambdaExpression>
@@ -1331,8 +1382,8 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				ResolveResult rr = ResolveInternal((expr.Parent as AssignmentExpression).Left, ExpressionContext.Default);
 				if (rr != null)
 					return rr.ResolvedType;
-			} else if (expr.Parent is NamedArgumentExpression) {
-				IMember m = ResolveNamedArgumentExpressionInObjectInitializer((NamedArgumentExpression)expr.Parent);
+			} else if (expr.Parent is MemberInitializerExpression) {
+				IMember m = ResolveMemberInitializerExpressionInObjectInitializer((MemberInitializerExpression)expr.Parent);
 				if (m != null)
 					return m.ReturnType;
 			} else if (expr.Parent is CollectionInitializerExpression) {
@@ -1347,6 +1398,18 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					collectionType = null;
 				if (collectionType != null)
 					return new ElementReturnType(projectContent, collectionType);
+			} else if (expr.Parent is IndexerExpression) {
+				IndexerExpression indexerExpr = expr.Parent as IndexerExpression;
+				MemberResolveResult indexer = ResolveInternal(indexerExpr, ExpressionContext.Default)
+					as MemberResolveResult;
+				
+				if (indexer != null && indexer.ResolvedMember is IProperty) {
+					IProperty p = indexer.ResolvedMember as IProperty;
+					int position = indexerExpr.Indexes.IndexOf(expr);
+					if (position < 0 || position >= p.Parameters.Count)
+						return null;
+					return p.Parameters[position].ReturnType;
+				}
 			}
 			return null;
 		}
@@ -1371,6 +1434,37 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				if (fd != null) typeRef = fd.TypeReference;
 			}
 			return TypeVisitor.CreateReturnType(typeRef, this);
+		}
+	}
+	
+	/// <summary>
+	/// Used in CtrlSpace-results to represent a keyword.
+	/// </summary>
+	public class KeywordEntry : ICompletionEntry
+	{
+		public string Name { get; private set; }
+		
+		public KeywordEntry(string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+			this.Name = name;
+		}
+		
+		public override int GetHashCode()
+		{
+			return Name.GetHashCode();
+		}
+		
+		public override bool Equals(object obj)
+		{
+			KeywordEntry e = obj as KeywordEntry;
+			return e != null && e.Name == this.Name;
+		}
+		
+		public override string ToString()
+		{
+			return Name;
 		}
 	}
 }

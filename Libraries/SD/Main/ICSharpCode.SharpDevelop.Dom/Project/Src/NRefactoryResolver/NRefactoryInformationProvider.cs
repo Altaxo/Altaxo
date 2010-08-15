@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2195 $</version>
+//     <version>$Revision: 5785 $</version>
 // </file>
 
 using System;
@@ -22,9 +22,14 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			_projectContent = projectContent;
 		}
 		
-		public bool HasField(string fullTypeName, int typeParameterCount, string fieldName)
+		public bool HasField(string reflectionTypeName, int typeParameterCount, string fieldName)
 		{
-			IClass c = _projectContent.GetClass(fullTypeName, typeParameterCount);
+			IClass c;
+			if (typeParameterCount > 0) {
+				c = _projectContent.GetClass(reflectionTypeName, typeParameterCount);
+			} else {
+				c = _projectContent.GetClassByReflectionName(reflectionTypeName, true);
+			}
 			if (c == null)
 				return false;
 			foreach (IField field in c.DefaultReturnType.GetFields()) {

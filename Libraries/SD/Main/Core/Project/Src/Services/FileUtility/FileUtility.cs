@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3323 $</version>
+//     <version>$Revision: 5785 $</version>
 // </file>
 
 using System;
@@ -131,8 +131,22 @@ namespace ICSharpCode.Core
 			}
 		}
 		
+		static string windowsSdk70InstallRoot = null;
+		/// <summary>
+		/// Location of the .NET 3.5 SP1 SDK (Windows SDK 7.0) install root.
+		/// </summary>
+		public static string WindowsSdk70InstallRoot {
+			get {
+				if (windowsSdk70InstallRoot == null) {
+					windowsSdk70InstallRoot = GetPathFromRegistry(@"SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0", "InstallationFolder") ?? string.Empty;
+				}
+				return windowsSdk70InstallRoot;
+			}
+		}
+		
 		#endregion
 		
+		[Obsolete("Use System.IO.Path.Combine instead")]
 		public static string Combine(params string[] paths)
 		{
 			if (paths == null || paths.Length == 0) {
@@ -148,7 +162,14 @@ namespace ICSharpCode.Core
 		
 		public static bool IsUrl(string path)
 		{
-			return path.IndexOf(':') >= 2;
+			if (path == null)
+				throw new ArgumentNullException("path");
+			return path.IndexOf("://", StringComparison.Ordinal) > 0;
+		}
+		
+		public static bool IsEqualFileName(FileName fileName1, FileName fileName2)
+		{
+			return fileName1 == fileName2;
 		}
 		
 		public static string GetCommonBaseDirectory(string dir1, string dir2)
@@ -185,6 +206,10 @@ namespace ICSharpCode.Core
 		/// <returns>The path of the executable, or null if the exe is not found.</returns>
 		public static string GetSdkPath(string exeName) {
 			string execPath;
+			if (!string.IsNullOrEmpty(WindowsSdk70InstallRoot)) {
+				execPath = Path.Combine(WindowsSdk70InstallRoot, "bin\\" + exeName);
+				if (File.Exists(execPath)) { return execPath; }
+			}
 			if (!string.IsNullOrEmpty(WindowsSdk61InstallRoot)) {
 				execPath = Path.Combine(WindowsSdk61InstallRoot, "bin\\" + exeName);
 				if (File.Exists(execPath)) { return execPath; }
@@ -252,16 +277,6 @@ namespace ICSharpCode.Core
 			return NormalizePath(Path.Combine(baseDirectoryPath, relPath));
 		}
 		
-		public static bool IsBaseDirectory(string baseDirectory, string testDirectory)
-		{
-			if (baseDirectory == null || testDirectory == null)
-				return false;
-			baseDirectory = NormalizePath(baseDirectory) + Path.DirectorySeparatorChar;
-			testDirectory = NormalizePath(testDirectory) + Path.DirectorySeparatorChar;
-			
-			return testDirectory.StartsWith(baseDirectory, StringComparison.InvariantCultureIgnoreCase);
-		}
-		
 		public static string RenameBaseDirectory(string fileName, string oldDirectory, string newDirectory)
 		{
 			fileName     = NormalizePath(fileName);
@@ -318,28 +333,33 @@ namespace ICSharpCode.Core
 		{
 			// If Directory.GetFiles() searches the 8.3 name as well as the full name so if the filemask is
 			// "*.xpt" it will return "Template.xpt~"
-			bool isExtMatch = Regex.IsMatch(filemask, @"^\*\..{3}$");
-			string ext = null;
-			string[] file = Directory.GetFiles(directory, filemask);
-			if (isExtMatch) ext = filemask.Remove(0,1);
-			
-			foreach (string f in file) {
-				if (ignoreHidden && (File.GetAttributes(f) & FileAttributes.Hidden) == FileAttributes.Hidden) {
-					continue;
-				}
-				if (isExtMatch && Path.GetExtension(f) != ext) continue;
+			try {
+				bool isExtMatch = Regex.IsMatch(filemask, @"^\*\..{3}$");
+				string ext = null;
+				string[] file = Directory.GetFiles(directory, filemask);
+				if (isExtMatch) ext = filemask.Remove(0,1);
 				
-				collection.Add(f);
-			}
-			
-			if (searchSubdirectories) {
-				string[] dir = Directory.GetDirectories(directory);
-				foreach (string d in dir) {
-					if (ignoreHidden && (File.GetAttributes(d) & FileAttributes.Hidden) == FileAttributes.Hidden) {
+				foreach (string f in file) {
+					if (ignoreHidden && (File.GetAttributes(f) & FileAttributes.Hidden) == FileAttributes.Hidden) {
 						continue;
 					}
-					SearchDirectory(d, filemask, collection, searchSubdirectories, ignoreHidden);
+					if (isExtMatch && Path.GetExtension(f) != ext) continue;
+					
+					collection.Add(f);
 				}
+				
+				if (searchSubdirectories) {
+					string[] dir = Directory.GetDirectories(directory);
+					foreach (string d in dir) {
+						if (ignoreHidden && (File.GetAttributes(d) & FileAttributes.Hidden) == FileAttributes.Hidden) {
+							continue;
+						}
+						SearchDirectory(d, filemask, collection, searchSubdirectories, ignoreHidden);
+					}
+				}
+			} catch (UnauthorizedAccessException) {
+				// Ignore exception when access to a directory is denied.
+				// Fixes SD2-893.
 			}
 		}
 		
@@ -372,6 +392,14 @@ namespace ICSharpCode.Core
 				return false;
 			}
 			
+			if(fileName[fileName.Length-1] == ' ') {
+				return false;
+			}
+			
+			if(fileName[fileName.Length-1] == '.') {
+				return false;
+			}
+			
 			// platform dependend : Check for invalid file names (DOS)
 			// this routine checks for follwing bad file names :
 			// CON, PRN, AUX, NUL, COM1-9 and LPT1-9
@@ -398,12 +426,21 @@ namespace ICSharpCode.Core
 		/// <summary>
 		/// Checks that a single directory name (not the full path) is valid.
 		/// </summary>
+		[ObsoleteAttribute("Use IsValidDirectoryEntryName instead")]
 		public static bool IsValidDirectoryName(string name)
+		{
+			return IsValidDirectoryEntryName(name);
+		}
+		
+		/// <summary>
+		/// Checks that a single directory name (not the full path) is valid.
+		/// </summary>
+		public static bool IsValidDirectoryEntryName(string name)
 		{
 			if (!IsValidPath(name)) {
 				return false;
 			}
-			if (name.IndexOfAny(new char[]{Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar}) >= 0) {
+			if (name.IndexOfAny(new char[]{Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar,Path.VolumeSeparatorChar}) >= 0) {
 				return false;
 			}
 			if (name.Trim(' ').Length == 0) {
@@ -415,7 +452,7 @@ namespace ICSharpCode.Core
 		public static bool TestFileExists(string filename)
 		{
 			if (!File.Exists(filename)) {
-				MessageService.ShowWarning(StringParser.Parse("${res:Fileutility.CantFindFileError}", new string[,] { {"FILE",  filename} }));
+				MessageService.ShowWarning(StringParser.Parse("${res:Fileutility.CantFindFileError}", new StringTagPair("FILE", filename)));
 				return false;
 			}
 			return true;
@@ -497,32 +534,39 @@ namespace ICSharpCode.Core
 		}
 
 		// Observe SAVE functions
-		public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, string fileName, string message, FileErrorPolicy policy)
+		public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, string fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
 		{
 			System.Diagnostics.Debug.Assert(IsValidPath(fileName));
 			try {
 				saveFile();
-				OnFileSaved(new FileNameEventArgs(fileName));
+				RaiseFileSaved(new FileNameEventArgs(fileName));
 				return FileOperationResult.OK;
-			} catch (Exception e) {
-				switch (policy) {
-					case FileErrorPolicy.Inform:
-						ServiceManager.MessageService.InformSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e);
-						break;
-					case FileErrorPolicy.ProvideAlternative:
-						ChooseSaveErrorResult r = ServiceManager.MessageService.ChooseSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e, false);
-						if (r.IsRetry) {
-							return ObservedSave(saveFile, fileName, message, policy);
-						} else if (r.IsIgnore) {
-							return FileOperationResult.Failed;
-						}
-						break;
-				}
+			} catch (IOException e) {
+				return ObservedSaveHandleException(e, saveFile, fileName, message, policy);
+			} catch (UnauthorizedAccessException e) {
+				return ObservedSaveHandleException(e, saveFile, fileName, message, policy);
+			}
+		}
+		
+		static FileOperationResult ObservedSaveHandleException(Exception e, FileOperationDelegate saveFile, string fileName, string message, FileErrorPolicy policy)
+		{
+			switch (policy) {
+				case FileErrorPolicy.Inform:
+					ServiceManager.Instance.MessageService.InformSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e);
+					break;
+				case FileErrorPolicy.ProvideAlternative:
+					ChooseSaveErrorResult r = ServiceManager.Instance.MessageService.ChooseSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e, false);
+					if (r.IsRetry) {
+						return ObservedSave(saveFile, fileName, message, policy);
+					} else if (r.IsIgnore) {
+						return FileOperationResult.Failed;
+					}
+					break;
 			}
 			return FileOperationResult.Failed;
 		}
 		
-		public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, string fileName, FileErrorPolicy policy)
+		public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, string fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
 		{
 			return ObservedSave(saveFile,
 			                    fileName,
@@ -530,12 +574,7 @@ namespace ICSharpCode.Core
 			                    policy);
 		}
 		
-		public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, string fileName)
-		{
-			return ObservedSave(saveFile, fileName, FileErrorPolicy.Inform);
-		}
-		
-		public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, string fileName, string message, FileErrorPolicy policy)
+		public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, string fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
 		{
 			System.Diagnostics.Debug.Assert(IsValidPath(fileName));
 			try {
@@ -544,39 +583,41 @@ namespace ICSharpCode.Core
 					Directory.CreateDirectory(directory);
 				}
 				saveFileAs(fileName);
-				OnFileSaved(new FileNameEventArgs(fileName));
+				RaiseFileSaved(new FileNameEventArgs(fileName));
 				return FileOperationResult.OK;
-			} catch (Exception e) {
-				switch (policy) {
-					case FileErrorPolicy.Inform:
-						ServiceManager.MessageService.InformSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e);
-						break;
-					case FileErrorPolicy.ProvideAlternative:
-						ChooseSaveErrorResult r = ServiceManager.MessageService.ChooseSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e, false);
-						if (r.IsRetry) {
-							return ObservedSave(saveFileAs, fileName, message, policy);
-						} else if (r.IsIgnore) {
-							return FileOperationResult.Failed;
-						} else if (r.IsSaveAlternative) {
-							return ObservedSave(saveFileAs, r.AlternativeFileName, message, policy);
-						}
-						break;
-				}
+			} catch (IOException e) {
+				return ObservedSaveHandleError(e, saveFileAs, fileName, message, policy);
+			} catch (UnauthorizedAccessException e) {
+				return ObservedSaveHandleError(e, saveFileAs, fileName, message, policy);
+			}
+		}
+
+		static FileOperationResult ObservedSaveHandleError(Exception e, NamedFileOperationDelegate saveFileAs, string fileName, string message, FileErrorPolicy policy)
+		{
+			switch (policy) {
+				case FileErrorPolicy.Inform:
+					ServiceManager.Instance.MessageService.InformSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e);
+					break;
+				case FileErrorPolicy.ProvideAlternative:
+					ChooseSaveErrorResult r = ServiceManager.Instance.MessageService.ChooseSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e, true);
+					if (r.IsRetry) {
+						return ObservedSave(saveFileAs, fileName, message, policy);
+					} else if (r.IsIgnore) {
+						return FileOperationResult.Failed;
+					} else if (r.IsSaveAlternative) {
+						return ObservedSave(saveFileAs, r.AlternativeFileName, message, policy);
+					}
+					break;
 			}
 			return FileOperationResult.Failed;
 		}
 		
-		public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, string fileName, FileErrorPolicy policy)
+		public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, string fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
 		{
 			return ObservedSave(saveFileAs,
 			                    fileName,
 			                    ResourceService.GetString("ICSharpCode.Services.FileUtilityService.CantSaveFileStandardText"),
 			                    policy);
-		}
-		
-		public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, string fileName)
-		{
-			return ObservedSave(saveFileAs, fileName, FileErrorPolicy.Inform);
 		}
 		
 		// Observe LOAD functions
@@ -586,24 +627,31 @@ namespace ICSharpCode.Core
 				loadFile();
 				OnFileLoaded(new FileNameEventArgs(fileName));
 				return FileOperationResult.OK;
-			} catch (Exception e) {
-				switch (policy) {
-					case FileErrorPolicy.Inform:
-						ServiceManager.MessageService.InformSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileLoading}", e);
-						break;
-					case FileErrorPolicy.ProvideAlternative:
-						ChooseSaveErrorResult r = ServiceManager.MessageService.ChooseSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileLoading}", e, false);
-						if (r.IsRetry)
-							return ObservedLoad(loadFile, fileName, message, policy);
-						else if (r.IsIgnore)
-							return FileOperationResult.Failed;
-						break;
-				}
+			} catch (IOException e) {
+				return ObservedLoadHandleException(e, loadFile, fileName, message, policy);
+			}  catch (UnauthorizedAccessException e) {
+				return ObservedLoadHandleException(e, loadFile, fileName, message, policy);
+			}
+		}
+
+		static FileOperationResult ObservedLoadHandleException(Exception e, FileOperationDelegate loadFile, string fileName, string message, FileErrorPolicy policy)
+		{
+			switch (policy) {
+				case FileErrorPolicy.Inform:
+					ServiceManager.Instance.MessageService.InformSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileLoading}", e);
+					break;
+				case FileErrorPolicy.ProvideAlternative:
+					ChooseSaveErrorResult r = ServiceManager.Instance.MessageService.ChooseSaveError(fileName, message, "${res:FileUtilityService.ErrorWhileLoading}", e, false);
+					if (r.IsRetry)
+						return ObservedLoad(loadFile, fileName, message, policy);
+					else if (r.IsIgnore)
+						return FileOperationResult.Failed;
+					break;
 			}
 			return FileOperationResult.Failed;
 		}
 		
-		public static FileOperationResult ObservedLoad(FileOperationDelegate loadFile, string fileName, FileErrorPolicy policy)
+		public static FileOperationResult ObservedLoad(FileOperationDelegate loadFile, string fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
 		{
 			return ObservedLoad(loadFile,
 			                    fileName,
@@ -611,17 +659,12 @@ namespace ICSharpCode.Core
 			                    policy);
 		}
 		
-		public static FileOperationResult ObservedLoad(FileOperationDelegate loadFile, string fileName)
-		{
-			return ObservedLoad(loadFile, fileName, FileErrorPolicy.Inform);
-		}
-		
-		public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, string fileName, string message, FileErrorPolicy policy)
+		public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, string fileName, string message, FileErrorPolicy policy = FileErrorPolicy.Inform)
 		{
 			return ObservedLoad(new FileOperationDelegate(delegate { saveFileAs(fileName); }), fileName, message, policy);
 		}
 		
-		public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, string fileName, FileErrorPolicy policy)
+		public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, string fileName, FileErrorPolicy policy = FileErrorPolicy.Inform)
 		{
 			return ObservedLoad(saveFileAs,
 			                    fileName,
@@ -629,19 +672,15 @@ namespace ICSharpCode.Core
 			                    policy);
 		}
 		
-		public static FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, string fileName)
-		{
-			return ObservedLoad(saveFileAs, fileName, FileErrorPolicy.Inform);
-		}
-		
-		static  void OnFileLoaded(FileNameEventArgs e)
+		static void OnFileLoaded(FileNameEventArgs e)
 		{
 			if (FileLoaded != null) {
 				FileLoaded(null, e);
 			}
 		}
 		
-		static void OnFileSaved(FileNameEventArgs e) {
+		public static void RaiseFileSaved(FileNameEventArgs e)
+		{
 			if (FileSaved != null) {
 				FileSaved(null, e);
 			}

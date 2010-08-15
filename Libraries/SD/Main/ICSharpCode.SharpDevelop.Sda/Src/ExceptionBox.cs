@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3786 $</version>
+//     <version>$Revision: 4918 $</version>
 // </file>
 
 // project created on 2/6/2003 at 11:10 AM
@@ -15,6 +15,7 @@ using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.Core.WinForms;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Sda
 {
@@ -39,7 +40,13 @@ namespace ICSharpCode.SharpDevelop.Sda
 		{
 			Application.ThreadException += ShowErrorBox;
 			AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;
-			MessageService.CustomErrorReporter = ShowErrorBox;
+			System.Windows.Threading.Dispatcher.CurrentDispatcher.UnhandledException += Dispatcher_UnhandledException;
+		}
+		
+		static void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+		{
+			ShowErrorBox(e.Exception, "Unhandled WPF exception", false);
+			e.Handled = true;
 		}
 		
 		static void ShowErrorBox(object sender, ThreadExceptionEventArgs e)
@@ -58,26 +65,45 @@ namespace ICSharpCode.SharpDevelop.Sda
 			ShowErrorBox(ex, "Unhandled exception", e.IsTerminating);
 		}
 		
-		static void ShowErrorBox(Exception exception, string message)
+		/// <summary>
+		/// Displays the exception box.
+		/// </summary>
+		public static void ShowErrorBox(Exception exception, string message)
 		{
 			ShowErrorBox(exception, message, false);
 		}
 		
+		[ThreadStatic]
+		static bool showingBox;
+		
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		static void ShowErrorBox(Exception exception, string message, bool mustTerminate)
 		{
+			if (exception == null)
+				throw new ArgumentNullException("exception");
+			
+			// ignore reentrant calls (e.g. when there's an exception in OnRender)
+			if (showingBox)
+				return;
+			showingBox = true;
 			try {
+				try {
+					AnalyticsMonitorService.TrackException(exception);
+				} catch (Exception ex) {
+					LoggingService.Warn("Error tracking exception", ex);
+				}
 				using (ExceptionBox box = new ExceptionBox(exception, message, mustTerminate)) {
-					try {
-						box.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
-					} catch (InvalidOperationException) {
+					if (ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.InvokeRequired)
 						box.ShowDialog();
-					}
+					else
+						box.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window);
 				}
 			} catch (Exception ex) {
 				LoggingService.Warn("Error showing ExceptionBox", ex);
 				MessageBox.Show(exception.ToString(), message, MessageBoxButtons.OK,
 				                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+			} finally {
+				showingBox = false;
 			}
 		}
 		
@@ -197,7 +223,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			if (MessageBox.Show(StringParser.Parse("${res:ICSharpCode.SharpDevelop.ExceptionBox.QuitWarning}"), MessageService.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, MessageBoxOptions.DefaultDesktopOnly)
 			    == DialogResult.Yes)
 			{
-				Application.Exit();
+				Process.GetCurrentProcess().Kill();
 			}
 		}
 		

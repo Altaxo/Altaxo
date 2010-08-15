@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 4711 $</version>
 // </file>
 
 using System;
@@ -82,7 +82,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		{
 			isInitialized = true;
 			
-			IProjectContent pc = ParserService.GetProjectContentForReference(item);
+			IProjectContent pc = AssemblyParserService.GetProjectContentForReference(item);
 			if (pc != null) {
 				Nodes.Clear();
 				foreach (IClass c in pc.Classes) {

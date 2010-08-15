@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3675 $</version>
+//     <version>$Revision: 5992 $</version>
 // </file>
 
 using System;
@@ -33,17 +33,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		/// <summary>
-		/// The project content in which this class is defined.
-		/// </summary>
-		IProjectContent ProjectContent {
-			get;
-		}
-		
-		ICompilationUnit CompilationUnit {
-			get;
-		}
-		
-		/// <summary>
 		/// Gets the using scope of contains this class.
 		/// </summary>
 		IUsingScope UsingScope {
@@ -53,9 +42,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		IList<IReturnType> BaseTypes {
 			get;
 		}
-		
-		/// <summary>Gets the class associated with the base type with the same index.</summary>
-		IReturnType GetBaseType(int index);
 		
 		IList<IClass> InnerClasses {
 			get;
@@ -77,11 +63,23 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 		
+		IEnumerable<IMember> AllMembers {
+			get;
+		}
+		
 		IList<ITypeParameter> TypeParameters {
 			get;
 		}
-
+		
+		/// <summary>
+		/// Returns the list of all classes that this class inherits from (directly or indirectly).
+		/// If this property is used on part of a partial class, it will also return classes inherited in other parts.
+		/// </summary>
 		IEnumerable<IClass> ClassInheritanceTree {
+			get;
+		}
+		
+		IEnumerable<IClass> ClassInheritanceTreeClassesOnly {
 			get;
 		}
 		
@@ -142,9 +140,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 			set;
 		}
 		
-		///// <summary>
-		///// Creates a shallow copy of the class that is not frozen.
-		///// </summary>
-		//IClass Unfreeze();
+		/// <summary>
+		/// Gets whether a default constructor should be added to this class if it is required.
+		/// Such automatic default constructors will not appear in IClass.Methods, but will be present
+		/// in IClass.DefaultReturnType.GetMethods().
+		/// </summary>
+		/// <remarks>This way of creating the default constructor is necessary because
+		/// we cannot create it directly in the IClass - we need to consider partial classes.</remarks>
+		bool AddDefaultConstructorIfRequired {
+			get;
+		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3548 $</version>
+//     <version>$Revision: 4742 $</version>
 // </file>
 
 using System;
@@ -36,6 +36,9 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		
 		public override void UpdateParseInformation(ICompilationUnit oldUnit, ICompilationUnit unit)
 		{
+			if (!isInitialized)
+				return;
+			
 			Dictionary<string, IClass> classDictionary      = new Dictionary<string, IClass>();
 			Dictionary<string, bool>   wasUpdatedDictionary = new Dictionary<string, bool>();
 			
@@ -99,7 +102,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 				foreach (ProjectItem item in Project.GetItemsOfType(ItemType.Compile)) {
 					ParseInformation parseInformation = ParserService.GetParseInformation(item.FileName);
 					if (parseInformation != null) {
-						InsertParseInformation(parseInformation.BestCompilationUnit);
+						InsertParseInformation(parseInformation.CompilationUnit);
 					}
 				}
 			}
@@ -147,7 +150,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 						ExtTreeNode newnode = new ExtTreeNode();
 						newnode.Tag      = path;
 						newnode.Text     = path;
-						newnode.ImageIndex = newnode.SelectedImageIndex = ClassBrowserIconService.NamespaceIndex;
+						newnode.ImageIndex = newnode.SelectedImageIndex = ClassBrowserIconService.Namespace.ImageIndex;
 						curcollection.Add(newnode);
 						curnode       = newnode;
 						curcollection = curnode.Nodes;

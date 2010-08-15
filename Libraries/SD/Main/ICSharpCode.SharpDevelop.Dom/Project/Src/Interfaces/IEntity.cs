@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3719 $</version>
+//     <version>$Revision: 5242 $</version>
 // </file>
 
 using System;
@@ -10,13 +10,9 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public interface IEntity : IFreezable, IComparable
+	public interface IEntity : ICompletionEntry, IFreezable, IComparable
 	{
 		string FullyQualifiedName {
-			get;
-		}
-		
-		string Name {
 			get;
 		}
 		
@@ -35,6 +31,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 		
+		/// <summary>
+		/// Gets the declaring type.
+		/// For members, this is the type that contains the member.
+		/// For classes, this is the outer class (for nested classes), or null if there this
+		/// is a top-level class.
+		/// </summary>
 		IClass DeclaringType {
 			get;
 		}
@@ -59,10 +61,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 
+		/// <summary>
+		/// Gets whether this entity is static.
+		/// Returns true if either the 'static' or the 'const' modifier is set.
+		/// </summary>
 		bool IsStatic {
 			get;
 		}
 		
+		/// <summary>
+		/// Gets whether this entity is a constant (C#-like const).
+		/// </summary>
 		bool IsConst {
 			get;
 		}
@@ -87,7 +96,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 
-
 		bool IsInternal {
 			get;
 		}
@@ -96,10 +104,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 
+		[Obsolete("This property does not do what one would expect - it merely checks if protected+internal are set, it is not the equivalent of AssemblyAndFamily in Reflection!")]
 		bool IsProtectedAndInternal {
 			get;
 		}
 
+		[Obsolete("This property does not do what one would expect - it merely checks if one of protected+internal is set, it is not the equivalent of AssemblyOrFamily in Reflection!")]
 		bool IsProtectedOrInternal {
 			get;
 		}
@@ -122,6 +132,20 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		/// <summary>
+		/// Gets the compilation unit that contains this entity.
+		/// </summary>
+		ICompilationUnit CompilationUnit {
+			get;
+		}
+		
+		/// <summary>
+		/// The project content in which this entity is defined.
+		/// </summary>
+		IProjectContent ProjectContent {
+			get;
+		}
+		
+		/// <summary>
 		/// This property can be used to attach any user-defined data to this class/method.
 		/// This property is mutable, it can be changed when the class/method is frozen.
 		/// </summary>
@@ -130,6 +154,18 @@ namespace ICSharpCode.SharpDevelop.Dom
 			set;
 		}
 		
+		EntityType EntityType {
+			get;
+		}
+		
 		bool IsAccessible(IClass callingClass, bool isAccessThoughReferenceOfCurrentClass);
+	}
+	
+	public enum EntityType {
+		Class,
+		Field,
+		Property,
+		Method,
+		Event
 	}
 }

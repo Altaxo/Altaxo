@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2973 $</version>
+//     <version>$Revision: 4735 $</version>
 // </file>
 
 using System;
@@ -98,8 +98,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			projectCreateInformation.Solution = newSolution;
 			
 			string newSolutionName = StringParser.Parse(name, new string[,] {
-			                                           	{"ProjectName", projectCreateInformation.SolutionName}
-			                                           });
+			                                            	{"ProjectName", projectCreateInformation.SolutionName}
+			                                            });
 			
 			newSolution.Name = newSolutionName;
 			
@@ -128,8 +128,9 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			// Save solution
 			if (File.Exists(solutionLocation)) {
 				
-				StringParser.Properties["combineLocation"] = solutionLocation;
-				if (MessageService.AskQuestion("${res:ICSharpCode.SharpDevelop.Internal.Templates.CombineDescriptor.OverwriteProjectQuestion}")) {
+				string question = StringParser.Parse("${res:ICSharpCode.SharpDevelop.Internal.Templates.CombineDescriptor.OverwriteProjectQuestion}",
+				                                     new StringTagPair("combineLocation", solutionLocation));
+				if (MessageService.AskQuestion(question)) {
 					newSolution.Save(solutionLocation);
 				}
 			} else {

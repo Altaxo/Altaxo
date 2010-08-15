@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
 		{
-			var ctrl	 = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 			if (null == ctrl)
 				return null;
 			var activeLayer = ctrl.Controller.ActiveLayer;
@@ -168,48 +168,48 @@ namespace Altaxo.Graph.Commands
 			}
 
 			return items;
-			}
-
-		
+		}
 
 
-	  /// <summary>
-    /// Handler for all submenu items of the data popup.".
-    /// </summary>
-    /// <param name="sender">The menuitem, must be of type <see cref="DataMenuItem"/>.</param>
-    /// <param name="e">Not used.</param>
-    /// <remarks>The handler either checks the menuitem, if it was unchecked. If it was already checked,
-    /// it shows the LineScatterPlotStyleControl into a dialog box.
-    /// </remarks>
-    private void EhMenuData_Data(object sender, System.EventArgs e)
-    {
-      MenuCommand dmi = (MenuCommand)sender;
+
+
+		/// <summary>
+		/// Handler for all submenu items of the data popup.".
+		/// </summary>
+		/// <param name="sender">The menuitem, must be of type <see cref="DataMenuItem"/>.</param>
+		/// <param name="e">Not used.</param>
+		/// <remarks>The handler either checks the menuitem, if it was unchecked. If it was already checked,
+		/// it shows the LineScatterPlotStyleControl into a dialog box.
+		/// </remarks>
+		private void EhMenuData_Data(object sender, System.EventArgs e)
+		{
+			MenuCommand dmi = (MenuCommand)sender;
 			int plotItemNumber = (int)dmi.Tag;
 
 			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 			if (null == ctrl)
-				return ;
+				return;
 			var activeLayer = ctrl.Controller.ActiveLayer;
 			if (null == activeLayer)
 				return;
 
-      if(!dmi.Checked)
-      {
-        // if the menu item was not checked before, check it now
-        // by making the plot association shown by the menu item
-        // the actual plot association
-        if(null!=activeLayer && plotItemNumber<activeLayer.PlotItems.Flattened.Length)
-        {
-          dmi.Checked=true;
-          ctrl.Controller.CurrentPlotNumber = plotItemNumber;
-        }
-      }
-      else
-      {
-        IGPlotItem pa = activeLayer.PlotItems.Flattened[plotItemNumber];
-        Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()),true);
-      }
-    }
+			if (!dmi.Checked)
+			{
+				// if the menu item was not checked before, check it now
+				// by making the plot association shown by the menu item
+				// the actual plot association
+				if (null != activeLayer && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
+				{
+					dmi.Checked = true;
+					ctrl.Controller.CurrentPlotNumber = plotItemNumber;
+				}
+			}
+			else
+			{
+				IGPlotItem pa = activeLayer.PlotItems.Flattened[plotItemNumber];
+				Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
+			}
+		}
 	}
 
 }

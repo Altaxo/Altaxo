@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3753 $</version>
+//     <version>$Revision: 5854 $</version>
 // </file>
 
 using System;
@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Debugging;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -113,6 +114,8 @@ namespace ICSharpCode.SharpDevelop.Project
 				return fileName ?? "";
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException();
 				WorkbenchSingleton.AssertMainThread();
 				Debug.Assert(FileUtility.IsUrl(value) || Path.IsPathRooted(value));
 				
@@ -129,11 +132,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		[ReadOnly(true)]
 		public virtual bool ReadOnly {
 			get {
-				if (File.Exists(FileName)) {
+				try {
 					FileAttributes attributes = File.GetAttributes(FileName);
 					return ((FileAttributes.ReadOnly & attributes) == FileAttributes.ReadOnly);
+				} catch (FileNotFoundException) {
+					return false;
+				} catch (DirectoryNotFoundException) {
+					return true;
 				}
-				return false;
 			}
 		}
 		
@@ -358,11 +364,33 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public virtual void Start(bool withDebugging)
 		{
+			ProcessStartInfo psi;
+			try {
+				psi = CreateStartInfo();
+			} catch (ProjectStartException ex) {
+				MessageService.ShowError(ex.Message);
+				return;
+			}
+			if (withDebugging && !FileUtility.IsUrl(psi.FileName)) {
+				DebuggerService.CurrentDebugger.Start(psi);
+			} else {
+				DebuggerService.CurrentDebugger.StartWithoutDebugging(psi);
+			}
+		}
+		
+		/// <summary>
+		/// Creates the start info used to start the project.
+		/// </summary>
+		/// <exception cref="ProjectStartException">Occurs when the project cannot be started.</exception>
+		/// <returns>ProcessStartInfo used to start the project.
+		/// Note: this can be a ProcessStartInfo with a URL as filename!</returns>
+		public virtual ProcessStartInfo CreateStartInfo()
+		{
 			throw new NotSupportedException();
 		}
 		
 		/// <summary>
-		/// Returns true, if a specific file (given by it's name) is inside this project.
+		/// Returns true, if a specific file is inside this project.
 		/// This member is thread-safe.
 		/// </summary>
 		/// <param name="fileName">The <b>fully qualified</b> file name of the file</param>
@@ -389,7 +417,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			lock (SyncRoot) {
 				if (findFileCache == null) {
-					findFileCache = new Dictionary<string, FileProjectItem>(StringComparer.InvariantCultureIgnoreCase);
+					findFileCache = new Dictionary<string, FileProjectItem>(StringComparer.OrdinalIgnoreCase);
 					foreach (ProjectItem item in this.Items) {
 						FileProjectItem fileItem = item as FileProjectItem;
 						if (fileItem != null) {
@@ -416,7 +444,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// <summary>
 		/// Creates a new projectItem for the passed itemType
 		/// </summary>
-		public virtual ProjectItem CreateProjectItem(Microsoft.Build.BuildEngine.BuildItem item)
+		public virtual ProjectItem CreateProjectItem(IProjectItemBackendStore item)
 		{
 			return new UnknownProjectItem(this, item);
 		}
@@ -486,6 +514,39 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 				return result;
 			}
+		}
+		
+		public virtual ProjectBuildOptions CreateProjectBuildOptions(BuildOptions options, bool isRootBuildable)
+		{
+			if (options == null)
+				throw new ArgumentNullException("options");
+			// start of default implementation
+			var configMatchings = this.ParentSolution.GetActiveConfigurationsAndPlatformsForProjects(options.SolutionConfiguration, options.SolutionPlatform);
+			ProjectBuildOptions projectOptions = new ProjectBuildOptions(isRootBuildable ? options.ProjectTarget : options.TargetForDependencies);
+			projectOptions.BuildOutputVerbosity = options.BuildOutputVerbosity;
+			// find the project configuration
+			foreach (var matching in configMatchings) {
+				if (matching.Project == this) {
+					projectOptions.Configuration = matching.Configuration;
+					projectOptions.Platform = matching.Platform;
+				}
+			}
+			// fall back to solution config if we don't find any entries for the project
+			if (string.IsNullOrEmpty(projectOptions.Configuration))
+				projectOptions.Configuration = options.SolutionConfiguration;
+			if (string.IsNullOrEmpty(projectOptions.Platform))
+				projectOptions.Platform = options.SolutionPlatform;
+			
+			// copy global properties to project options
+			foreach (var pair in options.GlobalAdditionalProperties)
+				projectOptions.Properties[pair.Key] = pair.Value;
+			if (isRootBuildable) {
+				// copy properties for root project to project options
+				foreach (var pair in options.ProjectAdditionalProperties) {
+					projectOptions.Properties[pair.Key] = pair.Value;
+				}
+			}
+			return projectOptions;
 		}
 	}
 }

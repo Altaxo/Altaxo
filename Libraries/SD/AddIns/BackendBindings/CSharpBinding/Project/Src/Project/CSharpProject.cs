@@ -2,23 +2,26 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3763 $</version>
+//     <version>$Revision: 5854 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Dom.CSharp;
 using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.SharpDevelop.Project.Converter;
 
 namespace CSharpBinding
 {
 	/// <summary>
-	/// Description of CSharpProject.
+	/// IProject implementation for .csproj files.
 	/// </summary>
 	public class CSharpProject : CompilableProject
 	{
@@ -28,7 +31,7 @@ namespace CSharpBinding
 		}
 		
 		public override string Language {
-			get { return CSharpLanguageBinding.LanguageName; }
+			get { return CSharpProjectBinding.LanguageName; }
 		}
 		
 		public override LanguageProperties LanguageProperties {
@@ -41,31 +44,21 @@ namespace CSharpBinding
 			reparseCodeSensitiveProperties.Add("DefineConstants");
 		}
 		
-		public CSharpProject(IMSBuildEngineProvider engineProvider, string fileName, string projectName)
-			: base(engineProvider)
-		{
-			this.Name = projectName;
-			Init();
-			LoadProject(fileName);
-		}
-		
-		public CSharpProject(ProjectCreateInformation info)
-			: base(info.Solution)
+		public CSharpProject(ProjectLoadInformation loadInformation)
+			: base(loadInformation)
 		{
 			Init();
-			Create(info);
 		}
 		
 		public const string DefaultTargetsFile = @"$(MSBuildBinPath)\Microsoft.CSharp.Targets";
 		public const string ExtendedTargetsFile = @"$(SharpDevelopBinPath)\SharpDevelop.Build.CSharp.targets";
 		
-		protected override void Create(ProjectCreateInformation information)
+		public CSharpProject(ProjectCreateInformation info)
+			: base(info)
 		{
-			this.AddImport(DefaultTargetsFile, null);
+			Init();
 			
-			// Add import before base.Create call - base.Create will call AddOrRemoveExtensions, which
-			// needs to change the import when the compact framework is targeted.
-			base.Create(information);
+			this.AddImport(DefaultTargetsFile, null);
 			
 			SetProperty("Debug", null, "CheckForOverflowUnderflow", "True",
 			            PropertyStorageLocations.ConfigurationSpecific, true);
@@ -93,12 +86,37 @@ namespace CSharpBinding
 				                         options,
 				                         feedbackSink,
 				                         MSBuildEngine.AdditionalTargetFiles.Concat(
-				                         	new [] { "$(SharpDevelopBinPath)/SharpDevelop.CheckMSBuild35Features.targets" }));
+				                         	new [] { Path.Combine(MSBuildEngine.SharpDevelopBinPath, "SharpDevelop.CheckMSBuild35Features.targets") }));
 			} else {
 				base.StartBuild(options, feedbackSink);
 			}
 		}
 		
+		static readonly CompilerVersion msbuild20 = new CompilerVersion(new Version(2, 0), "C# 2.0");
+		static readonly CompilerVersion msbuild35 = new CompilerVersion(new Version(3, 5), "C# 3.0");
+		static readonly CompilerVersion msbuild40 = new CompilerVersion(new Version(4, 0), "C# 4.0");
+		
+		public override CompilerVersion CurrentCompilerVersion {
+			get {
+				switch (MinimumSolutionVersion) {
+					case Solution.SolutionVersionVS2005:
+						return msbuild20;
+					case Solution.SolutionVersionVS2008:
+						return msbuild35;
+					case Solution.SolutionVersionVS2010:
+						return msbuild40;
+					default:
+						throw new NotSupportedException();
+				}
+			}
+		}
+		
+		public override IEnumerable<CompilerVersion> GetAvailableCompilerVersions()
+		{
+			return new[] { msbuild20, msbuild35, msbuild40 };
+		}
+		
+		/*
 		protected override void AddOrRemoveExtensions()
 		{
 			// Test if SharpDevelop-Build extensions are required
@@ -114,7 +132,7 @@ namespace CSharpBinding
 			
 			foreach (Microsoft.Build.BuildEngine.Import import in MSBuildProject.Imports) {
 				if (needExtensions) {
-					if (DefaultTargetsFile.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
+					if (DefaultTargetsFile.Equals(import.ProjectPath, StringComparison.OrdinalIgnoreCase)) {
 						//import.ProjectPath = extendedTargets;
 						MSBuildInternals.SetImportProjectPath(this, import, ExtendedTargetsFile);
 						// Workaround for SD2-1490. It would be better if the project browser could refresh itself
@@ -123,7 +141,7 @@ namespace CSharpBinding
 						break;
 					}
 				} else {
-					if (ExtendedTargetsFile.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
+					if (ExtendedTargetsFile.Equals(import.ProjectPath, StringComparison.OrdinalIgnoreCase)) {
 						//import.ProjectPath = defaultTargets;
 						MSBuildInternals.SetImportProjectPath(this, import, DefaultTargetsFile);
 						// Workaround for SD2-1490. It would be better if the project browser could refresh itself
@@ -134,5 +152,6 @@ namespace CSharpBinding
 				}
 			}
 		}
+		 */
 	}
 }

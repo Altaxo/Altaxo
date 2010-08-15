@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 4181 $</version>
 // </file>
 
 using System;
@@ -32,6 +32,11 @@ namespace ICSharpCode.Core
 	/// </attribute>
 	/// <attribute name="class" use="optional">
 	/// Command class that is run when item is clicked.
+	/// </attribute>
+	/// <attribute name="command" use="optional">
+	/// A WPF routed command that is executed when item is clicked.
+	/// Currently, this property is supported only for WPF Menus.
+	/// Only one of the "class" and "command" attributes can be used on a menu entry.
 	/// </attribute>
 	/// <attribute name="link" use="optional">
 	/// Only for the type "Item"/"Command". Opens a webpage instead of running a command when
@@ -78,6 +83,8 @@ namespace ICSharpCode.Core
 		
 		public MenuItemDescriptor(object caller, Codon codon, IList subItems)
 		{
+			if (codon == null)
+				throw new ArgumentNullException("codon");
 			this.Caller = caller;
 			this.Codon = codon;
 			this.SubItems = subItems;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3786 $</version>
+//     <version>$Revision: 5769 $</version>
 // </file>
 
 // created on 22.08.2003 at 19:02
@@ -34,17 +34,6 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			                        resolver.CallingClass, resolver.CallingMember,
 			                        resolver.CaretLine, resolver.CaretColumn,
 			                        resolver.ProjectContent, ReturnTypeOptions.None);
-		}
-		
-		[Obsolete("Use the overload with ReturnTypeOptions instead")]
-		public static IReturnType CreateReturnType(TypeReference reference, IClass callingClass,
-		                                           IMember callingMember, int caretLine, int caretColumn,
-		                                           IProjectContent projectContent,
-		                                           bool useLazyReturnType)
-		{
-			return CreateReturnType(reference, callingClass, callingMember, caretLine, caretColumn,
-			                        projectContent,
-			                        useLazyReturnType ? ReturnTypeOptions.Lazy : ReturnTypeOptions.None);
 		}
 		
 		public static IReturnType CreateReturnType(TypeReference reference, IClass callingClass,
@@ -79,6 +68,9 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 						}
 					}
 				}
+			}
+			if (t == null && reference.Type == "dynamic") {
+				t = new DynamicReturnType(projectContent);
 			}
 			if (t == null) {
 				int typeParameterCount = reference.GenericTypes.Count;

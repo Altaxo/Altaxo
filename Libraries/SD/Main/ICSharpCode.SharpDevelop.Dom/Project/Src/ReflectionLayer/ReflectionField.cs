@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5625 $</version>
 // </file>
 
 using System;
@@ -14,7 +14,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 	{
 		public ReflectionField(FieldInfo fieldInfo, IClass declaringType) : base(declaringType, fieldInfo.Name)
 		{
-			this.ReturnType = ReflectionReturnType.Create(this, fieldInfo.FieldType, false);
+			this.ReturnType = ReflectionReturnType.Create(this, fieldInfo.FieldType, attributeProvider: fieldInfo);
 			
 			ModifierEnum modifiers  = ModifierEnum.None;
 			if (fieldInfo.IsInitOnly) {

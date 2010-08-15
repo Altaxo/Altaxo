@@ -2,22 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3772 $</version>
+//     <version>$Revision: 6098 $</version>
 // </file>
 
-using ICSharpCode.NRefactory.Ast;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Editor;
+using ICSharpCode.SharpDevelop.Editor.Search;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Document;
-using SearchAndReplace;
 
 namespace ICSharpCode.SharpDevelop.Refactoring
 {
@@ -61,7 +59,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			
 			LanguageProperties language = c.ProjectContent.Language;
 			string classFileName = c.CompilationUnit.FileName;
-			string existingClassCode = ParserService.GetParseableFileContent(classFileName);
+			string existingClassCode = ParserService.GetParseableFileContent(classFileName).Text;
 			
 			// build the new interface...
 			string newInterfaceCode = language.RefactoringProvider.GenerateInterfaceForClass(extractInterface.NewInterfaceName,
@@ -73,11 +71,11 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			
 			// ...dump it to a file...
 			IViewContent viewContent = FileService.GetOpenFile(newInterfaceFileName);
-			IEditable editable = viewContent as IEditable;
+			ITextEditorProvider editable = viewContent as ITextEditorProvider;
 			
 			if (viewContent != null && editable != null) {
 				// simply update it
-				editable.Text = newInterfaceCode;
+				editable.TextEditor.Document.Text = newInterfaceCode;
 				viewContent.PrimaryFile.SaveToDisk();
 			} else {
 				// create it
@@ -96,7 +94,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				}
 			}
 			
-			ICompilationUnit newCompilationUnit = ParserService.ParseFile(newInterfaceFileName).MostRecentCompilationUnit;
+			ICompilationUnit newCompilationUnit = ParserService.ParseFile(newInterfaceFileName).CompilationUnit;
 			IClass newInterfaceDef = newCompilationUnit.Classes[0];
 			
 			// finally, add the interface to the base types of the class that we're extracting from
@@ -106,12 +104,13 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					return;
 				}
 				
+				// TODO: replacing the whole text is not an option, we would loose all breakpoints/bookmarks.
 				viewContent = FileService.OpenFile(classFileName);
-				editable = viewContent as IEditable;
+				editable = viewContent as ITextEditorProvider;
 				if (editable == null) {
 					return;
 				}
-				editable.Text = modifiedClassCode;
+				editable.TextEditor.Document.Text = modifiedClassCode;
 			}
 		}
 		#endregion
@@ -130,6 +129,10 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static void RenameClass(IClass c, string newName)
 		{
+			if (c == null)
+				throw new ArgumentNullException("c");
+			if (newName == null)
+				throw new ArgumentNullException("newName");
 			c = c.GetCompoundClass(); // get compound class if class is partial
 			
 			List<Reference> list = RefactoringService.FindReferences(c, null);
@@ -165,8 +168,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			if (fileName == null)
 				return;
 			ProvidedDocumentInformation documentInformation = FindReferencesAndRenameHelper.GetDocumentInformation(fileName);
-			int offset = documentInformation.CreateDocument().PositionToOffset(new TextLocation(region.BeginColumn - 1, region.BeginLine - 1));
-			string text = documentInformation.TextBuffer.GetText(offset, Math.Min(name.Length + 30, documentInformation.TextBuffer.Length - offset - 1));
+			int offset = documentInformation.Document.PositionToOffset(region.BeginLine, region.BeginColumn);
+			string text = documentInformation.Document.GetText(offset, Math.Min(name.Length + 30, documentInformation.Document.TextLength - offset - 1));
 			int offsetChange = -1;
 			do {
 				offsetChange = text.IndexOf(name, offsetChange + 1);
@@ -251,8 +254,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					}
 				}
 			}
-			ITextBufferStrategy strategy = StringTextBufferStrategy.CreateTextBufferFromFile(fileName);
-			return new ProvidedDocumentInformation(strategy, fileName, 0);
+			ITextBuffer fileContent = ParserService.GetParseableFileContent(fileName);
+			return new ProvidedDocumentInformation(fileContent, fileName, 0);
 		}
 		
 		public static bool IsReadOnly(IClass c)
@@ -260,7 +263,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			return c.CompilationUnit.FileName == null || c.GetCompoundClass().IsSynthetic;
 		}
 		
-		public static TextEditorControl JumpToDefinition(IMember member)
+		public static ITextEditor JumpToDefinition(IMember member)
 		{
 			IViewContent viewContent = null;
 			ICompilationUnit cu = member.DeclaringType.CompilationUnit;
@@ -268,17 +271,31 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				string fileName = cu.FileName;
 				if (fileName != null) {
 					if (!member.Region.IsEmpty) {
-						viewContent = FileService.JumpToFilePosition(fileName, member.Region.BeginLine - 1, member.Region.BeginColumn - 1);
+						viewContent = FileService.JumpToFilePosition(fileName, member.Region.BeginLine, member.Region.BeginColumn);
 					} else {
 						FileService.OpenFile(fileName);
 					}
 				}
 			}
-			ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider tecp = viewContent as ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider;
-			return (tecp == null) ? null : tecp.TextEditorControl;
+			ITextEditorProvider tecp = viewContent as ITextEditorProvider;
+			return (tecp == null) ? null : tecp.TextEditor;
 		}
 		
-		public static TextEditorControl JumpBehindDefinition(IMember member)
+		public static ITextEditor OpenDefinitionFile(IMember member, bool switchTo)
+		{
+			IViewContent viewContent = null;
+			ICompilationUnit cu = member.DeclaringType.CompilationUnit;
+			if (cu != null) {
+				string fileName = cu.FileName;
+				if (fileName != null) {
+					viewContent = FileService.OpenFile(fileName, switchTo);
+				}
+			}
+			ITextEditorProvider tecp = viewContent as ITextEditorProvider;
+			return (tecp == null) ? null : tecp.TextEditor;
+		}
+		
+		public static ITextEditor JumpBehindDefinition(IMember member)
 		{
 			IViewContent viewContent = null;
 			ICompilationUnit cu = member.DeclaringType.CompilationUnit;
@@ -286,14 +303,14 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				string fileName = cu.FileName;
 				if (fileName != null) {
 					if (!member.Region.IsEmpty) {
-						viewContent = FileService.JumpToFilePosition(fileName, member.Region.EndLine, 0);
+						viewContent = FileService.JumpToFilePosition(fileName, member.Region.EndLine + 1, 1);
 					} else {
 						FileService.OpenFile(fileName);
 					}
 				}
 			}
-			ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider tecp = viewContent as ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider;
-			return (tecp == null) ? null : tecp.TextEditorControl;
+			ITextEditorProvider tecp = viewContent as ITextEditorProvider;
+			return (tecp == null) ? null : tecp.TextEditor;
 		}
 		
 		public static bool CheckName(string name, string oldName)
@@ -315,11 +332,11 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public struct Modification
 		{
-			public ICSharpCode.TextEditor.Document.IDocument Document;
+			public IDocument Document;
 			public int Offset;
 			public int LengthDifference;
 			
-			public Modification(ICSharpCode.TextEditor.Document.IDocument document, int offset, int lengthDifference)
+			public Modification(IDocument document, int offset, int lengthDifference)
 			{
 				this.Document = document;
 				this.Offset = offset;
@@ -327,55 +344,55 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 		}
 		
-		public static void ModifyDocument(List<Modification> modifications, ICSharpCode.TextEditor.Document.IDocument doc, int offset, int length, string newName)
+		public static void ModifyDocument(List<Modification> modifications, IDocument doc, int offset, int length, string newName)
 		{
-			doc.UndoStack.StartUndoGroup();
-			foreach (Modification m in modifications) {
-				if (m.Document == doc) {
-					if (m.Offset < offset)
-						offset += m.LengthDifference;
-				}
-			}
-			int lengthDifference = newName.Length - length;
-			doc.Replace(offset, length, newName);
-			if (lengthDifference != 0) {
-				for (int i = 0; i < modifications.Count; ++i) {
-					Modification m = modifications[i];
+			using (doc.OpenUndoGroup()) {
+				foreach (Modification m in modifications) {
 					if (m.Document == doc) {
-						if (m.Offset > offset) {
-							m.Offset += lengthDifference;
-							modifications[i] = m; // Modification is a value type
-						}
+						if (m.Offset < offset)
+							offset += m.LengthDifference;
 					}
 				}
-				modifications.Add(new Modification(doc, offset, lengthDifference));
+				int lengthDifference = newName.Length - length;
+				doc.Replace(offset, length, newName);
+				if (lengthDifference != 0) {
+					for (int i = 0; i < modifications.Count; ++i) {
+						Modification m = modifications[i];
+						if (m.Document == doc) {
+							if (m.Offset > offset) {
+								m.Offset += lengthDifference;
+								modifications[i] = m; // Modification is a value type
+							}
+						}
+					}
+					modifications.Add(new Modification(doc, offset, lengthDifference));
+				}
 			}
-			doc.UndoStack.EndUndoGroup();
 		}
 		
-		public static void ShowAsSearchResults(string pattern, List<Reference> list)
+		public static void ShowAsSearchResults(string title, List<Reference> list)
 		{
 			if (list == null) return;
 			List<SearchResultMatch> results = new List<SearchResultMatch>(list.Count);
 			foreach (Reference r in list) {
-				SearchResultMatch res = new SearchResultMatch(r.Offset, r.Length);
-				res.ProvidedDocumentInformation = GetDocumentInformation(r.FileName);
+				SearchResultMatch res = new SearchResultMatch(GetDocumentInformation(r.FileName), r.Offset, r.Length);
 				results.Add(res);
 			}
-			SearchResultPanel.Instance.ShowSearchResults(new SearchResult(pattern, results));
+			SearchResultsPad.Instance.ShowSearchResults(title, results);
+			SearchResultsPad.Instance.BringToFront();
 		}
 		
 		sealed class FileView {
-			public IViewContent ViewContent { get; set; }
-			public OpenedFile OpenedFile { get; set; }
+			public IViewContent ViewContent;
+			public OpenedFile OpenedFile;
 		}
 		
 		public static void RenameReferences(List<Reference> list, string newName)
 		{
-			Dictionary<ICSharpCode.TextEditor.Document.IDocument, FileView> modifiedDocuments = new Dictionary<ICSharpCode.TextEditor.Document.IDocument, FileView>();
+			Dictionary<IDocument, FileView> modifiedDocuments = new Dictionary<IDocument, FileView>();
 			List<Modification> modifications = new List<Modification>();
 			foreach (Reference r in list) {
-				ICSharpCode.TextEditor.Document.IDocument document = null;
+				IDocument document = null;
 				IViewContent viewContent = null;
 				
 				OpenedFile file = FileService.GetOpenedFile(r.FileName);
@@ -404,18 +421,18 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				
 				if (!modifiedDocuments.ContainsKey(document)) {
 					modifiedDocuments.Add(document, new FileView() {ViewContent = viewContent, OpenedFile = file});
-					document.UndoStack.StartUndoGroup();
+					document.StartUndoableAction();
 				}
 				
 				ModifyDocument(modifications, document, r.Offset, r.Length, newName);
 			}
-			foreach (KeyValuePair<ICSharpCode.TextEditor.Document.IDocument, FileView> entry in modifiedDocuments) {
-				entry.Key.UndoStack.EndUndoGroup();
+			foreach (KeyValuePair<IDocument, FileView> entry in modifiedDocuments) {
+				entry.Key.EndUndoableAction();
 				entry.Value.OpenedFile.MakeDirty();
 				if (entry.Value.ViewContent is IEditable) {
 					ParserService.ParseViewContent(entry.Value.ViewContent);
 				} else {
-					ParserService.ParseFile(entry.Value.OpenedFile.FileName, entry.Key.TextContent, !entry.Value.OpenedFile.IsUntitled);
+					ParserService.ParseFile(entry.Value.OpenedFile.FileName, entry.Key);
 				}
 			}
 		}
@@ -423,7 +440,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		public static void MoveClassToFile(IClass c, string newFileName)
 		{
 			LanguageProperties language = c.ProjectContent.Language;
-			string existingCode = ParserService.GetParseableFileContent(c.CompilationUnit.FileName);
+			string existingCode = ParserService.GetParseableFileContent(c.CompilationUnit.FileName).Text;
 			DomRegion fullRegion = language.RefactoringProvider.GetFullCodeRangeForType(existingCode, c);
 			if (fullRegion.IsEmpty) return;
 			
@@ -451,24 +468,22 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static string ExtractCode(IClass c, DomRegion codeRegion, int indentationLine, out Action removeExtractedCodeAction)
 		{
-			ICSharpCode.TextEditor.Document.IDocument doc = GetDocument(c);
+			IDocument doc = GetDocument(c);
 			if (indentationLine < 1) indentationLine = 1;
 			if (indentationLine >= doc.TotalNumberOfLines) indentationLine = doc.TotalNumberOfLines;
 			
-			LineSegment segment = doc.GetLineSegment(indentationLine - 1);
-			string mainLine = doc.GetText(segment);
+			IDocumentLine segment = doc.GetLine(indentationLine);
+			string mainLine = doc.GetText(segment.Offset, segment.Length);
 			string indentation = mainLine.Substring(0, mainLine.Length - mainLine.TrimStart().Length);
 			
-			segment = doc.GetLineSegment(codeRegion.BeginLine - 1);
+			segment = doc.GetLine(codeRegion.BeginLine);
 			int startOffset = segment.Offset;
-			segment = doc.GetLineSegment(codeRegion.EndLine - 1);
+			segment = doc.GetLine(codeRegion.EndLine);
 			int endOffset = segment.Offset + segment.Length;
 			
 			StringReader reader = new StringReader(doc.GetText(startOffset, endOffset - startOffset));
 			removeExtractedCodeAction = delegate {
 				doc.Remove(startOffset, endOffset - startOffset);
-				doc.RequestUpdate(new ICSharpCode.TextEditor.TextAreaUpdate(ICSharpCode.TextEditor.TextAreaUpdateType.WholeTextArea));
-				doc.CommitUpdate();
 			};
 			
 			// now remove indentation from extracted source code
@@ -496,13 +511,55 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			return b.ToString();
 		}
 
-		public static ICSharpCode.TextEditor.Document.IDocument GetDocument(IClass c)
+		public static IDocument GetDocument(IClass c)
 		{
-			ITextEditorControlProvider tecp = FileService.OpenFile(c.CompilationUnit.FileName) as ITextEditorControlProvider;
+			ITextEditorProvider tecp = FileService.OpenFile(c.CompilationUnit.FileName) as ITextEditorProvider;
 			if (tecp == null) return null;
-			return tecp.TextEditorControl.Document;
+			return tecp.TextEditor.Document;
 		}
 		
+		#endregion
+		
+		
+		#region Find references
+		public static void RunFindReferences(IMember member)
+		{
+			string memberName = member.DeclaringType.Name + "." + member.Name;
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}"))
+			{
+				FindReferencesAndRenameHelper.ShowAsSearchResults(StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
+				                                                                     new string[,] {{ "Name", memberName }}),
+				                                                  RefactoringService.FindReferences(member, monitor));
+			}
+		}
+		
+		public static void RunFindReferences(IClass c)
+		{
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}"))
+			{
+				FindReferencesAndRenameHelper.ShowAsSearchResults(
+					StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
+					                   new string[,] {{ "Name", c.Name }}),
+					RefactoringService.FindReferences(c, monitor)
+				);
+			}
+		}
+		
+		public static void RunFindReferences(LocalResolveResult local)
+		{
+			FindReferencesAndRenameHelper.ShowAsSearchResults(
+				StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
+				                   new string[,] {{ "Name", local.VariableName }}),
+				RefactoringService.FindReferences(local, null)
+			);
+		}
+		
+		public static ICSharpCode.Core.WinForms.MenuCommand MakeFindReferencesMenuCommand(EventHandler handler)
+		{
+			return new ICSharpCode.Core.WinForms.MenuCommand("${res:SharpDevelop.Refactoring.FindReferencesCommand}", handler) {
+				ShortcutKeys = System.Windows.Forms.Keys.F12
+			};
+		}
 		#endregion
 	}
 }

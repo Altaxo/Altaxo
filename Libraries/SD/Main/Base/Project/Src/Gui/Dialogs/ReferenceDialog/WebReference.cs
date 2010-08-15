@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3513 $</version>
+//     <version>$Revision: 4711 $</version>
 // </file>
 
 using System;
@@ -87,7 +87,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			foreach (ProjectItem item in project.Items) {
 				if (item.ItemType == ItemType.Reference && item.Include != null) {
-					if (item.Include.Trim().StartsWith("System.Web.Services", StringComparison.InvariantCultureIgnoreCase)) {
+					if (item.Include.Trim().StartsWith("System.Web.Services", StringComparison.OrdinalIgnoreCase)) {
 						return true;
 					}
 				}
@@ -289,7 +289,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			CodeDomProvider provider = null;
 			
-			ICSharpCode.SharpDevelop.Dom.IParser parser = ParserService.GetParser(fileName);
+			IParser parser = ParserService.CreateParser(fileName);
 			if (parser != null) {
 				provider = parser.Language.CodeDomProvider;
 			}
@@ -316,7 +316,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		string GetProxyFileNameExtension(string language)
 		{
-			LanguageBindingDescriptor binding = LanguageBindingService.GetCodonPerLanguageName(language);
+			ProjectBindingDescriptor binding = ProjectBindingService.GetCodonPerLanguageName(language);
 			if (binding != null) {
 				string[] extensions = binding.CodeFileExtensions;
 				if (extensions.Length > 0) {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3169 $</version>
+//     <version>$Revision: 5713 $</version>
 // </file>
 
 using System;
@@ -21,6 +21,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		public static Action<string, Exception> ShowError = delegate(string message, Exception ex) {
 			LoggingService.Error(message, ex);
+			throw new Exception(message, ex);
 		};
 		
 		public static Action<string> ShowMessage = delegate(string message) {

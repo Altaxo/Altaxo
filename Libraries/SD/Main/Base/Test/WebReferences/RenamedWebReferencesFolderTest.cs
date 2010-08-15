@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 4537 $</version>
 // </file>
 
 using ICSharpCode.Core;
@@ -44,7 +44,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 			
 			protocol = new DiscoveryClientProtocol();
 			
-			WebReferenceTestHelper.InitializeLanguageBindings();
+			WebReferenceTestHelper.InitializeProjectBindings();
 			
 			webReference = new SD.WebReference(project, updateFromUrl, name, proxyNamespace, protocol);
 			webReferenceUrl = (WebReferenceUrl)WebReferenceTestHelper.GetProjectItem(webReference.Items, ItemType.WebReferenceUrl);

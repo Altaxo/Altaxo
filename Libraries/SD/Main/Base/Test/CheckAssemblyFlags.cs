@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3596 $</version>
+//     <version>$Revision: 4304 $</version>
 // </file>
 
 using System;
@@ -46,12 +46,6 @@ namespace ICSharpCode.SharpDevelop.Tests
 		public void CheckSharpDevelop32Bit()
 		{
 			Assert.IsTrue(Get32BitFlags("SharpDevelop.exe"));
-		}
-		
-		[Test]
-		public void CheckBuildWorker32Bit()
-		{
-			Assert.IsTrue(Get32BitFlags("ICSharpCode.SharpDevelop.BuildWorker.exe"));
 		}
 		
 		[Test]

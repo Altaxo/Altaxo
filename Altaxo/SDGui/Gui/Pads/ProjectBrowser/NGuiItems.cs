@@ -6,20 +6,20 @@ using System.Text;
 using Altaxo.Collections;
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-  public class NGBrowserTreeNode : NGTreeNode
-  {
-    public NGBrowserTreeNode() { }
-    public NGBrowserTreeNode(string txt) : base(txt) { }
+	public class NGBrowserTreeNode : NGTreeNode
+	{
+		public NGBrowserTreeNode() { }
+		public NGBrowserTreeNode(string txt) : base(txt) { }
 
-    public ProjectBrowseItemImage Image;
-    public override int? ImageIndex
-    {
-      get { return (int)Image; }
-    }
-    public override int? SelectedImageIndex
-    {
-      get { return (int)Image; }
-    }
+		public ProjectBrowseItemImage Image;
+		public override int? ImageIndex
+		{
+			get { return (int)Image; }
+		}
+		public override int? SelectedImageIndex
+		{
+			get { return (int)Image; }
+		}
 
 		public object ContextMenu;
 		public void SetContextMenuRecursively(object contextMenu)
@@ -29,29 +29,31 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				node.SetContextMenuRecursively(contextMenu);
 		}
 
-  }
+	}
 
-  public class BrowserListItem : SelectableListNode
-  {
-    public BrowserListItem(string name, object item, bool sel) : base(name, item, sel) { }
-    public ProjectBrowseItemImage Image;
-    public override int ImageIndex
-    {
-      get
-      {
-        return (int)Image;
-      }
-    }
-  }
+	public class BrowserListItem : SelectableListNode
+	{
+		public BrowserListItem(string name, object item, bool sel) : base(name, item, sel) { }
+		public ProjectBrowseItemImage Image;
+		public override int ImageIndex
+		{
+			get
+			{
+				return (int)Image;
+			}
+		}
 
-  public enum ProjectBrowseItemImage
-  {
-    Project = 0,
-    ClosedFolder = 1,
-    OpenFolder = 2,
-    Worksheet = 3,
-    Graph = 4
-  }
+		public System.Windows.Media.ImageSource ImageSource { get { return WpfBrowserTreeNode.Images[ImageIndex]; } }
+	}
+
+	public enum ProjectBrowseItemImage
+	{
+		Project = 0,
+		ClosedFolder = 1,
+		OpenFolder = 2,
+		Worksheet = 3,
+		Graph = 4
+	}
 
 	public enum ViewOnSelect
 	{
@@ -60,12 +62,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		ItemsInFolderAndSubfolders
 	}
 
-  public interface IGuiBrowserTreeNode
-  {
-    void OnNodeAdded(NGBrowserTreeNode node);
-    void OnNodeRemoved(NGBrowserTreeNode node);
-    void OnNodeMultipleChanges();
-  }
+	public interface IGuiBrowserTreeNode
+	{
+		void OnNodeAdded(NGBrowserTreeNode node);
+		void OnNodeRemoved(NGBrowserTreeNode node);
+		void OnNodeMultipleChanges();
+	}
 
 	/// <summary>
 	/// Helper class to distinguish between 'real' folders and the '..' folder.

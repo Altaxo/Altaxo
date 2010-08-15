@@ -32,109 +32,109 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace Altaxo.Worksheet.Commands
 {
-  /// <summary>
-  /// This helps in conditions where the number of selected data columns cares.
-  /// Valid values are all (all columns must be selected, none (no column must be selected),
-  /// one (exactly one column must be selected), any (one or more columns must be selected),
-  /// or the number of columns.
-  /// </summary>
-  public class SelectedDataConditionEvaluator : IConditionEvaluator
-  {
-    public bool IsValid(object caller, Condition condition)
-    {
-      string selectedData = condition.Properties["selected"].ToLower();
+	/// <summary>
+	/// This helps in conditions where the number of selected data columns cares.
+	/// Valid values are all (all columns must be selected, none (no column must be selected),
+	/// one (exactly one column must be selected), any (one or more columns must be selected),
+	/// or the number of columns.
+	/// </summary>
+	public class SelectedDataConditionEvaluator : IConditionEvaluator
+	{
+		public bool IsValid(object caller, Condition condition)
+		{
+			string selectedData = condition.Properties["selected"].ToLower();
 
-      if (Current.Workbench.ActiveViewContent == null)
-        return false;
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent))
-        return false;
+			if (Current.Workbench.ActiveViewContent == null)
+				return false;
+			if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent))
+				return false;
 
-      Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl
-        = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
+			Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl
+				= Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 
-      int val = ctrl.Controller.SelectedDataColumns.Count;
+			int val = ctrl.Controller.SelectedDataColumns.Count;
 
-      switch (selectedData)
-      {
-        case "none":
-          return val == 0;
-        case "one":
-          return val == 1;
-        case "two":
-          return val == 2;
-        case "all":
-          return val == ctrl.Controller.DataTable.DataColumnCount;
-        case "any":
-          return val > 0;
-        case "*":
-          return val > 0;
-        default:
-          {
-            try
-            {
-              int num = int.Parse(selectedData);
-              return val == num;
-            }
-            catch (Exception)
-            {
-              return false;
-            }
-          }
-      }
-    }
-  }
+			switch (selectedData)
+			{
+				case "none":
+					return val == 0;
+				case "one":
+					return val == 1;
+				case "two":
+					return val == 2;
+				case "all":
+					return val == ctrl.Controller.DataTable.DataColumnCount;
+				case "any":
+					return val > 0;
+				case "*":
+					return val > 0;
+				default:
+					{
+						try
+						{
+							int num = int.Parse(selectedData);
+							return val == num;
+						}
+						catch (Exception)
+						{
+							return false;
+						}
+					}
+			}
+		}
+	}
 
 
-  /// <summary>
-  /// This helps in conditions where the number of selected property columns cares.
-  /// Valid values are all (all columns must be selected, none (no column must be selected),
-  /// one (exactly one column must be selected), any (one or more columns must be selected),
-  /// or the number of columns.
-  /// </summary>
-  public class SelectedPropertyConditionEvaluator : IConditionEvaluator
-  {
-    public bool IsValid(object caller, Condition condition)
-    {
-      string selectedData = condition.Properties["selected"].ToLower();
+	/// <summary>
+	/// This helps in conditions where the number of selected property columns cares.
+	/// Valid values are all (all columns must be selected, none (no column must be selected),
+	/// one (exactly one column must be selected), any (one or more columns must be selected),
+	/// or the number of columns.
+	/// </summary>
+	public class SelectedPropertyConditionEvaluator : IConditionEvaluator
+	{
+		public bool IsValid(object caller, Condition condition)
+		{
+			string selectedData = condition.Properties["selected"].ToLower();
 
-      if (Current.Workbench.ActiveViewContent == null)
-        return false;
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent))
-        return false;
+			if (Current.Workbench.ActiveViewContent == null)
+				return false;
+			if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent))
+				return false;
 
-      Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl
-        = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
+			Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl
+				= Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 
-      int val = ctrl.Controller.SelectedPropertyColumns.Count;
+			int val = ctrl.Controller.SelectedPropertyColumns.Count;
 
-      switch (selectedData)
-      {
-        case "none":
-          return val == 0;
-        case "one":
-          return val == 1;
-        case "two":
-          return val == 2;
-        case "all":
-          return val == ctrl.Controller.DataTable.PropertyColumnCount;
-        case "any":
-          return val > 0;
-        case "*":
-          return val > 0;
-        default:
-          {
-            try
-            {
-              int num = int.Parse(selectedData);
-              return val == num;
-            }
-            catch (Exception)
-            {
-              return false;
-            }
-          }
-      }
-    }
-  }
+			switch (selectedData)
+			{
+				case "none":
+					return val == 0;
+				case "one":
+					return val == 1;
+				case "two":
+					return val == 2;
+				case "all":
+					return val == ctrl.Controller.DataTable.PropertyColumnCount;
+				case "any":
+					return val > 0;
+				case "*":
+					return val > 0;
+				default:
+					{
+						try
+						{
+							int num = int.Parse(selectedData);
+							return val == num;
+						}
+						catch (Exception)
+						{
+							return false;
+						}
+					}
+			}
+		}
+	}
 
 }

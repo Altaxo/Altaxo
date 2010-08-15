@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3142 $</version>
+//     <version>$Revision: 5207 $</version>
 // </file>
 
 using System;
@@ -53,12 +53,6 @@ namespace ICSharpCode.Core.Tests.AddInTreeTests.Tests
 			Assert.AreEqual(@"browser://http://danielgrunwald.de/path/", FileUtility.NormalizePath(@"browser://http://danielgrunwald.de/wrongpath/../path/"));
 		}
 		#endregion
-		
-		[Test]
-		public void TestCombine()
-		{
-			Assert.AreEqual(Path.Combine("A", Path.Combine("B", Path.Combine("Long", "Longer.txt"))), FileUtility.Combine("A", "B", "Long", "Longer.txt"));
-		}
 		
 		[Test]
 		public void TestIsBaseDirectory()

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3120 $</version>
+//     <version>$Revision: 4483 $</version>
 // </file>
 
 using System;
@@ -209,7 +209,7 @@ End Class");
 		{
 			TestProgramCS2VB("class A { [PreserveSig] public void B(// comment\nint c) {} }",
 			                 "Class A\n" +
-			                 "    ' comment\n" +
+			                 "  ' comment\n" +
 			                 "  <PreserveSig> _\n" +
 			                 "  Public Sub B(c As Integer)\n" +
 			                 "  End Sub\n" +

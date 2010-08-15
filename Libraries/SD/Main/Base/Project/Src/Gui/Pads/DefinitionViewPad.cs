@@ -2,16 +2,19 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2819 $</version>
+//     <version>$Revision: 5948 $</version>
 // </file>
 
 using System;
+using System.IO;
+using System.Windows;
 using System.Windows.Forms;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Document;
+using ICSharpCode.SharpDevelop.Editor;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -20,12 +23,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// </summary>
 	public class DefinitionViewPad : AbstractPadContent
 	{
-		TextEditorControl ctl;
+		AvalonEdit.TextEditor ctl;
 		
 		/// <summary>
-		/// The <see cref="System.Windows.Forms.Control"/> representing the pad
+		/// The control representing the pad
 		/// </summary>
-		public override Control Control {
+		public override object Control {
 			get {
 				return ctl;
 			}
@@ -36,12 +39,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public DefinitionViewPad()
 		{
-			ctl = new TextEditorControl();
-			ctl.Document.ReadOnly = true;
-			ctl.TextEditorProperties = SharpDevelopTextEditorProperties.Instance;
-			ctl.ActiveTextAreaControl.TextArea.DoubleClick += OnDoubleClick;
+			ctl = Editor.AvalonEdit.AvalonEditTextEditorAdapter.CreateAvalonEditInstance();
+			ctl.IsReadOnly = true;
+			ctl.MouseDoubleClick += OnDoubleClick;
 			ParserService.ParserUpdateStepFinished += OnParserUpdateStep;
-			ctl.VisibleChanged += delegate { UpdateTick(null); };
+			ctl.IsVisibleChanged += delegate { UpdateTick(null); };
 		}
 		
 		/// <summary>
@@ -50,15 +52,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public override void Dispose()
 		{
 			ParserService.ParserUpdateStepFinished -= OnParserUpdateStep;
-			ctl.Dispose();
+			ctl.Document = null;
 			base.Dispose();
 		}
 		
 		void OnDoubleClick(object sender, EventArgs e)
 		{
-			string fileName = ctl.FileName;
+			string fileName = currentFileName;
 			if (fileName != null) {
-				Caret caret = ctl.ActiveTextAreaControl.Caret;
+				var caret = ctl.TextArea.Caret;
 				FileService.JumpToFilePosition(fileName, caret.Line, caret.Column);
 				
 				// refresh DefinitionView to show the definition of the expression that was double-clicked
@@ -68,12 +70,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void OnParserUpdateStep(object sender, ParserUpdateStepEventArgs e)
 		{
-			WorkbenchSingleton.SafeThreadAsyncCall(UpdateTick, e);
+			UpdateTick(e);
 		}
 		
 		void UpdateTick(ParserUpdateStepEventArgs e)
 		{
-			if (!this.IsVisible) return;
+			if (!ctl.IsVisible) return;
 			LoggingService.Debug("DefinitionViewPad.Update");
 			
 			ResolveResult res = ResolveAtCaret(e);
@@ -91,17 +93,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return null;
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 			if (window == null) return null;
-			ITextEditorControlProvider provider = window.ActiveViewContent as ITextEditorControlProvider;
+			ITextEditorProvider provider = window.ActiveViewContent as ITextEditorProvider;
 			if (provider == null) return null;
-			TextEditorControl ctl = provider.TextEditorControl;
+			ITextEditor editor = provider.TextEditor;
 			
 			// e might be null when this is a manually triggered update
-			string fileName = (e == null) ? ctl.FileName : e.FileName;
-			if (ctl.FileName != fileName) return null;
-			IExpressionFinder expressionFinder = ParserService.GetExpressionFinder(fileName);
+			// don't resolve when an unrelated file was changed
+			if (e != null && editor.FileName != e.FileName) return null;
+			
+			IExpressionFinder expressionFinder = ParserService.GetExpressionFinder(editor.FileName);
 			if (expressionFinder == null) return null;
-			Caret caret = ctl.ActiveTextAreaControl.Caret;
-			string content = (e == null) ? ctl.Text : e.Content;
+			ITextEditorCaret caret = editor.Caret;
+			string content = (e == null) ? editor.Document.Text : e.Content.Text;
 			if (caret.Offset > content.Length) {
 				LoggingService.Debug("caret.Offset = " + caret.Offset + ", content.Length=" + content.Length);
 				return null;
@@ -109,27 +112,30 @@ namespace ICSharpCode.SharpDevelop.Gui
 			try {
 				ExpressionResult expr = expressionFinder.FindFullExpression(content, caret.Offset);
 				if (expr.Expression == null) return null;
-				return ParserService.Resolve(expr, caret.Line + 1, caret.Column + 1, fileName, content);
+				return ParserService.Resolve(expr, caret.Line, caret.Column, editor.FileName, content);
 			} catch (Exception ex) {
 				disableDefinitionView = true;
-				this.Control.Visible = false;
-				MessageService.ShowError(ex, "Error resolving at " + (caret.Line + 1) + "/" + (caret.Column + 1)
-				                         + ". DefinitionViewPad is disabled until you restart SharpDevelop.");
+				ctl.Visibility = Visibility.Collapsed;
+				MessageService.ShowException(ex, "Error resolving at " + caret.Line + "/" + caret.Column
+				                             + ". DefinitionViewPad is disabled until you restart SharpDevelop.");
 				return null;
 			}
 		}
 		
 		FilePosition oldPosition;
+		string currentFileName;
 		
 		void OpenFile(FilePosition pos)
 		{
 			if (pos.Equals(oldPosition)) return;
 			oldPosition = pos;
-			if (pos.FileName != ctl.FileName)
+			if (pos.FileName != currentFileName)
 				LoadFile(pos.FileName);
-			ctl.ActiveTextAreaControl.ScrollTo(int.MaxValue); // scroll completely down
-			ctl.ActiveTextAreaControl.Caret.Line = pos.Line - 1;
-			ctl.ActiveTextAreaControl.ScrollToCaret(); // scroll up to search position
+			ctl.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(pos.Line, pos.Column);
+			Rect r = ctl.TextArea.Caret.CalculateCaretRectangle();
+			if (!r.IsEmpty) {
+				ctl.ScrollToVerticalOffset(r.Top - 4);
+			}
 		}
 		
 		/// <summary>
@@ -139,28 +145,20 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void LoadFile(string fileName)
 		{
 			// Get currently open text editor that matches the filename.
-			TextEditorControl openTextEditor = null;
-			ITextEditorControlProvider provider = FileService.GetOpenFile(fileName) as ITextEditorControlProvider;
+			ITextEditor openTextEditor = null;
+			ITextEditorProvider provider = FileService.GetOpenFile(fileName) as ITextEditorProvider;
 			if (provider != null) {
-				openTextEditor = provider.TextEditorControl;
+				openTextEditor = provider.TextEditor;
 			}
 			
 			// Load the text into the definition view's text editor.
 			if (openTextEditor != null) {
-				ctl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
-				ctl.Text = openTextEditor.Text;
-				ctl.FileName = fileName;
+				ctl.Text = openTextEditor.Document.Text;
 			} else {
-				ctl.LoadFile(fileName, true, true); // TODO: get AutoDetectEncoding from settings
+				ctl.Load(fileName);
 			}
-		}
-		
-		/// <summary>
-		/// Refreshes the pad
-		/// </summary>
-		public override void RedrawContent()
-		{
-			// Refresh the whole pad control here, renew all resource strings whatever.
+			currentFileName = fileName;
+			ctl.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(fileName));
 		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3546 $</version>
+//     <version>$Revision: 5617 $</version>
 // </file>
 
 using System;
@@ -14,6 +14,8 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 
 using ICSharpCode.Core;
 using ICSharpCode.Core.WinForms;
@@ -36,8 +38,8 @@ namespace ICSharpCode.SharpDevelop.Sda
 		#region Initialize Core
 		public void InitSharpDevelopCore(SharpDevelopHost.CallbackHelper callback, StartupSettings properties)
 		{
-			ICSharpCode.Core.Services.ServiceManager.LoggingService = new log4netLoggingService();
-			ICSharpCode.Core.Services.ServiceManager.MessageService = WinFormsMessageService.Instance;
+			// creating the service manager initializes the logging service etc.
+			ICSharpCode.Core.Services.ServiceManager.Instance = new SDServiceManager();
 			
 			LoggingService.Info("InitSharpDevelop...");
 			this.callback = callback;
@@ -51,7 +53,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			if (properties.PropertiesName != null) {
 				startup.PropertiesName = properties.PropertiesName;
 			}
-			ParserService.DomPersistencePath = properties.DomPersistencePath;
+			AssemblyParserService.DomPersistencePath = properties.DomPersistencePath;
 			
 			// disable RTL: translations for the RTL languages are inactive
 			RightToLeftConverter.RightToLeftLanguages = new string[0];
@@ -66,6 +68,8 @@ namespace ICSharpCode.SharpDevelop.Sda
 			ResourceService.RegisterNeutralImages(new ResourceManager("Resources.BitmapResources", exe));
 			
 			MenuCommand.LinkCommandCreator = delegate(string link) { return new LinkCommand(link); };
+			MenuCommand.KnownCommandCreator = CreateICommandForWPFCommand;
+			Core.Presentation.MenuService.LinkCommandCreator = MenuCommand.LinkCommandCreator;
 			StringParser.RegisterStringTagProvider(new SharpDevelopStringTagProvider());
 			
 			LoggingService.Info("Looking for AddIns...");
@@ -88,8 +92,8 @@ namespace ICSharpCode.SharpDevelop.Sda
 			startup.RunInitialization();
 			
 			// Register events to marshal back
-			Project.ProjectService.StartBuild += delegate { this.callback.StartBuild(); };
-			Project.ProjectService.EndBuild   += delegate { this.callback.EndBuild(); };
+			Project.ProjectService.BuildStarted   += delegate { this.callback.StartBuild(); };
+			Project.ProjectService.BuildFinished  += delegate { this.callback.EndBuild(); };
 			Project.ProjectService.SolutionLoaded += delegate { this.callback.SolutionLoaded(); };
 			Project.ProjectService.SolutionClosed += delegate { this.callback.SolutionClosed(); };
 			Project.ProjectService.SolutionConfigurationChanged += delegate { this.callback.SolutionConfigurationChanged(); };
@@ -97,6 +101,41 @@ namespace ICSharpCode.SharpDevelop.Sda
 			FileUtility.FileSaved  += delegate(object sender, FileNameEventArgs e) { this.callback.FileSaved(e.FileName); };
 			
 			LoggingService.Info("InitSharpDevelop finished");
+		}
+		
+		static ICommand CreateICommandForWPFCommand(AddIn addIn, string commandName)
+		{
+			var wpfCommand = Core.Presentation.MenuService.GetRegisteredCommand(addIn, commandName);
+			if (wpfCommand != null)
+				return new WpfCommandWrapper(wpfCommand);
+			else
+				return null;
+		}
+		
+		sealed class WpfCommandWrapper : AbstractCommand
+		{
+			readonly System.Windows.Input.ICommand wpfCommand;
+			
+			public WpfCommandWrapper(System.Windows.Input.ICommand wpfCommand)
+			{
+				this.wpfCommand = wpfCommand;
+			}
+			
+			public override void Run()
+			{
+				var routedCommand = wpfCommand as System.Windows.Input.RoutedCommand;
+				if (routedCommand != null) {
+					var target = System.Windows.Input.FocusManager.GetFocusedElement(WorkbenchSingleton.MainWindow);
+					routedCommand.Execute(this.Owner, target);
+				} else {
+					wpfCommand.Execute(this.Owner);
+				}
+			}
+			
+			public override string ToString()
+			{
+				return "[WpfCommandWrapper " + wpfCommand + "]";
+			}
 		}
 		#endregion
 		
@@ -118,18 +157,14 @@ namespace ICSharpCode.SharpDevelop.Sda
 		{
 			WorkbenchSettings wbSettings = (WorkbenchSettings)settings;
 			
+			WorkbenchStartup wbc = new WorkbenchStartup();
 			LoggingService.Info("Initializing workbench...");
-#if ModifiedForAltaxo
-			// TODO what to do here: WorkbenchSingleton.InitializeWorkbench(typeof(DefaultWorkbench));
-#else
-			WorkbenchSingleton.InitializeWorkbench();
-#endif
+			wbc.InitializeWorkbench();
 			
 			LoggingService.Info("Starting workbench...");
 			Exception exception = null;
 			// finally start the workbench.
 			try {
-				StartWorkbenchCommand wbc = new StartWorkbenchCommand();
 				callback.BeforeRunWorkbench();
 				if (Debugger.IsAttached) {
 					wbc.Run(wbSettings.InitialFileList);
@@ -232,19 +267,18 @@ namespace ICSharpCode.SharpDevelop.Sda
 		}
 		bool CloseWorkbenchInternal(bool force)
 		{
-			if (force) {
-				foreach (IWorkbenchWindow window in WorkbenchSingleton.Workbench.WorkbenchWindowCollection.ToArray()) {
-					window.CloseWindow(true);
-				}
+			foreach (IWorkbenchWindow window in WorkbenchSingleton.Workbench.WorkbenchWindowCollection.ToArray()) {
+				if (!window.CloseWindow(force))
+					return false;
 			}
-			WorkbenchSingleton.MainForm.Close();
-			return WorkbenchSingleton.MainForm.IsDisposed;
+			WorkbenchSingleton.MainWindow.Close();
+			return true;
 		}
 		
-		[SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+		[SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "needs to be run in correct AppDomain")]
 		public void KillWorkbench()
 		{
-			System.Windows.Forms.Application.Exit();
+			Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Normal);
 		}
 		
 		public bool WorkbenchVisible {
@@ -265,11 +299,11 @@ namespace ICSharpCode.SharpDevelop.Sda
 		}
 		bool GetWorkbenchVisibleInternal()
 		{
-			return WorkbenchSingleton.MainForm.Visible;
+			return WorkbenchSingleton.MainWindow.Visibility == Visibility.Visible;
 		}
 		void SetWorkbenchVisibleInternal(bool value)
 		{
-			WorkbenchSingleton.MainForm.Visible = value;
+			WorkbenchSingleton.MainWindow.Visibility = value ? Visibility.Visible : Visibility.Hidden;
 		}
 	}
 }

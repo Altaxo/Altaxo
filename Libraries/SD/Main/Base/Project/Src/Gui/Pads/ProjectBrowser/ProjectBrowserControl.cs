@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3469 $</version>
+//     <version>$Revision: 4735 $</version>
 // </file>
 
 using System;
@@ -65,7 +65,10 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public AbstractProjectBrowserTreeNode RootNode {
 			get {
-				return treeView.Nodes[0] as AbstractProjectBrowserTreeNode;
+				if (treeView.Nodes.Count > 0)
+					return treeView.Nodes[0] as AbstractProjectBrowserTreeNode;
+				else
+					return null;
 			}
 		}
 		
@@ -107,7 +110,7 @@ namespace ICSharpCode.SharpDevelop.Project
 								FileService.OpenFile(file);
 							}
 						} catch (Exception ex) {
-							MessageService.ShowError(ex, "unable to open file " + file);
+							MessageService.ShowException(ex, "unable to open file " + file);
 						}
 					}
 				}

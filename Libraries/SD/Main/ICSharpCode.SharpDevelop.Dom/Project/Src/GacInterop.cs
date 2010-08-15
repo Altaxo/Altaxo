@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2631 $</version>
+//     <version>$Revision: 5672 $</version>
 // </file>
 
 using System;
@@ -20,15 +20,31 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// </summary>
 	public static class GacInterop
 	{
-		static string cachedGacPath;
+		volatile static string cachedGacPathV2;
+		volatile static string cachedGacPathV4;
 		
-		public static string GacRootPath {
+		public static string GacRootPathV2 {
 			get {
-				if (cachedGacPath == null) {
-					cachedGacPath = Fusion.GetGacPath();
+				if (cachedGacPathV2 == null) {
+					cachedGacPathV2 = Fusion.GetGacPath(false);
 				}
-				return cachedGacPath;
+				return cachedGacPathV2;
 			}
+		}
+		
+		public static string GacRootPathV4 {
+			get {
+				if (cachedGacPathV4 == null) {
+					cachedGacPathV4 = Fusion.GetGacPath(true);
+				}
+				return cachedGacPathV4;
+			}
+		}
+		
+		public static bool IsWithinGac(string assemblyLocation)
+		{
+			return Core.FileUtility.IsBaseDirectory(GacRootPathV2, assemblyLocation)
+				|| Core.FileUtility.IsBaseDirectory(GacRootPathV4, assemblyLocation);
 		}
 		
 		public static List<DomAssemblyName> GetAssemblyList()

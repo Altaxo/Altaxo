@@ -2,13 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3794 $</version>
+//     <version>$Revision: 6319 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+
+using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -35,19 +37,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// A view content is a view onto multiple files, or other content that opens like a document
 	/// (e.g. the start page).
 	/// </summary>
-	public interface IViewContent : IDisposable, ICanBeDirty
+	public interface IViewContent : IDisposable, ICanBeDirty, IServiceProvider
 	{
 		/// <summary>
-		/// This is the Windows.Forms control for the view.
+		/// This is the UI element for the view.
+		/// You can use both Windows.Forms and WPF controls.
 		/// </summary>
-		Control Control {
+		object Control {
+			get;
+		}
+		
+		/// <summary>
+		/// Gets the control which has focus initially.
+		/// </summary>
+		object InitiallyFocusedControl {
 			get;
 		}
 		
 		/// <summary>
 		/// The workbench window in which this view is displayed.
 		/// </summary>
-		IWorkbenchWindow  WorkbenchWindow {
+		IWorkbenchWindow WorkbenchWindow {
 			get;
 			set;
 		}
@@ -64,13 +74,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		string TabPageText {
 			get;
 		}
-		
-		/// <summary>
-		/// Reinitializes the content. (Re-initializes all add-in tree stuff)
-		/// and redraws the content.
-		/// Called on certain actions like changing the UI language.
-		/// </summary>
-		void RedrawContent();
 		
 		/// <summary>
 		/// The title of the view content. This normally is the title of the primary file being edited.
@@ -118,7 +121,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Gets the name of the primary file being edited. Might return null if no file is edited.
 		/// </summary>
-		string PrimaryFileName { get; }
+		FileName PrimaryFileName { get; }
 		
 		/// <summary>
 		/// Builds an <see cref="INavigationPoint"/> for the current position.

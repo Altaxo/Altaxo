@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2644 $</version>
+//     <version>$Revision: 6033 $</version>
 // </file>
 
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
-using System.Text;
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+
+using ICSharpCode.SharpDevelop.Editor;
 
 namespace ICSharpCode.SharpDevelop
 {
@@ -24,7 +23,7 @@ namespace ICSharpCode.SharpDevelop
 				options.BracingStyle             = AmbienceService.CodeGenerationProperties.Get("StartBlockOnSameLine", true) ? "Block" : "C";
 				options.ElseOnClosing            = AmbienceService.CodeGenerationProperties.Get("ElseOnClosing", true);
 				
-				options.IndentString = SharpDevelopTextEditorProperties.Instance.IndentationString;
+				options.IndentString = EditorControlService.GlobalOptions.IndentationString;
 				
 				return options;
 			}

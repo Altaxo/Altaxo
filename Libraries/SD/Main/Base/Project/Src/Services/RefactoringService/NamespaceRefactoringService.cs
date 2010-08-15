@@ -2,14 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3675 $</version>
+//     <version>$Revision: 5015 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.Editor;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.TextEditor.Document;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
 
 namespace ICSharpCode.SharpDevelop.Refactoring
 {
@@ -32,7 +33,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				} else if (!IsSystemNamespace(u1) && IsSystemNamespace(u2)) {
 					return 1;
 				}
-				return a.Usings[0].CompareTo(b.Usings[0]);
+				return u1.CompareTo(u2);
 			}
 			if (a.Aliases.Count != 0 && b.Aliases.Count != 0) {
 				return a.Aliases.Keys.First().CompareTo(b.Aliases.Keys.First());
@@ -42,9 +43,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static void ManageUsings(Gui.IProgressMonitor progressMonitor, string fileName, IDocument document, bool sort, bool removedUnused)
 		{
-			ParseInformation info = ParserService.ParseFile(fileName, document.TextContent);
+			ParseInformation info = ParserService.ParseFile(fileName, document);
 			if (info == null) return;
-			ICompilationUnit cu = info.MostRecentCompilationUnit;
+			ICompilationUnit cu = info.CompilationUnit;
 			
 			List<IUsing> newUsings = new List<IUsing>(cu.UsingScope.Usings);
 			if (sort) {
@@ -52,7 +53,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 			
 			if (removedUnused) {
-				IList<IUsing> decl = cu.ProjectContent.Language.RefactoringProvider.FindUnusedUsingDeclarations(Gui.DomProgressMonitor.Wrap(progressMonitor), fileName, document.TextContent, cu);
+				IList<IUsing> decl = cu.ProjectContent.Language.RefactoringProvider.FindUnusedUsingDeclarations(Gui.DomProgressMonitor.Wrap(progressMonitor), fileName, document.Text, cu);
 				if (decl != null && decl.Count > 0) {
 					foreach (IUsing u in decl) {
 						string ns = null;
@@ -72,7 +73,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				PutEmptyLineAfterLastSystemNamespace(newUsings);
 			}
 			
-			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(new TextEditorDocument(document), cu.UsingScope.Usings, newUsings);
+			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(new RefactoringDocumentAdapter(document), cu.UsingScope.Usings, newUsings);
 		}
 		
 		static void PutEmptyLineAfterLastSystemNamespace(List<IUsing> newUsings)
@@ -95,6 +96,17 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static void AddUsingDeclaration(ICompilationUnit cu, IDocument document, string newNamespace, bool sortExistingUsings)
 		{
+			if (cu == null)
+				throw new ArgumentNullException("cu");
+			if (document == null)
+				throw new ArgumentNullException("document");
+			if (newNamespace == null)
+				throw new ArgumentNullException("newNamespace");
+			
+			ParseInformation info = ParserService.ParseFile(cu.FileName, document);
+			if (info != null)
+				cu = info.CompilationUnit;
+			
 			IUsing newUsingDecl = new DefaultUsing(cu.ProjectContent);
 			newUsingDecl.Usings.Add(newNamespace);
 			
@@ -104,9 +116,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 			bool inserted = false;
 			for (int i = 0; i < newUsings.Count; i++) {
-				if (newUsings[i].Usings.Count >= 1
-				    && cu.ProjectContent.Language.NameComparer.Compare(newNamespace, newUsings[i].Usings[0]) <= 0)
-				{
+				if (CompareUsings(newUsingDecl, newUsings[i]) <= 0) {
 					newUsings.Insert(i, newUsingDecl);
 					inserted = true;
 					break;
@@ -118,7 +128,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			if (sortExistingUsings) {
 				PutEmptyLineAfterLastSystemNamespace(newUsings);
 			}
-			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(new TextEditorDocument(document), cu.UsingScope.Usings, newUsings);
+			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(new RefactoringDocumentAdapter(document), cu.UsingScope.Usings, newUsings);
 		}
 	}
 }

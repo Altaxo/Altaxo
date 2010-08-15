@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 4496 $</version>
 // </file>
 
 using System;
@@ -21,7 +21,7 @@ namespace ICSharpCode.SharpDevelop
 	/// "*" to test if any window is open.
 	/// </attribute>
 	/// <example title="Test if a text editor is opened">
-	/// &lt;Condition name="WindowOpen" openwindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider"&gt;
+	/// &lt;Condition name="WindowOpen" openwindow="ICSharpCode.SharpDevelop.Editor.ITextEditorProvider"&gt;
 	/// </example>
 	/// <example title="Test if any window is open">
 	/// &lt;Condition name="WindowOpen" openwindow="*"&gt;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3786 $</version>
+//     <version>$Revision: 4893 $</version>
 // </file>
 
 using System;
@@ -32,9 +32,9 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		public override bool IsEnabledForFile(string fileName)
 		{
 			string extension = Path.GetExtension(fileName);
-			if (extension.Equals(".cs", StringComparison.InvariantCultureIgnoreCase))
+			if (extension.Equals(".cs", StringComparison.OrdinalIgnoreCase))
 				return language == NR.SupportedLanguage.CSharp;
-			else if (extension.Equals(".vb", StringComparison.InvariantCultureIgnoreCase))
+			else if (extension.Equals(".vb", StringComparison.OrdinalIgnoreCase))
 				return language == NR.SupportedLanguage.VBNet;
 			else
 				return false;
@@ -263,7 +263,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			{
 				if (parseInformation != null) {
 					this.parseInformation = parseInformation;
-					resolver = new NRefactoryResolver.NRefactoryResolver(parseInformation.MostRecentCompilationUnit.ProjectContent.Language);
+					resolver = new NRefactoryResolver.NRefactoryResolver(parseInformation.CompilationUnit.ProjectContent.Language);
 				}
 			}
 			
@@ -488,7 +488,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				}
 			}
 			
-			public override object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
+			void HandleTypeDeclaration(AttributedNode typeDeclaration)
 			{
 				if (typeDeclaration.EndLocation.Y > includeCommentsAfterLine)
 					includeCommentsAfterLine = typeDeclaration.EndLocation.Y;
@@ -498,6 +498,17 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				} else {
 					RemoveCurrentNode();
 				}
+			}
+			
+			public override object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
+			{
+				HandleTypeDeclaration(typeDeclaration);
+				return null;
+			}
+			
+			public override object VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, object data)
+			{
+				HandleTypeDeclaration(delegateDeclaration);
 				return null;
 			}
 		}
@@ -608,13 +619,13 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		
 		static bool IsEndDirective(string trimLine)
 		{
-			return trimLine.StartsWith("#endregion", StringComparison.Ordinal) 
+			return trimLine.StartsWith("#endregion", StringComparison.Ordinal)
 				|| trimLine.StartsWith("#endif", StringComparison.Ordinal);
 		}
 		
 		static bool IsStartDirective(string trimLine)
 		{
-			return trimLine.StartsWith("#region", StringComparison.Ordinal) 
+			return trimLine.StartsWith("#region", StringComparison.Ordinal)
 				|| trimLine.StartsWith("#if", StringComparison.Ordinal);
 		}
 		#endregion

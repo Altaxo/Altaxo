@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3680 $</version>
+//     <version>$Revision: 4742 $</version>
 // </file>
 
 using System;
@@ -76,6 +76,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public ClassFinder(IClass callingClass, int caretLine, int caretColumn)
 		{
+			if (callingClass == null)
+				throw new ArgumentNullException("callingClass");
+			if (callingClass is CompoundClass)
+				throw new ArgumentException("Cannot use compound class for ClassFinder - must pass a specific class part.");
 			this.caretLine = caretLine;
 			this.caretColumn = caretColumn;
 			this.callingClass = callingClass;
@@ -94,7 +98,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		void Init(ParseInformation parseInfo)
 		{
 			if (parseInfo != null) {
-				cu = parseInfo.MostRecentCompilationUnit;
+				cu = parseInfo.CompilationUnit;
 			}
 			
 			if (cu != null) {

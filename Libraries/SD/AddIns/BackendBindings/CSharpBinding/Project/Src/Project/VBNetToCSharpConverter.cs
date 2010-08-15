@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2713 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -23,7 +23,7 @@ namespace CSharpBinding
 	{
 		public override string TargetLanguageName {
 			get {
-				return CSharpLanguageBinding.LanguageName;
+				return CSharpProjectBinding.LanguageName;
 			}
 		}
 		
@@ -54,13 +54,18 @@ namespace CSharpBinding
 			base.CopyProperties(sourceProject, targetProject);
 			
 			CSharpProject project = (CSharpProject)targetProject;
+			
 			// 1591 = missing XML comment - the VB compiler does not have this warning
 			// we disable it by default because many VB projects have XML documentation turned on
 			// even though only few members are commented
-			project.SetProperty("NoWarn", "1591"); 
+			// (we replace existing NoWarn entries because VB and C# error codes don't match)
+			project.SetProperty("NoWarn", "1591");
 			
-			FixProperty(project, "DefineConstants",
-			            delegate(string v) { return v.Replace(',', ';'); });
+			project.ChangeProperty("DefineConstants",
+			                       v => v.Replace(',', ';'));
+			
+			project.ChangeProperty("ProjectTypeGuids",
+			                       v => v.Replace(ProjectTypeGuids.VBNet, ProjectTypeGuids.CSharp, StringComparison.OrdinalIgnoreCase));
 		}
 		
 		protected override void ConvertAst(CompilationUnit compilationUnit, List<ISpecial> specials, FileProjectItem sourceItem)
@@ -71,6 +76,13 @@ namespace CSharpBinding
 			
 			IProjectContent pc = ParserService.GetProjectContent(sourceItem.Project) ?? ParserService.CurrentProjectContent;
 			VBNetToCSharpConvertVisitor visitor = new VBNetToCSharpConvertVisitorWithMyFormsSupport(pc, ParserService.GetParseInformation(sourceItem.FileName), sourceItem.Project.RootNamespace);
+						
+			// set project options
+			visitor.OptionInfer = (project.GetEvaluatedProperty("OptionInfer") ?? "Off")
+				.Equals("On", StringComparison.OrdinalIgnoreCase);
+			visitor.OptionStrict = (project.GetEvaluatedProperty("OptionStrict") ?? "Off")
+				.Equals("On", StringComparison.OrdinalIgnoreCase);
+			
 			compilationUnit.AcceptVisitor(visitor, null);
 		}
 		

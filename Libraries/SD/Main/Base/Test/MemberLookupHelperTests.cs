@@ -2,15 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3675 $</version>
+//     <version>$Revision: 4175 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICSharpCode.Core;
-using System.Collections.Generic;
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Editor;
+using ICSharpCode.SharpDevelop.Project;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpDevelop.Tests
@@ -20,6 +22,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 	{
 		IProjectContent msc; // = ProjectContentRegistry.Mscorlib;
 		IProjectContent swf; // = ProjectContentRegistry.GetProjectContentForReference("System.Windows.Forms", "System.Windows.Forms");
+		DefaultClass dummyClass;
 		IMethod methodForGenericCalls;
 		
 		[TestFixtureSetUp]
@@ -32,10 +35,10 @@ namespace ICSharpCode.SharpDevelop.Tests
 			DefaultProjectContent dpc = new DefaultProjectContent();
 			dpc.ReferencedContents.Add(msc);
 			DefaultCompilationUnit cu = new DefaultCompilationUnit(dpc);
-			DefaultClass c = new DefaultClass(cu, "DummyClass");
-			cu.Classes.Add(c);
-			methodForGenericCalls = new DefaultMethod(c, "DummyMethod");
-			c.Methods.Add(methodForGenericCalls);
+			dummyClass = new DefaultClass(cu, "DummyClass");
+			cu.Classes.Add(dummyClass);
+			methodForGenericCalls = new DefaultMethod(dummyClass, "DummyMethod");
+			dummyClass.Methods.Add(methodForGenericCalls);
 		}
 		
 		IReturnType DictionaryRT {
@@ -318,11 +321,13 @@ namespace ICSharpCode.SharpDevelop.Tests
 		[Test]
 		public void NoConversionExistsFromStringToDisposableT()
 		{
-			Assert.IsFalse(IsApplicable(msc.SystemTypes.String,
-			                            CreateTWithDisposableConstraint()));
-			
+			// no conversion exists
 			Assert.IsFalse(MemberLookupHelper.ConversionExists(msc.SystemTypes.String,
 			                                                   CreateTWithDisposableConstraint()));
+			
+			// but it is applicable (applicability ignores constraints)
+			Assert.IsTrue(IsApplicable(msc.SystemTypes.String,
+			                           CreateTWithDisposableConstraint()));
 		}
 		
 		[Test]
@@ -422,11 +427,19 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			// get a class deriving from Form
 			IClass form = swf.GetClass("System.Windows.Forms.PrintPreviewDialog", 0);
-			IMethod[] methods = DefaultEditor.Gui.Editor.OverrideCompletionDataProvider.GetOverridableMethods(form);
-			IProperty[] properties = DefaultEditor.Gui.Editor.OverrideCompletionDataProvider.GetOverridableProperties(form);
+			IMethod[] methods = OverrideCompletionItemProvider.GetOverridableMethods(form);
+			IProperty[] properties = OverrideCompletionItemProvider.GetOverridableProperties(form);
 			Assert.AreEqual(1, properties.Where(m=>m.Name=="AutoScroll").Count());
 			Assert.AreEqual(1, properties.Where(m=>m.Name=="CanRaiseEvents").Count());
 			Assert.AreEqual(1, methods.Where(m=>m.Name=="AdjustFormScrollbars").Count());
+		}
+		
+		[Test]
+		public void LocalVariableAndFieldAreNotSimilarMembers()
+		{
+			IField field = new DefaultField(dummyClass.DefaultReturnType, "Test", ModifierEnum.None, DomRegion.Empty, dummyClass);
+			IField local = new DefaultField.LocalVariableField(dummyClass.DefaultReturnType, "Test", DomRegion.Empty, dummyClass);
+			Assert.IsFalse(MemberLookupHelper.IsSimilarMember(local, field));
 		}
 	}
 }

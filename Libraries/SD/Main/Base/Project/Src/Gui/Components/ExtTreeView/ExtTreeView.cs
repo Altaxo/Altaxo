@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 6032 $</version>
 // </file>
 
 using System;
@@ -136,6 +136,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		#region label editing
 		
+		string labelEditOldLabel;
+		
 		public void StartLabelEdit(ExtTreeNode node)
 		{
 			if (node == null) {
@@ -148,6 +150,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 				LabelEdit = true;
 				node.BeforeLabelEdit();
 				node.BeginEdit();
+				// remove node's label so that it doesn't get rendered behind the label editing textbox
+				// (if the user deletes some characters so that the text box shrinks)
+				labelEditOldLabel = node.Text;
+				node.Text = "";
 			}
 		}
 		
@@ -173,10 +179,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 			e.CancelEdit = true;
 			
 			ExtTreeNode node = e.Node as ExtTreeNode;
-			if (node != null && e.Label != null) {
-				node.AfterLabelEdit(e.Label);
+			if (node != null) {
+				node.Text = labelEditOldLabel;
+				labelEditOldLabel = null;
+				if (e.Label != null) {
+					node.AfterLabelEdit(e.Label);
+				}
 			}
 			SortParentNodes(e.Node);
+			SelectedNode = e.Node;
 		}
 
 		private void SortParentNodes(TreeNode treeNode)
@@ -212,7 +223,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				}
 			} catch (Exception ex) {
 				// catch error to prevent corrupting the TreeView component
-				MessageService.ShowError(ex);
+				MessageService.ShowException(ex);
 			}
 			if (e.Node.Nodes.Count == 0) {
 				// when the node's subnodes have been removed by Expanding, AfterExpand is not called

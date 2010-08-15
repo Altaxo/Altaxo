@@ -27,7 +27,7 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Summary description for IWorkbench.
   /// </summary>
-  public interface IWorkbench
+  public interface IWorkbench 
   {
     /// <summary>Gets the corresponding workbench GUI object, i.e for Windows the main windows form.</summary>
     object ViewObject { get; }
@@ -57,8 +57,20 @@ namespace Altaxo.Gui.Common
     /// </summary>
     void CloseAllViews();
 
+    /// <summary>
+    /// Informs the workbench that the project instance has changed.
+    /// </summary>
+    /// <param name="sender">Sender of this message.</param>
+    /// <param name="e">Information about the project change.</param>
+    void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e);
+
     /// <summary>Fired if the current view (and so the view content) changed.</summary>
     event EventHandler ActiveWorkbenchWindowChanged;
+
+    /// <summary>
+    /// Object for executing methods on the main thread.
+    /// </summary>
+    System.ComponentModel.ISynchronizeInvoke SynchronizingObject { get; }
   }
 
 }

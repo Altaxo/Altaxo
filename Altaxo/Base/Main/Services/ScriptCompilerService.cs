@@ -280,7 +280,7 @@ namespace Altaxo.Main.Services
       }
 
 			Dictionary<string, string> providerOptions = new Dictionary<string, string>();
-			providerOptions.Add("CompilerVersion", "v3.5"); 
+			providerOptions.Add("CompilerVersion", "v4.0"); 
 			Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider(providerOptions);
 
       // For Visual Basic Compiler try this :
@@ -296,16 +296,7 @@ namespace Altaxo.Main.Services
       foreach (string loc in Settings.Scripting.ReferencedAssemblies.AllLocations)
         parameters.ReferencedAssemblies.Add(loc);
 
-      //parameters.ReferencedAssemblies.Add(@"D:\users\Lellid_LW_V\C\CALC\USSimulation\USSimulationCore\bin\Debug\USSimulationCore.dll");
-
-      /*
-      foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) 
-      {
-        // this will include only those assemblies that have an external file
-        if(!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location!=null && asm.Location!=String.Empty)
-          parameters.ReferencedAssemblies.Add(asm.Location);
-      }
-      */
+     
 
       CompilerResults results;
       if(scriptText.Length==1)

@@ -2,13 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3292 $</version>
+//     <version>$Revision: 4537 $</version>
 // </file>
 
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.SharpDevelop.Internal.Templates;
 using System;
 using System.Collections.Generic;
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 {
@@ -28,7 +29,11 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 			bool readOnly = false;
 			
 			public TestProject(string languageName)
-				: base(new Solution())
+				: base(new ProjectCreateInformation {
+				       	Solution = new Solution(),
+				       	ProjectName = "TestProject",
+				       	OutputProjectFileName = "c:\\temp\\TestProject.csproj"
+				       })
 			{
 				this.languageName = languageName;
 			}
@@ -46,21 +51,21 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 			}
 		}
 		
-		public static void InitializeLanguageBindings()
+		public static void InitializeProjectBindings()
 		{
 			Properties prop = new Properties();
 			prop["id"] = "C#";
 			prop["supportedextensions"] = ".cs";
 			prop["projectfileextension"] = ".csproj";
-			Codon codon1 = new Codon(null, "LanguageBinding", prop, new Condition[0]);
+			Codon codon1 = new Codon(null, "ProjectBinding", prop, new Condition[0]);
 			prop = new Properties();
 			prop["id"] = "VBNet";
 			prop["supportedextensions"] = ".vb";
 			prop["projectfileextension"] = ".vbproj";
-			Codon codon2 = new Codon(null, "LanguageBinding", prop, new Condition[0]);
-			LanguageBindingService.SetBindings(new LanguageBindingDescriptor[] {
-			                                   	new LanguageBindingDescriptor(codon1),
-			                                   	new LanguageBindingDescriptor(codon2)
+			Codon codon2 = new Codon(null, "ProjectBinding", prop, new Condition[0]);
+			ProjectBindingService.SetBindings(new ProjectBindingDescriptor[] {
+			                                   	new ProjectBindingDescriptor(codon1),
+			                                   	new ProjectBindingDescriptor(codon2)
 			                                   });
 		}
 		

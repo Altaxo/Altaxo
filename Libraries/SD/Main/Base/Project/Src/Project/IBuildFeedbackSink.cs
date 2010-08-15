@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3763 $</version>
+//     <version>$Revision: 5483 $</version>
 // </file>
 
 using System;
@@ -11,9 +11,17 @@ namespace ICSharpCode.SharpDevelop.Project
 {
 	/// <summary>
 	/// Interface for reporting build results in real-time.
+	/// Project-specific build engines use this interface to report results to the main build engine.
 	/// </summary>
 	public interface IBuildFeedbackSink
 	{
+		/// <summary>
+		/// Gets the progress monitor associated with this build.
+		/// Does not return null.
+		/// This member is thread-safe.
+		/// </summary>
+		Gui.IProgressMonitor ProgressMonitor { get; }
+		
 		/// <summary>
 		/// Reports an build error by adding it to the error list.
 		/// This member is thread-safe.

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3598 $</version>
+//     <version>$Revision: 6033 $</version>
 // </file>
 
 using System;
@@ -11,14 +11,16 @@ using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.Core.WinForms;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	public class TaskListPad : AbstractPadContent, IClipboardHandler
 	{
+		public const string DefaultContextMenuAddInTreeEntry = "/SharpDevelop/Pads/TaskList/TaskContextMenu";
+		
 		static TaskListPad instance;
 		Dictionary<string, bool> displayedTokens;
 		IClass oldClass;
@@ -32,7 +34,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		ToolStrip toolStrip;
 		Panel contentPanel = new Panel();
 		
-		TaskView taskView = new TaskView();
+		TaskView taskView = new TaskView() { DefaultContextMenuAddInTreeEntry = TaskListPad.DefaultContextMenuAddInTreeEntry };
 		
 		public Dictionary<string, bool> DisplayedTokens {
 			get { return displayedTokens; }
@@ -46,7 +48,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public override Control Control {
+		public override object Control {
 			get {
 				return contentPanel;
 			}
@@ -62,6 +64,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.displayedTokens = new Dictionary<string, bool>();
 			
 			RedrawContent();
+			ResourceService.LanguageChanged += delegate { RedrawContent(); };
 			
 			InitializeToolStrip();
 
@@ -74,31 +77,33 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			if (WorkbenchSingleton.Workbench.ActiveViewContent != null) {
 				UpdateItems();
-				
-				if (WorkbenchSingleton.Workbench.ActiveViewContent.Control is SharpDevelopTextAreaControl) {
-					SharpDevelopTextAreaControl ctrl = WorkbenchSingleton.Workbench.ActiveViewContent.Control as SharpDevelopTextAreaControl;
-					
-					ctrl.ActiveTextAreaControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
-				}
+				WorkbenchActiveViewContentChanged(null, null);
 			}
 			
 			ProjectService.SolutionLoaded += OnSolutionOpen;
 			ProjectService.SolutionClosed += OnSolutionClosed;
+			ProjectService.CurrentProjectChanged += ProjectServiceCurrentProjectChanged;
 			
 			this.isInitialized = true;
 		}
 
+		void ProjectServiceCurrentProjectChanged(object sender, ProjectEventArgs e)
+		{
+			if (isInitialized)
+				UpdateItems();
+		}
+
 		void WorkbenchActiveViewContentChanged(object sender, EventArgs e)
 		{
-			if (WorkbenchSingleton.Workbench.ActiveViewContent == null)
-				return;
 			if (isInitialized)
 				UpdateItems();
 			
-			if (WorkbenchSingleton.Workbench.ActiveViewContent.Control is SharpDevelopTextAreaControl) {
-				SharpDevelopTextAreaControl ctrl = WorkbenchSingleton.Workbench.ActiveViewContent.Control as SharpDevelopTextAreaControl;
-				
-				ctrl.ActiveTextAreaControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
+			ITextEditorProvider provider = WorkbenchSingleton.Workbench.ActiveViewContent as ITextEditorProvider;
+			
+			if (provider != null) {
+				// ensure we don't attach multiple times to the same editor
+				provider.TextEditor.Caret.PositionChanged -= CaretPositionChanged;
+				provider.TextEditor.Caret.PositionChanged += CaretPositionChanged;
 			}
 		}
 
@@ -121,13 +126,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 				UpdateItems();
 		}
 		
-		private void InitializeToolStrip()
+		void InitializeToolStrip()
 		{
 			taskView.CreateControl();
 			
 			contentPanel.Controls.Add(taskView);
 			
-			string[] tokens = PropertyService.Get<string[]>("SharpDevelop.TaskListTokens", ParserService.DefaultTaskListTokens);
+			string[] tokens = ParserService.TaskListTokens;
 			
 			foreach (string token in tokens)
 			{
@@ -150,7 +155,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			contentPanel.Controls.Add(toolStrip);
 		}
 		
-		public override void RedrawContent()
+		void RedrawContent()
 		{
 			taskView.RefreshColumnNames();
 		}
@@ -194,7 +199,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				case 1:
 					return ProjectService.CurrentProject != null && ProjectService.CurrentProject.FindFile(item.FileName) != null;
 				case 2:
-					return WorkbenchSingleton.Workbench.ActiveViewContent != null && WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName == item.FileName;
+					return WorkbenchSingleton.Workbench.ActiveViewContent != null && WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName == FileName.Create(item.FileName);
 				case 3:
 					return current != null && itemClass != null && current.Namespace == itemClass.Namespace;
 				case 4:
@@ -213,7 +218,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (parseInfo != null) {
 				IPositionable positionable = WorkbenchSingleton.Workbench.ActiveViewContent as IPositionable;
 				if (positionable != null) {
-					IClass c = parseInfo.MostRecentCompilationUnit.GetInnermostClass(positionable.Line, positionable.Column);
+					IClass c = parseInfo.CompilationUnit.GetInnermostClass(positionable.Line, positionable.Column);
 					if (c != null) return c;
 				}
 			}
@@ -223,9 +228,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		IClass GetCurrentClass(Task item)
 		{
-			ParseInformation parseInfo = ParserService.GetParseInformation(item.FileName);
+			// Tasks are created by parsing, so the parse information for item.FileName should already be present.
+			// If they aren't, that's because the file might have been deleted/renamed in the meantime.
+			// We use GetExistingParseInformation to avoid trying to parse a file that might have been deleted/renamed.
+			ParseInformation parseInfo = ParserService.GetExistingParseInformation(item.FileName);
 			if (parseInfo != null) {
-				IClass c = parseInfo.MostRecentCompilationUnit.GetInnermostClass(item.Line, item.Column);
+				IClass c = parseInfo.CompilationUnit.GetInnermostClass(item.Line, item.Column);
 				if (c != null) return c;
 			}
 			

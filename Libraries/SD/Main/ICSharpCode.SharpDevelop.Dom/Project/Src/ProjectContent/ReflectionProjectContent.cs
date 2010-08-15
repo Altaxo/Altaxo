@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3527 $</version>
+//     <version>$Revision: 4280 $</version>
 // </file>
 
 using System;
@@ -17,6 +17,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public class ReflectionProjectContent : DefaultProjectContent
 	{
 		string assemblyFullName;
+		string assemblyName;
 		DomAssemblyName[] referencedAssemblyNames;
 		ICompilationUnit assemblyCompilationUnit;
 		string assemblyLocation;
@@ -32,6 +33,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				return assemblyFullName;
 			}
+		}
+		
+		public override string AssemblyName {
+			get { return assemblyName; }
 		}
 		
 		/// <summary>
@@ -84,8 +89,19 @@ namespace ICSharpCode.SharpDevelop.Dom
 					AddClassToNamespaceListInternal(new ReflectionClass(assemblyCompilationUnit, type, name, null));
 				}
 			}
-			ReflectionClass.AddAttributes(this, assemblyCompilationUnit.Attributes, CustomAttributeData.GetCustomAttributes(assembly));
 			InitializeSpecialClasses();
+			AddAssemblyAttributes(assembly);
+			assemblyCompilationUnit.Freeze();
+		}
+		
+		/// <summary>
+		/// Adds assembly attributes from the specified assembly.
+		/// 
+		/// The constructor already does this, this method is meant for unit tests only!
+		/// </summary>
+		public void AddAssemblyAttributes(Assembly assembly)
+		{
+			ReflectionClass.AddAttributes(this, assemblyCompilationUnit.Attributes, CustomAttributeData.GetCustomAttributes(assembly));
 		}
 		
 		public ReflectionProjectContent(string assemblyFullName, string assemblyLocation, DomAssemblyName[] referencedAssemblies, ProjectContentRegistry registry)
@@ -99,6 +115,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			
 			this.registry = registry;
 			this.assemblyFullName = assemblyFullName;
+			this.assemblyName = (assemblyFullName.IndexOf(',') > -1) ? assemblyFullName.Substring(0, assemblyFullName.IndexOf(',')) : assemblyFullName;
 			this.referencedAssemblyNames = referencedAssemblies;
 			this.assemblyLocation = assemblyLocation;
 			this.assemblyCompilationUnit = new DefaultCompilationUnit(this);

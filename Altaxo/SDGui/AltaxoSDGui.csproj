@@ -28,7 +28,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -44,6 +44,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -88,6 +89,8 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -106,12 +109,25 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="..\..\Libraries\SD\AddIns\DisplayBindings\AvalonEdit.AddIn\AvalonEdit.AddIn.csproj">
+      <Project>{0162E499-42D0-409B-AA25-EED21F75336B}</Project>
+      <Name>AvalonEdit.AddIn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SD\Libraries\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
+      <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
+      <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\SD\Main\Core\Project\ICSharpCode.Core.csproj">
       <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
       <Name>ICSharpCode.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.Core.Presentation\ICSharpCode.Core.Presentation.csproj">
+      <Project>{7E4A7172-7FF5-48D0-B719-7CD959DD1AC9}</Project>
+      <Name>ICSharpCode.Core.Presentation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.Core.WinForms\ICSharpCode.Core.WinForms.csproj">
       <Project>{857CA1A3-FC88-4BE0-AB6A-D1EE772AB288}</Project>
@@ -120,10 +136,6 @@
     <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.SharpDevelop.Dom\Project\ICSharpCode.SharpDevelop.Dom.csproj">
       <Project>{924EE450-603D-49C1-A8E5-4AFAA31CE6F3}</Project>
       <Name>ICSharpCode.SharpDevelop.Dom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SD\Libraries\ICSharpCode.TextEditor\Project\ICSharpCode.TextEditor.csproj">
-      <Project>{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}</Project>
-      <Name>ICSharpCode.TextEditor</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\SD\Main\Base\Project\ICSharpCode.SharpDevelop.csproj">
       <Project>{2748AD25-9C63-4E12-877B-4DCE96FBED54}</Project>
@@ -147,6 +159,8 @@
       <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -162,23 +176,17 @@
     <Compile Include="Gui\Pads\ProjectBrowser\ItemHandler.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ListItemCommands.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\NGuiItems.cs" />
-    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.Designer.cs">
-      <DependentUpon>ProjectBrowseControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseController.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowserExtensions.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\TreeItemCommands.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\GuiTreeNodes.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml.cs">
+      <DependentUpon>ProjectBrowseControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Scripting\SDPureScriptControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Scripting\SDScriptOpenedFile.cs" />
-    <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
     <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs">
       <SubType>UserControl</SubType>
@@ -197,7 +205,7 @@
     <Compile Include="Main\MenuCommands\HelpCommands.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main\MenuCommands\OpenScriptDialog.cs">
+    <Compile Include="Main\MenuCommands\ScriptEditorCommands.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\MenuCommands\PLSPlotCommands.cs">
@@ -219,12 +227,8 @@
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.resx">
-      <DependentUpon>ProjectBrowseControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\SDPureScriptControl.resx">
       <DependentUpon>SDPureScriptControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +247,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

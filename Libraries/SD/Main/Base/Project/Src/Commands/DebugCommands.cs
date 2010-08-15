@@ -2,16 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3253 $</version>
+//     <version>$Revision: 6312 $</version>
 // </file>
 
 using System;
-using System.Windows.Forms;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Debugging;
-using ICSharpCode.TextEditor;
+using ICSharpCode.SharpDevelop.Editor;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project.Commands
 {
@@ -49,8 +47,13 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
-			LoggingService.Info("Debugger Command: Continue");
-			DebuggerService.CurrentDebugger.Continue();
+			if (DebuggerService.CurrentDebugger.IsDebugging) {
+				LoggingService.Info("Debugger Command: Continue");
+				DebuggerService.CurrentDebugger.Continue();
+			} else {
+				LoggingService.Info("Debugger Command: Run");
+				new Execute().Run();
+			}
 		}
 	}
 	
@@ -103,12 +106,12 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
-			ITextEditorControlProvider provider = WorkbenchSingleton.Workbench.ActiveContent as ITextEditorControlProvider;
+			ITextEditorProvider provider = WorkbenchSingleton.Workbench.ActiveContent as ITextEditorProvider;
 			
 			if (provider != null) {
-				TextEditorControl textEditor = provider.TextEditorControl;
-				if (!string.IsNullOrEmpty(textEditor.FileName)) {
-					DebuggerService.ToggleBreakpointAt(textEditor.Document, textEditor.FileName, textEditor.ActiveTextAreaControl.Caret.Line);
+				ITextEditor editor = provider.TextEditor;
+				if (!string.IsNullOrEmpty(editor.FileName)) {
+					DebuggerService.ToggleBreakpointAt(editor, editor.Caret.Line);
 				}
 			}
 		}
@@ -120,7 +123,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			DebuggerService.CurrentDebugger.ShowAttachDialog();
 		}
-	}	
+	}
 	
 	public class DetachFromProcessCommand : AbstractMenuCommand
 	{
@@ -128,5 +131,5 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			DebuggerService.CurrentDebugger.Detach();
 		}
-	}	
+	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3065 $</version>
+//     <version>$Revision: 5844 $</version>
 // </file>
 
 using System;
@@ -22,48 +22,38 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// The file line.
 		/// </summary>
-		int line = 0;
+		int line;
 		
 		/// <summary>
 		/// The line column.
 		/// </summary>
-		int column = 0;
+		int column;
 		
 		
 		/// <summary>
 		/// Gets or sets the filename. 
 		/// </summary>
 		public string FileName {
-			get	{
-				return fileName;
-			}
-			set	{
-				fileName = value;
-			}
+			get	{ return fileName; }
+			set	{ fileName = value; }
 		}
 		
 		/// <summary>
-		/// Gets or sets the line number 
+		/// Gets or sets the line number. The first line has the number 1.
+		/// The value '0' means that no line information is available.
 		/// </summary>
 		public int Line {
-			get	{
-				return line;
-			}
-			set	{
-				line = value;
-			}
+			get	{ return line; }
+			set	{ line = value; }
 		}	
 		
 		/// <summary>
-		/// Gets or sets the line column. 
+		/// Gets or sets the line column. The first line has the number 1.
+		/// The value '0' means that no column information is available.
 		/// </summary>
 		public int Column {
-			get	{
-				return column;
-			}
-			set	{
-				column = value;
-			}
+			get	{ return column; }
+			set	{ column = value; }
 		}			
 		/// <summary>
 		/// Creates a new instance of the <see cref="FileLineReference"/> class.

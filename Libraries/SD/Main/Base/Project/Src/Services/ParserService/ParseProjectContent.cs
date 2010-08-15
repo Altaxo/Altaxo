@@ -2,15 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3472 $</version>
+//     <version>$Revision: 5644 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop
 {
@@ -22,7 +27,7 @@ namespace ICSharpCode.SharpDevelop
 			newProjectContent.project = project;
 			newProjectContent.Language = project.LanguageProperties;
 			newProjectContent.initializing = true;
-			IProjectContent mscorlib = ParserService.GetRegistryForReference(new ReferenceProjectItem(project, "mscorlib")).Mscorlib;
+			IProjectContent mscorlib = AssemblyParserService.GetRegistryForReference(new ReferenceProjectItem(project, "mscorlib")).Mscorlib;
 			newProjectContent.AddReferencedContent(mscorlib);
 			return newProjectContent;
 		}
@@ -33,6 +38,14 @@ namespace ICSharpCode.SharpDevelop
 			get {
 				return project;
 			}
+		}
+		
+		public string ProjectName {
+			get { return project.Name; }
+		}
+		
+		public override string AssemblyName {
+			get { return project.AssemblyName; }
 		}
 		
 		bool initializing;
@@ -49,18 +62,16 @@ namespace ICSharpCode.SharpDevelop
 			ProjectService.ProjectItemRemoved += OnProjectItemRemoved;
 			UpdateDefaultImports(items);
 			// TODO: Translate me
-			progressMonitor.TaskName = "Resolving references for " + project.Name + "...";
+//			progressMonitor.TaskName = "Resolving references for " + project.Name + "...";
 			project.ResolveAssemblyReferences();
 			foreach (ProjectItem item in items) {
 				if (!initializing) return; // abort initialization
-				if (item.ItemType == ItemType.Reference
-				    || item.ItemType == ItemType.ProjectReference
-				    || item.ItemType == ItemType.COMReference)
-				{
+				progressMonitor.CancellationToken.ThrowIfCancellationRequested();
+				if (ItemType.ReferenceItemTypes.Contains(item.ItemType)) {
 					ReferenceProjectItem reference = item as ReferenceProjectItem;
 					if (reference != null) {
 						// TODO: Translate me
-						progressMonitor.TaskName = "Loading " + reference.ShortName + "...";
+//						progressMonitor.TaskName = "Loading " + reference.ShortName + "...";
 						AddReference(reference, false);
 					}
 				}
@@ -71,16 +82,22 @@ namespace ICSharpCode.SharpDevelop
 		
 		internal void ReInitialize1(IProgressMonitor progressMonitor)
 		{
+			var mscorlib = AssemblyParserService.GetRegistryForReference(new ReferenceProjectItem(project, "mscorlib")).Mscorlib;
+			// don't fetch mscorlib within lock - finding the correct registry might access the project, causing
+			// a deadlock between IProject.SyncRoot and the ReferencedContents lock
 			lock (ReferencedContents) {
 				ReferencedContents.Clear();
-				AddReferencedContent(ParserService.GetRegistryForReference(new ReferenceProjectItem(project, "mscorlib")).Mscorlib);
+				AddReferencedContent(mscorlib);
 			}
 			// prevent adding event handler twice
 			ProjectService.ProjectItemAdded   -= OnProjectItemAdded;
 			ProjectService.ProjectItemRemoved -= OnProjectItemRemoved;
 			initializing = true;
-			Initialize1(progressMonitor);
-			initializing = false;
+			try {
+				Initialize1(progressMonitor);
+			} finally {
+				initializing = false;
+			}
 		}
 		
 		void UpdateReferenceInterDependencies()
@@ -101,7 +118,7 @@ namespace ICSharpCode.SharpDevelop
 		void AddReference(ReferenceProjectItem reference, bool updateInterDependencies)
 		{
 			try {
-				AddReferencedContent(ParserService.GetProjectContentForReference(reference));
+				AddReferencedContent(AssemblyParserService.GetProjectContentForReference(reference));
 				if (updateInterDependencies) {
 					UpdateReferenceInterDependencies();
 				}
@@ -110,9 +127,9 @@ namespace ICSharpCode.SharpDevelop
 				// Refresh the reference if required.
 				// If the user removes the reference and then re-adds it, there might be other references
 				// in the project depending on it, so we do the refresh after the old reference was added.
-				ParserService.RefreshProjectContentForReference(reference);
+				AssemblyParserService.RefreshProjectContentForReference(reference);
 			} catch (Exception e) {
-				MessageService.ShowError(e);
+				MessageService.ShowException(e);
 			}
 		}
 		
@@ -163,7 +180,7 @@ namespace ICSharpCode.SharpDevelop
 				UpdateDefaultImports(project.Items);
 			} else if (e.ProjectItem.ItemType == ItemType.Compile) {
 				if (System.IO.File.Exists(e.ProjectItem.FileName)) {
-					ParserService.EnqueueForParsing(e.ProjectItem.FileName);
+					ParserService.BeginParse(e.ProjectItem.FileName);
 				}
 			}
 		}
@@ -175,7 +192,7 @@ namespace ICSharpCode.SharpDevelop
 			ReferenceProjectItem reference = e.ProjectItem as ReferenceProjectItem;
 			if (reference != null) {
 				try {
-					IProjectContent referencedContent = ParserService.GetExistingProjectContentForReference(reference);
+					IProjectContent referencedContent = AssemblyParserService.GetExistingProjectContentForReference(reference);
 					if (referencedContent != null) {
 						lock (ReferencedContents) {
 							ReferencedContents.Remove(referencedContent);
@@ -183,7 +200,7 @@ namespace ICSharpCode.SharpDevelop
 						OnReferencedContentsChanged(EventArgs.Empty);
 					}
 				} catch (Exception ex) {
-					MessageService.ShowError(ex);
+					MessageService.ShowException(ex);
 				}
 			}
 			
@@ -233,11 +250,7 @@ namespace ICSharpCode.SharpDevelop
 		internal void Initialize2(IProgressMonitor progressMonitor)
 		{
 			if (!initializing) return;
-			int progressStart = progressMonitor.WorkDone;
-			ParseableFileContentEnumerator enumerator = new ParseableFileContentEnumerator(project);
 			try {
-				progressMonitor.TaskName = "${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing} " + project.Name + "...";
-				
 				IProjectContent[] referencedContents;
 				lock (this.ReferencedContents) {
 					referencedContents = new IProjectContent[this.ReferencedContents.Count];
@@ -250,19 +263,34 @@ namespace ICSharpCode.SharpDevelop
 					}
 				}
 				
-				while (enumerator.MoveNext()) {
-					int i = enumerator.Index;
-					if ((i % 5) == 2)
-						progressMonitor.WorkDone = progressStart + i;
-					
-					ParserService.ParseFile(this, enumerator.CurrentFileName, enumerator.CurrentFileContent, true);
-					
-					if (!initializing) return;
-				}
+				ParseableFileContentFinder finder = new ParseableFileContentFinder();
+				var fileContents = (
+					from p in project.Items.AsParallel().WithCancellation(progressMonitor.CancellationToken)
+					where !ItemType.NonFileItemTypes.Contains(p.ItemType) && !String.IsNullOrEmpty(p.FileName)
+					select FileName.Create(p.FileName)
+				).ToList();
+				
+				object progressLock = new object();
+				double fileCountInverse = 1.0 / fileContents.Count;
+				Parallel.ForEach(
+					fileContents,
+					fileName => {
+						ParseableFileContentEntry entry = finder.Create(fileName);
+						// Don't read files we don't have a parser for.
+						// This avoids loading huge files (e.g. sdps) when we have no intention of parsing them.
+						if (ParserService.GetParser(fileName) != null) {
+							ITextBuffer content = entry.GetContent();
+							if (content != null)
+								ParserService.ParseFile(this, fileName, content);
+						}
+						lock (progressLock) {
+							progressMonitor.Progress += fileCountInverse;
+						}
+					}
+				);
 			} finally {
 				initializing = false;
-				progressMonitor.WorkDone = progressStart + enumerator.ItemCount;
-				enumerator.Dispose();
+				progressMonitor.Progress = 1;
 			}
 		}
 		

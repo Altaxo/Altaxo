@@ -3,54 +3,69 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
+
 using Altaxo.Collections;
-using System.Windows.Forms;
+
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-  /// <summary>
-  /// Extends the WinForms tree node for special interaction features with their non-Gui equivalents.
-  /// </summary>
-  public class GuiBrowserTreeNode : TreeNode, IGuiBrowserTreeNode
-  {
-    public GuiBrowserTreeNode(NGBrowserTreeNode nguinode)
-    {
-      this.Tag = nguinode;
-      this.Text = nguinode.Text;
-      nguinode.GuiTag = this;
-    }
+	/// <summary>
+	/// Extends the WinForms tree node for special interaction features with their non-Gui equivalents.
+	/// </summary>
+	public class WpfBrowserTreeNode : ImageTreeViewItem, IGuiBrowserTreeNode
+	{
+		public static List<ImageSource> Images = new List<ImageSource>();
 
-    public virtual void OnNodeAdded(NGBrowserTreeNode node)
-    {
-      AddNode(this.Nodes, node);
-    }
-
-
-    public virtual void OnNodeRemoved(NGBrowserTreeNode node)
-    {
-      TreeNode n = (TreeNode)node.GuiTag;
-      Nodes.Remove(n);
-    }
-
-    public virtual void OnNodeMultipleChanges()
-    {
-      var nguinode = (NGTreeNode)this.Tag;
-      this.Nodes.Clear();
-      foreach (var n in nguinode.Nodes)
-        AddNode(this.Nodes, (NGBrowserTreeNode)n);
-    }
-
-		public static void AddNode(TreeNodeCollection parNodes, NGBrowserTreeNode nguinode)
+		public WpfBrowserTreeNode(NGBrowserTreeNode nguinode)
 		{
-			var curNode = new GuiBrowserTreeNode(nguinode);
-			curNode.ContextMenuStrip = (ContextMenuStrip)nguinode.ContextMenu;
+
+			this.Tag = nguinode;
+			this.Text = nguinode.Text;
+			nguinode.GuiTag = this;
+		}
+
+		public virtual void OnNodeAdded(NGBrowserTreeNode node)
+		{
+			AddNode(this.Items, node);
+		}
+
+
+		public virtual void OnNodeRemoved(NGBrowserTreeNode node)
+		{
+			TreeViewItem n = (TreeViewItem)node.GuiTag;
+			Items.Remove(n);
+		}
+
+		public virtual void OnNodeMultipleChanges()
+		{
+			var nguinode = (NGTreeNode)this.Tag;
+			this.Items.Clear();
+			foreach (var n in nguinode.Nodes)
+				AddNode(this.Items, (NGBrowserTreeNode)n);
+		}
+
+		public static void AddNode(ItemCollection parNodes, NGBrowserTreeNode nguinode)
+		{
+			var curNode = new WpfBrowserTreeNode(nguinode);
+			curNode.ContextMenu = (ContextMenu)nguinode.ContextMenu;
+
 
 			if (null != nguinode.ImageIndex)
-				curNode.ImageIndex = (int)nguinode.ImageIndex;
+			{
+				var src = Images[(int)nguinode.ImageIndex];
+				curNode.SelectedImage = src;
+				curNode.UnselectedImage = src;
+			}
 			if (null != nguinode.SelectedImageIndex)
-				curNode.SelectedImageIndex = (int)nguinode.ImageIndex;
+				curNode.SelectedImage = Images[(int)nguinode.ImageIndex];
+
 
 			foreach (var n in nguinode.Nodes)
-				AddNode(curNode.Nodes, (NGBrowserTreeNode)n);
+				AddNode(curNode.Items, (NGBrowserTreeNode)n);
 			parNodes.Add(curNode);
 		}
 	}
@@ -60,38 +75,139 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	/// Simulate the equivalent of the non-Gui root node. Note that in the TreeList there is no such thing than a root node.
 	/// There is only the collection of nodes at the root.
 	/// </summary>
-  public class GuiRootNode : IGuiBrowserTreeNode
-  {
-    TreeNodeCollection _rootCollection;
-    NGTreeNode _nguiRoot;
+	public class WpfRootNode : IGuiBrowserTreeNode
+	{
+		ItemCollection _rootCollection;
+		NGTreeNode _nguiRoot;
 
-    public GuiRootNode(NGTreeNode nguiroot, TreeNodeCollection rootCollection)
-    {
-      _rootCollection = rootCollection;
-      foreach (var n in nguiroot.Nodes)
-        GuiBrowserTreeNode.AddNode(_rootCollection, (NGBrowserTreeNode)n);
+		public WpfRootNode(NGTreeNode nguiroot, ItemCollection rootCollection)
+		{
+			_rootCollection = rootCollection;
+			foreach (var n in nguiroot.Nodes)
+				WpfBrowserTreeNode.AddNode(_rootCollection, (NGBrowserTreeNode)n);
 
-      _nguiRoot = nguiroot;
-      nguiroot.GuiTag = this;
-    }
+			_nguiRoot = nguiroot;
+			nguiroot.GuiTag = this;
+		}
 
-    public void OnNodeAdded(NGBrowserTreeNode node)
-    {
-      GuiBrowserTreeNode.AddNode(_rootCollection, (NGBrowserTreeNode)node);
-    }
+		public void OnNodeAdded(NGBrowserTreeNode node)
+		{
+			WpfBrowserTreeNode.AddNode(_rootCollection, (NGBrowserTreeNode)node);
+		}
 
-    public void OnNodeRemoved(NGBrowserTreeNode node)
-    {
-      TreeNode n = (TreeNode)node.GuiTag;
-      _rootCollection.Remove(n);
-    }
+		public void OnNodeRemoved(NGBrowserTreeNode node)
+		{
+			TreeViewItem n = (TreeViewItem)node.GuiTag;
+			_rootCollection.Remove(n);
+		}
 
-    public virtual void OnNodeMultipleChanges()
-    {
-     _rootCollection.Clear();
-     foreach (var n in _nguiRoot.Nodes)
-       GuiBrowserTreeNode.AddNode(_rootCollection, (NGBrowserTreeNode)n);
-    }
+		public virtual void OnNodeMultipleChanges()
+		{
+			_rootCollection.Clear();
+			foreach (var n in _nguiRoot.Nodes)
+				WpfBrowserTreeNode.AddNode(_rootCollection, (NGBrowserTreeNode)n);
+		}
 
-  }
+	}
+
+
+	public class ImageTreeViewItem : TreeViewItem
+	{
+		TextBlock _text;
+		Image _image;
+		ImageSource _srcSelected;
+		ImageSource _srcUnselected;
+
+		public ImageTreeViewItem()
+		{
+			StackPanel stack = new StackPanel();
+
+			stack.Orientation = Orientation.Horizontal;
+
+			Header = stack;
+
+			_image = new Image();
+
+			_image.VerticalAlignment = VerticalAlignment.Center;
+
+			_image.Margin = new Thickness(0, 0, 2, 0);
+
+			_image.Source = _srcSelected;
+
+			stack.Children.Add(_image);
+
+			_text = new TextBlock();
+
+			_text.VerticalAlignment = VerticalAlignment.Center;
+
+			stack.Children.Add(_text);
+
+		}
+
+		public string Text
+		{
+
+			set { _text.Text = value; }
+
+			get { return _text.Text; }
+
+		}
+
+		public ImageSource SelectedImage
+		{
+
+			set
+			{
+
+				_srcSelected = value;
+
+				_image.Source = _srcSelected;
+
+			}
+
+			get { return _srcSelected; }
+
+		}
+
+		public ImageSource UnselectedImage
+		{
+
+			set
+			{
+
+				_srcUnselected = value;
+
+			}
+
+			get { return _srcUnselected; }
+
+		}
+
+
+
+		protected override void OnSelected(RoutedEventArgs args)
+		{
+
+			base.OnSelected(args);
+
+			_image.Source = _srcSelected;
+
+		}
+
+		protected override void OnUnselected(RoutedEventArgs args)
+		{
+
+			base.OnUnselected(args);
+
+			if (_srcUnselected != null)
+
+				_image.Source = _srcUnselected;
+
+			else
+
+				_image.Source = _srcSelected;
+
+		}
+	}
+
 }

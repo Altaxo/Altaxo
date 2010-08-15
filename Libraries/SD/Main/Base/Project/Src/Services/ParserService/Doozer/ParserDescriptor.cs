@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 4723 $</version>
 // </file>
 
 using System;
@@ -13,62 +13,54 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop
 {
-	public sealed class ParserDescriptor 
+	public sealed class ParserDescriptor
 	{
-		IParser parser = null;
-		string[] supportedExtensions = null;
 		Codon codon;
+		Type parserType;
 		
-		public IParser Parser {
-			get {
-				if (parser == null) {
-					parser = (IParser)codon.AddIn.CreateObject(codon.Properties["class"]);
-				}
-				return parser;
-			}
+		public IParser CreateParser()
+		{
+			if (codon != null)
+				return (IParser)codon.AddIn.CreateObject(codon.Properties["class"]);
+			else
+				return (IParser)Activator.CreateInstance(parserType);
 		}
-		
-		public Codon Codon {
-			get {
-				return codon;
-			}
-		}
-		
-		public string Language {
-			get {
-				return codon.Id;
-			}
-		}
-		
-		public string ProjectFileExtension {
-			get {
-				return codon.Properties["projectfileextension"];
-			}
-		}
-		
-		public string[] Supportedextensions {
-			get {
-				if (supportedExtensions == null) {
-					supportedExtensions = codon.Properties["supportedextensions"].ToUpperInvariant().Split(';');
-				}
-				return supportedExtensions;
-			}
-		}
-		
+
+		public string Language { get; private set; }
+
+		public string[] Supportedextensions { get; private set; }
+
 		public bool CanParse(string fileName)
 		{
-			string fileExtension = Path.GetExtension(fileName).ToUpperInvariant();
+			string fileExtension = Path.GetExtension(fileName);
 			foreach (string ext in Supportedextensions) {
-				if (fileExtension == ext) {
+				if (string.Equals(fileExtension, ext, StringComparison.OrdinalIgnoreCase)) {
 					return true;
 				}
 			}
 			return false;
 		}
-		
-		public ParserDescriptor (Codon codon)
+
+		public ParserDescriptor(Codon codon)
 		{
+			if (codon == null)
+				throw new ArgumentNullException("codon");
 			this.codon = codon;
+			this.Language = codon.Id;
+			this.Supportedextensions = codon.Properties["supportedextensions"].Split(';');
+		}
+		
+		public ParserDescriptor(Type parserType, string language, string[] supportedExtensions)
+		{
+			if (parserType == null)
+				throw new ArgumentNullException("parserType");
+			if (language == null)
+				throw new ArgumentNullException("language");
+			if (supportedExtensions == null)
+				throw new ArgumentNullException("supportedExtensions");
+			this.parserType = parserType;
+			this.Language = language;
+			this.Supportedextensions = supportedExtensions;
 		}
 	}
 }

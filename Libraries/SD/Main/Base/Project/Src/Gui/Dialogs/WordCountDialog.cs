@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2707 $</version>
+//     <version>$Revision: 4668 $</version>
 // </file>
 
 using System;
@@ -57,7 +57,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (!File.Exists(filename)) return null;
 			
-			return GetReport(filename, new StringReader(ParserService.GetParseableFileContent(filename)));
+			return GetReport(filename, ParserService.GetParseableFileContent(filename).CreateReader());
 		}
 		
 		Report GetReport(IViewContent content, TextReader reader)
@@ -101,7 +101,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 							if (editable == null) {
 								MessageService.ShowWarning("${res:Dialog.WordCountDialog.IsNotTextFile}");
 							} else {
-								Report r = GetReport(viewContent, new StringReader(editable.Text));
+								Report r = GetReport(viewContent, editable.CreateSnapshot().CreateReader());
 								if (r != null) items.Add(r);
 							}
 						}
@@ -113,7 +113,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 							foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 								IEditable editable = content as IEditable;
 								if (editable != null) {
-									Report r = GetReport(content, new StringReader(editable.Text));
+									Report r = GetReport(content, editable.CreateSnapshot().CreateReader());
 									if (r != null) {
 										total += r;
 										items.Add(r);
@@ -231,7 +231,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			((ListView)ControlDictionary["resultListView"]).ColumnClick += new ColumnClickEventHandler(SortEvt);
 			
 			Icon  = IconService.GetIcon("Icons.16x16.FindIcon");
-			Owner = WorkbenchSingleton.MainForm;
 			
 			((ComboBox)ControlDictionary["locationComboBox"]).Items.Add(StringParser.Parse("${res:Global.Location.currentfile}"));
 			((ComboBox)ControlDictionary["locationComboBox"]).Items.Add(StringParser.Parse("${res:Global.Location.allopenfiles}"));

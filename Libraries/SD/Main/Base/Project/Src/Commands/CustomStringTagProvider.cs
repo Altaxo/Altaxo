@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3685 $</version>
+//     <version>$Revision: 5334 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.IO;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
 
@@ -19,26 +20,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 	/// Provides tag to string mapping for SharpDevelop. Tags are mapped to strings by several methods
 	/// such as registry and resource files.
 	/// </summary>
-	public class SharpDevelopStringTagProvider :  IStringTagProvider
+	public class SharpDevelopStringTagProvider : IStringTagProvider
 	{
-		readonly static string[] tags = new string[] {
-			"ItemPath", "ItemDir", "ItemFilename", "ItemExt",
-			"CurLine", "CurCol", "CurText",
-			"TargetPath", "TargetDir", "TargetName", "TargetExt",
-			"CurrentProjectName",
-			"ProjectDir", "ProjectFilename",
-			"CombineDir", "CombineFilename",
-			"SolutionDir", "SolutionFilename",
-			"Startuppath", "ConfigDirectory",
-			"TaskService.Warnings", "TaskService.Errors", "TaskService.Messages"
-		};
-		
-		public string[] Tags {
-			get {
-				return tags;
-			}
-		}
-		
 		string GetCurrentItemPath()
 		{
 			return WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName;
@@ -56,7 +39,12 @@ namespace ICSharpCode.SharpDevelop.Commands
 			return String.Empty;
 		}
 		
-		public string Convert(string tag)
+		public string ProvideString(string tag, StringTagPair[] customTags)
+		{
+			return ProvideString(tag);
+		}
+		
+		public string ProvideString(string tag)
 		{
 			switch (tag) {
 				case "TaskService.Warnings":
@@ -70,86 +58,88 @@ namespace ICSharpCode.SharpDevelop.Commands
 						return "<no current project>";
 					else
 						return ProjectService.CurrentProject.Name;
-					
 			}
 			switch (tag.ToUpperInvariant()) {
 				case "ITEMPATH":
 					try {
 						return GetCurrentItemPath() ?? string.Empty;
 					} catch (Exception) {}
-					break;
+					return string.Empty;
 				case "ITEMDIR":
 					try {
 						return Path.GetDirectoryName(GetCurrentItemPath()) ?? string.Empty;
 					} catch (Exception) {}
-					break;
+					return string.Empty;
 				case "ITEMFILENAME":
 					try {
 						return Path.GetFileName(GetCurrentItemPath()) ?? string.Empty;
 					} catch (Exception) {}
-					break;
+					return string.Empty;
 				case "ITEMEXT":
 					try {
 						return Path.GetExtension(GetCurrentItemPath()) ?? string.Empty;
 					} catch (Exception) {}
-					break;
+					return string.Empty;
+				case "ITEMNAMENOEXT":
+					try {
+						return Path.GetFileNameWithoutExtension(GetCurrentItemPath()) ?? string.Empty;
+					} catch (Exception) {}
+					return string.Empty;
 					
 				case "CURLINE":
 					{
 						IPositionable positionable = WorkbenchSingleton.Workbench.ActiveViewContent as IPositionable;
 						if (positionable != null)
-							return (positionable.Line + 1).ToString();
-						break;
+							return positionable.Line.ToString();
+						return string.Empty;
 					}
 				case "CURCOL":
 					{
 						IPositionable positionable = WorkbenchSingleton.Workbench.ActiveViewContent as IPositionable;
 						if (positionable != null)
-							return (positionable.Column + 1).ToString();
-						break;
+							return positionable.Column.ToString();
+						return string.Empty;
 					}
 				case "CURTEXT":
 					{
-						var tecp = WorkbenchSingleton.Workbench.ActiveViewContent as DefaultEditor.Gui.Editor.ITextEditorControlProvider;
+						var tecp = WorkbenchSingleton.Workbench.ActiveViewContent as ITextEditorProvider;
 						if (tecp != null) {
-							return tecp.TextEditorControl.ActiveTextAreaControl.SelectionManager.SelectedText;
+							return tecp.TextEditor.SelectedText;
 						}
-						break;
+						return string.Empty;
 					}
 				case "TARGETPATH":
 					try {
 						return GetCurrentTargetPath() ?? string.Empty;
 					} catch (Exception) {}
-					break;
+					return string.Empty;
 				case "TARGETDIR":
 					try {
 						return Path.GetDirectoryName(GetCurrentTargetPath()) ?? string.Empty;
 					} catch (Exception) {}
-					break;
+					return string.Empty;
 				case "TARGETNAME":
 					try {
 						return Path.GetFileName(GetCurrentTargetPath()) ?? string.Empty;
 					} catch (Exception) {}
-					break;
+					return string.Empty;
 				case "TARGETEXT":
 					try {
 						return Path.GetExtension(GetCurrentTargetPath()) ?? string.Empty;
 					} catch (Exception) {}
-					break;
-					
+					return string.Empty;
 				case "PROJECTDIR":
 					if (ProjectService.CurrentProject != null) {
 						return ProjectService.CurrentProject.Directory;
 					}
-					break;
+					return string.Empty;
 				case "PROJECTFILENAME":
 					if (ProjectService.CurrentProject != null) {
 						try {
 							return Path.GetFileName(ProjectService.CurrentProject.FileName);
 						} catch (Exception) {}
 					}
-					break;
-					
+					return string.Empty;
 				case "COMBINEDIR":
 				case "SOLUTIONDIR":
 					return Path.GetDirectoryName(ProjectService.OpenSolution.FileName);
@@ -158,13 +148,14 @@ namespace ICSharpCode.SharpDevelop.Commands
 					try {
 						return Path.GetFileName(ProjectService.OpenSolution.FileName);
 					} catch (Exception) {}
-					break;
+					return string.Empty;
+				case "SHARPDEVELOPBINPATH":
+					return Path.GetDirectoryName(typeof(SharpDevelopStringTagProvider).Assembly.Location);
 				case "STARTUPPATH":
 					return Application.StartupPath;
-				case "CONFIGDIRECTORY":
-					return PropertyService.ConfigDirectory;
+				default:
+					return null;
 			}
-			return String.Empty;
 		}
 	}
 

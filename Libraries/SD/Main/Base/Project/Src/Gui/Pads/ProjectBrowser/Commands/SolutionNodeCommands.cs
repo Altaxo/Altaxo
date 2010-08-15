@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3469 $</version>
+//     <version>$Revision: 5704 $</version>
 // </file>
 
 using System;
@@ -25,7 +25,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 					npdlg.InitialProjectLocationDirectory = GetInitialDirectorySuggestion(solutionFolderNode);
 					
 					// show the dialog to request project type and name
-					if (npdlg.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
+					if (npdlg.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 						if (npdlg.NewProjectLocation.Length == 0) {
 							MessageService.ShowError("No project has been created, there is nothing to add.");
 							return;
@@ -68,11 +68,16 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public static void AddProject(ISolutionFolderNode solutionFolderNode, string fileName)
 		{
-			AddProject(solutionFolderNode, LanguageBindingService.LoadProject(solutionFolderNode.Solution, fileName, Path.GetFileNameWithoutExtension(fileName)));
+			if (solutionFolderNode == null)
+				throw new ArgumentNullException("solutionFolderNode");
+			ProjectLoadInformation loadInfo = new ProjectLoadInformation(solutionFolderNode.Solution, fileName, Path.GetFileNameWithoutExtension(fileName));
+			AddProject(solutionFolderNode, ProjectBindingService.LoadProject(loadInfo));
 		}
 		
 		public static void AddProject(ISolutionFolderNode solutionFolderNode, IProject newProject)
 		{
+			if (solutionFolderNode == null)
+				throw new ArgumentNullException("solutionFolderNode");
 			if (newProject != null) {
 				newProject.Location = FileUtility.GetRelativePath(solutionFolderNode.Solution.Directory, newProject.FileName);
 				ProjectService.AddProject(solutionFolderNode, newProject);
@@ -88,11 +93,11 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			if (node != null) {
 				using (OpenFileDialog fdiag = new OpenFileDialog()) {
 					fdiag.AddExtension    = true;
-					fdiag.Filter = ProjectService.GetAllProjectsFilter(this);
+					fdiag.Filter = ProjectService.GetAllProjectsFilter(this, false);
 					fdiag.Multiselect     = true;
 					fdiag.CheckFileExists = true;
 					fdiag.InitialDirectory = AddNewProjectToSolution.GetInitialDirectorySuggestion(solutionFolderNode);
-					if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
+					if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 						foreach (string fileName in fdiag.FileNames) {
 							AddProject(solutionFolderNode, fileName);
 						}
@@ -115,7 +120,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 					fdiag.Filter = StringParser.Parse("${res:SharpDevelop.FileFilter.AllFiles}|*.*");
 					fdiag.Multiselect     = true;
 					fdiag.CheckFileExists = true;
-					if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
+					if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 						foreach (string fileName in fdiag.FileNames) {
 							solutionFolderNode.AddItem(fileName);
 						}

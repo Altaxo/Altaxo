@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2751 $</version>
+//     <version>$Revision: 4853 $</version>
 // </file>
 
 using System;
@@ -16,21 +16,32 @@ namespace ICSharpCode.SharpDevelop.Gui
 {
 	public class LayoutConfiguration
 	{
-		const string DataLayoutSubPath = "resources/layouts";
 		const string configFile = "LayoutConfig.xml";
 		public static readonly List<LayoutConfiguration> Layouts = new List<LayoutConfiguration>();
 		
-		const string DefaultLayoutName = "Default";
+		/// <summary>
+		/// Gets the path the layouts folder in SharpDevelop/data (containing the layout templates).
+		/// </summary>
+		public static string DataLayoutPath {
+			get {
+				return Path.Combine(PropertyService.DataDirectory, "layouts");
+			}
+		}
 		
-		public static string[] DefaultLayouts = new string[] {
-			"Default",
-			"Debug",
-			"Plain"
-		};
+		/// <summary>
+		/// Gets the path to the layouts folder in the %appdata% (containing the user's layouts).
+		/// </summary>
+		public static string ConfigLayoutPath {
+			get {
+				return Path.Combine(PropertyService.ConfigDirectory, "layouts");
+			}
+		}
+		
+		const string DefaultLayoutName = "Default";
 		
 		string name;
 		string fileName;
-		string displayName = null;
+		string displayName;
 		
 		bool   readOnly;
 		bool   custom;
@@ -64,10 +75,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public string DisplayName {
 			get {
-				return displayName == null ? Name : displayName;
-			}
-			set {
-				displayName = value;
+				return displayName == null ? Name : StringParser.Parse(displayName);
 			}
 		}
 		
@@ -89,6 +97,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			name       = el.GetAttribute("name");
 			fileName   = el.GetAttribute("file");
 			readOnly   = Boolean.Parse(el.GetAttribute("readonly"));
+			if (el.HasAttribute("displayName"))
+				displayName = el.GetAttribute("displayName");
 			this.custom = custom;
 		}
 		
@@ -97,8 +107,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			LayoutConfiguration l = new LayoutConfiguration();
 			l.name = name;
 			l.fileName = Path.GetRandomFileName() + ".xml";
-			File.Copy(Path.Combine(Path.Combine(PropertyService.DataDirectory, DataLayoutSubPath), "Default.xml"),
-			          Path.Combine(Path.Combine(PropertyService.ConfigDirectory, "layouts"), l.fileName));
+			File.Copy(Path.Combine(DataLayoutPath, "Default.xml"),
+			          Path.Combine(ConfigLayoutPath, l.fileName));
 			l.custom = true;
 			Layouts.Add(l);
 			return l;
@@ -135,10 +145,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public static string CurrentLayoutFileName {
 			get {
-				string configPath = Path.Combine(PropertyService.ConfigDirectory, "layouts");
 				LayoutConfiguration current = CurrentLayout;
 				if (current != null) {
-					return Path.Combine(configPath, current.FileName);
+					return Path.Combine(ConfigLayoutPath, current.FileName);
 				}
 				return null;
 			}
@@ -146,10 +155,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public static string CurrentLayoutTemplateFileName {
 			get {
-				string dataPath = Path.Combine(PropertyService.DataDirectory, DataLayoutSubPath);
 				LayoutConfiguration current = CurrentLayout;
 				if (current != null) {
-					return Path.Combine(dataPath, current.FileName);
+					return Path.Combine(DataLayoutPath, current.FileName);
 				}
 				return null;
 			}
@@ -179,11 +187,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		internal static void LoadLayoutConfiguration()
 		{
 			Layouts.Clear();
-			string configPath = Path.Combine(PropertyService.ConfigDirectory, "layouts");
+			string configPath = ConfigLayoutPath;
 			if (File.Exists(Path.Combine(configPath, configFile))) {
 				LoadLayoutConfiguration(Path.Combine(configPath, configFile), true);
 			}
-			string dataPath = Path.Combine(PropertyService.DataDirectory, DataLayoutSubPath);
+			string dataPath = DataLayoutPath;
 			if (File.Exists(Path.Combine(dataPath, configFile))) {
 				LoadLayoutConfiguration(Path.Combine(dataPath, configFile), false);
 			}
@@ -201,7 +209,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public static void SaveCustomLayoutConfiguration()
 		{
-			string configPath = Path.Combine(PropertyService.ConfigDirectory, "layouts");
+			string configPath = ConfigLayoutPath;
 			using (XmlTextWriter w = new XmlTextWriter(Path.Combine(configPath, configFile), System.Text.Encoding.UTF8)) {
 				w.Formatting = Formatting.Indented;
 				w.WriteStartElement("LayoutConfig");
@@ -211,6 +219,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 						w.WriteAttributeString("name", lc.name);
 						w.WriteAttributeString("file", lc.fileName);
 						w.WriteAttributeString("readonly", lc.readOnly.ToString());
+						if (lc.displayName != null)
+							w.WriteAttributeString("displayName", lc.displayName);
 						w.WriteEndElement();
 					}
 				}

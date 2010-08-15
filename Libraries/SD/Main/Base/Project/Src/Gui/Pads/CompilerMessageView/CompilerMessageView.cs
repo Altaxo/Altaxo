@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3516 $</version>
+//     <version>$Revision: 5004 $</version>
 // </file>
 
 using System;
@@ -108,7 +108,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public override Control Control {
+		public override object Control {
 			get {
 				return myPanel;
 			}
@@ -172,14 +172,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			} else {
 				textEditorControl.ScrollBars = RichTextBoxScrollBars.ForcedBoth;
 			}
-		}
-		
-		public override void RedrawContent()
-		{
-//			messageCategory.Items.Clear();
-//			foreach (MessageViewCategory category in messageCategories) {
-//				messageCategory.Items.Add(StringParser.Parse(category.DisplayCategory));
-//			}
 		}
 		
 		#region Category handling
@@ -309,9 +301,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 					break;
 				}
 			}
-			if (!this.IsVisible) {
-				ActivateThisPad();
-			}
 		}
 		
 		void SelectCategory(string categoryName, string text)
@@ -340,14 +329,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		#endregion
 		
 		/// <summary>
-		/// Makes this pad visible (usually BEFORE build or debug events)
-		/// </summary>
-		void ActivateThisPad()
-		{
-			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this.GetType().FullName);
-		}
-		
-		/// <summary>
 		/// Occurs when the mouse pointer is over the control and a
 		/// mouse button is pressed.
 		/// </summary>
@@ -358,7 +339,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (fullText.Length > 0) {
 				//int line = textEditorControl.ActiveTextAreaControl.Caret.Line;
 				//string textLine = TextUtilities.GetLineAsString(textEditorControl.Document, line);
-				Point clickPos = textEditorControl.PointToClient(Control.MousePosition);
+				Point clickPos = textEditorControl.PointToClient(System.Windows.Forms.Control.MousePosition);
 				int index = textEditorControl.GetCharIndexFromPosition(clickPos);
 				int start = index;
 				// find start of current line

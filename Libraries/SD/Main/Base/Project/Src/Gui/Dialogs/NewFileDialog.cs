@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3259 $</version>
+//     <version>$Revision: 6069 $</version>
 // </file>
 
 using System;
@@ -15,7 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
 using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Project;
@@ -55,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				else
 					ControlDictionary["fileNameTextBox"].Select();
 			} catch (Exception e) {
-				MessageService.ShowError(e);
+				MessageService.ShowException(e);
 			}
 		}
 		
@@ -213,7 +213,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		bool AllPropertiesHaveAValue {
 			get {
 				foreach (TemplateProperty property in SelectedTemplate.Properties) {
-					string val = StringParser.Properties["Properties." + property.Name];
+					string val = StringParserPropertyContainer.LocalizedProperty["Properties." + property.Name];
 					if (val == null || val.Length == 0) {
 						return false;
 					}
@@ -248,7 +248,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 							throw new Exception("type : " + property.Type + " not found.");
 						}
 						localizedProperty.TypeConverterObject = new CustomTypeConverter(type);
-						StringParser.Properties["Properties." + localizedProperty.Name] = property.DefaultValue;
+						StringParserPropertyContainer.LocalizedProperty["Properties." + localizedProperty.Name] = property.DefaultValue;
 						localizedProperty.DefaultValue = property.DefaultValue; // localizedProperty.TypeConverterObject.ConvertFrom();
 					} else {
 						localizedProperty = new LocalizedProperty(property.Name, property.Type, property.Category, property.Description);
@@ -258,11 +258,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 							if (defVal == null || defVal.Length == 0) {
 								defVal = "True";
 							}
-							StringParser.Properties["Properties." + localizedProperty.Name] = defVal;
+							StringParserPropertyContainer.LocalizedProperty["Properties." + localizedProperty.Name] = defVal;
 							localizedProperty.DefaultValue = Boolean.Parse(defVal);
 						} else {
 							string defVal = property.DefaultValue == null ? String.Empty : property.DefaultValue.ToString();
-							StringParser.Properties["Properties." + localizedProperty.Name] = defVal;
+							StringParserPropertyContainer.LocalizedProperty["Properties." + localizedProperty.Name] = defVal;
 							localizedProperty.DefaultValue = defVal;
 						}
 					}
@@ -304,8 +304,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					int curNumber = 1;
 					
 					while (true) {
-						StringParser.Properties["Number"] = curNumber.ToString();
-						string fileName = StringParser.Parse(SelectedTemplate.DefaultName);
+						string fileName = StringParser.Parse(SelectedTemplate.DefaultName, new StringTagPair("Number", curNumber.ToString()));
 						if (allowUntitledFiles) {
 							bool found = false;
 							foreach (string openFile in FileService.GetOpenFiles()) {
@@ -315,14 +314,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 								}
 							}
 							if (found == false)
-								break;
+								return fileName;
 						} else if (!File.Exists(Path.Combine(basePath, fileName))) {
-							break;
+							return fileName;
 						}
 						++curNumber;
 					}
 				} catch (Exception e) {
-					MessageService.ShowError(e);
+					MessageService.ShowException(e);
 				}
 			}
 			return StringParser.Parse(SelectedTemplate.DefaultName);
@@ -370,15 +369,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return true;
 		}
 		
-		public void SaveFile(FileDescriptionTemplate newfile, string content, byte[] binaryContent)
+		public void SaveFile(FileDescriptionTemplate newfile, string content, string binaryFileName)
 		{
 			string parsedFileName = StringParser.Parse(newfile.Name);
 			// Parse twice so that tags used in included standard header are parsed
 			string parsedContent = StringParser.Parse(StringParser.Parse(content));
 			
 			if (parsedContent != null) {
-				if (SharpDevelopTextEditorProperties.Instance.IndentationString != "\t") {
-					parsedContent = parsedContent.Replace("\t", SharpDevelopTextEditorProperties.Instance.IndentationString);
+				if (EditorControlService.GlobalOptions.IndentationString != "\t") {
+					parsedContent = parsedContent.Replace("\t", EditorControlService.GlobalOptions.IndentationString);
 				}
 			}
 			
@@ -394,13 +393,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			if (newfile.IsDependentFile && Path.IsPathRooted(parsedFileName)) {
 				Directory.CreateDirectory(Path.GetDirectoryName(parsedFileName));
-				if (binaryContent != null)
-					File.WriteAllBytes(parsedFileName, binaryContent);
+				if (!String.IsNullOrEmpty(binaryFileName))
+					File.Copy(binaryFileName, parsedFileName);
 				else
 					File.WriteAllText(parsedFileName, parsedContent, ParserService.DefaultFileEncoding);
-				ParserService.ParseFile(parsedFileName, parsedContent);
+				ParserService.ParseFile(parsedFileName, new StringTextBuffer(parsedContent));
 			} else {
-				if (binaryContent != null) {
+				if (!String.IsNullOrEmpty(binaryFileName)) {
 					LoggingService.Warn("binary file was skipped");
 					return;
 				}
@@ -456,7 +455,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				PropertyService.Set("Dialogs.NewFileDialog.LastSelectedTemplate", item.Template.Name);
 				
 				string fileName;
-				StringParser.Properties["StandardNamespace"] = "DefaultNamespace";
+				StringParserPropertyContainer.FileCreation["StandardNamespace"] = "DefaultNamespace";
 				if (allowUntitledFiles) {
 					fileName = GenerateCurrentFileName();
 				} else {
@@ -475,16 +474,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 					fileName = FileUtility.NormalizePath(fileName);
 					IProject project = ProjectService.CurrentProject;
 					if (project != null) {
-						StringParser.Properties["StandardNamespace"] = CustomToolsService.GetDefaultNamespace(project, fileName);
+						StringParserPropertyContainer.FileCreation["StandardNamespace"] = CustomToolsService.GetDefaultNamespace(project, fileName);
 					}
 				}
-				StringParser.Properties["FullName"]                 = fileName;
-				StringParser.Properties["FileName"]                 = Path.GetFileName(fileName);
-				StringParser.Properties["FileNameWithoutExtension"] = Path.GetFileNameWithoutExtension(fileName);
-				StringParser.Properties["Extension"]                = Path.GetExtension(fileName);
-				StringParser.Properties["Path"]                     = Path.GetDirectoryName(fileName);
+				StringParserPropertyContainer.FileCreation["FullName"]                 = fileName;
+				StringParserPropertyContainer.FileCreation["FileName"]                 = Path.GetFileName(fileName);
+				StringParserPropertyContainer.FileCreation["FileNameWithoutExtension"] = Path.GetFileNameWithoutExtension(fileName);
+				StringParserPropertyContainer.FileCreation["Extension"]                = Path.GetExtension(fileName);
+				StringParserPropertyContainer.FileCreation["Path"]                     = Path.GetDirectoryName(fileName);
 				
-				StringParser.Properties["ClassName"] = GenerateValidClassOrNamespaceName(Path.GetFileNameWithoutExtension(fileName), false);
+				StringParserPropertyContainer.FileCreation["ClassName"] = GenerateValidClassOrNamespaceName(Path.GetFileNameWithoutExtension(fileName), false);
 				
 				// when adding a file to a project (but not when creating a standalone file while a project is open):
 				if (ProjectService.CurrentProject != null && !this.allowUntitledFiles) {
@@ -492,7 +491,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					bool changes = false;
 					foreach (ReferenceProjectItem reference in item.Template.RequiredAssemblyReferences) {
 						IEnumerable<ProjectItem> refs = ProjectService.CurrentProject.GetItemsOfType(ItemType.Reference);
-						if (!refs.Any(projItem => string.Equals(projItem.Include, reference.Include, StringComparison.InvariantCultureIgnoreCase))) {
+						if (!refs.Any(projItem => string.Equals(projItem.Include, reference.Include, StringComparison.OrdinalIgnoreCase))) {
 							ReferenceProjectItem projItem = (ReferenceProjectItem)reference.CloneFor(ProjectService.CurrentProject);
 							ProjectService.AddProjectItem(ProjectService.CurrentProject, projItem);
 							changes = true;
@@ -503,36 +502,26 @@ namespace ICSharpCode.SharpDevelop.Gui
 					}
 				}
 				
-				if (item.Template.WizardPath != null) {
-					Properties customizer = new Properties();
-					customizer.Set("Template", item.Template);
-					customizer.Set("Creator",  this);
-					WizardDialog wizard = new WizardDialog("File Wizard", customizer, item.Template.WizardPath);
-					if (wizard.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
-						DialogResult = DialogResult.OK;
+				foreach (FileDescriptionTemplate newfile in item.Template.FileDescriptionTemplates) {
+					if (!IsFilenameAvailable(StringParser.Parse(newfile.Name))) {
+						MessageService.ShowError(string.Format("Filename {0} is in use.\nChoose another one", StringParser.Parse(newfile.Name))); // TODO : translate
+						return;
 					}
-				} else {
-					foreach (FileDescriptionTemplate newfile in item.Template.FileDescriptionTemplates) {
-						if (!IsFilenameAvailable(StringParser.Parse(newfile.Name))) {
-							MessageService.ShowError("Filename " + StringParser.Parse(newfile.Name) + " is in use.\nChoose another one");
-							return;
-						}
+				}
+				ScriptRunner scriptRunner = new ScriptRunner();
+				
+				foreach (FileDescriptionTemplate newfile in item.Template.FileDescriptionTemplates) {
+					if (!String.IsNullOrEmpty(newfile.BinaryFileName)) {
+						SaveFile(newfile, null, newfile.BinaryFileName);
+					} else {
+						SaveFile(newfile, scriptRunner.CompileScript(item.Template, newfile), null);
 					}
-					ScriptRunner scriptRunner = new ScriptRunner();
-					
-					foreach (FileDescriptionTemplate newfile in item.Template.FileDescriptionTemplates) {
-						if (newfile.ContentData != null) {
-							SaveFile(newfile, null, newfile.ContentData);
-						} else {
-							SaveFile(newfile, scriptRunner.CompileScript(item.Template, newfile), null);
-						}
-					}
-					DialogResult = DialogResult.OK;
-					
-					// raise FileCreated event for the new files.
-					foreach (KeyValuePair<string, FileDescriptionTemplate> entry in createdFiles) {
-						FileService.FireFileCreated(entry.Key, false);
-					}
+				}
+				DialogResult = DialogResult.OK;
+				
+				// raise FileCreated event for the new files.
+				foreach (KeyValuePair<string, FileDescriptionTemplate> entry in createdFiles) {
+					FileService.FireFileCreated(entry.Key, false);
 				}
 			}
 		}
@@ -643,7 +632,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			tooltip.SetToolTip(ControlDictionary["largeIconsRadioButton"], StringParser.Parse("${res:Global.LargeIconToolTip}"));
 			tooltip.SetToolTip(ControlDictionary["smallIconsRadioButton"], StringParser.Parse("${res:Global.SmallIconToolTip}"));
 			tooltip.Active = true;
-			Owner         = WorkbenchSingleton.MainForm;
 			StartPosition = FormStartPosition.CenterParent;
 			Icon          = null;
 			

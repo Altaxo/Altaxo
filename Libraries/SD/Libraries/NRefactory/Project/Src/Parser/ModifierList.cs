@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 3717 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using ICSharpCode.NRefactory.Ast;

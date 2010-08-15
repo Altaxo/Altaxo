@@ -2,13 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3674 $</version>
+//     <version>$Revision: 6299 $</version>
 // </file>
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Windows.Input;
+using System.Xml;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -18,7 +21,7 @@ namespace ICSharpCode.SharpDevelop.Project
 	public static class ProjectService
 	{
 		static Solution openSolution;
-		static IProject currentProject;
+		volatile static IProject currentProject;
 		
 		public static Solution OpenSolution {
 			[System.Diagnostics.DebuggerStepThrough]
@@ -27,16 +30,23 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		/// <summary>
+		/// Gets/Sets the active project.
+		/// Returns null if no project is active.
+		/// The getter is thread-safe; the setter may only be called on the main thread.
+		/// </summary>
 		public static IProject CurrentProject {
 			[System.Diagnostics.DebuggerStepThrough]
 			get {
 				return currentProject;
 			}
 			set {
+				WorkbenchSingleton.AssertMainThread();
 				if (currentProject != value) {
 					LoggingService.Info("CurrentProject changed to " + (value == null ? "null" : value.Name));
 					currentProject = value;
 					OnCurrentProjectChanged(new ProjectEventArgs(currentProject));
+					CommandManager.InvalidateRequerySuggested();
 				}
 			}
 		}
@@ -245,36 +255,51 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void LoadSolution(string fileName)
 		{
+			FileUtility.ObservedLoad(LoadSolutionInternal, fileName);
+		}
+		
+		static void LoadSolutionInternal(string fileName)
+		{
 			if (!Path.IsPathRooted(fileName))
 				throw new ArgumentException("Path must be rooted!");
 			BeforeLoadSolution();
 			OnSolutionLoading(fileName);
 			try {
 				openSolution = Solution.Load(fileName);
+				CommandManager.InvalidateRequerySuggested();
 				if (openSolution == null)
 					return;
+			} catch (IOException ex) {
+				LoggingService.Warn(ex);
+				MessageService.ShowError(ex.Message);
+				return;
 			} catch (UnauthorizedAccessException ex) {
+				LoggingService.Warn(ex);
 				MessageService.ShowError(ex.Message);
 				return;
 			}
 			AbstractProject.filesToOpenAfterSolutionLoad.Clear();
 			try {
 				string file = GetPreferenceFileName(openSolution.FileName);
+				Properties properties;
 				if (FileUtility.IsValidPath(file) && File.Exists(file)) {
-					(openSolution.Preferences as IMementoCapable).SetMemento(Properties.Load(file));
+					properties = Properties.Load(file);
 				} else {
-					(openSolution.Preferences as IMementoCapable).SetMemento(new Properties());
+					properties = new Properties();
 				}
+				(openSolution.Preferences as IMementoCapable).SetMemento(properties);
 			} catch (Exception ex) {
-				MessageService.ShowError(ex);
+				MessageService.ShowException(ex);
 			}
 			try {
 				ApplyConfigurationAndReadPreferences();
 			} catch (Exception ex) {
-				MessageService.ShowError(ex);
+				MessageService.ShowException(ex);
 			}
 			// Create project contents for solution
 			ParserService.OnSolutionLoaded();
+			
+			Project.Converter.UpgradeViewContent.ShowIfRequired(openSolution);
 			
 			// preferences must be read before OnSolutionLoad is called to enable
 			// the event listeners to read e.Solution.Preferences.Properties
@@ -307,11 +332,16 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public static void LoadProject(string fileName)
 		{
+			FileUtility.ObservedLoad(LoadProjectInternal, fileName);
+		}
+		
+		static void LoadProjectInternal(string fileName)
+		{
 			if (!Path.IsPathRooted(fileName))
 				throw new ArgumentException("Path must be rooted!");
 			string solutionFile = Path.ChangeExtension(fileName, ".sln");
 			if (File.Exists(solutionFile)) {
-				LoadSolution(solutionFile);
+				LoadSolutionInternal(solutionFile);
 				
 				if (openSolution != null) {
 					bool found = false;
@@ -354,10 +384,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			Solution solution = new Solution();
 			solution.Name = Path.GetFileNameWithoutExtension(fileName);
-			ILanguageBinding binding = LanguageBindingService.GetBindingPerProjectFile(fileName);
+			IProjectBinding binding = ProjectBindingService.GetBindingPerProjectFile(fileName);
 			IProject project;
 			if (binding != null) {
-				project = LanguageBindingService.LoadProject(solution, fileName, solution.Name);
+				project = ProjectBindingService.LoadProject(new ProjectLoadInformation(solution, fileName, solution.Name));
 				if (project is UnknownProject) {
 					if (((UnknownProject)project).WarningDisplayedToUser == false) {
 						((UnknownProject)project).ShowWarningMessageBox();
@@ -401,15 +431,25 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		
 		/// <summary>
+		/// Gets the list of file filters.
+		/// </summary>
+		public static IList<FileFilterDescriptor> GetFileFilters()
+		{
+			return AddInTree.BuildItems<FileFilterDescriptor>("/SharpDevelop/Workbench/FileFilter", null);
+		}
+		
+		/// <summary>
 		/// Returns a File Dialog filter that can be used to filter on all registered project formats
 		/// </summary>
-		public static string GetAllProjectsFilter(object caller)
+		public static string GetAllProjectsFilter(object caller, bool includeSolutions)
 		{
-			AddInTreeNode addinTreeNode = AddInTree.GetTreeNode("/SharpDevelop/Workbench/Combine/FileFilter");
+			var filters = AddInTree.BuildItems<FileFilterDescriptor>("/SharpDevelop/Workbench/Combine/FileFilter", null);
+			if (!includeSolutions)
+				filters.RemoveAll(f => f.ContainsExtension(".sln"));
 			StringBuilder b = new StringBuilder(StringParser.Parse("${res:SharpDevelop.Solution.AllKnownProjectFormats}|"));
 			bool first = true;
-			foreach (Codon c in addinTreeNode.Codons) {
-				string ext = c.Properties.Get("extensions", "");
+			foreach (var filter in filters) {
+				string ext = filter.Extensions;
 				if (ext != "*.*" && ext.Length > 0) {
 					if (!first) {
 						b.Append(';');
@@ -419,9 +459,9 @@ namespace ICSharpCode.SharpDevelop.Project
 					b.Append(ext);
 				}
 			}
-			foreach (string entry in addinTreeNode.BuildChildItems(caller)) {
+			foreach (var filter in filters) {
 				b.Append('|');
-				b.Append(entry);
+				b.Append(filter.ToString());
 			}
 			return b.ToString();
 		}
@@ -477,8 +517,10 @@ namespace ICSharpCode.SharpDevelop.Project
 				
 				openSolution.Dispose();
 				openSolution = null;
+				ParserService.OnSolutionClosed();
 				
 				OnSolutionClosed(EventArgs.Empty);
+				CommandManager.InvalidateRequerySuggested();
 			}
 		}
 		
@@ -539,22 +581,34 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		public static void RaiseEventStartBuild()
+		/// <summary>
+		/// Raises the <see cref="BuildStarted"/> event.
+		/// 
+		/// You do not need to call this method if you use BuildEngine.BuildInGui - the build
+		/// engine will call these events itself.
+		/// </summary>
+		public static void RaiseEventBuildStarted(BuildEventArgs e)
 		{
+			if (e == null)
+				throw new ArgumentNullException("e");
 			WorkbenchSingleton.AssertMainThread();
 			building = true;
-			if (StartBuild != null) {
-				StartBuild(null, EventArgs.Empty);
-			}
+			BuildStarted.RaiseEvent(null, e);
 		}
 		
-		public static void RaiseEventEndBuild(BuildEventArgs e)
+		/// <summary>
+		/// Raises the <see cref="BuildFinished"/> event.
+		/// 
+		/// You do not need to call this method if you use BuildEngine.BuildInGui - the build
+		/// engine will call these events itself.
+		/// </summary>
+		public static void RaiseEventBuildFinished(BuildEventArgs e)
 		{
+			if (e == null)
+				throw new ArgumentNullException("e");
 			WorkbenchSingleton.AssertMainThread();
 			building = false;
-			if (EndBuild != null) {
-				EndBuild(null, e);
-			}
+			BuildFinished.RaiseEvent(null, e);
 		}
 		
 		public static void RemoveSolutionFolder(string guid)
@@ -632,11 +686,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static event ProjectEventHandler ProjectAdded;
 		public static event SolutionFolderEventHandler SolutionFolderRemoved;
 		
-		public static event EventHandler StartBuild;
-		public static event EventHandler<BuildEventArgs> EndBuild;
+		public static event EventHandler<BuildEventArgs> BuildStarted;
+		public static event EventHandler<BuildEventArgs> BuildFinished;
 		
-		[Obsolete("This event is never raised.")]
-		public static event ProjectConfigurationEventHandler ProjectConfigurationChanged { add {} remove {} }
 		public static event SolutionConfigurationEventHandler SolutionConfigurationChanged;
 		
 		public static event EventHandler<SolutionEventArgs> SolutionCreated;
@@ -662,10 +714,35 @@ namespace ICSharpCode.SharpDevelop.Project
 	
 	public class BuildEventArgs : EventArgs
 	{
+		/// <summary>
+		/// The project/solution to be built.
+		/// </summary>
+		public readonly IBuildable Buildable;
+		
+		/// <summary>
+		/// The build options.
+		/// </summary>
+		public readonly BuildOptions Options;
+		
+		/// <summary>
+		/// Gets the build results.
+		/// This property is null for build started events.
+		/// </summary>
 		public readonly BuildResults Results;
 		
-		public BuildEventArgs(BuildResults results)
+		public BuildEventArgs(IBuildable buildable, BuildOptions options)
+			: this(buildable, options, null)
 		{
+		}
+		
+		public BuildEventArgs(IBuildable buildable, BuildOptions options, BuildResults results)
+		{
+			if (buildable == null)
+				throw new ArgumentNullException("buildable");
+			if (options == null)
+				throw new ArgumentNullException("options");
+			this.Buildable = buildable;
+			this.Options = options;
 			this.Results = results;
 		}
 	}

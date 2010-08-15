@@ -1,7 +1,8 @@
 <AddIn name        = "C# Binding"
        author      = "Mike Krueger"
        copyright   = "prj:///doc/copyright.txt"
-       description = "Backing binding for C#">
+       description = "Backing binding for C#"
+       addInManagerHidden = "preinstalled">
 	
 	<Manifest>
 		<Identity name = "ICSharpCode.CSharpBinding"/>
@@ -57,6 +58,13 @@
 		<CodeCompletionBinding id = "CSharp" extensions = ".cs" class = "CSharpBinding.CSharpCompletionBinding"/>
 	</Path>
 	
+	<Path name="/SharpDevelop/Workbench/LanguageBindings">
+		<LanguageBinding
+			id="CSharp"
+		    class="CSharpBinding.CSharpLanguageBinding"
+		    extensions=".cs" />
+	</Path>
+	
 	<!--
 	<Path name = "/AddIns/DefaultTextEditor/AdvancedHighlighter/C#">
 		<Class id = "CSharpHighlighter" class = "CSharpBinding.CSharpAdvancedHighlighter"/>
@@ -64,33 +72,37 @@
 	-->
 	
 	<Path path = "/SharpDevelop/BackendBindings/ProjectOptions/C#">
-		<DialogPanel id    = "Application"
+		<OptionPanel id    = "Application"
 		             label = "${res:Dialog.ProjectOptions.ApplicationSettings}"
 		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.ApplicationSettings"/>
-		<DialogPanel id    = "ReferencePaths"
+		<OptionPanel id    = "ReferencePaths"
 		             label = "${res:Dialog.ProjectOptions.ReferencePaths}"
 		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.ReferencePaths"/>
-		<DialogPanel id    = "Signing"
+		<OptionPanel id    = "Signing"
 		             label = "${res:Dialog.ProjectOptions.Signing}"
 		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.Signing"/>
-		<DialogPanel id    = "BuildEvents"
+		<OptionPanel id    = "BuildEvents"
 		             label = "${res:Dialog.ProjectOptions.BuildEvents}"
 		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.BuildEvents"/>
-		<DialogPanel id    = "BuildOptions"
+		<OptionPanel id    = "BuildOptions"
 		             label = "${res:Dialog.ProjectOptions.BuildOptions}"
 		             class = "CSharpBinding.OptionPanels.BuildOptions"/>
-		<DialogPanel id    = "DebugOptions"
+		<OptionPanel id    = "DebugOptions"
 		             label = "${res:Dialog.ProjectOptions.DebugOptions}"
 		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.DebugOptions"/>
-		<!--<DialogPanel id    = "Publish"
+		<!--<OptionPanel id    = "Publish"
 		             label = "${res:Dialog.ProjectOptions.Publish}"
 		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.Publish"/>-->
 		<Include id = "AllManaged" path="/SharpDevelop/BackendBindings/ProjectOptions/AllManaged"/>
 	</Path>
 	
+	<!--
+	depreciated, use LanguageBinding instead
+
 	<Path name = "/AddIns/DefaultTextEditor/Formatter/C#">
 		<Class id ="CSharpFormatter" class = "CSharpBinding.FormattingStrategy.CSharpFormattingStrategy"/>
 	</Path>
+	-->
 	
 	<Path name = "/Workspace/Icons">
 		<!-- C# -->
@@ -103,12 +115,12 @@
 		      resource   = "C#.FileIcon"/>
 	</Path>
 	
-	<Path path = "/SharpDevelop/Workbench/LanguageBindings">
-		<LanguageBinding id                   = "C#"
-		                 guid                 = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-		                 supportedextensions  = ".cs"
-		                 projectfileextension = ".csproj"
-		                 class                = "CSharpBinding.CSharpLanguageBinding" />
+	<Path path = "/SharpDevelop/Workbench/ProjectBindings">
+		<ProjectBinding id                   = "C#"
+		                guid                 = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+		                supportedextensions  = ".cs"
+		                projectfileextension = ".csproj"
+		                class                = "CSharpBinding.CSharpProjectBinding" />
 	</Path>
 </AddIn>
 

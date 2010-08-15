@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 2972 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -18,16 +18,12 @@ namespace ICSharpCode.NRefactory.Parser
 		CommentType   currentCommentType;
 		StringBuilder sb = new StringBuilder();
 		Location         startPosition;
+		bool commentStartsLine;
 		
 		public List<ISpecial> CurrentSpecials {
 			get {
 				return currentSpecials;
 			}
-		}
-		
-		public void InformToken(int kind)
-		{
-			
 		}
 		
 		/// <summary>
@@ -53,11 +49,12 @@ namespace ICSharpCode.NRefactory.Parser
 		}
 		
 		// used for comment tracking
-		public void StartComment(CommentType commentType, Location startPosition)
+		public void StartComment(CommentType commentType, bool commentStartsLine, Location startPosition)
 		{
 			this.currentCommentType = commentType;
 			this.startPosition      = startPosition;
 			this.sb.Length          = 0;
+			this.commentStartsLine  = commentStartsLine;
 		}
 		
 		public void AddChar(char c)
@@ -72,7 +69,7 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public void FinishComment(Location endPosition)
 		{
-			currentSpecials.Add(new Comment(currentCommentType, sb.ToString(), startPosition, endPosition));
+			currentSpecials.Add(new Comment(currentCommentType, sb.ToString(), commentStartsLine, startPosition, endPosition));
 		}
 	}
 }

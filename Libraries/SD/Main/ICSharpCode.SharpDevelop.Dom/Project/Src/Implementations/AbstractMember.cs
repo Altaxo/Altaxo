@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2931 $</version>
+//     <version>$Revision: 4819 $</version>
 // </file>
 
 using System;
@@ -21,6 +21,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			interfaceImplementations = FreezeList(interfaceImplementations);
 			base.FreezeInternal();
+		}
+		
+		public sealed override ICompilationUnit CompilationUnit {
+			[System.Diagnostics.DebuggerStepThrough]
+			get {
+				return this.DeclaringType.CompilationUnit;
+			}
 		}
 		
 		public virtual DomRegion Region {
@@ -64,6 +71,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public AbstractMember(IClass declaringType, string name) : base(declaringType, name)
 		{
+			// members must have a parent class
+			if (declaringType == null)
+				throw new ArgumentNullException("declaringType");
 		}
 		
 		public abstract IMember Clone();

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3718 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -21,12 +21,16 @@ namespace NRefactoryASTGenerator.Ast
 		public NamespaceDeclaration(string name) {}
 	}
 	
+	enum VarianceModifier { Invariant, Covariant, Contravariant };
+	
 	class TemplateDefinition : AttributedNode
 	{
 		[QuestionMarkDefault]
 		string name;
+		VarianceModifier varianceModifier;
 		List<TypeReference> bases;
 		
+		public TemplateDefinition() {}
 		public TemplateDefinition(string name, List<AttributeSection> attributes) : base(attributes) {}
 	}
 	
@@ -61,20 +65,27 @@ namespace NRefactoryASTGenerator.Ast
 	}
 	
 	[IncludeBoolProperty("IsAlias", "return !alias.IsNull;")]
+	[IncludeBoolProperty("IsXml", "return xmlPrefix != null;")]
 	class Using : AbstractNode
 	{
 		[QuestionMarkDefault]
 		string name;
 		TypeReference alias;
+		string xmlPrefix;
 		
 		public Using(string name) {}
 		public Using(string name, TypeReference alias) {}
+		public Using(string name, string xmlPrefix) {}
 	}
 	
-	[IncludeMember("public UsingDeclaration(string @namespace) : this(@namespace, null) {}")]
+	[IncludeMember("public UsingDeclaration(string @namespace) : this(@namespace, TypeReference.Null) {}")]
 	[IncludeMember("public UsingDeclaration(string @namespace, TypeReference alias) {" +
 	               " usings = new List<Using>(1);" +
 	               " usings.Add(new Using(@namespace, alias)); " +
+	               "}")]
+	[IncludeMember("public UsingDeclaration(string xmlNamespace, string prefix) {" +
+	               " usings = new List<Using>(1);" +
+	               " usings.Add(new Using(xmlNamespace, prefix)); " +
 	               "}")]
 	class UsingDeclaration : AbstractNode
 	{

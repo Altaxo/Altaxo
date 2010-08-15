@@ -20,23 +20,25 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
-[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2007")]
-[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2007")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2010")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2010")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.54.0.659")]
+[assembly: AssemblyVersion("4.0.0.659")]
 
 [assembly: AssemblyDelaySign(false)]
 
 #if ModifiedForAltaxo
 internal static class RevisionClass
 {
-	public const string Major = "3";
-	public const string Minor = "0";
-	public const string Build = "0";
-	public const string Revision = "3800";
+  public const string Major = "4";
+  public const string Minor = "0";
+  public const string Build = "0";
+  public const string Revision = "6361";
 
-	public const string MainVersion = Major + "." + Minor;
-	public const string FullVersion = Major + "." + Minor + "." + Build + "." + Revision;
+  public const string MainVersion = Major + "." + Minor;
+  public const string FullVersion = Major + "." + Minor + "." + Build + "." + Revision;
+
+  public const string BranchName = null;
 }
 #endif

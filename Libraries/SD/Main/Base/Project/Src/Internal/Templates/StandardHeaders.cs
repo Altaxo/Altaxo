@@ -1,15 +1,15 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 1965 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.Gui;
 using System;
 using System.Collections;
 using System.IO;
 using System.Xml;
-
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
@@ -67,9 +67,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		public static void SetHeaders()
 		{
-			
 			foreach (StandardHeader standardHeader in standardHeaders) {
-				StringParser.Properties[standardHeader.Name] = standardHeader.Header;
+				StringParserPropertyContainer.FileCreation[standardHeader.Name] = standardHeader.Header;
 			}
 		}
 		
@@ -77,7 +76,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		{
 			
 			if (!LoadHeaders(Path.Combine(PropertyService.ConfigDirectory, TemplateFileName))) {
-				if (!LoadHeaders(FileUtility.Combine(PropertyService.DataDirectory,  "options", TemplateFileName))) {
+				if (!LoadHeaders(Path.Combine(PropertyService.DataDirectory,  "options", TemplateFileName))) {
 					MessageService.ShowWarning("Can not load standard headers");
 				}
 			}

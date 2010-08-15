@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald"/>
-//     <version>$Revision: 3722 $</version>
+//     <author name="Daniel Grunwald"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -231,27 +231,27 @@ namespace ICSharpCode.Core.WinForms
 			}
 		}
 #if ModifiedForAltaxo
-		static Dictionary<string, Cursor> cursorCache = new Dictionary<string,Cursor>();
+    static Dictionary<string, Cursor> cursorCache = new Dictionary<string, Cursor>();
     public static Cursor GetCursor(string name)
     {
-			lock (cursorCache)
-			{
-				Cursor crs;
-				if (cursorCache.TryGetValue(name, out crs))
-					return crs;
-				object bmp = ResourceService.GetImageResource(name);
-				if (bmp == null)
-				{
-					throw new ResourceNotFoundException(name);
-				}
-				if (bmp is Cursor)
-					crs = (Cursor)bmp;
-				else
-					crs = new Cursor(((Bitmap)bmp).GetHicon());
+      lock (cursorCache)
+      {
+        Cursor crs;
+        if (cursorCache.TryGetValue(name, out crs))
+          return crs;
+        object bmp = ResourceService.GetImageResource(name);
+        if (bmp == null)
+        {
+          throw new ResourceNotFoundException(name);
+        }
+        if (bmp is Cursor)
+          crs = (Cursor)bmp;
+        else
+          crs = new Cursor(((Bitmap)bmp).GetHicon());
 
-				cursorCache.Add(name, crs);
-				return crs;
-			}
+        cursorCache.Add(name, crs);
+        return crs;
+      }
     }
 #endif
 	}

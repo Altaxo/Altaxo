@@ -31,34 +31,34 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Main.Commands
 {
-  public class ShowAltaxoProgramHelp : AbstractMenuCommand
-  {
-    public override void Run()
-    {
-      string fileName = FileUtility.ApplicationRootPath + 
-        Path.DirectorySeparatorChar + "doc" +
-        Path.DirectorySeparatorChar + "help" +
-        Path.DirectorySeparatorChar + "AltaxoHelp.chm";
-      if (FileUtility.TestFileExists(fileName)) 
-      {
-        Help.ShowHelp((Form)WorkbenchSingleton.Workbench, fileName);
-      }
-    }
-  }
+	public class ShowAltaxoProgramHelp : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			string fileName = FileUtility.ApplicationRootPath +
+				Path.DirectorySeparatorChar + "doc" +
+				Path.DirectorySeparatorChar + "help" +
+				Path.DirectorySeparatorChar + "AltaxoHelp.chm";
+			if (FileUtility.TestFileExists(fileName))
+			{
+				Help.ShowHelp(null, fileName);
+			}
+		}
+	}
 
-  public class ShowAltaxoClassHelp : AbstractMenuCommand
-  {
-    public override void Run()
-    {
-      
-      string fileName = FileUtility.ApplicationRootPath + 
-        Path.DirectorySeparatorChar + "doc" +
-        Path.DirectorySeparatorChar + "help" +
-        Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
-      if (FileUtility.TestFileExists(fileName)) 
-      {
-        Help.ShowHelp((Form)WorkbenchSingleton.Workbench, fileName);
-      }
-    }
-  }
+	public class ShowAltaxoClassHelp : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+
+			string fileName = FileUtility.ApplicationRootPath +
+				Path.DirectorySeparatorChar + "doc" +
+				Path.DirectorySeparatorChar + "help" +
+				Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
+			if (FileUtility.TestFileExists(fileName))
+			{
+				Help.ShowHelp(null, fileName);
+			}
+		}
+	}
 }

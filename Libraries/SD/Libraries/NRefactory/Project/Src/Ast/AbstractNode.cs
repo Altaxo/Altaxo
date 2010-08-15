@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2708 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -35,6 +35,7 @@ namespace ICSharpCode.NRefactory.Ast
 		public virtual void AddChild(INode childNode)
 		{
 			Debug.Assert(childNode != null);
+			childNode.Parent = this;
 			children.Add(childNode);
 		}
 		

@@ -2,18 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3019 $</version>
+//     <version>$Revision: 5646 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.Editor;
 using System;
-//using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.SharpDevelop.Dom;
 
-namespace ICSharpCode.SharpDevelop.Dom
+namespace ICSharpCode.SharpDevelop.Project
 {
 	/// <summary>
-	/// TODO: find a better matching namespace - this class is in ICSharpCode.SharpDevelop.dll,
-	/// not in Dom!
+	/// Represents a language parser that produces ICompilationUnit instances
+	/// for code files.
 	/// </summary>
 	public interface IParser
 	{
@@ -41,7 +41,18 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		bool CanParse(IProject project);
 		
-		ICompilationUnit Parse(IProjectContent projectContent, string fileName, string fileContent);
+		/// <summary>
+		/// Parses a file.
+		/// </summary>
+		/// <param name="projectContent">The parent project of the file.</param>
+		/// <param name="fileName">The name of the file being parsed.</param>
+		/// <param name="fileContent">The content of the file.</param>
+		/// <returns>The compilation unit representing the parse results.</returns>
+		/// <remarks>
+		/// SharpDevelop may call IParser.Parse in parallel. This will be done on the same IParser instance
+		/// if there are two parallel parse requests for the same file. Parser implementations must be thread-safe.
+		/// </remarks>
+		ICompilationUnit Parse(IProjectContent projectContent, string fileName, ITextBuffer fileContent);
 		
 		IResolver CreateResolver();
 	}

@@ -25,29 +25,29 @@ namespace Altaxo.Gui
       }
     }
 
-    public Form MainWindow
+    public IWin32Window MainWindow
     {
       get
       {
-        return (Form)Current.Workbench.ViewObject;
+        return (IWin32Window)Current.Workbench.ViewObject;
       }
     }
 
     public override bool InvokeRequired()
     {
-      return MainWindow.InvokeRequired;
+      return Current.Workbench.SynchronizingObject.InvokeRequired;
     }
 
 
     public override void Invoke(Action act)
     {
-      MainWindow.Invoke(act);
+      Current.Workbench.SynchronizingObject.Invoke((Delegate)act, null);
     }
 
 
-    public override void Invoke(Delegate inv)
+    public override void Invoke(Delegate act)
     {
-      MainWindow.Invoke(inv);
+      Current.Workbench.SynchronizingObject.Invoke(act,null);
     }
 
 

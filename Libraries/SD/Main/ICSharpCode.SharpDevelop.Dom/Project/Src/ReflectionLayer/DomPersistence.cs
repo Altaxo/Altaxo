@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3527 $</version>
+//     <version>$Revision: 5708 $</version>
 // </file>
 
 using System;
@@ -20,7 +20,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	{
 		public const long FileMagic = 0x11635233ED2F428C;
 		public const long IndexFileMagic = 0x11635233ED2F427D;
-		public const short FileVersion = 16;
+		public const short FileVersion = 27;
 		
 		ProjectContentRegistry registry;
 		string cacheDirectory;
@@ -42,11 +42,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#region Cache management
 		public string SaveProjectContent(ReflectionProjectContent pc)
 		{
+			// create cache directory, if necessary
+			Directory.CreateDirectory(cacheDirectory);
+			
 			string assemblyFullName = pc.AssemblyFullName;
 			int pos = assemblyFullName.IndexOf(',');
 			string fileName = Path.Combine(cacheDirectory,
 			                               assemblyFullName.Substring(0, pos)
-			                               + "." + assemblyFullName.GetHashCode().ToString("x", CultureInfo.InvariantCulture)
 			                               + "." + pc.AssemblyLocation.GetHashCode().ToString("x", CultureInfo.InvariantCulture)
 			                               + ".dat");
 			AddFileNameToCacheIndex(Path.GetFileName(fileName), pc);
@@ -70,7 +72,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public ReflectionProjectContent LoadProjectContent(string cacheFileName)
 		{
-			using (FileStream fs = new FileStream(cacheFileName, FileMode.Open, FileAccess.Read)) {
+			using (FileStream fs = new FileStream(cacheFileName, FileMode.Open, FileAccess.Read,
+			                                      FileShare.Read | FileShare.Delete, 4096, FileOptions.SequentialScan)) {
 				return LoadProjectContent(fs);
 			}
 		}
@@ -90,7 +93,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		Dictionary<string, string> LoadCacheIndex()
 		{
 			string indexFile = GetIndexFileName();
-			Dictionary<string, string> list = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+			Dictionary<string, string> list = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			if (File.Exists(indexFile)) {
 				try {
 					using (FileStream fs = new FileStream(indexFile, FileMode.Open, FileAccess.Read)) {
@@ -179,6 +182,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				pc = new ReadWriteHelper(reader).ReadProjectContent(registry);
 				if (pc != null) {
 					pc.InitializeSpecialClasses();
+					pc.AssemblyCompilationUnit.Freeze();
 				}
 				return pc;
 			} catch (EndOfStreamException) {
@@ -212,13 +216,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 			public override bool Equals(object obj) {
 				if (!(obj is ClassNameTypeCountPair)) return false;
 				ClassNameTypeCountPair myClassNameTypeCountPair = (ClassNameTypeCountPair)obj;
-				if (!ClassName.Equals(myClassNameTypeCountPair.ClassName, StringComparison.InvariantCultureIgnoreCase)) return false;
+				if (ClassName != myClassNameTypeCountPair.ClassName) return false;
 				if (TypeParameterCount != myClassNameTypeCountPair.TypeParameterCount) return false;
 				return true;
 			}
 			
 			public override int GetHashCode() {
-				return StringComparer.InvariantCultureIgnoreCase.GetHashCode(ClassName) ^ ((int)TypeParameterCount * 5);
+				return ClassName.GetHashCode() ^ ((int)TypeParameterCount * 5);
 			}
 		}
 		
@@ -383,7 +387,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 				writer.Write((int)c.Modifiers);
 				if (c is DefaultClass) {
-					writer.Write(((DefaultClass)c).Flags);
+					writer.Write(((DefaultClass)c).CalculatedFlags);
 				} else {
 					writer.Write((byte)0);
 				}
@@ -452,7 +456,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					c.BaseTypes.Add(ReadType());
 				}
 				c.Modifiers = (ModifierEnum)reader.ReadInt32();
-				c.Flags = reader.ReadByte();
+				c.CalculatedFlags = reader.ReadByte();
 				c.ClassType = (ClassType)reader.ReadByte();
 				ReadAttributes(c);
 				count = reader.ReadInt32();
@@ -588,6 +592,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			const int NullRTReferenceCode = -5;
 			const int VoidRTCode          = -6;
 			const int PointerRTCode       = -7;
+			const int DynamicRTCode       = -8;
 			
 			void WriteType(IReturnType rt)
 			{
@@ -599,6 +604,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 					string name = rt.FullyQualifiedName;
 					if (name == "System.Void") {
 						writer.Write(VoidRTCode);
+					} else if (name == "dynamic") {
+						writer.Write(DynamicRTCode);
 					} else {
 						writer.Write(classIndices[new ClassNameTypeCountPair(rt)]);
 					}
@@ -656,6 +663,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 						return new VoidReturnType(pc);
 					case PointerRTCode:
 						return new PointerReturnType(ReadType());
+					case DynamicRTCode:
+						return new DynamicReturnType(pc);
 					default:
 						return types[index];
 				}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 4735 $</version>
 // </file>
 
 using System;
@@ -17,8 +17,19 @@ namespace ICSharpCode.Core.Tests
 	{
 		public StringParserTest()
 		{
-			StringParser.Properties["test"] = "Value";
-			StringParser.PropertyObjects["obj"] = this;
+			StringParser.RegisterStringTagProvider("obj", new PropertyObjectTagProvider(this));
+			StringParser.RegisterStringTagProvider(new CustomTagProvider());
+		}
+		
+		sealed class CustomTagProvider : IStringTagProvider
+		{
+			public string ProvideString(string tag, StringTagPair[] customTags)
+			{
+				if (string.Equals(tag, "test", StringComparison.OrdinalIgnoreCase))
+					return "Value";
+				else
+					return null;
+			}
 		}
 		
 		public string TestProperty {

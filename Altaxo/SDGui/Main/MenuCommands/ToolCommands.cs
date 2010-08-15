@@ -6,12 +6,12 @@ using ICSharpCode.Core;
 
 namespace Altaxo.Main.Commands
 {
-  public class AddTemporaryUserAssembly : AbstractMenuCommand
-  {
-    public override void Run()
-    {
-      Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
-    }
-  }
-  
+	public class AddTemporaryUserAssembly : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
+		}
+	}
+
 }

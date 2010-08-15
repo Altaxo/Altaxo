@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3786 $</version>
+//     <version>$Revision: 5242 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ICSharpCode.SharpDevelop.Dom
@@ -36,7 +37,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (c == null)
 				throw new ArgumentNullException("c");
 			
-			Constructor con = new Constructor(ModifierEnum.Public, c.Region, c.Region, c);
+			ModifierEnum modifiers = ModifierEnum.Synthetic;
+			if (c.IsAbstract)
+				modifiers |= ModifierEnum.Protected;
+			else
+				modifiers |= ModifierEnum.Public;
+			DomRegion region = new DomRegion(c.Region.BeginLine, c.Region.BeginColumn, c.Region.BeginLine, c.Region.BeginColumn);
+			Constructor con = new Constructor(modifiers, region, region, c);
 			con.Documentation = "Default constructor of " + c.Name;
 			return con;
 		}
@@ -84,7 +91,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			p.parameters = DefaultParameter.Clone(this.Parameters);
 			p.typeParameters = new List<ITypeParameter>(this.typeParameters);
 			p.CopyDocumentationFrom(this);
-			p.documentationTag = DocumentationTag;
 			p.isExtensionMethod = this.isExtensionMethod;
 			foreach (ExplicitInterfaceImplementation eii in InterfaceImplementations) {
 				p.InterfaceImplementations.Add(eii.Clone());
@@ -101,29 +107,24 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		string documentationTag;
-		
 		public override string DocumentationTag {
 			get {
-				if (documentationTag == null) {
-					string dotnetName = this.DotNetName;
-					StringBuilder b = new StringBuilder("M:", dotnetName.Length + 2);
-					b.Append(dotnetName);
-					IList<IParameter> paras = this.Parameters;
-					if (paras.Count > 0) {
-						b.Append('(');
-						for (int i = 0; i < paras.Count; ++i) {
-							if (i > 0) b.Append(',');
-							IReturnType rt = paras[i].ReturnType;
-							if (rt != null) {
-								b.Append(rt.DotNetName);
-							}
+				string dotnetName = this.DotNetName;
+				StringBuilder b = new StringBuilder("M:", dotnetName.Length + 2);
+				b.Append(dotnetName);
+				IList<IParameter> paras = this.Parameters;
+				if (paras.Count > 0) {
+					b.Append('(');
+					for (int i = 0; i < paras.Count; ++i) {
+						if (i > 0) b.Append(',');
+						IReturnType rt = paras[i].ReturnType;
+						if (rt != null) {
+							b.Append(rt.DotNetName);
 						}
-						b.Append(')');
 					}
-					documentationTag = b.ToString();
+					b.Append(')');
 				}
-				return documentationTag;
+				return b.ToString();
 			}
 		}
 		
@@ -172,6 +173,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		public virtual bool IsOperator {
+			get {
+				return Name.StartsWith("op_", StringComparison.Ordinal);
+			}
+		}
+		
 		public DefaultMethod(IClass declaringType, string name) : base(declaringType, name)
 		{
 		}
@@ -214,6 +221,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return 0;
 			}
 			return CompareTo((IMethod)value);
+		}
+		
+		public override EntityType EntityType {
+			get {
+				return EntityType.Method;
+			}
 		}
 	}
 }

@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3787 $</version>
+//     <version>$Revision: 6186 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using ICSharpCode.NRefactory.Ast;
@@ -43,26 +44,70 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			if (returnType == null)           return TypeReference.Null;
 			if (returnType is NullReturnType) return TypeReference.Null;
 			
-			TypeReference typeRef;
-			if (IsPrimitiveType(returnType))
-				typeRef = new TypeReference(returnType.FullyQualifiedName, true);
-			else if (context != null && CanUseShortTypeName(returnType, context))
-				typeRef = new TypeReference(returnType.Name);
-			else
-				typeRef = new TypeReference(returnType.FullyQualifiedName);
-			while (returnType.IsArrayReturnType) {
+			ArrayReturnType arrayReturnType = returnType.CastToArrayReturnType();
+			if (arrayReturnType != null) {
+				TypeReference typeRef = ConvertType(arrayReturnType.ArrayElementType, context);
 				int[] rank = typeRef.RankSpecifier ?? new int[0];
 				Array.Resize(ref rank, rank.Length + 1);
-				rank[rank.Length - 1] = returnType.CastToArrayReturnType().ArrayDimensions - 1;
+				rank[rank.Length - 1] = arrayReturnType.ArrayDimensions - 1;
 				typeRef.RankSpecifier = rank;
-				returnType = returnType.CastToArrayReturnType().ArrayElementType;
+				return typeRef;
 			}
+			PointerReturnType pointerReturnType = returnType.CastToDecoratingReturnType<PointerReturnType>();
+			if (pointerReturnType != null) {
+				TypeReference typeRef = ConvertType(pointerReturnType.BaseType, context);
+				typeRef.PointerNestingLevel++;
+				return typeRef;
+			}
+			
+			IList<IReturnType> typeArguments = EmptyList<IReturnType>.Instance;
 			if (returnType.IsConstructedReturnType) {
-				foreach (IReturnType typeArgument in returnType.CastToConstructedReturnType().TypeArguments) {
+				typeArguments = returnType.CastToConstructedReturnType().TypeArguments;
+			}
+			IClass c = returnType.GetUnderlyingClass();
+			if (c != null) {
+				return CreateTypeReference(c, typeArguments, context);
+			} else {
+				TypeReference typeRef;
+				if (IsPrimitiveType(returnType))
+					typeRef = new TypeReference(returnType.FullyQualifiedName, true);
+				else if (context != null && CanUseShortTypeName(returnType, context))
+					typeRef = new TypeReference(returnType.Name);
+				else {
+					string fullName = returnType.FullyQualifiedName;
+					if (string.IsNullOrEmpty(fullName))
+						fullName = returnType.Name;
+					typeRef = new TypeReference(fullName);
+				}
+				foreach (IReturnType typeArgument in typeArguments) {
 					typeRef.GenericTypes.Add(ConvertType(typeArgument, context));
 				}
+				return typeRef;
 			}
-			return typeRef;
+		}
+		
+		static TypeReference CreateTypeReference(IClass c, IList<IReturnType> typeArguments, ClassFinder context)
+		{
+			if (c.DeclaringType != null) {
+				TypeReference outerClass = CreateTypeReference(c.DeclaringType, typeArguments, context);
+				List<TypeReference> args = new List<TypeReference>();
+				for (int i = c.DeclaringType.TypeParameters.Count; i < Math.Min(c.TypeParameters.Count, typeArguments.Count); i++) {
+					args.Add(ConvertType(typeArguments[i], context));
+				}
+				return new InnerClassTypeReference(outerClass, c.Name, args);
+			} else {
+				TypeReference typeRef;
+				if (IsPrimitiveType(c.DefaultReturnType))
+					typeRef = new TypeReference(c.FullyQualifiedName, true);
+				else if (context != null && CanUseShortTypeName(c.DefaultReturnType, context))
+					typeRef = new TypeReference(c.Name);
+				else
+					typeRef = new TypeReference(c.FullyQualifiedName);
+				for (int i = 0; i < Math.Min(c.TypeParameters.Count, typeArguments.Count); i++) {
+					typeRef.GenericTypes.Add(ConvertType(typeArguments[i], context));
+				}
+				return typeRef;
+			}
 		}
 		
 		static bool IsPrimitiveType(IReturnType returnType)
@@ -78,9 +123,12 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		/// </summary>
 		public static bool CanUseShortTypeName(IReturnType returnType, ClassFinder context)
 		{
-			int typeArgumentCount = (returnType.IsConstructedReturnType) ? returnType.CastToConstructedReturnType().TypeArguments.Count : 0;
-			IReturnType typeInTargetContext = context.SearchType(returnType.Name, typeArgumentCount);
-			return typeInTargetContext != null && typeInTargetContext.FullyQualifiedName == returnType.FullyQualifiedName;
+			if (returnType == null || context == null)
+				return false;
+			IReturnType typeInTargetContext = context.SearchType(returnType.Name, returnType.TypeArgumentCount);
+			return typeInTargetContext != null
+				&& typeInTargetContext.FullyQualifiedName == returnType.FullyQualifiedName
+				&& typeInTargetContext.TypeArgumentCount == returnType.TypeArgumentCount;
 		}
 		
 		public static Modifiers ConvertModifier(ModifierEnum modifiers, ClassFinder targetContext)
@@ -90,6 +138,8 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 					return ((Modifiers)modifiers) & ~Modifiers.Static;
 				}
 			}
+			if (modifiers.HasFlag(ModifierEnum.Static))
+				modifiers &= ~(ModifierEnum.Abstract | ModifierEnum.Sealed);
 			return (Modifiers)modifiers;
 		}
 		
@@ -129,7 +179,11 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		{
 			AttributeSection sec = new AttributeSection();
 			foreach (IAttribute att in attributes) {
-				sec.Attributes.Add(new ICSharpCode.NRefactory.Ast.Attribute(ConvertType(att.AttributeType, targetContext).Type, null, null));
+				sec.Attributes.Add(new ICSharpCode.NRefactory.Ast.Attribute(
+					ConvertType(att.AttributeType, targetContext).Type,
+					att.PositionalArguments.Select(o => (Expression)new PrimitiveExpression(o)).ToList(),
+					att.NamedArguments.Select(p => new NamedArgumentExpression(p.Key, new PrimitiveExpression(p.Value))).ToList()
+				));
 			}
 			List<AttributeSection> resultList = new List<AttributeSection>(1);
 			if (sec.Attributes.Count > 0)
@@ -157,13 +211,21 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			return b;
 		}
 		
-		public static ParametrizedNode ConvertMember(IMethod m, ClassFinder targetContext)
+		public static AttributedNode ConvertMember(IMethod m, ClassFinder targetContext)
 		{
 			if (m.IsConstructor) {
 				return new ConstructorDeclaration(m.Name,
 				                                  ConvertModifier(m.Modifiers, targetContext),
 				                                  ConvertParameters(m.Parameters, targetContext),
-				                                  ConvertAttributes(m.Attributes, targetContext));
+				                                  ConvertAttributes(m.Attributes, targetContext)) {
+					Body = CreateNotImplementedBlock()
+				};
+			} else if (m.Name == "#dtor") { // TODO : maybe add IsDestructor property?
+				return new DestructorDeclaration(m.Name,
+				                                 ConvertModifier(m.Modifiers, targetContext),
+				                                 ConvertAttributes(m.Attributes, targetContext)) {
+					Body = CreateNotImplementedBlock()
+				};
 			} else {
 				return new MethodDeclaration {
 					Name = m.Name,
@@ -172,9 +234,18 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 					Parameters = ConvertParameters(m.Parameters, targetContext),
 					Attributes = ConvertAttributes(m.Attributes, targetContext),
 					Templates = ConvertTemplates(m.TypeParameters, targetContext),
-					Body = CreateNotImplementedBlock()
+					Body = (m.Modifiers.HasFlag(ModifierEnum.Abstract) || m.Modifiers.HasFlag(ModifierEnum.Extern)) ? null : CreateNotImplementedBlock(),
+					IsExtensionMethod = m.IsExtensionMethod,
+					InterfaceImplementations = ConvertInterfaceImplementations(m.InterfaceImplementations, targetContext)
 				};
 			}
+		}
+		
+		public static List<InterfaceImplementation> ConvertInterfaceImplementations(IEnumerable<ExplicitInterfaceImplementation> items, ClassFinder targetContext)
+		{
+			return items
+				.Select(i => new InterfaceImplementation(ConvertType(i.InterfaceReference, targetContext), i.MemberName))
+				.ToList();
 		}
 		
 		public static AttributedNode ConvertMember(IMember m, ClassFinder targetContext)
@@ -193,43 +264,44 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				throw new ArgumentException("Unknown member: " + m.GetType().FullName);
 		}
 		
-		public static AttributedNode ConvertMember(IProperty p, ClassFinder targetContext)
+		public static PropertyDeclaration ConvertMember(IProperty p, ClassFinder targetContext)
 		{
-			if (p.IsIndexer) {
-				IndexerDeclaration md;
-				md = new IndexerDeclaration(ConvertType(p.ReturnType, targetContext),
-				                            ConvertParameters(p.Parameters, targetContext),
-				                            ConvertModifier(p.Modifiers, targetContext),
-				                            ConvertAttributes(p.Attributes, targetContext));
-				md.Parameters = ConvertParameters(p.Parameters, targetContext);
-				if (p.CanGet) md.GetRegion = new PropertyGetRegion(CreateNotImplementedBlock(), null);
-				if (p.CanSet) md.SetRegion = new PropertySetRegion(CreateNotImplementedBlock(), null);
-				return md;
-			} else {
-				PropertyDeclaration md;
-				md = new PropertyDeclaration(ConvertModifier(p.Modifiers, targetContext),
-				                             ConvertAttributes(p.Attributes, targetContext),
-				                             p.Name,
-				                             ConvertParameters(p.Parameters, targetContext));
-				md.TypeReference = ConvertType(p.ReturnType, targetContext);
-				if (p.CanGet) {
-					md.GetRegion = new PropertyGetRegion(CreateNotImplementedBlock(), null);
-					md.GetRegion.Modifier = ConvertModifier(p.GetterModifiers, null);
-				}
-				if (p.CanSet) {
-					md.SetRegion = new PropertySetRegion(CreateNotImplementedBlock(), null);
-					md.SetRegion.Modifier = ConvertModifier(p.SetterModifiers, null);
-				}
-				return md;
+			PropertyDeclaration md = new PropertyDeclaration(ConvertModifier(p.Modifiers, targetContext),
+			                                                 ConvertAttributes(p.Attributes, targetContext),
+			                                                 p.Name,
+			                                                 ConvertParameters(p.Parameters, targetContext));
+			md.TypeReference = ConvertType(p.ReturnType, targetContext);
+			md.InterfaceImplementations = ConvertInterfaceImplementations(p.InterfaceImplementations, targetContext);
+			if (p.CanGet) {
+				md.GetRegion = new PropertyGetRegion((p.Modifiers.HasFlag(ModifierEnum.Abstract) || p.Modifiers.HasFlag(ModifierEnum.Extern)) ? null : CreateNotImplementedBlock(), null);
+				md.GetRegion.Modifier = ConvertModifier(p.GetterModifiers, null);
 			}
+			if (p.CanSet) {
+				md.SetRegion = new PropertySetRegion((p.Modifiers.HasFlag(ModifierEnum.Abstract) || p.Modifiers.HasFlag(ModifierEnum.Extern)) ? null : CreateNotImplementedBlock(), null);
+				md.SetRegion.Modifier = ConvertModifier(p.SetterModifiers, null);
+			}
+			return md;
 		}
 		
 		public static FieldDeclaration ConvertMember(IField f, ClassFinder targetContext)
 		{
 			TypeReference type = ConvertType(f.ReturnType, targetContext);
+			
 			FieldDeclaration fd = new FieldDeclaration(ConvertAttributes(f.Attributes, targetContext),
 			                                           type, ConvertModifier(f.Modifiers, targetContext));
-			fd.Fields.Add(new VariableDeclaration(f.Name, null, type));
+			
+			VariableDeclaration vd = new VariableDeclaration(f.Name, null, type);
+			fd.Fields.Add(vd);
+
+			
+			if (f.IsConst && f.DeclaringType.ClassType != ClassType.Enum)
+				vd.Initializer = ExpressionBuilder.CreateDefaultValueForType(type);
+			else if (f.Modifiers.HasFlag(ModifierEnum.Fixed)) {
+				if (f.ReturnType.IsArrayReturnType)
+					fd.TypeReference = ConvertType(f.ReturnType.CastToArrayReturnType().ArrayElementType, targetContext);
+				vd.FixedArrayInitialization = new PrimitiveExpression(1);
+			}
+			
 			return fd;
 		}
 		
@@ -240,7 +312,54 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				Name = e.Name,
 				Modifier = ConvertModifier(e.Modifiers, targetContext),
 				Attributes = ConvertAttributes(e.Attributes, targetContext),
+				InterfaceImplementations = ConvertInterfaceImplementations(e.InterfaceImplementations, targetContext)
+
 			};
+		}
+		
+		public static AttributedNode ConvertClass(IClass c, ClassFinder targetContext)
+		{
+			if (c.ClassType == Dom.ClassType.Delegate) {
+				IMethod invoke = c.Methods.First(m => m.Name == "Invoke");
+				
+				var d = new DelegateDeclaration(ConvertModifier(c.Modifiers, targetContext), ConvertAttributes(c.Attributes, targetContext)) {
+					Name = c.Name,
+					Parameters = ConvertParameters(invoke.Parameters, targetContext),
+					ReturnType = ConvertType(invoke.ReturnType, targetContext),
+					Templates = ConvertTemplates(c.TypeParameters, targetContext)
+				};
+				
+				return d;
+			} else {
+				var t = new TypeDeclaration(ConvertModifier(c.Modifiers, targetContext), ConvertAttributes(c.Attributes, targetContext)) {
+					Type = (NRefactory.Ast.ClassType)c.ClassType,
+					BaseTypes = c.BaseTypes.Select(type => ConvertType(type, targetContext)).ToList(),
+					Templates = ConvertTemplates(c.TypeParameters, targetContext),
+					Name = c.Name
+				};
+				
+				AttributedNode[] members = c.AllMembers.Select(m => ConvertMember(m, targetContext)).ToArray();
+				
+				if (c.ClassType == ClassType.Interface) {
+					foreach (MethodDeclaration node in members.OfType<MethodDeclaration>()) {
+						node.Modifier &= ~(Modifiers.Public | Modifiers.Private | Modifiers.Protected | Modifiers.Internal);
+						node.Body = null;
+					}
+					foreach (PropertyDeclaration node in members.OfType<PropertyDeclaration>()) {
+						node.Modifier &= ~(Modifiers.Public | Modifiers.Private | Modifiers.Protected | Modifiers.Internal);
+						node.GetRegion.Block = null;
+						node.SetRegion.Block = null;
+					}
+					foreach (EventDeclaration node in members.OfType<EventDeclaration>()) {
+						node.Modifier &= ~(Modifiers.Public | Modifiers.Private | Modifiers.Protected | Modifiers.Internal);
+					}
+				}
+				
+				t.Children.AddRange(members);
+				t.Children.AddRange(c.InnerClasses.Select(c2 => ConvertClass(c2, targetContext)));
+				
+				return t;
+			}
 		}
 		#endregion
 		
@@ -251,7 +370,13 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		}
 		
 		#region Code generation / insertion
-		public virtual void InsertCodeAfter(IMember member, IDocument document, params AbstractNode[] nodes)
+		public virtual void InsertCodeAfter(IClass @class, IRefactoringDocument document, params AbstractNode[] nodes)
+		{
+			InsertCodeAfter(@class.BodyRegion.EndLine, document,
+			                GetIndentation(document, @class.BodyRegion.BeginLine), nodes);
+		}
+		
+		public virtual void InsertCodeAfter(IMember member, IRefactoringDocument document, params AbstractNode[] nodes)
 		{
 			if (member is IMethodOrProperty) {
 				InsertCodeAfter(((IMethodOrProperty)member).BodyRegion.EndLine, document,
@@ -262,19 +387,19 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			}
 		}
 		
-		public virtual void InsertCodeAtEnd(DomRegion region, IDocument document, params AbstractNode[] nodes)
+		public virtual void InsertCodeAtEnd(DomRegion region, IRefactoringDocument document, params AbstractNode[] nodes)
 		{
 			InsertCodeAfter(region.EndLine - 1, document,
 			                GetIndentation(document, region.BeginLine) + options.IndentString, nodes);
 		}
 		
-		public virtual void InsertCodeInClass(IClass c, IDocument document, int targetLine, params AbstractNode[] nodes)
+		public virtual void InsertCodeInClass(IClass c, IRefactoringDocument document, int targetLine, params AbstractNode[] nodes)
 		{
 			InsertCodeAfter(targetLine, document,
 			                GetIndentation(document, c.Region.BeginLine) + options.IndentString, false, nodes);
 		}
 		
-		protected string GetIndentation(IDocument document, int line)
+		protected string GetIndentation(IRefactoringDocument document, int line)
 		{
 			string lineText = document.GetLine(line).Text;
 			return lineText.Substring(0, lineText.Length - lineText.TrimStart().Length);
@@ -284,7 +409,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		/// Generates code for <paramref name="nodes"/> and inserts it into <paramref name="document"/>
 		/// after the line <paramref name="insertLine"/>.
 		/// </summary>
-		protected void InsertCodeAfter(int insertLine, IDocument document, string indentation, params AbstractNode[] nodes)
+		protected void InsertCodeAfter(int insertLine, IRefactoringDocument document, string indentation, params AbstractNode[] nodes)
 		{
 			InsertCodeAfter(insertLine, document, indentation, true, nodes);
 		}
@@ -293,9 +418,9 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		/// Generates code for <paramref name="nodes"/> and inserts it into <paramref name="document"/>
 		/// after the line <paramref name="insertLine"/>.
 		/// </summary>
-		protected void InsertCodeAfter(int insertLine, IDocument document, string indentation, bool startWithEmptyLine, params AbstractNode[] nodes)
+		protected void InsertCodeAfter(int insertLine, IRefactoringDocument document, string indentation, bool startWithEmptyLine, params AbstractNode[] nodes)
 		{
-			IDocumentLine lineSegment = document.GetLine(insertLine + 1);
+			IRefactoringDocumentLine lineSegment = document.GetLine(insertLine + 1);
 			StringBuilder b = new StringBuilder();
 			for (int i = 0; i < nodes.Length; i++) {
 				if (options.EmptyLinesBetweenMembers) {
@@ -306,7 +431,6 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				b.Append(GenerateCode(nodes[i], indentation));
 			}
 			document.Insert(lineSegment.Offset, b.ToString());
-			document.UpdateView();
 		}
 		
 		/// <summary>
@@ -318,6 +442,8 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		#region Generate property
 		public virtual string GetPropertyName(string fieldName)
 		{
+			if (string.IsNullOrEmpty(fieldName))
+				return fieldName;
 			if (fieldName.StartsWith("_") && fieldName.Length > 1)
 				return Char.ToUpper(fieldName[1]) + fieldName.Substring(2);
 			else if (fieldName.StartsWith("m_") && fieldName.Length > 2)
@@ -328,12 +454,25 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		
 		public virtual string GetParameterName(string fieldName)
 		{
+			if (string.IsNullOrEmpty(fieldName))
+				return fieldName;
 			if (fieldName.StartsWith("_") && fieldName.Length > 1)
 				return Char.ToLower(fieldName[1]) + fieldName.Substring(2);
 			else if (fieldName.StartsWith("m_") && fieldName.Length > 2)
 				return Char.ToLower(fieldName[2]) + fieldName.Substring(3);
 			else
 				return Char.ToLower(fieldName[0]) + fieldName.Substring(1);
+		}
+		
+		public virtual string GetFieldName(string propertyName)
+		{
+			if (string.IsNullOrEmpty(propertyName))
+				return propertyName;
+			string newName = Char.ToLower(propertyName[0]) + propertyName.Substring(1);
+			if (newName == propertyName)
+				return "_" + newName;
+			else
+				return newName;
 		}
 		
 		public virtual PropertyDeclaration CreateProperty(IField field, bool createGetter, bool createSetter)
@@ -362,7 +501,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		#endregion
 		
 		#region Generate Changed Event
-		public virtual void CreateChangedEvent(IProperty property, IDocument document)
+		public virtual void CreateChangedEvent(IProperty property, IRefactoringDocument document)
 		{
 			ClassFinder targetContext = new ClassFinder(property);
 			string name = property.Name + "Changed";
@@ -443,7 +582,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				return member.DeclaringType.FullyQualifiedName;
 		}
 		
-		public virtual void ImplementInterface(IReturnType interf, IDocument document, bool explicitImpl, IClass targetClass)
+		public virtual void ImplementInterface(IReturnType interf, IRefactoringDocument document, bool explicitImpl, IClass targetClass)
 		{
 			List<AbstractNode> nodes = new List<AbstractNode>();
 			ImplementInterface(nodes, interf, explicitImpl, targetClass);
@@ -469,7 +608,8 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			return copy;
 		}
 		
-		static bool InterfaceMemberAlreadyImplemented<T>(IEnumerable<T> existingMembers, T interfaceMember,
+		// FIXME this whole method could be probably replaced by DOM.ExtensionMethodsPublic.HasMember
+		public static bool InterfaceMemberAlreadyImplemented<T>(IEnumerable<T> existingMembers, T interfaceMember,
 		                                                 out bool requireAlternativeImplementation)
 			where T : class, IMember
 		{
@@ -552,11 +692,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 					pd.Attributes.Clear();
 					if (explicitImpl || requireAlternativeImplementation) {
 						InterfaceImplementation impl = CreateInterfaceImplementation(p, context);
-						if (pd is IndexerDeclaration) {
-							((IndexerDeclaration)pd).InterfaceImplementations.Add(impl);
-						} else {
-							((PropertyDeclaration)pd).InterfaceImplementations.Add(impl);
-						}
+						((PropertyDeclaration)pd).InterfaceImplementations.Add(impl);
 						targetClassProperties.Add(CloneAndAddExplicitImpl(p, targetClass));
 						pd.Modifier = explicitImplModifier;
 					} else {
@@ -587,12 +723,29 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		}
 		#endregion
 		
+		#region Abstract class implementation
+		public static void ImplementAbstractClass(IRefactoringDocument doc, IClass target, IReturnType abstractClass)
+		{
+			CodeGenerator generator = target.ProjectContent.Language.CodeGenerator;
+			var pos = doc.OffsetToPosition(doc.PositionToOffset(target.BodyRegion.EndLine, target.BodyRegion.EndColumn) - 1);
+			ClassFinder context = new ClassFinder(target, pos.Line, pos.Column);
+			
+			foreach (IMember member in MemberLookupHelper.GetAccessibleMembers(abstractClass, target, LanguageProperties.CSharp, true)
+			         .Where(m => m.IsAbstract && !target.HasMember(m))) {
+				generator.InsertCodeAtEnd(target.BodyRegion, doc, generator.GetOverridingMethod(member, context));
+			}
+		}
+		#endregion
+		
 		#region Override member
 		public virtual AttributedNode GetOverridingMethod(IMember baseMember, ClassFinder targetContext)
 		{
-			AttributedNode node = ConvertMember(baseMember, targetContext);
-			node.Modifier &= ~(Modifiers.Virtual | Modifiers.Abstract);
-			node.Modifier |= Modifiers.Override;
+			AbstractMember newMember = (AbstractMember)baseMember.Clone();
+			newMember.Modifiers &= ~(ModifierEnum.Virtual | ModifierEnum.Abstract);
+			newMember.Modifiers |= ModifierEnum.Override;
+			// set modifiers be before calling convert so that a body is generated
+			AttributedNode node = ConvertMember(newMember, targetContext);
+			node.Attributes.Clear(); // don't copy over attributes
 			
 			if (!baseMember.IsAbstract) {
 				// replace the method/property body with a call to the base method/property
@@ -640,7 +793,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		#endregion
 		
 		#region Using statements
-		public virtual void ReplaceUsings(IDocument document, IList<IUsing> oldUsings, IList<IUsing> newUsings)
+		public virtual void ReplaceUsings(IRefactoringDocument document, IList<IUsing> oldUsings, IList<IUsing> newUsings)
 		{
 			if (oldUsings.Count == newUsings.Count) {
 				bool identical = true;

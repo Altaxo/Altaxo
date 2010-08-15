@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald"/>
-//     <version>$Revision$</version>
+//     <author name="Daniel Grunwald"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,6 @@ using NUnit.Framework;
 using ICSharpCode.NRefactory.Parser;
 using ICSharpCode.NRefactory.Parser.CSharp;
 using ICSharpCode.NRefactory.PrettyPrinter;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace ICSharpCode.NRefactory.Tests.Lexer.CSharp
 {
@@ -153,8 +152,8 @@ namespace ICSharpCode.NRefactory.Tests.Lexer.CSharp
 			List<ISpecial> specials = lexer.SpecialTracker.RetrieveSpecials();
 			
 			Assert.IsTrue(specials[0] is BlankLine);
-			Assert.AreEqual(new Location(2, 1), specials[0].StartPosition);
-			Assert.AreEqual(new Location(2, 1), specials[0].EndPosition);
+			Assert.AreEqual(new Location(1, 1), specials[0].StartPosition);
+			Assert.AreEqual(new Location(1, 1), specials[0].EndPosition);
 			
 			Assert.AreEqual("#region", (specials[1] as PreprocessingDirective).Cmd);
 			Assert.AreEqual("Region Title", (specials[1] as PreprocessingDirective).Arg);

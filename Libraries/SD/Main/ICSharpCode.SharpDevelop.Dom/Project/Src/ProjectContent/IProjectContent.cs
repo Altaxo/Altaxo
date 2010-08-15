@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3769 $</version>
+//     <version>$Revision: 5753 $</version>
 // </file>
 
 using System;
@@ -11,8 +11,10 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public interface IProjectContent : IDisposable
+	public interface IProjectContent 
 	{
+		void Dispose();
+		
 		XmlDoc XmlDoc {
 			get;
 		}
@@ -87,17 +89,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		IClass GetClass(string typeName, int typeParameterCount);
 		bool NamespaceExists(string name);
-		ArrayList GetNamespaceContents(string nameSpace);
+		List<ICompletionEntry> GetNamespaceContents(string nameSpace);
+		List<ICompletionEntry> GetAllContents();
 		
 		IClass GetClass(string typeName, int typeParameterCount, LanguageProperties language, GetClassOptions options);
 		bool NamespaceExists(string name, LanguageProperties language, bool lookInReferences);
 		/// <summary>
 		/// Adds the contents of the specified <paramref name="subNameSpace"/> to the <paramref name="list"/>.
 		/// </summary>
-		void AddNamespaceContents(ArrayList list, string subNameSpace, LanguageProperties language, bool lookInReferences);
-		
-		[Obsolete]
-		string SearchNamespace(string name, IClass curType, ICompilationUnit unit, int caretLine, int caretColumn);
+		/// <param name="lookInReferences">If true, contents of referenced projects will be added as well (not recursive - just 1 level deep).</param>
+		void AddNamespaceContents(List<ICompletionEntry> list, string subNameSpace, LanguageProperties language, bool lookInReferences);
+		/// <summary>
+		/// Adds the contents of all namespaces in this project to the <paramref name="list"/>.
+		/// </summary>
+		/// <param name="lookInReferences">If true, contents of referenced projects will be added as well (not recursive - just 1 level deep).</param>
+		void AddAllContents(List<ICompletionEntry> list, LanguageProperties language, bool lookInReferences);
 		
 		SearchTypeResult SearchType(SearchTypeRequest request);
 		
@@ -118,6 +124,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// Gets whether internals in the project content are visible to the other project content.
 		/// </summary>
 		bool InternalsVisibleTo(IProjectContent otherProjectContent);
+		
+		/// <summary>
+		/// Gets the name of the assembly.
+		/// </summary>
+		string AssemblyName {
+			get;
+		}
 	}
 	
 	[Flags]
@@ -132,6 +145,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// Try if the class is an inner class.
 		/// </summary>
 		LookForInnerClass = 2,
+		/// <summary>
+		/// Do not return a class with the wrong type parameter count.
+		/// If this flag is not set, GetClass will return a class with the same name but a different
+		/// type parameter count if no exact match is found.
+		/// </summary>
+		ExactMatch = 4,
 		/// <summary>
 		/// Default = LookInReferences + LookForInnerClass
 		/// </summary>
@@ -236,6 +255,37 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public string NamespaceResult {
 			get { return namespaceResult; }
+		}
+	}
+	
+	/// <summary>
+	/// Used in 'GetNamespaceContents' result to represent a namespace.
+	/// </summary>
+	public class NamespaceEntry : ICompletionEntry
+	{
+		public string Name { get; private set; }
+		
+		public NamespaceEntry(string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+			this.Name = name;
+		}
+		
+		public override int GetHashCode()
+		{
+			return Name.GetHashCode();
+		}
+		
+		public override bool Equals(object obj)
+		{
+			NamespaceEntry e = obj as NamespaceEntry;
+			return e != null && e.Name == this.Name;
+		}
+		
+		public override string ToString()
+		{
+			return Name;
 		}
 	}
 }

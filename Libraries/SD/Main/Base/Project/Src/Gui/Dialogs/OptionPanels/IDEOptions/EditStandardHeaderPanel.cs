@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 3568 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,7 @@ using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class EditStandardHeaderPanel : AbstractOptionPanel
+	public class EditStandardHeaderPanel : XmlFormsOptionPanel
 	{
 		public override void LoadPanelContents()
 		{

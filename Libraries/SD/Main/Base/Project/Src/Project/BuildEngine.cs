@@ -2,157 +2,173 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3763 $</version>
+//     <version>$Revision: 6298 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-
-using ICSharpCode.SharpDevelop.Gui;
 using System.Text;
+using System.Threading;
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
 	/// <summary>
 	/// Supports building a project with dependencies or the whole solution.
 	/// Creates a build graph and then builds it using topological sort.
-	/// 
 	/// Supports building multiple projects in parallel.
+	/// 
+	/// This class is not related to MSBuild: it simply "builds" a project by calling IBuildable.StartBuild.
 	/// </summary>
 	public sealed class BuildEngine
 	{
 		#region Building in the SharpDevelop GUI
-		static CancellableProgressMonitor guiBuildProgressMonitor;
+		static CancellationTokenSource guiBuildCancellation;
+		static IAnalyticsMonitorTrackedFeature guiBuildTrackedFeature;
 		
+		/// <summary>
+		/// Starts to run a build inside the SharpDevelop GUI.
+		/// Only one build can run inside the GUI at one time.
+		/// </summary>
+		/// <param name="project">The project/solution to build.</param>
+		/// <param name="options">The build options.</param>
 		public static void BuildInGui(IBuildable project, BuildOptions options)
 		{
+			if (project == null)
+				throw new ArgumentNullException("project");
+			if (options == null)
+				throw new ArgumentNullException("options");
 			WorkbenchSingleton.AssertMainThread();
-			if (guiBuildProgressMonitor != null) {
+			if (guiBuildCancellation != null) {
 				BuildResults results = new BuildResults();
-				results.Add(new BuildError(null, Core.ResourceService.GetString("MainWindow.CompilerMessages.MSBuildAlreadyRunning")));
+				WorkbenchSingleton.StatusBar.SetMessage(Core.ResourceService.GetString("MainWindow.CompilerMessages.MSBuildAlreadyRunning"));
+				BuildError error = new BuildError(null, Core.ResourceService.GetString("MainWindow.CompilerMessages.MSBuildAlreadyRunning"));
+				results.Add(error);
+				TaskService.Add(new Task(error));
 				results.Result = BuildResultCode.MSBuildAlreadyRunning;
-				options.Callback(results);
+				if (options.Callback != null) {
+					options.Callback(results);
+				}
 			} else {
-				guiBuildProgressMonitor = new CancellableProgressMonitor(StatusBarService.CreateProgressMonitor());
-				Gui.WorkbenchSingleton.Workbench.GetPad(typeof(Gui.CompilerMessageView)).BringPadToFront();
+				guiBuildCancellation = new CancellationTokenSource();
+				IProgressMonitor progressMonitor = WorkbenchSingleton.StatusBar.CreateProgressMonitor(guiBuildCancellation.Token);
+				guiBuildTrackedFeature = AnalyticsMonitorService.TrackFeature("ICSharpCode.SharpDevelop.Project.BuildEngine.Build");
+				WorkbenchSingleton.StatusBar.SetMessage(StringParser.Parse("${res:MainWindow.CompilerMessages.BuildVerb}..."));
+				ProjectService.RaiseEventBuildStarted(new BuildEventArgs(project, options));
 				StartBuild(project, options,
-				           new MessageViewSink(TaskService.BuildMessageViewCategory),
-				           guiBuildProgressMonitor);
+				           new MessageViewSink(TaskService.BuildMessageViewCategory, progressMonitor, WorkbenchSingleton.StatusBar));
 			}
 		}
 		
+		/// <summary>
+		/// Gets whether there is a build currently running inside the SharpDevelop GUI.
+		/// </summary>
 		public static bool IsGuiBuildRunning {
 			get {
 				WorkbenchSingleton.AssertMainThread();
-				return guiBuildProgressMonitor != null;
+				return guiBuildCancellation != null;
 			}
 		}
 		
+		/// <summary>
+		/// Cancels the build currently running inside the SharpDevelop GUI.
+		/// This method does nothing if no build is running.
+		/// </summary>
 		public static void CancelGuiBuild()
 		{
 			WorkbenchSingleton.AssertMainThread();
-			if (guiBuildProgressMonitor != null) {
-				guiBuildProgressMonitor.Cancel();
+			if (guiBuildCancellation != null) {
+				guiBuildCancellation.Cancel();
 			}
 		}
 		
+		/// <summary>
+		/// This error message sink is used for GUI builds.
+		/// </summary>
 		sealed class MessageViewSink : IBuildFeedbackSink
 		{
-			Gui.MessageViewCategory messageView;
+			MessageViewCategory messageView;
+			IProgressMonitor progressMonitor;
+			IStatusBarService statusBarService;
 			
-			public MessageViewSink(ICSharpCode.SharpDevelop.Gui.MessageViewCategory messageView)
+			public MessageViewSink(MessageViewCategory messageView, IProgressMonitor progressMonitor, IStatusBarService statusBarService)
 			{
+				Debug.Assert(messageView != null);
+				Debug.Assert(progressMonitor != null);
+				Debug.Assert(statusBarService != null);
+				
 				this.messageView = messageView;
+				this.progressMonitor = progressMonitor;
+				this.statusBarService = statusBarService;
+			}
+			
+			public IProgressMonitor ProgressMonitor {
+				get { return progressMonitor; }
 			}
 			
 			public void ReportError(BuildError error)
 			{
+				WorkbenchSingleton.SafeThreadAsyncCall(
+					delegate {
+						TaskService.Add(new Task(error));
+					});
 			}
 			
 			public void ReportMessage(string message)
 			{
-				messageView.AppendLine(ICSharpCode.Core.StringParser.Parse(message));
+				messageView.AppendLine(message);
 			}
 			
 			public void Done(bool success)
 			{
-				WorkbenchSingleton.SafeThreadAsyncCall(delegate { guiBuildProgressMonitor = null; });
+				throw new InvalidOperationException("The Done(IBuildable,BuildOptions,BuildResults) method should be called instead.");
 			}
-		}
-		
-		sealed class CancellableProgressMonitor : IProgressMonitor
-		{
-			IProgressMonitor baseProgressMonitor;
 			
-			public CancellableProgressMonitor(IProgressMonitor baseProgressMonitor)
+			public void Done(IBuildable buildable, BuildOptions options, BuildResults results)
 			{
-				this.baseProgressMonitor = baseProgressMonitor;
-			}
-			
-			readonly object lockObject = new object();
-			bool isCancelAllowed;
-			bool isCancelled;
-			
-			public bool IsCancelAllowed {
-				get { return isCancelAllowed; }
-			}
-			
-			public bool IsCancelled {
-				get { return isCancelled; }
-			}
-			
-			public void Cancel()
-			{
-				EventHandler eh = null;
-				lock (lockObject) {
-					if (isCancelAllowed && !isCancelled) {
-						ICSharpCode.Core.LoggingService.Info("Cancel build");
-						isCancelled = true;
-						eh = Cancelled;
-					}
-				}
-				if (eh != null)
-					eh(this, EventArgs.Empty);
-			}
-			
-			public event EventHandler Cancelled;
-			
-			public void BeginTask(string name, int totalWork, bool allowCancel)
-			{
-				baseProgressMonitor.BeginTask(name, totalWork, allowCancel);
-				lock (lockObject) {
-					isCancelAllowed = allowCancel;
-				}
-			}
-			
-			public void Done()
-			{
-				lock (lockObject) {
-					isCancelAllowed = false;
-				}
-				baseProgressMonitor.Done();
-			}
-			
-			public int WorkDone {
-				get { return baseProgressMonitor.WorkDone; }
-				set { baseProgressMonitor.WorkDone = value; }
-			}
-			
-			public string TaskName {
-				get { return baseProgressMonitor.TaskName; }
-				set { baseProgressMonitor.TaskName = value; }
-			}
-			
-			public bool ShowingDialog {
-				get { return baseProgressMonitor.ShowingDialog; }
-				set { baseProgressMonitor.ShowingDialog = value; }
+				WorkbenchSingleton.SafeThreadAsyncCall(
+					delegate {
+						guiBuildCancellation = null;
+						if (guiBuildTrackedFeature != null) {
+							guiBuildTrackedFeature.EndTracking();
+							guiBuildTrackedFeature = null;
+						}
+						string message;
+						if (results.Result == BuildResultCode.Cancelled) {
+							message = "${res:MainWindow.CompilerMessages.BuildCancelled}";
+						} else {
+							if (results.Result == BuildResultCode.Success)
+								message = "${res:MainWindow.CompilerMessages.BuildFinished}";
+							else
+								message = "${res:MainWindow.CompilerMessages.BuildFailed}";
+							
+							if (results.ErrorCount > 0)
+								message += " " + results.ErrorCount + " error(s)";
+							if (results.WarningCount > 0)
+								message += " " + results.WarningCount + " warning(s)";
+						}
+						statusBarService.SetMessage(message);
+						ProjectService.RaiseEventBuildFinished(new BuildEventArgs(buildable, options, results));
+					});
 			}
 		}
 		#endregion
 		
 		#region StartBuild
-		public static void StartBuild(IBuildable project, BuildOptions options, IBuildFeedbackSink realtimeBuildFeedbackSink, IProgressMonitor progressMonitor)
+		/// <summary>
+		/// Starts to run a build.
+		/// </summary>
+		/// <param name="project">The project/solution to build</param>
+		/// <param name="options">The build options that should be used</param>
+		/// <param name="realtimeBuildFeedbackSink">The build feedback sink that receives the build output.
+		/// The output is nearly sent "as it comes in": sometimes output must wait because the BuildEngine
+		/// will ensure that output from two projects building in parallel isn't interleaved.</param>
+		/// <param name="progressMonitor">The progress monitor that receives build progress. The monitor will be disposed
+		/// when the build completes.</param>
+		public static void StartBuild(IBuildable project, BuildOptions options, IBuildFeedbackSink realtimeBuildFeedbackSink)
 		{
 			if (project == null)
 				throw new ArgumentNullException("solution");
@@ -171,8 +187,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			BuildEngine engine = new BuildEngine(options, project);
 			engine.buildStart = DateTime.Now;
 			engine.combinedBuildFeedbackSink = realtimeBuildFeedbackSink;
-			engine.progressMonitor = progressMonitor;
-			engine.configMatchings = solution.GetActiveConfigurationsAndPlatformsForProjects(options.SolutionConfiguration, options.SolutionPlatform);
+			engine.progressMonitor = realtimeBuildFeedbackSink.ProgressMonitor;
 			try {
 				engine.rootNode = engine.CreateBuildGraph(project);
 			} catch (CyclicDependencyException ex) {
@@ -181,8 +196,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				else
 					engine.results.Add(new BuildError(null, "Cyclic dependency"));
 				engine.results.Result = BuildResultCode.BuildFileError;
-				realtimeBuildFeedbackSink.Done(false);
-				options.Callback(engine.results);
+				engine.ReportDone();
 				return;
 			}
 			
@@ -190,12 +204,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (engine.workersToStart < 1)
 				engine.workersToStart = 1;
 			
-			if (progressMonitor != null) {
-				progressMonitor.Cancelled += engine.BuildCancelled;
-				progressMonitor.BeginTask("", engine.nodeDict.Count, true);
-			}
+			engine.cancellationRegistration = engine.progressMonitor.CancellationToken.Register(engine.BuildCancelled);
 			
-			engine.ReportMessageInternal("${res:MainWindow.CompilerMessages.BuildStarted}");
+			engine.ReportMessageLine("${res:MainWindow.CompilerMessages.BuildStarted}");
 			engine.StartBuildProjects();
 			engine.UpdateProgressTaskName();
 		}
@@ -206,6 +217,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			readonly BuildEngine engine;
 			internal readonly IBuildable project;
+			/// <summary>The build options used for this node. Might be null.</summary>
 			internal ProjectBuildOptions options;
 			internal BuildNode[] dependencies;
 			/// <summary>specifies whether the node has been constructed completely (all dependencies initialized)</summary>
@@ -223,6 +235,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			/// <summary>The list of nodes that directly depend on this node</summary>
 			internal List<BuildNode> dependentOnThis = new List<BuildNode>();
+			
+			/// <summary>Progress monitor just for this node, used only while the node is being built</summary>
+			internal IProgressMonitor perNodeProgressMonitor;
 			
 			int totalDependentOnThisCount = -1;
 			
@@ -268,6 +283,12 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			public void ReportError(BuildError error)
 			{
+				if (error.IsWarning) {
+					if (perNodeProgressMonitor.Status != OperationStatus.Error)
+						perNodeProgressMonitor.Status = OperationStatus.Warning;
+				} else {
+					perNodeProgressMonitor.Status = OperationStatus.Error;
+				}
 				engine.ReportError(this, error);
 			}
 			
@@ -280,6 +301,15 @@ namespace ICSharpCode.SharpDevelop.Project
 			{
 				engine.OnBuildFinished(this, success);
 			}
+			
+			IProgressMonitor IBuildFeedbackSink.ProgressMonitor {
+				get {
+					// property should be accessed only while build is running and progress monitor available
+					if (perNodeProgressMonitor == null)
+						throw new InvalidOperationException();
+					return perNodeProgressMonitor;
+				}
+			}
 		}
 		#endregion
 		
@@ -287,14 +317,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		readonly Dictionary<IBuildable, BuildNode> nodeDict = new Dictionary<IBuildable, BuildNode>();
 		readonly BuildOptions options;
 		IProgressMonitor progressMonitor;
-		List<Solution.ProjectConfigurationPlatformMatching> configMatchings;
+		CancellationTokenRegistration cancellationRegistration;
 		BuildNode rootNode;
-		IBuildable rootProject;
-		BuildResults results = new BuildResults();
+		readonly IBuildable rootProject;
+		readonly BuildResults results = new BuildResults();
 		DateTime buildStart;
 		
-		List<BuildNode> projectsCurrentlyBuilding = new List<BuildNode>();
-		List<BuildNode> projectsReadyForBuildStart = new List<BuildNode>();
+		readonly List<BuildNode> projectsCurrentlyBuilding = new List<BuildNode>();
+		readonly List<BuildNode> projectsReadyForBuildStart = new List<BuildNode>();
 		int workersToStart, runningWorkers;
 		
 		private BuildEngine(BuildOptions options, IBuildable rootProject)
@@ -324,26 +354,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			IBuildable project = node.project;
 			// Create options for building the project
-			node.options = new ProjectBuildOptions(project == rootProject ? options.ProjectTarget : options.TargetForDependencies);
-			// find the project configuration
-			foreach (var matching in configMatchings) {
-				if (matching.Project == project) {
-					node.options.Configuration = matching.Configuration;
-					node.options.Platform = matching.Platform;
-				}
-			}
-			if (string.IsNullOrEmpty(node.options.Configuration))
-				node.options.Configuration = options.SolutionConfiguration;
-			if (string.IsNullOrEmpty(node.options.Platform))
-				node.options.Platform = options.SolutionPlatform;
-			
-			// copy properties to project options
-			options.GlobalAdditionalProperties.ForEach(node.options.Properties.Add);
-			if (project == rootProject) {
-				foreach (var pair in options.ProjectAdditionalProperties) {
-					node.options.Properties[pair.Key] = pair.Value;
-				}
-			}
+			node.options = project.CreateProjectBuildOptions(options, project == rootProject);
 		}
 		
 		void InitializeDependencies(BuildNode node)
@@ -412,6 +423,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					}
 					BuildNode node = projectsReadyForBuildStart[projectToStartIndex];
 					projectsReadyForBuildStart.RemoveAt(projectToStartIndex);
+					node.perNodeProgressMonitor = progressMonitor.CreateSubTask(1.0 / nodeDict.Count);
 					node.buildStarted = true;
 					
 					bool hasDependencyErrors = false;
@@ -464,7 +476,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		void OnBuildFinished(BuildNode node, bool success)
 		{
-			ICSharpCode.Core.LoggingService.Info("Finished building " + node.project.Name);
+			ICSharpCode.Core.LoggingService.Info("Finished building " + node.project.Name + ", success=" + success);
+			node.perNodeProgressMonitor.Progress = 1;
+			node.perNodeProgressMonitor.Dispose();
 			lock (this) {
 				if (node.buildFinished) {
 					throw new InvalidOperationException("This node already finished building, do not call IBuildFeedbackSink.Done() multiple times!");
@@ -475,9 +489,6 @@ namespace ICSharpCode.SharpDevelop.Project
 				
 				projectsCurrentlyBuilding.Remove(node);
 				results.AddBuiltProject(node.project);
-				if (progressMonitor != null) {
-					progressMonitor.WorkDone += 1;
-				}
 				
 				foreach (BuildNode n in node.dependentOnThis) {
 					n.outstandingDependencies--;
@@ -512,26 +523,39 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (buildIsCancelled) {
 				results.Result = BuildResultCode.Cancelled;
 				
-				ReportMessageInternal("${res:MainWindow.CompilerMessages.BuildCancelled}");
+				ReportMessageLine("${res:MainWindow.CompilerMessages.BuildCancelled}");
 			} else if (rootNode.hasErrors) {
 				results.Result = BuildResultCode.Error;
 				
-				ReportMessageInternal("${res:MainWindow.CompilerMessages.BuildFailed}" + buildTime);
-				//StatusBarService.SetMessage("${res:MainWindow.CompilerMessages.BuildFailed}");
+				ReportMessageLine("${res:MainWindow.CompilerMessages.BuildFailed}" + buildTime);
 			} else {
 				results.Result = BuildResultCode.Success;
 				
-				ReportMessageInternal("${res:MainWindow.CompilerMessages.BuildFinished}" + buildTime);
-				//StatusBarService.SetMessage("${res:MainWindow.CompilerMessages.BuildFinished}");
+				ReportMessageLine("${res:MainWindow.CompilerMessages.BuildFinished}" + buildTime);
 			}
-			if (progressMonitor != null) {
-				progressMonitor.Done();
-			}
+			cancellationRegistration.Dispose();
+			progressMonitor.Dispose();
+			ReportDone();
+		}
+		
+		/// <summary>
+		/// Notifies the callback hooks that the build is done.
+		/// </summary>
+		void ReportDone()
+		{
 			if (combinedBuildFeedbackSink != null) {
-				combinedBuildFeedbackSink.Done(results.Result == BuildResultCode.Success);
+				if (combinedBuildFeedbackSink is MessageViewSink) {
+					// Special case GUI-builds so that they have more information available:
+					// (non-GUI builds can get the same information from the options.Callback,
+					// but the GUI cannot use the callback because the build options are set by
+					// the code triggering the build)
+					((MessageViewSink)combinedBuildFeedbackSink).Done(rootProject, options, results);
+				} else {
+					combinedBuildFeedbackSink.Done(results.Result == BuildResultCode.Success);
+				}
 			}
 			if (options.Callback != null) {
-				Gui.WorkbenchSingleton.MainForm.BeginInvoke(options.Callback, results);
+				Gui.WorkbenchSingleton.SafeThreadAsyncCall(delegate { options.Callback(results); });
 			}
 		}
 		#endregion
@@ -539,14 +563,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		#region Cancel build
 		bool buildIsCancelled;
 		
-		void BuildCancelled(object sender, EventArgs e)
+		void BuildCancelled()
 		{
 			lock (this) {
 				if (buildIsDone)
 					return;
 				buildIsCancelled = true;
 			}
-			results.Add(new BuildError(null, "Build was cancelled."));
+			results.Add(new BuildError(null, StringParser.Parse("${res:MainWindow.CompilerMessages.BuildCancelled}")));
 		}
 		#endregion
 		
@@ -619,6 +643,11 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		void ReportMessageLine(string message)
+		{
+			ReportMessageInternal(StringParser.Parse(message));
+		}
+		
 		void ReportMessageInternal(string message)
 		{
 			if (combinedBuildFeedbackSink != null)
@@ -628,11 +657,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		void UpdateProgressTaskName()
 		{
 			lock (this) {
-				if (progressMonitor != null) {
-					progressMonitor.TaskName = "${res:MainWindow.CompilerMessages.BuildVerb} "
-						+ projectsCurrentlyBuilding.Select(n => n.project.Name).Join(", ")
-						+ "...";
-				}
+				progressMonitor.TaskName = StringParser.Parse("${res:MainWindow.CompilerMessages.BuildVerb} ")
+					+ string.Join(", ", projectsCurrentlyBuilding.Select(n => n.project.Name))
+					+ "...";
 			}
 		}
 		#endregion

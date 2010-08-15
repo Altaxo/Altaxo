@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1185 $</version>
+//     <version>$Revision: 6070 $</version>
 // </file>
 
 using System;
@@ -69,13 +69,12 @@ namespace ICSharpCode.Core
 			
 			public void Apply(IList items)
 			{
-				AddInTreeNode node;
-				try {
-					node = AddInTree.GetTreeNode(path);
+				AddInTreeNode node = AddInTree.GetTreeNode(path, false);
+				if (node != null) {
 					foreach (object o in node.BuildChildItems(caller)) {
 						items.Add(o);
 					}
-				} catch (TreePathNotFoundException) {
+				} else {
 					MessageService.ShowError("IncludeDoozer: AddinTree-Path not found: " + path);
 				}
 			}

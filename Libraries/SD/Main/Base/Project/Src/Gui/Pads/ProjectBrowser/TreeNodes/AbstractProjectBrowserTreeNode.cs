@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2973 $</version>
+//     <version>$Revision: 3485 $</version>
 // </file>
 
 using System;
@@ -92,7 +92,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public virtual void ShowProperties()
 		{
-			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(typeof(PropertyPad).FullName);
+			WorkbenchSingleton.Workbench.GetPad(typeof(PropertyPad)).BringPadToFront();
 		}
 		
 		public static bool IsSomewhereBelow(string path, ProjectItem item)

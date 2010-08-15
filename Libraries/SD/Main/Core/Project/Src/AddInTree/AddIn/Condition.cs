@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2085 $</version>
+//     <version>$Revision: 3805 $</version>
 // </file>
 
 using System;
@@ -53,14 +53,13 @@ namespace ICSharpCode.Core
 			action = properties.Get("action", ConditionFailedAction.Exclude);
 		}
 		
-		public bool IsValid(object caller)
+		public bool IsValid(object owner)
 		{
 			try {
-				return AddInTree.ConditionEvaluators[name].IsValid(caller, this);
+				return AddInTree.ConditionEvaluators[name].IsValid(owner, this);
 			} catch (KeyNotFoundException) {
 				throw new CoreException("Condition evaluator " + name + " not found!");
 			}
-
 		}
 		
 		public static ICondition Read(XmlReader reader)

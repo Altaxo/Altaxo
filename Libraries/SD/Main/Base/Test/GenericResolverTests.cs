@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3726 $</version>
+//     <version>$Revision: 3865 $</version>
 // </file>
 
 using System;
@@ -474,6 +474,25 @@ class D : Program  {
 			mrr = Resolve<MemberResolveResult>(program, "a.OfType<string>()", 4);
 			Assert.AreEqual("ExtensionMethods.OfType", mrr.ResolvedMember.FullyQualifiedName);
 			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.String}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SD2_1528()
+		{
+			string program = @"using System;
+	class TestClass {
+		static void Test(IRuleBuilder<TestClass, string> ruleBuilder) {
+			
+		}
+	}
+	delegate R Func<T, R>(T arg);
+	interface IRuleBuilder<T> { }
+	interface IRuleBuilder<T, P> : IRuleBuilder<T> { }
+	static class ExtensionMethods {
+		public static IRuleBuilderOptions<T, TProperty> LessThan<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder, Func<T, TProperty> valueToCompare) where TProperty: IComparable<TProperty> {}
+	}";
+			var rr = Resolve<LocalResolveResult>(program, "ruleBuilder", 4);
+			rr.GetCompletionData(rr.CallingClass.ProjectContent);
 		}
 		#endregion
 		

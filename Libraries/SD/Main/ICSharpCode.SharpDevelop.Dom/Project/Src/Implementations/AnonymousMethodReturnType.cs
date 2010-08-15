@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3009 $</version>
+//     <version>$Revision: 5444 $</version>
 // </file>
 
 using System;
@@ -46,6 +46,26 @@ namespace ICSharpCode.SharpDevelop.Dom
 			} else {
 				return null;
 			}
+		}
+		
+		public IReturnType ToDefaultDelegate()
+		{
+			IReturnType type = new GetClassReturnType(cu.ProjectContent, "System.Func", 0);
+			List<IReturnType> parameters = new List<IReturnType>();
+			
+			if (this.HasParameterList)
+				parameters = MethodParameters.Select(p => p.ReturnType ?? new GetClassReturnType(cu.ProjectContent, "System.Object", 0)).ToList();
+			
+			if (this.MethodReturnType != null && this.MethodReturnType.FullyQualifiedName == "System.Void")
+				type = new GetClassReturnType(cu.ProjectContent, "System.Action", 0);
+			else {
+				var rt = this.MethodReturnType;
+				if (rt == null)
+					rt = new GetClassReturnType(cu.ProjectContent, "System.Object", 0);
+				parameters.Add(rt);
+			}
+			
+			return new ConstructedReturnType(type, parameters);
 		}
 		
 		/// <summary>

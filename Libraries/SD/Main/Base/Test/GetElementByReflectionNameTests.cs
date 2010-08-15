@@ -2,21 +2,23 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3506 $</version>
+//     <version>$Revision: 4711 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
-using NUnit.Framework;
+
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Project;
+using NUnit.Framework;
 
 namespace ICSharpCode.SharpDevelop.Tests
 {
 	[TestFixture]
 	public class GetElementByReflectionNameTests
 	{
-		IProjectContent mscorlib = ParserService.DefaultProjectContentRegistry.Mscorlib;
+		IProjectContent mscorlib = AssemblyParserService.DefaultProjectContentRegistry.Mscorlib;
 		
 		void TestClass(Type type)
 		{
@@ -29,9 +31,15 @@ namespace ICSharpCode.SharpDevelop.Tests
 		public void TestClasses()
 		{
 			TestClass(typeof(object));
-			TestClass(typeof(Environment.SpecialFolder));
 			TestClass(typeof(Nullable));
 			TestClass(typeof(Nullable<>));
+		}
+		
+		[Test]
+		public void TestNestedClass()
+		{
+			TestClass(typeof(Environment.SpecialFolder));
+			TestClass(typeof(Dictionary<,>.ValueCollection));
 		}
 		
 		void TestMember(string className, string memberName)

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5992 $</version>
 // </file>
 
 using System;
@@ -56,9 +56,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			
 			IProjectContent content = c.ProjectContent;
 			if (content != null) {
-				int count = c.BaseTypes.Count;
-				for (int i = 0; i < count; i++) {
-					IReturnType baseType = c.GetBaseType(i);
+				foreach (var baseType in c.BaseTypes) {
 					IClass baseClass = (baseType != null) ? baseType.GetUnderlyingClass() : null;
 					if (baseClass != null) {
 						new ClassNode(project, baseClass).AddTo(this);

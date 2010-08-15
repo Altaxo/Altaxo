@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3408 $</version>
+//     <version>$Revision: 5888 $</version>
 // </file>
 
 using System;
@@ -14,30 +14,6 @@ namespace ICSharpCode.SharpDevelop
 {
 	public class SplashScreenForm : Form
 	{
-#if ModifiedForAltaxo
-		//public const string VersionText = "Altaxo 0.53 build " + RevisionClass.Revision;
-    public string VersionText
-    {
-      get
-      {
-        const string search1 = "=";
-        string[] vs = null;
-        System.Reflection.Assembly startass = System.Reflection.Assembly.GetExecutingAssembly();
-        int idx1 = startass.FullName.IndexOf(search1);
-        if(idx1>0)
-          vs = startass.FullName.Substring(idx1+search1.Length).Split(new char[]{'.',' ',','},5);
-
-        if (vs!=null && vs.Length>=4)
-          return "Altaxo " + vs[0] + '.' + vs[1] + " build " + vs[3];
-        else
-          return startass.FullName;
-      }
-    }
-
-#else
-		public const string VersionText = "SharpDevelop " + RevisionClass.FullVersion;
-#endif
-		
 		static SplashScreenForm splashScreen;
 		static List<string> requestedFileList = new List<string>();
 		static List<string> parameterList = new List<string>();
@@ -54,23 +30,42 @@ namespace ICSharpCode.SharpDevelop
 		
 		public SplashScreenForm()
 		{
+#if ModifiedForAltaxo
+      const string search1 = "=";
+      string[] vs = null;
+      System.Reflection.Assembly startass = System.Reflection.Assembly.GetExecutingAssembly();
+      int idx1 = startass.FullName.IndexOf(search1);
+      if (idx1 > 0)
+        vs = startass.FullName.Substring(idx1 + search1.Length).Split(new char[] { '.', ' ', ',' }, 5);
+
+      string versionText = (vs != null && vs.Length >= 4) ?
+        ("Altaxo " + vs[0] + '.' + vs[1] + " build " + vs[3]) : 
+        (startass.FullName);
+      #if DEBUG
+      versionText += " (debug)";
+			#endif
+#else
+			const string versionText = "SharpDevelop"
+				+ (RevisionClass.BranchName != null ? "-" + RevisionClass.BranchName : "")
+				+ " " + RevisionClass.FullVersion
+				#if DEBUG
+				+ " (debug)"
+				#endif
+				;
+#endif
+			
 			FormBorderStyle = FormBorderStyle.None;
 			StartPosition   = FormStartPosition.CenterScreen;
 			ShowInTaskbar   = false;
-			#if DEBUG
-			string versionText = VersionText + " (debug)";
-			#else
-			string versionText = VersionText;
-			#endif
 			// Stream must be kept open for the lifetime of the bitmap
 			bitmap = new Bitmap(typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Resources.SplashScreen.jpg"));
 			this.ClientSize = bitmap.Size;
 			using (Font font = new Font("Sans Serif", 4)) {
 				using (Graphics g = Graphics.FromImage(bitmap)) {
 #if ModifiedForAltaxo
-          g.DrawString(versionText, font, Brushes.Black, 124, 14);
+          g.DrawString(versionText, font, Brushes.Black, 230 - 3 * versionText.Length, 14);
 #else
-					g.DrawString(versionText, font, Brushes.Black, 100, 142);
+					g.DrawString(versionText, font, Brushes.Black, 166 - 3 * versionText.Length, 142);
 #endif
 				}
 			}
@@ -118,7 +113,12 @@ namespace ICSharpCode.SharpDevelop
 						markerLength = 2;
 					}
 					
-					parameterList.Add(arg.Substring(markerLength));
+					string param = arg.Substring(markerLength);
+					// work around .NET "feature" that causes trouble with /addindir:"c:\temp\"
+					// http://www.mobzystems.com/code/bugingetcommandlineargs.aspx
+					if (param.EndsWith("\"", StringComparison.Ordinal))
+						param = param.Substring(0, param.Length - 1) + "\\";
+					parameterList.Add(param);
 				} else {
 					requestedFileList.Add(arg);
 				}

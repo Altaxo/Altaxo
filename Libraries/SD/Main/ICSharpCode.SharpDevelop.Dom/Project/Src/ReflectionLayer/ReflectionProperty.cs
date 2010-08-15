@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2357 $</version>
+//     <version>$Revision: 5625 $</version>
 // </file>
 
 using System;
@@ -14,7 +14,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 	{
 		public ReflectionProperty(PropertyInfo propertyInfo, IClass declaringType) : base(declaringType, propertyInfo.Name)
 		{
-			this.ReturnType = ReflectionReturnType.Create(this, propertyInfo.PropertyType, false);
+			this.ReturnType = ReflectionReturnType.Create(this, propertyInfo.PropertyType, attributeProvider: propertyInfo);
 			
 			CanGet = propertyInfo.CanRead;
 			CanSet = propertyInfo.CanWrite;
@@ -34,16 +34,17 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 				}
 			}
 			
-			MethodInfo methodBase = null;
+			MethodInfo getterMethod = null;
 			try {
-				methodBase = propertyInfo.GetGetMethod(true);
+				getterMethod = propertyInfo.GetGetMethod(true);
 			} catch (Exception) {}
 			
-			if (methodBase == null) {
-				try {
-					methodBase = propertyInfo.GetSetMethod(true);
-				} catch (Exception) {}
-			}
+			MethodInfo setterMethod = null;
+			try {
+				setterMethod = propertyInfo.GetSetMethod(true);
+			} catch (Exception) {}
+			
+			MethodInfo methodBase = getterMethod ?? setterMethod;
 			
 			ModifierEnum modifiers  = ModifierEnum.None;
 			if (methodBase != null) {
@@ -65,19 +66,46 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 					modifiers |= ModifierEnum.Internal;
 				}
 				
-				if (methodBase.IsVirtual) {
-					modifiers |= ModifierEnum.Virtual;
-				}
-				if (methodBase.IsAbstract) {
-					modifiers |= ModifierEnum.Abstract;
-				}
 				if (methodBase.IsFinal) {
 					modifiers |= ModifierEnum.Sealed;
+				} else if (methodBase.IsAbstract) {
+					modifiers |= ModifierEnum.Abstract;
+				} else if (methodBase.IsVirtual) {
+					modifiers |= ModifierEnum.Virtual;
 				}
 			} else { // assume public property, if no methodBase could be get.
 				modifiers = ModifierEnum.Public;
 			}
 			this.Modifiers = modifiers;
+			if (getterMethod != null) {
+				ModifierEnum getterModifier = GetAccessorModifier(getterMethod);
+				if (getterModifier == ModifierEnum.Private) {
+					this.CanGet = false;
+				} else {
+					if (getterModifier != (modifiers & ModifierEnum.VisibilityMask))
+						this.GetterModifiers = getterModifier;
+				}
+			}
+			if (setterMethod != null) {
+				ModifierEnum setterModifier = GetAccessorModifier(setterMethod);
+				if (setterModifier == ModifierEnum.Private) {
+					this.CanSet = false;
+				} else {
+					if (setterModifier != (modifiers & ModifierEnum.VisibilityMask))
+						this.SetterModifiers = setterModifier;
+				}
+			}
+		}
+		
+		static ModifierEnum GetAccessorModifier(MethodInfo accessor)
+		{
+			if (accessor.IsPublic) {
+				return ModifierEnum.Public;
+			} else if (accessor.IsFamily || accessor.IsFamilyOrAssembly) {
+				return ModifierEnum.Protected;
+			} else {
+				return ModifierEnum.Private; // or internal, we don't care about that difference
+			}
 		}
 	}
 }

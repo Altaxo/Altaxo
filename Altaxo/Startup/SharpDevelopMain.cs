@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3559 $</version>
+//     <version>$Revision: 5695 $</version>
 // </file>
 
 using System;
@@ -32,28 +32,40 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		static bool UseExceptionBox {
+			get {
+				#if DEBUG
+				if (Debugger.IsAttached) return false;
+				#endif
+				foreach(string arg in commandLineArgs) {
+					if (arg.Contains("noExceptionBox")) return false;
+				}
+				return true;
+			}
+		}
+		
 		/// <summary>
 		/// Starts the core of SharpDevelop.
 		/// </summary>
 		[STAThread()]
 		public static void Main(string[] args)
 		{
-			#if DEBUG
-			if (Debugger.IsAttached) {
-				Run(args);
-				return;
-			}
-			#endif
+			commandLineArgs = args; // Needed by UseExceptionBox
+			
 			// Do not use LoggingService here (see comment in Run(string[]))
-			try {
-				Run(args);
-			} catch (Exception ex) {
+			if (UseExceptionBox) {
 				try {
-					HandleMainException(ex);
-				} catch (Exception loadError) {
-					// HandleMainException can throw error when log4net is not found
-					MessageBox.Show(loadError.ToString(), "Critical error (Logging service defect?)");
+					Run();
+				} catch (Exception ex) {
+					try {
+						HandleMainException(ex);
+					} catch (Exception loadError) {
+						// HandleMainException can throw error when log4net is not found
+						MessageBox.Show(loadError.ToString(), "Critical error (Logging service defect?)");
+					}
 				}
+			} else {
+				Run();
 			}
 		}
 		
@@ -67,7 +79,7 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		static void Run(string[] args)
+		static void Run()
 		{
 			// DO NOT USE LoggingService HERE!
 			// LoggingService requires ICSharpCode.Core.dll and log4net.dll
@@ -79,16 +91,18 @@ namespace ICSharpCode.SharpDevelop
 			#if DEBUG
 			Control.CheckForIllegalCrossThreadCalls = true;
 			#endif
-			commandLineArgs = args;
 			bool noLogo = false;
 			
 			Application.SetCompatibleTextRenderingDefault(false);
-			SplashScreenForm.SetCommandLineArgs(args);
+			SplashScreenForm.SetCommandLineArgs(commandLineArgs);
 			
 			foreach (string parameter in SplashScreenForm.GetParameterList()) {
 				if ("nologo".Equals(parameter, StringComparison.OrdinalIgnoreCase))
 					noLogo = true;
 			}
+			
+			if (!CheckEnvironment())
+				return;
 			
 			if (!noLogo) {
 				SplashScreenForm.ShowSplashScreen();
@@ -102,13 +116,39 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		static bool CheckEnvironment()
+		{
+			// Safety check: our setup already checks that .NET 4 is installed, but we manually check the .NET version in case SharpDevelop is
+			// used on another machine than it was installed on (e.g. "SharpDevelop on USB stick")
+			if (Environment.Version < new Version(4, 0, 30319)) {
+				MessageBox.Show("This version of SharpDevelop requires .NET 4.0. You are using: " + Environment.Version, "SharpDevelop");
+				return false;
+			}
+			return true;
+		}
+		
 		static void RunApplication()
 		{
+			// The output encoding differs based on whether SharpDevelop is a console app (debug mode)
+			// or Windows app (release mode). Because this flag also affects the default encoding
+			// when reading from other processes' standard output, we explicitly set the encoding to get
+			// consistent behaviour in debug and release builds of SharpDevelop.
+			
+			#if DEBUG
+			// Console apps use the system's OEM codepage, windows apps the ANSI codepage.
+			// We'll always use the Windows (ANSI) codepage.
+			try {
+				Console.OutputEncoding = System.Text.Encoding.Default;
+			} catch (IOException) {
+				// can happen if SharpDevelop doesn't have a console
+			}
+			#endif
+			
 			LoggingService.Info("Starting SharpDevelop...");
 			try {
 				StartupSettings startup = new StartupSettings();
 				#if DEBUG
-				startup.UseSharpDevelopErrorHandler = !Debugger.IsAttached;
+				startup.UseSharpDevelopErrorHandler = UseExceptionBox;
 				#endif
 				
 				Assembly exe = typeof(SharpDevelopMain).Assembly;
@@ -119,7 +159,7 @@ namespace ICSharpCode.SharpDevelop
 				if (String.IsNullOrEmpty(configDirectory)) {
 #if ModifiedForAltaxo
         startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                               "Altaxo\\Altaxo2");
+                                               "Altaxo\\Altaxo4");
         startup.ResourceAssemblyName = "AltaxoStartup";
 #else
 					startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -170,9 +210,9 @@ namespace ICSharpCode.SharpDevelop
 				};
 #if ModifiedForAltaxo
 				Altaxo.Main.Commands.AutostartCommand.EarlyRun();
-				Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
-				WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.SdiWorkbenchLayout());
-        Altaxo.Current.SetWorkbench((Altaxo.Gui.Common.IWorkbench)WorkbenchSingleton.Workbench);
+				var altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
+        Altaxo.Current.SetWorkbench(altaxoWb);
+        WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.AvalonDockLayout());
         new Altaxo.Main.Commands.AutostartCommand().Run();
 #endif
 				

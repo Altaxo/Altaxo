@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3702 $</version>
+//     <version>$Revision: 4735 $</version>
 // </file>
 
 using System;
@@ -23,7 +23,7 @@ namespace ICSharpCode.Core.WinForms
 				try {
 					menuCommand = (ICheckableMenuCommand)codon.AddIn.CreateObject(codon.Properties["class"]);
 				} catch (Exception e) {
-					MessageService.ShowError(e, "Can't create menu command : " + codon.Id);
+					MessageService.ShowException(e, "Can't create menu command : " + codon.Id);
 				}
 			}
 		}

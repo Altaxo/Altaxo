@@ -2,12 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5659 $</version>
 // </file>
 
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Markup;
 
 [assembly: CLSCompliant(true)]
 [assembly: StringFreezing()]
@@ -17,3 +19,11 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
+[assembly: ThemeInfo(
+    ResourceDictionaryLocation.SourceAssembly, //where theme specific resource dictionaries are located
+    ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
+)]
+
+[assembly: XmlnsPrefix("http://icsharpcode.net/sharpdevelop/widgets", "widgets")]
+[assembly: XmlnsDefinition("http://icsharpcode.net/sharpdevelop/widgets", "ICSharpCode.SharpDevelop.Widgets")]

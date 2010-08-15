@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2455 $</version>
+//     <version>$Revision: 4483 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,7 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class BuildEvents : AbstractProjectOptionPanel
+	public class BuildEvents : AbstractXmlFormsProjectOptionPanel
 	{
 		public override void LoadPanelContents()
 		{
@@ -19,15 +19,6 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			
 			InitializeHelper();
 			baseDirectory = Path.GetDirectoryName(project.OutputAssemblyFullPath);
-			
-			ConnectBrowseButton("preBuildEventBrowseButton",
-			                    "preBuildEventTextBox",
-			                    "${res:SharpDevelop.FileFilter.AllFiles}|*.*",
-			                    TextBoxEditMode.EditRawProperty);
-			ConnectBrowseButton("postBuildEventBrowseButton",
-			                    "postBuildEventTextBox",
-			                    "${res:SharpDevelop.FileFilter.AllFiles}|*.*",
-			                    TextBoxEditMode.EditRawProperty);
 			
 			ConfigurationGuiBinding b;
 			

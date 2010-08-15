@@ -116,12 +116,18 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="data\layouts\Debug.xml" />
+    <Content Include="data\layouts\Default.xml" />
+    <Content Include="data\layouts\LayoutConfig.xml" />
+    <Content Include="data\layouts\Plain.xml" />
     <Content Include="data\templates\project\AddInWritingHelp.txt" />
     <Content Include="data\templates\project\CSharp\DefaultAssemblyInfo.cs" />
     <Content Include="data\templates\file\CSharp\ConfigurationElement.cs" />
     <Content Include="data\templates\file\CSharp\ConfigurationElementCollection.cs" />
     <Content Include="data\templates\file\CSharp\ConfigurationSection.cs" />
     <Content Include="data\templates\project\CSharp\WPFAssemblyInfo.cs" />
+    <Content Include="data\templates\file\CSharp\RecentFileElement.cs" />
+    <Content Include="data\templates\file\CSharp\RecentFilesCollection.cs" />
     <Compile Include="HelpSetup.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -158,16 +164,8 @@
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Content Include="data\ConversionStyleSheets\CSharp_prjx2csproj.xsl" />
-    <Content Include="data\ConversionStyleSheets\CSharp_prjx2csproj_user.xsl" />
-    <Content Include="data\ConversionStyleSheets\vsnet2msbuild.xsl" />
-    <Content Include="data\ConversionStyleSheets\vsnet2msbuild_user.xsl" />
     <Content Include="data\resources\languages\catalonia.png" />
     <Content Include="data\resources\languages\turkey.png" />
-    <Content Include="data\resources\layouts\Debug.xml" />
-    <Content Include="data\resources\layouts\Default.xml" />
-    <Content Include="data\resources\layouts\LayoutConfig.xml" />
-    <Content Include="data\resources\layouts\Plain.xml" />
     <Content Include="data\resources\mathml\font-configuration-1-math-roman.xml" />
     <Content Include="data\resources\mathml\font-configuration-2-cm-stretchy.xml" />
     <Content Include="data\resources\mathml\font-configuration-3-times-new-roman.xml" />
@@ -181,7 +179,6 @@
     <Content Include="data\resources\mathml\cm-roman.ttf" />
     <Content Include="data\resources\mathml\cm-stretchy.ttf" />
     <Content Include="data\resources\mathml\math-roman.ttf" />
-    <Content Include="data\templates\file\CSharp\CSharp.Gtk.Window.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.Interface.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.Web.WebControl.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.Web.WebForm.xft" />
@@ -193,13 +190,10 @@
     <Content Include="data\templates\file\CSharp\CSharp.WPFUserControl.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.WPFWindow.xft" />
     <Content Include="data\templates\file\Misc\EmptyMsBuildFile.xft" />
-    <Content Include="data\templates\file\Misc\EmptyNAntBuildFile.xft" />
     <Content Include="data\templates\file\SharpDevelop\AddInOptions.xft" />
     <Content Include="data\templates\file\VBNet\VBNet.Interface.xft" />
     <Content Include="data\templates\file\VBNet\VBNet.Module.xft" />
     <Content Include="data\templates\file\VBNet\VBNet.MyExtensionClass.xft" />
-    <Content Include="data\templates\project\CSharp\GladeProject.xpt" />
-    <Content Include="data\templates\project\CSharp\GtkProject.xpt" />
     <Content Include="data\templates\project\CSharp\SharpDevelopAddin.xpt" />
     <Content Include="data\templates\project\CSharp\SharpDevelopCustomToolTemplate.xft.xml" />
     <Content Include="data\templates\project\CSharp\SharpDevelopMacro.xpt" />
@@ -210,14 +204,11 @@
     <Content Include="data\templates\project\VBNet\ProjectCategorySortOrder.xml" />
     <Content Include="data\templates\project\VBNet\SharpDevelopAddin.xpt" />
     <Content Include="data\templates\project\VBNet\SharpDevelopMacro.xpt" />
-    <Content Include="data\templates\file\VBNet\VBNet.Gtk.Window.xft" />
-    <Content Include="data\templates\project\VBNet\GtkProject.xpt" />
     <Content Include="data\schemas\wixloc.xsd">
       <SubType>
       </SubType>
     </Content>
     <Content Include="data\templates\file\CSharp\CSharp.Struct.xft" />
-    <Content Include="data\templates\project\CSharp\CompactFormsProject.xpt" />
     <Content Include="data\templates\project\CSharp\NotifyIcon.xpt" />
     <Content Include="data\templates\project\CSharp\SharedAddin.xpt" />
     <Content Include="data\templates\project\CSharp\WebService.xpt" />
@@ -226,10 +217,60 @@
     <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElementCollection.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.ConfigurationSection.xft" />
     <Content Include="data\templates\project\CSharp\SharpDevelopCustomTool.xpt" />
-    <Content Include="data\templates\project\VBNet\CompactFormsProject.xpt" />
     <Content Include="doc\help\AltaxoClassRef.chw" />
-    <Content Include="data\templates\file\Misc\EmptyReport.xft" />
     <Content Include="data\templates\file\Misc\AppConfigFile.xft" />
+    <None Include="data\schemas\complus.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\difxapp.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\firewall.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\gaming.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\iis.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\msmq.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\netfx.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\ps.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\sql.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\util.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\vs.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\schemas\xml.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="data\templates\file\VBNet\VBNet.Structure.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Web.WebControl.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Web.WebForm.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Web.WebHandler.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Web.WebService.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.WPFFlowDocument.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.WPFPage.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.WPFPageFunction.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.WPFResourceDictionary.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.WPFUserControl.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.WPFWindow.xft" />
+    <Content Include="data\templates\project\CSharp\SilverlightApplication.xpt" />
+    <Content Include="data\templates\file\VBNet\VBNet.Exception.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Exception.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.RecentFilesCollection.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Web.WebHandler.xft" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.no.resources" />
     <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
@@ -241,9 +282,7 @@
       <DependentUpon>HelpSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="data\ConversionStyleSheets\ShowChangeLog.xsl" />
     <Content Include="data\ConversionStyleSheets\ShowXmlDocumentation.xsl" />
-    <Content Include="data\ConversionStyleSheets\SVNChangelogToXml.xsl" />
     <Content Include="data\modes\C64CSharp.xshd" />
     <Content Include="data\modes\CSharp-Mode-VSEnh.xshd" />
     <Content Include="data\options\SharpDevelopControlLibrary.sdcl" />
@@ -257,8 +296,6 @@
     <Content Include="data\options\TextLib\XSLT.xml" />
     <Content Include="data\resources\AltaxoBitmap.resources" />
     <Content Include="data\resources\AltaxoString.resources" />
-    <Content Include="data\resources\css\MsdnHelp.css" />
-    <Content Include="data\resources\css\SharpDevelopStandard.css" />
     <Content Include="data\resources\InstallerBitmaps\default-banner.bmp" />
     <Content Include="data\resources\InstallerBitmaps\default-dialog.bmp" />
     <Content Include="data\resources\InstallerBitmaps\exclamic.bmp" />
@@ -266,7 +303,6 @@
     <Content Include="data\resources\InstallerBitmaps\new.bmp" />
     <Content Include="data\resources\InstallerBitmaps\up.bmp" />
     <Content Include="data\resources\languages\Arabic.png" />
-    <Content Include="data\resources\languages\badgoisern.png" />
     <Content Include="data\resources\languages\brazil.png" />
     <Content Include="data\resources\languages\bulgaria.png" />
     <Content Include="data\resources\languages\chinalg.png" />
@@ -295,28 +331,6 @@
     <Content Include="data\resources\languages\sweden.png" />
     <Content Include="data\resources\languages\uk.png" />
     <Content Include="data\resources\languages\usa.png" />
-    <Content Include="data\resources\startpage\Layout\blue\balken_links.gif" />
-    <Content Include="data\resources\startpage\Layout\blue\balken_mitte.gif" />
-    <Content Include="data\resources\startpage\Layout\blue\balken_rechts.gif" />
-    <Content Include="data\resources\startpage\Layout\brown\balken_links.gif" />
-    <Content Include="data\resources\startpage\Layout\brown\balken_mitte.gif" />
-    <Content Include="data\resources\startpage\Layout\brown\balken_rechts.gif" />
-    <Content Include="data\resources\startpage\Layout\common\blind.gif" />
-    <Content Include="data\resources\startpage\Layout\common\dot_listing.gif" />
-    <Content Include="data\resources\startpage\Layout\common\klinker_milestone.gif" />
-    <Content Include="data\resources\startpage\Layout\common\line_hor_black.gif" />
-    <Content Include="data\resources\startpage\Layout\common\milestone_col_head.gif" />
-    <Content Include="data\resources\startpage\Layout\common\pixel_weiss.gif" />
-    <Content Include="data\resources\startpage\Layout\default.css" />
-    <Content Include="data\resources\startpage\Layout\green\balken_links.gif" />
-    <Content Include="data\resources\startpage\Layout\green\balken_mitte.gif" />
-    <Content Include="data\resources\startpage\Layout\green\balken_rechts.gif" />
-    <Content Include="data\resources\startpage\Layout\orange\balken_links.gif" />
-    <Content Include="data\resources\startpage\Layout\orange\balken_mitte.gif" />
-    <Content Include="data\resources\startpage\Layout\orange\balken_rechts.gif" />
-    <Content Include="data\resources\startpage\Layout\red\balken_links.gif" />
-    <Content Include="data\resources\startpage\Layout\red\balken_mitte.gif" />
-    <Content Include="data\resources\startpage\Layout\red\balken_rechts.gif" />
     <Content Include="data\resources\StringResources.cz.resources" />
     <Content Include="data\resources\StringResources.de.resources" />
     <Content Include="data\resources\StringResources.es.resources" />
@@ -394,44 +408,6 @@
     <Content Include="data\templates\project\VBNet\FormsProject.xpt" />
     <Content Include="data\templates\project\VBNet\Library.xpt" />
     <Content Include="data\templates\project\VBNet\Service.xpt" />
-    <Content Include="doc\AddIns\AddIn.html" />
-    <Content Include="doc\AddIns\AddIn_p1.png" />
-    <Content Include="doc\AddIns\AddIn_p10.png" />
-    <Content Include="doc\AddIns\AddIn_p11.png" />
-    <Content Include="doc\AddIns\AddIn_p12.png" />
-    <Content Include="doc\AddIns\AddIn_p13.png" />
-    <Content Include="doc\AddIns\AddIn_p14.png" />
-    <Content Include="doc\AddIns\AddIn_p15.png" />
-    <Content Include="doc\AddIns\AddIn_p16.png" />
-    <Content Include="doc\AddIns\AddIn_p17.png" />
-    <Content Include="doc\AddIns\AddIn_p18.png" />
-    <Content Include="doc\AddIns\AddIn_p19.png" />
-    <Content Include="doc\AddIns\AddIn_p2.png" />
-    <Content Include="doc\AddIns\AddIn_p20.png" />
-    <Content Include="doc\AddIns\AddIn_p21.png" />
-    <Content Include="doc\AddIns\AddIn_p22.png" />
-    <Content Include="doc\AddIns\AddIn_p23.png" />
-    <Content Include="doc\AddIns\AddIn_p24.png" />
-    <Content Include="doc\AddIns\AddIn_p25.png" />
-    <Content Include="doc\AddIns\AddIn_p26.png" />
-    <Content Include="doc\AddIns\AddIn_p27.png" />
-    <Content Include="doc\AddIns\AddIn_p28.png" />
-    <Content Include="doc\AddIns\AddIn_p29.png" />
-    <Content Include="doc\AddIns\AddIn_p3.png" />
-    <Content Include="doc\AddIns\AddIn_p30.png" />
-    <Content Include="doc\AddIns\AddIn_p31.png" />
-    <Content Include="doc\AddIns\AddIn_p32.png" />
-    <Content Include="doc\AddIns\AddIn_p33.png" />
-    <Content Include="doc\AddIns\AddIn_p34.png" />
-    <Content Include="doc\AddIns\AddIn_p35.png" />
-    <Content Include="doc\AddIns\AddIn_p36.png" />
-    <Content Include="doc\AddIns\AddIn_p37.png" />
-    <Content Include="doc\AddIns\AddIn_p4.png" />
-    <Content Include="doc\AddIns\AddIn_p5.png" />
-    <Content Include="doc\AddIns\AddIn_p6.png" />
-    <Content Include="doc\AddIns\AddIn_p7.png" />
-    <Content Include="doc\AddIns\AddIn_p8.png" />
-    <Content Include="doc\AddIns\AddIn_p9.png" />
     <Content Include="doc\BuiltWithSharpDevelop.png" />
     <Content Include="doc\ChangeLog.xml" />
     <Content Include="doc\CodingStyleGuide.pdf" />
@@ -464,6 +440,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\options\WpfToolbox.xaml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

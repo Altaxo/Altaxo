@@ -38,27 +38,27 @@ namespace Altaxo.Graph.GUI
   public class GraphView : System.Windows.Forms.UserControl, 
 		Altaxo.Gui.Graph.Viewing.IGraphView
   {
-    private System.Windows.Forms.ImageList m_GraphToolsImages;
-    private System.Windows.Forms.ImageList m_LayerButtonImages;
-    private System.Windows.Forms.ToolBar m_LayerToolbar;
-    private GraphPanel m_GraphPanel;
+    private System.Windows.Forms.ImageList _graphToolsImages;
+    private System.Windows.Forms.ImageList _layerButtonImages;
+    private System.Windows.Forms.ToolBar _layerToolbar;
+    private GraphPanel _graphPanel;
     // private System.Windows.Forms.TextBox m_TextBox;
     private System.ComponentModel.IContainer components;
     private Altaxo.Graph.GUI.WinFormsGraphController _winFormsController;
 		private Altaxo.Gui.Graph.Viewing.GraphController _controller;
 		
     [Browsable(false)]
-    private MainMenu m_Menu;
+    private MainMenu _mainMenu;
 
     [Browsable(false)]
-    private ToolBar m_GraphToolsToolBar=null;
+    private ToolBar _graphToolsToolBar=null;
 		private VScrollBar _verticalScrollBar;
 		private HScrollBar _horizontalScrollBar;
 
    
 
     [Browsable(false)]
-    private int        m_CachedCurrentLayer = -1;
+    private int        _cachedCurrentLayer = -1;
 
 
     public GraphView()
@@ -72,6 +72,8 @@ namespace Altaxo.Graph.GUI
       InitializeComponent();
 
 			_winFormsController = new WinFormsGraphController(this);
+
+			
     }
 
     /// <summary>
@@ -98,40 +100,40 @@ namespace Altaxo.Graph.GUI
     {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GraphView));
-			this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
-			this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
-			this.m_LayerToolbar = new System.Windows.Forms.ToolBar();
+			this._graphToolsImages = new System.Windows.Forms.ImageList(this.components);
+			this._layerButtonImages = new System.Windows.Forms.ImageList(this.components);
+			this._layerToolbar = new System.Windows.Forms.ToolBar();
 			this._verticalScrollBar = new System.Windows.Forms.VScrollBar();
 			this._horizontalScrollBar = new System.Windows.Forms.HScrollBar();
-			this.m_GraphPanel = new Altaxo.Graph.GUI.GraphPanel();
+			this._graphPanel = new Altaxo.Graph.GUI.GraphPanel();
 			this.SuspendLayout();
 			// 
 			// m_GraphToolsImages
 			// 
-			this.m_GraphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
-			this.m_GraphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
-			this.m_GraphToolsImages.Images.SetKeyName(0, "");
-			this.m_GraphToolsImages.Images.SetKeyName(1, "");
+			this._graphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
+			this._graphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
+			this._graphToolsImages.Images.SetKeyName(0, "");
+			this._graphToolsImages.Images.SetKeyName(1, "");
 			// 
 			// m_LayerButtonImages
 			// 
-			this.m_LayerButtonImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-			this.m_LayerButtonImages.ImageSize = new System.Drawing.Size(1, 1);
-			this.m_LayerButtonImages.TransparentColor = System.Drawing.Color.Transparent;
+			this._layerButtonImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this._layerButtonImages.ImageSize = new System.Drawing.Size(1, 1);
+			this._layerButtonImages.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// m_LayerToolbar
 			// 
-			this.m_LayerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
-			this.m_LayerToolbar.Dock = System.Windows.Forms.DockStyle.Left;
-			this.m_LayerToolbar.DropDownArrows = true;
-			this.m_LayerToolbar.ImageList = this.m_LayerButtonImages;
-			this.m_LayerToolbar.Location = new System.Drawing.Point(0, 0);
-			this.m_LayerToolbar.Name = "m_LayerToolbar";
-			this.m_LayerToolbar.ShowToolTips = true;
-			this.m_LayerToolbar.Size = new System.Drawing.Size(22, 311);
-			this.m_LayerToolbar.TabIndex = 0;
-			this.m_LayerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhLayerToolbar_ButtonClick);
-			this.m_LayerToolbar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhLayerToolbar_MouseDown);
+			this._layerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
+			this._layerToolbar.Dock = System.Windows.Forms.DockStyle.Left;
+			this._layerToolbar.DropDownArrows = true;
+			this._layerToolbar.ImageList = this._layerButtonImages;
+			this._layerToolbar.Location = new System.Drawing.Point(0, 0);
+			this._layerToolbar.Name = "m_LayerToolbar";
+			this._layerToolbar.ShowToolTips = true;
+			this._layerToolbar.Size = new System.Drawing.Size(22, 311);
+			this._layerToolbar.TabIndex = 0;
+			this._layerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhLayerToolbar_ButtonClick);
+			this._layerToolbar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhLayerToolbar_MouseDown);
 			// 
 			// _verticalScrollBar
 			// 
@@ -158,25 +160,25 @@ namespace Altaxo.Graph.GUI
 			// 
 			// m_GraphPanel
 			// 
-			this.m_GraphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_GraphPanel.Location = new System.Drawing.Point(22, 0);
-			this.m_GraphPanel.Name = "m_GraphPanel";
-			this.m_GraphPanel.Size = new System.Drawing.Size(312, 311);
-			this.m_GraphPanel.TabIndex = 3;
-			this.m_GraphPanel.DoubleClick += new System.EventHandler(this.EhGraphPanel_DoubleClick);
-			this.m_GraphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.EhGraphPanel_Paint);
-			this.m_GraphPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseMove);
-			this.m_GraphPanel.Click += new System.EventHandler(this.EhGraphPanel_Click);
-			this.m_GraphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseDown);
-			this.m_GraphPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseUp);
-			this.m_GraphPanel.SizeChanged += new System.EventHandler(this.EhGraphPanel_SizeChanged);
+			this._graphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._graphPanel.Location = new System.Drawing.Point(22, 0);
+			this._graphPanel.Name = "m_GraphPanel";
+			this._graphPanel.Size = new System.Drawing.Size(312, 311);
+			this._graphPanel.TabIndex = 3;
+			this._graphPanel.DoubleClick += new System.EventHandler(this.EhGraphPanel_DoubleClick);
+			this._graphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.EhGraphPanel_Paint);
+			this._graphPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseMove);
+			this._graphPanel.Click += new System.EventHandler(this.EhGraphPanel_Click);
+			this._graphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseDown);
+			this._graphPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseUp);
+			this._graphPanel.SizeChanged += new System.EventHandler(this.EhGraphPanel_SizeChanged);
 			// 
 			// GraphView
 			// 
 			this.Controls.Add(this._horizontalScrollBar);
 			this.Controls.Add(this._verticalScrollBar);
-			this.Controls.Add(this.m_GraphPanel);
-			this.Controls.Add(this.m_LayerToolbar);
+			this.Controls.Add(this._graphPanel);
+			this.Controls.Add(this._layerToolbar);
 			this.Name = "GraphView";
 			this.Size = new System.Drawing.Size(334, 311);
 			this.ResumeLayout(false);
@@ -227,9 +229,9 @@ namespace Altaxo.Graph.GUI
         if(e.Button == MouseButtons.Right)
         {
           Point pt = new Point(e.X,e.Y);
-          for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
+          for(int i=0;i<_layerToolbar.Buttons.Count;i++)
           {
-            if(m_LayerToolbar.Buttons[i].Rectangle.Contains(pt))
+            if(_layerToolbar.Buttons[i].Rectangle.Contains(pt))
             {
               _controller.EhView_ShowDataContextMenu(i, this, pt);
               return;
@@ -299,8 +301,8 @@ namespace Altaxo.Graph.GUI
 
     public void OnViewDeselection()
     {
-      if(null!=m_GraphToolsToolBar)
-        m_GraphToolsToolBar.Parent=null;
+      if(null!=_graphToolsToolBar)
+        _graphToolsToolBar.Parent=null;
     }
 
   
@@ -312,7 +314,7 @@ namespace Altaxo.Graph.GUI
     {
       set
       {
-        m_Menu = value;
+        _mainMenu = value;
       }
     }
 
@@ -322,13 +324,13 @@ namespace Altaxo.Graph.GUI
     /// <returns>The graphics context.</returns>
     public Graphics CreateGraphGraphics()
     {
-      return this.m_GraphPanel.CreateGraphics();
+      return this._graphPanel.CreateGraphics();
     }
 
 
     public void InvalidateGraph()
     {
-      this.m_GraphPanel.Invalidate();
+      this._graphPanel.Invalidate();
     }
 
 
@@ -373,7 +375,7 @@ namespace Altaxo.Graph.GUI
     {
       get
       {
-        return this.m_GraphPanel.Size;
+        return this._graphPanel.Size;
       }
     }
    
@@ -382,9 +384,9 @@ namespace Altaxo.Graph.GUI
     {
       set
       {
-        m_CachedCurrentLayer = value;
-        for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
-          m_LayerToolbar.Buttons[i].Pushed = (i==m_CachedCurrentLayer);
+        _cachedCurrentLayer = value;
+        for(int i=0;i<_layerToolbar.Buttons.Count;i++)
+          _layerToolbar.Buttons[i].Pushed = (i==_cachedCurrentLayer);
       }
     }
 
@@ -393,25 +395,25 @@ namespace Altaxo.Graph.GUI
     {
       set
       {
-        int nNumButtons = m_LayerToolbar.Buttons.Count;
+        int nNumButtons = _layerToolbar.Buttons.Count;
 
         if(value > nNumButtons)
         {
 					for (int i = nNumButtons; i < value; i++)
 					{
 						var newbutton = new ToolBarButton(i.ToString());
-						m_LayerToolbar.Buttons.Add(newbutton);
+						_layerToolbar.Buttons.Add(newbutton);
 					}
         }
         else if(nNumButtons > value)
         {
           for(int i=nNumButtons-1;i>=value;i--)
-            m_LayerToolbar.Buttons.RemoveAt(i);
+            _layerToolbar.Buttons.RemoveAt(i);
         }
 
         // now press the currently active layer button
-        for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
-          m_LayerToolbar.Buttons[i].Pushed = (i==m_CachedCurrentLayer);
+        for(int i=0;i<_layerToolbar.Buttons.Count;i++)
+          _layerToolbar.Buttons[i].Pushed = (i==_cachedCurrentLayer);
       }
     }
 
@@ -438,7 +440,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="cursor">The cursor showing in the graph panel.</param>
     public void SetPanelCursor(Cursor cursor)
     {
-      this.m_GraphPanel.Cursor = cursor;
+      this._graphPanel.Cursor = cursor;
     }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -451,6 +453,11 @@ namespace Altaxo.Graph.GUI
       //      System.Diagnostics.Trace.WriteLine("GraphView CmdKey pressed");
       return base.ProcessCmdKey (ref msg, keyData);
     }
+
+		protected override void OnKeyPress(KeyPressEventArgs e)
+		{
+			base.OnKeyPress(e);
+		}
 
 		private void EhVerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
 		{
@@ -518,13 +525,13 @@ namespace Altaxo.Graph.GUI
 			get
 			{
 				float dpix, dpiy;
-				using (Graphics grfx = m_GraphPanel.CreateGraphics())
+				using (Graphics grfx = _graphPanel.CreateGraphics())
 				{
 					dpix = grfx.DpiX;
 					dpiy = grfx.DpiY;
 				}
 
-				return new SizeF(m_GraphPanel.Width/dpix, m_GraphPanel.Height/dpiy);
+				return new SizeF(_graphPanel.Width/dpix, _graphPanel.Height/dpiy);
 			}
 		}
 

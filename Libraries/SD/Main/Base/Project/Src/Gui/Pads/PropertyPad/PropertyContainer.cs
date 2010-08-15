@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2663 $</version>
+//     <version>$Revision: 3485 $</version>
 // </file>
 
 using System;
@@ -105,13 +105,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		Control propertyGridReplacementControl;
+		object propertyGridReplacementContent;
 		
-		public Control PropertyGridReplacementControl {
-			get { return propertyGridReplacementControl; }
+		public object PropertyGridReplacementContent {
+			get { return propertyGridReplacementContent; }
 			set {
-				propertyGridReplacementControl = value;
-				PropertyPad.UpdatePropertyGridReplacementControl(this);
+				propertyGridReplacementContent = value;
+				PropertyPad.UpdatePropertyGridReplacementContent(this);
 			}
 		}
 		
@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			Host = null;
 			SelectableObjects = null;
 			SelectedObject = null;
-			PropertyGridReplacementControl = null;
+			PropertyGridReplacementContent = null;
 		}
 	}
 }

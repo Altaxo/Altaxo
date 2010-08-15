@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2702 $</version>
+//     <version>$Revision: 5625 $</version>
 // </file>
 
 using System;
@@ -30,7 +30,8 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 			: base(declaringType, methodBase is ConstructorInfo ? "#ctor" : methodBase.Name)
 		{
 			if (methodBase is MethodInfo) {
-				this.ReturnType = ReflectionReturnType.Create(this, ((MethodInfo)methodBase).ReturnType, false);
+				MethodInfo m = ((MethodInfo)methodBase);
+				this.ReturnType = ReflectionReturnType.Create(this, m.ReturnType, attributeProvider: m.ReturnTypeCustomAttributes);
 			} else if (methodBase is ConstructorInfo) {
 				this.ReturnType = DeclaringType.DefaultReturnType;
 			}
@@ -63,15 +64,14 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 				modifiers |= ModifierEnum.Internal;
 			}
 			
-			if (methodBase.IsVirtual) {
-				modifiers |= ModifierEnum.Virtual;
-			}
-			if (methodBase.IsAbstract) {
-				modifiers |= ModifierEnum.Abstract;
-			}
 			if (methodBase.IsFinal) {
 				modifiers |= ModifierEnum.Sealed;
+			} else if (methodBase.IsAbstract) {
+				modifiers |= ModifierEnum.Abstract;
+			} else if (methodBase.IsVirtual) {
+				modifiers |= ModifierEnum.Virtual;
 			}
+			
 			this.Modifiers = modifiers;
 			
 			ReflectionClass.AddAttributes(declaringType.ProjectContent, this.Attributes, CustomAttributeData.GetCustomAttributes(methodBase));

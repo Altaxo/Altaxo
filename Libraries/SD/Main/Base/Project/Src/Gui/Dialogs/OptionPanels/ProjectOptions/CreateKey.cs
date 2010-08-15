@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3119 $</version>
+//     <version>$Revision: 6069 $</version>
 // </file>
 
 using System;
@@ -71,7 +71,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		{
 			if (File.Exists(keyPath)) {
 				string question = "${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.OverwriteQuestion}";
-				question = StringParser.Parse(question, new string[,] {{"fileName", keyPath}});
+				question = StringParser.Parse(question, new string[,] {{"fileNames", keyPath}});
 				if (!MessageService.AskQuestion(question, "${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.OverwriteQuestion.InfoName}")) {
 					return false;
 				}

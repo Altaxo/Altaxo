@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 3586 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,7 @@ using RadioBinding = System.Collections.Generic.KeyValuePair<ICSharpCode.SharpDe
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class DebugOptions : AbstractProjectOptionPanel
+	public class DebugOptions : AbstractXmlFormsProjectOptionPanel
 	{
 		public override void LoadPanelContents()
 		{

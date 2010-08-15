@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3660 $</version>
+//     <version>$Revision: 5450 $</version>
 // </file>
 
 using System;
@@ -112,11 +112,21 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 			IMethod currentMethod = resolver.CallingMember as IMethod;
 			CreateInterfaceImplementations(currentMethod, methodDeclaration, methodDeclaration.InterfaceImplementations);
+			// Make "Main" public
 			if (currentMethod != null && currentMethod.Name == "Main") {
 				if (currentMethod.DeclaringType.FullyQualifiedName == StartupObjectToMakePublic) {
 					if (currentMethod.IsStatic && currentMethod.IsPrivate) {
 						methodDeclaration.Modifier &= ~Modifiers.Private;
 						methodDeclaration.Modifier |= Modifiers.Internal;
+					}
+				}
+			}
+			if (resolver.CallingClass != null && resolver.CallingClass.BaseType != null) {
+				// methods with the same name as a method in a base class must have 'Overloads'
+				if ((methodDeclaration.Modifier & (Modifiers.Override | Modifiers.New)) == Modifiers.None) {
+					if (resolver.CallingClass.BaseType.GetMethods()
+					    .Any(m => string.Equals(m.Name, methodDeclaration.Name, StringComparison.OrdinalIgnoreCase))) {
+						methodDeclaration.Modifier |= Modifiers.Overloads;
 					}
 				}
 			}
@@ -331,6 +341,19 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return false;
 		}
 		
+		bool IsFloatingPoint(IReturnType rt)
+		{
+			if (rt != null && rt.IsDefaultReturnType) {
+				switch (rt.FullyQualifiedName) {
+					case "System.Single":
+					case "System.Double":
+					case "System.Decimal":
+						return true;
+				}
+			}
+			return false;
+		}
+		
 		bool NeedsExplicitConversionToString(IReturnType rt)
 		{
 			if (rt != null) {
@@ -441,21 +464,36 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (resolver.CompilationUnit == null)
 				return null;
 			
+			IReturnType targetType = ResolveType(castExpression.CastTo);
+			IClass targetClass = targetType != null ? targetType.GetUnderlyingClass() : null;
 			if (castExpression.CastType != CastType.TryCast) {
-				IReturnType targetType = ResolveType(castExpression.CastTo);
-				if (targetType != null) {
-					IClass targetClass = targetType.GetUnderlyingClass();
-					if (targetClass != null && (targetClass.ClassType == ClassType.Struct || targetClass.ClassType == ClassType.Enum)) {
-						// cast to value type is a conversion
-						castExpression.CastType = CastType.Conversion;
-					}
-					if (targetClass != null && targetClass.FullyQualifiedName == "System.Char") {
-						// C# cast to char is done using ChrW function
+				if (targetClass != null && (targetClass.ClassType == ClassType.Struct || targetClass.ClassType == ClassType.Enum)) {
+					// cast to value type is a conversion
+					castExpression.CastType = CastType.Conversion;
+					if (IsInteger(targetType)) {
 						ResolveResult sourceRR = resolver.ResolveInternal(castExpression.Expression, ExpressionContext.Default);
 						IReturnType sourceType = sourceRR != null ? sourceRR.ResolvedType : null;
-						if (IsInteger(sourceType)) {
-							ReplaceCurrentNode(new IdentifierExpression("ChrW").Call(castExpression.Expression));
+						if (IsFloatingPoint(sourceType)) {
+							// casts from float to int in C# truncate, but VB rounds
+							// we'll have to introduce a call to Math.Truncate
+							castExpression.Expression = ExpressionBuilder.Identifier("Math").Call("Truncate", castExpression.Expression);
+						} else if (sourceType != null && sourceType.FullyQualifiedName == "System.Char") {
+							// casts from char to int are valid in C#, but need to use AscW in VB
+							castExpression.Expression = ExpressionBuilder.Identifier("AscW").Call(castExpression.Expression);
+							if (targetType != null && targetType.FullyQualifiedName == "System.Int32") {
+								// AscW already returns int, so skip the cast
+								ReplaceCurrentNode(castExpression.Expression);
+								return null;
+							}
 						}
+					}
+				}
+				if (targetClass != null && targetClass.FullyQualifiedName == "System.Char") {
+					// C# cast to char is done using ChrW function
+					ResolveResult sourceRR = resolver.ResolveInternal(castExpression.Expression, ExpressionContext.Default);
+					IReturnType sourceType = sourceRR != null ? sourceRR.ResolvedType : null;
+					if (IsInteger(sourceType)) {
+						ReplaceCurrentNode(new IdentifierExpression("ChrW").Call(castExpression.Expression));
 					}
 				}
 			}

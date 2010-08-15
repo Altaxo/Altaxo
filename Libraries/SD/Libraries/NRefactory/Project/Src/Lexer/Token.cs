@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3715 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -60,11 +60,11 @@ namespace ICSharpCode.NRefactory.Parser
 			}
 		}
 		
-		public Token(int kind) : this(kind, 0, 0)
+		public Token(int kind, int col, int line) : this (kind, col, line, null)
 		{
 		}
 		
-		public Token(int kind, int col, int line) : this (kind, col, line, null)
+		public Token(int kind, Location startLocation, Location endLocation) : this(kind, startLocation, endLocation, "", null, LiteralFormat.None)
 		{
 		}
 		
@@ -74,7 +74,7 @@ namespace ICSharpCode.NRefactory.Parser
 			this.col          = col;
 			this.line         = line;
 			this.val          = val;
-			this.endLocation  = new Location(col + (string.IsNullOrEmpty(val) ? 1 : val.Length), line);
+			this.endLocation  = new Location(col + (val == null ? 1 : val.Length), line);
 		}
 		
 		internal Token(int kind, int x, int y, string val, object literalValue, LiteralFormat literalFormat)
@@ -95,11 +95,22 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public override string ToString()
 		{
-			return string.Format("[C# {0}/VB {1} Location={3} EndLocation={4} val={5}]",
-			                     CSharp.Tokens.GetTokenString(kind),
-			                     VB.Tokens.GetTokenString(kind),
-			                     Location, EndLocation, val);
+			string csharpToken, vbToken;
 			
+			try {
+				csharpToken = CSharp.Tokens.GetTokenString(kind);
+			} catch (NotSupportedException) {
+				csharpToken = "<unknown>";
+			}
+			
+			try {
+				vbToken = VB.Tokens.GetTokenString(kind);
+			} catch (NotSupportedException) {
+				vbToken = "<unknown>";
+			}
+			
+			return string.Format("[C# {0}/VB {1} Location={2} EndLocation={3} val={4}]",
+			                     csharpToken, vbToken, Location, EndLocation, val);
 		}
 	}
 }

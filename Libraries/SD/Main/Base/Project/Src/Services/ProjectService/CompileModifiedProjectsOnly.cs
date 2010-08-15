@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald"/>
-//     <version>$Revision$</version>
+//     <author name="Daniel Grunwald"/>
+//     <version>$Revision: 5854 $</version>
 // </file>
 
 using System;
@@ -45,7 +45,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			ProjectService.SolutionClosed += MarkAllForRecompilation;
 			ProjectService.SolutionConfigurationChanged += MarkAllForRecompilation;
 			ProjectService.SolutionSaved += MarkAllForRecompilation;
-			ProjectService.EndBuild += ProjectService_EndBuild;
+			ProjectService.BuildFinished += ProjectService_BuildFinished;
 			
 			FileUtility.FileSaved += OnFileSaved;
 		}
@@ -55,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			// first call to init causes static ctor calls
 		}
 		
-		static void ProjectService_EndBuild(object sender, BuildEventArgs e)
+		static void ProjectService_BuildFinished(object sender, BuildEventArgs e)
 		{
 			// at the end of an successful build, mark all built projects as unmodified
 			if (e.Results.Result == BuildResultCode.Success) {
@@ -67,6 +67,12 @@ namespace ICSharpCode.SharpDevelop.Project
 							unmodifiedProjects[p] = pass;
 						}
 					}
+				}
+			}
+			// at the end of a cleaning build, mark all projects as requiring a rebuild
+			if (e.Options.ProjectTarget == BuildTarget.Clean || e.Options.TargetForDependencies == BuildTarget.Clean) {
+				lock (unmodifiedProjects) {
+					unmodifiedProjects.Clear();
 				}
 			}
 		}
@@ -89,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			if (ProjectService.OpenSolution != null) {
 				foreach (IProject p in ProjectService.OpenSolution.Projects) {
-					if (p.FindFile(e.FileName) != null) {
+					if (p.FindFile(e.FileName) != null || FileUtility.IsEqualFileName(p.FileName, e.FileName)) {
 						lock (unmodifiedProjects) {
 							unmodifiedProjects.Remove(p);
 						}
@@ -133,6 +139,11 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			public Solution ParentSolution {
 				get { return wrappedBuildable.ParentSolution; }
+			}
+			
+			public ProjectBuildOptions CreateProjectBuildOptions(BuildOptions options, bool isRootBuildable)
+			{
+				return null;
 			}
 			
 			public ICollection<IBuildable> GetBuildDependencies(ProjectBuildOptions buildOptions)
@@ -197,8 +208,14 @@ namespace ICSharpCode.SharpDevelop.Project
 				get { return wrapped.ParentSolution; }
 			}
 			
-			Dictionary<ProjectBuildOptions, ICollection<IBuildable>> cachedBuildDependencies = new Dictionary<ProjectBuildOptions, ICollection<IBuildable>>();
+			public ProjectBuildOptions CreateProjectBuildOptions(BuildOptions options, bool isRootBuildable)
+			{
+				return wrapped.CreateProjectBuildOptions(options, isRootBuildable);
+			}
 			
+			Dictionary<ProjectBuildOptions, ICollection<IBuildable>> cachedBuildDependencies = new Dictionary<ProjectBuildOptions, ICollection<IBuildable>>();
+			ICollection<IBuildable> cachedBuildDependenciesForNullOptions;
+				
 			public ICollection<IBuildable> GetBuildDependencies(ProjectBuildOptions buildOptions)
 			{
 				List<IBuildable> result = new List<IBuildable>();
@@ -206,7 +223,10 @@ namespace ICSharpCode.SharpDevelop.Project
 					result.Add(factory.GetWrapper(b));
 				}
 				lock (cachedBuildDependencies) {
-					cachedBuildDependencies[buildOptions] = result;
+					if (buildOptions != null)
+						cachedBuildDependencies[buildOptions] = result;
+					else
+						cachedBuildDependenciesForNullOptions = result;
 				}
 				return result;
 			}
@@ -238,7 +258,8 @@ namespace ICSharpCode.SharpDevelop.Project
 					}
 					if (lastCompilationPass != null && Setting == BuildOnExecuteSetting.BuildModifiedAndDependent) {
 						lock (cachedBuildDependencies) {
-							if (cachedBuildDependencies[buildOptions].OfType<Wrapper>().Any(w=>w.WasRecompiledAfter(lastCompilationPass))) {
+							var dependencies = buildOptions != null ? cachedBuildDependencies[buildOptions] : cachedBuildDependenciesForNullOptions;
+							if (dependencies.OfType<Wrapper>().Any(w=>w.WasRecompiledAfter(lastCompilationPass))) {
 								lastCompilationPass = null;
 							}
 						}
@@ -274,6 +295,10 @@ namespace ICSharpCode.SharpDevelop.Project
 					this.project = p;
 					this.sink = sink;
 					this.currentPass = currentPass;
+				}
+				
+				public Gui.IProgressMonitor ProgressMonitor {
+					get { return sink.ProgressMonitor; }
 				}
 				
 				public void ReportError(BuildError error)

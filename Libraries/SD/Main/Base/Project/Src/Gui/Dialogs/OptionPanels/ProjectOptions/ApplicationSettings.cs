@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 2973 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 6028 $</version>
 // </file>
 
 using System;
@@ -13,11 +13,12 @@ using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class ApplicationSettings : AbstractProjectOptionPanel
+	public class ApplicationSettings : AbstractXmlFormsProjectOptionPanel
 	{
 		ComboBox applicationManifestComboBox;
 		
@@ -63,8 +64,8 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			b.CreateLocationButton("win32ResourceFileTextBox");
 			
 			applicationManifestComboBox = Get<ComboBox>("applicationManifest");
-			applicationManifestComboBox.Items.Add("Embed default manifest");
-			applicationManifestComboBox.Items.Add("Do not embed manifest");
+			applicationManifestComboBox.Items.Add(StringParser.Parse("${res:Dialog.ProjectOptions.ApplicationSettings.Manifest.EmbedDefault}"));
+			applicationManifestComboBox.Items.Add(StringParser.Parse("${res:Dialog.ProjectOptions.ApplicationSettings.Manifest.DoNotEmbedManifest}"));
 			foreach (string fileName in Directory.GetFiles(project.Directory, "*.manifest")) {
 				applicationManifestComboBox.Items.Add(Path.GetFileName(fileName));
 			}
@@ -81,7 +82,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			// re-evaluate if the project has the minimum version whenever this options page gets visible
 			// because the "convert project" button on the compiling tab page might have updated the MSBuild version.
 			applicationManifestComboBox.VisibleChanged += delegate {
-				applicationManifestComboBox.Enabled = project.MinimumSolutionVersion >= 10;
+				applicationManifestComboBox.Enabled = project.MinimumSolutionVersion >= Solution.SolutionVersionVS2008;
 			};
 			
 			Get<TextBox>("projectFolder").Text = project.Directory;
@@ -108,7 +109,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		void BrowseForManifest()
 		{
 			applicationManifestComboBox.SelectedIndex = -1;
-			BrowseForFile(applicationManifestComboBox, "Manifest files|*.manifest|${res:SharpDevelop.FileFilter.AllFiles}|*.*", TextBoxEditMode.EditEvaluatedProperty);
+			BrowseForFile(applicationManifestComboBox, "${res:Dialog.ProjectOptions.ApplicationSettings.Manifest.ManifestFiles}|*.manifest|${res:SharpDevelop.FileFilter.AllFiles}|*.*", TextBoxEditMode.EditEvaluatedProperty);
 		}
 		
 		void CreateManifest()
@@ -123,7 +124,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 						defaultManifest = r.ReadToEnd();
 					}
 				}
-				defaultManifest = defaultManifest.Replace("\t", DefaultEditor.Gui.Editor.SharpDevelopTextEditorProperties.Instance.IndentationString);
+				defaultManifest = defaultManifest.Replace("\t", EditorControlService.GlobalOptions.IndentationString);
 				File.WriteAllText(manifestFile, defaultManifest, System.Text.Encoding.UTF8);
 				FileService.FireFileCreated(manifestFile, false);
 			}

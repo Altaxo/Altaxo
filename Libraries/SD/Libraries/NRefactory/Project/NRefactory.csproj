@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>8.0.41115</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</ProjectGuid>
     <RootNamespace>ICSharpCode.NRefactory</RootNamespace>
@@ -12,7 +12,7 @@
     <WarningLevel>4</WarningLevel>
     <NoStdLib>False</NoStdLib>
     <NoConfig>False</NoConfig>
-    <RunPostBuildEvent>OnSuccessfulBuild</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <OutputType>Library</OutputType>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Resources\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
@@ -24,48 +24,26 @@
     <FileAlignment>4096</FileAlignment>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1020;-Microsoft.Design#CA1051;-Microsoft.Design#CA1062;-Microsoft.Globalization#CA1303;-Microsoft.Globalization#CA1305;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Usage#CA2211;-Microsoft.Usage#CA2227</CodeAnalysisRules>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <DefineConstants>TEST;DEBUG;NET35</DefineConstants>
+    <DefineConstants>TEST;DEBUG</DefineConstants>
     <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <CodeAnalysisRuleSet>Migrated rules for NRefactory.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <DefineConstants>TEST;NET35</DefineConstants>
+    <DefineConstants>TEST</DefineConstants>
     <OutputPath>..\..\..\..\bin\</OutputPath>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <CodeAnalysisRuleSet>Migrated rules for NRefactory.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>Full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>false</DebugSymbols>
@@ -76,11 +54,23 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrated rules for NRefactory.ruleset" />
+    <Compile Include="Src\Lexer\LATextReader.cs" />
+    <Compile Include="Src\Lexer\LexerMemento.cs" />
+    <Compile Include="Src\Lexer\SavepointEventArgs.cs" />
+    <Compile Include="Src\Lexer\VBNet\Block.cs" />
+    <Compile Include="Src\Lexer\VBNet\ExpressionFinder.cs" />
+    <Compile Include="Src\Lexer\VBNet\ExpressionFinderState.cs" />
+    <Compile Include="Src\Lexer\VBNet\Extensions.cs" />
+    <Compile Include="Src\Lexer\VBNet\Parser.cs">
+      <DependentUpon>ExpressionFinder.atg</DependentUpon>
+    </Compile>
     <None Include="Resources\ICSharpCode.NRefactory.snk" />
-    <None Include="Src\Lexer\BuildKeywords.pl" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Src\AstBuilder\ExpressionBuilder.cs" />
     <Compile Include="Src\AstBuilder\StatementBuilder.cs" />
@@ -105,6 +95,8 @@
     <Compile Include="..\..\..\Main\GlobalAssemblyInfo.cs">
       <Link>Configuration\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Src\Lexer\VBNet\VBLexerMemento.cs" />
+    <Compile Include="Src\Lexer\VBNet\XmlModeInfo.cs" />
     <Compile Include="Src\OperatorPrecedence.cs" />
     <Compile Include="Src\Parser\CSharp\CSharpParser.cs" />
     <Compile Include="Src\Parser\CSharp\Parser.cs" />
@@ -158,38 +150,28 @@
     <Compile Include="Src\Ast\TypeReference.cs" />
     <Compile Include="Src\Parser\VBNet\ParamModifierList.cs" />
     <Compile Include="Src\Visitors\NodeTrackingAstVisitor.cs" />
+    <None Include="Src\Lexer\VBNet\ExpressionFinder.atg">
+      <Generator>CocoParserGenerator</Generator>
+      <CustomToolNamespace>ICSharpCode.NRefactory.Parser.VB</CustomToolNamespace>
+    </None>
+    <None Include="Src\Lexer\VBNet\PushParser.frame">
+      <DependentUpon>ExpressionFinder.atg</DependentUpon>
+    </None>
+    <None Include="Src\Parser\Frames\Parser.frame" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Src\Lexer\CSharp\KeywordList.txt" />
     <Content Include="Src\Lexer\VBNet\KeywordList.txt" />
     <Content Include="Src\Parser\CSharp\cs.ATG" />
-    <Content Include="Src\Parser\Frames\Parser.frame" />
     <Content Include="Src\Parser\Frames\Scanner.frame" />
     <Content Include="Src\Parser\Frames\SharpCoco.exe" />
     <Content Include="Src\Parser\Frames\trace.txt" />
-    <Content Include="Src\Parser\VBNet\VBNET.ATG" />
+    <None Include="Src\Parser\VBNet\VBNET.ATG">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CustomToolNamespace>ICSharpCode.NRefactory.Parser.VB</CustomToolNamespace>
+    </None>
     <Content Include="Src\Parser\gen.bat" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
 </Project>

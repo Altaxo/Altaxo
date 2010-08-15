@@ -77,17 +77,26 @@ namespace Altaxo.Main
     /// </summary>
     public void UpdateBoundsAndMargins()
     {
+      bool validPage = false;
+
       if (_printerSettings.IsValid)
       {
         _printerPageBounds = _printDocument.DefaultPageSettings.Bounds;
         _printerMargins = _printDocument.DefaultPageSettings.Margins;
+
+        // check the values
+        validPage = true;
+        validPage &= _printerPageBounds.Height > 0;
+        validPage &= _printerPageBounds.Width > 0;
+        validPage &= _printerPageBounds.Height > (_printerMargins.Top + _printerMargins.Bottom);
+        validPage &= _printerPageBounds.Width > (_printerMargins.Left + _printerMargins.Right);
       }
-      else // obviously no printer installed, use A4 size (sorry, this is european size)
+
+     if(!validPage)// obviously no printer installed, use A4 size (sorry, this is european size)
       {
         _printerPageBounds = new System.Drawing.RectangleF(0, 0, 1169, 826);
         _printerMargins = new System.Drawing.Printing.Margins(50, 50, 50, 50);
       }
-
     }
 
    

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3621 $</version>
+//     <version>$Revision: 5490 $</version>
 // </file>
 
 using System;
@@ -41,6 +41,26 @@ namespace ICSharpCode.SharpDevelop
 		
 		static HashSet<FileChangeWatcher> activeWatchers = new HashSet<FileChangeWatcher>();
 		
+		static int globalDisableCount;
+		
+		public static void DisableAllChangeWatchers()
+		{
+			WorkbenchSingleton.AssertMainThread();
+			globalDisableCount++;
+			foreach (FileChangeWatcher w in activeWatchers)
+				w.SetWatcher();
+		}
+		
+		public static void EnableAllChangeWatchers()
+		{
+			WorkbenchSingleton.AssertMainThread();
+			if (globalDisableCount == 0)
+				throw new InvalidOperationException();
+			globalDisableCount--;
+			foreach (FileChangeWatcher w in activeWatchers)
+				w.SetWatcher();
+		}
+		
 		FileSystemWatcher watcher;
 		bool wasChangedExternally = false;
 		OpenedFile file;
@@ -50,7 +70,7 @@ namespace ICSharpCode.SharpDevelop
 			if (file == null)
 				throw new ArgumentNullException("file");
 			this.file = file;
-			WorkbenchSingleton.MainForm.Activated += MainForm_Activated;
+			WorkbenchSingleton.MainWindow.Activated += MainForm_Activated;
 			file.FileNameChanged += file_FileNameChanged;
 			activeWatchers.Add(this);
 			SetWatcher();
@@ -66,7 +86,7 @@ namespace ICSharpCode.SharpDevelop
 			WorkbenchSingleton.AssertMainThread();
 			activeWatchers.Remove(this);
 			if (file != null) {
-				WorkbenchSingleton.MainForm.Activated -= MainForm_Activated;
+				WorkbenchSingleton.MainWindow.Activated -= MainForm_Activated;
 				file.FileNameChanged -= file_FileNameChanged;
 				file = null;
 			}
@@ -96,6 +116,8 @@ namespace ICSharpCode.SharpDevelop
 			
 			if (!enabled)
 				return;
+			if (globalDisableCount > 0)
+				return;
 			if (DetectExternalChangesOption == false)
 				return;
 			
@@ -110,7 +132,8 @@ namespace ICSharpCode.SharpDevelop
 			try {
 				if (watcher == null) {
 					watcher = new FileSystemWatcher();
-					watcher.SynchronizingObject = WorkbenchSingleton.MainForm;
+					if (WorkbenchSingleton.Workbench != null)
+						watcher.SynchronizingObject = WorkbenchSingleton.Workbench.SynchronizingObject;
 					watcher.Changed += OnFileChangedEvent;
 					watcher.Created += OnFileChangedEvent;
 					watcher.Renamed += OnFileChangedEvent;
@@ -138,7 +161,7 @@ namespace ICSharpCode.SharpDevelop
 					// when the file changes twice in quick succession; and prevents
 					// trying to reload the file while it is still being written
 					WorkbenchSingleton.CallLater(
-						500,
+						TimeSpan.FromSeconds(0.5),
 						delegate { MainForm_Activated(this, EventArgs.Empty); } );
 				}
 			}

@@ -28,30 +28,43 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.Pads
 {
-  /// <summary>
-  /// Responsible for showing the notes of worksheets and graph windows.
-  /// </summary>
-  public class NotesController :
-    ICSharpCode.SharpDevelop.Gui.IPadContent,
-    ICSharpCode.SharpDevelop.Gui.IClipboardHandler
-  {
-    System.Windows.Forms.TextBox _view;
+	/// <summary>
+	/// Responsible for showing the notes of worksheets and graph windows.
+	/// </summary>
+	public class NotesController :
+		ICSharpCode.SharpDevelop.Gui.IPadContent
+	{
+		System.Windows.Controls.TextBox _view;
 
 		/// <summary>The currently active view content to which the text belongs.</summary>
 		object _currentActiveViewContent;
 
-    public NotesController()
-    {
-      _view = new System.Windows.Forms.TextBox();
-      _view.Multiline = true;
-      _view.WordWrap=true;
-			_view.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      _view.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace,8);
-      _view.Dock = System.Windows.Forms.DockStyle.Fill;
+		public NotesController()
+		{
+			_view = new System.Windows.Controls.TextBox();
+
+			_view.TextWrapping = System.Windows.TextWrapping.NoWrap;
+			_view.AcceptsReturn = true;
+			_view.AcceptsTab = true;
+			_view.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+			_view.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+			_view.FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
 
 			WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += EhActiveWorkbenchWindowChanged;
-			_view.Validating += EhTextValidating;
-    }
+			_view.LostFocus += new System.Windows.RoutedEventHandler(_view_LostFocus);
+			_view.LostKeyboardFocus += new System.Windows.Input.KeyboardFocusChangedEventHandler(_view_LostKeyboardFocus);
+			_view.IsEnabled = false;
+		}
+
+		void _view_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+		{
+			StoreCurrentText();
+		}
+
+		void _view_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		{
+			StoreCurrentText();
+		}
 
 		void EhActiveWorkbenchWindowChanged(object sender, EventArgs e)
 		{
@@ -63,7 +76,6 @@ namespace Altaxo.Gui.Pads
 			if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
 			{
 				_view.Text = ((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.DataTable.Notes;
-				// this. = "Notes for " + ((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)obj).Controller.Doc.Name;
 			}
 			else if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
 			{
@@ -75,26 +87,21 @@ namespace Altaxo.Gui.Pads
 				enable = false;
 			}
 
-			_view.Enabled = enable;
+			_view.IsEnabled = enable;
 
 			if (enable && _view.Text.Length > 0)
 			{
-					ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-					WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this.GetType().ToString());
-					// now focus back to the formerly active workbench window.
-					ww.SelectWindow();
+				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+
+				var pad = WorkbenchSingleton.Workbench.GetPad(this.GetType());
+				WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(pad);
+
+				// now focus back to the formerly active workbench window.
+				ww.SelectWindow();
 			}
 		}
 
-		/// <summary>
-		/// Fired when the user leaves the text window. Stores the text then back to the graph or worksheet.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void EhTextValidating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			StoreCurrentText();
-		}
+
 
 		/// <summary>
 		/// Stores the text in the text control back to the graph document or worksheet.
@@ -110,143 +117,37 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-    #region IPadContent Members
+		#region IPadContent Members
 
-    public string Title
-    {
-      get
-      {
-        return ResourceService.GetString("MainWindow.Windows.AltaxoNotesWindowLabel");
-      }
-    }
+		public object Control
+		{
+			get
+			{
+				return this._view;
+			}
+		}
 
-    public System.Windows.Forms.Control Control
-    {
-      get
-      {
-        return this._view;
-      }
-    }
+		public object InitiallyFocusedControl
+		{
+			get
+			{
+				return null;
+			}
+		}
 
-    public void BringToFront()
-    {
-      _view.BringToFront();
-    }
+		#endregion
 
-    public string Icon
-    {
-      get
-      {
-        return "Icons.16x16.OpenFolderBitmap";
-      }
-    }
+		#region IDisposable Members
 
-    public event System.EventHandler TitleChanged;
+		public void Dispose()
+		{
+			if (_view != null)
+			{
+				_view = null;
+			}
+		}
 
-    public event System.EventHandler IconChanged;
+		#endregion
 
-    string category;
-    public string Category 
-    {
-      get 
-      {
-        return category;
-      }
-      set
-      {
-        category = value;
-      }
-    }
-    string[] shortcut; // TODO: Inherit from AbstractPadContent
-    public string[] Shortcut 
-    {
-      get 
-      {
-        return shortcut;
-      }
-      set 
-      {
-        shortcut = value;
-      }
-    }
-
-   
-
-    public void RedrawContent()
-    {
-    }
-
-    #endregion
-
-    #region IDisposable Members
-
-    public void Dispose()
-    {
-      if(_view!=null)
-      {
-        _view.Dispose();
-        _view = null;
-      }
-    }
-
-    #endregion
- 
-    #region IClipboardHandler Members
-
-    public bool EnableCut
-    {
-      get { return _view.SelectionLength > 0; }
-    }
-
-    public bool EnableCopy
-    {
-      get { return _view.SelectionLength > 0; }
-    }
-
-    public bool EnablePaste
-    {
-      get { return true; }
-    }
-
-    public bool EnableDelete
-    {
-      get { return _view.SelectionLength > 0; }
-    }
-
-    public bool EnableSelectAll
-    {
-      get { return true; }
-    }
-
-    public void Cut()
-    {
-      _view.Cut();
-    }
-
-    public void Copy()
-    {
-      _view.Copy();
-    }
-
-    public void Paste()
-    {
-      _view.Paste();
-    }
-
-    public void Delete()
-    {
-      int start = _view.SelectionStart;
-      int len = _view.SelectionLength;
-      if (len > 0)
-        _view.Text = _view.Text.Substring(0, start) + _view.Text.Substring(start + len);
-     
-    }
-
-    public void SelectAll()
-    {
-      _view.SelectAll();
-    }
-
-    #endregion
-  }
+	}
 }

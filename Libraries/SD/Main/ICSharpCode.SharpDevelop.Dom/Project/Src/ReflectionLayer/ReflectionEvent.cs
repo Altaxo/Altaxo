@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5625 $</version>
 // </file>
 
 using System;
@@ -14,7 +14,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 	{
 		public ReflectionEvent(EventInfo eventInfo, IClass declaringType) : base(declaringType, eventInfo.Name)
 		{
-			this.ReturnType = ReflectionReturnType.Create(this, eventInfo.EventHandlerType, false);
+			this.ReturnType = ReflectionReturnType.Create(this, eventInfo.EventHandlerType, attributeProvider: eventInfo);
 			
 			// get modifiers
 			MethodInfo methodBase = null;
@@ -46,6 +46,14 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 					modifiers |= ModifierEnum.Public;
 				} else {
 					modifiers |= ModifierEnum.Internal;
+				}
+				
+				if (methodBase.IsFinal) {
+					modifiers |= ModifierEnum.Sealed;
+				} else if (methodBase.IsAbstract) {
+					modifiers |= ModifierEnum.Abstract;
+				} else if (methodBase.IsVirtual) {
+					modifiers |= ModifierEnum.Virtual;
 				}
 			} else {
 				// assume public property, if no methodBase could be get.

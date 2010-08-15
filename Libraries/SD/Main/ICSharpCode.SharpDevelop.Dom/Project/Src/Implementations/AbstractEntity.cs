@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3719 $</version>
+//     <version>$Revision: 6093 $</version>
 // </file>
 
 using System;
@@ -285,7 +285,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		public bool IsOverridable {
 			get {
-				return (IsOverride || IsVirtual || IsAbstract) && !IsSealed;
+				return (IsOverride || IsVirtual || IsAbstract || 
+				    // Interface members have IsVirtual == IsAbstract == false. These properties are based on modifiers only.
+				    (this.DeclaringType != null && this.DeclaringType.ClassType == ClassType.Interface)) 
+					&& !IsSealed;
 			}
 		}
 		public bool IsNew {
@@ -305,7 +308,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (IsPublic) {
 				return true;
 			} else if (IsInternal) {
-				return callingClass != null && this.DeclaringType.ProjectContent.InternalsVisibleTo(callingClass.ProjectContent);
+				// members can be both internal and protected: in that case, we want to return true if it is visible
+				// through any of the modifiers
+				if (callingClass != null && this.DeclaringType.ProjectContent.InternalsVisibleTo(callingClass.ProjectContent))
+					return true;
 			}
 			// protected or private:
 			// search in callingClass and, if callingClass is a nested class, in its outer classes
@@ -328,6 +334,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return false;
 		}
 		
+		public abstract ICompilationUnit CompilationUnit {
+			get;
+		}
+		
+		public IProjectContent ProjectContent {
+			[System.Diagnostics.DebuggerStepThrough]
+			get {
+				return this.CompilationUnit.ProjectContent;
+			}
+		}
+		
 		public virtual int CompareTo(IEntity value)
 		{
 			return this.Modifiers - value.Modifiers;
@@ -336,6 +353,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		int IComparable.CompareTo(object value)
 		{
 			return CompareTo((IEntity)value);
+		}
+		
+		public abstract EntityType EntityType {
+			get;
 		}
 	}
 }

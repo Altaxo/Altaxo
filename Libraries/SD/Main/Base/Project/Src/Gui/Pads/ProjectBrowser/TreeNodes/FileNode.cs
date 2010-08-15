@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3793 $</version>
+//     <version>$Revision: 5785 $</version>
 // </file>
 
 using System;
@@ -139,7 +139,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (newName == null) {
 				return;
 			}
-			if (!FileService.CheckFileName(newName)) {
+			if (!FileService.CheckDirectoryEntryName(newName)) {
 				return;
 			}
 			string oldFileName = FileName;

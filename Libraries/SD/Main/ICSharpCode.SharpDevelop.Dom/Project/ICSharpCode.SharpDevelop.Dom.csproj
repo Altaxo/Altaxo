@@ -21,28 +21,9 @@
     <FileAlignment>4096</FileAlignment>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1063;-Microsoft.Performance#CA1800;-Microsoft.Security#CA2104</CodeAnalysisRules>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
@@ -52,8 +33,6 @@
     <DebugType>Full</DebugType>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
-    <CodeAnalysisRuleSet>Migrated rules for ICSharpCode.SharpDevelop.Dom.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
@@ -62,8 +41,6 @@
     <DebugSymbols>False</DebugSymbols>
     <DebugType>None</DebugType>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <CodeAnalysisRuleSet>Migrated rules for ICSharpCode.SharpDevelop.Dom.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
@@ -87,6 +64,8 @@
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>Configuration\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Src\BusyManager.cs" />
+    <Compile Include="Src\CSharp\CSharpExpressionContext.cs" />
     <Compile Include="Src\CSharp\OverloadResolution.cs" />
     <Compile Include="Src\CSharp\TypeInference.cs" />
     <Compile Include="Src\DomCache.cs" />
@@ -115,6 +94,7 @@
     <Compile Include="Src\Implementations\DefaultTypeParameter.cs" />
     <Compile Include="Src\Implementations\DefaultUsing.cs" />
     <Compile Include="Src\Implementations\DefaultUsingScope.cs" />
+    <Compile Include="Src\Implementations\DynamicReturnType.cs" />
     <Compile Include="Src\Implementations\ElementReturnType.cs" />
     <Compile Include="Src\Implementations\GenericReturnType.cs" />
     <Compile Include="Src\Implementations\GetClassReturnType.cs" />
@@ -127,6 +107,7 @@
     <Compile Include="Src\Implementations\SystemTypes.cs" />
     <Compile Include="Src\Implementations\UnknownReturnType.cs" />
     <Compile Include="Src\Interfaces\ExplicitInterfaceImplementation.cs" />
+    <Compile Include="Src\Interfaces\ICompletionEntry.cs" />
     <Compile Include="Src\Interfaces\IDomProgressMonitor.cs" />
     <Compile Include="Src\Interfaces\IFreezable.cs" />
     <Compile Include="Src\Interfaces\IUsingScope.cs" />
@@ -142,6 +123,7 @@
     <Compile Include="Src\NRefactoryResolver\ResolveVisitor.cs" />
     <Compile Include="Src\NRefactoryResolver\TypeVisitor.cs" />
     <Compile Include="Src\NRefactoryResolver\VBNetToCSharpConvertVisitor.cs" />
+    <Compile Include="Src\ParameterListComparer.cs" />
     <Compile Include="Src\ProjectContent\DomAssemblyName.cs" />
     <Compile Include="Src\ReadOnlyDictionary.cs" />
     <Compile Include="Src\Refactoring\CodeGeneratorOptions.cs" />
@@ -152,7 +134,6 @@
     <Compile Include="Src\ReflectionLayer\ReflectionClass.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionEvent.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionField.cs" />
-    <Compile Include="Src\ReflectionLayer\ReflectionLoader.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionMethod.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionParameter.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionProperty.cs" />
@@ -162,6 +143,11 @@
     <Compile Include="Src\FilePosition.cs" />
     <Compile Include="Src\FoldingRegion.cs" />
     <Compile Include="Src\IComment.cs" />
+    <Compile Include="Src\ReflectionLayer\ReflectionTypeNameSyntaxError.cs" />
+    <Compile Include="Src\SignatureComparer.cs" />
+    <Compile Include="Src\VBNet\IVBNetOptionProvider.cs" />
+    <Compile Include="Src\VBNet\VBNetCompilationUnit.cs" />
+    <Compile Include="Src\VBNet\VBNetExpressionFinder.cs" />
     <Compile Include="Src\XmlDoc.cs" />
     <Compile Include="Src\Tag.cs" />
     <Compile Include="Src\ResolveResult.cs" />
@@ -196,7 +182,7 @@
     <Compile Include="Src\ProjectContent\ParseInformation.cs" />
     <Compile Include="Src\HostCallback.cs" />
     <Compile Include="Src\Refactoring\CodeGenerator.cs" />
-    <Compile Include="Src\Refactoring\IDocument.cs" />
+    <Compile Include="Src\Refactoring\IRefactoringDocument.cs" />
     <Compile Include="Src\ClassFinder.cs" />
     <Compile Include="Src\Refactoring\NRefactoryCodeGenerator.cs" />
     <Compile Include="Src\Refactoring\RefactoringProvider.cs" />
@@ -207,7 +193,6 @@
     <Compile Include="Src\Ambience.cs" />
     <Compile Include="Src\CSharp\ExpressionFinder.cs" />
     <Compile Include="Src\VBNet\VBNetAmbience.cs" />
-    <Compile Include="Src\VBNet\ExpressionFinder.cs" />
     <Compile Include="Src\EasyCodeDom.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -215,26 +200,6 @@
       <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
       <Name>NRefactory</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Migrated rules for ICSharpCode.SharpDevelop.Dom.ruleset" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

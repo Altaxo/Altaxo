@@ -1,7 +1,13 @@
 del /F /S /Q .\temp\*
 
+rmdir /S /Q .\AddIns\OriginConnector\obj
+rmdir /S /Q .\AddIns\OriginConnector\bin
+
 rmdir /S /Q .\Altaxo\Base\obj
 rmdir /S /Q .\Altaxo\Base\bin
+
+rmdir /S /Q .\Altaxo\Base.WinForms\obj
+rmdir /S /Q .\Altaxo\Base.WinForms\bin
 
 rmdir /S /Q .\Altaxo\BaseTest\obj
 rmdir /S /Q .\Altaxo\BaseTest\bin
@@ -22,8 +28,10 @@ rmdir /S /Q .\Altaxo\Startup\obj
 rmdir /S /Q .\Altaxo\Startup\bin
 
 
+
 rmdir /S /Q .\Content\obj
 rmdir /S /Q .\Content\bin
+
 
 
 rmdir /S /Q .\Libraries\AssemblySvnVersion\obj
@@ -37,20 +45,26 @@ rmdir /S /Q .\Libraries\SD\AddIns\BackendBindings\CSharpBinding\Project\bin
 rmdir /S /Q .\Libraries\SD\AddIns\BackendBindings\CSharpBinding\Test\obj
 rmdir /S /Q .\Libraries\SD\AddIns\BackendBindings\CSharpBinding\Test\bin
 
-rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\WinFormsUI\obj
-rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\WinFormsUI\bin
-rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\DockSample\obj
-rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\DockSample\bin
+rmdir /S /Q .\Libraries\SD\AddIns\DisplayBindings\AvalonEdit.Addin\obj
+rmdir /S /Q .\Libraries\SD\AddIns\DisplayBindings\AvalonEdit.Addin\bin
 
-rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\Project\obj
-rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\project\bin
-rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\Test\obj
-rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\Test\bin
+rmdir /S /Q .\Libraries\SD\Libraries\AvalonDock\AvalonDock\obj
+rmdir /S /Q .\Libraries\SD\Libraries\AvalonDock\AvalonDock\bin
+
+rmdir /S /Q .\Libraries\SD\Libraries\AvalonEdit\ICSharpCode.AvalonEdit\obj
+rmdir /S /Q .\Libraries\SD\Libraries\AvalonEdit\ICSharpCode.AvalonEdit\bin
+rmdir /S /Q .\Libraries\SD\Libraries\AvalonEdit\ICSharpCode.AvalonEdit.Tests\obj
+rmdir /S /Q .\Libraries\SD\Libraries\AvalonEdit\ICSharpCode.AvalonEdit.Tests\bin
+
+rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.Build.Tasks\Project\obj
+rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.Build.Tasks\Project\bin
 
 rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Project\obj
 rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Project\bin
 rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Test\obj
 rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Test\bin
+
+
 
 rmdir /S /Q .\Libraries\SD\Main\Base\Project\obj
 rmdir /S /Q .\Libraries\SD\Main\Base\Project\bin
@@ -61,6 +75,14 @@ rmdir /S /Q .\Libraries\SD\Main\Core\Project\obj
 rmdir /S /Q .\Libraries\SD\Main\Core\Project\bin
 rmdir /S /Q .\Libraries\SD\Main\Core\Test\obj
 rmdir /S /Q .\Libraries\SD\Main\Core\Test\bin
+
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.Core.Presentation\obj
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.Core.Presentation\bin
+
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.Core.WinForms\obj
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.Core.WinForms\bin
+
+
 
 rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.BuildWorker\obj
 rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.BuildWorker\bin

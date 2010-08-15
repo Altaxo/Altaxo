@@ -53,17 +53,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			MoveDocuments(list);
 		}
 
-    /// <summary>
-    /// Moves the selected list items to a folder that is asked for by a dialog.
-    /// </summary>
-    /// <param name="ctrl">Project browse controller.</param>
-    public static void CopySelectedListItemsToFolder(this ProjectBrowseController ctrl)
-    {
-      var list = ctrl.GetSelectedListItems();
-      CopyDocuments(list);
-    }
+		/// <summary>
+		/// Moves the selected list items to a folder that is asked for by a dialog.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		public static void CopySelectedListItemsToFolder(this ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems();
+			CopyDocuments(list);
+		}
 
-    const string rootFolderDisplayName = "<<<root folder>>>";
+		const string rootFolderDisplayName = "<<<root folder>>>";
 
 
 		/// <summary>
@@ -73,32 +73,32 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public static void MoveDocuments(IList<object> list)
 		{
 			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName, true);
-			names.Insert(0,rootFolderDisplayName);
+			names.Insert(0, rootFolderDisplayName);
 			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to move the items into:" };
 			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
 				return;
 
-      string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
-      Current.Project.Folders.MoveItemsToFolder(list, newFolderName);
+			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
+			Current.Project.Folders.MoveItemsToFolder(list, newFolderName);
 		}
 
 
-    /// <summary>
-    /// Copy the items given in the list (tables and graphs) to a folder, which is selected by the user via a dialog box.
-    /// </summary>
-    /// <param name="list">List of items to delete.</param>
-    public static void CopyDocuments(IList<object> list)
-    {
+		/// <summary>
+		/// Copy the items given in the list (tables and graphs) to a folder, which is selected by the user via a dialog box.
+		/// </summary>
+		/// <param name="list">List of items to delete.</param>
+		public static void CopyDocuments(IList<object> list)
+		{
 			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName, true);
 			names.Insert(0, rootFolderDisplayName);
 			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to copy the items into:" };
-      if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
-        return;
+			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
+				return;
 
 			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
-			Current.Project.Folders.CopyItemsToFolder(list,newFolderName);
-      
-    }
+			Current.Project.Folders.CopyItemsToFolder(list, newFolderName);
+
+		}
 
 
 		public static void RenameSelectedListItem(this ProjectBrowseController ctrl)
@@ -189,55 +189,55 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 
-    /// <summary>
-    /// Plot common columns in two or more tables.
-    /// </summary>
-    /// <param name="ctrl">Project browse controller.</param>
-    public static void PlotCommonColumns(this ProjectBrowseController ctrl)
-    {
-      var list = ctrl.GetSelectedListItems();
-      var tables = new List<Data.DataTable>();
+		/// <summary>
+		/// Plot common columns in two or more tables.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		public static void PlotCommonColumns(this ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems();
+			var tables = new List<Data.DataTable>();
 
-      foreach (object item in list)
-      {
-        if (item is Data.DataTable)
-          tables.Add((Data.DataTable)item);
-      }
+			foreach (object item in list)
+			{
+				if (item is Data.DataTable)
+					tables.Add((Data.DataTable)item);
+			}
 
-      if (tables.Count == 0) 
-        return;
+			if (tables.Count == 0)
+				return;
 
-      // now determine which columns are common to all selected tables.
-      var commonColumnNames = new HashSet<string>(tables[0].DataColumns.GetColumnNames());
-      for (int i = 1; i < tables.Count; i++)
-        commonColumnNames.IntersectWith(tables[i].DataColumns.GetColumnNames());
+			// now determine which columns are common to all selected tables.
+			var commonColumnNames = new HashSet<string>(tables[0].DataColumns.GetColumnNames());
+			for (int i = 1; i < tables.Count; i++)
+				commonColumnNames.IntersectWith(tables[i].DataColumns.GetColumnNames());
 
-      if (0 == commonColumnNames.Count)
-      {
-        Current.Gui.InfoMessageBox("The selected tables seem not to have common columns", "Please note");
-        return;
-      }
+			if (0 == commonColumnNames.Count)
+			{
+				Current.Gui.InfoMessageBox("The selected tables seem not to have common columns", "Please note");
+				return;
+			}
 
 
 
-      // and show a dialog to let the user chose which columns to plot
-      var dlg = new Gui.Common.MultiChoiceList() { Description = "Common columns:", ColumnNames = new string[] { "Column name" }};
-      foreach (var name in tables[0].DataColumns.GetColumnNames())
-      {
-        // Note: we will add the column names in the order like in the first table
-        if(commonColumnNames.Contains(name))
-          dlg.List.Add(new Altaxo.Collections.SelectableListNode(name, name, false));
-      }
+			// and show a dialog to let the user chose which columns to plot
+			var dlg = new Gui.Common.MultiChoiceList() { Description = "Common columns:", ColumnNames = new string[] { "Column name" } };
+			foreach (var name in tables[0].DataColumns.GetColumnNames())
+			{
+				// Note: we will add the column names in the order like in the first table
+				if (commonColumnNames.Contains(name))
+					dlg.List.Add(new Altaxo.Collections.SelectableListNode(name, name, false));
+			}
 
-      if (!Current.Gui.ShowDialog(ref dlg, "Plot common columns", false))
-        return;
+			if (!Current.Gui.ShowDialog(ref dlg, "Plot common columns", false))
+				return;
 
-      var choosenColumns = new List<string>();
-      foreach (var item in dlg.List)
-      {
-        if (item.Selected)
-          choosenColumns.Add((string)item.Item);
-      }
+			var choosenColumns = new List<string>();
+			foreach (var item in dlg.List)
+			{
+				if (item.Selected)
+					choosenColumns.Add((string)item.Item);
+			}
 
 			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;
 			var graphctrl = Current.ProjectService.CreateNewGraph();
@@ -258,17 +258,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				plotGroup.AddRange(plotItemList);
 				layer.PlotItems.Add(plotGroup);
 			}
-    }
+		}
 
-    #endregion
+		#endregion
 
-    #region Tree node commands
+		#region Tree node commands
 
-    /// <summary>
-    /// Rename the project folder, if a project folder is selected in the tree view.
-    /// </summary>
-    /// <param name="ctrl">Project browse controller.</param>
-    public static void RenameTreeNode(this ProjectBrowseController ctrl)
+		/// <summary>
+		/// Rename the project folder, if a project folder is selected in the tree view.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		public static void RenameTreeNode(this ProjectBrowseController ctrl)
 		{
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))

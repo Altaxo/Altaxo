@@ -2,13 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2700 $</version>
+//     <version>$Revision: 5852 $</version>
 // </file>
 
 using System;
 using System.IO;
-using System.Security;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop
@@ -29,19 +30,6 @@ namespace ICSharpCode.SharpDevelop
 		
 		[DllImport("user32.dll")]
 		public static extern IntPtr SetForegroundWindow(IntPtr hWnd);
-		
-		public static void SetWindowRedraw(IntPtr hWnd, bool allowRedraw)
-		{
-			SendMessage(hWnd, WM_SETREDRAW, allowRedraw ? TRUE : FALSE, IntPtr.Zero);
-		}
-		
-		[DllImport("user32.dll", ExactSpelling=true)]
-		static extern short GetKeyState(int vKey);
-		
-		public static bool IsKeyPressed(Keys key)
-		{
-			return GetKeyState((int)key) < 0;
-		}
 		
 		#region SHFileOperation
 		enum FO_FUNC : uint
@@ -99,15 +87,30 @@ namespace ICSharpCode.SharpDevelop
 			if (!File.Exists(fileName) && !Directory.Exists(fileName))
 				throw new FileNotFoundException("File not found.", fileName);
 			SHFILEOPSTRUCT info = new SHFILEOPSTRUCT();
-			info.hwnd = Gui.WorkbenchSingleton.MainForm.Handle;
+			info.hwnd = Gui.WorkbenchSingleton.MainWin32Window.Handle;
 			info.wFunc = FO_FUNC.FO_DELETE;
 			info.fFlags = FILEOP_FLAGS.FOF_ALLOWUNDO | FILEOP_FLAGS.FOF_NOCONFIRMATION;
 			info.lpszProgressTitle = "Delete " + Path.GetFileName(fileName);
 			info.pFrom = fileName + "\0"; // pFrom is double-null-terminated
 			int result = SHFileOperation(ref info);
 			if (result != 0)
-				throw new IOException("Could not delete file " + fileName + ". Error " + result);
+				throw new IOException("Could not delete file " + fileName + ". Error " + result, result);
 		}
 		#endregion
+		
+		[DllImport("kernel32.dll")]
+		static extern int GetOEMCP();
+		
+		public static Encoding OemEncoding {
+			get {
+				try {
+					return Encoding.GetEncoding(GetOEMCP());
+				} catch (ArgumentException) {
+					return Encoding.Default;
+				} catch (NotSupportedException) {
+					return Encoding.Default;
+				}
+			}
+		}
 	}
 }

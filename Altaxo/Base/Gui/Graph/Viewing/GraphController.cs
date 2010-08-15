@@ -684,6 +684,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			double zoomh = (PtPerInch * _view.ViewportSizeInInch.Width)  / (_doc.Layers.GraphSize.Width * _areaFillingFactor);
 			double zoomv = (PtPerInch * _view.ViewportSizeInInch.Height) / (_doc.Layers.GraphSize.Height * _areaFillingFactor);
 			_zoomFactor = System.Math.Min(zoomh, zoomv);
+      if (_zoomFactor <= 0)
+        _zoomFactor = 1;
 			_graphViewOffset = GraphPaddingOffset;
 		}
 

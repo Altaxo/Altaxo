@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3770 $</version>
+//     <version>$Revision: 6318 $</version>
 // </file>
 
 using System;
@@ -64,13 +64,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		 */
 		
-		byte flags;
+		byte flags = addDefaultConstructorIfRequiredFlag;
+		const byte calculatedFlagsReady                 = 0x01;
 		const byte hasPublicOrInternalStaticMembersFlag = 0x02;
 		const byte hasExtensionMethodsFlag              = 0x04;
-		internal byte Flags {
+		const byte addDefaultConstructorIfRequiredFlag  = 0x08;
+		
+		internal byte CalculatedFlags {
 			get {
-				if (flags == 0) {
-					flags = 1;
+				if ((flags & calculatedFlagsReady) == 0) {
+					flags |= calculatedFlagsReady;
 					foreach (IMember m in this.Fields) {
 						if (m.IsStatic && (m.IsPublic || m.IsInternal)) {
 							flags |= hasPublicOrInternalStaticMembersFlag;
@@ -112,12 +115,23 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		public bool HasPublicOrInternalStaticMembers {
 			get {
-				return (Flags & hasPublicOrInternalStaticMembersFlag) == hasPublicOrInternalStaticMembersFlag;
+				return (CalculatedFlags & hasPublicOrInternalStaticMembersFlag) == hasPublicOrInternalStaticMembersFlag;
 			}
 		}
 		public bool HasExtensionMethods {
 			get {
-				return (Flags & hasExtensionMethodsFlag) == hasExtensionMethodsFlag;
+				return (CalculatedFlags & hasExtensionMethodsFlag) == hasExtensionMethodsFlag;
+			}
+		}
+		public bool AddDefaultConstructorIfRequired {
+			get {
+				return (flags & addDefaultConstructorIfRequiredFlag) == addDefaultConstructorIfRequiredFlag;
+			}
+			set {
+				if (value)
+					flags |= addDefaultConstructorIfRequiredFlag;
+				else
+					flags &= unchecked((byte)~addDefaultConstructorIfRequiredFlag);
 			}
 		}
 		
@@ -227,17 +241,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 			defaultReturnType = null; // re-create default return type
 		}
 		
-		public ICompilationUnit CompilationUnit {
+		public sealed override ICompilationUnit CompilationUnit {
 			[System.Diagnostics.DebuggerStepThrough]
 			get {
 				return compilationUnit;
-			}
-		}
-		
-		public IProjectContent ProjectContent {
-			[System.Diagnostics.DebuggerStepThrough]
-			get {
-				return CompilationUnit.ProjectContent;
 			}
 		}
 		
@@ -264,16 +271,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public override string DotNetName {
 			get {
 				string fullName;
+				int typeParametersCount = this.TypeParameters.Count;
 				if (this.DeclaringType != null) {
 					fullName = this.DeclaringType.DotNetName + "+" + this.Name;
+					typeParametersCount -= this.DeclaringType.TypeParameters.Count;
 				} else {
 					fullName = this.FullyQualifiedName;
 				}
-				IList<ITypeParameter> typeParameters = this.TypeParameters;
-				if (typeParameters == null || typeParameters.Count == 0) {
+				if (typeParametersCount == 0) {
 					return fullName;
 				} else {
-					return fullName + "`" + typeParameters.Count;
+					return fullName + "`" + typeParametersCount;
 				}
 			}
 		}
@@ -375,9 +383,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		volatile IClass[] inheritanceTreeCache;
+		volatile IClass[] inheritanceTreeClassesOnlyCache;
 		
 		public IEnumerable<IClass> ClassInheritanceTree {
 			get {
+				IClass compoundClass = GetCompoundClass();
+				if (compoundClass != this)
+					return compoundClass.ClassInheritanceTree;
+				
 				// Notes:
 				// the ClassInheritanceTree must work even if the following things happen:
 				// - cyclic inheritance
@@ -404,7 +417,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					return inheritanceTree;
 				}
 				
-				inheritanceTree = CalculateClassInheritanceTree();
+				inheritanceTree = CalculateClassInheritanceTree(false);
 				
 				this.inheritanceTreeCache = inheritanceTree;
 				if (!KeepInheritanceTree)
@@ -414,12 +427,55 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		public IEnumerable<IClass> ClassInheritanceTreeClassesOnly {
+			get {
+				IClass compoundClass = GetCompoundClass();
+				if (compoundClass != this)
+					return compoundClass.ClassInheritanceTreeClassesOnly;
+				
+				// Notes:
+				// the ClassInheritanceTree must work even if the following things happen:
+				// - cyclic inheritance
+				// - multithreaded calls
+				
+				// Recursive calls are possible if the SearchType request done by GetUnderlyingClass()
+				// uses ClassInheritanceTree.
+				// Such recursive calls are tricky, they have caused incorrect behavior (SD2-1474)
+				// or performance problems (SD2-1510) in the past.
+				// As of revision 3769, NRefactoryAstConvertVisitor sets up the SearchClassReturnType
+				// used for base types so that it does not look up inner classes in the class itself,
+				// so the ClassInheritanceTree is not used created in those cases.
+				// However, other language bindings might not set up base types correctly, so it's
+				// still possible that ClassInheritanceTree is called recursivly.
+				// In that case, we'll return an invalid inheritance tree because of
+				// ProxyReturnType's automatic stack overflow prevention.
+				
+				// We do not use locks to protect against multithreaded calls because
+				// resolving one class's base types can cause getting the inheritance tree
+				// of another class -> beware of deadlocks
+				
+				IClass[] inheritanceTreeClassesOnly = this.inheritanceTreeClassesOnlyCache;
+				if (inheritanceTreeClassesOnly != null) {
+					return inheritanceTreeClassesOnly;
+				}
+				
+				inheritanceTreeClassesOnly = CalculateClassInheritanceTree(true);
+				
+				this.inheritanceTreeClassesOnlyCache = inheritanceTreeClassesOnly;
+				if (!KeepInheritanceTree)
+					DomCache.RegisterForClear(ClearCachedInheritanceTree);
+				
+				return inheritanceTreeClassesOnly;
+			}
+		}
+		
 		void ClearCachedInheritanceTree()
 		{
+			inheritanceTreeClassesOnlyCache = null;
 			inheritanceTreeCache = null;
 		}
 		
-		IClass[] CalculateClassInheritanceTree()
+		IClass[] CalculateClassInheritanceTree(bool ignoreInterfaces)
 		{
 			List<IClass> visitedList = new List<IClass>();
 			Queue<IReturnType> typesToVisit = new Queue<IReturnType>();
@@ -428,7 +484,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			IReturnType nextType;
 			do {
 				if (currentClass != null) {
-					if (!visitedList.Contains(currentClass)) {
+					if ((!ignoreInterfaces || currentClass.ClassType != ClassType.Interface) && !visitedList.Contains(currentClass)) {
 						visitedList.Add(currentClass);
 						foreach (IReturnType type in currentClass.BaseTypes) {
 							typesToVisit.Enqueue(type);
@@ -453,11 +509,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		protected virtual bool KeepInheritanceTree {
 			get { return false; }
-		}
-		
-		public IReturnType GetBaseType(int index)
-		{
-			return BaseTypes[index];
 		}
 		
 		IReturnType cachedBaseType;
@@ -521,7 +572,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return false;
 			}
 			foreach (IClass baseClass in this.ClassInheritanceTree) {
-				if (possibleBaseClass.FullyQualifiedName == baseClass.FullyQualifiedName)
+				if (possibleBaseClass.FullyQualifiedName == baseClass.FullyQualifiedName
+				    && possibleBaseClass.TypeParameters.Count == baseClass.TypeParameters.Count)
 					return true;
 			}
 			return false;
@@ -594,6 +646,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 				currentClass = currentClass.BaseClass;
 			} while (currentClass != null);
 			return types;
+		}
+		
+		public IEnumerable<IMember> AllMembers {
+			get {
+				IEnumerable<IMember> p = properties;
+				return p.Concat(methods)
+					.Concat(fields)
+					.Concat(events);
+			}
+		}
+		
+		public override EntityType EntityType {
+			get {
+				return EntityType.Class;
+			}
 		}
 	}
 }

@@ -41,6 +41,8 @@ namespace Altaxo.Collections
       Item = item;
     }
 
+		public string Col0 { get { return Name; } }
+
     public override string ToString()
     {
       if (!string.IsNullOrEmpty(Name))
@@ -95,9 +97,14 @@ namespace Altaxo.Collections
 
   }
 
-  public class SelectableListNode : ListNode
+	public interface ISelectableItem
+	{
+		bool Selected { get; set; }
+	}
+
+  public class SelectableListNode : ListNode, ISelectableItem
   {
-    public bool Selected;
+		public bool Selected { get; set; }
 
     public SelectableListNode(string name, object item, bool selected)
       : base(name, item)

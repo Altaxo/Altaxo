@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 1965 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.Parser
 			}
 		}
 		
-		public TagComment(string tag, string comment, Location startPosition, Location endPosition) : base(CommentType.SingleLine, comment, startPosition, endPosition)
+		public TagComment(string tag, string comment, bool commentStartsLine, Location startPosition, Location endPosition) : base(CommentType.SingleLine, comment, commentStartsLine, startPosition, endPosition)
 		{
 			this.tag = tag;
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5187 $</version>
 // </file>
 
 using System;
@@ -83,7 +83,7 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 		static ToolLoader()
 		{
 			if (!LoadToolsFromStream(Path.Combine(PropertyService.ConfigDirectory, TOOLFILE))) {
-				if (!LoadToolsFromStream(FileUtility.Combine(PropertyService.DataDirectory, "options", TOOLFILE))) {
+				if (!LoadToolsFromStream(Path.Combine(PropertyService.DataDirectory, "options", TOOLFILE))) {
 					MessageService.ShowWarning("${res:Internal.ExternalTool.CantLoadToolConfigWarining}");
 				}
 			}

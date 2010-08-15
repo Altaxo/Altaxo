@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1751 $</version>
+//     <version>$Revision: 3805 $</version>
 // </file>
 
 using System;
@@ -37,6 +37,6 @@ namespace ICSharpCode.Core
 		/// <summary>
 		/// Returns true, when the condition is valid otherwise false.
 		/// </summary>
-		bool IsValid(object caller);
+		bool IsValid(object owner);
 	}
 }

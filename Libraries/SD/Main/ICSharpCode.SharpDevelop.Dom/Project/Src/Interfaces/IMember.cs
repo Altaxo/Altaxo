@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2931 $</version>
+//     <version>$Revision: 4819 $</version>
 // </file>
 
 using System;
@@ -21,7 +21,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		/// <summary>
 		/// Gets/Sets the declaring type reference (declaring type incl. type arguments).
-		/// Never returns null, if the property is set to null (e.g. when this is not a specialized member),
+		/// Never returns null.
+		/// If the property is set to null (e.g. when this is not a specialized member),
 		/// it should return the default type reference to the <see cref="DeclaringType"/>.
 		/// </summary>
 		IReturnType DeclaringTypeReference {

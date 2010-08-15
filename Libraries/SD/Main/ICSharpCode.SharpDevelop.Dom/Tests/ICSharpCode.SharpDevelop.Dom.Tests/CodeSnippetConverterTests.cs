@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3531 $</version>
+//     <version>$Revision: 5785 $</version>
 // </file>
 
 using System;
@@ -12,6 +12,13 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpDevelop.Dom.Tests
 {
+	static class SharedProjectContentRegistryForTests
+	{
+		public static readonly ProjectContentRegistry Instance = new ProjectContentRegistry();
+		
+		static SharedProjectContentRegistryForTests() {} // delay-initialize
+	}
+	
 	[TestFixture]
 	public class CodeSnippetConverterTests
 	{
@@ -21,10 +28,9 @@ namespace ICSharpCode.SharpDevelop.Dom.Tests
 		
 		public CodeSnippetConverterTests()
 		{
-			ProjectContentRegistry pcr = new ProjectContentRegistry();
 			referencedContents = new List<IProjectContent> {
-				pcr.Mscorlib,
-				pcr.GetProjectContentForReference("System", "System")
+				SharedProjectContentRegistryForTests.Instance.Mscorlib,
+				SharedProjectContentRegistryForTests.Instance.GetProjectContentForReference("System", "System")
 			};
 		}
 		
@@ -79,6 +85,89 @@ namespace ICSharpCode.SharpDevelop.Dom.Tests
 			                                               " test\n" +
 			                                               "End Sub\n" +
 			                                               "Sub Test\n" +
+			                                               "End Sub",
+			                                               out errors)));
+		}
+		
+		[Test]
+		public void ConvertFloatingPointToInteger()
+		{
+			Assert.AreEqual("CInt(Math.Truncate(-3.5))", converter.CSharpToVB("(int)(-3.5)", out errors));
+			Assert.AreEqual("CInt(Math.Truncate(-3.5F))", converter.CSharpToVB("(int)(-3.5f)", out errors));
+			Assert.AreEqual("CInt(Math.Truncate(-3.5D))", converter.CSharpToVB("(int)(-3.5m)", out errors));
+		}
+		
+		[Test]
+		public void ConvertLongToInteger()
+		{
+			Assert.AreEqual("CInt(-35L)", converter.CSharpToVB("(int)(-35L)", out errors));
+		}
+		
+		[Test]
+		public void ConvertCharToInteger()
+		{
+			Assert.AreEqual("AscW(\"x\"C)", converter.CSharpToVB("(int)'x'", out errors));
+		}
+		
+		[Test]
+		public void ConvertCharToByte()
+		{
+			Assert.AreEqual("CByte(AscW(\"x\"C))", converter.CSharpToVB("(byte)'x'", out errors));
+		}
+		
+		[Test]
+		public void ConvertIntegerToChar()
+		{
+			Assert.AreEqual("ChrW(65)", converter.CSharpToVB("(char)65", out errors));
+		}
+		
+		[Test]
+		public void ConvertByteToChar()
+		{
+			Assert.AreEqual("ChrW(CByte(65))", converter.CSharpToVB("(char)(byte)65", out errors));
+		}
+		
+		[Test]
+		public void FixItemAccess()
+		{
+			Assert.AreEqual("public void A(System.Collections.Generic.List<string> l)\n" +
+			                "{\n" +
+			                "  l[0].ToString();\n" +
+			                "}",
+			                Normalize(converter.VBToCSharp("Sub A(l As Generic.List(Of String))\n" +
+			                                               " l.Item(0).ToString()\n" +
+			                                               "End Sub",
+			                                               out errors)));
+		}
+		
+		[Test]
+		public void ListAccessWithinForNextLoop()
+		{
+			Assert.AreEqual("public void A(System.Collections.Generic.List<string> l)\n" +
+			                "{\n" +
+			                "  for (int i = 0; i <= l.Count - 1; i++) {\n" +
+			                "    sum += l[i].Length;\n" +
+			                "  }\n" +
+			                "}",
+			                Normalize(converter.VBToCSharp("Sub A(l As Generic.List(Of String))\n" +
+			                                               " For i As Integer = 0 To l.Count - 1\n" +
+			                                               "   sum += l(i).Length\n" +
+			                                               " Next\n" +
+			                                               "End Sub",
+			                                               out errors)));
+		}
+		
+		[Test]
+		public void ListAccessOnField()
+		{
+			Assert.AreEqual("private System.Collections.Generic.List<System.Collections.Generic.List<string>> ParsedText = new System.Collections.Generic.List<System.Collections.Generic.List<string>>();\n" +
+			                "public void A()\n" +
+			                "{\n" +
+			                "  ParsedText[0].ToString();\n" +
+			                "}",
+			                Normalize(converter.VBToCSharp("Private ParsedText As New Generic.List(Of Generic.List(Of String))\n" +
+			                                               "Sub A()\n" +
+			                                               " ParsedText(0).ToString()\n" +
 			                                               "End Sub",
 			                                               out errors)));
 		}

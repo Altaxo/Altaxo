@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3715 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -17,13 +17,12 @@ namespace ICSharpCode.NRefactory.Parser
 	/// This is the base class for the C# and VB.NET lexer
 	/// </summary>
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1708:IdentifiersShouldDifferByMoreThanCase")]
-	public abstract class AbstractLexer : ILexer
+	internal abstract class AbstractLexer : ILexer
 	{
-		TextReader reader;
+		LATextReader reader;
 		int col  = 1;
 		int line = 1;
 		
-		[CLSCompliant(false)]
 		protected Errors errors = new Errors();
 		
 		protected Token lastToken = null;
@@ -34,7 +33,6 @@ namespace ICSharpCode.NRefactory.Parser
 		protected Hashtable specialCommentHash  = null;
 		List<TagComment> tagComments  = new List<TagComment>();
 		protected StringBuilder sb              = new StringBuilder();
-		[CLSCompliant(false)]
 		protected SpecialTracker specialTracker = new SpecialTracker();
 		
 		// used for the original value of strings (with escape sequences).
@@ -44,6 +42,23 @@ namespace ICSharpCode.NRefactory.Parser
 		public bool EvaluateConditionalCompilation { get; set; }
 		public virtual IDictionary<string, object> ConditionalCompilationSymbols {
 			get { throw new NotSupportedException(); }
+		}
+		
+		protected static IEnumerable<string> GetSymbols (string symbols)
+		{
+			if (!string.IsNullOrEmpty(symbols)) {
+				foreach (string symbol in symbols.Split (';', ' ', '\t')) {
+					string s = symbol.Trim ();
+					if (s.Length == 0)
+						continue;
+					yield return s;
+				}
+			}
+		}
+		
+		public virtual void SetConditionalCompilationSymbols (string symbols)
+		{
+			throw new NotSupportedException ();
 		}
 		
 		protected int Line {
@@ -56,19 +71,61 @@ namespace ICSharpCode.NRefactory.Parser
 				return col;
 			}
 		}
+		
+		protected bool recordRead = false;
+		protected StringBuilder recordedText = new StringBuilder ();
+		
 		protected int ReaderRead()
 		{
-			++col;
 			int val = reader.Read();
+			if (recordRead)
+				recordedText.Append ((char)val);
 			if ((val == '\r' && reader.Peek() != '\n') || val == '\n') {
 				++line;
 				col = 1;
+				LineBreak();
+			} else if (val >= 0) {
+				col++;
 			}
 			return val;
 		}
+		
 		protected int ReaderPeek()
 		{
 			return reader.Peek();
+		}
+		
+		protected int ReaderPeek(int step)
+		{
+			return reader.Peek(step);
+		}
+		
+		protected void ReaderSkip(int steps)
+		{
+			for (int i = 0; i < steps; i++) {
+				ReaderRead();
+			}
+		}
+		
+		protected string ReaderPeekString(int length)
+		{
+			StringBuilder builder = new StringBuilder();
+			
+			for (int i = 0; i < length; i++) {
+				int peek = ReaderPeek(i);
+				if (peek != -1)
+					builder.Append((char)peek);
+			}
+			
+			return builder.ToString();
+		}
+		
+		public void SetInitialLocation(Location location)
+		{
+			if (lastToken != null || curToken != null || peekToken != null)
+				throw new InvalidOperationException();
+			this.line = location.Line;
+			this.col = location.Column;
 		}
 		
 		public Errors Errors {
@@ -136,7 +193,14 @@ namespace ICSharpCode.NRefactory.Parser
 		/// </summary>
 		protected AbstractLexer(TextReader reader)
 		{
-			this.reader = reader;
+			this.reader = new LATextReader(reader);
+		}
+		
+		protected AbstractLexer(TextReader reader, LexerMemento state)
+			: this(reader)
+		{
+			SetInitialLocation(new Location(state.Column, state.Line));
+			lastToken = new Token(state.PrevTokenKind, 0, 0);
 		}
 		
 		#region System.IDisposable interface implementation
@@ -169,7 +233,6 @@ namespace ICSharpCode.NRefactory.Parser
 //			Console.WriteLine("Call to Peek");
 			if (peekToken.next == null) {
 				peekToken.next = Next();
-				specialTracker.InformToken(peekToken.next.kind);
 			}
 			peekToken = peekToken.next;
 			return peekToken;
@@ -183,7 +246,6 @@ namespace ICSharpCode.NRefactory.Parser
 		{
 			if (curToken == null) {
 				curToken = Next();
-				specialTracker.InformToken(curToken.kind);
 				//Console.WriteLine(ICSharpCode.NRefactory.Parser.CSharp.Tokens.GetTokenString(curToken.kind) + " -- " + curToken.val + "(" + curToken.kind + ")");
 				return curToken;
 			}
@@ -192,9 +254,6 @@ namespace ICSharpCode.NRefactory.Parser
 			
 			if (curToken.next == null) {
 				curToken.next = Next();
-				if (curToken.next != null) {
-					specialTracker.InformToken(curToken.next.kind);
-				}
 			}
 			
 			curToken  = curToken.next;
@@ -230,19 +289,30 @@ namespace ICSharpCode.NRefactory.Parser
 			errors.Error(line, col, String.Format("Invalid hex number '" + digit + "'"));
 			return 0;
 		}
-		
+		protected Location lastLineEnd = new Location (1, 1);
+		protected Location curLineEnd = new Location (1, 1);
+		protected void LineBreak ()
+		{
+			lastLineEnd = curLineEnd;
+			curLineEnd = new Location (col - 1, line);
+		}
 		protected bool HandleLineEnd(char ch)
 		{
 			// Handle MS-DOS or MacOS line ends.
 			if (ch == '\r') {
 				if (reader.Peek() == '\n') { // MS-DOS line end '\r\n'
-					ReaderRead();
+					ReaderRead(); // LineBreak (); called by ReaderRead ();
 					return true;
 				} else { // assume MacOS line end which is '\r'
+					LineBreak ();
 					return true;
 				}
 			}
-			return ch == '\n';
+			if (ch == '\n') {
+				LineBreak ();
+				return true;
+			}
+			return false;
 		}
 		
 		protected void SkipToEndOfLine()
@@ -297,5 +367,19 @@ namespace ICSharpCode.NRefactory.Parser
 		/// After the call, Lexer.LookAhead will be the block-closing token.
 		/// </summary>
 		public abstract void SkipCurrentBlock(int targetToken);
+		
+		public event EventHandler<SavepointEventArgs> SavepointReached;
+		
+		protected virtual void OnSavepointReached(SavepointEventArgs e)
+		{
+			if (SavepointReached != null) {
+				SavepointReached(this, e);
+			}
+		}
+		
+		public virtual LexerMemento Export()
+		{
+			throw new NotSupportedException();
+		}
 	}
 }

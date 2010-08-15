@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3548 $</version>
+//     <version>$Revision: 3984 $</version>
 // </file>
 
 using System;
@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			this.c       = c;
 			
 			Text = GetText(c);
-			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(c);
+			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(c).ImageIndex;
 			
 			if (c.ClassType != ClassType.Delegate) {
 				Nodes.Add(new TreeNode());
@@ -60,7 +60,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		public override void ActivateItem()
 		{
 			if (c.CompilationUnit != null) {
-				FileService.JumpToFilePosition(c.CompilationUnit.FileName, c.Region.BeginLine - 1, c.Region.BeginColumn - 1);
+				FileService.JumpToFilePosition(c.CompilationUnit.FileName, c.Region.BeginLine, c.Region.BeginColumn);
 			}
 		}
 		

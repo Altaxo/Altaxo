@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3772 $</version>
+//     <version>$Revision: 5019 $</version>
 // </file>
 
 using System;
@@ -19,22 +19,11 @@ namespace ICSharpCode.Core
 	public static class MessageService
 	{
 		/// <summary>
-		/// Delegate used for custom error callbacks.
+		/// Shows an exception error.
 		/// </summary>
-		public delegate void ShowErrorDelegate(Exception ex, string message);
-		
-		/// <summary>
-		/// Gets/Sets the custom error reporter callback delegate.
-		/// If this property is null, the default messagebox is used.
-		/// </summary>
-		public static ShowErrorDelegate CustomErrorReporter { get; set; }
-		
-		/// <summary>
-		/// Shows an exception error using the <see cref="CustomErrorReporter"/>.
-		/// </summary>
-		public static void ShowError(Exception ex)
+		public static void ShowException(Exception ex)
 		{
-			ShowError(ex, null);
+			ShowException(ex, null);
 		}
 		
 		/// <summary>
@@ -42,7 +31,8 @@ namespace ICSharpCode.Core
 		/// </summary>
 		public static void ShowError(string message)
 		{
-			ShowError(null, message);
+			LoggingService.Error(message);
+			ServiceManager.Instance.MessageService.ShowError(message);
 		}
 		
 		/// <summary>
@@ -51,33 +41,19 @@ namespace ICSharpCode.Core
 		/// <see cref="StringParser"/>,
 		/// then through <see cref="string.Format(string, object)"/>, using the formatitems as arguments.
 		/// </summary>
-		public static void ShowErrorFormatted(string formatstring, params string[] formatitems)
+		public static void ShowErrorFormatted(string formatstring, params object[] formatitems)
 		{
-			ShowError(null, Format(formatstring, formatitems));
+			ShowError(Format(formatstring, formatitems));
 		}
 		
 		/// <summary>
-		/// Shows an error.
-		/// If <paramref name="ex"/> is null, the message is shown inside
-		/// a message box.
-		/// Otherwise, the custom error reporter is used to display
-		/// the exception error.
+		/// Shows an exception.
 		/// </summary>
-		public static void ShowError(Exception ex, string message)
+		public static void ShowException(Exception ex, string message)
 		{
-			if (message == null) message = string.Empty;
-			
-			if (ex != null) {
-				LoggingService.Error(message, ex);
-				LoggingService.Warn("Stack trace of last error log:\n" + Environment.StackTrace);
-				if (CustomErrorReporter != null) {
-					CustomErrorReporter(ex, message);
-					return;
-				}
-			} else {
-				LoggingService.Error(message);
-			}
-			ServiceManager.MessageService.ShowError(ex, message);
+			LoggingService.Error(message, ex);
+			LoggingService.Warn("Stack trace of last exception log:\n" + Environment.StackTrace);
+			ServiceManager.Instance.MessageService.ShowException(ex, message);
 		}
 		
 		/// <summary>
@@ -86,7 +62,7 @@ namespace ICSharpCode.Core
 		public static void ShowWarning(string message)
 		{
 			LoggingService.Warn(message);
-			ServiceManager.MessageService.ShowWarning(message);
+			ServiceManager.Instance.MessageService.ShowWarning(message);
 		}
 		
 		/// <summary>
@@ -95,7 +71,7 @@ namespace ICSharpCode.Core
 		/// <see cref="StringParser"/>,
 		/// then through <see cref="string.Format(string, object)"/>, using the formatitems as arguments.
 		/// </summary>
-		public static void ShowWarningFormatted(string formatstring, params string[] formatitems)
+		public static void ShowWarningFormatted(string formatstring, params object[] formatitems)
 		{
 			ShowWarning(Format(formatstring, formatitems));
 		}
@@ -106,15 +82,15 @@ namespace ICSharpCode.Core
 		/// </summary>
 		public static bool AskQuestion(string question, string caption)
 		{
-			return ServiceManager.MessageService.AskQuestion(question, caption);
+			return ServiceManager.Instance.MessageService.AskQuestion(question, caption);
 		}
 		
-		public static bool AskQuestionFormatted(string caption, string formatstring, params string[] formatitems)
+		public static bool AskQuestionFormatted(string caption, string formatstring, params object[] formatitems)
 		{
 			return AskQuestion(Format(formatstring, formatitems), caption);
 		}
 		
-		public static bool AskQuestionFormatted(string formatstring, params string[] formatitems)
+		public static bool AskQuestionFormatted(string formatstring, params object[] formatitems)
 		{
 			return AskQuestion(Format(formatstring, formatitems));
 		}
@@ -125,7 +101,7 @@ namespace ICSharpCode.Core
 		/// </summary>
 		public static bool AskQuestion(string question)
 		{
-			return AskQuestion(StringParser.Parse(question), StringParser.Parse("${res:Global.QuestionText}"));
+			return AskQuestion(question, StringParser.Parse("${res:Global.QuestionText}"));
 		}
 		
 		/// <summary>
@@ -145,7 +121,7 @@ namespace ICSharpCode.Core
 		/// <returns>The number of the button that was clicked, or -1 if the dialog was closed  without clicking a button.</returns>
 		public static int ShowCustomDialog(string caption, string dialogText, int acceptButtonIndex, int cancelButtonIndex, params string[] buttontexts)
 		{
-			return ServiceManager.MessageService.ShowCustomDialog(caption, dialogText, acceptButtonIndex, cancelButtonIndex, buttontexts);
+			return ServiceManager.Instance.MessageService.ShowCustomDialog(caption, dialogText, acceptButtonIndex, cancelButtonIndex, buttontexts);
 		}
 		
 		/// <summary>
@@ -162,7 +138,7 @@ namespace ICSharpCode.Core
 		
 		public static string ShowInputBox(string caption, string dialogText, string defaultValue)
 		{
-			return ServiceManager.MessageService.ShowInputBox(caption, dialogText, defaultValue);
+			return ServiceManager.Instance.MessageService.ShowInputBox(caption, dialogText, defaultValue);
 		}
 		
 		static string defaultMessageBoxTitle = "MessageBox";
@@ -191,12 +167,12 @@ namespace ICSharpCode.Core
 			ShowMessage(message, DefaultMessageBoxTitle);
 		}
 		
-		public static void ShowMessageFormatted(string formatstring, params string[] formatitems)
+		public static void ShowMessageFormatted(string formatstring, params object[] formatitems)
 		{
 			ShowMessage(Format(formatstring, formatitems));
 		}
 		
-		public static void ShowMessageFormatted(string caption, string formatstring, params string[] formatitems)
+		public static void ShowMessageFormatted(string caption, string formatstring, params object[] formatitems)
 		{
 			ShowMessage(Format(formatstring, formatitems), caption);
 		}
@@ -204,16 +180,18 @@ namespace ICSharpCode.Core
 		public static void ShowMessage(string message, string caption)
 		{
 			LoggingService.Info(message);
-			ServiceManager.MessageService.ShowMessage(message, caption);
+			ServiceManager.Instance.MessageService.ShowMessage(message, caption);
 		}
 		
-		static string Format(string formatstring, string[] formatitems)
+		static string Format(string formatstring, object[] formatitems)
 		{
 			try {
 				return String.Format(StringParser.Parse(formatstring), formatitems);
-			} catch (FormatException) {
+			} catch (FormatException ex) {
+				LoggingService.Warn(ex);
+				
 				StringBuilder b = new StringBuilder(StringParser.Parse(formatstring));
-				foreach(string formatitem in formatitems) {
+				foreach(object formatitem in formatitems) {
 					b.Append("\nItem: ");
 					b.Append(formatitem);
 				}

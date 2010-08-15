@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3730 $</version>
+//     <version>$Revision: 5785 $</version>
 // </file>
 
 using System;
@@ -282,9 +282,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			LoggingService.Info("Initialize DirectoryNode " + Directory);
 			
 			Dictionary<string, FileNode> fileNodeDictionary
-				= new Dictionary<string, FileNode>(StringComparer.InvariantCultureIgnoreCase);
+				= new Dictionary<string, FileNode>(StringComparer.OrdinalIgnoreCase);
 			Dictionary<FileNode, string> dependendFileDictionary = new Dictionary<FileNode, string>();
-			Dictionary<string, DirectoryNode> directoryNodeList = new Dictionary<string, DirectoryNode>(StringComparer.InvariantCultureIgnoreCase);
+			Dictionary<string, DirectoryNode> directoryNodeList = new Dictionary<string, DirectoryNode>(StringComparer.OrdinalIgnoreCase);
 			
 			// Add files found in file system
 			
@@ -331,7 +331,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (virtualName.EndsWith("/"))
 					virtualName = virtualName.Substring(0, virtualName.Length - 1);
 				string fileName = Path.GetFileName(virtualName);
-				if (!string.Equals(virtualName, relativeDirectoryPath + fileName, StringComparison.InvariantCultureIgnoreCase)) {
+				if (!string.Equals(virtualName, relativeDirectoryPath + fileName, StringComparison.OrdinalIgnoreCase)) {
 					AddParentFolder(virtualName, relativeDirectoryPath, directoryNodeList);
 					continue;
 				}
@@ -427,7 +427,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		void AddParentFolder(string virtualName, string relativeDirectoryPath, Dictionary<string, DirectoryNode> directoryNodeList)
 		{
 			if (relativeDirectoryPath.Length == 0
-			    || string.Compare(virtualName, 0, relativeDirectoryPath, 0, relativeDirectoryPath.Length, StringComparison.InvariantCultureIgnoreCase) == 0)
+			    || string.Compare(virtualName, 0, relativeDirectoryPath, 0, relativeDirectoryPath.Length, StringComparison.OrdinalIgnoreCase) == 0)
 			{
 				// virtualName is a file in this folder, so we have to add its containing folder
 				// to the project
@@ -478,10 +478,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (newName == null) {
 				return;
 			}
-			if (!FileService.CheckFileName(newName)) {
-				return;
-			}
-			if (!FileService.CheckDirectoryName(newName)) {
+			if (!FileService.CheckDirectoryEntryName(newName)) {
 				return;
 			}
 			if (String.Compare(Text, newName, true) == 0) {
@@ -690,7 +687,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					if (file.FileName != null &&
 					    FileUtility.IsEqualFileName(file.FileName, fileName))
 					{
-						file.FileName  = copiedFileName;
+						file.FileName = new FileName(copiedFileName);
 					}
 				}
 				FileService.RemoveFile(fileName, false);
@@ -848,7 +845,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				
 				ProjectService.SaveSolution();
 			} catch (Exception e) {
-				MessageService.ShowError(e);
+				MessageService.ShowException(e);
 			}
 		}
 		

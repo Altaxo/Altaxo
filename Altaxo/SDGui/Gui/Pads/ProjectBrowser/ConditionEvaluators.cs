@@ -7,11 +7,11 @@ using ICSharpCode.Core;
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	/// <summary>
-  /// This helps in conditions where the number of selected data columns and the type of the item cares.
-  /// Two attributes are used: selcount and itemtype. The value of selcount is one of the comparer chars: (&lt; = &gt;)
+	/// This helps in conditions where the number of selected data columns and the type of the item cares.
+	/// Two attributes are used: selcount and itemtype. The value of selcount is one of the comparer chars: (&lt; = &gt;)
 	/// and an integer number, for instance: =1. The value of itemtype, if set, is the class name of the items, that should
 	/// be selected.
-  /// </summary>
+	/// </summary>
 	public class ListItemSelectionEvaluator : IConditionEvaluator
 	{
 		/// <summary>
@@ -76,13 +76,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (expectedItemType != "Folder") // if folder, than do no expansion of selected items!
 				((ProjectBrowseController)caller).ExpandItemListToSubfolderItems(selItems);
 
-			foreach(object item in selItems)
-				if(expectedItemType!=item.GetType().ToString())
+			foreach (object item in selItems)
+				if (expectedItemType != item.GetType().ToString())
 					return false;
 
-			return true;		
+			return true;
 		}
 
-	
+
 	}
 }

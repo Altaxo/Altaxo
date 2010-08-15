@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2993 $</version>
+//     <version>$Revision: 4929 $</version>
 // </file>
 
 using System;
@@ -166,6 +166,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			
 			return el;
+		}
+		
+		protected override object StartItemDrag(SideTabItem draggedItem)
+		{
+			if (this.ActiveTab.ChoosedItem != draggedItem && this.ActiveTab.Items.Contains(draggedItem)) {
+				this.ActiveTab.ChoosedItem = draggedItem;
+			}
+			var dataObject = new System.Windows.DataObject();
+			dataObject.SetText(draggedItem.Tag.ToString());
+			return dataObject;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3513 $</version>
+//     <version>$Revision: 4735 $</version>
 // </file>
 
 using System;
@@ -634,7 +634,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				DialogResult = DialogResult.OK;
 				Close();
 			} catch (Exception ex) {
-				MessageService.ShowError(ex);
+				MessageService.ShowException(ex);
 			}
 		}
 		
@@ -684,7 +684,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				StartDiscovery(uri, credential);
 			} else {
 				using (UserCredentialsDialog credentialsForm = new UserCredentialsDialog(uri.ToString(), authenticationType)) {
-					if (DialogResult.OK == credentialsForm.ShowDialog()) {
+					if (DialogResult.OK == credentialsForm.ShowDialog(WorkbenchSingleton.MainWin32Window)) {
 						StartDiscovery(uri, credentialsForm.Credential);
 					}
 				}

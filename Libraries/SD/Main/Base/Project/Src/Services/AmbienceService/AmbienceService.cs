@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3794 $</version>
+//     <version>$Revision: 4658 $</version>
 // </file>
 
 using System;
@@ -75,16 +75,14 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		static IAmbience defaultAmbience;
-		
 		/// <summary>
 		/// Gets the current ambience.
-		/// Might return a new ambience object, or use an existing. Use this method only on the main thread.
+		/// This method is thread-safe.
 		/// </summary>
+		/// <returns>Returns a new ambience object (ambience objects are never reused to ensure their thread-safety).
+		/// Never returns null, in case of errors the <see cref="NetAmbience"/> is used.</returns>
 		public static IAmbience GetCurrentAmbience()
 		{
-			Gui.WorkbenchSingleton.AssertMainThread();
-			
 			IAmbience ambience;
 			if (UseProjectAmbienceIfPossible) {
 				ICSharpCode.SharpDevelop.Project.IProject p = ICSharpCode.SharpDevelop.Project.ProjectService.CurrentProject;
@@ -94,19 +92,16 @@ namespace ICSharpCode.SharpDevelop
 						return ambience;
 				}
 			}
-			if (defaultAmbience == null) {
-				string language = DefaultAmbienceName;
-				try {
-					ambience = (IAmbience)AddInTree.BuildItem("/SharpDevelop/Workbench/Ambiences/" + language, null);
-				} catch (TreePathNotFoundException) {
-					ambience = null;
-				}
-				if (ambience == null && Gui.WorkbenchSingleton.MainForm != null) {
-					MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError}");
-				}
-				defaultAmbience = ambience ?? new NetAmbience();
+			string language = DefaultAmbienceName;
+			try {
+				ambience = (IAmbience)AddInTree.BuildItem("/SharpDevelop/Workbench/Ambiences/" + language, null);
+			} catch (TreePathNotFoundException) {
+				ambience = null;
 			}
-			return defaultAmbience;
+			if (ambience == null && Gui.WorkbenchSingleton.MainWin32Window != null) {
+				MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError}");
+			}
+			return ambience ?? new NetAmbience();
 		}
 		
 		public static string DefaultAmbienceName {

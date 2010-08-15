@@ -26,244 +26,255 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using System.IO;
 
 using Altaxo.Gui;
 using Altaxo.Gui.Scripting;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.DefaultEditor;
-using ICSharpCode.TextEditor.Document;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.AddIn;
 
 namespace Altaxo.Gui.Scripting
 {
-  /// <summary>
-  /// Summary description for PureScriptControl.
-  /// </summary>
-  [UserControlForController(typeof(IPureScriptViewEventSink),110)]
-  public class SDPureScriptControl : System.Windows.Forms.UserControl, IPureScriptView
-  {
-    /// <summary> 
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.Container components = null;
+	/// <summary>
+	/// Summary description for PureScriptControl.
+	/// </summary>
+	[UserControlForController(typeof(IPureScriptViewEventSink), 110)]
+	public class SDPureScriptControl : System.Windows.Forms.UserControl, IPureScriptView
+	{
+		/// <summary> 
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.Container components = null;
+		private System.Windows.Forms.Integration.ElementHost _wpfHost;
 
+		AvalonEditViewContent _editViewContent;
+		ICSharpCode.AvalonEdit.AddIn.CodeEditor _codeView;
 
-    private ICSharpCode.TextEditor.TextEditorControl edFormula;
-    private ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper edFormulaWrapper;
+		public SDPureScriptControl()
+		{
+			// This call is required by the Windows.Forms Form Designer.
+			InitializeComponent();
+		}
 
-    public SDPureScriptControl()
-    {
-      // This call is required by the Windows.Forms Form Designer.
-      InitializeComponent();
+		void InitializeEditor(string initialText, string scriptName)
+		{
+			this.SuspendLayout();
 
-     // InitializeEditor();
+			// The trick is here to create an untitled file, so that the binary content is used, 
+			// but at the same time to give the file an unique name in order to get processed by the parser
+			var openFile = FileService.CreateUntitledOpenedFile(scriptName, StringToByte(initialText));
 
-    }
+			_editViewContent = new AvalonEditViewContent(openFile);
+			this._codeView = _editViewContent.CodeEditor;
 
-    void InitializeEditor(string initialText, string scriptName)
-    {
-      this.SuspendLayout();
+			this._codeView.IsVisibleChanged += new System.Windows.DependencyPropertyChangedEventHandler(edFormula_IsVisibleChanged);
+			this._codeView.Name = "edFormula";
+			_wpfHost.Child = _codeView;
 
-		
-      this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper(new SDScriptOpenedFile(scriptName));
-      this.edFormula = edFormulaWrapper.TextEditorControl;
-			this.edFormula.Text = initialText;
-
-      this.edFormula.VisibleChanged += new EventHandler(edFormula_VisibleChanged);
-      this.edFormula.Location = new System.Drawing.Point(0, 0);
-      this.edFormula.Dock = DockStyle.Fill;
-      //this.edFormula.Multiline = true;
-      this.edFormula.Name = "edFormula";
-      //this.edFormula.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      this.edFormula.Size = new System.Drawing.Size(528, 336);
-
-      this.Controls.Add(this.edFormula);
-      Altaxo.Main.Services.ParserServiceConnector.RegisterScriptFileName(scriptName);
-      this.edFormula.Document.TextEditorProperties.TabIndent=2;
-      this.edFormulaWrapper.TextEditorControl.TextEditorProperties.MouseWheelScrollDown=true;
-
-      try
-      {
-        IHighlightingStrategy strat = HighlightingStrategyFactory.CreateHighlightingStrategy("C#");
-        if (strat == null)
-        {
-          throw new Exception("Strategy can't be null");
-        }
-        edFormula.Document.HighlightingStrategy = strat;
-        if (edFormula is ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)
-        {
-          ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)edFormula).InitializeAdvancedHighlighter();
-					((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)edFormula).InitializeFormatter();
+			//	Altaxo.Main.Services.ParserServiceConnector.RegisterScriptFileName(scriptName);
+			//  _codeView.PrimaryTextEditor.Options.IndentationSize = 2;
+			/*
+			try
+			{
+				var strat = HighlightingManager.Instance.GetDefinition("C#");
+				if (strat == null)
+				{
+					throw new Exception("Strategy can't be null");
 				}
-      }
-      catch (HighlightingDefinitionInvalidException ex)
-      {
-        
-      }
-
-      this.ResumeLayout();
-    }
-
-    bool _registered;
-    void Register()
-    {
-        if(!_registered)
-        {
-          _registered = true;
-          ParserService.RegisterModalContent(EditableContent);
-        }
-      
-    }
-    void Unregister()
-    {
-
-      ParserService.UnregisterModalContent();
-      _registered = false;
-     
-    }
-  
-    private object EditableContent
-    {
-      get
-      { 
-        return this.edFormulaWrapper; 
-      }
-    }
+				_codeView.SyntaxHighlighting = strat;
+				_codeView.PrimaryTextEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy(_codeView.PrimaryTextEditor.Options);
+			}
+			catch (HighlightingDefinitionInvalidException ex)
+			{
+			}
+			*/
 
 
-    /// <summary> 
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose( bool disposing )
-    {
-      if( disposing )
-      {
-        if(components != null)
-        {
-          components.Dispose();
-        }
+			this.ResumeLayout();
+		}
 
-        if(_registered)
-          Unregister();
 
-        if(edFormulaWrapper!=null)
-          edFormulaWrapper.Dispose();
-        if(edFormula!=null)
-          edFormula.Dispose();
 
-      }
-      base.Dispose( disposing );
-    }
+		bool _registered;
+		void Register()
+		{
+			if (!_registered)
+			{
+				_registered = true;
+				ParserService.RegisterModalContent(_editViewContent);
+			}
 
-    #region Component Designer generated code
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-      components = new System.ComponentModel.Container();
-    }
-    #endregion
+		}
+		void Unregister()
+		{
 
-    #region IPureScriptView Members
+			ParserService.UnregisterModalContent();
+			_registered = false;
 
-    IPureScriptViewEventSink _controller;
-    public IPureScriptViewEventSink Controller
-    {
-      get
-      {
-        return _controller;
-      }
-      set
-      {
-        _controller = value;
-      }
-    }
+		}
 
-    public string ScriptText
-    {
-      get 
-      {
-        return this.edFormula.Text; 
-      }
-      set 
-      {
-				if (this.edFormula == null)
+
+
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (components != null)
+				{
+					components.Dispose();
+				}
+
+				if (_registered)
+					Unregister();
+
+				_editViewContent.Dispose();
+				_editViewContent = null;
+
+			}
+			base.Dispose(disposing);
+		}
+
+		#region Component Designer generated code
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			this._wpfHost = new System.Windows.Forms.Integration.ElementHost();
+			this.SuspendLayout();
+			// 
+			// _wpfHost
+			// 
+			this._wpfHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._wpfHost.Location = new System.Drawing.Point(0, 0);
+			this._wpfHost.Name = "_wpfHost";
+			this._wpfHost.Size = new System.Drawing.Size(300, 300);
+			this._wpfHost.TabIndex = 0;
+			this._wpfHost.Text = "elementHost1";
+			this._wpfHost.Child = null;
+			// 
+			// SDPureScriptControl
+			// 
+			this.Controls.Add(this._wpfHost);
+			this.Name = "SDPureScriptControl";
+			this.Size = new System.Drawing.Size(300, 300);
+			this.ResumeLayout(false);
+
+		}
+		#endregion
+
+		#region IPureScriptView Members
+
+		IPureScriptViewEventSink _controller;
+		public IPureScriptViewEventSink Controller
+		{
+			get
+			{
+				return _controller;
+			}
+			set
+			{
+				_controller = value;
+			}
+		}
+
+		public string ScriptText
+		{
+			get
+			{
+				return this._codeView.Document.Text;
+			}
+			set
+			{
+				if (this._codeView == null)
 				{
 					string scriptName = System.Guid.NewGuid().ToString() + ".cs";
-					InitializeEditor(value,	scriptName);
+					InitializeEditor(value, scriptName);
 				}
-				else if (this.edFormula.Text != value)
+				else if (this._codeView.Document.Text != value)
 				{
-					this.edFormula.Text = value;
-					// The following line is a trick to re-get the complete folding of the text
-					// otherwise, when you change the text here, the folding will be disabled
-
-					// TODO 2006-11-06test if this works without the following line
-					//  this.edFormula.Document.FoldingManager.FoldMarker.Clear(); 
+					this._codeView.Document.Text = value;
 				}
-      }
-    }
+			}
+		}
 
-    public int ScriptCursorLocation
-    {
-      set
-      {
-        ICSharpCode.TextEditor.TextLocation point = edFormulaWrapper.TextEditorControl.Document.OffsetToPosition(value);
-        this.edFormulaWrapper.JumpTo(point.Line,point.Column);
-      }
+		public int ScriptCursorLocation
+		{
+			set
+			{
+				var location = _codeView.Document.GetLocation(value);
+				_codeView.PrimaryTextEditor.TextArea.Caret.Location = location;
 
-    }
+			}
 
-    public int InitialScriptCursorLocation
-    {
-      set
-      {
-        // do nothing here, because folding is active
-      }
+		}
 
-    }
+		public int InitialScriptCursorLocation
+		{
+			set
+			{
+				// do nothing here, because folding is active
+			}
 
-    public void SetScriptCursorLocation(int line, int column)
-    {
-      this.edFormulaWrapper.JumpTo(line,column);
-    }
+		}
 
-
-    public void MarkText(int pos1, int pos2)
-    {
-
-    }
+		public void SetScriptCursorLocation(int line, int column)
+		{
+			_codeView.PrimaryTextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
+		}
 
 
-  
+		public void MarkText(int pos1, int pos2)
+		{
 
-    #endregion
+		}
 
-  
 
-    Form _parentForm;
-    private void edFormula_VisibleChanged(object sender, EventArgs e)
-    {
-      if(edFormula.Visible)
-      {
-        if(null==_parentForm)
-        {
-          _parentForm = this.FindForm();
-          _parentForm.Closing += new CancelEventHandler(_parentForm_Closing);
 
-          Register();
-          
-         
-        }
-      }
-    }
 
-    private void _parentForm_Closing(object sender, CancelEventArgs e)
-    {
-      Unregister();
-    }
-  }
+		#endregion
+
+		Form _parentForm;
+		void edFormula_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+		{
+			if (_codeView.IsVisible)
+			{
+				if (null == _parentForm)
+				{
+					_parentForm = this.FindForm();
+					_parentForm.Closing += new CancelEventHandler(_parentForm_Closing);
+
+					Register();
+				}
+			}
+		}
+
+		private void _parentForm_Closing(object sender, CancelEventArgs e)
+		{
+			Unregister();
+		}
+
+
+		public static byte[] StringToByte(string fileContent)
+		{
+			MemoryStream memoryStream = new MemoryStream();
+			TextWriter tw = new StreamWriter(memoryStream);
+			tw.Write(fileContent);
+			tw.Flush();
+			return memoryStream.ToArray();
+		}
+
+
+	}
 }

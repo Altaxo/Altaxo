@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2977 $</version>
+//     <version>$Revision: 5245 $</version>
 // </file>
 
 using System;
@@ -107,6 +107,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 				this.Properties.AddRange(part.Properties);
 				this.Events.AddRange(part.Events);
 				this.Fields.AddRange(part.Fields);
+				
+				this.AddDefaultConstructorIfRequired |= part.AddDefaultConstructorIfRequired;
 			}
 			this.CompilationUnit.FileName = shortestFileName;
 			if ((modifier & ModifierEnum.VisibilityMask) == ModifierEnum.None) {

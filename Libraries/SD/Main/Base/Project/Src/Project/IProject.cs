@@ -2,13 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3290 $</version>
+//     <version>$Revision: 5854 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Xml;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -85,6 +87,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		/// <summary>
 		/// Gets/Sets the name of the project.
+		/// 
+		/// Only the getter is thread-safe.
 		/// </summary>
 		/// <remarks>
 		/// Name already exists in ISolutionFolder, it's repeated here to prevent
@@ -165,7 +169,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		#region Configuration / Platform management
 		/// <summary>
-		/// Gets/Sets the active configuration. MSBuild properties
+		/// Gets/Sets the active configuration.
 		/// </summary>
 		string ActiveConfiguration {
 			get;
@@ -188,6 +192,16 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// Gets the list of available platform names.
 		/// </summary>
 		ICollection<string> PlatformNames { get; }
+		
+		/// <summary>
+		/// Is raised after the ActiveConfiguration property has changed.
+		/// </summary>
+		event EventHandler ActiveConfigurationChanged;
+		
+		/// <summary>
+		/// Is raised after the ActivePlatform property has changed.
+		/// </summary>
+		event EventHandler ActivePlatformChanged;
 		#endregion
 		
 		/// <summary>
@@ -230,7 +244,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// <summary>
 		/// Creates a new ProjectItem for the passed MSBuild item.
 		/// </summary>
-		ProjectItem CreateProjectItem(Microsoft.Build.BuildEngine.BuildItem item);
+		ProjectItem CreateProjectItem(IProjectItemBackendStore item);
 		
 		/// <summary>
 		/// Gets the minimum version the solution must have to support this project type.
@@ -252,6 +266,7 @@ namespace ICSharpCode.SharpDevelop.Project
 	{
 		/// <summary>
 		/// Gets the list of projects on which this project depends.
+		/// This method is thread-safe.
 		/// </summary>
 		ICollection<IBuildable> GetBuildDependencies(ProjectBuildOptions buildOptions);
 		
@@ -263,13 +278,26 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		/// <summary>
 		/// Gets the name of the buildable item.
+		/// This property is thread-safe.
 		/// </summary>
 		string Name { get; }
 		
 		/// <summary>
 		/// Gets the parent solution.
+		/// This property is thread-safe.
 		/// </summary>
 		Solution ParentSolution { get; }
+		
+		/// <summary>
+		/// Creates the project-specific build options.
+		/// This member must be implemented thread-safe.
+		/// </summary>
+		/// <param name="options">The global build options.</param>
+		/// <param name="isRootBuildable">Specifies whether this project is the main buildable item.
+		/// The root buildable is the buildable for which <see cref="BuildOptions.ProjectTarget"/> and <see cref="BuildOptions.ProjectAdditionalProperties"/> apply.
+		/// The dependencies of that root buildable are the non-root buildables.</param>
+		/// <returns>The project-specific build options.</returns>
+		ProjectBuildOptions CreateProjectBuildOptions(BuildOptions options, bool isRootBuildable);
 	}
 	
 	/// <summary>

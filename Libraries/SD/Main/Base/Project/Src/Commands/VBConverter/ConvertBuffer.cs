@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2465 $</version>
+//     <version>$Revision: 4597 $</version>
 // </file>
 
 using System;
@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 			if (content != null && content.PrimaryFileName != null && content is IEditable) {
 				
-				IParser p = ParserFactory.CreateParser(SupportedLanguage.CSharp, new StringReader(((IEditable)content).Text));
+				IParser p = ParserFactory.CreateParser(SupportedLanguage.CSharp, ((IEditable)content).CreateSnapshot().CreateReader());
 				p.Parse();
 				if (p.Errors.Count > 0) {
 					MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.Convert.CorrectSourceCodeErrors}\n" + p.Errors.ErrorOutput);

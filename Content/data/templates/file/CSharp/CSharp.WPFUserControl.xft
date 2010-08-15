@@ -11,6 +11,18 @@
 	 
 	<Description>${res:Templates.File.WinFXUserControl.Description}</Description>
 	
+	<References>
+		<Reference include="PresentationCore">
+			<RequiredTargetFramework>3.0</RequiredTargetFramework>
+		</Reference>
+		<Reference include="PresentationFramework">
+			<RequiredTargetFramework>3.0</RequiredTargetFramework>
+		</Reference>
+		<Reference include="WindowsBase">
+			<RequiredTargetFramework>3.0</RequiredTargetFramework>
+		</Reference>
+	</References>
+	
 	<!-- 
 	Special new file templates:
 		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
@@ -21,14 +33,15 @@
 		${Path}                     -> Full path of the file
 	 -->
 	<Files>
-		<File name="${FullName}" language="C#"><![CDATA[<UserControl x:Class="${StandardNamespace}.${FileNameWithoutExtension}"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid>
-            
-    </Grid>
+		<File name="${FullName}" language="C#"><![CDATA[<UserControl x:Class="${StandardNamespace}.${ClassName}"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Grid>
+		
+	</Grid>
 </UserControl>]]></File>
-		<File name="${FullName}.cs" language="C#" DependentUpon="${FileName}" SubType="Code"><![CDATA[using System;
+		<File name="${FullName}.cs" language="C#" DependentUpon="${FileName}" SubType="Code"><![CDATA[${StandardHeader.C#}
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -37,24 +50,19 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ${StandardNamespace}
 {
-    /// <summary>
-    /// Interaction logic for ${FileName}
-    /// </summary>
-
-    public partial class ${FileNameWithoutExtension} : UserControl
-    {
-        public ${FileNameWithoutExtension}()
-        {
-            InitializeComponent();
-        }
-
-    }
+	/// <summary>
+	/// Interaction logic for ${FileName}
+	/// </summary>
+	public partial class ${ClassName} : UserControl
+	{
+		public ${ClassName}()
+		{
+			InitializeComponent();
+		}
+	}
 }]]></File>
 	</Files>
 	

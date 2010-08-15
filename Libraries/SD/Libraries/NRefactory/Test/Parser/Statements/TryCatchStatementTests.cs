@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 4549 $</version>
 // </file>
 
 using System;
@@ -21,26 +21,37 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		public void CSharpSimpleTryCatchStatementTest()
 		{
 			TryCatchStatement tryCatchStatement = ParseUtilCSharp.ParseStatement<TryCatchStatement>("try { } catch { } ");
-			// TODO : Extend test.
+			Assert.IsTrue(tryCatchStatement.FinallyBlock.IsNull);
+			Assert.AreEqual(1, tryCatchStatement.CatchClauses.Count);
+			Assert.IsTrue(tryCatchStatement.CatchClauses[0].TypeReference.IsNull);
+			Assert.IsEmpty(tryCatchStatement.CatchClauses[0].VariableName);
 		}
 		
 		[Test]
 		public void CSharpSimpleTryCatchStatementTest2()
 		{
 			TryCatchStatement tryCatchStatement = ParseUtilCSharp.ParseStatement<TryCatchStatement>("try { } catch (Exception e) { } ");
-			// TODO : Extend test.
+			Assert.IsTrue(tryCatchStatement.FinallyBlock.IsNull);
+			Assert.AreEqual(1, tryCatchStatement.CatchClauses.Count);
+			Assert.AreEqual("Exception", tryCatchStatement.CatchClauses[0].TypeReference.Type);
+			Assert.AreEqual("e", tryCatchStatement.CatchClauses[0].VariableName);
 		}
 		
 		[Test]
 		public void CSharpSimpleTryCatchFinallyStatementTest()
 		{
-			TryCatchStatement tryCatchStatement = ParseUtilCSharp.ParseStatement<TryCatchStatement>("try { } catch (Exception) { } finally { } ");
-			// TODO : Extend test.
+			TryCatchStatement tryCatchStatement = ParseUtilCSharp.ParseStatement<TryCatchStatement>("try { } catch (Exception) { } catch { } finally { } ");
+			Assert.IsFalse(tryCatchStatement.FinallyBlock.IsNull);
+			Assert.AreEqual(2, tryCatchStatement.CatchClauses.Count);
+			Assert.AreEqual("Exception", tryCatchStatement.CatchClauses[0].TypeReference.Type);
+			Assert.IsEmpty(tryCatchStatement.CatchClauses[0].VariableName);
+			Assert.IsTrue(tryCatchStatement.CatchClauses[1].TypeReference.IsNull);
+			Assert.IsEmpty(tryCatchStatement.CatchClauses[1].VariableName);
 		}
 		#endregion
 		
 		#region VB.NET
-			// TODO
-		#endregion 
+		// TODO
+		#endregion
 	}
 }

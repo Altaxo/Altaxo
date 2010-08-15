@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3073 $</version>
+//     <version>$Revision: 5242 $</version>
 // </file>
 
 using System;
@@ -281,5 +281,20 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 			throw new NotImplementedException();
 		}
 		
+		public ICompilationUnit CompilationUnit {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public IProjectContent ProjectContent {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public EntityType EntityType {
+			get { return EntityType.Property; }
+		}
 	}
 }

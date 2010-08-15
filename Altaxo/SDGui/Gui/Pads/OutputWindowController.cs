@@ -28,240 +28,125 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.Pads
 {
-  /// <summary>
-  /// Controls the Output window pad which shows the Altaxo text output.
-  /// </summary>
-  public class OutputWindowController :
-    ICSharpCode.SharpDevelop.Gui.IPadContent,
-    Altaxo.Main.Services.IOutputService,
-    ICSharpCode.SharpDevelop.Gui.IClipboardHandler
-  {
-    System.Windows.Forms.TextBox _view;
+	/// <summary>
+	/// Controls the Output window pad which shows the Altaxo text output.
+	/// </summary>
+	public class OutputWindowController :
+		ICSharpCode.SharpDevelop.Gui.IPadContent,
+		Altaxo.Main.Services.IOutputService
+	{
+		System.Windows.Controls.TextBox _view;
 
-    public OutputWindowController()
-    {
-      _view = new System.Windows.Forms.TextBox();
-      _view.Multiline = true;
-      _view.WordWrap=false;
-			_view.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      _view.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace,8);
-      _view.Dock = System.Windows.Forms.DockStyle.Fill;
+		public OutputWindowController()
+		{
+			_view = new System.Windows.Controls.TextBox();
 
-      Current.SetOutputService(this);
-    }
+			_view.TextWrapping = System.Windows.TextWrapping.NoWrap;
+			_view.AcceptsReturn = true;
+			_view.AcceptsTab = true;
+			_view.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+			_view.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
+			_view.FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
 
-
-    #region IPadContent Members
-
-    public string Title
-    {
-      get
-      {
-        return ResourceService.GetString("MainWindow.Windows.AltaxoOutputWindowLabel");
-      }
-    }
-
-    public System.Windows.Forms.Control Control
-    {
-      get
-      {
-        return this._view;
-      }
-    }
-
-    public void BringToFront()
-    {
-      _view.BringToFront();
-    }
-
-    public string Icon
-    {
-      get
-      {
-        return "Icons.16x16.OpenFolderBitmap";
-      }
-    }
-
-    public event System.EventHandler TitleChanged;
-
-    public event System.EventHandler IconChanged;
-
-    string category;
-    public string Category 
-    {
-      get 
-      {
-        return category;
-      }
-      set
-      {
-        category = value;
-      }
-    }
-    string[] shortcut; // TODO: Inherit from AbstractPadContent
-    public string[] Shortcut 
-    {
-      get 
-      {
-        return shortcut;
-      }
-      set 
-      {
-        shortcut = value;
-      }
-    }
-
-    /*
-    public void BringPadToFront()
-    {
-      if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) 
-      {
-        WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
-      }
-      WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
-    }
-    */
-
-    public void RedrawContent()
-    {
-    }
-
-    #endregion
-
-    #region IDisposable Members
-
-    public void Dispose()
-    {
-      if(_view!=null)
-      {
-        _view.Dispose();
-        _view = null;
-      }
-    }
-
-    #endregion
-
-    #region IOutputService Members
-
-    void WriteInternal(string text)
-    {
-      _view.AppendText(text);
+			Current.SetOutputService(this);
+		}
 
 
-      if (!_view.Visible || _view.Parent == null)
-      {
-        ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+		#region IPadContent Members
 
-        WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
+		public object Control
+		{
+			get
+			{
+				return this._view;
+			}
+		}
 
-        // now focus back to the formerly active workbench window.
-        ww.SelectWindow();
+		public object InitiallyFocusedControl
+		{
+			get
+			{
+				return null;
+			}
+		}
+		#endregion
 
-      }
-    }
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			if (_view != null)
+			{
+				_view = null;
+			}
+		}
+
+		#endregion
+
+		#region IOutputService Members
+
+		void WriteInternal(string text)
+		{
+			_view.AppendText(text);
 
 
-    public void Write(string text)
-    {
-      if (Current.Gui.InvokeRequired())
-      {
-        System.Windows.Forms.MethodInvoker i = delegate { WriteInternal(text); };
-        Current.Gui.Invoke(i);
-      }
-      else
-      {
-        WriteInternal(text);
-      }
-    }
+			if (!_view.IsVisible || _view.Parent == null)
+			{
+				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
-    public void WriteLine()
-    {
-      Write(System.Environment.NewLine);
-    }
+				WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
 
-    public void WriteLine(string text)
-    {
-      Write(text + System.Environment.NewLine);
-    }
+				// now focus back to the formerly active workbench window.
+				ww.SelectWindow();
 
-    public void WriteLine(string format, params object[] args)
-    {
-      Write(string.Format(format, args) + System.Environment.NewLine);
-    }
+			}
+		}
 
-    public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
-    {
-      Write(string.Format(provider, format, args) + System.Environment.NewLine);
-    }
 
-    public void Write(string format, params object[] args)
-    {
-      Write(string.Format(format,args));
-    }
+		public void Write(string text)
+		{
+			if (Current.Gui.InvokeRequired())
+			{
+				System.Windows.Forms.MethodInvoker i = delegate { WriteInternal(text); };
+				Current.Gui.Invoke(i);
+			}
+			else
+			{
+				WriteInternal(text);
+			}
+		}
 
-    public void Write(System.IFormatProvider provider, string format, params object[] args)
-    {
-      Write(string.Format(provider,format,args));
-    }
+		public void WriteLine()
+		{
+			Write(System.Environment.NewLine);
+		}
 
-    #endregion
+		public void WriteLine(string text)
+		{
+			Write(text + System.Environment.NewLine);
+		}
 
-    #region IClipboardHandler Members
+		public void WriteLine(string format, params object[] args)
+		{
+			Write(string.Format(format, args) + System.Environment.NewLine);
+		}
 
-    public bool EnableCut
-    {
-      get { return _view.SelectionLength > 0; }
-    }
+		public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
+		{
+			Write(string.Format(provider, format, args) + System.Environment.NewLine);
+		}
 
-    public bool EnableCopy
-    {
-      get { return _view.SelectionLength > 0; }
-    }
+		public void Write(string format, params object[] args)
+		{
+			Write(string.Format(format, args));
+		}
 
-    public bool EnablePaste
-    {
-      get { return true; }
-    }
+		public void Write(System.IFormatProvider provider, string format, params object[] args)
+		{
+			Write(string.Format(provider, format, args));
+		}
 
-    public bool EnableDelete
-    {
-      get { return _view.SelectionLength > 0; }
-    }
+		#endregion
 
-    public bool EnableSelectAll
-    {
-      get { return true; }
-    }
-
-    public void Cut()
-    {
-      _view.Cut();
-    }
-
-    public void Copy()
-    {
-      _view.Copy();
-    }
-
-    public void Paste()
-    {
-      _view.Paste();
-    }
-
-    public void Delete()
-    {
-      int start = _view.SelectionStart;
-      int len = _view.SelectionLength;
-      if (len > 0)
-        _view.Text = _view.Text.Substring(0, start) + _view.Text.Substring(start + len);
-     
-    }
-
-    public void SelectAll()
-    {
-      _view.SelectAll();
-    }
-
-    #endregion
-  }
+	}
 }

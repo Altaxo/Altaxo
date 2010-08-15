@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3794 $</version>
+//     <version>$Revision: 4743 $</version>
 // </file>
 
 using System;
@@ -222,10 +222,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public virtual bool ShowMember(IMember member, bool showStatic)
 		{
-			if (member is IProperty && ((IProperty)member).IsIndexer) {
+			IProperty property = member as IProperty;
+			if (property != null && property.IsIndexer) {
 				return false;
 			}
-			if (member is IMethod && ((IMethod)member).IsConstructor) {
+			IMethod method = member as IMethod;
+			if (method != null && (method.IsConstructor || method.IsOperator)) {
 				return false;
 			}
 			return member.IsStatic == showStatic;
@@ -309,6 +311,19 @@ namespace ICSharpCode.SharpDevelop.Dom
 					return base.GetFindMemberReferencesTextFinder(member);
 				}
 			}
+			
+			public override bool ShowMember(IMember member, bool showStatic)
+			{
+				if (!base.ShowMember(member, showStatic))
+					return false;
+				// do not show 'Finalize' methods (they are not directly callable from C#)
+				IMethod method = member as IMethod;
+				if (method != null) {
+					if (method.Name == "Finalize" && method.Parameters.Count == 0)
+						return false;
+				}
+				return true;
+			}
 		}
 		#endregion
 		
@@ -322,7 +337,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 				if (member is ArrayReturnType.ArrayIndexer) {
 					return false;
 				}
-				if (member is IMethod && ((IMethod)member).IsConstructor) {
+				IMethod method = member as IMethod;
+				if (method != null && (method.IsConstructor || method.IsOperator)) {
 					return false;
 				}
 				return member.IsStatic || !showStatic;

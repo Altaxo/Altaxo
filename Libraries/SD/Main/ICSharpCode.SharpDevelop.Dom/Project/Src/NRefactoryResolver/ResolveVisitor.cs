@@ -1,15 +1,15 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald"/>
-//     <version>$Revision: 3661 $</version>
+//     <author name="Daniel Grunwald"/>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Linq;
-
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
@@ -324,7 +324,8 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (resolver.Language == SupportedLanguage.VBNet) {
 				return CreateMemberResolveResult(GetVisualBasicIndexer(invocationExpression));
 			}
-			return null;
+
+			return resolver.CreateUnknownMethodResolveResult(invocationExpression);
 		}
 		
 		ResolveResult FallbackResolveMethod(InvocationExpression invocation, MethodGroupResolveResult mgrr, IReturnType[] argumentTypes)
@@ -342,8 +343,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				}
 			}
 			
-			// TODO: method still not found, now return invalid ResolveResult describing the expected method
-			return null;
+			return resolver.CreateUnknownMethodResolveResult(invocation);
 		}
 		
 		public override object VisitLambdaExpression(LambdaExpression lambdaExpression, object data)
@@ -444,11 +444,6 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			bool resultIsAcceptable;
 			IMethod result = MemberLookupHelper.FindOverload(methods, argumentTypes, out resultIsAcceptable);
 			
-			if (result == null) {
-				IClass c = rt.GetUnderlyingClass();
-				if (c != null)
-					result = Constructor.CreateDefault(c);
-			}
 			ResolveResult rr = CreateMemberResolveResult(result);
 			if (rr != null)
 				rr.ResolvedType = rt;
@@ -554,7 +549,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (selectClause != null) {
 				// Fake a call to 'Select'
 				var fakeInvocation = new InvocationExpression(new MemberReferenceExpression(
-					queryExpression.FromClause.InExpression, "Select"));
+					queryExpression.FromClause.Sources.First().Expression, "Select"));
 				
 				var selector = new LambdaExpression();
 				selector.Parameters.Add(new ParameterDeclarationExpression(null, "__rangeVariable"));
@@ -567,7 +562,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			} else if (groupClause != null) {
 				// Fake a call to 'GroupBy'
 				var fakeInvocation = new InvocationExpression(new MemberReferenceExpression(
-					queryExpression.FromClause.InExpression, "GroupBy"));
+					queryExpression.FromClause.Sources.First().Expression, "GroupBy"));
 				
 				var keySelector = new LambdaExpression();
 				keySelector.Parameters.Add(new ParameterDeclarationExpression(null, "__rangeVariable"));
@@ -672,5 +667,52 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		{
 			return CreateResolveResult(uncheckedExpression.Expression);
 		}
+		
+		#region XML Literal resolver
+		public override object VisitXmlContentExpression(XmlContentExpression xmlContentExpression, object data)
+		{
+			switch (xmlContentExpression.Type) {
+				case XmlContentType.Comment:
+					return CreateResolveResult(new TypeReference("System.Xml.Linq.XComment"));
+				case XmlContentType.Text:
+					return CreateResolveResult(new TypeReference("System.Xml.Linq.XText"));
+				case XmlContentType.CData:
+					return CreateResolveResult(new TypeReference("System.Xml.Linq.XCData"));
+				case XmlContentType.ProcessingInstruction:
+					if (xmlContentExpression.Content.StartsWith("xml ", StringComparison.OrdinalIgnoreCase))
+						return CreateResolveResult(new TypeReference("System.Xml.Linq.XDocumentType"));
+					return CreateResolveResult(new TypeReference("System.Xml.Linq.XProcessingInstruction"));
+				default:
+					throw new Exception("Invalid value for XmlContentType");
+			}
+		}
+		
+		public override object VisitXmlDocumentExpression(XmlDocumentExpression xmlDocumentExpression, object data)
+		{
+			return CreateResolveResult(new TypeReference("System.Xml.Linq.XDocument"));
+		}
+		
+		public override object VisitXmlElementExpression(XmlElementExpression xmlElementExpression, object data)
+		{
+			return CreateResolveResult(new TypeReference("System.Xml.Linq.XElement"));
+		}
+		
+		public override object VisitXmlMemberAccessExpression(XmlMemberAccessExpression xmlMemberAccessExpression, object data)
+		{
+			switch (xmlMemberAccessExpression.AxisType) {
+				case XmlAxisType.Element:
+				case XmlAxisType.Descendents:
+					return CreateResolveResult(
+						new TypeReference("System.Collections.Generic.IEnumerable",
+						                  new List<TypeReference> { new TypeReference("System.Xml.Linq.XElement") { IsGlobal = true } }
+						                 ) { IsGlobal = true }
+					);
+				case XmlAxisType.Attribute:
+					return CreateResolveResult(new TypeReference("System.String", true) { IsGlobal = true });
+				default:
+					throw new Exception("Invalid value for XmlAxisType");
+			}
+		}
+		#endregion
 	}
 }

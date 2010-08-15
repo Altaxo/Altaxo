@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2731 $</version>
+//     <version>$Revision: 5948 $</version>
 // </file>
 
 using System;
@@ -12,22 +12,34 @@ namespace ICSharpCode.SharpDevelop.Gui
 {
 	public abstract class AbstractPadContent : IPadContent
 	{
-		public abstract Control Control {
+		/// <inheritdoc/>
+		public abstract object Control {
 			get;
 		}
 		
-		public virtual void RedrawContent()
-		{
+		/// <inheritdoc/>
+		public virtual object InitiallyFocusedControl {
+			get {
+				return null;
+			}
 		}
 		
 		public virtual void Dispose()
 		{
 		}
 		
-		public bool IsVisible {
+		public void BringToFront()
+		{
+			PadDescriptor d = this.PadDescriptor;
+			if (d != null)
+				d.BringPadToFront();
+		}
+		
+		protected virtual PadDescriptor PadDescriptor {
 			get {
-				Control ctl = this.Control;
-				return ctl.Visible && ctl.Width > 0 && ctl.Height > 0;
+				if (WorkbenchSingleton.Workbench == null || WorkbenchSingleton.Workbench.WorkbenchLayout == null)
+					return null;
+				return WorkbenchSingleton.Workbench.GetPad(GetType());
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3592 $</version>
+//     <version>$Revision: 5076 $</version>
 // </file>
 
 using System;
@@ -47,7 +47,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			UpdateHostIfActive(pc);
 			UpdateSelectedObjectIfActive(pc);
 			UpdateSelectableIfActive(pc);
-			UpdatePropertyGridReplacementControl(pc);
+			UpdatePropertyGridReplacementContent(pc);
 		}
 		
 		internal static void UpdateSelectedObjectIfActive(PropertyContainer container)
@@ -55,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (instance == null) return;
 			if (instance.activeContainer != container)
 				return;
-			LoggingService.Debug("UpdateSelectedObjectIfActive");
+			//LoggingService.Debug("UpdateSelectedObjectIfActive");
 			if (container.SelectedObjects != null)
 				instance.SetDesignableObjects(container.SelectedObjects);
 			else
@@ -67,7 +67,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (instance == null) return;
 			if (instance.activeContainer != container)
 				return;
-			LoggingService.Debug("UpdateHostIfActive");
+			//LoggingService.Debug("UpdateHostIfActive");
 			if (instance.host == container.Host)
 				return;
 			if (instance.host != null)
@@ -81,34 +81,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (instance == null) return;
 			if (instance.activeContainer != container)
 				return;
-			LoggingService.Debug("UpdateSelectableIfActive");
+			//LoggingService.Debug("UpdateSelectableIfActive");
 			instance.SetSelectableObjects(container.SelectableObjects);
 		}
 		
-		internal static void UpdatePropertyGridReplacementControl(PropertyContainer container)
+		internal static void UpdatePropertyGridReplacementContent(PropertyContainer container)
 		{
 			if (instance == null) return;
 			if (instance.activeContainer != container)
 				return;
-			LoggingService.Debug("UpdatePropertyGridReplacementControl");
-			if (container.PropertyGridReplacementControl != null) {
-				if (!instance.panel.Controls.Contains(container.PropertyGridReplacementControl)) {
-					instance.panel.Controls.Clear();
-					container.PropertyGridReplacementControl.Dock = DockStyle.Fill;
-					instance.panel.Controls.Add(container.PropertyGridReplacementControl);
-				}
+			//LoggingService.Debug("UpdatePropertyGridReplacementControl");
+			if (container.PropertyGridReplacementContent != null) {
+				instance.contentControl.SetContent(container.PropertyGridReplacementContent);
 			} else {
-				if (!instance.panel.Controls.Contains(instance.grid)) {
-					instance.panel.Controls.Clear();
-					instance.panel.Controls.Add(instance.grid);
-					instance.panel.Controls.Add(instance.comboBox);
-				}
+				instance.contentControl.SetContent(instance.panel);
 			}
 		}
 		
-		Panel         panel;
-		ComboBox      comboBox;
-		PropertyGrid  grid;
+		System.Windows.Controls.ContentPresenter contentControl;
+		Panel panel;
+		ComboBox comboBox;
+		PropertyGrid grid;
 		IDesignerHost host;
 		
 		/// <summary>
@@ -127,9 +120,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public static event EventHandler SelectedObjectChanged;
 		public static event SelectedGridItemChangedEventHandler SelectedGridItemChanged;
 		
-		public override Control Control {
+		public override object Control {
 			get {
-				return panel;
+				return contentControl;
 			}
 		}
 		
@@ -161,6 +154,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public PropertyPad()
 		{
 			instance = this;
+			contentControl = new System.Windows.Controls.ContentPresenter();
 			panel = new Panel();
 			
 			grid = new PropertyGrid();
@@ -188,6 +182,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			panel.Controls.Add(grid);
 			panel.Controls.Add(comboBox);
+			contentControl.SetContent(panel);
 			
 			ProjectService.SolutionClosed += SolutionClosedEvent;
 			
@@ -334,11 +329,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			} else {
 				comboBox.SelectedIndex = -1;
 			}
-		}
-		
-		public override void RedrawContent()
-		{
-			grid.Refresh();
 		}
 		
 		public override void Dispose()

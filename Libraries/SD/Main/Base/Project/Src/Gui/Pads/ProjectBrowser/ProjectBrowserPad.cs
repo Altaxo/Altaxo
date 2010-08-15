@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3458 $</version>
+//     <version>$Revision: 5537 $</version>
 // </file>
 
 using System;
@@ -63,7 +63,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		public override Control Control {
+		public override object Control {
 			get {
 				return projectBrowserPanel;
 			}
@@ -145,25 +145,36 @@ namespace ICSharpCode.SharpDevelop.Project
 			projectBrowserPanel.Clear();
 		}
 		
-		string lastFileName;
+		bool activeContentChangedEnqueued;
 		
 		void ActiveContentChanged(object sender, EventArgs e)
 		{
+			// this event may occur several times quickly after another (e.g. when opening or closing multiple files)
+			// do the potentially expensive selection of the item in the tree view only once after the last change
+			if (!activeContentChangedEnqueued) {
+				activeContentChangedEnqueued = true;
+				WorkbenchSingleton.SafeThreadAsyncCall(ActiveContentChangedInvoked);
+			}
+		}
+		
+		void ActiveContentChangedInvoked()
+		{
+			activeContentChangedEnqueued = false;
 			if (WorkbenchSingleton.Workbench.ActiveContent == this) {
 				projectBrowserPanel.ProjectBrowserControl.PadActivated();
 			} else {
-				IViewContent content = WorkbenchSingleton.Workbench.ActiveViewContent;
+				// we don't use ActiveViewContent here as this is the ActiveContent change event handler
+				IViewContent content = WorkbenchSingleton.Workbench.ActiveContent as IViewContent;
 				if (content == null)
 					return;
 				string fileName = content.PrimaryFileName;
-				if (fileName == null || lastFileName == fileName) {
+				if (fileName == null) {
 					return;
 				}
 				
 				if (!FileUtility.IsValidPath(fileName)) {
 					return;
 				}
-				lastFileName = fileName;
 				projectBrowserPanel.SelectFile(fileName);
 			}
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 3805 $</version>
 // </file>
 
 using System;
@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 		protected override void OnOwnerChanged(EventArgs e)
 		{
 			base.OnOwnerChanged(e);
-			ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
+			ToolBarComboBox toolbarItem = (ToolBarComboBox)base.ComboBox;
 			toolbarItem.ComboBox.Width *= 3;
 			((HtmlViewPane)toolbarItem.Caller).SetUrlComboBox(toolbarItem.ComboBox);
 		}

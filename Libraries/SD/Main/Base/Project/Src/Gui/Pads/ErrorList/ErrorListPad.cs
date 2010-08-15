@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 5692 $</version>
 // </file>
 
 using System;
@@ -15,6 +15,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 {
 	public class ErrorListPad : AbstractPadContent, IClipboardHandler
 	{
+		public const string DefaultContextMenuAddInTreeEntry = "/SharpDevelop/Pads/ErrorList/TaskContextMenu";
+		
 		static ErrorListPad instance;
 		public static ErrorListPad Instance {
 			get {
@@ -24,39 +26,36 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		ToolStrip toolStrip;
 		Panel contentPanel = new Panel();
+		TaskView taskView = new TaskView() { DefaultContextMenuAddInTreeEntry = ErrorListPad.DefaultContextMenuAddInTreeEntry };
 		
-		TaskView taskView = new TaskView();
-
-		bool showWarnings = true;
-		bool showErrors = true;
-		bool showMessages = true;
+		Properties properties;
 		
 		public bool ShowErrors {
 			get {
-				return showErrors;
+				return properties.Get<bool>("ShowErrors", true);
 			}
 			set {
-				showErrors = value;
+				properties.Set<bool>("ShowErrors", value);
 				InternalShowResults();
 			}
 		}
 		
 		public bool ShowMessages {
 			get {
-				return showMessages;
+				return properties.Get<bool>("ShowMessages", true);
 			}
 			set {
-				showMessages = value;
+				properties.Set<bool>("ShowMessages", value);
 				InternalShowResults();
 			}
 		}
 		
 		public bool ShowWarnings {
 			get {
-				return showWarnings;
+				return properties.Get<bool>("ShowWarnings", true);
 			}
 			set {
-				showWarnings = value;
+				properties.Set<bool>("ShowWarnings", value);
 				InternalShowResults();
 			}
 		}
@@ -70,7 +69,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public override Control Control {
+		public override object Control {
 			get {
 				return contentPanel;
 			}
@@ -79,8 +78,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public ErrorListPad()
 		{
 			instance = this;
+			properties = PropertyService.Get("ErrorListPad", new Properties());
 			
 			RedrawContent();
+			ResourceService.LanguageChanged += delegate { RedrawContent(); };
 			
 			TaskService.Cleared += new EventHandler(TaskServiceCleared);
 			TaskService.Added   += new TaskEventHandler(TaskServiceAdded);
@@ -90,7 +91,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					InternalShowResults();
 			};
 			
-			ProjectService.EndBuild       += ProjectServiceEndBuild;
+			ProjectService.BuildFinished  += ProjectServiceEndBuild;
 			ProjectService.SolutionLoaded += OnSolutionOpen;
 			ProjectService.SolutionClosed += OnSolutionClosed;
 			
@@ -106,7 +107,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			InternalShowResults();
 		}
 		
-		public override void RedrawContent()
+		void RedrawContent()
 		{
 			taskView.RefreshColumnNames();
 		}
@@ -123,14 +124,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 				taskView.ClearTasks();
 				UpdateToolstripStatus();
 			} catch (Exception ex) {
-				MessageService.ShowError(ex);
+				MessageService.ShowException(ex);
 			}
 		}
 		
 		void ProjectServiceEndBuild(object sender, EventArgs e)
 		{
 			if (TaskService.TaskCount > 0 && ShowAfterBuild) {
-				WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this.GetType().FullName);
+				WorkbenchSingleton.Workbench.GetPad(typeof(ErrorListPad)).BringPadToFront();
 			}
 			UpdateToolstripStatus();
 		}

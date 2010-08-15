@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="David Alpert" email="david@spinthemoose.com"/>
-//     <version>$Revision:  $</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -33,7 +33,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			//
 			InitializeComponent();
 			
-			this.Owner = WorkbenchSingleton.MainForm;
 			this.possibleInterfaceMembers = new List<IMember>();
 			this.hasSetFilenameExplicitly = false;
 			
@@ -69,7 +68,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public ExtractInterfaceOptions ShowDialog(ExtractInterfaceOptions options)
 		{
 			InitializeFields(options);
-			options.IsCancelled = (base.ShowDialog() == DialogResult.Cancel);
+			options.IsCancelled = (base.ShowDialog(WorkbenchSingleton.MainWin32Window) == DialogResult.Cancel);
 			return options;
 		}
 		

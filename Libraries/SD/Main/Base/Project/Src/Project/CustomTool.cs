@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3498 $</version>
+//     <version>$Revision: 4735 $</version>
 // </file>
 
 using System;
@@ -77,7 +77,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					try {
 						action();
 					} catch (Exception ex) {
-						MessageService.ShowError(ex);
+						MessageService.ShowException(ex);
 					} finally {
 						CustomToolsService.NotifyAsyncFinish(this);
 					}
@@ -167,7 +167,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			                         },
 			                         outputFileName, FileErrorPolicy.Inform);
 			EnsureOutputFileIsInProject(baseItem, outputFileName);
-			ParserService.EnqueueForParsing(outputFileName, codeOutput);
+			ParserService.BeginParse(outputFileName, new StringTextBuffer(codeOutput));
 		}
 		
 		public void GenerateCodeDomAsync(FileProjectItem baseItem, string outputFileName, Func<CodeCompileUnit> func)

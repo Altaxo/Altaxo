@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 5498 $</version>
 // </file>
 
 using System;
@@ -108,12 +108,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 	}
+
 #if ModifiedForAltaxo
   public class FileList : ListView
 #else
 	sealed class FileList : ListView
 #endif
-	{
+  {
 		private FileSystemWatcher watcher;
 		
 //		private MagicMenus.PopupMenu menu = null;
@@ -242,7 +243,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					try {
 						File.Delete(fileItem.FullName);
 					} catch(Exception ex) {
-						MessageService.ShowError(ex, "Couldn't delete file '" + Path.GetFileName(fileItem.FullName) + "'");
+						MessageService.ShowException(ex, "Couldn't delete file '" + Path.GetFileName(fileItem.FullName) + "'");
 						break;
 					}
 				}
@@ -306,8 +307,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			EndUpdate();
 		}
-
-#if ModifiedForAltaxo		
+		
+#if ModifiedForAltaxo
 		public class FileListItem : ListViewItem
 #else
 		internal class FileListItem : ListViewItem
@@ -332,14 +333,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 	
 	public class FileScout : UserControl, IPadContent
 	{
-		public Control Control {
+		public object Control {
 			get {
 				return this;
 			}
 		}
 		
-		public void RedrawContent()
-		{
+		public object InitiallyFocusedControl {
+			get {
+				return null;
+			}
 		}
 		
 		Splitter      splitter1     = new Splitter();
@@ -408,7 +411,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 	}
-	
+
 #if ModifiedForAltaxo
   public class ShellTree : TreeView
 #else
@@ -608,7 +611,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				}
 			} catch (Exception excpt) {
 				
-				MessageService.ShowError(excpt, "Device error");
+				MessageService.ShowException(excpt, "Device error");
 				e.Cancel = true;
 			}
 			

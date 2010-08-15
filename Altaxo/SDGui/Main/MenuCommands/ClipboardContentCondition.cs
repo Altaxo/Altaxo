@@ -32,28 +32,28 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace Altaxo.Main.Commands
 {
-  /// <summary>
-  /// This helps in conditions where the number of selected data columns cares.
-  /// Valid values are all (all columns must be selected, none (no column must be selected),
-  /// one (exactly one column must be selected), any (one or more columns must be selected),
-  /// or the number of columns.
-  /// </summary>
-  public class ClipboardContentConditionEvaluator : IConditionEvaluator
-  {
-    public bool IsValid(object caller, Condition condition)
-    {
-      string expectedcontent = condition.Properties["content"].ToLower();
+	/// <summary>
+	/// This helps in conditions where the number of selected data columns cares.
+	/// Valid values are all (all columns must be selected, none (no column must be selected),
+	/// one (exactly one column must be selected), any (one or more columns must be selected),
+	/// or the number of columns.
+	/// </summary>
+	public class ClipboardContentConditionEvaluator : IConditionEvaluator
+	{
+		public bool IsValid(object caller, Condition condition)
+		{
+			string expectedcontent = condition.Properties["content"].ToLower();
 
-      var dao = System.Windows.Forms.Clipboard.GetDataObject();
-      string[] formats = dao.GetFormats();
+			var dao = System.Windows.Forms.Clipboard.GetDataObject();
+			string[] formats = dao.GetFormats();
 
-      foreach (string format in formats)
-        if (0 == string.Compare(expectedcontent, format, true))
-          return true;
+			foreach (string format in formats)
+				if (0 == string.Compare(expectedcontent, format, true))
+					return true;
 
-      return false;
-    }
-  }
+			return false;
+		}
+	}
 
 
 }

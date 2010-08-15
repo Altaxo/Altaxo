@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3681 $</version>
+//     <version>$Revision: 5187 $</version>
 // </file>
 
 using System;
@@ -187,7 +187,7 @@ namespace ICSharpCode.Core
 					command.Run();
 				} catch (Exception ex) {
 					// allow startup to continue if some commands fail
-					MessageService.ShowError(ex);
+					MessageService.ShowException(ex);
 				}
 			}
 		}
@@ -205,8 +205,21 @@ namespace ICSharpCode.Core
 			                                  dataDirectory ?? Path.Combine(FileUtility.ApplicationRootPath, "data"),
 			                                  propertiesName);
 			PropertyService.Load();
-			ResourceService.InitializeService(FileUtility.Combine(PropertyService.DataDirectory, "resources"));
-			StringParser.Properties["AppName"] = applicationName;
+			ResourceService.InitializeService(Path.Combine(PropertyService.DataDirectory, "resources"));
+			StringParser.RegisterStringTagProvider(new AppNameProvider { appName = applicationName });
+		}
+		
+		sealed class AppNameProvider : IStringTagProvider
+		{
+			internal string appName;
+			
+			public string ProvideString(string tag, StringTagPair[] customTags)
+			{
+				if (string.Equals(tag, "AppName", StringComparison.OrdinalIgnoreCase))
+					return appName;
+				else
+					return null;
+			}
 		}
 	}
 }

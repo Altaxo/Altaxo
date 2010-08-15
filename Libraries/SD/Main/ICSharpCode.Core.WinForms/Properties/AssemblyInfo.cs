@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald"/>
-//     <version>$Revision: 3763 $</version>
+//     <version>$Revision: 3805 $</version>
 // </file>
 
 using System;

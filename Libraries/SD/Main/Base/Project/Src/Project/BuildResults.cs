@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3622 $</version>
+//     <version>$Revision: 4088 $</version>
 // </file>
 
 using System;
@@ -60,7 +60,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		/// <summary>
 		/// Adds a project to the list of built projects.
-		/// This method is thread-sage.
+		/// This method is thread-safe.
 		/// </summary>
 		public void AddBuiltProject(IBuildable buildable)
 		{

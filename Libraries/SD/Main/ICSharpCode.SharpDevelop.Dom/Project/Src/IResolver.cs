@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2713 $</version>
+//     <version>$Revision: 4744 $</version>
 // </file>
 
 using System;
@@ -22,7 +22,5 @@ namespace ICSharpCode.SharpDevelop.Dom
 		ResolveResult Resolve(ExpressionResult expressionResult,
 		                      ParseInformation parseInfo,
 		                      string fileContent);
-		
-		ArrayList CtrlSpace(int caretLine, int caretColumn, ParseInformation parseInfo, string fileContent, ExpressionContext context);
 	}
 }

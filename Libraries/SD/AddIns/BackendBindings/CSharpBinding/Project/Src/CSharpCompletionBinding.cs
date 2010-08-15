@@ -2,25 +2,21 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3794 $</version>
+//     <version>$Revision: 6329 $</version>
 // </file>
 
 using System;
-using System.Collections.Generic;
 using ICSharpCode.Core;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.Parser;
 using ICSharpCode.NRefactory.Visitors;
 using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Dom.CSharp;
 using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
 using ICSharpCode.SharpDevelop.Dom.Refactoring;
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor.Gui.CompletionWindow;
+using ICSharpCode.SharpDevelop.Editor;
+using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
 using AST = ICSharpCode.NRefactory.Ast;
-using CSTokens = ICSharpCode.NRefactory.Parser.CSharp.Tokens;
 
 namespace CSharpBinding
 {
@@ -35,48 +31,41 @@ namespace CSharpBinding
 			return new CSharpExpressionFinder(ParserService.GetParseInformation(fileName));
 		}
 		
-		public override bool HandleKeyPress(SharpDevelopTextAreaControl editor, char ch)
+		public override CodeCompletionKeyPressResult HandleKeyPress(ITextEditor editor, char ch)
 		{
 			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
-			int cursor = editor.ActiveTextAreaControl.Caret.Offset;
-			ExpressionContext context = null;
-			if (ch == '(') {
-				if (context != null) {
-					if (IsInComment(editor)) return false;
-					editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(context), ch);
-					return true;
-				} else if (EnableMethodInsight && CodeCompletionOptions.InsightEnabled) {
-					editor.ShowInsightWindow(new MethodInsightDataProvider());
-					return true;
-				}
-				return false;
-			} else if (ch == '[') {
-				LineSegment line = editor.Document.GetLineSegmentForOffset(cursor);
-				if (TextUtilities.FindPrevWordStart(editor.Document, cursor) <= line.Offset) {
+			int cursor = editor.Caret.Offset;
+			if (ch == '[') {
+				var line = editor.Document.GetLineForOffset(cursor);
+				/* TODO: AVALONEDIT Reimplement this
+				if (TextUtilities.FindPrevWordStart(editor.ActiveTextAreaControl.Document, cursor) <= line.Offset) {
 					// [ is first character on the line
 					// -> Attribute completion
 					editor.ShowCompletionWindow(new AttributesDataProvider(ParserService.CurrentProjectContent), ch);
 					return true;
-				}
+				}*/
 			} else if (ch == ',' && CodeCompletionOptions.InsightRefreshOnComma && CodeCompletionOptions.InsightEnabled) {
-				if (InsightRefreshOnComma(editor, ch))
-					return true;
+				IInsightWindow insightWindow;
+				if (insightHandler.InsightRefreshOnComma(editor, ch, out insightWindow)) {
+					insightHandler.HighlightParameter(insightWindow, -1); // disable highlighting
+					return CodeCompletionKeyPressResult.Completed;
+				}
 			} else if(ch == '=') {
-				LineSegment curLine = editor.Document.GetLineSegmentForOffset(cursor);
-				string documentText = editor.Text;
-				int position = editor.ActiveTextAreaControl.Caret.Offset - 2;
+				var curLine = editor.Document.GetLineForOffset(cursor);
+				string documentText = editor.Document.Text;
+				int position = editor.Caret.Offset - 2;
 				
 				if (position > 0 && (documentText[position + 1] == '+')) {
 					ExpressionResult result = ef.FindFullExpression(documentText, position);
 					
 					if(result.Expression != null) {
-						ResolveResult resolveResult = ParserService.Resolve(result, editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1, editor.FileName, documentText);
+						ResolveResult resolveResult = ParserService.Resolve(result, editor.Caret.Line, editor.Caret.Column, editor.FileName, documentText);
 						if (resolveResult != null && resolveResult.ResolvedType != null) {
 							IClass underlyingClass = resolveResult.ResolvedType.GetUnderlyingClass();
 							if (underlyingClass != null && underlyingClass.IsTypeInInheritanceTree(ParserService.CurrentProjectContent.GetClass("System.MulticastDelegate", 0))) {
-								EventHandlerCompletitionDataProvider eventHandlerProvider = new EventHandlerCompletitionDataProvider(result.Expression, resolveResult);
-								eventHandlerProvider.InsertSpace = true;
-								editor.ShowCompletionWindow(eventHandlerProvider, ch);
+								EventHandlerCompletionItemProvider eventHandlerProvider = new EventHandlerCompletionItemProvider(result.Expression, resolveResult);
+								eventHandlerProvider.ShowCompletion(editor);
+								return CodeCompletionKeyPressResult.Completed;
 							}
 						}
 					}
@@ -84,37 +73,39 @@ namespace CSharpBinding
 					ExpressionResult result = ef.FindFullExpression(documentText, position);
 					
 					if(result.Expression != null) {
-						ResolveResult resolveResult = ParserService.Resolve(result, editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1, editor.FileName, documentText);
+						ResolveResult resolveResult = ParserService.Resolve(result, editor.Caret.Line, editor.Caret.Column, editor.FileName, documentText);
 						if (resolveResult != null && resolveResult.ResolvedType != null) {
 							if (ProvideContextCompletion(editor, resolveResult.ResolvedType, ch)) {
-								return true;
+								return CodeCompletionKeyPressResult.Completed;
 							}
 						}
 					}
 				}
 			} else if (ch == '.') {
-				editor.ShowCompletionWindow(new CSharpCodeCompletionDataProvider(), ch);
-				return true;
+				new CSharpCodeCompletionDataProvider().ShowCompletion(editor);
+				return CodeCompletionKeyPressResult.Completed;
 			} else if (ch == '>') {
-				if (IsInComment(editor)) return false;
+				if (IsInComment(editor)) return CodeCompletionKeyPressResult.None;
 				char prevChar = cursor > 1 ? editor.Document.GetCharAt(cursor - 1) : ' ';
 				if (prevChar == '-') {
-					editor.ShowCompletionWindow(new PointerArrowCompletionDataProvider(), ch);
+					new PointerArrowCompletionDataProvider().ShowCompletion(editor);
 					
-					return true;
+					return CodeCompletionKeyPressResult.Completed;
 				}
 			}
 			
 			if (char.IsLetter(ch) && CodeCompletionOptions.CompleteWhenTyping) {
-				if (editor.ActiveTextAreaControl.SelectionManager.HasSomethingSelected) {
+				if (editor.SelectionLength > 0) {
 					// allow code completion when overwriting an identifier
-					cursor = editor.ActiveTextAreaControl.SelectionManager.SelectionCollection[0].Offset;
-					int endOffset = editor.ActiveTextAreaControl.SelectionManager.SelectionCollection[0].EndOffset;
+					int endOffset = editor.SelectionStart + editor.SelectionLength;
 					// but block code completion when overwriting only part of an identifier
 					if (endOffset < editor.Document.TextLength && char.IsLetterOrDigit(editor.Document.GetCharAt(endOffset)))
-						return false;
-					editor.ActiveTextAreaControl.SelectionManager.RemoveSelectedText();
-					editor.ActiveTextAreaControl.Caret.Position = editor.Document.OffsetToPosition(cursor);
+						return CodeCompletionKeyPressResult.None;
+					
+					editor.Document.Remove(editor.SelectionStart, editor.SelectionLength);
+					// Read caret position again after removal - this is required because the document might change in other
+					// locations, too (e.g. bound elements in snippets).
+					cursor = editor.Caret.Offset;
 				}
 				char prevChar = cursor > 1 ? editor.Document.GetCharAt(cursor - 1) : ' ';
 				bool afterUnderscore = prevChar == '_';
@@ -123,13 +114,14 @@ namespace CSharpBinding
 					prevChar = cursor > 1 ? editor.Document.GetCharAt(cursor - 1) : ' ';
 				}
 				if (!char.IsLetterOrDigit(prevChar) && prevChar != '.' && !IsInComment(editor)) {
-					ExpressionResult result = ef.FindExpression(editor.Text, cursor);
+					ExpressionResult result = ef.FindExpression(editor.Document.Text, cursor);
 					LoggingService.Debug("CC: Beginning to type a word, result=" + result);
 					if (result.Context != ExpressionContext.IdentifierExpected) {
-						editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(result.Context) {
-						                            	ShowTemplates = true,
-						                            	AllowCompleteExistingExpression = afterUnderscore
-						                            }, '\0');
+						var ctrlSpaceProvider = new NRefactoryCtrlSpaceCompletionItemProvider(LanguageProperties.CSharp, result.Context);
+						ctrlSpaceProvider.ShowTemplates = true;
+						ctrlSpaceProvider.AllowCompleteExistingExpression = afterUnderscore;
+						ctrlSpaceProvider.ShowCompletion(editor);
+						return CodeCompletionKeyPressResult.CompletedIncludeKeyInCompletion;
 					}
 				}
 			}
@@ -137,23 +129,23 @@ namespace CSharpBinding
 			return base.HandleKeyPress(editor, ch);
 		}
 		
-		class CSharpCodeCompletionDataProvider : CodeCompletionDataProvider
+		class CSharpCodeCompletionDataProvider : DotCodeCompletionItemProvider
 		{
-			protected override ResolveResult Resolve(ExpressionResult expressionResult, int caretLineNumber, int caretColumn, string fileName, string fileContent)
+			public override ResolveResult Resolve(ITextEditor editor, ExpressionResult expressionResult)
 			{
 				// bypass ParserService.Resolve and set resolver.LimitMethodExtractionUntilCaretLine
-				ParseInformation parseInfo = ParserService.GetParseInformation(fileName);
+				ParseInformation parseInfo = ParserService.GetParseInformation(editor.FileName);
 				NRefactoryResolver resolver = new NRefactoryResolver(LanguageProperties.CSharp);
-				resolver.LimitMethodExtractionUntilLine = caretLineNumber;
-				return resolver.Resolve(expressionResult, parseInfo, fileContent);
+				resolver.LimitMethodExtractionUntilLine = editor.Caret.Line;
+				return resolver.Resolve(expressionResult, parseInfo, editor.Document.Text);
 			}
 		}
 		
-		class PointerArrowCompletionDataProvider : CodeCompletionDataProvider
+		class PointerArrowCompletionDataProvider : DotCodeCompletionItemProvider
 		{
-			protected override ResolveResult Resolve(ExpressionResult expressionResult, int caretLineNumber, int caretColumn, string fileName, string fileContent)
+			public override ResolveResult Resolve(ITextEditor editor, ExpressionResult expressionResult)
 			{
-				ResolveResult rr = base.Resolve(expressionResult, caretLineNumber, caretColumn, fileName, fileContent);
+				ResolveResult rr = base.Resolve(editor, expressionResult);
 				if (rr != null && rr.ResolvedType != null) {
 					PointerReturnType prt = rr.ResolvedType.CastToDecoratingReturnType<PointerReturnType>();
 					if (prt != null)
@@ -162,29 +154,21 @@ namespace CSharpBinding
 				return null;
 			}
 			
-			protected override ExpressionResult GetExpression(ICSharpCode.TextEditor.TextArea textArea)
+			public override ExpressionResult GetExpression(ITextEditor editor)
 			{
-				ICSharpCode.TextEditor.Document.IDocument document = textArea.Document;
-				IExpressionFinder expressionFinder = ParserService.GetExpressionFinder(fileName);
-				if (expressionFinder == null) {
-					return new ExpressionResult(TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset - 1));
-				} else {
-					ExpressionResult res = expressionFinder.FindExpression(document.GetText(0, textArea.Caret.Offset - 1), textArea.Caret.Offset - 1);
-					if (overrideContext != null)
-						res.Context = overrideContext;
-					return res;
-				}
+				// - 1 because the "-" is already inserted (the ">" is about to be inserted)
+				return GetExpressionFromOffset(editor, editor.Caret.Offset - 1);
 			}
 		}
 		
-		bool IsInComment(SharpDevelopTextAreaControl editor)
+		bool IsInComment(ITextEditor editor)
 		{
 			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
-			int cursor = editor.ActiveTextAreaControl.Caret.Offset - 1;
+			int cursor = editor.Caret.Offset - 1;
 			return ef.FilterComments(editor.Document.GetText(0, cursor + 1), ref cursor) == null;
 		}
 		
-		public override bool HandleKeyword(SharpDevelopTextAreaControl editor, string word)
+		public override bool HandleKeyword(ITextEditor editor, string word)
 		{
 			switch (word) {
 				case "using":
@@ -192,21 +176,21 @@ namespace CSharpBinding
 					
 					ParseInformation parseInfo = ParserService.GetParseInformation(editor.FileName);
 					if (parseInfo != null) {
-						IClass innerMostClass = parseInfo.MostRecentCompilationUnit.GetInnermostClass(editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1);
+						IClass innerMostClass = parseInfo.CompilationUnit.GetInnermostClass(editor.Caret.Line, editor.Caret.Column);
 						if (innerMostClass == null) {
-							editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(ExpressionContext.Namespace), ' ');
+							new NRefactoryCtrlSpaceCompletionItemProvider(LanguageProperties.CSharp, ExpressionContext.Namespace).ShowCompletion(editor);
+							return true;
 						}
-						return true;
 					}
-					return false;
+					break;
 				case "as":
 				case "is":
 					if (IsInComment(editor)) return false;
-					editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(ExpressionContext.Type), ' ');
+					new NRefactoryCtrlSpaceCompletionItemProvider(LanguageProperties.CSharp, ExpressionContext.Type).ShowCompletion(editor);
 					return true;
 				case "override":
 					if (IsInComment(editor)) return false;
-					editor.ShowCompletionWindow(new OverrideCompletionDataProvider(), ' ');
+					new OverrideCompletionItemProvider().ShowCompletion(editor);
 					return true;
 				case "new":
 					return ShowNewCompletion(editor);
@@ -218,24 +202,22 @@ namespace CSharpBinding
 					IMember m = GetCurrentMember(editor);
 					if (m != null) {
 						return ProvideContextCompletion(editor, m.ReturnType, ' ');
-					} else {
-						goto default;
 					}
-				default:
-					return base.HandleKeyword(editor, word);
+					break;
 			}
+			return base.HandleKeyword(editor, word);
 		}
 		
-		bool ShowNewCompletion(SharpDevelopTextAreaControl editor)
+		bool ShowNewCompletion(ITextEditor editor)
 		{
 			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
-			int cursor = editor.ActiveTextAreaControl.Caret.Offset;
+			int cursor = editor.Caret.Offset;
 			string documentToCursor = editor.Document.GetText(0, cursor);
 			ExpressionResult expressionResult = ef.FindExpression(documentToCursor, cursor);
 			
 			LoggingService.Debug("ShowNewCompletion: expression is " + expressionResult);
 			if (expressionResult.Context.IsObjectCreation) {
-				LineSegment currentLine = editor.Document.GetLineSegmentForOffset(cursor);
+				var currentLine = editor.Document.GetLineForOffset(cursor);
 				string lineText = editor.Document.GetText(currentLine.Offset, cursor - currentLine.Offset);
 				// when the new follows an assignment, improve code-completion by detecting the
 				// type of the variable that is assigned to
@@ -246,20 +228,20 @@ namespace CSharpBinding
 					if (context != null)
 						expressionResult.Context = context;
 				}
-				editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(expressionResult.Context), ' ');
+				new NRefactoryCtrlSpaceCompletionItemProvider(LanguageProperties.CSharp, expressionResult.Context).ShowCompletion(editor);
 				return true;
 			}
 			return false;
 		}
 		
-		ExpressionContext FindExactContextForNewCompletion(SharpDevelopTextAreaControl editor, string documentToCursor,
-		                                                   LineSegment currentLine, int pos)
+		ExpressionContext FindExactContextForNewCompletion(ITextEditor editor, string documentToCursor,
+		                                                   IDocumentLine currentLine, int pos)
 		{
 			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
 			// find expression on left hand side of the assignment
 			ExpressionResult lhsExpr = ef.FindExpression(documentToCursor, currentLine.Offset + pos);
 			if (lhsExpr.Expression != null) {
-				ResolveResult rr = ParserService.Resolve(lhsExpr, currentLine.LineNumber, pos, editor.FileName, editor.Text);
+				ResolveResult rr = ParserService.Resolve(lhsExpr, currentLine.LineNumber, pos, editor.FileName, editor.Document.Text);
 				if (rr != null && rr.ResolvedType != null) {
 					ExpressionContext context;
 					IClass c;
@@ -280,7 +262,7 @@ namespace CSharpBinding
 						string suggestedClassName = LanguageProperties.CSharp.CodeGenerator.GenerateCode(
 							CodeGenerator.ConvertType(
 								rr.ResolvedType,
-								new ClassFinder(ParserService.GetParseInformation(editor.FileName), editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1)
+								new ClassFinder(ParserService.GetParseInformation(editor.FileName), editor.Caret.Line, editor.Caret.Column)
 							), "");
 						if (suggestedClassName != c.Name) {
 							// create an IClass instance that includes the type arguments in its name
@@ -311,20 +293,20 @@ namespace CSharpBinding
 				this.FullyQualifiedName = c.FullyQualifiedName;
 			}
 			
-			string IEntity.Name {
+			string ICompletionEntry.Name {
 				get { return newName; }
 			}
 		}
 		
 		#region "case"-keyword completion
-		bool DoCaseCompletion(SharpDevelopTextAreaControl editor)
+		bool DoCaseCompletion(ITextEditor editor)
 		{
-			ICSharpCode.TextEditor.Caret caret = editor.ActiveTextAreaControl.Caret;
+			ITextEditorCaret caret = editor.Caret;
 			NRefactoryResolver r = new NRefactoryResolver(LanguageProperties.CSharp);
-			if (r.Initialize(ParserService.GetParseInformation(editor.FileName), caret.Line + 1, caret.Column + 1)) {
-				AST.INode currentMember = r.ParseCurrentMember(editor.Text);
+			if (r.Initialize(ParserService.GetParseInformation(editor.FileName), caret.Line, caret.Column)) {
+				AST.INode currentMember = r.ParseCurrentMember(editor.Document.Text);
 				if (currentMember != null) {
-					CaseCompletionSwitchFinder ccsf = new CaseCompletionSwitchFinder(caret.Line + 1, caret.Column + 1);
+					CaseCompletionSwitchFinder ccsf = new CaseCompletionSwitchFinder(caret.Line, caret.Column);
 					currentMember.AcceptVisitor(ccsf, null);
 					if (ccsf.bestStatement != null) {
 						r.RunLookupTableVisitor(currentMember);

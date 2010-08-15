@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3753 $</version>
+//     <version>$Revision: 4978 $</version>
 // </file>
 
 using System;
@@ -14,11 +14,10 @@ using System.Windows.Forms;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 using StringPair = System.Collections.Generic.KeyValuePair<System.String, System.String>;
-using MSBuild = Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
-	public class AbstractBuildOptions : AbstractProjectOptionPanel
+	public class AbstractBuildOptions : AbstractXmlFormsProjectOptionPanel
 	{
 		protected void InitBaseIntermediateOutputPath()
 		{
@@ -131,7 +130,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			RadioButton none, specific, all;
 			Control specificWarningsTextBox;
 			
-			public WarningsAsErrorsBinding(AbstractProjectOptionPanel panel)
+			public WarningsAsErrorsBinding(AbstractXmlFormsProjectOptionPanel panel)
 			{
 				this.none = panel.Get<RadioButton>("none");
 				this.specific = panel.Get<RadioButton>("specificWarnings");
@@ -243,13 +242,13 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			ComboBox targetFrameworkComboBox = (ComboBox)ControlDictionary["targetFrameworkComboBox"];
 			
 			if (convertProjectToMSBuild35Button != null) {
-				if (project.MinimumSolutionVersion == Solution.SolutionVersionVS2005) {
-					// VS05 project
+				if (project.MinimumSolutionVersion <= Solution.SolutionVersionVS2008) {
+					// VS05/VS08 project
 					targetFrameworkComboBox.Enabled = false;
-					convertProjectToMSBuild35Button.Click += OnConvertProjectToMSBuild35ButtonClick;
+					convertProjectToMSBuild35Button.Enabled = false;
 					return;
 				} else {
-					// VS08 project
+					// VS2010 project
 					targetFrameworkComboBox.Enabled = true;
 					convertProjectToMSBuild35Button.Visible = false;
 				}
@@ -261,7 +260,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			targetFrameworkBinding = helper.BindStringEnum(
 				"targetFrameworkComboBox", TargetFrameworkProperty,
 				"v2.0",
-				(from targetFramework in Internal.Templates.TargetFramework.TargetFrameworks
+				(from targetFramework in TargetFramework.TargetFrameworks
 				 where targetFramework.DisplayName != null
 				 select new StringPair(targetFramework.Name, targetFramework.DisplayName)).ToArray());
 			targetFrameworkBinding.CreateLocationButton("targetFrameworkLabel");
@@ -269,27 +268,6 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 				CompilableProject cProject = (CompilableProject)project;
 				cProject.AddOrRemoveExtensions();
 			};
-		}
-		
-		void OnConvertProjectToMSBuild35ButtonClick(object sender, EventArgs e)
-		{
-			using (ConvertToMSBuild35Dialog dlg = new ConvertToMSBuild35Dialog(project.Language + " newversion")) {
-				if (dlg.ShowDialog() == DialogResult.OK) {
-					if (dlg.ConvertAllProjects) {
-						foreach (IProject p in ProjectService.OpenSolution.Projects) {
-							MSBuildBasedProject msbp = p as MSBuildBasedProject;
-							if (msbp != null)
-								msbp.ConvertToMSBuild35(dlg.ChangeTargetFramework);
-						}
-					} else {
-						project.ConvertToMSBuild35(dlg.ChangeTargetFramework);
-					}
-					if (project.MinimumSolutionVersion == Solution.SolutionVersionVS2005)
-						throw new InvalidOperationException("Project did not convert to MSBuild 3.5");
-					ProjectService.SaveSolution();
-					InitTargetFramework();
-				}
-			}
 		}
 	}
 }

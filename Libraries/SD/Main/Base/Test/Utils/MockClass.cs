@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3675 $</version>
+//     <version>$Revision: 5245 $</version>
 // </file>
 
 using ICSharpCode.SharpDevelop.Dom;
@@ -122,6 +122,12 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		}
 		
 		public IEnumerable<IClass> ClassInheritanceTree {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public IEnumerable<IClass> ClassInheritanceTreeClassesOnly {
 			get {
 				throw new NotImplementedException();
 			}
@@ -341,6 +347,22 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 				throw new NotImplementedException();
 			}
 			set {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public IEnumerable<IMember> AllMembers {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public EntityType EntityType {
+			get { return EntityType.Class; }
+		}
+		
+		public bool AddDefaultConstructorIfRequired {
+			get {
 				throw new NotImplementedException();
 			}
 		}

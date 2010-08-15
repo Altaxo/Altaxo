@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3120 $</version>
+//     <version>$Revision: 4483 $</version>
 // </file>
 
 using System;
@@ -71,7 +71,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		{
 			if (!LastCharacterIsWhiteSpace)
 				Space();
-			PrintText("_\r\n");
+			PrintText("_" + Environment.NewLine);
 		}
 	}
 }

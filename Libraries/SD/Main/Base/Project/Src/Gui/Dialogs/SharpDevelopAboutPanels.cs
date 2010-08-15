@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 3815 $</version>
 // </file>
 
 using System;
@@ -72,10 +72,23 @@ namespace ICSharpCode.SharpDevelop.Gui
 			versionInfoTextBox.ScrollBars = ScrollBars.Both;
 			versionInfoTextBox.TabIndex = 9;
 			versionInfoTextBox.Font = WinFormsResourceService.LoadFont("Courier New", 8);
+			versionInfoTextBox.KeyDown += new KeyEventHandler(versionInfoTextBox_KeyDown);
 			Controls.Add(versionInfoTextBox);
 			
 			Dock = DockStyle.Fill;
 		}
+
+		void versionInfoTextBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			#if DEBUG
+			if (e.KeyData == (Keys.Control | Keys.Shift | Keys.E)) {
+				throw new ClownFishException();
+			}
+			#endif
+		}
+		
+		[Serializable]
+		class ClownFishException : Exception { }
 		
 		public static string LicenseSentence {
 			get {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3702 $</version>
+//     <version>$Revision: 3805 $</version>
 // </file>
 
 using System;
@@ -49,7 +49,8 @@ namespace ICSharpCode.Core.WinForms
 			this.codon   = codon;
 			
 			menuCommand = (IComboBoxCommand)codon.AddIn.CreateObject(codon.Properties["class"]);
-			menuCommand.Owner = this;
+			menuCommand.ComboBox = this;
+			menuCommand.Owner = caller;
 			if (menuCommand == null) {
 				throw new NullReferenceException("Can't create combobox menu command");
 			}

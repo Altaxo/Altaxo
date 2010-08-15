@@ -2,16 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3785 $</version>
+//     <version>$Revision: 6294 $</version>
 // </file>
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.CSharp;
 using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
 using ICSharpCode.SharpDevelop.Project;
 using NUnit.Framework;
@@ -21,7 +23,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 	[TestFixture]
 	public class NRefactoryResolverTests
 	{
-		ProjectContentRegistry projectContentRegistry = ParserService.DefaultProjectContentRegistry;
+		ProjectContentRegistry projectContentRegistry = AssemblyParserService.DefaultProjectContentRegistry;
 		
 		#region Test helper methods
 		public ICompilationUnit Parse(string fileName, string fileContent)
@@ -37,7 +39,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 				return pc;
 			};
 			lastPC = pc;
-			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc);
+			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc, ICSharpCode.NRefactory.SupportedLanguage.CSharp);
 			visitor.VisitCompilationUnit(p.CompilationUnit, null);
 			visitor.Cu.FileName = fileName;
 			Assert.AreEqual(0, p.Errors.Count, String.Format("Parse error preparing compilation unit: {0}", p.Errors.ErrorOutput));
@@ -65,7 +67,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			pc.ReferencedContents.Add(projectContentRegistry.GetProjectContentForReference("Microsoft.VisualBasic", "Microsoft.VisualBasic"));
 			pc.Language = LanguageProperties.VBNet;
 			lastPC = pc;
-			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc);
+			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc, ICSharpCode.NRefactory.SupportedLanguage.VBNet);
 			visitor.VBRootNamespace = "RootNamespace";
 			visitor.VisitCompilationUnit(p.CompilationUnit, null);
 			visitor.Cu.FileName = fileName;
@@ -187,7 +189,7 @@ End Class
 ";
 			LocalResolveResult result = ResolveVB<LocalResolveResult>(program, "a", 4);
 			Assert.IsNotNull(result, "result");
-			ArrayList arr = result.GetCompletionData(lastPC);
+			var arr = result.GetCompletionData(lastPC);
 			Assert.IsNotNull(arr, "arr");
 			foreach (object o in arr) {
 				if (o is IMember) {
@@ -211,7 +213,7 @@ End Module
 ";
 			ResolveResult result = ResolveVB<LocalResolveResult>(program, "t", 4);
 			
-			ArrayList arr = result.GetCompletionData(lastPC);
+			var arr = result.GetCompletionData(lastPC);
 			Assert.IsNotNull(arr, "arr");
 			foreach (object o in arr) {
 				if (o is IMember) {
@@ -241,7 +243,7 @@ interface IInterface2 {
 }
 ";
 			ResolveResult result = Resolve<LocalResolveResult>(program, "a", 4);
-			ArrayList arr = result.GetCompletionData(lastPC);
+			var arr = result.GetCompletionData(lastPC);
 			Assert.IsNotNull(arr, "arr");
 			bool m1 = false;
 			bool m2 = false;
@@ -301,7 +303,7 @@ interface IInterface2 {
 }
 ";
 			ResolveResult result = Resolve(program, "b.ThisMethodDoesNotExistOnString()", 3);
-			Assert.IsNull(result, "result");
+			Assert.IsInstanceOf(typeof(UnknownMethodResolveResult), result, "result");
 		}
 		
 		[Test]
@@ -578,9 +580,48 @@ class A {
 			IMethod m = (IMethod)result.ResolvedMember;
 			Assert.IsNotNull(m);
 			Assert.AreEqual("A", result.ResolvedType.FullyQualifiedName);
+			Assert.AreEqual(0, m.Parameters.Count);
 			
-			ArrayList ar = result.GetCompletionData(result.CallingClass.ProjectContent);
+			var ar = result.GetCompletionData(result.CallingClass.ProjectContent);
 			Assert.IsTrue(ContainsMember(ar, "A.Method"));
+		}
+		
+		[Test]
+		public void DefaultStructCTorOverloadLookupTest()
+		{
+			string program = @"struct A {
+	void Method() {
+		
+	}
+	
+	public A(int x) {}
+}
+";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "new A()", 3);
+			IMethod m = (IMethod)result.ResolvedMember;
+			Assert.IsNotNull(m);
+			Assert.AreEqual("A", result.ResolvedType.FullyQualifiedName);
+			Assert.AreEqual(0, m.Parameters.Count);
+			
+			var ar = result.GetCompletionData(result.CallingClass.ProjectContent);
+			Assert.IsTrue(ContainsMember(ar, "A.Method"));
+		}
+		
+		[Test]
+		public void ReflectionStructCTorOverloadLookupTest()
+		{
+			string program = @"using System;
+class A {
+	void Method() {
+		
+	}
+}
+";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "new DateTime()", 4);
+			IMethod m = (IMethod)result.ResolvedMember;
+			Assert.IsNotNull(m);
+			Assert.AreEqual("System.DateTime", result.ResolvedType.FullyQualifiedName);
+			Assert.AreEqual(0, m.Parameters.Count);
 		}
 		
 		[Test]
@@ -810,8 +851,22 @@ End Module
 			MemberResolveResult result = ResolveVB<MemberResolveResult>(program, "F()(0)", 3);
 			Assert.AreEqual("System.String", result.ResolvedType.FullyQualifiedName);
 			Assert.IsFalse(result.ResolvedType.IsArrayReturnType);
-			Assert.IsInstanceOfType(typeof(IProperty), result.ResolvedMember);
+			Assert.IsInstanceOf(typeof(IProperty), result.ResolvedMember);
 			Assert.IsTrue((result.ResolvedMember as IProperty).IsIndexer);
+		}
+		
+		[Test]
+		public void VBNetArrayParameterTest()
+		{
+			string program = @"Module Main
+	Sub Main()
+		
+	End Sub
+End Module
+";
+			TypeResolveResult result = ResolveVB<TypeResolveResult>(program, "String()", 3, 3, ExpressionContext.Type);
+			Assert.AreEqual("System.String", result.ResolvedType.FullyQualifiedName);
+			Assert.IsTrue(result.ResolvedType.IsArrayReturnType);
 		}
 		
 		[Test]
@@ -952,7 +1007,7 @@ namespace Root.Child {
 			Assert.AreEqual("Root.Alpha", result.ResolvedType.FullyQualifiedName);
 		}
 		
-		public ArrayList CtrlSpaceResolveCSharp(string program, int line, ExpressionContext context)
+		public List<ICompletionEntry> CtrlSpaceResolveCSharp(string program, int line, ExpressionContext context)
 		{
 			ParseInformation parseInfo = AddCompilationUnit(Parse("a.cs", program), "a.cs");
 			
@@ -973,12 +1028,12 @@ namespace Root.Child {
   }
 }
 ";
-			ArrayList m = CtrlSpaceResolveCSharp(program, 7, ExpressionContext.Default);
+			var m = CtrlSpaceResolveCSharp(program, 7, ExpressionContext.Default);
 			Assert.IsTrue(TypeExists(m, "Beta"), "Beta must exist");
 			Assert.IsTrue(TypeExists(m, "Alpha"), "Alpha must exist");
 		}
 		
-		bool TypeExists(ArrayList m, string name)
+		bool TypeExists(IEnumerable m, string name)
 		{
 			foreach (object o in m) {
 				IClass c = o as IClass;
@@ -1203,7 +1258,7 @@ class B {
 ";
 			ResolveResult result = Resolve(program, "b", 4);
 			Assert.IsNotNull(result);
-			ArrayList cd = result.GetCompletionData(lastPC);
+			var cd = result.GetCompletionData(lastPC);
 			Assert.IsFalse(MemberExists(cd, "member"), "member should not be in completion lookup");
 			result = Resolve(program, "b.member", 4);
 			Assert.IsTrue(result != null && result.IsValid, "member should be found even though it is not visible!");
@@ -1224,7 +1279,7 @@ class B {
 ";
 			ResolveResult result = Resolve(program, "a", 4);
 			Assert.IsNotNull(result);
-			ArrayList cd = result.GetCompletionData(lastPC);
+			var cd = result.GetCompletionData(lastPC);
 			Assert.IsTrue(MemberExists(cd, "member"), "member should be in completion lookup");
 			result = Resolve(program, "a.member", 4);
 			Assert.IsTrue(result != null && result.IsValid, "member should be found!");
@@ -1243,7 +1298,7 @@ class B {
 	protected int member;
 }
 ";
-			ArrayList results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
+			var results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
 			Assert.IsTrue(MemberExists(results, "member"), "member should be in completion lookup");
 			ResolveResult result = Resolve(program, "member", 4);
 			Assert.IsTrue(result != null && result.IsValid, "member should be found!");
@@ -1264,7 +1319,7 @@ class B {
 ";
 			ResolveResult result = Resolve(program, "b", 4);
 			Assert.IsNotNull(result);
-			ArrayList cd = result.GetCompletionData(lastPC);
+			var cd = result.GetCompletionData(lastPC);
 			Assert.IsFalse(MemberExists(cd, "member"), "member should not be in completion lookup");
 			result = Resolve(program, "b.member", 4);
 			Assert.IsTrue(result != null && result.IsValid, "member should be found even though it is not visible!");
@@ -1285,7 +1340,7 @@ class B {
 ";
 			ResolveResult result = Resolve(program, "b", 4);
 			Assert.IsNotNull(result);
-			ArrayList cd = result.GetCompletionData(lastPC);
+			var cd = result.GetCompletionData(lastPC);
 			Assert.IsFalse(MemberExists(cd, "member"), "member should not be in completion lookup");
 			result = Resolve(program, "b.member", 4);
 			Assert.IsTrue(result != null && result.IsValid, "member should be found even though it is not visible!");
@@ -1306,7 +1361,7 @@ class B {
 ";
 			ResolveResult result = Resolve(program, "base", 4);
 			Assert.IsNotNull(result);
-			ArrayList cd = result.GetCompletionData(lastPC);
+			var cd = result.GetCompletionData(lastPC);
 			Assert.IsTrue(MemberExists(cd, "member"), "member should be in completion lookup");
 			result = Resolve(program, "base.member", 4);
 			Assert.IsTrue(result != null && result.IsValid, "member should be found!");
@@ -1327,7 +1382,7 @@ class B {
 ";
 			ResolveResult result = Resolve(program, "b", 4);
 			Assert.IsNotNull(result);
-			ArrayList cd = result.GetCompletionData(lastPC);
+			var cd = result.GetCompletionData(lastPC);
 			Assert.IsFalse(MemberExists(cd, "Method"), "member should not be in completion lookup");
 			result = Resolve(program, "b.Method()", 4);
 			Assert.IsTrue(result != null && result.IsValid, "method should be found even though it is invisible!");
@@ -1348,7 +1403,7 @@ class B {
 ";
 			ResolveResult result = Resolve(program, "base", 4);
 			Assert.IsNotNull(result);
-			ArrayList cd = result.GetCompletionData(lastPC);
+			var cd = result.GetCompletionData(lastPC);
 			Assert.IsTrue(MemberExists(cd, "Method"), "member should be in completion lookup");
 			result = Resolve(program, "base.Method()", 4);
 			Assert.IsTrue(result != null && result.IsValid, "method should be found!");
@@ -1367,7 +1422,7 @@ class B {
 	protected int Method();
 }
 ";
-			ArrayList results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
+			var results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
 			Assert.IsTrue(MemberExists(results, "Method"), "method should be in completion lookup");
 			ResolveResult result = Resolve(program, "Method()", 4);
 			Assert.IsTrue(result != null && result.IsValid, "method should be found!");
@@ -1387,17 +1442,16 @@ class B {
 }
 class Method { }
 ";
-			ArrayList results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
+			var results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
 			Assert.IsTrue(MemberExists(results, "Method"), "method should be in completion lookup");
 			ResolveResult result = Resolve(program, "Method()", 4);
 			Assert.IsTrue(result != null && result.IsValid, "method should be found!");
 		}
 		
-		bool MemberExists(ArrayList members, string name)
+		bool MemberExists(IEnumerable members, string name)
 		{
 			Assert.IsNotNull(members);
-			foreach (object o in members) {
-				IMember m = o as IMember;
+			foreach (IMember m in members.OfType<IMember>()) {
 				if (m != null && m.Name == name) return true;
 			}
 			return false;
@@ -1512,7 +1566,7 @@ class A {
 			ResolveResult result = Resolve(arrayListMixedTypeProgram, "ArrayList", 4);
 			Assert.IsTrue(result is MixedResolveResult);
 			// CC should offer both static and non-static results
-			ArrayList list = result.GetCompletionData(lastPC);
+			var list = result.GetCompletionData(lastPC);
 			bool ok = false;
 			foreach (object o in list) {
 				IMethod method = o as IMethod;
@@ -1548,9 +1602,9 @@ namespace OtherName { class Bla { } }
 		public void MixedResolveResultTest()
 		{
 			ResolveResult result = Resolve(mixedTypeTestProgram, "Project", 4);
-			Assert.IsInstanceOfType(typeof(MixedResolveResult), result);
+			Assert.IsInstanceOf(typeof(MixedResolveResult), result);
 			MixedResolveResult mrr = (MixedResolveResult)result;
-			Assert.IsInstanceOfType(typeof(MemberResolveResult), mrr.PrimaryResult);
+			Assert.IsInstanceOf(typeof(MemberResolveResult), mrr.PrimaryResult);
 			Assert.AreEqual("Project", mrr.TypeResult.ResolvedClass.Name);
 		}
 		
@@ -1558,7 +1612,7 @@ namespace OtherName { class Bla { } }
 		public void MixedStaticAccessTest()
 		{
 			ResolveResult result = Resolve(mixedTypeTestProgram, "Project.Static", 4);
-			Assert.IsInstanceOfType(typeof(MemberResolveResult), result);
+			Assert.IsInstanceOf(typeof(MemberResolveResult), result);
 			Assert.AreEqual("Static", (result as MemberResolveResult).ResolvedMember.Name);
 		}
 		
@@ -1566,7 +1620,7 @@ namespace OtherName { class Bla { } }
 		public void MixedInstanceAccessTest()
 		{
 			ResolveResult result = Resolve(mixedTypeTestProgram, "Project.Instance", 4);
-			Assert.IsInstanceOfType(typeof(MemberResolveResult), result);
+			Assert.IsInstanceOf(typeof(MemberResolveResult), result);
 			Assert.AreEqual("Instance", (result as MemberResolveResult).ResolvedMember.Name);
 		}
 		
@@ -1574,7 +1628,7 @@ namespace OtherName { class Bla { } }
 		public void NamespaceMixResolveResultTest()
 		{
 			ResolveResult result = Resolve(mixedTypeTestProgram, "OtherName", 4);
-			Assert.IsInstanceOfType(typeof(MemberResolveResult), result);
+			Assert.IsInstanceOf(typeof(MemberResolveResult), result);
 			Assert.AreEqual("OtherName", (result as MemberResolveResult).ResolvedMember.Name);
 		}
 		
@@ -1582,7 +1636,7 @@ namespace OtherName { class Bla { } }
 		public void NamespaceMixMemberAccessTest()
 		{
 			ResolveResult result = Resolve(mixedTypeTestProgram, "OtherName.Instance", 4);
-			Assert.IsInstanceOfType(typeof(MemberResolveResult), result);
+			Assert.IsInstanceOf(typeof(MemberResolveResult), result);
 			Assert.AreEqual("Instance", (result as MemberResolveResult).ResolvedMember.Name);
 		}
 		#endregion
@@ -1912,13 +1966,13 @@ public class MyCollectionType : System.Collections.IEnumerable
 		[Test]
 		public void ObjectInitializerCtrlSpaceCompletion()
 		{
-			ArrayList results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 5, ExpressionContext.ObjectInitializer);
+			var results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 5, CSharpExpressionContext.ObjectInitializer);
 			Assert.AreEqual(new[] { "P1", "P2" }, (from IMember p in results orderby p.Name select p.Name).ToArray() );
 			
-			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 9, ExpressionContext.ObjectInitializer);
+			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 9, CSharpExpressionContext.ObjectInitializer);
 			Assert.AreEqual(new[] { "X", "Y" }, (from IMember p in results orderby p.Name select p.Name).ToArray() );
 			
-			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 13, ExpressionContext.ObjectInitializer);
+			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 13, CSharpExpressionContext.ObjectInitializer);
 			// collection type: expect system types
 			Assert.IsTrue(results.OfType<IClass>().Any((IClass c) => c.FullyQualifiedName == "System.Int32"));
 			Assert.IsTrue(results.OfType<IClass>().Any((IClass c) => c.FullyQualifiedName == "System.AppDomain"));
@@ -1929,30 +1983,30 @@ public class MyCollectionType : System.Collections.IEnumerable
 			Assert.IsFalse(results.OfType<IField>().Any((IField f) => f.FullyQualifiedName == "MyCollectionType.ReadOnlyValueTypeField"));
 			Assert.IsFalse(results.OfType<IProperty>().Any((IProperty f) => f.FullyQualifiedName == "MyCollectionType.ReadOnlyValueTypeProperty"));
 			
-			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 17, ExpressionContext.ObjectInitializer);
+			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 17, CSharpExpressionContext.ObjectInitializer);
 			Assert.AreEqual(new[] { "X", "Y" }, (from IMember p in results orderby p.Name select p.Name).ToArray() );
 		}
 		
 		[Test]
 		public void ObjectInitializerCompletion()
 		{
-			MemberResolveResult mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "P2", 5, 1, ExpressionContext.ObjectInitializer);
+			MemberResolveResult mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "P2", 5, 1, CSharpExpressionContext.ObjectInitializer);
 			Assert.IsNotNull(mrr);
 			Assert.AreEqual("Rectangle.P2", mrr.ResolvedMember.FullyQualifiedName);
 			
-			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "X", 9, 1, ExpressionContext.ObjectInitializer);
+			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "X", 9, 1, CSharpExpressionContext.ObjectInitializer);
 			Assert.IsNotNull(mrr);
 			Assert.AreEqual("Point.X", mrr.ResolvedMember.FullyQualifiedName);
 			
-			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "Field", 13, 1, ExpressionContext.ObjectInitializer);
+			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "Field", 13, 1, CSharpExpressionContext.ObjectInitializer);
 			Assert.IsNotNull(mrr);
 			Assert.AreEqual("MyCollectionType.Field", mrr.ResolvedMember.FullyQualifiedName);
 			
-			LocalResolveResult lrr = (LocalResolveResult)Resolve(objectInitializerTestProgram, "r1", 13, 1, ExpressionContext.ObjectInitializer);
+			LocalResolveResult lrr = (LocalResolveResult)Resolve(objectInitializerTestProgram, "r1", 13, 1, CSharpExpressionContext.ObjectInitializer);
 			Assert.IsNotNull(lrr);
 			Assert.AreEqual("r1", lrr.Field.Name);
 			
-			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "X", 17, 1, ExpressionContext.ObjectInitializer);
+			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "X", 17, 1, CSharpExpressionContext.ObjectInitializer);
 			Assert.IsNotNull(mrr);
 			Assert.AreEqual("Point.X", mrr.ResolvedMember.FullyQualifiedName);
 		}
@@ -2708,7 +2762,7 @@ class C2 : C1 {
 class C1 {
 	protected static int Field;
 }";
-			ArrayList arr = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
+			var arr = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
 			Assert.IsTrue(MemberExists(arr, "Field"));
 			
 			ResolveResult rr = Resolve(program, "C1", 4);
@@ -2740,7 +2794,7 @@ class C : B {
 	protected int Z;
 }";
 			LocalResolveResult rr = Resolve<LocalResolveResult>(program, "c", 4);
-			ArrayList arr = rr.GetCompletionData(lastPC);
+			var arr = rr.GetCompletionData(lastPC);
 			Assert.IsFalse(MemberExists(arr, "P1"));
 			Assert.IsTrue(MemberExists(arr, "P2"));
 			Assert.IsFalse(MemberExists(arr, "P3"));
@@ -2761,6 +2815,90 @@ class Test {
 			MemberResolveResult rr = Resolve<MemberResolveResult>(program, "a.Value", 4);
 			Assert.AreEqual("System.Nullable.Value", rr.ResolvedMember.FullyQualifiedName);
 			Assert.AreEqual("System.Int32", rr.ResolvedMember.ReturnType.FullyQualifiedName);
+		}
+		
+		
+		[Test]
+		public void MethodHidesEvent()
+		{
+			// see SD2-1542
+			string program = @"using System;
+class Test : Form {
+	public Test() {
+		
+	}
+	void KeyDown(object sender, EventArgs e) {}
+}
+class Form {
+	public event EventHandler KeyDown;
+}";
+			var mrr = Resolve<MemberResolveResult>(program, "base.KeyDown", 4);
+			Assert.AreEqual("Form.KeyDown", mrr.ResolvedMember.FullyQualifiedName);
+			
+			var mgrr = Resolve<MethodGroupResolveResult>(program, "this.KeyDown", 4);
+			Assert.AreEqual("Test.KeyDown", mgrr.GetMethodIfSingleOverload().FullyQualifiedName);
+		}
+		
+		[Test]
+		public void ProtectedMemberVisibleWhenBaseTypeReferenceIsInOtherPart()
+		{
+			string program = @"using System;
+partial class A {
+	void M1() {
+		
+	}
+}
+partial class A : B { }
+class B
+{
+	protected int x;
+}";
+			var mrr = Resolve<MemberResolveResult>(program, "x", 4);
+			Assert.AreEqual("B.x", mrr.ResolvedMember.FullyQualifiedName);
+			
+			var rr = Resolve<ResolveResult>(program, "this", 4);
+			var completionData = rr.GetCompletionData(mrr.ResolvedMember.DeclaringType.ProjectContent);
+			Assert.IsTrue(completionData.OfType<IField>().Any(f => f.FullyQualifiedName == "B.x"));
+		}
+		
+		[Test]
+		public void OverrideOnlyMethod()
+		{
+			// "override"s without corresponding "virtual"s can occur in code generated
+			// by the COM importer
+			string program = @"using System;
+class Test {
+	void Test(A instance) {
+		
+	}
+}
+class A {
+	public override void M1();
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "instance", 4);
+			Assert.AreEqual("instance", lrr.Field.Name);
+			var completionData = lrr.GetCompletionData(lrr.CallingClass.ProjectContent);
+			Assert.IsTrue(completionData.OfType<IMethod>().Any(m => m.FullyQualifiedName == "A.M1"));
+		}
+		
+		[Test]
+		public void OverrideOnlyProperty()
+		{
+			// "override"s without corresponding "virtual"s can occur in code generated
+			// by the COM importer
+			string program = @"using System;
+class Test {
+	void Test(A instance) {
+		
+	}
+}
+class A {
+	public override int P1 { get; set; }
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "instance", 4);
+			Assert.AreEqual("instance", lrr.Field.Name);
+			var completionData = lrr.GetCompletionData(lrr.CallingClass.ProjectContent);
+			Assert.IsTrue(completionData.OfType<IProperty>().Any(m => m.FullyQualifiedName == "A.P1"));
 		}
 	}
 }

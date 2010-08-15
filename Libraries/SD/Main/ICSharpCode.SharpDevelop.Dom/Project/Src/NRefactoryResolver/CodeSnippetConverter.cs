@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3090 $</version>
+//     <version>$Revision: 6292 $</version>
 // </file>
 
 using System;
@@ -39,6 +39,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		List<ISpecial> specials;
 		CompilationUnit compilationUnit;
 		ParseInformation parseInfo;
+		bool wasExpression;
 		
 		#region Parsing
 		INode Parse(SupportedLanguage sourceLanguage, string sourceCode, out string error)
@@ -46,8 +47,11 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			project = new DefaultProjectContent();
 			project.ReferencedContents.AddRange(ReferencedContents);
 			if (sourceLanguage == SupportedLanguage.VBNet) {
+				project.Language = LanguageProperties.VBNet;
 				project.DefaultImports = new DefaultUsing(project);
 				project.DefaultImports.Usings.AddRange(DefaultImportsToAdd);
+			} else {
+				project.Language = LanguageProperties.CSharp;
 			}
 			SnippetParser parser = new SnippetParser(sourceLanguage);
 			INode result = parser.Parse(sourceCode);
@@ -56,18 +60,20 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (parser.Errors.Count != 0)
 				return null;
 			
+			wasExpression = parser.SnippetType == SnippetType.Expression;
+			if (wasExpression) {
+				// Special case 'Expression': expressions may be replaced with other statements in the AST by the ConvertVisitor,
+				// but we need to return a 'stable' node so that the correct transformed AST is returned.
+				// Thus, we wrap any expressions into a statement block.
+				result = MakeBlockFromExpression((Expression)result);
+			}
+			
 			// now create a dummy compilation unit around the snippet result
 			switch (parser.SnippetType) {
 				case SnippetType.CompilationUnit:
 					compilationUnit = (CompilationUnit)result;
 					break;
 				case SnippetType.Expression:
-					compilationUnit = MakeCompilationUnitFromTypeMembers(
-						MakeMethodFromBlock(
-							MakeBlockFromExpression(
-								(Expression)result
-							)));
-					break;
 				case SnippetType.Statements:
 					compilationUnit = MakeCompilationUnitFromTypeMembers(
 						MakeMethodFromBlock(
@@ -82,7 +88,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 			
 			// convert NRefactory CU in DOM CU
-			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(project);
+			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(project, sourceLanguage);
 			visitor.VisitCompilationUnit(compilationUnit, null);
 			visitor.Cu.FileName = sourceLanguage == SupportedLanguage.CSharp ? "a.cs" : "a.vb";
 			
@@ -90,10 +96,25 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			foreach (IClass c in visitor.Cu.Classes) {
 				project.AddClassToNamespaceList(c);
 			}
-			parseInfo = new ParseInformation();
-			parseInfo.SetCompilationUnit(visitor.Cu);
+			parseInfo = new ParseInformation(visitor.Cu);
 			
 			return result;
+		}
+		
+		/// <summary>
+		/// Unpacks the expression from a statement block; if it was wrapped earlier.
+		/// </summary>
+		INode UnpackExpression(INode node)
+		{
+			if (wasExpression) {
+				BlockStatement block = node as BlockStatement;
+				if (block != null && block.Children.Count == 1) {
+					ExpressionStatement es = block.Children[0] as ExpressionStatement;
+					if (es != null)
+						return es.Expression;
+				}
+			}
+			return node;
 		}
 		
 		BlockStatement MakeBlockFromExpression(Expression expr)
@@ -124,7 +145,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			TypeDeclaration type = new TypeDeclaration(Modifiers.None, null) {
 				Name = "DummyTypeForConversion",
 				StartLocation = members[0].StartLocation,
-				EndLocation = members[members.Count - 1].EndLocation
+				EndLocation = GetEndLocation(members[members.Count - 1])
 			};
 			type.Children.AddRange(members);
 			return new CompilationUnit {
@@ -132,6 +153,17 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					type
 				}
 			};
+		}
+		
+		Location GetEndLocation(INode node)
+		{
+			// workaround: MethodDeclaration.EndLocation is the end of the method header,
+			// but for the end of the dummy class we need the body end
+			MethodDeclaration method = node as MethodDeclaration;
+			if (method != null && !method.Body.IsNull)
+				return method.Body.EndLocation;
+			else
+				return node.EndLocation;
 		}
 		#endregion
 		
@@ -147,7 +179,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				},
 				null);
 			PreprocessingDirective.CSharpToVB(specials);
-			return CreateCode(node, new VBNetOutputVisitor());
+			return CreateCode(UnpackExpression(node), new VBNetOutputVisitor());
 		}
 		
 		public string VBToCSharp(string input, out string errors)
@@ -160,7 +192,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				new VBNetToCSharpConvertVisitor(project, parseInfo),
 				null);
 			PreprocessingDirective.VBToCSharp(specials);
-			return CreateCode(node, new CSharpOutputVisitor());
+			return CreateCode(UnpackExpression(node), new CSharpOutputVisitor());
 		}
 		
 		string CreateCode(INode node, IOutputAstVisitor outputVisitor)

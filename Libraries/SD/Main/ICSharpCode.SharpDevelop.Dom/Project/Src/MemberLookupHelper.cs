@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3719 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ICSharpCode.SharpDevelop.Dom
@@ -21,7 +22,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public static class MemberLookupHelper
 	{
 		#region LookupMember / GetAccessibleMembers
-		static List<IMember> GetAllMembers(IReturnType rt)
+		public static List<IMember> GetAllMembers(IReturnType rt)
 		{
 			List<IMember> members = new List<IMember>();
 			if (rt != null) {
@@ -57,52 +58,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return LookupMember(members, callingClass, (bool)isAccessThoughReferenceOfCurrentClass, isInvocation);
 		}
 		
-		class SignatureComparer : IEqualityComparer<IMethod>
-		{
-			public bool Equals(IMethod x, IMethod y)
-			{
-				if (GetHashCode(x) != GetHashCode(y))
-					return false;
-				var paramsX = x.Parameters;
-				var paramsY = y.Parameters;
-				if (paramsX.Count != paramsY.Count)
-					return false;
-				if (x.TypeParameters.Count != y.TypeParameters.Count)
-					return false;
-				for (int i = 0; i < paramsX.Count; i++) {
-					IParameter px = paramsX[i];
-					IParameter py = paramsY[i];
-					if ((px.IsOut || px.IsRef) != (py.IsOut || py.IsRef))
-						return false;
-					if (!object.Equals(px.ReturnType, py.ReturnType))
-						return false;
-				}
-				return true;
-			}
-			
-			Dictionary<IMethod, int> cachedHashes = new Dictionary<IMethod, int>();
-			
-			public int GetHashCode(IMethod obj)
-			{
-				int hashCode;
-				if (cachedHashes.TryGetValue(obj, out hashCode))
-					return hashCode;
-				hashCode = obj.TypeParameters.Count;
-				unchecked {
-					foreach (IParameter p in obj.Parameters) {
-						hashCode *= 1000000579;
-						if (p.IsOut || p.IsRef)
-							hashCode += 1;
-						if (p.ReturnType != null) {
-							hashCode += p.ReturnType.GetHashCode();
-						}
-					}
-				}
-				cachedHashes[obj] = hashCode;
-				return hashCode;
-			}
-		}
-		
 		sealed class InheritanceLevelComparer : IComparer<IClass>
 		{
 			public readonly static InheritanceLevelComparer Instance = new InheritanceLevelComparer();
@@ -135,9 +90,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 			// base most member => most derived member
 			//Dictionary<IMember, IMember> overrideDict = new Dictionary<IMember, IMember>();
 			
-			bool handledNonMethod = false;
-			HashSet<IMethod> handledMethods = new HashSet<IMethod>(new SignatureComparer());
-			Dictionary<IMethod, IMethod> overrideMethodDict = new Dictionary<IMethod, IMethod>(new SignatureComparer());
+			ParameterListComparer parameterListComparer = new ParameterListComparer();
+			HashSet<IMethod> handledMethods = new HashSet<IMethod>(parameterListComparer);
+			Dictionary<IMethod, IMethod> overrideMethodDict = new Dictionary<IMethod, IMethod>(parameterListComparer);
 			IMember nonMethodOverride = null;
 			
 			List<IList<IMember>> allResults = new List<IList<IMember>>();
@@ -171,8 +126,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 								}
 							}
 						} else {
-							if (!handledNonMethod) {
-								handledNonMethod = true;
+							// non-methods are only available if they aren't hidden by something else
+							if (allResults.Count == 0) {
 								results.Add(nonMethodOverride ?? m);
 							}
 						}
@@ -183,17 +138,35 @@ namespace ICSharpCode.SharpDevelop.Dom
 					results = new List<IMember>();
 				}
 			}
+			// Sometimes there might be 'override's without corresponding 'virtual's.
+			// Ensure those get found, too.
+			if (nonMethodOverride != null && allResults.Count == 0) {
+				results.Add(nonMethodOverride);
+			}
+			foreach (IMethod method in overrideMethodDict.Values) {
+				if (handledMethods.Add(method)) {
+					results.Add(method);
+				}
+			}
+			if (results.Count > 0) {
+				allResults.Add(results);
+			}
 			return allResults;
 		}
 		
 		static bool IsInvocable(IMember member)
 		{
+			if (member == null)
+				throw new ArgumentNullException("member");
 			if (member is IMethod || member is IEvent)
 				return true;
 			IProperty p = member as IProperty;
 			if (p != null && p.Parameters.Count > 0)
 				return true;
-			IClass c = member.ReturnType.GetUnderlyingClass();
+			IReturnType returnType = member.ReturnType;
+			if (returnType == null)
+				return false;
+			IClass c = returnType.GetUnderlyingClass();
 			return c != null && c.ClassType == ClassType.Delegate;
 		}
 		
@@ -245,7 +218,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (methods.Count == 0)
 				return null;
 			return (IMethod)CSharp.OverloadResolution.FindOverload(
-				methods.Cast<IMethodOrProperty>().ToList(),
+				methods,
 				arguments,
 				false,
 				true,
@@ -258,7 +231,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return null;
 			bool acceptableMatch;
 			return (IProperty)CSharp.OverloadResolution.FindOverload(
-				properties.Cast<IMethodOrProperty>().ToList(),
+				properties,
 				arguments,
 				false,
 				false,
@@ -328,7 +301,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#endregion
 		
 		#region IsApplicable
-		internal static bool IsApplicable(IReturnType argument, IParameter expected, IMethod targetMethod)
+		public static bool IsApplicable(IReturnType argument, IParameter expected, IMethod targetMethod)
 		{
 			bool parameterIsRefOrOut = expected.IsRef || expected.IsOut;
 			bool argumentIsRefOrOut = argument != null && argument.IsDecoratingReturnType<ReferenceReturnType>();
@@ -470,7 +443,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		static bool IsConstructedConversionToGenericReturnType(IReturnType from, IReturnType to, IMethod allowGenericTargetsOnThisMethod)
 		{
 			// null could be passed when type arguments could not be resolved/inferred
-			if (from == null && to == null)
+			if (from == to) // both are null or
 				return true;
 			if (from == null || to == null)
 				return false;
@@ -483,14 +456,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 			
 			if (to.IsGenericReturnType) {
 				ITypeParameter typeParameter = to.CastToGenericReturnType().TypeParameter;
-				if (typeParameter.Method != allowGenericTargetsOnThisMethod)
-					return false;
-				foreach (IReturnType constraintType in typeParameter.Constraints) {
-					if (!ConversionExistsInternal(from, constraintType, allowGenericTargetsOnThisMethod)) {
-						return false;
-					}
-				}
-				return true;
+				if (typeParameter.Method == allowGenericTargetsOnThisMethod)
+					return true;
+				// applicability ignores constraints
+//				foreach (IReturnType constraintType in typeParameter.Constraints) {
+//					if (!ConversionExistsInternal(from, constraintType, allowGenericTargetsOnThisMethod)) {
+//						return false;
+//					}
+//				}
+				return false;
 			}
 			
 			// for conversions like from IEnumerable<string> to IEnumerable<T>, where T is a GenericReturnType
@@ -808,16 +782,29 @@ namespace ICSharpCode.SharpDevelop.Dom
 					return false;
 				}
 			}
+			IField f1 = member1 as IField;
+			IField f2 = member2 as IField;
+			if (f1 != null || f2 != null) {
+				if (f1 != null && f2 != null) {
+					if (f1.IsLocalVariable != f2.IsLocalVariable || f1.IsParameter != f2.IsParameter)
+						return false;
+				} else {
+					return false;
+				}
+			}
 			return true;
 		}
 		
 		public static IMember FindSimilarMember(IClass type, IMember member)
 		{
+			if (type == null)
+				throw new ArgumentNullException("type");
+			StringComparer nameComparer = member.DeclaringType.ProjectContent.Language.NameComparer;
 			member = GetGenericMember(member);
 			if (member is IMethod) {
 				IMethod parentMethod = (IMethod)member;
 				foreach (IMethod m in type.Methods) {
-					if (string.Equals(parentMethod.Name, m.Name, StringComparison.InvariantCultureIgnoreCase)) {
+					if (nameComparer.Equals(parentMethod.Name, m.Name)) {
 						if (m.IsStatic == parentMethod.IsStatic) {
 							if (DiffUtility.Compare(parentMethod.Parameters, m.Parameters) == 0) {
 								return m;
@@ -828,7 +815,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			} else if (member is IProperty) {
 				IProperty parentMethod = (IProperty)member;
 				foreach (IProperty m in type.Properties) {
-					if (string.Equals(parentMethod.Name, m.Name, StringComparison.InvariantCultureIgnoreCase)) {
+					if (nameComparer.Equals(parentMethod.Name, m.Name)) {
 						if (m.IsStatic == parentMethod.IsStatic) {
 							if (DiffUtility.Compare(parentMethod.Parameters, m.Parameters) == 0) {
 								return m;
@@ -860,7 +847,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		[System.Diagnostics.ConditionalAttribute("DEBUG")]
 		internal static void Log(string text)
 		{
-			Console.WriteLine(text);
+			Debug.WriteLine(text);
 		}
 		
 		[System.Diagnostics.ConditionalAttribute("DEBUG")]

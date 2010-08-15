@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3794 $</version>
+//     <version>$Revision: 5485 $</version>
 // </file>
 
 using System;
@@ -247,7 +247,7 @@ namespace ICSharpCode.SharpDevelop
 			if (UseFullyQualifiedTypeNames) {
 				builder.Append(name);
 			} else {
-				string rtNamespace = returnType.Namespace;
+				string rtNamespace = returnType.Namespace + ".";
 				if (name.StartsWith(rtNamespace, StringComparison.Ordinal)) {
 					builder.Append(name, rtNamespace.Length, name.Length - rtNamespace.Length);
 				}
@@ -283,6 +283,11 @@ namespace ICSharpCode.SharpDevelop
 		public override string GetIntrinsicTypeName(string dotNetTypeName)
 		{
 			return dotNetTypeName;
+		}
+		
+		public override string ConvertAccessibility(ModifierEnum accessibility)
+		{
+			return string.Empty;
 		}
 	}
 }

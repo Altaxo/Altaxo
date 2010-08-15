@@ -171,12 +171,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F0827B7C273744E88D87F1BADD10F4B3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F99E7F23E9EB485FBE46DB871E1DD7C9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -190,79 +184,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F0827B7C273744E88D87F1BADD10F4B3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DA45F15C2EA3485D975D195148BC6F9E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B5B565E3A74E48F8A1AE6526E128EAEE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9650983F3E814B8C8F27118866BDE0C9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B19AAF2C927176124C767BF60E468C5E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9444E9FBF4994308BB6952824290193F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8817F8231F18492AAAC398DE427247ED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8228D67EC3EA4D40B0F1815768693093"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6A173F44646800C3CBE78B58C173785D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7984E437BD114F1F93A307417AAB946B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_777F1377A2FA4438A07C3BC5E6ABC804"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6C2CE919376C46A08B27015509F02DD5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_53D5D2F01F1D4B22873320B59DC68F79"
+        "OwnerKey" = "8:_2D267B4BD649466BACDB65845395D971"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -274,7 +196,73 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2D267B4BD649466BACDB65845395D971"
+        "OwnerKey" = "8:_53D5D2F01F1D4B22873320B59DC68F79"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6C2CE919376C46A08B27015509F02DD5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_777F1377A2FA4438A07C3BC5E6ABC804"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7984E437BD114F1F93A307417AAB946B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6A173F44646800C3CBE78B58C173785D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8228D67EC3EA4D40B0F1815768693093"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8817F8231F18492AAAC398DE427247ED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_9444E9FBF4994308BB6952824290193F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B19AAF2C927176124C767BF60E468C5E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_9650983F3E814B8C8F27118866BDE0C9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B5B565E3A74E48F8A1AE6526E128EAEE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DA45F15C2EA3485D975D195148BC6F9E"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -359,7 +347,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "Version" = "8:2.0.50727"
+                "FrameworkVersion" = "8:2.0.50727"
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=9832"
                 }
@@ -414,11 +402,6 @@
             "AssemblyAsmDisplayName" = "8:ICSharpCode.NRefactory, Version=0.0.0.0, Culture=neutral, PublicKeyToken=efe927acf176eea2, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_6A173F44646800C3CBE78B58C173785D"
-                    {
-                    "Name" = "8:ICSharpCode.NRefactory.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ICSharpCode.NRefactory.dll"
             "TargetName" = "8:"
@@ -465,11 +448,6 @@
             "AssemblyAsmDisplayName" = "8:log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_B19AAF2C927176124C767BF60E468C5E"
-                    {
-                    "Name" = "8:log4net.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:log4net.dll"
             "TargetName" = "8:"
@@ -703,6 +681,7 @@
         "ProductCode" = "8:{74F1942B-E1AA-4724-9224-25BD3AD9C4D7}"
         "PackageCode" = "8:{25D70299-473F-4DF3-A60D-088F3596ABF1}"
         "UpgradeCode" = "8:{0F325C16-3E37-4CE0-A9C1-3EA42F7A0F84}"
+        "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
@@ -1305,7 +1284,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_33CD8CDE0ECA4DF2BC9C085D2948F5D1"
             {
-            "SourcePath" = "8:..\\..\\Libraries\\ICSharpCode.SharpDevelop.Sda\\obj\\Debug\\ICSharpCode.SharpDevelop.Sda.dll"
+            "SourcePath" = "8:..\\..\\Libraries\\SD\\Main\\ICSharpCode.SharpDevelop.Sda\\obj\\Debug\\ICSharpCode.SharpDevelop.Sda.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
@@ -1361,7 +1340,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_53D5D2F01F1D4B22873320B59DC68F79"
             {
-            "SourcePath" = "8:..\\..\\Libraries\\NRefactory\\Project\\obj\\Debug\\ICSharpCode.NRefactory.dll"
+            "SourcePath" = "8:..\\..\\Libraries\\SD\\Libraries\\NRefactory\\Project\\obj\\Debug\\ICSharpCode.NRefactory.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
@@ -1417,7 +1396,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_67BC4EB0B4814FB1881D1668DCE21876"
             {
-            "SourcePath" = "8:..\\..\\Libraries\\SharpDevelop.Base\\Project\\obj\\Debug\\ICSharpCode.SharpDevelop.dll"
+            "SourcePath" = "8:..\\..\\Libraries\\SD\\Main\\Base\\Project\\obj\\Debug\\ICSharpCode.SharpDevelop.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
@@ -1473,7 +1452,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_777F1377A2FA4438A07C3BC5E6ABC804"
             {
-            "SourcePath" = "8:..\\..\\Libraries\\ICSharpCode.SharpDevelop.Widgets\\Project\\obj\\Debug\\ICSharpCode.SharpDevelop.Widgets.dll"
+            "SourcePath" = "8:..\\..\\Libraries\\SD\\Main\\ICSharpCode.SharpDevelop.Widgets\\Project\\obj\\Debug\\ICSharpCode.SharpDevelop.Widgets.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
@@ -1501,7 +1480,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7984E437BD114F1F93A307417AAB946B"
             {
-            "SourcePath" = "8:..\\..\\Libraries\\CSharpBinding\\Project\\obj\\Debug\\CSharpBinding.dll"
+            "SourcePath" = "8:..\\..\\Libraries\\SD\\AddIns\\BackendBindings\\CSharpBinding\\Project\\obj\\Debug\\CSharpBinding.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_BC9613ABDFB74D318462871C40210322"
@@ -1585,7 +1564,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9444E9FBF4994308BB6952824290193F"
             {
-            "SourcePath" = "8:..\\..\\Libraries\\ICSharpCode.Core\\Project\\obj\\Debug\\ICSharpCode.Core.dll"
+            "SourcePath" = "8:..\\..\\Libraries\\SD\\Main\\Core\\Project\\obj\\Debug\\ICSharpCode.Core.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
@@ -1669,7 +1648,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B5B565E3A74E48F8A1AE6526E128EAEE"
             {
-            "SourcePath" = "8:..\\..\\Libraries\\ICSharpCode.SharpDevelop.Dom\\Project\\obj\\Debug\\ICSharpCode.SharpDevelop.Dom.dll"
+            "SourcePath" = "8:..\\..\\Libraries\\SD\\Main\\ICSharpCode.SharpDevelop.Dom\\Project\\obj\\Debug\\ICSharpCode.SharpDevelop.Dom.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
@@ -1697,7 +1676,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C08C7C6E16FC4D36BCB01D93FA738E14"
             {
-            "SourcePath" = "8:..\\..\\..\\bin\\ICSharpCode.Core.xml"
+            "SourcePath" = "8:..\\..\\Libraries\\bin\\ICSharpCode.Core.xml"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
@@ -1802,34 +1781,6 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:ContentFiles"
             "OutputProjectGuid" = "8:{012F4935-9036-4F02-8C03-060EC9514A1D}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F0827B7C273744E88D87F1BADD10F4B3"
-            {
-            "SourcePath" = "8:..\\..\\Libraries\\ICSharpCode.TextEditor\\Project\\obj\\Debug\\ICSharpCode.TextEditor.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6A07DA2C7D96453C824C2072C230CD9D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

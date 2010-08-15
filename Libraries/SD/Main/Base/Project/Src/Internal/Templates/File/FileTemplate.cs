@@ -2,15 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3685 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Xml;
-
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 
@@ -270,6 +271,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 						throw new InvalidDataException("Reference without 'include' attribute!");
 					ReferenceProjectItem item = new ReferenceProjectItem(null, reference.GetAttribute("include"));
 					item.SetMetadata("HintPath", reference.GetAttribute("hintPath"));
+					var requiredTargetFramework = reference.GetElementsByTagName("RequiredTargetFramework").OfType<XmlElement>().FirstOrDefault();
+					if (requiredTargetFramework != null) {
+						item.SetMetadata("RequiredTargetFramework", requiredTargetFramework.Value);
+					}
 					requiredAssemblyReferences.Add(item);
 				}
 			}
@@ -290,7 +295,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		public static void UpdateTemplates()
 		{
-			string dataTemplateDir = FileUtility.Combine(PropertyService.DataDirectory, "templates", "file");
+			string dataTemplateDir = Path.Combine(PropertyService.DataDirectory, "templates", "file");
 			List<string> files = FileUtility.SearchDirectory(dataTemplateDir, "*.xft");
 			foreach (string templateDirectory in AddInTree.BuildItems<string>(ProjectTemplate.TemplatePath, null, false)) {
 				if (!Directory.Exists(templateDirectory))
@@ -306,7 +311,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				} catch (TemplateLoadException ex) {
 					MessageService.ShowError("Error loading template file " + file + ":\n" + ex.ToString());
 				} catch(Exception e) {
-					MessageService.ShowError(e, "Error loading template file " + file + ".");
+					MessageService.ShowException(e, "Error loading template file " + file + ".");
 				}
 			}
 			FileTemplates.Sort();

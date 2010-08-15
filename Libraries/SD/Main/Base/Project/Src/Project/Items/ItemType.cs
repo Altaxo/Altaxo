@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3126 $</version>
+//     <version>$Revision: 5246 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -20,6 +21,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static readonly ItemType Reference = new ItemType("Reference");
 		public static readonly ItemType ProjectReference = new ItemType("ProjectReference");
 		public static readonly ItemType COMReference = new ItemType("COMReference");
+		
+		public static readonly ReadOnlyCollectionWrapper<ItemType> ReferenceItemTypes
+			= new ReadOnlyCollectionWrapper<ItemType>(new ItemType[] { Reference, ProjectReference, COMReference });
 		
 		/// <summary>
 		/// Item type for imported VB namespaces
@@ -38,16 +42,28 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static readonly ItemType BootstrapperFile = new ItemType("BootstrapperFile");
 		public static readonly ItemType Header = new ItemType("Header");
 		
+		// vcxproj-only (c++ project) items
+		public static readonly ItemType ClCompile = new ItemType("ClCompile");
+		public static readonly ItemType ClInclude = new ItemType("ClInclude");
+		
 		/// <summary>
 		/// Gets a collection of item types that are used for files.
 		/// </summary>
 		public static readonly ReadOnlyCollectionWrapper<ItemType> DefaultFileItems
-			= new Set<ItemType>(Compile, EmbeddedResource, None, Content).AsReadOnly();
+			= new ReadOnlyCollectionWrapper<ItemType>(new ItemType[] { Compile, EmbeddedResource, None, Content });
 		
 		public static readonly ItemType Resource = new ItemType("Resource");
 		public static readonly ItemType Folder = new ItemType("Folder");
 		public static readonly ItemType WebReferences = new ItemType("WebReferences");
 		
+		/// <summary>
+		/// Gets a collection of item types that are known not to be used for files.
+		/// </summary>
+		public static readonly ReadOnlyCollectionWrapper<ItemType> NonFileItemTypes
+			= new ReadOnlyCollectionWrapper<ItemType>(
+				new List<ItemType>(ReferenceItemTypes) {
+					Folder, WebReferences, Import 
+				});
 		
 		readonly string itemName;
 		
@@ -68,9 +84,6 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		
 		#region Equals and GetHashCode implementation
-		// The code in this region is useful if you want to use this structure in collections.
-		// If you don't need it, you can just remove the region and the ": IEquatable<ItemType>" declaration.
-		
 		public override bool Equals(object obj)
 		{
 			if (obj is ItemType)
@@ -81,13 +94,11 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public bool Equals(ItemType other)
 		{
-			// add comparisions for all members here
 			return this.itemName == other.itemName;
 		}
 		
 		public override int GetHashCode()
 		{
-			// combine the hash codes of all members here (e.g. with XOR operator ^)
 			return itemName.GetHashCode();
 		}
 		

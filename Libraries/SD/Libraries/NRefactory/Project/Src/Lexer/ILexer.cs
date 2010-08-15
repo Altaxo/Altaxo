@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2972 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -15,6 +15,11 @@ namespace ICSharpCode.NRefactory.Parser
 	/// </summary>
 	public interface ILexer : IDisposable
 	{
+		/// <summary>
+		/// Sets the start line/column number. This method can be called only before the first token is read.
+		/// </summary>
+		void SetInitialLocation(Location location);
+		
 		Errors Errors {
 			get;
 		}
@@ -62,6 +67,14 @@ namespace ICSharpCode.NRefactory.Parser
 		IDictionary<string, object> ConditionalCompilationSymbols { get; }
 		
 		/// <summary>
+		/// Sets the conditional compilation symbols. 
+		/// </summary>
+		/// <param name="symbols">
+		/// A <see cref="System.String"/> containing the symbols. The symbols are separated by ';'.
+		/// </param>
+		void SetConditionalCompilationSymbols (string symbols);
+		
+		/// <summary>
 		/// Returns the comments that had been read and containing tag key words.
 		/// </summary>
 		List<TagComment> TagComments {
@@ -93,5 +106,17 @@ namespace ICSharpCode.NRefactory.Parser
 		/// After the call, Lexer.LookAhead will be the block-closing token.
 		/// </summary>
 		void SkipCurrentBlock(int targetToken);
+		
+		/// <summary>
+		/// Used to export the current state of the lexer. The exported state should be
+		/// complete, so that it is possible to reset the lexer to a previous state completely.
+		/// </summary>
+		LexerMemento Export();
+		
+		/// <summary>
+		/// Is fired by the lexer as soon as a savepoint is reached.
+		/// The Export-method can be used to retrieve the current state.
+		/// </summary>
+		event EventHandler<SavepointEventArgs> SavepointReached;
 	}
 }

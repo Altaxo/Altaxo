@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3675 $</version>
+//     <version>$Revision: 4035 $</version>
 // </file>
 
 using System.Collections.Generic;
@@ -27,6 +27,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		IProjectContent ProjectContent {
+			get;
+		}
+		
+		/// <summary>
+		/// Gets the language this compilation unit was written in.
+		/// </summary>
+		LanguageProperties Language {
 			get;
 		}
 		

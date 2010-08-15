@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3719 $</version>
+//     <version>$Revision: 5761 $</version>
 // </file>
 
 using System;
@@ -28,6 +28,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		XmlDoc xmlDoc = new XmlDoc();
 		IUsing defaultImports;
+		bool isDisposed;
 		
 		public IUsing DefaultImports {
 			get {
@@ -79,6 +80,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		// NamespaceStruct behaves like a reference type because it only consists of readonly references!
 		protected struct NamespaceStruct
 		{
 			public readonly List<IClass> Classes;
@@ -88,6 +90,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 			{
 				this.Classes = new List<IClass>();
 				this.SubNamespaces = new List<string>();
+			}
+			
+			public NamespaceStruct MergeWith(NamespaceStruct other)
+			{
+				NamespaceStruct newStruct = new NamespaceStruct(null);
+				newStruct.Classes.AddRange(this.Classes);
+				newStruct.Classes.AddRange(other.Classes);
+				newStruct.SubNamespaces.AddRange(this.SubNamespaces);
+				newStruct.SubNamespaces.AddRange(other.SubNamespaces);
+				return newStruct;
 			}
 		}
 		
@@ -130,7 +142,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 				Dictionary<string, NamespaceStruct> oldList = namespaces[0];
 				d = new Dictionary<string, NamespaceStruct>(oldList.Count, language.NameComparer);
 				foreach (KeyValuePair<string, NamespaceStruct> pair in oldList) {
-					d.Add(pair.Key, pair.Value);
+					NamespaceStruct ns;
+					if (d.TryGetValue(pair.Key, out ns)) {
+						// we got a name conflict due to the new NameComparer.
+						// This happens if a C# assembly contains the namespace "a" and "A",
+						// and now we're trying to get a dictionary for use in VB.
+						d[pair.Key] = ns.MergeWith(pair.Value);
+					} else {
+						d.Add(pair.Key, pair.Value);
+					}
 				}
 			} else {
 				d = new Dictionary<string, NamespaceStruct>(language.NameComparer);
@@ -204,6 +224,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public string GetXmlDocumentation(string memberTag)
 		{
+			CheckNotDisposed();
 			string desc = xmlDoc.GetDocumentation(memberTag);
 			if (desc != null) {
 				return desc;
@@ -222,6 +243,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public virtual void Dispose()
 		{
 			xmlDoc.Dispose();
+			isDisposed = true;
+		}
+		
+		[Conditional("DEBUG")]
+		void CheckNotDisposed()
+		{
+			// TODO: this is broken - we are accessing project contents even after
+			// they have been unloaded, e.g. on other threads
+			if (!isDisposed) {
+				// throw new ObjectDisposedException();
+			}
 		}
 		
 		public void AddClassToNamespaceList(IClass addClass)
@@ -235,8 +267,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// <summary>
 		/// Container class that is used when multiple classes with different type parameter
 		/// count have the same class name.
+		/// 
+		/// The GenericClassContainer is only used internally to hold the class list, it is never returned by any public API.
 		/// </summary>
-		private class GenericClassContainer : DefaultClass
+		private sealed class GenericClassContainer : DefaultClass
 		{
 			public GenericClassContainer(string fullyQualifiedName) : base(DefaultCompilationUnit.DummyCompilationUnit, fullyQualifiedName) {}
 			
@@ -300,11 +334,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		static bool IsEqualFileName(string fileName1, string fileName2)
-		{
-			return ICSharpCode.Core.FileUtility.IsEqualFileName(fileName1, fileName2);
-		}
-		
 		protected void AddClassToNamespaceListInternal(IClass addClass)
 		{
 			// Freeze the class when adding it to the project content
@@ -351,9 +380,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		void AddClassToNamespaceListInternal2(IClass addClass)
 		{
+			bool isReplacingExistingClass = false;
 			string fullyQualifiedName = addClass.FullyQualifiedName;
 			IClass oldDictionaryClass;
 			if (GetClasses(language).TryGetValue(fullyQualifiedName, out oldDictionaryClass)) {
+				isReplacingExistingClass = true;
 				GenericClassContainer gcc = oldDictionaryClass as GenericClassContainer;
 				if (gcc != null) {
 					gcc.Set(addClass);
@@ -375,10 +406,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			CreateNamespace(nSpace);
 			List<IClass> classList = GetNamespaces(this.language)[nSpace].Classes;
-			for (int i = 0; i < classList.Count; i++) {
-				if (classList[i].FullyQualifiedName == fullyQualifiedName) {
-					classList[i] = addClass;
-					return;
+			if (isReplacingExistingClass) {
+				for (int i = 0; i < classList.Count; i++) {
+					if (classList[i].FullyQualifiedName == fullyQualifiedName) {
+						classList[i] = addClass;
+						return;
+					}
 				}
 			}
 			classList.Add(addClass);
@@ -394,7 +427,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 			// use the same namespaceStruct for all dictionaries
 			foreach (Dictionary<string, NamespaceStruct> otherDict in namespaces) {
 				if (otherDict == dict) continue;
-				otherDict.Add(nSpace, namespaceStruct);
+				NamespaceStruct existingNamespaceStruct;
+				if (otherDict.TryGetValue(nSpace, out existingNamespaceStruct))
+					otherDict[nSpace] = existingNamespaceStruct.MergeWith(namespaceStruct);
+				else
+					otherDict.Add(nSpace, namespaceStruct);
 			}
 			if (nSpace.Length == 0)
 				return;
@@ -561,6 +598,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		protected IClass GetClassInternal(string typeName, int typeParameterCount, LanguageProperties language)
 		{
+			CheckNotDisposed();
+			#if DEBUG
+			if (System.Text.RegularExpressions.Regex.IsMatch (typeName, "`[0-9]+$"))
+				Debug.Assert(false, "how did a Reflection type name get here?");
+			#endif
 			lock (namespaces) {
 				IClass c;
 				if (GetClasses(language).TryGetValue(typeName, out c)) {
@@ -593,7 +635,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if ((options & GetClassOptions.LookInReferences) != 0) {
 				lock (referencedContents) {
 					foreach (IProjectContent content in referencedContents) {
-						IClass contentClass = content.GetClass(typeName, typeParameterCount, language, GetClassOptions.None);
+						// Look for the class in the referenced content.
+						// Don't do a inner-class search in the recursive call - one search
+						// done by this GetClass call is sufficient.
+						IClass contentClass = content.GetClass(
+							typeName, typeParameterCount, language,
+							options & ~(GetClassOptions.LookInReferences | GetClassOptions.LookForInnerClass));
 						if (contentClass != null) {
 							if (contentClass.TypeParameters.Count == typeParameterCount
 							    && IsAccessibleClass(contentClass))
@@ -605,10 +652,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					}
 				}
-			}
-			
-			if (c != null) {
-				return c;
 			}
 			
 			if ((options & GetClassOptions.LookForInnerClass) != 0) {
@@ -624,7 +667,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 								string innerName = typeName.Substring(lastIndex + 1);
 								foreach (IClass innerClass in innerClasses) {
 									if (language.NameComparer.Equals(innerClass.Name, innerName)) {
-										return innerClass;
+										if (innerClass.TypeParameters.Count == typeParameterCount) {
+											return innerClass;
+										} else {
+											// store match
+											c = innerClass;
+										}
 									}
 								}
 							}
@@ -632,20 +680,52 @@ namespace ICSharpCode.SharpDevelop.Dom
 					}
 				}
 			}
-			return null;
+			if ((options & GetClassOptions.ExactMatch) == GetClassOptions.ExactMatch) {
+				return null;
+			} else {
+				// no matching class found - we'll return a class with different type paramter count
+				return c;
+			}
 		}
 		
-		public ArrayList GetNamespaceContents(string nameSpace)
+		public List<ICompletionEntry> GetNamespaceContents(string nameSpace)
 		{
-			ArrayList namespaceList = new ArrayList();
+			List<ICompletionEntry> namespaceList = new List<ICompletionEntry>();
 			AddNamespaceContents(namespaceList, nameSpace, language, true);
 			return namespaceList;
+		}
+		
+		public List<ICompletionEntry> GetAllContents()
+		{
+			List<ICompletionEntry> list = new List<ICompletionEntry>();
+			AddAllContents(list, this.language, true);
+			return list;
+		}
+		
+		/// <summary>
+		/// Adds the contents of all namespaces in this project to the <paramref name="list"/>.
+		/// </summary>
+		/// <param name="lookInReferences">If true, contents of referenced projects will be added as well (not recursive - just 1 level deep).</param>
+		public void AddAllContents(List<ICompletionEntry> list, LanguageProperties language, bool lookInReferences)
+		{
+			if (lookInReferences) {
+				lock (referencedContents) {
+					foreach (IProjectContent content in referencedContents) {
+						content.AddAllContents(list, language, false);
+					}
+				}
+			}
+			Dictionary<string, NamespaceStruct> dict = GetNamespaces(language);
+			foreach (var namespaceStruct in dict.Values) {
+				AddNamespaceStructContents(list, namespaceStruct, language, lookInReferences);
+			}
 		}
 		
 		/// <summary>
 		/// Adds the contents of the specified <paramref name="nameSpace"/> to the <paramref name="list"/>.
 		/// </summary>
-		public void AddNamespaceContents(ArrayList list, string nameSpace, LanguageProperties language, bool lookInReferences)
+		/// <param name="lookInReferences">If true, contents of referenced projects will be added as well (not recursive - just 1 level deep).</param>
+		public void AddNamespaceContents(List<ICompletionEntry> list, string nameSpace, LanguageProperties language, bool lookInReferences)
 		{
 			if (nameSpace == null) {
 				return;
@@ -662,26 +742,32 @@ namespace ICSharpCode.SharpDevelop.Dom
 			Dictionary<string, NamespaceStruct> dict = GetNamespaces(language);
 			if (dict.ContainsKey(nameSpace)) {
 				NamespaceStruct ns = dict[nameSpace];
-				int newCapacity = list.Count + ns.Classes.Count + ns.SubNamespaces.Count;
-				if (list.Capacity < newCapacity)
-					list.Capacity = Math.Max(list.Count * 2, newCapacity);
-				foreach (IClass c in ns.Classes) {
-					if (c is GenericClassContainer) {
-						foreach (IClass realClass in ((GenericClassContainer)c).RealClasses) {
-							AddNamespaceContentsClass(list, realClass, language, lookInReferences);
-						}
-					} else {
-						AddNamespaceContentsClass(list, c, language, lookInReferences);
+				AddNamespaceStructContents(list, ns, language, lookInReferences);
+			}
+		}
+
+		void AddNamespaceStructContents(List<ICompletionEntry> list, NamespaceStruct ns, LanguageProperties language, bool lookInReferences)
+		{
+			int newCapacity = list.Count + ns.Classes.Count + ns.SubNamespaces.Count;
+			if (list.Capacity < newCapacity)
+				list.Capacity = Math.Max(list.Count * 2, newCapacity);
+			foreach (IClass c in ns.Classes) {
+				if (c is GenericClassContainer) {
+					foreach (IClass realClass in ((GenericClassContainer)c).RealClasses) {
+						AddNamespaceContentsClass(list, realClass, language, lookInReferences);
 					}
+				} else {
+					AddNamespaceContentsClass(list, c, language, lookInReferences);
 				}
-				foreach (string subns in ns.SubNamespaces) {
-					if (!list.Contains(subns))
-						list.Add(subns);
-				}
+			}
+			foreach (string subns in ns.SubNamespaces) {
+				NamespaceEntry subnsEntry = new NamespaceEntry(subns);
+				if (!list.Contains(subnsEntry))	// PERF
+					list.Add(subnsEntry);
 			}
 		}
 		
-		void AddNamespaceContentsClass(ArrayList list, IClass c, LanguageProperties language, bool lookInReferences)
+		void AddNamespaceContentsClass(List<ICompletionEntry> list, IClass c, LanguageProperties language, bool lookInReferences)
 		{
 			if (c.IsInternal && !lookInReferences) {
 				// internal class and we are looking at it from another project content
@@ -733,12 +819,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return GetNamespaces(language).ContainsKey(name);
 		}
 		
-		
-		public string SearchNamespace(string name, IClass curType, ICompilationUnit unit, int caretLine, int caretColumn)
-		{
-			return SearchType(new SearchTypeRequest(name, 0, curType, unit, caretLine, caretColumn)).NamespaceResult;
-		}
-		
 		bool MatchesRequest(ref SearchTypeRequest request, ref SearchTypeResult result)
 		{
 			if (result.NamespaceResult != null)
@@ -772,7 +852,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					// Try inner classes (in full inheritance tree)
 					// Don't use loop with cur = cur.BaseType because of inheritance cycles
 					foreach (IClass baseClass in outerClass.ClassInheritanceTree) {
-						if (baseClass.ClassType == ClassType.Class) {
+						if (baseClass.ClassType == ClassType.Class || baseClass.ClassType == ClassType.Struct || baseClass.ClassType == ClassType.Module) {
 							foreach (IClass innerClass in baseClass.InnerClasses) {
 								if (language.NameComparer.Equals(innerClass.Name, name)) {
 									result = new SearchTypeResult(innerClass);
@@ -852,15 +932,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			if (className == null)
 				throw new ArgumentNullException("className");
-			className = className.Replace('+', '.');
-			if (className.Length > 2 && className[className.Length - 2] == '`') {
-				int typeParameterCount = className[className.Length - 1] - '0';
-				if (typeParameterCount < 0) typeParameterCount = 0;
-				className = className.Substring(0, className.Length - 2);
-				return GetClass(className, typeParameterCount, LanguageProperties.CSharp, GetClassOptions.Default);
-			} else {
-				return GetClass(className, 0, LanguageProperties.CSharp, GetClassOptions.Default);
-			}
+			int typeParameterCount;
+			className = ReflectionLayer.ReflectionClass.ConvertReflectionNameToFullName(className, out typeParameterCount);
+			GetClassOptions options = GetClassOptions.Default;
+			if (!lookInReferences)
+				options &= ~GetClassOptions.LookInReferences;
+			return GetClass(className, typeParameterCount, LanguageProperties.CSharp, options);
 		}
 		
 		/// <summary>
@@ -985,6 +1062,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 				get {
 					return HostCallback.GetCurrentProjectContent().SystemTypes;
 				}
+			}
+		}
+		
+		/// <inheritdoc/>
+		public virtual string AssemblyName {
+			get {
+				return null;
 			}
 		}
 	}

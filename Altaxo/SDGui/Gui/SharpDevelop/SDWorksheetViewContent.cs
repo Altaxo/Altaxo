@@ -34,9 +34,12 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.SharpDevelop
 {
-	public class SDWinFormsWorksheetController : Altaxo.Gui.Worksheet.Viewing.WinFormsWorksheetController
+	/// <summary>
+	/// Extends the default worksheet controller with WinForms context menus.
+	/// </summary>
+	public class SDWorksheetWinFormsController : Altaxo.Gui.Worksheet.Viewing.WinFormsWorksheetController
 	{
-		public SDWinFormsWorksheetController(Altaxo.Gui.Worksheet.Viewing.IWorksheetController controller, WorksheetView view)
+		public SDWorksheetWinFormsController(Altaxo.Gui.Worksheet.Viewing.IWorksheetController controller, WorksheetView view)
 			: base(controller, view)
 		{
 			this.DataColumnHeaderRightClicked += EhDataColumnHeaderRightClicked;
@@ -44,7 +47,6 @@ namespace Altaxo.Gui.SharpDevelop
 			this.PropertyColumnHeaderRightClicked += EhPropertyColumnHeaderRightClicked;
 			this.TableHeaderRightClicked += EhTableHeaderRightClicked;
 			this.OutsideAllRightClicked += EhOutsideAllRightClicked;
-
 		}
 
 		#region Context menu handlers
@@ -103,45 +105,46 @@ namespace Altaxo.Gui.SharpDevelop
 
 	}
 
+
 	public class SDWorksheetView : WorksheetView
 	{
 		public SDWorksheetView()
-			: base((x,y) => new SDWinFormsWorksheetController(x,y))
+			: base((x, y) => new SDWorksheetWinFormsController(x, y))
 		{
 		}
 	}
 
-  public class SDWorksheetViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
-  {
+	public class SDWorksheetViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IClipboardHandler
+	{
 		Altaxo.Gui.Worksheet.Viewing.WorksheetController _controller;
 
-    #region Constructors
-    /// <summary>
-    /// Creates a GraphController which shows the <see cref="Altaxo.Graph.Gdi.GraphDocument"/> in the <c>layout</c>.    
-    /// </summary>
-    /// <param name="layout">The graph layout which holds the graph document.</param>
-    public SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout)
-      : this(layout, false)
-    {
-    }
+		#region Constructors
+		/// <summary>
+		/// Creates a GraphController which shows the <see cref="Altaxo.Graph.Gdi.GraphDocument"/> in the <c>layout</c>.    
+		/// </summary>
+		/// <param name="layout">The graph layout which holds the graph document.</param>
+		public SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout)
+			: this(layout, false)
+		{
+		}
 
-    /// <summary>
-    /// Creates a WorksheetController which shows the table data into the 
-    /// View <paramref name="view"/>.
-    /// </summary>
-    /// <param name="layout">The worksheet layout.</param>
-    /// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
-    protected SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
-    :
-      this(new Altaxo.Gui.Worksheet.Viewing.WorksheetController(layout))
-    {
-    }
+		/// <summary>
+		/// Creates a WorksheetController which shows the table data into the 
+		/// View <paramref name="view"/>.
+		/// </summary>
+		/// <param name="layout">The worksheet layout.</param>
+		/// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
+		protected SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
+			:
+				this(new Altaxo.Gui.Worksheet.Viewing.WorksheetController(layout))
+		{
+		}
 
 		public SDWorksheetViewContent(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
+		{
 			_controller = ctrl;
 
-      _controller.TitleNameChanged += EhTitleNameChanged;
+			_controller.TitleNameChanged += EhTitleNameChanged;
 			SetTitle();
 		}
 
@@ -152,100 +155,100 @@ namespace Altaxo.Gui.SharpDevelop
 
 		void SetTitle()
 		{
-			if(_controller!=null && _controller.DataTable!=null)
+			if (_controller != null && _controller.DataTable != null)
 				this.TitleName = _controller.DataTable.Name;
 		}
-    
 
-    #endregion
 
-    public Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller
-    {
-      get { return _controller; }
-    }
+		#endregion
 
-    public Altaxo.Gui.IMVCController MVCController
-    {
-      get { return _controller; }
-    }
+		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller
+		{
+			get { return _controller; }
+		}
 
-    #region Abstract View Content overrides
-    #region Required
-    public override Control Control
-    {
-      get { return (Control)_controller.ViewObject; }
-    }
-    #endregion
+		public Altaxo.Gui.IMVCController MVCController
+		{
+			get { return _controller; }
+		}
 
-    #endregion
+		#region Abstract View Content overrides
+		#region Required
+		public override object Control
+		{
+			get { return _controller.ViewObject; }
+		}
+		#endregion
 
-    #region IEditable Members
+		#endregion
 
-    public string Text
-    {
-      get
-      {
-        return null;
-      }
-      set
-      {
-      }
-    }
+		#region IEditable Members
 
-    #endregion
+		public string Text
+		{
+			get
+			{
+				return null;
+			}
+			set
+			{
+			}
+		}
 
-    #region IClipboardHandler Members
+		#endregion
 
-    public bool EnableCut
-    {
-      get { return _controller.EnableCut; }
-    }
+		#region IClipboardHandler Members
 
-    public bool EnableCopy
-    {
-      get { return _controller.EnableCopy; }
-    }
+		public bool EnableCut
+		{
+			get { return _controller.EnableCut; }
+		}
 
-    public bool EnablePaste
-    {
-      get { return _controller.EnablePaste; }
-    }
+		public bool EnableCopy
+		{
+			get { return _controller.EnableCopy; }
+		}
 
-    public bool EnableDelete
-    {
-      get { return _controller.EnableDelete; }
-    }
+		public bool EnablePaste
+		{
+			get { return _controller.EnablePaste; }
+		}
 
-    public bool EnableSelectAll
-    {
-      get { return _controller.EnableSelectAll; }
-    }
+		public bool EnableDelete
+		{
+			get { return _controller.EnableDelete; }
+		}
 
-    public void Cut()
-    {
-      _controller.Cut();
-    }
+		public bool EnableSelectAll
+		{
+			get { return _controller.EnableSelectAll; }
+		}
 
-    public void Copy()
-    {
-      _controller.Copy();
-    }
+		public void Cut()
+		{
+			_controller.Cut();
+		}
 
-    public void Paste()
-    {
-      _controller.Paste();
-    }
+		public void Copy()
+		{
+			_controller.Copy();
+		}
 
-    public void Delete()
-    {
-      _controller.Delete();
-    }
+		public void Paste()
+		{
+			_controller.Paste();
+		}
 
-    public void SelectAll()
-    {
-      _controller.SelectAll();
-    }
+		public void Delete()
+		{
+			_controller.Delete();
+		}
 
-    #endregion
-  }
+		public void SelectAll()
+		{
+			_controller.SelectAll();
+		}
+
+		#endregion
+	}
 }

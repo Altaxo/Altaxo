@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2561 $</version>
+//     <version>$Revision: 5617 $</version>
 // </file>
 
 using System;
@@ -57,6 +57,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			CoreInitialized,
 			WorkbenchInitialized,
 			Busy,
+			WorkbenchUnloaded,
 			AppDomainUnloaded
 		}
 		#endregion
@@ -200,7 +201,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 		/// <returns>True when the workbench was closed.</returns>
 		public bool CloseWorkbench(bool force)
 		{
-			if (initStatus == SDInitStatus.CoreInitialized) {
+			if (initStatus == SDInitStatus.CoreInitialized || initStatus == SDInitStatus.WorkbenchUnloaded) {
 				// Workbench not loaded/already closed: do nothing
 				return true;
 			}
@@ -240,7 +241,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 		/// <summary>
 		/// Creates an instance of the specified type argument in the target AppDomain.
 		/// </summary>
-		/// <param name="arguments">Arguments to pass to the constructor of <paramref name="type"/>.</param>
+		/// <param name="arguments">Arguments to pass to the constructor of "T".</param>
 		/// <returns>The constructed object.</returns>
 		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public T CreateInstanceInTargetDomain<T>(params object[] arguments) where T : MarshalByRefObject
@@ -371,7 +372,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			internal void WorkbenchClosed()
 			{
 				if (InvokeRequired) { Invoke(WorkbenchClosed); return; }
-				host.initStatus = SDInitStatus.CoreInitialized;
+				host.initStatus = SDInitStatus.WorkbenchUnloaded;
 				if (host.WorkbenchClosed != null) host.WorkbenchClosed(host, EventArgs.Empty);
 			}
 			

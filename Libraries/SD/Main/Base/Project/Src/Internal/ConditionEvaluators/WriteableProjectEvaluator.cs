@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Justin Dearing" email="zippy1981@gmail.com"/>
-//     <version>$Revision: 3290 $</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -20,7 +20,7 @@ namespace ICSharpCode.SharpDevelop
 		public bool IsValid(object caller, Condition condition)
 		{
 			IProject project = (caller as IProject) ?? ProjectService.CurrentProject;
-			return !project.ReadOnly;
+			return project != null && !project.ReadOnly;
 		}
 	}
 }

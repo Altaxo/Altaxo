@@ -2,17 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3794 $</version>
+//     <version>$Revision: 4853 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 
 using ICSharpCode.Core;
-using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
+using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
@@ -28,10 +27,12 @@ namespace ICSharpCode.SharpDevelop.Commands
 		public ChooseLayoutCommand()
 		{
 			LayoutConfiguration.LayoutChanged += new EventHandler(LayoutChanged);
-			
-			foreach (string layout in LayoutConfiguration.DefaultLayouts) {
-				LayoutConfiguration.GetLayout(layout).DisplayName   = StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.ChooseLayoutCommand." + layout + "Item}");
-			}
+			ResourceService.LanguageChanged += new EventHandler(ResourceService_LanguageChanged);
+		}
+
+		void ResourceService_LanguageChanged(object sender, EventArgs e)
+		{
+			OnOwnerChanged(e);
 		}
 		
 		int oldItem = 0;
@@ -42,9 +43,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 			if (editingLayout) return;
 			LoggingService.Debug("ChooseLayoutCommand.Run()");
 			
-			ComboBox comboBox = ((ToolBarComboBox)Owner).ComboBox;
-			string dataPath   = Path.Combine(PropertyService.DataDirectory, "resources" + Path.DirectorySeparatorChar + "layouts");
-			string configPath = Path.Combine(PropertyService.ConfigDirectory, "layouts");
+			var comboBox = (System.Windows.Controls.ComboBox)base.ComboBox;
+			string dataPath   = LayoutConfiguration.DataLayoutPath;
+			string configPath = LayoutConfiguration.ConfigLayoutPath;
 			if (!Directory.Exists(configPath)) {
 				Directory.CreateDirectory(configPath);
 			}
@@ -118,7 +119,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				frm.StartPosition = FormStartPosition.CenterParent;
 				frm.ShowInTaskbar = false;
 				
-				if (frm.ShowDialog(WorkbenchSingleton.MainForm) == DialogResult.OK) {
+				if (frm.ShowDialog(WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 					IList<string> oldNames = new List<string>(CustomLayoutNames);
 					IList<string> newNames = ed.GetList();
 					// add newly added layouts
@@ -142,8 +143,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 			if (MessageService.AskQuestion("${res:ICSharpCode.SharpDevelop.Commands.ChooseLayoutCommand.ResetToDefaultsQuestion}")) {
 				
 				foreach (LayoutConfiguration config in LayoutConfiguration.Layouts) {
-					string configPath = Path.Combine(PropertyService.ConfigDirectory, "layouts");
-					string dataPath   = Path.Combine(PropertyService.DataDirectory, "resources" + Path.DirectorySeparatorChar + "layouts");
+					string configPath = LayoutConfiguration.ConfigLayoutPath;
+					string dataPath   = LayoutConfiguration.DataLayoutPath;
 					if (File.Exists(Path.Combine(dataPath, config.FileName)) && File.Exists(Path.Combine(configPath, config.FileName))) {
 						try {
 							File.Delete(Path.Combine(configPath, config.FileName));
@@ -158,8 +159,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 		{
 			if (editingLayout) return;
 			LoggingService.Debug("ChooseLayoutCommand.LayoutChanged(object,EventArgs)");
-			ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
-			ComboBox comboBox = toolbarItem.ComboBox;
+			var comboBox = (System.Windows.Controls.ComboBox)base.ComboBox;
 			for (int i = 0; i < comboBox.Items.Count; ++i) {
 				if (((LayoutConfiguration)comboBox.Items[i]).Name == LayoutConfiguration.CurrentLayoutName) {
 					comboBox.SelectedIndex = i;
@@ -170,23 +170,28 @@ namespace ICSharpCode.SharpDevelop.Commands
 		protected override void OnOwnerChanged(EventArgs e)
 		{
 			base.OnOwnerChanged(e);
-			ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
-			ComboBox comboBox = toolbarItem.ComboBox;
-			comboBox.Items.Clear();
-			int index = 0;
-			foreach (LayoutConfiguration config in LayoutConfiguration.Layouts) {
-				if (LayoutConfiguration.CurrentLayoutName == config.Name) {
-					index = comboBox.Items.Count;
+			
+			editingLayout = true;
+			try {
+				var comboBox = (System.Windows.Controls.ComboBox)base.ComboBox;
+				comboBox.Items.Clear();
+				int index = 0;
+				foreach (LayoutConfiguration config in LayoutConfiguration.Layouts) {
+					if (LayoutConfiguration.CurrentLayoutName == config.Name) {
+						index = comboBox.Items.Count;
+					}
+					comboBox.Items.Add(config);
 				}
-				comboBox.Items.Add(config);
+				editIndex = comboBox.Items.Count;
+				
+				comboBox.Items.Add(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.ChooseLayoutCommand.EditItem}"));
+				
+				resetIndex = comboBox.Items.Count;
+				comboBox.Items.Add(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.ChooseLayoutCommand.ResetToDefaultItem}"));
+				comboBox.SelectedIndex = index;
+			} finally {
+				editingLayout = false;
 			}
-			editIndex = comboBox.Items.Count;
-			
-			comboBox.Items.Add(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.ChooseLayoutCommand.EditItem}"));
-			
-			resetIndex = comboBox.Items.Count;
-			comboBox.Items.Add(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.ChooseLayoutCommand.ResetToDefaultItem}"));
-			comboBox.SelectedIndex = index;
 		}
 	}
 }

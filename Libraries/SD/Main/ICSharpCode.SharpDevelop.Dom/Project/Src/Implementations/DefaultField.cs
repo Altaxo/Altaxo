@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2992 $</version>
+//     <version>$Revision: 5242 $</version>
 // </file>
 
 using System;
@@ -63,6 +63,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// <summary>Gets if this field is a parameter that has been converted into a field.</summary>
 		public virtual bool IsParameter {
 			get { return false; }
+		}
+		
+		public override EntityType EntityType {
+			get {
+				return EntityType.Field;
+			}
 		}
 		
 		public class LocalVariableField : DefaultField

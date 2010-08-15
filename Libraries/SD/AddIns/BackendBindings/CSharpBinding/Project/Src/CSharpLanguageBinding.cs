@@ -1,35 +1,38 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <owner name="Siegfried Pammer" email="sie_pam@gmx.at"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
-using System.Xml;
-using ICSharpCode.SharpDevelop.Internal.Templates;
-using ICSharpCode.SharpDevelop.Project;
+using CSharpBinding.FormattingStrategy;
+using ICSharpCode.SharpDevelop;
+using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Editor;
 
 namespace CSharpBinding
 {
-	public class CSharpLanguageBinding : ILanguageBinding
+	/// <summary>
+	/// Description of CSharpLanguageBinding.
+	/// </summary>
+	public class CSharpLanguageBinding : DefaultLanguageBinding
 	{
-		public const string LanguageName = "C#";
-		
-		public string Language {
-			get {
-				return LanguageName;
-			}
+		public override IFormattingStrategy FormattingStrategy {
+			get { return new CSharpFormattingStrategy(); }
 		}
 		
-		public IProject LoadProject(IMSBuildEngineProvider engineProvider, string fileName, string projectName)
-		{
-			return new CSharpProject(engineProvider, fileName, projectName);
+		public override LanguageProperties Properties {
+			get { return LanguageProperties.CSharp; }
 		}
 		
-		public IProject CreateProject(ProjectCreateInformation info)
+		public override IBracketSearcher BracketSearcher {
+			get { return new CSharpBracketSearcher(); }
+		}
+		
+		public override void Attach(ITextEditor editor)
 		{
-			return new CSharpProject(info);
+			//CSharpBackgroundCompiler.Init();
 		}
 	}
 }

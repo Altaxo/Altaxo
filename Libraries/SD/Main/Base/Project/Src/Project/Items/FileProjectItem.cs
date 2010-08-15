@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3160 $</version>
+//     <version>$Revision: 5506 $</version>
 // </file>
 
 using System;
@@ -44,7 +44,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 		}
 		
-		internal FileProjectItem(IProject project, Microsoft.Build.BuildEngine.BuildItem buildItem)
+		internal FileProjectItem(IProject project, IProjectItemBackendStore buildItem)
 			: base(project, buildItem)
 		{
 		}
@@ -60,6 +60,15 @@ namespace ICSharpCode.SharpDevelop.Project
 				this.ItemType = new ItemType(value);
 				ReFilterProperties();
 			}
+		}
+		
+		[LocalizedProperty("${res:Global.FileName}",
+		                   Description = "${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.FileName.Description}")]
+		[Browsable(true)]
+		[ReadOnly(true)]
+		public override string FileName {
+			get { return base.FileName; }
+			set { base.FileName = value; }
 		}
 		
 		sealed class BuildActionEditor : DropDownEditor

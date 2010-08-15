@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2990 $</version>
+//     <version>$Revision: 3984 $</version>
 // </file>
 
 using System;
@@ -83,7 +83,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			InitMemberNode(method);
 			sortOrder = 10;
 			Text = AppendReturnType(GetAmbience().Convert(method), method.ReturnType);
-			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(method);
+			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(method).ImageIndex;
 		}
 		
 		
@@ -92,7 +92,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			InitMemberNode(property);
 			sortOrder = 12;
 			Text = AppendReturnType(GetAmbience().Convert(property), property.ReturnType);
-			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(property);
+			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(property).ImageIndex;
 		}
 		
 		
@@ -101,7 +101,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			InitMemberNode(field);
 			sortOrder = 11;
 			Text = AppendReturnType(GetAmbience().Convert(field), field.ReturnType);
-			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(field);
+			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(field).ImageIndex;
 		}
 		
 		public MemberNode(IEvent e)
@@ -109,7 +109,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			InitMemberNode(e);
 			sortOrder = 14;
 			Text = AppendReturnType(GetAmbience().Convert(e), e.ReturnType);
-			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(e);
+			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(e).ImageIndex;
 		}
 		
 		protected virtual IAmbience GetAmbience()
@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		public override void ActivateItem()
 		{
 			if (FileName != null) {
-				FileService.JumpToFilePosition(FileName, line - 1, column - 1);
+				FileService.JumpToFilePosition(FileName, line, column);
 			}
 		}
 	}

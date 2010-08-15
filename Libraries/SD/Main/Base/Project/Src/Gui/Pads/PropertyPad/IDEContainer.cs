@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3508 $</version>
+//     <version>$Revision: 3532 $</version>
 // </file>
 
 //#define IDECONTAINER_LOG_SERVICE_REQUESTS

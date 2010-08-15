@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3675 $</version>
+//     <version>$Revision: 4711 $</version>
 // </file>
 
 using System;
@@ -16,7 +16,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 	[TestFixture]
 	public class SearchGenericClassTests
 	{
-		ProjectContentRegistry projectContentRegistry = ParserService.DefaultProjectContentRegistry;
+		ProjectContentRegistry projectContentRegistry = AssemblyParserService.DefaultProjectContentRegistry;
 		
 		#region Helper methods
 		// usingMode: 0 = one using-statement for each namespace (correctly cased)

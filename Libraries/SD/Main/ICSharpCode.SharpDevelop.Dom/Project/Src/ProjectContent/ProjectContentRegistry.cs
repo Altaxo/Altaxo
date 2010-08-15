@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3644 $</version>
+//     <version>$Revision: 6231 $</version>
 // </file>
 
 using System;
@@ -22,7 +22,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public class ProjectContentRegistry : IDisposable
 	{
 		internal DomPersistence persistence;
-		Dictionary<string, IProjectContent> contents = new Dictionary<string, IProjectContent>(StringComparer.InvariantCultureIgnoreCase);
+		Dictionary<string, IProjectContent> contents = new Dictionary<string, IProjectContent>(StringComparer.OrdinalIgnoreCase);
 		
 		/// <summary>
 		/// Disposes all project contents stored in this registry.
@@ -197,8 +197,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 				
 				try {
 					pc = LoadProjectContent(itemInclude, itemFileName);
+				} catch (BadImageFormatException ex) {
+					HostCallback.ShowAssemblyLoadErrorInternal(itemFileName, itemInclude, ex.Message);
 				} catch (Exception ex) {
-					HostCallback.ShowAssemblyLoadErrorInternal(itemFileName, itemInclude, "Error loading assembly:\n" + ex.ToString());
+					HostCallback.ShowError("Error loading assembly " + itemFileName, ex);
 				} finally {
 					#if DEBUG
 					LoggingService.Debug(string.Format("Loaded {0} in {1}ms", itemInclude, Environment.TickCount - time));
@@ -261,7 +263,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					if (pc == null && asmName != null) {
 						string subPath = Path.Combine(asmName.ShortName, GetVersion__Token(asmName));
 						subPath = Path.Combine(subPath, asmName.ShortName + ".dll");
-						foreach (string dir in Directory.GetDirectories(GacInterop.GacRootPath, "GAC*")) {
+						foreach (string dir in Directory.GetDirectories(GacInterop.GacRootPathV4, "GAC*")) {
 							itemFileName = Path.Combine(dir, subPath);
 							if (File.Exists(itemFileName)) {
 								pc = CecilReader.LoadAssembly(itemFileName, this);
@@ -303,12 +305,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		protected virtual Assembly GetDefaultAssembly(string shortName)
 		{
 #if ModifiedForAltaxo
-      if(shortName.StartsWith("Altaxo"))
+      if (shortName.StartsWith("Altaxo"))
       {
-          Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-          foreach (Assembly ass in assemblies)
-            if (ass.GetName().Name == shortName)
-              return ass;
+        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (Assembly ass in assemblies)
+          if (ass.GetName().Name == shortName)
+            return ass;
       }
 #endif	
 			// These assemblies are already loaded by SharpDevelop, so we

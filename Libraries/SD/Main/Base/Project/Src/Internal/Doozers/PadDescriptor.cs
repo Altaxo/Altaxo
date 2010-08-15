@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3579 $</version>
+//     <version>$Revision: 5933 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,21 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop
 {
+	/// <summary>
+	/// Indicates the default position for a pad.
+	/// This is a bit-flag enum, Hidden can be combined with the directions.
+	/// </summary>
+	[Flags]
+	public enum DefaultPadPositions
+	{
+		None = 0,
+		Right = 1,
+		Left = 2,
+		Bottom = 4,
+		Top = 8,
+		Hidden = 16
+	}
+	
 	/// <summary>
 	/// Describes a pad.
 	/// </summary>
@@ -33,12 +48,17 @@ namespace ICSharpCode.SharpDevelop
 		/// </summary>
 		public PadDescriptor(Codon codon)
 		{
+			if (codon == null)
+				throw new ArgumentNullException("codon");
 			addIn = codon.AddIn;
 			shortcut = codon.Properties["shortcut"];
 			category = codon.Properties["category"];
 			icon = codon.Properties["icon"];
 			title = codon.Properties["title"];
 			@class = codon.Properties["class"];
+			if (!string.IsNullOrEmpty(codon.Properties["defaultPosition"])) {
+				DefaultPosition = (DefaultPadPositions)Enum.Parse(typeof(DefaultPadPositions), codon.Properties["defaultPosition"]);
+			}
 #if ModifiedForAltaxo
       // neccessary in order to load some pads on startup (such pads that are services, like the message output pad)
       string precreate = codon.Properties["precreated"];
@@ -52,6 +72,12 @@ namespace ICSharpCode.SharpDevelop
 		/// </summary>
 		public PadDescriptor(Type padType, string title, string icon)
 		{
+			if (padType == null)
+				throw new ArgumentNullException("padType");
+			if (title == null)
+				throw new ArgumentNullException("title");
+			if (icon == null)
+				throw new ArgumentNullException("icon");
 			this.padType = padType;
 			this.@class = padType.FullName;
 			this.title = title;
@@ -117,11 +143,10 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public bool HasFocus {
-			get {
-				return (padContent != null) ? padContent.Control.ContainsFocus : false;
-			}
-		}
+		/// <summary>
+		/// Gets/sets the default position of the pad.
+		/// </summary>
+		public DefaultPadPositions DefaultPosition { get; set; }
 		
 		public IPadContent PadContent {
 			get {
@@ -138,19 +163,10 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public void RedrawContent()
-		{
-			if (padContent != null) {
-				padContent.RedrawContent();
-			}
-		}
-		
 		public void CreatePad()
 		{
-			#if DEBUG
 			if (WorkbenchSingleton.InvokeRequired)
 				throw new InvalidOperationException("This action could trigger pad creation and is only valid on the main thread!");
-			#endif
 			if (!padContentCreated) {
 				padContentCreated = true;
 				try {
@@ -161,7 +177,7 @@ namespace ICSharpCode.SharpDevelop
 						padContent = (IPadContent)Activator.CreateInstance(padType);
 					}
 				} catch (Exception ex) {
-					MessageService.ShowError(ex, "Error creating pad instance");
+					MessageService.ShowException(ex, "Error creating pad instance");
 				}
 			}
 		}
@@ -170,10 +186,12 @@ namespace ICSharpCode.SharpDevelop
 		{
 			CreatePad();
 			if (padContent == null) return;
-			if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) {
-				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
-			}
 			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
+		}
+		
+		public override string ToString()
+		{
+			return "[PadDescriptor " + this.Class + "]";
 		}
 	}
 }

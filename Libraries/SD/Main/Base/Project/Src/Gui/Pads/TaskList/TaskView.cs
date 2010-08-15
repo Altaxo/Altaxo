@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="David Alpert" email="david@spinthemoose.com"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 5692 $</version>
 // </file>
 
 // much of TaskView's code has been refactored from
@@ -41,6 +41,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		ColumnHeader path        = new ColumnHeader();
 		ToolTip taskToolTip = new ToolTip();
 
+		public string DefaultContextMenuAddInTreeEntry { get; set; }
+
 		public Task SelectedTask {
 			get {
 				if (this.FocusedItem==null) {
@@ -73,12 +75,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (!string.IsNullOrEmpty(t.FileName)) {
 					b.Append(" - ");
 					b.Append(t.FileName);
-					if (t.Line >= 0) {
+					if (t.Line >= 1) {
 						b.Append(':');
-						b.Append(t.Line + 1);
-						if (t.Column > 0) {
+						b.Append(t.Line);
+						if (t.Column > 1) {
 							b.Append(',');
-							b.Append(t.Column + 1);
+							b.Append(t.Column);
 						}
 					}
 				}
@@ -243,11 +245,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 					for (int i = 1; i < this.SelectedItems.Count; i++) {
 						string entry2 = ((Task)this.SelectedItems[i].Tag).ContextMenuAddInTreeEntry;
 						if (entry2 != entry) {
-							entry = Task.DefaultContextMenuAddInTreeEntry;
+							entry = null;
 							break;
 						}
 					}
-					MenuService.ShowContextMenu(this, entry, this, pos.X, pos.Y);
+					if (entry == null)
+						entry = DefaultContextMenuAddInTreeEntry;
+					if (entry != null)
+						MenuService.ShowContextMenu(this, entry, this, pos.X, pos.Y);
 				}
 			}
 			base.WndProc(ref m);
@@ -272,11 +277,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			try {
 				path = Path.GetDirectoryName(path);
+				if (Project.ProjectService.OpenSolution != null) {
+					path = FileUtility.GetRelativePath(Project.ProjectService.OpenSolution.Directory, path);
+				}
 			} catch (Exception) {}
 			
 			ListViewItem item = new ListViewItem(new string[] {
 			                                     	String.Empty,
-			                                     	(task.Line + 1).ToString(),
+			                                     	task.Line.ToString(),
 			                                     	FormatDescription(task.Description),
 			                                     	fileName,
 			                                     	path

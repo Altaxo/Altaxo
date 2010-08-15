@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2644$</version>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -73,8 +73,8 @@ namespace ICSharpCode.NRefactory
 		
 		public static int ComparePrecedenceCSharp(BinaryOperatorType op1, BinaryOperatorType op2)
 		{
-			int p1 = GetOperatorPrecedence(vbDict, op1);
-			int p2 = GetOperatorPrecedence(vbDict, op2);
+			int p1 = GetOperatorPrecedence(csharpDict, op1);
+			int p2 = GetOperatorPrecedence(csharpDict, op2);
 			return p1.CompareTo(p2);
 		}
 		

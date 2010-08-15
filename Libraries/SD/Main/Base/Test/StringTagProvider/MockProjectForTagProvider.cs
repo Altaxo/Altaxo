@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision$</version>
+//     <version>$Revision: 5855 $</version>
 // </file>
 
 using System;
@@ -118,6 +118,10 @@ namespace ICSharpCode.SharpDevelop.Tests.StringTagProvider
 				throw new NotImplementedException();
 			}
 		}
+		
+		public event EventHandler ActiveConfigurationChanged { add {} remove {} }
+		
+		public event EventHandler ActivePlatformChanged { add {} remove {} }
 		
 		public ICollection<string> ConfigurationNames {
 			get {
@@ -236,7 +240,7 @@ namespace ICSharpCode.SharpDevelop.Tests.StringTagProvider
 			throw new NotImplementedException();
 		}
 		
-		public ProjectItem CreateProjectItem(Microsoft.Build.BuildEngine.BuildItem item)
+		public ProjectItem CreateProjectItem(IProjectItemBackendStore item)
 		{
 			throw new NotImplementedException();
 		}
@@ -252,6 +256,11 @@ namespace ICSharpCode.SharpDevelop.Tests.StringTagProvider
 		}
 		
 		public void StartBuild(ProjectBuildOptions buildOptions, IBuildFeedbackSink feedbackSink)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public ProjectBuildOptions CreateProjectBuildOptions(BuildOptions options, bool isRootBuildable)
 		{
 			throw new NotImplementedException();
 		}

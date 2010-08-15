@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3502 $</version>
+//     <version>$Revision: 6299 $</version>
 // </file>
 
 using System;
@@ -45,14 +45,14 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			}
 		}
 		
-		int GetFileFilterIndex(IProject project, string[] fileFilters)
+		int GetFileFilterIndex(IProject project, IList<FileFilterDescriptor> fileFilters)
 		{
 			if (project != null) {
-				LanguageBindingDescriptor languageCodon = LanguageBindingService.GetCodonPerLanguageName(project.Language);
-				if (languageCodon != null) {
-					for (int i = 0; i < fileFilters.Length; ++i) {
-						for (int j = 0; j < languageCodon.CodeFileExtensions.Length; ++j) {
-							if (fileFilters[i].ToUpperInvariant().IndexOf(languageCodon.CodeFileExtensions[j].ToUpperInvariant()) >= 0) {
+				ProjectBindingDescriptor projectCodon = ProjectBindingService.GetCodonPerLanguageName(project.Language);
+				if (projectCodon != null) {
+					for (int i = 0; i < fileFilters.Count; ++i) {
+						for (int j = 0; j < projectCodon.CodeFileExtensions.Length; ++j) {
+							if (fileFilters[i].ContainsExtension(projectCodon.CodeFileExtensions[j])) {
 								return i + 1;
 							}
 						}
@@ -151,7 +151,8 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public static IEnumerable<string> FindAdditionalFiles(string fileName)
 		{
 			List<string> list = new List<string>();
-			StringParser.Properties["Extension"] = Path.GetExtension(fileName);
+			// HACK: find a different way to support .Designer.XYZ
+			StringParserPropertyContainer.FileCreation["Extension"] = Path.GetExtension(fileName);
 			string prefix = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
 			foreach (string ext in AddInTree.BuildItems<string>("/SharpDevelop/Workbench/DependentFileExtensions", null, false)) {
 				if (File.Exists(prefix + ext))
@@ -162,16 +163,13 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		
 		public override void Run()
 		{
+			ProjectBrowserPad.Instance.BringToFront();
 			this.AddExistingItems();
 		}
 		
 		protected IEnumerable<FileProjectItem> AddExistingItems()
 		{
-			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
-			DirectoryNode node = selectedNode as DirectoryNode;
-			if (node == null && selectedNode != null) {
-				node = selectedNode.Parent as DirectoryNode;
-			}
+			DirectoryNode node = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedDirectoryNode;
 			if (node == null) {
 				return null;
 			}
@@ -181,8 +179,8 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			List<FileProjectItem> addedItems = new List<FileProjectItem>();
 			
 			using (OpenFileDialog fdiag  = new OpenFileDialog()) {
-				fdiag.AddExtension    = true;
-				string[] fileFilters  = (string[])(AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
+				fdiag.AddExtension = true;
+				var fileFilters    = ProjectService.GetFileFilters();
 				
 				fdiag.InitialDirectory = node.Directory;
 				fdiag.FilterIndex     = GetFileFilterIndex(node.Project, fileFilters);
@@ -191,7 +189,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				fdiag.CheckFileExists = true;
 				fdiag.Title = StringParser.Parse("${res:ProjectComponent.ContextMenu.AddExistingFiles}");
 				
-				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
+				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 					List<KeyValuePair<string, string>> fileNames = new List<KeyValuePair<string, string>>(fdiag.FileNames.Length);
 					foreach (string fileName in fdiag.FileNames) {
 						fileNames.Add(new KeyValuePair<string, string>(fileName, ""));
@@ -277,11 +275,8 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
-			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
-			DirectoryNode node = selectedNode as DirectoryNode;
-			if (node == null && selectedNode != null) {
-				node = selectedNode.Parent as DirectoryNode;
-			}
+			ProjectBrowserPad.Instance.BringToFront();
+			DirectoryNode node = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedDirectoryNode;
 			if (node == null) {
 				return;
 			}
@@ -291,7 +286,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			using (FolderBrowserDialog dlg = new FolderBrowserDialog()) {
 				dlg.SelectedPath = node.Directory;
 				dlg.ShowNewFolderButton = false;
-				if (dlg.ShowDialog(WorkbenchSingleton.MainForm) == DialogResult.OK) {
+				if (dlg.ShowDialog(WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 					string folderName = dlg.SelectedPath;
 					string copiedFolderName = Path.Combine(node.Directory, Path.GetFileName(folderName));
 					if (!FileUtility.IsEqualFileName(folderName, copiedFolderName)) {
@@ -344,6 +339,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			ProjectBrowserPad.Instance.BringToFront();
 			this.AddNewItems();
 		}
 		
@@ -359,7 +355,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			List<FileProjectItem> addedItems = new List<FileProjectItem>();
 			
 			using (NewFileDialog nfd = new NewFileDialog(node.Directory)) {
-				if (nfd.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
+				if (nfd.ShowDialog(WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 					bool additionalProperties = false;
 					foreach (KeyValuePair<string, FileDescriptionTemplate> createdFile in nfd.CreatedFiles) {
 						FileProjectItem item = node.AddNewFile(createdFile.Key);
@@ -411,11 +407,9 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		
 		public override void Run()
 		{
-			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
-			DirectoryNode node = selectedNode as DirectoryNode;
-			if (node == null) {
-				node = selectedNode.Parent as DirectoryNode;
-			}
+			ProjectBrowserPad.Instance.BringToFront();
+			
+			DirectoryNode node = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedDirectoryNode;
 			if (node == null) {
 				return;
 			}
@@ -432,8 +426,10 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
 			DirectoryNode node = selectedNode as DirectoryNode;
-			Directory.CreateDirectory(node.Directory);
-			IncludeFileInProject.IncludeDirectoryNode(node, false);
+			if (node != null) {
+				Directory.CreateDirectory(node.Directory);
+				IncludeFileInProject.IncludeDirectoryNode(node, false);
+			}
 		}
 	}
 }

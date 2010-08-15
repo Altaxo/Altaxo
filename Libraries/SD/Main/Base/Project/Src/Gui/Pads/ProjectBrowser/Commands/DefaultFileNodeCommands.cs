@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3559 $</version>
+//     <version>$Revision: 5627 $</version>
 // </file>
 
 using System;
@@ -73,18 +73,12 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		/// </summary>
 		static void OpenWith(string fileName)
 		{
-			var codons = DisplayBindingService.GetCodonsPerFileName(fileName);
-			int defaultCodonIndex = codons.IndexOf(DisplayBindingService.GetDefaultCodonPerFileName(fileName));
-			using (OpenWithDialog dlg = new OpenWithDialog(codons, defaultCodonIndex, Path.GetExtension(fileName))) {
-				if (dlg.ShowDialog(WorkbenchSingleton.MainForm) == DialogResult.OK) {
-					FileUtility.ObservedLoad(new FileService.LoadFileWrapper(dlg.SelectedBinding.Binding, true).Invoke, fileName);
-				}
-			}
+			ICSharpCode.SharpDevelop.Commands.OpenFileWith.OpenFilesWith(new string[] { fileName });
 		}
 	}
 	
 	/// <summary>
-	/// Opens the containing folder in the clipboard.
+	/// Opens the folder containing the selected file.
 	/// </summary>
 	public class OpenFolderContainingFile : AbstractMenuCommand
 	{
@@ -111,8 +105,30 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		
 		public static void OpenContainingFolderInExplorer(string fileName)
 		{
-			if (File.Exists(fileName)) {
+			if (fileName != null && File.Exists(fileName)) {
 				Process.Start("explorer", "/select,\"" + fileName + "\"");
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Opens the selected folder in Explorer.
+	/// </summary>
+	public class OpenFolder : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DirectoryNode directoryNode = ProjectBrowserPad.Instance.SelectedNode as DirectoryNode;
+			if (directoryNode != null) {
+				OpenFolderInExplorer(directoryNode.Directory);
+				return;
+			}
+		}
+		
+		public static void OpenFolderInExplorer(string directory)
+		{
+			if (directory != null && Directory.Exists(directory)) {
+				Process.Start(directory);
 			}
 		}
 	}

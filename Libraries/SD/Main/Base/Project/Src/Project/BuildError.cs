@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2051 $</version>
+//     <version>$Revision: 5643 $</version>
 // </file>
 
 using System;
@@ -50,6 +50,18 @@ namespace ICSharpCode.SharpDevelop.Project
 		[NonSerialized]
 		object tag;
 		string contextMenuAddInTreeEntry;
+		string subcategory;
+		string helpKeyword;
+		
+		public string HelpKeyword {
+			get { return helpKeyword; }
+			set { helpKeyword = value; }
+		}
+		
+		public string Subcategory {
+			get { return subcategory; }
+			set { subcategory = value; }
+		}
 		
 		public int Column {
 			get {

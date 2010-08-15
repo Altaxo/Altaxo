@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3815 $</version>
 // </file>
 
 using System;
@@ -57,18 +57,17 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			base.Initialize();
 			Nodes.Clear();
 			
-			List<IProjectContent> contentList = new List<IProjectContent>(1);
-			contentList.Add(null);
+			List<IProjectContent> contentList = new List<IProjectContent>();
 			if (ProjectService.OpenSolution != null) {
 				foreach (IProject project in ProjectService.OpenSolution.Projects) {
 					IProjectContent projectContent = ParserService.GetProjectContent(project);
 					if (projectContent != null) {
-						contentList[0] = projectContent;
-						foreach (IClass derivedClass in RefactoringService.FindDerivedClasses(c, contentList, true)) {
-							new ClassNode(project, derivedClass).AddTo(this);
-						}
+						contentList.Add(projectContent);
 					}
 				}
+			}
+			foreach (IClass derivedClass in RefactoringService.FindDerivedClasses(c, contentList, true)) {
+				new ClassNode(project, derivedClass).AddTo(this);
 			}
 			
 			if (Nodes.Count == 0) {

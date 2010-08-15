@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3671 $</version>
+//     <version>$Revision: 5426 $</version>
 // </file>
 
 using System;
@@ -44,16 +44,26 @@ namespace ICSharpCode.Core
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			foreach (AddIn addIn in AddIns) {
-				if (!FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, addIn.FileName)) {
-					if (sb.Length > 0) sb.Append(", ");
-					sb.Append("[");
-					sb.Append(addIn.Name);
+				// Skip preinstalled AddIns (show only third party AddIns)
+				if (addIn.IsPreinstalled)
+					continue;
+				
+				if (sb.Length > 0) sb.Append(", ");
+				sb.Append("[");
+				sb.Append(addIn.Name);
+				if (addIn.Version != null) {
+					sb.Append(' ');
+					sb.Append(addIn.Version.ToString());
+				}
+				if (!addIn.Enabled) {
 					sb.Append(", Enabled=");
 					sb.Append(addIn.Enabled);
+				}
+				if (addIn.Action != AddInAction.Enable) {
 					sb.Append(", Action=");
 					sb.Append(addIn.Action.ToString());
-					sb.Append("]");
 				}
+				sb.Append("]");
 			}
 			return sb.ToString();
 		}
@@ -213,9 +223,7 @@ namespace ICSharpCode.Core
 		static void AddExtensionPath(ExtensionPath path)
 		{
 			AddInTreeNode treePath = CreatePath(rootNode, path.Name);
-			foreach (Codon codon in path.Codons) {
-				treePath.Codons.Add(codon);
-			}
+			treePath.AddCodons(path.Codons);
 		}
 		
 		/// <summary>

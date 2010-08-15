@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision: 3165 $</version>
+//     <author name="unknown"/>
+//     <version>$Revision: 5529 $</version>
 // </file>
 
 using System;
@@ -49,7 +49,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 				OnDebugStarted(EventArgs.Empty);
 			} catch (Exception) {
 				OnDebugStopped(EventArgs.Empty);
-				throw new ApplicationException("Can't execute " + "\"" + processStartInfo.FileName + "\"\n");
+				throw new ApplicationException("Can't execute \"" + processStartInfo.FileName + "\"\n");
 			}
 		}
 		
@@ -130,7 +130,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 		/// Gets the tooltip control that shows the value of given variable.
 		/// Return null if no tooltip is available.
 		/// </summary>
-		public DebuggerGridControl GetTooltipControl(string variable)
+		public object GetTooltipControl(string variable)
 		{
 			return null;
 		}

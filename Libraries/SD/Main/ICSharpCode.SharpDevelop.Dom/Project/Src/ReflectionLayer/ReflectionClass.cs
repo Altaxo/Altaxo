@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3768 $</version>
+//     <version>$Revision: 5625 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 
 namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 {
@@ -22,9 +23,12 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 		void InitMembers(Type type)
 		{
 			foreach (Type nestedType in type.GetNestedTypes(flags)) {
-				if (!nestedType.IsVisible) continue;
-				string name = nestedType.FullName.Replace('+', '.');
-				InnerClasses.Add(new ReflectionClass(CompilationUnit, nestedType, name, this));
+				// We cannot use nestedType.IsVisible - that only checks for public types,
+				// but we also need to load protected types.
+				if (nestedType.IsNestedPublic || nestedType.IsNestedFamily || nestedType.IsNestedFamORAssem) {
+					string name = this.FullyQualifiedName + "." + nestedType.Name;
+					InnerClasses.Add(new ReflectionClass(CompilationUnit, nestedType, name, this));
+				}
 			}
 			
 			foreach (FieldInfo field in type.GetFields(flags)) {
@@ -51,6 +55,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 					Methods.Add(new ReflectionMethod(methodInfo, this));
 				}
 			}
+			this.AddDefaultConstructorIfRequired = (this.ClassType == ClassType.Struct || this.ClassType == ClassType.Enum);
 			
 			foreach (EventInfo eventInfo in type.GetEvents(flags)) {
 				Events.Add(new ReflectionEvent(eventInfo, this));
@@ -65,7 +70,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 		internal static void AddAttributes(IProjectContent pc, IList<IAttribute> list, IList<CustomAttributeData> attributes)
 		{
 			foreach (CustomAttributeData att in attributes) {
-				DefaultAttribute a = new DefaultAttribute(ReflectionReturnType.Create(pc, null, att.Constructor.DeclaringType, false));
+				DefaultAttribute a = new DefaultAttribute(ReflectionReturnType.Create(pc, att.Constructor.DeclaringType));
 				foreach (CustomAttributeTypedArgument arg in att.ConstructorArguments) {
 					a.PositionalArguments.Add(ReplaceTypeByIReturnType(pc, arg.Value));
 				}
@@ -79,7 +84,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 		static object ReplaceTypeByIReturnType(IProjectContent pc, object val)
 		{
 			if (val is Type) {
-				return ReflectionReturnType.Create(pc, null, (Type)val, false);
+				return ReflectionReturnType.Create(pc, (Type)val, forceGenericType: false);
 			} else {
 				return val;
 			}
@@ -97,13 +102,51 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 			}
 		}
 		
+		public static string SplitTypeParameterCountFromReflectionName(string reflectionName)
+		{
+			int lastBackTick = reflectionName.LastIndexOf('`');
+			if (lastBackTick < 0)
+				return reflectionName;
+			else
+				return reflectionName.Substring(0, lastBackTick);
+		}
+		
+		public static string SplitTypeParameterCountFromReflectionName(string reflectionName, out int typeParameterCount)
+		{
+			int pos = reflectionName.LastIndexOf('`');
+			if (pos < 0) {
+				typeParameterCount = 0;
+				return reflectionName;
+			} else {
+				string typeCount = reflectionName.Substring(pos + 1);
+				if (int.TryParse(typeCount, out typeParameterCount))
+					return reflectionName.Substring(0, pos);
+				else
+					return reflectionName;
+			}
+		}
+		
+		public static string ConvertReflectionNameToFullName(string reflectionName, out int typeParameterCount)
+		{
+			if (reflectionName.IndexOf('+') > 0) {
+				typeParameterCount = 0;
+				StringBuilder newName = new StringBuilder();
+				foreach (string namepart in reflectionName.Split('+')) {
+					if (newName.Length > 0)
+						newName.Append('.');
+					int partTypeParameterCount;
+					newName.Append(SplitTypeParameterCountFromReflectionName(namepart, out partTypeParameterCount));
+					typeParameterCount += partTypeParameterCount;
+				}
+				return newName.ToString();
+			} else {
+				return SplitTypeParameterCountFromReflectionName(reflectionName, out typeParameterCount);
+			}
+		}
+		
 		public ReflectionClass(ICompilationUnit compilationUnit, Type type, string fullName, IClass declaringType) : base(compilationUnit, declaringType)
 		{
-			if (fullName.Length > 2 && fullName[fullName.Length - 2] == '`') {
-				FullyQualifiedName = fullName.Substring(0, fullName.Length - 2);
-			} else {
-				FullyQualifiedName = fullName;
-			}
+			FullyQualifiedName = SplitTypeParameterCountFromReflectionName(fullName);
 			
 			try {
 				AddAttributes(compilationUnit.ProjectContent, this.Attributes, CustomAttributeData.GetCustomAttributes(type));
@@ -145,6 +188,9 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 			if (type.IsAbstract) {
 				modifiers |= ModifierEnum.Abstract;
 			}
+			if (type.IsSealed && type.IsAbstract) {
+				modifiers |= ModifierEnum.Static;
+			}
 			
 			if (type.IsNestedPrivate ) { // I assume that private is used most and public last (at least should be)
 				modifiers |= ModifierEnum.Private;
@@ -162,11 +208,11 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 			
 			// set base classes
 			if (type.BaseType != null) { // it's null for System.Object ONLY !!!
-				BaseTypes.Add(ReflectionReturnType.Create(this, type.BaseType, false));
+				BaseTypes.Add(ReflectionReturnType.Create(this, type.BaseType));
 			}
 			
 			foreach (Type iface in type.GetInterfaces()) {
-				BaseTypes.Add(ReflectionReturnType.Create(this, iface, false));
+				BaseTypes.Add(ReflectionReturnType.Create(this, iface));
 			}
 			
 			InitMembers(type);
@@ -176,9 +222,9 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 		{
 			foreach (Type constraint in type.GetGenericParameterConstraints()) {
 				if (tp.Method != null) {
-					tp.Constraints.Add(ReflectionReturnType.Create(tp.Method, constraint, false));
+					tp.Constraints.Add(ReflectionReturnType.Create(tp.Method, constraint));
 				} else {
-					tp.Constraints.Add(ReflectionReturnType.Create(tp.Class, constraint, false));
+					tp.Constraints.Add(ReflectionReturnType.Create(tp.Class, constraint));
 				}
 			}
 		}

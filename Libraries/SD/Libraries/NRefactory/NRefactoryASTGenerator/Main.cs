@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3722 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -19,6 +19,8 @@ namespace NRefactoryASTGenerator
 	class MainClass
 	{
 		public const string VisitPrefix = "Visit";
+		
+		static readonly string[] lineEndings = { "\r\n", "\r", "\n" };
 		
 		public static void Main(string[] args)
 		{
@@ -92,7 +94,7 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(directory + "Generated.cs", writer.ToString());
+				File.WriteAllText(directory + "Generated.cs", NormalizeNewLines(writer));
 			}
 			
 			ccu = new CodeCompileUnit();
@@ -103,7 +105,7 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(visitorsDir + "../IAstVisitor.cs", writer.ToString());
+				File.WriteAllText(visitorsDir + "../IAstVisitor.cs", NormalizeNewLines(writer));
 			}
 			
 			ccu = new CodeCompileUnit();
@@ -116,7 +118,7 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(visitorsDir + "AbstractAstVisitor.cs", writer.ToString());
+				File.WriteAllText(visitorsDir + "AbstractAstVisitor.cs", NormalizeNewLines(writer));
 			}
 			
 			ccu = new CodeCompileUnit();
@@ -129,7 +131,7 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(visitorsDir + "AbstractAstTransformer.cs", writer.ToString());
+				File.WriteAllText(visitorsDir + "AbstractAstTransformer.cs", NormalizeNewLines(writer));
 			}
 			
 			ccu = new CodeCompileUnit();
@@ -142,7 +144,7 @@ namespace NRefactoryASTGenerator
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
 				// CodeDom cannot output "sealed", so we need to use this hack:
 				File.WriteAllText(visitorsDir + "NodeTrackingAstVisitor.cs",
-				                  writer.ToString().Replace("public override object", "public sealed override object"));
+				                  NormalizeNewLines(writer).Replace("public override object", "public sealed override object"));
 			}
 			
 			//NotImplementedAstVisitor
@@ -154,9 +156,20 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(visitorsDir + "NotImplementedAstVisitor.cs", writer.ToString());
+				File.WriteAllText(visitorsDir + "NotImplementedAstVisitor.cs", NormalizeNewLines(writer));
 			}
 			Debug.WriteLine("AST Generator done!");
+			
+			Debug.WriteLine("start keyword list generation...");
+			
+			KeywordGenerator.Generate();
+			
+			Debug.WriteLine("keyword list generation done!");
+		}
+		
+		static string NormalizeNewLines(StringWriter writer)
+		{
+			return string.Join(Environment.NewLine, writer.ToString().Split(lineEndings, StringSplitOptions.None));
 		}
 		
 		static CodeTypeDeclaration CreateAstVisitorInterface(List<Type> nodeTypes)

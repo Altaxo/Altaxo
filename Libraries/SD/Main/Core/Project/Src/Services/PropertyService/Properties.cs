@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3786 $</version>
+//     <version>$Revision: 5785 $</version>
 // </file>
 
 using System;
@@ -95,6 +95,10 @@ namespace ICSharpCode.Core
 		
 		public void Set<T>(string property, T value)
 		{
+			if (property == null)
+				throw new ArgumentNullException("property");
+			if (value == null)
+				throw new ArgumentNullException("value");
 			T oldValue = default(T);
 			lock (properties) {
 				if (!properties.ContainsKey(property)) {

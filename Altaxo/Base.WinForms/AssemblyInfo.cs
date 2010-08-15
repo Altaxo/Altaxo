@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AltaxoBase.WinForms")]
-[assembly: AssemblyDescription("Windows forms library for Altaxo")]
+[assembly: AssemblyDescription("Windows forms Gui layer for Altaxo")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
-[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2009")]
-[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2009")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-20100")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2010")]
 [assembly: AssemblyCulture("")]   
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.54.0.659")]
+[assembly: AssemblyVersion("4.0.0.659")]

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3865 $</version>
 // </file>
 
 using System;
@@ -24,7 +24,7 @@ namespace ICSharpCode.Core
 	/// </attribute>
 	/// <attribute name="comparisonType">
 	/// The mode of the comparison: a field of the System.StringComparison enumeration. The default is
-	/// 'InvariantCultureIgnoreCase'.
+	/// 'OrdinalIgnoreCase'.
 	/// </attribute>
 	/// <example title="Check the value of a property in the PropertyService">
 	/// &lt;Condition name = "Compare" string = "${property:SharpDevelop.FiletypesRegisterStartup}" equals = "True"&gt;
@@ -36,7 +36,7 @@ namespace ICSharpCode.Core
 			string comparisonTypeText = condition.Properties["comparisonType"];
 			StringComparison comparisonType;
 			if (string.IsNullOrEmpty(comparisonTypeText))
-				comparisonType = StringComparison.InvariantCultureIgnoreCase;
+				comparisonType = StringComparison.OrdinalIgnoreCase;
 			else
 				comparisonType = (StringComparison)Enum.Parse(typeof(StringComparison), comparisonTypeText);
 			

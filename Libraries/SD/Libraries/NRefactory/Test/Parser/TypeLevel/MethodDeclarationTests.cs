@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3717 $</version>
+//     <version>$Revision: 5692 $</version>
 // </file>
 
 using System;
@@ -70,7 +70,6 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(2, md.StartLocation.Line, "StartLocation.Y");
 			Assert.AreEqual(2, md.EndLocation.Line, "EndLocation.Y");
 			Assert.AreEqual(3, md.StartLocation.Column, "StartLocation.X");
-			
 			// endLocation.X is currently 20. It should be 18, but that error is not critical
 			//Assert.AreEqual(18, md.EndLocation.X, "EndLocation.X");
 		}
@@ -283,6 +282,25 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(new Location(1, 2), md.Body.StartLocation);
 			Assert.AreEqual(new Location(2, 5), md.Body.EndLocation);
 		}
+		
+		[Test]
+		public void CSharpOptionalParameterTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
+				"public void Foo(string bar = null, int baz = 0) { }"
+			);
+			Assert.AreEqual("Foo", md.Name);
+			
+			Assert.AreEqual("bar", md.Parameters[0].ParameterName);
+			Assert.AreEqual("System.String", md.Parameters[0].TypeReference.Type);
+			Assert.AreEqual(ParameterModifiers.In | ParameterModifiers.Optional, md.Parameters[0].ParamModifier);
+			Assert.IsNull(((PrimitiveExpression)md.Parameters[0].DefaultValue).Value);
+			
+			Assert.AreEqual("baz", md.Parameters[1].ParameterName);
+			Assert.AreEqual("System.Int32", md.Parameters[1].TypeReference.Type);
+			Assert.AreEqual(ParameterModifiers.In | ParameterModifiers.Optional, md.Parameters[1].ParamModifier);
+			Assert.AreEqual(0, ((PrimitiveExpression)md.Parameters[1].DefaultValue).Value);
+		}
 		#endregion
 		
 		#region VB.NET
@@ -310,6 +328,34 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(2, md.StartLocation.Line, "StartLocation.Y");
 			Assert.AreEqual(2, md.EndLocation.Line, "EndLocation.Y");
 			Assert.AreEqual(2, md.StartLocation.Column, "StartLocation.X");
+		}
+		
+		[Test]
+		public void VBNetFunctionMethodDeclarationTest()
+		{
+			const string program = @"public function MyFunction() as Integer
+				return 1
+			end function";
+			
+			MethodDeclaration md = ParseUtilVBNet.ParseTypeMember<MethodDeclaration>(program);
+			Assert.AreEqual(Modifiers.Public, md.Modifier);
+			Assert.AreEqual(2, md.StartLocation.Line, "StartLocation.Y");
+			Assert.AreEqual(2, md.StartLocation.Column, "StartLocation.X");
+			Assert.AreEqual(2, md.EndLocation.Line, "EndLocation.Y");
+		}
+		
+		[Test]
+		public void VBNetSubroutineMethodDeclarationTest()
+		{
+			const string program = @"public Sub MyMethod()
+				OtherMethod()
+			end Sub";
+			
+			MethodDeclaration md = ParseUtilVBNet.ParseTypeMember<MethodDeclaration>(program);
+			Assert.AreEqual(Modifiers.Public, md.Modifier);
+			Assert.AreEqual(2, md.StartLocation.Line, "StartLocation.Y");
+			Assert.AreEqual(2, md.StartLocation.Column, "StartLocation.X");
+			Assert.AreEqual(2, md.EndLocation.Line, "EndLocation.Y");
 		}
 		
 		[Test]

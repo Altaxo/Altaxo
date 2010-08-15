@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 4711 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -59,7 +60,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			}
 		}
 		
-		public override Control Control {
+		public override object Control {
 			get {
 				return contentPanel;
 			}
@@ -77,7 +78,11 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		{
 			instance = this;
 			classBrowserTreeView.Dock         = DockStyle.Fill;
-			classBrowserTreeView.ImageList    = ClassBrowserIconService.ImageList;
+			// we need to create a copy of the image list because adding image to
+			// ClassBrowserIconService.ImageList is not allowed, but the ExtTreeView sometimes
+			// does add images to its image list.
+			classBrowserTreeView.ImageList    = new ImageList();
+			classBrowserTreeView.ImageList.Images.AddRange(ClassBrowserIconService.ImageList.Images.Cast<System.Drawing.Image>().ToArray());
 			classBrowserTreeView.AfterSelect += new TreeViewEventHandler(ClassBrowserTreeViewAfterSelect);
 			
 			contentPanel.Controls.Add(classBrowserTreeView);
@@ -99,7 +104,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			ProjectService.SolutionFolderRemoved += ProjectServiceSolutionChanged; // rebuild view when project is removed from solution
 			ProjectService.SolutionClosed += ProjectServiceSolutionClosed;
 			
-			ParserService.ParseInformationUpdated += new ParseInformationEventHandler(ParserServiceParseInformationUpdated);
+			ParserService.ParseInformationUpdated += ParserServiceParseInformationUpdated;
 			
 			AmbienceService.AmbienceChanged += new EventHandler(AmbienceServiceAmbienceChanged);
 			if (ProjectService.OpenSolution != null) {
@@ -107,31 +112,16 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			}
 			UpdateToolbars();
 		}
-
-		List<ParseInformationEventArgs> pending = new List<ParseInformationEventArgs>();
 		
-		// running on main thread, invoked by the parser thread when a compilation unit changed
-		void UpdateThread()
+		void ParserServiceParseInformationUpdated(object sender, ParseInformationEventArgs e)
 		{
-			lock (pending) {
-				foreach (ParseInformationEventArgs e in pending) {
-					foreach (TreeNode node in classBrowserTreeView.Nodes) {
-						AbstractProjectNode prjNode = node as AbstractProjectNode;
-						if (prjNode != null && e.ProjectContent.Project == prjNode.Project) {
-							prjNode.UpdateParseInformation(e.OldCompilationUnit, e.NewCompilationUnit);
-						}
-					}
+			WorkbenchSingleton.DebugAssertMainThread();
+			foreach (TreeNode node in classBrowserTreeView.Nodes) {
+				AbstractProjectNode prjNode = node as AbstractProjectNode;
+				if (prjNode != null && e.ProjectContent.Project == prjNode.Project) {
+					prjNode.UpdateParseInformation(e.OldCompilationUnit, e.NewCompilationUnit);
 				}
-				pending.Clear();
 			}
-		}
-		
-		public void ParserServiceParseInformationUpdated(object sender, ParseInformationEventArgs e)
-		{
-			lock (pending) {
-				pending.Add(e);
-			}
-			WorkbenchSingleton.SafeThreadAsyncCall(UpdateThread);
 		}
 		
 		#region Navigation
@@ -275,6 +265,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		
 		void ProjectServiceSolutionChanged(object sender, EventArgs e)
 		{
+			classBrowserTreeView.BeginUpdate();
 			classBrowserTreeView.Nodes.Clear();
 			if (ProjectService.OpenSolution != null) {
 				foreach (IProject project in ProjectService.OpenSolution.Projects) {
@@ -283,7 +274,9 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 					}
 					ProjectNodeBuilders.AddProjectNode(classBrowserTreeView, project);
 				}
+				classBrowserTreeView.Sort();
 			}
+			classBrowserTreeView.EndUpdate();
 		}
 		
 		void ProjectServiceSolutionClosed(object sender, EventArgs e)

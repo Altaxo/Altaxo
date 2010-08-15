@@ -2,27 +2,31 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3516 $</version>
+//     <version>$Revision: 5203 $</version>
 // </file>
 
-using ICSharpCode.SharpDevelop.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+
 using ICSharpCode.Core;
-using ICSharpCode.Core.WinForms;
+using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Internal.ExternalTool;
 using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.SharpDevelop.Util;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
-	public class NavigationHistoryMenuBuilder : ISubmenuBuilder
+	public class NavigationHistoryMenuBuilder : IMenuItemBuilder
 	{
 		// TODO: refactor BuildSubmenu to add a choice between flat and perfile, eventually per class/method sorting of the list
 		
-		ToolStripItem[] BuildMenuFlat(ICollection<INavigationPoint> points, int additionalItems)
+		/*ToolStripItem[] BuildMenuFlat(ICollection<INavigationPoint> points, int additionalItems)
 		{
 			ToolStripItem[] items = new ToolStripItem[points.Count+additionalItems];
 			MenuCommand cmd = null;
@@ -41,9 +45,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 				items[i++] = cmd;
 			}
 			return items;
-		}
-		ToolStripItem[] BuildMenuByFile(ICollection<INavigationPoint> points, int additionalItems)
+		}*/
+		List<FrameworkElement> BuildMenuByFile(ICollection<INavigationPoint> points)
 		{
+			List<FrameworkElement> items = new List<FrameworkElement>();
 			Dictionary<string, List<INavigationPoint>> files =
 				new Dictionary<string, List<INavigationPoint>>();
 			List<string> fileNames = new List<string>();
@@ -63,25 +68,24 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 			fileNames.Sort();
 			
-			ToolStripItem[] items =
-				new ToolStripItem[fileNames.Count + additionalItems];
-			ToolStripMenuItem containerItem = null;
-			MenuCommand cmd = null;
-			int i = 0;
+			MenuItem containerItem = null;
+			MenuItem cmd = null;
 			
 			foreach (string fname in fileNames) {
 				
 				// create a menu bucket
-				containerItem = new ToolStripMenuItem();
-				containerItem.Text = System.IO.Path.GetFileName(fname);
-				containerItem.ToolTipText = fname;
+				containerItem = new MenuItem();
+				containerItem.Header = System.IO.Path.GetFileName(fname);
+				containerItem.ToolTip = fname;
 				
 				// sort and populate the bucket's contents
 //				files[fname].Sort();
 				foreach(INavigationPoint p in files[fname]) {
-					cmd = new MenuCommand(p.Description, new EventHandler(NavigateTo));
+					cmd = new MenuItem();
+					cmd.Header = p.Description;
+					cmd.Click += NavigateTo;
 					cmd.Tag = p;
-					containerItem.DropDownItems.Add(cmd);
+					containerItem.Items.Add(cmd);
 				}
 				
 				// if there's only one nested item, add it
@@ -95,193 +99,167 @@ namespace ICSharpCode.SharpDevelop.Commands
 //					items[i++] = containerItem;
 //				}
 				// add the bucket to the result
-				items[i++] = containerItem;
+				items.Add(containerItem);
 			}
 			
 			return items;
 		}
 
-		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		public ICollection BuildItems(Codon codon, object owner)
 		{
-			MenuCommand cmd = null;
 			if (NavigationService.CanNavigateBack || NavigationService.CanNavigateForwards) {
 				ICollection<INavigationPoint> points = NavigationService.Points;
 
 				//ToolStripItem[] items = BuildMenuFlat(points, numberOfAdditionalItems);
-				ToolStripItem[] items = BuildMenuByFile(points, numberOfAdditionalItems);
-				
-				int i = items.Length - numberOfAdditionalItems;
+				var result = BuildMenuByFile(points);
 				
 				// additional item 1
-				items[i++] = new ToolStripSeparator();
+				result.Add(new Separator());
 				
 				// additional item 2
-				cmd = new MenuCommand("${res:XML.MainMenu.Navigation.ClearHistory}", new EventHandler(ClearHistory));
-				items[i++] = cmd;
+				MenuItem clearHistory = new MenuItem();
+				clearHistory.Header = StringParser.Parse("${res:XML.MainMenu.Navigation.ClearHistory}");
+				clearHistory.Click += delegate { NavigationService.ClearHistory(); };
+				result.Add(clearHistory);
 				
-				return items;
+				return result;
 			}
 			
 			// default is to disable the dropdown feature...
 			return null;
 		}
-
-		int numberOfAdditionalItems = 2;
 		
 		public void NavigateTo(object sender, EventArgs e)
 		{
-			MenuCommand item = (MenuCommand)sender;
+			MenuItem item = (MenuItem)sender;
 			NavigationService.Go((INavigationPoint)item.Tag);
-		}
-		
-		public void ClearHistory(object sender, EventArgs e)
-		{
-			NavigationService.ClearHistory();
 		}
 	}
 	
-	public class RecentFilesMenuBuilder : ISubmenuBuilder
+	public class RecentFilesMenuBuilder : IMenuItemBuilder
 	{
-		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		public ICollection BuildItems(Codon codon, object owner)
 		{
 			RecentOpen recentOpen = FileService.RecentOpen;
 			
 			if (recentOpen.RecentFile.Count > 0) {
-				MenuCommand[] items = new MenuCommand[recentOpen.RecentFile.Count];
+				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentFile.Count];
 				
 				for (int i = 0; i < recentOpen.RecentFile.Count; ++i) {
-					string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10) + " " : "";
-					items[i] = new MenuCommand(accelaratorKeyPrefix + recentOpen.RecentFile[i], new EventHandler(LoadRecentFile));
-					items[i].Tag = recentOpen.RecentFile[i].ToString();
-					items[i].Description = StringParser.Parse(ResourceService.GetString("Dialog.Componnents.RichMenuItem.LoadFileDescription"),
-					                                          new string[,] { {"FILE", recentOpen.RecentFile[i].ToString()} });
+					// variable inside loop, so that anonymous method refers to correct recent file
+					string recentFile = recentOpen.RecentFile[i];
+					string accelaratorKeyPrefix = i < 10 ? "_" + ((i + 1) % 10) + " " : "";
+					items[i] = new System.Windows.Controls.MenuItem() {
+						Header = accelaratorKeyPrefix + recentFile
+					};
+					items[i].Click += delegate {
+						FileService.OpenFile(recentFile);
+					};
 				}
 				return items;
+			} else {
+				return new [] { new System.Windows.Controls.MenuItem {
+						Header = StringParser.Parse("${res:Dialog.Componnents.RichMenuItem.NoRecentFilesString}"),
+						IsEnabled = false
+					} };
 			}
-			
-			MenuCommand defaultMenu = new MenuCommand("${res:Dialog.Componnents.RichMenuItem.NoRecentFilesString}");
-			defaultMenu.Enabled = false;
-			
-			return new MenuCommand[] { defaultMenu };
-		}
-		
-		void LoadRecentFile(object sender, EventArgs e)
-		{
-			MenuCommand item = (MenuCommand)sender;
-			
-			FileService.OpenFile(item.Tag.ToString());
 		}
 	}
 	
-	public class RecentProjectsMenuBuilder : ISubmenuBuilder
+	public class RecentProjectsMenuBuilder : IMenuItemBuilder
 	{
-		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		public ICollection BuildItems(Codon codon, object owner)
 		{
 			RecentOpen recentOpen = FileService.RecentOpen;
 			
 			if (recentOpen.RecentProject.Count > 0) {
-				MenuCommand[] items = new MenuCommand[recentOpen.RecentProject.Count];
+				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentProject.Count];
+				
 				for (int i = 0; i < recentOpen.RecentProject.Count; ++i) {
-					string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10) + " " : "";
-					items[i] = new MenuCommand(accelaratorKeyPrefix + recentOpen.RecentProject[i], new EventHandler(LoadRecentProject));
-					items[i].Tag = recentOpen.RecentProject[i].ToString();
-					items[i].Description = StringParser.Parse(ResourceService.GetString("Dialog.Componnents.RichMenuItem.LoadProjectDescription"),
-					                                          new string[,] { {"PROJECT", recentOpen.RecentProject[i].ToString()} });
+					// variable inside loop, so that anonymous method refers to correct recent file
+					string recentProject = recentOpen.RecentProject[i];
+					string accelaratorKeyPrefix = i < 10 ? "_" + ((i + 1) % 10) + " " : "";
+					items[i] = new System.Windows.Controls.MenuItem() {
+						Header = accelaratorKeyPrefix + recentProject
+					};
+					items[i].Click += delegate {
+						ProjectService.LoadSolution(recentProject);
+					};
 				}
 				return items;
+			} else {
+				return new [] { new System.Windows.Controls.MenuItem {
+						Header = StringParser.Parse("${res:Dialog.Componnents.RichMenuItem.NoRecentProjectsString}"),
+						IsEnabled = false
+					} };
 			}
-			
-			MenuCommand defaultMenu = new MenuCommand("${res:Dialog.Componnents.RichMenuItem.NoRecentProjectsString}");
-			defaultMenu.Enabled = false;
-			
-			return new MenuCommand[] { defaultMenu };
-		}
-		void LoadRecentProject(object sender, EventArgs e)
-		{
-			MenuCommand item = (MenuCommand)sender;
-			
-			string fileName = item.Tag.ToString();
-			
-			FileUtility.ObservedLoad(new NamedFileOperationDelegate(ProjectService.LoadSolution), fileName);
 		}
 	}
 	
-	public class ToolMenuBuilder : ISubmenuBuilder
+	public class ToolMenuBuilder : IMenuItemBuilder
 	{
-		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		public ICollection BuildItems(Codon codon, object owner)
 		{
-			MenuCommand[] items = new MenuCommand[ToolLoader.Tool.Count];
+			var items = new System.Windows.Controls.MenuItem[ToolLoader.Tool.Count];
 			for (int i = 0; i < ToolLoader.Tool.Count; ++i) {
-				MenuCommand item = new MenuCommand(ToolLoader.Tool[i].ToString(), new EventHandler(ToolEvt));
-				item.Description = "Start tool " + String.Join(String.Empty, ToolLoader.Tool[i].ToString().Split('&'));
-				items[i] = item;
+				ExternalTool tool = ToolLoader.Tool[i];
+				items[i] = new System.Windows.Controls.MenuItem {
+					Header = tool.ToString()
+				};
+				items[i].Click += delegate { RunTool(tool); };
 			}
 			return items;
 		}
 		
-		/// <summary>
-		/// This handler gets called when a tool in the Tool menu is clicked on.
-		/// </summary>
-		/// <param name="sender">The MenuCommand that sent the event.</param>
-		/// <param name="e">Event arguments.</param>
-		void ToolEvt(object sender, EventArgs e)
+		void RunTool(ExternalTool tool)
 		{
-			MenuCommand item = (MenuCommand)sender;
-			
-			// TODO: ToolLoader.Tool should get a string indexor. Overloading List or making it a Dictionary<string,ExternalTool> would work.
-			for (int i = 0; i < ToolLoader.Tool.Count; ++i) {
-				if (item.Text != ToolLoader.Tool[i].ToString()) { continue; }
-				ExternalTool tool = (ExternalTool)ToolLoader.Tool[i];
-				
-				// Set these to somewhat useful values in case StingParser.Parse() passes when being called on one of them.
-				string command = tool.Command;
-				string args = tool.Arguments;
+			// Set these to somewhat useful values in case StingParser.Parse() passes when being called on one of them.
+			string command = tool.Command;
+			string args = tool.Arguments;
 
-				// This needs it's own try/catch because if parsing these messages fail, the catch block after
-				// the second try would also throw because MessageService.ShowError() calls StringParser.Parse()
-				try {
-					command = StringParser.Parse(tool.Command);
-					args    = StringParser.Parse(tool.Arguments);
-				} catch (Exception ex) {
-					MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + ex.Message);
-					return;
-				}
-				
-				if (tool.PromptForArguments) {
-					args = MessageService.ShowInputBox(tool.MenuCommand, "${res:XML.MainMenu.ToolMenu.ExternalTools.EnterArguments}", args);
-					if (args == null)
-						return;
-				}
-				
-				try {
-					if (tool.UseOutputPad) {
-						ProcessRunner processRunner = new ProcessRunner();
-						processRunner.LogStandardOutputAndError = false;
-						processRunner.ProcessExited += ProcessExitEvent;
-						processRunner.OutputLineReceived += process_OutputLineReceived;
-						processRunner.ErrorLineReceived += process_OutputLineReceived;
-						processRunner.WorkingDirectory = StringParser.Parse(tool.InitialDirectory);
-						if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
-							processRunner.Start(command);
-						} else {
-							processRunner.Start(command, args);
-						}
-					} else {
-						ProcessStartInfo startinfo;
-						if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
-							startinfo = new ProcessStartInfo(command);
-						} else {
-							startinfo = new ProcessStartInfo(command, args);
-						}
-						startinfo.WorkingDirectory = StringParser.Parse(tool.InitialDirectory);
-						Process process = new Process();
-						process.StartInfo = startinfo;
-						process.Start();
-					}
-				} catch (Exception ex) {
-					MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + command + " " + args + "'\n" + ex.Message);
-				}
+			// This needs it's own try/catch because if parsing these messages fail, the catch block after
+			// the second try would also throw because MessageService.ShowError() calls StringParser.Parse()
+			try {
+				command = StringParser.Parse(tool.Command);
+				args    = StringParser.Parse(tool.Arguments);
+			} catch (Exception ex) {
+				MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + ex.Message);
 				return;
+			}
+			
+			if (tool.PromptForArguments) {
+				args = MessageService.ShowInputBox(tool.MenuCommand, "${res:XML.MainMenu.ToolMenu.ExternalTools.EnterArguments}", args);
+				if (args == null)
+					return;
+			}
+			
+			try {
+				if (tool.UseOutputPad) {
+					ProcessRunner processRunner = new ProcessRunner();
+					processRunner.LogStandardOutputAndError = false;
+					processRunner.ProcessExited += ProcessExitEvent;
+					processRunner.OutputLineReceived += process_OutputLineReceived;
+					processRunner.ErrorLineReceived += process_OutputLineReceived;
+					processRunner.WorkingDirectory = StringParser.Parse(tool.InitialDirectory);
+					if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
+						processRunner.Start(command);
+					} else {
+						processRunner.Start(command, args);
+					}
+				} else {
+					ProcessStartInfo startinfo;
+					if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
+						startinfo = new ProcessStartInfo(command);
+					} else {
+						startinfo = new ProcessStartInfo(command, args);
+					}
+					startinfo.WorkingDirectory = StringParser.Parse(tool.InitialDirectory);
+					Process process = new Process();
+					process.StartInfo = startinfo;
+					process.Start();
+				}
+			} catch (Exception ex) {
+				MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + command + " " + args + "'\n" + ex.Message);
 			}
 		}
 
@@ -301,40 +279,26 @@ namespace ICSharpCode.SharpDevelop.Commands
 		}
 	}
 	
-	public class OpenContentsMenuBuilder : ISubmenuBuilder
+	public class OpenContentsMenuBuilder : IMenuItemBuilder
 	{
-		
-		class MyMenuItem : MenuCheckBox
-		{
-			IWorkbenchWindow window;
-			
-			public MyMenuItem(IWorkbenchWindow window) : base(StringParser.Parse(window.Title))
-			{
-				this.window = window;
-			}
-			
-			protected override void OnClick(EventArgs e)
-			{
-				base.OnClick(e);
-				Checked = true;
-				window.SelectWindow();
-			}
-		}
-
-		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		public ICollection BuildItems(Codon codon, object owner)
 		{
 			int windowCount = WorkbenchSingleton.Workbench.WorkbenchWindowCollection.Count;
 			if (windowCount == 0) {
-				return new ToolStripItem[] {};
+				return new object[] {};
 			}
-			ToolStripItem[] items = new ToolStripItem[windowCount + 1];
-			items[0] = new MenuSeparator(null, null);
+			var items = new object[windowCount + 1];
+			items[0] = new System.Windows.Controls.Separator();
 			for (int i = 0; i < windowCount; ++i) {
 				IWorkbenchWindow window = WorkbenchSingleton.Workbench.WorkbenchWindowCollection[i];
-				MenuCheckBox item = new MyMenuItem(window);
-				item.Tag = window;
-				item.Checked = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == window;
-				item.Description = "Activate this window";
+				var item = new System.Windows.Controls.MenuItem() {
+					IsChecked = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == window,
+					IsCheckable = true,
+					Header = StringParser.Parse(window.Title)
+				};
+				item.Click += delegate {
+					window.SelectWindow();
+				};
 				items[i + 1] = item;
 			}
 			return items;
@@ -463,46 +427,57 @@ namespace ICSharpCode.SharpDevelop.Commands
 		}
 	}
 	
-	public abstract class ViewMenuBuilder : ISubmenuBuilder
+	public abstract class ViewMenuBuilder : IMenuItemBuilder
 	{
-		class MyMenuItem : MenuCommand
+		class BringPadToFrontCommand : System.Windows.Input.ICommand
 		{
 			PadDescriptor padDescriptor;
 			
-			public MyMenuItem(PadDescriptor padDescriptor) : base(null, null)
+			public BringPadToFrontCommand(PadDescriptor padDescriptor)
 			{
 				this.padDescriptor = padDescriptor;
-				Text = StringParser.Parse(padDescriptor.Title);
-				
-				if (!string.IsNullOrEmpty(padDescriptor.Icon)) {
-					base.Image = IconService.GetBitmap(padDescriptor.Icon);
-				}
-				
-				if (padDescriptor.Shortcut != null) {
-					ShortcutKeys = MenuCommand.ParseShortcut(padDescriptor.Shortcut);
-				}
 			}
 			
-			protected override void OnClick(EventArgs e)
+			public event EventHandler CanExecuteChanged { add {} remove {} }
+			
+			public void Execute(object parameter)
 			{
-				base.OnClick(e);
 				padDescriptor.BringPadToFront();
 			}
 			
+			public bool CanExecute(object parameter)
+			{
+				return true;
+			}
 		}
+		
 		protected abstract string Category {
 			get;
 		}
 		
-		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		public ICollection BuildItems(Codon codon, object owner)
 		{
-			List<ToolStripItem> items = new List<ToolStripItem>();
+			ArrayList list = new ArrayList();
 			foreach (PadDescriptor padContent in WorkbenchSingleton.Workbench.PadContentCollection) {
 				if (padContent.Category == Category) {
-					items.Add(new MyMenuItem(padContent));
+					var item = new System.Windows.Controls.MenuItem();
+					item.Header = ICSharpCode.Core.Presentation.MenuService.ConvertLabel(StringParser.Parse(padContent.Title));
+					if (!string.IsNullOrEmpty(padContent.Icon)) {
+						item.Icon = PresentationResourceService.GetImage(padContent.Icon);
+					}
+					item.Command = new BringPadToFrontCommand(padContent);
+					if (!string.IsNullOrEmpty(padContent.Shortcut)) {
+						var kg = Core.Presentation.MenuService.ParseShortcut(padContent.Shortcut);
+						WorkbenchSingleton.MainWindow.InputBindings.Add(
+							new System.Windows.Input.InputBinding(item.Command, kg)
+						);
+						item.InputGestureText = kg.GetDisplayStringForCulture(Thread.CurrentThread.CurrentUICulture);
+					}
+					
+					list.Add(item);
 				}
 			}
-			return items.ToArray();
+			return list;
 		}
 	}
 }

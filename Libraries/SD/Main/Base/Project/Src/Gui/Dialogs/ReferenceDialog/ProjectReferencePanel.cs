@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2631 $</version>
+//     <version>$Revision: 4537 $</version>
 // </file>
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
@@ -42,7 +43,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			foreach (ListViewItem item in SelectedItems) {
 				IProject project = (IProject)item.Tag;
-				ILanguageBinding binding = LanguageBindingService.GetBindingPerLanguageName(project.Language);
+				IProjectBinding binding = ProjectBindingService.GetBindingPerLanguageName(project.Language);
 				
 				selectDialog.AddReference(
 					project.Name, "Project", project.OutputAssemblyFullPath,
@@ -57,7 +58,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return;
 			}
 			
-			foreach (IProject project in ProjectService.OpenSolution.Projects) {
+			foreach (IProject project in ProjectService.OpenSolution.Projects.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)) {
 				ListViewItem newItem = new ListViewItem(new string[] { project.Name, project.Directory });
 				newItem.Tag = project;
 				Items.Add(newItem);

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 4304 $</version>
 // </file>
 
 using System;
@@ -17,7 +17,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 		}
 		
-		internal WebReferencesProjectItem(IProject project, Microsoft.Build.BuildEngine.BuildItem buildItem)
+		internal WebReferencesProjectItem(IProject project, IProjectItemBackendStore buildItem)
 			: base(project, buildItem)
 		{
 		}

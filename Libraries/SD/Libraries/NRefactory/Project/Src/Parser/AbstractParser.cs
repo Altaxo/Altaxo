@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2533 $</version>
+//     <version>$Revision: 4483 $</version>
 // </file>
 
 using System;
@@ -63,6 +63,7 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public abstract void Parse();
 		
+		public abstract TypeReference ParseTypeReference ();
 		public abstract Expression ParseExpression();
 		public abstract BlockStatement ParseBlock();
 		public abstract List<INode> ParseTypeMembers();

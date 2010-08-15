@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3660 $</version>
+//     <version>$Revision: 6214 $</version>
 // </file>
 
 using System;
@@ -157,6 +157,90 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			
 			Assert.AreEqual("", parser.Errors.ErrorOutput);
 			// TODO : Extend test ...
+		}
+		
+		[Test]
+		public void VBNetXmlNamespaceUsingTest()
+		{
+			string program = "Imports <xmlns=\"http://icsharpcode.net/sharpdevelop/avalonedit\">";
+			IParser parser = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(program));
+			parser.Parse();
+			
+			Assert.AreEqual("", parser.Errors.ErrorOutput);
+			CompilationUnit unit = parser.CompilationUnit;
+			
+			Assert.AreEqual(1, unit.Children.Count);
+			Assert.IsTrue(unit.Children[0] is UsingDeclaration);
+			UsingDeclaration ud = (UsingDeclaration)unit.Children[0];
+			Assert.AreEqual(1, ud.Usings.Count);
+			Assert.IsFalse(ud.Usings[0].IsAlias);
+			Assert.IsTrue(ud.Usings[0].IsXml);
+			
+			Assert.AreEqual("xmlns", ud.Usings[0].XmlPrefix);
+			Assert.AreEqual("http://icsharpcode.net/sharpdevelop/avalonedit", ud.Usings[0].Name);
+		}
+		
+		[Test]
+		public void VBNetXmlNamespaceWithPrefixUsingTest()
+		{
+			string program = "Imports <xmlns:avalonedit=\"http://icsharpcode.net/sharpdevelop/avalonedit\">";
+			IParser parser = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(program));
+			parser.Parse();
+			
+			Assert.AreEqual("", parser.Errors.ErrorOutput);
+			CompilationUnit unit = parser.CompilationUnit;
+			
+			Assert.AreEqual(1, unit.Children.Count);
+			Assert.IsTrue(unit.Children[0] is UsingDeclaration);
+			UsingDeclaration ud = (UsingDeclaration)unit.Children[0];
+			Assert.AreEqual(1, ud.Usings.Count);
+			Assert.IsFalse(ud.Usings[0].IsAlias);
+			Assert.IsTrue(ud.Usings[0].IsXml);
+			
+			Assert.AreEqual("xmlns:avalonedit", ud.Usings[0].XmlPrefix);
+			Assert.AreEqual("http://icsharpcode.net/sharpdevelop/avalonedit", ud.Usings[0].Name);
+		}
+		
+		[Test]
+		public void VBNetXmlNamespaceSingleQuotedUsingTest()
+		{
+			string program = "Imports <xmlns='http://icsharpcode.net/sharpdevelop/avalonedit'>";
+			IParser parser = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(program));
+			parser.Parse();
+			
+			Assert.AreEqual("", parser.Errors.ErrorOutput);
+			CompilationUnit unit = parser.CompilationUnit;
+			
+			Assert.AreEqual(1, unit.Children.Count);
+			Assert.IsTrue(unit.Children[0] is UsingDeclaration);
+			UsingDeclaration ud = (UsingDeclaration)unit.Children[0];
+			Assert.AreEqual(1, ud.Usings.Count);
+			Assert.IsFalse(ud.Usings[0].IsAlias);
+			Assert.IsTrue(ud.Usings[0].IsXml);
+			
+			Assert.AreEqual("xmlns", ud.Usings[0].XmlPrefix);
+			Assert.AreEqual("http://icsharpcode.net/sharpdevelop/avalonedit", ud.Usings[0].Name);
+		}
+		
+		[Test]
+		public void VBNetXmlNamespaceSingleQuotedWithPrefixUsingTest()
+		{
+			string program = "Imports <xmlns:avalonedit='http://icsharpcode.net/sharpdevelop/avalonedit'>";
+			IParser parser = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(program));
+			parser.Parse();
+			
+			Assert.AreEqual("", parser.Errors.ErrorOutput);
+			CompilationUnit unit = parser.CompilationUnit;
+			
+			Assert.AreEqual(1, unit.Children.Count);
+			Assert.IsTrue(unit.Children[0] is UsingDeclaration);
+			UsingDeclaration ud = (UsingDeclaration)unit.Children[0];
+			Assert.AreEqual(1, ud.Usings.Count);
+			Assert.IsFalse(ud.Usings[0].IsAlias);
+			Assert.IsTrue(ud.Usings[0].IsXml);
+			
+			Assert.AreEqual("xmlns:avalonedit", ud.Usings[0].XmlPrefix);
+			Assert.AreEqual("http://icsharpcode.net/sharpdevelop/avalonedit", ud.Usings[0].Name);
 		}
 		#endregion
 	}

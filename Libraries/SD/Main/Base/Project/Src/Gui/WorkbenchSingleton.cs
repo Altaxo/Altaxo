@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3792 $</version>
+//     <version>$Revision: 6050 $</version>
 // </file>
 
 using System;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -21,16 +22,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 		const string workbenchMemento        = "WorkbenchMemento";
 		const string activeContentState      = "Workbench.ActiveContent";
 		
-		static STAThreadCaller caller;
 		static IWorkbench workbench;
 		
 		/// <summary>
 		/// Gets the main form. Returns null in unit-testing mode.
 		/// </summary>
-		public static Form MainForm {
+		public static IWin32Window MainWin32Window {
 			get {
 				if (workbench != null) {
-					return workbench.MainForm;
+					return workbench.MainWin32Window;
+				}
+				return null;
+			}
+		}
+		
+		/// <summary>
+		/// Gets the main window. Returns null in unit-testing mode.
+		/// </summary>
+		public static Window MainWindow {
+			get {
+				if (workbench != null) {
+					return workbench.MainWindow;
 				}
 				return null;
 			}
@@ -45,49 +57,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public static Control ActiveControl {
+		public static IStatusBarService StatusBar { 
 			get {
-				ContainerControl container = WorkbenchSingleton.MainForm;
-				Control ctl;
-				do {
-					ctl = container.ActiveControl;
-					if (ctl == null)
-						return container;
-					container = ctl as ContainerControl;
-				} while(container != null);
-				return ctl;
+				return workbench != null ? workbench.StatusBar : null;
 			}
-		}
-		
-		/// <remarks>
-		/// This method handles the redraw all event for specific changed IDE properties
-		/// </remarks>
-		static void TrackPropertyChanges(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.OldValue != e.NewValue && workbench != null) {
-				switch (e.Key) {
-					case "ICSharpCode.SharpDevelop.Gui.StatusBarVisible":
-					case "ICSharpCode.SharpDevelop.Gui.VisualStyle":
-					case "ICSharpCode.SharpDevelop.Gui.ToolBarVisible":
-						workbench.RedrawAllComponents();
-						break;
-					case "ICSharpCode.SharpDevelop.Gui.UseProfessionalRenderer":
-						workbench.UpdateRenderer();
-						break;
-				}
-			}
-		}
-		
-		/// <summary>
-		/// Runs workbench initialization.
-		/// Is called by ICSharpCode.SharpDevelop.Sda and should not be called manually!
-		/// </summary>
-		public static void InitializeWorkbench()
-		{
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				InitializeWorkbench(new DefaultWorkbench(), new SimpleWorkbenchLayout());
-			else
-				InitializeWorkbench(new DefaultWorkbench(), new SdiWorkbenchLayout());
 		}
 		
 		public static void InitializeWorkbench(IWorkbench workbench, IWorkbenchLayout layout)
@@ -97,21 +70,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 			DisplayBindingService.InitializeService();
 			LayoutConfiguration.LoadLayoutConfiguration();
 			FileService.InitializeService();
-			StatusBarService.Initialize();
 			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
 			ParserService.InitializeParserService();
+			TaskService.Initialize();
 			Bookmarks.BookmarkManager.Initialize();
 			Project.CustomToolsService.Initialize();
 			Project.BuildModifiedProjectsOnlyService.Initialize();
 			
-			workbench.MainForm.CreateControl(); // ensure the control is created so Invoke can work
-			WinFormsMessageService.DialogOwner = workbench.MainForm;
-			WinFormsMessageService.DialogSynchronizeInvoke = workbench.MainForm;
-			
-			PropertyService.PropertyChanged += new PropertyChangedEventHandler(TrackPropertyChanges);
-			ResourceService.LanguageChanged += delegate { workbench.RedrawAllComponents(); };
-			
-			caller = new STAThreadCaller(workbench.MainForm);
+			var messageService = (WinFormsMessageService)Core.Services.ServiceManager.Instance.MessageService;
+			messageService.DialogOwner = workbench.MainWin32Window;
+			Debug.Assert(messageService.DialogOwner != null);
+			messageService.DialogSynchronizeInvoke = workbench.SynchronizingObject;
 			
 			workbench.Initialize();
 			workbench.SetMemento(PropertyService.Get(workbenchMemento, new Properties()));
@@ -126,12 +95,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 			NavigationService.InitializeService();
 			
 			workbench.ActiveContentChanged += delegate {
+				Debug.WriteLine("ActiveContentChanged to " + workbench.ActiveContent);
 				LoggingService.Debug("ActiveContentChanged to " + workbench.ActiveContent);
 			};
 			workbench.ActiveViewContentChanged += delegate {
+				Debug.WriteLine("ActiveViewContentChanged to " + workbench.ActiveViewContent);
 				LoggingService.Debug("ActiveViewContentChanged to " + workbench.ActiveViewContent);
 			};
 			workbench.ActiveWorkbenchWindowChanged += delegate {
+				Debug.WriteLine("ActiveWorkbenchWindowChanged to " + workbench.ActiveWorkbenchWindow);
 				LoggingService.Debug("ActiveWorkbenchWindowChanged to " + workbench.ActiveWorkbenchWindow);
 			};
 		}
@@ -147,55 +119,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			ApplicationStateInfoService.UnregisterStateGetter(activeContentState);
 			
-			if (WorkbenchUnloaded != null) {
-				WorkbenchUnloaded(null, EventArgs.Empty);
-			}
+			WorkbenchUnloaded(null, EventArgs.Empty);
 			
 			FileService.Unload();
 		}
 		
 		#region Safe Thread Caller
-		/// <summary>
-		/// Helper class for invoking methods on the main thread.
-		/// </summary>
-		private sealed class STAThreadCaller
-		{
-			Control ctl;
-			
-			public STAThreadCaller(Control ctl)
-			{
-				if (ctl == null)
-					throw new ArgumentNullException("ctl");
-				this.ctl = ctl;
-			}
-			
-			public object Call(Delegate method, object[] arguments)
-			{
-				if (method == null) {
-					throw new ArgumentNullException("method");
-				}
-				return ctl.Invoke(method, arguments);
-			}
-			
-			public void BeginCall(Delegate method, object[] arguments)
-			{
-				if (method == null) {
-					throw new ArgumentNullException("method");
-				}
-				try {
-					ctl.BeginInvoke(method, arguments);
-				} catch (InvalidOperationException ex) {
-					LoggingService.Warn("Error in SafeThreadAsyncCall", ex);
-				}
-			}
-		}
-		
 		public static bool InvokeRequired {
 			get {
 				if (workbench == null)
 					return false; // unit test mode, don't crash
 				else
-					return workbench.MainForm.InvokeRequired;
+					return workbench.SynchronizingObject.InvokeRequired;
 			}
 		}
 		
@@ -228,7 +163,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static R SafeThreadFunction<R>(Func<R> method)
 		{
-			return (R)caller.Call(method, emptyObjectArray);
+			return (R)workbench.SynchronizingObject.Invoke(method, emptyObjectArray);
 		}
 		
 		/// <summary>
@@ -238,7 +173,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static R SafeThreadFunction<A, R>(Func<A, R> method, A arg1)
 		{
-			return (R)caller.Call(method, new object[] { arg1 });
+			return (R)workbench.SynchronizingObject.Invoke(method, new object[] { arg1 });
 		}
 		
 		/// <summary>
@@ -248,7 +183,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadCall(Action method)
 		{
-			caller.Call(method, emptyObjectArray);
+			workbench.SynchronizingObject.Invoke(method, emptyObjectArray);
 		}
 		
 		/// <summary>
@@ -258,7 +193,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadCall<A>(Action<A> method, A arg1)
 		{
-			caller.Call(method, new object[] { arg1 });
+			workbench.SynchronizingObject.Invoke(method, new object[] { arg1 });
 		}
 		
 		/// <summary>
@@ -268,7 +203,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadCall<A, B>(Action<A, B> method, A arg1, B arg2)
 		{
-			caller.Call(method, new object[] { arg1, arg2 });
+			workbench.SynchronizingObject.Invoke(method, new object[] { arg1, arg2 });
 		}
 		
 		/// <summary>
@@ -278,7 +213,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadCall<A, B, C>(Action<A, B, C> method, A arg1, B arg2, C arg3)
 		{
-			caller.Call(method, new object[] { arg1, arg2, arg3 });
+			workbench.SynchronizingObject.Invoke(method, new object[] { arg1, arg2, arg3 });
 		}
 		
 		/// <summary>
@@ -286,7 +221,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadAsyncCall(Action method)
 		{
-			caller.BeginCall(method, new object[0]);
+			workbench.SynchronizingObject.BeginInvoke(method, emptyObjectArray);
 		}
 		
 		/// <summary>
@@ -294,7 +229,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadAsyncCall<A>(Action<A> method, A arg1)
 		{
-			caller.BeginCall(method, new object[] { arg1 });
+			workbench.SynchronizingObject.BeginInvoke(method, new object[] { arg1 });
 		}
 		
 		/// <summary>
@@ -302,7 +237,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadAsyncCall<A, B>(Action<A, B> method, A arg1, B arg2)
 		{
-			caller.BeginCall(method, new object[] { arg1, arg2 });
+			workbench.SynchronizingObject.BeginInvoke(method, new object[] { arg1, arg2 });
 		}
 		
 		/// <summary>
@@ -310,23 +245,24 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadAsyncCall<A, B, C>(Action<A, B, C> method, A arg1, B arg2, C arg3)
 		{
-			caller.BeginCall(method, new object[] { arg1, arg2, arg3 });
+			workbench.SynchronizingObject.BeginInvoke(method, new object[] { arg1, arg2, arg3 });
 		}
 		
 		/// <summary>
 		/// Calls a method on the GUI thread, but delays the call a bit.
 		/// </summary>
-		public static void CallLater(int delayMilliseconds, Action method)
+		public static void CallLater(TimeSpan delay, Action method)
 		{
-			if (delayMilliseconds <= 0)
-				throw new ArgumentOutOfRangeException("delayMilliseconds", delayMilliseconds, "Value must be positive");
+			int delayMilliseconds = (int)delay.TotalMilliseconds;
+			if (delayMilliseconds < 0)
+				throw new ArgumentOutOfRangeException("delay", delay, "Value must be positive");
 			if (method == null)
 				throw new ArgumentNullException("method");
 			SafeThreadAsyncCall(
 				delegate {
 					Timer t = new Timer();
-					t.Interval = delayMilliseconds;
-					t.Tick += delegate { 
+					t.Interval = Math.Max(1, delayMilliseconds);
+					t.Tick += delegate {
 						t.Stop();
 						t.Dispose();
 						method();
@@ -338,19 +274,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		static void OnWorkbenchCreated()
 		{
-			if (WorkbenchCreated != null) {
-				WorkbenchCreated(null, EventArgs.Empty);
-			}
+			WorkbenchCreated(null, EventArgs.Empty);
 		}
 		
 		/// <summary>
 		/// Is called, when the workbench is created
 		/// </summary>
-		public static event EventHandler WorkbenchCreated;
+		public static event EventHandler WorkbenchCreated = delegate {};
 		
 		/// <summary>
 		/// Is called, when the workbench is unloaded
 		/// </summary>
-		public static event EventHandler WorkbenchUnloaded;
+		public static event EventHandler WorkbenchUnloaded = delegate {};
 	}
 }

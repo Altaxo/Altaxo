@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3287 $</version>
+//     <version>$Revision: 5187 $</version>
 // </file>
 
 using System;
@@ -21,4 +21,3 @@ using System.Security.Permissions;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, Unrestricted=true)]

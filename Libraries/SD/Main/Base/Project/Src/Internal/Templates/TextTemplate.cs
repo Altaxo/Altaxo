@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 5187 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 using ICSharpCode.Core;
@@ -78,7 +79,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		static TextTemplate()
 		{
-			List<string> files = FileUtility.SearchDirectory(FileUtility.Combine(PropertyService.DataDirectory, "options", "textlib"), "*.xml");
+			List<string> files = FileUtility.SearchDirectory(Path.Combine(PropertyService.DataDirectory, "options", "textlib"), "*.xml");
 			foreach (string file in files) {
 				LoadTextTemplate(file);
 			}

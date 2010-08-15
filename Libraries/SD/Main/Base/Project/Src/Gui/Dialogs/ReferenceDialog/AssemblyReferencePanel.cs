@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2633 $</version>
+//     <version>$Revision: 3485 $</version>
 // </file>
 
 using System;
@@ -40,7 +40,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				fdiag.Multiselect     = true;
 				fdiag.CheckFileExists = true;
 				
-				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
+				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window) == DialogResult.OK) {
 					foreach (string file in fdiag.FileNames) {
 						ReferenceProjectItem assemblyReference = new ReferenceProjectItem(selectDialog.ConfigureProject);
 						assemblyReference.Include = Path.GetFileNameWithoutExtension(file);

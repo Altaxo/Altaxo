@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3759 $</version>
+//     <version>$Revision: 5239 $</version>
 // </file>
 
 using ICSharpCode.NRefactory.Ast;
@@ -95,6 +95,3 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		#endregion
 	}
 }
-
-
-

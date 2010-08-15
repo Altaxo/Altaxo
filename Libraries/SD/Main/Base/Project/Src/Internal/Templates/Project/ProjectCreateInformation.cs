@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2739 $</version>
+//     <version>$Revision: 4894 $</version>
 // </file>
 
 using System;
@@ -24,11 +24,16 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 	{
 		internal List<IProject> createdProjects = new List<IProject>();
 		
+		public ProjectCreateInformation() {
+			Platform = "x86";
+		}
+		
 		public ReadOnlyCollection<IProject> CreatedProjects {
 			get { return createdProjects.AsReadOnly(); }
 		}
 		
 		public string OutputProjectFileName { get; set; }
+		public string Platform { get; set; }
 		public string ProjectName { get; set; }
 		public string SolutionName { get; set; }
 		public string RootNamespace { get; set; }
