@@ -541,7 +541,6 @@
     <Compile Include="Gui\Worksheet\TransposeWorksheetControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Worksheet\Viewing\ClickedAreaType.cs" />
     <Compile Include="Gui\Worksheet\Viewing\ClickedCellInfo.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WinFormsWorksheetController.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetPanel.cs">

@@ -64,6 +64,7 @@
     <Compile Include="Gui\Graph\Viewing\GraphViewWpf.xaml.cs">
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Worksheet\Viewing\ClickedCellInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

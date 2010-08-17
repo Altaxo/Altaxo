@@ -231,6 +231,7 @@
     <Compile Include="Gui\Graph\XYPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\ClickedAreaType.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
     <Compile Include="Main\RelDocNodeProxy.cs" />

@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 using Altaxo;
 using Altaxo.Collections;
@@ -117,6 +120,34 @@ namespace Altaxo.Gui
 				gv.Columns[i].Width = widths[i];
 		}
 
+
+		#endregion
+
+		#region Mouse
+
+		public static Altaxo.Gui.AltaxoMouseButtons GetMouseState(MouseDevice mouse)
+		{
+			var result = Altaxo.Gui.AltaxoMouseButtons.None;
+			if (MouseButtonState.Pressed == mouse.LeftButton) result |= AltaxoMouseButtons.Left;
+			if (MouseButtonState.Pressed == mouse.MiddleButton) result |= AltaxoMouseButtons.Middle;
+			if (MouseButtonState.Pressed == mouse.RightButton) result |= AltaxoMouseButtons.Right;
+			if (MouseButtonState.Pressed == mouse.XButton1) result |= AltaxoMouseButtons.XButton1;
+			if (MouseButtonState.Pressed == mouse.XButton2) result |= AltaxoMouseButtons.XButton2;
+
+			return result;
+		}
+
+		public static Altaxo.Gui.AltaxoMouseButtons GetMouseState(MouseButtonEventArgs mouse)
+		{
+			var result = Altaxo.Gui.AltaxoMouseButtons.None;
+			if (MouseButtonState.Pressed == mouse.LeftButton) result |= AltaxoMouseButtons.Left;
+			if (MouseButtonState.Pressed == mouse.MiddleButton) result |= AltaxoMouseButtons.Middle;
+			if (MouseButtonState.Pressed == mouse.RightButton) result |= AltaxoMouseButtons.Right;
+			if (MouseButtonState.Pressed == mouse.XButton1) result |= AltaxoMouseButtons.XButton1;
+			if (MouseButtonState.Pressed == mouse.XButton2) result |= AltaxoMouseButtons.XButton2;
+
+			return result;
+		}
 
 		#endregion
 	}
