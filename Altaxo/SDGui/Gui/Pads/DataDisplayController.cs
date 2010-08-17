@@ -84,14 +84,24 @@ namespace Altaxo.Gui.Pads
 
 		#endregion
 
+		private void InternalWrite(string text)
+		{
+			var activeWin = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+
+			_view.Text = text;
+			var pad = WorkbenchSingleton.Workbench.GetPad(this.GetType());
+			pad.BringPadToFront();
+
+			activeWin.SelectWindow();
+		}
+
 		#region IDataDisplayService Members
 
 		/// <summary>Writes a string to the output.</summary>
 		/// <param name="text">The text to write to the output.</param>
 		public void WriteOneLine(string text)
 		{
-			_view.Text = text;
-			WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
+			InternalWrite(text);
 		}
 
 		/// <summary>
@@ -101,7 +111,7 @@ namespace Altaxo.Gui.Pads
 		/// <param name="line2">Second line.</param>
 		public void WriteTwoLines(string line1, string line2)
 		{
-			_view.Text = line1 + System.Environment.NewLine + line2;
+			InternalWrite( line1 + System.Environment.NewLine + line2 );
 		}
 
 		/// <summary>
@@ -112,7 +122,7 @@ namespace Altaxo.Gui.Pads
 		/// <param name="line3">Three line.</param>
 		public void WriteThreeLines(string line1, string line2, string line3)
 		{
-			_view.Text = line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3;
+			InternalWrite( line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3 );
 		}
 
 		#endregion

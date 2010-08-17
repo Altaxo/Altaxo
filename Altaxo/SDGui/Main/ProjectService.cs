@@ -811,7 +811,8 @@ namespace Altaxo.Main
 
 			Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDGraphViewContent(graph);
 
-			Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
+			//Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
+			var view = new Altaxo.Gui.Graph.Viewing.GraphViewWpf();
 
 			ctrl.Controller.ViewObject = view;
 

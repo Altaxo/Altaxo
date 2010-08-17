@@ -211,6 +211,13 @@ namespace Altaxo.Graph.GUI
       set { this.Text = value; }
     }
 
+		object Altaxo.Gui.Graph.Viewing.IGraphView.GuiInitiallyFocusedElement
+		{
+			get
+			{
+				return _graphPanel;
+			}
+		}
 
     private void EhLayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
     {

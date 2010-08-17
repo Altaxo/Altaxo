@@ -119,6 +119,10 @@ namespace Altaxo.Graph.Gdi
     [NonSerialized]
     Main.EventSuppressor _changedEventSuppressor;
 
+		/// <summary>Events which are fired from this thread are not distributed.</summary>
+		[NonSerialized]
+		System.Threading.Thread _paintThread;
+
     /// <summary>
     /// Event to signal that the name of this object has changed.
     /// </summary>
@@ -640,7 +644,16 @@ namespace Altaxo.Graph.Gdi
     /// to the top left corner of the printable area before calling this routine.</remarks>
     public void DoPaint(Graphics g, bool bForPrinting)
     {
-      Layers.Paint(g, bForPrinting);
+			System.Diagnostics.Debug.Assert(null == _paintThread, "DoPaint was called reentrant or from different threads");
+			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
+			try
+			{
+				Layers.Paint(g, bForPrinting);
+			}
+			finally
+			{
+				_paintThread = null;
+			}
     } // end of function DoPaint
 
 
@@ -725,7 +738,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="e">The change details.</param>
     public void EhChildChanged(object sender, System.EventArgs e)
     {
-
+			if (System.Threading.Thread.CurrentThread == _paintThread)
+				return;
 
       if (HandleImmediateChildChangeCases(sender, e))
         return;

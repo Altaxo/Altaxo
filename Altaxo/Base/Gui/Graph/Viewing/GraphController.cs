@@ -601,7 +601,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			if (null != this.ActiveLayer)
 			{
-				Current.Gui.ShowContextMenu(pt.X, pt.Y, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu");
+				Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu", pt.X, pt.Y);
 			}
 		}
 

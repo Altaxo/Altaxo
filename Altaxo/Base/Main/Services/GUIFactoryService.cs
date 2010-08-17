@@ -175,12 +175,25 @@ namespace Altaxo.Main.Services
         new object[] { controller });
     }
 
+		   /// <summary>
+    /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
+    /// </summary>
+    /// <param name="controller">The controller a control is searched for.</param>
+		public void FindAndAttachControlTo(IMVCController controller)
+		{
+			foreach (var entry in RegistedContextMenuProviders)
+			{
+				InternalFindAndAttachControlUsingGuiType(controller, entry.Key);
+				if (controller.ViewObject != null)
+					break;
+			}
+		}
 
     /// <summary>
     /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
     /// </summary>
     /// <param name="controller">The controller a control is searched for.</param>
-    public void FindAndAttachControlTo(IMVCController controller)
+    private void InternalFindAndAttachControlUsingGuiType(IMVCController controller, System.Type guiControlType)
     {
       // if the controller has 
       System.Type ct = controller.GetType();
@@ -195,7 +208,7 @@ namespace Altaxo.Main.Services
 
         foreach (ExpectedTypeOfViewAttribute attr in viewattributes)
         {
-          Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { GuiControlType, attr.TargetType });
+          Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { guiControlType, attr.TargetType });
           foreach (Type controltype in controltypes)
           {
             // test if the control has a special preference for a controller...
@@ -222,8 +235,6 @@ namespace Altaxo.Main.Services
 
             controller.ViewObject = controlinstance;
 
-            if (controller.ViewObject == null)
-              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but the controller did not accept this control.", ct, controltype));
 
             return;
           }
@@ -672,20 +683,21 @@ namespace Altaxo.Main.Services
     #region static Windows Form methods
 
 		/// <summary>
-		/// Used to register a function that can create context menues out of add in tree paths.
-		/// The function arguments function are an owner and an addInPathString. The return value is a context menu strip.
+		/// Dictionary of context menu providers. Key is the type of the gui root element (Winforms: Control, Wpf: UIElement).
+		/// Value is an Action with the following parameters: object parent (Gui parent element), object owner (Owner of the addin element), string addInPath, double x, double y)
 		/// </summary>
-		public Func<object, string, object> ContextMenuProvider;
+		public Dictionary<System.Type, Action<object, object, string, double, double>> RegistedContextMenuProviders = new Dictionary<Type, Action<object, object, string, double, double>>();
 
 		/// <summary>
 		/// Creates and shows a context menu.
 		/// </summary>
-		/// <param name="x">The x coordinate of the location where to show the context menu.</param>
-		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
+		/// <param name="parent">The parent gui element.</param>
 		/// <param name="owner">The object that will be owner of this context menu.</param>
 		/// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
+		/// <param name="x">The x coordinate of the location where to show the context menu.</param>
+		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
 		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
-		public abstract void ShowContextMenu(double x, double y, object owner, string addInTreePath);
+		public abstract void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y);
 		
     #endregion
   }

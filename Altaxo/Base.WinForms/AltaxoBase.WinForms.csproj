@@ -488,26 +488,6 @@
     <Compile Include="Gui\Graph\TitleFormatLayerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Graph\Viewing\GraphController.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerActions.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Graph\Viewing\GraphView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Graph\WaterfallTransformControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -777,12 +757,6 @@
     <EmbeddedResource Include="Gui\Graph\TitleFormatLayerControl.resx">
       <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\Viewing\GraphPanel.resx">
-      <DependentUpon>GraphPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\Viewing\GraphView.resx">
-      <DependentUpon>GraphView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\WaterfallTransformControl.resx">
       <DependentUpon>WaterfallTransformControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -865,6 +839,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Gui\Graph\Viewing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

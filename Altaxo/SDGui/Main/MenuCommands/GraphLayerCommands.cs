@@ -30,7 +30,6 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Plot.Data;
-using Altaxo.Graph.GUI;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
@@ -145,7 +144,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Taken from Commands.MenuItemBuilders. See last line for change.
 	/// </summary>
-	public class LayerItemsBuilder : ISubmenuBuilder
+	public class LayerItemsBuilder : ISubmenuBuilder, ICSharpCode.Core.Presentation.IMenuItemBuilder
 	{
 		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
 		{
@@ -210,6 +209,61 @@ namespace Altaxo.Graph.Commands
 				Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
 			}
 		}
+
+		public System.Collections.ICollection BuildItems(Codon codon, object owner)
+		{
+			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+			if (null == ctrl)
+				return null;
+			var activeLayer = ctrl.Controller.ActiveLayer;
+			if (null == activeLayer)
+				return null;
+
+			int actPA = ctrl.Controller.CurrentPlotNumber;
+			int len = activeLayer.PlotItems.Flattened.Length;
+			var items = new System.Collections.ArrayList();
+			for (int i = 0; i < len; i++)
+			{
+				IGPlotItem pa = activeLayer.PlotItems.Flattened[i];
+				var item = new System.Windows.Controls.MenuItem() { Header=pa.ToString() };
+				item.Click += EhWpfMenuItem_Clicked;
+				item.IsChecked = (i == actPA);
+				item.Tag = i;
+				items.Add(item);
+			}
+
+			return items;
+		}
+		void EhWpfMenuItem_Clicked(object sender, System.Windows.RoutedEventArgs e)
+		{
+			var dmi = (System.Windows.Controls.MenuItem)sender;
+			int plotItemNumber = (int)dmi.Tag;
+
+			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+			if (null == ctrl)
+				return;
+			var activeLayer = ctrl.Controller.ActiveLayer;
+			if (null == activeLayer)
+				return;
+
+			if (!dmi.IsChecked)
+			{
+				// if the menu item was not checked before, check it now
+				// by making the plot association shown by the menu item
+				// the actual plot association
+				if (null != activeLayer && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
+				{
+					dmi.IsChecked = true;
+					ctrl.Controller.CurrentPlotNumber = plotItemNumber;
+				}
+			}
+			else
+			{
+				IGPlotItem pa = activeLayer.PlotItems.Flattened[plotItemNumber];
+				Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
+			}
+		}
 	}
+
 
 }

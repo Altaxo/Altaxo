@@ -50,12 +50,25 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Current.SetResourceService(new ResourceServiceWrapper());
 			Altaxo.Current.SetProjectService(new Altaxo.Main.ProjectService());
 			Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.WinFormsGuiFactoryService());
-			Altaxo.Current.Gui.ContextMenuProvider = ICSharpCode.Core.WinForms.MenuService.CreateContextMenu;
+			// Altaxo.Current.Gui.ContextMenuProvider = ICSharpCode.Core.WinForms.MenuService.CreateContextMenu;
+
+			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.Forms.Control), ShowWinFormContextMenu);
+			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.UIElement), ShowWpfContextMenu);
+
 			Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
 
 			// we construct the main document (for now)
 			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
 
+		}
+
+		static void ShowWinFormContextMenu(object parent, object owner, string addInPath, double x, double y)
+		{
+			ICSharpCode.Core.WinForms.MenuService.ShowContextMenu(owner, addInPath, (System.Windows.Forms.Control)parent, (int)x, (int)y);
+		}
+		static void ShowWpfContextMenu(object parent, object owner, string addInPath, double x, double y)
+		{
+			ICSharpCode.Core.Presentation.MenuService.ShowContextMenu((System.Windows.UIElement)parent, owner, addInPath);
 		}
 
 		public override void Run()

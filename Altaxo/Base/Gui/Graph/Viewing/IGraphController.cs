@@ -79,6 +79,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		IList<IHitTestObject> SelectedObjects { get; }
 
 		GraphToolType GraphTool { get; set; }
+
+		/// <summary>
+		/// Returns the control that should be focused initially.
+		/// </summary>
+		object GuiInitiallyFocusedElement { get; }
 	}
 
 	public interface IGraphViewEventSink

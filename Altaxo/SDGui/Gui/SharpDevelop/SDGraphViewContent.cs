@@ -29,7 +29,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.GUI;
 using Altaxo.Serialization;
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -107,6 +106,8 @@ namespace Altaxo.Gui.SharpDevelop
 			_controller = ctrl;
 			_controller.TitleNameChanged += EhTitleNameChanged;
 			SetTitle();
+//			if (_controller.ViewObject == null)
+//				_controller.ViewObject = new Altaxo.Gui.Graph.Viewing.GraphViewWpf();
 		}
 
 		void EhTitleNameChanged(object sender, EventArgs e)
@@ -142,7 +143,15 @@ namespace Altaxo.Gui.SharpDevelop
 		#region Required
 		public override object Control
 		{
-			get { return (Control)_controller.ViewObject; }
+			get { return _controller.ViewObject; }
+		}
+
+		public override object InitiallyFocusedControl
+		{
+			get
+			{
+				return (_controller.ViewObject as Altaxo.Gui.Graph.Viewing.IGraphView).GuiInitiallyFocusedElement;
+			}
 		}
 		#endregion
 

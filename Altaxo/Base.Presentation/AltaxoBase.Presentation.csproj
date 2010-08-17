@@ -8,7 +8,7 @@
     <ProjectGuid>{323D97E6-92A8-40B4-99C1-D64D4368DFC7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AltaxoBase.Presentation</RootNamespace>
+    <RootNamespace>Altaxo</RootNamespace>
     <AssemblyName>AltaxoBase.Presentation</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -48,8 +48,21 @@
   <ItemGroup>
     <Compile Include="GdiToWpfBitmap.cs" />
     <Compile Include="GuiHelper.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphView.xaml.cs">
-      <DependentUpon>GraphView.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\PresentationGraphController.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphViewWpf.xaml.cs">
+      <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,7 +74,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Page Include="Gui\Graph\Viewing\GraphView.xaml">
+    <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
