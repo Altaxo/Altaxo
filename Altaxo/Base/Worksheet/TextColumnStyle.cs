@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Serialization;
 
@@ -31,8 +32,7 @@ namespace Altaxo.Worksheet
   [SerializationVersion(0)]
   public class TextColumnStyle : Altaxo.Worksheet.ColumnStyle
   {
-  
-    #region Serialization
+		#region Serialization
     public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
@@ -91,7 +91,6 @@ namespace Altaxo.Worksheet
 
     #endregion
 
-
     public TextColumnStyle()
       : base(ColumnStyleType.DataCell)
     {
@@ -123,6 +122,16 @@ namespace Altaxo.Worksheet
       }
       catch(Exception) {}
     }
+
+		public static Dictionary<System.Type, Action<TextColumnStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<TextColumnStyle, object, Graph.RectangleD, int, Data.DataColumn, bool>>();
+		public override void Paint(System.Type dctype, object dc, Altaxo.Graph.RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		{
+			Action<TextColumnStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool> action;
+			if (RegisteredPaintMethods.TryGetValue(dctype, out action))
+				action(this, dc, cellRectangle, nRow, data, bSelected);
+			else
+				throw new NotImplementedException("Paint method is not implemented for context type " + dc.GetType().ToString());
+		}
 
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {

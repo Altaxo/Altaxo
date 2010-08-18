@@ -97,6 +97,8 @@ namespace Altaxo.Graph
       }
     }
 
+		
+
 
     public static bool operator ==(RectangleD p, RectangleD q)
     {
@@ -128,19 +130,25 @@ namespace Altaxo.Graph
       return string.Format("X={0}; Y={1}; W={2}; H={3}", _x, _y, _w, _h); ;
     }
 
-
-
-
-
     public static explicit  operator System.Drawing.RectangleF (RectangleD r)
     {
-      return new System.Drawing.RectangleF((float)r.X, (float)r.Y, (float)r.Width, (float)r.Height);
+      return new System.Drawing.RectangleF((float)r._x, (float)r._y, (float)r._w, (float)r._h);
     }
+
+		public static explicit operator System.Drawing.Rectangle(RectangleD r)
+		{
+			return new System.Drawing.Rectangle((int)r._x, (int)r._y, (int)r._w, (int)r._h);
+		}
 
     public static implicit operator RectangleD(System.Drawing.RectangleF r)
     {
       return new RectangleD(r.X, r.Y, r.Width, r.Height);
     }
+
+		public static implicit operator RectangleD(System.Drawing.Rectangle r)
+		{
+			return new RectangleD(r.X, r.Y, r.Width, r.Height);
+		}
 
 
     public PointD2D Location
@@ -169,23 +177,10 @@ namespace Altaxo.Graph
       }
     }
 
-
-
-    public double Right
-    {
-      get
-      {
-        return X + Width;
-      }
-    }
-
-    public double Bottom
-    {
-      get
-      {
-        return Y + Height;
-      }
-    }
+		public double Top { get { return _y; } }
+		public double Bottom { get { return _y + _h; } }
+		public double Left { get { return _x; } }
+		public double Right { get { return _x + _w; } }
 
 
     public bool Contains(PointD2D p)

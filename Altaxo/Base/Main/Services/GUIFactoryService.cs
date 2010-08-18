@@ -181,9 +181,9 @@ namespace Altaxo.Main.Services
     /// <param name="controller">The controller a control is searched for.</param>
 		public void FindAndAttachControlTo(IMVCController controller)
 		{
-			foreach (var entry in RegistedContextMenuProviders)
+			foreach (var guiType in RegisteredGuiTechnologies)
 			{
-				InternalFindAndAttachControlUsingGuiType(controller, entry.Key);
+				InternalFindAndAttachControlUsingGuiType(controller, guiType);
 				if (controller.ViewObject != null)
 					break;
 			}
@@ -687,6 +687,8 @@ namespace Altaxo.Main.Services
 		/// Value is an Action with the following parameters: object parent (Gui parent element), object owner (Owner of the addin element), string addInPath, double x, double y)
 		/// </summary>
 		public Dictionary<System.Type, Action<object, object, string, double, double>> RegistedContextMenuProviders = new Dictionary<Type, Action<object, object, string, double, double>>();
+
+		public List<System.Type> RegisteredGuiTechnologies = new List<Type>();
 
 		/// <summary>
 		/// Creates and shows a context menu.

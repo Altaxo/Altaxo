@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
   /// <remarks>
   /// ClickedCellInfo retrieves (from mouse coordinates of a click), which cell has clicked onto. 
   /// </remarks>
-  public class ClickedCellInfo : System.EventArgs
+  public class ClickedCellInfoWpf : System.EventArgs
   {
     /// <summary>Gets which mouse buttons were pressed on the last mouseup/mousedown event</summary>
     private AltaxoMouseButtons _lastMouseButtons;
@@ -128,8 +128,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			_lastMouseButtons = GuiHelper.GetMouseState(e);
     }
 
-    public void MouseUp(Point position, MouseButtonEventArgs e, AltaxoMouseButtons buttonsAfterwards)
+    public void MouseUp(Point position, MouseButtonEventArgs e)
     {
+			var buttonsAfterwards = GuiHelper.GetMouseState(e);
       if(buttonsAfterwards == AltaxoMouseButtons.None)
       {
 				this._mousePositionLastUp = position;
@@ -167,7 +168,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <param name="mouseCoord">The coordinates of the mouse click.</param>
     /// <param name="cellRect">The function sets the x-properties (X and Width) of the cell rectangle.</param>
     /// <returns>Either -1 when clicked on the row header area, column number when clicked in the column range, or int.MinValue when clicked outside of all.</returns>
-    public static int GetColumnNumber(WinFormsWorksheetController dg, Point mouseCoord, ref Rect cellRect)
+    public static int GetColumnNumber(WorksheetControllerWpf dg, Point mouseCoord, ref Rect cellRect)
     {
       int firstVisibleColumn = dg.FirstVisibleColumn;
       int actualColumnRight = dg.WorksheetLayout.RowHeaderStyle.Width;
@@ -202,7 +203,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <param name="bPropertyCol">True if clicked on either the property column header or a property column, else false.</param>
     /// <returns>The row number of the clicked cell, or -1 if clicked on the column header.</returns>
     /// <remarks>If clicked onto a property cell, the function returns the property column number.</remarks>
-    public static int GetRowNumber(WinFormsWorksheetController dg, Point mouseCoord, ref Rect cellRect, out bool bPropertyCol)
+    public static int GetRowNumber(WorksheetControllerWpf dg, Point mouseCoord, ref Rect cellRect, out bool bPropertyCol)
     {
       int firstVisibleColumn = dg.FirstVisibleColumn;
       int actualColumnRight = dg.WorksheetLayout.RowHeaderStyle.Width;
@@ -246,7 +247,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// </summary>
     /// <param name="dg">The data grid.</param>
     /// <param name="mouseCoord">The mouse coordinates of the click.</param>
-    public void MouseClick(WinFormsWorksheetController dg, Point mouseCoord)
+    public void MouseClick(WorksheetControllerWpf dg, Point mouseCoord)
     {
 
       bool bIsPropertyColumn=false;

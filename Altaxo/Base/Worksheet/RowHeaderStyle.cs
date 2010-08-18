@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Serialization;
 
@@ -151,6 +152,17 @@ namespace Altaxo.Worksheet
       else
         dc.DrawString("["+nRow+"]",_textFont,_textBrush,cellRectangle,_textFormat);
     }
+
+		public static Dictionary<System.Type, Action<RowHeaderStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<RowHeaderStyle, object, Graph.RectangleD, int, Data.DataColumn, bool>>();
+		public override void Paint(System.Type dctype, object dc, Altaxo.Graph.RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		{
+			Action<RowHeaderStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool> action;
+			if (RegisteredPaintMethods.TryGetValue(dctype, out action))
+				action(this, dc, cellRectangle, nRow, data, bSelected);
+			else
+				throw new NotImplementedException("Paint method is not implemented for context type " + dc.GetType().ToString());
+		}
+
     
   }
 

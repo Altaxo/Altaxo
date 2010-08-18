@@ -683,8 +683,8 @@ namespace Altaxo.Main
 		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
 		{
 			layout.DataTable = table;
-			Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(layout);
-			var view = new Altaxo.Gui.SharpDevelop.SDWorksheetView();
+			var ctrl = new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(layout);
+			var view = new Altaxo.Gui.Worksheet.Viewing.WorksheetViewWpf((x, y) => new Altaxo.Gui.SharpDevelop.SDWorksheetControllerWpf(x, y));
 			ctrl.Controller.ViewObject = view;
 
 

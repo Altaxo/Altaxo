@@ -6,13 +6,14 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 using Altaxo;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui
 {
-	public class GuiHelper
+	public static class GuiHelper
 	{
 		#region Combobox
 
@@ -35,7 +36,7 @@ namespace Altaxo.Gui
 
 		#region ListBox
 
-		public static void Initialize(ListBox view,SelectableListNodeList data)
+		public static void Initialize(ListBox view, SelectableListNodeList data)
 		{
 			view.ItemsSource = null;
 			view.ItemsSource = data;
@@ -150,5 +151,99 @@ namespace Altaxo.Gui
 		}
 
 		#endregion
+
+		#region Brush and Pen
+
+		public static System.Windows.Media.Brush ToWpf(this Altaxo.Graph.Gdi.BrushX brushx)
+		{
+			System.Drawing.Color s = brushx.Color;
+			System.Windows.Media.Color c = System.Windows.Media.Color.FromArgb(s.A, s.R, s.G, s.B);
+			var result = new System.Windows.Media.SolidColorBrush(c);
+			return result;
+		}
+
+		public static System.Windows.Media.Pen ToWpf(this Altaxo.Graph.Gdi.PenX penx)
+		{
+			System.Drawing.Color s = penx.Color;
+			System.Windows.Media.Color c = System.Windows.Media.Color.FromArgb(s.A, s.R, s.G, s.B);
+			var result = new System.Windows.Media.Pen(new System.Windows.Media.SolidColorBrush(c), penx.Width);
+			return result;
+		}
+
+		#endregion
+
+		#region Graphics primitives
+
+		#region Point
+
+		public static Point ToWpf(this Altaxo.Graph.PointD2D pt)
+		{
+			return new Point(pt.X, pt.Y);
+		}
+
+		public static Point ToWpf(this System.Drawing.PointF pt)
+		{
+			return new Point(pt.X, pt.Y);
+		}
+
+		public static Point ToWpf(this System.Drawing.Point pt)
+		{
+			return new Point(pt.X, pt.Y);
+		}
+
+		public static Altaxo.Graph.PointD2D ToAltaxo(this Point pt)
+		{
+			return new Altaxo.Graph.PointD2D(pt.X, pt.Y);
+		}
+
+		public static System.Drawing.PointF ToSysDraw(this Point pt)
+		{
+			return new System.Drawing.PointF((float)pt.X, (float)pt.Y);
+		}
+
+		public static System.Drawing.Point ToSysDrawInt(this Point pt)
+		{
+			return new System.Drawing.Point((int)pt.X, (int)pt.Y);
+		}
+
+		#endregion
+
+		#region Rectangle
+
+		public static Rect ToWpf(this Altaxo.Graph.RectangleD rect)
+		{
+			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+		}
+
+		public static Rect ToWpf(this System.Drawing.RectangleF rect)
+		{
+			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+		}
+
+		public static Rect ToWpf(this System.Drawing.Rectangle rect)
+		{
+			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+		}
+
+		public static Altaxo.Graph.RectangleD ToAltaxo(this Rect rect)
+		{
+			return new Altaxo.Graph.RectangleD(rect.X, rect.Y, rect.Width, rect.Height);
+		}
+
+		public static System.Drawing.RectangleF ToSysDraw(this Rect rect)
+		{
+			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
+		}
+
+		public static System.Drawing.Rectangle ToSysDrawInt(this Rect rect)
+		{
+			return new System.Drawing.Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+		}
+
+		#endregion
+
+		#endregion
+
+
 	}
 }

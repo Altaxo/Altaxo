@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
+using System.Windows;
 using System.Collections.Generic;
 using Altaxo;
 using Altaxo.Main;
@@ -29,7 +29,7 @@ using Altaxo.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
 
 using ICSharpCode.Core;
-using ICSharpCode.Core.WinForms;
+using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.SharpDevelop
@@ -37,9 +37,9 @@ namespace Altaxo.Gui.SharpDevelop
 	/// <summary>
 	/// Extends the default worksheet controller with WinForms context menus.
 	/// </summary>
-	public class SDWorksheetWinFormsController : Altaxo.Gui.Worksheet.Viewing.WinFormsWorksheetController
+	public class SDWorksheetControllerWpf : Altaxo.Gui.Worksheet.Viewing.WorksheetControllerWpf
 	{
-		public SDWorksheetWinFormsController(Altaxo.Gui.Worksheet.Viewing.IWorksheetController controller, WorksheetView view)
+		public SDWorksheetControllerWpf(Altaxo.Gui.Worksheet.Viewing.IWorksheetController controller, WorksheetViewWpf view)
 			: base(controller, view)
 		{
 			this.DataColumnHeaderRightClicked += EhDataColumnHeaderRightClicked;
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.SharpDevelop
 
 		#region Context menu handlers
 
-		protected void EhDataColumnHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfo clickedCell)
+		protected void EhDataColumnHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfoWpf clickedCell)
 		{
 			if (!(this.SelectedDataColumns.Contains(clickedCell.Column)) &&
 					!(this.SelectedPropertyRows.Contains(clickedCell.Column)))
@@ -60,11 +60,10 @@ namespace Altaxo.Gui.SharpDevelop
 				this.SelectedDataColumns.Add(clickedCell.Column);
 				this._view.TableAreaInvalidate();
 			}
-			ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
-			mnu.Show((Control)this.ViewObject, clickedCell.MousePositionFirstDown);
+			MenuService.ShowContextMenu((UIElement)ViewObject,this.ViewObject,"/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
 		}
 
-		protected void EhDataRowHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfo clickedCell)
+		protected void EhDataRowHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfoWpf clickedCell)
 		{
 			if (!(this.SelectedDataRows.Contains(clickedCell.Row)))
 			{
@@ -72,11 +71,10 @@ namespace Altaxo.Gui.SharpDevelop
 				this.SelectedDataRows.Add(clickedCell.Row);
 				this._view.TableAreaInvalidate();
 			}
-			ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataRowHeader/ContextMenu");
-			mnu.Show((Control)this.ViewObject, clickedCell.MousePositionFirstDown);
+			MenuService.ShowContextMenu((UIElement)ViewObject,this.ViewObject, "/Altaxo/Views/Worksheet/DataRowHeader/ContextMenu");
 		}
 
-		protected void EhPropertyColumnHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfo clickedCell)
+		protected void EhPropertyColumnHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfoWpf clickedCell)
 		{
 			if (!(this.SelectedPropertyColumns.Contains(clickedCell.Column)))
 			{
@@ -84,20 +82,17 @@ namespace Altaxo.Gui.SharpDevelop
 				this.SelectedPropertyColumns.Add(clickedCell.Column);
 				this._view.TableAreaInvalidate();
 			}
-			ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/PropertyColumnHeader/ContextMenu");
-			mnu.Show((Control)this.ViewObject, clickedCell.MousePositionFirstDown);
+			MenuService.ShowContextMenu((UIElement)ViewObject,this.ViewObject, "/Altaxo/Views/Worksheet/PropertyColumnHeader/ContextMenu");
 		}
 
-		protected void EhTableHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfo clickedCell)
+		protected void EhTableHeaderRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfoWpf clickedCell)
 		{
-			ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu");
-			mnu.Show((Control)this.ViewObject, clickedCell.MousePositionFirstDown);
+			MenuService.ShowContextMenu((UIElement)ViewObject,this.ViewObject, "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu");
 		}
 
-		protected void EhOutsideAllRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfo clickedCell)
+		protected void EhOutsideAllRightClicked(object sender, Altaxo.Gui.Worksheet.Viewing.ClickedCellInfoWpf clickedCell)
 		{
-			ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu");
-			mnu.Show((Control)this.ViewObject, clickedCell.MousePositionFirstDown);
+			MenuService.ShowContextMenu((UIElement)ViewObject,this.ViewObject, "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu");
 		}
 
 
@@ -105,16 +100,7 @@ namespace Altaxo.Gui.SharpDevelop
 
 	}
 
-
-	public class SDWorksheetView : WorksheetView
-	{
-		public SDWorksheetView()
-			: base((x, y) => new SDWorksheetWinFormsController(x, y))
-		{
-		}
-	}
-
-	public class SDWorksheetViewContentWinForm : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IClipboardHandler
+	public class SDWorksheetViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IClipboardHandler
 	{
 		Altaxo.Gui.Worksheet.Viewing.WorksheetController _controller;
 
@@ -123,7 +109,7 @@ namespace Altaxo.Gui.SharpDevelop
 		/// Creates a GraphController which shows the <see cref="Altaxo.Graph.Gdi.GraphDocument"/> in the <c>layout</c>.    
 		/// </summary>
 		/// <param name="layout">The graph layout which holds the graph document.</param>
-		public SDWorksheetViewContentWinForm(Altaxo.Worksheet.WorksheetLayout layout)
+		public SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout)
 			: this(layout, false)
 		{
 		}
@@ -134,13 +120,13 @@ namespace Altaxo.Gui.SharpDevelop
 		/// </summary>
 		/// <param name="layout">The worksheet layout.</param>
 		/// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
-		protected SDWorksheetViewContentWinForm(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
+		protected SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
 			:
 				this(new Altaxo.Gui.Worksheet.Viewing.WorksheetController(layout))
 		{
 		}
 
-		public SDWorksheetViewContentWinForm(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		public SDWorksheetViewContent(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
 			_controller = ctrl;
 

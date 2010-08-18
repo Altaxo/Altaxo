@@ -351,6 +351,18 @@ namespace Altaxo.Worksheet
       } 
     }
 
+		public double WidthD
+		{
+			get
+			{
+				return _columnSize;
+			}
+			set
+			{
+				_columnSize = (int)value;
+			}
+		}
+
     public PenX CellBorder
     {
       get
@@ -397,6 +409,22 @@ namespace Altaxo.Worksheet
         }
       }
     }
+
+		public BrushX DefaultSelectedBackgroundBrush
+		{
+			get
+			{
+				return _defaultSelectedBackgroundBrush;
+			}
+		}
+
+		public BrushX DefaultSelectedTextBrush
+		{
+			get
+			{
+				return _defaultSelectedTextBrush;
+			}
+		}
 
     void EhBackgroundBrushChanged(object sender, EventArgs e)
     {
@@ -451,6 +479,7 @@ namespace Altaxo.Worksheet
       }
     }
 
+		public abstract void Paint(System.Type dctype, object dc, Altaxo.Graph.RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
     public abstract void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
     public virtual void PaintBackground(Graphics dc, Rectangle cellRectangle, bool bSelected)

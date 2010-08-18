@@ -64,7 +64,13 @@
     <Compile Include="Gui\Graph\Viewing\GraphViewWpf.xaml.cs">
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Worksheet\Viewing\ClickedCellInfo.cs" />
+    <Compile Include="Gui\VisualHost.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\ClickedCellInfoWpf.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml.cs">
+      <DependentUpon>WorksheetViewWpf.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -72,10 +78,18 @@
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
       <Name>AltaxoBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Core\AltaxoCore.csproj">
+      <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
+      <Name>AltaxoCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

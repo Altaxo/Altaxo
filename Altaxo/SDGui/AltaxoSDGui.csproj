@@ -195,6 +195,7 @@
     <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContentWpf.cs" />
     <Compile Include="Main\MenuCommands\AutostartCommands.cs">
       <SubType>Code</SubType>
     </Compile>

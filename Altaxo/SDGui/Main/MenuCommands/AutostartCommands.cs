@@ -55,6 +55,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.Forms.Control), ShowWinFormContextMenu);
 			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.UIElement), ShowWpfContextMenu);
 
+			Altaxo.Current.Gui.RegisteredGuiTechnologies.Add(typeof(System.Windows.UIElement));
+			Altaxo.Current.Gui.RegisteredGuiTechnologies.Add(typeof(System.Windows.Forms.Control));
+
 			Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
 
 			// we construct the main document (for now)
