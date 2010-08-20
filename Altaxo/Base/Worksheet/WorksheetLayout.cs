@@ -68,7 +68,10 @@ namespace Altaxo.Worksheet
     /// There is no need to store a column style here if the column is styled as default,
     /// instead the defaultColumnStyle is used in this case
     /// </summary>
-    protected ColumnDictionary _columnStyles;
+    protected ColumnDictionary _dataColumnStyles;
+
+
+		protected ColumnDictionary _propertyColumnStyles;
 
 
     /// <summary>
@@ -101,7 +104,7 @@ namespace Altaxo.Worksheet
       class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       protected WorksheetLayout                  _worksheetLayout;
-      protected System.Collections.Hashtable m_ColStyles;
+      protected System.Collections.Hashtable _colStyles;
       protected Main.DocumentPath  _pathToTable;
 
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -119,8 +122,8 @@ namespace Altaxo.Worksheet
           info.AddValue("DefaultColumnStyle",style);
         info.CommitArray();
 
-        info.CreateArray("ColumnStyles",s._columnStyles.Count);
-        foreach(KeyValuePair<DataColumn, ColumnStyle> dictentry in s._columnStyles)
+        info.CreateArray("ColumnStyles",s._dataColumnStyles.Count);
+        foreach(KeyValuePair<DataColumn, ColumnStyle> dictentry in s._dataColumnStyles)
         {
           info.CreateElement("e");
 					info.AddValue("Column", Main.DocumentPath.GetAbsolutePath(dictentry.Key));
@@ -142,7 +145,7 @@ namespace Altaxo.Worksheet
         
 
         XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-        surr.m_ColStyles = new System.Collections.Hashtable();
+        surr._colStyles = new System.Collections.Hashtable();
         surr._worksheetLayout = s;
         info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
@@ -175,7 +178,7 @@ namespace Altaxo.Worksheet
             info.OpenElement(); // "e"
             Main.DocumentPath key = (Main.DocumentPath)info.GetValue("Column",s);
             object val = info.GetValue("Style",s);
-            surr.m_ColStyles.Add(key,val);
+            surr._colStyles.Add(key,val);
             info.CloseElement();
           }
         }
@@ -195,22 +198,22 @@ namespace Altaxo.Worksheet
         }
 
         System.Collections.ArrayList resolvedStyles = new System.Collections.ArrayList();
-        foreach(System.Collections.DictionaryEntry entry in this.m_ColStyles)
+        foreach(System.Collections.DictionaryEntry entry in this._colStyles)
         {
           object resolvedobj = Main.DocumentPath.GetObject((Main.DocumentPath)entry.Key,_worksheetLayout, documentRoot);
           if(null!=resolvedobj)
           {
-            _worksheetLayout.ColumnStyles.Add((DataColumn)resolvedobj,(ColumnStyle)entry.Value);
+            _worksheetLayout.DataColumnStyles.Add((DataColumn)resolvedobj,(ColumnStyle)entry.Value);
             resolvedStyles.Add(entry.Key);
           }
         }
 
         foreach(object resstyle in resolvedStyles)
-          m_ColStyles.Remove(resstyle);
+          _colStyles.Remove(resstyle);
 
 
         // if all columns have resolved, we can close the event link
-        if(m_ColStyles.Count==0 && this._pathToTable==null)
+        if(_colStyles.Count==0 && this._pathToTable==null)
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
       }
     }
@@ -260,8 +263,9 @@ namespace Altaxo.Worksheet
 			_defaultPropertyColumnStyles = new Dictionary<System.Type, ColumnStyle>();
 
       // m_ColumnStyles stores the column styles for each data column individually,
-      _columnStyles = new ColumnDictionary();
+      _dataColumnStyles = new ColumnDictionary(_defaultDataColumnStyles);
 
+			_propertyColumnStyles = new ColumnDictionary(_defaultPropertyColumnStyles);
 
       // The style of the row header. This is the leftmost column that shows usually the row number.
       _rowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
@@ -318,10 +322,25 @@ namespace Altaxo.Worksheet
       get { return _defaultPropertyColumnStyles; }
     }
 
-    public IDictionary<Data.DataColumn, ColumnStyle> ColumnStyles
+    public IDictionary<Data.DataColumn, ColumnStyle> DataColumnStyles
     {
-      get { return _columnStyles; }
+      get { return _dataColumnStyles; }
     }
+
+		public ColumnStyle GetDataColumnStyle(int i)
+		{
+			return _dataColumnStyles[_dataTable.DataColumns[i]];
+		}
+
+		public IDictionary<Data.DataColumn, ColumnStyle> PropertyColumnStyles
+		{
+			get { return _propertyColumnStyles; }
+		}
+
+		public ColumnStyle GetPropertyColumnStyle(int i)
+		{
+			return _propertyColumnStyles[_dataTable.PropertyColumns[i]];
+		}
 
     public RowHeaderStyle RowHeaderStyle
     {
@@ -378,8 +397,15 @@ namespace Altaxo.Worksheet
 
     protected class ColumnDictionary : IDictionary<Data.DataColumn, ColumnStyle>
     {
-			Dictionary<Data.DataColumn, ColumnStyle> _hash = new Dictionary<Altaxo.Data.DataColumn, ColumnStyle>();
+			Dictionary<Data.DataColumn, ColumnStyle> _hash;
+			Dictionary<System.Type, ColumnStyle> _defaultColumnStyles;
 
+
+			public ColumnDictionary(Dictionary<System.Type, ColumnStyle> defaultColumnStyles)
+			{
+				_defaultColumnStyles = defaultColumnStyles;
+				_hash = new Dictionary<Altaxo.Data.DataColumn, ColumnStyle>();
+			}
 
 			void AttachKey(DataColumn key)
 			{
@@ -444,7 +470,28 @@ namespace Altaxo.Worksheet
 			{
 				get
 				{
-					return _hash[key];
+					ColumnStyle colstyle;
+					// first look at the column styles hash table, column itself is the key
+					if (_hash.TryGetValue(key, out colstyle))
+						return colstyle;
+
+					if(_defaultColumnStyles.TryGetValue(key.GetType(), out colstyle))
+						return colstyle;
+
+					// second look to the defaultcolumnstyles hash table, key is the type of the column style
+
+					System.Type searchstyletype = key.GetColumnStyleType();
+					if (null == searchstyletype)
+					{
+						throw new ApplicationException("Error: Column of type +" + key.GetType() + " returns no associated ColumnStyleType, you have to overload the method GetColumnStyleType.");
+					}
+					else
+					{
+						// if not successfull yet, we will create a new defaultColumnStyle
+						colstyle = (ColumnStyle)Activator.CreateInstance(searchstyletype);
+						_defaultColumnStyles.Add(key.GetType(), colstyle);
+						return colstyle;
+					}
 				}
 				set
 				{
@@ -457,6 +504,10 @@ namespace Altaxo.Worksheet
 						AttachKey(key);
 				}
 			}
+
+
+
+		
 
 			#endregion
 

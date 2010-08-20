@@ -46,8 +46,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GdiToWpfBitmap.cs" />
-    <Compile Include="GuiHelper.cs" />
+    <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
@@ -64,10 +63,11 @@
     <Compile Include="Gui\Graph\Viewing\GraphViewWpf.xaml.cs">
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\VisualHost.cs" />
-    <Compile Include="Gui\Worksheet\Viewing\ClickedCellInfoWpf.cs" />
+    <Compile Include="Gui\GuiHelper.cs" />
+    <Compile Include="Gui\VisualDrawingHost.cs" />
     <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\WorksheetPaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml.cs">
       <DependentUpon>WorksheetViewWpf.xaml</DependentUpon>
     </Compile>

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" Focusable="True" FocusManager.FocusedElement="{Binding ElementName=_worksheetPanel}">
     <Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
@@ -15,8 +15,12 @@
 				<RowDefinition/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			<Canvas Grid.Row="0" Name="_lowerPanel" Background="Gray"/>
-			<Canvas Grid.Row="0" Name="_worksheetPanel" Focusable="True" FocusManager.IsFocusScope="True" Background="Transparent" MouseDown="EhWP_MouseDown" MouseUp="EhWP_MouseUp" MouseMove="EhWP_MouseMove" MouseWheel="EhWP_MouseWheel" KeyDown="EhWP_KeyDown">
+			<Canvas Grid.Row="0" Name="_lowerPanel" Focusable ="False" Background="Gray" SizeChanged="EhWP_SizeChanged"/>
+			<Canvas Grid.Row="0" Name="_worksheetPanel" Focusable="True" Background="Transparent" MouseDown="EhWP_MouseDown" MouseUp="EhWP_MouseUp" MouseMove="EhWP_MouseMove" MouseWheel="EhWP_MouseWheel" KeyDown="EhWP_KeyDown">
+				<Canvas.CommandBindings>
+					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy"/>
+					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste"/>
+				</Canvas.CommandBindings>
 			</Canvas>
 			<ScrollBar Grid.Row="1" Name="_horzScrollBar" Orientation="Horizontal" Scroll="EhWP_HorzScroll" />
 		</Grid>

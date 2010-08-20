@@ -684,7 +684,7 @@ namespace Altaxo.Main
 		{
 			layout.DataTable = table;
 			var ctrl = new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(layout);
-			var view = new Altaxo.Gui.Worksheet.Viewing.WorksheetViewWpf((x, y) => new Altaxo.Gui.SharpDevelop.SDWorksheetControllerWpf(x, y));
+			var view = new Altaxo.Gui.Worksheet.Viewing.WorksheetViewWpf();
 			ctrl.Controller.ViewObject = view;
 
 

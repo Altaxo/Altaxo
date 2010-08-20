@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		public void TableAreaInvalidate()
 		{
 			if (null != _guiController)
-				_guiController.EhView_TableAreaPaint();
+				_guiController.TableAreaInvalidate();
 
 		}
 
@@ -189,13 +189,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		private void EhWP_MouseDown(object sender, MouseButtonEventArgs e)
 		{
+			if(!_worksheetPanel.IsFocused)
+				_worksheetPanel.Focus();
+
+
 			if (_guiController != null)
 			{
 				_guiController.EhView_TableAreaMouseDown(GetPosition(e), e);
-				if (e.ChangedButton == MouseButton.Left && e.ClickCount >= 2)
-					_guiController.EhView_TableAreaMouseDoubleClick(GetPosition(e), e);
-				else if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
-					_guiController.EhView_TableAreaMouseClick(GetPosition(e), e);
 			}
 		}
 
@@ -203,6 +203,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			if (_guiController != null)
 				_guiController.EhView_TableAreaMouseUp(GetPosition(e), e);
+
+			if (e.ChangedButton == MouseButton.Left && e.ClickCount >= 2)
+				_guiController.EhView_TableAreaMouseDoubleClick(GetPosition(e), e);
+			else if (e.ClickCount == 1)
+				_guiController.EhView_TableAreaMouseClick(GetPosition(e), e);
+
 		}
 
 		private void EhWP_MouseMove(object sender, MouseEventArgs e)
@@ -235,6 +241,58 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		}
 
 		#endregion
+
+		private void EhWP_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			if (null != _guiController)
+				_guiController.EhView_TableAreaSizeChanged(e);
+		}
+
+		private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
+		{
+			
+			if (null != _guiController)
+			{
+				e.CanExecute = _guiController.EnableCopy;
+				e.Handled = true;
+			}
+			
+		}
+
+		private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
+		{
+			
+			if (null != _guiController)
+			{
+				e.CanExecute = _guiController.EnableCopy;
+				e.Handled = true;
+			}
+			
+		}
+
+		private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _guiController)
+			{
+				_guiController.Copy();
+				e.Handled = true;
+			}
+		}
+
+
+		private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _guiController)
+			{
+				_guiController.Paste();
+				e.Handled = true;
+			}
+		}
+
+		private void EhPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+
+		}
 
 	}
 }

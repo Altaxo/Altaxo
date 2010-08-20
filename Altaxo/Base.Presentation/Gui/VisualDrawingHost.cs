@@ -11,8 +11,7 @@ using System.Windows.Media;
 namespace Altaxo.Gui
 {
 	// Create a host visual derived from the FrameworkElement class.
-	// This class provides layout, event handling, and container support for
-	// the child visual objects.
+	// This class provides layout, event handling, and container support for one drawing.
 	public class VisualHost : FrameworkElement
 	{
 		// Create a collection of child visual objects.
@@ -35,6 +34,18 @@ namespace Altaxo.Gui
 		{
 			return _child.RenderOpen();
 		}
+
+		/// <summary>
+		/// Invalidates the drawing. As a result, the render routine is called (asynchronously).
+		/// </summary>
+		public void InvalidateDrawing()
+		{
+			// Only this three commands: visibility=false, InvalidateVisual() and visibility=true will result in invalidating the VisualHost and thus a redrawing
+			this.Visibility = Visibility.Hidden;
+			this.InvalidateVisual();
+			this.Visibility = Visibility.Visible;
+		}
+
 
 		// Provide a required override for the VisualChildrenCount property.
 		protected override int VisualChildrenCount

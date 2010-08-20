@@ -218,7 +218,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		public void UpdateTableView()
 		{
-			_guiDependentController.UpdateTableView();
+			_guiDependentController.TableAreaInvalidate();
 		}
 
 		public bool EnableCut

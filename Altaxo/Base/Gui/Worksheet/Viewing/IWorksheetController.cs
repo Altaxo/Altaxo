@@ -139,7 +139,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Forces a redraw of the table view.
 		/// </summary>
-		void UpdateTableView();
+		void TableAreaInvalidate();
 
 
 		bool EnableCut { get; }

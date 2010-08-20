@@ -23,6 +23,8 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 
+using Altaxo.Worksheet;
+
 namespace Altaxo.Gui.Worksheet.Viewing
 {
   /// <remarks>
@@ -62,7 +64,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     private int _clickedColumn;
 
     /// <summary>What have been clicked onto.</summary>
-    private ClickedAreaType _clickedAreaType;
+    private AreaType _clickedAreaType;
 
 
     /// <summary>
@@ -154,7 +156,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       set { _clickedColumn = value; }
     }
     /// <value>The type of area clicked onto.</value>
-    public ClickedAreaType ClickedArea { get { return _clickedAreaType; }}
+    public AreaType ClickedArea { get { return _clickedAreaType; }}
  
     /// <summary>
     /// Retrieves the column number clicked onto 
@@ -255,26 +257,26 @@ namespace Altaxo.Gui.Worksheet.Viewing
       if(bIsPropertyColumn)
       {
         if(_clickedColumn==-1)
-          _clickedAreaType = ClickedAreaType.PropertyColumnHeader;
+          _clickedAreaType = AreaType.PropertyColumnHeader;
         else if(_clickedColumn>=0)
-          _clickedAreaType = ClickedAreaType.PropertyCell;
+          _clickedAreaType = AreaType.PropertyCell;
         else
-          _clickedAreaType = ClickedAreaType.OutsideAll;
+          _clickedAreaType = AreaType.OutsideAll;
 
         int h=_clickedColumn; _clickedColumn = _clickedRow; _clickedRow = h; // Swap columns and rows since it is a property column
       }
       else // it is not a property related cell
       {
         if(_clickedRow==-1 && _clickedColumn==-1)
-          _clickedAreaType = ClickedAreaType.TableHeader;
+          _clickedAreaType = AreaType.TableHeader;
         else if(_clickedRow==-1 && _clickedColumn>=0)
-          _clickedAreaType = ClickedAreaType.DataColumnHeader;
+          _clickedAreaType = AreaType.DataColumnHeader;
         else if(_clickedRow>=0 && _clickedColumn==-1)
-          _clickedAreaType = ClickedAreaType.DataRowHeader;
+          _clickedAreaType = AreaType.DataRowHeader;
         else if(_clickedRow>=0 && _clickedColumn>=0)
-          _clickedAreaType = ClickedAreaType.DataCell;
+          _clickedAreaType = AreaType.DataCell;
         else
-          _clickedAreaType = ClickedAreaType.OutsideAll;
+          _clickedAreaType = AreaType.OutsideAll;
       }
     }
   } // end of class ClickedCellInfo

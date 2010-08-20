@@ -599,7 +599,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Forces a redraw of the table view.
     /// </summary>
-    public void UpdateTableView()
+    public void TableAreaInvalidate()
     {
       if(View!=null)
         View.TableAreaInvalidate();
@@ -620,7 +620,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       Altaxo.Worksheet.ColumnStyle colstyle;
 
       // first look at the column styles hash table, column itself is the key
-      if(_worksheetLayout.ColumnStyles.TryGetValue(dc, out colstyle))
+      if(_worksheetLayout.DataColumnStyles.TryGetValue(dc, out colstyle))
         return colstyle;
       
       // second look to the defaultcolumnstyles hash table, key is the type of the column style
@@ -657,7 +657,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
       Altaxo.Worksheet.ColumnStyle colstyle;
 
       // first look at the column styles hash table, column itself is the key
-      if(_worksheetLayout.ColumnStyles.TryGetValue(dc, out colstyle))
+      if(_worksheetLayout.PropertyColumnStyles.TryGetValue(dc, out colstyle))
         return colstyle;
       
       // second look to the defaultcolumnstyles hash table, key is the type of the column style
@@ -877,11 +877,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
     {
       if(this._cellEdit_IsArmed && this._cellEditControl.Modified)
       {
-        if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+        if(this._cellEdit_EditedCell.ClickedArea == AreaType.DataCell)
         {
           GetDataColumnStyle(_cellEdit_EditedCell.Column).SetColumnValueAtRow(_cellEditControl.Text,_cellEdit_EditedCell.Row,DataTable[_cellEdit_EditedCell.Column]);
         }
-        else if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+        else if(this._cellEdit_EditedCell.ClickedArea == AreaType.PropertyCell)
         {
           GetPropertyColumnStyle(_cellEdit_EditedCell.Column).SetColumnValueAtRow(_cellEditControl.Text,_cellEdit_EditedCell.Row,DataTable.PropCols[_cellEdit_EditedCell.Column]);
         }
@@ -893,11 +893,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
     private void SetCellEditContent()
     {
       
-      if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+      if(this._cellEdit_EditedCell.ClickedArea == AreaType.DataCell)
       {
         _cellEditControl.Text = GetDataColumnStyle(_cellEdit_EditedCell.Column).GetColumnValueAtRow(_cellEdit_EditedCell.Row,DataTable[_cellEdit_EditedCell.Column]);
       }
-      else if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+      else if(this._cellEdit_EditedCell.ClickedArea == AreaType.PropertyCell)
       {
         _cellEditControl.Text = this.GetPropertyColumnStyle(_cellEdit_EditedCell.Column).GetColumnValueAtRow(_cellEdit_EditedCell.Row,DataTable.PropCols[_cellEdit_EditedCell.Column]);
       }
@@ -921,11 +921,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <returns>True when the cell was moved to a new position, false if moving was not possible.</returns>
     protected bool NavigateCellEdit(int dx, int dy)
     {
-      if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+      if(this._cellEdit_EditedCell.ClickedArea == AreaType.DataCell)
       {
         return NavigateTableCellEdit(dx,dy);
       }
-      else if(this._cellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+      else if(this._cellEdit_EditedCell.ClickedArea == AreaType.PropertyCell)
       {
         return NavigatePropertyCellEdit(dx,dy);
       }
@@ -1671,12 +1671,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
         }
         else
         {
-					_worksheetLayout.ColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs);
+					_worksheetLayout.DataColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs);
           if(null==cs)
           {
             Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this._dragColumnWidth_ColumnNumber);
             cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
-            _worksheetLayout.ColumnStyles.Add(DataTable[_dragColumnWidth_ColumnNumber],cs);
+            _worksheetLayout.DataColumnStyles.Add(DataTable[_dragColumnWidth_ColumnNumber],cs);
           }
         }
         int newWidth = this._dragColumnWidth_OriginalWidth + sizediff;
@@ -1739,11 +1739,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
           cs = this._worksheetLayout.RowHeaderStyle;
         else
         {
-					if(!_worksheetLayout.ColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs))
+					if(!_worksheetLayout.DataColumnStyles.TryGetValue(DataTable[_dragColumnWidth_ColumnNumber], out cs))
           {
             Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this._dragColumnWidth_ColumnNumber);
             cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
-            _worksheetLayout.ColumnStyles.Add(DataTable[_dragColumnWidth_ColumnNumber],cs);
+            _worksheetLayout.DataColumnStyles.Add(DataTable[_dragColumnWidth_ColumnNumber],cs);
           }
         }
 
@@ -2001,25 +2001,25 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         switch(_mouseInfo.ClickedArea)
         {
-          case ClickedAreaType.DataCell:
+          case AreaType.DataCell:
             OnLeftClickDataCell(_mouseInfo);
             break;
-          case ClickedAreaType.PropertyCell:
+          case AreaType.PropertyCell:
             OnLeftClickPropertyCell(_mouseInfo);
             break;
-          case ClickedAreaType.PropertyColumnHeader:
+          case AreaType.PropertyColumnHeader:
             OnLeftClickPropertyColumnHeader(_mouseInfo);
             break;
-          case ClickedAreaType.DataColumnHeader:
+          case AreaType.DataColumnHeader:
             OnLeftClickDataColumnHeader(_mouseInfo);
             break;
-          case ClickedAreaType.DataRowHeader:
+          case AreaType.DataRowHeader:
             OnLeftClickDataRowHeader(_mouseInfo);
             break;
-          case ClickedAreaType.TableHeader:
+          case AreaType.TableHeader:
             OnLeftClickTableHeader(_mouseInfo);
             break;
-          case ClickedAreaType.OutsideAll:
+          case AreaType.OutsideAll:
             OnLeftClickOutsideAll(_mouseInfo);
             break;
         }
@@ -2028,25 +2028,25 @@ namespace Altaxo.Gui.Worksheet.Viewing
       {
         switch(_mouseInfo.ClickedArea)
         {
-          case ClickedAreaType.DataCell:
+          case AreaType.DataCell:
             OnRightClickDataCell(_mouseInfo);
             break;
-          case ClickedAreaType.PropertyCell:
+          case AreaType.PropertyCell:
             OnRightClickPropertyCell(_mouseInfo);
             break;
-          case ClickedAreaType.PropertyColumnHeader:
+          case AreaType.PropertyColumnHeader:
             OnRightClickPropertyColumnHeader(_mouseInfo);
             break;
-          case ClickedAreaType.DataColumnHeader:
+          case AreaType.DataColumnHeader:
             OnRightClickDataColumnHeader(_mouseInfo);
             break;
-          case ClickedAreaType.DataRowHeader:
+          case AreaType.DataRowHeader:
             OnRightClickDataRowHeader(_mouseInfo);
             break;
-          case ClickedAreaType.TableHeader:
+          case AreaType.TableHeader:
             OnRightClickTableHeader(_mouseInfo);
             break;
-          case ClickedAreaType.OutsideAll:
+          case AreaType.OutsideAll:
             OnRightClickOutsideAll(_mouseInfo);
             break;
         }
