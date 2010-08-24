@@ -98,6 +98,14 @@ namespace Altaxo.Gui.SharpDevelop
 		{
 			get { return _controller.ViewObject; }
 		}
+
+		public override object InitiallyFocusedControl
+		{
+			get
+			{
+				return (_controller.ViewObject as Altaxo.Gui.Worksheet.Viewing.IWorksheetView).GuiInitiallyFocusedElement;
+			}
+		}
 		#endregion
 
 		#endregion

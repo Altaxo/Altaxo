@@ -344,6 +344,7 @@
     <Compile Include="Calc\LinearAlgebra\VectorSpacingEvaluator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Optimization\BruteForceLineSearch.cs" />
     <Compile Include="Calc\Optimization\StupidLineSearch.cs" />
     <Compile Include="Calc\Optimization\ConjugateGradient.cs" />
     <Compile Include="Calc\Optimization\ConstraintDefinition.cs" />

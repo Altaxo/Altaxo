@@ -19,7 +19,10 @@
 			<Canvas Grid.Row="0" Name="_worksheetPanel" Focusable="True" Background="Transparent" MouseDown="EhWP_MouseDown" MouseUp="EhWP_MouseUp" MouseMove="EhWP_MouseMove" MouseWheel="EhWP_MouseWheel" KeyDown="EhWP_KeyDown">
 				<Canvas.CommandBindings>
 					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy"/>
+					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut"/>
+					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete"/>
 					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste"/>
+					<CommandBinding Command="SelectAll" CanExecute="EhEnableCmdSelectAll" Executed="EhCmdSelectAll"/>
 				</Canvas.CommandBindings>
 			</Canvas>
 			<ScrollBar Grid.Row="1" Name="_horzScrollBar" Orientation="Horizontal" Scroll="EhWP_HorzScroll" />

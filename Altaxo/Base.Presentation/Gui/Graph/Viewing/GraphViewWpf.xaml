@@ -21,7 +21,14 @@
 				<RowDefinition/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			<Image Grid.Row="0" Focusable="True" FocusManager.IsFocusScope="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" KeyDown="EhGraphPanel_KeyDown" SizeChanged="EhGraphPanel_SizeChanged"/>
+			<Image Grid.Row="0" Focusable="True" FocusManager.IsFocusScope="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" KeyDown="EhGraphPanel_KeyDown" SizeChanged="EhGraphPanel_SizeChanged">
+				<Image.CommandBindings>
+					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy"/>
+					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut"/>
+					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete"/>
+					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste"/>
+				</Image.CommandBindings>
+			</Image>
 			<ScrollBar Grid.Row="1" Orientation="Horizontal" Name="_horizontalScrollBar" Scroll="EhHorizontalScrollBar_Scroll"/>
 		</Grid>
 		<ScrollBar Grid.Column="2" Orientation="Vertical" Name="_verticalScrollBar" Scroll="EhVerticalScrollBar_Scroll"/>

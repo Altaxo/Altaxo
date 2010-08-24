@@ -241,6 +241,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
       }
     }
 
+		/// <summary>
+		/// Returns the control that should be focused initially.
+		/// </summary>
+		public object GuiInitiallyFocusedElement { get { return _worksheetPanel; } }
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Form TableViewForm
     {

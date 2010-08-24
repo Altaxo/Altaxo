@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -132,6 +133,37 @@ namespace Altaxo.Data
       }
     }
 
+		class DataTableSelectedColumnSwapper
+		{
+			DataTable _table;
+			int _propColumns;
+			IAscendingIntegerCollection _selIndices;
+
+			AltaxoVariant _var;
+
+			public DataTableSelectedColumnSwapper(DataTable table, IAscendingIntegerCollection selectedDataColumns)
+			{
+				_table = table;
+				_propColumns = _table.PropertyColumnCount;
+				_selIndices = selectedDataColumns;
+			}
+
+			public void Swap(int i, int j)
+			{
+				int iNew = _selIndices[i];
+				int jNew = _selIndices[j];
+
+				_table.DataColumns.SwapColumnPositions(iNew, jNew);
+				DataColumnCollection prop = _table.PropCols;
+				for (int n = 0; n < _propColumns; n++)
+				{
+					_var = prop[n][iNew];
+					prop[n][iNew] = prop[n][jNew];
+					prop[n][jNew] = _var;
+				}
+			}
+		}
+
     class DoubleColumnComparer
     {
       DoubleColumn _col;
@@ -147,6 +179,27 @@ namespace Altaxo.Data
         return _ascendingOrder ? _col[i].CompareTo(_col[j]) : _col[j].CompareTo(_col[i]);
       }
     }
+
+		class SelectedDoubleColumnComparer
+		{
+			DoubleColumn _col;
+			bool _ascendingOrder;
+			IAscendingIntegerCollection _selIndices;
+
+			public SelectedDoubleColumnComparer(DoubleColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending)
+			{
+				_col = sortCol;
+				_ascendingOrder = ascending;
+				_selIndices = atSelectedIndices;
+			}
+
+			public int Compare(int i, int j)
+			{
+				int iNew = _selIndices[i];
+				int jNew = _selIndices[j];
+				return _ascendingOrder ? _col[iNew].CompareTo(_col[jNew]) : _col[jNew].CompareTo(_col[iNew]);
+			}
+		}
 
     class DataColumnComparer
     {
@@ -167,6 +220,32 @@ namespace Altaxo.Data
         else
           return _ascendingOrder ? +1 : -1;
       }
+		}
+
+		class SelectedDataColumnComparer
+		{
+			DataColumn _col;
+			bool _ascendingOrder;
+			IAscendingIntegerCollection _selIndices;
+			public SelectedDataColumnComparer(DataColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending)
+			{
+				_col = sortCol;
+				_ascendingOrder = ascending;
+				_selIndices = atSelectedIndices;
+			}
+
+			public int Compare(int i, int j)
+			{
+				int iNew = _selIndices[i];
+				int jNew = _selIndices[j];
+
+				if (_col[iNew] == _col[jNew])
+					return 0;
+				else if (_col[iNew] < _col[jNew])
+					return _ascendingOrder ? -1 : 1;
+				else
+					return _ascendingOrder ? +1 : -1;
+			}
 		}
 
 		class MultipleDataColumnComparer
@@ -212,7 +291,7 @@ namespace Altaxo.Data
     }
 
 		/// <summary>
-		/// Sorts the data rows of a table, using a specified column.
+		/// Sorts the data rows of a table, using multiple specified column.
 		/// </summary>
 		/// <param name="table">The table where the data columns should be sorted.</param>
 		/// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.</param>
@@ -281,6 +360,29 @@ namespace Altaxo.Data
         HeapSort(propCol.Count, new DataColumnComparer(propCol, inAscendingOrder).Compare, new DataTableColumnSwapper(table).Swap);
       }
     }
+
+
+		/// <summary>
+		/// Sort the order of the data columns (not rows!) of a table based on a specified property column. The relationship of property data to data columns is maintained.
+		/// </summary>
+		/// <param name="table">The table where to sort the columns.</param>
+		/// <param name="propCol">The property column where the sorting order is based on.</param>
+		/// <param name="inAscendingOrder">If true, the sorting is in ascending order. If false, the sorting is in descending order.</param>
+		public static void SortSelectedDataColumnsByPropertyColumn(this DataTable table, IAscendingIntegerCollection selectedDataCols, DataColumn propCol, bool inAscendingOrder)
+		{
+			if (!table.PropCols.ContainsColumn(propCol))
+				throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");
+
+			if (propCol is DoubleColumn)
+			{
+				HeapSort(selectedDataCols.Count, new SelectedDoubleColumnComparer((DoubleColumn)propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table,selectedDataCols).Swap);
+			}
+			else
+			{
+				HeapSort(selectedDataCols.Count, new SelectedDataColumnComparer(propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
+			}
+		}
+
   }
 }
 

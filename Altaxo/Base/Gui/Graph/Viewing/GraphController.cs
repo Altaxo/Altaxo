@@ -905,7 +905,23 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 
+		public bool IsCmdDeleteEnabled()
+		{
+			return true;
+		}
 
+		public void CmdDelete()
+		{
+			if (SelectedObjects.Count > 0)
+			{
+				RemoveSelectedObjects();
+			}
+			else
+			{
+				// nothing is selected, we assume that the user wants to delete the worksheet itself
+				Current.ProjectService.DeleteGraphDocument(Doc, false);
+			}
+		}
 
 		/// <summary>
 		/// Removes the currently selected objects (the <see cref="IHitTestObject" /> of the selected object(s) must provide
@@ -933,6 +949,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+
+		public bool IsCmdCopyEnabled()
+		{
+			return true;
+		}
 
 		/// <summary>
 		/// Copy the selected objects of this graph to the clipboard.
@@ -970,6 +991,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+		public bool IsCmdCutEnabled()
+		{
+			return 0 != SelectedObjects.Count;
+		}
+
 		public void CutSelectedObjectsToClipboard()
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
@@ -998,6 +1024,11 @@ namespace Altaxo.Gui.Graph.Viewing
 				SelectedObjects.Remove(o);
 
 			this.RemoveSelectedObjects();
+		}
+
+		public bool IsCmdPasteEnabled()
+		{
+			return true;
 		}
 
 		public void PasteObjectsFromClipboard()

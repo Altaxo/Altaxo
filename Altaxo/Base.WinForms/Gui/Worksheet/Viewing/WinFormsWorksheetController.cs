@@ -614,32 +614,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <returns>The column style of the data column.</returns>
     public Altaxo.Worksheet.ColumnStyle GetDataColumnStyle(int i)
     {
-      // zuerst in der ColumnStylesCollection nach dem passenden Namen
-      // suchen, ansonsten default-Style zurückgeben
-      Altaxo.Data.DataColumn dc = DataTable[i];
-      Altaxo.Worksheet.ColumnStyle colstyle;
-
-      // first look at the column styles hash table, column itself is the key
-      if(_worksheetLayout.DataColumnStyles.TryGetValue(dc, out colstyle))
-        return colstyle;
-      
-      // second look to the defaultcolumnstyles hash table, key is the type of the column style
-
-      System.Type searchstyletype = dc.GetColumnStyleType();
-      if(null==searchstyletype)
-      {
-        throw new ApplicationException("Error: Column of type +" + dc.GetType() + " returns no associated ColumnStyleType, you have to overload the method GetColumnStyleType.");
-      }
-      else
-      {
-        if(_worksheetLayout.DefaultColumnStyles.TryGetValue(searchstyletype, out colstyle))
-          return colstyle;
-
-        // if not successfull yet, we will create a new defaultColumnStyle
-        colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
-        _worksheetLayout.DefaultColumnStyles.Add(searchstyletype,colstyle);
-        return colstyle;
-      }
+			return _worksheetLayout.GetDataColumnStyle(i);
     }
 
 
@@ -651,33 +626,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <returns>The column style of the property column.</returns>
     public Altaxo.Worksheet.ColumnStyle GetPropertyColumnStyle(int i)
     {
-      // zuerst in der ColumnStylesCollection nach dem passenden Namen
-      // suchen, ansonsten default-Style zurückgeben
-      Altaxo.Data.DataColumn dc = DataTable.PropCols[i];
-      Altaxo.Worksheet.ColumnStyle colstyle;
-
-      // first look at the column styles hash table, column itself is the key
-      if(_worksheetLayout.PropertyColumnStyles.TryGetValue(dc, out colstyle))
-        return colstyle;
-      
-      // second look to the defaultcolumnstyles hash table, key is the type of the column style
-
-      System.Type searchstyletype = dc.GetColumnStyleType();
-      if(null==searchstyletype)
-      {
-        throw new ApplicationException("Error: Column of type +" + dc.GetType() + " returns no associated ColumnStyleType, you have to overload the method GetColumnStyleType.");
-      }
-      else
-      {
-        if(_worksheetLayout.DefaultPropertyColumnStyles.TryGetValue(searchstyletype, out colstyle))
-          return colstyle;
-
-        // if not successfull yet, we will create a new defaultColumnStyle
-        colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
-        _worksheetLayout.DefaultPropertyColumnStyles.Add(searchstyletype,colstyle);
-        colstyle.ChangeTypeTo(ColumnStyleType.PropertyCell);
-        return colstyle;
-      }
+			return _worksheetLayout.GetPropertyColumnStyle(i);
     }
 
     #endregion

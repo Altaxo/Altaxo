@@ -222,12 +222,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			_cellEdit_IsArmed = false;
 			_cellEdit_IsModified = false;
 			_cellEditControl.PreviewKeyDown += new KeyEventHandler(EhCellEditControl_PreviewKeyDown);
-			_cellEditControl.PreviewTextInput += new TextCompositionEventHandler(EhCellEditControl_PreviewTextInput);
+			_cellEditControl.TextChanged += new TextChangedEventHandler(EhCellEditControl_TextChanged);
 			_cellEditControl.LostFocus += this.EhCellEditControl_LostFocus;
 			_cellEditControl.Visibility = Visibility.Hidden;
 
 			_visualHost = new VisualHost(EhView_TableAreaPaint);
 		}
+
+	
 
 		#endregion
 
@@ -580,7 +582,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		}
 
-		void EhCellEditControl_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		void EhCellEditControl_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			_cellEdit_IsModified = true;
 		}
@@ -626,7 +628,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		private void SetCellEditContentAndShow()
 		{
-
 			if (this._cellEdit_EditedCell.AreaType == AreaType.DataCell)
 			{
 				_cellEditControl.Text = GetDataColumnStyle(_cellEdit_EditedCell.ColumnNumber).GetColumnValueAtRow(_cellEdit_EditedCell.RowNumber, DataTable[_cellEdit_EditedCell.ColumnNumber]);
@@ -1198,7 +1199,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		public void EhView_HorzScrollBarScroll(System.Windows.Controls.Primitives.ScrollEventArgs e)
 		{
-			if (e.ScrollEventType != System.Windows.Controls.Primitives.ScrollEventType.ThumbTrack)
+			//if (e.ScrollEventType != System.Windows.Controls.Primitives.ScrollEventType.ThumbTrack)
 				HorzScrollPos = (int)e.NewValue;
 		}
 
@@ -1716,15 +1717,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-
-		/// <summary>
-		/// Remove the selected columns, rows or property columns.
-		/// </summary>
-		public void RemoveSelected()
-		{
-			EditCommands.RemoveSelected(_guiIndependentController);
-		}
-
 		public void Delete()
 		{
 			if (this._cellEdit_IsArmed)
@@ -1733,7 +1725,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 			else if (this.AreColumnsOrRowsSelected)
 			{
-				this.RemoveSelected();
+				EditCommands.RemoveSelected(_guiIndependentController);
 			}
 			else
 			{

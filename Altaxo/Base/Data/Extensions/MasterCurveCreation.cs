@@ -90,7 +90,9 @@ namespace Altaxo.Data
       /// <summary>
       /// Evaluates the mean squared difference (always positive) between master curve and new data and tries to minimize this value (minimization method).
       /// </summary>
-      OptimizeSquaredDifference
+      OptimizeSquaredDifference,
+
+			OptimizeSquaredDifferenceByBruteForce
     }
 
     #region Interpolation information
@@ -353,6 +355,25 @@ namespace Altaxo.Data
 
               }
               break;
+
+						case OptimizationMethod.OptimizeSquaredDifferenceByBruteForce:
+							{
+								Func<double, double> optFunc = delegate(double shift)
+								{
+									double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
+									//Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+									return res;
+								};
+								var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
+								var vec = new Calc.LinearAlgebra.DoubleVector(1);
+								vec[0] = globalMinShift;
+								var dir = new Calc.LinearAlgebra.DoubleVector(1);
+								dir[0] = globalMaxShift - globalMinShift;
+								double initialStep = 1;
+								var result = optimizationMethod.Search(vec, dir, initialStep);
+								currentShiftFactor = result[0];
+							}
+							break;
             default:
               throw new NotImplementedException("OptimizationMethod not implemented: " + options.OptimizationMethod.ToString());
           }

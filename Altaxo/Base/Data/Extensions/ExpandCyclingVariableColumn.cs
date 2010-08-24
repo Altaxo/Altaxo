@@ -26,6 +26,12 @@ namespace Altaxo.Data
       GroupAllColumns,
     }
 
+		public enum OutputSorting
+		{
+			None,
+			Ascending,
+			Descending
+		}
     /// <summary>Indices of all columns that will be considered to be processed. If null, all columns of the source table will be considered.</summary>
     public IAscendingIntegerCollection ColumnsToProcess { get; set; }
 
@@ -42,6 +48,8 @@ namespace Altaxo.Data
 
     /// <summary>Designates the order of the newly created columns of the dependent variables.</summary>
     public OutputFormat DestinationOutput { get; set; }
+
+		public OutputSorting DestinationColumnSorting { get; set; }
 
     //public bool DestinationPutIndependentVariablesAsPropertyColumns { get; set; }
   }

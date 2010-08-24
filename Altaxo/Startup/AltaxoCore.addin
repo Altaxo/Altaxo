@@ -777,8 +777,7 @@
       description="${res:XML.MainMenu.WorksheetMenu.InsertDataRows.Description}" class="Altaxo.Worksheet.Commands.InsertDataRows" />
     <MenuItem id="ChangeRowsToPropCols" label="${res:XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns}"
       description="${res:XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.ChangeRowsToPropertyColumns" />
-
-    <MenuItem id="CleanSeparator"  type = "Separator"/>
+		<MenuItem id="CleanSeparator"  type = "Separator"/>
     <MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
       description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
     <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
@@ -796,7 +795,13 @@
         class="Altaxo.Worksheet.Commands.SortTableAscending" />
       <MenuItem	id="SortTableDesc"	label="${res:XML.MainMenu.ColumnMenu.SortTableDescending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableDescending.Description}"
         class="Altaxo.Worksheet.Commands.SortTableDescending" />
-    </Condition>
+
+			<MenuItem id="SortPropColAsc" label="${res:XML.MainMenu.WorksheetMenu.SortPropColAscending}"
+				description="${res:XML.MainMenu.WorksheetMenu.SortPropColAscending.Description}" class="Altaxo.Worksheet.Commands.SortColumnsByPropertyColumnAscending" />
+			<MenuItem id="SortPropColDesc" label="${res:XML.MainMenu.WorksheetMenu.SortPropColDescending}"
+				description="${res:XML.MainMenu.WorksheetMenu.SortPropColDescending.Description}" class="Altaxo.Worksheet.Commands.SortColumnsByPropertyColumnDescending" />
+
+		</Condition>
     <MenuItem	id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}"	
       description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}" class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
     <MenuItem id="ExtractPropertyValues" label="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues}"

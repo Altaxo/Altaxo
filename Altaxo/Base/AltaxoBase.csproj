@@ -463,6 +463,7 @@
     <Compile Include="Worksheet\ColumnStyle.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Worksheet\ColumnStyleDictionary.cs" />
     <Compile Include="Worksheet\Commands\Analysis\CalculusCommands.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -536,6 +537,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Worksheet\WorksheetArea.cs" />
+    <Compile Include="Worksheet\WorksheetPaintingGdi.cs" />
     <EmbeddedResource Include="Textures.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

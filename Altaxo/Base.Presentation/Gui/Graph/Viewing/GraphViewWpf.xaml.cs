@@ -369,5 +369,65 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (null != _controller)
 				_controller.EhView_Scroll();
 		}
+
+		private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = null != _controller && _controller.IsCmdCopyEnabled();
+			e.Handled = true;
+		}
+
+		private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = null != _controller && _controller.IsCmdCutEnabled();
+			e.Handled = true;
+		}
+
+		private void EhEnableCmdDelete(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = null != _controller && _controller.IsCmdDeleteEnabled();
+			e.Handled = true;
+		}
+
+		private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = null != _controller && _controller.IsCmdPasteEnabled();
+			e.Handled = true;
+		}
+
+		private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				_controller.CopySelectedObjectsToClipboard();
+				e.Handled = true;
+			}
+		}
+
+		private void EhCmdCut(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				_controller.CutSelectedObjectsToClipboard();
+				e.Handled = true;
+			}
+		}
+
+		private void EhCmdDelete(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				_controller.CmdDelete();
+				e.Handled = true;
+			}
+		}
+
+		private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				_controller.PasteObjectsFromClipboard();
+				e.Handled = true;
+			}
+		}
 	}
 }

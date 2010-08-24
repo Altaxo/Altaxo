@@ -50,6 +50,7 @@ namespace Altaxo.Worksheet
     /// </summary>
     protected Altaxo.Data.DataTable _dataTable;
 
+		/*
     /// <summary>
     /// defaultColumnsStyles stores the default column Styles in a dictionary
     /// the key for the hash table is the Type of the ColumnStyle
@@ -61,6 +62,7 @@ namespace Altaxo.Worksheet
     /// the key for the hash table is the Type of the ColumnStyle
     /// </summary>
 		protected Dictionary<System.Type, ColumnStyle> _defaultPropertyColumnStyles;
+		*/
 
     /// <summary>
     /// m_ColumnStyles stores the column styles for each data column individually,
@@ -68,10 +70,10 @@ namespace Altaxo.Worksheet
     /// There is no need to store a column style here if the column is styled as default,
     /// instead the defaultColumnStyle is used in this case
     /// </summary>
-    protected ColumnDictionary _dataColumnStyles;
+    protected ColumnStyleDictionary _dataColumnStyles;
 
 
-		protected ColumnDictionary _propertyColumnStyles;
+		protected ColumnStyleDictionary _propertyColumnStyles;
 
 
     /// <summary>
@@ -117,8 +119,8 @@ namespace Altaxo.Worksheet
         info.AddValue("ColumnHeaderStyle",s._columnHeaderStyle);
         info.AddValue("PropertyColumnHeaderStyle",s._propertyColumnHeaderStyle);
 
-        info.CreateArray("DefaultColumnStyles",s._defaultDataColumnStyles.Values.Count);
-        foreach(object style in s._defaultDataColumnStyles.Values)
+        info.CreateArray("DefaultColumnStyles",s._dataColumnStyles.DefaultColumnStyles.Values.Count);
+        foreach(object style in s._dataColumnStyles.DefaultColumnStyles.Values)
           info.AddValue("DefaultColumnStyle",style);
         info.CommitArray();
 
@@ -163,7 +165,7 @@ namespace Altaxo.Worksheet
         for(int i=0;i<count;i++)
         {
           var defstyle = (ColumnStyle)info.GetValue("DefaultColumnStyle",s);
-          s.DefaultColumnStyles.Add(defstyle.GetType(), defstyle);
+          s._dataColumnStyles.DefaultColumnStyles[defstyle.GetType()] = defstyle;
         }
         info.CloseArray(count);
       
@@ -227,8 +229,8 @@ namespace Altaxo.Worksheet
         base.Serialize(obj, info);
 
         WorksheetLayout s = (WorksheetLayout)obj;
-        info.CreateArray("DefaultPropertyColumnStyles", s._defaultPropertyColumnStyles.Values.Count);
-        foreach (object style in s._defaultPropertyColumnStyles.Values)
+        info.CreateArray("DefaultPropertyColumnStyles", s._propertyColumnStyles.DefaultColumnStyles.Values.Count);
+        foreach (object style in s._propertyColumnStyles.DefaultColumnStyles.Values)
           info.AddValue("DefaultPropertyColumnStyle", style);
         info.CommitArray();
       }
@@ -242,11 +244,80 @@ namespace Altaxo.Worksheet
         for (int i = 0; i < count; i++)
         {
           var defstyle = (ColumnStyle)info.GetValue("DefaultPropertyColumnStyle", s);
-          s.DefaultPropertyColumnStyles.Add(defstyle.GetType(), defstyle);
+          s._propertyColumnStyles.DefaultColumnStyles[defstyle.GetType()] = defstyle;
         }
         info.CloseArray(count);
       }
     }
+
+		// TODO (Wpf) Uncomment the next serialization if this is also implemented in Altaxo3
+		/*
+		 
+		// New in version 2 (2010-08): the key of the default styles is now the type of the column (before it was the type of default style)
+		// both data columns and property columns have their own default styles
+		// ColumnDictionary now has its own serialization code
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 2)]
+		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			protected WorksheetLayout _deserializedInstance;
+			protected Main.DocumentPath _unresolvedPathToTable;
+
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				WorksheetLayout s = (WorksheetLayout)obj;
+
+				info.AddValue("Guid", System.Xml.XmlConvert.ToString(s._guid));
+				info.AddValue("Table", Main.DocumentPath.GetAbsolutePath(s._dataTable));
+				info.AddValue("RowHeaderStyle", s._rowHeaderStyle);
+				info.AddValue("ColumnHeaderStyle", s._columnHeaderStyle);
+				info.AddValue("PropertyColumnHeaderStyle", s._propertyColumnHeaderStyle);
+
+				info.AddValue("DataColumnStyles", s._dataColumnStyles);
+				info.AddValue("PropertyColumnStyles", s._propertyColumnStyles);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				WorksheetLayout s = null != o ? (WorksheetLayout)o : new WorksheetLayout();
+				Deserialize(s, info, parent);
+				return s;
+			}
+
+			protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				XmlSerializationSurrogate2 surr = new XmlSerializationSurrogate2();
+				surr._deserializedInstance = s;
+				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+
+
+				s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
+				surr._unresolvedPathToTable = (Main.DocumentPath)info.GetValue("Table", s);
+				s._rowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
+				s._columnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
+				s._propertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
+
+				s._dataColumnStyles = (ColumnStyleDictionary)info.GetValue("DataColumnStypes", s);
+				s._propertyColumnStyles = (ColumnStyleDictionary)info.GetValue("PropertyColumnStyles", s);
+			}
+
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			{
+				if (this._unresolvedPathToTable != null)
+				{
+					object table = Main.DocumentPath.GetObject(this._unresolvedPathToTable, this._deserializedInstance, documentRoot);
+					if (table is Altaxo.Data.DataTable)
+					{
+						this._deserializedInstance._dataTable = (Altaxo.Data.DataTable)table;
+						this._unresolvedPathToTable = null;
+					}
+				}
+
+				// if the table path has been resolved, we can finish deserialization
+				if (this._unresolvedPathToTable == null)
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+			}
+		}
+		*/
 
     #endregion
 
@@ -256,16 +327,10 @@ namespace Altaxo.Worksheet
     {
       _guid = System.Guid.NewGuid();
 
-      // defaultColumnsStyles stores the default column Styles in a Hashtable
-			_defaultDataColumnStyles = new Dictionary<System.Type, ColumnStyle>();
-
-      // defaultPropertyColumnsStyles stores the default property column Styles in a Hashtable
-			_defaultPropertyColumnStyles = new Dictionary<System.Type, ColumnStyle>();
-
       // m_ColumnStyles stores the column styles for each data column individually,
-      _dataColumnStyles = new ColumnDictionary(_defaultDataColumnStyles);
+      _dataColumnStyles = new ColumnStyleDictionary();
 
-			_propertyColumnStyles = new ColumnDictionary(_defaultPropertyColumnStyles);
+			_propertyColumnStyles = new ColumnStyleDictionary();
 
       // The style of the row header. This is the leftmost column that shows usually the row number.
       _rowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
@@ -310,16 +375,6 @@ namespace Altaxo.Worksheet
     {
       get { return _dataTable; }
       set { _dataTable = value; }
-    }
-
-    public Dictionary<System.Type, ColumnStyle> DefaultColumnStyles
-    {
-      get { return _defaultDataColumnStyles; }
-    }
-
-		public Dictionary<System.Type, ColumnStyle> DefaultPropertyColumnStyles
-    {
-      get { return _defaultPropertyColumnStyles; }
     }
 
     public IDictionary<Data.DataColumn, ColumnStyle> DataColumnStyles
@@ -392,190 +447,6 @@ namespace Altaxo.Worksheet
 
     #endregion
 
-    #region Dictionaries
-
-
-    protected class ColumnDictionary : IDictionary<Data.DataColumn, ColumnStyle>
-    {
-			Dictionary<Data.DataColumn, ColumnStyle> _hash;
-			Dictionary<System.Type, ColumnStyle> _defaultColumnStyles;
-
-
-			public ColumnDictionary(Dictionary<System.Type, ColumnStyle> defaultColumnStyles)
-			{
-				_defaultColumnStyles = defaultColumnStyles;
-				_hash = new Dictionary<Altaxo.Data.DataColumn, ColumnStyle>();
-			}
-
-			void AttachKey(DataColumn key)
-			{
-				key.TunneledEvent += EhKey_TunneledEvent;
-			}
-
-			void DetachKey(DataColumn key)
-		{
-			key.TunneledEvent -= EhKey_TunneledEvent;
-		}
-
-      void EhKey_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
-      {
-				if (e is Main.DisposeEventArgs)
-				{
-					var c = source as DataColumn;
-					if (c != null)
-						this.Remove(c); // do not use direct remove, as the event handler has to be detached also
-				}
-      }
-
-			#region IDictionary<DataColumn,ColumnStyle> Members
-
-			public void Add(DataColumn key, ColumnStyle value)
-			{
-        if (null == value)
-          throw new ArgumentNullException("value");
-
-				_hash.Add(key, value);
-				AttachKey(key);
-			}
-
-			public bool ContainsKey(DataColumn key)
-			{
-				return _hash.ContainsKey(key);
-			}
-
-			public ICollection<DataColumn> Keys
-			{
-				get { return _hash.Keys; }
-			}
-
-			public bool Remove(DataColumn key)
-			{
-				bool result = _hash.Remove(key);
-				if (result)
-					DetachKey(key);
-				return result;
-			}
-
-			public bool TryGetValue(DataColumn key, out ColumnStyle value)
-			{
-				return _hash.TryGetValue(key, out value);
-			}
-
-			public ICollection<ColumnStyle> Values
-			{
-				get { return _hash.Values; }
-			}
-
-			public ColumnStyle this[DataColumn key]
-			{
-				get
-				{
-					ColumnStyle colstyle;
-					// first look at the column styles hash table, column itself is the key
-					if (_hash.TryGetValue(key, out colstyle))
-						return colstyle;
-
-					if(_defaultColumnStyles.TryGetValue(key.GetType(), out colstyle))
-						return colstyle;
-
-					// second look to the defaultcolumnstyles hash table, key is the type of the column style
-
-					System.Type searchstyletype = key.GetColumnStyleType();
-					if (null == searchstyletype)
-					{
-						throw new ApplicationException("Error: Column of type +" + key.GetType() + " returns no associated ColumnStyleType, you have to overload the method GetColumnStyleType.");
-					}
-					else
-					{
-						// if not successfull yet, we will create a new defaultColumnStyle
-						colstyle = (ColumnStyle)Activator.CreateInstance(searchstyletype);
-						_defaultColumnStyles.Add(key.GetType(), colstyle);
-						return colstyle;
-					}
-				}
-				set
-				{
-          if (null == value)
-            throw new ArgumentNullException("value");
-
-					bool hadOldValue = _hash.ContainsKey(key);
-					_hash[key] = value;
-					if (!hadOldValue)
-						AttachKey(key);
-				}
-			}
-
-
-
-		
-
-			#endregion
-
-			#region ICollection<KeyValuePair<DataColumn,ColumnStyle>> Members
-
-			public void Add(KeyValuePair<DataColumn, ColumnStyle> item)
-			{
-				((ICollection<KeyValuePair<DataColumn,ColumnStyle>>)_hash).Add(item);
-				AttachKey(item.Key);
-			}
-
-			public void Clear()
-			{
-				foreach (DataColumn c in _hash.Keys)
-					DetachKey(c);
-
-				_hash.Clear();
-			}
-
-			public bool Contains(KeyValuePair<DataColumn, ColumnStyle> item)
-			{
-				return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_hash).Contains(item);
-			}
-
-			public void CopyTo(KeyValuePair<DataColumn, ColumnStyle>[] array, int arrayIndex)
-			{
-				((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_hash).CopyTo(array, arrayIndex);
-			}
-
-			public int Count
-			{
-				get { return _hash.Count; }
-			}
-
-			public bool IsReadOnly
-			{
-				get { return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_hash).IsReadOnly; }
-			}
-
-			public bool Remove(KeyValuePair<DataColumn, ColumnStyle> item)
-			{
-				bool result = ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_hash).Remove(item);
-				if (result)
-					DetachKey(item.Key);
-				return result;
-			}
-
-			#endregion
-
-			#region IEnumerable<KeyValuePair<DataColumn,ColumnStyle>> Members
-
-			public IEnumerator<KeyValuePair<DataColumn, ColumnStyle>> GetEnumerator()
-			{
-				return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_hash).GetEnumerator();
-			}
-
-			#endregion
-
-			#region IEnumerable Members
-
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-			{
-				return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_hash).GetEnumerator();
-			}
-
-			#endregion
-		}
-
-    #endregion
+ 
   }
 }

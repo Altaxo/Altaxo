@@ -26,7 +26,7 @@ using Altaxo;
 using Altaxo.Main;
 
 using ICSharpCode.Core;
-using ICSharpCode.Core.WinForms;
+using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
@@ -254,6 +254,38 @@ namespace Altaxo.Main.Commands
 
 			if (recentOpen.RecentProject.Count > 0)
 			{
+				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentProject.Count];
+
+				for (int i = 0; i < recentOpen.RecentProject.Count; ++i)
+				{
+					// variable inside loop, so that anonymous method refers to correct recent file
+					string recentProject = recentOpen.RecentProject[i];
+					string accelaratorKeyPrefix = i < 10 ? "_" + ((i + 1) % 10) + " " : "";
+					items[i] = new System.Windows.Controls.MenuItem()
+					{
+						Header = accelaratorKeyPrefix + recentProject
+					};
+					items[i].Click += delegate
+					{
+						// Original SharpDevelop: ProjectService.LoadSolution(recentProject);
+						FileUtility.ObservedLoad(new NamedFileOperationDelegate(Current.ProjectService.OpenProject), recentProject);
+					};
+				}
+				return items;
+			}
+			else
+			{
+				return new[] { new System.Windows.Controls.MenuItem {
+						Header = StringParser.Parse("${res:Dialog.Componnents.RichMenuItem.NoRecentProjectsString}"),
+						IsEnabled = false
+					} };
+			}
+
+			/*
+
+
+			if (recentOpen.RecentProject.Count > 0)
+			{
 				MenuCommand[] items = new MenuCommand[recentOpen.RecentProject.Count];
 				for (int i = 0; i < recentOpen.RecentProject.Count; ++i)
 				{
@@ -270,17 +302,7 @@ namespace Altaxo.Main.Commands
 			defaultMenu.Enabled = false;
 
 			return new MenuCommand[] { defaultMenu };
-		}
-
-
-		void LoadRecentProject(object sender, EventArgs e)
-		{
-			MenuCommand item = (MenuCommand)sender;
-
-			string fileName = item.Tag.ToString();
-
-			// The following line was changed to load an altaxo solution.
-			FileUtility.ObservedLoad(new NamedFileOperationDelegate(Current.ProjectService.OpenProject), fileName);
+			*/
 		}
 	}
 

@@ -14,6 +14,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController GuiDependentController { get; }
 		void TableAreaInvalidate();
 		string TableViewTitle { set; }
+		/// <summary>
+		/// Returns the control that should be focused initially.
+		/// </summary>
+		object GuiInitiallyFocusedElement { get; }
 	}
 
   public interface IWorksheetController : IMVCController
@@ -72,6 +76,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// Forces a redraw of the table view.
     /// </summary>
    void UpdateTableView();
+
+	
 
 
 	 bool EnableCut { get; }

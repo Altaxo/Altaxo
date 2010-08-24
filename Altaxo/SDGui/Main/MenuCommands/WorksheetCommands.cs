@@ -698,6 +698,38 @@ namespace Altaxo.Worksheet.Commands
 
 	#endregion
 
+	#region Property column commands
+
+	public class SortColumnsByPropertyColumnAscending : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Sort(ctrl, true);
+		}
+
+		public static void Sort(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, bool ascending)
+		{
+			Altaxo.Collections.IAscendingIntegerCollection selectedDataColumns = ctrl.SelectedDataColumns;
+			if (0 == selectedDataColumns.Count)
+				selectedDataColumns = new Altaxo.Collections.ContiguousIntegerRange(0, ctrl.DataTable.DataColumnCount);
+
+			if (0 == ctrl.SelectedPropertyColumns.Count || 0 == selectedDataColumns.Count)
+				return;
+
+			Altaxo.Data.Sorting.SortSelectedDataColumnsByPropertyColumn(ctrl.DataTable, selectedDataColumns, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+		}
+	}
+
+	public class SortColumnsByPropertyColumnDescending : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			SortColumnsByPropertyColumnAscending.Sort(ctrl, false);
+		}
+	}
+
+	#endregion
+
 	#region Analysis
 
 	public class AnalysisFFT : AbstractWorksheetControllerCommand

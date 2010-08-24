@@ -76,6 +76,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
+		/// <summary>
+		/// Returns the control that should be focused initially.
+		/// </summary>
+		public object GuiInitiallyFocusedElement
+		{
+			get { return _worksheetPanel; }
+		}
+
 		#endregion
 
 		#region Functions called from GuiController
@@ -250,24 +258,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
 		{
-			
-			if (null != _guiController)
-			{
-				e.CanExecute = _guiController.EnableCopy;
-				e.Handled = true;
-			}
-			
+			e.CanExecute = null != _guiController && _guiController.EnableCopy;
+			e.Handled = true;
 		}
 
 		private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
 		{
-			
-			if (null != _guiController)
-			{
-				e.CanExecute = _guiController.EnableCopy;
-				e.Handled = true;
-			}
-			
+			e.CanExecute = null != _guiController && _guiController.EnablePaste;
+			e.Handled = true;
 		}
 
 		private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
@@ -279,7 +277,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-
 		private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
 		{
 			if (null != _guiController)
@@ -289,9 +286,49 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-		private void EhPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
 		{
+			e.CanExecute = null != _guiController && _guiController.EnableCut;
+			e.Handled = true;
+		}
 
+		private void EhCmdCut(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _guiController)
+			{
+				_guiController.Cut();
+				e.Handled = true;
+			}
+		}
+
+		private void EhEnableCmdDelete(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = null != _guiController && _guiController.EnableDelete;
+			e.Handled = true;
+		}
+
+		private void EhCmdDelete(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _guiController)
+			{
+				_guiController.Delete();
+				e.Handled = true;
+			}
+		}
+
+		private void EhEnableCmdSelectAll(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = null != _guiController && _guiController.EnableSelectAll;
+			e.Handled = true;
+		}
+
+		private void EhCmdSelectAll(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _guiController)
+			{
+				_guiController.SelectAll();
+				e.Handled = true;
+			}
 		}
 
 	}
