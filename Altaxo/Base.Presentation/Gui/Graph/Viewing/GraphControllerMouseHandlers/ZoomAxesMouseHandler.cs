@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			NextMouseHandlerType = this.GraphToolType;
 
       if(_grac!=null)
-        _grac.SetPanelCursor(Cursors.Arrow);
+        _grac.SetPanelCursor(Cursors.SizeAll);
     }
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType

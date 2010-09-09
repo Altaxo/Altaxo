@@ -1,0 +1,30 @@
+﻿<Window x:Class="Altaxo.Gui.Common.DialogShellViewWpf"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+				SizeToContent="WidthAndHeight"
+				ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Loaded="EhViewLoaded">
+    <Grid Name="_grid" Margin="4,4,4,4">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="6"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+			<Grid Name="_buttonGrid" Grid.Row="2" Margin="0,4,0,4">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0"/>
+				<ColumnDefinition Width="4*"/>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="4*"/>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="4*"/>
+				<ColumnDefinition Width="0"/>
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="1" IsDefault="True" Click="EhButtonOKPressed">Ok</Button>
+			<Button Grid.Column="3" IsCancel="True" Click="EhButtonCancelPressed">Cancel</Button>
+			<Button Grid.Column="5" Name="_btApply" Click="EhButtonApplyPressed">Apply</Button>
+		</Grid>
+	</Grid>
+</Window>

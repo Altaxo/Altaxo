@@ -194,6 +194,7 @@
     <Compile Include="Data\Extensions\MasterCurveCreation.cs" />
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\BreakLineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\CircleLineCaps.cs" />
     <Compile Include="Graph\Gdi\LineCaps\TriangleLineCaps.cs" />
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderARGBGradient.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\TabbedElementController.cs" />
     <Compile Include="Gui\Common\TextChoiceController.cs" />
+    <Compile Include="Gui\Data\ExpandCyclingVariableController.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
     <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleController.cs" />

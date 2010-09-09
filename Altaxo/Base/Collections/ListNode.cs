@@ -141,6 +141,26 @@ namespace Altaxo.Collections
         return null;
       }
     }
+		/// <summary>Get the index of the first selected node. Returns -1 if no node is selected.</summary>
+		public int FirstSelectedNodeIndex
+		{
+			get
+			{
+				int len = this.Count;
+				for(int i=0;i<len;i++)
+					if (this[i].Selected)
+						return i;
+
+				return -1;
+			}
+		}
+		/// <summary>Sets the <see cref="SelectedListNode.Selected"/> property of each node in the list to false.</summary>
+		public void ClearSelectionsAll()
+		{
+			foreach (var node in this)
+				node.Selected = false;
+		}
+
     public void Exchange(int i, int j)
     {
       if (i == j)
@@ -209,4 +229,29 @@ namespace Altaxo.Collections
 
   }
 
+
+	public static class SelectableListNodeListHelper
+	{
+		public static void FillWithEnumeration(this SelectableListNodeList list, System.Enum enumerationValue)
+		{
+			list.Clear();
+			foreach (System.Enum e in System.Enum.GetValues(enumerationValue.GetType()))
+			{
+				string baseName = e.ToString();
+				bool isSelected = 0==e.CompareTo(enumerationValue);
+				list.Add(new SelectableListNode(baseName, e, isSelected));
+			}
+		}
+
+		public static void FillWithFlagEnumeration(this SelectableListNodeList list, System.Enum enumerationValue)
+		{
+			list.Clear();
+			foreach (System.Enum e in System.Enum.GetValues(enumerationValue.GetType()))
+			{
+				string baseName = e.ToString();
+				bool isSelected = enumerationValue.HasFlag(e);
+				list.Add(new SelectableListNode(baseName, e, isSelected));
+			}
+		}
+	}
 }

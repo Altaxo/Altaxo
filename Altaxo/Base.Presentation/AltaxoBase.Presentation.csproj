@@ -12,6 +12,7 @@
     <AssemblyName>AltaxoBase.Presentation</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +47,18 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
+      <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\MultipleChoiceListView.cs" />
+    <Compile Include="Gui\Common\SingleChoiceComboBoxControl.cs" />
+    <Compile Include="Gui\Common\SingleChoiceRadioStackPanel.cs" />
+    <Compile Include="Gui\Common\SingleValueControl.xaml.cs">
+      <DependentUpon>SingleValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
+      <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
@@ -85,6 +98,18 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Page Include="Gui\Common\DialogShellViewWpf.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\SingleValueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

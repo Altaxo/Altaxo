@@ -44,7 +44,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Sorts elements in an order provided by the comparism method. Needs N log N operations. Worst case (already sorted) is something like 20% slower.
     /// </summary>
-    /// <param name="count">Number of elements to sort.</param>
+    /// <param name="count">Number of elements to sort (from indices 0 to count-1).</param>
     /// <param name="compare">A compare method wich takes two indices and compares the elements at those indices.</param>
     /// <param name="swap">A swap method which swaps the elements at two indices.</param>
     static void HeapSort(int count, RowComparismMethod compare, RowSwapMethod swap)
@@ -82,6 +82,60 @@ namespace Altaxo.Data
       }
     }
     #endregion
+
+
+			/// <summary>
+		/// Sorts the elements, but maintains the original order in the provided array. Instead, an array of indices is created. The elements are
+		/// sorted in the sense that elementsToSort[indexArray[i]] is sorted afterwards. The standard comparer of the elements is used for comparison.
+		/// </summary>
+		/// <param name="elementsToSort">The list of elements to sort. The list is not changed, thus it can be readonly.</param>
+		/// <returns>An array of indices, so that elementsToSort[indexArray[i]] (i = 0..Count-1) is sorted.</returns>
+		public static int[] HeapSortVirtually<T>(IList<T> elementsToSort) where T : IComparable
+		{
+			return HeapSortVirtually(elementsToSort, null);
+		}
+
+		public static int[] CreateIdentityIndices(int count)
+		{
+			var result = new int[count];
+			for (int i = count - 1; i >= 0; i--)
+				result[i] = i;
+			return result;
+		}
+
+		public static void ReverseArray(int[] arr)
+		{
+			int count = arr.Length;
+			for (int i = 0, j = count - 1; i < j; i++, j--)
+			{
+				int ai = arr[i];
+				arr[i] = arr[j];
+				arr[j] = ai;
+			}
+		}
+
+		/// <summary>
+		/// Sorts the elements, but maintains the original order in the provided array. Instead, an array of indices is created. The elements are
+		/// sorted in the sense that elementsToSort[indexArray[i]] is sorted afterwards. The standard comparer of the elements is used for comparison.
+		/// </summary>
+		/// <param name="elementsToSort">The list of elements to sort. The list is not changed, thus it can be readonly.</param>
+		/// <param name="destinationIndexArray">Can be null. If you provide an array here with a length greater or equal to the number of elements to sort, that array is used as return value and filled with the indices.</param>
+		/// <returns>An array of indices, so that elementsToSort[indexArray[i]] (i = 0..Count-1) is sorted.</returns>
+		public static int[] HeapSortVirtually<T>(IList<T> elementsToSort, int[] destinationIndexArray) where T : IComparable
+		{
+			if (destinationIndexArray == null || destinationIndexArray.Length < elementsToSort.Count)
+				destinationIndexArray = new int[elementsToSort.Count];
+			for (int i = elementsToSort.Count - 1; i >= 0; i--)
+				destinationIndexArray[i] = i;
+
+			HeapSort(
+				elementsToSort.Count,
+				delegate(int i, int j) { return elementsToSort[destinationIndexArray[i]].CompareTo(elementsToSort[destinationIndexArray[j]]); },
+				delegate(int i, int j) { int ti = destinationIndexArray[i]; destinationIndexArray[i] = destinationIndexArray[j]; destinationIndexArray[j] = ti; }
+			);
+
+			return destinationIndexArray;
+		}
 
     class DataColumnCollectionRowSwapper
     {
@@ -346,7 +400,7 @@ namespace Altaxo.Data
 		/// <param name="table">The table where to sort the columns.</param>
 		/// <param name="propCol">The property column where the sorting order is based on.</param>
 		/// <param name="inAscendingOrder">If true, the sorting is in ascending order. If false, the sorting is in descending order.</param>
-    public static void SortColumnsByPropertyColumn(this DataTable table, DataColumn propCol, bool inAscendingOrder)
+    public static void SortDataColumnsByPropertyColumn(this DataTable table, DataColumn propCol, bool inAscendingOrder)
     {
       if (!table.PropCols.ContainsColumn(propCol))
         throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");
@@ -368,7 +422,7 @@ namespace Altaxo.Data
 		/// <param name="table">The table where to sort the columns.</param>
 		/// <param name="propCol">The property column where the sorting order is based on.</param>
 		/// <param name="inAscendingOrder">If true, the sorting is in ascending order. If false, the sorting is in descending order.</param>
-		public static void SortSelectedDataColumnsByPropertyColumn(this DataTable table, IAscendingIntegerCollection selectedDataCols, DataColumn propCol, bool inAscendingOrder)
+		public static void SortDataColumnsByPropertyColumn(this DataTable table, IAscendingIntegerCollection selectedDataCols, DataColumn propCol, bool inAscendingOrder)
 		{
 			if (!table.PropCols.ContainsColumn(propCol))
 				throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");

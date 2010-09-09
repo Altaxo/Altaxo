@@ -49,8 +49,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Current.SetPropertyService(new PropertyServiceWrapper());
 			Altaxo.Current.SetResourceService(new ResourceServiceWrapper());
 			Altaxo.Current.SetProjectService(new Altaxo.Main.ProjectService());
-			Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.WinFormsGuiFactoryService());
-			// Altaxo.Current.Gui.ContextMenuProvider = ICSharpCode.Core.WinForms.MenuService.CreateContextMenu;
+			Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.GuiFactoryServiceWpfWin());
 
 			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.Forms.Control), ShowWinFormContextMenu);
 			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.UIElement), ShowWpfContextMenu);

@@ -651,25 +651,25 @@
     <ToolbarItem id="CutSeparator"  type = "Separator"/>
     <ToolbarItem id="GraphToolSeparator"  type = "Separator"/>
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">
-      <ToolbarItem id="GraphPointer" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
+      <ToolbarItem id="GraphPointer" type="CheckBox" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
         loadclasslazy="false" class="Altaxo.Graph.Commands.SelectPointerTool" />
-      <ToolbarItem id="TextPointer" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
+      <ToolbarItem id="TextPointer" type="CheckBox" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
         class="Altaxo.Graph.Commands.SelectTextTool" />
-      <ToolbarItem id="ReadPlotItemData" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadPlotItemData.Description}"
+      <ToolbarItem id="ReadPlotItemData" type="CheckBox" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadPlotItemData.Description}"
         class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
-      <ToolbarItem id="ReadLayerCoordinates" icon="Icons.16x16.ReadLayer" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadLayerCoordinates.Description}"
+      <ToolbarItem id="ReadLayerCoordinates" type="CheckBox" icon="Icons.16x16.ReadLayer" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadLayerCoordinates.Description}"
         class="Altaxo.Graph.Commands.ReadXYCoordinatesTool" />
-      <ToolbarItem id="LineDrawingTool" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.SingleLine.Description}"
+      <ToolbarItem id="LineDrawingTool" type="CheckBox" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.SingleLine.Description}"
         class="Altaxo.Graph.Commands.SingleLineDrawingTool" />
-      <ToolbarItem id="ArrowDrawingTool" icon="Icons.16x16.StraightArrow" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ArrowLine.Description}"
+      <ToolbarItem id="ArrowDrawingTool" type="CheckBox" icon="Icons.16x16.StraightArrow" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ArrowLine.Description}"
         class="Altaxo.Graph.Commands.ArrowLineDrawingTool" />
-      <ToolbarItem id="RectangleDrawingTool" icon="Icons.16x16.Rectangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Rectangle.Description}"
+      <ToolbarItem id="RectangleDrawingTool" type="CheckBox" icon="Icons.16x16.Rectangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Rectangle.Description}"
         class="Altaxo.Graph.Commands.RectangleDrawingTool" />
-      <ToolbarItem id="EllipseDrawingTool" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
+      <ToolbarItem id="EllipseDrawingTool" type="CheckBox" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
         class="Altaxo.Graph.Commands.EllipseDrawingTool" />
-			<ToolbarItem id="CurlyBraceDrawingTool" icon="Icons.16x16.CurlyBrace" tooltip="${res:XML.MainMenu.GraphMenu.Tools.CurlyBrace.Description}"
+			<ToolbarItem id="CurlyBraceDrawingTool" type="CheckBox" icon="Icons.16x16.CurlyBrace" tooltip="${res:XML.MainMenu.GraphMenu.Tools.CurlyBrace.Description}"
         class="Altaxo.Graph.Commands.CurlyBraceDrawingTool" />
-			<ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
+			<ToolbarItem id="ZoomAxes" type="CheckBox" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
         class="Altaxo.Graph.Commands.ZoomAxesTool" />
       <ToolbarItem id="GraphCmdsSeparator"  type = "Separator"/>
       <ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
@@ -1078,7 +1078,7 @@
     <MenuItem id="Delete"
               icon="Icons.16x16.DeleteIcon"
               label="${res:XML.MainMenu.EditMenu.Delete}"
-              class="ICSharpCode.SharpDevelop.Commands.Delete" />
+              command="Delete" />
 
 
 
@@ -1092,7 +1092,7 @@
     <String id = "AltaxoCore" text ="AltaxoCore"/>
     <String id = "AltaxoBase" text ="AltaxoBase"/>
     <String id = "AltaxoSDGui" text ="AltaxoSDGui"/>
-    <String id = "System.Data" text = "System.Data"/>
+		<String id = "System.Data" text = "System.Data"/>
     <String id = "System.Drawing" text = "System.Drawing"/>
     <String id = "System.Windows.Forms" text = "System.Windows.Forms"/>
     <String id = "System.Xml" text = "System.Xml"/>

@@ -653,7 +653,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Provides a abstract class for issuing commands that apply to worksheet controllers.
 	/// </summary>
-	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand
+	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand, System.ComponentModel.INotifyPropertyChanged
 	{
 		public Altaxo.Gui.Graph.Viewing.GraphController Controller
 		{
@@ -676,6 +676,29 @@ namespace Altaxo.Graph.Commands
 		{
 			base.Run();
 		}
+
+		public override bool IsChecked
+		{
+			get
+			{
+				return base.IsChecked;
+			}
+			set
+			{
+				var oldValue = base.IsChecked;
+				base.IsChecked = value;
+
+				if (value != oldValue)
+					OnPropertyChanged("IsChecked");
+			}
+		}
+
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			if (null != PropertyChanged)
+				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+		}
 	}
 
 	/// <summary>
@@ -685,9 +708,11 @@ namespace Altaxo.Graph.Commands
 	public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
 	{
 		Altaxo.Gui.Graph.Viewing.GraphController myCurrentGraphController;
+		Altaxo.Gui.Graph.Viewing.GraphToolType _graphToolType;
 
-		protected AbstractGraphToolsCommand()
+		protected AbstractGraphToolsCommand(Altaxo.Gui.Graph.Viewing.GraphToolType toolType)
 		{
+			_graphToolType = toolType;
 			if (null != Current.Workbench)
 			{
 				Current.Workbench.ActiveWorkbenchWindowChanged += new EventHandler(this.EhWorkbenchContentChanged);
@@ -715,17 +740,28 @@ namespace Altaxo.Graph.Commands
 						this.myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(this.EhGraphToolChanged);
 					}
 				}
+				OnPropertyChanged("IsChecked");
 			}
 		}
 
 		protected void EhGraphToolChanged(object o, EventArgs e)
 		{
-			bool bBaseChecked = base.IsChecked;
-			bool bThisChecked = this.IsChecked; // only to retrieve the checked state
-			if (bBaseChecked != bThisChecked) // to prevent that every button "updates" the toolbar
+			OnPropertyChanged("IsChecked");
+		}
+
+		public override bool IsChecked
+		{
+			get
 			{
-				//ICSharpCode.SharpDevelop.Gui.Workbench1 wb = Current.Workbench as ICSharpCode.SharpDevelop.Gui.Workbench1;
-				//wb.UpdateToolbars();      
+				return null==Controller ? false : _graphToolType == Controller.CurrentGraphTool;
+			}
+			set
+			{
+				if(value==true && Controller!=null)
+				{
+					Controller.CurrentGraphTool = _graphToolType;
+				}
+				OnPropertyChanged("IsChecked");
 			}
 		}
 
@@ -736,29 +772,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class SelectPointerTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
-				}
-
-				// ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public SelectPointerTool() : base(Gui.Graph.Viewing.GraphToolType.ObjectPointer) { }
 	}
 
 	/// <summary>
@@ -766,29 +780,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class SelectTextTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.TextDrawing);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.TextDrawing;
-				}
-
-				//((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+	public SelectTextTool() : base(Gui.Graph.Viewing.GraphToolType.TextDrawing) { }
 	}
 
 
@@ -797,29 +789,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class ReadPlotItemDataTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.ReadPlotItemData);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.ReadPlotItemData;
-				}
-
-				//((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public ReadPlotItemDataTool() : base(Gui.Graph.Viewing.GraphToolType.ReadPlotItemData) { }
 	}
 
 
@@ -829,58 +799,14 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class ReadXYCoordinatesTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.ReadXYCoordinates);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.ReadXYCoordinates;
-				}
-
-				//((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public ReadXYCoordinatesTool() : base(Gui.Graph.Viewing.GraphToolType.ReadXYCoordinates) { }
 	}
 	/// <summary>
 	/// Drawing a simple line with two points.
 	/// </summary>
 	public class SingleLineDrawingTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.SingleLineDrawing);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.SingleLineDrawing;
-				}
-
-				// ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public SingleLineDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.SingleLineDrawing) { }
 	}
 
 
@@ -889,29 +815,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class ArrowLineDrawingTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing;
-				}
-
-				//((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public ArrowLineDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing) { }
 	}
 
 
@@ -921,29 +825,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class RectangleDrawingTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.RectangleDrawing);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.RectangleDrawing;
-				}
-
-				// ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public RectangleDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.RectangleDrawing) { }
 	}
 
 
@@ -953,29 +835,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class CurlyBraceDrawingTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.CurlyBraceDrawing);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.CurlyBraceDrawing;
-				}
-
-				// ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public CurlyBraceDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.CurlyBraceDrawing) { }
 	}
 
 
@@ -984,61 +844,14 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class EllipseDrawingTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.EllipseDrawing);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.EllipseDrawing;
-				}
-
-				// ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public EllipseDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.EllipseDrawing) { }
 	}
 	/// <summary>
 	/// Magnifies the axes according to the selected area.
 	/// </summary>
 	public class ZoomAxesTool : AbstractGraphToolsCommand
 	{
-		public override bool IsChecked
-		{
-			get
-			{
-				if (null != Controller)
-				{
-					base.IsChecked = (Controller.CurrentGraphTool == Altaxo.Gui.Graph.Viewing.GraphToolType.ZoomAxes);
-				}
-
-				return base.IsChecked;
-			}
-			set
-			{
-				base.IsChecked = value;
-				if (true == value && null != Controller)
-				{
-					Controller.CurrentGraphTool = Altaxo.Gui.Graph.Viewing.GraphToolType.ZoomAxes;
-
-					//Cursor cursor = WinFormsResourceService.GetCursor("Cursors.32x32.ZoomAxes");
-					//this.Controller.View.SetPanelCursor(cursor);
-				}
-
-				//((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
-
-			}
-		}
+		public ZoomAxesTool() : base(Gui.Graph.Viewing.GraphToolType.ZoomAxes) { }
 	}
 
 	public class FontSizeChooser : AbstractComboBoxCommand

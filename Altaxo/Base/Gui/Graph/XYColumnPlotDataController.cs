@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Data;
@@ -146,9 +147,9 @@ namespace Altaxo.Gui.Graph
       {
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
 
-        Data.DataTable t1 = Data.DataTable.GetParentDataTableOf(m_xCol as Main.IDocumentNode);
-        Data.DataTable t2 = Data.DataTable.GetParentDataTableOf(m_yCol as Main.IDocumentNode);
-        Data.DataTable tg = null;
+        DataTable t1 = DataTable.GetParentDataTableOf(m_xCol as Main.IDocumentNode);
+        DataTable t2 = DataTable.GetParentDataTableOf(m_yCol as Main.IDocumentNode);
+        DataTable tg = null;
         if (t1 != null && t2!=null && t1 == t2)
           tg = t1;
         else if (t1 == null)

@@ -648,7 +648,7 @@ namespace Altaxo.Worksheet.Commands
 			if (ctrl.SelectedDataColumns.Count == 1)
 				Altaxo.Data.Sorting.SortDataRows(ctrl.DataTable, ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]], ascending);
 			else if (ctrl.SelectedPropertyColumns.Count == 1)
-				Altaxo.Data.Sorting.SortColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+				Altaxo.Data.Sorting.SortDataColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
 		}
 	}
 	public class SortTableDescending : AbstractWorksheetControllerCommand
@@ -716,7 +716,7 @@ namespace Altaxo.Worksheet.Commands
 			if (0 == ctrl.SelectedPropertyColumns.Count || 0 == selectedDataColumns.Count)
 				return;
 
-			Altaxo.Data.Sorting.SortSelectedDataColumnsByPropertyColumn(ctrl.DataTable, selectedDataColumns, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+			Altaxo.Data.Sorting.SortDataColumnsByPropertyColumn(ctrl.DataTable, selectedDataColumns, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
 		}
 	}
 

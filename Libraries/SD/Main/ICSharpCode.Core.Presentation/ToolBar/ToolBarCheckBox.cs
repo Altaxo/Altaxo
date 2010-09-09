@@ -30,7 +30,11 @@ namespace ICSharpCode.Core.Presentation
 			if (wrapper != null) {
 				ICheckableMenuCommand cmd = wrapper.GetAddInCommand() as ICheckableMenuCommand;
 				if (cmd != null) {
+#if ModifiedForAltaxo
+					isCheckedBinding = SetBinding(IsCheckedProperty, new Binding("IsChecked") { Source = cmd, Mode = BindingMode.TwoWay });
+#else
 					isCheckedBinding = SetBinding(IsCheckedProperty, new Binding("IsChecked") { Source = cmd, Mode = BindingMode.OneWay });
+#endif
 				}
 			}
 			

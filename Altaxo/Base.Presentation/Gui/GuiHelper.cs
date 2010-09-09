@@ -244,6 +244,11 @@ namespace Altaxo.Gui
 
 		#endregion
 
+		#region Panel Helpers
+
+
+
+		#endregion
 
 	}
 }

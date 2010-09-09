@@ -298,7 +298,11 @@ namespace Altaxo.Main
         info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
     }
 
+		/// <summary>
+		/// Fired if the document instance changed, (from null to some value, from a value to null, or from a value to another value).
+		/// </summary>
     public event DocumentInstanceChangedEventHandler DocumentInstanceChanged;
+
     protected virtual void OnDocumentInstanceChanged(Main.IDocumentNode oldvalue, Main.IDocumentNode newvalue)
     {
       if (null != DocumentInstanceChanged)
@@ -310,7 +314,14 @@ namespace Altaxo.Main
 
     #region IChangedEventSource Members
 
+
+		/// <summary>
+		/// Fired if the document node instance changed, is set to null, has changed its document path, or has changed its internal properties.
+		/// If the document instance changed, this event is fired <b>after</b> the <see cref="DocumentInstanceChanged"/>  event.
+		/// </summary>
     public event EventHandler Changed;
+
+
 
     protected virtual void OnChanged()
     {

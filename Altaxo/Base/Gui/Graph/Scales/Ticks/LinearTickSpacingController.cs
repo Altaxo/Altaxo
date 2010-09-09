@@ -24,6 +24,8 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text;
+
+using Altaxo.Data;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
@@ -277,14 +279,14 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		public bool Apply()
 		{
-      Data.AltaxoVariant[] varVals;
+      AltaxoVariant[] varVals;
       int[] intVals;
       int intVal;
 
       if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMajorTickValues, out varVals))
       {
         _doc.SuppressedMajorTicks.ByValues.Clear();
-        foreach (Data.AltaxoVariant v in varVals)
+        foreach (AltaxoVariant v in varVals)
           _doc.SuppressedMajorTicks.ByValues.Add(v);
       }
       else
@@ -295,7 +297,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMinorTickValues, out varVals))
       {
         _doc.SuppressedMinorTicks.ByValues.Clear();
-        foreach (Data.AltaxoVariant v in varVals)
+        foreach (AltaxoVariant v in varVals)
           _doc.SuppressedMinorTicks.ByValues.Add(v);
       }
       else
@@ -328,7 +330,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMajorTickValues, out varVals))
       {
         _doc.AdditionalMajorTicks.ByValues.Clear();
-        foreach (Data.AltaxoVariant v in varVals)
+        foreach (AltaxoVariant v in varVals)
           _doc.AdditionalMajorTicks.ByValues.Add(v);
       }
       else
@@ -339,7 +341,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMinorTickValues, out varVals))
       {
         _doc.AdditionalMinorTicks.ByValues.Clear();
-        foreach (Data.AltaxoVariant v in varVals)
+        foreach (AltaxoVariant v in varVals)
           _doc.AdditionalMinorTicks.ByValues.Add(v);
       }
       else

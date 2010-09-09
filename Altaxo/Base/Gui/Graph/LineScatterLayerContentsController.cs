@@ -24,6 +24,8 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
+
+using Altaxo.Data;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -164,7 +166,7 @@ namespace Altaxo.Gui.Graph
       {
         int nTables = Current.Project.DataTableCollection.Count;
         NGTreeNode no = new NGTreeNode();
-        foreach(Data.DataTable dt in Current.Project.DataTableCollection)
+        foreach(DataTable dt in Current.Project.DataTableCollection)
         {
           NGTreeNode newnode = new NGTreeNode(dt.Name, new NGTreeNode[1] { new NGTreeNode() });
           newnode.Tag = dt;
@@ -273,13 +275,13 @@ namespace Altaxo.Gui.Graph
 
       // create a new plotassociation from the column
       // first, get the y column from table and name
-      Data.DataTable tab = Current.Project.DataTableCollection[tablename];
+      DataTable tab = Current.Project.DataTableCollection[tablename];
       if(null!=tab)
       {
-        Data.DataColumn ycol = tab[columnname];
+        DataColumn ycol = tab[columnname];
         if(null!=ycol)
         {
-          Data.DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
+          DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
 
           // search in our document for the first plot item that is an XYColumnPlotItem,
           // we need this as template style
@@ -350,7 +352,7 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
     {
-      Data.DataTable dt = Current.Project.DataTableCollection[node.Text];
+      DataTable dt = Current.Project.DataTableCollection[node.Text];
       if(null!=dt)
       {
         node.Nodes.Clear();

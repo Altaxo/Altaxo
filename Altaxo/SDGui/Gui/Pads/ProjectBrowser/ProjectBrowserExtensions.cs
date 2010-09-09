@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+	using Altaxo;
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Altaxo.Gui.Common;
 
@@ -109,7 +111,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			var obj = list[0];
 
-			if (obj is Data.DataTable)
+			if (obj is DataTable)
 			{
 				Altaxo.Data.DataTableOtherActions.ShowRenameDialog((Altaxo.Data.DataTable)obj);
 			}
@@ -196,12 +198,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public static void PlotCommonColumns(this ProjectBrowseController ctrl)
 		{
 			var list = ctrl.GetSelectedListItems();
-			var tables = new List<Data.DataTable>();
+			var tables = new List<DataTable>();
 
 			foreach (object item in list)
 			{
-				if (item is Data.DataTable)
-					tables.Add((Data.DataTable)item);
+				if (item is DataTable)
+					tables.Add((DataTable)item);
 			}
 
 			if (tables.Count == 0)
@@ -245,11 +247,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			graphctrl.Doc.Layers.Add(layer);
 			layer.CreateDefaultAxes();
 
-			var processedColumns = new HashSet<Data.DataColumn>();
+			var processedColumns = new HashSet<DataColumn>();
 			foreach (var colname in choosenColumns)
 			{
 				// first create the plot items
-				var columnList = new List<Data.DataColumn>();
+				var columnList = new List<DataColumn>();
 				foreach (var table in tables)
 					columnList.Add(table[colname]);
 				var plotItemList = Altaxo.Worksheet.Commands.PlotCommands.CreatePlotItems(columnList, templateStyle, processedColumns);
@@ -302,7 +304,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public static Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewStandardWorksheet(this ProjectBrowseController ctrl)
 		{
 			var wks = ctrl.CreateNewEmptyWorksheet();
-			Data.DataTableCommands.AddStandardColumns(wks.DataTable);
+			DataTableCommands.AddStandardColumns(wks.DataTable);
 			return wks;
 		}
 

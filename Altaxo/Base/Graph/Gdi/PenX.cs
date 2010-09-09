@@ -1690,6 +1690,8 @@ namespace Altaxo.Graph.Gdi
       _registeredStyles.Add(more.Name, more);
       more = new LineCaps.TriangleOLineCap();
       _registeredStyles.Add(more.Name, more);
+			more = new LineCaps.BreakLineCap();
+			_registeredStyles.Add(more.Name, more);
     }
 
     public LineCapEx(LineCap style)

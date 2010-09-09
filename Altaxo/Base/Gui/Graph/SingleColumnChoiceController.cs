@@ -226,7 +226,7 @@ namespace Altaxo.Gui.Graph
         }
         else if(node.Tag is DataTable)
         {
-          Data.DataTable dt = (DataTable)node.Tag;
+          DataTable dt = (DataTable)node.Tag;
           _view.EhNodesCleared(node.Nodes);
           node.Nodes.Clear();
           NGTreeNode[] toadd = new NGTreeNode[dt.DataColumns.ColumnCount];

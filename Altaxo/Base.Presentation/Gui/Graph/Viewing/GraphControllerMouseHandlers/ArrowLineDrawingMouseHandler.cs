@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       : base(grac)
     {
       if(_grac!=null)
-        _grac.SetPanelCursor(Cursors.Arrow);
+        _grac.SetPanelCursor(Cursors.Pen);
     }
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType

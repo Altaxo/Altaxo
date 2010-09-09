@@ -29,9 +29,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		// Cached members
 		Bitmap _bitmap;
 
-		/// <summary>The plot item this legend is intended for.</summary>
-		DensityImagePlotItem _plotItem;
-
+		/// <summary>The proxy for the plot item this legend is intended for.</summary>
+		Altaxo.Main.RelDocNodeProxy _plotItemProxy;
 
     DensityLegendArea _cachedArea;
 
@@ -106,8 +105,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         DensityImageLegend s = (DensityImageLegend)obj;
         info.AddBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType);
 
-        var  proxy = new Altaxo.Main.RelDocNodeProxy(s._plotItem,s);
-        info.AddValue("PlotItem", proxy);
+        info.AddValue("PlotItem", s._plotItemProxy);
         info.AddValue("IsOrientationVertical", s.IsOrientationVertical);
         info.AddValue("IsScaleReversed", s.IsScaleReversed);
         info.AddValue("Scale", s.ScaleWithTicks.Scale);
@@ -121,8 +119,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         DensityImageLegend s = null != o ? (DensityImageLegend)o : new DensityImageLegend();
         info.GetBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType, parent);
 
-        var proxy = (Main.RelDocNodeProxy)info.GetValue("PlotItem",s);
-        proxy.Changed += s.EhPlotItemProxyDocumentInstanceChanged;
+        s._plotItemProxy = (Main.RelDocNodeProxy)info.GetValue("PlotItem",s);
+				s.WirePlotItemProxyEvents();
         bool isOrientationVertical = info.GetBoolean("IsOrientationVertical");
         bool isScaleReversed = info.GetBoolean("IsScaleReversed");
         var cachedScale = (NumericalScale)info.GetValue("Scale", parent);
@@ -140,15 +138,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
-    void EhPlotItemProxyDocumentInstanceChanged(object sender, EventArgs e)
-    {
-      var proxy = (Main.RelDocNodeProxy)sender;
-      if (proxy.DocumentObject != null)
-      {
-        proxy.Changed -= EhPlotItemProxyDocumentInstanceChanged;
-        _plotItem = proxy.DocumentObject as DensityImagePlotItem;
-      }
-    }
+		private void WirePlotItemProxyEvents()
+		{
+			_plotItemProxy.DocumentInstanceChanged += EhPlotItemProxyDocumentInstanceChanged;
+		}
 
     #endregion
 
@@ -159,13 +152,15 @@ namespace Altaxo.Graph.Gdi.Shapes
       this._position = initialLocation;
       this.SetSize(graphicSize.Width, graphicSize.Height);
 
+			_plotItemProxy = new Main.RelDocNodeProxy();
+			WirePlotItemProxyEvents();
       PlotItem = plotItem;
 
 
      // _orientationIsVertical = true;
      // _scaleIsReversed = false;
 
-      var cachedScale = (NumericalScale)_plotItem.Style.Scale.Clone();
+      var cachedScale = (NumericalScale)PlotItem.Style.Scale.Clone();
       var scaleTickSpacing = ScaleWithTicks.CreateDefaultTicks(cachedScale.GetType());
       _cachedArea = new DensityLegendArea(Size, true, false, cachedScale, scaleTickSpacing);
 
@@ -213,6 +208,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public DensityImageLegend(DensityImageLegend from)
 		{
+			_plotItemProxy = new Main.RelDocNodeProxy();
+			WirePlotItemProxyEvents();
+
 			CopyFrom(from);
 		}
 
@@ -229,7 +227,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         this._axisStyles.ParentObject = this;
 
 				this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
-				this.PlotItem = from._plotItem;
+				this._plotItemProxy.CopyPathOnlyFrom(from._plotItemProxy, this);
 			}
 		}
 
@@ -242,18 +240,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			set
 			{
-				if (null != _plotItem)
-				{
-					_plotItem.StyleChanged -= new EventHandler(EhPlotItemStyleChanged);
-				}
-				
-				_plotItem = value;
+				_plotItemProxy.SetDocNode(value, this);
+			}
+			get
+			{
+				return _plotItemProxy.DocumentObject as DensityImagePlotItem;
+			}
+		}
 
-				if (null != _plotItem)
-				{
-					_plotItem.StyleChanged += new EventHandler(EhPlotItemStyleChanged);
-				}
+		private void EhPlotItemProxyDocumentInstanceChanged(object sender, object oldValue, object newValue)
+		{
+			var oldPlotItem = oldValue as DensityImagePlotItem;
+			var newPlotItem = newValue as DensityImagePlotItem;
 
+			if (null != oldPlotItem)
+			{
+				oldPlotItem.StyleChanged -= new EventHandler(EhPlotItemStyleChanged);
+			}
+
+			if (null != newPlotItem)
+			{
+				newPlotItem.StyleChanged += new EventHandler(EhPlotItemStyleChanged);
 			}
 		}
 
@@ -337,7 +344,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			NumericalScale originalZScale;
 			Plot.IColorProvider colorProvider;
 
-			if (null == _plotItem)
+			if (null == PlotItem)
 			{
 				// search for the first density plot item in the layer
 				var layer = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
@@ -347,19 +354,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 					{
 						if (item is DensityImagePlotItem)
 						{
-							_plotItem = item as DensityImagePlotItem;
+							PlotItem = item as DensityImagePlotItem;
 							break;
 						}
 					}
 				}
 			}
 
-			if (null != _plotItem)
+			if (null != PlotItem)
 			{
-				porg = _plotItem.Style.Scale.OrgAsVariant;
-				pend = _plotItem.Style.Scale.EndAsVariant;
-				originalZScale = _plotItem.Style.Scale;
-				colorProvider = _plotItem.Style.ColorProvider;
+				porg = PlotItem.Style.Scale.OrgAsVariant;
+				pend = PlotItem.Style.Scale.EndAsVariant;
+				originalZScale = PlotItem.Style.Scale;
+				colorProvider = PlotItem.Style.ColorProvider;
 			}
 			else
 			{

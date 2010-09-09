@@ -616,7 +616,8 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public virtual void EhView_CurrentGraphToolChanged()
 		{
-			// this.CurrentGraphToolType = currGraphToolType;
+			if(null!=CurrentGraphToolChanged)
+				CurrentGraphToolChanged(this, EventArgs.Empty);
 		}
 
 
