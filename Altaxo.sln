@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCore", "Altaxo\Core\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoSDGui", "Altaxo\SDGui\AltaxoSDGui.csproj", "{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.SharpZipLib", "Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.csproj", "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.SharpZLib", "Libraries\SharpZipLib\src\ICSharpCode.SharpZLib.csproj", "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBaseTest", "Altaxo\BaseTest\AltaxoBaseTest.csproj", "{3B2A9A3B-5EBC-4C38-8B73-B4DCA6BFB1C3}"
 EndProject

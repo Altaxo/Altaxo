@@ -58,15 +58,6 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 	/// </summary>
 	public class StreamManipulator
 	{
-		#region Instance Fields
-		private byte[] window_;
-		private int windowStart_;
-		private int windowEnd_;
-		
-		private uint buffer_;
-		private int bitsInBuffer_;
-		#endregion
-
 		#region Constructors
 		/// <summary>
 		/// Constructs a default StreamManipulator with all buffers empty
@@ -92,7 +83,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 					return -1; // ok
 				}
 				buffer_ |= (uint)((window_[windowStart_++] & 0xff |
-				                 (window_[windowStart_++] & 0xff) << 8) << bitsInBuffer_);
+								 (window_[windowStart_++] & 0xff) << 8) << bitsInBuffer_);
 				bitsInBuffer_ += 16;
 			}
 			return (int)(buffer_ & ((1 << bitCount) - 1));
@@ -103,6 +94,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// with a bigger or equal n before, to make sure that enough bits are in
 		/// the bit buffer.
 		/// </summary>
+		/// <param name="bitCount">The number of bits to drop.</param>
 		public void DropBits(int bitCount)
 		{
 			buffer_ >>= bitCount;
@@ -111,7 +103,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		
 		/// <summary>
 		/// Gets the next n bits and increases input pointer.  This is equivalent
-        /// to <see cref="PeekBits"/> followed by <see cref="DropBits"/>, except for correct error handling.
+		/// to <see cref="PeekBits"/> followed by <see cref="DropBits"/>, except for correct error handling.
 		/// </summary>
 		/// <param name="bitCount">The number of bits to retrieve.</param>
 		/// <returns>
@@ -255,7 +247,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			}
 
 			if ( offset < 0 ) {
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("offset");
 #else
 				throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
@@ -263,7 +255,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			}
 
 			if ( count < 0 ) {
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("count");
 #else
 				throw new ArgumentOutOfRangeException("count", "Cannot be negative");
@@ -292,5 +284,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			windowStart_ = offset;
 			windowEnd_ = end;
 		}
+
+		#region Instance Fields
+		private byte[] window_;
+		private int windowStart_;
+		private int windowEnd_;
+
+		private uint buffer_;
+		private int bitsInBuffer_;
+		#endregion
 	}
 }

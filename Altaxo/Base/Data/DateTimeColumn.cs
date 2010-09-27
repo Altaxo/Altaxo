@@ -22,6 +22,8 @@
 
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Altaxo.Serialization;
 using Altaxo;
 
@@ -215,34 +217,82 @@ namespace Altaxo.Data
       return typeof(Altaxo.Worksheet.DateTimeColumnStyle);
     }
 
-      
-    public override void CopyDataFrom(Altaxo.Data.DataColumn v)
-    {
-      if(v.GetType()!=typeof(Altaxo.Data.DateTimeColumn))
-      {
-        throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(),"v"); // throw exception
-      }
-      Altaxo.Data.DateTimeColumn vd = (Altaxo.Data.DateTimeColumn)v;
 
-      // suggestion, but __not__ implemented:
-      // if v is a standalone column, then simply take the dataarray
-      // otherwise: copy the data by value  
-      int oldCount = this._count;
-      if(null==vd._data || vd._count==0)
-      {
-        _data=null;
-        _capacity=0;
-        _count=0;
-      }
-      else
-      {
-        _data = (DateTime[])vd._data.Clone();
-        _capacity = _data.Length;
-        _count = ((Altaxo.Data.DateTimeColumn)v)._count;
-      }
-      if(oldCount>0 || _count>0) // message only if really was a change
-        NotifyDataChanged(0, oldCount>_count? (oldCount):(_count),_count<oldCount);
-    }       
+		public override void CopyDataFrom(object o)
+		{
+			var oldCount = _count;
+			_count = 0;
+
+			if (o is DateTimeColumn)
+			{
+				var src = (DateTimeColumn)o;
+				_data = null==src._data ? null : (DateTime[])src._data.Clone();
+				_capacity = _data.Length;
+				_count = src._count;
+			}
+			else
+			{
+				if (o is ICollection)
+					Realloc((o as ICollection).Count); // Prealloc the array if count of the collection is known beforehand
+
+				if (o is IEnumerable<DateTime>)
+				{
+					var src = (IEnumerable<DateTime>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = it;
+					}
+				}
+				else if (o is IEnumerable<double>)
+				{
+					var src = (IEnumerable<double>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = new DateTime((long)(1e7 * it));
+					}
+				}
+				else if (o is IEnumerable<AltaxoVariant>)
+				{
+					var src = (IEnumerable<AltaxoVariant>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = it;
+					}
+				}
+				else
+				{
+					_count = 0;
+					if (o == null)
+						throw new ArgumentNullException("o");
+					else
+						throw new ArgumentException("Try to copy " + o.GetType() + " to " + this.GetType(), "o"); // throw exception
+				}
+
+				TrimEmptyElementsAtEnd();
+			}
+
+
+			if (oldCount > 0 || _count > 0) // message only if really was a change
+				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
+		}
+
+
+		private void TrimEmptyElementsAtEnd()
+		{
+
+			for (; _count > 0 && _data[_count - 1] != DateTime.MinValue; _count--) ;
+		}
+
+		
 
     protected void Realloc(int i)
     {

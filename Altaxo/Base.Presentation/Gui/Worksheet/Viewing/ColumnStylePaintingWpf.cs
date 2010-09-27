@@ -140,6 +140,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			t = new FormattedText(textToDraw, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush);
 			t.MaxTextWidth = cellRect.Width;
 			t.TextAlignment = alignment;
+			t.Trimming = TextTrimming.CharacterEllipsis;
 			dc.DrawText(t, cellRectangle.Location);
 		}
 

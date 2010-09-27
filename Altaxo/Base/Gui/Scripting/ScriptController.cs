@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Scripting
   /// <summary>
   /// Executes the script provided in the argument.
   /// </summary>
-  public delegate bool ScriptExecutionHandler(IScriptText script);
+  public delegate bool ScriptExecutionHandler(IScriptText script, IProgressReporter reporter);
 
   public interface IScriptView
   {
@@ -56,8 +56,9 @@ namespace Altaxo.Gui.Scripting
     void Compile();
     void Update();
     void Cancel();
-   
-  }
+		void Execute(IProgressReporter reporter);
+		bool HasExecutionErrors();
+   }
 
 
 
@@ -146,8 +147,7 @@ namespace Altaxo.Gui.Scripting
         int col  = int.Parse(scol);
 
         
-        _pureScriptController.SetScriptCursorLocation(line-1,col-1);
-
+        _pureScriptController.SetScriptCursorLocation(line,col); // line and col are starting with "1" here
       }
       catch(Exception)
       {
@@ -233,6 +233,26 @@ namespace Altaxo.Gui.Scripting
       
     }
 
+		public void Execute(IProgressReporter progress)
+		{
+			var applyresult = _scriptExecutionHandler(_doc, progress);
+		
+		}
+
+		public bool HasExecutionErrors()
+		{
+			if (null != _doc.Errors && _doc.Errors.Length > 0)
+			{
+				_view.ClearCompilerErrors();
+
+				foreach (string s in _doc.Errors)
+					_view.AddCompilerError(s);
+				Current.Gui.ErrorMessageBox("There were execution errors");
+			}
+
+			return null != _doc.Errors && _doc.Errors.Length > 0;
+		}
+
     #endregion
 
     #region IMVCController Members
@@ -288,18 +308,6 @@ namespace Altaxo.Gui.Scripting
           {
             _doc = _compiledDoc;
             applyresult = true;
-          }
-        }
-        
-        if(applyresult == true && _scriptExecutionHandler!=null)
-        {
-          applyresult = _scriptExecutionHandler(_doc);
-          if(applyresult==false)
-          {
-            foreach(string s in _doc.Errors)
-              _view.AddCompilerError(s);
-
-            Current.Gui.ErrorMessageBox("There were execution errors");
           }
         }
       }

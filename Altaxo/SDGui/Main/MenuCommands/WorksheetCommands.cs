@@ -426,7 +426,7 @@ namespace Altaxo.Worksheet.Commands
 			this.m_Table = null;
 		}
 
-		public bool EhScriptExecution(IScriptText script)
+		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
 			return ((ExtractTableDataScript)script).Execute(m_Table);
 		}
@@ -455,9 +455,9 @@ namespace Altaxo.Worksheet.Commands
 			this.m_Table = null;
 
 		}
-		public bool EhScriptExecution(IScriptText script)
+		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
-			return ((TableScript)script).ExecuteWithSuspendedNotifications(m_Table);
+			return ((TableScript)script).ExecuteWithSuspendedNotifications(m_Table,reporter);
 		}
 	}
 
@@ -503,9 +503,9 @@ namespace Altaxo.Worksheet.Commands
 			}
 			this.m_Column = null;
 		}
-		public bool EhScriptExecution(IScriptText script)
+		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
-			return ((DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column);
+			return ((DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column,reporter);
 		}
 	}
 	public class OpenPropertyColumnScriptDialog : AbstractWorksheetControllerCommand
@@ -532,9 +532,9 @@ namespace Altaxo.Worksheet.Commands
 			this.m_Column = null;
 		}
 
-		public bool EhScriptExecution(IScriptText script)
+		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
-			return ((PropertyColumnScript)script).ExecuteWithSuspendedNotifications(m_Column);
+			return ((PropertyColumnScript)script).ExecuteWithSuspendedNotifications(m_Column,reporter);
 		}
 	}
 

@@ -31,7 +31,7 @@ namespace Altaxo.Gui.Scripting
   /// <summary>
   /// Summary description for ScriptExecutionDialog.
   /// </summary>
-  public class ScriptExecutionDialog : System.Windows.Forms.Form
+  public class ScriptExecutionDialogWin : System.Windows.Forms.Form
   {
     private System.Windows.Forms.Button _btOk;
     private System.Windows.Forms.Button _btCompile;
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Scripting
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public ScriptExecutionDialog()
+    public ScriptExecutionDialogWin()
     {
       //
       // Required for Windows Form Designer support
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Scripting
    }
 
     IScriptController _controller;
-    public ScriptExecutionDialog(IScriptController controller)
+    public ScriptExecutionDialogWin(IScriptController controller)
     {
       _controller = controller;
       InitializeComponent();

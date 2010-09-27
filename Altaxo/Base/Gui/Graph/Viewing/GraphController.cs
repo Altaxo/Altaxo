@@ -496,6 +496,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="e">The EventArgs.</param>
 		protected void EhGraph_Changed(object sender, System.EventArgs e)
 		{
+			Current.Gui.BeginExecute(EhGraph_Changed_Unsynchronized);
+		}
+		protected void EhGraph_Changed_Unsynchronized()
+		{
 			// if something changed on the graph, make sure that the layer and plot number reflect this changed
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();
@@ -512,6 +516,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="e">The event arguments.</param>
 		protected void EhGraph_BoundsChanged(object sender, System.EventArgs e)
 		{
+			Current.Gui.BeginExecute(EhGraph_BoundsChanged_Unsynchronized);
+		}
+		protected void EhGraph_BoundsChanged_Unsynchronized()
+		{
 			if (_view != null)
 			{
 				if (this._isAutoZoomActive)
@@ -527,6 +535,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="sender">The sender of the event (the GraphDocument).</param>
 		/// <param name="e">The event arguments.</param>
 		protected void EhGraph_LayerCollectionChanged(object sender, System.EventArgs e)
+		{
+			Current.Gui.BeginExecute(EhGraph_LayerCollectionChanged_Unsynchronized);
+		}
+		protected void EhGraph_LayerCollectionChanged_Unsynchronized()
 		{
 			int oldActiveLayer = this._currentLayerNumber;
 
@@ -549,6 +561,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		public void EhGraphDocumentNameChanged(Main.INameOwner sender, string oldName)
+		{
+			Current.Gui.Execute(EhGraphDocumentNameChanged, sender, oldName);
+		}
+		void EhGraphDocumentNameChanged_Unsynchronized(Main.INameOwner sender, string oldName)
 		{
 			if (null != _view)
 				_view.GraphViewTitle = Doc.Name;

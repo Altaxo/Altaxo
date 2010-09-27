@@ -35,7 +35,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar 
 {
@@ -124,6 +123,8 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Construct an entry with only a <paramref name="name">name</paramref>.
 		/// This allows the programmer to construct the entry's header "by hand". 
 		/// </summary>
+		/// <param name="name">The name to use for the entry</param>
+		/// <returns>Returns the newly created <see cref="TarEntry"/></returns>
 		public static TarEntry CreateTarEntry(string name)
 		{
 			TarEntry entry = new TarEntry();
@@ -135,9 +136,8 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Construct an entry for a file. File is set to file, and the
 		/// header is constructed from information from the file.
 		/// </summary>
-		/// <param name = "fileName">
-		/// The file that the entry represents.
-		/// </param>
+		/// <param name = "fileName">The file name that the entry represents.</param>
+		/// <returns>Returns the newly created <see cref="TarEntry"/></returns>
 		public static TarEntry CreateEntryFromFile(string fileName)
 		{
 			TarEntry entry = new TarEntry();
@@ -149,8 +149,9 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Determine if the two entries are equal. Equality is determined
 		/// by the header names being equal.
 		/// </summary>
+		/// <param name="obj">The <see cref="Object"/> to compare with the current Object.</param>
 		/// <returns>
-		/// True if the entries are equal.
+		/// True if the entries are equal; false if not.
 		/// </returns>
 		public override bool Equals(object obj)
 		{
@@ -164,8 +165,9 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// Must be overridden when you override Equals.
+		/// Derive a Hash value for the current <see cref="Object"/>
 		/// </summary>
+		/// <returns>A Hash code for the current <see cref="Object"/></returns>
 		public override int GetHashCode()
 		{
 			return Name.GetHashCode();
@@ -380,7 +382,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			// bugfix from torhovl from #D forum:
 			string name = file;
 
-#if !COMPACT_FRAMEWORK_V10 && !COMPACT_FRAMEWORK_V20
+#if !NETCF_1_0 && !NETCF_2_0
 			// 23-Jan-2004 GnuTar allows device names in path where the name is not local to the current directory
 			if (name.IndexOf(Environment.CurrentDirectory) == 0) {
 				name = name.Substring(Environment.CurrentDirectory.Length);
@@ -482,8 +484,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </param>
 		static public void AdjustEntryName(byte[] buffer, string newName)
 		{
-			int offset = 0;
-			TarHeader.GetNameBytes(newName, buffer, offset, TarHeader.NAMELEN);
+			TarHeader.GetNameBytes(newName, buffer, 0, TarHeader.NAMELEN);
 		}
 		
 		/// <summary>

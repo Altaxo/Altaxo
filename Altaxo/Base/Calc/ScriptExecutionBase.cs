@@ -410,13 +410,25 @@ namespace Altaxo.Calc
   public class ColScriptExeBase : ScriptExecutionBase
   {
     /// <summary>
-    /// This method must be overriden by the column script in order to be able to execute the script.
+    /// Version1 of the execute method. This method must be overriden by the column script in order to be able to execute the script.
     /// This method is the entry point of the column script
     /// </summary>
     /// <param name="myColumn">The column on which the column script is executed.</param>
+		[Obsolete]
     public virtual void Execute(Altaxo.Data.DataColumn myColumn)
     {
     }
+
+		/// <summary>
+		/// Version 2 of the execute method. This method must be overriden by the column script in order to be able to execute the script.
+		/// This method is the entry point of the column script. In order to maintain backward compatibility, if not overridden, this method calls the version 1 of the execute method.
+		/// </summary>
+		/// <param name="myColumn">The column on which the column script is executed.</param>
+		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+		public virtual void Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
+		{
+			Execute(myColumn);
+		}
   }
 
 
@@ -433,13 +445,24 @@ namespace Altaxo.Calc
   public class TableScriptExeBase : ScriptExecutionBase
   {
     /// <summary>
-    /// This method which must be overriden by the table script in order to be able to execute the script.
-    /// This method is the entry point of the table script
+		/// Version 1 of the execute method. Obsole, so please use Version 2 now.
     /// </summary>
     /// <param name="myTable">The table on which the table script is executed.</param>
     public virtual void Execute(Altaxo.Data.DataTable myTable)
     {
     }
+
+
+		/// <summary>
+		/// Version 2 of the execute method. This method which must be overriden by the table script in order to be able to execute the script.
+		/// This method is the entry point of the table script.In order to maintain backward compatibility, if not overridden, this method calls the version 1 of the execute method.
+		/// </summary>
+		/// <param name="myTable">The table on which the table script is executed.</param>
+		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+		public virtual void Execute(Altaxo.Data.DataTable myTable, Altaxo.IProgressReporter reporter)
+		{
+			Execute(myTable);
+		}
   }
 
   /// <summary>
@@ -447,12 +470,23 @@ namespace Altaxo.Calc
   /// </summary>
   public class ProgramInstanceExeBase : ScriptExecutionBase
   {
+		/// <summary>
+		/// Version 1 of the execute method. This method which must be overriden by the script in order to be able to execute the script.
+		/// This method is the entry point of the  script
+		/// </summary>
+		[Obsolete("Please use version 2 of the Execute method")]
+		public virtual void Execute()
+		{
+		}
+
     /// <summary>
-    /// This method which must be overriden by the script in order to be able to execute the script.
+    /// Version 2 of the execute method. This method which must be overriden by the script in order to be able to execute the script.
     /// This method is the entry point of the  script
-    /// </summary>
-    public virtual void Execute()
+    /// </summary/>
+		/// <param name="reporter">Can be used to report the execution progress of the script.</param>
+    public virtual void Execute(IProgressReporter reporter)
     {
+			Execute();
     }
   }
 

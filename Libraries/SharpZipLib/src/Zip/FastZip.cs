@@ -33,7 +33,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
-
 using System;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
@@ -48,19 +47,32 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <summary>
 		/// Delegate to invoke when processing directories.
 		/// </summary>
-		public ProcessDirectoryDelegate ProcessDirectory;
+		public ProcessDirectoryHandler ProcessDirectory;
+		
 		/// <summary>
 		/// Delegate to invoke when processing files.
 		/// </summary>
-		public ProcessFileDelegate ProcessFile;
+		public ProcessFileHandler ProcessFile;
+
+		/// <summary>
+		/// Delegate to invoke during processing of files.
+		/// </summary>
+		public ProgressHandler Progress;
+
+		/// <summary>
+		/// Delegate to invoke when processing for a file has been completed.
+		/// </summary>
+		public CompletedFileHandler CompletedFile;
+		
 		/// <summary>
 		/// Delegate to invoke when processing directory failures.
 		/// </summary>
-		public DirectoryFailureDelegate DirectoryFailure;
+		public DirectoryFailureHandler DirectoryFailure;
+		
 		/// <summary>
 		/// Delegate to invoke when processing file failures.
 		/// </summary>
-		public FileFailureDelegate FileFailure;
+		public FileFailureHandler FileFailure;
 		
 		/// <summary>
 		/// Raise the <see cref="DirectoryFailure">directory failure</see> event.
@@ -71,42 +83,65 @@ namespace ICSharpCode.SharpZipLib.Zip
 		public bool OnDirectoryFailure(string directory, Exception e)
 		{
 			bool result = false;
-			if ( DirectoryFailure != null ) {
+			DirectoryFailureHandler handler = DirectoryFailure;
+
+			if ( handler != null ) {
 				ScanFailureEventArgs args = new ScanFailureEventArgs(directory, e);
-				DirectoryFailure(this, args);
+				handler(this, args);
 				result = args.ContinueRunning;
 			}
 			return result;
 		}
 		
 		/// <summary>
-		/// Raises the <see cref="FileFailure">file failure delegate</see>.
+		/// Fires the <see cref="FileFailure"> file failure handler delegate</see>.
 		/// </summary>
 		/// <param name="file">The file causing the failure.</param>
 		/// <param name="e">The exception for this failure.</param>
 		/// <returns>A boolean indicating if execution should continue or not.</returns>
 		public bool OnFileFailure(string file, Exception e)
 		{
-			bool result = false;
-			if ( FileFailure != null ) {
+			FileFailureHandler handler = FileFailure;
+            bool result = (handler != null);
+
+			if ( result ) {
 				ScanFailureEventArgs args = new ScanFailureEventArgs(file, e);
-				FileFailure(this, args);
+				handler(this, args);
 				result = args.ContinueRunning;
 			}
 			return result;
 		}
 		
 		/// <summary>
-		/// Raises the <see cref="ProcessFile">Process File delegate</see>.
+		/// Fires the <see cref="ProcessFile">ProcessFile delegate</see>.
 		/// </summary>
 		/// <param name="file">The file being processed.</param>
 		/// <returns>A boolean indicating if execution should continue or not.</returns>
 		public bool OnProcessFile(string file)
 		{
 			bool result = true;
-			if ( ProcessFile != null ) {
+			ProcessFileHandler handler = ProcessFile;
+
+			if ( handler != null ) {
 				ScanEventArgs args = new ScanEventArgs(file);
-				ProcessFile(this, args);
+				handler(this, args);
+				result = args.ContinueRunning;
+			}
+			return result;
+		}
+
+		/// <summary>
+        /// Fires the <see cref="CompletedFile"/> delegate
+		/// </summary>
+		/// <param name="file">The file whose processing has been completed.</param>
+		/// <returns>A boolean indicating if execution should continue or not.</returns>
+		public bool OnCompletedFile(string file)
+		{
+			bool result = true;
+			CompletedFileHandler handler = CompletedFile;
+			if ( handler != null ) {
+				ScanEventArgs args = new ScanEventArgs(file);
+				handler(this, args);
 				result = args.ContinueRunning;
 			}
 			return result;
@@ -116,19 +151,39 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Fires the <see cref="ProcessDirectory">process directory</see> delegate.
 		/// </summary>
 		/// <param name="directory">The directory being processed.</param>
-		/// <param name="hasMatchingFiles">Flag indicating if directory has matching files as determined by the current filter.</param>
-		public void OnProcessDirectory(string directory, bool hasMatchingFiles)
+		/// <param name="hasMatchingFiles">Flag indicating if the directory has matching files as determined by the current filter.</param>
+		/// <returns>A <see cref="bool"/> of true if the operation should continue; false otherwise.</returns>
+		public bool OnProcessDirectory(string directory, bool hasMatchingFiles)
 		{
-			if ( ProcessDirectory != null ) {
+			bool result = true;
+			ProcessDirectoryHandler handler = ProcessDirectory;
+			if ( handler != null ) {
 				DirectoryEventArgs args = new DirectoryEventArgs(directory, hasMatchingFiles);
-				ProcessDirectory(this, args);
+				handler(this, args);
+				result = args.ContinueRunning;
 			}
+			return result;
 		}
+
+		/// <summary>
+		/// The minimum timespan between <see cref="Progress"/> events.
+		/// </summary>
+		/// <value>The minimum period of time between <see cref="Progress"/> events.</value>
+		/// <seealso cref="Progress"/>
+        /// <remarks>The default interval is three seconds.</remarks>
+		public TimeSpan ProgressInterval
+		{
+			get { return progressInterval_; }
+			set { progressInterval_ = value; }
+		}
+
+		#region Instance Fields
+		TimeSpan progressInterval_ = TimeSpan.FromSeconds(3);
+		#endregion
 	}
 	
 	/// <summary>
 	/// FastZip provides facilities for creating and extracting zip files.
-	/// Only relative paths are supported.
 	/// </summary>
 	public class FastZip
 	{
@@ -152,6 +207,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			Always
 		}
 		#endregion
+		
 		#region Constructors
 		/// <summary>
 		/// Initialise a default instance of <see cref="FastZip"/>.
@@ -169,6 +225,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			events_ = events;
 		}
 		#endregion
+		
 		#region Properties
 		/// <summary>
 		/// Get/set a value indicating wether empty directories should be created.
@@ -179,6 +236,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			set { createEmptyDirectories_ = value; }
 		}
 
+#if !NETCF_1_0
 		/// <summary>
 		/// Get / set the password value.
 		/// </summary>
@@ -187,10 +245,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 			get { return password_; }
 			set { password_ = value; }
 		}
-		
+#endif
+
 		/// <summary>
 		/// Get or set the <see cref="INameTransform"></see> active when creating Zip files.
 		/// </summary>
+		/// <seealso cref="EntryFactory"></seealso>
 		public INameTransform NameTransform
 		{
 			get { return entryFactory_.NameTransform; }
@@ -214,6 +274,24 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 			}
 		}
+		
+		/// <summary>
+		/// Gets or sets the setting for <see cref="UseZip64">Zip64 handling when writing.</see>
+		/// </summary>
+        /// <remarks>
+        /// The default value is dynamic which is not backwards compatible with old
+        /// programs and can cause problems with XP's built in compression which cant
+        /// read Zip64 archives. However it does avoid the situation were a large file
+        /// is added and cannot be completed correctly.
+        /// NOTE: Setting the size for entries before they are added is the best solution!
+        /// By default the EntryFactory used by FastZip will set fhe file size.
+        /// </remarks>
+		public UseZip64 UseZip64
+		{
+			get { return useZip64_; }
+			set { useZip64_ = value; }
+		}
+		
 		/// <summary>
 		/// Get/set a value indicating wether file dates and times should 
 		/// be restored when extracting files from an archive.
@@ -228,13 +306,25 @@ namespace ICSharpCode.SharpZipLib.Zip
 				restoreDateTimeOnExtract_ = value;
 			}
 		}
+		
+		/// <summary>
+		/// Get/set a value indicating wether file attributes should
+		/// be restored during extract operations
+		/// </summary>
+		public bool RestoreAttributesOnExtract
+		{
+			get { return restoreAttributesOnExtract_; }
+			set { restoreAttributesOnExtract_ = value; }
+		}
 		#endregion
+		
 		#region Delegates
 		/// <summary>
 		/// Delegate called when confirming overwriting of files.
 		/// </summary>
 		public delegate bool ConfirmOverwriteDelegate(string fileName);
 		#endregion
+		
 		#region CreateZip
 		/// <summary>
 		/// Create a zip file.
@@ -270,18 +360,27 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <param name="recurse">True to recurse directories, false for no recursion.</param>
 		/// <param name="fileFilter">The <see cref="PathFilter">file filter</see> to apply.</param>
 		/// <param name="directoryFilter">The <see cref="PathFilter">directory filter</see> to apply.</param>
+        /// <remarks>The <paramref name="outputStream"/> is closed after creation.</remarks>
 		public void CreateZip(Stream outputStream, string sourceDirectory, bool recurse, string fileFilter, string directoryFilter)
 		{
 			NameTransform = new ZipNameTransform(sourceDirectory);
 			sourceDirectory_ = sourceDirectory;
 
 			using ( outputStream_ = new ZipOutputStream(outputStream) ) {
-				FileSystemScanner scanner = new FileSystemScanner(fileFilter, directoryFilter);
-				scanner.ProcessFile += new ProcessFileDelegate(ProcessFile);
-				if ( this.CreateEmptyDirectories ) {
-					scanner.ProcessDirectory += new ProcessDirectoryDelegate(ProcessDirectory);
-				}
 
+#if !NETCF_1_0
+				if ( password_ != null ) {
+					outputStream_.Password = password_;
+				}
+#endif
+
+				outputStream_.UseZip64 = UseZip64;
+				FileSystemScanner scanner = new FileSystemScanner(fileFilter, directoryFilter);
+				scanner.ProcessFile += new ProcessFileHandler(ProcessFile);
+				if ( this.CreateEmptyDirectories ) {
+					scanner.ProcessDirectory += new ProcessDirectoryHandler(ProcessDirectory);
+				}
+				
 				if (events_ != null) {
 					if ( events_.FileFailure != null ) {
 						scanner.FileFailure += events_.FileFailure;
@@ -297,6 +396,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 
 		#endregion
+		
 		#region ExtractZip
 		/// <summary>
 		/// Extract the contents of a zip file.
@@ -318,37 +418,75 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <param name="confirmDelegate">A delegate to invoke when confirming overwriting.</param>
 		/// <param name="fileFilter">A filter to apply to files.</param>
 		/// <param name="directoryFilter">A filter to apply to directories.</param>
-		/// <param name="restoreDateTime">Flag indicating wether to restore the date and time for extracted files.</param>
+		/// <param name="restoreDateTime">Flag indicating whether to restore the date and time for extracted files.</param>
 		public void ExtractZip(string zipFileName, string targetDirectory, 
-		                       Overwrite overwrite, ConfirmOverwriteDelegate confirmDelegate, 
-		                       string fileFilter, string directoryFilter, bool restoreDateTime)
+							   Overwrite overwrite, ConfirmOverwriteDelegate confirmDelegate, 
+							   string fileFilter, string directoryFilter, bool restoreDateTime)
 		{
-			if ( (overwrite == Overwrite.Prompt) && (confirmDelegate == null) ) {
+			Stream inputStream = File.Open(zipFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+			ExtractZip(inputStream, targetDirectory, overwrite, confirmDelegate, fileFilter, directoryFilter, restoreDateTime, true);
+		}
+
+		/// <summary>
+		/// Extract the contents of a zip file held in a stream.
+		/// </summary>
+		/// <param name="inputStream">The seekable input stream containing the zip to extract from.</param>
+		/// <param name="targetDirectory">The directory to save extracted information in.</param>
+		/// <param name="overwrite">The style of <see cref="Overwrite">overwriting</see> to apply.</param>
+		/// <param name="confirmDelegate">A delegate to invoke when confirming overwriting.</param>
+		/// <param name="fileFilter">A filter to apply to files.</param>
+		/// <param name="directoryFilter">A filter to apply to directories.</param>
+		/// <param name="restoreDateTime">Flag indicating whether to restore the date and time for extracted files.</param>
+		/// <param name="isStreamOwner">Flag indicating whether the inputStream will be closed by this method.</param>
+		public void ExtractZip(Stream inputStream, string targetDirectory,
+					   Overwrite overwrite, ConfirmOverwriteDelegate confirmDelegate,
+					   string fileFilter, string directoryFilter, bool restoreDateTime,
+					   bool isStreamOwner)
+		{
+			if ((overwrite == Overwrite.Prompt) && (confirmDelegate == null)) {
 				throw new ArgumentNullException("confirmDelegate");
 			}
 
 			continueRunning_ = true;
 			overwrite_ = overwrite;
 			confirmDelegate_ = confirmDelegate;
-			targetDirectory_ = targetDirectory;
+			extractNameTransform_ = new WindowsNameTransform(targetDirectory);
+
 			fileFilter_ = new NameFilter(fileFilter);
 			directoryFilter_ = new NameFilter(directoryFilter);
 			restoreDateTimeOnExtract_ = restoreDateTime;
-			
-			using ( inputStream_ = new ZipInputStream(File.OpenRead(zipFileName)) ) {
-				if (password_ != null) {
-					inputStream_.Password = password_;
-				}
 
-				ZipEntry entry;
-				while ( continueRunning_ && (entry = inputStream_.GetNextEntry()) != null ) {
-					if ( directoryFilter_.IsMatch(Path.GetDirectoryName(entry.Name)) && fileFilter_.IsMatch(entry.Name) ) {
-						ExtractEntry(entry);
+			using (zipFile_ = new ZipFile(inputStream)) {
+
+#if !NETCF_1_0
+				if (password_ != null) {
+					zipFile_.Password = password_;
+				}
+#endif
+				zipFile_.IsStreamOwner = isStreamOwner;
+				System.Collections.IEnumerator enumerator = zipFile_.GetEnumerator();
+				while (continueRunning_ && enumerator.MoveNext()) {
+					ZipEntry entry = (ZipEntry)enumerator.Current;
+					if (entry.IsFile)
+					{
+						// TODO Path.GetDirectory can fail here on invalid characters.
+						if (directoryFilter_.IsMatch(Path.GetDirectoryName(entry.Name)) && fileFilter_.IsMatch(entry.Name)) {
+							ExtractEntry(entry);
+						}
+					}
+					else if (entry.IsDirectory) {
+						if (directoryFilter_.IsMatch(entry.Name) && CreateEmptyDirectories) {
+							ExtractEntry(entry);
+						}
+					}
+					else {
+						// Do nothing for volume labels etc...
 					}
 				}
 			}
 		}
 		#endregion
+		
 		#region Internal Processing
 		void ProcessDirectory(object sender, DirectoryEventArgs e)
 		{
@@ -357,9 +495,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 					events_.OnProcessDirectory(e.Name, e.HasMatchingFiles);
 				}
 				
-				if (e.Name != sourceDirectory_) {
-					ZipEntry entry = entryFactory_.MakeDirectoryEntry(e.Name);
-					outputStream_.PutNextEntry(entry);
+				if ( e.ContinueRunning ) {
+					if (e.Name != sourceDirectory_) {
+						ZipEntry entry = entryFactory_.MakeDirectoryEntry(e.Name);
+						outputStream_.PutNextEntry(entry);
+					}
 				}
 			}
 		}
@@ -371,23 +511,51 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 			
 			if ( e.ContinueRunning ) {
-				ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
-				outputStream_.PutNextEntry(entry);
-				AddFileContents(e.Name);
+                try {
+                    // The open below is equivalent to OpenRead which gaurantees that if opened the 
+                    // file will not be changed by subsequent openers, but precludes opening in some cases
+                    // were it could succeed.
+                    using (FileStream stream = File.Open(e.Name, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+                        ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
+                        outputStream_.PutNextEntry(entry);
+                        AddFileContents(e.Name, stream);
+                    }
+                }
+                catch(Exception ex) {
+                    if (events_ != null) {
+                        continueRunning_ = events_.OnFileFailure(e.Name, ex);
+                    }
+                    else {
+                        continueRunning_ = false;
+                        throw;
+                    }
+                }
 			}
 		}
 
-		void AddFileContents(string name)
+		void AddFileContents(string name, Stream stream)
 		{
-			if ( buffer_ == null ) {
-				buffer_ = new byte[4096];
+			if( stream==null ) {
+				throw new ArgumentNullException("stream");
 			}
 
-			using (FileStream stream = File.OpenRead(name)) {
+			if( buffer_==null ) {
+				buffer_=new byte[4096];
+			}
+
+			if( (events_!=null)&&(events_.Progress!=null) ) {
+				StreamUtils.Copy(stream, outputStream_, buffer_,
+					events_.Progress, events_.ProgressInterval, this, name);
+			}
+			else {
 				StreamUtils.Copy(stream, outputStream_, buffer_);
 			}
+
+			if( events_!=null ) {
+				continueRunning_=events_.OnCompletedFile(name);
+			}
 		}
-		
+
 		void ExtractFileEntry(ZipEntry entry, string targetName)
 		{
 			bool proceed = true;
@@ -413,13 +581,31 @@ namespace ICSharpCode.SharpZipLib.Zip
 							if ( buffer_ == null ) {
 								buffer_ = new byte[4096];
 							}
-						
-							StreamUtils.Copy(inputStream_, outputStream, buffer_);
+							if ((events_ != null) && (events_.Progress != null))
+							{
+								StreamUtils.Copy(zipFile_.GetInputStream(entry), outputStream, buffer_,
+									events_.Progress, events_.ProgressInterval, this, entry.Name, entry.Size);
+							}
+							else
+							{
+								StreamUtils.Copy(zipFile_.GetInputStream(entry), outputStream, buffer_);
+							}
+							
+							if (events_ != null) {
+								continueRunning_ = events_.OnCompletedFile(entry.Name);
+							}
 						}
-						
-#if !COMPACT_FRAMEWORK_V10 && !COMPACT_FRAMEWORK_V20
+
+#if !NETCF_1_0 && !NETCF_2_0
 						if ( restoreDateTimeOnExtract_ ) {
 							File.SetLastWriteTime(targetName, entry.DateTime);
+						}
+						
+						if ( RestoreAttributesOnExtract && entry.IsDOSEntry && (entry.ExternalFileAttributes != -1)) {
+							FileAttributes fileAttributes = (FileAttributes) entry.ExternalFileAttributes;
+							// TODO: FastZip - Setting of other file attributes on extraction is a little trickier.
+							fileAttributes &= (FileAttributes.Archive | FileAttributes.Normal | FileAttributes.ReadOnly | FileAttributes.Hidden);
+							File.SetAttributes(targetName, fileAttributes);
 						}
 #endif						
 					}
@@ -428,7 +614,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 							continueRunning_ = events_.OnFileFailure(targetName, ex);
 						}
 						else {
-							continueRunning_ = false;
+                            continueRunning_ = false;
+                            throw;
 						}
 					}
 				}
@@ -437,29 +624,31 @@ namespace ICSharpCode.SharpZipLib.Zip
 
 		void ExtractEntry(ZipEntry entry)
 		{
-
-			bool doExtraction = NameIsValid(entry.Name) && entry.IsCompressionMethodSupported();
-			
-			// TODO: Fire delegate were compression method not supported.
-
-			string dirName = null;
-			string targetName = null;
+			bool doExtraction = entry.IsCompressionMethodSupported();
+			string targetName = entry.Name;
 			
 			if ( doExtraction ) {
-				string entryFileName;
-				if (Path.IsPathRooted(entry.Name)) {
-					string workName = Path.GetPathRoot(entry.Name);
-					workName = entry.Name.Substring(workName.Length);
-					entryFileName = Path.Combine(Path.GetDirectoryName(workName), Path.GetFileName(entry.Name));
+				if ( entry.IsFile ) {
+					targetName = extractNameTransform_.TransformFile(targetName);
 				}
-				else {
-					entryFileName = entry.Name;
+				else if ( entry.IsDirectory ) {
+					targetName = extractNameTransform_.TransformDirectory(targetName);
 				}
 				
-				targetName = Path.Combine(targetDirectory_, entryFileName);
-				dirName = Path.GetDirectoryName(Path.GetFullPath(targetName));
-	
-				doExtraction = (entryFileName.Length > 0);
+				doExtraction = !((targetName == null) || (targetName.Length == 0));
+			}
+			
+			// TODO: Fire delegate/throw exception were compression method not supported, or name is invalid?
+
+			string dirName = null;
+			
+			if ( doExtraction ) {
+					if ( entry.IsDirectory ) {
+						dirName = targetName;
+					}
+					else {
+						dirName = Path.GetDirectoryName(Path.GetFullPath(targetName));
+					}
 			}
 			
 			if ( doExtraction && !Directory.Exists(dirName) ) {
@@ -467,8 +656,20 @@ namespace ICSharpCode.SharpZipLib.Zip
 					try {
 						Directory.CreateDirectory(dirName);
 					}
-					catch {
+					catch (Exception ex) {
 						doExtraction = false;
+						if ( events_ != null ) {
+							if ( entry.IsDirectory ) {
+								continueRunning_ = events_.OnDirectoryFailure(targetName, ex);
+							}
+							else {
+								continueRunning_ = events_.OnFileFailure(targetName, ex);
+							}
+						}
+						else {
+							continueRunning_ = false;
+                            throw;
+						}
 					}
 				}
 			}
@@ -483,7 +684,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			return (int)info.Attributes;
 		}
 		
-#if NET_VER_1 || COMPACT_FRAMEWORK_V10
+#if NET_1_0 || NET_1_1 || NETCF_1_0
 		static bool NameIsValid(string name)
 		{
 			return (name != null) &&
@@ -499,22 +700,30 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 #endif
 		#endregion
+		
 		#region Instance Fields
 		bool continueRunning_;
 		byte[] buffer_;
 		ZipOutputStream outputStream_;
-		ZipInputStream inputStream_;
-		string password_;
-		string targetDirectory_;
+		ZipFile zipFile_;
 		string sourceDirectory_;
 		NameFilter fileFilter_;
 		NameFilter directoryFilter_;
 		Overwrite overwrite_;
 		ConfirmOverwriteDelegate confirmDelegate_;
+		
 		bool restoreDateTimeOnExtract_;
+		bool restoreAttributesOnExtract_;
 		bool createEmptyDirectories_;
 		FastZipEvents events_;
 		IEntryFactory entryFactory_ = new ZipEntryFactory();
+		INameTransform extractNameTransform_;
+		UseZip64 useZip64_=UseZip64.Dynamic;
+		
+#if !NETCF_1_0
+		string password_;
+#endif	
+
 		#endregion
 	}
 }

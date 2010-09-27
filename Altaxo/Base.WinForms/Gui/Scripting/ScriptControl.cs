@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Scripting
   /// Summary description for ScriptControl.
   /// </summary>
   [UserControlForController(typeof(IScriptViewEventSink))]
-  public class ScriptControl : System.Windows.Forms.UserControl, IScriptView
+  public class ScriptControlWin : System.Windows.Forms.UserControl, IScriptView
   {
     private System.Windows.Forms.Splitter _vertSplitter;
     private System.Windows.Forms.ListBox lbCompilerErrors;
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Scripting
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public ScriptControl()
+    public ScriptControlWin()
     {
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
@@ -74,46 +74,45 @@ namespace Altaxo.Gui.Scripting
     /// </summary>
     private void InitializeComponent()
     {
-      this._vertSplitter = new System.Windows.Forms.Splitter();
-      this.lbCompilerErrors = new System.Windows.Forms.ListBox();
-      this._panelText = new System.Windows.Forms.Panel();
-      this.SuspendLayout();
-      // 
-      // _vertSplitter
-      // 
-      this._vertSplitter.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this._vertSplitter.Location = new System.Drawing.Point(0, 357);
-      this._vertSplitter.Name = "_vertSplitter";
-      this._vertSplitter.Size = new System.Drawing.Size(408, 3);
-      this._vertSplitter.TabIndex = 1;
-      this._vertSplitter.TabStop = false;
-      // 
-      // lbCompilerErrors
-      // 
-      this.lbCompilerErrors.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.lbCompilerErrors.Location = new System.Drawing.Point(0, 262);
-      this.lbCompilerErrors.Name = "lbCompilerErrors";
-      this.lbCompilerErrors.Size = new System.Drawing.Size(408, 95);
-      this.lbCompilerErrors.TabIndex = 2;
-      this.lbCompilerErrors.DoubleClick += new System.EventHandler(this.lbCompilerErrors_DoubleClick);
-      // 
-      // _panelText
-      // 
-      this._panelText.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._panelText.Location = new System.Drawing.Point(0, 0);
-      this._panelText.Name = "_panelText";
-      this._panelText.Size = new System.Drawing.Size(408, 262);
-      this._panelText.TabIndex = 0;
-      // 
-      // ScriptControl
-      // 
-      this.Controls.Add(this._panelText);
-      this.Controls.Add(this._vertSplitter);
-      this.Controls.Add(this.lbCompilerErrors);
-     
-      this.Name = "ScriptControl";
-      this.Size = new System.Drawing.Size(408, 360);
-      this.ResumeLayout(false);
+			this._vertSplitter = new System.Windows.Forms.Splitter();
+			this.lbCompilerErrors = new System.Windows.Forms.ListBox();
+			this._panelText = new System.Windows.Forms.Panel();
+			this.SuspendLayout();
+			// 
+			// _vertSplitter
+			// 
+			this._vertSplitter.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this._vertSplitter.Location = new System.Drawing.Point(0, 262);
+			this._vertSplitter.Name = "_vertSplitter";
+			this._vertSplitter.Size = new System.Drawing.Size(408, 3);
+			this._vertSplitter.TabIndex = 1;
+			this._vertSplitter.TabStop = false;
+			// 
+			// lbCompilerErrors
+			// 
+			this.lbCompilerErrors.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.lbCompilerErrors.Location = new System.Drawing.Point(0, 265);
+			this.lbCompilerErrors.Name = "lbCompilerErrors";
+			this.lbCompilerErrors.Size = new System.Drawing.Size(408, 95);
+			this.lbCompilerErrors.TabIndex = 2;
+			this.lbCompilerErrors.DoubleClick += new System.EventHandler(this.lbCompilerErrors_DoubleClick);
+			// 
+			// _panelText
+			// 
+			this._panelText.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._panelText.Location = new System.Drawing.Point(0, 0);
+			this._panelText.Name = "_panelText";
+			this._panelText.Size = new System.Drawing.Size(408, 262);
+			this._panelText.TabIndex = 0;
+			// 
+			// ScriptControl
+			// 
+			this.Controls.Add(this._panelText);
+			this.Controls.Add(this._vertSplitter);
+			this.Controls.Add(this.lbCompilerErrors);
+			this.Name = "ScriptControl";
+			this.Size = new System.Drawing.Size(408, 360);
+			this.ResumeLayout(false);
 
     }
     #endregion

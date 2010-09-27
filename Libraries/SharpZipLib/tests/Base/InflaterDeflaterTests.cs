@@ -7,7 +7,8 @@ using NUnit.Framework;
 
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using ICSharpCode.SharpZipLib.GZip;
+
+using ICSharpCode.SharpZipLib.Tests.TestSupport;
 
 namespace ICSharpCode.SharpZipLib.Tests.Base
 {
@@ -164,29 +165,6 @@ namespace ICSharpCode.SharpZipLib.Tests.Base
 			TryManyVariants(0, false, new RunCompress(DeflateAndInflate), buffer);
 		}
 
-		[Test]
-		[Category("Base")]
-		[Category("ExcludeFromAutoBuild")]
-		public void FindBug()
-		{
-			using ( FileStream fs = File.OpenRead("c:\\tmp\\original.dat") )
-			{
-				long readOffset =  0;
-				long readLength = fs.Length - readOffset;
-//				readLength -= 5567; // 5568 works 5567 doesnt....
-
-				fs.Seek(readOffset, SeekOrigin.Begin);
-
-				byte[] original = new byte[readLength];
-
-				int bytesRead = fs.Read(original, 0, original.Length);
-				Assert.AreEqual(bytesRead, original.Length);
-
-				MemoryStream ms = Deflate(original, Deflater.BEST_SPEED, true);
-				Inflate(ms, original, Deflater.BEST_SPEED, true);
-			}
-		}
-
 		/// <summary>
 		/// Basic inflate/deflate test
 		/// </summary>
@@ -214,21 +192,77 @@ namespace ICSharpCode.SharpZipLib.Tests.Base
 			}
 			
 			Assert.IsNotNull(tempFile, "No permission to execute this test?");
-			if (tempFile != null) 
-			{
-				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
-				using (FileStream diskFile = File.Create(tempFile))
-				using (DeflaterOutputStream deflator = new DeflaterOutputStream(diskFile))
-				using (StreamWriter txtFile = new StreamWriter(deflator))
-				{
-					txtFile.Write("Hello");
-					txtFile.Flush();
-				}
 
-				File.Delete(tempFile);
+			tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
+			using (FileStream diskFile = File.Create(tempFile))
+			using (DeflaterOutputStream deflator = new DeflaterOutputStream(diskFile))
+			using (StreamWriter txtFile = new StreamWriter(deflator))
+			{
+				txtFile.Write("Hello");
+				txtFile.Flush();
 			}
+
+			File.Delete(tempFile);
 		}
 
+		[Test]
+		[Category("Base")]
+		public void DeflatorStreamOwnership()
+		{
+			TrackedMemoryStream memStream = new TrackedMemoryStream();
+			DeflaterOutputStream s = new DeflaterOutputStream(memStream);
+			
+			Assert.IsFalse(memStream.IsClosed, "Shouldnt be closed initially");
+			Assert.IsFalse(memStream.IsDisposed, "Shouldnt be disposed initially");
+			
+			s.Close();
+			
+			Assert.IsTrue(memStream.IsClosed, "Should be closed after parent owner close");
+			Assert.IsTrue(memStream.IsDisposed, "Should be disposed after parent owner close");
+			
+			memStream = new TrackedMemoryStream();
+			s = new DeflaterOutputStream(memStream);
+			
+			Assert.IsFalse(memStream.IsClosed, "Shouldnt be closed initially");
+			Assert.IsFalse(memStream.IsDisposed, "Shouldnt be disposed initially");
+			
+			s.IsStreamOwner = false;
+			s.Close();
+			
+			Assert.IsFalse(memStream.IsClosed, "Should not be closed after parent owner close");
+			Assert.IsFalse(memStream.IsDisposed, "Should not be disposed after parent owner close");
+			
+		}
+
+		[Test]
+		[Category("Base")]
+		public void InflatorStreamOwnership()
+		{
+			TrackedMemoryStream memStream = new TrackedMemoryStream();
+			InflaterInputStream s = new InflaterInputStream(memStream);
+
+			Assert.IsFalse(memStream.IsClosed, "Shouldnt be closed initially");
+			Assert.IsFalse(memStream.IsDisposed, "Shouldnt be disposed initially");
+
+			s.Close();
+
+			Assert.IsTrue(memStream.IsClosed, "Should be closed after parent owner close");
+			Assert.IsTrue(memStream.IsDisposed, "Should be disposed after parent owner close");
+
+			memStream = new TrackedMemoryStream();
+			s = new InflaterInputStream(memStream);
+
+			Assert.IsFalse(memStream.IsClosed, "Shouldnt be closed initially");
+			Assert.IsFalse(memStream.IsDisposed, "Shouldnt be disposed initially");
+
+			s.IsStreamOwner = false;
+			s.Close();
+
+			Assert.IsFalse(memStream.IsClosed, "Should not be closed after parent owner close");
+			Assert.IsFalse(memStream.IsDisposed, "Should not be disposed after parent owner close");
+
+		}
+		
 		[Test]
 		[Category("Base")]
 		public void CloseInflatorWithNestedUsing()
@@ -244,33 +278,30 @@ namespace ICSharpCode.SharpZipLib.Tests.Base
 			
 			Assert.IsNotNull(tempFile, "No permission to execute this test?");
 
-			if (tempFile != null) 
+			tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
+			using (FileStream diskFile = File.Create(tempFile))
+			using (DeflaterOutputStream deflator = new DeflaterOutputStream(diskFile))
+			using (StreamWriter textWriter = new StreamWriter(deflator))
 			{
-				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
-				using (FileStream diskFile = File.Create(tempFile))
-				using (DeflaterOutputStream deflator = new DeflaterOutputStream(diskFile))
-				using (StreamWriter textWriter = new StreamWriter(deflator))
-				{
-					textWriter.Write("Hello");
-					textWriter.Flush();
-				}
-
-				using (FileStream diskFile = File.OpenRead(tempFile))
-				using (InflaterInputStream deflator = new InflaterInputStream(diskFile))
-				using (StreamReader textReader = new StreamReader(deflator))
-				{
-					char[] buffer = new char[5];
-					int readCount = textReader.Read(buffer, 0, 5);
-					Assert.AreEqual(5, readCount);
-
-					StringBuilder b = new StringBuilder();
-					b.Append(buffer);
-					Assert.AreEqual("Hello", b.ToString());
-
-				}
-
-				File.Delete(tempFile);
+				textWriter.Write("Hello");
+				textWriter.Flush();
 			}
+
+			using (FileStream diskFile = File.OpenRead(tempFile))
+			using (InflaterInputStream deflator = new InflaterInputStream(diskFile))
+			using (StreamReader textReader = new StreamReader(deflator))
+			{
+				char[] buffer = new char[5];
+				int readCount = textReader.Read(buffer, 0, 5);
+				Assert.AreEqual(5, readCount);
+
+				StringBuilder b = new StringBuilder();
+				b.Append(buffer);
+				Assert.AreEqual("Hello", b.ToString());
+
+			}
+
+			File.Delete(tempFile);
 		}
 	}
 }

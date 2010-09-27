@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Scripting
 	/// <summary>
 	/// Summary description for PureScriptControl.
 	/// </summary>
-	[UserControlForController(typeof(IPureScriptViewEventSink), 110)]
+	//[UserControlForController(typeof(IPureScriptViewEventSink), 110)]
 	public class SDPureScriptControl : System.Windows.Forms.UserControl, IPureScriptView
 	{
 		/// <summary> 

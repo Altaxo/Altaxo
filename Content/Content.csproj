@@ -107,11 +107,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.csproj">
-      <Name>zICSharpCode.SharpZipLib</Name>
-      <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -447,6 +442,12 @@
     <Content Include="data\options\WpfToolbox.xaml">
       <SubType>Designer</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\SharpZipLib\src\ICSharpCode.SharpZLib.csproj">
+      <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
+      <Name>ICSharpCode.SharpZLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

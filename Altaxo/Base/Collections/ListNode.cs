@@ -30,10 +30,42 @@ namespace Altaxo.Collections
   /// This class is intended to use in list boxes, where you have to display a name, but must retrieve
   /// the item instead.
   /// </summary>
-  public class ListNode
+  public class ListNode : System.ComponentModel.INotifyPropertyChanged
   {
-    public string Name;
-    public object Item;
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+		protected string _name;
+		protected object _item;
+
+
+
+		public string Name
+		{
+			get
+			{
+				return _name;
+			}
+			set
+			{
+				var oldValue = _name;
+				_name = value;
+				if (value != oldValue)
+					OnPropertyChanged("Col0");
+			}
+		}
+		public object Item
+		{
+			get
+			{
+				return _item;
+			}
+			set
+			{
+				var oldValue = _item;
+				_item = value;
+				if (value != oldValue)
+					OnPropertyChanged("Item");
+			}
+		}
 
     public ListNode(string name, object item)
     {
@@ -57,12 +89,21 @@ namespace Altaxo.Collections
     public virtual string Description { get { return null; } }
     public virtual System.Drawing.Color? SubItemBackColor(int i) { return null; }
 		public virtual int ImageIndex { get { return 0; } }
-  }
 
-  public class ListNodeList : List<ListNode>
+
+		protected void OnPropertyChanged(string propertyName)
+		{
+			
+			if (null != PropertyChanged)
+				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+		}
+
+
+	}
+
+  public class ListNodeList : System.Collections.ObjectModel.ObservableCollection<ListNode>
   {
     public ListNodeList() { }
-    public ListNodeList(int capacity) : base(capacity) { }
     public ListNodeList(IEnumerable<ListNode> from) : base(from) { }
 
     public int IndexOfObject(object o)
@@ -104,7 +145,18 @@ namespace Altaxo.Collections
 
   public class SelectableListNode : ListNode, ISelectableItem
   {
-		public bool Selected { get; set; }
+		protected bool _isSelected;
+
+		public bool Selected 
+		{
+			get { return _isSelected; }
+			set 
+			{ 
+				var oldValue = _isSelected;
+				_isSelected = value; 
+				if (oldValue != value) 
+					OnPropertyChanged("Selected"); }
+		}
 
     public SelectableListNode(string name, object item, bool selected)
       : base(name, item)
@@ -113,13 +165,28 @@ namespace Altaxo.Collections
     }
   }
 
-  public class SelectableListNodeList : List<SelectableListNode>
+  public class SelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNode>
   {
     public SelectableListNodeList() { }
-    public SelectableListNodeList(int capacity) : base(capacity) { }
     public SelectableListNodeList(IEnumerable<SelectableListNode> from) : base(from) { }
 
-    public int IndexOfObject(object o)
+		public SelectableListNode[] ToArray()
+		{
+			SelectableListNode[] result = new SelectableListNode[Count];
+			for (int i = Count - 1; i >= 0; i--)
+				result[i] = this[i];
+			return result;
+		}
+
+		public int FindIndex(Predicate<SelectableListNode> match)
+		{
+			for (int i = 0; i < Count; i++)
+				if (match(this[i]))
+					return i;
+			return -1;
+		}
+
+		public int IndexOfObject(object o)
     {
       int i = -1;
       foreach (SelectableListNode n in this)
@@ -183,7 +250,21 @@ namespace Altaxo.Collections
 
   public class CheckableSelectableListNode : SelectableListNode
   {
-    public bool Checked;
+		protected bool _isChecked;
+		public bool Checked
+		{
+			get
+			{
+				return _isChecked;
+			}
+			set
+			{
+				var oldValue = _isChecked;
+				_isChecked = value;
+				if (value != oldValue)
+					OnPropertyChanged("Checked");
+			}
+		}
 
     public CheckableSelectableListNode(string name, object item, bool selected, bool ischecked)
       : base(name, item, selected)
@@ -192,10 +273,9 @@ namespace Altaxo.Collections
     }
   }
 
-  public class CheckableSelectableListNodeList : List<CheckableSelectableListNode>
+  public class CheckableSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<CheckableSelectableListNode>
   {
     public CheckableSelectableListNodeList() { }
-    public CheckableSelectableListNodeList(int capacity) : base(capacity) { }
     public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from) : base(from) { }
 
     public int IndexOfObject(object o)
@@ -252,6 +332,19 @@ namespace Altaxo.Collections
 				bool isSelected = enumerationValue.HasFlag(e);
 				list.Add(new SelectableListNode(baseName, e, isSelected));
 			}
+		}
+
+		public static int GetFlagEnumValueAsInt32(this SelectableListNodeList list)
+		{
+			int result=0;
+			foreach (var item in list)
+			{
+				if (item.Selected)
+				{
+					result |= (int)item.Item;
+				}
+			}
+			return result;
 		}
 	}
 }

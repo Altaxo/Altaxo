@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -21,7 +22,7 @@ namespace Altaxo.Gui
 		{
 			view.ItemsSource = null;
 			view.ItemsSource = data;
-			view.SelectedIndex = data.FindIndex(n => n.Selected);
+			view.SelectedIndex = data.FirstSelectedNodeIndex;
 		}
 
 		public static void SynchronizeSelectionFromGui(ComboBox view)
@@ -42,7 +43,7 @@ namespace Altaxo.Gui
 			view.ItemsSource = data;
 			if (view.SelectionMode == SelectionMode.Single)
 			{
-				view.SelectedIndex = data.FindIndex(n => n.Selected);
+				view.SelectedIndex = data.FirstSelectedNodeIndex;
 			}
 			else
 			{
@@ -73,7 +74,7 @@ namespace Altaxo.Gui
 
 			if (view.SelectionMode == SelectionMode.Single)
 			{
-				view.SelectedIndex = data.FindIndex(n => n.Selected);
+				view.SelectedIndex = data.FirstSelectedNodeIndex;
 			}
 			else
 			{
@@ -246,6 +247,20 @@ namespace Altaxo.Gui
 
 		#region Panel Helpers
 
+
+		public static void InitializeChoicePanel<TChoiceGuiElement>(Panel panel, SelectableListNodeList choices) where TChoiceGuiElement: ToggleButton, new()
+		{
+			panel.Tag = choices;
+			panel.Children.Clear();
+			foreach (var choice in choices)
+			{
+				var rb = new TChoiceGuiElement();
+				rb.Content = choice.Name;
+				rb.Tag = choice;
+				rb.SetBinding(ToggleButton.IsCheckedProperty,new System.Windows.Data.Binding("Selected") { Source=choice, Mode= System.Windows.Data.BindingMode.TwoWay });
+				panel.Children.Add(rb);
+			}
+		}
 
 
 		#endregion

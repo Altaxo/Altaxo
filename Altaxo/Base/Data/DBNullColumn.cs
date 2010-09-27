@@ -71,7 +71,7 @@ namespace Altaxo.Data
     }
 
 
-    public override void CopyDataFrom(Altaxo.Data.DataColumn v)
+    public override void CopyDataFrom(object o)
     {
     }
     public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow 

@@ -18,5 +18,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		ReadPlotItemData,
 		ReadXYCoordinates,
 		ZoomAxes,
+		RegularPolygonDrawing,
+		OpenCardinalSplineDrawing,
+		ClosedCardinalSplineDrawing
 	}
 }

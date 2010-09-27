@@ -43,18 +43,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
         return;
 
-
-      // preliminary
-
-      // we simply create a new column, copy the values
       Altaxo.Data.DoubleColumn col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]];
 
-
-      double[] arr=col.Array;
-      FastHartleyTransform.RealFFT(arr,arr.Length);
-
-      col.Array = arr;
-
+			Altaxo.Data.Extensions.AnalysisRealFourierTransformationCommands.ShowRealFourierTransformDialog(col);
     }
 
 

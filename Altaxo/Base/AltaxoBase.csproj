@@ -190,6 +190,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\DataRow.cs" />
+    <Compile Include="Data\Extensions\AnalysisRealFourierTransformCommands.cs" />
     <Compile Include="Data\Extensions\ExpandCyclingVariableColumn.cs" />
     <Compile Include="Data\Extensions\MasterCurveCreation.cs" />
     <Compile Include="Data\NumericColumnProxy.cs" />
@@ -201,6 +202,9 @@
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderAHSBGradient.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ColumnDrivenColorPlotStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ColumnDrivenSymbolSizePlotStyle.cs" />
+    <Compile Include="Graph\Gdi\Shapes\ClosedCardinalSpline.cs" />
+    <Compile Include="Graph\Gdi\Shapes\OpenCardinalSpline.cs" />
+    <Compile Include="Graph\Gdi\Shapes\RegularPolygon.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Plot\Groups\VariableColorGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\VariableSymbolSizeGroupStyle.cs" />
@@ -233,6 +237,7 @@
     <Compile Include="Gui\Graph\XYPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
+    <Compile Include="Gui\Worksheet\RealFourierTransformationController.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
     <Compile Include="Main\RelDocNodeProxy.cs" />
@@ -240,6 +245,7 @@
     <Compile Include="Main\Services\IBackgroundMonitor.cs" />
     <Compile Include="Main\Services\IFitFunctionService.cs" />
     <Compile Include="Main\Services\RtfComposerService.cs" />
+    <Compile Include="Root\IProgressReporter.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
       <SubType>Code</SubType>
@@ -906,7 +912,9 @@
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.ShearGripHandle.cs" />
     <Compile Include="Graph\Gdi\TranslationRotationShearxScaleTransformation2D.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rem ..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs</PreBuildEvent>

@@ -119,6 +119,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		private void EhProjectOpened(object sender, ProjectEventArgs e)
 		{
+			Current.Gui.Execute(EhProjectOpened_Unsynchronized, sender, e);
+		}
+		private void EhProjectOpened_Unsynchronized(object sender, ProjectEventArgs e)
+		{
 			if (object.ReferenceEquals(_doc, e.Project))
 				return;
 
@@ -139,6 +143,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 		private void EhProjectClosed(object sender, ProjectEventArgs e)
+		{
+			Current.Gui.Execute(EhProjectClosed_Unsynchronized, sender, e);
+		}
+		private void EhProjectClosed_Unsynchronized(object sender, ProjectEventArgs e)
 		{
 			if (null != _doc)
 			{
@@ -183,6 +191,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		private void EhProjectDirectoryItemChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
+			Current.Gui.Execute(EhProjectDirectoryItemChanged_Unsynchronized, changeType, item, oldName, newName);
+		}
+		private void EhProjectDirectoryItemChanged_Unsynchronized(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		{
 			if (changeType == NamedObjectCollectionChangeType.MultipleChanges)
 			{
 				RecreateDirectoryNodes();
@@ -195,6 +207,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 		private void EhProjectDirectoryChanged(Main.NamedObjectCollectionChangeType changeType, string dir)
+		{
+			Current.Gui.Execute(EhProjectDirectoryChanged_Unsynchronized, changeType, dir);
+		}
+		private void EhProjectDirectoryChanged_Unsynchronized(Main.NamedObjectCollectionChangeType changeType, string dir)
 		{
 			if (Main.ProjectFolder.IsRootFolderName(dir))
 				return; // for the root directory, we have already the node, and we can not add or remove them
@@ -306,6 +322,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="list"></param>
 		void EhListItemHandlerListChange(SelectableListNodeList list)
 		{
+			Current.Gui.Execute(EhListItemHandlerListChange_Unsynchronized, list);
+		}
+
+		/// <summary>
+		/// Called if the list item handler announces a change in the item list.
+		/// </summary>
+		/// <param name="list"></param>
+		void EhListItemHandlerListChange_Unsynchronized(SelectableListNodeList list)
+		{
 			_listViewItems = list;
 			//_listViewItems.Sort(NameComparism);
 			if (_listItemHandler is SpecificProjectFolderHandler)
@@ -317,7 +342,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 
 			if (null != _view)
+			{
 				_view.InitializeList(_listViewItems);
+			}
 		}
 
 		/// <summary>

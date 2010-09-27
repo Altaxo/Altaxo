@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Pads
 
 		#region IOutputService Members
 
-		void WriteInternal(string text)
+		void Write_Unsynchronized(string text)
 		{
 			_view.AppendText(text);
 
@@ -102,18 +102,9 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-
 		public void Write(string text)
 		{
-			if (Current.Gui.InvokeRequired())
-			{
-				System.Windows.Forms.MethodInvoker i = delegate { WriteInternal(text); };
-				Current.Gui.Invoke(i);
-			}
-			else
-			{
-				WriteInternal(text);
-			}
+			Current.Gui.Execute(Write_Unsynchronized,text);
 		}
 
 		public void WriteLine()

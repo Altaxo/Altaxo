@@ -36,7 +36,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar 
 {
@@ -78,6 +77,16 @@ namespace ICSharpCode.SharpZipLib.Tar
 			blockBuffer  = new byte[TarBuffer.BlockSize];
 		}
 		#endregion		
+
+        /// <summary>
+        /// Get/set flag indicating ownership of the underlying stream.
+        /// When the flag is true <see cref="Close"></see> will close the underlying stream also.
+        /// </summary>
+        public bool IsStreamOwner
+        {
+            get { return buffer.IsStreamOwner; }
+            set { buffer.IsStreamOwner = value; }
+        }
 
 		/// <summary>
 		/// true if the stream supports reading; otherwise, false.
@@ -141,14 +150,18 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <summary>
 		/// set the position within the current stream
 		/// </summary>
+		/// <param name="offset">The offset relative to the <paramref name="origin"/> to seek to</param>
+		/// <param name="origin">The <see cref="SeekOrigin"/> to seek from.</param>
+		/// <returns>The new position in the stream.</returns>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
 			return outputStream.Seek(offset, origin);
 		}
 		
 		/// <summary>
-		/// set the length of the current stream
+		/// Set the length of the current stream
 		/// </summary>
+		/// <param name="value">The new stream length.</param>
 		public override void SetLength(long value)
 		{
 			outputStream.SetLength(value);
@@ -168,7 +181,12 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// read bytes from the current stream and advance the position within the 
 		/// stream by the number of bytes read.
 		/// </summary>
-		/// <returns>The total number of bytes read, or zero if at the end of the stream</returns>
+		/// <param name="buffer">The buffer to store read bytes in.</param>
+		/// <param name="offset">The index into the buffer to being storing bytes at.</param>
+		/// <param name="count">The desired number of bytes to read.</param>
+		/// <returns>The total number of bytes read, or zero if at the end of the stream.
+		/// The number of bytes may be less than the <paramref name="count">count</paramref>
+		/// requested if data is not avialable.</returns>
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			return outputStream.Read(buffer, offset, count);
@@ -266,11 +284,10 @@ namespace ICSharpCode.SharpZipLib.Tar
 				longHeader.GroupName = "";
 				longHeader.UserName = "";
 				longHeader.LinkName = "";
+                longHeader.Size = entry.TarHeader.Name.Length;
 
-				longHeader.Size = entry.TarHeader.Name.Length;
-
-				longHeader.WriteHeader(this.blockBuffer);
-				this.buffer.WriteBlock(this.blockBuffer);  // Add special long filename header block
+				longHeader.WriteHeader(blockBuffer);
+				buffer.WriteBlock(blockBuffer);  // Add special long filename header block
 
 				int nameCharIndex = 0;
 
@@ -313,7 +330,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			if (currBytes < currSize) {
 				string errorText = string.Format(
 					"Entry closed at '{0}' before the '{1}' bytes specified in the header were written",
-                    currBytes, currSize);
+					currBytes, currSize);
 				throw new TarException(errorText);
 			}
 		}
@@ -356,7 +373,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			
 			if ( offset < 0 )
 			{
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("offset");
 #else
 				throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
@@ -370,7 +387,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 
 			if ( count < 0 )
 			{
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("count");
 #else
 				throw new ArgumentOutOfRangeException("count", "Cannot be negative");
@@ -380,7 +397,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			if ( (currBytes + count) > currSize ) {
 				string errorText = string.Format("request to write '{0}' bytes exceeds size in header of '{1}' bytes",
 					count, this.currSize);
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("count");
 #else
 				throw new ArgumentOutOfRangeException("count", errorText);

@@ -22,56 +22,44 @@
 
 
 using System;
+using Altaxo;
 
 namespace Altaxo.Main.Services
 {
-  /// <summary>
-  /// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see cref="CancelledByUser" />, and
-  /// if it is <c>true</c>, return in a safe way.
-  /// </summary>
-  public interface IBackgroundMonitor
+	/// <summary>
+	/// Interface for the other site, i.e. the site that reads the progress and bring it to display.
+	/// </summary>
+	public interface IProgressMonitor
+	{
+		/// <summary>
+		/// Indicates that new report text has arrived that was not displayed yet.
+		/// </summary>
+		bool HasReportText { get; }
+		/// <summary>
+		/// Gets the report text. When called, the function has to reset the <see cref="HasReportText"/> flag.
+		/// </summary>
+		string GetReportText();
+	}
+ 
+
+  public interface IExternalDrivenBackgroundMonitor : IProgressReporter, IProgressMonitor
   {
     /// <summary>
-    /// True when we should send a string what we do currently
+    /// Sets the <see cref="IProgressReporter.ShouldReportNow"/> flag to <c>True</c> to indicate that the worker thread should report its progress.
     /// </summary>
-    bool ShouldReport { get; }
+		void SetShouldReportNow();
 
     /// <summary>
-    /// Sets a text that the user can read.
+    /// Sets the <see cref="IProgressReporter.CancellationPending"/> flag to <c>True</c> to indicate that the worker thread should cancel its activity.
     /// </summary>
-    /// <param name="text"></param>
-    void Report(string text);
-
-    /// <summary>
-    /// Gets the report text.
-    /// </summary>
-    string ReportText { get; }
-
-    /// <summary>
-    /// Returns true if the activity was cancelled by the user
-    /// </summary>
-    bool CancelledByUser { get; }
-    
+		void SetCancellationPending();
   }
 
-  public interface IExternalDrivenBackgroundMonitor : IBackgroundMonitor
-  {
-    /// <summary>
-    /// Can be set True when the watching instance (for instance a dialog) should report the text.
-    /// </summary>
-    new bool ShouldReport { set; }
-
-    /// <summary>
-    /// Can be set True if the activity should be cancelled.
-    /// </summary>
-    new bool CancelledByUser { set; }
-  }
-
-  public class DummyBackgroundMonitor : IBackgroundMonitor
+  public class DummyBackgroundMonitor : IProgressReporter
   {
     #region IBackgroundMonitor Members
 
-    public bool ShouldReport
+    public bool ShouldReportNow
     {
       get
       {
@@ -79,7 +67,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    public void Report(string text)
+    public void ReportProgress(string text)
     {
       
     }
@@ -92,7 +80,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    public bool CancelledByUser
+    public bool CancellationPending
     {
       get
       {
@@ -109,44 +97,56 @@ namespace Altaxo.Main.Services
   {
     protected bool _shouldReport;
     string _reportText;
-    bool _cancelledByUser;
+		bool _hasFreshReportText;
+
+    bool _cancellationPending;
 
     #region IBackgroundMonitor Members
 
-    public virtual bool ShouldReport
+    public virtual bool ShouldReportNow
     {
       get
       {
         return _shouldReport;
       }
-      set
-      {
-        _shouldReport |= value;
-      }
     }
 
-    public void Report(string text)
+		public virtual void SetShouldReportNow()
+		{
+			_shouldReport = true;
+		}
+
+    public void ReportProgress(string text)
     {
       _shouldReport = false;
       _reportText = text;
+			_hasFreshReportText = true;
     }
 
-    public string ReportText
+
+		public bool HasReportText
+		{
+			get { return _hasFreshReportText; }
+		}
+
+    public string GetReportText()
     {
-      get { return _reportText; }
+				_hasFreshReportText = false;
+				return _reportText; 
     }
 
-    public bool CancelledByUser
+    public bool CancellationPending
     {
       get
       {
-        return _cancelledByUser;
-      }
-      set 
-      {
-        _cancelledByUser |= value;
+        return _cancellationPending;
       }
     }
+
+		public void SetCancellationPending()
+		{
+			_cancellationPending = true;
+		}
 
     #endregion
 
@@ -156,27 +156,29 @@ namespace Altaxo.Main.Services
   {
     DateTime _timeBegin = DateTime.Now;
 
-    public override bool ShouldReport
+    public override bool ShouldReportNow
     {
       get
       {
         return _shouldReport;
       }
-      set
-      {
-        _shouldReport |= value;
-
-        if(_shouldReport)
-          Report("Busy ... " + (DateTime.Now - _timeBegin).ToString());
-      }
+     
     }
+
+		public override void SetShouldReportNow()
+		{
+			_shouldReport = true;
+
+			if (_shouldReport)
+				ReportProgress("Busy ... " + (DateTime.Now - _timeBegin).ToString());
+		}
   }
 
-  public class TimedBackgroundMonitor : IBackgroundMonitor
+  public class TimedBackgroundMonitor : IProgressReporter
   {
     System.Timers.Timer _timer = new System.Timers.Timer(200);
     bool _shouldReport;
-    bool _cancelledByUser;
+    bool _cancellationPending;
     string _reportText;
 
     public event System.Timers.ElapsedEventHandler Elapsed;
@@ -204,7 +206,7 @@ namespace Altaxo.Main.Services
 
     #region IBackgroundMonitor Members
 
-    public bool ShouldReport
+    public bool ShouldReportNow
     {
       get
       {
@@ -212,7 +214,7 @@ namespace Altaxo.Main.Services
       }
     }
 
-    public void Report(string text)
+    public void ReportProgress(string text)
     {
       _shouldReport = false;
       _reportText = text;
@@ -225,17 +227,18 @@ namespace Altaxo.Main.Services
       get { return _reportText; }
     }
 
-    public bool CancelledByUser
+    public bool CancellationPending
     {
       get
       {
-        return _cancelledByUser;
-      }
-      set
-      {
-        _cancelledByUser = value;
+        return _cancellationPending;
       }
     }
+
+		public void SetCancellationPending()
+		{
+			_cancellationPending = true;
+		}
 
     #endregion
 

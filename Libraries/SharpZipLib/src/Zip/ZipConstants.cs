@@ -37,15 +37,14 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
-#if COMPACT_FRAMEWORK_V10 && COMPACT_FRAMEWORK_V20
-#error Cannot define both COMPACT_FRAMEWORK_V10 and COMPACT_FRAMEWORK_V20
-#endif
+// HISTORY
+//	22-12-2009	DavidPierson	Added AES support
 
 using System;
 using System.Text;
 using System.Threading;
 
-#if COMPACT_FRAMEWORK_V10 || COMPACT_FRAMEWORK_V20
+#if NETCF_1_0 || NETCF_2_0
 using System.Globalization;
 #endif
 
@@ -96,12 +95,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 		Deflate64  = 9,
 		
 		/// <summary>
-		/// Not supported by #Zip currently
+		/// BZip2 compression. Not supported by #Zip.
 		/// </summary>
 		BZip2      = 11,
 		
 		/// <summary>
-		/// WinZip special for AES encryption, Not supported by #Zip
+		/// WinZip special for AES encryption, Now supported by #Zip.
 		/// </summary>
 		WinZipAES  = 99,
 		
@@ -161,7 +160,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </summary>
 		Twofish = 0x6721,
 		/// <summary>
-		/// RCS has been used for encryption.
+		/// RC4 has been used for encryption.
 		/// </summary>
 		RC4            = 0x6801,
 		/// <summary>
@@ -198,7 +197,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </summary>
 		Patched = 0x0020,
 		/// <summary>
-		/// Bit 6 if set strong encryption has been used for this entry.
+		/// Bit 6 if set indicates strong encryption has been used for this entry.
 		/// </summary>
 		StrongEncryption = 0x0040,
 		/// <summary>
@@ -257,9 +256,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </summary>
 		/// <remarks>
 		/// This is also the Zip version for the library when comparing against the version required to extract
-		/// for an entry.  See <see cref="ZipInputStream.CanDecompressEntry"/>.
+		/// for an entry.  See <see cref="ZipEntry.CanDecompress"/>.
 		/// </remarks>
-		public const int VersionMadeBy = 45;
+		public const int VersionMadeBy = 51; // was 45 before AES
 		
 		/// <summary>
 		/// The version made by field for entries in the central header when created by this library
@@ -269,7 +268,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// for an entry.  See <see cref="ZipInputStream.CanDecompressEntry">ZipInputStream.CanDecompressEntry</see>.
 		/// </remarks>
 		[Obsolete("Use VersionMadeBy instead")]
-		public const int VERSION_MADE_BY = 45;
+		public const int VERSION_MADE_BY = 51;
 		
 		/// <summary>
 		/// The minimum version required to support strong encryption
@@ -281,9 +280,14 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </summary>
 		[Obsolete("Use VersionStrongEncryption instead")]
 		public const int VERSION_STRONG_ENCRYPTION = 50;
-		
+
 		/// <summary>
-		/// The version required for Zip64 extensions
+		/// Version indicating AES encryption
+		/// </summary>
+		public const int VERSION_AES = 51;
+
+		/// <summary>
+		/// The version required for Zip64 extensions (4.5 or higher)
 		/// </summary>
 		public const int VersionZip64 = 45;
 		#endregion
@@ -463,15 +467,17 @@ namespace ICSharpCode.SharpZipLib.Zip
 		public const int ENDSIG = 'P' | ('K' << 8) | (5 << 16) | (6 << 24);
 		#endregion
 		
-#if COMPACT_FRAMEWORK_V10 || COMPACT_FRAMEWORK_V20
-		// This isnt so great but is better than nothing?
+#if NETCF_1_0 || NETCF_2_0
+		// This isnt so great but is better than nothing.
+        // Trying to work out an appropriate OEM code page would be good.
+        // 850 is a good default for english speakers particularly in Europe.
 		static int defaultCodePage = CultureInfo.CurrentCulture.TextInfo.ANSICodePage;
 #else
 		static int defaultCodePage = Thread.CurrentThread.CurrentCulture.TextInfo.OEMCodePage;
 #endif
 		
 		/// <summary>
-		/// Default encoding used for string conversion.  0 gives the default system Ansi code page.
+		/// Default encoding used for string conversion.  0 gives the default system OEM code page.
 		/// Dont use unicode encodings if you want to be Zip compatible!
 		/// Using the default code page isnt the full solution neccessarily
 		/// there are many variable factors, codepage 850 is often a good choice for
@@ -586,34 +592,27 @@ namespace ICSharpCode.SharpZipLib.Zip
 				return new byte[0];
 			}
 			
-#if COMPACT_FRAMEWORK_V10 || COMPACT_FRAMEWORK_V20
-			return Encoding.ASCII.GetBytes(str);
-#else
 			return Encoding.GetEncoding(DefaultCodePage).GetBytes(str);
-#endif
 		}
 
 		/// <summary>
 		/// Convert a string to a byte array
 		/// </summary>
-		/// <param name="flags">The applicable general purpose bits flags</param>
+        /// <param name="flags">The applicable <see cref="GeneralBitFlags">general purpose bits flags</see></param>
 		/// <param name="str">
 		/// String to convert to an array
 		/// </param>
 		/// <returns>Converted array</returns>
 		public static byte[] ConvertToArray(int flags, string str)
 		{
-			if (str == null)
-			{
+			if (str == null) {
 				return new byte[0];
 			}
 
-			if ((flags & (int)GeneralBitFlags.UnicodeText) != 0)
-			{
+			if ((flags & (int)GeneralBitFlags.UnicodeText) != 0) {
 				return Encoding.UTF8.GetBytes(str);
 			}
-			else
-			{
+			else {
 				return ConvertToArray(str);
 			}
 		}

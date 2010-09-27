@@ -3,7 +3,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{57E8E474-4143-479E-8F41-CC4B12B56F8D}</ProjectGuid>
+    <ProjectGuid>{61BE8DBC-149A-4564-B891-9EEA4A09ED12}</ProjectGuid>
     <RootNamespace>FastZip</RootNamespace>
     <AssemblyName>FastZip</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -37,10 +37,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>

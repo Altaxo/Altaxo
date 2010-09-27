@@ -142,10 +142,9 @@
       <Project>{2748AD25-9C63-4E12-877B-4DCE96FBED54}</Project>
       <Name>ICSharpCode.SharpDevelop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.csproj">
-      <Name>zICSharpCode.SharpZipLib</Name>
+    <ProjectReference Include="..\..\Libraries\SharpZipLib\src\ICSharpCode.SharpZLib.csproj">
       <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+      <Name>ICSharpCode.SharpZLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\Base.Presentation\AltaxoBase.Presentation.csproj">
       <Project>{323D97E6-92A8-40B4-99C1-D64D4368DFC7}</Project>
@@ -191,6 +190,9 @@
     </Compile>
     <Compile Include="Gui\Scripting\SDPureScriptControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Scripting\SDPureScriptControlWpf.xaml.cs">
+      <DependentUpon>SDPureScriptControlWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
@@ -257,6 +259,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Scripting\SDPureScriptControlWpf.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

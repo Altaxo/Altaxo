@@ -305,7 +305,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		protected virtual Assembly GetDefaultAssembly(string shortName)
 		{
 #if ModifiedForAltaxo
-      if (shortName.StartsWith("Altaxo"))
+      //if (shortName.StartsWith("Altaxo"))
       {
         Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
         foreach (Assembly ass in assemblies)

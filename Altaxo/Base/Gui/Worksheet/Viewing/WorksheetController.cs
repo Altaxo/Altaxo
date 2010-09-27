@@ -287,11 +287,19 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		void EhTitleNameChanged(object sender, EventArgs e)
 		{
+			Current.Gui.Execute(EhTitleNameChanged_Unsynchronized, sender, e);
+		}
+		void EhTitleNameChanged_Unsynchronized(object sender, EventArgs e)
+		{
 			if (null != TitleNameChanged)
 				TitleNameChanged(this, e);
 		}
 
 		public void EhTableNameChanged(Main.INameOwner sender, string oldName)
+		{
+			Current.Gui.Execute(EhTableNameChanged_Unsynchronized, sender, oldName);
+		}
+		private void EhTableNameChanged_Unsynchronized(Main.INameOwner sender, string oldName)
 		{
 			if (_view != null)
 				_view.TableViewTitle = _table.Name;

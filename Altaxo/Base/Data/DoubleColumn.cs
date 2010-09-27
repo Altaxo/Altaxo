@@ -22,6 +22,8 @@
 
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Altaxo.Serialization;
 using Altaxo;
 
@@ -134,15 +136,103 @@ namespace Altaxo.Data
       this.NotifyDataChanged(nInsBeforeColumn, _count, false);
     }
 
-    public override void CopyDataFrom(Altaxo.Data.DataColumn v)
-    {
-      if (v.GetType() != typeof(Altaxo.Data.DoubleColumn))
-      {
-        throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(), "v"); // throw exception
-      }
 
-      this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v)._data, v.Count);
-    }     
+		public override void CopyDataFrom(object o)
+		{
+			var oldCount = _count;
+			_count = 0;
+
+			if (o is DoubleColumn)
+			{
+				var src = (DoubleColumn)o;
+				_data = null == src._data ? null : (double[])src._data.Clone();
+				_capacity = _data.Length;
+				_count = src._count;
+			}
+			else
+			{
+				if (o is ICollection)
+					Realloc((o as ICollection).Count); // Prealloc the array if count of the collection is known beforehand
+
+				if (o is IEnumerable<double>)
+				{
+					var src = (IEnumerable<double>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = it;
+					}
+				}
+				else if (o is IEnumerable<float>)
+				{
+					var src = (IEnumerable<float>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = it;
+					}
+				}
+				else if (o is IEnumerable<int>)
+				{
+					var src = (IEnumerable<int>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = it;
+					}
+				}
+				else if (o is IEnumerable<DateTime>)
+				{
+					var src = (IEnumerable<DateTime>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = it.Ticks / 1e7; ;
+					}
+				}
+				else if (o is IEnumerable<AltaxoVariant>)
+				{
+					var src = (IEnumerable<AltaxoVariant>)o;
+					_count = 0;
+					foreach (var it in src)
+					{
+						if (_count >= _capacity)
+							Realloc(_count);
+						_data[_count++] = it;
+					}
+				}
+				else
+				{
+					_count = 0;
+					if (o == null)
+						throw new ArgumentNullException("o");
+					else
+						throw new ArgumentException("Try to copy " + o.GetType() + " to " + this.GetType(), "o"); // throw exception
+				}
+
+				TrimEmptyElementsAtEnd();
+			}
+
+
+			if (oldCount > 0 || _count > 0) // message only if really was a change
+				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
+		}
+
+
+		private void TrimEmptyElementsAtEnd()
+		{
+
+			for (; _count > 0 && IsElementEmpty(_count-1); _count--) ;
+		}
+   
 
     public override System.Type GetColumnStyleType()
     {

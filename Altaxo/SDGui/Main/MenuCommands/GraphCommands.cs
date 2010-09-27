@@ -641,7 +641,7 @@ namespace Altaxo.Graph.Commands
 			}
 		}
 
-		public bool EhScriptExecution(IScriptText script)
+		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
 			return true;
 		}
@@ -846,6 +846,32 @@ namespace Altaxo.Graph.Commands
 	{
 		public EllipseDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.EllipseDrawing) { }
 	}
+
+	/// <summary>
+	/// Drawing an ellipse on the graph.
+	/// </summary>
+	public class RegularPolygonDrawingTool : AbstractGraphToolsCommand
+	{
+		public RegularPolygonDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.RegularPolygonDrawing) { }
+	}
+
+	/// <summary>
+	/// Drawing of an open cardinal spline on a graph.
+	/// </summary>
+	public class OpenCardinalSplineDrawingTool : AbstractGraphToolsCommand
+	{
+		public OpenCardinalSplineDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.OpenCardinalSplineDrawing) { }
+	}
+
+
+	/// <summary>
+	/// Drawing of an closed cardinal spline on a graph.
+	/// </summary>
+	public class ClosedCardinalSplineDrawingTool : AbstractGraphToolsCommand
+	{
+		public ClosedCardinalSplineDrawingTool() : base(Gui.Graph.Viewing.GraphToolType.ClosedCardinalSplineDrawing) { }
+	}
+
 	/// <summary>
 	/// Magnifies the axes according to the selected area.
 	/// </summary>

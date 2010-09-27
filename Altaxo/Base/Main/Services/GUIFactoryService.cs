@@ -345,8 +345,249 @@ namespace Altaxo.Main.Services
     }
 
     public abstract bool InvokeRequired();
-    public abstract void Invoke(Delegate inv);
-		public abstract void Invoke(Action act);
+    public abstract object Invoke(Delegate method, object[] args);
+		public abstract IAsyncResult BeginInvoke(Delegate act, object[] args);
+		
+
+		/// <summary>
+		/// Evaluates a function synchronously with the Gui.
+		/// </summary>
+		/// <typeparam name="TResult">The type of function result.</typeparam>
+		/// <param name="function">The function to execute.</param>
+		/// <returns>The result of the function evaluation.</returns>
+		public TResult Evaluate<TResult>(Func<TResult> function)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, null);
+			else
+				return function();
+		}
+
+		/// <summary>
+		/// Evaluates a function synchronously with the Gui.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="TResult">The type of function result.</typeparam>
+		/// <param name="function">The function to execute.</param>
+		/// <param name="arg">The 1st function argument.</param>
+		/// <returns>The result of the function evaluation.</returns>
+		public TResult Evaluate<T, TResult>(Func<T, TResult> function, T arg)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, new object[] { arg });
+			else
+				return function(arg);
+		}
+
+		public TResult Evaluate<T1, T2, TResult>(Func<T1, T2, TResult> function, T1 arg1, T2 arg2)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2 });
+			else
+				return function(arg1, arg2);
+		}
+
+		public TResult Evaluate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> function, T1 arg1, T2 arg2, T3 arg3)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3 });
+			else
+				return function(arg1, arg2, arg3);
+		}
+
+
+		public TResult Evaluate<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4 });
+			else
+				return function(arg1, arg2, arg3, arg4);
+		}
+
+		public TResult Evaluate<T1, T2, T3, T4, T5, TResult>(Func<T1, T2, T3, T4, T5, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5 });
+			else
+				return function(arg1, arg2, arg3, arg4, arg5);
+		}
+
+
+		/// <summary>
+		/// Executes an action synchronously with the GUI.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		public void Execute(Action action)
+		{
+			if (InvokeRequired())
+				Invoke((Delegate)action, null);
+			else
+				action();
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the GUI.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg">The argument of the action.</param>
+		public void Execute<T>(Action<T> action, T arg)
+		{
+			if (InvokeRequired())
+				Invoke((Delegate)action,new object[]{arg});
+			else
+				action(arg);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the GUI.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The first argument of the action.</param>
+		/// <param name="arg2">The second argument of the action.</param>
+		public void Execute<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
+		{
+			if (InvokeRequired())
+				Invoke((Delegate)action, new object[] { arg1, arg2 });
+			else
+				action(arg1, arg2);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the GUI.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The 1st argument of the action.</param>
+		/// <param name="arg2">The 2nd argument of the action.</param>
+		/// <param name="arg3">The 3rd argument of the action.</param>
+		public void Execute<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
+		{
+			if (InvokeRequired())
+				Invoke((Delegate)action, new object[] { arg1, arg2, arg3 });
+			else
+				action(arg1, arg2, arg3);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the GUI.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The first argument of the action.</param>
+		/// <param name="arg2">The second argument of the action.</param>
+		/// <param name="arg3">The 3rd argument of the action.</param>
+		/// <param name="arg4">The 4th argument of the action.</param>
+		public void Execute<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		{
+			if (InvokeRequired())
+				Invoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4 });
+			else
+				action(arg1, arg2, arg3, arg4);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the Gui.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The first argument of the action.</param>
+		/// <param name="arg2">The second argument of the action.</param>
+		/// <param name="arg3">The 3rd argument of the action.</param>
+		/// <param name="arg4">The 4th argument of the action.</param>
+		/// <param name="arg5">The 5th argument of the action.</param>
+		public void Execute<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+		{
+			if (InvokeRequired())
+				Invoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4, arg5 });
+			else
+				action(arg1, arg2, arg3, arg4, arg5);
+		}
+
+
+
+		/// <summary>
+		/// Executes an action synchronously with the Gui without waiting.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		public void BeginExecute(Action action)
+		{
+			if (InvokeRequired())
+				BeginInvoke((Delegate)action, null);
+			else
+				action();
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the Gui without waiting.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg">The argument of the action.</param>
+		public void BeginExecute<T>(Action<T> action, T arg)
+		{
+			if (InvokeRequired())
+				BeginInvoke((Delegate)action, new object[] { arg });
+			else
+				action(arg);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the Gui without waiting.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The first argument of the action.</param>
+		/// <param name="arg2">The second argument of the action.</param>
+		public void BeginExecute<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
+		{
+			if (InvokeRequired())
+				BeginInvoke((Delegate)action, new object[] { arg1, arg2 });
+			else
+				action(arg1, arg2);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the Gui without waiting.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The 1st argument of the action.</param>
+		/// <param name="arg2">The 2nd argument of the action.</param>
+		/// <param name="arg3">The 3rd argument of the action.</param>
+		public void BeginExecute<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
+		{
+			if (InvokeRequired())
+				BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3 });
+			else
+				action(arg1, arg2, arg3);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the Gui without waiting.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The first argument of the action.</param>
+		/// <param name="arg2">The second argument of the action.</param>
+		/// <param name="arg3">The 3rd argument of the action.</param>
+		/// <param name="arg4">The 4th argument of the action.</param>
+		public void BeginExecute<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		{
+			if (InvokeRequired())
+				BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4 });
+			else
+				action(arg1, arg2, arg3, arg4);
+		}
+
+		/// <summary>
+		/// Executes an action synchronously with the Gui without waiting.
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		/// <param name="arg1">The first argument of the action.</param>
+		/// <param name="arg2">The second argument of the action.</param>
+		/// <param name="arg3">The 3rd argument of the action.</param>
+		/// <param name="arg4">The 4th argument of the action.</param>
+		/// <param name="arg5">The 5th argument of the action.</param>
+		public void BeginExecute<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+		{
+			if (InvokeRequired())
+				BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4, arg5 });
+			else
+				action(arg1, arg2, arg3, arg4, arg5);
+		}
 
 
 

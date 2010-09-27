@@ -107,10 +107,9 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.csproj">
-      <Name>zICSharpCode.SharpZipLib</Name>
+    <ProjectReference Include="..\..\Libraries\SharpZipLib\src\ICSharpCode.SharpZLib.csproj">
       <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+      <Name>ICSharpCode.SharpZLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\Base\AltaxoBase.csproj">
       <Name>AltaxoBase</Name>

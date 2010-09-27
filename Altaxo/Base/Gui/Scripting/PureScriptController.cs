@@ -50,6 +50,11 @@ namespace Altaxo.Gui.Scripting
     // Initializes or reinitializes the script controller.
     void SetText(string text);
 
+		/// <summary>
+		/// Sets the cursor location inside the script. Line and column are starting with 1.
+		/// </summary>
+		/// <param name="line">Script line (1-based).</param>
+		/// <param name="column">Script column (1-based).</param>
     void SetScriptCursorLocation(int line, int column);
 
     void SetScriptCursorLocation(int offset);
@@ -180,6 +185,12 @@ namespace Altaxo.Gui.Scripting
     #endregion
 
     #region IPureScriptController
+
+		/// <summary>
+		/// Sets the cursor location inside the script. Line and column are starting with 1.
+		/// </summary>
+		/// <param name="line">Script line (1-based).</param>
+		/// <param name="column">Script column (1-based).</param>
     public void SetScriptCursorLocation(int line, int column)
     {
       if(_view!=null)

@@ -411,6 +411,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		public void EhTableDataChanged(object sender, EventArgs e)
 		{
+			Current.Gui.BeginExecute(EhTableDataChanged_Unsynchronized);
+		}
+		private void EhTableDataChanged_Unsynchronized()
+		{
 			if (this._numberOfTableRows != DataTable.DataColumns.RowCount)
 				this.SetCachedNumberOfDataRows();
 
@@ -497,6 +501,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		}
 
 		public void EhPropertyDataChanged(object sender, EventArgs e)
+		{
+			Current.Gui.Execute(EhPropertyDataChanged_Unsynchronized, sender, e);
+		}
+		private void EhPropertyDataChanged_Unsynchronized(object sender, EventArgs e)
 		{
 			if (this._numberOfPropertyCols != DataTable.PropCols.ColumnCount)
 				SetCachedNumberOfPropertyColumns();

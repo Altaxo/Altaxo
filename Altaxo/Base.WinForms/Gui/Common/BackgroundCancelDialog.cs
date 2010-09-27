@@ -224,8 +224,9 @@ namespace Altaxo.Gui.Common
     {
       if (_monitor != null)
       {
-          this.lblText.Text = _monitor.ReportText;
-        _monitor.ShouldReport = true;
+				if(_monitor.HasReportText)
+          this.lblText.Text = _monitor.GetReportText();
+				_monitor.SetShouldReportNow();
       }
 
       if(!_thread.IsAlive)
@@ -243,7 +244,7 @@ namespace Altaxo.Gui.Common
       this.wasUserInterrupted = true;
       if (_monitor != null)
       {
-        _monitor.CancelledByUser = true;
+        _monitor.SetCancellationPending();
         btCancel.Visible = false;
         _btInterrupt.Visible = true;
       }

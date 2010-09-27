@@ -34,7 +34,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar 
 {
@@ -103,6 +102,8 @@ or which contains garbage records after a zero block.
 		/// <summary>
 		/// Get the record size for this buffer
 		/// </summary>
+		/// <value>The record size in bytes.
+		/// This is equal to the <see cref="BlockFactor"/> multiplied by the <see cref="BlockSize"/></value>
 		public int RecordSize 
 		{
 			get { 
@@ -113,6 +114,8 @@ or which contains garbage records after a zero block.
 		/// <summary>
 		/// Get the TAR Buffer's record size.
 		/// </summary>
+		/// <returns>The record size in bytes.
+		/// This is equal to the <see cref="BlockFactor"/> multiplied by the <see cref="BlockSize"/></returns>
 		[Obsolete("Use RecordSize property instead")]
 		public int GetRecordSize()
 		{
@@ -122,6 +125,7 @@ or which contains garbage records after a zero block.
 		/// <summary>
 		/// Get the Blocking factor for the buffer
 		/// </summary>
+		/// <value>This is the number of blocks in each record.</value>
 		public int BlockFactor {
 			get { 
 				return blockFactor; 
@@ -131,10 +135,11 @@ or which contains garbage records after a zero block.
 		/// <summary>
 		/// Get the TAR Buffer's block factor
 		/// </summary>
+		/// <returns>The block factor; the number of blocks per record.</returns>
 		[Obsolete("Use BlockFactor property instead")]
 		public int GetBlockFactor()
 		{
-			return this.blockFactor;
+			return blockFactor;
 		}
 		
 		/// <summary>
@@ -148,7 +153,7 @@ or which contains garbage records after a zero block.
 		/// Create TarBuffer for reading with default BlockFactor
 		/// </summary>
 		/// <param name="inputStream">Stream to buffer</param>
-		/// <returns>TarBuffer</returns>
+		/// <returns>A new <see cref="TarBuffer"/> suitable for input.</returns>
 		public static TarBuffer CreateInputTarBuffer(Stream inputStream)
 		{
 			if ( inputStream == null )
@@ -156,7 +161,7 @@ or which contains garbage records after a zero block.
 				throw new ArgumentNullException("inputStream");
 			}
 
-			return CreateInputTarBuffer(inputStream, TarBuffer.DefaultBlockFactor);
+			return CreateInputTarBuffer(inputStream, DefaultBlockFactor);
 		}
 
 		/// <summary>
@@ -164,7 +169,7 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		/// <param name="inputStream">Stream to buffer</param>
 		/// <param name="blockFactor">Blocking factor to apply</param>
-		/// <returns>TarBuffer</returns>
+		/// <returns>A new <see cref="TarBuffer"/> suitable for input.</returns>
 		public static TarBuffer CreateInputTarBuffer(Stream inputStream, int blockFactor)
 		{
 			if ( inputStream == null )
@@ -174,7 +179,7 @@ or which contains garbage records after a zero block.
 			
 			if ( blockFactor <= 0 )
 			{
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("blockFactor");
 #else
 				throw new ArgumentOutOfRangeException("blockFactor", "Factor cannot be negative");
@@ -193,7 +198,7 @@ or which contains garbage records after a zero block.
 		/// Construct TarBuffer for writing with default BlockFactor
 		/// </summary>
 		/// <param name="outputStream">output stream for buffer</param>
-		/// <returns>TarBuffer</returns>
+		/// <returns>A new <see cref="TarBuffer"/> suitable for output.</returns>
 		public static TarBuffer CreateOutputTarBuffer(Stream outputStream)
 		{
 			if ( outputStream == null )
@@ -201,7 +206,7 @@ or which contains garbage records after a zero block.
 				throw new ArgumentNullException("outputStream");
 			}
 
-			return CreateOutputTarBuffer(outputStream, TarBuffer.DefaultBlockFactor);
+			return CreateOutputTarBuffer(outputStream, DefaultBlockFactor);
 		}
 
 		/// <summary>
@@ -209,7 +214,7 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		/// <param name="outputStream">Output stream to write to.</param>
 		/// <param name="blockFactor">Blocking factor to apply</param>
-		/// <returns>TarBuffer</returns>
+		/// <returns>A new <see cref="TarBuffer"/> suitable for output.</returns>
 		public static TarBuffer CreateOutputTarBuffer(Stream outputStream, int blockFactor)
 		{
 			if ( outputStream == null )
@@ -219,7 +224,7 @@ or which contains garbage records after a zero block.
 
 			if ( blockFactor <= 0 )
 			{
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("blockFactor");
 #else
 				throw new ArgumentOutOfRangeException("blockFactor", "Factor cannot be negative");
@@ -237,10 +242,10 @@ or which contains garbage records after a zero block.
 		/// <summary>
 		/// Initialization common to all constructors.
 		/// </summary>
-		void Initialize(int blockFactor)
+		void Initialize(int archiveBlockFactor)
 		{
-			this.blockFactor  = blockFactor;
-			recordSize   = blockFactor * BlockSize;
+			blockFactor  = archiveBlockFactor;
+			recordSize   = archiveBlockFactor * BlockSize;
 			recordBuffer  = new byte[RecordSize];
 			
 			if (inputStream != null) {
@@ -253,8 +258,6 @@ or which contains garbage records after a zero block.
 			}
 		}
 		
-		// TODO: IsEOFBlock could/should be static but this is a breaking change.
-
 		/// <summary>
 		/// Determine if an archive block indicates End of Archive. End of
 		/// archive is indicated by a block that consists entirely of null bytes.
@@ -263,6 +266,8 @@ or which contains garbage records after a zero block.
 		/// and also partial records
 		/// </summary>
 		/// <param name = "block">The data block to check.</param>
+		/// <returns>Returns true if the block is an EOF block; false otherwise.</returns>
+		[Obsolete("Use IsEndOfArchiveBlock instead")]
 		public bool IsEOFBlock(byte[] block)
 		{
 			if ( block == null ) {
@@ -274,13 +279,41 @@ or which contains garbage records after a zero block.
 				throw new ArgumentException("block length is invalid");
 			}
 
-			for (int i = 0; i < BlockSize; ++i) 
-			{
+			for (int i = 0; i < BlockSize; ++i) {
 				if (block[i] != 0) {
 					return false;
 				}
 			}
 			
+			return true;
+		}
+
+
+		/// <summary>
+		/// Determine if an archive block indicates the End of an Archive has been reached.
+		/// End of archive is indicated by a block that consists entirely of null bytes.
+		/// All remaining blocks for the record should also be null's
+		/// However some older tars only do a couple of null blocks (Old GNU tar for one)
+		/// and also partial records
+		/// </summary>
+		/// <param name = "block">The data block to check.</param>
+		/// <returns>Returns true if the block is an EOF block; false otherwise.</returns>
+		public static bool IsEndOfArchiveBlock(byte[] block)
+		{
+			if ( block == null ) {
+				throw new ArgumentNullException("block");
+			}
+
+			if ( block.Length != BlockSize ) {
+				throw new ArgumentException("block length is invalid");
+			}
+
+			for ( int i = 0; i < BlockSize; ++i ) {
+				if ( block[i] != 0 ) {
+					return false;
+				}
+			}
+
 			return true;
 		}
 		
@@ -289,7 +322,7 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		public void SkipBlock()
 		{
-			if (this.inputStream == null) {
+			if (inputStream == null) {
 				throw new TarException("no input stream defined");
 			}
 			
@@ -375,10 +408,22 @@ or which contains garbage records after a zero block.
 		/// <summary>
 		/// Get the current block number, within the current record, zero based.
 		/// </summary>
+        /// <remarks>Block numbers are zero based values</remarks>
+        /// <seealso cref="RecordSize"/>
 		public int CurrentBlock
 		{
 			get { return currentBlockIndex; }
 		}
+
+        /// <summary>
+        /// Get/set flag indicating ownership of the underlying stream.
+        /// When the flag is true <see cref="Close"></see> will close the underlying stream also.
+        /// </summary>
+        public bool IsStreamOwner
+        {
+            get { return isStreamOwner_; }
+            set { isStreamOwner_ = value; }
+        }
 
 		/// <summary>
 		/// Get the current block number, within the current record, zero based.
@@ -392,7 +437,7 @@ or which contains garbage records after a zero block.
 		[Obsolete("Use CurrentBlock property instead")]
 		public int GetCurrentBlockNum()
 		{
-			return this.currentBlockIndex;
+			return currentBlockIndex;
 		}
 		
 		/// <summary>
@@ -415,7 +460,7 @@ or which contains garbage records after a zero block.
 		[Obsolete("Use CurrentRecord property instead")]
 		public int GetCurrentRecordNum()
 		{
-			return this.currentRecordIndex;
+			return currentRecordIndex;
 		}
 		
 		/// <summary>
@@ -476,7 +521,7 @@ or which contains garbage records after a zero block.
 
 			if ((offset + BlockSize) > buffer.Length) {
 				string errorText = string.Format("TarBuffer.WriteBlock - record has length '{0}' with offset '{1}' which is less than the record size of '{2}'",
-					buffer.Length, offset, this.recordSize);
+					buffer.Length, offset, recordSize);
 				throw new TarException(errorText);
 			}
 			
@@ -494,8 +539,7 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		void WriteRecord()
 		{
-			if (outputStream == null)
-			{
+			if (outputStream == null) {
 				throw new TarException("TarBuffer.WriteRecord no output stream defined");
 			}
 			
@@ -507,17 +551,17 @@ or which contains garbage records after a zero block.
 		}
 		
 		/// <summary>
-		/// Flush the current record if it has any data in it.
+		/// WriteFinalRecord writes the current record buffer to output any unwritten data is present.
 		/// </summary>
-		void Flush()
+        /// <remarks>Any trailing bytes are set to zero which is by definition correct behaviour
+        /// for the end of a tar stream.</remarks>
+		void WriteFinalRecord()
 		{
-			if (outputStream == null) 
-			{
-				throw new TarException("TarBuffer.Flush no output stream defined");
+			if (outputStream == null) {
+				throw new TarException("TarBuffer.WriteFinalRecord no output stream defined");
 			}
 			
-			if (currentBlockIndex > 0) 
-			{
+			if (currentBlockIndex > 0) {
 				int dataBytes = currentBlockIndex * BlockSize;
 				Array.Clear(recordBuffer, dataBytes, RecordSize - dataBytes);
 				WriteRecord();
@@ -532,16 +576,18 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		public void Close()
 		{
-			if (outputStream != null)
-			{
-				Flush();
-	
-				outputStream.Close();
+			if (outputStream != null) {
+				WriteFinalRecord();
+
+                if (isStreamOwner_) {
+                    outputStream.Close();
+                }
 				outputStream = null;
 			}
-			else if (inputStream != null)
-			{
-				inputStream.Close();
+			else if (inputStream != null) {
+                if (isStreamOwner_) {
+                    inputStream.Close();
+                }
 				inputStream = null;
 			}
 		}
@@ -556,6 +602,7 @@ or which contains garbage records after a zero block.
 
 		int recordSize = DefaultRecordSize;
 		int blockFactor = DefaultBlockFactor;
+        bool isStreamOwner_ = true;
 		#endregion
 	}
 }

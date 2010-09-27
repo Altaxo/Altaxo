@@ -64,7 +64,7 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
 
-  public abstract class AbstractRODoubleVector : IROVector
+  public abstract class AbstractRODoubleVector : IROVector, System.Collections.Generic.IList<double>
   {
     static public implicit operator AbstractRODoubleVector(double[] src)
     {
@@ -78,35 +78,105 @@ namespace Altaxo.Calc.LinearAlgebra
       get;
     }
 
+		public abstract double this[int idx]
+		{
+			get;
+			set;
+		}
+
     #endregion
 
     #region INumericSequence Members
 
-    public double this[int i]
-    {
-      get { return GetElementAt(i); }
-    }
+  
 
     protected abstract double GetElementAt(int i);
 
     #endregion
-  }
+
+		public int IndexOf(double item)
+		{
+			int len = Length;
+			for (int i = 0; i < len; i++)
+				if (this[i] == item)
+					return i;
+			return -1;
+		}
+
+		public void Insert(int index, double item)
+		{
+			throw new NotImplementedException("This is a read-only vector");
+		}
+
+		public void RemoveAt(int index)
+		{
+			throw new NotImplementedException("This is a read-only vector");
+		}
+
+		public void Add(double item)
+		{
+			throw new NotImplementedException("This is a read-only vector");
+		}
+
+		public void Clear()
+		{
+			throw new NotImplementedException("This is a read-only vector");
+		}
+
+		public bool Contains(double item)
+		{
+			int len = Length;
+			for (int i = 0; i < len; i++)
+				if (this[i] == item)
+					return true;
+
+			return false;
+		}
+
+		public void CopyTo(double[] array, int arrayIndex)
+		{
+			if(array==null)
+				throw new ArgumentNullException("array");
+			if (Length + arrayIndex > array.Length)
+				throw new ArgumentException("Provided array is too short");
+			int len = Length;
+			for (int i = 0; i < len; i++)
+				array[i + arrayIndex] = this[i];
+		}
+
+		public int Count
+		{
+			get { return Length; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return true; }
+		}
+
+		public bool Remove(double item)
+		{
+			throw new NotImplementedException("This is a read-only vector");
+		}
+
+		public System.Collections.Generic.IEnumerator<double> GetEnumerator()
+		{
+			int len = this.Count;
+			for (int i = 0; i < len; i++)
+				yield return this[i];
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			int len = this.Count;
+			for (int i = 0; i < len; i++)
+				yield return this[i];
+		}
+	}
 
   
   public abstract class AbstractDoubleVector : AbstractRODoubleVector, IVector
   {
-    public new double this[int i]
-    {
-      get
-      {
-        return GetElementAt(i);
-      }
-      set
-      {
-        SetElementAt(i, value);
-      }
-    }
-
     protected abstract void SetElementAt(int i, double value);
   }
   
@@ -135,6 +205,18 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       get { return _data.Length; }
     }
+
+		public override double this[int idx]
+		{
+			get
+			{
+				return _data[idx];
+			}
+			set
+			{
+				throw new NotImplementedException("This is a read-only vector");
+			}
+		}
 
     #endregion
 

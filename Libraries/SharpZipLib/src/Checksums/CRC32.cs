@@ -66,7 +66,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 	/// </summary>
 	public sealed class Crc32 : IChecksum
 	{
-		readonly static uint CrcSeed = 0xFFFFFFFF;
+		const uint CrcSeed = 0xFFFFFFFF;
 		
 		readonly static uint[] CrcTable = new uint[] {
 			0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419,
@@ -200,7 +200,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 			}
 			
 			if ( count < 0 ) {
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("count");
 #else
 				throw new ArgumentOutOfRangeException("count", "Count cannot be less than zero");

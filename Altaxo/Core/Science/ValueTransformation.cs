@@ -5,6 +5,154 @@ using System.Text;
 
 namespace Altaxo.Science
 {
+	public interface IDoubleToDoubleValueTransformation
+	{
+		double Transform(double value);
+		string StringRepresentation { get; }
+		IDoubleToDoubleValueTransformation BackTransformation { get; }
+	}
+
+
+	public class InverseTransformation : IDoubleToDoubleValueTransformation
+	{
+		public double Transform(double value)
+		{
+			return 1 / value;
+		}
+
+		public string StringRepresentation
+		{
+			get { return "1/x"; }
+		}
+
+		public IDoubleToDoubleValueTransformation BackTransformation
+		{
+			get { return this; }
+		}
+	}
+
+	public class NegateTransformation : IDoubleToDoubleValueTransformation
+	{
+		public double Transform(double value)
+		{
+			return -value;
+		}
+
+		public string StringRepresentation
+		{
+			get { return "-x"; }
+		}
+
+		public IDoubleToDoubleValueTransformation BackTransformation
+		{
+			get { return this; }
+		}
+	}
+
+	public class OffsetTransformation : IDoubleToDoubleValueTransformation
+	{
+		double _offsetValue;
+
+		public double Transform(double value)
+		{
+			return value + _offsetValue;
+		}
+
+		public string StringRepresentation
+		{
+			get { return string.Format("(x+{0})", _offsetValue); }
+		}
+
+		public IDoubleToDoubleValueTransformation BackTransformation
+		{
+			get { return new OffsetTransformation() { _offsetValue = -this._offsetValue }; }
+		}
+	}
+
+	public class ScaleTransformation : IDoubleToDoubleValueTransformation
+	{
+		double _scaleValue;
+
+		public double Transform(double value)
+		{
+			return value * _scaleValue;
+		}
+
+		public string StringRepresentation
+		{
+			get { return string.Format("({0}*x)", _scaleValue); }
+		}
+
+		public IDoubleToDoubleValueTransformation BackTransformation
+		{
+			get { return new ScaleTransformation() { _scaleValue = 1 / this._scaleValue }; }
+		}
+	}
+
+	public class NaturalLogarithmTransformation : IDoubleToDoubleValueTransformation
+	{
+		public double Transform(double value)
+		{
+			return Math.Log(value);
+		}
+
+		public string StringRepresentation
+		{
+			get { return "ln(x)"; }
+		}
+
+		public IDoubleToDoubleValueTransformation BackTransformation
+		{
+			get { return new NaturalExponentialTransform(); }
+		}
+	}
+
+	public class NaturalExponentialTransform : IDoubleToDoubleValueTransformation
+	{
+		public double Transform(double value)
+		{
+			return Math.Exp(value);
+		}
+
+		public string StringRepresentation
+		{
+			get { return "exp(x)"; }
+		}
+
+		public IDoubleToDoubleValueTransformation BackTransformation
+		{
+			get { return new NaturalLogarithmTransformation(); }
+		}
+	}
+
+	public class CombinedTransform : IDoubleToDoubleValueTransformation
+	{
+		List<IDoubleToDoubleValueTransformation> _transformations = new List<IDoubleToDoubleValueTransformation>();
+
+		public double Transform(double value)
+		{
+			foreach (var item in _transformations)
+				value = item.Transform(value);
+			return value;
+		}
+
+		public string StringRepresentation
+		{
+			get { return "CombinedTransform"; }
+		}
+
+		public IDoubleToDoubleValueTransformation BackTransformation
+		{
+			get 
+			{
+				CombinedTransform t = new CombinedTransform();
+				for (int i = _transformations.Count - 1; i >= 0; i--)
+					t._transformations.Add(_transformations[i].BackTransformation);
+				return t;
+			}
+		}
+	}
+
 
   public enum TransformedValueRepresentation
   {
@@ -23,7 +171,6 @@ namespace Altaxo.Science
     /// <summary>Value is used in the form of its negative natural logarithm.</summary>
     NegativeNaturalLogarithm
   }
-
 
   public struct TransformedValue
   {

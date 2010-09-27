@@ -36,7 +36,7 @@
 
 /* The tar format and its POSIX successor PAX have a long history which makes for compatability
    issues when creating and reading files.
-   
+
    This is further complicated by a large number of programs with variations on formats
    One common issue is the handling of names longer than 100 characters.
    GNU style long names are currently supported.
@@ -273,23 +273,25 @@ namespace ICSharpCode.SharpZipLib.Tar
 		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// Initialise a default TarHeader instance
 		/// </summary>
 		public TarHeader()
 		{
-			this.Magic = TarHeader.TMAGIC;
-			this.Version = " ";
+			Magic = TMAGIC;
+			Version = " ";
 			
-			this.Name     = "";
-			this.LinkName = "";
+			Name     = "";
+			LinkName = "";
 			
-			this.UserId    = defaultUserId;
-			this.GroupId   = defaultGroupId;
-			this.UserName  = defaultUser;
-			this.GroupName = defaultGroupName;
-			this.Size      = 0;
+			UserId    = defaultUserId;
+			GroupId   = defaultGroupId;
+			UserName  = defaultUser;
+			GroupName = defaultGroupName;
+			Size      = 0;
 		}
+
 		#endregion
 
 		#region Properties
@@ -365,7 +367,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			get { return size; }
 			set { 
 				if ( value < 0 ) {
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 					throw new ArgumentOutOfRangeException("value");
 #else
 					throw new ArgumentOutOfRangeException("value", "Cannot be less than zero");
@@ -389,7 +391,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			set {
 				if ( value < dateTime1970 )
 				{
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 					throw new ArgumentOutOfRangeException("value");
 #else
 					throw new ArgumentOutOfRangeException("value", "ModTime cannot be before Jan 1st 1970");
@@ -490,7 +492,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 					userName = value.Substring(0, Math.Min(UNAMELEN, value.Length));
 				}
 				else {
-#if COMPACT_FRAMEWORK_V10 || COMPACT_FRAMEWORK_V20
+#if NETCF_1_0 || NETCF_2_0
 					string currentUser = "PocketPC";
 #else
 					string currentUser = Environment.UserName;
@@ -547,11 +549,12 @@ namespace ICSharpCode.SharpZipLib.Tar
 
 		#region ICloneable Members
 		/// <summary>
-		/// Clone a TAR header.
+		/// Create a new <see cref="TarHeader"/> that is a copy of the current instance.
 		/// </summary>
+		/// <returns>A new <see cref="Object"/> that is a copy of the current instance.</returns>
 		public object Clone()
 		{
-			return this.MemberwiseClone();
+			return MemberwiseClone();
 		}
 		#endregion
 
@@ -631,34 +634,32 @@ namespace ICSharpCode.SharpZipLib.Tar
 
 			int offset = 0;
 			
-			offset = GetNameBytes(this.Name, outBuffer, offset, TarHeader.NAMELEN);
-			offset = GetOctalBytes(this.mode, outBuffer, offset, TarHeader.MODELEN);
-			offset = GetOctalBytes(this.UserId, outBuffer, offset, TarHeader.UIDLEN);
-			offset = GetOctalBytes(this.GroupId, outBuffer, offset, TarHeader.GIDLEN);
+			offset = GetNameBytes(Name, outBuffer, offset, NAMELEN);
+			offset = GetOctalBytes(mode, outBuffer, offset, MODELEN);
+			offset = GetOctalBytes(UserId, outBuffer, offset, UIDLEN);
+			offset = GetOctalBytes(GroupId, outBuffer, offset, GIDLEN);
 			
-			long size = this.Size;
-			
-			offset = GetLongOctalBytes(size, outBuffer, offset, TarHeader.SIZELEN);
-			offset = GetLongOctalBytes(GetCTime(this.ModTime), outBuffer, offset, TarHeader.MODTIMELEN);
+			offset = GetLongOctalBytes(Size, outBuffer, offset, SIZELEN);
+			offset = GetLongOctalBytes(GetCTime(ModTime), outBuffer, offset, MODTIMELEN);
 			
 			int csOffset = offset;
-			for (int c = 0; c < TarHeader.CHKSUMLEN; ++c) 
+			for (int c = 0; c < CHKSUMLEN; ++c) 
 			{
 				outBuffer[offset++] = (byte)' ';
 			}
 			
-			outBuffer[offset++] = this.TypeFlag;
+			outBuffer[offset++] = TypeFlag;
 			
-			offset = GetNameBytes(this.LinkName, outBuffer, offset, NAMELEN);
-			offset = GetAsciiBytes(this.Magic, 0, outBuffer, offset, MAGICLEN);
-			offset = GetNameBytes(this.Version, outBuffer, offset, VERSIONLEN);
-			offset = GetNameBytes(this.UserName, outBuffer, offset, UNAMELEN);
-			offset = GetNameBytes(this.GroupName, outBuffer, offset, GNAMELEN);
+			offset = GetNameBytes(LinkName, outBuffer, offset, NAMELEN);
+			offset = GetAsciiBytes(Magic, 0, outBuffer, offset, MAGICLEN);
+			offset = GetNameBytes(Version, outBuffer, offset, VERSIONLEN);
+			offset = GetNameBytes(UserName, outBuffer, offset, UNAMELEN);
+			offset = GetNameBytes(GroupName, outBuffer, offset, GNAMELEN);
 			
-			if (this.TypeFlag == LF_CHR || this.TypeFlag == LF_BLK) 
+			if ((TypeFlag == LF_CHR) || (TypeFlag == LF_BLK)) 
 			{
-				offset = GetOctalBytes(this.DevMajor, outBuffer, offset, DEVLEN);
-				offset = GetOctalBytes(this.DevMinor, outBuffer, offset, DEVLEN);
+				offset = GetOctalBytes(DevMajor, outBuffer, offset, DEVLEN);
+				offset = GetOctalBytes(DevMinor, outBuffer, offset, DEVLEN);
 			}
 			
 			for ( ; offset < outBuffer.Length; ) 
@@ -690,28 +691,30 @@ namespace ICSharpCode.SharpZipLib.Tar
 		{
 			TarHeader localHeader = obj as TarHeader;
 
+		    bool result;
 			if ( localHeader != null ) 
 			{
-				return name == localHeader.name
-					&& mode == localHeader.mode
-					&& UserId == localHeader.UserId
-					&& GroupId == localHeader.GroupId
-					&& Size == localHeader.Size
-					&& ModTime == localHeader.ModTime
-					&& Checksum == localHeader.Checksum
-					&& TypeFlag == localHeader.TypeFlag
-					&& LinkName == localHeader.LinkName
-					&& Magic == localHeader.Magic
-					&& Version == localHeader.Version
-					&& UserName == localHeader.UserName
-					&& GroupName == localHeader.GroupName
-					&& DevMajor == localHeader.DevMajor
-					&& DevMinor == localHeader.DevMinor;
+				result = (name == localHeader.name)
+					&& (mode == localHeader.mode)
+					&& (UserId == localHeader.UserId)
+					&& (GroupId == localHeader.GroupId)
+					&& (Size == localHeader.Size)
+					&& (ModTime == localHeader.ModTime)
+					&& (Checksum == localHeader.Checksum)
+					&& (TypeFlag == localHeader.TypeFlag)
+					&& (LinkName == localHeader.LinkName)
+					&& (Magic == localHeader.Magic)
+					&& (Version == localHeader.Version)
+					&& (UserName == localHeader.UserName)
+					&& (GroupName == localHeader.GroupName)
+					&& (DevMajor == localHeader.DevMajor)
+					&& (DevMinor == localHeader.DevMinor);
 			}
 			else 
 			{
-				return false;
+				result = false;
 			}
+		    return result;
 		}
 		
 		/// <summary>
@@ -747,7 +750,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		static public long ParseOctal(byte[] header, int offset, int length)
 		{
 			if ( header == null ) {
-				throw new NullReferenceException("header");
+				throw new ArgumentNullException("header");
 			}
 
 			long result = 0;
@@ -799,7 +802,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			}
 
 			if ( offset < 0 ) {
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("offset");
 #else
 				throw new ArgumentOutOfRangeException("offset", "Cannot be less than zero");
@@ -808,7 +811,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 
 			if ( length < 0 )
 			{
-#if COMPACT_FRAMEWORK_V10
+#if NETCF_1_0
 				throw new ArgumentOutOfRangeException("length");
 #else
 				throw new ArgumentOutOfRangeException("length", "Cannot be less than zero");
@@ -840,7 +843,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="buffer">The buffer to add to</param>
 		/// <param name="bufferOffset">The index of the first byte to add</param>
 		/// <param name="length">The number of characters/bytes to add</param>
-		/// <returns>The next free index in the <paramref name="buf">buffer</paramref></returns>
+		/// <returns>The next free index in the <paramref name="buffer"/></returns>
 		public static int GetNameBytes(StringBuilder name, int nameOffset, byte[] buffer, int bufferOffset, int length)
 		{
 			if ( name == null ) {
@@ -862,7 +865,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="buffer">The buffer to add to</param>
 		/// <param name="bufferOffset">The index of the first byte to add</param>
 		/// <param name="length">The number of characters/bytes to add</param>
-		/// <returns>The next free index in the <paramref name="buf">buffer</paramref></returns>
+		/// <returns>The next free index in the <paramref name="buffer"/></returns>
 		public static int GetNameBytes(string name, int nameOffset, byte[] buffer, int bufferOffset, int length)
 		{
 			if ( name == null ) 
@@ -963,10 +966,10 @@ namespace ICSharpCode.SharpZipLib.Tar
 			}
 
 			for (int i = 0 ; i < length && nameOffset + i < toAdd.Length; ++i) 
-		 	{
+			{
 				buffer[bufferOffset + i] = (byte)toAdd[nameOffset + i];
-		 	}
-		 	return bufferOffset + length;
+			}
+			return bufferOffset + length;
 		}
 
 		/// <summary>

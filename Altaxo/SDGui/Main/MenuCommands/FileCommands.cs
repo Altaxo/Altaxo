@@ -427,9 +427,9 @@ namespace Altaxo.Main.Commands
 				} while (null != errors);
 			}
 		}
-		public bool EhScriptExecution(Altaxo.Scripting.IScriptText script)
+		public bool EhScriptExecution(Altaxo.Scripting.IScriptText script, IProgressReporter reporter)
 		{
-			return ((Altaxo.Scripting.ProgramInstanceScript)script).Execute();
+			return ((Altaxo.Scripting.ProgramInstanceScript)script).Execute(reporter);
 		}
 
 		string SaveScriptText(string filename, string text)

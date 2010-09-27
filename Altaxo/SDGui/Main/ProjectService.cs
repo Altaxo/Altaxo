@@ -577,6 +577,10 @@ namespace Altaxo.Main
 		/// <param name="document"></param>
 		public void CloseDocumentViews(object document)
 		{
+			Current.Gui.Execute(CloseDocumentViews_Unsynchronized, document);
+		}
+		private void CloseDocumentViews_Unsynchronized(object document)
+		{
 			var list = SearchContentForDocument(document, int.MaxValue);
 			for (int i = list.Count - 1; i >= 0; i--)
 			{
@@ -589,6 +593,10 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="document">The document to open.</param>
 		public void ShowDocumentView(object document)
+		{
+			Current.Gui.Execute(ShowDocumentView_Unsynchronized, document);
+		}
+		private void ShowDocumentView_Unsynchronized(object document)
 		{
 			if (document is Altaxo.Data.DataTable)
 				OpenOrCreateWorksheetForTable((Altaxo.Data.DataTable)document);
@@ -667,12 +675,16 @@ namespace Altaxo.Main
 		/// <returns>The view content for the provided table.</returns>
 		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
 		{
+			return Current.Gui.Evaluate(CreateNewWorksheet_Unsynchronized, table);
+		}
+
+		private Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet_Unsynchronized(Altaxo.Data.DataTable table)
+		{
 			if (table.ParentObject == null)
 				this.CurrentOpenProject.DataTableCollection.Add(table);
 
 			return CreateNewWorksheet(table, this.CurrentOpenProject.CreateNewTableLayout(table));
 		}
-
 
 		/// <summary>
 		/// Creates a view content for a table.
@@ -681,6 +693,17 @@ namespace Altaxo.Main
 		/// <param name="layout">The layout for the table.</param>
 		/// <returns>The view content for the provided table.</returns>
 		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
+		{
+			return Current.Gui.Evaluate(CreateNewWorksheet_Unsynchronized, table, layout);
+		}
+
+			/// <summary>
+		/// Creates a view content for a table.
+		/// </summary>
+		/// <param name="table">The table which should be viewed.</param>
+		/// <param name="layout">The layout for the table.</param>
+		/// <returns>The view content for the provided table.</returns>
+		private Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet_Unsynchronized(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
 		{
 			layout.DataTable = table;
 			var ctrl = new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(layout);
@@ -702,6 +725,17 @@ namespace Altaxo.Main
 		/// <returns>The view content for the provided table.</returns>
 		public object OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table)
 		{
+			return Current.Gui.Evaluate(OpenOrCreateWorksheetForTable_Unsynchronized, table);
+		}
+
+			/// <summary>
+		/// Opens a view that shows the table <code>table</code>. If no view for the table can be found,
+		/// a new default view is created for the table.
+		/// </summary>
+		/// <param name="table">The table for which a view must be found.</param>
+		/// <returns>The view content for the provided table.</returns>
+		private object OpenOrCreateWorksheetForTable_Unsynchronized(Altaxo.Data.DataTable table)
+		{
 
 			// if a content exist that show that table, activate that content
 			List<IViewContent> foundContent = SearchContentForDocument(table, 1);
@@ -713,7 +747,7 @@ namespace Altaxo.Main
 
 
 			// otherwise create a new Worksheet
-			return CreateNewWorksheet(table);
+			return CreateNewWorksheet_Unsynchronized(table);
 		}
 
 		/// <summary>
@@ -723,6 +757,10 @@ namespace Altaxo.Main
 		/// <param name="force">If true, the table is deleted without safety question,
 		/// if false, the user is ask before the table is deleted.</param>
 		public void DeleteTable(Altaxo.Data.DataTable table, bool force)
+		{
+			Current.Gui.Execute(DeleteTable_Unsynchronized, table, force);
+		}
+		private void DeleteTable_Unsynchronized(Altaxo.Data.DataTable table, bool force)
 		{
 			if (!force &&
 				false == Current.Gui.YesNoMessageBox("Are you sure to remove the table and the corresponding views?", "Attention", false))
@@ -749,6 +787,10 @@ namespace Altaxo.Main
 		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
 		public void RemoveWorksheet(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl)
 		{
+			Current.Gui.Execute(RemoveWorksheet_Unsynchronized, ctrl);
+		}
+		private void RemoveWorksheet_Unsynchronized(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl)
+		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
 			{
 				if ((content is Altaxo.Gui.IMVCControllerWrapper) &&
@@ -774,7 +816,11 @@ namespace Altaxo.Main
 		/// <returns>The view content for the newly created graph.</returns>
 		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph()
 		{
-			return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument());
+			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized);
+		}
+		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized()
+		{
+			return CreateNewGraph_Unsynchronized(CurrentOpenProject.CreateNewGraphDocument());
 		}
 
 		/// <summary>
@@ -784,7 +830,11 @@ namespace Altaxo.Main
 		/// <returns>The view content for the newly created graph.</returns>
 		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder(string folderName)
 		{
-			return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument(ProjectFolder.Combine(folderName, "GRAPH")));
+			return Current.Gui.Evaluate(CreateNewGraphInFolder_Unsynchronized, folderName);
+		}
+		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder_Unsynchronized(string folderName)
+		{
+			return CreateNewGraph_Unsynchronized(this.CurrentOpenProject.CreateNewGraphDocument(ProjectFolder.Combine(folderName, "GRAPH")));
 		}
 
 		/// <summary>
@@ -794,7 +844,11 @@ namespace Altaxo.Main
 		/// <returns>The view content for the newly created graph.</returns>
 		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(string preferredName)
 		{
-			return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument(preferredName));
+			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized, preferredName);
+		}
+		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(string preferredName)
+		{
+			return CreateNewGraph_Unsynchronized(this.CurrentOpenProject.CreateNewGraphDocument(preferredName));
 		}
 
 
@@ -805,6 +859,10 @@ namespace Altaxo.Main
 		/// <param name="graph">The graph document.</param>
 		/// <returns>The view content for the provided graph document.</returns>
 		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
+		{
+			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized,graph);
+		}
+		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
 			if (graph == null)
 				graph = this.CurrentOpenProject.CreateNewGraphDocument();
@@ -830,6 +888,10 @@ namespace Altaxo.Main
 		/// <returns>The view content for the provided graph.</returns>
 		public object OpenOrCreateGraphForGraphDocument(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
+			return Current.Gui.Evaluate(OpenOrCreateGraphForGraphDocument_Unsynchronized, graph);
+		}
+		private object OpenOrCreateGraphForGraphDocument_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
+		{
 
 			// if a content exist that show that graph, activate that content
 			List<IViewContent> foundContent = SearchContentForDocument(graph, 1);
@@ -841,7 +903,7 @@ namespace Altaxo.Main
 
 
 			// otherwise create a new graph view
-			return CreateNewGraph(graph);
+			return CreateNewGraph_Unsynchronized(graph);
 		}
 
 
@@ -852,6 +914,10 @@ namespace Altaxo.Main
 		/// <param name="force">If true, the graph document is deleted without safety question,
 		/// if false, the user is ask before the graph document is deleted.</param>
 		public void DeleteGraphDocument(Altaxo.Graph.Gdi.GraphDocument graph, bool force)
+		{
+			Current.Gui.Execute(DeleteGraphDocument_Unsynchronized, graph, force);
+		}
+		private void DeleteGraphDocument_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph, bool force)
 		{
 
 			if (!force &&
@@ -883,6 +949,10 @@ namespace Altaxo.Main
 		/// <param name="ctrl">The GraphController to remove.</param>
 		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
 		public void RemoveGraph(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
+		{
+			Current.Gui.Execute(RemoveGraph_Unsynchronized, ctrl);
+		}
+		private void RemoveGraph_Unsynchronized(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
 			{

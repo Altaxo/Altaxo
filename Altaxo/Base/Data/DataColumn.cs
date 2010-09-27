@@ -339,11 +339,11 @@ namespace Altaxo.Data
     public abstract void InsertRows(int nBeforeRow, int nCount); // inserts additional empty rows
 
     /// <summary>
-    /// Copies the contents of another column v to this column. An exception should be thrown if the data types of
+    /// Copies the contents of another column o to this column. An exception should be thrown if the data types of
     /// both columns are incompatible.
     /// </summary>
-    /// <param name="v">The column the data will be copied from.</param>
-    public abstract void CopyDataFrom(Altaxo.Data.DataColumn v);
+    /// <param name="o">The column the data will be copied from.</param>
+    public abstract void CopyDataFrom(object o);
 
 
 
@@ -580,7 +580,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Provides a setter property to which another data column can be assigned to. Copies all elements of the other DataColumn to this column. An exception is thrown if the data types of both columns are incompatible. 
     /// See also <see cref="CopyDataFrom"/>.</summary>
-    public DataColumn Data
+    public object Data
     {
       set { CopyDataFrom(value); }
     }

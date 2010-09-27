@@ -39,17 +39,15 @@ namespace Altaxo.Gui
     }
 
 
-    public override void Invoke(Action act)
+    public override object Invoke(Delegate act, object[] args)
     {
-      Current.Workbench.SynchronizingObject.Invoke((Delegate)act, null);
+      return Current.Workbench.SynchronizingObject.Invoke(act,args);
     }
 
-
-    public override void Invoke(Delegate act)
-    {
-      Current.Workbench.SynchronizingObject.Invoke(act,null);
-    }
-
+		public override IAsyncResult BeginInvoke(Delegate act, object[] args)
+		{
+			return Current.Workbench.SynchronizingObject.BeginInvoke(act, args);
+		}
 
 
     /// <summary>
@@ -72,7 +70,7 @@ namespace Altaxo.Gui
 
       if (controller is Altaxo.Gui.Scripting.IScriptController)
       {
-        System.Windows.Forms.Form dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
+        System.Windows.Forms.Form dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialogWin((Altaxo.Gui.Scripting.IScriptController)controller);
         return (System.Windows.Forms.DialogResult.OK == dlgctrl.ShowDialog(MainWindow));
       }
       else

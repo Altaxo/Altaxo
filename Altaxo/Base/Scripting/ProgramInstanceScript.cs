@@ -76,7 +76,9 @@ namespace Altaxo.Scripting
         return
           "#region ScriptHeader\r\n" +
           "using System;\r\n" +
-          "using Altaxo;\r\n" +
+					"using System.Collections.Generic;\r\n" +
+					"using System.Linq;\r\n" +
+					"using Altaxo;\r\n" +
           "using Altaxo.Calc;\r\n" +
           "using Altaxo.Data;\r\n" +
           "using Altaxo.Main;\r\n" +
@@ -84,7 +86,7 @@ namespace Altaxo.Scripting
           "{\r\n" +
           "\tpublic class ProgramInstanceScriptObject : Altaxo.Calc.ProgramInstanceExeBase\r\n" +
           "\t{\r\n" +
-          "\t\tpublic override void Execute()\r\n" +
+          "\t\tpublic override void Execute(IProgressReporter reporter)\r\n" +
           "\t\t{\r\n"
           ;
       }
@@ -162,7 +164,7 @@ namespace Altaxo.Scripting
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool Execute()
+    public bool Execute(IProgressReporter reporter)
     {
       if (null == m_ScriptObject)
       {
@@ -172,7 +174,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((Altaxo.Calc.ProgramInstanceExeBase)m_ScriptObject).Execute();
+        ((Altaxo.Calc.ProgramInstanceExeBase)m_ScriptObject).Execute(reporter);
       }
       catch (Exception ex)
       {

@@ -48,17 +48,15 @@ namespace Altaxo.Gui
     }
 
 
-    public override void Invoke(Action act)
+    public override object Invoke(Delegate act, object[] args)
     {
-      Current.Workbench.SynchronizingObject.Invoke((Delegate)act, null);
+      return Current.Workbench.SynchronizingObject.Invoke(act,args);
     }
 
-
-    public override void Invoke(Delegate act)
-    {
-      Current.Workbench.SynchronizingObject.Invoke(act,null);
-    }
-
+		public override IAsyncResult BeginInvoke(Delegate act, object[] args)
+		{
+			return Current.Workbench.SynchronizingObject.BeginInvoke(act, args);
+		}
 
 
     /// <summary>
@@ -81,8 +79,9 @@ namespace Altaxo.Gui
 
       if (controller is Altaxo.Gui.Scripting.IScriptController)
       {
-        System.Windows.Forms.Form dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
-        return (System.Windows.Forms.DialogResult.OK == dlgctrl.ShowDialog(MainWindow));
+        var dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
+				dlgctrl.Owner = MainWindowWpf;
+        return (true == dlgctrl.ShowDialog());
       }
 			else if (controller.ViewObject is System.Windows.UIElement)
 			{
@@ -155,12 +154,11 @@ namespace Altaxo.Gui
 
       if (thread.IsAlive)
       {
-        BackgroundCancelDialog dlg = new BackgroundCancelDialog(thread, monitor);
-
+        var dlg = new BackgroundCancelDialogWpf(thread, monitor);
         if (thread.IsAlive)
         {
-          System.Windows.Forms.DialogResult r = dlg.ShowDialog(MainWindow);
-          return r == System.Windows.Forms.DialogResult.OK ? false : true;
+					dlg.Owner = MainWindowWpf;
+					return true == dlg.ShowDialog();
         }
       }
       return false;
@@ -249,6 +247,18 @@ namespace Altaxo.Gui
 
 		public override bool ShowOpenFileDialog(OpenFileOptions options)
 		{
+			if (InvokeRequired())
+			{
+				return (bool)MainWindowWpf.Dispatcher.Invoke((Func<OpenFileOptions, bool>)InternalShowOpenFileDialog, new object[] { options });
+			}
+			else
+			{
+				return InternalShowOpenFileDialog(options);
+			}
+		}
+
+		private bool InternalShowOpenFileDialog(OpenFileOptions options)
+		{
 			var dlg = new Microsoft.Win32.OpenFileDialog();
 
 			dlg.Filter = GetFilterString(options);
@@ -271,7 +281,16 @@ namespace Altaxo.Gui
 			return false;
 		}
 
-    public override bool ShowSaveFileDialog(SaveFileOptions options)
+
+		public override bool ShowSaveFileDialog(SaveFileOptions options)
+		{
+			if (InvokeRequired())
+				return (bool)MainWindowWpf.Dispatcher.Invoke((Func<SaveFileOptions, bool>)InternalShowSaveFileDialog, new object[] { options });
+			else
+				return InternalShowSaveFileDialog(options);
+		}
+
+    private bool InternalShowSaveFileDialog(SaveFileOptions options)
     {
 			var dlg = new Microsoft.Win32.SaveFileDialog();
       dlg.Filter = GetFilterString(options);

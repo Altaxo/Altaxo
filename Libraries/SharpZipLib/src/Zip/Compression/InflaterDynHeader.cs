@@ -59,18 +59,6 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		{ 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 		
 		#endregion
-		#region Instance Fields
-		byte[] blLens;
-		byte[] litdistLens;
-		
-		InflaterHuffmanTree blTree;
-		
-		int mode;
-		int lnum, dnum, blnum, num;
-		int repSymbol;
-		byte lastLen;
-		int ptr;
-		#endregion
 
 		#region Constructors
 		public InflaterDynHeader()
@@ -190,8 +178,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 								return true;
 							}
 						}
-							mode = LENS;
-							goto decode_loop;
+						mode = LENS;
+						goto decode_loop;
 					}
 				}
 		}
@@ -209,5 +197,22 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			Array.Copy(litdistLens, lnum, distLens, 0, dnum);
 			return new InflaterHuffmanTree(distLens);
 		}
+
+		#region Instance Fields
+		byte[] blLens;
+		byte[] litdistLens;
+
+		InflaterHuffmanTree blTree;
+
+        /// <summary>
+        /// The current decode mode
+        /// </summary>
+		int mode;
+		int lnum, dnum, blnum, num;
+		int repSymbol;
+		byte lastLen;
+		int ptr;
+		#endregion
+
 	}
 }

@@ -469,6 +469,15 @@ namespace Altaxo.Gui.Scripting
     {
     }
 
+		public void Execute(IProgressReporter reporter)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool HasExecutionErrors()
+		{
+			throw new NotImplementedException();
+		}
     #endregion
   }
 }

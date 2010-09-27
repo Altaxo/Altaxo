@@ -206,6 +206,9 @@ namespace Altaxo.Gui.Graph.Viewing
 					case GraphToolType.RectangleDrawing:
 						_mouseState = new GraphControllerMouseHandlers.RectangleDrawingMouseHandler(_view);
 						break;
+					case GraphToolType.RegularPolygonDrawing:
+						_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(_view);
+						break;
 					case GraphToolType.SingleLineDrawing:
 						_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(_view);
 						break;
@@ -214,6 +217,12 @@ namespace Altaxo.Gui.Graph.Viewing
 						break;
 					case GraphToolType.ZoomAxes:
 						_mouseState = new GraphControllerMouseHandlers.ZoomAxesMouseHandler(_view);
+						break;
+					case GraphToolType.OpenCardinalSplineDrawing:
+						_mouseState = new OpenCardinalSplineMouseHandler(_view);
+						break;
+					case GraphToolType.ClosedCardinalSplineDrawing:
+						_mouseState = new ClosedCardinalSplineMouseHandler(_view);
 						break;
 					default:
 						throw new NotImplementedException("Type not implemented: " + value.ToString());
@@ -625,10 +634,10 @@ namespace Altaxo.Gui.Graph.Viewing
 				Graphics g = this._view.CreateGraphGraphics();
 				this.DoPaint(g, false);
 				_view.EhGraphImageChanged();
-				
 			}
-
 		}
+
+
 
 
 

@@ -36,12 +36,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		protected class PathNodeGripHandle : IGripManipulationHandle
 		{
-			PointD2D _gripCenter;
-			double _gripRadius;
-			IHitTestObject _parent;
-			PointD2D _drawrPosition;
-			PointD2D _fixrPosition;
-			PointD2D _fixaPosition;
+			protected PointD2D _gripCenter;
+			protected double _gripRadius;
+			protected IHitTestObject _parent;
+			protected PointD2D _drawrPosition;
+			protected PointD2D _fixrPosition;
+			protected PointD2D _fixaPosition;
 
 			Action<PointD2D> _moveAction;
 
@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_moveAction = moveAction;
 			}
 
-			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
+			protected GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
 
 			#region IGripManipulationHandle Members
@@ -85,12 +85,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// Announces the deactivation of this grip.
 			/// </summary>
 			/// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
-			public bool Deactivate()
+			public virtual bool Deactivate()
 			{
 				return false;
 			}
 
-			public void MoveGrip(PointD2D newPosition)
+			public virtual void MoveGrip(PointD2D newPosition)
 			{
 				if (_moveAction != null)
 				{

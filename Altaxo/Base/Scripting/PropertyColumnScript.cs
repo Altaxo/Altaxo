@@ -37,10 +37,11 @@ namespace Altaxo.Scripting
     /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
     /// </summary>
     /// <param name="myColumn">The property column this script is working on.</param>
+		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn);
+    bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter);
   }
  
   /// <summary>
@@ -119,15 +120,18 @@ namespace Altaxo.Scripting
       {
         return
           "#region ScriptHeader\r\n"+
-          "using System;\r\n" + 
-          "using Altaxo;\r\n" + 
-          "using Altaxo.Calc;\r\n" + 
-          "using Altaxo.Data;\r\n" + 
+					"using System;\r\n" +
+					"using System.Collections.Generic;\r\n" +
+					"using System.Linq;\r\n" +
+					"using Altaxo;\r\n" +
+					"using Altaxo.Calc.LinearAlgebra;\r\n" +
+					"using Altaxo.Data;\r\n" +
+					"\r\n" +
           "namespace Altaxo.Calc\r\n" + 
           "{\r\n" + 
           "\tpublic class SetPropertyColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
           "\t{\r\n"+
-          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol)\r\n" +
+          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol, IProgressReporter reporter)\r\n" +
           "\t\t{\r\n" +
           "\t\t\tAltaxo.Data.DataColumnCollection pcol = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
           "\t\t\tAltaxo.Data.DataTable         mytable = Altaxo.Data.DataTable.GetParentDataTableOf(pcol);\r\n" +
@@ -201,10 +205,11 @@ namespace Altaxo.Scripting
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
     /// <param name="myColumn">The data table this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+		/// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool Execute(Altaxo.Data.DataColumn myColumn)
+    public bool Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
     {
       if(null==m_ScriptObject)
       {
@@ -214,7 +219,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
+        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn, reporter);
       }
       catch(Exception ex)
       {
@@ -232,10 +237,11 @@ namespace Altaxo.Scripting
     /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
     /// </summary>
     /// <param name="myColumn">The property column this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
+		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+		/// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn)
+    public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
     {
       bool bSucceeded=true;
       Altaxo.Data.DataTableCollection   myDataSet=null;
@@ -264,7 +270,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
+        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn, reporter);
       }
       catch(Exception ex)
       {
@@ -286,6 +292,23 @@ namespace Altaxo.Scripting
 
       return bSucceeded; 
     }
+
+		/// <summary>
+		/// Executes the script in the background with showing the background dialog. If no instance of the script object exists, a error message will be stored and the return value is false.
+		/// If the script object exists, the data change notifications will be switched of (for all tables).
+		/// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
+		/// </summary>
+		/// <param name="myColumn">The property column this script is working on.</param>
+		/// <returns>True if executed without exceptions, otherwise false.</returns>
+		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
+		/// inside the column script and can be recalled by the Errors property.</remarks>
+		public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataColumn myColumn)
+		{
+			var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+			System.Threading.Thread t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myColumn, reporter));
+			t.Start();
+			return Current.Gui.ShowBackgroundCancelDialog(1000, reporter, t);
+		}
 
   } // end of class PropertyColumnScript
 }

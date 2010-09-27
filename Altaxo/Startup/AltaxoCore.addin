@@ -669,6 +669,12 @@
         class="Altaxo.Graph.Commands.EllipseDrawingTool" />
 			<ToolbarItem id="CurlyBraceDrawingTool" type="CheckBox" icon="Icons.16x16.CurlyBrace" tooltip="${res:XML.MainMenu.GraphMenu.Tools.CurlyBrace.Description}"
         class="Altaxo.Graph.Commands.CurlyBraceDrawingTool" />
+			<ToolbarItem id="RegularPolygonDrawingTool" type="CheckBox" icon="Icons.16x16.Triangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.RegularPolygon.Description}"
+        class="Altaxo.Graph.Commands.RegularPolygonDrawingTool" />
+			<ToolbarItem id="OpenCardinalSplineDrawingTool" type="CheckBox" icon="Icons.16x16.OpenSplineCurve" tooltip="${res:XML.MainMenu.GraphMenu.Tools.OpenCardinalSpline.Description}"
+        class="Altaxo.Graph.Commands.OpenCardinalSplineDrawingTool" />
+			<ToolbarItem id="ClosedCardinalSplineDrawingTool" type="CheckBox" icon="Icons.16x16.ClosedSplineCurve" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ClosedCardinalSpline.Description}"
+        class="Altaxo.Graph.Commands.ClosedCardinalSplineDrawingTool" />
 			<ToolbarItem id="ZoomAxes" type="CheckBox" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
         class="Altaxo.Graph.Commands.ZoomAxesTool" />
       <ToolbarItem id="GraphCmdsSeparator"  type = "Separator"/>
@@ -1085,9 +1091,6 @@
 
   </Path>
 
-
-
-
   <Path name="/SharpDevelop/Services/ParserService/SingleFileGacReferences">
     <String id = "AltaxoCore" text ="AltaxoCore"/>
     <String id = "AltaxoBase" text ="AltaxoBase"/>
@@ -1096,6 +1099,7 @@
     <String id = "System.Drawing" text = "System.Drawing"/>
     <String id = "System.Windows.Forms" text = "System.Windows.Forms"/>
     <String id = "System.Xml" text = "System.Xml"/>
+		<String id = "ICSharpCode.SharpZipLib" text ="ICSharpCode.SharpZipLib"/>
   </Path>
 
   

@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,6 +48,12 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gui\Common\BackgroundCancelControl.xaml.cs">
+      <DependentUpon>BackgroundCancelControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\BackgroundCancelDialogWpf.xaml.cs">
+      <DependentUpon>BackgroundCancelDialogWpf.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
       <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
     </Compile>
@@ -62,11 +69,14 @@
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ClosedCardinalSplineMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\OpenCardinalSplineMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\RegularPolygonDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs" />
@@ -77,7 +87,16 @@
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GuiHelper.cs" />
+    <Compile Include="Gui\Scripting\ScriptControl.xaml.cs">
+      <DependentUpon>ScriptControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Scripting\ScriptExecutionDialog.xaml.cs">
+      <DependentUpon>ScriptExecutionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\VisualDrawingHost.cs" />
+    <Compile Include="Gui\Worksheet\RealFourierTransformationControl.xaml.cs">
+      <DependentUpon>RealFourierTransformationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetPaintingWpf.cs" />
@@ -98,6 +117,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Page Include="Gui\Common\BackgroundCancelControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\BackgroundCancelDialogWpf.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\DialogShellViewWpf.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -111,6 +138,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Scripting\ScriptControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Scripting\ScriptExecutionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Worksheet\RealFourierTransformationControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

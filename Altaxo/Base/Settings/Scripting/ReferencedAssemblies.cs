@@ -23,14 +23,38 @@ namespace Altaxo.Settings.Scripting
 
     static ReferencedAssemblies()
     {
+			var assembliesLoadedSoFar = AppDomain.CurrentDomain.GetAssemblies();
+			// watch further loading of assemblies
+			AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(CurrentDomain_AssemblyLoad);
+
+
       // Add available assemblies including the application itself 
-      foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+      foreach (Assembly asm in assembliesLoadedSoFar)
       {
         // this will include only those assemblies that have an external file
-        if (!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location != null && asm.Location != String.Empty)
-          _startupAssemblies.Add(asm);
+				if (!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location != null && asm.Location != String.Empty)
+				{
+					lock (_startupAssemblies)
+					{
+						_startupAssemblies.Add(asm);
+					}
+				}
       }
-    }
+		
+		}
+
+		static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+		{
+			var asm = args.LoadedAssembly;
+			// this will include only those assemblies that have an external file
+			if (!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location != null && asm.Location != String.Empty)
+			{
+				lock (_startupAssemblies)
+				{
+					_startupAssemblies.Add(asm);
+				}
+			}
+		}
 
     public static void Initialize()
     {
