@@ -32,8 +32,6 @@ namespace Altaxo.Gui.Common
 			_hostedControl = hostedControl;
 			_hostedControl.SetValue(Grid.RowProperty, 0);
 			_hostedControl.SetValue(Grid.ColumnProperty, 0);
-//			((System.Windows.Controls.Control)_hostedControl).HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-//		((System.Windows.Controls.Control)_hostedControl).VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
 			_grid.Children.Add(_hostedControl);
 
 			
@@ -63,6 +61,7 @@ namespace Altaxo.Gui.Common
 
 		private void EhButtonOKPressed(object sender, RoutedEventArgs e)
 		{
+			_btOk.Focus(); // Trick to drag the focus away from the embedded control in order to trigger its validation code <b>before</b> the controls Apply routine is called. (This is only needed if user pressed Enter on the keyboard).
 			var eventArgs = new System.ComponentModel.CancelEventArgs();
 			if (null != ButtonOKPressed)
 				ButtonOKPressed(eventArgs);
@@ -70,7 +69,6 @@ namespace Altaxo.Gui.Common
 			if (!eventArgs.Cancel)
 			{
 				this.DialogResult = true;
-				this.Close();
 			}
 
 		}
@@ -81,7 +79,6 @@ namespace Altaxo.Gui.Common
 				ButtonCancelPressed();
 
 			this.DialogResult = false;
-			this.Close();
 		}
 
 		private void EhButtonApplyPressed(object sender, RoutedEventArgs e)

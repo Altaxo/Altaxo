@@ -56,11 +56,11 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public class DialogShellController 
   {
-    private IDialogShellView m_View;
-    private IApplyController m_HostedController;
+    private IDialogShellView _view;
+    private IApplyController _hostedController;
 
-    private string m_Title = String.Empty;
-    private bool   m_ApplyVisible = true;
+    private string _title = String.Empty;
+    private bool   _isApplyVisible = true;
 
     /// <summary>
     /// Creates the controller.
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Common
     public DialogShellController(IDialogShellView view, IApplyController hostedController)
     {
       View = view;
-      m_HostedController = hostedController;
+      _hostedController = hostedController;
       SetElements(true);
     }
 
@@ -88,9 +88,9 @@ namespace Altaxo.Gui.Common
       bool   applyvisible)
     {
       View = view;
-      m_HostedController = hostedController;
-      m_Title = title;
-      m_ApplyVisible = applyvisible;
+      _hostedController = hostedController;
+      _title = title;
+      _isApplyVisible = applyvisible;
 
       SetElements(true);
     }
@@ -99,24 +99,24 @@ namespace Altaxo.Gui.Common
     /// </summary>
     IDialogShellView View
     {
-      get { return m_View; }
+      get { return _view; }
       set
       {
-        if (null != m_View)
+        if (null != _view)
         {
-          m_View.ButtonOKPressed -= EhOK;
-          m_View.ButtonCancelPressed -= EhCancel;
-          m_View.ButtonApplyPressed -= EhApply;
+          _view.ButtonOKPressed -= EhOK;
+          _view.ButtonCancelPressed -= EhCancel;
+          _view.ButtonApplyPressed -= EhApply;
         }
 
-        m_View = value;
+        _view = value;
         
-        if(null!=m_View)
+        if(null!=_view)
         {
           SetElements(false);
-          m_View.ButtonOKPressed += EhOK;
-          m_View.ButtonCancelPressed += EhCancel;
-          m_View.ButtonApplyPressed += EhApply;
+          _view.ButtonOKPressed += EhOK;
+          _view.ButtonCancelPressed += EhCancel;
+          _view.ButtonApplyPressed += EhApply;
         }
       }
     }
@@ -126,8 +126,8 @@ namespace Altaxo.Gui.Common
 
       if(null!=View)
       {
-        View.Title = m_Title;
-        View.ApplyVisible = m_ApplyVisible;
+        View.Title = _title;
+        View.ApplyVisible = _isApplyVisible;
       }
     }
 
@@ -140,8 +140,8 @@ namespace Altaxo.Gui.Common
     public void EhOK(System.ComponentModel.CancelEventArgs e)
     {
       bool bSuccess = true;
-      if(null!=m_HostedController)
-        bSuccess = m_HostedController.Apply();
+      if(null!=_hostedController)
+        bSuccess = _hostedController.Apply();
 
       if (!bSuccess)
         e.Cancel = true;
@@ -160,8 +160,8 @@ namespace Altaxo.Gui.Common
     /// </summary>
     public void EhApply()
     {
-      if(null!=m_HostedController)
-        m_HostedController.Apply();
+      if(null!=_hostedController)
+        _hostedController.Apply();
     }
 
     #endregion

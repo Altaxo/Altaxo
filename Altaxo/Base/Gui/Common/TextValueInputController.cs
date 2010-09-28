@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Common
 
     string m_InitialContents;
     string m_Contents;
+		bool _isContentsValid = true;
 
     private IStringValidator m_Validator;
 
@@ -87,6 +88,7 @@ namespace Altaxo.Gui.Common
 
     public void EhView_ValidatingValue1(object sender, CancelEventArgs e)
     {
+			_isContentsValid = true;
       m_Contents = m_View.ValueText;
       if (m_Validator != null)
       {
@@ -94,6 +96,7 @@ namespace Altaxo.Gui.Common
         if (null != err)
         {
           e.Cancel = true;
+					_isContentsValid = false;
           Current.Gui.ErrorMessageBox( err );
         }
       }
@@ -102,6 +105,7 @@ namespace Altaxo.Gui.Common
         if (null == m_Contents || 0 == m_Contents.Length)
         {
           e.Cancel = true;
+					_isContentsValid = false;
         }
       }
     }
@@ -184,8 +188,9 @@ namespace Altaxo.Gui.Common
 
     public bool Apply()
     {
-      m_InitialContents = m_Contents;
-      return true;
+			if(_isContentsValid)
+	      m_InitialContents = m_Contents;
+			return _isContentsValid;
     }
 
     #endregion

@@ -562,7 +562,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public void EhGraphDocumentNameChanged(Main.INameOwner sender, string oldName)
 		{
-			Current.Gui.Execute(EhGraphDocumentNameChanged, sender, oldName);
+			Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, sender, oldName);
 		}
 		void EhGraphDocumentNameChanged_Unsynchronized(Main.INameOwner sender, string oldName)
 		{

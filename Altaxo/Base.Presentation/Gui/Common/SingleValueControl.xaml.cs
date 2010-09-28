@@ -19,9 +19,21 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class SingleValueControl : UserControl , ISingleValueView
 	{
+		NotifyChangedValue<string> _editText = new NotifyChangedValue<string>();
 		public SingleValueControl()
 		{
 			InitializeComponent();
+			try
+			{
+				var binding = new Binding();
+				binding.Source = _editText;
+				binding.Path = new PropertyPath("Value");
+				binding.ValidationRules.Add(new ValidationWithCancelEventArgs(this.ValidateText));
+				_lblEditText.SetBinding(TextBox.TextProperty, binding);
+			}
+			catch (Exception ex)
+			{
+			}
 		}
 
 		#region ISingleValueView
@@ -36,10 +48,12 @@ namespace Altaxo.Gui.Common
 			get
 			{
 				return _lblEditText.Text;
+				//return _editText.Content;
 			}
 			set
 			{
-				_lblEditText.Text = value;
+				//_lblEditText.Text = value;
+				_editText.Value = value;
 			}
 		}
 
@@ -47,20 +61,13 @@ namespace Altaxo.Gui.Common
 
 		#endregion
 
-		private void EhLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+
+		private void ValidateText(object value, System.Globalization.CultureInfo cultureInfo, System.ComponentModel.CancelEventArgs ev)
 		{
 			if (null != ValueText_Validating)
 			{
-				var ev = new System.ComponentModel.CancelEventArgs();
 				ValueText_Validating(this, ev);
-				if (ev.Cancel == true)
-				{
-					_lblEditText.Focus();
-					e.Handled = true;
-				}
 			}
-
-
 		}
 	}
 }
