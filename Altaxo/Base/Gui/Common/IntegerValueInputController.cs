@@ -106,9 +106,10 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueFormController Members
 
-    public void EhView_ValidatingValue1(object sender, CancelEventArgs e)
+    public string EhView_ValidatingValue1(string val)
     {
       // we validate only during apply
+			return null;
     }
     #endregion
 

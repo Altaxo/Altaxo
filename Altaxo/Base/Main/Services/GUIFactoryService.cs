@@ -412,6 +412,22 @@ namespace Altaxo.Main.Services
 				return function(arg1, arg2, arg3, arg4, arg5);
 		}
 
+		public TResult Evaluate<T1, T2, T3, T4, T5, T6, TResult>(Func<T1, T2, T3, T4, T5, T6, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
+			else
+				return function(arg1, arg2, arg3, arg4, arg5, arg6);
+		}
+
+		public TResult Evaluate<T1, T2, T3, T4, T5, T6, T7, TResult>(Func<T1, T2, T3, T4, T5, T6, T7, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
+		{
+			if (InvokeRequired())
+				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
+			else
+				return function(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+		}
+
 
 		/// <summary>
 		/// Executes an action synchronously with the GUI.

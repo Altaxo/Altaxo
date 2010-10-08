@@ -232,15 +232,17 @@ namespace Altaxo.Graph.Plot.Data
       result.RangeList = rangeList;
       Gdi.G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
-      NumericalScale xaxis = layer.XAxis as NumericalScale;
-      NumericalScale yaxis = layer.YAxis as NumericalScale;
+			var xaxis = layer.XAxis;
+			var yaxis = layer.YAxis;
       if (xaxis == null || yaxis == null)
         return null;
+
 
       for (i = 0, j = 0; i < functionPoints; i++)
       {
         double x_rel = ((double)i) / (functionPoints - 1);
-        double x = xaxis.NormalToPhysical(x_rel);
+				var x_variant = xaxis.NormalToPhysicalVariant(x_rel);
+				double x = x_variant.ToDouble();
         double y = Evaluate(x);
 
         if (Double.IsNaN(x) || Double.IsNaN(y))
@@ -255,7 +257,7 @@ namespace Altaxo.Graph.Plot.Data
 
 
         // double x_rel = layer.XAxis.PhysicalToNormal(x);
-        double y_rel = yaxis.PhysicalToNormal(y);
+        double y_rel = yaxis.PhysicalVariantToNormal(y);
 
         // chop relative values to an range of about -+ 10^6
         if (y_rel > MaxRelativeValue)

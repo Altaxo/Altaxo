@@ -63,34 +63,29 @@ namespace Altaxo.Gui.Common
       return base.Apply();
     }
 
-    public override void EhView_ValidatingValue1(object sender, System.ComponentModel.CancelEventArgs e)
+    public override string EhView_ValidatingValue1(string val)
     {
-      string val = _view.ValueText;
       double vald;
       if(Altaxo.Serialization.GUIConversion.IsDouble(val,out vald))
       {
         if(vald<_minimumValue || (!_isMinimumValueIncluded && vald==_minimumValue))
         {
-          e.Cancel=true;
-          Current.Gui.ErrorMessageBox(string.Format("Value must be {0} than {1}!",(_isMinimumValueIncluded?"greater or equal":"greater"), Altaxo.Serialization.GUIConversion.ToString(_minimumValue)));
+          return string.Format("Value must be {0} than {1}!",(_isMinimumValueIncluded?"greater or equal":"greater"), Altaxo.Serialization.GUIConversion.ToString(_minimumValue));
         }
         else if(vald>_maximumValue || (!_isMaximumValueIncluded && vald==_maximumValue))
         {
-          e.Cancel=true;
-          Current.Gui.ErrorMessageBox(string.Format("Value must be {0} than {1}!",(_isMaximumValueIncluded?"less or equal":"less"),Altaxo.Serialization.GUIConversion.ToString(_maximumValue)));
+          return string.Format("Value must be {0} than {1}!",(_isMaximumValueIncluded?"less or equal":"less"),Altaxo.Serialization.GUIConversion.ToString(_maximumValue));
         }
         else
         {
           _value1DoubleTemporary = vald;
+					return null;
         }
       }
       else
       {
-        e.Cancel = true;
+				return string.Format("Value must be a valid numeric string");
       }
-
-      base.EhView_ValidatingValue1(val,e);
     }
-
   }
 }

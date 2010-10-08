@@ -235,7 +235,8 @@ namespace Altaxo.Gui.Scripting
 
 		public void Execute(IProgressReporter progress)
 		{
-			var applyresult = _scriptExecutionHandler(_doc, progress);
+			if(null!=_scriptExecutionHandler)
+				_scriptExecutionHandler(_doc, progress);
 		
 		}
 

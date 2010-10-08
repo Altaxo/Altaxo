@@ -28,7 +28,7 @@ namespace Altaxo.Gui.Common
 				var binding = new Binding();
 				binding.Source = _editText;
 				binding.Path = new PropertyPath("Value");
-				binding.ValidationRules.Add(new ValidationWithCancelEventArgs(this.ValidateText));
+				binding.ValidationRules.Add(new ValidationWithErrorString(this.ValidateText));
 				_lblEditText.SetBinding(TextBox.TextProperty, binding);
 			}
 			catch (Exception ex)
@@ -53,21 +53,28 @@ namespace Altaxo.Gui.Common
 			set
 			{
 				//_lblEditText.Text = value;
-				_editText.Value = value;
+			_editText.Value = value;
 			}
 		}
 
-		public event System.ComponentModel.CancelEventHandler ValueText_Validating;
+		public event Func<string,string> ValueText_Validating;
 
 		#endregion
 
 
-		private void ValidateText(object value, System.Globalization.CultureInfo cultureInfo, System.ComponentModel.CancelEventArgs ev)
+		private string ValidateText(object value, System.Globalization.CultureInfo cultureInfo)
 		{
+			string result = null;
 			if (null != ValueText_Validating)
 			{
-				ValueText_Validating(this, ev);
+				foreach (var e in ValueText_Validating.GetInvocationList())
+				{
+					var s = (string)e.DynamicInvoke(value);
+					result = null == result ? s : null == s ? result : result + e;
+				}
 			}
+
+			return result;
 		}
 	}
 }

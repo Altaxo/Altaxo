@@ -86,28 +86,28 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueFormController Members
 
-    public void EhView_ValidatingValue1(object sender, CancelEventArgs e)
+    public string EhView_ValidatingValue1(string text)
     {
 			_isContentsValid = true;
-      m_Contents = m_View.ValueText;
+			m_Contents = text;
       if (m_Validator != null)
       {
         string err = m_Validator.Validate(m_Contents);
         if (null != err)
         {
-          e.Cancel = true;
 					_isContentsValid = false;
-          Current.Gui.ErrorMessageBox( err );
+					return err;
         }
       }
       else // if no validating handler, use some default validation
       {
         if (null == m_Contents || 0 == m_Contents.Length)
         {
-          e.Cancel = true;
 					_isContentsValid = false;
+					return "You have to enter a value!";
         }
       }
+			return null;
     }
 
     #endregion

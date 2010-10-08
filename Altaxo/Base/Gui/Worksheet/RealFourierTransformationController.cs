@@ -5,7 +5,7 @@ using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
 
-using Altaxo.Data.Extensions;
+using Altaxo.Data;
 
 namespace Altaxo.Gui.Worksheet
 {

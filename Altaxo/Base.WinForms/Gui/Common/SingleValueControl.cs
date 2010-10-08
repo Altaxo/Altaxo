@@ -142,11 +142,24 @@ namespace Altaxo.Gui.Common
 
     #endregion
 
-    public event System.ComponentModel.CancelEventHandler ValueText_Validating;
+    public event Func<string,string> ValueText_Validating;
     private void m_edEdit_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if (null != ValueText_Validating)
-        ValueText_Validating(this, e);
+			string result = null;
+			if (null != ValueText_Validating)
+			{
+				foreach (var method in ValueText_Validating.GetInvocationList())
+				{
+					var s = (string)method.DynamicInvoke(m_edEdit.Text);
+					result = null == result ? s : null == s ? result : result + e;
+				}
+			}
+
+			if (!string.IsNullOrEmpty(result))
+			{
+				e.Cancel = true;
+				Current.Gui.ErrorMessageBox(result);
+			}
     }
   }
 }

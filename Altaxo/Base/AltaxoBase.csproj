@@ -254,6 +254,7 @@
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Plot\Groups\VariableColorGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\VariableSymbolSizeGroupStyle.cs" />
+    <Compile Include="Graph\Procedures\MasterCurveCreation.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementController.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitEnsembleController.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitFunctionSelectionController.cs" />
@@ -284,6 +285,8 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
     <Compile Include="Gui\NotifyChangedValue.cs" />
+    <Compile Include="Gui\Worksheet\MasterCurveCreationDataController.cs" />
+    <Compile Include="Gui\Worksheet\MasterCurveCreationMainController.cs" />
     <Compile Include="Gui\Worksheet\RealFourierTransformationController.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />

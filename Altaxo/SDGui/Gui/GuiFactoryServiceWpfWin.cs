@@ -66,7 +66,19 @@ namespace Altaxo.Gui
     /// <param name="title">The title of the dialog to show.</param>
     /// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    public override bool ShowDialog(IMVCAController controller, string title, bool showApplyButton)
+		public override bool ShowDialog(IMVCAController controller, string title, bool showApplyButton)
+		{
+			return Evaluate(InternalShowDialog, controller, title, showApplyButton);
+		}
+
+			  /// <summary>
+    /// Shows a configuration dialog for an object.
+    /// </summary>
+    /// <param name="controller">The controller to show in the dialog</param>
+    /// <param name="title">The title of the dialog to show.</param>
+    /// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
+    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+    private bool InternalShowDialog(IMVCAController controller, string title, bool showApplyButton)
     {
 
       if (controller.ViewObject == null)
@@ -97,18 +109,19 @@ namespace Altaxo.Gui
 			}
     }
 
-    /// <summary>
+
+		  /// <summary>
     /// Shows a message box with the error text.
     /// </summary>
     /// <param name="errortxt">The error text.</param>
-    public override void ErrorMessageBox(string errortxt, string title)
-    {
-      System.Windows.Forms.MessageBox.Show(MainWindow, errortxt, title ?? "Error(s)!", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-    }
+		public override void ErrorMessageBox(string errortxt, string title)
+		{
+			Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, errortxt, title ?? "Error(s)!", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+		}
 
     public override void InfoMessageBox(string infotxt, string title)
     {
-      System.Windows.Forms.MessageBox.Show(MainWindow, infotxt, title ?? "Information", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+      Evaluate(System.Windows.MessageBox.Show,MainWindowWpf, infotxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
     }
 
     /// <summary>
@@ -120,7 +133,7 @@ namespace Altaxo.Gui
     /// <returns>True if the user answered with Yes, otherwise false.</returns>
     public override bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
     {
-      return System.Windows.Forms.DialogResult.Yes == System.Windows.Forms.MessageBox.Show(MainWindow, txt, caption, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question, defaultanswer ? System.Windows.Forms.MessageBoxDefaultButton.Button1 : System.Windows.Forms.MessageBoxDefaultButton.Button2);
+			return System.Windows.MessageBoxResult.Yes == Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
     }
 
     /// <summary>
@@ -132,15 +145,15 @@ namespace Altaxo.Gui
     /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
     public override bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer)
     {
-      var defaultButton = MessageBoxDefaultButton.Button3;
+      var defaultButton = System.Windows.MessageBoxResult.Cancel;
       if(defaultAnswer!=null)
-        defaultButton = ((bool)defaultAnswer) ? MessageBoxDefaultButton.Button1 : MessageBoxDefaultButton.Button2;
+				defaultButton = ((bool)defaultAnswer) ? System.Windows.MessageBoxResult.Yes : System.Windows.MessageBoxResult.No;
 
-      var result = System.Windows.Forms.MessageBox.Show(MainWindow, text, caption, System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Question, defaultButton);
+			var result = Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, text, caption, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, defaultButton);
 
-      if (result == DialogResult.Yes)
+			if (result == System.Windows.MessageBoxResult.Yes)
         return true;
-      else if(result==DialogResult.No)
+			else if (result == System.Windows.MessageBoxResult.No)
       return false;
       else
       return null;
@@ -149,6 +162,9 @@ namespace Altaxo.Gui
 
     public override bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread)
     {
+			if (InvokeRequired())
+				throw new ApplicationException("Trying to show a BackgroundCancelDialog initiated by a background thread. This nesting is not supported"); 
+
       for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
         System.Threading.Thread.Sleep(10);
 

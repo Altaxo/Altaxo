@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Common
   {
     string DescriptionText { set; }
     string ValueText { get; set; }
-    event System.ComponentModel.CancelEventHandler ValueText_Validating;
+    event Func<string,string> ValueText_Validating;
   }
   public interface ISingleValueController : IMVCAController
   {
@@ -131,9 +131,10 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueViewEventSink Members
 
-    public virtual void EhView_ValidatingValue1(object sender, System.ComponentModel.CancelEventArgs e)
+    public virtual string EhView_ValidatingValue1(string text)
     {
-      _value1StringTemporary = _view.ValueText;
+			_value1StringTemporary = text;
+			return null;
     }
 
     #endregion

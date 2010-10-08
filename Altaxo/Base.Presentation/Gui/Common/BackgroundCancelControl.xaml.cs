@@ -51,6 +51,9 @@ namespace Altaxo.Gui.Common
 			if (_thread != null && _thread.IsAlive)
 				throw new ApplicationException("Background thread is still executed");
 
+			if (null != _timer)
+				throw new ApplicationException("Timer is still active");
+			
 			_monitor = new ExternalDrivenBackgroundMonitor();
 			_thread = new System.Threading.Thread(() => action(_monitor));
 
@@ -110,7 +113,12 @@ namespace Altaxo.Gui.Common
 
 			if (!_thread.IsAlive)
 			{
-				_timer.Stop();
+				var timer = (System.Windows.Threading.DispatcherTimer)sender;
+				timer.Tick -= EhTimer;
+				timer.Stop();
+				_timer = null;
+				_thread = null;
+
 				if (ExecutionFinished != null)
 					ExecutionFinished(_wasCancelledByUser?false:true);
 			}

@@ -45,7 +45,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       Altaxo.Data.DoubleColumn col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]];
 
-			Altaxo.Data.Extensions.AnalysisRealFourierTransformationCommands.ShowRealFourierTransformDialog(col);
+			Altaxo.Data.AnalysisRealFourierTransformationCommands.ShowRealFourierTransformDialog(col);
     }
 
 

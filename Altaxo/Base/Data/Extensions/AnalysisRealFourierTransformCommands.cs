@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Data.Extensions
+namespace Altaxo.Data
 {
 	public static class AnalysisRealFourierTransformationCommands
 	{

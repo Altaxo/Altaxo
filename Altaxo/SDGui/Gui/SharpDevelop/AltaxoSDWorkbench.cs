@@ -314,6 +314,10 @@ namespace Altaxo.Gui.SharpDevelop
 
 		public void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e)
 		{
+			Current.Gui.Execute(EhProjectChanged_Nosync, sender, e);
+		}
+		private void EhProjectChanged_Nosync(object sender, Altaxo.Main.ProjectEventArgs e)
+		{
 			// UpdateMenu(null, null); // 2006-11-07 hope this is not needed any longer because of the menu update timer
 			System.Text.StringBuilder title = new System.Text.StringBuilder();
 			title.Append(ResourceService.GetString("MainWindow.DialogName"));
@@ -332,6 +336,7 @@ namespace Altaxo.Gui.SharpDevelop
 				if (Altaxo.Current.ProjectService.CurrentOpenProject != null && Altaxo.Current.ProjectService.CurrentOpenProject.IsDirty)
 					title.Append("*");
 			}
+
 			this.MainWindow.Title = title.ToString();
 		}
 

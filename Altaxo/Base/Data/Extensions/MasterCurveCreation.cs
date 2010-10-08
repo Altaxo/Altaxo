@@ -15,6 +15,12 @@ namespace Altaxo.Data
 	public static class MasterCurveCreation
   {
     #region Helper types
+
+
+		public class CurveData : List<List<DoubleColumn>>
+		{
+		}
+
     /// <summary>
     /// Contains options for master curve creation.
     /// </summary>

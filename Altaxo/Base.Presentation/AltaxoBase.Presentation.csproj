@@ -93,6 +93,7 @@
     <Compile Include="Gui\Common\SingleValueControl.xaml.cs">
       <DependentUpon>SingleValueControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
@@ -125,10 +126,16 @@
       <DependentUpon>ScriptExecutionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\VisualDrawingHost.cs" />
+    <Compile Include="Gui\Worksheet\MasterCurveCreationDataControl.xaml.cs">
+      <DependentUpon>MasterCurveCreationDataControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Worksheet\RealFourierTransformationControl.xaml.cs">
       <DependentUpon>RealFourierTransformationControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
+    <Compile Include="Gui\Worksheet\Viewing\MasterCurveCreationMainControl.xaml.cs">
+      <DependentUpon>MasterCurveCreationMainControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetPaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml.cs">
@@ -180,7 +187,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Worksheet\MasterCurveCreationDataControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Worksheet\RealFourierTransformationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Worksheet\Viewing\MasterCurveCreationMainControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
