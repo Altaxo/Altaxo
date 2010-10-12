@@ -17,12 +17,15 @@ namespace Altaxo.Graph.Procedures
 		public static void ShowMasterCurveCreationDialog(GraphDocument doc)
 		{
 			string error;
-			List<List<DoubleColumn>> groupList = new List<List<DoubleColumn>>();
-			if (null != (error = FillDataListFromGraphDocument(doc, groupList)))
+			Altaxo.Data.MasterCurveCreation.Options opt = new Data.MasterCurveCreation.Options();
+			if (null != (error = FillDataListFromGraphDocument(doc, opt.ColumnGroups)))
 			{
 				Current.Gui.ErrorMessageBox(error);
 				return;
 			}
+
+			Current.Gui.ShowDialog(ref opt, "Create master curve",false);
+
 		}
 
 		/// <summary>

@@ -515,7 +515,9 @@
 					class="Altaxo.Graph.Commands.FitPolynomial" />
         <MenuItem id="FitNonlinear" label="${res:XML.MainMenu.AnalysisMenu.FitNonlinear}" description="${res:XML.MainMenu.AnalysisMenu.FitNonlinear.Description}"
 					class="Altaxo.Graph.Commands.FitNonlinear" />
-      </MenuItem>
+				<MenuItem id="CreateMasterCurve" label="${res:XML.MainMenu.AnalysisMenu.CreateMasterCurve}" description="${res:XML.MainMenu.AnalysisMenu.CreateMasterCurve.Description}"
+					class="Altaxo.Graph.Commands.CreateMasterCurve" />
+			</MenuItem>
     </Condition>
     <!-- Tools menu -->
     <MenuItem id="Tools" label="${res:XML.MainMenu.ToolsMenu}" type="Menu">

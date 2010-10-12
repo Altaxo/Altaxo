@@ -107,6 +107,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			// for the time being, we do the work directly
 			if (null != _guiController)
 				_guiController.RefreshGraph();
+
+		
 		}
 
 		/// <summary>
@@ -221,6 +223,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				_guiController.RefreshGraph();
 			}
+		}
+
+		protected override void OnRender(DrawingContext drawingContext)
+		{
+			base.OnRender(drawingContext);
 		}
 
 		public string GraphViewTitle

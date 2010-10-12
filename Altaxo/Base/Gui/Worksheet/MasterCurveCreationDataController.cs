@@ -98,6 +98,11 @@ namespace Altaxo.Gui.Worksheet
 			set
 			{
 				_view = value as IMasterCurveCreationDataView;
+
+				if (null != _view)
+				{
+					Initialize(false);
+				}
 			}
 		}
 

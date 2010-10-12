@@ -328,7 +328,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public LinePlotStyle()
     {
-      _penHolder = new PenX(Color.Black);
+			_penHolder = new PenX(Color.Black) { LineJoin = LineJoin.Bevel };
       _useLineSymbolGap = true;
       _ignoreMissingPoints = false;
       _fillArea = false;

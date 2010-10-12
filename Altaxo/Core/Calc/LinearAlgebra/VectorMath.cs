@@ -488,7 +488,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
     public static IROVector ToROVector(double[] x)
     {
-      return new RODoubleArrayWrapper(x);
+      return null==x ? null : new RODoubleArrayWrapper(x);
     }
 
     /// <summary>

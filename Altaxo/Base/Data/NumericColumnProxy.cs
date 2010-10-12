@@ -25,9 +25,6 @@ using Altaxo.Main;
 
 namespace Altaxo.Data
 {
-
-
- 
   /// <summary>
   /// Holds a "weak" reference to a numeric column, altogether with a document path to that column.
   /// </summary>

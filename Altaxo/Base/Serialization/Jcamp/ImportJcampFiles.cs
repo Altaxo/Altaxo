@@ -33,13 +33,35 @@ namespace Altaxo.Serialization.Jcamp
   public class Import
   {
     static readonly char[] splitChars = new char[] { ' ', '\t' };
+
+		/// <summary>
+    /// Imports a Jcamp file into an DataTable. The file must not be a multi spectrum file (an exception is thrown in this case).
+    /// </summary>
+    /// <param name="table">On return, contains the newly created data table with the spectral data.</param>
+    /// <param name="stream">The stream where to import from.</param>
+    /// <returns>Null if successful, otherwise an error description.</returns>
+		public static string ToDataTable(System.IO.Stream stream, out DataTable table)
+		{
+			table = null;
+			TextReader tr;
+			try
+			{
+				tr = new StreamReader(stream);
+				return ToDataTable(tr, out table);
+			}
+			catch (Exception ex)
+			{
+				return ex.Message;
+			}
+		}
+
      /// <summary>
     /// Imports a Jcamp file into an DataTable. The file must not be a multi spectrum file (an exception is thrown in this case).
     /// </summary>
     /// <param name="table">On return, contains the newly created data table with the spectral data.</param>
-    /// <param name="stream">The file stream where to import from.</param>
+    /// <param name="tr">A <see cref="System.IO.TextReader"/> where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string ToDataTable(System.IO.FileStream stream, out DataTable table)
+    public static string ToDataTable(TextReader tr, out DataTable table)
     {
       const string XLabelHeader = "##XLABEL=";
       const string YLabelHeader = "##YLABEL=";
@@ -58,8 +80,6 @@ namespace Altaxo.Serialization.Jcamp
 
       try
       {
-
-        TextReader tr = new StreamReader(stream);
         string line;
         int lineCounter = 0;
 

@@ -621,6 +621,14 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+	public class CreateMasterCurve : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			Altaxo.Graph.Procedures.MasterCurveCreation.ShowMasterCurveCreationDialog(ctrl.Doc);
+		}
+	}
+
 	public class NewUserFunction : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)

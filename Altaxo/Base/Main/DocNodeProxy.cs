@@ -240,16 +240,18 @@ namespace Altaxo.Main
 		/// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
 		/// </summary>
 		/// <param name="sender"></param>
+		/// <param name="source">Source of the tunneled event.</param>
 		/// <param name="e"></param>
 		void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
+			bool shouldFireChangedEvent = false;
+
 			if (e is DisposeEventArgs)
 			{
 				if (object.ReferenceEquals(source, sender))
 				{
 					ClearDocNode();
-					OnChanged();
-					return;
+					shouldFireChangedEvent = true;
 				}
 			}
 			else if (e is DocumentPathChangedEventArgs)
@@ -259,9 +261,11 @@ namespace Altaxo.Main
 				else
 					_docNodePath = null;
 
-				OnChanged();
-				return;
+				shouldFireChangedEvent = true;
 			}
+
+			if (shouldFireChangedEvent)
+				OnChanged();
 		}
 
 

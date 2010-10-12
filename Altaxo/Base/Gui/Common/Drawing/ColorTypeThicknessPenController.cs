@@ -75,6 +75,8 @@ namespace Altaxo.Gui.Common.Drawing
     {
       var ctrl = new PenAllPropertiesController(_tempDoc);
       Current.Gui.ShowDialog(ctrl, "Pen properties");
+			if (null != _view)
+				_view.DocPen = _tempDoc;
     }
 
     #endregion
@@ -117,7 +119,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public bool Apply()
     {
-      _doc.CopyFrom(_tempDoc);
+      _doc.CopyFrom(_view.DocPen);
       return true;
     }
 

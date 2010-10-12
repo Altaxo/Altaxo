@@ -174,10 +174,11 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     public virtual void OnChanged()
     {
+			if (_parent is Main.IChildChangedEventSink)
+				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
       if (null != Changed)
         Changed(this, new System.EventArgs());
-
-
     }
 
 

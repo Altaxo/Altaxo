@@ -720,7 +720,7 @@ namespace Altaxo.Data
     
 
     /// <summary>
-    /// Get or sets the name of the Table.
+    /// Get or sets the full name of the table.
     /// </summary>
     public string Name
     {
@@ -754,7 +754,27 @@ namespace Altaxo.Data
       }
     }
 
-   
+		/// <summary>
+		/// Gets the project folder name of this table.
+		/// </summary>
+		public string FolderName
+		{
+			get
+			{
+				return Main.ProjectFolder.GetDirectoryPart(Name);
+			}
+		}
+
+		/// <summary>
+		/// Gets the short name (i.e. without the folder name) of this table.
+		/// </summary>
+		public string ShortName
+		{
+			get
+			{
+				return Main.ProjectFolder.GetNamePart(Name);
+			}
+		}
    
     
 

@@ -126,14 +126,20 @@
       <DependentUpon>ScriptExecutionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\VisualDrawingHost.cs" />
+    <Compile Include="Gui\Worksheet\MasterCurveCreationDataColumnControl.xaml.cs">
+      <DependentUpon>MasterCurveCreationDataColumnControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Worksheet\MasterCurveCreationDataControl.xaml.cs">
       <DependentUpon>MasterCurveCreationDataControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Worksheet\MasterCurveCreationEditControl.xaml.cs">
+      <DependentUpon>MasterCurveCreationEditControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\RealFourierTransformationControl.xaml.cs">
       <DependentUpon>RealFourierTransformationControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
-    <Compile Include="Gui\Worksheet\Viewing\MasterCurveCreationMainControl.xaml.cs">
+    <Compile Include="Gui\Worksheet\MasterCurveCreationMainControl.xaml.cs">
       <DependentUpon>MasterCurveCreationMainControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
@@ -187,7 +193,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Worksheet\MasterCurveCreationDataColumnControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Worksheet\MasterCurveCreationDataControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Worksheet\MasterCurveCreationEditControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -195,7 +209,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Worksheet\Viewing\MasterCurveCreationMainControl.xaml">
+    <Page Include="Gui\Worksheet\MasterCurveCreationMainControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

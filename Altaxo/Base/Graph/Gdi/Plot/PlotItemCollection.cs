@@ -1021,7 +1021,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       plotitem.ParentObject = this;
       WireBoundaryEvents(plotitem);
-      plotitem.Changed += new EventHandler(this.EhChildChanged);
+     // plotitem.Changed += new EventHandler(this.EhChildChanged);
     }
 
     /// <summary>

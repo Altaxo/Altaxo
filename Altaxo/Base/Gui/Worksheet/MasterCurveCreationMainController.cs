@@ -13,7 +13,7 @@ namespace Altaxo.Gui.Worksheet
 		void InitializeEditTab(object guiControl);
 	}
 
-	[UserControlForController(typeof(MasterCurveCreation.Options))]
+	[UserControllerForObject(typeof(MasterCurveCreation.Options))]
 	[ExpectedTypeOfView(typeof(IMasterCurveCreationMainView))]
 	class MasterCurveCreationMainController : IMVCANController
 	{
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Worksheet
 
 		public UseDocument UseDocumentCopy
 		{
-			set { throw new NotImplementedException(); }
+			set { }
 		}
 
 		public object ViewObject

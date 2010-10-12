@@ -395,8 +395,24 @@ namespace Altaxo.Calc
 
     #endregion
 
+		#region Other helper functions
 
-  } // end of class ScriptExecutionBase
+
+		/// <summary>
+		/// Combines a path with a name to form a full name.
+		/// </summary>
+		/// <param name="directoryPart">Path. Can be null (in this case only the name is returned).</param>
+		/// <param name="namePart">Name.</param>
+		/// <returns>Full name as combination of path with a DirectorySeparatorChar with name.</returns>
+		public string CombinePath(string directoryPart, string namePart)
+		{
+			return Main.ProjectFolder.Combine(directoryPart, namePart);
+		}
+
+		#endregion
+
+
+	} // end of class ScriptExecutionBase
 
   /// <summary>
   /// ColScriptExeBase is the base class of all column scripts.

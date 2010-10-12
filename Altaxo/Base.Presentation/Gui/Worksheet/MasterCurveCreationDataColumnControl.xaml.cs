@@ -12,16 +12,29 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Worksheet.Viewing
+namespace Altaxo.Gui.Worksheet
 {
 	/// <summary>
-	/// Interaction logic for MasterCurveCreationMainControl.xaml
+	/// Interaction logic for MasterCurveCreationDataColumnControl.xaml
 	/// </summary>
-	public partial class MasterCurveCreationMainControl : UserControl
+	public partial class MasterCurveCreationDataColumnControl : UserControl
 	{
-		public MasterCurveCreationMainControl()
+		public MasterCurveCreationDataColumnControl()
 		{
 			InitializeComponent();
+		}
+
+		public ListBox ItemList
+		{
+			get
+			{
+				return _itemList;
+			}
+		}
+
+		public void SetTitle(string title)
+		{
+			_headerLabel.Content = title;
 		}
 	}
 }
