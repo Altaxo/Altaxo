@@ -459,7 +459,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		public void RefreshGraph()
 		{
 			if (null != _view)
-				_view.RefreshGraph();
+				_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
 		public object ViewObject
@@ -496,18 +496,13 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="e">The EventArgs.</param>
 		protected void EhGraph_Changed(object sender, System.EventArgs e)
 		{
-			Current.Gui.BeginExecute(EhGraph_Changed_Unsynchronized);
-		}
-		protected void EhGraph_Changed_Unsynchronized()
-		{
 			// if something changed on the graph, make sure that the layer and plot number reflect this changed
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();
 
 			if (null != _view)
-				_view.RefreshGraph();
+				_view.InvalidateCachedGraphBitmapAndRepaint(); // this function is non-Gui thread safe
 		}
-
 
 		/// <summary>
 		/// Handler of the event LayerCollectionChanged of the graph document. Forces to
@@ -524,7 +519,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				if (this._isAutoZoomActive)
 					this.RefreshAutoZoom();
-				_view.RefreshGraph();
+				_view.InvalidateCachedGraphBitmapAndRepaint();
 			}
 		}
 
@@ -679,7 +674,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		public void EhView_Scroll()
 		{
 			_graphViewOffset = ScrollPositionToGraphViewOffset(_view.GraphScrollPosition);
-			_view.RefreshGraph();
+			_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
 
@@ -728,7 +723,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				_graphViewOffset = new PointF((gz.Width - vz.Width) / 2, (gz.Height - vz.Height) / 2);
 			}
 			if (null != _view)
-				_view.RefreshGraph();
+				_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
 		#region Arrange
@@ -765,7 +760,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				arrange(o, bounds, masterbound);
 			}
 
-			_view.RefreshGraph(); // force a refresh
+			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
 		}
 
 		/// <summary>
@@ -892,7 +887,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				o.ShiftPosition((firstbound.X + firstbound.Width * 0.5f) + i * step - (bounds.X + bounds.Width * 0.5f), 0);
 			}
 
-			_view.RefreshGraph(); // force a refresh
+			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
 		}
 
 		/// <summary>
@@ -917,7 +912,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				o.ShiftPosition(0, (firstbound.Y + firstbound.Height * 0.5f) + i * step - (bounds.Y + bounds.Height * 0.5f));
 			}
 
-			_view.RefreshGraph(); // force a refresh
+			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
 		}
 
 
@@ -962,7 +957,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				foreach (IHitTestObject o in removedObjects)
 					SelectedObjects.Remove(o);
 
-				_view.RefreshGraph();
+				_view.InvalidateCachedGraphBitmapAndRepaint();
 			}
 		}
 
@@ -1202,7 +1197,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			while (objectsToGroup.Count > 0);
 
 			SelectedObjects.Clear();
-			_view.RefreshGraph();
+			_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
 

@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
       // deselect the text tool
       // this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-      _grac.GuiController.RefreshGraph();
+      _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
       
     }
 

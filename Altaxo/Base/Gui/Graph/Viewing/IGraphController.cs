@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		IGraphViewEventSink Controller { set; }
 
 		/// <summary>Causes a full redrawing of the plot. If the image is cached, the cache will be invalidated.</summary>
-		void RefreshGraph();
+		void InvalidateCachedGraphBitmapAndRepaint();
 
 		/// <summary>
 		/// This sets the title of the graph view.

@@ -23,5 +23,11 @@ namespace Altaxo.Gui.Worksheet
 		{
 			InitializeComponent();
 		}
+
+		private void EhAutoShift_Click(object sender, RoutedEventArgs e)
+		{
+			var row = ((FrameworkElement)sender).DataContext;
+			// cast row to a known type
+		}
 	}
 }

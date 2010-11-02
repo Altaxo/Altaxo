@@ -145,32 +145,53 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion // Constructors
 
-		#region IGraphController interface definitions
+		#region Shortcuts to implementations by view or controller
 
 		/// <summary>
 		/// This returns the GraphDocument that is managed by this controller.
 		/// </summary>
-		public GraphDocument Doc
+		private GraphDocument Doc
 		{
 			get { return _view.Doc; }
 		}
 		/// <summary>
 		/// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.
 		/// </summary>
-		public XYPlotLayerCollection Layers
+		private XYPlotLayerCollection Layers
 		{
 			get { return _view.Doc.Layers; }
 		}
 
-		public XYPlotLayer ActiveLayer
+		private XYPlotLayer ActiveLayer
 		{
 			get { return _view.ActiveLayer; }
 		}
 
-		public void SetActiveLayer(int layerNumber)
+		private void SetActiveLayer(int layerNumber)
 		{
 			_view.SetActiveLayerFromInternal(layerNumber);
 		}
+
+		private double ZoomFactor
+		{
+			get
+			{
+				return _view.GC.ZoomFactor;
+			}
+		}
+
+		private PointF GraphViewOffset
+		{
+			get
+			{
+				return _view.GC.GraphViewOffset;
+			}
+		}
+
+
+		#endregion
+
+		#region Functions used by View
 
 		public GraphToolType GraphTool
 		{
@@ -230,25 +251,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+		#endregion
 
-		private double ZoomFactor
-		{
-			get
-			{
-				return _view.GC.ZoomFactor;
-			}
-		}
-
-		private PointF GraphViewOffset
-		{
-			get
-			{
-				return _view.GC.GraphViewOffset;
-			}
-		}
-
-
-
+		#region Event handlers forwarded by view
 
 
 		/// <summary>
@@ -328,38 +333,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			_mouseState.OnDoubleClick(position, e);
 		}
 
-	
+		#endregion
 
-		#endregion // IGraphView interface definitions
-
-
-		#region Other event handlers
-
-
-
-
-		/// <summary>
-		/// This is called if the host window is selected.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		protected void EhParentWindowSelected(object sender, EventArgs e)
-		{
-			if (_view != null)
-				_view.OnViewSelection();
-		}
-
-		/// <summary>
-		/// This is called if the host window is deselected.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		protected void EhParentWindowDeselected(object sender, EventArgs e)
-		{
-			if (_view != null)
-				_view.OnViewDeselection();
-		}
-
+		#region Event handlers set-up by this controller
 
 		/// <summary>
 		/// Handles the double click event onto a plot item.
@@ -417,22 +393,78 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion
 
-		#region Methods
+		#region Painting
 
+		/// <summary>
+		/// Marks the cached graph image as invalid, but causes no further action.
+		/// Note: it is save to call this function from non-gui-threads
+		/// </summary>
+		public void InvalidateCachedGraphImage()
+		{
+			this._isCachedGraphImageDirty = true;
+		}
 
+		/// <summary>
+		/// Marks the cached graph image as invalid, and triggers a repainting of the graph area with Gui render priority. 
+		/// Thus, in the next rendering cycle, the cached graph image is recreated and used to repaint the graph area, followed by the custom mouse handler drawing.
+		/// </summary>
+		public void InvalidateCachedGraphImageAndRepaintOffline()
+		{
+			this._isCachedGraphImageDirty = true;
+			//RepaintGraphAreaForMouseHandler();
 
+			if (_view != null)
+				_view.TriggerRenderingOfGraphArea();
+		}
 
+		/// <summary>
+		/// If the cached graph bitmap is valid, the graph area is repainted immediately using the cached bitmap and then the custom mouse handler drawing.
+		/// If the cached graph bitmap is invalid, a repaint (and thus a recreation of the cached graph bitmap) is triggered, but only with Gui render priority.
+		/// </summary>
+		public void RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline()
+		{
+			if (_view == null || _view.Doc == null || _view.GC == null || _view.ViewportSizeInInch == Size.Empty)
+				return;
 
+			if (this._cachedGraphImage != null && !this._isCachedGraphImageDirty)
+			{
+				RepaintGraphAreaImmediately();
+			}
+			else
+			{
+				_view.TriggerRenderingOfGraphArea();
+			}
+		}
 
+		/// <summary>
+		/// Causes an repaint of the graph area. If the cached graph bitmap is valid, it is used for repainting, followed by the custom mouse handler drawing. If the cached graph bitmap is not valid,
+		/// it is created first and used for painting, followed then by the custom mouse handler drawing.
+		/// </summary>
+		public void RepaintGraphAreaImmediately()
+		{
+		Graphics g = this._view.BeginPaintingGraph();
+		this.DoPaint(g, false); // paint the cached graph image and the mouse handler drawings
+		_view.EndPaintingGraph(); // inform the view, that the painting is finished
+		}
+
+		/// <summary>
+		/// If for printing, does an unbuffered paint of the graph document into the given graphics context. If not for printing, it depends on
+		/// the state of the cached graph image: if not valid or dirty, the paint will be done into the cached graph image to make the cached graph image valid.
+		/// Then the cached graph image is drawn into the given graphics context. At the end additional drawing is to be added by the current mouse handler to
+		/// show for instance selection rectangles etc.
+		/// </summary>
+		/// <param name="g"></param>
+		/// <param name="bForPrinting"></param>
 		private void DoPaint(Graphics g, bool bForPrinting)
 		{
 			if (bForPrinting)
 			{
 				DoPaintUnbuffered(g, bForPrinting);
 			}
-			else
+			else // not for printing
 			{
 
+				// if neccessary, create a new bitmap for caching the graph image.
 				if (_cachedGraphImage == null || _cachedGraphImage.Width != _view.GraphSize.Width || _cachedGraphImage.Height != _view.GraphSize.Height)
 				{
 					if (_cachedGraphImage != null)
@@ -447,6 +479,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					_cachedGraphImage = new Bitmap(_view.GraphSize.Width, _view.GraphSize.Height, g);
 					_isCachedGraphImageDirty = true;
 				}
+
 
 				if (_cachedGraphImage == null)
 				{
@@ -553,8 +586,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-		#endregion // Methods
-
+		#endregion // Painting
 
 		#region Editing selected objects
 
@@ -599,43 +631,10 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion
 
-
 		#region Scaling and Positioning
 
-		/// <summary>
-		/// Does a complete new drawing of the graph, even if the graph is cached in a bitmap.
-		/// </summary>
-		public void RefreshGraph()
-		{
-			this._isCachedGraphImageDirty = true;
-			RepaintGraphArea();
-		}
-
-		/// <summary>
-		/// If the graph is cached, this causes an immediate redraw of the client area using the cached bitmap.
-		/// If not cached, this simply invalidates the client area.
-		/// </summary>
-		public void RepaintGraphArea()
-		{
-			if (_view == null || _view.Doc==null || _view.GC==null || _view.ViewportSizeInInch==Size.Empty)
-				return;
-
-			if (this._cachedGraphImage != null && !this._isCachedGraphImageDirty)
-			{
-				Graphics g = this._view.CreateGraphGraphics();
-			
-
-				this.DoPaint(g, false);
-				_view.EhGraphImageChanged();
-			}
-			else
-			{
-				// TODO (Wpf) do the same as above, but in an invoke with paint priority
-				Graphics g = this._view.CreateGraphGraphics();
-				this.DoPaint(g, false);
-				_view.EhGraphImageChanged();
-			}
-		}
+	
+	
 
 
 
@@ -796,7 +795,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion // Scaling, Converting
 
-
+		#region Finding objects at position
 
 
 
@@ -830,12 +829,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-
-
-
-
-
-
-
+		#endregion
 	}
 }

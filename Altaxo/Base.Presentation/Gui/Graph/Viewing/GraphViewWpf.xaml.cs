@@ -91,8 +91,11 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 
-
-		public System.Drawing.Graphics CreateGraphGraphics()
+		/// <summary>
+		/// Called by the PresentationGraphController to get a new graphics context for painting.
+		/// </summary>
+		/// <returns></returns>
+		public System.Drawing.Graphics BeginPaintingGraph()
 		{
 			var result = _wpfGdiBitmap.GdiGraphics;
 			result.ResetTransform();
@@ -101,24 +104,23 @@ namespace Altaxo.Gui.Graph.Viewing
 			return result;
 		}
 
-		public void InvalidateGraph()
-		{
-			// TODO (Wpf) -> start a background thread which draws the image
-			// for the time being, we do the work directly
-			if (null != _guiController)
-				_guiController.RefreshGraph();
-
-		
-		}
-
 		/// <summary>
-		/// Called when the graph image has changed.
+		/// Called by the PresentationGraphController when the painting (into the _wpfGdiBitmap) is finished.
 		/// </summary>
-		public void EhGraphImageChanged()
+		public void EndPaintingGraph()
 		{
 			_wpfGdiBitmap.WpfBitmap.Invalidate();
 		}
 
+
+	
+
+
+		public void TriggerRenderingOfGraphArea()
+		{
+			this.InvalidateVisual();
+		}
+	
 
 	
 
@@ -217,16 +219,22 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		void Altaxo.Gui.Graph.Viewing.IGraphView.RefreshGraph()
+		/// <summary>
+		/// Causes a complete redrawing of the graph. The cached graph bitmap will be marked as dirty and a repainting of the graph area is triggered with Gui render priority.
+		/// Note: it is save to call this function from non-Gui threads.
+		/// </summary>
+			void Altaxo.Gui.Graph.Viewing.IGraphView.InvalidateCachedGraphBitmapAndRepaint()
 		{
+			// TODO (Wpf) -> start a background thread which draws the image
+			// for the time being, we do the work directly
 			if (null != _guiController)
-			{
-				_guiController.RefreshGraph();
-			}
+				_guiController.InvalidateCachedGraphImage();
+			TriggerRenderingOfGraphArea();
 		}
 
 		protected override void OnRender(DrawingContext drawingContext)
 		{
+			_guiController.RepaintGraphAreaImmediately();
 			base.OnRender(drawingContext);
 		}
 

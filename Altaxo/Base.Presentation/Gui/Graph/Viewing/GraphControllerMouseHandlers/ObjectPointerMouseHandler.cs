@@ -311,7 +311,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					{
 						_selectedObjects.Remove(hitTestObj);
 						superGrip.Remove(gripHandle);
-						_grac.GuiController.RefreshGraph(); // repaint the graph
+						_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline(); // repaint the graph
 						return;
 					}
 				}
@@ -353,7 +353,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
         DisplayedGrips[0].Activate(graphXY, true);
       }
 
-      _grac.GuiController.RepaintGraphArea();
+      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
     }
 
     private IGripManipulationHandle[] GetGripsFromSelectedObjects()
@@ -392,7 +392,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
         PointF printAreaCoord = _grac.GuiController.PixelToPrintableAreaCoordinates((PointF)position);
         ActiveGrip.MoveGrip(printAreaCoord);
         _wereObjectsMoved = true;
-        _grac.GuiController.RepaintGraphArea();
+        _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
       }
     }
 
@@ -423,9 +423,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					
 
         if (bRefresh)
-          _grac.GuiController.RefreshGraph(); // redraw the contents
+          _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline(); // redraw the contents
 				else if(bRepaint)
-					_grac.GuiController.RepaintGraphArea();
+					_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
       }
     }
 
@@ -494,7 +494,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       ActiveGrip = null;
 
       if(bRepaint)
-        _grac.GuiController.RepaintGraphArea();
+        _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
     }
 
 

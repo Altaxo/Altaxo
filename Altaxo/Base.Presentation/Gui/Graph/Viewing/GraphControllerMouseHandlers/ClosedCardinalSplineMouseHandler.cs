@@ -114,7 +114,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			ModifyCurrentMousePrintAreaCoordinate();
 
-			_grac.GuiController.RepaintGraphArea();
+			_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 		}
 
 		public override void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -134,12 +134,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				case Key.OemPlus:
 					_tension *= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
-					_grac.GuiController.RepaintGraphArea();
+					_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 					return true;
 				case Key.OemMinus:
 					_tension /= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
-					_grac.GuiController.RepaintGraphArea();
+					_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 					return true;
 			}
 
@@ -208,7 +208,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(NextMouseHandlerType);
-			_grac.GuiController.RefreshGraph();
+			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 
 	}

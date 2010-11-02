@@ -15,6 +15,15 @@
 				<DataGridTextColumn Header="Item"/>
 				<DataGridCheckBoxColumn Header="CanShift"/>
 				<DataGridTextColumn Header="ShiftValue"/>
+				<DataGridTemplateColumn  MinWidth="100" Header="AutoShift">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Click="EhAutoShift_Click">View Details</Button>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>

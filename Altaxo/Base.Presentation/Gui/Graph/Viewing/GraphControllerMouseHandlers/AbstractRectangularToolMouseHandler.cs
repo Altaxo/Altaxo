@@ -101,12 +101,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			if (e.LeftButton == MouseButtonState.Pressed)
       {
         ModifyCurrentMousePrintAreaCoordinate();
-        _grac.GuiController.RepaintGraphArea();
+        _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
       }
       else if(_currentPoint!=0)
       {
         _currentPoint=0;
-        _grac.GuiController.RepaintGraphArea();
+        _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
       }
 
     }

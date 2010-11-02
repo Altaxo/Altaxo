@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
       DisplayCrossCoordinates();
       
-      _grac.GuiController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
          
      
     } // end of function
@@ -151,7 +151,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
       DisplayCrossCoordinates();
 
-      _grac.GuiController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
       DisplayCrossCoordinates();
 
-      _grac.GuiController.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
 
       
     }
