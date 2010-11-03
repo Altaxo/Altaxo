@@ -38,23 +38,7 @@ namespace ICSharpCode.HelpConverter
 		}
 		
 
-#if !ModifiedForAltaxo
-    //  old MakeXmlComliant - does not work if spaces or linefeeds are between the tags
-    void MakeXmlCompliant()
-    {
-      StringBuilder strFixup =
-        new StringBuilder(Regex.Replace(hhcFileContents,
-        "(?'start'<param\\s[^>]*)(?'end'\"/?>)",
-        "${start}\"/>"));
-
-      strFixup.Replace("</OBJECT></UL>", "</OBJECT></LI></UL>");
-      strFixup.Replace("</OBJECT><LI>", "</OBJECT></LI><LI>");
-      strFixup.Replace("</OBJECT><UL><LI>", "</OBJECT></LI><UL><LI>");
-      hhcFileContents = strFixup.ToString();
-    }
-
-#else
-
+#if ModifiedForAltaxo
     // Method by D.Lellinger to handle different formatting of the hhc file
     // the old method fails if there are spaces or line breaks inbetween the tags
 		void MakeXmlCompliant()
@@ -85,6 +69,21 @@ namespace ICSharpCode.HelpConverter
       hhcFileContents = leftPart + Regex.Replace(rightPart,"</OBJECT>\\s*<UL>\\s*<LI>", "</OBJECT></LI><UL><LI>");
 		}
 		
+
+#else
+    //  old MakeXmlComliant - does not work if spaces or linefeeds are between the tags
+    void MakeXmlCompliant()
+    {
+      StringBuilder strFixup =
+        new StringBuilder(Regex.Replace(hhcFileContents,
+        "(?'start'<param\\s[^>]*)(?'end'\"/?>)",
+        "${start}\"/>"));
+
+      strFixup.Replace("</OBJECT></UL>", "</OBJECT></LI></UL>");
+      strFixup.Replace("</OBJECT><LI>", "</OBJECT></LI><LI>");
+      strFixup.Replace("</OBJECT><UL><LI>", "</OBJECT></LI><UL><LI>");
+      hhcFileContents = strFixup.ToString();
+    }
 #endif
 
 		void Load(string fileName)

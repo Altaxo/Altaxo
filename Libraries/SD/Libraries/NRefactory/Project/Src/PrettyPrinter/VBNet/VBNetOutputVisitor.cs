@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6214 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Linq;
@@ -2781,7 +2777,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				outputFormatter.PrintToken(Tokens.Optional);
 				outputFormatter.Space();
 			}
-			if ((modifier & ParameterModifiers.Ref) == ParameterModifiers.Ref) {
+			if ((modifier & ParameterModifiers.Ref) == ParameterModifiers.Ref
+			    || (modifier & ParameterModifiers.Out) == ParameterModifiers.Out) {
 				outputFormatter.PrintToken(Tokens.ByRef);
 				outputFormatter.Space();
 			}

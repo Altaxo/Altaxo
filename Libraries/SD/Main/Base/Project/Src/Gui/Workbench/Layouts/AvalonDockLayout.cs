@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6242 $</version>
-// </file>
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -237,8 +233,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			workbenchWindows.Add(window);
 			window.ViewContents.Add(content);
 			window.ViewContents.AddRange(content.SecondaryViewContents);
+			window.Show(dockingManager);
 			if (switchToOpenedView) {
-				window.Show(dockingManager);
 				window.Activate();
 			}
 			window.Closed += window_Closed;

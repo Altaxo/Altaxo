@@ -1,22 +1,14 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6298 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
-using ICSharpCode.Core.Presentation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
+
+using ICSharpCode.Core.Presentation;
 
 namespace ICSharpCode.SharpDevelop.Project.Converter
 {
@@ -25,17 +17,38 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 	/// </summary>
 	internal partial class UpgradeView : UserControl
 	{
-		Solution solution;
+		readonly Solution solution;
+		readonly List<Entry> entries;
 		
 		public UpgradeView(Solution solution)
 		{
+			if (solution == null)
+				throw new ArgumentNullException("solution");
 			this.solution = solution;
 			InitializeComponent();
 			
-			listView.ItemsSource = solution.Projects.OfType<IUpgradableProject>().Select(p => new Entry(p)).ToList();
+			this.entries = solution.Projects.OfType<IUpgradableProject>().Select(p => new Entry(p)).ToList();
+			listView.ItemsSource = entries;
 			SortableGridViewColumn.SetCurrentSortColumn(listView, nameColumn);
 			SortableGridViewColumn.SetSortDirection(listView, ColumnSortDirection.Ascending);
 			ListView_SelectionChanged(null, null);
+		}
+		
+		public bool UpgradeViewOpenedAutomatically {
+			get { return upgradeDescription.Visibility == Visibility.Visible; }
+			set { upgradeDescription.Visibility = value ? Visibility.Visible : Visibility.Collapsed; }
+		}
+		
+		public Solution Solution {
+			get { return solution; }
+		}
+		
+		public void Select(IUpgradableProject project)
+		{
+			foreach (Entry entry in entries) {
+				if (entry.Project == project)
+					listView.SelectedItem = entry;
+			}
 		}
 		
 		void SelectAllCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -228,7 +241,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 		
 		sealed class UnchangedCompilerVersion : CompilerVersion
 		{
-			public UnchangedCompilerVersion() : base(new Version(0, 0), "<do not change>")
+			public UnchangedCompilerVersion() : base(new Version(0, 0), Core.StringParser.Parse("${res:ICSharpCode.SharpDevelop.Project.UpgradeView.DoNotChange}"))
 			{
 			}
 			
@@ -245,7 +258,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 		
 		sealed class UnchangedTargetFramework : TargetFramework
 		{
-			public UnchangedTargetFramework() : base(string.Empty, "<do not change>")
+			public UnchangedTargetFramework() : base(string.Empty, Core.StringParser.Parse("${res:ICSharpCode.SharpDevelop.Project.UpgradeView.DoNotChange}"))
 			{
 			}
 			
@@ -274,6 +287,11 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			
 			public string Name {
 				get { return this.Project.Name; }
+			}
+			
+			public override string ToString()
+			{
+				return this.Name;
 			}
 			
 			public CompilerVersion CompilerVersion;

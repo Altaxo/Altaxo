@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2564 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -112,7 +108,7 @@ namespace ICSharpCode.Core
 			if (version.StartsWith("@")) {
 				if (version == "@SharpDevelopCoreVersion") {
 					if (entryVersion == null)
-						entryVersion = new Version(RevisionClass.FullVersion);
+						entryVersion = new Version(RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
 					return entryVersion;
 				}
 				if (hintPath != null) {

@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6314 $</version>
-// </file>
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -19,9 +15,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
-
 using ICSharpCode.Core;
 using ICSharpCode.Core.Presentation;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -97,6 +93,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public void Initialize()
 		{
+			UpdateFlowDirection();
+			
 			foreach (PadDescriptor content in AddInTree.BuildItems<PadDescriptor>(viewContentPath, this, false)) {
 				if (content != null) {
 					ShowPad(content);
@@ -214,6 +212,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void OnLanguageChanged(object sender, EventArgs e)
 		{
 			MenuService.UpdateText(mainMenu.ItemsSource);
+			UpdateFlowDirection();
+		}
+		
+		void UpdateFlowDirection()
+		{
+			Language language = LanguageService.GetLanguage(ResourceService.Language);
+			Core.WinForms.RightToLeftConverter.IsRightToLeft = language.IsRightToLeft;
+			this.FlowDirection = language.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+#if ModifiedForAltaxo
+#else
+			App.Current.Resources[GlobalStyles.FlowDirectionKey] = this.FlowDirection;
+#endif
 		}
 		
 		public ICollection<IViewContent> ViewContentCollection {
@@ -438,6 +448,25 @@ namespace ICSharpCode.SharpDevelop.Gui
 				closeAll = false;
 				OnActiveWindowChanged(this, EventArgs.Empty);
 			}
+		}
+		
+		public bool CloseAllSolutionViews()
+		{
+			bool result = true;
+			
+			WorkbenchSingleton.AssertMainThread();
+			try {
+				closeAll = true;
+				foreach (IWorkbenchWindow window in this.WorkbenchWindowCollection.ToArray()) {
+					if (window.ActiveViewContent != null && window.ActiveViewContent.CloseWithSolution)
+						result &= window.CloseWindow(false);
+				}
+			} finally {
+				closeAll = false;
+				OnActiveWindowChanged(this, EventArgs.Empty);
+			}
+			
+			return result;
 		}
 		
 		#region ViewContent Memento Handling

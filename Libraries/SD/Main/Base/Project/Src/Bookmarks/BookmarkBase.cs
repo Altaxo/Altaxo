@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 4215 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using ICSharpCode.SharpDevelop.Editor;
 using System;
@@ -132,6 +128,10 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 			}
 		}
 		
+		public virtual int ZOrder {
+			get { return 0; }
+		}
+		
 		/// <summary>
 		/// Gets if the bookmark can be toggled off using the 'set/unset bookmark' command.
 		/// </summary>
@@ -154,10 +154,22 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		
 		public virtual void MouseDown(MouseButtonEventArgs e)
 		{
+		}
+		
+		public virtual void MouseUp(MouseButtonEventArgs e)
+		{
 			if (e.ChangedButton == MouseButton.Left && CanToggle) {
 				RemoveMark();
 				e.Handled = true;
 			}
+		}
+		
+		public virtual bool CanDragDrop {
+			get { return false; }
+		}
+		
+		public virtual void Drop(int lineNumber)
+		{
 		}
 	}
 }

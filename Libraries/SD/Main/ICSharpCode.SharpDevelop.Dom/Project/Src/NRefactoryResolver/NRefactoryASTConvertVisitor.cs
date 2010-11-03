@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6292 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 // created on 04.08.2003 at 17:49
 using System;
@@ -641,6 +637,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			DomRegion bodyRegion = GetRegion(operatorDeclaration.EndLocation, operatorDeclaration.Body != null ? operatorDeclaration.Body.EndLocation : RefParser.Location.Empty);
 			
 			DefaultMethod method = new DefaultMethod(operatorDeclaration.Name, CreateReturnType(operatorDeclaration.TypeReference), ConvertModifier(operatorDeclaration.Modifier), region, bodyRegion, c);
+			method.Documentation = GetDocumentation(region.BeginLine, operatorDeclaration.Attributes);
 			ConvertAttributes(operatorDeclaration, method);
 			if(operatorDeclaration.Parameters != null)
 			{
@@ -857,4 +854,3 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		}
 	}
 }
-

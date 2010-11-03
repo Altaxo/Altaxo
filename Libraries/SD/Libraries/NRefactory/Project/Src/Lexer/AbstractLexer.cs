@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 6214 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -78,7 +74,7 @@ namespace ICSharpCode.NRefactory.Parser
 		protected int ReaderRead()
 		{
 			int val = reader.Read();
-			if (recordRead)
+			if (recordRead && val >= 0)
 				recordedText.Append ((char)val);
 			if ((val == '\r' && reader.Peek() != '\n') || val == '\n') {
 				++line;
@@ -378,6 +374,11 @@ namespace ICSharpCode.NRefactory.Parser
 		}
 		
 		public virtual LexerMemento Export()
+		{
+			throw new NotSupportedException();
+		}
+		
+		public virtual void SetInitialContext(SnippetType context)
 		{
 			throw new NotSupportedException();
 		}

@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 6054 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -89,6 +85,8 @@ namespace ICSharpCode.Core
 			// However, we need to make sure we don't return before the dependencies are ready,
 			// so "bool dependenciesLoaded" must be volatile and set only at the very end of this method.
 			if (!dependenciesLoaded) {
+				LoggingService.Info("Loading addin " + this.Name);
+				
 				AssemblyLocator.Init();
 				foreach (AddInReference r in manifest.Dependencies) {
 					if (r.RequirePreload) {
@@ -269,22 +267,26 @@ namespace ICSharpCode.Core
 		
 		public static AddIn Load(TextReader textReader, string hintPath)
 		{
-			AddIn addIn = new AddIn();
-			using (XmlTextReader reader = new XmlTextReader(textReader)) {
-				while (reader.Read()){
-					if (reader.IsStartElement()) {
-						switch (reader.LocalName) {
-							case "AddIn":
-								addIn.properties = Properties.ReadFromAttributes(reader);
-								SetupAddIn(reader, addIn, hintPath);
-								break;
-							default:
-								throw new AddInLoadException("Unknown add-in file.");
+			try {
+				AddIn addIn = new AddIn();
+				using (XmlTextReader reader = new XmlTextReader(textReader)) {
+					while (reader.Read()){
+						if (reader.IsStartElement()) {
+							switch (reader.LocalName) {
+								case "AddIn":
+									addIn.properties = Properties.ReadFromAttributes(reader);
+									SetupAddIn(reader, addIn, hintPath);
+									break;
+								default:
+									throw new AddInLoadException("Unknown add-in file.");
+							}
 						}
 					}
 				}
+				return addIn;
+			} catch (XmlException ex) {
+				throw new AddInLoadException(ex.Message, ex);
 			}
-			return addIn;
 		}
 		
 		public static AddIn Load(string fileName)

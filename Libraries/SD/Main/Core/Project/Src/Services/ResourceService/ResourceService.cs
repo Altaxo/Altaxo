@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 4852 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -40,39 +36,15 @@ namespace ICSharpCode.Core
 			PropertyService.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChange);
 			LoadLanguageResources(ResourceService.Language);
 		}
-#if ModifiedForAltaxo
-    public static void LoadUserStrings(string filename)
-    {
-      Hashtable userStrings = Load(resourceDirectory + Path.DirectorySeparatorChar + filename);
-      localStrings = MergeTable(userStrings, localStrings);
-    }
-    public static void LoadUserIcons(string filename)
-    {
-      Hashtable userIcons = Load(resourceDirectory + Path.DirectorySeparatorChar + filename);
-      localIcons = MergeTable(userIcons, localIcons);
-    }
-    static Hashtable MergeTable(Hashtable t, Hashtable mergeinto)
-    {
-      if (mergeinto == null)
-        return t;
-
-      foreach (DictionaryEntry e in t)
-      {
-        if (mergeinto.Contains(e.Key))
-          mergeinto[e.Key] = e.Value;
-        else
-          mergeinto.Add(e.Key, e.Value);
-      }
-      return mergeinto;
-    }
-#endif
 		
 		public static string Language {
 			get {
 				return PropertyService.Get(uiLanguageProperty, Thread.CurrentThread.CurrentUICulture.Name);
 			}
 			set {
-				PropertyService.Set(uiLanguageProperty, value);
+				if (Language != value) {
+					PropertyService.Set(uiLanguageProperty, value);
+				}
 			}
 		}
 		

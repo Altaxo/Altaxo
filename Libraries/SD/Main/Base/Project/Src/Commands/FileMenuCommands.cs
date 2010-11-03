@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5704 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Windows.Forms;
@@ -44,8 +40,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public override void Run()
 		{
 			ProjectService.SaveSolutionPreferences();
-			WorkbenchSingleton.Workbench.CloseAllViews();
-			if (WorkbenchSingleton.Workbench.WorkbenchWindowCollection.Count == 0) {
+			if (WorkbenchSingleton.Workbench.CloseAllSolutionViews()) {
 				ProjectService.CloseSolution();
 			}
 		}

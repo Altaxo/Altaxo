@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 6050 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Diagnostics;
@@ -57,7 +53,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public static IStatusBarService StatusBar { 
+		public static IStatusBarService StatusBar {
 			get {
 				return workbench != null ? workbench.StatusBar : null;
 			}
@@ -66,7 +62,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public static void InitializeWorkbench(IWorkbench workbench, IWorkbenchLayout layout)
 		{
 			WorkbenchSingleton.workbench = workbench;
-
+			
+			LanguageService.ValidateLanguage();
+			
 			DisplayBindingService.InitializeService();
 			LayoutConfiguration.LoadLayoutConfiguration();
 			FileService.InitializeService();
@@ -77,10 +75,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			Project.CustomToolsService.Initialize();
 			Project.BuildModifiedProjectsOnlyService.Initialize();
 			
-			var messageService = (WinFormsMessageService)Core.Services.ServiceManager.Instance.MessageService;
-			messageService.DialogOwner = workbench.MainWin32Window;
-			Debug.Assert(messageService.DialogOwner != null);
-			messageService.DialogSynchronizeInvoke = workbench.SynchronizingObject;
+			var messageService = Core.Services.ServiceManager.Instance.MessageService as IDialogMessageService;
+			if (messageService != null) {
+				messageService.DialogOwner = workbench.MainWin32Window;
+				Debug.Assert(messageService.DialogOwner != null);
+				messageService.DialogSynchronizeInvoke = workbench.SynchronizingObject;
+			}
 			
 			workbench.Initialize();
 			workbench.SetMemento(PropertyService.Get(workbenchMemento, new Properties()));

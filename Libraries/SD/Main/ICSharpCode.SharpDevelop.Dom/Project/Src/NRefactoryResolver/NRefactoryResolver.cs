@@ -1,17 +1,13 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6292 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
@@ -46,6 +42,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		int caretColumn;
 		
 		bool inferAllowed;
+		internal bool allowMethodGroupResolveResult;
 		
 		public NR.SupportedLanguage Language {
 			get {
@@ -110,11 +107,13 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (languageProperties is LanguageProperties.CSharpProperties) {
 				language = NR.SupportedLanguage.CSharp;
 				inferAllowed = true;
+				allowMethodGroupResolveResult = true;
 			} else if (languageProperties is LanguageProperties.VBNetProperties) {
 				language = NR.SupportedLanguage.VBNet;
 				inferAllowed = false;
+				allowMethodGroupResolveResult = false;
 			} else {
-				throw new NotSupportedException("The language " + languageProperties.ToString() + " is not supported in the resolver");
+				throw new NotSupportedException("The language " + languageProperties.ToString() + " is not supported in the NRefactoryResolver");
 			}
 		}
 		
@@ -677,7 +676,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		                                     bool allowExtensionMethods, bool? isAccessThoughReferenceOfCurrentClass)
 		{
 			// in VB everything can be used with invocation syntax (because the same syntax also accesses indexers),
-			// do don't use 'isInvocation'.
+			// don't use 'isInvocation'.
 			if (language == NR.SupportedLanguage.VBNet)
 				isInvocation = false;
 			
@@ -761,7 +760,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				else
 					return new MethodGroupResolveResult(callingClass, callingMember,
 					                                    declaringType ?? methods[0][0].DeclaringTypeReference,
-					                                    memberName, methods);
+					                                    memberName, methods, language == SupportedLanguage.VBNet, allowMethodGroupResolveResult) { IsVBNetAddressOf = allowMethodGroupResolveResult && language == SupportedLanguage.VBNet };
 			} else {
 				methods.Add(
 					new MethodGroup(
@@ -770,7 +769,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					{ IsExtensionMethodGroup = true });
 				return new MethodGroupResolveResult(callingClass, callingMember,
 				                                    declaringType,
-				                                    memberName, methods);
+				                                    memberName, methods, language == SupportedLanguage.VBNet, allowMethodGroupResolveResult) { IsVBNetAddressOf = allowMethodGroupResolveResult && language == SupportedLanguage.VBNet };
 			}
 		}
 		#endregion
@@ -1468,5 +1467,3 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		}
 	}
 }
-
-

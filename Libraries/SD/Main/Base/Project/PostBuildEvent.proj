@@ -6,5 +6,6 @@
 		<AddInFile Include="ICSharpCode.SharpDevelop.addin" />
 	</ItemGroup>
 	<Target Name="MyPostBuildTarget">
+		<Copy SourceFiles="@(AddInFile)" DestinationFolder="$(OutputPath)..\AddIns" />
 	</Target>
 </Project>

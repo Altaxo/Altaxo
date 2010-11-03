@@ -1,4 +1,5 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -22,6 +23,10 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>Full</DebugType>
@@ -42,6 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -50,18 +56,25 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SharpDevelopMain.cs" />
-    <EmbeddedResource Include="Resources\BitmapResources.resources" />
-    <None Include="SharpDevelop.exe.manifest">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <EmbeddedResource Include="..\..\..\..\data\resources\StringResources.resx">
+      <Link>Resources\StringResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BitmapResources.resources">
+      <LogicalName>Resources.BitmapResources.resources</LogicalName>
+    </EmbeddedResource>
+    <None Include="app.manifest">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <EmbeddedResource Include="Resources\SplashScreen.jpg" />
-    <EmbeddedResource Include="Resources\StringResources.resources" />
+    <EmbeddedResource Include="Resources\SplashScreen.jpg">
+      <LogicalName>Resources.SplashScreen.jpg</LogicalName>
+    </EmbeddedResource>
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <None Include="SharpDevelop.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>Configuration\GlobalAssemblyInfo.cs</Link>
+      <DependentUpon>GlobalAssemblyInfo.template</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

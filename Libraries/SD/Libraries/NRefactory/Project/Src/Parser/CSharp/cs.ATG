@@ -192,18 +192,21 @@ CS
 UsingDirective
 (.
 	string qualident = null; TypeReference aliasedType = null;
+	string alias = null;
 .)
 =
 	"using"                     (. Location startPos = t.Location; .)
+	[ IF (IdentAndDoubleColon()) Identifier (. alias = t.val; .) "::" ]
 	Qualident<out qualident>
 	[ "=" NonArrayType<out aliasedType> ]
 	";"                         (. 
 	                               if (qualident != null && qualident.Length > 0) {
+	                                 string name = (alias != null && alias != "global") ? alias + "." + qualident : qualident;
 	                                 INode node;
 	                                 if (aliasedType != null) {
-	                                     node = new UsingDeclaration(qualident, aliasedType);
+	                                     node = new UsingDeclaration(name, aliasedType);
 	                                 } else {
-	                                     node = new UsingDeclaration(qualident);
+	                                     node = new UsingDeclaration(name);
 	                                 }
 	                                 node.StartLocation = startPos;
 	                                 node.EndLocation   = t.EndLocation;
@@ -269,7 +272,7 @@ AttributeArguments<List<Expression> positional, List<NamedArgumentExpression> na
 .
 
 AttributeArgument<List<Expression> positional, List<NamedArgumentExpression> named>
-(. string name = null; bool isNamed = false; Expression expr; .)
+(. string name = null; bool isNamed = false; Expression expr; Location startLocation = la.Location; .)
 =
 	(
 		IF (IsAssignment())          (. isNamed = true; .)
@@ -285,12 +288,12 @@ AttributeArgument<List<Expression> positional, List<NamedArgumentExpression> nam
 	(.
 		if (expr != null) {
 			if (isNamed) {
-				named.Add(new NamedArgumentExpression(name, expr));
+				named.Add(new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation });
 			} else {
 				if (named.Count > 0)
 					Error("positional argument after named argument is not allowed");
 				if (name != null)
-					expr = new NamedArgumentExpression(name, expr);
+					expr = new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };
 				positional.Add(expr);
 			}
 		}
@@ -834,9 +837,26 @@ StructMemberDecl<ModifierList m, List<AttributeSection> attributes>
 			(. eventDecl.InterfaceImplementations.Add(new InterfaceImplementation(explicitInterface, qualident)); .)
 			
 		|	Identifier (. qualident = t.val; .)
+			[   "=" Expr<out expr> (. eventDecl.Initializer = expr; .) ]
+			{	"," /* multiple event declarations on single line */
+				/* our AST isn't built to handle this, so let's create multiple overlapping EventDeclarations */
+				/* commit the current EventDeclaration */
+				(. eventDecl.Name = qualident; eventDecl.EndLocation = t.EndLocation; BlockEnd(); .)
+				/* create a new EventDeclaration for the next identifier */
+				(. eventDecl = new EventDeclaration {
+				      Modifier = eventDecl.Modifier,
+				      Attributes = eventDecl.Attributes,
+				      StartLocation = eventDecl.StartLocation,
+				      TypeReference = eventDecl.TypeReference.Clone()
+				   };
+				   AddChild(eventDecl);
+				   BlockStart(eventDecl);
+				.)
+				Identifier (. qualident = t.val; .)
+				[ "=" Expr<out expr> (. eventDecl.Initializer = expr; .) ]
+			}
 		)
 		(. eventDecl.Name = qualident; eventDecl.EndLocation = t.EndLocation; .)
-		[   "=" Expr<out expr> (. eventDecl.Initializer = expr; .) ]
 		[	"{" (. eventDecl.BodyStart = t.Location; .)
 			EventAccessorDecls<out addBlock, out removeBlock> 
 			"}" (. eventDecl.BodyEnd   = t.EndLocation; .)
@@ -903,8 +923,8 @@ StructMemberDecl<ModifierList m, List<AttributeSection> attributes>
 		                                      if (m.isNone) Error("at least one modifier must be set");
 		                                   .)
 		"operator" OverloadableOperator<out op> (. TypeReference firstType, secondType = null; string secondName = null; .)
-		"(" Type<out firstType> Identifier (. string firstName = t.val; .)
-		( "," Type<out secondType> Identifier (. secondName = t.val; .)        /* (. if (Tokens.OverloadableUnaryOp[op.kind] && !Tokens.OverloadableBinaryOp[op.kind])
+		"(" (. Location firstStart = la.Location, secondStart = Location.Empty, secondEnd = Location.Empty; .) Type<out firstType> Identifier (. string firstName = t.val; Location firstEnd = t.EndLocation; .)
+		( "," (. secondStart = la.Location; .) Type<out secondType> Identifier (. secondName = t.val; secondEnd = t.EndLocation; .)        /* (. if (Tokens.OverloadableUnaryOp[op.kind] && !Tokens.OverloadableBinaryOp[op.kind])
 		                                      Error("too many operands for unary operator"); 
 		                                   .)*/
 		| /* empty */                      /*(. if (Tokens.OverloadableBinaryOp[op.kind]){
@@ -929,9 +949,9 @@ StructMemberDecl<ModifierList m, List<AttributeSection> attributes>
 				StartLocation = m.GetDeclarationLocation(startPos),
 				EndLocation = endPos
 			};
-			SafeAdd(operatorDeclaration, operatorDeclaration.Parameters, new ParameterDeclarationExpression(firstType, firstName));
+			SafeAdd(operatorDeclaration, operatorDeclaration.Parameters, new ParameterDeclarationExpression(firstType, firstName) { StartLocation = firstStart, EndLocation = firstEnd });
 			if (secondType != null) {
-				SafeAdd(operatorDeclaration, operatorDeclaration.Parameters, new ParameterDeclarationExpression(secondType, secondName));
+				SafeAdd(operatorDeclaration, operatorDeclaration.Parameters, new ParameterDeclarationExpression(secondType, secondName) { StartLocation = secondStart, EndLocation = secondEnd });
 			}
 			AddChild(operatorDeclaration);
 		.)
@@ -1819,20 +1839,20 @@ UnaryExpr<out Expression uExpr>
 	{
 		/* IF (Tokens.UnaryOp[la.kind] || IsTypeCast()) */
 		(
-			  "+"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Plus)); .)
-			| "-"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Minus)); .)
-			| "!"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Not)); .)
-			| "~"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.BitNot)); .)
-			| "*"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Dereference)); .)
-			| "++" (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Increment)); .)
-			| "--" (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Decrement)); .)
-			| "&"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.AddressOf)); .)
+			  "+"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Plus) { StartLocation = t.Location }); .)
+			| "-"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Minus) { StartLocation = t.Location }); .)
+			| "!"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Not) { StartLocation = t.Location }); .)
+			| "~"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.BitNot) { StartLocation = t.Location }); .)
+			| "*"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Dereference) { StartLocation = t.Location }); .)
+			| "++" (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Increment) { StartLocation = t.Location }); .)
+			| "--" (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Decrement) { StartLocation = t.Location }); .)
+			| "&"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.AddressOf) { StartLocation = t.Location }); .)
 			
 			/*--- cast expression: */
 			/* Problem:  "(" Type ")" from here and                     *
 			 *           "(" Expr ")" from PrimaryExpr                  *
 			 * Solution: (in IsTypeCast())                              */
-			| IF (IsTypeCast()) "(" Type<out type> ")"  (.  expressions.Add(new CastExpression(type)); .)
+			| IF (IsTypeCast()) "(" Type<out type> ")"  (.  expressions.Add(new CastExpression(type) { StartLocation = t.Location }); .)
 		)
 	}
 	
@@ -2162,39 +2182,40 @@ AnonymousMethodExpr<out Expression outExpr>
 .
 
 ConditionalOrExpr<ref Expression outExpr>
-(. Expression expr;   .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	ConditionalAndExpr<ref outExpr>  { "||" UnaryExpr<out expr> ConditionalAndExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.LogicalOr, expr);  .) }
+	ConditionalAndExpr<ref outExpr>  { "||" UnaryExpr<out expr> ConditionalAndExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.LogicalOr, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 ConditionalAndExpr<ref Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	InclusiveOrExpr<ref outExpr>  { "&&" UnaryExpr<out expr> InclusiveOrExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.LogicalAnd, expr);  .) }
+	InclusiveOrExpr<ref outExpr>  { "&&" UnaryExpr<out expr> InclusiveOrExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.LogicalAnd, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 InclusiveOrExpr<ref Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	ExclusiveOrExpr<ref outExpr>  { "|" UnaryExpr<out expr> ExclusiveOrExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.BitwiseOr, expr);  .) }
+	ExclusiveOrExpr<ref outExpr>  { "|" UnaryExpr<out expr> ExclusiveOrExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.BitwiseOr, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 ExclusiveOrExpr<ref Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	AndExpr<ref outExpr>  { "^" UnaryExpr<out expr> AndExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.ExclusiveOr, expr);  .) }
+	AndExpr<ref outExpr>  { "^" UnaryExpr<out expr> AndExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.ExclusiveOr, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 AndExpr<ref Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	EqualityExpr<ref outExpr> { "&" UnaryExpr<out expr> EqualityExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.BitwiseAnd, expr);  .) }
+	EqualityExpr<ref outExpr> { "&" UnaryExpr<out expr> EqualityExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.BitwiseAnd, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 EqualityExpr<ref Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .)
 =
 	RelationalExpr<ref outExpr>
@@ -2203,7 +2224,7 @@ EqualityExpr<ref Expression outExpr>
 			"!="   (. op = BinaryOperatorType.InEquality; .)
 			| "==" (. op = BinaryOperatorType.Equality; .)
 		)
-		UnaryExpr<out expr> RelationalExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .) 
+		UnaryExpr<out expr> RelationalExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) 
 	}
 .
 
@@ -2212,6 +2233,7 @@ RelationalExpr<ref Expression outExpr>
 	TypeReference type;
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .)
 =
 	ShiftExpr<ref outExpr>
@@ -2223,18 +2245,18 @@ RelationalExpr<ref Expression outExpr>
 		)
 		UnaryExpr<out expr>
 		ShiftExpr<ref expr>
-		(. outExpr = new BinaryOperatorExpression(outExpr, op, expr); .)
+		(. outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 	|
 		(	"is"
 			TypeWithRestriction<out type, false, false>
 			[ IF (la.kind == Tokens.Question && !IsPossibleExpressionStart(Peek(1).kind))
 				NullableQuestionMark<ref type> ]
-			(. outExpr = new TypeOfIsExpression(outExpr, type); .)
+			(. outExpr = new TypeOfIsExpression(outExpr, type)  { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 		|	"as"
 			TypeWithRestriction<out type, false, false>
 			[ IF (la.kind == Tokens.Question && !IsPossibleExpressionStart(Peek(1).kind))
 				NullableQuestionMark<ref type> ]
-			(. outExpr = new CastExpression(type, outExpr, CastType.TryCast); .)
+			(. outExpr = new CastExpression(type, outExpr, CastType.TryCast) { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 		)
 	}
 .
@@ -2243,6 +2265,7 @@ ShiftExpr<ref Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .)
 =
 	AdditiveExpr<ref outExpr> 
@@ -2252,7 +2275,7 @@ ShiftExpr<ref Expression outExpr>
 				">" ">" (. op = BinaryOperatorType.ShiftRight; .)
 			)
 		)
-		UnaryExpr<out expr> AdditiveExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .) 
+		UnaryExpr<out expr> AdditiveExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) 
 	}
 .
 
@@ -2260,6 +2283,7 @@ AdditiveExpr<ref Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .)
 =
 	MultiplicativeExpr<ref outExpr>
@@ -2268,7 +2292,7 @@ AdditiveExpr<ref Expression outExpr>
 			"+"   (. op = BinaryOperatorType.Add; .)
 			| "-" (. op = BinaryOperatorType.Subtract; .)
 		)
-		UnaryExpr<out expr> MultiplicativeExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .)
+		UnaryExpr<out expr> MultiplicativeExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .)
 	}
 .
 
@@ -2276,6 +2300,7 @@ MultiplicativeExpr<ref Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .)
 =
 	{
@@ -2284,7 +2309,7 @@ MultiplicativeExpr<ref Expression outExpr>
 			| "/" (. op = BinaryOperatorType.Divide; .)
 			| "%" (. op = BinaryOperatorType.Modulus; .)
 		) 
-		UnaryExpr<out expr> (. outExpr = new BinaryOperatorExpression(outExpr, op, expr); .) 
+		UnaryExpr<out expr> (. outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }; .) 
 	}
 .
 

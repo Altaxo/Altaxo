@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 4483 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using ICSharpCode.NRefactory.Ast;
@@ -24,6 +20,23 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			
 			Assert.IsFalse(ed.HasAddRegion);
 			Assert.IsFalse(ed.HasRemoveRegion);
+		}
+		
+		[Test]
+		public void CSharpMultipleEventDeclarationTest()
+		{
+			TypeDeclaration t = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("class C { public event EventHandler A, B; }");
+			Assert.AreEqual(2, t.Children.Count);
+			
+			EventDeclaration ed = (EventDeclaration)t.Children[0];
+			Assert.AreEqual(Modifiers.Public, ed.Modifier);
+			Assert.AreEqual("EventHandler", ed.TypeReference.Type);
+			Assert.AreEqual("A", ed.Name);
+			
+			ed = (EventDeclaration)t.Children[1];
+			Assert.AreEqual(Modifiers.Public, ed.Modifier);
+			Assert.AreEqual("EventHandler", ed.TypeReference.Type);
+			Assert.AreEqual("B", ed.Name);
 		}
 		
 		[Test]

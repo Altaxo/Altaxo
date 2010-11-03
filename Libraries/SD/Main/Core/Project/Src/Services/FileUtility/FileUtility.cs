@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5785 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -686,7 +682,7 @@ namespace ICSharpCode.Core
 			}
 		}
 		
-		public static event FileNameEventHandler FileLoaded;
-		public static event FileNameEventHandler FileSaved;
+		public static event EventHandler<FileNameEventArgs> FileLoaded;
+		public static event EventHandler<FileNameEventArgs> FileSaved;
 	}
 }

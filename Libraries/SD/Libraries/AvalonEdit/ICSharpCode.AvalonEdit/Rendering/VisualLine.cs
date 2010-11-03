@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 5412 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using ICSharpCode.AvalonEdit.Utils;
 using System;
@@ -310,12 +306,24 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		/// <summary>
 		/// Gets the visual column from a document position (relative to top left of the document).
+		/// If the user clicks between two visual columns, rounds to the nearest column.
 		/// </summary>
 		public int GetVisualColumn(Point point)
 		{
 			TextLine textLine = GetTextLineByVisualYPosition(point.Y);
 			CharacterHit ch = textLine.GetCharacterHitFromDistance(point.X);
 			return ch.FirstCharacterIndex + ch.TrailingLength;
+		}
+		
+		/// <summary>
+		/// Gets the visual column from a document position (relative to top left of the document).
+		/// If the user clicks between two visual columns, returns the first of those columns.
+		/// </summary>
+		public int GetVisualColumnFloor(Point point)
+		{
+			TextLine textLine = GetTextLineByVisualYPosition(point.Y);
+			CharacterHit ch = textLine.GetCharacterHitFromDistance(point.X);
+			return ch.FirstCharacterIndex;
 		}
 		
 		/// <summary>

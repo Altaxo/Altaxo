@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="unknown"/>
-//     <version>$Revision: 6028 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -133,7 +129,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 				FileProjectItem newItem = new FileProjectItem(project, ItemType.None);
 				newItem.Include = "app.manifest";
 				ProjectService.AddProjectItem(project, newItem);
-				ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
+				ProjectBrowserPad.RefreshViewAsync();
 			}
 			
 			FileService.OpenFile(manifestFile);

@@ -1,15 +1,12 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6300 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Threading;
+using ICSharpCode.AvalonEdit.AddIn.Options;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
@@ -129,13 +126,13 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			}
 		}
 		
-		bool isLoading;
+		//bool isLoading;
 		
 		public override void Load(OpenedFile file, Stream stream)
 		{
 			if (file != PrimaryFile)
 				return;
-			isLoading = true;
+			//isLoading = true;
 			try {
 				BookmarksDetach();
 				codeEditor.PrimaryTextEditor.SyntaxHighlighting =
@@ -150,7 +147,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 				codeEditor.FileName = FileName.Create(file.FileName);
 				BookmarksAttach();
 			} finally {
-				isLoading = false;
+				//isLoading = false;
 			}
 		}
 		
@@ -186,7 +183,17 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		void CaretChanged(object sender, EventArgs e)
 		{
 			NavigationService.Log(this.BuildNavPoint());
-			WorkbenchSingleton.StatusBar.SetCaretPosition(this.Column, this.Line, this.Column);
+			var document = codeEditor.Document;
+			int lineOffset = document.GetLineByNumber(this.Line).Offset;
+			int chOffset = this.Column;
+			int col = 1;
+			for (int i = 1; i < chOffset; i++) {
+				if (document.GetCharAt(lineOffset + i - 1) == '\t')
+					col += CodeEditorOptions.Instance.IndentationSize;
+				else
+					col += 1;
+			}
+			WorkbenchSingleton.StatusBar.SetCaretPosition(col, this.Line, chOffset);
 		}
 		
 		public override bool IsReadOnly {

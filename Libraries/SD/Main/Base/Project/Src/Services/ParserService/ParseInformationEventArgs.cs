@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5628 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using ICSharpCode.Core;
@@ -52,7 +48,11 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public ParseInformationEventArgs(FileName fileName, IProjectContent projectContent, ICompilationUnit oldCompilationUnit, ParseInformation newParseInformation)
+		public bool IsPrimaryParseInfoForFile {
+			get; private set;
+		}
+		
+		public ParseInformationEventArgs(FileName fileName, IProjectContent projectContent, ICompilationUnit oldCompilationUnit, ParseInformation newParseInformation, bool isPrimaryParseInfoForFile)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
@@ -62,6 +62,7 @@ namespace ICSharpCode.SharpDevelop
 			this.projectContent = projectContent;
 			this.oldCompilationUnit = oldCompilationUnit;
 			this.newParseInformation = newParseInformation;
+			this.IsPrimaryParseInfoForFile = isPrimaryParseInfoForFile;
 		}
 	}
 	

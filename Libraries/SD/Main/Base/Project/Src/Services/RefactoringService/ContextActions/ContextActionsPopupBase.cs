@@ -1,13 +1,11 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Martin Konicek" email="martin.konicek@gmail.com"/>
-//     <version>$Revision: $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-
+using System.Windows.Media;
+using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpDevelop.Editor;
 
 namespace ICSharpCode.SharpDevelop.Refactoring
@@ -15,11 +13,13 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 	/// <summary>
 	/// Description of ContextActionsPopupBase.
 	/// </summary>
-	public abstract class ContextActionsPopupBase : Popup
+	public abstract class ContextActionsPopupBase : ExtendedPopup
 	{
 		protected ContextActionsPopupBase()
 		{
 			this.KeyDown += OnKeyDown;
+			this.UseLayoutRounding = true;
+			TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
 		}
 		
 		void OnKeyDown(object sender, KeyEventArgs e)

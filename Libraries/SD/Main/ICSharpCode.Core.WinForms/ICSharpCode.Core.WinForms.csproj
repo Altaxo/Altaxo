@@ -109,6 +109,7 @@
     <Compile Include="MessageService\CustomDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MessageService\IDialogMessageService.cs" />
     <Compile Include="MessageService\InputBox.cs">
       <SubType>Form</SubType>
     </Compile>

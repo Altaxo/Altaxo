@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 4735 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.IO;
@@ -230,6 +226,31 @@ namespace ICSharpCode.SharpDevelop.Project
 						treeView.SelectedNode = nodeToSelect;
 					}
 				} else {
+					SelectDeepestOpenNodeForPath(fileName);
+				}
+			} finally {
+				inSelectFile = false;
+			}
+		}
+		
+		public void SelectFileAndExpand(string fileName)
+		{
+			try {
+				inSelectFile = true;
+				lastSelectionTarget = fileName;
+				TreeNode node = FindFileNode(fileName);
+				
+				if (node != null) {
+					// Expand to node
+					TreeNode parent = node.Parent;
+					while (parent != null) {
+						parent.Expand();
+						parent = parent.Parent;
+					}
+					//node = FindFileNode(fileName);
+					treeView.SelectedNode = node;
+				} else {
+					// Node for this file does not exist yet (the tree view is lazy loaded)
 					SelectDeepestOpenNodeForPath(fileName);
 				}
 			} finally {

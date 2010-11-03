@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6214 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -19,6 +15,11 @@ namespace ICSharpCode.NRefactory.Parser
 		/// Sets the start line/column number. This method can be called only before the first token is read.
 		/// </summary>
 		void SetInitialLocation(Location location);
+		
+		/// <summary>
+		/// Sets the context of the lexer.
+		/// </summary>
+		void SetInitialContext(SnippetType context);
 		
 		Errors Errors {
 			get;

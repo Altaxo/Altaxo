@@ -1,9 +1,6 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Martin Konicek" email="martin.konicek@gmail.com"/>
-//     <version>$Revision: $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,6 +30,12 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			remove { this.ActionsTreeView.ActionExecuted -= value; }
 		}
 		
+		public new ContextActionsBulbViewModel DataContext
+		{
+			get { return (ContextActionsBulbViewModel)base.DataContext; }
+			set { base.DataContext = value; }
+		}
+		
 		bool isOpen;
 		public bool IsOpen {
 			get { return isOpen; }
@@ -40,8 +43,16 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				isOpen = value;
 				this.Header.Opacity = isOpen ? 1.0 : 0.7;
 				this.Header.BorderThickness = isOpen ? new Thickness(1, 1, 1, 0) : new Thickness(1);
-				this.ActionsTreeView.Visibility = isOpen ? Visibility.Visible : Visibility.Collapsed;
+				// Show / hide
+				this.ContentBorder.Visibility =
+					isOpen ? Visibility.Visible : Visibility.Collapsed;
 			}
+		}
+		
+		public bool IsHiddenActionsExpanded
+		{
+			get { return this.HiddenActionsExpander.IsExpanded; }
+			set { this.HiddenActionsExpander.IsExpanded = value; }
 		}
 		
 		public new void Focus()
@@ -53,6 +64,16 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		void Header_MouseUp(object sender, MouseButtonEventArgs e)
 		{
 			this.IsOpen = !this.IsOpen;
+		}
+		
+		void Expander_Expanded(object sender, RoutedEventArgs e)
+		{
+			this.DataContext.LoadHiddenActions();
+		}
+		
+		void CheckBox_Click(object sender, RoutedEventArgs e)
+		{
+			e.Handled = true;
 		}
 	}
 }

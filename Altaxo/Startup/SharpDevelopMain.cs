@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5695 $</version>
-// </file>
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Configuration;
@@ -161,9 +157,11 @@ namespace ICSharpCode.SharpDevelop
         startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                                                "Altaxo\\Altaxo4");
         startup.ResourceAssemblyName = "AltaxoStartup";
+				ResourceService.RegisterNeutralStrings(new System.Resources.ResourceManager("Resources.AltaxoString", exe));
+				ResourceService.RegisterNeutralImages(new System.Resources.ResourceManager("Resources.AltaxoBitmap", exe));
 #else
 					startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-					                                       "ICSharpCode/SharpDevelop" + RevisionClass.MainVersion);
+					                                       "ICSharpCode/SharpDevelop" + RevisionClass.Major + "." + RevisionClass.Minor);
 #endif				
 				} else {
 					startup.ConfigDirectory = Path.Combine(Path.GetDirectoryName(exe.Location), configDirectory);
@@ -171,7 +169,7 @@ namespace ICSharpCode.SharpDevelop
 				
 				startup.DomPersistencePath = ConfigurationManager.AppSettings["domPersistencePath"];
 				if (string.IsNullOrEmpty(startup.DomPersistencePath)) {
-					startup.DomPersistencePath = Path.Combine(Path.GetTempPath(), "SharpDevelop" + RevisionClass.MainVersion);
+					startup.DomPersistencePath = Path.Combine(Path.GetTempPath(), "SharpDevelop" + RevisionClass.Major + "." + RevisionClass.Minor);
 					#if DEBUG
 					startup.DomPersistencePath = Path.Combine(startup.DomPersistencePath, "Debug");
 					#endif
@@ -189,10 +187,6 @@ namespace ICSharpCode.SharpDevelop
 				}
 				
 				SharpDevelopHost host = new SharpDevelopHost(AppDomain.CurrentDomain, startup);
-#if ModifiedForAltaxo
-          ResourceService.LoadUserStrings("AltaxoString.resources");
-          ResourceService.LoadUserIcons("AltaxoBitmap.resources");
-#endif
 				
 				string[] fileList = SplashScreenForm.GetRequestedFileList();
 				if (fileList.Length > 0) {

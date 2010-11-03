@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="David Alpert" email="david@spinthemoose.com"/>
-//     <version>$Revision: 5529 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -38,7 +34,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Tests
 //     <copyright see=""prj:///doc/copyright.txt""/>
 //     <license see=""prj:///doc/license.txt""/>
 //     <owner name=""David Alpert"" email=""david@spinthemoose.com""/>
-//     <version>$Revision: 5529 $</version>
+//     <version>$Revision$</version>
 // </file>
 
 using System;

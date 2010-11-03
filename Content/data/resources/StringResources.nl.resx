@@ -231,6 +231,9 @@
   <data name="AddIns.ClassDiagram.ShowClassDiagram" xml:space="preserve">
     <value>Klassendiagram weergeven</value>
   </data>
+  <data name="AddIns.Git.TortoiseGitRequired" xml:space="preserve">
+    <value>Om deze actie uit te voeren dient TortoiseGit geïnstalleerd te zijn.</value>
+  </data>
   <data name="AddIns.HelpViewer.ContentsPadTitle" xml:space="preserve">
     <value>Inhoud</value>
   </data>
@@ -369,12 +372,6 @@ Om het help systeem te verkrijgen dient u de .NET Framework SDK te installeren.<
   </data>
   <data name="AddIns.HtmlHelp2.LookForSimilarWords" xml:space="preserve">
     <value>Zoek naar overeenkomstige woorden</value>
-  </data>
-  <data name="AddIns.HtmlHelp2.MoveDown" xml:space="preserve">
-    <value>Verplaats omlaag</value>
-  </data>
-  <data name="AddIns.HtmlHelp2.MoveUp" xml:space="preserve">
-    <value>Verplaats omhoog</value>
   </data>
   <data name="AddIns.HtmlHelp2.MultiTopic" xml:space="preserve">
     <value>onderwerpen</value>
@@ -522,6 +519,9 @@ Om het help systeem te verkrijgen dient u de .NET Framework SDK te installeren.<
   </data>
   <data name="AddIns.Profiler.Options.General.DataCollection.SizeOfStorageDescription" xml:space="preserve">
     <value>Grootte van tijdelijke opslag bestanden</value>
+  </data>
+  <data name="AddIns.Profiler.Options.General.DataCollection.TrackEvents" xml:space="preserve">
+    <value>Volg gebeurtenissen</value>
   </data>
   <data name="AddIns.Profiler.Options.General.Title" xml:space="preserve">
     <value>Algemeen</value>
@@ -698,6 +698,9 @@ De geselecteerde code bevat een break commando zonder de insluitende lus. Wijzig
   </data>
   <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.AddOperatorOverloads" xml:space="preserve">
     <value>Voeg operator overladingen toe</value>
+  </data>
+  <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.AddOtherMethod" xml:space="preserve">
+    <value>Voeg overschreven $(otherMethod} toe</value>
   </data>
   <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.SurroundWithRegion" xml:space="preserve">
     <value>Insluiten met #region</value>
@@ -2224,12 +2227,6 @@ Wilt u het nieuwe bestand toevoegen aan project ${CurrentProjectName}?</value>
   <data name="Dialog.Options.CombineOptions.Startup.EntryColumnHeader" xml:space="preserve">
     <value>Ingave</value>
   </data>
-  <data name="Dialog.Options.CombineOptions.Startup.MoveDownButton" xml:space="preserve">
-    <value>Verplaats omlaag</value>
-  </data>
-  <data name="Dialog.Options.CombineOptions.Startup.MoveUpButton" xml:space="preserve">
-    <value>Verplaats omhoog</value>
-  </data>
   <data name="Dialog.Options.CombineOptions.Startup.MultipleStartupRadioButton" xml:space="preserve">
     <value>Project met &amp;meervoudige startup</value>
   </data>
@@ -2241,12 +2238,6 @@ Wilt u het nieuwe bestand toevoegen aan project ${CurrentProjectName}?</value>
   </data>
   <data name="Dialog.Options.ExternalTool.CommandLabel" xml:space="preserve">
     <value>&amp;Opdracht</value>
-  </data>
-  <data name="Dialog.Options.ExternalTool.MoveDownButton" xml:space="preserve">
-    <value>Omlaag</value>
-  </data>
-  <data name="Dialog.Options.ExternalTool.MoveUpButton" xml:space="preserve">
-    <value>Omhoog</value>
   </data>
   <data name="Dialog.Options.ExternalTool.PromptForArgsCheckBox" xml:space="preserve">
     <value>&amp;Prompt voor argumenten</value>
@@ -3266,18 +3257,6 @@ Er kan worden gekozen voor opslag van de instellingen in het .user bestand inpla
   <data name="Dialog.SelectReferenceDialog.TypeHeader" xml:space="preserve">
     <value>Type</value>
   </data>
-  <data name="Dialog.TipOfTheDay.button1Text" xml:space="preserve">
-    <value>Volge&amp;nde Tip</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.checkBox1Text" xml:space="preserve">
-    <value>Tips tonen bij starten</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.DialogName" xml:space="preserve">
-    <value>Tip van de dag</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.DidYouKnowText" xml:space="preserve">
-    <value>Wist u ...</value>
-  </data>
   <data name="Dialog.ViewGPL.DialogName" xml:space="preserve">
     <value>GNU General Public License</value>
   </data>
@@ -3437,6 +3416,12 @@ Er kan worden gekozen voor opslag van de instellingen in het .user bestand inpla
   <data name="Global.Location.wholeproject" xml:space="preserve">
     <value>hele project</value>
   </data>
+  <data name="Global.MoveDown" xml:space="preserve">
+    <value>Omlaag</value>
+  </data>
+  <data name="Global.MoveUp" xml:space="preserve">
+    <value>Omhoog</value>
+  </data>
   <data name="Global.NA" xml:space="preserve">
     <value>n.v.t.</value>
   </data>
@@ -3486,7 +3471,7 @@ Er kan worden gekozen voor opslag van de instellingen in het .user bestand inpla
     <value>Opnieuw</value>
   </data>
   <data name="Global.SelectAllButtonText" xml:space="preserve">
-    <value>Alles selecteren</value>
+    <value>&amp;Alles selecteren</value>
   </data>
   <data name="Global.SmallIconToolTip" xml:space="preserve">
     <value>Kleine pictogrammen</value>
@@ -4053,8 +4038,23 @@ Configureer a.u.b. in SharpDevelop opties de locatie van NAnt's uitvoerend besta
   <data name="ICSharpCode.PythonBinding.PythonProjectFiles" xml:space="preserve">
     <value>Python projectbestanden</value>
   </data>
+  <data name="ICSharpCode.PythonBinding.SendLineToPythonConsole" xml:space="preserve">
+    <value>Stuur regel naar Python console</value>
+  </data>
+  <data name="ICSharpCode.PythonBinding.SendSelectedTextToPythonConsole" xml:space="preserve">
+    <value>Naar Python Console leiden</value>
+  </data>
   <data name="ICSharpCode.PythonBinding.UnknownTypeName" xml:space="preserve">
     <value>Kan type {0} niet vinden. Ontbreekt er een assembly referentie?</value>
+  </data>
+  <data name="ICSharpCode.Refactoring.NoClassOrOverridableSymbolUnderCursorError" xml:space="preserve">
+    <value>Het geselecteerd element is geen klasse of overschrijfbaar lid, waardoor geen afgeleide symbolen kunnen worden weergegeven.</value>
+  </data>
+  <data name="ICSharpCode.RubyBinding.SendLineToRubyConsole" xml:space="preserve">
+    <value>Stuur regel naar Ruby console</value>
+  </data>
+  <data name="ICSharpCode.RubyBinding.SendSelectedTextToRubyConsole" xml:space="preserve">
+    <value>Naar Ruby Console leiden</value>
   </data>
   <data name="ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText" xml:space="preserve">
     <value>Kan het bestand ${FileNameWithoutPath} in de map ${Path} niet laden. Controleer de beveiliging en het bestaan van het bestand.</value>
@@ -4257,6 +4257,9 @@ Noot: Dit beïnvloed eigen aangepaste opmaak niet.</value>
   </data>
   <data name="ICSharpCode.SharpDevelop.Commands.SaveFileAs.FileSavedCaption" xml:space="preserve">
     <value>Bestand opgeslagen</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Commands.TabStrip.NavigateToFileInProjectBrowser" xml:space="preserve">
+    <value>Naar bestand in project browser navigeren</value>
   </data>
   <data name="ICSharpCode.SharpDevelop.Commands.VBConvertProjectToCSharp" xml:space="preserve">
     <value>Van VB.NET naar C#</value>
@@ -4786,6 +4789,33 @@ Alleen letters, getallen, spatie, '.' of '_' zijn toegestaan.</value>
   <data name="ICSharpCode.SharpDevelop.LoadingFile" xml:space="preserve">
     <value>Laden van ${Filename}...</value>
   </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeCompilerVersionLabel" xml:space="preserve">
+    <value>Converteer geselecteerde &amp;projecten naar</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeTargetFrameworkLabel" xml:space="preserve">
+    <value>Wijzig doel framework</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeVersionGroupBoxHeader" xml:space="preserve">
+    <value>Versie van geselecteerde projecten wijzigen</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.CompilerVersion" xml:space="preserve">
+    <value>Compiler versie</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ConvertButton" xml:space="preserve">
+    <value>&amp;Converteren</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.DoNotChange" xml:space="preserve">
+    <value>&lt;niet wijzigen&gt;</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.TargetFramework" xml:space="preserve">
+    <value>Doel framework</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.Title" xml:space="preserve">
+    <value>Project opwaarderen</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.UpgradeFromPreviousVersionDescription" xml:space="preserve">
+    <value>Deze oplossing werd met een vorige versie van SharpDevelop gemaakt. Door te upgraden kan gebruik gemaakt worden van nieuwe taal of framework mogelijkheden.</value>
+  </data>
   <data name="ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError" xml:space="preserve">
     <value>Momentele ambience niet gevonden.
 Ga naar 'Opties-&gt;Vormgeving' en wijzig de momentele taal ambience.</value>
@@ -4840,6 +4870,9 @@ Ga naar 'Opties-&gt;Vormgeving' en wijzig de momentele taal ambience.</value>
   </data>
   <data name="ICSharpCode.UnitTesting.TestMenu" xml:space="preserve">
     <value>&amp;Testen</value>
+  </data>
+  <data name="ICSharpCode.UnitTesting.TestRunnerNotFoundMessageFormat" xml:space="preserve">
+    <value>Unittesten kunnen niet uitgevoerd omdat het bestand '{0}' niet gevonden wordt.</value>
   </data>
   <data name="ICSharpCode.WixBinding.AddCompilerExtensionsDialog.Title" xml:space="preserve">
     <value>Extensies toevoegen</value>
@@ -5919,6 +5952,9 @@ Microsoft.Tools.WindowsInstallerXml.Extenties.NetFxCompiler, WixNetFxExtentie</v
   <data name="ProjectComponent.ContextMenu.Clean" xml:space="preserve">
     <value>Opscho&amp;nen</value>
   </data>
+  <data name="ProjectComponent.ContextMenu.CollapseAll" xml:space="preserve">
+    <value>Alles invouwen</value>
+  </data>
   <data name="ProjectComponent.ContextMenu.Delete.Question" xml:space="preserve">
     <value>Wilt u '${FileName}' definitief verwijderen?</value>
   </data>
@@ -6300,6 +6336,9 @@ Microsoft.Tools.WindowsInstallerXml.Extenties.NetFxCompiler, WixNetFxExtentie</v
   <data name="SharpDevelop.HexEditor.StreamAdded" xml:space="preserve">
     <value>Stream toegevoegd!</value>
   </data>
+  <data name="SharpDevelop.Refactoring.BaseClassesOf" xml:space="preserve">
+    <value>Basis klassen van $(Name)</value>
+  </data>
   <data name="SharpDevelop.Refactoring.CannotPerformOperationBecauseOfSyntaxErrors" xml:space="preserve">
     <value>Bewerking kan niet worden uitgevoerd, want de broncode bevat fouten:</value>
   </data>
@@ -6339,8 +6378,14 @@ Microsoft.Tools.WindowsInstallerXml.Extenties.NetFxCompiler, WixNetFxExtentie</v
   <data name="SharpDevelop.Refactoring.ExtractInterfaceCommand" xml:space="preserve">
     <value>Extract interface</value>
   </data>
+  <data name="SharpDevelop.Refactoring.FindBaseClassesCommand" xml:space="preserve">
+    <value>Basis klassen vinden</value>
+  </data>
   <data name="SharpDevelop.Refactoring.FindDerivedClassesCommand" xml:space="preserve">
     <value>Vind afgeleidde klassen</value>
+  </data>
+  <data name="SharpDevelop.Refactoring.FindDerivedClassesOrOverridesCommand" xml:space="preserve">
+    <value>Afgeleide symbolen vinden</value>
   </data>
   <data name="SharpDevelop.Refactoring.FindingReferences" xml:space="preserve">
     <value>Referenties zoeken...</value>
@@ -6796,18 +6841,6 @@ De hulpbron bestanden zijn hernoemd/verplaatst op de beschreven wijze.</value>
   <data name="SideBarComponent.ContextMenu.DeleteTabItemQuestion" xml:space="preserve">
     <value>Wilt u item "${TabItem}" echt verwijderen?</value>
   </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabDown" xml:space="preserve">
-    <value>Tab naar &amp;beneden</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabItemDown" xml:space="preserve">
-    <value>Verplaats item omlaag</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabItemUp" xml:space="preserve">
-    <value>Verplaats item omhoog</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabUp" xml:space="preserve">
-    <value>Verplaats tab &amp;omhoog</value>
-  </data>
   <data name="SideBarComponent.ContextMenu.RenameTab" xml:space="preserve">
     <value>He&amp;rnoem Tab</value>
   </data>
@@ -7242,6 +7275,12 @@ De hulpbron bestanden zijn hernoemd/verplaatst op de beschreven wijze.</value>
   </data>
   <data name="Templates.Project.SharpDevelopMacro.Name" xml:space="preserve">
     <value>Eztra menu ingang</value>
+  </data>
+  <data name="Templates.Project.SilverlightApplication.Description" xml:space="preserve">
+    <value>Project voor het maken van een Silverlight applicatie.</value>
+  </data>
+  <data name="Templates.Project.SilverlightApplication.Name" xml:space="preserve">
+    <value>Silverlight applicatie</value>
   </data>
   <data name="Templates.Project.SysTrayIcon.Description" xml:space="preserve">
     <value>Een project waarin een applicatie wordt gemaakt met een pictogram in het meldingengebied van de taakbalk.</value>

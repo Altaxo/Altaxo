@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5239 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -20,7 +16,7 @@ namespace ICSharpCode.Core
 		readonly object lockObj = new object();
 		Dictionary<string, AddInTreeNode> childNodes = new Dictionary<string, AddInTreeNode>();
 		ReadOnlyCollection<Codon> codons;
-		List<ICollection<Codon>> codonInput;
+		List<IEnumerable<Codon>> codonInput;
 		
 		/// <summary>
 		/// A dictionary containing the child paths.
@@ -31,13 +27,13 @@ namespace ICSharpCode.Core
 			}
 		}
 		
-		public void AddCodons(ICollection<Codon> newCodons)
+		public void AddCodons(IEnumerable<Codon> newCodons)
 		{
 			if (newCodons == null)
 				throw new ArgumentNullException("newCodons");
 			lock (lockObj) {
 				if (codonInput == null) {
-					codonInput = new List<ICollection<Codon>>();
+					codonInput = new List<IEnumerable<Codon>>();
 					if (codons != null)
 						codonInput.Add(codons);
 				}

@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 6319 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.ComponentModel.Design;
@@ -514,14 +510,20 @@ namespace ICSharpCode.SharpDevelop.Gui
 		#endregion
 		
 		#region IServiceProvider
-		ServiceContainer _services=new ServiceContainer();
+		ServiceContainer services = new ServiceContainer();
 		
-		public object GetService(Type serviceType){
-			return _services.GetService(serviceType);
+		public object GetService(Type serviceType)
+		{
+			object obj = services.GetService(serviceType);
+			if (obj == null) {
+				if (serviceType.IsInstanceOfType(this))
+					return this;
+			}
+			return obj;
 		}
 		
 		public ServiceContainer Services {
-			get { return _services; }
+			get { return services; }
 		}
 		
 		#endregion
@@ -551,6 +553,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public virtual bool IsViewOnly {
 			get { return Files.Count == 0; }
+		}
+		
+		public virtual bool CloseWithSolution {
+			get {
+				var fileName = this.PrimaryFileName;
+				return fileName == null
+					|| Project.ProjectService.OpenSolution.FindProjectContainingFile(fileName) != null;
+			}
 		}
 	}
 }

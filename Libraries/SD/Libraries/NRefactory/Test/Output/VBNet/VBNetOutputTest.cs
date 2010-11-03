@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6214 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.IO;
@@ -119,6 +115,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			TestStatement("Dim a As Object() = New Object(10) {}");
 			TestTypeMember("Private MultiDim As Integer(,) = {{1, 2}, {1, 3}}");
 			TestExpression("New Integer(, ) {{1, 1}, {1, 1}}");
+			TestTypeMember("Private _titles As String() = New String() {}");
 		}
 		
 		[Test]

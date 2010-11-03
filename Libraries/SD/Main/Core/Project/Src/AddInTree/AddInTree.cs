@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5426 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -223,7 +219,8 @@ namespace ICSharpCode.Core
 		static void AddExtensionPath(ExtensionPath path)
 		{
 			AddInTreeNode treePath = CreatePath(rootNode, path.Name);
-			treePath.AddCodons(path.Codons);
+			foreach (IEnumerable<Codon> innerCodons in path.GroupedCodons)
+				treePath.AddCodons(innerCodons);
 		}
 		
 		/// <summary>

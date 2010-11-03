@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6306 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Linq;
@@ -2927,7 +2923,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		public override object TrackedVisitConditionalExpression(ConditionalExpression conditionalExpression, object data)
 		{
-			TrackVisit(conditionalExpression.Condition, data);
+			if (conditionalExpression.Condition is ConditionalExpression) {
+				TrackedVisitParenthesizedExpression(new ParenthesizedExpression(conditionalExpression.Condition), data);
+			} else {
+				TrackVisit(conditionalExpression.Condition, data);
+			}
 			if (this.prettyPrintOptions.ConditionalOperatorBeforeConditionSpace) {
 				outputFormatter.Space();
 			}

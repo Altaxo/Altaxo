@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 5598 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Windows.Media;
@@ -72,6 +68,10 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			}
 		}
 		
+		public override int ZOrder {
+			get { return 100; }
+		}
+		
 		public CurrentLineBookmark(FileName fileName, Location location) : base(fileName, location)
 		{
 			this.IsSaved = false;
@@ -91,6 +91,20 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			marker.BackgroundColor = Colors.Yellow;
 			marker.ForegroundColor = Colors.Blue;
 			return marker;
+		}
+		
+		public override bool CanDragDrop {
+			get { return true; }
+		}
+		
+		public override void Drop(int lineNumber)
+		{
+			// call async because the Debugger seems to use Application.DoEvents(), but we don't want to process events
+			// because Drag'N'Drop operation has finished
+			WorkbenchSingleton.SafeThreadAsyncCall(
+				delegate {
+					DebuggerService.CurrentDebugger.SetInstructionPointer(this.FileName, lineNumber, 1);
+				});
 		}
 	}
 }

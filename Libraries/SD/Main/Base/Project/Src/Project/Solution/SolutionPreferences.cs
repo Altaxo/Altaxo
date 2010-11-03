@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2028 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -100,10 +96,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			// validate configuration and platform:
 			IList<string> available = solution.GetConfigurationNames();
-			if (!available.Contains(configuration))
+			if (available.Count > 0 && !available.Contains(configuration))
 				configuration = available[0];
 			available = solution.GetPlatformNames();
-			if (!available.Contains(platform))
+			if (available.Count > 0 && !available.Contains(platform))
 				platform = available[0];
 			
 			this.ActiveConfiguration = configuration;

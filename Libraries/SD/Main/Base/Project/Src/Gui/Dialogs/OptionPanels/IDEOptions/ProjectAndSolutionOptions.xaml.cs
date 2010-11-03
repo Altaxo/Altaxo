@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.ComponentModel;
@@ -51,7 +47,6 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		public override void LoadOptions()
 		{
 			base.LoadOptions();
-			defaultProjectLocationTextBox.Text = DefaultProjectCreationPath;
 			parallelBuildCount.Value = Project.BuildOptions.DefaultParallelProjectCount;
 			onExecuteComboBox.SelectedIndex = (int)Project.BuildModifiedProjectsOnlyService.Setting;
 			verbosityComboBox.SelectedIndex = (int)Project.BuildOptions.DefaultBuildOutputVerbosity;

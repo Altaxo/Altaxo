@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Parser.VB;
@@ -408,10 +409,18 @@ TypeParameterList<List<TemplateDefinition> templates>
 
 /* 4.9.1 */
 TypeParameter<out TemplateDefinition template>
-	(. VarianceModifier modifier = VarianceModifier.Invariant; .)
+	(. VarianceModifier modifier = VarianceModifier.Invariant; Location startLocation = la.Location; .)
 =
-	[ "In" (. modifier = VarianceModifier.Contravariant; .) | "Out" (. modifier = VarianceModifier.Covariant; .) ] Identifier (. template = new TemplateDefinition(t.val, null) { VarianceModifier = modifier }; .)
-	[TypeParameterConstraints<template>]
+	(
+		[ "In" (. modifier = VarianceModifier.Contravariant; .) | "Out" (. modifier = VarianceModifier.Covariant; .) ] Identifier (. template = new TemplateDefinition(t.val, null) { VarianceModifier = modifier }; .)
+		[TypeParameterConstraints<template>]
+	)
+	(.
+		if (template != null) {
+			template.StartLocation = startLocation;
+			template.EndLocation = t.EndLocation;
+		}
+	.)
 .
 
 /* 4.9.2 */
@@ -434,11 +443,12 @@ TypeParameterConstraints<TemplateDefinition template>
 .
 
 TypeParameterConstraint<out TypeReference constraint>
-(. constraint = null; .)
-=	"Class"		(. constraint = TypeReference.ClassConstraint; .)
-|	"Structure"	(. constraint = TypeReference.StructConstraint; .)
-|	"New"		(. constraint = TypeReference.NewConstraint; .)
-|	TypeName<out constraint>
+	(. constraint = null; Location startLocation = la.Location; .)
+=
+	"Class"		(. constraint = TypeReference.ClassConstraint; .)
+	| "Structure"	(. constraint = TypeReference.StructConstraint; .)
+	| "New"		(. constraint = TypeReference.NewConstraint; .)
+	| TypeName<out constraint>
 .
 
 /* 6.4.2 */
@@ -776,8 +786,9 @@ EnumMemberDecl<out FieldDeclaration f>
 		f.StartLocation = varDecl.StartLocation = t.Location;
 	.)
 	[ "=" Expr<out expr> (. varDecl.Initializer = expr; .) ]
+	(. f.EndLocation = varDecl.EndLocation = t.EndLocation; .)
 	EndOfStmt
-	.
+.
 
 ClassMemberDecl<ModifierList m, List<AttributeSection> attributes> =
 	StructureMemberDecl<m, attributes>
@@ -1222,22 +1233,19 @@ StructureMemberDecl<ModifierList m, List<AttributeSection> attributes>
 		Location startPos = t.Location;
 		TypeReference returnType = NullTypeReference.Instance;
 		TypeReference operandType = NullTypeReference.Instance;
-		string operandName;
 		OverloadableOperatorType operatorType;
 		AttributeSection section;
+		ParameterDeclarationExpression param;
 		List<ParameterDeclarationExpression> parameters = new List<ParameterDeclarationExpression>();
 	.)
 	OverloadableOperator<out operatorType>
-	"(" [ "ByVal" ] Identifier (. operandName = t.val; .)
-		[ "As" TypeName<out operandType> ]
-		(. parameters.Add(new ParameterDeclarationExpression(operandType, operandName, ParameterModifiers.In)); .)
-		
-		{
-			","
-			[ "ByVal" ] Identifier (. operandName = t.val; .)
-			[ "As" TypeName<out operandType> ]
-			(. parameters.Add(new ParameterDeclarationExpression(operandType, operandName, ParameterModifiers.In)); .)
-		}
+	"("
+	FormalParameter<out param>
+	(. if (param != null) parameters.Add(param); .)
+	[
+		"," FormalParameter<out param>
+		(. if (param != null) parameters.Add(param); .)
+	]
 	")"
 	(. Location endPos = t.EndLocation; .)
 	[ "As" { AttributeSection<out section>
@@ -1552,6 +1560,7 @@ CollectionInitializer<out CollectionInitializerExpression outExpr>
 	(.
 		Expression expr = null;
 		CollectionInitializerExpression initializer = new CollectionInitializerExpression();
+		Location startLocation = la.Location;
 	.) =
 	"{"
 	[
@@ -1564,8 +1573,13 @@ CollectionInitializer<out CollectionInitializerExpression outExpr>
 			(. if (expr != null) { initializer.CreateExpressions.Add(expr); } .)
 		}
 	]
-	"}" (. outExpr = initializer; .)
-	.
+	"}"
+	(.
+		outExpr = initializer;
+		outExpr.StartLocation = startLocation;
+		outExpr.EndLocation = t.EndLocation;
+	.)
+.
 
 Charset<out CharsetModifier charsetModifier>
 	(. charsetModifier = CharsetModifier.None; .) =
@@ -1645,11 +1659,20 @@ EventMemberSpecifier<out string name>
 .
 
 Expr<out Expression expr>
-	(. expr = null; .) =
-	  IF ( IsQueryExpression() )
-	  QueryExpr<out expr>
-	| LambdaExpr<out expr>
-	| DisjunctionExpr<out expr>
+	(. expr = null; Location startLocation = la.Location; .)
+	=
+	(
+		  IF ( IsQueryExpression() )
+		  QueryExpr<out expr>
+		| LambdaExpr<out expr>
+		| DisjunctionExpr<out expr>
+	)
+	(.
+		if (expr != null) {
+			expr.StartLocation = startLocation;
+			expr.EndLocation = t.EndLocation;
+		}
+	.)
 .
 
 AssignmentOperator<out AssignmentOperatorType op>
@@ -1668,25 +1691,33 @@ AssignmentOperator<out AssignmentOperatorType op>
 
 /* 11.4 */
 SimpleExpr<out Expression pexpr>
-(. string name; .)
+(. string name; Location startLocation = la.Location; .)
 =
+(
 	SimpleNonInvocationExpression<out pexpr>
 	{
 			"." (
 				XmlOpenTag IdentifierOrKeyword<out name> XmlCloseTag
 				(. pexpr = new XmlMemberAccessExpression(pexpr, XmlAxisType.Element, name, true); .)
 				| IdentifierOrKeyword<out name>
-				(. pexpr = new MemberReferenceExpression(pexpr, name); .)
+				(. pexpr = new MemberReferenceExpression(pexpr, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 			)
 			[ IF (la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of)
 					"(" "Of" TypeArgumentList<((MemberReferenceExpression)pexpr).TypeArguments> ")"
 			]
-		|	"!" IdentifierOrKeyword<out name> (. pexpr = new BinaryOperatorExpression(pexpr, BinaryOperatorType.DictionaryAccess, new PrimitiveExpression(name, name)); .)
+		|	"!" IdentifierOrKeyword<out name> (. pexpr = new BinaryOperatorExpression(pexpr, BinaryOperatorType.DictionaryAccess, new PrimitiveExpression(name, name) { StartLocation = t.Location, EndLocation = t.EndLocation }); .)
 		|	(. XmlAxisType type = XmlAxisType.Attribute; bool isXmlName = false; .)
 			( ".@" | "..." (. type = XmlAxisType.Descendents; .) ) [ XmlOpenTag (. isXmlName = true; .) ] IdentifierOrKeyword<out name> [ XmlCloseTag ]
 			(. pexpr = new XmlMemberAccessExpression(pexpr, type, name, isXmlName); .)
 		|	InvocationExpression<ref pexpr>
 	}
+)
+(.
+	if (pexpr != null) {
+		pexpr.StartLocation = startLocation;
+		pexpr.EndLocation = t.EndLocation;
+	}
+.)
 .
 
 SimpleNonInvocationExpression<out Expression pexpr>
@@ -1695,6 +1726,7 @@ SimpleNonInvocationExpression<out Expression pexpr>
 	CollectionInitializerExpression cie;
 	TypeReference type = null;
 	string name = String.Empty;
+	Location startLocation = la.Location;
 	pexpr = null;
 .) =
 	(
@@ -1724,10 +1756,10 @@ SimpleNonInvocationExpression<out Expression pexpr>
 			(. pexpr = new TypeReferenceExpression(new TypeReference(val, true)); .)
 		|	"Me"							(. pexpr = new ThisReferenceExpression(); .)
 		|	(. Expression retExpr = null; .)
-			( "MyBase"										(. retExpr = new BaseReferenceExpression(); .)
-			| "MyClass"										(. retExpr = new ClassReferenceExpression(); .)
+			( "MyBase"										(. retExpr = new BaseReferenceExpression() { StartLocation = t.Location, EndLocation = t.EndLocation }; .)
+			| "MyClass"										(. retExpr = new ClassReferenceExpression() { StartLocation = t.Location, EndLocation = t.EndLocation }; .)
 			)
-			"." IdentifierOrKeyword<out name>				(. pexpr = new MemberReferenceExpression(retExpr, name); .)
+			"." IdentifierOrKeyword<out name>				(. pexpr = new MemberReferenceExpression(retExpr, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 		|	"Global" "."
 			Identifier (. type = new TypeReference(t.val ?? ""); .)
 			/* fallback to "" is required if the token wasn't an identifier (->parser error but no exception) */
@@ -1755,11 +1787,11 @@ SimpleNonInvocationExpression<out Expression pexpr>
 			/* this form only occurs in WithStatements */
 			"." (
 				XmlOpenTag IdentifierOrKeyword<out name> XmlCloseTag
-				(. pexpr = new XmlMemberAccessExpression(null, XmlAxisType.Element, name, true); .)
+				(. pexpr = new XmlMemberAccessExpression(null, XmlAxisType.Element, name, true) { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 				| IdentifierOrKeyword<out name>
-				(. pexpr = new MemberReferenceExpression(null, name); .)
+				(. pexpr = new MemberReferenceExpression(null, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 			) |
-			"!" IdentifierOrKeyword<out name> (. pexpr = new BinaryOperatorExpression(null, BinaryOperatorType.DictionaryAccess, new PrimitiveExpression(name, name)); .)
+			"!" IdentifierOrKeyword<out name> (. pexpr = new BinaryOperatorExpression(null, BinaryOperatorType.DictionaryAccess, new PrimitiveExpression(name, name) { StartLocation = t.Location, EndLocation = t.EndLocation }); .)
 			| (. XmlAxisType axisType = XmlAxisType.Element; bool isXmlIdentifier = false; .)
 			( "..." (. axisType = XmlAxisType.Descendents; .) | ".@" (. axisType = XmlAxisType.Attribute; .) ) (
 				[ XmlOpenTag (. isXmlIdentifier = true; .) ] IdentifierOrKeyword<out name> [ XmlCloseTag ]
@@ -1767,6 +1799,12 @@ SimpleNonInvocationExpression<out Expression pexpr>
 			)
 		)
 	)
+(.
+	if (pexpr != null) {
+		pexpr.StartLocation = startLocation;
+		pexpr.EndLocation = t.EndLocation;
+	}
+.)
 .
 
 XmlLiteralExpression<out Expression pexpr>
@@ -1923,6 +1961,7 @@ DisjunctionExpr<out Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .) =
 	ConjunctionExpr<out outExpr>
 	{
@@ -1931,7 +1970,7 @@ DisjunctionExpr<out Expression outExpr>
 			| "OrElse" (. op = BinaryOperatorType.LogicalOr; .)
 			| "Xor"    (. op = BinaryOperatorType.ExclusiveOr; .)
 		)
-		ConjunctionExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .)
+		ConjunctionExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .)
 	}
 .
 
@@ -1939,6 +1978,7 @@ ConjunctionExpr<out Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .) =
 	NotExpr<out outExpr>
 	{
@@ -1946,7 +1986,7 @@ ConjunctionExpr<out Expression outExpr>
 			  "And"     (. op = BinaryOperatorType.BitwiseAnd; .)
 			| "AndAlso" (. op = BinaryOperatorType.LogicalAnd; .)
 		)
-		NotExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .)
+		NotExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .)
 	}
 .
 
@@ -1963,6 +2003,7 @@ ComparisonExpr<out Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .) =
 	ShiftExpr<out outExpr>
 	{
@@ -1978,10 +2019,10 @@ ComparisonExpr<out Expression outExpr>
 			| "IsNot" (. op = BinaryOperatorType.ReferenceInequality; .)
 		)
 		(
-			ShiftExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .)
-		|
+			ShiftExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .)
+		| (. Location startLocation2 = la.Location; .)
 			"Not"
-			ShiftExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, new UnaryOperatorExpression(expr, UnaryOperatorType.Not));  .)
+			ShiftExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, new UnaryOperatorExpression(expr, UnaryOperatorType.Not) { StartLocation = startLocation2, EndLocation = t.EndLocation }) { StartLocation = startLocation, EndLocation = t.EndLocation };  .)
 		)
 	}
 .
@@ -1990,6 +2031,7 @@ ShiftExpr<out Expression outExpr>
 	(.
 		Expression expr;
 		BinaryOperatorType op = BinaryOperatorType.None;
+		Location startLocation = la.Location;
 	.) =
 	ConcatenationExpr<out outExpr> 
 	{
@@ -1997,20 +2039,21 @@ ShiftExpr<out Expression outExpr>
 			"<<"   (. op = BinaryOperatorType.ShiftLeft; .)
 			| ">>" (. op = BinaryOperatorType.ShiftRight; .)
 		)
-		ConcatenationExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .) 
+		ConcatenationExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) 
 	}
 	.
 
 ConcatenationExpr<out Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	AdditiveExpr<out outExpr> { "&" AdditiveExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Concat, expr);  .) }
+	AdditiveExpr<out outExpr> { "&" AdditiveExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Concat, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 AdditiveExpr<out Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .) =
 	ModuloExpr<out outExpr>
 	{
@@ -2018,26 +2061,27 @@ AdditiveExpr<out Expression outExpr>
 			  "+"   (. op = BinaryOperatorType.Add; .)
 			| "-" (. op = BinaryOperatorType.Subtract; .)
 		)
-		ModuloExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr);  .)
+		ModuloExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .)
 	}
 .
 
 ModuloExpr<out Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 = 
-	IntegerDivisionExpr<out outExpr> { "Mod" IntegerDivisionExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Modulus, expr);  .) }
+	IntegerDivisionExpr<out outExpr> { "Mod" IntegerDivisionExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Modulus, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 IntegerDivisionExpr<out Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	MultiplicativeExpr<out outExpr> { "\\" MultiplicativeExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.DivideInteger, expr);  .) }
+	MultiplicativeExpr<out outExpr> { "\\" MultiplicativeExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.DivideInteger, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 
 MultiplicativeExpr<out Expression outExpr>
 (.
 	Expression expr;
 	BinaryOperatorType op = BinaryOperatorType.None;
+	Location startLocation = la.Location;
 .) =
 	UnaryExpr<out outExpr>
 	{
@@ -2045,7 +2089,7 @@ MultiplicativeExpr<out Expression outExpr>
 			"*"   (. op = BinaryOperatorType.Multiply; .)
 			| "/" (. op = BinaryOperatorType.Divide; .)
 		) 
-		UnaryExpr<out expr> (. outExpr = new BinaryOperatorExpression(outExpr, op, expr); .) 
+		UnaryExpr<out expr> (. outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }; .) 
 	}
 .
 
@@ -2053,6 +2097,7 @@ UnaryExpr<out Expression uExpr>
 (.
 	Expression expr;
 	UnaryOperatorType uop = UnaryOperatorType.None;
+	Location startLocation = la.Location;
 	bool isUOp = false;
 .) =
 	{ 	"+" 		(. uop = UnaryOperatorType.Plus; isUOp = true; .)
@@ -2062,7 +2107,7 @@ UnaryExpr<out Expression uExpr>
 	ExponentiationExpr<out expr>
 	(.
 		if (isUOp) {
-			uExpr = new UnaryOperatorExpression(expr, uop);
+			uExpr = new UnaryOperatorExpression(expr, uop) { StartLocation = startLocation, EndLocation = t.EndLocation };
 		} else {
 			uExpr = expr;
 		}
@@ -2070,9 +2115,9 @@ UnaryExpr<out Expression uExpr>
 .
 
 ExponentiationExpr<out Expression outExpr>
-(. Expression expr; .)
+(. Expression expr; Location startLocation = la.Location; .)
 =
-	SimpleExpr<out outExpr> { "^" SimpleExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Power, expr);  .) }
+	SimpleExpr<out outExpr> { "^" SimpleExpr<out expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Power, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  .) }
 .
 	
 ObjectCreateExpression<out Expression oce>
@@ -2112,6 +2157,7 @@ ObjectCreateExpression<out Expression oce>
 		(
 			(.
 				MemberInitializerExpression memberInitializer = null;
+				Expression anonymousMember = null;
 			.)
 			"With"
 			(.
@@ -2119,11 +2165,19 @@ ObjectCreateExpression<out Expression oce>
 				memberInitializers.StartLocation = la.Location;
 			.)
 			"{"
-				MemberInitializer<out memberInitializer>
-				(. memberInitializers.CreateExpressions.Add(memberInitializer); .)
-				{ ","
+				(
 					MemberInitializer<out memberInitializer>
-					(. memberInitializers.CreateExpressions.Add(memberInitializer); .)
+						(. memberInitializers.CreateExpressions.Add(memberInitializer); .)
+					| Expr<out anonymousMember>
+						(. memberInitializers.CreateExpressions.Add(anonymousMember); .)
+				)
+				{ ","
+					(
+						MemberInitializer<out memberInitializer>
+							(. memberInitializers.CreateExpressions.Add(memberInitializer); .)
+						| Expr<out anonymousMember>
+							(. memberInitializers.CreateExpressions.Add(anonymousMember); .)
+					)
 				}
 			"}"
 			(.
@@ -2613,10 +2667,11 @@ Argument<out Expression argumentexpr>
 		Expression expr;
 		argumentexpr = null;
 		string name;
+		Location startLocation = la.Location;
 	.) =
 	IF(IsNamedAssign()) Identifier (. name = t.val;  .) ":=" Expr<out expr>
 	(.
-		argumentexpr = new NamedArgumentExpression(name, expr);
+		argumentexpr = new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };
 	.)
 	|
 	Expr<out argumentexpr>
@@ -2624,15 +2679,17 @@ Argument<out Expression argumentexpr>
 
 /* 7.1. */
 TypeName<out TypeReference typeref>
-(. ArrayList rank = null; .)
+(. ArrayList rank = null; Location startLocation = la.Location; .)
 =
 	NonArrayTypeName<out typeref, false>
-	
-	
-	
 	ArrayTypeModifiers<out rank>
-	(.	if (rank != null && typeref != null) {
-			typeref.RankSpecifier = (int[])rank.ToArray(typeof(int));
+	(.
+		if (typeref != null) {
+			if (rank != null) {
+				typeref.RankSpecifier = (int[])rank.ToArray(typeof(int));
+			}
+			typeref.StartLocation = startLocation;
+			typeref.EndLocation = t.EndLocation;
 		}
 	.)
 .
@@ -2774,15 +2831,17 @@ GlobalAttributeSection =
 
 /* Spec, 5. */
 Attribute<out ASTAttribute attribute>
-(. string name;
-   List<Expression> positional = new List<Expression>();
-   List<NamedArgumentExpression> named = new List<NamedArgumentExpression>();
+(.
+	string name;
+	List<Expression> positional = new List<Expression>();
+	List<NamedArgumentExpression> named = new List<NamedArgumentExpression>();
+	Location startLocation = la.Location;
 .) =
 	[ "Global" "." ]
 	Qualident<out name>
 	[ AttributeArguments<positional, named> ]
 	(.
-		attribute  = new ASTAttribute(name, positional, named);
+		attribute  = new ASTAttribute(name, positional, named) { StartLocation = startLocation, EndLocation = t.EndLocation };
 	.)
 .
 
@@ -2795,7 +2854,8 @@ AttributeArguments<List<Expression> positional, List<NamedArgumentExpression> na
 	.) =
 	"("
 	[
-		IF (IsNotClosingParenthesis()) ( 
+		IF (IsNotClosingParenthesis()) (
+			(. Location startLocation = la.Location; .)
 			[
 				IF (IsNamedAssign()) (. nameFound = true; .)
 				IdentifierOrKeyword<out name>
@@ -2804,7 +2864,7 @@ AttributeArguments<List<Expression> positional, List<NamedArgumentExpression> na
 				(.
 					if (expr != null) {
 						if (string.IsNullOrEmpty(name)) { positional.Add(expr); }
-						else { named.Add(new NamedArgumentExpression(name, expr)); name = ""; }
+						else { named.Add(new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }); name = ""; }
 					}
 				.)
 			{
@@ -2815,7 +2875,7 @@ AttributeArguments<List<Expression> positional, List<NamedArgumentExpression> na
 						( ":=" | "=" )
 						| (. if (nameFound) Error("no positional argument after named argument"); .)
 					) Expr<out expr>	(. 	if (expr != null) { if(name == "") positional.Add(expr);
-											else { named.Add(new NamedArgumentExpression(name, expr)); name = ""; }
+											else { named.Add(new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }); name = ""; }
 											}
 										.)
 			}
@@ -2827,11 +2887,12 @@ AttributeArguments<List<Expression> positional, List<NamedArgumentExpression> na
 /* Spec, 5. */
 AttributeSection<out AttributeSection section>
 	(.
-		string attributeTarget = "";List<ASTAttribute> attributes = new List<ASTAttribute>();
+		string attributeTarget = "";
+		List<ASTAttribute> attributes = new List<ASTAttribute>();
 		ASTAttribute attribute;
-		
+		Location startLocation = la.Location;
 	.) =
-	"<" (. Location startPos = t.Location; .)
+	"<"
 	[ IF (IsLocalAttrTarget())
 		( "Event"		(. attributeTarget = "event";.)
 		| "Return"		(. attributeTarget = "return";.)
@@ -2855,7 +2916,7 @@ AttributeSection<out AttributeSection section>
 			section = new AttributeSection {
 				AttributeTarget = attributeTarget,
 				Attributes = attributes,
-				StartLocation = startPos,
+				StartLocation = startLocation,
 				EndLocation = t.EndLocation
 			};
 		.)
@@ -2865,9 +2926,9 @@ AttributeSection<out AttributeSection section>
 FormalParameterList<List<ParameterDeclarationExpression> parameter>
 (. ParameterDeclarationExpression p; .)
 =
-	FormalParameter <out p>	(. if (p != null) parameter.Add(p); .)
+	FormalParameter<out p>	(. if (p != null) parameter.Add(p); .)
 	{	","
-		FormalParameter <out p>	(. if (p != null) parameter.Add(p); .)
+		FormalParameter<out p>	(. if (p != null) parameter.Add(p); .)
 	}
 .
 /* 9.2.5 */
@@ -2880,6 +2941,7 @@ FormalParameter<out ParameterDeclarationExpression p>
 	Expression expr = null;
 	p = null;
 	ArrayList arrayModifiers = null;
+	Location startLocation = la.Location;
 .)
 =
 	{ AttributeSection<out section> (. attributes.Add(section); .) }
@@ -2903,6 +2965,8 @@ FormalParameter<out ParameterDeclarationExpression p>
 		mod.Check();
 		p = new ParameterDeclarationExpression(type, parameterName, mod.Modifier, expr);
 		p.Attributes = attributes;
+		p.StartLocation = startLocation;
+		p.EndLocation = t.EndLocation;
 	.)
 .
 
@@ -2916,7 +2980,15 @@ Block<out Statement stmt>
 		BlockStart(blockStmt);
 	.)
 	{	
-			IF (IsEndStmtAhead()) "End" EndOfStmt (. AddChild(new EndStatement()); .)
+			IF (IsEndStmtAhead())
+				(. Token first = la; .)
+				"End" EndOfStmt
+				(.
+					AddChild(new EndStatement() {
+						StartLocation = first.Location,
+						EndLocation = first.EndLocation }
+					);
+				.)
 			| Statement EndOfStmt
 /*	 	IF (!LeaveBlock()) { }*/
 	}
@@ -2989,7 +3061,9 @@ EmbeddedStatement<out Statement statement>
 		Expression expr = null;
 		string name = String.Empty;
 		List<Expression> p = null;
+		Location startLocation = la.Location;
 	.) =
+	(
 		"Exit"				(. ExitType exitType = ExitType.None; .)
 		(
 		"Sub"				(. exitType = ExitType.Sub; .)
@@ -3072,7 +3146,6 @@ EmbeddedStatement<out Statement statement>
 			Expression group = null;
 			TypeReference typeReference;
 			string        typeName;
-			Location startLocation = t.Location;
 	.)
 	(
 		/* 10.9.3  */
@@ -3236,20 +3309,29 @@ EmbeddedStatement<out Statement statement>
 	(.
 		Expression val = null;
 		AssignmentOperatorType op;
+		Location startLoc = la.Location;
 		
 		bool mustBeAssignment = la.kind == Tokens.Plus  || la.kind == Tokens.Minus ||
 		                        la.kind == Tokens.Not   || la.kind == Tokens.Times;
 	.)
 	SimpleExpr<out expr>
 		(
-		AssignmentOperator<out op> Expr<out val>	(. expr = new AssignmentExpression(expr, op, val); .)
+		AssignmentOperator<out op> Expr<out val>
+		(.
+			expr = new AssignmentExpression(expr, op, val);
+			expr.StartLocation = startLoc;
+			expr.EndLocation = t.EndLocation;
+		.)
 		| (. if (mustBeAssignment) Error("error in assignment."); .)
 		)
 		(.
 			// a field reference expression that stands alone is a
 			// invocation expression without parantheses and arguments
 			if(expr is MemberReferenceExpression || expr is IdentifierExpression) {
+				Location endLocation = expr.EndLocation;
 				expr = new InvocationExpression(expr);
+				expr.StartLocation = startLoc;
+				expr.EndLocation = endLocation;
 			}
 			statement = new ExpressionStatement(expr);
 		.)
@@ -3272,16 +3354,23 @@ EmbeddedStatement<out Statement statement>
 		)
 		"End" "Using"
 	| LocalDeclarationStatement<out statement>
+)
+(.
+	if (statement != null) {
+		statement.StartLocation = startLocation;
+		statement.EndLocation = t.EndLocation;
+	}
+.)
 .
 
 SingleLineStatementList<List<Statement> list>
 (. Statement embeddedStatement = null; .)
 =
-	( "End" (. embeddedStatement = new EndStatement(); .)
+	( "End" (. embeddedStatement = new EndStatement() { StartLocation = t.Location, EndLocation = t.EndLocation }; .)
 	| EmbeddedStatement<out embeddedStatement> )
 	(. if (embeddedStatement != null) list.Add(embeddedStatement); .)
 	{	":" { ":" }
-		( "End" (. embeddedStatement = new EndStatement(); .)
+		( "End" (. embeddedStatement = new EndStatement() { StartLocation = t.Location, EndLocation = t.EndLocation }; .)
 		| EmbeddedStatement<out embeddedStatement> )
 		(. if (embeddedStatement != null) list.Add(embeddedStatement); .)
 	}
@@ -3311,6 +3400,7 @@ LoopControlVariable<out TypeReference type, out string name>
 OnErrorStatement<out OnErrorStatement stmt>
 	(.
 		stmt = null;
+		Location startLocation = la.Location;
 		GotoStatement goToStatement = null;
 	.)
 	=
@@ -3343,19 +3433,26 @@ OnErrorStatement<out OnErrorStatement stmt>
 			stmt = new OnErrorStatement(new ResumeStatement(true));
 		.)
 	)
+	(.
+		if (stmt != null) {
+			stmt.StartLocation = startLocation;
+			stmt.EndLocation = t.EndLocation;
+		}
+	.)
 	.
 
 /* 10.11 */
 GotoStatement<out GotoStatement goToStatement>
-	(.
-		string label = String.Empty;
-	.)
+	(. string label = String.Empty; Location startLocation = la.Location; .)
 	=
 	"GoTo" LabelName<out label>
 	(.
-		goToStatement = new GotoStatement(label);
+		goToStatement = new GotoStatement(label) {
+			StartLocation = startLocation,
+			EndLocation = t.EndLocation
+		};
 	.)
-	.
+.
 
 /* 10.1 */
 LabelName<out string name>
@@ -3374,11 +3471,15 @@ ReDimClause<out Expression expr>
 .
 
 ReDimClauseInternal<ref Expression expr>
-(. List<Expression> arguments; bool canBeNormal; bool canBeRedim; string name; .)
+(. List<Expression> arguments; bool canBeNormal; bool canBeRedim; string name; Location startLocation = la.Location; .)
 =
-	{	"." IdentifierOrKeyword<out name> (. expr = new MemberReferenceExpression(expr, name); .)
+	{ "." IdentifierOrKeyword<out name> (. expr = new MemberReferenceExpression(expr, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; .)
 	|  IF (la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of)
 		InvocationExpression<ref expr>
+		(.
+			expr.StartLocation = startLocation;
+			expr.EndLocation = t.EndLocation;
+		.)
 	}
 	"("
 	NormalOrReDimArgumentList<out arguments, out canBeNormal, out canBeRedim>

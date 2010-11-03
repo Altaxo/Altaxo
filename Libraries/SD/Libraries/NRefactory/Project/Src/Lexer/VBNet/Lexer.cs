@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Siegfried Pammer" email="siegfriedpammer@gmail.com" />
-//     <version>$Revision: 6245 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -64,6 +60,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 						return new Token(Tokens.EOF, Col, Line, string.Empty);
 					char ch = (char)nextChar;
 					#region XML mode
+					CheckXMLState(startLocation);
 					if (inXmlMode && xmlModeStack.Peek().level <= 0 && !xmlModeStack.Peek().isDocumentStart && !xmlModeStack.Peek().inXmlTag) {
 						XmlModeInfo info = xmlModeStack.Peek();
 						int peek = nextChar;
@@ -195,7 +192,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 								}
 							}
 							if (!lineEnd) {
-								errors.Error(Line, Col, String.Format("Return expected"));
+								errors.Error(Line, Col, String.Format("NewLine expected"));
 							}
 							lineEnd = oldLineEnd;
 							continue;
@@ -363,6 +360,12 @@ namespace ICSharpCode.NRefactory.Parser.VB
 				}
 			}
 		}
+
+		void CheckXMLState(Location startLocation)
+		{
+			if (inXmlMode && !xmlModeStack.Any())
+				throw new InvalidOperationException("invalid XML stack state at " + startLocation);
+		}
 		
 		Token prevToken;
 		
@@ -376,7 +379,8 @@ namespace ICSharpCode.NRefactory.Parser.VB
 				if (SkipEOL(prevToken.kind, t.next.kind)) {
 					t = t.next;
 				}
-			}
+			} else
+				encounteredLineContinuation = false;
 			// inform EF only once we're sure it's really a token
 			// this means we inform it about EOL tokens "1 token too late", but that's not a problem because
 			// XML literals cannot start immediately after an EOL token
@@ -432,7 +436,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			
 			// 6th rule
 			// after a greater-than (>) in a non-file-level attribute context
-			if (prevTokenKind == Tokens.GreaterThan && ef.InContext(Context.Attribute))
+			if (ef.WasNormalAttribute && prevTokenKind == Tokens.GreaterThan)
 				return true;
 			
 			// 7th rule
@@ -440,9 +444,16 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			var queryOperators = new int[] { Tokens.From, Tokens.Aggregate, Tokens.Select, Tokens.Distinct,
 				Tokens.Where, Tokens.Order, Tokens.By, Tokens.Ascending, Tokens.Descending, Tokens.Take,
 				Tokens.Skip, Tokens.Let, Tokens.Group, Tokens.Into, Tokens.On, Tokens.While, Tokens.Join };
-			if ((queryOperators.Contains(prevTokenKind) || queryOperators.Contains(nextTokenKind))
-			    && ef.InContext(Context.Query))
-				return true;
+			if (ef.InContext(Context.Query)) {
+				// Ascending, Descending, Distinct are special
+				// fixes http://community.sharpdevelop.net/forums/p/12068/32893.aspx#32893
+				var specialQueryOperators = new int[] { Tokens.Ascending, Tokens.Descending, Tokens.Distinct };
+				if (specialQueryOperators.Contains(prevTokenKind) && !queryOperators.Contains(nextTokenKind))
+					return false;
+				
+				if ((queryOperators.Contains(prevTokenKind) || queryOperators.Contains(nextTokenKind)))
+					return true;
+			}
 			
 			// 8th rule
 			// after binary operators (+, -, /, *, etc.) in an expression context
@@ -1134,7 +1145,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			}
 		}
 		
-		public void SetInitialContext(SnippetType type)
+		public override void SetInitialContext(SnippetType type)
 		{
 			ef.SetContext(type);
 		}

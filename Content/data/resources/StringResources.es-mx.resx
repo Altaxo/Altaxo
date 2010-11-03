@@ -232,6 +232,9 @@ Descargue un complemento de Internet, luego haga clic en "Instalar AddIn" y sele
   <data name="AddIns.ClassDiagram.ShowClassDiagram" xml:space="preserve">
     <value>Mostrar Diagrama de Clase</value>
   </data>
+  <data name="AddIns.Git.TortoiseGitRequired" xml:space="preserve">
+    <value>TortoiseGit necesita ser instalado para ejecutar esta acción.</value>
+  </data>
   <data name="AddIns.HelpViewer.ContentsPadTitle" xml:space="preserve">
     <value>Contenidos</value>
   </data>
@@ -370,12 +373,6 @@ Necesita instalar el .NET Framework SDK para obtener el sistema de ayuda.</value
   </data>
   <data name="AddIns.HtmlHelp2.LookForSimilarWords" xml:space="preserve">
     <value>Buscar palabras similares</value>
-  </data>
-  <data name="AddIns.HtmlHelp2.MoveDown" xml:space="preserve">
-    <value>Mover hacia abajo</value>
-  </data>
-  <data name="AddIns.HtmlHelp2.MoveUp" xml:space="preserve">
-    <value>Mover hacia arriba</value>
   </data>
   <data name="AddIns.HtmlHelp2.MultiTopic" xml:space="preserve">
     <value>tópicos</value>
@@ -523,6 +520,9 @@ Necesita instalar el .NET Framework SDK para obtener el sistema de ayuda.</value
   </data>
   <data name="AddIns.Profiler.Options.General.DataCollection.SizeOfStorageDescription" xml:space="preserve">
     <value>Tamaño de archivo de almacenamiento temporal:</value>
+  </data>
+  <data name="AddIns.Profiler.Options.General.DataCollection.TrackEvents" xml:space="preserve">
+    <value>Rastrear eventos</value>
   </data>
   <data name="AddIns.Profiler.Options.General.Title" xml:space="preserve">
     <value>General</value>
@@ -699,6 +699,9 @@ Opcionalmente puede especificar un directorio de trabajo y argumentos de línea 
   </data>
   <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.AddOperatorOverloads" xml:space="preserve">
     <value>Agregar sobrecargas de operador</value>
+  </data>
+  <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.AddOtherMethod" xml:space="preserve">
+    <value>Agregar override de ${otherMethod}</value>
   </data>
   <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.SurroundWithRegion" xml:space="preserve">
     <value>Rodear con #region</value>
@@ -951,6 +954,9 @@ SharpDevelop puede obtener esta información y enviarla automáticamente.
   </data>
   <data name="AddIns.XamlBinding.Options.UseExtensionCompletion" xml:space="preserve">
     <value>Usar completado de extensión de marcado</value>
+  </data>
+  <data name="AddIns.XamlBinding.Options.UseHighlighting" xml:space="preserve">
+    <value>Usar resaltado de sintaxis avanzado</value>
   </data>
   <data name="AvalonEdit.FileEncoding.EncodingCausesDataLoss" xml:space="preserve">
     <value>El archivo no puede ser guardado con la actual codificación ${encoding} sin perder datos.</value>
@@ -2222,12 +2228,6 @@ Adicionalmente, se le puede asignar a una extensión un conjunto de reglas defin
   <data name="Dialog.Options.CombineOptions.Startup.EntryColumnHeader" xml:space="preserve">
     <value>Entrada</value>
   </data>
-  <data name="Dialog.Options.CombineOptions.Startup.MoveDownButton" xml:space="preserve">
-    <value>Mover abajo</value>
-  </data>
-  <data name="Dialog.Options.CombineOptions.Startup.MoveUpButton" xml:space="preserve">
-    <value>Mover arriba</value>
-  </data>
   <data name="Dialog.Options.CombineOptions.Startup.MultipleStartupRadioButton" xml:space="preserve">
     <value>Proyecto de inicio &amp;múltiple</value>
   </data>
@@ -2239,12 +2239,6 @@ Adicionalmente, se le puede asignar a una extensión un conjunto de reglas defin
   </data>
   <data name="Dialog.Options.ExternalTool.CommandLabel" xml:space="preserve">
     <value>&amp;Comando</value>
-  </data>
-  <data name="Dialog.Options.ExternalTool.MoveDownButton" xml:space="preserve">
-    <value>Mover &amp;Abajo</value>
-  </data>
-  <data name="Dialog.Options.ExternalTool.MoveUpButton" xml:space="preserve">
-    <value>Mover A&amp;rriba</value>
   </data>
   <data name="Dialog.Options.ExternalTool.PromptForArgsCheckBox" xml:space="preserve">
     <value>&amp;Solicitar argumentos</value>
@@ -3265,18 +3259,6 @@ También puede elegir guardar la opción en el archivo .user en lugar de en el a
   <data name="Dialog.SelectReferenceDialog.TypeHeader" xml:space="preserve">
     <value>Tipo</value>
   </data>
-  <data name="Dialog.TipOfTheDay.button1Text" xml:space="preserve">
-    <value>&amp;Siguiente</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.checkBox1Text" xml:space="preserve">
-    <value>Mostrar sugerencias al inicio</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.DialogName" xml:space="preserve">
-    <value>Sugerencia del día</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.DidYouKnowText" xml:space="preserve">
-    <value>Sabia que...</value>
-  </data>
   <data name="Dialog.ViewGPL.DialogName" xml:space="preserve">
     <value>GNU Licencia Pública General</value>
   </data>
@@ -3436,6 +3418,12 @@ También puede elegir guardar la opción en el archivo .user en lugar de en el a
   <data name="Global.Location.wholeproject" xml:space="preserve">
     <value>todo el proyecto</value>
   </data>
+  <data name="Global.MoveDown" xml:space="preserve">
+    <value>Mover &amp;Abajo</value>
+  </data>
+  <data name="Global.MoveUp" xml:space="preserve">
+    <value>Mover A&amp;rriba</value>
+  </data>
   <data name="Global.NA" xml:space="preserve">
     <value>N/A</value>
   </data>
@@ -3485,7 +3473,7 @@ También puede elegir guardar la opción en el archivo .user en lugar de en el a
     <value>Reintentar</value>
   </data>
   <data name="Global.SelectAllButtonText" xml:space="preserve">
-    <value>Seleccionar Todo</value>
+    <value>Seleccion&amp;ar Todo</value>
   </data>
   <data name="Global.SmallIconToolTip" xml:space="preserve">
     <value>Iconos pequeños</value>
@@ -4051,8 +4039,23 @@ Por favor configure la ubicación del archivo ejecutable de NAnt en las opciones
   <data name="ICSharpCode.PythonBinding.PythonProjectFiles" xml:space="preserve">
     <value>Archivos de Proyecto Python</value>
   </data>
+  <data name="ICSharpCode.PythonBinding.SendLineToPythonConsole" xml:space="preserve">
+    <value>Enviar Línea a la Consola Python</value>
+  </data>
+  <data name="ICSharpCode.PythonBinding.SendSelectedTextToPythonConsole" xml:space="preserve">
+    <value>Enviar a la Consola Python</value>
+  </data>
   <data name="ICSharpCode.PythonBinding.UnknownTypeName" xml:space="preserve">
     <value>No se pudo encontrar el tipo '{0}'.¿Falta una referencia a un ensamblado?</value>
+  </data>
+  <data name="ICSharpCode.Refactoring.NoClassOrOverridableSymbolUnderCursorError" xml:space="preserve">
+    <value>El elemento seleccionado no es una clase o miembro sobrescribible, así que no se puede mostrar ningún símbolo derivado.</value>
+  </data>
+  <data name="ICSharpCode.RubyBinding.SendLineToRubyConsole" xml:space="preserve">
+    <value>Enviar Línea a la Consola Ruby</value>
+  </data>
+  <data name="ICSharpCode.RubyBinding.SendSelectedTextToRubyConsole" xml:space="preserve">
+    <value>Enviar a la Consola Ruby</value>
   </data>
   <data name="ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText" xml:space="preserve">
     <value>No se puede cargar el archivo ${FileNameWithoutPath} bajo ${Path}. Revise los permisos del archivo y la existencia del archivo.</value>
@@ -4254,6 +4257,9 @@ Por favor configure la ubicación del archivo ejecutable de NAnt en las opciones
   </data>
   <data name="ICSharpCode.SharpDevelop.Commands.SaveFileAs.FileSavedCaption" xml:space="preserve">
     <value>Archivo Guardado</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Commands.TabStrip.NavigateToFileInProjectBrowser" xml:space="preserve">
+    <value>Navegar al archivo en el explorador de proyectos.</value>
   </data>
   <data name="ICSharpCode.SharpDevelop.Commands.VBConvertProjectToCSharp" xml:space="preserve">
     <value>De VB.NET a C#</value>
@@ -4786,6 +4792,34 @@ Utilice solamente letras, dígitos, espacio, '.' ó '_'.</value>
   <data name="ICSharpCode.SharpDevelop.LoadingFile" xml:space="preserve">
     <value>Cargando ${Filename}...</value>
   </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeCompilerVersionLabel" xml:space="preserve">
+    <value>Convertir &amp;proyectos seleccionados a:</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeTargetFrameworkLabel" xml:space="preserve">
+    <value>Cambiar framework de &amp;destino:</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeVersionGroupBoxHeader" xml:space="preserve">
+    <value>Cambiar versión de proyectos seleccionados</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.CompilerVersion" xml:space="preserve">
+    <value>Versión del Compilador</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ConvertButton" xml:space="preserve">
+    <value>&amp;Convertir</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.DoNotChange" xml:space="preserve">
+    <value>&lt;no cambiar&gt;</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.TargetFramework" xml:space="preserve">
+    <value>Framework de Destino</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.Title" xml:space="preserve">
+    <value>Actualización de Proyecto</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.UpgradeFromPreviousVersionDescription" xml:space="preserve">
+    <value>Esta solución fue creada usando una versión previa de SharpDevelop.
+Quizás quiera actualizarlo para poder usar nuevas características del lenguaje o del framework.</value>
+  </data>
   <data name="ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError" xml:space="preserve">
     <value>El ambiente actual no se encontró.
 Vaya a 'Opciones-&gt;Estilo Visual' y cambie el lenguaje del ambiente.</value>
@@ -4840,6 +4874,9 @@ Vaya a 'Opciones-&gt;Estilo Visual' y cambie el lenguaje del ambiente.</value>
   </data>
   <data name="ICSharpCode.UnitTesting.TestMenu" xml:space="preserve">
     <value>&amp;Pruebas</value>
+  </data>
+  <data name="ICSharpCode.UnitTesting.TestRunnerNotFoundMessageFormat" xml:space="preserve">
+    <value>No se pudieron ejecutar los test de unidad. El archivo '{0}' no se pudo encontrar.</value>
   </data>
   <data name="ICSharpCode.WixBinding.AddCompilerExtensionsDialog.Title" xml:space="preserve">
     <value>Agregar Extensiones</value>
@@ -5069,6 +5106,36 @@ Microsoft.Tools.WindowsInstallerXml.Extensions.NetFxCompiler, WixNetFxExtension<
   </data>
   <data name="ICSharpCode.WixBinding.WixVisualStudioExtensionTitle" xml:space="preserve">
     <value>Extensión Visual Studio</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Copy" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Cut" xml:space="preserve">
+    <value>Cortar</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Outline" xml:space="preserve">
+    <value>Subrayar</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Paste" xml:space="preserve">
+    <value>Pegar</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Properties" xml:space="preserve">
+    <value>Propiedades</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Redo" xml:space="preserve">
+    <value>Rehacer</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Remove" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Tools" xml:space="preserve">
+    <value>Herramientas</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Undo" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.ViewXAML" xml:space="preserve">
+    <value>Ver XAML</value>
   </data>
   <data name="ICSharpCode.XmlEditor.AddAttributeDialog.CustomAttributeLabel" xml:space="preserve">
     <value>Personalizado:</value>
@@ -5889,6 +5956,9 @@ Microsoft.Tools.WindowsInstallerXml.Extensions.NetFxCompiler, WixNetFxExtension<
   <data name="ProjectComponent.ContextMenu.Clean" xml:space="preserve">
     <value>Li&amp;mpiar</value>
   </data>
+  <data name="ProjectComponent.ContextMenu.CollapseAll" xml:space="preserve">
+    <value>Colapsar todo.</value>
+  </data>
   <data name="ProjectComponent.ContextMenu.Delete.Question" xml:space="preserve">
     <value>¿Eliminar '${FileName}' permanentemente?</value>
   </data>
@@ -6270,6 +6340,9 @@ Microsoft.Tools.WindowsInstallerXml.Extensions.NetFxCompiler, WixNetFxExtension<
   <data name="SharpDevelop.HexEditor.StreamAdded" xml:space="preserve">
     <value>Datos agregados!</value>
   </data>
+  <data name="SharpDevelop.Refactoring.BaseClassesOf" xml:space="preserve">
+    <value>Buscar clases base de ${Name}</value>
+  </data>
   <data name="SharpDevelop.Refactoring.CannotPerformOperationBecauseOfSyntaxErrors" xml:space="preserve">
     <value>La operación no puede ser realizada debido a que su código fuente contiene errores:</value>
   </data>
@@ -6309,8 +6382,14 @@ Microsoft.Tools.WindowsInstallerXml.Extensions.NetFxCompiler, WixNetFxExtension<
   <data name="SharpDevelop.Refactoring.ExtractInterfaceCommand" xml:space="preserve">
     <value>Extraer Interfase</value>
   </data>
+  <data name="SharpDevelop.Refactoring.FindBaseClassesCommand" xml:space="preserve">
+    <value>Buscar clases base</value>
+  </data>
   <data name="SharpDevelop.Refactoring.FindDerivedClassesCommand" xml:space="preserve">
     <value>Buscar clases &amp;derivadas</value>
+  </data>
+  <data name="SharpDevelop.Refactoring.FindDerivedClassesOrOverridesCommand" xml:space="preserve">
+    <value>Buscar símbolos derivados</value>
   </data>
   <data name="SharpDevelop.Refactoring.FindingReferences" xml:space="preserve">
     <value>Buscando referencias...</value>
@@ -6765,18 +6844,6 @@ Los archivos de recursos han sido renombrados/movidos convenientemente.</value>
   <data name="SideBarComponent.ContextMenu.DeleteTabItemQuestion" xml:space="preserve">
     <value>¿Realmente desea borrar el elemento "${TabItem}"?</value>
   </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabDown" xml:space="preserve">
-    <value>Bajar &amp;Pestaña</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabItemDown" xml:space="preserve">
-    <value>Bajar Elemento</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabItemUp" xml:space="preserve">
-    <value>Subir Elemento</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabUp" xml:space="preserve">
-    <value>S&amp;ubir Pestaña</value>
-  </data>
   <data name="SideBarComponent.ContextMenu.RenameTab" xml:space="preserve">
     <value>&amp;Renombrar Pestaña</value>
   </data>
@@ -7211,6 +7278,12 @@ Los archivos de recursos han sido renombrados/movidos convenientemente.</value>
   </data>
   <data name="Templates.Project.SharpDevelopMacro.Name" xml:space="preserve">
     <value>Entrada para el menú Herramientas</value>
+  </data>
+  <data name="Templates.Project.SilverlightApplication.Description" xml:space="preserve">
+    <value>Un proyecto que crea una aplicación SilverLight.</value>
+  </data>
+  <data name="Templates.Project.SilverlightApplication.Name" xml:space="preserve">
+    <value>Aplicación SilverLight.</value>
   </data>
   <data name="Templates.Project.SysTrayIcon.Description" xml:space="preserve">
     <value>Un proyecto que crea una aplicación con un icono en la bandeja del sistema.</value>

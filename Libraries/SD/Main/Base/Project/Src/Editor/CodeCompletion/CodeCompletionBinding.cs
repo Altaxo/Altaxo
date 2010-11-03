@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6329 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -175,7 +171,7 @@ namespace ICSharpCode.SharpDevelop.Editor.CodeCompletion
 				case '(':
 					if (enableMethodInsight && CodeCompletionOptions.InsightEnabled) {
 						IInsightWindow insightWindow = editor.ShowInsightWindow(new MethodInsightProvider().ProvideInsight(editor));
-						if (insightWindow != null) {
+						if (insightWindow != null && insightHandler != null) {
 							insightHandler.InitializeOpenedInsightWindow(editor, insightWindow);
 							insightHandler.HighlightParameter(insightWindow, -1); // disable highlighting
 						}
@@ -185,7 +181,7 @@ namespace ICSharpCode.SharpDevelop.Editor.CodeCompletion
 				case '[':
 					if (enableIndexerInsight && CodeCompletionOptions.InsightEnabled) {
 						IInsightWindow insightWindow = editor.ShowInsightWindow(new IndexerInsightProvider().ProvideInsight(editor));
-						if (insightWindow != null)
+						if (insightWindow != null && insightHandler != null)
 							insightHandler.InitializeOpenedInsightWindow(editor, insightWindow);
 						return CodeCompletionKeyPressResult.Completed;
 					}

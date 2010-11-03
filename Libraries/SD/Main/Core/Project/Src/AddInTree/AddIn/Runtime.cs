@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5581 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -63,8 +59,6 @@ namespace ICSharpCode.Core
 		{
 			lock (lockObj) {
 				if (!isAssemblyLoaded) {
-					LoggingService.Info("Loading addin " + assembly);
-					
 					if (!this.IsActive)
 						throw new InvalidOperationException("Cannot load inactive AddIn runtime");
 					

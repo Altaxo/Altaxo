@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 5507 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -97,7 +93,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 							}
 						}
 						break;
-					default: 
+					default:
 						isAtLineBegin = false; // non-ws chars are handled here
 						ch = (char)nextChar;
 						if (Char.IsLetter(ch) || ch == '_' || ch == '\\') {
@@ -166,7 +162,9 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				}
 				
 				if (curPos < MAX_IDENTIFIER_LENGTH) {
-					identBuffer[curPos++] = ch;
+					if (ch != '\0') // only add character, if it is valid
+									 // prevents \ from being added
+						identBuffer[curPos++] = ch;
 				} else {
 					errors.Error(Line, Col, String.Format("Identifier too long"));
 					while (IsIdentifierPart(ReaderPeek())) {

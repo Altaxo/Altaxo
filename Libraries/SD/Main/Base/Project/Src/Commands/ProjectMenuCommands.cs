@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5506 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Diagnostics;
@@ -49,9 +45,25 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	
 	public class GenerateProjectDocumentation : AbstractMenuCommand
 	{
+		static string[] registryKeys = new string[] {
+			@"HKEY_CLASSES_ROOT\Sandcastle Help File Builder Project\shell\open\command",
+			@"HKEY_CLASSES_ROOT\SandcastleBuilder.shfbproj\shell\open\command"
+		};
+		
 		static string FindSHFB()
 		{
-			string command = Registry.GetValue(@"HKEY_CLASSES_ROOT\Sandcastle Help File Builder Project\shell\open\command", null, string.Empty) as string;
+			foreach (string registryKey in registryKeys) {
+				string fileName = FindSHFB(registryKey);
+				if (fileName != null) {
+					return fileName;
+				}
+			}
+			return null;
+		}
+		
+		static string FindSHFB(string registryKey)
+		{
+			string command = Registry.GetValue(registryKey, null, string.Empty) as string;
 			return ExtractExecutableFromCommand(command);
 		}
 		

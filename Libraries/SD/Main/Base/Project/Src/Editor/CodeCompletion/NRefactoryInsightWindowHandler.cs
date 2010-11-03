@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6028 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -282,6 +278,8 @@ namespace ICSharpCode.SharpDevelop.Editor.CodeCompletion
 		
 		public void HighlightParameter(IInsightWindow window, int index)
 		{
+			if (window == null)
+				return;
 			var item = window.SelectedItem as MethodInsightItem;
 			
 			if (item != null)

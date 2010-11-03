@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 5762 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.ComponentModel;
@@ -58,9 +54,16 @@ namespace ICSharpCode.AvalonEdit
 			
 			textArea.TextView.Services.AddService(typeof(TextEditor), this);
 			
-			this.Options = textArea.Options;
-			this.Document = new TextDocument();
+			SetCurrentValue(OptionsProperty, textArea.Options);
+			SetCurrentValue(DocumentProperty, new TextDocument());
 		}
+		
+		#if !DOTNET4
+		void SetCurrentValue(DependencyProperty property, object value)
+		{
+			SetValue(property, value);
+		}
+		#endif
 		#endregion
 		
 		/// <inheritdoc/>
@@ -352,6 +355,10 @@ namespace ICSharpCode.AvalonEdit
 		/// <summary>
 		/// Specifies whether the text editor uses word wrapping.
 		/// </summary>
+		/// <remarks>
+		/// Setting WordWrap=true has the same effect as setting HorizontalScrollBarVisibility=Disabled and will override the
+		/// HorizontalScrollBarVisibility setting.
+		/// </remarks>
 		public bool WordWrap {
 			get { return (bool)GetValue(WordWrapProperty); }
 			set { SetValue(WordWrapProperty, Boxes.Box(value)); }
@@ -431,7 +438,7 @@ namespace ICSharpCode.AvalonEdit
 			if (e.PropertyName == "IsOriginalFile") {
 				TextDocument document = this.Document;
 				if (document != null) {
-					this.IsModified = !document.UndoStack.IsOriginalFile;
+					SetCurrentValue(IsModifiedProperty, Boxes.Box(!document.UndoStack.IsOriginalFile));
 				}
 				return true;
 			} else {
@@ -991,6 +998,34 @@ namespace ICSharpCode.AvalonEdit
 		public event MouseEventHandler MouseHoverStopped {
 			add { AddHandler(MouseHoverStoppedEvent, value); }
 			remove { RemoveHandler(MouseHoverStoppedEvent, value); }
+		}
+		#endregion
+		
+		#region ScrollBarVisibility
+		/// <summary>
+		/// Dependency property for <see cref="HorizontalScrollBarVisibility"/>
+		/// </summary>
+		public static readonly DependencyProperty HorizontalScrollBarVisibilityProperty = ScrollViewer.HorizontalScrollBarVisibilityProperty.AddOwner(typeof(TextEditor), new FrameworkPropertyMetadata(ScrollBarVisibility.Visible));
+		
+		/// <summary>
+		/// Gets/Sets the horizontal scroll bar visibility.
+		/// </summary>
+		public ScrollBarVisibility HorizontalScrollBarVisibility {
+			get { return (ScrollBarVisibility)GetValue(HorizontalScrollBarVisibilityProperty); }
+			set { SetValue(HorizontalScrollBarVisibilityProperty, value); }
+		}
+		
+		/// <summary>
+		/// Dependency property for <see cref="VerticalScrollBarVisibility"/>
+		/// </summary>
+		public static readonly DependencyProperty VerticalScrollBarVisibilityProperty = ScrollViewer.VerticalScrollBarVisibilityProperty.AddOwner(typeof(TextEditor), new FrameworkPropertyMetadata(ScrollBarVisibility.Visible));
+		
+		/// <summary>
+		/// Gets/Sets the vertical scroll bar visibility.
+		/// </summary>
+		public ScrollBarVisibility VerticalScrollBarVisibility {
+			get { return (ScrollBarVisibility)GetValue(VerticalScrollBarVisibilityProperty); }
+			set { SetValue(VerticalScrollBarVisibilityProperty, value); }
 		}
 		#endregion
 		

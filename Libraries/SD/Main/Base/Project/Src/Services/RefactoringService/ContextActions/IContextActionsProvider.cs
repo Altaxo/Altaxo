@@ -1,9 +1,6 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Martin Konicek" email="martin.konicek@gmail.com"/>
-//     <version>$Revision: $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System;
 using System.Collections.Generic;
 using ICSharpCode.SharpDevelop.Editor;
@@ -19,6 +16,11 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		/// <summary>
 		/// Gets actions available for current line of the editor.
 		/// </summary>
-		IEnumerable<IContextAction> GetAvailableActions(EditorContext editorAST);
+		IEnumerable<IContextAction> GetAvailableActions(EditorContext context);
+		
+		/// <summary>
+		/// Is this provider enabled by user?
+		/// </summary>
+		bool IsVisible { get; set; }
 	}
 }

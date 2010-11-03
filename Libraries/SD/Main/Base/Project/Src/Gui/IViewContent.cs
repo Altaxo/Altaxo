@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6319 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -141,6 +137,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// Gets if the view content is view-only (cannot be saved at all).
 		/// </summary>
 		bool IsViewOnly { get; }
+		
+		/// <summary>
+		/// Gets whether this view content should be closed when the solution is closed.
+		/// </summary>
+		bool CloseWithSolution { get; }
 		
 		#region Secondary view content support
 		/// <summary>

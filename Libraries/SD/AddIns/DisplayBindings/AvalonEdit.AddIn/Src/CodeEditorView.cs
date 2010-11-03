@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6347 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -17,17 +13,19 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
-
 using ICSharpCode.AvalonEdit.AddIn.Options;
 using ICSharpCode.AvalonEdit.AddIn.Snippets;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.NRefactory;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Editor.AvalonEdit;
 using ICSharpCode.SharpDevelop.Editor.Commands;
+using ICSharpCode.SharpDevelop.Refactoring;
+using Ast = ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.AvalonEdit.AddIn
 {
@@ -73,7 +71,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			if (e.PropertyName == "HighlightBrackets")
 				HighlightBrackets(null, e);
 			else if (e.PropertyName == "EnableFolding")
-				UpdateParseInformation();
+				UpdateParseInformationForFolding();
 			else if (e.PropertyName == "HighlightSymbol") {
 				if (this.caretReferencesRenderer != null)
 					this.caretReferencesRenderer.ClearHighlight();
@@ -254,7 +252,17 @@ namespace ICSharpCode.AvalonEdit.AddIn
 						toolTip.Closed += ToolTipClosed;
 					}
 					toolTip.PlacementTarget = this; // required for property inheritance
-					toolTip.Content = args.ContentToShow;
+					
+					if(args.ContentToShow is string) {
+						toolTip.Content = new TextBlock
+						{
+							Text = args.ContentToShow as string,
+							TextWrapping = TextWrapping.Wrap
+						};
+					}
+					else
+						toolTip.Content = args.ContentToShow;
+					
 					toolTip.IsOpen = true;
 					e.Handled = true;
 				}
@@ -359,15 +367,58 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		
 		void TextViewMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			// close existing popup immediately on text editor mouse down
+			// close existing debugger popup immediately on text editor mouse down
 			TryCloseExistingPopup(false);
+			
 			if (options.CtrlClickGoToDefinition && e.ChangedButton == MouseButton.Left && Keyboard.Modifiers == ModifierKeys.Control) {
+				// Ctrl+Click Go to definition
 				var position = GetPositionFromPoint(e.GetPosition(this));
 				if (position == null)
 					return;
 				Core.AnalyticsMonitorService.TrackFeature(typeof(GoToDefinition).FullName, "Ctrl+Click");
 				this.GotoDefinitionCommand.Run(this.Adapter, this.Document.GetOffset(position.Value));
 				e.Handled = true;
+			}
+		}
+		#endregion
+		
+		#region Expand selection
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			base.OnKeyUp(e);
+			if (e.Handled) return;
+			if (e.Key == Key.W && Keyboard.Modifiers.HasFlag(ModifierKeys.Control)) {
+				// Select AST Node
+				var editorLang = EditorContext.GetEditorLanguage(this.Adapter); if (editorLang == null) return;
+				var parser = ParserFactory.CreateParser(editorLang.Value, new StringReader(this.Text));
+				parser.ParseMethodBodies = true;
+				parser.Parse();
+				var parsedCU = parser.CompilationUnit; if (parsedCU == null) return;
+				//var caretLocation = new Location(this.Adapter.Caret.Column, this.Adapter.Caret.Line);
+				var selectionStart = this.Adapter.Document.OffsetToPosition(this.SelectionStart);
+				var selectionEnd = this.Adapter.Document.OffsetToPosition(this.SelectionStart + this.SelectionLength);
+				foreach (var node in parsedCU.Children) {
+					// fix StartLocation / EndLocation
+					node.AcceptVisitor(new ICSharpCode.NRefactory.Visitors.SetRegionInclusionVisitor(), null);
+				}
+				Ast.INode currentNode = parsedCU.Children.Select(
+					n => EditorContext.FindInnermostNodeContainingSelection(n, selectionStart, selectionEnd)).Where(n => n != null).FirstOrDefault();
+				if (currentNode == null) return;
+				
+				if (currentNode.StartLocation == selectionStart && currentNode.EndLocation == selectionEnd) {
+					// if whole node already selected, expand selection to parent
+					currentNode = currentNode.Parent;
+					if (currentNode == null)
+						return;
+				}
+				int startOffset, endOffset;
+				try {
+					startOffset = this.Adapter.Document.PositionToOffset(currentNode.StartLocation.Line, currentNode.StartLocation.Column);
+					endOffset = this.Adapter.Document.PositionToOffset(currentNode.EndLocation.Line, currentNode.EndLocation.Column);
+				} catch(ArgumentOutOfRangeException) {
+					return;
+				}
+				this.Select(startOffset, endOffset - startOffset);
 			}
 		}
 		#endregion
@@ -383,14 +434,26 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		}
 		
 		#region UpdateParseInformation - Folding
-		void UpdateParseInformation()
+		void UpdateParseInformationForFolding()
 		{
-			UpdateParseInformation(ParserService.GetExistingParseInformation(this.Adapter.FileName));
+			UpdateParseInformationForFolding(ParserService.GetExistingParseInformation(this.Adapter.FileName));
 		}
 		
-		public void UpdateParseInformation(ParseInformation parseInfo)
+		bool disableParseInformationFolding;
+		
+		public bool DisableParseInformationFolding {
+			get { return disableParseInformationFolding; }
+			set {
+				if (disableParseInformationFolding != value) {
+					disableParseInformationFolding = value;
+					UpdateParseInformationForFolding();
+				}
+			}
+		}
+		
+		public void UpdateParseInformationForFolding(ParseInformation parseInfo)
 		{
-			if (!CodeEditorOptions.Instance.EnableFolding)
+			if (!CodeEditorOptions.Instance.EnableFolding || disableParseInformationFolding)
 				parseInfo = null;
 			
 			IServiceContainer container = this.Adapter.GetService(typeof(IServiceContainer)) as IServiceContainer;

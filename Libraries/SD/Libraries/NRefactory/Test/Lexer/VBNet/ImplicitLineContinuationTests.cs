@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Siegfried Pammer" email="siegfriedpammer@gmail.com" />
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.IO;
@@ -137,6 +133,83 @@ End Module";
 			            Tokens.End, Tokens.Sub, Tokens.EOL,
 			            Tokens.End, Tokens.Sub, Tokens.EOL,
 			            Tokens.End, Tokens.Module);
+		}
+		
+		/// <remarks>tests http://community.sharpdevelop.net/forums/p/12068/32893.aspx#32893</remarks>
+		[Test]
+		public void Bug_Thread12068()
+		{
+			string code = @"Class MainClass
+  Public Shared Sub Main()
+	Dim categoryNames = From p In AList  _
+           Select p.AFunction(1,2,3) _
+           Distinct
+  End Sub
+End Class";
+			
+			ILexer lexer = GenerateLexer(new StringReader(code));
+			
+			CheckTokens(
+				lexer, Tokens.Class, Tokens.Identifier, Tokens.EOL,
+				Tokens.Public, Tokens.Shared, Tokens.Sub, Tokens.Identifier, Tokens.OpenParenthesis, Tokens.CloseParenthesis, Tokens.EOL,
+				Tokens.Dim, Tokens.Identifier, Tokens.Assign, Tokens.From, Tokens.Identifier, Tokens.In, Tokens.Identifier,
+				Tokens.Select, Tokens.Identifier, Tokens.Dot, Tokens.Identifier, Tokens.OpenParenthesis, Tokens.LiteralInteger,
+				Tokens.Comma, Tokens.LiteralInteger, Tokens.Comma, Tokens.LiteralInteger, Tokens.CloseParenthesis,
+				Tokens.Distinct, Tokens.EOL,
+				Tokens.End, Tokens.Sub, Tokens.EOL,
+				Tokens.End, Tokens.Class
+			);
+		}
+		
+		[Test]
+		public void LineContinuationAfterAttributes()
+		{
+			string code = @"<TestFixture>
+Public Class TestContinuation
+    <Test>
+    Public Sub TestMethod
+        Assert.Fail
+    End Sub
+    
+    <Test> _
+    Public Sub TestMethod2
+        Assert.Fail
+    End Sub
+End Class";
+			
+			ILexer lexer = GenerateLexer(new StringReader(code));
+			
+			CheckTokens(
+				lexer, Tokens.LessThan, Tokens.Identifier, Tokens.GreaterThan,
+				Tokens.Public, Tokens.Class, Tokens.Identifier, Tokens.EOL,
+				Tokens.LessThan, Tokens.Identifier, Tokens.GreaterThan,
+				Tokens.Public, Tokens.Sub, Tokens.Identifier, Tokens.EOL,
+				Tokens.Identifier, Tokens.Dot, Tokens.Identifier, Tokens.EOL,
+				Tokens.End, Tokens.Sub, Tokens.EOL,
+				Tokens.LessThan, Tokens.Identifier, Tokens.GreaterThan,
+				Tokens.Public, Tokens.Sub, Tokens.Identifier, Tokens.EOL,
+				Tokens.Identifier, Tokens.Dot, Tokens.Identifier, Tokens.EOL,
+				Tokens.End, Tokens.Sub, Tokens.EOL,
+				Tokens.End, Tokens.Class
+			);
+		}
+		
+		[Test]
+		public void NoILCAfterGlobalAttributes()
+		{
+			string code = "<Assembly: AssemblyTitle(\"My.UnitTests\")>" + Environment.NewLine +
+				"<Assembly: AssemblyDescription(\"\")>";
+			
+			ILexer lexer = GenerateLexer(new StringReader(code));
+			
+			CheckTokens(
+				lexer, Tokens.LessThan, Tokens.Assembly, Tokens.Colon,
+				Tokens.Identifier, Tokens.OpenParenthesis, Tokens.LiteralString,
+				Tokens.CloseParenthesis, Tokens.GreaterThan, Tokens.EOL,
+				Tokens.LessThan, Tokens.Assembly, Tokens.Colon,
+				Tokens.Identifier, Tokens.OpenParenthesis, Tokens.LiteralString,
+				Tokens.CloseParenthesis, Tokens.GreaterThan
+			);
 		}
 		
 		#region Helpers

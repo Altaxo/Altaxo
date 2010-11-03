@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5537 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Windows.Forms;
@@ -259,5 +255,22 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		#endregion
+		
+		static bool refreshViewEnqueued;
+		
+		public static void RefreshViewAsync()
+		{
+			WorkbenchSingleton.AssertMainThread();
+			if (refreshViewEnqueued)
+				return;
+			refreshViewEnqueued = true;
+			WorkbenchSingleton.SafeThreadAsyncCall(
+				delegate {
+					refreshViewEnqueued = false;
+					if (instance != null) {
+						instance.ProjectBrowserControl.RefreshView();
+					}
+				});
+		}
 	}
 }

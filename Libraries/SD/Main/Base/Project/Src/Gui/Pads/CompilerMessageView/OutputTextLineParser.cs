@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3984 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Text.RegularExpressions;
@@ -84,7 +80,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			FileLineReference result = null;
 			
 			if (lineText != null) {
-				Match match = Regex.Match(lineText, @"\sin\s(.*?):line\s(\d+)?\r?$", regexOptions);
+				Match match = Regex.Match(lineText, "\\sin\\s([^<>|\"]*?):line\\s(\\d+)?\\r?$", regexOptions);
 				while (match.Success) {
 					try	{
 						int line = Convert.ToInt32(match.Groups[2].Value);

@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6334 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System.Linq;
 using ICSharpCode.SharpDevelop.Editor.Search;
@@ -135,11 +131,10 @@ namespace ICSharpCode.SharpDevelop.Editor.Commands
 			}
 			ParserService.ParseCurrentViewContent();
 			c = c.ProjectContent.GetClass(c.FullyQualifiedName, c.TypeParameters.Count, c.ProjectContent.Language, GetClassOptions.LookForInnerClass);
-			c = GetCurrentPart(c);
-			return c;
+			return GetCurrentPart(c);
 		}
 		
-		static IClass GetCurrentPart(IClass possibleCompound)
+		public static IClass GetCurrentPart(IClass possibleCompound)
 		{
 			IViewContent viewContent = WorkbenchSingleton.Workbench.ActiveViewContent;
 			if (viewContent != null)

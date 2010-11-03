@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6298 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.ObjectModel;
@@ -142,6 +138,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			CustomizedHighlightingColor.ActiveColorsChanged += CustomizedHighlightingColor_ActiveColorsChanged;
 			ParserService.ParseInformationUpdated += ParserServiceParseInformationUpdated;
 			
+			this.FlowDirection = FlowDirection.LeftToRight; // code editing is always left-to-right
 			this.CommandBindings.Add(new CommandBinding(SharpDevelopRoutedCommands.SplitView, OnSplitView));
 			
 			textMarkerService = new TextMarkerService(this);
@@ -510,7 +507,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		
 		void ParserServiceParseInformationUpdated(object sender, ParseInformationEventArgs e)
 		{
-			if (e.FileName != this.FileName)
+			if (e.FileName != this.FileName || !e.IsPrimaryParseInfoForFile)
 				return;
 			this.VerifyAccess();
 			// When parse information is updated quickly in succession, only do a single update
@@ -549,9 +546,9 @@ namespace ICSharpCode.AvalonEdit.AddIn
 				}
 			}
 			iconBarManager.UpdateClassMemberBookmarks(parseInfo);
-			primaryTextEditor.UpdateParseInformation(parseInfo);
+			primaryTextEditor.UpdateParseInformationForFolding(parseInfo);
 			if (secondaryTextEditor != null)
-				secondaryTextEditor.UpdateParseInformation(parseInfo);
+				secondaryTextEditor.UpdateParseInformationForFolding(parseInfo);
 		}
 		
 		public void Dispose()

@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6334 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -34,10 +30,25 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 {
 	public class RefactoringMenuContext
 	{
-		public ITextEditor Editor;
-		public ExpressionResult ExpressionResult;
-		public ResolveResult ResolveResult;
-		public bool IsDefinition;
+		public readonly ITextEditor Editor;
+		public readonly ExpressionResult ExpressionResult;
+		public readonly ResolveResult ResolveResult;
+		public readonly bool IsDefinition;
+		/// <remarks>Can be null.</remarks>
+		public readonly IProjectContent ProjectContent;
+		public readonly ICompilationUnit CompilationUnit;
+		
+		public RefactoringMenuContext(ITextEditor editor, ExpressionResult expressionResult,
+		                              ResolveResult resolveResult, bool isDefinition,
+		                              IProjectContent projectContent, ICompilationUnit compilationUnit)
+		{
+			this.Editor = editor;
+			this.ExpressionResult = expressionResult;
+			this.ResolveResult = resolveResult;
+			this.IsDefinition = isDefinition;
+			this.ProjectContent = projectContent;
+			this.CompilationUnit = compilationUnit;
+		}
 	}
 	
 	public interface IRefactoringMenuItemFactory
@@ -79,13 +90,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		void AddTopLevelItems(List<object> resultItems, ITextEditor textEditor, ExpressionResult expressionResult, List<string> definitions, bool addAsSubmenu)
 		{
 			// Insert items at this position to get the outermost expression first, followed by the inner expressions (if any).
-			int insertIndex = resultItems.Count;	
+			int insertIndex = resultItems.Count;
 			ResolveResult rr = ResolveExpressionAtCaret(textEditor, expressionResult);
-			RefactoringMenuContext context = new RefactoringMenuContext {
-				Editor = textEditor,
-				ResolveResult = rr,
-				ExpressionResult = expressionResult
-			};
 			MenuItem item = null;
 			
 			if (rr is MethodGroupResolveResult) {
@@ -106,8 +112,12 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			} else if (rr is TypeResolveResult) {
 				item = MakeItem(definitions, ((TypeResolveResult)rr).ResolvedClass);
 			} else if (rr is LocalResolveResult) {
-				int caretLine = textEditor.Caret.Line;
-				context.IsDefinition = caretLine == ((LocalResolveResult)rr).VariableDefinitionRegion.BeginLine;
+				bool isDefinition = textEditor.Caret.Line == ((LocalResolveResult)rr).VariableDefinitionRegion.BeginLine;
+				ParseInformation pi = ParserService.GetParseInformation(textEditor.FileName);
+				IProjectContent pc = null; 
+				if (pi != null)
+					pc = pi.CompilationUnit.ProjectContent;
+				RefactoringMenuContext context = new RefactoringMenuContext(textEditor, expressionResult, rr, isDefinition, pc, pi.CompilationUnit);
 				item = MakeItem((LocalResolveResult)rr, context);
 				insertIndex = 0;	// Insert local variable menu item at the topmost position.
 			}
@@ -173,9 +183,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			Debug.Assert(local == context.ResolveResult);
 			MenuItem item = MakeItemWithGoToDefinition(local.VariableName,
-			                                 local.IsParameter ? ClassBrowserIconService.Parameter : ClassBrowserIconService.LocalVariable,
-			                                 local.CallingClass.CompilationUnit,
-			                                 context.IsDefinition ? DomRegion.Empty : local.VariableDefinitionRegion);
+			                                           local.IsParameter ? ClassBrowserIconService.Parameter : ClassBrowserIconService.LocalVariable,
+			                                           local.CallingClass.CompilationUnit,
+			                                           context.IsDefinition ? DomRegion.Empty : local.VariableDefinitionRegion);
 			string treePath = "/SharpDevelop/ViewContent/DefaultTextEditor/Refactoring/";
 			treePath += local.IsParameter ? "Parameter" : "LocalVariable";
 			if (context.IsDefinition) treePath += "Definition";
@@ -252,8 +262,3 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		}
 	}
 }
-
-
-
-
-

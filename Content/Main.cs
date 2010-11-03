@@ -77,19 +77,19 @@ namespace ICSharpCode.HelpConverter
 		
 		void ConvertHelpfile()
 		{
-#if NotModifiedForAltaxo
-			string basePath = Application.StartupPath + Path.DirectorySeparatorChar +
-			                  ".." + Path.DirectorySeparatorChar +
-			                  ".." + Path.DirectorySeparatorChar +
-			                  "doc" + Path.DirectorySeparatorChar +
-							  "help";
-#else
+#if ModifiedForAltaxo
 			string basePath = Path.GetDirectoryName(
 				System.Reflection.Assembly.GetExecutingAssembly().Location)
 				+ Path.DirectorySeparatorChar +
 				".." + Path.DirectorySeparatorChar +
 				"doc" + Path.DirectorySeparatorChar +
 				"help";
+#else
+			string basePath = Application.StartupPath + Path.DirectorySeparatorChar +
+			                  ".." + Path.DirectorySeparatorChar +
+			                  ".." + Path.DirectorySeparatorChar +
+			                  "doc" + Path.DirectorySeparatorChar +
+							  "help";
 #endif
 
 			if (!File.Exists(basePath + Path.DirectorySeparatorChar + @"HelpDescription.xml")) 

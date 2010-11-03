@@ -100,6 +100,7 @@
     <Compile Include="Parser\Expressions\StackAllocExpressionTests.cs" />
     <Compile Include="Parser\GlobalScope\UsingDeclarationTests.cs" />
     <Compile Include="Parser\GlobalScope\TypeDeclarationTests.cs" />
+    <Compile Include="Parser\LocationAssignmentCheckVisitor.cs" />
     <Compile Include="Parser\SnippetParserTests.cs" />
     <Compile Include="Parser\TypeLevel\ConstructorDeclarationTests.cs" />
     <Compile Include="Parser\TypeLevel\EventDeclarationTests.cs" />
@@ -155,9 +156,7 @@
     <Compile Include="Output\CodeDOM\CodeDOMParenthesizedExpressionTest.cs" />
     <Compile Include="Parser\Statements\YieldStatementTests.cs" />
     <Compile Include="Lexer\CSharp\NumberLexerTest.cs" />
-    <Compile Include="Lexer\VBNet\LiteralsTests.cs">
-      <DependentUpon>LexerTests.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Lexer\VBNet\LiteralsTests.cs" />
     <Compile Include="Parser\SkipMethodBodiesTest.cs" />
     <Compile Include="Parser\Expressions\AnonymousMethodTests.cs" />
     <Compile Include="Output\CodeDOM\InvocationExpressionTest.cs" />

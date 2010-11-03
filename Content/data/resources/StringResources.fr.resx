@@ -232,6 +232,9 @@ Téléchargez un AddIn depuis l'Internet, cliquez ensuite sur 'Installer un AddI
   <data name="AddIns.ClassDiagram.ShowClassDiagram" xml:space="preserve">
     <value>Afficher le diagramme des classes</value>
   </data>
+  <data name="AddIns.Git.TortoiseGitRequired" xml:space="preserve">
+    <value>TortoiseGit doit être installé pour exécuter cette action.</value>
+  </data>
   <data name="AddIns.HelpViewer.ContentsPadTitle" xml:space="preserve">
     <value>Contenus</value>
   </data>
@@ -369,12 +372,6 @@ Téléchargez un AddIn depuis l'Internet, cliquez ensuite sur 'Installer un AddI
   </data>
   <data name="AddIns.HtmlHelp2.LookForSimilarWords" xml:space="preserve">
     <value>Rechercher des mots similaires</value>
-  </data>
-  <data name="AddIns.HtmlHelp2.MoveDown" xml:space="preserve">
-    <value>Déplacer vers la bas</value>
-  </data>
-  <data name="AddIns.HtmlHelp2.MoveUp" xml:space="preserve">
-    <value>Déplacer vers le haut</value>
   </data>
   <data name="AddIns.HtmlHelp2.MultiTopic" xml:space="preserve">
     <value>Sujets</value>
@@ -522,6 +519,9 @@ Téléchargez un AddIn depuis l'Internet, cliquez ensuite sur 'Installer un AddI
   </data>
   <data name="AddIns.Profiler.Options.General.DataCollection.SizeOfStorageDescription" xml:space="preserve">
     <value>Taille du fichier de stockage temporaire:</value>
+  </data>
+  <data name="AddIns.Profiler.Options.General.DataCollection.TrackEvents" xml:space="preserve">
+    <value>Suivi d'événements</value>
   </data>
   <data name="AddIns.Profiler.Options.General.Title" xml:space="preserve">
     <value>Général</value>
@@ -697,6 +697,9 @@ En option, vous pouvez spécifer un répertoire de travail et des arguments en l
   </data>
   <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.AddOperatorOverloads" xml:space="preserve">
     <value>Ajouter des surcharges d'opérateur</value>
+  </data>
+  <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.AddOtherMethod" xml:space="preserve">
+    <value>Surcharger ${otherMethod}</value>
   </data>
   <data name="AddIns.SharpRefactoring.OverrideEqualsGetHashCodeMethods.SurroundWithRegion" xml:space="preserve">
     <value>Entourer par #region</value>
@@ -879,6 +882,9 @@ Sauvegardez ces fichiers avant de déclencher l'opération.</value>
   <data name="AddIns.UsageDataCollector.Title" xml:space="preserve">
     <value>Collecteur de données d'utilisation</value>
   </data>
+  <data name="AddIns.VBNetBinding.CodeCompletion.QuestionmarkEqualsItem.Description" xml:space="preserve">
+    <value>Laisser SharpDevelop deviner le type depuis l'initialisation.</value>
+  </data>
   <data name="AddIns.XamlBinding.Menu.EditGridColumnsAndRows" xml:space="preserve">
     <value>Editer colonnes et lignes de la grille</value>
   </data>
@@ -944,6 +950,9 @@ Sauvegardez ces fichiers avant de déclencher l'opération.</value>
   </data>
   <data name="AddIns.XamlBinding.Options.UseExtensionCompletion" xml:space="preserve">
     <value>Utiliser la complétion d'extension</value>
+  </data>
+  <data name="AddIns.XamlBinding.Options.UseHighlighting" xml:space="preserve">
+    <value>Utiliser le surlignage avancé</value>
   </data>
   <data name="AvalonEdit.FileEncoding.EncodingCausesDataLoss" xml:space="preserve">
     <value>Impossible de sauvegarder sans perte d'informations avec l'encodage ${encoding}</value>
@@ -2211,12 +2220,6 @@ Voulez-vous ajouter le nouveau fichier au projet ${CurrentProjectName}?</value>
   <data name="Dialog.Options.CombineOptions.Startup.EntryColumnHeader" xml:space="preserve">
     <value>Elément</value>
   </data>
-  <data name="Dialog.Options.CombineOptions.Startup.MoveDownButton" xml:space="preserve">
-    <value>Bas</value>
-  </data>
-  <data name="Dialog.Options.CombineOptions.Startup.MoveUpButton" xml:space="preserve">
-    <value>Haut</value>
-  </data>
   <data name="Dialog.Options.CombineOptions.Startup.MultipleStartupRadioButton" xml:space="preserve">
     <value>Projet lancements &amp;multiples</value>
   </data>
@@ -2228,12 +2231,6 @@ Voulez-vous ajouter le nouveau fichier au projet ${CurrentProjectName}?</value>
   </data>
   <data name="Dialog.Options.ExternalTool.CommandLabel" xml:space="preserve">
     <value>&amp;Commande</value>
-  </data>
-  <data name="Dialog.Options.ExternalTool.MoveDownButton" xml:space="preserve">
-    <value>&amp;Descendre</value>
-  </data>
-  <data name="Dialog.Options.ExternalTool.MoveUpButton" xml:space="preserve">
-    <value>Monter</value>
   </data>
   <data name="Dialog.Options.ExternalTool.PromptForArgsCheckBox" xml:space="preserve">
     <value>&amp;Demande d'Arguments</value>
@@ -3257,18 +3254,6 @@ Vous pouvez aussi choisir de stocker la configuration dans le fichier .user-file
   <data name="Dialog.SelectReferenceDialog.TypeHeader" xml:space="preserve">
     <value>Type</value>
   </data>
-  <data name="Dialog.TipOfTheDay.button1Text" xml:space="preserve">
-    <value>&amp;Suivant</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.checkBox1Text" xml:space="preserve">
-    <value>Afficher au démarrage</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.DialogName" xml:space="preserve">
-    <value>Conseil du jour</value>
-  </data>
-  <data name="Dialog.TipOfTheDay.DidYouKnowText" xml:space="preserve">
-    <value>Savez-vous que...</value>
-  </data>
   <data name="Dialog.ViewGPL.DialogName" xml:space="preserve">
     <value>GNU General Public License</value>
   </data>
@@ -3427,6 +3412,12 @@ Vous pouvez aussi choisir de stocker la configuration dans le fichier .user-file
   </data>
   <data name="Global.Location.wholeproject" xml:space="preserve">
     <value>projet complet</value>
+  </data>
+  <data name="Global.MoveDown" xml:space="preserve">
+    <value>&amp;Descendre</value>
+  </data>
+  <data name="Global.MoveUp" xml:space="preserve">
+    <value>Monter</value>
   </data>
   <data name="Global.NA" xml:space="preserve">
     <value>Non disponible</value>
@@ -4044,8 +4035,23 @@ Configurez le chemin vers NAnt dans les options de SharpDevelop.</value>
   <data name="ICSharpCode.PythonBinding.PythonProjectFiles" xml:space="preserve">
     <value>Projets Python</value>
   </data>
+  <data name="ICSharpCode.PythonBinding.SendLineToPythonConsole" xml:space="preserve">
+    <value>Envoyer cette ligne vers la console Python</value>
+  </data>
+  <data name="ICSharpCode.PythonBinding.SendSelectedTextToPythonConsole" xml:space="preserve">
+    <value>Envoyer vers la console Python</value>
+  </data>
   <data name="ICSharpCode.PythonBinding.UnknownTypeName" xml:space="preserve">
     <value>Impossible de trouver le type '{0}'. Manque-t-il uUne référence d'assembly ?</value>
+  </data>
+  <data name="ICSharpCode.Refactoring.NoClassOrOverridableSymbolUnderCursorError" xml:space="preserve">
+    <value>L'élément sélectionné n'est ni une classe ni un membre surchargeable: aucun symbole dérivé n'est disponible.</value>
+  </data>
+  <data name="ICSharpCode.RubyBinding.SendLineToRubyConsole" xml:space="preserve">
+    <value>Envoyer cette ligne vers la console Ruby</value>
+  </data>
+  <data name="ICSharpCode.RubyBinding.SendSelectedTextToRubyConsole" xml:space="preserve">
+    <value>Envoyer vers la console Ruby</value>
   </data>
   <data name="ICSharpCode.Services.FileUtilityService.CantLoadFileStandardText" xml:space="preserve">
     <value>Chargement du fichier ${FileNameWithoutPath} depuis ${Path}. Controler les droits et l'existence du fichier.</value>
@@ -4248,6 +4254,9 @@ Toutes les modifications seront perdues.</value>
   </data>
   <data name="ICSharpCode.SharpDevelop.Commands.SaveFileAs.FileSavedCaption" xml:space="preserve">
     <value>Fichier sauvé</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Commands.TabStrip.NavigateToFileInProjectBrowser" xml:space="preserve">
+    <value>Naviguer par fichier avec l'explorateur de projet</value>
   </data>
   <data name="ICSharpCode.SharpDevelop.Commands.VBConvertProjectToCSharp" xml:space="preserve">
     <value>De VB.NET vers C#</value>
@@ -4779,6 +4788,34 @@ Utilisez seulement des lettres, chiffres, espace, '.' ou '_'.</value>
   <data name="ICSharpCode.SharpDevelop.LoadingFile" xml:space="preserve">
     <value>Chargement de ${Filename}...</value>
   </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeCompilerVersionLabel" xml:space="preserve">
+    <value>Convertir les projets sélectionnés vers:</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeTargetFrameworkLabel" xml:space="preserve">
+    <value>Changer le framework cible:</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ChangeVersionGroupBoxHeader" xml:space="preserve">
+    <value>Changer la version des projets sélectionnés</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.CompilerVersion" xml:space="preserve">
+    <value>Version du compilateur</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.ConvertButton" xml:space="preserve">
+    <value>&amp;Convertir</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.DoNotChange" xml:space="preserve">
+    <value>&lt;ne pas changer&gt;</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.TargetFramework" xml:space="preserve">
+    <value>Framework cible</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.Title" xml:space="preserve">
+    <value>Mettre à jour le projet</value>
+  </data>
+  <data name="ICSharpCode.SharpDevelop.Project.UpgradeView.UpgradeFromPreviousVersionDescription" xml:space="preserve">
+    <value>Cette solution a été créée par une précédente version de SharpDevelop.
+La mettre à jour vous permet d'utiliser de nouveaux languages, ou les évolutions du framework.</value>
+  </data>
   <data name="ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError" xml:space="preserve">
     <value>Ambiance actuelle introuvable.
 Allez dans 'Outils/Options-&gt;Style Visuel pour changer l'ambiance actuelle.</value>
@@ -4833,6 +4870,9 @@ Allez dans 'Outils/Options-&gt;Style Visuel pour changer l'ambiance actuelle.</v
   </data>
   <data name="ICSharpCode.UnitTesting.TestMenu" xml:space="preserve">
     <value>&amp;Test</value>
+  </data>
+  <data name="ICSharpCode.UnitTesting.TestRunnerNotFoundMessageFormat" xml:space="preserve">
+    <value>Impossible de lancer les tests unitaires, fichier {0} introuvable.</value>
   </data>
   <data name="ICSharpCode.WixBinding.AddCompilerExtensionsDialog.Title" xml:space="preserve">
     <value>Ajouter des extensions</value>
@@ -5000,7 +5040,7 @@ Soit ils n'existent pas, soit le document Wix n'est pas pour WiX 3.0 et l'espace
     <value>Program Menu</value>
   </data>
   <data name="ICSharpCode.WixBinding.WixDirectoryElement.SendToFolder" xml:space="preserve">
-    <value>Send To</value>
+    <value>Envoyer Vers</value>
   </data>
   <data name="ICSharpCode.WixBinding.WixDirectoryElement.StartMenuFolder" xml:space="preserve">
     <value>Start Menu</value>
@@ -5061,6 +5101,36 @@ Soit ils n'existent pas, soit le document Wix n'est pas pour WiX 3.0 et l'espace
   </data>
   <data name="ICSharpCode.WixBinding.WixVisualStudioExtensionTitle" xml:space="preserve">
     <value>Extension Visual Studio</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Copy" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Cut" xml:space="preserve">
+    <value>Couper</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Outline" xml:space="preserve">
+    <value>Souligner</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Paste" xml:space="preserve">
+    <value>Coller</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Properties" xml:space="preserve">
+    <value>Propriétés</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Redo" xml:space="preserve">
+    <value>Refaire</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Remove" xml:space="preserve">
+    <value>Enlever</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Tools" xml:space="preserve">
+    <value>Outils</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.Undo" xml:space="preserve">
+    <value>Défaire</value>
+  </data>
+  <data name="ICSharpCode.WPFDesigner.ContextMenu.ViewXAML" xml:space="preserve">
+    <value>Voir le XAML</value>
   </data>
   <data name="ICSharpCode.XmlEditor.AddAttributeDialog.CustomAttributeLabel" xml:space="preserve">
     <value>Personnalisé:</value>
@@ -5882,6 +5952,9 @@ Soit ils n'existent pas, soit le document Wix n'est pas pour WiX 3.0 et l'espace
   <data name="ProjectComponent.ContextMenu.Clean" xml:space="preserve">
     <value>&amp;Nettoyer</value>
   </data>
+  <data name="ProjectComponent.ContextMenu.CollapseAll" xml:space="preserve">
+    <value>Réduire tout</value>
+  </data>
   <data name="ProjectComponent.ContextMenu.Delete.Question" xml:space="preserve">
     <value>Supprimer '${FileName}' de façon permanente?</value>
   </data>
@@ -6263,6 +6336,9 @@ Soit ils n'existent pas, soit le document Wix n'est pas pour WiX 3.0 et l'espace
   <data name="SharpDevelop.HexEditor.StreamAdded" xml:space="preserve">
     <value>Flux ajouté !</value>
   </data>
+  <data name="SharpDevelop.Refactoring.BaseClassesOf" xml:space="preserve">
+    <value>Classes de base de ${Name}</value>
+  </data>
   <data name="SharpDevelop.Refactoring.CannotPerformOperationBecauseOfSyntaxErrors" xml:space="preserve">
     <value>L'opération ne peut être effectuée car votre code contient des erreurs:</value>
   </data>
@@ -6302,8 +6378,14 @@ Soit ils n'existent pas, soit le document Wix n'est pas pour WiX 3.0 et l'espace
   <data name="SharpDevelop.Refactoring.ExtractInterfaceCommand" xml:space="preserve">
     <value>Extraire une interface</value>
   </data>
+  <data name="SharpDevelop.Refactoring.FindBaseClassesCommand" xml:space="preserve">
+    <value>Trouver les classes de base</value>
+  </data>
   <data name="SharpDevelop.Refactoring.FindDerivedClassesCommand" xml:space="preserve">
     <value>Chercher les classes &amp;dérivées</value>
+  </data>
+  <data name="SharpDevelop.Refactoring.FindDerivedClassesOrOverridesCommand" xml:space="preserve">
+    <value>Trouver les symboles dérivés</value>
   </data>
   <data name="SharpDevelop.Refactoring.FindingReferences" xml:space="preserve">
     <value>Recherche des références...</value>
@@ -6758,18 +6840,6 @@ Les fichiers de resources ont été renommés/déplacés en conséquence.</value
   <data name="SideBarComponent.ContextMenu.DeleteTabItemQuestion" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer l'élément "${TabItem}" ?</value>
   </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabDown" xml:space="preserve">
-    <value>Déplacer vers le bas</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabItemDown" xml:space="preserve">
-    <value>Déplacer vers la bas</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabItemUp" xml:space="preserve">
-    <value>Déplacer vers le haut</value>
-  </data>
-  <data name="SideBarComponent.ContextMenu.MoveTabUp" xml:space="preserve">
-    <value>Déplacer vers le haut</value>
-  </data>
   <data name="SideBarComponent.ContextMenu.RenameTab" xml:space="preserve">
     <value>&amp;Renommer</value>
   </data>
@@ -7004,6 +7074,12 @@ Les fichiers de resources ont été renommés/déplacés en conséquence.</value
   <data name="Templates.File.Struct.Name" xml:space="preserve">
     <value>Structure</value>
   </data>
+  <data name="Templates.File.Structure.Description" xml:space="preserve">
+    <value>Une déclaration incluant les implémentations pour Equals() et GetHashCode()</value>
+  </data>
+  <data name="Templates.File.Structure.Name" xml:space="preserve">
+    <value>Structure</value>
+  </data>
   <data name="Templates.File.Text.EmptyText.Name" xml:space="preserve">
     <value>Fichier texte vide</value>
   </data>
@@ -7198,6 +7274,12 @@ Les fichiers de resources ont été renommés/déplacés en conséquence.</value
   </data>
   <data name="Templates.Project.SharpDevelopMacro.Name" xml:space="preserve">
     <value>Entrée du menu Outils</value>
+  </data>
+  <data name="Templates.Project.SilverlightApplication.Description" xml:space="preserve">
+    <value>Un projet pour une application Silverlight.</value>
+  </data>
+  <data name="Templates.Project.SilverlightApplication.Name" xml:space="preserve">
+    <value>Application Silverlight</value>
   </data>
   <data name="Templates.Project.SysTrayIcon.Description" xml:space="preserve">
     <value>Un projet qui crée une application avec une icône dans la zone de notification de la barre des tâches.</value>
@@ -7470,10 +7552,10 @@ Les fichiers de resources ont été renommés/déplacés en conséquence.</value
     <value>Refaire la dernière action annulée</value>
   </data>
   <data name="XML.MainMenu.EditMenu.SelectAll" xml:space="preserve">
-    <value>Sélectionner &amp;tout</value>
+    <value>Sélectionner tout</value>
   </data>
   <data name="XML.MainMenu.EditMenu.Undo" xml:space="preserve">
-    <value>&amp;Annuler</value>
+    <value>&amp;Défaire</value>
   </data>
   <data name="XML.MainMenu.EditMenu.Undo.Description" xml:space="preserve">
     <value>Annuler la dernière action</value>

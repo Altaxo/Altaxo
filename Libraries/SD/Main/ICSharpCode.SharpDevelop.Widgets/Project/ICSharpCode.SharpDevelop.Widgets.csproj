@@ -17,6 +17,7 @@
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <Optimize>False</Optimize>
@@ -142,7 +143,10 @@
     <Page Include="themes\generic.xaml" />
     <Page Include="ZoomScrollViewer.xaml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Images" />
+    <Folder Include="themes" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ZoomIn.png" />
     <Resource Include="Images\ZoomOut.png" />

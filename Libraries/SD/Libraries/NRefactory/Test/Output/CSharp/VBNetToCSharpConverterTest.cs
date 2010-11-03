@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6306 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Text;
@@ -781,6 +777,14 @@ static bool InitStaticVariableHelper(Microsoft.VisualBasic.CompilerServices.Stat
 		public void CastToInteger()
 		{
 			TestStatement("Dim x As Integer = CInt(obj)", "int x = Convert.ToInt32(obj);");
+		}
+		
+		[Test]
+		public void ConditionalExprPrecedence()
+		{
+			TestStatement("Dim x As Integer = If(If(a,b,c),d,e)", "int x = (a ? b : c) ? d : e;");
+			TestStatement("Dim x As Integer = If(a,If(b,c,d),e)", "int x = a ? b ? c : d : e;");
+			TestStatement("Dim x As Integer = If(a,b,If(c,d,e))", "int x = a ? b : c ? d : e;");
 		}
 		
 		[Test]

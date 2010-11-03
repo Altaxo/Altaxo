@@ -153,6 +153,8 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Resources\SharpDevelop.ico" />
+    <EmbeddedResource Include="Resources\AltaxoBitmap.resources" />
+    <EmbeddedResource Include="Resources\AltaxoString.resources" />
     <EmbeddedResource Include="Resources\SplashScreen.jpg" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Dialogs\SplashScreen.cs">

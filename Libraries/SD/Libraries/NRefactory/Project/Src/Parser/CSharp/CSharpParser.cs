@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6214 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using ICSharpCode.NRefactory.Visitors;
 using System;
@@ -94,7 +90,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				if (expr.StartLocation.IsEmpty)
 					expr.StartLocation = startLocation;
 				if (expr.EndLocation.IsEmpty)
-					expr.EndLocation = t.EndLocation;
+					expr.EndLocation = (t ?? la).EndLocation;
 				expr.AcceptVisitor(new SetParentVisitor(), null);
 			}
 			Expect(Tokens.EOF);
@@ -120,7 +116,8 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			}
 			
 			BlockEnd();
-			blockStmt.EndLocation = t.EndLocation;
+			// if lexer didn't return any tokens, use position of the EOF token in "la"
+			blockStmt.EndLocation = (t ?? la).EndLocation;
 			Expect(Tokens.EOF);
 			blockStmt.AcceptVisitor(new SetParentVisitor(), null);
 			return blockStmt;

@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6098 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -90,7 +86,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					ProjectService.AddProjectItem(project, projectItem);
 					FileService.FireFileCreated(newInterfaceFileName, false);
 					project.Save();
-					ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
+					ProjectBrowserPad.RefreshViewAsync();
 				}
 			}
 			
@@ -462,7 +458,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				ProjectService.AddProjectItem(project, projectItem);
 				FileService.FireFileCreated(newFileName, false);
 				project.Save();
-				ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
+				ProjectBrowserPad.RefreshViewAsync();
 			}
 		}
 		
@@ -513,6 +509,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 
 		public static IDocument GetDocument(IClass c)
 		{
+			if (c is CompoundClass)
+				throw new ArgumentException("Cannot get document from compound class - must pass a specific class part");
+			
 			ITextEditorProvider tecp = FileService.OpenFile(c.CompilationUnit.FileName) as ITextEditorProvider;
 			if (tecp == null) return null;
 			return tecp.TextEditor.Document;
@@ -525,7 +524,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		public static void RunFindReferences(IMember member)
 		{
 			string memberName = member.DeclaringType.Name + "." + member.Name;
-			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}"))
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}", true))
 			{
 				FindReferencesAndRenameHelper.ShowAsSearchResults(StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
 				                                                                     new string[,] {{ "Name", memberName }}),
@@ -535,7 +534,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static void RunFindReferences(IClass c)
 		{
-			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}"))
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}", true))
 			{
 				FindReferencesAndRenameHelper.ShowAsSearchResults(
 					StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",

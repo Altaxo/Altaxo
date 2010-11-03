@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 6214 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.IO;
@@ -281,12 +277,6 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			OperatorPrecedenceTest("And", BinaryOperatorType.BitwiseAnd, "Or", BinaryOperatorType.BitwiseOr, true);
 			SameOperatorPrecedenceTest("Or", BinaryOperatorType.BitwiseOr, "OrElse", BinaryOperatorType.LogicalOr, true);
 			SameOperatorPrecedenceTest("Or", BinaryOperatorType.BitwiseOr, "Xor", BinaryOperatorType.ExclusiveOr, true);
-		}
-		
-		[Test]
-		public void VBNetTest()
-		{
-			VBNetTestBinaryOperatorExpressionTest("a ^ b", BinaryOperatorType.Power);
 		}
 		
 		[Test]

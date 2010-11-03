@@ -1,14 +1,11 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3287 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Drawing;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-
 using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
 
@@ -132,6 +129,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public CommonAboutDialog()
 		{
 			SetupFromXmlStream(this.GetType().Assembly.GetManifestResourceStream("Resources.CommonAboutDialog.xfrm"));
+			var aca = (AssemblyCopyrightAttribute)typeof(CommonAboutDialog).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)[0];
+			ControlDictionary["copyrightLabel"].Text = "Copyright " + aca.Copyright;
 		}
 		
 		protected override void SetupXmlLoader()

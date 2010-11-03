@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6298 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -91,6 +87,14 @@ namespace ICSharpCode.AvalonEdit.AddIn
 				if (r != 0)
 					return r;
 				return string.Compare(text, other.text, StringComparison.Ordinal);
+			}
+			
+			/// <summary>
+			/// ToString override is necessary to support keyboard navigation in WPF
+			/// </summary>
+			public override string ToString()
+			{
+				return text;
 			}
 		}
 		

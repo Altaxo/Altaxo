@@ -1,9 +1,6 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Martin Konicek" email="martin.konicek@gmail.com"/>
-//     <version>$Revision: $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,6 +33,13 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			firstButton.Focus();
 		}
 		
+		void TreeViewLoaded(object sender, RoutedEventArgs e)
+		{
+			if (TreeView.IsVisible) {
+				this.Focus();
+			}
+		}
+
 		void ActionButtonClick(object sender, RoutedEventArgs e)
 		{
 			if (ActionExecuted != null)
@@ -56,6 +60,15 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					return foundChild;
 			}
 			return null;
+		}
+		
+		public static readonly DependencyProperty ItemTemplateProperty =
+			DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(ContextActionsControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public DataTemplate ItemTemplate {
+			get { return (DataTemplate)GetValue(ItemTemplateProperty); }
+			set { SetValue(ItemTemplateProperty, value); }
 		}
 	}
 }

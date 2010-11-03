@@ -98,6 +98,9 @@
     <Reference Include="System.Xaml" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -128,6 +131,7 @@
     <Compile Include="Src\Editor\AvalonEdit\IndentationStrategyAdapter.cs" />
     <Compile Include="Src\Editor\AvalonEdit\ISnippetElementProvider.cs" />
     <Compile Include="Src\Editor\AvalonEdit\TextContentCondition.cs" />
+    <Compile Include="Src\Editor\AvalonEdit\TextSelectedCondition.cs" />
     <Compile Include="Src\Editor\CodeCompletion\CodeCompletionPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -191,6 +195,7 @@
     <Compile Include="Src\Editor\ITooltip.cs">
       <DependentUpon>ToolTipService.cs</DependentUpon>
     </Compile>
+    <Compile Include="Src\Editor\ReadOnlyDocument.cs" />
     <Compile Include="Src\Editor\RefactoringDocumentAdapter.cs" />
     <Compile Include="Src\Editor\Search\ISearchResult.cs" />
     <Compile Include="Src\Editor\Search\ISearchResultFactory.cs" />
@@ -242,7 +247,6 @@
     <Compile Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="ICSharpCode.SharpDevelop.addin" />
     <None Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
       <Link>Src\Services\RefactoringService\ExtractInterfaceDialog.cs</Link>
     </None>
@@ -303,6 +307,7 @@
     </Compile>
     <Compile Include="Src\Gui\IImage.cs" />
     <Compile Include="Src\Gui\Pads\AbstractConsolePad.cs" />
+    <Compile Include="Src\Gui\Pads\BaseWatchBox.cs" />
     <Compile Include="Src\Gui\Pads\OutlinePad.cs" />
     <Compile Include="Src\Gui\Pads\ProjectBrowser\TreeNodes\DirectoryNodeFactory.cs" />
     <Compile Include="Src\Gui\Pads\TaskList\TaskListPadCommands.cs" />
@@ -385,6 +390,8 @@
     <Compile Include="Src\Services\ParserService\ParserService.cs" />
     <Compile Include="Src\Services\ProjectService\CompileModifiedProjectsOnly.cs" />
     <Compile Include="Src\Services\ProjectService\SolutionConfigurationEventHandler.cs" />
+    <Compile Include="Src\Services\RefactoringService\ContextActions\BoolToVisibilityConverter.cs" />
+    <Compile Include="Src\Services\RefactoringService\ContextActions\ContextAction.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionsBulbControl.xaml.cs">
       <DependentUpon>ContextActionsBulbControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -394,11 +401,12 @@
       <DependentUpon>ContextActionsHeaderedControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionsBulbViewModel.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionsPopupBase.cs" />
+    <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionsProvider.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionsService.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\EditorContext.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\IContextAction.cs" />
-    <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionCommand.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionsControl.xaml.cs">
       <DependentUpon>ContextActionsControl.xaml</DependentUpon>
     </Compile>
@@ -406,6 +414,7 @@
     <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionsViewModel.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\ContextActionViewModel.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActionsHelper.cs" />
+    <Compile Include="Src\Services\RefactoringService\ContextActions\IContextActionCache.cs" />
     <Compile Include="Src\Services\RefactoringService\ContextActions\IContextActionsProvider.cs" />
     <Compile Include="Src\Services\RefactoringService\ExtractInterfaceOptions.cs" />
     <Compile Include="Src\Services\RefactoringService\GoToClassAction.cs" />
@@ -663,7 +672,6 @@
     <Compile Include="Src\Gui\Components\ExtTreeView\ExtTreeViewComparer.cs" />
     <Compile Include="Src\Project\WebReferenceUrl.cs" />
     <EmbeddedResource Include="Resources\CodeGenerationOptionsPanel.xfrm" />
-    <EmbeddedResource Include="Resources\CombineStartupPanel.xfrm" />
     <EmbeddedResource Include="Resources\CommonAboutDialog.xfrm" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <EmbeddedResource Include="Resources\EditStandardHeaderPanel.xfrm" />
@@ -722,7 +730,7 @@
     <Compile Include="Src\Bookmarks\ClassMemberBookmark.cs" />
     <Compile Include="Src\Services\RefactoringService\RefactoringService.cs" />
     <Compile Include="Src\Services\RefactoringService\Reference.cs" />
-    <Compile Include="Src\Services\ProjectService\ParseableFileContentEnumerator.cs" />
+    <Compile Include="Src\Services\ProjectService\ParseableFileContentFinder.cs" />
     <Compile Include="Src\Services\ParserService\ParseProjectContent.cs" />
     <Compile Include="Src\Project\Items\ImportProjectItem.cs" />
     <EmbeddedResource Include="Resources\CodeCompletionOptionPanel.xfrm" />
@@ -784,6 +792,7 @@
     <Compile Include="Src\Gui\Dialogs\ReferenceDialog\AsyncDiscoveryState.cs" />
     <Compile Include="Src\Gui\Dialogs\ReferenceDialog\DiscoveryNetworkCredential.cs" />
     <Compile Include="Src\Services\ProjectService\ProjectLoader.cs" />
+    <Compile Include="Src\Util\FakeXmlViewContent.cs" />
     <Compile Include="Src\Util\TreeNode.cs" />
     <Compile Include="Src\Util\NativeMethods.cs" />
     <Compile Include="Src\Util\ProcessRunnerException.cs" />

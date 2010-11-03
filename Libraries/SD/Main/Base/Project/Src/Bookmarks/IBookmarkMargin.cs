@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3986 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -43,8 +39,28 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		IImage Image { get; }
 		
 		/// <summary>
+		/// Gets the Z-Order of the bookmark icon.
+		/// </summary>
+		int ZOrder { get; }
+		
+		/// <summary>
 		/// Handles the mouse down event.
 		/// </summary>
 		void MouseDown(MouseButtonEventArgs e);
+		
+		/// <summary>
+		/// Handles the mouse up event.
+		/// </summary>
+		void MouseUp(MouseButtonEventArgs e);
+		
+		/// <summary>
+		/// Gets whether this bookmark can be dragged around.
+		/// </summary>
+		bool CanDragDrop { get; }
+		
+		/// <summary>
+		/// Notifies the bookmark that it was dropped on the specified line.
+		/// </summary>
+		void Drop(int lineNumber);
 	}
 }

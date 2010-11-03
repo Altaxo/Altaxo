@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6150 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 
@@ -51,7 +47,6 @@ namespace ICSharpCode.SharpDevelop.Editor.CodeCompletion
 		public virtual void Complete(CompletionContext context)
 		{
 			context.Editor.Document.Replace(context.StartOffset, context.Length, this.Text);
-			
 			context.EndOffset = context.StartOffset + this.Text.Length;
 		}
 	}

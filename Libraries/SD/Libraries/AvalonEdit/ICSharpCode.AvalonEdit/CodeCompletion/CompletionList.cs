@@ -1,13 +1,10 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 6125 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -225,7 +222,7 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 		{
 			// if the user just typed one more character, don't filter all data but just filter what we are already displaying
 			var listToFilter = (this.currentList != null && (!string.IsNullOrEmpty(this.currentText)) && (!string.IsNullOrEmpty(query)) &&
-			                    query.StartsWith(this.currentText)) ?
+			                    query.StartsWith(this.currentText, StringComparison.Ordinal)) ?
 				this.currentList : this.completionData;
 			
 			var matchingItems =
@@ -332,7 +329,7 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			if (string.Equals(itemText, query, StringComparison.OrdinalIgnoreCase))
 				return 7;
 			
-			if (itemText.StartsWith(query))
+			if (itemText.StartsWith(query, StringComparison.Ordinal))
 				return 6;
 			if (itemText.StartsWith(query, StringComparison.OrdinalIgnoreCase))
 				return 5;
@@ -365,7 +362,7 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			foreach (char upper in text.Where(c => char.IsUpper(c))) {
 				if (i > query.Length - 1)
 					return true;	// return true here for CamelCase partial match ("CQ" matches "CodeQualityAnalysis")
-				if (char.ToUpper(query[i]) != upper)
+				if (char.ToUpper(query[i], CultureInfo.InvariantCulture) != upper)
 					return false;
 				i++;
 			}

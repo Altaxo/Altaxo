@@ -1,9 +1,6 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Martin Konicek" email="martin.konicek@gmail.com"/>
-//     <version>$Revision: $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System;
 using ICSharpCode.SharpDevelop.Editor;
 
@@ -18,30 +15,34 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			this.StaysOpen = true;
 			this.AllowsTransparency = true;
-			this.ActionsControl = new ContextActionsBulbControl();
+			this.ChildControl = new ContextActionsBulbControl();
 			// Close when any action excecuted
-			this.ActionsControl.ActionExecuted += delegate { this.Close(); };
+			this.ChildControl.ActionExecuted += delegate { this.Close(); };
 		}
 		
-		public ContextActionsBulbControl ActionsControl
+		private ContextActionsBulbControl ChildControl
 		{
 			get { return (ContextActionsBulbControl)this.Child; }
 			set { this.Child = value; }
 		}
 		
-		public ContextActionsViewModel Actions
+		public ContextActionsBulbViewModel ViewModel
 		{
-			get { return (ContextActionsViewModel)ActionsControl.DataContext; }
-			set { 
-				ActionsControl.DataContext = value; 
-			}
+			get { return (ContextActionsBulbViewModel)this.DataContext; }
+			set { this.DataContext = value; }
 		}
 		
-		public bool IsDropdownOpen { get { return ActionsControl.IsOpen; } set {ActionsControl.IsOpen = value; } }
+		public bool IsDropdownOpen { get { return ChildControl.IsOpen; } set {ChildControl.IsOpen = value; } }
+		
+		public bool IsHiddenActionsExpanded { get { return ChildControl.IsHiddenActionsExpanded; } set {ChildControl.IsHiddenActionsExpanded = value; } }
 		
 		public new void Focus()
 		{
-			this.ActionsControl.Focus();
+			if (this.ViewModel.Actions.Count > 0) {
+				this.ChildControl.ActionsTreeView.Focus();
+			} else {
+				this.ChildControl.HiddenActionsTreeView.Focus();
+			}
 		}
 		
 		public void OpenAtLineStart(ITextEditor editor)

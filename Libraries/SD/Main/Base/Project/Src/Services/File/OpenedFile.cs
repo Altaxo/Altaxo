@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 5679 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -263,8 +259,12 @@ namespace ICSharpCode.SharpDevelop
 		}
 		
 		
-		protected void SwitchedToView(IViewContent newView)
+		public void SwitchedToView(IViewContent newView)
 		{
+			if (newView == null)
+				throw new ArgumentNullException("newView");
+			if (currentView == newView)
+				return;
 			if (currentView != null) {
 				if (newView.SupportsSwitchToThisWithoutSaveLoad(this, currentView)
 				    || currentView.SupportsSwitchFromThisWithoutSaveLoad(this, newView))

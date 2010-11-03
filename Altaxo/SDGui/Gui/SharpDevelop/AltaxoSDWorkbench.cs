@@ -300,6 +300,13 @@ namespace Altaxo.Gui.SharpDevelop
 			_wb.CloseAllViews();
 		}
 
+		public bool CloseAllSolutionViews()
+		{
+			_wb.CloseAllViews();
+			return true;
+		}
+
+
 		public event System.EventHandler ActiveWorkbenchWindowChanged
 		{
 			add

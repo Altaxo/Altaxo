@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 6298 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Windows;
@@ -53,6 +49,23 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 				e.Handled = true;
 			}
 		}
+		
+		public virtual void MouseUp(MouseButtonEventArgs e)
+		{
+		}
+		
+		int IBookmark.ZOrder {
+			get { return -10; }
+		}
+		
+		bool IBookmark.CanDragDrop {
+			get { return false; }
+		}
+		
+		void IBookmark.Drop(int lineNumber)
+		{
+			throw new NotSupportedException();
+		}
 	}
 	
 	public class ClassBookmark : IBookmark
@@ -93,6 +106,23 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 				ctx.Closed += delegate { f.EndTracking(); };
 				e.Handled = true;
 			}
+		}
+		
+		public virtual void MouseUp(MouseButtonEventArgs e)
+		{
+		}
+		
+		int IBookmark.ZOrder {
+			get { return -10; }
+		}
+		
+		bool IBookmark.CanDragDrop {
+			get { return false; }
+		}
+		
+		void IBookmark.Drop(int lineNumber)
+		{
+			throw new NotSupportedException();
 		}
 	}
 }

@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 6299 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -279,7 +275,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 			List<DisplayBindingDescriptor> codons = DisplayBindingService.GetCodonsPerFileName(fileNames[0]).ToList();
 			for (int i = 1; i < fileNames.Length; i++) {
-				var codonsForThisFile = DisplayBindingService.GetCodonsPerFileName(fileNames[1]);
+				var codonsForThisFile = DisplayBindingService.GetCodonsPerFileName(fileNames[i]);
 				codons.RemoveAll(c => !codonsForThisFile.Contains(c));
 			}
 			if (codons.Count == 0)

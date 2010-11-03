@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 5906 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Linq;
@@ -52,6 +48,11 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 		public int EndOffset { get; set; }
 		
 		/// <summary>
+		/// Gets whether the window was opened above the current line.
+		/// </summary>
+		protected bool IsUp { get; private set; }
+		
+		/// <summary>
 		/// Creates a new CompletionWindowBase.
 		/// </summary>
 		public CompletionWindowBase(TextArea textArea)
@@ -75,7 +76,8 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			if (document != null) {
 				document.Changing += textArea_Document_Changing;
 			}
-			this.TextArea.PreviewLostKeyboardFocus += TextAreaLostFocus;
+			// LostKeyboardFocus seems to be more reliable than PreviewLostKeyboardFocus - see SD-1729
+			this.TextArea.LostKeyboardFocus += TextAreaLostFocus;
 			this.TextArea.TextView.ScrollOffsetChanged += TextViewScrollOffsetChanged;
 			this.TextArea.DocumentChanged += TextAreaDocumentChanged;
 			if (parentWindow != null) {
@@ -100,7 +102,7 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			if (document != null) {
 				document.Changing -= textArea_Document_Changing;
 			}
-			this.TextArea.PreviewLostKeyboardFocus -= TextAreaLostFocus;
+			this.TextArea.LostKeyboardFocus -= TextAreaLostFocus;
 			this.TextArea.TextView.ScrollOffsetChanged -= TextViewScrollOffsetChanged;
 			this.TextArea.DocumentChanged -= TextAreaDocumentChanged;
 			if (parentWindow != null) {
@@ -311,6 +313,9 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 				}
 				if (bounds.Bottom > workingScreen.Bottom) {
 					bounds.Y = locationTop.Y - bounds.Height;
+					IsUp = true;
+				} else {
+					IsUp = false;
 				}
 				if (bounds.Y < workingScreen.Top) {
 					bounds.Y = workingScreen.Top;
@@ -320,6 +325,15 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			bounds = bounds.TransformFromDevice(textView);
 			this.Left = bounds.X;
 			this.Top = bounds.Y;
+		}
+		
+		/// <inheritdoc/>
+		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+		{
+			base.OnRenderSizeChanged(sizeInfo);
+			if (sizeInfo.HeightChanged && IsUp) {
+				this.Top += sizeInfo.PreviousSize.Height - sizeInfo.NewSize.Height;
+			}
 		}
 		
 		/// <summary>

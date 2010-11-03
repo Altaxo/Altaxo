@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 6050 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -166,6 +162,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// Closes all views inside the workbench.
 		/// </summary>
 		void CloseAllViews();
+		
+		/// <summary>
+		/// 	Closes all views related to current solution.
+		/// </summary>
+		/// <returns>
+		/// 	True if all views were closed properly, false if closing was aborted.
+		/// </returns>
+		bool CloseAllSolutionViews();
 		
 		/// <summary>
 		/// Is called, when a workbench view was opened

@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 5704 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.IO;
@@ -145,6 +141,25 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				SolutionFolderNode newSolutionFolderNode = new SolutionFolderNode(solutionFolderNode.Solution, newSolutionFolder);
 				newSolutionFolderNode.InsertSorted(node);
 				ProjectBrowserPad.Instance.StartLabelEdit(newSolutionFolderNode);
+			}
+		}
+	}
+	
+	public class CollapseAll : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			AbstractProjectBrowserTreeNode node = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
+			if (node is SolutionNode) {
+				// Solution node does not collapse fully, but its subitems stay visible
+				foreach (var subNode in node.Nodes) {
+					var subBrowserNode = subNode as AbstractProjectBrowserTreeNode;
+					if (subBrowserNode != null) {
+						subBrowserNode.Collapse();
+					}
+				}
+			} else {
+				node.Collapse();
 			}
 		}
 	}

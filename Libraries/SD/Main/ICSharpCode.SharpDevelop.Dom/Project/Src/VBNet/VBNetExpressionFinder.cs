@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Siegfried Pammer" email="siegfriedpammer@gmail.com" />
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -30,7 +26,8 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		int LocationToOffset(Location location)
 		{
-			if (location.Line <= 0) return -1;
+			if (location.Line <= 0 || location.Line >= lineOffsets.Count)
+				return -1;
 			return lineOffsets[location.Line - 1] + location.Column - 1;
 		}
 		
@@ -112,6 +109,14 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 
 		ExpressionResult MakeResult(string text, int startOffset, int endOffset, ExpressionContext context, BitArray expectedKeywords)
 		{
+			// partial/incomplete expressions (especially between comments) need this hack.
+			// see http://community.sharpdevelop.net/forums/t/11951.aspx (first post)
+			if (startOffset > endOffset) {
+				int tmp = startOffset;
+				startOffset = endOffset;
+				endOffset = tmp;
+			}
+			
 			return new ExpressionResult(TrimComment(text.Substring(startOffset, endOffset - startOffset)).Trim(),
 			                            DomRegion.FromLocation(OffsetToLocation(startOffset), OffsetToLocation(endOffset)),
 			                            context, expectedKeywords);
@@ -127,7 +132,11 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				
 				if (ch == '"')
 					inString = !inString;
-				if (ch == '\'' && !inString) {
+				
+				bool isInWord = (i > 0 && char.IsLetterOrDigit(text[i - 1]))
+					|| (i + 1 < text.Length && char.IsLetterOrDigit(text[i + 1]));
+				
+				if ((ch == '\'' || ch == '_') && !inString && !isInWord) {
 					int eol = text.IndexOfAny(new[] { '\r', '\n' }, i);
 					
 					if (eol > -1) {

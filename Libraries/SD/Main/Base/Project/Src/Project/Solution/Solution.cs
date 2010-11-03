@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 5854 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -46,12 +42,17 @@ namespace ICSharpCode.SharpDevelop.Project
 				return currentProject;
 			
 			// Try all project's in the solution.
+			IProject linkedProject = null;
 			foreach (IProject project in Projects) {
-				if (project.IsFileInProject(fileName)) {
-					return project;
+				FileProjectItem file = project.FindFile(fileName);
+				if (file != null) {
+					if (file.IsLink)
+						linkedProject = project;
+					else
+						return project; // prefer projects with non-links over projects with links
 				}
 			}
-			return null;
+			return linkedProject;
 		}
 		
 		[Browsable(false)]

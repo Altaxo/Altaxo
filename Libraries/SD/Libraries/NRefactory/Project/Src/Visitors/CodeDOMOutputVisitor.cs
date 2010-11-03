@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 5785 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.CodeDom;
@@ -335,6 +331,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			CodeMemberMethod memberMethod = new CodeMemberMethod();
 			memberMethod.Name = methodDeclaration.Name;
 			memberMethod.Attributes = ConvMemberAttributes(methodDeclaration.Modifier);
+			memberMethod.ReturnType = ConvType(methodDeclaration.TypeReference);
 
 			// RG: Private Interface Decl
 			if ((memberMethod.Attributes & MemberAttributes.Public) != MemberAttributes.Public &&

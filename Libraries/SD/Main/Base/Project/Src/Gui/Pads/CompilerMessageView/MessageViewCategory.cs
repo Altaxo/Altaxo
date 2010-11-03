@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3565 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Text;
@@ -20,8 +16,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Creates a new MessageViewCategory with the specified category
 		/// and adds it to the CompilerMessageView pad.
-		/// This method is thread-safe and works correctly even if called multiple times for the same
-		/// thread; only one messageViewCategory will be created.
+		/// This method is thread-safe and works correctly even if called concurrently for the same
+		/// category; only one messageViewCategory will be created.
 		/// </summary>
 		public static void Create(ref MessageViewCategory messageViewCategory, string category)
 		{

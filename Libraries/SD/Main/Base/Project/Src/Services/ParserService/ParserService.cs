@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 5937 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -134,13 +130,22 @@ namespace ICSharpCode.SharpDevelop
 		static List<IProjectContent> GetProjectContents(string fileName)
 		{
 			List<IProjectContent> result = new List<IProjectContent>();
+			List<IProjectContent> linkResults = new List<IProjectContent>();
 			lock (projectContents) {
 				foreach (KeyValuePair<IProject, IProjectContent> projectContent in projectContents) {
-					if (projectContent.Key.IsFileInProject(fileName)) {
-						result.Add(projectContent.Value);
+					FileProjectItem file = projectContent.Key.FindFile(fileName);
+					if (file != null) {
+						// Prefer normal files over linked files.
+						// The order matters because GetParseInformation() will return the ICompilationUnit
+						// for the first result.
+						if (file.IsLink)
+							linkResults.Add(projectContent.Value);
+						else
+							result.Add(projectContent.Value);
 					}
 				}
 			}
+			result.AddRange(linkResults);
 			if (result.Count == 0)
 				result.Add(DefaultProjectContent);
 			return result;
@@ -189,7 +194,7 @@ namespace ICSharpCode.SharpDevelop
 				if (!lastParseRun.IsCompleted)
 					return;
 				lastParseRun = null;
-      }
+			}
 #if ModifiedForAltaxo
       IViewContent viewContent = _activeModalContent as IViewContent;
 #else 
@@ -299,18 +304,22 @@ namespace ICSharpCode.SharpDevelop
 		/// </summary>
 		public static ResolveResult Resolve(int caretLine, int caretColumn, IDocument document, string fileName)
 		{
-			IExpressionFinder expressionFinder = GetExpressionFinder(fileName);
-			if (expressionFinder == null)
-				return null;
-			if (caretColumn > document.GetLine(caretLine).Length)
-				return null;
-			string documentText = document.Text;
-			var expressionResult = expressionFinder.FindFullExpression(documentText, document.PositionToOffset(caretLine, caretColumn));
+			var expressionResult = FindFullExpression(caretLine, caretColumn, document, fileName);
 			string expression = (expressionResult.Expression ?? "").Trim();
 			if (expression.Length > 0) {
-				return Resolve(expressionResult, caretLine, caretColumn, fileName, documentText);
+				return Resolve(expressionResult, caretLine, caretColumn, fileName, document.Text);
 			} else
 				return null;
+		}
+
+		public static ExpressionResult FindFullExpression(int caretLine, int caretColumn, IDocument document, string fileName)
+		{
+			IExpressionFinder expressionFinder = GetExpressionFinder(fileName);
+			if (expressionFinder == null)
+				return ExpressionResult.Empty;
+			if (caretColumn > document.GetLine(caretLine).Length)
+				return ExpressionResult.Empty;
+			return expressionFinder.FindFullExpression(document.Text, document.PositionToOffset(caretLine, caretColumn));
 		}
 		
 		public static ResolveResult Resolve(int offset, IDocument document, string fileName)
@@ -503,14 +512,14 @@ namespace ICSharpCode.SharpDevelop
 						ICompilationUnit oldUnit = oldUnits.FirstOrDefault(o => o.ProjectContent == pc);
 						pc.UpdateCompilationUnit(oldUnit, newUnits[i], fileName);
 						ParseInformation newUnitParseInfo = (newUnits[i] == resultUnit) ? newParseInfo : new ParseInformation(newUnits[i]);
-						RaiseParseInformationUpdated(new ParseInformationEventArgs(fileName, pc, oldUnit, newUnitParseInfo));
+						RaiseParseInformationUpdated(new ParseInformationEventArgs(fileName, pc, oldUnit, newUnitParseInfo, newUnits[i] == resultUnit));
 					}
 					
 					// remove all old units that don't exist anymore
 					foreach (ICompilationUnit oldUnit in oldUnits) {
 						if (!newUnits.Any(n => n.ProjectContent == oldUnit.ProjectContent)) {
 							oldUnit.ProjectContent.RemoveCompilationUnit(oldUnit);
-							RaiseParseInformationUpdated(new ParseInformationEventArgs(fileName, oldUnit.ProjectContent, oldUnit, null));
+							RaiseParseInformationUpdated(new ParseInformationEventArgs(fileName, oldUnit.ProjectContent, oldUnit, null, false));
 						}
 					}
 					
@@ -523,18 +532,22 @@ namespace ICSharpCode.SharpDevelop
 			
 			public void Clear()
 			{
+				ParseInformation parseInfo;
 				ICompilationUnit[] oldUnits;
 				lock (this) {
 					// by setting the disposed flag, we'll cause all running ParseFile() calls to return null and not
 					// call into the parser anymore, so we can do the remainder of the clean-up work outside the lock
 					this.disposed = true;
+					parseInfo = this.parseInfo;
 					oldUnits = this.oldUnits;
 					this.oldUnits = null;
 					this.bufferVersion = null;
+					this.parseInfo = null;
 				}
 				foreach (ICompilationUnit oldUnit in oldUnits) {
 					oldUnit.ProjectContent.RemoveCompilationUnit(oldUnit);
-					RaiseParseInformationUpdated(new ParseInformationEventArgs(fileName, oldUnit.ProjectContent, oldUnit, null));
+					bool isPrimary = parseInfo != null && parseInfo.CompilationUnit == oldUnit;
+					RaiseParseInformationUpdated(new ParseInformationEventArgs(fileName, oldUnit.ProjectContent, oldUnit, null, isPrimary));
 				}
 			}
 			
@@ -690,6 +703,13 @@ namespace ICSharpCode.SharpDevelop
 		/// <returns>
 		/// Returns a task that will make the parse result available.
 		/// </returns>
+		/// <remarks>
+		/// EnqueueForParsing has been renamed to BeginParse and now provides a future (Task&lt;ParseInformation&gt;)
+		/// to allow waiting for the result. However, to avoid deadlocks, this should not be done by any
+		/// thread the parser might be waiting for  (especially the main thread).
+		/// 
+		/// Unlike BeginParse().Wait(), ParseFile() is safe to call from the main thread.
+		/// </remarks>
 		public static Task<ParseInformation> BeginParse(string fileName)
 		{
 			return GetFileEntry(fileName, true).BeginParse(null);
@@ -702,6 +722,13 @@ namespace ICSharpCode.SharpDevelop
 		/// <returns>
 		/// Returns a task that will make the parse result available.
 		/// </returns>
+		/// <remarks>
+		/// EnqueueForParsing has been renamed to BeginParse and now provides a future (Task&lt;ParseInformation&gt;)
+		/// to allow waiting for the result. However, to avoid deadlocks, this should not be done by any
+		/// thread the parser might be waiting for  (especially the main thread).
+		/// 
+		/// Unlike BeginParse().Wait(), ParseFile() is safe to call from the main thread.
+		/// </remarks>
 		public static Task<ParseInformation> BeginParse(string fileName, ITextBuffer fileContent)
 		{
 			if (fileContent == null)
@@ -746,6 +773,13 @@ namespace ICSharpCode.SharpDevelop
 		/// Parses the current view content.
 		/// This method can only be called from the main thread.
 		/// </summary>
+		/// <remarks>
+		/// EnqueueForParsing has been renamed to BeginParse and now provides a future (Task&lt;ParseInformation&gt;)
+		/// to allow waiting for the result. However, to avoid deadlocks, this should not be done by any
+		/// thread the parser might be waiting for  (especially the main thread).
+		/// 
+		/// Unlike BeginParse().Wait(), ParseFile() is safe to call from the main thread.
+		/// </remarks>
 		public static Task<ParseInformation> BeginParseCurrentViewContent()
 		{
 			WorkbenchSingleton.AssertMainThread();
@@ -760,6 +794,13 @@ namespace ICSharpCode.SharpDevelop
 		/// Begins parsing the specified view content.
 		/// This method can only be called from the main thread.
 		/// </summary>
+		/// <remarks>
+		/// EnqueueForParsing has been renamed to BeginParse and now provides a future (Task&lt;ParseInformation&gt;)
+		/// to allow waiting for the result. However, to avoid deadlocks, this should not be done by any
+		/// thread the parser might be waiting for  (especially the main thread).
+		/// 
+		/// Unlike BeginParse().Wait(), ParseFile() is safe to call from the main thread.
+		/// </remarks>
 		public static Task<ParseInformation> BeginParseViewContent(IViewContent viewContent)
 		{
 			if (viewContent == null)

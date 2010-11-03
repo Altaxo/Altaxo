@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 4735 $</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.CodeDom;
@@ -36,7 +32,6 @@ namespace ICSharpCode.SharpDevelop.Project
 	{
 		IProject project;
 		IProgressMonitor progressMonitor;
-		string outputNamespace;
 		internal bool RunningSeparateThread;
 		
 		public CustomToolContext(IProject project)
@@ -60,10 +55,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			get { return project; }
 		}
 		
-		public string OutputNamespace {
-			get { return outputNamespace; }
-			set { outputNamespace = value; }
-		}
+		public string OutputNamespace { get; set; }
 		
 		/// <summary>
 		/// Runs a method asynchronously. Prevents another CustomTool invocation
@@ -141,7 +133,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				ProjectService.AddProjectItem(project, outputItem);
 				FileService.FireFileCreated(outputFileName, false);
 				project.Save();
-				ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
+				ProjectBrowserPad.RefreshViewAsync();
 			}
 			return outputItem;
 		}
@@ -423,20 +415,25 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
 			
-			string relPath = FileUtility.GetRelativePath(project.Directory, Path.GetDirectoryName(fileName));
-			string[] subdirs = relPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-			StringBuilder standardNameSpace = new StringBuilder(project.RootNamespace);
-			foreach(string subdir in subdirs) {
-				if (subdir == "." || subdir == ".." || subdir.Length == 0)
-					continue;
-				if (subdir.Equals("src", StringComparison.OrdinalIgnoreCase))
-					continue;
-				if (subdir.Equals("source", StringComparison.OrdinalIgnoreCase))
-					continue;
-				standardNameSpace.Append('.');
-				standardNameSpace.Append(NewFileDialog.GenerateValidClassOrNamespaceName(subdir, true));
+			if (project.LanguageProperties == Dom.LanguageProperties.VBNet) {
+				return project.RootNamespace;
+			} else {
+				string relPath = FileUtility.GetRelativePath(project.Directory, Path.GetDirectoryName(fileName));
+				string[] subdirs = relPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				StringBuilder standardNameSpace = new StringBuilder(project.RootNamespace);
+				foreach(string subdir in subdirs) {
+					if (subdir == "." || subdir == ".." || subdir.Length == 0)
+						continue;
+					if (subdir.Equals("src", StringComparison.OrdinalIgnoreCase))
+						continue;
+					if (subdir.Equals("source", StringComparison.OrdinalIgnoreCase))
+						continue;
+					if (standardNameSpace.Length > 0)
+						standardNameSpace.Append('.');
+					standardNameSpace.Append(NewFileDialog.GenerateValidClassOrNamespaceName(subdir, true));
+				}
+				return standardNameSpace.ToString();
 			}
-			return standardNameSpace.ToString();
 		}
 		
 		static void RunCustomTool(CustomToolRun run)
