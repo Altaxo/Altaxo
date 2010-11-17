@@ -16,15 +16,6 @@ namespace Altaxo.Gui
     private System.Windows.Forms.PageSetupDialog _pageSetupDialog;
     private System.Windows.Forms.PrintDialog _printDialog;
 
-
-    protected override System.Type GuiControlType
-    {
-      get
-      {
-        return typeof(System.Windows.Forms.Control);
-      }
-    }
-
     public IWin32Window MainWindow
     {
       get

@@ -35,10 +35,8 @@ namespace Altaxo.Gui.Common
   /// which provides the user interaction.
   /// The only elements it itself is shown are the 3 buttons OK, Cancel, and Apply.
   /// </summary>
-  [UserControlForController(typeof(ITabbedElementViewEventSink))]
   public class TabbedElementControl : System.Windows.Forms.UserControl, ITabbedElementView
   {
-    private ITabbedElementViewEventSink _controller;
     private System.Windows.Forms.Panel m_ButtonPanel;
     private System.Windows.Forms.TabControl m_TabControl;
 
@@ -123,20 +121,6 @@ namespace Altaxo.Gui.Common
       // this.ActiveControl = m_HostedControl;
     }
     #region ITabbedDialogView Members
-
-   
-
-    public ITabbedElementViewEventSink Controller
-    {
-      get
-      {
-        return _controller;
-      }
-      set
-      {
-        _controller = value;
-      }
-    }
 
     public void ClearTabs()
     {

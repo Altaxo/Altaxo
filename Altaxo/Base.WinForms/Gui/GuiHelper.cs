@@ -73,7 +73,6 @@ namespace Altaxo.Gui
 
  
     #endregion
-
   
     #region Combobox
 

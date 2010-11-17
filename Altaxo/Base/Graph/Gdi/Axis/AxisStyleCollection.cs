@@ -82,8 +82,12 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisStyleCollection s = null != o ? (AxisStyleCollection)o : new AxisStyleCollection();
 
         int count = info.OpenArray();
-        for (int i = 0; i < count; ++i)
-          s._axisStyles.Add((AxisStyle)info.GetValue("e", s));
+				for (int i = 0; i < count; ++i)
+				{
+					var newStyle = (AxisStyle)info.GetValue("e", s);
+					newStyle.ParentObject = s;
+					s._axisStyles.Add(newStyle);
+				}
         info.CloseArray(count);
 
         return s;

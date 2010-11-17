@@ -38,6 +38,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYColumnPlotItemController.
   /// </summary>
   [UserControllerForObject(typeof(G2DPlotItem))]
+	[ExpectedTypeOfView(typeof(ITabbedElementView))]
   public class G2DPlotItemController 
     :
     TabbedElementController,

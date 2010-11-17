@@ -1754,5 +1754,25 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#endregion
 
+
+		internal void EhView_KeyDown(KeyEventArgs e)
+		{
+			switch (e.Key)
+			{
+				case Key.PageDown: // Page-Down-Key
+					VertScrollPos = VertScrollPos + VisibleTableRows;
+					break;
+				case Key.PageUp: // Page-Up-Key
+					VertScrollPos = VertScrollPos - VisibleTableRows;
+					break;
+				case Key.Home:
+					HorzScrollPos = 0;
+					break;
+				case Key.End:
+					HorzScrollPos = HorzScrollMaximum;
+					break;
+			}
+			
+		}
 	}
 }

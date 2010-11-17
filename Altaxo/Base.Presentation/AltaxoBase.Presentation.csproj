@@ -6,13 +6,15 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{323D97E6-92A8-40B4-99C1-D64D4368DFC7}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Altaxo</RootNamespace>
     <AssemblyName>AltaxoBase.Presentation</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,7 +45,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -57,25 +61,117 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Gui\Common\BackgroundCancelControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\BackgroundCancelDialogWpf.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\DialogShellViewWpf.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\MinMaxIntegerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\MultiChildControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\NumericUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SingleValueControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\TabbedElementControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Scripting\FitFunctionScriptControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Scripting\ScriptControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Scripting\ScriptExecutionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\InterpolationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\MasterCurveCreationDataColumnControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\MasterCurveCreationDataControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\MasterCurveCreationEditControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\MasterCurveCreationMainControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\RealFourierTransformationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\TransposeWorksheetControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\Common\BackgroundCancelControl.xaml.cs">
@@ -84,14 +180,27 @@
     <Compile Include="Gui\Common\BackgroundCancelDialogWpf.xaml.cs">
       <DependentUpon>BackgroundCancelDialogWpf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\BooleanValueControl.cs" />
     <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
       <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\MinMaxIntegerControl.xaml.cs">
+      <DependentUpon>MinMaxIntegerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\MultiChildControl.xaml.cs">
+      <DependentUpon>MultiChildControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\MultipleChoiceListView.cs" />
+    <Compile Include="Gui\Common\NumericUpDown.xaml.cs">
+      <DependentUpon>NumericUpDown.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\SingleChoiceComboBoxControl.cs" />
     <Compile Include="Gui\Common\SingleChoiceRadioStackPanel.cs" />
     <Compile Include="Gui\Common\SingleValueControl.xaml.cs">
       <DependentUpon>SingleValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\TabbedElementControl.xaml.cs">
+      <DependentUpon>TabbedElementControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
@@ -99,11 +208,13 @@
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ClosedCardinalSplineMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\OpenCardinalSplineMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs" />
@@ -112,13 +223,14 @@
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\PresentationGraphController.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphViewWpf.xaml.cs">
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\Viewing\PresentationGraphController.cs" />
     <Compile Include="Gui\GuiHelper.cs" />
+    <Compile Include="Gui\Scripting\FitFunctionScriptControl.xaml.cs">
+      <DependentUpon>FitFunctionScriptControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Scripting\ScriptControl.xaml.cs">
       <DependentUpon>ScriptControl.xaml</DependentUpon>
     </Compile>
@@ -126,6 +238,9 @@
       <DependentUpon>ScriptExecutionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\VisualDrawingHost.cs" />
+    <Compile Include="Gui\Worksheet\InterpolationControl.xaml.cs">
+      <DependentUpon>InterpolationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Worksheet\MasterCurveCreationDataColumnControl.xaml.cs">
       <DependentUpon>MasterCurveCreationDataColumnControl.xaml</DependentUpon>
     </Compile>
@@ -135,19 +250,25 @@
     <Compile Include="Gui\Worksheet\MasterCurveCreationEditControl.xaml.cs">
       <DependentUpon>MasterCurveCreationEditControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Worksheet\RealFourierTransformationControl.xaml.cs">
-      <DependentUpon>RealFourierTransformationControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationMainControl.xaml.cs">
       <DependentUpon>MasterCurveCreationMainControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Worksheet\RealFourierTransformationControl.xaml.cs">
+      <DependentUpon>RealFourierTransformationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Worksheet\TransposeWorksheetControl.xaml.cs">
+      <DependentUpon>TransposeWorksheetControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetPaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml.cs">
       <DependentUpon>WorksheetViewWpf.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Base\AltaxoBase.csproj">
@@ -158,65 +279,6 @@
       <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
       <Name>AltaxoCore</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Page Include="Gui\Common\BackgroundCancelControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Common\BackgroundCancelDialogWpf.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Common\DialogShellViewWpf.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Common\SingleValueControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Scripting\ScriptControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Scripting\ScriptExecutionDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Worksheet\MasterCurveCreationDataColumnControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Worksheet\MasterCurveCreationDataControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Worksheet\MasterCurveCreationEditControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Worksheet\RealFourierTransformationControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Worksheet\MasterCurveCreationMainControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

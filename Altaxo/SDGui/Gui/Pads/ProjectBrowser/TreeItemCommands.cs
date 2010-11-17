@@ -110,11 +110,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return true;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				
 			}
 		}
 

@@ -233,6 +233,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		private void EhWP_KeyDown(object sender, KeyEventArgs e)
 		{
+			if (_guiController != null)
+				_guiController.EhView_KeyDown(e);
 		}
 
 

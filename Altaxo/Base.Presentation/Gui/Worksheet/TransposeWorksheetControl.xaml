@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="Altaxo.Gui.Worksheet.TransposeWorksheetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:local="clr-namespace:Altaxo.Gui.Common"
+            >
+	<StackPanel Orientation="Horizontal">
+		<GroupBox>
+			<GroupBox.Header>
+				<TextBlock Width="120" TextWrapping="Wrap" >Number of data columns changing to property columns:</TextBlock>
+			</GroupBox.Header>
+			<local:MinMaxIntegerControl x:Name="_ctrlNumMovedDataCols" />
+		</GroupBox>
+		<GroupBox>
+			<GroupBox.Header>
+				<TextBlock Width="120" TextWrapping="Wrap" >Number of property columns changing to data columns:</TextBlock>
+			</GroupBox.Header>
+			<local:MinMaxIntegerControl x:Name="_ctrlNumMovedPropCols"/>
+		</GroupBox>
+
+	</StackPanel>
+</UserControl>

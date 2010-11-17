@@ -507,7 +507,7 @@ namespace Altaxo.Main
 				else if (item is ProjectFolder)
 				{
 					var folder = (ProjectFolder)item;
-					string moveToFolder = ProjectFolder.Combine(newFolderName, ProjectFolder.GetNamePart(newFolderName));
+					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(folder.Name));
 					RenameFolder(folder.Name, moveToFolder);
 				}
 			}

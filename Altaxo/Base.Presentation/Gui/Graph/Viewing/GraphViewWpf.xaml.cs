@@ -207,7 +207,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return _graphPanel;
+				// make sure that the returned element implements IInputElement
+				var result = _graphPanel;
+				System.Diagnostics.Debug.Assert(null != (result as System.Windows.IInputElement));
+				return result;
 			}
 		}
 

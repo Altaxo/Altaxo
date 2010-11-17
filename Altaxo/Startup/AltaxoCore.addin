@@ -640,7 +640,6 @@
     <ToolbarItem id="Duplicate" icon="Icons.16x16.Duplicate" tooltip="${res:XML.MainMenu.EditMenu.Duplicate.Description}"
         class="Altaxo.Main.Commands.Duplicate" />
     <ToolbarItem id="Separator1"  type = "Separator"/>
-    <Condition name = "WindowActive" activewindow="*" action="Disable">
       <ToolbarItem id="Cut" icon="Icons.16x16.CutIcon" tooltip="${res:XML.MainMenu.EditMenu.Cut.Description}"
         command="Cut" />
       <ToolbarItem id="Copy" icon="Icons.16x16.CopyIcon" tooltip="${res:XML.MainMenu.EditMenu.Copy.Description}"
@@ -649,7 +648,6 @@
         command="Paste" />
       <ToolbarItem id="Delete" icon="Icons.16x16.DeleteIcon" tooltip="${res:XML.MainMenu.EditMenu.Delete.Description}"
         command="Delete" />
-    </Condition>
     <ToolbarItem id="CutSeparator"  type = "Separator"/>
     <ToolbarItem id="GraphToolSeparator"  type = "Separator"/>
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">

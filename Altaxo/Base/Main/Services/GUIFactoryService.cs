@@ -34,9 +34,6 @@ namespace Altaxo.Main.Services
   /// </summary>
   public abstract class GUIFactoryService
   {
-    protected abstract System.Type GuiControlType { get; } 
-
-
 
 		/// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type.
@@ -169,10 +166,18 @@ namespace Altaxo.Main.Services
     /// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
     public object FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
     {
-      return ReflectionService.GetClassForClassInstanceByAttribute(
-        typeof(UserControlForControllerAttribute),
-        new Type[] { GuiControlType, expectedType },
-        new object[] { controller });
+			object result = null;
+
+			foreach (var guiControlType in this.RegisteredGuiTechnologies)
+			{
+				result = ReflectionService.GetClassForClassInstanceByAttribute(
+					typeof(UserControlForControllerAttribute),
+					new Type[] { guiControlType, expectedType },
+					new object[] { controller });
+				if (null != result)
+					break;
+			}
+			return result;
     }
 
 		   /// <summary>
@@ -245,7 +250,7 @@ namespace Altaxo.Main.Services
         object control =
           ReflectionService.GetClassForClassInstanceByAttribute(
           typeof(UserControlForControllerAttribute),
-          new System.Type[] { GuiControlType },
+          new System.Type[] { guiControlType },
           new object[] { controller });
 
         if (control == null)

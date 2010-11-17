@@ -27,16 +27,12 @@ namespace Altaxo.Gui.Common
 
   #region Interfaces
   
-  public interface IBooleanValueViewEventSink
-  {
-    void EhValidatingBool1(bool val);
-  }
+ 
   public interface IBooleanValueView
   {
-    IBooleanValueViewEventSink Controller { set; }
-
     void InitializeDescription(string value);
     void InitializeBool1(bool value);
+		event Action<bool> Bool1Changed;
   }
  
   public interface IBooleanValueController : IMVCAController
@@ -51,7 +47,7 @@ namespace Altaxo.Gui.Common
   /// </summary>
   [UserControllerForObject(typeof(bool),100)]
   [ExpectedTypeOfView(typeof(IBooleanValueView))]
-  public class BooleanValueController : IBooleanValueController, IBooleanValueViewEventSink
+  public class BooleanValueController : IBooleanValueController
   {
     protected IBooleanValueView _view;
     protected bool _value1Bool;
@@ -100,15 +96,18 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if(_view!=null)
-          _view.Controller = null;
+				if (_view != null)
+				{
+					_view.Bool1Changed -= EhValidatingBool1;
+				}
 
-        _view = value as IBooleanValueView;
-        
-        Initialize();
+				_view = value as IBooleanValueView;
 
-        if(_view!=null)
-          _view.Controller = this;
+				if (_view != null)
+				{
+					_view.Bool1Changed += EhValidatingBool1;
+					Initialize();
+				}
       }
     }
 

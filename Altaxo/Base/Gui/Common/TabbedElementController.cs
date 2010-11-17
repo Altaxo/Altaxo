@@ -32,14 +32,6 @@ namespace Altaxo.Gui.Common
   /// </summary>
   public interface ITabbedElementView
   {
-   
-
-    /// <summary>
-    /// Get / sets the controler of this view.
-    /// </summary>
-    ITabbedElementViewEventSink Controller { get; set; }
-
-   
     /// <summary>
     /// Removes all Tab pages from the dialog.
     /// </summary>
@@ -51,8 +43,6 @@ namespace Altaxo.Gui.Common
     /// <param name="title">The title of the tab page.</param>
     /// <param name="view">The view (must be currently of type Control.</param>
     void AddTab(string title, object view);
-
-   
 
     /// <summary>
     /// Activates the tab page with the title <code>title</code>.
@@ -101,6 +91,7 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Controls the <see cref="ITabbedElementView"/>.
   /// </summary>
+	[ExpectedTypeOfView(typeof(ITabbedElementView))]
   public class TabbedElementController : ITabbedElementViewEventSink, ITabbedElementController
   {
   
@@ -174,7 +165,6 @@ namespace Altaxo.Gui.Common
       {
         if (_view != null)
         {
-          _view.Controller = null;
           _view.ChildControl_Entered -= EhView_ChildControlEntered;
           _view.ChildControl_Validated -= EhView_ChildControlValidated;
         }
@@ -185,7 +175,6 @@ namespace Altaxo.Gui.Common
 
         if (_view != null)
         {
-          _view.Controller = this;
           _view.ChildControl_Entered += EhView_ChildControlEntered;
           _view.ChildControl_Validated += EhView_ChildControlValidated;
         }

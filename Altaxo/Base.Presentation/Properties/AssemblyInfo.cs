@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -22,6 +23,9 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("80bfd7b1-f874-4121-b093-89393d8e3489")]
 
+// The following line is neccessary if the assembly contains themes for custom wpf controls
+[assembly: ThemeInfo(ResourceDictionaryLocation.SourceAssembly, ResourceDictionaryLocation.SourceAssembly)]
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -32,4 +36,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.0.0.671")]
+[assembly: AssemblyVersion("4.0.0.685")]

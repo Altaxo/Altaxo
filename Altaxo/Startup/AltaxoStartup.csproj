@@ -230,7 +230,8 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>if not exist $(SolutionDir)rt$(ConfigurationName)\AddIns mkdir $(SolutionDir)rt$(ConfigurationName)\AddIns
-copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rt$(ConfigurationName)\AddIns</PreBuildEvent>
+copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rt$(ConfigurationName)\AddIns
+del  $(SolutionDir)rt$(ConfigurationName)\AddIns\ICSharpCode.SharpDevelop.addin</PreBuildEvent>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>

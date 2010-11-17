@@ -32,7 +32,6 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Summary description for BooleanValueControl.
   /// </summary>
-  [UserControlForController(typeof(IBooleanValueViewEventSink))]
   public class BooleanValueControl : System.Windows.Forms.UserControl, IBooleanValueView
   {
     private System.Windows.Forms.CheckBox _cbCheckBox1;
@@ -97,18 +96,7 @@ namespace Altaxo.Gui.Common
 
     #region IBooleanValueView Members
 
-    IBooleanValueViewEventSink _controller;
-    public IBooleanValueViewEventSink Controller
-    {
-      get
-      {
-        return _controller;
-      }
-      set
-      {
-        _controller = value;
-      }
-    }
+		public event Action<bool> Bool1Changed;
 
     public void InitializeDescription(string value)
     {
@@ -122,12 +110,10 @@ namespace Altaxo.Gui.Common
 
     #endregion
 
-  
-
     private void _cbCheckBox1_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhValidatingBool1(this._cbCheckBox1.Checked);
+			if (null != Bool1Changed)
+				Bool1Changed(this._cbCheckBox1.Checked);
     }
   }
 }
