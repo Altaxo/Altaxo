@@ -3,33 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:local="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d" 
              d:DesignWidth="200"
 						 MinWidth="200">
 	<UserControl.Resources>
-		<Style xmlns:local="clr-namespace:Altaxo.Gui.Common"  TargetType="TextBox">
-			<Setter Property="Validation.ErrorTemplate">
-				<Setter.Value>
-					<ControlTemplate>
-						<Border BorderBrush="Red" BorderThickness="4">
-						<StackPanel Orientation="Vertical">
-							<AdornedElementPlaceholder x:Name="adornedElement"/>
-								<TextBlock Foreground="Red" Background="White" TextWrapping="Wrap" 
-													 Width="{Binding ElementName=adornedElement, Path=AdornedElement.(ActualWidth)}"
-													 Text="{Binding ElementName=adornedElement, Path=AdornedElement.(Validation.Errors), Converter={local:ValidationErrorToMessageConverter}}"/>
-						</StackPanel>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+		<ResourceDictionary Source="Resources/styledictionary.xaml" />
 	</UserControl.Resources>
-    <Grid>
+
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Name="_lblDescription" Content="Description:"/>
-		<TextBox Grid.Row="1" Name="_lblEditText" Margin="0,5,0,10" AcceptsReturn="False"/>
+		<local:ValidatingTextBox Grid.Row="1" x:Name="_edEditText" Margin="0,5,0,10" Style="{StaticResource ValidatingTextBoxStyle}" AcceptsReturn="False" Validating="EhValidating"/>
 	</Grid>
 </UserControl>

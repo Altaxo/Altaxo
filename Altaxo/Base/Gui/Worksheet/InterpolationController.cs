@@ -21,37 +21,34 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.Regression;
 using Altaxo.Gui;
+using Altaxo.Collections;
+using Altaxo.Calc;
 
 namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
   
-  public interface IInterpolationParameterViewEventSink
-  {
-    void EhValidatingClassName(int val);
-    void EhValidatingNumberOfPoints(string val, System.ComponentModel.CancelEventArgs e);
-    void EhValidatingXOrg(string val, System.ComponentModel.CancelEventArgs e);
-    void EhValidatingXEnd(string val, System.ComponentModel.CancelEventArgs e);
-
-  }
   public interface IInterpolationParameterView
   {
-    IInterpolationParameterViewEventSink Controller { set; }
-
-    void InitializeClassList(string[] classes, int preselection);
-    void InitializeNumberOfPoints(int val);
-    void InitializeXOrg(double val);
-    void InitializeXEnd(double val);
-
+    void InitializeClassList(SelectableListNodeList list);
+    void InitializeNumberOfPoints(string val);
+    void InitializeXOrg(string val);
+    void InitializeXEnd(string val);
     void SetDetailControl(object detailControl);
+
+		event Action<ValidationEventArgs<string>> ValidatingFrom;
+		event Action<ValidationEventArgs<string>> ValidatingTo;
+		event Action<ValidationEventArgs<string>> ValidatingNumberOfPoints;
+		event Action ChangedInterpolationMethod;
   }
 
 
   public class InterpolationParameters
   {
-    public Altaxo.Calc.Interpolation.CurveBase InterpolationInstance;
+    public Altaxo.Calc.Interpolation.IInterpolationFunction InterpolationInstance;
     public double XOrg;
     public double XEnd;
     public int NumberOfPoints;
@@ -64,18 +61,19 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   [UserControllerForObject(typeof(InterpolationParameters),100)]
   [ExpectedTypeOfView(typeof(IInterpolationParameterView))]
-  public class InterpolationParameterController : IMVCAController, IInterpolationParameterViewEventSink
+  public class InterpolationParameterController : IMVCAController
   {
     InterpolationParameters _doc;
     IInterpolationParameterView _view;
 
-    int _numberOfPoints;
-    double _xOrg;
-    double _xEnd;
-    Altaxo.Calc.Interpolation.CurveBase _interpolationInstance;
+    int? _numberOfPoints;
+    double? _xOrg;
+    double? _xEnd;
+
+    Altaxo.Calc.Interpolation.IInterpolationFunction _interpolationInstance;
     IMVCAController _interpolationDetailController;
-    System.Type[] _classList;
-    string[] _classListStrings;
+		SelectableListNodeList _classListA = new SelectableListNodeList();
+
 
     public InterpolationParameterController(InterpolationParameters parameters)
     {
@@ -105,36 +103,35 @@ namespace Altaxo.Gui.Worksheet
     {
       if(_view!=null)
       {
-        _view.InitializeNumberOfPoints(_numberOfPoints);
-        _view.InitializeXOrg(_xOrg);
-        _view.InitializeXEnd(_xEnd);
+        _view.InitializeNumberOfPoints(Altaxo.Serialization.GUIConversion.ToString(_numberOfPoints));
+				_view.InitializeXOrg(Altaxo.Serialization.GUIConversion.ToString(_xOrg));
+        _view.InitializeXEnd(Altaxo.Serialization.GUIConversion.ToString(_xEnd));
 
         RetrieveClassList();
-        _view.InitializeClassList(_classListStrings,0);
-        EhValidatingClassName(0); // to make sure the right InterpolationInstance is set
+
+				if(null==_classListA.FirstSelectedNode)
+					_classListA[0].Selected = true;
+        
+				_view.InitializeClassList(_classListA);
+				this.EhInterpolationClassChanged(); // to make sure the right InterpolationInstance is set
       }
     }
 
 
     void RetrieveClassList()
     {
-      System.Type[] rawTypes = Altaxo.Main.Services.ReflectionService.GetSubclassesOf(typeof(Altaxo.Calc.Interpolation.IInterpolationFunction));
+      System.Type[] rawTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Interpolation.IInterpolationFunction));
 
-      System.Collections.ArrayList list = new System.Collections.ArrayList();
+			var list = new List<System.Type>();
       foreach(System.Type type in rawTypes)
       {
         if(type.IsClass && type.IsPublic && !type.IsAbstract && null!=type.GetConstructor(new System.Type[]{}))
           list.Add(type);
       }
 
-      _classList = (System.Type[])list.ToArray(typeof(System.Type));
-      _classListStrings = new string[_classList.Length];
-      for(int i=0;i<_classList.Length;i++)
-        _classListStrings[i] = Current.Gui.GetUserFriendlyClassName(_classList[i]);
-
-
-
-    }
+			foreach(var clsType in list)
+				_classListA.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(clsType),clsType,_interpolationInstance!=null && clsType==_interpolationInstance.GetType()));
+		}
 
     public bool Apply()
     {
@@ -143,15 +140,14 @@ namespace Altaxo.Gui.Worksheet
         return false;
       }
 
-      if(_view!=null)
-      {
-        _doc.NumberOfPoints = _numberOfPoints;
-        _doc.XOrg = _xOrg;
-        _doc.XEnd = _xEnd;
-        _doc.InterpolationInstance = this._interpolationInstance;
+			if (null==_interpolationInstance || null == _numberOfPoints || null == _xOrg || null == _xEnd)
+				return false;
 
-        return true;
-      }
+        _doc.NumberOfPoints = (int)_numberOfPoints;
+        _doc.XOrg = (double)_xOrg;
+        _doc.XEnd = (double)_xEnd;
+        _doc.InterpolationInstance = _interpolationInstance;
+
 
       return true;
     }
@@ -169,15 +165,26 @@ namespace Altaxo.Gui.Worksheet
       }
       set
       {
-        if(_view!=null)
-          _view.Controller = null;
+				if (_view != null)
+				{
+					_view.ChangedInterpolationMethod -= EhInterpolationClassChanged;
+					_view.ValidatingFrom -= EhValidatingXOrg;
+					_view.ValidatingTo -= EhValidatingXEnd;
+					_view.ValidatingNumberOfPoints -= EhValidatingNumberOfPoints;
+				}
 
         _view = value as IInterpolationParameterView;
         
-        Initialize();
 
-        if(_view!=null)
-          _view.Controller = this;
+				if (_view != null)
+				{
+					_view.ChangedInterpolationMethod += EhInterpolationClassChanged;
+					_view.ValidatingFrom += EhValidatingXOrg;
+					_view.ValidatingTo += EhValidatingXEnd;
+					_view.ValidatingNumberOfPoints += EhValidatingNumberOfPoints;
+
+					Initialize();
+				}
       }
     }
 
@@ -193,41 +200,69 @@ namespace Altaxo.Gui.Worksheet
 
     #region IInterpolationParameterViewEventSink Members
 
-    public void EhValidatingClassName(int val)
+    public void EhInterpolationClassChanged()
     {
-      this._interpolationInstance = (Altaxo.Calc.Interpolation.CurveBase)System.Activator.CreateInstance(_classList[val]);
+			var sel = _classListA.FirstSelectedNode;
+      this._interpolationInstance = (Altaxo.Calc.Interpolation.IInterpolationFunction)System.Activator.CreateInstance((System.Type)sel.Item);
       SetInterpolationDetailController((IMVCAController)Current.Gui.GetControllerAndControl(new object[]{this._interpolationInstance},typeof(IMVCAController)));
     }
 
-    public void EhValidatingNumberOfPoints(string val, System.ComponentModel.CancelEventArgs e)
+    public void EhValidatingNumberOfPoints(ValidationEventArgs<string> e)
     {
+			_numberOfPoints = null;
       int var;
-      if(Altaxo.Serialization.GUIConversion.IsInteger(val, out var))
-   
-        _numberOfPoints = var;
-      else
-        e.Cancel = true;
+			if(!Altaxo.Serialization.GUIConversion.IsInteger(e.ValueToValidate, out var))
+			{
+				e.AddError("Value has to be an integer!");
+				return;
+			}
+
+			if (var < 2)
+			{
+				e.AddError("Value has to be >=2");
+				return;
+			}
+
+			_numberOfPoints = var;
     }
 
-    public void EhValidatingXOrg(string val, System.ComponentModel.CancelEventArgs e)
+    public void EhValidatingXOrg(ValidationEventArgs<string> e)
     {
+			_xOrg = null;
       double var;
-      if(Altaxo.Serialization.GUIConversion.IsDouble(val, out var))
-   
-        _xOrg = var;
-      else
-        e.Cancel = true;
+      if(!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var))
+			{
+				e.AddError("Value has to be a number");
+				return;
+			}
+
+			if (!var.IsFinite())
+			{
+				e.AddError("Value has to be a finite number");
+				return;
+			}
+
+			_xOrg = var;
     }
 
-    public void EhValidatingXEnd(string val, System.ComponentModel.CancelEventArgs e)
-    {
-      double var;
-      if(Altaxo.Serialization.GUIConversion.IsDouble(val, out var))
-   
-        _xEnd = var;
-      else
-        e.Cancel = true;
-    }
+		public void EhValidatingXEnd(ValidationEventArgs<string> e)
+		{
+			_xEnd = null;
+			double var;
+			if (!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var))
+			{
+				e.AddError("Value has to be a number");
+				return;
+			}
+
+			if (!var.IsFinite())
+			{
+				e.AddError("Value has to be a finite number");
+				return;
+			}
+
+			_xEnd = var;
+		}
 
     #endregion
   }

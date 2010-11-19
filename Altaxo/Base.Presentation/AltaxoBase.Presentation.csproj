@@ -108,6 +108,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Resources\styledictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\SingleValueControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -135,6 +139,10 @@
     <Page Include="Gui\Scripting\ScriptExecutionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Worksheet\ExportGalacticSpcFileControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Worksheet\InterpolationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -202,6 +210,7 @@
     <Compile Include="Gui\Common\TabbedElementControl.xaml.cs">
       <DependentUpon>TabbedElementControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\ValidatingTextBox.cs" />
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
@@ -238,6 +247,9 @@
       <DependentUpon>ScriptExecutionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\VisualDrawingHost.cs" />
+    <Compile Include="Gui\Worksheet\ExportGalacticSpcFileControl.xaml.cs">
+      <DependentUpon>ExportGalacticSpcFileControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Worksheet\InterpolationControl.xaml.cs">
       <DependentUpon>InterpolationControl.xaml</DependentUpon>
     </Compile>
@@ -280,6 +292,7 @@
       <Name>AltaxoCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

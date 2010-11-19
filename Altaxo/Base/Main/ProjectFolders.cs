@@ -497,12 +497,18 @@ namespace Altaxo.Main
 				if (item is Altaxo.Data.DataTable)
 				{
 					var table = (Altaxo.Data.DataTable)item;
-					table.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
+					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
+					if (Current.Project.DataTableCollection.Contains(newName))
+						newName = Current.Project.DataTableCollection.FindNewTableName(newName);
+					table.Name = newName;
 				}
 				else if (item is Altaxo.Graph.Gdi.GraphDocument)
 				{
 					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
-					graph.Name = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
+					if (Current.Project.GraphDocumentCollection.Contains(newName))
+						newName = Current.Project.GraphDocumentCollection.FindNewName(newName);
+					graph.Name = newName;
 				}
 				else if (item is ProjectFolder)
 				{

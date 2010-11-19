@@ -54,9 +54,10 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-
-		public IExportGalacticSpcFileEventSink Controller { get; set; }
-
+		public event Action BasicFileNameAndPathChoose;
+		public event Action Change_CreateSpectrumFrom;
+		public event Action Change__XValuesFromOption;
+		public event Action Change_ExtendFileNameOptions;
 
     /// <summary>
     /// Creates the export dialog for Galactic SPC file export.
@@ -153,15 +154,9 @@ namespace Altaxo.Gui.Worksheet
     /// This fills the x values column combobox with column names and selects the first index in the column as default.
     /// </summary>
     /// <param name="colnames">The array of column names the combobox is filled with.</param>
-    public void FillXValuesColumnBox(string [] colnames)
+    public void FillXValuesColumnBox(SelectableListNodeList list)
     {
-      this.m_cbXValues_Column.Items.Clear();
-      this.m_cbXValues_Column.Items.AddRange(colnames);
-
-      if(colnames.Length>0)
-        this.m_cbXValues_Column.SelectedIndex=0;
-      else
-        this.m_cbXValues_Column.SelectedIndex=-1;
+			GuiHelper.UpdateList(m_cbXValues_Column, list);
     }
 
     /// <summary>
@@ -169,7 +164,11 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     public string XValuesColumnName
     {
-      get { return (string)this.m_cbXValues_Column.SelectedItem; }
+      get 
+			{
+				GuiHelper.SynchronizeSelectionFromGui(m_cbXValues_Column);
+				return (string)this.m_cbXValues_Column.SelectedItem; 
+			}
     }
 
     /// <summary>
@@ -184,15 +183,9 @@ namespace Altaxo.Gui.Worksheet
     /// Fills the "Extend file name by column" combobox with column names.
     /// </summary>
     /// <param name="colnames">The array of column names the combobox is filled with.</param>
-    public void FillExtFileNameColumnBox(string [] colnames)
+    public void FillExtFileNameColumnBox(SelectableListNodeList list)
     {
-      this.m_cbExtFileName_Column.Items.Clear();
-      this.m_cbExtFileName_Column.Items.AddRange(colnames);
-
-      if(colnames.Length>0)
-        this.m_cbExtFileName_Column.SelectedIndex=0;
-      else
-        this.m_cbExtFileName_Column.SelectedIndex=-1;
+			GuiHelper.UpdateList(m_cbExtFileName_Column, list);
     }
 
     /// <summary>
@@ -200,7 +193,11 @@ namespace Altaxo.Gui.Worksheet
     /// </summary>
     public string ExtFileNameColumnName
     {
-      get { return (string)this.m_cbExtFileName_Column.SelectedItem; }
+      get 
+			{
+				GuiHelper.SynchronizeSelectionFromGui(m_cbExtFileName_Column);
+				return (string)this.m_cbExtFileName_Column.SelectedItem; 
+			}
     }
 
     /// <summary>
@@ -412,26 +409,27 @@ namespace Altaxo.Gui.Worksheet
 
     private void EhChooseBasicFileNameAndPath_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.ChooseBasicFileNameAndPath();    
+			
+      if(null!=BasicFileNameAndPathChoose)
+				BasicFileNameAndPathChoose();    
     }
 
     private void EhCreateSpectrumFrom_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhChange_CreateSpectrumFrom();
+      if(null!=Change_CreateSpectrumFrom)
+				Change_CreateSpectrumFrom();
     }
 
     private void EhXValuesChooseOptions_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhChange_XValuesFromOptions();
+      if(null!=Change__XValuesFromOption)
+				Change__XValuesFromOption();
     }
 
     private void EhFileNameExtendOptions1_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhChange_ExtendFileNameOptions();
+      if(null!=Change_ExtendFileNameOptions)
+				Change_ExtendFileNameOptions();
     }
   } // end of class ExportGalacticSpcFileDialog
 

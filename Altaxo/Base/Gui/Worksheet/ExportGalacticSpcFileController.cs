@@ -7,12 +7,13 @@ using Altaxo.Collections;
 using Altaxo.Serialization.Galactic;
 using Altaxo.Serialization.Galactic.Options;
 
+using Altaxo.Collections;
+
 namespace Altaxo.Gui.Worksheet
 {
 	#region Interfaces
 	public interface IExportGalacticSpcFileView
 	{
-		IExportGalacticSpcFileEventSink Controller { set; }
 		bool CreateSpectrumFromRow { get; set; }
 		bool CreateSpectrumFromColumn { get; }
 		bool XValuesContinuousNumber { get; set; }
@@ -21,22 +22,20 @@ namespace Altaxo.Gui.Worksheet
 		bool ExtendFileName_ByColumn { get; }
 		string BasicFileName { get; set; }
 
-		void FillXValuesColumnBox(string[] colnames);
+		void FillXValuesColumnBox(SelectableListNodeList list);
 		bool EnableXValuesColumnBox { set; }
 		string XValuesColumnName { get; }
 
-		void FillExtFileNameColumnBox(string[] colnames);
+		void FillExtFileNameColumnBox(SelectableListNodeList list);
 		bool EnableExtFileNameColumnBox { set; }
 		string ExtFileNameColumnName { get; }
+
+		event Action BasicFileNameAndPathChoose;
+		event Action Change_CreateSpectrumFrom;
+		event Action Change__XValuesFromOption;
+		event Action Change_ExtendFileNameOptions;
 	}
 
-	public interface IExportGalacticSpcFileEventSink
-	{
-		void ChooseBasicFileNameAndPath();
-		void EhChange_CreateSpectrumFrom();
-		void EhChange_XValuesFromOptions();
-		void EhChange_ExtendFileNameOptions();
-	}
 
 	#endregion
 
@@ -44,7 +43,7 @@ namespace Altaxo.Gui.Worksheet
 	/// The controller class which controls the <see cref="ExportGalacticSpcFileDialog"/> dialog.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IExportGalacticSpcFileView))]
-	public class ExportGalacticSpcFileDialogController : IMVCAController, IExportGalacticSpcFileEventSink
+	public class ExportGalacticSpcFileDialogController : IMVCAController
 	{
 		/// <summary>
 		/// The dialog to control.
@@ -121,17 +120,11 @@ namespace Altaxo.Gui.Worksheet
 			else
 				colcol = m_Table.DataColumns;
 
-			// count the number of numeric columns
-			int numnumeric = 0;
-			for (int i = 0; i < colcol.ColumnCount; i++)
-				if (colcol[i] is Altaxo.Data.INumericColumn)
-					++numnumeric;
-
 			// Fill the Combo Box with Column names
-			string[] colnames = new string[numnumeric];
+			var colnames = new SelectableListNodeList();
 			for (int i = 0, j = 0; i < colcol.ColumnCount; i++)
 				if (colcol[i] is Altaxo.Data.INumericColumn)
-					colnames[j++] = colcol.GetColumnName(i);
+					colnames.Add(new SelectableListNode(colcol.GetColumnName(i),colcol[i],0==i));
 
 			// now set the contents of the combo box
 			_view.FillXValuesColumnBox(colnames);
@@ -152,9 +145,9 @@ namespace Altaxo.Gui.Worksheet
 				colcol = m_Table.PropCols;
 
 			// Fill the Combo Box with Column names
-			string[] colnames = new string[colcol.ColumnCount];
+			var colnames = new SelectableListNodeList();
 			for (int i = 0; i < colcol.ColumnCount; i++)
-				colnames[i] = colcol.GetColumnName(i);
+				colnames.Add(new SelectableListNode( colcol.GetColumnName(i), colcol[i], i==0));
 
 			// now set the contents of the combo box
 			_view.FillExtFileNameColumnBox(colnames);
@@ -382,7 +375,10 @@ namespace Altaxo.Gui.Worksheet
 			{
 				if (null != _view)
 				{
-					_view.Controller = null;
+					_view.BasicFileNameAndPathChoose -= this.ChooseBasicFileNameAndPath;
+					_view.Change_ExtendFileNameOptions -= this.EhChange_ExtendFileNameOptions;
+					_view.Change_CreateSpectrumFrom -= this.EhChange_CreateSpectrumFrom;
+					_view.Change__XValuesFromOption -= this.EhChange_XValuesFromOptions;
 				}
 
 				_view = value as IExportGalacticSpcFileView;
@@ -390,7 +386,12 @@ namespace Altaxo.Gui.Worksheet
 				if (null != _view)
 				{
 					InitializeElements();
-					_view.Controller = this;
+
+					_view.BasicFileNameAndPathChoose += this.ChooseBasicFileNameAndPath;
+					_view.Change_ExtendFileNameOptions += this.EhChange_ExtendFileNameOptions;
+					_view.Change_CreateSpectrumFrom += this.EhChange_CreateSpectrumFrom;
+					_view.Change__XValuesFromOption += this.EhChange_XValuesFromOptions;
+
 				}
 			}
 		}

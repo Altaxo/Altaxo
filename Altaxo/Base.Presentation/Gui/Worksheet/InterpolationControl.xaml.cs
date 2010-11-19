@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Altaxo.Collections;
+
 namespace Altaxo.Gui.Worksheet
 {
 	/// <summary>
@@ -19,39 +21,85 @@ namespace Altaxo.Gui.Worksheet
 	/// </summary>
 	public partial class InterpolationControl : UserControl, IInterpolationParameterView
 	{
+		public event Action<ValidationEventArgs<string>> ValidatingFrom;
+		public event Action<ValidationEventArgs<string>> ValidatingTo;
+		public event Action<ValidationEventArgs<string>> ValidatingNumberOfPoints;
+		public event Action ChangedInterpolationMethod;
+
 		public InterpolationControl()
 		{
 			InitializeComponent();
 		}
 
-		public IInterpolationParameterViewEventSink Controller
+		public void InitializeClassList(SelectableListNodeList list)
 		{
-			set { throw new NotImplementedException(); }
+			GuiHelper.Initialize(_cbInterpolationClass, list);
 		}
 
-		public void InitializeClassList(string[] classes, int preselection)
+		public void InitializeNumberOfPoints(string val)
 		{
-			throw new NotImplementedException();
+			this._edNumberOfPoints.Text = val;
 		}
 
-		public void InitializeNumberOfPoints(int val)
+		public void InitializeXOrg(string val)
 		{
-			throw new NotImplementedException();
+			this._edFrom.Text = val;
 		}
 
-		public void InitializeXOrg(double val)
+		public void InitializeXEnd(string val)
 		{
-			throw new NotImplementedException();
+			this._edTo.Text = val;
 		}
 
-		public void InitializeXEnd(double val)
-		{
-			throw new NotImplementedException();
-		}
-
+		UIElement _detailControl;
 		public void SetDetailControl(object detailControl)
 		{
-			throw new NotImplementedException();
+			if (_detailControl != null)
+				_mainGrid.Children.Remove(_detailControl);
+
+			if (detailControl is System.Windows.Forms.Control)
+			{
+				var host = new System.Windows.Forms.Integration.WindowsFormsHost();
+				host.Child = (System.Windows.Forms.Control)detailControl;
+				_detailControl = host;
+			}
+			else
+			{
+				_detailControl = (UIElement)detailControl;
+			}
+
+			if (null != _detailControl)
+			{
+				_detailControl.SetValue(Grid.RowProperty, 4);
+				_detailControl.SetValue(Grid.ColumnProperty, 2);
+				_mainGrid.Children.Add(_detailControl);
+			}
+			
+		}
+
+		private void EhValueTo_Validating(object sender, ValidationEventArgs<string> e)
+		{
+			if (null != ValidatingTo)
+				ValidatingTo(e);
+		}
+
+		private void EhValueNumberOfPoints_Validating(object sender, Altaxo.Gui.ValidationEventArgs<string> e)
+		{
+			if (null != ValidatingNumberOfPoints)
+				ValidatingNumberOfPoints(e);
+		}
+
+		private void EhValueFrom_Validating(object sender, Altaxo.Gui.ValidationEventArgs<string> e)
+		{
+			if (null != ValidatingFrom)
+				ValidatingFrom(e);
+		}
+
+		private void EhInterpolationClassChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_cbInterpolationClass);
+			if (null != ChangedInterpolationMethod)
+				ChangedInterpolationMethod();
 		}
 	}
 }

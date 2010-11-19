@@ -285,6 +285,7 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
     <Compile Include="Gui\NotifyChangedValue.cs" />
+    <Compile Include="Gui\ValidationEventArgs.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationDataController.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationMainController.cs" />
     <Compile Include="Gui\Worksheet\RealFourierTransformationController.cs" />

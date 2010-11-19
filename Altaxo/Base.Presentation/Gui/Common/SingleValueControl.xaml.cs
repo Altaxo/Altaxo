@@ -19,21 +19,9 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class SingleValueControl : UserControl , ISingleValueView
 	{
-		NotifyChangedValue<string> _editText = new NotifyChangedValue<string>();
 		public SingleValueControl()
 		{
 			InitializeComponent();
-			try
-			{
-				var binding = new Binding();
-				binding.Source = _editText;
-				binding.Path = new PropertyPath("Value");
-				binding.ValidationRules.Add(new ValidationWithErrorString(this.ValidateText));
-				_lblEditText.SetBinding(TextBox.TextProperty, binding);
-			}
-			catch (Exception ex)
-			{
-			}
 		}
 
 		#region ISingleValueView
@@ -47,34 +35,23 @@ namespace Altaxo.Gui.Common
 		{
 			get
 			{
-				return _lblEditText.Text;
-				//return _editText.Content;
+				return _edEditText.Text;
 			}
 			set
 			{
-				//_lblEditText.Text = value;
-			_editText.Value = value;
+			_edEditText.Text = value;
 			}
 		}
 
-		public event Func<string,string> ValueText_Validating;
+		public event Action<ValidationEventArgs<string>> ValueText_Validating;
 
 		#endregion
+	
 
-
-		private string ValidateText(object value, System.Globalization.CultureInfo cultureInfo)
+		private void EhValidating(object sender, ValidationEventArgs<string> e)
 		{
-			string result = null;
 			if (null != ValueText_Validating)
-			{
-				foreach (var e in ValueText_Validating.GetInvocationList())
-				{
-					var s = (string)e.DynamicInvoke(value);
-					result = null == result ? s : null == s ? result : result + e;
-				}
-			}
-
-			return result;
+				ValueText_Validating(e);
 		}
 	}
 }

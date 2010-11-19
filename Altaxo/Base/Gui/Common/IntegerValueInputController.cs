@@ -106,10 +106,11 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueFormController Members
 
-    public string EhView_ValidatingValue1(string val)
+    public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
     {
-      // we validate only during apply
-			return null;
+			int val;
+			if (!int.TryParse(e.ValueToValidate, out val))
+				e.AddError("Value has to be a valid integer");
     }
     #endregion
 

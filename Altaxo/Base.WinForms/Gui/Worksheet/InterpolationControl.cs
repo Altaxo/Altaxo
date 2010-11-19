@@ -29,13 +29,13 @@ using System.Windows.Forms;
 
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet
 {
   /// <summary>
   /// Summary description for InterpolationControl.
   /// </summary>
-  [UserControlForController(typeof(IInterpolationParameterViewEventSink))]
   public class InterpolationControl : System.Windows.Forms.UserControl, IInterpolationParameterView
   {
     private System.Windows.Forms.Label label1;
@@ -50,6 +50,13 @@ namespace Altaxo.Gui.Worksheet
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
+
+
+		public event Action<ValidationEventArgs<string>> ValidatingFrom;
+		public event Action<ValidationEventArgs<string>> ValidatingTo;
+		public event Action<ValidationEventArgs<string>> ValidatingNumberOfPoints;
+		public event Action ChangedInterpolationMethod;
+
 
     public InterpolationControl()
     {
@@ -186,62 +193,60 @@ namespace Altaxo.Gui.Worksheet
 
     private void _cbInterpolationClass_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhValidatingClassName(this._cbInterpolationClass.SelectedIndex);
+			GuiHelper.SynchronizeSelectionFromGui(_cbInterpolationClass);
+			if (null != ChangedInterpolationMethod)
+				ChangedInterpolationMethod();
     }
 
     private void _edFrom_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=Controller)    
-        Controller.EhValidatingXOrg(this._edFrom.Text, e);
+			if (null != ValidatingFrom)
+			{
+				var ea = new ValidationEventArgs<string>(_edFrom.Text);
+				ValidatingFrom(ea);
+				e.Cancel = ea.HasErrors;
+			}
     }
 
     private void _edTo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=Controller)    
-        Controller.EhValidatingXEnd(this._edTo.Text, e);
+			if (null != ValidatingTo)
+			{
+				var ea = new ValidationEventArgs<string>(_edTo.Text);
+				ValidatingTo(ea);
+				e.Cancel = ea.HasErrors;
+			}
     }
 
     private void _edNumberOfPoints_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=Controller)    
-        Controller.EhValidatingNumberOfPoints(this._edNumberOfPoints.Text, e);
+			if (null != ValidatingNumberOfPoints)
+			{
+				var ea = new ValidationEventArgs<string>(_edNumberOfPoints.Text);
+				ValidatingNumberOfPoints(ea);
+				e.Cancel = ea.HasErrors;
+			}
     }
     #region IInterpolationParameterView Members
 
-    IInterpolationParameterViewEventSink _controller = null;
-    public IInterpolationParameterViewEventSink Controller
+    public void InitializeClassList(SelectableListNodeList list)
     {
-      get
-      {
-        return _controller;
-      }
-      set
-      {
-        _controller = value;
-      }
+			GuiHelper.UpdateList(_cbInterpolationClass, list);
     }
 
-    public void InitializeClassList(string[] classes, int preselection)
+    public void InitializeNumberOfPoints(string val)
     {
-      this._cbInterpolationClass.Items.Clear();
-      this._cbInterpolationClass.Items.AddRange(classes);
-      this._cbInterpolationClass.SelectedIndex = preselection;
+			this._edNumberOfPoints.Text = val;
     }
 
-    public void InitializeNumberOfPoints(int val)
+		public void InitializeXOrg(string val)
     {
-      this._edNumberOfPoints.Text = Altaxo.Serialization.GUIConversion.ToString(val);
+			this._edFrom.Text = val;
     }
 
-    public void InitializeXOrg(double val)
+		public void InitializeXEnd(string val)
     {
-      this._edFrom.Text = Altaxo.Serialization.GUIConversion.ToString(val);
-    }
-
-    public void InitializeXEnd(double val)
-    {
-      this._edTo.Text = Altaxo.Serialization.GUIConversion.ToString(val);
+			this._edTo.Text = val;
     }
 
     UserControl _detailControl;

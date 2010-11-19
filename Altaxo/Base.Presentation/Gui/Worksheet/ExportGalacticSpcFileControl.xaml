@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="Altaxo.Gui.Worksheet.ExportGalacticSpcFileControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:local="clr-namespace:Altaxo.Gui.Common"
+             mc:Ignorable="d" 
+             >
+	<UserControl.Resources>
+		<ResourceDictionary Source="../Common/Resources/styledictionary.xaml" />
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<GroupBox Grid.Row="0" Header="Basic file name and path:" Margin="4">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<local:ValidatingTextBox Margin="4" x:Name="m_edBasicFileNameAndPath"/>
+				<Button Grid.Column="1" Margin="4" x:Name="m_btChooseBasicFileNameAndPath" Click="EhChooseBasicFileName"> ... </Button>
+			</Grid>
+		</GroupBox>
+
+
+		<GroupBox Grid.Row="1"  Header="Create a spectrum from:" Margin="4">
+			<StackPanel Orientation="Horizontal">
+				<RadioButton Margin="4" Content="Data on a row" x:Name="m_rbCreateSpectrum_FromRow" Checked="EhCreateSpectrumFrom_Changed"/>
+				<RadioButton Margin="4" Content="Data on a column" x:Name="m_rbCreateSpectrum_FromColumn" Checked="EhCreateSpectrumFrom_Changed"/>
+			</StackPanel>
+		</GroupBox>
+		<GroupBox Grid.Row="2"  Header="X-Values:" Margin="4">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<RadioButton Grid.Row="0" Grid.ColumnSpan="2" Margin="4" x:Name="m_rbXValues_ContinuousNumber" Checked="EhXValues_Changed">Continuous number</RadioButton>
+				<RadioButton Grid.Row="1" Margin="4" x:Name="m_rbXValues_FromColumn" Checked="EhXValues_Changed">Column:</RadioButton>
+				<ComboBox Grid.Row="1" Grid.Column="1" Margin="4" x:Name="m_cbXValues_Column"/>
+			</Grid>
+		</GroupBox>
+
+		<GroupBox Grid.Row="3" Header="Extend file name by:" Margin="4">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<RadioButton Grid.Row="0" Grid.ColumnSpan="2" Margin="4" x:Name="m_rbExtFileName_ContinuousNumber" Checked="EhExtendFileNameBy_Changed">Continuous number</RadioButton>
+				<RadioButton Grid.Row="1" Margin="4" x:Name="m_rbFileName_FromColumn" Checked="EhExtendFileNameBy_Changed">Column:</RadioButton>
+				<ComboBox Grid.Row="1" Grid.Column="1" Margin="4" x:Name="m_cbExtFileName_Column"/>
+			</Grid>
+		</GroupBox>
+	</Grid>
+</UserControl>

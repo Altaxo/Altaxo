@@ -169,7 +169,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
-      Calc.Interpolation.CurveBase interpolInstance, IROVector samplePoints, 
+      Calc.Interpolation.IInterpolationFunction interpolInstance, IROVector samplePoints, 
       Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
     {
       int rows = Math.Min(xCol.Count, yCol.Count);
@@ -185,7 +185,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         //double r = i / (double)(parameters.NumberOfPoints - 1);
         //double x = parameters.XOrg * (1 - r) + parameters.XEnd * (r);
         double x = samplePoints[i];
-        double y = ((IInterpolationFunction)interpolInstance).GetYOfX(x);
+        double y = interpolInstance.GetYOfX(x);
         xRes[i] = x;
         yRes[i] = y;
       }
