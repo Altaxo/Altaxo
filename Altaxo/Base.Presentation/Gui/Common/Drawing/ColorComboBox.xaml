@@ -1,0 +1,25 @@
+﻿<ComboBox x:Class="Altaxo.Gui.Common.Drawing.ColorComboBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             >
+	<ComboBox.Resources>
+		<ControlTemplate x:Key="Cadfeddd" TargetType="ComboBoxItem">
+		<Border Name="Border" Padding="2" 
+            SnapsToDevicePixels="true">
+			<StackPanel>
+					<Rectangle Stretch="Fill" Width="60" Height="60" Fill="Aqua"/>
+					<Image Source="{Binding Image}" 
+                   Stretch="Fill" 
+                   Width="60" Height="60"/>
+				<ContentPresenter HorizontalAlignment="Center"/>
+			</StackPanel>
+		</Border>
+	</ControlTemplate>
+	</ComboBox.Resources>
+	
+	
+	
+</ComboBox>

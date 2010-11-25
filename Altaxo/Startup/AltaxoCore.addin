@@ -42,7 +42,8 @@
       <Doozer name="Directory" class="ICSharpCode.SharpDevelop.DirectoryDoozer"/>
       <Doozer name="TaskBoundAdditionalLogger" class="ICSharpCode.SharpDevelop.Project.TaskBoundAdditionalLoggerDoozer"/>
     </Import>
-    <Import assembly=":AltaxoBase"/>
+		<Import assembly=":ICSharpCode.SharpZipLib"/>
+		<Import assembly=":AltaxoBase"/>
     <Import assembly=":AltaxoBase.WinForms"/>
 		<Import assembly=":AltaxoBase.Presentation"/>
 		<Import assembly=":AltaxoSDGui">

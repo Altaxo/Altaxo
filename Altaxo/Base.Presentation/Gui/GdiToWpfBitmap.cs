@@ -95,6 +95,9 @@ namespace Altaxo.Gui
 
 		void InternalAllocate(int width, int height)
 		{
+			width = Math.Max(width, 1);
+			height = Math.Max(height, 1);
+		
 			_width = width;
 			_height = height;
 			_section = CreateFileMapping(INVALID_HANDLE_VALUE,
@@ -106,8 +109,6 @@ namespace Altaxo.Gui
 
 			_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(width * height * BytesPerPixel));
 
-			width = Math.Max(width, 1);
-			height = Math.Max(height, 1);
 
 			_bmp = new System.Drawing.Bitmap(width, height, width * BytesPerPixel, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _map);
 

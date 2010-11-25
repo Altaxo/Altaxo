@@ -96,6 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Drawing\ColorComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\MinMaxIntegerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -191,6 +195,9 @@
     <Compile Include="Gui\Common\BooleanValueControl.cs" />
     <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
       <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorComboBox.xaml.cs">
+      <DependentUpon>ColorComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\MinMaxIntegerControl.xaml.cs">
       <DependentUpon>MinMaxIntegerControl.xaml</DependentUpon>

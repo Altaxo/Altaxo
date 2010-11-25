@@ -193,10 +193,18 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			if (null != _controller)
 			{
-				_wpfGdiBitmap.Resize((int)_graphPanel.ActualWidth, (int)_graphPanel.ActualHeight);
-				_wpfGdiBitmap.GdiBitmap.SetResolution(96,96);
-				_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
-				_controller.EhView_GraphPanelSizeChanged();
+				int actWidth = (int)_graphPanel.ActualWidth;
+				int actHeight = (int)_graphPanel.ActualHeight;
+				if (actWidth > 0 && actHeight > 0)
+				{
+					_wpfGdiBitmap.Resize((int)_graphPanel.ActualWidth, (int)_graphPanel.ActualHeight);
+					_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
+					_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
+					_controller.EhView_GraphPanelSizeChanged();
+				}
+				else // either actWidth or actHeight was 0, thus the graph panel is momentarily invisible
+				{
+				}
 			}
 		}
 
