@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Altaxo.Collections
@@ -29,7 +30,7 @@ namespace Altaxo.Collections
   /// <summary>
   /// Represents a collection of <see cref="NGTreeNode" />.
   /// </summary>
-  public interface NGTreeNodeCollection : IList<NGTreeNode>
+	public interface NGTreeNodeCollection : IList<NGTreeNode> // TODO implement this, System.Collections.Specialized.INotifyCollectionChanged
   {
     /// <summary>
     /// Adds a bunch of nodes.
@@ -385,6 +386,61 @@ namespace Altaxo.Collections
     #endregion
 
     #region MyNGTreeNodeCollection
+
+		private class MyColl2 : System.Collections.ObjectModel.ObservableCollection<NGTreeNode>
+		{
+			NGTreeNode _parent;
+
+			  public MyColl2(NGTreeNode parent)
+     {
+       this._parent = parent;
+     }
+
+				public void AddRange(NGTreeNode[] nodes)
+				{
+					foreach (NGTreeNode n in nodes)
+						Add(n);
+				}
+
+				public void Swap(int i, int j)
+				{
+					if (i < 0 || i >= Count)
+						throw new ArgumentOutOfRangeException("i");
+					if (j < 0 || j >= Count)
+						throw new ArgumentOutOfRangeException("j");
+
+					var node_i = this[i];
+					var node_j = this[j];
+					base.SetItem(i, node_j);
+					base.SetItem(j, node_i);
+
+					OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Replace,node_i,node_j));
+					OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Replace,node_j,node_i));
+				}
+
+			protected override void InsertItem(int index, NGTreeNode item)
+			{
+				if (item._parent != null && !object.ReferenceEquals(item._parent,_parent))
+					throw new ApplicationException("Parent of the node is not null. Please remove the node before adding it");
+				item._parent = _parent;
+				base.InsertItem(index, item);
+			}
+
+			protected override void SetItem(int index, NGTreeNode item)
+			{
+				if (item._parent != null && !object.ReferenceEquals(item._parent,_parent))
+					throw new ApplicationException("Parent of the node is not null. Please remove the node before adding it");
+				item._parent = _parent;
+				base.SetItem(index, item);
+			}
+
+			protected override void RemoveItem(int index)
+			{
+				this[index]._parent = null;
+				base.RemoveItem(index);
+			}
+		}
+
     private class MyNGTreeNodeCollection : NGTreeNodeCollection, IList<NGTreeNode>
     {
      NGTreeNode _parent;

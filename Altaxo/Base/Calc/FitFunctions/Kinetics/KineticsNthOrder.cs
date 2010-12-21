@@ -4,46 +4,39 @@ using System.Text;
 
 namespace Altaxo.Calc.FitFunctions.Kinetics
 {
+	/// <summary>
+	/// Represents solutions related to the differential equation y'=-k*y^n. For the direct solution of this equation, see <see cref="CoreSolution"/>.
+	/// </summary>
   public class KineticsNthOrder
   {
     /// <summary>
-    /// This core is related to the solution of a nth order kinetic equation system (see remarks).
+    /// Represents the real solution of the nth order kinetic equation y'=-k*y^n with y[0]&gt;=0.
     /// </summary>
     /// <param name="t">Time.</param>
-    /// <param name="x0">Starting value at t=0.</param>
+    /// <param name="y0">Starting value of y at t=0.</param>
     /// <param name="k">Kinetic constant.</param>
-    /// <param name="order">Order of the kinetics (equal or greater than 0).</param>
-    /// <returns>A value, that can be used to calculate the solution of the set of differential equations (see remarks). The return value is 1 at t=0 and 0 at t=Infinity.</returns>
-    /// <remarks>
-    /// The set of differential equations is:
-    /// <para>dy/dt=k*x^order</para>
-    /// <para>dy/dt=-dx/dt</para>
-    /// with the boundary conditions:
-    /// <para>x(t=0)==x0</para> and
-    /// <para>y(t=0)==1-x0.</para>
-    /// <para>The solution of this system of differential equations is then:</para>
-    /// <para><c>y(t)==1-x0*Core(t,x0,k,order)</c>.</para>
-    /// <para>and</para>
-    /// <para><c>x(t)==x0*Core(t,x0,k,order)</c>.</para>
-    /// <para>The Core function starts with a value of 1 at t=0 and ends with a value of 0 at t=Infinity.</para>
-    ///</remarks>
-    public static double Core(double t, double x0, double k, double order)
+    /// <param name="order">The order (n in above formula) of the kinetics equation ( has to be nonnegative).</param>
+    /// <returns>The solution if y'=-k*y^n, presuming that y0 is nonnegative.</returns>
+    public static double CoreSolution(double t, double y0, double k, double order)
     {
+			if (!(y0 >= 0))
+				return double.NaN; // throw new ArgumentOutOfRangeException("y0 has to be nonnegative");
+
       if (order >= 1)
       {
         if (order == 1)
-          return Math.Exp(-k * t);
+          return y0*Math.Exp(-k * t);
         else
-          return Math.Pow(1 + Math.Pow(x0, order - 1) * (order - 1) * k * t, 1/(1 - order));
+          return Math.Pow(Math.Pow(y0, 1 - order) + (order - 1) * k * t, 1/(1 - order));
       }
-      else // alpha<1
+      else // order<1
       {
         if (order == 0)
-          return x0 == 0 ? 0 : Math.Max(0, 1 - k * t / x0);
-        else if (order > 0)
-          return Math.Pow(Math.Max(0, 1 + Math.Pow(x0, order - 1)*(order - 1) * k * t), 1 / (1 - order));
-        else
-          throw new ArgumentException("Order must be >=0");
+          return y0 - k * t;
+				else if (order > 0)
+					return Math.Pow(Math.Pow(y0, 1-order) + (order - 1) * k * t, 1 / (1 - order));
+				else
+					return double.NaN; // throw new ArgumentOutOfRangeException("order has to be nonnegative");
       }
     }
 
@@ -59,13 +52,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// <returns>The volume fraction of aggregates at time t. At time t=0, this value is <c>(pSample-p0)/pInsideAggregate</c>. For t going to infinity,
     /// this value tends to <c>pSample/pInsideAggregate</c>.</returns>
     /// <remarks>
-    /// The kinetic equation for this problem (see <see cref="Core"/> is formulated with the number
+    /// The kinetic equation for this problem (see <see cref="CoreSolution"/> is formulated with the number
     /// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y. 
     /// The solution was reformulated with volume fractions, using a new kinetic constant scaled by the volume of one aggregating particel.
     /// </remarks>
-    public static double AggregateConcentrationFromP0AndPInsideAggregate(double t, double p0, double k, double order, double pSample, double pInsideAggregate)
+    public static double AgglomerateConcentrationFromP0AndPInsideAggregate(double t, double p0, double k, double order, double pSample, double pInsideAggregate)
     {
-      return (pSample - p0 * Core(t, p0, k, order)) / pInsideAggregate;
+      return (pSample - p0 * CoreSolution(t, p0, k, order)) / pInsideAggregate;
     }
 
     /// <summary>
@@ -87,10 +80,10 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// The solution was reformulated with volume fractions, using a new kinetic constant scaled by the volume of one aggregating particel.
 
     /// </remarks>
-    public static double AggregateConcentrationFromPA0AndPAInf(double t, double pA0, double pAInf, double k, double order, double pSample)
+    public static double AgglomarateConcentrationFromPA0AndPAInf(double t, double pA0, double pAInf, double k, double order, double pSample)
     {
       double p0 = pSample * (1 - pA0 / pAInf);
-      return (pAInf - (pAInf-pA0) * Core(t, p0, k, order));
+      return (pAInf - (pAInf-pA0) * CoreSolution(t, p0, k, order));
     }
   }
 }

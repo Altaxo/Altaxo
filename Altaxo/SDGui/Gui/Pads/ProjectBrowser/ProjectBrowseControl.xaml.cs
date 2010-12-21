@@ -140,8 +140,5 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (null != _controller)
 				_controller.EhListViewAfterSelect();
 		}
-
-
-
 	}
 }
