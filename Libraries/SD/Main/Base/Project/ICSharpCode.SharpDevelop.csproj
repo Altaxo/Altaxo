@@ -247,6 +247,7 @@
     <Compile Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <None Include="ICSharpCode.SharpDevelop.addin" />
     <None Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
       <Link>Src\Services\RefactoringService\ExtractInterfaceDialog.cs</Link>
     </None>
@@ -375,7 +376,6 @@
     <Compile Include="Src\Services\LanguageBinding\AggregatedLanguageBinding.cs" />
     <Compile Include="Src\Services\LanguageBinding\DefaultLanguageBinding.cs" />
     <Compile Include="Src\Services\LanguageBinding\ILanguageBinding.cs" />
-    <Compile Include="Src\Services\LanguageBinding\LanguageBindingDescriptor.cs" />
     <Compile Include="Src\Services\LanguageBinding\LanguageBindingDoozer.cs" />
     <Compile Include="Src\Services\LanguageBinding\LanguageBindingService.cs" />
     <Compile Include="Src\Services\Language\LanguageService.cs" />

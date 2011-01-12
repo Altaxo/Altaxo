@@ -7,8 +7,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Threading;
-
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.Document
@@ -98,7 +98,6 @@ namespace ICSharpCode.AvalonEdit.Document
 			
 			anchorTree = new TextAnchorTree(this);
 			undoStack = new UndoStack();
-			undoStack.AttachToDocument(this);
 			FireChangeEvents();
 		}
 		
@@ -154,6 +153,12 @@ namespace ICSharpCode.AvalonEdit.Document
 			if (segment == null)
 				throw new ArgumentNullException("segment");
 			return GetText(segment.Offset, segment.Length);
+		}
+		
+		int ITextSource.IndexOfAny(char[] anyOf, int startIndex, int count)
+		{
+			DebugVerifyAccess(); // frequently called (NewLineFinder), so must be fast in release builds
+			return rope.IndexOfAny(anyOf, startIndex, count);
 		}
 		
 		/// <inheritdoc/>
@@ -354,6 +359,7 @@ namespace ICSharpCode.AvalonEdit.Document
 				throw new InvalidOperationException("Cannot change document within another document change.");
 			beginUpdateCount++;
 			if (beginUpdateCount == 1) {
+				undoStack.StartUndoGroup();
 				if (UpdateStarted != null)
 					UpdateStarted(this, EventArgs.Empty);
 			}
@@ -374,6 +380,7 @@ namespace ICSharpCode.AvalonEdit.Document
 				// fire change events inside the change group - event handlers might add additional
 				// document changes to the change group
 				FireChangeEvents();
+				undoStack.EndUndoGroup();
 				beginUpdateCount = 0;
 				if (UpdateFinished != null)
 					UpdateFinished(this, EventArgs.Empty);
@@ -490,6 +497,10 @@ namespace ICSharpCode.AvalonEdit.Document
 				case OffsetChangeMappingType.Normal:
 					Replace(offset, length, text, null);
 					break;
+				case OffsetChangeMappingType.KeepAnchorBeforeInsertion:
+					Replace(offset, length, text, OffsetChangeMap.FromSingleElement(
+						new OffsetChangeMapEntry(offset, length, text.Length, false, true)));
+					break;
 				case OffsetChangeMappingType.RemoveAndInsert:
 					if (length == 0 || text.Length == 0) {
 						// only insertion or only removal?
@@ -514,7 +525,7 @@ namespace ICSharpCode.AvalonEdit.Document
 						OffsetChangeMapEntry entry = new OffsetChangeMapEntry(offset + length - 1, 1, 1 + text.Length - length);
 						Replace(offset, length, text, OffsetChangeMap.FromSingleElement(entry));
 					} else if (text.Length < length) {
-						OffsetChangeMapEntry entry = new OffsetChangeMapEntry(offset + text.Length, length - text.Length, 0, true);
+						OffsetChangeMapEntry entry = new OffsetChangeMapEntry(offset + text.Length, length - text.Length, 0, true, false);
 						Replace(offset, length, text, OffsetChangeMap.FromSingleElement(entry));
 					} else {
 						Replace(offset, length, text, OffsetChangeMap.Empty);
@@ -585,6 +596,8 @@ namespace ICSharpCode.AvalonEdit.Document
 			// fire DocumentChanging event
 			if (Changing != null)
 				Changing(this, args);
+			
+			undoStack.Push(this, args);
 			
 			cachedText = null; // reset cache of complete document text
 			fireTextChanged = true;
@@ -715,13 +728,23 @@ namespace ICSharpCode.AvalonEdit.Document
 			}
 		}
 		
-		readonly UndoStack undoStack;
+		UndoStack undoStack;
 		
 		/// <summary>
 		/// Gets the <see cref="UndoStack"/> of the document.
 		/// </summary>
+		/// <remarks>This property can also be used to set the undo stack, e.g. for sharing a common undo stack between multiple documents.</remarks>
 		public UndoStack UndoStack {
 			get { return undoStack; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				if (value != undoStack) {
+					undoStack.ClearAll(); // first clear old undo stack, so that it can't be used to perform unexpected changes on this document
+					// ClearAll() will also throw an exception when it's not safe to replace the undo stack (e.g. update is currently in progress)
+					undoStack = value;
+				}
+			}
 		}
 		
 		/// <summary>

@@ -2817,6 +2817,9 @@ system. I don't think that it needs translation.</comment>
   <data name="Dialog.Options.IDEOptions.TextEditor.Markers.CaretCheckBox" xml:space="preserve">
     <value>Show caret line</value>
   </data>
+  <data name="Dialog.Options.IDEOptions.TextEditor.Markers.EnableAnimationsCheckBox" xml:space="preserve">
+    <value>Enable animations</value>
+  </data>
   <data name="Dialog.Options.IDEOptions.TextEditor.Markers.EOLMarkersCheckBox" xml:space="preserve">
     <value>Show &amp;end-of-line markers</value>
   </data>
@@ -2849,6 +2852,9 @@ system. I don't think that it needs translation.</comment>
   </data>
   <data name="Dialog.Options.IDEOptions.TextEditor.Markers.PanelName" xml:space="preserve">
     <value>Markers and Rulers</value>
+  </data>
+  <data name="Dialog.Options.IDEOptions.TextEditor.Markers.ShowHiddenDefinitionsCheckBox" xml:space="preserve">
+    <value>Show &amp;hidden definitions (brackets only)</value>
   </data>
   <data name="Dialog.Options.IDEOptions.TextEditor.Markers.SpacesCheckBox" xml:space="preserve">
     <value>Show &amp;spaces</value>
@@ -5642,6 +5648,14 @@ Unable to find 'WelcomeDialogId' in Dialogs.wxs</comment>
   <data name="MainWindow.Windows.BookmarkPad.GotoPrev.ToolTip" xml:space="preserve">
     <value>Goto previous bookmark</value>
   </data>
+  <data name="MainWindow.Windows.BookmarkPad.LineText" xml:space="preserve">
+    <value>{0} @line {1}</value>
+    <comment>format string for displaying "filename @line #" in the bookmarks pad</comment>
+  </data>
+  <data name="MainWindow.Windows.BookmarkPad.LocationText" xml:space="preserve">
+    <value>Location</value>
+    <comment>Column title for the bookmark location</comment>
+  </data>
   <data name="MainWindow.Windows.BookmarksLabel" xml:space="preserve">
     <value>Bookmarks</value>
   </data>
@@ -5751,6 +5765,10 @@ Unable to find 'WelcomeDialogId' in Dialogs.wxs</comment>
   <data name="MainWindow.Windows.Debug.Conditional.Breakpoints.Condition" xml:space="preserve">
     <value>Conditional</value>
   </data>
+  <data name="MainWindow.Windows.Debug.Conditional.Breakpoints.ConditionalColumnHeader" xml:space="preserve">
+    <value>Condition</value>
+    <comment>column title for a conditional breakpoint's condition</comment>
+  </data>
   <data name="MainWindow.Windows.Debug.Conditional.Breakpoints.Continue" xml:space="preserve">
     <value>Continue</value>
   </data>
@@ -5837,6 +5855,9 @@ Stop/terminate the debuggee.</comment>
   <data name="MainWindow.Windows.Debug.ExceptionHistory.Time" xml:space="preserve">
     <value>Time</value>
   </data>
+  <data name="MainWindow.Windows.Debug.HideZoomControl" xml:space="preserve">
+    <value>Show/Hide Zoom Control</value>
+  </data>
   <data name="MainWindow.Windows.Debug.Local" xml:space="preserve">
     <value>Local</value>
   </data>
@@ -5922,6 +5943,9 @@ Shows the full callstack of the error.</comment>
   <data name="MainWindow.Windows.Debug.ObjectGraph" xml:space="preserve">
     <value>Object Graph</value>
   </data>
+  <data name="MainWindow.Windows.Debug.ParallelStack" xml:space="preserve">
+    <value>Parallel Stacks</value>
+  </data>
   <data name="MainWindow.Windows.Debug.RunToCursor" xml:space="preserve">
     <value>Run to cursor</value>
   </data>
@@ -5969,6 +5993,9 @@ Shows the full callstack of the error.</comment>
   </data>
   <data name="MainWindow.Windows.Debug.Threads.ThreadSwitch" xml:space="preserve">
     <value>Thread switch</value>
+  </data>
+  <data name="MainWindow.Windows.Debug.ToggleMethodView" xml:space="preserve">
+    <value>Toggle Method View</value>
   </data>
   <data name="MainWindow.Windows.Debug.Watch" xml:space="preserve">
     <value>Watch</value>
@@ -6230,6 +6257,9 @@ Removed the end part of the original message ", reason '${Message}'" since this 
     <value>Open Containing Folder In Explorer</value>
     <comment>String for the editor tab context menu that will open the directory in which a documents file is contained in Windows Explorer.</comment>
   </data>
+  <data name="ProjectBrowser.Toolbar.CollapseAll" xml:space="preserve">
+    <value>Collapse all nodes</value>
+  </data>
   <data name="ProjectComponent.ContextMenu.AddExistingFiles" xml:space="preserve">
     <value>Add existing files</value>
   </data>
@@ -6380,6 +6410,17 @@ Removed the end part of the original message ", reason '${Message}'" since this 
   <data name="ProjectComponent.RemoveAllWebReferences.Title" xml:space="preserve">
     <value>Delete all web references</value>
     <comment>Title of the dialog box when the user tries to remove all web references.</comment>
+  </data>
+  <data name="ReflectorAddIn.IdeOptions.FindReflectorPath" xml:space="preserve">
+    <value>Select Reflector path</value>
+    <comment>Button to select the Reflector path</comment>
+  </data>
+  <data name="ReflectorAddIn.IdeOptions.ReflectorFoundInPath" xml:space="preserve">
+    <value>Reflector was found in the following directory:</value>
+  </data>
+  <data name="ReflectorAddIn.IdeOptions.ReflectorTitle" xml:space="preserve">
+    <value>Reflector</value>
+    <comment>Title of Reflector path option panel</comment>
   </data>
   <data name="ReflectorAddIn.OpenReflectorCommand" xml:space="preserve">
     <value>Open .NET Reflector</value>
@@ -6824,6 +6865,10 @@ Removed the end part of the original message ", reason '${Message}'" since this 
   <data name="SharpDevelop.Solution.AllKnownProjectFormats" xml:space="preserve">
     <value>All known project formats</value>
   </data>
+  <data name="SharpDevelop.Solution.CannotLoadOldSolution" xml:space="preserve">
+    <value>This SharpDevelop version cannot load projects created using Visual Studio .NET 2003 (or earlier).
+Try using SharpDevelop 3.2 for the conversion; or create a new project and add the existing source code files.</value>
+  </data>
   <data name="SharpDevelop.Solution.CannotSave.IOException" xml:space="preserve">
     <value>Could not save {0}:\n{1}</value>
     <comment>{0} is the name of the solution.
@@ -6838,18 +6883,6 @@ Message shown when Solution.Save() is called on a solution with the ReadOnly att
     <value>Could not save {0}:\n{1}\n\nEnsure the file is writable.</value>
     <comment>{0} is the file name of the solution.
 {1} is the value of the property UnauthorizedAccessException.Message.</comment>
-  </data>
-  <data name="SharpDevelop.Solution.ConvertSolutionVersion7" xml:space="preserve">
-    <value>Found Visual Studio.NET Project. Should I convert it to Solution Format 9.00 (Visual Studio 2005)?</value>
-  </data>
-  <data name="SharpDevelop.Solution.ConvertSolutionVersion8" xml:space="preserve">
-    <value>Found Visual Studio.NET 2003 Project. Should I convert it to Solution Format 9.00 (Visual Studio 2005)?</value>
-  </data>
-  <data name="SharpDevelop.Solution.ImportCmbx" xml:space="preserve">
-    <value>Should the SharpDevelop 1.x combine be converted into a SharpDevelop 2.x solution?</value>
-  </data>
-  <data name="SharpDevelop.Solution.ImportPrjx" xml:space="preserve">
-    <value>Should the SharpDevelop 1.x project be converted into a SharpDevelop 2.x project?</value>
   </data>
   <data name="SharpDevelop.Solution.ImportResourceWarning" xml:space="preserve">
     <value>There were resource files in the project.
@@ -7128,6 +7161,12 @@ The resources files have been renamed/moved accordingly.</value>
   <data name="SharpReport.Toolbar.Functions.TodaysDate" xml:space="preserve">
     <value>Today</value>
   </data>
+  <data name="SharpReport.Toolbar.GroupFooter" xml:space="preserve">
+    <value>GroupFooter</value>
+  </data>
+  <data name="SharpReport.Toolbar.GroupHeader" xml:space="preserve">
+    <value>GroupHeader</value>
+  </data>
   <data name="SharpReport.Toolbar.Image" xml:space="preserve">
     <value>Image</value>
   </data>
@@ -7139,6 +7178,9 @@ The resources files have been renamed/moved accordingly.</value>
   </data>
   <data name="SharpReport.Toolbar.Rectangle" xml:space="preserve">
     <value>Rectangle</value>
+  </data>
+  <data name="SharpReport.Toolbar.Table" xml:space="preserve">
+    <value>Table</value>
   </data>
   <data name="SharpReport.Toolbar.TextBox" xml:space="preserve">
     <value>Label</value>
@@ -7175,6 +7217,21 @@ The resources files have been renamed/moved accordingly.</value>
   </data>
   <data name="SharpReport.Wizard.BaseSettings.ReportType" xml:space="preserve">
     <value>Report Type</value>
+  </data>
+  <data name="SharpReport.Wizard.Layout.Column" xml:space="preserve">
+    <value>Select the GroupColumn</value>
+  </data>
+  <data name="SharpReport.Wizard.Layout.Grouping" xml:space="preserve">
+    <value>Grouping</value>
+  </data>
+  <data name="SharpReport.Wizard.Layout.ListLayout" xml:space="preserve">
+    <value>List Layout</value>
+  </data>
+  <data name="SharpReport.Wizard.Layout.ReportLayout" xml:space="preserve">
+    <value>Report layout</value>
+  </data>
+  <data name="SharpReport.Wizard.Layout.TableLayout" xml:space="preserve">
+    <value>Table Layout</value>
   </data>
   <data name="SharpReport.Wizard.PullModel" xml:space="preserve">
     <value>Pull Data Model</value>
@@ -7832,6 +7889,10 @@ The resources files have been renamed/moved accordingly.</value>
   <data name="XML.MainMenu.DebugMenu.Error.ProcessRunning" xml:space="preserve">
     <value>Can not perform action because process is running.</value>
   </data>
+  <data name="XML.MainMenu.DebugMenu.RemoveAllBreakpoints" xml:space="preserve">
+    <value>Remove all breakpoints</value>
+    <comment>Main menu command for removing all breakpoints + tooltip for the corresponding toolbar button (in the breakpoints pad)</comment>
+  </data>
   <data name="XML.MainMenu.DebugMenu.RunWithoutDebug" xml:space="preserve">
     <value>Run &amp;without debugger</value>
   </data>
@@ -8003,6 +8064,9 @@ The resources files have been renamed/moved accordingly.</value>
     <value>Open new buffer</value>
   </data>
   <data name="XML.MainMenu.FileMenu.New.Project" xml:space="preserve">
+    <value>&amp;Project...</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.New.Solution" xml:space="preserve">
     <value>&amp;Solution...</value>
   </data>
   <data name="XML.MainMenu.FileMenu.Open" xml:space="preserve">

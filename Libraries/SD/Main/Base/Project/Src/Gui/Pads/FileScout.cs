@@ -104,13 +104,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 	}
-
+	
 #if ModifiedForAltaxo
   public class FileList : ListView
 #else
 	sealed class FileList : ListView
 #endif
-  {
+	{
 		private FileSystemWatcher watcher;
 		
 //		private MagicMenus.PopupMenu menu = null;
@@ -407,13 +407,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 	}
-
+	
 #if ModifiedForAltaxo
   public class ShellTree : TreeView
 #else
-  sealed class ShellTree : TreeView
+	sealed class ShellTree : TreeView
 #endif
-  {
+	{
 		public string NodePath {
 			get {
 				return (string)SelectedNode.Tag;

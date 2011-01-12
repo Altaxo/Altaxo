@@ -145,6 +145,7 @@
     <Content Include="data\layouts\Default.xml" />
     <Content Include="data\layouts\LayoutConfig.xml" />
     <Content Include="data\layouts\Plain.xml" />
+    <Content Include="data\templates\file\VB\FileCategorySortOrder.xml" />
     <Content Include="data\templates\project\AddInWritingHelp.txt" />
     <Content Include="data\templates\project\CSharp\DefaultAssemblyInfo.cs" />
     <Content Include="data\templates\file\CSharp\ConfigurationElement.cs" />
@@ -199,7 +200,6 @@
       </SubType>
     </Content>
     <Content Include="data\templates\file\CSharp\FileCategorySortOrder.xml" />
-    <Content Include="data\templates\file\VBNet\FileCategorySortOrder.xml" />
     <Content Include="data\templates\project\CSharp\ProjectCategorySortOrder.xml" />
     <Content Include="data\resources\mathml\cm-roman.ttf" />
     <Content Include="data\resources\mathml\cm-stretchy.ttf" />
@@ -216,19 +216,12 @@
     <Content Include="data\templates\file\CSharp\CSharp.WPFWindow.xft" />
     <Content Include="data\templates\file\Misc\EmptyMsBuildFile.xft" />
     <Content Include="data\templates\file\SharpDevelop\AddInOptions.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Interface.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Module.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.MyExtensionClass.xft" />
     <Content Include="data\templates\project\CSharp\SharpDevelopAddin.xpt" />
     <Content Include="data\templates\project\CSharp\SharpDevelopCustomToolTemplate.xft.xml" />
     <Content Include="data\templates\project\CSharp\SharpDevelopMacro.xpt" />
     <Content Include="data\templates\project\CSharp\WebpageProject.xpt" />
     <Content Include="data\templates\project\CSharp\WPFApplication.xpt" />
     <Content Include="data\templates\project\CSharp\WPFNavigationApplication.xpt" />
-    <Content Include="data\templates\project\VBNet\DefaultAssemblyInfo.vb" />
-    <Content Include="data\templates\project\VBNet\ProjectCategorySortOrder.xml" />
-    <Content Include="data\templates\project\VBNet\SharpDevelopAddin.xpt" />
-    <Content Include="data\templates\project\VBNet\SharpDevelopMacro.xpt" />
     <Content Include="data\schemas\wixloc.xsd">
       <SubType>
       </SubType>
@@ -237,11 +230,15 @@
     <Content Include="data\templates\project\CSharp\NotifyIcon.xpt" />
     <Content Include="data\templates\project\CSharp\SharedAddin.xpt" />
     <Content Include="data\templates\project\CSharp\WebService.xpt" />
-    <Content Include="data\templates\project\VBNet\SharedAddin.xpt" />
     <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElement.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElementCollection.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.ConfigurationSection.xft" />
     <Content Include="data\templates\project\CSharp\SharpDevelopCustomTool.xpt" />
+    <Content Include="data\templates\project\VB\DefaultAssemblyInfo.vb" />
+    <Content Include="data\templates\project\VB\MyWpfExtension.vb" />
+    <Content Include="data\templates\project\VB\ProjectCategorySortOrder.xml" />
+    <Content Include="data\templates\project\VB\SharpDevelopCustomToolTemplate.xft.xml" />
+    <Content Include="data\templates\project\VB\WPFAssemblyInfo.vb" />
     <Content Include="doc\help\AltaxoClassRef.chw" />
     <Content Include="data\templates\file\Misc\AppConfigFile.xft" />
     <None Include="app.config" />
@@ -281,22 +278,47 @@
     <None Include="data\schemas\xml.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="data\templates\file\VBNet\VBNet.Structure.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Web.WebControl.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Web.WebForm.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Web.WebHandler.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Web.WebService.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.WPFFlowDocument.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.WPFPage.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.WPFPageFunction.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.WPFResourceDictionary.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.WPFUserControl.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.WPFWindow.xft" />
     <Content Include="data\templates\project\CSharp\SilverlightApplication.xpt" />
-    <Content Include="data\templates\file\VBNet\VBNet.Exception.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.Exception.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.RecentFilesCollection.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.Web.WebHandler.xft" />
+    <Content Include="data\templates\file\VB\VB.Empty.xft" />
+    <Content Include="data\templates\file\VB\VB.EmptyClass.xft" />
+    <Content Include="data\templates\file\VB\VB.Exception.xft" />
+    <Content Include="data\templates\file\VB\VB.Forms.Form.xft" />
+    <Content Include="data\templates\file\VB\VB.Forms.UserControl.xft" />
+    <Content Include="data\templates\file\VB\VB.Interface.xft" />
+    <Content Include="data\templates\file\VB\VB.Module.xft" />
+    <Content Include="data\templates\file\VB\VB.MyExtensionClass.xft" />
+    <Content Include="data\templates\file\VB\VB.Patterns.Singleton.xft" />
+    <Content Include="data\templates\file\VB\VB.Structure.xft" />
+    <Content Include="data\templates\file\VB\VB.UnitTest.xft" />
+    <Content Include="data\templates\file\VB\VB.Web.WebControl.xft" />
+    <Content Include="data\templates\file\VB\VB.Web.WebForm.xft" />
+    <Content Include="data\templates\file\VB\VB.Web.WebHandler.xft" />
+    <Content Include="data\templates\file\VB\VB.Web.WebService.xft" />
+    <Content Include="data\templates\file\VB\VB.WPFFlowDocument.xft" />
+    <Content Include="data\templates\file\VB\VB.WPFPage.xft" />
+    <Content Include="data\templates\file\VB\VB.WPFPageFunction.xft" />
+    <Content Include="data\templates\file\VB\VB.WPFResourceDictionary.xft" />
+    <Content Include="data\templates\file\VB\VB.WPFUserControl.xft" />
+    <Content Include="data\templates\file\VB\VB.WPFWindow.xft" />
+    <Content Include="data\templates\project\VB\ConsoleProject.xpt" />
+    <Content Include="data\templates\project\VB\ControlLibrary.xpt" />
+    <Content Include="data\templates\project\VB\EmptyProject.xpt" />
+    <Content Include="data\templates\project\VB\FormsProject.xpt" />
+    <Content Include="data\templates\project\VB\Library.xpt" />
+    <Content Include="data\templates\project\VB\NotifyIcon.xpt" />
+    <Content Include="data\templates\project\VB\Service.xpt" />
+    <Content Include="data\templates\project\VB\SharedAddin.xpt" />
+    <Content Include="data\templates\project\VB\SharpDevelopAddin.xpt" />
+    <Content Include="data\templates\project\VB\SharpDevelopCustomTool.xpt" />
+    <Content Include="data\templates\project\VB\SharpDevelopMacro.xpt" />
+    <Content Include="data\templates\project\VB\SilverlightApplication.xpt" />
+    <Content Include="data\templates\project\VB\WebpageProject.xpt" />
+    <Content Include="data\templates\project\VB\WebService.xpt" />
+    <Content Include="data\templates\project\VB\WPFApplication.xpt" />
+    <Content Include="data\templates\project\VB\WPFNavigationApplication.xpt" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.no.resources" />
     <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
@@ -304,6 +326,7 @@
     </Content>
     <Content Include="data\resources\StringResources.pt.resources" />
     <Content Include="data\resources\StringResources.cn-gb.resources" />
+    <Content Include="data\templates\project\VB\NotifyIconResources.resx" />
     <EmbeddedResource Include="HelpSetup.resx">
       <DependentUpon>HelpSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -412,28 +435,14 @@
     <Content Include="data\templates\file\SharpDevelop\ExamplePad.xft" />
     <Content Include="data\templates\file\SharpDevelop\ExampleView.xft" />
     <Content Include="data\templates\file\SharpDevelop\SimpleCommand.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Empty.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.EmptyClass.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Forms.Form.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Forms.UserControl.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.Patterns.Singleton.xft" />
-    <Content Include="data\templates\file\VBNet\VBNet.UnitTest.xft" />
     <Content Include="data\templates\project\ComplexExample.xpt.test" />
     <Content Include="data\templates\project\CSharp\ConsoleProject.xpt" />
     <Content Include="data\templates\project\CSharp\ControlLibrary.xpt" />
-    <Content Include="data\templates\project\CSharp\Direct3DProject.xpt" />
     <Content Include="data\templates\project\CSharp\EmptyProject.xpt" />
     <Content Include="data\templates\project\CSharp\FormsProject.xpt" />
     <Content Include="data\templates\project\CSharp\Library.xpt" />
     <Content Include="data\templates\project\CSharp\Service.xpt" />
     <Content Include="data\templates\project\Misc\BlankCombine.xpt" />
-    <Content Include="data\templates\project\VBNet\ConsoleProject.xpt" />
-    <Content Include="data\templates\project\VBNet\ControlLibrary.xpt" />
-    <Content Include="data\templates\project\VBNet\Direct3DProject.xpt" />
-    <Content Include="data\templates\project\VBNet\EmptyProject.xpt" />
-    <Content Include="data\templates\project\VBNet\FormsProject.xpt" />
-    <Content Include="data\templates\project\VBNet\Library.xpt" />
-    <Content Include="data\templates\project\VBNet\Service.xpt" />
     <Content Include="doc\BuiltWithSharpDevelop.png" />
     <Content Include="doc\ChangeLog.xml" />
     <Content Include="doc\CodingStyleGuide.pdf" />

@@ -109,8 +109,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			ClearVisualLines();
 			if (newValue != null) {
 				TextDocumentWeakEventManager.Changing.AddListener(newValue, this);
-				heightTree = new HeightTree(newValue, FontSize + 3);
 				formatter = TextFormatterFactory.Create(this);
+				heightTree = new HeightTree(newValue, DefaultLineHeight); // measuring DefaultLineHeight depends on formatter
 				cachedElements = new TextViewCachedElements();
 			}
 			InvalidateMeasure(DispatcherPriority.Normal);
@@ -366,6 +366,23 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		}
 		#endregion
 		
+		#region Brushes
+		/// <summary>
+		/// NonPrintableCharacterBrush dependency property.
+		/// </summary>
+		public static readonly DependencyProperty NonPrintableCharacterBrushProperty =
+			DependencyProperty.Register("NonPrintableCharacterBrush", typeof(Brush), typeof(TextView),
+			                            new FrameworkPropertyMetadata(Brushes.LightGray));
+		
+		/// <summary>
+		/// Gets/sets the Brush used for displaying non-printable characters.
+		/// </summary>
+		public Brush NonPrintableCharacterBrush {
+			get { return (Brush)GetValue(NonPrintableCharacterBrushProperty); }
+			set { SetValue(NonPrintableCharacterBrushProperty, value); }
+		}
+		#endregion
+		
 		#region Redraw methods / VisualLine invalidation
 		/// <summary>
 		/// Causes the text editor to regenerate all visual lines.
@@ -544,18 +561,21 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			VisualLine l = GetVisualLine(documentLine.LineNumber);
 			if (l == null) {
 				TextRunProperties globalTextRunProperties = CreateGlobalTextRunProperties();
-				TextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
+				VisualLineTextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
 				
 				while (heightTree.GetIsCollapsed(documentLine)) {
-					documentLine = heightTree.GetLineByNumber(documentLine.LineNumber - 1);
+					documentLine = documentLine.PreviousLine;
 				}
 				
 				l = BuildVisualLine(documentLine,
 				                    globalTextRunProperties, paragraphProperties,
 				                    elementGenerators.ToArray(), lineTransformers.ToArray(),
 				                    lastAvailableSize);
-				l.VisualTop = heightTree.GetVisualPosition(documentLine);
 				allVisualLines.Add(l);
+				// update all visual top values (building the line might have changed visual top of other lines due to word wrapping)
+				foreach (var line in allVisualLines) {
+					line.VisualTop = heightTree.GetVisualPosition(line.FirstDocumentLine);
+				}
 			}
 			return l;
 		}
@@ -707,7 +727,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		double CreateAndMeasureVisualLines(Size availableSize)
 		{
 			TextRunProperties globalTextRunProperties = CreateGlobalTextRunProperties();
-			TextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
+			VisualLineTextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
 			
 			Debug.WriteLine("Measure availableSize=" + availableSize + ", scrollOffset=" + scrollOffset);
 			var firstLineInView = heightTree.GetLineByVisualPosition(scrollOffset.Y);
@@ -775,15 +795,16 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		TextRunProperties CreateGlobalTextRunProperties()
 		{
-			return new GlobalTextRunProperties {
-				typeface = this.CreateTypeface(),
-				fontRenderingEmSize = FontSize,
-				foregroundBrush = (Brush)GetValue(Control.ForegroundProperty),
-				cultureInfo = CultureInfo.CurrentCulture
-			};
+			var p = new GlobalTextRunProperties();
+			p.typeface = this.CreateTypeface();
+			p.fontRenderingEmSize = FontSize;
+			p.foregroundBrush = (Brush)GetValue(Control.ForegroundProperty);
+			ExtensionMethods.CheckIsFrozen(p.foregroundBrush);
+			p.cultureInfo = CultureInfo.CurrentCulture;
+			return p;
 		}
 		
-		TextParagraphProperties CreateParagraphProperties(TextRunProperties defaultTextRunProperties)
+		VisualLineTextParagraphProperties CreateParagraphProperties(TextRunProperties defaultTextRunProperties)
 		{
 			return new VisualLineTextParagraphProperties {
 				defaultTextRunProperties = defaultTextRunProperties,
@@ -794,7 +815,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		VisualLine BuildVisualLine(DocumentLine documentLine,
 		                           TextRunProperties globalTextRunProperties,
-		                           TextParagraphProperties paragraphProperties,
+		                           VisualLineTextParagraphProperties paragraphProperties,
 		                           VisualLineElementGenerator[] elementGeneratorsArray,
 		                           IVisualLineTransformer[] lineTransformersArray,
 		                           Size availableSize)
@@ -826,6 +847,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			int textOffset = 0;
 			TextLineBreak lastLineBreak = null;
 			var textLines = new List<TextLine>();
+			paragraphProperties.indent = 0;
+			paragraphProperties.firstLineInParagraph = true;
 			while (textOffset <= visualLine.VisualLength) {
 				TextLine textLine = formatter.FormatLine(
 					textSource,
@@ -837,11 +860,51 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				textLines.Add(textLine);
 				textOffset += textLine.Length;
 				
+				// exit loop so that we don't do the indentation calculation if there's only a single line
+				if (textOffset >= visualLine.VisualLength)
+					break;
+				
+				if (paragraphProperties.firstLineInParagraph) {
+					paragraphProperties.firstLineInParagraph = false;
+					
+					TextEditorOptions options = this.Options;
+					double indentation = 0;
+					if (options.InheritWordWrapIndentation) {
+						// determine indentation for next line:
+						int indentVisualColumn = GetIndentationVisualColumn(visualLine);
+						if (indentVisualColumn > 0 && indentVisualColumn < textOffset) {
+							indentation = textLine.GetDistanceFromCharacterHit(new CharacterHit(indentVisualColumn, 0));
+						}
+					}
+					indentation += options.WordWrapIndentation;
+					// apply the calculated indentation unless it's more than half of the text editor size:
+					if (indentation > 0 && indentation * 2 < availableSize.Width)
+						paragraphProperties.indent = indentation;
+				}
 				lastLineBreak = textLine.GetTextLineBreak();
 			}
 			visualLine.SetTextLines(textLines);
 			heightTree.SetHeight(visualLine.FirstDocumentLine, visualLine.Height);
 			return visualLine;
+		}
+		
+		static int GetIndentationVisualColumn(VisualLine visualLine)
+		{
+			if (visualLine.Elements.Count == 0)
+				return 0;
+			int column = 0;
+			int elementIndex = 0;
+			VisualLineElement element = visualLine.Elements[elementIndex];
+			while (element.IsWhitespace(column)) {
+				column++;
+				if (column == element.VisualColumn + element.VisualLength) {
+					elementIndex++;
+					if (elementIndex == visualLine.Elements.Count)
+						break;
+					element = visualLine.Elements[elementIndex];
+				}
+			}
+			return column;
 		}
 		#endregion
 		
@@ -1069,12 +1132,12 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		void IScrollInfo.LineUp()
 		{
-			((IScrollInfo)this).SetVerticalOffset(scrollOffset.Y - FontSize);
+			((IScrollInfo)this).SetVerticalOffset(scrollOffset.Y - DefaultLineHeight);
 		}
 		
 		void IScrollInfo.LineDown()
 		{
-			((IScrollInfo)this).SetVerticalOffset(scrollOffset.Y + FontSize);
+			((IScrollInfo)this).SetVerticalOffset(scrollOffset.Y + DefaultLineHeight);
 		}
 		
 		void IScrollInfo.LineLeft()
@@ -1110,14 +1173,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		void IScrollInfo.MouseWheelUp()
 		{
 			((IScrollInfo)this).SetVerticalOffset(
-				scrollOffset.Y - (SystemParameters.WheelScrollLines * FontSize));
+				scrollOffset.Y - (SystemParameters.WheelScrollLines * DefaultLineHeight));
 			OnScrollChange();
 		}
 		
 		void IScrollInfo.MouseWheelDown()
 		{
 			((IScrollInfo)this).SetVerticalOffset(
-				scrollOffset.Y + (SystemParameters.WheelScrollLines * FontSize));
+				scrollOffset.Y + (SystemParameters.WheelScrollLines * DefaultLineHeight));
 			OnScrollChange();
 		}
 		
@@ -1135,10 +1198,50 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			OnScrollChange();
 		}
 		
+		double wideSpaceWidth; // Width of an 'x'. Used as basis for the tab width, and for scrolling.
+		double defaultLineHeight; // Height of a line containing 'x'. Used for scrolling.
+		
 		double WideSpaceWidth {
 			get {
-				return FontSize / 2;
+				if (wideSpaceWidth == 0) {
+					MeasureWideSpaceWidthAndDefaultLineHeight();
+				}
+				return wideSpaceWidth;
 			}
+		}
+		
+		double DefaultLineHeight {
+			get {
+				if (defaultLineHeight == 0) {
+					MeasureWideSpaceWidthAndDefaultLineHeight();
+				}
+				return defaultLineHeight;
+			}
+		}
+		
+		void MeasureWideSpaceWidthAndDefaultLineHeight()
+		{
+			if (formatter != null) {
+				var textRunProperties = CreateGlobalTextRunProperties();
+				using (var line = formatter.FormatLine(
+					new SimpleTextSource("x", textRunProperties),
+					0, 32000,
+					new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties },
+					null))
+				{
+					wideSpaceWidth = Math.Max(1, line.WidthIncludingTrailingWhitespace);
+					defaultLineHeight = line.Height;
+				}
+			} else {
+				wideSpaceWidth = FontSize / 2;
+				defaultLineHeight = FontSize + 3;
+			}
+		}
+		
+		void InvalidateWideSpaceWidthAndDefaultLineHeight()
+		{
+			wideSpaceWidth = 0;
+			defaultLineHeight = 0;
 		}
 		
 		static double ValidateVisualOffset(double offset)
@@ -1567,15 +1670,18 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			if (TextFormatterFactory.PropertyChangeAffectsTextFormatter(e.Property)) {
 				RecreateCachedElements();
 				RecreateTextFormatter();
+				InvalidateWideSpaceWidthAndDefaultLineHeight();
 			}
 			if (e.Property == Control.ForegroundProperty
 			    || e.Property == Control.FontFamilyProperty
 			    || e.Property == Control.FontSizeProperty
 			    || e.Property == Control.FontStretchProperty
 			    || e.Property == Control.FontStyleProperty
-			    || e.Property == Control.FontWeightProperty)
+			    || e.Property == Control.FontWeightProperty
+			    || e.Property == TextView.NonPrintableCharacterBrushProperty)
 			{
 				RecreateCachedElements();
+				InvalidateWideSpaceWidthAndDefaultLineHeight();
 				Redraw();
 			}
 		}

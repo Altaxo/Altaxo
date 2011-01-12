@@ -1,4 +1,4 @@
-// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
@@ -219,7 +219,7 @@ namespace ICSharpCode.Core.Presentation
 #else
 					return "CheckBox";
 #endif
-				//return new MenuCheckBox(codon, descriptor.Caller);
+					//return new MenuCheckBox(codon, descriptor.Caller);
 				case "Item":
 				case "Command":
 					return new MenuCommand(context.InputBindingOwner, codon, descriptor.Caller, createCommand, context.ActivationMethod);

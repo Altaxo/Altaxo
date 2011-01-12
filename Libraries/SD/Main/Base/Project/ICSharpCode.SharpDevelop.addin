@@ -182,6 +182,11 @@
 			             icon    = "ProjectBrowser.Toolbar.Refresh"
 			             tooltip = "${res:AddIns.HtmlHelp2.Refresh}"
 			             class   = "ICSharpCode.SharpDevelop.Project.Commands.RefreshProjectBrowser"/>
+			<ToolbarItem id = "PropertySeparator" type = "Separator"/>
+			<ToolbarItem id      = "Collapse"
+			             icon    = "Icons.16x16.Assembly"
+			             tooltip = "${res:MainWindow.Windows.SearchResultPanel.CollapseAll.ToolTip}"
+			             class   = "ICSharpCode.SharpDevelop.Project.Commands.CollapseAllProjectBrowser"/>
 		</Condition>
 	</Path>
 	
@@ -768,6 +773,11 @@
 			          label = "${res:MainWindow.Windows.ClassBrowser.ClassViewSettings.ShowOtherMembers.Label}"
 			          class = "ICSharpCode.SharpDevelop.Gui.ClassBrowser.ShowOtherMembers"/>
 		</ToolbarItem>
+		<ToolbarItem id = "NavigationSeparator" type  = "Separator"/>
+		<ToolbarItem id      = "Collapse"
+		             icon    = "Icons.16x16.Assembly"
+		             tooltip = "${res:MainWindow.Windows.SearchResultPanel.CollapseAll.ToolTip}"
+		             class   = "ICSharpCode.SharpDevelop.Gui.ClassBrowser.ClassBrowserCollapseAll"/>
 	</Path>
 	
 	<Path name = "/SharpDevelop/Pads/ClassBrowser/Searchbar">
@@ -1145,9 +1155,16 @@
 				          shortcut     = "Control|N"
 				          class        = "ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>
 				
-				<MenuItem id          = "Project"
-				          label       = "${res:XML.MainMenu.FileMenu.New.Project}"
-				          icon        = "Icons.16x16.NewProjectIcon"
+				<Condition name="SolutionOpen" action="Disable">
+					<MenuItem id          = "Project"
+					          label       = "${res:XML.MainMenu.FileMenu.New.Project}"
+					          icon        = "Icons.16x16.NewProjectIcon"
+					          class       = "ICSharpCode.SharpDevelop.Project.Commands.AddNewProjectToSolution"/>
+				</Condition>
+				
+				<MenuItem id          = "Solution"
+				          label       = "${res:XML.MainMenu.FileMenu.New.Solution}"
+				          icon        = "Icons.16x16.SolutionIcon"
 				          shortcut    = "Control|Shift|N"
 				          class       = "ICSharpCode.SharpDevelop.Project.Commands.CreateNewSolution"/>
 			</MenuItem>
@@ -2092,7 +2109,7 @@
 		          label = "${res:XML.MainMenu.EditMenu.Copy}"
 		          type = "Item"
 		          icon = "Icons.16x16.CopyIcon"
-		          class = "ICSharpCode.SharpDevelop.Commands.Copy"/>
+		          command = "Copy"/>
 	</Path>
 	
 	<Path name="/SharpDevelop/Pads/CommonConsole/ToolBar">

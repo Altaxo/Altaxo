@@ -228,6 +228,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			return member.IsStatic == showStatic;
 		}
+		
+		public virtual bool ShowMemberInOverrideCompletion(IMember member)
+		{
+			return true;
+		}
 		#endregion
 		
 		/// <summary>
@@ -320,6 +325,18 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 				return true;
 			}
+			
+			public override bool ShowMemberInOverrideCompletion(IMember member)
+			{
+				IMethod method = member as IMethod;
+				
+				if (method != null) {
+					if (method.Name == "Finalize" && method.Parameters.Count == 0)
+						return false;
+				}
+				
+				return base.ShowMemberInOverrideCompletion(member);
+			}
 		}
 		#endregion
 		
@@ -356,6 +373,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 				get {
 					return true;
 				}
+			}
+			
+			public override bool SupportsExtensionMethods {
+				get { return true; }
+			}
+			
+			public override bool SearchExtensionsInClasses {
+				get { return true; }
 			}
 			
 			public override bool IsClassWithImplicitlyStaticMembers(IClass c)
