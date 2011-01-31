@@ -171,6 +171,16 @@ namespace Altaxo.Gui
 			return result;
 		}
 
+
+		public static System.Windows.Media.Color ToWpf(this System.Drawing.Color c)
+		{
+			return Color.FromArgb(c.A, c.R, c.G, c.B);
+		}
+
+		public static System.Drawing.Color FromWpf(this System.Windows.Media.Color c)
+		{
+			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
+		}
 		#endregion
 
 		#region Graphics primitives

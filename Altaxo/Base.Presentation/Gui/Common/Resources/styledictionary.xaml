@@ -18,4 +18,22 @@
 		</Setter>
 	</Style>
 
+
+	<Style x:Key="ValidatingComboBoxStyle" xmlns:local="clr-namespace:Altaxo.Gui.Common"  TargetType="ComboBox">
+		<Setter Property="Validation.ErrorTemplate">
+			<Setter.Value>
+				<ControlTemplate>
+					<Border BorderBrush="Red" BorderThickness="4">
+						<StackPanel Orientation="Vertical">
+							<AdornedElementPlaceholder x:Name="adornedElement"/>
+							<TextBlock Foreground="Red" Background="White" TextWrapping="Wrap" 
+													 Width="{Binding ElementName=adornedElement, Path=AdornedElement.(ActualWidth)}"
+													 Text="{Binding ElementName=adornedElement, Path=AdornedElement.(Validation.Errors), Converter={local:ValidationErrorToMessageConverter}}"/>
+						</StackPanel>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 </ResourceDictionary>

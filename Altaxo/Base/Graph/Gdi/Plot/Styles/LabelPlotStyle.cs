@@ -31,6 +31,7 @@ using Altaxo.Graph.Gdi.Background;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Main;
   using Graph.Plot.Groups;
   using Plot.Groups;
   using Plot.Data;
@@ -838,6 +839,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get { return "LabelStyle"; }
     }
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		public void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		{
+			options.Visit(_labelColumn);
+		}
 
     #endregion
   }

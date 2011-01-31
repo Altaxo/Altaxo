@@ -62,7 +62,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public static void CopySelectedListItemsToFolder(this ProjectBrowseController ctrl)
 		{
 			var list = ctrl.GetSelectedListItems();
-			CopyDocuments(list);
+
+			string originalFolderName=null;
+			bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected( out originalFolderName);
+
+			CopyDocuments(list, areDocumentsFromOneFolder, originalFolderName);
 		}
 
 		const string rootFolderDisplayName = "<<<root folder>>>";
@@ -89,16 +93,34 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// Copy the items given in the list (tables and graphs) to a folder, which is selected by the user via a dialog box.
 		/// </summary>
 		/// <param name="list">List of items to delete.</param>
-		public static void CopyDocuments(IList<object> list)
+		/// <param name="areDocumentsFromOneFolder">If true, the list contains objects origination from only one project folder (or from subfolders of that folder). In this case the paramenter <c>originalSourceFolder</c> contains the original project folder from which the items should be copied.</param>
+		/// <param name="originalSourceFolder">Original folder from which the items originate (only valid if <c>areDocumentsFromOneFolder</c> is true.</param>
+		public static void CopyDocuments(IList<object> list, bool areDocumentsFromOneFolder, string originalSourceFolder)
 		{
 			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName, true);
 			names.Insert(0, rootFolderDisplayName);
 			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to copy the items into:" };
 			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
 				return;
-
 			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
-			Current.Project.Folders.CopyItemsToFolder(list, newFolderName);
+
+
+			DocNodePathReplacementOptions relocateOptions = null;
+			if (areDocumentsFromOneFolder)
+			{
+				var relocateData = Current.Gui.YesNoCancelMessageBox("Do you want to relocate the references in the copied plots so that they point to the destination folder?", "Question", null);
+				if (null == relocateData)
+					return;
+
+				if (true == relocateData)
+				{
+					relocateOptions = new DocNodePathReplacementOptions();
+					AltaxoDocument.AddRelocationDataForTables(relocateOptions, originalSourceFolder + ProjectFolder.DirectorySeparatorChar, newFolderName + ProjectFolder.DirectorySeparatorChar);
+				}
+			}
+
+
+			Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions);
 
 		}
 

@@ -454,7 +454,27 @@ namespace Altaxo
         return "FitFunctionScripts";
       else
         return null;
-    }
-  
-  }
+		}
+
+		#region Static functions
+
+
+		/// <summary>
+		/// Adds relocation data for tables in a specific project folder.
+		/// </summary>
+		/// <param name="options">The relocation data to fill in (this object is changed during the operation).</param>
+		/// <param name="originalFolder">The original project folder of the data.</param>
+		/// <param name="destinationFolder">The new project folder that references should point to.</param>
+		public static void AddRelocationDataForTables(DocNodePathReplacementOptions options, string originalFolder, string destinationFolder)
+		{
+			var srcPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
+			srcPath.Add(originalFolder);
+			var destPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
+			destPath.Add(destinationFolder);
+			options.AddPathReplacement(srcPath, destPath);
+		}
+
+		#endregion
+
+	}
 }

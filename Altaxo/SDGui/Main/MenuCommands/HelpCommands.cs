@@ -61,4 +61,16 @@ namespace Altaxo.Main.Commands
 			}
 		}
 	}
+
+	public class DevelopmentTest : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var brush = new Altaxo.Graph.Gdi.BrushX(System.Drawing.Color.Black);
+			var ctrl = new Altaxo.Gui.Common.Drawing.BrushControllerAdvanced(brush);
+			Current.Gui.ShowDialog(ctrl, "Brush pros");
+		}
+	}
+
+
 }

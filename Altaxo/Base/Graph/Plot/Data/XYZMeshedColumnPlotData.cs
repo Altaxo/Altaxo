@@ -22,6 +22,8 @@
 
 using System;
 using System.Drawing;
+
+using Altaxo.Main;
 using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Collections;
@@ -663,7 +665,20 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
-   
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		public void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		{
+			options.Visit(_xColumn);
+			options.Visit(_yColumn);
+			foreach (var c in _dataColumns)
+				options.Visit(c);
+		}
+
   }
 
 

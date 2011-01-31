@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(356, 129);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(359, 155);
 			this.flowLayoutPanel1.TabIndex = 0;
 			// 
 			// _grpbPosition
@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Graph
 			this._grpbPosition.Controls.Add(this._ctrlPosSize);
 			this._grpbPosition.Location = new System.Drawing.Point(3, 3);
 			this._grpbPosition.Name = "_grpbPosition";
-			this._grpbPosition.Size = new System.Drawing.Size(350, 123);
+			this._grpbPosition.Size = new System.Drawing.Size(353, 149);
 			this._grpbPosition.TabIndex = 2;
 			this._grpbPosition.TabStop = false;
 			this._grpbPosition.Text = "Position/Size";
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph
 			this._ctrlPosSize.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._ctrlPosSize.Location = new System.Drawing.Point(6, 19);
 			this._ctrlPosSize.Name = "_ctrlPosSize";
-			this._ctrlPosSize.Size = new System.Drawing.Size(338, 85);
+			this._ctrlPosSize.Size = new System.Drawing.Size(341, 111);
 			this._ctrlPosSize.TabIndex = 0;
 			// 
 			// ImageGraphicControl
@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Graph
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.flowLayoutPanel1);
 			this.Name = "ImageGraphicControl";
-			this.Size = new System.Drawing.Size(362, 135);
+			this.Size = new System.Drawing.Size(365, 161);
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
 			this._grpbPosition.ResumeLayout(false);

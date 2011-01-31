@@ -23,6 +23,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+
+using Altaxo.Main;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
@@ -397,5 +399,14 @@ namespace Altaxo.Graph.Gdi.Plot
       _plotStyle.GetPixelwiseImage(_plotData, _plotData.ColumnCount, _plotData.RowCount, ref image);
     }
 
+			/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		public override void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		{
+			_plotData.EnumerateDocumentReferences(options);
+		}
   }
 }

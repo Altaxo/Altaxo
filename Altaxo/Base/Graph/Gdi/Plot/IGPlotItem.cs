@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
+using Altaxo.Main;
 using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot
@@ -133,5 +134,15 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
     IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint);
 
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		void EnumerateDocumentReferences(IDocNodeProxyVisitor options);
+
   }
+
+
 }

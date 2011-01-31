@@ -484,6 +484,19 @@ namespace Altaxo.Graph.Gdi
         NameChanged(this, oldValue);
     }
 
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		public void ReplaceItemPaths(IDocNodeProxyVisitor options)
+		{
+			foreach (var layer in _layers)
+			{
+				layer.PlotItems.EnumerateDocumentReferences(options);
+			}
+		}
+
     /// <summary>
     /// The date/time of creation of this graph.
     /// </summary>

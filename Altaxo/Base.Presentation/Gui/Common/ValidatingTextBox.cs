@@ -12,17 +12,56 @@ namespace Altaxo.Gui.Common
 	public class ValidatingTextBox : TextBox
 	{
 		NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
+		bool _isInitialTextModified;
+		bool _isValidatedSuccessfully = true;
 
-		public new string Text
+		#region Dependency property
+		public string ValidatedText
 		{
-			get 
-			{
-				return _validatedText.Value;
-			}
+			get { var result = (string)GetValue(ValidatedTextProperty); return result; }
+			set { SetValue(ValidatedTextProperty, value); _isValidatedSuccessfully = true; }
+		}
+
+		public static readonly DependencyProperty ValidatedTextProperty =
+				DependencyProperty.Register("ValidatedText", typeof(string), typeof(ValidatingTextBox),
+				new FrameworkPropertyMetadata(OnValidatedTextChanged));
+
+		private static void OnValidatedTextChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+
+		}
+		#endregion
+
+
+		public string InitialText
+		{
 			set
-			{ 
-				_validatedText.Value = value;
-			} 
+			{
+				base.Text = value;
+				_isInitialTextModified = false;
+				_isValidatedSuccessfully = true;
+			}
+		}
+
+		public bool IsInitialTextModified
+		{
+			get
+			{
+				return _isInitialTextModified;
+			}
+		}
+
+		public bool IsValidatedSuccessfully
+		{
+			get
+			{
+				return _isValidatedSuccessfully;
+			}
+		}
+
+		protected virtual void EhTextChanged(object sender, EventArgs e)
+		{
+			_isInitialTextModified = true;
 		}
 
 		/// <summary>
@@ -47,17 +86,15 @@ namespace Altaxo.Gui.Common
 
 		public ValidatingTextBox()
 		{
-			try
-			{
-				var binding = new Binding();
-				binding.Source = _validatedText;
-				binding.Path = new PropertyPath("Value");
-				binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
-				this.SetBinding(TextBox.TextProperty, binding);
-			}
-			catch (Exception ex)
-			{
-			}
+			var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, this.GetType());
+			dpd.AddValueChanged(this, EhTextChanged);
+
+			var binding = new Binding();
+			binding.Source = this;
+			binding.Path = new PropertyPath("ValidatedText");
+			binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
+			this.SetBinding(TextBox.TextProperty, binding);
 		}
 	}
 }
+

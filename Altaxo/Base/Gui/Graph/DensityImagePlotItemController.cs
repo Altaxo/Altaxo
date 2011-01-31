@@ -30,6 +30,7 @@ using Altaxo.Gui.Common;
 namespace Altaxo.Gui.Graph
 {
   [UserControllerForObject(typeof(DensityImagePlotItem))]
+	[ExpectedTypeOfView(typeof(ITabbedElementView))]
   class DensityImagePlotItemController : TabbedElementController, IMVCANController
   {
 

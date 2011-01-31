@@ -50,147 +50,103 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-      this._grpbPen = new System.Windows.Forms.GroupBox();
-      this._grpbBrush = new System.Windows.Forms.GroupBox();
-      this._brushTableLayout = new System.Windows.Forms.TableLayoutPanel();
-      this._lblFillBrush = new System.Windows.Forms.Label();
-      this._lblFillBrushEnable = new System.Windows.Forms.Label();
-      this._chkFillShapeEnable = new System.Windows.Forms.CheckBox();
-      this._grpbPosition = new System.Windows.Forms.GroupBox();
-      this._ctrlPenColorTypeThickness = new Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl();
-      this._cbFillBrush = new Altaxo.Gui.Common.Drawing.BrushColorComboBox();
-      this._ctrlPosSize = new Altaxo.Gui.Graph.PositionSizeRotationScaleControl();
-      this.flowLayoutPanel1.SuspendLayout();
-      this._grpbPen.SuspendLayout();
-      this._grpbBrush.SuspendLayout();
-      this._brushTableLayout.SuspendLayout();
-      this._grpbPosition.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // flowLayoutPanel1
-      // 
-      this.flowLayoutPanel1.AutoSize = true;
-      this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this.flowLayoutPanel1.Controls.Add(this._grpbPen);
-      this.flowLayoutPanel1.Controls.Add(this._grpbBrush);
-      this.flowLayoutPanel1.Controls.Add(this._grpbPosition);
-      this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-      this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-      this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-      this.flowLayoutPanel1.Size = new System.Drawing.Size(356, 351);
-      this.flowLayoutPanel1.TabIndex = 0;
-      // 
-      // _grpbPen
-      // 
-      this._grpbPen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-      this._grpbPen.AutoSize = true;
-      this._grpbPen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._grpbPen.Controls.Add(this._ctrlPenColorTypeThickness);
-      this._grpbPen.Location = new System.Drawing.Point(3, 3);
-      this._grpbPen.Name = "_grpbPen";
-      this._grpbPen.Size = new System.Drawing.Size(350, 125);
-      this._grpbPen.TabIndex = 0;
-      this._grpbPen.TabStop = false;
-      this._grpbPen.Text = "Pen:";
-      // 
-      // _grpbBrush
-      // 
-      this._grpbBrush.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-      this._grpbBrush.AutoSize = true;
-      this._grpbBrush.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._grpbBrush.Controls.Add(this._brushTableLayout);
-      this._grpbBrush.Location = new System.Drawing.Point(3, 134);
-      this._grpbBrush.Name = "_grpbBrush";
-      this._grpbBrush.Size = new System.Drawing.Size(350, 85);
-      this._grpbBrush.TabIndex = 1;
-      this._grpbBrush.TabStop = false;
-      this._grpbBrush.Text = "Filling:";
-      // 
-      // _brushTableLayout
-      // 
-      this._brushTableLayout.AutoSize = true;
-      this._brushTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._brushTableLayout.ColumnCount = 2;
-      this._brushTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._brushTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._brushTableLayout.Controls.Add(this._cbFillBrush, 1, 1);
-      this._brushTableLayout.Controls.Add(this._lblFillBrush, 0, 1);
-      this._brushTableLayout.Controls.Add(this._lblFillBrushEnable, 0, 0);
-      this._brushTableLayout.Controls.Add(this._chkFillShapeEnable, 1, 0);
-      this._brushTableLayout.Location = new System.Drawing.Point(6, 19);
-      this._brushTableLayout.Name = "_brushTableLayout";
-      this._brushTableLayout.RowCount = 2;
-      this._brushTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._brushTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._brushTableLayout.Size = new System.Drawing.Size(188, 47);
-      this._brushTableLayout.TabIndex = 0;
-      // 
-      // _lblFillBrush
-      // 
-      this._lblFillBrush.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._lblFillBrush.AutoSize = true;
-      this._lblFillBrush.Location = new System.Drawing.Point(22, 27);
-      this._lblFillBrush.Name = "_lblFillBrush";
-      this._lblFillBrush.Size = new System.Drawing.Size(37, 13);
-      this._lblFillBrush.TabIndex = 1;
-      this._lblFillBrush.Text = "Brush:";
-      // 
-      // _lblFillBrushEnable
-      // 
-      this._lblFillBrushEnable.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._lblFillBrushEnable.AutoSize = true;
-      this._lblFillBrushEnable.Location = new System.Drawing.Point(3, 3);
-      this._lblFillBrushEnable.Name = "_lblFillBrushEnable";
-      this._lblFillBrushEnable.Size = new System.Drawing.Size(56, 13);
-      this._lblFillBrushEnable.TabIndex = 2;
-      this._lblFillBrushEnable.Text = "Fill Shape:";
-      // 
-      // _chkFillShapeEnable
-      // 
-      this._chkFillShapeEnable.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._chkFillShapeEnable.AutoSize = true;
-      this._chkFillShapeEnable.Location = new System.Drawing.Point(65, 3);
-      this._chkFillShapeEnable.Name = "_chkFillShapeEnable";
-      this._chkFillShapeEnable.Size = new System.Drawing.Size(15, 14);
-      this._chkFillShapeEnable.TabIndex = 3;
-      this._chkFillShapeEnable.UseVisualStyleBackColor = true;
-      this._chkFillShapeEnable.CheckedChanged += new System.EventHandler(this.EhIsShapedFilled_CheckChanged);
-      // 
-      // _grpbPosition
-      // 
-      this._grpbPosition.AutoSize = true;
-      this._grpbPosition.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._grpbPosition.Controls.Add(this._ctrlPosSize);
-      this._grpbPosition.Location = new System.Drawing.Point(3, 225);
-      this._grpbPosition.Name = "_grpbPosition";
-      this._grpbPosition.Size = new System.Drawing.Size(350, 123);
-      this._grpbPosition.TabIndex = 2;
-      this._grpbPosition.TabStop = false;
-      this._grpbPosition.Text = "Position/Size";
-      // 
-      // _ctrlPenColorTypeThickness
-      // 
-      this._ctrlPenColorTypeThickness.AutoSize = true;
-      this._ctrlPenColorTypeThickness.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._ctrlPenColorTypeThickness.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      this._ctrlPenColorTypeThickness.Controller = null;
-      this._ctrlPenColorTypeThickness.DocPen = null;
-      this._ctrlPenColorTypeThickness.Location = new System.Drawing.Point(6, 19);
-      this._ctrlPenColorTypeThickness.Name = "_ctrlPenColorTypeThickness";
-      this._ctrlPenColorTypeThickness.Size = new System.Drawing.Size(198, 87);
-      this._ctrlPenColorTypeThickness.TabIndex = 0;
-      // 
-      // _cbFillBrush
-      // 
-      this._cbFillBrush.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._cbFillBrush.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      this._cbFillBrush.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-      this._cbFillBrush.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cbFillBrush.FormattingEnabled = true;
-      this._cbFillBrush.ItemHeight = 15;
-      this._cbFillBrush.Items.AddRange(new object[] {
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._grpbPen = new System.Windows.Forms.GroupBox();
+			this._ctrlPenColorTypeThickness = new Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl();
+			this._grpbBrush = new System.Windows.Forms.GroupBox();
+			this._brushTableLayout = new System.Windows.Forms.TableLayoutPanel();
+			this._cbFillBrush = new Altaxo.Gui.Common.Drawing.BrushColorComboBox();
+			this._lblFillBrush = new System.Windows.Forms.Label();
+			this._lblFillBrushEnable = new System.Windows.Forms.Label();
+			this._chkFillShapeEnable = new System.Windows.Forms.CheckBox();
+			this._grpbPosition = new System.Windows.Forms.GroupBox();
+			this._ctrlPosSize = new Altaxo.Gui.Graph.PositionSizeRotationScaleControl();
+			this.flowLayoutPanel1.SuspendLayout();
+			this._grpbPen.SuspendLayout();
+			this._grpbBrush.SuspendLayout();
+			this._brushTableLayout.SuspendLayout();
+			this._grpbPosition.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.AutoSize = true;
+			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.flowLayoutPanel1.Controls.Add(this._grpbPen);
+			this.flowLayoutPanel1.Controls.Add(this._grpbBrush);
+			this.flowLayoutPanel1.Controls.Add(this._grpbPosition);
+			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(359, 377);
+			this.flowLayoutPanel1.TabIndex = 0;
+			// 
+			// _grpbPen
+			// 
+			this._grpbPen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._grpbPen.AutoSize = true;
+			this._grpbPen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._grpbPen.Controls.Add(this._ctrlPenColorTypeThickness);
+			this._grpbPen.Location = new System.Drawing.Point(3, 3);
+			this._grpbPen.Name = "_grpbPen";
+			this._grpbPen.Size = new System.Drawing.Size(353, 125);
+			this._grpbPen.TabIndex = 0;
+			this._grpbPen.TabStop = false;
+			this._grpbPen.Text = "Pen:";
+			// 
+			// _ctrlPenColorTypeThickness
+			// 
+			this._ctrlPenColorTypeThickness.AutoSize = true;
+			this._ctrlPenColorTypeThickness.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._ctrlPenColorTypeThickness.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
+			this._ctrlPenColorTypeThickness.Controller = null;
+			this._ctrlPenColorTypeThickness.DocPen = null;
+			this._ctrlPenColorTypeThickness.Location = new System.Drawing.Point(6, 19);
+			this._ctrlPenColorTypeThickness.Name = "_ctrlPenColorTypeThickness";
+			this._ctrlPenColorTypeThickness.Size = new System.Drawing.Size(198, 87);
+			this._ctrlPenColorTypeThickness.TabIndex = 0;
+			// 
+			// _grpbBrush
+			// 
+			this._grpbBrush.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._grpbBrush.AutoSize = true;
+			this._grpbBrush.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._grpbBrush.Controls.Add(this._brushTableLayout);
+			this._grpbBrush.Location = new System.Drawing.Point(3, 134);
+			this._grpbBrush.Name = "_grpbBrush";
+			this._grpbBrush.Size = new System.Drawing.Size(353, 85);
+			this._grpbBrush.TabIndex = 1;
+			this._grpbBrush.TabStop = false;
+			this._grpbBrush.Text = "Filling:";
+			// 
+			// _brushTableLayout
+			// 
+			this._brushTableLayout.AutoSize = true;
+			this._brushTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._brushTableLayout.ColumnCount = 2;
+			this._brushTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._brushTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._brushTableLayout.Controls.Add(this._cbFillBrush, 1, 1);
+			this._brushTableLayout.Controls.Add(this._lblFillBrush, 0, 1);
+			this._brushTableLayout.Controls.Add(this._lblFillBrushEnable, 0, 0);
+			this._brushTableLayout.Controls.Add(this._chkFillShapeEnable, 1, 0);
+			this._brushTableLayout.Location = new System.Drawing.Point(6, 19);
+			this._brushTableLayout.Name = "_brushTableLayout";
+			this._brushTableLayout.RowCount = 2;
+			this._brushTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._brushTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._brushTableLayout.Size = new System.Drawing.Size(188, 47);
+			this._brushTableLayout.TabIndex = 0;
+			// 
+			// _cbFillBrush
+			// 
+			this._cbFillBrush.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._cbFillBrush.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
+			this._cbFillBrush.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+			this._cbFillBrush.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._cbFillBrush.FormattingEnabled = true;
+			this._cbFillBrush.ItemHeight = 15;
+			this._cbFillBrush.Items.AddRange(new object[] {
             System.Drawing.SystemColors.ActiveBorder,
             System.Drawing.SystemColors.ActiveCaption,
             System.Drawing.SystemColors.ActiveCaptionText,
@@ -539,41 +495,84 @@ namespace Altaxo.Gui.Graph
             System.Drawing.SystemColors.GradientInactiveCaption,
             System.Drawing.SystemColors.MenuBar,
             System.Drawing.SystemColors.MenuHighlight});
-      this._cbFillBrush.Location = new System.Drawing.Point(65, 23);
-      this._cbFillBrush.Name = "_cbFillBrush";
-      this._cbFillBrush.Size = new System.Drawing.Size(120, 21);
-      this._cbFillBrush.TabIndex = 0;
-      // 
-      // _ctrlPosSize
-      // 
-      this._ctrlPosSize.AutoSize = true;
-      this._ctrlPosSize.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._ctrlPosSize.Location = new System.Drawing.Point(6, 19);
-      this._ctrlPosSize.Name = "_ctrlPosSize";
-      this._ctrlPosSize.Size = new System.Drawing.Size(338, 85);
-      this._ctrlPosSize.TabIndex = 0;
-      // 
-      // ShapeGraphicControl
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.AutoSize = true;
-      this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this.Controls.Add(this.flowLayoutPanel1);
-      this.Name = "ShapeGraphicControl";
-      this.Size = new System.Drawing.Size(362, 357);
-      this.flowLayoutPanel1.ResumeLayout(false);
-      this.flowLayoutPanel1.PerformLayout();
-      this._grpbPen.ResumeLayout(false);
-      this._grpbPen.PerformLayout();
-      this._grpbBrush.ResumeLayout(false);
-      this._grpbBrush.PerformLayout();
-      this._brushTableLayout.ResumeLayout(false);
-      this._brushTableLayout.PerformLayout();
-      this._grpbPosition.ResumeLayout(false);
-      this._grpbPosition.PerformLayout();
-      this.ResumeLayout(false);
-      this.PerformLayout();
+			this._cbFillBrush.Location = new System.Drawing.Point(65, 23);
+			this._cbFillBrush.Name = "_cbFillBrush";
+			this._cbFillBrush.Size = new System.Drawing.Size(120, 21);
+			this._cbFillBrush.TabIndex = 0;
+			// 
+			// _lblFillBrush
+			// 
+			this._lblFillBrush.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._lblFillBrush.AutoSize = true;
+			this._lblFillBrush.Location = new System.Drawing.Point(22, 27);
+			this._lblFillBrush.Name = "_lblFillBrush";
+			this._lblFillBrush.Size = new System.Drawing.Size(37, 13);
+			this._lblFillBrush.TabIndex = 1;
+			this._lblFillBrush.Text = "Brush:";
+			// 
+			// _lblFillBrushEnable
+			// 
+			this._lblFillBrushEnable.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._lblFillBrushEnable.AutoSize = true;
+			this._lblFillBrushEnable.Location = new System.Drawing.Point(3, 3);
+			this._lblFillBrushEnable.Name = "_lblFillBrushEnable";
+			this._lblFillBrushEnable.Size = new System.Drawing.Size(56, 13);
+			this._lblFillBrushEnable.TabIndex = 2;
+			this._lblFillBrushEnable.Text = "Fill Shape:";
+			// 
+			// _chkFillShapeEnable
+			// 
+			this._chkFillShapeEnable.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._chkFillShapeEnable.AutoSize = true;
+			this._chkFillShapeEnable.Location = new System.Drawing.Point(65, 3);
+			this._chkFillShapeEnable.Name = "_chkFillShapeEnable";
+			this._chkFillShapeEnable.Size = new System.Drawing.Size(15, 14);
+			this._chkFillShapeEnable.TabIndex = 3;
+			this._chkFillShapeEnable.UseVisualStyleBackColor = true;
+			this._chkFillShapeEnable.CheckedChanged += new System.EventHandler(this.EhIsShapedFilled_CheckChanged);
+			// 
+			// _grpbPosition
+			// 
+			this._grpbPosition.AutoSize = true;
+			this._grpbPosition.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._grpbPosition.Controls.Add(this._ctrlPosSize);
+			this._grpbPosition.Location = new System.Drawing.Point(3, 225);
+			this._grpbPosition.Name = "_grpbPosition";
+			this._grpbPosition.Size = new System.Drawing.Size(353, 149);
+			this._grpbPosition.TabIndex = 2;
+			this._grpbPosition.TabStop = false;
+			this._grpbPosition.Text = "Position/Size";
+			// 
+			// _ctrlPosSize
+			// 
+			this._ctrlPosSize.AutoSize = true;
+			this._ctrlPosSize.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._ctrlPosSize.Location = new System.Drawing.Point(6, 19);
+			this._ctrlPosSize.Name = "_ctrlPosSize";
+			this._ctrlPosSize.Size = new System.Drawing.Size(341, 111);
+			this._ctrlPosSize.TabIndex = 0;
+			// 
+			// ShapeGraphicControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.Controls.Add(this.flowLayoutPanel1);
+			this.Name = "ShapeGraphicControl";
+			this.Size = new System.Drawing.Size(365, 383);
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
+			this._grpbPen.ResumeLayout(false);
+			this._grpbPen.PerformLayout();
+			this._grpbBrush.ResumeLayout(false);
+			this._grpbBrush.PerformLayout();
+			this._brushTableLayout.ResumeLayout(false);
+			this._brushTableLayout.PerformLayout();
+			this._grpbPosition.ResumeLayout(false);
+			this._grpbPosition.PerformLayout();
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
     }
 

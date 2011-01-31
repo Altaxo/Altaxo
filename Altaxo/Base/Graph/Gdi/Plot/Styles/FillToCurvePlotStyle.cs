@@ -28,6 +28,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Main;
 	using Graph.Plot.Groups;
 	using Plot.Groups;
 	using Plot.Data;
@@ -231,6 +232,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public string Name
 		{
 			get { return this.GetType().Name; }
+		}
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		public void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		{
+			
 		}
 
 		#endregion

@@ -27,6 +27,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
+	using Altaxo.Main;
   using Groups;
   using Graph.Plot.Groups;
 
@@ -262,6 +263,15 @@ namespace Altaxo.Graph.Gdi.Plot
     public virtual void PaintSymbol(Graphics g, RectangleF location)
     {
     }
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		public virtual void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		{
+		}
 
     #endregion
 

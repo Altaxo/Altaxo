@@ -104,16 +104,72 @@ namespace Altaxo.Main
       return stringBuilder.ToString();
     }
 
-    #region static navigation methods
 
-    /// <summary>
-    /// Get the root node of the node <code>node</code>. The root node is defined as last node in the hierarchie that
-    /// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent.
-    /// </summary>
-    /// <param name="node">The node from where the search begins.</param>
-    /// <returns>The root node, i.e. the last node in the hierarchie that
-    /// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent</returns>
-    public static object GetRootNode(IDocumentNode node)
+		/// <summary>
+		/// Replaces parts of the part by another part.
+		/// </summary>
+		/// <param name="partToReplace">Part of the path that should be replaced. This part has to match the beginning of this part. The last item of the part
+		/// is allowed to be given only partially.</param>
+		/// <param name="newPart">The new part to replace that piece of the path, that match the <c>partToReplace</c>.</param>
+		/// <returns>True if the part could be replaced. Returns false if the path does not fulfill the presumtions given above.</returns>
+		/// <remarks>
+		/// As stated above, the last item of the partToReplace can be given only partially. As an example, the path (here separated by space)
+		/// <para>Tables Preexperiment1/WDaten Time</para>
+		/// <para>should be replaced by </para>
+		/// <para>Tables Preexperiment2\WDaten Time</para>
+		/// <para>To make this replacement, the partToReplace should be given by</para>
+		/// <para>Tables Preexperiment1/</para>
+		/// <para>and the newPart should be given by</para>
+		/// <para>Tables Preexperiment2\</para>
+		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
+		/// </remarks>
+		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
+		{
+			// Test if the start of my path is identical to that of partToReplace
+			if (this.Count < partToReplace.Count)
+				return false;
+
+			for (int i = 0; i < partToReplace.Count-1; i++)
+				if (0 != string.Compare(this[i], partToReplace[i]))
+					return false;
+
+			if (!this[partToReplace.Count - 1].StartsWith(partToReplace[partToReplace.Count - 1]))
+				return false;
+
+			// ok, the beginning of my path and partToReplace is identical,
+			// thus we replace the beginning of my path with that of newPart
+
+			string s = this[partToReplace.Count - 1].Substring(partToReplace[partToReplace.Count-1].Length);
+			this[partToReplace.Count - 1] = newPart[newPart.Count - 1] + s;
+
+			int j, k;
+			for (j = partToReplace.Count - 2, k = newPart.Count - 2; j >= 0 && k >= 0; --j, --k)
+				this[j] = newPart[k];
+
+			if (k > 0)
+			{
+				for (; k >= 0; --k)
+					this.Insert(0, newPart[k]);
+			}
+			else if (j > 0)
+			{
+				for (; j >= 0; --j)
+					this.RemoveAt(0);
+			}
+
+			return true;
+		}
+
+		#region static navigation methods
+
+		/// <summary>
+		/// Get the root node of the node <code>node</code>. The root node is defined as last node in the hierarchie that
+		/// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent.
+		/// </summary>
+		/// <param name="node">The node from where the search begins.</param>
+		/// <returns>The root node, i.e. the last node in the hierarchie that
+		/// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent</returns>
+		public static object GetRootNode(IDocumentNode node)
     {
       object root = node.ParentObject;
       while(root!= null && root is IDocumentNode)

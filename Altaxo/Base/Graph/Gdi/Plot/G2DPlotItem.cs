@@ -353,6 +353,11 @@ namespace Altaxo.Graph.Gdi.Plot
       return null;
     }
 
+		public override void EnumerateDocumentReferences(Main.IDocNodeProxyVisitor options)
+		{
+			_plotStyles.EnumerateDocumentReferences(options);
+			base.EnumerateDocumentReferences(options);
+		}
 
     #region IRoutedPropertyReceiver Members
 

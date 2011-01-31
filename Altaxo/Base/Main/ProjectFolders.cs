@@ -524,12 +524,14 @@ namespace Altaxo.Main
 		/// Copies the items given in the list (tables, graphs and folders) to another folder, which is given by newFolderName. The copying
 		/// is done by cloning the items.
 		/// </summary>
-		/// <param name="list">List of items to delete.</param>
-		public void CopyItemsToFolder(IList<object> list, string newFolderName)
+		/// <param name="list">List of items to copy.</param>
+		/// <param name="destinationFolderName">Destination folder name.</param>
+		/// <param name="relocationOptions">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
+		public void CopyItemsToFolder(IList<object> list, string destinationFolderName, IDocNodeProxyVisitor relocationOptions)
 		{
 			foreach (object item in list)
 			{
-				CopyItemToFolder(item, newFolderName);
+				CopyItemToFolder(item, destinationFolderName, relocationOptions);
 			}
 		}
 
@@ -539,7 +541,8 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="item">Item to copy.</param>
 		/// <param name="destinationFolderName">Destination folder name.</param>
-		public void CopyItemToFolder(object item, string destinationFolderName)
+		/// <param name="relocationOptions">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
+		public void CopyItemToFolder(object item, string destinationFolderName, IDocNodeProxyVisitor relocationOptions)
 		{
 			if (item == null)
 				throw new ArgumentNullException("Item is null");
@@ -550,7 +553,7 @@ namespace Altaxo.Main
 				string subDestination = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 				foreach(var subitem in this.GetItemsInFolder(orgName))
 				{
-					CopyItemToFolder(subitem, subDestination);
+					CopyItemToFolder(subitem, subDestination, relocationOptions);
 				}
 			}
 			else if ((item is ICloneable) && (item is INameOwner))
@@ -559,6 +562,14 @@ namespace Altaxo.Main
 				var clonedItem = (INameOwner)(item as ICloneable).Clone();
 				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 				Current.Project.AddItem(clonedItem);
+
+				if (null!=relocationOptions)
+				{
+					if (clonedItem is Altaxo.Graph.Gdi.GraphDocument)
+					{
+						((Altaxo.Graph.Gdi.GraphDocument)clonedItem).ReplaceItemPaths(relocationOptions);
+					}
+				}
 			}
 			else
 			{

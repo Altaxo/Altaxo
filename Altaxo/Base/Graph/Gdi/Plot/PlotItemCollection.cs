@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+
+using Altaxo.Main;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
@@ -803,7 +805,19 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     #endregion
-  
+
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="options">Information what to replace.</param>
+		public virtual void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		{
+			foreach (var item in this)
+				item.EnumerateDocumentReferences(options);
+		}
+
     #endregion
 
     #region IEnumerable<IG2DPlotItem> Members

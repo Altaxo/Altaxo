@@ -216,6 +216,34 @@ namespace Altaxo.Main
       OnChanged();
     }
 
+
+			/// <summary>
+		/// Replaces parts of the part of the document node by another part. If the replacement was successful, the original document node is cleared.
+		/// See <see cref="DocumentNode.ReplacePathParts"/> for details of the part replacement.
+		/// </summary>
+		/// <param name="partToReplace">Part of the path that should be replaced. This part has to match the beginning of this part. The last item of the part
+		/// is allowed to be given only partially.</param>
+		/// <param name="newPart">The new part to replace that piece of the path, that match the <c>partToReplace</c>.</param>
+		/// <returns>True if the path could be replaced. Returns false if the path does not fulfill the presumptions given above.</returns>
+		/// <remarks>
+		/// As stated above, the last item of the partToReplace can be given only partially. As an example, the path (here separated by space)
+		/// <para>Tables Preexperiment1/WDaten Time</para>
+		/// <para>should be replaced by </para>
+		/// <para>Tables Preexperiment2\WDaten Time</para>
+		/// <para>To make this replacement, the partToReplace should be given by</para>
+		/// <para>Tables Preexperiment1/</para>
+		/// <para>and the newPart should be given by</para>
+		/// <para>Tables Preexperiment2\</para>
+		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
+		/// </remarks>
+		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
+		{
+			var result = _docNodePath.ReplacePathParts(partToReplace, newPart);
+			if (result)
+				ClearDocNode();
+			return result;
+		}
+
     /// <summary>
     /// Sets the document node to null, but keeps the doc node path.
     /// </summary>

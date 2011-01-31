@@ -48,6 +48,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <DocumentationFile>..\..\rtdebug\bin\AltaxoBase.Presentation.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -96,7 +97,87 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Drawing\BrushAllPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\BrushTypeComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\ColorScaleComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Common\Drawing\ColorComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\HatchStyleComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\TextureImageComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\TextureScaleComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\GradientFocusComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\WrapModeComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\LinearGradientShapeComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\LinearGradientModeComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\DashCapComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\PenAllPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\ScaleComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\ShearComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\DashStyleComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\LineCapComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\LineCapSizeComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\LineJoinComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\LineThicknessComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\RotationComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,6 +208,14 @@
     <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\ImageGraphicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\PositionSizeRotationScaleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -196,8 +285,73 @@
     <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
       <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.xaml.cs">
+      <DependentUpon>BrushAllPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs" />
+    <Compile Include="Gui\Common\Drawing\BrushTypeComboBox.xaml.cs">
+      <DependentUpon>BrushTypeComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorScaleComboBox.xaml.cs">
+      <DependentUpon>ColorScaleComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\ColorComboBox.xaml.cs">
       <DependentUpon>ColorComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.xaml.cs">
+      <DependentUpon>HatchStyleComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\TextureImageComboBox.xaml.cs">
+      <DependentUpon>TextureImageComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.xaml.cs">
+      <DependentUpon>TextureScaleComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\GradientFocusComboBox.xaml.cs">
+      <DependentUpon>GradientFocusComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\WrapModeComboBox.xaml.cs">
+      <DependentUpon>WrapModeComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LinearGradientShapeComboBox.xaml.cs">
+      <DependentUpon>LinearGradientShapeComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LinearGradientModeComboBox.xaml.cs">
+      <DependentUpon>LinearGradientModeComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\DashCapComboBox.xaml.cs">
+      <DependentUpon>DashCapComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.xaml.cs">
+      <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ScaleComboBox.xaml.cs">
+      <DependentUpon>ScaleComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ShearComboBox.xaml.cs">
+      <DependentUpon>ShearComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ImageComboBox.cs" />
+    <Compile Include="Gui\Common\Drawing\DashStyleComboBox.xaml.cs">
+      <DependentUpon>DashStyleComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\EditableImageComboBox.cs" />
+    <Compile Include="Gui\Common\Drawing\ImageComboBoxItem.cs" />
+    <Compile Include="Gui\Common\Drawing\LineCapComboBox.xaml.cs">
+      <DependentUpon>LineCapComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineCapSizeComboBox.xaml.cs">
+      <DependentUpon>LineCapSizeComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineJoinComboBox.xaml.cs">
+      <DependentUpon>LineJoinComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineThicknessComboBox.xaml.cs">
+      <DependentUpon>LineThicknessComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PositionBox.cs" />
+    <Compile Include="Gui\Common\Drawing\RotationComboBox.xaml.cs">
+      <DependentUpon>RotationComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\MinMaxIntegerControl.xaml.cs">
       <DependentUpon>MinMaxIntegerControl.xaml</DependentUpon>
@@ -224,6 +378,13 @@
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\Graph\ImageGraphicControl.xaml.cs">
+      <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
+    <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.xaml.cs">
+      <DependentUpon>PositionSizeRotationScaleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />

@@ -291,6 +291,7 @@
     <Compile Include="Gui\Worksheet\RealFourierTransformationController.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
+    <Compile Include="Main\DocNodeProxyVisitors.cs" />
     <Compile Include="Main\RelDocNodeProxy.cs" />
     <Compile Include="Main\Services\FitFunctionService.cs" />
     <Compile Include="Main\Services\IBackgroundMonitor.cs" />
