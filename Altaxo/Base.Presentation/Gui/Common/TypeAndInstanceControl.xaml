@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="Altaxo.Gui.Common.TypeAndInstanceControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             >
+    <Grid x:Name="_grid">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Label x:Name="_lblCSType" Grid.Column="0" Grid.Row="0" Content="Type:"/>
+		<ComboBox x:Name="_cbTypeChoice" Grid.Column="1" Grid.Row="0" SelectionChanged="EhSelectionChangeCommitted"/>
+	</Grid>
+</UserControl>

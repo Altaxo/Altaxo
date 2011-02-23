@@ -17,82 +17,98 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Interaction logic for LineCapSizeComboBox.xaml
 	/// </summary>
-	public partial class LineCapSizeComboBox : EditableImageComboBox
+	public partial class LineCapSizeComboBox : ThicknessImageComboBox
 	{
+		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+
+		static readonly double[] _initialValues = new double[] { 4,6,8,10,12,16,20,24,28,32 };
+
 		public LineCapSizeComboBox()
 		{
 			InitializeComponent();
 
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath("Thickness");
-			//binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
-			this.SetBinding(ComboBox.TextProperty, binding);
+			foreach(var e in _initialValues)
+				Items.Add(new ImageComboBoxItem(this,e));
+
+			SetBinding(_nameOfValueProp);
+
+			_img.Source = GetImage(SelectedLineCapSize);
+		}
+	
+
+	#region Dependency property
+		const string _nameOfValueProp = "SelectedLineCapSize";
+		public double SelectedLineCapSize
+		{
+			get { return (double)GetValue(SelectedLineCapSizeProperty); }
+			set { SetValue(SelectedLineCapSizeProperty, value); }
 		}
 
+		public static readonly DependencyProperty SelectedLineCapSizeProperty =
+				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(LineCapSizeComboBox),
+				new FrameworkPropertyMetadata(8.0, OnSelectedLineCapSizeChanged));
 
-		#region Dependency property
-		public double LineCapSize
+		private static void OnSelectedLineCapSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			get { var result = (double)GetValue(LineCapSizeProperty); return result; }
-			set { SetValue(LineCapSizeProperty, value); }
-		}
-
-		public static readonly DependencyProperty LineCapSizeProperty =
-				DependencyProperty.Register("LineCapSize", typeof(double), typeof(LineThicknessComboBox),
-				new FrameworkPropertyMetadata(OnLineCapSizeChanged));
-
-		private static void OnLineCapSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-
+			((LineCapSizeComboBox)obj).EhSelectedLineCapSizeChanged(obj, args);
 		}
 		#endregion
 
-		protected override void SetImageFromContent()
+		protected virtual void EhSelectedLineCapSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			if (null == _img)
-				return;
-			double val;
-			if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out val))
+			if (null != _img)
 			{
+				var val = (double)args.NewValue;
 				_img.Source = GetImage(val);
 			}
+		}
+
+		public override ImageSource GetItemImage(object item)
+		{
+			var val = (double)item;
+			ImageSource result;
+			if (!_cachedImages.TryGetValue(val, out result))
+				_cachedImages.Add(val, result = GetImage(val));
+			return result;
 		}
 
 
 		public override string GetItemText(object item)
 		{
-			var value = (double)item;
-			return Altaxo.Serialization.GUIConversion.ToString(value);
+			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
 		}
 
-		public override ImageSource GetItemImage(object item)
+
+		public static ImageSource GetImage(double val)
 		{
-			var value = (double)item;
-			return base.GetItemImage(item);
-		}
-			
+			const double height = 1;
+			const double width = 2;
+			const double nominalHeight = 24; // normal height of a combobox item
 
-		public static DrawingImage GetImage(double thickness)
-		{
-			double height = 24;
-			double width = 48;
+			val *= height / nominalHeight;
 
-			GeometryGroup geometryGroup = new GeometryGroup();
-			geometryGroup.Children.Add(new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)));
-			GeometryDrawing aGeometryDrawing = new GeometryDrawing();
-			aGeometryDrawing.Geometry = geometryGroup;
 
-			// Outline the drawing with a solid color.
-			aGeometryDrawing.Pen = new Pen(Brushes.Black, Math.Min(height, thickness));
+			// draws a transparent outline to fix the borders
+			var drawingGroup = new DrawingGroup();
 
-			//
-			// Use a DrawingImage and an Image control
-			// to display the drawing.
-			//
-			DrawingImage geometryImage = new DrawingImage(aGeometryDrawing);
+			var geometryDrawing = new GeometryDrawing();
+			geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
+			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+			drawingGroup.Children.Add(geometryDrawing);
 
-			// Freeze the DrawingImage for performance benefits.
+			var pathFigure = new PathFigure();
+			pathFigure.StartPoint = new Point(width/6,height/2);
+			pathFigure.Segments.Add(new PolyLineSegment(new Point[]{ new Point(width/2,height/2+val/2), new Point(width-width/6,height/2), new Point(width/2, height/2-val/2) }, false));
+			pathFigure.IsClosed = true;
+			pathFigure.IsFilled = true;
+			geometryDrawing = new GeometryDrawing() { Geometry = new PathGeometry(new PathFigure[] { pathFigure }) };
+			geometryDrawing.Brush = Brushes.Black;
+		drawingGroup.Children.Add(geometryDrawing);
+
+		drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
+
+
+			var geometryImage = new DrawingImage(drawingGroup);
 			geometryImage.Freeze();
 			return geometryImage;
 		}

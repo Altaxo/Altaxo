@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph
       ControlViewElement c2 = new ControlViewElement("Grid2", _grid2, _grid2.ViewObject);
 
       _background = new BrushControllerSimple(_doc.Background);
-      Current.Gui.FindAndAttachControlTo(_background);
+      Current.Gui.FindAndAttachControlUsingGuiTemplate(_background,_grid2.ViewObject);
       ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
       
         base.Initialize(new ControlViewElement[] { c1, c2, c3 }, false);

@@ -180,7 +180,7 @@ namespace Altaxo.Main.Services
 			return result;
     }
 
-		   /// <summary>
+		/// <summary>
     /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
     /// </summary>
     /// <param name="controller">The controller a control is searched for.</param>
@@ -193,6 +193,28 @@ namespace Altaxo.Main.Services
 					break;
 			}
 		}
+
+		/// <summary>
+		/// Try to attach a control to the controller. To determine the type of gui, the viewTemplate is analysed.
+		/// </summary>
+		/// <param name="controller"></param>
+		/// <param name="viewTemplate"></param>
+		public void FindAndAttachControlUsingGuiTemplate(IMVCController controller, object viewTemplate)
+		{
+			foreach (var guiType in RegisteredGuiTechnologies)
+			{
+				if (ReflectionService.IsSubClassOfOrImplements(viewTemplate.GetType(), guiType))
+				{
+					InternalFindAndAttachControlUsingGuiType(controller, guiType);
+					if (controller.ViewObject != null)
+						return;
+				}
+			}
+
+			if (controller.ViewObject == null)
+				FindAndAttachControlTo(controller);
+		}
+
 
     /// <summary>
     /// Searchs for a appropriate control for a given controller and attaches the control to the controller.

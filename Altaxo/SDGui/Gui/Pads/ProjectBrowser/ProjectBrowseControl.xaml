@@ -16,9 +16,7 @@
 		</Grid.RowDefinitions>
 		<TreeView Grid.Row="0" Name="_treeView" TreeViewItem.Selected="EhTreeNodeAfterSelect" >
 		</TreeView>
-		<GridSplitter Grid.Row ="1" Background="Blue" Height="5"
-                HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="true"
-              ResizeDirection="Rows"/>
+		<GridSplitter Grid.Row ="1" Background="Blue" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="true" ResizeDirection="Rows"/>
 
 		<ListView Grid.Row="2" Name="_listView" SelectionChanged="EhListViewSelectionChanged" MouseDoubleClick="EhListViewItemDoubleClick">
 			<ListView.Resources>

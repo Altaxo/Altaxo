@@ -30,75 +30,232 @@ namespace Altaxo.Collections
   /// <summary>
   /// Represents a collection of <see cref="NGTreeNode" />.
   /// </summary>
-	public interface NGTreeNodeCollection : IList<NGTreeNode> // TODO implement this, System.Collections.Specialized.INotifyCollectionChanged
+	public interface NGTreeNodeCollection : IList<NGTreeNode>, System.Collections.Specialized.INotifyCollectionChanged
   {
     /// <summary>
     /// Adds a bunch of nodes.
     /// </summary>
     /// <param name="nodes">Array of nodes to add to this collection.</param>
     void AddRange(NGTreeNode[] nodes);
+
+		/// <summary>
+		/// Swap the nodes of indices i and j.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="j"></param>
+		void Swap(int i, int j);
   }
 
   // Represents a non GUI tree node that can be used for interfacing/communication with Gui components.
-  public class NGTreeNode
+  public class NGTreeNode : System.ComponentModel.INotifyPropertyChanged
   {
+		static NGTreeNode _dummyNode = new NGTreeNode();
+
+		object _tag;
+		object _guiTag;
+		string _text;
+		bool _isExpanded;
+		bool _isSelected;
+
+		/// <summary>
+		/// Collection of child nodes.
+		/// </summary>
+		NGTreeNodeCollection _nodes;
+
+		/// <summary>
+		/// Parent node.
+		/// </summary>
+		NGTreeNode _parent;
+
+
+		/// <summary>
+		/// Empty constructor.
+		/// </summary>
+		public NGTreeNode()
+		{
+		}
+
+		/// <summary>
+		/// Constructor that initializes the text of the tree node.
+		/// </summary>
+		/// <param name="text">Text for the tree node.</param>
+		public NGTreeNode(string text)
+		{
+			Text = text;
+		}
+
+		/// <summary>
+		/// Constructor that initializes the text of the tree node and adds a range of elements to it.
+		/// </summary>
+		/// <param name="text">Text for the tree node.</param>
+		/// <param name="nodes">Array of child nodes.</param>
+		public NGTreeNode(string text, NGTreeNode[] nodes)
+		{
+			Text = text;
+			Nodes.AddRange(nodes);
+		}
+
+		public NGTreeNode(bool lazyLoadChildren)
+		{
+			if (lazyLoadChildren)
+			{
+				_nodes = new MyColl3(this);
+				_nodes.Add(_dummyNode);
+			}
+		}
+
+		public bool AlwaysFalse
+		{
+			get
+			{
+				return false;
+			}
+			set
+			{
+				OnPropertyChanged("AlwaysFalse");
+			}
+		}
+
+
+		protected virtual void OnPropertyChanged(string name)
+		{
+			if(null!=PropertyChanged)
+				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+		}
+
     /// <summary>
     /// Can be used by the application to get a connection to document items.
     /// Do not use this for Gui items, the <c>GuiTag</c> can be used for this purpose.
     /// </summary>
-    public object Tag;
+		public object Tag
+		{
+			get
+			{
+				return _tag;
+			}
+			set
+			{
+				var oldValue = _tag;
+				_tag = value;
+				if (!object.ReferenceEquals(value, oldValue))
+					OnPropertyChanged("Tag");
+			}
+		}
 
     /// <summary>
     /// Can be used by some GUI to get a connection to GUI elements.
     /// </summary>
-    public object GuiTag;
+		public object GuiTag
+		{
+			get
+			{
+				return _guiTag;
+			}
+			set
+			{
+				var oldValue = _guiTag;
+				_guiTag = value;
+				if (!object.ReferenceEquals(value, oldValue))
+					OnPropertyChanged("GuiTag");
+			}
+		}
+
 
     /// <summary>
     /// Text a Gui node can display.
     /// </summary>
-    public string Text;
+		public string Text
+		{
+			get
+			{
+				return _text;
+			}
+			set
+			{
+				var oldVal = _text;
+				_text = value;
+				if (oldVal != value)
+					OnPropertyChanged("Text");
+			}
+		}
 
-    /// <summary>
-    /// Collection of child nodes.
-    /// </summary>
-    MyNGTreeNodeCollection _nodes;
-
-    /// <summary>
-    /// Parent node.
-    /// </summary>
-    NGTreeNode _parent;
-
+  
     /// <summary>
     /// Parent tree node.
     /// </summary>
     public NGTreeNode Parent { get { return _parent; } }
 
-    /// <summary>
-    /// Empty constructor.
-    /// </summary>
-    public NGTreeNode()
-    {
-    }
+  
 
-    /// <summary>
-    /// Constructor that initializes the text of the tree node.
-    /// </summary>
-    /// <param name="text">Text for the tree node.</param>
-    public NGTreeNode(string text)
-    {
-      Text = text;
-    }
+		/// <summary>
+		/// Gets/sets whether the TreeViewItem 
+		/// associated with this object is expanded.
+		/// </summary>
+		public virtual bool IsExpanded
+		{
+			get { return _isExpanded; }
+			set
+			{
+				if (value != _isExpanded)
+				{
+					_isExpanded = value;
+					this.OnPropertyChanged("IsExpanded");
+				}
 
-    /// <summary>
-    /// Constructor that initializes the text of the tree node and adds a range of elements to it.
-    /// </summary>
-    /// <param name="text">Text for the tree node.</param>
-    /// <param name="nodes">Array of child nodes.</param>
-    public NGTreeNode(string text, NGTreeNode[] nodes)
-    {
-      Text = text;
-      Nodes.AddRange(nodes);
-    }
+				// Expand all the way up to the root.
+				if (_isExpanded && _parent != null)
+					_parent.IsExpanded = true;
+
+				// Lazy load the child items, if necessary.
+				if (this.HasDummyChild)
+				{
+					this._nodes.Remove(_dummyNode);
+					this.LoadChildren();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets/sets whether the TreeViewItem 
+		/// associated with this object is expanded.
+		/// </summary>
+		public virtual bool IsSelected
+		{
+			get { return _isSelected; }
+			set
+			{
+				if (value != _isSelected)
+				{
+					_isSelected = value;
+					this.OnPropertyChanged("IsSelected");
+				}
+			}
+		}
+
+		public virtual void ClearSelectionRecursively()
+		{
+			IsSelected = false;
+			foreach (var n in Nodes)
+				n.ClearSelectionRecursively();
+		}
+
+
+		/// <summary>
+		/// Returns true if this object's Children have not yet been populated.
+		/// </summary>
+		public bool HasDummyChild
+		{
+			get { return this._nodes.Count == 1 && this._nodes[0] ==_dummyNode; }
+		}
+
+		/// <summary>
+		/// Invoked when the child items need to be loaded on demand.
+		/// Subclasses can override this to populate the Children collection.
+		/// </summary>
+		protected virtual void LoadChildren()
+		{
+		}
+
 
 		/// <summary>
 		/// Returns an image index, or null if no image is set. The implementation here returns null, but can be overriden.
@@ -130,7 +287,7 @@ namespace Altaxo.Collections
       get
       {
         if (null == _nodes)
-          _nodes = new MyNGTreeNodeCollection(this);
+          _nodes = new MyColl3(this);
 
         return _nodes; 
       }
@@ -441,143 +598,59 @@ namespace Altaxo.Collections
 			}
 		}
 
-    private class MyNGTreeNodeCollection : NGTreeNodeCollection, IList<NGTreeNode>
-    {
-     NGTreeNode _parent;
-     List<NGTreeNode> _list;
+		private class MyColl3 : System.Collections.ObjectModel.ObservableCollection<NGTreeNode>, NGTreeNodeCollection
+		{
+			readonly NGTreeNode _parent;
 
-     public MyNGTreeNodeCollection(NGTreeNode parent)
-     {
-       this._parent = parent;
-       _list = new List<NGTreeNode>();
-     }
+			public MyColl3(NGTreeNode parent)
+			{
+				_parent = parent;
+			}
 
-      public void Add(NGTreeNode node)
-      {
-        if (node._parent != null)
-          throw new ApplicationException("Parent of the node is not null. Please remove the node before adding it");
-        node._parent = _parent;
-        _list.Add(node);
-      }
+			public void AddRange(NGTreeNode[] nodes)
+			{
+				foreach (var n in nodes)
+					base.Add(n);
+			}
 
-     public void AddRange(NGTreeNode[] nodes)
-     {
-       foreach (NGTreeNode n in nodes)
-         Add(n);
-     }
-
-      public void Swap(int i, int j)
-      {
-        if (i < 0 || i >= Count)
-          throw new ArgumentOutOfRangeException("i");
-        if (j < 0 || j >= Count)
-          throw new ArgumentOutOfRangeException("j");
-
-        NGTreeNode node_i = _list[i];
-        _list[i] = _list[j];
-        _list[j] = node_i;
-      }
-
-      #region ICollection<NGTreeNode> Members
+			public void Swap(int i, int j)
+			{
+				if (i < 0 || i >= Count)
+					throw new ArgumentOutOfRangeException("i");
+				if (j < 0 || j >= Count)
+					throw new ArgumentOutOfRangeException("j");
+				
+				NGTreeNode node_i = base[i];
+				base[i] = base[j];
+				base[j] = node_i;
+			}
 
 
-      public void Clear()
-      {
-        _list.Clear();
-      }
 
-      public bool Contains(NGTreeNode item)
-      {
-        return _list.Contains(item);
-      }
+			protected override void InsertItem(int index, NGTreeNode item)
+			{
+				item._parent = _parent;
+				base.InsertItem(index, item);
+			}
 
-      public void CopyTo(NGTreeNode[] array, int arrayIndex)
-      {
-        _list.CopyTo(array, arrayIndex);
-      }
+			protected override void SetItem(int index, NGTreeNode item)
+			{
+				item._parent = _parent;
+				base.SetItem(index, item);
+			}
 
-      public int Count
-      {
-        get { return _list.Count; }
-      }
+			protected override void RemoveItem(int index)
+			{
+				base[index]._parent = null;
+				base.RemoveItem(index);
+			}
 
-      public bool IsReadOnly
-      {
-        get { return false; }
-      }
+		}
 
-      public bool Remove(NGTreeNode item)
-      {
-      if(_list.Remove(item))
-      {
-        item._parent = null;
-        return true;
-      }
-      return false;
-      }
-
-      #endregion
-
-      #region IEnumerable<NGTreeNode> Members
-
-      public IEnumerator<NGTreeNode> GetEnumerator()
-      {
-        return _list.GetEnumerator();
-      }
-
-      #endregion
-
-      #region IEnumerable Members
-
-      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-      {
-        return _list.GetEnumerator();
-      }
-
-      #endregion
-
-      #region IList<NGTreeNode> Members
-
-      public int IndexOf(NGTreeNode item)
-      {
-        return _list.IndexOf(item);
-      }
-
-      public void Insert(int index, NGTreeNode item)
-      {
-        if (item._parent != null)
-          throw new ApplicationException("Item must be removed from bthe parent collection before it can be inserted here");
-        _list.Insert(index,item);
-      }
-
-      public void RemoveAt(int index)
-      {
-        NGTreeNode node = _list[index];
-        node._parent = null;
-        _list.RemoveAt(index);
-      }
-
-      public NGTreeNode this[int index]
-      {
-        get
-        {
-          return _list[index];
-        }
-        set
-        {
-          if (value._parent != null)
-            throw new ApplicationException("Item must be removed from the parent collection before it can be inserted here");
-          NGTreeNode oldNode = _list[index];
-          oldNode._parent = null;
-          value._parent = _parent;
-          _list[index] = value;
-        }
-      }
-
-      #endregion
-    }
     #endregion
-  }
+
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+	}
 
  
 }

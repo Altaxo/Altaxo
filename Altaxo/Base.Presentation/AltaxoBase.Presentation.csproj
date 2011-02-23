@@ -49,6 +49,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <DocumentationFile>..\..\rtdebug\bin\AltaxoBase.Presentation.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -79,6 +80,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -93,6 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\CheckableGroupBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Common\DialogShellViewWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -101,9 +108,21 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\Drawing\BrushSimpleConditionalControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\Drawing\BrushTypeComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\ColorCombControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\ColorPickerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\Drawing\ColorScaleComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -113,9 +132,37 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Drawing\BrushComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\Drawing\FontSizeComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\FontStyleComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\FontFamilyComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\MiterLimitComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Common\Drawing\HatchStyleComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\Drawing\PenSimpleConditionalControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\Drawing\TextureImageComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -189,9 +236,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Common\NumericUpDown.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Gui\Common\MultiSelectTreeView.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\Resources\styledictionary.xaml">
       <SubType>Designer</SubType>
@@ -205,11 +252,51 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\TypeAndInstanceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\ArrangeLayersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\AxisLineStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\AxisLinkControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\AxisScaleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\G2DCartesicCSControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\ImageGraphicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\LayerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\LayerPositionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\LineGraphicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\OrgEndSpanControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -217,9 +304,41 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ShapeGraphicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\TitleFormatLayerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\XYAxisLabelStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\XYGridStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\XYPlotDataControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\XYPlotLayerContentsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Scripting\FitFunctionScriptControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -273,6 +392,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\Common\BackgroundCancelControl.xaml.cs">
@@ -282,6 +405,11 @@
       <DependentUpon>BackgroundCancelDialogWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\BooleanValueControl.cs" />
+    <Compile Include="Gui\Common\CheckableGroupBox.xaml.cs">
+      <DependentUpon>CheckableGroupBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\DecimalUpDown.cs" />
+    <Compile Include="Gui\Common\Int32UpDown.cs" />
     <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
       <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
     </Compile>
@@ -289,8 +417,19 @@
       <DependentUpon>BrushAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs" />
+    <Compile Include="Gui\Common\Drawing\BrushSimpleConditionalControl.xaml.cs">
+      <DependentUpon>BrushSimpleConditionalControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\BrushTypeComboBox.xaml.cs">
       <DependentUpon>BrushTypeComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorCombControl.xaml.cs">
+      <DependentUpon>ColorCombControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorComboBoxBase.cs" />
+    <Compile Include="Gui\Common\Drawing\ColorController.cs" />
+    <Compile Include="Gui\Common\Drawing\ColorPickerControl.xaml.cs">
+      <DependentUpon>ColorPickerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\ColorScaleComboBox.xaml.cs">
       <DependentUpon>ColorScaleComboBox.xaml</DependentUpon>
@@ -298,8 +437,31 @@
     <Compile Include="Gui\Common\Drawing\ColorComboBox.xaml.cs">
       <DependentUpon>ColorComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushComboBox.xaml.cs">
+      <DependentUpon>BrushComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.xaml.cs">
+      <DependentUpon>ColorTypeThicknessPenControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontControlsGlue.cs" />
+    <Compile Include="Gui\Common\Drawing\FontSizeComboBox.xaml.cs">
+      <DependentUpon>FontSizeComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontStyleComboBox.xaml.cs">
+      <DependentUpon>FontStyleComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontFamilyComboBox.xaml.cs">
+      <DependentUpon>FontFamilyComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\MiterLimitComboBox.xaml.cs">
+      <DependentUpon>MiterLimitComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.xaml.cs">
       <DependentUpon>HatchStyleComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenControlsGlue.cs" />
+    <Compile Include="Gui\Common\Drawing\PenSimpleConditionalControl.xaml.cs">
+      <DependentUpon>PenSimpleConditionalControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\TextureImageComboBox.xaml.cs">
       <DependentUpon>TextureImageComboBox.xaml</DependentUpon>
@@ -310,6 +472,7 @@
     <Compile Include="Gui\Common\Drawing\GradientFocusComboBox.xaml.cs">
       <DependentUpon>GradientFocusComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\ThicknessImageComboBox.cs" />
     <Compile Include="Gui\Common\Drawing\WrapModeComboBox.xaml.cs">
       <DependentUpon>WrapModeComboBox.xaml</DependentUpon>
     </Compile>
@@ -360,9 +523,11 @@
       <DependentUpon>MultiChildControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\MultipleChoiceListView.cs" />
-    <Compile Include="Gui\Common\NumericUpDown.xaml.cs">
-      <DependentUpon>NumericUpDown.xaml</DependentUpon>
+    <Compile Include="Gui\Common\MultiSelectTreeView.xaml.cs">
+      <DependentUpon>MultiSelectTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\MultiSelectTreeViewItem.cs" />
+    <Compile Include="Gui\Common\NumericUpDownBase.cs" />
     <Compile Include="Gui\Common\SingleChoiceComboBoxControl.cs" />
     <Compile Include="Gui\Common\SingleChoiceRadioStackPanel.cs" />
     <Compile Include="Gui\Common\SingleValueControl.xaml.cs">
@@ -371,6 +536,9 @@
     <Compile Include="Gui\Common\TabbedElementControl.xaml.cs">
       <DependentUpon>TabbedElementControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\TypeAndInstanceControl.xaml.cs">
+      <DependentUpon>TypeAndInstanceControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\ValidatingTextBox.cs" />
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
@@ -378,12 +546,53 @@
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
+      <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisLineStyleControl.xaml.cs">
+      <DependentUpon>AxisLineStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisLinkControl.xaml.cs">
+      <DependentUpon>AxisLinkControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisScaleControl.xaml.cs">
+      <DependentUpon>AxisScaleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\BackgroundControlsGlue.cs" />
+    <Compile Include="Gui\Graph\G2DCartesicCSControl.xaml.cs">
+      <DependentUpon>G2DCartesicCSControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\GdiFontGlue.cs" />
     <Compile Include="Gui\Graph\ImageGraphicControl.xaml.cs">
       <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\LayerControl.xaml.cs">
+      <DependentUpon>LayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LayerPositionControl.xaml.cs">
+      <DependentUpon>LayerPositionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LineGraphicControl.xaml.cs">
+      <DependentUpon>LineGraphicControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
+    <Compile Include="Gui\Graph\OrgEndSpanControl.xaml.cs">
+      <DependentUpon>OrgEndSpanControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.xaml.cs">
       <DependentUpon>PositionSizeRotationScaleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.xaml.cs">
+      <DependentUpon>AngularTickSpacingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.xaml.cs">
+      <DependentUpon>LinearTickSpacingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ShapeGraphicControl.xaml.cs">
+      <DependentUpon>ShapeGraphicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\TitleFormatLayerControl.xaml.cs">
+      <DependentUpon>TitleFormatLayerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
@@ -404,6 +613,18 @@
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Viewing\PresentationGraphController.cs" />
+    <Compile Include="Gui\Graph\XYAxisLabelStyleControl.xaml.cs">
+      <DependentUpon>XYAxisLabelStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYGridStyleControl.xaml.cs">
+      <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotDataControl.xaml.cs">
+      <DependentUpon>XYPlotDataControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotLayerContentsControl.xaml.cs">
+      <DependentUpon>XYPlotLayerContentsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\GuiHelper.cs" />
     <Compile Include="Gui\Scripting\FitFunctionScriptControl.xaml.cs">
       <DependentUpon>FitFunctionScriptControl.xaml</DependentUpon>

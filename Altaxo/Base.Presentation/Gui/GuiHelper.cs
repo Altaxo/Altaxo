@@ -20,9 +20,16 @@ namespace Altaxo.Gui
 
 		public static void Initialize(ComboBox view, SelectableListNodeList data)
 		{
-			view.ItemsSource = null;
-			view.ItemsSource = data;
-			view.SelectedIndex = data.FirstSelectedNodeIndex;
+			int idx = data.FirstSelectedNodeIndex; // Note: the selected index must be determined _before_ the data are bound to the box (otherwise when a binding is in place, it can happen that the selection is resetted)
+
+			if (view.ItemsSource != data)
+			{
+				//view.ItemsSource = null; 
+				view.ItemsSource = data;
+			}
+
+			if (idx >= 0)
+				view.SelectedItem = data[idx];
 		}
 
 		public static void SynchronizeSelectionFromGui(ComboBox view)
@@ -177,7 +184,7 @@ namespace Altaxo.Gui
 			return Color.FromArgb(c.A, c.R, c.G, c.B);
 		}
 
-		public static System.Drawing.Color FromWpf(this System.Windows.Media.Color c)
+		public static System.Drawing.Color ToSysDraw(this System.Windows.Media.Color c)
 		{
 			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
 		}

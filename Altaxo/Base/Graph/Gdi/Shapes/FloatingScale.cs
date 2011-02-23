@@ -264,6 +264,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       Data.AltaxoVariant _span;
       double _relTickPosition;
 
+			public SpanTickSpacing()
+				: this(1,0.5)
+			{
+			}
+
       public SpanTickSpacing(Data.AltaxoVariant span, double relTickPosition)
       {
         _span = span;

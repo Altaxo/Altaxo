@@ -509,8 +509,10 @@ namespace Altaxo.Gui.Graph
     {
       if(null!=Controller)
       {
+				double newValue=1;
         bool bCancel = e.Cancel;
-        Controller.EhView_ScaleChanged(((TextBox)sender).Text,ref bCancel);
+				bCancel |= !Altaxo.Serialization.GUIConversion.GetPercentMeasureValue(((TextBox)sender).Text, ref newValue);
+        Controller.EhView_ScaleChanged(newValue);
         e.Cancel = bCancel;
       }
     

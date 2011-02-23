@@ -246,6 +246,9 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
     {
+			if (null == m_ScriptObject && !m_WasTriedToCompile)
+				Compile();
+
       if(null==m_ScriptObject)
       {
         m_Errors = new string[1]{"Script Object is null"};
@@ -280,6 +283,9 @@ namespace Altaxo.Scripting
     {
       bool bSucceeded=true;
       Altaxo.Data.DataTableCollection   myDataSet=null;
+
+			if (null == m_ScriptObject && !m_WasTriedToCompile)
+				Compile();
 
       // first, test some preconditions
       if(null==m_ScriptObject)

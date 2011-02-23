@@ -35,6 +35,7 @@ namespace Altaxo.Gui.Common
 
 		void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			e.Handled = true;
 			_choices.ClearSelectionsAll();
 			if (SelectedIndex >= 0)
 				_choices[SelectedIndex].Selected = true;

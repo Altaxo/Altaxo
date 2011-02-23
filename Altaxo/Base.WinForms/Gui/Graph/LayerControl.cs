@@ -193,7 +193,6 @@ namespace Altaxo.Gui.Graph
           ctrl.CausesValidation = true;
           
         }
-        
       }
     }
 
@@ -247,7 +246,7 @@ namespace Altaxo.Gui.Graph
     {
       _pageEnabled = _chkPageEnable.Checked;
       m_TabCtrl.SelectedTab.Controls[0].Enabled = _pageEnabled;
-
+			
       if(null!=m_Ctrl && m_SuppressEvents==0)
         m_Ctrl.EhView_PageEnabledChanged(_pageEnabled);
     }

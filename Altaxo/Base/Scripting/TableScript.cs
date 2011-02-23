@@ -241,7 +241,7 @@ namespace Altaxo.Scripting
 
 
     /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// Executes the script. If no instance of the script object exists, the script is compiled. If thereafter no script object exists, a error message will be stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
     /// <param name="myTable">The data table this script is working on.</param>
@@ -251,6 +251,9 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataTable myTable, IProgressReporter reporter)
     {
+			if (null == m_ScriptObject && !m_WasTriedToCompile)
+				Compile();
+
       if(null==m_ScriptObject)
       {
         m_Errors = new string[1]{"Script Object is null"};
@@ -259,7 +262,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((Altaxo.Calc.TableScriptExeBase)m_ScriptObject).Execute(myTable);
+        ((Altaxo.Calc.TableScriptExeBase)m_ScriptObject).Execute(myTable, reporter);
       }
       catch(Exception ex)
       {
@@ -285,6 +288,9 @@ namespace Altaxo.Scripting
     {
       bool bSucceeded=true;
       Altaxo.Data.DataTableCollection   myDataSet=null;
+
+			if (null == m_ScriptObject && !m_WasTriedToCompile)
+				Compile();
 
       // first, test some preconditions
       if(null==m_ScriptObject)

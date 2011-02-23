@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.ShapeGraphicControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+             mc:Ignorable="d" 
+             >
+	<UserControl.Resources>
+		<LinearGradientBrush x:Key="HorzSeparatorBrush" StartPoint="0,0" EndPoint="0,1">
+			<GradientBrush.GradientStops>
+				<GradientStopCollection>
+					<GradientStop Color="White" Offset="0.0"/>
+					<GradientStop Color="Azure" Offset="0.5"/>
+					<GradientStop Color="White" Offset="1"/>
+				</GradientStopCollection>
+			</GradientBrush.GradientStops>
+		</LinearGradientBrush>
+		<Style x:Key="HorzSeparatorStyle" TargetType="{x:Type Rectangle}">
+			<Setter Property="Fill" Value="{StaticResource HorzSeparatorBrush}" />
+			<Setter Property="Height" Value="8" />
+		</Style>
+
+	</UserControl.Resources>
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Rectangle Grid.Row="1" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}"/>
+		<Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}"/>
+
+		<GroupBox Grid.Row="0" Header="Outlining">
+			<axogcd:PenSimpleConditionalControl x:Name="_outlinePenControl"/>
+		</GroupBox>
+			<GroupBox Grid.Row="2" Header="Filling">
+			<axogcd:BrushSimpleConditionalControl x:Name="_fillingBrushControl"/>
+		</GroupBox>
+		<GroupBox  Grid.Row="4" Header="Positioning">
+			<axogg:PositionSizeRotationScaleControl x:Name="_positioningControl"/>
+		</GroupBox>
+	</Grid>
+</UserControl>

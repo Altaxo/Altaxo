@@ -83,22 +83,23 @@ namespace Altaxo.Gui.Common.Drawing
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 		Binding _valueBinding;
 		CC _valueConverter;
+		public event DependencyPropertyChangedEventHandler SelectedRotationChanged;
 
 		#region Dependency property
-		private const string _nameOfValueProp = "Angle";
-		public double Angle
+		private const string _nameOfValueProp = "SelectedRotation";
+		public double SelectedRotation
 		{
-			get { var result = (double)GetValue(AngleProperty); return result; }
-			set { SetValue(AngleProperty, value); }
+			get { var result = (double)GetValue(SelectedRotationProperty); return result; }
+			set { SetValue(SelectedRotationProperty, value); }
 		}
 
-		public static readonly DependencyProperty AngleProperty =
+		public static readonly DependencyProperty SelectedRotationProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(RotationComboBox),
-				new FrameworkPropertyMetadata(OnAngleChanged));
+				new FrameworkPropertyMetadata(EhSelectedRotationChanged));
 
-		private static void OnAngleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhSelectedRotationChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((RotationComboBox)obj).EhRotationValueChanged(obj, args);
+			((RotationComboBox)obj).OnSelectedRotationChanged(obj, args);
 		}
 		#endregion
 
@@ -126,18 +127,21 @@ namespace Altaxo.Gui.Common.Drawing
 			this.Items.Add(new ImageComboBoxItem(this, 270.0));
 			this.Items.Add(new ImageComboBoxItem(this, 315.0));
 
-			_img.Source = GetImage(Angle); // since 0 is the default value, we have to set the image here explicitly
+			_img.Source = GetImage(SelectedRotation); // since 0 is the default value, we have to set the image here explicitly
 
 		}
 
 
-		protected virtual void EhRotationValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnSelectedRotationChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			if (null != _img)
 			{
 				var val = (double)args.NewValue;
 				_img.Source = GetImage(val);
 			}
+
+			if (null != SelectedRotationChanged)
+				SelectedRotationChanged(obj, args);
 		}
 
 		public override ImageSource GetItemImage(object item)

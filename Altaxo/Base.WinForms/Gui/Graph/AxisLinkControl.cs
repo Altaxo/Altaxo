@@ -36,7 +36,6 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public class AxisLinkControl : System.Windows.Forms.UserControl, IAxisLinkView
   {
-    private IAxisLinkController m_Ctrl;
     private System.Windows.Forms.Label label26;
     private System.Windows.Forms.Label label25;
     private System.Windows.Forms.Label label24;
@@ -205,79 +204,58 @@ namespace Altaxo.Gui.Graph
 
     private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=Controller && this.m_rbLinkAxisStraight.Checked==true)
-        Controller.EhView_LinkTypeChanged(true);
+      if(null!=LinkType_Changed && this.m_rbLinkAxisStraight.Checked==true)
+        LinkType_Changed(true);
     }
 
     private void EhLinkCustom_CheckedChanged(object sender, System.EventArgs e)
     {
-      if(null!=Controller && this.m_rbLinkAxisCustom.Checked==true)
-        Controller.EhView_LinkTypeChanged(false);
+      if(null!=LinkType_Changed && this.m_rbLinkAxisCustom.Checked==true)
+        LinkType_Changed(false);
     }
 
     private void EhOrgA_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=Controller)
+      if(null!=OrgA_Validating)
       {
-        bool bCancel = e.Cancel;
-        Controller.EhView_OrgAValidating(((TextBox)sender).Text,ref bCancel);
-        e.Cancel = bCancel;
+				var ev = new ValidationEventArgs<string>(((TextBox)sender).Text, System.Globalization.CultureInfo.CurrentUICulture);
+				OrgA_Validating(ev);
+				e.Cancel = ev.HasErrors;
       }
     }
 
     private void EhOrgB_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=Controller)
+      if(null!=OrgB_Validating)
       {
-        bool bCancel = e.Cancel;
-        Controller.EhView_OrgBValidating(((TextBox)sender).Text,ref bCancel);
-        e.Cancel = bCancel;
+				var ev = new ValidationEventArgs<string>(((TextBox)sender).Text, System.Globalization.CultureInfo.CurrentUICulture);
+				OrgB_Validating(ev);
+				e.Cancel = ev.HasErrors;
       }
     
     }
 
     private void EhEndA_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=Controller)
+       if(null!=EndA_Validating)
       {
-        bool bCancel = e.Cancel;
-        Controller.EhView_EndAValidating(((TextBox)sender).Text,ref bCancel);
-        e.Cancel = bCancel;
+				var ev = new ValidationEventArgs<string>(((TextBox)sender).Text, System.Globalization.CultureInfo.CurrentUICulture);
+				EndA_Validating(ev);
+				e.Cancel = ev.HasErrors;
       }
     }
 
     private void EhEndB_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=Controller)
-      {
-        bool bCancel = e.Cancel;
-        Controller.EhView_EndBValidating(((TextBox)sender).Text,ref bCancel);
-        e.Cancel = bCancel;
-      }
-    
+			if (null != EndB_Validating)
+			{
+				var ev = new ValidationEventArgs<string>(((TextBox)sender).Text, System.Globalization.CultureInfo.CurrentUICulture);
+				EndB_Validating(ev);
+				e.Cancel = ev.HasErrors;
+			}
     }
     #region ILinkAxisView Members
-
-    public IAxisLinkController Controller
-    {
-      get
-      {
-        return m_Ctrl;
-      }
-      set
-      {
-        m_Ctrl = value;
-      }
-    }
-
-    public Form Form
-    {
-      get
-      {
-        return this.ParentForm;
-      }
-    }
-
+  
     void EnableCustom(bool bEnab)
     {
       this.m_edLinkAxisOrgA.Enabled = bEnab;
@@ -329,20 +307,17 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-    #region IMVCView Members
+  
 
-    public object ControllerObject
-    {
-      get
-      {
-        return Controller;
-      }
-      set
-      {
-        Controller = value as IAxisLinkController;
-      }
-    }
 
-    #endregion
-  }
+		public event Action<ValidationEventArgs<string>> OrgA_Validating;
+
+		public event Action<ValidationEventArgs<string>> OrgB_Validating;
+
+		public event Action<ValidationEventArgs<string>> EndA_Validating;
+
+		public event Action<ValidationEventArgs<string>> EndB_Validating;
+
+		public event Action<bool> LinkType_Changed;
+	}
 }

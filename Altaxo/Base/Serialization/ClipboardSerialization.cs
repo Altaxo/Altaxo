@@ -26,12 +26,19 @@ namespace Altaxo.Serialization
 		{
 			var dao = Current.Gui.OpenClipboardDataObject();
 			string s = (string)dao.GetData(clipBoardFormat);
-			var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-			info.BeginReading(s);
-			object o = info.GetValue("Object", null);
-			info.EndReading();
+			if (!string.IsNullOrEmpty(s))
+			{
+				var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+				info.BeginReading(s);
+				object o = info.GetValue("Object", null);
+				info.EndReading();
 
-			return o;
+				return o;
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
 }

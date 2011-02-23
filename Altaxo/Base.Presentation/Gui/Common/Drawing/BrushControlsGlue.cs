@@ -19,29 +19,25 @@ namespace Altaxo.Gui.Common.Drawing
 {
 	public class BrushControlsGlue : FrameworkElement
 	{
+		bool _isAllPropertiesGlue;
 		MenuItem _customBrushMenuItem;
 
 		public BrushControlsGlue()
 		{
-			_customBrushMenuItem = new MenuItem();
-			_customBrushMenuItem.Header = "Custom Brush ...";
-			_customBrushMenuItem.Click += EhShowCustomBrushDialog;
+			
+		}
 
-			InsertContextMenuItem(_customBrushMenuItem);
+		public BrushControlsGlue(bool isAllPropertiesGlue)
+		{
+			_isAllPropertiesGlue = isAllPropertiesGlue;
 		}
 
 		void EhShowCustomBrushDialog(object sender, EventArgs e)
 		{
-			BrushAllPropertiesControl ctrl = new BrushAllPropertiesControl();
-			ctrl.Brush = this.Brush;
-			throw new NotImplementedException();
-			/*
-			if (Current.Gui.ShowDialog(ctrl, "Brush properties"))
-			{
-				this.Brush = ctrl.Brush;
-				OnBrushChanged();
-			}
-			 */
+			var ctrl = new BrushControllerAdvanced(this.Brush.Clone());
+			ctrl.ViewObject = new BrushAllPropertiesControl();
+			if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
+				this.Brush = (BrushX)ctrl.ModelObject;
 		}
 
 		BrushX _brush;
@@ -59,19 +55,18 @@ namespace Altaxo.Gui.Common.Drawing
 
 				if (_brush != null)
 				{
-					CbBrushType = _cbBrushType;
-					CbHatchStyle = _cbHatchStyle;
-					CbColor1 = _cbColor1;
-					CbColor2 = _cbColor2;
-					ChkExchangeColors = _chkExchangeColors;
-					CbGradientMode = _cbGradientMode;
-					CbGradientShape = _cbGradientShape;
-					CbWrapMode = _cbWrapMode;
-					CbGradientFocus = _cbGradientFocus;
-					CbGradientScale = _cbGradientScale;
-					CbTextureImage = _cbTextureImage;
-					CbTextureScale = _cbTextureScale;
-
+					if (null != CbBrushType) CbBrushType.BrushType = _brush.BrushType;
+					if (null != CbHatchStyle) CbHatchStyle.HatchStyle = _brush.HatchStyle;
+					if (null != CbColor1) CbColor1.SelectedColor = GuiHelper.ToWpf(_brush.Color);
+					if (null != CbColor2) CbColor2.SelectedColor = GuiHelper.ToWpf(_brush.BackColor);
+					if (null != ChkExchangeColors) ChkExchangeColors.IsChecked = _brush.ExchangeColors;
+					if (null != CbGradientMode) _cbGradientMode.LinearGradientMode = _brush.GradientMode;
+					if (null != CbGradientShape) _cbGradientShape.LinearGradientShape = _brush.GradientShape;
+					if (null != CbWrapMode) CbWrapMode.WrapMode = _brush.WrapMode;
+					if (null != CbGradientFocus) CbGradientFocus.GradientFocus = _brush.GradientFocus;
+					if (null != CbGradientScale) _cbGradientScale.ColorScale = _brush.GradientScale;
+					if (null != CbTextureImage) CbTextureImage.TextureImage = _brush.TextureImage;
+					if (null != CbTextureScale) CbTextureScale.TextureScale = _brush.TextureScale;
 
 					_brush.Changed += EhBrushChanged;
 					UpdatePreviewPanel();
@@ -82,7 +77,6 @@ namespace Altaxo.Gui.Common.Drawing
 		void EhBrushChanged(object sender, EventArgs e)
 		{
 			OnBrushChanged();
-			UpdatePreviewPanel();
 		}
 
 
@@ -91,6 +85,8 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (BrushChanged != null)
 				BrushChanged(this, EventArgs.Empty);
+
+			UpdatePreviewPanel();
 		}
 
 
@@ -244,9 +240,13 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					dpd.AddValueChanged(_cbColor1, EhColor1_ColorChoiceChanged);
 
-
-					foreach (var item in _customContextMenuItems)
-						_cbColor1.ContextMenu.Items.Insert(0, item);
+					if (!_isAllPropertiesGlue)
+					{
+						var menuItem = new MenuItem();
+						menuItem.Header = "Custom Brush ...";
+						menuItem.Click += EhShowCustomBrushDialog;
+						_cbColor1.ContextMenu.Items.Insert(0, menuItem);
+					}
 				}
 			}
 		}
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_brush != null)
 			{
-				_brush.Color = GuiHelper.FromWpf(_cbColor1.SelectedColor);
+				_brush.Color = GuiHelper.ToSysDraw(_cbColor1.SelectedColor);
 				OnBrushChanged();
 			}
 		}
@@ -290,7 +290,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_brush != null)
 			{
-				_brush.BackColor = GuiHelper.FromWpf(_cbColor2.SelectedColor);
+				_brush.BackColor = GuiHelper.ToSysDraw(_cbColor2.SelectedColor);
 				OnBrushChanged();
 			}
 		}

@@ -213,7 +213,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _cbRotation)
-					return _cbRotation.Angle;
+					return _cbRotation.SelectedRotation;
 				else
 					return _rotation;
 			}
@@ -221,7 +221,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_rotation = value;
 				if (_cbRotation != null)
-					_cbRotation.Angle = value;
+					_cbRotation.SelectedRotation = value;
 			}
 		}
 
@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Graph
 				_cbRotation = value;
 				if (_cbRotation != null)
 				{
-					_cbRotation.Angle = _rotation;
+					_cbRotation.SelectedRotation = _rotation;
 				}
 			}
 		}
@@ -288,7 +288,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (_edScaleX != null)
-					return _edScaleX.Scale;
+					return _edScaleX.SelectedScale;
 				else
 					return _scaleX;
 			}
@@ -296,7 +296,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_scaleX = value;
 				if (_edScaleX != null)
-					_edScaleX.Scale = value;
+					_edScaleX.SelectedScale = value;
 			}
 		}
 
@@ -310,7 +310,7 @@ namespace Altaxo.Gui.Graph
 
 				if (_edScaleX != null)
 				{
-					_edScaleX.Scale = _scaleX;
+					_edScaleX.SelectedScale = _scaleX;
 				}
 			}
 		}
@@ -325,7 +325,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if(_edScaleY!=null)
-					return _edScaleY.Scale;
+					return _edScaleY.SelectedScale;
 				else 
 					return _scaleY;
 			}
@@ -333,7 +333,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_scaleY = value;
 				if (_edScaleY != null)
-					_edScaleY.Scale = value;
+					_edScaleY.SelectedScale = value;
 			}
 		}
 
@@ -346,7 +346,7 @@ namespace Altaxo.Gui.Graph
 				_edScaleY = value;
 				if (_edScaleY != null)
 				{
-					_edScaleY.Scale = _scaleY;
+					_edScaleY.SelectedScale = _scaleY;
 				}
 			}
 		}

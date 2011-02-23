@@ -38,8 +38,8 @@ namespace Altaxo.Gui.Graph
 		PenX LinePen { get; set; }
 		PenX MajorPen { get; set; }
 		PenX MinorPen { get; set; }
-		float MajorTickLength { get; set; }
-		float MinorTickLength { get; set; }
+		double MajorTickLength { get; set; }
+		double MinorTickLength { get; set; }
 		SelectableListNodeList MajorPenTicks { get; set; }
 		SelectableListNodeList MinorPenTicks { get; set; }
 	}
@@ -126,8 +126,8 @@ namespace Altaxo.Gui.Graph
       _doc.AxisPen = _view.LinePen;
       _doc.MajorPen = _view.MajorPen;
       _doc.MinorPen = _view.MinorPen;
-      _doc.MajorTickLength = _view.MajorTickLength;
-      _doc.MinorTickLength = _view.MinorTickLength;
+      _doc.MajorTickLength = (float)_view.MajorTickLength;
+      _doc.MinorTickLength = (float)_view.MinorTickLength;
 
       SelectableListNodeList list;
       list = _view.MajorPenTicks;

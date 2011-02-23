@@ -35,25 +35,37 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (double)value;
 				return Altaxo.Serialization.GUIConversion.ToString(val);
-
-			
 			}
 
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			public object ConvertBack(object obj, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
-				string text = (string)value;
 				double val;
-				if (Altaxo.Serialization.GUIConversion.IsDouble(text, out val))
-					return val;
-				else
-					throw new ArgumentOutOfRangeException("Provided string can not be converted to a numeric value");
+				string err = ValidateAndConvertText(obj, culture, out val);
+				if(null!=err)
+					throw new ArgumentOutOfRangeException(err);
+				return val;
 			}
 
 			public string EhValidateText(object obj, System.Globalization.CultureInfo info)
 			{
+				double val;
+				return ValidateAndConvertText(obj, info, out val);
+			}
+
+			public string ValidateAndConvertText(object obj, System.Globalization.CultureInfo info, out double val)
+			{
+				string text = ((string)obj).Trim();
 				string error = null;
-					double val;
-					if (Altaxo.Serialization.GUIConversion.IsDouble((string)obj, out val))
+				val = double.NaN;
+				bool isInPercent=false;
+
+				if(text.EndsWith("%"))
+					{
+						text = text.Substring(0, text.Length - 1).Trim();
+						isInPercent=true;
+					}
+
+				if (Altaxo.Serialization.GUIConversion.IsDouble(text, out val))
 					{
 						if (val == 0)
 							error = "Value must be non-zero";
@@ -66,6 +78,9 @@ namespace Altaxo.Gui.Common.Drawing
 					{
 						error =  "Provided text can not be converted to a numeric value";
 					}
+
+				if (isInPercent)
+					val = val / 100;
 
 					if (null != error)
 					{
@@ -96,31 +111,36 @@ namespace Altaxo.Gui.Common.Drawing
 		Binding _valueBinding;
 		CC _valueConverter;
 
+		public event DependencyPropertyChangedEventHandler SelectedScaleChanged;
+
 		#region Dependency property
-		private const string _nameOfValueProp = "Scale";
-		public double Scale
+		private const string _nameOfValueProp = "SelectedScale";
+		public double SelectedScale
 		{
-			get { var result = (double)GetValue(ScaleProperty); return result; }
-			set { SetValue(ScaleProperty, value); }
+			get { var result = (double)GetValue(SelectedScaleProperty); return result; }
+			set { SetValue(SelectedScaleProperty, value); }
 		}
 
-		public static readonly DependencyProperty ScaleProperty =
+		public static readonly DependencyProperty SelectedScaleProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(ScaleComboBox),
-				new FrameworkPropertyMetadata(1.0, OnScaleChanged));
+				new FrameworkPropertyMetadata(1.0, EhSelectedScaleChanged));
 
-		private static void OnScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhSelectedScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((ScaleComboBox)obj).EhScaleValueChanged(obj, args);
+			((ScaleComboBox)obj).OnSelectedScaleChanged(obj, args);
 		}
 		#endregion
 
-		protected virtual void EhScaleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnSelectedScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			if (null != _img)
 			{
 				var val = (double)args.NewValue;
 				_img.Source = GetImage(val, _isForYScale);
 			}
+
+			if (SelectedScaleChanged != null)
+				SelectedScaleChanged(obj, args);
 		}
 
 		public ScaleComboBox()

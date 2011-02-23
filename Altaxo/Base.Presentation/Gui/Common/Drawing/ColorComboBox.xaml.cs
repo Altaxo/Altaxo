@@ -20,31 +20,9 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// ComboBox for <see cref="Altaxo.Graph.Gdi.Color"/>.
 	/// </summary>
-	public partial class ColorComboBox : ImageComboBox
+	public partial class ColorComboBox : ColorComboBoxBase
 	{
-		class ColorComboBoxItem : ImageComboBoxItem
-		{
-			DrawingImage _cachedDrawing;
-
-			public override string Text
-			{
-				get
-				{
-					return GetColorName((Color)Value);
-				}
-			}
-
-			public override ImageSource Image
-			{
-				get
-				{
-					if (null == _cachedDrawing)
-						_cachedDrawing = GetImage((Color)Value);
-
-					return _cachedDrawing;
-				}
-			}
-		}
+		
 
 		class CC : IValueConverter
 		{
@@ -83,39 +61,17 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		static Dictionary<Color, string> _knownColorNames = new Dictionary<Color, string>();
-		static Dictionary<Color, ColorComboBoxItem> _knownColorItems = new Dictionary<Color, ColorComboBoxItem>();
-		static List<ColorComboBoxItem> _knownColors = new List<ColorComboBoxItem>();
+	
 		static Dictionary<Color, ImageSource> _cachedImages = new Dictionary<Color, ImageSource>();
 
 		List<ColorComboBoxItem> _lastLocalUsedColors = new List<ColorComboBoxItem>();
 		Dictionary<Color, ColorComboBoxItem> _lastLocalUsedColorsDict = new Dictionary<Color, ColorComboBoxItem>();
 
-		static Brush _checkerBrush;
+		
 
 		Dictionary<Color, ImageComboBoxItem> _cachedItems = new Dictionary<Color, ImageComboBoxItem>();
 
 		ColorType _colorType;
-
-		static ColorComboBox()
-		{
-
-			// Enumerate constant colors from the Colors class
-			Type colorsType = typeof(Colors);
-			var pis = colorsType.GetProperties();
-			foreach (var pi in pis)
-			{
-				Color c = (Color)pi.GetValue(null, null);
-				var item = new ColorComboBoxItem() { Value = c };
-				_knownColors.Add(item);
-				if (!_knownColorNames.ContainsKey(c))
-				{
-					_knownColorNames.Add(c, pi.Name);
-					_knownColorItems.Add(c, item);
-				}
-
-			}
-		}
 
 		public ColorType ColorType
 		{
@@ -127,21 +83,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				_colorType = value;
 			}
-		}
-
-		public static string GetColorName(Color c)
-		{
-			if (_knownColorNames.ContainsKey(c))
-				return _knownColorNames[c];
-			var crgb = Color.FromRgb(c.R, c.G, c.B);
-			if (_knownColorNames.ContainsKey(crgb))
-			{
-				var name = _knownColorNames[crgb];
-				int transp = ((255 - c.A) * 100) / 255;
-				name += string.Format(" {0}%", transp);
-				return name;
-			}
-			return c.ToString();
 		}
 
 		public ColorComboBox()
@@ -207,34 +148,7 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 
-		public static Brush CreateCheckerBrush(double checkerRepeatLength)
-		{
-			DrawingBrush checkerBrush = new DrawingBrush();
 
-			GeometryDrawing backgroundSquare =
-					new GeometryDrawing(
-							Brushes.White,
-							null,
-							new RectangleGeometry(new Rect(0, 0, checkerRepeatLength, checkerRepeatLength)));
-
-			double c2 = checkerRepeatLength / 2;
-
-			GeometryGroup aGeometryGroup = new GeometryGroup();
-			aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, c2, c2)));
-			aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(c2, c2, c2, c2)));
-
-			GeometryDrawing checkers = new GeometryDrawing(Brushes.Black, null, aGeometryGroup);
-
-			DrawingGroup checkersDrawingGroup = new DrawingGroup();
-			checkersDrawingGroup.Children.Add(backgroundSquare);
-			checkersDrawingGroup.Children.Add(checkers);
-
-			checkerBrush.Drawing = checkersDrawingGroup;
-			checkerBrush.Viewport = new Rect(0, 0, 0.5, 0.5);
-			checkerBrush.TileMode = TileMode.Tile;
-
-			return checkerBrush;
-		}
 
 		public static DrawingImage GetImage(Color val)
 		{
@@ -274,7 +188,10 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
 		{
-
+			ColorController ctrl = new ColorController(SelectedColor);
+			ctrl.ViewObject = new ColorPickerControl(SelectedColor);
+			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
+				this.SelectedColor = (Color)ctrl.ModelObject;
 		}
 
 		private void EhChooseTransparencyFromContextMenu(object sender, RoutedEventArgs e)
@@ -351,17 +268,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		private static List<ColorComboBoxItem> GetFilteredList(List<ColorComboBoxItem> originalList, string filterString)
-		{
-			var result = new List<ColorComboBoxItem>();
-			filterString = filterString.ToLowerInvariant();
-			foreach (var item in originalList)
-			{
-				if (item.Text.ToLowerInvariant().StartsWith(filterString))
-					result.Add(item);
-			}
-			return result;
-		}
+	
 
 		#endregion
 	}

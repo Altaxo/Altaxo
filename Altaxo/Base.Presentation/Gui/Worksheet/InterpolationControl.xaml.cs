@@ -97,6 +97,7 @@ namespace Altaxo.Gui.Worksheet
 
 		private void EhInterpolationClassChanged(object sender, SelectionChangedEventArgs e)
 		{
+			e.Handled = true;
 			GuiHelper.SynchronizeSelectionFromGui(_cbInterpolationClass);
 			if (null != ChangedInterpolationMethod)
 				ChangedInterpolationMethod();

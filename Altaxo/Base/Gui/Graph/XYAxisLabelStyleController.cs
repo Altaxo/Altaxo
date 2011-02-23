@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the color is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_ColorChanged(Color newValue);
+    void EhView_ColorChanged(BrushX newValue);
 
   
 
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the font size is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_FontSizeChanged(float newValue);
+    void EhView_FontSizeChanged(double newValue);
 
     /// <summary>
     /// Called if the horizontal aligment is changed.
@@ -114,7 +114,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the Color combo box.
     /// </summary>
-    void Color_Initialize(System.Drawing.Color color);
+    void Color_Initialize(BrushX color);
 
 
     /// <summary>
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Graph
     /// Initializes the font size combo box.
     /// </summary>
     /// <param name="val">Value for the font size.</param>
-    void FontSize_Initialize(float val);
+    void FontSize_Initialize(double val);
 
     /// <summary>
     /// Initializes the horizontal aligment combo box.
@@ -196,10 +196,10 @@ namespace Altaxo.Gui.Graph
     protected Font _fontFamily;
 
     /// <summary>The color for the label.</summary>
-    protected Color  _color;
+    protected BrushX  _color;
   
     /// <summary>The size of the font.</summary>
-    protected float _fontSize;
+    protected double _fontSize;
 
     protected System.Drawing.StringAlignment _horizontalAlignment;
 
@@ -242,7 +242,7 @@ namespace Altaxo.Gui.Graph
       if(bInit)
       {
         _fontFamily  = _doc.Font;
-        _color = _doc.Color;
+				_color = _doc.Brush.Clone();
         _fontSize = _doc.FontSize;
         _horizontalAlignment = _doc.HorizontalAlignment;
         _verticalAlignment = _doc.VerticalAlignment;
@@ -320,14 +320,14 @@ namespace Altaxo.Gui.Graph
       _fontFamily = newValue;
     }
 
-    public void EhView_ColorChanged(System.Drawing.Color color)
+    public void EhView_ColorChanged(BrushX color)
     {
       _color = color;
     }
 
    
 
-    public void EhView_FontSizeChanged(float newValue)
+    public void EhView_FontSizeChanged(double newValue)
     {
       _fontSize = newValue;
     }
@@ -384,9 +384,9 @@ namespace Altaxo.Gui.Graph
     {
       _doc.BackgroundStyle = _view.Background;
 
-      _doc.Font = new Font(_fontFamily.FontFamily,_fontSize,_fontFamily.Style,GraphicsUnit.World);
+      _doc.Font = new Font(_fontFamily.FontFamily,(float)_fontSize,_fontFamily.Style,GraphicsUnit.World);
      
-      _doc.Color = _color;
+      _doc.Brush = _color;
 
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;

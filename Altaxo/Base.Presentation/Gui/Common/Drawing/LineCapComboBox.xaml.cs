@@ -22,6 +22,45 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class LineCapComboBox : ImageComboBox
 	{
+		#region Converter
+
+		class Converter : IValueConverter
+		{
+			LineCapComboBox _cb;
+
+			public Converter(LineCapComboBox c)
+			{
+				_cb = c;
+			}
+
+			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				var val = (LineCapEx)value;
+				if (val.IsDefaultStyle)
+					return _cb._cachedItems[LineCapEx.Flat.Name];
+				else 
+					return _cb._cachedItems[val.Name];
+
+
+			}
+
+			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				return ((ImageComboBoxItem)value).Value;
+			}
+		}
+
+		#endregion
+
+
+		static Dictionary<string, ImageSource> _cachedImagesForStartCap = new Dictionary<string, ImageSource>();
+		static Dictionary<string, ImageSource> _cachedImagesForEndCap = new Dictionary<string, ImageSource>();
+
+		Dictionary<string, ImageComboBoxItem> _cachedItems = new Dictionary<string, ImageComboBoxItem>();
+
+		static GdiToWpfBitmap _interopBitmap;
+
+
 		bool _isForEndCap;
 
 		
@@ -30,9 +69,13 @@ namespace Altaxo.Gui.Common.Drawing
 		public LineCapComboBox()
 		{
 			InitializeComponent();
-
-
 			SetDefaultValues();
+
+			var binding = new Binding();
+			binding.Source = this;
+			binding.Path = new PropertyPath(_nameOfValueProp);
+			binding.Converter = new Converter(this);
+			this.SetBinding(ComboBox.SelectedItemProperty, binding);
 		}
 
 		public bool IsForEndCap
@@ -43,48 +86,34 @@ namespace Altaxo.Gui.Common.Drawing
 
 		void SetDefaultValues()
 		{
-			_lineCaps = new SortedDictionary<string, int>();
-
-			int i = 0;
 			foreach (LineCapEx cap in LineCapEx.GetValues())
 			{
-				_lineCaps.Add(cap.Name, i);
-				this.Items.Add(new ImageComboBoxItem(this,cap));
-				++i;
+				var item = new ImageComboBoxItem(this, cap);
+				_cachedItems.Add(cap.Name,item);
+				this.Items.Add(item);
 			}
 		}
 
 	
 
 		#region Dependency property
-		public LineCapEx LineCap
+		private const string _nameOfValueProp = "SelectedLineCap";
+		public LineCapEx SelectedLineCap
 		{
-			get { var result = (LineCapEx)GetValue(LineCapProperty); return result; }
-			set
-			{
-				SetValue(LineCapProperty, value);
-				this.SelectedIndex = _lineCaps[value.Name];
-			}
+			get { return (LineCapEx)GetValue(SelectedLineCapProperty); }
+			set	{	SetValue(SelectedLineCapProperty, value); }
 		}
 
-		public static readonly DependencyProperty LineCapProperty =
-				DependencyProperty.Register("LineCap", typeof(double), typeof(LineCapComboBox),
-				new FrameworkPropertyMetadata(OnLineCapChanged));
+		public static readonly DependencyProperty SelectedLineCapProperty =
+				DependencyProperty.Register(_nameOfValueProp, typeof(LineCapEx), typeof(LineCapComboBox),
+				new FrameworkPropertyMetadata(LineCapEx.Flat, OnSelectedLineCapChanged));
 
-		private static void OnLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 
 		}
 		#endregion
 
-
-
-
-		protected override void OnSelectionChanged(SelectionChangedEventArgs e)
-		{
-			LineCap = (LineCapEx)((ImageComboBoxItem)this.SelectedItem).Value;
-			base.OnSelectionChanged(e);
-		}
 
 
 		public override string GetItemText(object item)
@@ -96,46 +125,54 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			var value = (LineCapEx)item;
-			return GetImage(value, _isForEndCap);
+			var val = (LineCapEx)item;
+			ImageSource result;
+			if (_isForEndCap)
+			{
+				if (!_cachedImagesForEndCap.TryGetValue(val.Name, out result))
+					_cachedImagesForEndCap.Add(val.Name, result = GetImage(val, _isForEndCap));
+			}
+			else
+			{
+				if (!_cachedImagesForStartCap.TryGetValue(val.Name, out result))
+					_cachedImagesForStartCap.Add(val.Name, result = GetImage(val, _isForEndCap));
+			}
+			return result;
 		}
 
-		public static DrawingImage GetImage(LineCapEx join, bool isForEndCap)
+		public static ImageSource GetImage(LineCapEx join, bool isForEndCap)
 		{
-			double height = 20;
-			double width = 40;
-			double lineWidth = 0.375 * height;
-			//
-			// Create the Geometry to draw.
-			//
-			GeometryGroup geometryGroup = new GeometryGroup();
-			if (isForEndCap)
-				geometryGroup.Children.Add(new LineGeometry(new Point(0, height * 0.5), new Point(width * 0.75, height * 0.5)));
-			else
-				geometryGroup.Children.Add(new LineGeometry(new Point(width * 0.25, height * 0.5), new Point(width, height * 0.5)));
-			GeometryDrawing aGeometryDrawing = new GeometryDrawing();
-			aGeometryDrawing.Geometry = geometryGroup;
-			// Outline the drawing with a solid color.
+			
+			
+			const int bmpHeight = 24;
+			const int bmpWidth = 48;
+			const double nominalHeight = 24; // height of a combobox item
+			const double nominalWidth = (nominalHeight*bmpWidth)/bmpHeight;
+			const double lineWidth = bmpHeight*0.4;
 
-			var pen = new Pen(Brushes.Black, lineWidth);
-			if (isForEndCap)
-				pen.EndLineCap = PenLineCap.Square;
-			else
-				pen.StartLineCap = PenLineCap.Square;
+			if (null == _interopBitmap)
+				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
 
-			aGeometryDrawing.Pen = new Pen(Brushes.Black, lineWidth);
+			var grfx = _interopBitmap.GdiGraphics;
 
+			grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
+			grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
 
+      var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
+      if (isForEndCap)
+      {
+        join.SetPenEndCap(linePen);
+        grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth*(1 - 0.25f), 0.5f * bmpHeight );
+      }
+      else
+      {
+        join.SetPenStartCap(linePen);
+        grfx.DrawLine(linePen, 0.25f*bmpWidth, 0.5f * bmpHeight,  bmpWidth, 0.5f * bmpHeight);
+      }
 
-			//
-			// Use a DrawingImage and an Image control
-			// to display the drawing.
-			//
-			DrawingImage geometryImage = new DrawingImage(aGeometryDrawing);
-
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
+			var img = new WriteableBitmap(_interopBitmap.WpfBitmap);
+			img.Freeze();
+			return img;
 		}
 	}
 }

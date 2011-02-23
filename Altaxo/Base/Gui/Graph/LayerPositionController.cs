@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph
     void EhView_WidthChanged(string txt, ref bool bCancel);
     void EhView_HeightChanged(string txt, ref bool bCancel);
     void EhView_RotationChanged(double newValue);
-    void EhView_ScaleChanged(string txt, ref bool bCancel);
+    void EhView_ScaleChanged(double newValue);
     void EhView_ClipDataToFrameChanged(bool value);
   }
 
@@ -78,21 +78,21 @@ namespace Altaxo.Gui.Graph
   public class LayerPositionController : ILayerPositionViewEventSink,  IMVCAController
   {
     // the view
-    ILayerPositionView m_View;
+    ILayerPositionView _view;
 
     // the document
-    XYPlotLayer m_Layer;
+    XYPlotLayer _layer;
 
     // Shadow variables
-    double m_Left, m_Top, m_Width, m_Height, m_Rotation, m_Scale;
-    XYPlotLayerPositionType m_LeftType, m_TopType;
-    XYPlotLayerSizeType      m_HeightType, m_WidthType;
-    bool m_ClipDataToFrame;
-    XYPlotLayer m_LinkedLayer;
+    double _left, _top, _width, _height, _rotation, _scale;
+    XYPlotLayerPositionType _leftPositionType, _topPositionType;
+    XYPlotLayerSizeType      _heightType, _widthType;
+    bool _clipDataToFrame;
+    XYPlotLayer _linkedLayer;
 
     public LayerPositionController(XYPlotLayer layer)
     {
-      m_Layer = layer;
+      _layer = layer;
       SetElements(true);
     }
 
@@ -103,19 +103,19 @@ namespace Altaxo.Gui.Graph
 
       if(bInit)
       {
-        m_Height    = m_Layer.UserHeight;
-        m_Width     = m_Layer.UserWidth;
-        m_Left      = m_Layer.UserXPosition;
-        m_Top       = m_Layer.UserYPosition;
-        m_Rotation  = m_Layer.Rotation;
-        m_Scale     = m_Layer.Scale;
-        m_ClipDataToFrame = m_Layer.ClipDataToFrame == LayerDataClipping.StrictToCS;
+        _height    = _layer.UserHeight;
+        _width     = _layer.UserWidth;
+        _left      = _layer.UserXPosition;
+        _top       = _layer.UserYPosition;
+        _rotation  = _layer.Rotation;
+        _scale     = _layer.Scale;
+        _clipDataToFrame = _layer.ClipDataToFrame == LayerDataClipping.StrictToCS;
 
-        m_LeftType = m_Layer.UserXPositionType;
-        m_TopType  = m_Layer.UserYPositionType;
-        m_HeightType = m_Layer.UserHeightType;
-        m_WidthType = m_Layer.UserWidthType;
-        m_LinkedLayer = m_Layer.LinkedLayer;
+        _leftPositionType = _layer.UserXPositionType;
+        _topPositionType  = _layer.UserYPositionType;
+        _heightType = _layer.UserHeightType;
+        _widthType = _layer.UserWidthType;
+        _linkedLayer = _layer.LinkedLayer;
       }
 
       if(View!=null)
@@ -127,9 +127,9 @@ namespace Altaxo.Gui.Graph
         InitializeLeftValue();
         InitializeTopValue();
 
-        View.InitializeRotation((float)m_Rotation);
-        View.InitializeScale(Serialization.GUIConversion.GetPercentMeasureText(m_Scale));
-        View.InitializeClipDataToFrame(m_ClipDataToFrame);
+        View.InitializeRotation((float)_rotation);
+        View.InitializeScale(Serialization.GUIConversion.GetPercentMeasureText(_scale));
+        View.InitializeClipDataToFrame(_clipDataToFrame);
 
         InitializePositionTypes();
         InitializeSizeTypes();
@@ -141,13 +141,13 @@ namespace Altaxo.Gui.Graph
     void InitializeLinkedAxisChoices()
     {
       SelectableListNodeList list = new SelectableListNodeList();
-      list.Add(new SelectableListNode("None",null,m_LinkedLayer==null));
-      if (null != m_Layer.ParentLayerList)
+      list.Add(new SelectableListNode("None",null,_linkedLayer==null));
+      if (null != _layer.ParentLayerList)
       {
-        for (int i = 0; i < m_Layer.ParentLayerList.Count; i++)
+        for (int i = 0; i < _layer.ParentLayerList.Count; i++)
         {
-          if (!m_Layer.IsLayerDependentOnMe(m_Layer.ParentLayerList[i]))
-            list.Add(new SelectableListNode("XYPlotLayer " + i.ToString(),m_Layer.ParentLayerList[i],m_Layer.ParentLayerList[i]==m_LinkedLayer));
+          if (!_layer.IsLayerDependentOnMe(_layer.ParentLayerList[i]))
+            list.Add(new SelectableListNode("XYPlotLayer " + i.ToString(),_layer.ParentLayerList[i],_layer.ParentLayerList[i]==_linkedLayer));
         }
       }
       View.InitializeLinkedLayer(list);
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Graph
       list.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(toadd),  toadd, false));
       toadd = XYPlotLayerPositionType.RelativeToGraphDocument;
       list.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(toadd),  toadd, false));
-      if (null != m_LinkedLayer)
+      if (null != _linkedLayer)
       {
         toadd = XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear;
         list.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(toadd),  toadd, false));
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Graph
       list.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(toadd), toadd, false));
       toadd = XYPlotLayerSizeType.RelativeToGraphDocument;
       list.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(toadd), toadd, false));
-      if (null != m_LinkedLayer)
+      if (null != _linkedLayer)
       {
         toadd = XYPlotLayerSizeType.RelativeToLinkedLayer;
         list.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(toadd), toadd, false));
@@ -202,31 +202,31 @@ namespace Altaxo.Gui.Graph
     {
       SelectableListNodeList leftlist = GetPositionTypeList();
       foreach (SelectableListNode node in leftlist)
-        if ((XYPlotLayerPositionType)node.Item == m_LeftType)
+        if ((XYPlotLayerPositionType)node.Item == _leftPositionType)
           node.Selected = true;
 
       View.InitializeLeftType(leftlist);
 
       SelectableListNodeList toplist = GetPositionTypeList();
       foreach (SelectableListNode node in toplist)
-        if ((XYPlotLayerPositionType)node.Item == m_TopType)
+        if ((XYPlotLayerPositionType)node.Item == _topPositionType)
           node.Selected = true;
 
       View.InitializeTopType(toplist);
     }
     void InitializeLeftValue()
     {
-      string text = (m_LeftType== XYPlotLayerPositionType.AbsoluteValue)?
-        Serialization.GUIConversion.GetLengthMeasureText(m_Left):
-        Serialization.GUIConversion.GetPercentMeasureText(m_Left);
+      string text = (_leftPositionType== XYPlotLayerPositionType.AbsoluteValue)?
+        Serialization.GUIConversion.GetLengthMeasureText(_left):
+        Serialization.GUIConversion.GetPercentMeasureText(_left);
 
       View.InitializeLeft(text);
     }
     void InitializeTopValue()
     {
-      string text = (m_TopType == XYPlotLayerPositionType.AbsoluteValue) ?
-        Serialization.GUIConversion.GetLengthMeasureText(m_Top) :
-        Serialization.GUIConversion.GetPercentMeasureText(m_Top);
+      string text = (_topPositionType == XYPlotLayerPositionType.AbsoluteValue) ?
+        Serialization.GUIConversion.GetLengthMeasureText(_top) :
+        Serialization.GUIConversion.GetPercentMeasureText(_top);
 
       View.InitializeTop(text);
     }
@@ -235,14 +235,14 @@ namespace Altaxo.Gui.Graph
     {
       SelectableListNodeList list = GetSizeTypeList();
       foreach (SelectableListNode node in list)
-        if ((XYPlotLayerSizeType)node.Item == m_WidthType)
+        if ((XYPlotLayerSizeType)node.Item == _widthType)
           node.Selected = true;
 
       View.InitializeWidthType(list);
 
       list = GetSizeTypeList();
       foreach (SelectableListNode node in list)
-        if ((XYPlotLayerSizeType)node.Item == m_HeightType)
+        if ((XYPlotLayerSizeType)node.Item == _heightType)
           node.Selected = true;
 
       View.InitializeHeightType(list);
@@ -250,17 +250,17 @@ namespace Altaxo.Gui.Graph
 
     void InitializeWidthValue()
     {
-      string text = (m_WidthType == XYPlotLayerSizeType.AbsoluteValue) ?
-        Serialization.GUIConversion.GetLengthMeasureText(m_Width) :
-        Serialization.GUIConversion.GetPercentMeasureText(m_Width);
+      string text = (_widthType == XYPlotLayerSizeType.AbsoluteValue) ?
+        Serialization.GUIConversion.GetLengthMeasureText(_width) :
+        Serialization.GUIConversion.GetPercentMeasureText(_width);
 
       View.InitializeWidth(text);
     }
     void InitializeHeightValue()
     {
-      string text = (m_HeightType == XYPlotLayerSizeType.AbsoluteValue) ?
-        Serialization.GUIConversion.GetLengthMeasureText(m_Height) :
-        Serialization.GUIConversion.GetPercentMeasureText(m_Height);
+      string text = (_heightType == XYPlotLayerSizeType.AbsoluteValue) ?
+        Serialization.GUIConversion.GetLengthMeasureText(_height) :
+        Serialization.GUIConversion.GetPercentMeasureText(_height);
 
       View.InitializeHeight(text);
     }
@@ -273,16 +273,16 @@ namespace Altaxo.Gui.Graph
 
       try
       {
-        m_Layer.LinkedLayer = m_LinkedLayer;
+        _layer.LinkedLayer = _linkedLayer;
 
       
         // now update the layer
-        m_Layer.Rotation = (float)m_Rotation;
-        m_Layer.Scale    = (float)m_Scale;
-        m_Layer.ClipDataToFrame = m_ClipDataToFrame?LayerDataClipping.StrictToCS:LayerDataClipping.None;
+        _layer.Rotation = _rotation;
+        _layer.Scale    = _scale;
+        _layer.ClipDataToFrame = _clipDataToFrame?LayerDataClipping.StrictToCS:LayerDataClipping.None;
 
-        m_Layer.SetSize(m_Width,m_WidthType,m_Height,m_HeightType);
-        m_Layer.SetPosition(m_Left,m_LeftType,m_Top,m_TopType);
+        _layer.SetSize(_width,_widthType,_height,_heightType);
+        _layer.SetPosition(_left,_leftPositionType,_top,_topPositionType);
       }
       catch(Exception)
       {
@@ -309,7 +309,7 @@ namespace Altaxo.Gui.Graph
 
     public object ModelObject
     {
-      get { return this.m_Layer; }
+      get { return this._layer; }
     }
 
     #endregion
@@ -320,18 +320,18 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        return m_View;
+        return _view;
       }
       set
       {
-        if(null!=m_View)
-          m_View.Controller = null;
+        if(null!=_view)
+          _view.Controller = null;
         
-        m_View = value;
+        _view = value;
 
-        if(null!=m_View)
+        if(null!=_view)
         {
-          m_View.Controller = this;
+          _view.Controller = this;
           SetElements(false); // set only the view elements, dont't initialize the variables
         }
       }
@@ -339,28 +339,28 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_LinkedLayerChanged(SelectableListNode node)
     {
-      XYPlotLayer oldLinkedLayer = m_LinkedLayer;
-      m_LinkedLayer = (XYPlotLayer)node.Item;
+      XYPlotLayer oldLinkedLayer = _linkedLayer;
+      _linkedLayer = (XYPlotLayer)node.Item;
 
       // we have to check if there is a need to update the type comboboxes
-      if (oldLinkedLayer != null && m_LinkedLayer != null)
+      if (oldLinkedLayer != null && _linkedLayer != null)
       {
       }
-      else if (oldLinkedLayer == null && m_LinkedLayer != null)
+      else if (oldLinkedLayer == null && _linkedLayer != null)
       {
         InitializePositionTypes();
         InitializeSizeTypes();
       }
-      else if (oldLinkedLayer != null && m_LinkedLayer == null)
+      else if (oldLinkedLayer != null && _linkedLayer == null)
       {
-        if (m_LeftType != XYPlotLayerPositionType.AbsoluteValue && m_LeftType != XYPlotLayerPositionType.RelativeToGraphDocument)
+        if (_leftPositionType != XYPlotLayerPositionType.AbsoluteValue && _leftPositionType != XYPlotLayerPositionType.RelativeToGraphDocument)
           ChangeLeftType(XYPlotLayerPositionType.RelativeToGraphDocument);
-        if (m_TopType != XYPlotLayerPositionType.AbsoluteValue && m_TopType != XYPlotLayerPositionType.RelativeToGraphDocument)
+        if (_topPositionType != XYPlotLayerPositionType.AbsoluteValue && _topPositionType != XYPlotLayerPositionType.RelativeToGraphDocument)
           ChangeTopType(XYPlotLayerPositionType.RelativeToGraphDocument);
 
-        if (m_WidthType != XYPlotLayerSizeType.AbsoluteValue && m_WidthType != XYPlotLayerSizeType.RelativeToGraphDocument)
+        if (_widthType != XYPlotLayerSizeType.AbsoluteValue && _widthType != XYPlotLayerSizeType.RelativeToGraphDocument)
           ChangeWidthType(XYPlotLayerSizeType.RelativeToGraphDocument);
-        if (m_HeightType != XYPlotLayerSizeType.AbsoluteValue && m_HeightType != XYPlotLayerSizeType.RelativeToGraphDocument)
+        if (_heightType != XYPlotLayerSizeType.AbsoluteValue && _heightType != XYPlotLayerSizeType.RelativeToGraphDocument)
           ChangeHeightType(XYPlotLayerSizeType.RelativeToGraphDocument);
 
         InitializeSizeTypes();
@@ -371,45 +371,45 @@ namespace Altaxo.Gui.Graph
 
     void ChangeLeftType(XYPlotLayerPositionType newType)
     {
-      XYPlotLayerPositionType oldType = m_LeftType;
+      XYPlotLayerPositionType oldType = _leftPositionType;
       if (newType == oldType)
         return;
-      double oldPosition = m_Layer.XPositionToPointUnits(m_Left,oldType);
-      m_Left  = m_Layer.XPositionToUserUnits(oldPosition,newType);
-      m_LeftType = newType;
+      double oldPosition = _layer.XPositionToPointUnits(_left,oldType);
+      _left  = _layer.XPositionToUserUnits(oldPosition,newType);
+      _leftPositionType = newType;
 
       InitializeLeftValue();
     }
     void ChangeTopType(XYPlotLayerPositionType newType)
     {
-      XYPlotLayerPositionType oldType = m_TopType;
+      XYPlotLayerPositionType oldType = _topPositionType;
       if (newType == oldType)
         return;
-      double oldPosition = m_Layer.YPositionToPointUnits(m_Top, oldType);
-      m_Top = m_Layer.YPositionToUserUnits(oldPosition, newType);
-      m_TopType = newType;
+      double oldPosition = _layer.YPositionToPointUnits(_top, oldType);
+      _top = _layer.YPositionToUserUnits(oldPosition, newType);
+      _topPositionType = newType;
 
       InitializeTopValue();
     }
     void ChangeWidthType(XYPlotLayerSizeType newType)
     {
-      XYPlotLayerSizeType oldType = m_WidthType;
+      XYPlotLayerSizeType oldType = _widthType;
       if (newType == oldType)
         return;
-      double oldSize = m_Layer.WidthToPointUnits(m_Width, oldType);
-      m_Width = m_Layer.WidthToUserUnits(oldSize, newType);
-      m_WidthType = newType;
+      double oldSize = _layer.WidthToPointUnits(_width, oldType);
+      _width = _layer.WidthToUserUnits(oldSize, newType);
+      _widthType = newType;
       InitializeWidthValue();
 
     }
     void ChangeHeightType(XYPlotLayerSizeType newType)
     {
-      XYPlotLayerSizeType oldType = m_HeightType;
+      XYPlotLayerSizeType oldType = _heightType;
       if (newType == oldType)
         return;
-      double oldSize = m_Layer.HeightToPointUnits(m_Height, oldType);
-      m_Height = m_Layer.HeightToUserUnits(oldSize, newType);
-      m_HeightType = newType;
+      double oldSize = _layer.HeightToPointUnits(_height, oldType);
+      _height = _layer.HeightToUserUnits(oldSize, newType);
+      _heightType = newType;
       InitializeHeightValue();
 
     }
@@ -436,49 +436,51 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_LeftChanged(string txt, ref bool bCancel)
     {
-      if (m_LeftType == XYPlotLayerPositionType.AbsoluteValue)
-        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref m_Left);
+      if (_leftPositionType == XYPlotLayerPositionType.AbsoluteValue)
+        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref _left);
       else
-        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref m_Left);
+        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref _left);
     }
 
     void ILayerPositionViewEventSink.EhView_TopChanged(string txt, ref bool bCancel)
     {
-      if (m_TopType == XYPlotLayerPositionType.AbsoluteValue)
-        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref m_Top);
+      if (_topPositionType == XYPlotLayerPositionType.AbsoluteValue)
+        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref _top);
       else
-        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref m_Top);
+        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref _top);
     }
 
     public void EhView_WidthChanged(string txt, ref bool bCancel)
     {
-      if (m_WidthType == XYPlotLayerSizeType.AbsoluteValue)
-        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref m_Width);
+      if (_widthType == XYPlotLayerSizeType.AbsoluteValue)
+        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref _width);
       else
-        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref m_Width);
+        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref _width);
     }
 
     public void EhView_HeightChanged(string txt, ref bool bCancel)
     {
-      if (m_HeightType == XYPlotLayerSizeType.AbsoluteValue)
-        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref m_Height);
+      if (_heightType == XYPlotLayerSizeType.AbsoluteValue)
+        bCancel = !GUIConversion.GetLengthMeasureValue(txt, ref _height);
       else
-        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref m_Height);
+        bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref _height);
     }
 
     public void EhView_RotationChanged(double newVal)
     {
-      m_Rotation = newVal;
+      _rotation = newVal;
     }
 
-    public void EhView_ScaleChanged(string txt, ref bool bCancel)
+    public void EhView_ScaleChanged(double newValue)
     {
-      bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref m_Scale);
+
+			_scale = newValue;
+     // bCancel = !GUIConversion.GetPercentMeasureValue(txt, ref m_Scale);
     }
 
     public void EhView_ClipDataToFrameChanged(bool value)
     {
-      m_ClipDataToFrame = value;
+      _clipDataToFrame = value;
     }
 
     #endregion

@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Graph
     List<CSAxisInformation> _axisStyleInfoSortedByName;
     List<CSPlaneID> _planeIdentifier;
 
-		protected IAxisScaleController _axisScaleController;
+		protected IMVCAController _axisScaleController;
     protected IMVCAController _coordinateController;
     Dictionary<CSLineID, IMVCANController> _TitleFormatController;
     Dictionary<CSLineID, IMVCANController> _MajorLabelController;

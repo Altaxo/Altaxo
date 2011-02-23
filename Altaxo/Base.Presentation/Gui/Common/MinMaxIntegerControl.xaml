@@ -16,6 +16,6 @@
 		<RadioButton Grid.Row="0" Margin="4" Name="_rbMin" Checked="EhMin_Checked">Min</RadioButton>
 		<RadioButton Grid.Row="1" Margin="4" Name="_rbMax" Checked="EhMax_Checked">Max</RadioButton>
 		<RadioButton Grid.Row="2" Margin="4" Name="_rbEnterNumber" Checked="EhNumber_Checked">Number:</RadioButton>
-		<local:NumericUpDown Grid.Row="3" Margin="4" Minimum="1" x:Name="_edNumber" ValueChanged="EhNumber_ValueChanged" LostFocus="EhNumber_LostFocus"/>
+		<local:Int32UpDown Grid.Row="3" Margin="4" Minimum="1" x:Name="_edNumber" ValueChanged="EhNumber_ValueChanged" LostFocus="EhNumber_LostFocus"/>
 	</Grid>
 </UserControl>

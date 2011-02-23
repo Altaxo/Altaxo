@@ -1,4 +1,4 @@
-﻿<local:ImageComboBox x:Class="Altaxo.Gui.Common.Drawing.ColorComboBox"
+﻿<local:ColorComboBoxBase x:Class="Altaxo.Gui.Common.Drawing.ColorComboBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
@@ -29,4 +29,4 @@
 			<MenuItem Header="100% transparency" Tag="100" Click="EhChooseTransparencyFromContextMenu"/>
 		</ContextMenu>
 	</ComboBox.ContextMenu>
-</local:ImageComboBox>
+</local:ColorComboBoxBase>

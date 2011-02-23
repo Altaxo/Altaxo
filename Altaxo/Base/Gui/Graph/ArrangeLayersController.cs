@@ -45,8 +45,8 @@ namespace Altaxo.Gui.Graph
 
   public interface IArrangeLayersViewEventSink
   {
-    bool EhNumberOfRowsChanged(string val);
-    bool EhNumberOfColumnsChanged(string val);
+    bool EhNumberOfRowsChanged(int val);
+    bool EhNumberOfColumnsChanged(int val);
     bool EhRowSpacingChanged(string val);
     bool EhColumnSpacingChanged(string val);
     bool EhTopMarginChanged(string val);
@@ -109,39 +109,30 @@ namespace Altaxo.Gui.Graph
 
     #region IArrangeLayersViewEventSink Members
 
-    public bool EhNumberOfRowsChanged(string val)
-    {
-      int v;
-      if(!GUIConversion.IsInteger(val, out v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an integer value here");
-        return true;
-      }
-      if(v<1)
-      {
-        Current.Gui.ErrorMessageBox("Please provide a value >0 here");
-        return true;
-      }
-      _tempDoc.NumberOfRows = v;
-      SetEnableConditions();
-      return false;
-    }
+   
 
-    public bool EhNumberOfColumnsChanged(string val)
+		public bool EhNumberOfRowsChanged(int val)
+		{
+			if (val < 1)
+			{
+				Current.Gui.ErrorMessageBox("Please provide a value >0 here");
+				return true;
+			}
+			_tempDoc.NumberOfRows = val;
+			SetEnableConditions();
+			return false;
+		}
+
+    public bool EhNumberOfColumnsChanged(int val)
     {
-      int v;
-      if(!GUIConversion.IsInteger(val, out v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an integer value here");
-        return true;
-      }
-      if(v<1)
+     
+      if(val<1)
       {
         Current.Gui.ErrorMessageBox("Please provide a value >0 here");
         return true;
       }
 
-      _tempDoc.NumberOfColumns = v;
+      _tempDoc.NumberOfColumns = val;
       SetEnableConditions();
       return false;
     }

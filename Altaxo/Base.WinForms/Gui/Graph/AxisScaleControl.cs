@@ -38,7 +38,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox m_Scale_cbType;
     private System.Windows.Forms.Label label4;
 
-    private IAxisScaleController m_Ctrl;
 		private TableLayoutPanel _tlp_Main;
 		private FlowLayoutPanel _flp_ScaleType;
 		private FlowLayoutPanel _flp_LinkType;
@@ -241,18 +240,6 @@ namespace Altaxo.Gui.Graph
 
     #region IAxisScaleView Members
 
-    public IAxisScaleController Controller
-    {
-      get { return m_Ctrl; }
-      set { m_Ctrl = value; }
-    }
-    public object ControllerObject
-    {
-      get { return Controller; }
-      set { Controller = (IAxisScaleController)value; }
-    }
-   
-
     public void InitializeAxisType(SelectableListNodeList names)
     {
 			GuiHelper.UpdateList(this.m_Scale_cbType, names);
@@ -354,42 +341,51 @@ namespace Altaxo.Gui.Graph
    
     private void EhAxisType_SelectionChangeCommit(object sender, System.EventArgs e)
     {
-			if (null != m_Ctrl)
+			if (null != AxisTypeChanged)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(this.m_Scale_cbType);
-				m_Ctrl.EhView_AxisTypeChanged();
+				AxisTypeChanged();
 			}
     }
 
 		private void EhTickSpacingType_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			if (null != m_Ctrl)
+			if (null != TickSpacingTypeChanged)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
-				m_Ctrl.EhView_TickSpacingTypeChanged();
+				TickSpacingTypeChanged();
 			}
 		}
 
 		private void EhLinkTarget_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			if (null != m_Ctrl)
+			if (null != LinkTargetChanged)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(this._cbLinkTarget);
-				m_Ctrl.EhView_LinkTargetChanged();
+				LinkTargetChanged();
 			}
 		}
 
 
 		private void EhLinked_CheckedChanged(object sender, EventArgs e)
 		{
-			if (null != m_Ctrl)
+			if (null != LinkChanged)
 			{
-				m_Ctrl.EhView_LinkChanged(_chkLinkScale.Checked);
+				LinkChanged(_chkLinkScale.Checked);
 			}
 		}
 
 
-  
 
-  }
+
+
+
+		public event Action AxisTypeChanged;
+
+		public event Action TickSpacingTypeChanged;
+
+		public event Action LinkTargetChanged;
+
+		public event Action<bool> LinkChanged;
+	}
 }

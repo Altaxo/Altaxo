@@ -1,0 +1,13 @@
+﻿<GroupBox x:Class="Altaxo.Gui.Common.CheckableGroupBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+							x:Name="_groupBox"
+             >
+	<GroupBox.HeaderTemplate>
+		<DataTemplate>
+			<CheckBox Name="_checkBox" Content="{Binding ElementName=_groupBox, Path=Header}" Checked="EhCheckBox_Checked" Unchecked="EhCheckBox_Unchecked" IsChecked="{Binding ElementName=_groupBox, Path=IsChecked, Mode=TwoWay}" />
+		</DataTemplate>
+	</GroupBox.HeaderTemplate>
+</GroupBox>

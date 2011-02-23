@@ -73,24 +73,24 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
-		private const string _nameOfValueProp = "LineJoin";
-		public sdd.LineJoin LineJoin
+		private const string _nameOfValueProp = "SelectedLineJoin";
+		public sdd.LineJoin SelectedLineJoin
 		{
-			get { var result = (sdd.LineJoin)GetValue(LineJoinProperty); return result; }
-			set {	SetValue(LineJoinProperty, value); }
+			get { var result = (sdd.LineJoin)GetValue(SelectedLineJoinProperty); return result; }
+			set {	SetValue(SelectedLineJoinProperty, value); }
 		}
 
-		public static readonly DependencyProperty LineJoinProperty =
+		public static readonly DependencyProperty SelectedLineJoinProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(sdd.LineJoin), typeof(LineJoinComboBox),
-				new FrameworkPropertyMetadata(OnLineJoinChanged));
+				new FrameworkPropertyMetadata(OnSelectedLineJoinChanged));
 
-		private static void OnLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void OnSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((LineJoinComboBox)obj).EhLineJoinChanged(obj,args);
+			((LineJoinComboBox)obj).EhSelectedLineJoinChanged(obj,args);
 		}
 		#endregion
 
-		protected virtual void EhLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void EhSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 
 		}
@@ -115,20 +115,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static DrawingImage GetImage(System.Drawing.Drawing2D.LineJoin join)
 		{
-			double height = 1;
-			double width = 2;
-			double lineWidth = 0.375 * height;
-			//
-			// Create the Geometry to draw.
-			//
-			GeometryGroup geometryGroup = new GeometryGroup();
-			var figure = new PathFigure();
-			figure.Segments.Add(new PolyLineSegment(new Point[] { new Point(width, height * 0.875), new Point(width / 2, height / 2), new Point(width, height * 0.175) }, true));
-			geometryGroup.Children.Add(new PathGeometry(new PathFigure[] { figure }));
-			GeometryDrawing aGeometryDrawing = new GeometryDrawing();
-			aGeometryDrawing.Geometry = geometryGroup;
-			// Outline the drawing with a solid color.
-
+			const double height = 1;
+			const double width = 2;
+			const double lineWidth = 0.375 * height;
 
 			PenLineJoin plj;
 			switch (join)
@@ -147,19 +136,32 @@ namespace Altaxo.Gui.Common.Drawing
 					plj = PenLineJoin.Bevel;
 					break;
 			}
-			var pen = new Pen(Brushes.Black, lineWidth);
-			pen.LineJoin = plj;
-			aGeometryDrawing.Pen = new Pen(Brushes.Black, lineWidth);
 
 
 
-			//
-			// Use a DrawingImage and an Image control
-			// to display the drawing.
-			//
-			DrawingImage geometryImage = new DrawingImage(aGeometryDrawing);
+			var drawingGroup = new DrawingGroup();
+			GeometryDrawing geometryDrawing;
 
-			// Freeze the DrawingImage for performance benefits.
+			geometryDrawing = new GeometryDrawing();
+			geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
+			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+			drawingGroup.Children.Add(geometryDrawing);
+
+			geometryDrawing = new GeometryDrawing();
+			var figure = new PathFigure();
+			figure.StartPoint = new Point(width, height * 0.875);
+			figure.Segments.Add(new PolyLineSegment(new Point[] 
+			{
+				new Point(width / 2, height / 2),
+				new Point(width, height * 0.175) }, true));
+			geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
+			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = plj };
+			drawingGroup.Children.Add(geometryDrawing);
+
+			drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
+
+			DrawingImage geometryImage = new DrawingImage(drawingGroup);
+
 			geometryImage.Freeze();
 			return geometryImage;
 		}

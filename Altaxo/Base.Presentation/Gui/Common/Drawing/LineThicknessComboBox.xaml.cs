@@ -17,79 +17,86 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Interaction logic for LineThicknessComboBox.xaml
 	/// </summary>
-	public partial class LineThicknessComboBox : EditableImageComboBox
+	public partial class LineThicknessComboBox : ThicknessImageComboBox
 	{
+		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+
+		static readonly double[] _initialValues = new double[] { 0.001, 0.125, 0.25, 0.5, 1, 2, 3, 5, 10 };
+
 		public LineThicknessComboBox()
 		{
 			InitializeComponent();
 
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath("Thickness");
-			//binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
-			this.SetBinding(ComboBox.TextProperty, binding);
+			foreach(var e in _initialValues)
+				Items.Add(new ImageComboBoxItem(this,e));
+
+			SetBinding(_nameOfValueProp);
 		}
 	
 
 	#region Dependency property
-		public double Thickness
+		const string _nameOfValueProp = "SelectedThickness";
+		public double SelectedThickness
 		{
-			get { var result = (double)GetValue(ThicknessProperty); return result; }
-			set { SetValue(ThicknessProperty, value); }
+			get { var result = (double)GetValue(SelectedThicknessProperty); return result; }
+			set { SetValue(SelectedThicknessProperty, value); }
 		}
 
-		public static readonly DependencyProperty ThicknessProperty =
-				DependencyProperty.Register("Thickness", typeof(double), typeof(LineThicknessComboBox),
-				new FrameworkPropertyMetadata(OnThicknessChanged));
+		public static readonly DependencyProperty SelectedThicknessProperty =
+				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(LineThicknessComboBox),
+				new FrameworkPropertyMetadata(1.0, OnSelectedThicknessChanged));
 
-		private static void OnThicknessChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void OnSelectedThicknessChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
+			((LineThicknessComboBox)obj).EhSelectedThicknessChanged(obj, args);
 		}
 		#endregion
 
-		protected override void SetImageFromContent()
+		protected virtual void EhSelectedThicknessChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			if (null == _img)
-				return;
-			double val;
-			if(Altaxo.Serialization.GUIConversion.IsDouble(this.Text,out val))
+			if (null != _img)
 			{
+				var val = (double)args.NewValue;
 				_img.Source = GetImage(val);
 			}
+		}
+
+		public override ImageSource GetItemImage(object item)
+		{
+			var val = (double)item;
+			ImageSource result;
+			if (!_cachedImages.TryGetValue(val, out result))
+				_cachedImages.Add(val, result = GetImage(val));
+			return result;
 		}
 
 
 		public override string GetItemText(object item)
 		{
-			var value = (double)item;
-			return Altaxo.Serialization.GUIConversion.ToString(value);
+			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
 		}
 
-		public override ImageSource GetItemImage(object item)
-		{
-			var value = (double)item;
-			return base.GetItemImage(item);
-		}
 
 		public static DrawingImage GetImage(double thickness)
 		{
-			double height = 24;
-			double width = 48;
+			const double nominalHeight = 24; // Height as it occurs in the combobox
+			const double height = 1;
+			const double width = 2;
 
-			GeometryGroup geometryGroup = new GeometryGroup();
-			geometryGroup.Children.Add(new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)));
-			GeometryDrawing aGeometryDrawing = new GeometryDrawing();
-			aGeometryDrawing.Geometry = geometryGroup;
+			var drawingGroup = new DrawingGroup();
+			var bounds = new Rect(0, 0, width, height);
 
-			// Outline the drawing with a solid color.
-			aGeometryDrawing.Pen = new Pen(Brushes.Black, Math.Min(height, thickness));
+			var geometryDrawing = new GeometryDrawing { Geometry = new RectangleGeometry(bounds) };
+			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+			drawingGroup.Children.Add(geometryDrawing);
 
-			//
-			// Use a DrawingImage and an Image control
-			// to display the drawing.
-			//
-			DrawingImage geometryImage = new DrawingImage(aGeometryDrawing);
+
+			geometryDrawing = new GeometryDrawing { Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)) };
+			geometryDrawing.Pen = new Pen(Brushes.Black, Math.Min(height, thickness*height/nominalHeight));
+			drawingGroup.Children.Add(geometryDrawing);
+			drawingGroup.ClipGeometry = new RectangleGeometry(bounds);
+
+			DrawingImage geometryImage = new DrawingImage(drawingGroup);
 
 			// Freeze the DrawingImage for performance benefits.
 			geometryImage.Freeze();

@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.LayerPositionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             mc:Ignorable="d" 
+             >
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,2"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+			</Style.Setters>
+		</Style>
+		<Style x:Key="CBWithMargin" TargetType="Control">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,0"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="16"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="16"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="16"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Label Grid.Column="0" Grid.Row="0" Content="Linked to layer:"/>
+		<ComboBox x:Name="m_Layer_cbLinkedLayer" Grid.Column="1" Grid.Row="0" SelectionChanged="EhLinkedLayer_SelectionChangeCommitted"/>
+		<Label Grid.Column="0" Grid.Row="2" Content="Left:"/>
+		<Label Grid.Column="0" Grid.Row="4" Content="Top:"/>
+		<Label Grid.Column="0" Grid.Row="6" Content="Width:"/>
+		<Label Grid.Column="0" Grid.Row="8" Content="Height:"/>
+
+		<axogc:ValidatingTextBox x:Name="m_Layer_edLeftPosition"  Grid.Column="1" Grid.Row="2" Validating="EhLeft_Validating" />
+		<axogc:ValidatingTextBox x:Name="m_Layer_edTopPosition" Grid.Column="1" Grid.Row="4" Validating="EhTop_Validating"/>
+		<axogc:ValidatingTextBox x:Name="m_Layer_edWidth"  Grid.Column="1" Grid.Row="6" Validating="EhWidth_Validating"/>
+		<axogc:ValidatingTextBox x:Name="m_Layer_edHeight"  Grid.Column="1" Grid.Row="8" Validating="EhHeight_Validating"/>
+
+		<ComboBox x:Name="m_Layer_cbLeftType"  Grid.Column="2" Grid.Row="2" Style="{StaticResource CBWithMargin}" SelectionChanged="EhLeftType_SelectionChangeCommitted"/>
+		<ComboBox x:Name="m_Layer_cbTopType"  Grid.Column="2" Grid.Row="4" Style="{StaticResource CBWithMargin}" SelectionChanged="EhTopType_SelectionChangeCommitted"/>
+		<ComboBox x:Name="m_Layer_cbWidthType"  Grid.Column="2" Grid.Row="6" Style="{StaticResource CBWithMargin}" SelectionChanged="EhWidthType_SelectionChangeCommitted"/>
+		<ComboBox x:Name="m_Layer_cbHeightType"  Grid.Column="2" Grid.Row="8" Style="{StaticResource CBWithMargin}" SelectionChanged="EhHeightType_SelectionChangeCommitted"/>
+
+		<Label Grid.Column="0" Grid.Row="10" Content="Rotation:"/>
+		<axogcd:RotationComboBox  x:Name="m_Layer_edRotation" Grid.Column="1" Grid.Row="10" SelectedRotationChanged="EhRotation_Changed"/>
+		<Label Grid.Column="0" Grid.Row="12" Content="Scale:"/>
+		<axogcd:ScaleComboBox x:Name="m_Layer_edScale"  Grid.Column="1" Grid.Row="12" SelectedScaleChanged="EhScale_Validating"/>
+		<Label Grid.Column="0" Grid.Row="14" Content="Clip data to frame:"/>
+		<CheckBox x:Name="m_Layer_ClipDataToFrame"  Grid.Column="1" Grid.Row="14" VerticalAlignment="Center" Checked="EhClipDataToFrame_Validating" Unchecked="EhClipDataToFrame_Validating"/>
+
+
+	</Grid>
+</UserControl>

@@ -83,6 +83,7 @@ namespace Altaxo.Gui.Scripting
 
 		private void _cbNumberOfParameters_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			e.Handled = true;
 			if (null != Controller && 0 == _suppressEvents)
 				Controller.EhView_NumberOfParameterChanged(this._cbNumberOfParameters.SelectedIndex);
 		}

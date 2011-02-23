@@ -1,0 +1,33 @@
+﻿<local:ColorComboBoxBase x:Class="Altaxo.Gui.Common.Drawing.BrushComboBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
+    SnapsToDevicePixels="True"
+					>
+	<ComboBox.Resources>
+		<DataTemplate  DataType="{x:Type local:ImageComboBoxItem}">
+			<StackPanel Orientation="Horizontal" Margin="2">
+				<Image Source="{Binding Image}" MaxWidth="24" MaxHeight="24"/>
+				<TextBlock Text="{Binding Path=Text}" Margin="4 0 4 0" VerticalAlignment="Center"/>
+			</StackPanel>
+		</DataTemplate>
+	</ComboBox.Resources>
+	<ComboBox.ContextMenu>
+		<ContextMenu x:Name="_contextMenu">
+			<MenuItem Header="Custom brush.." Click="EhShowCustomBrushDialog"/>
+			<MenuItem Header="Custom color.." Click="EhShowCustomColorDialog"/>
+			<Separator/>
+			<MenuItem Header=" 0% transparency" Tag="0" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="10% transparency" Tag="10" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="20% transparency" Tag="20" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="30% transparency" Tag="30" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="40% transparency" Tag="40" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="50% transparency" Tag="50" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="60% transparency" Tag="60" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="70% transparency" Tag="70" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="80% transparency" Tag="80" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="90% transparency" Tag="90" Click="EhChooseTransparencyFromContextMenu"/>
+			<MenuItem Header="100% transparency" Tag="100" Click="EhChooseTransparencyFromContextMenu"/>
+		</ContextMenu>
+	</ComboBox.ContextMenu>
+</local:ColorComboBoxBase>

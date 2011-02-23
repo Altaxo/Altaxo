@@ -27,7 +27,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			InitializeComponent();
 
-			_glue = new BrushControlsGlue();
+			_glue = new BrushControlsGlue(true);
 			_glue.CbBrushType = _cbBrushType;
 			_glue.CbColor1 = _cbColor;
 			_glue.CbColor2 = _cbBackColor;

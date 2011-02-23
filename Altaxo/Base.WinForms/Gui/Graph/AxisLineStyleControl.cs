@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public float MajorTickLength
+    public double MajorTickLength
     {
       get
       {
@@ -96,11 +96,11 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        _lineMajorLength.PenWidthChoice = value;
+        _lineMajorLength.PenWidthChoice = (float)value;
       }
     }
 
-    public float MinorTickLength
+    public double MinorTickLength
     {
       get
       {
@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        _lineMinorLength.PenWidthChoice = value;
+        _lineMinorLength.PenWidthChoice = (float)value;
       }
     }
     public bool ShowLine

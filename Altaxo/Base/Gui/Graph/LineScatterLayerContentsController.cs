@@ -61,6 +61,7 @@ namespace Altaxo.Gui.Graph
 
     void EhView_CopyClipboard(NGTreeNode[] selNodes);
     void EhView_PasteClipboard();
+		bool EhView_CanPasteFromClipboard();
 
   }
 
@@ -115,8 +116,45 @@ namespace Altaxo.Gui.Graph
   [UserControllerForObject(typeof(PlotItemCollection))]
   [ExpectedTypeOfView(typeof(ILineScatterLayerContentsView))]
   public class LineScatterLayerContentsController : ILineScatterLayerContentsController
-  {
-    protected ILineScatterLayerContentsView _view;
+	{
+		#region Special tree nodes
+
+		class TableNode : NGTreeNode
+		{
+			public TableNode(string tableName)
+				: base(true)
+			{
+				base.Text = tableName;
+			}
+
+			public override bool IsSelected
+			{
+				get
+				{
+					return false;
+				}
+				set
+				{
+				}
+			}
+
+			protected override void LoadChildren()
+			{
+				if(!Current.Project.DataTableCollection.Contains(Text))
+					return;
+
+				var table = Current.Project.DataTableCollection[Text];
+
+				for(int i=0;i<table.DataColumnCount;++i)
+					Nodes.Add(new NGTreeNode(table.DataColumns.GetColumnName(i)));
+				base.LoadChildren();
+			}
+		}
+
+
+		#endregion
+
+		protected ILineScatterLayerContentsView _view;
     protected PlotItemCollection _doc;
     protected PlotItemCollection _originalDoc;
 
@@ -168,7 +206,7 @@ namespace Altaxo.Gui.Graph
         NGTreeNode no = new NGTreeNode();
         foreach(DataTable dt in Current.Project.DataTableCollection)
         {
-          NGTreeNode newnode = new NGTreeNode(dt.Name, new NGTreeNode[1] { new NGTreeNode() });
+					NGTreeNode newnode = new TableNode(dt.Name);
           newnode.Tag = dt;
           no.Nodes.Add( newnode );
         }
@@ -645,7 +683,16 @@ namespace Altaxo.Gui.Graph
 
       Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
     }
-    public void EhView_PasteClipboard()
+
+		public bool EhView_CanPasteFromClipboard()
+		{
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
+			PlotItemCollection coll = o as PlotItemCollection;
+			return null != coll;
+			
+		}
+
+		public void EhView_PasteClipboard()
     {
 			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
 			PlotItemCollection coll = o as PlotItemCollection;
@@ -665,9 +712,7 @@ namespace Altaxo.Gui.Graph
 
           View.Contents_SetItems(_plotItemsTree);
           SetDirty();
-
         }
-
       }
     
 

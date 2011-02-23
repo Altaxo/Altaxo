@@ -32,11 +32,8 @@ namespace Altaxo.Gui.Graph
 {
   #region Interfaces
 	
-	public interface IAxisScaleView : IMVCView
+	public interface IAxisScaleView 
 	{
-
-		IAxisScaleController Controller { get; set; }
-
 		void InitializeAxisType(SelectableListNodeList names);
 		void InitializeTickSpacingType(SelectableListNodeList names);
 		void InitializeLinkTargets(SelectableListNodeList names);
@@ -46,15 +43,16 @@ namespace Altaxo.Gui.Graph
 		void SetBoundaryView(object guiobject);
 		void SetScaleView(object guiobject);
 		void SetTickSpacingView(object guiobject);
+
+		event Action AxisTypeChanged;
+		event Action TickSpacingTypeChanged;
+		event Action LinkTargetChanged;
+
+		/// <summary>Argument is true if the scale is linked, otherwise false.</summary>
+		event Action<bool> LinkChanged;
 	}
 
-  public interface IAxisScaleController : IMVCAController
-  {
-    void EhView_AxisTypeChanged();
-		void EhView_TickSpacingTypeChanged();
-		void EhView_LinkTargetChanged();
-		void EhView_LinkChanged(bool isLinked);
-  }
+ 
 
  
   #endregion
@@ -63,7 +61,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for AxisScaleController.
   /// </summary>
 	[ExpectedTypeOfView(typeof(IAxisScaleView))]
-  public class AxisScaleController : IAxisScaleController
+  public class AxisScaleController : IMVCAController
   {
     protected IAxisScaleView _view;
     protected XYPlotLayer _layer;
@@ -200,8 +198,8 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-      if(null!=View)
-        View.InitializeAxisType(_scaleTypes);
+      if(null!=_view)
+        _view.InitializeAxisType(_scaleTypes);
     }
 
 
@@ -218,8 +216,8 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-			if (null != View)
-				View.InitializeTickSpacingType(_tickSpacingTypes);
+			if (null != _view)
+				_view.InitializeTickSpacingType(_tickSpacingTypes);
 		}
 
     public void InitScaleController(bool bInit)
@@ -229,9 +227,9 @@ namespace Altaxo.Gui.Graph
         object scaleObject = _tempScale;
         _scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
       }
-      if (null != View)
+      if (null != _view)
       {
-        View.SetScaleView(null==_scaleController ? null : _scaleController.ViewObject);
+        _view.SetScaleView(null==_scaleController ? null : _scaleController.ViewObject);
       }
     }
 
@@ -245,12 +243,12 @@ namespace Altaxo.Gui.Graph
         else
           _boundaryController = null;
       }
-      if(null!=View)
+      if(null!=_view)
       {
 				if (_isScaleLinked)
-					View.SetBoundaryView(_linkedScaleParameterController.ViewObject);
+					_view.SetBoundaryView(_linkedScaleParameterController.ViewObject);
 				else
-					View.SetBoundaryView(null!=_boundaryController ? _boundaryController.ViewObject : null);
+					_view.SetBoundaryView(null!=_boundaryController ? _boundaryController.ViewObject : null);
       }
     }
 
@@ -263,9 +261,9 @@ namespace Altaxo.Gui.Graph
 				else
 					_tickSpacingController = null;
 			}
-			if (null != View)
+			if (null != _view)
 			{
-				View.SetTickSpacingView(null != _tickSpacingController ? _tickSpacingController.ViewObject : null);
+				_view.SetTickSpacingView(null != _tickSpacingController ? _tickSpacingController.ViewObject : null);
 			}
 		}
 
@@ -311,6 +309,10 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_TickSpacingTypeChanged()
 		{
+			var selNode = _tickSpacingTypes.FirstSelectedNode; // FirstSelectedNode can be null when the content of the box changes
+			if (null == selNode)
+				return;
+
 			Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Item;
 
 			if (spaceType == _tempTickSpacing.GetType())
@@ -335,28 +337,33 @@ namespace Altaxo.Gui.Graph
 
 		#region IMVCAController
 
-		public IAxisScaleView View
+		public object ViewObject
 		{
 			get { return _view; }
 			set
 			{
 				if (null != _view)
-					_view.Controller = null;
+				{
+					_view.AxisTypeChanged -= this.EhView_AxisTypeChanged;
+					_view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
+					_view.LinkTargetChanged -= this.EhView_LinkTargetChanged;
+					_view.LinkChanged -= this.EhView_LinkChanged;
 
-				_view = value;
+				}
+
+				_view = value as IAxisScaleView;
 
 				if (null != _view)
 				{
-					_view.Controller = this;
+					_view.AxisTypeChanged += this.EhView_AxisTypeChanged;
+					_view.TickSpacingTypeChanged += this.EhView_TickSpacingTypeChanged;
+					_view.LinkTargetChanged += this.EhView_LinkTargetChanged;
+					_view.LinkChanged += this.EhView_LinkChanged;
+
+
 					Initialize(false);
 				}
 			}
-		}
-
-		public object ViewObject
-		{
-			get { return View; }
-			set { View = value as IAxisScaleView; }
 		}
 
 		public object ModelObject

@@ -22,116 +22,124 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class DashCapComboBox : ImageComboBox
 	{
-		bool _isForEndCap;
+		#region Converter
 
-		
-		static SortedDictionary<string, int> _lineCaps;
+		class Converter : IValueConverter
+		{
+			DashCapComboBox _cb;
+
+			public Converter(DashCapComboBox c)
+			{
+				_cb = c;
+			}
+
+			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				var val = (sdd.DashCap)value;
+				return _cb._cachedItems[val];
+
+
+			}
+
+			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				return ((ImageComboBoxItem)value).Value;
+			}
+		}
+
+		#endregion
+		static Dictionary<sdd.DashCap, ImageSource> _cachedImages = new Dictionary<sdd.DashCap, ImageSource>();
+
+		Dictionary<sdd.DashCap, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.DashCap, ImageComboBoxItem>();
 
 		public DashCapComboBox()
 		{
 			InitializeComponent();
 
 
-			SetDefaultValues();
-		}
-
-		public bool IsForEndCap
-		{
-			get { return _isForEndCap; }
-			set { _isForEndCap = value; }
-		}
-
-		void SetDefaultValues()
-		{
-			_lineCaps = new SortedDictionary<string, int>();
-
-			int i = 0;
-			foreach (LineCapEx cap in LineCapEx.GetValues())
+			foreach (sdd.DashCap e in Enum.GetValues(typeof(sdd.DashCap)))
 			{
-				_lineCaps.Add(cap.Name, i);
-				this.Items.Add(new ImageComboBoxItem(this,cap));
-				++i;
+				_cachedItems.Add(e, new ImageComboBoxItem(this, e));
+				Items.Add(_cachedItems[e]);
 			}
-		}
 
+			var binding = new Binding();
+			binding.Source = this;
+			binding.Path = new PropertyPath(_nameOfValueProp);
+			binding.Converter = new Converter(this);
+			this.SetBinding(ComboBox.SelectedItemProperty, binding);
+		}
 	
 
 		#region Dependency property
-		public LineCapEx LineCap
+		private const string _nameOfValueProp = "SelectedDashCap";
+
+		public sdd.DashCap SelectedDashCap
 		{
-			get { var result = (LineCapEx)GetValue(LineCapProperty); return result; }
-			set
-			{
-				SetValue(LineCapProperty, value);
-				this.SelectedIndex = _lineCaps[value.Name];
-			}
+			get { return (sdd.DashCap)GetValue(SelectedDashCapProperty);  }
+			set	{	SetValue(SelectedDashCapProperty, value);	}
 		}
 
-		public static readonly DependencyProperty LineCapProperty =
-				DependencyProperty.Register("LineCap", typeof(double), typeof(LineCapComboBox),
-				new FrameworkPropertyMetadata(LineCapEx.NoAnchor, OnLineCapChanged));
+		public static readonly DependencyProperty SelectedDashCapProperty =
+				DependencyProperty.Register(_nameOfValueProp, typeof(sdd.DashCap), typeof(DashCapComboBox),
+				new FrameworkPropertyMetadata(sdd.DashCap.Flat, OnSelectedDashCapChanged));
 
-		private static void OnLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void OnSelectedDashCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 
 		}
 		#endregion
 
 
-
-
-		protected override void OnSelectionChanged(SelectionChangedEventArgs e)
-		{
-			LineCap = (LineCapEx)((ImageComboBoxItem)this.SelectedItem).Value;
-			base.OnSelectionChanged(e);
-		}
-
-
 		public override string GetItemText(object item)
 		{
-			var value = (LineCapEx)item;
-			return value.Name;
+			var val = (sdd.DashCap)item;
+			return val.ToString();
 		}
-
 
 		public override ImageSource GetItemImage(object item)
 		{
-			var value = (LineCapEx)item;
-			return GetImage(value, _isForEndCap);
+			var val = (sdd.DashCap)item;
+			ImageSource result;
+			if (!_cachedImages.TryGetValue(val, out result))
+				_cachedImages.Add(val, result = GetImage(val));
+			return result;
 		}
 
-		public static DrawingImage GetImage(LineCapEx join, bool isForEndCap)
+
+		public static DrawingImage GetImage(sdd.DashCap val)
 		{
-			double height = 20;
-			double width = 40;
-			double lineWidth = 0.375 * height;
+			double height = 1;
+			double width = 2;
+
+			PenLineCap dashCap = PenLineCap.Flat;
+			switch(val)
+			{
+				default:
+				case sdd.DashCap.Flat:
+					dashCap = PenLineCap.Flat;
+					break;
+				case sdd.DashCap.Round:
+					dashCap = PenLineCap.Round;
+					break;
+				case sdd.DashCap.Triangle:
+					dashCap= PenLineCap.Triangle;
+					break;
+			}
+
 			//
 			// Create the Geometry to draw.
 			//
-			GeometryGroup geometryGroup = new GeometryGroup();
-			if (isForEndCap)
-				geometryGroup.Children.Add(new LineGeometry(new Point(0, height * 0.5), new Point(width * 0.75, height * 0.5)));
-			else
-				geometryGroup.Children.Add(new LineGeometry(new Point(width * 0.25, height * 0.5), new Point(width, height * 0.5)));
-			GeometryDrawing aGeometryDrawing = new GeometryDrawing();
-			aGeometryDrawing.Geometry = geometryGroup;
-			// Outline the drawing with a solid color.
+			var drawingGroup = new DrawingGroup();
+			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0, 0, width, height)) };
+			geometryDrawing.Pen = new Pen(Brushes.Transparent,0);
+			drawingGroup.Children.Add(geometryDrawing);
 
-			var pen = new Pen(Brushes.Black, lineWidth);
-			if (isForEndCap)
-				pen.EndLineCap = PenLineCap.Square;
-			else
-				pen.StartLineCap = PenLineCap.Square;
+			geometryDrawing = new GeometryDrawing() { Geometry = new LineGeometry(new Point(0,height/2), new Point(width,height/2)) };
+			geometryDrawing.Pen = new Pen(Brushes.Black, height/5) { DashCap = dashCap,  DashStyle=DashStyles.Dash };
+			drawingGroup.Children.Add(geometryDrawing);
 
-			aGeometryDrawing.Pen = new Pen(Brushes.Black, lineWidth);
-
-
-
-			//
-			// Use a DrawingImage and an Image control
-			// to display the drawing.
-			//
-			DrawingImage geometryImage = new DrawingImage(aGeometryDrawing);
+			DrawingImage geometryImage = new DrawingImage(drawingGroup);
 
 			// Freeze the DrawingImage for performance benefits.
 			geometryImage.Freeze();

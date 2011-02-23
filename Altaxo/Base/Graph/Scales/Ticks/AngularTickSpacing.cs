@@ -34,8 +34,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		protected bool _usePositiveNegativeAngles;
 
 
-		List<double> _majorTicks;
-		List<double> _minorTicks;
+		List<double> _majorTicks = new List<double>();
+		List<double> _minorTicks = new List<double>();
 
 		#region Serialization
 

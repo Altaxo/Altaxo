@@ -76,6 +76,7 @@ namespace Altaxo.Gui.Common
 			{
 				UIElement uiEle;
 
+			
 				if (child.View is System.Windows.Forms.Control)
 				{
 					var host = new System.Windows.Forms.Integration.WindowsFormsHost();
@@ -88,6 +89,14 @@ namespace Altaxo.Gui.Common
 				}
 				uiEle.GotFocus += EhUIElement_GotFocus;
 				uiEle.LostFocus += EhUIElement_LostFocus;
+
+				if (!string.IsNullOrEmpty(child.Title))
+				{
+					var gbox = new GroupBox();
+					gbox.Header = child.Title;
+					gbox.Content = uiEle;
+					uiEle = gbox;
+				}
 
 				_stackPanel.Children.Add(uiEle);
 			}

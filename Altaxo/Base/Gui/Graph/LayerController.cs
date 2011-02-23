@@ -41,7 +41,6 @@ namespace Altaxo.Gui.Graph
     void EhView_PageChanged(string firstChoice);
     void EhView_SecondChoiceChanged(int index, string item);
     void EhView_PageEnabledChanged(bool pageEnabled);
-
   }
 
   public interface ILayerView
@@ -92,7 +91,7 @@ namespace Altaxo.Gui.Graph
     protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
     protected IMVCAController _layerPositionController;
     protected ILineScatterLayerContentsController _layerContentsController;
-    protected IAxisScaleController[] _axisScaleController;
+    protected IMVCAController[] _axisScaleController;
 
     Dictionary<CSLineID, CSAxisInformation> _axisStyleIds;
     List<CSAxisInformation> _axisStyleInfoSortedByName;
@@ -287,7 +286,8 @@ namespace Altaxo.Gui.Graph
           {
             GridPlane p = _doc.GridPlanes.Contains(_currentPlaneID) ? _doc.GridPlanes[_currentPlaneID] : new GridPlane(_currentPlaneID);
             GridPlaneController ctrl = new GridPlaneController(p);
-            Current.Gui.FindAndAttachControlTo(ctrl);
+            //Current.Gui.FindAndAttachControlTo(ctrl);
+						Current.Gui.FindAndAttachControlUsingGuiTemplate(ctrl, View);
             _GridStyleController.Add(_currentPlaneID, ctrl);
           }
           _currentController = _GridStyleController[_currentPlaneID];
@@ -507,6 +507,7 @@ namespace Altaxo.Gui.Graph
         e.Cancel = true;
     }
 
+
     bool ApplyCurrentController(bool force)
       {
       if (_currentController == null)
@@ -612,7 +613,7 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      ApplyCurrentController(false);
+      ApplyCurrentController(true);
 
       // Remove axis styles that are not enabled
       List<CSLineID> toremove = new List<CSLineID>();

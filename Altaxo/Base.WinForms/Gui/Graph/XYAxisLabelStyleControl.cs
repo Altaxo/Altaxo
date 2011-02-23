@@ -461,8 +461,7 @@ namespace Altaxo.Gui.Graph
       if(null!=Controller)
       {
        
-          Controller.EhView_ColorChanged(m_cbColor.ColorChoice);
-        
+          Controller.EhView_ColorChanged(new Altaxo.Graph.Gdi.BrushX(m_cbColor.ColorChoice));
       }
     }
 
@@ -565,9 +564,9 @@ namespace Altaxo.Gui.Graph
 
    
 
-    public void Color_Initialize(System.Drawing.Color color)
+    public void Color_Initialize(Altaxo.Graph.Gdi.BrushX color)
     {
-      this.m_cbColor.ColorChoice=color;
+      this.m_cbColor.ColorChoice=color.Color;
     }
 
     public Altaxo.Graph.Gdi.Background.IBackgroundStyle Background
@@ -585,9 +584,9 @@ namespace Altaxo.Gui.Graph
       
     }
 
-    public void FontSize_Initialize(float val)
+    public void FontSize_Initialize(double val)
     {
-      m_cbFontSize.FontSize = val;
+      m_cbFontSize.FontSize = (float)val;
     }
     
     public void LabelStyle_Initialize(string[] names, string name)

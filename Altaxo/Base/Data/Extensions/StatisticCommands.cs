@@ -81,8 +81,8 @@ namespace Altaxo.Data
 		/// Calculates statistics of selected columns. Creates a new table where the statistical data will be written to.
 		/// </summary>
 		/// <param name="srctable">Source table.</param>
-		/// <param name="selectedColumns">Selected data columns in the source table.</param>
-		/// <param name="selectedRows">Selected rows in the source table.</param>
+		/// <param name="selectedColumns">Selected data columns in the source table. If the argument is null, all columns will be used.</param>
+		/// <param name="selectedRows">Selected rows in the source table. If the argument is null, all rows will be used.</param>
 		/// <param name="destinationTable">The table where the statistical results are written to.</param>
     public static void DoStatisticsOnColumns(
       this DataColumnCollection srctable,
@@ -152,8 +152,7 @@ namespace Altaxo.Data
         }
         // now fill a new row in the worksheet
 
-        if(NN>0)
-        {
+       
           double mean = sum/NN;
           double ymy0sqr = sumsqr - sum*sum/NN;
           if(ymy0sqr<0) ymy0sqr=0; // if this is lesser zero, it is a rounding error, so set it to zero
@@ -167,7 +166,7 @@ namespace Altaxo.Data
           colSum[currRow] = sum;
           colN[currRow] = NN;
           currRow++; // for the next column
-        }
+        
       } // for all selected columns
       
   

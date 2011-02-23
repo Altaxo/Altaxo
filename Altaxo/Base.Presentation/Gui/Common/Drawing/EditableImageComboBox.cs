@@ -50,10 +50,12 @@ namespace Altaxo.Gui.Common.Drawing
 		protected virtual void ImplantImage(double width, double height)
 		{
 			const double leftRightMargin = 4;
+			const double topDownMargin = 3;
 			var grid = VisualTreeHelper.GetChild(this, 0) as Grid;
 			_imgColumnDefinition = new ColumnDefinition();
 			_imgColumnDefinition.Width = new GridLength(1, GridUnitType.Auto);
 			grid.ColumnDefinitions.Insert(0, _imgColumnDefinition);
+			TextBox textBox = null;
 			foreach (UIElement ele in grid.Children)
 			{
 				if (ele is TextBox || ele is System.Windows.Controls.Primitives.ToggleButton)
@@ -64,11 +66,22 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					ele.SetValue(Grid.ColumnSpanProperty, 1 + (int)ele.GetValue(Grid.ColumnSpanProperty));
 				}
+
+				if (ele is TextBox)
+					textBox = ele as TextBox;
 			}
 
+			if (textBox != null)
+			{
+				_img.Height = textBox.ActualHeight;
+				_img.Margin = textBox.Margin;
+			}
+			else
+			{
+				_img.Margin = new Thickness(leftRightMargin, topDownMargin, leftRightMargin, topDownMargin);
+				_img.Height = grid.ActualHeight;
+			}
 			
-			_img.Height = grid.ActualHeight;
-			_img.Margin = new Thickness(leftRightMargin, 0, leftRightMargin, 0);
 			_img.Stretch = Stretch.Uniform;
 			grid.Children.Add(_img);
 		}
