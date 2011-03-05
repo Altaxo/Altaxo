@@ -46,8 +46,6 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public interface IFitPolynomialDialogControl
   {
-    IFitPolynomialDialogController Controller { get; set; }
-
     int Order { get; set; }
     double FitCurveXmin { get; set; }
     double FitCurveXmax { get; set; }
@@ -114,14 +112,10 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        if(null!=_View)
-          _View.Controller = null;
-        
         _View = value;
 
         if(null!=_View)
         {
-          _View.Controller = this;
           SetElements(false); // set only the view elements, dont't initialize the variables
         }
       }

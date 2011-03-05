@@ -30,10 +30,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   public class ParameterSetViewItem
   {
-    public string Name;
-    public string Value;
-    public bool Vary;
-    public string Variance;
+		public string Name { get; set; }
+    public string Value { get; set; }
+    public bool Vary { get; set; }
+    public string Variance { get; set; }
   }
 
   public interface IParameterSetView

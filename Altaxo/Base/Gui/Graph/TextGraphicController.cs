@@ -39,13 +39,13 @@ namespace Altaxo.Gui.Graph
     void EndUpdate();
 
     ITextGraphicViewEventSink Controller { set; }
-    IBackgroundStyle Background { get; set; }
+    IBackgroundStyle SelectedBackground { get; set; }
     string EditText { get; set; }
-    PointD2D Position { get; set; }
-    double Rotation { get; set; }
-    System.Drawing.FontFamily FontFamily { get; set; }
-    float FontSize { get; set; }
-    BrushX FontColor { get; set; }
+    PointD2D SelectedPosition { get; set; }
+    double SelectedRotation { get; set; }
+    System.Drawing.FontFamily SelectedFontFamily { get; set; }
+    double SelectedFontSize { get; set; }
+    BrushX SelectedFontBrush { get; set; }
 
     void InsertBeforeAndAfterSelectedText(string insbefore, string insafter);
     void RevertToNormal();
@@ -97,17 +97,17 @@ namespace Altaxo.Gui.Graph
       {
         _view.BeginUpdate();
 
-        _view.Background = _doc.Background;
+        _view.SelectedBackground = _doc.Background;
 
         _view.EditText = _doc.Text;
 
-        _view.Position = _doc.Position;
-        _view.Rotation = _doc.Rotation;
+        _view.SelectedPosition = _doc.Position;
+        _view.SelectedRotation = _doc.Rotation;
 
         // fill the font name combobox with all fonts
-        _view.FontFamily = _doc.Font.FontFamily;
+        _view.SelectedFontFamily = _doc.Font.FontFamily;
 
-        _view.FontSize = _doc.Font.Size;
+        _view.SelectedFontSize = _doc.Font.Size;
 
         // fill the font size combobox with reasonable values
         //this.m_cbFontSize.Items.AddRange(new string[] { "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" });
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph
 
 
         // fill the color dialog box
-        _view.FontColor = this._doc.TextFillBrush;
+        _view.SelectedFontBrush = this._doc.TextFillBrush;
 
         _view.EndUpdate();
       }
@@ -183,6 +183,10 @@ namespace Altaxo.Gui.Graph
     {
       g.PageUnit = System.Drawing.GraphicsUnit.Point;
 
+			g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+			g.FillRectangle(Brushes.Transparent, g.VisibleClipBounds);
+			g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+
       // set position and rotation to zero
       //    m_TextObject.Position=new PointF(0,0);
       //    m_TextObject.Rotation = 0;
@@ -201,13 +205,13 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_BackgroundStyleChanged()
     {
-      _doc.Background = _view.Background;
+      _doc.Background = _view.SelectedBackground;
       _view.InvalidatePreviewPanel();
     }
 
     public void EhView_FontFamilyChanged()
     {
-      FontFamily ff = _view.FontFamily;
+      FontFamily ff = _view.SelectedFontFamily;
       // make sure that regular style is available
       if (ff.IsStyleAvailable(FontStyle.Regular))
         this._doc.Font = new Font(ff, this._doc.Font.Size, FontStyle.Regular, GraphicsUnit.World);
@@ -221,15 +225,15 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_FontSizeChanged()
     {
-      float newSize = _view.FontSize;
+      var newSize = _view.SelectedFontSize;
       Font oldFont = this._doc.Font;
-      this._doc.Font = new Font(oldFont.FontFamily, newSize, oldFont.Style, GraphicsUnit.World);
+      this._doc.Font = new Font(oldFont.FontFamily, (float)newSize, oldFont.Style, GraphicsUnit.World);
       _view.InvalidatePreviewPanel();
 
     }
     public void EhView_TextFillBrushChanged()
     {
-      this._doc.TextFillBrush = _view.FontColor;
+      this._doc.TextFillBrush = _view.SelectedFontBrush;
       _view.InvalidatePreviewPanel();
     }
 
@@ -290,8 +294,8 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      _doc.Position = _view.Position;
-      _doc.Rotation = _view.Rotation;
+      _doc.Position = _view.SelectedPosition;
+      _doc.Rotation = _view.SelectedRotation;
 
       if(!object.ReferenceEquals(_originalDoc,_doc))
         _originalDoc.CopyFrom(_doc);

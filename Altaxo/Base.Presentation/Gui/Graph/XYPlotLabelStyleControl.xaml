@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.XYPlotLabelStyleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             mc:Ignorable="d" 
+             >
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="6,0,0,0"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="VerticalAlignment" Value="Center"/>
+			</Style.Setters>
+		</Style>
+		<Style TargetType="CheckBox">
+			<Style.Setters>
+				<Setter Property="Margin" Value="6,0,6,0"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="VerticalAlignment" Value="Center"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Label Grid.Column="0" Grid.Row="0" Content="Label column:"/>
+		<TextBox x:Name="_edLabelColumn" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" IsEnabled="False"/>
+		<Button Grid.Column="3" Grid.Row="0" Content="Select.." Click="EhSelectLabelColumn_Click"/>
+		<CheckBox x:Name="m_chkIndependentColor" Grid.Column="0" Grid.Row="2" Content="Indep. color:" Checked="EhIndependentColor_CheckChanged" Unchecked="EhIndependentColor_CheckChanged"/>
+		
+		<Label Grid.Column="0" Grid.Row="4" Content="Font:"/>
+		<Label Grid.Column="0" Grid.Row="6" Content="Font size:"/>
+		<Label Grid.Column="0" Grid.Row="10" Content="Horz. alignment:"/>
+		<Label Grid.Column="0" Grid.Row="12" Content="Vert. alignment:"/>
+		<CheckBox x:Name="m_chkAttachToAxis" Grid.Column="0" Grid.Row="14" Content="Attach to axis:" Checked="EhAttachToAxis_CheckedChanged" Unchecked="EhAttachToAxis_CheckedChanged"/>
+		<Label Grid.Column="0" Grid.Row="16" Content="Background:"/>
+
+		<Label Grid.Column="2" Grid.Row="4" Content="Style:"/>
+		<Label Grid.Column="2" Grid.Row="6" Content="Rotation:"/>
+		<GroupBox Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" Grid.RowSpan="5" Header="Offset (%):" Margin="4,8,0,0"/>
+		<Label Grid.Column="2" Grid.Row="10" Content="X:"/>
+		<Label Grid.Column="2" Grid.Row="12" Content="Y:"/>
+		<Label Grid.Column="2" Grid.Row="16" Content="Brush:"/>
+
+		<axogcd:ColorComboBox x:Name="m_cbColor" Grid.Column="1" Grid.Row="2" SelectedColorChanged="EhColor_SelectionChangeCommitted"/>
+		<axogcd:FontFamilyComboBox x:Name="m_cbFontFamily" Grid.Column="1" Grid.Row="4" />
+		<axogcd:FontStyleComboBox x:Name="m_cbFontStyle" Grid.Column="3" Grid.Row="6" />
+		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="6" SelectedFontSizeChanged="EhFontSize_SelectionChangeCommitted"/>
+		<axogcd:RotationComboBox x:Name="m_edRotation" Grid.Column="3" Grid.Row="6" />
+		<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhHorizontalAlignment_SelectionChangeCommitted"/>
+		<axogc:ValidatingTextBox x:Name="m_edXOffset" Grid.Column="3" Grid.Row="10" Validating="EhXOffset_Validating"/>
+		<ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="12" SelectionChanged="EhVerticalAlignment_SelectionChangeCommitted"/>
+		<axogc:ValidatingTextBox x:Name="m_edYOffset" Grid.Column="3" Grid.Row="12" Validating="EhYOffset_Validating"/>
+		<ComboBox x:Name="m_cbAttachedAxis" Grid.Column="1" Grid.Row="14"/>
+		<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="16"/>
+		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="16"/>
+	</Grid>
+</UserControl>

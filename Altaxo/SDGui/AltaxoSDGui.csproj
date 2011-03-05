@@ -183,10 +183,6 @@
       <Project>{323D97E6-92A8-40B4-99C1-D64D4368DFC7}</Project>
       <Name>AltaxoBase.Presentation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Base.WinForms\AltaxoBase.WinForms.csproj">
-      <Project>{35576625-F69C-4142-AF4A-D55E507E1CFE}</Project>
-      <Name>AltaxoBase.WinForms</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Base\AltaxoBase.csproj">
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
       <Name>AltaxoBase</Name>
@@ -221,17 +217,11 @@
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml.cs">
       <DependentUpon>ProjectBrowseControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Scripting\SDPureScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Scripting\SDPureScriptControlWpf.xaml.cs">
       <DependentUpon>SDPureScriptControlWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
-    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\SharpDevelop\SDWorksheetViewContentWpf.cs" />
     <Compile Include="Main\MenuCommands\AutostartCommands.cs">
       <SubType>Code</SubType>
@@ -269,9 +259,6 @@
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="Gui\Scripting\SDPureScriptControl.resx">
-      <DependentUpon>SDPureScriptControl.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

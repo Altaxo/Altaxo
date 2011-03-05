@@ -27,7 +27,7 @@ namespace Altaxo.Gui.Data
 
 		public void InitializeCyclingVarColumn(SelectableListNodeList list)
 		{
-			_cbColWithCyclingVar.Initialize(list);
+			GuiHelper.Initialize(_cbColWithCyclingVar,list);
 		}
 
 		public void InitializeColumnsToAverage(SelectableListNodeList list)

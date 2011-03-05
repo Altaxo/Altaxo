@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Altaxo.Gui.Common.EquallySpacedIntervalControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             mc:Ignorable="d" >
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="4,0,0,0"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+			</Style.Setters>
+		</Style>
+		<Style TargetType="RadioButton">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,4,8,0"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+		</Grid.RowDefinitions>
+		<RadioButton x:Name="_rbStartEndIntv" Grid.Column="0" Grid.Row="0" Content="Start, End, Intv." Checked="_rbStartEndCount_CheckedChanged"/>
+		<RadioButton x:Name="_rbStartCountInterval" Grid.Column="1" Grid.Row="0" Content="Start, Count, Intv." Checked="_rbStartEndCount_CheckedChanged"/>
+		<RadioButton x:Name="_rbStartEndCount" Grid.Column="0" Grid.Row="2" Content="Start, End, Count" Checked="_rbStartEndCount_CheckedChanged"/>
+		<RadioButton x:Name="_rbEndCountIntv" Grid.Column="1" Grid.Row="2" Content="End, Count, Intv." Checked="_rbStartEndCount_CheckedChanged"/>
+		<Label Grid.Column="0" Grid.Row="4" Content="Start:"/>
+		<axogc:ValidatingTextBox x:Name="_edStart" Grid.Column="1" Grid.Row="4" Validating="_edStart_TextChanged"/>
+		<Label Grid.Column="0" Grid.Row="6" Content="End:"/>
+		<axogc:ValidatingTextBox x:Name="_edEnd" Grid.Column="1" Grid.Row="6" Validating="_edEnd_TextChanged"/>
+		<Label Grid.Column="0" Grid.Row="8" Content="Interval:"/>
+		<axogc:ValidatingTextBox x:Name="_edIntv" Grid.Column="1" Grid.Row="8" Validating="_edIntv_TextChanged"/>
+		<Label Grid.Column="0" Grid.Row="10" Content="Count:"/>
+		<axogc:ValidatingTextBox x:Name="_edCount" Grid.Column="1" Grid.Row="10" Validating="_edCount_TextChanged"/>
+	</Grid>
+</UserControl>

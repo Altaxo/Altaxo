@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.DensityScaleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             >
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="4"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+		</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0" Content="Scale:"/>
+		<ComboBox x:Name="_cbScales" Grid.Column="1" Grid.Row="0" SelectionChanged="EhScaleSelectionChangeCommitted"/>
+		<Viewbox x:Name="_boundaryHost" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"/>
+		<Viewbox x:Name="_scaleViewHost" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"/>
+	</Grid>
+</UserControl>

@@ -60,6 +60,17 @@ namespace Altaxo.Gui
 			}
 		}
 
+		/// <summary>
+		/// Sets the items of a list box with <see cref="CheckableSelectableListNode"/> items. We presume here that the ListBox has an appropriate DataTemplate, thus only the ItemsSource
+		/// property of the ListBox is set with the data.
+		/// </summary>
+		/// <param name="view">ListBox to set.</param>
+		/// <param name="data">The data to set for the ListBox.</param>
+		public static void Initialize(ListBox view, CheckableSelectableListNodeList data)
+		{
+			view.ItemsSource = data;
+		}
+
 		public static void SynchronizeSelectionFromGui(ListBox view)
 		{
 			foreach (ISelectableItem it in view.ItemsSource)

@@ -56,17 +56,8 @@ namespace Altaxo.Gui.Worksheet
 		{
 			if (_detailControl != null)
 				_mainGrid.Children.Remove(_detailControl);
-
-			if (detailControl is System.Windows.Forms.Control)
-			{
-				var host = new System.Windows.Forms.Integration.WindowsFormsHost();
-				host.Child = (System.Windows.Forms.Control)detailControl;
-				_detailControl = host;
-			}
-			else
-			{
-				_detailControl = (UIElement)detailControl;
-			}
+		
+			_detailControl = (UIElement)detailControl;
 
 			if (null != _detailControl)
 			{

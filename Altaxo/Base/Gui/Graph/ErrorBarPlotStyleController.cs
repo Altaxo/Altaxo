@@ -42,11 +42,11 @@ namespace Altaxo.Gui.Graph
     bool DoNotShiftIndependentVariable { get; set; }
     bool IsHorizontalStyle { get; set; }
     void InitializeSymbolSizeList(string[] names, int selection);
-    string SymbolSize { get; }
+    double SymbolSize { get; }
     bool IndependentNegativeError { get; set; }
     string PositiveError { get; set; }
     string NegativeError { get; set; }
-    string SkipFrequency { get; set; }
+    int SkipFrequency { get; set; }
     event EventHandler ChoosePositiveError;
     event EventHandler ChooseNegativeError;
     event EventHandler IndependentNegativeError_CheckChanged;
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Graph
         _view.InitializeSymbolSizeList(new string[] { Serialization.GUIConversion.ToString(_tempSymbolSize) }, 0);
 
         _tempSkipFreq = _doc.SkipFrequency;
-        _view.SkipFrequency = Serialization.GUIConversion.ToString(_tempSkipFreq);
+        _view.SkipFrequency =_tempSkipFreq;
 
 
         // Errors
@@ -160,30 +160,12 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
 }
     void EhView_VerifySymbolSize(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      string s = _view.SymbolSize;
-      double val;
-      if (Serialization.GUIConversion.IsDouble(s, out val))
-      {
-        _tempSymbolSize = val;
-      }
-      else
-      {
-        e.Cancel = true;
-      }
+			_tempSymbolSize = _view.SymbolSize;
     }
 
     void EhView_VerifySkipFrequency(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      string s = _view.SkipFrequency;
-      int val;
-      if (Serialization.GUIConversion.IsInteger(s, out val))
-      {
-        _tempSkipFreq = val;
-      }
-      else
-      {
-        e.Cancel = true;
-      }
+			_tempSkipFreq = _view.SkipFrequency;
     }
 
 

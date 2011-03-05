@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
       this.ResumeLayout();
     }
 
-    public Altaxo.Graph.Gdi.Background.IBackgroundStyle Background
+    public Altaxo.Graph.Gdi.Background.IBackgroundStyle SelectedBackground
     {
       get
       {
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public PointD2D Position
+    public PointD2D SelectedPosition
     {
       get
       {
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public double Rotation
+    public double SelectedRotation
     {
       get
       {
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public FontFamily FontFamily
+    public FontFamily SelectedFontFamily
     {
       get
       {
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public float FontSize
+    public double SelectedFontSize
     {
       get
       {
@@ -121,11 +121,11 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        m_cbFontSize.FontSize = value;
+        m_cbFontSize.FontSize = (float)value;
       }
     }
 
-    public Altaxo.Graph.Gdi.BrushX FontColor
+    public Altaxo.Graph.Gdi.BrushX SelectedFontBrush
     {
       get
       {

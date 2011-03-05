@@ -117,9 +117,7 @@ namespace Altaxo.Gui.Graph
         _controller = value;
       }
     }
-
-   
-
+		
 
     public void Initialize(NGTreeNode[] nodes)
     {

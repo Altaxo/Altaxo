@@ -56,22 +56,12 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsDateTime(string s, out DateTime val)
     {
-      bool bRet=false;
-      val = DateTime.MinValue;
-      try
-      {
-        val = System.Convert.ToDateTime(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+			return DateTime.TryParse(s, System.Globalization.DateTimeFormatInfo.CurrentInfo, System.Globalization.DateTimeStyles.AssumeLocal, out val);
     }
 
     public static string ToString(DateTime o)
     {
-      return o.ToString();
+      return o.ToString(System.Globalization.CultureInfo.CurrentUICulture);
     }
 
     /// <summary>
@@ -93,23 +83,13 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsTimeSpan(string s, out TimeSpan val)
     {
-      bool bRet=false;
-      val = TimeSpan.Zero;
-      try
-      {
-        val = TimeSpan.Parse(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+			return TimeSpan.TryParse(s, System.Globalization.DateTimeFormatInfo.CurrentInfo, out val);
     }
 
 
     public static string ToString(TimeSpan o)
     {
-      return o.ToString();
+      return o.ToString(String.Empty, System.Globalization.CultureInfo.CurrentUICulture);
 		}
 
 		#endregion
@@ -136,17 +116,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a double.</returns>
     public static bool IsDouble(string s, out double  val)
     {
-      bool bRet=false;
-      val = double.NaN;
-      try
-      {
-        val = System.Convert.ToDouble(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+			return double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentUICulture, out val);
     }
 
 		public static bool IsDoubleOrNull(string s, out double? val)
@@ -183,7 +153,7 @@ namespace Altaxo.Serialization
 			else
 			{
 				int val1;
-				if (int.TryParse(s,out val1))
+				if (int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.CurrentUICulture, out val1))
 				{
 					val = val1;
 					return true;
@@ -198,7 +168,7 @@ namespace Altaxo.Serialization
 
     public static string ToString(double val)
     {
-      return val.ToString();
+      return val.ToString(System.Globalization.CultureInfo.CurrentUICulture);
     }
 
 		public static string ToString(double? val)
@@ -206,17 +176,17 @@ namespace Altaxo.Serialization
 			if (val == null)
 				return string.Empty;
 			else
-				return val.ToString();
+				return ((double)val).ToString(System.Globalization.CultureInfo.CurrentUICulture);
 		}
 
     public static string ToString(double val, int accuracy)
     {
-      return val.ToString("G"+accuracy.ToString());
+			return val.ToString("G" + accuracy.ToString(), System.Globalization.CultureInfo.CurrentUICulture);
     }
 
     public static string ToString(double val, string format)
     {
-      return val.ToString(format);
+			return val.ToString(format, System.Globalization.CultureInfo.CurrentUICulture);
     }
 
     /*
@@ -237,7 +207,7 @@ namespace Altaxo.Serialization
       StringBuilder stb = new StringBuilder();
       foreach (int v in vals)
       {
-        stb.Append(ToString(v));
+				stb.Append(ToString(v));
         stb.Append(" ");
       }
       return stb.ToString().TrimEnd();
@@ -278,30 +248,20 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsInteger(string s, out int  val)
     {
-      bool bRet=false;
-      val = int.MinValue;
-      try
-      {
-        val = System.Convert.ToInt32(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+			return int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.CurrentUICulture, out val);
     }
 
     public static string ToString(int val)
     {
-      return val.ToString();
+			return val.ToString(System.Globalization.CultureInfo.CurrentUICulture);
     }
 
 		public static string ToString(int? val)
 		{
 			if (val == null)
 				return string.Empty;
-			else 
-				return val.ToString();
+			else
+				return ((int)val).ToString(System.Globalization.CultureInfo.CurrentUICulture);
 		}
 
 		public static string ToString(int[] vals)
@@ -335,7 +295,7 @@ namespace Altaxo.Serialization
 
 			for (int i = 0; i < result.Length; i++)
 			{
-				if (!int.TryParse(parts[i], out result[i]))
+				if (!int.TryParse(parts[i], System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.CurrentUICulture, out result[i]))
 				{
 					failed = true;
 					break;

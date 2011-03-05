@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Graph;
@@ -105,25 +104,6 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			ctrl.Doc.ShowPrintDialogAndPrint();
-
-			/*
-			try
-			{
-				if(Current.Gui.ShowPrintDialog())
-				{
-					Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
-					Current.PrintingService.PrintDocument.Print();
-				}
-			}
-			catch(Exception ex)
-			{
-				System.Windows.Forms.MessageBox.Show(ctrl.View.Form,ex.ToString());
-			}
-			finally
-			{
-				Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
-			}
-			*/
 		}
 	}
 
@@ -135,24 +115,6 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			ctrl.Doc.ShowPrintPreviewDialog();
-			/*
-			try
-			{
-				System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-				Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
-				dlg.Document = Current.PrintingService.PrintDocument;
-				dlg.ShowDialog(ctrl.View.Form);
-				dlg.Dispose();
-			}
-			catch(Exception ex)
-			{
-				System.Windows.Forms.MessageBox.Show(ctrl.View.Form,ex.ToString());
-			}
-			finally
-			{
-				Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
-			}
-			*/
 		}
 	}
 
@@ -248,13 +210,13 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			System.IO.Stream myStream;
-			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+			var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog();
 
 			saveFileDialog1.Filter = "Altaxo graph files (*.axogrp)|*.axogrp|All files (*.*)|*.*";
 			saveFileDialog1.FilterIndex = 1;
 			saveFileDialog1.RestoreDirectory = true;
 
-			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+			if (true == saveFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
 			{
 				if ((myStream = saveFileDialog1.OpenFile()) != null)
 				{

@@ -10,13 +10,13 @@
 			<GroupBox.Header>
 				<TextBlock Width="120" TextWrapping="Wrap" >Number of data columns changing to property columns:</TextBlock>
 			</GroupBox.Header>
-			<local:MinMaxIntegerControl x:Name="_ctrlNumMovedDataCols" />
+			<local:Int32UpDown x:Name="_ctrlNumMovedDataCols"  Minimum="0" MinimumReplacementText="None" MaximumReplacementText="All" />
 		</GroupBox>
 		<GroupBox>
 			<GroupBox.Header>
 				<TextBlock Width="120" TextWrapping="Wrap" >Number of property columns changing to data columns:</TextBlock>
 			</GroupBox.Header>
-			<local:MinMaxIntegerControl x:Name="_ctrlNumMovedPropCols"/>
+			<local:Int32UpDown x:Name="_ctrlNumMovedPropCols" Minimum="0" MinimumReplacementText="None" MaximumReplacementText="All"/>
 		</GroupBox>
 
 	</StackPanel>

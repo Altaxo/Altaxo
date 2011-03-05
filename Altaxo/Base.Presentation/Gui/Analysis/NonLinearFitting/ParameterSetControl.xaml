@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Altaxo.Gui.Analysis.NonLinearFitting.ParameterSetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             mc:Ignorable="d" MinHeight="60"
+             >
+	<DataGrid x:Name="_dataGrid" AutoGenerateColumns="False" AlternationCount="2" AlternatingRowBackground="Azure" CanUserAddRows="False">
+		<DataGrid.Resources>
+			<!-- style to apply to DataGridTextColumn in edit mode  -->
+			<Style x:Key="CellEditStyle" TargetType="{x:Type TextBox}">
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Padding" Value="0"/>
+				<Style.Triggers>
+					<Trigger Property="Validation.HasError" Value="true">
+						<Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self},
+                                    Path=(Validation.Errors)[0].ErrorContent}"/>
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+
+
+		</DataGrid.Resources>
+		<DataGrid.Columns>
+			<DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"/>
+			<DataGridTextColumn Header="Value"  EditingElementStyle="{StaticResource CellEditStyle}"
+													
+													>
+				<DataGridTextColumn.Binding>
+					<Binding Path="Value">
+						<Binding.ValidationRules>
+							<axogc:NumericDoubleConverter AllowInfinity="True" AllowNaN="False"/>
+						</Binding.ValidationRules>
+					</Binding>
+				</DataGridTextColumn.Binding>
+			</DataGridTextColumn>
+			<DataGridCheckBoxColumn Header="Vary?" Binding="{Binding Vary}"/>
+			<DataGridTextColumn Header="Variance" EditingElementStyle="{StaticResource CellEditStyle}">
+				<DataGridTextColumn.Binding>
+					<Binding Path="Variance">
+						<Binding.ValidationRules>
+							<axogc:NumericDoubleConverter AllowInfinity="False" AllowNaN="False"/>
+						</Binding.ValidationRules>
+					</Binding>
+				</DataGridTextColumn.Binding>
+			</DataGridTextColumn>
+		</DataGrid.Columns>
+	</DataGrid>
+</UserControl>

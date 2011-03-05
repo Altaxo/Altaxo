@@ -71,7 +71,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -85,9 +84,50 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="WPG">
+      <HintPath>..\..\Libraries\bin\WPG.dll</HintPath>
+    </Reference>
+    <Reference Include="WPGBrushEditor">
+      <HintPath>..\..\Libraries\bin\WPGBrushEditor.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Gui\Analysis\Multivariate\PLSPredictValueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\Multivariate\PLSStartAnalysisControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\Multivariate\SpectralPreprocessingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\NonLinearFitting\FitElementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\NonLinearFitting\FitEnsembleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\NonLinearFitting\FitFunctionSelectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\NonLinearFitting\NonlinearFitControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\SavitzkyGolayParameterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\BackgroundCancelControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -228,6 +268,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\EquallySpacedIntervalControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\FreeTextComboBoxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\HelpAboutControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\MinMaxIntegerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -240,13 +292,25 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\PropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\Resources\styledictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Common\SingleChoiceComboBoxControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\SingleValueControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SpinAndComboBoxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\TabbedElementControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -276,7 +340,59 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\BarGraphPlotStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ColorProviderBaseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ColorProviderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\DensityImagePlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\DensityImagePlotItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\DensityScaleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ErrorBarPlotStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\FillToCurvePlotStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\FitPolynomialDialogControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\FunctionPlotDataControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\G2DCartesicCSControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\GraphExportOptionsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -300,7 +416,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\PlotGroupCollectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\PlottingRangeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\PositionSizeRotationScaleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\PrintableAreaSetupControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -316,6 +444,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\SingleColumnChoiceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\TextGraphicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\TitleFormatLayerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -323,6 +459,10 @@
     <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\WaterfallTransformControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\XYAxisLabelStyleControl.xaml">
       <SubType>Designer</SubType>
@@ -336,7 +476,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\XYPlotGroupControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\XYPlotLabelStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\XYPlotLayerContentsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\XYPlotLineStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\XYPlotScatterStyleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\XYPlotStyleCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -398,6 +558,33 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gui\Analysis\Multivariate\PLSPredictValueControl.xaml.cs">
+      <DependentUpon>PLSPredictValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\Multivariate\PLSStartAnalysisControl.xaml.cs">
+      <DependentUpon>PLSStartAnalysisControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\Multivariate\SpectralPreprocessingControl.xaml.cs">
+      <DependentUpon>SpectralPreprocessingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.xaml.cs">
+      <DependentUpon>FitElementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\NonLinearFitting\FitEnsembleControl.xaml.cs">
+      <DependentUpon>FitEnsembleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\NonLinearFitting\FitFunctionSelectionControl.xaml.cs">
+      <DependentUpon>FitFunctionSelectionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\NonLinearFitting\NonlinearFitControl.xaml.cs">
+      <DependentUpon>NonlinearFitControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.xaml.cs">
+      <DependentUpon>ParameterSetControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\SavitzkyGolayParameterControl.xaml.cs">
+      <DependentUpon>SavitzkyGolayParameterControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\BackgroundCancelControl.xaml.cs">
       <DependentUpon>BackgroundCancelControl.xaml</DependentUpon>
     </Compile>
@@ -409,6 +596,15 @@
       <DependentUpon>CheckableGroupBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
+    <Compile Include="Gui\Common\EquallySpacedIntervalControl.xaml.cs">
+      <DependentUpon>EquallySpacedIntervalControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\FreeTextComboBoxControl.xaml.cs">
+      <DependentUpon>FreeTextComboBoxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\HelpAboutControl.xaml.cs">
+      <DependentUpon>HelpAboutControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Int32UpDown.cs" />
     <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
       <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
@@ -527,11 +723,21 @@
       <DependentUpon>MultiSelectTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\MultiSelectTreeViewItem.cs" />
+    <Compile Include="Gui\Common\NumericDoubleConverter.cs" />
     <Compile Include="Gui\Common\NumericUpDownBase.cs" />
-    <Compile Include="Gui\Common\SingleChoiceComboBoxControl.cs" />
+    <Compile Include="Gui\Common\PropertyControl.xaml.cs">
+      <DependentUpon>PropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\RichTextBoxWithDefaultSize.cs" />
+    <Compile Include="Gui\Common\SingleChoiceComboBoxControl.xaml.cs">
+      <DependentUpon>SingleChoiceComboBoxControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\SingleChoiceRadioStackPanel.cs" />
     <Compile Include="Gui\Common\SingleValueControl.xaml.cs">
       <DependentUpon>SingleValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SpinAndComboBoxControl.xaml.cs">
+      <DependentUpon>SpinAndComboBoxControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\TabbedElementControl.xaml.cs">
       <DependentUpon>TabbedElementControl.xaml</DependentUpon>
@@ -559,10 +765,49 @@
       <DependentUpon>AxisScaleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs" />
+    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.xaml.cs">
+      <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorProviderBaseControl.xaml.cs">
+      <DependentUpon>ColorProviderBaseControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorProviderControl.xaml.cs">
+      <DependentUpon>ColorProviderControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.xaml.cs">
+      <DependentUpon>ColumnDrivenColorPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml.cs">
+      <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityImagePlotStyleControl.xaml.cs">
+      <DependentUpon>DensityImagePlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityImagePlotItemControl.xaml.cs">
+      <DependentUpon>DensityImagePlotItemControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\DensityScaleControl.xaml.cs">
+      <DependentUpon>DensityScaleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.xaml.cs">
+      <DependentUpon>ErrorBarPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\FillToCurvePlotStyleControl.xaml.cs">
+      <DependentUpon>FillToCurvePlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\FitPolynomialDialogControl.xaml.cs">
+      <DependentUpon>FitPolynomialDialogControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\FunctionPlotDataControl.xaml.cs">
+      <DependentUpon>FunctionPlotDataControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\G2DCartesicCSControl.xaml.cs">
       <DependentUpon>G2DCartesicCSControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\GdiFontGlue.cs" />
+    <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
+      <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\ImageGraphicControl.xaml.cs">
       <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
     </Compile>
@@ -579,8 +824,17 @@
     <Compile Include="Gui\Graph\OrgEndSpanControl.xaml.cs">
       <DependentUpon>OrgEndSpanControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\PlotGroupCollectionControl.xaml.cs">
+      <DependentUpon>PlotGroupCollectionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PlottingRangeControl.xaml.cs">
+      <DependentUpon>PlottingRangeControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.xaml.cs">
       <DependentUpon>PositionSizeRotationScaleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PrintableAreaSetupControl.xaml.cs">
+      <DependentUpon>PrintableAreaSetupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.xaml.cs">
       <DependentUpon>AngularTickSpacingControl.xaml</DependentUpon>
@@ -590,6 +844,12 @@
     </Compile>
     <Compile Include="Gui\Graph\ShapeGraphicControl.xaml.cs">
       <DependentUpon>ShapeGraphicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\SingleColumnChoiceControl.xaml.cs">
+      <DependentUpon>SingleColumnChoiceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\TextGraphicControl.xaml.cs">
+      <DependentUpon>TextGraphicControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\TitleFormatLayerControl.xaml.cs">
       <DependentUpon>TitleFormatLayerControl.xaml</DependentUpon>
@@ -613,6 +873,9 @@
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Viewing\PresentationGraphController.cs" />
+    <Compile Include="Gui\Graph\WaterfallTransformControl.xaml.cs">
+      <DependentUpon>WaterfallTransformControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\XYAxisLabelStyleControl.xaml.cs">
       <DependentUpon>XYAxisLabelStyleControl.xaml</DependentUpon>
     </Compile>
@@ -622,8 +885,23 @@
     <Compile Include="Gui\Graph\XYPlotDataControl.xaml.cs">
       <DependentUpon>XYPlotDataControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\XYPlotGroupControl.xaml.cs">
+      <DependentUpon>XYPlotGroupControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotLabelStyleControl.xaml.cs">
+      <DependentUpon>XYPlotLabelStyleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\XYPlotLayerContentsControl.xaml.cs">
       <DependentUpon>XYPlotLayerContentsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotLineStyleControl.xaml.cs">
+      <DependentUpon>XYPlotLineStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotScatterStyleControl.xaml.cs">
+      <DependentUpon>XYPlotScatterStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.xaml.cs">
+      <DependentUpon>XYPlotStyleCollectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GuiHelper.cs" />
     <Compile Include="Gui\Scripting\FitFunctionScriptControl.xaml.cs">

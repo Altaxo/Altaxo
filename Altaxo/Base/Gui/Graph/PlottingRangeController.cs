@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="fromValue">The old value.</param>
     /// <param name="toValue">The new selected item of the combo box.</param>
-    void EhView_Changed(string fromValue, string toValue);
+    void EhView_Changed(int fromValue, int toValue);
   }
 
   public interface IPlottingRangeView
@@ -129,18 +129,8 @@ namespace Altaxo.Gui.Graph
 
     #region IPlotRangeViewEventSink Members
 
-    public void EhView_Changed(string fromValue, string toValue)
+    public void EhView_Changed(int from, int to)
     {
-      int from;
-      int to = int.MaxValue;
-      if (!int.TryParse(fromValue, out from))
-        Current.Gui.ErrorMessageBox("PositiveIntegerRange 'From' is not a integer number");
-      if (toValue != null && toValue.Trim().Length > 0)
-      {
-        if (!int.TryParse(toValue, out to))
-          Current.Gui.ErrorMessageBox("PositiveIntegerRange 'To' is not a integer number");
-      }
-
       try
       {
         if (to != int.MaxValue)

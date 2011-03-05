@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using ICSharpCode.Core;
 using Altaxo;
 using Altaxo.Data;

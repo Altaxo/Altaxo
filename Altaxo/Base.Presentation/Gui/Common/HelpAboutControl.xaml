@@ -1,0 +1,83 @@
+﻿<Window x:Class="Altaxo.Gui.Common.HelpAboutControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Width="500"
+							Title="About Altaxo" >
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+			<Label Grid.Row="0" Content="(C) 2002-2011 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"/>
+		<Label Grid.Row="0" Content="{Binding VersionString}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+		<Label Grid.Row="0" Content="Altaxo" FontFamily="Times New Roman" FontSize="32" HorizontalAlignment="Center" />
+		<Label Grid.Row="1" Content="data processing / data plotting program" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center"/>
+		<RichTextBox Grid.Row="2">
+			<RichTextBox.Document>
+				<FlowDocument>
+					<Paragraph> You can obtain the latest version of Altaxo from
+						<Hyperlink Foreground="Blue" NavigateUri="http://sourceforge.net/projects/altaxo" Click="EhOpenExplorer" Cursor="AppStarting">
+						http://sourceforge.net/projects/altaxo
+					</Hyperlink>
+</Paragraph>
+					<Paragraph TextAlignment="Center">ACKNOWLEDGEMENTS</Paragraph>
+					<Paragraph>
+						This projects would not be possible without the great contributions of the open
+			    source community. I want to thank the authors of the projects, that are included
+    directly or indirectly in this project:
+					</Paragraph>
+					<List>
+						<ListItem>
+							<Paragraph>SharpDevelop, (www.icsharpcode.net), from which the GUI and the cool code completion
+  and syntax highlighting is adopted.
+- The authors of the projects that are included in SharpDevelop and therefore also in Altaxo</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Matpack (B.Gammel, www.matpack.de). A lot of the function library was adopted from the
+  C++ sources of Matpack.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Exocortex DSP (exocortexdsp.sourceforge.net) contributes the complex library.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>dnAnalytics (www.dnAnalytics.net) for part of the linear algebra and optimization functions.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>The authors of the projects that I have forgotten (sorry!), and the authors of the
+  countless support tools that are neccessary to manage such a project (for instance
+  Subversion, WinMerge, NUnit, NDoc).</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>My wife for for her support, new ideas and critism.</Paragraph>
+						</ListItem>
+					</List>
+					<Paragraph>
+                 Dr. D. Lellinger
+					</Paragraph>
+				</FlowDocument>
+			</RichTextBox.Document>
+		</RichTextBox>
+			<Expander Grid.Row="4" Header="License" Margin="0,12,0,0">
+			<RichTextBox>
+				<RichTextBox.Document>
+					<FlowDocument>
+						
+						<Paragraph>
+							This program is licensed unter the terms and conditions of the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991. You can find a copy of the license
+							in the file 
+							&lt;&lt;main_project_folder&gt;&gt;/doc/license.txt.</Paragraph>
+						<Paragraph>
+							Parts of the program
+						may be licensed unter different terms and conditions.
+							Please refer to the folder &lt;&lt;main_project_folder&gt;&gt;/doc/Contributions to see the licenses corresponding to the contributions.</Paragraph>
+					</FlowDocument>
+				</RichTextBox.Document>
+			</RichTextBox>
+		</Expander>
+	</Grid>
+</Window>

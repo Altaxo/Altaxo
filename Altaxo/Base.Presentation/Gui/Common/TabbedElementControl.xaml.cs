@@ -30,6 +30,7 @@ namespace Altaxo.Gui.Common
 			{
 				item.LostFocus -= item_LostFocus;
 				item.GotFocus -= item_GotFocus;
+				item.Content = null;
 			}
 
 			_tabControl.Items.Clear();
@@ -40,17 +41,9 @@ namespace Altaxo.Gui.Common
 			var item = new TabItem();
 			item.Header = title;
 
-			if (view is UIElement)
-			{
+			
 				item.Content = (UIElement)view;
-			}
-			else
-			{
-				var host = new System.Windows.Forms.Integration.WindowsFormsHost();
-				host.Child = (System.Windows.Forms.Control)view;
-				item.Content = host;
-
-			}
+			
 
 			item.LostFocus += item_LostFocus;
 			item.GotFocus += item_GotFocus;

@@ -113,14 +113,16 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-	
 
 
+
+		/// <summary>
+		/// Triggers the rendering of the graph area by invalidating its visual. This function is safe to call from other threads.
+		/// </summary>
 		public void TriggerRenderingOfGraphArea()
 		{
-			this.InvalidateVisual();
+			Current.Gui.Execute(() => this.InvalidateVisual());
 		}
-	
 
 	
 

@@ -52,8 +52,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.SharpDevelop.Bu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Core.WinForms", "Libraries\SD\Main\ICSharpCode.Core.WinForms\ICSharpCode.Core.WinForms.csproj", "{857CA1A3-FC88-4BE0-AB6A-D1EE772AB288}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBase.WinForms", "Altaxo\Base.WinForms\AltaxoBase.WinForms.csproj", "{35576625-F69C-4142-AF4A-D55E507E1CFE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OriginConnector", "AddIns\OriginConnector\OriginConnector.csproj", "{F1FDBA3D-F52A-476E-9000-DF024B25C456}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Core.Presentation", "Libraries\SD\Main\ICSharpCode.Core.Presentation\ICSharpCode.Core.Presentation.csproj", "{7E4A7172-7FF5-48D0-B719-7CD959DD1AC9}"
@@ -301,18 +299,6 @@ Global
 		{857CA1A3-FC88-4BE0-AB6A-D1EE772AB288}.Release|Any CPU.Build.0 = Release|Any CPU
 		{857CA1A3-FC88-4BE0-AB6A-D1EE772AB288}.Release|x86.ActiveCfg = Release|x86
 		{857CA1A3-FC88-4BE0-AB6A-D1EE772AB288}.Release|x86.Build.0 = Release|x86
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Debug|x86.ActiveCfg = Debug|x86
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Debug|x86.Build.0 = Debug|x86
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.DesignTimeDebugging|Any CPU.ActiveCfg = Debug|Any CPU
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.DesignTimeDebugging|Any CPU.Build.0 = Debug|Any CPU
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.DesignTimeDebugging|x86.ActiveCfg = Debug|x86
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.DesignTimeDebugging|x86.Build.0 = Debug|x86
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Release|x86.ActiveCfg = Release|x86
-		{35576625-F69C-4142-AF4A-D55E507E1CFE}.Release|x86.Build.0 = Release|x86
 		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1FDBA3D-F52A-476E-9000-DF024B25C456}.Debug|x86.ActiveCfg = Debug|x86

@@ -462,7 +462,8 @@ namespace Altaxo.Graph.Gdi.Shapes
       set
       {
         _textBrush = new BrushX(value);
-      }
+				_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
+			}
     }
 
     public BrushX TextFillBrush
@@ -477,6 +478,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           throw new ArgumentNullException();
 
         _textBrush = value.Clone();
+				_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
       }
     }
 

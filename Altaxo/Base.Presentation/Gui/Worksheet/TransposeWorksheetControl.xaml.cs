@@ -22,18 +22,6 @@ namespace Altaxo.Gui.Worksheet
 		public TransposeWorksheetControl()
 		{
 			InitializeComponent();
-
-			_ctrlNumMovedDataCols.MinLabel = "None";
-			_ctrlNumMovedPropCols.MinLabel = "None";
-
-			_ctrlNumMovedDataCols.MaxLabel = "All";
-			_ctrlNumMovedPropCols.MaxLabel = "All";
-
-			_ctrlNumMovedDataCols.Minimum = 0;
-			_ctrlNumMovedPropCols.Minimum = 0;
-
-			_ctrlNumMovedDataCols.Maximum = int.MaxValue;
-			_ctrlNumMovedPropCols.Maximum = int.MaxValue;
 		}
 
 

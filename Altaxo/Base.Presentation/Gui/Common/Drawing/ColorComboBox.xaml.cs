@@ -73,6 +73,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		ColorType _colorType;
 
+		public event DependencyPropertyChangedEventHandler SelectedColorChanged;
+
+
 		public ColorType ColorType
 		{
 			get
@@ -115,19 +118,26 @@ namespace Altaxo.Gui.Common.Drawing
 			set {	SetValue(SelectedColorProperty, value); }
 		}
 
+		public System.Drawing.Color SelectedGdiColor
+		{
+			get { return GuiHelper.ToSysDraw((Color)GetValue(SelectedColorProperty)); }
+			set { SetValue(SelectedColorProperty, GuiHelper.ToWpf(value)); }
+		}
+
 		public static readonly DependencyProperty SelectedColorProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(Color), typeof(ColorComboBox),
-				new FrameworkPropertyMetadata(Colors.Black, OnSelectedColorChanged));
+				new FrameworkPropertyMetadata(Colors.Black, EhSelectedColorChanged));
 
-		private static void OnSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((ColorComboBox)obj).EhSelectedColorChanged(obj,args);
+			((ColorComboBox)obj).OnSelectedColorChanged(obj,args);
 		}
 		#endregion
 
-		protected virtual void EhSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
+			if (null != SelectedColorChanged)
+				SelectedColorChanged(obj, args);
 		}
 
 	

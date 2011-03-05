@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.DensityImagePlotStyleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+             mc:Ignorable="d" 
+             >
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<StackPanel Orientation="Vertical">
+		<GroupBox Header="Scale">
+			<axogg:DensityScaleControl x:Name="_ctrlScale"/>
+		</GroupBox>
+
+		<GroupBox Header="Style:">
+			<axogg:ColorProviderControl x:Name="_colorProviderControl"/>
+		</GroupBox>
+
+		<GroupBox Header="Other:">
+			<CheckBox x:Name="_chkClipToLayer" Content="Clip to layer"/>
+		</GroupBox>
+
+
+	</StackPanel>
+</UserControl>

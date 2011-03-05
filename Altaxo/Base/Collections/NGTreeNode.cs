@@ -245,7 +245,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		public bool HasDummyChild
 		{
-			get { return this._nodes.Count == 1 && this._nodes[0] ==_dummyNode; }
+			get { return null!= this._nodes && this._nodes.Count == 1 && this._nodes[0] ==_dummyNode; }
 		}
 
 		/// <summary>

@@ -70,15 +70,32 @@ namespace Altaxo.Gui.Graph
 
     private void _edFrom_Validating(object sender, CancelEventArgs e)
     {
-      if (_controller != null)
-        _controller.EhView_Changed(_edFrom.Text, _edTo.Text);
+			int from, to;
+			if (!int.TryParse(_edFrom.Text, out from))
+			{
+				e.Cancel = true;
+				return;
+			}
 
+			if (!string.IsNullOrEmpty(_edTo.Text.Trim()))
+			{
+				if (!int.TryParse(_edTo.Text, out to))
+				{
+					e.Cancel = true;
+					return;
+				}
+			}
+			else
+				to = int.MaxValue;
+
+
+      if (_controller != null)
+        _controller.EhView_Changed(from, to);
     }
 
     private void _edTo_Validating(object sender, CancelEventArgs e)
     {
-      if (_controller != null)
-        _controller.EhView_Changed(_edFrom.Text, _edTo.Text);
+			_edFrom_Validating(sender, e);
     }
   }
 }

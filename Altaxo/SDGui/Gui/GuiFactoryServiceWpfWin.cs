@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Drawing.Printing;
 
 using Altaxo.Main.Services;
@@ -16,11 +15,11 @@ namespace Altaxo.Gui
     private System.Windows.Forms.PageSetupDialog _pageSetupDialog;
     private System.Windows.Forms.PrintDialog _printDialog;
 
-    public IWin32Window MainWindow
+    public System.Windows.Forms.IWin32Window MainWindow
     {
       get
       {
-        return (IWin32Window)Current.Workbench.ViewObject;
+        return (System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject;
       }
     }
 
@@ -38,7 +37,12 @@ namespace Altaxo.Gui
       return Current.Workbench.SynchronizingObject.InvokeRequired;
     }
 
-
+		/// <summary>
+		/// Consider using rather either one of the methods Execute or Evaluate instead of this. This is only a basic function for invoking a method synchronously with the Gui.
+		/// </summary>
+		/// <param name="act">Method to invoke.</param>
+		/// <param name="args">Method parameter.</param>
+		/// <returns>The return value of the method.</returns>
     public override object Invoke(Delegate act, object[] args)
     {
       return Current.Workbench.SynchronizingObject.Invoke(act,args);
@@ -71,7 +75,6 @@ namespace Altaxo.Gui
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     private bool InternalShowDialog(IMVCAController controller, string title, bool showApplyButton)
     {
-
       if (controller.ViewObject == null)
       {
         FindAndAttachControlTo(controller);
@@ -94,9 +97,12 @@ namespace Altaxo.Gui
 			}
 			else
 			{
+				throw new NotSupportedException("This type of UIElement is not supported: " + controller.ViewObject.GetType().ToString());
+				/*
 				DialogShellView dlgview = new DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject);
 				DialogShellController dlgctrl = new DialogShellController(dlgview, controller, title, showApplyButton);
-				return DialogResult.OK == dlgview.ShowDialog(MainWindow);
+				return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
+				*/
 			}
     }
 
@@ -327,7 +333,7 @@ namespace Altaxo.Gui
 
 		private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
 		{
-			public void SetCommaSeparatedValues(string text) { this.SetData(DataFormats.CommaSeparatedValue, text); }
+			public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
 		}
 		private class ClipGetDataWrapper : IClipboardGetDataObject
 		{

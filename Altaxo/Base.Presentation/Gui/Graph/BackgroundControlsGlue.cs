@@ -100,6 +100,10 @@ namespace Altaxo.Gui.Graph
 			else
 				_doc = null;
 
+			// Apply the currently selected brush to the newly created instance
+			if (_doc != null && _cbBrush != null) 
+				_doc.Brush = _cbBrush.SelectedBrush;
+
 			OnBackgroundStyleChanged();
 			UpdateBrushState();
 
@@ -135,7 +139,7 @@ namespace Altaxo.Gui.Graph
 				}
 
 				_cbBrush = value;
-				if (_doc != null && _cbBrush != null)
+				if (_doc != null && _cbBrush != null && _doc.Brush!=null)
 					_cbBrush.SelectedBrush = _doc.Brush;
 
 				if (_cbBrush != null)

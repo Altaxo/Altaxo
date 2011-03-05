@@ -42,6 +42,18 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+
+		/// <summary>
+		/// Gets a bitmap with a certain size.
+		/// </summary>
+		/// <param name="width">Pixel width of the bitmap.</param>
+		/// <param name="height">Pixel height of the bitmap.</param>
+		/// <returns>A bitmap that can be used for drawing.</returns>
+		public System.Drawing.Bitmap GetPreviewBitmap(int width, int height)
+		{
+			return new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		}
+
 		public void SetPreviewBitmap(Bitmap bitmap)
 		{
 			_previewPanel.Image = bitmap;

@@ -86,104 +86,106 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// </summary>
     private void InitializeComponent()
     {
-      this._twFitFunctions = new System.Windows.Forms.TreeView();
-      this._splitContainer = new System.Windows.Forms.SplitContainer();
-      this._rtfDescription = new System.Windows.Forms.RichTextBox();
-      this._userFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
-      this.menuContextEdit = new System.Windows.Forms.MenuItem();
-      this.menuContextRemove = new System.Windows.Forms.MenuItem();
-      this._appFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
-      this.menuItem1 = new System.Windows.Forms.MenuItem();
-      this.menuItem2 = new System.Windows.Forms.MenuItem();
-      this._splitContainer.Panel1.SuspendLayout();
-      this._splitContainer.Panel2.SuspendLayout();
-      this._splitContainer.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // _twFitFunctions
-      // 
-      this._twFitFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._twFitFunctions.Location = new System.Drawing.Point(0, 0);
-      this._twFitFunctions.Name = "_twFitFunctions";
-      this._twFitFunctions.Size = new System.Drawing.Size(153, 344);
-      this._twFitFunctions.TabIndex = 1;
-      this._twFitFunctions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._twFitFunctions_AfterSelect);
-      this._twFitFunctions.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._twFitFunctions_NodeMouseClick);
-      // 
-      // _splitContainer
-      // 
-      this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-      this._splitContainer.Location = new System.Drawing.Point(0, 0);
-      this._splitContainer.Name = "_splitContainer";
-      // 
-      // _splitContainer.Panel1
-      // 
-      this._splitContainer.Panel1.Controls.Add(this._twFitFunctions);
-      // 
-      // _splitContainer.Panel2
-      // 
-      this._splitContainer.Panel2.Controls.Add(this._rtfDescription);
-      this._splitContainer.Size = new System.Drawing.Size(349, 344);
-      this._splitContainer.SplitterDistance = 153;
-      this._splitContainer.TabIndex = 2;
-      // 
-      // _rtfDescription
-      // 
-      this._rtfDescription.Cursor = System.Windows.Forms.Cursors.IBeam;
-      this._rtfDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._rtfDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-      this._rtfDescription.Location = new System.Drawing.Point(0, 0);
-      this._rtfDescription.Name = "_rtfDescription";
-      this._rtfDescription.ReadOnly = true;
-      this._rtfDescription.Size = new System.Drawing.Size(192, 344);
-      this._rtfDescription.TabIndex = 0;
-      this._rtfDescription.Text = "";
-      // 
-      // _userFileLeafNodeContextMenu
-      // 
-      this._userFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+			this._twFitFunctions = new System.Windows.Forms.TreeView();
+			this._splitContainer = new System.Windows.Forms.SplitContainer();
+			this._rtfDescription = new System.Windows.Forms.RichTextBox();
+			this._userFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
+			this.menuContextEdit = new System.Windows.Forms.MenuItem();
+			this.menuItem2 = new System.Windows.Forms.MenuItem();
+			this.menuContextRemove = new System.Windows.Forms.MenuItem();
+			this._appFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
+			this.menuItem1 = new System.Windows.Forms.MenuItem();
+			((System.ComponentModel.ISupportInitialize)(this._splitContainer)).BeginInit();
+			this._splitContainer.Panel1.SuspendLayout();
+			this._splitContainer.Panel2.SuspendLayout();
+			this._splitContainer.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// _twFitFunctions
+			// 
+			this._twFitFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._twFitFunctions.Location = new System.Drawing.Point(0, 0);
+			this._twFitFunctions.Name = "_twFitFunctions";
+			this._twFitFunctions.Size = new System.Drawing.Size(153, 344);
+			this._twFitFunctions.TabIndex = 1;
+			this._twFitFunctions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._twFitFunctions_AfterSelect);
+			this._twFitFunctions.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._twFitFunctions_NodeMouseClick);
+			// 
+			// _splitContainer
+			// 
+			this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this._splitContainer.Location = new System.Drawing.Point(0, 0);
+			this._splitContainer.Name = "_splitContainer";
+			// 
+			// _splitContainer.Panel1
+			// 
+			this._splitContainer.Panel1.Controls.Add(this._twFitFunctions);
+			// 
+			// _splitContainer.Panel2
+			// 
+			this._splitContainer.Panel2.Controls.Add(this._rtfDescription);
+			this._splitContainer.Size = new System.Drawing.Size(349, 344);
+			this._splitContainer.SplitterDistance = 153;
+			this._splitContainer.TabIndex = 2;
+			// 
+			// _rtfDescription
+			// 
+			this._rtfDescription.Cursor = System.Windows.Forms.Cursors.IBeam;
+			this._rtfDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._rtfDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this._rtfDescription.Location = new System.Drawing.Point(0, 0);
+			this._rtfDescription.Name = "_rtfDescription";
+			this._rtfDescription.ReadOnly = true;
+			this._rtfDescription.Size = new System.Drawing.Size(192, 344);
+			this._rtfDescription.TabIndex = 0;
+			this._rtfDescription.Text = "";
+			// 
+			// _userFileLeafNodeContextMenu
+			// 
+			this._userFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuContextEdit,
             this.menuItem2,
             this.menuContextRemove});
-      // 
-      // menuContextEdit
-      // 
-      this.menuContextEdit.Index = 0;
-      this.menuContextEdit.Text = "Edit";
-      this.menuContextEdit.Click += new System.EventHandler(this.menuContextEdit_Click);
-      // 
-      // menuContextRemove
-      // 
-      this.menuContextRemove.Index = 2;
-      this.menuContextRemove.Text = "Remove";
-      this.menuContextRemove.Click += new System.EventHandler(this.menuContextRemove_Click);
-      // 
-      // _appFileLeafNodeContextMenu
-      // 
-      this._appFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+			// 
+			// menuContextEdit
+			// 
+			this.menuContextEdit.Index = 0;
+			this.menuContextEdit.Text = "Edit";
+			this.menuContextEdit.Click += new System.EventHandler(this.menuContextEdit_Click);
+			// 
+			// menuItem2
+			// 
+			this.menuItem2.Index = 1;
+			this.menuItem2.Text = "Edit copy of this";
+			this.menuItem2.Click += new System.EventHandler(this.menuContextCreateFromHere_Click);
+			// 
+			// menuContextRemove
+			// 
+			this.menuContextRemove.Index = 2;
+			this.menuContextRemove.Text = "Remove";
+			this.menuContextRemove.Click += new System.EventHandler(this.menuContextRemove_Click);
+			// 
+			// _appFileLeafNodeContextMenu
+			// 
+			this._appFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem1});
-      // 
-      // menuItem1
-      // 
-      this.menuItem1.Index = 0;
-      this.menuItem1.Text = "Edit";
-      // 
-      // menuItem2
-      // 
-      this.menuItem2.Index = 1;
-      this.menuItem2.Text = "Edit copy of this";
-      this.menuItem2.Click += new System.EventHandler(this.menuContextCreateFromHere_Click);
-      // 
-      // FitFunctionSelectionControl
-      // 
-      this.Controls.Add(this._splitContainer);
-      this.Name = "FitFunctionSelectionControl";
-      this.Size = new System.Drawing.Size(349, 344);
-      this._splitContainer.Panel1.ResumeLayout(false);
-      this._splitContainer.Panel2.ResumeLayout(false);
-      this._splitContainer.ResumeLayout(false);
-      this.ResumeLayout(false);
+			// 
+			// menuItem1
+			// 
+			this.menuItem1.Index = 0;
+			this.menuItem1.Text = "Edit";
+			// 
+			// FitFunctionSelectionControl
+			// 
+			this.Controls.Add(this._splitContainer);
+			this.Name = "FitFunctionSelectionControl";
+			this.Size = new System.Drawing.Size(349, 344);
+			this._splitContainer.Panel1.ResumeLayout(false);
+			this._splitContainer.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this._splitContainer)).EndInit();
+			this._splitContainer.ResumeLayout(false);
+			this.ResumeLayout(false);
 
     }
     #endregion
@@ -387,6 +389,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       _lastClickedNode = e.Node;
     }
+
+		
 
   
   }

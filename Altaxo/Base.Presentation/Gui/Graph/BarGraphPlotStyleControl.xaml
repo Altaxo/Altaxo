@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.BarGraphPlotStyleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             mc:Ignorable="d" 
+             >
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+			</Style.Setters>
+		</Style>
+		<Style TargetType="CheckBox">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0"/>
+				<Setter Property="VerticalAlignment" Value="Center"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+		</Grid.RowDefinitions>
+		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="0" Content="Independent fill color:"/>
+		<axogcd:BrushComboBox x:Name="_cbFillBrush" Grid.Column="1" Grid.Row="0" />
+		<CheckBox x:Name="_chkFrameBar" Grid.Column="0" Grid.Row="2" Content="Frame color:" Checked="_chkFrameBar_CheckedChanged" Unchecked="_chkFrameBar_CheckedChanged"/>
+		<axogcd:BrushComboBox x:Name="_cbPenColor" Grid.Column="1" Grid.Row="2"/>
+		<Label Grid.Column="0" Grid.Row="4" Content="Inner gap (%):"/>
+		<axogc:ValidatingTextBox x:Name="_edInnerGap" Grid.Column="1" Grid.Row="4"/>
+		<Label Grid.Column="0" Grid.Row="6" Content="Outer gap (%):"/>
+		<axogc:ValidatingTextBox x:Name="_edOuterGap" Grid.Column="1" Grid.Row="6"/>
+		<Label Grid.Column="0" Grid.Row="8" Content="Base value (%):"/>
+		<axogc:ValidatingTextBox x:Name="_edBaseValue" Grid.Column="1" Grid.Row="8"/>
+		<CheckBox x:Name="_chkUsePreviousItem" Grid.Column="0" Grid.Row="10" Content="Start at prev. item with Y-gap (%):" Checked="_chkUsePreviousItem_CheckedChanged" Unchecked="_chkUsePreviousItem_CheckedChanged"/>
+		<axogc:ValidatingTextBox x:Name="_edYGap" Grid.Column="1" Grid.Row="10"/>
+
+	</Grid>
+</UserControl>

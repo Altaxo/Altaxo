@@ -135,23 +135,31 @@ namespace Altaxo.Gui.Graph
       _cbSymbolSize.EndUpdate();
     }
 
-    public string SymbolSize
+    public double SymbolSize
     {
       get 
       {
-        return _cbSymbolSize.Text;
+				double val;
+				if (Altaxo.Serialization.GUIConversion.IsDouble(_cbSymbolSize.Text, out val))
+					return val;
+				else
+					return 12;
       }
     }
 
-    public string SkipFrequency
+    public int SkipFrequency
     {
       get
       {
-        return _edSkipFrequency.Text;
+				int val;
+				if (Altaxo.Serialization.GUIConversion.IsInteger(_cbSymbolSize.Text, out val))
+					return val;
+				else
+					return 1;
       }
       set
       {
-        _edSkipFrequency.Text = value;
+        _edSkipFrequency.Text = value.ToString();
       }
     }
 
@@ -230,14 +238,26 @@ namespace Altaxo.Gui.Graph
 
     private void _cbSymbolSize_Validating(object sender, CancelEventArgs e)
     {
-      if (null != VerifySymbolSize)
-        VerifySymbolSize(this, e);
+			double v;
+			if (!Altaxo.Serialization.GUIConversion.IsDouble(_cbSymbolSize.Text, out v))
+				e.Cancel = true;
+			else
+			{
+				if (VerifySymbolSize != null)
+					VerifySymbolSize(sender, e);
+			}
     }
 
     private void _edSkipFrequency_Validating(object sender, CancelEventArgs e)
     {
-      if (null != VerifySkipFrequency)
-        VerifySkipFrequency(this, e);
+			int v;
+			if (!Altaxo.Serialization.GUIConversion.IsInteger(_edSkipFrequency.Text, out v))
+				e.Cancel = true;
+			else
+			{
+				if (VerifySkipFrequency != null)
+					VerifySkipFrequency(sender, e);
+			}
     }
 
     private void _btClearPosError_Click(object sender, EventArgs e)

@@ -24,7 +24,6 @@ using System;
 using System.IO;
 using System.Collections;
 using System.CodeDom.Compiler;
-using System.Windows.Forms;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Security.Policy;
@@ -51,11 +50,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Current.SetProjectService(new Altaxo.Main.ProjectService());
 			Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.GuiFactoryServiceWpfWin());
 
-			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.Forms.Control), ShowWinFormContextMenu);
 			Altaxo.Current.Gui.RegistedContextMenuProviders.Add(typeof(System.Windows.UIElement), ShowWpfContextMenu);
 
 			Altaxo.Current.Gui.RegisteredGuiTechnologies.Add(typeof(System.Windows.UIElement));
-			Altaxo.Current.Gui.RegisteredGuiTechnologies.Add(typeof(System.Windows.Forms.Control));
 
 			Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
 
@@ -68,6 +65,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		{
 			ICSharpCode.Core.WinForms.MenuService.ShowContextMenu(owner, addInPath, (System.Windows.Forms.Control)parent, (int)x, (int)y);
 		}
+
 		static void ShowWpfContextMenu(object parent, object owner, string addInPath, double x, double y)
 		{
 			ICSharpCode.Core.Presentation.MenuService.ShowContextMenu((System.Windows.UIElement)parent, owner, addInPath);

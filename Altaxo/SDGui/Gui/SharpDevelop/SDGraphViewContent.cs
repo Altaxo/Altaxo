@@ -26,7 +26,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;

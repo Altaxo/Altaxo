@@ -255,36 +255,36 @@ namespace Altaxo.Collections
       return nValue >= 0 && nValue < _count;
     }
 
-    public bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result)
-    {
-      
-      if (Contains(currentposition))
-      {
-        result = new ContiguousIntegerRange(currentposition, _count - (currentposition - _start));
-        currentposition = End;
-        return true;
-      }
-      else
-      {
-        result = ContiguousIntegerRange.Empty;
-        return false;
-      }
-    }
+		public bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result)
+		{
 
-    public bool GetNextRangeDescending(ref int currentposition, out ContiguousIntegerRange result)
-    {
-      if (Contains(currentposition))
-      {
-        result = new ContiguousIntegerRange(_start, 1 + (currentposition - _start));
-        currentposition = Start - 1;
-        return true;
-      }
-      else
-      {
-        result =  ContiguousIntegerRange.Empty;
-        return false;
-      }
-    }
+			if (currentposition < 0 || currentposition >= _count)
+			{
+				result = ContiguousIntegerRange.Empty;
+				return false;
+			}
+			else
+			{
+				result = new ContiguousIntegerRange(_start, 1 + currentposition);
+				currentposition = _count;
+				return true;
+			}
+		}
+
+		public bool GetNextRangeDescending(ref int currentposition, out ContiguousIntegerRange result)
+		{
+			if (currentposition < 0 || currentposition >= _count)
+			{
+				result = ContiguousIntegerRange.Empty;
+				return false;
+			}
+			else
+			{
+				result = new ContiguousIntegerRange(_start, 1 + currentposition);
+				currentposition = -1;
+				return true;
+			}
+		}
 
     #endregion
 

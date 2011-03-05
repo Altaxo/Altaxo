@@ -72,18 +72,7 @@ namespace Altaxo.Gui.Graph
 				if (tp.Content!=null)
 					tp.Content = null;
 
-				if( value is UIElement)
-				{
-					tp.Content = (UIElement)value;
-				}
-				else if(value is System.Windows.Forms.Control)
-				{
-					var host = new System.Windows.Forms.Integration.WindowsFormsHost();
-					host.Child = (System.Windows.Forms.Control)value;
-					tp.Content = host;
-
-					host.Child.CausesValidation = true;
-				}
+				tp.Content = (UIElement)value;
 			}
 		}
 
@@ -100,19 +89,10 @@ namespace Altaxo.Gui.Graph
 			_chkPageEnable.Header = title;
 
 
-			if (guielement is UIElement)
-			{
+		
 				_chkPageEnable.Content = (UIElement)guielement;
-			}
-			else
-			{
-				var host = new System.Windows.Forms.Integration.WindowsFormsHost();
-				host.Child = (System.Windows.Forms.Control)guielement;
-				_chkPageEnable.Content = host;
-
-				if(host.Child!=null)
-					host.Child.CausesValidation = true;
-			}
+			
+		
 			tp.Content = _chkPageEnable;
 
 			--m_SuppressEvents;

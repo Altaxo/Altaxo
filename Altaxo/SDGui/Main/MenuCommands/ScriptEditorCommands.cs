@@ -22,7 +22,6 @@
 
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 using Altaxo;
 using Altaxo.Main;
@@ -221,8 +220,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 	{
 		public override void Run()
 		{
-			if (System.Windows.Forms.Form.ActiveForm.Modal)
-				return;
+			//if (System.Windows.Forms.Form.ActiveForm.Modal)
+				//return;
 
 			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null)
 			{
@@ -236,8 +235,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 		public override void Run()
 		{
 
-			if (System.Windows.Forms.Form.ActiveForm.Modal)
-				return;
+		//	if (System.Windows.Forms.Form.ActiveForm.Modal)
+			//	return;
 
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 			if (window != null)
@@ -279,8 +278,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 	{
 		public override void Run()
 		{
-			if (System.Windows.Forms.Form.ActiveForm.Modal)
-				return;
+			//if (System.Windows.Forms.Form.ActiveForm.Modal)
+			//	return;
 
 
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
@@ -298,8 +297,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 						return;
 					}
 				}
-				using (SaveFileDialog fdiag = new SaveFileDialog())
-				{
+				var fdiag = new Microsoft.Win32.SaveFileDialog();
+				
 					fdiag.OverwritePrompt = true;
 					fdiag.AddExtension = true;
 
@@ -314,11 +313,9 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 						}
 					}
 
-					if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWin32Window) == DialogResult.OK)
+					if (true==fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWindow))
 					{
 						string fileName = fdiag.FileName;
-
-
 
 						if (!FileService.CheckFileName(fileName))
 						{
@@ -326,16 +323,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 						}
 
 						throw new NotImplementedException();
-						/*
-						if (FileUtility.ObservedSave(new NamedFileOperationDelegate(window.ActiveViewContent.Save), fileName) == FileOperationResult.OK)
-						{
-							FileService.RecentOpen.AddLastFile(fileName);
-
-							MessageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
-						}
-						*/
 					}
-				}
+				
 			}
 		}
 	}

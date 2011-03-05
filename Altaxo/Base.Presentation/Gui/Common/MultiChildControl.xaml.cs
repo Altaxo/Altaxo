@@ -77,16 +77,9 @@ namespace Altaxo.Gui.Common
 				UIElement uiEle;
 
 			
-				if (child.View is System.Windows.Forms.Control)
-				{
-					var host = new System.Windows.Forms.Integration.WindowsFormsHost();
-					host.Child = (System.Windows.Forms.Control)child.View;
-					uiEle = host;
-				}
-				else
-				{
+			
 					uiEle = (UIElement)child.View;
-				}
+				
 				uiEle.GotFocus += EhUIElement_GotFocus;
 				uiEle.LostFocus += EhUIElement_LostFocus;
 

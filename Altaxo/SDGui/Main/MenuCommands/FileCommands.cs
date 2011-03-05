@@ -21,10 +21,8 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using Altaxo;
 using Altaxo.Main;
-
 using ICSharpCode.Core;
 using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpZipLib.Zip;
@@ -161,13 +159,13 @@ namespace Altaxo.Main.Commands
 		public override void Run()
 		{
 
-			OpenFileDialog openFileDialog1 = new OpenFileDialog();
+			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
 
 			openFileDialog1.Filter = "Worksheet or graph files (*.axowks;*.axogrp)|*.axowks;*.axogrp|All files (*.*)|*.*";
 			openFileDialog1.FilterIndex = 1;
 			openFileDialog1.RestoreDirectory = true;
 
-			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
 			{
 				OpenWorksheetOrGraph(openFileDialog1.FileName);
 			}
@@ -194,7 +192,7 @@ namespace Altaxo.Main.Commands
 			Current.Project.IsDirty = false; // set document to non-dirty
 
 
-			OpenFileDialog openFileDialog1 = new OpenFileDialog();
+			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
 
 			openFileDialog1.Filter = "Altaxo project files (*.axoprj)|*.axoprj|All files (*.*)|*.*";
 			openFileDialog1.FilterIndex = 1;
@@ -202,7 +200,7 @@ namespace Altaxo.Main.Commands
 
 
 
-			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
 			{
 				Current.ProjectService.OpenProject(openFileDialog1.FileName);
 				FileService.RecentOpen.AddLastProject(openFileDialog1.FileName);
@@ -310,7 +308,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			((Form)WorkbenchSingleton.Workbench).Close();
+			((System.Windows.Window)Current.Workbench.ViewObject).Close();
 		}
 	}
 
@@ -352,8 +350,9 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Altaxo.Main.AboutDialog dlg = new Altaxo.Main.AboutDialog();
-			dlg.ShowDialog(((IWin32Window)WorkbenchSingleton.Workbench));
+			var ctrl = new Altaxo.Gui.Common.HelpAboutControl();
+
+			ctrl.ShowDialog();
 		}
 	}
 
@@ -361,14 +360,14 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
+			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
 			{
 				openFileDialog1.Filter = "OPJ files (*.opj)|*.opj|All files (*.*)|*.*";
 				openFileDialog1.FilterIndex = 1;
 				openFileDialog1.RestoreDirectory = true;
 				openFileDialog1.Multiselect = false;
 
-				if (openFileDialog1.ShowDialog() == DialogResult.OK && openFileDialog1.FileName.Length > 0)
+				if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject) && openFileDialog1.FileName.Length > 0)
 				{
 					string result = Altaxo.Serialization.Origin.Importer.Import(openFileDialog1.FileName);
 					if (result != null)
@@ -398,7 +397,7 @@ namespace Altaxo.Main.Commands
 				string scripttext;
 				string err = OpenScriptText(options.FileName, out scripttext);
 				if (null != err)
-					MessageBox.Show(err);
+					Current.Gui.ErrorMessageBox(err);
 				else
 					script.ScriptText = scripttext;
 			}

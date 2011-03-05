@@ -59,6 +59,15 @@ namespace Altaxo.Gui.Graph
 		void SetPreviewBitmap(System.Drawing.Bitmap bitmap);
 
 		/// <summary>
+		/// Gets a bitmap with a certain size.
+		/// </summary>
+		/// <param name="width">Pixel width of the bitmap.</param>
+		/// <param name="height">Pixel height of the bitmap.</param>
+		/// <returns>A bitmap that can be used for drawing.</returns>
+		System.Drawing.Bitmap GetPreviewBitmap(int width, int height);
+
+
+		/// <summary>
 		/// Fired when the selected color provider changed.
 		/// </summary>
 		event Action ColorProviderChanged;
@@ -184,7 +193,7 @@ namespace Altaxo.Gui.Graph
 			if (null != _view)
 			{
 				if (null == _previewBitmap)
-					_previewBitmap = new Bitmap(previewWidth, previewHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+					_previewBitmap = _view.GetPreviewBitmap(previewWidth, previewHeight); // new Bitmap(previewWidth, previewHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
 				for (int i = 0; i < previewWidth; i++)
 				{
