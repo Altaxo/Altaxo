@@ -51,6 +51,9 @@ namespace Altaxo.Graph.Gdi
 
     void CopyFrom(LayerBackground from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._background = null == from._background ? null : (IBackgroundStyle)from._background.Clone();
       this._leftPadding = from._leftPadding;
       this._rightPadding = from._rightPadding;

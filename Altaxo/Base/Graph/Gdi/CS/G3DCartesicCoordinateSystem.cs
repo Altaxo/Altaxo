@@ -52,6 +52,9 @@ namespace Altaxo.Graph.Gdi.CS
     /// <param name="fromb">The coordinate system to copy from.</param>
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
+			if (object.ReferenceEquals(this, fromb))
+				return;
+
       base.CopyFrom(fromb);
       if (fromb is G3DCartesicCoordinateSystem)
       {

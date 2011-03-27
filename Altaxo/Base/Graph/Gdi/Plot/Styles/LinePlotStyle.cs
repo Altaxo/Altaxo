@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected PenX _penHolder;
     protected XYPlotLineStyles.ConnectionStyle _connectionStyle;
     protected bool _useLineSymbolGap;
-    protected float _symbolGap;
+    protected double _symbolGap;
     protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
     protected bool _fillArea;
     protected BrushX _fillBrush; // brush to fill the area under the line
@@ -346,6 +346,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void CopyFrom(LinePlotStyle from, bool suppressChangeEvent)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._penHolder = null == from._penHolder ? null : (PenX)from._penHolder.Clone();
       this._useLineSymbolGap = from._useLineSymbolGap;
       this._symbolGap = from._symbolGap;
@@ -608,7 +611,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         GraphicsState gs = g.Save();
         g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
         float halfwidth = bounds.Width / 2;
-        float symsize = _symbolGap;
+        float symsize = (float)(_symbolGap);
 
         if (this.LineSymbolGap == true)
         {
@@ -631,7 +634,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
       PlotRangeList rangeList = pdata.RangeList;
-      float symbolGap = this._symbolGap;
+      float symbolGap = (float)(_symbolGap);
 
       // ensure that brush and pen are cached
       if (null != _penHolder) _penHolder.Cached = true;
@@ -667,7 +670,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
       PlotRangeList rangeList = pdata.RangeList;
-      float symbolGap = this._symbolGap;
       layer.UpdateCSPlaneID(fillDirection);
 
       int rangelistlen = rangeList.Count;
@@ -1797,7 +1799,7 @@ out int lastIndex)
 
       LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(DashStyle c) { this.PenHolder.DashStyle = c; });
 
-      if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(float size) { this._symbolGap = size; }))
+      if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this._symbolGap = size; }))
       {
         this._symbolGap = 0;
       }

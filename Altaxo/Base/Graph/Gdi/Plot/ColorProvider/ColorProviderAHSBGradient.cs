@@ -64,6 +64,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
     public override bool CopyFrom(object obj)
     {
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
       bool hasCopied = base.CopyFrom(obj);
       var from = obj as ColorProviderAHSBGradient;
       if (null != from)

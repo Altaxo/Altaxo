@@ -51,6 +51,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		public virtual bool CopyFrom(object obj)
 		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
 			bool result = false;
 			var from = obj as ColorProviderBase;
 			if (null != from)

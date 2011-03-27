@@ -49,7 +49,10 @@ namespace Altaxo.Collections
 				var oldValue = _name;
 				_name = value;
 				if (value != oldValue)
+				{
+					OnPropertyChanged("Name");
 					OnPropertyChanged("Col0");
+				}
 			}
 		}
 		public object Item
@@ -74,6 +77,15 @@ namespace Altaxo.Collections
     }
 
 		public string Col0 { get { return Name; } }
+		public string Col1 { get { return SubItemText(1); } }
+		public string Col2 { get { return SubItemText(2); } }
+		public string Col3 { get { return SubItemText(3); } }
+		public string Col4 { get { return SubItemText(4); } }
+		public string Col5 { get { return SubItemText(5); } }
+		public string Col6 { get { return SubItemText(6); } }
+		public string Col7 { get { return SubItemText(7); } }
+		public string Col8 { get { return SubItemText(8); } }
+		public string Col9 { get { return SubItemText(9); } }
 
     public override string ToString()
     {
@@ -140,14 +152,14 @@ namespace Altaxo.Collections
 
 	public interface ISelectableItem
 	{
-		bool Selected { get; set; }
+		bool IsSelected { get; set; }
 	}
 
   public class SelectableListNode : ListNode, ISelectableItem
   {
 		protected bool _isSelected;
 
-		public bool Selected 
+		public bool IsSelected 
 		{
 			get { return _isSelected; }
 			set 
@@ -155,13 +167,13 @@ namespace Altaxo.Collections
 				var oldValue = _isSelected;
 				_isSelected = value; 
 				if (oldValue != value) 
-					OnPropertyChanged("Selected"); }
+					OnPropertyChanged("IsSelected"); }
 		}
 
     public SelectableListNode(string name, object item, bool selected)
       : base(name, item)
     {
-      this.Selected = selected;
+      this.IsSelected = selected;
     }
   }
 
@@ -169,6 +181,29 @@ namespace Altaxo.Collections
   {
     public SelectableListNodeList() { }
     public SelectableListNodeList(IEnumerable<SelectableListNode> from) : base(from) { }
+
+		/// <summary>
+		/// Initializes the collection with a list of names. One of them is the selected item.
+		/// </summary>
+		/// <param name="names">Array of names that are used to initialize the list.</param>
+		/// <param name="selectedName">The selected name. Each item with this name is selected.</param>
+		public SelectableListNodeList(string[] names, string selectedName)
+		{
+			foreach(var name in names)
+				Add(new SelectableListNode(name,null,name==selectedName));
+		}
+
+		/// <summary>
+		/// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
+		/// </summary>
+		/// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
+		public SelectableListNodeList(System.Enum selectedItem)
+		{
+			var values = System.Enum.GetValues(selectedItem.GetType());
+			foreach(var value in values)
+				Add(new SelectableListNode(value.ToString(), value, value.ToString()==selectedItem.ToString()));
+		}
+
 
 		public SelectableListNode[] ToArray()
 		{
@@ -202,7 +237,7 @@ namespace Altaxo.Collections
       get
       {
         foreach (SelectableListNode node in this)
-          if (node.Selected)
+          if (node.IsSelected)
             return node;
 
         return null;
@@ -215,7 +250,7 @@ namespace Altaxo.Collections
 			{
 				int len = this.Count;
 				for(int i=0;i<len;i++)
-					if (this[i].Selected)
+					if (this[i].IsSelected)
 						return i;
 
 				return -1;
@@ -225,7 +260,7 @@ namespace Altaxo.Collections
 		public void ClearSelectionsAll()
 		{
 			foreach (var node in this)
-				node.Selected = false;
+				node.IsSelected = false;
 		}
 
     public void Exchange(int i, int j)
@@ -251,7 +286,7 @@ namespace Altaxo.Collections
   public class CheckableSelectableListNode : SelectableListNode
   {
 		protected bool _isChecked;
-		public bool Checked
+		public bool IsChecked
 		{
 			get
 			{
@@ -262,14 +297,14 @@ namespace Altaxo.Collections
 				var oldValue = _isChecked;
 				_isChecked = value;
 				if (value != oldValue)
-					OnPropertyChanged("Checked");
+					OnPropertyChanged("IsChecked");
 			}
 		}
 
     public CheckableSelectableListNode(string name, object item, bool selected, bool ischecked)
       : base(name, item, selected)
     {
-      this.Checked = ischecked;
+      this.IsChecked = ischecked;
     }
   }
 
@@ -339,7 +374,7 @@ namespace Altaxo.Collections
 			int result=0;
 			foreach (var item in list)
 			{
-				if (item.Selected)
+				if (item.IsSelected)
 				{
 					result |= (int)item.Item;
 				}

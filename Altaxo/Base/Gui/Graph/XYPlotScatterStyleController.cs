@@ -41,8 +41,7 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public interface IXYPlotScatterStyleView
   {
-    // Get / sets the controller of this view
-    IXYPlotScatterStyleViewEventSink Controller { get; set; }
+   
   
     /// <summary>
     /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
@@ -61,7 +60,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
-    void InitializeSymbolSize(string[] arr , string sel);
+    void InitializeSymbolSize(double value);
 
     /// <summary>
     /// Initializes the independent symbol size check box.
@@ -74,21 +73,21 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
-    void InitializeSymbolStyle(string[] arr , string sel);
+    void InitializeSymbolStyle(SelectableListNodeList list);
 
     /// <summary>
     /// Initializes the symbol shape combobox.
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
-    void InitializeSymbolShape(string[] arr , string sel);
+		void InitializeSymbolShape(SelectableListNodeList list);
 
 
     /// <summary>
     /// Intitalizes the drop line checkboxes.
     /// </summary>
     /// <param name="names">List of names plus the information if they are selected or not.</param>
-    void InitializeDropLineConditions(List<SelectableListNode> names);
+    void InitializeDropLineConditions(SelectableListNodeList names);
 
     
     void InitializeIndependentColor(bool val);
@@ -101,12 +100,12 @@ namespace Altaxo.Gui.Graph
     bool IndependentColor { get; }
     
     Color SymbolColor { get; }
-    string SymbolShape {get; }
+    SelectableListNode SymbolShape {get; }
     bool   IndependentSymbolSize { get; }
-    string SymbolStyle {get; }
-    string SymbolSize  {get; }
+    SelectableListNode SymbolStyle {get; }
+    double SymbolSize  {get; }
 
-    List<SelectableListNode> DropLines { get; }
+    SelectableListNodeList DropLines { get; }
     int SkipPoints { get; }
 
 		string RelativePenWidth { get; set; }
@@ -114,21 +113,9 @@ namespace Altaxo.Gui.Graph
     #endregion // Getter
   }
 
-  /// <summary>
-  /// This is the controller interface of the XYPlotScatterStyleView
-  /// </summary>
-  public interface IXYPlotScatterStyleViewEventSink
-  {
-  }
+ 
 
-  public interface IXYPlotScatterStyleController : IMVCANController
-  {
-    /// <summary>
-    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
-    /// </summary>
-    /// <param name="bActivate"></param>
-    void SetEnableDisableMain(bool bActivate);    
-  }
+ 
 
   #endregion
 
@@ -137,10 +124,10 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(ScatterPlotStyle))]
   [ExpectedTypeOfView(typeof(IXYPlotScatterStyleView))]
-  public class XYPlotScatterStyleController : IXYPlotScatterStyleViewEventSink, IXYPlotScatterStyleController
+	public class XYPlotScatterStyleController : IMVCANController
   {
+    ScatterPlotStyle _originalDoc;
     ScatterPlotStyle _doc;
-    ScatterPlotStyle _tempDoc;
     IXYPlotScatterStyleView _view;
     UseDocument _useDocumentCopy;
     
@@ -148,24 +135,19 @@ namespace Altaxo.Gui.Graph
     { 
     }
 
-    public XYPlotScatterStyleController(ScatterPlotStyle doc)
-    {
-      if (doc == null)
-        throw new ArgumentNullException("doc is null");
-
-      if (!InitializeDocument(doc))
-        throw new ApplicationException("Programming error");
-    }
-
     public bool InitializeDocument(params object[] args)
     {
-      if (args.Length == 0 || !(args[0] is ScatterPlotStyle))
+      if (args==null || args.Length == 0 || !(args[0] is ScatterPlotStyle))
         return false;
 
-      bool isFirstTime = (null == _doc);
-      _doc = (ScatterPlotStyle)args[0];
-      _tempDoc = _useDocumentCopy == UseDocument.Directly ? _doc : (ScatterPlotStyle)_doc.Clone();
-      Initialize(isFirstTime);
+			var tempView = this.ViewObject;
+			this.ViewObject = null; // temporarily deactivate view to avoid cascading updates
+
+      _originalDoc = (ScatterPlotStyle)args[0];
+      _doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (ScatterPlotStyle)_originalDoc.Clone();
+      Initialize(true);
+
+			this.ViewObject = tempView;
       return true;
     }
 
@@ -200,17 +182,15 @@ namespace Altaxo.Gui.Graph
         _view.SetEnableDisableMain(bActivate);
     }
 
-    void Initialize(bool isFirstTime)
+    void Initialize(bool initData)
     {
       if(_view!=null)
       {
         // now we have to set all dialog elements to the right values
-        _view.InitializeIndependentColor(_tempDoc.IndependentColor);
-        _view.InitializeIndependentSymbolSize(_tempDoc.IndependentSymbolSize);
+        _view.InitializeIndependentColor(_doc.IndependentColor);
+        _view.InitializeIndependentSymbolSize(_doc.IndependentSymbolSize);
        
         SetPlotStyleColor();
-      
-
 
         // Scatter properties
         SetSymbolShape();
@@ -218,8 +198,8 @@ namespace Altaxo.Gui.Graph
         SetSymbolSize();
         SetDropLineConditions();
         _view.SetEnableDisableMain(_ActivateEnableDisableMain);
-        _view.InitializeSkipPoints(_tempDoc.SkipFrequency);
-				_view.RelativePenWidth = Altaxo.Serialization.GUIConversion.ToString(Math.Round(100*_tempDoc.RelativePenWidth, 3));
+        _view.InitializeSkipPoints(_doc.SkipFrequency);
+				_view.RelativePenWidth = Altaxo.Serialization.GUIConversion.ToString(Math.Round(100*_doc.RelativePenWidth, 3));
       }
     }
 
@@ -229,27 +209,19 @@ namespace Altaxo.Gui.Graph
       string[] SymbolSizes = 
       { "0","1","3","5","8","12","15","18","24","30"};
 
-      _view.InitializeSymbolSize(SymbolSizes, _tempDoc.SymbolSize.ToString());
+      _view.InitializeSymbolSize(_doc.SymbolSize);
     }
 
   
     public void SetSymbolStyle()
     {
-      string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style));
-      _view.InitializeSymbolStyle(names,_tempDoc.Style.ToString());
+      _view.InitializeSymbolStyle(new SelectableListNodeList(_doc.Style));
     }
 
   
     public void SetSymbolShape()
     {
-      string[] names = System.Enum.GetNames(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape));
-
-      Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape sh = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
-      sh = _tempDoc.Shape;
-      string name = sh.ToString();
-      _view.InitializeSymbolShape(names,name);
-
-    
+      _view.InitializeSymbolShape(new SelectableListNodeList(_doc.Shape));
     }
    
 
@@ -258,14 +230,14 @@ namespace Altaxo.Gui.Graph
 
     public void SetDropLineConditions()
     {
-      XYPlotLayer layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(XYPlotLayer)) as XYPlotLayer;
+      XYPlotLayer layer = Main.DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(XYPlotLayer)) as XYPlotLayer;
 
-      List<SelectableListNode> names = new List<SelectableListNode>();
+      SelectableListNodeList names = new SelectableListNodeList();
 
-      foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _tempDoc.DropLine))
+      foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropLine))
       {
 
-        bool sel = _tempDoc.DropLine.Contains(id);
+        bool sel = _doc.DropLine.Contains(id);
         CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
         names.Add(new SelectableListNode(info.Name, id, sel));
       }
@@ -278,7 +250,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetPlotStyleColor()
     {
-      _view.InitializePlotStyleColor(_tempDoc.Pen.Color);
+      _view.InitializePlotStyleColor(_doc.Pen.Color);
     }
 
 
@@ -288,22 +260,25 @@ namespace Altaxo.Gui.Graph
       get { return _view; }
       set
       {
-        if(_view!=null)
-          _view.Controller = null;
+				if (_view != null)
+				{
+					
+				}
 
         _view = value as IXYPlotScatterStyleView;
-        
-        Initialize(false);
 
-        if(_view!=null)
-          _view.Controller = this;
+				if (_view != null)
+				{
+					Initialize(false);
+				}
       }
     }
+
     public object ModelObject
     {
       get
       {
-        return _doc;
+        return _originalDoc;
       }
     }
     #endregion
@@ -319,32 +294,30 @@ namespace Altaxo.Gui.Graph
       
 
         // Symbol Color
-        _doc.Color = _view.SymbolColor;
+        _originalDoc.Color = _view.SymbolColor;
 
-        _doc.IndependentColor = _view.IndependentColor;
+        _originalDoc.IndependentColor = _view.IndependentColor;
       
-        _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+        _originalDoc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
         // Symbol Shape
-        string str = _view.SymbolShape;
-        _doc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape), str);
+				_originalDoc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_view.SymbolShape.Item;
 
         // Symbol Style
-        str = _view.SymbolStyle;
-        _doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style), str);
+				_originalDoc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_view.SymbolStyle.Item;
 
         // Symbol Size
-        str = _view.SymbolSize;
-        _doc.SymbolSize = System.Convert.ToSingle(str);
+				_originalDoc.SymbolSize = _view.SymbolSize;
 
         // Drop line left
-        _doc.DropLine.Clear();
+        _originalDoc.DropLine.Clear();
         foreach (SelectableListNode node in _view.DropLines)
-          _doc.DropLine.Add((CSPlaneID)node.Item);
+					if(node.IsSelected)
+						_originalDoc.DropLine.Add((CSPlaneID)node.Item);
 
         // Skip points
 
-        _doc.SkipFrequency = _view.SkipPoints;
+        _originalDoc.SkipFrequency = _view.SkipPoints;
 
 				double relPenWidth;
 				if (!Altaxo.Serialization.GUIConversion.IsDouble(_view.RelativePenWidth, out relPenWidth))
@@ -354,7 +327,7 @@ namespace Altaxo.Gui.Graph
 				}
 				else
 				{
-					_doc.RelativePenWidth = (float)relPenWidth/100;
+					_originalDoc.RelativePenWidth = (float)relPenWidth/100;
 				}
        
 

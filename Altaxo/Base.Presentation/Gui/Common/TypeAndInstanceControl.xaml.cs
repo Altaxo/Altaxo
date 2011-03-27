@@ -44,21 +44,9 @@ namespace Altaxo.Gui.Common
 			GuiHelper.Initialize(_cbTypeChoice,list);
 		}
 
-		UIElement _instanceControl;
 		public void SetInstanceControl(object instanceControl)
 		{
-			if (null != _instanceControl)
-				_grid.Children.Remove(_instanceControl);
-
-			_instanceControl = instanceControl as UIElement;
-
-			if (null != _instanceControl)
-			{
-				_instanceControl.SetValue(Grid.ColumnProperty, 0);
-				_instanceControl.SetValue(Grid.ColumnSpanProperty, 2);
-				_instanceControl.SetValue(Grid.RowProperty, 2);
-				_grid.Children.Add(_instanceControl);
-			}
+			_instanceHost.Child = instanceControl as UIElement;
 		}
 
 		public event EventHandler TypeChoiceChanged;

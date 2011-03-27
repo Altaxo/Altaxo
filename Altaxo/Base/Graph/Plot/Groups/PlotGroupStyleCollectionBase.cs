@@ -61,11 +61,19 @@ namespace Altaxo.Graph.Plot.Groups
     }
     #endregion
 
+		/// <summary>Dictionary, which stores exactly one instance of a plot group style per type. Thus it is ensured, that only one instance per type is existent in this collection.</summary>
     protected Dictionary<System.Type, IPlotGroupStyle> _typeToInstance;
-    protected Dictionary<System.Type, GroupInfo> _typeToInfo;
-    protected PlotGroupStrictness _plotGroupStrictness;
-    protected bool _inheritFromParentGroups;
-    protected bool _distributeToChildGroups;
+
+		/// <summary>Dictionary, which stores additional information for each plot group style. Since only one instance of each style can be stored, the key here is the type of the plot group style.</summary>
+		protected Dictionary<System.Type, GroupInfo> _typeToInfo;
+  
+		/// <summary>Strictness of the plot group collection. This determines how the styles are distributed among the plot items.</summary>
+		protected PlotGroupStrictness _plotGroupStrictness;
+
+
+		protected bool _inheritFromParentGroups;
+    
+		protected bool _distributeToChildGroups;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 0)]
@@ -165,6 +173,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     public virtual void CopyFrom(PlotGroupStyleCollectionBase from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
       _typeToInfo = new Dictionary<Type, GroupInfo>();
 
@@ -219,25 +230,64 @@ namespace Altaxo.Graph.Plot.Groups
       set { _distributeToChildGroups = value; }
     }
 
+		/// <summary>
+		/// Tests, whether or not a group style of a given type is existent in the collection.
+		/// </summary>
+		/// <param name="groupStyleType">Type of plot group style to test.</param>
+		/// <returns>True if the type is existent in this collection.</returns>
     public bool ContainsType(System.Type groupStyleType)
     {
       return _typeToInstance.ContainsKey(groupStyleType);
     }
 
+		/// <summary>
+		/// Gets the instance of the plot group style of a given type.
+		/// </summary>
+		/// <param name="groupStyleType">The type of plot group style.</param>
+		/// <returns>The instance of the plot group style of the type given in the parameter.</returns>
     public IPlotGroupStyle GetPlotGroupStyle(System.Type groupStyleType)
     {
       return _typeToInstance[groupStyleType];
     }
 
-    public System.Type GetChildTypeOf(System.Type groupStyleType)
+		/// <summary>
+		/// Retries the type of a child plot group style, if one exists.
+		/// </summary>
+		/// <param name="groupStyleType">The type of group style for which the type of child group style should be retrieved.</param>
+		/// <returns>Type of the child plot group style, or null if no child exists.</returns>
+    public System.Type GetTypeOfChild(System.Type groupStyleType)
     {
       return _typeToInfo[groupStyleType].ChildGroupType;
     }
+
+		/// <summary>
+		/// Retrieves the type of the parent plot group style, if one exists.
+		/// </summary>
+		/// <param name="groupStyleType">The type of group style for which the type of parent group style should be retrieved.</param>
+		/// <returns>Type of the parent plot group style, or null if no parent exists.</returns>
     public System.Type GetParentTypeOf(System.Type groupStyleType)
     {
       return _typeToInfo[groupStyleType].ParentGroupType;
     }
 
+		/// <summary>
+		/// Determines the tree level of a group style, i.e. how many parent items it has.
+		/// </summary>
+		/// <param name="groupStyleType">Type of group style.</param>
+		/// <returns>Number of parent items in the tree above the item.</returns>
+		public int GetTreeLevelOf(System.Type groupStyleType)
+		{
+			int result = 0;
+			System.Type t = groupStyleType;
+			while (null != (t = _typeToInfo[t].ParentGroupType))
+				++result;
+
+			return result;
+		}
+
+		/// <summary>
+		/// Number of styles in this collection.
+		/// </summary>
     public int Count
     {
       get
@@ -246,22 +296,40 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+		/// <summary>
+		/// Adds a group style to this collection. An exception will be thrown if an item of the same type already exists in the collection.
+		/// </summary>
+		/// <param name="groupStyle">Group style to add.</param>
     public void Add(IPlotGroupStyle groupStyle)
     {
       Add(groupStyle, null);
     }
 
-
+		/// <summary>
+		/// Adds a group style to this collection, as a child of another group style. If the parent group style doesn't allow childs, then the group style is added normally.
+		/// </summary>
+		/// <param name="groupStyle">Group style to add to this collection.</param>
+		/// <param name="parentGroupStyleType">Type of the parent group style.</param>
     public void Add(IPlotGroupStyle groupStyle, System.Type parentGroupStyleType)
     {
-      if (groupStyle == null)
+			if (parentGroupStyleType != null)
+			{
+				if (!_typeToInstance.ContainsKey(parentGroupStyleType))
+					throw new ArgumentException(string.Format("The parent group style (of type: {0}) can not be found in this collection", parentGroupStyleType));
+				var parentInstance = _typeToInstance[parentGroupStyleType];
+				if (!parentInstance.CanCarryOver)
+				{
+					Add(groupStyle);
+					return;
+				}
+			}
+			
+			
+			if (groupStyle == null)
         throw new ArgumentNullException("Try to add a null value to this group style collection");
 
       if (_typeToInstance.ContainsKey(groupStyle.GetType()))
         throw new ArgumentException(string.Format("The group style type <<{0}>> is already present in this group style collection", groupStyle.GetType()));
-
-      if (parentGroupStyleType != null && !_typeToInstance.ContainsKey(parentGroupStyleType))
-        throw new ArgumentException(string.Format("The parent group style (of type: {0}) can not be found in this collection", parentGroupStyleType));
 
       _typeToInstance.Add(groupStyle.GetType(), groupStyle);
       GroupInfo groupInfo = new GroupInfo();
@@ -282,10 +350,10 @@ namespace Altaxo.Graph.Plot.Groups
 
     /// <summary>
     /// Inserts a group style by adding it. The child group style type is appended as child to this group type.
-    /// In case the child type has a parent, then this will be the parent of the inserted group style.
+    /// In case the child type has already a parent, then this parent will be the parent of the inserted group style.
     /// </summary>
-    /// <param name="groupStyle"></param>
-    /// <param name="childGroupStyleType"></param>
+    /// <param name="groupStyle">Group style to add.</param>
+    /// <param name="childGroupStyleType">Type of group style, which should be the child of the added group style.</param>
     public void Insert(IPlotGroupStyle groupStyle, System.Type childGroupStyleType)
     {
       if (groupStyle == null)
@@ -313,6 +381,10 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+		/// <summary>
+		/// Removes a certain group style from the collection.
+		/// </summary>
+		/// <param name="groupType">Type of group style to remove from the collection.</param>
     public void RemoveType(System.Type groupType)
     {
       if (!_typeToInstance.ContainsKey(groupType))
@@ -340,6 +412,9 @@ namespace Altaxo.Graph.Plot.Groups
 
     }
 
+		/// <summary>
+		/// Removes all group styles, thus clearing the collection.
+		/// </summary>
     public virtual void Clear()
     {
       _typeToInfo.Clear();
@@ -518,6 +593,43 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     #endregion
+
+
+		/// <summary>
+		/// Returns a list, in which the items are ordered by (i) their name, if the items are on the same level, (ii) by their parent-child relationship.
+		/// </summary>
+		/// <param name="comparison">Comparism method for items on the first level.</param>
+		/// <returns>Ordered list of items.</returns>
+		public List<IPlotGroupStyle> GetOrderedListOfItems(Comparison<IPlotGroupStyle> comparison)
+		{
+			var result = new List<IPlotGroupStyle>();
+			// add the items, which have no parent, and sort them
+			foreach (var entry in _typeToInfo)
+			{
+				if (entry.Value.ParentGroupType == null)
+					result.Add(_typeToInstance[entry.Key]);
+			}
+			// now order them by whatever ordering
+			result.Sort(comparison);
+
+			// now find the other items and insert them
+			// we have to use a for loop because we modify the result list
+			for(int i=result.Count-1;i>=0;--i)
+			{
+				var info = _typeToInfo[result[i].GetType()];
+				int insertPoint = i + 1;
+				while(info.ChildGroupType != null)
+				{
+					result.Insert(insertPoint,_typeToInstance[info.ChildGroupType]);
+					++insertPoint;
+					info = _typeToInfo[info.ChildGroupType];
+				}
+			}
+
+			System.Diagnostics.Debug.Assert(result.Count == this.Count); // hope that all items are now in the collection
+
+			return result;
+		}
 
 
   }

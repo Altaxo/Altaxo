@@ -199,6 +199,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public virtual void CopyFrom(LinearTickSpacing from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			this._axisEndByMajor = from._axisEndByMajor;
 			this._axisOrgByMajor = from._axisOrgByMajor;
 			this._majorSpan = from._majorSpan;

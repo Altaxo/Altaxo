@@ -268,6 +268,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\EnumFlagControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\EquallySpacedIntervalControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -287,6 +291,10 @@
     <Page Include="Gui\Common\MultiChildControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\MultiChoiceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\MultiSelectTreeView.xaml">
       <SubType>Designer</SubType>
@@ -392,6 +400,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\G2DPlotItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\GraphExportOptionsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -417,6 +429,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\PlotGroupCollectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\PlotGroupCollectionControlAdvanced.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -476,7 +492,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotGroupControl.xaml">
+    <Page Include="Gui\Graph\PlotGroupCollectionControlSimple.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -596,6 +612,10 @@
       <DependentUpon>CheckableGroupBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
+    <Compile Include="Gui\Common\Drawing\ValidatingComboBox.cs" />
+    <Compile Include="Gui\Common\EnumFlagControl.xaml.cs">
+      <DependentUpon>EnumFlagControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\EquallySpacedIntervalControl.xaml.cs">
       <DependentUpon>EquallySpacedIntervalControl.xaml</DependentUpon>
     </Compile>
@@ -605,6 +625,7 @@
     <Compile Include="Gui\Common\HelpAboutControl.xaml.cs">
       <DependentUpon>HelpAboutControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\ImageWithNoSizeRequest.cs" />
     <Compile Include="Gui\Common\Int32UpDown.cs" />
     <Compile Include="Gui\Common\DialogShellViewWpf.xaml.cs">
       <DependentUpon>DialogShellViewWpf.xaml</DependentUpon>
@@ -712,6 +733,10 @@
     <Compile Include="Gui\Common\Drawing\RotationComboBox.xaml.cs">
       <DependentUpon>RotationComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\MultiChoiceControl.xaml.cs">
+      <DependentUpon>MultiChoiceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\QuantityWithUnitTextBox.cs" />
     <Compile Include="Gui\Common\MinMaxIntegerControl.xaml.cs">
       <DependentUpon>MinMaxIntegerControl.xaml</DependentUpon>
     </Compile>
@@ -748,6 +773,7 @@
     <Compile Include="Gui\Common\ValidatingTextBox.cs" />
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
+    <Compile Include="Gui\Common\Converter.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>
@@ -804,6 +830,9 @@
     <Compile Include="Gui\Graph\G2DCartesicCSControl.xaml.cs">
       <DependentUpon>G2DCartesicCSControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\G2DPlotItemControl.xaml.cs">
+      <DependentUpon>G2DPlotItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\GdiFontGlue.cs" />
     <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
       <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
@@ -826,6 +855,9 @@
     </Compile>
     <Compile Include="Gui\Graph\PlotGroupCollectionControl.xaml.cs">
       <DependentUpon>PlotGroupCollectionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PlotGroupCollectionControlAdvanced.xaml.cs">
+      <DependentUpon>PlotGroupCollectionControlAdvanced.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlottingRangeControl.xaml.cs">
       <DependentUpon>PlottingRangeControl.xaml</DependentUpon>
@@ -885,8 +917,8 @@
     <Compile Include="Gui\Graph\XYPlotDataControl.xaml.cs">
       <DependentUpon>XYPlotDataControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotGroupControl.xaml.cs">
-      <DependentUpon>XYPlotGroupControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\PlotGroupCollectionControlSimple.xaml.cs">
+      <DependentUpon>PlotGroupCollectionControlSimple.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\XYPlotLabelStyleControl.xaml.cs">
       <DependentUpon>XYPlotLabelStyleControl.xaml</DependentUpon>

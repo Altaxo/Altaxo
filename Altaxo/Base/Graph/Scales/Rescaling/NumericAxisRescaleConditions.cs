@@ -82,6 +82,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <param name="from">The object to copy the data from.</param>
     public void CopyFrom(NumericAxisRescaleConditions from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       bool bEqual = this.IsEqualTo(from);
       this._orgRescaling = from._orgRescaling;
       this._endRescaling = from._endRescaling;

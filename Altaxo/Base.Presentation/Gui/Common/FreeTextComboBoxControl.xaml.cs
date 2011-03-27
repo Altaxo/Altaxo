@@ -19,13 +19,20 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class FreeTextComboBoxControl : UserControl, IFreeTextChoiceView
 	{
+		BindingExpressionBase _bindingExpression;
+
 		public FreeTextComboBoxControl()
 		{
 			InitializeComponent();
 
-			var binding = new Binding("ValidatedText");
-			binding.ValidationRules.Add(new MyValidationRule(this));
-			_cbChoice.SetBinding(ComboBox.TextProperty, binding);
+			var binding = new Binding();
+			binding.Source = this;
+			binding.Path = new PropertyPath("ValidatedText");
+			var validator = new MyValidationRule(this);
+			binding.ValidationRules.Add(validator);
+			binding.Mode = BindingMode.TwoWay;
+			binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+			_bindingExpression = _cbChoice.SetBinding(ComboBox.TextProperty, binding);
 		}
 
 		private void EhSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
@@ -34,20 +41,24 @@ namespace Altaxo.Gui.Common
 				SelectionChangeCommitted(_cbChoice.SelectedIndex);
 		}
 
-		string _validatedText;
+		#region Dependency property
 		public string ValidatedText
 		{
-			get
-			{
-				return _validatedText;
-			}
-			set
-			{
-				_validatedText = value;
-			}
+			get { return (string)GetValue(ValidatedTextProperty); }
+			set { SetValue(ValidatedTextProperty, value); }
 		}
 
-		private class MyValidationRule : ValidationRule
+		public static readonly DependencyProperty ValidatedTextProperty =
+				DependencyProperty.Register("ValidatedText", typeof(string), typeof(FreeTextComboBoxControl),
+				new FrameworkPropertyMetadata(EhValidatedTextChanged));
+
+		private static void EhValidatedTextChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+
+		}
+		#endregion
+
+		private class MyValidationRule : ValidationRule, IValueConverter
 		{
 			FreeTextComboBoxControl _parent;
 			public MyValidationRule(FreeTextComboBoxControl parent)
@@ -65,6 +76,16 @@ namespace Altaxo.Gui.Common
 						return new ValidationResult(false, "The entered text is not valid");
 				}
 				return ValidationResult.ValidResult;
+			}
+
+			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				return value;
+			}
+
+			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				return value;
 			}
 		}
 
@@ -90,5 +111,7 @@ namespace Altaxo.Gui.Common
 		}
 
 		#endregion
+
+	
 	}
 }

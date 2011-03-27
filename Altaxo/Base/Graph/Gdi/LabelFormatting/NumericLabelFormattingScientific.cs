@@ -66,6 +66,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public void CopyFrom(NumericLabelFormattingScientific from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       base.CopyFrom(from);
     }
 

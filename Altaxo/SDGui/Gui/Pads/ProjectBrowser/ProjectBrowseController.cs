@@ -357,7 +357,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			foreach (BrowserListItem item in _listViewItems)
 			{
-				if (item.Selected && !(item.Item is ParentProjectFolder))
+				if (item.IsSelected && !(item.Item is ParentProjectFolder))
 				{
 					result.Add(item.Item);
 				}
@@ -422,7 +422,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			int count = 0;
 			foreach (BrowserListItem item in _listViewItems)
 			{
-				if (item.Selected)
+				if (item.IsSelected)
 				{
 					count++;
 				}
@@ -452,7 +452,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			foreach (var node in this._listViewItems)
 			{
-				if (!node.Selected)
+				if (!node.IsSelected)
 					continue;
 
 

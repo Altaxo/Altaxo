@@ -545,10 +545,18 @@
     <Compile Include="Collections\IROVector.cs" />
     <Compile Include="Collections\ContiguousNonNegativeIntegerRange.cs" />
     <Compile Include="Science\Energy.cs" />
+    <Compile Include="Science\IRelativeUnit.cs" />
+    <Compile Include="Science\Length.cs" />
+    <Compile Include="Science\PrefixedUnit.cs" />
+    <Compile Include="Science\QuantityWithUnit.cs" />
     <Compile Include="Science\SIConstants.cs" />
+    <Compile Include="Science\SIPrefix.cs" />
+    <Compile Include="Science\SIPrefixList.cs" />
     <Compile Include="Science\SIUnit.cs" />
     <Compile Include="Science\SIValue.cs" />
     <Compile Include="Science\Temperature.cs" />
+    <Compile Include="Science\IUnit.cs" />
+    <Compile Include="Science\UnitWithLimitedPrefixes.cs" />
     <Compile Include="Science\ValueTransformation.cs" />
   </ItemGroup>
   <ItemGroup>

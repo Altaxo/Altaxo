@@ -205,9 +205,9 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataTable myTable)
     {
-      if(null==m_ScriptObject)
+      if(null==_scriptObject)
       {
-        m_Errors = new string[1]{"Script Object is null"};
+        _errors = new string[1]{"Script Object is null"};
         return false;
       }
 
@@ -224,7 +224,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        Altaxo.Calc.ExtractTableValuesExeBase scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)m_ScriptObject;
+        Altaxo.Calc.ExtractTableValuesExeBase scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)_scriptObject;
         for(int i=0;i<len;i++)
         {
           if(scriptObject.IsRowIncluded(myTable,i))
@@ -233,8 +233,8 @@ namespace Altaxo.Scripting
       }
       catch(Exception ex)
       {
-        m_Errors = new string[1];
-        m_Errors[0] = ex.ToString();
+        _errors = new string[1];
+        _errors[0] = ex.ToString();
         return false;
       }
 

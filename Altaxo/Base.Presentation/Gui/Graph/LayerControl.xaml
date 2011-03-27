@@ -10,7 +10,7 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="5*"/>
 		</Grid.ColumnDefinitions>
-		<ListBox Grid.Column="0" x:Name="m_lbEdges" Background="Bisque" Padding="4,4,4,0" SelectionChanged="EhSecondChoice_SelectionChanged"/>
-		<TabControl Grid.Column="1"  x:Name="m_TabCtrl" SelectionChanged="EhTabControl_SelectionChanged"/>
+		<ListBox Grid.Column="0" x:Name="_lbEdges" Background="Bisque" Padding="4,4,4,0" SelectionChanged="EhSecondChoice_SelectionChanged"/>
+		<TabControl Grid.Column="1"  x:Name="_tabCtrl" SelectionChanged="EhTabControl_SelectionChanged"/>
 	</Grid>
 </UserControl>

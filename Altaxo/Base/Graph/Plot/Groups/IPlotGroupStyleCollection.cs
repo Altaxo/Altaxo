@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// </summary>
     /// <param name="groupStyleType">Type of the group style to test.</param>
     /// <returns>Type of the child group style.</returns>
-    Type GetChildTypeOf(Type groupStyleType);
+    Type GetTypeOfChild(Type groupStyleType);
 
    
     /// <summary>

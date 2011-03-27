@@ -96,6 +96,9 @@ namespace Altaxo.Graph.Gdi.Background
 
     public void CopyFrom(DarkMarbel from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.Brush = from._brush;
       
     }

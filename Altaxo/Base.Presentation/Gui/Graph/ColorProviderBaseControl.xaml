@@ -17,8 +17,8 @@
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
+			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -34,14 +34,14 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Color below:"/>
-		<axogcd:ColorComboBox x:Name="_cbColorBelow" Grid.Column="1" Grid.Row="0"/>
+		<axogcd:ColorComboBox x:Name="_cbColorBelow" Grid.Column="1" Grid.Row="0" SelectedColorChanged="EhColorBelowChanged"/>
 		<Label Grid.Column="0" Grid.Row="2" Content="Color above:"/>
-		<axogcd:ColorComboBox x:Name="_cbColorAbove" Grid.Column="1" Grid.Row="2"/>
+		<axogcd:ColorComboBox x:Name="_cbColorAbove" Grid.Column="1" Grid.Row="2"  SelectedColorChanged="EhColorAboveChanged"/>
 		<Label Grid.Column="0" Grid.Row="4" Content="Color of invalid point:"/>
-		<axogcd:ColorComboBox x:Name="_cbInvalid" Grid.Column="1" Grid.Row="4"/>
+		<axogcd:ColorComboBox x:Name="_cbInvalid" Grid.Column="1" Grid.Row="4"  SelectedColorChanged="EhColorInvalidChanged"/>
 		<Label Grid.Column="0" Grid.Row="6" Content="Transparency (%):"/>
-		<axogc:DecimalUpDown x:Name="_edTransparency" Grid.Column="1" Grid.Row="6" Minimum="0" Maximum="100" Change="5" DecimalPlaces="1"/>
+		<axogc:DecimalUpDown x:Name="_edTransparency" Grid.Column="1" Grid.Row="6" Minimum="0" Maximum="100" Change="5" DecimalPlaces="1" ValueChanged="EhTransparencyChanged"/>
 		<Label Grid.Column="0" Grid.Row="8" Content="Color steps:"/>
-		<axogc:Int32UpDown x:Name="_edColorSteps" Grid.Column="1" Grid.Row="8" Minimum="0" MinimumReplacementText="No steps (Continuous)"/>
+		<axogc:Int32UpDown x:Name="_edColorSteps" Grid.Column="1" Grid.Row="8" Minimum="0" MinimumReplacementText="No steps (Continuous)" ValueChanged="EhColorStepsChanged"/>
 	</Grid>
 </UserControl>

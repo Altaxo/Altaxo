@@ -80,6 +80,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public void CopyFrom(SuppressedTicks from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			_suppressedTickValues.Clear();
 			_suppressedTicksByNumber.Clear();
 

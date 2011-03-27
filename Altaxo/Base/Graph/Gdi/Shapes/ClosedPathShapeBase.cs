@@ -118,6 +118,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     protected override void CopyFrom(GraphicBase bfrom)
     {
+			if (object.ReferenceEquals(this, bfrom))
+				return;
+
       ClosedPathShapeBase from = bfrom as ClosedPathShapeBase;
       if (from != null)
       {

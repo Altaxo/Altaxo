@@ -47,6 +47,9 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(TransformationMatrix2D from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.sx = from.sx;
       this.rx = from.rx;
       this.ry = from.ry;
@@ -68,6 +71,9 @@ namespace Altaxo.Graph.Gdi
 
     public bool CopyFrom(object o)
     {
+			if (object.ReferenceEquals(this, o))
+				return true;
+
       var from = o as TransformationMatrix2D;
       if (null != from)
       {

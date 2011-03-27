@@ -111,9 +111,20 @@ namespace Altaxo.Graph.Plot.Groups
 		{
 		}
 
-		public bool CanHaveChilds()
+		public bool CanCarryOver
 		{
-			return false;
+			get
+			{
+				return false;
+			}
+		}
+
+		public bool CanStep
+		{
+			get
+			{
+				return false;
+			}
 		}
 
 		public int Step(int step)

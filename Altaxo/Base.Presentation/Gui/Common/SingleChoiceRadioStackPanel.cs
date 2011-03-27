@@ -24,7 +24,7 @@ namespace Altaxo.Gui.Common
 				var rb = new RadioButton();
 				rb.Content = choice.Name;
 				rb.Tag = choice;
-				rb.IsChecked = choice.Selected;
+				rb.IsChecked = choice.IsSelected;
 				rb.Checked += EhRadioButtonChecked;
 				Children.Add(rb);
 			}
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Common
 			if (node != null)
 			{
 				_choices.ClearSelectionsAll();
-				node.Selected = true == rb.IsChecked;
+				node.IsSelected = true == rb.IsChecked;
 			}
 		}
 	}

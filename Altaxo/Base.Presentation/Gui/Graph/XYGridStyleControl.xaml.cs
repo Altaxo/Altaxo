@@ -17,65 +17,47 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for XYGridStyleControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IXYGridStyleViewEventSink))]
 	public partial class XYGridStyleControl : UserControl, IXYGridStyleView
 	{
+		NotifyChangedValue<bool> _isGridStyleEnabled = new NotifyChangedValue<bool>();
+		NotifyChangedValue<string> _headerTitle = new NotifyChangedValue<string>();
+
 		public XYGridStyleControl()
 		{
 			InitializeComponent();
 		}
 
-		private void EhEnableChecked(object sender, RoutedEventArgs e)
+		private void EhEnableCheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (_controller != null)
-				_controller.EhView_ShowGridChanged(true==_chkEnable.IsChecked);
+			if(null!=ShowGridChanged)
+				ShowGridChanged(true==_chkEnable.IsChecked);
+
 		}
 
-		private void EhEnableUnchecked(object sender, RoutedEventArgs e)
+		
+
+		private void EhShowZeroOnlyCheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (_controller != null)
-				_controller.EhView_ShowGridChanged(true == _chkEnable.IsChecked);
+			if (null != ShowZeroOnlyChanged)
+				ShowZeroOnlyChanged(true==_chkShowZeroOnly.IsChecked);
 		}
 
-		private void EhShowZeroOnlyChecked(object sender, RoutedEventArgs e)
+		
+
+		private void EhShowMinorCheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (_controller != null)
-				_controller.EhView_ShowZeroOnly(true==_chkShowZeroOnly.IsChecked);
+			if(null!=ShowMinorGridChanged)
+				ShowMinorGridChanged(true==_chkShowMinor.IsChecked);
 		}
 
-		private void EhShowZeroOnlyUnchecked(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_ShowZeroOnly(true == _chkShowZeroOnly.IsChecked);
-		}
-
-		private void ShowMinorChecked(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_ShowMinorGridChanged(true==_chkShowMinor.IsChecked);
-		}
-
-		private void EhShowMinorUnchecked(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_ShowMinorGridChanged(true == _chkShowMinor.IsChecked);
-		}
+	
 
 		#region IXYGridStyleView
 		
-			IXYGridStyleViewEventSink _controller;
-		public IXYGridStyleViewEventSink Controller
-		{
-			get
-			{
-
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
+		public event Action<bool> ShowGridChanged;
+		public event Action<bool> ShowMinorGridChanged;
+		public event Action<bool> ShowZeroOnlyChanged;
+		
 
 		public void InitializeBegin()
 		{

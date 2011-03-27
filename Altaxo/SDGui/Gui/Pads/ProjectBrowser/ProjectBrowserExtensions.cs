@@ -259,7 +259,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			var choosenColumns = new List<string>();
 			foreach (var item in dlg.List)
 			{
-				if (item.Selected)
+				if (item.IsSelected)
 					choosenColumns.Add((string)item.Item);
 			}
 

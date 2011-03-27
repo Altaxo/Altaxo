@@ -246,23 +246,23 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
     {
-			if (null == m_ScriptObject && !m_WasTriedToCompile)
+			if (null == _scriptObject && !_wasTriedToCompile)
 				Compile();
 
-      if(null==m_ScriptObject)
+      if(null==_scriptObject)
       {
-        m_Errors = new string[1]{"Script Object is null"};
+        _errors = new string[1]{"Script Object is null"};
         return false;
       }
 
       try
       {
-        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn, reporter);
+        ((Altaxo.Calc.ColScriptExeBase)_scriptObject).Execute(myColumn, reporter);
       }
       catch(Exception ex)
       {
-        m_Errors = new string[1];
-        m_Errors[0] = ex.ToString();
+        _errors = new string[1];
+        _errors[0] = ex.ToString();
         return false;
       }
       return true;
@@ -284,13 +284,13 @@ namespace Altaxo.Scripting
       bool bSucceeded=true;
       Altaxo.Data.DataTableCollection   myDataSet=null;
 
-			if (null == m_ScriptObject && !m_WasTriedToCompile)
+			if (null == _scriptObject && !_wasTriedToCompile)
 				Compile();
 
       // first, test some preconditions
-      if(null==m_ScriptObject)
+      if(null==_scriptObject)
       {
-        m_Errors = new string[1]{"Script Object is null"};
+        _errors = new string[1]{"Script Object is null"};
         return false;
       }
 
@@ -311,13 +311,13 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn, reporter);
+        ((Altaxo.Calc.ColScriptExeBase)_scriptObject).Execute(myColumn, reporter);
       }
       catch(Exception ex)
       {
         bSucceeded = false;
-        m_Errors = new string[1];
-        m_Errors[0] = ex.ToString();
+        _errors = new string[1];
+        _errors[0] = ex.ToString();
       }
       finally
       {

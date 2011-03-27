@@ -26,27 +26,9 @@ using Altaxo.Collections;
 namespace Altaxo.Gui.Common
 {
   #region Interfaces
-  public interface IIntegerAndComboBoxController
+
+  public interface IIntegerAndComboBoxView
   {
-    /// <summary>
-    /// Get/sets the view this controller controls.
-    /// </summary>
-    IIntegerAndComboBoxView View { get; set; }
-
-    void EhView_IntegerChanged(int val, ref bool bCancel);
-
-    void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem);
-
-  }
-
-  public interface IIntegerAndComboBoxView : IMVCView
-  {
-
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    IIntegerAndComboBoxController Controller { get; set; }
-    
     void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
   
     void ComboBoxLabel_Initialize(string text);
@@ -55,7 +37,9 @@ namespace Altaxo.Gui.Common
 
     void IntegerLabel_Initialize(string text);
 
-    
+		event Action<SelectableListNode> ComboBoxSelectionChanged;
+
+		event Action<int> IntegerSelectionChanged;
   
   }
   #endregion
@@ -64,18 +48,17 @@ namespace Altaxo.Gui.Common
   /// Summary description for IntegerAndComboBoxController.
   /// </summary>
 	[ExpectedTypeOfView(typeof(IIntegerAndComboBoxView))]
-  public class IntegerAndComboBoxController :  IMVCAController, IIntegerAndComboBoxController
+  public class IntegerAndComboBoxController :  IMVCAController
   {
-    protected IIntegerAndComboBoxView m_View;
-    protected string m_IntegerLabelText;
-    protected string m_ComboBoxLabelText;
-    protected int m_IntegerMinimum;
-    protected int m_IntegerMaximum;
-    protected int m_IntegerValue;
-    protected SelectableListNodeList m_ComboBoxItems;
-    protected SelectableListNode m_SelectedItem;
+    protected IIntegerAndComboBoxView _view;
+    protected string _integerLabelText;
+    protected string _comboBoxLabelText;
+    protected int _integerMinimum;
+    protected int _integerMaximum;
+    protected int _integerValue;
+    protected SelectableListNodeList _comboBoxItems;
+    protected SelectableListNode _selectedItem;
 
-    
     public IntegerAndComboBoxController(string integerLabel,
       int intMin, int intMax, 
       int intVal,
@@ -83,48 +66,30 @@ namespace Altaxo.Gui.Common
       SelectableListNodeList items,
       int defaultItem)
     {
-      m_IntegerLabelText = integerLabel;
-      m_IntegerMinimum = intMin;
-      m_IntegerMaximum = intMax;
-      m_IntegerValue    = intVal;
-      m_ComboBoxLabelText = comboBoxLabel;
-      m_ComboBoxItems = items;
-      m_SelectedItem = items[defaultItem];
+      _integerLabelText = integerLabel;
+      _integerMinimum = intMin;
+      _integerMaximum = intMax;
+      _integerValue    = intVal;
+      _comboBoxLabelText = comboBoxLabel;
+      _comboBoxItems = items;
+      _selectedItem = items[defaultItem];
 
-      SetElements(true);
+      Initialize(true);
     }
 
 
-    public void SetElements(bool bInit)
+    public void Initialize(bool initData)
     {
-      if(bInit)
+      if(initData)
       {
       }
 
-      if(View!=null)
+      if(null!=_view)
       {
-        View.ComboBoxLabel_Initialize(m_ComboBoxLabelText);
-        View.ComboBox_Initialize(m_ComboBoxItems,m_SelectedItem);
-        View.IntegerLabel_Initialize(m_IntegerLabelText);
-        View.IntegerEdit_Initialize(m_IntegerMinimum,m_IntegerMaximum,m_IntegerValue);
-      }
-    }
-
-    public IIntegerAndComboBoxView View
-    {
-      get { return m_View; }
-      set
-      {
-        if(null!=m_View)
-          m_View.Controller = null;
-
-        m_View = value;
-
-        if(null!=m_View)
-        {
-          m_View.Controller = this;
-          SetElements(false);
-        }
+				_view.ComboBoxLabel_Initialize(_comboBoxLabelText);
+				_view.ComboBox_Initialize(_comboBoxItems, _selectedItem);
+				_view.IntegerLabel_Initialize(_integerLabelText);
+				_view.IntegerEdit_Initialize(_integerMinimum, _integerMaximum, _integerValue);
       }
     }
   
@@ -135,51 +100,64 @@ namespace Altaxo.Gui.Common
 
     public SelectableListNode SelectedItem
     {
-      get { return m_SelectedItem; }
+      get { return _selectedItem; }
     }
 
     public int IntegerValue
     {
-      get { return this.m_IntegerValue; }
+      get { return this._integerValue; }
     }
 
     #region IMVCController Members
 
+		
+
     public object ViewObject
     {
-      get
-      {
-        
-        return View;
-      }
-      set
-      {
-        View = value as IIntegerAndComboBoxView;
-      }
+			get { return _view; }
+			set
+			{
+				if (null != _view)
+				{
+					_view.IntegerSelectionChanged -= EhView_IntegerChanged;
+					_view.ComboBoxSelectionChanged -= EhView_ComboBoxSelectionChanged;
+				}
+
+				_view = value as IIntegerAndComboBoxView;
+
+				if (null != _view)
+				{
+					
+					Initialize(false);
+					_view.IntegerSelectionChanged += EhView_IntegerChanged;
+					_view.ComboBoxSelectionChanged += EhView_ComboBoxSelectionChanged;
+				}
+			}
     }
 
     public object ModelObject
     {
-      get { return this.m_IntegerValue; }
+      get { return this._integerValue; }
     }
 
     #endregion
 
     #region IIntegerAndComboBoxController Members
 
-    public void EhView_IntegerChanged(int val, ref bool bCancel)
+    public void EhView_IntegerChanged(int val)
     {
-      m_IntegerValue = val;
-      bCancel = false;
+      _integerValue = val;
     }
 
     public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
     {
-      m_SelectedItem = selectedItem;
+      _selectedItem = selectedItem;
     }
 
     #endregion
-  }
+
+	
+	}
 
 
 

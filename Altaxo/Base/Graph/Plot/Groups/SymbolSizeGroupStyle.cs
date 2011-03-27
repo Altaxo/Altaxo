@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Plot.Groups
   public class SymbolSizeGroupStyle : IPlotGroupStyle
   {
     bool _isInitialized;
-    float _symbolSize;
+    double _symbolSize;
     readonly static Type MyType = typeof(SymbolSizeGroupStyle);
 
     #region Serialization
@@ -106,10 +106,21 @@ namespace Altaxo.Graph.Plot.Groups
     {
     }
 
-    public bool CanHaveChilds()
+    public bool CanCarryOver
     {
-      return false;
+			get
+			{
+				return false;
+			}
     }
+
+		public bool CanStep
+		{
+			get
+			{
+				return false;
+			}
+		}
 
     public int Step(int step)
     {
@@ -142,12 +153,12 @@ namespace Altaxo.Graph.Plot.Groups
         return _isInitialized;
       }
     }
-    public void Initialize(float symbolSize)
+    public void Initialize(double symbolSize)
     {
       _isInitialized = true;
       _symbolSize = symbolSize;
     }
-    public float SymbolSize
+    public double SymbolSize
     {
       get
       {
@@ -177,7 +188,7 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new SymbolSizeGroupStyle());
     }
 
-    public delegate float SymbolSizeGetter();
+    public delegate double SymbolSizeGetter();
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -202,7 +213,7 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
 
-    public delegate void SymbolSizeSetter(float c);
+    public delegate void SymbolSizeSetter(double c);
     /// <summary>
     /// Try to apply the symbol size group style. Returns true if successfull applied.
     /// </summary>

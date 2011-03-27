@@ -106,10 +106,21 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     {
     }
 
-    public bool CanHaveChilds()
+    public bool CanCarryOver
     {
-      return true;
+			get
+			{
+				return true;
+			}
     }
+
+		public bool CanStep
+		{
+			get
+			{
+				return true;
+			}
+		}
 
     public int Step(int step)
     {

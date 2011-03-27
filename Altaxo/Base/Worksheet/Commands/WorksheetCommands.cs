@@ -103,7 +103,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bAddToPropertyColumns">If true, the columns are added to the property columns instead of the data columns collection.</param>
     public static void ShowAddColumnsDialog(Altaxo.Data.DataTable table, bool bAddToPropertyColumns)
     {
-      Altaxo.Collections.SelectableListNodeList lbitems = new Altaxo.Collections.SelectableListNodeList();
+      var lbitems = new Altaxo.Collections.SelectableListNodeList();
       lbitems.Add(new Altaxo.Collections.SelectableListNode("Numeric", typeof(Altaxo.Data.DoubleColumn), true));
       lbitems.Add(new Altaxo.Collections.SelectableListNode("Date/Time", typeof(Altaxo.Data.DateTimeColumn), false));
       lbitems.Add(new Altaxo.Collections.SelectableListNode("Text", typeof(Altaxo.Data.TextColumn), false));

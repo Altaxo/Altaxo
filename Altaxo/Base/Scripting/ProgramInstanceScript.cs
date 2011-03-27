@@ -166,20 +166,20 @@ namespace Altaxo.Scripting
     /// inside the column script and can be recalled by the Errors property.</remarks>
     public bool Execute(IProgressReporter reporter)
     {
-      if (null == m_ScriptObject)
+      if (null == _scriptObject)
       {
-        m_Errors = new string[1] { "Script Object is null" };
+        _errors = new string[1] { "Script Object is null" };
         return false;
       }
 
       try
       {
-        ((Altaxo.Calc.ProgramInstanceExeBase)m_ScriptObject).Execute(reporter);
+        ((Altaxo.Calc.ProgramInstanceExeBase)_scriptObject).Execute(reporter);
       }
       catch (Exception ex)
       {
-        m_Errors = new string[1];
-        m_Errors[0] = ex.ToString();
+        _errors = new string[1];
+        _errors[0] = ex.ToString();
         return false;
       }
       return true;

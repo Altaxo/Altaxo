@@ -54,29 +54,9 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void Initialize(Collections.NGTreeNode[] nodes)
+		public void Initialize(Collections.NGTreeNodeCollection nodes)
 		{
 			_tvColumns.ItemsSource = nodes;
-		}
-
-		public void SelectNode(Collections.NGTreeNode node)
-		{
-			node.IsSelected = true;
-			node.IsExpanded = true;
-		}
-
-		public void ExpandNode(Collections.NGTreeNode node)
-		{
-			node.IsExpanded = true;
-		}
-
-		public void InitializeNewNodes(Collections.NGTreeNode[] nodes)
-		{
-			
-		}
-
-		public void EhNodesCleared(Collections.NGTreeNodeCollection nodes)
-		{
 		}
 
 		#endregion

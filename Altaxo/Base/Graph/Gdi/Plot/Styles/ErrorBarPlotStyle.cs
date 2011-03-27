@@ -32,6 +32,7 @@ using Altaxo.Graph.Plot.Groups;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
+	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi.Plot.Data;
 	using Altaxo.Graph.Gdi.Plot.Groups;
 
@@ -59,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     bool _independentSymbolSize;
 
     /// <summary>Controls the length of the end bar.</summary>
-    float _symbolSize;
+    double _symbolSize;
 
     /// <summary>
     /// True when the line is not drawn in the circel of diameter SymbolSize around the symbol center.
@@ -163,6 +164,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     void CopyFrom(ErrorBarPlotStyle from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._independentSymbolSize = from._independentSymbolSize;
       this._symbolSize = from._symbolSize;
       this._symbolGap = from._symbolGap;
@@ -188,7 +192,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>Controls the length of the end bar.</summary>
-    public float SymbolSize
+    public double SymbolSize
     {
       get { return _symbolSize; }
       set { _symbolSize = value; }
@@ -340,7 +344,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // symbol size
       if (!_independentSymbolSize)
       {
-        if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(float size) { this._symbolSize = size; }))
+        if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this._symbolSize = size; }))
         {
           this._symbolSize = 0;
         }
@@ -425,7 +429,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             double xlm, ylm;
             layer.CoordinateSystem.LogicalToLayerCoordinates(lm,out xlm, out ylm);
             newClip.Union(oldClippingRegion);
-            newClip.Exclude(new RectangleF((float)(xlm - _symbolSize / 2), (float)(ylm - _symbolSize / 2), _symbolSize, _symbolSize));
+            newClip.Exclude(new RectangleF((float)(xlm - _symbolSize / 2), (float)(ylm - _symbolSize / 2), (float)( _symbolSize), (float)(_symbolSize)));
             g.Clip = newClip;
           }
 
@@ -453,8 +457,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             {
               PointF outDir;
               layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(1, 0), out outDir);
-              outDir.X *= _symbolSize / 2;
-              outDir.Y *= _symbolSize / 2;
+              outDir.X *= (float)( _symbolSize / 2);
+              outDir.Y *= (float)(_symbolSize / 2 );
               double xlay, ylay;
               layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
               // Draw a line from x,y to 
@@ -465,8 +469,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             {
               PointF outDir;
               layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(1, 0), out outDir);
-              outDir.X *= _symbolSize / 2;
-              outDir.Y *= _symbolSize / 2;
+              outDir.X *= (float)(_symbolSize / 2);
+              outDir.Y *= (float)(_symbolSize / 2);
               double xlay, ylay;
               layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
               // Draw a line from x,y to 
@@ -534,7 +538,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             double xlm, ylm;
             layer.CoordinateSystem.LogicalToLayerCoordinates(lm, out xlm, out ylm);
             newClip.Union(oldClippingRegion);
-            newClip.Exclude(new RectangleF((float)(xlm - _symbolSize / 2), (float)(ylm - _symbolSize / 2), _symbolSize, _symbolSize));
+            newClip.Exclude(new RectangleF((float)(xlm - _symbolSize / 2), (float)(ylm - _symbolSize / 2), (float)(_symbolSize), (float)(_symbolSize)));
             g.Clip = newClip;
           }
 
@@ -562,8 +566,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             {
               PointF outDir;
               layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(0, 1), out outDir);
-              outDir.X *= _symbolSize / 2;
-              outDir.Y *= _symbolSize / 2;
+              outDir.X *= (float)(_symbolSize / 2);
+              outDir.Y *= (float)(_symbolSize / 2);
               double xlay, ylay;
               layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
               // Draw a line from x,y to 
@@ -574,8 +578,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             {
               PointF outDir;
               layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(0, 1), out outDir);
-              outDir.X *= _symbolSize / 2;
-              outDir.Y *= _symbolSize / 2;
+              outDir.X *= (float)(_symbolSize / 2);
+              outDir.Y *= (float)(_symbolSize / 2);
               double xlay, ylay;
               layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
               // Draw a line from x,y to 

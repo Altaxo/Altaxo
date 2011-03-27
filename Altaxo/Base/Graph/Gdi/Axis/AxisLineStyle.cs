@@ -289,6 +289,9 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="from">The AxisStyle to copy from</param>
     public void CopyFrom(AxisLineStyle from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       if (_axisPen != null)
         WireEventChain(false);
      

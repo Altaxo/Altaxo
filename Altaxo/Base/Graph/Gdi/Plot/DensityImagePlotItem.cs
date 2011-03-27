@@ -162,6 +162,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
     protected override void CopyFrom(PlotItem fromb)
     {
+			if (object.ReferenceEquals(this, fromb))
+				return;
+
       base.CopyFrom(fromb);
 
       DensityImagePlotItem from = fromb as DensityImagePlotItem;

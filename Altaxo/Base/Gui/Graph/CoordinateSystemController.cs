@@ -32,44 +32,67 @@ namespace Altaxo.Gui.Graph
 {
   [UserControllerForObject(typeof(G2DCoordinateSystem))]
   [ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
-  public class CoordinateSystemController : IMVCAController
+  public class CoordinateSystemController : IMVCANController
   {
     ITypeAndInstanceView _view;
+    G2DCoordinateSystem _originalDoc;
     G2DCoordinateSystem _doc;
-    G2DCoordinateSystem _tempdoc;
 
     IMVCAController _instanceController;
 
 		SelectableListNodeList _choiceList;
+		UseDocument _useDocumentCopy;
 
-    public CoordinateSystemController(G2DCoordinateSystem doc)
-    {
-      _doc = doc;
-      _tempdoc = (G2DCoordinateSystem)doc.Clone();
-      Initialize(true);
-    }
+		/// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
+		Type[] _cosSubTypes;
 
 
       #region IMVCController Members
 
+		public bool InitializeDocument(params object[] args)
+		{
+			if (null == args || args.Length == 0 || !(args[0] is G2DCoordinateSystem))
+				return false;
 
-    void Initialize(bool bInit)
+			_originalDoc = (G2DCoordinateSystem)args[0];
+			if (_useDocumentCopy == UseDocument.Copy)
+				_doc = (G2DCoordinateSystem)_originalDoc.Clone();
+			else
+				_doc = _originalDoc;
+
+			Initialize(true);
+
+			return true;
+		}
+
+		public UseDocument UseDocumentCopy
+		{
+			set { _useDocumentCopy = value; }
+		}
+
+    void Initialize(bool initData)
     {
+			if (initData)
+			{
+				// look for coordinate system types
+				if(null==_cosSubTypes)
+				_cosSubTypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
+
+				if(null==_choiceList)
+					_choiceList = new SelectableListNodeList();
+				_choiceList.Clear();
+				foreach (Type t in _cosSubTypes)
+					_choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
+			}
+
       if (_view != null)
       {
-        // look for coordinate system types
-        Type[] subtypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
-
-				_choiceList = new SelectableListNodeList();
-        foreach(Type t in subtypes)
-					_choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _tempdoc.GetType()));
-
         // look for a controller-control
-        _view.TypeLabel="Type";
+        _view.TypeLabel="Type:";
 				_view.InitializeTypeNames(_choiceList);
 
         // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
-        _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _tempdoc }, typeof(IMVCAController));
+        _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController));
         if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
         {
           Current.Gui.FindAndAttachControlTo(_instanceController);
@@ -91,9 +114,9 @@ namespace Altaxo.Gui.Graph
       if (sel != null)
       {
         System.Type t = (System.Type)sel.Item;
-        if (_tempdoc.GetType() != t)
+        if (_doc.GetType() != t)
         {
-          _tempdoc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Item);
+          _doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Item);
           Initialize(true);
         }
       }
@@ -107,22 +130,24 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        ITypeAndInstanceView oldvalue = _view;
-        _view = value as ITypeAndInstanceView;
+				if (null != _view)
+				{
+					_view.TypeChoiceChanged -= EhTypeChoiceChanged;
+				}
 
-        if (oldvalue != null)
-          oldvalue.TypeChoiceChanged -= EhTypeChoiceChanged;
-        
-        Initialize(false);
+				_view = value as ITypeAndInstanceView;
 
-        if (_view != null)
-          _view.TypeChoiceChanged += EhTypeChoiceChanged;
+				if (null != _view)
+				{
+					Initialize(false);
+					_view.TypeChoiceChanged += EhTypeChoiceChanged;
+				}
       }
     }
 
     public object ModelObject
     {
-      get { return _doc; }
+      get { return _originalDoc; }
     }
 
     #endregion
@@ -135,7 +160,7 @@ namespace Altaxo.Gui.Graph
       bool result = _instanceController==null || _instanceController.Apply();
       if (true == result)
       {
-        _doc = _tempdoc;
+				_originalDoc = _doc;
       }
       return result;
 
@@ -144,5 +169,7 @@ namespace Altaxo.Gui.Graph
     #endregion
 
 
-  }
+
+
+	}
 }

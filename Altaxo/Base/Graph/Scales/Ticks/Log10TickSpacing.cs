@@ -163,6 +163,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public void CopyFrom(Log10TickSpacing from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			_log10Org = from._log10Org;
 			_log10End = from._log10End;
 			_decadesPerMajorTick = from._decadesPerMajorTick;

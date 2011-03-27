@@ -189,6 +189,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
     public void CopyFrom(G2DPlotStyleCollection from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       Suspend();
 
       Clear();

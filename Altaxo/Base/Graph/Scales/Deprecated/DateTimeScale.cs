@@ -103,6 +103,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     #region ICloneable Members
     public void CopyFrom(DateTimeScale from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.IsLinked = from.IsLinked;
 
       this._axisOrg = from._axisOrg;

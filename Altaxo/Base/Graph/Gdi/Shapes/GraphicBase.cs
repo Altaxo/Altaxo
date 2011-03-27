@@ -269,6 +269,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected virtual void CopyFrom(GraphicBase from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._bounds = from._bounds;
       this._position = from._position;
       this._rotation = from._rotation;

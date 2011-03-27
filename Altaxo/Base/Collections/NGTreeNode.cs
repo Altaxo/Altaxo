@@ -67,6 +67,8 @@ namespace Altaxo.Collections
 		/// </summary>
 		NGTreeNode _parent;
 
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
 
 		/// <summary>
 		/// Empty constructor.
@@ -217,7 +219,7 @@ namespace Altaxo.Collections
 
 		/// <summary>
 		/// Gets/sets whether the TreeViewItem 
-		/// associated with this object is expanded.
+		/// associated with this object is selected.
 		/// </summary>
 		public virtual bool IsSelected
 		{
@@ -389,7 +391,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Returns only the nodes with the lowest hierarchie level.
+    /// Returns only the nodes with the lowest hierarchy level.
     /// </summary>
     /// <param name="nodes">Array of nodes.</param>
     /// <returns>Only those nodes wich have the lowest hierarchy level.</returns>
@@ -649,7 +651,6 @@ namespace Altaxo.Collections
 
     #endregion
 
-		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 	}
 
  

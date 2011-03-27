@@ -66,6 +66,9 @@ namespace Altaxo.Graph.Gdi
 
 		public void CopyFrom(ArrangeLayersDocument from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			this.NumberOfColumns = from.NumberOfColumns;
 			this.NumberOfRows = from.NumberOfRows;
 			this.RowSpacing = from.RowSpacing;

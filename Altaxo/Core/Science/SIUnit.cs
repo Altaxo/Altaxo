@@ -27,7 +27,7 @@ namespace Altaxo.Science
 		MagneticFieldStrength,
 	}
 
-	public struct SIUnit
+	public abstract class SIUnit : IUnit,  IEquatable<SIUnit>, IEquatable<IUnit>
 	{
 		sbyte _metre;
 		sbyte _kilogram;
@@ -37,7 +37,7 @@ namespace Altaxo.Science
 		sbyte _mole;
 		sbyte _candela;
 
-		static Dictionary<SIUnit, string> _specialNames;
+		static Dictionary<SIUnit, string> _specialNames = new Dictionary<SIUnit, string>();
 
 
 		public SIUnit(sbyte m, sbyte kg, sbyte s, sbyte A, sbyte K, sbyte mol, sbyte CD)
@@ -84,24 +84,30 @@ namespace Altaxo.Science
 			this._candela = (sbyte)-this._candela;
 		}
 
+		public bool Equals(SIUnit b)
+		{
+			return null == b ? false :
+			this._metre == b._metre &&
+			this._kilogram == b._kilogram &&
+			this._second == b._second &&
+			this._ampere == b._ampere &&
+			this._kelvin == b._kelvin &&
+			this._mole == b._mole &&
+			this._candela == b._candela;
+		}
+
+		public bool Equals(IUnit obj)
+		{
+			SIUnit b = obj as SIUnit;
+			return null == b ? false : Equals(b);
+		}
 
 		public override bool Equals(object obj)
 		{
-			if (obj is SIUnit)
-			{
-				SIUnit b = (SIUnit)obj;
-				return
-				this._metre == b._metre &&
-				this._kilogram == b._kilogram &&
-				this._second == b._second &&
-				this._ampere == b._ampere &&
-				this._kelvin == b._kelvin &&
-				this._mole == b._mole &&
-				this._candela == b._candela;
-			}
-			else
-				return false;
+			SIUnit b = obj as SIUnit;
+			return null == b ? false : Equals(b);
 		}
+
 
 		public override int GetHashCode()
 		{
@@ -113,6 +119,36 @@ namespace Altaxo.Science
 				_kelvin << 8 +
 				_mole << 4 +
 				_candela;
+		}
+
+		public abstract string Name
+		{
+			get; 
+		}
+
+		public abstract string ShortCut
+		{
+			get; 
+		}
+
+		public double ToSIUnit(double x)
+		{
+			return x;
+		}
+
+		public double FromSIUnit(double x)
+		{
+			return x;
+		}
+
+		public abstract ISIPrefixList Prefixes
+		{
+			get;
+		}
+
+		SIUnit IUnit.SIUnit
+		{
+			get { return this; }
 		}
 	}
 }

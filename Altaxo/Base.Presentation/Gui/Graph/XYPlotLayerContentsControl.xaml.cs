@@ -21,7 +21,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class XYPlotLayerContentsControl : UserControl, ILineScatterLayerContentsView
 	{
-		private ILineScatterLayerContentsController m_Ctrl;
+		private ILineScatterLayerContentsViewEventSink _controller;
 
 
 		public XYPlotLayerContentsControl()
@@ -37,6 +37,7 @@ namespace Altaxo.Gui.Graph
 		{
 			e.CanExecute = m_Contents_lbContents.SelectedItems.Count > 0;
 			e.Handled = true;
+			object o = Keyboard.FocusedElement;
 		}
 
 		void EhCommand_CopyExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -57,10 +58,7 @@ namespace Altaxo.Gui.Graph
 			e.Handled = true;
 		}
 
-		protected override void OnPreviewKeyDown(KeyEventArgs e)
-		{
-			base.OnPreviewKeyDown(e);
-		}
+		
 
 		NGTreeNode[] SelectedNodes(Altaxo.Gui.Common.MultiSelectTreeView tree)
 		{
@@ -157,15 +155,15 @@ namespace Altaxo.Gui.Graph
 
 		#region ILineScatterLayerContentsView
 
-		public ILineScatterLayerContentsController Controller
+		public ILineScatterLayerContentsViewEventSink Controller
 		{
 			get
 			{
-				return m_Ctrl;
+				return _controller;
 			}
 			set
 			{
-				m_Ctrl = value;
+				_controller = value;
 			}
 		}
 
@@ -214,11 +212,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return m_Ctrl;
+				return _controller;
 			}
 			set
 			{
-				m_Ctrl = value as ILineScatterLayerContentsController;
+				_controller = value as ILineScatterLayerContentsViewEventSink;
 			}
 		}
 

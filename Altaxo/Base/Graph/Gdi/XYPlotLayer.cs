@@ -797,6 +797,9 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(XYPlotLayer from, GraphCopyOptions options)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       using (IDisposable updateLock = BeginUpdate())
       {
         // XYPlotLayer style
@@ -3021,6 +3024,9 @@ namespace Altaxo.Graph.Gdi
 
       void CopyFrom(ScaleStyle from)
       {
+				if (object.ReferenceEquals(this, from))
+					return;
+
         this.GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
 
         this._axisStyles.Clear();

@@ -112,6 +112,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void CopyFrom(GridStyle from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.MajorPen = from._majorPen == null ? null : (PenX)(from._majorPen.Clone());
       this.MinorPen = from._minorPen == null ? null : (PenX)(from._minorPen.Clone());
       this._showGrid = from._showGrid;

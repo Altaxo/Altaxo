@@ -103,6 +103,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="from">The other instance to copy the data from.</param>
     public void CopyFrom(SpectralPreprocessingOptions from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._method = from._method;
       this._detrendingOrder = from._detrendingOrder;
       this._ensembleScale = from._ensembleScale;

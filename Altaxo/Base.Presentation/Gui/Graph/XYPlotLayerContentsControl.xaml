@@ -9,6 +9,14 @@
              >
 	<UserControl.Resources>
 		<Thickness x:Key="ButtonMargin">8</Thickness>
+		<Geometry x:Key="LeftArrowGeo" >M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z</Geometry>
+		<Style TargetType="Path">
+			<Style.Setters>
+				<Setter Property="Stroke" Value="Black"/>
+				<Setter Property="StrokeThickness" Value="0.2"/>
+				<Setter Property="Fill" Value="LightBlue"/>
+ 			</Style.Setters>
+		</Style>
 	</UserControl.Resources>
     <Grid>
 		<Grid.ColumnDefinitions>
@@ -19,16 +27,24 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition MinHeight="4" Height="*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0">Available data:</Label>
-		<axogc:MultiSelectTreeView x:Name="m_Content_tvDataAvail" Grid.Column="0" Grid.Row="1" Grid.RowSpan="7">
+		<Label x:Name="_label1"  Grid.Column="0" Grid.Row="0">Available data:</Label>
+		<axogc:MultiSelectTreeView x:Name="m_Content_tvDataAvail" Grid.Column="0" Grid.Row="2" Grid.RowSpan="13">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -54,7 +70,7 @@
 
 		</axogc:MultiSelectTreeView>
 		<Label Grid.Column="2" Grid.Row="0">Layer contents:</Label>
-		<axogc:MultiSelectTreeView x:Name="m_Contents_lbContents" Grid.Column="2" Grid.Row="1" Grid.RowSpan="7" ItemMouseDoubleClick="EhItemMouseDoubleClick">
+		<axogc:MultiSelectTreeView x:Name="m_Contents_lbContents" Grid.Column="2" Grid.Row="2" Grid.RowSpan="13" ItemMouseDoubleClick="EhItemMouseDoubleClick">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -72,7 +88,7 @@
 				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
 					<StackPanel Orientation="Horizontal">
 						<Image Width="16" Height="16" Margin="3,0"/>
-						<TextBlock Text="{Binding Text}" />
+						<TextBlock Text="{Binding Text}"  />
 					</StackPanel>
 				</HierarchicalDataTemplate>
 			</ItemsControl.Resources>
@@ -86,24 +102,49 @@
 				<CommandBinding Command="Copy" CanExecute="EhCommand_CopyCanExecute" Executed="EhCommand_CopyExecuted" PreviewCanExecute="EhCommand_CopyPreviewCanExecute"/>
 				<CommandBinding Command="Paste" CanExecute="EhCommand_PasteCanExecute" Executed="EhCommand_PasteExecuted"/>
 			</axogc:MultiSelectTreeView.CommandBindings>
-			<axogc:MultiSelectTreeView.InputBindings>
-				<KeyBinding Key="C" Modifiers="CTRL" Command="Copy"/>
-				<KeyBinding Key="V" Modifiers="CTRL" Command="Paste"/>
-			</axogc:MultiSelectTreeView.InputBindings>
+	
 
 		</axogc:MultiSelectTreeView>
 			
-		<Button Grid.Column="1" Grid.Row="1" Content="->" Margin="{StaticResource ButtonMargin}"  Click="EhPutData_Click"/>
-		<Button Grid.Column="1" Grid.Row="2" Content="&lt;-" Margin="{StaticResource ButtonMargin}" Click="EhPullData_Click"/>
+		<Button Grid.Column="1" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}"  Click="EhPutData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+			<Viewbox Stretch="Uniform">
+				<Viewbox.LayoutTransform>
+					<RotateTransform Angle="0"/>
+				</Viewbox.LayoutTransform>
+				<Path Data="{StaticResource LeftArrowGeo}"/>
+			</Viewbox>
+		</Button>
+		<Button Grid.Column="1" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}" Click="EhPullData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+			<Viewbox>
+				<Viewbox.LayoutTransform>
+					<RotateTransform Angle="180"/>
+				</Viewbox.LayoutTransform>
+				<Path Data="{StaticResource LeftArrowGeo}"/>
+			</Viewbox>
+		</Button>
 
-		<Button Grid.Column="3" Grid.Row="1" HorizontalAlignment="Left" Content="/\" Margin="{StaticResource ButtonMargin}" Click="EhListSelUp_Click" />
-		<Button Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" Content="\/" Margin="{StaticResource ButtonMargin}" Click="EhListSelDown_Click" />
+		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelUp_Click" >
+			<Viewbox>
+				<Viewbox.LayoutTransform>
+					<RotateTransform Angle="270"/>
+				</Viewbox.LayoutTransform>
+				<Path Data="{StaticResource LeftArrowGeo}"/>
+			</Viewbox>
+		</Button>
+		<Button Grid.Column="3" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelDown_Click" >
+			<Viewbox>
+				<Viewbox.LayoutTransform>
+					<RotateTransform Angle="90"/>
+				</Viewbox.LayoutTransform>
+				<Path Data="{StaticResource LeftArrowGeo}"/>
+			</Viewbox>
+		</Button>
 
-		<Button Grid.Column="3" Grid.Row="3" Content="Plot associations" Margin="{StaticResource ButtonMargin}" Click="EhPlotAssociations_Click" />
-		<Button Grid.Column="3" Grid.Row="4" Content="Group" Margin="{StaticResource ButtonMargin}" Click="EhGroup_Click" />
-		<Button Grid.Column="3" Grid.Row="5" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click"/>
-		<Button Grid.Column="3" Grid.Row="6" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click"/>
-		<CheckBox Grid.Column="3" Grid.Row="7" Content="Show range" Margin="{StaticResource ButtonMargin}" Checked="EhShowRange_CheckedChanged" Unchecked="EhShowRange_CheckedChanged" />
+		<Button Grid.Column="3" Grid.Row="6" Content="Plot associations" Margin="{StaticResource ButtonMargin}" Click="EhPlotAssociations_Click" />
+		<Button x:Name="_btGroup" Grid.Column="3" Grid.Row="8" Content="Group" Margin="{StaticResource ButtonMargin}" Click="EhGroup_Click" />
+		<Button Grid.Column="3" Grid.Row="10" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click"/>
+		<Button Grid.Column="3" Grid.Row="12" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click"/>
+		<CheckBox Grid.Column="3" Grid.Row="14" Content="Show range" Margin="{StaticResource ButtonMargin}" Checked="EhShowRange_CheckedChanged" Unchecked="EhShowRange_CheckedChanged" />
 
 	</Grid>
 </UserControl>

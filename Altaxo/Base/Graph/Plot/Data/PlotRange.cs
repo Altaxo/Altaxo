@@ -98,7 +98,8 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// First index in the plot point array, that appears as a plot range.
+    /// First index of a contiguous plot range in the plot point array (i.e. in the array of processed plot point data, <b>not</b> in the original data column).
+		/// To calculate from which row index in the original data column this comes from, add to this value <see cref="OffsetToOriginal"/>.
     /// </summary>
     public int LowerBound
     {
@@ -107,7 +108,8 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// One more than the last index in the plot poin array, that appeas as a plot range.
+		/// Last index + 1 of a contiguous plot range in the plot point array (i.e. in the array of processed plot point data, <b>not</b> in the original data column).
+		/// To calculate from which row index in the original data column this comes from, add to this value <see cref="OffsetToOriginal"/>.
     /// </summary>
     public int UpperBound
     {
@@ -116,7 +118,7 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// This gives the offset to the original row index.
+    /// This gives the offset of an index in the plot point array to the original data row index.
     /// </summary>
     /// <example>If the LowerBound=4 and UpperBound==6, this means points 4 to 6 in the array of plot point locations (!)
     /// will be a contiguous range of plot points, and for this, they are connected by a line etc.
@@ -128,11 +130,17 @@ namespace Altaxo.Graph.Plot.Data
       set { _offsetToOriginal = value; }
     }
 
-
+		/// <summary>
+		/// Row index of the first point of this plot range in the original data column.
+		/// </summary>
     public int OriginalFirstPoint
     {
       get { return _lowerBound + _offsetToOriginal; }
     }
+
+		/// <summary>
+		/// Row index of the last point of this plot range in the original data column.
+		/// </summary>
     public int OriginalLastPoint
     {
       get { return _upperBound + _offsetToOriginal -1; }
@@ -145,7 +153,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <returns>A enumerable that enumerates through the orginal row indices.</returns>
     public IEnumerable<int> OriginalRowIndices()
     {
-      for (int i = _lowerBound; i < _upperBound; i++)
+      for (int i = _lowerBound; i < _upperBound; ++i)
       {
         yield return i + _offsetToOriginal;
       }

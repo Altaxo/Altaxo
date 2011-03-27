@@ -26,66 +26,48 @@ namespace Altaxo.Gui.Common
 
 		private void EhIntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-
+			if (null != IntegerSelectionChanged)
+				IntegerSelectionChanged(_edIntegerUpDown.Value);
 		}
 
 		private void EhComboBox_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
-
+			if (null != ComboBoxSelectionChanged)
+				ComboBoxSelectionChanged((Collections.SelectableListNode)_cbComboBox.SelectedItem);
 		}
 
 
 		#region IIntegerAndComboBoxView
 
-		IIntegerAndComboBoxController m_Controller;
+		public event Action<Collections.SelectableListNode> ComboBoxSelectionChanged;
 
-		public IIntegerAndComboBoxController Controller
-		{
-			get
-			{
-				return m_Controller;
-			}
-			set
-			{
-				m_Controller = value;
-			}
-		}
+		public event Action<int> IntegerSelectionChanged;
 
 		public void ComboBox_Initialize(Collections.SelectableListNodeList items, Collections.SelectableListNode defaultItem)
 		{
-			m_ComboBox.ItemsSource = null;
-			m_ComboBox.ItemsSource = items;
-			m_ComboBox.SelectedItem = defaultItem;
+			_cbComboBox.ItemsSource = null;
+			_cbComboBox.ItemsSource = items;
+			_cbComboBox.SelectedItem = defaultItem;
 		}
 
 		public void ComboBoxLabel_Initialize(string text)
 		{
-			m_ComboBoxLabel.Content = text;
+			_lblComboBoxLabel.Content = text;
 		}
 
 		public void IntegerEdit_Initialize(int min, int max, int val)
 		{
-			m_IntegerUpDown.Minimum = min;
-			m_IntegerUpDown.Maximum = max;
-			m_IntegerUpDown.Value = val;
+			_edIntegerUpDown.Minimum = min;
+			_edIntegerUpDown.Maximum = max;
+			_edIntegerUpDown.Value = val;
 		}
 
 		public void IntegerLabel_Initialize(string text)
 		{
-			m_IntegerLabel.Content = text;
+			_lblIntegerLabel.Content = text;
 		}
 
-		public object ControllerObject
-		{
-			get
-			{
-				return m_Controller;
-			}
-			set
-			{
-				m_Controller = value as IIntegerAndComboBoxController;
-			}
-		}
+	
 
 		#endregion
 	}

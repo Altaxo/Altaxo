@@ -64,18 +64,6 @@ namespace Altaxo.Gui.Graph
 				ClearNegativeError(this, EventArgs.Empty);
 		}
 
-		private void _cbSymbolSize_Validating(object sender, SelectionChangedEventArgs e)
-		{
-			if (null != VerifySymbolSize)
-				VerifySymbolSize(this, new System.ComponentModel.CancelEventArgs());
-		}
-
-		private void _edSkipFrequency_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
-		{
-			if (null != VerifySkipFrequency)
-				VerifySkipFrequency(this, new System.ComponentModel.CancelEventArgs());
-		}
-
 		#region IErrorBarPlotStyleView Members
 
 		public bool IndependentColor
@@ -173,6 +161,10 @@ namespace Altaxo.Gui.Graph
 			{
 				return _cbSymbolSize.SelectedLineCapSize;
 			}
+			set
+			{
+				_cbSymbolSize.SelectedLineCapSize = value;
+			}
 		}
 
 		public int SkipFrequency
@@ -229,10 +221,6 @@ namespace Altaxo.Gui.Graph
 		public event EventHandler ChooseNegativeError;
 
 		public event EventHandler IndependentNegativeError_CheckChanged;
-
-		public event CancelEventHandler VerifySymbolSize;
-
-		public event CancelEventHandler VerifySkipFrequency;
 
 		public event EventHandler ClearPositiveError;
 

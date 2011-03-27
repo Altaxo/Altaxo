@@ -50,6 +50,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     void CopyFrom(GridPlaneCollection from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.Clear();
 
       foreach (GridPlane plane in from)

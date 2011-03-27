@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Graph
 
     protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
     protected IMVCAController _layerPositionController;
-    protected ILineScatterLayerContentsController _layerContentsController;
+    protected IMVCANController _layerContentsController;
     protected IMVCAController[] _axisScaleController;
 
     Dictionary<CSLineID, CSAxisInformation> _axisStyleIds;
@@ -224,7 +224,7 @@ namespace Altaxo.Gui.Graph
           }
           if (null == _layerContentsController)
           {
-            _layerContentsController = (ILineScatterLayerContentsController)Current.Gui.GetControllerAndControl(new object[] { _doc.PlotItems }, typeof(ILineScatterLayerContentsController), UseDocument.Directly);
+            _layerContentsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.PlotItems }, typeof(IMVCANController), UseDocument.Directly);
           }
           _currentController = _layerContentsController;
           View.CurrentContent = _currentController.ViewObject;
@@ -268,7 +268,8 @@ namespace Altaxo.Gui.Graph
           }
           if (null == this._coordinateController)
           {
-            this._coordinateController = new Altaxo.Gui.Graph.CoordinateSystemController(_doc.CoordinateSystem);
+						this._coordinateController = new Altaxo.Gui.Graph.CoordinateSystemController() { UseDocumentCopy = UseDocument.Directly };
+						_coordinateController.InitializeDocument(_doc.CoordinateSystem);
             Current.Gui.FindAndAttachControlTo(this._coordinateController);
           }
           _currentController = this._coordinateController;

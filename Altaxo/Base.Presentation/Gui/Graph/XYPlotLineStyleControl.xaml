@@ -51,20 +51,20 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Connect:"/>
-		<ComboBox x:Name="m_cbLineConnect" Grid.Column="1" Grid.Row="0" SelectionChanged="m_cbLineConnect_SelectionChangeCommitted"/>
+		<ComboBox x:Name="_cbLineConnect" Grid.Column="1" Grid.Row="0" SelectionChanged="EhLineConnect_SelectionChanged"/>
 		<CheckBox x:Name="_chkConnectCircular" Grid.Column="1" Grid.Row="2" Content="Circular connection"/>
-		<CheckBox x:Name="m_chkLineSymbolGap" Grid.Column="1" Grid.Row="4" Content="Line/symbol gap"/>
+		<CheckBox x:Name="_chkLineSymbolGap" Grid.Column="1" Grid.Row="4" Content="Line/symbol gap"/>
 		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" />
 		<axogcd:BrushComboBox x:Name="_cbLineColor" Grid.Column="1" Grid.Row="6"/>
 		<Label Grid.Column="0" Grid.Row="8" Content="Style:"/>
 		<axogcd:DashStyleComboBox x:Name="_cbLineStyle" Grid.Column="1" Grid.Row="8"/>
 		<Label Grid.Column="0" Grid.Row="10" Content="Thickness:"/>
 		<axogcd:LineThicknessComboBox x:Name="_cbLineThickness" Grid.Column="1" Grid.Row="10"/>
-		<CheckBox x:Name="m_chkLineFillArea" Grid.Column="0" Grid.Row="12" Content="Fill area" Checked="EhLineFillArea_CheckedChanged" Unchecked="EhLineFillArea_CheckedChanged"/>
+		<CheckBox x:Name="_chkLineFillArea" Grid.Column="0" Grid.Row="12" Content="Fill area" Checked="EhLineFillArea_CheckedChanged" Unchecked="EhLineFillArea_CheckedChanged"/>
 		<CheckBox x:Name="_chkIndependentFillColor" Grid.Column="0" Grid.Row="14" Content="Indep. fill color:"/>
-		<axogcd:BrushComboBox x:Name="m_cbLineFillColor" Grid.Column="1" Grid.Row="14" />
+		<axogcd:BrushComboBox x:Name="_cbLineFillColor" Grid.Column="1" Grid.Row="14" />
 		<Label Grid.Column="0" Grid.Row="16" Content="Fill direction:"/>
-		<ComboBox x:Name="m_cbLineFillDirection" Grid.Column="1" Grid.Row="16"/>
+		<ComboBox x:Name="_cbLineFillDirection" Grid.Column="1" Grid.Row="16"/>
 
 
 	</Grid>

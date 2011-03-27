@@ -28,7 +28,7 @@
 		</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Content="Scale:"/>
 		<ComboBox x:Name="_cbScales" Grid.Column="1" Grid.Row="0" SelectionChanged="EhScaleSelectionChangeCommitted"/>
-		<Viewbox x:Name="_boundaryHost" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"/>
-		<Viewbox x:Name="_scaleViewHost" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"/>
+		<Border x:Name="_boundaryHost" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"/>
+		<Border x:Name="_scaleViewHost" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"/>
 	</Grid>
 </UserControl>

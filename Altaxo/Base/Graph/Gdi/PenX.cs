@@ -662,6 +662,9 @@ namespace Altaxo.Graph.Gdi
     /// <param name="pen">the PenHolder object to copy</param>
     public void CopyFrom(PenX pen)
     {
+			if (object.ReferenceEquals(this, pen))
+				return;
+
       _SetPenVariable(null);
 
       this.m_ConfiguredProperties = pen.m_ConfiguredProperties;
@@ -1410,6 +1413,9 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(DashStyleEx from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._knownStyle = from.KnownStyle;
       this._customStyle = from._customStyle == null ? null : (float[])from._customStyle.Clone();
     }
@@ -1751,6 +1757,9 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(LineCapEx from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._size = from._size;
       this._currentStyle = from._currentStyle;
     }

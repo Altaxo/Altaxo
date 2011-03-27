@@ -15,6 +15,20 @@ namespace Altaxo.Gui.Common
 		bool _isInitialTextModified;
 		bool _isValidatedSuccessfully = true;
 
+
+		public ValidatingTextBox()
+		{
+			var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, this.GetType());
+			dpd.AddValueChanged(this, EhTextChanged);
+
+			var binding = new Binding();
+			binding.Source = this;
+			binding.Path = new PropertyPath("ValidatedText");
+			binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
+			this.SetBinding(TextBox.TextProperty, binding);
+		}
+
+
 		#region Dependency property
 		public string ValidatedText
 		{
@@ -84,17 +98,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		public ValidatingTextBox()
-		{
-			var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBox.TextProperty, this.GetType());
-			dpd.AddValueChanged(this, EhTextChanged);
-
-			var binding = new Binding();
-			binding.Source = this;
-			binding.Path = new PropertyPath("ValidatedText");
-			binding.ValidationRules.Add(new ValidationWithErrorString(this.EhValidateText));
-			this.SetBinding(TextBox.TextProperty, binding);
-		}
+	
 	}
 }
 

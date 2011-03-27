@@ -17,12 +17,10 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for XYPlotLineStyleControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IXYPlotLineStyleViewEventSink))]
 	public partial class XYPlotLineStyleControl : UserControl, IXYPlotLineStyleView
 	{
-		private IXYPlotLineStyleViewEventSink _controller;
-		private bool _EnableDisableAll = false;
-		private int m_SuppressEvents = 0;
+		private bool _enableDisableAll = false;
+		private int _suppressEvents = 0;
 		Altaxo.Gui.Common.Drawing.PenControlsGlue _penGlue;
 		CTTPV _cttpv;
 
@@ -38,9 +36,9 @@ namespace Altaxo.Gui.Graph
 
 		}
 
-		private void m_cbLineConnect_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
+		private void EhLineConnect_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (this._EnableDisableAll)
+			if (this._enableDisableAll)
 				EnableDisableMain(this.ShouldEnableMain());
 		}
 
@@ -48,11 +46,11 @@ namespace Altaxo.Gui.Graph
 
 		private void EhLineFillArea_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			bool bFill = true==m_chkLineFillArea.IsChecked;
-			this.m_cbLineFillColor.IsEnabled = bFill;
-			this.m_cbLineFillDirection.IsEnabled = bFill;
+			bool bFill = true==_chkLineFillArea.IsChecked;
+			this._cbLineFillColor.IsEnabled = bFill;
+			this._cbLineFillDirection.IsEnabled = bFill;
 
-			if (this._EnableDisableAll)
+			if (this._enableDisableAll)
 				EnableDisableMain(this.ShouldEnableMain());
 		}
 
@@ -65,13 +63,13 @@ namespace Altaxo.Gui.Graph
 			this._cbLineStyle.IsEnabled = bEnable;
 			this._cbLineThickness.IsEnabled = bEnable;
 
-			this.m_cbLineFillColor.IsEnabled = bEnable;
-			this.m_chkLineSymbolGap.IsEnabled = bEnable;
+			this._cbLineFillColor.IsEnabled = bEnable;
+			this._chkLineSymbolGap.IsEnabled = bEnable;
 		}
 
 		bool ShouldEnableMain()
 		{
-			return this.m_cbLineConnect.SelectedIndex != 0 || true==m_chkLineFillArea.IsChecked;
+			return this._cbLineConnect.SelectedIndex != 0 || true==_chkLineFillArea.IsChecked;
 		}
 
 		#region Inner class
@@ -116,16 +114,10 @@ namespace Altaxo.Gui.Graph
 
 		#region  IXYPlotLineStyleView
 
-		public IXYPlotLineStyleViewEventSink Controller
-		{
-			get { return _controller; }
-			set { _controller = value; }
-		}
-
 		public void SetEnableDisableMain(bool bActivate)
 		{
-			this._EnableDisableAll = bActivate;
-			this.EnableDisableMain(_EnableDisableAll == false || this.ShouldEnableMain());
+			this._enableDisableAll = bActivate;
+			this.EnableDisableMain(_enableDisableAll == false || this.ShouldEnableMain());
 		}
 
 		public void InitializeIndependentColor(bool val)
@@ -140,38 +132,38 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeLineSymbolGapCondition(bool bGap)
 		{
-			++m_SuppressEvents;
-			this.m_chkLineSymbolGap.IsChecked = bGap;
-			--m_SuppressEvents;
+			++_suppressEvents;
+			this._chkLineSymbolGap.IsChecked = bGap;
+			--_suppressEvents;
 		}
 
 		public void InitializeLineConnect(string[] arr, string sel)
 		{
-			m_cbLineConnect.ItemsSource = arr;
-			m_cbLineConnect.SelectedItem = sel;
+			_cbLineConnect.ItemsSource = arr;
+			_cbLineConnect.SelectedItem = sel;
 		}
 
 		public void InitializeFillCondition(bool bFill)
 		{
-			this.m_chkLineFillArea.IsChecked = bFill;
-			this.m_cbLineFillColor.IsEnabled = bFill;
-			this.m_cbLineFillDirection.IsEnabled = bFill;
+			this._chkLineFillArea.IsChecked = bFill;
+			this._cbLineFillColor.IsEnabled = bFill;
+			this._cbLineFillDirection.IsEnabled = bFill;
 		}
 
 		public void InitializeFillDirection(List<Collections.ListNode> list, int sel)
 		{
-			this.m_cbLineFillDirection.ItemsSource = list;
-			this.m_cbLineFillDirection.SelectedIndex= sel;
+			this._cbLineFillDirection.ItemsSource = list;
+			this._cbLineFillDirection.SelectedIndex= sel;
 		}
 
 		public void InitializeFillColor(Altaxo.Graph.Gdi.BrushX sel)
 		{
-			m_cbLineFillColor.SelectedBrush = sel;
+			_cbLineFillColor.SelectedBrush = sel;
 		}
 
 		public bool LineSymbolGap
 		{
-			get { return true==m_chkLineSymbolGap.IsChecked; }
+			get { return true==_chkLineSymbolGap.IsChecked; }
 		}
 
 		public bool IndependentColor
@@ -184,7 +176,7 @@ namespace Altaxo.Gui.Graph
 
 		public string LineConnect
 		{
-			get { return (string)m_cbLineConnect.SelectedItem; }
+			get { return (string)_cbLineConnect.SelectedItem; }
 		}
 
 		public bool ConnectCircular
@@ -195,17 +187,17 @@ namespace Altaxo.Gui.Graph
 
 		public bool LineFillArea
 		{
-			get { return true==m_chkLineFillArea.IsChecked; }
+			get { return true==_chkLineFillArea.IsChecked; }
 		}
 
 		public Collections.ListNode LineFillDirection
 		{
-			get { return (Collections.ListNode)m_cbLineFillDirection.SelectedItem; }
+			get { return (Collections.ListNode)_cbLineFillDirection.SelectedItem; }
 		}
 
 		public Altaxo.Graph.Gdi.BrushX LineFillColor
 		{
-			get { return m_cbLineFillColor.SelectedBrush; }
+			get { return _cbLineFillColor.SelectedBrush; }
 		}
 
 		public bool IndependentFillColor

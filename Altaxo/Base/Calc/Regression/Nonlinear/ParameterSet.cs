@@ -91,6 +91,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public void CopyFrom(ParameterSetElement from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.Name = from.Name;
       this.Parameter = from.Parameter;
       this.Variance = from.Variance;

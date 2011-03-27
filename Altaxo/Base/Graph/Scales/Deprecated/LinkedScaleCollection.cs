@@ -106,6 +106,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     public void CopyFrom(LinkedScaleCollection from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       if (_linkedScales != null)
       {
         for (int i = 0; i < _linkedScales.Length; ++i)

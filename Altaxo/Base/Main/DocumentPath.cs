@@ -25,7 +25,8 @@ using System;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// DocumentPath holds a path to a document
+  /// DocumentPath holds a path to a document. This path reflects the internal organization of the class instances in Altaxo. Do not mix this
+	/// concept with the concept of document folders (see <see cref="DocumentFolder"/>).
   /// </summary>
   [Serializable]
   public class DocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable
@@ -315,7 +316,7 @@ namespace Altaxo.Main
       }
 
 
-      if(!hash.ContainsKey(root))
+      if(null==root || !hash.ContainsKey(root))
       {
         return GetAbsolutePath(endnode); // no common root -> return AbsolutePath
       }

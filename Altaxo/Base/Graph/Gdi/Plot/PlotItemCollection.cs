@@ -282,6 +282,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		public void CopyFrom(PlotItemCollection from, GraphCopyOptions options)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			if (GraphCopyOptions.CopyLayerPlotStyles == (GraphCopyOptions.CopyLayerPlotStyles & options))
 			{
         var thisFlat = this.Flattened;

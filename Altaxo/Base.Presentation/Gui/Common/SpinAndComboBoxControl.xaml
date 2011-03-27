@@ -15,10 +15,10 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
-		<Label x:Name="m_IntegerLabel" Grid.Row="0" Content="Label1"/>
-		<axogc:Int32UpDown x:Name="m_IntegerUpDown" Grid.Row="1" ValueChanged="EhIntegerUpDown_ValueChanged"/>
-		<Label x:Name="m_ComboBoxLabel" Grid.Row="3" Content="Label2"/>
-		<ComboBox x:Name="m_ComboBox" Grid.Row="4" SelectionChanged="EhComboBox_SelectionChangeCommit"/>
+		<Label x:Name="_lblIntegerLabel" Grid.Row="0" Content="Label1"/>
+		<axogc:Int32UpDown x:Name="_edIntegerUpDown" Grid.Row="1" ValueChanged="EhIntegerUpDown_ValueChanged"/>
+		<Label x:Name="_lblComboBoxLabel" Grid.Row="3" Content="Label2"/>
+		<ComboBox x:Name="_cbComboBox" Grid.Row="4" SelectionChanged="EhComboBox_SelectionChangeCommit"/>
 
 	</Grid>
 </UserControl>

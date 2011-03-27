@@ -5,11 +5,5 @@ using System.Text;
 
 namespace Altaxo.Science
 {
-	public struct  SIValue
-	{
-		double _val;
-		SIUnit _unit;
-
-
-	}
+	
 }

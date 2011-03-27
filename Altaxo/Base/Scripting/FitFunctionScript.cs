@@ -216,9 +216,9 @@ namespace Altaxo.Scripting
         FitFunctionScript s = (FitFunctionScript)obj;
 
         // Update the user defined paramter names
-        if (s.m_ScriptObject != null && s.IsUsingUserDefinedParameterNames)
+        if (s._scriptObject != null && s.IsUsingUserDefinedParameterNames)
         { 
-          IFitFunction ff = (IFitFunction)s.m_ScriptObject;
+          IFitFunction ff = (IFitFunction)s._scriptObject;
           if(s._UserDefinedParameterNames==null || s._UserDefinedParameterNames.Length!=ff.NumberOfParameters)
             s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
           for(int i=0;i<ff.NumberOfParameters;++i)
@@ -290,9 +290,9 @@ namespace Altaxo.Scripting
         FitFunctionScript s = (FitFunctionScript)obj;
 
         // Update the user defined paramter names
-        if (s.m_ScriptObject != null && s.IsUsingUserDefinedParameterNames)
+        if (s._scriptObject != null && s.IsUsingUserDefinedParameterNames)
         {
-          IFitFunction ff = (IFitFunction)s.m_ScriptObject;
+          IFitFunction ff = (IFitFunction)s._scriptObject;
           if (s._UserDefinedParameterNames == null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
             s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
           for (int i = 0; i < ff.NumberOfParameters; ++i)
@@ -404,6 +404,9 @@ namespace Altaxo.Scripting
 
     public void CopyFrom(FitFunctionScript from, bool forModification)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       base.CopyFrom(from,forModification);
       CopyInstanceMembersFrom(from);
     }
@@ -425,9 +428,9 @@ namespace Altaxo.Scripting
     {
       bool success = base.Compile ();
 
-      if(success && (this.m_ScriptObject is IFitFunction))
+      if(success && (this._scriptObject is IFitFunction))
       {
-        IFitFunction ff = (IFitFunction)m_ScriptObject;
+        IFitFunction ff = (IFitFunction)_scriptObject;
 
         this._NumberOfParameters = ff.NumberOfParameters;
         this._fitFunctionCreationTime = DateTime.Now;
@@ -1046,15 +1049,15 @@ namespace Altaxo.Scripting
 
       MakeSureWasTriedToCompile();
 
-      if (null == m_ScriptObject)
+      if (null == _scriptObject)
       {
-        m_Errors = new string[1] { "Script Object is null" };
+        _errors = new string[1] { "Script Object is null" };
         return double.NaN;
       }
 
       try
       {
-        return ((Altaxo.Calc.IParametrizedScalarFunctionDD)m_ScriptObject).Evaluate(x,parameters);
+        return ((Altaxo.Calc.IParametrizedScalarFunctionDD)_scriptObject).Evaluate(x,parameters);
       }
       catch (Exception)
       {
@@ -1070,8 +1073,8 @@ namespace Altaxo.Scripting
       {
        
 
-        if (this.m_ScriptObject != null)
-          return ((IFitFunction)m_ScriptObject).NumberOfIndependentVariables;
+        if (this._scriptObject != null)
+          return ((IFitFunction)_scriptObject).NumberOfIndependentVariables;
         else
           return this._IndependentVariablesNames.Length;
       }
@@ -1083,8 +1086,8 @@ namespace Altaxo.Scripting
       {
         
 
-        if (this.m_ScriptObject != null)
-          return ((IFitFunction)m_ScriptObject).NumberOfDependentVariables;
+        if (this._scriptObject != null)
+          return ((IFitFunction)_scriptObject).NumberOfDependentVariables;
         else
           return this._DependentVariablesNames.Length;
       }
@@ -1096,14 +1099,14 @@ namespace Altaxo.Scripting
       {
         
 
-        if (this.m_ScriptObject != null)
-          return ((IFitFunction)m_ScriptObject).NumberOfParameters;
+        if (this._scriptObject != null)
+          return ((IFitFunction)_scriptObject).NumberOfParameters;
         else
           return this._NumberOfParameters;
       }
       set
       {
-        if (this.m_ScriptObject != null)
+        if (this._scriptObject != null)
           throw new ApplicationException("Number of parameters can not be changed after successfull compilation");
         else
         {
@@ -1118,8 +1121,8 @@ namespace Altaxo.Scripting
     {
       
 
-      if (this.m_ScriptObject != null)
-        return ((IFitFunction)m_ScriptObject).IndependentVariableName(i);
+      if (this._scriptObject != null)
+        return ((IFitFunction)_scriptObject).IndependentVariableName(i);
       else
         return this._IndependentVariablesNames[i];
     }
@@ -1128,8 +1131,8 @@ namespace Altaxo.Scripting
     {
       
 
-      if (this.m_ScriptObject != null)
-        return ((IFitFunction)m_ScriptObject).DependentVariableName(i);
+      if (this._scriptObject != null)
+        return ((IFitFunction)_scriptObject).DependentVariableName(i);
       else
         return this._DependentVariablesNames[i];
     }
@@ -1145,9 +1148,9 @@ namespace Altaxo.Scripting
      // if (tryUseCompiledObject && IsUsingUserDefinedParameterNames && (_UserDefinedParameterNames == null || i >= this._UserDefinedParameterNames.Length))
      //   MakeSureWasTriedToCompile();
 
-      if (this.m_ScriptObject != null)
+      if (this._scriptObject != null)
       {
-        return ((IFitFunction)m_ScriptObject).ParameterName(i);
+        return ((IFitFunction)_scriptObject).ParameterName(i);
       }
       else
       {
@@ -1163,8 +1166,8 @@ namespace Altaxo.Scripting
     public double DefaultParameterValue(int i)
     {
 
-      if (this.m_ScriptObject != null)
-        return ((IFitFunction)m_ScriptObject).DefaultParameterValue(i);
+      if (this._scriptObject != null)
+        return ((IFitFunction)_scriptObject).DefaultParameterValue(i);
       else
         return 0;
     }
@@ -1172,8 +1175,8 @@ namespace Altaxo.Scripting
 
     public IVarianceScaling DefaultVarianceScaling(int i)
     {
-      if (this.m_ScriptObject != null)
-        return ((IFitFunction)m_ScriptObject).DefaultVarianceScaling(i);
+      if (this._scriptObject != null)
+        return ((IFitFunction)_scriptObject).DefaultVarianceScaling(i);
       else
         return null;
     }
@@ -1182,15 +1185,15 @@ namespace Altaxo.Scripting
     {
       MakeSureWasTriedToCompile();
 
-      if (null == m_ScriptObject)
+      if (null == _scriptObject)
       {
-        m_Errors = new string[1] { "Script Object is null" };
+        _errors = new string[1] { "Script Object is null" };
         return;
       }
 
       try
       {
-        ((IFitFunction)m_ScriptObject).Evaluate(independent,parameters,result);
+        ((IFitFunction)_scriptObject).Evaluate(independent,parameters,result);
         return;
       }
       catch (Exception ex)

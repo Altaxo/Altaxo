@@ -52,16 +52,11 @@ namespace Altaxo.Gui.Graph
     /// Initializes the treeview of available data with content.
     /// </summary>
     /// <param name="nodes"></param>
-    void Initialize(NGTreeNode[] nodes);
-    void SelectNode(NGTreeNode node);
-    void ExpandNode(NGTreeNode node);
-    void InitializeNewNodes(NGTreeNode[] nodes);
-    void EhNodesCleared(NGTreeNodeCollection nodes);
+    void Initialize(NGTreeNodeCollection nodes);
   }
 
   public interface ISingleColumnChoiceViewEventSink
   {
-    void EhView_BeforeExpand(NGTreeNode node);
     void EhView_AfterSelectNode(NGTreeNode node);
   }
 
@@ -70,66 +65,123 @@ namespace Altaxo.Gui.Graph
   [UserControllerForObject(typeof(SingleColumnChoice))]
   [ExpectedTypeOfView(typeof(ISingleColumnChoiceView))]
   public class SingleColumnChoiceController : IMVCAController, ISingleColumnChoiceViewEventSink
-  {
-    ISingleColumnChoiceView _view;
+	{
+		#region My private nodes
+
+		class TableNode : NGTreeNode
+		{
+			public TableNode() : base(true) { }
+
+			protected override void LoadChildren()
+			{
+				DataTable table = Tag as DataTable;
+				if (null != table)
+				{
+					Nodes.Clear();
+					for (int i = 0; i < table.DataColumnCount; ++i)
+						Nodes.Add(new NGTreeNode() { Text = table.DataColumns.GetColumnName(i), Tag = table.DataColumns[i] });
+				}
+			}
+		}
+
+		#endregion
+
+		ISingleColumnChoiceView _view;
     SingleColumnChoice _doc;
 
     DataColumn _selectedColumn = null;
+		NGTreeNode _rootNode = new NGTreeNode();
 
     public SingleColumnChoiceController(SingleColumnChoice doc)
     {
       _doc = doc;
+			Initialize(true);
     }
 
-    public void Initialize()
+    public void Initialize(bool initData)
     {
+			if (initData)
+			{
+				if (_doc.Environment is Altaxo.Gui.Graph.Viewing.IGraphController)
+				{
+					NGTreeNode node = null;
+					node = new NGTreeNode(true) { Text = "Graph", Tag = _doc.Environment };
+					_rootNode.Nodes.Add(node);
+				}
+
+				var tableCollectionNode = new NGTreeNode(true) { Text="Tables", Tag=Current.Project.DataTableCollection };
+				_rootNode.Nodes.Add(tableCollectionNode);
+
+				AddAllTableNodes(tableCollectionNode);
+
+
+				DataTable selectedTable = null;
+				if (_doc.SelectedColumn != null)
+					selectedTable = DataTable.GetParentDataTableOf(_doc.SelectedColumn);
+
+				if (null != selectedTable)
+				{
+					var selTableNode = FindTableNode(tableCollectionNode, selectedTable);
+					if(selTableNode != null)
+						selTableNode.IsExpanded = true;
+
+					if (null != selTableNode && null != _doc.SelectedColumn)
+					{
+						var selColumnNode = FindColumnNode(selTableNode, _doc.SelectedColumn);
+						selColumnNode.IsSelected = true;
+					}
+				}
+			}
+
       if(_view!=null)
       {
-        var arr = new List<NGTreeNode>();
-        NGTreeNode node = null;
-				if (_doc.Environment is Altaxo.Gui.Graph.Viewing.IGraphController)
-        {
-          node = new NGTreeNode("Graph",new NGTreeNode[1]{new NGTreeNode()});
-          node.Tag = _doc.Environment;
-          arr.Add(node);
-        }
-        var tablenode = new NGTreeNode("Tables",new NGTreeNode[1]{new NGTreeNode()});
-        tablenode.Tag = Current.Project.DataTableCollection;
-        arr.Add(tablenode);
-
-        _view.Initialize(arr.ToArray());
-
-        DataTable selectedTable = null;
-        if (_doc.SelectedColumn != null)
-          selectedTable = DataTable.GetParentDataTableOf(_doc.SelectedColumn);
-
-        if (null != selectedTable)
-        {
-          this.EhView_BeforeExpand(tablenode);
-          _view.ExpandNode(tablenode);
-
-          NGTreeNode found = FindNode(tablenode.Nodes,selectedTable.Name);
-          if (found!=null)
-          {
-            NGTreeNode selectedTableNode = found;
-            this.EhView_BeforeExpand(selectedTableNode);
-            _view.ExpandNode(selectedTableNode);
-
-            found = FindNode(selectedTableNode.Nodes,_doc.SelectedColumn.Name);
-
-            if (found != null)
-            {
-              _view.SelectNode(found);
-            }
-
-          }
-        }
-          
+        _view.Initialize(_rootNode.Nodes);
       }
-
-
-      
     }
+
+		void AddAllTableNodes(NGTreeNode tableCollectionNode)
+		{
+			tableCollectionNode.Nodes.Clear();
+			foreach (var table in Current.Project.DataTableCollection)
+			{
+				var node = new TableNode { Text = table.Name, Tag = table };
+				tableCollectionNode.Nodes.Add(node);
+			}
+		}
+
+
+		NGTreeNode FindTableNode(NGTreeNode tableCollectionNode, DataTable table)
+		{
+			NGTreeNode result=null;
+
+			foreach(NGTreeNode node in tableCollectionNode.Nodes)
+				if(object.ReferenceEquals(node.Tag,table))
+				{
+					result=node;
+					return result;
+				}
+
+			foreach(NGTreeNode node in tableCollectionNode.Nodes)
+			{
+				result = FindTableNode(node, table);
+				if(null!=result)
+					return result;
+			}
+
+			return result;
+		}
+
+
+		NGTreeNode FindColumnNode(NGTreeNode tableNode, DataColumn column)
+		{
+			foreach (NGTreeNode node in tableNode.Nodes)
+				if (object.ReferenceEquals(node.Tag, column))
+				{
+					return node;
+				}
+
+			return null;
+		}
 
     private NGTreeNode FindNode(NGTreeNodeCollection nodecoll, string txt)
     {
@@ -158,7 +210,7 @@ namespace Altaxo.Gui.Graph
 
         _view = value as ISingleColumnChoiceView;
         
-        Initialize();
+        Initialize(false);
 
         if(_view!=null)
           _view.Controller = this;
@@ -198,48 +250,6 @@ namespace Altaxo.Gui.Graph
         node = node.Parent;
 
       return node;
-    }
-
-
-    public void EhView_BeforeExpand(NGTreeNode node)
-    {
-      var rootNode = GetRootNode(node);
-
-      if(rootNode.Tag is DataTableCollection)
-      {
-        if(node.Tag is DataTableCollection)
-        {
-          _view.EhNodesCleared(node.Nodes);
-          node.Nodes.Clear();
-          NGTreeNode[] toadd = new NGTreeNode[Current.Project.DataTableCollection.Count];
-
-          int i=0;
-          foreach(DataTable table in Current.Project.DataTableCollection)
-          {
-            toadd[i] = new NGTreeNode(table.Name, new NGTreeNode[1]{new NGTreeNode()});
-            toadd[i].Tag = table;
-            i++;
-          }
-          node.Nodes.AddRange(toadd);
-          _view.InitializeNewNodes(toadd);
-          return;
-        }
-        else if(node.Tag is DataTable)
-        {
-          DataTable dt = (DataTable)node.Tag;
-          _view.EhNodesCleared(node.Nodes);
-          node.Nodes.Clear();
-          NGTreeNode[] toadd = new NGTreeNode[dt.DataColumns.ColumnCount];
-          for(int i=0;i<toadd.Length;i++)
-          {
-            toadd[i] = new NGTreeNode(dt[i].Name);
-            toadd[i].Tag = dt[i];
-          }
-          node.Nodes.AddRange(toadd);
-          _view.InitializeNewNodes(toadd);
-          return;
-        }
-      }
     }
 
     public void EhView_AfterSelectNode(NGTreeNode node)

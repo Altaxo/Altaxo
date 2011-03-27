@@ -183,7 +183,7 @@ namespace Altaxo.Scripting
     /// <summary>
     /// The text of the column script.
     /// </summary>
-    public string m_ScriptText; // the text of the script
+    public string _scriptText; // the text of the script
 
     /// <summary>
     /// The result of the successfull compiler run. After this variable is set, the script text must not be changed!
@@ -195,27 +195,27 @@ namespace Altaxo.Scripting
     /// True when the text changed from last time this flag was reseted.
     /// </summary>
     [NonSerialized()]
-    protected bool  m_IsDirty; // true when text changed, can be reseted
+    protected bool  _isDirty; // true when text changed, can be reseted
     
 
     /// <summary>
     /// True when the script text was already tried to compile.
     /// </summary>
     [NonSerialized()]
-    protected bool  m_WasTriedToCompile; 
+    protected bool  _wasTriedToCompile; 
 
 
     /// <summary>
     /// The script object. This is a instance of the newly created script class.
     /// </summary>
     [NonSerialized()]
-    protected object m_ScriptObject; // the compiled and created script object
+    protected object _scriptObject; // the compiled and created script object
 
     /// <summary>
     /// The name of the script. This is set to a arbitrary unique name ending in ".cs".
     /// </summary>
     [NonSerialized()]
-    protected string m_ScriptName;
+    protected string _scriptName;
 
     /// <summary>
     /// Holds error messages created by the compiler.
@@ -225,7 +225,7 @@ namespace Altaxo.Scripting
     /// try to execute the script. That's the reason for holding the compiler error messages
     /// here and not in the script dialog.</remarks>
     [NonSerialized()]
-    protected string[] m_Errors=null;
+    protected string[] _errors=null;
 
 
 
@@ -240,12 +240,12 @@ namespace Altaxo.Scripting
       {
         AbstractScript s = (AbstractScript)obj;
     
-        info.AddValue("Text",s.m_ScriptText);
+        info.AddValue("Text",s._scriptText);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         AbstractScript s = (AbstractScript)o;
-        s.m_ScriptText = info.GetString("Text");
+        s._scriptText = info.GetString("Text");
         return s;
       }
     }
@@ -297,13 +297,16 @@ namespace Altaxo.Scripting
     /// the compiled assembly is not copied, so that the script text can be modified.</param>
     public void CopyFrom(AbstractScript from, bool forModification)
     {
-      this.m_ScriptText  = from.m_ScriptText;
-      this.m_ScriptObject   = from.m_ScriptObject;
-      this.m_IsDirty = from.m_IsDirty;
+			if (object.ReferenceEquals(this, from))
+				return;
+
+      this._scriptText  = from._scriptText;
+      this._scriptObject   = from._scriptObject;
+      this._isDirty = from._isDirty;
       
-      this.m_WasTriedToCompile = forModification ? false : from.m_WasTriedToCompile;
+      this._wasTriedToCompile = forModification ? false : from._wasTriedToCompile;
       
-      this.m_Errors   = null==from.m_Errors ? null: (string[])from.m_Errors.Clone();
+      this._errors   = null==from._errors ? null: (string[])from._errors.Clone();
       
       this._compilerResult = forModification ? null :  from._compilerResult; // (not cloning is intented here)
     }
@@ -318,7 +321,7 @@ namespace Altaxo.Scripting
     /// </summary>
     public string[] Errors
     {
-      get { return m_Errors; }
+      get { return _errors; }
     }
 
     public Assembly ScriptAssembly
@@ -333,7 +336,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        return this.m_ScriptObject;
+        return this._scriptObject;
       }
     }
     /// <summary>
@@ -341,8 +344,8 @@ namespace Altaxo.Scripting
     /// </summary>
     public bool IsDirty
     {
-      get { return m_IsDirty; }
-      set { m_IsDirty = value; }
+      get { return _isDirty; }
+      set { _isDirty = value; }
     }
   
     public static string GenerateScriptName()
@@ -354,10 +357,10 @@ namespace Altaxo.Scripting
     {
       get
       {
-        if(null==m_ScriptName)
-          m_ScriptName = GenerateScriptName();
+        if(null==_scriptName)
+          _scriptName = GenerateScriptName();
 
-        return m_ScriptName + ".cs";
+        return _scriptName + ".cs";
       }
     }
 
@@ -380,11 +383,11 @@ namespace Altaxo.Scripting
         {
           return _compilerResult.ScriptText(0);
         }
-        if(null==m_ScriptText)
+        if(null==_scriptText)
         {
-          m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
+          _scriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
         }
-        return m_ScriptText;
+        return _scriptText;
       }
       set
       {
@@ -392,9 +395,9 @@ namespace Altaxo.Scripting
           throw new ArgumentException("After successfull compilation, the script text can not be changed any more");
         else
         {
-          m_ScriptText = value; 
-          m_IsDirty=true;
-          m_WasTriedToCompile = false;
+          _scriptText = value; 
+          _isDirty=true;
+          _wasTriedToCompile = false;
         }
       }
     }
@@ -411,11 +414,11 @@ namespace Altaxo.Scripting
         {
           return _compilerResult.ScriptTextHash;
         }
-        if(null==m_ScriptText)
+        if(null==_scriptText)
         {
-          m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
+          _scriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
         }
-        return Main.Services.ScriptCompilerService.ComputeScriptTextHash(m_ScriptText);
+        return Main.Services.ScriptCompilerService.ComputeScriptTextHash(_scriptText);
       }
     }
 
@@ -497,7 +500,7 @@ namespace Altaxo.Scripting
     {
       AbstractScript result = (AbstractScript)Clone();
       result._compilerResult = null;
-      result.m_ScriptObject = null;
+      result._scriptObject = null;
       return result;
     }
     
@@ -510,9 +513,9 @@ namespace Altaxo.Scripting
     /// </summary>
     public void MakeSureWasTriedToCompile()
     {
-      if (null == m_ScriptObject)
+      if (null == _scriptObject)
       {
-        if(!this.m_WasTriedToCompile)
+        if(!this._wasTriedToCompile)
           Compile();
       }
     }
@@ -526,33 +529,33 @@ namespace Altaxo.Scripting
     /// <returns>True if successfully compiles, otherwise false.</returns>
     public virtual bool Compile()
     {
-      this.m_WasTriedToCompile = true;
+      this._wasTriedToCompile = true;
 
       if(_compilerResult!=null)
         return true;
 
-      _compilerResult = ScriptCompilerService.Compile(new string[]{ScriptText},out m_Errors);
+      _compilerResult = ScriptCompilerService.Compile(new string[]{ScriptText},out _errors);
       bool bSucceeded = (null!=_compilerResult);
     
       if(_compilerResult!=null)  
       {
-        this.m_ScriptObject = null;
+        this._scriptObject = null;
 
         try
         {
-          this.m_ScriptObject = _compilerResult.ScriptAssembly.CreateInstance(this.ScriptObjectType);
-          if(null==m_ScriptObject)
+          this._scriptObject = _compilerResult.ScriptAssembly.CreateInstance(this.ScriptObjectType);
+          if(null==_scriptObject)
           {
             bSucceeded = false;
-            m_Errors = new string[1];
-            m_Errors[0] = string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n",this.ScriptObjectType); 
+            _errors = new string[1];
+            _errors[0] = string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n",this.ScriptObjectType); 
           }
         }
         catch (Exception ex) 
         {
           bSucceeded = false;
-          m_Errors = new string[1];
-          m_Errors[0] = string.Format("Exception during creation of scripting object: {0}\n",ex.Message); 
+          _errors = new string[1];
+          _errors[0] = string.Format("Exception during creation of scripting object: {0}\n",ex.Message); 
         }
       }
       return bSucceeded;

@@ -7,8 +7,6 @@ using Altaxo.Collections;
 using Altaxo.Serialization.Galactic;
 using Altaxo.Serialization.Galactic.Options;
 
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Worksheet
 {
 	#region Interfaces

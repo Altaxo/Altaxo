@@ -34,8 +34,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Plot.Data;
 	using Graph.Plot.Data;
 
-	public delegate void Action<T1, T2, T3, T4, T5>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5);
-
 	public class FillToCurvePlotStyle :
 		ICloneable,
 		Main.IChangedEventSource,
@@ -76,6 +74,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void CopyFrom(FillToCurvePlotStyle from, bool suppressChangeEvent)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			var locker = _changeEventSuppressor.Suspend();
 
 			this._fillToPrevPlotItem = from._fillToPrevPlotItem;
@@ -272,20 +273,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			if (_fillToPrevPlotItem && null != prevItemData)
 			{
-				// ensure that brush and pen are cached
-				if (null != _fillBrush)
-				{
-          _fillBrush.SetEnvironment(new RectangleF(PointF.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
-				}
-
-				PlotRangeList rangeList = pdata.RangeList;
-				int rangelistlen = rangeList.Count;
-
-				// we have to ignore the missing points here, thus all ranges can be plotted
-				// as one range, i.e. continuously
-				// for this, we create the totalRange, which contains all ranges
-				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData);
+				PaintFillToPrevPlotItem(g, layer, pdata, prevItemData);
 			}
 
 			if (_fillToNextPlotItem && null != nextItemData)
@@ -306,6 +294,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData);
 			}
 
+		}
+
+		private void PaintFillToPrevPlotItem(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData)
+		{
+			// ensure that brush and pen are cached
+			if (null != _fillBrush)
+			{
+				_fillBrush.SetEnvironment(new RectangleF(PointF.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
+			}
+
+			PlotRangeList rangeList = pdata.RangeList;
+			int rangelistlen = rangeList.Count;
+
+			// we have to ignore the missing points here, thus all ranges can be plotted
+			// as one range, i.e. continuously
+			// for this, we create the totalRange, which contains all ranges
+			PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound,rangeList[0].OffsetToOriginal);
+			_cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData);
 		}
 
 		public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
@@ -335,12 +341,50 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			PointF[] linepts = new PointF[range.Length];
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
 			int lastIdx = range.Length - 1;
-			GraphicsPath gp = new GraphicsPath();
 
-			SizeF layerSize = layer.Size;
+		
+			// Try to find points with a similar x value on otherlinepoints
+			double firstLogicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
+			double lastLogicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
+			double minDistanceToFirst = double.MaxValue;
+			double minDistanceToLast = double.MaxValue;
+			int minIdxFirst = -1;
+			int minIdxLast = -1;
+			foreach (var rangeP in previousData.RangeList)
+			{
+				for (int i = rangeP.LowerBound; i < rangeP.UpperBound; ++i)
+				{
+					double logicalX = layer.XAxis.PhysicalVariantToNormal(previousData.GetXPhysical(i+rangeP.OffsetToOriginal));
+					if (Math.Abs(logicalX - firstLogicalX) < minDistanceToFirst)
+					{
+						minDistanceToFirst = Math.Abs(logicalX - firstLogicalX);
+						minIdxFirst = i;
+					}
+					if (Math.Abs(logicalX - lastLogicalX) < minDistanceToLast)
+					{
+						minDistanceToLast = Math.Abs(logicalX - lastLogicalX);
+						minIdxLast = i;
+					}
+				}
+			}
 
-			PointF[] otherLinePoints = (PointF[])previousData.PlotPointsInAbsoluteLayerCoordinates.Clone();
+			// if nothing found, use the outmost boundaries of the plot points of the other data item
+			if (minIdxFirst < 0)
+				minIdxFirst = 0;
+			if (minIdxLast < 0)
+				minIdxLast = previousData.PlotPointsInAbsoluteLayerCoordinates.Length-1;
+
+			PointF[] otherLinePoints = new PointF[minIdxLast + 1 - minIdxFirst];
+			Array.Copy(previousData.PlotPointsInAbsoluteLayerCoordinates, minIdxFirst, otherLinePoints, 0, otherLinePoints.Length);
 			Array.Reverse(otherLinePoints);
+
+
+			// now paint this
+
+			GraphicsPath gp = new GraphicsPath();
+			SizeF layerSize = layer.Size;
+		
+			
 
 			gp.StartFigure();
 			gp.AddLines(linepts);

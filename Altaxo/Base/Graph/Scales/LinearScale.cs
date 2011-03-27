@@ -136,6 +136,9 @@ namespace Altaxo.Graph.Scales
 
     public virtual void CopyFrom(LinearScale from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._cachedAxisEnd        = from._cachedAxisEnd;
       this._cachedAxisOrg        = from._cachedAxisOrg;
       this._cachedAxisSpan       = from._cachedAxisSpan;

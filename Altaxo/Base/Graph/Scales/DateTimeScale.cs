@@ -99,6 +99,9 @@ namespace Altaxo.Graph.Scales
     #region ICloneable Members
     public void CopyFrom(DateTimeScale from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._axisOrg = from._axisOrg;
       this._axisEnd = from._axisEnd;
  

@@ -108,6 +108,9 @@ namespace Altaxo.Graph.Scales
 
 		public void CopyFrom(ScaleCollection from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			int len = Math.Min(this._scales.Length, from._scales.Length);
 			for (int i = 0; i < len; i++)
 			{

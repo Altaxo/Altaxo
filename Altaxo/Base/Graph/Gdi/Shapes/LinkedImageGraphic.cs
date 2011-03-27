@@ -151,6 +151,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     protected override void CopyFrom(GraphicBase bfrom)
     {
+			if (object.ReferenceEquals(this, bfrom))
+				return;
+
       LinkedImageGraphic from = bfrom as LinkedImageGraphic;
       if (from != null)
       {

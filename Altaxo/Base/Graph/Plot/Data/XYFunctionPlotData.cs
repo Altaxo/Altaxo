@@ -91,6 +91,9 @@ namespace Altaxo.Graph.Plot.Data
 
     public void CopyFrom(XYFunctionPlotData from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       if (from._function is ICloneable)
         this.Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._function).Clone();
       else

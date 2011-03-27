@@ -41,8 +41,7 @@ namespace Altaxo.Gui.Graph
     bool ShowEndBars { get; set; }
     bool DoNotShiftIndependentVariable { get; set; }
     bool IsHorizontalStyle { get; set; }
-    void InitializeSymbolSizeList(string[] names, int selection);
-    double SymbolSize { get; }
+		double SymbolSize { get; set; }
     bool IndependentNegativeError { get; set; }
     string PositiveError { get; set; }
     string NegativeError { get; set; }
@@ -50,8 +49,6 @@ namespace Altaxo.Gui.Graph
     event EventHandler ChoosePositiveError;
     event EventHandler ChooseNegativeError;
     event EventHandler IndependentNegativeError_CheckChanged;
-    event System.ComponentModel.CancelEventHandler VerifySymbolSize;
-    event System.ComponentModel.CancelEventHandler VerifySkipFrequency;
     event EventHandler ClearPositiveError;
     event EventHandler ClearNegativeError;
   }
@@ -71,7 +68,7 @@ namespace Altaxo.Gui.Graph
     int _tempSkipFreq;
 
 
-    void Initialize(bool docAlso)
+    void Initialize(bool initData)
     {
       if (_view != null)
       {
@@ -84,7 +81,7 @@ namespace Altaxo.Gui.Graph
         _view.IsHorizontalStyle = _doc.IsHorizontalStyle;
 
         _tempSymbolSize = _doc.SymbolSize;
-        _view.InitializeSymbolSizeList(new string[] { Serialization.GUIConversion.ToString(_tempSymbolSize) }, 0);
+				_view.SymbolSize = _tempSymbolSize;
 
         _tempSkipFreq = _doc.SkipFrequency;
         _view.SkipFrequency =_tempSkipFreq;
@@ -142,21 +139,25 @@ namespace Altaxo.Gui.Graph
      if (choice.SelectedColumn is INumericColumn)
      {
        _tempNegErrorColumn = (INumericColumn)choice.SelectedColumn;
-       _view.NegativeError = _tempNegErrorColumn.FullName;
+			 _view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
      }
    }
  }
 
     void EhView_ClearNegativeError(object sender, EventArgs e)
     {
-      _tempNegErrorColumn = null;
+			_tempNegErrorColumn = null;
       _view.NegativeError = string.Empty;
     }
 
 
 void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
 {
-
+	if (false == _view.IndependentNegativeError && null == _tempNegErrorColumn)
+	{
+		_tempNegErrorColumn = _tempPosErrorColumn;
+		_view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
+	}
 }
     void EhView_VerifySymbolSize(object sender, System.ComponentModel.CancelEventArgs e)
     {
@@ -173,14 +174,18 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0)
+      if (args == null || args.Length == 0 || !(args[0] is ErrorBarPlotStyle))
         return false;
-      ErrorBarPlotStyle doc = args[0] as ErrorBarPlotStyle;
-      if (doc == null)
-        return false;
-      _doc = doc;
+
+			var tempView = this.ViewObject;
+			this.ViewObject = null; // temporarity deactivate view to avoid cascading updates
+
+			_doc = (ErrorBarPlotStyle)args[0];
       Initialize(true);
-      return true;
+
+			this.ViewObject = tempView; // reactivate the view
+    
+			return true;
     }
 
     public UseDocument UseDocumentCopy
@@ -205,23 +210,20 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
           _view.ChoosePositiveError -= EhView_ChoosePositiveError;
           _view.ChooseNegativeError -= EhView_ChooseNegativeError;
           _view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
-          _view.VerifySymbolSize -= EhView_VerifySymbolSize;
-          _view.VerifySkipFrequency -= EhView_VerifySkipFrequency;
           _view.ClearPositiveError -= EhView_ClearPositiveError;
           _view.ClearNegativeError -= EhView_ClearNegativeError;
 
         }
 
         _view = value as IErrorBarPlotStyleView;
-        Initialize(false);
 
         if (_view != null)
         {
-          _view.ChoosePositiveError += EhView_ChoosePositiveError;
+					Initialize(false);
+					
+					_view.ChoosePositiveError += EhView_ChoosePositiveError;
           _view.ChooseNegativeError += EhView_ChooseNegativeError;
           _view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
-          _view.VerifySymbolSize += EhView_VerifySymbolSize;
-          _view.VerifySkipFrequency += EhView_VerifySkipFrequency;
           _view.ClearPositiveError += EhView_ClearPositiveError;
           _view.ClearNegativeError += EhView_ClearNegativeError;
         }

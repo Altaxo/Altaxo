@@ -26,7 +26,17 @@ namespace Altaxo.Gui.Graph
 			InitializeComponent();
 		}
 
+		protected virtual void OnChoiceChanged()
+		{
+			if (null != ChoiceChanged)
+				ChoiceChanged();
+		}
+
+
 		#region IColorProviderBaseView Members
+
+
+		public event Action ChoiceChanged;
 
 		public sd.Color ColorBelow
 		{
@@ -89,6 +99,31 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion
+
+		private void EhColorBelowChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			OnChoiceChanged();
+		}
+
+		private void EhColorAboveChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			OnChoiceChanged();
+		}
+
+		private void EhColorInvalidChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			OnChoiceChanged();
+		}
+
+		private void EhTransparencyChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+		{
+			OnChoiceChanged();
+		}
+
+		private void EhColorStepsChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
+		{
+			OnChoiceChanged();
+		}
 
 	}
 }

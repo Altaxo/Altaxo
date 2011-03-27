@@ -247,6 +247,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		protected override void CopyFrom(GraphicBase bfrom)
     {
+			if (object.ReferenceEquals(this, bfrom))
+				return;
+
       TextGraphic from = bfrom as TextGraphic;
       if (from != null)
       {

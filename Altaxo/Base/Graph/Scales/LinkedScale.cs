@@ -99,6 +99,9 @@ namespace Altaxo.Graph.Scales
     
     void CopyFrom(LinkedScale from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			this._linkedScaleIndex = from._linkedScaleIndex;
 			_linkParameters = (LinkedScaleParameters)from._linkParameters.Clone();
 			_linkParameters.Changed += EhLinkParametersChanged;

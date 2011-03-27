@@ -54,6 +54,9 @@ namespace Altaxo.Graph
     }
     public void CopyFrom(CSAxisInformation from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._identifier = from._identifier.Clone();
       CopyWithoutIdentifierFrom(from);
     }

@@ -33,7 +33,6 @@ namespace Altaxo.Gui.Graph
 
   public interface IXYGridStyleView
   {
-    IXYGridStyleViewEventSink Controller { get; set; }
     void InitializeBegin();
     void InitializeEnd();
     void InitializeMajorGridStyle( IColorTypeThicknessPenController controller);
@@ -42,13 +41,10 @@ namespace Altaxo.Gui.Graph
     void InitializeShowMinorGrid(bool value);
     void InitializeShowZeroOnly(bool value);
     void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly);
-  }
 
-  public interface IXYGridStyleViewEventSink
-  {
-    void EhView_ShowGridChanged(bool newval);
-    void EhView_ShowMinorGridChanged(bool newval);
-    void EhView_ShowZeroOnly(bool newval);
+		event Action<bool> ShowGridChanged;
+		event Action<bool> ShowMinorGridChanged;
+		event Action<bool> ShowZeroOnlyChanged;
   }
 
   #endregion
@@ -58,7 +54,7 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(GridStyle))]
   [ExpectedTypeOfView(typeof(IXYGridStyleView))]
-  public class XYGridStyleController : IMVCANController, IXYGridStyleViewEventSink
+  public class XYGridStyleController : IMVCANController
   {
     IXYGridStyleView _view;
     GridStyle _doc;
@@ -152,7 +148,7 @@ namespace Altaxo.Gui.Graph
       InitializeElementEnabling();
     }
 
-    public void EhView_ShowZeroOnly(bool newval)
+    public void EhView_ShowZeroOnlyChanged(bool newval)
     {
       _tempdoc.ShowZeroOnly = newval;
       if (newval == true && _tempdoc.ShowMinor)
@@ -172,15 +168,24 @@ namespace Altaxo.Gui.Graph
       get { return _view; }
       set
       {
-        if(_view!=null)
-          _view.Controller = null;
+				if (_view != null)
+				{
+					_view.ShowGridChanged -= this.EhView_ShowGridChanged;
+					_view.ShowMinorGridChanged -= this.EhView_ShowMinorGridChanged;
+					_view.ShowZeroOnlyChanged -= this.EhView_ShowZeroOnlyChanged;
+				}
 
         _view = value as IXYGridStyleView;
-        
-        Initialize(false);
 
-        if(_view!=null)
-          _view.Controller = this;
+				if (_view != null)
+				{
+					Initialize(false);
+
+					_view.ShowGridChanged += this.EhView_ShowGridChanged;
+					_view.ShowMinorGridChanged += this.EhView_ShowMinorGridChanged;
+					_view.ShowZeroOnlyChanged += this.EhView_ShowZeroOnlyChanged;
+
+				}
       }
     }
 

@@ -131,12 +131,12 @@ namespace Altaxo.Gui.Graph
 
       SelectableListNodeList list;
       list = _view.MajorPenTicks;
-      _doc.FirstDownMajorTicks = list[0].Selected;
-      _doc.FirstUpMajorTicks = list[1].Selected;
+      _doc.FirstDownMajorTicks = list[0].IsSelected;
+      _doc.FirstUpMajorTicks = list[1].IsSelected;
 
       list = _view.MinorPenTicks;
-      _doc.FirstDownMinorTicks = list[0].Selected;
-      _doc.FirstUpMinorTicks = list[1].Selected;
+      _doc.FirstDownMinorTicks = list[0].IsSelected;
+      _doc.FirstUpMinorTicks = list[1].IsSelected;
 
 
       return true;

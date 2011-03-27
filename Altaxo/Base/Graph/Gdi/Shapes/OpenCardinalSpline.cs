@@ -200,10 +200,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			GraphicsPath gp = new GraphicsPath();
 
-			PointF[] pt = new PointF[_curvePoints.Count];
-			for(int i=0;i<_curvePoints.Count;i++)
-				pt[i] = new PointF((float)_curvePoints[i].X, (float)_curvePoints[i].Y);
-			gp.AddCurve(pt,(float)_tension);
+			if (_curvePoints.Count > 1)
+			{
+				PointF[] pt = new PointF[_curvePoints.Count];
+				for (int i = 0; i < _curvePoints.Count; i++)
+					pt[i] = new PointF((float)_curvePoints[i].X, (float)_curvePoints[i].Y);
+
+				gp.AddCurve(pt, (float)_tension);
+			}
 			return gp;
 		}
 

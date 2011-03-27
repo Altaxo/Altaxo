@@ -6,7 +6,8 @@
 						  xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
              mc:Ignorable="d" 
-             >
+            
+						 >
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
@@ -16,23 +17,32 @@
 		</Style>
 		
 	</UserControl.Resources>
+	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+	
     <Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
+			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Colorization:"/>
 		<ComboBox x:Name="_cbColorProvider" Grid.Column="1" Grid.Row="0" SelectionChanged="EhColorProviderChanged"/>
-		<Viewbox x:Name="_detailsPanel" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"/>
-		<Label Grid.Column="0" Grid.Row="4" Content="Preview:"/>
-		<Image x:Name="_previewPanel" Grid.Column="1" Grid.Row="4"/>
 	</Grid>
+		<Border x:Name="_detailsPanel" HorizontalAlignment="Stretch" />
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="4"/>
+			</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0" Content="Preview:"/>
+			<axogc:ImageWithNoSizeRequest x:Name="_previewPanel" Grid.Column="1" Grid.Row="0" Stretch="Fill" />
+		</Grid>
+	</StackPanel>
 </UserControl>

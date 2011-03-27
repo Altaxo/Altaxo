@@ -103,6 +103,9 @@ namespace Altaxo.Main
     /// <param name="newparent"></param>
     public void CopyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
         this.SetDocNode(from._docNode, newparent); // than the new Proxy refers to the same document node
     }
 

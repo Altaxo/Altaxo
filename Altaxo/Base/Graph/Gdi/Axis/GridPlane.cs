@@ -71,6 +71,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     void CopyFrom(GridPlane from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._planeID = from._planeID;
       this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
       this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();

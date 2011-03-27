@@ -63,6 +63,9 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		int ColorSteps { get; set; }
 
+		/// <summary>Is called when any of the user choices of this control changed. Intended for updating the preview when something changed.</summary>
+		event Action ChoiceChanged;
+
 	}
 	#endregion
 
@@ -73,6 +76,7 @@ namespace Altaxo.Gui.Graph
 		ColorProviderBase _originalDoc;
 		ColorProviderBase _doc;
 		IColorProviderBaseView _view;
+		UseDocument _useDocumentCopy;
 
 		void Initialize(bool initData)
 		{
@@ -95,14 +99,18 @@ namespace Altaxo.Gui.Graph
 				return false;
 
 			_originalDoc = (ColorProviderBase)args[0];
-			_doc = (ColorProviderBase)_originalDoc.Clone();
+			if (_useDocumentCopy == UseDocument.Copy)
+				_doc = (ColorProviderBase)_originalDoc.Clone();
+			else
+				_doc = _originalDoc;
+
 			Initialize(true);
 			return true;
 		}
 
 		public UseDocument UseDocumentCopy
 		{
-			set { }
+			set { _useDocumentCopy = value; }
 		}
 
 		#endregion

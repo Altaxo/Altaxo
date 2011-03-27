@@ -13,129 +13,62 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Science;
 
 namespace Altaxo.Gui.Graph
 {
 	/// <summary>
 	/// Interaction logic for XYPlotLabelStyleControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IXYPlotLabelStyleViewEventSink))]
 	public partial class XYPlotLabelStyleControl : UserControl, IXYPlotLabelStyleView
 	{
-		private IXYPlotLabelStyleViewEventSink _controller;
-
 		FontControlsGlue _fontControlsGlue;
 		BackgroundControlsGlue _backgroundGlue;
+		public event Action LabelColumnSelected;
+		public event Action FontSizeChanged;
 
 		public XYPlotLabelStyleControl()
 		{
 			InitializeComponent();
 
-			_fontControlsGlue = new FontControlsGlue() { CbFontFamily = m_cbFontFamily, CbFontStyle = m_cbFontStyle, CbFontSize = m_cbFontSize };
+			_fontControlsGlue = new FontControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize };
+			_fontControlsGlue.SelectedFontChanged += EhFontSizeChanged;
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
-
 		}
+
+		
+
 
 		private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != Controller)
-				Controller.EhView_SelectLabelColumn();
+			if (null != LabelColumnSelected)
+				LabelColumnSelected();
+		}
+
+		private void EhFontSizeChanged(object sender, EventArgs e)
+		{
+			if (null != FontSizeChanged)
+				FontSizeChanged();
 		}
 
 		private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != Controller)
-			{
-				Controller.EhView_IndependentColorChanged(true==m_chkIndependentColor.IsChecked);
-				this.m_cbColor.IsEnabled = true==m_chkIndependentColor.IsChecked;
-			}
+				this._cbColor.IsEnabled = true==_chkIndependentColor.IsChecked;
 		}
 
 		private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != Controller)
-			{
-				Controller.EhView_AttachToAxisChanged(true==m_chkAttachToAxis.IsChecked);
-				this.m_cbAttachedAxis.IsEnabled = true==m_chkAttachToAxis.IsChecked;
-			}
+			this._cbAttachedAxis.IsEnabled = true==_chkAttachToAxis.IsChecked;
 		}
-
-		private void EhColor_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (null != Controller)
-			{
-				Controller.EhView_ColorChanged(m_cbColor.SelectedGdiColor);
-			}
-		}
-
-		private void EhHorizontalAlignment_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
-		{
-			if (null != Controller)
-			{
-				string name = (string)this.m_cbHorizontalAlignment.SelectedItem;
-				Controller.EhView_HorizontalAlignmentChanged(name);
-			}
-		}
-
-		private void EhXOffset_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			if (null != Controller)
-			{
-				bool bCancel = e.Cancel;
-				Controller.EhView_XOffsetValidating(((TextBox)sender).Text, ref bCancel);
-				if (bCancel)
-					e.AddError("The provided text could not be recognized as valid number");
-			}
-		}
-
-		private void EhVerticalAlignment_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
-		{
-			if (null != Controller)
-			{
-				string name = (string)this.m_cbVerticalAlignment.SelectedItem;
-				Controller.EhView_VerticalAlignmentChanged(name);
-			}
-		}
-
-		private void EhYOffset_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			if (null != Controller)
-			{
-				bool bCancel = e.Cancel;
-				Controller.EhView_YOffsetValidating(((TextBox)sender).Text, ref bCancel);
-				if (bCancel)
-					e.AddError("The provided text could not be recognized as valid number");
-			}
-		}
+		
 
 		#region IXYPlotLabelStyleView
 
-		public IXYPlotLabelStyleViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
-
-		public void LabelColumn_Initialize(string labelColumnAsText)
+		public void Init_LabelColumn(string labelColumnAsText)
 		{
 			this._edLabelColumn.Text = labelColumnAsText;
 		}
 
-		public void Font_Initialize(System.Drawing.Font font)
-		{
-			_fontControlsGlue.Font = font;
-		}
-
-		public void Color_Initialize(System.Drawing.Color color)
-		{
-			this.m_cbColor.SelectedGdiColor = color;
-		}
 
 		public new Altaxo.Graph.Gdi.Background.IBackgroundStyle Background
 		{
@@ -149,59 +82,132 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void HorizontalAlignment_Initialize(string[] names, string name)
-		{
-			m_cbHorizontalAlignment.ItemsSource = names;
-			m_cbHorizontalAlignment.SelectedItem = name;
 
-		}
-
-		public void VerticalAlignment_Initialize(string[] names, string name)
-		{
-			m_cbVerticalAlignment.ItemsSource = names;
-			m_cbVerticalAlignment.SelectedItem = name;
-		}
-
-		public void AttachToAxis_Initialize(bool bAttached)
-		{
-			this.m_chkAttachToAxis.IsChecked = bAttached;
-			this.m_cbAttachedAxis.IsEnabled = !bAttached;     
-		}
-
-		public void AttachedAxis_Initialize(List<Collections.ListNode> names, int sel)
-		{
-			m_cbAttachedAxis.ItemsSource = names;
-			m_cbAttachedAxis.SelectedIndex = sel;
-		}
-
-		public double Rotation
+		public double SelectedRotation
 		{
 			get
 			{
-				return this.m_edRotation.SelectedRotation;
+				return this._cbRotation.SelectedRotation;
 			}
 			set
 			{
-				this.m_edRotation.SelectedRotation = value;
+				this._cbRotation.SelectedRotation = value;
 			}
 		}
 
-		public void XOffset_Initialize(string text)
+		public void Init_XOffset(QuantityWithUnitGuiEnvironment environment, QuantityWithUnit value)
 		{
-			this.m_edXOffset.Text = text;
+			this._edXOffset.UnitEnvironment = environment;
+			this._edXOffset.SelectedQuantity = value;
 		}
 
-		public void YOffset_Initialize(string text)
+		public void Init_YOffset(QuantityWithUnitGuiEnvironment environment, QuantityWithUnit value)
 		{
-			this.m_edYOffset.Text = text;
+			this._edYOffset.UnitEnvironment = environment;
+			this._edYOffset.SelectedQuantity = value;
 		}
 
-		public void IndependentColor_Initialize(bool bIndependent)
+		public QuantityWithUnit XOffset
 		{
-			this.m_chkIndependentColor.IsChecked = bIndependent;
-			this.m_cbColor.IsEnabled = bIndependent;    
+			get { return _edXOffset.SelectedQuantity; }
 		}
+		public QuantityWithUnit YOffset
+		{
+			get { return _edYOffset.SelectedQuantity; }
+		}
+
+		public System.Drawing.Font SelectedFont
+		{
+			get
+			{
+				return _fontControlsGlue.SelectedFont;
+			}
+			set
+			{
+				_fontControlsGlue.SelectedFont = value;
+			}
+		}
+
+		public System.Drawing.Color SelectedColor
+		{
+			get
+			{
+				return _cbColor.SelectedGdiColor;
+			}
+			set
+			{
+				_cbColor.SelectedGdiColor = value;
+			}
+		}
+
+		public void Init_HorizontalAlignment(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_cbHorizontalAlignment, list);
+		}
+
+		public Collections.ListNode SelectedHorizontalAlignment
+		{
+			get { return (Collections.ListNode)_cbHorizontalAlignment.SelectedItem; }
+		}
+
+		public void Init_VerticalAlignment(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_cbVerticalAlignment, list);
+		}
+
+		public Collections.ListNode SelectedVerticalAlignment
+		{
+			get { return (Collections.ListNode)_cbVerticalAlignment.SelectedItem; }
+		}
+
+		public bool AttachToAxis
+		{
+			get
+			{
+				return true == _chkAttachToAxis.IsChecked;
+			}
+			set
+			{
+				_chkAttachToAxis.IsChecked = value;
+				_cbAttachedAxis.IsEnabled = value;
+			}
+		}
+
+		public void Init_AttachedAxis(Collections.SelectableListNodeList names)
+		{
+			GuiHelper.Initialize(_cbAttachedAxis, names);
+		}
+
+		public Collections.ListNode AttachedAxis
+		{
+			get { return (Collections.ListNode)_cbAttachedAxis.SelectedItem; }
+		}
+
+		public bool IsIndependentColorSelected
+		{
+			get
+			{
+				return true == _chkIndependentColor.IsChecked;
+			}
+			set
+			{
+				_chkIndependentColor.IsChecked = value;
+				_cbColor.IsEnabled = value;
+			}
+		}
+
 
 		#endregion
+
+	
+
+
+
+
+
+
+
+
+	
 	}
 }

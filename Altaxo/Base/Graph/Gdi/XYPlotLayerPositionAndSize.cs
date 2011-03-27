@@ -154,6 +154,9 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(XYPlotLayerPositionAndSize from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._layerXPosition = from._layerXPosition;
       this._layerXPositionType = from._layerXPositionType;
       this._layerYPosition = from._layerYPosition;

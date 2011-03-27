@@ -94,8 +94,11 @@ namespace Altaxo.Gui.Graph
 
 
 		protected IMVCAController _detailController;
+		protected object _detailView;
 
 		protected SelectableListNodeList _availableClasses;
+
+		UseDocument _useDocumentCopy;
 
 
 		public bool InitializeDocument(params object[] args)
@@ -104,14 +107,18 @@ namespace Altaxo.Gui.Graph
 				return false;
 
 			_originalDoc = (IColorProvider)args[0];
-			_doc = (IColorProvider)_originalDoc.Clone();
+			if (_useDocumentCopy == UseDocument.Copy)
+				_doc = (IColorProvider)_originalDoc.Clone();
+			else
+				_doc = _originalDoc;
+
 			Initialize(true);
 			return true;
 		}
 
 		public UseDocument UseDocumentCopy
 		{
-			set { }
+			set { _useDocumentCopy = value; }
 		}
 
 
@@ -146,11 +153,19 @@ namespace Altaxo.Gui.Graph
 			if (bInit)
 			{
 				object providerObject = _doc;
-				_detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCAController));
+				_detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCANController), UseDocument.Directly);
 			}
 			if (null != _view)
 			{
-				_view.SetDetailView(null == _detailController ? null : _detailController.ViewObject);
+				if (null != (_detailView as IColorProviderBaseView))
+					((IColorProviderBaseView)_detailView).ChoiceChanged -= EhDetailsChanged;
+
+				_detailView = null == _detailController ? null : _detailController.ViewObject;
+				_view.SetDetailView(_detailView);
+
+				if (null != (_detailView as IColorProviderBaseView))
+					((IColorProviderBaseView)_detailView).ChoiceChanged += EhDetailsChanged;
+
 			}
 		}
 
@@ -183,6 +198,12 @@ namespace Altaxo.Gui.Graph
 			catch (Exception)
 			{
 			}
+		}
+
+		void EhDetailsChanged()
+		{
+			_detailController.Apply(); // we use the instance directly, thus no further taking of the instance is neccessary here
+			CreateAndSetPreviewBitmap();
 		}
 
 		Bitmap _previewBitmap;

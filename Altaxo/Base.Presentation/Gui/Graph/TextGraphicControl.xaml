@@ -64,14 +64,34 @@
 		<axogcd:RotationComboBox x:Name="m_cbRotation" Grid.Column="7" Grid.Row="4"/>
 
 		<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="8" Grid.Row="6" >
-			<Button Content="N" FontFamily="Times New Roman" Click="EhNormal_Click"/>
-			<Button Content="B" FontFamily="Times New Roman" FontWeight="Bold" Click="EhBold_Click"/>
-			<Button Content="I" FontFamily="Times New Roman" FontStyle="Italic" Click="EhItalic_Click"/>
-			<Button Content="U" FontFamily="Times New Roman" Click="EhUnderline_Click"  />
-			<Button Content="S" FontFamily="Times New Roman" Click="EhStrikeout_Click"/>
-			<Button Content="x²" FontFamily="Times New Roman" Click="EhSupIndex_Click"/>
-			<Button Content="x2" FontFamily="Times New Roman" Click="EhSubIndex_Click"/>
-			<Button Content="G" FontFamily="Symbol" Click="EhGreek_Click"/>
+			<Button Content="N" FontFamily="Times New Roman" ToolTip="Normal" Click="EhNormal_Click"/>
+			<Button Content="B" FontFamily="Times New Roman" FontWeight="Bold" ToolTip="Bold" Click="EhBold_Click"/>
+			<Button Content="I" FontFamily="Times New Roman" FontStyle="Italic" ToolTip="Italic" Click="EhItalic_Click"/>
+			<Button FontFamily="Times New Roman" ToolTip="Underline" Click="EhUnderline_Click">
+				<Grid>
+					<TextBlock Text="U"/>
+					<Rectangle Height="1" Width="10" Fill="Red" VerticalAlignment="Bottom"/>
+				</Grid>
+			</Button>
+			<Button FontFamily="Times New Roman" ToolTip="Strikeout" Click="EhStrikeout_Click">
+				<Grid>
+					<TextBlock Text="S"/>
+					<Rectangle Height="1" Width="10" Fill="Red"/>
+				</Grid>
+			</Button>
+			<Button FontFamily="Times New Roman" ToolTip="Superscript" Click="EhSupIndex_Click" >
+				<TextBlock  >
+					<Run FontFamily="Times New Roman" Text="x"/>
+					<Run FontFamily="Times New Roman" BaselineAlignment="Superscript"  FontSize="8" Text="2" Foreground="Red"/>
+				</TextBlock>
+			</Button>
+			<Button FontFamily="Times New Roman" ToolTip="Supscript" Click="EhSubIndex_Click">
+				<TextBlock  >
+					<Run FontFamily="Times New Roman" Text="x"/>
+					<Run FontFamily="Times New Roman" BaselineAlignment="Subscript" FontSize="8" Text="2" Foreground="Red"/>
+				</TextBlock>
+			</Button>
+			<Button Content="G" FontFamily="Symbol" ToolTip="Greek" Click="EhGreek_Click"/>
 		</StackPanel>
 
 		<ScrollViewer Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="8" MinHeight="120">

@@ -53,6 +53,9 @@ namespace Altaxo.Graph.Gdi
     /// <param name="from">The coordinate system to copy from.</param>
     public virtual void CopyFrom(G2DCoordinateSystem from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._layerWidth = from._layerWidth;
       this._layerHeight = from._layerHeight;
       this._axisStyleInformation.Clear();

@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
               xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-             mc:Ignorable="d" 
-             >
+             mc:Ignorable="d" >
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
@@ -53,15 +52,15 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Label column:"/>
-		<TextBox x:Name="_edLabelColumn" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" IsEnabled="False"/>
+		<TextBox x:Name="_edLabelColumn" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Margin="0,0,8,0" IsEnabled="False"/>
 		<Button Grid.Column="3" Grid.Row="0" Content="Select.." Click="EhSelectLabelColumn_Click"/>
-		<CheckBox x:Name="m_chkIndependentColor" Grid.Column="0" Grid.Row="2" Content="Indep. color:" Checked="EhIndependentColor_CheckChanged" Unchecked="EhIndependentColor_CheckChanged"/>
+		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="2" Content="Indep. color:" Checked="EhIndependentColor_CheckChanged" Unchecked="EhIndependentColor_CheckChanged"/>
 		
 		<Label Grid.Column="0" Grid.Row="4" Content="Font:"/>
 		<Label Grid.Column="0" Grid.Row="6" Content="Font size:"/>
 		<Label Grid.Column="0" Grid.Row="10" Content="Horz. alignment:"/>
 		<Label Grid.Column="0" Grid.Row="12" Content="Vert. alignment:"/>
-		<CheckBox x:Name="m_chkAttachToAxis" Grid.Column="0" Grid.Row="14" Content="Attach to axis:" Checked="EhAttachToAxis_CheckedChanged" Unchecked="EhAttachToAxis_CheckedChanged"/>
+		<CheckBox x:Name="_chkAttachToAxis" Grid.Column="0" Grid.Row="14" Content="Attach to axis:" Checked="EhAttachToAxis_CheckedChanged" Unchecked="EhAttachToAxis_CheckedChanged"/>
 		<Label Grid.Column="0" Grid.Row="16" Content="Background:"/>
 
 		<Label Grid.Column="2" Grid.Row="4" Content="Style:"/>
@@ -71,16 +70,16 @@
 		<Label Grid.Column="2" Grid.Row="12" Content="Y:"/>
 		<Label Grid.Column="2" Grid.Row="16" Content="Brush:"/>
 
-		<axogcd:ColorComboBox x:Name="m_cbColor" Grid.Column="1" Grid.Row="2" SelectedColorChanged="EhColor_SelectionChangeCommitted"/>
-		<axogcd:FontFamilyComboBox x:Name="m_cbFontFamily" Grid.Column="1" Grid.Row="4" />
-		<axogcd:FontStyleComboBox x:Name="m_cbFontStyle" Grid.Column="3" Grid.Row="6" />
-		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="6" SelectedFontSizeChanged="EhFontSize_SelectionChangeCommitted"/>
-		<axogcd:RotationComboBox x:Name="m_edRotation" Grid.Column="3" Grid.Row="6" />
-		<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhHorizontalAlignment_SelectionChangeCommitted"/>
-		<axogc:ValidatingTextBox x:Name="m_edXOffset" Grid.Column="3" Grid.Row="10" Validating="EhXOffset_Validating"/>
-		<ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="12" SelectionChanged="EhVerticalAlignment_SelectionChangeCommitted"/>
-		<axogc:ValidatingTextBox x:Name="m_edYOffset" Grid.Column="3" Grid.Row="12" Validating="EhYOffset_Validating"/>
-		<ComboBox x:Name="m_cbAttachedAxis" Grid.Column="1" Grid.Row="14"/>
+		<axogcd:ColorComboBox x:Name="_cbColor" Grid.Column="1" Grid.Row="2" />
+		<axogcd:FontFamilyComboBox x:Name="_cbFontFamily" Grid.Column="1" Grid.Row="4" />
+		<axogcd:FontStyleComboBox x:Name="_cbFontStyle" Grid.Column="3" Grid.Row="4" />
+		<axogcd:FontSizeComboBox x:Name="_cbFontSize" Grid.Column="1" Grid.Row="6" />
+		<axogcd:RotationComboBox x:Name="_cbRotation" Grid.Column="3" Grid.Row="6" />
+		<ComboBox x:Name="_cbHorizontalAlignment" Grid.Column="1" Grid.Row="10" />
+		<axogc:QuantityWithUnitTextBox x:Name="_edXOffset" Grid.Column="3" Grid.Row="10"/>
+		<ComboBox x:Name="_cbVerticalAlignment" Grid.Column="1" Grid.Row="12"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edYOffset" Grid.Column="3" Grid.Row="12"/>
+		<ComboBox x:Name="_cbAttachedAxis" Grid.Column="1" Grid.Row="14" />
 		<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="16"/>
 		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="16"/>
 	</Grid>

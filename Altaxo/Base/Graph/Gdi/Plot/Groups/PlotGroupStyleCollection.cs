@@ -27,6 +27,9 @@ using System.Text;
 using Altaxo.Graph.Plot.Groups;
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
+	/// <summary>
+	/// Extends the <see cref="PlotGroupStyleCollectionBase"/> with a coordinate transforming style.
+	/// </summary>
   public class PlotGroupStyleCollection 
     :
     PlotGroupStyleCollectionBase,
@@ -75,6 +78,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public override void CopyFrom(PlotGroupStyleCollectionBase fromb)
     {
+			if (object.ReferenceEquals(this, fromb))
+				return;
+
       base.CopyFrom(fromb);
 
       if (fromb is PlotGroupStyleCollection)
@@ -108,6 +114,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       _coordinateTransformingStyle = null;
     }
 
+		/// <summary>
+		/// Gets/sets the coordinate transforming style.
+		/// </summary>
     public ICoordinateTransformingGroupStyle CoordinateTransformingStyle
     {
       get
@@ -119,12 +128,5 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         _coordinateTransformingStyle = value;
       }
     }
-
-
-
-   
-
-   
-
   }
 }

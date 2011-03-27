@@ -54,6 +54,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 		public void CopyFrom(AngularRescaleConditions from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			this._scaleOrigin = from._scaleOrigin;
 		}
 

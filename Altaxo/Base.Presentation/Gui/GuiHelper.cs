@@ -35,10 +35,10 @@ namespace Altaxo.Gui
 		public static void SynchronizeSelectionFromGui(ComboBox view)
 		{
 			foreach (ISelectableItem it in view.ItemsSource)
-				it.Selected = false;
+				it.IsSelected = false;
 
 			if (null != view.SelectedItem)
-				((ISelectableItem)view.SelectedItem).Selected = true;
+				((ISelectableItem)view.SelectedItem).IsSelected = true;
 		}
 		#endregion
 
@@ -55,7 +55,7 @@ namespace Altaxo.Gui
 			else
 			{
 				foreach (var n in data)
-					if (n.Selected)
+					if (n.IsSelected)
 						view.SelectedItems.Add(n);
 			}
 		}
@@ -74,10 +74,10 @@ namespace Altaxo.Gui
 		public static void SynchronizeSelectionFromGui(ListBox view)
 		{
 			foreach (ISelectableItem it in view.ItemsSource)
-				it.Selected = false;
+				it.IsSelected = false;
 
 			if (null != view.SelectedItem)
-				((ISelectableItem)view.SelectedItem).Selected = true;
+				((ISelectableItem)view.SelectedItem).IsSelected = true;
 		}
 
 		#endregion
@@ -97,7 +97,7 @@ namespace Altaxo.Gui
 			else
 			{
 				foreach (var n in data)
-					if (n.Selected)
+					if (n.IsSelected)
 						view.SelectedItems.Add(n);
 			}
 		}
@@ -114,11 +114,11 @@ namespace Altaxo.Gui
 			if (null != listView.ItemsSource)
 			{
 				foreach (ISelectableItem it in listView.ItemsSource)
-					it.Selected = false;
+					it.IsSelected = false;
 			}
 
 			foreach (ISelectableItem it in listView.SelectedItems)
-				it.Selected = true;
+				it.IsSelected = true;
 		}
 
 		public static int[] GetColumnWidths(ListView listView)

@@ -898,6 +898,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="a">The vector to copy the data from.</param>
     public void CopyFrom(IROVector a)
     {
+			if (object.ReferenceEquals(this, a))
+				return;
+
       Resize(a.Length);
       for (int i = 0; i < data.Length; ++i)
         data[i] = a[i];

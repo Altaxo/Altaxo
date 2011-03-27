@@ -71,6 +71,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     protected void CopyFrom(LabelFormattingBase from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._prefix = from._prefix;
       this._suffix = from._suffix;
     }

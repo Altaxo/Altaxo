@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Common
 			e.Handled = true;
 			_choices.ClearSelectionsAll();
 			if (SelectedIndex >= 0)
-				_choices[SelectedIndex].Selected = true;
+				_choices[SelectedIndex].IsSelected = true;
 		}
 	}
 }

@@ -280,6 +280,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public bool CopyFrom(object obj)
     {
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
       var from = obj as DensityImagePlotStyle;
       bool hasCopied = false;
       if (null != from)

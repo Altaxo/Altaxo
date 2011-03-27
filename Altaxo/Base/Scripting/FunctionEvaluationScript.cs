@@ -196,18 +196,18 @@ namespace Altaxo.Scripting
     /// <returns></returns>
     public double Evaluate(double x)
     {
-      if(null==m_ScriptObject && !m_WasTriedToCompile)
+      if(null==_scriptObject && !_wasTriedToCompile)
         Compile();
 
-      if(null==m_ScriptObject)
+      if(null==_scriptObject)
       {
-        m_Errors = new string[1]{"Script Object is null"};
+        _errors = new string[1]{"Script Object is null"};
         return double.NaN;
       }
 
       try
       {
-        return ((Altaxo.Calc.FunctionEvaluationScriptBase)m_ScriptObject).EvaluateFunctionValue(x);
+        return ((Altaxo.Calc.FunctionEvaluationScriptBase)_scriptObject).EvaluateFunctionValue(x);
       }
       catch(Exception)
       {

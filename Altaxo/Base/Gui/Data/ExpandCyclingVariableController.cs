@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Data
 			_doc.ColumnsToAverageOverRepeatPeriod.Clear();
 			foreach (var node in _choicesColsToAvarage)
 			{
-				if (node.Selected)
+				if (node.IsSelected)
 					_doc.ColumnsToAverageOverRepeatPeriod.Add((int)node.Item);
 			}
 

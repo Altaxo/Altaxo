@@ -117,6 +117,9 @@ namespace Altaxo.Graph.Scales
 
     void CopyFrom(TextScale from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       _dataBounds = (TextBoundaries)from._dataBounds.Clone();
       _dataBounds.BoundaryChanged += EhBoundariesChanged;
 

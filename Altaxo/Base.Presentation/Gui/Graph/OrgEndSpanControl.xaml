@@ -9,7 +9,7 @@
     <Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*" MinWidth="80"/>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="*" MinWidth="80"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>

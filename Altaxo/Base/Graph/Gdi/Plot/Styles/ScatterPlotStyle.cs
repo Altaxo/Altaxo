@@ -215,9 +215,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected PenX _pen;
     protected bool _independentColor;
 
-    protected float _symbolSize;
+    protected double _symbolSize;
     protected bool _independentSymbolSize;
-    protected float _relativePenWidth;
+    protected double _relativePenWidth;
     protected int _skipFreq;
 
     // cached values:
@@ -424,6 +424,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void CopyFrom(ScatterPlotStyle from, bool suppressChangeEvent)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._shape = from._shape;
       this._style = from._style;
       if(null==this._dropLine)
@@ -611,7 +614,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-    public float SymbolSize
+    public double SymbolSize
     {
       get { return _symbolSize; }
       set
@@ -620,13 +623,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         {
           _symbolSize = value;
           _cachedPath = GetPath(this._shape, this._style, this._symbolSize);
-          _pen.Width = _symbolSize * _relativePenWidth;
+          _pen.Width = (float)(_symbolSize * _relativePenWidth);
           OnChanged(); // Fire Changed event
         }
       }
     }
 
-		public float RelativePenWidth
+		public double RelativePenWidth
 		{
 			get
 			{
@@ -638,7 +641,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					throw new ArgumentOutOfRangeException("Out of range: RelativePenWidth = " + value.ToString());
 
 				_relativePenWidth = value;
-				_pen.Width = _symbolSize * _relativePenWidth;
+				_pen.Width = (float)( _symbolSize * _relativePenWidth);
 				OnChanged();
 			}
 		}
@@ -693,9 +696,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return new ScatterPlotStyle(this);
     }
 
-    public static GraphicsPath GetPath(XYPlotScatterStyles.Shape sh, XYPlotScatterStyles.Style st, float size)
+    public static GraphicsPath GetPath(XYPlotScatterStyles.Shape sh, XYPlotScatterStyles.Style st, double sized)
     {
-      float sizeh = size / 2;
+      float sizeh = (float)(sized / 2);
+			float size = (float)sized;
       GraphicsPath gp = new GraphicsPath();
 
 
@@ -985,7 +989,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         g.Restore(gs);
 
         if (this.SymbolSize > bounds.Height)
-          bounds.Inflate(0, this.SymbolSize - bounds.Height);
+          bounds.Inflate(0, (float)( this.SymbolSize - bounds.Height));
       }
 
       return bounds;
@@ -1043,7 +1047,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (!_independentSymbolSize)
 			{
 				// try to get a constant symbol size ...
-				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(float size) { this.SymbolSize = size; });
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this.SymbolSize = size; });
 				// but if there is an symbol size evaluation function, then use this with higher priority.
 				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
 			}

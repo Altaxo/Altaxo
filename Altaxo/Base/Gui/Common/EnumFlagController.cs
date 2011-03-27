@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Altaxo.Collections;
+
 namespace Altaxo.Gui.Common
 {
   public interface IEnumFlagView
   {
-    void SetNames(string[] names);
-    void SetChecks(bool[] checks);
-    event Action<int, bool> CheckChanged;
+		/// <summary>
+		/// Initializes the names. The view can set i.e. checks for each item which is selected. The view is responsible for updating
+		/// the <see cref="SelectableListNode.IsSelected"/> property when a check is set or unset.
+		/// </summary>
+		/// <param name="names"></param>
+    void Initialize(SelectableListNodeList names);
   }
 
   [UserControllerForObject(typeof(System.Enum))]
@@ -21,71 +26,92 @@ namespace Altaxo.Gui.Common
     IEnumFlagView _view;
 
     Array _values;
+		SelectableListNodeList _list;
     string[] _names;
     bool[] _checks;
 
+		int _checkedChangeLock=0;
 
     void Initialize(bool initData)
     {
       if (initData)
       {
-        _values = System.Enum.GetValues(_doc.GetType());
-        _names = System.Enum.GetNames(_doc.GetType());
-        _checks = new bool[_names.Length];
-        CalculateChecksFromDoc();
+				_list = new SelectableListNodeList();
+				var values = System.Enum.GetValues(_doc.GetType());
+				foreach (var val in values)
+				{
+					var node = new SelectableListNode(System.Enum.GetName(_doc.GetType(), val), val, IsChecked(val, _tempDoc));
+					node.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNode_PropertyChanged);
+					_list.Add(node);
+				}
       }
 
       if (_view != null)
       {
-        _view.SetNames(_names);
-        _view.SetChecks(_checks);
+        _view.Initialize(_list);
       }
     }
 
-    void CalculateChecksFromDoc()
-    {
-      for (int i = 0; i < _checks.Length; i++)
-      {
-        long x =Convert.ToInt64(_values.GetValue(i));
-       
+		void EhNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (0 != _checkedChangeLock || "IsSelected" != e.PropertyName)
+				return;
 
-        if (x == 0)
-          _checks[i] = _tempDoc == 0;
-        else
-          _checks[i] = (x == (x & _tempDoc));
-      }
-    }
+			var node = (SelectableListNode)sender;
+			
+			bool b = node.IsSelected;
+			long x = Convert.ToInt64(node.Item); // get the selected flag
 
-    void CalculateEnumFromChecks()
-    {
-      long sum = 0;
-      for (int i = 0; i < _checks.Length; i++)
-      {
-        long x = Convert.ToInt64(_values.GetValue(i));
-        if (_checks[i])
-          sum |= x;
-      }
-      _tempDoc = sum;
-    }
-
-
-    void EhCheckChanged(int i, bool b)
-    {
-      long x = Convert.ToInt64(_values.GetValue(i));
-      if (b && (x == 0))
-      {
-        _tempDoc = 0;
-      }
-      else
-      {
+			if (b && (x == 0)) // if the "None" flag is selected, then no flag should be selected, so _tempDoc must be 0
+			{
+				_tempDoc = 0;
+			}
+			else // a "normal" flag is selected
+			{
 				if (b)
 					_tempDoc |= x;
 				else
 					_tempDoc &= ~x;
-      }
-      CalculateChecksFromDoc();
-      _view.SetChecks(_checks);
+			}
+
+
+			++_checkedChangeLock; // avoid recursive calls when changing the checks in the view
+			CalculateChecksFromDoc();
+			--_checkedChangeLock;
+		}
+
+		static bool IsChecked(object flag, long document)
+		{
+			long x = Convert.ToInt64(flag);
+			if (x == 0)
+				return 0==document;
+			else
+				return (x == (x & document));
+		}
+
+    void CalculateChecksFromDoc()
+    {
+			foreach (var n in _list)
+			{
+				n.IsSelected = IsChecked(n.Item, _tempDoc);
+			}
     }
+
+    void CalculateEnumFromChecks()
+    {
+			// calculate enum from checks
+			long sum = 0;
+			for (int i = 0; i < _list.Count; i++)
+			{
+				long x = Convert.ToInt64(_list[i].Item);
+				if (_list[i].IsSelected)
+					sum |= x;
+			}
+			_tempDoc = sum;
+    }
+
+
+   
 
     #region IMVCANController Members
 
@@ -119,15 +145,11 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if (null != _view)
-          _view.CheckChanged -= EhCheckChanged;
-
         _view = value as IEnumFlagView;
 
         if (null != _view)
         {
           Initialize(false);
-          _view.CheckChanged += EhCheckChanged;
         }
       }
     }

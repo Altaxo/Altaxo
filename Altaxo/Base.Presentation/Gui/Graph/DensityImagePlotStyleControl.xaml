@@ -17,18 +17,16 @@
 		</Style>
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical">
-		<GroupBox Header="Scale">
+		<GroupBox Header="Scale:">
 			<axogg:DensityScaleControl x:Name="_ctrlScale"/>
 		</GroupBox>
 
 		<GroupBox Header="Style:">
-			<axogg:ColorProviderControl x:Name="_colorProviderControl"/>
+			<axogg:ColorProviderControl x:Name="_colorProviderControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 		</GroupBox>
 
 		<GroupBox Header="Other:">
 			<CheckBox x:Name="_chkClipToLayer" Content="Clip to layer"/>
 		</GroupBox>
-
-
 	</StackPanel>
 </UserControl>

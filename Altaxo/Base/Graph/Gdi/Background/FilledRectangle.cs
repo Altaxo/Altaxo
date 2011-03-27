@@ -77,6 +77,9 @@ namespace Altaxo.Graph.Gdi.Background
 
     public void CopyFrom(FilledRectangle from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.Brush = from._brush;
     }
 

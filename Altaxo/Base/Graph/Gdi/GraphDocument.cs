@@ -372,6 +372,9 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(GraphDocument from, GraphCopyOptions options)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       if (0 != (options & GraphCopyOptions.CopyPageSize))
       {
         this._pageBounds = from._pageBounds;

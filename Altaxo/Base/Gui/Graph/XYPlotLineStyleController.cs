@@ -41,10 +41,6 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public interface IXYPlotLineStyleView
   {
-    // Get / sets the controller of this view
-    IXYPlotLineStyleViewEventSink Controller { get; set; }
-    
-    
     /// <summary>
     /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
     /// </summary>
@@ -111,24 +107,6 @@ namespace Altaxo.Gui.Graph
     #endregion // Getter
   }
 
-  /// <summary>
-  /// This is the controller interface of the XYPlotLineStyleView
-  /// </summary>
-  public interface IXYPlotLineStyleViewEventSink
-  {
-    
-
-  }
-
-  public interface IXYPlotLineStyleController : IMVCANController
-  {
-    /// <summary>
-    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
-    /// </summary>
-    /// <param name="bActivate"></param>
-    void SetEnableDisableMain(bool bActivate);    
-  }
-
 
   #endregion
 
@@ -137,7 +115,7 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(LinePlotStyle))]
   [ExpectedTypeOfView(typeof(IXYPlotLineStyleView))]
-  public class XYPlotLineStyleController : IXYPlotLineStyleViewEventSink, IXYPlotLineStyleController
+	public class XYPlotLineStyleController : IMVCANController
   {
     IXYPlotLineStyleView _view;
     LinePlotStyle _doc;
@@ -148,24 +126,22 @@ namespace Altaxo.Gui.Graph
     public XYPlotLineStyleController()
     {
     }
-    public XYPlotLineStyleController(LinePlotStyle doc)
-    {
-      if(doc==null)
-        throw new ArgumentNullException("doc is null");
-
-      if (!InitializeDocument(doc))
-        throw new ApplicationException("Programming error");
-    }
+  
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args.Length == 0 || !(args[0] is LinePlotStyle))
+      if (args==null || args.Length == 0 || !(args[0] is LinePlotStyle))
         return false;
 
-      bool isFirstTime = (null == _doc);
+			var tempView = this.ViewObject; // deactivate the view to avoid cascading updates
+			this.ViewObject = null;
+
       _doc = (LinePlotStyle)args[0];
       _tempDoc = _useDocumentCopy == UseDocument.Directly ? _doc : (LinePlotStyle)_doc.Clone();
-      Initialize(isFirstTime);
+      Initialize(true);
+
+			this.ViewObject = tempView;
+
       return true;
     }
 
@@ -177,15 +153,16 @@ namespace Altaxo.Gui.Graph
       get { return _view; }
       set
       {
-        if(_view!=null)
-          _view.Controller = null;
+				if (_view != null)
+				{
+				}
 
         _view = value as IXYPlotLineStyleView;
-        
-        Initialize(false);
 
-        if(_view!=null)
-          _view.Controller = this;
+				if (_view != null)
+				{
+					Initialize(false);
+				}
       }
     }
     public object ModelObject
@@ -224,28 +201,32 @@ namespace Altaxo.Gui.Graph
         _view.SetEnableDisableMain(bActivate);
     }
 
-    void Initialize(bool firstTime)
-    {
-      _penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
-      if(_view!=null)
-      {
-        _view.InitializeIndependentColor(_tempDoc.IndependentColor);
-       
+    void Initialize(bool initData)
+		{
+			if(initData)
+			{
+				_penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
+			}
 
-        // now we have to set all dialog elements to the right values
-        _view.InitializePen(_penController);
-        SetLineSymbolGapCondition();
+			if (_view != null)
+			{
+				_view.InitializeIndependentColor(_tempDoc.IndependentColor);
 
-        // Line properties
-        SetLineConnect();
-        SetFillCondition();
-        SetFillDirection();
-        SetFillColor();
-        _view.IndependentFillColor = _tempDoc.IndependentFillColor;
-        _view.ConnectCircular = _tempDoc.ConnectCircular;
-        _view.SetEnableDisableMain(_ActivateEnableDisableMain);
-      }
-    }
+
+				// now we have to set all dialog elements to the right values
+				_view.InitializePen(_penController);
+				SetLineSymbolGapCondition();
+
+				// Line properties
+				SetLineConnect();
+				SetFillCondition();
+				SetFillDirection();
+				SetFillColor();
+				_view.IndependentFillColor = _tempDoc.IndependentFillColor;
+				_view.ConnectCircular = _tempDoc.ConnectCircular;
+				_view.SetEnableDisableMain(_ActivateEnableDisableMain);
+			}
+		}
 
 
     public void SetLineSymbolGapCondition()

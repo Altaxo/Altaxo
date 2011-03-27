@@ -52,22 +52,22 @@
 			</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Shape:"/>
-		<ComboBox x:Name="m_cbSymbolShape" Grid.Column="1" Grid.Row="0" SelectionChanged="EhSymbolShape_SelectionChangeCommit"/>
+		<ComboBox x:Name="_cbSymbolShape" Grid.Column="1" Grid.Row="0" SelectionChanged="EhSymbolShape_SelectionChangeCommit"/>
 
 		<Label Grid.Column="0" Grid.Row="2" Content="Style:"/>
-		<ComboBox x:Name="m_cbSymbolStyle" Grid.Column="1" Grid.Row="2" SelectionChanged="EhSymbolShape_SelectionChangeCommit"/>
+		<ComboBox x:Name="_cbSymbolStyle" Grid.Column="1" Grid.Row="2" SelectionChanged="EhSymbolShape_SelectionChangeCommit"/>
 
 		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" />
 		<axogcd:BrushComboBox x:Name="_cbColor" Grid.Column="1" Grid.Row="6"/>
 
 		<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. size:" />
-		<axogcd:LineCapSizeComboBox x:Name="m_cbSymbolSize" Grid.Column="1" Grid.Row="8"/>
+		<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Column="1" Grid.Row="8"/>
 
-		<CheckBox x:Name="m_chkSymbolSkipPoints" Grid.Column="0" Grid.Row="10" Content="Show every nth point:"/>
-		<axogc:Int32UpDown x:Name="m_edSymbolSkipFrequency" Grid.Column="1" Grid.Row="10" Minimum="1"/>
+		<Label Grid.Column="0" Grid.Row="10" Content="Show every nth point:"/>
+		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Column="1" Grid.Row="10" Minimum="1"/>
 
 		<Label Grid.Column="0" Grid.Row="12" Content="Relative pen width (%):"/>
-		<axogc:ValidatingTextBox x:Name="m_edRelativePenWidth" Grid.Column="1" Grid.Row="12"/>
+		<axogc:ValidatingTextBox x:Name="_edRelativePenWidth" Grid.Column="1" Grid.Row="12"/>
 
 		<GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="14" Header="Drop lines:">
 			<ListBox x:Name="_lbDropLines">
@@ -75,7 +75,7 @@
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
 							<CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-							<TextBlock Text="{Binding Text}"/>
+							<TextBlock Text="{Binding Name}"/>
 						</StackPanel>
 					</DataTemplate>
 				</ListBox.ItemTemplate>

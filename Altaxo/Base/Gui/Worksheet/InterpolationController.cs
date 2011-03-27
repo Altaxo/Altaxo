@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Worksheet
         RetrieveClassList();
 
 				if(null==_classListA.FirstSelectedNode)
-					_classListA[0].Selected = true;
+					_classListA[0].IsSelected = true;
         
 				_view.InitializeClassList(_classListA);
 				this.EhInterpolationClassChanged(); // to make sure the right InterpolationInstance is set

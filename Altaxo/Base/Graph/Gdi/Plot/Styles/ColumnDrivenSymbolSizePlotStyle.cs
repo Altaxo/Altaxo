@@ -138,6 +138,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <returns>True if data was copied, otherwise false.</returns>
 		public bool CopyFrom(object obj)
 		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
 			bool copied = false;
 			var from = obj as ColumnDrivenSymbolSizePlotStyle;
 			if (null != from)

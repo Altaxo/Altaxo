@@ -67,7 +67,9 @@ namespace Altaxo.Graph.Gdi.Background
 
     public void CopyFrom(WhiteOut from)
     {
-      
+			if (object.ReferenceEquals(this, from))
+				return;
+
     }
 
     public object Clone()

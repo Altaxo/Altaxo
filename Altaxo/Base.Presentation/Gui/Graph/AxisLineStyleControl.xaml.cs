@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Graph
 					CheckBox chk = new CheckBox();
 					chk.Content = n.Name;
 					chk.Tag = n.Item;
-					chk.IsChecked = n.Selected;
+					chk.IsChecked = n.IsSelected;
 					_majorWhichTicksLayout.Children.Add(chk);
 				}
 			}
@@ -265,7 +265,7 @@ namespace Altaxo.Gui.Graph
 					CheckBox chk = new CheckBox();
 					chk.Content = n.Name;
 					chk.Tag = n.Item;
-					chk.IsChecked = n.Selected;
+					chk.IsChecked = n.IsSelected;
 					_minorWhichTicksLayout.Children.Add(chk);
 				}
 			}

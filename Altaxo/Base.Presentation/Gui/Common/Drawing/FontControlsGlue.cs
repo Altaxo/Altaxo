@@ -63,13 +63,13 @@ namespace Altaxo.Gui.Common.Drawing
         if (value != oldValue)
         {
           if (_font != null)
-            this.Font = new sd.Font(_font.FontFamily, _font.Size, _font.Style, _fontUnit);
+            this.SelectedFont = new sd.Font(_font.FontFamily, _font.Size, _font.Style, _fontUnit);
         }
       }
     }
 
     sd.Font _font;
-    public sd.Font Font
+    public sd.Font SelectedFont
     {
       get
       {
@@ -86,11 +86,11 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public event EventHandler FontChanged;
-    protected virtual void OnFontChanged()
+    public event EventHandler SelectedFontChanged;
+    protected virtual void OnSelectedFontChanged()
     {
-      if (FontChanged != null)
-        FontChanged(this, EventArgs.Empty);
+      if (SelectedFontChanged != null)
+        SelectedFontChanged(this, EventArgs.Empty);
     }
 
     #endregion
@@ -123,8 +123,8 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_font != null)
       {
-        _font = new sd.Font(_cbFontFamily.SelectedGdiFontFamily, _font.Size, _font.Style);
-        OnFontChanged();
+        _font = new sd.Font(_cbFontFamily.SelectedGdiFontFamily, _font.Size, _font.Style, _fontUnit);
+        OnSelectedFontChanged();
       }
     }
 
@@ -142,16 +142,16 @@ namespace Altaxo.Gui.Common.Drawing
 
 				if (_cbFontStyle != null)
 				{
-					dpd.RemoveValueChanged(_cbFontSize, EhFontStyle_SelectionChangeCommitted);
+					dpd.RemoveValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
 				}
 
 				_cbFontStyle = value;
 				if (_font != null && _cbFontStyle != null)
 					_cbFontStyle.SelectedFontStyle = _font.Style;
 
-				if (_cbFontSize != null)
+				if (_cbFontStyle != null)
 				{
-					dpd.AddValueChanged(_cbFontSize, EhFontStyle_SelectionChangeCommitted);
+					dpd.AddValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
 				}
 			}
 		}
@@ -160,8 +160,8 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_font != null)
 			{
-				_font = new sd.Font(_font.FontFamily, _font.Size, _cbFontStyle.SelectedFontStyle);
-				OnFontChanged();
+				_font = new sd.Font(_font.FontFamily, _font.Size, _cbFontStyle.SelectedFontStyle, _fontUnit);
+				OnSelectedFontChanged();
 			}
 		}
 
@@ -198,8 +198,8 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_font != null)
       {
-        _font = new sd.Font(_font.FontFamily,(float)_cbFontSize.FontSize,_font.Style);
-        OnFontChanged();
+        _font = new sd.Font(_font.FontFamily,(float)_cbFontSize.SelectedFontSize,_font.Style, _fontUnit);
+        OnSelectedFontChanged();
       }
     }
     

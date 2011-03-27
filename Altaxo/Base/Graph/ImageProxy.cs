@@ -157,6 +157,9 @@ namespace Altaxo.Graph
 
     private void CopyFrom(ResourceImageProxy from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._url = from._url;
       this._name = from._name;
       this._image = from._image;
@@ -315,6 +318,9 @@ namespace Altaxo.Graph
 
     private void CopyFrom(MemoryStreamImageProxy from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._url = from._url;
       this._name = from._name;
       this._stream = from._stream;

@@ -203,14 +203,14 @@ namespace Altaxo.Gui.Graph
       SelectableListNodeList leftlist = GetPositionTypeList();
       foreach (SelectableListNode node in leftlist)
         if ((XYPlotLayerPositionType)node.Item == _leftPositionType)
-          node.Selected = true;
+          node.IsSelected = true;
 
       View.InitializeLeftType(leftlist);
 
       SelectableListNodeList toplist = GetPositionTypeList();
       foreach (SelectableListNode node in toplist)
         if ((XYPlotLayerPositionType)node.Item == _topPositionType)
-          node.Selected = true;
+          node.IsSelected = true;
 
       View.InitializeTopType(toplist);
     }
@@ -236,14 +236,14 @@ namespace Altaxo.Gui.Graph
       SelectableListNodeList list = GetSizeTypeList();
       foreach (SelectableListNode node in list)
         if ((XYPlotLayerSizeType)node.Item == _widthType)
-          node.Selected = true;
+          node.IsSelected = true;
 
       View.InitializeWidthType(list);
 
       list = GetSizeTypeList();
       foreach (SelectableListNode node in list)
         if ((XYPlotLayerSizeType)node.Item == _heightType)
-          node.Selected = true;
+          node.IsSelected = true;
 
       View.InitializeHeightType(list);
     }

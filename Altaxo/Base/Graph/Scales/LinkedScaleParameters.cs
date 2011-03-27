@@ -72,6 +72,9 @@ namespace Altaxo.Graph.Scales
 
 		public void CopyFrom(LinkedScaleParameters from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			// this call has the advantage, that a change event is raised when the parameter really change
 			SetTo(from._orgA, from._orgB, from._endA, from.EndB);
 		}

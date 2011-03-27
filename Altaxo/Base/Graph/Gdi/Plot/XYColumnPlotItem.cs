@@ -213,6 +213,9 @@ namespace Altaxo.Graph.Gdi.Plot
     }
     protected override void CopyFrom(PlotItem fromb)
     {
+			if (object.ReferenceEquals(this, fromb))
+				return;
+
       base.CopyFrom(fromb);
 
       XYColumnPlotItem from = fromb as XYColumnPlotItem;

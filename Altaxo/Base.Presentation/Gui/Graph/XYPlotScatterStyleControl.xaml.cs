@@ -22,12 +22,10 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for XYPlotScatterStyleControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IXYPlotScatterStyleViewEventSink))]
 	public partial class XYPlotScatterStyleControl : UserControl, IXYPlotScatterStyleView
 	{
-		private IXYPlotScatterStyleViewEventSink _controller;
-		private bool _EnableDisableAll = false;
-		private int m_SuppressEvents = 0;
+		private bool _enableDisableAll = false;
+		private int _suppressEvents = 0;
 
 		public XYPlotScatterStyleControl()
 		{
@@ -36,7 +34,7 @@ namespace Altaxo.Gui.Graph
 
 		private void EhSymbolShape_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
-			if (this._EnableDisableAll)
+			if (this._enableDisableAll)
 				EnableDisableMain(this.ShouldEnableMain());
 		}
 
@@ -47,32 +45,27 @@ namespace Altaxo.Gui.Graph
 			this._chkIndependentSize.IsEnabled = bEnable;
 
 			this._cbColor.IsEnabled = bEnable;
-			this.m_cbSymbolSize.IsEnabled = bEnable;
-			this.m_cbSymbolStyle.IsEnabled = bEnable;
-			this.m_chkSymbolSkipPoints.IsEnabled = bEnable;
-			this.m_edSymbolSkipFrequency.IsEnabled = bEnable;
+			this._cbSymbolSize.IsEnabled = bEnable;
+			this._cbSymbolStyle.IsEnabled = bEnable;
+			this._edSymbolSkipFrequency.IsEnabled = bEnable;
 		}
 
 		bool ShouldEnableMain()
 		{
-			return this.m_cbSymbolShape.SelectedIndex != 0 ||
+			return this._cbSymbolShape.SelectedIndex != 0 ||
 				this._lbDropLines.SelectedItems.Count > 0;
 
 		}
 
 		#region IXYPlotScatterStyleView
 
-		public IXYPlotScatterStyleViewEventSink Controller
-		{
-			get { return _controller; }
-			set { _controller = value; }
-		}
+	
 
 
 		public void SetEnableDisableMain(bool bActivate)
 		{
-			this._EnableDisableAll = bActivate;
-			this.EnableDisableMain(_EnableDisableAll == false || this.ShouldEnableMain());
+			this._enableDisableAll = bActivate;
+			this.EnableDisableMain(_enableDisableAll == false || this.ShouldEnableMain());
 		}
 
 		public void InitializePlotStyleColor(sd.Color sel)
@@ -80,9 +73,9 @@ namespace Altaxo.Gui.Graph
 			_cbColor.SelectedBrush = new Altaxo.Graph.Gdi.BrushX(sel);
 		}
 
-		public void InitializeSymbolSize(string[] arr, string sel)
+		public void InitializeSymbolSize(double size)
 		{
-			m_cbSymbolSize.SelectedItem = sel;
+			_cbSymbolSize.SelectedLineCapSize = size;
 		}
 
 		public void InitializeIndependentSymbolSize(bool val)
@@ -90,19 +83,17 @@ namespace Altaxo.Gui.Graph
 			this._chkIndependentSize.IsChecked = val;
 		}
 
-		public void InitializeSymbolStyle(string[] arr, string sel)
+		public void InitializeSymbolStyle(SelectableListNodeList list)
 		{
-			m_cbSymbolStyle.ItemsSource = arr;
-			m_cbSymbolStyle.SelectedItem = sel;
+			GuiHelper.Initialize(_cbSymbolStyle, list);
 		}
 
-		public void InitializeSymbolShape(string[] arr, string sel)
+		public void InitializeSymbolShape(SelectableListNodeList list)
 		{
-			m_cbSymbolShape.ItemsSource = arr;
-			m_cbSymbolShape.SelectedItem = sel;
+			GuiHelper.Initialize(_cbSymbolShape, list);
 		}
 
-		public void InitializeDropLineConditions(List<SelectableListNode> names)
+		public void InitializeDropLineConditions(SelectableListNodeList names)
 		{
 			_lbDropLines.ItemsSource = names;
 		}
@@ -114,9 +105,7 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeSkipPoints(int val)
 		{
-			this.m_edSymbolSkipFrequency.Value = val;
-			this.m_edSymbolSkipFrequency.IsEnabled = (val != 1);
-			this.m_chkSymbolSkipPoints.IsChecked = (val != 1);
+			this._edSymbolSkipFrequency.Value = val;
 		}
 
 		public bool IndependentColor
@@ -132,9 +121,9 @@ namespace Altaxo.Gui.Graph
 			get { return _cbColor.SelectedBrush.Color; }
 		}
 
-		public string SymbolShape
+		public SelectableListNode SymbolShape
 		{
-			get { return (string)m_cbSymbolShape.SelectedItem; }
+			get { return (SelectableListNode)_cbSymbolShape.SelectedItem; }
 		}
 
 		public bool IndependentSymbolSize
@@ -142,30 +131,26 @@ namespace Altaxo.Gui.Graph
 			get { return true==_chkIndependentSize.IsChecked; }
 		}
 
-		public string SymbolStyle
+		public SelectableListNode SymbolStyle
 		{
-			get { return (string)m_cbSymbolStyle.SelectedItem; }
+			get { return (SelectableListNode)_cbSymbolStyle.SelectedItem; }
 		}
 
-		public string SymbolSize
+		public double SymbolSize
 		{
-			get { return (string)m_cbSymbolSize.Text; }
+			get { return _cbSymbolSize.SelectedLineCapSize; }
 		}
 
-		public List<SelectableListNode> DropLines
+		public SelectableListNodeList DropLines
 		{
-			get { return (List<SelectableListNode>)(_lbDropLines.ItemsSource); }
+			get { return (SelectableListNodeList)(_lbDropLines.ItemsSource); }
 		}
 
 		public int SkipPoints
 		{
 			get
 			{
-				if (true==m_chkSymbolSkipPoints.IsChecked)
-				{
-					return m_edSymbolSkipFrequency.Value;
-				}
-				return 1;
+					return _edSymbolSkipFrequency.Value;
 			}
 		}
 
@@ -173,11 +158,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return m_edRelativePenWidth.Text;
+				return _edRelativePenWidth.Text;
 			}
 			set
 			{
-				m_edRelativePenWidth.Text = value;
+				_edRelativePenWidth.Text = value;
 			}
 		}
 

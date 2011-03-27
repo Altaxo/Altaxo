@@ -117,6 +117,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     
     void CopyFrom(LinkedScale from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this.Scale = from._scale == null ? null : (Scale)from._scale.Clone();
       this._linkOrgA = from._linkOrgA;
       this._linkOrgB = from._linkOrgB;

@@ -3,102 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
- 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d" 
              >
-	<UserControl.Resources>
-			<Style TargetType="Label">
-				<Style.Setters>
-					<Setter Property="Margin" Value="8,0,8,0"/>
-					<Setter Property="HorizontalAlignment" Value="Right"/>
-				</Style.Setters>
-			</Style>
-		<Style TargetType="Button">
-			<Style.Setters>
-				<Setter Property="Margin" Value="8,0,8,0"/>
-				<Setter Property="HorizontalAlignment" Value="Stretch"/>
-			</Style.Setters>
-		</Style>
-	</UserControl.Resources>
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
-		</Grid.ColumnDefinitions>
+    <Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="10"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="8"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="8"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="8"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="8"/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Coordinate transforming style:"/>
-		<ComboBox x:Name="_cbCoordTransfoStyle" Grid.Column="2" Grid.Row="0" SelectionChanged="_cbCoordTransfoStyle_SelectionChangeCommitted"/>
-		<Button x:Name="_btEditCSTransfoStyle" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" Content="..." Click="_btEditCSTransfoStyle_Click"/>
 
-		<ListBox x:Name="_lbGroupStylesAvailable" Grid.Column="0" Grid.Row="2" Grid.RowSpan="7">
-			<ItemsControl.ItemContainerStyle>
-				<!-- This Style binds a ListBoxItem to a SelectableListNode -->
-				<Style TargetType="{x:Type ListBoxItem}">
-					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-					<Style.Triggers>
-						<DataTrigger Binding="{Binding IsSelected}" Value="True">
-							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</ItemsControl.ItemContainerStyle>
-		</ListBox>
-		
-		
-		<ListBox x:Name="_lbGroupStyles" Grid.Column="2" Grid.Row="2" Grid.RowSpan="7" MinWidth="80">
-			<ItemsControl.ItemContainerStyle>
-				<!-- This Style binds a ListBoxItem to a CheckableSelectableListNode -->
-				<Style TargetType="{x:Type ListBoxItem}">
-					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-					<Style.Triggers>
-						<DataTrigger Binding="{Binding IsSelected}" Value="True">
-							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</ItemsControl.ItemContainerStyle>
-			<ItemsControl.Resources>
-				<DataTemplate DataType="{x:Type axocoll:CheckableSelectableListNode}">
-					<StackPanel Orientation="Horizontal">
-						<CheckBox Width="16" Height="16" Margin="3,0" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
-						<TextBlock Text="{Binding Text}" />
-					</StackPanel>
-				</DataTemplate>
-			</ItemsControl.Resources>
-		</ListBox>
-
-		<Button Grid.Column="1" Grid.Row="2" Content="->"  Click="_btAddNormalGroupStyle_Click"/>
-		<Button Grid.Column="1" Grid.Row="4" Content="&lt;-" Click="_btRemoveNormalGroupStyle_Click"/>
-
-
-		<Button Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" Content="&lt;-" Click="_btUnindent_Click"/>
-		<Button Grid.Column="3" Grid.Row="4" HorizontalAlignment="Left" Content="->"   Click="_btIndent_Click"/>
-
-		<Button Grid.Column="3" Grid.Row="6" HorizontalAlignment="Left" Content="/\"  Click="_btUp_Click" />
-		<Button Grid.Column="3" Grid.Row="8" HorizontalAlignment="Left" Content="\/"  Click="_btDown_Click" />
-
-		<Label Grid.Column="0" Grid.Row="10" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom" Content="Update:"/>
-		<ComboBox x:Name="_cbGroupStrictness" Grid.Column="0" Grid.Row="11"/>
-		<CheckBox x:Name="_chkUpdateFromParentGroups" Grid.Column="2" Grid.Row="10" VerticalAlignment="Bottom" Content="Inherit from parent groups"  />
-		<CheckBox x:Name="_chkDistributeToSubGroups" Grid.Column="2" Grid.Row="11"  VerticalAlignment="Center" Content="Distribute to child groups"  />
+		<Border x:Name="_controlHost" Grid.Row="0"/>
+		<Button x:Name="_btGotoAdvanced" Grid.Row="2" Content="Advanced view .." Margin="8,0,8,0" Click="EhGotoAdvanced"/>
+		<Button x:Name="_btGotoSimple" Grid.Row="2" Content="Simple view .." Margin="8,0,8,0" Click="EhGotoSimple"/>
 
 	</Grid>
 </UserControl>

@@ -84,6 +84,9 @@ namespace Altaxo.Graph.Plot.Groups
 
 		void CopyFrom(BarWidthPositionGroupStyle from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			_isInitialized = from._isInitialized;
 			_isStepEnabled = from._isStepEnabled;
 			_wasTouchedInThisPrepareStep = from._wasTouchedInThisPrepareStep;
@@ -171,9 +174,20 @@ namespace Altaxo.Graph.Plot.Groups
 			_wasTouchedInThisPrepareStep = false;
 		}
 
-		public bool CanHaveChilds()
+		public bool CanCarryOver
 		{
-			return false;
+			get
+			{
+				return false;
+			}
+		}
+
+		public bool CanStep
+		{
+			get
+			{
+				return true;
+			}
 		}
 
 		public int Step(int step)

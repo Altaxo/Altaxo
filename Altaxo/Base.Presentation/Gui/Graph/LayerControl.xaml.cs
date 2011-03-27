@@ -22,8 +22,8 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class LayerControl : UserControl, ILayerView
 	{
-		private ILayerController m_Ctrl;
-		private int m_SuppressEvents = 0;
+		private ILayerController _controller;
+		private int _suppressEventCounter = 0;
 		CheckableGroupBox _chkPageEnable;
 
 		public LayerControl()
@@ -41,11 +41,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return m_Ctrl;
+				return _controller;
 			}
 			set
 			{
-				m_Ctrl = value;
+				_controller = value;
 			}
 		}
 
@@ -54,21 +54,21 @@ namespace Altaxo.Gui.Graph
 			var tc = new TabItem();
 			tc.Name = name;
 			tc.Header = text;
-			this.m_TabCtrl.Items.Add(tc);
+			this._tabCtrl.Items.Add(tc);
 		}
 
 		public object CurrentContent
 		{
 			get
 			{
-				int sel = m_TabCtrl.SelectedIndex;
-				var tp = (TabItem)m_TabCtrl.Items[sel];
+				int sel = _tabCtrl.SelectedIndex;
+				var tp = (TabItem)_tabCtrl.Items[sel];
 				return tp.Content;
 			}
 			set
 			{
-				int sel = m_TabCtrl.SelectedIndex;
-				var tp = (TabItem)m_TabCtrl.Items[sel];
+				int sel = _tabCtrl.SelectedIndex;
+				var tp = (TabItem)_tabCtrl.Items[sel];
 				if (tp.Content!=null)
 					tp.Content = null;
 
@@ -78,10 +78,10 @@ namespace Altaxo.Gui.Graph
 
 		public void SetCurrentContentWithEnable(object guielement, bool enable, string title)
 		{
-			++m_SuppressEvents;
+			++_suppressEventCounter;
 
-			int sel = m_TabCtrl.SelectedIndex;
-			var tp = (TabItem)m_TabCtrl.Items[sel];
+			int sel = _tabCtrl.SelectedIndex;
+			var tp = (TabItem)_tabCtrl.Items[sel];
 			if (tp.Content != null)
 				tp.Content = null;
 
@@ -95,19 +95,19 @@ namespace Altaxo.Gui.Graph
 		
 			tp.Content = _chkPageEnable;
 
-			--m_SuppressEvents;
+			--_suppressEventCounter;
 		}
 
 		void EhControlEnable_Checked(object sender, RoutedEventArgs e)
 		{
-			if(null!=m_Ctrl && m_SuppressEvents==0)
-        m_Ctrl.EhView_PageEnabledChanged(true);
+			if(null!=_controller && _suppressEventCounter==0)
+        _controller.EhView_PageEnabledChanged(true);
 		}
 
 		void EhControlEnable_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (null != m_Ctrl && m_SuppressEvents == 0)
-				m_Ctrl.EhView_PageEnabledChanged(false);
+			if (null != _controller && _suppressEventCounter == 0)
+				_controller.EhView_PageEnabledChanged(false);
 		}
 
 		
@@ -118,25 +118,25 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				if (m_TabCtrl.SelectedContent is CheckableGroupBox)
-					return (m_TabCtrl.SelectedContent as CheckableGroupBox).IsChecked==true;
+				if (_tabCtrl.SelectedContent is CheckableGroupBox)
+					return (_tabCtrl.SelectedContent as CheckableGroupBox).IsChecked==true;
 				else
 					return true;
 			}
 			set
 			{
-				if (m_TabCtrl.SelectedContent is CheckableGroupBox)
-					(m_TabCtrl.SelectedContent as CheckableGroupBox).IsChecked = value;
+				if (_tabCtrl.SelectedContent is CheckableGroupBox)
+					(_tabCtrl.SelectedContent as CheckableGroupBox).IsChecked = value;
 			}
 		}
 
 		public void SelectTab(string name)
 		{
-			foreach (TabItem page in this.m_TabCtrl.Items)
+			foreach (TabItem page in this._tabCtrl.Items)
 			{
 				if ((string)page.Name == name)
 				{
-					this.m_TabCtrl.SelectedItem = page;
+					this._tabCtrl.SelectedItem = page;
 					break;
 				}
 			}
@@ -144,13 +144,13 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeSecondaryChoice(string[] names, string name)
 		{
-			++m_SuppressEvents;
-			this.m_lbEdges.Items.Clear();
+			++_suppressEventCounter;
+			this._lbEdges.Items.Clear();
 			foreach(var n in names)
-				this.m_lbEdges.Items.Add(n);
+				this._lbEdges.Items.Add(n);
 
-			this.m_lbEdges.SelectedItem = name;
-			--m_SuppressEvents;
+			this._lbEdges.SelectedItem = name;
+			--_suppressEventCounter;
 
 		}
 
@@ -161,15 +161,15 @@ namespace Altaxo.Gui.Graph
 		private void EhSecondChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
-			if (null != m_Ctrl && m_SuppressEvents == 0)
-				m_Ctrl.EhView_SecondChoiceChanged(this.m_lbEdges.SelectedIndex, (string)this.m_lbEdges.SelectedItem);
+			if (null != _controller && _suppressEventCounter == 0)
+				_controller.EhView_SecondChoiceChanged(this._lbEdges.SelectedIndex, (string)this._lbEdges.SelectedItem);
 		}
 
 
 		int _tabControl_SelectionChanged_Calls;
 		private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (!object.ReferenceEquals(e.OriginalSource,m_TabCtrl))
+			if (!object.ReferenceEquals(e.OriginalSource,_tabCtrl))
 				return;
 			e.Handled = true;
 
@@ -178,7 +178,7 @@ namespace Altaxo.Gui.Graph
 				++_tabControl_SelectionChanged_Calls;
 				bool shouldBeCancelled = false;
 
-				if (null != m_Ctrl && e.RemovedItems.Count > 0)
+				if (null != _controller && e.RemovedItems.Count > 0)
 				{
 					if (!(e.RemovedItems[0] is TabItem))
 					{
@@ -194,7 +194,7 @@ namespace Altaxo.Gui.Graph
 					shouldBeCancelled = cancelEventArgs.Cancel;
 
 					if (shouldBeCancelled)
-						m_TabCtrl.SelectedItem = tp;
+						_tabCtrl.SelectedItem = tp;
 				}
 
 				if (!shouldBeCancelled)
@@ -204,10 +204,10 @@ namespace Altaxo.Gui.Graph
 						if (it is TabItem)
 							((TabItem)it).Content = null;
 
-					if (null != m_Ctrl)
+					if (null != _controller)
 					{
-						var tp = (TabItem)m_TabCtrl.SelectedItem;
-						m_Ctrl.EhView_PageChanged(tp.Name);
+						var tp = (TabItem)_tabCtrl.SelectedItem;
+						_controller.EhView_PageChanged(tp.Name);
 					}
 				}
 

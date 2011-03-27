@@ -616,6 +616,9 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(object fr)
     {
+			if (object.ReferenceEquals(this, fr))
+				return;
+
       var from = fr as GraphExportOptions;
       if (null == from)
         throw new ArgumentException("Argument either null or has wrong type");

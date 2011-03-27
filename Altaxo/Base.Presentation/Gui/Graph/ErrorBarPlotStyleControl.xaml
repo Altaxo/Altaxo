@@ -88,12 +88,12 @@
 				<axogcd:DashStyleComboBox x:Name="_cbDashStyle" Grid.Column="1" Grid.Row="4"/>
 				<CheckBox x:Name="_chkIsHorizontal" Grid.Column="0" Grid.Row="6" Content="Horizontal error bars"/>
 				<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. size:"/>
-				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Column="1" Grid.Row="8" SelectionChanged="_cbSymbolSize_Validating"/>
+				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Column="1" Grid.Row="8" />
 				<CheckBox x:Name="_chkLineSymbolGap" Grid.Column="0" Grid.Row="10" Content="Line/Symbol gap"/>
 				<CheckBox x:Name="_chkShowEndBars" Grid.Column="0" Grid.Row="12" Content="Show end bars"/>
 				<CheckBox x:Name="_chkDoNotShift" Grid.Column="0" Grid.Row="14" Content="Don't shift indep. var."/>
-				<Label Grid.Column="0" Grid.Row="16" Content="Skip frequency:"/>
-				<axogc:Int32UpDown x:Name="_edSkipFrequency" Grid.Column="1" Grid.Row="16" ValueChanged="_edSkipFrequency_Validating"/>
+				<Label Grid.Column="0" Grid.Row="16" Content="Show every nth point:"/>
+				<axogc:Int32UpDown x:Name="_edSkipFrequency" Grid.Column="1" Grid.Row="16" Minimum="1" />
 			</Grid>
 		</GroupBox>
 	</StackPanel>

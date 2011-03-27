@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get 
       {
-        return null==m_ScatterStyle ? 0 : m_ScatterStyle.SymbolSize;
+        return (float)( null==m_ScatterStyle ? 0 : m_ScatterStyle.SymbolSize);
       }
     }
 

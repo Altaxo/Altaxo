@@ -122,9 +122,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public void SynchronizeListSelection()
 		{
 			foreach (Collections.SelectableListNode node in _listView.Items)
-				node.Selected = false;
+				node.IsSelected = false;
 			foreach (Collections.SelectableListNode node in _listView.SelectedItems)
-				node.Selected = true;
+				node.IsSelected = true;
 		}
 
 		private void EhListViewItemDoubleClick(object sender, MouseButtonEventArgs e)

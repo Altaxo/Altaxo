@@ -129,10 +129,12 @@ namespace Altaxo.Gui.Common
 				if (e.Key == Key.Left)
 				{
 					this.IsExpanded = false;
+					e.Handled = true;
 				}
 				else if (e.Key == Key.Right)
 				{
 					this.IsExpanded = true;
+					e.Handled = true;
 				}
 				else if (e.Key == Key.Up)
 				{
@@ -152,6 +154,7 @@ namespace Altaxo.Gui.Common
 						tmp = GetPreviousNodeAtSameLevel(this);
 						itemToSelect = GetLastVisibleChildNodeOf(tmp);
 					}
+					e.Handled = true;
 				}
 				else if (e.Key == Key.Down)
 				{
@@ -180,6 +183,7 @@ namespace Altaxo.Gui.Common
 
 						}
 					}
+					e.Handled = true;
 				}
 
 				if (itemToSelect != null)
@@ -190,9 +194,6 @@ namespace Altaxo.Gui.Common
 				}
 			}
 			catch (Exception) { /* Silently ignore */ }
-
-			// Don't bubble up the event. (I'm sure you know difference between Bubble and Tunnel events in WPF...)
-			e.Handled = true;
 		}
 
 

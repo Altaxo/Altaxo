@@ -13,6 +13,7 @@ namespace Altaxo.Gui.Common
 	{
 		/// <summary>The description text shown above the list of items.</summary>
 		public string Description { get; set; }
+
 		/// <summary>List of items. Has to be filled before showing the control.</summary>
 		public SelectableListNodeList List { get; protected set; }
 
@@ -51,7 +52,7 @@ namespace Altaxo.Gui.Common
 		/// Initialize the column names.
 		/// </summary>
 		/// <param name="colNames">Column names.</param>
-		void InitializeListColumns(string[] colNames);
+		void InitializeColumnNames(string[] colNames);
 		
 		/// <summary>
 		/// Initializes the list. 
@@ -77,9 +78,9 @@ namespace Altaxo.Gui.Common
 				_view.InitializeDescription(_doc.Description);
 
 				if (_doc.ColumnNameList.Count == 0)
-					_view.InitializeListColumns(new string[] { "Name" });
+					_view.InitializeColumnNames(new string[] { "Name" });
 				else
-					_view.InitializeListColumns(_doc.ColumnNameList.ToArray());
+					_view.InitializeColumnNames(_doc.ColumnNameList.ToArray());
 
 				_view.InitializeList(_doc.List);
 			}

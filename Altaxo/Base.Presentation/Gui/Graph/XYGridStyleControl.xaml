@@ -21,6 +21,14 @@
 			<Setter Property="Height" Value="8" />
 		</Style>
 	</UserControl.Resources>
+	
+	<GroupBox>
+		<GroupBox.Header>
+			<StackPanel Orientation="Horizontal">
+				<Label x:Name="_gridLabel" VerticalAlignment="Center" >Enable grid:</Label>
+				<CheckBox x:Name="_chkEnable" VerticalAlignment="Center" Checked="EhEnableCheckChanged" Unchecked="EhEnableCheckChanged"></CheckBox>
+			</StackPanel>
+		</GroupBox.Header>
 
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -40,14 +48,13 @@
 		<Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}"/>
 
 		
-		<CheckBox Grid.Column="0" Grid.Row="0" x:Name="_chkEnable" Checked="EhEnableChecked" Unchecked="EhEnableUnchecked">Enable</CheckBox>
-		<CheckBox Grid.Column="0" Grid.Row="2"  x:Name="_chkShowZeroOnly" Checked="EhShowZeroOnlyChecked" Unchecked="EhShowZeroOnlyUnchecked">At zero only</CheckBox>
-		<CheckBox Grid.Column="1" Grid.Row="2" x:Name="_chkShowMinor" Checked="ShowMinorChecked" Unchecked="EhShowMinorUnchecked">Show minor grid</CheckBox>
+		
+		<CheckBox Grid.Column="0" Grid.Row="2"  x:Name="_chkShowZeroOnly" Checked="EhShowZeroOnlyCheckChanged" Unchecked="EhShowZeroOnlyCheckChanged">At zero only</CheckBox>
+		<CheckBox Grid.Column="1" Grid.Row="2" x:Name="_chkShowMinor" Checked="EhShowMinorCheckChanged" Unchecked="EhShowMinorCheckChanged">Show minor grid</CheckBox>
 
 		<axogcd:ColorTypeThicknessPenControl Grid.Column="0" Grid.Row="4" x:Name="_majorStyle"/>
 		<axogcd:ColorTypeThicknessPenControl Grid.Column="1" Grid.Row="4" x:Name="_minorStyle"/>
 
-
-
 	</Grid>
+	</GroupBox>
 </UserControl>

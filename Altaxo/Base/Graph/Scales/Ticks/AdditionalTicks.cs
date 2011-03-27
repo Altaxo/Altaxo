@@ -65,6 +65,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public void CopyFrom(AdditionalTicks from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			_additionalMajorTicks.Clear();
 			_additionalMajorTicks.AddRange(from._additionalMajorTicks);
 		}

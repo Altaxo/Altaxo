@@ -205,6 +205,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     void CopyFrom(AxisStyle from)
     {
+			if (object.ReferenceEquals(this, from))
+				return;
+
       this._styleID = from._styleID.Clone();
       CopyWithoutIdFrom(from);
       this._cachedAxisInfo = from._cachedAxisInfo;

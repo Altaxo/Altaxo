@@ -40,10 +40,9 @@ using Altaxo.Gui.Common;
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ILineScatterLayerContentsController : IMVCANController
-  {
-    ILineScatterLayerContentsView View { get; set; }
 
+  public interface ILineScatterLayerContentsViewEventSink 
+  {
     void EhView_DataAvailableBeforeExpand(NGTreeNode node);
 
     void EhView_ContentsDoubleClick(NGTreeNode selNode);
@@ -62,16 +61,15 @@ namespace Altaxo.Gui.Graph
     void EhView_CopyClipboard(NGTreeNode[] selNodes);
     void EhView_PasteClipboard();
 		bool EhView_CanPasteFromClipboard();
-
   }
 
-  public interface ILineScatterLayerContentsView : IMVCView
+  public interface ILineScatterLayerContentsView 
   {
 
     /// <summary>
     /// Get/sets the controller of this view.
     /// </summary>
-    ILineScatterLayerContentsController Controller { get; set; }
+    ILineScatterLayerContentsViewEventSink Controller { get; set; }
 
     /// <summary>
     /// Initializes the treeview of available data with content.
@@ -115,7 +113,7 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(PlotItemCollection))]
   [ExpectedTypeOfView(typeof(ILineScatterLayerContentsView))]
-  public class LineScatterLayerContentsController : ILineScatterLayerContentsController
+  public class LineScatterLayerContentsController : ILineScatterLayerContentsViewEventSink, IMVCANController
 	{
 		#region Special tree nodes
 
@@ -160,8 +158,9 @@ namespace Altaxo.Gui.Graph
 
     NGTreeNode _plotItemsRootNode = new NGTreeNode();
     NGTreeNodeCollection _plotItemsTree;
+		NGTreeNode _availableItemsRootNode = new NGTreeNode();
     
-    bool m_bDirty=false;
+    bool _isDirty=false;
     UseDocument _useDocument;
     public UseDocument UseDocumentCopy { set { _useDocument = value; } }
     public LineScatterLayerContentsController()
@@ -175,60 +174,62 @@ namespace Altaxo.Gui.Graph
     /// <returns>True if successfull, else false.</returns>
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0)
+      if (args == null || args.Length == 0 || !(args[0] is PlotItemCollection))
         return false;
-      _doc = _originalDoc = args[0] as PlotItemCollection;
-      if (null == _originalDoc)
-        return false;
+      _originalDoc = (PlotItemCollection)args[0];
 
-      if (_useDocument == UseDocument.Copy)
-        _doc = _originalDoc.Clone();
+			if (_useDocument == UseDocument.Copy)
+				_doc = _originalDoc.Clone();
+			else
+				_doc = _originalDoc;
 
       _plotItemsTree = _plotItemsRootNode.Nodes;
-      SetElements(true);
+      Initialize(true);
       return true;
     }
 
     public void SetDirty()
     {
-      m_bDirty=true;
+      _isDirty=true;
     }
 
-    public void SetElements(bool bInit)
+    public void Initialize(bool initData)
     {
       if (_doc == null)
         throw new ApplicationException("Doc was not set before!");
 
-      // Available Items
-      if(null!=View)
-      {
-        int nTables = Current.Project.DataTableCollection.Count;
-        NGTreeNode no = new NGTreeNode();
-        foreach(DataTable dt in Current.Project.DataTableCollection)
-        {
-					NGTreeNode newnode = new TableNode(dt.Name);
-          newnode.Tag = dt;
-          no.Nodes.Add( newnode );
-        }
 
-        View.DataAvailable_Initialize(no.Nodes);
-      }
 
-      // now fill the tree view  with all plot associations currently inside
-      if(bInit)
+			  // now fill the tree view  with all plot associations currently inside
+      if(initData)
       {
+				// Plot items
         _plotItemsTree.Clear();
         AddToNGTreeNode(_plotItemsRootNode, _doc);
+
+				// available items
+				int nTables = Current.Project.DataTableCollection.Count;
+				foreach (DataTable dt in Current.Project.DataTableCollection)
+				{
+					NGTreeNode newnode = new TableNode(dt.Name);
+					newnode.Tag = dt;
+					_availableItemsRootNode.Nodes.Add(newnode);
+				}
+
+				_isDirty = false;
+			}
+
+   
+
+      // Available Items
+      if(null!=_view)
+      {
+				_view.Contents_SetItems(_plotItemsTree);
+
+        _view.DataAvailable_Initialize(this._availableItemsRootNode.Nodes);
       }
 
-      if(null!=View)
-        View.Contents_SetItems(_plotItemsTree);
-
-
-      // if initializing set dirty to false
-      if(bInit)
-        m_bDirty = false;
-    }
+		}
 
 
     private void AddToNGTreeNode(NGTreeNode node, PlotItemCollection picoll)
@@ -242,6 +243,7 @@ namespace Altaxo.Gui.Graph
           NGTreeNode grpNode = new NGTreeNode();
           grpNode.Text = "PlotGroup";
           grpNode.Tag = pa;
+					grpNode.IsExpanded = true;
           node.Nodes.Add(grpNode);
           // add all the items in the group also to the list of added items 
           AddToNGTreeNode(grpNode, (PlotItemCollection)pa);
@@ -251,6 +253,7 @@ namespace Altaxo.Gui.Graph
           NGTreeNode toAdd = new NGTreeNode();
           toAdd.Text = pa.GetName(2);
           toAdd.Tag = pa;
+					toAdd.IsExpanded = true;
           node.Nodes.Add(toAdd);
         }
       }
@@ -365,27 +368,7 @@ namespace Altaxo.Gui.Graph
 
     #region ILineScatterLayerContentsController Members
 
-    public ILineScatterLayerContentsView View
-    { 
-      get 
-      {
-        return _view;
-      }
-
-      set
-      {
-        if(null!=_view)
-          _view.Controller = null;
-        
-        _view = value;
-
-        if(null!=_view)
-        {
-          _view.Controller = this;
-          SetElements(false); // set only the view elements, dont't initialize the variables
-        }
-      }
-    }
+  
 
 
     public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
@@ -429,20 +412,20 @@ namespace Altaxo.Gui.Graph
         }
       }
 
-      View.Contents_SetItems(_plotItemsTree);
-      View.DataAvailable_ClearSelection();
+      _view.Contents_SetItems(_plotItemsTree);
+      _view.DataAvailable_ClearSelection();
       SetDirty();
     }
 
     public void EhView_PullDataClick(NGTreeNode[] selNodes)
     {
-      View.Contents_RemoveItems(selNodes);
+      _view.Contents_RemoveItems(selNodes);
 
       foreach (NGTreeNode node in selNodes)
         node.Remove();
 
       TransferTreeToDoc(_plotItemsRootNode, _doc);
-      View.Contents_SetItems(_plotItemsTree);
+      _view.Contents_SetItems(_plotItemsTree);
       SetDirty();
     }
 
@@ -473,7 +456,7 @@ namespace Altaxo.Gui.Graph
       {
         NGTreeNode.MoveUpDown(iDelta, selNodes);
         TransferTreeToDoc(_plotItemsRootNode, _doc);
-        View.Contents_SetItems(this._plotItemsTree);
+        _view.Contents_SetItems(this._plotItemsTree);
         SetDirty();
       }
     }
@@ -504,9 +487,9 @@ namespace Altaxo.Gui.Graph
           _plotItemsTree[iSeg-1] = _plotItemsTree[iSeg];
           _plotItemsTree[iSeg] = helpSeg;
 
-          View.Contents_InvalidateItems(iSeg-1,iSeg);
-          View.Contents_SetSelected(iSeg-1,true); // select upper item,
-          View.Contents_SetSelected(iSeg,false); // deselect lower item
+          _view.Contents_InvalidateItems(iSeg-1,iSeg);
+          _view.Contents_SetSelected(iSeg-1,true); // select upper item,
+          _view.Contents_SetSelected(iSeg,false); // deselect lower item
         }
       } // end if iDelta==-1
       else if(iDelta==1) // move one position down
@@ -525,9 +508,9 @@ namespace Altaxo.Gui.Graph
           _plotItemsTree[iSeg+1]=_plotItemsTree[iSeg];
           _plotItemsTree[iSeg]=helpSeg;
 
-          View.Contents_InvalidateItems(iSeg+1,iSeg);
-          View.Contents_SetSelected(iSeg+1,true);
-          View.Contents_SetSelected(iSeg,false);
+          _view.Contents_InvalidateItems(iSeg+1,iSeg);
+          _view.Contents_SetSelected(iSeg+1,true);
+          _view.Contents_SetSelected(iSeg,false);
         }
       } // end if iDelta==1
 
@@ -600,7 +583,7 @@ namespace Altaxo.Gui.Graph
 
        TransferTreeToDoc(_plotItemsRootNode, _doc);
       // so update the list box:
-       View.Contents_SetItems(this._plotItemsTree);
+       _view.Contents_SetItems(this._plotItemsTree);
 
       SetDirty();
     }
@@ -639,7 +622,7 @@ namespace Altaxo.Gui.Graph
       } // end for
 
       TransferTreeToDoc(_plotItemsRootNode, _doc);
-      View.Contents_SetItems(_plotItemsTree);
+      _view.Contents_SetItems(_plotItemsTree);
       SetDirty();
 
     }
@@ -710,7 +693,7 @@ namespace Altaxo.Gui.Graph
               _plotItemsTree.Add(newNode);
           }
 
-          View.Contents_SetItems(_plotItemsTree);
+          _view.Contents_SetItems(_plotItemsTree);
           SetDirty();
         }
       }
@@ -723,7 +706,7 @@ namespace Altaxo.Gui.Graph
     public bool Apply()
     {
 
-      if(!this.m_bDirty)
+      if(!this._isDirty)
         return true; // not dirty - so no need to apply something
 
       _originalDoc.Clear(); // first, clear all Plot items
@@ -731,7 +714,7 @@ namespace Altaxo.Gui.Graph
 
       if (_useDocument== UseDocument.Copy)
         _doc = _originalDoc.Clone();
-      SetElements(true); // Reload the applied contents to make sure it is synchronized
+      Initialize(true); // Reload the applied contents to make sure it is synchronized
      
       return true; // all ok
     }
@@ -744,12 +727,23 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        return View;
+				return _view;
       }
-      set
-      {
-        View = value as ILineScatterLayerContentsView;
-      }
+			set
+			{
+				if (null != _view)
+				{
+					_view.Controller = null;
+				}
+
+				_view = value as ILineScatterLayerContentsView;
+
+				if (null != _view)
+				{
+					Initialize(false); // set only the view elements, dont't initialize the variables
+					_view.Controller = this;
+				}
+			}
     }
 
     public object ModelObject

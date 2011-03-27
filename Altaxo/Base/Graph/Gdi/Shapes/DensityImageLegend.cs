@@ -216,6 +216,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public void CopyFrom(object o)
 		{
+			if (object.ReferenceEquals(this, o))
+				return;
+
 			base.CopyFrom((GraphicBase)o);
 			var from = o as DensityImageLegend;
 			if(null!=from)

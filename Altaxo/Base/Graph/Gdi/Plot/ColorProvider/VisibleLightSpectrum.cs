@@ -55,6 +55,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <returns>True if all or some of the data of the other instance could be copied. False if no data could be copied.</returns>
 		public override bool CopyFrom(object o)
 		{
+			if (object.ReferenceEquals(this, o))
+				return true;
+
 			var result = base.CopyFrom(o);
 			var from = o as VisibleLightSpectrum;
 			if (null != from)

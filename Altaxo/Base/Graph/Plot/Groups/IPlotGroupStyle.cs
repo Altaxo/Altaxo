@@ -46,20 +46,25 @@ namespace Altaxo.Graph.Plot.Groups
     void PrepareStep();
 
     /// <summary>
-    /// Determines if this style can have childs, i.e. other plot group
-    /// styles that are incremented if this group style swaps over.
-    /// When <see cref="Step" /> can return only zero, you should return false.
-		/// Otherwise you should return true.
+    /// Determines if this style can carry over during the <see cref="Step"/> operation. If yes, then the style can have childs, i.e. other plot group
+    /// styles that are incremented if this group style carries over.
+    /// When <see cref="Step" /> can return a nonzero value, true is returned here.
+		/// For instance, color or line style can be stepped and they can carry over, so they return true here. In constract, bar graph group style
+		/// can be stepped, but it can not carry over, so false is returned here.
     /// </summary>
-    /// <returns></returns>
-    bool CanHaveChilds();
+		bool CanCarryOver { get; }
 
     /// <summary>
-    /// Increments/decrements the style. Returns true when the style was swapped around.
+    /// Increments/decrements the style. Returns +1 or -1 when the style was swapped around.
     /// </summary>
     /// <param name="step">Either +1 or -1 for increment or decrement.</param>
     /// <returns>Number of wraps.</returns>
     int Step(int step);
+
+		/// <summary>
+		/// Indicates whether this group style makes any action when calling <see cref="Step"/>. This property is true, if <see cref="IsStepEnabled"/> can be set to true.
+		/// </summary>
+		bool CanStep { get; }
 
     /// <summary>
     /// Get/sets whether or not stepping is allowed.

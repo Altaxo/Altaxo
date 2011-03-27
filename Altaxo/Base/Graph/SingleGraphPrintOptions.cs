@@ -59,6 +59,9 @@ namespace Altaxo.Graph
 
 		public void CopyFrom(SingleGraphPrintOptions from)
 		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
 			this._fitGraphToPrintIfSmaller = from._fitGraphToPrintIfSmaller;
 			this._fitGraphToPrintIfLarger = from._fitGraphToPrintIfLarger;
 			this._useFixedZoomFactor = from._useFixedZoomFactor;
