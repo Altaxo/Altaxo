@@ -228,7 +228,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (null != _folderName)
 				_list.Add(new BrowserListItem(
 					"..",
-					new ParentProjectFolder(Main.ProjectFolder.GetParentDirectory(_folderName)),
+					new ParentProjectFolder(Main.ProjectFolder.GetFoldersParentFolder(_folderName)),
 					false)
 					{
 						Image = ProjectBrowseItemImage.OpenFolder
@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			subfolderList.Sort();
 			foreach (var o in subfolderList)
 			{
-				_list.Add(new BrowserListItem(Main.ProjectFolder.GetNamePart(o), new Main.ProjectFolder(o), false) { Image = ProjectBrowseItemImage.OpenFolder });
+				_list.Add(new BrowserListItem(Main.ProjectFolder.ConvertFolderNameToDisplayFolderName(o), new Main.ProjectFolder(o), false) { Image = ProjectBrowseItemImage.OpenFolder });
 			}
 
 			var itemList = Current.Project.Folders.GetItemsInFolder(_folderName);

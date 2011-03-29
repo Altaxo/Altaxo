@@ -203,7 +203,7 @@ namespace Altaxo.Gui.Worksheet
     public void EhInterpolationClassChanged()
     {
 			var sel = _classListA.FirstSelectedNode;
-      this._interpolationInstance = (Altaxo.Calc.Interpolation.IInterpolationFunction)System.Activator.CreateInstance((System.Type)sel.Item);
+      this._interpolationInstance = (Altaxo.Calc.Interpolation.IInterpolationFunction)System.Activator.CreateInstance((System.Type)sel.Tag);
       SetInterpolationDetailController((IMVCAController)Current.Gui.GetControllerAndControl(new object[]{this._interpolationInstance},typeof(IMVCAController)));
     }
 

@@ -283,7 +283,7 @@ namespace Altaxo.Gui
 			foreach (var choice in choices)
 			{
 				var rb = new TChoiceGuiElement();
-				rb.Content = choice.Name;
+				rb.Content = choice.Text;
 				rb.Tag = choice;
 				rb.SetBinding(ToggleButton.IsCheckedProperty,new System.Windows.Data.Binding("Selected") { Source=choice, Mode= System.Windows.Data.BindingMode.TwoWay });
 				panel.Children.Add(rb);

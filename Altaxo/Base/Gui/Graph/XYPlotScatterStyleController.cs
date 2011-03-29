@@ -301,10 +301,10 @@ namespace Altaxo.Gui.Graph
         _originalDoc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
         // Symbol Shape
-				_originalDoc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_view.SymbolShape.Item;
+				_originalDoc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_view.SymbolShape.Tag;
 
         // Symbol Style
-				_originalDoc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_view.SymbolStyle.Item;
+				_originalDoc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_view.SymbolStyle.Tag;
 
         // Symbol Size
 				_originalDoc.SymbolSize = _view.SymbolSize;
@@ -313,7 +313,7 @@ namespace Altaxo.Gui.Graph
         _originalDoc.DropLine.Clear();
         foreach (SelectableListNode node in _view.DropLines)
 					if(node.IsSelected)
-						_originalDoc.DropLine.Add((CSPlaneID)node.Item);
+						_originalDoc.DropLine.Add((CSPlaneID)node.Tag);
 
         // Skip points
 

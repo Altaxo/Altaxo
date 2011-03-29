@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_AxisTypeChanged()
 		{
-			Type axistype = (Type)_scaleTypes.FirstSelectedNode.Item;
+			Type axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
 
 			try
 			{

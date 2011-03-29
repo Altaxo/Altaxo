@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Collections;
+
 	/// <summary>
 	/// Interaction logic for XYPlotDataControl.xaml
 	/// </summary>
@@ -29,50 +31,57 @@ namespace Altaxo.Gui.Graph
 
 		private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
-			if (null != Controller)
-				Controller.EhView_TableSelectionChanged(this.m_cbTables.SelectedIndex, (string)this.m_cbTables.SelectedItem);
+			if (null != _controller)
+			{
+				GuiHelper.SynchronizeSelectionFromGui(this._cbTables);
+				_controller.EhView_TableSelectionChanged();
+			}
 
 		}
 
 		private void EhToX_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != Controller)
-				Controller.EhView_ToX(this.m_cbTables.SelectedIndex, (string)this.m_cbTables.SelectedItem, m_lbColumns.SelectedIndex, (string)this.m_lbColumns.SelectedItem);
+			if (null != _controller)
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
+				_controller.EhView_ToX();
+			}
 
 		}
 
 		private void EhEraseX_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != Controller)
-				Controller.EhView_EraseX();
-
+			if (null != _controller)
+				_controller.EhView_EraseX();
 		}
 
 		private void EhToY_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != Controller)
-				Controller.EhView_ToY(this.m_cbTables.SelectedIndex, (string)this.m_cbTables.SelectedItem, m_lbColumns.SelectedIndex, (string)this.m_lbColumns.SelectedItem);
-
+			if (null != _controller)
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
+				_controller.EhView_ToY();
+			}
 		}
 
 		private void EhEraseY_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != Controller)
-				Controller.EhView_EraseY();
+			if (null != _controller)
+				_controller.EhView_EraseY();
 
 		}
 
 		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-			if (null != Controller)
-				Controller.EhView_RangeFrom(this.m_nudPlotRangeFrom.Value);
+			if (null != _controller)
+				_controller.EhView_RangeFrom(this._nudPlotRangeFrom.Value);
 
 		}
 
 		private void EhPlotRangeTo_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-			if (null != Controller)
-				Controller.EhView_RangeTo(this.m_nudPlotRangeTo.Value);
+			if (null != _controller)
+				_controller.EhView_RangeTo(this.m_nudPlotRangeTo.Value);
 
 		}
 
@@ -80,47 +89,37 @@ namespace Altaxo.Gui.Graph
 
 		public IXYColumnPlotDataViewEventSink Controller
 		{
-			get
-			{
-				return _controller;
-			}
 			set
 			{
 				_controller = value;
 			}
 		}
 
-		public void Tables_Initialize(string[] tables, int selectedTable)
+		public void Tables_Initialize(SelectableListNodeList items)
 		{
-			this.m_cbTables.Items.Clear();
-			this.m_cbTables.ItemsSource = tables;
-			this.m_cbTables.SelectedIndex = selectedTable;
-
+			GuiHelper.Initialize(_cbTables, items);
 		}
 
-		public void Columns_Initialize(string[] colnames, int selectedColumn)
+		public void Columns_Initialize(SelectableListNodeList items)
 		{
-			this.m_lbColumns.Items.Clear();
-			this.m_lbColumns.ItemsSource=colnames;
-			if (selectedColumn < colnames.Length)
-				this.m_lbColumns.SelectedIndex = selectedColumn;
+			GuiHelper.Initialize(_lbColumns, items);
 		}
 
 		public void XColumn_Initialize(string colname)
 		{
-			this.m_edXColumn.Text = colname;
+			this._edXColumn.Text = colname;
 		}
 
 		public void YColumn_Initialize(string colname)
 		{
-			this.m_edYColumn.Text = colname;
+			this._edYColumn.Text = colname;
 		}
 
 		public void PlotRangeFrom_Initialize(int from)
 		{
-			this.m_nudPlotRangeFrom.Minimum = 0;
-			this.m_nudPlotRangeFrom.Maximum = int.MaxValue;
-			this.m_nudPlotRangeFrom.Value = from;
+			this._nudPlotRangeFrom.Minimum = 0;
+			this._nudPlotRangeFrom.Maximum = int.MaxValue;
+			this._nudPlotRangeFrom.Value = from;
 		}
 
 		public void PlotRangeTo_Initialize(int to)

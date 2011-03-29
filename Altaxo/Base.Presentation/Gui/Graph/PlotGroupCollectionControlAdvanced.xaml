@@ -75,7 +75,7 @@
 				<DataTemplate DataType="{x:Type axocoll:CheckableSelectableListNode}">
 					<StackPanel Orientation="Horizontal">
 						<CheckBox Width="16" Height="16" Margin="3,0" IsChecked="{Binding IsChecked, Mode=TwoWay}" Visibility="{Binding IsCheckBoxVisible, Converter={StaticResource HiddenForFalseConverter}}"/>
-						<TextBlock Text="{Binding Name}" />
+						<TextBlock Text="{Binding Text}" />
 					</StackPanel>
 				</DataTemplate>
 			</ItemsControl.Resources>

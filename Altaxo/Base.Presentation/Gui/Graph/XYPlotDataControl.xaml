@@ -31,16 +31,16 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<ComboBox x:Name="m_cbTables" Grid.Column="0" Grid.Row="0" SelectionChanged="EhTables_SelectionChangeCommit"/>
-		<ListBox x:Name="m_lbColumns" Grid.Column="0" Grid.Row="2" Grid.RowSpan="5"/>
+		<ComboBox x:Name="_cbTables" Grid.Column="0" Grid.Row="0" SelectionChanged="EhTables_SelectionChangeCommit"/>
+		<ListBox x:Name="_lbColumns" Grid.Column="0" Grid.Row="2" Grid.RowSpan="5"/>
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="7" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
 
 		<Button x:Name="m_btToX"  Grid.Column="2" Grid.Row="2" Content="-> X" Click="EhToX_Click"/>
-		<TextBox x:Name="m_edXColumn" Grid.Column="3" Grid.Row="2" IsEnabled="False"/>
+		<TextBox x:Name="_edXColumn" Grid.Column="3" Grid.Row="2" IsEnabled="False"/>
 		<Button x:Name="m_btEraseX" Grid.Column="4" Grid.Row="2" Content="X" Click="EhEraseX_Click"/>
 
 		<Button x:Name="m_btToY"  Grid.Column="2" Grid.Row="4" Content="-> Y" Click="EhToY_Click"/>
-		<TextBox x:Name="m_edYColumn" Grid.Column="3" Grid.Row="4" IsEnabled="False"/>
+		<TextBox x:Name="_edYColumn" Grid.Column="3" Grid.Row="4" IsEnabled="False"/>
 		<Button x:Name="m_btEraseY"  Grid.Column="4" Grid.Row="4" Content="X" Click="EhEraseY_Click"/>
 			
 			<GroupBox Header="Plot Range:" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="6" Margin="0,16,0,0"  Padding="0,4,0,0">
@@ -52,7 +52,7 @@
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 				<Label Grid.Column="0" Content="From:"/>
-				<axogc:Int32UpDown x:Name="m_nudPlotRangeFrom" Grid.Column="1" Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeFrom_Validating"/>
+				<axogc:Int32UpDown x:Name="_nudPlotRangeFrom" Grid.Column="1" Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeFrom_Validating"/>
 				<Label  Grid.Column="2" Content="To:"/>
 				<axogc:Int32UpDown x:Name="m_nudPlotRangeTo" Grid.Column="3" Minimum="0" Change="1" MaximumReplacementText="Maximum" ValueIfTextIsEmpty="{Binding RelativeSource={RelativeSource Self}, Path=Maximum}" IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeTo_Validating" />
 			</Grid>

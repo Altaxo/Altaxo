@@ -220,8 +220,8 @@ namespace Altaxo.Gui.Graph
 			if(!(dr>0))
 				return false;
 
-			var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Item;
-			var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Item;
+			var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
+			var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Tag;
 
 			if (!_doc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
 			{
@@ -229,8 +229,8 @@ namespace Altaxo.Gui.Graph
 				return false;
 			}
 			
-			_doc.ExportArea = (GraphExportArea)_exportArea.FirstSelectedNode.Item;
-      _doc.ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormat.FirstSelectedNode.Item;
+			_doc.ExportArea = (GraphExportArea)_exportArea.FirstSelectedNode.Tag;
+      _doc.ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormat.FirstSelectedNode.Tag;
 			_doc.SourceDpiResolution = sr;
 			_doc.DestinationDpiResolution = dr;
 

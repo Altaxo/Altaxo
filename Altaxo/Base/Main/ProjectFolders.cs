@@ -17,7 +17,7 @@ namespace Altaxo.Main
 		AltaxoDocument _doc;
 
 		/// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
-		DictionaryWithNullableKey<string, HashSet<object>> _directories = new DictionaryWithNullableKey<string, HashSet<object>>();
+		Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
 
 		/// <summary>
 		/// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
@@ -46,7 +46,9 @@ namespace Altaxo.Main
 		/// <returns>True if the given folder name is present, i.e. if at least one item belongs to the folder.</returns>
 		public bool ContainsFolder(string folder)
 		{
-			return null == folder || _directories.ContainsKey(folder);
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folder);
+
+			return _directories.ContainsKey(folder);
 		}
 
 		/// <summary>
@@ -57,6 +59,8 @@ namespace Altaxo.Main
 		/// <returns>List of subfolders of the provied folder.</returns>
 		public List<string> GetSubfoldersAsStringList(string parentFolder, bool recurseSubdirectories)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(parentFolder);
+
 			var result = new List<string>();
 			InternalGetSubfoldersAsStringList(parentFolder, recurseSubdirectories, result);
 			return result;
@@ -92,6 +96,8 @@ namespace Altaxo.Main
 		/// <returns>List of subfolders of the provied folder.</returns>
 		public List<ProjectFolder> GetSubfoldersAsProjectFolderList(string parentFolder)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(parentFolder);
+
 			var result = new List<ProjectFolder>();
 
 			HashSet<object> items;
@@ -113,6 +119,8 @@ namespace Altaxo.Main
 		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
     public List<object> GetItemsInFolder(string folderName)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+
 			var result = new List<object>();
 
       AddItemsInFolder(folderName, result);
@@ -127,8 +135,9 @@ namespace Altaxo.Main
 		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
     public List<object> GetItemsInFolderAndSubfolders(string folderName)
 		{
-			var result = new List<object>();
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
 
+			var result = new List<object>();
       AddItemsInFolderAndSubfolders(folderName, result);
 
 			return result;
@@ -142,8 +151,11 @@ namespace Altaxo.Main
     public void AddItemsInFolder(string folderName, List<object> list)
 		{
 			HashSet<object> items;
-      if (!_directories.TryGetValue(folderName, out items))
-        throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
+			if (!_directories.TryGetValue(folderName, out items))
+			{
+				ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
+			}
 
 			foreach (var v in items)
 			{
@@ -160,8 +172,11 @@ namespace Altaxo.Main
     public void AddItemsInFolderAndSubfolders(string folderName, List<object> list)
 		{
 			HashSet<object> items;
-      if (!_directories.TryGetValue(folderName, out items))
-        throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
+			if (!_directories.TryGetValue(folderName, out items))
+			{
+				ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
+			}
 
 			foreach (var v in items)
 			{
@@ -184,6 +199,9 @@ namespace Altaxo.Main
 		/// <param name="newFolderName">New name of the folder.</param>
 		public void RenameFolder(string oldFolderName, string newFolderName)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(oldFolderName);
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(newFolderName);
+
 			var items = GetItemsInFolderAndSubfolders(oldFolderName);
 			MoveItemsToNewFolder(oldFolderName, newFolderName, items);
 		}
@@ -197,6 +215,9 @@ namespace Altaxo.Main
 		/// <param name="items">List of items that should be renamed.</param>
 		public void MoveItemsToNewFolder(string oldFolderName, string newFolderName, IEnumerable<object> items)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(oldFolderName);
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(newFolderName);
+
 			// The algorithm tries to continuously rename items that could be renamed
 			// If no more items could be renamed, the rest of the items is renamed with a unique generated name using the new name as basis
 
@@ -267,7 +288,7 @@ namespace Altaxo.Main
 			_suspendEvents = true;
 
 			_directories.Clear();
-			_directories.Add(null, new HashSet<object>()); // Root folder
+			_directories.Add(ProjectFolder.RootFolderName, new HashSet<object>()); // Root folder
 
 			foreach (var v in _doc.DataTableCollection)
 				ItemAdded(v, v.Name);
@@ -329,7 +350,7 @@ namespace Altaxo.Main
 
 		private void ItemAdded(object item, string itemName)
 		{
-			string itemDir = ProjectFolder.GetDirectoryPart(itemName);
+			string itemDir = ProjectFolder.GetFolderPart(itemName);
 			DirectoryAdded(itemDir);
 			_directories[itemDir].Add(item);
 			OnCollectionChanged(NamedObjectCollectionChangeType.ItemAdded, item, itemName, itemName);
@@ -337,7 +358,7 @@ namespace Altaxo.Main
 
 		private void ItemRemoved(object item, string itemName)
 		{
-			string itemDir = ProjectFolder.GetDirectoryPart(itemName);
+			string itemDir = ProjectFolder.GetFolderPart(itemName);
 			var s = _directories[itemDir];
 			s.Remove(item);
 			OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, item, itemName, itemName);
@@ -348,8 +369,8 @@ namespace Altaxo.Main
 
 		private void ItemRenamed(object item, string oldName, string newName)
 		{
-			string oldDir = ProjectFolder.GetDirectoryPart(oldName);
-			string newDir = ProjectFolder.GetDirectoryPart(newName);
+			string oldDir = ProjectFolder.GetFolderPart(oldName);
+			string newDir = ProjectFolder.GetFolderPart(newName);
 
 			if (oldDir != newDir) // only then it is neccessary to do something
 			{
@@ -372,7 +393,7 @@ namespace Altaxo.Main
 			{
 				_directories.Add(dir, new HashSet<object>());
 
-				string parDir = ProjectFolder.GetParentDirectory(dir);
+				string parDir = ProjectFolder.GetFoldersParentFolder(dir);
 				DirectoryAdded(parDir);
 				_directories[parDir].Add(dir);
 
@@ -386,7 +407,7 @@ namespace Altaxo.Main
 				return;
 
 			_directories.Remove(dir);
-			string parDir = ProjectFolder.GetParentDirectory(dir);
+			string parDir = ProjectFolder.GetFoldersParentFolder(dir);
 			var s = _directories[parDir];
 			s.Remove(dir);
 			OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, dir, dir, dir);
@@ -410,6 +431,10 @@ namespace Altaxo.Main
 		/// <returns>True if the folder can be renamed, i.e. if none of the new item names conflicts with an existing item name.</returns>
 		public bool CanRenameFolder(string oldFolderName, string newFolderName)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(oldFolderName);
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(newFolderName);
+
+
 			var oldList = GetItemsInFolderAndSubfolders(oldFolderName);
 			var itemHashSet = new HashSet<object>(oldList);
 
@@ -460,18 +485,19 @@ namespace Altaxo.Main
 		/// <param name="folderName">Folder to rename.</param>
 		public void ShowFolderRenameDialog(string folderName)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+
 			if (folderName == ProjectFolder.RootFolderName)
 				return;
 
-			var tvctrl = new Altaxo.Gui.Common.TextValueInputController(folderName, "Enter the new name of the folder:");
+			var tvctrl = new Altaxo.Gui.Common.TextValueInputController(ProjectFolder.ConvertFolderNameToDisplayFolderName(folderName), "Enter the new name of the folder:");
 
 			if (!Current.Gui.ShowDialog(tvctrl, "Rename folder", false))
 				return;
 
-			var newFolderName = tvctrl.InputText.Trim();
+			var newFolderName = ProjectFolder.ConvertDisplayFolderNameToFolderName( tvctrl.InputText.Trim() );
 
-			if (newFolderName == string.Empty)
-				newFolderName = null;
+		
 
 			if (!CanRenameFolder(folderName, newFolderName))
 			{
@@ -492,6 +518,8 @@ namespace Altaxo.Main
 		/// <param name="newFolderName">Name of the folder where to move the items into.</param>
 		public void MoveItemsToFolder(IList<object> list, string newFolderName)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(newFolderName);
+
 			foreach (object item in list)
 			{
 				if (item is Altaxo.Data.DataTable)
@@ -529,6 +557,8 @@ namespace Altaxo.Main
 		/// <param name="relocationOptions">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
 		public void CopyItemsToFolder(IList<object> list, string destinationFolderName, IDocNodeProxyVisitor relocationOptions)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
+
 			foreach (object item in list)
 			{
 				CopyItemToFolder(item, destinationFolderName, relocationOptions);
@@ -544,6 +574,8 @@ namespace Altaxo.Main
 		/// <param name="relocationOptions">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
 		public void CopyItemToFolder(object item, string destinationFolderName, IDocNodeProxyVisitor relocationOptions)
 		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
+
 			if (item == null)
 				throw new ArgumentNullException("Item is null");
 
@@ -576,5 +608,52 @@ namespace Altaxo.Main
 				throw new NotImplementedException(string.Format("The item of type {0} can not be copied", item.GetType()));
 			}
 		}
+
+
+		#region Helper Gui Functions
+
+		/// <summary>
+		/// Get a list of subfolders of the provided folder (as string list).
+		/// </summary>
+		/// <param name="parentFolder">Folder for which to get the subfolders.</param>
+		/// <param name="recurseSubdirectories">If true, the function returns not only the direct subfolders, but also all subfolders deeper in the hierarchy.</param>
+		/// <returns>List of subfolders of the provied folder.</returns>
+		public List<string> GetSubfoldersAsDisplayFolderNameStringList(string parentFolder, bool recurseSubdirectories)
+		{
+			var result = GetSubfoldersAsStringList(parentFolder, recurseSubdirectories);
+
+
+			for (int i = 0; i < result.Count; ++i)
+				result[i] = ProjectFolder.ConvertFolderNameToDisplayFolderName(result[i]);
+
+			return result;
+		}
+
+
+		/// <summary>
+		/// Add a <see cref="NGTreeNode"/>s corresponding to the folder name recursively for all parts of the folder name so that a hierarchy of those nodes is built-up. 
+		/// If the folder name is already represented by a tree node (i.e. is present in the folderDictionary), this node is returned. 
+		/// If not, the node is created and added to the folder dictionary as well as to the nodes collection of the parent tree node. 
+		/// If the parent tree node is not found in the folderDictionary, this function is called recursively to add the parent tree node.
+		/// </summary>
+		/// <param name="folderName">The folder name to add.</param>
+		/// <param name="folderDictionary">Dictionary that relates the full folder name to the already built-up tree nodes. At least the root node (key is the <see cref="Main.ProjectFolder.RootFolderName"/> has to be present in the dictionary. The newly created folder nodes are also added to this dictionary.</param>
+		/// <returns>The tree node corresponding to the provided folder name.</returns>
+		public static NGTreeNode AddFolderNodeRecursively(string folderName, Dictionary<string, NGTreeNode> folderDictionary)
+		{
+			NGTreeNode folderNode;
+			if (!folderDictionary.TryGetValue(folderName, out folderNode))
+			{
+				var parentNode = AddFolderNodeRecursively(Main.ProjectFolder.GetFoldersParentFolder(folderName), folderDictionary);
+
+
+				folderNode = new NGTreeNode { Text = Main.ProjectFolder.ConvertFolderNameToDisplayFolderName(Main.ProjectFolder.GetFoldersLastFolderPart(folderName)), Tag = folderName };
+				folderDictionary.Add(folderName, folderNode);
+				parentNode.Nodes.Add(folderNode);
+			}
+			return folderNode;
+		}
+
+		#endregion
 	}
 }

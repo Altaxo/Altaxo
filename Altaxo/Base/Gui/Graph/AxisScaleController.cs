@@ -272,7 +272,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_AxisTypeChanged()
 		{
-			Type axistype = (Type)_scaleTypes.FirstSelectedNode.Item;
+			Type axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
 
 			try
 			{
@@ -313,7 +313,7 @@ namespace Altaxo.Gui.Graph
 			if (null == selNode)
 				return;
 
-			Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Item;
+			Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
 
 			if (spaceType == _tempTickSpacing.GetType())
 				return;
@@ -325,7 +325,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_LinkTargetChanged()
 		{
-			_linkScaleNumber = (int)_linkScaleNumbers.FirstSelectedNode.Item;
+			_linkScaleNumber = (int)_linkScaleNumbers.FirstSelectedNode.Tag;
 		}
 
 		public void EhView_LinkChanged(bool linked)

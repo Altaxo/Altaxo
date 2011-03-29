@@ -202,14 +202,14 @@ namespace Altaxo.Gui.Graph
     {
       SelectableListNodeList leftlist = GetPositionTypeList();
       foreach (SelectableListNode node in leftlist)
-        if ((XYPlotLayerPositionType)node.Item == _leftPositionType)
+        if ((XYPlotLayerPositionType)node.Tag == _leftPositionType)
           node.IsSelected = true;
 
       View.InitializeLeftType(leftlist);
 
       SelectableListNodeList toplist = GetPositionTypeList();
       foreach (SelectableListNode node in toplist)
-        if ((XYPlotLayerPositionType)node.Item == _topPositionType)
+        if ((XYPlotLayerPositionType)node.Tag == _topPositionType)
           node.IsSelected = true;
 
       View.InitializeTopType(toplist);
@@ -235,14 +235,14 @@ namespace Altaxo.Gui.Graph
     {
       SelectableListNodeList list = GetSizeTypeList();
       foreach (SelectableListNode node in list)
-        if ((XYPlotLayerSizeType)node.Item == _widthType)
+        if ((XYPlotLayerSizeType)node.Tag == _widthType)
           node.IsSelected = true;
 
       View.InitializeWidthType(list);
 
       list = GetSizeTypeList();
       foreach (SelectableListNode node in list)
-        if ((XYPlotLayerSizeType)node.Item == _heightType)
+        if ((XYPlotLayerSizeType)node.Tag == _heightType)
           node.IsSelected = true;
 
       View.InitializeHeightType(list);
@@ -340,7 +340,7 @@ namespace Altaxo.Gui.Graph
     public void EhView_LinkedLayerChanged(SelectableListNode node)
     {
       XYPlotLayer oldLinkedLayer = _linkedLayer;
-      _linkedLayer = (XYPlotLayer)node.Item;
+      _linkedLayer = (XYPlotLayer)node.Tag;
 
       // we have to check if there is a need to update the type comboboxes
       if (oldLinkedLayer != null && _linkedLayer != null)
@@ -416,22 +416,22 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_LeftTypeChanged(SelectableListNode node)
     {
-      ChangeLeftType((XYPlotLayerPositionType)node.Item);
+      ChangeLeftType((XYPlotLayerPositionType)node.Tag);
     }
 
     public void EhView_TopTypeChanged(SelectableListNode node)
     {
-      ChangeTopType((XYPlotLayerPositionType)node.Item);
+      ChangeTopType((XYPlotLayerPositionType)node.Tag);
     }
 
     public void EhView_WidthTypeChanged(SelectableListNode node)
     {
-      ChangeWidthType((XYPlotLayerSizeType)node.Item);
+      ChangeWidthType((XYPlotLayerSizeType)node.Tag);
     }
 
     public void EhView_HeightTypeChanged(SelectableListNode node)
     {
-      ChangeHeightType((XYPlotLayerSizeType)node.Item);
+      ChangeHeightType((XYPlotLayerSizeType)node.Tag);
     }
 
     public void EhView_LeftChanged(string txt, ref bool bCancel)

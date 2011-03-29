@@ -359,8 +359,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       else
         return false;
 
-      _doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Item;
-      _doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Item;
+      _doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
+      _doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;
 
 			_originalDoc.CopyFrom(_doc);
 			return true;

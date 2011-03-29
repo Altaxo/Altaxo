@@ -195,11 +195,11 @@ namespace Altaxo.Gui.Graph
     {
 			foreach (var item in _currentNormalStyles)
 			{
-				int level = _doc.GetTreeLevelOf((Type)item.Item);
+				int level = _doc.GetTreeLevelOf((Type)item.Tag);
 				StringBuilder stb = new StringBuilder();
 				stb.Append(' ', level * 3);
-				stb.Append(item.Name.Trim());
-				item.Name = stb.ToString();
+				stb.Append(item.Text.Trim());
+				item.Text = stb.ToString();
 			}
 		}
 
@@ -219,7 +219,7 @@ namespace Altaxo.Gui.Graph
       for (int i = 0; i < _currentNoOfItemsThatCanHaveChilds; i++, previousStyle=style)
       {
         CheckableSelectableListNode node = _currentNormalStyles[i];
-        style = _doc.GetPlotGroupStyle((Type)node.Item);
+        style = _doc.GetPlotGroupStyle((Type)node.Tag);
 
         if (previousStyle != null)
         {
@@ -313,7 +313,7 @@ namespace Altaxo.Gui.Graph
       {
         if (node.IsSelected)
         {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Item;
+          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
           _doc.CoordinateTransformingStyle = _currentTransfoStyle;
           break;
         }
@@ -322,7 +322,7 @@ namespace Altaxo.Gui.Graph
       _view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
       foreach (CheckableSelectableListNode node in _currentNormalStyles)
       {
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Item);
+        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Tag);
         style.IsStepEnabled = node.IsChecked;
       }
 
@@ -334,7 +334,7 @@ namespace Altaxo.Gui.Graph
       {
         if (node.IsSelected)
         {
-          _doc.PlotGroupStrictness = (PlotGroupStrictness)node.Item;
+          _doc.PlotGroupStrictness = (PlotGroupStrictness)node.Tag;
           break;
         }
       }
@@ -354,7 +354,7 @@ namespace Altaxo.Gui.Graph
       {
         if (node.IsSelected)
         {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Item;
+          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
           break;
         }
       }
@@ -367,7 +367,7 @@ namespace Altaxo.Gui.Graph
       {
         if (node.IsSelected)
         {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Item;
+          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
           break;
         }
       }
@@ -393,7 +393,7 @@ namespace Altaxo.Gui.Graph
       {
         _availableNormalStyles.Remove(selected);
 
-        IPlotGroupStyle s = (IPlotGroupStyle)Activator.CreateInstance((Type)selected.Item);
+        IPlotGroupStyle s = (IPlotGroupStyle)Activator.CreateInstance((Type)selected.Tag);
         _doc.Add(s);
 				var node = new MyListNode(
 					Current.Gui.GetUserFriendlyClassName(s.GetType()),
@@ -421,15 +421,15 @@ namespace Altaxo.Gui.Graph
         if (!selected.IsSelected)
           continue;
 
-        _doc.RemoveType((Type)selected.Item);
+        _doc.RemoveType((Type)selected.Tag);
 
         _currentNormalStyles.RemoveAt(i);
         if (i < _currentNoOfItemsThatCanHaveChilds)
           _currentNoOfItemsThatCanHaveChilds--;
 
         _availableNormalStyles.Add(new SelectableListNode(
-          Current.Gui.GetUserFriendlyClassName((Type)selected.Item),
-          selected.Item,
+          Current.Gui.GetUserFriendlyClassName((Type)selected.Tag),
+          selected.Tag,
           true));
 
       }
@@ -450,12 +450,12 @@ namespace Altaxo.Gui.Graph
         if (!selected.IsSelected)
           continue;
 
-        if (null != _doc.GetParentTypeOf((Type)selected.Item))
+        if (null != _doc.GetParentTypeOf((Type)selected.Tag))
           continue; // only ident those items who dont have a parent
 
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Item);
+        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
         _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
-        _doc.Add(style,(Type)_currentNormalStyles[i-1].Item); // Add the type again, but this time without parents or childs
+        _doc.Add(style,(Type)_currentNormalStyles[i-1].Tag); // Add the type again, but this time without parents or childs
       }
       // this requires the whole currentNormalStyle list to be updated
       UpdateCurrentNormalOrder();
@@ -473,9 +473,9 @@ namespace Altaxo.Gui.Graph
         if (!selected.IsSelected)
           continue;
 
-        if (null != _doc.GetParentTypeOf((Type)selected.Item))
+        if (null != _doc.GetParentTypeOf((Type)selected.Tag))
         {
-          IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Item);
+          IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
           _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
           _doc.Add(style); // Add the type again, but this time without parents or childs
         }
@@ -500,7 +500,7 @@ namespace Altaxo.Gui.Graph
         if (!selected.IsSelected)
           continue;
 
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Item);
+        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
         Type parenttype = _doc.GetParentTypeOf(style.GetType());
         _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
         if (parenttype == null)
@@ -530,7 +530,7 @@ namespace Altaxo.Gui.Graph
         if (!selected.IsSelected)
           continue;
 
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Item);
+        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
         Type childtype = _doc.GetTypeOfChild(style.GetType());
         _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
         if (childtype == null)

@@ -313,7 +313,7 @@ namespace Altaxo.Gui.Graph
         // Line fill direction
         CSPlaneID id = null;
         if (_doc.FillArea && null != _view.LineFillDirection)
-          id = ((CSPlaneID)_view.LineFillDirection.Item);
+          id = ((CSPlaneID)_view.LineFillDirection.Tag);
 
         _doc.FillDirection = id;
         // Line fill color

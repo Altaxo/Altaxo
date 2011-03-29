@@ -115,7 +115,7 @@ namespace Altaxo.Worksheet.Commands
 
       if (true == Current.Gui.ShowDialog(ct,"Add new column(s)",false))
       {
-        System.Type columntype = (System.Type)ct.SelectedItem.Item;
+        System.Type columntype = (System.Type)ct.SelectedItem.Tag;
 
         table.Suspend();
 

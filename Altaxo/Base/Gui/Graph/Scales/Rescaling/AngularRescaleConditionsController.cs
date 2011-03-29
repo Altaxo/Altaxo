@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     public bool Apply()
     {
-      _doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Item;
+      _doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
       return true;
     }
 

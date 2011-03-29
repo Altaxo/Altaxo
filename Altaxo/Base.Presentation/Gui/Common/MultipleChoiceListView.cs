@@ -23,7 +23,7 @@ namespace Altaxo.Gui.Common
 			foreach (var choice in _choices)
 			{
 				var item = new ListViewItem();
-				item.Content = choice.Name;
+				item.Content = choice.Text;
 				item.Tag = choice;
 				Items.Add(item);
 			}

@@ -113,10 +113,10 @@ namespace Altaxo.Gui.Graph
 
       if (sel != null)
       {
-        System.Type t = (System.Type)sel.Item;
+        System.Type t = (System.Type)sel.Tag;
         if (_doc.GetType() != t)
         {
-          _doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Item);
+          _doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
           Initialize(true);
         }
       }

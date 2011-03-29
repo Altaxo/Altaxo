@@ -223,7 +223,7 @@ namespace Altaxo.Gui.Graph
 
     public void EhSuperfluousLayersActionChanged(Altaxo.Collections.SelectableListNode node)
     {
-      _tempDoc.SuperfluousLayersAction = (SuperfluousLayersAction)node.Item;
+      _tempDoc.SuperfluousLayersAction = (SuperfluousLayersAction)node.Tag;
     }
 
 

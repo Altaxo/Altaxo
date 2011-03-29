@@ -70,16 +70,57 @@ namespace Altaxo.Gui.Graph
 
 		class TableNode : NGTreeNode
 		{
-			public TableNode() : base(true) { }
+			const int MaxNumberOfColumnsInOneNode = 100;
+			DataColumnCollection _collection;
+			int _firstColumn;
+			int _columnCount;
+
+			public TableNode(DataTable table)
+				: base(true)
+			{
+				_collection = table.DataColumns;
+				_firstColumn = 0;
+				_columnCount = table.DataColumns.ColumnCount;
+				Text = table.ShortName;
+				Tag = table;
+			}
+
+			public TableNode(DataColumnCollection coll, int firstColumn, int columnCount)
+				: base(true)
+			{
+				_firstColumn = firstColumn;
+				_columnCount = columnCount;
+				_collection = coll;
+				Text = string.Format("Cols {0}-{1}", firstColumn, firstColumn + columnCount - 1);
+			}
 
 			protected override void LoadChildren()
 			{
-				DataTable table = Tag as DataTable;
-				if (null != table)
+				DataColumnCollection coll = _collection;
+				Nodes.Clear();
+				int nextColumn = Math.Min(_firstColumn+_columnCount,coll.ColumnCount);
+
+				if (_columnCount <= MaxNumberOfColumnsInOneNode) // If number is low enough, expand to the data columns directly
 				{
-					Nodes.Clear();
-					for (int i = 0; i < table.DataColumnCount; ++i)
-						Nodes.Add(new NGTreeNode() { Text = table.DataColumns.GetColumnName(i), Tag = table.DataColumns[i] });
+					for (int i = _firstColumn; i < nextColumn; ++i)
+						Nodes.Add(new NGTreeNode() { Text = coll.GetColumnName(i), Tag = coll[i] });
+				}
+				else // if the number of data columns is too high to be directly shown, we create intermediate nodes
+				{
+					// calculate the number of nodes to be shown
+					int numNodes = (int)Math.Ceiling(_columnCount / (double)MaxNumberOfColumnsInOneNode);
+					numNodes = Math.Min(MaxNumberOfColumnsInOneNode, numNodes);
+					int colsInOneNode = MaxNumberOfColumnsInOneNode;
+					for (; colsInOneNode * numNodes < _columnCount; colsInOneNode *= MaxNumberOfColumnsInOneNode) ; // Multiply with a multiple of MaxNumberOfColumnsInOneNode until it fits
+
+					int first=_firstColumn;
+					int remaining = nextColumn - _firstColumn;
+					for (int i = 0; i < numNodes && remaining>0; ++i )
+					{
+						Nodes.Add(new TableNode(coll, first, Math.Min(remaining, colsInOneNode)));
+						remaining -= colsInOneNode;
+						first += colsInOneNode;
+					}
 				}
 			}
 		}
@@ -139,13 +180,19 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-		void AddAllTableNodes(NGTreeNode tableCollectionNode)
+
+		public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
 		{
+			// Create a dictionary of folders to TreeNodes relation
+			var folderDict = new Dictionary<string, NGTreeNode>();
+			folderDict.Add(Main.ProjectFolder.RootFolderName, tableCollectionNode); // add the root folder node to the dictionary
+
 			tableCollectionNode.Nodes.Clear();
 			foreach (var table in Current.Project.DataTableCollection)
 			{
-				var node = new TableNode { Text = table.Name, Tag = table };
-				tableCollectionNode.Nodes.Add(node);
+				var parentNode = Main.ProjectFolders.AddFolderNodeRecursively(table.FolderName, folderDict);
+				var node = new TableNode(table);
+				parentNode.Nodes.Add(node);
 			}
 		}
 

@@ -237,8 +237,8 @@ namespace Altaxo.Gui.Graph
 				foreach (SelectableListNode n in value)
 				{
 					CheckBox chk = new CheckBox();
-					chk.Content = n.Name;
-					chk.Tag = n.Item;
+					chk.Content = n.Text;
+					chk.Tag = n.Tag;
 					chk.IsChecked = n.IsSelected;
 					_majorWhichTicksLayout.Children.Add(chk);
 				}
@@ -263,8 +263,8 @@ namespace Altaxo.Gui.Graph
 				foreach (SelectableListNode n in value)
 				{
 					CheckBox chk = new CheckBox();
-					chk.Content = n.Name;
-					chk.Tag = n.Item;
+					chk.Content = n.Text;
+					chk.Tag = n.Tag;
 					chk.IsChecked = n.IsSelected;
 					_minorWhichTicksLayout.Children.Add(chk);
 				}

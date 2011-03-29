@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		void EhMajorTicksChanged(object sender, EventArgs e)
 		{
-			_tempMajorDivider = (int)_majorTickList.FirstSelectedNode.Item;
+			_tempMajorDivider = (int)_majorTickList.FirstSelectedNode.Tag;
 			BuildMinorTickList();
 			_view.MinorTicks = _minorTickList;
 		}
@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		{
 			_doc.UseSignedValues = _view.UsePositiveNegativeValues;
 			_doc.MajorTickDivider = _tempMajorDivider;
-			_doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Item;
+			_doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Tag;
 			return true;
 		}
 

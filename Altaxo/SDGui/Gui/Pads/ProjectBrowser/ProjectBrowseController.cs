@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		NGBrowserTreeNode _allTablesNode;
 
 		/// <summary>Dictionary of project folders (keys) and the corresponing non-Gui nodes (values).</summary>
-		DictionaryWithNullableKey<string, NGBrowserTreeNode> _directoryNodesByName;
+		Dictionary<string, NGBrowserTreeNode> _directoryNodesByName;
 
 		/// <summary>Current selected tree node.</summary>
 		NGBrowserTreeNode _currentSelectedTreeNode;
@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public ProjectBrowseController()
 		{
 			_rootNode = new NGBrowserTreeNode("Root");
-			_directoryNodesByName = new DictionaryWithNullableKey<string, NGBrowserTreeNode>();
+			_directoryNodesByName = new Dictionary<string, NGBrowserTreeNode>();
 
 			_allItemsNode = new NGBrowserTreeNode("Project") { Image = ProjectBrowseItemImage.Project };
 			_rootNode.Nodes.Add(_allItemsNode);
@@ -81,8 +81,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_allItemsNode.Nodes.Add(_allTablesNode);
 
 
-			_projectDirectoryRoot = new NGBrowserTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = null };
-			_directoryNodesByName.Add(null, _projectDirectoryRoot);
+			_projectDirectoryRoot = new NGBrowserTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = ProjectFolder.RootFolderName };
+			_directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
 			_allItemsNode.Nodes.Add(_projectDirectoryRoot);
 
 
@@ -146,6 +146,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Current.Gui.Execute(EhProjectClosed_Unsynchronized, sender, e);
 		}
+
 		private void EhProjectClosed_Unsynchronized(object sender, ProjectEventArgs e)
 		{
 			if (null != _doc)
@@ -158,13 +159,24 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		#region Tree related stuff
 
+		/// <summary>
+		/// Returns the name that is displayed in the TreeView
+		/// </summary>
+		/// <param name="fullFolderPath"></param>
+		/// <returns></returns>
+		static string GetDisplayNameOfFolder(string fullFolderPath)
+		{
+			return ProjectFolder.ConvertFolderNameToDisplayFolderName(fullFolderPath);
+		}
+
+
 		void RecreateDirectoryNodes()
 		{
 			_directoryNodesByName.Clear();
-			_directoryNodesByName.Add(null, _projectDirectoryRoot);
+			_directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
 			_projectDirectoryRoot.Nodes.Clear();
 
-			CreateDirectoryNode(null, _projectDirectoryRoot);
+			CreateDirectoryNode((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
 
 			if (_view != null)
 				((IGuiBrowserTreeNode)_projectDirectoryRoot.GuiTag).OnNodeMultipleChanges();
@@ -177,7 +189,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			var subfolders = _doc.Folders.GetSubfoldersAsStringList(dir, false);
 			foreach (var subfolder in subfolders)
 			{
-				var subnode = new NGBrowserTreeNode(ProjectFolder.GetNamePart(subfolder))
+				var subnode = new NGBrowserTreeNode(GetDisplayNameOfFolder(subfolder))
 				{
 					Image = ProjectBrowseItemImage.OpenFolder,
 					Tag = subfolder,
@@ -215,13 +227,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (Main.ProjectFolder.IsRootFolderName(dir))
 				return; // for the root directory, we have already the node, and we can not add or remove them
 
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(dir);
+
 			switch (changeType)
 			{
 				case NamedObjectCollectionChangeType.ItemAdded:
 					{
-						string parDir = ProjectFolder.GetParentDirectory(dir);
+						string parDir = ProjectFolder.GetFoldersParentFolder(dir);
 						var parNode = _directoryNodesByName[parDir];
-						var curNode = new NGBrowserTreeNode(ProjectFolder.GetNamePart(dir))
+						var curNode = new NGBrowserTreeNode(GetDisplayNameOfFolder(dir))
 						{
 							Image = ProjectBrowseItemImage.OpenFolder,
 							Tag = dir,
@@ -238,7 +252,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					{
 						var curNode = _directoryNodesByName[dir];
 						_directoryNodesByName.Remove(dir);
-						string parDir = ProjectFolder.GetParentDirectory(dir);
+						string parDir = ProjectFolder.GetFoldersParentFolder(dir);
 						var parNode = _directoryNodesByName[parDir];
 						parNode.Nodes.Remove(curNode);
 						if (parNode.GuiTag is IGuiBrowserTreeNode)
@@ -357,9 +371,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			foreach (BrowserListItem item in _listViewItems)
 			{
-				if (item.IsSelected && !(item.Item is ParentProjectFolder))
+				if (item.IsSelected && !(item.Tag is ParentProjectFolder))
 				{
-					result.Add(item.Item);
+					result.Add(item.Tag);
 				}
 			}
 			return result;
@@ -375,9 +389,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			foreach (BrowserListItem item in _listViewItems)
 			{
-				if (!(item.Item is ParentProjectFolder))
+				if (!(item.Tag is ParentProjectFolder))
 				{
-					result.Add(item.Item);
+					result.Add(item.Tag);
 				}
 			}
 			return result;
@@ -457,24 +471,24 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 
 				// table nodes
-				if (node.Item is Altaxo.Data.DataTable)
+				if (node.Tag is Altaxo.Data.DataTable)
 				{
 					// tag is the name of the table clicked, so look for a view that has the table or
 					// create a new one
-					Current.ProjectService.OpenOrCreateWorksheetForTable((Altaxo.Data.DataTable)node.Item);
+					Current.ProjectService.OpenOrCreateWorksheetForTable((Altaxo.Data.DataTable)node.Tag);
 				}
-				else if (node.Item is Altaxo.Graph.Gdi.GraphDocument)
+				else if (node.Tag is Altaxo.Graph.Gdi.GraphDocument)
 				{
 					// tag is the name of the table clicked, so look for a view that has the table or create a new one
-					Current.ProjectService.OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)node.Item);
+					Current.ProjectService.OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)node.Tag);
 				}
-				else if (node.Item is ProjectFolder)
+				else if (node.Tag is ProjectFolder)
 				{
-					SetItemListHandler(new SpecificProjectFolderHandler((node.Item as ProjectFolder).Name));
+					SetItemListHandler(new SpecificProjectFolderHandler((node.Tag as ProjectFolder).Name));
 				}
-				else if (node.Item is ParentProjectFolder)
+				else if (node.Tag is ParentProjectFolder)
 				{
-					SetItemListHandler(new SpecificProjectFolderHandler((node.Item as ParentProjectFolder).Name));
+					SetItemListHandler(new SpecificProjectFolderHandler((node.Tag as ParentProjectFolder).Name));
 				}
 			}
 		}
@@ -483,7 +497,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		int NameComparism(SelectableListNode x, SelectableListNode y)
 		{
-			return string.Compare(x.Name, y.Name);
+			return string.Compare(x.Text, y.Text);
 		}
 
 

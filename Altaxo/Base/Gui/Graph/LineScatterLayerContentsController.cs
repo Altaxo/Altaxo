@@ -149,7 +149,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		#endregion
 
 		protected ILineScatterLayerContentsView _view;
@@ -208,13 +207,7 @@ namespace Altaxo.Gui.Graph
         AddToNGTreeNode(_plotItemsRootNode, _doc);
 
 				// available items
-				int nTables = Current.Project.DataTableCollection.Count;
-				foreach (DataTable dt in Current.Project.DataTableCollection)
-				{
-					NGTreeNode newnode = new TableNode(dt.Name);
-					newnode.Tag = dt;
-					_availableItemsRootNode.Nodes.Add(newnode);
-				}
+				SingleColumnChoiceController.AddAllTableNodes(_availableItemsRootNode);
 
 				_isDirty = false;
 			}
@@ -363,6 +356,56 @@ namespace Altaxo.Gui.Graph
 
 
 
+		private IGPlotItem CreatePlotItem(Altaxo.Data.DataColumn ycol)
+		{
+			if (null==ycol)
+				return null;
+
+			DataTable tab = DataTable.GetParentDataTableOf(ycol);
+			if (null == tab)
+				return null;
+
+		
+				
+					DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
+
+					// search in our document for the first plot item that is an XYColumnPlotItem,
+					// we need this as template style
+					XYColumnPlotItem templatePlotItem = FindFirstXYColumnPlotItem(_doc);
+					G2DPlotStyleCollection templatePlotStyle;
+					if (null != templatePlotItem)
+					{
+						templatePlotStyle = templatePlotItem.Style.Clone();
+					}
+					else // there is no item that can be used as template
+					{
+						int numRows = ycol.Count;
+						if (null != xcol)
+							numRows = Math.Min(numRows, xcol.Count);
+						if (numRows < 100)
+						{
+							templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+						}
+						else
+						{
+							templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line);
+						}
+					}
+
+
+					XYColumnPlotItem result;
+					if (null == xcol)
+						result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
+					else
+						result = new XYColumnPlotItem(new XYColumnPlotData(xcol, ycol), templatePlotStyle);
+
+
+					return result;
+				
+		}
+
+
+
 
 
 
@@ -398,17 +441,17 @@ namespace Altaxo.Gui.Graph
       // first, put the selected node into the list, even if it is not checked
       foreach (NGTreeNode sn  in selNodes)
       {
-        if(null!=sn.Parent && (sn.Parent.Tag is Altaxo.Data.DataTable))
+        if(sn.Tag is Altaxo.Data.DataColumn)
         {
-          IGPlotItem newItem = this.CreatePlotItem(sn.Parent.Text,sn.Text);
-          if (null == newItem)
-            continue;
-
-          _doc.Add(newItem);
-          NGTreeNode newNode = new NGTreeNode();
-          newNode.Text = newItem.GetName(2);
-          newNode.Tag = newItem;
-          _plotItemsTree.Add(newNode);
+          IGPlotItem newItem = this.CreatePlotItem(sn.Tag as Altaxo.Data.DataColumn);
+					if (null != newItem)
+					{
+						_doc.Add(newItem);
+						NGTreeNode newNode = new NGTreeNode();
+						newNode.Text = newItem.GetName(2);
+						newNode.Tag = newItem;
+						_plotItemsTree.Add(newNode);
+					}
         }
       }
 

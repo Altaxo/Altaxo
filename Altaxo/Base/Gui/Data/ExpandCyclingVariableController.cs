@@ -110,19 +110,19 @@ namespace Altaxo.Gui.Data
 
 		public bool Apply()
 		{
-			_doc.ColumnWithCyclingVariable = (int)_choicesCyclingVar.FirstSelectedNode.Item;
+			_doc.ColumnWithCyclingVariable = (int)_choicesCyclingVar.FirstSelectedNode.Tag;
 			
 			_doc.ColumnsToAverageOverRepeatPeriod.Clear();
 			foreach (var node in _choicesColsToAvarage)
 			{
 				if (node.IsSelected)
-					_doc.ColumnsToAverageOverRepeatPeriod.Add((int)node.Item);
+					_doc.ColumnsToAverageOverRepeatPeriod.Add((int)node.Tag);
 			}
 
-			_doc.DestinationOutput = (ExpandCyclingVariableColumnOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Item;
-			_doc.DestinationX = (ExpandCyclingVariableColumnOptions.DestinationXColumn)_choicesDestinationX.FirstSelectedNode.Item;
-			_doc.DestinationColumnSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Item;
-			_doc.DestinationRowSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationRowSort.FirstSelectedNode.Item;
+			_doc.DestinationOutput = (ExpandCyclingVariableColumnOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Tag;
+			_doc.DestinationX = (ExpandCyclingVariableColumnOptions.DestinationXColumn)_choicesDestinationX.FirstSelectedNode.Tag;
+			_doc.DestinationColumnSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Tag;
+			_doc.DestinationRowSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationRowSort.FirstSelectedNode.Tag;
 
 			return true;
 		}

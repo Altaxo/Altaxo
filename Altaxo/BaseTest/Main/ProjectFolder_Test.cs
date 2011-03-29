@@ -40,13 +40,13 @@ namespace Altaxo.Main
         string namepart = _testNames[i, 2];
 
 
-        result = ProjectFolder.GetDirectoryPart(fullname);
+        result = ProjectFolder.GetFolderPart(fullname);
         Assert.That(result == dirpart, ReportNameError("GetDirectoryPart",i));
 
 				result = ProjectFolder.GetNamePart(fullname);
         Assert.That(result == namepart, ReportNameError("GetNamePart",i));
 
-				ProjectFolder.SplitIntoDirectoryAndNamePart(fullname, out result, out result1);
+				ProjectFolder.SplitIntoFolderAndNamePart(fullname, out result, out result1);
         Assert.That(result == dirpart && result1 == namepart, ReportNameError("SplitIntoDirectoryAndNamePart",i));
       }
     }

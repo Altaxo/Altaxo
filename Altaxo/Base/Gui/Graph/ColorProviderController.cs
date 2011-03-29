@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Graph
 
 		void EhColorProviderSelectionChanged()
 		{
-			Type chosenType = (Type)_availableClasses.FirstSelectedNode.Item;
+			Type chosenType = (Type)_availableClasses.FirstSelectedNode.Tag;
 
 			try
 			{

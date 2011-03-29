@@ -108,40 +108,59 @@ namespace Altaxo.Gui.Common
 			base.OnPreviewKeyDown(e);
 		}
 
-		internal void OnViewItemMouseDown(MultiSelectTreeViewItem viewItem)
+		internal void OnViewItemMouseDown(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
 		{
-			MultiSelectTreeViewItem newItem = viewItem;
-			if (viewItem == null)
-				return;
-
-			switch (this.SelectionMode)
+			if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
 			{
-				case SelectionModalities.MultipleSelectionOnly:
-					ManageCtrlSelection(newItem);
-					break;
-				case SelectionModalities.SingleSelectionOnly:
-					ManageSingleSelection(newItem);
-					break;
-				case SelectionModalities.KeyboardModifiersMode:
-					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-					{
-						ManageShiftSelection(newItem);
-					}
-					else if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-					{
-						ManageCtrlSelection(newItem);
-					}
-					else
-					{
-						ManageSingleSelection(newItem);
-					}
-					break;
+				OnItemClicked(viewItem);
+				e.Handled = true;
+			}
+
+			if (e.ChangedButton == MouseButton.Left && e.ClickCount >= 2)
+			{
+				OnItemDoubleClicked(viewItem);
+				e.Handled = true;
+			}
+
+		}
+
+		/// <summary>
+		/// Handels the situation when a item is clicked (either by mouse or by keyboard).
+		/// </summary>
+		/// <param name="item"></param>
+		internal void OnItemClicked(MultiSelectTreeViewItem item)
+		{
+			if (item != null)
+			{
+				switch (this.SelectionMode)
+				{
+					case SelectionModalities.MultipleSelectionOnly:
+						ManageCtrlSelection(item);
+						break;
+					case SelectionModalities.SingleSelectionOnly:
+						ManageSingleSelection(item);
+						break;
+					case SelectionModalities.KeyboardModifiersMode:
+						if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+						{
+							ManageShiftSelection(item);
+						}
+						else if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+						{
+							ManageCtrlSelection(item);
+						}
+						else
+						{
+							ManageSingleSelection(item);
+						}
+						break;
+				}
 			}
 		}
 
-		protected internal void OnViewItemMouseDoubleClick(MultiSelectTreeViewItem viewItem)
+		protected internal void OnItemDoubleClicked(MultiSelectTreeViewItem item)
 		{
-			if (null != ItemMouseDoubleClick)
+			if (null != item && null != ItemMouseDoubleClick)
 				ItemMouseDoubleClick(this, EventArgs.Empty);
 		}
 

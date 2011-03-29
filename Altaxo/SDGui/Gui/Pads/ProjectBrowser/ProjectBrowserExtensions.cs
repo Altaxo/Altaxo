@@ -78,13 +78,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="list">List of items to delete.</param>
 		public static void MoveDocuments(IList<object> list)
 		{
-			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName, true);
+			var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringList(ProjectFolder.RootFolderName, true);
 			names.Insert(0, rootFolderDisplayName);
 			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to move the items into:" };
 			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
 				return;
 
-			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
+			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : ProjectFolder.ConvertDisplayFolderNameToFolderName( choices.Text );
 			Current.Project.Folders.MoveItemsToFolder(list, newFolderName);
 		}
 
@@ -97,12 +97,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="originalSourceFolder">Original folder from which the items originate (only valid if <c>areDocumentsFromOneFolder</c> is true.</param>
 		public static void CopyDocuments(IList<object> list, bool areDocumentsFromOneFolder, string originalSourceFolder)
 		{
-			var names = Current.Project.Folders.GetSubfoldersAsStringList(ProjectFolder.RootFolderName, true);
+			var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringList(ProjectFolder.RootFolderName, true);
 			names.Insert(0, rootFolderDisplayName);
 			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to copy the items into:" };
 			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
 				return;
-			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : choices.Text;
+			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : ProjectFolder.ConvertDisplayFolderNameToFolderName( choices.Text );
 
 
 			DocNodePathReplacementOptions relocateOptions = null;
@@ -260,7 +260,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			foreach (var item in dlg.List)
 			{
 				if (item.IsSelected)
-					choosenColumns.Add((string)item.Item);
+					choosenColumns.Add((string)item.Tag);
 			}
 
 			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;

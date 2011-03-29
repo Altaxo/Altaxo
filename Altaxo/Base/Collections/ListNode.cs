@@ -33,66 +33,66 @@ namespace Altaxo.Collections
   public class ListNode : System.ComponentModel.INotifyPropertyChanged
   {
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-		protected string _name;
-		protected object _item;
+		protected string _text;
+		protected object _tag;
 
 
 
-		public string Name
+		public string Text
 		{
 			get
 			{
-				return _name;
+				return _text;
 			}
 			set
 			{
-				var oldValue = _name;
-				_name = value;
+				var oldValue = _text;
+				_text = value;
 				if (value != oldValue)
 				{
-					OnPropertyChanged("Name");
-					OnPropertyChanged("Col0");
+					OnPropertyChanged("Text");
 				}
 			}
 		}
-		public object Item
+		public object Tag
 		{
 			get
 			{
-				return _item;
+				return _tag;
 			}
 			set
 			{
-				var oldValue = _item;
-				_item = value;
+				var oldValue = _tag;
+				_tag = value;
 				if (value != oldValue)
-					OnPropertyChanged("Item");
+					OnPropertyChanged("Tag");
 			}
 		}
 
-    public ListNode(string name, object item)
+    public ListNode(string text, object tag)
     {
-      Name = name;
-      Item = item;
+      Text = text;
+      Tag = tag;
     }
 
-		public string Col0 { get { return Name; } }
-		public string Col1 { get { return SubItemText(1); } }
-		public string Col2 { get { return SubItemText(2); } }
-		public string Col3 { get { return SubItemText(3); } }
-		public string Col4 { get { return SubItemText(4); } }
-		public string Col5 { get { return SubItemText(5); } }
-		public string Col6 { get { return SubItemText(6); } }
-		public string Col7 { get { return SubItemText(7); } }
-		public string Col8 { get { return SubItemText(8); } }
-		public string Col9 { get { return SubItemText(9); } }
+		public virtual string Text1 { get { return SubItemText(1); } }
+		public virtual string Text2 { get { return SubItemText(2); } }
+		public virtual string Text3 { get { return SubItemText(3); } }
+		public virtual string Text4 { get { return SubItemText(4); } }
+		public virtual string Text5 { get { return SubItemText(5); } }
+		public virtual string Text6 { get { return SubItemText(6); } }
+		public virtual string Text7 { get { return SubItemText(7); } }
+		public virtual string Text8 { get { return SubItemText(8); } }
+		public virtual string Text9 { get { return SubItemText(9); } }
+
+		public virtual object Image { get { return null; } }
 
     public override string ToString()
     {
-      if (!string.IsNullOrEmpty(Name))
-        return Name;
-      else if (Item != null)
-        return Item.ToString();
+      if (!string.IsNullOrEmpty(Text))
+        return Text;
+      else if (Tag != null)
+        return Tag.ToString();
       else return base.ToString();
     }
 
@@ -103,9 +103,8 @@ namespace Altaxo.Collections
 		public virtual int ImageIndex { get { return 0; } }
 
 
-		protected void OnPropertyChanged(string propertyName)
+		protected virtual void OnPropertyChanged(string propertyName)
 		{
-			
 			if (null != PropertyChanged)
 				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 		}
@@ -124,7 +123,7 @@ namespace Altaxo.Collections
       foreach (ListNode n in this)
       {
         i++;
-        if (n.Item == o)
+        if (n.Tag == o)
           return i;
       }
       return -1;
@@ -170,10 +169,10 @@ namespace Altaxo.Collections
 					OnPropertyChanged("IsSelected"); }
 		}
 
-    public SelectableListNode(string name, object item, bool selected)
-      : base(name, item)
+    public SelectableListNode(string text, object tag, bool isSelected)
+      : base(text, tag)
     {
-      this.IsSelected = selected;
+      this._isSelected = isSelected;
     }
   }
 
@@ -227,7 +226,7 @@ namespace Altaxo.Collections
       foreach (SelectableListNode n in this)
       {
         i++;
-        if (n.Item == o)
+        if (n.Tag == o)
           return i;
       }
       return -1;
@@ -256,7 +255,7 @@ namespace Altaxo.Collections
 				return -1;
 			}
 		}
-		/// <summary>Sets the <see cref="SelectedListNode.Selected"/> property of each node in the list to false.</summary>
+		/// <summary>Sets the <see cref="SelectedListNode.IsSelected"/> property of each node in the list to false.</summary>
 		public void ClearSelectionsAll()
 		{
 			foreach (var node in this)
@@ -301,10 +300,10 @@ namespace Altaxo.Collections
 			}
 		}
 
-    public CheckableSelectableListNode(string name, object item, bool selected, bool ischecked)
-      : base(name, item, selected)
+    public CheckableSelectableListNode(string text, object tag, bool isSelected, bool isChecked)
+      : base(text, tag, isSelected)
     {
-      this.IsChecked = ischecked;
+      this._isChecked = isChecked;
     }
   }
 
@@ -319,7 +318,7 @@ namespace Altaxo.Collections
       foreach (CheckableSelectableListNode n in this)
       {
         i++;
-        if (n.Item == o)
+        if (n.Tag == o)
           return i;
       }
       return -1;
@@ -376,7 +375,7 @@ namespace Altaxo.Collections
 			{
 				if (item.IsSelected)
 				{
-					result |= (int)item.Item;
+					result |= (int)item.Tag;
 				}
 			}
 			return result;

@@ -756,12 +756,30 @@ namespace Altaxo.Data
 
 		/// <summary>
 		/// Gets the project folder name of this table.
+		/// If the table is located in the root folder, the <see cref="Main.ProjectFolder.RootFolderName"/> (an empty string) is returned.
+		/// If the table is located in any other folder, the full folder name including the trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/> is returned.
 		/// </summary>
 		public string FolderName
 		{
 			get
 			{
-				return Main.ProjectFolder.GetDirectoryPart(Name);
+				return Main.ProjectFolder.GetFolderPart(Name);
+			}
+		}
+
+		/// <summary>
+		/// Gets the project folder name of this table without the trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/>. 
+		/// If the table is located in the root folder, an exception will be thrown, because the root folder name doesn't contain a <see cref="Main.ProjectFolder.DirectorySeparatorChar"/>.
+		/// If the table is located in any other folder, the full folder name, but without the trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/> is returned.
+		/// </summary>
+		public string FolderNameWithoutTrailingDirectorySeparatorChar
+		{
+			get
+			{
+				string folderName = Main.ProjectFolder.GetFolderPart(Name);
+				if (folderName.Length == 0)
+					throw new ArgumentOutOfRangeException(string.Format("The table <<{0}>> is located in the root folder, therefore it is not possible to get the folder name without trailing directory separator char",Name));
+				return folderName.Substring(0, folderName.Length - 1);
 			}
 		}
 
@@ -1283,14 +1301,14 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Gets the directory part of the table name with trailing DirectorySeparatorChar. 
-    /// If the table is located in the root folder, an empty string is returned.
+    /// Gets the directory part of the table name with trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/>.
+		/// If the table is located in the root folder, the <see cref="Main.ProjectFolder.RootFolderName"/>  (an empty string) is returned.
     /// </summary>
     public string Folder
     {
       get
       {
-        return Main.ProjectFolder.GetDirectoryPart(this.Name);
+        return Main.ProjectFolder.GetFolderPart(this.Name);
       }
     }
 

@@ -22,7 +22,7 @@ namespace Altaxo.Gui.Common
 			foreach (var choice in _choices)
 			{
 				var rb = new RadioButton();
-				rb.Content = choice.Name;
+				rb.Content = choice.Text;
 				rb.Tag = choice;
 				rb.IsChecked = choice.IsSelected;
 				rb.Checked += EhRadioButtonChecked;

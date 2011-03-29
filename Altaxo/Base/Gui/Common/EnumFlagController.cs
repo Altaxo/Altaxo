@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Common
 			var node = (SelectableListNode)sender;
 			
 			bool b = node.IsSelected;
-			long x = Convert.ToInt64(node.Item); // get the selected flag
+			long x = Convert.ToInt64(node.Tag); // get the selected flag
 
 			if (b && (x == 0)) // if the "None" flag is selected, then no flag should be selected, so _tempDoc must be 0
 			{
@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Common
     {
 			foreach (var n in _list)
 			{
-				n.IsSelected = IsChecked(n.Item, _tempDoc);
+				n.IsSelected = IsChecked(n.Tag, _tempDoc);
 			}
     }
 
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Common
 			long sum = 0;
 			for (int i = 0; i < _list.Count; i++)
 			{
-				long x = Convert.ToInt64(_list[i].Item);
+				long x = Convert.ToInt64(_list[i].Tag);
 				if (_list[i].IsSelected)
 					sum |= x;
 			}

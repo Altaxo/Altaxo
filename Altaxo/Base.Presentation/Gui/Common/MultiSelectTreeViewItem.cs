@@ -100,24 +100,17 @@ namespace Altaxo.Gui.Common
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			if (ParentMultiSelectTreeView == null)
-				return;
+			base.OnMouseDown(e);
 
-			if (e.LeftButton == MouseButtonState.Released &&
-					e.RightButton == MouseButtonState.Pressed)
-				return;
-
-			ParentMultiSelectTreeView.OnViewItemMouseDown(this);
+			var tw = ParentMultiSelectTreeView;
+			if (null!=tw)
+			{
+				tw.OnViewItemMouseDown(this,e);
+			}
 		}
 
-		protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
-		{
-			base.OnMouseDoubleClick(e);
+	
 
-			var parent = ParentMultiSelectTreeView;
-			if (null != parent)
-				parent.OnViewItemMouseDoubleClick(this);
-		}
 
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -190,7 +183,7 @@ namespace Altaxo.Gui.Common
 				{
 					itemToSelect.Focus();
 					itemToSelect.IsSelected = true;
-					ParentMultiSelectTreeView.OnViewItemMouseDown(itemToSelect);
+					ParentMultiSelectTreeView.OnItemClicked(itemToSelect);
 				}
 			}
 			catch (Exception) { /* Silently ignore */ }

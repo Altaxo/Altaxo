@@ -316,7 +316,7 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_AttachedAxisChanged(ListNode newValue)
     {
-      _attachedEdge = ((CSPlaneID)newValue.Item);
+      _attachedEdge = ((CSPlaneID)newValue.Tag);
     }
 
     public void EhView_IndependentColorChanged(bool newValue)
@@ -372,8 +372,8 @@ namespace Altaxo.Gui.Graph
 			_doc.Font = _view.SelectedFont;
 			_doc.IndependentColor = _view.IsIndependentColorSelected;
 			_doc.Color = _view.SelectedColor;
-			_doc.HorizontalAlignment = (StringAlignment)(_view.SelectedHorizontalAlignment).Item;
-			_doc.VerticalAlignment = (StringAlignment)(_view.SelectedVerticalAlignment).Item;
+			_doc.HorizontalAlignment = (StringAlignment)(_view.SelectedHorizontalAlignment).Tag;
+			_doc.VerticalAlignment = (StringAlignment)(_view.SelectedVerticalAlignment).Tag;
 
 			var xOffs = _view.XOffset;
 			if (xOffs.Unit is IRelativeUnit)
@@ -388,7 +388,7 @@ namespace Altaxo.Gui.Graph
 				_doc.YOffset = yOffs.AsValueIn(LengthUnitPoint.Instance) / _font.Size;
 
 			if (_view.AttachToAxis && null != _view.AttachedAxis)
-				_doc.AttachedAxis = (CSPlaneID)_view.AttachedAxis.Item;
+				_doc.AttachedAxis = (CSPlaneID)_view.AttachedAxis.Tag;
 			else
 				_doc.AttachedAxis = null;
 
