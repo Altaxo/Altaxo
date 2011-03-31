@@ -200,11 +200,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\GuiFactoryServiceWpfWin.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileBrowserController.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileFullNameToImageConverter.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileListController.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml.cs">
+      <DependentUpon>FileBrowserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Pads\FileBrowser\FileSystemTreeController.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\IndexToImageConverter.cs" />
     <Compile Include="Gui\Pads\NotesController.cs" />
     <Compile Include="Gui\Pads\DataDisplayController.cs" />
-    <Compile Include="Gui\Pads\FileScout.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\Pads\OutputWindowController.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ConditionEvaluators.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ItemHandler.cs" />
@@ -278,6 +283,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

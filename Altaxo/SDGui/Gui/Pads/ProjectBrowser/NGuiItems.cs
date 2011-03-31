@@ -12,11 +12,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public NGBrowserTreeNode(string txt) : base(txt) { }
 
 		public ProjectBrowseItemImage Image;
-		public override int? ImageIndex
+
+		public override int ImageIndex
 		{
 			get { return (int)Image; }
 		}
-		public override int? SelectedImageIndex
+
+		public override int SelectedImageIndex
 		{
 			get { return (int)Image; }
 		}

@@ -51,11 +51,11 @@ namespace Altaxo.Collections
   {
 		static NGTreeNode _dummyNode = new NGTreeNode();
 
-		object _tag;
-		object _guiTag;
-		string _text;
-		bool _isExpanded;
-		bool _isSelected;
+		protected object _tag;
+		protected object _guiTag;
+		protected string _text;
+		protected bool _isExpanded;
+		protected bool _isSelected;
 
 		/// <summary>
 		/// Collection of child nodes.
@@ -260,14 +260,24 @@ namespace Altaxo.Collections
 
 
 		/// <summary>
-		/// Returns an image index, or null if no image is set. The implementation here returns null, but can be overriden.
+		/// Returns an image index, or -1 if no image is set. The default implementation here returns -1, but this behaviour can be overriden in a derived class.
 		/// </summary>
-		public virtual int? ImageIndex { get { return null; } }
+		public virtual int ImageIndex 
+		{
+			get { return -1; }
+			set { }
+		}
 
 		/// <summary>
-		/// Returns an image index (for the selected node), or null if no image is set. The implementation here returns null, but can be overriden.
+		/// Returns an image index (for the selected node), or -1 if no image is set. The default implementation here returns -1, but this can be overriden in a derived class.
+		/// Note that when using SelectedImageIndex, you probably also need to override <see cref="OnPropertyChanged"/>, so that when the <see cref="IsSelected"/> property changed,
+		/// you must also call <see cref="OnPropertyChanged"/> with "ImageIndex" as argument.
 		/// </summary>
-		public virtual int? SelectedImageIndex { get { return null; } }
+		public virtual int SelectedImageIndex 
+		{
+			get { return -1; }
+			set { }
+		}
 
 
     /// <summary>

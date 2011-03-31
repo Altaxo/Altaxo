@@ -71,7 +71,7 @@
 		     title    = "${res:MainWindow.Windows.FileScoutLabel}"
 		     icon     = "PadIcons.FileBrowser"
 		     shortcut = "Control|Alt|F"
-		     class    = "Altaxo.Gui.Pads.FileScout"/>
+		     class    = "Altaxo.Gui.Pads.FileBrowser.FileBrowserControl"/>
 
     <Pad id       = "AltaxoProjectScout"
         category = "Main"

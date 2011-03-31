@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common
 				++colNo;
 
 				var gvCol = new GridViewColumn() { Header = colName };
-				var binding = new Binding("Col"+colNo.ToString());
+				var binding = new Binding(colNo==0 ? "Text " : "Text"+colNo.ToString());
 				gvCol.DisplayMemberBinding = binding;
 				gv.Columns.Add(gvCol);
 			}
