@@ -32,8 +32,8 @@
 		<Label Grid.Row="0" Content="Width:"/>
 		<Label Grid.Row="2" Content="Height:"/>
 		<Label Grid.Row="4" Content="Rescale:"/>
-		<axogcd:PositionBox x:Name="_edWidth" Grid.Column="1" Grid.Row="0"/>
-		<axogcd:PositionBox x:Name="_edHeight" Grid.Column="1" Grid.Row="2"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edWidth" Grid.Column="1" Grid.Row="0"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edHeight" Grid.Column="1" Grid.Row="2"/>
 		<CheckBox x:Name="_chkRescale" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center"/>
 	</Grid>
 </UserControl>

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
              mc:Ignorable="d">
@@ -48,7 +49,7 @@
 		</Grid.RowDefinitions>
 
 		<axogcd:FontFamilyComboBox x:Name="m_cbFonts" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" SelectedFontFamilyChanged="EhFontFamilyChanged"/>
-		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="0" SelectedFontSizeChanged="EhFontSize_Changed"/>
+		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="0" SelectedQuantityChanged="EhFontSize_Changed"/>
 		<axogcd:BrushComboBox x:Name="m_cbFontColor" Grid.Column="6" Grid.ColumnSpan="2" Grid.Row="0" SelectedBrushChanged="EhTextBrush_SelectionChangeCommitted"/>
 
 		<Label Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Content="Background:"/>
@@ -57,9 +58,9 @@
 
 
 		<Label Content="Pos.X:" Grid.Column="0" Grid.Row="4"/>
-		<axogcd:PositionBox x:Name="m_edPosX" Grid.Column="1" Grid.Row="4"/>
+		<axogc:QuantityWithUnitTextBox x:Name="m_edPosX" Grid.Column="1" Grid.Row="4"/>
 		<Label Content="Pos.Y:" Grid.Column="3" Grid.Row="4"/>
-		<axogcd:PositionBox x:Name="m_edPosY" Grid.Column="4" Grid.Row="4"/>
+		<axogc:QuantityWithUnitTextBox x:Name="m_edPosY" Grid.Column="4" Grid.Row="4"/>
 		<Label Content="Rot.:" Grid.Column="6" Grid.Row="4"/>
 		<axogcd:RotationComboBox x:Name="m_cbRotation" Grid.Column="7" Grid.Row="4"/>
 

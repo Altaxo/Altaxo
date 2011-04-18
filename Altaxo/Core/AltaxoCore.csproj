@@ -558,6 +558,7 @@
     <Compile Include="Science\IUnit.cs" />
     <Compile Include="Science\UnitWithLimitedPrefixes.cs" />
     <Compile Include="Science\ValueTransformation.cs" />
+    <Compile Include="WeakEventHandlers.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.de.resx">

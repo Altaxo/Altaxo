@@ -8,7 +8,7 @@ namespace Altaxo.Science
 	/// <summary>
 	/// Represents a quantity, consisting of a numeric value, the corresponding unit and, optionally, a SI prefix for the unit.
 	/// </summary>
-	public struct QuantityWithUnit
+	public struct QuantityWithUnit : IComparable<QuantityWithUnit>
 	{
 		double _value;
 		SIPrefix _prefix;
@@ -29,6 +29,11 @@ namespace Altaxo.Science
 			_value = value;
 			_prefix = prefix;
 			_unit = unit;
+		}
+
+		public bool IsEqualInValuePrefixUnit(QuantityWithUnit a)
+		{
+			return this.Value == a.Value && this.Prefix == a.Prefix && this.Unit == a.Unit; 
 		}
 
 		/// <summary>
@@ -105,6 +110,11 @@ namespace Altaxo.Science
 			return prefix.FromSIUnit(unit.FromSIUnit(InSIUnits));
 		}
 
+		public QuantityWithUnit AsQuantityIn(IPrefixedUnit prefixedUnit)
+		{
+			return AsQuantityIn(prefixedUnit.Prefix, prefixedUnit.Unit);
+		}
+
 		public QuantityWithUnit AsQuantityIn(SIPrefix prefix, IUnit unit)
 		{
 			return new QuantityWithUnit(AsValueIn(prefix, unit), prefix, unit);
@@ -118,5 +128,15 @@ namespace Altaxo.Science
 			}
 		}
 
+
+		public int CompareTo(QuantityWithUnit other)
+		{
+			if(this._unit.SIUnit != other._unit.SIUnit)
+				throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}",this._unit.Name, other._unit.Name));
+
+			double thisval = this.AsValueIn(_unit.SIUnit);
+			double otherval = other.AsValueIn(_unit.SIUnit);
+			return thisval.CompareTo(otherval);
+		}
 	}
 }

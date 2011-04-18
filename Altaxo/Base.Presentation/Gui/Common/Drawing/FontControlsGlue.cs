@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Common.Drawing
        
         if(null!=CbFontFamily) CbFontFamily.SelectedGdiFontFamily = _font.FontFamily;
 				if(null!=_cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
-        if(null!=CbFontSize) CbFontSize.SelectedFontSize = _font.Size; 
+				if (null != CbFontSize) CbFontSize.SelectedQuantityInPoints = _font.Size; 
       }
     }
 
@@ -176,29 +176,27 @@ namespace Altaxo.Gui.Common.Drawing
       get { return _cbFontSize; }
       set
       {
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontSizeComboBox.SelectedFontSizeProperty, typeof(FontSizeComboBox));
-
         if (_cbFontSize != null)
         {
-          dpd.RemoveValueChanged(_cbFontSize, EhFontSize_SelectionChangeCommitted);
+					_cbFontSize.SelectedQuantityChanged -= EhFontSize_SelectionChangeCommitted;
         }
 
         _cbFontSize = value;
         if (_font != null && _cbFontSize != null)
-          _cbFontSize.SelectedFontSize = _font.Size;
+          _cbFontSize.SelectedQuantityInPoints = _font.Size;
 
         if (_cbFontSize != null)
         {
-          dpd.AddValueChanged(_cbFontSize, EhFontSize_SelectionChangeCommitted);
+					_cbFontSize.SelectedQuantityChanged += EhFontSize_SelectionChangeCommitted;
         }
       }
     }
 
-    void EhFontSize_SelectionChangeCommitted(object sender, EventArgs e)
+    void EhFontSize_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
     {
       if (_font != null)
       {
-        _font = new sd.Font(_font.FontFamily,(float)_cbFontSize.SelectedFontSize,_font.Style, _fontUnit);
+				_font = new sd.Font(_font.FontFamily, (float)_cbFontSize.SelectedQuantityInPoints, _font.Style, _fontUnit);
         OnSelectedFontChanged();
       }
     }

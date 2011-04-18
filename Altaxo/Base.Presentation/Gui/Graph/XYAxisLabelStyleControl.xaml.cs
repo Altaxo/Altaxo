@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_FontSizeChanged(m_cbFontSize.SelectedFontSize);
+				Controller.EhView_FontSizeChanged(m_cbFontSize.SelectedQuantityInPoints);
 			}
 		}
 

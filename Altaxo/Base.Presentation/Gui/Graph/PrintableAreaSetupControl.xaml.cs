@@ -27,6 +27,10 @@ namespace Altaxo.Gui.Graph
 		{
 			InitializeComponent();
 			_positionSizeGlue = new ObjectPositionAndSizeGlue();
+
+			_edWidth.UnitEnvironment = PositionEnvironment.Instance;
+			_edHeight.UnitEnvironment = PositionEnvironment.Instance;
+
 			_positionSizeGlue.EdSizeX = _edWidth;
 			_positionSizeGlue.EdSizeY = _edHeight;
 		}

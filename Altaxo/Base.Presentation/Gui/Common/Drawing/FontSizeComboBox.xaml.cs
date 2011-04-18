@@ -17,59 +17,41 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Interaction logic for FontSizeComboBox.xaml
 	/// </summary>
-	public partial class FontSizeComboBox : ThicknessImageComboBox
+	public partial class FontSizeComboBox : LengthImageComboBox
 	{
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
 		static readonly double[] _initialValues = new double[] { 4,6,8,10,12,16,18,20,24,28,32,36,54,72 };
 
-		public event DependencyPropertyChangedEventHandler SelectedFontSizeChanged;
-
 		public FontSizeComboBox()
 		{
+			UnitEnvironment = FontSizeEnvironment.Instance;
 			InitializeComponent();
 
 			foreach(var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this,e));
+				Items.Add(new ImageComboBoxItem(this,new Science.QuantityWithUnit(e,Science.LengthUnitPoint.Instance)));
 
-			SetBinding(_nameOfValueProp);
-
-			_img.Source = GetImage(SelectedFontSize);
-		}
-	
-
-	#region Dependency property
-		const string _nameOfValueProp = "SelectedFontSize";
-		public double SelectedFontSize
-		{
-			get { return (double)GetValue(SelectedFontSizeProperty); }
-			set { SetValue(SelectedFontSizeProperty, value); }
+			_img.Source = GetImage(SelectedQuantityInPoints);
 		}
 
-		public static readonly DependencyProperty SelectedFontSizeProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(FontSizeComboBox),
-				new FrameworkPropertyMetadata(8.0, EhSelectedFontSizeChanged));
-
-		private static void EhSelectedFontSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((FontSizeComboBox)obj).OnSelectedFontSizeChanged(obj, args);
-		}
-		#endregion
-
-		protected virtual void OnSelectedFontSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
+			base.OnSelectedQuantityChanged(obj, args);
+			
 			if (null != _img)
 			{
-				var val = (double)args.NewValue;
+				var val = SelectedQuantityInPoints;
 				_img.Source = GetImage(val);
 			}
-			if (null != SelectedFontSizeChanged)
-				SelectedFontSizeChanged(obj, args);
 		}
+
+	
 
 		public override ImageSource GetItemImage(object item)
 		{
-			var val = (double)item;
+			double val = ((Science.QuantityWithUnit)item).AsValueIn(Science.LengthUnitPoint.Instance);
+
+
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));

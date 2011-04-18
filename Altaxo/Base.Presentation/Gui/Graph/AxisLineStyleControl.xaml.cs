@@ -61,9 +61,9 @@ namespace Altaxo.Gui.Graph
 			}
 
 			if (false==_chkCustomMajorThickness.IsChecked)
-				_lineMajorThickness.SelectedThickness = _lineLineThickness.SelectedThickness;
+				_lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
 			if (false==_chkCustomMinorThickness.IsChecked)
-				_lineMinorThickness.SelectedThickness = _lineLineThickness.SelectedThickness;
+				_lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
 
 		}
 
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph
 		private void EhIndividualMajorThickness_CheckChanged(object sender, RoutedEventArgs e)
 		{
 			if (false==_chkCustomMajorThickness.IsChecked)
-				_lineMajorThickness.SelectedThickness = _lineLineThickness.SelectedThickness;
+				_lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
 			_lineMajorThickness.IsEnabled = true==_chkCustomMajorThickness.IsChecked;
 		}
 
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Graph
 		private void EhIndividualMinorThickness_CheckChanged(object sender, RoutedEventArgs e)
 		{
 			if (false == _chkCustomMinorThickness.IsChecked)
-				_lineMinorThickness.SelectedThickness = _lineLineThickness.SelectedThickness;
+				_lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
 			_lineMinorThickness.IsEnabled = true == _chkCustomMinorThickness.IsChecked;
 		}
 
@@ -199,11 +199,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _lineMajorLength.SelectedThickness;
+				return _lineMajorLength.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_lineMajorLength.SelectedThickness = value;
+				_lineMajorLength.SelectedQuantityInPoints = value;
 			}
 		}
 
@@ -211,11 +211,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _lineMinorLength.SelectedThickness;
+				return _lineMinorLength.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_lineMinorLength.SelectedThickness = value;
+				_lineMinorLength.SelectedQuantityInPoints = value;
 			}
 		}
 

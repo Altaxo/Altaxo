@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeSymbolSize(double size)
 		{
-			_cbSymbolSize.SelectedLineCapSize = size;
+			_cbSymbolSize.SelectedQuantityInPoints = size;
 		}
 
 		public void InitializeIndependentSymbolSize(bool val)
@@ -138,7 +138,7 @@ namespace Altaxo.Gui.Graph
 
 		public double SymbolSize
 		{
-			get { return _cbSymbolSize.SelectedLineCapSize; }
+			get { return _cbSymbolSize.SelectedQuantityInPoints; }
 		}
 
 		public SelectableListNodeList DropLines

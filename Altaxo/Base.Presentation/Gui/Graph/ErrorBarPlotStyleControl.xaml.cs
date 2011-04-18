@@ -159,11 +159,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _cbSymbolSize.SelectedLineCapSize;
+				return _cbSymbolSize.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_cbSymbolSize.SelectedLineCapSize = value;
+				_cbSymbolSize.SelectedQuantityInPoints = value;
 			}
 		}
 

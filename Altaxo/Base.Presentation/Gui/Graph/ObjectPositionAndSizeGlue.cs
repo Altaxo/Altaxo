@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get {
 				if (null != _edPositionX)
-					return _edPositionX.PositionDistanceValue;
+					return _edPositionX.SelectedQuantity.AsValueIn(Science.LengthUnitPoint.Instance);
 				else 
 					return _positionX;
 			}
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_positionX = value;
 				if (null != _edPositionX)
-					_edPositionX.PositionDistanceValue = value;
+					_edPositionX.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _edPositionY)
-					return _edPositionY.PositionDistanceValue;
+					return _edPositionY.SelectedQuantity.AsValueIn(Science.LengthUnitPoint.Instance);
 				else
 					return _positionY;
 			}
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_positionY = value;
 				if (null != _edPositionY)
-					_edPositionY.PositionDistanceValue = value;
+					_edPositionY.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -96,8 +96,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.Drawing.PositionBox _edPositionX;
-		public Altaxo.Gui.Common.Drawing.PositionBox EdPositionX
+		Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionX;
+		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdPositionX
 		{
 			get { return _edPositionX; }
 			set
@@ -105,12 +105,15 @@ namespace Altaxo.Gui.Graph
 				_edPositionX = value;
 
 				if (_edPositionX != null)
-					_edPositionX.PositionDistanceValue = _positionX;
+				{
+					_edPositionX.UnitEnvironment = PositionEnvironment.Instance;
+					_edPositionX.SelectedQuantity = new Science.QuantityWithUnit(_positionX, Science.LengthUnitPoint.Instance);
+				}
 			}
 		}
 
-		Altaxo.Gui.Common.Drawing.PositionBox _edPositionY;
-		public Altaxo.Gui.Common.Drawing.PositionBox EdPositionY
+		Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionY;
+		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdPositionY
 		{
 			get { return _edPositionY; }
 			set
@@ -118,20 +121,26 @@ namespace Altaxo.Gui.Graph
 				_edPositionY = value;
 
 				if (_edPositionY != null)
-					_edPositionY.PositionDistanceValue = _positionY;
+				{
+					_edPositionY.UnitEnvironment = PositionEnvironment.Instance;
+					_edPositionY.SelectedQuantity = new Science.QuantityWithUnit(_positionY, Science.LengthUnitPoint.Instance);
+				}
 			}
 		}
 		#endregion
 
 		#region Size
 
+		/// <summary>Size in point units.</summary>
 		double _sizeX;
+
+		/// <summary>Gets/sets the size in point units.</summary>
 		public double SizeX
 		{
 			get
 			{
 				if (null != _edSizeX)
-					return _edSizeX.PositionDistanceValue;
+					return _edSizeX.SelectedQuantity.AsValueIn(Science.LengthUnitPoint.Instance);
 				else
 					return _sizeX; 
 			}
@@ -139,7 +148,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_sizeX = value;
 				if (null != _edSizeX)
-					_edSizeX.PositionDistanceValue = value;
+					_edSizeX.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -149,7 +158,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _edSizeY)
-					return _edSizeY.PositionDistanceValue;
+					return _edSizeY.SelectedQuantity.AsValueIn(Science.LengthUnitPoint.Instance);
 				else
 					return _sizeY;
 			}
@@ -157,7 +166,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_sizeY = value;
 				if (null != _edSizeY)
-					_edSizeY.PositionDistanceValue = value;
+					_edSizeY.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -174,10 +183,10 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.Drawing.PositionBox _edSizeX;
-		Altaxo.Gui.Common.Drawing.PositionBox _edSizeY;
+		Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeX;
+		Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeY;
 
-		public Altaxo.Gui.Common.Drawing.PositionBox EdSizeX
+		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdSizeX
 		{
 			get { return _edSizeX; }
 			set
@@ -185,10 +194,13 @@ namespace Altaxo.Gui.Graph
 				_edSizeX = value;
 
 				if (_edSizeX != null)
-					_edSizeX.PositionDistanceValue = _sizeX;
+				{
+					_edSizeX.UnitEnvironment = PositionEnvironment.Instance;
+					_edSizeX.SelectedQuantity = new Science.QuantityWithUnit(_sizeX, Science.LengthUnitPoint.Instance);
+				}
 			}
 		}
-		public Altaxo.Gui.Common.Drawing.PositionBox EdSizeY
+		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdSizeY
 		{
 			get { return _edSizeY; }
 			set
@@ -196,9 +208,10 @@ namespace Altaxo.Gui.Graph
 				_edSizeY = value;
 
 				if (_edSizeY != null)
-					_edSizeY.PositionDistanceValue = _sizeY;
-
-				SetPositionText(_edSizeY, _sizeY);
+				{
+					_edSizeY.UnitEnvironment = PositionEnvironment.Instance;
+					_edSizeY.SelectedQuantity = new Science.QuantityWithUnit(_sizeY, Science.LengthUnitPoint.Instance);
+				}
 			}
 		}
 
@@ -241,7 +254,6 @@ namespace Altaxo.Gui.Graph
 
 		#endregion
 
-
 		#region Shear
 
 		double _shear;
@@ -278,7 +290,6 @@ namespace Altaxo.Gui.Graph
 		}
 		
 		#endregion
-
 
 		#region ScaleX
 

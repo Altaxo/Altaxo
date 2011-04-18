@@ -18,12 +18,37 @@
 						<MenuItem Header="Cut" Command="Cut"/>
 						<MenuItem Header="Paste" Command="Paste"/>
 						<MenuItem Header="Convert to.." Tag="TagConvertTo"/>
-						<MenuItem Header="Change unit.." Tag="TagChangeUnitTo"/>
+						<!--MenuItem Header="Change unit.." Tag="TagChangeUnitTo"/-->
+						<MenuItem Header="Set number of digits displayed.." Tag="TagSetDigits"/>
 					</ContextMenu>
 				</Setter.Value>
 			</Setter>
 		</Style.Setters>
 		
+	</Style>
+
+	<!-- *********************** Styles for the ThicknessImageComboBox ************************************** -->
+	<Style TargetType="{x:Type axogcd:LengthImageComboBox}" xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" BasedOn="{StaticResource {x:Type ComboBox}}" >
+		<Style.Triggers>
+			<Trigger Property="Validation.HasError" Value="true">
+				<Setter Property="ToolTip"
+													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)[0].ErrorContent}"/>
+			</Trigger>
+		</Style.Triggers>
+		<Style.Setters>
+			<Setter Property="ContextMenu">
+				<Setter.Value>
+					<ContextMenu>
+						<MenuItem Header="Copy" Command="Copy"/>
+						<MenuItem Header="Cut" Command="Cut"/>
+						<MenuItem Header="Paste" Command="Paste"/>
+						<MenuItem Header="Convert to.." Tag="TagConvertTo"/>
+						<MenuItem Header="Set number of digits displayed.." Tag="TagSetDigits"/>
+					</ContextMenu>
+				</Setter.Value>
+			</Setter>
+		</Style.Setters>
 	</Style>
 
 	<!-- *********************** Styles for the MultiSelctTreeView ************************************** -->

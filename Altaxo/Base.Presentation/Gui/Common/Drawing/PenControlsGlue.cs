@@ -85,15 +85,15 @@ namespace Altaxo.Gui.Common.Drawing
     void InitControlProperties()
     {
 			if (null != CbBrush) CbBrush.SelectedBrush = _pen.BrushHolder;
-			if (null != CbLineThickness) CbLineThickness.SelectedThickness = _pen.Width;
+			if (null != CbLineThickness) CbLineThickness.SelectedQuantityInPoints = _pen.Width;
 			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashStyleEx;
 			if (null != CbDashCap) CbDashCap.SelectedDashCap = _pen.DashCap;
 			if (null != CbStartCap) CbStartCap.SelectedLineCap = _pen.StartCap;
-			if (null != CbStartCapSize) CbStartCapSize.SelectedLineCapSize = _pen.StartCap.Size;
+			if (null != CbStartCapSize) CbStartCapSize.SelectedQuantityInPoints = _pen.StartCap.Size;
       if (null != CbEndCap) CbEndCap.SelectedLineCap = _pen.EndCap;
-			if (null != CbEndCapSize) CbEndCapSize.SelectedLineCapSize = _pen.EndCap.Size;
+			if (null != CbEndCapSize) CbEndCapSize.SelectedQuantityInPoints = _pen.EndCap.Size;
 			if (null != CbLineJoin) CbLineJoin.SelectedLineJoin = _pen.LineJoin;
-			if (null != CbMiterLimit) CbMiterLimit.SelectedMiterLimit = _pen.MiterLimit;
+			if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityInPoints = _pen.MiterLimit;
     }
 
     public event EventHandler PenChanged;
@@ -234,26 +234,24 @@ namespace Altaxo.Gui.Common.Drawing
       get { return _cbThickness; }
       set
       {
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineThicknessComboBox.SelectedThicknessProperty, typeof(LineThicknessComboBox));
-
         if (_cbThickness != null)
-          dpd.RemoveValueChanged(_cbThickness, EhThickness_ChoiceChanged);
+          _cbThickness.SelectedQuantityChanged -= EhThickness_ChoiceChanged;
 
         _cbThickness = value;
         if (_pen != null && _cbThickness != null)
-          _cbThickness.SelectedThickness = _pen.Width;
+					_cbThickness.SelectedQuantityInPoints = _pen.Width;
 
 				if (_cbThickness != null)
-					dpd.AddValueChanged(_cbThickness, EhThickness_ChoiceChanged);
+					_cbThickness.SelectedQuantityChanged += EhThickness_ChoiceChanged;
       }
     }
 
-    void EhThickness_ChoiceChanged(object sender, EventArgs e)
+    void EhThickness_ChoiceChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       if (_pen != null)
       {
         BeginPenUpdate();
-        _pen.Width = (float)_cbThickness.SelectedThickness;
+				_pen.Width = (float)_cbThickness.SelectedQuantityInPoints;
         EndPenUpdate();
 
         OnPenChanged();
@@ -292,14 +290,14 @@ namespace Altaxo.Gui.Common.Drawing
       {
         LineCapEx cap = _cbStartCap.SelectedLineCap;
         if (_userChangedStartCapSize && _cbStartCapSize != null)
-          cap.Size = (float)_cbStartCapSize.SelectedLineCapSize;
+					cap.Size = (float)_cbStartCapSize.SelectedQuantityInPoints;
 
         BeginPenUpdate();
         _pen.StartCap = cap;
         EndPenUpdate();
 
         if (_cbStartCapSize != null)
-          _cbStartCapSize.SelectedLineCapSize = cap.Size;
+					_cbStartCapSize.SelectedQuantityInPoints = cap.Size;
 
         OnPenChanged();
       }
@@ -313,29 +311,26 @@ namespace Altaxo.Gui.Common.Drawing
       get { return _cbStartCapSize; }
       set
       {
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapSizeComboBox.SelectedLineCapSizeProperty, typeof(LineCapSizeComboBox));
-
-
-        if (_cbStartCapSize != null)
-          dpd.RemoveValueChanged(_cbStartCapSize, EhStartCapSize_SelectionChangeCommitted);
+				if (_cbStartCapSize != null)
+					_cbStartCapSize.SelectedQuantityChanged -= EhStartCapSize_SelectionChangeCommitted;
 
 				_cbStartCapSize = value;
         if (_pen != null && _cbStartCapSize != null)
-          _cbStartCapSize.SelectedLineCapSize = _pen.StartCap.Size;
+					_cbStartCapSize.SelectedQuantityInPoints = _pen.StartCap.Size;
 
         if (_cbStartCapSize != null)
-          dpd.AddValueChanged(_cbStartCapSize, EhStartCapSize_SelectionChangeCommitted);
-      }
+					_cbStartCapSize.SelectedQuantityChanged += EhStartCapSize_SelectionChangeCommitted;
+			}
     }
 
-    void EhStartCapSize_SelectionChangeCommitted(object sender, EventArgs e)
+    void EhStartCapSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
     {
       _userChangedStartCapSize = true;
 
       if (_pen != null)
       {
         LineCapEx cap = _pen.StartCap;
-        cap.Size = (float)_cbStartCapSize.SelectedLineCapSize;
+				cap.Size = (float)_cbStartCapSize.SelectedQuantityInPoints;
 
         BeginPenUpdate();
         _pen.StartCap = cap;
@@ -381,14 +376,14 @@ namespace Altaxo.Gui.Common.Drawing
       {
         LineCapEx cap = _cbEndCap.SelectedLineCap;
         if (_userChangedEndCapSize && _cbEndCapSize != null)
-          cap.Size = (float)_cbEndCapSize.SelectedLineCapSize;
+					cap.Size = (float)_cbEndCapSize.SelectedQuantityInPoints;
 
         BeginPenUpdate();
         _pen.EndCap = cap;
         EndPenUpdate();
 
         if (_cbEndCapSize != null)
-          _cbEndCapSize.SelectedLineCapSize = cap.Size;
+					_cbEndCapSize.SelectedQuantityInPoints = cap.Size;
 
         OnPenChanged();
       }
@@ -403,28 +398,26 @@ namespace Altaxo.Gui.Common.Drawing
       get { return _cbEndCapSize; }
       set
       {
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapSizeComboBox.SelectedLineCapSizeProperty, typeof(LineCapSizeComboBox));
-
         if (_cbEndCapSize != null)
-          dpd.RemoveValueChanged(_cbEndCapSize, EhEndCapSize_SelectionChangeCommitted);
+					_cbEndCapSize.SelectedQuantityChanged -= EhEndCapSize_SelectionChangeCommitted;
 
         _cbEndCapSize = value;
         if (_pen != null && _cbEndCapSize != null)
-          _cbEndCapSize.SelectedLineCapSize = _pen.EndCap.Size;
+					_cbEndCapSize.SelectedQuantityInPoints = _pen.EndCap.Size;
 
         if (_cbEndCapSize != null)
-          dpd.AddValueChanged(_cbEndCapSize, EhEndCapSize_SelectionChangeCommitted);
-      }
+					_cbEndCapSize.SelectedQuantityChanged += EhEndCapSize_SelectionChangeCommitted;
+			}
     }
 
-    void EhEndCapSize_SelectionChangeCommitted(object sender, EventArgs e)
+    void EhEndCapSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
     {
       _userChangedEndCapSize = true;
 
       if (_pen != null)
       {
         LineCapEx cap = _pen.EndCap;
-        cap.Size = (float)_cbEndCapSize.SelectedLineCapSize;
+				cap.Size = (float)_cbEndCapSize.SelectedQuantityInPoints;
 
         BeginPenUpdate();
         _pen.EndCap = cap;
@@ -484,26 +477,24 @@ namespace Altaxo.Gui.Common.Drawing
       get { return _cbMiterLimit; }
       set
       {
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(MiterLimitComboBox.SelectedMiterLimitProperty, typeof(MiterLimitComboBox));
-
         if (_cbMiterLimit != null)
-          dpd.RemoveValueChanged(_cbMiterLimit, EhMiterLimit_SelectionChangeCommitted);
+          _cbMiterLimit.SelectedQuantityChanged -= EhMiterLimit_SelectionChangeCommitted;
 
         _cbMiterLimit = value;
         if (_pen != null && _cbMiterLimit != null)
-          _cbMiterLimit.SelectedMiterLimit = _pen.MiterLimit;
+					_cbMiterLimit.SelectedQuantityInPoints = _pen.MiterLimit;
 
         if (_cbLineJoin != null)
-          dpd.AddValueChanged(_cbMiterLimit, EhMiterLimit_SelectionChangeCommitted);
-      }
+					_cbMiterLimit.SelectedQuantityChanged += EhMiterLimit_SelectionChangeCommitted;
+			}
     }
 
-    void EhMiterLimit_SelectionChangeCommitted(object sender, EventArgs e)
+    void EhMiterLimit_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
     {
       if (_pen != null)
       {
         BeginPenUpdate();
-        _pen.MiterLimit = (float)_cbMiterLimit.SelectedMiterLimit;
+				_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityInPoints;
         EndPenUpdate();
 
         OnPenChanged();

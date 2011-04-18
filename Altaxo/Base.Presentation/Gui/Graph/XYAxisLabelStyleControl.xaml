@@ -65,7 +65,7 @@
 		<axogcd:BrushComboBox x:Name="m_cbColor" Grid.Column="1" Grid.Row="0" SelectedBrushChanged="EhColor_SelectionChangeCommitted"/>
 		<axogcd:FontFamilyComboBox x:Name="m_cbFontFamily" Grid.Column="1" Grid.Row="2" />
 		<axogcd:FontStyleComboBox x:Name="m_cbFontStyle" Grid.Column="3" Grid.Row="2" />
-		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="4" SelectedFontSizeChanged="EhFontSize_SelectionChangeCommitted"/>
+		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="4" SelectedQuantityChanged="EhFontSize_SelectionChangeCommitted"/>
 		<axogcd:RotationComboBox x:Name="m_edRotation" Grid.Column="3" Grid.Row="4" />
 		<CheckBox x:Name="_chkAutomaticAlignment" Grid.Column="1" Grid.Row="6" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged"/>
 		<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="8" SelectionChanged="EhHorizontalAlignment_SelectionChangeCommitted"/>

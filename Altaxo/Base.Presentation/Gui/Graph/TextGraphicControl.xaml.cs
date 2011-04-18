@@ -212,11 +212,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return m_cbFontSize.SelectedFontSize;
+				return m_cbFontSize.SelectedQuantityInPoints;
 			}
 			set
 			{
-				m_cbFontSize.SelectedFontSize = value;
+				m_cbFontSize.SelectedQuantityInPoints = value;
 			}
 		}
 
@@ -280,6 +280,8 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion
+
+		
 
 	
 	}

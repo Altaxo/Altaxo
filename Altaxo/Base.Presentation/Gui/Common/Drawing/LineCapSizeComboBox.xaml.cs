@@ -17,7 +17,7 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Interaction logic for LineCapSizeComboBox.xaml
 	/// </summary>
-	public partial class LineCapSizeComboBox : ThicknessImageComboBox
+	public partial class LineCapSizeComboBox : LengthImageComboBox
 	{
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
@@ -25,43 +25,27 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public LineCapSizeComboBox()
 		{
+			UnitEnvironment = LineCapSizeEnvironment.Instance;
 			InitializeComponent();
 
 			foreach(var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this,e));
+				Items.Add(new ImageComboBoxItem(this, new Science.QuantityWithUnit(e, Science.LengthUnitPoint.Instance)));
 
-			SetBinding(_nameOfValueProp);
-
-			_img.Source = GetImage(SelectedLineCapSize);
-		}
-	
-
-	#region Dependency property
-		const string _nameOfValueProp = "SelectedLineCapSize";
-		public double SelectedLineCapSize
-		{
-			get { return (double)GetValue(SelectedLineCapSizeProperty); }
-			set { SetValue(SelectedLineCapSizeProperty, value); }
+			_img.Source = GetImage(SelectedQuantityInPoints);
 		}
 
-		public static readonly DependencyProperty SelectedLineCapSizeProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(LineCapSizeComboBox),
-				new FrameworkPropertyMetadata(8.0, OnSelectedLineCapSizeChanged));
-
-		private static void OnSelectedLineCapSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((LineCapSizeComboBox)obj).EhSelectedLineCapSizeChanged(obj, args);
-		}
-		#endregion
+			base.OnSelectedQuantityChanged(obj, args);
 
-		protected virtual void EhSelectedLineCapSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
 			if (null != _img)
 			{
-				var val = (double)args.NewValue;
+				var val = SelectedQuantityInPoints;
 				_img.Source = GetImage(val);
 			}
 		}
+
+
 
 		public override ImageSource GetItemImage(object item)
 		{

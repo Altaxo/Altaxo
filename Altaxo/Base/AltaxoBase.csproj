@@ -290,6 +290,7 @@
     <Compile Include="Gui\IRefreshable.cs" />
     <Compile Include="Gui\NotifyChangedValue.cs" />
     <Compile Include="Gui\QuantityWithUnitGuiEnvironment.cs" />
+    <Compile Include="Gui\UnitEnvironments.cs" />
     <Compile Include="Gui\ValidationEventArgs.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationDataController.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationMainController.cs" />

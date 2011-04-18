@@ -17,47 +17,38 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Interaction logic for MiterLimitComboBox.xaml
 	/// </summary>
-	public partial class MiterLimitComboBox : ThicknessImageComboBox
+	public partial class MiterLimitComboBox : LengthImageComboBox
 	{
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+
+		static readonly double[] _initialValues = new double[] { 0, 4, 6, 8, 10, 12};
 
 
 		public MiterLimitComboBox()
 		{
+			UnitEnvironment = MiterLimitEnvironment.Instance;
+
 			InitializeComponent();
 
-			SetBinding(_nameOfValueProp);
+			foreach (var e in _initialValues)
+				Items.Add(new ImageComboBoxItem(this, new Science.QuantityWithUnit(e, Science.LengthUnitPoint.Instance)));
 
-			_img.Source = GetImage(SelectedMiterLimit);
-		}
-	
+			_img.Source = GetImage(SelectedQuantityInPoints);
 
-	#region Dependency property
-		const string _nameOfValueProp = "SelectedMiterLimit";
-		public double SelectedMiterLimit
-		{
-			get { return (double)GetValue(SelectedMiterLimitProperty); }
-			set { SetValue(SelectedMiterLimitProperty, value); }
 		}
 
-		public static readonly DependencyProperty SelectedMiterLimitProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(MiterLimitComboBox),
-				new FrameworkPropertyMetadata(8.0, OnSelectedMiterLimitChanged));
 
-		private static void OnSelectedMiterLimitChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((MiterLimitComboBox)obj).EhSelectedMiterLimitChanged(obj, args);
-		}
-		#endregion
+			base.OnSelectedQuantityChanged(obj, args);
 
-		protected virtual void EhSelectedMiterLimitChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
 			if (null != _img)
 			{
-				var val = (double)args.NewValue;
+				var val = SelectedQuantityInPoints;
 				_img.Source = GetImage(val);
 			}
 		}
+
 
 		public override ImageSource GetItemImage(object item)
 		{

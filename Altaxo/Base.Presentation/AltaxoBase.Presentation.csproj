@@ -689,7 +689,7 @@
     <Compile Include="Gui\Common\Drawing\GradientFocusComboBox.xaml.cs">
       <DependentUpon>GradientFocusComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\ThicknessImageComboBox.cs" />
+    <Compile Include="Gui\Common\Drawing\LengthImageComboBox.cs" />
     <Compile Include="Gui\Common\Drawing\WrapModeComboBox.xaml.cs">
       <DependentUpon>WrapModeComboBox.xaml</DependentUpon>
     </Compile>
@@ -736,6 +736,7 @@
     <Compile Include="Gui\Common\MultiChoiceControl.xaml.cs">
       <DependentUpon>MultiChoiceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\QuantityWithUnitConverter.cs" />
     <Compile Include="Gui\Common\QuantityWithUnitTextBox.cs" />
     <Compile Include="Gui\Common\MinMaxIntegerControl.xaml.cs">
       <DependentUpon>MinMaxIntegerControl.xaml</DependentUpon>
@@ -773,7 +774,7 @@
     <Compile Include="Gui\Common\ValidatingTextBox.cs" />
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
-    <Compile Include="Gui\Common\Converter.cs" />
+    <Compile Include="Gui\Common\VisibilityConverter.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>

@@ -17,7 +17,7 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Interaction logic for LineThicknessComboBox.xaml
 	/// </summary>
-	public partial class LineThicknessComboBox : ThicknessImageComboBox
+	public partial class LineThicknessComboBox : LengthImageComboBox
 	{
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
@@ -25,41 +25,28 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public LineThicknessComboBox()
 		{
+			UnitEnvironment = LineThicknessEnvironment.Instance;
 			InitializeComponent();
 
 			foreach(var e in _initialValues)
 				Items.Add(new ImageComboBoxItem(this,e));
 
-			SetBinding(_nameOfValueProp);
-		}
-	
-
-	#region Dependency property
-		const string _nameOfValueProp = "SelectedThickness";
-		public double SelectedThickness
-		{
-			get { var result = (double)GetValue(SelectedThicknessProperty); return result; }
-			set { SetValue(SelectedThicknessProperty, value); }
+			_img.Source = GetImage(SelectedQuantityInPoints);
 		}
 
-		public static readonly DependencyProperty SelectedThicknessProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(LineThicknessComboBox),
-				new FrameworkPropertyMetadata(1.0, OnSelectedThicknessChanged));
 
-		private static void OnSelectedThicknessChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((LineThicknessComboBox)obj).EhSelectedThicknessChanged(obj, args);
-		}
-		#endregion
+			base.OnSelectedQuantityChanged(obj, args);
 
-		protected virtual void EhSelectedThicknessChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
 			if (null != _img)
 			{
-				var val = (double)args.NewValue;
+				var val = SelectedQuantityInPoints;
 				_img.Source = GetImage(val);
 			}
 		}
+
+
 
 		public override ImageSource GetItemImage(object item)
 		{

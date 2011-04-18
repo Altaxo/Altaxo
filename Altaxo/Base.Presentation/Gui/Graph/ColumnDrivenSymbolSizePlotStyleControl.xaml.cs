@@ -57,11 +57,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _cbSymbolSizeAt0.SelectedLineCapSize;
+				return _cbSymbolSizeAt0.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_cbSymbolSizeAt0.SelectedLineCapSize = value;
+				_cbSymbolSizeAt0.SelectedQuantityInPoints = value;
 			}
 		}
 
@@ -69,11 +69,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _cbSymbolSizeAt1.SelectedLineCapSize;
+				return _cbSymbolSizeAt1.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_cbSymbolSizeAt1.SelectedLineCapSize = value;
+				_cbSymbolSizeAt1.SelectedQuantityInPoints = value;
 			}
 		}
 
@@ -81,11 +81,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _cbSymbolSizeAbove.SelectedLineCapSize;
+				return _cbSymbolSizeAbove.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_cbSymbolSizeAbove.SelectedLineCapSize = value;
+				_cbSymbolSizeAbove.SelectedQuantityInPoints = value;
 			}
 		}
 
@@ -93,11 +93,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _cbSymbolSizeBelow.SelectedLineCapSize;
+				return _cbSymbolSizeBelow.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_cbSymbolSizeBelow.SelectedLineCapSize = value;
+				_cbSymbolSizeBelow.SelectedQuantityInPoints = value;
 			}
 		}
 
@@ -105,11 +105,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _cbSymbolSizeInvalid.SelectedLineCapSize;
+				return _cbSymbolSizeInvalid.SelectedQuantityInPoints;
 			}
 			set
 			{
-				_cbSymbolSizeInvalid.SelectedLineCapSize = value;
+				_cbSymbolSizeInvalid.SelectedQuantityInPoints = value;
 			}
 		}
 
