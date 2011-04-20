@@ -92,6 +92,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CommonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Analysis\Multivariate\PLSPredictValueControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

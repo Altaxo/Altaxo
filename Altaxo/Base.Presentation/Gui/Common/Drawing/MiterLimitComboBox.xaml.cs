@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			var val = (double)item;
+			double val = ((Science.QuantityWithUnit)item).AsValueIn(Science.LengthUnitPoint.Instance);
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));

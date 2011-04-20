@@ -22,9 +22,9 @@
 	</UserControl.Resources>
     <Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>

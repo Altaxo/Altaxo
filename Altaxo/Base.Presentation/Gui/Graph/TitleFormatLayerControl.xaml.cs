@@ -98,11 +98,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				double val = 0;
-				if (Altaxo.Serialization.GUIConversion.IsDouble(m_Format_edAxisPositionValue.Text, out val))
-					return val;
-				else
-					return 0;
+				return (double)m_Format_edAxisPositionValue.Value;
 			}
 		}
 

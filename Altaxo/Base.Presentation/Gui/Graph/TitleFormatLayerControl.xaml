@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d" 
              >
     <Grid>
@@ -29,7 +30,7 @@
 		<TextBox x:Name="m_Format_edTitle" Grid.Column="1" Grid.Row="0"  />
 
 		<Label Grid.Column="2" Grid.Row="0"  Content="Shift axis position (%):"/>
-		<TextBox x:Name="m_Format_edAxisPositionValue" Grid.Column="3" Grid.Row="0"  />
+		<axogc:DecimalUpDown x:Name="m_Format_edAxisPositionValue" Grid.Column="3" Grid.Row="0" Change="10" />
 
 		<CheckBox x:Name="_chkShowMajorLabels" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"  Content="Show major labels:"/>
 

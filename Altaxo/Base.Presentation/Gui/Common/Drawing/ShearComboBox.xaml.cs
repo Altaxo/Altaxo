@@ -100,11 +100,11 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static readonly DependencyProperty ShearProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(ShearComboBox),
-				new FrameworkPropertyMetadata(OnShearChanged));
+				new FrameworkPropertyMetadata(EhShearChanged));
 
-		private static void OnShearChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhShearChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((ShearComboBox)obj).EhShearValueChanged(obj, args);
+			((ShearComboBox)obj).OnShearValueChanged(obj, args);
 		}
 		#endregion
 
@@ -131,7 +131,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Source = GetImage(0.0); // since null is the default value, we have to set the image explicitely here
 		}
 
-		protected virtual void EhShearValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnShearValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			if (null != _img)
 			{
@@ -174,6 +174,7 @@ namespace Altaxo.Gui.Common.Drawing
 			//
 			// Create the Geometry to draw.
 			//
+			shear = -shear;
 			var geometryGroup = new GeometryGroup();
 			var figure1 = new PathFigure();
 			if (shear == 0)

@@ -77,24 +77,25 @@ namespace Altaxo.Gui.Graph
         _view.MajorTickLength = _doc.MajorTickLength;
         _view.MinorTickLength = _doc.MinorTickLength;
 
-        SelectableListNodeList list = new SelectableListNodeList();
-
-        list.Clear();
+        
+				var list = new List<SelectableListNode>();
         if (_doc.CachedAxisInformation != null)
         {
-          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, null, _doc.FirstDownMajorTicks));
-          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, null, _doc.FirstUpMajorTicks));
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, 0, _doc.FirstDownMajorTicks));
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, 1, _doc.FirstUpMajorTicks));
         }
-        _view.MajorPenTicks = list;
+				list.Sort((x, y) => string.Compare(x.Text, y.Text));
+        _view.MajorPenTicks = new SelectableListNodeList(list);
 
 
-        list.Clear();
-        if (_doc.CachedAxisInformation != null)
+				list = new List<SelectableListNode>();
+				if (_doc.CachedAxisInformation != null)
         {
-          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, null, _doc.FirstDownMinorTicks));
-          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, null, _doc.FirstUpMinorTicks));
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, 0, _doc.FirstDownMinorTicks));
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, 1, _doc.FirstUpMinorTicks));
         }
-        _view.MinorPenTicks = list;
+				list.Sort((x, y) => string.Compare(x.Text, y.Text));
+				_view.MinorPenTicks = new SelectableListNodeList(list);
 
       }
     }
@@ -131,12 +132,32 @@ namespace Altaxo.Gui.Graph
 
       SelectableListNodeList list;
       list = _view.MajorPenTicks;
-      _doc.FirstDownMajorTicks = list[0].IsSelected;
-      _doc.FirstUpMajorTicks = list[1].IsSelected;
+			foreach (var item in list)
+			{
+				switch ((int)item.Tag)
+				{
+					case 0:
+						_doc.FirstDownMajorTicks = item.IsSelected;
+						break;
+					case 1:
+						_doc.FirstUpMajorTicks = item.IsSelected;
+						break;
+				}
+			}
 
       list = _view.MinorPenTicks;
-      _doc.FirstDownMinorTicks = list[0].IsSelected;
-      _doc.FirstUpMinorTicks = list[1].IsSelected;
+			foreach (var item in list)
+			{
+				switch ((int)item.Tag)
+				{
+					case 0:
+						_doc.FirstDownMinorTicks = item.IsSelected;
+						break;
+					case 1:
+						_doc.FirstUpMinorTicks = item.IsSelected;
+						break;
+				}
+			}
 
 
       return true;

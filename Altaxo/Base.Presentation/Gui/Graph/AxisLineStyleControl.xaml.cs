@@ -223,25 +223,12 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				SelectableListNodeList list = new SelectableListNodeList();
-				foreach (CheckBox chk in _majorWhichTicksLayout.Children)
-				{
-					SelectableListNode n = new SelectableListNode(chk.Content as string, chk.Tag, true==chk.IsChecked);
-					list.Add(n);
-				}
-				return list;
+				return (Collections.SelectableListNodeList)_majorWhichTicksLayout.ItemsSource;
+
 			}
 			set
 			{
-				_majorWhichTicksLayout.Children.Clear();
-				foreach (SelectableListNode n in value)
-				{
-					CheckBox chk = new CheckBox();
-					chk.Content = n.Text;
-					chk.Tag = n.Tag;
-					chk.IsChecked = n.IsSelected;
-					_majorWhichTicksLayout.Children.Add(chk);
-				}
+				_majorWhichTicksLayout.ItemsSource = value;
 			}
 		}
 
@@ -249,25 +236,12 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				SelectableListNodeList list = new SelectableListNodeList();
-				foreach (CheckBox chk in _minorWhichTicksLayout.Children)
-				{
-					SelectableListNode n = new SelectableListNode(chk.Content as string, chk.Tag, true==chk.IsChecked);
-					list.Add(n);
-				}
-				return list;
+				return (Collections.SelectableListNodeList)_minorWhichTicksLayout.ItemsSource;
+				
 			}
 			set
 			{
-				_minorWhichTicksLayout.Children.Clear();
-				foreach (SelectableListNode n in value)
-				{
-					CheckBox chk = new CheckBox();
-					chk.Content = n.Text;
-					chk.Tag = n.Tag;
-					chk.IsChecked = n.IsSelected;
-					_minorWhichTicksLayout.Children.Add(chk);
-				}
+				_minorWhichTicksLayout.ItemsSource = value;
 			}
 		}
 

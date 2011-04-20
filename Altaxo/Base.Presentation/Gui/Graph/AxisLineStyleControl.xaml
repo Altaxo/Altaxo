@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              mc:Ignorable="d" 
              >
 	<UserControl.Resources>
@@ -18,6 +19,22 @@
 				<Setter Property="Margin" Value="8,0,0,2"/>
 			</Style.Setters>
 		</Style>
+		<DataTemplate x:Key="TickItemsTemplate" DataType="{x:Type axocoll:SelectableListNode}">
+			<StackPanel Orientation="Horizontal" Margin="0,4,8,0">
+				<CheckBox Width="16" Height="16" Margin="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+				<TextBlock Text="{Binding Text}" />
+			</StackPanel>
+		</DataTemplate>
+		<Style x:Key="TickItemsControlStyle" TargetType="ItemsControl">
+			<Setter Property="ItemsPanel">
+				<Setter.Value>
+						<ItemsPanelTemplate>
+							<WrapPanel/>
+						</ItemsPanelTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
 	</UserControl.Resources>
 	
     <Grid Grid.IsSharedSizeScope="True">
@@ -68,10 +85,8 @@
 				<axogcd:LineThicknessComboBox x:Name="_lineMajorThickness" Grid.Column="3" Grid.Row="0"/>
 				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
 				<axogcd:LineThicknessComboBox x:Name="_lineMajorLength"  Grid.Column="1" Grid.Row="2"/>
-				<StackPanel x:Name="_majorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Orientation="Horizontal">
-					<CheckBox Margin="0,0,8,0" x:Name="_chkWhichMajor1">In</CheckBox>
-					<CheckBox x:Name="_chkWhichMajor2">Out</CheckBox>
-				</StackPanel>
+				<ItemsControl x:Name="_majorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}"/>
+
 			</Grid>
 			
 		</GroupBox>
@@ -94,11 +109,7 @@
 				<axogcd:LineThicknessComboBox x:Name="_lineMinorThickness" Grid.Column="3" Grid.Row="0"/>
 				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
 				<axogcd:LineThicknessComboBox x:Name="_lineMinorLength"  Grid.Column="1" Grid.Row="2"/>
-				<StackPanel x:Name="_minorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Orientation="Horizontal">
-					<CheckBox Margin="0,0,8,0" x:Name="_chkWhichMinor1">In</CheckBox>
-					<CheckBox x:Name="_chkWhichMinor2">Out</CheckBox>
-				</StackPanel>
-
+				<ItemsControl x:Name="_minorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}"/>
 			</Grid>
 		</GroupBox>
 	</Grid>

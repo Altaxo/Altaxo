@@ -18,6 +18,10 @@
 	</UserControl.Resources>
 	
 	<Grid>
+		<Grid.Resources>
+			<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml"/>
+		</Grid.Resources>
+
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
@@ -37,9 +41,21 @@
 		<ComboBox x:Name="_cbPredefinedStyleSets" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" SelectionChanged="EhPredefinedStyleSets_SelectionChange"/>
 		<ListBox x:Name="_lbStyles" Grid.Column="0" Grid.Row="3" Grid.RowSpan="6"/>
 		<Button x:Name="_btAddStyle" Grid.Column="1" Grid.Row="3" Content="+" Click="EhAddStyle_Click"/>
-		<Button Grid.Column="1" Grid.Row="4" Content="/\" Click="EhStyleUp_Click"/>
-		<Button Grid.Column="1" Grid.Row="5" Content="\/" Click="EhStyleDown_Click"/>
+		<Button Grid.Column="1" Grid.Row="4" Click="EhStyleUp_Click">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource UpArrowPathStyle}"/>
+			</Viewbox>
+		</Button>
+		<Button Grid.Column="1" Grid.Row="5" Click="EhStyleDown_Click">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource DownArrowPathStyle}"/>
+			</Viewbox>
+		</Button>
 		<Button Grid.Column="1" Grid.Row="7" Content="Edit" Click="EhStyleEdit_Click"/>
-		<Button Grid.Column="1" Grid.Row="8" Content="X" Click="EhStyleRemove_Click"/>
+		<Button Grid.Column="1" Grid.Row="8" Click="EhStyleRemove_Click">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource RemoveCrossPathStyle}"/>
+			</Viewbox>
+		</Button>
 	</Grid>
 </UserControl>

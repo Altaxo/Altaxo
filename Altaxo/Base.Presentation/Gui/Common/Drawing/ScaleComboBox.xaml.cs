@@ -161,6 +161,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_valueBinding.Converter = _valueConverter;
 			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
 			this.SetBinding(ComboBox.TextProperty, _valueBinding);
+			_img.Source = GetImage(SelectedScale, _isForYScale);
 		}
 
 		public bool IsForYScale

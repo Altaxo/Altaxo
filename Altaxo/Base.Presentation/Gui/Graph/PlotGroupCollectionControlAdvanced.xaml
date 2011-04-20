@@ -8,12 +8,6 @@
              mc:Ignorable="d" 
              >
 	<UserControl.Resources>
-			<Style TargetType="Label">
-				<Style.Setters>
-					<Setter Property="Margin" Value="8,0,8,0"/>
-					<Setter Property="HorizontalAlignment" Value="Right"/>
-				</Style.Setters>
-			</Style>
 		<Style TargetType="Button">
 			<Style.Setters>
 				<Setter Property="Margin" Value="8,0,8,0"/>
@@ -23,6 +17,9 @@
 		<axogc:VisibilityHiddenForFalseConverter x:Key="HiddenForFalseConverter"/>
 	</UserControl.Resources>
 	<Grid>
+		<Grid.Resources>
+			<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml"/>
+		</Grid.Resources>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
@@ -33,23 +30,25 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="10"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="8"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition MinHeight="8" Height="*"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="8"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="8"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="8"/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
-			<RowDefinition/>
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Coordinate transforming style:"/>
+		<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Coordinate transforming style:" HorizontalAlignment="Right"/>
 		<ComboBox x:Name="_cbCoordTransfoStyle" Grid.Column="2" Grid.Row="0" SelectionChanged="_cbCoordTransfoStyle_SelectionChangeCommitted"/>
-		<Button x:Name="_btEditCSTransfoStyle" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" Content="..." Click="_btEditCSTransfoStyle_Click"/>
+		<Button x:Name="_btEditCSTransfoStyle" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" Content="..." Click="_btEditCSTransfoStyle_Click" ToolTip="Edit coordinate transforming style"/>
 
-		<ListBox x:Name="_lbGroupStylesAvailable" Grid.Column="0" Grid.Row="2" Grid.RowSpan="7">
+		<Rectangle Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" Height="4" Fill="LightBlue" VerticalAlignment="Bottom"/>
+		<Label Grid.Column="0" Grid.Row="2" Content="Available group styles:" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+		<ListBox x:Name="_lbGroupStylesAvailable" Grid.Column="0" Grid.Row="3" Grid.RowSpan="7">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a ListBoxItem to a SelectableListNode -->
 				<Style TargetType="{x:Type ListBoxItem}">
@@ -62,9 +61,9 @@
 				</Style>
 			</ItemsControl.ItemContainerStyle>
 		</ListBox>
-		
-		
-		<ListBox x:Name="_lbGroupStyles" Grid.Column="2" Grid.Row="2" Grid.RowSpan="7" MinWidth="80">
+
+		<Label Grid.Column="2" Grid.Row="2" Content="Currently used group styles:" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+		<ListBox x:Name="_lbGroupStyles" Grid.Column="2" Grid.Row="3" Grid.RowSpan="7" MinWidth="80">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a ListBoxItem to a CheckableSelectableListNode -->
 				<Style TargetType="{x:Type ListBoxItem}">
@@ -81,20 +80,45 @@
 			</ItemsControl.Resources>
 		</ListBox>
 
-		<Button Grid.Column="1" Grid.Row="2" Content="->"  Click="_btAddNormalGroupStyle_Click"/>
-		<Button Grid.Column="1" Grid.Row="4" Content="&lt;-" Click="_btRemoveNormalGroupStyle_Click"/>
+		<Button Grid.Column="1" Grid.Row="3" Click="_btAddNormalGroupStyle_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Add selected items">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource LeftArrowPathStyle}"/>
+			</Viewbox>
+		</Button>
+		<Button Grid.Column="1" Grid.Row="5"  Click="_btRemoveNormalGroupStyle_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Remove selected items">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource RightArrowPathStyle}"/>
+			</Viewbox>
+		</Button>
 
 
-		<Button Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" Content="&lt;-" Click="_btUnindent_Click"/>
-		<Button Grid.Column="3" Grid.Row="4" HorizontalAlignment="Left" Content="->"   Click="_btIndent_Click"/>
+		<Button Grid.Column="3" Grid.Row="3" HorizontalAlignment="Left"  Click="_btIndent_Click" ToolTip="Indent selected items">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource LeftIndentPathStyle}"/>
+			</Viewbox>
+		</Button>
 
-		<Button Grid.Column="3" Grid.Row="6" HorizontalAlignment="Left" Content="/\"  Click="_btUp_Click" />
-		<Button Grid.Column="3" Grid.Row="8" HorizontalAlignment="Left" Content="\/"  Click="_btDown_Click" />
+		<Button Grid.Column="3" Grid.Row="5" HorizontalAlignment="Left"  Click="_btUnindent_Click" ToolTip="Unindent selected items">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource RightIndentPathStyle}"/>
+			</Viewbox>
+		</Button>
 
-		<Label Grid.Column="0" Grid.Row="10" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom" Content="Update:"/>
-		<ComboBox x:Name="_cbGroupStrictness" Grid.Column="0" Grid.Row="11"/>
-		<CheckBox x:Name="_chkUpdateFromParentGroups" Grid.Column="2" Grid.Row="10" VerticalAlignment="Bottom" Content="Inherit from parent groups"  />
-		<CheckBox x:Name="_chkDistributeToSubGroups" Grid.Column="2" Grid.Row="11"  VerticalAlignment="Center" Content="Distribute to child groups"  />
+		<Button Grid.Column="3" Grid.Row="7" HorizontalAlignment="Left" Click="_btUp_Click" ToolTip="Move selected items up">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource UpArrowPathStyle}"/>
+			</Viewbox>
+		</Button>
+		<Button Grid.Column="3" Grid.Row="9" HorizontalAlignment="Left" Click="_btDown_Click" ToolTip="Move selected items down">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource DownArrowPathStyle}"/>
+			</Viewbox>
+		</Button>
+
+		<Label Grid.Column="0" Grid.Row="11" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom" Content="Update:"/>
+		<ComboBox x:Name="_cbGroupStrictness" Grid.Column="0" Grid.Row="12"/>
+		<CheckBox x:Name="_chkUpdateFromParentGroups" Grid.Column="2" Grid.Row="11" VerticalAlignment="Bottom" Content="Inherit from parent groups"  />
+		<CheckBox x:Name="_chkDistributeToSubGroups" Grid.Column="2" Grid.Row="12"  VerticalAlignment="Center" Content="Distribute to child groups"  />
 
 	</Grid>
 </UserControl>
