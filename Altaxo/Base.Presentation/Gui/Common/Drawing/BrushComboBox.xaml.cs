@@ -18,7 +18,7 @@ using Altaxo.Graph.Gdi;
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
-	/// ComboBox for <see cref="Altaxo.Graph.Gdi.Color"/>.
+	/// ComboBox for .
 	/// </summary>
 	public partial class BrushComboBox : ColorComboBoxBase
 	{
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Common.Drawing
 							name = "CustBrush ";
 							break;
 					}
-					return name + GetColorName(GuiHelper.ToWpf(brush.Color));
+					return name + NamedColor.GetColorName(GuiHelper.ToAxo(brush.Color));
 				}
 			}
 
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Common.Drawing
 			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
 				var val = (BrushX)value;
-				var color = GuiHelper.ToWpf(val.Color);
+				var color = new NamedColor( GuiHelper.ToAxo(val.Color));
 				if (val.BrushType== BrushType.SolidBrush && _knownColorItems.ContainsKey(color))
 					return _knownColorItems[color];
 
@@ -104,8 +104,8 @@ namespace Altaxo.Gui.Common.Drawing
 				if (null != icbi)
 				{
 					object val = icbi.Value;
-					if (val is Color)
-						return new BrushX(GuiHelper.ToSysDraw((Color)val));
+					if (val is NamedColor)
+						return new BrushX(GuiHelper.ToGdi(((NamedColor)val).Color));
 					else if (val is BrushX)
 						return val;
 				}
@@ -116,9 +116,14 @@ namespace Altaxo.Gui.Common.Drawing
 		List<BrushComboBoxItem> _lastLocalUsedBrushes = new List<BrushComboBoxItem>();
 		Dictionary<BrushX, BrushComboBoxItem> _lastLocalUsedBrushesDict = new Dictionary<BrushX, BrushComboBoxItem>();
 
-		Dictionary<Color, ImageComboBoxItem> _cachedItems = new Dictionary<Color, ImageComboBoxItem>();
-
 		ColorType _colorType;
+
+		/// <summary>If true, the user can choose among all colors contained in the color collection, but can not choose or create other colors.</summary>
+		protected bool _restrictColorChoiceToCollection;
+
+
+		/// <summary>Colors that are shown as choices in the combobox.</summary>
+		protected List<NamedColor> _colorCollection;
 
 		public event DependencyPropertyChangedEventHandler SelectedBrushChanged;
 
@@ -126,16 +131,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			InitializeComponent();
 
-			foreach(var e in _knownColors)
-			{
-				try
-				{
-					Items.Add(e);
-				}
-				catch (Exception ex)
-				{
-				}
-			}
+			this.SelectableColors = _knownColors;
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
@@ -143,6 +139,19 @@ namespace Altaxo.Gui.Common.Drawing
 			_valueBinding.Converter = new CC(this);
 			this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
 		}
+
+
+			public bool RestrictColorChoiceToCollection
+			{
+				get
+				{
+					return _restrictColorChoiceToCollection;
+				}
+				set
+				{
+					_restrictColorChoiceToCollection = value;
+				}
+			}
 
 		public ColorType ColorType
 		{
@@ -156,6 +165,16 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
+
+		public ICollection<NamedColor> SelectableColors
+		{
+			set
+			{
+				_colorCollection = new List<NamedColor>(value);
+				_filterString = string.Empty;
+				FillWithFilteredItems(_filterString, false);
+			}
+		}
 	
 
 	
@@ -224,6 +243,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhChooseTransparencyFromContextMenu(object sender, RoutedEventArgs e)
 		{
+			if (_restrictColorChoiceToCollection)
+				return;
+
 			var a = (255 * (100 - int.Parse((string)((MenuItem)sender).Tag))) / 100;
 			var o = SelectedBrush.Color;
 			var newColor = System.Drawing.Color.FromArgb((byte)a, o.R, o.G, o.B);
@@ -237,6 +259,31 @@ namespace Altaxo.Gui.Common.Drawing
 
 		string _filterString = string.Empty;
 
+		bool FillWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
+		{
+			List<BrushComboBoxItem> lastUsed;
+
+			if (_restrictColorChoiceToCollection)
+				lastUsed = new List<BrushComboBoxItem>();
+			else
+				lastUsed = GetFilteredList(_lastLocalUsedBrushes, filterString);
+
+			var known = GetFilteredList(_colorCollection, filterString);
+
+			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
+			{
+				Items.Clear();
+				foreach (var item in lastUsed)
+					Items.Add(item);
+				foreach (var item in known)
+					Items.Add(GetCBItem(item));
+
+				return true;
+			}
+
+			return false;
+		}
+
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if (this.IsDropDownOpen)
@@ -249,30 +296,15 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					string filterString = _filterString + pressedChar;
 
-					var lastUsed = GetFilteredList(_lastLocalUsedBrushes, filterString);
-					var known = GetFilteredList(_knownColors, filterString);
-					if ((lastUsed.Count + known.Count) > 0)
-					{
+					if (FillWithFilteredItems(filterString, true))
 						_filterString = filterString;
-						Items.Clear();
-						foreach (var item in lastUsed)
-							Items.Add(item);
-						foreach (var item in known)
-							Items.Add(item);
-					}
 				}
 				else if (pressedKey == Key.Delete || pressedKey == Key.Back)
 				{
 					if (_filterString.Length > 0)
 					{
 						_filterString = _filterString.Substring(0, _filterString.Length - 1);
-						var lastUsed = GetFilteredList(_lastLocalUsedBrushes, _filterString);
-						var known = GetFilteredList(_knownColors, _filterString);
-						Items.Clear();
-						foreach (var item in lastUsed)
-							Items.Add(item);
-						foreach (var item in known)
-							Items.Add(item);
+						FillWithFilteredItems(_filterString, false);
 					}
 				}
 			}
@@ -288,14 +320,25 @@ namespace Altaxo.Gui.Common.Drawing
 				var selItem = this.SelectedItem;
 
 				_filterString = string.Empty;
-				Items.Clear();
-				foreach (var item in _lastLocalUsedBrushes)
-					Items.Add(item);
-				foreach (var item in _knownColors)
-					Items.Add(item);
+				FillWithFilteredItems(_filterString, false);
 
 				this.SelectedItem = selItem;
 			}
+		}
+
+		private ImageComboBoxItem GetCBItem(NamedColor c)
+		{
+			ImageComboBoxItem result;
+			if (_cachedItems.TryGetValue(c, out result))
+				return result;
+
+			ColorComboBoxItem result1;
+			if (_knownColorItems.TryGetValue(c, out result1))
+				return result1;
+
+			var newItem = new ColorComboBoxItem { Value = c };
+			_cachedItems.Add(c, newItem);
+			return newItem;
 		}
 
 		private static List<BrushComboBoxItem> GetFilteredList(List<BrushComboBoxItem> originalList, string filterString)
@@ -314,6 +357,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
 		{
+			if (_restrictColorChoiceToCollection)
+				return;
+
 			var localBrush = this.SelectedBrush.Clone();
 			var ctrl = new BrushControllerAdvanced(localBrush);
 			if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
@@ -322,6 +368,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
 		{
+			if (_restrictColorChoiceToCollection)
+				return;
+
 			Color color = GuiHelper.ToWpf(SelectedBrush.Color);
 			ColorController ctrl = new ColorController(color);
 			ctrl.ViewObject = new ColorPickerControl(color);

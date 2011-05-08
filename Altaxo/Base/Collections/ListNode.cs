@@ -231,6 +231,10 @@ namespace Altaxo.Collections
       }
       return -1;
     }
+
+		/// <summary>
+		/// Gets the first selected node, or null if no node is currently selected.
+		/// </summary>
     public SelectableListNode FirstSelectedNode
     {
       get
@@ -262,13 +266,18 @@ namespace Altaxo.Collections
 				node.IsSelected = false;
 		}
 
+		/// <summary>
+		/// Exchange the item at index i with the item at index j.
+		/// </summary>
+		/// <param name="i">First item index.</param>
+		/// <param name="j">Second item index.</param>
     public void Exchange(int i, int j)
     {
       if (i == j)
         return;
       if (i < 0)
         throw new ArgumentException("i<0");
-      if (j > 0)
+      if (j < 0)
         throw new ArgumentException("j<0");
       if (i >= Count)
         throw new ArgumentException("i>=Count");
@@ -279,6 +288,47 @@ namespace Altaxo.Collections
       this[i] = this[j];
       this[j] = li;
     }
+
+		/// <summary>
+		/// Move the selected items one place up (i.e. to lower index).
+		/// </summary>
+		public void MoveSelectedItemsUp()
+		{
+			if (Count == 0 || this[0].IsSelected)
+				return;
+
+			for (int i = 1; i < Count; i++)
+			{
+				if (this[i].IsSelected)
+					Exchange(i, i - 1);
+			}
+		}
+
+		/// <summary>
+		/// Move the selected items one place down (i.e. to higher index).
+		/// </summary>
+		public void MoveSelectedItemsDown()
+		{
+			if (Count == 0 || this[Count - 1].IsSelected)
+				return;
+
+			for (int i = Count - 2; i >= 0; i--)
+			{
+				if (this[i].IsSelected)
+					Exchange(i, i + 1);
+			}
+
+		}
+
+		/// <summary>
+		/// Remove the selected items from the collection.
+		/// </summary>
+		public void RemoveSelectedItems()
+		{
+			for (int i = Count - 1; i >= 0; i--)
+				if (this[i].IsSelected)
+					this.RemoveAt(i);
+		}
 
   }
 

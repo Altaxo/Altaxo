@@ -23,7 +23,7 @@ namespace Altaxo.Gui.Common.Drawing
 	public partial class ColorComboBox : ColorComboBoxBase
 	{
 		
-
+		/// <summary>Converts the <see cref="AxoColor"/> to a <see cref="ColorComboBoxItem"/> and vice versa.</summary>
 		class CC : IValueConverter
 		{
 			ColorComboBox _cb;
@@ -35,9 +35,17 @@ namespace Altaxo.Gui.Common.Drawing
 				_cb = c;
 			}
 
+			/// <summary>
+			/// Converts a <see cref="AxoColor"/> to a <see cref="ColorComboBoxItem"/>.
+			/// </summary>
+			/// <param name="value"></param>
+			/// <param name="targetType"></param>
+			/// <param name="parameter"></param>
+			/// <param name="culture"></param>
+			/// <returns></returns>
 			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
-				var val = (Color)value;
+				var val = (NamedColor)value;
 				if (_knownColorItems.ContainsKey(val))
 					return _knownColorItems[val];
 
@@ -45,13 +53,21 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					// if not found, insert a new item for this color
 					var newItem = new ColorComboBoxItem() { Value = val };
-					_cb._lastLocalUsedColors.Insert(0, newItem);
+					_cb._lastLocalUsedColors.Insert(0, val);
 					_cb.Items.Insert(0, newItem);
 					_cb._lastLocalUsedColorsDict.Add(val, newItem );
 				}
 				return _cb._lastLocalUsedColorsDict[val];
 			}
 
+			/// <summary>
+			/// Converts the <see cref="ColorComboBoxItem"/> to a <see cref="AxoColor"/>.
+			/// </summary>
+			/// <param name="value"></param>
+			/// <param name="targetType"></param>
+			/// <param name="parameter"></param>
+			/// <param name="culture"></param>
+			/// <returns></returns>
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
 				if (null != value)
@@ -61,17 +77,20 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-	
-		static Dictionary<Color, ImageSource> _cachedImages = new Dictionary<Color, ImageSource>();
+		/// <summary>Dictionary of cached images for each <see cref="AxoColor"/>.</summary>
+		static Dictionary<AxoColor, ImageSource> _cachedImages = new Dictionary<AxoColor, ImageSource>();
 
-		List<ColorComboBoxItem> _lastLocalUsedColors = new List<ColorComboBoxItem>();
-		Dictionary<Color, ColorComboBoxItem> _lastLocalUsedColorsDict = new Dictionary<Color, ColorComboBoxItem>();
-
-		
-
-		Dictionary<Color, ImageComboBoxItem> _cachedItems = new Dictionary<Color, ImageComboBoxItem>();
+		List<NamedColor> _lastLocalUsedColors = new List<NamedColor>();
+		Dictionary<NamedColor, ColorComboBoxItem> _lastLocalUsedColorsDict = new Dictionary<NamedColor, ColorComboBoxItem>();
 
 		ColorType _colorType;
+
+		/// <summary>If true, the user can choose among all colors contained in the color collection, but can not choose or create other colors.</summary>
+		protected bool _restrictColorChoiceToCollection;
+	
+
+		/// <summary>Colors that are shown as choices in the combobox.</summary>
+		protected List<NamedColor> _colorCollection;
 
 		public event DependencyPropertyChangedEventHandler SelectedColorChanged;
 
@@ -88,20 +107,33 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
+		public bool RestrictColorChoiceToCollection
+		{
+			get
+			{
+				return _restrictColorChoiceToCollection; 
+			}
+			set 
+			{
+				_restrictColorChoiceToCollection = value; 
+			}
+		}
+
+		public ICollection<NamedColor> SelectableColors
+		{
+			set
+			{
+				_colorCollection = new List<NamedColor>(value);
+				_filterString = string.Empty;
+				FillWithFilteredItems(_filterString, false);
+			}
+		}
+
 		public ColorComboBox()
 		{
 			InitializeComponent();
 
-			foreach(var e in _knownColors)
-			{
-				try
-				{
-					Items.Add(e);
-				}
-				catch (Exception ex)
-				{
-				}
-			}
+			this.SelectableColors = _knownColors;
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
@@ -112,21 +144,35 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#region Dependency property
 		private const string _nameOfValueProp = "SelectedColor";
-		public Color SelectedColor
+		public NamedColor SelectedColor
 		{
-			get { return (Color)GetValue(SelectedColorProperty); }
+			get { return (NamedColor)GetValue(SelectedColorProperty); }
 			set {	SetValue(SelectedColorProperty, value); }
+		}
+
+		public Color SelectedWpfColor
+		{
+			get { return GuiHelper.ToWpf(((NamedColor)GetValue(SelectedColorProperty)).Color); }
+			set
+			{
+				AxoColor c = GuiHelper.ToAxo(value);
+				SetValue(SelectedColorProperty, new NamedColor(c,NamedColor.GetColorName(c))); 
+			}
 		}
 
 		public System.Drawing.Color SelectedGdiColor
 		{
-			get { return GuiHelper.ToSysDraw((Color)GetValue(SelectedColorProperty)); }
-			set { SetValue(SelectedColorProperty, GuiHelper.ToWpf(value)); }
+			get { return GuiHelper.ToGdi(((NamedColor)GetValue(SelectedColorProperty)).Color); }
+			set
+			{
+				AxoColor c = GuiHelper.ToAxo(value);
+				SetValue(SelectedColorProperty, new NamedColor(c, NamedColor.GetColorName(c)));
+			}
 		}
 
 		public static readonly DependencyProperty SelectedColorProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(Color), typeof(ColorComboBox),
-				new FrameworkPropertyMetadata(Colors.Black, EhSelectedColorChanged));
+				DependencyProperty.Register(_nameOfValueProp, typeof(NamedColor), typeof(ColorComboBox),
+				new FrameworkPropertyMetadata(new NamedColor(KnownAxoColors.Black), EhSelectedColorChanged));
 
 		private static void EhSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -144,16 +190,16 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override string GetItemText(object item)
 		{
-			var val = (Color)item;
-			return val.ToString();
+			var val = (NamedColor)item;
+			return val.Name;
 		}
 
 		public override ImageSource GetItemImage(object item)
 		{
-			var val = (Color)item;
+			var val = (NamedColor)item;
 			ImageSource result;
-			if (!_cachedImages.TryGetValue(val, out result))
-				_cachedImages.Add(val, result = GetImage(val));
+			if (!_cachedImages.TryGetValue(val.Color, out result))
+				_cachedImages.Add(val.Color, result = GetImage(val));
 			return result;
 		}
 
@@ -198,24 +244,55 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
 		{
-			ColorController ctrl = new ColorController(SelectedColor);
-			ctrl.ViewObject = new ColorPickerControl(SelectedColor);
+			if (_restrictColorChoiceToCollection)
+				return;
+
+			ColorController ctrl = new ColorController(SelectedWpfColor);
+			ctrl.ViewObject = new ColorPickerControl(SelectedWpfColor);
 			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
-				this.SelectedColor = (Color)ctrl.ModelObject;
+				this.SelectedWpfColor = (Color)ctrl.ModelObject;
 		}
 
 		private void EhChooseTransparencyFromContextMenu(object sender, RoutedEventArgs e)
 		{
+			if (_restrictColorChoiceToCollection)
+				return;
+
 			var a = (255 * (100 - int.Parse((string)((MenuItem)sender).Tag))) / 100;
-			Color o = SelectedColor;
-			Color newColor = Color.FromArgb((byte)a, o.R, o.G, o.B);
-			SelectedColor = newColor;
+			AxoColor newColor = SelectedColor.Color.ToAlphaValue((byte)a);
+			SelectedColor = new NamedColor(newColor);
 		}
 
 
 		#region Special treatment for key processing
 
 		string _filterString = string.Empty;
+
+
+		bool FillWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
+		{
+			List<NamedColor> lastUsed;
+			
+			if (_restrictColorChoiceToCollection)
+				lastUsed = new List<NamedColor>();
+			else
+				lastUsed = GetFilteredList(_lastLocalUsedColors, filterString);
+
+			var known = GetFilteredList(_colorCollection, filterString);
+			
+			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
+			{
+				Items.Clear();
+				foreach (var item in lastUsed)
+					Items.Add(GetCBItem(item));
+				foreach (var item in known)
+					Items.Add(GetCBItem(item));
+
+				return true;
+			}
+
+			return false;
+		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
@@ -229,34 +306,34 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					string filterString = _filterString + pressedChar;
 
-					var lastUsed = GetFilteredList(_lastLocalUsedColors, filterString);
-					var known = GetFilteredList(_knownColors, filterString);
-					if ((lastUsed.Count + known.Count) > 0)
-					{
+					if (FillWithFilteredItems(filterString, true))
 						_filterString = filterString;
-						Items.Clear();
-						foreach (var item in lastUsed)
-							Items.Add(item);
-						foreach (var item in known)
-							Items.Add(item);
-					}
 				}
 				else if (pressedKey == Key.Delete || pressedKey == Key.Back)
 				{
 					if (_filterString.Length > 0)
 					{
 						_filterString = _filterString.Substring(0, _filterString.Length - 1);
-						var lastUsed = GetFilteredList(_lastLocalUsedColors, _filterString);
-						var known = GetFilteredList(_knownColors, _filterString);
-						Items.Clear();
-						foreach (var item in lastUsed)
-							Items.Add(item);
-						foreach (var item in known)
-							Items.Add(item);
+						FillWithFilteredItems(_filterString,false);
 					}
 				}
 			}
 			base.OnKeyDown(e);
+		}
+
+		private ImageComboBoxItem GetCBItem(NamedColor c)
+		{
+			ImageComboBoxItem result;
+			if (_cachedItems.TryGetValue(c, out result))
+				return result;
+
+			ColorComboBoxItem result1;
+			if (_knownColorItems.TryGetValue(c, out result1))
+				return result1;
+			
+			var newItem = new ColorComboBoxItem { Value = c };
+			_cachedItems.Add(c,newItem);
+			return newItem;
 		}
 
 		protected override void OnDropDownClosed(EventArgs e)
@@ -268,11 +345,7 @@ namespace Altaxo.Gui.Common.Drawing
 				var selItem = this.SelectedItem;
 
 				_filterString = string.Empty;
-				Items.Clear();
-				foreach (var item in _lastLocalUsedColors)
-					Items.Add(item);
-				foreach (var item in _knownColors)
-					Items.Add(item);
+				FillWithFilteredItems(_filterString,false);
 
 				this.SelectedItem = selItem;
 			}

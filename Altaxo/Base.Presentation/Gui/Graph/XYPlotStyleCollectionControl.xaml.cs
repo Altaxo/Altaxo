@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Altaxo.Collections;
 namespace Altaxo.Gui.Graph
 {
 	/// <summary>
@@ -25,54 +26,57 @@ namespace Altaxo.Gui.Graph
 			InitializeComponent();
 		}
 
-		private void EhPredefinedStyleSets_SelectionChange(object sender, SelectionChangedEventArgs e)
+
+		private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (_controller != null)
-				_controller.EhView_PredefinedStyleSelected(this._cbPredefinedStyleSets.SelectedIndex);
+			if (_controller != null && null != _predefinedSetsAvailable.SelectedItem)
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_predefinedSetsAvailable);
+				_controller.EhView_PredefinedStyleSelected();
+			}
 		}
 
-		private void EhAddStyle_Click(object sender, RoutedEventArgs e)
+		private void EhSingleStylesAvailable_DoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (null != _btAddStyle.ContextMenu)
-				_btAddStyle.ContextMenu.IsOpen = true;
+			if (_controller != null && _singleStylesAvailable.SelectedItem != null)
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_singleStylesAvailable);
+				_controller.EhView_AddStyle();
+			}
 		}
+
+		private void EhCurrentStyles_DoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (_controller != null)
+			{
+				_controller.EhView_StyleEdit();
+			}
+		}
+
 
 		private void EhStyleUp_Click(object sender, RoutedEventArgs e)
 		{
 			if (_controller != null)
-				_controller.EhView_StyleUp(GetSelectedStyles());
+			{
+				_controller.EhView_StyleUp();
+			}
 		}
 
 		private void EhStyleDown_Click(object sender, RoutedEventArgs e)
 		{
 			if (_controller != null)
-				_controller.EhView_StyleDown(GetSelectedStyles());
-		}
-
-		private void EhStyleEdit_Click(object sender, RoutedEventArgs e)
-		{
-			if (_controller != null)
-				_controller.EhView_StyleEdit(GetSelectedStyles());
+			{
+				_controller.EhView_StyleDown();
+			}
 		}
 
 		private void EhStyleRemove_Click(object sender, RoutedEventArgs e)
 		{
 			if (_controller != null)
-				_controller.EhView_StyleRemove(GetSelectedStyles());
-		}
-
-
-		int[] GetSelectedStyles()
-		{
-			var coll = _lbStyles.SelectedItems;
-			int[] result = new int[coll.Count];
-			for (int i = 0; i < result.Length; i++)
 			{
-				result[i] = _lbStyles.Items.IndexOf(coll[i]);
+				_controller.EhView_StyleRemove();
 			}
-			return result;
 		}
-
 
 		#region  IXYPlotStyleCollectionView
 
@@ -89,41 +93,26 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void InitializePredefinedStyles(string[] names, int selindex)
+		public void InitializePredefinedStyles(SelectableListNodeList list)
 		{
-			_cbPredefinedStyleSets.ItemsSource = names;
-			_cbPredefinedStyleSets.SelectedIndex = selindex;
+			GuiHelper.Initialize(_predefinedSetsAvailable, list);
 		}
 
-		public void InitializeStyleList(string[] names, int[] selindices)
+		public void InitializeStyleList(SelectableListNodeList list)
 		{
-			_lbStyles.SelectionMode = SelectionMode.Extended;
-			_lbStyles.ItemsSource = names;
-			foreach (int idx in selindices)
-			{
-				_lbStyles.SelectedItems.Add(names[idx]);
-			}
+			GuiHelper.Initialize(_lbStyles, list);
 		}
 
-		public void InitializeAvailableStyleList(List<string> names)
+		public void InitializeAvailableStyleList(SelectableListNodeList list)
 		{
-			if (_btAddStyle.ContextMenu == null)
-				_btAddStyle.ContextMenu = new System.Windows.Controls.ContextMenu();
-
-			for (int i = 0; i < names.Count; i++)
-			{
-				MenuItem item = new MenuItem() { Header=names[i], Tag=i };
-				item.Click += new RoutedEventHandler(EhAddSingleStyle_Click);
-				_btAddStyle.ContextMenu.Items.Add(item);
-			}
-		}
-
-		void EhAddSingleStyle_Click(object sender, RoutedEventArgs e)
-		{
-					if (_controller != null)
-						_controller.EhView_AddStyle(this.GetSelectedStyles(), (int)((MenuItem)sender).Tag);
+			GuiHelper.Initialize(_singleStylesAvailable, list);
 		}
 
 		#endregion
+
+	
+	
+
+		
 	}
 }

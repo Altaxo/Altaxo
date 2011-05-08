@@ -15,6 +15,9 @@
 		</Style>
 	</UserControl.Resources>
     <Grid>
+		<Grid.Resources>
+			<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml"/>
+		</Grid.Resources>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
@@ -35,13 +38,35 @@
 		<ListBox x:Name="_lbColumns" Grid.Column="0" Grid.Row="2" Grid.RowSpan="5"/>
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="7" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
 
-		<Button x:Name="m_btToX"  Grid.Column="2" Grid.Row="2" Content="-> X" Click="EhToX_Click"/>
+		<Button x:Name="m_btToX"  Grid.Column="2" Grid.Row="2" Click="EhToX_Click">
+			<StackPanel Orientation="Horizontal">
+				<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+					<Path Style="{StaticResource LeftArrowPathStyle}"/>
+				</Viewbox>
+				<TextBlock Text="X" Margin="4,0,0,0"/>
+			</StackPanel>
+		</Button>
 		<TextBox x:Name="_edXColumn" Grid.Column="3" Grid.Row="2" IsEnabled="False"/>
-		<Button x:Name="m_btEraseX" Grid.Column="4" Grid.Row="2" Content="X" Click="EhEraseX_Click"/>
+		<Button x:Name="m_btEraseX" Grid.Column="4" Grid.Row="2" Click="EhEraseX_Click">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource RemoveCrossPathStyle}"/>
+			</Viewbox>
+		</Button>
 
-		<Button x:Name="m_btToY"  Grid.Column="2" Grid.Row="4" Content="-> Y" Click="EhToY_Click"/>
+		<Button x:Name="m_btToY"  Grid.Column="2" Grid.Row="4" Click="EhToY_Click">
+			<StackPanel Orientation="Horizontal">
+				<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+					<Path Style="{StaticResource LeftArrowPathStyle}"/>
+				</Viewbox>
+				<TextBlock Text="Y" Margin="4,0,0,0"/>
+			</StackPanel>
+		</Button>
 		<TextBox x:Name="_edYColumn" Grid.Column="3" Grid.Row="4" IsEnabled="False"/>
-		<Button x:Name="m_btEraseY"  Grid.Column="4" Grid.Row="4" Content="X" Click="EhEraseY_Click"/>
+		<Button x:Name="m_btEraseY"  Grid.Column="4" Grid.Row="4" Click="EhEraseY_Click">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
+				<Path Style="{StaticResource RemoveCrossPathStyle}"/>
+			</Viewbox>
+		</Button>
 			
 			<GroupBox Header="Plot Range:" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="6" Margin="0,16,0,0"  Padding="0,4,0,0">
 			<Grid>

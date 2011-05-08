@@ -13,7 +13,7 @@
 		</Style>
 		<Style TargetType="ComboBox">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,4,8,4"/>
+				<Setter Property="Margin" Value="4"/>
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
@@ -22,27 +22,22 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<Button Content="Worksheet" Grid.Row="0"/>
-		<Button Content="Remove" Grid.Row="1"/>
-		<GroupBox Header="Plot group" Grid.Row="2">
+		<GroupBox Header="Plot group" Grid.Row="0">
 			<StackPanel Orientation="Vertical">
 				<CheckBox x:Name="m_chkPlotGroupColor" Content="Color"/>
 				<CheckBox x:Name="m_chkPlotGroupLineType" Content="Line type"/>
 				<CheckBox x:Name="m_chkPlotGroupSymbol" Content="Symbol"/>
 			</StackPanel>
 		</GroupBox>
-		<GroupBox Header="Application" Grid.Row="3">
+		<GroupBox Header="Application" Grid.Row="1">
 			<StackPanel Orientation="Vertical">
 				<RadioButton x:Name="_rbtSequential" Content="Sequential"/>
 				<RadioButton x:Name="_rbtConcurrently" Content="Concurrently"/>
 			</StackPanel>
 		</GroupBox>
-		<ComboBox x:Name="_cbStrict" Grid.Row="4"/>
+		<ComboBox x:Name="_cbStrict" Grid.Row="2"/>
 	</Grid>
 </UserControl>

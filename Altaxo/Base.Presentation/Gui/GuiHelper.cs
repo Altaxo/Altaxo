@@ -195,10 +195,35 @@ namespace Altaxo.Gui
 			return Color.FromArgb(c.A, c.R, c.G, c.B);
 		}
 
+		public static Altaxo.Graph.AxoColor ToAxo(this System.Drawing.Color c)
+		{
+			return Altaxo.Graph.AxoColor.FromArgb(c.A, c.R, c.G, c.B);
+		}
+
+		public static System.Drawing.Color ToGdi(this Altaxo.Graph.AxoColor c)
+		{
+			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
+		}
+
+		public static System.Windows.Media.Color ToWpf(this Altaxo.Graph.AxoColor c)
+		{
+			if (c.IsFromArgb)
+				return Color.FromArgb(c.A, c.R, c.G, c.B);
+			else
+				return Color.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
+		}
+
+		public static Altaxo.Graph.AxoColor ToAxo(this System.Windows.Media.Color c)
+		{
+			return Altaxo.Graph.AxoColor.FromScRgb(c.ScA , c.ScR , c.ScG , c.ScB);
+		}
+
 		public static System.Drawing.Color ToSysDraw(this System.Windows.Media.Color c)
 		{
 			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
 		}
+
+		
 		#endregion
 
 		#region Graphics primitives

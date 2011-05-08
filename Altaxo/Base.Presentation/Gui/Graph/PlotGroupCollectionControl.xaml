@@ -13,8 +13,8 @@
 		</Grid.RowDefinitions>
 
 		<Border x:Name="_controlHost" Grid.Row="0"/>
-		<Button x:Name="_btGotoAdvanced" Grid.Row="2" Content="Advanced view .." Margin="8,0,8,0" Click="EhGotoAdvanced"/>
-		<Button x:Name="_btGotoSimple" Grid.Row="2" Content="Simple view .." Margin="8,0,8,0" Click="EhGotoSimple"/>
+		<Button x:Name="_btGotoAdvanced" Grid.Row="2" Content="Advanced view .." Margin="4,0,4,0" Click="EhGotoAdvanced"/>
+		<Button x:Name="_btGotoSimple" Grid.Row="2" Content="Simple view .." Margin="0,0,0,0" Click="EhGotoSimple"/>
 
 	</Grid>
 </UserControl>

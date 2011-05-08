@@ -36,21 +36,21 @@ namespace Altaxo.Gui.Graph
   public interface IXYPlotStyleCollectionView
   {
     IXYPlotStyleCollectionViewEventSink Controller { get; set; }
-    void InitializePredefinedStyles(string[] names, int selindex);
-    void InitializeStyleList(string[] names, int[] selindices);
-    void InitializeAvailableStyleList(List<string> names);
+    void InitializePredefinedStyles(SelectableListNodeList list);
+    void InitializeStyleList(SelectableListNodeList list);
+    void InitializeAvailableStyleList(SelectableListNodeList list);
   }
   /// <summary>
   /// Summary description for XYPlotStyleCollectionController.
   /// </summary>
   public interface IXYPlotStyleCollectionViewEventSink
   {
-    void EhView_AddStyle(int[] selindices, int style);
-    void EhView_StyleUp(int[] selindices);
-    void EhView_StyleDown(int[] selindices);
-    void EhView_StyleEdit(int[] selindices);
-    void EhView_StyleRemove(int[] selindices);
-    void EhView_PredefinedStyleSelected(int selectedindex);
+    void EhView_AddStyle();
+    void EhView_StyleUp();
+    void EhView_StyleDown();
+    void EhView_StyleEdit();
+    void EhView_StyleRemove();
+    void EhView_PredefinedStyleSelected();
   }
   /// <summary>
   /// Summary description for XYPlotStyleCollectionController.
@@ -58,7 +58,9 @@ namespace Altaxo.Gui.Graph
   public interface IXYPlotStyleCollectionController : IMVCANController
   {
     event EventHandler CollectionChangeCommit;
-    void OnCollectionChangeCommit();
+
+		/// <summary>Is fired when user selected a style for editing. The argument is the index of the style to edit.</summary>
+		event Action<int> StyleEditRequested;
   }
 
  
@@ -70,37 +72,24 @@ namespace Altaxo.Gui.Graph
   {
     protected IXYPlotStyleCollectionView _view;
     protected G2DPlotStyleCollection _doc;
-    protected System.Collections.ArrayList _tempdoc;
 
-    List<System.Type> _plotStyleTypes;
+		SelectableListNodeList _predefinedStyleSetsAvailable;
+		SelectableListNodeList _singleStylesAvailable;
+		SelectableListNodeList _currentItems;
 
 
-    public XYPlotStyleCollectionController()
-    {
-    }
 
-    public XYPlotStyleCollectionController(G2DPlotStyleCollection doc)
-    {
-      _doc = doc;
-      _tempdoc = new System.Collections.ArrayList();
-      for(int i=0;i<_doc.Count;i++)
-        _tempdoc.Add(_doc[i]);
-    }
+		/// <summary>Is fired when user selected a style for editing. The argument is the index of the style to edit.</summary>
+		public event Action<int> StyleEditRequested;
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length == 0)
-        return false;
-      G2DPlotStyleCollection doc = args[0] as G2DPlotStyleCollection;
-      if (doc == null)
+      if (args == null || args.Length == 0 || !(args[0] is G2DPlotStyleCollection))
         return false;
       
-      _doc = doc;
-      _tempdoc = new System.Collections.ArrayList();
-      for (int i = 0; i < _doc.Count; i++)
-        _tempdoc.Add(_doc[i]);
+      _doc = (G2DPlotStyleCollection)args[0];
 
-      Initialize();
+      Initialize(true);
       return true;
     }
 
@@ -109,138 +98,103 @@ namespace Altaxo.Gui.Graph
       set { }
     }
 
-    public void Initialize()
+    public void Initialize(bool initData)
     {
-      UpdateStyleList(new int[0]);
-      InitializeAvailableStyleList();
-      InitializePredefinedStyles();
+			if (initData)
+			{
+				// predefined styles
+				string[] names = G2DPlotStyleCollectionTemplates.GetAvailableNames();
+				_predefinedStyleSetsAvailable = new SelectableListNodeList();
+				for (int i = 0; i < names.Length; ++i)
+					_predefinedStyleSetsAvailable.Add(new SelectableListNode(names[i], i, false));
+
+				// single styles
+				_singleStylesAvailable = new SelectableListNodeList();
+				Type[] avtypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IG2DPlotStyle));
+				for (int i = 0; i < avtypes.Length; i++)
+				{
+					if (avtypes[i] != typeof(G2DPlotStyleCollection))
+					{
+						_singleStylesAvailable.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(avtypes[i]),avtypes[i],false));
+					}
+				}
+
+				// current styles
+				_currentItems = new SelectableListNodeList();
+				for (int i = 0; i < _doc.Count; ++i)
+					_currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(_doc[i].GetType()), _doc[i], false)); 
+			}
+
+
+			if (null != _view)
+			{
+				_view.InitializePredefinedStyles(_predefinedStyleSetsAvailable);
+				_view.InitializeAvailableStyleList(_singleStylesAvailable);
+				_view.InitializeStyleList(_currentItems);
+			}
     }
 
-    public void UpdateStyleList(int[] selIndices)
-    {
-      if(_view!=null)
-      {
-        string[] names = new string[_tempdoc.Count];
-        for(int i=0;i<names.Length;i++)
-          names[i] = Current.Gui.GetUserFriendlyClassName(_tempdoc[i].GetType());
-
-        _view.InitializeStyleList(names,selIndices);
-      }
-    }
-
-    public void InitializeAvailableStyleList()
-    {
-      Type[] avtypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IG2DPlotStyle));
-      _plotStyleTypes = new List<Type>();
-      List<string> names = new List<string>();
-      for (int i = 0; i < avtypes.Length; i++)
-      {
-        if (avtypes[i] != typeof(G2DPlotStyleCollection))
-        {
-          _plotStyleTypes.Add(avtypes[i]);
-          names.Add(Current.Gui.GetUserFriendlyClassName(avtypes[i]));
-        }
-      }
-
-      if(_view!=null)
-        _view.InitializeAvailableStyleList(names);
-    }
-
-    public void InitializePredefinedStyles()
-    {
-   
-      string[] names = G2DPlotStyleCollectionTemplates.GetAvailableNamesPlusCustom();
-      int idx = G2DPlotStyleCollectionTemplates.GetIndexOfAvailableNamesPlusCustom(_doc);
-      if(_view!=null)
-        _view.InitializePredefinedStyles(names,idx);
-    }
+ 
 
     #region IXYPlotStyleCollectionViewEventSink Members
 
-    public virtual void EhView_AddStyle(int[] selindices, int nstyle)
+    public virtual void EhView_AddStyle()
     {
-      IG2DPlotStyle style = (IG2DPlotStyle)Activator.CreateInstance(this._plotStyleTypes[nstyle]);
+			var sel = _singleStylesAvailable.FirstSelectedNode;
+			if (null == sel)
+				return;
+
+      IG2DPlotStyle style = (IG2DPlotStyle)Activator.CreateInstance((Type)sel.Tag);
       IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
       G2DPlotItem plotitem = Main.DocumentPath.GetRootNodeImplementing<G2DPlotItem>(_doc);
       if(layer!=null && plotitem!=null)
         _doc.PrepareNewSubStyle(style, layer, plotitem.GetRangesAndPoints(layer));
 
-      _tempdoc.Add(style);
-      UpdateStyleList(new int[]{});
+			_currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()),style,true));
 
       OnCollectionChangeCommit();
     }
 
-    void Tempdoc_ExchangeItemPositions(int i, int j)
+ 
+
+    public virtual void EhView_StyleUp()
     {
-      object oi = _tempdoc[i];
-      _tempdoc[i] = _tempdoc[j];
-      _tempdoc[j] = oi;
-
-    }
-
-    public virtual void EhView_StyleUp(int[] selIndices)
-    {
-      if(selIndices.Length==0 || selIndices[0]==0)
-        return;
-
-      // Presumption: the first selected index is greater than 0
-      for(int i=0;i<selIndices.Length;i++)
-      {
-        int idx = selIndices[i];
-        Tempdoc_ExchangeItemPositions(idx,idx-1);
-        selIndices[i]--; // for new list selection
-      }
-
-      UpdateStyleList(selIndices);
+			_currentItems.MoveSelectedItemsUp();
 
       OnCollectionChangeCommit();
       
     }
 
-    public virtual void EhView_StyleDown(int[] selIndices)
+    public virtual void EhView_StyleDown()
     {
-      if(selIndices.Length==0 || selIndices[selIndices.Length-1]==(_tempdoc.Count-1))
-        return;
-
-      // Presumption: the first selected index is greater than 0
-      for(int i=selIndices.Length-1;i>=0;i--)
-      {
-        int idx = selIndices[i];
-        Tempdoc_ExchangeItemPositions(idx,idx+1);
-        selIndices[i]++; // for new list selection
-      }
-
-      UpdateStyleList(selIndices);
-
+			_currentItems.MoveSelectedItemsDown();
       OnCollectionChangeCommit();
     }
 
-    public virtual void EhView_StyleEdit(int[] selindices)
+    public virtual void EhView_StyleEdit()
     {
-      
+			var idx = _currentItems.FirstSelectedNodeIndex;
+			if (idx >= 0 && null != StyleEditRequested)
+				StyleEditRequested(idx);
     }
 
-    public virtual void EhView_StyleRemove(int[] selindices)
+    public virtual void EhView_StyleRemove()
     {
-      for(int i=selindices.Length-1;i>=0;--i)
-        _tempdoc.RemoveAt(selindices[i]);
-
-      UpdateStyleList(new int[0]);
+			_currentItems.RemoveSelectedItems();
       OnCollectionChangeCommit();
     }
 
-    public void EhView_PredefinedStyleSelected(int selectedindex)
+    public void EhView_PredefinedStyleSelected()
     {
-      if (selectedindex == 0)
+			var sel = _predefinedStyleSetsAvailable.FirstSelectedNode;
+      if (null==sel)
         return;
 
-      G2DPlotStyleCollection template = G2DPlotStyleCollectionTemplates.GetTemplate(selectedindex - 1);
-      _tempdoc.Clear();
+      G2DPlotStyleCollection template = G2DPlotStyleCollectionTemplates.GetTemplate((int)sel.Tag);
+			_currentItems.Clear();
       for (int i = 0; i < template.Count; i++)
-        _tempdoc.Add(template[i]);
+				_currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(template[i].GetType()), template[i], false));
 
-      UpdateStyleList(new int[0]);
       OnCollectionChangeCommit();
     }
 
@@ -267,15 +221,19 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        if(_view!=null)
-          _view.Controller = null;
+				if (_view != null)
+				{
+					_view.Controller = null;
+				}
 
         _view = value as IXYPlotStyleCollectionView;
-        
-        Initialize();
+       
 
-        if(_view!=null)
-          _view.Controller = this;
+				if (_view != null)
+				{
+					Initialize(false);
+					_view.Controller = this;
+				}
       }
     }
 
@@ -295,7 +253,8 @@ namespace Altaxo.Gui.Graph
     {
       _doc.BeginUpdate();
       _doc.Clear();
-      _doc.AddRange((IG2DPlotStyle[])_tempdoc.ToArray(typeof(IG2DPlotStyle)));
+			foreach (var node in _currentItems)
+				_doc.Add((IG2DPlotStyle)(node.Tag));
       _doc.EndUpdate();
       return true;
     }

@@ -164,6 +164,7 @@ namespace Altaxo.Gui.Graph
 				// find the style collection controller
 				_styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style }, typeof(IXYPlotStyleCollectionController));
 				_styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
+				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
 
 
 				// Initialize the data controller
@@ -186,6 +187,8 @@ namespace Altaxo.Gui.Graph
 				View_SetAllTabViews();
 			}
 		}
+
+	
 
 
 		void View_SetAllTabViews()
@@ -387,11 +390,7 @@ namespace Altaxo.Gui.Graph
       int result = 0;
       if (_dataController != null)
         ++result;
-      if (_plotGroupController != null)
-        ++result;
-      if (_styleCollectionController != null)
-        ++result;
-
+     
       return result;
     }
 
@@ -404,7 +403,13 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-
+		void _styleCollectionController_StyleEditRequested(int styleIndex)
+		{
+			if (null != _view)
+			{
+				_view.BringTabToFront(styleIndex + GetFirstStyleTabIndex());
+			}
+		}
 
 	
 	}

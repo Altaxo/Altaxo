@@ -57,8 +57,8 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					if (null != CbBrushType) CbBrushType.BrushType = _brush.BrushType;
 					if (null != CbHatchStyle) CbHatchStyle.HatchStyle = _brush.HatchStyle;
-					if (null != CbColor1) CbColor1.SelectedColor = GuiHelper.ToWpf(_brush.Color);
-					if (null != CbColor2) CbColor2.SelectedColor = GuiHelper.ToWpf(_brush.BackColor);
+					if (null != CbColor1) CbColor1.SelectedWpfColor = GuiHelper.ToWpf(_brush.Color);
+					if (null != CbColor2) CbColor2.SelectedWpfColor = GuiHelper.ToWpf(_brush.BackColor);
 					if (null != ChkExchangeColors) ChkExchangeColors.IsChecked = _brush.ExchangeColors;
 					if (null != CbGradientMode) _cbGradientMode.LinearGradientMode = _brush.GradientMode;
 					if (null != CbGradientShape) _cbGradientShape.LinearGradientShape = _brush.GradientShape;
@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Common.Drawing
 				if (_cbColor1 != null)
 					_cbColor1.ColorType = _colorType;
 				if (_brush != null && _cbColor1 != null)
-					_cbColor1.SelectedColor = GuiHelper.ToWpf(_brush.Color);
+					_cbColor1.SelectedWpfColor = GuiHelper.ToWpf(_brush.Color);
 
 				if (_cbColor1 != null)
 				{
@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_brush != null)
 			{
-				_brush.Color = GuiHelper.ToSysDraw(_cbColor1.SelectedColor);
+				_brush.Color = GuiHelper.ToSysDraw(_cbColor1.SelectedWpfColor);
 				OnBrushChanged();
 			}
 		}
@@ -277,7 +277,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbColor2 = value;
 				if (_brush != null && _cbColor2 != null)
-					_cbColor2.SelectedColor = GuiHelper.ToWpf(_brush.BackColor);
+					_cbColor2.SelectedWpfColor = GuiHelper.ToWpf(_brush.BackColor);
 
 				if (_cbColor2 != null)
 					dpd.AddValueChanged(_cbColor2, EhColor2_ColorChoiceChanged);
@@ -290,7 +290,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_brush != null)
 			{
-				_brush.BackColor = GuiHelper.ToSysDraw(_cbColor2.SelectedColor);
+				_brush.BackColor = GuiHelper.ToSysDraw(_cbColor2.SelectedWpfColor);
 				OnBrushChanged();
 			}
 		}

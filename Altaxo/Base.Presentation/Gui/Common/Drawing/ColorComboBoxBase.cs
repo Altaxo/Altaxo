@@ -24,12 +24,15 @@ namespace Altaxo.Gui.Common.Drawing
 		protected class ColorComboBoxItem : ImageComboBoxItem
 		{
 			DrawingImage _cachedDrawing;
-
+			
 			public override string Text
 			{
 				get
 				{
-					return GetColorName((Color)Value);
+					if (Value is NamedColor)
+						return ((NamedColor)Value).Name;
+					else
+						return NamedColor.GetColorName((AxoColor)Value);
 				}
 			}
 
@@ -38,7 +41,7 @@ namespace Altaxo.Gui.Common.Drawing
 				get
 				{
 					if (null == _cachedDrawing)
-						_cachedDrawing = GetImage((Color)Value);
+						_cachedDrawing = GetImage((NamedColor)Value);
 
 					return _cachedDrawing;
 				}
@@ -47,45 +50,29 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#endregion
 
-		protected static Dictionary<Color, string> _knownColorNames = new Dictionary<Color, string>();
-		protected static Dictionary<Color, ColorComboBoxItem> _knownColorItems = new Dictionary<Color, ColorComboBoxItem>();
-		protected static List<ColorComboBoxItem> _knownColors = new List<ColorComboBoxItem>();
+		protected static List<NamedColor> _knownColors = new List<NamedColor>();
+
+		/// <summary>Cached items of all known colors.</summary>
+		protected static Dictionary<NamedColor, ColorComboBoxItem> _knownColorItems = new Dictionary<NamedColor, ColorComboBoxItem>();
+
+		/// <summary>Helper brush.</summary>
 		protected static Brush _checkerBrush;
+
+		protected Dictionary<NamedColor, ImageComboBoxItem> _cachedItems = new Dictionary<NamedColor, ImageComboBoxItem>();
+
+
 
 		static ColorComboBoxBase()
 		{
-
-			// Enumerate constant colors from the Colors class
-			Type colorsType = typeof(Colors);
-			var pis = colorsType.GetProperties();
-			foreach (var pi in pis)
+			foreach (var e in KnownAxoColors.Items)
 			{
-				Color c = (Color)pi.GetValue(null, null);
-				var item = new ColorComboBoxItem() { Value = c };
-				_knownColors.Add(item);
-				if (!_knownColorNames.ContainsKey(c))
-				{
-					_knownColorNames.Add(c, pi.Name);
-					_knownColorItems.Add(c, item);
-				}
-
+				var item = new ColorComboBoxItem() { Value = e };
+				_knownColorItems.Add(e, item);
+				_knownColors.Add(e);
 			}
 		}
 
-		public static string GetColorName(Color c)
-		{
-			if (_knownColorNames.ContainsKey(c))
-				return _knownColorNames[c];
-			var crgb = Color.FromRgb(c.R, c.G, c.B);
-			if (_knownColorNames.ContainsKey(crgb))
-			{
-				var name = _knownColorNames[crgb];
-				int transp = ((255 - c.A) * 100) / 255;
-				name += string.Format(" {0}%", transp);
-				return name;
-			}
-			return c.ToString();
-		}
+	
 
 		public static Brush CreateCheckerBrush(double checkerRepeatLength)
 		{
@@ -116,8 +103,9 @@ namespace Altaxo.Gui.Common.Drawing
 			return checkerBrush;
 		}
 
-		public static DrawingImage GetImage(Color val)
+		public static DrawingImage GetImage(NamedColor namedColor)
 		{
+			Color val = GuiHelper.ToWpf(namedColor.Color);
 
 			const double border = 0.1;
 			const double height = 1;
@@ -152,13 +140,13 @@ namespace Altaxo.Gui.Common.Drawing
 			return geometryImage;
 		}
 
-		protected static List<ColorComboBoxItem> GetFilteredList(List<ColorComboBoxItem> originalList, string filterString)
+		protected static List<NamedColor> GetFilteredList(List<NamedColor> originalList, string filterString)
 		{
-			var result = new List<ColorComboBoxItem>();
+			var result = new List<NamedColor>();
 			filterString = filterString.ToLowerInvariant();
 			foreach (var item in originalList)
 			{
-				if (item.Text.ToLowerInvariant().StartsWith(filterString))
+				if (item.Name.ToLowerInvariant().StartsWith(filterString))
 					result.Add(item);
 			}
 			return result;
