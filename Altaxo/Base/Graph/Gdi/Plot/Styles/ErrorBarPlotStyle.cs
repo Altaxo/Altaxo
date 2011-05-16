@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public ErrorBarPlotStyle()
     {
-      this._strokePen = new PenX(Color.Black);
+      this._strokePen = new PenX(NamedColor.Black);
     }
     public ErrorBarPlotStyle(ErrorBarPlotStyle from)
     {
@@ -322,7 +322,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
     {
       if (!_independentColor)
-        Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups,localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this._strokePen.Color); });
+        Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups,localGroups, delegate() { return this._strokePen.Color; });
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
       SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SkipFrequency; });
@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       // color
       if (!_independentColor)
-        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this._strokePen.Color = c; });
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._strokePen.Color = c; });
 
       // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
       SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency = c; });

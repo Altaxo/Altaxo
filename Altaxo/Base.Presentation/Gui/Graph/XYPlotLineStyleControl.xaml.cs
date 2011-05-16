@@ -23,6 +23,7 @@ namespace Altaxo.Gui.Graph
 		private int _suppressEvents = 0;
 		Altaxo.Gui.Common.Drawing.PenControlsGlue _penGlue;
 		CTTPV _cttpv;
+		public event Action IndependentColorChanged;
 
 		public XYPlotLineStyleControl()
 		{
@@ -106,6 +107,11 @@ namespace Altaxo.Gui.Graph
 				{
 					_parent._penGlue.Pen = value;
 				}
+			}
+
+			public void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection)
+			{
+				_parent._penGlue.CbBrush.SetSelectableColors(colorSet,restrictChoiceToThisCollection);
 			}
 		}
 
@@ -207,5 +213,11 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion
+
+		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentColorChanged)
+				IndependentColorChanged();
+		}
 	}
 }

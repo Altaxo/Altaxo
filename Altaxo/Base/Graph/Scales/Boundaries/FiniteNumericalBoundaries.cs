@@ -27,7 +27,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
   /// FinitePhysicalBoundaries is intended to use for LinearAxis
-  /// it keeps track of the most negative and most positive value
+  /// it keeps track of the most negative and most positive finite value
   /// </summary>
   [Serializable]
   public class FiniteNumericalBoundaries : NumericalBoundaries

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 
 using Altaxo.Collections;
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
@@ -156,7 +157,7 @@ namespace Altaxo.Gui.Graph
 				_view.SetExportArea(_exportArea);
 				_view.SetSourceDpi(_sourceDpi);
 				_view.SetDestinationDpi(_destinationDpi);
-        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(Color.Transparent) : _doc.BackgroundBrush;
+        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColor.Transparent) : _doc.BackgroundBrush;
 			}
 		}
 

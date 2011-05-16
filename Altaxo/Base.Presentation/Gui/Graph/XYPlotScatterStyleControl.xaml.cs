@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 
 using Altaxo.Collections;
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Graph;
 
 using sd = System.Drawing;
 
@@ -68,7 +69,7 @@ namespace Altaxo.Gui.Graph
 			this.EnableDisableMain(_enableDisableAll == false || this.ShouldEnableMain());
 		}
 
-		public void InitializePlotStyleColor(sd.Color sel)
+		public void InitializePlotStyleColor(NamedColor sel)
 		{
 			_cbColor.SelectedBrush = new Altaxo.Graph.Gdi.BrushX(sel);
 		}
@@ -116,7 +117,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public System.Drawing.Color SymbolColor
+		public NamedColor SymbolColor
 		{
 			get { return _cbColor.SelectedBrush.Color; }
 		}

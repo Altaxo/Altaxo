@@ -6,7 +6,8 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+						 Loaded="EhLoaded">
 	<UserControl.Resources>
 		<Style TargetType="Button">
 			<Style.Setters>

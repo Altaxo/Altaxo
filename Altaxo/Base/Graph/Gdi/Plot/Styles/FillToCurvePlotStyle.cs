@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
-			FillBrush = new BrushX(Color.Aqua);
+			FillBrush = new BrushX(NamedColor.Aqua);
 		}
 
 		public FillToCurvePlotStyle(FillToCurvePlotStyle from)

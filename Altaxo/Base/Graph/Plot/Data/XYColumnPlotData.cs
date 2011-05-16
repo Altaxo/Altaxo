@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Serialization;
 using Altaxo.Main;
@@ -59,10 +60,11 @@ namespace Altaxo.Graph.Plot.Data
     protected IPhysicalBoundaries _xBoundaries;
     protected IPhysicalBoundaries _yBoundaries;
 
-    /// <summary>
-    /// Number of valid pairs of plot data.
-    /// </summary>
-    protected int    _plottablePoints; // number of plottable points
+		/// <summary>List of plot points that is allocated once per thread (as thread local storage variable).</summary>
+		[ThreadStatic]
+		[NonSerialized]
+		protected static List<PointF> _tlsBufferedPlotData;
+  
     /// <summary>
     /// One more that the index to the last valid pair of plot data. 
     /// </summary>
@@ -513,7 +515,6 @@ namespace Altaxo.Graph.Plot.Data
         this._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
       }
 
-      this._plottablePoints = from._plottablePoints;
       this._pointCount = from._pointCount;
       this._isCachedDataValid = from._isCachedDataValid;
       this._parent = from._parent;
@@ -704,19 +705,6 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
     /// <summary>
-    /// Number of valid plot data points.
-    /// </summary>
-    public int PlottablePoints
-    {
-      get
-      {
-        if(!this._isCachedDataValid)
-          this.CalculateCachedData();
-        return this._plottablePoints;
-      }
-    }
-
-    /// <summary>
     /// One more than the index to the last valid plot data point. This is <b>not</b>
     /// the number of plottable points, <seealso cref="PlottablePoints"/>
     /// </summary>
@@ -813,7 +801,6 @@ namespace Altaxo.Graph.Plot.Data
         return;
 
 
-      _plottablePoints = 0;
 
       
       this._xBoundaries.BeginUpdate(); // disable events
@@ -834,7 +821,6 @@ namespace Altaxo.Graph.Plot.Data
       if (xColumn == null || yColumn == null)
       {
         _pointCount=0;
-        _plottablePoints = 0;
       }
       else
       {
@@ -855,8 +841,7 @@ namespace Altaxo.Graph.Plot.Data
           {
             bool x_added = this._xBoundaries.Add(xColumn, i);
             bool y_added = this._yBoundaries.Add(yColumn, i);
-            if (x_added && y_added)
-              _plottablePoints++;
+          
           }
         }
       }
@@ -945,22 +930,19 @@ namespace Altaxo.Graph.Plot.Data
       if(null==xColumn || null==yColumn)
         return null; // this plotitem is only for x and y double columns
 
-      if(this.PlottablePoints<=0)
-        return null;
-
-
       Processed2DPlotData result = new Processed2DPlotData();
       MyPlotData myPlotData = new MyPlotData(xColumn, yColumn);
       result.XPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetXPhysical);
       result.YPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetYPhysical);
       PlotRangeList rangeList = null;
-      PointF[] ptArray = null;
 
-
-
-      // allocate an array PointF to hold the line points
-      ptArray = new PointF[this.PlottablePoints];
-      result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
+			// allocate an array PointF to hold the line points
+			// _tlsBufferedPlotData is a static buffer that is allocated per thread
+			// and thus is only used temporary here in this routine
+			if (null == _tlsBufferedPlotData)
+				_tlsBufferedPlotData = new List<PointF>();
+			else
+				_tlsBufferedPlotData.Clear();
 
       // Fill the array with values
       // only the points where x and y are not NaNs are plotted!
@@ -1024,9 +1006,7 @@ namespace Altaxo.Graph.Plot.Data
             rangeStart = j;
             rangeOffset = i-j;
           }
-          ptArray[j].X = (float)xcoord;
-          ptArray[j].Y = (float)ycoord;
-          
+					_tlsBufferedPlotData.Add(new PointF((float)xcoord, (float)ycoord));
           j++;
         }
         else
@@ -1043,6 +1023,9 @@ namespace Altaxo.Graph.Plot.Data
         bInPlotSpace=true;
         rangeList.Add(new PlotRange(rangeStart,j,rangeOffset)); // add the last range
       }
+
+			result.PlotPointsInAbsoluteLayerCoordinates = _tlsBufferedPlotData.ToArray();
+
       return result;
     }
   }

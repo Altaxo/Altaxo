@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Gdi.Background
   [Serializable]
   public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
   {
-    protected BrushX _brush = new BrushX(Color.White);
+    protected BrushX _brush = new BrushX(NamedColor.White);
     protected float _shadowLength = 5;
 
     [NonSerialized]
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Gdi.Background
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
-        s.Brush = new BrushX((Color)info.GetValue("Color", parent));
+        s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
         s._shadowLength = (float)info.GetDouble();
 
         return s;
@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Gdi.Background
     {
     }
 
-    public RectangleWithShadow(Color c)
+    public RectangleWithShadow(NamedColor c)
     {
       this.Brush = new BrushX(c);
     }
@@ -134,19 +134,19 @@ namespace Altaxo.Graph.Gdi.Background
       {
         default:
         case BrushType.SolidBrush:
-          this._cachedShadowBrush = new BrushX(Color.FromArgb(_brush.Color.A, 0, 0, 0));
+          this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
           break;
         case BrushType.HatchBrush:
-          this._cachedShadowBrush = new BrushX(Color.FromArgb(_brush.Color.A, 0, 0, 0));
+          this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
           break;
         case BrushType.TextureBrush:
-          this._cachedShadowBrush = new BrushX(Color.Black);
+          this._cachedShadowBrush = new BrushX(NamedColor.Black);
           break;
         case BrushType.LinearGradientBrush:
         case BrushType.PathGradientBrush:
           this._cachedShadowBrush = (BrushX)_brush.Clone();
-          this._cachedShadowBrush.Color = Color.FromArgb(_brush.Color.A, 0, 0, 0);
-          this._cachedShadowBrush.BackColor = Color.FromArgb(_brush.BackColor.A, 0, 0, 0);
+          this._cachedShadowBrush.Color = NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0);
+          this._cachedShadowBrush.BackColor = NamedColor.FromArgb(_brush.BackColor.Color.A, 0, 0, 0);
           break;
       }
       

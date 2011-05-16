@@ -175,16 +175,14 @@ namespace Altaxo.Gui
 
 		public static System.Windows.Media.Brush ToWpf(this Altaxo.Graph.Gdi.BrushX brushx)
 		{
-			System.Drawing.Color s = brushx.Color;
-			System.Windows.Media.Color c = System.Windows.Media.Color.FromArgb(s.A, s.R, s.G, s.B);
+			System.Windows.Media.Color c = ToWpf(brushx.Color);
 			var result = new System.Windows.Media.SolidColorBrush(c);
 			return result;
 		}
 
 		public static System.Windows.Media.Pen ToWpf(this Altaxo.Graph.Gdi.PenX penx)
 		{
-			System.Drawing.Color s = penx.Color;
-			System.Windows.Media.Color c = System.Windows.Media.Color.FromArgb(s.A, s.R, s.G, s.B);
+			System.Windows.Media.Color c = ToWpf(penx.Color);
 			var result = new System.Windows.Media.Pen(new System.Windows.Media.SolidColorBrush(c), penx.Width);
 			return result;
 		}
@@ -211,6 +209,11 @@ namespace Altaxo.Gui
 				return Color.FromArgb(c.A, c.R, c.G, c.B);
 			else
 				return Color.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
+		}
+
+		public static System.Windows.Media.Color ToWpf(this Altaxo.Graph.NamedColor c)
+		{
+			return ToWpf(c.Color);
 		}
 
 		public static Altaxo.Graph.AxoColor ToAxo(this System.Windows.Media.Color c)

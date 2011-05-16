@@ -32,6 +32,7 @@ namespace System.Drawing
 
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
+			throw new ApplicationException("Deprecated 2011-05-09: do not serialize System.Drawing.Color anymore");
       System.Drawing.Color s = (System.Drawing.Color)obj;
 
       info.SetNodeContent(sm_Converter.ConvertToInvariantString(s));
@@ -40,7 +41,8 @@ namespace System.Drawing
     {
 
       string val = info.GetNodeContent();
-      return (Color)sm_Converter.ConvertFromInvariantString(val);
+      var c= (Color)sm_Converter.ConvertFromInvariantString(val);
+			return Altaxo.Graph.NamedColor.FromArgb(c.A, c.R, c.G, c.B);
     }
   }
 

@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   {
     protected string _text = ""; // the text, which contains the formatting symbols
     protected Font _font;
-    protected BrushX _textBrush = new BrushX(Color.Black);
+    protected BrushX _textBrush = new BrushX(NamedColor.Black);
     protected IBackgroundStyle _background = null;
     protected float _lineSpacingFactor=1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
     protected XAnchorPositionType _xAnchorType = XAnchorPositionType.Left;
@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     public TextGraphic(PointF graphicPosition, string text, 
-      Font textFont, Color textColor)
+      Font textFont, NamedColor textColor)
     {
       this.SetPosition(graphicPosition);
       this.Font = textFont;
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
     public TextGraphic(  float posX, float posY, 
-      string text, Font textFont, Color textColor)
+      string text, Font textFont, NamedColor textColor)
       : this(new PointF(posX, posY), text, textFont, textColor)
     {
     }
@@ -227,7 +227,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public TextGraphic(PointF graphicPosition, 
       string text, Font textFont, 
-      Color textColor, float Rotation)
+      NamedColor textColor, float Rotation)
       : this(graphicPosition, text, textFont, textColor)
     {
       this.Rotation = Rotation;
@@ -236,7 +236,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public TextGraphic(float posX, float posY, 
       string text, 
       Font textFont, 
-      Color textColor, float Rotation)
+      NamedColor textColor, float Rotation)
       : this(new PointF(posX, posY), text, textFont, textColor, Rotation)
     {
     }
@@ -456,7 +456,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public System.Drawing.Color Color
+    public NamedColor Color
     {
       get
       {

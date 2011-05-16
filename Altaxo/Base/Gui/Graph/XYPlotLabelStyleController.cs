@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes/gets the content of the Color combo box.
     /// </summary>
-		System.Drawing.Color SelectedColor { get; set; }
+		NamedColor SelectedColor { get; set; }
 
     /// <summary>
     /// Initializes/gets the background.
@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Graph
     protected bool _independentColor;
 
     /// <summary>The color for the label.</summary>
-    protected Color  _color;
+    protected NamedColor  _color;
   
    
     protected System.Drawing.StringAlignment _horizontalAlignment;
@@ -290,7 +290,7 @@ namespace Altaxo.Gui.Graph
       _font = newValue;
     }
 
-    public void EhView_ColorChanged(System.Drawing.Color color)
+    public void EhView_ColorChanged(NamedColor color)
     {
       this._color = color;
     }

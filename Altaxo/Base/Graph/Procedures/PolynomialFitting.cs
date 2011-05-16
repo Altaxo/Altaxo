@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Calc.Probability;
@@ -46,9 +47,12 @@ namespace Altaxo.Graph.Procedures
     /// <param name="yarr">The array of the data point's y values.</param>
     /// <param name="nPlotPoints">The number of plot points (may be smaller than the length of x and y arrays.</param>
     /// <returns>Null if all is ok, or error message if not.</returns>
-		public static string GetActivePlotPoints(Altaxo.Gui.Graph.Viewing.IGraphController ctrl, ref double[] xarr, ref double[] yarr, out int nPlotPoints)
+		public static string GetActivePlotPoints(Altaxo.Gui.Graph.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
     {
-      nPlotPoints=0;
+			List<double> xlist = new List<double>();
+			List<double> ylist = new List<double>();
+
+			xarr = yarr = null;
 
       ctrl.EnsureValidityOfCurrentLayerNumber();
       ctrl.EnsureValidityOfCurrentPlotNumber();
@@ -56,6 +60,8 @@ namespace Altaxo.Graph.Procedures
       IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
+
+
 
       if(xyPlotItem==null)
         return "No active plot!";
@@ -70,28 +76,23 @@ namespace Altaxo.Graph.Procedures
       Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)data.XColumn;
       Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)data.YColumn;
 
-      int n = data.PlottablePoints;
-      if(null==xarr || xarr.Length<n)
-        xarr = new double[n];
-      if(null==yarr || yarr.Length<n)
-        yarr = new double[n];
-
       int end = data.PlotRangeEnd;
 
-      int j=0;
-      for(int i=data.PlotRangeStart;i<end && j<n;i++)
+     
+      for(int i=data.PlotRangeStart;i<end;i++)
       {
         double x = xcol[i];
         double y = ycol[i];
 
         if(double.IsNaN(x) || double.IsNaN(y))
           continue;
-        
-        xarr[j] = x;
-        yarr[j] = y;
-        ++j;
+
+				xlist.Add(x);
+				ylist.Add(y);
       }
-      nPlotPoints = j;
+
+			xarr = xlist.ToArray();
+			yarr = ylist.ToArray();
       return null;
     }
 
@@ -174,9 +175,9 @@ namespace Altaxo.Graph.Procedures
     {
       string error;
 
-      int numberOfDataPoints;
-      double[] xarr=null, yarr=null, earr=null;
-      error = GetActivePlotPoints(ctrl, ref xarr, ref yarr, out numberOfDataPoints);
+			double[] xarr, yarr;
+      error = GetActivePlotPoints(ctrl, out xarr, out yarr );
+			int numberOfDataPoints = xarr.Length;
 
       if(null!=error)
         return error;

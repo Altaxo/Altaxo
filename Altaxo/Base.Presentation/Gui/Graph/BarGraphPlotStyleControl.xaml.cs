@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Graph;
 	using Altaxo.Gui.Common;
 	using Altaxo.Gui.Common.Drawing;
 
@@ -83,7 +84,7 @@ namespace Altaxo.Gui.Graph
 			 if (value != null)
 				 _framePenGlue.Pen = value;
 			 else
-				 _framePenGlue.Pen = new Altaxo.Graph.Gdi.PenX(System.Drawing.Color.Black);
+				 _framePenGlue.Pen = new Altaxo.Graph.Gdi.PenX(NamedColor.Black);
 		 }
 	 }
 

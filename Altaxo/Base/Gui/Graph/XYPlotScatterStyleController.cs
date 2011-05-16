@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph
     /// Initializes the plot style color combobox.
     /// </summary>
     /// <param name="sel">Current selection.</param>
-    void InitializePlotStyleColor(Color sel);
+    void InitializePlotStyleColor(NamedColor sel);
 
     /// <summary>
     /// Initializes the symbol size combobox.
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph
 
     bool IndependentColor { get; }
     
-    Color SymbolColor { get; }
+    NamedColor SymbolColor { get; }
     SelectableListNode SymbolShape {get; }
     bool   IndependentSymbolSize { get; }
     SelectableListNode SymbolStyle {get; }
@@ -154,20 +154,7 @@ namespace Altaxo.Gui.Graph
     public UseDocument UseDocumentCopy { set { _useDocumentCopy = value; } } // not used here
 
 
-    public static string [] GetPlotColorNames()
-    {
-      string[] arr = new string[1+PlotColors.Colors.Count];
-
-      arr[0] = "Custom";
-
-      int i=1;
-      foreach(PlotColor c in PlotColors.Colors)
-      {
-        arr[i++] = c.Name;
-      }
-
-      return arr;
-    }
+  
 
 
     bool _ActivateEnableDisableMain = false;

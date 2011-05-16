@@ -561,7 +561,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="start">Index of the start of the section to wrap.</param>
     /// <param name="len">Length (=number of elements) of the section to wrap.</param>
     /// <returns>A IROVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
-    public static IROVector ToROVector(IROVector x, int start, int len)
+    public static IROVector ToROVector(this IROVector x, int start, int len)
     {
       return new ROVectorSectionWrapper(x, start, len);
     }
@@ -737,7 +737,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="values">The vector for which the used length has to be determined.</param>
 		/// <param name="currentlength">The current length of the array. Normally values.Length, but you can provide a value less than this.</param>
 		/// <returns>The used length. Elements with indices greater or equal this until <c>currentlength</c> are NaNs.</returns>
-		static public int GetUsedLength(IROVector values, int currentlength)
+		static public int GetUsedLength(this IROVector values, int currentlength)
     {
       for (int i = currentlength - 1; i >= 0; --i)
       {

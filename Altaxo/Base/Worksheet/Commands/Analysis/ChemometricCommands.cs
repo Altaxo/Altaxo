@@ -31,6 +31,7 @@ using Altaxo.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
@@ -616,7 +617,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
       LabelPlotStyle labelStyle = new LabelPlotStyle(labelcol);
       labelStyle.FontSize = 10;
-      labelStyle.BackgroundStyle = new FilledRectangle(System.Drawing.Color.LightCyan);
+      labelStyle.BackgroundStyle = new FilledRectangle(NamedColor.LightCyan);
       ps.Add(labelStyle);
       
       layer.PlotItems.Add(new XYColumnPlotItem(pa,ps));

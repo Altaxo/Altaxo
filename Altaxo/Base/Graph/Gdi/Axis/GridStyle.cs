@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Gdi.Axis
       get
       {
         if (null == _majorPen)
-          _majorPen = new PenX(Color.Blue);
+          _majorPen = new PenX(NamedColor.Blue);
         return _majorPen;
 
       }
@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi.Axis
       get
       {
         if (null == _minorPen)
-          _minorPen = new PenX(Color.LightBlue);
+          _minorPen = new PenX(NamedColor.LightBlue);
 
         return _minorPen;
       }

@@ -458,7 +458,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CreateEventChain();
     }
 
-    public ScatterPlotStyle(XYPlotScatterStyles.Shape shape, XYPlotScatterStyles.Style style, float size, float penWidth, Color penColor)
+    public ScatterPlotStyle(XYPlotScatterStyles.Shape shape, XYPlotScatterStyles.Style style, float size, float penWidth, NamedColor penColor)
     {
       _shape = shape;
       _style = style;
@@ -480,7 +480,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._shape = XYPlotScatterStyles.Shape.Square;
       this._style = XYPlotScatterStyles.Style.Solid;
       this._dropLine = new CSPlaneIDList();
-      this._pen = new PenX(Color.Black);
+      this._pen = new PenX(NamedColor.Black);
       this._independentColor = false;
 
       this._symbolSize = 8;
@@ -488,7 +488,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._relativePenWidth = 0.1f;
       this._skipFreq = 1;
       this._cachedFillPath = true; // since default is solid
-      this._cachedFillBrush = new BrushX(Color.Black);
+      this._cachedFillBrush = new BrushX(NamedColor.Black);
       this._cachedPath = GetPath(_shape, _style, _symbolSize);
       CreateEventChain();
     }
@@ -510,7 +510,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           // ensure that a pen is set if Shape is other than nosymbol
           if (value != XYPlotScatterStyles.Shape.NoSymbol && null == this._pen)
-            _pen = new PenX(Color.Black);
+            _pen = new PenX(NamedColor.Black);
 
           SetCachedValues();
 
@@ -585,7 +585,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    public System.Drawing.Color Color
+    public NamedColor Color
     {
       get { return this._pen.Color; }
       set
@@ -681,7 +681,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _cachedFillPath = _style == XYPlotScatterStyles.Style.Solid || _style == XYPlotScatterStyles.Style.Open || _style == XYPlotScatterStyles.Style.DotCenter;
 
       if (this._style != XYPlotScatterStyles.Style.Solid)
-        _cachedFillBrush = new BrushX(Color.White);
+        _cachedFillBrush = new BrushX(NamedColor.White);
       else if (this._pen.PenType == PenType.SolidColor)
         _cachedFillBrush = new BrushX(_pen.Color);
       else
@@ -1018,7 +1018,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if(this.IsColorProvider)
-        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
+        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
 
       SymbolShapeStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.ShapeAndStyle; });
 
@@ -1035,7 +1035,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this.IsColorReceiver)
 			{
 				// try to get a constant color ...
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
 				// but if there is a color evaluation function, then use that function with higher priority
 				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
 			}

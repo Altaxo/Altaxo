@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Altaxo.Graph;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Science;
 
@@ -128,15 +129,15 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public System.Drawing.Color SelectedColor
+		public NamedColor SelectedColor
 		{
 			get
 			{
-				return _cbColor.SelectedGdiColor;
+				return _cbColor.SelectedColor;
 			}
 			set
 			{
-				_cbColor.SelectedGdiColor = value;
+				_cbColor.SelectedColor = value;
 			}
 		}
 

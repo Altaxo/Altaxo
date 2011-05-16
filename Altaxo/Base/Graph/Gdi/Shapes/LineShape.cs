@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public LineShape(PointF startPosition, PointF endPosition, float lineWidth, Color lineColor)
+		public LineShape(PointF startPosition, PointF endPosition, float lineWidth, NamedColor lineColor)
 			:
 			this(startPosition)
 		{
@@ -191,7 +191,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.Pen.Color = lineColor;
 		}
 
-		public LineShape(float startX, float startY, float endX, float endY, float lineWidth, Color lineColor)
+		public LineShape(float startX, float startY, float endX, float endY, float lineWidth, NamedColor lineColor)
 			:
 			this(new PointF(startX, startY), new PointF(endX, endY))
 		{

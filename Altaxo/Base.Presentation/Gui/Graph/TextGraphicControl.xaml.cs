@@ -281,6 +281,11 @@ namespace Altaxo.Gui.Graph
 
 		#endregion
 
+		private void EhLoaded(object sender, RoutedEventArgs e)
+		{
+			this.m_edText.Focus();
+		}
+
 		
 
 	

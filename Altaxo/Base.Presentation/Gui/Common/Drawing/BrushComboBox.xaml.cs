@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Common.Drawing
 							name = "CustBrush ";
 							break;
 					}
-					return name + NamedColor.GetColorName(GuiHelper.ToAxo(brush.Color));
+					return name + brush.Color.Name;
 				}
 			}
 
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Common.Drawing
 			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
 				var val = (BrushX)value;
-				var color = new NamedColor( GuiHelper.ToAxo(val.Color));
+				var color = val.Color;
 				if (val.BrushType== BrushType.SolidBrush && _knownColorItems.ContainsKey(color))
 					return _knownColorItems[color];
 
@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					object val = icbi.Value;
 					if (val is NamedColor)
-						return new BrushX(GuiHelper.ToGdi(((NamedColor)val).Color));
+						return new BrushX((NamedColor)val);
 					else if (val is BrushX)
 						return val;
 				}
@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Common.Drawing
 		List<BrushComboBoxItem> _lastLocalUsedBrushes = new List<BrushComboBoxItem>();
 		Dictionary<BrushX, BrushComboBoxItem> _lastLocalUsedBrushesDict = new Dictionary<BrushX, BrushComboBoxItem>();
 
-		ColorType _colorType;
+		
 
 		/// <summary>If true, the user can choose among all colors contained in the color collection, but can not choose or create other colors.</summary>
 		protected bool _restrictColorChoiceToCollection;
@@ -131,7 +131,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			InitializeComponent();
 
-			this.SelectableColors = _knownColors;
+			SetSelectableColors( _knownColors, false);
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
@@ -141,41 +141,36 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 
-			public bool RestrictColorChoiceToCollection
-			{
-				get
-				{
-					return _restrictColorChoiceToCollection;
-				}
-				set
-				{
-					_restrictColorChoiceToCollection = value;
-				}
-			}
+			
 
-		public ColorType ColorType
-		{
-			get
-			{
-				return _colorType;
-			}
-			set
-			{
-				_colorType = value;
-			}
-		}
+		
 
-
-		public ICollection<NamedColor> SelectableColors
-		{
-			set
-			{
-				_colorCollection = new List<NamedColor>(value);
-				_filterString = string.Empty;
-				FillWithFilteredItems(_filterString, false);
-			}
-		}
+		
 	
+		public void SetSelectableColors(ICollection<NamedColor> value, bool restrictChoiceToThisCollection)
+		{
+			if (null == value)
+				value = _knownColors;
+
+			NamedColor prevSelected = this.SelectedBrush.Color;
+
+			_colorCollection = new List<NamedColor>(value);
+			_filterString = string.Empty;
+			FillWithFilteredItems(_filterString, false);
+			_restrictColorChoiceToCollection = restrictChoiceToThisCollection;
+
+			bool isIncluded = _colorCollection.Contains(prevSelected);
+			if (!isIncluded)
+			{
+				if (restrictChoiceToThisCollection && _colorCollection.Count > 0)
+					prevSelected = _colorCollection[0];
+				else if (!restrictChoiceToThisCollection)
+					_colorCollection.Add(prevSelected);
+			}
+			var newBrush = this.SelectedBrush.Clone();
+			newBrush.Color = prevSelected;
+			this.SelectedBrush = newBrush;
+		}
 
 	
 
@@ -189,7 +184,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static readonly DependencyProperty SelectedBrushProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(BrushX), typeof(BrushComboBox),
-				new FrameworkPropertyMetadata(new BrushX(System.Drawing.Color.Black), EhSelectedBrushChanged));
+				new FrameworkPropertyMetadata(new BrushX(NamedColor.Black), EhSelectedBrushChanged));
 
 		private static void EhSelectedBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -247,10 +242,9 @@ namespace Altaxo.Gui.Common.Drawing
 				return;
 
 			var a = (255 * (100 - int.Parse((string)((MenuItem)sender).Tag))) / 100;
-			var o = SelectedBrush.Color;
-			var newColor = System.Drawing.Color.FromArgb((byte)a, o.R, o.G, o.B);
+			var newColor = SelectedBrush.Color.Color.ToAlphaValue((byte)a);
 			var newBrush = SelectedBrush.Clone();
-			newBrush.Color = newColor;
+			newBrush.Color = new NamedColor(newColor);
 			SelectedBrush = newBrush;
 		}
 
@@ -375,7 +369,7 @@ namespace Altaxo.Gui.Common.Drawing
 			ColorController ctrl = new ColorController(color);
 			ctrl.ViewObject = new ColorPickerControl(color);
 			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
-				this.SelectedBrush = new BrushX(GuiHelper.ToSysDraw((Color)ctrl.ModelObject));
+				this.SelectedBrush = new BrushX((NamedColor)ctrl.ModelObject);
 		}
 	}
 }

@@ -329,11 +329,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public LinePlotStyle()
     {
-			_penHolder = new PenX(Color.Black) { LineJoin = LineJoin.Bevel };
+			_penHolder = new PenX(NamedColor.Black) { LineJoin = LineJoin.Bevel };
       _useLineSymbolGap = true;
       _ignoreMissingPoints = false;
       _fillArea = false;
-      _fillBrush = new BrushX(Color.Black);
+      _fillBrush = new BrushX(NamedColor.Black);
       _fillDirection = null;
       _connectionStyle = XYPlotLineStyles.ConnectionStyle.Straight;
       _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
@@ -542,7 +542,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         this._fillArea = value;
         // ensure that if value is true, there is a fill brush which is not null
         if (true == value && null == this._fillBrush)
-          this._fillBrush = new BrushX(Color.White);
+          this._fillBrush = new BrushX(NamedColor.White);
 
         OnChanged(); // Fire Changed event
       }
@@ -1725,7 +1725,7 @@ out int lastIndex)
       }
     }
 
-    public Color Color
+    public NamedColor Color
     {
       get
       {
@@ -1747,9 +1747,9 @@ out int lastIndex)
     /// Sets the fill brush color from a color, but leaves the opacity value unchanged.
     /// </summary>
     /// <param name="c">The color to set. Only the RGB values are used from here; the A value (opacity) is ignored and remains unchanged.</param>
-    public void SetFillColorRGB(Color c)
+    public void SetFillColorRGB(NamedColor c)
     {
-      _fillBrush.Color = Color.FromArgb(_fillBrush.Color.A, c.R, c.G, c.B);
+      _fillBrush.Color = NamedColor.FromArgb(_fillBrush.Color.Color.A, c.Color.R, c.Color.G, c.Color.B);
     }
 
 
@@ -1784,7 +1784,7 @@ out int lastIndex)
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (this.IsColorProvider)
-        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
+        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
 
       LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.PenHolder.DashStyle; });
     }
@@ -1792,10 +1792,10 @@ out int lastIndex)
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (this.IsColorReceiver)
-        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
 
       if (this._fillArea && !this._independentFillColor)
-        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.SetFillColorRGB(c.Color); });
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.SetFillColorRGB(c); });
 
       LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(DashStyle c) { this.PenHolder.DashStyle = c; });
 

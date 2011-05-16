@@ -86,8 +86,8 @@ namespace Altaxo.Graph.Gdi
   {
 
     protected BrushType _brushType; // Type of the brush
-    protected Color _foreColor; // Color of the brush
-    protected Color _backColor; // Backcolor of brush, f.i.f. HatchStyle brushes
+    protected NamedColor _foreColor; // Color of the brush
+    protected NamedColor _backColor; // Backcolor of brush, f.i.f. HatchStyle brushes
     protected HatchStyle _hatchStyle; // Attention: is not serializable!
     protected ImageProxy _textureImage; // für Texturebrush
     protected WrapMode _wrapMode; // für TextureBrush und LinearGradientBrush
@@ -134,17 +134,17 @@ namespace Altaxo.Graph.Gdi
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        BrushX s = null != o ? (BrushX)o : new BrushX(Color.Black);
+        BrushX s = null != o ? (BrushX)o : new BrushX(NamedColor.Black);
 
         s._brushType = (BrushType)info.GetValue("Type", s);
         switch (s._brushType)
         {
           case BrushType.SolidBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
             break;
           case BrushType.HatchBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
-            s._backColor = (Color)info.GetValue("BackColor", s);
+            s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
+            s._backColor = (NamedColor)info.GetValue("BackColor", s);
             s._hatchStyle = (HatchStyle)info.GetEnum("HatchStyle", typeof(HatchStyle));
             break;
         }
@@ -195,22 +195,22 @@ namespace Altaxo.Graph.Gdi
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        BrushX s = null != o ? (BrushX)o : new BrushX(Color.Black);
+        BrushX s = null != o ? (BrushX)o : new BrushX(NamedColor.Black);
 
         s._brushType = (BrushType)info.GetValue("Type", s);
         switch (s._brushType)
         {
           case BrushType.SolidBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
             break;
           case BrushType.HatchBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
-            s._backColor = (Color)info.GetValue("BackColor", s);
+						s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
+						s._backColor = (NamedColor)info.GetValue("BackColor", s);
             s._hatchStyle = (HatchStyle)info.GetEnum("HatchStyle", typeof(HatchStyle));
             break;
           case BrushType.LinearGradientBrush:
-             s._foreColor = (Color)info.GetValue("ForeColor",s);
-             s._backColor = (Color)info.GetValue("BackColor", s);
+						s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
+						s._backColor = (NamedColor)info.GetValue("BackColor", s);
              s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
              LinearGradientModeEx gm = (LinearGradientModeEx)info.GetEnum("GradientMode", typeof(LinearGradientModeEx));
              string gmname = Enum.GetName(typeof(LinearGradientModeEx), gm);
@@ -229,8 +229,8 @@ namespace Altaxo.Graph.Gdi
             s._focus = info.GetSingle("Focus");
             break;
           case BrushType.PathGradientBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
-            s._backColor = (Color)info.GetValue("BackColor", s);
+						s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
+						s._backColor = (NamedColor)info.GetValue("BackColor", s);
             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
             break;
           case BrushType.TextureBrush:
@@ -287,23 +287,23 @@ namespace Altaxo.Graph.Gdi
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        BrushX s = null != o ? (BrushX)o : new BrushX(Color.Black);
+        BrushX s = null != o ? (BrushX)o : new BrushX(NamedColor.Black);
 
         s._brushType = (BrushType)info.GetValue("Type", s);
         switch (s._brushType)
         {
           case BrushType.SolidBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
+						s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
             break;
           case BrushType.HatchBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
-            s._backColor = (Color)info.GetValue("BackColor", s);
+						s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
+						s._backColor = (NamedColor)info.GetValue("BackColor", s);
             s._exchangeColors = info.GetBoolean("ExchangeColors");
             s._hatchStyle = (HatchStyle)info.GetEnum("HatchStyle", typeof(HatchStyle));
             break;
           case BrushType.LinearGradientBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
-            s._backColor = (Color)info.GetValue("BackColor", s);
+						s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
+						s._backColor = (NamedColor)info.GetValue("BackColor", s);
             s._exchangeColors = info.GetBoolean("ExchangeColors");
             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
             s._gradientMode = (LinearGradientMode)info.GetEnum("GradientMode", typeof(LinearGradientMode));
@@ -312,8 +312,8 @@ namespace Altaxo.Graph.Gdi
             s._focus = info.GetSingle("Focus");
             break;
           case BrushType.PathGradientBrush:
-            s._foreColor = (Color)info.GetValue("ForeColor", s);
-            s._backColor = (Color)info.GetValue("BackColor", s);
+						s._foreColor = (NamedColor)info.GetValue("ForeColor", s);
+						s._backColor = (NamedColor)info.GetValue("BackColor", s);
             s._exchangeColors = info.GetBoolean("ExchangeColors");
             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
             break;
@@ -349,7 +349,7 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    public BrushX(Color c)
+    public BrushX(NamedColor c)
     {
       this._brushType = BrushType.SolidBrush;
       this._foreColor = c;
@@ -406,7 +406,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return !(_brushType == BrushType.SolidBrush && _foreColor.A == 0);
+        return !(_brushType == BrushType.SolidBrush && _foreColor.Color.A == 0);
       }
     }
 
@@ -417,16 +417,16 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return _brushType == BrushType.SolidBrush && _foreColor.A == 0;
+        return _brushType == BrushType.SolidBrush && _foreColor.Color.A == 0;
       }
     }
 
-    public Color Color
+    public NamedColor Color
     {
       get { return _foreColor; }
       set
       {
-        bool bChanged = (_foreColor != value);
+        bool bChanged = !_foreColor.Equals(value);
         _foreColor = value;
         if (bChanged)
         {
@@ -436,12 +436,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public Color BackColor
+    public NamedColor BackColor
     {
       get { return _backColor; }
       set
       {
-        bool bChanged = (_backColor != value);
+        bool bChanged = !_backColor.Equals(value);
         _backColor = value;
         if (bChanged)
         {
@@ -716,8 +716,14 @@ namespace Altaxo.Graph.Gdi
 		private Bitmap GetDefaultTextureBitmap()
 		{
 			Bitmap result = new Bitmap(3, 3, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			result.SetPixel(1, 1, Color.Black);
+			result.SetPixel(1, 1, System.Drawing.Color.Black);
 			return result;
+		}
+
+		private static System.Drawing.Color ToGdi(NamedColor color)
+		{
+			var c = color.Color;
+			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
 		}
 
     public Brush Brush
@@ -730,19 +736,19 @@ namespace Altaxo.Graph.Gdi
           switch (_brushType)
           {
             case BrushType.SolidBrush:
-              br = new SolidBrush(_foreColor);
+              br = new SolidBrush(ToGdi(_foreColor));
               break;
             case BrushType.HatchBrush:
               if(_exchangeColors)
-                br = new HatchBrush(_hatchStyle, _backColor, _foreColor);
+                br = new HatchBrush(_hatchStyle, ToGdi(_backColor), ToGdi(_foreColor));
               else
-                br = new HatchBrush(_hatchStyle, _foreColor, _backColor);
+                br = new HatchBrush(_hatchStyle, ToGdi(_foreColor), ToGdi(_backColor));
               break;
             case BrushType.LinearGradientBrush:
               if (_brushBoundingRectangle.IsEmpty)
                 _brushBoundingRectangle = new RectangleF(0, 0, 1000, 1000);
               LinearGradientBrush lgb;
-              br = lgb = new LinearGradientBrush(_brushBoundingRectangle, _exchangeColors ? _backColor : _foreColor, _exchangeColors ? _foreColor : _backColor, _gradientMode);
+              br = lgb = new LinearGradientBrush(_brushBoundingRectangle, _exchangeColors ? ToGdi(_backColor) : ToGdi(_foreColor), _exchangeColors ? ToGdi(_foreColor) : ToGdi(_backColor), _gradientMode);
               if (_wrapMode != WrapMode.Clamp)
                 lgb.WrapMode = _wrapMode;
               if (_gradientShape == LinearGradientShape.Triangular)
@@ -758,13 +764,13 @@ namespace Altaxo.Graph.Gdi
               PathGradientBrush pgb = new PathGradientBrush(p);
               if (_exchangeColors)
               {
-                pgb.SurroundColors = new Color[] { _backColor };
-                pgb.CenterColor = _foreColor;
+                pgb.SurroundColors = new Color[] { ToGdi(_backColor) };
+                pgb.CenterColor = ToGdi(_foreColor);
               }
               else
               {
-                pgb.SurroundColors = new Color[] { _foreColor };
-                pgb.CenterColor = _backColor;
+                pgb.SurroundColors = new Color[] { ToGdi(_foreColor) };
+                pgb.CenterColor = ToGdi(_backColor);
               }
               pgb.WrapMode = _wrapMode;
               br = pgb;
@@ -858,7 +864,7 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    public void SetSolidBrush(Color c)
+    public void SetSolidBrush(NamedColor c)
     {
       _brushType = BrushType.SolidBrush;
       _foreColor = c;
@@ -866,12 +872,12 @@ namespace Altaxo.Graph.Gdi
       OnChanged();
     }
 
-    public void SetHatchBrush(HatchStyle hs, Color fc)
+    public void SetHatchBrush(HatchStyle hs, NamedColor fc)
     {
-      SetHatchBrush(hs, fc, Color.Black);
+      SetHatchBrush(hs, fc, NamedColor.Black);
     }
 
-    public void SetHatchBrush(HatchStyle hs, Color fc, Color bc)
+    public void SetHatchBrush(HatchStyle hs, NamedColor fc, NamedColor bc)
     {
       _brushType = BrushType.HatchBrush;
       _hatchStyle = hs;
@@ -925,7 +931,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return new BrushX(Color.Transparent);
+        return new BrushX(NamedColor.Transparent);
       }
     }
 

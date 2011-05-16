@@ -66,14 +66,14 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			var pen = new Altaxo.Graph.Gdi.PenX(System.Drawing.Color.Red, 2);
+			var pen = new Altaxo.Graph.Gdi.PenX(Altaxo.Graph.NamedColor.Red, 2);
 			var ctrl = new Altaxo.Gui.Common.Drawing.PenAllPropertiesController(pen);
 			Current.Gui.ShowDialog(ctrl, "Pen properties");
 		}
 
 		public void Run1()
 		{
-			var brush = new Altaxo.Graph.Gdi.BrushX(System.Drawing.Color.Black);
+			var brush = new Altaxo.Graph.Gdi.BrushX(Altaxo.Graph.NamedColor.Black);
 			var ctrl = new Altaxo.Gui.Common.Drawing.BrushControllerAdvanced(brush);
 			Current.Gui.ShowDialog(ctrl, "Brush pros");
 		}

@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Background
     {
     }
 
-    public FilledRectangle(Color c)
+    public FilledRectangle(NamedColor c)
     {
       _brush = new BrushX(c);
     }

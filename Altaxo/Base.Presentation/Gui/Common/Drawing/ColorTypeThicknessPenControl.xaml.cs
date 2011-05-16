@@ -53,6 +53,14 @@ namespace Altaxo.Gui.Common.Drawing
 				_glue.Pen = value;
 			}
 		}
+
+
+		public void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection)
+		{
+			_glue.CbBrush.SetSelectableColors(colorSet, restrictChoiceToThisCollection);
+		}
+
+	
 		#endregion
 	}
 }

@@ -31,9 +31,9 @@ namespace Altaxo.Graph.Plot.Groups
   public class ColorGroupStyle : IPlotGroupStyle
   {
     bool _isInitialized;
-    PlotColor _color;
+    NamedColor _color;
     bool _isStepEnabled = true;
-
+		IPlotColorSet _colorSet = PlotColorCollections.Instance.BuiltinDarkColors;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 0)]
@@ -53,6 +53,27 @@ namespace Altaxo.Graph.Plot.Groups
         return s;
       }
     }
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 1)] // 2011-05-11 adding ColorSet
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ColorGroupStyle s = (ColorGroupStyle)obj;
+				info.AddValue("StepEnabled", s._isStepEnabled);
+				info.AddValue("ColorSet", s._colorSet);
+			}
+
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : new ColorGroupStyle();
+				s._isStepEnabled = info.GetBoolean("StepEnabled");
+				s._colorSet = (IPlotColorSet)info.GetValue("ColorSet");
+				return s;
+			}
+		}
+
 
     #endregion
 
@@ -92,7 +113,7 @@ namespace Altaxo.Graph.Plot.Groups
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       ColorGroupStyle from = (ColorGroupStyle)fromb;
-      System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, (_color==null?null:_color.Color.ToString()), from._isInitialized, (from._color==null?null:from._color.Color.ToString())));
+      System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, _color.Color.ToString(), from._isInitialized, from._color.Color.ToString()));
       this._isInitialized = from._isInitialized;
       this._color = from._color;
     }
@@ -109,7 +130,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void EndPrepare()
     {
-      System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.EndPrepare, ini={0}, col={1}",_isInitialized,(_color==null ? null:_color.Color.ToString())));
+      System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.EndPrepare, ini={0}, col={1}",_isInitialized,_color.Color.ToString()));
     }
 
    
@@ -134,7 +155,7 @@ namespace Altaxo.Graph.Plot.Groups
     public int Step(int step)
     {
       int wraps;
-      this._color = PlotColors.Colors.GetNextPlotColor(this._color, step, out wraps);
+      this._color = _colorSet.GetNextPlotColor(this._color, step, out wraps);
       return wraps;
     }
 
@@ -164,21 +185,31 @@ namespace Altaxo.Graph.Plot.Groups
         return _isInitialized;
       }
     }
-    public void Initialize(PlotColor c)
+    public void Initialize(NamedColor c)
     {
       _isInitialized = true;
       _color = c;
       //System.Diagnostics.Debug.WriteLine(string.Format("ColorGroup.Initialize, col={0}", _color.Color));
     }
-    public PlotColor Color
+    public NamedColor Color
     {
       get
       {
-        if (null == _color) // then it seems that no color provider has given us a color, so we initialize with black
-          _color = PlotColors.Colors.GetPlotColor(System.Drawing.Color.Black);
         return _color;
       }
     }
+
+		public IPlotColorSet ColorSet
+		{
+			get
+			{
+				return _colorSet;
+			}
+			set
+			{
+				_colorSet = value;
+			}
+		}
     #endregion
 
     #region Static helpers
@@ -203,7 +234,7 @@ namespace Altaxo.Graph.Plot.Groups
         localGroups.Add(new ColorGroupStyle());
     }
 
-    public delegate PlotColor Getter();
+    public delegate NamedColor Getter();
     public static void PrepareStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
@@ -226,7 +257,7 @@ namespace Altaxo.Graph.Plot.Groups
         grpStyle.Initialize(getter());
     }
 
-    public delegate void Setter(PlotColor c);
+    public delegate void Setter(NamedColor c);
     public static void ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,

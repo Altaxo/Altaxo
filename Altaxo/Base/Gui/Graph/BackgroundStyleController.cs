@@ -27,6 +27,7 @@ using System.Drawing;
 
 using Altaxo.Calc;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 
@@ -122,7 +123,7 @@ namespace Altaxo.Gui.Graph
       if (this._tempDoc != null && this._tempDoc.SupportsBrush)
         _view.BackgroundBrush_Initialize(this._tempDoc.Brush);
       else
-        _view.BackgroundBrush_Initialize(new BrushX(Color.Transparent));
+        _view.BackgroundBrush_Initialize(new BrushX(NamedColor.Transparent));
 
       _view.BackgroundBrushEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsBrush);
 
@@ -195,7 +196,7 @@ namespace Altaxo.Gui.Graph
     public void EhView_BackgroundStyleChanged(int newValue)
     {
 
-      BrushX backgroundColor = new BrushX(Color.Transparent);
+      BrushX backgroundColor = new BrushX(NamedColor.Transparent);
 
       if (newValue != 0)
       {

@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 	
-		public FloatingScale(double  lineWidth, Color lineColor)
+		public FloatingScale(double  lineWidth, NamedColor lineColor)
 		{
 			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;

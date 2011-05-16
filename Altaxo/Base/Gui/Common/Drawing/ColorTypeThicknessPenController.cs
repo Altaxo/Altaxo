@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
@@ -31,6 +32,7 @@ namespace Altaxo.Gui.Common.Drawing
   {
     IColorTypeThicknessPenViewEventSink Controller { get; set; }
     PenX DocPen  { get; set; }
+		void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection);
   }
 
   public interface IColorTypeThicknessPenViewEventSink
@@ -51,6 +53,10 @@ namespace Altaxo.Gui.Common.Drawing
     PenX _doc;
     PenX _tempDoc;
     IColorTypeThicknessPenView _view;
+		ICollection<Altaxo.Graph.NamedColor> _colorSet;
+		bool _restrictColorsToGivenSet;
+
+	
 
     public ColorTypeThicknessPenController(PenX doc)
     {
@@ -65,8 +71,19 @@ namespace Altaxo.Gui.Common.Drawing
       if(_view!=null)
       {
         _view.DocPen = _tempDoc;
+				_view.SetSelectableColors(_colorSet, _restrictColorsToGivenSet);
       }
     }
+
+		public void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection)
+		{
+			_colorSet = colorSet;
+			_restrictColorsToGivenSet = restrictChoiceToThisCollection;
+			if (null != _view)
+				_view.SetSelectableColors(_colorSet, _restrictColorsToGivenSet);
+		}
+
+		
     #region IColorTypeThicknessPenViewEventSink Members
 
    

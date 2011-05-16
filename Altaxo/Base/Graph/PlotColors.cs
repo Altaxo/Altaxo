@@ -47,6 +47,22 @@ namespace Altaxo.Graph
 		PlotColor
 	}
 
+	public static class GdiColorHelper
+	{
+		public static NamedColor ToNamedColor(System.Drawing.Color c)
+		{
+			var r = AxoColor.FromArgb(c.A, c.R, c.G, c.B);
+			return new NamedColor(r);
+		}
+
+		public static System.Drawing.Color ToGdi(NamedColor color)
+		{
+			var c = color.Color;
+			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
+		}
+	}
+
+	[Serializable]
 	public struct AxoColor : IEquatable<AxoColor>
 	{
 		bool _isFromArgb;
@@ -145,6 +161,11 @@ namespace Altaxo.Graph
 			return new AxoColor() { A = a, R = r, G = g, B = b, _isFromArgb = true };
 		}
 
+		public int ToArgb()
+		{
+			return _a << 24 | _r << 16 | _g << 8 | _b;
+		}
+
 
 		public AxoColor ToFullyOpaque()
 		{
@@ -197,17 +218,66 @@ namespace Altaxo.Graph
 
 		public override string ToString()
 		{
+			return ToInvariantString();
+		}
+
+		public string ToInvariantString()
+		{
 			if (_isFromArgb)
 			{
-				return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{#{0:X2}{1:X2}{2:X2}{3:X2}}}", _a, _r, _g, _b);
+				return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{#{0:X2}{1:X2}{2:X2}{3:X2}{4}", _a, _r, _g, _b,'}');
 			}
 			else
 			{
-				return string.Format(System.Globalization.CultureInfo.InvariantCulture,"{{sc#{0:R}, {1:R}, {2:R}, {3:R}}}", _scA, _scR, _scG, _scB);
+				return string.Format(System.Globalization.CultureInfo.InvariantCulture,"{{sc#{0:R}, {1:R}, {2:R}, {3:R}{4}", _scA, _scR, _scG, _scB, '}');
+			}
+		}
+
+		public static AxoColor FromInvariantString(string val)
+		{
+			if (val.StartsWith("{sc#"))
+			{
+				int first = 4;
+				int next = val.IndexOf(',',first);
+				if(next<0)
+					throw new ArgumentException("Wrong color format: body unrecognized", "val");
+				var a = float.Parse(val.Substring(first,next-first),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture);
+
+
+				first = next+1;
+				next = val.IndexOf(',', first);
+				if (next < 0)
+					throw new ArgumentException("Wrong color format: body unrecognized", "val");
+				var r = float.Parse(val.Substring(first, next-first), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+
+
+				first = next + 1;
+				next = val.IndexOf(',', first);
+				if (next < 0)
+					throw new ArgumentException("Wrong color format: body unrecognized", "val");
+				var g = float.Parse(val.Substring(first, next - first), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+
+
+				first = next + 1;
+				next = val.Length - 1;
+				var b = float.Parse(val.Substring(first, next - first), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+
+				return AxoColor.FromScRgb(a, r, g, b);
+			}
+			else if (val.StartsWith("{#"))
+			{
+				var u = UInt32.Parse(val.Substring(2,8), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
+				return AxoColor.FromArgb((byte)(u >> 24), (byte)(u >> 16), (byte)(u >> 8), (byte)u);
+			}
+			else
+			{
+				throw new ArgumentException("Wrong color format: header unrecognized", "val");
 			}
 		}
 	}
 
+
+	[Serializable]
 	public struct NamedColor : IEquatable<NamedColor>, IEquatable<AxoColor>
 	{
 		AxoColor _color;
@@ -219,6 +289,29 @@ namespace Altaxo.Graph
 		{
 			_colorsAsReadOnly = _colors.AsReadOnly();
 		}
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NamedColor), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				NamedColor s = (NamedColor)obj;
+				info.AddValue("Color", s.Color.ToInvariantString());
+				info.AddValue("Name", s.Name);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var color = AxoColor.FromInvariantString(info.GetString("Color"));
+				var name = info.GetString("Name");
+
+				return new NamedColor(color, name);
+			}
+		}
+
+		#endregion
+
 
 		public NamedColor(AxoColor c, string name)
 		{
@@ -232,10 +325,21 @@ namespace Altaxo.Graph
 			_name = GetColorName(c);
 		}
 
+		public static NamedColor FromArgb(byte a, byte r, byte g, byte b)
+		{
+			var c = AxoColor.FromArgb(a, r, g, b);
+			return new NamedColor(c, GetColorName(c));
+		}
 
 		public static NamedColor FromArgb(byte a, byte r, byte g, byte b, string name)
 		{
 			return new NamedColor() { _color = AxoColor.FromArgb(a, r, g, b), _name = name };
+		}
+
+		public static NamedColor FromScRgb(float a, float r, float g, float b)
+		{
+			var c = AxoColor.FromScRgb(a, r, g, b);
+			return new NamedColor(c, GetColorName(c));
 		}
 
 		public static NamedColor FromScRgb(float a, float r, float g, float b, string name)
@@ -305,6 +409,16 @@ namespace Altaxo.Graph
 		public bool Equals(AxoColor from)
 		{
 			return this._color.Equals(from);
+		}
+
+		public static bool operator ==(NamedColor x, NamedColor y)
+		{
+			return x.Equals(y);
+		}
+
+		public static bool operator !=(NamedColor x, NamedColor y)
+		{
+			return !x.Equals(y);
 		}
 
 		#region Auto generated code
@@ -1087,289 +1201,223 @@ AxoColor.FromArgb(255, 154, 205, 50),
 
 	}
 
-	public static class ColorDictionary
+
+	public interface IPlotColorSet : IList<NamedColor>
 	{
-		static Dictionary<string, Color> _nameToColor;
-		static Dictionary<Color, string> _colorToName;
-		static List<Color> _knownAndSystemColors;
-		static List<Color> _knownColors;
-		static List<Color> _plotColors;
-
-		static ColorDictionary()
-		{
-			_nameToColor = new Dictionary<string, Color>();
-			_colorToName = new Dictionary<Color, string>(new MyColorComparer());
-			_knownAndSystemColors = new List<Color>();
-			_knownColors = new List<Color>();
-
-			foreach (object o in Enum.GetValues(typeof(KnownColor)))
-			{
-				Color c = Color.FromKnownColor((KnownColor)o);
-				try
-				{
-					_nameToColor.Add(c.Name, c);
-
-					if (!_colorToName.ContainsKey(c)) // Some different names give the same color, so we can use only the first name here
-						_colorToName.Add(c, c.Name);
-
-					_knownAndSystemColors.Add(c);
-					if (!c.IsSystemColor)
-						_knownColors.Add(c);
-				}
-				catch (Exception)
-				{
-
-				}
-			}
-		}
-
-		public static string GetColorName(Color c)
-		{
-			if (c.IsNamedColor)
-				return c.Name;
-			else
-				return _colorToName[c];
-		}
-		public static string GetBaseColorName(Color c)
-		{
-			if (c.IsNamedColor)
-				return c.Name;
-
-			if (_colorToName.ContainsKey(c))
-				return _colorToName[c];
-			else
-				return _colorToName[Color.FromArgb(c.R, c.G, c.B)];
-		}
-
-		public static bool IsColorNamed(Color c)
-		{
-			return c.IsNamedColor || _colorToName.ContainsKey(c);
-		}
-
-		public static bool IsBaseColorNamed(Color c)
-		{
-			if (c.IsNamedColor)
-				return true;
-
-			if (_colorToName.ContainsKey(c))
-				return true;
-			else
-				return _colorToName.ContainsKey(Color.FromArgb(c.R, c.G, c.B));
-		}
-
-
-		public static bool IsNameKnown(string name)
-		{
-			return _nameToColor.ContainsKey(name);
-		}
-
-		public static Color GetColor(string name)
-		{
-			return _nameToColor[name];
-		}
-
-
-		public static Color[] GetKnownAndSystemColors()
-		{
-			return _knownAndSystemColors.ToArray();
-		}
-
-		public static Color[] GetKnownColors()
-		{
-			return _knownColors.ToArray();
-		}
-
-		public static Color[] GetPlotColors()
-		{
-			return PlotColors.Colors.ToArray();
-		}
-
-		public static Color[] GetColorsOfType(ColorType type)
-		{
-			Color[] result = null;
-			switch (type)
-			{
-				case ColorType.PlotColor:
-					result = GetPlotColors();
-					break;
-				case ColorType.KnownColor:
-					result = GetKnownColors();
-					break;
-				case ColorType.KnownAndSystemColor:
-					result = GetKnownAndSystemColors();
-					break;
-			}
-			return result;
-		}
-
-		public static bool IsColorOfType(Color c, ColorType type)
-		{
-			bool result = false;
-			switch (type)
-			{
-				case ColorType.PlotColor:
-					{
-						result = PlotColors.Colors.IsPlotColor(c);
-					}
-					break;
-				case ColorType.KnownColor:
-					{
-						if (_colorToName.ContainsKey(c))
-						{
-							Color cc = _nameToColor[_colorToName[c]];
-							result = !(cc.IsSystemColor);
-						}
-					}
-					break;
-				case ColorType.KnownAndSystemColor:
-					{
-						result = _colorToName.ContainsKey(c);
-					}
-					break;
-			}
-			return result;
-		}
-
-		public static Color GetNormalizedColor(Color c, ColorType type)
-		{
-			Color result = c;
-			switch (type)
-			{
-				case ColorType.PlotColor:
-					if (_colorToName.ContainsKey(c))
-					{
-						result = _nameToColor[_colorToName[c]];
-					}
-					break;
-				case ColorType.KnownColor:
-				case ColorType.KnownAndSystemColor:
-					if (_colorToName.ContainsKey(c))
-					{
-						result = _nameToColor[_colorToName[c]];
-					}
-					break;
-			}
-			return result;
-		}
-
-
-		class MyColorComparer : IEqualityComparer<Color>
-		{
-			#region IEqualityComparer<Color> Members
-
-			public bool Equals(Color x, Color y)
-			{
-				if (x.IsSystemColor || y.IsSystemColor)
-					return (x == y);
-				else
-					return (x.R == y.R && x.G == y.G && x.B == y.B && x.A == y.A);
-			}
-
-			public int GetHashCode(Color x)
-			{
-				if (x.IsSystemColor)
-					return x.GetHashCode();
-				else
-					return Color.FromArgb(x.A, x.R, x.G, x.B).GetHashCode();
-			}
-
-			#endregion
-		}
+		string Name { get; }
+		NamedColor GetNextPlotColor(NamedColor c);
+		NamedColor GetNextPlotColor(NamedColor c, int step);
+		NamedColor GetNextPlotColor(NamedColor c, int step, out int wraps);
 	}
 
-	public class PlotColor
+	public class BuiltinPlotColorSet : IPlotColorSet
 	{
-		System.Drawing.Color _color;
-		string _name;
-		PlotColors _parent;
+		const string BuiltinPrefix = "BuiltIn/";
 
-		public PlotColor(System.Drawing.Color color, string name, PlotColors parent)
+		protected List<NamedColor> _innerList;
+		protected string _name;
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BuiltinPlotColorSet), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			_color = color;
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				BuiltinPlotColorSet s = (BuiltinPlotColorSet)obj;
+				info.AddValue("Name", s._name);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var name = info.GetString("Name");
+				var fullName = BuiltinPrefix + name;
+				if (PlotColorCollections.Instance.Contains(fullName))
+					return PlotColorCollections.Instance[fullName];
+				else
+					return PlotColorCollections.Instance.BuiltinDarkColors;
+			}
+		}
+
+		#endregion
+
+
+		public BuiltinPlotColorSet(string name, IEnumerable<NamedColor> colorSet)
+		{
+			if (string.IsNullOrEmpty(name))
+				throw new ArgumentException("name is null or empty");
+
 			_name = name;
-			_parent = parent;
+			_innerList = new List<NamedColor>(colorSet);
 		}
 
-		public PlotColor(System.Drawing.Color color, string name)
-		{
-			_color = color;
-			_name = name;
-		}
-
-		public System.Drawing.Color Color
-		{
-			get { return _color; }
-		}
+		#region IPlotColorSet
 
 		public string Name
 		{
-			get { return _name; }
+			get { return BuiltinPrefix + _name; }
 		}
 
-		public static implicit operator System.Drawing.Color(PlotColor c)
+		public NamedColor GetNextPlotColor(NamedColor c)
 		{
-			return c._color;
+			return GetNextPlotColor(this, c);
 		}
 
-		public override bool Equals(object obj)
+		public NamedColor GetNextPlotColor(NamedColor c, int step)
 		{
-			if (obj is PlotColor)
-				return this._color == ((PlotColor)obj)._color;
-
-			return false;
+			return GetNextPlotColor(this, c, step);
 		}
 
-		public override int GetHashCode()
+		public NamedColor GetNextPlotColor(NamedColor c, int step, out int wraps)
 		{
-			return this._color.GetHashCode();
+			return GetNextPlotColor(this, c, step, out wraps);
 		}
-	}
 
-	public class PlotColors : System.Collections.ObjectModel.ObservableCollection<PlotColor>
-	{
-		string _name;
+		public void Add(NamedColor item)
+		{
+			throw new InvalidOperationException("This is a read-only collection");
+		}
 
-		static PlotColors _instance = new PlotColors();
-		public static PlotColors Colors
+		public void Clear()
+		{
+			throw new InvalidOperationException("This is a read-only collection");
+		}
+
+		public bool Contains(NamedColor item)
+		{
+			return _innerList.Contains(item);
+		}
+
+		public void CopyTo(NamedColor[] array, int arrayIndex)
+		{
+			_innerList.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return _innerList.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return true; }
+		}
+
+		public bool Remove(NamedColor item)
+		{
+			throw new InvalidOperationException("This is a read-only collection");
+
+		}
+
+		public IEnumerator<NamedColor> GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		public int IndexOf(NamedColor item)
+		{
+			return _innerList.IndexOf(item);
+		}
+
+		public void Insert(int index, NamedColor item)
+		{
+			throw new InvalidOperationException("This is a read-only collection");
+		}
+
+		public void RemoveAt(int index)
+		{
+			throw new InvalidOperationException("This is a read-only collection");
+		}
+
+		public NamedColor this[int index]
 		{
 			get
 			{
-				return _instance;
+				return _innerList[index];
+			}
+			set
+			{
+				throw new InvalidOperationException("This is a read-only collection");
 			}
 		}
 
-		private PlotColors()
+		#endregion
+
+		#region static helper functions
+
+		public static NamedColor GetNextPlotColor(IList<NamedColor> colorSet, NamedColor c)
 		{
-			Add(new PlotColor(System.Drawing.Color.Black, "Black"));
-			Add(new PlotColor(System.Drawing.Color.Red, "Red"));
-			Add(new PlotColor(System.Drawing.Color.Green, "Green"));
-			Add(new PlotColor(System.Drawing.Color.Blue, "Blue"));
-			Add(new PlotColor(System.Drawing.Color.Magenta, "Magenta"));
-			Add(new PlotColor(System.Drawing.Color.Goldenrod, "Goldenrod"));
-			Add(new PlotColor(System.Drawing.Color.Coral, "Coral"));
+			return GetNextPlotColor(colorSet, c, 1);
 		}
+
+		public static NamedColor GetNextPlotColor(IList<NamedColor> colorSet, NamedColor c, int step)
+		{
+			int wraps;
+			return GetNextPlotColor(colorSet, c, step, out wraps);
+		}
+
+		public static NamedColor GetNextPlotColor(IList<NamedColor> colorSet, NamedColor c, int step, out int wraps)
+		{
+			int i = colorSet.IndexOf(c);
+			if (i >= 0)
+			{
+				wraps = Calc.BasicFunctions.NumberOfWraps(colorSet.Count, i, step);
+				return colorSet[Calc.BasicFunctions.PMod(i + step, colorSet.Count)];
+
+			}
+			else
+			{
+				// default if the color was not found
+				wraps = 0;
+				return colorSet[0];
+			}
+		}
+
+		#endregion
+
+		
+	}
+
+	public class PlotColorSet : System.Collections.ObjectModel.ObservableCollection<NamedColor>, IPlotColorSet
+	{
+		string _name;
+
+		/// <summary>
+		/// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
+		/// </summary>
+		/// <param name="name">Name of this plot color collection.</param>
+		public PlotColorSet(string name)
+			:this(name, null)
+		{
+		}
+
 
 		/// <summary>
 		/// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
 		/// </summary>
 		/// <param name="name">Name of this plot color collection.</param>
 		/// <param name="basedOn">Another plot color collection from which to copy the initial items.</param>
-		public PlotColors(string name, PlotColors basedOn)
+		public PlotColorSet(string name, PlotColorSet basedOn)
 		{
 			_name = name;
-			foreach (var item in basedOn)
-				Add(item);
+			if (null != basedOn)
+			{
+				foreach (var item in basedOn)
+					Add(item);
+			}
 		}
 
-		protected override void InsertItem(int index, PlotColor item)
+		protected override void InsertItem(int index, NamedColor item)
 		{
-			var nitem = new PlotColor(item.Color, item.Name, this);
-			base.InsertItem(index, nitem);
+			base.InsertItem(index, item);
 		}
 
-		protected override void SetItem(int index, PlotColor item)
+		protected override void SetItem(int index, NamedColor item)
 		{
-			var nitem = new PlotColor(item.Color, item.Name, this);
 			base.SetItem(index, item);
 		}
 
@@ -1385,69 +1433,24 @@ AxoColor.FromArgb(255, 154, 205, 50),
 			}
 		}
 
-		public Color[] ToArray()
+		public NamedColor[] ToArray()
 		{
-			Color[] result = new Color[Count];
-			for (int i = Count - 1; i >= 0; i--)
-				result[i] = this[i].Color;
-			return result;
+			return this.ToArray();
 		}
 
-		public int IndexOf(Color c)
+		public NamedColor GetNextPlotColor(NamedColor c)
 		{
-			for (int i = 0; i < Count; i++)
-			{
-				if (c.ToArgb() == this[i].Color.ToArgb())
-				{
-					return i;
-				}
-			}
-			return -1;
+			return BuiltinPlotColorSet.GetNextPlotColor(this,c);
 		}
 
-		public PlotColor GetPlotColor(Color c)
+		public NamedColor GetNextPlotColor(NamedColor c, int step)
 		{
-			int i = IndexOf(c);
-			return i < 0 ? null : this[i];
+			return BuiltinPlotColorSet.GetNextPlotColor(this, c, step);
 		}
 
-		public bool IsPlotColor(Color c)
+		public NamedColor GetNextPlotColor(NamedColor c, int step, out int wraps)
 		{
-			return IndexOf(c) >= 0;
-		}
-
-		public string GetPlotColorName(Color c)
-		{
-			int i = IndexOf(c);
-			return i < 0 ? null : this[i].Name;
-		}
-
-		public PlotColor GetNextPlotColor(Color c)
-		{
-			return GetNextPlotColor(c, 1);
-		}
-
-		public PlotColor GetNextPlotColor(Color c, int step)
-		{
-			int wraps;
-			return GetNextPlotColor(c, step, out wraps);
-		}
-
-		public PlotColor GetNextPlotColor(Color c, int step, out int wraps)
-		{
-			int i = IndexOf(c);
-			if (i >= 0)
-			{
-				wraps = Calc.BasicFunctions.NumberOfWraps(Count, i, step);
-				return this[Calc.BasicFunctions.PMod(i + step, Count)];
-
-			}
-			else
-			{
-				// default if the color was not found
-				wraps = 0;
-				return this[0];
-			}
+			return BuiltinPlotColorSet.GetNextPlotColor(this, c, step, out wraps);
 		}
 
 
@@ -1456,12 +1459,41 @@ AxoColor.FromArgb(255, 154, 205, 50),
 
 	public class PlotColorCollections
 	{
-		Dictionary<string, PlotColors> _plotColorCollections = new Dictionary<string, PlotColors>();
+		static PlotColorCollections _instance = new PlotColorCollections();
 
+		Dictionary<string, IPlotColorSet> _plotColorCollections = new Dictionary<string, IPlotColorSet>();
 
-		public void Add(PlotColors plotColors)
+		IPlotColorSet _builtinDarkColors;
+		IPlotColorSet _builtinLightColors;
+
+		private PlotColorCollections()
 		{
-			PlotColors existing;
+			_builtinDarkColors = new BuiltinPlotColorSet("DarkColors", new NamedColor[]{
+			NamedColor.Black,
+			NamedColor.Red,
+			NamedColor.Green,
+			NamedColor.Blue,
+			NamedColor.Magenta,
+			NamedColor.Goldenrod,
+			NamedColor.Coral
+		});
+
+			this.Add(_builtinDarkColors);
+		}
+
+		public static PlotColorCollections Instance { get { return _instance; } }
+
+		public IPlotColorSet BuiltinDarkColors
+		{
+			get
+			{
+				return _builtinDarkColors;
+			}
+		}
+
+		public void Add(IPlotColorSet plotColors)
+		{
+			IPlotColorSet existing;
 			if (_plotColorCollections.TryGetValue(plotColors.Name, out existing) && !object.ReferenceEquals(existing, plotColors))
 				throw new ArgumentException(string.Format("Try to add a plot color collection <<{0}>>, but another collection with the same name is already present", plotColors.Name));
 
@@ -1469,7 +1501,12 @@ AxoColor.FromArgb(255, 154, 205, 50),
 
 		}
 
-		public PlotColors this[string name]
+		public bool Contains(string name)
+		{
+			return _plotColorCollections.ContainsKey(name);
+		}
+
+		public  IPlotColorSet this[string name]
 		{
 			get
 			{

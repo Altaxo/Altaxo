@@ -108,9 +108,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			_nonPageAreaColor = Color.Gray;
 
-			_pageGroundBrush = new BrushX(Color.LightGray);
+			_pageGroundBrush = new BrushX(NamedColor.LightGray);
 
-			_graphAreaBrush = new BrushX(Color.Snow);
+			_graphAreaBrush = new BrushX(NamedColor.Snow);
 
 			_horizontalResolution = 300;
 

@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_brush != null)
 			{
-				_brush.Color = GuiHelper.ToSysDraw(_cbColor1.SelectedWpfColor);
+				_brush.Color = _cbColor1.SelectedColor;
 				OnBrushChanged();
 			}
 		}
@@ -290,7 +290,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_brush != null)
 			{
-				_brush.BackColor = GuiHelper.ToSysDraw(_cbColor2.SelectedWpfColor);
+				_brush.BackColor = _cbColor2.SelectedColor;
 				OnBrushChanged();
 			}
 		}

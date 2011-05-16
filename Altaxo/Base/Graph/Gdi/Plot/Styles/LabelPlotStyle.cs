@@ -390,7 +390,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       this._font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
       this._independentColor = false;
-      this._brush = new BrushX(Color.Black);
+      this._brush = new BrushX(NamedColor.Black);
       this._xOffset = 0;
       this._yOffset = 0;
       this._rotation = 0;
@@ -477,12 +477,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>The brush color.</summary>
-    public System.Drawing.Color Color
+    public NamedColor Color
     {
       get { return this._brush.Color; }
       set
       {
-        Color oldColor = this.Color;
+        var oldColor = this.Color;
         if (value != oldColor)
         {
           this._brush.SetSolidBrush(value);
@@ -812,14 +812,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (this.IsColorProvider)
-        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
+        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
 
     }
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (this.IsColorReceiver)
-        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
     }
 
     #endregion

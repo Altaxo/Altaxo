@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Brush to fill the bar.
     /// </summary>
-    BrushX _fillBrush = new BrushX(Color.Red);
+    BrushX _fillBrush = new BrushX(NamedColor.Red);
     
     /// <summary>
     /// Pen used to frame the bar. Can be null.
@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         bwp.Initialize(_relInnerGapWidth, _relOuterGapWidth);
 
       if (this.IsColorReceiver)
-        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this._fillBrush.Color); });
+        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._fillBrush.Color; });
 
     }
 
@@ -296,7 +296,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         bwp.Apply(out _relInnerGapWidth, out _relOuterGapWidth, out _width, out _position);
 
       if (this.IsColorReceiver)
-        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this._fillBrush.Color = c; });
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._fillBrush.Color = c; });
 
 
     }

@@ -102,8 +102,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public ClosedPathShapeBase()
     {
-      Brush = new BrushX(Color.Transparent);
-      Pen = new PenX(Color.Black);
+      Brush = new BrushX(NamedColor.Transparent);
+      Pen = new PenX(NamedColor.Black);
     }
 
 		public ClosedPathShapeBase(PointD2D Position, PointD2D Size)

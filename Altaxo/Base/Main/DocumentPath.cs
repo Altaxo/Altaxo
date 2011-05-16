@@ -195,6 +195,12 @@ namespace Altaxo.Main
       return type.IsInstanceOfType(root) ? root : null;
     }
 
+		/// <summary>
+		/// Get the first parent node of the node <code>node</code> that implements the given type <code>type.</code>.
+		/// </summary>
+		/// <typeparam name="T">The type to search for.</typeparam>
+		/// <param name="node">The node from where the search begins.</param>
+		/// <returns>The first parental node that implements the type <code>T</code>.</returns>
     public static T GetRootNodeImplementing<T>(IDocumentNode node)
     {
       object root = node.ParentObject;

@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this.m_LineSymbolGap = true;
     }
 
-    public System.Drawing.Color Color
+    public NamedColor Color
     {
       get
       {
@@ -210,7 +210,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if(m_ScatterStyle!=null)
           return this.m_ScatterStyle.Color;
         else
-          return Color.Black;
+          return NamedColor.Black;
       }
       set
       {

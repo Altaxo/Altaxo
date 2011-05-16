@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi.Axis
     protected StringAlignment _verticalAlignment;
 
     protected StringFormat _stringFormat;
-    protected BrushX _brush = new BrushX(Color.Black);
+    protected BrushX _brush = new BrushX(NamedColor.Black);
     
     /// <summary>The x offset in EM units.</summary>
     protected double _xOffset;
@@ -400,12 +400,12 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
     /// <summary>The brush color. If you set this, the font brush will be set to a solid brush.</summary>
-    public System.Drawing.Color Color
+    public NamedColor Color
     {
-      get { return this._brush.Color;; }
+      get { return this._brush.Color; }
       set 
       {
-        Color oldColor = this.Color;
+        var oldColor = this.Color;
         if(value!=oldColor)
         {
           this._brush.SetSolidBrush( value );

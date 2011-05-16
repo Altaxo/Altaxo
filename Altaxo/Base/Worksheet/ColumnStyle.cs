@@ -27,6 +27,7 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
+	using Altaxo.Graph;
 
   [Serializable]
   public enum ColumnStyleType { RowHeader, ColumnHeader, PropertyHeader, PropertyCell, DataCell }
@@ -42,13 +43,13 @@ namespace Altaxo.Worksheet
   public abstract class ColumnStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
   {
 
-    protected static BrushX _defaultNormalBackgroundBrush = new BrushX(SystemColors.Window);
-    protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(SystemColors.Control);
-    protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(SystemColors.Highlight);
-    protected static BrushX _defaultNormalTextBrush = new BrushX(SystemColors.WindowText);
-    protected static BrushX _defaultSelectedTextBrush = new BrushX(SystemColors.HighlightText);
+    protected static BrushX _defaultNormalBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.Window));
+    protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.Control));
+    protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.Highlight));
+    protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.WindowText));
+    protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.HighlightText));
     protected static Font _defaultTextFont = new Font("Arial", 8);
-    protected static PenX _defaultCellPen = new PenX(SystemColors.InactiveBorder, 1);
+    protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor( SystemColors.InactiveBorder), 1);
 
     protected ColumnStyleType _columnStyleType;
 
@@ -56,15 +57,15 @@ namespace Altaxo.Worksheet
     protected StringFormat _textFormat = new StringFormat();
 
     protected bool _isCellPenCustom;
-    protected PenX _cellPen = new PenX(SystemColors.InactiveBorder,1);
+    protected PenX _cellPen = new PenX(GdiColorHelper.ToNamedColor( SystemColors.InactiveBorder),1);
     
     protected Font _textFont = new Font("Arial",8);
 
     protected bool _isTextBrushCustom;
-    protected BrushX _textBrush = new BrushX(SystemColors.WindowText);
+    protected BrushX _textBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.WindowText));
 
     protected bool _isBackgroundBrushCustom;
-    protected BrushX _backgroundBrush = new BrushX(SystemColors.Window);
+    protected BrushX _backgroundBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.Window));
 
     
 
@@ -291,7 +292,7 @@ namespace Altaxo.Worksheet
       if(type==ColumnStyleType.DataCell || type==ColumnStyleType.PropertyCell)
         return (PenX)_defaultCellPen.Clone();
       else      
-        return new PenX(SystemColors.ControlDarkDark, 1);
+        return new PenX(GdiColorHelper.ToNamedColor( SystemColors.ControlDarkDark), 1);
     }
 
     public void SetDefaultCellBorder()
@@ -305,7 +306,7 @@ namespace Altaxo.Worksheet
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
         return (BrushX)_defaultNormalTextBrush.Clone();
       else
-        return new BrushX(SystemColors.ControlText);
+        return new BrushX(GdiColorHelper.ToNamedColor( SystemColors.ControlText));
     }
     public void SetDefaultTextBrush()
     {

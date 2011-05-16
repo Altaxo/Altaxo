@@ -105,7 +105,13 @@ namespace Altaxo.Gui.Graph
     
 
     #endregion // Getter
-  }
+
+		#region events
+
+		event Action IndependentColorChanged;
+
+		#endregion
+	}
 
 
   #endregion
@@ -120,7 +126,10 @@ namespace Altaxo.Gui.Graph
     IXYPlotLineStyleView _view;
     LinePlotStyle _doc;
     LinePlotStyle _tempDoc;
-    IColorTypeThicknessPenController _penController;
+    ColorTypeThicknessPenController _penController;
+
+		/// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
+		Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
 
     UseDocument _useDocumentCopy;
     public XYPlotLineStyleController()
@@ -155,6 +164,7 @@ namespace Altaxo.Gui.Graph
       {
 				if (_view != null)
 				{
+					_view.IndependentColorChanged -= EhIndependentColorChanged;
 				}
 
         _view = value as IXYPlotLineStyleView;
@@ -162,9 +172,13 @@ namespace Altaxo.Gui.Graph
 				if (_view != null)
 				{
 					Initialize(false);
+					_view.IndependentColorChanged += EhIndependentColorChanged;
 				}
       }
     }
+
+	
+
     public object ModelObject
     {
       get
@@ -173,20 +187,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public static string [] GetPlotColorNames()
-    {
-      string[] arr = new string[1+PlotColors.Colors.Count];
-
-      arr[0] = "Custom";
-
-      int i=1;
-      foreach(PlotColor c in PlotColors.Colors)
-      {
-        arr[i++] = c.Name;
-      }
-
-      return arr;
-    }
+ 
 
 
     bool _ActivateEnableDisableMain = false;
@@ -205,7 +206,14 @@ namespace Altaxo.Gui.Graph
 		{
 			if(initData)
 			{
-				_penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
+				// try to get the color group style that is responsible for coloring this item
+				_colorGroupStyle = GetColorGroupStyle();
+
+				var penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
+				_penController = penController;
+
+				if (null != _colorGroupStyle && !_tempDoc.IndependentColor)
+					penController.SetSelectableColors( _colorGroupStyle.ColorSet, true);
 			}
 
 			if (_view != null)
@@ -228,6 +236,31 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		void EhIndependentColorChanged()
+		{
+			_tempDoc.IndependentColor = _view.IndependentColor;
+			if (!_tempDoc.IndependentColor && null != _colorGroupStyle)
+			{
+				_penController.SetSelectableColors(_colorGroupStyle.ColorSet, true);
+			}
+			else
+			{
+				_penController.SetSelectableColors(NamedColor.Collection, false);
+			}
+		}
+
+		public Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle()
+		{
+			var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(_doc);
+			if (null == plotItemCollection)
+				return null;
+
+			if (plotItemCollection.GroupStyles.ContainsType(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle)))
+				return (Altaxo.Graph.Plot.Groups.ColorGroupStyle)plotItemCollection.GroupStyles.GetPlotGroupStyle(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle));
+			else
+				return null;
+		}
+
 
     public void SetLineSymbolGapCondition()
     {
@@ -242,12 +275,6 @@ namespace Altaxo.Gui.Graph
     
       _view.InitializeLineConnect(names,_tempDoc.Connection.ToString());
     }
-
-   
-
-
-  
-    
 
     public void SetFillCondition()
     {
