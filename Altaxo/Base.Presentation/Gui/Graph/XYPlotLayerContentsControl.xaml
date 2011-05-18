@@ -39,7 +39,7 @@
 			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
 		<Label x:Name="_label1"  Grid.Column="0" Grid.Row="0">Available data:</Label>
-		<axogc:MultiSelectTreeView x:Name="m_Content_tvDataAvail" Grid.Column="0" Grid.Row="2" Grid.RowSpan="13">
+		<axogc:MultiSelectTreeView x:Name="m_Content_tvDataAvail" Grid.Column="0" Grid.Row="2" Grid.RowSpan="13" Focusable="True">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">

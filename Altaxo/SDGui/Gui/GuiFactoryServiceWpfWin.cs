@@ -331,10 +331,15 @@ namespace Altaxo.Gui
 
 		#region Clipboard
 
+	
+
+		/* old WinForm Clipboard wrappers 
+		
 		private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
 		{
 			public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
 		}
+		 
 		private class ClipGetDataWrapper : IClipboardGetDataObject
 		{
 			System.Windows.Forms.DataObject _dao;
@@ -355,22 +360,97 @@ namespace Altaxo.Gui
 			public System.Drawing.Image GetImage() { return _dao.GetImage(); }
 
 		}
+		*/
+
+
+		private class WpfClipSetDataWrapper : IClipboardSetDataObject
+		{
+			System.Windows.DataObject _dao = new System.Windows.DataObject();
+
+			public System.Windows.IDataObject DataObject { get { return _dao; } }
+
+			public void SetImage(System.Drawing.Image image)
+			{
+				_dao.SetData(image);
+			}
+
+			public void SetFileDropList(System.Collections.Specialized.StringCollection filePaths)
+			{
+				_dao.SetFileDropList(filePaths);
+			}
+
+			public void SetData(string format, object data)
+			{
+				_dao.SetData(format, data);
+			}
+
+			public void SetData(Type format, object data)
+			{
+				_dao.SetData(format, data);
+			}
+
+			public void SetCommaSeparatedValues(string text)
+			{
+				_dao.SetData("Csv", text);
+			}
+		}
+
+
+		private class WpfClipGetDataWrapper : IClipboardGetDataObject
+		{
+			System.Windows.DataObject _dao;
+
+			public WpfClipGetDataWrapper(System.Windows.DataObject value)
+			{
+				_dao = value;
+			}
+
+			public string[] GetFormats() { return _dao.GetFormats(); }
+			public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
+			public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
+			public object GetData(string format) { return _dao.GetData(format); }
+			public object GetData(System.Type type) { return _dao.GetData(type); }
+			public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
+			public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
+			public bool ContainsImage() { return _dao.ContainsImage(); }
+			public System.Drawing.Image GetImage() 
+			{
+				try
+				{
+				if (_dao.GetDataPresent("EnhancedMetafile"))
+					return (System.Drawing.Imaging.Metafile)_dao.GetData("EnhancedMetafile");
+				else if (_dao.GetDataPresent("System.Drawing.Imaging.Metafile"))
+					return (System.Drawing.Imaging.Metafile)_dao.GetData("System.Drawing.Imaging.Metafile");
+				else if(_dao.GetDataPresent("System.Drawing.Bitmap"))
+					return (System.Drawing.Bitmap)_dao.GetData("System.Drawing.Bitmap");
+				}
+				catch(Exception)
+				{
+				}
+				
+				return null;
+			}
+		}
 
 		public override IClipboardSetDataObject GetNewClipboardDataObject()
 		{
-			return new ClipDataWrapper();
+			return new WpfClipSetDataWrapper();
 		}
 
 		public override IClipboardGetDataObject OpenClipboardDataObject()
 		{
-			var dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
-			return new ClipGetDataWrapper(dao);
+			//var dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
+			//return new ClipGetDataWrapper(dao);
+
+			var dao = System.Windows.Clipboard.GetDataObject() as System.Windows.DataObject;
+			return new WpfClipGetDataWrapper(dao);
 		}
 
 
 		public override void SetClipboardDataObject(IClipboardSetDataObject dataObject, bool copy)
 		{
-			System.Windows.Forms.Clipboard.SetDataObject(dataObject, copy);
+			//System.Windows.Forms.Clipboard.SetDataObject(dataObject, copy);
+			System.Windows.Clipboard.SetDataObject(((WpfClipSetDataWrapper)dataObject).DataObject, copy);
 		}
 
 

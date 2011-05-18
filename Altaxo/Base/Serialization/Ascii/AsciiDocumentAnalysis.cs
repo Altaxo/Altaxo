@@ -114,7 +114,8 @@ namespace Altaxo.Serialization.Ascii
         int maxNumberOfEqualLines;
         AsciiLineStructure mostFrequentLineStructure;
         GetPriorityOf(result, strat, out maxNumberOfEqualLines, out mostFrequentLineStructure);
-        numEqLinesAndStructForSeparationStrategy.Add(strat, new NumberAndStructure() { NumberOfLines = maxNumberOfEqualLines, LineStructure = mostFrequentLineStructure });
+				if(null!=mostFrequentLineStructure)
+				 numEqLinesAndStructForSeparationStrategy.Add(strat, new NumberAndStructure() { NumberOfLines = maxNumberOfEqualLines, LineStructure = mostFrequentLineStructure });
       }
 
       // determine, which of the separation strategies results in the topmost total priority (product of number of lines and best line priority)
@@ -183,6 +184,19 @@ namespace Altaxo.Serialization.Ascii
 
     }
 
+		 /// <summary>
+  /// Determines, which lines are the most fr
+  /// </summary>
+  /// <param name="result"></param>
+  /// <param name="sep"></param>
+  /// <param name="maxNumberOfEqualLines"></param>
+  /// <param name="bestLine"></param>
+		public static void GetPriorityOf(List<AsciiLineAnalysis> result, IAsciiSeparationStrategy sep,
+			out int maxNumberOfEqualLines,
+			out AsciiLineStructure bestLine)
+		{
+			GetPriorityOf(result, sep, null, out maxNumberOfEqualLines, out bestLine);
+		}
 
   /// <summary>
   /// Determines, which lines are the most fr
@@ -191,7 +205,7 @@ namespace Altaxo.Serialization.Ascii
   /// <param name="sep"></param>
   /// <param name="maxNumberOfEqualLines"></param>
   /// <param name="bestLine"></param>
-    public static void GetPriorityOf(List<AsciiLineAnalysis> result, IAsciiSeparationStrategy sep, 
+    public static void GetPriorityOf(List<AsciiLineAnalysis> result, IAsciiSeparationStrategy sep, HashSet<int> excludeLineStructureHashes,
       out int maxNumberOfEqualLines,
       out AsciiLineStructure bestLine)
     {
@@ -216,6 +230,10 @@ namespace Altaxo.Serialization.Ascii
       foreach (var dictEntry in numberOfLinesForLineStructureHash)
       {
         int lineStructureHash = dictEntry.Key;
+
+				if (null != excludeLineStructureHashes && excludeLineStructureHashes.Contains(lineStructureHash))
+					continue;
+
         int numberOfLines = dictEntry.Value;
         if (maxNumberOfEqualLines < numberOfLines)
         {
@@ -240,6 +258,24 @@ namespace Altaxo.Serialization.Ascii
           }
         }// if
       } // for
+
+			// if the bestLine is a line with a column count of zero, we should use the next best line
+			// we achieve this by adding the best hash to a list of excluded hashes and call the function again
+			if (bestLine != null && bestLine.Count == 0)
+			{
+				if (null != excludeLineStructureHashes && !excludeLineStructureHashes.Contains(hashOfMostFrequentStructure))
+				{
+					excludeLineStructureHashes.Add(hashOfMostFrequentStructure);
+					GetPriorityOf(result, sep, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);
+					return;
+				}
+				else if (null == excludeLineStructureHashes)
+				{
+					excludeLineStructureHashes = new HashSet<int>() { hashOfMostFrequentStructure };
+					GetPriorityOf(result, sep, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);
+					return;
+				}
+			}
     }
 
     private static void PutRecognizedStructuresToClipboard(List<AsciiLineAnalysis> analysisResults, IList<IAsciiSeparationStrategy> separationStrategies)

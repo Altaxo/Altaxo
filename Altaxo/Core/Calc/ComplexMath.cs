@@ -27,7 +27,7 @@ namespace Altaxo.Calc
   /// <summary>
   /// <p>Various mathematical functions for complex numbers.</p>
   /// </summary>
-  public class ComplexMath 
+  public static class ComplexMath 
   {
     #region private helper constants and functions
     const double M_PI = Math.PI;
@@ -1194,14 +1194,23 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Returns the square of the complex number.
+    /// Returns the 3rd power of the complex number.
     /// </summary>
     /// <param name="c">Argument.</param>
-    /// <returns>Square of c.</returns>
+    /// <returns>3rd power of c.</returns>
     static public Complex Pow3(Complex c)
     {
       return c * c * c;
     }
+
+		public static Complex Pow4(this Complex x) { Complex x2 = x * x; return x2 * x2; }
+		public static Complex Pow5(this Complex x) { Complex x2 = x * x; return x2 * x2 * x; }
+		public static Complex Pow6(this Complex x) { Complex x2 = x * x; return x2 * x2 * x2; }
+		public static Complex Pow7(this Complex x) { Complex x3 = x * x * x; return x3 * x3 * x; }
+		public static Complex Pow8(this Complex x) { Complex x2 = x * x; Complex x4 = x2 * x2; return x4 * x4; }
+		public static Complex Pow9(this Complex x) { Complex x3 = x * x * x; return x3 * x3 * x3; }
+
+	
 
     /// <summary>
     /// Returns the complex secant of the argument z, i.e. 1/Cos(z)

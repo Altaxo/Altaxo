@@ -101,12 +101,14 @@ namespace Altaxo.Gui.Common
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			base.OnMouseDown(e);
-
+				
 			var tw = ParentMultiSelectTreeView;
 			if (null!=tw)
 			{
 				tw.OnViewItemMouseDown(this,e);
 			}
+
+			Keyboard.Focus(this); // neccessary because the element needs the keyboard focus in order to position the selection with the keyboard
 		}
 
 	
