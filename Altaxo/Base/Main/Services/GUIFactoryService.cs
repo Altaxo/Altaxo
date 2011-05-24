@@ -34,6 +34,10 @@ namespace Altaxo.Main.Services
   /// </summary>
   public abstract class GUIFactoryService
   {
+		/// <summary>
+		/// Gets the window handle of the main window;
+		/// </summary>
+		public abstract IntPtr MainWindowHandle { get; }
 
 		/// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type.

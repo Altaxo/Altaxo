@@ -452,6 +452,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\PrintingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -872,6 +876,9 @@
     </Compile>
     <Compile Include="Gui\Graph\PrintableAreaSetupControl.xaml.cs">
       <DependentUpon>PrintableAreaSetupControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PrintingControl.xaml.cs">
+      <DependentUpon>PrintingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.xaml.cs">
       <DependentUpon>AngularTickSpacingControl.xaml</DependentUpon>

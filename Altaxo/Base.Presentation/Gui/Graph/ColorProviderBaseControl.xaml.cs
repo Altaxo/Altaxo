@@ -16,6 +16,8 @@ using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Graph;
+
 	/// <summary>
 	/// Interaction logic for ColorProviderBaseControl.xaml
 	/// </summary>
@@ -38,39 +40,39 @@ namespace Altaxo.Gui.Graph
 
 		public event Action ChoiceChanged;
 
-		public sd.Color ColorBelow
+		public NamedColor ColorBelow
 		{
 			get
 			{
-				return _cbColorBelow.SelectedGdiColor;
+				return _cbColorBelow.SelectedColor;
 			}
 			set
 			{
-				_cbColorBelow.SelectedGdiColor = value;
+				_cbColorBelow.SelectedColor = value;
 			}
 		}
 
-		public sd.Color ColorAbove
+		public NamedColor ColorAbove
 		{
 			get
 			{
-				return _cbColorAbove.SelectedGdiColor;
+				return _cbColorAbove.SelectedColor;
 			}
 			set
 			{
-				_cbColorAbove.SelectedGdiColor = value;
+				_cbColorAbove.SelectedColor = value;
 			}
 		}
 
-		public sd.Color ColorInvalid
+		public NamedColor ColorInvalid
 		{
 			get
 			{
-				return _cbInvalid.SelectedGdiColor;
+				return _cbInvalid.SelectedColor;
 			}
 			set
 			{
-				_cbInvalid.SelectedGdiColor = value;
+				_cbInvalid.SelectedColor = value;
 			}
 		}
 

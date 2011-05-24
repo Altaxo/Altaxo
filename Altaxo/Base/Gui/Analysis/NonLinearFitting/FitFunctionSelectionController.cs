@@ -30,6 +30,7 @@ using System.Reflection;
 using Altaxo.Scripting;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main.Services;
+using Altaxo.Graph;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -47,7 +48,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void AddFitFunctionList(string rootname, Altaxo.Main.Services.IFitFunctionInformation[] info, FitFunctionContextMenuStyle menustyle);
 
     void SetRtfDocumentation(string rtfString);
-    Color GetRtfBackgroundColor();
+    NamedColor GetRtfBackgroundColor();
   }
 
   public interface IFitFunctionSelectionViewEventSink

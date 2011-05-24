@@ -332,6 +332,20 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
+		/// Converts a folder name (i.e. either an empty string or a string with a trailing <see cref="DirectorySeparatorChar"/>) to a
+		/// name which can be used to display. Only the last part of the folder name is returned here. 
+		/// </summary>
+		/// <param name="folderName">The name of the folder.</param>
+		/// <returns>The last part of a full folder name name that can be displayed. The root folder name is converted an empty string, and all other folder names are stripped off the trailing <see cref="DirectorySeparatorChar"/>.</returns>
+		public static string ConvertFolderNameToDisplayFolderLastPart(string folderName)
+		{
+			var name = ProjectFolder.GetFoldersLastFolderPart(folderName);
+			if (name.Length > 0 && name[name.Length - 1] == ProjectFolder.DirectorySeparatorChar)
+				name = name.Substring(0, name.Length - 1);
+			return name;
+		}
+
+		/// <summary>
 		/// Converts a string that was used by the Gui or entered by the user (and contains no trailing <see cref="DirectorySeparatorChar"/>) to a
 		/// valid folder name.
 		/// </summary>

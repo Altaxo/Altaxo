@@ -234,9 +234,7 @@ namespace Altaxo.Scripting
   
 
    
-
-
-    /// <summary>
+		/// <summary>
     /// Executes the script. If no instance of the script object exists, the script is compiled. If thereafter no script object exists, a error message will be stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
@@ -245,27 +243,73 @@ namespace Altaxo.Scripting
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool Execute(Altaxo.Data.DataTable myTable, IProgressReporter reporter)
+		public bool Execute(Altaxo.Data.DataTable myTable, IProgressReporter reporter)
+		{
+			return Execute(myTable, reporter, true);
+		}
+
+		/// <summary>
+		/// Executes the script. If no instance of the script object exists, the script is compiled. If thereafter no script object exists, a error message will be stored and the return value is false.
+		/// If the script object exists, the Execute function of this script object is called.
+		/// </summary>
+		/// <param name="myTable">The data table this script is working on.</param>
+		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+		/// <remarks>No exceptions are catched here. This function is therefore intended for being called by another script.</remarks>
+		public void ExecuteWithoutExceptionCatching(Altaxo.Data.DataTable myTable, IProgressReporter reporter)
+		{
+			Execute(myTable, reporter, false);
+		}
+
+
+    /// <summary>
+    /// Executes the script. If no instance of the script object exists, the script is compiled. If thereafter no script object exists, a error message will be stored and the return value is false.
+    /// If the script object exists, the Execute function of this script object is called.
+    /// </summary>
+    /// <param name="myTable">The data table this script is working on.</param>
+		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+		/// <param name="catchExceptionsAndStoreThemInThisScript">If true, exceptions during the script execution are catched and stored here for further investigation by the user.
+		/// If you call this script from another script, you should set this parameter to false in order to see the execution errors in your script.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    public bool Execute(Altaxo.Data.DataTable myTable, IProgressReporter reporter, bool catchExceptionsAndStoreThemInThisScript)
     {
 			if (null == _scriptObject && !_wasTriedToCompile)
 				Compile();
 
       if(null==_scriptObject)
       {
-        _errors = new string[1]{"Script Object is null"};
-        return false;
+				if (catchExceptionsAndStoreThemInThisScript)
+				{
+					_errors = new string[1] { "Script Object is null" };
+					return false;
+				}
+				else
+				{
+					throw new InvalidOperationException("The script object is null");
+				}
       }
 
-      try
-      {
-        ((Altaxo.Calc.TableScriptExeBase)_scriptObject).Execute(myTable, reporter);
-      }
-      catch(Exception ex)
-      {
-        _errors = new string[1];
-        _errors[0] = ex.ToString();
-        return false;
-      }
+			if (catchExceptionsAndStoreThemInThisScript)
+			{
+				try
+				{
+					((Altaxo.Calc.TableScriptExeBase)_scriptObject).Execute(myTable, reporter);
+				}
+				catch (Exception ex)
+				{
+					_errors = new string[1];
+					_errors[0] = ex.ToString();
+					return false;
+				}
+			}
+			else // Execution without catching the exceptions
+			{
+				
+				((Altaxo.Calc.TableScriptExeBase)_scriptObject).Execute(myTable, reporter);
+				
+			}
+
       return true;
     }
 

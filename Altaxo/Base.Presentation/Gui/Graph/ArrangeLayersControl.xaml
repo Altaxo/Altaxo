@@ -43,8 +43,8 @@
 
 		<axogc:Int32UpDown x:Name="_edNumberOfRows" Grid.Row="0" Grid.Column="1" Minimum="1" ValueChanged="_edNumberOfRows_Validating"/>
 		<axogc:Int32UpDown x:Name="_edNumberOfColumns" Grid.Row="2" Grid.Column="1" Minimum="1" ValueChanged="_edNumberOfColumns_Validating"/>
-		<axogc:ValidatingTextBox x:Name="_edRowSpacing" Grid.Row="4" Grid.Column="1" Validating="_edNumberOfColumns_Validating"/>
-		<axogc:ValidatingTextBox x:Name="_edColumnSpacing" Grid.Row="6" Grid.Column="1" Validating="_edNumberOfColumns_Validating"/>
+		<axogc:ValidatingTextBox x:Name="_edRowSpacing" Grid.Row="4" Grid.Column="1" Validating="_edRowSpacing_Validating"/>
+		<axogc:ValidatingTextBox x:Name="_edColumnSpacing" Grid.Row="6" Grid.Column="1" Validating="_edColumnSpacing_Validating"/>
 		<axogc:ValidatingTextBox x:Name="_edTopMargin" Grid.Row="8" Grid.Column="1" Validating="_edTopMargin_Validating"/>
 		<axogc:ValidatingTextBox x:Name="_edLeftMargin" Grid.Row="10" Grid.Column="1" Validating="_edLeftMargin_Validating"/>
 		<axogc:ValidatingTextBox x:Name="_edBottomMargin" Grid.Row="12" Grid.Column="1" Validating="_edBottomMargin_Validating"/>

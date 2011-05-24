@@ -152,9 +152,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       _view.SetChoice3(_choices, (int)_spanRescaling);
 
 
-      _view.SetValue1(NumberConversion.ToString(_org));
-      _view.SetValue2(NumberConversion.ToString(_end));
-      _view.SetValue3(NumberConversion.ToString(_span));
+      _view.SetValue1(GUIConversion.ToString(_org));
+      _view.SetValue2(GUIConversion.ToString(_end));
+      _view.SetValue3(GUIConversion.ToString(_span));
 
       SetEnableState();
     }

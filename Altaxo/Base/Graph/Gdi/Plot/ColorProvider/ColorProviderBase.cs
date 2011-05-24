@@ -6,6 +6,8 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
+	using Altaxo.Graph;
+
 	/// <summary>
 	/// Abstract class to calculate a color out of a relative value that is normally
 	/// between 0 and 1. Special colors are used here for values between 0, above 1, and for NaN.
@@ -13,13 +15,13 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 	public abstract class ColorProviderBase : IColorProvider
 	{
 		/// <summary>The color used if the values are below the lower bound.</summary>
-		protected Color _colorBelow;
+		protected NamedColor _colorBelow;
 
 		/// <summary>The color used if the values are above the upper bound.</summary>
-		protected Color _colorAbove;
+		protected NamedColor _colorAbove;
 
 		/// <summary>The color used for invalid values (missing values).</summary>
-		protected Color _colorInvalid;
+		protected NamedColor _colorInvalid;
 
 		/// <summary>Alpha channel for the generated colors. Range from 0 to 255.</summary>
 		protected int _alphaChannel;
@@ -34,12 +36,19 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// </summary>
 		public event EventHandler Changed;
 
+		/// <summary>Cached Gdi color for <see cref="_colorBelow"/>.</summary>
+		protected Color _cachedGdiColorBelow;
+		/// <summary>Cached Gdi color for <see cref="_colorAbove"/>.</summary>
+		protected Color _cachedGdiColorAbove;
+		/// <summary>Cached Gdi color for <see cref="_colorInvalid"/>.</summary>
+		protected Color _cachedGdiColorInvalid;
+
 
 		public ColorProviderBase()
 		{
-			_colorBelow = Color.Black;
-			_colorAbove = Color.Snow;
-			_colorInvalid = Color.Transparent;
+			_colorBelow = NamedColor.Black;
+			_colorAbove = NamedColor.Snow;
+			_colorInvalid = NamedColor.Transparent;
 			_alphaChannel = 255;
 			_colorSteps = 0;
 		}
@@ -88,9 +97,15 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 				ColorProviderBase s = (ColorProviderBase)o;
 
-				s._colorBelow = (System.Drawing.Color)info.GetValue("ColorBelow", parent);
-				s._colorAbove = (System.Drawing.Color)info.GetValue("ColorAbove", parent);
-				s._colorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid", parent);
+				s._colorBelow = (NamedColor)info.GetValue("ColorBelow", parent);
+				s._cachedGdiColorBelow = GdiColorHelper.ToGdi(s._colorBelow);
+		
+				s._colorAbove = (NamedColor)info.GetValue("ColorAbove", parent);
+				s._cachedGdiColorAbove = GdiColorHelper.ToGdi(s._colorAbove);
+
+				s._colorInvalid = (NamedColor)info.GetValue("ColorInvalid", parent);
+				s._cachedGdiColorInvalid = GdiColorHelper.ToGdi(s._colorInvalid);
+
 				s.Transparency = info.GetDouble("Transparency");
 				s.ColorSteps = info.GetInt32("ColorSteps");
 
@@ -107,13 +122,14 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <summary>
 		/// Gets/sets the color used when the relative value is smaller than 0.
 		/// </summary>
-		public System.Drawing.Color ColorBelow
+		public NamedColor ColorBelow
 		{
 			get { return _colorBelow; }
 			set
 			{
-				Color oldValue = _colorBelow;
+				var oldValue = _colorBelow;
 				_colorBelow = value;
+				_cachedGdiColorBelow = GdiColorHelper.ToGdi(_colorBelow);
 
 				if (_colorBelow != oldValue)
 				{
@@ -126,14 +142,16 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <summary>
 		/// Get/sets the color used when the relative value is greater than 1.
 		/// </summary>
-		public System.Drawing.Color ColorAbove
+		public NamedColor ColorAbove
 		{
 			get { return _colorAbove; }
 			set
 			{
-				Color oldValue = _colorAbove;
+				var oldValue = _colorAbove;
 
 				_colorAbove = value;
+				_cachedGdiColorAbove = GdiColorHelper.ToGdi(_colorAbove);
+
 				if (_colorAbove != oldValue)
 				{
 					OnChanged();
@@ -145,13 +163,15 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <summary>
 		/// Gets/sets the color when the relative value is NaN.
 		/// </summary>
-		public System.Drawing.Color ColorInvalid
+		public NamedColor ColorInvalid
 		{
 			get { return _colorInvalid; }
 			set
 			{
-				Color oldValue = _colorInvalid;
+				var oldValue = _colorInvalid;
 				_colorInvalid = value;
+				_cachedGdiColorInvalid = GdiColorHelper.ToGdi(_colorInvalid);
+
 				if (_colorInvalid != oldValue)
 				{
 					OnChanged();
@@ -212,11 +232,11 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		public virtual Color GetOutOfBoundsColor(double relVal)
 		{
 			if(relVal<0)
-				return _colorBelow;
+				return _cachedGdiColorBelow;
 			else if(relVal>1)
-				return _colorAbove;
+				return _cachedGdiColorAbove;
 			else
-				return _colorInvalid;
+				return _cachedGdiColorInvalid;
 		}
 
 	

@@ -274,6 +274,17 @@ namespace Altaxo.Graph
 				throw new ArgumentException("Wrong color format: header unrecognized", "val");
 			}
 		}
+
+
+		#region Conversion operators
+
+		public static implicit operator System.Drawing.Color(AxoColor c)
+		{
+			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
+		}
+
+		#endregion
+
 	}
 
 
@@ -420,6 +431,21 @@ namespace Altaxo.Graph
 		{
 			return !x.Equals(y);
 		}
+
+		#region Conversion
+
+		public static implicit operator AxoColor(NamedColor c)
+		{
+			return c.Color;
+		}
+
+		public static implicit operator System.Drawing.Color(NamedColor c)
+		{
+			return (System.Drawing.Color)c.Color;
+		}
+
+
+		#endregion
 
 		#region Auto generated code
 
@@ -758,6 +784,9 @@ NamedColor.FromArgb(255, 154, 205, 50, "YellowGreen"),
 				return _colors.GetEnumerator();
 			}
 		}
+
+	
+
 
 		#region Generated code
 

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 
 using Altaxo.Collections;
 using Altaxo.Main.Services;
+using Altaxo.Graph;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -245,13 +246,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			this._rtfDescription.AppendText(rtfString);
 		}
 
-		public System.Drawing.Color GetRtfBackgroundColor()
+		public NamedColor GetRtfBackgroundColor()
 		{
 			var brush = _rtfDescription.Background;
 			if (brush is SolidColorBrush)
-				return GuiHelper.ToSysDraw(((SolidColorBrush)brush).Color);
+				return  new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
 			else
-				return System.Drawing.Color.Transparent;
+				return NamedColor.Transparent;
 		}
 
 		#endregion

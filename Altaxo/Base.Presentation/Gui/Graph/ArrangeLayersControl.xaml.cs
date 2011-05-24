@@ -39,9 +39,22 @@ namespace Altaxo.Gui.Graph
 				_controller.EhNumberOfColumnsChanged(_edNumberOfColumns.Value);
 		}
 
-		private void _edNumberOfColumns_Validating(object sender, ValidationEventArgs<string> e)
+		private void _edRowSpacing_Validating(object sender, ValidationEventArgs<string> e)
 		{
+			bool Cancel = false;
+			if (null != _controller)
+				Cancel |= _controller.EhRowSpacingChanged(e.ValueToValidate);
+			if (Cancel)
+				e.AddError("The provided string could not be converted to a numeric value");
+		}
 
+		private void _edColumnSpacing_Validating(object sender, ValidationEventArgs<string> e)
+		{
+			bool Cancel = false;
+			if (null != _controller)
+				Cancel |= _controller.EhColumnSpacingChanged(e.ValueToValidate);
+			if (Cancel)
+				e.AddError("The provided string could not be converted to a numeric value");
 		}
 
 		private void _edTopMargin_Validating(object sender, ValidationEventArgs<string> e)
@@ -139,6 +152,8 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion IArrangeLayersView
+
+	
 
 	
 	}

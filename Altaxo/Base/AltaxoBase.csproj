@@ -276,6 +276,7 @@
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
+    <Compile Include="Gui\Graph\PrintingController.cs" />
     <Compile Include="Gui\Graph\ShapeGraphicController.cs" />
     <Compile Include="Gui\Graph\XYAxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph\XYColumnPlotDataController.cs" />

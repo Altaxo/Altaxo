@@ -64,7 +64,17 @@ namespace Altaxo.Main.Commands
 
 	public class DevelopmentTest : AbstractMenuCommand
 	{
+
 		public override void Run()
+		{
+			Altaxo.Gui.Graph.PrintingController ctrl = new Gui.Graph.PrintingController();
+			ctrl.InitializeDocument(null);
+			Current.Gui.FindAndAttachControlTo(ctrl);
+
+			Current.Gui.ShowDialog(ctrl, "Print");
+		}
+
+		public void Run2()
 		{
 			var pen = new Altaxo.Graph.Gdi.PenX(Altaxo.Graph.NamedColor.Red, 2);
 			var ctrl = new Altaxo.Gui.Common.Drawing.PenAllPropertiesController(pen);

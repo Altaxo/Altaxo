@@ -31,6 +31,10 @@ namespace Altaxo.Gui
 			}
 		}
 
+		public override IntPtr MainWindowHandle
+		{
+			get { return  ((System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject).Handle; }
+		}
 
     public override bool InvokeRequired()
     {
@@ -201,6 +205,16 @@ namespace Altaxo.Gui
     public override bool ShowPrintDialog()
     {
       return System.Windows.Forms.DialogResult.OK == _printDialog.ShowDialog(MainWindow);
+
+			// next is a address for showing the advanced print dlg for Wpf
+			// http://social.msdn.microsoft.com/Forums/en/wpf/thread/0dc695c1-578d-4da5-8f68-b2a257846c02
+
+			// next is a address for showing the advanced print dlg for WinForms
+			// http://stackoverflow.com/questions/2437337/how-to-show-printer-properties-preferences-dialog-and-save-changes
+			// or here with complete source
+			// http://rongchaua.net/blog/c-invoke-printer-properties-dialog/
+			// or google for: call printer properties dialog
+
     }
 
     /// <summary>

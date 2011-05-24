@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			subfolderList.Sort();
 			foreach (var o in subfolderList)
 			{
-				_list.Add(new BrowserListItem(Main.ProjectFolder.ConvertFolderNameToDisplayFolderName(o), new Main.ProjectFolder(o), false) { Image = ProjectBrowseItemImage.OpenFolder });
+				_list.Add(new BrowserListItem(Main.ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(o), new Main.ProjectFolder(o), false) { Image = ProjectBrowseItemImage.OpenFolder });
 			}
 
 			var itemList = Current.Project.Folders.GetItemsInFolder(_folderName);

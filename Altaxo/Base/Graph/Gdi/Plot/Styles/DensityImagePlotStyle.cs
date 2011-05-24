@@ -191,9 +191,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         var vRangeFrom = info.GetDouble("RangeFrom");
         var vRangeTo = info.GetDouble("RangeTo");
         s._clipToLayer = info.GetBoolean("ClipToLayer");
-        var colorBelow = (System.Drawing.Color)info.GetValue("ColorBelow", parent);
-        var colorAbove = (System.Drawing.Color)info.GetValue("ColorAbove", parent);
-        var colorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid", parent);
+        var colorBelow = (NamedColor)info.GetValue("ColorBelow", parent);
+        var colorAbove = (NamedColor)info.GetValue("ColorAbove", parent);
+        var colorInvalid = (NamedColor)info.GetValue("ColorInvalid", parent);
 
 				var colorProvider = new ColorProvider.ColorProviderBGMYR() { ColorBelow = colorBelow, ColorAbove = colorAbove, ColorInvalid = colorInvalid, Transparency = 0 };
 				var scale = scalingStyle== ScalingStyle.Logarithmic ? (NumericalScale)new Log10Scale() : (NumericalScale)new LinearScale();

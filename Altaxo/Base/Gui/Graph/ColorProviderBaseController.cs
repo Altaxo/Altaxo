@@ -31,6 +31,8 @@ using Altaxo.Gui;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Graph;
+
 	#region Interfaces
 
 	/// <summary>
@@ -41,17 +43,17 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Get/set the content of the ColorBelow combo box.
 		/// </summary>
-		Color ColorBelow { get; set; }
+		NamedColor ColorBelow { get; set; }
 
 		/// <summary>
 		/// IGet/set the content of the ColorAbove combo box.
 		/// </summary>
-		Color ColorAbove { get; set; }
+		NamedColor ColorAbove { get; set; }
 
 		/// <summary>
 		/// Get/set the content of the ColorInvalid combo box.
 		/// </summary>
-		Color ColorInvalid { get; set; }
+		NamedColor ColorInvalid { get; set; }
 
 		/// <summary>
 		/// Get/set the transparency value (0 .. 1).

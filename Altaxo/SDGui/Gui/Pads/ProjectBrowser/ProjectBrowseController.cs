@@ -166,7 +166,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <returns></returns>
 		static string GetDisplayNameOfFolder(string fullFolderPath)
 		{
-			return ProjectFolder.ConvertFolderNameToDisplayFolderName(fullFolderPath);
+			return ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(fullFolderPath);
 		}
 
 
