@@ -26,11 +26,16 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Holds options to control the printing process of a graph document.
 	/// </summary>
-	public class SingleGraphPrintOptions
+	public class SingleGraphPrintOptions : System.ComponentModel.INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Event can be used to inform a listener about changed properties.
+		/// </summary>
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
 		/// <summary>If graph is smaller than the printable area, the graph will be zoomed to fill the printable area.</summary>
 		bool _fitGraphToPrintIfSmaller;
-		
+
 		/// <summary>If graph is larger than the printable area, the graph will be shrinked to fill the printable area.</summary>
 		bool _fitGraphToPrintIfLarger;
 
@@ -80,12 +85,25 @@ namespace Altaxo.Graph
 		}
 
 
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			if (null != PropertyChanged)
+				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+		}
+
 		/// <summary>If graph is smaller than the printable area, the graph will be zoomed to fill the printable area.</summary>
 		[System.ComponentModel.Category("Document size")]
 		public bool FitGraphToPrintIfSmaller
 		{
 			get { return _fitGraphToPrintIfSmaller; }
-			set { _fitGraphToPrintIfSmaller = value; }
+			set
+			{
+				var oldValue = _fitGraphToPrintIfSmaller;
+				_fitGraphToPrintIfSmaller = value;
+
+				if (oldValue != value)
+					OnPropertyChanged("FitGraphToPrintIfSmaller");
+			}
 		}
 
 
@@ -94,7 +112,13 @@ namespace Altaxo.Graph
 		public bool FitGraphToPrintIfLarger
 		{
 			get { return _fitGraphToPrintIfLarger; }
-			set { _fitGraphToPrintIfLarger = value; }
+			set
+			{
+				var oldValue = _fitGraphToPrintIfLarger;
+				_fitGraphToPrintIfLarger = value;
+				if (oldValue != value)
+					OnPropertyChanged("FitGraphToPrintIfLarger");
+			}
 		}
 
 		/// <summary>If true, the graph will be zoomed by a fixed zoom factor.</summary>
@@ -102,7 +126,13 @@ namespace Altaxo.Graph
 		public bool UseFixedZoomFactor
 		{
 			get { return _useFixedZoomFactor; }
-			set { _useFixedZoomFactor = value; }
+			set
+			{
+				var oldValue = _useFixedZoomFactor;
+				_useFixedZoomFactor = value;
+				if (oldValue != value)
+					OnPropertyChanged("UseFixedZoomFactor");
+			}
 		}
 
 		/// <summary>Zoom factor used to zoom the graph.</summary>
@@ -110,14 +140,26 @@ namespace Altaxo.Graph
 		public double ZoomFactor
 		{
 			get { return _zoomFactor; }
-			set { _zoomFactor = value; }
+			set
+			{
+				var oldValue = _zoomFactor;
+				_zoomFactor = value;
+				if (oldValue != value)
+					OnPropertyChanged("ZoomFactor");
+			}
 		}
 
 		/// <summary>If graph is larger than the printable area, the graph will be tiled onto multiple pages.</summary>
 		public bool TilePages
 		{
 			get { return _tilePages; }
-			set { _tilePages = value; }
+			set
+			{
+				var oldValue = _tilePages;
+				_tilePages = value;
+				if (oldValue != value)
+					OnPropertyChanged("TilePages");
+			}
 		}
 
 
@@ -126,7 +168,13 @@ namespace Altaxo.Graph
 		public bool RotatePageAutomatically
 		{
 			get { return _rotatePageAutomatically; }
-			set { _rotatePageAutomatically = value; }
+			set
+			{
+				var oldValue = _rotatePageAutomatically;
+				_rotatePageAutomatically = value;
+				if (oldValue != value)
+					OnPropertyChanged("RotatePageAutomatically");
+			}
 		}
 
 
@@ -134,7 +182,13 @@ namespace Altaxo.Graph
 		public bool PrintCropMarks
 		{
 			get { return _printCropMarks; }
-			set { _printCropMarks = value; }
+			set
+			{
+				var oldValue = _printCropMarks;
+				_printCropMarks = value;
+				if (oldValue != value)
+					OnPropertyChanged("PrintCropMarks");
+			}
 		}
 
 
@@ -143,7 +197,13 @@ namespace Altaxo.Graph
 		public SingleGraphPrintLocation PrintLocation
 		{
 			get { return _printLocation; }
-			set { _printLocation = value; }
+			set
+			{
+				var oldValue = _printLocation;
+				_printLocation = value;
+				if (oldValue != value)
+					OnPropertyChanged("PrintLocation");
+			}
 		}
 
 		/// <summary>
@@ -171,20 +231,15 @@ namespace Altaxo.Graph
 				zoom = (float)this.ZoomFactor;
 
 			}
-			else if (this.FitGraphToPrintIfSmaller)
+			else if (this.FitGraphToPrintIfSmaller || this.FitGraphToPrintIfLarger)
 			{
 				float zoomx = MarginBounds.Width / graphSize.Width;
 				float zoomy = MarginBounds.Height / graphSize.Height;
-				if (zoomx > 1 && zoomy > 1)
+				if (zoomx > 1 && zoomy > 1 && this.FitGraphToPrintIfSmaller)
 				{
 					zoom = Math.Min(zoomx, zoomy);
 				}
-			}
-			else if (this.FitGraphToPrintIfLarger)
-			{
-				float zoomx = MarginBounds.Width / graphSize.Width;
-				float zoomy = MarginBounds.Height / graphSize.Height;
-				if (zoomx < 1 && zoomy < 1)
+				else if ((zoomx < 1 || zoomy < 1) && this.FitGraphToPrintIfLarger)
 				{
 					zoom = Math.Min(zoomx, zoomy);
 				}
@@ -215,7 +270,5 @@ namespace Altaxo.Graph
 				startLocationOnPage = startLocationOnPage.Scale(100.0 / 72);
 			}
 		}
-
-		
 	}
 }

@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
 
+using Altaxo.Graph.Gdi;
+
 namespace Altaxo.Gui.Graph
 {
 	/// <summary>
@@ -23,13 +25,17 @@ namespace Altaxo.Gui.Graph
 	{
 		public event Action SelectedPrinterChanged;
 		public event Action EditPrinterProperties;
+		public event Action ShowPrintPreview;
+
+		GdiToWpfBitmap _previewBitmap;
+		System.Drawing.Printing.PreviewPageInfo[] _previewData;
 
 		public PrintingControl()
 		{
 			InitializeComponent();
 		}
 
-	
+
 		#region IPrintingView
 
 		public void InitializeAvailablePrinters(Collections.SelectableListNodeList list)
@@ -37,7 +43,53 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_cbAvailablePrinters, list);
 		}
 
-	
+		public void InitializeDocumentPrintOptionsView(object view)
+		{
+			_documentPrintOptionsViewHost.Child = view as UIElement;
+		}
+
+		public void SetPrintPreview(System.Drawing.Printing.PreviewPageInfo[] preview)
+		{
+			_previewData = preview;
+			UpdatePreview();
+		}
+
+		void UpdatePreview()
+		{
+			if (null == _previewBitmap || null==_previewData || _previewData.Length == 0)
+				return;
+
+			double ow = _previewData[0].PhysicalSize.Width;
+			double oh = _previewData[0].PhysicalSize.Height;
+
+			double dw = _previewBitmap.GdiRectangle.Width;
+			double dh = _previewBitmap.GdiRectangle.Height;
+
+
+
+
+			System.Drawing.Rectangle destRect;
+
+			if (oh / ow > dh / dw) // if the original image is more portrait than the destination rectangle
+			{
+				// use the full height, but restrict the destination with
+				var rw = dh * ow / oh;
+				destRect = new System.Drawing.Rectangle((int)(0.5 * (dw - rw)), 0, (int)rw, (int)dh);
+			}
+			else // if the original image is more landscape than the destination rectangle
+			{
+				var rh = dw * oh / ow;
+				destRect = new System.Drawing.Rectangle(0, (int)(0.5*(dh - rh)), (int)dw, (int)rh);
+			}
+
+			_previewBitmap.GdiGraphics.FillRectangle(System.Drawing.Brushes.White, _previewBitmap.GdiRectangle);
+			_previewBitmap.GdiGraphics.DrawRectangle(System.Drawing.Pens.Black, destRect);
+			_previewBitmap.GdiGraphics.DrawImage(_previewData[0].Image, destRect);
+				_previewBitmap.WpfBitmap.Invalidate();
+
+		}
+
+
 
 		#endregion
 
@@ -96,7 +148,7 @@ namespace Altaxo.Gui.Graph
 			IntPtr handle = Current.Gui.MainWindowHandle;
 			UnmanagedPrinterPropertiesDialogHelper.OpenPrinterPropertiesDialog(psSettings, handle);
 		}
-	
+
 
 
 		#endregion
@@ -113,5 +165,32 @@ namespace Altaxo.Gui.Graph
 			if (null != SelectedPrinterChanged)
 				SelectedPrinterChanged();
 		}
+
+		private void EhShowPrintPreview(object sender, RoutedEventArgs e)
+		{
+			if (null != ShowPrintPreview)
+				ShowPrintPreview();
+		}
+
+		private void EhPreviewImageSizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			_previewImage.Width = e.NewSize.Width;
+			_previewImage.Height = e.NewSize.Height;
+			if (null == _previewBitmap)
+			{
+				_previewBitmap = new GdiToWpfBitmap((int)e.NewSize.Width, (int)e.NewSize.Height);
+				_previewImage.Source = _previewBitmap.WpfBitmap;
+			}
+			else
+			{
+				_previewBitmap.Resize((int)e.NewSize.Width, (int)e.NewSize.Height);
+				_previewImage.Source = _previewBitmap.WpfBitmap;
+			}
+			UpdatePreview();
+		}
+
+
+		
 	}
 }
+

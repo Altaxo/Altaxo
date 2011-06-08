@@ -243,6 +243,9 @@ namespace Altaxo.Graph.Gdi.Plot
         PlotRangeList rangeList = pdata.RangeList;
         PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
+				if (ptArray.Length < 2)
+					return null;
+
         if (ptArray.Length < 2048)
         {
           GraphicsPath gp = new GraphicsPath();

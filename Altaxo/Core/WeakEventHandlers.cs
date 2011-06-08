@@ -177,6 +177,90 @@ namespace Altaxo
 
 	#endregion WeakEventHandler<TEventArgs>
 
+	#region WeakPropertyChangedEventHandler
+
+	/// <summary>
+	/// Mediates an <see cref="EventHandler"/> event, holding only a weak reference to the event sink.
+	/// Thus there is no reference created from the event source to the event sink, and the event sink can be garbage collected.
+	/// </summary>
+	/// <remarks>
+	/// Typical use:
+	/// <code>
+	/// source.Changed += new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x);
+	/// </code>
+	/// Sometimes it might be neccessary to use explicitly the event handler method of this instance:
+	/// <code>
+	/// source.Changed += new WeakEventHandler(this.EhHandleChange, x=&gt; source.Changed -= x.EventSink).EventSink;
+	/// </code>
+	/// You can even maintain a reference to the WeakActionHandler instance in your event sink instance, in case you have to remove the event handling programmatically:
+	/// <code>
+	/// _weakEventHandler = new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x); // weakEventHandler is an instance variable of this class
+	/// source.Changed += _weakEventHandler;
+	/// .
+	/// . 
+	/// .
+	/// source.Changed -= _weakEventHandler;
+	/// </code>
+	/// </remarks>
+	public class WeakPropertyChangedEventHandler
+	{
+		WeakReference _handlerObjectWeakRef;
+		MethodInfo _handlerMethodInfo;
+		Action<WeakPropertyChangedEventHandler> _removeAction;
+
+		/// <summary>
+		/// Constructs the WeakEventHandler.
+		/// </summary>
+		/// <param name="handler">Event handler for the event to wrap (event sink).</param>
+		/// <param name="removeHandlerAction">Action that removes the event handling by this instance from the source.</param>
+		/// <remarks>
+		/// Typcical usage: <code>source.Changed += new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x);</code>
+		/// </remarks>
+		public WeakPropertyChangedEventHandler(System.ComponentModel.PropertyChangedEventHandler handler, Action<WeakPropertyChangedEventHandler> removeHandlerAction)
+		{
+			if (handler.Target == null)
+				throw new ArgumentException("Can not set weak events to a static handler method. Please use normal event handling to bind to a static method");
+
+			_handlerObjectWeakRef = new WeakReference(handler.Target);
+			_handlerMethodInfo = handler.Method;
+			_removeAction = removeHandlerAction;
+		}
+
+		/// <summary>
+		/// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting fails. See remarks in the description of this class.
+		/// </summary>
+		/// <param name="sender">Sender of the event.</param>
+		/// <param name="e">Event args.</param>
+		public void EventSink(object sender, EventArgs e)
+		{
+			var handlerObj = _handlerObjectWeakRef.Target;
+			if (null != handlerObj)
+			{
+				_handlerMethodInfo.Invoke(handlerObj, new object[] { sender, e });
+			}
+			else
+			{
+				if (null != _removeAction)
+				{
+					_removeAction(this);
+					_removeAction = null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Converts this instance to an <see cref="EventHandler"/> that can be used to add or remove it from/to an event.
+		/// </summary>
+		/// <param name="weakHandler">A instance if this class.</param>
+		/// <returns>A reference to the event handler routine inside the instance.</returns>
+		public static implicit operator System.ComponentModel.PropertyChangedEventHandler(WeakPropertyChangedEventHandler weakHandler)
+		{
+			return weakHandler.EventSink;
+		}
+	}
+
+	#endregion
+
 	#region WeakActionHandler (for an Action with no arguments)
 
 	/// <summary>

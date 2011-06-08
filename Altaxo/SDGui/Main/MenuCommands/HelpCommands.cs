@@ -67,8 +67,12 @@ namespace Altaxo.Main.Commands
 
 		public override void Run()
 		{
+			var graphView	= Current.Workbench.ActiveViewContent	as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+						
+			var doc = null==graphView ? null : graphView.Controller.Doc;
+
 			Altaxo.Gui.Graph.PrintingController ctrl = new Gui.Graph.PrintingController();
-			ctrl.InitializeDocument(null);
+			ctrl.InitializeDocument(doc);
 			Current.Gui.FindAndAttachControlTo(ctrl);
 
 			Current.Gui.ShowDialog(ctrl, "Print");

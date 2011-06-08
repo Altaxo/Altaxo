@@ -472,6 +472,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\SingleGraphPrintOptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\TextGraphicControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -891,6 +895,9 @@
     </Compile>
     <Compile Include="Gui\Graph\SingleColumnChoiceControl.xaml.cs">
       <DependentUpon>SingleColumnChoiceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\SingleGraphPrintOptionsControl.xaml.cs">
+      <DependentUpon>SingleGraphPrintOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>

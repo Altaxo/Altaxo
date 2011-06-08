@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -27,9 +28,15 @@
 				<Label Grid.Column="0" Content="Name:"/>
 				<ComboBox x:Name="_cbAvailablePrinters" Grid.Row="0" Grid.Column="2" SelectionChanged="EhPrinterSelectionChanged"/>
 				<Button Content="Properties.." Grid.Row="0" Grid.Column="4" Click="EhShowPrinterProperties"/>
-			</Grid>
+				<Button Content="Print preview" Grid.Row="2" Grid.Column="4" Click="EhShowPrintPreview"/>
+				<Border x:Name="_documentPrintOptionsViewHost"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"></Border>
+			</Grid> 
 
 		</GroupBox>
+
+		<Rectangle Grid.Row="1" Grid.Column="0" Fill="AliceBlue" SizeChanged="EhPreviewImageSizeChanged"/>
+		<axogc:ImageWithNoSizeRequest x:Name="_previewImage" Grid.Row="1" Grid.Column="0" SnapsToDevicePixels="True"/>
+
 	</Grid>
 	
 	

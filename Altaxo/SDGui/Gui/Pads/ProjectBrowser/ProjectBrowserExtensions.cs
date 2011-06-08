@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				if (true == relocateData)
 				{
 					relocateOptions = new DocNodePathReplacementOptions();
-					AltaxoDocument.AddRelocationDataForTables(relocateOptions, originalSourceFolder + ProjectFolder.DirectorySeparatorChar, newFolderName + ProjectFolder.DirectorySeparatorChar);
+					AltaxoDocument.AddRelocationDataForTables(relocateOptions, originalSourceFolder , newFolderName);
 				}
 			}
 

@@ -278,6 +278,7 @@
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
     <Compile Include="Gui\Graph\PrintingController.cs" />
     <Compile Include="Gui\Graph\ShapeGraphicController.cs" />
+    <Compile Include="Gui\Graph\SingleGraphPrintOptionsController.cs" />
     <Compile Include="Gui\Graph\XYAxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph\XYColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph\G2DPlotItemController.cs" />

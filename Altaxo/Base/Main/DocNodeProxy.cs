@@ -238,6 +238,9 @@ namespace Altaxo.Main
 		/// </remarks>
 		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
 		{
+			if (null == _docNodePath)
+				return false;
+
 			var result = _docNodePath.ReplacePathParts(partToReplace, newPart);
 			if (result)
 				ClearDocNode();
