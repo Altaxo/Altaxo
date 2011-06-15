@@ -67,4 +67,44 @@ namespace Altaxo.Science
 			get { return LengthUnitMeter.Instance; }
 		}
 	}
+
+	public class LengthUnitInch : IUnit
+	{
+		static readonly LengthUnitInch _instance = new LengthUnitInch();
+		public static LengthUnitInch Instance { get { return _instance; } }
+
+		protected LengthUnitInch()
+		{
+		}
+
+		public string Name
+		{
+			get { return "Inch"; }
+		}
+
+		public string ShortCut
+		{
+			get { return "in"; }
+		}
+
+		public double ToSIUnit(double x)
+		{
+			return x * (2.54E-2);
+		}
+
+		public double FromSIUnit(double x)
+		{
+			return x / 2.54E-2;
+		}
+
+		public ISIPrefixList Prefixes
+		{
+			get { return SIPrefix.ListWithNonePrefixOnly; }
+		}
+
+		public SIUnit SIUnit
+		{
+			get { return LengthUnitMeter.Instance; }
+		}
+	}
 }

@@ -125,4 +125,28 @@ namespace Altaxo.Gui
 		}
 	}
 
+	public static class PaperMarginEnvironment
+	{
+		static QuantityWithUnitGuiEnvironment _instance;
+
+		static PaperMarginEnvironment()
+		{
+			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
+			{
+				DefaultUnit = new Science.PrefixedUnit(Science.SIPrefix.None, Science.LengthUnitPoint.Instance)
+			};
+		}
+
+		/// <summary>
+		/// Gets the common position environment for all position boxes.
+		/// </summary>
+		public static QuantityWithUnitGuiEnvironment Instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+	}
+
 }

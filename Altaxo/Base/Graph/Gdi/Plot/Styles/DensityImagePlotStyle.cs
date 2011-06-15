@@ -694,7 +694,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
         else if (areLinearScales)
         {
-          BuildImageV3(gfrx, gl, lx.ToArray(), ly.ToArray(), vcolumns.ToArray()); // affine, but nonlinear scales
+          BuildImageV3(gfrx, gl, lx.ToArray(), ly.ToArray(), vcolumns.ToArray()); // affine and linear, but nonequidistant scale
           //BuildImageV2(); // affine and linear scales, but not equidistant
         }
         else

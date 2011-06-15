@@ -56,7 +56,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsDateTime(string s, out DateTime val)
     {
-			return DateTime.TryParse(s, System.Globalization.DateTimeFormatInfo.CurrentInfo, System.Globalization.DateTimeStyles.AssumeLocal, out val);
+			return DateTime.TryParse(s, System.Globalization.CultureInfo.CurrentUICulture, System.Globalization.DateTimeStyles.AssumeLocal, out val);
     }
 
     public static string ToString(DateTime o)

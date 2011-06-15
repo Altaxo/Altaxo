@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
+using System.Management;
 
 using Altaxo.Graph.Gdi;
 
@@ -25,14 +26,28 @@ namespace Altaxo.Gui.Graph
 	{
 		public event Action SelectedPrinterChanged;
 		public event Action EditPrinterProperties;
-		public event Action ShowPrintPreview;
+		public event Action<bool> PaperOrientationLandscapeChanged;
+		public event Action PaperSizeChanged;
+		public event Action PaperSourceChanged;
+		public event Action<double> MarginLeftChanged;
+		public event Action<double> MarginRightChanged;
+		public event Action<double> MarginTopChanged;
+		public event Action<double> MarginBottomChanged;
+
 
 		GdiToWpfBitmap _previewBitmap;
 		System.Drawing.Printing.PreviewPageInfo[] _previewData;
 
+		/// <summary>Number of the page that is currently previewed.</summary>
+		int _previewPageNumber;
+
 		public PrintingControl()
 		{
 			InitializeComponent();
+			_guiMarginLeft.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
+			_guiMarginRight.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
+			_guiMarginTop.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
+			_guiMarginBottom.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
 		}
 
 
@@ -45,13 +60,53 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeDocumentPrintOptionsView(object view)
 		{
-			_documentPrintOptionsViewHost.Child = view as UIElement;
+			_documentPrintOptionsViewHost.Content = view as UIElement;
 		}
 
-		public void SetPrintPreview(System.Drawing.Printing.PreviewPageInfo[] preview)
+		public void InitializeAvailablePaperSizes(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiPaperSize, list);
+		}
+
+		public void InitializeAvailablePaperSources(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiPaperSource, list);
+		}
+
+		public void InitializePaperOrientationLandscape(bool isLandScape)
+		{
+			_guiPaperOrientationLandscape.IsChecked = isLandScape;
+			_guiPaperOrientationPortrait.IsChecked = !isLandScape;
+		}
+
+		public void InitializePaperMarginsInHundrethInch(double left, double right, double top, double bottom)
+		{
+			_guiMarginLeft.SelectedQuantity = new Science.QuantityWithUnit(left, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
+			_guiMarginRight.SelectedQuantity = new Science.QuantityWithUnit(right, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
+			_guiMarginTop.SelectedQuantity = new Science.QuantityWithUnit(top, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
+			_guiMarginBottom.SelectedQuantity = new Science.QuantityWithUnit(bottom, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
+		}
+
+		public void InitializePrintPreview(System.Drawing.Printing.PreviewPageInfo[] preview)
 		{
 			_previewData = preview;
-			UpdatePreview();
+			UpdatePreviewPageAndText();
+		}
+
+
+		private void UpdatePreviewPageAndText()
+		{
+			if (null == _previewData)
+			{
+				_edPreviewPageOfPages.Content = null;
+			}
+			else
+			{
+				_previewPageNumber = Math.Max(0, Math.Min(_previewPageNumber, _previewData.Length - 1));
+				string txt = string.Format("{0} of {1}", _previewPageNumber + 1, _previewData.Length);
+				_edPreviewPageOfPages.Content = txt;
+				UpdatePreview();
+			}
 		}
 
 		void UpdatePreview()
@@ -84,11 +139,28 @@ namespace Altaxo.Gui.Graph
 
 			_previewBitmap.GdiGraphics.FillRectangle(System.Drawing.Brushes.White, _previewBitmap.GdiRectangle);
 			_previewBitmap.GdiGraphics.DrawRectangle(System.Drawing.Pens.Black, destRect);
-			_previewBitmap.GdiGraphics.DrawImage(_previewData[0].Image, destRect);
-				_previewBitmap.WpfBitmap.Invalidate();
+
+			_previewPageNumber = Math.Max(0, Math.Min(_previewPageNumber, _previewData.Length - 1));
+			_previewBitmap.GdiGraphics.DrawImage(_previewData[_previewPageNumber].Image, destRect);
+			_previewBitmap.WpfBitmap.Invalidate();
 
 		}
 
+
+		void GetPrinterStatus()
+		{
+			string printerName = "YourPrinterName";
+			string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", printerName);
+			ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+			ManagementObjectCollection coll = searcher.Get();
+			foreach (ManagementObject printer in coll)
+			{
+				foreach (PropertyData property in printer.Properties)
+				{
+					Console.WriteLine(string.Format("{0}: {1}", property.Name, property.Value));
+				}
+			}
+		}
 
 
 		#endregion
@@ -166,11 +238,7 @@ namespace Altaxo.Gui.Graph
 				SelectedPrinterChanged();
 		}
 
-		private void EhShowPrintPreview(object sender, RoutedEventArgs e)
-		{
-			if (null != ShowPrintPreview)
-				ShowPrintPreview();
-		}
+	
 
 		private void EhPreviewImageSizeChanged(object sender, SizeChangedEventArgs e)
 		{
@@ -187,6 +255,96 @@ namespace Altaxo.Gui.Graph
 				_previewImage.Source = _previewBitmap.WpfBitmap;
 			}
 			UpdatePreview();
+		}
+
+
+	
+
+
+		private void EhPreviewFirstPage(object sender, RoutedEventArgs e)
+		{
+			_previewPageNumber = 0;
+			UpdatePreviewPageAndText();
+		}
+
+		private void EhPreviewPreviousPage(object sender, RoutedEventArgs e)
+		{
+			_previewPageNumber = Math.Max(0,_previewPageNumber-1);
+			UpdatePreviewPageAndText();
+
+		}
+
+		private void EhPreviewNextPage(object sender, RoutedEventArgs e)
+		{
+			_previewPageNumber = Math.Min(_previewPageNumber + 1, null != _previewData ? _previewData.Length - 1 : 0);
+			UpdatePreviewPageAndText();
+		}
+
+		private void EhPreviewLastPage(object sender, RoutedEventArgs e)
+		{
+			_previewPageNumber = null != _previewData ? _previewData.Length - 1 : 0;
+			UpdatePreviewPageAndText();
+		}
+
+		private void EhPaperOrientationPortrait(object sender, RoutedEventArgs e)
+		{
+			if (null != PaperOrientationLandscapeChanged)
+				PaperOrientationLandscapeChanged(false);
+		}
+
+		private void EhPaperOrientationLandscape(object sender, RoutedEventArgs e)
+		{
+			if (null != PaperOrientationLandscapeChanged)
+				PaperOrientationLandscapeChanged(true);
+		}
+
+		private void EhPaperSizeChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiPaperSize);
+			if (null != PaperSizeChanged)
+			{
+				PaperSizeChanged();
+			}
+		}
+
+		private void EhPaperSourceChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiPaperSource);
+			if (null != PaperSourceChanged)
+			{
+				PaperSourceChanged();
+			}
+		}
+
+		private void EhMarginLeftChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var val = _guiMarginLeft.SelectedQuantity.AsQuantityIn(Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).Value;
+			if (null != MarginLeftChanged)
+				MarginLeftChanged(val);
+		}
+
+		private void EhMarginRightChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var val = _guiMarginRight.SelectedQuantity.AsQuantityIn(Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).Value;
+			if (null != MarginRightChanged)
+				MarginRightChanged(val);
+
+		}
+
+		private void EhMarginTopChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var val = _guiMarginTop.SelectedQuantity.AsQuantityIn(Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).Value;
+			if (null != MarginTopChanged)
+				MarginTopChanged(val);
+
+		}
+
+		private void EhMarginBottomChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var val = _guiMarginBottom.SelectedQuantity.AsQuantityIn(Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).Value;
+			if (null != MarginBottomChanged)
+				MarginBottomChanged(val);
+
 		}
 
 

@@ -816,25 +816,6 @@ namespace Altaxo.Main.Services
 
     public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread);
 
-    /// <summary>
-    /// Shows a page setup dialog.
-    /// </summary>
-    /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
-    public abstract bool ShowPageSetupDialog();
-
-    /// <summary>
-    /// Shows a print dialog.
-    /// </summary>
-    /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
-    public abstract bool ShowPrintDialog();
-
-
-    /// <summary>
-    /// Sets the print document for both the page setup dialog and the print dialog.
-    /// </summary>
-    /// <param name="printDocument">The document to set.</param>
-    public abstract void SetPrintDocument(System.Drawing.Printing.PrintDocument printDocument);
-
 
     /// <summary>
     /// Gets a user friendly class name. See remarks for a detailed description how it is been obtained.
@@ -936,8 +917,6 @@ namespace Altaxo.Main.Services
 
 		public abstract bool ShowOpenFileDialog(OpenFileOptions options);
 		public abstract bool ShowSaveFileDialog(SaveFileOptions options);
-
-		public abstract bool ShowPrintPreviewDialog(System.Drawing.Printing.PrintPageEventHandler printPageEventHandler, System.Drawing.Printing.QueryPageSettingsEventHandler queryPageSettingsEventHandler);
 
 		/// <summary>
 		/// Get a new clipboard data object. You can use this to put data on the clipboard.

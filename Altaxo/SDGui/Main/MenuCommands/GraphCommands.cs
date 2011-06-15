@@ -73,16 +73,7 @@ namespace Altaxo.Graph.Commands
 	}
 
 
-	/// <summary>
-	/// Handler for the menu item "File" - "Setup Page".
-	/// </summary>
-	public class PageSetup : AbstractGraphControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
-		{
-			ctrl.Doc.ShowPageSetupDialog();
-		}
-	}
+	
 
 	/// <summary>
 	/// Handler for the menu item "File" - "Setup Page".
@@ -107,16 +98,7 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-	/// <summary>
-	/// Handler for the menu item "File" - "Print Preview".
-	/// </summary>
-	public class PrintPreview : AbstractGraphControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
-		{
-			ctrl.Doc.ShowPrintPreviewDialog();
-		}
-	}
+	
 
 	/// <summary>
 	/// Handler for the menu item "File" - "Print options".

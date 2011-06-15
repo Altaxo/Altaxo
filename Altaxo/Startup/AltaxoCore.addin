@@ -156,14 +156,10 @@
       <MenuItem id="SaveWindowSeparator"  type = "Separator"/>
       <MenuItem id="PrintSeparator" type = "Separator"/>
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
-        <MenuItem id="GraphPageSetup" label="${res:XML.MainMenu.FileMenu.PageSetup}" icon="Icons.16x16.NewDocumentIcon"
-					description="${res:XML.MainMenu.FileMenu.PageSetup.Description}" class="Altaxo.Graph.Commands.PageSetup" />
 				<MenuItem id="PrintableSizeSetup" label="${res:XML.MainMenu.FileMenu.PrintableSizeSetup}" icon="Icons.16x16.NewDocumentIcon"
 					description="${res:XML.MainMenu.FileMenu.PrintableSizeSetup.Description}" class="Altaxo.Graph.Commands.PrintableSizeSetup" />
 				<MenuItem id="PrintOptionsSetup" label="${res:XML.MainMenu.FileMenu.PrintOptionsSetup}" icon="Icons.16x16.NewDocumentIcon"
 					description="${res:XML.MainMenu.FileMenu.PrintOptionsSetup.Description}" class="Altaxo.Graph.Commands.PrintOptionsSetup" />
-				<MenuItem id="GraphPrintPreview" label="${res:XML.MainMenu.FileMenu.PrintPreview}" icon="Icons.16x16.PreView"
-					description="${res:XML.MainMenu.FileMenu.PrintPreview.Description}" class="Altaxo.Graph.Commands.PrintPreview" />
         <MenuItem id="GraphPrint" label="${res:XML.MainMenu.FileMenu.Print}" icon="Icons.16x16.Printer"
 					description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Graph.Commands.Print" />
       </Condition>

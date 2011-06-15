@@ -66,7 +66,6 @@ namespace Altaxo.Main
       _printDocument = new System.Drawing.Printing.PrintDocument();
       // we set the print document default orientation to landscape
       _printDocument.DefaultPageSettings.Landscape=true;
-      Current.Gui.SetPrintDocument(_printDocument);
       _printerSettings = new System.Drawing.Printing.PrinterSettings();
       UpdateBoundsAndMargins();
     }

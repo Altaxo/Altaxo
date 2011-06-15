@@ -22,11 +22,15 @@ namespace Altaxo.Graph.Gdi
 		{
 			try
 			{
-				if (Current.Gui.ShowPrintDialog())
-					if(ShowPrintOptionsDialog(doc))
-						doc.Print();
+				Altaxo.Gui.Graph.PrintingController ctrl = new Gui.Graph.PrintingController();
+				ctrl.InitializeDocument(doc);
+				Current.Gui.FindAndAttachControlTo(ctrl);
 
-				return true;
+				if (Current.Gui.ShowDialog(ctrl, "Print"))
+				{
+					doc.Print();
+					return true;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -36,17 +40,7 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
-		/// <summary>
-		/// Shows the print preview dialog for the provided graph document.
-		/// </summary>
-		/// <param name="doc">The graph document for which to show the print preview dialog.</param>
-		/// <returns>True if the document was shown in print preview, false if an exceptions was thrown during the print preview.</returns>
-		public static bool ShowPrintPreviewDialog(this GraphDocument doc)
-		{
-			GraphDocumentPrintTask printTask = new GraphDocumentPrintTask(doc);
-			printTask.IsPrintPreview = true;
-			return Current.Gui.ShowPrintPreviewDialog(new PrintPageEventHandler(printTask.EhPrintPage), new QueryPageSettingsEventHandler(printTask.EhQueryPageSettings));
-		}
+	
 
 	
 
@@ -70,26 +64,7 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
-		public static bool ShowPageSetupDialog(this GraphDocument doc)
-		{
-			try
-			{
-				if (Current.Gui.ShowPageSetupDialog())
-				{
-					doc.SetGraphPageBoundsToPrinterSettings();
-					if (Current.Gui.YesNoMessageBox("Do you want to resize the graph document to fit into the printable area of the page?", "Question", true))
-					{
-						doc.Layers.SetGraphSize(doc.PrintableBounds.Size, true);
-						return true;
-					}
-				}
-			}
-			catch (Exception exc)
-			{
-				Current.Gui.ErrorMessageBox(exc.ToString());
-			}
-			return false;
-		}
+		
 
 		/// <summary>
 		/// Shows the dialog to set the print options for this document.

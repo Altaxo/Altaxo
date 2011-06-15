@@ -53,11 +53,11 @@ namespace Altaxo.Graph.Plot.Data
 
     // cached or temporary data
 		[NonSerialized]
-    protected NumericalBoundaries _xBoundaries;
+    protected IPhysicalBoundaries _xBoundaries;
 		[NonSerialized]
-		protected NumericalBoundaries _yBoundaries;
+		protected IPhysicalBoundaries _yBoundaries;
 		[NonSerialized]
-		protected NumericalBoundaries _vBoundaries;
+		protected IPhysicalBoundaries _vBoundaries;
 
 
     /// <summary>
@@ -203,9 +203,9 @@ namespace Altaxo.Graph.Plot.Data
         info.CloseArray(count);
 
 
-        s._xBoundaries = (NumericalBoundaries)info.GetValue("XBoundaries", typeof(NumericalBoundaries));
-        s._yBoundaries = (NumericalBoundaries)info.GetValue("YBoundaries", typeof(NumericalBoundaries));
-        s._vBoundaries = (NumericalBoundaries)info.GetValue("VBoundaries", typeof(NumericalBoundaries));
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+        s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
 
         s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
         s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
@@ -312,9 +312,9 @@ namespace Altaxo.Graph.Plot.Data
         info.CloseArray(count);
 
 
-        s._xBoundaries = (NumericalBoundaries)info.GetValue("XBoundaries", typeof(NumericalBoundaries));
-        s._yBoundaries = (NumericalBoundaries)info.GetValue("YBoundaries", typeof(NumericalBoundaries));
-        s._vBoundaries = (NumericalBoundaries)info.GetValue("VBoundaries", typeof(NumericalBoundaries));
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+        s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
 
         s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
         s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
@@ -458,7 +458,7 @@ namespace Altaxo.Graph.Plot.Data
         {
           _xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
         }
-        _xBoundaries = (NumericalBoundaries)val.Clone();
+        _xBoundaries = (IPhysicalBoundaries)val.Clone();
         _xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
         this._isCachedDataValid = false;
 
@@ -475,7 +475,7 @@ namespace Altaxo.Graph.Plot.Data
         {
           _yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
         }
-        _yBoundaries = (NumericalBoundaries)val.Clone();
+        _yBoundaries = (IPhysicalBoundaries)val.Clone();
         _yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
         this._isCachedDataValid = false;
 
@@ -492,7 +492,7 @@ namespace Altaxo.Graph.Plot.Data
         {
           _vBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
         }
-        _vBoundaries = (NumericalBoundaries)val.Clone();
+        _vBoundaries = (IPhysicalBoundaries)val.Clone();
         _vBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
         this._isCachedDataValid = false;
 
@@ -577,6 +577,18 @@ namespace Altaxo.Graph.Plot.Data
         return "Empty (no data)";
     }
 
+		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
+		{
+			if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
+				this.SetXBoundsFromTemplate(xBounds);
+
+			if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
+				this.SetYBoundsFromTemplate(yBounds);
+
+			CalculateCachedData();
+		}
+
+
     public void CalculateCachedData()
     {
       if (null == _dataColumns || _dataColumns.Length == 0)
@@ -614,13 +626,25 @@ namespace Altaxo.Graph.Plot.Data
       }
 
 
-      // enter the two bounds for x
-      for (int i = 0; i < _dataColumns.Length; i++)
-        this._yBoundaries.Add(_yColumn.Document, i);
-
       // enter the bounds for y
-      for (int i = 0; i < _numberOfRows; i++)
-        this._xBoundaries.Add(_xColumn.Document, i);
+			for (int i = 0; i < _dataColumns.Length; i++)
+			{
+				var col = _dataColumns[i].Document as Altaxo.Data.DataColumn;
+				if (null != col)
+				{
+					DataColumnCollection parentcoll = DataColumnCollection.GetParentDataColumnCollectionOf(col);
+					if (parentcoll != null)
+					{
+						int nColIdx = parentcoll.GetColumnNumber(col);
+						this._yBoundaries.Add(_yColumn.Document, nColIdx);
+					}
+				}
+			}
+
+      // enter the bounds for x
+			for (int i = 0; i < _numberOfRows; i++)
+				this._xBoundaries.Add(_xColumn.Document, i);
+		
 
       // now the cached data are valid
       _isCachedDataValid = true;

@@ -199,6 +199,7 @@ namespace Altaxo.Graph.Gdi.Plot
               _plotData.Changed -= new EventHandler(OnDataChangedEventHandler);
               _plotData.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
               _plotData.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
+							_plotData.VBoundariesChanged -= new BoundaryChangedHandler(EhVBoundariesChanged);
 
             }
 
@@ -209,6 +210,7 @@ namespace Altaxo.Graph.Gdi.Plot
               _plotData.Changed += new EventHandler(OnDataChangedEventHandler);
               _plotData.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
               _plotData.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
+							_plotData.VBoundariesChanged += new BoundaryChangedHandler(EhVBoundariesChanged);
 
             }
 
@@ -287,7 +289,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public override void PrepareScales(IPlotArea layer)
     {
       if (null != this._plotData)
-        _plotData.CalculateCachedData();
+				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
     }
 
 
@@ -313,14 +315,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (val is NumericalBoundaries)
-        this._plotData.SetXBoundsFromTemplate(val as NumericalBoundaries);
+        this._plotData.SetXBoundsFromTemplate(val);
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      if (pb is NumericalBoundaries)
-        this._plotData.MergeXBoundsInto(pb as NumericalBoundaries);
+        this._plotData.MergeXBoundsInto(pb);
     }
 
     #endregion
@@ -336,19 +336,26 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if (val is NumericalBoundaries)
-        this._plotData.SetYBoundsFromTemplate(val as NumericalBoundaries);
+        this._plotData.SetYBoundsFromTemplate(val);
     }
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      if (pb is NumericalBoundaries)
-        this._plotData.MergeYBoundsInto(pb as NumericalBoundaries);
+        this._plotData.MergeYBoundsInto(pb);
     }
 
     #endregion
 
-    public override void CollectStyles(PlotGroupStyleCollection styles)
+		void EhVBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+		{
+			OnDataChanged();
+		}
+
+		#region VBoundaries
+
+		#endregion
+
+		public override void CollectStyles(PlotGroupStyleCollection styles)
     {
 
     }

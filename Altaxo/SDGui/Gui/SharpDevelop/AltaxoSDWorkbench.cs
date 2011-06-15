@@ -15,7 +15,7 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.SharpDevelop
 {
-	public class AltaxoSDWorkbench : Altaxo.Gui.Common.IWorkbench, ICSharpCode.SharpDevelop.Gui.IWorkbench, System.Windows.Forms.IWin32Window
+	public class AltaxoSDWorkbench : Altaxo.Gui.Common.IWorkbench, ICSharpCode.SharpDevelop.Gui.IWorkbench // , System.Windows.Forms.IWin32Window
 	{
 		WpfWorkbench _wb;
 
@@ -65,12 +65,12 @@ namespace Altaxo.Gui.SharpDevelop
 		}
 
 		#region IWorkbench Members
-
-		public IWin32Window MainWin32Window
+		
+		public System.Windows.Forms.IWin32Window MainWin32Window
 		{
 			get { return _wb.MainWin32Window; }
 		}
-
+		
 		public ISynchronizeInvoke SynchronizingObject
 		{
 			get { return _wb.SynchronizingObject; }

@@ -12,16 +12,15 @@ namespace Altaxo.Gui
 {
   public class GuiFactoryServiceWpfWin : Altaxo.Main.Services.GUIFactoryService
   {
-    private System.Windows.Forms.PageSetupDialog _pageSetupDialog;
-    private System.Windows.Forms.PrintDialog _printDialog;
-
-    public System.Windows.Forms.IWin32Window MainWindow
+		/*
+    public IWin32Window MainWindow
     {
       get
       {
         return (System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject;
       }
     }
+		*/
 
 		public System.Windows.Window MainWindowWpf
 		{
@@ -181,80 +180,9 @@ namespace Altaxo.Gui
       return false;
     }
 
+   
 
-
-    /// <summary>
-    /// Shows a page setup dialog.
-    /// </summary>
-    /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
-    public override bool ShowPageSetupDialog()
-    {
-      bool result = System.Windows.Forms.DialogResult.OK == _pageSetupDialog.ShowDialog(MainWindow);
-      if (true == result)
-      {
-        Current.PrintingService.UpdateBoundsAndMargins();
-      }
-      return result;
-    }
-
-
-    /// <summary>
-    /// Shows a print dialog.
-    /// </summary>
-    /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
-    public override bool ShowPrintDialog()
-    {
-      return System.Windows.Forms.DialogResult.OK == _printDialog.ShowDialog(MainWindow);
-
-			// next is a address for showing the advanced print dlg for Wpf
-			// http://social.msdn.microsoft.com/Forums/en/wpf/thread/0dc695c1-578d-4da5-8f68-b2a257846c02
-
-			// next is a address for showing the advanced print dlg for WinForms
-			// http://stackoverflow.com/questions/2437337/how-to-show-printer-properties-preferences-dialog-and-save-changes
-			// or here with complete source
-			// http://rongchaua.net/blog/c-invoke-printer-properties-dialog/
-			// or google for: call printer properties dialog
-
-    }
-
-    /// <summary>
-    /// Sets the print document for both the page setup dialog and the print dialog.
-    /// </summary>
-    /// <param name="printDocument">The document to set.</param>
-    public override void SetPrintDocument(System.Drawing.Printing.PrintDocument printDocument)
-    {
-      if (_pageSetupDialog == null)
-        _pageSetupDialog = new System.Windows.Forms.PageSetupDialog();
-      if (_printDialog == null)
-        _printDialog = new System.Windows.Forms.PrintDialog();
-
-      _pageSetupDialog.Document = printDocument;
-      _printDialog.Document = printDocument;
-    }
-
-    public override bool ShowPrintPreviewDialog(PrintPageEventHandler printPageEventHandler, QueryPageSettingsEventHandler queryPageSettingsEventHandler)
-    {
-      try
-      {
-        System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-        Current.PrintingService.PrintDocument.PrintPage += printPageEventHandler;
-        Current.PrintingService.PrintDocument.QueryPageSettings += queryPageSettingsEventHandler;
-        dlg.Document = Current.PrintingService.PrintDocument;
-        dlg.ShowDialog(MainWindow);
-        dlg.Dispose();
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Current.Gui.ErrorMessageBox(ex.ToString());
-      }
-      finally
-      {
-        Current.PrintingService.PrintDocument.PrintPage -= printPageEventHandler;
-        Current.PrintingService.PrintDocument.QueryPageSettings -= queryPageSettingsEventHandler;
-      }
-      return false;
-    }
+   
 
     private string GetFilterString(OpenFileOptions options)
     {
