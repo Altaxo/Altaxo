@@ -979,27 +979,12 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			else
 			{
-
-
-				var dao = Current.Gui.GetNewClipboardDataObject();
-
-				var objectList = new List<object>();
-
+				var objectList = new ArrayList();
 				foreach (IHitTestObject o in SelectedObjects)
 				{
-					if (o.HittedObject is System.Runtime.Serialization.ISerializable)
-					{
 						objectList.Add(o.HittedObject);
-					}
 				}
-
-				dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
-
-				// Test code to test if the object list can be serialized
-
-
-				// now copy the data object to the clipboard
-				Current.Gui.SetClipboardDataObject(dao, true);
+				Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
 			}
 		}
 
@@ -1011,25 +996,16 @@ namespace Altaxo.Gui.Graph.Viewing
 		public void CutSelectedObjectsToClipboard()
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
-			var objectList = new List<object>();
+			var objectList = new ArrayList();
 			var notSerialized = new List<IHitTestObject>();
 
 			foreach (IHitTestObject o in SelectedObjects)
 			{
-				if (o.HittedObject is System.Runtime.Serialization.ISerializable)
-				{
-					objectList.Add(o.HittedObject);
-				}
-				else
-				{
-					notSerialized.Add(o);
-				}
+				objectList.Add(o.HittedObject);
 			}
 
-			dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
+			Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
 
-			// now copy the data object to the clipboard
-			Current.Gui.SetClipboardDataObject(dao, true);
 
 			// Remove the not serialized objects from the selection, so they are not removed from the graph..
 			foreach (IHitTestObject o in notSerialized)
@@ -1048,11 +1024,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			GraphDocument gd = this.Doc;
 			var dao = Current.Gui.OpenClipboardDataObject();
 
-			if (dao.GetDataPresent("Altaxo.Graph.GraphObjectList"))
+			if (dao.GetDataPresent("Altaxo.Graph.GraphObjectListAsXml"))
 			{
-				object obj = dao.GetData("Altaxo.Graph.GraphObjectList");
-
-				// if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
+				object obj = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphObjectListAsXml");
 				if (obj is ICollection)
 				{
 					ICollection list = (ICollection)obj;
@@ -1060,6 +1034,8 @@ namespace Altaxo.Gui.Graph.Viewing
 					{
 						if (item is GraphicBase)
 							this.ActiveLayer.GraphObjects.Add(item as GraphicBase);
+						else if (item is Altaxo.Graph.Gdi.Plot.IGPlotItem)
+							this.ActiveLayer.PlotItems.Add((Altaxo.Graph.Gdi.Plot.IGPlotItem)item);
 					}
 				}
 				return;

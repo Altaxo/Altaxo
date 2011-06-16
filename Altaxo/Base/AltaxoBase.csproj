@@ -235,6 +235,7 @@
     <Compile Include="Calc\ScriptExecutionBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Collections\SystemCollectionsSerialization.cs" />
     <Compile Include="Data\DataRow.cs" />
     <Compile Include="Data\Extensions\AnalysisRealFourierTransformCommands.cs" />
     <Compile Include="Data\Extensions\ExpandCyclingVariableColumn.cs" />
