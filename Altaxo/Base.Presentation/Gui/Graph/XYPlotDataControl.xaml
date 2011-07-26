@@ -35,7 +35,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		<ComboBox x:Name="_cbTables" Grid.Column="0" Grid.Row="0" SelectionChanged="EhTables_SelectionChangeCommit"/>
-		<ListBox x:Name="_lbColumns" Grid.Column="0" Grid.Row="2" Grid.RowSpan="5"/>
+		<ListBox x:Name="_lbColumns" Grid.Column="0" Grid.Row="2" Grid.RowSpan="5" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="7" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
 
 		<Button x:Name="m_btToX"  Grid.Column="2" Grid.Row="2" Click="EhToX_Click">

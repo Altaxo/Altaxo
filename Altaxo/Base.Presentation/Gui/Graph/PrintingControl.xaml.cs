@@ -33,10 +33,13 @@ namespace Altaxo.Gui.Graph
 		public event Action<double> MarginRightChanged;
 		public event Action<double> MarginTopChanged;
 		public event Action<double> MarginBottomChanged;
+		public event Action<int> NumberOfCopiesChanged;
+		public event Action<bool> CollateCopiesChanged;
 
 
 		GdiToWpfBitmap _previewBitmap;
 		System.Drawing.Printing.PreviewPageInfo[] _previewData;
+		System.Windows.Threading.DispatcherTimer _timer = new System.Windows.Threading.DispatcherTimer();
 
 		/// <summary>Number of the page that is currently previewed.</summary>
 		int _previewPageNumber;
@@ -50,6 +53,26 @@ namespace Altaxo.Gui.Graph
 			_guiMarginBottom.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
 		}
 
+
+		private void EhLoaded(object sender, RoutedEventArgs e)
+		{
+			_timer.Tick += EhTimerTick;
+			_timer.Interval = new TimeSpan(0, 0, 1);
+			_timer.Start();
+		}
+
+		private void EhUnloaded(object sender, RoutedEventArgs e)
+		{
+			_timer.Stop();
+		}
+
+		private void EhTimerTick(object sender, EventArgs e)
+		{
+			if (this.IsVisible && null != _cbAvailablePrinters.SelectedItem)
+			{
+				UpdatePrinterStatusGuiElements(((Collections.SelectableListNode)_cbAvailablePrinters.SelectedItem).Text);
+			}
+		}
 
 		#region IPrintingView
 
@@ -87,6 +110,16 @@ namespace Altaxo.Gui.Graph
 			_guiMarginBottom.SelectedQuantity = new Science.QuantityWithUnit(bottom, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
 		}
 
+		public void InitializeNumberOfCopies(int val)
+		{
+			_guiNumberOfCopies.Value = val;
+		}
+
+		public void InitializeCollateCopies(bool val)
+		{
+			_guiCollateCopies.IsChecked = val;
+		}
+
 		public void InitializePrintPreview(System.Drawing.Printing.PreviewPageInfo[] preview)
 		{
 			_previewData = preview;
@@ -114,11 +147,15 @@ namespace Altaxo.Gui.Graph
 			if (null == _previewBitmap || null==_previewData || _previewData.Length == 0)
 				return;
 
+			// original sizes
 			double ow = _previewData[0].PhysicalSize.Width;
 			double oh = _previewData[0].PhysicalSize.Height;
 
-			double dw = _previewBitmap.GdiRectangle.Width;
-			double dh = _previewBitmap.GdiRectangle.Height;
+			// destination sizes and locations
+			double dl = Math.Min(4, _previewBitmap.GdiRectangle.Width/8.0); // left
+			double dt = Math.Min(4, _previewBitmap.GdiRectangle.Height / 8.0); // top
+			double dw = _previewBitmap.GdiRectangle.Width - 2*dl; // width
+			double dh = _previewBitmap.GdiRectangle.Height - 2*dt; // height
 
 
 
@@ -129,12 +166,12 @@ namespace Altaxo.Gui.Graph
 			{
 				// use the full height, but restrict the destination with
 				var rw = dh * ow / oh;
-				destRect = new System.Drawing.Rectangle((int)(0.5 * (dw - rw)), 0, (int)rw, (int)dh);
+				destRect = new System.Drawing.Rectangle((int)(0.5 * (dw - rw) + dl), (int)dt, (int)rw, (int)dh);
 			}
 			else // if the original image is more landscape than the destination rectangle
 			{
 				var rh = dw * oh / ow;
-				destRect = new System.Drawing.Rectangle(0, (int)(0.5*(dh - rh)), (int)dw, (int)rh);
+				destRect = new System.Drawing.Rectangle((int)dl, (int)(0.5*(dh - rh)+dt), (int)dw, (int)rh);
 			}
 
 			_previewBitmap.GdiGraphics.FillRectangle(System.Drawing.Brushes.White, _previewBitmap.GdiRectangle);
@@ -147,19 +184,48 @@ namespace Altaxo.Gui.Graph
 		}
 
 
-		void GetPrinterStatus()
+		void UpdatePrinterStatusGuiElements(string printerName)
 		{
-			string printerName = "YourPrinterName";
+			string comment = string.Empty;
+			string status = string.Empty;
+			string location = string.Empty;
+			bool? isOffline=null;
+
 			string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", printerName);
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
 			ManagementObjectCollection coll = searcher.Get();
 			foreach (ManagementObject printer in coll)
 			{
+				// Console.WriteLine("------ Printer: {0} ---------", printer.Path);
 				foreach (PropertyData property in printer.Properties)
 				{
-					Console.WriteLine(string.Format("{0}: {1}", property.Name, property.Value));
+					// Console.WriteLine(string.Format("{0}: {1}", property.Name, property.Value));
+					switch (property.Name)
+					{
+						case "Status":
+							status = (string)property.Value;
+							break;
+						case "Comment":
+							comment = (string)property.Value;
+							break;
+						case "Location":
+							location = (string)property.Value;
+							break;
+						case "WorkOffline":
+							isOffline = (bool)property.Value;
+							break;
+					}
 				}
+			break;
 			}
+
+			if (true == isOffline)
+				status = "Offline";
+
+			this._guiPrinterStatus.Content = status;
+			this._guiPrinterComment.Content = comment;
+			this._guiPrinterLocation.Content = location;
+
 		}
 
 
@@ -236,6 +302,14 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.SynchronizeSelectionFromGui(_cbAvailablePrinters);
 			if (null != SelectedPrinterChanged)
 				SelectedPrinterChanged();
+
+			var node = (Collections.SelectableListNode)_cbAvailablePrinters.SelectedItem;
+
+			var printerName = node.Text;
+
+			UpdatePrinterStatusGuiElements(printerName);
+
+
 		}
 
 	
@@ -346,6 +420,23 @@ namespace Altaxo.Gui.Graph
 				MarginBottomChanged(val);
 
 		}
+
+		private void EhNoOfCopiesChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
+		{
+			if (null != NumberOfCopiesChanged)
+				NumberOfCopiesChanged(_guiNumberOfCopies.Value);
+		}
+
+		private void EhCollateCopiesChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != CollateCopiesChanged)
+				CollateCopiesChanged(_guiCollateCopies.IsChecked == true);
+
+		}
+
+	
+
+	
 
 
 		

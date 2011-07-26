@@ -37,6 +37,61 @@ namespace Altaxo.Gui.Common
 			
 		}
 
+
+		/// <summary>
+		/// Overrides the logic for determining the size of the dialog window. See remarks for details.
+		/// </summary>
+		/// <param name="availableSize"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// There are two changes from the default behaviour: 
+		/// <para>(i) when the dialog is loaded, the size is adjusted so that it is not bigger than
+		/// the available working area on the screen. If the initial position of the dialog is chosen so that the right lower corner of the dialog would be outside
+		/// of the working area, it is adjusted so that it is inside the working area.</para>
+		/// <para>
+		/// If during the dialog is showed the size of the content changed, the dialog box size is adjusted so that the lower right corner of the dialog window would 
+		/// always be inside the working area. This does not apply if the user had manually changed the size of the dialog box before.
+		/// </para>
+		/// 
+		/// </remarks>
+		protected override Size MeasureOverride(Size availableSize)
+		{
+			var workArea = System.Windows.SystemParameters.WorkArea; // the working area on the screen
+
+			if (!this.IsLoaded) // when the dialog is initially loaded
+			{
+				// adjust the size of the dialog box so that is is maximum the size of the working area
+				if (availableSize.Height > workArea.Height)
+					availableSize.Height = workArea.Height;
+				if (availableSize.Width > workArea.Width)
+					availableSize.Width = workArea.Width;
+
+				// adjust the top and left position of the dialog if neccessary so that the dialog box fits inside the working area
+				if (this.Top + availableSize.Height > workArea.Bottom)
+					this.Top = workArea.Bottom - availableSize.Height;
+				if (this.Left + availableSize.Width > workArea.Right)
+					this.Left = workArea.Right - availableSize.Width;
+
+			}
+			else if (this.SizeToContent == System.Windows.SizeToContent.WidthAndHeight) // when the content size changed and the user had not manually resized the box
+			{
+				// adjust the size of the dialog box so that it fits inside of the working area (without changing the position of the dialog
+				if (this.Top + availableSize.Height > workArea.Bottom)
+					availableSize.Height = workArea.Bottom - this.Top;
+				if (this.Left + availableSize.Width > workArea.Right)
+					availableSize.Width = workArea.Right - this.Left;
+			}
+
+			if (availableSize.Height < 0)
+				availableSize.Height = 0;
+			if (availableSize.Width < 0)
+				availableSize.Width = 0;
+
+			return base.MeasureOverride(availableSize);
+		}
+
+
+
 		#region IDialogShellView
 
 		public bool ApplyVisible

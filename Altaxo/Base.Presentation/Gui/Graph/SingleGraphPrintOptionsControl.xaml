@@ -9,6 +9,7 @@
     <Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="4"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
@@ -25,16 +26,16 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
-		<Label Grid.Row="0" Grid.Column="0" Content="Print area:"/>
-		<ComboBox x:Name="_cbPrintLocation" Grid.Row="0" Grid.Column="1" SelectionChanged="EhPrintLocationChanged"/>
+		<Label Grid.Row="0" Grid.Column="0" Content="Print area:" />
+		<ComboBox x:Name="_cbPrintLocation" Grid.Row="0" Grid.Column="2" SelectionChanged="EhPrintLocationChanged"/>
 		<CheckBox x:Name="_chkRotatePageAutomatically" Grid.Row="2" Grid.Column="0"  Content="Rotate page automatically" Checked="EhRotatePageAutomaticallyChanged" Unchecked="EhRotatePageAutomaticallyChanged"/>
 		<CheckBox x:Name="_chkFitGraphToPrintIfSmaller" Grid.Row="4" Grid.Column="0"  Content="Fit graph to print if smaller" Checked="EhFitGraphToPrintIfSmallerChanged" Unchecked="EhFitGraphToPrintIfSmallerChanged"/>
-		<CheckBox x:Name="_chkFitGraphToPrintIfLarger" Grid.Row="4" Grid.Column="1"  Content="Fit graph to print if larger" Checked="EhFitGraphToPrintIfLargerChanged" Unchecked="EhFitGraphToPrintIfLargerChanged"/>
-		<CheckBox x:Name="_chkPrintCropMarks" Grid.Row="2" Grid.Column="1"  Content="Print crop marks" Checked="EhPrintCropMarksChanged" Unchecked="EhPrintCropMarksChanged"/>
+		<CheckBox x:Name="_chkFitGraphToPrintIfLarger" Grid.Row="4" Grid.Column="2"  Content="Fit graph to print if larger" Checked="EhFitGraphToPrintIfLargerChanged" Unchecked="EhFitGraphToPrintIfLargerChanged"/>
+		<CheckBox x:Name="_chkPrintCropMarks" Grid.Row="2" Grid.Column="2"  Content="Print crop marks" Checked="EhPrintCropMarksChanged" Unchecked="EhPrintCropMarksChanged"/>
 		<CheckBox x:Name="_chkTilePages" Grid.Row="6" Grid.Column="0"  Content="Tile pages" Checked="EhTilePagesChanged" Unchecked="EhTilePagesChanged"/>
 		<CheckBox x:Name="_chkUseFixedZoomFactor" Grid.Row="8" Grid.Column="0"  Content="Use fixed zoom factor" Checked="EhUseFixedZoomFactorChanged" Unchecked="EhUseFixedZoomFactorChanged"/>
 		<Label Grid.Row="10" Grid.Column="0" Content="Zoom factor:"/>
-		<axogcd:ScaleComboBox x:Name="_edZoomFactor" Grid.Row="10" Grid.Column="1" SelectedScaleChanged="EhZoomFactorChanged"/>
+		<axogcd:ScaleComboBox x:Name="_edZoomFactor" Grid.Row="10" Grid.Column="2" SelectedScaleChanged="EhZoomFactorChanged"/>
 
 	</Grid>
 </UserControl>

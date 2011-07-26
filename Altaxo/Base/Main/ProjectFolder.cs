@@ -70,7 +70,7 @@ namespace Altaxo.Main
 		}
 	
 		/// <summary>
-		/// Gets the string that is associated with the root folder (here: null).
+		/// Gets the string that is associated with the root folder (here: an empty string).
 		/// </summary>
 		public static string RootFolderName
 		{
@@ -270,6 +270,9 @@ namespace Altaxo.Main
 		public static string GetFoldersParentFolder(string dirName)
 		{
 			ThrowExceptionOnInvalidFullFolderPath(dirName);
+			if (dirName == RootFolderName)
+				throw new InvalidOperationException("Can not get the parent directory of the root folder");
+
 			int lastIndex = dirName.LastIndexOf(DirectorySeparatorChar, dirName.Length - 2);
 
 			if (lastIndex < 0)

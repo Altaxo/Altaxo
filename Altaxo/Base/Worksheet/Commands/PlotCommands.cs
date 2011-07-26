@@ -58,7 +58,7 @@ namespace Altaxo.Worksheet.Commands
 			return CreatePlotItems(selectedColumns, templatePlotStyle, new HashSet<DataColumn>());
 		}
 
-		/// <summary>
+			/// <summary>
 		/// Creates a list of plot items from data columns, using a template plot style.
 		/// </summary>
 		/// <param name="selectedColumns">Columns for which to create plot items.</param>
@@ -69,6 +69,21 @@ namespace Altaxo.Worksheet.Commands
 		/// <returns>List of plot items created.</returns>
 		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns)
 		{
+			return CreatePlotItems(selectedColumns, string.Empty, templatePlotStyle, processedColumns);
+		}
+
+		/// <summary>
+		/// Creates a list of plot items from data columns, using a template plot style.
+		/// </summary>
+		/// <param name="selectedColumns">Columns for which to create plot items.</param>
+		/// <param name="xColumnName">Name of the x column. If it is null or empty, or that column is not found in the table, the current assigned x column is used.</param>
+		/// <param name="templatePlotStyle">The template plot style used to create the basic plot item.</param>
+		/// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
+		/// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
+		/// labels, yerr, and so on.</param>
+		/// <returns>List of plot items created.</returns>
+		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string xColumnName, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns)
+		{
 			var result = new List<IGPlotItem>();
 			foreach(DataColumn ycol in selectedColumns)
 			{
@@ -78,7 +93,12 @@ namespace Altaxo.Worksheet.Commands
 					processedColumns.Add(ycol);
 
 				DataColumnCollection table = DataColumnCollection.GetParentDataColumnCollectionOf(ycol);
-				Altaxo.Data.DataColumn xcol = null==table ? null : table.FindXColumnOf(ycol);
+				Altaxo.Data.DataColumn xcol;
+				if (!string.IsNullOrEmpty(xColumnName) && null!=table && table.ContainsColumn(xColumnName))
+					xcol = table[xColumnName];
+				else
+					xcol = null==table ? null : table.FindXColumnOf(ycol);
+
 				XYColumnPlotData pa;
 				if (null != xcol)
 					pa = new XYColumnPlotData(xcol, ycol);

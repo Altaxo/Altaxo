@@ -220,68 +220,27 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public static void PlotCommonColumns(this ProjectBrowseController ctrl)
 		{
 			var list = ctrl.GetSelectedListItems();
-			var tables = new List<DataTable>();
-
+			var command = new Altaxo.Worksheet.Commands.PlotCommonColumnsCommand();
 			foreach (object item in list)
 			{
 				if (item is DataTable)
-					tables.Add((DataTable)item);
+					command.Tables.Add((DataTable)item);
 			}
 
-			if (tables.Count == 0)
+			if (command.Tables.Count == 0)
 				return;
 
-			// now determine which columns are common to all selected tables.
-			var commonColumnNames = new HashSet<string>(tables[0].DataColumns.GetColumnNames());
-			for (int i = 1; i < tables.Count; i++)
-				commonColumnNames.IntersectWith(tables[i].DataColumns.GetColumnNames());
+			var commonColumnNames = command.GetCommonColumnNamesUnordered();
+		
 
 			if (0 == commonColumnNames.Count)
 			{
-				Current.Gui.InfoMessageBox("The selected tables seem not to have common columns", "Please note");
+				Current.Gui.InfoMessageBox("The selected tables do not seem to have common columns", "Please note");
 				return;
 			}
 
-
-
-			// and show a dialog to let the user chose which columns to plot
-			var dlg = new Gui.Common.MultiChoiceList() { Description = "Common columns:", ColumnNames = new string[] { "Column name" } };
-			foreach (var name in tables[0].DataColumns.GetColumnNames())
-			{
-				// Note: we will add the column names in the order like in the first table
-				if (commonColumnNames.Contains(name))
-					dlg.List.Add(new Altaxo.Collections.SelectableListNode(name, name, false));
-			}
-
-			if (!Current.Gui.ShowDialog(ref dlg, "Plot common columns", false))
-				return;
-
-			var choosenColumns = new List<string>();
-			foreach (var item in dlg.List)
-			{
-				if (item.IsSelected)
-					choosenColumns.Add((string)item.Tag);
-			}
-
-			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;
-			var graphctrl = Current.ProjectService.CreateNewGraph();
-			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.DefaultLayerPosition, graphctrl.Doc.DefaultLayerSize);
-			graphctrl.Doc.Layers.Add(layer);
-			layer.CreateDefaultAxes();
-
-			var processedColumns = new HashSet<DataColumn>();
-			foreach (var colname in choosenColumns)
-			{
-				// first create the plot items
-				var columnList = new List<DataColumn>();
-				foreach (var table in tables)
-					columnList.Add(table[colname]);
-				var plotItemList = Altaxo.Worksheet.Commands.PlotCommands.CreatePlotItems(columnList, templateStyle, processedColumns);
-
-				var plotGroup = new Altaxo.Graph.Gdi.Plot.PlotItemCollection();
-				plotGroup.AddRange(plotItemList);
-				layer.PlotItems.Add(plotGroup);
-			}
+			if (true == Current.Gui.ShowDialog(ref command, "Plot common columns", false))
+				command.Execute();
 		}
 
 		#endregion

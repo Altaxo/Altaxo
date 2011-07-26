@@ -403,7 +403,7 @@ namespace Altaxo.Main
 
 		private void DirectoryRemoved(string dir)
 		{
-			if (null == dir)
+			if (dir==null || dir==ProjectFolder.RootFolderName)
 				return;
 
 			_directories.Remove(dir);

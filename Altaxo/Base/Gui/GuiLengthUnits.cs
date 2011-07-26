@@ -18,6 +18,7 @@ namespace Altaxo.Gui
 
 			instance.Add(LengthUnitPoint.Instance);
 			instance.Add(new UnitWithLimitedPrefixes(LengthUnitMeter.Instance , new SIPrefix[]{SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci}));
+			instance.Add(LengthUnitInch.Instance);
 			_instance = instance.AsReadOnly();
 		}
 

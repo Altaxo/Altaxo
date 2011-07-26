@@ -274,6 +274,7 @@
     <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleController.cs" />
     <Compile Include="Gui\Graph\G2DPlotItemControllerOld.cs" />
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
+    <Compile Include="Gui\Worksheet\PlotCommonColumnsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
     <Compile Include="Gui\Graph\PrintingController.cs" />
@@ -553,6 +554,7 @@
     <Compile Include="Worksheet\Commands\PlotCommands.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Worksheet\Commands\PlotCommonColumnsCommand.cs" />
     <Compile Include="Worksheet\Commands\RowCommands.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -433,6 +433,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Worksheet\PlotCommonColumnsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\PlotGroupCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -866,6 +870,9 @@
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
     <Compile Include="Gui\Graph\OrgEndSpanControl.xaml.cs">
       <DependentUpon>OrgEndSpanControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Worksheet\PlotCommonColumnsControl.xaml.cs">
+      <DependentUpon>PlotCommonColumnsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlotGroupCollectionControl.xaml.cs">
       <DependentUpon>PlotGroupCollectionControl.xaml</DependentUpon>

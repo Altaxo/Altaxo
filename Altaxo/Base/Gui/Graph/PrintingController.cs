@@ -20,6 +20,8 @@ namespace Altaxo.Gui.Graph
 		void InitializePaperOrientationLandscape(bool isLandScape);
 		void InitializePaperMarginsInHundrethInch(double left, double right, double top, double bottom);
 		void InitializePrintPreview(System.Drawing.Printing.PreviewPageInfo[] preview);
+		void InitializeNumberOfCopies(int val);
+		void InitializeCollateCopies(bool val);
 		void ShowPrinterPropertiesDialog(PrinterSettings currentSettings);
 
 		event Action SelectedPrinterChanged;
@@ -31,6 +33,8 @@ namespace Altaxo.Gui.Graph
 		event Action<double> MarginRightChanged;
 		event Action<double> MarginTopChanged;
 		event Action<double> MarginBottomChanged;
+		event Action<int> NumberOfCopiesChanged;
+		event Action<bool> CollateCopiesChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(IPrintingView))]
@@ -76,6 +80,8 @@ namespace Altaxo.Gui.Graph
 				InitAvailablePaperSizes(false);
 				InitPaperOrientation();
 				InitPaperMargins();
+				_view.InitializeNumberOfCopies(Current.PrintingService.PrintDocument.PrinterSettings.Copies);
+				_view.InitializeCollateCopies(Current.PrintingService.PrintDocument.PrinterSettings.Collate);
 
 				RequestPreview();
 			}
@@ -155,6 +161,16 @@ namespace Altaxo.Gui.Graph
 		{
 			Current.PrintingService.PrintDocument.DefaultPageSettings.Margins.Bottom = (int)val;
 			RequestPreview();
+		}
+
+		void EhNumberOfCopiesChanged(int val)
+		{
+			Current.PrintingService.PrintDocument.PrinterSettings.Copies = (short)val;
+		}
+
+		void EhCollateCopiesChanged(bool val)
+		{
+			Current.PrintingService.PrintDocument.PrinterSettings.Collate = val;
 		}
 
 		void InitAvailablePaperSources(bool initData)
@@ -377,6 +393,8 @@ namespace Altaxo.Gui.Graph
 					_view.MarginRightChanged -= this.EhMarginRightChanged;
 					_view.MarginTopChanged -= this.EhMarginTopChanged;
 					_view.MarginBottomChanged -= this.EhMarginBottomChanged;
+					_view.NumberOfCopiesChanged -= this.EhNumberOfCopiesChanged;
+					_view.CollateCopiesChanged -= this.EhCollateCopiesChanged;
 				}
 
 				_view = value as IPrintingView;
@@ -393,6 +411,8 @@ namespace Altaxo.Gui.Graph
 					_view.MarginRightChanged += this.EhMarginRightChanged;
 					_view.MarginTopChanged += this.EhMarginTopChanged;
 					_view.MarginBottomChanged += this.EhMarginBottomChanged;
+					_view.NumberOfCopiesChanged += this.EhNumberOfCopiesChanged;
+					_view.CollateCopiesChanged += this.EhCollateCopiesChanged;
 				}
 			}
 		}
@@ -404,6 +424,12 @@ namespace Altaxo.Gui.Graph
 
 		public bool Apply()
 		{
+			var previewTask = _previewTask;
+			if (null != previewTask)
+				previewTask.Wait();
+
+
+			Current.PrintingService.PrintDocument.DocumentName = _doc.Name;
 			return true;
 		}
 
