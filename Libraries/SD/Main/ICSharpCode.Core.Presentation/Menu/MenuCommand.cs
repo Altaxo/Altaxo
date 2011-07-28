@@ -240,4 +240,31 @@ namespace ICSharpCode.Core.Presentation
 			}
 		}
 	}
+#if ModifiedForAltaxo
+	// Adds support for a checkable menu command:
+	// note that an alternative way would be to check whether the underlying command implements the ICheckableMenuCommand interface,
+	// and then create the MenuItem with IsCheckable=true
+	// but the disadvantage is that the underlying commands of all MenuCommands must then be created onto the creating of the MenuCommand
+	// note that the MenuService must be modified too in order to support this CheckableMenuCommand
+	class CheckableMenuCommand : MenuCommand
+	{
+		System.Windows.Data.BindingExpressionBase _isCheckedBinding;
+
+		public CheckableMenuCommand(UIElement inputBindingOwner, Codon codon, object caller, bool createCommand, string activationMethod)
+			: base(inputBindingOwner, codon, caller, createCommand, activationMethod)
+		{
+			CommandWrapper wrapper = this.Command as CommandWrapper;
+
+			if (wrapper != null)
+			{
+				ICheckableMenuCommand cmd = wrapper.GetAddInCommand() as ICheckableMenuCommand;
+				if (cmd != null)
+				{
+					this.IsCheckable = true;
+					_isCheckedBinding = SetBinding(IsCheckedProperty, new System.Windows.Data.Binding("IsChecked") { Source = cmd, Mode = System.Windows.Data.BindingMode.TwoWay });
+				}
+			}
+		}
+	}
+#endif
 }

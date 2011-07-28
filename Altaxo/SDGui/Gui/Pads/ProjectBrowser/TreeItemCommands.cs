@@ -7,9 +7,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	public class CmdViewOnSelectOff : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
+		public event EventHandler IsCheckedChanged;
+		ViewOnSelect _lastKnownValue;
+
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			Ctrl.ViewOnSelectTreeNode = ViewOnSelect.Off;
+			_lastKnownValue = ViewOnSelect.Off;
+			Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+			if (null != IsCheckedChanged)
+				IsCheckedChanged(this, EventArgs.Empty);
 		}
 
 		#region ICheckableMenuCommand Members
@@ -33,6 +39,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			get
 			{
+				if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+				{
+					IsCheckedChanged(this, EventArgs.Empty);
+					_lastKnownValue = Ctrl.ViewOnSelectTreeNode;
+				}
+
 				return true;
 			}
 			set
@@ -45,9 +57,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 	public class CmdViewOnSelectFolderItems : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
+		public event EventHandler IsCheckedChanged;
+		ViewOnSelect _lastKnownValue;
+
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			Ctrl.ViewOnSelectTreeNode = ViewOnSelect.ItemsInFolder;
+			_lastKnownValue = ViewOnSelect.ItemsInFolder;
+			Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+			if (null != IsCheckedChanged)
+				IsCheckedChanged(this, EventArgs.Empty);
 		}
 
 		#region ICheckableMenuCommand Members
@@ -71,6 +89,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			get
 			{
+				if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+				{
+					IsCheckedChanged(this, EventArgs.Empty);
+					_lastKnownValue = Ctrl.ViewOnSelectTreeNode;
+				}
+
 				return true;
 			}
 			set
@@ -83,9 +107,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 	public class CmdViewOnSelectFolderAndSubfolderItems : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
+		public event EventHandler IsCheckedChanged;
+		ViewOnSelect _lastKnownValue;
+
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			Ctrl.ViewOnSelectTreeNode = ViewOnSelect.ItemsInFolderAndSubfolders;
+			_lastKnownValue = ViewOnSelect.ItemsInFolderAndSubfolders;
+			Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+			if (null != IsCheckedChanged)
+				IsCheckedChanged(this, EventArgs.Empty);
 		}
 
 		#region ICheckableMenuCommand Members
@@ -110,6 +140,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			get
 			{
+				if (Ctrl.ViewOnSelectTreeNode != _lastKnownValue && null != IsCheckedChanged)
+				{
+					IsCheckedChanged(this, EventArgs.Empty);
+					_lastKnownValue = Ctrl.ViewOnSelectTreeNode;
+				}
+
 				return true;
 			}
 			set

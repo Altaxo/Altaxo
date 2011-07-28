@@ -72,9 +72,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 	public class CmdViewOnSelectListNodeOff : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
+		public event EventHandler IsCheckedChanged;
+
+
 		protected override void Run(ProjectBrowseController ctrl)
 		{
 			ctrl.ViewOnSelectListNodeOn = false;
+			if (null != IsCheckedChanged)
+				IsCheckedChanged(this, EventArgs.Empty);
 		}
 
 		#region ICheckableMenuCommand Members
@@ -98,6 +103,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			get
 			{
+				if (null != IsCheckedChanged)
+					IsCheckedChanged(this, EventArgs.Empty);
 				return true;
 			}
 			set
@@ -110,9 +117,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 	public class CmdViewOnSelectListNodeOn : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
+		public event EventHandler IsCheckedChanged;
+
 		protected override void Run(ProjectBrowseController ctrl)
 		{
 			ctrl.ViewOnSelectListNodeOn = true;
+			if (null != IsCheckedChanged)
+				IsCheckedChanged(this, EventArgs.Empty);
 		}
 
 		#region ICheckableMenuCommand Members
@@ -136,6 +147,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			get
 			{
+				if (null != IsCheckedChanged)
+					IsCheckedChanged(this, EventArgs.Empty);
 				return true;
 			}
 			set

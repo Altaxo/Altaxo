@@ -215,7 +215,7 @@ namespace ICSharpCode.Core.Presentation
 					return new ConditionalSeparator(codon, descriptor.Caller, false);
 				case "CheckBox":
 #if ModifiedForAltaxo // no solution at all, but at least the normal menu item...
-					return new MenuCommand(context.InputBindingOwner, codon, descriptor.Caller, createCommand, context.ActivationMethod);
+					return new CheckableMenuCommand(context.InputBindingOwner, codon, descriptor.Caller, createCommand, context.ActivationMethod);
 #else
 					return "CheckBox";
 #endif

@@ -225,7 +225,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				return _list;
 
 
-			if (null != _folderName)
+			if (!Altaxo.Main.ProjectFolder.IsRootFolderName(_folderName))
 				_list.Add(new BrowserListItem(
 					"..",
 					new ParentProjectFolder(Main.ProjectFolder.GetFoldersParentFolder(_folderName)),
