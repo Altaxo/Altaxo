@@ -39,7 +39,10 @@ namespace Altaxo.Gui.Graph
 
 		GdiToWpfBitmap _previewBitmap;
 		System.Drawing.Printing.PreviewPageInfo[] _previewData;
-		System.Windows.Threading.DispatcherTimer _timer = new System.Windows.Threading.DispatcherTimer();
+
+		System.Threading.CancellationToken _printerStatusCancellationToken;
+		System.Threading.CancellationTokenSource _printerStatusCancellationTokenSource;
+		string _printerName;
 
 		/// <summary>Number of the page that is currently previewed.</summary>
 		int _previewPageNumber;
@@ -56,23 +59,19 @@ namespace Altaxo.Gui.Graph
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
-			_timer.Tick += EhTimerTick;
-			_timer.Interval = new TimeSpan(0, 0, 1);
-			_timer.Start();
+			this._printerStatusCancellationTokenSource = new System.Threading.CancellationTokenSource();
+			this._printerStatusCancellationToken = _printerStatusCancellationTokenSource.Token;
+
+			System.Threading.Tasks.Task.Factory.StartNew(UpdatePrinterStatusGuiElements, _printerStatusCancellationToken);
 		}
 
 		private void EhUnloaded(object sender, RoutedEventArgs e)
 		{
-			_timer.Stop();
+			_printerStatusCancellationTokenSource.Cancel();
 		}
 
-		private void EhTimerTick(object sender, EventArgs e)
-		{
-			if (this.IsVisible && null != _cbAvailablePrinters.SelectedItem)
-			{
-				UpdatePrinterStatusGuiElements(((Collections.SelectableListNode)_cbAvailablePrinters.SelectedItem).Text);
-			}
-		}
+
+	
 
 		#region IPrintingView
 
@@ -144,7 +143,7 @@ namespace Altaxo.Gui.Graph
 
 		void UpdatePreview()
 		{
-			if (null == _previewBitmap || null==_previewData || _previewData.Length == 0)
+			if (null == _previewBitmap || null == _previewData || _previewData.Length == 0)
 				return;
 
 			// original sizes
@@ -152,10 +151,10 @@ namespace Altaxo.Gui.Graph
 			double oh = _previewData[0].PhysicalSize.Height;
 
 			// destination sizes and locations
-			double dl = Math.Min(4, _previewBitmap.GdiRectangle.Width/8.0); // left
+			double dl = Math.Min(4, _previewBitmap.GdiRectangle.Width / 8.0); // left
 			double dt = Math.Min(4, _previewBitmap.GdiRectangle.Height / 8.0); // top
-			double dw = _previewBitmap.GdiRectangle.Width - 2*dl; // width
-			double dh = _previewBitmap.GdiRectangle.Height - 2*dt; // height
+			double dw = _previewBitmap.GdiRectangle.Width - 2 * dl; // width
+			double dh = _previewBitmap.GdiRectangle.Height - 2 * dt; // height
 
 
 
@@ -171,7 +170,7 @@ namespace Altaxo.Gui.Graph
 			else // if the original image is more landscape than the destination rectangle
 			{
 				var rh = dw * oh / ow;
-				destRect = new System.Drawing.Rectangle((int)dl, (int)(0.5*(dh - rh)+dt), (int)dw, (int)rh);
+				destRect = new System.Drawing.Rectangle((int)dl, (int)(0.5 * (dh - rh) + dt), (int)dw, (int)rh);
 			}
 
 			_previewBitmap.GdiGraphics.FillRectangle(System.Drawing.Brushes.White, _previewBitmap.GdiRectangle);
@@ -184,50 +183,58 @@ namespace Altaxo.Gui.Graph
 		}
 
 
-		void UpdatePrinterStatusGuiElements(string printerName)
+		void UpdatePrinterStatusGuiElements()
 		{
-			string comment = string.Empty;
-			string status = string.Empty;
-			string location = string.Empty;
-			bool? isOffline=null;
-
-			string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", printerName);
-			ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
-			ManagementObjectCollection coll = searcher.Get();
-			foreach (ManagementObject printer in coll)
+			for (; ; )
 			{
-				// Console.WriteLine("------ Printer: {0} ---------", printer.Path);
-				foreach (PropertyData property in printer.Properties)
+				if (_printerStatusCancellationToken.IsCancellationRequested)
+					break;
+
+				string printerName = _printerName;
+				if (string.IsNullOrEmpty(printerName))
 				{
-					// Console.WriteLine(string.Format("{0}: {1}", property.Name, property.Value));
-					switch (property.Name)
-					{
-						case "Status":
-							status = (string)property.Value;
-							break;
-						case "Comment":
-							comment = (string)property.Value;
-							break;
-						case "Location":
-							location = (string)property.Value;
-							break;
-						case "WorkOffline":
-							isOffline = (bool)property.Value;
-							break;
-					}
+					System.Threading.Thread.Sleep(100);
+					continue;
 				}
-			break;
+
+				string comment = string.Empty;
+				string status = string.Empty;
+				string location = string.Empty;
+				bool? isOffline = null;
+
+				string escapedPrinterName = printerName.Replace("\\", "\\\\");
+				//string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", escapedPrinterName);
+				string query = string.Format("SELECT * from Win32_Printer WHERE Name = '{0}'", escapedPrinterName);
+				ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+				ManagementObjectCollection coll = searcher.Get();
+				foreach (ManagementObject printer in coll)
+				{
+					//Console.WriteLine("------ Printer: {0} ---------", printer.Path);
+					//Console.WriteLine("Property Status = {0}", printer.GetPropertyValue("Status"));
+
+					status = (string)printer.GetPropertyValue("Status");
+					comment = (string)printer.GetPropertyValue("Comment");
+					location = (string)printer.GetPropertyValue("Location");
+					isOffline = (bool)printer.GetPropertyValue("WorkOffline");
+					break;
+				}
+
+				if (true == isOffline)
+					status = "Offline";
+
+				if (_printerStatusCancellationToken.IsCancellationRequested)
+					break;
+
+				Current.Gui.Execute(() =>
+					{
+						this._guiPrinterStatus.Content = status;
+						this._guiPrinterComment.Content = comment;
+						this._guiPrinterLocation.Content = location;
+					});
+				System.Threading.Thread.Sleep(100);
 			}
-
-			if (true == isOffline)
-				status = "Offline";
-
-			this._guiPrinterStatus.Content = status;
-			this._guiPrinterComment.Content = comment;
-			this._guiPrinterLocation.Content = location;
-
 		}
-
+	
 
 		#endregion
 
@@ -305,14 +312,14 @@ namespace Altaxo.Gui.Graph
 
 			var node = (Collections.SelectableListNode)_cbAvailablePrinters.SelectedItem;
 
-			var printerName = node.Text;
+			_printerName = node.Text;
 
-			UpdatePrinterStatusGuiElements(printerName);
+			//UpdatePrinterStatusGuiElements(printerName);
 
 
 		}
 
-	
+
 
 		private void EhPreviewImageSizeChanged(object sender, SizeChangedEventArgs e)
 		{
@@ -332,7 +339,7 @@ namespace Altaxo.Gui.Graph
 		}
 
 
-	
+
 
 
 		private void EhPreviewFirstPage(object sender, RoutedEventArgs e)
@@ -343,7 +350,7 @@ namespace Altaxo.Gui.Graph
 
 		private void EhPreviewPreviousPage(object sender, RoutedEventArgs e)
 		{
-			_previewPageNumber = Math.Max(0,_previewPageNumber-1);
+			_previewPageNumber = Math.Max(0, _previewPageNumber - 1);
 			UpdatePreviewPageAndText();
 
 		}
@@ -434,12 +441,12 @@ namespace Altaxo.Gui.Graph
 
 		}
 
-	
-
-	
 
 
-		
+
+
+
+
 	}
 }
 
