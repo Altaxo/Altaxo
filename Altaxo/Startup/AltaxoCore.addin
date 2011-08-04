@@ -733,6 +733,14 @@
         class="Altaxo.Graph.Commands.GroupSelectedObjects" />
 			<ToolbarItem id="UngroupObjects" icon="Icons.16x16.UngroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.UngroupShapes.Description}"
         class="Altaxo.Graph.Commands.UngroupSelectedObjects" />
+			<ToolbarItem id="SelectionUp" icon="Icons.16x16.MoveUp" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemUp.Description}"
+        class="Altaxo.Graph.Commands.MoveGraphItemUp" />
+			<ToolbarItem id="SelectionDown" icon="Icons.16x16.MoveDown" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemDown.Description}"
+        class="Altaxo.Graph.Commands.MoveGraphItemDown" />
+			<ToolbarItem id="SelectionToTop" icon="Icons.16x16.MoveToTop" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToTop.Description}"
+        class="Altaxo.Graph.Commands.MoveGraphItemToTop" />
+			<ToolbarItem id="SelectionToBottom" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+        class="Altaxo.Graph.Commands.MoveGraphItemToBottom" />
 		</Condition>
   </Path>
 

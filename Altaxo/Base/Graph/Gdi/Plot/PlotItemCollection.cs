@@ -875,12 +875,19 @@ namespace Altaxo.Graph.Gdi.Plot
 			OnChanged();
 		}
 
-    public void Clear()
+		public void ClearPlotItems()
+		{
+			_plotItems.Clear();
+			OnCollectionChanged();
+		}
+		
+		public void ClearPlotItemsAndGroupStyles()
     {
       _plotItems.Clear();
       _plotGroupStyles.Clear();
       OnCollectionChanged();
     }
+
 
     public IGPlotItem this[int i]
     {

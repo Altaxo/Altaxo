@@ -177,7 +177,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
           IXBoundsHolder xbpi = (IXBoundsHolder)pi;
           xbounds.Reset();
           xbpi.MergeXBoundsInto(xbounds);
-          xbounds.Shift(_xinc * idx);
+          xbounds.Shift(_xinc * _scaleXInc * idx);
           pb.Add(xbounds);
         }
         if (pi is G2DPlotItem)
@@ -215,7 +215,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       if (nItems == 0)
         _yinc = 0;
       else
-        _yinc = (ybounds.UpperBound - ybounds.LowerBound) / nItems;
+        _yinc = (ybounds.UpperBound - ybounds.LowerBound);
 
       int idx = 0;
       foreach (IGPlotItem pi in coll)
@@ -225,7 +225,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
           IYBoundsHolder ybpi = (IYBoundsHolder)pi;
           ybounds.Reset();
           ybpi.MergeYBoundsInto(ybounds);
-          ybounds.Shift(_yinc * idx);
+          ybounds.Shift(_yinc * _scaleYInc * idx);
           pb.Add(ybounds);
         }
         if (pi is G2DPlotItem)

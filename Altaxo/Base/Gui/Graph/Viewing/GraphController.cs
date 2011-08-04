@@ -916,6 +916,57 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
+		public void MoveSelectedGraphItemsUp()
+		{
+			var selectedItems = new HashSet<object>();
+			foreach (var hittestobject in SelectedObjects)
+				selectedItems.Add(hittestobject.HittedObject);
+
+			foreach (var layer in _doc.Layers)
+			{
+				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsTowardsHigherIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
+			}
+		}
+
+		public void MoveSelectedGraphItemsDown()
+		{
+			var selectedItems = new HashSet<object>();
+			foreach (var hittestobject in SelectedObjects)
+				selectedItems.Add(hittestobject.HittedObject);
+
+			foreach (var layer in _doc.Layers)
+			{
+				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsTowardsLowerIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
+			}
+		}
+
+		public void MoveSelectedGraphItemsToTop()
+		{
+			var selectedItems = new HashSet<object>();
+			foreach (var hittestobject in SelectedObjects)
+				selectedItems.Add(hittestobject.HittedObject);
+
+			foreach (var layer in _doc.Layers)
+			{
+				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsToMaximumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
+			}
+
+		}
+
+		public void MoveSelectedGraphItemsToBottom()
+		{
+			var selectedItems = new HashSet<object>();
+			foreach (var hittestobject in SelectedObjects)
+				selectedItems.Add(hittestobject.HittedObject);
+
+			foreach (var layer in _doc.Layers)
+			{
+				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsToMinimumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
+			}
+
+		}
+
+
 
 		public bool IsCmdDeleteEnabled()
 		{

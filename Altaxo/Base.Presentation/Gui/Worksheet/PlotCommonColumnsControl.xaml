@@ -5,7 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              >
-	<StackPanel Orientation="Vertical">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 		<GroupBox Header="X-Column:">
 			<StackPanel Orientation="Vertical">
 				<RadioButton x:Name="_guiUseXColumnCurrent" Content="Use current x-column of each worksheet"  Checked="EhUseCurrentXColumnChecked"/>
@@ -13,8 +18,8 @@
 				<ComboBox x:Name="_guiCommonXColumn" IsEnabled="False" SelectionChanged="EhXColumnSelectionChanged"/>
 			</StackPanel>
 		</GroupBox>
-		<GroupBox Header="Y-Columns to plot:">
-			<ListBox x:Name="_guiCommonYColumns" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="EhYColumnsSelectionChanged"/>
+		<GroupBox Grid.Row="2" Header="Y-Columns to plot:">
+			<ListBox x:Name="_guiCommonYColumns" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="EhYColumnsSelectionChanged"/>
 		</GroupBox>
-	</StackPanel>
+	</Grid>
 </UserControl>

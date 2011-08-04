@@ -426,6 +426,41 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+	public class MoveGraphItemUp : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.MoveSelectedGraphItemsUp();
+		}
+	}
+
+	public class MoveGraphItemDown : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.MoveSelectedGraphItemsDown();
+		}
+	}
+
+	public class MoveGraphItemToTop : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.MoveSelectedGraphItemsToTop();
+		}
+	}
+
+	public class MoveGraphItemToBottom : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.MoveSelectedGraphItemsToBottom();
+		}
+	}
+
+
+
+
 	public class ZoomAutomatic : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)

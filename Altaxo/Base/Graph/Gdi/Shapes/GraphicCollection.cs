@@ -217,6 +217,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       _items.Insert(index, go);
       OnChanged();
     }
+
+		/// <summary>
+		/// Moves the selected objects forwards or backwards in the list.
+		/// </summary>
+		/// <param name="selectedObjects">List of objects that should be moved. These objects must be part of this GraphicCollection.</param>
+		/// <param name="steps">Number of steps to move. Positive values move the objects to higher indices, thus to the top of the drawing.</param>
+		public void Move(ISet<GraphicBase> selectedObjects, int steps)
+		{
+			Altaxo.Collections.ListMoveOperations.MoveSelectedItems(this, i => selectedObjects.Contains(this[i]), steps);
+		}
    
     #region IChangedEventSource Members
 

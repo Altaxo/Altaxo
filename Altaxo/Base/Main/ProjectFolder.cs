@@ -160,6 +160,26 @@ namespace Altaxo.Main
 				return fullName.Substring(0, lastIndex+1);
 		}
 
+
+		/// <summary>
+		/// Intended for scripting purposes only! 
+		/// Gets the directory part of a full qualified name, but without the trailing DirectorySeparatorChar.
+		/// No exception is thrown if the directory part is the root folder, thus the names '\Alice' and 'Alice' both return an empty string.
+		/// The full qualified name can either be the name of an item (worksheet, graph) or a full folder name.
+		/// If the name of a item is provided, the item's directory name (without trailing DirectorySeparatorChar) is returned.
+		/// If a full folder path is provided  (i.e. either an empty string or a string ending with a <see cref="DirectorySeparatorChar"/>), the name of the parent folder (without trailing DirectorySeparatorChar)  is returned.
+		/// </summary>
+		/// <param name="fullName">The full qualified name of (either an item's name or a full folder name).</param>
+		/// <returns>Name of the parent folder, but without trailing DirectorySeparatorChar.</returns>
+		public static string GetFolderPartWithoutTrailingDirectorySeparatorChar(string fullName)
+		{
+			string result = GetFolderPart(fullName);
+			if (result.Length > 0 && result[result.Length - 1] == DirectorySeparatorChar)
+				return result.Substring(0, result.Length - 1);
+			else
+				return result;
+		}
+
 		/// <summary>
 		/// Gets the name portion of a full name.  Can either be the name of an item (worksheet, graph) or a full folder name.
 		/// If the name of a item (worksheet or graph) is provided, the item's name without folder name is returned (thus containing no <see cref="DirectorySeparatorChar"/>)directory name is returned.

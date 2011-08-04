@@ -27,7 +27,7 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Class which holds unique items in the order in wich they are added
+  /// Class which holds unique items in the order in wich they are added (like a List, but with the difference that only unique items could be contained).
   /// </summary>
   /// <typeparam name="T"></typeparam>
   public class AltaxoSet<T> : ICollection<T>

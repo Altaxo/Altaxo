@@ -254,7 +254,7 @@ namespace Altaxo.Gui.Graph
 
     private void TransferTreeToDoc(NGTreeNode rootnode, PlotItemCollection picoll)
     {
-      picoll.Clear();
+			picoll.ClearPlotItems(); // do not clear group styles here, otherwise group styles would not be applied
       foreach (NGTreeNode node in rootnode.Nodes)
       {
         IGPlotItem item = (IGPlotItem)node.Tag;
@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Graph
 
 		private void SelNodesToTempDoc(NGTreeNode[] selNodes, PlotItemCollection picoll)
 		{
-			picoll.Clear();
+			picoll.ClearPlotItems();
 			foreach (NGTreeNode node in selNodes)
 			{
 				IGPlotItem item = (IGPlotItem)node.Tag;
@@ -752,7 +752,7 @@ namespace Altaxo.Gui.Graph
       if(!this._isDirty)
         return true; // not dirty - so no need to apply something
 
-      _originalDoc.Clear(); // first, clear all Plot items
+      _originalDoc.ClearPlotItems(); // first, clear all Plot items
       TransferTreeToDoc(_plotItemsRootNode, _originalDoc);
 
       if (_useDocument== UseDocument.Copy)
