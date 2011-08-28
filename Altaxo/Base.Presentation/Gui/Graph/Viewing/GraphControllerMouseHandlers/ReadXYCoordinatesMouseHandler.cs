@@ -84,9 +84,18 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseDown(position, e);
 
-      m_Cross = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
+			if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) // if M is pressed, we don't move the cross, but instead we display not only the cross coordinates but also the differenz
+			{
+				var printableCoord = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
+				DisplayCrossCoordinatesAndDifference(printableCoord);
 
-      DisplayCrossCoordinates();
+			}
+			else
+			{
+				m_Cross = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
+				DisplayCrossCoordinates();
+			}
+
       
       _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
          
@@ -94,7 +103,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     } // end of function
 
 
-		bool CalculateCrossCoordinates(out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
+		bool CalculateCrossCoordinates(PointF cross, out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
 		{
 			XYPlotLayer layer = _grac.ActiveLayer;
 			if (layer == null)
@@ -104,7 +113,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				return false;
 			}
 
-			PointF layerXY = layer.GraphToLayerCoordinates(m_Cross);
+			PointF layerXY = layer.GraphToLayerCoordinates(cross);
 
 
 
@@ -128,7 +137,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       else
       {
         AltaxoVariant xphys, yphys;
-        if (CalculateCrossCoordinates(out xphys, out  yphys))
+        if (CalculateCrossCoordinates(m_Cross, out xphys, out  yphys))
           Current.DataDisplay.WriteOneLine(string.Format(
          "Layer({0}) X={1}, Y={2}",
          _grac.ActiveLayer.Number,
@@ -136,6 +145,42 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
          yphys));
       }
     }
+
+		void DisplayCrossCoordinatesAndDifference(PointF printableAreaCoords)
+		{
+			if (_showPrintableCoordinates)
+			{
+				Current.DataDisplay.WriteTwoLines(
+					string.Format("Layer({0}) XS={1}, YS={2}",_grac.ActiveLayer.Number,	m_Cross.X, m_Cross.Y),
+					string.Format("DeltaX={0}, DeltaY={1}, Distance={2}", printableAreaCoords.X-m_Cross.X, printableAreaCoords.Y-m_Cross.Y, Calc.RMath.Hypot(printableAreaCoords.X-m_Cross.X, printableAreaCoords.Y-m_Cross.Y))
+					);
+			}
+			else
+			{
+				AltaxoVariant xphys, yphys;
+				AltaxoVariant xphys2, yphys2;
+				if (CalculateCrossCoordinates(m_Cross, out xphys, out  yphys) && CalculateCrossCoordinates(printableAreaCoords, out xphys2, out yphys2))
+				{
+					double distance=double.NaN;
+					AltaxoVariant dx=double.NaN, dy=double.NaN;
+					try
+					{
+						dx = xphys2-xphys;
+						dy = yphys2-yphys;
+						var r2 = dx*dx+dy*dy;
+						distance = Math.Sqrt(r2);
+					}
+					catch(Exception)
+					{
+					}
+
+					Current.DataDisplay.WriteTwoLines(
+						string.Format("Layer({0}) X={1}, Y={2}", _grac.ActiveLayer.Number, xphys, yphys),
+						string.Format("DeltaX={0}, DeltaY={1}, Distance={2}", dx, dy, distance) 
+						);
+				}
+			}
+		}
 
 
 
@@ -247,7 +292,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
         else
         {
           AltaxoVariant xphys, yphys;
-          if (CalculateCrossCoordinates(out xphys, out  yphys))
+          if (CalculateCrossCoordinates(m_Cross, out xphys, out  yphys))
             Current.Console.WriteLine("{0}\t{1}", xphys, yphys);
         }
         return true;

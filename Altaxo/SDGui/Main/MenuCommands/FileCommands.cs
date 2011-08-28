@@ -232,6 +232,27 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
+	public class FileImportAscii : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var content = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
+
+			if (null != content)
+			{
+				var controller = (Altaxo.Gui.Worksheet.Viewing.WorksheetController)content.MVCController;
+
+				if (null != controller)
+					Altaxo.Data.FileCommands.ShowImportAsciiDialog(controller.DataTable);
+			}
+			else
+			{
+				Altaxo.Data.FileCommands.ShowImportAsciiDialog(null,true,false);
+			}
+		}
+
+	}
+
 
 	public class CloseProject : AbstractMenuCommand
 	{
