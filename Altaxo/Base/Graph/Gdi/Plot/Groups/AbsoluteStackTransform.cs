@@ -30,6 +30,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
+	/// <summary>
+	/// 
+	/// </summary>
   public class AbsoluteStackTransform : ICoordinateTransformingGroupStyle
   {
     #region Serialization
@@ -53,8 +56,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     #endregion
 
 
+
+
     public AbsoluteStackTransform()
     {
+			
     }
 
     public AbsoluteStackTransform(AbsoluteStackTransform from)
@@ -66,6 +72,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
       CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
+			
     }
 
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
@@ -127,6 +134,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 
 
+		/// <summary>
+		/// Determines whether the plot items in <paramref name="coll"/> can be plotted as stack. Presumption is that all plot items 
+		/// have the same number of plot points, and that all items have the same order of x values associated with the plot points.
+		/// </summary>
+		/// <param name="layer">Plot layer.</param>
+		/// <param name="coll">Collection of plot items.</param>
+		/// <param name="plotDataList">Output: dictionary with associates each plot item with a list of processed plot data.</param>
+		/// <returns>Returns <c>true</c> if the plot items in <paramref name="coll"/> can be plotted as stack; otherwise, <c>false</c>.</returns>
     public static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
     {
       plotDataList = new Dictionary<G2DPlotItem, Processed2DPlotData>();
@@ -177,6 +192,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     }
 
 
+		/// <summary>Adds the y-values of a plot item to an array of y-values..</summary>
+		/// <param name="yArray">The y array to be added to. If null, a new array will be allocated (and filled with the y-values of the plot item).</param>
+		/// <param name="pdata">The pdata.</param>
+		/// <returns>If the parameter <paramref name="yArray"/> was not null, then that <paramref name="yArray"/> is returned. Otherwise the newly allocated array is returned.</returns>
     public static AltaxoVariant[] AddUp(AltaxoVariant[] yArray, Processed2DPlotData pdata)
     {
       if (yArray == null)
@@ -202,6 +221,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       return yArray;
     }
 
+		/// <summary>Paints the plot items.</summary>
+		/// <param name="g">Graphics context used for drawing.</param>
+		/// <param name="layer">Plot layer.</param>
+		/// <param name="coll">Collection of plot items to draw.</param>
     public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
     {
       Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
@@ -244,7 +267,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
           // we have also to exchange the accessor for the physical y value and replace it by our own one
           AltaxoVariant[] localArray = (AltaxoVariant[])yArray.Clone();
-          pdata.YPhysicalAccessor = new IndexedPhysicalValueAccessor(delegate(int i) { return localArray[i]; });
+					LocalArrayHolder localArrayHolder = new LocalArrayHolder(localArray, pdata);
+          pdata.YPhysicalAccessor = localArrayHolder.GetPhysical;
           pdata.PreviousItemData = previousItemData;
           previousItemData = pdata;
         }
@@ -279,6 +303,38 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 
     }
+
+
+		/// <summary>
+		/// Private class to hold the transformed physical y values. The problem is that <see cref="GetPhysical"/> is called with the original row index (and not the plot index),
+		/// thus a dictionary with translates the original row index to the index in the array is neccessary.
+		/// </summary>
+		private class LocalArrayHolder
+		{
+			AltaxoVariant[] _localArray;
+			Dictionary<int, int> _originalRowIndexToPlotIndex;
+
+			/// <summary>Initializes a new instance of the <see cref="LocalArrayHolder"/> class.</summary>
+			/// <param name="localArray">The local array of transformed y values. The array length is equal to the number of plot points.</param>
+			/// <param name="pdata">The processed plot data. The plot range member of this instance is used to build a dictionary which associates the original row indices to the indices of the <paramref name="localArray"/>.</param>
+			public LocalArrayHolder(AltaxoVariant[] localArray, Processed2DPlotData pdata)
+			{
+				_localArray = localArray;
+				_originalRowIndexToPlotIndex = pdata.RangeList.GetDictionaryOfOriginalRowIndicesToPlotIndices();
+			}
+
+			/// <summary>Gets the physical y value for a given original row index.</summary>
+			/// <param name="originalRowIndex">Index of the original row.</param>
+			/// <returns>The (now transformed) y value of the given original row index. If it is not found in the dictionary which associates the original row indices to the indices of the <paramref name="localArray"/>, a empty <see cref="AltaxoVariant"/> instance is returned.</returns>
+			public AltaxoVariant GetPhysical(int originalRowIndex)
+			{
+				int idx;
+				if (_originalRowIndexToPlotIndex.TryGetValue(originalRowIndex, out idx))
+					return _localArray[idx];
+				else
+					return new AltaxoVariant();
+			}
+		}
 
     #endregion
 

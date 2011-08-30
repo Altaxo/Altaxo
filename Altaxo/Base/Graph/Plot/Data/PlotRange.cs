@@ -37,8 +37,25 @@ namespace Altaxo.Graph.Plot.Data
   [Serializable]
   public class PlotRange 
   {
+		/// <summary>
+		/// First index of a contiguous plot range in the plot point array (i.e. in the array of processed plot point data, <b>not</b> in the original data column).
+		/// To calculate from which row index in the original data column this comes from, add to this value <see cref="OffsetToOriginal"/>.
+		/// </summary>
     int _lowerBound;
-    int _upperBound;
+
+		/// <summary>
+		/// Last index + 1 of a contiguous plot range in the plot point array (i.e. in the array of processed plot point data, <b>not</b> in the original data column).
+		/// To calculate from which row index in the original data column this comes from, add to this value <see cref="OffsetToOriginal"/>.
+		/// </summary>
+		int _upperBound;
+
+		/// <summary>
+		/// This gives the offset of an index in the plot point array to the original data row index.
+		/// </summary>
+		/// <example>If the LowerBound=4 and UpperBound==6, this means points 4 to 6 in the array of plot point locations (!)
+		/// will be a contiguous range of plot points, and for this, they can be connected by a line etc.
+		/// If OffsetToOriginal is 5, this means the point at index 4 in the plot point location array was created
+		/// from row index 4+5=9, i.e. from row index 9 in the DataColumn.</example>
     int _offsetToOriginal;
 
     #region Serialization
@@ -211,6 +228,7 @@ namespace Altaxo.Graph.Plot.Data
       return -1;
     }
 
+
     /// <summary>
     /// Returns the total number of plot points.
     /// </summary>
@@ -223,7 +241,7 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// By enumerating throw this, you will get the original row indices (indices into the DataColumns).
+    /// By enumerating through this, you will get the original row indices (indices into the DataColumns).
     /// The number of items returned is equal to <see cref="PlotPointCount" />.
     /// </summary>
     /// <returns></returns>
@@ -236,6 +254,21 @@ namespace Altaxo.Graph.Plot.Data
           yield return j+r.OffsetToOriginal;
       }
     }
+
+		/// <summary>Gets a dictionary that associates the original row indices to the current plot indices. Note that this dictionary reflectes the actual state of the PlotRangeList
+		/// in the moment of the function call; subsequent changes in the list are <b>not</b> reflected in the dictionary.</summary>
+		/// <returns>Dictionary that associates the original row indices to the current plot indices.</returns>
+		public Dictionary<int, int> GetDictionaryOfOriginalRowIndicesToPlotIndices()
+		{
+			Dictionary<int, int> result = new Dictionary<int, int>();
+			int plotIndex = 0;
+			foreach (int originalIndex in OriginalRowIndices())
+			{
+				result.Add(originalIndex, plotIndex);
+				++plotIndex;
+			}
+			return result;
+		}
 
     #region IEnumerable<PlotRange> Members
 

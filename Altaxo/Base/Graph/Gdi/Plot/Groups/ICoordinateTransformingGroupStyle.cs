@@ -33,9 +33,32 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	/// </summary>
   public interface ICoordinateTransformingGroupStyle : ICloneable
   {
-    void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
-    void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
-    void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll);
 
+		/// <summary>
+		/// Merges the X bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.
+		/// If the group style transforms the x values, of course the transformed values should be merged into.
+		/// </summary>
+		/// <param name="layer">The layer.</param>
+		/// <param name="pb">The physical boundaries to merge with.</param>
+		/// <param name="coll">The collection of plot items.</param>
+    void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
+		
+		/// <summary>
+		/// Merges the Y bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.
+		/// If the group style transforms the y values, of course the transformed values should be merged into.
+		/// </summary>
+		/// <param name="layer">The layer.</param>
+		/// <param name="pb">The physical boundaries to merge with.</param>
+		/// <param name="coll">The collection of plot items.</param>
+		void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
+
+
+		/// <summary>
+		/// Paints the plot items.
+		/// </summary>
+		/// <param name="g">Graphics context used for drawing.</param>
+		/// <param name="layer">Plot layer.</param>
+		/// <param name="coll">Collection of plot items to draw.</param>
+    void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll);
   }
 }

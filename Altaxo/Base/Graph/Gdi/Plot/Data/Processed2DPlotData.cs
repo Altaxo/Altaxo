@@ -34,28 +34,47 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// </summary>
   public class Processed2DPlotData : I3DPhysicalVariantAccessor
   {
+		/// <summary>List of plot ranges of the plot points. This is used to identify contiguous ranges of plot points, so that for instance it can be decided to connect them by a line or not.</summary>
     public PlotRangeList RangeList;
-    public PointF[] PlotPointsInAbsoluteLayerCoordinates;
+
+
+		/// <summary>Holds the final coordinates of the plot points in absolute layer coordinates.</summary>
+		public PointF[] PlotPointsInAbsoluteLayerCoordinates;
+
+
     IndexedPhysicalValueAccessor _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
     IndexedPhysicalValueAccessor _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
     IndexedPhysicalValueAccessor _getZPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
 
+		/// <summary>Data of the previous plot item for temporary purposes.</summary>
     Processed2DPlotData _previousItemData;
 
-    public AltaxoVariant GetXPhysical(int originalRowIndex)
+		/// <summary>Gets the physical x value at a given original row index.</summary>
+		/// <param name="originalRowIndex">Index of the original data row.</param>
+		/// <returns>The physical x value at that given original row index.</returns>
+		public AltaxoVariant GetXPhysical(int originalRowIndex)
     {
       return _getXPhysical(originalRowIndex);
     }
-    public AltaxoVariant GetYPhysical(int originalRowIndex)
+
+		/// <summary>Gets the physical y value at a given original row index.</summary>
+		/// <param name="originalRowIndex">Index of the original data row.</param>
+		/// <returns>The physical y value at that given original row index.</returns>
+		public AltaxoVariant GetYPhysical(int originalRowIndex)
     {
       return  _getYPhysical(originalRowIndex) ;
     }
-    public virtual AltaxoVariant GetZPhysical(int originalRowIndex)
+
+		/// <summary>Gets the physical z value at a given original row index.</summary>
+		/// <param name="originalRowIndex">Index of the original data row.</param>
+		/// <returns>The physical z value at that given original row index.</returns>
+		public virtual AltaxoVariant GetZPhysical(int originalRowIndex)
     {
       return _getZPhysical(originalRowIndex);
     }
 
-
+		/// <summary>Gets or sets the X physical accessor.</summary>
+		/// <value>The X physical accessor. It is awaiting the original row index of the data as argument and will return the physical x data value at that row.</value>
     public IndexedPhysicalValueAccessor XPhysicalAccessor
     {
       get
@@ -70,7 +89,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
           _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
       }
     }
-    public IndexedPhysicalValueAccessor YPhysicalAccessor
+
+
+		/// <summary>Gets or sets the Y physical accessor.</summary>
+		/// <value>The Y physical accessor. It is awaiting the original row index of the data as argument and will return the physical y data value at that row.</value>
+		public IndexedPhysicalValueAccessor YPhysicalAccessor
     {
       get
       {
@@ -84,7 +107,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
           _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
       }
     }
-    public IndexedPhysicalValueAccessor ZPhysicalAccessor
+
+
+		/// <summary>Gets or sets the Z physical accessor.</summary>
+		/// <value>The Z physical accessor. It is awaiting the original row index of the data as argument and will return the z data value at that row.</value>
+		public IndexedPhysicalValueAccessor ZPhysicalAccessor
     {
       get
       {
@@ -99,6 +126,10 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
     }
 
+
+		/// <summary>
+		/// Gets/sets the processed plot data of a previous plot item for temporary usage.
+		/// </summary>
     public Processed2DPlotData PreviousItemData
     {
       get

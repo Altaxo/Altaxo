@@ -139,23 +139,26 @@ namespace Altaxo.Data
 
     class DataColumnCollectionRowSwapper
     {
-      DataColumnCollection _data;
-      int _columns;
+			List<DataColumn> _colsToSwap;
       AltaxoVariant _var;
 
-      public DataColumnCollectionRowSwapper(DataColumnCollection coll)
+      public DataColumnCollectionRowSwapper(DataColumnCollection coll, int forColumnGroup)
       {
-        _data = coll;
-        _columns = _data.ColumnCount;
+				_colsToSwap = new List<DataColumn>();
+				for (int i = 0; i < coll.ColumnCount; ++i)
+				{
+					if (coll.GetColumnGroup(i) == forColumnGroup)
+						_colsToSwap.Add(coll[i]);
+				}
       }
 
-      public void Swap(int i, int j)
+			public void Swap(int i, int j)
       {
-        for(int n=0;n<_columns;n++)
+        foreach(DataColumn col in _colsToSwap)
         {
-          _var = _data[n][i];
-          _data[n][i] = _data[n][j];
-          _data[n][j] = _var;
+						_var = col[i];
+						col[i] = col[j];
+						col[j] = _var;
         }
       }
     }
@@ -334,10 +337,11 @@ namespace Altaxo.Data
 
 
 		/// <summary>
-		/// Sorts the data rows of a table, using a specified column.
+		/// Sorts the data rows of a table (more accurate: of all columns belonging to a column group, see below), using the data of column <paramref name="col"/> to determine the order. 
 		/// </summary>
 		/// <param name="table">The table where the data columns should be sorted.</param>
-		/// <param name="col">The column which is used for determining the order of the entries.</param>
+		/// <param name="col">The column which is used for determining the order of the entries.
+		/// This column has to belong to the table (otherwise an exception will be thrown). All columns with the same group number than this column will be sorted.</param>
 		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
 		public static void SortDataRows(this DataTable table, DataColumn col, bool inAscendingOrder)
     {
@@ -345,10 +349,11 @@ namespace Altaxo.Data
     }
 
 		/// <summary>
-		/// Sorts the data rows of a table, using multiple specified column.
+		/// Sorts the data rows of a table (more accurate: of all columns belonging to a column group, see below), using multiple specified column.
 		/// </summary>
 		/// <param name="table">The table where the data columns should be sorted.</param>
-		/// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.</param>
+		/// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.
+		/// All this columns has to belong to the table and need to have the same column group number (otherwise an exception will be thrown). All columns with the same group number than this columns will be included in the sort process.</param>
 		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
 		public static void SortDataRows(this DataTable table, DataColumn[] cols, bool inAscendingOrder)
 		{
@@ -356,42 +361,56 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Sorts the data rows of a DataColumnCollection, using a specified column.
+		/// Sorts the data rows of a DataColumnCollection (more accurate: of all columns belonging to a column group, see below), using a specified column.
 		/// </summary>
 		/// <param name="table">The DataColumnCollection where the data columns should be sorted.</param>
-		/// <param name="col">The column which is used for determining the order of the entries.</param>
+		/// <param name="col">The column which is used for determining the order of the entries.
+		/// This column has to belong to the table (otherwise an exception will be thrown). All columns with the same group number than this column will be included in the sort process.</param>
 		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
 		public static void SortRows(this DataColumnCollection table, DataColumn col, bool inAscendingOrder)
 		{
 			if (!table.ContainsColumn(col))
 				throw new ArgumentException("The sorting column provided must be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
 
+			int columnGroup = table.GetColumnGroup(col);
+
 			if (col is DoubleColumn)
 			{
-				HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table).Swap);
+				HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table,columnGroup).Swap);
 			}
 			else
 			{
-				HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table).Swap);
+				HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table,columnGroup).Swap);
 			}
 		}
 
 
 		/// <summary>
-		/// Sorts the data rows of a DataColumnCollection, using a specified column.
+		/// Sorts the data rows of a DataColumnCollection (more accurate: of all columns belonging to a column group, see below), using a specified column.
 		/// </summary>
 		/// <param name="table">The DataColumnCollection where the data columns should be sorted.</param>
-		/// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.</param>
+		/// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.
+		/// ll this columns has to belong to the table and need to have the same column group number (otherwise an exception will be thrown). All columns with the same group number than this columns will be included in the sort process.</param>
 		/// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
 		public static void SortRows(this DataColumnCollection table, DataColumn[] cols, bool inAscendingOrder)
 		{
+			if (cols == null || cols.Length == 0)
+				throw new ArgumentException("cols is null or empty");
+
+			int groupNumber = table.GetColumnGroup(cols[0]);
+			for (int i = 1; i < cols.Length; i++)
+			{
+				if (groupNumber != table.GetColumnGroup(cols[i]))
+					throw new ArgumentException(string.Format("cols[{0}] has a deviating group number from cols[0]. Only columns belonging to the same group can be sorted",i));
+			}
+
 			for (int k = 0; k < cols.Length; k++)
 			{
 				if (!table.ContainsColumn(cols[k]))
 					throw new ArgumentException("The sorting columnd provided must all be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
 			}
 
-				HeapSort(cols[0].Count, new MultipleDataColumnComparer(cols, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table).Swap);
+				HeapSort(cols[0].Count, new MultipleDataColumnComparer(cols, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table,groupNumber).Swap);
 		}
 
 		/// <summary>
