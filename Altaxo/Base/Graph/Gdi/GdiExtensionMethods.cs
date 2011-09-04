@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,50 +30,50 @@ namespace Altaxo.Graph.Gdi
 {
 	public static class GdiExtensionMethods
 	{
-    public static PointF Subtract(this PointF p1, PointF p2)
-    {
-      return new PointF(p1.X - p2.X, p1.Y - p2.Y);
-    }
+		public static PointF Subtract(this PointF p1, PointF p2)
+		{
+			return new PointF(p1.X - p2.X, p1.Y - p2.Y);
+		}
 
-    public static PointF Add(this PointF p1, PointF p2)
-    {
-      return new PointF(p1.X + p2.X, p1.Y + p2.Y);
-    }
+		public static PointF Add(this PointF p1, PointF p2)
+		{
+			return new PointF(p1.X + p2.X, p1.Y + p2.Y);
+		}
 
-    public static PointF AddScaled(this PointF p1, PointF p2, float s)
-    {
-      return new PointF(p1.X + p2.X*s, p1.Y + p2.Y*s);
-    }
+		public static PointF AddScaled(this PointF p1, PointF p2, float s)
+		{
+			return new PointF(p1.X + p2.X * s, p1.Y + p2.Y * s);
+		}
 
-    public static float VectorLength(this PointF p)
-    {
-      return (float)Math.Sqrt(p.X * p.X + p.Y * p.Y);
-    }
+		public static float VectorLength(this PointF p)
+		{
+			return (float)Math.Sqrt(p.X * p.X + p.Y * p.Y);
+		}
 
-    public static PointF FlipXY(this PointF p)
-    {
-      return new PointF(p.Y, p.X);
-    }
+		public static PointF FlipXY(this PointF p)
+		{
+			return new PointF(p.Y, p.X);
+		}
 
 		public static PointF Rotate90Degree(this PointF p)
 		{
 			return new PointF(-p.Y, p.X);
 		}
 
-    public static PointF FlipSign(this PointF p)
-    {
-      return new PointF(-p.X, -p.Y);
-    }
+		public static PointF FlipSign(this PointF p)
+		{
+			return new PointF(-p.X, -p.Y);
+		}
 
-    public static float DotProduct(this PointF p, PointF q)
-    {
-      return p.X * q.X + p.Y * q.Y;
-    }
+		public static float DotProduct(this PointF p, PointF q)
+		{
+			return p.X * q.X + p.Y * q.Y;
+		}
 
 		public static PointF Normalize(this PointF p)
 		{
-			var s = 1/Math.Sqrt(p.X * p.X + p.Y * p.Y);
-			return new PointF((float)(p.X * s), (float)(p.Y *s));
+			var s = 1 / Math.Sqrt(p.X * p.X + p.Y * p.Y);
+			return new PointF((float)(p.X * s), (float)(p.Y * s));
 		}
 
 
@@ -96,7 +118,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>Half of the original size</returns>
 		public static SizeF Half(this SizeF s)
 		{
-			return new SizeF(s.Width /2, s.Height /2);
+			return new SizeF(s.Width / 2, s.Height / 2);
 		}
 
 		/// <summary>
@@ -106,7 +128,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The position of the center of the rectangle.</returns>
 		public static PointF Center(this RectangleF r)
 		{
-			return new PointF(r.X + r.Width/2, r.Y +  r.Height/2);
+			return new PointF(r.X + r.Width / 2, r.Y + r.Height / 2);
 		}
 
 		/// <summary>
@@ -187,10 +209,10 @@ namespace Altaxo.Graph.Gdi
 			return (float)Math.Sqrt(Math.Min(horz, vert));
 		}
 
-    public void Translate(float dx, float dy)
-    {
-      Center.X += dx;
-      Center.Y += dy;
-    }
+		public void Translate(float dx, float dy)
+		{
+			Center.X += dx;
+			Center.Y += dy;
+		}
 	}
 }

@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +54,7 @@ namespace Altaxo.Gui.Common.Drawing
 				{
 					var brush = (BrushX)Value;
 					string name;
-					switch(brush.BrushType)
+					switch (brush.BrushType)
 					{
 						case BrushType.SolidBrush:
 							name = "CustSB ";
@@ -84,7 +106,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (BrushX)value;
 				var color = val.Color;
-				if (val.BrushType== BrushType.SolidBrush && _knownColorItems.ContainsKey(color))
+				if (val.BrushType == BrushType.SolidBrush && _knownColorItems.ContainsKey(color))
 					return _knownColorItems[color];
 
 				if (!_cb._lastLocalUsedBrushesDict.ContainsKey(val))
@@ -93,7 +115,7 @@ namespace Altaxo.Gui.Common.Drawing
 					var newItem = new BrushComboBoxItem() { Value = val };
 					_cb._lastLocalUsedBrushes.Insert(0, newItem);
 					_cb.Items.Insert(0, newItem);
-					_cb._lastLocalUsedBrushesDict.Add(val, newItem );
+					_cb._lastLocalUsedBrushesDict.Add(val, newItem);
 				}
 				return _cb._lastLocalUsedBrushesDict[val];
 			}
@@ -116,7 +138,7 @@ namespace Altaxo.Gui.Common.Drawing
 		List<BrushComboBoxItem> _lastLocalUsedBrushes = new List<BrushComboBoxItem>();
 		Dictionary<BrushX, BrushComboBoxItem> _lastLocalUsedBrushesDict = new Dictionary<BrushX, BrushComboBoxItem>();
 
-		
+
 
 		/// <summary>If true, the user can choose among all colors contained in the color collection, but can not choose or create other colors.</summary>
 		protected bool _restrictColorChoiceToCollection;
@@ -127,11 +149,11 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public event DependencyPropertyChangedEventHandler SelectedBrushChanged;
 
-			public BrushComboBox()
+		public BrushComboBox()
 		{
 			InitializeComponent();
 
-			SetSelectableColors( _knownColors, false);
+			SetSelectableColors(_knownColors, false);
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
@@ -141,12 +163,12 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 
-			
 
-		
 
-		
-	
+
+
+
+
 		public void SetSelectableColors(ICollection<NamedColor> value, bool restrictChoiceToThisCollection)
 		{
 			if (null == value)
@@ -172,7 +194,7 @@ namespace Altaxo.Gui.Common.Drawing
 			this.SelectedBrush = newBrush;
 		}
 
-	
+
 
 		#region Dependency property
 		private const string _nameOfValueProp = "SelectedBrush";
@@ -188,7 +210,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private static void EhSelectedBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((BrushComboBox)obj).OnSelectedBrushChanged(obj,args);
+			((BrushComboBox)obj).OnSelectedBrushChanged(obj, args);
 		}
 		#endregion
 
@@ -200,7 +222,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static DrawingImage GetImage(BrushX val)
 		{
-		
+
 			const double border = 0.1;
 			const double height = 1;
 			const double width = 2;
@@ -213,7 +235,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 			var drawingGroup = new DrawingGroup();
 
-			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0,0,width,height)) };
+			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0, 0, width, height)) };
 			geometryDrawing.Brush = Brushes.Black;
 			drawingGroup.Children.Add(geometryDrawing);
 
@@ -234,7 +256,7 @@ namespace Altaxo.Gui.Common.Drawing
 			return geometryImage;
 		}
 
-	
+
 
 		private void EhChooseTransparencyFromContextMenu(object sender, RoutedEventArgs e)
 		{

@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -47,10 +47,10 @@ namespace Altaxo.Graph.Gdi
 	}
 
 
-	 /// <summary>
-	 /// Holds the information how to arrange layers in a graph document.
-  /// Is used by the <see cref="Altaxo.Gui.Graph.ArrangeLayersController" /> controller.
-  /// </summary>
+	/// <summary>
+	/// Holds the information how to arrange layers in a graph document.
+	/// Is used by the <see cref="Altaxo.Gui.Graph.ArrangeLayersController" /> controller.
+	/// </summary>
 	public class ArrangeLayersDocument
 	{
 		public int NumberOfRows = 2;
@@ -92,23 +92,23 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="graph">Graph that contains the layers to arrange.</param>
 		public static void ShowLayerArrangementDialog(this GraphDocument graph)
-    {
-      ArrangeLayersDocument doc = new ArrangeLayersDocument();
+		{
+			ArrangeLayersDocument doc = new ArrangeLayersDocument();
 			object doco = doc;
 
-      if(Current.Gui.ShowDialog(ref doco,"Arrange layers"))
-      {
-        doc = (ArrangeLayersDocument)doco;
-        try 
-        {
-          ArrangeLayers(graph, doc);
-        }
-        catch(Exception ex)
-        {
-          Current.Gui.ErrorMessageBox(ex.Message);
-        }
-      }
-    }
+			if (Current.Gui.ShowDialog(ref doco, "Arrange layers"))
+			{
+				doc = (ArrangeLayersDocument)doco;
+				try
+				{
+					ArrangeLayers(graph, doc);
+				}
+				catch (Exception ex)
+				{
+					Current.Gui.ErrorMessageBox(ex.Message);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Arranges the layers according to the provided options.

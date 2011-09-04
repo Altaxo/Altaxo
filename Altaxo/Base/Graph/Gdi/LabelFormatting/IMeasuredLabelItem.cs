@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,24 +29,24 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
-  /// <summary>
-  /// Interface for an label item that is ready to draw and was already measured.
-  /// </summary>
-  public interface IMeasuredLabelItem
-  {
-    /// <summary>
-    /// Size of the enclosing rectangle of the label item.
-    /// </summary>
-    SizeF Size { get; }
+	/// <summary>
+	/// Interface for an label item that is ready to draw and was already measured.
+	/// </summary>
+	public interface IMeasuredLabelItem
+	{
+		/// <summary>
+		/// Size of the enclosing rectangle of the label item.
+		/// </summary>
+		SizeF Size { get; }
 
-    /// <summary>
-    /// Draws the label to a specified point.
-    /// </summary>
-    /// <param name="g">Graphics context.</param>
-    /// <param name="brush">The brush to use for the drawing.</param>
-    /// <param name="point">The point where to draw the item.</param>
-    void Draw(Graphics g, BrushX brush, PointF point);
-  }
+		/// <summary>
+		/// Draws the label to a specified point.
+		/// </summary>
+		/// <param name="g">Graphics context.</param>
+		/// <param name="brush">The brush to use for the drawing.</param>
+		/// <param name="point">The point where to draw the item.</param>
+		void Draw(Graphics g, BrushX brush, PointF point);
+	}
 
- 
+
 }

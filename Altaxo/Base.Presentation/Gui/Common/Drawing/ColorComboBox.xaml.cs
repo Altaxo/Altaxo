@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +44,7 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class ColorComboBox : ColorComboBoxBase
 	{
-		
+
 		/// <summary>Converts the <see cref="AxoColor"/> to a <see cref="ColorComboBoxItem"/> and vice versa.</summary>
 		class CC : IValueConverter
 		{
@@ -55,7 +77,7 @@ namespace Altaxo.Gui.Common.Drawing
 					var newItem = new ColorComboBoxItem() { Value = val };
 					_cb._lastLocalUsedColors.Insert(0, val);
 					_cb.Items.Insert(0, newItem);
-					_cb._lastLocalUsedColorsDict.Add(val, newItem );
+					_cb._lastLocalUsedColorsDict.Add(val, newItem);
 				}
 				return _cb._lastLocalUsedColorsDict[val];
 			}
@@ -87,7 +109,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		/// <summary>If true, the user can choose among all colors contained in the color collection, but can not choose or create other colors.</summary>
 		protected bool _restrictColorChoiceToCollection;
-	
+
 
 		/// <summary>Colors that are shown as choices in the combobox.</summary>
 		protected List<NamedColor> _colorCollection;
@@ -111,11 +133,11 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			get
 			{
-				return _restrictColorChoiceToCollection; 
+				return _restrictColorChoiceToCollection;
 			}
-			set 
+			set
 			{
-				_restrictColorChoiceToCollection = value; 
+				_restrictColorChoiceToCollection = value;
 			}
 		}
 
@@ -147,7 +169,7 @@ namespace Altaxo.Gui.Common.Drawing
 		public NamedColor SelectedColor
 		{
 			get { return (NamedColor)GetValue(SelectedColorProperty); }
-			set {	SetValue(SelectedColorProperty, value); }
+			set { SetValue(SelectedColorProperty, value); }
 		}
 
 		public Color SelectedWpfColor
@@ -156,7 +178,7 @@ namespace Altaxo.Gui.Common.Drawing
 			set
 			{
 				AxoColor c = GuiHelper.ToAxo(value);
-				SetValue(SelectedColorProperty, new NamedColor(c,NamedColor.GetColorName(c))); 
+				SetValue(SelectedColorProperty, new NamedColor(c, NamedColor.GetColorName(c)));
 			}
 		}
 
@@ -176,7 +198,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private static void EhSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((ColorComboBox)obj).OnSelectedColorChanged(obj,args);
+			((ColorComboBox)obj).OnSelectedColorChanged(obj, args);
 		}
 		#endregion
 
@@ -186,7 +208,7 @@ namespace Altaxo.Gui.Common.Drawing
 				SelectedColorChanged(obj, args);
 		}
 
-	
+
 
 		public override string GetItemText(object item)
 		{
@@ -208,7 +230,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static DrawingImage GetImage(Color val)
 		{
-		
+
 			const double border = 0.1;
 			const double height = 1;
 			const double width = 2;
@@ -221,7 +243,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 			var drawingGroup = new DrawingGroup();
 
-			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0,0,width,height)) };
+			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0, 0, width, height)) };
 			geometryDrawing.Brush = Brushes.Black;
 			drawingGroup.Children.Add(geometryDrawing);
 
@@ -272,14 +294,14 @@ namespace Altaxo.Gui.Common.Drawing
 		bool FillWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
 		{
 			List<NamedColor> lastUsed;
-			
+
 			if (_restrictColorChoiceToCollection)
 				lastUsed = new List<NamedColor>();
 			else
 				lastUsed = GetFilteredList(_lastLocalUsedColors, filterString);
 
 			var known = GetFilteredList(_colorCollection, filterString);
-			
+
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
 			{
 				Items.Clear();
@@ -314,7 +336,7 @@ namespace Altaxo.Gui.Common.Drawing
 					if (_filterString.Length > 0)
 					{
 						_filterString = _filterString.Substring(0, _filterString.Length - 1);
-						FillWithFilteredItems(_filterString,false);
+						FillWithFilteredItems(_filterString, false);
 					}
 				}
 			}
@@ -330,9 +352,9 @@ namespace Altaxo.Gui.Common.Drawing
 			ColorComboBoxItem result1;
 			if (_knownColorItems.TryGetValue(c, out result1))
 				return result1;
-			
+
 			var newItem = new ColorComboBoxItem { Value = c };
-			_cachedItems.Add(c,newItem);
+			_cachedItems.Add(c, newItem);
 			return newItem;
 		}
 
@@ -345,13 +367,13 @@ namespace Altaxo.Gui.Common.Drawing
 				var selItem = this.SelectedItem;
 
 				_filterString = string.Empty;
-				FillWithFilteredItems(_filterString,false);
+				FillWithFilteredItems(_filterString, false);
 
 				this.SelectedItem = selItem;
 			}
 		}
 
-	
+
 
 		#endregion
 	}

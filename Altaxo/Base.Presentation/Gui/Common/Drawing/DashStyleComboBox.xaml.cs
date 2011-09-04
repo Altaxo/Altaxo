@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,7 +95,7 @@ namespace Altaxo.Gui.Common.Drawing
 						valList.Add(val);
 				}
 
-				if (valList.Count < 1 && error==null) // only use this error, if there is no other error;
+				if (valList.Count < 1 && error == null) // only use this error, if there is no other error;
 					error = "At least one number is neccessary";
 
 				return new DashStyleEx(valList.ToArray());
@@ -134,7 +156,7 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _knownStylesList)
-				Items.Add(new ImageComboBoxItem(this,e));
+				Items.Add(new ImageComboBoxItem(this, e));
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
@@ -193,24 +215,24 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			const double height = 1;
 			const double width = 2;
-			const double lineWidth = height/5;
+			const double lineWidth = height / 5;
 
 			DashStyle dashStyle = DashStyles.Solid;
 
-			if(val.IsKnownStyle)
+			if (val.IsKnownStyle)
 			{
-			if (val == DashStyleEx.Solid)
-				dashStyle = DashStyles.Solid;
-			else if (val == DashStyleEx.Dash)
-				dashStyle = DashStyles.Dash;
-			else if (val == DashStyleEx.Dot)
-				dashStyle = DashStyles.Dot;
-			else if (val == DashStyleEx.DashDot)
-				dashStyle = DashStyles.DashDot;
-			else if (val == DashStyleEx.DashDotDot)
-				dashStyle = DashStyles.DashDotDot;
-			else if (val == DashStyleEx.LongDash)
-				dashStyle = new DashStyle(new double[] { 5, 2 }, 0);
+				if (val == DashStyleEx.Solid)
+					dashStyle = DashStyles.Solid;
+				else if (val == DashStyleEx.Dash)
+					dashStyle = DashStyles.Dash;
+				else if (val == DashStyleEx.Dot)
+					dashStyle = DashStyles.Dot;
+				else if (val == DashStyleEx.DashDot)
+					dashStyle = DashStyles.DashDot;
+				else if (val == DashStyleEx.DashDotDot)
+					dashStyle = DashStyles.DashDotDot;
+				else if (val == DashStyleEx.LongDash)
+					dashStyle = new DashStyle(new double[] { 5, 2 }, 0);
 			}
 			else if (val.IsCustomStyle)
 			{
@@ -219,7 +241,7 @@ namespace Altaxo.Gui.Common.Drawing
 					list.Add(e);
 				dashStyle = new DashStyle(list, 0);
 			}
-				
+
 
 
 			// draws a transparent outline to fix the borders

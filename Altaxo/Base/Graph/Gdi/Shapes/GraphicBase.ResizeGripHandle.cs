@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public abstract partial class GraphicBase 
+	public abstract partial class GraphicBase
 	{
 		protected class ResizeGripHandle : IGripManipulationHandle
 		{
@@ -39,8 +39,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			PointD2D _drawrPosition;
 			PointD2D _fixrPosition;
 			PointD2D _fixaPosition;
-      PointD2D _initialMousePosition;
-      PointD2D _initialSize;
+			PointD2D _initialMousePosition;
+			PointD2D _initialSize;
 			TransformationMatrix2D _spanningHalfYRhombus;
 
 
@@ -64,12 +64,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
-				
+
 				initialPosition = _parent.Transformation.InverseTransformPoint(initialPosition);
-        _initialMousePosition = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, initialPosition);
+				_initialMousePosition = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, initialPosition);
 
 
-        _initialSize = GraphObject.Size;
+				_initialSize = GraphObject.Size;
 			}
 
 			public bool Deactivate()
@@ -79,11 +79,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public void MoveGrip(PointD2D newPosition)
 			{
-        newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-        var diff = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, newPosition);
-        diff -= _initialMousePosition;
+				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
+				var diff = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, newPosition);
+				diff -= _initialMousePosition;
 
-        GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialSize);
+				GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialSize);
 			}
 
 			#region IGripManipulationHandle Members

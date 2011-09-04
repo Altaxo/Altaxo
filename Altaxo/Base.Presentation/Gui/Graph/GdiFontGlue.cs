@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -28,14 +50,15 @@ namespace Altaxo.Gui.Graph
 		public double FontSize
 		{
 			get { return _fontSize; }
-			set {
+			set
+			{
 				var oldValue = _fontSize;
 				_fontSize = value;
-			if (_guiFontSize != null && oldValue!=value)
-				_guiFontSize.SelectedQuantityInPoints = value;
+				if (_guiFontSize != null && oldValue != value)
+					_guiFontSize.SelectedQuantityInPoints = value;
 			}
 		}
-		
+
 
 		public sd.FontFamily FontFamily
 		{
@@ -44,11 +67,11 @@ namespace Altaxo.Gui.Graph
 			{
 				var oldValue = _fontFamily;
 				_fontFamily = value;
-				if (null != _guiFontFamily && oldValue!=value)
+				if (null != _guiFontFamily && oldValue != value)
 					_guiFontFamily.SelectedGdiFontFamily = value;
 			}
 		}
-		
+
 
 		public sd.FontStyle FontStyle
 		{
@@ -57,7 +80,7 @@ namespace Altaxo.Gui.Graph
 			{
 				var oldValue = _fontStyle;
 				_fontStyle = value;
-				if (null != _guiFontStyle && oldValue!=value)
+				if (null != _guiFontStyle && oldValue != value)
 					_guiFontStyle.SelectedFontStyle = value;
 			}
 		}
@@ -86,7 +109,7 @@ namespace Altaxo.Gui.Graph
 			get { return _guiFontSize; }
 			set
 			{
- 				if(null!=_guiFontSize)
+				if (null != _guiFontSize)
 					_guiFontSize.SelectedQuantityChanged -= _guiFontStyle_SelectedFontSizeChanged;
 
 				_guiFontSize = value;
@@ -107,12 +130,12 @@ namespace Altaxo.Gui.Graph
 				if (null != _guiFontFamily)
 					_guiFontFamily.SelectedFontFamilyChanged -= _guiFontStyle_SelectedFontFamilyChanged;
 
-				_guiFontFamily = value; 
+				_guiFontFamily = value;
 				_guiFontFamily.SelectedGdiFontFamily = _fontFamily;
 
 
-				if(null!=_guiFontFamily)
-					_guiFontFamily.SelectedFontFamilyChanged +=	 _guiFontStyle_SelectedFontFamilyChanged;
+				if (null != _guiFontFamily)
+					_guiFontFamily.SelectedFontFamilyChanged += _guiFontStyle_SelectedFontFamilyChanged;
 			}
 		}
 
@@ -125,11 +148,11 @@ namespace Altaxo.Gui.Graph
 			{
 				if (null != _guiFontStyle)
 					_guiFontStyle.SelectedFontStyleChanged -= _guiFontStyle_SelectedFontStyleChanged;
-				
-						_guiFontStyle = value; 
+
+				_guiFontStyle = value;
 				_guiFontStyle.SelectedFontStyle = _fontStyle;
 
-				if(null!=_guiFontStyle)
+				if (null != _guiFontStyle)
 					_guiFontStyle.SelectedFontStyleChanged += _guiFontStyle_SelectedFontStyleChanged;
 			}
 		}
@@ -139,7 +162,7 @@ namespace Altaxo.Gui.Graph
 			var oldFontSize = _fontSize;
 			_fontSize = _guiFontSize.SelectedQuantityInPoints;
 
-			if(oldFontSize!=_fontSize)
+			if (oldFontSize != _fontSize)
 				OnFontChanged();
 		}
 
@@ -147,7 +170,7 @@ namespace Altaxo.Gui.Graph
 		{
 			var oldFontStyle = _fontStyle;
 			_fontStyle = _guiFontStyle.SelectedFontStyle;
-			if(oldFontStyle!=_fontStyle)
+			if (oldFontStyle != _fontStyle)
 				OnFontChanged();
 		}
 
@@ -155,7 +178,7 @@ namespace Altaxo.Gui.Graph
 		{
 			var oldFontFamily = _fontFamily;
 			_fontFamily = _guiFontFamily.SelectedGdiFontFamily;
-			if(oldFontFamily != _fontFamily)
+			if (oldFontFamily != _fontFamily)
 				OnFontChanged();
 		}
 

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,74 +37,74 @@ using sd = System.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class FontControlsGlue : FrameworkElement
-  {
-    public FontControlsGlue()
-    {
-      
-    }
+	public class FontControlsGlue : FrameworkElement
+	{
+		public FontControlsGlue()
+		{
 
-    #region Font
+		}
 
-    public sd.GraphicsUnit _fontUnit = sd.GraphicsUnit.World;
-    /// <summary>
-    /// The unit used to create the font.
-    /// </summary>
-    public sd.GraphicsUnit FontUnit
-    {
-      get
-      {
-        return _fontUnit;
-      }
-      set
-      {
-        sd.GraphicsUnit oldValue = _fontUnit;
-        _fontUnit = value;
-        if (value != oldValue)
-        {
-          if (_font != null)
-            this.SelectedFont = new sd.Font(_font.FontFamily, _font.Size, _font.Style, _fontUnit);
-        }
-      }
-    }
+		#region Font
 
-    sd.Font _font;
-    public sd.Font SelectedFont
-    {
-      get
-      {
-        return _font;
-      }
-      set
-      {
-        _font = value;
-        _fontUnit = value.Unit;
-       
-        if(null!=CbFontFamily) CbFontFamily.SelectedGdiFontFamily = _font.FontFamily;
-				if(null!=_cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
-				if (null != CbFontSize) CbFontSize.SelectedQuantityInPoints = _font.Size; 
-      }
-    }
+		public sd.GraphicsUnit _fontUnit = sd.GraphicsUnit.World;
+		/// <summary>
+		/// The unit used to create the font.
+		/// </summary>
+		public sd.GraphicsUnit FontUnit
+		{
+			get
+			{
+				return _fontUnit;
+			}
+			set
+			{
+				sd.GraphicsUnit oldValue = _fontUnit;
+				_fontUnit = value;
+				if (value != oldValue)
+				{
+					if (_font != null)
+						this.SelectedFont = new sd.Font(_font.FontFamily, _font.Size, _font.Style, _fontUnit);
+				}
+			}
+		}
 
-    public event EventHandler SelectedFontChanged;
-    protected virtual void OnSelectedFontChanged()
-    {
-      if (SelectedFontChanged != null)
-        SelectedFontChanged(this, EventArgs.Empty);
-    }
+		sd.Font _font;
+		public sd.Font SelectedFont
+		{
+			get
+			{
+				return _font;
+			}
+			set
+			{
+				_font = value;
+				_fontUnit = value.Unit;
 
-    #endregion
+				if (null != CbFontFamily) CbFontFamily.SelectedGdiFontFamily = _font.FontFamily;
+				if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
+				if (null != CbFontSize) CbFontSize.SelectedQuantityInPoints = _font.Size;
+			}
+		}
 
-  
+		public event EventHandler SelectedFontChanged;
+		protected virtual void OnSelectedFontChanged()
+		{
+			if (SelectedFontChanged != null)
+				SelectedFontChanged(this, EventArgs.Empty);
+		}
 
-    #region Font
+		#endregion
 
-    FontFamilyComboBox _cbFontFamily;
-    public FontFamilyComboBox CbFontFamily
-    {
-      get { return _cbFontFamily; }
-      set
-      {
+
+
+		#region Font
+
+		FontFamilyComboBox _cbFontFamily;
+		public FontFamilyComboBox CbFontFamily
+		{
+			get { return _cbFontFamily; }
+			set
+			{
 				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontFamilyComboBox.SelectedFontFamilyProperty, typeof(FontFamilyComboBox));
 
 				if (_cbFontFamily != null)
@@ -116,19 +116,19 @@ namespace Altaxo.Gui.Common.Drawing
 
 				if (_cbFontFamily != null)
 					dpd.AddValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
-      }
-    }
+			}
+		}
 
 		void EhFontFamily_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (_font != null)
-      {
-        _font = new sd.Font(_cbFontFamily.SelectedGdiFontFamily, _font.Size, _font.Style, _fontUnit);
-        OnSelectedFontChanged();
-      }
-    }
+		{
+			if (_font != null)
+			{
+				_font = new sd.Font(_cbFontFamily.SelectedGdiFontFamily, _font.Size, _font.Style, _fontUnit);
+				OnSelectedFontChanged();
+			}
+		}
 
-    #endregion
+		#endregion
 
 		#region Style
 
@@ -168,44 +168,44 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#endregion
 
-    #region Size
+		#region Size
 
-    FontSizeComboBox _cbFontSize;
-    public FontSizeComboBox CbFontSize
-    {
-      get { return _cbFontSize; }
-      set
-      {
-        if (_cbFontSize != null)
-        {
+		FontSizeComboBox _cbFontSize;
+		public FontSizeComboBox CbFontSize
+		{
+			get { return _cbFontSize; }
+			set
+			{
+				if (_cbFontSize != null)
+				{
 					_cbFontSize.SelectedQuantityChanged -= EhFontSize_SelectionChangeCommitted;
-        }
+				}
 
-        _cbFontSize = value;
-        if (_font != null && _cbFontSize != null)
-          _cbFontSize.SelectedQuantityInPoints = _font.Size;
+				_cbFontSize = value;
+				if (_font != null && _cbFontSize != null)
+					_cbFontSize.SelectedQuantityInPoints = _font.Size;
 
-        if (_cbFontSize != null)
-        {
+				if (_cbFontSize != null)
+				{
 					_cbFontSize.SelectedQuantityChanged += EhFontSize_SelectionChangeCommitted;
-        }
-      }
-    }
+				}
+			}
+		}
 
-    void EhFontSize_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-    {
-      if (_font != null)
-      {
+		void EhFontSize_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+		{
+			if (_font != null)
+			{
 				_font = new sd.Font(_font.FontFamily, (float)_cbFontSize.SelectedQuantityInPoints, _font.Style, _fontUnit);
-        OnSelectedFontChanged();
-      }
-    }
-    
+				OnSelectedFontChanged();
+			}
+		}
 
-    #endregion
 
-  
+		#endregion
 
-  
-  }
+
+
+
+	}
 }

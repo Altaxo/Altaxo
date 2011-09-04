@@ -3,7 +3,7 @@
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
 //    modified for Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,123 +31,123 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Altaxo.Calc.LinearAlgebra.Blas  
+namespace Altaxo.Calc.LinearAlgebra.Blas
 {
-  ///<summary>Computes a vector-scalar product and adds the result to a vector.</summary>
-  ///<remarks>Calculates <c> y := a * x + y </c> </remarks>
-  [System.Security.SuppressUnmanagedCodeSecurityAttribute]
-  internal sealed class Axpy 
-  {
-    private Axpy() {}
-    ///<summary>Check arguments so that errors don't occur in native code</summary>
-    private static void ArgumentCheck(int n, object X, int lenX, ref int incx, object Y, int lenY, ref int incy) 
-    {
-      if( n < 0 ) 
-      {
-        throw new ArgumentException( "n must be zero or greater", "n" );
-      }
-      if ( X == null ) 
-      {
-        throw new ArgumentNullException( "X", "X cannot be null.");
-      }
-      if ( Y == null ) 
-      {
-        throw new ArgumentNullException( "Y", "Y cannot be null.");
-      }
-      if( incx == 0 )
-      {
-        throw new ArgumentException("incx cannot be zero.","incx");
-      }
-      if( incy == 0 )
-      {
-        throw new ArgumentException("incy cannot be zero.", "incy");
-      }
-      incx = System.Math.Abs(incx);
-      incy = System.Math.Abs(incy);
-      if ( lenX < ( 1 + (n-1) * incx ) ) 
-      {
-        throw new ArgumentException("The dimension of X must be at least 1 + (n-1) * incx.");
-      }
-      if ( lenY < ( 1 + (n-1) * incy ) ) 
-      {
-        throw new ArgumentException("The dimension of Y must be at least 1 + (n-1) * incy.");
-      }
-    }
-    
-    ///<summary>Compute the function of this class</summary>
-    internal static void Compute(int n, float alpha, float[] X, int incx, float[] Y, int incy)
-    {
-      ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
-      
+	///<summary>Computes a vector-scalar product and adds the result to a vector.</summary>
+	///<remarks>Calculates <c> y := a * x + y </c> </remarks>
+	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
+	internal sealed class Axpy
+	{
+		private Axpy() { }
+		///<summary>Check arguments so that errors don't occur in native code</summary>
+		private static void ArgumentCheck(int n, object X, int lenX, ref int incx, object Y, int lenY, ref int incy)
+		{
+			if (n < 0)
+			{
+				throw new ArgumentException("n must be zero or greater", "n");
+			}
+			if (X == null)
+			{
+				throw new ArgumentNullException("X", "X cannot be null.");
+			}
+			if (Y == null)
+			{
+				throw new ArgumentNullException("Y", "Y cannot be null.");
+			}
+			if (incx == 0)
+			{
+				throw new ArgumentException("incx cannot be zero.", "incx");
+			}
+			if (incy == 0)
+			{
+				throw new ArgumentException("incy cannot be zero.", "incy");
+			}
+			incx = System.Math.Abs(incx);
+			incy = System.Math.Abs(incy);
+			if (lenX < (1 + (n - 1) * incx))
+			{
+				throw new ArgumentException("The dimension of X must be at least 1 + (n-1) * incx.");
+			}
+			if (lenY < (1 + (n - 1) * incy))
+			{
+				throw new ArgumentException("The dimension of Y must be at least 1 + (n-1) * incy.");
+			}
+		}
+
+		///<summary>Compute the function of this class</summary>
+		internal static void Compute(int n, float alpha, float[] X, int incx, float[] Y, int incy)
+		{
+			ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
+
 #if MANAGED
-      int ix = 0;
-      int iy = 0;
-      for ( int i = 0; i < n; ++i ) 
-      {
-        Y[iy] += alpha* X[ix];
-        ix += incx;
-        iy += incy;
-      }
+			int ix = 0;
+			int iy = 0;
+			for (int i = 0; i < n; ++i)
+			{
+				Y[iy] += alpha * X[ix];
+				ix += incx;
+				iy += incy;
+			}
 #else
       dna_blas_saxpy(n, alpha, X, incx, Y, incy);
 #endif
-    }
-    
-    internal static void Compute(int n, double alpha, double[] X, int incx, double[] Y, int incy)
-    {
-      ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
+		}
+
+		internal static void Compute(int n, double alpha, double[] X, int incx, double[] Y, int incy)
+		{
+			ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
 
 #if MANAGED
-      int ix = 0;
-      int iy = 0;
-      for ( int i = 0; i < n; ++i ) 
-      {
-        Y[iy] += alpha* X[ix];
-        ix += incx;
-        iy += incy;
-      }
+			int ix = 0;
+			int iy = 0;
+			for (int i = 0; i < n; ++i)
+			{
+				Y[iy] += alpha * X[ix];
+				ix += incx;
+				iy += incy;
+			}
 #else
       dna_blas_daxpy(n, alpha, X, incx, Y, incy);
 #endif
-    }
+		}
 
-    internal static void Compute(int n, ComplexFloat alpha, ComplexFloat[] X, int incx, ComplexFloat[] Y, int incy )
-    { 
-      ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
-      
+		internal static void Compute(int n, ComplexFloat alpha, ComplexFloat[] X, int incx, ComplexFloat[] Y, int incy)
+		{
+			ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
+
 #if MANAGED
-      int ix = 0;
-      int iy = 0;
-      for ( int i = 0; i < n; ++i ) 
-      {
-        Y[iy] += alpha* X[ix];
-        ix += incx;
-        iy += incy;
-      }
+			int ix = 0;
+			int iy = 0;
+			for (int i = 0; i < n; ++i)
+			{
+				Y[iy] += alpha * X[ix];
+				ix += incx;
+				iy += incy;
+			}
 #else
       dna_blas_caxpy(n, ref alpha, X, incx, Y, incy);
 #endif
-    }
+		}
 
 
-    internal static void Compute(int n, Complex alpha, Complex[] X, int incx, Complex[] Y, int incy )
-    { 
-      ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
+		internal static void Compute(int n, Complex alpha, Complex[] X, int incx, Complex[] Y, int incy)
+		{
+			ArgumentCheck(n, X, X.Length, ref incx, Y, Y.Length, ref incy);
 
 #if MANAGED
-      int ix = 0;
-      int iy = 0;
-      for ( int i = 0; i < n; ++i ) 
-      {
-        Y[iy] += alpha* X[ix];
-        ix += incx;
-        iy += incy;
-      }
+			int ix = 0;
+			int iy = 0;
+			for (int i = 0; i < n; ++i)
+			{
+				Y[iy] += alpha * X[ix];
+				ix += incx;
+				iy += incy;
+			}
 #else
       dna_blas_zaxpy(n, ref alpha, X, incx, Y, incy);
 #endif
-    }
-    
+		}
+
 #if !MANAGED
     ///<summary>P/Invoke to wrapper with native code</summary>
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
@@ -162,5 +162,5 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern void dna_blas_zaxpy( int N, ref Complex alpha, [In]Complex[] X, int incX, [In,Out]Complex[] Y, int incY);
 #endif
-  }
+	}
 }

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,110 +29,110 @@ using Altaxo.Graph.Scales;
 namespace Altaxo.Graph.Gdi.Axis
 {
 
-  /// <remarks>AbstractXYAxisLabelStyle is the abstract base class of all LabelStyles.</remarks>
-  public abstract class AxisLabelStyleBase 
-    :
-    Main.IChangedEventSource, 
-    IRoutedPropertyReceiver,
-    Main.IDocumentNode,
-    System.ICloneable
-  {
-    [field:NonSerialized]
-    event System.EventHandler _changed;
+	/// <remarks>AbstractXYAxisLabelStyle is the abstract base class of all LabelStyles.</remarks>
+	public abstract class AxisLabelStyleBase
+		:
+		Main.IChangedEventSource,
+		IRoutedPropertyReceiver,
+		Main.IDocumentNode,
+		System.ICloneable
+	{
+		[field: NonSerialized]
+		event System.EventHandler _changed;
 
-    [NonSerialized]
-    object _parent;
-   
-     /// <summary>
-    /// Paints the axis style labels.
-    /// </summary>
-    /// <param name="g">Graphics environment.</param>
-    /// <param name="coordSyst">The coordinate system. Used to get the path along the axis.</param>
-    /// <param name="scaleWithTicks">Scale and appropriate ticks.</param>
-    /// <param name="styleInfo">Information about begin of axis, end of axis.</param>
-    /// <param name="outerDistance">Distance between axis and labels.</param>
-    /// <param name="useMinorTicks">If true, minor ticks are shown.</param>
-    public abstract void Paint(
-      Graphics g,
-      G2DCoordinateSystem coordSyst,
-      ScaleWithTicks scaleWithTicks,
-      CSAxisInformation styleInfo,
-      float outerDistance,
-      bool useMinorTicks);
- 
-    #region IChangedEventSource Members
+		[NonSerialized]
+		object _parent;
 
-    event EventHandler Altaxo.Main.IChangedEventSource.Changed
-    {
-      add { _changed += value; }
-      remove { _changed -= value; }
-    }
+		/// <summary>
+		/// Paints the axis style labels.
+		/// </summary>
+		/// <param name="g">Graphics environment.</param>
+		/// <param name="coordSyst">The coordinate system. Used to get the path along the axis.</param>
+		/// <param name="scaleWithTicks">Scale and appropriate ticks.</param>
+		/// <param name="styleInfo">Information about begin of axis, end of axis.</param>
+		/// <param name="outerDistance">Distance between axis and labels.</param>
+		/// <param name="useMinorTicks">If true, minor ticks are shown.</param>
+		public abstract void Paint(
+			Graphics g,
+			G2DCoordinateSystem coordSyst,
+			ScaleWithTicks scaleWithTicks,
+			CSAxisInformation styleInfo,
+			float outerDistance,
+			bool useMinorTicks);
+
+		#region IChangedEventSource Members
+
+		event EventHandler Altaxo.Main.IChangedEventSource.Changed
+		{
+			add { _changed += value; }
+			remove { _changed -= value; }
+		}
 
 
-    protected virtual void OnChanged()
-    {
-      if (_parent is Main.IChildChangedEventSink)
-        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+		protected virtual void OnChanged()
+		{
+			if (_parent is Main.IChildChangedEventSink)
+				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
 
-      if(null!=_changed)
-        _changed(this,new EventArgs());
-    }
+			if (null != _changed)
+				_changed(this, new EventArgs());
+		}
 
-    #endregion
+		#endregion
 
-    /// <summary>
-    /// Creates a cloned copy of this object.
-    /// </summary>
-    /// <returns>The cloned copy of this object.</returns>
-    public abstract object Clone();
+		/// <summary>
+		/// Creates a cloned copy of this object.
+		/// </summary>
+		/// <returns>The cloned copy of this object.</returns>
+		public abstract object Clone();
 
-    public abstract IHitTestObject HitTest(IPlotArea layer, PointD2D pt);
+		public abstract IHitTestObject HitTest(IPlotArea layer, PointD2D pt);
 
-    public abstract float FontSize { get; set; }
+		public abstract float FontSize { get; set; }
 
-    #region IDocumentNode Members
+		#region IDocumentNode Members
 
-    public object ParentObject
-    {
-      get { return _parent; }
-      set { _parent = value; }
-    }
+		public object ParentObject
+		{
+			get { return _parent; }
+			set { _parent = value; }
+		}
 
-    public string Name
-    {
-      get { return this.GetType().Name; }
-    }
+		public string Name
+		{
+			get { return this.GetType().Name; }
+		}
 
-    #endregion
+		#endregion
 
-    #region IRoutedPropertyReceiver Members
+		#region IRoutedPropertyReceiver Members
 
-    public virtual void SetRoutedProperty(IRoutedSetterProperty property)
-    {
-      switch (property.Name)
-      {
-        case "FontSize":
-          {
-            var prop = (RoutedSetterProperty<double>)property;
-            this.FontSize = (float)prop.Value;
-            OnChanged();
-          }
-          break;
-      }
-    }
+		public virtual void SetRoutedProperty(IRoutedSetterProperty property)
+		{
+			switch (property.Name)
+			{
+				case "FontSize":
+					{
+						var prop = (RoutedSetterProperty<double>)property;
+						this.FontSize = (float)prop.Value;
+						OnChanged();
+					}
+					break;
+			}
+		}
 
-    public virtual void GetRoutedProperty(IRoutedGetterProperty property)
-    {
-      switch (property.Name)
-      {
-        case "FontSize":
-          ((RoutedGetterProperty<double>)property).Merge(this.FontSize);
-          break;
-      }
-    }
+		public virtual void GetRoutedProperty(IRoutedGetterProperty property)
+		{
+			switch (property.Name)
+			{
+				case "FontSize":
+					((RoutedGetterProperty<double>)property).Merge(this.FontSize);
+					break;
+			}
+		}
 
-    #endregion
-  }
+		#endregion
+	}
 
 
 }

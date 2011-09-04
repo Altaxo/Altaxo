@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,69 +26,69 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
-  
-
-  /// <summary>
-  /// The main purpose of the column.
-  /// </summary>
-  [Serializable]
-  public enum ColumnKind
-  {
-    /// <summary>
-    /// Column values are the dependent variable (usually y in 2D-Plots, z in 3D-plots) 
-    /// </summary>
-    V=0,
-    /// <summary>
-    /// Column values are the first independent variable.
-    /// </summary>
-    X=1,
-    /// <summary>
-    /// Column values are the second independent variable.
-    /// </summary>
-    Y=2,      
-    /// <summary>
-    /// Column values are the third independent variable.
-    /// </summary>
-    Z=3,                
-    /// <summary>
-    /// Column values are +- error values.
-    /// </summary>
-    Err=4,    
-    /// <summary>
-    /// Column values are + error values.
-    /// </summary>
-    pErr=5,
-    /// <summary>
-    /// Column values are - error values.
-    /// </summary>
-    mErr=6,
-    /// <summary>
-    /// Column values are labels.
-    /// </summary>
-    Label=7,
-    /// <summary>
-    /// Column values are the plot condition, i.e. if zero, the row is ignored during plotting.
-    /// </summary>
-    Condition=8
-  }
 
 
-  public class ColumnKindChangeEventArgs : System.EventArgs
-  {
-    ColumnKind _oldKind;
-    ColumnKind _newKind;
-    
-    public ColumnKindChangeEventArgs(ColumnKind oldKind, ColumnKind newKind)
-    {
-      _oldKind = oldKind;
-      _newKind = newKind;
-    }
+	/// <summary>
+	/// The main purpose of the column.
+	/// </summary>
+	[Serializable]
+	public enum ColumnKind
+	{
+		/// <summary>
+		/// Column values are the dependent variable (usually y in 2D-Plots, z in 3D-plots) 
+		/// </summary>
+		V = 0,
+		/// <summary>
+		/// Column values are the first independent variable.
+		/// </summary>
+		X = 1,
+		/// <summary>
+		/// Column values are the second independent variable.
+		/// </summary>
+		Y = 2,
+		/// <summary>
+		/// Column values are the third independent variable.
+		/// </summary>
+		Z = 3,
+		/// <summary>
+		/// Column values are +- error values.
+		/// </summary>
+		Err = 4,
+		/// <summary>
+		/// Column values are + error values.
+		/// </summary>
+		pErr = 5,
+		/// <summary>
+		/// Column values are - error values.
+		/// </summary>
+		mErr = 6,
+		/// <summary>
+		/// Column values are labels.
+		/// </summary>
+		Label = 7,
+		/// <summary>
+		/// Column values are the plot condition, i.e. if zero, the row is ignored during plotting.
+		/// </summary>
+		Condition = 8
+	}
 
-    public ColumnKind OldKind { get { return _oldKind; }}
-    public ColumnKind NewKind { get { return _newKind; }}
-    
 
-  }
+	public class ColumnKindChangeEventArgs : System.EventArgs
+	{
+		ColumnKind _oldKind;
+		ColumnKind _newKind;
+
+		public ColumnKindChangeEventArgs(ColumnKind oldKind, ColumnKind newKind)
+		{
+			_oldKind = oldKind;
+			_newKind = newKind;
+		}
+
+		public ColumnKind OldKind { get { return _oldKind; } }
+		public ColumnKind NewKind { get { return _newKind; } }
+
+
+	}
 
 
 }

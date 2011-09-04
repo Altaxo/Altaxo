@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -68,7 +90,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		private void SetupElements()
 		{
-			var leftButtonMargin = new Thickness(4,2,0,2);
+			var leftButtonMargin = new Thickness(4, 2, 0, 2);
 			var rightButtonMargin = new Thickness(0, 2, 4, 2);
 			var standardLeftInnerLabelMargin = new Thickness(2, 0, 0, 0);
 			var standardRightInnerLabelMargin = new Thickness(0, 0, 2, 0);
@@ -83,7 +105,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				_grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
 			}
 
-			var colW = new GridLength( circleDiameter/2);
+			var colW = new GridLength(circleDiameter / 2);
 			_colL1.Width = colW;
 			_colL2.Width = colW;
 			_colR1.Width = colW;
@@ -116,7 +138,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			// internal independent variable names
 			for (int i = 0; i < _numberOfX; ++i)
 			{
-				string name = null != _fitElement.FitFunction && i<_fitElement.FitFunction.NumberOfIndependentVariables ? _fitElement.FitFunction.IndependentVariableName(i) : string.Empty;
+				string name = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfIndependentVariables ? _fitElement.FitFunction.IndependentVariableName(i) : string.Empty;
 				var item = new TextBlock() { Text = name };
 				item.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
 				item.VerticalAlignment = System.Windows.VerticalAlignment.Center;
@@ -127,13 +149,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				var circle = new Ellipse()
 				{
-				Stroke = Brushes.Blue,
-				StrokeThickness = circleThickness,
-				Width = circleDiameter,
-				Height = circleDiameter,
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center
-			};
+					Stroke = Brushes.Blue,
+					StrokeThickness = circleThickness,
+					Width = circleDiameter,
+					Height = circleDiameter,
+					HorizontalAlignment = HorizontalAlignment.Center,
+					VerticalAlignment = VerticalAlignment.Center
+				};
 				circle.SetValue(Grid.ColumnProperty, 1);
 				circle.SetValue(Grid.ColumnSpanProperty, 2);
 				circle.SetValue(Grid.RowProperty, i);
@@ -143,8 +165,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			// external independent variable names
 			for (int i = 0; i < _numberOfX; ++i)
 			{
-				var item = new Button() 
-				{ Content = GetTextShownForIndependentVariable(i), 
+				var item = new Button()
+				{
+					Content = GetTextShownForIndependentVariable(i),
 					Margin = leftButtonMargin,
 					Tag = i
 				};
@@ -158,8 +181,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			{
 				var item = new Button()
 				{
-					Content = GetTextShownForPlotRange(), 
-					Margin=leftButtonMargin
+					Content = GetTextShownForPlotRange(),
+					Margin = leftButtonMargin
 				};
 				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
 				item.SetValue(Grid.RowProperty, _numberOfX);
@@ -170,11 +193,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			// internal dependent variable names
 			for (int i = 0; i < _numberOfY; ++i)
 			{
-				var item = new TextBlock() 
+				var item = new TextBlock()
 				{
 					Text = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty,
 					Margin = standardLeftInnerLabelMargin,
- 					HorizontalAlignment = HorizontalAlignment.Left,
+					HorizontalAlignment = HorizontalAlignment.Left,
 					VerticalAlignment = VerticalAlignment.Center
 				};
 				item.SetValue(Grid.ColumnProperty, idxVariablesNameColumn);
@@ -205,10 +228,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				panel.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
 
 				var item = new Button()
-				{ 
-					Content= GetTextShownForDependentVariable(i),
-					Margin=leftButtonMargin,
- 					Tag = i
+				{
+					Content = GetTextShownForDependentVariable(i),
+					Margin = leftButtonMargin,
+					Tag = i
 				};
 				item.Click += new RoutedEventHandler(EhClickOnDependentVariable);
 				item.ContextMenu = new ContextMenu();
@@ -216,12 +239,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				menuItem.Click += EhRemoveDependentVariable;
 				item.ContextMenu.Items.Add(menuItem);
 				panel.Children.Add(item);
-				
+
 				item = new Button()
-				{ 
+				{
 					Content = GetTextShownForErrorEvaluation(i),
-					Padding=new Thickness(0),
-					Margin=leftButtonMargin,
+					Padding = new Thickness(0),
+					Margin = leftButtonMargin,
 					Tag = i
 				};
 				item.Click += new RoutedEventHandler(EhClickOnErrorFunction);
@@ -234,12 +257,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			for (int i = 0; i < _numberOfParameter; ++i)
 			{
 				string name = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfParameters ? _fitElement.FitFunction.ParameterName(i) : string.Empty;
-				var item = new TextBlock() 
+				var item = new TextBlock()
 				{
-					Text = name ,
-				HorizontalAlignment =HorizontalAlignment.Right,
-				VerticalAlignment = VerticalAlignment.Center,
-				Margin = standardRightInnerLabelMargin
+					Text = name,
+					HorizontalAlignment = HorizontalAlignment.Right,
+					VerticalAlignment = VerticalAlignment.Center,
+					Margin = standardRightInnerLabelMargin
 				};
 				item.SetValue(Grid.ColumnProperty, idxParameterNameColumn);
 				item.SetValue(Grid.RowProperty, i);
@@ -247,13 +270,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				var circle = new Ellipse()
 				{
-				Stroke = Brushes.DarkTurquoise,
-				StrokeThickness = circleThickness,
-				Width = circleDiameter,
-				Height = circleDiameter,
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
-			};
+					Stroke = Brushes.DarkTurquoise,
+					StrokeThickness = circleThickness,
+					Width = circleDiameter,
+					Height = circleDiameter,
+					HorizontalAlignment = HorizontalAlignment.Center,
+					VerticalAlignment = VerticalAlignment.Center,
+				};
 				circle.SetValue(Grid.ColumnProperty, idxParameterSymbolColumn);
 				circle.SetValue(Grid.ColumnSpanProperty, 2);
 				circle.SetValue(Grid.RowProperty, i);
@@ -263,7 +286,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			// external parameters
 			for (int i = 0; i < _numberOfParameter; ++i)
 			{
-				var item = new Button() 
+				var item = new Button()
 				{
 					Content = GetTextShownForParameter(i),
 					Margin = rightButtonMargin,
@@ -390,16 +413,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void Refresh()
 		{
-			
+
 		}
 
 		public bool FitFunctionSelected
 		{
-			set 
-      {
-        _fitFunctionSelected = value;
-        //this.Invalidate();
-      }
+			set
+			{
+				_fitFunctionSelected = value;
+				//this.Invalidate();
+			}
 		}
 
 		#endregion

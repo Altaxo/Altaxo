@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public abstract partial class GraphicBase 
+	public abstract partial class GraphicBase
 	{
 		protected class ShearGripHandle : IGripManipulationHandle
 		{
@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			PointD2D _drawrPosition;
 			PointD2D _fixrPosition;
 			PointD2D _fixaPosition;
-      PointD2D _initialMousePosition;
+			PointD2D _initialMousePosition;
 			double _initialShear, _initialRotation, _initialScaleX, _initialScaleY;
 			TransformationMatrix2D _spanningHalfYRhombus;
 
@@ -63,8 +63,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 
-        _initialShear = GraphObject.Shear;
-        _initialRotation = GraphObject.Rotation;
+				_initialShear = GraphObject.Shear;
+				_initialRotation = GraphObject.Rotation;
 				_initialScaleX = GraphObject.ScaleX;
 				_initialScaleY = GraphObject.ScaleY;
 			}
@@ -76,10 +76,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public void MoveGrip(PointD2D newPosition)
 			{
-        newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
+				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 				PointD2D diff = new PointD2D(newPosition.X - _initialMousePosition.X, newPosition.Y - _initialMousePosition.Y);
 
-        GraphObject.SetShearFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialRotation, _initialShear, _initialScaleX, _initialScaleY);
+				GraphObject.SetShearFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialRotation, _initialShear, _initialScaleX, _initialScaleY);
 			}
 
 			public void Show(Graphics g)
@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         new PointF(bigX, smallY),
         new PointF(bigX, arrY),
         new PointF(0, bigY),
-					};
+          };
 			}
 		}
 

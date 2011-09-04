@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,7 +80,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			InitializeComponent();
 
-			foreach(var e in new LinearGradientMode[]{ LinearGradientMode.Horizontal, LinearGradientMode.Vertical, LinearGradientMode.ForwardDiagonal, LinearGradientMode.BackwardDiagonal })
+			foreach (var e in new LinearGradientMode[] { LinearGradientMode.Horizontal, LinearGradientMode.Vertical, LinearGradientMode.ForwardDiagonal, LinearGradientMode.BackwardDiagonal })
 			{
 				_cachedItems.Add(e, new ImageComboBoxItem(this, e));
 				Items.Add(_cachedItems[e]);
@@ -76,7 +98,7 @@ namespace Altaxo.Gui.Common.Drawing
 		public LinearGradientMode LinearGradientMode
 		{
 			get { return (LinearGradientMode)GetValue(LinearGradientModeProperty); }
-			set {	SetValue(LinearGradientModeProperty, value); }
+			set { SetValue(LinearGradientModeProperty, value); }
 		}
 
 		public static readonly DependencyProperty LinearGradientModeProperty =
@@ -85,7 +107,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private static void OnLinearGradientModeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((LinearGradientModeComboBox)obj).EhLinearGradientModeChanged(obj,args);
+			((LinearGradientModeComboBox)obj).EhLinearGradientModeChanged(obj, args);
 		}
 		#endregion
 
@@ -94,7 +116,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		}
 
-	
+
 
 		public override string GetItemText(object item)
 		{
@@ -110,7 +132,7 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-		
+
 
 		public static DrawingImage GetImage(LinearGradientMode val)
 		{
@@ -121,7 +143,7 @@ namespace Altaxo.Gui.Common.Drawing
 			// Create the Geometry to draw.
 			//
 			GeometryGroup geometryGroup = new GeometryGroup();
-			geometryGroup.Children.Add(new RectangleGeometry(new Rect(0,0,width,height)));
+			geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
 
 			var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
 

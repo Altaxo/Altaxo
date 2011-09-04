@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,15 +43,15 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		static readonly double[] _initialValues = new double[] { 4,6,8,10,12,16,18,20,24,28,32,36,54,72 };
+		static readonly double[] _initialValues = new double[] { 4, 6, 8, 10, 12, 16, 18, 20, 24, 28, 32, 36, 54, 72 };
 
 		public FontSizeComboBox()
 		{
 			UnitEnvironment = FontSizeEnvironment.Instance;
 			InitializeComponent();
 
-			foreach(var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this,new Science.QuantityWithUnit(e,Science.LengthUnitPoint.Instance)));
+			foreach (var e in _initialValues)
+				Items.Add(new ImageComboBoxItem(this, new Science.QuantityWithUnit(e, Science.LengthUnitPoint.Instance)));
 
 			_img.Source = GetImage(SelectedQuantityInPoints);
 		}
@@ -37,7 +59,7 @@ namespace Altaxo.Gui.Common.Drawing
 		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			base.OnSelectedQuantityChanged(obj, args);
-			
+
 			if (null != _img)
 			{
 				var val = SelectedQuantityInPoints;
@@ -45,7 +67,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-	
+
 
 		public override ImageSource GetItemImage(object item)
 		{
@@ -83,15 +105,15 @@ namespace Altaxo.Gui.Common.Drawing
 			drawingGroup.Children.Add(geometryDrawing);
 
 			var pathFigure = new PathFigure();
-			pathFigure.StartPoint = new Point(width/6,height/2);
-			pathFigure.Segments.Add(new PolyLineSegment(new Point[]{ new Point(width/2,height/2+val/2), new Point(width-width/6,height/2), new Point(width/2, height/2-val/2) }, false));
+			pathFigure.StartPoint = new Point(width / 6, height / 2);
+			pathFigure.Segments.Add(new PolyLineSegment(new Point[] { new Point(width / 2, height / 2 + val / 2), new Point(width - width / 6, height / 2), new Point(width / 2, height / 2 - val / 2) }, false));
 			pathFigure.IsClosed = true;
 			pathFigure.IsFilled = true;
 			geometryDrawing = new GeometryDrawing() { Geometry = new PathGeometry(new PathFigure[] { pathFigure }) };
 			geometryDrawing.Brush = Brushes.Black;
-		drawingGroup.Children.Add(geometryDrawing);
+			drawingGroup.Children.Add(geometryDrawing);
 
-		drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
+			drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));
 
 
 			var geometryImage = new DrawingImage(drawingGroup);

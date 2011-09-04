@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,69 +28,69 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi
 {
-  using Shapes;
+	using Shapes;
 
-  /// <summary>
-  /// Handler type to process double click events
-  /// </summary>
-  public delegate bool DoubleClickHandler(IHitTestObject o);
+	/// <summary>
+	/// Handler type to process double click events
+	/// </summary>
+	public delegate bool DoubleClickHandler(IHitTestObject o);
 
-  /// <summary>
-  /// IHitTestObject is used as a return type for hit testing in the graph area.
-  /// </summary>
-  public interface IHitTestObject
-  {
-    /// <summary>
-    /// Returns the object outline path in page coordinates used for arrangement of multiple objects together.
+	/// <summary>
+	/// IHitTestObject is used as a return type for hit testing in the graph area.
+	/// </summary>
+	public interface IHitTestObject
+	{
+		/// <summary>
+		/// Returns the object outline path in page coordinates used for arrangement of multiple objects together.
 		/// Thus it should describes the object as accurate as possible. 
 		/// In case of lines shapes, it is the line path without widening.
 		/// In case of closed shapes, it is the outline path of the shape.
-    /// </summary>
-    /// <returns>Object outline.</returns>
-    GraphicsPath ObjectOutlineForArrangements { get; }
+		/// </summary>
+		/// <returns>Object outline.</returns>
+		GraphicsPath ObjectOutlineForArrangements { get; }
 
-    /// <summary>
-    /// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
-    /// </summary>
-   TransformationMatrix2D Transformation {get;}
+		/// <summary>
+		/// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
+		/// </summary>
+		TransformationMatrix2D Transformation { get; }
 
-    /// <summary>
-    /// Transform the internal positions according to the provided transformation matrix.
-    /// </summary>
-    /// <param name="x"></param>
-    void Transform(TransformationMatrix2D x);
+		/// <summary>
+		/// Transform the internal positions according to the provided transformation matrix.
+		/// </summary>
+		/// <param name="x"></param>
+		void Transform(TransformationMatrix2D x);
 
-    /// <summary>
-    /// This will return the object itself, i.e. the object which corresponds to the selection path.
-    /// </summary>
-    /// <returns></returns>
-    object  HittedObject { get; set;}
+		/// <summary>
+		/// This will return the object itself, i.e. the object which corresponds to the selection path.
+		/// </summary>
+		/// <returns></returns>
+		object HittedObject { get; set; }
 
-    XYPlotLayer ParentLayer { get; set; }
+		XYPlotLayer ParentLayer { get; set; }
 
-    /// <summary>
-    /// Shifts the position of the hitted object according to the x and y values.
-    /// </summary>
-    /// <param name="dx">Shift value in x direction in page coordinates.</param>
-    /// <param name="dy">Shift value in y direction in page coordinates.</param>
-    void ShiftPosition(double dx, double dy);
+		/// <summary>
+		/// Shifts the position of the hitted object according to the x and y values.
+		/// </summary>
+		/// <param name="dx">Shift value in x direction in page coordinates.</param>
+		/// <param name="dy">Shift value in y direction in page coordinates.</param>
+		void ShiftPosition(double dx, double dy);
 
 
-    /// <summary>
-    /// Delegate to handle double click events. Should return true if the object was removed during the processing. Otherwise returns false.
-    /// </summary>
-    DoubleClickHandler DoubleClick { get; set; }
+		/// <summary>
+		/// Delegate to handle double click events. Should return true if the object was removed during the processing. Otherwise returns false.
+		/// </summary>
+		DoubleClickHandler DoubleClick { get; set; }
 
-    /// <summary>
-    /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
-    /// </summary>
-    DoubleClickHandler Remove { get; set; }
+		/// <summary>
+		/// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
+		/// </summary>
+		DoubleClickHandler Remove { get; set; }
 
-    /// <summary>
-    /// This function is called if a double click to the object occured.
-    /// </summary>
-    /// <returns>False normally, true if this hit test object should be deleted from the list (for instance if the object itself was deleted).</returns>
-    bool OnDoubleClick();
+		/// <summary>
+		/// This function is called if a double click to the object occured.
+		/// </summary>
+		/// <returns>False normally, true if this hit test object should be deleted from the list (for instance if the object itself was deleted).</returns>
+		bool OnDoubleClick();
 
 
 		/// <summary>
@@ -107,7 +107,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The next grip level to be used.</returns>
 		int GetNextGripLevel(int currentGripLevel);
 
-  }
+	}
 
 
 

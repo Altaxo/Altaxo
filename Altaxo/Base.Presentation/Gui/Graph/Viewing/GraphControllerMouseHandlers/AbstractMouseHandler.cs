@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -32,100 +32,100 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
-  /// <summary>
-  /// The abstract base class of all MouseStateHandlers.
-  /// </summary>
-  /// <remarks>The mouse state handler are used to handle the mouse events of the graph view in different contexts,
-  /// depending on which GraphTool is choosen by the user.</remarks>
-  public abstract class MouseStateHandler
-  {
-    /// <summary>Stores the mouse position of the last mouse up event.</summary>
-    protected Altaxo.Graph.PointD2D m_LastMouseUp;
-    /// <summary>Stores the mouse position of the last mouse down event.</summary>
+	/// <summary>
+	/// The abstract base class of all MouseStateHandlers.
+	/// </summary>
+	/// <remarks>The mouse state handler are used to handle the mouse events of the graph view in different contexts,
+	/// depending on which GraphTool is choosen by the user.</remarks>
+	public abstract class MouseStateHandler
+	{
+		/// <summary>Stores the mouse position of the last mouse up event.</summary>
+		protected Altaxo.Graph.PointD2D m_LastMouseUp;
+		/// <summary>Stores the mouse position of the last mouse down event.</summary>
 		protected Altaxo.Graph.PointD2D m_LastMouseDown;
 
 		public abstract Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType { get; }
 
-    /// <summary>
-    /// Handles the mouse move event.
-    /// </summary>
-    /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+		/// <summary>
+		/// Handles the mouse move event.
+		/// </summary>
+		/// <param name="e">MouseEventArgs as provided by the view.</param>
+		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
-    {
-      
-    }
+		{
 
-    /// <summary>
-    /// Handles the mouse up event. Stores the position of the mouse into <see cref="m_LastMouseUp"/>.
-    /// </summary>
-    /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+		}
+
+		/// <summary>
+		/// Handles the mouse up event. Stores the position of the mouse into <see cref="m_LastMouseUp"/>.
+		/// </summary>
+		/// <param name="e">MouseEventArgs as provided by the view.</param>
+		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseUp(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
-    {
+		{
 			m_LastMouseUp = position;
-    }
+		}
 
-    /// <summary>
-    /// Handles the mouse down event. Stores the position of the mouse into <see cref="m_LastMouseDown"/>.
-    /// </summary>
-    /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+		/// <summary>
+		/// Handles the mouse down event. Stores the position of the mouse into <see cref="m_LastMouseDown"/>.
+		/// </summary>
+		/// <param name="e">MouseEventArgs as provided by the view.</param>
+		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
-    {
+		{
 			m_LastMouseDown = position;
-      
-    }
-      
-    /// <summary>
-    /// Handles the mouse click event.
-    /// </summary>
-    /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+
+		}
+
+		/// <summary>
+		/// Handles the mouse click event.
+		/// </summary>
+		/// <param name="e">EventArgs as provided by the view.</param>
+		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
-    {
-      
-    }
-      
-    /// <summary>
-    /// Handles the mouse doubleclick event.
-    /// </summary>
-    /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
+		{
+
+		}
+
+		/// <summary>
+		/// Handles the mouse doubleclick event.
+		/// </summary>
+		/// <param name="e">EventArgs as provided by the view.</param>
+		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnDoubleClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
-    {
-      
-    }
+		{
+
+		}
 
 
-    /// <summary>
-    /// Is called when the mouse state handler is deselected.
-    /// </summary>
-    public virtual void OnDeselection()
-    {
-    }
+		/// <summary>
+		/// Is called when the mouse state handler is deselected.
+		/// </summary>
+		public virtual void OnDeselection()
+		{
+		}
 
-    /// <summary>
-    /// This function is called just after the paint event. The graphic context is in graph coordinates.
-    /// </summary>
-    /// <param name="g"></param>
-    public virtual void AfterPaint(Graphics g)
-    {
-    }
+		/// <summary>
+		/// This function is called just after the paint event. The graphic context is in graph coordinates.
+		/// </summary>
+		/// <param name="g"></param>
+		public virtual void AfterPaint(Graphics g)
+		{
+		}
 
-		
-    /// <summary>
-    /// This function is called if a key is pressed.
-    /// </summary>
-    /// <param name="msg"></param>
-    /// <param name="keyData"></param>
-    /// <returns></returns>
-    public virtual bool ProcessCmdKey(KeyEventArgs e)
-    {
-      return false; // per default the key is not processed
-    }
-		
-  }
- 
+
+		/// <summary>
+		/// This function is called if a key is pressed.
+		/// </summary>
+		/// <param name="msg"></param>
+		/// <param name="keyData"></param>
+		/// <returns></returns>
+		public virtual bool ProcessCmdKey(KeyEventArgs e)
+		{
+			return false; // per default the key is not processed
+		}
+
+	}
+
 
 }

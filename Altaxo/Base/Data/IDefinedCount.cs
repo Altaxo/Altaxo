@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,17 +26,17 @@ namespace Altaxo.Data
 {
 
 
-  /// <summary>
-  /// The interface to a column which has a definite number of elements.
-  /// </summary>
-  public interface IDefinedCount
-  {
-    /// <summary>
-    /// Get the number of elements of the column.
-    /// </summary>
-    int Count
-    {
-      get;
-    }
-  }
+	/// <summary>
+	/// The interface to a column which has a definite number of elements.
+	/// </summary>
+	public interface IDefinedCount
+	{
+		/// <summary>
+		/// Get the number of elements of the column.
+		/// </summary>
+		int Count
+		{
+			get;
+		}
+	}
 }

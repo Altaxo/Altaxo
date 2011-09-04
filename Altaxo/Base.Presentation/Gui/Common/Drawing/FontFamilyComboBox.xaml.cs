@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -89,8 +111,8 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				get
 				{
-					if(null==_imgSource)
-					_imgSource = GetImage((FontFamily)Value);
+					if (null == _imgSource)
+						_imgSource = GetImage((FontFamily)Value);
 					return _imgSource;
 				}
 			}
@@ -112,7 +134,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				// else use the default characters, but test if they are present in the typeface
 				var chars = new List<char>();
-				for (int i = 0; i < _defaultChars.Length && chars.Count<4; i++)
+				for (int i = 0; i < _defaultChars.Length && chars.Count < 4; i++)
 				{
 					var c = _defaultChars[i];
 					if (glyphTypeFace.CharacterToGlyphMap.ContainsKey(c))
@@ -136,12 +158,12 @@ namespace Altaxo.Gui.Common.Drawing
 				geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
 				drawingGroup.Children.Add(geometryDrawing);
 
-				Typeface typeface = new Typeface(fontFamily,FontStyles.Normal,FontWeights.Normal,FontStretches.Normal);
+				Typeface typeface = new Typeface(fontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 				GlyphTypeface glyphTypeFace;
-				if(!typeface.TryGetGlyphTypeface(out glyphTypeFace))
+				if (!typeface.TryGetGlyphTypeface(out glyphTypeFace))
 					glyphTypeFace = null;
 
-				if(null!=glyphTypeFace)
+				if (null != glyphTypeFace)
 				{
 					var glyphRun = new GlyphRun();
 					((System.ComponentModel.ISupportInitialize)glyphRun).BeginInit();
@@ -207,11 +229,11 @@ namespace Altaxo.Gui.Common.Drawing
 			foreach (var fontFam in System.Windows.Media.Fonts.SystemFontFamilies)
 			{
 				// use only those items, that have a corresponding Gdi font family
-				if(_gdiFontFamilyNames.Contains(fontFam.Source))
+				if (_gdiFontFamilyNames.Contains(fontFam.Source))
 				{
-				var item = new FontComboBoxItem(fontFam);
-				_allItems.Add(item);
-				_cachedItems.Add(fontFam.Source, item);
+					var item = new FontComboBoxItem(fontFam);
+					_allItems.Add(item);
+					_cachedItems.Add(fontFam.Source, item);
 				}
 			}
 		}
@@ -234,7 +256,7 @@ namespace Altaxo.Gui.Common.Drawing
 		public FontFamily SelectedFontFamily
 		{
 			get { return (FontFamily)GetValue(SelectedFontFamilyProperty); }
-			set	{	SetValue(SelectedFontFamilyProperty, value); }
+			set { SetValue(SelectedFontFamilyProperty, value); }
 		}
 
 		public sd.FontFamily SelectedGdiFontFamily
@@ -267,17 +289,17 @@ namespace Altaxo.Gui.Common.Drawing
 				SelectedFontFamilyChanged(obj, args);
 		}
 		#endregion
-	
+
 
 		public static ImageSource GetImage(sd.FontFamily join)
 		{
-			
-			
+
+
 			const int bmpHeight = 24;
 			const int bmpWidth = 48;
 			const double nominalHeight = 24; // height of a combobox item
-			const double nominalWidth = (nominalHeight*bmpWidth)/bmpHeight;
-			const double lineWidth = bmpHeight*0.4;
+			const double nominalWidth = (nominalHeight * bmpWidth) / bmpHeight;
+			const double lineWidth = bmpHeight * 0.4;
 
 			if (null == _interopBitmap)
 				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -76,14 +76,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class DeprecatedLineShape : ClosedPathShapeBase
 		{
-      /// <summary>
-      /// Get the object outline for arrangements in object world coordinates.
-      /// </summary>
-      /// <returns>Object outline for arrangements in object world coordinates</returns>
-      public override GraphicsPath GetObjectOutlineForArrangements()
-      {
-        throw new NotImplementedException();
-      }
+			/// <summary>
+			/// Get the object outline for arrangements in object world coordinates.
+			/// </summary>
+			/// <returns>Object outline for arrangements in object world coordinates</returns>
+			public override GraphicsPath GetObjectOutlineForArrangements()
+			{
+				throw new NotImplementedException();
+			}
 
 			public override void Paint(Graphics g, object obj)
 			{
@@ -102,8 +102,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-        throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
-        /*
+				throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
+				/*
 				LineShape s = (LineShape)obj;
 				info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
 				*/
@@ -164,8 +164,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-      this._bounds.Width = endPosition.X - startPosition.X;
-      this._bounds.Height = endPosition.Y - startPosition.Y;
+			this._bounds.Width = endPosition.X - startPosition.X;
+			this._bounds.Height = endPosition.Y - startPosition.Y;
 		}
 
 
@@ -185,9 +185,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-      this._bounds.Width = endPosition.X - startPosition.X;
-      this._bounds.Height = endPosition.Y - startPosition.Y;
-      this.Pen.Width = lineWidth;
+			this._bounds.Width = endPosition.X - startPosition.X;
+			this._bounds.Height = endPosition.Y - startPosition.Y;
+			this.Pen.Width = lineWidth;
 			this.Pen.Color = lineColor;
 		}
 
@@ -229,7 +229,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// Gets the path of the object in object world coordinates.
 		/// </summary>
 		/// <returns></returns>
-    public override GraphicsPath GetObjectOutlineForArrangements()
+		public override GraphicsPath GetObjectOutlineForArrangements()
 		{
 			return GetPath();
 		}
@@ -249,16 +249,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			HitTestObjectBase result = null;
 			GraphicsPath gp = GetPath();
-      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
+			if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), _linePen))
 			{
 				result = new LineShapeHitTestObject(this);
 			}
 			else
 			{
 				gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
-        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+				if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
 				{
-					result = new LineShapeHitTestObject(this); 
+					result = new LineShapeHitTestObject(this);
 				}
 			}
 
@@ -283,22 +283,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public override void Paint(Graphics g, object obj)
 		{
 			GraphicsState gs = g.Save();
-      TransformGraphics(g);
-      Pen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+			TransformGraphics(g);
+			Pen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
 			g.DrawLine(Pen, (float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
 
-			if(_outlinePen!=null && _outlinePen.IsVisible)
+			if (_outlinePen != null && _outlinePen.IsVisible)
 			{
-			GraphicsPath p = new GraphicsPath();
-			p.AddLine((float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
-			p.Widen(Pen);
-      OutlinePen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
-			g.DrawPath(OutlinePen, p);
+				GraphicsPath p = new GraphicsPath();
+				p.AddLine((float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
+				p.Widen(Pen);
+				OutlinePen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				g.DrawPath(OutlinePen, p);
 			}
 
 			g.Restore(gs);
 		}
-	
+
 
 
 		protected class LineShapeHitTestObject : GraphicBaseHitTestObject

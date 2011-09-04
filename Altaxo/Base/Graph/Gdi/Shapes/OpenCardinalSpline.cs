@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public class OpenCardinalSpline : OpenPathShapeBase
 	{
-		static double _defaultTension=0.5;
+		static double _defaultTension = 0.5;
 
 		List<PointD2D> _curvePoints = new List<PointD2D>();
 		double _tension = _defaultTension;
@@ -102,8 +102,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._tension = info.GetDouble("Tension");
 				s._curvePoints.Clear();
 				int count = info.OpenArray("Points");
-				for(int i=0;i<count;i++)
-					s._curvePoints.Add((PointD2D)info.GetValue("e",s));
+				for (int i = 0; i < count; i++)
+					s._curvePoints.Add((PointD2D)info.GetValue("e", s));
 				info.CloseArray(count);
 				return s;
 			}
@@ -118,7 +118,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		public OpenCardinalSpline(IEnumerable<PointD2D> points)
-			: this(points,DefaultTension)
+			: this(points, DefaultTension)
 		{
 		}
 
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_curvePoints.AddRange(points);
 			_tension = Math.Abs(tension);
 
-			if (!(_curvePoints.Count >=2))
+			if (!(_curvePoints.Count >= 2))
 				throw new ArgumentException("Number of curve points has to be >= 2");
 
 			CalculateAndSetBounds();
@@ -286,13 +286,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 						pts[i] = pt;
 					}
 
-					IGripManipulationHandle[] grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 1+ls._curvePoints.Count];
+					IGripManipulationHandle[] grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 1 + ls._curvePoints.Count];
 
 					// Translation grips
 					GraphicsPath path = new GraphicsPath();
-					path.AddCurve(pts,(float)ls._tension);
+					path.AddCurve(pts, (float)ls._tension);
 					path.Widen(new Pen(Color.Black, (float)(6 / pageScale)));
-					grips[grips.Length-1] = new MovementGripHandle(this, path, null);
+					grips[grips.Length - 1] = new MovementGripHandle(this, path, null);
 
 					// PathNode grips
 					if (gripLevel == 1)
@@ -318,7 +318,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			int _pointNumber;
 
 			public BSplinePathNodeGripHandle(IHitTestObject parent, int pointNr, PointD2D gripCenter, double gripRadius)
-			: base(parent,new PointD2D(0,0),gripCenter,gripRadius)
+				: base(parent, new PointD2D(0, 0), gripCenter, gripRadius)
 			{
 				_pointNumber = pointNr;
 			}
@@ -326,10 +326,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public override void MoveGrip(PointD2D newPosition)
 			{
-					newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-					var obj = (OpenCardinalSpline)GraphObject;
-					newPosition = obj._transformation.InverseTransformPoint(newPosition);
-					obj.SetPoint(_pointNumber, newPosition);
+				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
+				var obj = (OpenCardinalSpline)GraphObject;
+				newPosition = obj._transformation.InverseTransformPoint(newPosition);
+				obj.SetPoint(_pointNumber, newPosition);
 			}
 
 			public override bool Deactivate()

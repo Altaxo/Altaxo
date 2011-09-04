@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +46,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public BrushControlsGlue()
 		{
-			
+
 		}
 
 		public BrushControlsGlue(bool isAllPropertiesGlue)
@@ -273,7 +295,7 @@ namespace Altaxo.Gui.Common.Drawing
 				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ColorComboBox.SelectedColorProperty, typeof(ColorComboBox));
 
 				if (_cbColor2 != null)
-					dpd.RemoveValueChanged(_cbColor2,EhColor2_ColorChoiceChanged);
+					dpd.RemoveValueChanged(_cbColor2, EhColor2_ColorChoiceChanged);
 
 				_cbColor2 = value;
 				if (_brush != null && _cbColor2 != null)
@@ -665,7 +687,7 @@ namespace Altaxo.Gui.Common.Drawing
 				OnBrushChanged();
 			}
 		}
-	
+
 
 		Control _lblGradientScale;
 		public Control LabelGradientScale
@@ -791,7 +813,7 @@ namespace Altaxo.Gui.Common.Drawing
 				OnBrushChanged();
 			}
 		}
-		
+
 
 		Control _lblTextureScale;
 		public Control LabelTextureScale
@@ -832,17 +854,17 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 			set
 			{
-				if(null!=_previewPanel)
+				if (null != _previewPanel)
 				{
-				_previewPanel.SizeChanged -= EhPreviewPanel_SizeChanged;
+					_previewPanel.SizeChanged -= EhPreviewPanel_SizeChanged;
 				}
 
 				_previewPanel = value;
 
-				if(null!=_previewPanel)
+				if (null != _previewPanel)
 				{
-				_previewPanel.SizeChanged += EhPreviewPanel_SizeChanged;
-				UpdatePreviewPanel();
+					_previewPanel.SizeChanged += EhPreviewPanel_SizeChanged;
+					UpdatePreviewPanel();
 				}
 			}
 		}
@@ -855,13 +877,13 @@ namespace Altaxo.Gui.Common.Drawing
 
 		void UpdatePreviewPanel()
 		{
-			if (null == _previewPanel || null==_brush)
+			if (null == _previewPanel || null == _brush)
 				return;
 
 			int height = (int)_previewPanel.ActualHeight;
 			int width = (int)_previewPanel.ActualWidth;
 			if (height <= 0)
-				height=64;
+				height = 64;
 			if (width <= 0)
 				width = 64;
 
@@ -879,22 +901,22 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 
 			var grfx = _previewBitmap.GdiGraphics;
-			
-				var fullRect = _previewBitmap.GdiRectangle;
 
-				grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-					grfx.FillRectangle(System.Drawing.Brushes.Transparent, fullRect);
-					grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+			var fullRect = _previewBitmap.GdiRectangle;
 
-					var r2 = fullRect;
-					r2.Inflate(-r2.Width / 4, -r2.Height / 4);
-					//grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
+			grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+			grfx.FillRectangle(System.Drawing.Brushes.Transparent, fullRect);
+			grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 
-					_brush.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
-					grfx.FillRectangle(_brush, fullRect);
+			var r2 = fullRect;
+			r2.Inflate(-r2.Width / 4, -r2.Height / 4);
+			//grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
 
-					_previewBitmap.WpfBitmap.Invalidate();
-			
+			_brush.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
+			grfx.FillRectangle(_brush, fullRect);
+
+			_previewBitmap.WpfBitmap.Invalidate();
+
 		}
 
 		#endregion

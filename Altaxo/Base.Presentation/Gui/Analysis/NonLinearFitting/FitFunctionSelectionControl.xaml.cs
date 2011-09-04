@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -98,7 +120,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			public Altaxo.Main.Services.IFitFunctionInformation FunctionInstance;
 			public override string NodeType { get { return "DocumentLeafNode"; } }
 
-		
+
 			public DocumentLeafNode(string text, Altaxo.Main.Services.IFitFunctionInformation func)
 				: base(text)
 			{
@@ -140,8 +162,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			if (_controller != null)
 				_controller.EhView_SelectionChanged(fitInfo);
 
-			
-			if (fitInfo!=null)
+
+			if (fitInfo != null)
 			{
 				if (_rtfGraphics == null)
 				{
@@ -151,9 +173,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				string rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(fitInfo.Description, _rtfGraphics, GetRtfBackgroundColor(), 12);
 				var stream = new System.IO.MemoryStream(ASCIIEncoding.Default.GetBytes(rtf));
 				this._rtfDescription.SelectAll();
-				this._rtfDescription.Selection.Load(stream, DataFormats.Rtf); 
+				this._rtfDescription.Selection.Load(stream, DataFormats.Rtf);
 			}
-			
+
 		}
 
 		#region IFitFunctionSelectionView
@@ -178,14 +200,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void AddFitFunctionList(string rootname, Main.Services.IFitFunctionInformation[] info, FitFunctionContextMenuStyle menustyle)
 		{
-			if(_twFitFunctions.ItemsSource==null)
+			if (_twFitFunctions.ItemsSource == null)
 			{
 				_twFitFunctions.ItemsSource = new NGTreeNode().Nodes;
 			}
 			var mainRoot = (NGTreeNodeCollection)_twFitFunctions.ItemsSource;
 
 
-			
+
 			// The key of the entries is the FitFunctionAttribute, the value is the type of the fitting function
 			RootNode rnode = new RootNode(rootname, RootNodeType.RootNodeBuiltin);
 			mainRoot.Add(rnode);
@@ -216,19 +238,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 						leaf.SetMenuEnabled(false, false);
 						break;
 					case FitFunctionContextMenuStyle.EditAndDelete:
-					//	leaf.ContextMenu = _userFileLeafNodeContextMenu;
+						//	leaf.ContextMenu = _userFileLeafNodeContextMenu;
 						leaf.SetMenuEnabled(true, true);
 						break;
 					case FitFunctionContextMenuStyle.Edit:
-					//	leaf.ContextMenu = _appFileLeafNodeContextMenu;
+						//	leaf.ContextMenu = _appFileLeafNodeContextMenu;
 						leaf.SetMenuEnabled(true, false);
 						break;
 				}
 				where.Add(leaf);
 			}
-			
 
-		
+
+
 		}
 
 		NGTreeNode GetPathNode(NGTreeNodeCollection coll, string path)
@@ -250,7 +272,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			var brush = _rtfDescription.Background;
 			if (brush is SolidColorBrush)
-				return  new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
+				return new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
 			else
 				return NamedColor.Transparent;
 		}

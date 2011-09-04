@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public abstract partial class GraphicBase 
+	public abstract partial class GraphicBase
 	{
 		/// <summary>
 		/// Shows a single round grip, which can be customized to a move action.
@@ -100,19 +100,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 					var diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
-					GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff,new PointD2D(0,0));
+					GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, new PointD2D(0, 0));
 				}
 			}
 
 
 			public void Show(Graphics g)
 			{
-				g.FillEllipse(Brushes.Blue, 
-          (float)(_gripCenter.X - _gripRadius), 
-          (float)(_gripCenter.Y - _gripRadius),
-          (float)(2 * _gripRadius),
-          (float)(2 * _gripRadius)
-          );
+				g.FillEllipse(Brushes.Blue,
+					(float)(_gripCenter.X - _gripRadius),
+					(float)(_gripCenter.Y - _gripRadius),
+					(float)(2 * _gripRadius),
+					(float)(2 * _gripRadius)
+					);
 			}
 
 			public bool IsGripHitted(PointD2D point)

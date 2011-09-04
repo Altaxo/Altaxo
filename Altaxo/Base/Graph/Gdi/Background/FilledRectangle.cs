@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,101 +24,101 @@ using System;
 using System.Drawing;
 namespace Altaxo.Graph.Gdi.Background
 {
-  /// <summary>
-  /// Backs the item with a color filled rectangle.
-  /// </summary>
-  [Serializable]
-  public class FilledRectangle : IBackgroundStyle
-  {
-    protected BrushX _brush;
+	/// <summary>
+	/// Backs the item with a color filled rectangle.
+	/// </summary>
+	[Serializable]
+	public class FilledRectangle : IBackgroundStyle
+	{
+		protected BrushX _brush;
 
-    #region Serialization
+		#region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BackgroundColorStyle", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FilledRectangle),0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        FilledRectangle s = (FilledRectangle)obj;
-        info.AddValue("Brush",s._brush);
-        
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        FilledRectangle s = null!=o ? (FilledRectangle)o : new FilledRectangle();
-        s._brush = (BrushX)info.GetValue("Brush",parent);
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BackgroundColorStyle", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FilledRectangle), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				FilledRectangle s = (FilledRectangle)obj;
+				info.AddValue("Brush", s._brush);
 
-        return s;
-      }
-    }
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				FilledRectangle s = null != o ? (FilledRectangle)o : new FilledRectangle();
+				s._brush = (BrushX)info.GetValue("Brush", parent);
 
-    #endregion
+				return s;
+			}
+		}
+
+		#endregion
 
 
-    public FilledRectangle()
-    {
-    }
+		public FilledRectangle()
+		{
+		}
 
-    public FilledRectangle(NamedColor c)
-    {
-      _brush = new BrushX(c);
-    }
+		public FilledRectangle(NamedColor c)
+		{
+			_brush = new BrushX(c);
+		}
 
-    public FilledRectangle(BrushX brush)
-    {
-      _brush = (BrushX)brush.Clone();
-    }
+		public FilledRectangle(BrushX brush)
+		{
+			_brush = (BrushX)brush.Clone();
+		}
 
-    public FilledRectangle(FilledRectangle from)
-    {
-      CopyFrom(from);
-    }
+		public FilledRectangle(FilledRectangle from)
+		{
+			CopyFrom(from);
+		}
 
-    public void CopyFrom(FilledRectangle from)
-    {
+		public void CopyFrom(FilledRectangle from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-      this.Brush = from._brush;
-    }
+			this.Brush = from._brush;
+		}
 
-    public object Clone()
-    {
-      return new FilledRectangle(this);
-    }
+		public object Clone()
+		{
+			return new FilledRectangle(this);
+		}
 
-   
 
-    #region IBackgroundStyle Members
 
-    public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-      return innerArea;
-    }
+		#region IBackgroundStyle Members
 
-    public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-      if (_brush != null)
-      {
-        _brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-        g.FillRectangle(_brush, innerArea);
-      }
-    }
+		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
+			return innerArea;
+		}
 
-    public bool SupportsBrush { get { return true; }}
+		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
+			if (_brush != null)
+			{
+				_brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+				g.FillRectangle(_brush, innerArea);
+			}
+		}
 
-    public BrushX Brush
-    {
-      get
-      {
-        return _brush;
-      }
-      set
-      {
-        _brush = value==null ? null : value.Clone();
-      }
-    }
-    #endregion
-  }
+		public bool SupportsBrush { get { return true; } }
+
+		public BrushX Brush
+		{
+			get
+			{
+				return _brush;
+			}
+			set
+			{
+				_brush = value == null ? null : value.Clone();
+			}
+		}
+		#endregion
+	}
 }

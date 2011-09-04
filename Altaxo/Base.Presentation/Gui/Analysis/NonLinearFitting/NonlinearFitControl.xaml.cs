@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -87,13 +109,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		private void EhSimulate_GenerationMethodChanged(object sender, RoutedEventArgs e)
 		{
-			_ctrlEquallySpacedInterval.IsEnabled = true==_rbFromEquallySpacedInterval.IsChecked;
+			_ctrlEquallySpacedInterval.IsEnabled = true == _rbFromEquallySpacedInterval.IsChecked;
 		}
 
 		private void _btSimulate_Click(object sender, RoutedEventArgs e)
 		{
 			if (_controller != null)
-				_controller.EhView_DoSimulation(true==_rbFromEquallySpacedInterval.IsChecked, true==_chkUseUnusedDependentVarsAlso.IsChecked);
+				_controller.EhView_DoSimulation(true == _rbFromEquallySpacedInterval.IsChecked, true == _chkUseUnusedDependentVarsAlso.IsChecked);
 		}
 
 		#region  INonlinearFitView
@@ -114,9 +136,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		UIElement _setParameterControl;
 		public void SetParameterControl(object control)
 		{
-				this._parameterControlHost.Child = null;
-				_setParameterControl = control as UIElement;
-				this._parameterControlHost.Child = _setParameterControl;
+			this._parameterControlHost.Child = null;
+			_setParameterControl = control as UIElement;
+			this._parameterControlHost.Child = _setParameterControl;
 		}
 
 		UIElement _funcSelControl;
@@ -131,10 +153,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		UIElement _fitEnsembleControl;
 		public void SetFitEnsembleControl(object control)
 		{
-			
-				this._tpFitEnsemble.Content = null;
-				_fitEnsembleControl = control as UIElement;
-				this._tpFitEnsemble.Content = _fitEnsembleControl;
+
+			this._tpFitEnsemble.Content = null;
+			_fitEnsembleControl = control as UIElement;
+			this._tpFitEnsemble.Content = _fitEnsembleControl;
 		}
 
 		public void SetChiSquare(double chiSquare)

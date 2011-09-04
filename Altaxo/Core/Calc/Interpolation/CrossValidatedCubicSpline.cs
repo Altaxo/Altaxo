@@ -270,7 +270,7 @@ namespace Altaxo.Calc.Interpolation
 				return wkr[5];
 			}
 		}
-		
+
 		/// <summary>
 		/// Mean square value of the dyy[i] (i.e. the provided variance values by <see cref="SetErrorVariance"/>).
 		/// The values of <see cref="GeneralizedCrossValidation"/>, <see cref="MeanSquareResidual"/> and <see cref="EstimatedTrueMeanSquareError"/>
@@ -960,8 +960,8 @@ namespace Altaxo.Calc.Interpolation
 			base.x = xstore;
 			base.y = ystore;
 
-			
-			var	n = x.Length;
+
+			var n = x.Length;
 
 
 			// Resize the auxilliary vectors. Note, that there is no reallocation if the
@@ -990,14 +990,14 @@ namespace Altaxo.Calc.Interpolation
 			if (x.Length == 2)
 			{
 				y0[0] = y[0];
-				y0[n-1] = y[n-1];
-				y1[0] = y1[n-1] = (y[n-1] - y[0]) / (x[n-1] - x[0]);
-				y2[0] = y2[n-1] =
-					y3[0] = y3[n-1] = 0.0;
+				y0[n - 1] = y[n - 1];
+				y1[0] = y1[n - 1] = (y[n - 1] - y[0]) / (x[n - 1] - x[0]);
+				y2[0] = y2[n - 1] =
+					y3[0] = y3[n - 1] = 0.0;
 				return 0;
 			}
 
-		
+
 
 			// set standard deviation of the points to 1 if dy is not set or has
 			// the wrong length
@@ -1044,10 +1044,10 @@ namespace Altaxo.Calc.Interpolation
 			return GetYOfU(x);
 		}
 
-    public double GetY1stDerivativeOfX(double xx)
-    {
-      return CubicSplineHorner1stDerivative(xx, x, y0, y1, y2, y3);
-    }
+		public double GetY1stDerivativeOfX(double xx)
+		{
+			return CubicSplineHorner1stDerivative(xx, x, y0, y1, y2, y3);
+		}
 
 		public override double GetYOfU(double u)
 		{
@@ -1072,8 +1072,8 @@ namespace Altaxo.Calc.Interpolation
 				var = value;
 			}
 		}
-			
-	
+
+
 
 	}
 

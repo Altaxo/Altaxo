@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		bool _fillToNextPlotItem = true;
 
 		[NonSerialized]
-		
+
 		Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData> _cachedPaintOneRange;
 
 		[NonSerialized]
@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
-			CopyFrom(from,true);
+			CopyFrom(from, true);
 		}
 
 		public void CopyFrom(FillToCurvePlotStyle from, bool suppressChangeEvent)
@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				return s;
 			}
 		}
-		
+
 		#endregion
 
 
@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				if (null != _fillBrush)
 					_fillBrush.Changed -= EhChildChanged;
-				
+
 				_fillBrush = value;
 
 				if (null != _fillBrush)
@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			if (_parentObject is Main.IChildChangedEventSink)
 				((Main.IChildChangedEventSink)this._parentObject).EhChildChanged(this, EventArgs.Empty);
-		
+
 			if (null != Changed)
 				Changed(this, EventArgs.Empty);
 		}
@@ -207,13 +207,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IChangedEventSource Members
 
-		[field:NonSerialized]
+		[field: NonSerialized]
 		public event EventHandler Changed;
 
 		#endregion
 
 		#region IChildChangedEventSink Members
-	
+
 		public void EhChildChanged(object child, EventArgs e)
 		{
 			if (null != Changed)
@@ -242,7 +242,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="options">Information what to replace.</param>
 		public void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
 		{
-			
+
 		}
 
 		#endregion
@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// ensure that brush and pen are cached
 				if (null != _fillBrush)
 				{
-          _fillBrush.SetEnvironment(new RectangleF(PointF.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
+					_fillBrush.SetEnvironment(new RectangleF(PointF.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
 				}
 
 				PlotRangeList rangeList = pdata.RangeList;
@@ -310,7 +310,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// we have to ignore the missing points here, thus all ranges can be plotted
 			// as one range, i.e. continuously
 			// for this, we create the totalRange, which contains all ranges
-			PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound,rangeList[0].OffsetToOriginal);
+			PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound, rangeList[0].OffsetToOriginal);
 			_cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData);
 		}
 
@@ -342,7 +342,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
 			int lastIdx = range.Length - 1;
 
-		
+
 			// Try to find points with a similar x value on otherlinepoints
 			double firstLogicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
 			double lastLogicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
@@ -354,7 +354,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				for (int i = rangeP.LowerBound; i < rangeP.UpperBound; ++i)
 				{
-					double logicalX = layer.XAxis.PhysicalVariantToNormal(previousData.GetXPhysical(i+rangeP.OffsetToOriginal));
+					double logicalX = layer.XAxis.PhysicalVariantToNormal(previousData.GetXPhysical(i + rangeP.OffsetToOriginal));
 					if (Math.Abs(logicalX - firstLogicalX) < minDistanceToFirst)
 					{
 						minDistanceToFirst = Math.Abs(logicalX - firstLogicalX);
@@ -372,7 +372,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (minIdxFirst < 0)
 				minIdxFirst = 0;
 			if (minIdxLast < 0)
-				minIdxLast = previousData.PlotPointsInAbsoluteLayerCoordinates.Length-1;
+				minIdxLast = previousData.PlotPointsInAbsoluteLayerCoordinates.Length - 1;
 
 			PointF[] otherLinePoints = new PointF[minIdxLast + 1 - minIdxFirst];
 			Array.Copy(previousData.PlotPointsInAbsoluteLayerCoordinates, minIdxFirst, otherLinePoints, 0, otherLinePoints.Length);
@@ -383,8 +383,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			GraphicsPath gp = new GraphicsPath();
 			SizeF layerSize = layer.Size;
-		
-			
+
+
 
 			gp.StartFigure();
 			gp.AddLines(linepts);
@@ -402,7 +402,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			gp.Reset();
 		} // end function PaintOneRange
 
-		
+
 
 		#endregion
 

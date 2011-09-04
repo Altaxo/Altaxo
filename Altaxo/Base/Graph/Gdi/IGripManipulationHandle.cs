@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi
 {
-  /// <summary>
-  /// Used to manipulate an object by dragging it's grip area around.
-  /// </summary>
-  public interface IGripManipulationHandle
-  {
+	/// <summary>
+	/// Used to manipulate an object by dragging it's grip area around.
+	/// </summary>
+	public interface IGripManipulationHandle
+	{
 		/// <summary>
 		/// Activates this grip, providing the initial position of the mouse.
 		/// </summary>
@@ -43,12 +43,12 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <returns>True if the nextgrip level should be displayed, otherwise false.</returns>
 		bool Deactivate();
-		
-    /// <summary>
-    /// Moves the grip to the new position. 
-    /// </summary>
-    /// <param name="newPosition"></param>
-    void MoveGrip(PointD2D newPosition);
+
+		/// <summary>
+		/// Moves the grip to the new position. 
+		/// </summary>
+		/// <param name="newPosition"></param>
+		void MoveGrip(PointD2D newPosition);
 
 		/// <summary>
 		/// Draws the grip in the graphics context.
@@ -62,5 +62,5 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="point">Coordinates of the mouse pointer in unscaled page coordinates (points).</param>
 		/// <returns></returns>
 		bool IsGripHitted(PointD2D point);
-  }
+	}
 }

@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +29,7 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
-	
+
 	/// <summary>
 	/// Interpolation method for scattered data in any dimension based on radial basis functions.
 	/// In 2D this is the so called Thin Plate Spline, which is an interpolation method that finds a "minimally bended"
@@ -26,13 +48,13 @@ namespace Altaxo.Calc.Interpolation
 	{
 		/// <summary>Default value of the <see cref="RegularizationParameter".</summary>
 		public const double DefaultRegularizationParameter = 0;
-		
+
 		/// <summary>Default value of the <see cref="DerivativeOrder".</summary>
 		public const int DefaultDerivativeOrder = 2;
-		
+
 		DoubleVector _mtx_v;
-		
-		
+
+
 
 		/// <summary>
 		/// This matrix is only neccessary for calculating the bending energy.
@@ -40,22 +62,22 @@ namespace Altaxo.Calc.Interpolation
 		DoubleMatrix _mtx_orig_k;
 
 		int _derivativeOrder;
-		
+
 		/// <summary>
 		/// The dimension of the coordinates. If for instance splining height values of an area, this value is 2.
 		/// </summary>
 		int _coordDim;
-		
+
 		/// <summary>
 		/// Number of control points. Can be different from the length of the arrays.
 		/// </summary>
 		int _numberOfControlPoints;
-		
+
 		/// <summary>
 		/// The cached Tps function.
 		/// </summary>
-		Func<double, double>_cachedTpsFunc;
-		
+		Func<double, double> _cachedTpsFunc;
+
 		/// <summary>
 		/// The coordinate points. The first index is the index to the coordinate component (i.e. 0==x, 1,==y ..). The second index is the index of the control point.
 		/// </summary>
@@ -81,13 +103,13 @@ namespace Altaxo.Calc.Interpolation
 			_regularizationParameter = DefaultRegularizationParameter;
 			_derivativeOrder = DefaultDerivativeOrder;
 		}
-		
+
 		/// <summary>Invalidating interpolation by clearing the result.</summary>
 		void Clear()
 		{
 			_mtx_v = null;
 		}
-		
+
 		/// <summary>
 		/// Regularization parameter (&gt;=0).
 		/// If the regularization parameter is zero, interpolation is exact. As it approaches infinity, the resulting spline is reduced to a least squares linear fit (in 2D this is a plane, the bending energy is 0). 
@@ -100,20 +122,20 @@ namespace Altaxo.Calc.Interpolation
 			}
 			set
 			{
-				if(!(value>0))
+				if (!(value > 0))
 					throw new ArgumentOutOfRangeException("Value have to be >=0");
-				
+
 				var oldValue = _regularizationParameter;
 				_regularizationParameter = value;
-				if(oldValue!=value)
+				if (oldValue != value)
 					Clear();
 			}
 		}
-			
+
 		/// <summary>
 		/// Derivative order of the spline. Effectively, the L2-norm of this derivative is minimized.
 		/// </summary>
-			public int DerivativeOrder
+		public int DerivativeOrder
 		{
 			get
 			{
@@ -121,36 +143,36 @@ namespace Altaxo.Calc.Interpolation
 			}
 			set
 			{
-				if(!(value>=1))
+				if (!(value >= 1))
 					throw new ArgumentOutOfRangeException("DerivativeOrder have to be >=1");
-				
+
 				var oldValue = _derivativeOrder;
 				_derivativeOrder = value;
-				if(oldValue!=value)
+				if (oldValue != value)
 					Clear();
 			}
 		}
-			
-			/// <summary>Number of dimensions of the control points.</summary>
-			public int NumberOfDimensions
-			{
-				get
-				{
-					return _coordDim;
-				}
-			}
 
-			/// <summary>
-			/// Number of control points.
-			/// </summary>
-			public int NumberOfControlPoints
+		/// <summary>Number of dimensions of the control points.</summary>
+		public int NumberOfDimensions
+		{
+			get
 			{
-				get
-				{
-					return _numberOfControlPoints;
-				}
+				return _coordDim;
 			}
-		
+		}
+
+		/// <summary>
+		/// Number of control points.
+		/// </summary>
+		public int NumberOfControlPoints
+		{
+			get
+			{
+				return _numberOfControlPoints;
+			}
+		}
+
 		/// <summary>
 		/// Constructs the interpolation (1 dimensional). The values and the corresponding coordinates of the values are given in separate vectors.
 		/// </summary>
@@ -158,10 +180,10 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="h">Values of the points that should be interpolated.</param>
 		public void Construct(IROVector x, IROVector h)
 		{
-			Construct(new IROVector[]{x},h);
+			Construct(new IROVector[] { x }, h);
 		}
-		
-		
+
+
 		/// <summary>
 		/// Constructs the interpolation (2 dimensional). The values and the corresponding coordinates of the values are given in separate vectors.
 		/// </summary>
@@ -170,9 +192,9 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="h">Values of the points that should be interpolated.</param>
 		public void Construct(IROVector x, IROVector y, IROVector h)
 		{
-			Construct(new IROVector[]{x,y},h);
+			Construct(new IROVector[] { x, y }, h);
 		}
-		
+
 
 		/// <summary>
 		/// Constructs the interpolation (3 dimensional). The values and the corresponding coordinates of the values are given in separate vectors.
@@ -183,10 +205,10 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="h">Values of the points that should be interpolated.</param>
 		public void Construct(IROVector x, IROVector y, IROVector z, IROVector h)
 		{
-			Construct(new IROVector[]{x,y,z},h);
+			Construct(new IROVector[] { x, y, z }, h);
 		}
 
-		
+
 		/// <summary>
 		/// Constructs the interpolation (any dimension). The values and the corresponding coordinates of the values are given in separate vectors.
 		/// </summary>
@@ -196,79 +218,79 @@ namespace Altaxo.Calc.Interpolation
 		public void Construct(IROVector[] x, IROVector h)
 		{
 			_coordDim = x.Length;
-			if(0==_coordDim)
+			if (0 == _coordDim)
 				throw new ArgumentException("The spline must have at least one dimension (No coordinates were provided).");
 
 			_numberOfControlPoints = h.Length;
-			for(int d = 0;d < _coordDim;d++)
-				_numberOfControlPoints = Math.Min(_numberOfControlPoints,x[d].Length);
-			if(_numberOfControlPoints<=_coordDim)
+			for (int d = 0; d < _coordDim; d++)
+				_numberOfControlPoints = Math.Min(_numberOfControlPoints, x[d].Length);
+			if (_numberOfControlPoints <= _coordDim)
 				throw new ArgumentException("The number of control points must exceed the number of dimension at least by one.");
 
 			_coordinates = new double[_coordDim][];
-			for(int d=0;d<_coordDim;d++)
+			for (int d = 0; d < _coordDim; d++)
 			{
 				var x_d = x[d];
 				var coord_d = _coordinates[d] = new double[_numberOfControlPoints];
 				for (int i = 0; i < _numberOfControlPoints; i++)
 					coord_d[i] = x_d[i];
 			}
-			
+
 			_values = new double[_numberOfControlPoints];
 			for (int i = 0; i < _numberOfControlPoints; i++)
 				_values[i] = h[i];
-			
+
 			SetCachedTpsFunction();
 
 			InternalCompute();
 		}
-	
+
 		double tps_base_even_pos(double r)
 		{
-			return r==0 ? 0 : RMath.Pow(r,2*_derivativeOrder-_coordDim)*Math.Log(r);
+			return r == 0 ? 0 : RMath.Pow(r, 2 * _derivativeOrder - _coordDim) * Math.Log(r);
 		}
-		
+
 		double tps_base_even_neg(double r)
 		{
-			return r == 0 ? 0 : -RMath.Pow(r,2*_derivativeOrder-_coordDim)*Math.Log(r);
+			return r == 0 ? 0 : -RMath.Pow(r, 2 * _derivativeOrder - _coordDim) * Math.Log(r);
 		}
-		
+
 		double tps_base_odd_pos(double r)
 		{
-			return r == 0 ? 0 : RMath.Pow(r,2*_derivativeOrder-_coordDim);
+			return r == 0 ? 0 : RMath.Pow(r, 2 * _derivativeOrder - _coordDim);
 		}
-		
+
 		double tps_base_odd_neg(double r)
 		{
-			return r == 0 ? 0 : -RMath.Pow(r,2*_derivativeOrder-_coordDim);
+			return r == 0 ? 0 : -RMath.Pow(r, 2 * _derivativeOrder - _coordDim);
 		}
 
 		bool IsEven(int i)
 		{
-			return 0==(i%2);
+			return 0 == (i % 2);
 		}
-		
-		
+
+
 		void SetCachedTpsFunction()
 		{
-			if(IsEven(_coordDim) && ((2*_derivativeOrder)>=_coordDim)) // even dimension and 2*m>=n
+			if (IsEven(_coordDim) && ((2 * _derivativeOrder) >= _coordDim)) // even dimension and 2*m>=n
 			{
-				if(IsEven(1+_coordDim/2))
-					_cachedTpsFunc = tps_base_even_pos; 				
+				if (IsEven(1 + _coordDim / 2))
+					_cachedTpsFunc = tps_base_even_pos;
 				else
 					_cachedTpsFunc = tps_base_even_neg;
 			}
 			else // odd dimension or 2*m<n
 			{
-				if(IsEven(_derivativeOrder))
+				if (IsEven(_derivativeOrder))
 					_cachedTpsFunc = tps_base_odd_pos;
 				else
 					_cachedTpsFunc = tps_base_odd_neg;
 			}
 		}
-		
-		
-		
+
+
+
 		double Pow2(double x)
 		{
 			return x * x;
@@ -303,7 +325,7 @@ namespace Altaxo.Calc.Interpolation
 			for (int d = 0; d < _coordDim; d++)
 			{
 				var coord_d = _coordinates[d];
-				sumsqr += Pow2(_coordinates[d][i] -x[d]);
+				sumsqr += Pow2(_coordinates[d][i] - x[d]);
 			}
 			return Math.Sqrt(sumsqr);
 		}
@@ -317,7 +339,7 @@ namespace Altaxo.Calc.Interpolation
 
 			// Allocate the matrix and vector
 			var mtx_l = new DoubleMatrix(N + 1 + _coordDim, N + 1 + _coordDim);
-			
+
 			// there is no need for this matrix if we don't need to calculate the bending energy
 			_mtx_orig_k = new DoubleMatrix(N, N);
 
@@ -345,11 +367,11 @@ namespace Altaxo.Calc.Interpolation
 				// P (N x (nCoordDim+1), upper right)
 				mtx_l[i, N + 0] = 1; // for the intercept
 				for (int d = 0; d < _coordDim; d++)
-					mtx_l[i, N + 1 + d] = _coordinates[d][i]; 
+					mtx_l[i, N + 1 + d] = _coordinates[d][i];
 
 				// P transposed ((nCoordDim+1) x N, bottom left)
 				mtx_l[N + 0, i] = 1; // for the intercept
-				for(int d = 0; d < _coordDim;++d)
+				for (int d = 0; d < _coordDim; ++d)
 					mtx_l[N + 1 + d, i] = _coordinates[d][i];
 			}
 			// Zero ((nCoordDim+1) x (nCoordDim+1), lower right)
@@ -370,7 +392,7 @@ namespace Altaxo.Calc.Interpolation
 			_mtx_v = new DoubleVector(N + 1 + _coordDim);
 			for (int i = 0; i < N; ++i)
 				_mtx_v[i] = _values[i];
-			for(int d=0;d<=_coordDim;++d) // comparison '<=' is ok here because of additional intercept
+			for (int d = 0; d <= _coordDim; ++d) // comparison '<=' is ok here because of additional intercept
 				_mtx_v[N + d] = 0;
 
 			_mtx_v = solver.Solve(_mtx_v);

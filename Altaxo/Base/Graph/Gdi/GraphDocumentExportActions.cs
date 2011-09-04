@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,30 +32,30 @@ namespace Altaxo.Graph.Gdi
 {
 	public static class GraphDocumentExportActions
 	{
-		static IList<KeyValuePair<string,string>> GetFileFilterString(ImageFormat fmt)
+		static IList<KeyValuePair<string, string>> GetFileFilterString(ImageFormat fmt)
 		{
 			List<KeyValuePair<string, string>> filter = new List<KeyValuePair<string, string>>();
 
 			if (fmt == ImageFormat.Bmp)
-				filter.Add(new KeyValuePair<string,string>("*.bmp", "Bitmap files (*.bmp)"));
+				filter.Add(new KeyValuePair<string, string>("*.bmp", "Bitmap files (*.bmp)"));
 			else if (fmt == ImageFormat.Emf)
-				filter.Add(new KeyValuePair<string,string>("*.emf", "Enhanced metafiles (*.emf)"));
+				filter.Add(new KeyValuePair<string, string>("*.emf", "Enhanced metafiles (*.emf)"));
 			else if (ImageFormat.Exif == fmt)
-				filter.Add(new KeyValuePair<string,string>("*.exi", "Exif files (*.exi)"));
+				filter.Add(new KeyValuePair<string, string>("*.exi", "Exif files (*.exi)"));
 			else if (ImageFormat.Gif == fmt)
-				filter.Add(new KeyValuePair<string,string>("*.gif", "Gif files (*.gif)"));
+				filter.Add(new KeyValuePair<string, string>("*.gif", "Gif files (*.gif)"));
 			else if (ImageFormat.Icon == fmt)
-				filter.Add(new KeyValuePair<string,string>("*.ico", "Icon files (*.ico)"));
+				filter.Add(new KeyValuePair<string, string>("*.ico", "Icon files (*.ico)"));
 			else if (ImageFormat.Jpeg == fmt)
-				filter.Add(new KeyValuePair<string,string>("*.jpg", "Jpeg files (*.jpg)"));
+				filter.Add(new KeyValuePair<string, string>("*.jpg", "Jpeg files (*.jpg)"));
 			else if (ImageFormat.Png == fmt)
-				filter.Add(new KeyValuePair<string,string>("*.png", "Png files (*.png)"));
+				filter.Add(new KeyValuePair<string, string>("*.png", "Png files (*.png)"));
 			else if (ImageFormat.Tiff == fmt)
-				filter.Add(new KeyValuePair<string,string>("*.tif", "Tiff files (*.tif)"));
+				filter.Add(new KeyValuePair<string, string>("*.tif", "Tiff files (*.tif)"));
 			else if (ImageFormat.Wmf == fmt)
-				filter.Add(new KeyValuePair<string,string>("*.wmf", "Windows metafiles (*.wmf)"));
+				filter.Add(new KeyValuePair<string, string>("*.wmf", "Windows metafiles (*.wmf)"));
 
-			filter.Add(new KeyValuePair<string,string>("*.*", "All files (*.*)"));
+			filter.Add(new KeyValuePair<string, string>("*.*", "All files (*.*)"));
 
 			return filter;
 		}
@@ -156,7 +178,7 @@ namespace Altaxo.Graph.Gdi
 					throw new ArgumentException("areaToExport unkown: " + areaToExport.ToString());
 					break;
 			}
-			
+
 
 			System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(width, height, pixelformat);
 
@@ -184,7 +206,7 @@ namespace Altaxo.Graph.Gdi
 				case GraphExportArea.PrintableArea:
 					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
 					grfx.TranslateTransform(-startLocationOnPage.X + doc.PrintableBounds.X, -startLocationOnPage.Y + doc.PrintableBounds.Y);
-					grfx.ScaleTransform(zoom, zoom); 
+					grfx.ScaleTransform(zoom, zoom);
 					break;
 			}
 			grfx.PageScale = 1; // (float)scale;
@@ -354,7 +376,7 @@ namespace Altaxo.Graph.Gdi
 				case GraphExportArea.Page:
 					metaFileBounds = new RectangleF(0, 0, (float)(doc.PageBounds.Width * scale), (float)(doc.PageBounds.Height * scale));
 					break;
-				
+
 				case GraphExportArea.PrintableArea:
 					metaFileBounds = new RectangleF(0, 0, (float)(doc.PrintableBounds.Width * scale), (float)(doc.PrintableBounds.Height * scale));
 					break;
@@ -363,7 +385,7 @@ namespace Altaxo.Graph.Gdi
 			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, metaFileBounds, MetafileFrameUnit.Point);
 			using (Graphics grfx2 = Graphics.FromImage(mf))
 			{
-        
+
 				if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
 				{
 					grfx2.PageUnit = GraphicsUnit.Point;
@@ -385,8 +407,8 @@ namespace Altaxo.Graph.Gdi
 						break;
 					case GraphExportArea.PrintableArea:
 						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
-						grfx2.TranslateTransform(-startLocationOnPage.X+doc.PrintableBounds.X, -startLocationOnPage.Y+doc.PrintableBounds.Y);
-						grfx2.ScaleTransform(zoom, zoom); 
+						grfx2.TranslateTransform(-startLocationOnPage.X + doc.PrintableBounds.X, -startLocationOnPage.Y + doc.PrintableBounds.Y);
+						grfx2.ScaleTransform(zoom, zoom);
 						break;
 				}
 
@@ -588,19 +610,19 @@ namespace Altaxo.Graph.Gdi
 		BoundingBox
 	}
 
-  /// <summary>
-  /// Designates how to store the copied page in the clipboard.
-  /// </summary>
-  [Flags]
-  public enum GraphCopyPageClipboardFormat
-  {
-    /// <summary>Store both as native image and store in temporary file and set the file name in the clipboard as DropDownList.</summary>
-    AsNativeAndDropDownList=3,
-    /// <summary>Store as native image.</summary>
-    AsNative=1,
-    /// <summary>Store in a temporary file and set the file name in the clipboard as DropDownList.</summary>
-    AsDropDownList=2
-  }
+	/// <summary>
+	/// Designates how to store the copied page in the clipboard.
+	/// </summary>
+	[Flags]
+	public enum GraphCopyPageClipboardFormat
+	{
+		/// <summary>Store both as native image and store in temporary file and set the file name in the clipboard as DropDownList.</summary>
+		AsNativeAndDropDownList = 3,
+		/// <summary>Store as native image.</summary>
+		AsNative = 1,
+		/// <summary>Store in a temporary file and set the file name in the clipboard as DropDownList.</summary>
+		AsDropDownList = 2
+	}
 
 	public class GraphExportOptions
 	{
@@ -609,41 +631,41 @@ namespace Altaxo.Graph.Gdi
 		BrushX _backgroundBrush;
 		double _sourceDpiResolution;
 		double _destinationDpiResolution;
-    public GraphExportArea ExportArea { get; set; }
-    public bool IsIntentedForClipboardOperation { get; set; }
-    public GraphCopyPageClipboardFormat ClipboardFormat { get; set; }
+		public GraphExportArea ExportArea { get; set; }
+		public bool IsIntentedForClipboardOperation { get; set; }
+		public GraphCopyPageClipboardFormat ClipboardFormat { get; set; }
 
 
-    public void CopyFrom(object fr)
-    {
+		public void CopyFrom(object fr)
+		{
 			if (object.ReferenceEquals(this, fr))
 				return;
 
-      var from = fr as GraphExportOptions;
-      if (null == from)
-        throw new ArgumentException("Argument either null or has wrong type");
+			var from = fr as GraphExportOptions;
+			if (null == from)
+				throw new ArgumentException("Argument either null or has wrong type");
 
-      this._imageFormat = from.ImageFormat;
-      this._pixelFormat = from.PixelFormat;
-      this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
-      this.SourceDpiResolution = from.SourceDpiResolution;
-      this.DestinationDpiResolution = from.DestinationDpiResolution;
-      this.ExportArea = from.ExportArea;
-      this.IsIntentedForClipboardOperation = from.IsIntentedForClipboardOperation;
-      this.ClipboardFormat = from.ClipboardFormat;
-    }
+			this._imageFormat = from.ImageFormat;
+			this._pixelFormat = from.PixelFormat;
+			this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
+			this.SourceDpiResolution = from.SourceDpiResolution;
+			this.DestinationDpiResolution = from.DestinationDpiResolution;
+			this.ExportArea = from.ExportArea;
+			this.IsIntentedForClipboardOperation = from.IsIntentedForClipboardOperation;
+			this.ClipboardFormat = from.ClipboardFormat;
+		}
 
-    public GraphExportOptions()
-    {
-      this._imageFormat = System.Drawing.Imaging.ImageFormat.Emf;
-      this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-      this.ExportArea = GraphExportArea.GraphSize;
-      this.SourceDpiResolution = 300;
-      this.DestinationDpiResolution = 300;
-      this.BackgroundBrush = null;
-      this.IsIntentedForClipboardOperation = false;
-      this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNativeAndDropDownList;
-    }
+		public GraphExportOptions()
+		{
+			this._imageFormat = System.Drawing.Imaging.ImageFormat.Emf;
+			this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+			this.ExportArea = GraphExportArea.GraphSize;
+			this.SourceDpiResolution = 300;
+			this.DestinationDpiResolution = 300;
+			this.BackgroundBrush = null;
+			this.IsIntentedForClipboardOperation = false;
+			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNativeAndDropDownList;
+		}
 
 
 		public ImageFormat ImageFormat { get { return _imageFormat; } }
@@ -689,11 +711,11 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-   
 
 
 
-	
+
+
 
 		public bool TrySetImageAndPixelFormat(ImageFormat imgfmt, PixelFormat pixfmt)
 		{
@@ -722,33 +744,33 @@ namespace Altaxo.Graph.Gdi
 				return GetDefaultBrush();
 		}
 
-    /// <summary>
-    /// Returns the default file name extension (including leading dot) for the current image format.
-    /// </summary>
-    /// <returns>Default file name extension (including leading dot) for the current image format</returns>
-    public string GetDefaultFileNameExtension()
-    {
-      if (_imageFormat == ImageFormat.Bmp)
-        return ".bmp";
-      else if (_imageFormat == ImageFormat.Emf)
-        return ".emf";
-      else if (_imageFormat == ImageFormat.Exif)
-        return ".exif";
-      else if (_imageFormat == ImageFormat.Gif)
-        return ".gif";
-      else if (_imageFormat == ImageFormat.Icon)
-        return ".ico";
-      else if (_imageFormat == ImageFormat.Jpeg)
-        return ".jpg";
-      else if (_imageFormat == ImageFormat.Png)
-        return ".png";
-      else if (_imageFormat == ImageFormat.Tiff)
-        return ".tif";
-      else if (_imageFormat == ImageFormat.Wmf)
-        return ".wmf";
-      else return ".img";
-    }
-    
+		/// <summary>
+		/// Returns the default file name extension (including leading dot) for the current image format.
+		/// </summary>
+		/// <returns>Default file name extension (including leading dot) for the current image format</returns>
+		public string GetDefaultFileNameExtension()
+		{
+			if (_imageFormat == ImageFormat.Bmp)
+				return ".bmp";
+			else if (_imageFormat == ImageFormat.Emf)
+				return ".emf";
+			else if (_imageFormat == ImageFormat.Exif)
+				return ".exif";
+			else if (_imageFormat == ImageFormat.Gif)
+				return ".gif";
+			else if (_imageFormat == ImageFormat.Icon)
+				return ".ico";
+			else if (_imageFormat == ImageFormat.Jpeg)
+				return ".jpg";
+			else if (_imageFormat == ImageFormat.Png)
+				return ".png";
+			else if (_imageFormat == ImageFormat.Tiff)
+				return ".tif";
+			else if (_imageFormat == ImageFormat.Wmf)
+				return ".wmf";
+			else return ".img";
+		}
+
 
 		static GraphExportOptions _currentSetting = new GraphExportOptions();
 		public static GraphExportOptions CurrentSetting
@@ -813,6 +835,6 @@ namespace Altaxo.Graph.Gdi
 				PixelFormat.PAlpha == fmt;
 		}
 
-   
+
 	}
 }

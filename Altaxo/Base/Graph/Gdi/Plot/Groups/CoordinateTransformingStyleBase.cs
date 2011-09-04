@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,40 +33,40 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
 	using Plot.Data;
 
-  public class CoordinateTransformingStyleBase
-  {
-    public static void MergeXBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
-    {
-      foreach (IGPlotItem pi in coll)
-      {
-        if (pi is IXBoundsHolder)
-        {
-          IXBoundsHolder plotItem = (IXBoundsHolder)pi;
-          plotItem.MergeXBoundsInto(pb);
-        }
-      }
-    }
+	public class CoordinateTransformingStyleBase
+	{
+		public static void MergeXBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
+		{
+			foreach (IGPlotItem pi in coll)
+			{
+				if (pi is IXBoundsHolder)
+				{
+					IXBoundsHolder plotItem = (IXBoundsHolder)pi;
+					plotItem.MergeXBoundsInto(pb);
+				}
+			}
+		}
 
-    public static void MergeYBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
-    {
-      foreach (IGPlotItem pi in coll)
-      {
-        if (pi is IYBoundsHolder)
-        {
-          IYBoundsHolder plotItem = (IYBoundsHolder)pi;
-          plotItem.MergeYBoundsInto(pb);
-        }
-      }
-    }
+		public static void MergeYBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
+		{
+			foreach (IGPlotItem pi in coll)
+			{
+				if (pi is IYBoundsHolder)
+				{
+					IYBoundsHolder plotItem = (IYBoundsHolder)pi;
+					plotItem.MergeYBoundsInto(pb);
+				}
+			}
+		}
 
-    public static void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
-    {
+		public static void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		{
 			for (int i = coll.Count - 1; i >= 0; --i)
 			{
 				coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i + 1], i == 0 ? null : coll[i - 1]);
 			}
-    }
+		}
 
 
-  }
+	}
 }

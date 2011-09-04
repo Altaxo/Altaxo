@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,7 +83,7 @@ namespace Altaxo.Gui.Common.Drawing
 						error = "Value must be a valid number";
 					else if (val < 0)
 						error = "Value must be a non-negative number";
-					else if(val>1)
+					else if (val > 1)
 						error = "Value must be less or equal than 1";
 
 				}
@@ -140,8 +162,8 @@ namespace Altaxo.Gui.Common.Drawing
 			base.ImplantImage(width, height);
 			var h = _img.Height;
 			const double hMargin = 6;
-			_img.Margin = new Thickness(_img.Margin.Left, _img.Margin.Top+hMargin, _img.Margin.Right, _img.Margin.Bottom+hMargin);
-			_img.Height = h-2*hMargin;
+			_img.Margin = new Thickness(_img.Margin.Left, _img.Margin.Top + hMargin, _img.Margin.Right, _img.Margin.Bottom + hMargin);
+			_img.Height = h - 2 * hMargin;
 		}
 
 		protected virtual void EhColorScaleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -162,7 +184,7 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-	
+
 
 		public override string GetItemText(object item)
 		{
@@ -172,7 +194,7 @@ namespace Altaxo.Gui.Common.Drawing
 		public static ImageSource GetImage(double val)
 		{
 			const double height = 1;
-			const double width  = 2;
+			const double width = 2;
 			const double lineWidth = 0;
 			const double lwHalf = lineWidth / 2;
 
@@ -182,9 +204,9 @@ namespace Altaxo.Gui.Common.Drawing
 			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
 
 			var gradStops = new GradientStopCollection();
-			gradStops.Add(new GradientStop(Colors.Black,0));
-			gradStops.Add(new GradientStop(Colors.White,val));
-			gradStops.Add(new GradientStop(Colors.Black,1));
+			gradStops.Add(new GradientStop(Colors.Black, 0));
+			gradStops.Add(new GradientStop(Colors.White, val));
+			gradStops.Add(new GradientStop(Colors.Black, 1));
 
 			geometryDrawing.Brush = new LinearGradientBrush(gradStops, 0);
 			var geometryImage = new DrawingImage(geometryDrawing);

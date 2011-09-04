@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
-  /// VectorMath provides common static functions concerning vectors.
-  /// </summary>
-  public static class VectorMath
-  {
+	/// <summary>
+	/// VectorMath provides common static functions concerning vectors.
+	/// </summary>
+	public static class VectorMath
+	{
 		private static Func<int, IVector> _funcCreateNewVector = DefaultCreateNewVector;
 
 		public static IVector DefaultCreateNewVector(int length)
@@ -36,11 +36,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 
-    #region private Helper functions
-    static double Square(double x) { return x*x; }
-    #endregion
-  
-    #region Inner types
+		#region private Helper functions
+		static double Square(double x) { return x * x; }
+		#endregion
+
+		#region Inner types
 
 		/// <summary>
 		/// Provides a read-only vector with equal and constant items.
@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			int _length;
 			double _value;
 
-			public ROConstantVector(double value,int length)
+			public ROConstantVector(double value, int length)
 			{
 				_length = length;
 				_value = value;
@@ -75,538 +75,538 @@ namespace Altaxo.Calc.LinearAlgebra
 			#endregion
 		}
 
-    /// <summary>
-    /// Provides a read-only vector with equal and constant items.
-    /// </summary>
-    private class ROEquallySpacedVector : IROVector
-    {
-      int _length;
-      double _startValue;
-      double _incrementValue;
-
-      public ROEquallySpacedVector(double start, double increment, int length)
-      {
-        _length = length;
-        _startValue = start;
-        _incrementValue = increment;
-      }
-
-      #region IROVector Members
-
-      public int Length
-      {
-        get { return _length; }
-      }
-
-      #endregion
-
-      #region INumericSequence Members
-
-      public double this[int i]
-      {
-        get { return _startValue + i * _incrementValue; }
-      }
-
-      #endregion
-    }
-
-    /// <summary>
-    /// Serves as Wrapper for an double array to plug-in where a IROVector is neccessary.
-    /// </summary>
-    private class RODoubleArrayWrapper : IROVector
-    {
-      protected double[] _x;
-      int _length;
-      
-      /// <summary>
-      /// Constructor, takes a double array for wrapping.
-      /// </summary>
-      /// <param name="x"></param>
-      public RODoubleArrayWrapper(double[] x)
-      {
-        _x = x;
-        _length = _x.Length;
-      }
-
-      /// <summary>
-      /// Constructor, takes a double array for wrapping.
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="usedlength">The length used for the vector.</param>
-      public RODoubleArrayWrapper(double[] x, int usedlength)
-      {
-        if(usedlength>x.Length)
-          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
-
-        _x = x;
-        _length = usedlength;
-      }
-
-			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
-			/// <value>The element at index i.</value>
-      public double this[int i] { get { return _x[i]; }}
-    
-      /// <summary>The number of elements of this vector.</summary>
-      public int Length { get { return _length; }}  // change this later to length property
-    }
-
-    private class RWDoubleArrayWrapper : RODoubleArrayWrapper, IVector
-    {
-      public RWDoubleArrayWrapper(double[] x)
-        : base(x)
-      {
-      }
-
-      public RWDoubleArrayWrapper(double[] x, int usedlength)
-        : base(x,usedlength)
-      {
-      }
-
-      #region IVector Members
-
-      public new double this[int i]
-      {
-        get { return _x[i]; }
-        set { _x[i] = value; }
-      }
-
-      #endregion
-    }
-
-    /// <summary>
-    /// Serves as Wrapper for an double array to plug-in where a IROVector is neccessary.
-    /// </summary>
-    private class RODoubleArraySectionWrapper : IROVector
-    {
-      protected double[] _x;
-      protected int _start;
-      protected int _length;
-
-      /// <summary>
-      /// Constructor, takes a double array for wrapping.
-      /// </summary>
-      /// <param name="x"></param>
-      public RODoubleArraySectionWrapper(double[] x)
-      {
-        _x = x;
-        _start = 0;
-        _length = _x.Length;
-      }
-
-      /// <summary>
-      /// Constructor, takes a double array for wrapping.
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="usedlength">The length used for the vector.</param>
-      public RODoubleArraySectionWrapper(double[] x, int start, int usedlength)
-      {
-        if(start<0)
-          throw new ArgumentException("start is negative");
-        if(usedlength<0)
-          throw new ArgumentException("usedlength is negative");
-
-        if ((start+usedlength) > x.Length)
-          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
-
-        _x = x;
-        _start = start;
-        _length = usedlength;
-      }
-
-			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
-			/// <value>The element at index i.</value>
-      public double this[int i] { get { return _x[i+_start]; } }
-
-      /// <summary>The number of elements of this vector.</summary>
-      public int Length { get { return _length; } }  // change this later to length property
-    }
-
-    private class RWDoubleArraySectionWrapper : RODoubleArraySectionWrapper, IVector
-    {
-      public RWDoubleArraySectionWrapper(double[] x)
-        : base(x)
-      {
-      }
-      public RWDoubleArraySectionWrapper(double[] x, int start, int usedlength)
-        : base(x,start,usedlength)
-      {
-      }
-
-      #region IVector Members
-
-      public new double this[int i]
-      {
-        get { return _x[i+_start]; }
-        set { _x[i+_start] = value; }
-      }
-
-      #endregion
-    }
-
-    /// <summary>
-    /// Serves as wrapper for an IROVector to get only a section of the original wrapper.
-    /// </summary>
-    private class ROVectorSectionWrapper : IROVector
-    {
-      protected IROVector _x;
-      int _start;
-      int _length;
-
-      /// <summary>
-      /// Constructor, takes a double array for wrapping.
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="start">Start index of the section to wrap.</param>
-      /// <param name="len">Length of the section to wrap.</param>
-      public ROVectorSectionWrapper(IROVector x, int start, int len)
-      {
-        if(start>=x.Length)
-          throw new ArgumentException("Start of the section is beyond length of the vector");
-       if (start+len>x.Length)
-          throw new ArgumentException("End of the section is beyond length of the vector");
-       
-        _x = x;
-        _start = start;
-        _length = len;
-      }
-
-			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
-			/// <value>The element at index i.</value>
-      public double this[int i] { get { return _x[i+_start]; } }
-
-      /// <summary>The number of elements of this vector.</summary>
-      public int Length { get { return _length; } }  // change this later to length property
-    }
-
-    /// <summary>
-    /// Serves as wrapper for an IVector to get only a section of the original wrapper.
-    /// </summary>
-    private class RWVectorSectionWrapper : IVector
-    {
-      protected IVector _x;
-      int _start;
-      int _length;
-
-      /// <summary>
-      /// Constructor, takes a double array for wrapping.
-      /// </summary>
-      /// <param name="x"></param>
-      /// <param name="start">Start index of the section to wrap.</param>
-      /// <param name="len">Length of the section to wrap.</param>
-      public RWVectorSectionWrapper(IVector x, int start, int len)
-      {
-        if (start >= x.Length)
-          throw new ArgumentException("Start of the section is beyond length of the vector");
-        if (start + len >= x.Length)
-          throw new ArgumentException("End of the section is beyond length of the vector");
-
-        _x = x;
-        _start = start;
-        _length = len;
-      }
-
-			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
-			/// <value>The element at index i.</value>
-      public double this[int i] 
-      {
-        get { return _x[i + _start]; }
-        set { _x[i + _start] = value; }
-      }
-
-      /// <summary>The number of elements of this vector.</summary>
-      public int Length { get { return _length; } }  // change this later to length property
-    }
-
-    private class ExtensibleVector : IExtensibleVector  
-    {
-      double[] _arr;
-      int      _length;
-
-      public ExtensibleVector(int initiallength)
-      {
-        _arr = new double[initiallength];
-        _length = initiallength;
-      }
-
-
-      #region IVector Members
-
-      public double this[int i]
-      {
-        get
-        {
-          
-          return _arr[i];
-        }
-        set
-        {
-          _arr[i] = value;
-        }
-      }
-
-      #endregion
-
-      #region IROVector Members
-
-      double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
-      {
-        get
-        {
-         
-          return _arr[i];
-        }
-      }
-
-      public int Length
-      {
-        get
-        {
-         
-          return _length;
-        }
-      }
-
-      #endregion
-
-      #region IExtensibleVector Members
-      public void Append(IROVector a)
-      {
-        if(_length+a.Length>=_arr.Length)
-          Redim((int)(32+1.3*(_length+a.Length)));
-
-
-        for(int i=0;i<a.Length;i++)
-          _arr[i+_length] = a[i];
-        _length += a.Length;
-      }
-      #endregion
-
-  
-      private void Redim(int newsize)
-      {
-        if(newsize>_arr.Length)
-        {
-          double[] oldarr = _arr;
-          _arr = new double[newsize];
-          Array.Copy(oldarr,0,_arr,0,_length);
-        }
-      }
-    }
-
-    class EquidistantSequenceVectorStartStepLength : IROVector
-    {
-      double _start;
-      double _step;
-      int _len;
-
-      public EquidistantSequenceVectorStartStepLength(double start, double step, int length)
-      {
-        _start = start;
-        _step = step;
-        _len = length;
-      }
-
-      #region IROVector Members
-
-      public int Length
-      {
-        get { return _len; }
-      }
-
-      #endregion
-
-      #region INumericSequence Members
-
-      public double this[int i]
-      {
-        
-        get 
-        {
-          if (i < 0 || i >= _len)
-            throw new ArgumentOutOfRangeException("i");
-          return _start + i * _step; 
-        }
-      }
-
-      #endregion
-    }
-
-    class EquidistantSequenceVectorStartEndLength : IROVector
-    {
-      double _start;
-      double _end;
-      int _len;
-
-      public EquidistantSequenceVectorStartEndLength(double start, double end, int length)
-      {
-        _start = start;
-        _end = end;
-        _len = length;
-      }
-
-      #region IROVector Members
-
-      public int Length
-      {
-        get { return _len; }
-      }
-
-      #endregion
-
-      #region INumericSequence Members
-
-      public double this[int i]
-      {
-
-        get
-        {
-          if (i < 0 || i >= _len)
-            throw new ArgumentOutOfRangeException("i");
-
-          double r = i / (double)(_len - 1);
-          return _start * (1 - r) + _end * (r);
-        }
-      }
-
-      #endregion
-    }
-
-    #endregion
-
-    #region Type conversion
-
-		public static IROVector GetConstantVector(double value,int length)
+		/// <summary>
+		/// Provides a read-only vector with equal and constant items.
+		/// </summary>
+		private class ROEquallySpacedVector : IROVector
 		{
-			return new ROConstantVector( value,length);
+			int _length;
+			double _startValue;
+			double _incrementValue;
+
+			public ROEquallySpacedVector(double start, double increment, int length)
+			{
+				_length = length;
+				_startValue = start;
+				_incrementValue = increment;
+			}
+
+			#region IROVector Members
+
+			public int Length
+			{
+				get { return _length; }
+			}
+
+			#endregion
+
+			#region INumericSequence Members
+
+			public double this[int i]
+			{
+				get { return _startValue + i * _incrementValue; }
+			}
+
+			#endregion
 		}
 
-    #region From/To double[]
-    /// <summary>
-    /// Wraps a double[] array to get a IROVector.
-    /// </summary>
-    /// <param name="x">The array to wrap.</param>
-    /// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
-    public static IROVector ToROVector(double[] x)
-    {
-      return null==x ? null : new RODoubleArrayWrapper(x);
-    }
+		/// <summary>
+		/// Serves as Wrapper for an double array to plug-in where a IROVector is neccessary.
+		/// </summary>
+		private class RODoubleArrayWrapper : IROVector
+		{
+			protected double[] _x;
+			int _length;
 
-    /// <summary>
-    /// Wraps a double[] array till a given length to get a IROVector.
-    /// </summary>
-    /// <param name="x">The array to wrap.</param>
-    /// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-    /// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
-    public static IROVector ToROVector(double[] x, int usedlength)
-    {
-      return new RODoubleArrayWrapper(x,usedlength);
-    }
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			public RODoubleArrayWrapper(double[] x)
+			{
+				_x = x;
+				_length = _x.Length;
+			}
 
-    /// <summary>
-    /// Wraps a double[] array till a given length to get a IROVector.
-    /// </summary>
-    /// <param name="x">The array to wrap.</param>
-    /// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-    /// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
-    public static IROVector ToROVector(double[] x, int start, int usedlength)
-    {
-      if(0==start)
-        return new RODoubleArrayWrapper(x, usedlength);
-      else
-        return new RODoubleArraySectionWrapper(x, start, usedlength);
-    }
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="usedlength">The length used for the vector.</param>
+			public RODoubleArrayWrapper(double[] x, int usedlength)
+			{
+				if (usedlength > x.Length)
+					throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+				_x = x;
+				_length = usedlength;
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public double this[int i] { get { return _x[i]; } }
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length { get { return _length; } }  // change this later to length property
+		}
+
+		private class RWDoubleArrayWrapper : RODoubleArrayWrapper, IVector
+		{
+			public RWDoubleArrayWrapper(double[] x)
+				: base(x)
+			{
+			}
+
+			public RWDoubleArrayWrapper(double[] x, int usedlength)
+				: base(x, usedlength)
+			{
+			}
+
+			#region IVector Members
+
+			public new double this[int i]
+			{
+				get { return _x[i]; }
+				set { _x[i] = value; }
+			}
+
+			#endregion
+		}
+
+		/// <summary>
+		/// Serves as Wrapper for an double array to plug-in where a IROVector is neccessary.
+		/// </summary>
+		private class RODoubleArraySectionWrapper : IROVector
+		{
+			protected double[] _x;
+			protected int _start;
+			protected int _length;
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			public RODoubleArraySectionWrapper(double[] x)
+			{
+				_x = x;
+				_start = 0;
+				_length = _x.Length;
+			}
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="usedlength">The length used for the vector.</param>
+			public RODoubleArraySectionWrapper(double[] x, int start, int usedlength)
+			{
+				if (start < 0)
+					throw new ArgumentException("start is negative");
+				if (usedlength < 0)
+					throw new ArgumentException("usedlength is negative");
+
+				if ((start + usedlength) > x.Length)
+					throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+				_x = x;
+				_start = start;
+				_length = usedlength;
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public double this[int i] { get { return _x[i + _start]; } }
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length { get { return _length; } }  // change this later to length property
+		}
+
+		private class RWDoubleArraySectionWrapper : RODoubleArraySectionWrapper, IVector
+		{
+			public RWDoubleArraySectionWrapper(double[] x)
+				: base(x)
+			{
+			}
+			public RWDoubleArraySectionWrapper(double[] x, int start, int usedlength)
+				: base(x, start, usedlength)
+			{
+			}
+
+			#region IVector Members
+
+			public new double this[int i]
+			{
+				get { return _x[i + _start]; }
+				set { _x[i + _start] = value; }
+			}
+
+			#endregion
+		}
+
+		/// <summary>
+		/// Serves as wrapper for an IROVector to get only a section of the original wrapper.
+		/// </summary>
+		private class ROVectorSectionWrapper : IROVector
+		{
+			protected IROVector _x;
+			int _start;
+			int _length;
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="start">Start index of the section to wrap.</param>
+			/// <param name="len">Length of the section to wrap.</param>
+			public ROVectorSectionWrapper(IROVector x, int start, int len)
+			{
+				if (start >= x.Length)
+					throw new ArgumentException("Start of the section is beyond length of the vector");
+				if (start + len > x.Length)
+					throw new ArgumentException("End of the section is beyond length of the vector");
+
+				_x = x;
+				_start = start;
+				_length = len;
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public double this[int i] { get { return _x[i + _start]; } }
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length { get { return _length; } }  // change this later to length property
+		}
+
+		/// <summary>
+		/// Serves as wrapper for an IVector to get only a section of the original wrapper.
+		/// </summary>
+		private class RWVectorSectionWrapper : IVector
+		{
+			protected IVector _x;
+			int _start;
+			int _length;
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="start">Start index of the section to wrap.</param>
+			/// <param name="len">Length of the section to wrap.</param>
+			public RWVectorSectionWrapper(IVector x, int start, int len)
+			{
+				if (start >= x.Length)
+					throw new ArgumentException("Start of the section is beyond length of the vector");
+				if (start + len >= x.Length)
+					throw new ArgumentException("End of the section is beyond length of the vector");
+
+				_x = x;
+				_start = start;
+				_length = len;
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public double this[int i]
+			{
+				get { return _x[i + _start]; }
+				set { _x[i + _start] = value; }
+			}
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length { get { return _length; } }  // change this later to length property
+		}
+
+		private class ExtensibleVector : IExtensibleVector
+		{
+			double[] _arr;
+			int _length;
+
+			public ExtensibleVector(int initiallength)
+			{
+				_arr = new double[initiallength];
+				_length = initiallength;
+			}
 
 
-    /// <summary>
-    /// Wraps a double[] array to get a IVector.
-    /// </summary>
-    /// <param name="x">The array to wrap.</param>
-    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
-    public static IVector ToVector(double[] x)
-    {
-      return new RWDoubleArrayWrapper(x);
-    }
+			#region IVector Members
 
-    /// <summary>
-    /// Wraps a double[] array to get a IVector.
-    /// </summary>
-    /// <param name="x">The array to wrap.</param>
-    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
-    public static IVector ToVector(double[] x, int usedlength)
-    {
-      return new RWDoubleArrayWrapper(x, usedlength);
-    }
+			public double this[int i]
+			{
+				get
+				{
 
+					return _arr[i];
+				}
+				set
+				{
+					_arr[i] = value;
+				}
+			}
 
-    /// <summary>
-    /// Wraps a double[] array to get a IVector.
-    /// </summary>
-    /// <param name="x">The array to wrap.</param>
-    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
-    public static IVector ToVector(double[] x, int start, int count)
-    {
-      if (0 == start)
-        return new RWDoubleArrayWrapper(x, count);
-      else
-        return new RWDoubleArraySectionWrapper(x,start,count);
-    }
-    #endregion
+			#endregion
 
-    #region from/to IROVector
+			#region IROVector Members
 
-    /// <summary>
-    /// Wraps a section of a original vector <c>x</c> into a new vector.
-    /// </summary>
-    /// <param name="x">Original vector.</param>
-    /// <param name="start">Index of the start of the section to wrap.</param>
-    /// <param name="len">Length (=number of elements) of the section to wrap.</param>
-    /// <returns>A IROVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
-    public static IROVector ToROVector(this IROVector x, int start, int len)
-    {
-      return new ROVectorSectionWrapper(x, start, len);
-    }
+			double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
+			{
+				get
+				{
 
-    #endregion
+					return _arr[i];
+				}
+			}
 
-    #region from/to IVector
+			public int Length
+			{
+				get
+				{
 
-    /// <summary>
-    /// Wraps a section of a original vector <c>x</c> into a new vector.
-    /// </summary>
-    /// <param name="x">Original vector.</param>
-    /// <param name="start">Index of the start of the section to wrap.</param>
-    /// <param name="len">Length (=number of elements) of the section to wrap.</param>
-    /// <returns>A IVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
-    public static IVector ToVector(IVector x, int start, int len)
-    {
-      return new RWVectorSectionWrapper(x, start, len);
-    }
+					return _length;
+				}
+			}
+
+			#endregion
+
+			#region IExtensibleVector Members
+			public void Append(IROVector a)
+			{
+				if (_length + a.Length >= _arr.Length)
+					Redim((int)(32 + 1.3 * (_length + a.Length)));
 
 
-    #endregion
+				for (int i = 0; i < a.Length; i++)
+					_arr[i + _length] = a[i];
+				_length += a.Length;
+			}
+			#endregion
 
-    /// <summary>
-    /// Creates a new extensible vector of length <c>length</c>
-    /// </summary>
-    /// <param name="length">The inital length of the vector.</param>
-    /// <returns>An instance of a extensible vector.</returns>
-    public static IExtensibleVector CreateExtensibleVector(int length)
-    {
-      return new ExtensibleVector(length);
-    }
 
-    /// <summary>
-    /// Creates a read-only vector with equidistant elements from start to start+(length-1)*step. The created vector
-    /// consumes memory only for the three variables, independent of its length.
-    /// </summary>
-    /// <param name="start">First element of the vector.</param>
-    /// <param name="step">Difference between two successive elements.</param>
-    /// <param name="length">Length of the vector.</param>
-    /// <returns></returns>
-    public static IROVector CreateEquidistantSequenceByStartStepLength(double start, double step, int length)
-    {
-      return new EquidistantSequenceVectorStartStepLength(start, step, length);
-    }
+			private void Redim(int newsize)
+			{
+				if (newsize > _arr.Length)
+				{
+					double[] oldarr = _arr;
+					_arr = new double[newsize];
+					Array.Copy(oldarr, 0, _arr, 0, _length);
+				}
+			}
+		}
+
+		class EquidistantSequenceVectorStartStepLength : IROVector
+		{
+			double _start;
+			double _step;
+			int _len;
+
+			public EquidistantSequenceVectorStartStepLength(double start, double step, int length)
+			{
+				_start = start;
+				_step = step;
+				_len = length;
+			}
+
+			#region IROVector Members
+
+			public int Length
+			{
+				get { return _len; }
+			}
+
+			#endregion
+
+			#region INumericSequence Members
+
+			public double this[int i]
+			{
+
+				get
+				{
+					if (i < 0 || i >= _len)
+						throw new ArgumentOutOfRangeException("i");
+					return _start + i * _step;
+				}
+			}
+
+			#endregion
+		}
+
+		class EquidistantSequenceVectorStartEndLength : IROVector
+		{
+			double _start;
+			double _end;
+			int _len;
+
+			public EquidistantSequenceVectorStartEndLength(double start, double end, int length)
+			{
+				_start = start;
+				_end = end;
+				_len = length;
+			}
+
+			#region IROVector Members
+
+			public int Length
+			{
+				get { return _len; }
+			}
+
+			#endregion
+
+			#region INumericSequence Members
+
+			public double this[int i]
+			{
+
+				get
+				{
+					if (i < 0 || i >= _len)
+						throw new ArgumentOutOfRangeException("i");
+
+					double r = i / (double)(_len - 1);
+					return _start * (1 - r) + _end * (r);
+				}
+			}
+
+			#endregion
+		}
+
+		#endregion
+
+		#region Type conversion
+
+		public static IROVector GetConstantVector(double value, int length)
+		{
+			return new ROConstantVector(value, length);
+		}
+
+		#region From/To double[]
+		/// <summary>
+		/// Wraps a double[] array to get a IROVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static IROVector ToROVector(double[] x)
+		{
+			return null == x ? null : new RODoubleArrayWrapper(x);
+		}
+
+		/// <summary>
+		/// Wraps a double[] array till a given length to get a IROVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static IROVector ToROVector(double[] x, int usedlength)
+		{
+			return new RODoubleArrayWrapper(x, usedlength);
+		}
+
+		/// <summary>
+		/// Wraps a double[] array till a given length to get a IROVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static IROVector ToROVector(double[] x, int start, int usedlength)
+		{
+			if (0 == start)
+				return new RODoubleArrayWrapper(x, usedlength);
+			else
+				return new RODoubleArraySectionWrapper(x, start, usedlength);
+		}
+
+
+		/// <summary>
+		/// Wraps a double[] array to get a IVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
+		public static IVector ToVector(double[] x)
+		{
+			return new RWDoubleArrayWrapper(x);
+		}
+
+		/// <summary>
+		/// Wraps a double[] array to get a IVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
+		public static IVector ToVector(double[] x, int usedlength)
+		{
+			return new RWDoubleArrayWrapper(x, usedlength);
+		}
+
+
+		/// <summary>
+		/// Wraps a double[] array to get a IVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
+		public static IVector ToVector(double[] x, int start, int count)
+		{
+			if (0 == start)
+				return new RWDoubleArrayWrapper(x, count);
+			else
+				return new RWDoubleArraySectionWrapper(x, start, count);
+		}
+		#endregion
+
+		#region from/to IROVector
+
+		/// <summary>
+		/// Wraps a section of a original vector <c>x</c> into a new vector.
+		/// </summary>
+		/// <param name="x">Original vector.</param>
+		/// <param name="start">Index of the start of the section to wrap.</param>
+		/// <param name="len">Length (=number of elements) of the section to wrap.</param>
+		/// <returns>A IROVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		public static IROVector ToROVector(this IROVector x, int start, int len)
+		{
+			return new ROVectorSectionWrapper(x, start, len);
+		}
+
+		#endregion
+
+		#region from/to IVector
+
+		/// <summary>
+		/// Wraps a section of a original vector <c>x</c> into a new vector.
+		/// </summary>
+		/// <param name="x">Original vector.</param>
+		/// <param name="start">Index of the start of the section to wrap.</param>
+		/// <param name="len">Length (=number of elements) of the section to wrap.</param>
+		/// <returns>A IVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		public static IVector ToVector(IVector x, int start, int len)
+		{
+			return new RWVectorSectionWrapper(x, start, len);
+		}
+
+
+		#endregion
+
+		/// <summary>
+		/// Creates a new extensible vector of length <c>length</c>
+		/// </summary>
+		/// <param name="length">The inital length of the vector.</param>
+		/// <returns>An instance of a extensible vector.</returns>
+		public static IExtensibleVector CreateExtensibleVector(int length)
+		{
+			return new ExtensibleVector(length);
+		}
+
+		/// <summary>
+		/// Creates a read-only vector with equidistant elements from start to start+(length-1)*step. The created vector
+		/// consumes memory only for the three variables, independent of its length.
+		/// </summary>
+		/// <param name="start">First element of the vector.</param>
+		/// <param name="step">Difference between two successive elements.</param>
+		/// <param name="length">Length of the vector.</param>
+		/// <returns></returns>
+		public static IROVector CreateEquidistantSequenceByStartStepLength(double start, double step, int length)
+		{
+			return new EquidistantSequenceVectorStartStepLength(start, step, length);
+		}
 
 		/// <summary>
 		/// Creates a read-only vector with equidistant elements from start to end. The created vector
@@ -621,103 +621,103 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new EquidistantSequenceVectorStartEndLength(start, end, length);
 		}
 
-    #endregion
+		#endregion
 
-    #region Filling
+		#region Filling
 
-    /// <summary>
-    /// Fills a vector with a certain value.
-    /// </summary>
-    /// <param name="x">The vector to fill.</param>
-    /// <param name="val">The value each element is set to.</param>
-    public static void Fill(IVector x, double val)
-    {
-      for(int i=x.Length-1;i>=0;--i)
-				x[i]=val;
-    }
+		/// <summary>
+		/// Fills a vector with a certain value.
+		/// </summary>
+		/// <param name="x">The vector to fill.</param>
+		/// <param name="val">The value each element is set to.</param>
+		public static void Fill(IVector x, double val)
+		{
+			for (int i = x.Length - 1; i >= 0; --i)
+				x[i] = val;
+		}
 
-    /// <summary>
-    /// Reverses the order of elements in the provided vector.
-    /// </summary>
-    /// <param name="x">Vector. On return, the elements of this vector are in reverse order.</param>
-    public static void Reverse(IVector x)
-    {
-      for (int i = 0, j = x.Length - 1; i < j; i++, j--)
-      {
-        var x_i = x[i];
-        x[i] = x[j];
-        x[j] = x_i;
-      }
-    }
+		/// <summary>
+		/// Reverses the order of elements in the provided vector.
+		/// </summary>
+		/// <param name="x">Vector. On return, the elements of this vector are in reverse order.</param>
+		public static void Reverse(IVector x)
+		{
+			for (int i = 0, j = x.Length - 1; i < j; i++, j--)
+			{
+				var x_i = x[i];
+				x[i] = x[j];
+				x[j] = x_i;
+			}
+		}
 
-    #endregion
+		#endregion
 
-    #region copy 
+		#region copy
 
-    /// <summary>
-    /// Copies the source vector to the destination vector. Both vectors must have the same length.
-    /// </summary>
-    /// <param name="src">The source vector.</param>
-    /// <param name="dest">The destination vector.</param>
-    public static void Copy(IROVector src, IVector dest)
-    {
-      if(src.Length!=dest.Length)
-        throw new ArgumentException("src and destination vector have unequal length!");
+		/// <summary>
+		/// Copies the source vector to the destination vector. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="src">The source vector.</param>
+		/// <param name="dest">The destination vector.</param>
+		public static void Copy(IROVector src, IVector dest)
+		{
+			if (src.Length != dest.Length)
+				throw new ArgumentException("src and destination vector have unequal length!");
 
-      Copy(src,0,dest,0,src.Length);
-    }
+			Copy(src, 0, dest, 0, src.Length);
+		}
 
-    /// <summary>
-    /// Copies elements of a source vector to a destination vector.
-    /// </summary>
-    /// <param name="src">The source vector.</param>
-    /// <param name="srcstart">First element of the source vector to copy.</param>
-    /// <param name="dest">The destination vector.</param>
-    /// <param name="deststart">First element of the destination vector to copy to.</param>
-    /// <param name="count">Number of elements to copy.</param>
-    public static void Copy(IROVector src, int srcstart, IVector dest, int deststart, int count)
-    {
-      for(int i=0;i<count;i++)
-        dest[i+deststart] = src[i+srcstart];
-    }
+		/// <summary>
+		/// Copies elements of a source vector to a destination vector.
+		/// </summary>
+		/// <param name="src">The source vector.</param>
+		/// <param name="srcstart">First element of the source vector to copy.</param>
+		/// <param name="dest">The destination vector.</param>
+		/// <param name="deststart">First element of the destination vector to copy to.</param>
+		/// <param name="count">Number of elements to copy.</param>
+		public static void Copy(IROVector src, int srcstart, IVector dest, int deststart, int count)
+		{
+			for (int i = 0; i < count; i++)
+				dest[i + deststart] = src[i + srcstart];
+		}
 
-    #endregion
+		#endregion
 
-    #region Arithmetic
+		#region Arithmetic
 
-    /// <summary>
-    /// Adds (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
-    /// </summary>
-    /// <param name="a">First summand.</param>
-    /// <param name="b">Second summand.</param>
-    /// <param name="c">The resulting vector.</param>
-    public static void Add(IROVector a, IROVector b, IVector c)
-    {
-      if(a.Length != b.Length)
-        throw new ArgumentException("Length of vectors a and b unequal");
-      if(c.Length != b.Length)
-        throw new ArgumentException("Length of vectors a and c unequal");
+		/// <summary>
+		/// Adds (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
+		/// </summary>
+		/// <param name="a">First summand.</param>
+		/// <param name="b">Second summand.</param>
+		/// <param name="c">The resulting vector.</param>
+		public static void Add(IROVector a, IROVector b, IVector c)
+		{
+			if (a.Length != b.Length)
+				throw new ArgumentException("Length of vectors a and b unequal");
+			if (c.Length != b.Length)
+				throw new ArgumentException("Length of vectors a and c unequal");
 
-      for(int i=c.Length-1;i>=0;--i)
-        c[i]=a[i]+b[i];
-    }
+			for (int i = c.Length - 1; i >= 0; --i)
+				c[i] = a[i] + b[i];
+		}
 
-    /// <summary>
-    /// Multiplies (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
-    /// </summary>
-    /// <param name="a">First summand.</param>
-    /// <param name="b">Second summand.</param>
-    /// <param name="c">The resulting vector.</param>
-    public static void Multiply(IROVector a, IROVector b, IVector c)
-    {
-      if (a.Length != b.Length)
-        throw new ArgumentException("Length of vectors a and b unequal");
-      if (c.Length != b.Length)
-        throw new ArgumentException("Length of vectors a and c unequal");
+		/// <summary>
+		/// Multiplies (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
+		/// </summary>
+		/// <param name="a">First summand.</param>
+		/// <param name="b">Second summand.</param>
+		/// <param name="c">The resulting vector.</param>
+		public static void Multiply(IROVector a, IROVector b, IVector c)
+		{
+			if (a.Length != b.Length)
+				throw new ArgumentException("Length of vectors a and b unequal");
+			if (c.Length != b.Length)
+				throw new ArgumentException("Length of vectors a and c unequal");
 
-      for (int i = c.Length-1; i >=0; --i)
-        c[i] = a[i] * b[i];
-    }
+			for (int i = c.Length - 1; i >= 0; --i)
+				c[i] = a[i] * b[i];
+		}
 
 		/// <summary>
 		/// Multiplies all vector elements with a constant.
@@ -726,7 +726,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="a">The constant to multiply with.</param>
 		public static void Multiply(this IVector v, double a)
 		{
-			for (int i = v.Length-1; i >=0; --i)
+			for (int i = v.Length - 1; i >= 0; --i)
 				v[i] *= a;
 		}
 		#endregion
@@ -738,28 +738,28 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="currentlength">The current length of the array. Normally values.Length, but you can provide a value less than this.</param>
 		/// <returns>The used length. Elements with indices greater or equal this until <c>currentlength</c> are NaNs.</returns>
 		static public int GetUsedLength(this IROVector values, int currentlength)
-    {
-      for (int i = currentlength - 1; i >= 0; --i)
-      {
-        if (!Double.IsNaN(values[i]))
-          return i + 1;
-      }
-      return 0;
-    }
+		{
+			for (int i = currentlength - 1; i >= 0; --i)
+			{
+				if (!Double.IsNaN(values[i]))
+					return i + 1;
+			}
+			return 0;
+		}
 
-    /// <summary>
-    /// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
-    /// </summary>
-    /// <param name="values">The vector for which the used length has to be determined.</param>
-    /// <returns>The used length. Elements with indices greater or equal this until the end of the array are NaNs.</returns>
-    static public int GetUsedLength(IROVector values)
-    {
-      return GetUsedLength(values, values.Length);
-    }
+		/// <summary>
+		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
+		/// </summary>
+		/// <param name="values">The vector for which the used length has to be determined.</param>
+		/// <returns>The used length. Elements with indices greater or equal this until the end of the array are NaNs.</returns>
+		static public int GetUsedLength(IROVector values)
+		{
+			return GetUsedLength(values, values.Length);
+		}
 
-	
 
-   
+
+
 
 		/// <summary>
 		/// Gives the parallel maximum of vector v1 and v2. The first element of the resulting vector
@@ -772,13 +772,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static void PMax(IROVector v1, IROVector v2, IVector result)
 		{
 			int maxlen = Math.Max(v1.Length, v2.Length);
-			for (int i = maxlen-1; i >=0; --i)
+			for (int i = maxlen - 1; i >= 0; --i)
 			{
 				result[i] = Math.Max(v1[i], v2[i]);
 			}
 		}
 
-	
+
 
 		/// <summary>
 		/// Returns the sum of the elements in xarray.
@@ -786,13 +786,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="xarray">The array.</param>
 		/// <returns>The sum of all elements in xarray.</returns>
 		public static double Sum(this double[] xarray)
-    {
-      double sum = 0;
-      for(int i=0;i<xarray.Length;i++)
-        sum += xarray[i];
+		{
+			double sum = 0;
+			for (int i = 0; i < xarray.Length; i++)
+				sum += xarray[i];
 
-      return sum;
-    }
+			return sum;
+		}
 
 		/// <summary>
 		/// Returns the sum of the elements in the vector.
@@ -809,264 +809,264 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 
-    /// <summary>
-    /// Returns the sum of squared differences of the elements of xarray and yarray.
-    /// </summary>
-    /// <param name="xarray">The first array.</param>
-    /// <param name="yarray">The other array.</param>
-    /// <returns>The sum of squared differences all elements of xarray and yarray.</returns>
-    public static double SumOfSquaredDifferences(double[] xarray, double[] yarray)
-    {
-      if(xarray.Length!=yarray.Length)
-        throw new ArgumentException("Length of xarray is unequal length of yarray");
+		/// <summary>
+		/// Returns the sum of squared differences of the elements of xarray and yarray.
+		/// </summary>
+		/// <param name="xarray">The first array.</param>
+		/// <param name="yarray">The other array.</param>
+		/// <returns>The sum of squared differences all elements of xarray and yarray.</returns>
+		public static double SumOfSquaredDifferences(double[] xarray, double[] yarray)
+		{
+			if (xarray.Length != yarray.Length)
+				throw new ArgumentException("Length of xarray is unequal length of yarray");
 
-      double sum = 0;
-      for(int i=0;i<xarray.Length;i++)
-        sum += Square(xarray[i]-yarray[i]);
+			double sum = 0;
+			for (int i = 0; i < xarray.Length; i++)
+				sum += Square(xarray[i] - yarray[i]);
 
-      return sum;
-    }
+			return sum;
+		}
 
-    /// <summary>
-    /// Returns the sum of squared differences of the elements of xarray and yarray.
-    /// </summary>
-    /// <param name="xarray">The first array.</param>
-    /// <param name="yarray">The other array.</param>
-    /// <returns>The sum of squared differences all elements of xarray and yarray.</returns>
-    public static double SumOfSquaredDifferences(IROVector xarray, IROVector yarray)
-    {
-      if(xarray.Length!=yarray.Length)
-        throw new ArgumentException("Length of xarray is unequal length of yarray");
+		/// <summary>
+		/// Returns the sum of squared differences of the elements of xarray and yarray.
+		/// </summary>
+		/// <param name="xarray">The first array.</param>
+		/// <param name="yarray">The other array.</param>
+		/// <returns>The sum of squared differences all elements of xarray and yarray.</returns>
+		public static double SumOfSquaredDifferences(IROVector xarray, IROVector yarray)
+		{
+			if (xarray.Length != yarray.Length)
+				throw new ArgumentException("Length of xarray is unequal length of yarray");
 
-      double sum = 0;
-      for(int i=0;i<xarray.Length;i++)
-        sum += Square(xarray[i]-yarray[i]);
+			double sum = 0;
+			for (int i = 0; i < xarray.Length; i++)
+				sum += Square(xarray[i] - yarray[i]);
 
-      return sum;
-    }
+			return sum;
+		}
 
 
-    static double sqr(double x) 
-    {
-      return x * x;
-    }
+		static double sqr(double x)
+		{
+			return x * x;
+		}
 
-    /// <summary>Given an n-vector x, this function calculates the
-    /// euclidean norm of x. 
-    /// </summary>
-    /// <param name="x">An input array. </param>
-    /// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
-    public static double GetNorm(double[] x)
-    {
-      return GetNorm(x, 0, x.Length);
-    }
+		/// <summary>Given an n-vector x, this function calculates the
+		/// euclidean norm of x. 
+		/// </summary>
+		/// <param name="x">An input array. </param>
+		/// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
+		public static double GetNorm(double[] x)
+		{
+			return GetNorm(x, 0, x.Length);
+		}
 
-    /// <summary>Given an n-vector x, this function calculates the
-    /// euclidean norm of x. 
-    /// </summary>
-    /// <param name="n">A positive integer input variable of the number of elements to process.</param>
-    /// <param name="x">An input array of length n. </param>
-    /// <param name="startindex">The index of the first element in x to process.</param>
-    /// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
-    /// <remarks>
-    ///     the euclidean norm is computed by accumulating the sum of 
-    ///     squares in three different sums. the sums of squares for the 
-    ///     small and large components are scaled so that no overflows 
-    ///     occur. non-destructive underflows are permitted. underflows 
-    ///     and overflows do not occur in the computation of the unscaled 
-    ///     sum of squares for the intermediate components. 
-    ///     the definitions of small, intermediate and large components 
-    ///     depend on two constants, rdwarf and rgiant. the main 
-    ///     restrictions on these constants are that rdwarf**2 not 
-    ///     underflow and rgiant**2 not overflow. the constants 
-    ///     given here are suitable for every known computer. 
-    ///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
-    ///      
-    /// </remarks>
-    public static double GetNorm(double[] x, int startindex, int n)
-    {
-      const double rdwarf = 3.834e-20;
-      const double rgiant = 1.304e19;
-      double ret_val = 0.0, xabs, x1max, x3max, s1, s2, s3, agiant, floatn;
-      int i;
+		/// <summary>Given an n-vector x, this function calculates the
+		/// euclidean norm of x. 
+		/// </summary>
+		/// <param name="n">A positive integer input variable of the number of elements to process.</param>
+		/// <param name="x">An input array of length n. </param>
+		/// <param name="startindex">The index of the first element in x to process.</param>
+		/// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
+		/// <remarks>
+		///     the euclidean norm is computed by accumulating the sum of 
+		///     squares in three different sums. the sums of squares for the 
+		///     small and large components are scaled so that no overflows 
+		///     occur. non-destructive underflows are permitted. underflows 
+		///     and overflows do not occur in the computation of the unscaled 
+		///     sum of squares for the intermediate components. 
+		///     the definitions of small, intermediate and large components 
+		///     depend on two constants, rdwarf and rgiant. the main 
+		///     restrictions on these constants are that rdwarf**2 not 
+		///     underflow and rgiant**2 not overflow. the constants 
+		///     given here are suitable for every known computer. 
+		///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
+		///      
+		/// </remarks>
+		public static double GetNorm(double[] x, int startindex, int n)
+		{
+			const double rdwarf = 3.834e-20;
+			const double rgiant = 1.304e19;
+			double ret_val = 0.0, xabs, x1max, x3max, s1, s2, s3, agiant, floatn;
+			int i;
 
-      // Parameter adjustments
-      // --x; LELLID!!
+			// Parameter adjustments
+			// --x; LELLID!!
 
-      s1 = s2 = s3 = x1max = x3max = 0.0;
-      floatn = (double)n;
-      agiant = rgiant / floatn;
+			s1 = s2 = s3 = x1max = x3max = 0.0;
+			floatn = (double)n;
+			agiant = rgiant / floatn;
 
-      for (i = 0; i < n; i++)
-      { // LELLID!!
+			for (i = 0; i < n; i++)
+			{ // LELLID!!
 
-        xabs = Math.Abs(x[i + startindex]);
-        if (xabs > rdwarf && xabs < agiant) goto L70;
-        if (xabs <= rdwarf) goto L30;
+				xabs = Math.Abs(x[i + startindex]);
+				if (xabs > rdwarf && xabs < agiant) goto L70;
+				if (xabs <= rdwarf) goto L30;
 
-        //sum for large components
-        if (xabs <= x1max) goto L10;
-        s1 = 1.0 + s1 * sqr(x1max / xabs);
-        x1max = xabs;
-        goto L80;
+				//sum for large components
+				if (xabs <= x1max) goto L10;
+				s1 = 1.0 + s1 * sqr(x1max / xabs);
+				x1max = xabs;
+				goto L80;
 
-      L10:
-        s1 += sqr(xabs / x1max);
-        goto L80;
+			L10:
+				s1 += sqr(xabs / x1max);
+				goto L80;
 
-      L30:
-        // sum for small components
-        if (xabs <= x3max) goto L40;
-        s3 = 1.0 + s3 * sqr(x3max / xabs);
-        x3max = xabs;
-        goto L80;
+			L30:
+				// sum for small components
+				if (xabs <= x3max) goto L40;
+				s3 = 1.0 + s3 * sqr(x3max / xabs);
+				x3max = xabs;
+				goto L80;
 
-      L40:
-        if (xabs != 0.0) s3 += sqr(xabs / x3max);
-        goto L80;
+			L40:
+				if (xabs != 0.0) s3 += sqr(xabs / x3max);
+				goto L80;
 
-      L70:
-        // sum for intermediate components
-        s2 += sqr(xabs);
+			L70:
+				// sum for intermediate components
+				s2 += sqr(xabs);
 
-      L80: ;
-      }
+			L80: ;
+			}
 
-      // calculation of norm
-      if (s1 == 0.0) goto L100;
-      ret_val = x1max * Math.Sqrt(s1 + s2 / x1max / x1max);
-      goto L130;
+			// calculation of norm
+			if (s1 == 0.0) goto L100;
+			ret_val = x1max * Math.Sqrt(s1 + s2 / x1max / x1max);
+			goto L130;
 
-      L100:
-        if (s2 == 0.0) goto L110;
-      if (s2 >= x3max)
-        ret_val = Math.Sqrt(s2 * (1.0 + x3max / s2 * (x3max * s3)));
-      if (s2 < x3max)
-        ret_val = Math.Sqrt(x3max * (s2 / x3max + x3max * s3));
-      goto L130;
+		L100:
+			if (s2 == 0.0) goto L110;
+			if (s2 >= x3max)
+				ret_val = Math.Sqrt(s2 * (1.0 + x3max / s2 * (x3max * s3)));
+			if (s2 < x3max)
+				ret_val = Math.Sqrt(x3max * (s2 / x3max + x3max * s3));
+			goto L130;
 
-      L110:
-        ret_val = x3max * Math.Sqrt(s3);
+		L110:
+			ret_val = x3max * Math.Sqrt(s3);
 
-      L130:
-        return ret_val;
-    }
+		L130:
+			return ret_val;
+		}
 
-    /// <summary>Return the index of a the maximum absolute value in a vector</summary>
-    /// <param name="X">The input array.</param>
-    /// <returns>The index of the maximum absolute value.</returns>
-    public static int IMax(float[] X)
-    {
-      float max = 0;
-      int index=0;
-      for (int i = 0; i < X.Length; ++i)
-      {
-        float test = System.Math.Abs(X[i]);
-        if (test > max)
-        {
-          index = i;
-          max = test;
-        }
-      }
-      return index;
-    }
+		/// <summary>Return the index of a the maximum absolute value in a vector</summary>
+		/// <param name="X">The input array.</param>
+		/// <returns>The index of the maximum absolute value.</returns>
+		public static int IMax(float[] X)
+		{
+			float max = 0;
+			int index = 0;
+			for (int i = 0; i < X.Length; ++i)
+			{
+				float test = System.Math.Abs(X[i]);
+				if (test > max)
+				{
+					index = i;
+					max = test;
+				}
+			}
+			return index;
+		}
 
-    /// <summary>Return the index of a the (first) element with the maximum absolute value in a vector</summary>
-    /// <param name="X">The input vector.</param>
-    /// <returns>The index of the (first) element with the maximum absolute value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
-    public static int IndexOfMaxAbsValue(this IROVector X)
-    {
-      int index = -1;
-      int len = X.Length;
-      if (len > 0)
-      {
-        double max;
-        if (double.IsNaN(Math.Abs(X[0])))
-        {
-          max = double.NegativeInfinity;
-        }
-        else
-        {
-          max = Math.Abs(X[0]);
-          index = 0;
-        }
-       
-        for (int i = 1; i < len; ++i)
-        {
-          double test = Math.Abs(X[i]);
-          if (test > max)
-          {
-            index = i;
-            max = test;
-          }
-        }
-      }
-      return index;
-    }
+		/// <summary>Return the index of a the (first) element with the maximum absolute value in a vector</summary>
+		/// <param name="X">The input vector.</param>
+		/// <returns>The index of the (first) element with the maximum absolute value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMaxAbsValue(this IROVector X)
+		{
+			int index = -1;
+			int len = X.Length;
+			if (len > 0)
+			{
+				double max;
+				if (double.IsNaN(Math.Abs(X[0])))
+				{
+					max = double.NegativeInfinity;
+				}
+				else
+				{
+					max = Math.Abs(X[0]);
+					index = 0;
+				}
 
-    /// <summary>Return the index of a the (first) element with the maximum  value in a vector</summary>
-    /// <param name="X">The input vector.</param>
-    /// <returns>The index of the (first) element with the maximum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
-    public static int IndexOfMaxValue(this IROVector X)
-    {
-      int index = -1;
-      int len = X.Length;
-      if (len > 0)
-      {
-        double max;
-        if (double.IsNaN(X[0]))
-        {
-          max = double.NegativeInfinity;
-        }
-        else
-        {
-          max = X[0];
-          index = 0;
-        }
-        for (int i = 1; i < len; ++i)
-        {
-          double test = X[i];
-          if (test > max)
-          {
-            index = i;
-            max = test;
-          }
-        }
-      }
-      return index;
-    }
+				for (int i = 1; i < len; ++i)
+				{
+					double test = Math.Abs(X[i]);
+					if (test > max)
+					{
+						index = i;
+						max = test;
+					}
+				}
+			}
+			return index;
+		}
 
-    /// <summary>Return the index of a the (first) element with the minimum value in a vector</summary>
-    /// <param name="X">The input vector.</param>
-    /// <returns>The index of the (first) element with the mimimum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
-    public static int IndexOfMinValue(this IROVector X)
-    {
-      int index = -1;
-      int len = X.Length;
-      if (len > 0)
-      {
-        double min;
-        if (double.IsNaN(X[0]))
-        {
-          min = double.PositiveInfinity;
-        }
-        else
-        {
-          min = X[0];
-          index = 0;
-        }
-        for (int i = 1; i < len; ++i)
-        {
-          double test = X[i];
-          if (test < min)
-          {
-            index = i;
-            min = test;
-          }
-        }
-      }
-      return index;
-    }
+		/// <summary>Return the index of a the (first) element with the maximum  value in a vector</summary>
+		/// <param name="X">The input vector.</param>
+		/// <returns>The index of the (first) element with the maximum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMaxValue(this IROVector X)
+		{
+			int index = -1;
+			int len = X.Length;
+			if (len > 0)
+			{
+				double max;
+				if (double.IsNaN(X[0]))
+				{
+					max = double.NegativeInfinity;
+				}
+				else
+				{
+					max = X[0];
+					index = 0;
+				}
+				for (int i = 1; i < len; ++i)
+				{
+					double test = X[i];
+					if (test > max)
+					{
+						index = i;
+						max = test;
+					}
+				}
+			}
+			return index;
+		}
+
+		/// <summary>Return the index of a the (first) element with the minimum value in a vector</summary>
+		/// <param name="X">The input vector.</param>
+		/// <returns>The index of the (first) element with the mimimum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMinValue(this IROVector X)
+		{
+			int index = -1;
+			int len = X.Length;
+			if (len > 0)
+			{
+				double min;
+				if (double.IsNaN(X[0]))
+				{
+					min = double.PositiveInfinity;
+				}
+				else
+				{
+					min = X[0];
+					index = 0;
+				}
+				for (int i = 1; i < len; ++i)
+				{
+					double test = X[i];
+					if (test < min)
+					{
+						index = i;
+						min = test;
+					}
+				}
+			}
+			return index;
+		}
 
 		/// <summary>
 		/// Returns the maximum value of all the valid elements in x (nonvalid elements, i.e. NaN values are not considered).
@@ -1189,40 +1189,40 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
-    /// <summary>
-    /// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
-    /// </summary>
-    /// <param name="x">First vector.</param>
-    /// <param name="y">Second vector.</param>
-    /// <returns>True if both vectors contain the same elements.</returns>
-    public static bool AreValuesEqual(IROVector x, IROVector y)
-    {
-      if (x.Length != y.Length)
-        throw new ArgumentException("Length of x and y are unequal");
+		/// <summary>
+		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="x">First vector.</param>
+		/// <param name="y">Second vector.</param>
+		/// <returns>True if both vectors contain the same elements.</returns>
+		public static bool AreValuesEqual(IROVector x, IROVector y)
+		{
+			if (x.Length != y.Length)
+				throw new ArgumentException("Length of x and y are unequal");
 
-      for (int i = x.Length - 1; i >= 0; i--)
-        if (!(x[i] == y[i]))
-          return false;
+			for (int i = x.Length - 1; i >= 0; i--)
+				if (!(x[i] == y[i]))
+					return false;
 
-      return true;
-    }
+			return true;
+		}
 
-    /// <summary>
-    /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
-    /// </summary>
-    /// <param name="x">Vector (sequence) to test.</param>
-    /// <returns>True if the sequence is strictly increasing or decreasing.</returns>
-    public static bool IsStrictlyIncreasingOrDecreasing(IROVector x)
-    {
-      bool isDecreasing;
-      return IsStrictlyIncreasingOrDecreasing(x, out isDecreasing);
-    }
-    /// <summary>
-    /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
-    /// </summary>
-    /// <param name="x">Vector (sequence) to test.</param>
-    /// <param name="isDecreasing">On return, this argument is set to true if the sequence is strictly decreasing. If increasing, this argument is set to false.</param>
-    /// <returns>True if the sequence is strictly increasing or decreasing.</returns>
+		/// <summary>
+		/// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
+		/// </summary>
+		/// <param name="x">Vector (sequence) to test.</param>
+		/// <returns>True if the sequence is strictly increasing or decreasing.</returns>
+		public static bool IsStrictlyIncreasingOrDecreasing(IROVector x)
+		{
+			bool isDecreasing;
+			return IsStrictlyIncreasingOrDecreasing(x, out isDecreasing);
+		}
+		/// <summary>
+		/// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
+		/// </summary>
+		/// <param name="x">Vector (sequence) to test.</param>
+		/// <param name="isDecreasing">On return, this argument is set to true if the sequence is strictly decreasing. If increasing, this argument is set to false.</param>
+		/// <returns>True if the sequence is strictly increasing or decreasing.</returns>
 		public static bool IsStrictlyIncreasingOrDecreasing(IROVector x, out bool isDecreasing)
 		{
 			isDecreasing = false;
@@ -1267,7 +1267,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="v">The vector.</param>
 		/// <param name="func">The function to apply to every element.</param>
-		public static void Apply(this IVector v, Func<double,double> func)
+		public static void Apply(this IVector v, Func<double, double> func)
 		{
 			for (int i = v.Length - 1; i >= 0; --i)
 				v[i] = func(v[i]);
@@ -1294,53 +1294,53 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 
-    /// <summary>
-    /// Shifts the element of this vector by moving them <c>increment</c> times to the right. The elements on the rightmost side are shifted back into the left side of the vector. Thus, effectively, the elements are rotated to the right.
-    /// </summary>
-    /// <param name="x">The vector to rotate.</param>
-    /// <param name="increment"></param>
-    public static void Rotate(this IVector x, int increment)
-    {
-      int xLen = x.Length;
-      if (xLen < 2)
-        return; // Nothing to do
-      increment = increment % xLen;
-      if (increment == 0)
-        return;
-      if (increment < 0)
-        increment += xLen;
+		/// <summary>
+		/// Shifts the element of this vector by moving them <c>increment</c> times to the right. The elements on the rightmost side are shifted back into the left side of the vector. Thus, effectively, the elements are rotated to the right.
+		/// </summary>
+		/// <param name="x">The vector to rotate.</param>
+		/// <param name="increment"></param>
+		public static void Rotate(this IVector x, int increment)
+		{
+			int xLen = x.Length;
+			if (xLen < 2)
+				return; // Nothing to do
+			increment = increment % xLen;
+			if (increment == 0)
+				return;
+			if (increment < 0)
+				increment += xLen;
 
 
-      // first cycle is to measure number of shifts per cycle
-      int shiftsPerCycle = 0;
-      int i=0;
-      int k = i;
-      double prevVal = x[k];
-      do
-      {
-        k = (k + increment) % xLen;
-        double currVal = x[k];
-        x[k] = prevVal;
-        prevVal = currVal;
-        shiftsPerCycle++;
-      } while (i != k);
+			// first cycle is to measure number of shifts per cycle
+			int shiftsPerCycle = 0;
+			int i = 0;
+			int k = i;
+			double prevVal = x[k];
+			do
+			{
+				k = (k + increment) % xLen;
+				double currVal = x[k];
+				x[k] = prevVal;
+				prevVal = currVal;
+				shiftsPerCycle++;
+			} while (i != k);
 
 
-      // now do the rest of the cycles
-      System.Diagnostics.Debug.Assert(0 == xLen % shiftsPerCycle);
-      int numCycles = xLen / shiftsPerCycle;
-      for (i = 1; i < numCycles; i++)
-      {
-        k = i;
-        prevVal = x[k];
-        do
-        {
-          k = (k + increment) % xLen;
-          double currVal = x[k];
-          x[k] = prevVal;
-          prevVal = currVal;
-        } while(i!=k);
-      }
-    }
+			// now do the rest of the cycles
+			System.Diagnostics.Debug.Assert(0 == xLen % shiftsPerCycle);
+			int numCycles = xLen / shiftsPerCycle;
+			for (i = 1; i < numCycles; i++)
+			{
+				k = i;
+				prevVal = x[k];
+				do
+				{
+					k = (k + increment) % xLen;
+					double currVal = x[k];
+					x[k] = prevVal;
+					prevVal = currVal;
+				} while (i != k);
+			}
+		}
 	}
 }

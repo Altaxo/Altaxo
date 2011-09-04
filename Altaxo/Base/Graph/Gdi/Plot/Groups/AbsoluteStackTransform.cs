@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,109 +28,109 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-  using Plot.Data;
+	using Plot.Data;
 
 	/// <summary>
 	/// 
 	/// </summary>
-  public class AbsoluteStackTransform : ICoordinateTransformingGroupStyle
-  {
-    #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteStackTransform), 0)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        AbsoluteStackTransform s = (AbsoluteStackTransform)obj;
-       
-      }
+	public class AbsoluteStackTransform : ICoordinateTransformingGroupStyle
+	{
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteStackTransform), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				AbsoluteStackTransform s = (AbsoluteStackTransform)obj;
+
+			}
 
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AbsoluteStackTransform s = null != o ? (AbsoluteStackTransform)o : new AbsoluteStackTransform();
-        return s;
-      }
-    }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				AbsoluteStackTransform s = null != o ? (AbsoluteStackTransform)o : new AbsoluteStackTransform();
+				return s;
+			}
+		}
 
-    #endregion
-
-
+		#endregion
 
 
-    public AbsoluteStackTransform()
-    {
-			
-    }
 
-    public AbsoluteStackTransform(AbsoluteStackTransform from)
-    {
-    }
 
-    #region ICoordinateTransformingGroupStyle Members
+		public AbsoluteStackTransform()
+		{
 
-    public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
-    {
-      CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
-			
-    }
+		}
 
-    public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
-    {
-      Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList;
-      IPhysicalBoundaries pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
-      CoordinateTransformingStyleBase.MergeYBoundsInto(pbclone, coll);
-      if (!CanUseStyle(layer, coll, out plotDataList))
-      {
-        pb.Add(pbclone);
-        return;
-      }
+		public AbsoluteStackTransform(AbsoluteStackTransform from)
+		{
+		}
 
-      // we put zero into the y-Boundaries, since the addition starts with that value
-      pb.Add(new AltaxoVariant(0.0));
+		#region ICoordinateTransformingGroupStyle Members
 
-      AltaxoVariant[] ySumArray = null;
+		public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
+		{
+			CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
 
-      int idx = -1;
-      foreach (IGPlotItem pi in coll)
-      {
-        if (pi is G2DPlotItem)
-        {
-          idx++;
+		}
 
-          G2DPlotItem gpi = (G2DPlotItem)pi;
-          Processed2DPlotData pdata = plotDataList[gpi];
+		public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
+		{
+			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList;
+			IPhysicalBoundaries pbclone = (IPhysicalBoundaries)pb.Clone(); // before we can use CanUseStyle, we have to give physical y boundaries template
+			CoordinateTransformingStyleBase.MergeYBoundsInto(pbclone, coll);
+			if (!CanUseStyle(layer, coll, out plotDataList))
+			{
+				pb.Add(pbclone);
+				return;
+			}
 
-          // Note: we can not use AddUp function here, since
-          // when we have positive/negative items, the intermediate bounds
-          // might be wider than the bounds of the end result
+			// we put zero into the y-Boundaries, since the addition starts with that value
+			pb.Add(new AltaxoVariant(0.0));
 
-          if (ySumArray == null)
-          {
-            ySumArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+			AltaxoVariant[] ySumArray = null;
 
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
-              ySumArray[j] = pdata.GetYPhysical(originalIndex);
-              pb.Add(ySumArray[j]);
-            }
-          }
-          else // this is not the first item
-          {
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
-              ySumArray[j] += pdata.GetYPhysical(originalIndex);
-              pb.Add(ySumArray[j]);
+			int idx = -1;
+			foreach (IGPlotItem pi in coll)
+			{
+				if (pi is G2DPlotItem)
+				{
+					idx++;
 
-            }
-          }
-        }
-      }
-    }
+					G2DPlotItem gpi = (G2DPlotItem)pi;
+					Processed2DPlotData pdata = plotDataList[gpi];
+
+					// Note: we can not use AddUp function here, since
+					// when we have positive/negative items, the intermediate bounds
+					// might be wider than the bounds of the end result
+
+					if (ySumArray == null)
+					{
+						ySumArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+
+						int j = -1;
+						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						{
+							j++;
+							ySumArray[j] = pdata.GetYPhysical(originalIndex);
+							pb.Add(ySumArray[j]);
+						}
+					}
+					else // this is not the first item
+					{
+						int j = -1;
+						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						{
+							j++;
+							ySumArray[j] += pdata.GetYPhysical(originalIndex);
+							pb.Add(ySumArray[j]);
+
+						}
+					}
+				}
+			}
+		}
 
 
 
@@ -142,137 +142,137 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// <param name="coll">Collection of plot items.</param>
 		/// <param name="plotDataList">Output: dictionary with associates each plot item with a list of processed plot data.</param>
 		/// <returns>Returns <c>true</c> if the plot items in <paramref name="coll"/> can be plotted as stack; otherwise, <c>false</c>.</returns>
-    public static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
-    {
-      plotDataList = new Dictionary<G2DPlotItem, Processed2DPlotData>();
+		public static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
+		{
+			plotDataList = new Dictionary<G2DPlotItem, Processed2DPlotData>();
 
-      AltaxoVariant[] xArray = null;
+			AltaxoVariant[] xArray = null;
 
-      int idx = -1;
-      foreach (IGPlotItem pi in coll)
-      {
-        if (pi is G2DPlotItem)
-        {
-          idx++;
-          G2DPlotItem gpi = (G2DPlotItem)pi;
-          Processed2DPlotData pdata = gpi.GetRangesAndPoints(layer);
-          plotDataList.Add(gpi, pdata);
+			int idx = -1;
+			foreach (IGPlotItem pi in coll)
+			{
+				if (pi is G2DPlotItem)
+				{
+					idx++;
+					G2DPlotItem gpi = (G2DPlotItem)pi;
+					Processed2DPlotData pdata = gpi.GetRangesAndPoints(layer);
+					plotDataList.Add(gpi, pdata);
 
-          if (xArray == null)
-          {
-            xArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+					if (xArray == null)
+					{
+						xArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
 
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
-              xArray[j] = pdata.GetXPhysical(originalIndex);
-            }
-          }
-          else // this is not the first item
-          {
-            if (pdata.RangeList.PlotPointCount != xArray.Length)
-              return false;
-
-
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
+						int j = -1;
+						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						{
+							j++;
+							xArray[j] = pdata.GetXPhysical(originalIndex);
+						}
+					}
+					else // this is not the first item
+					{
+						if (pdata.RangeList.PlotPointCount != xArray.Length)
+							return false;
 
 
-              if (xArray[j] != pdata.GetXPhysical(originalIndex))
-                return false;
-            }
-          }
-        }
-      }
+						int j = -1;
+						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						{
+							j++;
 
-      return idx >= 1;
-    }
+
+							if (xArray[j] != pdata.GetXPhysical(originalIndex))
+								return false;
+						}
+					}
+				}
+			}
+
+			return idx >= 1;
+		}
 
 
 		/// <summary>Adds the y-values of a plot item to an array of y-values..</summary>
 		/// <param name="yArray">The y array to be added to. If null, a new array will be allocated (and filled with the y-values of the plot item).</param>
 		/// <param name="pdata">The pdata.</param>
 		/// <returns>If the parameter <paramref name="yArray"/> was not null, then that <paramref name="yArray"/> is returned. Otherwise the newly allocated array is returned.</returns>
-    public static AltaxoVariant[] AddUp(AltaxoVariant[] yArray, Processed2DPlotData pdata)
-    {
-      if (yArray == null)
-      {
-        yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+		public static AltaxoVariant[] AddUp(AltaxoVariant[] yArray, Processed2DPlotData pdata)
+		{
+			if (yArray == null)
+			{
+				yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
 
-        int j = -1;
-        foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-        {
-          j++;
-          yArray[j] = pdata.GetYPhysical(originalIndex);
-        }
-      }
-      else // this is not the first item
-      {
-        int j = -1;
-        foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-        {
-          j++;
-          yArray[j] += pdata.GetYPhysical(originalIndex);
-        }
-      }
-      return yArray;
-    }
+				int j = -1;
+				foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+				{
+					j++;
+					yArray[j] = pdata.GetYPhysical(originalIndex);
+				}
+			}
+			else // this is not the first item
+			{
+				int j = -1;
+				foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+				{
+					j++;
+					yArray[j] += pdata.GetYPhysical(originalIndex);
+				}
+			}
+			return yArray;
+		}
 
 		/// <summary>Paints the plot items.</summary>
 		/// <param name="g">Graphics context used for drawing.</param>
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="coll">Collection of plot items to draw.</param>
-    public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
-    {
-      Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
-      if (!CanUseStyle(layer, coll, out plotDataDict))
-      {
-        CoordinateTransformingStyleBase.Paint(g, layer, coll);
-        return;
-      }
+		public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		{
+			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
+			if (!CanUseStyle(layer, coll, out plotDataDict))
+			{
+				CoordinateTransformingStyleBase.Paint(g, layer, coll);
+				return;
+			}
 
-      AltaxoVariant[] yArray = null;
-      // First, add up all items since we start always with the last item
-      int idx = -1;
-      Processed2DPlotData previousItemData = null;
-      foreach (IGPlotItem pi in coll)
-       {
-         
-        if (pi is G2DPlotItem)
-        {
-          idx++;
+			AltaxoVariant[] yArray = null;
+			// First, add up all items since we start always with the last item
+			int idx = -1;
+			Processed2DPlotData previousItemData = null;
+			foreach (IGPlotItem pi in coll)
+			{
 
-          G2DPlotItem gpi = pi as G2DPlotItem;
-          Processed2DPlotData pdata = plotDataDict[gpi];
-          yArray = AddUp(yArray, pdata);
-        
-          if(idx>0) // this is not the first item
-          {
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
-              Logical3D rel = new Logical3D(
-              layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
-              layer.YAxis.PhysicalVariantToNormal(yArray[j]));
+				if (pi is G2DPlotItem)
+				{
+					idx++;
 
-              double xabs, yabs;
-              layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
-              pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-            }
-          }
+					G2DPlotItem gpi = pi as G2DPlotItem;
+					Processed2DPlotData pdata = plotDataDict[gpi];
+					yArray = AddUp(yArray, pdata);
 
-          // we have also to exchange the accessor for the physical y value and replace it by our own one
-          AltaxoVariant[] localArray = (AltaxoVariant[])yArray.Clone();
+					if (idx > 0) // this is not the first item
+					{
+						int j = -1;
+						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						{
+							j++;
+							Logical3D rel = new Logical3D(
+							layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
+							layer.YAxis.PhysicalVariantToNormal(yArray[j]));
+
+							double xabs, yabs;
+							layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+							pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+						}
+					}
+
+					// we have also to exchange the accessor for the physical y value and replace it by our own one
+					AltaxoVariant[] localArray = (AltaxoVariant[])yArray.Clone();
 					LocalArrayHolder localArrayHolder = new LocalArrayHolder(localArray, pdata);
-          pdata.YPhysicalAccessor = localArrayHolder.GetPhysical;
-          pdata.PreviousItemData = previousItemData;
-          previousItemData = pdata;
-        }
-      }
+					pdata.YPhysicalAccessor = localArrayHolder.GetPhysical;
+					pdata.PreviousItemData = previousItemData;
+					previousItemData = pdata;
+				}
+			}
 
 			Processed2DPlotData prevPlotData = null;
 			Processed2DPlotData nextPlotData = null;
@@ -302,7 +302,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				nextPlotData = null;
 			}
 
-    }
+		}
 
 
 		/// <summary>
@@ -336,22 +336,22 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-    #endregion
+		#endregion
 
-    #region ICloneable Members
+		#region ICloneable Members
 
-    public object Clone()
-    {
-      return new AbsoluteStackTransform(this);
-    }
+		public object Clone()
+		{
+			return new AbsoluteStackTransform(this);
+		}
 
-    #endregion
+		#endregion
 
-    #region ICoordinateTransformingGroupStyle Members
+		#region ICoordinateTransformingGroupStyle Members
 
 
 
-    #endregion
-  }
+		#endregion
+	}
 
 }

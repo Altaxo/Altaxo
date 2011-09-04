@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,37 +34,37 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
-  /// <summary>
-  /// Summary description for ArrowLineDrawingMouseHandler.
-  /// </summary>
-  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
-  {
-    public ArrowLineDrawingMouseHandler(GraphViewWpf grac)
-      : base(grac)
-    {
-      if(_grac!=null)
-        _grac.SetPanelCursor(Cursors.Pen);
-    }
+	/// <summary>
+	/// Summary description for ArrowLineDrawingMouseHandler.
+	/// </summary>
+	public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
+	{
+		public ArrowLineDrawingMouseHandler(GraphViewWpf grac)
+			: base(grac)
+		{
+			if (_grac != null)
+				_grac.SetPanelCursor(Cursors.Pen);
+		}
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
 		{
-			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing;  }
+			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing; }
 		}
 
 
-    protected override void FinishDrawing()
-    {
-      LineShape go = new LineShape(_Points[0].layerCoord,_Points[1].layerCoord);
-      //go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
-      LineCapEx cap = LineCapEx.FromName("ArrowF10");
-      cap.Size = 10;
-      go.Pen.EndCap = cap;
-     
-      // deselect the text tool
-			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
-      _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
-      
-    }
-  }
+		protected override void FinishDrawing()
+		{
+			LineShape go = new LineShape(_Points[0].layerCoord, _Points[1].layerCoord);
+			//go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
+			LineCapEx cap = LineCapEx.FromName("ArrowF10");
+			cap.Size = 10;
+			go.Pen.EndCap = cap;
+
+			// deselect the text tool
+			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+			_grac.ActiveLayer.GraphObjects.Add(go);
+			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+
+		}
+	}
 }

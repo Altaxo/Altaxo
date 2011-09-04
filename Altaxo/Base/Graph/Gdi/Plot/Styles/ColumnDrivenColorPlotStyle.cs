@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		IColorProvider _colorProvider;
 
 		/// <summary>If true, the color is applied as a fill color for symbols, bar graphs etc.</summary>
-		bool _appliesToFill=true;
+		bool _appliesToFill = true;
 		/// <summary>If true, the color is applied as a stroke color for framing symbols, bar graphs etc.</summary>
 		bool _appliesToStroke;
 		/// <summary>If true, the color is used to color the background, for instance of labels.</summary>

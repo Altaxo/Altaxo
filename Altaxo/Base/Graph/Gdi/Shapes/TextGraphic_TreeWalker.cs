@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,10 +83,10 @@ using System.Drawing.Drawing2D;
 */
 namespace Altaxo.Graph.Gdi.Shapes
 {
-  using Plot;
-  using Plot.Data;
-  using Graph.Plot.Data;
-  using Background;
+	using Plot;
+	using Plot.Data;
+	using Graph.Plot.Data;
+	using Background;
 
 	public partial class TextGraphic : GraphicBase
 	{
@@ -85,23 +107,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_sourceText = sourceText;
 			}
-     
+
 			public StructuralGlyph VisitTree(PegNode root, StyleContext context)
 			{
 				var rootGlyph = new VerticalStack();
-        rootGlyph.Style = context;
-        rootGlyph.LineSpacingFactor = 1.25;
-        rootGlyph.FixedLineSpacing = true;
+				rootGlyph.Style = context;
+				rootGlyph.LineSpacingFactor = 1.25;
+				rootGlyph.FixedLineSpacing = true;
 
 				var line = new GlyphLine();
-        line.Style = context;
+				line.Style = context;
 
 				rootGlyph.Add(line);
 
-				if(null!=root && null!=root.child_)
+				if (null != root && null != root.child_)
 					VisitNode(root.child_, context, line);
 
-        return rootGlyph;
+				return rootGlyph;
 			}
 
 			private StructuralGlyph VisitNode(PegNode node, StyleContext context, StructuralGlyph parent)
@@ -125,12 +147,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 					case EAltaxo_LabelV1.EscSeq1:
 						HandleEscSeq1(node, context, parent);
 						break;
-          case EAltaxo_LabelV1.EscSeq2:
-            HandleEscSeq2(node, context, parent);
-            break;
-          case EAltaxo_LabelV1.EscSeq3:
-            HandleEscSeq3(node, context, parent);
-            break;
+					case EAltaxo_LabelV1.EscSeq2:
+						HandleEscSeq2(node, context, parent);
+						break;
+					case EAltaxo_LabelV1.EscSeq3:
+						HandleEscSeq3(node, context, parent);
+						break;
 				}
 
 				if (null != node.next_)
@@ -139,7 +161,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return nextparent;
 			}
 
-			void HandleWordSpan( PegNode node, StyleContext context, StructuralGlyph parent)
+			void HandleWordSpan(PegNode node, StyleContext context, StructuralGlyph parent)
 			{
 				int posBeg = node.match_.posBeg_;
 				int posEnd = node.match_.posEnd_;
@@ -194,7 +216,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					if (parent.Parent is VerticalStack)
 					{
 						newcontext = new GlyphLine();
-            newcontext.Style = context;
+						newcontext.Style = context;
 						parent.Parent.Add(newcontext);
 					}
 					else // parent.Parent is not a VerticalStack
@@ -203,7 +225,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 						parent.Parent.Exchange(parent, vertStack);
 						vertStack.Add(parent);
 						newcontext = new GlyphLine();
-            newcontext.Style = context;
+						newcontext.Style = context;
 						vertStack.Add(newcontext);
 					}
 				}
@@ -241,7 +263,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 								parent.Add(new DocumentIdentifier(context));
 						}
 						break;
-					case  @"\g(":
+					case @"\g(":
 						{
 							var newContext = context.Clone();
 							newContext.SetFont("Symbol", context.FontId.Size, context.FontId.Style);
@@ -276,55 +298,55 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
-          case @"\n(":
-            {
-              var newContext = context.Clone();
-              newContext.StyleFont(FontStyle.Regular);
-              VisitNode(childNode, newContext, parent);
-            }
-            break;
+					case @"\n(":
+						{
+							var newContext = context.Clone();
+							newContext.StyleFont(FontStyle.Regular);
+							VisitNode(childNode, newContext, parent);
+						}
+						break;
 					case @"\+(":
 						{
-              var newParent = new Superscript();
-              newParent.Style = context;
-              parent.Add(newParent);
-              
-              var newContext = context.Clone();
-              newContext.ScaleFont(0.65);
+							var newParent = new Superscript();
+							newParent.Style = context;
+							parent.Add(newParent);
+
+							var newContext = context.Clone();
+							newContext.ScaleFont(0.65);
 							VisitNode(childNode, newContext, newParent);
 						}
 						break;
 					case @"\-(":
 						{
-              var newParent = new Subscript();
-              newParent.Style = context;
-              parent.Add(newParent);
-              
-              var newContext = context.Clone();
-              newContext.ScaleFont(0.65);
+							var newParent = new Subscript();
+							newParent.Style = context;
+							parent.Add(newParent);
+
+							var newContext = context.Clone();
+							newContext.ScaleFont(0.65);
 							VisitNode(childNode, newContext, newParent);
 						}
 						break;
-          case @"\l(":
-            {
-              string s = GetText(childNode);
-              int plotNumber;
-              if (int.TryParse(s, out plotNumber))
-              {
-                parent.Add(new PlotSymbol(context, plotNumber));
-              }
-            }
-            break;
-          case @"\%(":
-            {
-              string s = GetText(childNode);
-              int plotNumber;
-              if (int.TryParse(s, out plotNumber))
-              {
-                parent.Add(new PlotName(context, plotNumber));
-              }
-            }
-            break;
+					case @"\l(":
+						{
+							string s = GetText(childNode);
+							int plotNumber;
+							if (int.TryParse(s, out plotNumber))
+							{
+								parent.Add(new PlotSymbol(context, plotNumber));
+							}
+						}
+						break;
+					case @"\%(":
+						{
+							string s = GetText(childNode);
+							int plotNumber;
+							if (int.TryParse(s, out plotNumber))
+							{
+								parent.Add(new PlotName(context, plotNumber));
+							}
+						}
+						break;
 					case @"\ad(":
 						{
 							var newParent = new DotOverGlyph();
@@ -344,29 +366,29 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-      void HandleEscSeq2(PegNode node, StyleContext context, StructuralGlyph parent)
-      {
-        int posBeg = node.match_.posBeg_;
-        var childNode = node.child_;
+			void HandleEscSeq2(PegNode node, StyleContext context, StructuralGlyph parent)
+			{
+				int posBeg = node.match_.posBeg_;
+				var childNode = node.child_;
 
-        if (childNode == null)
-          throw new ArgumentNullException("childNode");
+				if (childNode == null)
+					throw new ArgumentNullException("childNode");
 
-        string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
+				string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
 
-        switch (escHeader.ToLowerInvariant())
-        {
-          case @"\=(":
-            {
-              var newParent = new SubSuperScript();
-              newParent.Style = context;
-              parent.Add(newParent);
+				switch (escHeader.ToLowerInvariant())
+				{
+					case @"\=(":
+						{
+							var newParent = new SubSuperScript();
+							newParent.Style = context;
+							parent.Add(newParent);
 
-              var newContext = context.Clone();
-              newContext.ScaleFont(0.65);
-              VisitNode(childNode, newContext, newParent);
-            }
-            break;
+							var newContext = context.Clone();
+							newContext.ScaleFont(0.65);
+							VisitNode(childNode, newContext, newParent);
+						}
+						break;
 					case @"\p(":
 						{
 							double val;
@@ -406,66 +428,66 @@ namespace Altaxo.Graph.Gdi.Shapes
 						{
 							string s1 = GetText(childNode).Trim();
 							var newContext = context.Clone();
-								var conv = new ColorConverter();
+							var conv = new ColorConverter();
 
-								try
-								{
-									object result = conv.ConvertFromInvariantString(s1);
-									newContext.brush = new SolidBrush((Color)result);
-								}
-								catch (Exception)
-								{
-								}
-								
-							
+							try
+							{
+								object result = conv.ConvertFromInvariantString(s1);
+								newContext.brush = new SolidBrush((Color)result);
+							}
+							catch (Exception)
+							{
+							}
+
+
 
 							VisitNode(childNode.next_, newContext, parent);
 						}
 						break;
-          case @"\l(":
-            {
-              string s1 = GetText(childNode);
-              string s2 = GetText(childNode.next_);
-              int plotNumber, plotLayer;
-              if (int.TryParse(s1, out plotLayer) && int.TryParse(s2, out plotNumber))
-              {
-                parent.Add(new PlotSymbol(context, plotNumber, plotLayer));
-              }
-            }
-            break;
-          case @"\%(":
-            {
-              string s1 = GetText(childNode);
-              string s2 = GetText(childNode.next_);
-              int plotNumber, plotLayer;
-              if (int.TryParse(s1, out plotLayer) && int.TryParse(s2, out plotNumber))
-              {
-                parent.Add(new PlotName(context, plotNumber, plotLayer));
-              }
-              else if (int.TryParse(s1, out plotNumber))
-              {
-                var label = new PlotName(context, plotNumber);
-                label.SetPropertyColumnName(s2);
-                parent.Add(label);
-              }
+					case @"\l(":
+						{
+							string s1 = GetText(childNode);
+							string s2 = GetText(childNode.next_);
+							int plotNumber, plotLayer;
+							if (int.TryParse(s1, out plotLayer) && int.TryParse(s2, out plotNumber))
+							{
+								parent.Add(new PlotSymbol(context, plotNumber, plotLayer));
+							}
+						}
+						break;
+					case @"\%(":
+						{
+							string s1 = GetText(childNode);
+							string s2 = GetText(childNode.next_);
+							int plotNumber, plotLayer;
+							if (int.TryParse(s1, out plotLayer) && int.TryParse(s2, out plotNumber))
+							{
+								parent.Add(new PlotName(context, plotNumber, plotLayer));
+							}
+							else if (int.TryParse(s1, out plotNumber))
+							{
+								var label = new PlotName(context, plotNumber);
+								label.SetPropertyColumnName(s2);
+								parent.Add(label);
+							}
 
-            }
-            break;
-        }
-      }
+						}
+						break;
+				}
+			}
 
-      void HandleEscSeq3(PegNode node, StyleContext context, StructuralGlyph parent)
-      {
-        int posBeg = node.match_.posBeg_;
-        var childNode = node.child_;
+			void HandleEscSeq3(PegNode node, StyleContext context, StructuralGlyph parent)
+			{
+				int posBeg = node.match_.posBeg_;
+				var childNode = node.child_;
 
-        if (childNode == null)
-          throw new ArgumentNullException("childNode");
+				if (childNode == null)
+					throw new ArgumentNullException("childNode");
 
-        string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
+				string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
 
-        switch (escHeader.ToLowerInvariant())
-        {
+				switch (escHeader.ToLowerInvariant())
+				{
 					case @"\%(":
 						{
 							string s1 = GetText(childNode);
@@ -480,14 +502,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 							}
 						}
 						break;
-        }
-      }
+				}
+			}
 
 			private string GetText(PegNode node)
 			{
 				return _sourceText.Substring(node.match_.posBeg_, node.match_.Length);
 			}
-    } // end class TreeWalker
-  
+		} // end class TreeWalker
+
 	}
 }

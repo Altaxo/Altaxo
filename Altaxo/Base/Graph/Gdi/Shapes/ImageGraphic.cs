@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,60 +29,60 @@ using System.IO;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-  
-  [Serializable]
-  public abstract class ImageGraphic : GraphicBase
-  {
-    #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ImageGraphic", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic),1)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        ImageGraphic s = (ImageGraphic)obj;
-        info.AddBaseValueEmbedded(s,typeof(ImageGraphic).BaseType);
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        ImageGraphic s =  (ImageGraphic)o;
-        info.GetBaseValueEmbedded(s,typeof(ImageGraphic).BaseType,parent);
-        return s;
-      }
-    }
+	[Serializable]
+	public abstract class ImageGraphic : GraphicBase
+	{
+		#region Serialization
 
-    /// <summary>
-    /// Finale measures after deserialization.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public override void OnDeserialization(object obj)
-    {
-    }
-    #endregion
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ImageGraphic", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 1)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ImageGraphic s = (ImageGraphic)obj;
+				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
 
-    protected ImageGraphic()
-      :
-      base()
-    {
-    }
-    protected ImageGraphic(ImageGraphic from)
-      :
-      base(from)
-    {
-    }
+				ImageGraphic s = (ImageGraphic)o;
+				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
+				return s;
+			}
+		}
 
-    public abstract Image GetImage();
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
 
-    /// <summary>
-    /// Get the object outline for arrangements in object world coordinates.
-    /// </summary>
-    /// <returns>Object outline for arrangements in object world coordinates</returns>
-    public override GraphicsPath GetObjectOutlineForArrangements()
-    {
-      return GetRectangularObjectOutline();
-    }
+		protected ImageGraphic()
+			:
+			base()
+		{
+		}
+		protected ImageGraphic(ImageGraphic from)
+			:
+			base(from)
+		{
+		}
+
+		public abstract Image GetImage();
+
+		/// <summary>
+		/// Get the object outline for arrangements in object world coordinates.
+		/// </summary>
+		/// <returns>Object outline for arrangements in object world coordinates</returns>
+		public override GraphicsPath GetObjectOutlineForArrangements()
+		{
+			return GetRectangularObjectOutline();
+		}
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
@@ -99,6 +99,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			((ImageGraphic)hitted).OnChanged();
 			return true;
 		}
-  } //  End Class
+	} //  End Class
 
 }

@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,12 +37,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			IHitTestObject _parent;
 			PointD2D _drawrPosition;
-      PointD2D _drawaPosition;
+			PointD2D _drawaPosition;
 			PointD2D _fixrPosition;
 			PointD2D _fixaPosition;
-      PointD2D _initialMousePosition;
-      double _initialScaleX, _initialScaleY;
-      TransformationMatrix2D _spanningHalfYRhombus;
+			PointD2D _initialMousePosition;
+			double _initialScaleX, _initialScaleY;
+			TransformationMatrix2D _spanningHalfYRhombus;
 
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
@@ -51,12 +51,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_parent = parent;
 				_drawrPosition = relPos;
-        _drawaPosition = GraphObject.RelativeToAbsolutePosition(_drawrPosition, true);
+				_drawaPosition = GraphObject.RelativeToAbsolutePosition(_drawrPosition, true);
 
-        _fixrPosition = new PointD2D(1- relPos.X, 1-relPos.Y);
+				_fixrPosition = new PointD2D(1 - relPos.X, 1 - relPos.Y);
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
-				
-        _spanningHalfYRhombus = spanningHalfYRhombus;
+
+				_spanningHalfYRhombus = spanningHalfYRhombus;
 			}
 
 
@@ -64,14 +64,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
-        initialPosition = _parent.Transformation.InverseTransformPoint(initialPosition);
-        _initialMousePosition = GraphObject.ToUnrotatedDifference(_fixaPosition, initialPosition);
+				initialPosition = _parent.Transformation.InverseTransformPoint(initialPosition);
+				_initialMousePosition = GraphObject.ToUnrotatedDifference(_fixaPosition, initialPosition);
 
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 				_drawaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_drawrPosition);
 
-        _initialScaleX = GraphObject.ScaleX;
-        _initialScaleY = GraphObject.ScaleY;
+				_initialScaleX = GraphObject.ScaleX;
+				_initialScaleY = GraphObject.ScaleY;
 			}
 
 			public bool Deactivate()
@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 				var diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
-        diff -= _initialMousePosition;
+				diff -= _initialMousePosition;
 
 
 				GraphObject.SetScalesFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialScaleX, _initialScaleY);
@@ -105,7 +105,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			#endregion
 
 
-     
+
 
 
 			static RescaleGripHandle()
@@ -114,7 +114,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				const float bigY = 0.5f; // half heigth of the bar
 				const float smallY = 0.125f; // half height of the steg
 				const float barX = 0.33f; // width of the bar
-        const float stegX = 0.2f; // width of the steg between the bars
+				const float stegX = 0.2f; // width of the steg between the bars
 
 				_shapePoints = new PointF[] {
         new PointF(0,-bigY),
@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         new PointF(barX, smallY),
         new PointF(barX, bigY),
         new PointF(0, bigY),
-					};
+          };
 			}
 		}
 	}

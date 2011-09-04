@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -55,22 +55,22 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
 			GraphicsPath hPath = new GraphicsPath();
 
-			var r = endPoint/(2*Math.Sin(_designAngle*(Math.PI/180)));
+			var r = endPoint / (2 * Math.Sin(_designAngle * (Math.PI / 180)));
 			var b = r - r * Math.Cos(_designAngle * (Math.PI / 180));
 			var h = endPoint / 2;
 
 			// Create the outline for our custom end cap.
 
 			hPath.AddArc(
-				(float)(-r-h), (float)(-b),
+				(float)(-r - h), (float)(-b),
 				(float)(2 * r), (float)(2 * r),
-				(float)(-90-_designAngle), (float)(2 * _designAngle));
+				(float)(-90 - _designAngle), (float)(2 * _designAngle));
 
 
 			hPath.AddArc(
-				(float)(h - r), (float)(b-1.999999*r),
+				(float)(h - r), (float)(b - 1.999999 * r),
 				(float)(2 * r), (float)(2 * r),
-				(float)(90+_designAngle), (float)(-2 * _designAngle));
+				(float)(90 + _designAngle), (float)(-2 * _designAngle));
 
 			CustomLineCap clone = new CustomLineCap(null, hPath); // we set the stroke path only
 			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);

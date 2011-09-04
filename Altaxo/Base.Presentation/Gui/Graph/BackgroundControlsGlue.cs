@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph
 				_doc = null;
 
 			// Apply the currently selected brush to the newly created instance
-			if (_doc != null && _cbBrush != null) 
+			if (_doc != null && _cbBrush != null)
 				_doc.Brush = _cbBrush.SelectedBrush;
 
 			OnBackgroundStyleChanged();
@@ -139,7 +139,7 @@ namespace Altaxo.Gui.Graph
 				}
 
 				_cbBrush = value;
-				if (_doc != null && _cbBrush != null && _doc.Brush!=null)
+				if (_doc != null && _cbBrush != null && _doc.Brush != null)
 					_cbBrush.SelectedBrush = _doc.Brush;
 
 				if (_cbBrush != null)

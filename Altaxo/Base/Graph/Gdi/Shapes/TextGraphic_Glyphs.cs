@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -91,7 +113,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			private static void InternalGetInformation(Graphics g, FontInfo result, Font font)
 			{
-					// get some properties of the font
+				// get some properties of the font
 				result.cyLineSpace = font.GetHeight(g); // space between two lines
 				int iCellSpace = font.FontFamily.GetLineSpacing(font.Style);
 				int iCellAscent = font.FontFamily.GetCellAscent(font.Style);
@@ -211,29 +233,29 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			/// <summary>Parent of this object.</summary>
 			public StructuralGlyph Parent { get; set; }
-			
+
 			/// <summary>Style of this object.</summary>
 			public StyleContext Style { get; set; }
 
 			/// <summary>X position.</summary>
 			public double X { get; set; }
-			
+
 			/// <summary>Y position.</summary>
 			public double Y { get; set; }
-			
+
 			/// <summary>Width of the object.</summary>
 			public double Width { get; set; }
 
 			/// <summary>Height of the object. Setting this propery, you will set <see cref="ExtendAboveLine" /> and <see cref="ExtendBelowLine" /> both to Height/2.</summary>
 			public double Height
 			{
-				get { return ExtendAboveBaseline + ExtendBelowBaseline; } 
+				get { return ExtendAboveBaseline + ExtendBelowBaseline; }
 				set { ExtendAboveBaseline = value / 2; ExtendBelowBaseline = value / 2; }
 			}
-			
+
 			/// <summary>Height of the object above the baseline.</summary>
 			public double ExtendAboveBaseline { get; set; }
-			
+
 			/// <summary>Extend of the object below the baseline. (Normally positive).</summary>
 			public double ExtendBelowBaseline { get; set; }
 
@@ -243,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Width = 0;
 				Height = 0;
 			}
-		
+
 			/// <summary>Draws the object.</summary>
 			public virtual void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
 			{
@@ -499,7 +521,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					Font font = dc.FontCache.GetFont(g, Style.FontId);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
 					double psize = g.MeasureString(".", font, PointF.Empty, this.StringFormat).Width;
-					g.DrawString(".", font, Style.brush, (float)(xbase + _child.Width/2 - psize/2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+					g.DrawString(".", font, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
 			}
 		}
@@ -621,7 +643,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		class TextGlyph : Glyph
 		{
 			protected string _text;
-		
+
 			public TextGlyph(string text, StyleContext style)
 			{
 				_text = text;
@@ -659,12 +681,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Width = 0;
 
 				double tab = mc.TabStop;
-				
-				if (!(tab> 0))
+
+				if (!(tab > 0))
 					tab = g.MeasureString("MMMM", mc.FontCache.GetFont(g, Style.BaseFontId), PointF.Empty, _stringFormat).Width;
 
-				if(!(tab>0))
-					tab = Style.BaseFontId.Size*4;
+				if (!(tab > 0))
+					tab = Style.BaseFontId.Size * 4;
 
 				if (tab > 0)
 				{
@@ -841,7 +863,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		class DocumentIdentifier : TextGlyph
 		{
 			public DocumentIdentifier(StyleContext style)
-			: base(null,style)
+				: base(null, style)
 			{
 			}
 			public override void Measure(Graphics g, MeasureContext mc, double x)

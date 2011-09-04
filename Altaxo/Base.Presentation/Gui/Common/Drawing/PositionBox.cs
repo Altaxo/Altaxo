@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,11 +71,11 @@ namespace Altaxo.Gui.Common.Drawing
 				string newtext = (string)value;
 				_textBoxText = newtext;
 
-				double val=0;
+				double val = 0;
 				if (Altaxo.Serialization.GUIConversion.GetLengthMeasureValue(newtext, ref val))
 				{
-						_value = val;
-						return val;
+					_value = val;
+					return val;
 				}
 				else
 					throw new ArgumentOutOfRangeException("Provided string can not be converted to a numeric value");
@@ -65,7 +87,7 @@ namespace Altaxo.Gui.Common.Drawing
 				double val = 0;
 				if (Altaxo.Serialization.GUIConversion.GetLengthMeasureValue((string)obj, ref val))
 				{
-					
+
 					if (double.IsInfinity(val))
 						error = "Value must not be infinity";
 					if (double.IsNaN(val))
@@ -108,7 +130,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_valueBinding.Mode = BindingMode.TwoWay;
 			_valueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 			_valueBindingExpression = this.SetBinding(TextBox.TextProperty, _valueBinding);
-	}
+		}
 
 
 		#region Dependency property
@@ -117,7 +139,8 @@ namespace Altaxo.Gui.Common.Drawing
 		public double PositionDistanceValue
 		{
 			get { var result = (double)GetValue(PositionDistanceValueProperty); return result; }
-			set { 
+			set
+			{
 				SetValue(PositionDistanceValueProperty, value);
 				this.Text = Altaxo.Serialization.GUIConversion.ToString(value);
 			}

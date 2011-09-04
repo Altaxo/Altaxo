@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +43,7 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		static readonly double[] _initialValues = new double[] { 0, 4, 6, 8, 10, 12};
+		static readonly double[] _initialValues = new double[] { 0, 4, 6, 8, 10, 12 };
 
 
 		public MiterLimitComboBox()
@@ -84,11 +106,11 @@ namespace Altaxo.Gui.Common.Drawing
 			var figure = new PathFigure();
 			figure.StartPoint = new Point(width, height * 0.875);
 			figure.Segments.Add(new PolyLineSegment(new Point[] 
-			{
-				new Point(width / 2, height / 2),
-				new Point(width, height * 0.175) }, true));
+      {
+        new Point(width / 2, height / 2),
+        new Point(width, height * 0.175) }, true));
 			geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
-			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = PenLineJoin.Miter, MiterLimit=miterLimit };
+			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = PenLineJoin.Miter, MiterLimit = miterLimit };
 			drawingGroup.Children.Add(geometryDrawing);
 
 			drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0, 0, width, height));

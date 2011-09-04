@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,13 +36,13 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public class HitTestPointData
 	{
-    /// <summary>Hitted point in page coordinates.</summary>
+		/// <summary>Hitted point in page coordinates.</summary>
 		PointD2D _hittedPointInPageCoord;
 
-    /// <summary>The ratio between displayed sizes and page scale sizes, i.e. the zoom factor on the display.</summary>
+		/// <summary>The ratio between displayed sizes and page scale sizes, i.e. the zoom factor on the display.</summary>
 		double _pageScale;
 
-    /// <summary>Transformation of this item that transform world coordinates to page coordinates.</summary>
+		/// <summary>Transformation of this item that transform world coordinates to page coordinates.</summary>
 		TransformationMatrix2D _transformation;
 
 		/// <summary>
@@ -88,7 +110,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 
-		
+
 
 		public HitTestPointData NewFromTranslationRotationScaleShear(double x, double y, double rotation, double scaleX, double scaleY, double shear)
 		{
@@ -99,7 +121,7 @@ namespace Altaxo.Graph.Gdi
 			if (1 != scaleX || 1 != scaleY)
 				result.Transformation.ScalePrepend(scaleX, scaleY);
 			if (0 != shear)
-				result.Transformation.ShearPrepend(shear,0);
+				result.Transformation.ShearPrepend(shear, 0);
 
 			return result;
 		}
@@ -114,7 +136,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 
-		
+
 
 		/// <summary>
 		/// Returns the hitted point in world coordinated by applying the inverse current coordinate transformation.
@@ -122,7 +144,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>Hitted point in world coordinates.</returns>
 		public PointD2D GetHittedPointInWorldCoord()
 		{
-				return Transformation.InverseTransformPoint(HittedPointInPageCoord);
+			return Transformation.InverseTransformPoint(HittedPointInPageCoord);
 		}
 
 		/// <summary>

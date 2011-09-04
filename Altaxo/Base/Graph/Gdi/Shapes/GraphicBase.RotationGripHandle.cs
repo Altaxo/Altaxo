@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public abstract partial class GraphicBase 
+	public abstract partial class GraphicBase
 	{
 		protected class RotationGripHandle : IGripManipulationHandle
 		{
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public void MoveGrip(PointD2D newPosition)
 			{
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
-        var diff = new PointD2D(newPosition.X - _fixaPosition.X, newPosition.Y - _fixaPosition.Y);
+				var diff = new PointD2D(newPosition.X - _fixaPosition.X, newPosition.Y - _fixaPosition.Y);
 				GraphObject.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff);
 			}
 
@@ -109,20 +109,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_rotationGripShape.AddArc(-ri, -ri, 2 * ri, 2 * ri, -45, 90); // mit Innenradius beginnen
 
 				_rotationGripShape.AddLines(new PointF[] 
-			{
-				new PointF(rii*cos45, rii*sin45),
-				new PointF(rii*cos45, rii*sin45 + rotArrowWidth*cos45),
-				new PointF(raa*cos45, raa*sin45)
-			});
+      {
+        new PointF(rii*cos45, rii*sin45),
+        new PointF(rii*cos45, rii*sin45 + rotArrowWidth*cos45),
+        new PointF(raa*cos45, raa*sin45)
+      });
 
 				_rotationGripShape.AddArc(-ra, -ra, 2 * ra, 2 * ra, 45, -90); // Außenradius
 
 				_rotationGripShape.AddLines(new PointF[] 
-			{
-				new PointF(raa*cos45, -raa*sin45),
-				new PointF(rii*cos45, -rii*sin45 - rotArrowWidth*cos45),
-				new PointF(rii*cos45, -rii*sin45),
-			});
+      {
+        new PointF(raa*cos45, -raa*sin45),
+        new PointF(rii*cos45, -rii*sin45 - rotArrowWidth*cos45),
+        new PointF(rii*cos45, -rii*sin45),
+      });
 
 				_rotationGripShape.CloseFigure();
 

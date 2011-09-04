@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
-  /// <summary>
-  /// This class is intended to use in list boxes, where you have to display a name, but must retrieve
-  /// the item instead.
-  /// </summary>
-  public class ListNode : System.ComponentModel.INotifyPropertyChanged
-  {
+	/// <summary>
+	/// This class is intended to use in list boxes, where you have to display a name, but must retrieve
+	/// the item instead.
+	/// </summary>
+	public class ListNode : System.ComponentModel.INotifyPropertyChanged
+	{
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 		protected string _text;
 		protected object _tag;
@@ -69,11 +69,11 @@ namespace Altaxo.Collections
 			}
 		}
 
-    public ListNode(string text, object tag)
-    {
-      Text = text;
-      Tag = tag;
-    }
+		public ListNode(string text, object tag)
+		{
+			Text = text;
+			Tag = tag;
+		}
 
 		public virtual string Text1 { get { return SubItemText(1); } }
 		public virtual string Text2 { get { return SubItemText(2); } }
@@ -87,19 +87,19 @@ namespace Altaxo.Collections
 
 		public virtual object Image { get { return null; } }
 
-    public override string ToString()
-    {
-      if (!string.IsNullOrEmpty(Text))
-        return Text;
-      else if (Tag != null)
-        return Tag.ToString();
-      else return base.ToString();
-    }
+		public override string ToString()
+		{
+			if (!string.IsNullOrEmpty(Text))
+				return Text;
+			else if (Tag != null)
+				return Tag.ToString();
+			else return base.ToString();
+		}
 
-    public virtual int SubItemCount { get { return 0; } }
-    public virtual string SubItemText(int i) { return null; }
-    public virtual string Description { get { return null; } }
-    public virtual System.Drawing.Color? SubItemBackColor(int i) { return null; }
+		public virtual int SubItemCount { get { return 0; } }
+		public virtual string SubItemText(int i) { return null; }
+		public virtual string Description { get { return null; } }
+		public virtual System.Drawing.Color? SubItemBackColor(int i) { return null; }
 		public virtual int ImageIndex { get { return 0; } }
 
 
@@ -112,74 +112,75 @@ namespace Altaxo.Collections
 
 	}
 
-  public class ListNodeList : System.Collections.ObjectModel.ObservableCollection<ListNode>
-  {
-    public ListNodeList() { }
-    public ListNodeList(IEnumerable<ListNode> from) : base(from) { }
+	public class ListNodeList : System.Collections.ObjectModel.ObservableCollection<ListNode>
+	{
+		public ListNodeList() { }
+		public ListNodeList(IEnumerable<ListNode> from) : base(from) { }
 
-    public int IndexOfObject(object o)
-    {
-      int i = -1;
-      foreach (ListNode n in this)
-      {
-        i++;
-        if (n.Tag == o)
-          return i;
-      }
-      return -1;
-    }
+		public int IndexOfObject(object o)
+		{
+			int i = -1;
+			foreach (ListNode n in this)
+			{
+				i++;
+				if (n.Tag == o)
+					return i;
+			}
+			return -1;
+		}
 
-    public void Exchange(int i, int j)
-    {
-      if (i == j)
-        return;
-      if (i < 0)
-        throw new ArgumentException("i<0");
-      if (j < 0)
-        throw new ArgumentException("j<0");
-      if (i >= Count)
-        throw new ArgumentException("i>=Count");
-      if (j >= Count)
-        throw new ArgumentException("j>=Count");
+		public void Exchange(int i, int j)
+		{
+			if (i == j)
+				return;
+			if (i < 0)
+				throw new ArgumentException("i<0");
+			if (j < 0)
+				throw new ArgumentException("j<0");
+			if (i >= Count)
+				throw new ArgumentException("i>=Count");
+			if (j >= Count)
+				throw new ArgumentException("j>=Count");
 
-      ListNode li = this[i];
-      this[i] = this[j];
-      this[j] = li;
-    }
+			ListNode li = this[i];
+			this[i] = this[j];
+			this[j] = li;
+		}
 
-  }
+	}
 
 	public interface ISelectableItem
 	{
 		bool IsSelected { get; set; }
 	}
 
-  public class SelectableListNode : ListNode, ISelectableItem
-  {
+	public class SelectableListNode : ListNode, ISelectableItem
+	{
 		protected bool _isSelected;
 
-		public bool IsSelected 
+		public bool IsSelected
 		{
 			get { return _isSelected; }
-			set 
-			{ 
+			set
+			{
 				var oldValue = _isSelected;
-				_isSelected = value; 
-				if (oldValue != value) 
-					OnPropertyChanged("IsSelected"); }
+				_isSelected = value;
+				if (oldValue != value)
+					OnPropertyChanged("IsSelected");
+			}
 		}
 
-    public SelectableListNode(string text, object tag, bool isSelected)
-      : base(text, tag)
-    {
-      this._isSelected = isSelected;
-    }
-  }
+		public SelectableListNode(string text, object tag, bool isSelected)
+			: base(text, tag)
+		{
+			this._isSelected = isSelected;
+		}
+	}
 
-  public class SelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNode>
-  {
-    public SelectableListNodeList() { }
-    public SelectableListNodeList(IEnumerable<SelectableListNode> from) : base(from) { }
+	public class SelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNode>
+	{
+		public SelectableListNodeList() { }
+		public SelectableListNodeList(IEnumerable<SelectableListNode> from) : base(from) { }
 
 		/// <summary>
 		/// Initializes the collection with a list of names. One of them is the selected item.
@@ -188,8 +189,8 @@ namespace Altaxo.Collections
 		/// <param name="selectedName">The selected name. Each item with this name is selected.</param>
 		public SelectableListNodeList(string[] names, string selectedName)
 		{
-			foreach(var name in names)
-				Add(new SelectableListNode(name,null,name==selectedName));
+			foreach (var name in names)
+				Add(new SelectableListNode(name, null, name == selectedName));
 		}
 
 		/// <summary>
@@ -199,8 +200,8 @@ namespace Altaxo.Collections
 		public SelectableListNodeList(System.Enum selectedItem)
 		{
 			var values = System.Enum.GetValues(selectedItem.GetType());
-			foreach(var value in values)
-				Add(new SelectableListNode(value.ToString(), value, value.ToString()==selectedItem.ToString()));
+			foreach (var value in values)
+				Add(new SelectableListNode(value.ToString(), value, value.ToString() == selectedItem.ToString()));
 		}
 
 
@@ -221,38 +222,38 @@ namespace Altaxo.Collections
 		}
 
 		public int IndexOfObject(object o)
-    {
-      int i = -1;
-      foreach (SelectableListNode n in this)
-      {
-        i++;
-        if (n.Tag == o)
-          return i;
-      }
-      return -1;
-    }
+		{
+			int i = -1;
+			foreach (SelectableListNode n in this)
+			{
+				i++;
+				if (n.Tag == o)
+					return i;
+			}
+			return -1;
+		}
 
 		/// <summary>
 		/// Gets the first selected node, or null if no node is currently selected.
 		/// </summary>
-    public SelectableListNode FirstSelectedNode
-    {
-      get
-      {
-        foreach (SelectableListNode node in this)
-          if (node.IsSelected)
-            return node;
+		public SelectableListNode FirstSelectedNode
+		{
+			get
+			{
+				foreach (SelectableListNode node in this)
+					if (node.IsSelected)
+						return node;
 
-        return null;
-      }
-    }
+				return null;
+			}
+		}
 		/// <summary>Get the index of the first selected node. Returns -1 if no node is selected.</summary>
 		public int FirstSelectedNodeIndex
 		{
 			get
 			{
 				int len = this.Count;
-				for(int i=0;i<len;i++)
+				for (int i = 0; i < len; i++)
 					if (this[i].IsSelected)
 						return i;
 
@@ -271,23 +272,23 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <param name="i">First item index.</param>
 		/// <param name="j">Second item index.</param>
-    public void Exchange(int i, int j)
-    {
-      if (i == j)
-        return;
-      if (i < 0)
-        throw new ArgumentException("i<0");
-      if (j < 0)
-        throw new ArgumentException("j<0");
-      if (i >= Count)
-        throw new ArgumentException("i>=Count");
-      if (j >= Count)
-        throw new ArgumentException("j>=Count");
+		public void Exchange(int i, int j)
+		{
+			if (i == j)
+				return;
+			if (i < 0)
+				throw new ArgumentException("i<0");
+			if (j < 0)
+				throw new ArgumentException("j<0");
+			if (i >= Count)
+				throw new ArgumentException("i>=Count");
+			if (j >= Count)
+				throw new ArgumentException("j>=Count");
 
-      SelectableListNode li = this[i];
-      this[i] = this[j];
-      this[j] = li;
-    }
+			SelectableListNode li = this[i];
+			this[i] = this[j];
+			this[j] = li;
+		}
 
 		/// <summary>
 		/// Move the selected items one place up (i.e. to lower index).
@@ -330,10 +331,10 @@ namespace Altaxo.Collections
 					this.RemoveAt(i);
 		}
 
-  }
+	}
 
-  public class CheckableSelectableListNode : SelectableListNode
-  {
+	public class CheckableSelectableListNode : SelectableListNode
+	{
 		protected bool _isChecked;
 		public bool IsChecked
 		{
@@ -350,48 +351,48 @@ namespace Altaxo.Collections
 			}
 		}
 
-    public CheckableSelectableListNode(string text, object tag, bool isSelected, bool isChecked)
-      : base(text, tag, isSelected)
-    {
-      this._isChecked = isChecked;
-    }
-  }
+		public CheckableSelectableListNode(string text, object tag, bool isSelected, bool isChecked)
+			: base(text, tag, isSelected)
+		{
+			this._isChecked = isChecked;
+		}
+	}
 
-  public class CheckableSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<CheckableSelectableListNode>
-  {
-    public CheckableSelectableListNodeList() { }
-    public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from) : base(from) { }
+	public class CheckableSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<CheckableSelectableListNode>
+	{
+		public CheckableSelectableListNodeList() { }
+		public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from) : base(from) { }
 
-    public int IndexOfObject(object o)
-    {
-      int i = -1;
-      foreach (CheckableSelectableListNode n in this)
-      {
-        i++;
-        if (n.Tag == o)
-          return i;
-      }
-      return -1;
-    }
-    public void Exchange(int i, int j)
-    {
-      if (i == j)
-        return;
-      if (i < 0)
-        throw new ArgumentException("i<0");
-      if (j < 0)
-        throw new ArgumentException("j<0");
-      if (i >= Count)
-        throw new ArgumentException("i>=Count");
-      if (j >= Count)
-        throw new ArgumentException("j>=Count");
+		public int IndexOfObject(object o)
+		{
+			int i = -1;
+			foreach (CheckableSelectableListNode n in this)
+			{
+				i++;
+				if (n.Tag == o)
+					return i;
+			}
+			return -1;
+		}
+		public void Exchange(int i, int j)
+		{
+			if (i == j)
+				return;
+			if (i < 0)
+				throw new ArgumentException("i<0");
+			if (j < 0)
+				throw new ArgumentException("j<0");
+			if (i >= Count)
+				throw new ArgumentException("i>=Count");
+			if (j >= Count)
+				throw new ArgumentException("j>=Count");
 
-      CheckableSelectableListNode li = this[i];
-      this[i] = this[j];
-      this[j] = li;
-    }
+			CheckableSelectableListNode li = this[i];
+			this[i] = this[j];
+			this[j] = li;
+		}
 
-  }
+	}
 
 
 	public static class SelectableListNodeListHelper
@@ -402,7 +403,7 @@ namespace Altaxo.Collections
 			foreach (System.Enum e in System.Enum.GetValues(enumerationValue.GetType()))
 			{
 				string baseName = e.ToString();
-				bool isSelected = 0==e.CompareTo(enumerationValue);
+				bool isSelected = 0 == e.CompareTo(enumerationValue);
 				list.Add(new SelectableListNode(baseName, e, isSelected));
 			}
 		}
@@ -420,7 +421,7 @@ namespace Altaxo.Collections
 
 		public static int GetFlagEnumValueAsInt32(this SelectableListNodeList list)
 		{
-			int result=0;
+			int result = 0;
 			foreach (var item in list)
 			{
 				if (item.IsSelected)
@@ -470,13 +471,13 @@ namespace Altaxo.Collections
 		/// <param name="list">List to operate with.</param>
 		/// <param name="IsSelected">Function that determines for each item index if it is selected or not.</param>
 		/// <param name="steps">Number of steps to move. A positive value moves the items towards higher indices, a negative value towards lower indices.</param>
-		public static void  MoveSelectedItems<T>(this IList<T> list, Func<int,bool> IsSelected, int steps)
-	{
-		if (steps < 0)
-			MoveSelectedItemsTowardsLowerIndices(list, IsSelected, -steps);
-		else
-			MoveSelectedItemsTowardsHigherIndices(list, IsSelected, steps);
-	}
+		public static void MoveSelectedItems<T>(this IList<T> list, Func<int, bool> IsSelected, int steps)
+		{
+			if (steps < 0)
+				MoveSelectedItemsTowardsLowerIndices(list, IsSelected, -steps);
+			else
+				MoveSelectedItemsTowardsHigherIndices(list, IsSelected, steps);
+		}
 
 		/// <summary>
 		/// Return the number of steps that selected items can be moved towards lower indices. The selected item with the lowest index determines that value.
@@ -567,7 +568,7 @@ namespace Altaxo.Collections
 			if (steps < 0)
 				throw new ArgumentOutOfRangeException("steps have to be greater or equal than zero");
 
-			if (0 == steps || list.Count==0)
+			if (0 == steps || list.Count == 0)
 				return;
 
 			for (int i = 0; i < steps; ++i)
@@ -595,8 +596,8 @@ namespace Altaxo.Collections
 		{
 			if (steps < 0)
 				throw new ArgumentOutOfRangeException("steps have to be greater or equal than zero");
-		
-			if (0 == steps || list.Count==0)
+
+			if (0 == steps || list.Count == 0)
 				return;
 
 			for (int i = list.Count - 1; i >= list.Count - steps; --i)
@@ -605,7 +606,7 @@ namespace Altaxo.Collections
 					return;
 			}
 
-			for (int i = list.Count - 1- steps; i >= 0; --i)
+			for (int i = list.Count - 1 - steps; i >= 0; --i)
 			{
 				if (isSelected(i))
 					ExchangePositions(list, i, i + steps);

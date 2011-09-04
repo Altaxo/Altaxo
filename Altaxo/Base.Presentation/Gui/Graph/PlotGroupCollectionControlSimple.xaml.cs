@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Graph
 
 		#region IXYPlotGroupView
 
-	
+
 
 		public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict)
 		{
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph
 			this.m_chkPlotGroupLineType.IsChecked = bLineType;
 			this.m_chkPlotGroupSymbol.IsChecked = bSymbol;
 
-			this._cbStrict.ItemsSource= new object[] { "Normal", "Exact", "Strict" };
+			this._cbStrict.ItemsSource = new object[] { "Normal", "Exact", "Strict" };
 			this._cbStrict.SelectedIndex = (int)bStrict;
 		}
 
@@ -75,22 +75,22 @@ namespace Altaxo.Gui.Graph
 
 		public bool PlotGroupColor
 		{
-			get { return true==m_chkPlotGroupColor.IsChecked; }
+			get { return true == m_chkPlotGroupColor.IsChecked; }
 		}
 
 		public bool PlotGroupLineType
 		{
-			get { return true==m_chkPlotGroupLineType.IsChecked; }
+			get { return true == m_chkPlotGroupLineType.IsChecked; }
 		}
 
 		public bool PlotGroupSymbol
 		{
-			get { return true==m_chkPlotGroupSymbol.IsChecked; }
+			get { return true == m_chkPlotGroupSymbol.IsChecked; }
 		}
 
 		public bool PlotGroupConcurrently
 		{
-			get { return true==_rbtConcurrently.IsChecked; }
+			get { return true == _rbtConcurrently.IsChecked; }
 		}
 
 		public bool PlotGroupUpdate
@@ -100,6 +100,6 @@ namespace Altaxo.Gui.Graph
 
 		#endregion
 
-	
+
 	}
 }

@@ -3,7 +3,7 @@
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
 //    modified for Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,14 +34,14 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Base class for Line Search method declaration</summary>
-  /// <remarks>
-  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
-  /// </remarks>
-  public abstract class LineSearchMethod : OptimizationMethod 
-  {
-    ///<summary> Minimize the given cost function </summary>
-    public abstract DoubleVector Search(DoubleVector x, DoubleVector direction, double step);
-  }
+	///<summary>Base class for Line Search method declaration</summary>
+	/// <remarks>
+	/// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+	/// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+	/// </remarks>
+	public abstract class LineSearchMethod : OptimizationMethod
+	{
+		///<summary> Minimize the given cost function </summary>
+		public abstract DoubleVector Search(DoubleVector x, DoubleVector direction, double step);
+	}
 }

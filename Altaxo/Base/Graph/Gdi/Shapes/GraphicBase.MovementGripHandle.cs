@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public abstract partial class GraphicBase 
+	public abstract partial class GraphicBase
 	{
 		protected class MovementGripHandle : IGripManipulationHandle
 		{
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				diff = _parent.Transformation.InverseTransformVector(diff);
 				((GraphicBase)_parent.HittedObject).SilentSetPosition(_initialObjectPosition + diff);
 
-				
+
 			}
 
 			public void Show(Graphics g)

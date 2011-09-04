@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,68 +29,68 @@ using Altaxo.Graph.Gdi.Plot.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-  using Graph.Plot.Groups;
-  using Groups;
+	using Graph.Plot.Groups;
+	using Groups;
 
-  public interface IG2DPlotStyle : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
-  {
-    /// <summary>
-    /// Adds all plot group styles that are not already in the externalGroups collection, and that
-    /// are appropriate for this plot style. Furthermore, the group style must be intended for use as external group style.
-    /// </summary>
-    /// <param name="externalGroups">The collection of external group styles.</param>
-    void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups);
+	public interface IG2DPlotStyle : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
+	{
+		/// <summary>
+		/// Adds all plot group styles that are not already in the externalGroups collection, and that
+		/// are appropriate for this plot style. Furthermore, the group style must be intended for use as external group style.
+		/// </summary>
+		/// <param name="externalGroups">The collection of external group styles.</param>
+		void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups);
 
-    /// <summary>
-    /// Looks in externalGroups and localGroups to find PlotGroupStyles that are appropriate for this plot style.
-    /// If such PlotGroupStyles were not found, the function adds them to the localGroups collection.
-    /// </summary>
-    /// <param name="externalGroups">External plot groups. This collection remains unchanged and is provided here only to check whether or not the group style is already present in the externalGroups.</param>
-    /// <param name="localGroups">Local plot groups. To this collection PlotGroupStyles are added if neccessary.</param>
-    void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
+		/// <summary>
+		/// Looks in externalGroups and localGroups to find PlotGroupStyles that are appropriate for this plot style.
+		/// If such PlotGroupStyles were not found, the function adds them to the localGroups collection.
+		/// </summary>
+		/// <param name="externalGroups">External plot groups. This collection remains unchanged and is provided here only to check whether or not the group style is already present in the externalGroups.</param>
+		/// <param name="localGroups">Local plot groups. To this collection PlotGroupStyles are added if neccessary.</param>
+		void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
 
 
-    /// <summary>
-    /// Prepares the group styles by showing them to this plot style.
-    /// </summary>
+		/// <summary>
+		/// Prepares the group styles by showing them to this plot style.
+		/// </summary>
 		/// <param name="externalGroups">External plot group styles, i.e. plot group styles from the plot item collection.</param>
 		/// <param name="localGroups">Internal plot group styles of the plot item this plot style belongs to.</param>
 		/// <param name="layer">Plot layer the plot item belonging to this plot style resides in.</param>
-    /// <param name="pdata">The preprocessed plot data of the plot item.</param>
-    void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata);
+		/// <param name="pdata">The preprocessed plot data of the plot item.</param>
+		void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata);
 
 
-    /// <summary>
-    /// Applies the group styles to this plot styles.
-    /// </summary>
-    /// <param name="externalGroups">External plot group styles, i.e. plot group styles from the plot item collection.</param>
-    /// <param name="localGroups">Internal plot group styles of this plot item.</param>
-    void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
+		/// <summary>
+		/// Applies the group styles to this plot styles.
+		/// </summary>
+		/// <param name="externalGroups">External plot group styles, i.e. plot group styles from the plot item collection.</param>
+		/// <param name="localGroups">Internal plot group styles of this plot item.</param>
+		void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
 
-    /// <summary>
-    /// Paints the style.
-    /// </summary>
-    /// <param name="g">The graphics.</param>
-    /// <param name="layer">Area to plot to</param>
-    /// <param name="pdata">The preprocessed plot data used for plotting.</param>
-    void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData );
-
-  
-    /// <summary>
-    /// Paints a appropriate symbol in the given rectangle. The width of the rectangle is mandatory, but if the heigth is too small,
-    /// you should extend the bounding rectangle and set it as return value of this function.
-    /// </summary>
-    /// <param name="g">The graphics context.</param>
-    /// <param name="bounds">The bounds, in which the symbol should be painted.</param>
-    /// <returns>If the height of the bounding rectangle is sufficient for painting, returns the original bounding rectangle. Otherwise, it returns a rectangle that is
-    /// inflated in y-Direction. Do not inflate the rectangle in x-direction!</returns>
-    RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds);
+		/// <summary>
+		/// Paints the style.
+		/// </summary>
+		/// <param name="g">The graphics.</param>
+		/// <param name="layer">Area to plot to</param>
+		/// <param name="pdata">The preprocessed plot data used for plotting.</param>
+		void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData);
 
 
-    /// <summary>
-    /// Sets the parent object
-    /// </summary>
-    new object ParentObject { set; }
+		/// <summary>
+		/// Paints a appropriate symbol in the given rectangle. The width of the rectangle is mandatory, but if the heigth is too small,
+		/// you should extend the bounding rectangle and set it as return value of this function.
+		/// </summary>
+		/// <param name="g">The graphics context.</param>
+		/// <param name="bounds">The bounds, in which the symbol should be painted.</param>
+		/// <returns>If the height of the bounding rectangle is sufficient for painting, returns the original bounding rectangle. Otherwise, it returns a rectangle that is
+		/// inflated in y-Direction. Do not inflate the rectangle in x-direction!</returns>
+		RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds);
+
+
+		/// <summary>
+		/// Sets the parent object
+		/// </summary>
+		new object ParentObject { set; }
 
 
 		/// <summary>
@@ -100,5 +100,5 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="options">Information what to replace.</param>
 		void EnumerateDocumentReferences(IDocNodeProxyVisitor options);
 
-  }
+	}
 }

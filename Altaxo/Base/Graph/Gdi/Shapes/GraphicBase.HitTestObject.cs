@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	public  abstract partial class GraphicBase 
+	public abstract partial class GraphicBase
 	{
 		protected class GraphicBaseHitTestObject : HitTestObjectBase
 		{
@@ -70,10 +70,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public override int GetNextGripLevel(int currentGripLevel)
 			{
-        int newLevel = 1 + currentGripLevel;
-        int maxLevel = ((GraphicBase)_hitobject).AutoSize ? 3 : 4;
-        if (newLevel > maxLevel)
-          newLevel = 1;
+				int newLevel = 1 + currentGripLevel;
+				int maxLevel = ((GraphicBase)_hitobject).AutoSize ? 3 : 4;
+				if (newLevel > maxLevel)
+					newLevel = 1;
 				return newLevel;
 			}
 
@@ -87,11 +87,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move);
 						case 1:
 							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rotate);
-            case 2:
-              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
-            case 3:
-              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
-          }
+						case 2:
+							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
+						case 3:
+							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
+					}
 				}
 				else // a normal object
 				{
@@ -103,11 +103,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Resize);
 						case 2:
 							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rotate);
-            case 3:
-              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
-            case 4:
-              return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
-          }
+						case 3:
+							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
+						case 4:
+							return ((GraphicBase)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rescale);
+					}
 				}
 				return null;
 			}

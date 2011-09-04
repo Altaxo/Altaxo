@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,185 +25,185 @@ using System.Drawing;
 using System.Runtime.Serialization;
 namespace Altaxo.Graph.Gdi.Background
 {
-  /// <summary>
-  /// Backs the item with a color filled rectangle.
-  /// </summary>
-  [Serializable]
-  public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
-  {
-    protected BrushX _brush = new BrushX(NamedColor.White);
-    protected float _shadowLength = 5;
+	/// <summary>
+	/// Backs the item with a color filled rectangle.
+	/// </summary>
+	[Serializable]
+	public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
+	{
+		protected BrushX _brush = new BrushX(NamedColor.White);
+		protected float _shadowLength = 5;
 
-    [NonSerialized]
-    protected BrushX _cachedShadowBrush;
-   
-
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.RectangleWithShadow", 0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        throw new ApplicationException("Programming error - this should not be called");
-        /*
-        RectangleWithShadow s = (RectangleWithShadow)obj;
-        info.AddValue("Color", s._color);
-        info.AddValue("ShadowLength", s._shadowLength);
-        */
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
-        s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
-        s._shadowLength = (float)info.GetDouble();
-
-        return s;
-      }
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.RectangleWithShadow", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleWithShadow), 2)]
-    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        RectangleWithShadow s = (RectangleWithShadow)obj;
-        info.AddValue("Brush", s._brush);
-        info.AddValue("ShadowLength", s._shadowLength);
-
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
-        s.Brush = (BrushX)info.GetValue("Brush", parent);
-        s._shadowLength = (float)info.GetDouble();
-
-        return s;
-      }
-    }
+		[NonSerialized]
+		protected BrushX _cachedShadowBrush;
 
 
-    #endregion
+		#region Serialization
 
-    #region IDeserializationCallback Members
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.RectangleWithShadow", 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new ApplicationException("Programming error - this should not be called");
+				/*
+				RectangleWithShadow s = (RectangleWithShadow)obj;
+				info.AddValue("Color", s._color);
+				info.AddValue("ShadowLength", s._shadowLength);
+				*/
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
+				s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
+				s._shadowLength = (float)info.GetDouble();
 
-    public void OnDeserialization(object sender)
-    {
-      SetCachedBrushes();
-    }
+				return s;
+			}
+		}
 
-    #endregion
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.RectangleWithShadow", 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleWithShadow), 2)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				RectangleWithShadow s = (RectangleWithShadow)obj;
+				info.AddValue("Brush", s._brush);
+				info.AddValue("ShadowLength", s._shadowLength);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
+				s.Brush = (BrushX)info.GetValue("Brush", parent);
+				s._shadowLength = (float)info.GetDouble();
+
+				return s;
+			}
+		}
 
 
-    public RectangleWithShadow()
-    {
-    }
+		#endregion
 
-    public RectangleWithShadow(NamedColor c)
-    {
-      this.Brush = new BrushX(c);
-    }
+		#region IDeserializationCallback Members
 
-    public RectangleWithShadow(RectangleWithShadow from)
-    {
-      CopyFrom(from);
-    }
+		public void OnDeserialization(object sender)
+		{
+			SetCachedBrushes();
+		}
 
-    public void CopyFrom(RectangleWithShadow from)
-    {
+		#endregion
+
+
+		public RectangleWithShadow()
+		{
+		}
+
+		public RectangleWithShadow(NamedColor c)
+		{
+			this.Brush = new BrushX(c);
+		}
+
+		public RectangleWithShadow(RectangleWithShadow from)
+		{
+			CopyFrom(from);
+		}
+
+		public void CopyFrom(RectangleWithShadow from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-      this.Brush = from._brush;
-    }
+			this.Brush = from._brush;
+		}
 
-    public object Clone()
-    {
-      return new RectangleWithShadow(this);
-    }
+		public object Clone()
+		{
+			return new RectangleWithShadow(this);
+		}
 
-    private void ResetCachedBrushes()
-    {
-      this._cachedShadowBrush = null;
-    }
+		private void ResetCachedBrushes()
+		{
+			this._cachedShadowBrush = null;
+		}
 
-    private void SetCachedBrushes()
-    {
-      switch (_brush.BrushType)
-      {
-        default:
-        case BrushType.SolidBrush:
-          this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
-          break;
-        case BrushType.HatchBrush:
-          this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
-          break;
-        case BrushType.TextureBrush:
-          this._cachedShadowBrush = new BrushX(NamedColor.Black);
-          break;
-        case BrushType.LinearGradientBrush:
-        case BrushType.PathGradientBrush:
-          this._cachedShadowBrush = (BrushX)_brush.Clone();
-          this._cachedShadowBrush.Color = NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0);
-          this._cachedShadowBrush.BackColor = NamedColor.FromArgb(_brush.BackColor.Color.A, 0, 0, 0);
-          break;
-      }
-      
-    }
+		private void SetCachedBrushes()
+		{
+			switch (_brush.BrushType)
+			{
+				default:
+				case BrushType.SolidBrush:
+					this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
+					break;
+				case BrushType.HatchBrush:
+					this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
+					break;
+				case BrushType.TextureBrush:
+					this._cachedShadowBrush = new BrushX(NamedColor.Black);
+					break;
+				case BrushType.LinearGradientBrush:
+				case BrushType.PathGradientBrush:
+					this._cachedShadowBrush = (BrushX)_brush.Clone();
+					this._cachedShadowBrush.Color = NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0);
+					this._cachedShadowBrush.BackColor = NamedColor.FromArgb(_brush.BackColor.Color.A, 0, 0, 0);
+					break;
+			}
 
-    #region IBackgroundStyle Members
+		}
 
-    public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-      innerArea.Inflate(_shadowLength/2,_shadowLength/2);
-      innerArea.Width += _shadowLength;
-      innerArea.Height += _shadowLength;
-      return innerArea;
-    }
+		#region IBackgroundStyle Members
 
-    public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-      if (null == _cachedShadowBrush)
-        SetCachedBrushes();
+		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
+			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2);
+			innerArea.Width += _shadowLength;
+			innerArea.Height += _shadowLength;
+			return innerArea;
+		}
 
-      innerArea.Inflate(_shadowLength / 2,_shadowLength/2);
-   
-      // please note: m_Bounds is already extended to the shadow
+		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
+			if (null == _cachedShadowBrush)
+				SetCachedBrushes();
 
-      // first the shadow
-      _cachedShadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2);
 
-      g.TranslateTransform(_shadowLength, _shadowLength);
-      g.FillRectangle(_cachedShadowBrush, innerArea);
-      g.TranslateTransform(-_shadowLength, -_shadowLength);
+			// please note: m_Bounds is already extended to the shadow
 
-      _brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-      g.FillRectangle(_brush, innerArea);
-      g.DrawRectangle(Pens.Black, innerArea.Left, innerArea.Top, innerArea.Width , innerArea.Height );
-    }
+			// first the shadow
+			_cachedShadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
 
-    public bool SupportsBrush
-    { 
-      get
-      { 
-        return true; 
-      } 
-    }
+			g.TranslateTransform(_shadowLength, _shadowLength);
+			g.FillRectangle(_cachedShadowBrush, innerArea);
+			g.TranslateTransform(-_shadowLength, -_shadowLength);
 
-    public BrushX Brush
-    {
-      get
-      {
-        return _brush;
-      }
-      set
-      {
-        _brush = value==null ? null : value.Clone();
-        ResetCachedBrushes();
-      }
-    }
-    #endregion
+			_brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+			g.FillRectangle(_brush, innerArea);
+			g.DrawRectangle(Pens.Black, innerArea.Left, innerArea.Top, innerArea.Width, innerArea.Height);
+		}
 
-  }
+		public bool SupportsBrush
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public BrushX Brush
+		{
+			get
+			{
+				return _brush;
+			}
+			set
+			{
+				_brush = value == null ? null : value.Clone();
+				ResetCachedBrushes();
+			}
+		}
+		#endregion
+
+	}
 }

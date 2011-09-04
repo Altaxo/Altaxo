@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
-  /// <summary>
-  /// Base class for all Kronrod algorithms.
-  /// </summary>
-  public class QK
-  {
-    #region QK
+	/// <summary>
+	/// Base class for all Kronrod algorithms.
+	/// </summary>
+	public class QK
+	{
+		#region QK
 
-    /* integration/qk.c
+		/* integration/qk.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -30,89 +30,89 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    protected static void
-    gsl_integration_qk(int n,
-                        double[] xgk, double[] wg, double[] wgk,
-                        double[] fv1, double[] fv2,
-                        ScalarFunctionDD f, double a, double b,
-                        out double result, out double abserr,
-                        out double resabs, out double resasc)
-    {
+		protected static void
+		gsl_integration_qk(int n,
+												double[] xgk, double[] wg, double[] wgk,
+												double[] fv1, double[] fv2,
+												ScalarFunctionDD f, double a, double b,
+												out double result, out double abserr,
+												out double resabs, out double resasc)
+		{
 
-      double center = 0.5 * (a + b);
-      double half_length = 0.5 * (b - a);
-      double abs_half_length = Math.Abs(half_length);
-      double f_center = f(center);
+			double center = 0.5 * (a + b);
+			double half_length = 0.5 * (b - a);
+			double abs_half_length = Math.Abs(half_length);
+			double f_center = f(center);
 
-      double result_gauss = 0;
-      double result_kronrod = f_center * wgk[n - 1];
+			double result_gauss = 0;
+			double result_kronrod = f_center * wgk[n - 1];
 
-      double result_abs = Math.Abs(result_kronrod);
-      double result_asc = 0;
-      double mean = 0, err = 0;
+			double result_abs = Math.Abs(result_kronrod);
+			double result_asc = 0;
+			double mean = 0, err = 0;
 
-      int j;
+			int j;
 
-      if (n % 2 == 0)
-      {
-        result_gauss = f_center * wg[n / 2 - 1];
-      }
+			if (n % 2 == 0)
+			{
+				result_gauss = f_center * wg[n / 2 - 1];
+			}
 
-      for (j = 0; j < (n - 1) / 2; j++)
-      {
-        int jtw = j * 2 + 1;        /* j=1,2,3 jtw=2,4,6 */
-        double abscissa = half_length * xgk[jtw];
-        double fval1 = f(center - abscissa);
-        double fval2 = f(center + abscissa);
-        double fsum = fval1 + fval2;
-        fv1[jtw] = fval1;
-        fv2[jtw] = fval2;
-        result_gauss += wg[j] * fsum;
-        result_kronrod += wgk[jtw] * fsum;
-        result_abs += wgk[jtw] * (Math.Abs(fval1) + Math.Abs(fval2));
-      }
+			for (j = 0; j < (n - 1) / 2; j++)
+			{
+				int jtw = j * 2 + 1;        /* j=1,2,3 jtw=2,4,6 */
+				double abscissa = half_length * xgk[jtw];
+				double fval1 = f(center - abscissa);
+				double fval2 = f(center + abscissa);
+				double fsum = fval1 + fval2;
+				fv1[jtw] = fval1;
+				fv2[jtw] = fval2;
+				result_gauss += wg[j] * fsum;
+				result_kronrod += wgk[jtw] * fsum;
+				result_abs += wgk[jtw] * (Math.Abs(fval1) + Math.Abs(fval2));
+			}
 
-      for (j = 0; j < n / 2; j++)
-      {
-        int jtwm1 = j * 2;
-        double abscissa = half_length * xgk[jtwm1];
-        double fval1 = f(center - abscissa);
-        double fval2 = f(center + abscissa);
-        fv1[jtwm1] = fval1;
-        fv2[jtwm1] = fval2;
-        result_kronrod += wgk[jtwm1] * (fval1 + fval2);
-        result_abs += wgk[jtwm1] * (Math.Abs(fval1) + Math.Abs(fval2));
-      };
+			for (j = 0; j < n / 2; j++)
+			{
+				int jtwm1 = j * 2;
+				double abscissa = half_length * xgk[jtwm1];
+				double fval1 = f(center - abscissa);
+				double fval2 = f(center + abscissa);
+				fv1[jtwm1] = fval1;
+				fv2[jtwm1] = fval2;
+				result_kronrod += wgk[jtwm1] * (fval1 + fval2);
+				result_abs += wgk[jtwm1] * (Math.Abs(fval1) + Math.Abs(fval2));
+			};
 
-      mean = result_kronrod * 0.5;
+			mean = result_kronrod * 0.5;
 
-      result_asc = wgk[n - 1] * Math.Abs(f_center - mean);
+			result_asc = wgk[n - 1] * Math.Abs(f_center - mean);
 
-      for (j = 0; j < n - 1; j++)
-      {
-        result_asc += wgk[j] * (Math.Abs(fv1[j] - mean) + Math.Abs(fv2[j] - mean));
-      }
+			for (j = 0; j < n - 1; j++)
+			{
+				result_asc += wgk[j] * (Math.Abs(fv1[j] - mean) + Math.Abs(fv2[j] - mean));
+			}
 
-      /* scale by the width of the integration region */
+			/* scale by the width of the integration region */
 
-      err = (result_kronrod - result_gauss) * half_length;
+			err = (result_kronrod - result_gauss) * half_length;
 
-      result_kronrod *= half_length;
-      result_abs *= abs_half_length;
-      result_asc *= abs_half_length;
+			result_kronrod *= half_length;
+			result_abs *= abs_half_length;
+			result_asc *= abs_half_length;
 
-      result = result_kronrod;
-      resabs = result_abs;
-      resasc = result_asc;
-      abserr = rescale_error(err, result_abs, result_asc);
+			result = result_kronrod;
+			resabs = result_abs;
+			resasc = result_asc;
+			abserr = rescale_error(err, result_abs, result_asc);
 
-    }
+		}
 
 
-    #endregion
+		#endregion
 
-    #region Rescale_Error
-    /* integration/err.c
+		#region Rescale_Error
+		/* integration/err.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -132,43 +132,43 @@ namespace Altaxo.Calc.Integration
  */
 
 
-    static double
-    rescale_error(double err, double result_abs, double result_asc)
-    {
-      err = Math.Abs(err);
+		static double
+		rescale_error(double err, double result_abs, double result_asc)
+		{
+			err = Math.Abs(err);
 
-      if (result_asc != 0 && err != 0)
-      {
-        double scale = Math.Pow((200 * err / result_asc), 1.5);
+			if (result_asc != 0 && err != 0)
+			{
+				double scale = Math.Pow((200 * err / result_asc), 1.5);
 
-        if (scale < 1)
-        {
-          err = result_asc * scale;
-        }
-        else
-        {
-          err = result_asc;
-        }
-      }
-      if (result_abs > GSL_CONST.GSL_DBL_MIN / (50 * GSL_CONST.GSL_DBL_EPSILON))
-      {
-        double min_err = 50 * GSL_CONST.GSL_DBL_EPSILON * result_abs;
+				if (scale < 1)
+				{
+					err = result_asc * scale;
+				}
+				else
+				{
+					err = result_asc;
+				}
+			}
+			if (result_abs > GSL_CONST.GSL_DBL_MIN / (50 * GSL_CONST.GSL_DBL_EPSILON))
+			{
+				double min_err = 50 * GSL_CONST.GSL_DBL_EPSILON * result_abs;
 
-        if (min_err > err)
-        {
-          err = min_err;
-        }
-      }
+				if (min_err > err)
+				{
+					err = min_err;
+				}
+			}
 
-      return err;
-    }
+			return err;
+		}
 
-    #endregion
-  }
+		#endregion
+	}
 
-  #region QK15
+	#region QK15
 
-  /* integration/qk15.c
+	/* integration/qk15.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -187,12 +187,12 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-  /* Gauss quadrature weights and kronrod quadrature abscissae and
+	/* Gauss quadrature weights and kronrod quadrature abscissae and
  weights as evaluated with 80 decimal digit arithmetic by
  L. W. Fullerton, Bell Labs, Nov. 1981. */
-  public class QK15 : QK
-  {
-    static readonly double[] xgk =    /* abscissae of the 15-point kronrod rule */
+	public class QK15 : QK
+	{
+		static readonly double[] xgk =    /* abscissae of the 15-point kronrod rule */
 {
   0.991455371120812639206854697526329,
   0.949107912342758524526189684047851,
@@ -204,10 +204,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-    /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule. 
-       xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
+		/* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule. 
+			 xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
 
-    static readonly double[] wg =     /* weights of the 7-point gauss rule */
+		static readonly double[] wg =     /* weights of the 7-point gauss rule */
 {
   0.129484966168869693270611432679082,
   0.279705391489276667901467771423780,
@@ -215,7 +215,7 @@ namespace Altaxo.Calc.Integration
   0.417959183673469387755102040816327
 };
 
-    static readonly double[] wgk =    /* weights of the 15-point kronrod rule */
+		static readonly double[] wgk =    /* weights of the 15-point kronrod rule */
 {
   0.022935322010529224963732008058970,
   0.063092092629978553290700663189204,
@@ -228,41 +228,41 @@ namespace Altaxo.Calc.Integration
 };
 
 
-    const int _fvlength = 8;
-    double[] _fv1;
-    double[] _fv2;
-    public QK15()
-    {
-      _fv1 = new double[_fvlength];
-      _fv2 = new double[_fvlength];
-    }
-    public void Integrate(ScalarFunctionDD f, double a, double b,
-                out double result, out double abserr,
-                out double resabs, out double resasc)
-    {
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
+		const int _fvlength = 8;
+		double[] _fv1;
+		double[] _fv2;
+		public QK15()
+		{
+			_fv1 = new double[_fvlength];
+			_fv2 = new double[_fvlength];
+		}
+		public void Integrate(ScalarFunctionDD f, double a, double b,
+								out double result, out double abserr,
+								out double resabs, out double resasc)
+		{
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
 
-    public static void Integration(ScalarFunctionDD f, double a, double b,
-                 out double result, out double abserr,
-                 out double resabs, out double resasc)
-    {
-      double[] fv1 = new double[_fvlength];
-      double[] fv2 = new double[_fvlength];
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
+		public static void Integration(ScalarFunctionDD f, double a, double b,
+								 out double result, out double abserr,
+								 out double resabs, out double resasc)
+		{
+			double[] fv1 = new double[_fvlength];
+			double[] fv2 = new double[_fvlength];
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
 
-  }
-
-
+	}
 
 
-  #endregion
 
-  #region QK21
-  public class QK21 : QK
-  {
-    /* integration/qk21.c
+
+	#endregion
+
+	#region QK21
+	public class QK21 : QK
+	{
+		/* integration/qk21.c
 * 
 * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
 * 
@@ -281,11 +281,11 @@ namespace Altaxo.Calc.Integration
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-    /* Gauss quadrature weights and kronrod quadrature abscissae and
-       weights as evaluated with 80 decimal digit arithmetic by
-       L. W. Fullerton, Bell Labs, Nov. 1981. */
+		/* Gauss quadrature weights and kronrod quadrature abscissae and
+			 weights as evaluated with 80 decimal digit arithmetic by
+			 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-    static readonly double[] xgk =   /* abscissae of the 21-point kronrod rule */
+		static readonly double[] xgk =   /* abscissae of the 21-point kronrod rule */
 {
   0.995657163025808080735527280689003,
   0.973906528517171720077964012084452,
@@ -300,10 +300,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-    /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule. 
-       xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
+		/* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule. 
+			 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
 
-    static readonly double[] wg =     /* weights of the 10-point gauss rule */
+		static readonly double[] wg =     /* weights of the 10-point gauss rule */
 {
   0.066671344308688137593568809893332,
   0.149451349150580593145776339657697,
@@ -312,7 +312,7 @@ namespace Altaxo.Calc.Integration
   0.295524224714752870173892994651338
 };
 
-    static readonly double[] wgk =   /* weights of the 21-point kronrod rule */
+		static readonly double[] wgk =   /* weights of the 21-point kronrod rule */
 {
   0.011694638867371874278064396062192,
   0.032558162307964727478818972459390,
@@ -328,38 +328,38 @@ namespace Altaxo.Calc.Integration
 };
 
 
-    const int _fvlength = 11;
-    double[] _fv1;
-    double[] _fv2;
-    public QK21()
-    {
-      _fv1 = new double[_fvlength];
-      _fv2 = new double[_fvlength];
-    }
-    public void Integrate(ScalarFunctionDD f, double a, double b,
-                out double result, out double abserr,
-                out double resabs, out double resasc)
-    {
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
+		const int _fvlength = 11;
+		double[] _fv1;
+		double[] _fv2;
+		public QK21()
+		{
+			_fv1 = new double[_fvlength];
+			_fv2 = new double[_fvlength];
+		}
+		public void Integrate(ScalarFunctionDD f, double a, double b,
+								out double result, out double abserr,
+								out double resabs, out double resasc)
+		{
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
 
-    public static void Integration(ScalarFunctionDD f, double a, double b,
-                 out double result, out double abserr,
-                 out double resabs, out double resasc)
-    {
-      double[] fv1 = new double[_fvlength];
-      double[] fv2 = new double[_fvlength];
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
-  }
+		public static void Integration(ScalarFunctionDD f, double a, double b,
+								 out double result, out double abserr,
+								 out double resabs, out double resasc)
+		{
+			double[] fv1 = new double[_fvlength];
+			double[] fv2 = new double[_fvlength];
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
+	}
 
 
-  #endregion
+	#endregion
 
-  #region QK31
-  public class QK31 : QK
-  {
-    /* integration/qk31.c
+	#region QK31
+	public class QK31 : QK
+	{
+		/* integration/qk31.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -379,11 +379,11 @@ namespace Altaxo.Calc.Integration
  */
 
 
-    /* Gauss quadrature weights and kronrod quadrature abscissae and
-       weights as evaluated with 80 decimal digit arithmetic by
-       L. W. Fullerton, Bell Labs, Nov. 1981. */
+		/* Gauss quadrature weights and kronrod quadrature abscissae and
+			 weights as evaluated with 80 decimal digit arithmetic by
+			 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-    readonly static double[] xgk =   /* abscissae of the 31-point kronrod rule */
+		readonly static double[] xgk =   /* abscissae of the 31-point kronrod rule */
 {
   0.998002298693397060285172840152271,
   0.987992518020485428489565718586613,
@@ -403,10 +403,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-    /* xgk[1], xgk[3], ... abscissae of the 15-point gauss rule. 
-       xgk[0], xgk[2], ... abscissae to optimally extend the 15-point gauss rule */
+		/* xgk[1], xgk[3], ... abscissae of the 15-point gauss rule. 
+			 xgk[0], xgk[2], ... abscissae to optimally extend the 15-point gauss rule */
 
-    readonly static double[] wg =     /* weights of the 15-point gauss rule */
+		readonly static double[] wg =     /* weights of the 15-point gauss rule */
 {
   0.030753241996117268354628393577204,
   0.070366047488108124709267416450667,
@@ -418,7 +418,7 @@ namespace Altaxo.Calc.Integration
   0.202578241925561272880620199967519
 };
 
-    readonly static double[] wgk =   /* weights of the 31-point kronrod rule */
+		readonly static double[] wgk =   /* weights of the 31-point kronrod rule */
 {
   0.005377479872923348987792051430128,
   0.015007947329316122538374763075807,
@@ -438,36 +438,36 @@ namespace Altaxo.Calc.Integration
   0.101330007014791549017374792767493
 };
 
-    const int _fvlength = 16;
-    double[] _fv1;
-    double[] _fv2;
-    public QK31()
-    {
-      _fv1 = new double[_fvlength];
-      _fv2 = new double[_fvlength];
-    }
-    public void Integrate(ScalarFunctionDD f, double a, double b,
-                out double result, out double abserr,
-                out double resabs, out double resasc)
-    {
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
+		const int _fvlength = 16;
+		double[] _fv1;
+		double[] _fv2;
+		public QK31()
+		{
+			_fv1 = new double[_fvlength];
+			_fv2 = new double[_fvlength];
+		}
+		public void Integrate(ScalarFunctionDD f, double a, double b,
+								out double result, out double abserr,
+								out double resabs, out double resasc)
+		{
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
 
-    public static void Integration(ScalarFunctionDD f, double a, double b,
-                 out double result, out double abserr,
-                 out double resabs, out double resasc)
-    {
-      double[] fv1 = new double[_fvlength];
-      double[] fv2 = new double[_fvlength];
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
-  }
-  #endregion
+		public static void Integration(ScalarFunctionDD f, double a, double b,
+								 out double result, out double abserr,
+								 out double resabs, out double resasc)
+		{
+			double[] fv1 = new double[_fvlength];
+			double[] fv2 = new double[_fvlength];
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
+	}
+	#endregion
 
-  #region QK41
-  public class QK41 : QK
-  {
-    /* integration/qk41.c
+	#region QK41
+	public class QK41 : QK
+	{
+		/* integration/qk41.c
 * 
 * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
 * 
@@ -488,11 +488,11 @@ namespace Altaxo.Calc.Integration
 
 
 
-    /* Gauss quadrature weights and kronrod quadrature abscissae and
-       weights as evaluated with 80 decimal digit arithmetic by
-       L. W. Fullerton, Bell Labs, Nov. 1981. */
+		/* Gauss quadrature weights and kronrod quadrature abscissae and
+			 weights as evaluated with 80 decimal digit arithmetic by
+			 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-    readonly static double[] xgk =   /* abscissae of the 41-point kronrod rule */
+		readonly static double[] xgk =   /* abscissae of the 41-point kronrod rule */
 {
   0.998859031588277663838315576545863,
   0.993128599185094924786122388471320,
@@ -517,10 +517,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-    /* xgk[1], xgk[3], ... abscissae of the 20-point gauss rule. 
-       xgk[0], xgk[2], ... abscissae to optimally extend the 20-point gauss rule */
+		/* xgk[1], xgk[3], ... abscissae of the 20-point gauss rule. 
+			 xgk[0], xgk[2], ... abscissae to optimally extend the 20-point gauss rule */
 
-    readonly static double[] wg =    /* weights of the 20-point gauss rule */
+		readonly static double[] wg =    /* weights of the 20-point gauss rule */
 {
   0.017614007139152118311861962351853,
   0.040601429800386941331039952274932,
@@ -534,7 +534,7 @@ namespace Altaxo.Calc.Integration
   0.152753387130725850698084331955098
 };
 
-    readonly static double[] wgk =   /* weights of the 41-point kronrod rule */
+		readonly static double[] wgk =   /* weights of the 41-point kronrod rule */
 {
   0.003073583718520531501218293246031,
   0.008600269855642942198661787950102,
@@ -559,37 +559,37 @@ namespace Altaxo.Calc.Integration
   0.076600711917999656445049901530102
 };
 
-    const int _fvlength = 21;
-    double[] _fv1;
-    double[] _fv2;
-    public QK41()
-    {
-      _fv1 = new double[_fvlength];
-      _fv2 = new double[_fvlength];
-    }
-    public void Integrate(ScalarFunctionDD f, double a, double b,
-                out double result, out double abserr,
-                out double resabs, out double resasc)
-    {
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
+		const int _fvlength = 21;
+		double[] _fv1;
+		double[] _fv2;
+		public QK41()
+		{
+			_fv1 = new double[_fvlength];
+			_fv2 = new double[_fvlength];
+		}
+		public void Integrate(ScalarFunctionDD f, double a, double b,
+								out double result, out double abserr,
+								out double resabs, out double resasc)
+		{
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
 
-    public static void Integration(ScalarFunctionDD f, double a, double b,
-                 out double result, out double abserr,
-                 out double resabs, out double resasc)
-    {
-      double[] fv1 = new double[_fvlength];
-      double[] fv2 = new double[_fvlength];
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
-  }
+		public static void Integration(ScalarFunctionDD f, double a, double b,
+								 out double result, out double abserr,
+								 out double resabs, out double resasc)
+		{
+			double[] fv1 = new double[_fvlength];
+			double[] fv2 = new double[_fvlength];
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
+	}
 
-  #endregion
+	#endregion
 
-  #region QK51
-  public class QK51 : QK
-  {
-    /* integration/qk51.c
+	#region QK51
+	public class QK51 : QK
+	{
+		/* integration/qk51.c
 * 
 * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
 * 
@@ -610,11 +610,11 @@ namespace Altaxo.Calc.Integration
 
 
 
-    /* Gauss quadrature weights and kronrod quadrature abscissae and
-       weights as evaluated with 80 decimal digit arithmetic by
-       L. W. Fullerton, Bell Labs, Nov. 1981. */
+		/* Gauss quadrature weights and kronrod quadrature abscissae and
+			 weights as evaluated with 80 decimal digit arithmetic by
+			 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-    readonly static double[] xgk =   /* abscissae of the 51-point kronrod rule */
+		readonly static double[] xgk =   /* abscissae of the 51-point kronrod rule */
 {
   0.999262104992609834193457486540341,
   0.995556969790498097908784946893902,
@@ -644,10 +644,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-    /* xgk[1], xgk[3], ... abscissae of the 25-point gauss rule. 
-       xgk[0], xgk[2], ... abscissae to optimally extend the 25-point gauss rule */
+		/* xgk[1], xgk[3], ... abscissae of the 25-point gauss rule. 
+			 xgk[0], xgk[2], ... abscissae to optimally extend the 25-point gauss rule */
 
-    readonly static double[] wg =    /* weights of the 25-point gauss rule */
+		readonly static double[] wg =    /* weights of the 25-point gauss rule */
 {
   0.011393798501026287947902964113235,
   0.026354986615032137261901815295299,
@@ -664,7 +664,7 @@ namespace Altaxo.Calc.Integration
   0.123176053726715451203902873079050
 };
 
-    readonly static double[] wgk =   /* weights of the 51-point kronrod rule */
+		readonly static double[] wgk =   /* weights of the 51-point kronrod rule */
 {
   0.001987383892330315926507851882843,
   0.005561932135356713758040236901066,
@@ -694,38 +694,38 @@ namespace Altaxo.Calc.Integration
   0.061580818067832935078759824240066
 };
 
-    /* wgk[25] was calculated from the values of wgk[0..24] */
+		/* wgk[25] was calculated from the values of wgk[0..24] */
 
-    const int _fvlength = 26;
-    double[] _fv1;
-    double[] _fv2;
-    public QK51()
-    {
-      _fv1 = new double[_fvlength];
-      _fv2 = new double[_fvlength];
-    }
-    public void Integrate(ScalarFunctionDD f, double a, double b,
-                out double result, out double abserr,
-                out double resabs, out double resasc)
-    {
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
+		const int _fvlength = 26;
+		double[] _fv1;
+		double[] _fv2;
+		public QK51()
+		{
+			_fv1 = new double[_fvlength];
+			_fv2 = new double[_fvlength];
+		}
+		public void Integrate(ScalarFunctionDD f, double a, double b,
+								out double result, out double abserr,
+								out double resabs, out double resasc)
+		{
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
 
-    public static void Integration(ScalarFunctionDD f, double a, double b,
-                 out double result, out double abserr,
-                 out double resabs, out double resasc)
-    {
-      double[] fv1 = new double[_fvlength];
-      double[] fv2 = new double[_fvlength];
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
-  }
-  #endregion
+		public static void Integration(ScalarFunctionDD f, double a, double b,
+								 out double result, out double abserr,
+								 out double resabs, out double resasc)
+		{
+			double[] fv1 = new double[_fvlength];
+			double[] fv2 = new double[_fvlength];
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
+	}
+	#endregion
 
-  #region QK61
-  public class QK61 : QK
-  {
-    /* integration/qk61.c
+	#region QK61
+	public class QK61 : QK
+	{
+		/* integration/qk61.c
 * 
 * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
 * 
@@ -746,11 +746,11 @@ namespace Altaxo.Calc.Integration
 
 
 
-    /* Gauss quadrature weights and kronrod quadrature abscissae and
-       weights as evaluated with 80 decimal digit arithmetic by
-       L. W. Fullerton, Bell Labs, Nov. 1981. */
+		/* Gauss quadrature weights and kronrod quadrature abscissae and
+			 weights as evaluated with 80 decimal digit arithmetic by
+			 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-    readonly static double[] xgk =   /* abscissae of the 61-point kronrod rule */
+		readonly static double[] xgk =   /* abscissae of the 61-point kronrod rule */
 {
   0.999484410050490637571325895705811,
   0.996893484074649540271630050918695,
@@ -785,10 +785,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-    /* xgk[1], xgk[3], ... abscissae of the 30-point gauss rule. 
-       xgk[0], xgk[2], ... abscissae to optimally extend the 30-point gauss rule */
+		/* xgk[1], xgk[3], ... abscissae of the 30-point gauss rule. 
+			 xgk[0], xgk[2], ... abscissae to optimally extend the 30-point gauss rule */
 
-    readonly static double[] wg =    /* weights of the 30-point gauss rule */
+		readonly static double[] wg =    /* weights of the 30-point gauss rule */
 {
   0.007968192496166605615465883474674,
   0.018466468311090959142302131912047,
@@ -807,7 +807,7 @@ namespace Altaxo.Calc.Integration
   0.102852652893558840341285636705415
 };
 
-    readonly static double[] wgk =   /* weights of the 61-point kronrod rule */
+		readonly static double[] wgk =   /* weights of the 61-point kronrod rule */
 {
   0.001389013698677007624551591226760,
   0.003890461127099884051267201844516,
@@ -842,30 +842,30 @@ namespace Altaxo.Calc.Integration
   0.051494729429451567558340433647099
 };
 
-    const int _fvlength = 31;
-    double[] _fv1;
-    double[] _fv2;
-    public QK61()
-    {
-      _fv1 = new double[_fvlength];
-      _fv2 = new double[_fvlength];
-    }
-    public void Integrate(ScalarFunctionDD f, double a, double b,
-                out double result, out double abserr,
-                out double resabs, out double resasc)
-    {
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
+		const int _fvlength = 31;
+		double[] _fv1;
+		double[] _fv2;
+		public QK61()
+		{
+			_fv1 = new double[_fvlength];
+			_fv2 = new double[_fvlength];
+		}
+		public void Integrate(ScalarFunctionDD f, double a, double b,
+								out double result, out double abserr,
+								out double resabs, out double resasc)
+		{
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
 
-    public static void Integration(ScalarFunctionDD f, double a, double b,
-                 out double result, out double abserr,
-                 out double resabs, out double resasc)
-    {
-      double[] fv1 = new double[_fvlength];
-      double[] fv2 = new double[_fvlength];
-      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-    }
-  }
-  #endregion
+		public static void Integration(ScalarFunctionDD f, double a, double b,
+								 out double result, out double abserr,
+								 out double resabs, out double resasc)
+		{
+			double[] fv1 = new double[_fvlength];
+			double[] fv2 = new double[_fvlength];
+			gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+		}
+	}
+	#endregion
 
 }

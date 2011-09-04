@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,9 +62,9 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
-	
 
-	
+
+
 
 
 		/// <summary>
@@ -64,7 +86,7 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
-		
+
 
 		/// <summary>
 		/// Shows the dialog to set the print options for this document.
@@ -97,15 +119,15 @@ namespace Altaxo.Graph.Gdi
 			Exception ex = null;
 			try
 			{
-					Current.PrintingService.PrintDocument.PrintPage += printTask.EhPrintPage;
-					Current.PrintingService.PrintDocument.QueryPageSettings += printTask.EhQueryPageSettings;
+				Current.PrintingService.PrintDocument.PrintPage += printTask.EhPrintPage;
+				Current.PrintingService.PrintDocument.QueryPageSettings += printTask.EhQueryPageSettings;
 
-					//Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
-					Current.PrintingService.PrintDocument.Print();
+				//Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
+				Current.PrintingService.PrintDocument.Print();
 			}
 			catch (Exception exx)
 			{
-				ex = exx; 
+				ex = exx;
 			}
 			finally
 			{
@@ -113,7 +135,7 @@ namespace Altaxo.Graph.Gdi
 				Current.PrintingService.PrintDocument.QueryPageSettings -= printTask.EhQueryPageSettings;
 			}
 
-			if(null!=ex)
+			if (null != ex)
 				throw ex;
 		}
 	}
@@ -138,7 +160,7 @@ namespace Altaxo.Graph.Gdi
 
 
 		public GraphDocumentPrintTask(GraphDocument doc)
-			: this(doc.Layers,doc.PrintOptions)
+			: this(doc.Layers, doc.PrintOptions)
 		{
 		}
 
@@ -162,7 +184,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			if (_printOptions.RotatePageAutomatically)
 			{
-				bool needLandscape=false;
+				bool needLandscape = false;
 				if (_layers.GraphSize.Width > _layers.GraphSize.Height)
 					needLandscape = true;
 
@@ -187,14 +209,14 @@ namespace Altaxo.Graph.Gdi
 			PointF startLocationOnPage;
 			SizeF graphSize = _layers.GraphSize;
 			_printOptions.GetZoomAndStartLocation(e.PageBounds, e.MarginBounds, graphSize, out zoom, out startLocationOnPage, true);
-			graphSize = graphSize.Scale( zoom );
+			graphSize = graphSize.Scale(zoom);
 
 			PointF startLocationInGraph = new PointF(0, 0);
 			if (_printOptions.TilePages)
 			{
 				startLocationOnPage = e.MarginBounds.Location; // when tiling pages start always from margin bounds
-				int columns = (int)Math.Ceiling(graphSize.Width/e.MarginBounds.Width);
-				int rows =    (int)Math.Ceiling(graphSize.Height / e.MarginBounds.Height);
+				int columns = (int)Math.Ceiling(graphSize.Width / e.MarginBounds.Width);
+				int rows = (int)Math.Ceiling(graphSize.Height / e.MarginBounds.Height);
 				int col = _page % columns;
 				int row = _page / columns;
 
@@ -208,22 +230,22 @@ namespace Altaxo.Graph.Gdi
 
 			if (_printOptions.PrintCropMarks)
 			{
-				float armLength = Math.Min(e.MarginBounds.Width,e.MarginBounds.Height)/20.0f;
+				float armLength = Math.Min(e.MarginBounds.Width, e.MarginBounds.Height) / 20.0f;
 				DrawCross(g, new PointF(e.MarginBounds.Left, e.MarginBounds.Top), armLength);
-				DrawCross(g, new PointF(e.MarginBounds.Right,e.MarginBounds.Top), armLength);
-				DrawCross(g, new PointF(e.MarginBounds.Left,e.MarginBounds.Bottom), armLength);
-				DrawCross(g, new PointF(e.MarginBounds.Right,e.MarginBounds.Bottom), armLength);
+				DrawCross(g, new PointF(e.MarginBounds.Right, e.MarginBounds.Top), armLength);
+				DrawCross(g, new PointF(e.MarginBounds.Left, e.MarginBounds.Bottom), armLength);
+				DrawCross(g, new PointF(e.MarginBounds.Right, e.MarginBounds.Bottom), armLength);
 			}
 
-		//	DrawCrossedRectangle(g, e.MarginBounds);
+			//	DrawCrossedRectangle(g, e.MarginBounds);
 
 			// from here on we have units of Points
 			g.PageUnit = GraphicsUnit.Point;
 
-			if(!IsPrintPreview)
+			if (!IsPrintPreview)
 				g.TranslateTransform(-hx * 72 / 100.0f, -hy * 72 / 100.0f);
-			
-			g.TranslateTransform(startLocationOnPage.X*72/100.0f, startLocationOnPage.Y*72/100.0f);
+
+			g.TranslateTransform(startLocationOnPage.X * 72 / 100.0f, startLocationOnPage.Y * 72 / 100.0f);
 
 			g.ScaleTransform(zoom, zoom);
 
@@ -246,6 +268,6 @@ namespace Altaxo.Graph.Gdi
 			g.DrawLine(Pens.Black, rect.Left, rect.Bottom, rect.Right, rect.Top);
 		}
 
-	
+
 	}
 }

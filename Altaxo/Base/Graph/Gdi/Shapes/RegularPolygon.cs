@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public class RegularPolygon : ClosedPathShapeBase
 	{
-		int _vertices=7;
-		double _cornerRadius=0;
+		int _vertices = 7;
+		double _cornerRadius = 0;
 
 		#region Serialization
 
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (HasEvenNumberOfVertices)
 			{
 				// with an even number of vertices, the upper line is also parallel
-				relHeigth = 2*Math.Abs(Math.Sin(startAngle));
+				relHeigth = 2 * Math.Abs(Math.Sin(startAngle));
 				int ridx = (int)Math.Round((2 + _vertices) / 4.0);
 				relWidth = 2 * Math.Cos(Math.PI * ((2 * ridx - 1) / (double)_vertices - 0.5));
 			}
@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				relHeigth = 1 + Math.Abs(Math.Sin(startAngle)); // one vertex is always on top
 				relYMid = 1 / relHeigth;
 				int ridx = (int)Math.Round((2 + _vertices) / 4.0);
-				relWidth = 2*Math.Cos(Math.PI*((2*ridx-1)/(double)_vertices-0.5));
+				relWidth = 2 * Math.Cos(Math.PI * ((2 * ridx - 1) / (double)_vertices - 0.5));
 			}
 
 
@@ -265,8 +265,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			for (int i = 0; i < _vertices; i++)
 			{
 				double w = i * angleStep + startAngle;
-				double x = Width/2 + Math.Cos(w) * Width / relWidth;
-				double y = Height*relYMid - Math.Sin(w) * Height / relHeigth;
+				double x = Width / 2 + Math.Cos(w) * Width / relWidth;
+				double y = Height * relYMid - Math.Sin(w) * Height / relHeigth;
 				pts[i] = new PointD2D(x, y);
 			}
 
@@ -299,20 +299,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 						var midPoint = pts[i] + distanceFromCornerToMidpoint * bisectionVec;
 						var cornerStartAngle = -Math.Atan2(prevVec.X, prevVec.Y);
 						var cornerSweepAngle = -Math.PI + alpha;
-						gp.AddArc((float)(midPoint.X - _cornerRadius), (float)(midPoint.Y - _cornerRadius), (float)(2 * _cornerRadius), (float)(2 * _cornerRadius),(float)(cornerStartAngle*180/Math.PI),(float)(cornerSweepAngle*180/Math.PI));
+						gp.AddArc((float)(midPoint.X - _cornerRadius), (float)(midPoint.Y - _cornerRadius), (float)(2 * _cornerRadius), (float)(2 * _cornerRadius), (float)(cornerStartAngle * 180 / Math.PI), (float)(cornerSweepAngle * 180 / Math.PI));
 					}
 					else // nonregular case -> corner radius is too big
 					{
 						var m = Math.Tan(alpha / 2);
 						var d = Math.Min(prevLen / 2, nextLen / 2);
-						var dd = d / Math.Sqrt(1 + m*m);
+						var dd = d / Math.Sqrt(1 + m * m);
 						var y = m * dd; // heigth of the intersection point above the bisector
-						var distanceFromCornerToMidpoint = dd + Math.Sqrt(_cornerRadius * _cornerRadius - y*y);
+						var distanceFromCornerToMidpoint = dd + Math.Sqrt(_cornerRadius * _cornerRadius - y * y);
 						var midPoint = pts[i] + distanceFromCornerToMidpoint * bisectionVec;
 						var midPointToStart = pts[i] + d * prevVec - midPoint; // Vector from midPoint to SweepStart
 						var cornerStartAngle = Math.Atan2(midPointToStart.Y, midPointToStart.X);
 						var cornerSweepAngle = -2 * Math.Asin(y / _cornerRadius);
-						gp.AddArc((float)(midPoint.X - _cornerRadius), (float)(midPoint.Y - _cornerRadius), (float)(2 * _cornerRadius), (float)(2 * _cornerRadius), (float)(cornerStartAngle*180/Math.PI),(float)(cornerSweepAngle*180/Math.PI));
+						gp.AddArc((float)(midPoint.X - _cornerRadius), (float)(midPoint.Y - _cornerRadius), (float)(2 * _cornerRadius), (float)(2 * _cornerRadius), (float)(cornerStartAngle * 180 / Math.PI), (float)(cornerSweepAngle * 180 / Math.PI));
 					}
 				}
 			}

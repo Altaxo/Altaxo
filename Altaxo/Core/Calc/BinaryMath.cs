@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,203 +24,203 @@ using System;
 
 namespace Altaxo.Calc
 {
-  /// <summary>
-  /// BinaryMath provides static methods for "Bit" mathematics.
-  /// </summary>
-  public class BinaryMath
-  {
+	/// <summary>
+	/// BinaryMath provides static methods for "Bit" mathematics.
+	/// </summary>
+	public class BinaryMath
+	{
 
-    /// <summary>
-    /// Returns k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
-    public static int Ld(uint x)
-    {
-      if ( 0==x )  return  0;
+		/// <summary>
+		/// Returns k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
+		public static int Ld(uint x)
+		{
+			if (0 == x) return 0;
 
-      int r = 0;
-      if ( (x & 0xffff0000)!=0 )  { x >>= 16;  r += 16; }
-      if ( (x & 0x0000ff00)!=0 )  { x >>=  8;  r +=  8; }
-      if ( (x & 0x000000f0)!=0 )  { x >>=  4;  r +=  4; }
-      if ( (x & 0x0000000c)!=0 )  { x >>=  2;  r +=  2; }
-      if ( (x & 0x00000002)!=0 )  {            r +=  1; }
-      return r;
-    }
-
-
-    /// <summary>
-    /// Returns k so that 2^k &lt;= x &lt; 2^(k+1).
-    /// If x==0 then 0 is returned.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
-    public static int Ld(ulong x)
-    {
-      if ( 0==x )  return  0;
-
-      int r = 0;
-      if ( (x & (~0UL<<32))!=0 )  { x >>= 32;  r += 32; }
-      if ( (x & 0xffff0000)!=0 )  { x >>= 16;  r += 16; }
-      if ( (x & 0x0000ff00)!=0 )  { x >>=  8;  r +=  8; }
-      if ( (x & 0x000000f0)!=0 )  { x >>=  4;  r +=  4; }
-      if ( (x & 0x0000000c)!=0 )  { x >>=  2;  r +=  2; }
-      if ( (x & 0x00000002)!=0 )  {            r +=  1; }
-      return r;
-    }
+			int r = 0;
+			if ((x & 0xffff0000) != 0) { x >>= 16; r += 16; }
+			if ((x & 0x0000ff00) != 0) { x >>= 8; r += 8; }
+			if ((x & 0x000000f0) != 0) { x >>= 4; r += 4; }
+			if ((x & 0x0000000c) != 0) { x >>= 2; r += 2; }
+			if ((x & 0x00000002) != 0) { r += 1; }
+			return r;
+		}
 
 
-    // return true if number is 0 (!) or a power of two
-    /// <summary>
-    /// Return true if number is 0 (!) or a power of two
-    /// </summary>
-    /// <param name="x">Argument to test.</param>
-    /// <returns>Return true if number is 0 (!) or a power of two.</returns>
-    public static bool IsPowerOfTwo(int x)
-    {
-      return  ((x & -x) == x);
-    }
+		/// <summary>
+		/// Returns k so that 2^k &lt;= x &lt; 2^(k+1).
+		/// If x==0 then 0 is returned.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
+		public static int Ld(ulong x)
+		{
+			if (0 == x) return 0;
+
+			int r = 0;
+			if ((x & (~0UL << 32)) != 0) { x >>= 32; r += 32; }
+			if ((x & 0xffff0000) != 0) { x >>= 16; r += 16; }
+			if ((x & 0x0000ff00) != 0) { x >>= 8; r += 8; }
+			if ((x & 0x000000f0) != 0) { x >>= 4; r += 4; }
+			if ((x & 0x0000000c) != 0) { x >>= 2; r += 2; }
+			if ((x & 0x00000002) != 0) { r += 1; }
+			return r;
+		}
 
 
-    /// <summary>
-    /// Return true if x &gt; 0 and x is a power of two.
-    /// </summary>
-    /// <param name="x">The argument to test.</param>
-    /// <returns>True if x &gt; 0 and x is a power of two.</returns>
-    public static bool IsNonzeroPowerOfTwo(uint x)
-    {
-      ulong m = x-1;
-      return  (((x^m)>>1) == m);
-    }
-
-    /// <summary>
-    /// Return true if x &gt; 0 and x is a power of two.
-    /// </summary>
-    /// <param name="x">The argument to test.</param>
-    /// <returns>True if x &gt; 0 and x is a power of two.</returns>
-    public static bool IsNonzeroPowerOfTwo(ulong x)
-    {
-      ulong m = x-1;
-      return  (((x^m)>>1) == m);
-    }
-
-   
-    /// <summary>
-    /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
-    /// </summary>
-    /// <param name="x">The argument to test.</param>
-    /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
-    public static int NextPowerOfTwo(int x)
-    {
-      int i;
-      for(i=1; i<x ;i<<=1);
-      return i;
-    }
+		// return true if number is 0 (!) or a power of two
+		/// <summary>
+		/// Return true if number is 0 (!) or a power of two
+		/// </summary>
+		/// <param name="x">Argument to test.</param>
+		/// <returns>Return true if number is 0 (!) or a power of two.</returns>
+		public static bool IsPowerOfTwo(int x)
+		{
+			return ((x & -x) == x);
+		}
 
 
-    #region Parity calculations
+		/// <summary>
+		/// Return true if x &gt; 0 and x is a power of two.
+		/// </summary>
+		/// <param name="x">The argument to test.</param>
+		/// <returns>True if x &gt; 0 and x is a power of two.</returns>
+		public static bool IsNonzeroPowerOfTwo(uint x)
+		{
+			ulong m = x - 1;
+			return (((x ^ m) >> 1) == m);
+		}
+
+		/// <summary>
+		/// Return true if x &gt; 0 and x is a power of two.
+		/// </summary>
+		/// <param name="x">The argument to test.</param>
+		/// <returns>True if x &gt; 0 and x is a power of two.</returns>
+		public static bool IsNonzeroPowerOfTwo(ulong x)
+		{
+			ulong m = x - 1;
+			return (((x ^ m) >> 1) == m);
+		}
 
 
-    /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(byte x)
-    {
-      uint xx = x;
-      xx = (xx & 0xF) ^ (xx >> 4);
-      xx = (xx & 0x3) ^ (xx >> 2);
-      xx = (xx & 0x1) ^ (xx >> 1);
-      return 0 != x;
-    }
+		/// <summary>
+		/// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
+		/// </summary>
+		/// <param name="x">The argument to test.</param>
+		/// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
+		public static int NextPowerOfTwo(int x)
+		{
+			int i;
+			for (i = 1; i < x; i <<= 1) ;
+			return i;
+		}
 
-      /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(sbyte x)
-    {
-      return IsParityOdd((byte)x);
-    }
 
-    /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(UInt16 x)
-    {
-      uint xx = x;
-      xx = (xx & 0xFF) ^ (xx >> 8);
-      xx = (xx & 0xF) ^ (xx >> 4);
-      xx = (xx & 0x3) ^ (xx >> 2);
-      xx = (xx & 0x1) ^ (xx >> 1);
-      return 0 != x;
-    }
+		#region Parity calculations
 
-       /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(Int16 x)
-    {
-      return IsParityOdd((UInt16)x);
-    }
 
-    /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(UInt32 x)
-    {
-      x = (x & 0xFFFF) ^ (x >> 16);
-      x = (x & 0xFF) ^ (x >> 8);
-      x = (x & 0xF) ^ (x >> 4);
-      x = (x & 0x3) ^ (x >> 2);
-      x = (x & 0x1) ^ (x >> 1);
-      return 0 != x;
-    }
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(byte x)
+		{
+			uint xx = x;
+			xx = (xx & 0xF) ^ (xx >> 4);
+			xx = (xx & 0x3) ^ (xx >> 2);
+			xx = (xx & 0x1) ^ (xx >> 1);
+			return 0 != x;
+		}
 
-     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(Int32 x)
-    {
-      return IsParityOdd((UInt32)x);
-    }
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(sbyte x)
+		{
+			return IsParityOdd((byte)x);
+		}
 
-    /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(UInt64 x)
-    {
-      uint xx = (uint)(x & 0xFFFFFFFF) ^ (uint)(x >> 32);
-      xx = (xx & 0xFFFF) ^ (xx >> 16);
-      xx = (xx & 0xFF) ^ (xx >> 8);
-      xx = (xx & 0xF) ^ (xx >> 4);
-      xx = (xx & 0x3) ^ (xx >> 2);
-      xx = (xx & 0x1) ^ (xx >> 1);
-      return 0 != x;
-    }
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(UInt16 x)
+		{
+			uint xx = x;
+			xx = (xx & 0xFF) ^ (xx >> 8);
+			xx = (xx & 0xF) ^ (xx >> 4);
+			xx = (xx & 0x3) ^ (xx >> 2);
+			xx = (xx & 0x1) ^ (xx >> 1);
+			return 0 != x;
+		}
 
-     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
-    /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
-    public static bool IsParityOdd(Int64 x)
-    {
-      return IsParityOdd((UInt64)x);
-    }
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(Int16 x)
+		{
+			return IsParityOdd((UInt16)x);
+		}
 
-    #endregion
-  }
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(UInt32 x)
+		{
+			x = (x & 0xFFFF) ^ (x >> 16);
+			x = (x & 0xFF) ^ (x >> 8);
+			x = (x & 0xF) ^ (x >> 4);
+			x = (x & 0x3) ^ (x >> 2);
+			x = (x & 0x1) ^ (x >> 1);
+			return 0 != x;
+		}
+
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(Int32 x)
+		{
+			return IsParityOdd((UInt32)x);
+		}
+
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(UInt64 x)
+		{
+			uint xx = (uint)(x & 0xFFFFFFFF) ^ (uint)(x >> 32);
+			xx = (xx & 0xFFFF) ^ (xx >> 16);
+			xx = (xx & 0xFF) ^ (xx >> 8);
+			xx = (xx & 0xF) ^ (xx >> 4);
+			xx = (xx & 0x3) ^ (xx >> 2);
+			xx = (xx & 0x1) ^ (xx >> 1);
+			return 0 != x;
+		}
+
+		/// <summary>
+		/// Determines, if x contains an odd number of '1' bits.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+		public static bool IsParityOdd(Int64 x)
+		{
+			return IsParityOdd((UInt64)x);
+		}
+
+		#endregion
+	}
 }

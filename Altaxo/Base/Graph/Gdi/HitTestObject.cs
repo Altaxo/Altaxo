@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -116,10 +116,10 @@ namespace Altaxo.Graph.Gdi
 			get { return _matrix; }
 		}
 
-    /// <summary>
-    /// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
-    /// </summary>
-    /// <param name="x">The transformation to append.</param>
+		/// <summary>
+		/// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
+		/// </summary>
+		/// <param name="x">The transformation to append.</param>
 		public virtual void Transform(TransformationMatrix2D x)
 		{
 			_matrix.AppendTransform(x);
@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="dx">Shift value of x in page coordinates.</param>
 		/// <param name="dy">Shift value of y in page coordinates.</param>
 		public abstract void ShiftPosition(double dx, double dy);
-	
+
 
 
 		DoubleClickHandler _DoubleClick;
@@ -199,9 +199,9 @@ namespace Altaxo.Graph.Gdi
 	}
 
 
-  /// <summary>
-  /// This class holds the arrangement path by itself.
-  /// </summary>
+	/// <summary>
+	/// This class holds the arrangement path by itself.
+	/// </summary>
 	public class HitTestObject : HitTestObjectBase
 	{
 		/// <summary>
@@ -237,10 +237,10 @@ namespace Altaxo.Graph.Gdi
 			_objectPath.Transform(transformation);
 		}
 
-    /// <summary>
-    /// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
-    /// </summary>
-    /// <param name="x">The transformation to append.</param>
+		/// <summary>
+		/// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
+		/// </summary>
+		/// <param name="x">The transformation to append.</param>
 		public override void Transform(TransformationMatrix2D x)
 		{
 			base.Transform(x);

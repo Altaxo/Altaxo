@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,7 +99,7 @@ namespace Altaxo.Gui.Common.Drawing
 		public sdd.LineJoin SelectedLineJoin
 		{
 			get { var result = (sdd.LineJoin)GetValue(SelectedLineJoinProperty); return result; }
-			set {	SetValue(SelectedLineJoinProperty, value); }
+			set { SetValue(SelectedLineJoinProperty, value); }
 		}
 
 		public static readonly DependencyProperty SelectedLineJoinProperty =
@@ -86,7 +108,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private static void OnSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((LineJoinComboBox)obj).EhSelectedLineJoinChanged(obj,args);
+			((LineJoinComboBox)obj).EhSelectedLineJoinChanged(obj, args);
 		}
 		#endregion
 
@@ -95,7 +117,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		}
 
-	
+
 
 		public override string GetItemText(object item)
 		{
@@ -111,7 +133,7 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-		
+
 
 		public static DrawingImage GetImage(System.Drawing.Drawing2D.LineJoin join)
 		{
@@ -151,9 +173,9 @@ namespace Altaxo.Gui.Common.Drawing
 			var figure = new PathFigure();
 			figure.StartPoint = new Point(width, height * 0.875);
 			figure.Segments.Add(new PolyLineSegment(new Point[] 
-			{
-				new Point(width / 2, height / 2),
-				new Point(width, height * 0.175) }, true));
+      {
+        new Point(width / 2, height / 2),
+        new Point(width, height * 0.175) }, true));
 			geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
 			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = plj };
 			drawingGroup.Children.Add(geometryDrawing);

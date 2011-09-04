@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,118 +27,118 @@ namespace Altaxo.Data
 {
 
 
- 
-  /// <summary>
-  /// Summary description for DataColumnPlaceHolder.
-  /// </summary>
-  [Serializable]
-  public class ReadableColumnProxy : DocNodeProxy
-  {
-    #region Serialization
 
-    #region Clipboard
-    protected ReadableColumnProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-      : base(info,context)
-    {
-    }
+	/// <summary>
+	/// Summary description for DataColumnPlaceHolder.
+	/// </summary>
+	[Serializable]
+	public class ReadableColumnProxy : DocNodeProxy
+	{
+		#region Serialization
 
-    #endregion
+		#region Clipboard
+		protected ReadableColumnProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+			: base(info, context)
+		{
+		}
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy),0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        info.AddBaseValueEmbedded(obj,typeof(DocNodeProxy)); // serialize the base class
-      }
+		#endregion
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        ReadableColumnProxy s = o!=null ? (ReadableColumnProxy)o : new ReadableColumnProxy();
-        info.GetBaseValueEmbedded(s,typeof(DocNodeProxy),parent);         // deserialize the base class
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
+			}
 
-        return s;
-      }
-    }
-    #endregion
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ReadableColumnProxy s = o != null ? (ReadableColumnProxy)o : new ReadableColumnProxy();
+				info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
 
-    public ReadableColumnProxy(IReadableColumn column)
-      : base(column)
-    {
-    }
+				return s;
+			}
+		}
+		#endregion
 
-    /// <summary>
-    /// For deserialization purposes only.
-    /// </summary>
-    protected ReadableColumnProxy()
-    {
-    }
+		public ReadableColumnProxy(IReadableColumn column)
+			: base(column)
+		{
+		}
 
-    /// <summary>
-    /// Cloning constructor.
-    /// </summary>
-    /// <param name="from">Object to clone from.</param>
-    public ReadableColumnProxy(ReadableColumnProxy from)
-      : base(from)
-    {
-    }
+		/// <summary>
+		/// For deserialization purposes only.
+		/// </summary>
+		protected ReadableColumnProxy()
+		{
+		}
 
-    protected override bool IsValidDocument(object obj)
-    {
-      return (obj is IReadableColumn) || obj==null;
-    }
-   
-    public IReadableColumn Document
-    {
-      get
-      {
-        return (IReadableColumn)base.DocumentObject;        
-      }
-    }
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="from">Object to clone from.</param>
+		public ReadableColumnProxy(ReadableColumnProxy from)
+			: base(from)
+		{
+		}
 
-    public override object Clone()
-    {
-      return new ReadableColumnProxy(this);
-    }
+		protected override bool IsValidDocument(object obj)
+		{
+			return (obj is IReadableColumn) || obj == null;
+		}
 
-    public string GetName(int level)
-    {
-      IReadableColumn col = this.Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
-      if (col is Data.DataColumn)
-      {
-        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-        string tablename = table == null ? string.Empty : table.Name + "\\";
-        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
-        if (level <= 0)
-          return ((DataColumn)col).Name;
-        else if (level == 1)
-          return tablename + ((DataColumn)col).Name;
-        else
-          return tablename + collectionname + ((DataColumn)col).Name;
-      }
-      else if(base._docNodePath != null)
-      {
-        string path =  _docNodePath.ToString();
-        int idx = 0;
-        if (level <= 0)
-        {
-          idx = path.LastIndexOf('/');
-          if (idx < 0)
-            idx = 0;
-          else
-            idx++;
-        }
+		public IReadableColumn Document
+		{
+			get
+			{
+				return (IReadableColumn)base.DocumentObject;
+			}
+		}
 
-        return path.Substring(idx);
-      }
-      else if (col != null)
-      {
-        return col.ToString();
-      }
-      else
-      {
-        return string.Empty;
-      }
-    }
-  }
+		public override object Clone()
+		{
+			return new ReadableColumnProxy(this);
+		}
+
+		public string GetName(int level)
+		{
+			IReadableColumn col = this.Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
+			if (col is Data.DataColumn)
+			{
+				Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+				string tablename = table == null ? string.Empty : table.Name + "\\";
+				string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+				if (level <= 0)
+					return ((DataColumn)col).Name;
+				else if (level == 1)
+					return tablename + ((DataColumn)col).Name;
+				else
+					return tablename + collectionname + ((DataColumn)col).Name;
+			}
+			else if (base._docNodePath != null)
+			{
+				string path = _docNodePath.ToString();
+				int idx = 0;
+				if (level <= 0)
+				{
+					idx = path.LastIndexOf('/');
+					if (idx < 0)
+						idx = 0;
+					else
+						idx++;
+				}
+
+				return path.Substring(idx);
+			}
+			else if (col != null)
+			{
+				return col.ToString();
+			}
+			else
+			{
+				return string.Empty;
+			}
+		}
+	}
 }

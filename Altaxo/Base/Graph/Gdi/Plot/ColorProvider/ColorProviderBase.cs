@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		public ColorProviderBase(ColorProviderBase from)
 		{
-			CopyFrom(from);	
+			CopyFrom(from);
 		}
 
 		public virtual bool CopyFrom(object obj)
@@ -99,7 +121,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 				s._colorBelow = (NamedColor)info.GetValue("ColorBelow", parent);
 				s._cachedGdiColorBelow = GdiColorHelper.ToGdi(s._colorBelow);
-		
+
 				s._colorAbove = (NamedColor)info.GetValue("ColorAbove", parent);
 				s._cachedGdiColorAbove = GdiColorHelper.ToGdi(s._colorAbove);
 
@@ -225,21 +247,21 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		protected void OnChanged()
 		{
 			if (null != Changed)
-				Changed(this,EventArgs.Empty);
+				Changed(this, EventArgs.Empty);
 		}
 
 
 		public virtual Color GetOutOfBoundsColor(double relVal)
 		{
-			if(relVal<0)
+			if (relVal < 0)
 				return _cachedGdiColorBelow;
-			else if(relVal>1)
+			else if (relVal > 1)
 				return _cachedGdiColorAbove;
 			else
 				return _cachedGdiColorInvalid;
 		}
 
-	
+
 		/// <summary>
 		/// Calculates a color from the provided relative value.
 		/// </summary>
@@ -269,5 +291,5 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		protected abstract Color GetColorFrom0To1Continuously(double relVal);
 	}
 
-	
+
 }

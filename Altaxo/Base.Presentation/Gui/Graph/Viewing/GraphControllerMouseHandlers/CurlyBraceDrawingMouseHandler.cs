@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			CurlyBraceShape go = new CurlyBraceShape(new PointD2D(rect.X, rect.Y), new PointD2D(rect.Width, rect.Height));
 
 			// deselect the text tool
-			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 			_grac.ActiveLayer.GraphObjects.Add(go);
 			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
 		}

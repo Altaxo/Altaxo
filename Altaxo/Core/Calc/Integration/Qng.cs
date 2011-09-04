@@ -4,16 +4,16 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
-  /// <summary>
-  /// The QNG algorithm is a non-adaptive procedure which uses fixed Gauss-Kronrod abscissae
-  /// to sample the integrand at a maximum of 87 points. It is provided for fast integration of
-  /// smooth functions.
-  /// </summary>
-  public class Qng : IntegrationBase
-  {
+	/// <summary>
+	/// The QNG algorithm is a non-adaptive procedure which uses fixed Gauss-Kronrod abscissae
+	/// to sample the integrand at a maximum of 87 points. It is provided for fast integration of
+	/// smooth functions.
+	/// </summary>
+	public class Qng : IntegrationBase
+	{
 
-    #region Rescale_Error
-    /* integration/err.c
+		#region Rescale_Error
+		/* integration/err.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -33,41 +33,41 @@ namespace Altaxo.Calc.Integration
  */
 
 
-    static double
-    rescale_error(double err, double result_abs, double result_asc)
-    {
-      err = Math.Abs(err);
+		static double
+		rescale_error(double err, double result_abs, double result_asc)
+		{
+			err = Math.Abs(err);
 
-      if (result_asc != 0 && err != 0)
-      {
-        double scale = Math.Pow((200 * err / result_asc), 1.5);
+			if (result_asc != 0 && err != 0)
+			{
+				double scale = Math.Pow((200 * err / result_asc), 1.5);
 
-        if (scale < 1)
-        {
-          err = result_asc * scale;
-        }
-        else
-        {
-          err = result_asc;
-        }
-      }
-      if (result_abs > GSL_CONST.GSL_DBL_MIN / (50 * GSL_CONST.GSL_DBL_EPSILON))
-      {
-        double min_err = 50 * GSL_CONST.GSL_DBL_EPSILON * result_abs;
+				if (scale < 1)
+				{
+					err = result_asc * scale;
+				}
+				else
+				{
+					err = result_asc;
+				}
+			}
+			if (result_abs > GSL_CONST.GSL_DBL_MIN / (50 * GSL_CONST.GSL_DBL_EPSILON))
+			{
+				double min_err = 50 * GSL_CONST.GSL_DBL_EPSILON * result_abs;
 
-        if (min_err > err)
-        {
-          err = min_err;
-        }
-      }
+				if (min_err > err)
+				{
+					err = min_err;
+				}
+			}
 
-      return err;
-    }
+			return err;
+		}
 
-    #endregion
+		#endregion
 
-    #region qng.h
-    /* integration/qng.h
+		#region qng.h
+		/* integration/qng.h
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -86,13 +86,13 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    /* Gauss-Kronrod-Patterson quadrature coefficients for use in
-       quadpack routine qng. These coefficients were calculated with
-       101 decimal digit arithmetic by L. W. Fullerton, Bell Labs, Nov
-       1981. */
+		/* Gauss-Kronrod-Patterson quadrature coefficients for use in
+			 quadpack routine qng. These coefficients were calculated with
+			 101 decimal digit arithmetic by L. W. Fullerton, Bell Labs, Nov
+			 1981. */
 
-    /* x1, abscissae common to the 10-, 21-, 43- and 87-point rule */
-    static readonly double[] x1 = {
+		/* x1, abscissae common to the 10-, 21-, 43- and 87-point rule */
+		static readonly double[] x1 = {
   0.973906528517171720077964012084452,
   0.865063366688984510732096688423493,
   0.679409568299024406234327365114874,
@@ -100,8 +100,8 @@ namespace Altaxo.Calc.Integration
   0.148874338981631210884826001129720
 };
 
-    /* w10, weights of the 10-point formula */
-    static readonly double[] w10 = {
+		/* w10, weights of the 10-point formula */
+		static readonly double[] w10 = {
   0.066671344308688137593568809893332,
   0.149451349150580593145776339657697,
   0.219086362515982043995534934228163,
@@ -109,8 +109,8 @@ namespace Altaxo.Calc.Integration
   0.295524224714752870173892994651338
 };
 
-    /* x2, abscissae common to the 21-, 43- and 87-point rule */
-    static readonly double[] x2 = {
+		/* x2, abscissae common to the 21-, 43- and 87-point rule */
+		static readonly double[] x2 = {
   0.995657163025808080735527280689003,
   0.930157491355708226001207180059508,
   0.780817726586416897063717578345042,
@@ -118,8 +118,8 @@ namespace Altaxo.Calc.Integration
   0.294392862701460198131126603103866
 };
 
-    /* w21a, weights of the 21-point formula for abscissae x1 */
-    static readonly double[] w21a = {
+		/* w21a, weights of the 21-point formula for abscissae x1 */
+		static readonly double[] w21a = {
   0.032558162307964727478818972459390,
   0.075039674810919952767043140916190,
   0.109387158802297641899210590325805,
@@ -127,8 +127,8 @@ namespace Altaxo.Calc.Integration
   0.147739104901338491374841515972068
 };
 
-    /* w21b, weights of the 21-point formula for abscissae x2 */
-    static readonly double[] w21b = {
+		/* w21b, weights of the 21-point formula for abscissae x2 */
+		static readonly double[] w21b = {
   0.011694638867371874278064396062192,
   0.054755896574351996031381300244580,
   0.093125454583697605535065465083366,
@@ -137,8 +137,8 @@ namespace Altaxo.Calc.Integration
   0.149445554002916905664936468389821
 };
 
-    /* x3, abscissae common to the 43- and 87-point rule */
-    static readonly double[] x3 = {
+		/* x3, abscissae common to the 43- and 87-point rule */
+		static readonly double[] x3 = {
   0.999333360901932081394099323919911,
   0.987433402908088869795961478381209,
   0.954807934814266299257919200290473,
@@ -152,8 +152,8 @@ namespace Altaxo.Calc.Integration
   0.074650617461383322043914435796506
 };
 
-    /* w43a, weights of the 43-point formula for abscissae x1, x3 */
-    static readonly double[] w43a = {
+		/* w43a, weights of the 43-point formula for abscissae x1, x3 */
+		static readonly double[] w43a = {
   0.016296734289666564924281974617663,
   0.037522876120869501461613795898115,
   0.054694902058255442147212685465005,
@@ -166,8 +166,8 @@ namespace Altaxo.Calc.Integration
   0.071387267268693397768559114425516
 };
 
-    /* w43b, weights of the 43-point formula for abscissae x3 */
-    static readonly double[] w43b = {
+		/* w43b, weights of the 43-point formula for abscissae x3 */
+		static readonly double[] w43b = {
   0.001844477640212414100389106552965,
   0.010798689585891651740465406741293,
   0.021895363867795428102523123075149,
@@ -182,8 +182,8 @@ namespace Altaxo.Calc.Integration
   0.074722147517403005594425168280423
 };
 
-    /* x4, abscissae of the 87-point rule */
-    static readonly double[] x4 = {
+		/* x4, abscissae of the 87-point rule */
+		static readonly double[] x4 = {
   0.999902977262729234490529830591582,
   0.997989895986678745427496322365960,
   0.992175497860687222808523352251425,
@@ -208,8 +208,8 @@ namespace Altaxo.Calc.Integration
   0.037352123394619870814998165437704
 };
 
-    /* w87a, weights of the 87-point formula for abscissae x1, x2, x3 */
-    static readonly double[] w87a = {
+		/* w87a, weights of the 87-point formula for abscissae x1, x2, x3 */
+		static readonly double[] w87a = {
   0.008148377384149172900002878448190,
   0.018761438201562822243935059003794,
   0.027347451050052286161582829741283,
@@ -233,8 +233,8 @@ namespace Altaxo.Calc.Integration
   0.037253875503047708539592001191226
 };
 
-    /* w87b, weights of the 87-point formula for abscissae x4    */
-    static readonly double[] w87b = {
+		/* w87b, weights of the 87-point formula for abscissae x4    */
+		static readonly double[] w87b = {
   0.000274145563762072350016527092881,
   0.001807124155057942948341311753254,
   0.004096869282759164864458070683480,
@@ -261,10 +261,10 @@ namespace Altaxo.Calc.Integration
 };
 
 
-    #endregion
+		#endregion
 
-    #region qng.c
-    /* integration/qng.c
+		#region qng.c
+		/* integration/qng.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -284,168 +284,168 @@ namespace Altaxo.Calc.Integration
  */
 
 
-    static GSL_ERROR
-    gsl_integration_qng(ScalarFunctionDD f,
-                         double a, double b,
-                         double epsabs, double epsrel,
-                         out double result, out double abserr, out int neval, bool bDebug)
-    {
-      double[] fv1 = new double[5], fv2 = new double[5], fv3 = new double[5], fv4 = new double[5];
-      double[] savfun = new double[21];  /* array of function values which have been computed */
-      double res10, res21, res43, res87;    /* 10, 21, 43 and 87 point results */
-      double result_kronrod, err;
-      double resabs; /* approximation to the integral of abs(f) */
-      double resasc; /* approximation to the integral of abs(f-i/(b-a)) */
+		static GSL_ERROR
+		gsl_integration_qng(ScalarFunctionDD f,
+												 double a, double b,
+												 double epsabs, double epsrel,
+												 out double result, out double abserr, out int neval, bool bDebug)
+		{
+			double[] fv1 = new double[5], fv2 = new double[5], fv3 = new double[5], fv4 = new double[5];
+			double[] savfun = new double[21];  /* array of function values which have been computed */
+			double res10, res21, res43, res87;    /* 10, 21, 43 and 87 point results */
+			double result_kronrod, err;
+			double resabs; /* approximation to the integral of abs(f) */
+			double resasc; /* approximation to the integral of abs(f-i/(b-a)) */
 
-      double half_length = 0.5 * (b - a);
-      double abs_half_length = Math.Abs(half_length);
-      double center = 0.5 * (b + a);
-      double f_center = f(center);
+			double half_length = 0.5 * (b - a);
+			double abs_half_length = Math.Abs(half_length);
+			double center = 0.5 * (b + a);
+			double f_center = f(center);
 
-      int k;
+			int k;
 
-      if (epsabs <= 0 && (epsrel < 50 * GSL_CONST.GSL_DBL_EPSILON || epsrel < 0.5e-28))
-      {
-        result = 0;
-        abserr = 0;
-        neval = 0;
-        return new GSL_ERROR("tolerance cannot be acheived with given epsabs and epsrel",
-                   GSL_ERR.GSL_EBADTOL, true);
-      };
+			if (epsabs <= 0 && (epsrel < 50 * GSL_CONST.GSL_DBL_EPSILON || epsrel < 0.5e-28))
+			{
+				result = 0;
+				abserr = 0;
+				neval = 0;
+				return new GSL_ERROR("tolerance cannot be acheived with given epsabs and epsrel",
+									 GSL_ERR.GSL_EBADTOL, true);
+			};
 
-      /* Compute the integral using the 10- and 21-point formula. */
+			/* Compute the integral using the 10- and 21-point formula. */
 
-      res10 = 0;
-      res21 = w21b[5] * f_center;
-      resabs = w21b[5] * Math.Abs(f_center);
+			res10 = 0;
+			res21 = w21b[5] * f_center;
+			resabs = w21b[5] * Math.Abs(f_center);
 
-      for (k = 0; k < 5; k++)
-      {
-        double abscissa = half_length * x1[k];
-        double fval1 = f(center + abscissa);
-        double fval2 = f(center - abscissa);
-        double fval = fval1 + fval2;
-        res10 += w10[k] * fval;
-        res21 += w21a[k] * fval;
-        resabs += w21a[k] * (Math.Abs(fval1) + Math.Abs(fval2));
-        savfun[k] = fval;
-        fv1[k] = fval1;
-        fv2[k] = fval2;
-      }
+			for (k = 0; k < 5; k++)
+			{
+				double abscissa = half_length * x1[k];
+				double fval1 = f(center + abscissa);
+				double fval2 = f(center - abscissa);
+				double fval = fval1 + fval2;
+				res10 += w10[k] * fval;
+				res21 += w21a[k] * fval;
+				resabs += w21a[k] * (Math.Abs(fval1) + Math.Abs(fval2));
+				savfun[k] = fval;
+				fv1[k] = fval1;
+				fv2[k] = fval2;
+			}
 
-      for (k = 0; k < 5; k++)
-      {
-        double abscissa = half_length * x2[k];
-        double fval1 = f(center + abscissa);
-        double fval2 = f(center - abscissa);
-        double fval = fval1 + fval2;
-        res21 += w21b[k] * fval;
-        resabs += w21b[k] * (Math.Abs(fval1) + Math.Abs(fval2));
-        savfun[k + 5] = fval;
-        fv3[k] = fval1;
-        fv4[k] = fval2;
-      }
+			for (k = 0; k < 5; k++)
+			{
+				double abscissa = half_length * x2[k];
+				double fval1 = f(center + abscissa);
+				double fval2 = f(center - abscissa);
+				double fval = fval1 + fval2;
+				res21 += w21b[k] * fval;
+				resabs += w21b[k] * (Math.Abs(fval1) + Math.Abs(fval2));
+				savfun[k + 5] = fval;
+				fv3[k] = fval1;
+				fv4[k] = fval2;
+			}
 
-      resabs *= abs_half_length;
+			resabs *= abs_half_length;
 
-      {
-        double mean = 0.5 * res21;
+			{
+				double mean = 0.5 * res21;
 
-        resasc = w21b[5] * Math.Abs(f_center - mean);
+				resasc = w21b[5] * Math.Abs(f_center - mean);
 
-        for (k = 0; k < 5; k++)
-        {
-          resasc +=
-            (w21a[k] * (Math.Abs(fv1[k] - mean) + Math.Abs(fv2[k] - mean))
-            + w21b[k] * (Math.Abs(fv3[k] - mean) + Math.Abs(fv4[k] - mean)));
-        }
-        resasc *= abs_half_length;
-      }
+				for (k = 0; k < 5; k++)
+				{
+					resasc +=
+						(w21a[k] * (Math.Abs(fv1[k] - mean) + Math.Abs(fv2[k] - mean))
+						+ w21b[k] * (Math.Abs(fv3[k] - mean) + Math.Abs(fv4[k] - mean)));
+				}
+				resasc *= abs_half_length;
+			}
 
-      result_kronrod = res21 * half_length;
+			result_kronrod = res21 * half_length;
 
-      err = rescale_error((res21 - res10) * half_length, resabs, resasc);
+			err = rescale_error((res21 - res10) * half_length, resabs, resasc);
 
-      /*   test for convergence. */
+			/*   test for convergence. */
 
-      if (err < epsabs || err < epsrel * Math.Abs(result_kronrod))
-      {
-        result = result_kronrod;
-        abserr = err;
-        neval = 21;
-        return null; // GSL_SUCCESS;
-      }
+			if (err < epsabs || err < epsrel * Math.Abs(result_kronrod))
+			{
+				result = result_kronrod;
+				abserr = err;
+				neval = 21;
+				return null; // GSL_SUCCESS;
+			}
 
-      /* compute the integral using the 43-point formula. */
+			/* compute the integral using the 43-point formula. */
 
-      res43 = w43b[11] * f_center;
+			res43 = w43b[11] * f_center;
 
-      for (k = 0; k < 10; k++)
-      {
-        res43 += savfun[k] * w43a[k];
-      }
+			for (k = 0; k < 10; k++)
+			{
+				res43 += savfun[k] * w43a[k];
+			}
 
-      for (k = 0; k < 11; k++)
-      {
-        double abscissa = half_length * x3[k];
-        double fval = (f(center + abscissa)
-                             + f(center - abscissa));
-        res43 += fval * w43b[k];
-        savfun[k + 10] = fval;
-      }
+			for (k = 0; k < 11; k++)
+			{
+				double abscissa = half_length * x3[k];
+				double fval = (f(center + abscissa)
+														 + f(center - abscissa));
+				res43 += fval * w43b[k];
+				savfun[k + 10] = fval;
+			}
 
-      /*  test for convergence */
+			/*  test for convergence */
 
-      result_kronrod = res43 * half_length;
-      err = rescale_error((res43 - res21) * half_length, resabs, resasc);
+			result_kronrod = res43 * half_length;
+			err = rescale_error((res43 - res21) * half_length, resabs, resasc);
 
-      if (err < epsabs || err < epsrel * Math.Abs(result_kronrod))
-      {
-        result = result_kronrod;
-        abserr = err;
-        neval = 43;
-        return null; // GSL_SUCCESS;
-      }
+			if (err < epsabs || err < epsrel * Math.Abs(result_kronrod))
+			{
+				result = result_kronrod;
+				abserr = err;
+				neval = 43;
+				return null; // GSL_SUCCESS;
+			}
 
-      /* compute the integral using the 87-point formula. */
+			/* compute the integral using the 87-point formula. */
 
-      res87 = w87b[22] * f_center;
+			res87 = w87b[22] * f_center;
 
-      for (k = 0; k < 21; k++)
-      {
-        res87 += savfun[k] * w87a[k];
-      }
+			for (k = 0; k < 21; k++)
+			{
+				res87 += savfun[k] * w87a[k];
+			}
 
-      for (k = 0; k < 22; k++)
-      {
-        double abscissa = half_length * x4[k];
-        res87 += w87b[k] * (f(center + abscissa)
-                            + f(center - abscissa));
-      }
+			for (k = 0; k < 22; k++)
+			{
+				double abscissa = half_length * x4[k];
+				res87 += w87b[k] * (f(center + abscissa)
+														+ f(center - abscissa));
+			}
 
-      /*  test for convergence */
+			/*  test for convergence */
 
-      result_kronrod = res87 * half_length;
+			result_kronrod = res87 * half_length;
 
-      err = rescale_error((res87 - res43) * half_length, resabs, resasc);
+			err = rescale_error((res87 - res43) * half_length, resabs, resasc);
 
-      if (err < epsabs || err < epsrel * Math.Abs(result_kronrod))
-      {
-        result = result_kronrod;
-        abserr = err;
-        neval = 87;
-        return null; // GSL_SUCCESS;
-      }
+			if (err < epsabs || err < epsrel * Math.Abs(result_kronrod))
+			{
+				result = result_kronrod;
+				abserr = err;
+				neval = 87;
+				return null; // GSL_SUCCESS;
+			}
 
-      /* failed to converge */
+			/* failed to converge */
 
-      result = result_kronrod;
-      abserr = err;
-      neval = 87;
+			result = result_kronrod;
+			abserr = err;
+			neval = 87;
 
-      return new GSL_ERROR("failed to reach tolerance with highest-order rule", GSL_ERR.GSL_ETOL, bDebug);
-    }
+			return new GSL_ERROR("failed to reach tolerance with highest-order rule", GSL_ERR.GSL_ETOL, bDebug);
+		}
 
-    #endregion
-  }
+		#endregion
+	}
 }

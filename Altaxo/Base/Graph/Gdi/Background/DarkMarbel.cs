@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,113 +25,113 @@ using System.Drawing;
 using System.Runtime.Serialization;
 namespace Altaxo.Graph.Gdi.Background
 {
-  /// <summary>
-  /// Backs the item with a color filled rectangle.
-  /// </summary>
-  [Serializable]
-  public class DarkMarbel : IBackgroundStyle
-  {
-    protected BrushX _brush = new BrushX(NamedColor.LightGray);
-    protected float _shadowLength = 5;
+	/// <summary>
+	/// Backs the item with a color filled rectangle.
+	/// </summary>
+	[Serializable]
+	public class DarkMarbel : IBackgroundStyle
+	{
+		protected BrushX _brush = new BrushX(NamedColor.LightGray);
+		protected float _shadowLength = 5;
 
-    #region Serialization
+		#region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.DarkMarbel", 0)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        throw new ApplicationException("Programming error - this should not be called");
-        /*
-        DarkMarbel s = (DarkMarbel)obj;
-        info.AddValue("Color", s._color);
-        info.AddValue("ShadowLength", s._shadowLength);
-        */
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
-        s.Brush  = new BrushX((NamedColor)info.GetValue("Color", parent));
-        s._shadowLength = (float)info.GetDouble();
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.DarkMarbel", 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new ApplicationException("Programming error - this should not be called");
+				/*
+				DarkMarbel s = (DarkMarbel)obj;
+				info.AddValue("Color", s._color);
+				info.AddValue("ShadowLength", s._shadowLength);
+				*/
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
+				s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
+				s._shadowLength = (float)info.GetDouble();
 
-        return s;
-      }
-    }
+				return s;
+			}
+		}
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.DarkMarbel", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 2)]
-    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        DarkMarbel s = (DarkMarbel)obj;
-        info.AddValue("Brush", s._brush);
-        info.AddValue("ShadowLength", s._shadowLength);
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
-        s.Brush = (BrushX)info.GetValue("Brush", parent);
-        s._shadowLength = (float)info.GetDouble();
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.DarkMarbel", 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 2)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DarkMarbel s = (DarkMarbel)obj;
+				info.AddValue("Brush", s._brush);
+				info.AddValue("ShadowLength", s._shadowLength);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
+				s.Brush = (BrushX)info.GetValue("Brush", parent);
+				s._shadowLength = (float)info.GetDouble();
 
-        return s;
-      }
-    }
-    #endregion
+				return s;
+			}
+		}
+		#endregion
 
-    public DarkMarbel()
-    {
-    }
+		public DarkMarbel()
+		{
+		}
 
-    public DarkMarbel(NamedColor c)
-    {
-      this.Brush = new BrushX(c);
-      
-    }
+		public DarkMarbel(NamedColor c)
+		{
+			this.Brush = new BrushX(c);
 
-    public DarkMarbel(DarkMarbel from)
-    {
-      CopyFrom(from);
-    }
+		}
 
-    public void CopyFrom(DarkMarbel from)
-    {
+		public DarkMarbel(DarkMarbel from)
+		{
+			CopyFrom(from);
+		}
+
+		public void CopyFrom(DarkMarbel from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-      this.Brush = from._brush;
-      
-    }
+			this.Brush = from._brush;
 
-    public object Clone()
-    {
-      return new DarkMarbel(this);
-    }
+		}
+
+		public object Clone()
+		{
+			return new DarkMarbel(this);
+		}
 
 
-  
 
-    #region IBackgroundStyle Members
 
-    public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-      innerArea.Inflate(3.0f*_shadowLength/2, 3.0f*_shadowLength/2);
-      return innerArea;
-    }
+		#region IBackgroundStyle Members
 
-    public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-     
+		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
+			innerArea.Inflate(3.0f * _shadowLength / 2, 3.0f * _shadowLength / 2);
+			return innerArea;
+		}
 
-      innerArea.Inflate(_shadowLength / 2, _shadowLength / 2); // Padding
-      RectangleF outerArea = innerArea;
-      outerArea.Inflate(_shadowLength, _shadowLength);
+		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
 
-      _brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g,1));
-      g.FillRectangle(_brush, outerArea);
 
-      SolidBrush twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
-      g.FillPolygon(twhite, new PointF[] {
+			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2); // Padding
+			RectangleF outerArea = innerArea;
+			outerArea.Inflate(_shadowLength, _shadowLength);
+
+			_brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+			g.FillRectangle(_brush, outerArea);
+
+			SolidBrush twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
+			g.FillPolygon(twhite, new PointF[] {
                                                       new PointF(outerArea.Left,outerArea.Top), // upper left point
                                                       new PointF(outerArea.Right,outerArea.Top), // go to the right
                                                       new PointF(innerArea.Right,innerArea.Top), // go 45 deg left down in the upper right corner
@@ -140,8 +140,8 @@ namespace Altaxo.Graph.Gdi.Background
                                                       new PointF(outerArea.Left,outerArea.Bottom) // lower left corner
       });
 
-      SolidBrush tblack = new SolidBrush(Color.FromArgb(128, 0, 0, 0));
-      g.FillPolygon(tblack, new PointF[] {
+			SolidBrush tblack = new SolidBrush(Color.FromArgb(128, 0, 0, 0));
+			g.FillPolygon(tblack, new PointF[] {
                                                       new PointF(outerArea.Right,outerArea.Bottom),  
                                                       new PointF(outerArea.Right,outerArea.Top), 
                                                       new PointF(innerArea.Right,innerArea.Top), 
@@ -150,29 +150,29 @@ namespace Altaxo.Graph.Gdi.Background
                                                       new PointF(outerArea.Left,outerArea.Bottom) // lower left corner
       });
 
-    }
+		}
 
-    public bool SupportsBrush
-    {
-      get
-      {
-        return true;
-      }
-    }
+		public bool SupportsBrush
+		{
+			get
+			{
+				return true;
+			}
+		}
 
-    public BrushX Brush
-    {
-      get
-      {
-        return _brush;
-      }
-      set
-      {
-        _brush = value==null ? null : value.Clone();
-       
-      }
-    }
-    #endregion
-  }
+		public BrushX Brush
+		{
+			get
+			{
+				return _brush;
+			}
+			set
+			{
+				_brush = value == null ? null : value.Clone();
+
+			}
+		}
+		#endregion
+	}
 }
 

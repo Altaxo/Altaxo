@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,87 +24,87 @@ using System;
 using System.Drawing;
 namespace Altaxo.Graph.Gdi.Background
 {
-  /// <summary>
-  /// Backs the item with a color filled rectangle.
-  /// </summary>
-  [Serializable]
-  public class BlackOut : IBackgroundStyle
-  {
+	/// <summary>
+	/// Backs the item with a color filled rectangle.
+	/// </summary>
+	[Serializable]
+	public class BlackOut : IBackgroundStyle
+	{
 
-    #region Serialization
+		#region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BlackOut", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackOut), 1)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        BlackOut s = (BlackOut)obj;
-        
-        
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        BlackOut s = null!=o ? (BlackOut)o : new BlackOut();
-       
-
-        return s;
-      }
-    }
-
-    #endregion
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BlackOut", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackOut), 1)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				BlackOut s = (BlackOut)obj;
 
 
-    public BlackOut()
-    {
-    }
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				BlackOut s = null != o ? (BlackOut)o : new BlackOut();
 
-   
-    public BlackOut(BlackOut from)
-    {
-      CopyFrom(from);
-    }
 
-    public void CopyFrom(BlackOut from)
-    {
+				return s;
+			}
+		}
+
+		#endregion
+
+
+		public BlackOut()
+		{
+		}
+
+
+		public BlackOut(BlackOut from)
+		{
+			CopyFrom(from);
+		}
+
+		public void CopyFrom(BlackOut from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-    }
+		}
 
-    public object Clone()
-    {
-      return new BlackOut(this);
-    }
+		public object Clone()
+		{
+			return new BlackOut(this);
+		}
 
-   
 
-    #region IBackgroundStyle Members
 
-    public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-      return innerArea;
-    }
+		#region IBackgroundStyle Members
 
-    public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
-    {
-      g.FillRectangle(Brushes.Black,innerArea.Left,innerArea.Top,innerArea.Width,innerArea.Height);
-    }
+		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
+			return innerArea;
+		}
 
-    public bool SupportsBrush { get { return false; }}
+		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		{
+			g.FillRectangle(Brushes.Black, innerArea.Left, innerArea.Top, innerArea.Width, innerArea.Height);
+		}
 
-    public BrushX Brush
-    {
-      get
-      {
-        return  null ;
-      }
-      set
-      {
-        
-      }
-    }
-    #endregion
-  }
+		public bool SupportsBrush { get { return false; } }
+
+		public BrushX Brush
+		{
+			get
+			{
+				return null;
+			}
+			set
+			{
+
+			}
+		}
+		#endregion
+	}
 }
 

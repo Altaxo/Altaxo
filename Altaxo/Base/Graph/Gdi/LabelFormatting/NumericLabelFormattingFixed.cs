@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,72 +24,72 @@ using System;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
-  /// <summary>
-  /// Summary description for NumericAxisLabelFormattingFixed.
-  /// </summary>
-  public class NumericLabelFormattingFixed : NumericLabelFormattingBase
-  {
-   
-    
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingFixed", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingFixed),1)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        NumericLabelFormattingFixed s = (NumericLabelFormattingFixed)obj;
-        info.AddBaseValueEmbedded(s,typeof(NumericLabelFormattingBase));
-        
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        NumericLabelFormattingFixed s = null!=o ? (NumericLabelFormattingFixed)o : new NumericLabelFormattingFixed();
-        info.GetBaseValueEmbedded(s,typeof(NumericLabelFormattingBase),parent);
-        return s;
-      }
-    }
-
-    #endregion
+	/// <summary>
+	/// Summary description for NumericAxisLabelFormattingFixed.
+	/// </summary>
+	public class NumericLabelFormattingFixed : NumericLabelFormattingBase
+	{
 
 
-    public NumericLabelFormattingFixed()
-    {
-    }
+		#region Serialization
 
-    public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
-    {
-      CopyFrom(from);      
-    }
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingFixed", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingFixed), 1)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				NumericLabelFormattingFixed s = (NumericLabelFormattingFixed)obj;
+				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
 
-    public void CopyFrom(NumericLabelFormattingFixed from)
-    {
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				NumericLabelFormattingFixed s = null != o ? (NumericLabelFormattingFixed)o : new NumericLabelFormattingFixed();
+				info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
+				return s;
+			}
+		}
+
+		#endregion
+
+
+		public NumericLabelFormattingFixed()
+		{
+		}
+
+		public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
+		{
+			CopyFrom(from);
+		}
+
+		public void CopyFrom(NumericLabelFormattingFixed from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-      base.CopyFrom(from);
-    }
+			base.CopyFrom(from);
+		}
 
-    public override object Clone()
-    {
-      return new NumericLabelFormattingFixed(this);
-    }
-
-
-    protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
-    {
-      if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
-        return FormatItem((double)item);
-      else
-        return item.ToString();
-    }
+		public override object Clone()
+		{
+			return new NumericLabelFormattingFixed(this);
+		}
 
 
-    public string FormatItem(double tick)
-    {
-      return _prefix + tick.ToString() + _suffix;
-    }
+		protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
+		{
+			if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
+				return FormatItem((double)item);
+			else
+				return item.ToString();
+		}
 
-  }
+
+		public string FormatItem(double tick)
+		{
+			return _prefix + tick.ToString() + _suffix;
+		}
+
+	}
 }

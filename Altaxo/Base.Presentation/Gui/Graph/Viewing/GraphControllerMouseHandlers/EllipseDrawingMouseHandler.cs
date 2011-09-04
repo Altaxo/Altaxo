@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,16 +34,16 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
-  /// <summary>
-  /// Summary description for RectangleDrawingMouseHandler.
-  /// </summary>
-  public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
-  {
-    public EllipseDrawingMouseHandler(GraphViewWpf grac)
-      : base(grac)
-    {
-      
-    }
+	/// <summary>
+	/// Summary description for RectangleDrawingMouseHandler.
+	/// </summary>
+	public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
+	{
+		public EllipseDrawingMouseHandler(GraphViewWpf grac)
+			: base(grac)
+		{
+
+		}
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
 		{
@@ -51,30 +51,30 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		}
 
 
-    protected override void FinishDrawing()
-    {
-      RectangleF rect = GetNormalRectangle(_Points[0].layerCoord,_Points[1].layerCoord);
-      EllipseShape go =  new EllipseShape(rect.X,rect.Y,rect.Width,rect.Height);
+		protected override void FinishDrawing()
+		{
+			RectangleF rect = GetNormalRectangle(_Points[0].layerCoord, _Points[1].layerCoord);
+			EllipseShape go = new EllipseShape(rect.X, rect.Y, rect.Width, rect.Height);
 
-      // deselect the text tool
-			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
-      _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
-    }
- 
-    /// <summary>
-    /// Draws the ellipse
-    /// </summary>
-    /// <param name="g"></param>
-    public override void AfterPaint(Graphics g)
-    {
-      if(_currentPoint>=1)
-      {
-        RectangleF rect = GetNormalRectangle(_Points[0].printAreaCoord,_currentMousePrintAreaCoord);
-        g.DrawEllipse(Pens.Blue,rect);
-      }
+			// deselect the text tool
+			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+			_grac.ActiveLayer.GraphObjects.Add(go);
+			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+		}
 
-    }
+		/// <summary>
+		/// Draws the ellipse
+		/// </summary>
+		/// <param name="g"></param>
+		public override void AfterPaint(Graphics g)
+		{
+			if (_currentPoint >= 1)
+			{
+				RectangleF rect = GetNormalRectangle(_Points[0].printAreaCoord, _currentMousePrintAreaCoord);
+				g.DrawEllipse(Pens.Blue, rect);
+			}
 
-  }
+		}
+
+	}
 }

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,58 +27,58 @@ using Altaxo;
 
 namespace Altaxo.Data
 {
-  /// <summary>
-  /// AltaxoDBNullColumn serves as a placeholder in case the column
-  /// type is not yet known, but some attibutes of the column must
-  /// already been set
-  /// </summary>
-  public class DBNullColumn : DataColumn
-  {
-    public DBNullColumn()
-    {
-    }
+	/// <summary>
+	/// AltaxoDBNullColumn serves as a placeholder in case the column
+	/// type is not yet known, but some attibutes of the column must
+	/// already been set
+	/// </summary>
+	public class DBNullColumn : DataColumn
+	{
+		public DBNullColumn()
+		{
+		}
 
-    public override object Clone()
-    {
-      return new DBNullColumn();
-    }
+		public override object Clone()
+		{
+			return new DBNullColumn();
+		}
 
-    public override int Count
-    {
-      get
-      {
-        return 0;
-      }
-    }
+		public override int Count
+		{
+			get
+			{
+				return 0;
+			}
+		}
 
-    public override System.Type GetColumnStyleType()
-    { 
-      return null;
-    }
-    public override void SetValueAt(int i, AltaxoVariant val)
-    {
-    }
-    public override AltaxoVariant GetVariantAt(int i)
-    {
-      return null;
-    }
-    public override bool IsElementEmpty(int i)
-    {
-      return true;
-    }
-    public override void SetElementEmpty(int i)
-    {
-    }
+		public override System.Type GetColumnStyleType()
+		{
+			return null;
+		}
+		public override void SetValueAt(int i, AltaxoVariant val)
+		{
+		}
+		public override AltaxoVariant GetVariantAt(int i)
+		{
+			return null;
+		}
+		public override bool IsElementEmpty(int i)
+		{
+			return true;
+		}
+		public override void SetElementEmpty(int i)
+		{
+		}
 
 
-    public override void CopyDataFrom(object o)
-    {
-    }
-    public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow 
-    {
-    }
-    public override void InsertRows(int nBeforeRow, int nCount) // inserts additional empty rows
-    {
-    }
-  }
+		public override void CopyDataFrom(object o)
+		{
+		}
+		public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow 
+		{
+		}
+		public override void InsertRows(int nBeforeRow, int nCount) // inserts additional empty rows
+		{
+		}
+	}
 }

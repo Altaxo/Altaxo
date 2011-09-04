@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,36 +71,36 @@ namespace Altaxo.Gui.Graph
 
 		void EhLinePen_Changed(object sender, EventArgs e)
 		{
-			if (false==_chkCustomMajorColor.IsChecked)
+			if (false == _chkCustomMajorColor.IsChecked)
 			{
 				if (this._majorPenGlue.Pen != null)
 					this._majorPenGlue.Pen.BrushHolder = _linePenGlue.Pen.BrushHolder;
 			}
-			if (false==_chkCustomMinorColor.IsChecked)
+			if (false == _chkCustomMinorColor.IsChecked)
 			{
 				if (this._minorPenGlue.Pen != null)
 					this._minorPenGlue.Pen.BrushHolder = _linePenGlue.Pen.BrushHolder;
 			}
 
-			if (false==_chkCustomMajorThickness.IsChecked)
+			if (false == _chkCustomMajorThickness.IsChecked)
 				_lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
-			if (false==_chkCustomMinorThickness.IsChecked)
+			if (false == _chkCustomMinorThickness.IsChecked)
 				_lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
 
 		}
 
 		private void EhIndividualMajorColor_CheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (false==_chkCustomMajorColor.IsChecked)
+			if (false == _chkCustomMajorColor.IsChecked)
 				_majorLineColor.SelectedBrush = _lineBrushColor.SelectedBrush;
-			_majorLineColor.IsEnabled = true==_chkCustomMajorColor.IsChecked;
+			_majorLineColor.IsEnabled = true == _chkCustomMajorColor.IsChecked;
 		}
 
 		private void EhIndividualMajorThickness_CheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (false==_chkCustomMajorThickness.IsChecked)
+			if (false == _chkCustomMajorThickness.IsChecked)
 				_lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
-			_lineMajorThickness.IsEnabled = true==_chkCustomMajorThickness.IsChecked;
+			_lineMajorThickness.IsEnabled = true == _chkCustomMajorThickness.IsChecked;
 		}
 
 		private void EhIndividualMinorColor_CheckChanged(object sender, RoutedEventArgs e)
@@ -141,7 +163,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkEnableLine.IsChecked;
+				return true == _chkEnableLine.IsChecked;
 			}
 			set
 			{
@@ -237,7 +259,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				return (Collections.SelectableListNodeList)_minorWhichTicksLayout.ItemsSource;
-				
+
 			}
 			set
 			{

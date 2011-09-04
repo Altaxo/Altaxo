@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,19 +26,19 @@ namespace Altaxo.Data
 {
 
 
-  /// <summary>
-  /// This is a column with elements, which can be treated as numeric values. This is truly the case
-  /// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
-  /// can converted in seconds since a given reference date.
-  /// </summary>
-  public interface INumericColumn : IReadableColumn, ICloneable, Altaxo.Calc.LinearAlgebra.INumericSequence
-  {
-    /// <summary>
-    /// Returns the value of a column element at index i as numeric value (double).
-    /// </summary>
-    /// <param name="i">The index to the column element.</param>
-    /// <returns>The value of the column element as double value.</returns>
-    new double this[int i] { get; }
-  }
+	/// <summary>
+	/// This is a column with elements, which can be treated as numeric values. This is truly the case
+	/// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
+	/// can converted in seconds since a given reference date.
+	/// </summary>
+	public interface INumericColumn : IReadableColumn, ICloneable, Altaxo.Calc.LinearAlgebra.INumericSequence
+	{
+		/// <summary>
+		/// Returns the value of a column element at index i as numeric value (double).
+		/// </summary>
+		/// <param name="i">The index to the column element.</param>
+		/// <returns>The value of the column element as double value.</returns>
+		new double this[int i] { get; }
+	}
 
 }

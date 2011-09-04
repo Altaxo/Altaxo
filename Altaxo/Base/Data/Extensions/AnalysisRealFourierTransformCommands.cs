@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,11 +34,11 @@ namespace Altaxo.Data
 		[Flags]
 		public enum RealFourierTransformOutput
 		{
-			Re		=0x01,
-			Im		=0x02,
-			Abs		=0x04,
-			Phase	=0x08,
-			Power	=0x10
+			Re = 0x01,
+			Im = 0x02,
+			Abs = 0x04,
+			Phase = 0x08,
+			Power = 0x10
 		}
 
 		public enum RealFourierTransformOutputPlacement
@@ -41,18 +63,18 @@ namespace Altaxo.Data
 			xIncrement = 1;
 			var coll = DataColumnCollection.GetParentDataColumnCollectionOf(yColumnToTransform);
 
-			if(null==coll)
+			if (null == coll)
 				return "Can't find parent collection of provided data column to transform";
 
 			var xColD = coll.FindXColumnOf(yColumnToTransform);
-			if(null==xColD)
+			if (null == xColD)
 				return "Can't find x-column of provided data column to transform";
 
 			var xCol = xColD as DoubleColumn;
-			if(null==xCol)
+			if (null == xCol)
 				return "X-column of provided data column to transform is not a numeric column";
 
-			
+
 
 			var spacing = new Calc.LinearAlgebra.VectorSpacingEvaluator(xCol.ToROVector());
 			if (!spacing.IsStrictlyMonotonicIncreasing)
@@ -93,14 +115,14 @@ namespace Altaxo.Data
 						throw new ArgumentException("Provided y-column does not belong to a data table.");
 					break;
 				default:
-					throw new ArgumentOutOfRangeException("Unkown  enum value: " + options.OutputPlacement.ToString() );
+					throw new ArgumentOutOfRangeException("Unkown  enum value: " + options.OutputPlacement.ToString());
 			}
 
 			// create the x-Column first
 			var freqCol = new DoubleColumn();
 			freqCol.AssignVector = wrapper.FrequenciesFromXIncrement(options.XIncrementValue);
 			int outputGroup = outputTable.DataColumns.GetUnusedColumnGroupNumber();
-			outputTable.DataColumns.Add(freqCol,"Frequency",ColumnKind.X,outputGroup);
+			outputTable.DataColumns.Add(freqCol, "Frequency", ColumnKind.X, outputGroup);
 
 			// now create the other output cols
 			if (options.Output.HasFlag(RealFourierTransformOutput.Re))

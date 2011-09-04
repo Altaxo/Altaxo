@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,19 +26,19 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-  /// <summary>
-  /// Enumerates the sides of an axis line.
-  /// </summary>
-  [Serializable]
-  public enum CSAxisSide
-  {
-    /// <summary>Direction to lower logical values of the first alternate axis.</summary>
-    FirstDown = 0,
-    /// <summary>Direction to higher logical values of the first alternate axis.</summary>
-    FirstUp = 1,
-    /// <summary>Direction to lower logical values of the second alternate axis.</summary>
-    SecondDown = 2,
-    /// <summary>Direction to higher logical values of the second alternate axis.</summary>
-    SecondUp = 3
-  };
+	/// <summary>
+	/// Enumerates the sides of an axis line.
+	/// </summary>
+	[Serializable]
+	public enum CSAxisSide
+	{
+		/// <summary>Direction to lower logical values of the first alternate axis.</summary>
+		FirstDown = 0,
+		/// <summary>Direction to higher logical values of the first alternate axis.</summary>
+		FirstUp = 1,
+		/// <summary>Direction to lower logical values of the second alternate axis.</summary>
+		SecondDown = 2,
+		/// <summary>Direction to higher logical values of the second alternate axis.</summary>
+		SecondUp = 3
+	};
 }

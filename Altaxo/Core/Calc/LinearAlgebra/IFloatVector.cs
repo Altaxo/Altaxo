@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,107 +24,107 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  public interface IFloatSequence
-  {
-    /// <summary>Gets the element of the sequence at index i.</summary>
-    /// <value>The element at index i.</value>
-    float this[int i] { get; }
-  }
+	public interface IFloatSequence
+	{
+		/// <summary>Gets the element of the sequence at index i.</summary>
+		/// <value>The element at index i.</value>
+		float this[int i] { get; }
+	}
 
-  /// <summary>
-  /// Interface for a read-only vector of double values.
-  /// </summary>
-  public interface IROFloatVector : IFloatSequence
-  {
-    /// <summary>The number of elements of this vector.</summary>
-    int Length { get; }  // change this later to length property
-  }
+	/// <summary>
+	/// Interface for a read-only vector of double values.
+	/// </summary>
+	public interface IROFloatVector : IFloatSequence
+	{
+		/// <summary>The number of elements of this vector.</summary>
+		int Length { get; }  // change this later to length property
+	}
 
-  /// <summary>
-  /// Interface for a readable and writeable vector of double values.
-  /// </summary>
-  public interface IFloatVector : IROFloatVector
-  {
-    /// <summary>Read/write Accessor for the element at index i.</summary>
-    /// <value>The element at index i.</value>
-    new float this[int i] { get; set; }
-  }
+	/// <summary>
+	/// Interface for a readable and writeable vector of double values.
+	/// </summary>
+	public interface IFloatVector : IROFloatVector
+	{
+		/// <summary>Read/write Accessor for the element at index i.</summary>
+		/// <value>The element at index i.</value>
+		new float this[int i] { get; set; }
+	}
 
-  /// <summary>
-  /// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-  /// can be appended to the right of the matrix. 
-  /// </summary>
-  public interface IFloatExtensibleVector : IFloatVector
-  {
-    /// <summary>
-    /// Append vector a to the end of this vector.
-    /// </summary>
-    /// <param name="a">The vector to append.</param>
-    void Append(IROFloatVector a);
-  }
-
-
-  public abstract class AbstractROFloatVector : IROFloatVector
-  {
-    static public implicit operator AbstractROFloatVector(float[] src)
-    {
-      return new ROFloatVector(src);
-    }
-
-    #region IROVector Members
-
-    public abstract int Length
-    {
-      get;
-    }
-
-    #endregion
-
-    #region INumericSequence Members
-
-    public abstract float this[int i]
-    {
-      get;
-    }
-
-    #endregion
-  }
-
-  public class ROFloatVector : AbstractROFloatVector
-  {
-    private float[] _data;
-
-    public ROFloatVector(float[] array)
-    {
-      _data = array;
-    }
+	/// <summary>
+	/// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
+	/// can be appended to the right of the matrix. 
+	/// </summary>
+	public interface IFloatExtensibleVector : IFloatVector
+	{
+		/// <summary>
+		/// Append vector a to the end of this vector.
+		/// </summary>
+		/// <param name="a">The vector to append.</param>
+		void Append(IROFloatVector a);
+	}
 
 
+	public abstract class AbstractROFloatVector : IROFloatVector
+	{
+		static public implicit operator AbstractROFloatVector(float[] src)
+		{
+			return new ROFloatVector(src);
+		}
 
-    static public implicit operator ROFloatVector(float[] src)
-    {
-      return new ROFloatVector(src);
-    }
+		#region IROVector Members
+
+		public abstract int Length
+		{
+			get;
+		}
+
+		#endregion
+
+		#region INumericSequence Members
+
+		public abstract float this[int i]
+		{
+			get;
+		}
+
+		#endregion
+	}
+
+	public class ROFloatVector : AbstractROFloatVector
+	{
+		private float[] _data;
+
+		public ROFloatVector(float[] array)
+		{
+			_data = array;
+		}
 
 
 
-    #region IROVector Members
+		static public implicit operator ROFloatVector(float[] src)
+		{
+			return new ROFloatVector(src);
+		}
 
-    public override int Length
-    {
-      get { return _data.Length; }
-    }
 
-    #endregion
 
-    #region INumericSequence Members
+		#region IROVector Members
 
-    public override float this[int i]
-    {
-      get { return _data[i]; }
-    }
+		public override int Length
+		{
+			get { return _data.Length; }
+		}
 
-    #endregion
-  }
+		#endregion
+
+		#region INumericSequence Members
+
+		public override float this[int i]
+		{
+			get { return _data[i]; }
+		}
+
+		#endregion
+	}
 
 }

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	/// <summary>
 	/// Plot group style, which changes plot items by transforming their coordinates, i.e. by shifting them on the x- or y-axis (or both).
 	/// </summary>
-  public interface ICoordinateTransformingGroupStyle : ICloneable
-  {
+	public interface ICoordinateTransformingGroupStyle : ICloneable
+	{
 
 		/// <summary>
 		/// Merges the X bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.
@@ -41,8 +41,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// <param name="layer">The layer.</param>
 		/// <param name="pb">The physical boundaries to merge with.</param>
 		/// <param name="coll">The collection of plot items.</param>
-    void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
-		
+		void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
+
 		/// <summary>
 		/// Merges the Y bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.
 		/// If the group style transforms the y values, of course the transformed values should be merged into.
@@ -59,6 +59,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// <param name="g">Graphics context used for drawing.</param>
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="coll">Collection of plot items to draw.</param>
-    void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll);
-  }
+		void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll);
+	}
 }

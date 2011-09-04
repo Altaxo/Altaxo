@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,7 +71,7 @@ namespace Altaxo.Gui.Graph
 			if (null != IndependentNegativeError_CheckChanged)
 				IndependentNegativeError_CheckChanged(this, EventArgs.Empty);
 
-			_btSelectNegErrorColumn.IsEnabled = true==_chkIndepNegErrorColumn.IsChecked;
+			_btSelectNegErrorColumn.IsEnabled = true == _chkIndepNegErrorColumn.IsChecked;
 		}
 
 		private void _btSelectNegErrorColumn_Click(object sender, RoutedEventArgs e)
@@ -70,7 +92,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkIndependentColor.IsChecked;
+				return true == _chkIndependentColor.IsChecked;
 			}
 			set
 			{
@@ -94,7 +116,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkIndependentSize.IsChecked;
+				return true == _chkIndependentSize.IsChecked;
 			}
 			set
 			{
@@ -106,7 +128,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkLineSymbolGap.IsChecked;
+				return true == _chkLineSymbolGap.IsChecked;
 			}
 			set
 			{
@@ -119,7 +141,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkShowEndBars.IsChecked;
+				return true == _chkShowEndBars.IsChecked;
 			}
 			set
 			{
@@ -131,7 +153,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkDoNotShift.IsChecked;
+				return true == _chkDoNotShift.IsChecked;
 			}
 			set
 			{
@@ -143,7 +165,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkIsHorizontal.IsChecked;
+				return true == _chkIsHorizontal.IsChecked;
 			}
 			set
 			{
@@ -183,7 +205,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return true==_chkIndepNegErrorColumn.IsChecked;
+				return true == _chkIndepNegErrorColumn.IsChecked;
 			}
 			set
 			{

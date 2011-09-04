@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,7 +60,7 @@ namespace Altaxo.Gui.Common.Drawing
 				var val = (LineCapEx)value;
 				if (val.IsDefaultStyle)
 					return _cb._cachedItems[LineCapEx.Flat.Name];
-				else 
+				else
 					return _cb._cachedItems[val.Name];
 
 
@@ -63,7 +85,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		bool _isForEndCap;
 
-		
+
 		static SortedDictionary<string, int> _lineCaps;
 
 		public LineCapComboBox()
@@ -89,19 +111,19 @@ namespace Altaxo.Gui.Common.Drawing
 			foreach (LineCapEx cap in LineCapEx.GetValues())
 			{
 				var item = new ImageComboBoxItem(this, cap);
-				_cachedItems.Add(cap.Name,item);
+				_cachedItems.Add(cap.Name, item);
 				this.Items.Add(item);
 			}
 		}
 
-	
+
 
 		#region Dependency property
 		private const string _nameOfValueProp = "SelectedLineCap";
 		public LineCapEx SelectedLineCap
 		{
 			get { return (LineCapEx)GetValue(SelectedLineCapProperty); }
-			set	{	SetValue(SelectedLineCapProperty, value); }
+			set { SetValue(SelectedLineCapProperty, value); }
 		}
 
 		public static readonly DependencyProperty SelectedLineCapProperty =
@@ -142,13 +164,13 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static ImageSource GetImage(LineCapEx join, bool isForEndCap)
 		{
-			
-			
+
+
 			const int bmpHeight = 24;
 			const int bmpWidth = 48;
 			const double nominalHeight = 24; // height of a combobox item
-			const double nominalWidth = (nominalHeight*bmpWidth)/bmpHeight;
-			const double lineWidth = bmpHeight*0.4;
+			const double nominalWidth = (nominalHeight * bmpWidth) / bmpHeight;
+			const double lineWidth = bmpHeight * 0.4;
 
 			if (null == _interopBitmap)
 				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
@@ -158,17 +180,17 @@ namespace Altaxo.Gui.Common.Drawing
 			grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
 			grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
 
-      var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
-      if (isForEndCap)
-      {
-        join.SetPenEndCap(linePen);
-        grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth*(1 - 0.25f), 0.5f * bmpHeight );
-      }
-      else
-      {
-        join.SetPenStartCap(linePen);
-        grfx.DrawLine(linePen, 0.25f*bmpWidth, 0.5f * bmpHeight,  bmpWidth, 0.5f * bmpHeight);
-      }
+			var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
+			if (isForEndCap)
+			{
+				join.SetPenEndCap(linePen);
+				grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
+			}
+			else
+			{
+				join.SetPenStartCap(linePen);
+				grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
+			}
 
 			var img = new WriteableBitmap(_interopBitmap.WpfBitmap);
 			img.Freeze();

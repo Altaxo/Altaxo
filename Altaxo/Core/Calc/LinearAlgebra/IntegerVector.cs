@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,56 +25,56 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
-  /// Vector of integer elements.
-  /// </summary>
-  public class IntegerVector
-  {
-    protected int[] x;
-    protected int len = 0;
+	/// <summary>
+	/// Vector of integer elements.
+	/// </summary>
+	public class IntegerVector
+	{
+		protected int[] x;
+		protected int len = 0;
 
 
-    /// <summary>
-    /// Element accessor.
-    /// </summary>
-    public int this[int i]
-    {
-      get { return x[i]; }
-      set { x[i] = value; }
-    }
+		/// <summary>
+		/// Element accessor.
+		/// </summary>
+		public int this[int i]
+		{
+			get { return x[i]; }
+			set { x[i] = value; }
+		}
 
-    /// <summary>
-    /// Sets all elements to the provided value.
-    /// </summary>
-    /// <param name="val">The value all elements are set to.</param>
-    public void SetAllElementsTo(int val)
-    {
-      for(int i=len-1; i>=0; --i)
-        x[i] = val;
-    }
+		/// <summary>
+		/// Sets all elements to the provided value.
+		/// </summary>
+		/// <param name="val">The value all elements are set to.</param>
+		public void SetAllElementsTo(int val)
+		{
+			for (int i = len - 1; i >= 0; --i)
+				x[i] = val;
+		}
 
-    /// <summary>
-    /// Clears all elements and deletes the underlying array.
-    /// </summary>
-    public void Clear()
-    {
-      x=null;
-      len=0;
-    }
+		/// <summary>
+		/// Clears all elements and deletes the underlying array.
+		/// </summary>
+		public void Clear()
+		{
+			x = null;
+			len = 0;
+		}
 
-    /// <summary>
-    /// Resizes the vector. Previosly stored data are lost.
-    /// </summary>
-    /// <param name="length">New length.</param>
-    public void Resize(int length)
-    {
-      if(x==null || length>=x.Length)
-      {
-        x = new int[length];
-      }
+		/// <summary>
+		/// Resizes the vector. Previosly stored data are lost.
+		/// </summary>
+		/// <param name="length">New length.</param>
+		public void Resize(int length)
+		{
+			if (x == null || length >= x.Length)
+			{
+				x = new int[length];
+			}
 			this.len = length;
-    }
-  }
+		}
+	}
 
 
 }

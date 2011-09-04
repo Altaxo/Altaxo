@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ namespace Altaxo.Data
 		/// <param name="myStream">The stream to import from.</param>
 		public static void ImportAscii(this DataTable dataTable, System.IO.Stream myStream)
 		{
-      AsciiImporter.Import(myStream, dataTable);
+			AsciiImporter.Import(myStream, dataTable);
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace Altaxo.Data
 		/// <param name="filenames">The names of the files to import.</param>
 		public static void ImportAsciiToMultipleWorksheets(this DataTable dataTable, string[] filenames)
 		{
-      AsciiImporter.ImportAsciiToMultipleWorksheets(filenames, dataTable);
+			AsciiImporter.ImportAsciiToMultipleWorksheets(filenames, dataTable);
 		}
 
 		/// <summary>
@@ -64,16 +64,16 @@ namespace Altaxo.Data
 			AsciiImporter.ImportMultipleAsciiHorizontally(filenames, dataTable);
 		}
 
-    /// <summary>
-    /// Imports multiple Ascii files into a single data table, vertically, i.e. in subsequent rows.
-    /// </summary>
-    /// <param name="dataTable">The data table where to import the data.</param>
-    /// <param name="filenames">The files names. The names will be sorted before use.</param>
-    public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames)
-    {
-      Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-      AsciiImporter.ImportMultipleAsciiVertically(filenames, dataTable);
-    }
+		/// <summary>
+		/// Imports multiple Ascii files into a single data table, vertically, i.e. in subsequent rows.
+		/// </summary>
+		/// <param name="dataTable">The data table where to import the data.</param>
+		/// <param name="filenames">The files names. The names will be sorted before use.</param>
+		public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames)
+		{
+			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+			AsciiImporter.ImportMultipleAsciiVertically(filenames, dataTable);
+		}
 
 		/// <summary>
 		/// Asks for file name(s) and imports the file(s) into multiple worksheets.
@@ -89,7 +89,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="dataTable">The data table to import to. Can be null if <see cref="toMultipleWorksheets"/> is set to true.</param>
 		/// <param name="toMultipleWorksheets">If true, multiple files are imported into multiple worksheets. New worksheets were then created automatically.</param>
-    /// <param name="vertically">If <c>toMultipleWorksheets</c> is false, and this option is true, the data will be exported vertically (in the same columns) instead of horizontally.</param>
+		/// <param name="vertically">If <c>toMultipleWorksheets</c> is false, and this option is true, the data will be exported vertically (in the same columns) instead of horizontally.</param>
 		public static void ShowImportAsciiDialog(this DataTable dataTable, bool toMultipleWorksheets, bool vertically)
 		{
 			var options = new Altaxo.Gui.OpenFileOptions();
@@ -101,15 +101,15 @@ namespace Altaxo.Data
 
 			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
 			{
-        if (toMultipleWorksheets)
-          ImportAsciiToMultipleWorksheets(dataTable, options.FileNames);
-        else
-        {
-          if(vertically)
-            ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames);
-          else
-           ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames);
-        }
+				if (toMultipleWorksheets)
+					ImportAsciiToMultipleWorksheets(dataTable, options.FileNames);
+				else
+				{
+					if (vertically)
+						ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames);
+					else
+						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames);
+				}
 			}
 
 		}

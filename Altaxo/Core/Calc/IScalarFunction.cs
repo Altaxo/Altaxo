@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,54 +25,54 @@ using System;
 
 namespace Altaxo.Calc
 {
-  /// <summary>
-  /// Provides a delegate for function evaluation.
-  /// </summary>
-  /// <param name="x">The one and only parameter of the function.</param>
-  /// <returns>The functional value.</returns>
-  public delegate double ScalarFunctionDD(double x);
+	/// <summary>
+	/// Provides a delegate for function evaluation.
+	/// </summary>
+	/// <param name="x">The one and only parameter of the function.</param>
+	/// <returns>The functional value.</returns>
+	public delegate double ScalarFunctionDD(double x);
 
-  /// <summary>
-  /// Provides the interface to a function with one double argument, and one resulting double value.
-  /// </summary>
-  public interface IScalarFunctionDD
-  {
-    /// <summary>
-    /// The function evaluation.
-    /// </summary>
-    /// <param name="x">The argument of the function.</param>
-    /// <returns>The resulting value that the function evaluates.</returns>
-    double Evaluate(double x);
-  }
+	/// <summary>
+	/// Provides the interface to a function with one double argument, and one resulting double value.
+	/// </summary>
+	public interface IScalarFunctionDD
+	{
+		/// <summary>
+		/// The function evaluation.
+		/// </summary>
+		/// <param name="x">The argument of the function.</param>
+		/// <returns>The resulting value that the function evaluates.</returns>
+		double Evaluate(double x);
+	}
 
-  /// <summary>
-  /// Provides the interface to a function with one double argument, and one resulting double value.
-  /// The evaluation is parametrized by one or more parameters.
-  /// </summary>
-  public interface IParametrizedScalarFunctionDD
-  {
-    /// <summary>
-    /// The function evaluation.
-    /// </summary>
-    /// <param name="x">The argument of the function.</param>
-    /// <param name="parameters">The parameters of this function</param>
-    /// <returns>The resulting value that the function evaluates.</returns>
-    double Evaluate(double x, double[] parameters);
-  }
+	/// <summary>
+	/// Provides the interface to a function with one double argument, and one resulting double value.
+	/// The evaluation is parametrized by one or more parameters.
+	/// </summary>
+	public interface IParametrizedScalarFunctionDD
+	{
+		/// <summary>
+		/// The function evaluation.
+		/// </summary>
+		/// <param name="x">The argument of the function.</param>
+		/// <param name="parameters">The parameters of this function</param>
+		/// <returns>The resulting value that the function evaluates.</returns>
+		double Evaluate(double x, double[] parameters);
+	}
 
-  /// <summary>
-  /// Provides the interface to a function with one double argument, and one resulting double value.
-  /// The evaluation is parametrized by one or more parameters.
-  /// </summary>
-  public interface IParametrizedFunctionDDD
-  {
-    /// <summary>
-    /// The function evaluation.
-    /// </summary>
-    /// <param name="independent">The argument of the function.</param>
-    /// <param name="parameters">The parameters of this function</param>
-    /// <param name="result">On output, this is the function result.</param>
-    /// <returns>The resulting value that the function evaluates.</returns>
-    void Evaluate(double[] independent, double[] parameters, double[] result);
-  }
+	/// <summary>
+	/// Provides the interface to a function with one double argument, and one resulting double value.
+	/// The evaluation is parametrized by one or more parameters.
+	/// </summary>
+	public interface IParametrizedFunctionDDD
+	{
+		/// <summary>
+		/// The function evaluation.
+		/// </summary>
+		/// <param name="independent">The argument of the function.</param>
+		/// <param name="parameters">The parameters of this function</param>
+		/// <param name="result">On output, this is the function result.</param>
+		/// <returns>The resulting value that the function evaluates.</returns>
+		void Evaluate(double[] independent, double[] parameters, double[] result);
+	}
 }

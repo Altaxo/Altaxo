@@ -1,188 +1,210 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-  /// <summary>
-  /// Class for simple non linear fitting that can be used inside of scripts.
-  /// </summary>
-  public class SimpleNonlinearFit
-  {
-    #region Inner classes
+	/// <summary>
+	/// Class for simple non linear fitting that can be used inside of scripts.
+	/// </summary>
+	public class SimpleNonlinearFit
+	{
+		#region Inner classes
 
-    class DummyFitFunc : IFitFunction
-    {
-      
-      FitEvaluationFunction _func;
-      double[] _defaultParameter;
+		class DummyFitFunc : IFitFunction
+		{
 
-      public DummyFitFunc(FitEvaluationFunction func, double[] defaultParameter)
-      {
-        _func = func;
-        _defaultParameter = (double[])defaultParameter.Clone();
-      }
+			FitEvaluationFunction _func;
+			double[] _defaultParameter;
 
-      #region IFitFunction Members
+			public DummyFitFunc(FitEvaluationFunction func, double[] defaultParameter)
+			{
+				_func = func;
+				_defaultParameter = (double[])defaultParameter.Clone();
+			}
 
-      public int NumberOfIndependentVariables
-      {
-        get { return 1; }
-      }
+			#region IFitFunction Members
 
-      public int NumberOfDependentVariables
-      {
-        get { return 1; }
-      }
+			public int NumberOfIndependentVariables
+			{
+				get { return 1; }
+			}
 
-      public int NumberOfParameters
-      {
-        get { return _defaultParameter.Length; }
-      }
+			public int NumberOfDependentVariables
+			{
+				get { return 1; }
+			}
 
-      public string IndependentVariableName(int i)
-      {
-        return "x";
-      }
+			public int NumberOfParameters
+			{
+				get { return _defaultParameter.Length; }
+			}
 
-      public string DependentVariableName(int i)
-      {
-        return "y";
-      }
+			public string IndependentVariableName(int i)
+			{
+				return "x";
+			}
 
-      public string ParameterName(int i)
-      {
-        return "P" + i.ToString();
-      }
+			public string DependentVariableName(int i)
+			{
+				return "y";
+			}
 
-      public double DefaultParameterValue(int i)
-      {
-        return _defaultParameter[i];
-      }
+			public string ParameterName(int i)
+			{
+				return "P" + i.ToString();
+			}
 
-      public IVarianceScaling DefaultVarianceScaling(int i)
-      {
-        return new ConstantVarianceScaling();
-      }
+			public double DefaultParameterValue(int i)
+			{
+				return _defaultParameter[i];
+			}
 
-      public void Evaluate(double[] independent, double[] parameters, double[] FV)
-      {
-        _func(independent, parameters, FV);
-      }
+			public IVarianceScaling DefaultVarianceScaling(int i)
+			{
+				return new ConstantVarianceScaling();
+			}
 
-      #endregion
-    }
+			public void Evaluate(double[] independent, double[] parameters, double[] FV)
+			{
+				_func(independent, parameters, FV);
+			}
 
-    #endregion
+			#endregion
+		}
 
-    NonlinearFitDocument _fitDoc;
-    FitElement _fitEle;
-    LevMarAdapter _fitAdapter;
+		#endregion
 
-    /// <summary>
-    /// Creates an instance of this class.
-    /// </summary>
-    /// <param name="fitFunc">Fitting function.</param>
-    /// <param name="parameter">Array of default parameters (length must match the expected number of parameter of fitFunc).</param>
-    /// <param name="xCol">Data column of independent values.</param>
-    /// <param name="yCol">Data column of dependent values.</param>
-    /// <param name="start">First point to be used for fitting.</param>
-    /// <param name="count">Number of points to be used for fitting.</param>
-    public SimpleNonlinearFit(FitEvaluationFunction fitFunc, double[] parameter, Altaxo.Data.INumericColumn xCol, Altaxo.Data.INumericColumn yCol, int start, int count)
-    {
-      _fitDoc = new NonlinearFitDocument();
-      _fitEle = new FitElement(xCol, yCol, start, count);
-      _fitEle.FitFunction = new DummyFitFunc(fitFunc, parameter);
-      _fitDoc.FitEnsemble.Add(_fitEle);
-      _fitDoc.SetDefaultParametersForFitElement(0);
-    }
+		NonlinearFitDocument _fitDoc;
+		FitElement _fitEle;
+		LevMarAdapter _fitAdapter;
 
-    /// <summary>
-    /// Executes the fit. Afterwards, you can get the fit parameters by <see cref="GetParameter"/>, or the resulting Chi².
-    /// </summary>
-    public void Fit()
-    {
-      _fitAdapter = new LevMarAdapter(_fitDoc.FitEnsemble, _fitDoc.CurrentParameters);
-      _fitAdapter.Fit();
-      _fitAdapter.CopyParametersBackTo(_fitDoc.CurrentParameters);
-    }
+		/// <summary>
+		/// Creates an instance of this class.
+		/// </summary>
+		/// <param name="fitFunc">Fitting function.</param>
+		/// <param name="parameter">Array of default parameters (length must match the expected number of parameter of fitFunc).</param>
+		/// <param name="xCol">Data column of independent values.</param>
+		/// <param name="yCol">Data column of dependent values.</param>
+		/// <param name="start">First point to be used for fitting.</param>
+		/// <param name="count">Number of points to be used for fitting.</param>
+		public SimpleNonlinearFit(FitEvaluationFunction fitFunc, double[] parameter, Altaxo.Data.INumericColumn xCol, Altaxo.Data.INumericColumn yCol, int start, int count)
+		{
+			_fitDoc = new NonlinearFitDocument();
+			_fitEle = new FitElement(xCol, yCol, start, count);
+			_fitEle.FitFunction = new DummyFitFunc(fitFunc, parameter);
+			_fitDoc.FitEnsemble.Add(_fitEle);
+			_fitDoc.SetDefaultParametersForFitElement(0);
+		}
 
-    /// <summary>
-    /// Sets the values of the parameter back to their default value.
-    /// </summary>
-    public void ResetToDefaultParameters()
-    {
-      _fitDoc.SetDefaultParametersForFitElement(0);
-    }
+		/// <summary>
+		/// Executes the fit. Afterwards, you can get the fit parameters by <see cref="GetParameter"/>, or the resulting Chi².
+		/// </summary>
+		public void Fit()
+		{
+			_fitAdapter = new LevMarAdapter(_fitDoc.FitEnsemble, _fitDoc.CurrentParameters);
+			_fitAdapter.Fit();
+			_fitAdapter.CopyParametersBackTo(_fitDoc.CurrentParameters);
+		}
 
-    /// <summary>
-    /// Sets the parameter with index i to a certain value, that is used as starting value for fitting.
-    /// </summary>
-    /// <param name="i">Index of the parameter.</param>
-    /// <param name="val">Value of the parameter.</param>
-    public void SetParameter(int i, double val)
-    {
-      _fitDoc.CurrentParameters[i].Parameter = val;
-    }
+		/// <summary>
+		/// Sets the values of the parameter back to their default value.
+		/// </summary>
+		public void ResetToDefaultParameters()
+		{
+			_fitDoc.SetDefaultParametersForFitElement(0);
+		}
 
-    /// <summary>
-   /// Gets the parameter with index i.
-    /// </summary>
-    /// <param name="i">Index of the parameter.</param>
-    /// <returns>Value of the parameter i.</returns>
-    public double GetParameter(int i)
-    {
-      return _fitDoc.CurrentParameters[i].Parameter;
-    }
+		/// <summary>
+		/// Sets the parameter with index i to a certain value, that is used as starting value for fitting.
+		/// </summary>
+		/// <param name="i">Index of the parameter.</param>
+		/// <param name="val">Value of the parameter.</param>
+		public void SetParameter(int i, double val)
+		{
+			_fitDoc.CurrentParameters[i].Parameter = val;
+		}
 
-    /// <summary>
-    /// Sets the parameter with index i to either fixed (parameter can't vary during fit) or unfixed.
-    /// </summary>
-    /// <param name="i">Index of the parameter.</param>
-    /// <param name="paraFixed">If true, the parameter is fixed during fitting.</param>
-    public void SetParameterIsFixed(int i, bool paraFixed)
-    {
-      _fitDoc.CurrentParameters[i].Vary = !paraFixed;
-    }
+		/// <summary>
+		/// Gets the parameter with index i.
+		/// </summary>
+		/// <param name="i">Index of the parameter.</param>
+		/// <returns>Value of the parameter i.</returns>
+		public double GetParameter(int i)
+		{
+			return _fitDoc.CurrentParameters[i].Parameter;
+		}
 
-    /// <summary>
-    /// Gets the fixed/unfixed state of the parameter with index i.
-    /// </summary>
-    /// <param name="i">Index of the parameter.</param>
-    /// <returns>If true, the parameter is fixed during fitting.</returns>
-    public bool GetParameterIsFixed(int i)
-    {
-      return !_fitDoc.CurrentParameters[i].Vary;
-    }
+		/// <summary>
+		/// Sets the parameter with index i to either fixed (parameter can't vary during fit) or unfixed.
+		/// </summary>
+		/// <param name="i">Index of the parameter.</param>
+		/// <param name="paraFixed">If true, the parameter is fixed during fitting.</param>
+		public void SetParameterIsFixed(int i, bool paraFixed)
+		{
+			_fitDoc.CurrentParameters[i].Vary = !paraFixed;
+		}
 
-    /// <summary>
-    /// After a fit, returns the resulting Chi Square.
-    /// </summary>
-    public double ResultingChiSquare
-    {
-      get
-      {
-        return _fitAdapter.ResultingChiSquare;
-      }
-    }
+		/// <summary>
+		/// Gets the fixed/unfixed state of the parameter with index i.
+		/// </summary>
+		/// <param name="i">Index of the parameter.</param>
+		/// <returns>If true, the parameter is fixed during fitting.</returns>
+		public bool GetParameterIsFixed(int i)
+		{
+			return !_fitDoc.CurrentParameters[i].Vary;
+		}
 
-    /// <summary>
-    /// With these function is is possible to change the data column used for the independent variable.
-    /// </summary>
-    /// <param name="xCol">Data column representing the independent variable.</param>
-    public void SetIndependentVariable(Altaxo.Data.INumericColumn xCol)
-    {
-      _fitEle.SetIndependentVariable(0, xCol);
-    }
+		/// <summary>
+		/// After a fit, returns the resulting Chi Square.
+		/// </summary>
+		public double ResultingChiSquare
+		{
+			get
+			{
+				return _fitAdapter.ResultingChiSquare;
+			}
+		}
 
-    /// <summary>
-    /// With these function is is possible to change the data column used for the dependent variable.
-    /// </summary>
-    /// <param name="yCol">Data column representing the dependent variable.</param>
-    public void SetDependentVariable(Altaxo.Data.INumericColumn yCol)
-    {
-      _fitEle.SetDependentVariable(0, yCol);
-    }
+		/// <summary>
+		/// With these function is is possible to change the data column used for the independent variable.
+		/// </summary>
+		/// <param name="xCol">Data column representing the independent variable.</param>
+		public void SetIndependentVariable(Altaxo.Data.INumericColumn xCol)
+		{
+			_fitEle.SetIndependentVariable(0, xCol);
+		}
 
-  }
+		/// <summary>
+		/// With these function is is possible to change the data column used for the dependent variable.
+		/// </summary>
+		/// <param name="yCol">Data column representing the dependent variable.</param>
+		public void SetDependentVariable(Altaxo.Data.INumericColumn yCol)
+		{
+			_fitEle.SetDependentVariable(0, yCol);
+		}
+
+	}
 }

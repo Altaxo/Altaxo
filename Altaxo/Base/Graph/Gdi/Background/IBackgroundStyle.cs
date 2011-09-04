@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,35 +25,35 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Background
 {
-  /// <summary>
-  /// Provides a background around a rectangular spaced area.
-  /// </summary>
-  public interface IBackgroundStyle : ICloneable
-  {
-    /// <summary>
-    /// Measures the outer size of the item.
-    /// </summary>
-    /// <param name="g">Graphics context.</param>
-    /// <param name="innerArea">Inner area of the item.</param>
-    /// <returns>The rectangle that encloses the item including the background.</returns>
-    RectangleF MeasureItem(Graphics g, RectangleF innerArea);
+	/// <summary>
+	/// Provides a background around a rectangular spaced area.
+	/// </summary>
+	public interface IBackgroundStyle : ICloneable
+	{
+		/// <summary>
+		/// Measures the outer size of the item.
+		/// </summary>
+		/// <param name="g">Graphics context.</param>
+		/// <param name="innerArea">Inner area of the item.</param>
+		/// <returns>The rectangle that encloses the item including the background.</returns>
+		RectangleF MeasureItem(Graphics g, RectangleF innerArea);
 
 
-    /// <summary>
-    /// Draws the background.
-    /// </summary>
-    /// <param name="g">Graphics context.</param>
-    /// <param name="innerArea">The inner area of the item.</param>
-    void Draw(Graphics g, RectangleF innerArea);
+		/// <summary>
+		/// Draws the background.
+		/// </summary>
+		/// <param name="g">Graphics context.</param>
+		/// <param name="innerArea">The inner area of the item.</param>
+		void Draw(Graphics g, RectangleF innerArea);
 
-    /// <summary>
-    /// True if the classes color property can be set/reset;
-    /// </summary>
-    bool SupportsBrush { get; }
+		/// <summary>
+		/// True if the classes color property can be set/reset;
+		/// </summary>
+		bool SupportsBrush { get; }
 
-    /// <summary>
-    /// Get/sets the color.
-    /// </summary>
-    BrushX Brush { get; set; }
-  }
+		/// <summary>
+		/// Get/sets the color.
+		/// </summary>
+		BrushX Brush { get; set; }
+	}
 }
