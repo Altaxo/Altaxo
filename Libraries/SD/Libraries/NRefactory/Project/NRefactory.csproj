@@ -50,7 +50,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+ <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
     <DefineConstants>TEST;DEBUG</DefineConstants>
@@ -189,6 +189,7 @@
     <None Include="Src\Lexer\VBNet\ExpressionFinder.atg">
       <Generator>CocoParserGenerator</Generator>
       <CustomToolNamespace>ICSharpCode.NRefactory.Parser.VB</CustomToolNamespace>
+      <LastGenOutput>Parser.cs</LastGenOutput>
     </None>
     <None Include="Src\Lexer\VBNet\PushParser.frame">
       <DependentUpon>ExpressionFinder.atg</DependentUpon>

@@ -57,11 +57,14 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		}
 	}
 	
-	
+	/// <summary>
+	/// Returned by <see cref="ContextActionsService.GetAvailableActions()"></see>.
+	/// </summary>
 	public class EditorActionsProvider
 	{
 		ITextEditor editor { get; set; }
 		IList<IContextActionsProvider> providers { get; set; }
+		public EditorContext EditorContext { get; set; }
 		
 		public EditorActionsProvider(ITextEditor editor, IList<IContextActionsProvider> providers)
 		{
@@ -76,6 +79,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			// parseTask.Wait();
 			// Reparse so that we have up-to-date DOM.
 			ParserService.ParseCurrentViewContent();
+			this.EditorContext = new EditorContext(editor);
 		}
 		
 		public IEnumerable<IContextAction> GetVisibleActions()
@@ -109,11 +113,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			if (ParserService.LoadSolutionProjectsThreadRunning)
 				yield break;
-			var editorContext = new EditorContext(this.editor);
-			
 			// could run providers in parallel
 			foreach (var provider in providers) {
-				foreach (var action in provider.GetAvailableActions(editorContext)) {
+				foreach (var action in provider.GetAvailableActions(this.EditorContext)) {
 					providerForAction[action] = provider;
 					yield return action;
 				}

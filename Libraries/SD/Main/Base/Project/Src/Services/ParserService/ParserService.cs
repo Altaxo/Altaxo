@@ -29,7 +29,6 @@ namespace ICSharpCode.SharpDevelop
 		static Dictionary<IProject, IProjectContent> projectContents = new Dictionary<IProject, IProjectContent>();
 		static Dictionary<FileName, FileEntry> fileEntryDict = new Dictionary<FileName, FileEntry>();
 		static DefaultProjectContent defaultProjectContent;
-
 #if ModifiedForAltaxo
     // neccessary to support scripts, which are usually displayed in dialog windows
     static object _activeModalContent;
@@ -53,7 +52,6 @@ namespace ICSharpCode.SharpDevelop
       _activeModalContent = null;
     }
 #endif
-
 		
 		#region Manage Project Contents
 		/// <summary>
@@ -312,6 +310,12 @@ namespace ICSharpCode.SharpDevelop
 				return null;
 		}
 
+		public static ResolveResult Resolve(int offset, IDocument document, string fileName)
+		{
+			var position = document.OffsetToPosition(offset);
+			return Resolve(position.Line, position.Column, document, fileName);
+		}
+		
 		public static ExpressionResult FindFullExpression(int caretLine, int caretColumn, IDocument document, string fileName)
 		{
 			IExpressionFinder expressionFinder = GetExpressionFinder(fileName);
@@ -320,12 +324,6 @@ namespace ICSharpCode.SharpDevelop
 			if (caretColumn > document.GetLine(caretLine).Length)
 				return ExpressionResult.Empty;
 			return expressionFinder.FindFullExpression(document.Text, document.PositionToOffset(caretLine, caretColumn));
-		}
-		
-		public static ResolveResult Resolve(int offset, IDocument document, string fileName)
-		{
-			var position = document.OffsetToPosition(offset);
-			return Resolve(position.Line, position.Column, document, fileName);
 		}
 		#endregion
 		

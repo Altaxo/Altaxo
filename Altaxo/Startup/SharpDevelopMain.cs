@@ -1,4 +1,4 @@
-// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
@@ -119,6 +119,11 @@ namespace ICSharpCode.SharpDevelop
 			if (Environment.Version < new Version(4, 0, 30319)) {
 				MessageBox.Show("This version of SharpDevelop requires .NET 4.0. You are using: " + Environment.Version, "SharpDevelop");
 				return false;
+			}
+			// Work around a WPF issue when %WINDIR% is set to an incorrect path
+			string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows, Environment.SpecialFolderOption.DoNotVerify);
+			if (Environment.GetEnvironmentVariable("WINDIR") != windir) {
+				Environment.SetEnvironmentVariable("WINDIR", windir);
 			}
 			return true;
 		}
