@@ -915,6 +915,16 @@ namespace Altaxo.Main.Services
     }
 
 
+		/// <summary>
+		/// Retrieves information about a screen area.
+		/// </summary>
+		/// <param name="virtual_x">The virtual screen x coordinate of the point on the virtual screen.</param>
+		/// <param name="virtual_y">The virtual screen x coordinate of the point on the virtual screen.</param>
+		/// <param name="info">On return, contains the information about the screen that contains the virtual screen point.</param>
+		/// <returns>True if the function has successfully retrieved information, false otherwise.</returns>
+		public abstract Altaxo.Graph.RectangleD GetScreenInformation(double virtual_x, double virtual_y);
+
+
 		public abstract bool ShowOpenFileDialog(OpenFileOptions options);
 		public abstract bool ShowSaveFileDialog(SaveFileOptions options);
 
@@ -967,7 +977,16 @@ namespace Altaxo.Main.Services
 		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
 		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
 		public abstract void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y);
-		
+
+
+		public struct ScreenInformation
+		{
+			public double WorkAreaX;
+			public double WorkAreaY;
+			public double WorkAreaWidth;
+			public double WorkAreaHeight;
+		}
+
     #endregion
   }
 }

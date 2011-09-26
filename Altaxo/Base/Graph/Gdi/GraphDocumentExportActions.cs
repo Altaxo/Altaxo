@@ -28,6 +28,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
+using Altaxo.Gui.Common.MultiRename;
+using Altaxo.Main.Commands;
+
 namespace Altaxo.Graph.Gdi
 {
 	public static class GraphDocumentExportActions
@@ -61,6 +64,111 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		static GraphExportOptions _graphExportOptionsToFile = new GraphExportOptions();
+
+
+		/// <summary>Shows the dialog to choose the graph export options, and then the multi file export dialog.</summary>
+		/// <param name="documents">List with graph documents to export.</param>
+		public static void ShowExportMultipleGraphsDialogAndExportOptions(IEnumerable<Graph.Gdi.GraphDocument> documents)
+		{
+			object resopt = _graphExportOptionsToFile;
+			if (Current.Gui.ShowDialog(ref resopt, "Choose export options"))
+			{
+				_graphExportOptionsToFile = (GraphExportOptions)resopt;
+			}
+			else
+			{
+				return;
+			}
+
+			ShowExportMultipleGraphsDialog(documents);
+		}
+
+		/// <summary>Shows the multi file export dialog and exports the graphs, using the <see cref="GraphExportOptions"/> that are stored in this class.</summary>
+		/// <param name="documents">List with graph documents to export.</param>
+		public static void ShowExportMultipleGraphsDialog(IEnumerable<Graph.Gdi.GraphDocument> documents)
+		{
+
+			MultiRenameData mrData = new MultiRenameData();
+			MultiRenameDocuments.RegisterCommonDocumentShortcuts(mrData);
+			mrData.RegisterStringShortcut("E", (o, i) => _graphExportOptionsToFile.GetDefaultFileNameExtension(), "File extension (depends on the image type that was chosen before");
+
+			mrData.RegisterRenameActionHandler(DoExportGraphs);
+
+
+
+			mrData.AddObjectsToRename(documents);
+
+			mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullName);
+			mrData.RegisterListColumn("File name", null);
+			mrData.RegisterListColumn("Creation date", MultiRenameDocuments.GetCreationDateString);
+
+			mrData.DefaultPatternString = "[SN][E]";
+
+			MultiRenameController mrController = new MultiRenameController();
+			mrController.InitializeDocument(mrData);
+			Current.Gui.ShowDialog(mrController, "Export multiple graphs");
+		}
+
+		static List<object> DoExportGraphs(MultiRenameData mrData)
+		{
+			var failedItems = new List<object>();
+			var errors = new StringBuilder();
+
+			bool allPathsRooted = true;
+			for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
+			{
+				var fileName = mrData.GetNewNameForObject(i);
+				if (!System.IO.Path.IsPathRooted(fileName))
+				{
+					allPathsRooted = false;
+					break;
+				}
+			}
+
+			if (!allPathsRooted)
+			{
+				//Current.Gui.ShowFolderDialog();
+				// http://wpfdialogs.codeplex.com/
+			}
+
+
+
+
+			for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
+			{
+				var graph = (GraphDocument)mrData.GetObjectToRename(i);
+				var fileName = mrData.GetNewNameForObject(i);
+				try
+				{
+					DoExportGraph(graph, fileName, _graphExportOptionsToFile);
+				}
+				catch (Exception ex)
+				{
+					failedItems.Add(graph);
+					errors.AppendFormat("Graph {0} -> file name {1}: export failed, {2}\n",graph.Name,fileName,ex.Message);
+				}
+			}
+
+			if (errors.Length != 0)
+				Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
+			else
+				Current.Gui.InfoMessageBox(string.Format("{0} graphs successfully exported.", mrData.ObjectsToRenameCount));
+
+			return failedItems;
+		}
+
+
+		public static void DoExportGraph(Graph.Gdi.GraphDocument doc, string fileName, Graph.Gdi.GraphExportOptions graphExportOptions)
+		{
+			if (!System.IO.Path.IsPathRooted(fileName))
+				throw new ArgumentException("Path is not rooted!");
+
+			using (Stream myStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+			{
+				doc.Render(myStream, graphExportOptions);
+				myStream.Close();
+			} 
+		}
 
 		public static void ShowFileExportSpecificDialog(this GraphDocument doc)
 		{

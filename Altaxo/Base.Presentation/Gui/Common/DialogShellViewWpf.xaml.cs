@@ -42,6 +42,7 @@ namespace Altaxo.Gui.Common
 	public partial class DialogShellViewWpf : Window, IDialogShellView
 	{
 		UIElement _hostedControl;
+		Altaxo.Graph.RectangleD _workArea;
 
 		public DialogShellViewWpf()
 		{
@@ -59,6 +60,8 @@ namespace Altaxo.Gui.Common
 
 		}
 
+
+	
 
 		/// <summary>
 		/// Overrides the logic for determining the size of the dialog window. See remarks for details.
@@ -78,30 +81,24 @@ namespace Altaxo.Gui.Common
 		/// </remarks>
 		protected override Size MeasureOverride(Size availableSize)
 		{
-			var workArea = System.Windows.SystemParameters.WorkArea; // the working area on the screen
+			_workArea = Current.Gui.GetScreenInformation(this.Left, this.Top);
+
 
 			if (!this.IsLoaded) // when the dialog is initially loaded
 			{
 				// adjust the size of the dialog box so that is is maximum the size of the working area
-				if (availableSize.Height > workArea.Height)
-					availableSize.Height = workArea.Height;
-				if (availableSize.Width > workArea.Width)
-					availableSize.Width = workArea.Width;
-
-				// adjust the top and left position of the dialog if neccessary so that the dialog box fits inside the working area
-				if (this.Top + availableSize.Height > workArea.Bottom)
-					this.Top = workArea.Bottom - availableSize.Height;
-				if (this.Left + availableSize.Width > workArea.Right)
-					this.Left = workArea.Right - availableSize.Width;
-
+				if (availableSize.Height > _workArea.Height)
+					availableSize.Height = _workArea.Height;
+				if (availableSize.Width > _workArea.Width)
+					availableSize.Width = _workArea.Width;
 			}
 			else if (this.SizeToContent == System.Windows.SizeToContent.WidthAndHeight) // when the content size changed and the user had not manually resized the box
 			{
 				// adjust the size of the dialog box so that it fits inside of the working area (without changing the position of the dialog
-				if (this.Top + availableSize.Height > workArea.Bottom)
-					availableSize.Height = workArea.Bottom - this.Top;
-				if (this.Left + availableSize.Width > workArea.Right)
-					availableSize.Width = workArea.Right - this.Left;
+				if (this.Top + availableSize.Height > _workArea.Bottom)
+					availableSize.Height = _workArea.Bottom - this.Top;
+				if (this.Left + availableSize.Width > _workArea.Right)
+					availableSize.Width = _workArea.Right - this.Left;
 			}
 
 			if (availableSize.Height < 0)
@@ -112,6 +109,25 @@ namespace Altaxo.Gui.Common
 			return base.MeasureOverride(availableSize);
 		}
 
+
+		/// <summary>Override this method to arrange and size a window and its child elements.</summary>
+		/// <param name="arrangeBounds">A <see cref="T:System.Windows.Size"/> that reflects the final size that the window should use to arrange itself and its children.</param>
+		/// <returns>A <see cref="T:System.Windows.Size"/> that reflects the actual size that was used.</returns>
+		protected override Size ArrangeOverride(Size arrangeBounds)
+		{
+
+			if (!this.IsLoaded) // when the dialog is initially loaded
+			{
+				// adjust the top and left position of the dialog if neccessary so that the dialog box fits inside the working area
+				if (this.Top + arrangeBounds.Height > _workArea.Bottom)
+					this.Top = _workArea.Bottom - arrangeBounds.Height;
+				if (this.Left + arrangeBounds.Width > _workArea.Right)
+					this.Left = _workArea.Right - arrangeBounds.Width;
+			}
+
+
+			return base.ArrangeOverride(arrangeBounds);
+		}
 
 
 		#region IDialogShellView

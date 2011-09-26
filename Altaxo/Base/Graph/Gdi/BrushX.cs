@@ -657,6 +657,27 @@ namespace Altaxo.Graph.Gdi
 		{
 			bool changed = false;
 
+			// fix: in order that a gradient is shown, the bounding rectangle's width and height must always be positive (this is not the case for instance for pens)
+			if (boundingRectangle.Width < 0)
+			{
+				boundingRectangle.X += boundingRectangle.Width;
+				boundingRectangle.Width = -boundingRectangle.Width;
+			}
+			else if (boundingRectangle.Width == 0)
+			{
+				boundingRectangle.Width = 1;
+			}
+
+			if (boundingRectangle.Height < 0)
+			{
+				boundingRectangle.Y += boundingRectangle.Height;
+				boundingRectangle.Height = -boundingRectangle.Height;
+			}
+			else if (boundingRectangle.Height == 0)
+			{
+				boundingRectangle.Height = 1;
+			}
+
 			if (_brushType == BrushType.LinearGradientBrush || _brushType == BrushType.PathGradientBrush)
 			{
 				changed = (_brushBoundingRectangle != boundingRectangle);

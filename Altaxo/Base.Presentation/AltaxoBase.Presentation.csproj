@@ -301,6 +301,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\MultiRename\MultiRenameControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\MultiSelectTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -752,6 +756,9 @@
     </Compile>
     <Compile Include="Gui\Common\MultiChoiceControl.xaml.cs">
       <DependentUpon>MultiChoiceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\MultiRename\MultiRenameControl.xaml.cs">
+      <DependentUpon>MultiRenameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\QuantityWithUnitConverter.cs" />
     <Compile Include="Gui\Common\QuantityWithUnitTextBox.cs" />

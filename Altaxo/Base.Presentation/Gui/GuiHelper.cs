@@ -30,6 +30,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Data;
 
 using Altaxo;
 using Altaxo.Collections;
@@ -162,6 +163,33 @@ namespace Altaxo.Gui
 				gv.Columns[i].Width = widths[i];
 		}
 
+		/// <summary>
+		/// Sets the column names of a list view and set up the binding to items that derive from <see cref="Altaxo.Collections.ListNode"/>
+		/// </summary>
+		/// <param name="listView">The ListView where the columns to set.</param>
+		/// <param name="columnHeaders">The text of the column headers.</param>
+		/// <remarks>The first column is bind to the property "Text" of the items, the next columns to the property "Text1", "Text2", and so on.</remarks>
+		public static void InitializeListViewColumnsAndBindToListNode(ListView listView, string[] columnHeaders)
+		{
+			if (null == (listView.View as GridView))
+				listView.View = new GridView();
+
+			var grid = listView.View as GridView;
+
+			grid.Columns.Clear();
+
+
+			int colNo = -1;
+			foreach (var colName in columnHeaders)
+			{
+				++colNo;
+
+				var gvCol = new GridViewColumn() { Header = colName };
+				var binding = new Binding(colNo == 0 ? "Text " : "Text" + colNo.ToString());
+				gvCol.DisplayMemberBinding = binding;
+				grid.Columns.Add(gvCol);
+			}
+		}
 
 		#endregion
 

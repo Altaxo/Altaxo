@@ -87,6 +87,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	using Plot.Data;
 	using Graph.Plot.Data;
 	using Background;
+	using Altaxo.Main.PegParser;
 
 	public partial class TextGraphic : GraphicBase
 	{

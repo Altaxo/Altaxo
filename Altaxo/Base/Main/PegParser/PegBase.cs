@@ -1,16 +1,38 @@
-﻿/*Author:Martin.Holzherr;Date:20080922;Context:"PEG Support for C#";Licence:CPOL
- * <<History>> 
- *  20080922;V1.0 created
- *  20080929;UTF16BE;Added UTF16BE read support to <<FileLoader.LoadFile(out string src)>>
- * <</History>>
-*/
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//   Author:Martin.Holzherr;Date:20080922;Context:"PEG Support for C#";Licence:CPOL
+//   <<History>> 
+//   20080922;V1.0 created
+//   20080929;UTF16BE;Added UTF16BE read support to <<FileLoader.LoadFile(out string src)>>
+//   <</History>>
+//
+//    modified for Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//
+//    Altaxo is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Diagnostics;
 using System.Text;
 using System;
-namespace Altaxo.Graph.Gdi.Shapes
+namespace Altaxo.Main.PegParser
 {
 	#region Input File Support
 	public enum EncodingClass { unicode, utf8, binary, ascii };

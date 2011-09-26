@@ -215,4 +215,30 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+	public class CmdMultiRenameItems : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems();
+			Main.Commands.MultiRenameDocuments.ShowRenameDocumentsDialog(list);
+		}
+	}
+
+	public class CmdMultiExportGraphs : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
+			int count = list.Count();
+
+			if (count==0)
+				return;
+			if (count == 1)
+				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowFileExportSpecificDialog(list.First());
+			else
+				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowExportMultipleGraphsDialogAndExportOptions(list);
+		}
+	}
+
+		
 }

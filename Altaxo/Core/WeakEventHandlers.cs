@@ -187,7 +187,7 @@ namespace Altaxo
 		}
 
 		/// <summary>
-		/// Converts this instance to an <see cref="EventHandler<TEventArgs>"/> that can be used to add or remove it from/to an event.
+		/// Converts this instance to an <see cref="EventHandler&lt;TEventArgs&gt;"/> that can be used to add or remove it from/to an event.
 		/// </summary>
 		/// <param name="weakHandler">A instance if this class.</param>
 		/// <returns>A reference to the event handler routine inside the instance.</returns>

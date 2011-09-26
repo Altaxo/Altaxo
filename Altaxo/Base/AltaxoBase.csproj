@@ -265,9 +265,15 @@
     <Compile Include="Gui\Common\ControlViewElement.cs" />
     <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenController.cs" />
     <Compile Include="Gui\Common\MultiChildController.cs" />
+    <Compile Include="Gui\Common\MultiRename\MultiRenameElements.cs" />
+    <Compile Include="Gui\Common\MultiRename\MultiRenameParser.cs" />
+    <Compile Include="Gui\Common\MultiRename\MultiRenameParserBase.cs" />
+    <Compile Include="Gui\Common\MultiRename\MultiRenameData.cs" />
+    <Compile Include="Gui\Common\MultiRename\MultiRenameTreeWalker.cs" />
     <Compile Include="Gui\Common\TabbedElementController.cs" />
     <Compile Include="Gui\Common\TextChoiceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableController.cs" />
+    <Compile Include="Gui\Common\MultiRename\MultiRenameController.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
     <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleController.cs" />
@@ -298,6 +304,7 @@
     <Compile Include="Gui\Worksheet\MasterCurveCreationDataController.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationMainController.cs" />
     <Compile Include="Gui\Worksheet\RealFourierTransformationController.cs" />
+    <Compile Include="Main\Commands\MultiRenameDocuments.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
     <Compile Include="Main\DocNodeProxyVisitors.cs" />
@@ -685,7 +692,7 @@
     <Compile Include="Graph\Gdi\Plot\ColorProvider\ColorProviderBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\DensityImageLegend.cs" />
     <Compile Include="Graph\Gdi\Shapes\FloatingScale.cs" />
-    <Compile Include="Graph\Gdi\Shapes\TextGraphic_PegBase.cs" />
+    <Compile Include="Main\PegParser\PegBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_TreeWalker.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Parser.cs" />

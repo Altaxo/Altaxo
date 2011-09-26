@@ -33,16 +33,24 @@ using Altaxo.Gui.Common;
 namespace Altaxo.Gui
 {
   public class GuiFactoryServiceWpfWin : Altaxo.Main.Services.GUIFactoryService
-  {
-		/*
-    public IWin32Window MainWindow
-    {
-      get
-      {
-        return (System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject;
-      }
-    }
-		*/
+	{
+
+		#region Still dependent on Windows Forms
+
+		public override IntPtr MainWindowHandle
+		{
+			get { return ((System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject).Handle; }
+		}
+
+		public override Altaxo.Graph.RectangleD GetScreenInformation(double virtual_x, double virtual_y)
+		{
+		
+			var wa = System.Windows.Forms.Screen.GetWorkingArea(new System.Drawing.Point((int)virtual_x, (int)virtual_y));
+
+			return new Altaxo.Graph.RectangleD(wa.X, wa.Y, wa.Width, wa.Height);
+		}
+
+		#endregion
 
 		public System.Windows.Window MainWindowWpf
 		{
@@ -52,10 +60,7 @@ namespace Altaxo.Gui
 			}
 		}
 
-		public override IntPtr MainWindowHandle
-		{
-			get { return  ((System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject).Handle; }
-		}
+	
 
     public override bool InvokeRequired()
     {

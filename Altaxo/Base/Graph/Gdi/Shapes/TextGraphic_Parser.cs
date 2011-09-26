@@ -25,6 +25,8 @@
 using System;
 using System.IO;
 using System.Text;
+using Altaxo.Main.PegParser;
+
 namespace Altaxo.Graph.Gdi.Shapes
 {
 

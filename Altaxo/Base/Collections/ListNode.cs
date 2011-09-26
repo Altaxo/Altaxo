@@ -38,7 +38,7 @@ namespace Altaxo.Collections
 
 
 
-		public string Text
+		public virtual string Text
 		{
 			get
 			{
