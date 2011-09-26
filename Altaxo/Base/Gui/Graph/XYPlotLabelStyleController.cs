@@ -113,18 +113,18 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the XOffset edit box.
     /// </summary>
-    void Init_XOffset(QuantityWithUnitGuiEnvironment environment, QuantityWithUnit value);
+    void Init_XOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
 
-		QuantityWithUnit XOffset { get; }
+		DimensionfulQuantity XOffset { get; }
 
 
     /// <summary>
     /// Initializes the content of the YOffset edit box.
     /// </summary>
-		void Init_YOffset(QuantityWithUnitGuiEnvironment environment, QuantityWithUnit value);
+		void Init_YOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
 
 
-		QuantityWithUnit YOffset { get; }
+		DimensionfulQuantity YOffset { get; }
 
     /// <summary>
     /// Initializes the content of the Independent color checkbox
@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Graph
 
     UseDocument _useDocumentCopy;
 
-		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", new QuantityWithUnit(1, LengthUnitPoint.Instance));
+		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", new DimensionfulQuantity(1, LengthUnitPoint.Instance));
 
     public XYPlotLabelStyleController()
     {
@@ -225,7 +225,7 @@ namespace Altaxo.Gui.Graph
         _yOffset      = _doc.YOffset;
         _labelColumn = _doc.LabelColumn;
         _backgroundStyle = _doc.BackgroundStyle;
-				_percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em size", new QuantityWithUnit(_font.Size, LengthUnitPoint.Instance));
+				_percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em size", new DimensionfulQuantity(_font.Size, LengthUnitPoint.Instance));
 			}
 
       if(null!=_view)
@@ -239,11 +239,11 @@ namespace Altaxo.Gui.Graph
         SetAttachmentDirection();
 				_view.SelectedRotation = _doc.Rotation;
 
-				_percentFontSizeUnit.ReferenceQuantity = new QuantityWithUnit(_font.Size, LengthUnitPoint.Instance);
+				_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_font.Size, LengthUnitPoint.Instance);
 
 				var xEnv = new QuantityWithUnitGuiEnvironment( GuiLengthUnits.Collection, _percentFontSizeUnit);
-				_view.Init_XOffset(xEnv, new QuantityWithUnit(_xOffset * 100, _percentFontSizeUnit));
-				_view.Init_YOffset(xEnv, new QuantityWithUnit(_yOffset * 100, _percentFontSizeUnit));
+				_view.Init_XOffset(xEnv, new DimensionfulQuantity(_xOffset * 100, _percentFontSizeUnit));
+				_view.Init_YOffset(xEnv, new DimensionfulQuantity(_yOffset * 100, _percentFontSizeUnit));
 				_view.Background = _backgroundStyle;
 
         InitializeLabelColumnText();
@@ -359,7 +359,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_FontSizeChanged()
 		{
-			_percentFontSizeUnit.ReferenceQuantity = new QuantityWithUnit(_view.SelectedFont.Size, LengthUnitPoint.Instance);
+			_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_view.SelectedFont.Size, LengthUnitPoint.Instance);
 		}
   
     #endregion

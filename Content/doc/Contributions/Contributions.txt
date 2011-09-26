@@ -51,6 +51,10 @@ AltaxoCore contains contributions from the following projects (in alphabetic ord
 	License: Code Project Open License 1.02
 	Used to parse the graph textbox text, and the syntax of the multi rename tool
 
+- Troschuetz.Random Class Library Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
+	Licence: no explicit license attached 
+	URL: http://www.codeproject.com/KB/recipes/Random.aspx
+
 
 
 Please note also the license files from some of the contributors in the same directory where you found this file.

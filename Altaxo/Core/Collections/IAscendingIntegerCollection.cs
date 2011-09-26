@@ -26,12 +26,12 @@ using System.Collections.Generic;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// The interface of a sorted collection of integers, sorted so that the smallest integers come first.
+  /// Sorted collection of integers, sorted so that the smallest integers come first.
   /// </summary>
   public interface IAscendingIntegerCollection : ICloneable, IEnumerable<int>, IROVector<int>
   {
     /// <summary>
-    /// Returns true, if the integer <code>nValue</code> is contained in this collection.
+    /// Returns true if the integer <code>nValue</code> is contained in this collection.
     /// </summary>
     /// <param name="nValue">The integer value to test for membership.</param>
     /// <returns>True if the integer value is member of the collection.</returns>
@@ -43,16 +43,15 @@ namespace Altaxo.Collections
     /// Get the next range (i.e. a contiguous range of integers) in ascending order.
     /// </summary>
     /// <param name="currentposition">The current position into this collection. Use 0 for the first time. On return, this is the next position.</param>
-    /// <param name="rangestart">Returns the starting index of the contiguous range.</param>
-    /// <param name="rangecount">Returns the width of the range.</param>
+		/// <param name="result">On return, contains the next contiguous range of integer values (if the return value is <c>True</c>).</param>
     /// <returns>True if the returned data are valid, false if there is no more data.</returns>
     /// <remarks>You can use this function in a while loop:
     /// <code>
-    /// int rangestart, rangecount;
+		/// ContiguousIntegerRange range;
     /// int currentPosition=0;
-    /// while(GetNextRangeAscending(ref currentPosition, out rangestart, out rangecount))
+    /// while(GetNextRangeAscending(ref currentPosition, out range))
     ///   {
-    ///   // do your things here
+    ///   // do your things here with range
     ///   }
     /// </code></remarks>
     bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result);

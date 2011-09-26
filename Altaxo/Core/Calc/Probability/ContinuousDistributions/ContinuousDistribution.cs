@@ -26,23 +26,38 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
+	/// <summary>
+	/// Base class for continuous probability distribution functions.
+	/// </summary>
   public abstract class ContinuousDistribution : Distribution
   {
+
+		/// <summary>Initializes a new instance of the <see cref="ContinuousDistribution"/> class.</summary>
+		/// <param name="generator">The random number generator used.</param>
     public ContinuousDistribution(Generator generator)
       : base(generator)
     {
     }
 
+		/// <summary>Calculates the cumulative distribution function.</summary>
+		/// <param name="x">Argument.</param>
+		/// <returns>The probability that the random variable of this probability distribution will be found at a value less than or equal to <paramref name="x"/>.</returns>
     public virtual double CDF(double x)
     {
       throw new NotImplementedException();
     }
 
+		/// <summary>Calculates the probability density function.</summary>
+		/// <param name="x">Argument.</param>
+		/// <returns>The relative likelihood for the random variable to occur at the point <paramref name="x"/>.</returns>
     public virtual double PDF(double x)
     {
       throw new NotImplementedException();
     }
 
+		/// <summary>Calculates the quantile of the distribution function.</summary>
+		/// <param name="p">The probability p.</param>
+		/// <returns>The point x at which the cumulative distribution function <see cref="CDF"/>() of argument x is equal to <paramref name="p"/>.</returns>
     public virtual double Quantile(double p)
     {
       throw new NotImplementedException();

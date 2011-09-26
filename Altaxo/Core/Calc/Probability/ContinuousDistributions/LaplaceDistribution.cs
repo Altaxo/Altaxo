@@ -121,7 +121,8 @@ namespace Altaxo.Calc.Probability
       if (!IsValidAlpha(alpha))
         throw new ArgumentOutOfRangeException("Alpha is out of range");
 
-      
+			this.mu = mu;
+			this.alpha = alpha;
     }
 
 		/// <summary>

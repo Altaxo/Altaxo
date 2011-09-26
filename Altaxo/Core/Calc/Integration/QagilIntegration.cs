@@ -179,7 +179,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
 		/// <param name="limit">Maximum number of subintervals used for integration.</param>
-		/// <param name="integrationRule">Integration rule used for integration (only for this function call).</param>
+		/// <param name="q">Integration rule used for integration (only for this function call).</param>
 		/// <param name="debug">Setting of the debug flag (only for this function call). If the integration fails or the specified accuracy
 		/// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
 		/// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>

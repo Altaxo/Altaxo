@@ -755,9 +755,9 @@ namespace Altaxo.Calc.Probability
         W = _expDist.NextDouble();
       }
       while (W == 0);
-      ///  double t = beta * Math.Tan(M_PI_2 * alpha);
-      ///  double B = Math.Atan(t) / alpha;
-      ///  double S = Math.Pow(1 + t * t, 1 / (2 * alpha));
+      //  double t = beta * Math.Tan(M_PI_2 * alpha);
+      //  double B = Math.Atan(t) / alpha;
+      //  double S = Math.Pow(1 + t * t, 1 / (2 * alpha));
 
       X = S * Math.Sin(alpha * (V + B)) / Math.Pow(Math.Cos(V), 1 / alpha)
         * Math.Pow(Math.Cos(V - alpha * (V + B)) / W, (1 - alpha) / alpha);
@@ -1032,7 +1032,7 @@ namespace Altaxo.Calc.Probability
               return double.NaN;
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -1685,7 +1685,7 @@ namespace Altaxo.Calc.Probability
 
           return result;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -1975,7 +1975,7 @@ namespace Altaxo.Calc.Probability
 
           return result;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -2276,7 +2276,7 @@ namespace Altaxo.Calc.Probability
 
           return result;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -2623,7 +2623,7 @@ namespace Altaxo.Calc.Probability
 
           return result;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -2661,7 +2661,7 @@ namespace Altaxo.Calc.Probability
 
           return result;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -2885,7 +2885,7 @@ namespace Altaxo.Calc.Probability
 
           return result;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -3078,7 +3078,7 @@ namespace Altaxo.Calc.Probability
               return double.NaN;
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -3267,7 +3267,7 @@ namespace Altaxo.Calc.Probability
               return double.NaN;
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -3448,7 +3448,7 @@ namespace Altaxo.Calc.Probability
               return double.NaN;
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }
@@ -3629,7 +3629,7 @@ namespace Altaxo.Calc.Probability
               return double.NaN;
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return double.NaN;
         }

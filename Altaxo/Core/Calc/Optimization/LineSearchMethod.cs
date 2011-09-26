@@ -41,7 +41,11 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public abstract class LineSearchMethod : OptimizationMethod
 	{
-		///<summary> Minimize the given cost function </summary>
+		/// <summary>Minimize the given cost function</summary>
+		/// <param name="x">Start point of search.</param>
+		/// <param name="direction">Direction of search.</param>
+		/// <param name="step">Scaling factor to calculate the second evaluation point after the start point. The second evaluation point is calculated from <c>x+direction*step</c>.</param>
+		/// <returns>The point where the given const function is minimal.</returns>
 		public abstract DoubleVector Search(DoubleVector x, DoubleVector direction, double step);
 	}
 }

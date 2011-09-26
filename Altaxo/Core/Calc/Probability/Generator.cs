@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Probability
 
 
     /// <summary>
-    /// Gets the maximum number that a call to <see cref="Next"/> can return.
+    /// Gets the maximum number that a call to <see cref="M:Next()"/> can return.
     /// </summary>
     public virtual int Maximum { get { return int.MaxValue - 1; } }
     
@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Probability
 		/// </summary>
         /// <returns>
         /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="Int32.MaxValue"/>; that is, 
-        ///   the range of return values includes 0 but not <paramref name="Int32.MaxValue"/>.
+        ///   the range of return values includes 0 but not <see cref="Int32.MaxValue"/>.
         /// </returns>
         public abstract int Next();
 

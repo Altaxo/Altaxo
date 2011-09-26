@@ -548,7 +548,7 @@
     <Compile Include="Science\IRelativeUnit.cs" />
     <Compile Include="Science\Length.cs" />
     <Compile Include="Science\PrefixedUnit.cs" />
-    <Compile Include="Science\QuantityWithUnit.cs" />
+    <Compile Include="Science\DimensionfulQuantity.cs" />
     <Compile Include="Science\SIConstants.cs" />
     <Compile Include="Science\SIPrefix.cs" />
     <Compile Include="Science\SIPrefixList.cs" />

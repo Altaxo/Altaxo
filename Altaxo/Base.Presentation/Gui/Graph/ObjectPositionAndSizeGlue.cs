@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_positionX = value;
 				if (null != _edPositionX)
-					_edPositionX.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edPositionX.SelectedQuantity = new Science.DimensionfulQuantity(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_positionY = value;
 				if (null != _edPositionY)
-					_edPositionY.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edPositionY.SelectedQuantity = new Science.DimensionfulQuantity(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Graph
 				if (_edPositionX != null)
 				{
 					_edPositionX.UnitEnvironment = PositionEnvironment.Instance;
-					_edPositionX.SelectedQuantity = new Science.QuantityWithUnit(_positionX, Science.LengthUnitPoint.Instance);
+					_edPositionX.SelectedQuantity = new Science.DimensionfulQuantity(_positionX, Science.LengthUnitPoint.Instance);
 				}
 			}
 		}
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Graph
 				if (_edPositionY != null)
 				{
 					_edPositionY.UnitEnvironment = PositionEnvironment.Instance;
-					_edPositionY.SelectedQuantity = new Science.QuantityWithUnit(_positionY, Science.LengthUnitPoint.Instance);
+					_edPositionY.SelectedQuantity = new Science.DimensionfulQuantity(_positionY, Science.LengthUnitPoint.Instance);
 				}
 			}
 		}
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_sizeX = value;
 				if (null != _edSizeX)
-					_edSizeX.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edSizeX.SelectedQuantity = new Science.DimensionfulQuantity(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_sizeY = value;
 				if (null != _edSizeY)
-					_edSizeY.SelectedQuantity = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edSizeY.SelectedQuantity = new Science.DimensionfulQuantity(value, Science.LengthUnitPoint.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -219,7 +219,7 @@ namespace Altaxo.Gui.Graph
 				if (_edSizeX != null)
 				{
 					_edSizeX.UnitEnvironment = PositionEnvironment.Instance;
-					_edSizeX.SelectedQuantity = new Science.QuantityWithUnit(_sizeX, Science.LengthUnitPoint.Instance);
+					_edSizeX.SelectedQuantity = new Science.DimensionfulQuantity(_sizeX, Science.LengthUnitPoint.Instance);
 				}
 			}
 		}
@@ -233,7 +233,7 @@ namespace Altaxo.Gui.Graph
 				if (_edSizeY != null)
 				{
 					_edSizeY.UnitEnvironment = PositionEnvironment.Instance;
-					_edSizeY.SelectedQuantity = new Science.QuantityWithUnit(_sizeY, Science.LengthUnitPoint.Instance);
+					_edSizeY.SelectedQuantity = new Science.DimensionfulQuantity(_sizeY, Science.LengthUnitPoint.Instance);
 				}
 			}
 		}

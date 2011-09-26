@@ -86,15 +86,15 @@ namespace Altaxo.Gui.Common.Drawing
 		/// <summary>
 		/// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
 		/// </summary>
-		public QuantityWithUnit SelectedQuantity
+		public DimensionfulQuantity SelectedQuantity
 		{
-			get { return (QuantityWithUnit)GetValue(SelectedQuantityProperty); }
+			get { return (DimensionfulQuantity)GetValue(SelectedQuantityProperty); }
 			set { SetValue(SelectedQuantityProperty, value); }
 		}
 
 		public static readonly DependencyProperty SelectedQuantityProperty =
-				DependencyProperty.Register("SelectedQuantity", typeof(QuantityWithUnit), typeof(LengthImageComboBox),
-				new FrameworkPropertyMetadata(new QuantityWithUnit(0, LengthUnitPoint.Instance), EhSelectedQuantityChanged));
+				DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(LengthImageComboBox),
+				new FrameworkPropertyMetadata(new DimensionfulQuantity(0, LengthUnitPoint.Instance), EhSelectedQuantityChanged));
 
 		private static void EhSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -120,7 +120,7 @@ namespace Altaxo.Gui.Common.Drawing
 			get { return SelectedQuantity.AsValueIn(Altaxo.Science.LengthUnitPoint.Instance); }
 			set
 			{
-				var quant = new Science.QuantityWithUnit(value, Science.LengthUnitPoint.Instance);
+				var quant = new Science.DimensionfulQuantity(value, Science.LengthUnitPoint.Instance);
 				if (null != UnitEnvironment)
 					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
 				SelectedQuantity = quant;

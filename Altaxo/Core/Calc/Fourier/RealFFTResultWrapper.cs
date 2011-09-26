@@ -48,8 +48,7 @@ namespace Altaxo.Calc.Fourier
 	/// The element at zero frequency contains only the real part, the imaginary part of this element is zero.
 	/// The element at nyquist frequency contains only the real part at nyquist frequency, the imaginary part of this element is zero.
 	/// Note that if the length of the FFT is for instance 1024, there are 513 complex spectral values. If the length of the FFT is 1023 (odd), there are 512 complex spectral values.
-	/// </para>
-	/// </para><para>
+	/// <para/>
 	/// <para>3. Compact complex representation</para>
 	/// <para>---------------------------------</para>
 	/// <para>
@@ -568,7 +567,7 @@ namespace Altaxo.Calc.Fourier
 		/// Transforms from the real representation of a spectrum to the compact complex representation (nyquist frequency value put in imaginary part of first element).
 		/// </summary>
 		/// <param name="src">Real representation of the spectrum.</param>
-		/// <param name="destRe">On return, contains the complex spectrum.</param>
+		/// <param name="dest">On return, contains the complex spectrum.</param>
 		public static void FromRepresentationRealToCompactComplex(IROVector src, IComplexDoubleVector dest)
 		{
 			bool isEven = 0 == (src.Length % 2);

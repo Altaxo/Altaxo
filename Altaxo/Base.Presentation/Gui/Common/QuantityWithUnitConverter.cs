@@ -36,7 +36,7 @@ using Altaxo.Science;
 namespace Altaxo.Gui.Common
 {
 	/// <summary>
-	/// Converts a <see cref="QuantityWithUnit"/> to a string and vice versa. Additionaly, this class can act as validation rule for the strings entered.
+	/// Converts a <see cref="DimensionfulQuantity"/> to a string and vice versa. Additionaly, this class can act as validation rule for the strings entered.
 	/// </summary>
 	public class QuantityWithUnitConverter : ValidationRule, IValueConverter
 	{
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common
 		BindingExpressionBase _binding;
 
 
-		QuantityWithUnit? _lastConvertedQuantity;
+		DimensionfulQuantity? _lastConvertedQuantity;
 		string _lastConvertedString;
 
 		/// <summary>Used for the context menu helpers only.</summary>
@@ -101,18 +101,18 @@ namespace Altaxo.Gui.Common
 
 
 		/// <summary>
-		/// Converts from a <see cref="QuantityWithUnit"/> to a string.
+		/// Converts from a <see cref="DimensionfulQuantity"/> to a string.
 		/// </summary>
-		/// <param name="value">The value to convert. Has to be a <see cref="QuantityWithUnit"/>.</param>
+		/// <param name="value">The value to convert. Has to be a <see cref="DimensionfulQuantity"/>.</param>
 		/// <param name="targetType">Ignored.</param>
 		/// <param name="parameter">Ignored.</param>
 		/// <param name="culture">The culture used to convert the quantity.</param>
 		/// <returns></returns>
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			var q = (QuantityWithUnit)value;
+			var q = (DimensionfulQuantity)value;
 
-			if (null != _lastConvertedQuantity && q.IsEqualInValuePrefixUnit(((QuantityWithUnit)_lastConvertedQuantity)))
+			if (null != _lastConvertedQuantity && q.IsEqualInValuePrefixUnit(((DimensionfulQuantity)_lastConvertedQuantity)))
 			{
 				return _lastConvertedString;
 			}
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Common
 		}
 
 		/// <summary>
-		/// Converts a string to a <see cref="QuantityWithUnit"/>.
+		/// Converts a string to a <see cref="DimensionfulQuantity"/>.
 		/// </summary>
 		/// <param name="value">String to convert.</param>
 		/// <param name="targetType">Ignored.</param>
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Common
 		/// <returns>The converted quantity.</returns>
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			QuantityWithUnit q;
+			DimensionfulQuantity q;
 			string s = (string)value;
 			var result = ConvertValidate(s, culture, out q);
 			if (result.IsValid)
@@ -158,14 +158,14 @@ namespace Altaxo.Gui.Common
 		}
 
 		/// <summary>
-		/// Validates a string, whether or not it can be converted to a <see cref="QuantityWithUnit"/>.
+		/// Validates a string, whether or not it can be converted to a <see cref="DimensionfulQuantity"/>.
 		/// </summary>
 		/// <param name="value">String value to validate.</param>
 		/// <param name="cultureInfo">The culture used to convert the string.</param>
 		/// <returns>A validation result depending on the result of the validation.</returns>
 		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
 		{
-			QuantityWithUnit q;
+			DimensionfulQuantity q;
 			string s = (string)value;
 			var result = ConvertValidate(s, cultureInfo, out q);
 			if (result.IsValid)
@@ -176,15 +176,15 @@ namespace Altaxo.Gui.Common
 			return result;
 		}
 
-		private ValidationResult ConvertValidate(string s, System.Globalization.CultureInfo cultureInfo, out QuantityWithUnit result)
+		private ValidationResult ConvertValidate(string s, System.Globalization.CultureInfo cultureInfo, out DimensionfulQuantity result)
 		{
 			if (null != _lastConvertedQuantity && s == _lastConvertedString)
 			{
-				result = (QuantityWithUnit)_lastConvertedQuantity;
+				result = (DimensionfulQuantity)_lastConvertedQuantity;
 				return ValidationResult.ValidResult;
 			}
 
-			result = new QuantityWithUnit();
+			result = new DimensionfulQuantity();
 			double parsedValue;
 			SIPrefix prefix = null;
 			s = s.Trim();
@@ -218,7 +218,7 @@ namespace Altaxo.Gui.Common
 
 				if (double.TryParse(s, System.Globalization.NumberStyles.Float, cultureInfo, out parsedValue))
 				{
-					result = new QuantityWithUnit(parsedValue, prefix, u);
+					result = new DimensionfulQuantity(parsedValue, prefix, u);
 					return ValidationResult.ValidResult;
 				}
 				else
@@ -253,12 +253,12 @@ namespace Altaxo.Gui.Common
 			{
 				if (null != _lastConvertedQuantity)
 				{
-					result = new QuantityWithUnit(parsedValue, ((QuantityWithUnit)_lastConvertedQuantity).Prefix, ((QuantityWithUnit)_lastConvertedQuantity).Unit);
+					result = new DimensionfulQuantity(parsedValue, ((DimensionfulQuantity)_lastConvertedQuantity).Prefix, ((DimensionfulQuantity)_lastConvertedQuantity).Unit);
 					return ValidationResult.ValidResult;
 				}
 				else if (null != _unitEnvironment && null != _unitEnvironment.DefaultUnit)
 				{
-					result = new QuantityWithUnit(parsedValue, _unitEnvironment.DefaultUnit.Prefix, _unitEnvironment.DefaultUnit.Unit);
+					result = new DimensionfulQuantity(parsedValue, _unitEnvironment.DefaultUnit.Prefix, _unitEnvironment.DefaultUnit.Unit);
 					return ValidationResult.ValidResult;
 				}
 				else
@@ -289,9 +289,9 @@ namespace Altaxo.Gui.Common
 
 
 
-		private QuantityWithUnit SelectedQuantity
+		private DimensionfulQuantity SelectedQuantity
 		{
-			get { var result = (QuantityWithUnit)_parent.GetValue(_quantityGetSetProperty); return result; }
+			get { var result = (DimensionfulQuantity)_parent.GetValue(_quantityGetSetProperty); return result; }
 			set { _parent.SetValue(_quantityGetSetProperty, value); }
 		}
 
@@ -478,7 +478,7 @@ namespace Altaxo.Gui.Common
 			if (null != mnu && mnu.Tag is PrefixedUnit)
 			{
 				var prefixedUnit = (PrefixedUnit)mnu.Tag;
-				var newQuantity = new QuantityWithUnit(SelectedQuantity.Value, prefixedUnit.Prefix, prefixedUnit.Unit);
+				var newQuantity = new DimensionfulQuantity(SelectedQuantity.Value, prefixedUnit.Prefix, prefixedUnit.Unit);
 				SelectedQuantity = newQuantity;
 				if (null != _unitEnvironment)
 					_unitEnvironment.DefaultUnit = prefixedUnit;
@@ -502,7 +502,7 @@ namespace Altaxo.Gui.Common
 		{
 			if (null != _lastConvertedQuantity && null != _binding && !_binding.HasError)
 			{
-				var quant = (QuantityWithUnit)_lastConvertedQuantity; // save the current quantity
+				var quant = (DimensionfulQuantity)_lastConvertedQuantity; // save the current quantity
 				_lastConvertedQuantity = null; // set the temporarily stored values to null in order to force a full conversion
 				_lastConvertedString = null;
 				_binding.UpdateTarget();

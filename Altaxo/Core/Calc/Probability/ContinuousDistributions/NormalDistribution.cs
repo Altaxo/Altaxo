@@ -193,13 +193,10 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the <see cref="DefaultGenerator"/> as underlying random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
+		/// <param name="mu">Mean value.</param>
+		/// <param name="sigma">Standard deviation.</param>
     public NormalDistribution(double mu, double sigma)
       : this(mu, sigma, DefaultGenerator)
     {
@@ -209,6 +206,8 @@ namespace Altaxo.Calc.Probability
     /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the specified 
     ///   <see cref="Generator"/> as underlying random number generator.
     /// </summary>
+		/// <param name="mu">Mean value.</param>
+		/// <param name="sigma">Standard deviation.</param>
     /// <param name="generator">A <see cref="Generator"/> object.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).

@@ -180,7 +180,7 @@ namespace Altaxo.Calc.Probability
         /// <param name="seed">
         /// An unsigned number used to calculate a starting value for the pseudo-random number sequence.
         /// </param>
-        [CLSCompliant(false)]
+        
         public XorShift128Generator(uint seed)
         {
             this.seed = seed;
@@ -213,7 +213,7 @@ namespace Altaxo.Calc.Probability
         /// A 32-bit unsigned integer greater than or equal to <see cref="UInt32.MinValue"/> and 
         ///   less than or equal to <see cref="UInt32.MaxValue"/>.
         /// </returns>
-        [CLSCompliant(false)]
+        
         public uint NextUInt()
         {
             uint t = (this.x ^ (this.x << 11));
@@ -228,7 +228,7 @@ namespace Altaxo.Calc.Probability
         /// </summary>
         /// <returns>
         /// A 32-bit signed integer greater than or equal to 0, and less than or equal to <see cref="Int32.MaxValue"/>; 
-        ///   that is, the range of return values includes 0 and <paramref name="Int32.MaxValue"/>.
+				///   that is, the range of return values includes 0 and <see cref="Int32.MaxValue"/>.
         /// </returns>
         public int NextInclusiveMaxValue()
         {
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.Probability
         /// </summary>
         /// <returns>
         /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="Int32.MaxValue"/>; that is, 
-        ///   the range of return values includes 0 but not <paramref name="Int32.MaxValue"/>.
+				///   the range of return values includes 0 but not <see cref="Int32.MaxValue"/>.
         /// </returns>
         public override int Next()
         {

@@ -102,14 +102,14 @@ namespace Altaxo.Gui.Common
 		/// <summary>
 		/// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
 		/// </summary>
-		public QuantityWithUnit SelectedQuantity
+		public DimensionfulQuantity SelectedQuantity
 		{
-			get { var result = (QuantityWithUnit)GetValue(SelectedQuantityProperty); return result; }
+			get { var result = (DimensionfulQuantity)GetValue(SelectedQuantityProperty); return result; }
 			set { SetValue(SelectedQuantityProperty, value); }
 		}
 
 		public static readonly DependencyProperty SelectedQuantityProperty =
-				DependencyProperty.Register("SelectedQuantity", typeof(QuantityWithUnit), typeof(QuantityWithUnitTextBox),
+				DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(QuantityWithUnitTextBox),
 				new FrameworkPropertyMetadata(EhSelectedQuantityChanged));
 
 		private static void EhSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)

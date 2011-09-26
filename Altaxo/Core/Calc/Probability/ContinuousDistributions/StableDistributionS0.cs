@@ -144,11 +144,11 @@ namespace Altaxo.Calc.Probability
     public void Initialize(double alpha, double beta, double abe, double sigma, double mu)
     {
       if (!IsValidAlpha(alpha))
-        throw new ArgumentOutOfRangeException("Alpha out of range (must be greater 0.1 and smalle or equal than 2)");
+        throw new ArgumentOutOfRangeException("Alpha out of range (must be in the range (0,2])");
       if (!IsValidBeta(beta))
         throw new ArgumentOutOfRangeException("Beta out of range (must be in the range [-1,1])");
       if (!IsValidSigma(sigma))
-        throw new ArgumentOutOfRangeException("Sigma out of range (must be >0)");
+        throw new ArgumentOutOfRangeException("Sigma out of range (must be > 0)");
       if (!IsValidMu(mu))
         throw new ArgumentOutOfRangeException("Mu out of range (must be finite)");
 
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.Probability
       return CDF(x, _alpha, _beta, _abe, _scale, _mu, ref _tempStorePDF, DefaultPrecision);
     }
 
-    public double Quantile(double p)
+    public override double Quantile(double p)
     {
       return _mu + _scale*Quantile(p, _alpha, _beta, _abe);
     }

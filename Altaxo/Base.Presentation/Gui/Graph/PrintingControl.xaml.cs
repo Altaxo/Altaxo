@@ -125,10 +125,10 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializePaperMarginsInHundrethInch(double left, double right, double top, double bottom)
 		{
-			_guiMarginLeft.SelectedQuantity = new Science.QuantityWithUnit(left, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
-			_guiMarginRight.SelectedQuantity = new Science.QuantityWithUnit(right, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
-			_guiMarginTop.SelectedQuantity = new Science.QuantityWithUnit(top, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
-			_guiMarginBottom.SelectedQuantity = new Science.QuantityWithUnit(bottom, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
+			_guiMarginLeft.SelectedQuantity = new Science.DimensionfulQuantity(left, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
+			_guiMarginRight.SelectedQuantity = new Science.DimensionfulQuantity(right, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
+			_guiMarginTop.SelectedQuantity = new Science.DimensionfulQuantity(top, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
+			_guiMarginBottom.SelectedQuantity = new Science.DimensionfulQuantity(bottom, Science.SIPrefix.Centi, Science.LengthUnitInch.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
 		}
 
 		public void InitializeNumberOfCopies(int val)

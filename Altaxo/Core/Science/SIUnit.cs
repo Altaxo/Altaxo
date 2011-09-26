@@ -49,6 +49,10 @@ namespace Altaxo.Science
 		MagneticFieldStrength,
 	}
 
+
+	/// <summary>
+	/// Represents a SI unit.
+	/// </summary>
 	public abstract class SIUnit : IUnit,  IEquatable<SIUnit>, IEquatable<IUnit>
 	{
 		sbyte _metre;
@@ -59,20 +63,36 @@ namespace Altaxo.Science
 		sbyte _mole;
 		sbyte _candela;
 
+		/// <summary>
+		/// Cache for unit names. Here the units, as specified by their individual powers of basic units, act as keys, whereas the commonly used name of this units are the values.
+		/// </summary>
 		static Dictionary<SIUnit, string> _specialNames = new Dictionary<SIUnit, string>();
 
-
-		public SIUnit(sbyte m, sbyte kg, sbyte s, sbyte A, sbyte K, sbyte mol, sbyte CD)
+		/// <summary>
+		/// Constructor of the SI unit.
+		/// </summary>
+		/// <param name="metre">Power of 'Metre' units that the constructed unit will contain.</param>
+		/// <param name="kilogram">Power of 'Kilogram' units that the constructed unit will contain.</param>
+		/// <param name="second">Power of 'Second' units that the constructed unit will contain.</param>
+		/// <param name="ampere">Power of 'Ampere' units that the constructed unit will contain.</param>
+		/// <param name="kelvin">Power of 'Kelvin' units that the constructed unit will contain.</param>
+		/// <param name="mole">Power of 'Mole' units that the constructed unit will contain.</param>
+		/// <param name="candela">Power of 'Candela' units that the constructed unit will contain.</param>
+		public SIUnit(sbyte metre, sbyte kilogram, sbyte second, sbyte ampere, sbyte kelvin, sbyte mole, sbyte candela)
 		{
-			_metre = m;
-			_kilogram = kg;
-			_second = s;
-			_ampere = A;
-			_kelvin = K;
-			_mole = mol;
-			_candela = CD;
+			_metre = metre;
+			_kilogram = kilogram;
+			_second = second;
+			_ampere = ampere;
+			_kelvin = kelvin;
+			_mole = mole;
+			_candela = candela;
 		}
 
+		/// <summary>
+		/// Multiplies this unit by another unit <paramref name="b"/>.
+		/// </summary>
+		/// <param name="b">Other unit.</param>
 		void Multiply(SIUnit b)
 		{
 			this._metre += b._metre;
@@ -84,6 +104,8 @@ namespace Altaxo.Science
 			this._candela += b._candela;
 		}
 
+		/// <summary>Divides this unit by another unit <paramref name="b"/>.</summary>
+		/// <param name="b">Other unit.</param>
 		void DivideBy(SIUnit b)
 		{
 			this._metre -= b._metre;
@@ -95,6 +117,9 @@ namespace Altaxo.Science
 			this._candela -= b._candela;
 		}
 
+		/// <summary>
+		/// Takes the inverse of this unit.
+		/// </summary>
 		void Invert()
 		{
 			this._metre = (sbyte)-this._metre;
@@ -106,6 +131,9 @@ namespace Altaxo.Science
 			this._candela = (sbyte)-this._candela;
 		}
 
+		/// <summary>Compares this unit with another unit <paramref name="b"/> and returns <c>true</c> when both are equal.</summary>
+		/// <param name="b">The other unit.</param>
+		/// <returns><c>True</c> when both units are equal.</returns>
 		public bool Equals(SIUnit b)
 		{
 			return null == b ? false :
@@ -118,12 +146,18 @@ namespace Altaxo.Science
 			this._candela == b._candela;
 		}
 
+		/// <summary>Compares this unit with another unit <paramref name="b"/> and returns <c>true</c> when both are equal.</summary>
+		/// <param name="b">The other unit.</param>
+		/// <returns><c>True</c> when both units are equal.</returns>
 		public bool Equals(IUnit obj)
 		{
 			SIUnit b = obj as SIUnit;
 			return null == b ? false : Equals(b);
 		}
 
+		/// <summary>Determines whether the specified <see cref="System.Object"/> is equal to this instance.</summary>
+		/// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
+		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.</returns>
 		public override bool Equals(object obj)
 		{
 			SIUnit b = obj as SIUnit;
@@ -131,6 +165,8 @@ namespace Altaxo.Science
 		}
 
 
+		/// <summary>Returns a hash code for this instance.</summary>
+		/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
 		public override int GetHashCode()
 		{
 			return
@@ -143,31 +179,42 @@ namespace Altaxo.Science
 				_candela;
 		}
 
+
+		/// <summary>Full name of the unit.</summary>
 		public abstract string Name
 		{
 			get; 
 		}
 
+		/// <summary>Usual shortcut of the unit.</summary>
 		public abstract string ShortCut
 		{
 			get; 
 		}
 
+		/// <summary>Converts <paramref name="x"/> to the corresponding SI unit.</summary>
+		/// <param name="x">Value to convert.</param>
+		/// <returns>The corresponding value of <paramref name="x"/> in SI units. Since this instance represents a SI unit, the value <paramref name="x"/> is returned unchanged.</returns>
 		public double ToSIUnit(double x)
 		{
 			return x;
 		}
 
+		/// <summary>Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.</summary>
+		/// <param name="x">Value in SI units.</param>
+		/// <returns>The corresponding value in this unit. Since this instance represents a SI unit, the value <paramref name="x"/> is returned unchanged.</returns>
 		public double FromSIUnit(double x)
 		{
 			return x;
 		}
 
+		/// <summary>Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).</summary>
 		public abstract ISIPrefixList Prefixes
 		{
 			get;
 		}
 
+		/// <summary>Returns the corresponding SI unit. Since this instance already represents a SI unit, the returned value is this instance itself.</summary>
 		SIUnit IUnit.SIUnit
 		{
 			get { return this; }

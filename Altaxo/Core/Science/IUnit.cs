@@ -38,15 +38,15 @@ namespace Altaxo.Science
 		/// <summary>Usual shortcut of the unit.</summary>
 		string ShortCut { get; }
 
-/// <summary>
-/// Converts x to the corresponding SI unit.
-/// </summary>
-/// <param name="x">Value to convert.</param>
-/// <returns>The corresponding value of x in SI units.</returns>
+		/// <summary>
+		/// Converts <paramref name="x"/> to the corresponding SI unit.
+		/// </summary>
+		/// <param name="x">Value to convert.</param>
+		/// <returns>The corresponding value of <paramref name="x"/> in SI units.</returns>
 		double ToSIUnit(double x);
 
 		/// <summary>
-		/// Converts x in SI units to the corresponding value in this unit.
+		/// Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.
 		/// </summary>
 		/// <param name="x">Value in SI units.</param>
 		/// <returns>The corresponding value in this unit.</returns>
@@ -63,12 +63,15 @@ namespace Altaxo.Science
 		SIUnit SIUnit { get; }
 	}
 
-	public class UnitLess : SIUnit
+	/// <summary>
+	/// Represents no unit at all.
+	/// </summary>
+	public class Dimensionless : SIUnit
 	{
-		static readonly UnitLess _instance = new UnitLess();
-		public static UnitLess Instance { get { return _instance; } }
+		static readonly Dimensionless _instance = new Dimensionless();
+		public static Dimensionless Instance { get { return _instance; } }
 
-		private UnitLess() : base(0, 0, 0, 0, 0, 0, 0) { }
+		private Dimensionless() : base(0, 0, 0, 0, 0, 0, 0) { }
 
 		public override string Name
 		{

@@ -32,7 +32,7 @@ namespace Altaxo.Science
 		/// <summary>
 		/// The corresponding quantity that this unit encapsulates.
 		/// </summary>
-		QuantityWithUnit ReferenceQuantity { get; }
+		DimensionfulQuantity ReferenceQuantity { get; }
 
 
 		/// <summary>
@@ -52,9 +52,9 @@ namespace Altaxo.Science
 		string _name;
 		string _shortCut;
 		protected double _divider;
-		QuantityWithUnit _referenceQuantity;
+		DimensionfulQuantity _referenceQuantity;
 
-		public ChangeableRelativeUnit(string name, string shortcut, double divider, QuantityWithUnit referenceQuantity)
+		public ChangeableRelativeUnit(string name, string shortcut, double divider, DimensionfulQuantity referenceQuantity)
 		{
 			_name = name;
 			_shortCut = shortcut;
@@ -72,7 +72,7 @@ namespace Altaxo.Science
 			get { return _shortCut; }
 		}
 
-		public QuantityWithUnit ReferenceQuantity
+		public DimensionfulQuantity ReferenceQuantity
 		{
 			get
 			{
@@ -119,7 +119,7 @@ namespace Altaxo.Science
 
 	public class ChangeableRelativePercentUnit : ChangeableRelativeUnit
 	{
-		public ChangeableRelativePercentUnit(string fullName, QuantityWithUnit valueForHundredPercent)
+		public ChangeableRelativePercentUnit(string fullName, DimensionfulQuantity valueForHundredPercent)
 			: base(fullName, "%", 100, valueForHundredPercent)
 		{
 		}

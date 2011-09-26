@@ -45,7 +45,7 @@ namespace Altaxo.Science
 		}
 
 
-		public IUnit Unit { get { return _unit ?? UnitLess.Instance; } }
+		public IUnit Unit { get { return _unit ?? Dimensionless.Instance; } }
 
 		public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
 

@@ -192,7 +192,7 @@ namespace Altaxo.Science
 
 		public SIUnit SIUnit
 		{
-			get { return UnitLess.Instance; }
+			get { return Dimensionless.Instance; }
 		}
 
 		public bool Equals(SIPrefix other)

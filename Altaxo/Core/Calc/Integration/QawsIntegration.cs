@@ -465,8 +465,6 @@ namespace Altaxo.Calc.Integration
 			public double[] rj = new double[25];
 			public double[] rg = new double[25];
 			public double[] rh = new double[25];
-
-
 		}
 
 		#endregion

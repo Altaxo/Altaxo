@@ -173,6 +173,7 @@ namespace Altaxo.Calc.Probability
           
           this.alpha = alpha;
           this.beta = beta;
+					this.betaDistribution = new BetaDistribution();
           this.betaDistribution.Initialize(this.alpha, this.beta);
         }
         #endregion

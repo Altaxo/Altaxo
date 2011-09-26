@@ -539,10 +539,12 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-		/// Wraps a double[] array to get a IVector.
+		/// Wraps part of a double[] array to get a IVector.
 		/// </summary>
 		/// <param name="x">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
+		/// <param name="start">Index of first element of <paramref name="x"/> to use.</param>
+		/// <param name="count">Number of elements of <paramref name="x"/> to use.</param>
+		/// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps part of the provided array.</returns>
 		public static IVector ToVector(double[] x, int start, int count)
 		{
 			if (0 == start)

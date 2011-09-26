@@ -30,30 +30,30 @@ namespace Altaxo.Science
 	/// <summary>
 	/// Represents a quantity, consisting of a numeric value, the corresponding unit and, optionally, a SI prefix for the unit.
 	/// </summary>
-	public struct QuantityWithUnit : IComparable<QuantityWithUnit>
+	public struct DimensionfulQuantity : IComparable<DimensionfulQuantity>
 	{
 		double _value;
 		SIPrefix _prefix;
 		IUnit _unit;
 
-		public QuantityWithUnit(double value)
+		public DimensionfulQuantity(double value)
 			: this(value, null, null)
 		{
 		}
 
-		public QuantityWithUnit(double value, IUnit unit)
+		public DimensionfulQuantity(double value, IUnit unit)
 			: this(value, null, unit)
 		{
 		}
 
-		public QuantityWithUnit(double value, SIPrefix prefix, IUnit unit)
+		public DimensionfulQuantity(double value, SIPrefix prefix, IUnit unit)
 		{
 			_value = value;
 			_prefix = prefix;
 			_unit = unit;
 		}
 
-		public bool IsEqualInValuePrefixUnit(QuantityWithUnit a)
+		public bool IsEqualInValuePrefixUnit(DimensionfulQuantity a)
 		{
 			return this.Value == a.Value && this.Prefix == a.Prefix && this.Unit == a.Unit; 
 		}
@@ -63,16 +63,16 @@ namespace Altaxo.Science
 		/// </summary>
 		/// <param name="value">New numeric value.</param>
 		/// <returns>A new quantity with the provided value and the same prefix and unit as this quantity.</returns>
-		public QuantityWithUnit NewValue(double value)
+		public DimensionfulQuantity NewValue(double value)
 		{
-			return new QuantityWithUnit(value, _prefix, _unit);
+			return new DimensionfulQuantity(value, _prefix, _unit);
 		}
 
 		public IUnit Unit
 		{
 			get
 			{
-				return _unit ?? UnitLess.Instance;
+				return _unit ?? Dimensionless.Instance;
 			}
 		}
 
@@ -115,9 +115,9 @@ namespace Altaxo.Science
 			return unit.FromSIUnit(InSIUnits);
 		}
 
-		public QuantityWithUnit AsQuantityIn(IUnit unit)
+		public DimensionfulQuantity AsQuantityIn(IUnit unit)
 		{
-			return new QuantityWithUnit(AsValueIn(unit), null, unit);
+			return new DimensionfulQuantity(AsValueIn(unit), null, unit);
 		}
 
 		public double AsValueIn(SIPrefix prefix, IUnit unit)
@@ -132,26 +132,26 @@ namespace Altaxo.Science
 			return prefix.FromSIUnit(unit.FromSIUnit(InSIUnits));
 		}
 
-		public QuantityWithUnit AsQuantityIn(IPrefixedUnit prefixedUnit)
+		public DimensionfulQuantity AsQuantityIn(IPrefixedUnit prefixedUnit)
 		{
 			return AsQuantityIn(prefixedUnit.Prefix, prefixedUnit.Unit);
 		}
 
-		public QuantityWithUnit AsQuantityIn(SIPrefix prefix, IUnit unit)
+		public DimensionfulQuantity AsQuantityIn(SIPrefix prefix, IUnit unit)
 		{
-			return new QuantityWithUnit(AsValueIn(prefix, unit), prefix, unit);
+			return new DimensionfulQuantity(AsValueIn(prefix, unit), prefix, unit);
 		}
 
-		public QuantityWithUnit InSIUnitsAsQuantity
+		public DimensionfulQuantity InSIUnitsAsQuantity
 		{
 			get
 			{
-				return new QuantityWithUnit(InSIUnits, _unit == null ? null : _unit.SIUnit);
+				return new DimensionfulQuantity(InSIUnits, _unit == null ? null : _unit.SIUnit);
 			}
 		}
 
 
-		public int CompareTo(QuantityWithUnit other)
+		public int CompareTo(DimensionfulQuantity other)
 		{
 			if(this._unit.SIUnit != other._unit.SIUnit)
 				throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}",this._unit.Name, other._unit.Name));

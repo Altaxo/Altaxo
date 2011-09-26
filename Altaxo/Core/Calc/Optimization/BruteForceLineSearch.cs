@@ -35,7 +35,6 @@ namespace Altaxo.Calc.Optimization
 		int _numberOfInitialDivisions;
 		int _numberOfSubsequentDivisions;
 		int _divisionDepth;
-		bool _verbose = false;
 
 		public BruteForceLineSearch(ICostFunction cost)
 		{

@@ -323,6 +323,7 @@ namespace Altaxo.Calc.Probability
     /// in the intermediate range.
     /// </summary>
     /// <param name="x">The argument.</param>
+    /// <param name="aga">For alpha &lt;=1: This is either (alpha-gamma)/alpha for gamma &gt;=0, or (alpha+gamma)/alpha for gamma &lt; 1.
     /// <param name="alpha"></param>
     /// <returns></returns>
     public static double PDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)

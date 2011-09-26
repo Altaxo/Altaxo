@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Science.QuantityWithUnit(e, Science.LengthUnitPoint.Instance)));
+				Items.Add(new ImageComboBoxItem(this, new Science.DimensionfulQuantity(e, Science.LengthUnitPoint.Instance)));
 
 			_img.Source = GetImage(SelectedQuantityInPoints);
 		}
@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Science.QuantityWithUnit)item).AsValueIn(Science.LengthUnitPoint.Instance);
+			double val = ((Science.DimensionfulQuantity)item).AsValueIn(Science.LengthUnitPoint.Instance);
 
 
 			ImageSource result;

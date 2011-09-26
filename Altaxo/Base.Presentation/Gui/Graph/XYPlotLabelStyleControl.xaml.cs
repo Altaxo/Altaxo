@@ -118,23 +118,23 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void Init_XOffset(QuantityWithUnitGuiEnvironment environment, QuantityWithUnit value)
+		public void Init_XOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
 		{
 			this._edXOffset.UnitEnvironment = environment;
 			this._edXOffset.SelectedQuantity = value;
 		}
 
-		public void Init_YOffset(QuantityWithUnitGuiEnvironment environment, QuantityWithUnit value)
+		public void Init_YOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
 		{
 			this._edYOffset.UnitEnvironment = environment;
 			this._edYOffset.SelectedQuantity = value;
 		}
 
-		public QuantityWithUnit XOffset
+		public DimensionfulQuantity XOffset
 		{
 			get { return _edXOffset.SelectedQuantity; }
 		}
-		public QuantityWithUnit YOffset
+		public DimensionfulQuantity YOffset
 		{
 			get { return _edYOffset.SelectedQuantity; }
 		}
