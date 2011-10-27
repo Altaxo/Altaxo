@@ -100,7 +100,6 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 		/// The kinetic equation for this problem (see <see cref="Core"/> is formulated with the number
 		/// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y. 
 		/// The solution was reformulated with volume fractions, using a new kinetic constant scaled by the volume of one aggregating particel.
-
 		/// </remarks>
 		public static double AgglomarateConcentrationFromPA0AndPAInf(double t, double pA0, double pAInf, double k, double order, double pSample)
 		{

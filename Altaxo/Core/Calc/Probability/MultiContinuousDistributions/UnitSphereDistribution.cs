@@ -29,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Calc.Probability.ContinuousRNDs
+namespace Altaxo.Calc.Probability
 {
   /// <summary>
   /// Vector of three random numbers distributed uniformly on the unit sphere.   

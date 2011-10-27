@@ -1267,7 +1267,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// retrieves the object with the name <code>name</code>.
+		/// Retrieves the object with the name <paramref name="name"/>.
 		/// </summary>
 		/// <param name="name">The objects name.</param>
 		/// <returns>The object with the specified name.</returns>

@@ -169,7 +169,8 @@ namespace Altaxo.Gui.Graph
 					if (null != selTableNode && null != _doc.SelectedColumn)
 					{
 						var selColumnNode = FindColumnNode(selTableNode, _doc.SelectedColumn);
-						selColumnNode.IsSelected = true;
+						if(null!=selColumnNode)
+							selColumnNode.IsSelected = true;
 					}
 				}
 			}
@@ -221,11 +222,20 @@ namespace Altaxo.Gui.Graph
 
 		NGTreeNode FindColumnNode(NGTreeNode tableNode, DataColumn column)
 		{
+			NGTreeNode result = null;
 			foreach (NGTreeNode node in tableNode.Nodes)
+			{
 				if (object.ReferenceEquals(node.Tag, column))
 				{
 					return node;
 				}
+				else if (node.HasChilds)
+				{
+					result = FindColumnNode(node, column);
+					if (null != result)
+						return result;
+				}
+			}
 
 			return null;
 		}

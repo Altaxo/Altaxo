@@ -20,20 +20,22 @@
     <HtmlHelp1xCompilerPath>O:\ToolsProgramming\HTML Help Workshop\</HtmlHelp1xCompilerPath>
     <SandcastlePath>O:\ToolsProgramming\Sandcastle\</SandcastlePath>
     <CopyrightText>%28C%29 D.Lellinger 2004-2011</CopyrightText>
-    <FeedbackEMailAddress>DLellinger%40dki.tu-darmstadt.de</FeedbackEMailAddress>
+    <FeedbackEMailAddress>dlellinger%40users.sourceforge.net</FeedbackEMailAddress>
     <HelpTitle>Altaxo class reference</HelpTitle>
     <WorkingPath>C:\TEMP\SandCastleTemp\</WorkingPath>
     <DocumentationSources>
       <DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.dll" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.Presentation.dll" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.Presentation.xml" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.WinForms.dll" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.WinForms.xml" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.xml" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoCore.dll" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoCore.xml" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoSDGui.dll" xmlns="" />
-<DocumentationSource sourceFile="rtdebug\bin\AltaxoSDGui.xml" xmlns="" /></DocumentationSources>
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.Presentation.dll" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.Presentation.xml" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.WinForms.dll" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.WinForms.xml" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoBase.xml" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoCore.dll" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoCore.xml" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoSDGui.dll" xmlns="" />
+      <DocumentationSource sourceFile="rtdebug\bin\AltaxoSDGui.xml" xmlns="" />
+    </DocumentationSources>
+    <FrameworkVersion>4.0.30319</FrameworkVersion>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in
        order for Visual Studio to perform the build.  The others are optional

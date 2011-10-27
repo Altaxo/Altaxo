@@ -26,10 +26,25 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
-  /// <summary>
-  /// Represents a stable distribution in Zolotarev's parametrization.
-  /// </summary>
-  public class StableDistributionS0 : StableDistributionBase
+	/// <summary>
+	///  Represents a stable distribution in Nolan's S0 parametrization.
+	/// </summary>
+	/// <remarks>
+	/// The characteristic function in Nolan's S0 parametrization is:
+	/// <code>
+	/// log(phi(t))= -scale^alpha |t|^alpha (1+i beta Sign(t) Tan(pi alpha/2) (|scale t|^(1-alpha)-1)) + i location t              (for alpha not equal to 1)
+	/// </code>
+	/// and
+	/// <code>
+	/// log(phi(t)) = -scale |t| (1+i beta Sign(t) (2/pi) Log(scale |t|)) + i location t  (for alpha equal to 1)                                 
+	/// </code>
+	/// <para>Reference: J.P.Nolan, Numerical calculation of stable densities and distribution functions. Communication is statistics - Stochastic models, 13, 759-774, 1999</para>
+	/// <para>Reference: S.Borak, W.Härdle, R.Weron, Stable distributions. SFB 649 Discussion paper 2005-2008, http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664</para>
+	/// <para/>
+	/// <para>If you are interested in accurate calculations when beta is close to 1 or -1, you should use those functions which allow you to provide the parameter <c>abe</c>. This helps
+	/// specifying beta with higher accuracy close to +1 or -1. For instance, by using abe=1E-30 and beta=1, it is possible to specify beta=1-1E-30, which is impossible otherwise since with the 64-bit representation of numbers.</para>
+	/// </remarks>
+	public class StableDistributionS0 : StableDistributionBase
   {
     double _alpha;
     double _beta;
@@ -192,10 +207,10 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (_alpha < 1 && _beta == 1)
-          return _mu - _scale * Math.Tan(_alpha * 0.5 * Math.PI);
-        else
-          return double.MinValue;
+				if (_alpha < 1 && _beta == 1)
+					return _mu - _scale * TanXPiBy2(_alpha);
+				else
+					return double.NegativeInfinity;
       }
     }
 
@@ -203,10 +218,10 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (_alpha < 1 && _beta == -1)
-          return _mu + _scale * Math.Tan(_alpha * 0.5 * Math.PI);
-        else
-          return double.MaxValue;
+				if (_alpha < 1 && _beta == -1)
+					return _mu + _scale * TanXPiBy2(_alpha);
+				else
+					return double.PositiveInfinity;
       }
     }
 

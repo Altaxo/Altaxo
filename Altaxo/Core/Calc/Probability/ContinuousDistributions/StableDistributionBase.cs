@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -26,6 +26,12 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
+
+	/// <summary>
+	/// Represents the base of all StableDistributions classes in different parametrizations.
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
   public class StableDistributionBase : ContinuousDistribution
   {
     ExponentialDistribution _expDist = new ExponentialDistribution();
@@ -42,6 +48,8 @@ namespace Altaxo.Calc.Probability
 
     #region Abstract Implementation of ContinuousDistribution
 
+		/// <summary>Initializes a new instance of the <see cref="StableDistributionBase"/> class.</summary>
+		/// <param name="generator">The random number generator used.</param>
     protected StableDistributionBase(Generator generator)
       : base(generator)
     {
@@ -49,36 +57,44 @@ namespace Altaxo.Calc.Probability
       _contDist = new ContinuousUniformDistribution(generator);
     }
 
+		/// <summary>Gets the minimum possible value of distributed random numbers.</summary>
     public override double Minimum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+		/// <summary>Gets the maximum possible value of distributed random numbers.</summary>
     public override double Maximum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+		/// <summary>Gets the mean of distributed random numbers.</summary>
     public override double Mean
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+		/// <summary>Gets the median of distributed random numbers.</summary>
     public override double Median
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+		/// <summary>Gets the variance of distributed random numbers.</summary>
     public override double Variance
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+		/// <summary>Gets the mode of distributed random numbers.</summary>
     public override double[] Mode
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+		/// <summary>Returns a distributed floating point random number.</summary>
+		/// <returns>A distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
       throw new Exception("The method or operation is not implemented.");
@@ -129,12 +145,12 @@ namespace Altaxo.Calc.Probability
     #region Function value finding
 
     /// <summary>
-    /// Finds the x where func(x)==1+-1E-5 between x &lt; x0 &lt; x1 for a monoton increasing function func.
+		/// Finds the x where func(x)==1±-1E-5 between  x0 &lt; x &lt; x1 for a monoton increasing function func.
     /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
+    /// <param name="func">Function for which to find the argument x where func(x)=1. The function has to be increasing with x.</param>
+    /// <param name="x0">Lower bound of the search range.</param>
+    /// <param name="x1">Upper bound of the search range.</param>
+		/// <returns>The value x at which func(x)=1±-1E-5.</returns>
     protected static double FindIncreasingYEqualToOne(ScalarFunctionDD func, double x0, double x1)
     {
       const double ConsideredAsZero = 2 * double.Epsilon;
@@ -164,15 +180,15 @@ namespace Altaxo.Calc.Probability
 
 
 
-   
 
-    /// <summary>
-    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton decreasing function func.
-    /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
+
+		/// <summary>
+		/// Finds the x where func(x)==1±-1E-5 between  x0 &lt; x &lt; x1 for a monoton decreasing function func.
+		/// </summary>
+		/// <param name="func">Function for which to find the argument x where func(x)=1. The function has to be decreasing with x.</param>
+		/// <param name="x0">Lower bound of the search range.</param>
+		/// <param name="x1">Upper bound of the search range.</param>
+		/// <returns>The value x at which func(x)=1±-1E-5.</returns>
     protected static double FindDecreasingYEqualToOne(ScalarFunctionDD func, double x0, double x1)
     {
       double low = x0;
@@ -200,14 +216,18 @@ namespace Altaxo.Calc.Probability
 
 
 
-    /// <summary>
-    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton increasing function func.
-    /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
-    protected static double FindIncreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
+
+		/// <summary>
+		/// Finds the x where func(x)==<paramref name="ysearch"/>±<paramref name="tol"/> between  x0 &lt; x &lt; x1 for a monotonic increasing function func.
+		/// </summary>
+		/// <param name="func">Function for which to find the argument x where func(x)=1. The function has to be increasing with x.</param>
+		/// <param name="x0">Lower bound of the search range.</param>
+		/// <param name="x1">Upper bound of the search range.</param>
+		/// <param name="ysearch">The function value to search.</param>
+		/// <param name="tol">Tolerable deviation of the searched function value.</param>
+		/// <param name="y">On return, this is the function value that corresponds to the returned x value.</param>
+		/// <returns>The value x at which func(x)=<paramref name="ysearch"/>±<paramref name="tol"/>.</returns>
+		protected static double FindIncreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
     {
       const double ConsideredAsZero = 2 * double.Epsilon;
 
@@ -235,14 +255,17 @@ namespace Altaxo.Calc.Probability
       return (x0 == 0 && xm <= ConsideredAsZero) ? 0 : xm;
     }
 
-    /// <summary>
-    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton decreasing function func.
-    /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
-    protected static double FindDecreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
+		/// <summary>
+		/// Finds the x where func(x)==<paramref name="ysearch"/>±<paramref name="tol"/> between  x0 &lt; x &lt; x1 for a monotonic decreasing function func.
+		/// </summary>
+		/// <param name="func">Function for which to find the argument x where func(x)=1. The function has to be decreasing with x.</param>
+		/// <param name="x0">Lower bound of the search range.</param>
+		/// <param name="x1">Upper bound of the search range.</param>
+		/// <param name="ysearch">The function value to search.</param>
+		/// <param name="tol">Tolerable deviation of the searched function value.</param>
+		/// <param name="y">On return, this is the function value that corresponds to the returned x value.</param>
+		/// <returns>The value x at which func(x)=<paramref name="ysearch"/>±<paramref name="tol"/>.</returns>
+		protected static double FindDecreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
     {
       double low = x0;
       double high = x1;
@@ -357,6 +380,9 @@ namespace Altaxo.Calc.Probability
       return beta;
     }
 
+		/// <summary>Calculates the sine of <paramref name="x"/> times Pi/2 with increased accuracy.</summary>
+		/// <param name="x">Argument x.</param>
+		/// <returns>Sin(x*Pi/2) with high accuracy.</returns>
     public static double SinXPiBy2(double x)
     {
       const double PiBy2 = Math.PI / 2;
@@ -377,6 +403,9 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+		/// <summary>Calculates the cosine of <paramref name="x"/> times Pi/2 with increased accuracy.</summary>
+		/// <param name="x">Argument x.</param>
+		/// <returns>Cos(x*Pi/2) with high accuracy.</returns>
     public static double CosXPiBy2(double x)
     {
       const double PiBy2 = Math.PI / 2;
@@ -397,6 +426,9 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+		/// <summary>Calculates the tangens of <paramref name="x"/> times Pi/2 with increased accuracy.</summary>
+		/// <param name="x">Argument x.</param>
+		/// <returns>Tan(x*Pi/2) with high accuracy.</returns>
     protected static double TanXPiBy2(double x)
     {
       const double PiBy2 = Math.PI / 2;
@@ -413,6 +445,13 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+		/// <summary>Calculates the tangent of gamma time Pi/2 with high accuracy. If |gamma| is less than or equal to 0.5, the tangent is calculated directly
+		/// by calling <see cref="TanXPiBy2"/> with argument gamma. Else (if |gamma| is greater than 0.5, it is calculated from <paramref name="alpha"/> and <paramref name="aga"/>,
+		/// which ensures a higher accuracy.</summary>
+		/// <param name="alpha">Characteristic exponent of the stable distribution.</param>
+		/// <param name="gamma">Parameter gamma of the stable distribution in Feller's parametrization.</param>
+		/// <param name="aga">Specifies the parameter <paramref name="gamma"/> with increased precision when |gamma|≈alpha. For an explanation how aga is defined, see <see cref="M:StableDistributionFeller.GetAgaFromAlphaGamma"/>.</param>
+		/// <returns>Tangent of gamma time Pi/2 with high accuracy.</returns>
     protected static double TanGammaPiBy2(double alpha, double gamma, double aga)
     {
       if (Math.Abs(gamma) <= 0.5)
@@ -438,7 +477,14 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    protected static double CosGammaPiBy2(double alpha, double gamma, double aga)
+		/// <summary>Calculates the cosine of gamma time Pi/2 with high accuracy. If |gamma| is less than or equal to 0.5, the cosine is calculated directly
+		/// by calling <see cref="CosXPiBy2"/> with argument gamma. Else (if |gamma| is greater than 0.5, it is calculated from <paramref name="alpha"/> and <paramref name="aga"/>,
+		/// which ensures a higher accuracy.</summary>
+		/// <param name="alpha">Characteristic exponent of the stable distribution.</param>
+		/// <param name="gamma">Parameter gamma of the stable distribution in Feller's parametrization.</param>
+		/// <param name="aga">Specifies the parameter <paramref name="gamma"/> with increased precision when |gamma|≈alpha. For an explanation how aga is defined, see <see cref="M:StableDistributionFeller.GetAgaFromAlphaGamma"/>.</param>
+		/// <returns>Cosine of gamma time Pi/2 with high accuracy.</returns>
+		protected static double CosGammaPiBy2(double alpha, double gamma, double aga)
     {
       if (Math.Abs(gamma) <= 0.5)
       {
@@ -457,10 +503,12 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+		/// <summary>Calculates (1+x²)^pow with increased accuracy, for both small and big values of |x|.</summary>
+		/// <param name="x">Argument x.</param>
+		/// <param name="pow">Power.</param>
+		/// <returns>The value (1+x²)^pow with increased accuary.</returns>
     public static double PowerOfOnePlusXSquared(double x, double pow)
     {
-      const double BIG = 1 / DoubleConstants.DBL_EPSILON;
-
       double ax = Math.Abs(x);
       if (ax < 1)
       {
@@ -472,12 +520,20 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+		/// <summary>
+		/// Upper bound for x, at which the relative error of the series expansion of (1-Exp(x)) with 9 terms exceeds the accuracy of double values.
+		/// </summary>
     static readonly double OneMinusExp_SmallBound = Math.Pow(DoubleConstants.DBL_EPSILON * 3628800, 1 / 9.0);
+
     /// <summary>
-    /// Calculates 1-Exp(x) with more accuracy around x=0
+    /// Calculates 1-Exp(x) with more accuracy around x=0.
     /// </summary>
     /// <param name="x">Function argument</param>
     /// <returns>1-Exp(x)</returns>
+		/// <remarks>
+		/// <para>If |x| is smaller than <see cref="OneMinusExp_SmallBound"/>, the series expansion of (1-Exp(x)) is used for calculation.</para>
+		/// <para>If |x| is greater than or equal to <see cref="OneMinusExp_SmallBound"/>, the standard way of evaluation is used.</para>
+		/// </remarks>
     public static double OneMinusExp(double x)
     {
       const double A1 = 1;
@@ -504,11 +560,20 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+		/// <summary>Calculates the 'alternative beta' value abe from the skewness parameter beta. The value abe helps to specifiy beta with enhanced accuracy especially when |beta| is close to 1.
+		/// Of course, this helper function is only intended to give a correct abe value for a given beta. But in order to specify beta with enhanced accuracy around |beta|=1, you should 
+		/// specify abe first, and then calculate beta from abe, which can be done with <see cref="GetBetaFromAbe"/>.</summary>
+		/// <param name="beta">The beta value.</param>
+		/// <returns>If beta is &gt;= 0, the return value is (1-beta). Else, if beta is &lt;0, the return value is (1+beta).</returns>
     public static double GetAbeFromBeta(double beta)
     {
       return beta >= 0 ? 1 - beta : 1 + beta;
     }
 
+		/// <summary>Gets the skewness parameter beta (range: [-1,1]) from the 'alternative beta' value <paramref name="abe"/>.</summary>
+		/// <param name="abe">'Alternative beta' value. It is defined as (1-beta) for beta&gt=0, and as (1+beta) for beta&lt;0. Thus, abe is a value in the range [0,1].</param>
+		/// <param name="isBetaNegative">Specifies the sign of the original beta value. If false, the original beta is a nonnegative value. Of true, the original beta is negative.</param>
+		/// <returns>The skewness parameter beta (range: [-1,1]) as calculated from the 'alternative beta' value <paramref name="abe"/>.</returns>
     public static double GetBetaFromAbe(double abe, bool isBetaNegative)
     {
       return isBetaNegative ? -1 + abe : 1 - abe;
@@ -773,7 +838,10 @@ namespace Altaxo.Calc.Probability
 
     #region Function increasing
 
-    public class Alt1GnI
+		/// <summary>
+		/// Helper class for calculation used if alpha&lt;1, gamma&lt;0 and for increasing integration direction.
+		/// </summary>
+		public class Alt1GnI
     {
       protected double factorp;
       protected double facdiv;
@@ -1574,7 +1642,10 @@ namespace Altaxo.Calc.Probability
 
     #region Function decreasing
 
-    public class Alt1GnD
+		/// <summary>
+		/// Helper class for calculation used if alpha&lt;1, gamma&lt;0 and for decreasing integration direction.
+		/// </summary>
+		public class Alt1GnD
     {
       protected double factorp;
       protected double facdiv;
@@ -2965,6 +3036,9 @@ namespace Altaxo.Calc.Probability
 
     #region Classes for integration (alpha>1)
 
+		/// <summary>
+		/// Helper class for calculation used if alpha&gt;1, gamma&lt;0 and for increasing integration direction.
+		/// </summary>
     public class Agt1GnI
     {
       double factorp;
@@ -3158,7 +3232,10 @@ namespace Altaxo.Calc.Probability
 
     }
 
-    public class Agt1GnD
+		/// <summary>
+		/// Helper class for calculation used if alpha&gt;1, gamma&lt;0 and for decreasing integration direction.
+		/// </summary>
+		public class Agt1GnD
     {
       double factorp;
       double factorw;
@@ -3341,7 +3418,10 @@ namespace Altaxo.Calc.Probability
 
     }
 
-    public class Agt1GpI
+		/// <summary>
+		/// Helper class for calculation used if alpha&gt;1, gamma&gt;=0 and for increasing integration direction.
+		/// </summary>
+		public class Agt1GpI
     {
       double factorp;
       double factorw;
@@ -3522,7 +3602,10 @@ namespace Altaxo.Calc.Probability
 
     }
 
-    public class Agt1GpD
+		/// <summary>
+		/// Helper class for calculation used if alpha&gt;1, gamma&gt;=0 and for decreasing integration direction.
+		/// </summary>
+		public class Agt1GpD
     {
       double factorp;
       double factorw;

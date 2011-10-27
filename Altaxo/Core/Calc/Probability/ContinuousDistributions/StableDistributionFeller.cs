@@ -34,7 +34,7 @@ namespace Altaxo.Calc.Probability
     double _gamma;
     double _aga;
 
-    double _mu;
+    double _location;
     double _scale = 1;
 
     object _tempStorePDF;
@@ -161,7 +161,7 @@ namespace Altaxo.Calc.Probability
 
       if (!IsValidLocation(location))
         throw new ArgumentOutOfRangeException("Location out of range (must be finite)");
-      _mu = location;
+      _location = location;
 
 
 
@@ -171,7 +171,7 @@ namespace Altaxo.Calc.Probability
         _gen_B = -0.5 * Math.PI * _gamma / _alpha;
         _gen_S = PowerOfOnePlusXSquared(_gen_t, 0.5 / _alpha);
         double beta, abe, mu0;
-        ParameterConversionFellerToS0(_alpha, _gamma, _aga, _scale, _mu, out beta, out abe, out _gen_Scale, out mu0);
+        ParameterConversionFellerToS0(_alpha, _gamma, _aga, _scale, _location, out beta, out abe, out _gen_Scale, out mu0);
       }
       else if (alpha == 1) // this case is for the case alpha=1
       {
@@ -215,7 +215,7 @@ namespace Altaxo.Calc.Probability
       get
       {
         if (_alpha < 1 && _gamma < 0 && _aga == 0)
-          return _mu;
+          return _location;
         else
           return double.MinValue;
       }
@@ -226,7 +226,7 @@ namespace Altaxo.Calc.Probability
       get
       {
         if (_alpha < 1 && _gamma > 0 && _aga == 0)
-          return _mu;
+          return _location;
         else
           return double.MaxValue;
       }
@@ -265,24 +265,24 @@ namespace Altaxo.Calc.Probability
     {
       if (_gamma == 0)
       {
-        return GenerateSymmetricCase(_alpha) * _scale + _mu;
+        return GenerateSymmetricCase(_alpha) * _scale + _location;
       }
       else
       {
         if (_alpha == 1)
         {
-          return (GenerateSymmetricCase(_alpha) * _gen_B - _gen_S) * _scale + _mu;
+          return (GenerateSymmetricCase(_alpha) * _gen_B - _gen_S) * _scale + _location;
         }
         else
         {
-          return GenerateAsymmetricCaseS1_ANe1(_alpha, _gen_t, _gen_B, _gen_S, _gen_Scale) + _mu;
+          return GenerateAsymmetricCaseS1_ANe1(_alpha, _gen_t, _gen_B, _gen_S, _gen_Scale) + _location;
         }
       }
     }
 
     public override double PDF(double x)
     {
-      return PDF(x, _alpha, _gamma, _aga, _scale, _mu, ref _tempStorePDF, _pdfPrecision);
+      return PDF(x, _alpha, _gamma, _aga, _scale, _location, ref _tempStorePDF, _pdfPrecision);
     }
     #endregion
 
@@ -973,6 +973,11 @@ namespace Altaxo.Calc.Probability
     }
 
 
+		/// <summary>Calculates the probability density at x=0 for the stable distribution in Feller's parametrization.</summary>
+		/// <param name="alpha">Characteristic exponent of the distibution.</param>
+		/// <param name="gamma">Skewness parameter gamma.</param>
+		/// <param name="aga">'Alternative gamma' value to specify gamma with enhanced accuracy. For an explanation how it is defined, see <see cref="GetAgaFromAlphaGamma"/>.</param>
+		/// <returns>Probability density value at x=0 for the stable distribution in Feller's parametrization.</returns>
     public static double PDFforXZero(double alpha, double gamma, double aga)
     {
       // use different methods, which provide the best accuracy for the case
