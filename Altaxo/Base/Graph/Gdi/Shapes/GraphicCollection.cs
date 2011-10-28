@@ -128,6 +128,30 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
+		public IHitTestObject HitTest(HitTestPointData layerHitTestData)
+		{
+			 // hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+				for(int i=this._items.Count-1;i>=0;--i)
+				{
+          var hit = _items[i].HitTest(layerHitTestData);
+          if (null != hit)
+          {
+            if (null == hit.Remove && (hit.HittedObject is GraphicBase))
+              hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
+            return hit;
+          }
+        }
+
+				return null;
+      }
+
+		static bool EhGraphicsObject_Remove(IHitTestObject o)
+		{
+			GraphicBase go = (GraphicBase)o.HittedObject;
+			o.ParentLayer.GraphObjects.Remove(go);
+			return true;
+		}
+	
 		public GraphicBase FindObjectAtPoint(HitTestPointData htd)
 		{
 			if (null != this._items)

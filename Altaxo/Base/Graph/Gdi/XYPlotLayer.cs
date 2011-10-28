@@ -2590,16 +2590,9 @@ namespace Altaxo.Graph.Gdi
 
 
         // now hit testing the other objects in the layer
-        foreach (GraphicBase go in _graphObjects)
-        {
-          hit = go.HitTest(layerHitTestData);
-          if (null != hit)
-          {
-            if (null == hit.Remove && (hit.HittedObject is GraphicBase))
-              hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
-            return ForwardTransform(hit);
-          }
-        }
+				hit = _graphObjects.HitTest(layerHitTestData);
+				if (null != hit)
+					return ForwardTransform(hit);
       }
 
       if (null != (hit = _plotItems.HitTest(this, layerC)))
@@ -2708,13 +2701,7 @@ namespace Altaxo.Graph.Gdi
     {
       OnChanged();
     }
-
-    static bool EhGraphicsObject_Remove(IHitTestObject o)
-    {
-      GraphicBase go = (GraphicBase)o.HittedObject;
-      o.ParentLayer.GraphObjects.Remove(go);
-      return true;
-    }
+  
     static bool EhTitlesOrLegend_Remove(IHitTestObject o)
     {
       GraphicBase go = (GraphicBase)o.HittedObject;

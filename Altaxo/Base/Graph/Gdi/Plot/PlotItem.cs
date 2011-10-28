@@ -268,8 +268,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.
 		/// </summary>
-		/// <param name="options">Information what to replace.</param>
-		public virtual void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
 		}
 

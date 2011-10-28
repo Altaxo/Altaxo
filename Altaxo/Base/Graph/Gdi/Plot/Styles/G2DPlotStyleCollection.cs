@@ -553,10 +553,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// to change a plot so that the plot items refer to another table.
 		/// </summary>
 		/// <param name="options">Information what to replace.</param>
-		public void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		public void VisitDocumentReferences(DocNodeProxyReporter options)
 		{
 			foreach (var s in this)
-				s.EnumerateDocumentReferences(options);
+				s.VisitDocumentReferences(options);
 		}
 
 		#endregion

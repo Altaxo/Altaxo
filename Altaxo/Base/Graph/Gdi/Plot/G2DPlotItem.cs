@@ -359,10 +359,12 @@ namespace Altaxo.Graph.Gdi.Plot
 			return null;
 		}
 
-		public override void EnumerateDocumentReferences(Main.IDocNodeProxyVisitor options)
+		/// <summary>Visits the document references.</summary>
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		public override void VisitDocumentReferences(Main.DocNodeProxyReporter Report)
 		{
-			_plotStyles.EnumerateDocumentReferences(options);
-			base.EnumerateDocumentReferences(options);
+			_plotStyles.VisitDocumentReferences(Report);
+			base.VisitDocumentReferences(Report);
 		}
 
 		#region IRoutedPropertyReceiver Members

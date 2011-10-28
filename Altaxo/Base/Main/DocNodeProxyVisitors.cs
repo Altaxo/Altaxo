@@ -27,22 +27,22 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Interface to visit all <see cref="DocNodeProxy"/> in the document.
-	/// </summary>
-	public interface IDocNodeProxyVisitor
-	{
-		/// <summary>
-		/// Visits a <see cref="DocNodeProxy"/>. Some visitors can change the <see cref="DocNodeProxy"/> during the visit.
-		/// </summary>
-		/// <param name="proxy">The <see cref="DocNodeProxy"/> to visit.</param>
-		void Visit(DocNodeProxy proxy);
-	}
 
 	/// <summary>
-	/// Implements a <see cref="IDocNodeProxyVisitor"/> in order to relocate the <see cref="DocumentPath"/> that the <see cref="DocNodeProxy"/> is holding.
+	/// Handler to report owned <see cref="DocNodeProxy"/> instances to a visitor.
 	/// </summary>
-	public class DocNodePathReplacementOptions :  IDocNodeProxyVisitor
+	/// <param name="proxy">The proxy that is owned by the instance.</param>
+	/// <param name="owner">The instance that owns the proxy.</param>
+	/// <param name="propertyName">Name of the property that accesses the proxy in this instance.</param>
+	public delegate void DocNodeProxyReporter(DocNodeProxy proxy, object owner, string propertyName);
+
+
+	/// <summary>
+	/// Can be used to to relocate the <see cref="DocumentPath"/> that the <see cref="DocNodeProxy"/> is holding. The <see cref="Visit"/> function implements
+	/// the <see cref="DocNodeProxyReporter"/> delegate that is used to enumerate all proxies to <see cref="Altaxo.Data.DataColumn"/>s and change there references
+	/// to the corresponding <see cref="Altaxo.Data.DataColumn"/>s of another table.
+	/// </summary>
+	public class DocNodePathReplacementOptions
 	{
 		List<KeyValuePair<DocumentPath, DocumentPath>> _replacementDictionary = new List<KeyValuePair<DocumentPath, DocumentPath>>();
 
@@ -50,7 +50,9 @@ namespace Altaxo.Main
 		/// Visits a <see cref="DocNodeProxy"/> and applies the modifications to the document path of that proxy.
 		/// </summary>
 		/// <param name="proxy">The <see cref="DocNodeProxy"/> to modify.</param>
-		public void Visit(DocNodeProxy proxy)
+		/// <param name="owner">The instance that owns the proxy.</param>
+		/// <param name="propertyName">Name of the property that accesses the proxy in this instance.</param>
+		public void Visit(DocNodeProxy proxy, object owner, string propertyName)
 		{
 			if (null == proxy)
 				return;

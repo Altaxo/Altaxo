@@ -694,13 +694,13 @@ namespace Altaxo.Graph.Plot.Data
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.
 		/// </summary>
-		/// <param name="options">Information what to replace.</param>
-		public void EnumerateDocumentReferences(IDocNodeProxyVisitor options)
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			options.Visit(_xColumn);
-			options.Visit(_yColumn);
-			foreach (var c in _dataColumns)
-				options.Visit(c);
+			Report(_xColumn, this, "XColumn");
+			Report(_yColumn, this, "YColumn");
+			for(int i=0;i<_dataColumns.Length;++i)
+				Report(_dataColumns[i], this, string.Format("DataColumns[{0}]", i) );
 		}
 
   }

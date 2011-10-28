@@ -576,14 +576,14 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="list">List of items to copy.</param>
 		/// <param name="destinationFolderName">Destination folder name.</param>
-		/// <param name="relocationOptions">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
-		public void CopyItemsToFolder(IList<object> list, string destinationFolderName, IDocNodeProxyVisitor relocationOptions)
+		/// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
+		public void CopyItemsToFolder(IList<object> list, string destinationFolderName, DocNodeProxyReporter ReportProxies)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
 			foreach (object item in list)
 			{
-				CopyItemToFolder(item, destinationFolderName, relocationOptions);
+				CopyItemToFolder(item, destinationFolderName, ReportProxies);
 			}
 		}
 
@@ -593,8 +593,8 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="item">Item to copy.</param>
 		/// <param name="destinationFolderName">Destination folder name.</param>
-		/// <param name="relocationOptions">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
-		public void CopyItemToFolder(object item, string destinationFolderName, IDocNodeProxyVisitor relocationOptions)
+		/// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
+		public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter ReportProxies)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
@@ -607,7 +607,7 @@ namespace Altaxo.Main
 				string subDestination = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 				foreach(var subitem in this.GetItemsInFolder(orgName))
 				{
-					CopyItemToFolder(subitem, subDestination, relocationOptions);
+					CopyItemToFolder(subitem, subDestination, ReportProxies);
 				}
 			}
 			else if ((item is ICloneable) && (item is INameOwner))
@@ -617,11 +617,11 @@ namespace Altaxo.Main
 				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 				Current.Project.AddItem(clonedItem);
 
-				if (null!=relocationOptions)
+				if (null!=ReportProxies)
 				{
 					if (clonedItem is Altaxo.Graph.Gdi.GraphDocument)
 					{
-						((Altaxo.Graph.Gdi.GraphDocument)clonedItem).ReplaceItemPaths(relocationOptions);
+						((Altaxo.Graph.Gdi.GraphDocument)clonedItem).VisitDocumentReferences(ReportProxies);
 					}
 				}
 			}
