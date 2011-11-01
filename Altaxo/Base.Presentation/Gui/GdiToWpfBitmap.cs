@@ -131,6 +131,12 @@ namespace Altaxo.Gui
 
 			_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(width * height * BytesPerPixel));
 
+			if (IntPtr.Zero == _map)
+			{
+				System.GC.Collect();
+				_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(width * height * BytesPerPixel));
+			}
+
 
 			_bmp = new System.Drawing.Bitmap(width, height, width * BytesPerPixel, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _map);
 

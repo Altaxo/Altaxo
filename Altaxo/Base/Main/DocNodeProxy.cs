@@ -328,6 +328,19 @@ namespace Altaxo.Main
       }
     }
 
+		public Main.DocumentPath DocumentPath
+		{
+			get
+			{
+				if (_docNode is Main.IDocumentNode)
+					return Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
+				else if (_docNodePath != null)
+					return _docNodePath;
+				else
+					return null;
+			}
+		}
+
     protected virtual object ResolveDocumentObject(object startnode)
     {
       if (_docNode == null && _docNodePath != null)

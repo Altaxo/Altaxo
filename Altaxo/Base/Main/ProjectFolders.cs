@@ -676,6 +676,31 @@ namespace Altaxo.Main
 			return folderNode;
 		}
 
+
+		/// <summary>
+		/// Add a <see cref="NGTreeNode"/>s corresponding to the folder name recursively for all parts of the folder name so that a hierarchy of those nodes is built-up. 
+		/// If the folder name is already represented by a tree node (i.e. is present in the folderDictionary), this node is returned. 
+		/// If not, the node is created and added to the folder dictionary as well as to the nodes collection of the parent tree node. 
+		/// If the parent tree node is not found in the folderDictionary, this function is called recursively to add the parent tree node.
+		/// </summary>
+		/// <param name="folderName">The folder name to add.</param>
+		/// <param name="folderDictionary">Dictionary that relates the full folder name to the already built-up tree nodes. At least the root node (key is the <see cref="Main.ProjectFolder.RootFolderName"/> has to be present in the dictionary. The newly created folder nodes are also added to this dictionary.</param>
+		/// <returns>The tree node corresponding to the provided folder name.</returns>
+		public static NGTreeNode AddFolderNodeRecursively<T>(string folderName, Dictionary<string, NGTreeNode> folderDictionary) where T : NGTreeNode, new()
+		{
+			NGTreeNode folderNode;
+			if (!folderDictionary.TryGetValue(folderName, out folderNode))
+			{
+				var parentNode = AddFolderNodeRecursively<T>(Main.ProjectFolder.GetFoldersParentFolder(folderName), folderDictionary);
+
+
+				folderNode = new T { Text = Main.ProjectFolder.ConvertFolderNameToDisplayFolderName(Main.ProjectFolder.GetFoldersLastFolderPart(folderName)), Tag = folderName };
+				folderDictionary.Add(folderName, folderNode);
+				parentNode.Nodes.Add(folderNode);
+			}
+			return folderNode;
+		}
+
 		#endregion
 	}
 }

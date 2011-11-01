@@ -305,6 +305,7 @@
     <Compile Include="Gui\Worksheet\MasterCurveCreationDataController.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationMainController.cs" />
     <Compile Include="Gui\Worksheet\RealFourierTransformationController.cs" />
+    <Compile Include="Gui\Worksheet\SingleTableChoiceController.cs" />
     <Compile Include="Main\Commands\MultiRenameDocuments.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />

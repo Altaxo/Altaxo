@@ -110,18 +110,21 @@ namespace Altaxo.Gui.Common.MultiRename
 			if (string.IsNullOrEmpty(stringValue))
 				return string.Empty;
 
-			if (_start < 0)
-				_start += stringValue.Length;
-			if (_last < 0)
-				_last += stringValue.Length;
+			int start = _start;
+			int last = _last;
 
-			_start = Math.Max(_start, 0);
-			_last = Math.Max(_last, 0);
-			_start = Math.Min(_start, stringValue.Length - 1);
-			_last = Math.Min(_last, stringValue.Length - 1);
+			if (start < 0)
+				start += stringValue.Length;
+			if (last < 0)
+				last += stringValue.Length;
 
-			if (_start <= _last)
-				return stringValue.Substring(_start, _last - _start + 1);
+			start = Math.Max(start, 0);
+			last = Math.Max(last, 0);
+			start = Math.Min(start, stringValue.Length - 1);
+			last = Math.Min(last, stringValue.Length - 1);
+
+			if (start <= last)
+				return stringValue.Substring(start, last - start + 1);
 			else
 				return string.Empty;
 		}
@@ -211,18 +214,21 @@ namespace Altaxo.Gui.Common.MultiRename
 		{
 			string[] arr = _renameData.GetStringArrayValueOfShortcut(_shortCut, originalListIndex, currentSortIndex);
 
-			if (_start < 0)
-				_start += arr.Length;
-			if (_last < 0)
-				_last += arr.Length;
+			var start = _start;
+			var last = _last;
 
-			_start = Math.Max(_start, 0);
-			_last = Math.Max(_last, 0);
-			_start = Math.Min(_start, arr.Length - 1);
-			_last = Math.Min(_last, arr.Length - 1);
+			if (start < 0)
+				start += arr.Length;
+			if (last < 0)
+				last += arr.Length;
 
-			if (_start <= _last)
-				return string.Join(_separator, arr, _start, _last - _start + 1);
+			start = Math.Max(start, 0);
+			last = Math.Max(last, 0);
+			start = Math.Min(start, arr.Length - 1);
+			last = Math.Min(last, arr.Length - 1);
+
+			if (start <= last)
+				return string.Join(_separator, arr, start, last - start + 1);
 			else
 				return string.Empty;
 		}

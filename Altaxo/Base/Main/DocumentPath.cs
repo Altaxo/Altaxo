@@ -105,6 +105,50 @@ namespace Altaxo.Main
       return stringBuilder.ToString();
     }
 
+		public override bool Equals(object obj)
+		{
+			var o = obj as DocumentPath;
+			if (null == o)
+				return false;
+			if (this.IsAbsolutePath != o.IsAbsolutePath)
+				return false;
+			if (this.Count != o.Count)
+				return false;
+
+			for (int i = this.Count - 1; i >= 0; --i)
+			{
+				if (!(this[i] == o[i]))
+					return false;
+			}
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return ToString().GetHashCode();
+		}
+
+		public bool StartsWith(DocumentPath another)
+		{
+			if (this.Count< another.Count)
+				return false;
+
+			for (int i = 0; i < another.Count; ++i)
+				if (this[i] != another[i])
+					return false;
+
+			return true;
+		}
+
+
+		public DocumentPath SubPath(int count)
+		{
+			var result = new DocumentPath(this._IsAbsolutePath);
+			for (int i = 0; i < count; ++i)
+				result.Add(this[i]);
+			return result;
+		}
+
 
 		/// <summary>
 		/// Replaces parts of the part by another part.

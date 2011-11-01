@@ -163,6 +163,13 @@ namespace Altaxo.Graph.Gdi
 			if (!System.IO.Path.IsPathRooted(fileName))
 				throw new ArgumentException("Path is not rooted!");
 
+			var fileNamePart = System.IO.Path.GetFileName(fileName);
+			var pathPart = System.IO.Path.GetDirectoryName(fileName);
+			if (true && !System.IO.Directory.Exists(pathPart))
+				{
+					System.IO.Directory.CreateDirectory(pathPart);
+				}
+
 			using (Stream myStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				doc.Render(myStream, graphExportOptions);

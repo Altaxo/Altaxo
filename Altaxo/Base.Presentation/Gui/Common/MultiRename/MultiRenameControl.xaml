@@ -6,16 +6,16 @@
              >
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*" MinHeight="40"/>
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ListView x:Name="_guiItemList" Grid.Row="0"/>
+		<ListView x:Name="_guiItemList" Grid.Row="0" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 		<GroupBox Header="Pattern" Grid.Row="2">
 		<TextBox x:Name="_guiRenameText"  TextChanged="EhRenameTextChanged"/>
 		</GroupBox>
@@ -30,10 +30,10 @@
 				</ListView.View>
 			</ListView>
 		</Expander>
-		<Expander Header="Syntax" Grid.Row="6">
+		<ScrollViewer Grid.Row="6" VerticalScrollBarVisibility="Auto">
+		<Expander Header="Syntax">
 			<StackPanel Orientation="Vertical" Margin="20,0,0,0">
 				<Expander Header="Numbers">
-					<FlowDocumentScrollViewer>
 						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
 							<Paragraph>
 								In most cases a shortcut [C] is provided, which represents the position of the item in the list. Assuming that the number shortcut used here is [C] for example, and that the shortcut's value is 42, the syntax for number shortcuts is:
@@ -56,12 +56,9 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-					</FlowDocumentScrollViewer>
-
 				</Expander>
 
 				<Expander Header="Strings">
-					<FlowDocumentScrollViewer>
 						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
 							<Paragraph>
 								In most cases a shortcut [N] is provided, which represents the full name of the item (a string). Assuming that the string shortcut used here is [N] for example, and that the shortcut's value is "Hello", the syntax for string shortcuts is:
@@ -89,11 +86,9 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-					</FlowDocumentScrollViewer>
 				</Expander>
 				<Expander Header="DateTime">
-					<FlowDocumentScrollViewer>
-						<FlowDocument>
+						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
 							<Paragraph>In most cases a shortcut [CD] is provided, which represents the creation date of the item. Assuming that the string shortcut used here is [CD] for example, 
 								that the shortcut's date value is "2011-09-17 21:50:30" of UTC time, and the timezone is +1h UTC, the syntax for string shortcuts is:</Paragraph>
 							<List>
@@ -138,11 +133,9 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-					</FlowDocumentScrollViewer>
 				</Expander>
 				<Expander Header="Array">
-					<FlowDocumentScrollViewer>
-						<FlowDocument>
+						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
 							<Paragraph>
 								Arrays of string are used for instance, when a full path name is split into the separate folder names. In most cases, for items that can have a full name (e.g. tables or graphs), a shortcut [PA] is provided,
 								which represents the path name of the item split into individual pieces. Assuming that you have an item with the full name "foo\bar\tro\max". Then the folder path of this
@@ -184,9 +177,9 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-					</FlowDocumentScrollViewer>
 				</Expander>
 			</StackPanel>
 		</Expander>
+		</ScrollViewer>
 	</Grid>
 </UserControl>

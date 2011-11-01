@@ -151,5 +151,19 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion
 
+
+		#region Exchange tables for plot items
+
+		/// <summary>Shows the dialog, in which the user can exchange the underlying table(s) of all plot items in the graph documents given by the <paramref name="list"/>.</summary>
+		/// <param name="list">The list of graph documents.</param>
+		public static void ShowExchangeTablesOfPlotItemsDialog(IEnumerable<GraphDocument> list)
+		{
+			var exchangeOptions = Altaxo.Gui.Graph.ExchangeTablesOfPlotItemsDocument.CreateFromGraphs(list);
+			Current.Gui.ShowDialog(ref exchangeOptions, "Exchange tables of plot items", false);
+
+		}
+
+		#endregion
+
 	}
 }

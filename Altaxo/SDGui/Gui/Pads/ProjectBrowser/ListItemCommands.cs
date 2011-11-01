@@ -240,5 +240,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+	public class CmdExchangeTablesForPlotItems : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
+			int count = list.Count();
+
+			if (count == 0)
+			{
+				return;
+			}
+			else
+			{
+				Altaxo.Graph.Gdi.GraphDocumentOtherActions.ShowExchangeTablesOfPlotItemsDialog(list);
+			}
+		
+		}
+	}
 		
 }

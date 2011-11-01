@@ -887,6 +887,10 @@
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemCopyTo" />
 			<MenuItem id="MultiRenameItems" label="${res:XML.ProjectBrowserMenu.MultiRenameItems}" description="${res:XML.ProjectBrowserMenu.MultiRenameItems.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiRenameItems" />
+			<MenuItem id="CmdExchangeTablesForPlotItems" label="${res:XML.ProjectBrowserMenu.CmdExchangeTablesForPlotItems}" description="${res:XML.ProjectBrowserMenu.CmdExchangeTablesForPlotItems.Description}"
+							class="Altaxo.Gui.Pads.ProjectBrowser.CmdExchangeTablesForPlotItems" />
+
+
 		</Condition>
 		<Condition name="ProjbrowserListItemSelection" selcount="=1" action="Disable">
 			<MenuItem id="Rename" label="${res:XML.ProjectBrowserMenu.Rename}" description="${res:XML.ProjectBrowserMenu.Rename.Description}"
