@@ -66,7 +66,10 @@ namespace Altaxo.Gui.Graph
 
 		void CollectDataColumnFromProxyVisit(Main.DocNodeProxy proxy, object owner, string propertyName)
 		{
-			if (proxy.DocumentObject is Altaxo.Data.DataColumn)
+			if (proxy.IsEmpty)
+			{
+			}
+			else if (proxy.DocumentObject is Altaxo.Data.DataColumn)
 			{
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)proxy.DocumentObject);
 				if (table != null)
@@ -129,7 +132,10 @@ namespace Altaxo.Gui.Graph
 		{
 			Altaxo.Data.DataTable substituteTable;
 
-			if (proxy.DocumentObject is Altaxo.Data.DataColumn)
+			if (proxy.IsEmpty)
+			{
+			}
+			else if (proxy.DocumentObject is Altaxo.Data.DataColumn)
 			{
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)proxy.DocumentObject);
 				if (table != null)

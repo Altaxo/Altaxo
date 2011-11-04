@@ -590,10 +590,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return this._pen.Color; }
 			set
 			{
+				var oldValue = this._pen.Color;
 				this._pen.Color = value;
 				SetCachedValues();
 
-				OnChanged(); // Fire Changed event
+				if(value!=oldValue)
+					OnChanged(); // Fire Changed event
 			}
 		}
 

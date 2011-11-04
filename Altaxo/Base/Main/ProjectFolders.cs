@@ -604,10 +604,12 @@ namespace Altaxo.Main
 			if (item is ProjectFolder)
 			{
 				var orgName = (item as ProjectFolder).Name;
-				string subDestination = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
-				foreach(var subitem in this.GetItemsInFolder(orgName))
+				string destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
+				foreach(var subitem in this.GetItemsInFolderAndSubfolders(orgName))
 				{
-					CopyItemToFolder(subitem, subDestination, ReportProxies);
+					var oldItemFolder = ProjectFolder.GetFolderPart(((INameOwner)subitem).Name);
+					var newItemFolder = oldItemFolder.Replace(orgName, destName);
+					CopyItemToFolder(subitem, newItemFolder, ReportProxies);
 				}
 			}
 			else if ((item is ICloneable) && (item is INameOwner))
