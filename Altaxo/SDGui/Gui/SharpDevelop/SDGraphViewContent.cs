@@ -103,10 +103,19 @@ namespace Altaxo.Gui.SharpDevelop
 		public SDGraphViewContent(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			_controller = ctrl;
-			_controller.TitleNameChanged += EhTitleNameChanged;
+			_controller.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => _controller.TitleNameChanged -= x);
 			SetTitle();
-//			if (_controller.ViewObject == null)
-//				_controller.ViewObject = new Altaxo.Gui.Graph.Viewing.GraphViewWpf();
+		}
+
+		public override void Dispose()
+		{
+			base.Dispose();
+			
+			if(null!=_controller)
+			{
+				_controller.Dispose();
+			_controller = null;
+			}
 		}
 
 		void EhTitleNameChanged(object sender, EventArgs e)

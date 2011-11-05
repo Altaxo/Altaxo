@@ -81,7 +81,7 @@ namespace Altaxo.Gui
 
 		#endregion
 
-		static int BytesPerPixel = 4; // it is only possible to use ARGB format, otherwise Imaging.CreateBitmapSourceFromMemorySection would copy the bitmap instead of mapping it
+		const int BytesPerPixel = 4; // it is only possible to use ARGB format, otherwise Imaging.CreateBitmapSourceFromMemorySection would copy the bitmap instead of mapping it
 
 		IntPtr _section;
 		IntPtr _map;
@@ -129,16 +129,18 @@ namespace Altaxo.Gui
 																				 (uint)(width * height * BytesPerPixel),
 																				 null);
 
-			_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(width * height * BytesPerPixel));
+			_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(_width * _height * BytesPerPixel));
 
 			if (IntPtr.Zero == _map)
 			{
 				System.GC.Collect();
-				_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(width * height * BytesPerPixel));
+				_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(_width * _height * BytesPerPixel));
 			}
 
 
-			_bmp = new System.Drawing.Bitmap(width, height, width * BytesPerPixel, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _map);
+			_bmp = new System.Drawing.Bitmap(_width, _height, _width * BytesPerPixel, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _map);
+
+			GC.AddMemoryPressure(_width * _height * BytesPerPixel);
 
 			_interopBmp = null;
 		}
@@ -174,6 +176,8 @@ namespace Altaxo.Gui
 				CloseHandle(_section);
 				_section = IntPtr.Zero;
 			}
+
+			GC.RemoveMemoryPressure(_width * _height * BytesPerPixel);
 
 			_width = 0;
 			_height = 0;
@@ -211,7 +215,9 @@ namespace Altaxo.Gui
 			get
 			{
 				if (null == _interopBmp && IntPtr.Zero != _section)
+				{
 					_interopBmp = (System.Windows.Interop.InteropBitmap)System.Windows.Interop.Imaging.CreateBitmapSourceFromMemorySection(_section, _width, _height, System.Windows.Media.PixelFormats.Bgra32, _width * BytesPerPixel, 0);
+				}
 
 				return _interopBmp;
 			}

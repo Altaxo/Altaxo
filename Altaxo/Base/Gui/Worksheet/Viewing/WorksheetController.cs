@@ -30,7 +30,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 {
 	[UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
 	[ExpectedTypeOfView(typeof(IWorksheetView))]
-	public class WorksheetController : IWorksheetController
+	public class WorksheetController : IWorksheetController, IDisposable
 	{
 		IWorksheetView _view;
 
@@ -127,6 +127,22 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		}
 
+
+		public void Dispose()
+		{
+			var view = _view;
+			this.ViewObject = null;
+			if (view is IDisposable)
+				((IDisposable)view).Dispose();
+
+			if (null != _table)
+			{
+				_table.NameChanged -= EhTableNameChanged;
+			}
+
+			_table = null;
+			_worksheetLayout = null; // removes also the event handler(s)
+		}
 	
 
 		#endregion // Constructors
@@ -160,16 +176,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 				if (null != oldTable)
 				{
-					//oldTable.DataColumns.Changed -= new EventHandler(this.EhTableDataChanged);
-					//oldTable.PropCols.Changed -= new EventHandler(this.EhPropertyDataChanged);
 					oldTable.NameChanged -= this.EhTableNameChanged;
 				}
 
 				_table = newTable;
 				if (null != newTable)
 				{
-					//newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
-					//newTable.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
 					newTable.NameChanged += this.EhTableNameChanged;
 					OnTitleNameChanged();
 				}
@@ -357,5 +369,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		}
 
 		#endregion
+
+	
 	}
 }

@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Pads
 		System.Windows.Controls.TextBox _view;
 
 		/// <summary>The currently active view content to which the text belongs.</summary>
-		object _currentActiveViewContent;
+		WeakReference _currentActiveViewContent = new WeakReference(null);
 
 		public NotesController()
 		{
@@ -70,16 +70,19 @@ namespace Altaxo.Gui.Pads
 		{
 			StoreCurrentText(); // Saves the old text
 
-			_currentActiveViewContent = Current.Workbench.ActiveViewContent;
+			_currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
 
 			bool enable = true;
-			if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
+
+			var gvc = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+			var wvc = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
+			if (null != wvc && null != wvc.Controller)
 			{
-				_view.Text = ((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.DataTable.Notes;
+				_view.Text = wvc.Controller.DataTable.Notes;
 			}
-			else if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
+			else if (null != gvc && null != gvc.Controller)
 			{
-				_view.Text = ((Altaxo.Gui.SharpDevelop.SDGraphViewContent)_currentActiveViewContent).Controller.Doc.Notes;
+				_view.Text = gvc.Controller.Doc.Notes;
 			}
 			else
 			{
@@ -110,10 +113,12 @@ namespace Altaxo.Gui.Pads
 		{
 			if (null != _view)
 			{
-				if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
-					((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.DataTable.Notes = _view.Text;
-				else if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
-					((Altaxo.Gui.SharpDevelop.SDGraphViewContent)_currentActiveViewContent).Controller.Doc.Notes = _view.Text;
+				var wvc = _currentActiveViewContent.Target as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
+				var gvc = _currentActiveViewContent.Target as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+				if (null != wvc && null != wvc.Controller)
+					wvc.Controller.DataTable.Notes = _view.Text;
+				else if (null != gvc && null != gvc.Controller)
+					gvc.Controller.Doc.Notes = _view.Text;
 			}
 		}
 

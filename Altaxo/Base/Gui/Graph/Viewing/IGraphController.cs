@@ -30,7 +30,7 @@ using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 namespace Altaxo.Gui.Graph.Viewing
 {
-	public interface IGraphView
+	public interface IGraphView 
 	{
 		/// <summary>
 		/// Sets the controller of the view;

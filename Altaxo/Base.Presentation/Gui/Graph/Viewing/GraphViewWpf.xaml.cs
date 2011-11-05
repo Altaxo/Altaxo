@@ -41,12 +41,12 @@ namespace Altaxo.Gui.Graph.Viewing
 	/// <summary>
 	/// Interaction logic for GraphView.xaml
 	/// </summary>
-	public partial class GraphViewWpf : UserControl, Altaxo.Gui.Graph.Viewing.IGraphView
+	public partial class GraphViewWpf : UserControl, Altaxo.Gui.Graph.Viewing.IGraphView, IDisposable
 	{
 		[Browsable(false)]
 		private int _cachedCurrentLayer = -1;
 
-		private Altaxo.Gui.Graph.Viewing.GraphController _controller;
+		private WeakReference _controller = new WeakReference(null);
 
 		private Altaxo.Gui.Graph.Viewing.PresentationGraphController _guiController;
 
@@ -59,11 +59,23 @@ namespace Altaxo.Gui.Graph.Viewing
 			_guiController = new PresentationGraphController(this);
 		}
 
+		public virtual void Dispose()
+		{
+			if (null != _wpfGdiBitmap)
+			{
+				_graphPanel.Source = null;
+				_wpfGdiBitmap.Dispose();
+				_wpfGdiBitmap = null;
+			}
+			_guiController = null;
+			_controller = new WeakReference(null);
+		}
+
 		public Altaxo.Gui.Graph.Viewing.GraphController GC
 		{
 			get
 			{
-				return _controller;
+				return (Altaxo.Gui.Graph.Viewing.GraphController)_controller.Target;
 			}
 		}
 
@@ -79,7 +91,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return _controller != null ? _controller.Doc : null;
+				var gc = GC;
+				return null != gc ? gc.Doc : null;
 			}
 		}
 
@@ -87,7 +100,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return _controller.ActiveLayer;
+				var gc = GC;
+				return null != gc ? gc.ActiveLayer : null;
 			}
 		}
 
@@ -97,13 +111,17 @@ namespace Altaxo.Gui.Graph.Viewing
 			_guiController.GraphTool = value;
 			bool result = _graphPanel.Focus();
 			Keyboard.Focus(_graphPanel);
-			if (null != _controller)
-				_controller.EhView_CurrentGraphToolChanged();
+
+			var gc = GC;
+			if (null != gc)
+				gc.EhView_CurrentGraphToolChanged();
 		}
 
 		public void SetActiveLayerFromInternal(int layerNumber)
 		{
-			_controller.EhView_CurrentLayerChoosen(layerNumber, false);
+			var gc = GC;
+			if(null != gc)
+			gc.EhView_CurrentLayerChoosen(layerNumber, false);
 		}
 
 		public void SetPanelCursor(Cursor cursor)
@@ -215,7 +233,8 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private void EhGraphPanel_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			if (null != _controller)
+			var gc = GC;
+			if (null != gc)
 			{
 				int actWidth = (int)_graphPanel.ActualWidth;
 				int actHeight = (int)_graphPanel.ActualHeight;
@@ -224,7 +243,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					_wpfGdiBitmap.Resize((int)_graphPanel.ActualWidth, (int)_graphPanel.ActualHeight);
 					_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
 					_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
-					_controller.EhView_GraphPanelSizeChanged();
+					gc.EhView_GraphPanelSizeChanged();
 				}
 				else // either actWidth or actHeight was 0, thus the graph panel is momentarily invisible
 				{
@@ -250,7 +269,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			set
 			{
-				_controller = value as Altaxo.Gui.Graph.Viewing.GraphController; 
+					_controller = new WeakReference(value as Altaxo.Gui.Graph.Viewing.GraphController); 
 			}
 		}
 
@@ -344,20 +363,22 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		void EhLayerButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
+			var gc = GC;
+			if (null != gc)
 			{
 				int pushedLayerNumber = (int)((ButtonBase)sender).Tag;
 
-				_controller.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
+				gc.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
 			}
 		}
 
 		void EhLayerButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			if (null != _guiController)
+			var gc = GC;
+			if (null != gc)
 			{
 				int i = (int)((ToggleButton)sender).Tag;
-				_controller.EhView_ShowDataContextMenu(i, this, new System.Drawing.Point((int)e.CursorLeft, (int)e.CursorTop));
+				GC.EhView_ShowDataContextMenu(i, this, new System.Drawing.Point((int)e.CursorLeft, (int)e.CursorTop));
 			}
 		}
 
@@ -407,8 +428,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (e.ScrollEventType == ScrollEventType.ThumbTrack)
 				return;
 
-			if (null != _controller)
-				_controller.EhView_Scroll();
+			var gc = GC;
+			if (null != gc)
+				gc.EhView_Scroll();
 		}
 
 		private void EhVerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
@@ -416,66 +438,75 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (e.ScrollEventType == ScrollEventType.ThumbTrack)
 				return;
 
-			if (null != _controller)
-				_controller.EhView_Scroll();
+			var gc = GC;
+			if (null != gc)
+				gc.EhView_Scroll();
 		}
 
 		private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = null != _controller && _controller.IsCmdCopyEnabled();
+			var gc = GC;
+			e.CanExecute = null!=gc && gc.IsCmdCopyEnabled();
 			e.Handled = true;
 		}
 
 		private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = null != _controller && _controller.IsCmdCutEnabled();
+			var gc = GC;
+			e.CanExecute = null!=gc && gc.IsCmdCutEnabled();
 			e.Handled = true;
 		}
 
 		private void EhEnableCmdDelete(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = null != _controller && _controller.IsCmdDeleteEnabled();
+			var gc = GC;
+			e.CanExecute = null != gc && gc.IsCmdDeleteEnabled();
 			e.Handled = true;
 		}
 
 		private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = null != _controller && _controller.IsCmdPasteEnabled();
+			var gc = GC;
+			e.CanExecute = null != gc && gc.IsCmdPasteEnabled();
 			e.Handled = true;
 		}
 
 		private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (null != _controller)
+			var gc = GC;
+			if (null != gc)
 			{
-				_controller.CopySelectedObjectsToClipboard();
+				gc.CopySelectedObjectsToClipboard();
 				e.Handled = true;
 			}
 		}
 
 		private void EhCmdCut(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (null != _controller)
+			var gc = GC;
+			if (null != gc)
 			{
-				_controller.CutSelectedObjectsToClipboard();
+				gc.CutSelectedObjectsToClipboard();
 				e.Handled = true;
 			}
 		}
 
 		private void EhCmdDelete(object sender, ExecutedRoutedEventArgs e)
 		{
+			var gc = GC;
 			if (null != _controller)
 			{
-				_controller.CmdDelete();
+				gc.CmdDelete();
 				e.Handled = true;
 			}
 		}
 
 		private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
 		{
+			var gc = GC;
 			if (null != _controller)
 			{
-				_controller.PasteObjectsFromClipboard();
+				gc.PasteObjectsFromClipboard();
 				e.Handled = true;
 			}
 		}

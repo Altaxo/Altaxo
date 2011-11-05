@@ -70,11 +70,16 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			set
 			{
-				if (null == value)
-					throw new ArgumentNullException("value");
-
-				_controller = value;
-				_guiController = _createGuiDependentController(_controller, this);
+				if (null != value)
+				{
+					_controller = value;
+					_guiController = _createGuiDependentController(_controller, this);
+				}
+				else
+				{
+					_controller = null;
+					_guiController = null;
+				}
 			}
 		}
 

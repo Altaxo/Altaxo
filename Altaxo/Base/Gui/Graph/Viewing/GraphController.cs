@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
-	public class GraphController : IGraphController, IGraphViewEventSink
+	public class GraphController : IGraphController, IGraphViewEventSink, IDisposable
 	{
 		// following default unit is point (1/72 inch)
 		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
@@ -332,10 +332,11 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			_doc = doc;
 
-			_doc.Changed += this.EhGraph_Changed;
-			_doc.Layers.LayerCollectionChanged += this.EhGraph_LayerCollectionChanged;
-			_doc.BoundsChanged += this.EhGraph_BoundsChanged;
-			_doc.NameChanged += this.EhGraphDocumentNameChanged;
+			// we are using weak events here, to avoid that _doc will maintain strong references to the controller
+			_doc.Changed += new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x);
+			_doc.Layers.LayerCollectionChanged += new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.Layers.LayerCollectionChanged -= x);
+			_doc.BoundsChanged += new WeakEventHandler(this.EhGraph_BoundsChanged, x => _doc.BoundsChanged -= x);
+			_doc.NameChanged += new WeakActionHandler<Main.INameOwner, string>(this.EhGraphDocumentNameChanged, x => _doc.NameChanged -= x);
 
 			// Ensure the current layer and plot numbers are valid
 			this.EnsureValidityOfCurrentLayerNumber();
@@ -1300,5 +1301,13 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion
 
+
+		public void Dispose()
+		{
+			if (_view is IDisposable)
+				((IDisposable)_view).Dispose();
+
+			_view = null;
+		}
 	}
 }
