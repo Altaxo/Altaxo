@@ -93,12 +93,5 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		void OnNodeMultipleChanges();
 	}
 
-	/// <summary>
-	/// Helper class to distinguish between 'real' folders and the '..' folder.
-	/// </summary>
-	public class ParentProjectFolder
-	{
-		public string Name { get; private set; }
-		public ParentProjectFolder(string name) { Name = name; }
-	}
+	
 }

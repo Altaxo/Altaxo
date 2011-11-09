@@ -212,6 +212,7 @@
     <Compile Include="Gui\Pads\ProjectBrowser\ConditionEvaluators.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ItemHandler.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ListItemCommands.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\NavigationPoint.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\NGuiItems.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseController.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowserExtensions.cs" />

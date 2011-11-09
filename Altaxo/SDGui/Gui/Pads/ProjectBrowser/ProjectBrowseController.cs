@@ -49,6 +49,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		object TreeNodeContextMenu { get; }
 
 		void InitializeList(SelectableListNodeList list);
+
+		/// <summary>Sets the display in what folder we are currently in.</summary>
+		/// <param name="currentFolder">Name of the current folder.</param>
+		void InitializeCurrentFolder(string currentFolder);
+
 		void SynchronizeListSelection();
 	}
 	#endregion
@@ -86,6 +91,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		ViewOnSelect _viewOnSelectTreeNode = ViewOnSelect.Off;
 		/// <summary>Action when selection a list node. If true, the item is shown in the document area.</summary>
 		bool _viewOnSelectListNodeOn = false;
+
+		NavigationList<NavigationPoint> _navigationPoints = new NavigationList<NavigationPoint>();
 
 		/// <summary>Creates the project browse controller.</summary>
 		public ProjectBrowseController()
@@ -128,6 +135,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				_projectDirectoryRoot.SetContextMenuRecursively(_view.TreeNodeContextMenu);
 
 				_view.InitializeTree(_rootNode);
+				_view.InitializeCurrentFolder(GetLocationStringFromCurrentState());
 			}
 		}
 
@@ -325,10 +333,20 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		void SetItemListHandler(AbstractItemHandler itemHandler)
 		{
 			if (null != _listItemHandler)
+			{
 				_listItemHandler.ListChange -= EhListItemHandlerListChange;
+			}
+
 			_listItemHandler = itemHandler;
+
 			if (null != _listItemHandler)
+			{
 				_listItemHandler.ListChange += EhListItemHandlerListChange;
+				StoreNavigationPoint();
+
+				if (null != _view)
+					_view.InitializeCurrentFolder(GetLocationStringFromCurrentState());
+			}
 		}
 
 		/// <summary>
@@ -393,7 +411,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			foreach (BrowserListItem item in _listViewItems)
 			{
-				if (item.IsSelected && !(item.Tag is ParentProjectFolder))
+				if (item.IsSelected)
 				{
 					result.Add(item.Tag);
 				}
@@ -411,10 +429,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			foreach (BrowserListItem item in _listViewItems)
 			{
-				if (!(item.Tag is ParentProjectFolder))
-				{
 					result.Add(item.Tag);
-				}
 			}
 			return result;
 		}
@@ -508,11 +523,132 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				{
 					SetItemListHandler(new SpecificProjectFolderHandler((node.Tag as ProjectFolder).Name));
 				}
-				else if (node.Tag is ParentProjectFolder)
-				{
-					SetItemListHandler(new SpecificProjectFolderHandler((node.Tag as ParentProjectFolder).Name));
-				}
 			}
+		}
+
+		/// <summary>
+		/// Navigate on folder up, to the parent folder.
+		/// </summary>
+		public void EhListView_OneFolderUp()
+		{
+			var spfh = _listItemHandler as SpecificProjectFolderHandler;
+			if (null != spfh && !string.IsNullOrEmpty(spfh.CurrentProjectFolder))
+			{
+				var parentFolder = Main.ProjectFolder.GetFoldersParentFolder(spfh.CurrentProjectFolder);
+				SetItemListHandler(new SpecificProjectFolderHandler(parentFolder));
+			}
+		}
+
+	
+
+		#endregion
+
+
+		#region Navigation
+
+		public void EhNavigateBackward()
+		{
+			NavigationPoint p;
+			if (_navigationPoints.TryNavigateBackward(out p, IsNavigationPointValid, true))
+			{
+				NavigateTo(p);
+			}
+		}
+
+		public void EhNavigateForward()
+		{
+			NavigationPoint p;
+			if (_navigationPoints.TryNavigateForward(out p, IsNavigationPointValid, true))
+			{
+				NavigateTo(p);
+			}
+		}
+
+		bool IsNavigationPointValid(NavigationPoint p)
+		{
+			if (p.Kind != NavigationPoint.KindOfNavigationPoint.ProjectFolder)
+				return true;
+			else
+				return Current.Project.Folders.ContainsFolder(p.Folder);
+		}
+
+		void NavigateTo(NavigationPoint p)
+		{
+			switch (p.Kind)
+			{
+				case NavigationPoint.KindOfNavigationPoint.ProjectFolder:
+					SetItemListHandler(new SpecificProjectFolderHandler(p.Folder));
+					break;
+				case NavigationPoint.KindOfNavigationPoint.AllTables:
+					SetItemListHandler(new AllWorksheetHandler());
+					break;
+				case NavigationPoint.KindOfNavigationPoint.AllGraphs:
+					SetItemListHandler(new AllGraphHandler());
+					break;
+				case NavigationPoint.KindOfNavigationPoint.AllProjectItems:
+					SetItemListHandler(new ProjectAllItemHandler());
+					break;
+			}
+		}
+
+		void StoreNavigationPoint()
+		{
+			_navigationPoints.AddNavigationPoint(GetNavigationPointFromCurrentState());
+		}
+
+		NavigationPoint GetNavigationPointFromCurrentState()
+		{
+			NavigationPoint result;
+			if (_listItemHandler is ProjectAllItemHandler)
+			{
+				result = new NavigationPoint() { Kind = NavigationPoint.KindOfNavigationPoint.AllProjectItems, Folder = null };
+			}
+			else if (_listItemHandler is AllWorksheetHandler)
+			{
+				result = new NavigationPoint() { Kind = NavigationPoint.KindOfNavigationPoint.AllTables, Folder = null };
+			}
+			else if (_listItemHandler is AllGraphHandler)
+			{
+				result = new NavigationPoint() { Kind = NavigationPoint.KindOfNavigationPoint.AllGraphs, Folder = null };
+			}
+			else if (_listItemHandler is SpecificProjectFolderHandler)
+			{
+				result = new NavigationPoint() { Kind = NavigationPoint.KindOfNavigationPoint.ProjectFolder, Folder = ((SpecificProjectFolderHandler)_listItemHandler).CurrentProjectFolder };
+			}
+			else
+			{
+				result = new NavigationPoint() { Kind = NavigationPoint.KindOfNavigationPoint.AllProjectItems, Folder = null };
+			}
+			return result;
+		}
+
+
+		string GetLocationStringFromCurrentState()
+		{
+			string result;
+			if (_listItemHandler is ProjectAllItemHandler)
+			{
+				result = "<<< All items >>>";
+			}
+			else if (_listItemHandler is AllWorksheetHandler)
+			{
+				result = "<<< All tables >>>";
+			}
+			else if (_listItemHandler is AllGraphHandler)
+			{
+				result = "<<< All graphs >>>";
+			}
+			else if (_listItemHandler is SpecificProjectFolderHandler)
+			{
+				result = ((SpecificProjectFolderHandler)_listItemHandler).CurrentProjectFolder;
+				if (string.IsNullOrEmpty(result))
+					result = "<<< Root folder >>>";
+			}
+			else
+			{
+				result = string.Empty;
+			}
+			return result;
 		}
 
 		#endregion

@@ -246,17 +246,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (!Current.Project.Folders.ContainsFolder(_folderName))
 				return _list;
 
-
-			if (!Altaxo.Main.ProjectFolder.IsRootFolderName(_folderName))
-				_list.Add(new BrowserListItem(
-					"..",
-					new ParentProjectFolder(Main.ProjectFolder.GetFoldersParentFolder(_folderName)),
-					false)
-					{
-						Image = ProjectBrowseItemImage.OpenFolder
-					}
-					);
-
 			var subfolderList = Current.Project.Folders.GetSubfoldersAsStringList(_folderName, false);
 			subfolderList.Sort();
 			foreach (var o in subfolderList)

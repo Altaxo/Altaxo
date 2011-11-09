@@ -141,6 +141,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_listView.ItemsSource = list;
 		}
 
+		public void InitializeCurrentFolder(string currentFolder)
+		{
+			_guiCurrentFolderName.Text = currentFolder;
+		}
+
 		public void SynchronizeListSelection()
 		{
 			foreach (Collections.SelectableListNode node in _listView.Items)
@@ -161,6 +166,59 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			SynchronizeListSelection();
 			if (null != _controller)
 				_controller.EhListViewAfterSelect();
+		}
+
+		private void EhDeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+
+			e.Handled = true;
+		}
+
+		private void EhDeleteCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			
+			e.Handled = true;
+		}
+
+		private void EhListViewDeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			_controller.DeleteSelectedListItems();
+			e.Handled = true;
+		}
+
+		private void EhListViewDeleteCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = _listView.SelectedItems.Count > 0;
+			e.Handled = true;
+		}
+
+		private void EhListViewSelectAllCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+			e.Handled = true;
+		}
+
+		private void EhListViewSelectAllCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			_listView.SelectAll();
+		}
+
+		private void EhListView_OneFolderUp(object sender, RoutedEventArgs e)
+		{
+			if (null != _controller)
+				_controller.EhListView_OneFolderUp();
+		}
+
+		private void EhNavigateBackward(object sender, RoutedEventArgs e)
+		{
+			if (null != _controller)
+				_controller.EhNavigateBackward();
+		}
+
+		private void EhNavigateForward(object sender, RoutedEventArgs e)
+		{
+			if (null != _controller)
+				_controller.EhNavigateForward();
 		}
 	}
 }

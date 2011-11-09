@@ -803,6 +803,7 @@
     <Compile Include="Gui\Common\TabbedElementControl.xaml.cs">
       <DependentUpon>TabbedElementControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\TextBlockUtilities.cs" />
     <Compile Include="Gui\Common\TypeAndInstanceControl.xaml.cs">
       <DependentUpon>TypeAndInstanceControl.xaml</DependentUpon>
     </Compile>

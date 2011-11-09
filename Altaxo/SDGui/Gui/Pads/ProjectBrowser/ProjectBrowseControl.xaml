@@ -3,8 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase.Presentation"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+
+	<UserControl.CommandBindings>
+		<CommandBinding Command="Delete"
+                  Executed="EhDeleteCommandExecuted"
+                  CanExecute="EhDeleteCommandCanExecute"/>
+	</UserControl.CommandBindings>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
@@ -17,8 +24,41 @@
 		<TreeView Grid.Row="0" Name="_treeView" TreeViewItem.Selected="EhTreeNodeAfterSelect" >
 		</TreeView>
 		<GridSplitter Grid.Row ="1" Background="Blue" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="true" ResizeDirection="Rows"/>
-
-		<ListView Grid.Row="2" Name="_listView" SelectionChanged="EhListViewSelectionChanged" MouseDoubleClick="EhListViewItemDoubleClick">
+		<Grid Grid.Row="2" VerticalAlignment="Top" Height="18">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="0" Height="16" Margin="1" Focusable="False" ToolTip="Navigate backward" Background="Blue" Click="EhNavigateBackward">
+				<Path Margin="1,0,0,0" Fill="White">
+					<Path.Data>
+						<Geometry>F1 M 0,4L 4,0L 4,3L 8,3L 8,5L 4,5L 4,8L 0,4 Z</Geometry>
+					</Path.Data>
+				</Path>
+			</Button>
+			<Button Grid.Column="1" Height="16" Margin="1" Focusable="False" ToolTip="Navigate forward" Background="Blue" Click="EhNavigateForward">
+				<Path Margin="1,0,0,0" Fill="White">
+					<Path.Data>
+						<Geometry>F1 M 8,4L 4,0L 4,3L 0,3L 0,5L 4,5L 4,8L 8,4 Z</Geometry>
+					</Path.Data>
+				</Path>
+			</Button>
+			<TextBlock x:Name="_guiCurrentFolderName" Grid.Column="2" Margin="4,0,4,0" TextTrimming="CharacterEllipsis" axogc:TextBlockUtilities.AutoTooltip="True"/>
+			<Button Grid.Column="3" Height="16" Width="16" Margin="1" Background="Yellow" Focusable="False" Click="EhListView_OneFolderUp" ToolTip="Navigate one folder up" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" >
+				<Path Margin="1,0,0,0" Fill="Black">
+					<Path.Data>
+						<Geometry>F1 M 8,6L 4,6L 4,3L 6,3L 3,0 0,3L 2,3L 2,8L 8,8L 8,6 Z</Geometry>
+					</Path.Data>
+				</Path>
+			</Button>
+		</Grid>
+		<ListView Grid.Row="2" Margin="0,18,0,0" Name="_listView" SelectionChanged="EhListViewSelectionChanged" MouseDoubleClick="EhListViewItemDoubleClick">
+			<ListView.CommandBindings>
+				<CommandBinding Command="Delete" CanExecute="EhListViewDeleteCommandCanExecute" Executed="EhListViewDeleteCommandExecuted" />
+				<CommandBinding Command="SelectAll" CanExecute="EhListViewSelectAllCommandCanExecute" Executed="EhListViewSelectAllCommandExecuted" />
+			</ListView.CommandBindings>
 			<ListView.Resources>
 				<DataTemplate x:Key="ColumnWithIconTemplate">
 					<Grid>
