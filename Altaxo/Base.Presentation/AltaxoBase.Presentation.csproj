@@ -797,6 +797,7 @@
     <Compile Include="Gui\Common\SingleValueControl.xaml.cs">
       <DependentUpon>SingleValueControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\SortAdorner.cs" />
     <Compile Include="Gui\Common\SpinAndComboBoxControl.xaml.cs">
       <DependentUpon>SpinAndComboBoxControl.xaml</DependentUpon>
     </Compile>

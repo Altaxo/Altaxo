@@ -54,6 +54,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="currentFolder">Name of the current folder.</param>
 		void InitializeCurrentFolder(string currentFolder);
 
+		void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+		void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+
 		void SynchronizeListSelection();
 	}
 	#endregion
@@ -93,6 +96,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		bool _viewOnSelectListNodeOn = false;
 
 		NavigationList<NavigationPoint> _navigationPoints = new NavigationList<NavigationPoint>();
+
+
 
 		/// <summary>Creates the project browse controller.</summary>
 		public ProjectBrowseController()
@@ -136,6 +141,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 				_view.InitializeTree(_rootNode);
 				_view.InitializeCurrentFolder(GetLocationStringFromCurrentState());
+
+				UpdateSortIndicatorsInView();
 			}
 		}
 
@@ -385,8 +392,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="list"></param>
 		void EhListItemHandlerListChange_Unsynchronized(SelectableListNodeList list)
 		{
+			SortItemList(list);
+
 			_listViewItems = list;
-			//_listViewItems.Sort(NameComparism);
+
 			if (_listItemHandler is SpecificProjectFolderHandler)
 			{
 				if (!_directoryNodesByName.TryGetValue(((SpecificProjectFolderHandler)_listItemHandler).CurrentProjectFolder, out _currentSelectedTreeNode))
@@ -656,6 +665,121 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		int NameComparism(SelectableListNode x, SelectableListNode y)
 		{
 			return string.Compare(x.Text, y.Text);
+		}
+
+
+		BrowserListItem.SortKind _primaryListSortKind = BrowserListItem.SortKind.Name;
+		bool _primaryListSortDescending;
+		BrowserListItem.SortKind _secondaryListSortKind;
+		bool _secondaryListSortDescending;
+
+		public void EhToggleListSort_Name()
+		{
+			EhToggleListSort(BrowserListItem.SortKind.Name);
+		}
+
+		public void EhToggleListSort_CreationDate()
+		{
+			EhToggleListSort(BrowserListItem.SortKind.CreationDate);
+		}
+
+		private void EhToggleListSort(BrowserListItem.SortKind clickedSort)
+		{
+			bool newDirection = false; // Ascending
+
+			if (clickedSort == _primaryListSortKind) // clicked on primary sort column
+			{
+				_primaryListSortDescending = !_primaryListSortDescending;
+			}
+			else if (clickedSort == _secondaryListSortKind) // clicked on secondary column
+			{
+				newDirection = _secondaryListSortDescending;
+				_secondaryListSortKind = _primaryListSortKind;
+				_secondaryListSortDescending = _primaryListSortDescending;
+				_primaryListSortDescending = newDirection;
+				_primaryListSortKind = clickedSort;
+			}
+			else // clicked in any other column
+			{
+				_secondaryListSortKind = _primaryListSortKind;
+				_secondaryListSortDescending = _primaryListSortDescending;
+
+				_primaryListSortKind = clickedSort;
+				_primaryListSortDescending = false;
+			}
+
+
+			// now sort the item list
+			SortItemList(_listViewItems);
+
+			// and indicate the sorting as arrows in the column headers of the view
+			UpdateSortIndicatorsInView();
+		}
+
+		private void SortItemList(SelectableListNodeList list)
+		{
+			BrowserListItem.Comparer comparer = null;
+
+			if (_secondaryListSortKind != BrowserListItem.SortKind.None)
+				comparer = new BrowserListItem.Comparer(_primaryListSortKind, _primaryListSortDescending, _secondaryListSortKind, _secondaryListSortDescending);
+			else
+				comparer = new BrowserListItem.Comparer(_primaryListSortKind, _primaryListSortDescending);
+
+			if (null != comparer)
+				BrowserListItem.Sort(list, comparer);
+		}
+
+		private void UpdateSortIndicatorsInView()
+		{
+			if (null != _view)
+			{
+				bool isNameColSorted;
+				bool isNameColDescending;
+				bool isColSecondary;
+				
+				if(BrowserListItem.SortKind.Name==_primaryListSortKind)
+				{
+					isNameColSorted = true;
+					isNameColDescending = _primaryListSortDescending;
+					isColSecondary = false;
+				}
+				else if (BrowserListItem.SortKind.Name == _secondaryListSortKind)
+				{
+					isNameColSorted = true;
+					isNameColDescending = _secondaryListSortDescending;
+					isColSecondary = true;
+				}
+				else
+				{
+					isNameColSorted = false;
+					isNameColDescending = false;
+					isColSecondary = false;
+				}
+				_view.SetSortIndicator_NameColumn(isNameColSorted, isNameColDescending, isColSecondary);
+
+
+				if (BrowserListItem.SortKind.CreationDate == _primaryListSortKind)
+				{
+					isNameColSorted = true;
+					isNameColDescending = _primaryListSortDescending;
+					isColSecondary = false;
+				}
+				else if (BrowserListItem.SortKind.CreationDate == _secondaryListSortKind)
+				{
+					isNameColSorted = true;
+					isNameColDescending = _secondaryListSortDescending;
+					isColSecondary = true;
+				}
+				else
+				{
+					isNameColSorted = false;
+					isNameColDescending = false;
+					isColSecondary = false;
+				}
+				_view.SetSortIndicator_CreationDateColumn(isNameColSorted, isNameColDescending, isColSecondary);
+
+
+			}
 		}
 
 

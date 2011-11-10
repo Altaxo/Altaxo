@@ -84,6 +84,41 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// Ends monitoring of changes that can affect the items in the list.
 		/// </summary>
 		public abstract void EndTracking();
+
+		public static BrowserListItem GetBrowserListItem(Altaxo.Data.DataTable t, bool showFullName)
+		{
+			var name = showFullName ? t.Name : Main.ProjectFolder.GetNamePart(t.Name);
+			return new BrowserListItem(name, t, false) { Image = ProjectBrowseItemImage.Worksheet, CreationDate = t.CreationTimeUtc };
+		}
+
+		public static BrowserListItem GetBrowserListItem(Altaxo.Graph.Gdi.GraphDocument t, bool showFullName)
+		{
+			var name = showFullName ? t.Name : Main.ProjectFolder.GetNamePart(t.Name);
+			return new BrowserListItem(name, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
+		}
+
+		public static BrowserListItem GetBrowserListItem(string folder)
+		{
+			return new BrowserListItem(Main.ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(folder), new Main.ProjectFolder(folder), false) { Image = ProjectBrowseItemImage.OpenFolder };
+		}
+
+
+		public static BrowserListItem GetBrowserListItemFromObject(object t, bool showFullName)
+		{
+			Altaxo.Graph.Gdi.GraphDocument gd;
+			Altaxo.Data.DataTable dt;
+			string folder;
+			if (null != (gd = t as Altaxo.Graph.Gdi.GraphDocument))
+				return GetBrowserListItem(gd, showFullName);
+			else if (null != (dt = t as Altaxo.Data.DataTable))
+				return GetBrowserListItem(dt, showFullName);
+			else if (null != (folder = t as string))
+				return GetBrowserListItem(folder);
+			else if (null == t)
+				throw new ArgumentNullException("Object to list is null");
+			else
+				throw new ApplicationException("Unknown type to list: " + t.GetType().ToString());
+		}
 	}
 
 	/// <summary>
@@ -99,9 +134,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			_list = new SelectableListNodeList();
 			foreach (var t in Current.Project.DataTableCollection)
-				_list.Add(new BrowserListItem(t.Name, t, false) { Image = ProjectBrowseItemImage.Worksheet });
+				_list.Add(GetBrowserListItem(t,true));
 			foreach (Altaxo.Graph.Gdi.GraphDocument t in Current.Project.GraphDocumentCollection)
-				_list.Add(new BrowserListItem(t.Name, t, false) { Image = ProjectBrowseItemImage.Graph });
+				_list.Add(GetBrowserListItem(t,true));
 
 			return _list;
 		}
@@ -146,7 +181,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			_list = new SelectableListNodeList();
 			foreach (var t in Current.Project.DataTableCollection)
-				_list.Add(new BrowserListItem(t.Name, t, false) { Image = ProjectBrowseItemImage.Worksheet });
+				_list.Add(GetBrowserListItem(t,true));
 
 			return _list;
 		}
@@ -185,7 +220,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			_list = new SelectableListNodeList();
 			foreach (Altaxo.Graph.Gdi.GraphDocument t in Current.Project.GraphDocumentCollection)
-				_list.Add(new BrowserListItem(t.Name, t, false) { Image = ProjectBrowseItemImage.Graph });
+				_list.Add(GetBrowserListItem(t,true));
 
 			return _list;
 		}
@@ -247,44 +282,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				return _list;
 
 			var subfolderList = Current.Project.Folders.GetSubfoldersAsStringList(_folderName, false);
-			subfolderList.Sort();
+			//subfolderList.Sort();
 			foreach (var o in subfolderList)
 			{
-				_list.Add(new BrowserListItem(Main.ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(o), new Main.ProjectFolder(o), false) { Image = ProjectBrowseItemImage.OpenFolder });
+				_list.Add(GetBrowserListItem(o));
 			}
 
 			var itemList = Current.Project.Folders.GetItemsInFolder(_folderName);
-			itemList.Sort(CompareItemsByName);
+			//itemList.Sort(CompareItemsByName);
 			foreach (var o in itemList)
 			{
-				if (o is Altaxo.Data.DataTable)
-				{
-					var newItem = new BrowserListItem(Main.ProjectFolder.GetNamePart(((Main.INameOwner)o).Name), o, false)
-					{
-						Image = ProjectBrowseItemImage.Worksheet
-					};
-					_list.Add(newItem);
-				}
-
-				if (o is Altaxo.Graph.Gdi.GraphDocument)
-				{
-					var newItem = new BrowserListItem(Main.ProjectFolder.GetNamePart(((Main.INameOwner)o).Name), o, false)
-					{
-						Image = ProjectBrowseItemImage.Graph
-					};
-					_list.Add(newItem);
-				}
+				_list.Add(GetBrowserListItemFromObject(o,false));
 			}
 
 			return _list;
 		}
 
-		private static int CompareItemsByName(object a, object b)
-		{
-			string sa = (a is Main.INameOwner) ? ((Main.INameOwner)a).Name : string.Empty;
-			string sb = (b is Main.INameOwner) ? ((Main.INameOwner)b).Name : string.Empty;
-			return string.Compare(sa, sb);
-		}
+	
 
 		/// <summary>
 		/// Starts monitoring of item changes in the current project folder.

@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 using ICSharpCode.Core;
 using ICSharpCode.Core.Presentation;
@@ -219,6 +220,122 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			if (null != _controller)
 				_controller.EhNavigateForward();
+		}
+
+
+		private GridViewColumnHeader _currentPrimarySortedColumnHeader = null;
+		private Altaxo.Gui.Common.SortAdorner _currentPrimarySortAdorner = null;
+
+		private GridViewColumnHeader _currentSecondarySortedColumnHeader = null;
+		private Altaxo.Gui.Common.SortAdorner _currentSecondarySortAdorner = null;
+
+
+		private void SetSortAdorner(Visual visual, ref Adorner adorner, bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
+		{
+			if(null!=adorner)
+			{
+			AdornerLayer.GetAdornerLayer(visual).Remove(adorner);
+			adorner = null;
+			}
+
+			if (isSorted)
+			{
+				adorner = new Common.SortAdorner((UIElement)visual, isDescendingSort ? ListSortDirection.Descending : ListSortDirection.Ascending, isSecondaryAdorner);
+				var adornerLayer = AdornerLayer.GetAdornerLayer(visual); // adornerLayer is valid only after the visual was visible for the first time
+				if(null!=adornerLayer)
+					adornerLayer.Add(adorner);
+			}
+		}
+
+		Adorner _nameColumnSortAdorner;
+		public void SetSortIndicator_NameColumn( bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
+		{
+			SetSortAdorner(_listViewColHeader_Name, ref _nameColumnSortAdorner,isSorted,isDescendingSort,isSecondaryAdorner);
+		}
+
+		Adorner _creationDateColumnSortAdorner;
+		public void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
+		{
+			SetSortAdorner(_listViewColHeader_CreationDate, ref _creationDateColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
+		}
+
+		void EhListView_ColumnHeaderClicked_Name(object sender, RoutedEventArgs e)
+		{
+			if (null != _controller)
+				_controller.EhToggleListSort_Name();
+		}
+
+		void EhListView_ColumnHeaderClicked_CreationDate(object sender, RoutedEventArgs e)
+		{
+			if (null != _controller)
+				_controller.EhToggleListSort_CreationDate();
+		}
+
+		/// <summary>Ehes the list view sort.</summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+		/// <remarks>
+		/// <code>
+		/// Behaviour when user clicked on:
+		/// - primary sort column: toggle direction of primary sort column, leave secondary as is
+		/// - secondary sort column: make old primary sort column now secondary sort column, clicked column now the primary sort column with same direction as formerly secondary sort column
+		/// - other column: make old primary sort column now secondary sort column, clicked column now the primary sort column ascending
+		/// </code>
+		/// </remarks>
+		private void EhListViewSort(object sender, RoutedEventArgs e)
+		{
+			GridViewColumnHeader columnHeaderClicked = sender as GridViewColumnHeader;
+			String sortPropertyName = columnHeaderClicked.Tag as String;
+
+			bool clickedOnPrimarySortColumn = columnHeaderClicked.Equals(_currentPrimarySortedColumnHeader);
+			bool clickedOnSecondarySortColumn = columnHeaderClicked.Equals(_currentSecondarySortedColumnHeader);
+
+			_listView.Items.SortDescriptions.Clear();
+			if(null!=_currentSecondarySortedColumnHeader)
+				AdornerLayer.GetAdornerLayer(_currentSecondarySortedColumnHeader).Remove(_currentSecondarySortAdorner);
+			if(null!=_currentPrimarySortedColumnHeader)
+				AdornerLayer.GetAdornerLayer(_currentPrimarySortedColumnHeader).Remove(_currentPrimarySortAdorner);
+
+			ListSortDirection newDir = ListSortDirection.Ascending;
+
+			if (clickedOnPrimarySortColumn)
+			{
+				if(_currentPrimarySortAdorner.Direction == ListSortDirection.Ascending)
+					newDir = ListSortDirection.Descending;
+
+				_currentPrimarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader,newDir,false);
+			}
+			else if (clickedOnSecondarySortColumn)
+			{
+				newDir = _currentSecondarySortAdorner.Direction;
+				_currentSecondarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader,_currentPrimarySortAdorner.Direction,true);
+				_currentSecondarySortedColumnHeader = _currentPrimarySortedColumnHeader;
+
+				_currentPrimarySortAdorner = new Common.SortAdorner(columnHeaderClicked,newDir,false);
+				_currentPrimarySortedColumnHeader = columnHeaderClicked;
+			}
+			else // clicked in any other column
+			{
+				if(null!=_currentPrimarySortedColumnHeader)
+				{
+				_currentSecondarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader,_currentPrimarySortAdorner.Direction,true);
+				_currentSecondarySortedColumnHeader = _currentPrimarySortedColumnHeader;
+				}
+
+				_currentPrimarySortAdorner = new Common.SortAdorner(columnHeaderClicked,newDir,false);
+				_currentPrimarySortedColumnHeader = columnHeaderClicked;
+			}
+
+
+			AdornerLayer.GetAdornerLayer(_currentPrimarySortedColumnHeader).Add(_currentPrimarySortAdorner);
+			_listView.Items.SortDescriptions.Add(new SortDescription(_currentPrimarySortedColumnHeader.Tag as string, _currentPrimarySortAdorner.Direction));
+
+			if(null!=_currentSecondarySortedColumnHeader)
+			{
+				AdornerLayer.GetAdornerLayer(_currentSecondarySortedColumnHeader).Add(_currentSecondarySortAdorner);
+			_listView.Items.SortDescriptions.Add(new SortDescription(_currentSecondarySortAdorner.Tag as string, _currentSecondarySortAdorner.Direction));
+			}
+ 
 		}
 	}
 }

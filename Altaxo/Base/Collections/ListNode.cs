@@ -330,7 +330,6 @@ namespace Altaxo.Collections
 				if (this[i].IsSelected)
 					this.RemoveAt(i);
 		}
-
 	}
 
 	public class CheckableSelectableListNode : SelectableListNode

@@ -58,7 +58,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	public class BrowserListItem : SelectableListNode
 	{
 		public BrowserListItem(string name, object item, bool sel) : base(name, item, sel) { }
-		public ProjectBrowseItemImage Image;
+		public new ProjectBrowseItemImage Image;
+		private DateTime _creationDate;
+
+		
 		public override int ImageIndex
 		{
 			get
@@ -68,6 +71,100 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 		public System.Windows.Media.ImageSource ImageSource { get { return WpfBrowserTreeNode.Images[ImageIndex]; } }
+
+		public DateTime CreationDate
+		{
+			get { return _creationDate; }
+			set
+			{
+				var oldValue = _creationDate; 
+				_creationDate = value;
+				if (oldValue != _creationDate)
+				{
+					OnPropertyChanged("CreationDate");
+					OnPropertyChanged("Text1");
+				}
+			}
+		}
+
+		public override string Text1
+		{
+			get
+			{
+				if (_creationDate == default(DateTime))
+					return null;
+				else
+					return _creationDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+			}
+		}
+
+
+	
+	
+
+		public enum  SortKind { None, Name, CreationDate }
+		public class Comparer : IComparer<SelectableListNode>
+		{
+			Tuple<SortKind, bool>[] _sort;
+			public Comparer(SortKind sort, bool descending)
+			{
+				_sort = new Tuple<SortKind, bool>[] { new Tuple<SortKind,bool>(sort, descending) };
+			}
+
+			public Comparer(SortKind sort1, bool descending1, SortKind sort2, bool descending2)
+			{
+				_sort = new Tuple<SortKind, bool>[] { new Tuple<SortKind, bool>(sort1, descending1), new Tuple<SortKind, bool>(sort2, descending2) };
+			}
+
+			public int Compare(SelectableListNode x, SelectableListNode y)
+			{
+				var xx = (BrowserListItem)x;
+				var yy = (BrowserListItem)y;
+				int result = 0;
+
+				// before doing the real comparison, we handle a special case that ensures that folders are always first
+				// if one of the both is a ProjectFolder, this folder is always "first", i.e. returns a -1
+				if ((xx.Tag is Altaxo.Main.ProjectFolder) ^  (yy.Tag is Altaxo.Main.ProjectFolder))
+					return (xx.Tag is Altaxo.Main.ProjectFolder) ? -1 : 1;
+
+				// now the "real" comparison
+
+				foreach (var tuple in _sort) // Tuple.Item1 is SortKind, Tuple.Item2 is descending
+				{
+					switch(tuple.Item1)
+					{
+						case SortKind.Name:
+							result = tuple.Item2 ?  string.Compare(y.Text, x.Text) : string.Compare(x.Text, y.Text);
+							break;
+						case SortKind.CreationDate:
+							result = tuple.Item2 ?  DateTime.Compare(yy._creationDate, xx._creationDate) : DateTime.Compare(xx._creationDate, yy._creationDate);
+							break;
+					}
+					if (0 != result)
+						return result;
+				}
+
+				// wenn die Sort-Kriterien nicht reichen, entscheiden wir anhand des Tags
+				if (null != x.Tag && null == y.Tag)
+					return 1;
+				else if (null == x.Tag && null != y.Tag)
+					return -1;
+
+				result = string.Compare(x.Tag.GetType().ToString(), y.Tag.GetType().ToString());
+				if (0 != result)
+					return result;
+
+				return 1;
+			}
+		}
+
+		public static void Sort(SelectableListNodeList list, IComparer<SelectableListNode> comparer)
+		{
+			SortedSet<SelectableListNode> sset = new SortedSet<SelectableListNode>(list, comparer);
+			list.Clear();
+			foreach (var item in sset)
+				list.Add(item);
+		}
 	}
 
 	public enum ProjectBrowseItemImage
