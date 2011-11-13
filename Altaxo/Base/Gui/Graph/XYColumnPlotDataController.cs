@@ -22,6 +22,7 @@
 
 using System;
 using Altaxo.Collections;
+using Altaxo.Main;
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Gdi;
@@ -115,8 +116,8 @@ namespace Altaxo.Gui.Graph
 				// Initialize tables
 				string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
 
-				DataTable t1 = DataTable.GetParentDataTableOf(_xColumn as Main.IDocumentNode);
-				DataTable t2 = DataTable.GetParentDataTableOf(_yColumn as Main.IDocumentNode);
+				DataTable t1 = DataTable.GetParentDataTableOf(_xColumn as IDocumentNode);
+				DataTable t2 = DataTable.GetParentDataTableOf(_yColumn as IDocumentNode);
 				DataTable tg = null;
 				if (t1 != null && t2 != null && t1 == t2)
 					tg = t1;

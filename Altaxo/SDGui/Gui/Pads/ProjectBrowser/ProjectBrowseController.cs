@@ -238,11 +238,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		private void EhProjectDirectoryItemChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhProjectDirectoryItemChanged(NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
 			Current.Gui.Execute(EhProjectDirectoryItemChanged_Unsynchronized, changeType, item, oldName, newName);
 		}
-		private void EhProjectDirectoryItemChanged_Unsynchronized(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhProjectDirectoryItemChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
 			if (changeType == NamedObjectCollectionChangeType.MultipleChanges)
 			{
@@ -255,13 +255,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		private void EhProjectDirectoryChanged(Main.NamedObjectCollectionChangeType changeType, string dir)
+		private void EhProjectDirectoryChanged(NamedObjectCollectionChangeType changeType, string dir)
 		{
 			Current.Gui.Execute(EhProjectDirectoryChanged_Unsynchronized, changeType, dir);
 		}
-		private void EhProjectDirectoryChanged_Unsynchronized(Main.NamedObjectCollectionChangeType changeType, string dir)
+		private void EhProjectDirectoryChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, string dir)
 		{
-			if (Main.ProjectFolder.IsRootFolderName(dir))
+			if (ProjectFolder.IsRootFolderName(dir))
 				return; // for the root directory, we have already the node, and we can not add or remove them
 
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(dir);
@@ -370,7 +370,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				else if (object.ReferenceEquals(_currentSelectedTreeNode, _allGraphsNode))
 					SetItemListHandler(new AllGraphHandler());
 				else if (object.ReferenceEquals(_currentSelectedTreeNode, _projectDirectoryRoot))
-					SetItemListHandler(new SpecificProjectFolderHandler(Main.ProjectFolder.RootFolderName));
+					SetItemListHandler(new SpecificProjectFolderHandler(ProjectFolder.RootFolderName));
 				else if (_currentSelectedTreeNode.Tag is string)
 					SetItemListHandler(new SpecificProjectFolderHandler((string)_currentSelectedTreeNode.Tag));
 			}
@@ -543,7 +543,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			var spfh = _listItemHandler as SpecificProjectFolderHandler;
 			if (null != spfh && !string.IsNullOrEmpty(spfh.CurrentProjectFolder))
 			{
-				var parentFolder = Main.ProjectFolder.GetFoldersParentFolder(spfh.CurrentProjectFolder);
+				var parentFolder = ProjectFolder.GetFoldersParentFolder(spfh.CurrentProjectFolder);
 				SetItemListHandler(new SpecificProjectFolderHandler(parentFolder));
 			}
 		}
@@ -833,7 +833,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 			else
 			{
-				folderName = Main.ProjectFolder.RootFolderName;
+				folderName = ProjectFolder.RootFolderName;
 				return false;
 			}
 		}

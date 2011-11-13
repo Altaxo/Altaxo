@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 
 
-			Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null!=relocateOptions ? relocateOptions.Visit : (Main.DocNodeProxyReporter)null);
+			Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null!=relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null);
 
 		}
 
@@ -295,7 +295,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))
-				folderName = Main.ProjectFolder.RootFolderName;
+				folderName = ProjectFolder.RootFolderName;
 			return Current.ProjectService.CreateNewWorksheetInFolder(folderName);
 		}
 
@@ -320,7 +320,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))
-				folderName = Main.ProjectFolder.RootFolderName;
+				folderName = ProjectFolder.RootFolderName;
 			return Current.ProjectService.CreateNewGraphInFolder(folderName);
 		}
 

@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Altaxo.Main;
+using Altaxo.Main.Services;
 using Altaxo.Graph.Gdi;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
@@ -76,7 +78,7 @@ namespace Altaxo.Gui.Graph
 			{
 				// look for coordinate system types
 				if(null==_cosSubTypes)
-				_cosSubTypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
+				_cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
 
 				if(null==_choiceList)
 					_choiceList = new SelectableListNodeList();

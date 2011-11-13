@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Graph
 				object oldContent = null == oldItem ? null : oldItem.Content;
 
 				if (null != SelectedPage_Changed)
-					SelectedPage_Changed(this, new Main.InstanceChangedEventArgs<object>(oldContent, newContent));
+					SelectedPage_Changed(this, new Altaxo.Main.InstanceChangedEventArgs<object>(oldContent, newContent));
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Graph
 			_tabControl.SelectedIndex = index;
 		}
 
-		public event Action<object, Main.InstanceChangedEventArgs<object>> SelectedPage_Changed;
+		public event Action<object, Altaxo.Main.InstanceChangedEventArgs<object>> SelectedPage_Changed;
 
 		public void SetPlotStyleView(object view)
 		{

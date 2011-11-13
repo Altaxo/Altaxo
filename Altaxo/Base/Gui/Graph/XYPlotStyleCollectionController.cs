@@ -22,7 +22,10 @@
 
 using System;
 using System.Collections.Generic;
+
 using Altaxo.Collections;
+using Altaxo.Main;
+using Altaxo.Main.Services;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -110,7 +113,7 @@ namespace Altaxo.Gui.Graph
 
 				// single styles
 				_singleStylesAvailable = new SelectableListNodeList();
-				Type[] avtypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IG2DPlotStyle));
+				Type[] avtypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(IG2DPlotStyle));
 				for (int i = 0; i < avtypes.Length; i++)
 				{
 					if (avtypes[i] != typeof(G2DPlotStyleCollection))
@@ -145,8 +148,8 @@ namespace Altaxo.Gui.Graph
 				return;
 
       IG2DPlotStyle style = (IG2DPlotStyle)Activator.CreateInstance((Type)sel.Tag);
-      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
-      G2DPlotItem plotitem = Main.DocumentPath.GetRootNodeImplementing<G2DPlotItem>(_doc);
+      IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+      G2DPlotItem plotitem = DocumentPath.GetRootNodeImplementing<G2DPlotItem>(_doc);
       if(layer!=null && plotitem!=null)
         _doc.PrepareNewSubStyle(style, layer, plotitem.GetRangesAndPoints(layer));
 

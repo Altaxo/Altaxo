@@ -3,40 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             >
 	<UserControl.Resources>
 
-		<ContextMenu x:Key="EmptyContextMenu">
+		<ContextMenu x:Key="TableItemsContextMenu">
 			<MenuItem Header="Choose new table..." Click="EhChooseTable"/>
 			<MenuItem Header="Choose new folder..." Click="EhChooseFolder"/>
 		</ContextMenu>
 
-		<Style x:Key="MyContainer" TargetType="{x:Type ListViewItem}">
-			<Setter Property="ContextMenu" Value="{StaticResource EmptyContextMenu}"/>
-			<Setter Property="Margin" Value="0,1,0,0"/>
-			<Setter Property="Height" Value="21"/>
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver" Value="true">
-					<Setter Property="Foreground" Value="Blue" />
-					<Setter Property="Cursor" Value="Hand"/>
-				</Trigger>
-				<MultiTrigger>
-					<MultiTrigger.Conditions>
-						<Condition Property="IsSelected" Value="true" />
-						<Condition Property="Selector.IsSelectionActive" Value="true" />
-					</MultiTrigger.Conditions>
-					<Setter Property="Foreground" Value="Yellow" />
-				</MultiTrigger>
-			</Style.Triggers>
+		<Style x:Key="TableItemsContainer" TargetType="{x:Type ListViewItem}">
+			<Setter Property="ContextMenu" Value="{StaticResource TableItemsContextMenu}"/>
 		</Style>
+
 	</UserControl.Resources>
     <Grid>
-		<ListView x:Name="_guiTableList" ItemContainerStyle="{StaticResource MyContainer}" PreviewMouseRightButtonDown="EhTableList_MouseRightButtonDown" >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Button Content="Choose a table for replacement of selected tables..." Grid.Row="0" Margin="4" Click="EhChooseTable"
+						ToolTip="Select a single table that is used as replacement table."/>
+		<Button Content="Choose table(s) with the same name in another folder..." Grid.Row="1" Margin="4" Click="EhChooseFolder" 
+						ToolTip="Tries to find table(s) with the same short name in a folder of your choice." />
+
+		<!-- the catching of PreviewMouseRightButtonDown is a trick to maintain the selected items when using the context menu -->
+		<ListView x:Name="_guiTableList" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+							PreviewMouseRightButtonDown="EhTableList_MouseRightButtonDown" 
+							ScrollViewer.VerticalScrollBarVisibility="Visible" 
+							ItemContainerStyle="{StaticResource TableItemsContainer}">
 			<ListView.View>
 				<GridView>
-						<GridViewColumn Header="Current table" DisplayMemberBinding="{Binding Text}"/>
-						<GridViewColumn Header="New table" DisplayMemberBinding="{Binding Text1}"/>
+						<GridViewColumn Header="Current table" DisplayMemberBinding="{Binding Text}" Width="200"/>
+						<GridViewColumn Header="Replacement table" DisplayMemberBinding="{Binding Text1}" Width="200"/>
 				</GridView>
 			</ListView.View>
 		</ListView>

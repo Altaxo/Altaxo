@@ -27,6 +27,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Altaxo.Collections;
+
+using Altaxo.Main;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -283,7 +285,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetFillDirection()
     {
-      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
+      IPlotArea layer = DocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
 
       List<ListNode> names = new List<ListNode>();
 

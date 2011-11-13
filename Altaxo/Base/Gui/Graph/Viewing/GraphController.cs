@@ -29,6 +29,7 @@ using System.Drawing;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
+	using Altaxo.Main;
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Graph.Gdi.Shapes;
@@ -83,7 +84,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphController), 1)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			Main.DocumentPath _PathToGraph;
+			DocumentPath _PathToGraph;
 			GraphController _GraphController;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -91,7 +92,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				GraphController s = (GraphController)obj;
 				info.AddValue("AutoZoom", s._isAutoZoomActive);
 				info.AddValue("Zoom", s._zoomFactor);
-				info.AddValue("Graph", Main.DocumentPath.GetAbsolutePath(s.Doc));
+				info.AddValue("Graph", DocumentPath.GetAbsolutePath(s.Doc));
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -102,7 +103,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
 				surr._GraphController = s;
-				surr._PathToGraph = (Main.DocumentPath)info.GetValue("Graph", s);
+				surr._PathToGraph = (DocumentPath)info.GetValue("Graph", s);
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 				return s;
@@ -110,7 +111,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
 			{
-				object o = Main.DocumentPath.GetObject(_PathToGraph, documentRoot, _GraphController);
+				object o = DocumentPath.GetObject(_PathToGraph, documentRoot, _GraphController);
 				if (o is GraphDocument)
 				{
 					_GraphController.InternalInitializeGraphDocument(o as GraphDocument);
@@ -336,7 +337,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			_doc.Changed += new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x);
 			_doc.Layers.LayerCollectionChanged += new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.Layers.LayerCollectionChanged -= x);
 			_doc.BoundsChanged += new WeakEventHandler(this.EhGraph_BoundsChanged, x => _doc.BoundsChanged -= x);
-			_doc.NameChanged += new WeakActionHandler<Main.INameOwner, string>(this.EhGraphDocumentNameChanged, x => _doc.NameChanged -= x);
+			_doc.NameChanged += new WeakActionHandler<INameOwner, string>(this.EhGraphDocumentNameChanged, x => _doc.NameChanged -= x);
 
 			// Ensure the current layer and plot numbers are valid
 			this.EnsureValidityOfCurrentLayerNumber();
@@ -578,11 +579,11 @@ namespace Altaxo.Gui.Graph.Viewing
 				_view.NumberOfLayers = _doc.Layers.Count;
 		}
 
-		public void EhGraphDocumentNameChanged(Main.INameOwner sender, string oldName)
+		public void EhGraphDocumentNameChanged(INameOwner sender, string oldName)
 		{
 			Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, sender, oldName);
 		}
-		void EhGraphDocumentNameChanged_Unsynchronized(Main.INameOwner sender, string oldName)
+		void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
 		{
 			if (null != _view)
 				_view.GraphViewTitle = Doc.Name;

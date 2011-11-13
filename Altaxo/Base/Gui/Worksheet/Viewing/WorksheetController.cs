@@ -25,6 +25,7 @@ using System.ComponentModel;
 
 using Altaxo.Worksheet;
 using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
@@ -54,13 +55,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetController), 1)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			Main.DocumentPath _PathToLayout;
+			DocumentPath _PathToLayout;
 			WorksheetController _TableController;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				WorksheetController s = (WorksheetController)obj;
-				info.AddValue("Layout", Main.DocumentPath.GetAbsolutePath(s.WorksheetLayout));
+				info.AddValue("Layout", DocumentPath.GetAbsolutePath(s.WorksheetLayout));
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -72,12 +73,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				if (info.CurrentElementName == "Controller")
 				{
 					info.OpenElement();
-					surr._PathToLayout = (Main.DocumentPath)info.GetValue("Layout", s);
+					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
 					info.CloseElement();
 				}
 				else
 				{
-					surr._PathToLayout = (Main.DocumentPath)info.GetValue("Layout", s);
+					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
 				}
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 				if (null != _PathToLayout)
 				{
-					object o = Main.DocumentPath.GetObject(_PathToLayout, documentRoot, _TableController);
+					object o = DocumentPath.GetObject(_PathToLayout, documentRoot, _TableController);
 					if (o is Altaxo.Worksheet.WorksheetLayout)
 					{
 						_TableController.WorksheetLayout =  (Altaxo.Worksheet.WorksheetLayout)o;
@@ -307,11 +308,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				TitleNameChanged(this, e);
 		}
 
-		public void EhTableNameChanged(Main.INameOwner sender, string oldName)
+		public void EhTableNameChanged(INameOwner sender, string oldName)
 		{
 			Current.Gui.Execute(EhTableNameChanged_Unsynchronized, sender, oldName);
 		}
-		private void EhTableNameChanged_Unsynchronized(Main.INameOwner sender, string oldName)
+		private void EhTableNameChanged_Unsynchronized(INameOwner sender, string oldName)
 		{
 			if (_view != null)
 				_view.TableViewTitle = _table.Name;

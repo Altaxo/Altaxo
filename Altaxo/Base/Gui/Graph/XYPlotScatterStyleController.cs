@@ -25,6 +25,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.ComponentModel;
+
+using Altaxo.Main;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi;
@@ -217,7 +219,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetDropLineConditions()
     {
-      XYPlotLayer layer = Main.DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(XYPlotLayer)) as XYPlotLayer;
+      XYPlotLayer layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(XYPlotLayer)) as XYPlotLayer;
 
       SelectableListNodeList names = new SelectableListNodeList();
 

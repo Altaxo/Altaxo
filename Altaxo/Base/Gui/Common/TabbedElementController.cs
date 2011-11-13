@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Common
 {
@@ -142,16 +143,16 @@ namespace Altaxo.Gui.Common
     object _lastActiveChildControl = null;
     void EhView_ChildControlEntered(object sender, EventArgs e)
     {
-      EhView_ActiveChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(_lastActiveChildControl,sender));
+      EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(_lastActiveChildControl,sender));
       _lastActiveChildControl = sender;
     }
     void EhView_ChildControlValidated(object sender, EventArgs e)
     {
-      EhView_ActiveChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(sender, null));
+      EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(sender, null));
       _lastActiveChildControl = null;
     }
 
-    protected virtual void EhView_ActiveChildControlChanged(object sender, Main.InstanceChangedEventArgs<object> e)
+    protected virtual void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
     {
     }
 

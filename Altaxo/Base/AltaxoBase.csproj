@@ -282,6 +282,7 @@
     <Compile Include="Gui\Graph\ExchangeTablesOfPlotItemsController.cs" />
     <Compile Include="Gui\Graph\G2DPlotItemControllerOld.cs" />
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
+    <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
     <Compile Include="Gui\Worksheet\PlotCommonColumnsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />

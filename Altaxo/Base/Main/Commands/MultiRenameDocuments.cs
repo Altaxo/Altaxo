@@ -52,7 +52,8 @@ namespace Altaxo.Main.Commands
 			for (int i = 0; i < renameData.ObjectsToRenameCount; ++i)
 			{
 				object o = renameData.GetObjectToRename(i);
-				string newName = System.Guid.NewGuid().ToString();
+				string oldName = GetFullName(o);
+				string newName = oldName + "_._" + System.Guid.NewGuid().ToString();
 				SetName(o, newName);
 			}
 

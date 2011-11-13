@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		protected override void Run(ProjectBrowseController ctrl)
 		{
 			var list = ctrl.GetSelectedListItems();
-			Main.Commands.MultiRenameDocuments.ShowRenameDocumentsDialog(list);
+			Altaxo.Main.Commands.MultiRenameDocuments.ShowRenameDocumentsDialog(list);
 		}
 	}
 

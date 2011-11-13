@@ -27,6 +27,7 @@ using Altaxo.Serialization;
 using System.Drawing;
 using Altaxo.Graph.Gdi;
 
+using Altaxo.Main;
 using Altaxo.Data;
 using Altaxo.Science;
 using Altaxo.Graph;
@@ -253,7 +254,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetAttachmentDirection()
     {
-      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
+      IPlotArea layer = DocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
 
 			var names = new SelectableListNodeList();
 

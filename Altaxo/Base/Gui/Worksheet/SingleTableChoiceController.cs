@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 
+using Altaxo.Main;
 using Altaxo.Gui;
 using Altaxo.Data;
 using Altaxo.Collections;
@@ -145,12 +146,12 @@ public UseDocument  UseDocumentCopy
 		{
 			// Create a dictionary of folders to TreeNodes relation
 			var folderDict = new Dictionary<string, NGTreeNode>();
-			folderDict.Add(Main.ProjectFolder.RootFolderName, tableCollectionNode); // add the root folder node to the dictionary
+			folderDict.Add(ProjectFolder.RootFolderName, tableCollectionNode); // add the root folder node to the dictionary
 
 			tableCollectionNode.Nodes.Clear();
 			foreach (var table in Current.Project.DataTableCollection)
 			{
-				var parentNode = Main.ProjectFolders.AddFolderNodeRecursively<StructureNode>(table.FolderName, folderDict);
+				var parentNode = ProjectFolders.AddFolderNodeRecursively<StructureNode>(table.FolderName, folderDict);
 				var node = new TableNode(table);
 				parentNode.Nodes.Add(node);
 			}

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
+using Altaxo.Main;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
@@ -90,7 +91,7 @@ namespace Altaxo.Gui.Graph
     {
       if (initDocument)
       {
-        m_Layer = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
+        m_Layer = DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
       }
 
       if (_view != null)

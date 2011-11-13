@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		}
 
 
-		public void AddFitFunctionList(string rootname, Main.Services.IFitFunctionInformation[] info, FitFunctionContextMenuStyle menustyle)
+		public void AddFitFunctionList(string rootname, Altaxo.Main.Services.IFitFunctionInformation[] info, FitFunctionContextMenuStyle menustyle)
 		{
 			if (_twFitFunctions.ItemsSource == null)
 			{

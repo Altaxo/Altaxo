@@ -40,6 +40,7 @@ using Altaxo.Serialization;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
 using Altaxo.Graph;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
@@ -381,8 +382,8 @@ namespace Altaxo.Gui.Graph.Viewing
 				}
 				else
 				{
-					if (tg.ParentObject is Main.IChildChangedEventSink)
-						((Main.IChildChangedEventSink)tg.ParentObject).EhChildChanged(tg, EventArgs.Empty);
+					if (tg.ParentObject is IChildChangedEventSink)
+						((IChildChangedEventSink)tg.ParentObject).EhChildChanged(tg, EventArgs.Empty);
 				}
 			}
 

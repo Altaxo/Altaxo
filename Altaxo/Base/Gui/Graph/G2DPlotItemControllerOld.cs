@@ -22,6 +22,8 @@
 
 using System;
 using System.Collections.Generic;
+
+using Altaxo.Main;
 using Altaxo.Gui.Common;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -348,7 +350,7 @@ namespace Altaxo.Gui.Graph
 
           if (addHelperStyle)
           {
-            IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+            IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
             // add either line or scatter
             if (_tempdoc.Style[0] is LinePlotStyle)
             {
@@ -410,7 +412,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    protected override void EhView_ActiveChildControlChanged(object sender, Main.InstanceChangedEventArgs<object> e)
+    protected override void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
     {
       // first: test if this is the view of the additional style
       if (_additionalPlotStyleController != null && object.ReferenceEquals(_additionalPlotStyleController.ViewObject, e.OldInstance))
@@ -475,7 +477,7 @@ namespace Altaxo.Gui.Graph
     /// <param name="pivotelement"></param>
     void DistributeStyleChange(int pivotelement)
     {
-      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+      IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
       _tempdoc.Style.DistributeSubStyleChange(pivotelement,layer,_doc.GetRangesAndPoints(layer));
 
       // now all style controllers must be updated

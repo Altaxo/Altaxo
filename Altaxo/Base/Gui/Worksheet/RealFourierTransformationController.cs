@@ -27,6 +27,7 @@ using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
 
+using Altaxo.Main;
 using Altaxo.Data;
 
 namespace Altaxo.Gui.Worksheet
@@ -61,7 +62,7 @@ namespace Altaxo.Gui.Worksheet
 
 			if (_view != null)
 			{
-				var yColName = Main.DocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
+				var yColName = DocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
 				_view.SetColumnToTransform(yColName);
 
 				string xInc = _doc.XIncrementValue.ToString();

@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 
 using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -87,19 +88,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		public static BrowserListItem GetBrowserListItem(Altaxo.Data.DataTable t, bool showFullName)
 		{
-			var name = showFullName ? t.Name : Main.ProjectFolder.GetNamePart(t.Name);
+			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
 			return new BrowserListItem(name, t, false) { Image = ProjectBrowseItemImage.Worksheet, CreationDate = t.CreationTimeUtc };
 		}
 
 		public static BrowserListItem GetBrowserListItem(Altaxo.Graph.Gdi.GraphDocument t, bool showFullName)
 		{
-			var name = showFullName ? t.Name : Main.ProjectFolder.GetNamePart(t.Name);
+			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
 			return new BrowserListItem(name, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
 		}
 
 		public static BrowserListItem GetBrowserListItem(string folder)
 		{
-			return new BrowserListItem(Main.ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(folder), new Main.ProjectFolder(folder), false) { Image = ProjectBrowseItemImage.OpenFolder };
+			return new BrowserListItem(ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(folder), new ProjectFolder(folder), false) { Image = ProjectBrowseItemImage.OpenFolder };
 		}
 
 

@@ -22,6 +22,8 @@
 
 using System;
 using System.Collections.Generic;
+
+using Altaxo.Main;
 using Altaxo.Gui.Common;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -56,7 +58,7 @@ namespace Altaxo.Gui.Graph
 		void BringTabToFront(int index);
 
 
-		event Action<object, Main.InstanceChangedEventArgs<object>> SelectedPage_Changed;
+		event Action<object, InstanceChangedEventArgs<object>> SelectedPage_Changed;
 
 		/// <summary>
 		/// Sets the plot style view, i.e. the control where we can add or remove plot styles.
@@ -255,7 +257,7 @@ namespace Altaxo.Gui.Graph
 	
 
 
-    protected void EhView_ActiveChildControlChanged(object sender, Main.InstanceChangedEventArgs<object> e)
+    protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
     {
         // test if it is the view of the normal styles
         for (int i = 0; i < _styleControllerList.Count; i++)
@@ -280,7 +282,7 @@ namespace Altaxo.Gui.Graph
     /// <param name="pivotelement"></param>
     void DistributeStyleChange(int pivotelement)
     {
-      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+      IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
       _tempdoc.Style.DistributeSubStyleChange(pivotelement,layer,_doc.GetRangesAndPoints(layer));
 
       // now all style controllers must be updated

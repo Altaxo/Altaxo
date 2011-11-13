@@ -265,7 +265,12 @@ namespace Altaxo.Gui.Common.MultiRename
 
 		public bool Apply()
 		{
-			return _doc.DoRename();
+			bool success = _doc.DoRename();
+
+			if (!success)
+				Initialize(true); // if not successfull, initialize the lists to show the remaining data
+
+			return success;
 		}
 	}
 }
