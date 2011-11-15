@@ -22,19 +22,22 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Altaxo.Serialization;
+
+
 
 //
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("AltaxoCore")]
-[assembly: AssemblyDescription("Core Library for Altaxo")]
-[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
+[assembly: AssemblyTitle("AltaxoBase")]
+[assembly: AssemblyDescription("Base Library for Altaxo")]
+[assembly: AssemblyConfiguration("REVID: 926fa6d9b34e, BRANCH: default")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
-[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
-[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2011")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2011")]
 [assembly: AssemblyCulture("")]
 
 //
@@ -48,8 +51,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("4.0.$REVNUM$.$DIRTY$")]
-
+[assembly: AssemblyVersion("4.0.716.1")]
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
 // Microsoft .NET Framework documentation for more information on assembly signing.
@@ -78,3 +80,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
+[assembly: SupportsSerializationVersioningAttribute()]

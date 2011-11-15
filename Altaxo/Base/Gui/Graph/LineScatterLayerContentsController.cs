@@ -252,6 +252,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+	
+
+
     private void TransferTreeToDoc(NGTreeNode rootnode, PlotItemCollection picoll)
     {
 			picoll.ClearPlotItems(); // do not clear group styles here, otherwise group styles would not be applied
@@ -691,9 +694,43 @@ namespace Altaxo.Gui.Graph
     
     public void EhView_EditRangeClick(NGTreeNode[] selNodes)
     {
-      if (selNodes.Length == 1 && selNodes[0].Tag is IGPlotItem)
-        EhView_ContentsDoubleClick(selNodes[0]);
+			if (selNodes.Length == 0)
+				return;
+			int minRange, maxRange;
+			if (!GetMinimumMaximumPlotRange(selNodes, out minRange, out maxRange))
+				return;
+			var range = new Altaxo.Collections.ContiguousNonNegativeIntegerRange(minRange, maxRange - minRange);
+
+			if (!Current.Gui.ShowDialog(ref range, "Edit plot range for selected items", false))
+				return;
+
+			foreach (NGTreeNode node in selNodes)
+			{
+				var pi = node.Tag as XYColumnPlotItem;
+				if (pi == null)
+					continue;
+				pi.Data.PlotRangeStart = range.Start;
+				pi.Data.PlotRangeLength =  range.Count;
+			}
     }
+
+		bool GetMinimumMaximumPlotRange(IEnumerable<NGTreeNode> selNodes, out int minRange, out int maxRange)
+		{
+			minRange = int.MaxValue;
+			maxRange = int.MinValue;
+			bool result = false;
+
+			foreach(NGTreeNode node in selNodes)
+			{
+				var pi = node.Tag as XYColumnPlotItem;
+				if (pi == null)
+					continue;
+				minRange = Math.Min(minRange, pi.Data.PlotRangeStart);
+				maxRange = Math.Max(maxRange, pi.Data.PlotRangeEnd);
+				result = true;
+			}
+			return result;
+		}
 
     public void EhView_PlotAssociationsClick(NGTreeNode[] selNodes)
     {
@@ -725,16 +762,24 @@ namespace Altaxo.Gui.Graph
         // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
       if (null!=coll)
         {
-          foreach (IGPlotItem item in coll)
-          {
-              
-              _doc.Add(item);
 
+				/*
+				foreach (IGPlotItem item in coll)
+          {
+              _doc.Add(item);
               NGTreeNode newNode = new NGTreeNode();
               newNode.Text = item.GetName(2);
               newNode.Tag = item;
               _plotItemsTree.Add(newNode);
           }
+				*/
+
+					foreach (IGPlotItem item in coll)
+					{
+						_doc.Add(item); // it is formally neccessary to add the plot items to the doc, since some functions only work when the parent layer of the items is available
+					}
+
+					AddToNGTreeNode(_plotItemsRootNode, coll);
 
           _view.Contents_SetItems(_plotItemsTree);
           SetDirty();

@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("AltaxoBase.Presentation")]
 [assembly: AssemblyDescription("Wpf Gui layer for Altaxo")]
-[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
+[assembly: AssemblyConfiguration("REVID: 926fa6d9b34e, BRANCH: default")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
-[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
-[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2011")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2011")]
 [assembly: AssemblyCulture("")]   
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -36,4 +36,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.0.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyVersion("4.0.716.1")]

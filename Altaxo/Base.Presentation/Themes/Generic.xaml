@@ -68,14 +68,14 @@
 						        x:Name="Border" 
 						        BorderBrush="{TemplateBinding Border.BorderBrush}" 
 						        BorderThickness="{TemplateBinding Border.BorderThickness}">
-						<ScrollViewer Focusable="false" 
+						<ScrollViewer Focusable="true" 
 							              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
 							              Background="{TemplateBinding Background}" 
 							              Padding="{TemplateBinding Padding}" 
 							              CanContentScroll="false"
 							              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
 							              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-							<ItemsPresenter />
+							<ItemsPresenter/>
 						</ScrollViewer>
 					</Border>
 				</ControlTemplate>

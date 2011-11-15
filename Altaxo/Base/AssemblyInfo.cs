@@ -33,11 +33,11 @@ using Altaxo.Serialization;
 //
 [assembly: AssemblyTitle("AltaxoBase")]
 [assembly: AssemblyDescription("Base Library for Altaxo")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
-[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2010")]
-[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2010")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
 [assembly: AssemblyCulture("")]
 
 //
@@ -51,8 +51,7 @@ using Altaxo.Serialization;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("4.0.0.699")]
-
+[assembly: AssemblyVersion("4.0.$REVNUM$.$DIRTY$")]
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
 // Microsoft .NET Framework documentation for more information on assembly signing.

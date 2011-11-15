@@ -30,11 +30,11 @@ using System.Runtime.CompilerServices;
 //
 [assembly: AssemblyTitle("AltaxoSDGui")]
 [assembly: AssemblyDescription("SharpDevelop style GUI Library for Altaxo")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
-[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2010")]
-[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2010")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
 [assembly: AssemblyCulture("")]
 
 //
@@ -48,7 +48,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("4.0.0.699")]
+[assembly: AssemblyVersion("4.0.$REVNUM$.$DIRTY$")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

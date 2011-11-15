@@ -164,7 +164,15 @@ namespace Altaxo.Gui.Graph
 			else if ((proxy is Altaxo.Data.NumericColumnProxy) || (proxy is Altaxo.Data.ReadableColumnProxy))
 			{
 				var path = proxy.DocumentPath;
-				throw new NotImplementedException();
+				var tableCollectionPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
+				if (path.Count >= 2 && path[0] == tableCollectionPath[0])
+				{
+					var tablePath = path.SubPath(2);
+					if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
+					{
+						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable));
+					}
+				}
 			}
 
 		}

@@ -65,7 +65,9 @@
 
 		</axogc:MultiSelectTreeView>
 		<Label Grid.Column="2" Grid.Row="0">Layer contents:</Label>
-		<axogc:MultiSelectTreeView x:Name="m_Contents_lbContents" Grid.Column="2" Grid.Row="2" Grid.RowSpan="13" ItemMouseDoubleClick="EhItemMouseDoubleClick">
+		<axogc:MultiSelectTreeView x:Name="m_Contents_lbContents" Grid.Column="2" Grid.Row="2" Grid.RowSpan="13" 
+															 ItemMouseDoubleClick="EhItemMouseDoubleClick" 
+															 Focusable="True">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -89,12 +91,12 @@
 			</ItemsControl.Resources>
 			<axogc:MultiSelectTreeView.ContextMenu>
 				<ContextMenu>
-					<MenuItem Command="Copy" Header="Copy items"/>
+					<MenuItem Command="Copy" Header="Copy items" />
 					<MenuItem Command="Paste" Header="Paste items"/>
 				</ContextMenu>
 			</axogc:MultiSelectTreeView.ContextMenu>
 			<axogc:MultiSelectTreeView.CommandBindings>
-				<CommandBinding Command="Copy" CanExecute="EhCommand_CopyCanExecute" Executed="EhCommand_CopyExecuted" PreviewCanExecute="EhCommand_CopyPreviewCanExecute"/>
+				<CommandBinding Command="Copy" CanExecute="EhCommand_CopyCanExecute" Executed="EhCommand_CopyExecuted"/>
 				<CommandBinding Command="Paste" CanExecute="EhCommand_PasteCanExecute" Executed="EhCommand_PasteExecuted"/>
 			</axogc:MultiSelectTreeView.CommandBindings>
 	

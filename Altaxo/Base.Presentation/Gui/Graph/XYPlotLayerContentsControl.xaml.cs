@@ -51,10 +51,7 @@ namespace Altaxo.Gui.Graph
 			InitializeComponent();
 		}
 
-		void EhCommand_CopyPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-		}
-
+		
 		void EhCommand_CopyCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = m_Contents_lbContents.SelectedItems.Count > 0;

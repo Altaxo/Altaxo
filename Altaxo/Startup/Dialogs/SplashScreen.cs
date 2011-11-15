@@ -35,7 +35,7 @@ namespace ICSharpCode.SharpDevelop
         vs = startass.FullName.Substring(idx1 + search1.Length).Split(new char[] { '.', ' ', ',' }, 5);
 
       string versionText = (vs != null && vs.Length >= 4) ?
-        ("Altaxo " + vs[0] + '.' + vs[1] + " build " + vs[3]) : 
+        ("Altaxo " + vs[0] + '.' + vs[1] + " build " + vs[2] + "." + vs[3]) : 
         (startass.FullName);
       #if DEBUG
       versionText += " (debug)";
