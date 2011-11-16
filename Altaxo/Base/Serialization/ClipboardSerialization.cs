@@ -27,8 +27,14 @@ using System.Text;
 
 namespace Altaxo.Serialization
 {
+	/// <summary>
+	/// Supports clipboard operations. The operations are based on Altaxo's XML serialization / deserialization capabilities.
+	/// </summary>
 	public static class ClipboardSerialization
 	{
+		/// <summary>Puts an object to the clipboard.</summary>
+		/// <param name="clipBoardFormat">The clip board format string (is used later on to identify the data on the clipboard).</param>
+		/// <param name="toSerialize">Data to put on the clipboard.</param>
 		public static void PutObjectToClipboard(string clipBoardFormat, object toSerialize)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
@@ -44,7 +50,28 @@ namespace Altaxo.Serialization
 		}
 
 
+		/// <summary>Determines whether data in the given clipboard format is available.</summary>
+		/// <param name="clipBoardFormat">The clip board format.</param>
+		/// <returns><c>True</c> if data in the given clipboard format are available; otherwise, <c>false</c>.</returns>
+		public static bool IsClipboardFormatAvailable(string clipBoardFormat)
+		{
+			var dao = Current.Gui.OpenClipboardDataObject();
+			return dao.GetDataPresent(clipBoardFormat);
+		}
+
+		/// <summary>Gets an object from the clipboard.</summary>
+		/// <param name="clipBoardFormat">The clip board format string.</param>
+		/// <returns>The deserialized object that was on the clipboard, or <c>null</c> otherwise.</returns>
 		public static object GetObjectFromClipboard(string clipBoardFormat)
+		{
+			return GetObjectFromClipboard<object>(clipBoardFormat);
+		}
+
+		/// <summary>Gets an object of a certain type from the clipboard.</summary>
+		/// <typeparam name="T">The type of object to deserialize.</typeparam>
+		/// <param name="clipBoardFormat">The clip board format string.</param>
+		/// <returns>The deserialized object. If deserialization was not possible, or the deserialized data was not of the expected type, the default object for type T is returned (default(T)).</returns>
+		public static T GetObjectFromClipboard<T>(string clipBoardFormat)
 		{
 			var dao = Current.Gui.OpenClipboardDataObject();
 			string s = (string)dao.GetData(clipBoardFormat);
@@ -55,11 +82,18 @@ namespace Altaxo.Serialization
 				object o = info.GetValue("Object", null);
 				info.EndReading();
 
-				return o;
+				if ((null!=o) && (o is T))
+				{
+					return (T)o;
+				}
+				else
+				{
+					return default(T);
+				}
 			}
 			else
 			{
-				return null;
+				return default(T);
 			}
 		}
 	}

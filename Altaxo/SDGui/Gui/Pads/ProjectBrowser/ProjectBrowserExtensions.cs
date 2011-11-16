@@ -265,6 +265,49 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				command.Execute();
 		}
 
+		#region Clipboard commands
+
+		/// <summary>
+		/// Moves the selected list items to a folder that is asked for by a dialog.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		public static void CopySelectedListItemsToClipboard(this ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems();
+
+			string originalFolderName = null;
+			bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out originalFolderName);
+
+
+			string folderName;
+			if (!ctrl.IsProjectFolderSelected(out folderName))
+				folderName = null;
+
+			Altaxo.Main.Commands.ProjectItemCommands.CopyItemsToClipboard(list,folderName);
+			
+		}
+
+		public static bool CanPasteItemsFromClipboard(this ProjectBrowseController ctrl)
+		{
+			
+
+			return Altaxo.Main.Commands.ProjectItemCommands.CanPasteItemsFromClipboard();
+		}
+
+		public static void PasteItemsFromClipboard(this ProjectBrowseController ctrl)
+		{
+			string folderName;
+			if(!ctrl.IsProjectFolderSelected(out folderName))
+				folderName = string.Empty;
+
+			Altaxo.Main.Commands.ProjectItemCommands.PasteItemsFromClipboard(folderName);
+		}
+
+
+
+		#endregion
+
+
 		#endregion
 
 		#region Tree node commands

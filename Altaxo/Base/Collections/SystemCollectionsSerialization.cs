@@ -55,6 +55,35 @@ namespace Altaxo.Collections
 	}
 
 
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.Generic.List<object>), 0)]
+	public class SystemCollectionsListOfObjectListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+	{
+
+		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			var s = (System.Collections.Generic.List<object>)obj;
+			info.CreateArray("List", s.Count);
+
+			for (int i = 0; i < s.Count; ++i)
+				info.AddValue("e", s[i]);
+
+			info.CommitArray();
+		}
+
+		public object Deserialize(object obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+		{
+			int count = info.OpenArray("List");
+			var s = null != obj ? (System.Collections.Generic.List<object>)obj : new System.Collections.Generic.List<object>(count);
+			s.Clear();
+			for (int i = 0; i < count; ++i)
+				s.Add(info.GetValue("e", parent));
+			info.CloseArray(count);
+
+			return s;
+		}
+	}
 
 
-} // end namespace System.Drawing
+
+
+} 

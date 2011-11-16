@@ -199,6 +199,42 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			e.Handled = true;
 		}
 
+		private void EhListViewCopyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				e.CanExecute = _listView.SelectedItems.Count > 0;
+				e.Handled = true;
+			}
+		}
+
+		private void EhListViewCopyCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				_controller.CopySelectedListItemsToClipboard();
+				e.Handled = true;
+			}
+		}
+
+		private void EhListViewPasteCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				e.CanExecute = _controller.CanPasteItemsFromClipboard();
+				e.Handled = true;
+			}
+		}
+
+		private void EhListViewPasteCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (null != _controller)
+			{
+				_controller.PasteItemsFromClipboard();
+				e.Handled = true;
+			}
+		}
+
 		private void EhListViewSelectAllCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			_listView.SelectAll();
@@ -337,5 +373,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
  
 		}
+
+	
 	}
 }

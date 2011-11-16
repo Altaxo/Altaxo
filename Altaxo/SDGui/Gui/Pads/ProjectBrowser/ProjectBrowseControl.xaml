@@ -58,6 +58,8 @@
 			<ListView.CommandBindings>
 				<CommandBinding Command="Delete" CanExecute="EhListViewDeleteCommandCanExecute" Executed="EhListViewDeleteCommandExecuted" />
 				<CommandBinding Command="SelectAll" CanExecute="EhListViewSelectAllCommandCanExecute" Executed="EhListViewSelectAllCommandExecuted" />
+				<CommandBinding Command="Copy" CanExecute="EhListViewCopyCommandCanExecute" Executed="EhListViewCopyCommandExecuted" />
+				<CommandBinding Command="Paste" CanExecute="EhListViewPasteCommandCanExecute" Executed="EhListViewPasteCommandExecuted" />
 			</ListView.CommandBindings>
 			<ListView.Resources>
 				<DataTemplate x:Key="ColumnWithIconTemplate">
