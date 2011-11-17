@@ -176,6 +176,9 @@ namespace Altaxo.Serialization.Xml
 
     public void CreateArray(string name, int count)
     {
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count has to be >=0");
+
       m_Writer.WriteStartElement(name);
       m_Writer.WriteAttributeString("Count", XmlConvert.ToString(count));
     }

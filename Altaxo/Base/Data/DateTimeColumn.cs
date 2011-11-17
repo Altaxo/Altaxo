@@ -369,10 +369,12 @@ namespace Altaxo.Data
 			{
 				bool bCountDecreased = false;
 
+				if (i < 0)
+					throw new ArgumentOutOfRangeException(string.Format("Index<0 (i={0}) while trying to set element of column {1} ({2})", i, Name, FullName));
 
 				if (value == DateTime.MinValue)
 				{
-					if (i >= 0 && i < _count - 1) // i is inside the used range
+					if (i < _count - 1) // i is inside the used range
 					{
 						_data[i] = value;
 					}
@@ -388,7 +390,7 @@ namespace Altaxo.Data
 				}
 				else // value is a valid value
 				{
-					if (i >= 0 && i < _count) // i is inside the used range
+					if (i < _count) // i is inside the used range
 					{
 						_data[i] = value;
 					}
@@ -405,7 +407,7 @@ namespace Altaxo.Data
 						_data[i] = value;
 						_count = i + 1;
 					}
-					else if (i >= 0) // i is outside of capacity, then realloc the array
+					else // i is outside of capacity, then realloc the array
 					{
 						Realloc(i);
 
