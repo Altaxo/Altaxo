@@ -297,19 +297,6 @@ namespace Altaxo.Worksheet.Commands
     {
       ctrl.DataTable.Suspend();
 
-
-      // Property columns are only deleted, if selected alone or in conjunction with data row selection
-      if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyRows.Count == 0 && ctrl.SelectedDataColumns.Count == 0)
-      {
-        ctrl.DataTable.PropCols.RemoveColumns(ctrl.SelectedPropertyColumns);
-        ctrl.SelectedPropertyColumns.Clear();
-        ctrl.SelectedPropertyRows.Clear();
-      }
-      // note here: Property rows are only removed indirect by removing data columns
-
-
-
-
       // clear whole columns when no specific
       if (ctrl.SelectedPropertyColumns.Count > 0)
       {
