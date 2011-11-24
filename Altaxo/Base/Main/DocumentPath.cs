@@ -82,6 +82,18 @@ namespace Altaxo.Main
       foreach(string s in from)
         Add(s);
     }
+
+		/// <summary>Get a absolute <see cref="DocumentPath"/> from a collection node and the name of an item in this collection.</summary>
+		/// <param name="collectionNode">The collection node (for instance the DataTableCollection in the current project).</param>
+		/// <param name="nameOfItemInTheCollection">The name of item in the collection (in the above example the name of the data table).</param>
+		/// <returns>An absolute document path designating the named item in the collection.</returns>
+		public static DocumentPath FromDocumentCollectionNodeAndName(IDocumentNode collectionNode, string nameOfItemInTheCollection)
+		{
+			DocumentPath result = DocumentPath.GetAbsolutePath(collectionNode);
+			result.Add(nameOfItemInTheCollection);
+			return result;
+		}
+
     public bool IsAbsolutePath
     {
       get { return _IsAbsolutePath; }
