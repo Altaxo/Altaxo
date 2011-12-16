@@ -464,6 +464,46 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Moves a item to another list position. All items inbetween the interval <paramref name="originalIndex"/> and <paramref name="destinationIndex"/> will slip by one position (except the item at <paramref name="originalIndex"/>,
+		/// which will of course move to <paramref name="destinationIndex"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of the list items.</typeparam>
+		/// <param name="list">List to operate with.</param>
+		/// <param name="originalIndex">Original position of the  item.</param>
+		/// <param name="destinationIndex">Destination position of the item.</param>
+		static public void MoveItemToIndex<T>(this IList<T> list, int originalIndex, int destinationIndex)
+		{
+			if (originalIndex == destinationIndex)
+				return;
+			if (originalIndex < 0)
+				throw new ArgumentException("originalIndex<0");
+			if (destinationIndex < 0)
+				throw new ArgumentException("DestinationIndex<0");
+			if (originalIndex >= list.Count)
+				throw new ArgumentException("originalIndex>=Count");
+			if (destinationIndex >= list.Count)
+				throw new ArgumentException("destinationIndex>=Count");
+		
+
+			var item_i = list[originalIndex];
+
+			if (destinationIndex > originalIndex)
+			{
+				for (int k = originalIndex; k < destinationIndex; ++k)
+					list[k] = list[k + 1];
+			}
+			else
+			{
+				for (int k = originalIndex; k > destinationIndex; --k)
+					list[k] = list[k - 1];
+			}
+
+			list[destinationIndex] = item_i;
+		}
+
+	
+
+		/// <summary>
 		/// Moves the selected items towards higher indices (for steps &gt; 0) or lower indices (for steps &lt; 0).
 		/// </summary>
 		/// <typeparam name="T">Type of list item.</typeparam>
@@ -579,7 +619,7 @@ namespace Altaxo.Collections
 			for (int i = steps; i < list.Count; i++)
 			{
 				if (isSelected(i))
-					ExchangePositions(list, i, i - steps);
+					MoveItemToIndex(list, i, i - steps);
 			}
 		}
 
@@ -608,7 +648,7 @@ namespace Altaxo.Collections
 			for (int i = list.Count - 1 - steps; i >= 0; --i)
 			{
 				if (isSelected(i))
-					ExchangePositions(list, i, i + steps);
+					MoveItemToIndex(list, i, i + steps);
 			}
 
 		}

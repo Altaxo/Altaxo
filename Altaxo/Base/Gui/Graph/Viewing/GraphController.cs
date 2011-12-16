@@ -1227,6 +1227,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 				if (objectsToGroup.Count >= 2)
 				{
+					// note that: we must take care of the visibility: more visible items must be added later to the list (and elements from layers with higher index)
+					// the group element must be added to the position at which the element with the best visibility was before
+
 					var elements = new List<GraphicBase>();
 					foreach (var hit in objectsToGroup)
 						elements.Add(hit.HittedObject as GraphicBase);

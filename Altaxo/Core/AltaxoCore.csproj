@@ -545,6 +545,19 @@
     <Compile Include="Collections\ContiguousIntegerRange.cs" />
     <Compile Include="Collections\IROVector.cs" />
     <Compile Include="Collections\ContiguousNonNegativeIntegerRange.cs" />
+    <Compile Include="Collections\Operations\MinimumOnSlidingWindow.cs" />
+    <Compile Include="Collections\Text\GeneralizedSuffixArray.cs" />
+    <Compile Include="Collections\Text\IntegerTextData.cs" />
+    <Compile Include="Collections\Text\LongestCommonGeneralizedRepeatA.cs" />
+    <Compile Include="Collections\Text\LongestCommonGeneralizedRepeatL.cs" />
+    <Compile Include="Collections\Text\LongestCommonRepeatA.cs" />
+    <Compile Include="Collections\Text\LongestCommonRepeatL.cs" />
+    <Compile Include="Collections\Text\LongestCommonSubstringA.cs" />
+    <Compile Include="Collections\Text\LongestCommonSubstringBase.cs" />
+    <Compile Include="Collections\Text\LongestCommonSubstringBaseA.cs" />
+    <Compile Include="Collections\Text\LongestCommonSubstringBaseL.cs" />
+    <Compile Include="Collections\Text\LongestCommonSubstringL.cs" />
+    <Compile Include="Collections\Text\SubstringPosition.cs" />
     <Compile Include="Science\Energy.cs" />
     <Compile Include="Science\IRelativeUnit.cs" />
     <Compile Include="Science\Length.cs" />
@@ -600,6 +613,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
