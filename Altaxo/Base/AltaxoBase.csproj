@@ -478,6 +478,8 @@
     <Compile Include="Serialization\Ascii\AsciiLineStructure.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Serialization\AutoUpdates\PackageInfo.cs" />
+    <Compile Include="Serialization\AutoUpdates\UpdateDownloaderStarter.cs" />
     <Compile Include="Serialization\DateTimeParsing.cs">
       <SubType>Code</SubType>
     </Compile>
