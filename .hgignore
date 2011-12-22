@@ -1,6 +1,6 @@
 /obj/
 /bin/
-rtdebug/
+rtDir/
 .suo
 .user
 .ruleset

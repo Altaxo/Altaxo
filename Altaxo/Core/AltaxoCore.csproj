@@ -47,14 +47,14 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>TRACE;DEBUG;MANAGED</DefineConstants>
-    <DocumentationFile>..\..\rtdebug\bin\AltaxoCore.XML</DocumentationFile>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoCore.XML</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -67,15 +67,14 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DefineConstants>TRACE;MANAGED</DefineConstants>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoCore.XML</DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -90,10 +89,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MANAGED</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
-    <DocumentationFile>..\..\rtdebug\bin\AltaxoCore.XML</DocumentationFile>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoCore.XML</DocumentationFile>
     <FileAlignment>4096</FileAlignment>
     <NoWarn>1591</NoWarn>
     <PlatformTarget>x86</PlatformTarget>
@@ -106,8 +105,8 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>TRACE;MANAGED</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
@@ -120,6 +119,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoCore.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">

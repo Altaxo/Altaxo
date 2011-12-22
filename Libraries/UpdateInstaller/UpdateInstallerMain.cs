@@ -31,23 +31,33 @@ namespace Altaxo.Serialization.AutoUpdates
 	{
 		static void Main(string[] args)
 		{
-			// first arg is either 'stable' or 
-			// second argument is the version string of the Altaxo executable
-			// 3rd argument is the full path of the Altaxo executable file
-			// 4th argument is either 0 or 1: if 1, then afterwards the updater has run, Altaxo is restarted again
-			// 5th and more arguments: the original arguments of the Altaxo executable
+			// args[0]: the name of the event that must be signalled when the installer is ready to install
+			// args[1]: name of the package file to use
+			// args[2]: either 0 or 1, if 1 then Altaxo should be restarted after installation
+			// args[3]: argument full name of the Altaxo executable
+			// args[4]: and more arguments: the original arguments of the Altaxo executable
 
-			if (args.Length != 3)
-				throw new ArgumentOutOfRangeException("Programm called with less than or more than 3 arguments");
+			if (args.Length <4 )
+				throw new ArgumentOutOfRangeException("Programm called with less than 4 arguments");
 
-			bool loadUnstableVersion;
-			if (!PackageInfo.IsValidStableIdentifier(args[0], out loadUnstableVersion))
-				throw new ArgumentException("first argument is not a valid stable identifier (is neither 'stable' nor 'unstable')");
+			for (int i = 0; i < args.Length; ++i)
+				Console.WriteLine("args[{0}]: {1}", i, args[i]);
 
-			var currentProgramVersion = new Version(args[1]);
 
-			var installer = new UpdateInstaller(loadUnstableVersion, currentProgramVersion,args[2]);
-			installer.Run();
+
+			//var currentProgramVersion = new Version(args[1]);
+			try
+			{
+				var installer = new UpdateInstaller(args[0], args[1], args[3]);
+				installer.Run();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("{0} {1}",ex.GetType().ToString(), ex.Message);
+			}
+
+			Console.Write("Press any key:");
+			Console.ReadKey();
 		}
 	}
 }

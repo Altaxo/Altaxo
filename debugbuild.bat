@@ -1,2 +1,8 @@
-%windir%\microsoft.net\framework\v3.5\msbuild Altaxo.sln
-@IF %ERRORLEVEL% NEQ 0 PAUSE
+rmdir /S /Q .\rtDir
+mkdir rtDir
+%windir%\microsoft.net\Framework\v4.0.30319\msbuild /m Altaxo.sln /p:Configuration=Debug "/p:Platform=Any CPU"
+IF %ERRORLEVEL% NEQ 0 GOTO err
+@exit /B 0
+:err
+@PAUSE
+@exit /B 1

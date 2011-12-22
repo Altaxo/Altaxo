@@ -40,45 +40,32 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
- <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
-    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
     <BaseAddress>136577024</BaseAddress>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <FileAlignment>4096</FileAlignment>
     <DebugType>Full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\..\rtdebug\bin\ICSharpCode.SharpDevelop.Widgets.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
     <BaseAddress>136577024</BaseAddress>
     <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>None</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\bin\ICSharpCode.SharpDevelop.Widgets.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore">
@@ -152,10 +139,7 @@
     <Page Include="themes\generic.xaml" />
     <Page Include="ZoomScrollViewer.xaml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images" />
-    <Folder Include="themes" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\ZoomIn.png" />
     <Resource Include="Images\ZoomOut.png" />

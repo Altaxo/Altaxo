@@ -58,6 +58,9 @@ namespace Altaxo.Serialization.AutoUpdates
 			{
 				Console.WriteLine(ex.ToString());
 			}
+
+			//Console.Write("Downloader finished; press any key:");
+			//Console.ReadKey();
 		}
 	}
 }

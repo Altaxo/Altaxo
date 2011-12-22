@@ -48,7 +48,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\rtDir\bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -70,7 +70,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\rtDir\bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -93,7 +93,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\rtDir\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE;ModifiedForAltaxo</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <FileAlignment>4096</FileAlignment>
@@ -107,7 +107,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\rtDir\bin\</OutputPath>
     <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
@@ -491,18 +491,9 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin
-xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y
-xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y
-xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y
-rem Dont forget to copy the 
-copy ..\..\..\Libraries\bin\Interop.SHDocVw.dll ..\..\..\rt$(ConfigurationName)\bin
-
-rem copy the HelpConverter.exe and .pdb to the bin directory
-copy HelpConverter.* ..\..\..\rt$(ConfigurationName)\bin
-
-rem Update the build version of the main important assemblies
-rem ..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\  ..\..\..\Altaxo\Startup\AssemblyInfo.cs ..\..\..\Altaxo\Core\AssemblyInfo.cs ..\..\..\Altaxo\SDGui\AssemblyInfo.cs ..\..\..\Altaxo\Base\AssemblyInfo.cs
-</PostBuildEvent>
+    <PostBuildEvent>rem if not exist $(SolutionDir)rtDir\bin mkdir  $(SolutionDir)rtDir\bin
+rem xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y
+xcopy $(SolutionDir)Content\data\*.* $(SolutionDir)rtDir\data /E /I /Y
+xcopy $(SolutionDir)Content\doc\*.* $(SolutionDir)rtDir\doc /E /I /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

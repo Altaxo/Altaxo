@@ -46,8 +46,14 @@ namespace Altaxo.Serialization.AutoUpdates
 			var args = string.Format("{0}\t{1}", "Unstable", entryAssembly.GetName().Version);
 
 			var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe,args);
+
 			processInfo.CreateNoWindow = true;
 			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
+			processInfo.CreateNoWindow = false;
+			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+
+
 			var proc = System.Diagnostics.Process.Start(processInfo);
 			proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
 		}

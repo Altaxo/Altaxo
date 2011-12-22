@@ -123,25 +123,49 @@ namespace Altaxo.Serialization.AutoUpdates
 		}
 
 
+		/// <summary>Gets the stable identifier (either 'Unstable' or 'Stable').</summary>
+		/// <param name="loadUnstable">Determines either to return 'Unstable' or 'Stable'</param>
+		/// <returns>'Unstable' if <paramref name="loadUnstable"/> is <c>true</c>, otherwise 'Stable'.</returns>
+		public static string GetStableIdentifier(bool loadUnstable)
+		{
+			return loadUnstable ? "Unstable" : "Stable";
+		}
+
 		/// <summary>Gets the directory where to store the downloaded update package.</summary>
 		/// <param name="loadUnstableVersion"><c>true</c> when to get the folder for the unstable version; false otherwise.</param>
 		/// <returns>The directory where to store the downloaded package.</returns>
 		public static string GetDownloadDirectory(bool loadUnstableVersion)
 		{
-			var stableIdentifier = loadUnstableVersion ? "Unstable" : "Stable";
-
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Altaxo\\AutoUpdates\\" + stableIdentifier);
+			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Altaxo\\AutoUpdates\\" + GetStableIdentifier(loadUnstableVersion));
 		}
 
 
-		/// <summary>If there already a package in the download directory, this function gets the present downloaded package. If anything is invalid (wrong format of the version file,
+
+				/// <summary>If there already a package in the download directory, this function gets the present downloaded package. If anything is invalid (wrong format of the version file,
 		/// wrong hash sum), the return value is <c>Null</c>.</summary>
 		/// <param name="fs">Stream to read the version info from. This must be the opened stream of the VersionInfo.txt file in the download directory.</param>
 		/// <param name="storagePath">Path to the directory that stores the downloaded package.</param>
 		/// <returns>The info for the already present package in the download directory. If anything is invalid, the return value is null.</returns>
 		public static PackageInfo GetPresentDownloadedPackage(Stream fs, string storagePath)
 		{
+			FileStream packageStream;
+			var result = GetPresentDownloadedPackage(fs, storagePath, out packageStream);
+			if (null != packageStream)
+				packageStream.Close();
+
+			return result;
+		}
+
+		/// <summary>If there already a package in the download directory, this function gets the present downloaded package. If anything is invalid (wrong format of the version file,
+		/// wrong hash sum), the return value is <c>Null</c>.</summary>
+		/// <param name="fs">Stream to read the version info from. This must be the opened stream of the VersionInfo.txt file in the download directory.</param>
+		/// <param name="storagePath">Path to the directory that stores the downloaded package.</param>
+		/// <param name="packageFile">On successfull return, the opened <see cref="FileStream"/> of the package file is provided here. You are responsible for closing the stream!</param>
+		/// <returns>The info for the already present package in the download directory. If anything is invalid, the return value is null.</returns>
+		public static PackageInfo GetPresentDownloadedPackage(Stream fs, string storagePath, out FileStream packageFile)
+		{
 			PackageInfo packageInfo = null;
+			packageFile = null;
 			try
 			{
 				packageInfo = PackageInfo.FromStream(fs);
@@ -155,15 +179,12 @@ namespace Altaxo.Serialization.AutoUpdates
 				if (fileInfo.Length != packageInfo.FileLength)
 					return null;
 
-				using (FileStream ps = new FileStream(Path.Combine(storagePath, GetPackageFileName(packageInfo.Version)), FileMode.Open, FileAccess.Read, FileShare.None))
-				{
-					var hashProvider = new System.Security.Cryptography.SHA1Managed();
-					var hash = hashProvider.ComputeHash(ps);
-					ps.Close();
+				packageFile = new FileStream(Path.Combine(storagePath, GetPackageFileName(packageInfo.Version)), FileMode.Open, FileAccess.Read, FileShare.Read);
+				var hashProvider = new System.Security.Cryptography.SHA1Managed();
+				var hash = hashProvider.ComputeHash(packageFile);
 
-					if (GetHashAsString(hash) != packageInfo.Hash)
-						throw new InvalidOperationException("Hash of downloaded package is not valid");
-				}
+				if (GetHashAsString(hash) != packageInfo.Hash)
+					throw new InvalidOperationException("Hash of downloaded package is not valid");
 
 				return packageInfo;
 			}

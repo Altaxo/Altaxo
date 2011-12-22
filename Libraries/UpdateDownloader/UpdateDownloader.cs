@@ -97,7 +97,10 @@ namespace Altaxo.Serialization.AutoUpdates
 							// make at least the test for the right length
 							var fileInfo = new FileInfo(packageFileName);
 							if (fileInfo.Length != parsedVersion.FileLength)
+							{
+								Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted", fileInfo.Length, parsedVersion.FileLength);
 								fileInfo.Delete();
+							}
 						}
 					}
 				}

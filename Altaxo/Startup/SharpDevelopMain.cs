@@ -224,6 +224,10 @@ namespace ICSharpCode.SharpDevelop
 			} finally {
 				LoggingService.Info("Leaving RunApplication()");
 			}
+
+#if ModifiedForAltaxo
+			Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(false);
+#endif
 		}
 		
 		static bool LoadFilesInPreviousInstance(string[] fileList)

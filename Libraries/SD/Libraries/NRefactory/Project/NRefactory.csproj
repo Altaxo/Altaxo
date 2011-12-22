@@ -31,14 +31,14 @@
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>TEST;DEBUG</DefineConstants>
-    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TEST</DefineConstants>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -50,39 +50,24 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
   </PropertyGroup>
- <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <DefineConstants>TEST;DEBUG</DefineConstants>
     <BaseAddress>94896128</BaseAddress>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <FileAlignment>4096</FileAlignment>
     <DebugType>Full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\..\rtdebug\bin\ICSharpCode.NRefactory.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1020;-Microsoft.Design#CA1051;-Microsoft.Design#CA1062;-Microsoft.Globalization#CA1303;-Microsoft.Globalization#CA1305;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Usage#CA2211;-Microsoft.Usage#CA2227</CodeAnalysisRules>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <DefineConstants>TEST</DefineConstants>
     <BaseAddress>94896128</BaseAddress>
     <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <DebugType>None</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\bin\ICSharpCode.NRefactory.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1020;-Microsoft.Design#CA1051;-Microsoft.Design#CA1062;-Microsoft.Globalization#CA1303;-Microsoft.Globalization#CA1305;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Usage#CA2211;-Microsoft.Usage#CA2227</CodeAnalysisRules>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -199,27 +184,15 @@
   <ItemGroup>
     <Content Include="Src\Lexer\CSharp\KeywordList.txt" />
     <Content Include="Src\Lexer\VBNet\KeywordList.txt" />
-    <Folder Include="Src\Parser" />
-    <Folder Include="Src\Parser\CSharp" />
     <None Include="Src\Parser\CSharp\cs.ATG" />
-    <Folder Include="Src\Parser\Frames" />
     <Content Include="Src\Parser\Frames\Scanner.frame" />
     <Content Include="Src\Parser\Frames\SharpCoco.exe" />
-    <Folder Include="Src\Parser\VBNet" />
     <None Include="Src\Parser\VBNet\VBNET.ATG">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CustomToolNamespace>ICSharpCode.NRefactory.Parser.VB</CustomToolNamespace>
     </None>
     <Content Include="Src\Parser\gen.bat" />
-    <Folder Include="Src\PrettyPrinter" />
-    <Folder Include="Src\PrettyPrinter\CSharp" />
-    <Folder Include="Src\PrettyPrinter\VBNet" />
-    <Folder Include="Src\Visitors" />
-    <Folder Include="Src\Ast" />
-    <Folder Include="Src\Ast\General" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Src\AstBuilder" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

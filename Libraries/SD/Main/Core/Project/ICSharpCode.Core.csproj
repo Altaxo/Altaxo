@@ -28,19 +28,21 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>False</Optimize>
     <DebugType>Full</DebugType>
-    <DocumentationFile>..\..\..\..\..\rtdebug\bin\ICSharpCode.Core.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\..\..\rtDir\bin\ICSharpCode.Core.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>False</DebugSymbols>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <DefineConstants>ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>..\..\..\..\..\rtDir\bin\ICSharpCode.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <RegisterForComInterop>False</RegisterForComInterop>
@@ -48,38 +50,26 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
- <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
     <BaseAddress>83886080</BaseAddress>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DocumentationFile>..\..\..\..\..\rtdebug\bin\ICSharpCode.Core.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\..\..\rtDir\bin\ICSharpCode.Core.XML</DocumentationFile>
     <FileAlignment>4096</FileAlignment>
     <NoWarn>1591</NoWarn>
     <DebugType>Full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\..\rtdebug\bin\ICSharpCode.Core.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <BaseAddress>83886080</BaseAddress>
     <Optimize>true</Optimize>
     <FileAlignment>4096</FileAlignment>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\..\..\bin\ICSharpCode.Core.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <DefineConstants>ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>..\..\..\..\..\rtDir\bin\ICSharpCode.Core.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -164,16 +154,12 @@
     <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\ITextBoxCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Src\Services\LoggingService" />
-    <Folder Include="Src\Services\AnalyticsMonitor" />
-    <Folder Include="Src\Services\RegistryService" />
-    <Folder Include="Src\Services\ResourceService" />
     <Content Include="..\..\..\..\data\schemas\AddIn.xsd">
       <Link>Src\AddInTree\AddIn\AddIn.xsd</Link>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-   <PropertyGroup>
+  <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
