@@ -109,6 +109,21 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 					return ICSharpCode.Core.PropertyService.ConfigDirectory;
 				}
 			}
+
+			public string Get(string property)
+			{
+				return ICSharpCode.Core.PropertyService.Get(property);
+			}
+
+			public T Get<T>(string property, T defaultValue)
+			{
+				return ICSharpCode.Core.PropertyService.Get(property, defaultValue);
+			}
+
+			public void Set<T>(string property, T value)
+			{
+				ICSharpCode.Core.PropertyService.Set(property, value);
+			}
 		}
 	}
 }

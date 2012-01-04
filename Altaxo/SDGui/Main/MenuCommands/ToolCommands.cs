@@ -36,4 +36,14 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
+
+	public class ShowOptions : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var ctrl = new Altaxo.Gui.Settings.AutoUpdateSettingsController();
+			Current.Gui.ShowDialog(ctrl, "Autoupdate options", false);
+		}
+	}
+
 }

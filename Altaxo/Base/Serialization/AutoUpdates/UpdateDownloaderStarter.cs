@@ -38,12 +38,25 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// </summary>
 		public static void Run()
 		{
+			var updateSettings = Current.PropertyService.Get(Altaxo.Settings.AutoUpdateSettings.SettingsStoragePath, new Altaxo.Settings.AutoUpdateSettings());
+
+			if (!updateSettings.EnableAutoUpdates)
+				return;
+
+			if (updateSettings.DownloadIntervalInDays > 0)
+			{
+				var lastCheckUtc = PackageInfo.GetLastUpdateCheckTimeUtc(updateSettings.DownloadUnstableVersion);
+				if ((DateTime.UtcNow - lastCheckUtc).TotalDays < updateSettings.DownloadIntervalInDays)
+					return;
+			}
+
+
 			var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			string assemblyLocation = entryAssembly.Location;
 			string binPath = Path.GetDirectoryName(assemblyLocation);
 			string downLoadExe = Path.Combine(binPath, "AltaxoUpdateDownloader.exe");
 
-			var args = string.Format("{0}\t{1}", "Unstable", entryAssembly.GetName().Version);
+			var	args = string.Format("{0}\t{1}", PackageInfo.GetStableIdentifier(updateSettings.DownloadUnstableVersion), entryAssembly.GetName().Version);
 
 			var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe,args);
 
@@ -53,9 +66,14 @@ namespace Altaxo.Serialization.AutoUpdates
 			processInfo.CreateNoWindow = false;
 			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
 
-
-			var proc = System.Diagnostics.Process.Start(processInfo);
-			proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+			try
+			{
+				var proc = System.Diagnostics.Process.Start(processInfo);
+				proc.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+			}
+			catch (Exception)
+			{
+			}
 		}
 	}
 }

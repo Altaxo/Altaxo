@@ -285,6 +285,7 @@
     <Compile Include="Gui\Graph\G2DPlotItemControllerOld.cs" />
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
     <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
+    <Compile Include="Gui\Settings\AutoUpdateSettingsController.cs" />
     <Compile Include="Gui\Worksheet\PlotCommonColumnsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
@@ -543,6 +544,7 @@
     <Compile Include="Serialization\Xml\XmlSurrogateSelector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Settings\AutoUpdateSettings.cs" />
     <Compile Include="Worksheet\ColumnHeaderStyle.cs">
       <SubType>Code</SubType>
     </Compile>

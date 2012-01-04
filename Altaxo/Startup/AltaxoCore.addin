@@ -52,7 +52,8 @@
       <ConditionEvaluator name="Clipboard" class="Altaxo.Main.Commands.ClipboardContentConditionEvaluator"/>
 			<ConditionEvaluator name="ProjbrowserListItemSelection" class="Altaxo.Gui.Pads.ProjectBrowser.ListItemSelectionEvaluator"/>
       <Doozer name="Texture" class="Altaxo.Main.TextureDoozer"/>
-    </Import>
+			<Doozer name="OptionPanel" class="Altaxo.Main.OptionPanelDoozer"/>
+		</Import>
 	</Runtime>
 
   <!-- Altaxo stuff -->
@@ -523,7 +524,11 @@
                     label="${res:XML.MainMenu.ToolsMenu.AddTempUserAssembly}"
                     description="${res:XML.MainMenu.ToolsMenu.AddTempUserAssembly.Description}"
                     class="Altaxo.Main.Commands.AddTemporaryUserAssembly" />
-    </MenuItem>
+			<MenuItem id="Options"
+								label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
+								description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
+								class="Altaxo.Main.Commands.ShowOptions" />
+		</MenuItem>
     <!-- Window menu -->
     <MenuItem id="Window" label="${res:XML.MainMenu.WindowMenu}" type="Menu">
       <Condition name = "WindowActive" activewindow="*" action="Disable">

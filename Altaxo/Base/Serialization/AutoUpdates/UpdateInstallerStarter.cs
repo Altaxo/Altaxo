@@ -15,19 +15,26 @@ namespace Altaxo.Serialization.AutoUpdates
 		const string UpdateInstallerFileName = "AltaxoUpdateInstaller.exe";
 
 		/// <summary>Starts the installer program, when all presumtions are fullfilled.</summary>
-		/// <param name="isAltaxoBeingRestartedAfterInstallation">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
+		/// <param name="isAltaxoCurrentlyStarting">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
+		/// <param name="commandLineArgs">Original command line arguments. Can be <c>null</c> when calling this function on shutdown.</param>
 		/// <returns>True if the installer program was started. Then Altaxo have to be shut down immediately. Returns <c>false</c> if the installer program was not started.</returns>
-		public static bool Run(bool isAltaxoBeingRestartedAfterInstallation)
+		public static bool Run(bool isAltaxoCurrentlyStarting, string[] commandLineArgs)
 		{
-			bool loadUnstable = true;
+			var updateSettings = Current.PropertyService.Get(Altaxo.Settings.AutoUpdateSettings.SettingsStoragePath, new Altaxo.Settings.AutoUpdateSettings());
+
+			if ((updateSettings.InstallAtStartup && !isAltaxoCurrentlyStarting) &&
+				 (updateSettings.InstallAtShutdown && isAltaxoCurrentlyStarting))
+				return false;
+			
+			bool loadUnstable = updateSettings.DownloadUnstableVersion;
+
 
 			FileStream versionFileStream = null;
 			FileStream packageStream = null;
 
-			// try to lock the version File
+			// try to lock the version file in the download directory, thus no other process can modify it
 			try
 			{
-
 				var downloadFolder = PackageInfo.GetDownloadDirectory(loadUnstable);
 				var versionFileName = Path.Combine(downloadFolder, PackageInfo.VersionFileName);
 
@@ -60,15 +67,23 @@ namespace Altaxo.Serialization.AutoUpdates
 
 				var processInfo = new System.Diagnostics.ProcessStartInfo();
 				processInfo.FileName = installerFullDestName;
-				processInfo.Arguments = string.Format("\"{0}\"\t\"{1}\"\t{2}\t\"{3}\"", eventName, packageStream.Name, isAltaxoBeingRestartedAfterInstallation ? 1 : 0, entryAssembly.Location);
+				StringBuilder stb = new StringBuilder();
+				stb.AppendFormat("\"{0}\"\t\"{1}\"\t{2}\t\"{3}\"", eventName, packageStream.Name, isAltaxoCurrentlyStarting ? 1 : 0, entryAssembly.Location);
+				if (isAltaxoCurrentlyStarting && commandLineArgs != null && commandLineArgs.Length > 0)
+				{
+					foreach (var s in commandLineArgs)
+						stb.AppendFormat("\t\"{0}\"", s);
+				}
+				processInfo.Arguments = stb.ToString();
 				processInfo.CreateNoWindow =false;
 				processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-				var process = System.Diagnostics.Process.Start(processInfo);
 
 				// Start the updater program
+				var process = System.Diagnostics.Process.Start(processInfo);
 
 				for (; ; )
 				{
+					// we wait until the update program signals that it has now taken the VersionInfo file
 					if (waitForRemoteStartSignal.WaitOne(100))
 						break;
 					if (process.HasExited)

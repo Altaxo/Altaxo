@@ -196,5 +196,25 @@ namespace Altaxo.Serialization.AutoUpdates
 
 		}
 
+		/// <summary>Gets the last time a check for new updates was made</summary>
+		/// <param name="loadUnstable">If set to <c>true</c>, the time of the last check time for an unstable version is returned, otherwise the last check time for a stable version is returned.</param>
+		/// <returns>The last check time (as Utc). If no check was made before, <see cref="DateTime.MinValue"/> is returned.</returns>
+		public static DateTime GetLastUpdateCheckTimeUtc(bool loadUnstable)
+		{
+			try
+			{
+				var fileName = Path.Combine(GetDownloadDirectory(loadUnstable), VersionFileName);
+				FileInfo info = new FileInfo(fileName);
+				if (info.Exists)
+					return info.LastWriteTimeUtc;
+			}
+			catch (Exception)
+			{
+			}
+			
+			return DateTime.MinValue;
+
+		}
+
 	}
 }

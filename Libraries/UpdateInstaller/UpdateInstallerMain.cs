@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -31,9 +32,13 @@ namespace Altaxo.Serialization.AutoUpdates
 	{
 		static void Main(string[] args)
 		{
+			System.Diagnostics.Debugger.Launch();
+
+			try
+			{
 			// args[0]: the name of the event that must be signalled when the installer is ready to install
 			// args[1]: name of the package file to use
-			// args[2]: either 0 or 1, if 1 then Altaxo should be restarted after installation
+			// args[2]: either 0 or 1, if 1 then Altaxo should be restarted after installation. Furthermore, Bit1=1 indicates that this process was started with elevated privileges.
 			// args[3]: argument full name of the Altaxo executable
 			// args[4]: and more arguments: the original arguments of the Altaxo executable
 
@@ -43,13 +48,48 @@ namespace Altaxo.Serialization.AutoUpdates
 			for (int i = 0; i < args.Length; ++i)
 				Console.WriteLine("args[{0}]: {1}", i, args[i]);
 
+			int options = int.Parse(args[2]);
+			bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
+			bool restartAltaxo = (0 != (options & 1)) && !wasStartedWithElevatedPrivileges;
 
 
 			//var currentProgramVersion = new Version(args[1]);
-			try
-			{
+
 				var installer = new UpdateInstaller(args[0], args[1], args[3]);
-				installer.Run();
+				if (!installer.PackListFileExists())
+					throw new InvalidOperationException("PackList.txt of old installation not found!");
+
+				if (!installer.PackListFileIsWriteable())
+				{
+					if (0!=(options & 2))
+						throw new InvalidOperationException("There is no write access to the PackList.txt file, thus probably there is also no write access to the installation directory");
+
+					var templateProc = System.Diagnostics.Process.GetCurrentProcess().StartInfo;
+					var proc = new System.Diagnostics.ProcessStartInfo(templateProc.FileName,templateProc.Arguments);
+					args[2] = (options|2).ToString();
+					var stb = new StringBuilder();
+					foreach (var s in args)
+						stb.AppendFormat("\"{0}\"\t", s);
+
+					proc.Arguments = stb.ToString();
+					proc.Verb = "runas";
+					var runProcWithElevated = System.Diagnostics.Process.Start(proc);
+						
+					if(restartAltaxo) 
+						runProcWithElevated.WaitForExit();
+				}
+				else
+				{
+					installer.Run();
+				}
+
+				if (restartAltaxo)
+				{
+					StringBuilder stb = new StringBuilder();
+					for(int i=4;i<args.Length;++i)
+						stb.AppendFormat("\"{0}\"\t",args[i]);
+					System.Diagnostics.Process.Start(args[3], stb.ToString());
+				}
 			}
 			catch (Exception ex)
 			{
@@ -59,5 +99,9 @@ namespace Altaxo.Serialization.AutoUpdates
 			Console.Write("Press any key:");
 			Console.ReadKey();
 		}
+
+
+	
+
 	}
 }

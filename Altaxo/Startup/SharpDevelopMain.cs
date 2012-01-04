@@ -209,6 +209,8 @@ namespace ICSharpCode.SharpDevelop
 				};
 #if ModifiedForAltaxo
 				Altaxo.Main.Commands.AutostartCommand.EarlyRun();
+				if (Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(true, SharpDevelopMain.CommandLineArgs))
+					return;
 				var altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
         Altaxo.Current.SetWorkbench(altaxoWb);
         WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.AvalonDockLayout());
@@ -226,7 +228,7 @@ namespace ICSharpCode.SharpDevelop
 			}
 
 #if ModifiedForAltaxo
-			Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(false);
+			Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(false,null);
 #endif
 		}
 		

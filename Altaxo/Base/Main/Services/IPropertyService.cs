@@ -35,5 +35,12 @@ namespace Altaxo.Main.Services
     /// Absolute path to the application's config directory.
     /// </summary>
     string ConfigDirectory { get; }
+
+
+		string Get(string property);
+
+		T Get<T>(string property, T defaultValue);
+		
+		void Set<T>(string property, T value);
   }
 }
