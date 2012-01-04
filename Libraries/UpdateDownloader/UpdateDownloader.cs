@@ -29,11 +29,15 @@ using System.Reflection;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
+	/// <summary>
+	/// Responsible for the download of the auto update files.
+	/// </summary>
 	public class Downloader
 	{
 		string _storagePath;
 		string _downloadURL;
 		Version _currentVersion;
+		bool _isDownloadOfPackageCompleted;
 
 		/// <summary>Initializes a new instance of the <see cref="Downloader"/> class.</summary>
 		/// <param name="loadUnstable">If set to <c>true</c>, the <see cref="Downloader"/> take a look for the latest unstable version. If set to <c>false</c>, it 
@@ -97,8 +101,17 @@ namespace Altaxo.Serialization.AutoUpdates
 						var packageUrl = _downloadURL + PackageInfo.GetPackageFileName(parsedVersion.Version);
 						var packageFileName = Path.Combine(_storagePath, PackageInfo.GetPackageFileName(parsedVersion.Version));
 						Console.WriteLine("Starting download of package file ...");
-						webClient.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
-						webClient.DownloadFile(packageUrl, packageFileName); // download the package
+						webClient.DownloadProgressChanged += EhDownloadOfPackageFileProgressChanged;
+						webClient.DownloadFileCompleted += EhDownloadOfPackageFileCompleted;
+						_isDownloadOfPackageCompleted = false;
+						webClient.DownloadFileAsync(new Uri(packageUrl), packageFileName);// download the package asynchronously to get progress messages
+						for(;!_isDownloadOfPackageCompleted;)
+						{
+							System.Threading.Thread.Sleep(250);
+						}
+						webClient.DownloadProgressChanged -= EhDownloadOfPackageFileProgressChanged;
+						webClient.DownloadFileCompleted -= EhDownloadOfPackageFileCompleted;
+
 						Console.WriteLine("Download finished!");
 
 						// make at least the test for the right length
@@ -117,7 +130,18 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
-		void webClient_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+		/// <summary>Called when the download of the package file is completed.</summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.ComponentModel.AsyncCompletedEventArgs"/> instance containing the event data.</param>
+		void EhDownloadOfPackageFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+		{
+			_isDownloadOfPackageCompleted = true;
+		}
+
+		/// <summary>Outputs the download progress to the console.</summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.Net.DownloadProgressChangedEventArgs"/> instance containing the event data.</param>
+		void EhDownloadOfPackageFileProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
 		{
 			Console.Write("{0}%\r",e.ProgressPercentage);
 		}

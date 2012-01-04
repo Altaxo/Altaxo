@@ -30,6 +30,9 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
+	/// <summary>
+	/// Responsible for installing the downloaded update.
+	/// </summary>
 	public class UpdateInstaller
 	{
 		static System.Threading.EventWaitHandle _eventWaitHandle;
@@ -69,6 +72,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
 
+		/// <summary>Runs the installer</summary>
+		/// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
 		public void Run(Func<double,string,bool> ReportProgress)
 		{
 			string pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
@@ -126,13 +131,18 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
+		/// <summary>Creates and then sets the specified event.</summary>
+		/// <param name="eventName">Name of the event.</param>
 		public static void SetEvent(string eventName)
 		{
 			_eventWaitHandle = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.ManualReset, eventName);
 			_eventWaitHandle.Set();
 		}
 
-		private void ExtractPackageFiles(FileStream fs, Func<double, string,bool> ReportProgress)
+		/// <summary>Extracts the package files.</summary>
+		/// <param name="fs">File stream of the package file (this is a zip file).</param>
+		/// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
+		private void ExtractPackageFiles(FileStream fs, Func<double, string, bool> ReportProgress)
 		{
 			var zipFile = new ZipFile(fs);
 			byte[] buffer = new byte[4096];
@@ -164,11 +174,15 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
+		/// <summary>Tests whether the pack list file exists in the installation directory (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
+		/// <returns>Returns <c>true</c> if the pack list file exists.</returns>
 		public bool PackListFileExists()
 		{
 			return File.Exists(PackListFileFullName);
 		}
 
+		/// <summary>Gets the full name of the pack list file (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
+		/// <value>The full name of the pack list file.</value>
 		public string PackListFileFullName
 		{
 			get
@@ -177,6 +191,8 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
+		/// <summary>Tests whether or not the packs the list file is writeable (this is the file PackList.txt in the doc folder of the Altaxo installation).</summary>
+		/// <returns>Returns <c>true</c> if the pack list file is writeable. If returning <c>false</c>, this is probably an indication that elevated privileges are required to update the installation.</returns>
 		public bool PackListFileIsWriteable()
 		{
 			string fullName = Path.Combine(_pathToInstallation, PackListRelativePath);
@@ -195,6 +211,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		}
 
 
+		/// <summary>Removes the old installation files. For this purpose, the pack list file of the old installation is opened, and all files that match the content of the pack list files are removed.</summary>
 		private void RemoveOldInstallationFiles()
 		{
 			byte[] buff = null;
@@ -228,6 +245,10 @@ namespace Altaxo.Serialization.AutoUpdates
 		}
 
 
+		/// <summary>Deletes the directory if it is orphaned, i.e. contains no files or subfolders. The call is recursive, i.e. prior to looking if this directory doesn't contain files or folders,
+		/// the operation is applied to all subfolders of the directory.</summary>
+		/// <param name="dir">The full path of the directory.</param>
+		/// <returns>True if this directory was orphaned and thus was deleted.</returns>
 		static bool DeleteDirIfOrphaned(DirectoryInfo dir)
 		{
 			bool isOrphaned = true;

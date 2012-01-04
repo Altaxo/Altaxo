@@ -44,9 +44,8 @@ namespace Altaxo.Serialization.AutoUpdates
 		{
 			var updateSettings = Current.PropertyService.Get(Altaxo.Settings.AutoUpdateSettings.SettingsStoragePath, new Altaxo.Settings.AutoUpdateSettings());
 
-
-			if ((updateSettings.InstallAtStartup && !isAltaxoCurrentlyStarting) &&
-				 (updateSettings.InstallAtShutdown && isAltaxoCurrentlyStarting))
+			var installationRequested = (isAltaxoCurrentlyStarting && updateSettings.InstallAtStartup) || (!isAltaxoCurrentlyStarting && updateSettings.InstallAtShutdown);
+			if(!installationRequested)
 				return false;
 			
 			bool loadUnstable = updateSettings.DownloadUnstableVersion;
@@ -106,7 +105,7 @@ namespace Altaxo.Serialization.AutoUpdates
 						stb.AppendFormat("\t\"{0}\"", s);
 				}
 				processInfo.Arguments = stb.ToString();
-				processInfo.CreateNoWindow =false;
+				processInfo.CreateNoWindow = false;
 				processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
 
 				// Start the updater program

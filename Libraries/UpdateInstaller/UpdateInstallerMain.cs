@@ -28,13 +28,21 @@ using System.IO;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
+	/// <summary>
+	/// Contains the main entry point of the installer application.
+	/// </summary>
 	class UpdateInstallerMain
 	{
 		static System.Windows.Application app;
 		static InstallerMainWindow mainWindow;
 
+		/// <summary>
+		/// A text that should occur prior to the error message.
+		/// </summary>
 		public const string ErrorIntroduction = "An error occured during the auto update installation of Altaxo:\r\n\r\n";
 
+		/// <summary>Main entry point of the application.</summary>
+		/// <param name="args">Application arguments.</param>
 		[STAThread]
 		static void Main(string[] args)
 		{
@@ -119,6 +127,8 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
+		/// <summary>Starts the window of the application, and then runs the provided installer program.</summary>
+		/// <param name="installer">The installer program to run..</param>
 		static void StartVisualApp(UpdateInstaller installer)
 		{
 			if (null == app)
@@ -133,6 +143,9 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
+		/// <summary>Starts the window of the application, and then presents the provided error message message.</summary>
+		/// <param name="eventName">Name of the event that is used to signal to Altaxo that Altaxo should be stopped.</param>
+		/// <param name="message">The error message to present.</param>
 		static void StartVisualAppWithErrorMessage(string eventName, string message)
 		{
 			if (null != eventName)

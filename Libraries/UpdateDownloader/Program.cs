@@ -31,7 +31,7 @@ namespace Altaxo.Serialization.AutoUpdates
 	class Program
 	{
 		/// <summary>
-		/// Main entry point of the updater program.
+		/// Main entry point of the Altaxo auto updater program.
 		/// </summary>
 		/// <param name="args">The arguments must contain:
 		/// <para>args[0] is either 'stable' or 'unstable'</para>
@@ -66,12 +66,13 @@ namespace Altaxo.Serialization.AutoUpdates
 				for (int i = 60; i >= 0; --i)
 				{
 					System.Threading.Thread.Sleep(1000);
-					Console.WriteLine("Program ends in {0} s\r", i);
+					Console.Write("Program ends in {0} s\r", i);
 				}
 
 			}
 		}
 
+		/// <summary>Prints the usage information.</summary>
 		static void PrintUsage()
 		{
 			Console.WriteLine(
