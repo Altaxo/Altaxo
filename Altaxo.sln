@@ -66,9 +66,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBase.Presentation", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "Libraries\SD\Libraries\Mono.Cecil\Mono.Cecil.csproj", "{D68133BD-1E63-496E-9EDE-4FBDBF77B486}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateDownloader", "Libraries\UpdateDownloader\UpdateDownloader.csproj", "{2DECA055-4255-4110-88A1-5486A24DFEB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdateDownloader", "Libraries\UpdateDownloader\AutoUpdateDownloader.csproj", "{2DECA055-4255-4110-88A1-5486A24DFEB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateInstaller", "Libraries\UpdateInstaller\UpdateInstaller.csproj", "{DDABD252-6327-441B-8B35-08F19AEEC4AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdateInstaller", "Libraries\UpdateInstaller\AutoUpdateInstaller.csproj", "{DDABD252-6327-441B-8B35-08F19AEEC4AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
