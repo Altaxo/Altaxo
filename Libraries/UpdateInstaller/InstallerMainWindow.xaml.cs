@@ -47,10 +47,14 @@ namespace Altaxo.Serialization.AutoUpdates
 		public double _progress;
 		public string _message = string.Empty;
 		System.Windows.Threading.DispatcherTimer _timer;
+		Brush _normalBackground;
+		bool _isCancellationRequested = false;
+		bool _installerFinishedSuccessfully = false;
 
 		public InstallerMainWindow()
 		{
 			InitializeComponent();
+			_normalBackground = _guiMessages.Background;
 			Loaded += new RoutedEventHandler(EhLoaded);
 		}
 
@@ -58,16 +62,45 @@ namespace Altaxo.Serialization.AutoUpdates
 		{
 			if (null != _installer)
 			{
-				_btOk.IsEnabled = false;
-
-				_timer = new System.Windows.Threading.DispatcherTimer();
-				_timer.Tick += new EventHandler(EhTimerTick);
-				_timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
-				_timer.Start();
-
-				_installerTask = new System.Threading.Tasks.Task(RunInstaller);
-				_installerTask.Start();
+				InstallerTaskSetupAndStart();
 			}
+		}
+
+		private void InstallerTaskSetupAndStart()
+		{
+			_btOk.IsEnabled = false;
+			_btCancel.IsEnabled = true;
+			_btTryAgain.IsEnabled = false;
+
+			_isCancellationRequested = false;
+			_guiMessages.Background = _normalBackground;
+
+			_timer = new System.Windows.Threading.DispatcherTimer();
+			_timer.Tick += new EventHandler(EhTimerTick);
+			_timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
+			_timer.Start();
+
+			_installerTask = new System.Threading.Tasks.Task(RunInstaller);
+			_installerTask.Start();
+		}
+
+		private AggregateException InstallerTaskCleanup()
+		{
+			_timer.Tick -= EhTimerTick;
+			_timer.Stop();
+			_timer = null;
+
+			var exception = _installerTask.Exception;
+			_installerTask.Dispose();
+			_installerTask = null;
+			_isCancellationRequested = false;
+
+			_installerFinishedSuccessfully = (null == exception);
+			_btOk.IsEnabled = true;
+			_btTryAgain.IsEnabled = !_installerFinishedSuccessfully;
+			_btCancel.IsEnabled = false;
+
+			return exception;
 		}
 
 		public void SetErrorMessage(string message)
@@ -95,25 +128,19 @@ namespace Altaxo.Serialization.AutoUpdates
 
 			if (_installerTask.IsCompleted)
 			{
-				_timer.Tick -= EhTimerTick;
-				_timer.Stop();
-				_timer = null;
-
-				var exception = _installerTask.Exception;
-				_btOk.IsEnabled = true;
-				_installerTask.Dispose();
-				_installerTask = null;
-
+				var exception = InstallerTaskCleanup();
 				if (null != exception)
-					throw exception;
+				{
+					SetErrorMessage(UpdateInstallerMain.ErrorIntroduction + exception.ToString());
+				}
 			}
 		}
 
-
-		private void ReportProgressAsync(double progress, string message)
+		private bool ReportProgressAsync(double progress, string message)
 		{
 			_progress = progress;
 			_message = message;
+			return _isCancellationRequested;
 		}
 
 		private void RunInstaller()
@@ -124,6 +151,19 @@ namespace Altaxo.Serialization.AutoUpdates
 		private void EhOk(object sender, RoutedEventArgs e)
 		{
 			this.Close();
+		}
+
+		private void EhTryAgain(object sender, RoutedEventArgs e)
+		{
+			if (null == _installerTask && null == _timer)
+			{
+				InstallerTaskSetupAndStart();
+			}
+		}
+
+		private void EhCancel(object sender, RoutedEventArgs e)
+		{
+			_isCancellationRequested = true;
 		}
 	}
 }

@@ -69,7 +69,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
 
-		public void Run(Action<double,string> ReportProgress)
+		public void Run(Func<double,string,bool> ReportProgress)
 		{
 			string pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
 
@@ -90,7 +90,8 @@ namespace Altaxo.Serialization.AutoUpdates
 					}
 					catch (Exception ex)
 					{
-						ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s", Math.Round((DateTime.UtcNow-startWaitingTime).TotalSeconds, 1)));
+						if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1))))
+							throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
 						System.Threading.Thread.Sleep(250);
 					}
 					finally
@@ -107,12 +108,14 @@ namespace Altaxo.Serialization.AutoUpdates
 				// remove the old files
 				ReportProgress(0, "Remove old installation files ...");
 				RemoveOldInstallationFiles();
-				ReportProgress(0, "Old installation files successfully removed!");
+				if (ReportProgress(0, "Old installation files successfully removed!"))
+					throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
 
 				// now delete all orphaned directories in the installation directory
 				ReportProgress(0, "Deleting orphaned directories ...");
 				DeleteDirIfOrphaned(new DirectoryInfo(_pathToInstallation));
-				ReportProgress(0, "Orphaned directories successfully deleted!");
+				if (ReportProgress(0, "Orphaned directories successfully deleted!"))
+					throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
 
 				// and extract the new files
 				ReportProgress(0, "Extracting new installation files ...");
@@ -129,7 +132,7 @@ namespace Altaxo.Serialization.AutoUpdates
 			_eventWaitHandle.Set();
 		}
 
-		private void ExtractPackageFiles(FileStream fs, Action<double, string> ReportProgress)
+		private void ExtractPackageFiles(FileStream fs, Func<double, string,bool> ReportProgress)
 		{
 			var zipFile = new ZipFile(fs);
 			byte[] buffer = new byte[4096];

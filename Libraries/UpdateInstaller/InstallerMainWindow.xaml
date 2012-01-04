@@ -8,12 +8,20 @@
 			<RowDefinition/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<GroupBox Header="Progress">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+			<GroupBox Header="Progress" Grid.ColumnSpan="3">
 			<ProgressBar x:Name="_guiProgress" Height="30" Margin="0,4,0,4" Minimum="0" Maximum="100" Value="0"/>
 		</GroupBox>
-		<GroupBox Header="Messages" Grid.Row="1">
+		<GroupBox Header="Messages" Grid.Row="1" Grid.ColumnSpan="3">
 			<TextBox x:Name="_guiMessages" Margin="0,4,0,4" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" />
 		</GroupBox>
 		<Button x:Name="_btOk" Content="OK" Grid.Row="2" Margin="4" IsDefault="True" Click="EhOk"/>
+		<Button x:Name="_btTryAgain" Content="Try again" Grid.Row="3" Grid.Column="1" Margin="4" IsEnabled="False" Click="EhTryAgain"/>
+		<Button x:Name="_btCancel" Content="Cancel" Grid.Row="3" Grid.Column="2" Margin="4" IsEnabled="False" Click="EhCancel"/>
+			
 	</Grid>
 </Window>

@@ -33,7 +33,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		static System.Windows.Application app;
 		static InstallerMainWindow mainWindow;
 
-		const string ErrorIntroduction = "An error occured during the auto update installation of Altaxo:\r\n\r\n";
+		public const string ErrorIntroduction = "An error occured during the auto update installation of Altaxo:\r\n\r\n";
 
 		[STAThread]
 		static void Main(string[] args)
