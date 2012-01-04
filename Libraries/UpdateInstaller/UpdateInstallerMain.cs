@@ -84,8 +84,8 @@ namespace Altaxo.Serialization.AutoUpdates
 						else
 						{
 							// Start a new process with elevated privileges and wait for exit 
-							var templateProc = System.Diagnostics.Process.GetCurrentProcess().StartInfo;
-							var proc = new System.Diagnostics.ProcessStartInfo(templateProc.FileName, templateProc.Arguments);
+							var proc = new System.Diagnostics.ProcessStartInfo();
+							proc.FileName = System.Reflection.Assembly.GetEntryAssembly().Location;
 							args[2] = "2";
 							var stb = new StringBuilder();
 							foreach (var s in args)

@@ -32,6 +32,8 @@ namespace Altaxo.Serialization.AutoUpdates
 {
 	public class UpdateInstaller
 	{
+		static System.Threading.EventWaitHandle _eventWaitHandle;
+
 		const string PackListRelativePath = "doc\\PackList.txt";
 		string _eventName;
 		string _packageName;
@@ -79,6 +81,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
 				// warte auf das Close von Altaxo
 				FileStream axoExe = null;
+				DateTime startWaitingTime = DateTime.UtcNow;
 				do
 				{
 					try
@@ -87,7 +90,7 @@ namespace Altaxo.Serialization.AutoUpdates
 					}
 					catch (Exception ex)
 					{
-						ReportProgress(0, "Waiting for shutdown of Altaxo ...");
+						ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s", Math.Round((DateTime.UtcNow-startWaitingTime).TotalSeconds, 1)));
 						System.Threading.Thread.Sleep(250);
 					}
 					finally
@@ -122,8 +125,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
 		public static void SetEvent(string eventName)
 		{
-			var waitHandle = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset, eventName);
-			waitHandle.Set();
+			_eventWaitHandle = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.ManualReset, eventName);
+			_eventWaitHandle.Set();
 		}
 
 		private void ExtractPackageFiles(FileStream fs, Action<double, string> ReportProgress)
@@ -132,12 +135,13 @@ namespace Altaxo.Serialization.AutoUpdates
 			byte[] buffer = new byte[4096];
 
 			double totalNumberOfFiles =  zipFile.Count;
-			int currentProcessedFile = 0;
+			int currentProcessedFile = -1;
 			foreach (ZipEntry entry in zipFile)
 			{
+				++currentProcessedFile;
 				var destinationFileName = Path.Combine(_pathToInstallation, entry.Name);
 				var destinationPath = Path.GetDirectoryName(destinationFileName);
-				ReportProgress(currentProcessedFile/totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName));
+				ReportProgress(100*currentProcessedFile/totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName));
 
 				if (!Directory.Exists(destinationPath))
 					Directory.CreateDirectory(destinationPath);

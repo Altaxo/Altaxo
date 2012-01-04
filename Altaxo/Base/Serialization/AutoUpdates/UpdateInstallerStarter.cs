@@ -72,7 +72,7 @@ namespace Altaxo.Serialization.AutoUpdates
 				// so we can start the updater program
 
 				var eventName = System.Guid.NewGuid().ToString();
-				var waitForRemoteStartSignal = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset, eventName);
+				var waitForRemoteStartSignal = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.ManualReset, eventName);
 
 				var processInfo = new System.Diagnostics.ProcessStartInfo();
 				processInfo.FileName = installerFullDestName;

@@ -29,20 +29,11 @@ namespace Altaxo.Serialization.AutoUpdates
 		public InstallerMainWindow()
 		{
 			InitializeComponent();
+			Loaded += new RoutedEventHandler(EhLoaded);
 		}
 
-		public void SetErrorMessage(string message)
+		void EhLoaded(object sender, RoutedEventArgs e)
 		{
-			_guiProgress.Value = 0;
-			_guiMessages.AppendText(message);
-			_guiMessages.Background = new SolidColorBrush(Colors.LightPink);
-		}
-
-
-		protected override void OnInitialized(EventArgs e)
-		{
-			base.OnInitialized(e);
-
 			if (null != _installer)
 			{
 				_btOk.IsEnabled = false;
@@ -56,6 +47,14 @@ namespace Altaxo.Serialization.AutoUpdates
 				_installerTask.Start();
 			}
 		}
+
+		public void SetErrorMessage(string message)
+		{
+			_guiProgress.Value = 0;
+			_guiMessages.AppendText(message);
+			_guiMessages.Background = new SolidColorBrush(Colors.LightPink);
+		}
+
 
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
 		{

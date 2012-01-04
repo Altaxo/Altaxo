@@ -96,9 +96,10 @@ namespace Altaxo.Serialization.AutoUpdates
 
 						var packageUrl = _downloadURL + PackageInfo.GetPackageFileName(parsedVersion.Version);
 						var packageFileName = Path.Combine(_storagePath, PackageInfo.GetPackageFileName(parsedVersion.Version));
-						Console.Write("Start download of package file ...");
+						Console.WriteLine("Starting download of package file ...");
+						webClient.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
 						webClient.DownloadFile(packageUrl, packageFileName); // download the package
-						Console.WriteLine(" ok!");
+						Console.WriteLine("Download finished!");
 
 						// make at least the test for the right length
 						var fileInfo = new FileInfo(packageFileName);
@@ -114,6 +115,11 @@ namespace Altaxo.Serialization.AutoUpdates
 					}
 				}
 			}
+		}
+
+		void webClient_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+		{
+			Console.Write("{0}%\r",e.ProgressPercentage);
 		}
 
 
