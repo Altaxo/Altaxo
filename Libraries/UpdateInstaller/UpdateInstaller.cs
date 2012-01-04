@@ -67,7 +67,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
 
-		public void Run()
+		public void Run(Action<double,string> ReportProgress)
 		{
 			string pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
 
@@ -75,9 +75,7 @@ namespace Altaxo.Serialization.AutoUpdates
 			{
 				fs.Seek(0, SeekOrigin.Begin);
 				// signal Altaxo, that we have the stream now
-				var waitHandle = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset, _eventName);
-				waitHandle.Set();
-				Console.WriteLine("Event has been set");
+				SetEvent(_eventName);
 
 				// warte auf das Close von Altaxo
 				FileStream axoExe = null;
@@ -89,7 +87,7 @@ namespace Altaxo.Serialization.AutoUpdates
 					}
 					catch (Exception ex)
 					{
-						Console.WriteLine("Waiting for shutdown of Altaxo: {0} {1}", ex.GetType().ToString(), ex.Message);
+						ReportProgress(0, "Waiting for shutdown of Altaxo ...");
 						System.Threading.Thread.Sleep(250);
 					}
 					finally
@@ -101,38 +99,45 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
 
-				Console.WriteLine("Altaxo now has ended and is ready to be updated");
+				ReportProgress(0,"Altaxo now has ended and is ready to be updated");
 
 				// remove the old files
-				Console.Write("Remove old installation files...");
+				ReportProgress(0, "Remove old installation files ...");
 				RemoveOldInstallationFiles();
-				Console.WriteLine("ok!");
+				ReportProgress(0, "Old installation files successfully removed!");
 
 				// now delete all orphaned directories in the installation directory
-				Console.Write("Deleting orphaned directories...");
+				ReportProgress(0, "Deleting orphaned directories ...");
 				DeleteDirIfOrphaned(new DirectoryInfo(_pathToInstallation));
-				Console.WriteLine("ok!");
+				ReportProgress(0, "Orphaned directories successfully deleted!");
 
 				// and extract the new files
-				Console.WriteLine("Extracting new files...");
-				ExtractPackageFiles(fs);
+				ReportProgress(0, "Extracting new installation files ...");
+				ExtractPackageFiles(fs, ReportProgress);
+				ReportProgress(100, "All new installation files extracted, auto update finished successfully!");
 
 				fs.Close();
 			}
 		}
 
+		public static void SetEvent(string eventName)
+		{
+			var waitHandle = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset, eventName);
+			waitHandle.Set();
+		}
 
-
-		private void ExtractPackageFiles(FileStream fs)
+		private void ExtractPackageFiles(FileStream fs, Action<double, string> ReportProgress)
 		{
 			var zipFile = new ZipFile(fs);
 			byte[] buffer = new byte[4096];
 
+			double totalNumberOfFiles =  zipFile.Count;
+			int currentProcessedFile = 0;
 			foreach (ZipEntry entry in zipFile)
 			{
 				var destinationFileName = Path.Combine(_pathToInstallation, entry.Name);
 				var destinationPath = Path.GetDirectoryName(destinationFileName);
-				Console.WriteLine("{0} => {1}", entry.Name, destinationFileName);
+				ReportProgress(currentProcessedFile/totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName));
 
 				if (!Directory.Exists(destinationPath))
 					Directory.CreateDirectory(destinationPath);
@@ -154,8 +159,15 @@ namespace Altaxo.Serialization.AutoUpdates
 
 		public bool PackListFileExists()
 		{
-			string fullName = Path.Combine(_pathToInstallation, PackListRelativePath);
-			return File.Exists(fullName);
+			return File.Exists(PackListFileFullName);
+		}
+
+		public string PackListFileFullName
+		{
+			get
+			{
+				return Path.Combine(_pathToInstallation, PackListRelativePath);
+			}
 		}
 
 		public bool PackListFileIsWriteable()

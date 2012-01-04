@@ -30,78 +30,130 @@ namespace Altaxo.Serialization.AutoUpdates
 {
 	class UpdateInstallerMain
 	{
+		static System.Windows.Application app;
+		static InstallerMainWindow mainWindow;
+
+		const string ErrorIntroduction = "An error occured during the auto update installation of Altaxo:\r\n\r\n";
+
+		[STAThread]
 		static void Main(string[] args)
 		{
-			System.Diagnostics.Debugger.Launch();
+			// System.Diagnostics.Debugger.Launch();
 
 			try
 			{
-			// args[0]: the name of the event that must be signalled when the installer is ready to install
-			// args[1]: name of the package file to use
-			// args[2]: either 0 or 1, if 1 then Altaxo should be restarted after installation. Furthermore, Bit1=1 indicates that this process was started with elevated privileges.
-			// args[3]: argument full name of the Altaxo executable
-			// args[4]: and more arguments: the original arguments of the Altaxo executable
+				// args[0]: the name of the event that must be signalled when the installer is ready to install
+				// args[1]: name of the package file to use
+				// args[2]: either 0 or 1, if 1 then Altaxo should be restarted after installation. Furthermore, Bit1=1 indicates that this process was started with elevated privileges.
+				// args[3]: argument full name of the Altaxo executable
+				// args[4]: and more arguments: the original arguments of the Altaxo executable
 
-			if (args.Length <4 )
-				throw new ArgumentOutOfRangeException("Programm called with less than 4 arguments");
+				if (args.Length < 4)
+				{
+					StartVisualAppWithErrorMessage(null, 
+						"Programm called with less than 4 arguments, but at least 4 arguments are required:\r\n\r\n"+
+						"args[0]: name of the event the installer is signalling when it is ready to install\r\n"+
+						"args[1]: full path to the auto update package file\r\n"+
+						"args[2]: either 0,1, or 2. If 1, Altaxo is restarted after the installation is finished. A value of 2 is an indication that this program was started with elevated privileges\r\n"+
+						"args[3]: full path to the old Altaxo executable\r\n"+
+						"args[4..n]: arguments that will be used to restart Altaxo (if args[2] is 1)\r\n"
+						);
+					return;
+				}
 
-			for (int i = 0; i < args.Length; ++i)
-				Console.WriteLine("args[{0}]: {1}", i, args[i]);
-
-			int options = int.Parse(args[2]);
-			bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
-			bool restartAltaxo = (0 != (options & 1)) && !wasStartedWithElevatedPrivileges;
-
-
-			//var currentProgramVersion = new Version(args[1]);
+				string eventName = args[0];
+				int options = int.Parse(args[2]);
+				bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
+				bool restartAltaxo = (0 != (options & 1)) && !wasStartedWithElevatedPrivileges;
 
 				var installer = new UpdateInstaller(args[0], args[1], args[3]);
-				if (!installer.PackListFileExists())
-					throw new InvalidOperationException("PackList.txt of old installation not found!");
-
-				if (!installer.PackListFileIsWriteable())
+				if (installer.PackListFileExists())
 				{
-					if (0!=(options & 2))
-						throw new InvalidOperationException("There is no write access to the PackList.txt file, thus probably there is also no write access to the installation directory");
+					if (installer.PackListFileIsWriteable())
+					{
+						StartVisualApp(installer);
+					}
+					else // Package file is not writetable
+					{
+						if (0 != (options & 2)) // do we have already elevated privileges?
+						{
+							StartVisualAppWithErrorMessage(eventName,
+								string.Format(ErrorIntroduction + "There is still no write access to the package file of the old installation, try to update again later!"));
+							return; // returns is ok here, no need to restart Altaxo since we run with elevated privileges
+						}
+						else
+						{
+							// Start a new process with elevated privileges and wait for exit 
+							var templateProc = System.Diagnostics.Process.GetCurrentProcess().StartInfo;
+							var proc = new System.Diagnostics.ProcessStartInfo(templateProc.FileName, templateProc.Arguments);
+							args[2] = "2";
+							var stb = new StringBuilder();
+							foreach (var s in args)
+								stb.AppendFormat("\"{0}\"\t", s);
 
-					var templateProc = System.Diagnostics.Process.GetCurrentProcess().StartInfo;
-					var proc = new System.Diagnostics.ProcessStartInfo(templateProc.FileName,templateProc.Arguments);
-					args[2] = (options|2).ToString();
-					var stb = new StringBuilder();
-					foreach (var s in args)
-						stb.AppendFormat("\"{0}\"\t", s);
+							proc.Arguments = stb.ToString();
+							proc.Verb = "runas";
+							var runProcWithElevated = System.Diagnostics.Process.Start(proc);
 
-					proc.Arguments = stb.ToString();
-					proc.Verb = "runas";
-					var runProcWithElevated = System.Diagnostics.Process.Start(proc);
-						
-					if(restartAltaxo) 
-						runProcWithElevated.WaitForExit();
+							if (restartAltaxo)
+								runProcWithElevated.WaitForExit();
+						}
+					}
 				}
-				else
+				else // package file don't exist
 				{
-					installer.Run();
+					StartVisualAppWithErrorMessage(eventName, string.Format("{0}Package file of old installation was not found (file: {1})!\r\nPlease reinstall Altaxo manually!", ErrorIntroduction, installer.PackListFileFullName));
 				}
 
 				if (restartAltaxo)
 				{
 					StringBuilder stb = new StringBuilder();
-					for(int i=4;i<args.Length;++i)
-						stb.AppendFormat("\"{0}\"\t",args[i]);
+					for (int i = 4; i < args.Length; ++i)
+						stb.AppendFormat("\"{0}\"\t", args[i]);
 					System.Diagnostics.Process.Start(args[3], stb.ToString());
 				}
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("{0} {1}",ex.GetType().ToString(), ex.Message);
+				StartVisualAppWithErrorMessage(args[0], string.Format("{0}{1}", ex.GetType().ToString(), ex.ToString()));
 			}
-
-			Console.Write("Press any key:");
-			Console.ReadKey();
 		}
 
+		static void StartVisualApp(UpdateInstaller installer)
+		{
+			if (null == app)
+			{
+				app = new System.Windows.Application();
+			}
+			if (null == mainWindow)
+			{
+				mainWindow = new InstallerMainWindow();
+				mainWindow._installer = installer;
+				app.Run(mainWindow);
+			}
+		}
 
-	
+		static void StartVisualAppWithErrorMessage(string eventName, string message)
+		{
+			if (null != eventName)
+				UpdateInstaller.SetEvent(eventName); // Altaxo is waiting for this event to finish itself
+
+			if (null == app)
+			{
+				app = new System.Windows.Application();
+			}
+			if (null == mainWindow)
+			{
+				mainWindow = new InstallerMainWindow();
+				mainWindow.SetErrorMessage(message);
+				app.Run(mainWindow);
+			}
+			else
+			{
+				mainWindow.SetErrorMessage(message);
+			}
+		}
+
 
 	}
 }

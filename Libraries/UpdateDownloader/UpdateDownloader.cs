@@ -45,7 +45,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
 			_storagePath = PackageInfo.GetDownloadDirectory(loadUnstable);
 
-			if(loadUnstable)
+			if (loadUnstable)
 				_downloadURL = "http://downloads.sourceforge.net/project/altaxo/Altaxo/Altaxo-Latest-Unstable/";
 			else
 				_downloadURL = "http://downloads.sourceforge.net/project/altaxo/Altaxo/Altaxo-Latest-Stable/";
@@ -74,33 +74,42 @@ namespace Altaxo.Serialization.AutoUpdates
 			using (FileStream fs = new FileStream(versionFileFullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
 			{
 				fs.Seek(0, SeekOrigin.Begin);
-				var alreadyDownloadedVersion = PackageInfo.GetPresentDownloadedPackage(fs,_storagePath);
+				var alreadyDownloadedVersion = PackageInfo.GetPresentDownloadedPackage(fs, _storagePath);
 				fs.Seek(0, SeekOrigin.Begin);
 
 				using (var webClient = new System.Net.WebClient())
 				{
+					Console.Write("Starting to download version file ...");
 					var versionData = webClient.DownloadData(_downloadURL + PackageInfo.VersionFileName);
-					// we leave the file open, thus no other can access it
+					Console.WriteLine(" ok! ({0} bytes downloaded)", versionData.Length);
+					// we leave the file open, thus no other process can access it
 					var parsedVersion = PackageInfo.FromStream(new MemoryStream(versionData));
 
-					if (null == alreadyDownloadedVersion || Comparer<Version>.Default.Compare(parsedVersion.Version, alreadyDownloadedVersion.Version) != 0) // if the remote version is different from the already downloaded (we don't use higher version here, since it may unintentionally set to a high version)
-					{
-						fs.Write(versionData, 0, versionData.Length);
-						fs.Flush();
-						if (Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0) // if the remote version is higher than the currently installed Altaxo version
-						{
-							CleanDirectory(versionFileFullName); // Clean old downloaded files from the directory
-							var packageUrl = _downloadURL + PackageInfo.GetPackageFileName(parsedVersion.Version);
-							var packageFileName = Path.Combine(_storagePath, PackageInfo.GetPackageFileName(parsedVersion.Version));
-							webClient.DownloadFile(packageUrl,packageFileName); // download the package
+					fs.Write(versionData, 0, versionData.Length);
+					fs.Flush(); // write the new version to disc in order to change the write date
 
-							// make at least the test for the right length
-							var fileInfo = new FileInfo(packageFileName);
-							if (fileInfo.Length != parsedVersion.FileLength)
-							{
-								Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted", fileInfo.Length, parsedVersion.FileLength);
-								fileInfo.Delete();
-							}
+					if (null == alreadyDownloadedVersion || Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0) // if the remote version is higher than the currently installed Altaxo version
+					{
+						Console.Write("Cleaning download directory ...");
+						CleanDirectory(versionFileFullName); // Clean old downloaded files from the directory
+						Console.WriteLine(" ok!");
+
+						var packageUrl = _downloadURL + PackageInfo.GetPackageFileName(parsedVersion.Version);
+						var packageFileName = Path.Combine(_storagePath, PackageInfo.GetPackageFileName(parsedVersion.Version));
+						Console.Write("Start download of package file ...");
+						webClient.DownloadFile(packageUrl, packageFileName); // download the package
+						Console.WriteLine(" ok!");
+
+						// make at least the test for the right length
+						var fileInfo = new FileInfo(packageFileName);
+						if (fileInfo.Length != parsedVersion.FileLength)
+						{
+							Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted!", fileInfo.Length, parsedVersion.FileLength);
+							fileInfo.Delete();
+						}
+						else
+						{
+							Console.WriteLine("Test file length of downloaded package file ... ok!");
 						}
 					}
 				}
@@ -114,7 +123,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		{
 			try
 			{
-				var files = Directory.GetFiles(_storagePath,"Altaxo*.zip");
+				var files = Directory.GetFiles(_storagePath, "Altaxo*.zip");
 				foreach (var fileName in files)
 				{
 					if (0 == string.Compare(fileName, withExceptionOfThisFile, true))

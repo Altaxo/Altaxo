@@ -23,40 +23,43 @@
 			<CheckBox x:Name="_guiEnableAutoUpdates" Content="Enable auto updates" IsChecked="True" FontWeight="Bold" Margin="0" Checked="EhEnableAutoUpdatesChanged" Unchecked="EhEnableAutoUpdatesChanged"  />
 		</GroupBox.Header>
 		<StackPanel>
-		<GroupBox Margin="0,4,0,0">
+			<GroupBox Margin="0,4,0,0">
 				<GroupBox.Header>
 					<Label Content="Download" FontWeight="Bold" FontStyle="Italic"/>
 				</GroupBox.Header>
 
-					<StackPanel>
+				<StackPanel>
 					<GroupBox Header="Versions to download"  Margin="0,4,0,0"  >
-					<StackPanel>
-						<RadioButton x:Name="_guiDownloadStableOnly"  Content="Stable versions only"/>
-						<RadioButton x:Name="_guiDownloadStableAndUnstable" Content="Stable and unstable versions"/>
-					</StackPanel>
-				</GroupBox>
+						<StackPanel>
+							<RadioButton x:Name="_guiDownloadStableOnly"  Content="Stable versions only"/>
+							<RadioButton x:Name="_guiDownloadStableAndUnstable" Content="Stable and unstable versions"/>
+						</StackPanel>
+					</GroupBox>
 					<GroupBox Header="Look for a new version"  Margin="0,4,0,0">
-					<StackPanel>
-						<RadioButton x:Name="_guiDownloadAlways" Content="Every time Altaxo is running"/>
+						<StackPanel>
+							<RadioButton x:Name="_guiDownloadAlways" Content="Every time Altaxo is running"/>
 							<RadioButton x:Name="_guiDownloadWeekly" Content="Once a week"/>
 							<RadioButton x:Name="_guiDownloadMonthly" Content="Once a month"/>
-					</StackPanel>
-				</GroupBox>
-			</StackPanel>
-		</GroupBox>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Header="Download window">
+						<CheckBox x:Name="_guiShowDownloadWindow" Content="Show download window"/>
+					</GroupBox>
+				</StackPanel>
+			</GroupBox>
 
-		<GroupBox>
+			<GroupBox>
 				<GroupBox.Header>
 					<Label Content="Installation" FontWeight="Bold" FontStyle="Italic"/>
 				</GroupBox.Header>
-			<GroupBox Header="Install a new version">
-				<StackPanel>
+				<GroupBox Header="Install a new version">
+					<StackPanel>
 						<RadioButton x:Name="_guiInstallAtStartup"  Content="When Altaxo is starting"/>
 						<RadioButton x:Name="_guiInstallAtShutdown" Content="When Altaxo is ending"/>
 						<RadioButton x:Name="_guiInstallEitherStartupOrShutdown" Content="Either Altaxo is starting or ending"/>
 					</StackPanel>
+				</GroupBox>
 			</GroupBox>
-		</GroupBox>
-	</StackPanel>
+		</StackPanel>
 	</GroupBox>
 </UserControl>

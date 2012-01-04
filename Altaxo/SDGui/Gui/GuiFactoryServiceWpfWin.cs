@@ -60,11 +60,9 @@ namespace Altaxo.Gui
 			}
 		}
 
-	
-
     public override bool InvokeRequired()
     {
-      return Current.Workbench.SynchronizingObject.InvokeRequired;
+			return Current.Workbench.SynchronizingObject.InvokeRequired;
     }
 
 		/// <summary>
@@ -160,7 +158,10 @@ namespace Altaxo.Gui
     /// <returns>True if the user answered with Yes, otherwise false.</returns>
     public override bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
     {
-			return System.Windows.MessageBoxResult.Yes == Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
+			if(null!=Current.Workbench)
+				return System.Windows.MessageBoxResult.Yes == Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
+			else
+				return System.Windows.MessageBoxResult.Yes == System.Windows.MessageBox.Show(txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
     }
 
     /// <summary>

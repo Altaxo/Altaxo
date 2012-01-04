@@ -18,6 +18,7 @@ namespace Altaxo.Settings
 		public bool EnableAutoUpdates { get; set; }
 		public bool DownloadUnstableVersion { get; set; }
 		public int DownloadIntervalInDays { get; set; }
+		public bool ShowDownloadWindow { get; set; }
 		public bool InstallAtStartup { get; set; }
 		public bool InstallAtShutdown { get; set; }
 	}

@@ -22,6 +22,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		{
 			var updateSettings = Current.PropertyService.Get(Altaxo.Settings.AutoUpdateSettings.SettingsStoragePath, new Altaxo.Settings.AutoUpdateSettings());
 
+
 			if ((updateSettings.InstallAtStartup && !isAltaxoCurrentlyStarting) &&
 				 (updateSettings.InstallAtShutdown && isAltaxoCurrentlyStarting))
 				return false;
@@ -51,6 +52,14 @@ namespace Altaxo.Serialization.AutoUpdates
 				if (info.Version <= entryAssemblyVersion)
 					return false; // no need to update
 
+				var question = string.Format(
+					"A new Altaxo update is available (from current version {0} to new {1} version {2}).\r\n\r\n" +
+					"If you don't want to have auto updates, please deactivate them by choosing 'Tools'->'Options' menu in Altaxo.\r\n" +
+					"\r\n"+
+				"Do you want to update to {1} version {2} now?", entryAssemblyVersion, PackageInfo.GetStableIdentifier(info.IsUnstableVersion).ToLower(), info.Version);
+				
+				if (false == Current.Gui.YesNoMessageBox(question, "Altaxo update available", true))
+					return false; // user don't want to update
 
 				// copy the Updater executable to the download folder
 				var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location);

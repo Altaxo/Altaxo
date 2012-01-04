@@ -60,11 +60,16 @@ namespace Altaxo.Serialization.AutoUpdates
 
 			var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe,args);
 
-			processInfo.CreateNoWindow = true;
-			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-
-			processInfo.CreateNoWindow = false;
-			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+			if (updateSettings.ShowDownloadWindow)
+			{
+				processInfo.CreateNoWindow = false;
+				processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+			}
+			else
+			{
+				processInfo.CreateNoWindow = true;
+				processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+			}
 
 			try
 			{

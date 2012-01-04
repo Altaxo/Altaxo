@@ -58,6 +58,18 @@ namespace Altaxo.Gui.Settings
 			}
 		}
 
+		public bool ShowDownloadWindow
+		{
+			get
+			{
+				return true == _guiShowDownloadWindow.IsChecked;
+			}
+			set
+			{
+				_guiShowDownloadWindow.IsChecked = value;
+			}
+		}
+
 		public int DownloadInterval
 		{
 			get

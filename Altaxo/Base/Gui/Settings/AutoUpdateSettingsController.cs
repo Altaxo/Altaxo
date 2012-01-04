@@ -11,7 +11,9 @@ namespace Altaxo.Gui.Settings
 	{
 		bool EnableAutoUpdates { get; set; }
 		bool DownloadUnstableVersion { get; set; }
+		bool ShowDownloadWindow { get; set; }
 		int DownloadInterval { get; set; }
+
 
 		/// <summary>When to install Altaxo: Bit0: at startup; Bit1: at shutdown</summary>
 		int InstallAt { get; set; }
@@ -50,6 +52,7 @@ namespace Altaxo.Gui.Settings
 				_view.EnableAutoUpdates = _doc.EnableAutoUpdates;
 				_view.DownloadUnstableVersion = _doc.DownloadUnstableVersion;
 				_view.DownloadInterval = _doc.DownloadIntervalInDays;
+				_view.ShowDownloadWindow = _doc.ShowDownloadWindow;
 				_view.InstallAt = (_doc.InstallAtStartup ? 1 : 0) + ( _doc.InstallAtShutdown ? 2 : 0);
 			}
 		}
@@ -90,6 +93,7 @@ namespace Altaxo.Gui.Settings
 			_doc.EnableAutoUpdates = _view.EnableAutoUpdates;
 			_doc.DownloadUnstableVersion = _view.DownloadUnstableVersion;
 			_doc.DownloadIntervalInDays = _view.DownloadInterval;
+			_doc.ShowDownloadWindow = _view.ShowDownloadWindow;
 			_doc.InstallAtStartup = 0 != (_view.InstallAt & 1);
 			_doc.InstallAtShutdown =0 != (_view.InstallAt & 2);
 

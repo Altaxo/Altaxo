@@ -43,11 +43,14 @@ namespace Altaxo.Serialization.AutoUpdates
 			{
 
 				if (args.Length != 2)
+				{
+					PrintUsage();
 					throw new ArgumentOutOfRangeException("Programm called with less than or more than 2 arguments");
+				}
 
 				bool loadUnstableVersion;
 				if (!PackageInfo.IsValidStableIdentifier(args[0], out loadUnstableVersion))
-					throw new ArgumentException("first argument is not a valid stable identifier (is neither 'stable' nor 'unstable')");
+					throw new ArgumentException("First argument is not a valid stable identifier (is neither 'stable' nor 'unstable')");
 
 				var currentProgramVersion = new Version(args[1]);
 
@@ -56,11 +59,27 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 			catch (Exception ex) // catch all Exceptions silently
 			{
+				System.Environment.ExitCode = 1;
 				Console.WriteLine(ex.ToString());
-			}
 
-			//Console.Write("Downloader finished; press any key:");
-			//Console.ReadKey();
+				Console.WriteLine();
+				for (int i = 60; i >= 0; --i)
+				{
+					System.Threading.Thread.Sleep(1000);
+					Console.WriteLine("Program ends in {0} s\r", i);
+				}
+
+			}
 		}
+
+		static void PrintUsage()
+		{
+			Console.WriteLine(
+				"This program has to be called with 2 arguments:\r\n\r\n" +
+				"args[0]: either 'stable' or 'unstable', depending on whether to download only the stable versions or both stable and unstable versions\r\n" +
+				"args[1]: the version string of the currently installed Altaxo version\r\n\r\n"
+				);
+		}
+
 	}
 }
