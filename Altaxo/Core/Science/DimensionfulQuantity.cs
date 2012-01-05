@@ -36,16 +36,25 @@ namespace Altaxo.Science
 		SIPrefix _prefix;
 		IUnit _unit;
 
+		/// <summary>Creates a dimensionless quantity with the provided value.</summary>
+		/// <param name="value">Value.</param>
 		public DimensionfulQuantity(double value)
 			: this(value, null, null)
 		{
 		}
 
+		/// <summary>Creates a quantity with the provided value in the given unit.</summary>
+		/// <param name="value">The value of the created quantity.</param>
+		/// <param name="unit">The unit of the created quantity.</param>
 		public DimensionfulQuantity(double value, IUnit unit)
 			: this(value, null, unit)
 		{
 		}
 
+		/// <summary>Creates a quantity with the provided value in the given prefixed unit.</summary>
+		/// <param name="value">The value of the created quantity.</param>
+		/// <param name="prefix">The prefix of the unit.</param>
+		/// <param name="unit">The unit of the created quantity.</param>
 		public DimensionfulQuantity(double value, SIPrefix prefix, IUnit unit)
 		{
 			_value = value;
@@ -53,21 +62,35 @@ namespace Altaxo.Science
 			_unit = unit;
 		}
 
+		/// <summary>Creates a quantity with the provided value in the given prefixed unit.</summary>
+		/// <param name="value">The value of the created quantity.</param>
+		/// <param name="prefixedUnit">The prefixed unit of the created quanity.</param>
+		public DimensionfulQuantity(double value, IPrefixedUnit prefixedUnit)
+		{
+			_value = value;
+			_prefix = prefixedUnit.Prefix;
+			_unit = prefixedUnit.Unit;
+		}
+
+		/// <summary>Determines whether this instance is equal to another quanity in all three components (value, prefix and unit). This is <b>not</b> a comparison for the physical equality of the quantities.</summary>
+		/// <param name="a">Quantity to compare.</param>
+		/// <returns>Returns <c>true</c> if <paramref name="a"/> is equal in all three components(value, prefix, unit) to this quantity; otherwise, <c>false</c>.</returns>
 		public bool IsEqualInValuePrefixUnit(DimensionfulQuantity a)
 		{
 			return this.Value == a.Value && this.Prefix == a.Prefix && this.Unit == a.Unit; 
 		}
 
 		/// <summary>
-		/// Creates a quantity with a new provided value, and with the same prefix and unit as this quantity.
+		/// Creates an instance with a new value, and with the same prefix and unit as this quantity.
 		/// </summary>
 		/// <param name="value">New numeric value.</param>
 		/// <returns>A new quantity with the provided value and the same prefix and unit as this quantity.</returns>
-		public DimensionfulQuantity NewValue(double value)
+		public DimensionfulQuantity WithNewValue(double value)
 		{
 			return new DimensionfulQuantity(value, _prefix, _unit);
 		}
 
+		/// <summary>Gets the unit of this quantity.</summary>
 		public IUnit Unit
 		{
 			get
@@ -76,6 +99,7 @@ namespace Altaxo.Science
 			}
 		}
 
+		/// <summary>Gets the SI prefix of this quantity.</summary>
 		public SIPrefix Prefix
 		{
 			get
@@ -84,6 +108,7 @@ namespace Altaxo.Science
 			}
 		}
 
+		/// <summary>Gets the numeric value of this quantity in the context of prefix and unit.</summary>
 		public double Value
 		{
 			get
@@ -92,6 +117,7 @@ namespace Altaxo.Science
 			}
 		}
 
+		/// <summary>Converts this quantity to its numerical value in SI units (without prefix).</summary>
 		public double InSIUnits
 		{
 			get
@@ -105,6 +131,9 @@ namespace Altaxo.Science
 			}
 		}
 
+		/// <summary>Converts this quantity to its numerical value in the given unit (without prefix).</summary>
+		/// <param name="unit">The unit in which to get the numerical value of this quantity.</param>
+		/// <returns>Numerical value of this quantity in the provided unit (without prefix).</returns>
 		public double AsValueIn(IUnit unit)
 		{
 			if (null == unit)
@@ -115,11 +144,10 @@ namespace Altaxo.Science
 			return unit.FromSIUnit(InSIUnits);
 		}
 
-		public DimensionfulQuantity AsQuantityIn(IUnit unit)
-		{
-			return new DimensionfulQuantity(AsValueIn(unit), null, unit);
-		}
-
+		/// <summary>Converts this quantity to its numerical value in the given unit, with the given prefix.</summary>
+		/// <param name="prefix">The prefix of the unit in which to get the numerical value of this quantity.</param>
+		/// <param name="unit">The unit in which to get the numerical value of this quantity.</param>
+		/// <returns>Numerical value of this quantity in the provided unit with the provided prefix.</returns>
 		public double AsValueIn(SIPrefix prefix, IUnit unit)
 		{
 			if (null == unit)
@@ -132,17 +160,17 @@ namespace Altaxo.Science
 			return prefix.FromSIUnit(unit.FromSIUnit(InSIUnits));
 		}
 
-		public DimensionfulQuantity AsQuantityIn(IPrefixedUnit prefixedUnit)
+		/// <summary>Converts this quantity to its numerical value in the given unit, with the given prefix.</summary>
+		/// <param name="prefixedUnit">The prefixed unit in which to get the numerical value of this quantity.</param>
+		/// <returns>Numerical value of this quantity in the provided unit with the provided prefix.</returns>
+		public double AsValueIn(IPrefixedUnit prefixedUnit)
 		{
-			return AsQuantityIn(prefixedUnit.Prefix, prefixedUnit.Unit);
+			return AsValueIn(prefixedUnit.Prefix, prefixedUnit.Unit);
 		}
 
-		public DimensionfulQuantity AsQuantityIn(SIPrefix prefix, IUnit unit)
-		{
-			return new DimensionfulQuantity(AsValueIn(prefix, unit), prefix, unit);
-		}
 
-		public DimensionfulQuantity InSIUnitsAsQuantity
+		/// <summary>Gets this quantity in SI units (without prefix).</summary>
+		public DimensionfulQuantity AsQuantityInSIUnits
 		{
 			get
 			{
@@ -150,7 +178,36 @@ namespace Altaxo.Science
 			}
 		}
 
+		/// <summary>Converts this quantity to another quantity in the provided unit (without prefix).</summary>
+		/// <param name="unit">The unit to convert the quantity to.</param>
+		/// <returns>New instance of a quantity in the provided unit (without prefix).</returns>
+		public DimensionfulQuantity AsQuantityIn(IUnit unit)
+		{
+			return new DimensionfulQuantity(AsValueIn(unit), null, unit);
+		}
 
+		/// <summary>Converts this quantity to another quantity in the provided unit, with the provided prefix.</summary>
+		/// <param name="prefix">The prefix of the unit to convert the quantity to.</param>
+		/// <param name="unit">The unit to convert the quantity to.</param>
+		/// <returns>New instance of a quantity in the provided unit with the provided prefix.</returns>
+		public DimensionfulQuantity AsQuantityIn(SIPrefix prefix, IUnit unit)
+		{
+			return new DimensionfulQuantity(AsValueIn(prefix, unit), prefix, unit);
+		}
+
+		/// <summary>Converts this quantity to another quantity in the provided prefixed unit.</summary>
+		/// <param name="prefixedUnit">The prefixed unit to convert the quantity to.</param>
+		/// <returns>New instance of a quantity in the provided prefixed unit.</returns>
+		public DimensionfulQuantity AsQuantityIn(IPrefixedUnit prefixedUnit)
+		{
+			return AsQuantityIn(prefixedUnit.Prefix, prefixedUnit.Unit);
+		}
+
+
+
+		/// <summary>Compares this quanitity to another quantity.</summary>
+		/// <param name="other">The other quantity to compare with.</param>
+		/// <returns>The value is 1, if this quantity is greater than the other quantity; 0 if both quantities are equal, and -1 if this quantity is less than the other quantity.</returns>
 		public int CompareTo(DimensionfulQuantity other)
 		{
 			if(this._unit.SIUnit != other._unit.SIUnit)

@@ -364,7 +364,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Quantile of the F-distribution.
     /// </summary>
-    /// <param name="alpha">Probability (0..1).</param>
+    /// <param name="probability">Probability (0..1).</param>
     /// <returns>The quantile of the F-Distribution.</returns>
     public override double Quantile(double probability)
     {
@@ -389,7 +389,7 @@ namespace Altaxo.Calc.Probability
   }
 
   /// <summary>
-  /// Surrogate name for <see cref="FisherSnedecorDistribution /> and included here only for convenience. No other instance members defined.
+  /// Surrogate name for <see cref="FisherSnedecorDistribution"/> and included here only for convenience. No other instance members defined.
   /// </summary>
   public class FDistribution : FisherSnedecorDistribution
   {

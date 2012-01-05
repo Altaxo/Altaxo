@@ -211,8 +211,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="layer">The plot layer.</param>
-		/// <param name="plotdata">The plot data. Since the data are transformed, you should not
-		/// rely that the physical values in this item correspond to the area coordinates.</param>
+		/// <param name="plotdata">The plot data. Since the data are transformed, you should not rely that the physical values in this item correspond to the area coordinates.</param>
+		/// <param name="prevPlotData">Plot data of the previous plot item.</param>
+		/// <param name="nextPlotData">Plot data of the next plot item.</param>
 		public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata, Processed2DPlotData prevPlotData, Processed2DPlotData nextPlotData)
 		{
 			_cachedPlotDataUsedForPainting = plotdata;
@@ -360,7 +361,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		/// <summary>Visits the document references.</summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		/// <param name="Report">Function that reports the found <see cref="Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
 		public override void VisitDocumentReferences(Main.DocNodeProxyReporter Report)
 		{
 			_plotStyles.VisitDocumentReferences(Report);

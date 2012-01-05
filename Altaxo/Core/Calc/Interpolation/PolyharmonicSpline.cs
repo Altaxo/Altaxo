@@ -46,10 +46,10 @@ namespace Altaxo.Calc.Interpolation
 	///</remarks>
 	public class PolyharmonicSpline
 	{
-		/// <summary>Default value of the <see cref="RegularizationParameter".</summary>
+		/// <summary>Default value of the <see cref="RegularizationParameter"/>.</summary>
 		public const double DefaultRegularizationParameter = 0;
 
-		/// <summary>Default value of the <see cref="DerivativeOrder".</summary>
+		/// <summary>Default value of the <see cref="DerivativeOrder"/>.</summary>
 		public const int DefaultDerivativeOrder = 2;
 
 		DoubleVector _mtx_v;
@@ -112,7 +112,8 @@ namespace Altaxo.Calc.Interpolation
 
 		/// <summary>
 		/// Regularization parameter (&gt;=0).
-		/// If the regularization parameter is zero, interpolation is exact. As it approaches infinity, the resulting spline is reduced to a least squares linear fit (in 2D this is a plane, the bending energy is 0). 
+		/// If the regularization parameter is zero, interpolation is exact. 
+		/// As it approaches infinity, the resulting spline is reduced to a least squares linear fit (in 2D this is a plane, the bending energy is 0). 
 		/// </summary>
 		public double RegularizationParameter
 		{
@@ -214,7 +215,6 @@ namespace Altaxo.Calc.Interpolation
 		/// </summary>
 		/// <param name="x">X coordinates of the points.</param>
 		/// <param name="h">Values of the points that should be interpolated.</param>
-		/// <param name="regularizationParameter">If zero, interpolation is exact. As it approaches infinity, interpolation is a least square fitted plane with a bending energy of zero.</param>
 		public void Construct(IROVector[] x, IROVector h)
 		{
 			_coordDim = x.Length;
@@ -403,7 +403,6 @@ namespace Altaxo.Calc.Interpolation
 		/// Gets the interpolation value of given coordinates x and y.
 		/// </summary>
 		/// <param name="x">The x coordinate of the point.</param>
-		/// <param name="y">The y coordinate of the point.</param>
 		/// <returns>The interpolated value at the point (x,y).</returns>
 		public double GetInterpolatedValue(params double[] x)
 		{

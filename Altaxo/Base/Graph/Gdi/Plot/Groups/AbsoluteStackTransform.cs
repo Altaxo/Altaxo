@@ -325,7 +325,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 			/// <summary>Gets the physical y value for a given original row index.</summary>
 			/// <param name="originalRowIndex">Index of the original row.</param>
-			/// <returns>The (now transformed) y value of the given original row index. If it is not found in the dictionary which associates the original row indices to the indices of the <paramref name="localArray"/>, a empty <see cref="AltaxoVariant"/> instance is returned.</returns>
+			/// <returns>The (now transformed) y value of the given original row index.
+			/// If it is not found in the dictionary which associates the original row indices to the indices of the <see cref="_localArray"/>, a empty <see cref="Altaxo.Data.AltaxoVariant"/> instance is returned.</returns>
 			public AltaxoVariant GetPhysical(int originalRowIndex)
 			{
 				int idx;

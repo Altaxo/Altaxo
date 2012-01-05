@@ -57,8 +57,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (double)value;
 				return Altaxo.Serialization.GUIConversion.ToString(val);
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -103,6 +101,11 @@ namespace Altaxo.Gui.Common.Drawing
 				}
 
 				return error;
+			}
+
+			public bool HasValidationError
+			{
+				get { return _hasValidationError; }
 			}
 		}
 		#endregion
@@ -195,7 +198,6 @@ namespace Altaxo.Gui.Common.Drawing
 			const double height = 1;
 			const double width = 2;
 			const double lineWidth = 0;
-			const double lwHalf = lineWidth / 2;
 
 			// draws a transparent outline to fix the borders
 			var geometryDrawing = new GeometryDrawing();

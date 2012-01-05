@@ -174,7 +174,7 @@ namespace Altaxo.Data
 
 
 		/// <summary>
-		/// Expand the source columns according to the provided options. The source table and the settings are provided in the <see cref="options"/> variable.
+		/// Expand the source columns according to the provided options. The source table and the settings are provided in the <paramref name="options"/> variable.
 		/// The provided destination table is cleared from all data and property values before.
 		/// </summary>
 		/// <param name="options">The options containing the source table and the settings for expanding.</param>
@@ -464,6 +464,7 @@ namespace Altaxo.Data
 		/// The sorting is done using the default comparison.
 		/// </summary>
 		/// <param name="src">Source column.</param>
+		/// <param name="sortDescending">If <c>true</c>, the sorting is done in descending order (instead of ascending order).</param>
 		/// <returns>Dictionary which contains the unique values of the source column as keys and the sorting index as value.</returns>
 		public static SortedDictionary<AltaxoVariant, int> GetUniqueValues(DataColumn src, bool sortDescending)
 		{

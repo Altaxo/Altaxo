@@ -236,6 +236,7 @@ namespace Altaxo.Graph
 		/// <param name="graphSize">Size of the document in 1/72 inch.</param>
 		/// <param name="zoom">Returns the zoom factor to use for the document.</param>
 		/// <param name="startLocationOnPage">Returns the start location onto the page in 1/100 inch.</param>
+		/// <param name="usePrintingUnits">If <c>true</c> use printing units (1/100 inch) instead of points.</param>
 		public void GetZoomAndStartLocation(RectangleF PageBounds, RectangleF MarginBounds, SizeF graphSize, out float zoom, out PointF startLocationOnPage, bool usePrintingUnits)
 		{
 			// First the size of the graph

@@ -188,6 +188,7 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
 		/// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
+		/// <param name="x_repeats">Array (length=number of words) with the number of repeats that should occur in each word.</param>
 		public LongestCommonGeneralizedRepeatA(GeneralizedSuffixArray gsa, int[] x_repeats)
 			: base(gsa)
 		{
@@ -195,7 +196,7 @@ namespace Altaxo.Collections.Text
 		}
 
 			/// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
-		/// the state of <see cref="StoreVerboseResults"/>.
+		/// the state of <see cref="P:StoreVerboseResults"/>.
 		/// </summary>
 		/// <returns>This instance.</returns>
 		public LongestCommonGeneralizedRepeatA Evaluate()
@@ -204,7 +205,7 @@ namespace Altaxo.Collections.Text
 		}
 
 		/// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
-		/// the state of <see cref="StoreVerboseResults"/>.
+		/// the state of <see cref="P:StoreVerboseResults"/>.
 		/// </summary>
 		/// <returns>This instance.</returns>
 		public LongestCommonGeneralizedRepeatA Evaluate(int[] x_repeats)
@@ -366,7 +367,7 @@ namespace Altaxo.Collections.Text
 			L[end].Clean = clean;
 		}
 
-		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LCS5"/>).</summary>
+		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonGeneralizedRepeatA"/>).</summary>
 		/// <param name="i">The i.</param>
 		void list_update(int i)
 		{
@@ -438,9 +439,10 @@ namespace Altaxo.Collections.Text
 
 
 
-		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LCS5"/>).</summary>
+		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonGeneralizedRepeatA"/>).</summary>
 		/// <param name="lcp_i">The lcp_i.</param>
 		/// <param name="index">The index.</param>
+		/// <param name="clean"></param>
 		void lcp_update(int lcp_i, int index, bool clean)
 		{
 			var L = _ddlList.L;
@@ -500,6 +502,7 @@ namespace Altaxo.Collections.Text
 		/// <param name="list_pos">Number of words that have this common substring.</param>
 		/// <param name="beg">Start index of the suffix in the suffix array.</param>
 		/// <param name="end">End index of the suffix in the suffix array.</param>
+		/// <param name="lcs">Longest common substring in the suffix array in the range [beg, end].</param>
 		void StorePreResult(int list_pos, int beg, int end, int lcs)
 		{
 			_preResults.Add(new PreResult { Begin = beg, End = end, WordIdx = list_pos, Lcs = lcs });

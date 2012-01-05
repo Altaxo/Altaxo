@@ -78,7 +78,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Asks for file name(s) and imports the file(s) into multiple worksheets.
 		/// </summary>
-		/// <param name="dataTable">The data table to import to. Can be null if <see cref="toMultipleWorksheets"/> is set to true.</param>
+		/// <param name="dataTable">The data table to import to. Can be null (in this case the data are imported into a new data table).</param>
 		public static void ShowImportAsciiDialog(this DataTable dataTable)
 		{
 			ShowImportAsciiDialog(dataTable, true, false);
@@ -87,7 +87,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Asks for file name(s) and imports the file(s) into one or multiple worksheets.
 		/// </summary>
-		/// <param name="dataTable">The data table to import to. Can be null if <see cref="toMultipleWorksheets"/> is set to true.</param>
+		/// <param name="dataTable">The data table to import to. Can be null if <paramref name="toMultipleWorksheets"/> is set to <c>true</c>.</param>
 		/// <param name="toMultipleWorksheets">If true, multiple files are imported into multiple worksheets. New worksheets were then created automatically.</param>
 		/// <param name="vertically">If <c>toMultipleWorksheets</c> is false, and this option is true, the data will be exported vertically (in the same columns) instead of horizontally.</param>
 		public static void ShowImportAsciiDialog(this DataTable dataTable, bool toMultipleWorksheets, bool vertically)

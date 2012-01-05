@@ -274,7 +274,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		}
 
 		/// <summary>
-		/// Finds the x where func(x)==0 between x0<x<x1 for a monoton decreasing function func.
+		/// Finds the x where func(x)==0 between x0&lt;x&lt;x1 for a monoton decreasing function func.
 		/// </summary>
 		/// <param name="func"></param>
 		/// <param name="x0"></param>

@@ -224,6 +224,7 @@ namespace Altaxo.Main.Services
     /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
     /// </summary>
     /// <param name="controller">The controller a control is searched for.</param>
+		/// <param name="guiControlType">Base type of the underlying Gui system.</param>
     private void InternalFindAndAttachControlUsingGuiType(IMVCController controller, System.Type guiControlType)
     {
       // if the controller has 
@@ -664,7 +665,6 @@ namespace Altaxo.Main.Services
     {
       System.Type type = arg.GetType();
       System.Array arr = System.Enum.GetValues(type);
-      int i;
 
       var ctrl = new Altaxo.Gui.Common.EnumFlagController();
       ctrl.InitializeDocument(new object[] { arg });
@@ -800,7 +800,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
     /// </summary>
-    /// <param name="txt">The question text.</param>
+    /// <param name="text">The question text.</param>
     /// <param name="caption">The caption of the dialog box.</param>
     /// <param name="defaultAnswer">If true, the default answer is "yes", if false the default answer is "no", if null the default answer is "Cancel".</param>
     /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
@@ -920,7 +920,6 @@ namespace Altaxo.Main.Services
 		/// </summary>
 		/// <param name="virtual_x">The virtual screen x coordinate of the point on the virtual screen.</param>
 		/// <param name="virtual_y">The virtual screen x coordinate of the point on the virtual screen.</param>
-		/// <param name="info">On return, contains the information about the screen that contains the virtual screen point.</param>
 		/// <returns>True if the function has successfully retrieved information, false otherwise.</returns>
 		public abstract Altaxo.Graph.RectangleD GetScreenInformation(double virtual_x, double virtual_y);
 

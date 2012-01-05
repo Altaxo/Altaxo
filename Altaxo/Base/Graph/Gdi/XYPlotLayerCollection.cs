@@ -469,8 +469,9 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Inserts a layer to this layer collection.
+		/// Inserts a layer to this layer collection before index <paramref name="index"/>.
 		/// </summary>
+		/// <param name="index"></param>
 		/// <param name="l"></param>
 		public void Insert(int index, XYPlotLayer l)
 		{

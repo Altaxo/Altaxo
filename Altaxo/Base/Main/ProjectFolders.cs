@@ -536,7 +536,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Move items in a list to a other folder.
 		/// </summary>
-		/// <param name="list">List of items to move. Momentarily the item types <see cref="DataTable"/>, <see cref="GraphDocument"/> and <see cref="ProjectFolder"/></param> are supported.
+		/// <param name="list">List of items to move. Momentarily the item types <see cref="Altaxo.Data.DataTable"/>, <see cref="Altaxo.Graph.Gdi.GraphDocument"/> and <see cref="ProjectFolder"/></param> are supported.
 		/// <param name="newFolderName">Name of the folder where to move the items into.</param>
 		public void MoveItemsToFolder(IList<object> list, string newFolderName)
 		{

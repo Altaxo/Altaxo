@@ -49,9 +49,18 @@ namespace Altaxo.Calc.Optimization
 		///<seealso href="http://www.ece.northwestern.edu/~rwaltz/CG+.html">CG+</seealso>
 		public ConjugateGradient(CostFunction costfunction)
 			: this(costfunction, new EndCriteria()) { }
+
+		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the 
+		/// costfunction and optionally user specified ending criteria and line search methods.</summary>
+		///<param name="costfunction">Nonlinear cost function to minimize.</param>
 		///<param name="endcriteria">User specified ending criteria.</param>
 		public ConjugateGradient(CostFunction costfunction, EndCriteria endcriteria)
 			: this(costfunction, endcriteria, new SecantLineSearch(costfunction, endcriteria)) { }
+
+		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the 
+		/// costfunction and optionally user specified ending criteria and line search methods.</summary>
+		///<param name="costfunction">Nonlinear cost function to minimize.</param>
+		///<param name="endcriteria">User specified ending criteria.</param>
 		///<param name="lsm">User specified line search method, defaults to Secant line search method</param>
 		public ConjugateGradient(CostFunction costfunction, EndCriteria endcriteria, LineSearchMethod lsm)
 		{

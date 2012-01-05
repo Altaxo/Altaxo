@@ -642,7 +642,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>
 		/// Gives the path where the hit test is successfull.
 		/// </summary>
-		/// <param name="layer"></param>
 		/// <returns></returns>
 		public virtual GraphicsPath GetSelectionPath()
 		{

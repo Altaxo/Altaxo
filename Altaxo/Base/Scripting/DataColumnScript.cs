@@ -78,7 +78,7 @@ namespace Altaxo.Scripting
         /// </summary>
         SetColumn,
         /// <summary>
-        /// With this style, you can write code outside the function <see cref="Altaxo.Calc.ColScriptExeBase.Execute"/>
+				/// With this style, you can write code outside the function <see cref="Altaxo.Calc.ColScriptExeBase.Execute(Altaxo.Data.DataColumn, IProgressReporter)"/>.
         /// You can even define your own classes and functions for use by the column script.
         /// </summary>
         FreeStyle };

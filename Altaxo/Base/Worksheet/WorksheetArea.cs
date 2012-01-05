@@ -82,6 +82,8 @@ namespace Altaxo.Worksheet
 		/// Gets the first table row that is visible under the coordinate top.
 		/// </summary>
 		/// <param name="top">The upper coordinate of the clipping rectangle.</param>
+		/// <param name="layout">Worksheet layout referring to.</param>
+		/// <param name="VertScrollPos">Value of the vertical scroll bar.</param>
 		/// <returns>The first table row that is visible below the top coordinate.</returns>
 		public static int GetFirstVisibleTableRow(double top, WorksheetLayout layout, int VertScrollPos)
 		{
@@ -98,6 +100,8 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		/// <param name="top">The top y coordinate.</param>
 		/// <param name="bottom">The bottom y coordinate.</param>
+		/// <param name="layout">Worksheet layout referring to.</param>
+		/// <param name="VertScrollPos">Value of the vertical scroll bar.</param>
 		/// <returns>The number of data rows visible between these two coordinates.</returns>
 		public static int GetVisibleTableRows(double top, double bottom, WorksheetLayout layout, int VertScrollPos)
 		{
@@ -330,6 +334,9 @@ namespace Altaxo.Worksheet
 		/// the column nForLastCol the last visible column
 		/// </summary>
 		/// <param name="nForLastCol">the column number which should be the last visible column</param>
+		/// <param name="layout">Worksheet layout referring to.</param>
+		/// <param name="HorzScrollPos">Value of the horizontal scroll bar.</param>
+		/// <param name="TableAreaWidth">Width of the table area shown.</param>
 		/// <returns>the number of the first visible column</returns>
 		public static int GetFirstVisibleColumnForLastVisibleColumn(int nForLastCol, WorksheetLayout layout, int HorzScrollPos, double TableAreaWidth)
 		{
@@ -405,9 +412,11 @@ namespace Altaxo.Worksheet
 		/// <summary>
 		/// Retrieves the column number clicked onto 
 		/// </summary>
-		/// <param name="dg">The parent data grid</param>
-		/// <param name="mouseCoord">The coordinates of the mouse click.</param>
-		/// <param name="cellRect">The function sets the x-properties (X and Width) of the cell rectangle.</param>
+		/// <param name="positionX">Clicked position.</param>
+		/// <param name="layout">Worksheet layout referring to.</param>
+		/// <param name="HorzScrollPos">Value of the horizontal scroll bar.</param>
+		/// <param name="left">Returns the left position of the clicked cell.</param>
+		/// <param name="width">Returns the width of the clicked cell.</param>
 		/// <returns>Either -1 when clicked on the row header area, column number when clicked in the column range, or int.MinValue when clicked outside of all.</returns>
 		public static int GetColumnNumber(double positionX, WorksheetLayout layout, int HorzScrollPos, out double left, out double width)
 		{
@@ -442,9 +451,11 @@ namespace Altaxo.Worksheet
 		/// <summary>
 		/// Returns the row number of the clicked cell.
 		/// </summary>
-		/// <param name="dg">The parent WorksheetController.</param>
-		/// <param name="mouseCoord">The mouse coordinates of the click.</param>
-		/// <param name="cellRect">Returns the bounding rectangle of the clicked cell.</param>
+		/// <param name="positionY">The vertical position value.</param>
+		/// <param name="layout">The worksheet area.</param>
+		/// <param name="VertScrollPos">Value of the vertical scroll bar.</param>
+		/// <param name="top">Returns the top value of the clicked cell.</param>
+		/// <param name="height">Returns the height value of the clicked cell.</param>
 		/// <param name="bPropertyCol">True if clicked on either the property column header or a property column, else false.</param>
 		/// <returns>The row number of the clicked cell, or -1 if clicked on the column header.</returns>
 		/// <remarks>If clicked onto a property cell, the function returns the property column number.</remarks>
@@ -488,8 +499,11 @@ namespace Altaxo.Worksheet
 		/// <summary>
 		/// Creates the ClickedCellInfo from the data grid and the mouse coordinates of the click.
 		/// </summary>
-		/// <param name="dg">The data grid.</param>
-		/// <param name="mouseCoord">The mouse coordinates of the click.</param>
+		/// <param name="positionX">The horizontal position value.</param>
+		/// <param name="positionY">The vertical position value.</param>
+		/// <param name="layout">The worksheet area.</param>
+		/// <param name="HorzScrollPos">Value of the horizontal scroll bar.</param>
+		/// <param name="VertScrollPos">Value of the vertical scroll bar.</param>
 		public static AreaInfo GetAreaType(double positionX, double positionY, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
 		{
 			bool bIsPropertyColumn = false;

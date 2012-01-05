@@ -88,8 +88,8 @@ namespace Altaxo.Calc.Optimization
 			double fm;
 			double fxm;
 			double fym;
-			double dxgm;
-			double dygm;
+			//double dxgm;
+			//double dygm;
 			double dgref;
 			double dgm;
 			double dgxm;
@@ -98,10 +98,10 @@ namespace Altaxo.Calc.Optimization
 			double stmin;
 			double stmax;
 
-			double p5 = 0.5;
-			double p66 = 0.66;
+			//double p5 = 0.5;
+			//double p66 = 0.66;
 			double xtrapf = 4.0;
-			double zero = 0.0;
+			//double zero = 0.0;
 			DoubleVector wa = new DoubleVector(x);
 
 			// CHECK THE INPUT PARAMETERS FOR ERRORS.

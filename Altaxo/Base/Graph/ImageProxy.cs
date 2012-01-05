@@ -176,7 +176,7 @@ namespace Altaxo.Graph
       return img;
     }
 
-    public new static ImageProxy FromResource(string name, string fullpath)
+    public static ImageProxy FromResource(string name, string fullpath)
     {
       if (string.IsNullOrEmpty(name))
         throw new ArgumentException("Name is null or empty");
@@ -328,7 +328,7 @@ namespace Altaxo.Graph
       this._hash = from._hash;
     }
 
-    public static MemoryStreamImageProxy FromFile(string fullpath)
+    public static new MemoryStreamImageProxy FromFile(string fullpath)
     {
       MemoryStreamImageProxy img = new MemoryStreamImageProxy();
       img._url = fullpath;
@@ -337,12 +337,12 @@ namespace Altaxo.Graph
       return img;
     }
 
-    public static MemoryStreamImageProxy FromImage(System.Drawing.Image image)
+    public static new MemoryStreamImageProxy FromImage(System.Drawing.Image image)
     {
       return FromImage(image, null);
     }
 
-    public static MemoryStreamImageProxy FromImage(System.Drawing.Image image, string name)
+    public static new MemoryStreamImageProxy FromImage(System.Drawing.Image image, string name)
     {
       MemoryStreamImageProxy img = new MemoryStreamImageProxy();
       img._url = "image://" + name;
@@ -378,12 +378,12 @@ namespace Altaxo.Graph
       return img;
     }
 
-    public static MemoryStreamImageProxy FromStream(Stream istr)
+    public static new MemoryStreamImageProxy FromStream(Stream istr)
     {
       return FromStream(istr, null);
     }
 
-    public static MemoryStreamImageProxy FromStream(Stream istr, string name)
+    public static new MemoryStreamImageProxy FromStream(Stream istr, string name)
     {
       MemoryStreamImageProxy img = new MemoryStreamImageProxy();
       img._url =  name;

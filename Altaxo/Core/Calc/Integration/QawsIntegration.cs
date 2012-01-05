@@ -479,10 +479,10 @@ namespace Altaxo.Calc.Integration
 
 		class gsl_integration_qaws_table
 		{
-			public double alpha;
-			public double beta;
-			public int mu;
-			public int nu;
+			public double alpha=0;
+			public double beta=0;
+			public int mu=0;
+			public int nu=0;
 			public double[] ri = new double[25];
 			public double[] rj = new double[25];
 			public double[] rg = new double[25];

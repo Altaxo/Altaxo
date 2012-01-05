@@ -197,6 +197,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// Constructor, takes a double array for wrapping.
 			/// </summary>
 			/// <param name="x"></param>
+			/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
 			/// <param name="usedlength">The length used for the vector.</param>
 			public RODoubleArraySectionWrapper(double[] x, int start, int usedlength)
 			{
@@ -506,6 +507,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// Wraps a double[] array till a given length to get a IROVector.
 		/// </summary>
 		/// <param name="x">The array to wrap.</param>
+		/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
 		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
 		public static IROVector ToROVector(double[] x, int start, int usedlength)
@@ -531,6 +533,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// Wraps a double[] array to get a IVector.
 		/// </summary>
 		/// <param name="x">The array to wrap.</param>
+		/// <param name="usedlength">Used length of the array to get the wrapped vector (i.e. the vector wraps around <paramref name="x"/>[0..usedLength-1]).</param>
 		/// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
 		public static IVector ToVector(double[] x, int usedlength)
 		{

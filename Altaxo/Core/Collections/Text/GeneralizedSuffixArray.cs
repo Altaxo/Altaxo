@@ -39,7 +39,7 @@ namespace Altaxo.Collections.Text
 	/// </para>
 	/// <para>
 	/// Secondly, an O(N) algorithm is neccessary to calculated the length of longest common prefix of two adjacent suffixes. This is implemented according to T. Kasai, G. Lee, H. Arimura, S. Arikawa1, and K. Park:
-	/// "Linear-Time Longest-Common-Prefix Computation in Sux Arrays and Its Applications", Proc. 12th Annual Symposium on Combinatorial Pattern Matching. Lecture Notes in Computer Science, vol. 2089, pp. 181–192. Springer, Berlin (2001).
+	/// "Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its Applications", Proc. 12th Annual Symposium on Combinatorial Pattern Matching. Lecture Notes in Computer Science, vol. 2089, pp. 181–192. Springer, Berlin (2001).
 	/// </para>
 	/// <para>
 	/// See also the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
@@ -161,11 +161,8 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>Constructs the generalized suffix array from separate 'words'. Each list in the parameter <paramref name="words"/> is treated as 'word'. The elements are treated as characters. The elements are converted
 		/// to an integer alphabet by means of the <see cref="IntegerText"/> class.</summary>
-		/// <typeparam name="T">The type of characters of the text. It must implement IComparable.</typeparam>
 		/// <param name="words">The list of 'words'.</param>
-		/// <param name="withSeparators">If set to <c>true</c>, the words were treated as individual words, and will be separated by special separator elements. If set to <c>false</c>, the converted text will contain the concenated 'words' without separator elements. If set to <c>false</c>, they will be concenated to form one single word.</param>
-		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="HashSet"/> will be used to make a unique mapping of the elements to integers.</param>
-		/// <param name="customSortingComparer">If <paramref name="useSortedMapping"/> is <c>true</c>, you can here provide a custom comparer for the elements of type T. Otherwise, if you want to use the default comparer, leave this parameter <c>null</c>.</param>
+		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="System.Collections.Generic.HashSet&lt;T&gt;"/> will be used to make a unique mapping of the elements to integers.</param>
 		/// <returns>The generalized suffix array. Since each list in <paramref name="words"/> is treated as separate word, the generalized suffix array is prepared to search for the longest common substring in these words.</returns>
 		public static GeneralizedSuffixArray FromSeparateWords(IEnumerable<string> words, bool useSortedMapping)
 		{
@@ -174,10 +171,9 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>Constructs the generalized suffix array from separate 'words'. Each list in the parameter <paramref name="words"/> is treated as 'word'. The elements are treated as characters. The elements are converted
 		/// to an integer alphabet by means of the <see cref="IntegerText"/> class.</summary>
-		/// <typeparam name="T">The type of characters of the text. It must implement IComparable.</typeparam>
 		/// <param name="words">The list of 'words'.</param>
 		/// <param name="withSeparators">If set to <c>true</c>, the words were treated as individual words, and will be separated by special separator elements. If set to <c>false</c>, the converted text will contain the concenated 'words' without separator elements. If set to <c>false</c>, they will be concenated to form one single word.</param>
-		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="HashSet"/> will be used to make a unique mapping of the elements to integers.</param>
+		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="System.Collections.Generic.HashSet&lt;T&gt;"/> will be used to make a unique mapping of the elements to integers.</param>
 		/// <param name="customSortingComparer">If <paramref name="useSortedMapping"/> is <c>true</c>, you can here provide a custom comparer for the elements of type T. Otherwise, if you want to use the default comparer, leave this parameter <c>null</c>.</param>
 		/// <returns>The generalized suffix array. Since each list in <paramref name="words"/> is treated as separate word, the generalized suffix array is prepared to search for the longest common substring in these words.</returns>
 		public static GeneralizedSuffixArray FromWords(IEnumerable<string> words, bool withSeparators, bool useSortedMapping, IComparer<char> customSortingComparer)
@@ -193,7 +189,7 @@ namespace Altaxo.Collections.Text
 		/// to an integer alphabet by means of the <see cref="IntegerText"/> class.</summary>
 		/// <typeparam name="T">The type of characters of the text. It must implement IComparable.</typeparam>
 		/// <param name="words">The list of 'words'.</param>
-		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="HashSet"/> will be used to make a unique mapping of the elements to integers.</param>
+		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="System.Collections.Generic.HashSet&lt;T&gt;"/> will be used to make a unique mapping of the elements to integers.</param>
 		/// <returns>The generalized suffix array. Since each list in <paramref name="words"/> is treated as separate word, the generalized suffix array is prepared to search for the longest common substring in these words.</returns>
 		public static GeneralizedSuffixArray FromSeparateWords<T>(IEnumerable<IEnumerable<T>> words, bool useSortedMapping)
 		{
@@ -205,7 +201,7 @@ namespace Altaxo.Collections.Text
 		/// <typeparam name="T">The type of characters of the text. It must implement IComparable.</typeparam>
 		/// <param name="words">The list of 'words'.</param>
 		/// <param name="withSeparators">If set to <c>true</c>, the words were treated as individual words, and will be separated by special separator elements. If set to <c>false</c>, the converted text will contain the concenated 'words' without separator elements. If set to <c>false</c>, they will be concenated to form one single word.</param>
-		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="HashSet"/> will be used to make a unique mapping of the elements to integers.</param>
+		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="System.Collections.Generic.HashSet&lt;T&gt;"/> will be used to make a unique mapping of the elements to integers.</param>
 		/// <param name="customSortingComparer">If <paramref name="useSortedMapping"/> is <c>true</c>, you can here provide a custom comparer for the elements of type T. Otherwise, if you want to use the default comparer, leave this parameter <c>null</c>.</param>
 		/// <returns>The generalized suffix array. Since each list in <paramref name="words"/> is treated as separate word, the generalized suffix array is prepared to search for the longest common substring in these words.</returns>
 		public static GeneralizedSuffixArray FromWords<T>(IEnumerable<IEnumerable<T>> words, bool withSeparators, bool useSortedMapping, IComparer<T> customSortingComparer)
@@ -392,8 +388,7 @@ namespace Altaxo.Collections.Text
 		/// <param name="text">The text. Each element of the original text (or object array) is represented by an integer, so that equal elements of the original text map to equal integers.</param>
 		/// <param name="numberOfWords">The num_words.</param>
 		/// <param name="textLength">Number of text elements. Can be smaller than the size of the <paramref name="text"/> array, since for some algorithms, the text array have to be longer than the text.</param>
-		/// <param name="wordIndices">The wordindex.</param>
-		/// <param name="lcptabs">The lcptabs.</param>
+		/// <param name="wordIndices">The wordindex array.</param>
 		static int[] calc_lcptabs(int[] suffixArray, int[] inverseSuffixArray, int[] text, int textLength, int numberOfWords, int[] wordIndices)
 		{
 			var lcptabs = new int[textLength];

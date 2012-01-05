@@ -1560,9 +1560,9 @@ namespace Altaxo.Data
 			SetColumnKind(this[idx], columnKind);
 		}
 		/// <summary>
-		/// Sets the kind of the column with column name <code>columnName</code>.
+		/// Sets the kind of the column with name <paramref name="columnName"/>.
 		/// </summary>
-		/// <param name="idx">The column number of the column.</param>
+		/// <param name="columnName">The name of the column.</param>
 		/// <param name="columnKind">The new kind of the column.</param>
 		public void SetColumnKind(string columnName, ColumnKind columnKind)
 		{

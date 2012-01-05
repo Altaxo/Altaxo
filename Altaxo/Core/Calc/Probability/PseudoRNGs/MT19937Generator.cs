@@ -373,7 +373,7 @@ namespace Altaxo.Calc.Probability
         /// </summary>
         /// <returns>
         /// A 32-bit signed integer greater than or equal to 0, and less than or equal to <see cref="Int32.MaxValue"/>; 
-        ///   that is, the range of return values includes 0 and <paramref name="Int32.MaxValue"/>.
+        ///   that is, the range of return values includes 0 and <see cref="Int32.MaxValue"/>.
         /// </returns>
         public int NextInclusiveMaxValue()
         {
@@ -421,7 +421,7 @@ namespace Altaxo.Calc.Probability
         /// </summary>
         /// <returns>
         /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="Int32.MaxValue"/>; that is, 
-        ///   the range of return values includes 0 but not <paramref name="Int32.MaxValue"/>.
+        ///   the range of return values includes 0 but not <see cref="Int32.MaxValue"/>.
         /// </returns>
         public override int Next()
         {

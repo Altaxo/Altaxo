@@ -260,7 +260,7 @@ namespace Altaxo.Collections
 				return -1;
 			}
 		}
-		/// <summary>Sets the <see cref="SelectedListNode.IsSelected"/> property of each node in the list to false.</summary>
+		/// <summary>Sets the <see cref="P:SelectedListNode.IsSelected"/> property of each node in the list to false.</summary>
 		public void ClearSelectionsAll()
 		{
 			foreach (var node in this)
@@ -600,7 +600,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <typeparam name="T">Type of list item.</typeparam>
 		/// <param name="list">List to operate with.</param>
-		/// <param name="IsSelected">Function that determines for each item index if it is selected or not.</param>
+		/// <param name="isSelected">Function that determines for each item index if it is selected or not.</param>
 		/// <param name="steps">Number of steps to move. Has to be a positive value.</param>
 		public static void MoveSelectedItemsTowardsLowerIndices<T>(this IList<T> list, Func<int, bool> isSelected, int steps)
 		{
@@ -628,7 +628,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <typeparam name="T">Type of list item.</typeparam>
 		/// <param name="list">List to operate with.</param>
-		/// <param name="IsSelected">Function that determines for each item index if it is selected or not.</param>
+		/// <param name="isSelected">Function that determines for each item index if it is selected or not.</param>
 		/// <param name="steps">Number of steps to move. Has to be a positive value.</param>
 
 		public static void MoveSelectedItemsTowardsHigherIndices<T>(this IList<T> list, Func<int, bool> isSelected, int steps)

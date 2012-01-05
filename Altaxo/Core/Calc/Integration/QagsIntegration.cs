@@ -160,14 +160,14 @@ namespace Altaxo.Calc.Integration
 					double a, double b,
 					double epsabs, double epsrel,
 					int limit,
-					gsl_integration_rule q, bool debug,
+					gsl_integration_rule integrationRule, bool debug,
 					out double result, out double abserr,
 					ref object tempStorage)
 		{
 			QagsIntegration algo = tempStorage as QagsIntegration;
 			if (null == algo)
-				tempStorage = algo = new QagsIntegration(q, debug);
-			return algo.Integrate(f, a, b, epsabs, epsrel, limit, q, debug, out result, out abserr);
+				tempStorage = algo = new QagsIntegration(integrationRule, debug);
+			return algo.Integrate(f, a, b, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
 		}
 
 		/// <summary>
@@ -219,12 +219,12 @@ namespace Altaxo.Calc.Integration
 		 double a, double b,
 		 double epsabs, double epsrel,
 		 int limit,
-			gsl_integration_rule q, bool debug,
+			gsl_integration_rule integrationRule, bool debug,
 		 out double result, out double abserr
 		 )
 		{
 			object tempStorage = null;
-			return Integration(f, a, b, epsabs, epsrel, limit, q, debug, out result, out abserr, ref tempStorage);
+			return Integration(f, a, b, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr, ref tempStorage);
 		}
 
 

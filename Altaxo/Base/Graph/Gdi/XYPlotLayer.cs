@@ -2030,9 +2030,10 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Absorbs the event from the ScaleCollection and distributes it further.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void EhScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
+		/// <param name="idx">Index of the scale in the linked layer.</param>
+		/// <param name="oldScale">Old scale instance.</param>
+		/// <param name="newScale">New scale instance.</param>
+		void EhScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
     {
       if (null != ScaleInstanceChanged)
         ScaleInstanceChanged(idx, oldScale, newScale);
@@ -2047,8 +2048,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Absorbs the event from the linked layer. Used to adjust the LinkedScale here.
     /// </summary>
-    /// <param name="oldScale"></param>
-    /// <param name="newScale"></param>
+		/// <param name="idx">Index of the scale in the linked layer.</param>
+    /// <param name="oldScale">Old scale instance.</param>
+    /// <param name="newScale">New scale instance.</param>
     void EhLinkedLayerScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
     {
       _scales.EhLinkedLayerScaleInstanceChanged(idx, oldScale, newScale);

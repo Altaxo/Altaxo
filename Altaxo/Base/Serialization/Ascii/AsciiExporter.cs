@@ -93,7 +93,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="strwr">A stream writer to write the ascii data to.</param>
     /// <param name="columnCollection">The column collection to export.</param>
-    /// <param name="separator">The separator char. If the text to export contains the separator char, it is replaced by a space.</param>
+    /// <param name="options">The options used for exporting the data.</param>
     static protected void ExportDataColumns(
       StreamWriter strwr, 
       Altaxo.Data.DataColumnCollection columnCollection, 
@@ -122,7 +122,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="myStream">The stream the table should be exported to.</param>
     /// <param name="table">The table that is to be exported.</param>
-    /// <param name="separator">The separator char that separates the items from each other.</param>
+    /// <param name="options">The options used for exporting of the data.</param>
     static public void ExportAscii(System.IO.Stream myStream, Altaxo.Data.DataTable table, AsciiExportOptions options)
     {
       StreamWriter strwr = new StreamWriter(myStream, System.Text.Encoding.Default); // Change to Unicode or quest encoding by a dialog box

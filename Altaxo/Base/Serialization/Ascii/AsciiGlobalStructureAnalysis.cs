@@ -330,7 +330,7 @@ namespace Altaxo.Serialization.Ascii
     /// the counterArray is incremented at this position by N.
     /// </summary>
     /// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
-    /// <param name="couterArray">Integer array with the line counts for each tabbed position.</param>
+    /// <param name="counterArray">Integer array with the line counts for each tabbed position.</param>
     void ReportStartOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
     {
       foreach (List<int> list in listOfTabbedWordBounds)
@@ -348,7 +348,7 @@ namespace Altaxo.Serialization.Ascii
     /// the counterArray is incremented at this position by N.
     /// </summary>
     /// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
-    /// <param name="couterArray">Integer array with the line counts for each tabbed position.</param>
+    /// <param name="counterArray">Integer array with the line counts for each tabbed position.</param>
     void ReportEndOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
     {
       foreach (List<int> list in listOfTabbedWordBounds)
@@ -367,7 +367,7 @@ namespace Altaxo.Serialization.Ascii
     /// the counterArray is incremented at this position by N.
     /// </summary>
     /// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
-    /// <param name="couterArray">Integer array with the line counts for each tabbed position.</param>
+    /// <param name="counterArray">Integer array with the line counts for each tabbed position.</param>
     void ReportInsideOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
     {
       foreach (List<int> list in listOfTabbedWordBounds)
@@ -389,6 +389,8 @@ namespace Altaxo.Serialization.Ascii
     /// Gets the tabbed position for the start and end of all words in a line, assuming a certain tab width.
     /// </summary>
     /// <param name="sLine">Line to analyse.</param>
+		/// <param name="stringPositions"></param>
+		/// <param name="tabSize"></param>
     /// <returns>List of positions of the word starts and ends (ends=next position after the word). The list therefore always has
     /// an even number of members. If there is a word, the list starts always with the start position of the word, followed by the position of the first character after this word.</returns>
     public List<int> GetTabbedWordBounds(string sLine, List<int> stringPositions, int tabSize)
@@ -396,7 +398,6 @@ namespace Altaxo.Serialization.Ascii
       List<int> result = new List<int>();
 
       int tabPos = 0;
-      int stringPos = 0;
       int listPos = 0;
       for (int i = 0; i < sLine.Length && listPos<stringPositions.Count; )
       {

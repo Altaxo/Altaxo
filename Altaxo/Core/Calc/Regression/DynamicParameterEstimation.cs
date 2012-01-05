@@ -660,7 +660,7 @@ namespace Altaxo.Calc.Regression
     /// be the same than GetTransferFunction.</param>
     /// <param name="numY">Number of y points used for the history.</param>
     /// <param name="backgroundOrder">Order of the background fitting.</param>
-    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="SVDSolver" /> or <see cref="LUSolver" /> to get a solver.</param>
+    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="P:SVDSolver" /> or <see cref="P:LUSolver" /> to get a solver.</param>
     public DynamicParameterEstimationVariableX(int[] xcount, int numY, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(xcount.Length, numY, backgroundOrder, solver)
     {
@@ -678,7 +678,7 @@ namespace Altaxo.Calc.Regression
     /// designates how many points of the x history are added up and threated as one input element. If you set all elements to 1, the behaviour should
     /// be the same than GetTransferFunction.</param>
     /// <param name="backgroundOrder">Order of the background fitting.</param>
-    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="SVDSolver" /> or <see cref="LUSolver" /> to get a solver.</param>
+    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="P:SVDSolver" /> or <see cref="P:LUSolver" /> to get a solver.</param>
     public DynamicParameterEstimationVariableX(int[] xcount, int[] ycount, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(xcount.Length, ycount.Length, backgroundOrder, solver)
     {
@@ -1102,7 +1102,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="numY">Number of y parameters to evaluate.</param>
     /// <param name="ySpacing">Interval between two subsequent y history points. The value must be greater or equal to 1.</param>
     /// <param name="backgroundOrder">Order of the background fitting.</param>
-    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="SVDSolver" /> or <see cref="LUSolver" /> to get a solver.</param>
+    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="P:SVDSolver" /> or <see cref="P:LUSolver" /> to get a solver.</param>
     public DynamicParameterEstimationCombXY(int numX, int xSpacing, int numY, int ySpacing, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(numX, numY, backgroundOrder, solver)
     {
@@ -1134,7 +1134,7 @@ namespace Altaxo.Calc.Regression
         int yIdx = i + _startingPoint;
 
         // fill with x history samples
-        for (int j = 0, k = 0; j < _numX; j++)
+        for (int j = 0; j < _numX; j++)
         {
           M[i, j] = x[yIdx - _offsetX - j*_xSpacing];
         }

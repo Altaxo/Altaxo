@@ -95,9 +95,10 @@ namespace Altaxo.Graph.Gdi
 
 
 		/// <summary>
-		/// Deletes the active layer.
+		/// Deletes the layer specified by index <paramref name="layerNumber"/>.
 		/// </summary>
-		/// <param name="ctrl"></param>
+		/// <param name="doc">Graph document.</param>
+		/// <param name="layerNumber">Number of the layer to delete.</param>
 		/// <param name="withGui">If true, a message box will ask the user for approval.</param>
 		public static void DeleteLayer(this GraphDocument doc, int layerNumber, bool withGui)
 		{
@@ -111,10 +112,11 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Deletes the active layer
+		/// Moves the layer specified by index <paramref name="sourcePosition"/> to index <paramref name="destposition"/>.
 		/// </summary>
-		/// <param name="ctrl"></param>
-		/// <param name="destposition"></param>
+		/// <param name="doc">Graph document.</param>
+		/// <param name="sourcePosition">Original index of the layer.</param>
+		/// <param name="destposition">New index of the layer.</param>
 		public static void MoveLayerToPosition(this GraphDocument doc, int sourcePosition, int destposition)
 		{
 			if (!IsValidLayerNumber(doc, sourcePosition))
@@ -131,10 +133,10 @@ namespace Altaxo.Graph.Gdi
 
 
 		/// <summary>
-		/// Deletes the active layer
+		/// Moves the layer specified by index <paramref name="layerNumber"/> as specified by the user in the opened dialog.
 		/// </summary>
-		/// <param name="ctrl"></param>
-		/// <param name="destposition"></param>
+		/// <param name="doc">Graph document.</param>
+		/// <param name="layerNumber">Number of the layer to move.</param>
 		public static void ShowMoveLayerToPositionDialog(this GraphDocument doc, int layerNumber)
 		{
 			var ivictrl = new Altaxo.Gui.Common.IntegerValueInputController(0, "Please enter the new position (>=0):");

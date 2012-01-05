@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Probability
     #region instance methods
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+    /// Determines whether the specified value is valid for <see cref="Probability"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>

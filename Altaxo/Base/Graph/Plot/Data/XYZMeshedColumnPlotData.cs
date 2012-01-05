@@ -296,8 +296,6 @@ namespace Altaxo.Graph.Plot.Data
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        bool bSurrogateUsed = false;
-
         XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
         s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
@@ -331,7 +329,6 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Finale measures after deserialization.
     /// </summary>
-    /// <param name="obj">Not used.</param>
     public void CreateEventChain()
     {
       // restore the event chain

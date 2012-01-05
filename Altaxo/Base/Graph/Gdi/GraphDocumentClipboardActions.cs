@@ -98,10 +98,11 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Copies the current graph as an bitmap image to the clipboard in native bmp format.
 		/// </summary>
-		/// <param name="ctrl">Controller controlling the current graph.</param>
+		/// <param name="doc">Graph to copy to the clipboard.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
+		/// <param name="areaToExport">The area of the graph that should be copied to the clipboard.</param>
 		public static void CopyToClipboardAsBitmap(this GraphDocument doc, int dpiResolution, Brush backbrush, PixelFormat pixelformat, GraphExportArea areaToExport)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
@@ -191,7 +192,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Puts the entire graph to the clipboard in XML format.
 		/// </summary>
-		/// <param name="ctrl">Graph controller.</param>
+		/// <param name="doc">Graph to copy to the clipboard.</param>
 		public static void CopyToClipboardAsNative(this GraphDocument doc)
 		{
 			Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphDocumentAsXml", doc);
@@ -217,6 +218,7 @@ namespace Altaxo.Graph.Gdi
 		/// Try to paste the entire GraphDocument from the clipboard.
 		/// </summary>
 		/// <param name="doc">The graph document to paste into.</param>
+		/// <param name="showOptionsDialog">If <c>true</c>, shows the user an option dialog for choise of specific items to paste.</param>
 		public static void PasteFromClipboardAsGraphStyle(this GraphDocument doc, bool showOptionsDialog)
 		{
 			object from = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
@@ -237,9 +239,10 @@ namespace Altaxo.Graph.Gdi
 
 
 		/// <summary>
-		/// Puts the active layer to the clipboard in XML format.
+		/// Puts the layer with index <paramref name="layerNumber"/> to the clipboard in XML format.
 		/// </summary>
-		/// <param name="ctrl">Graph controller.</param>
+		/// <param name="doc">Graph document to copy.</param>
+		/// <param name="layerNumber">Number of the layer to copy.</param>
 		public static void CopyToClipboardLayerAsNative(this GraphDocument doc, int layerNumber)
 		{
 			Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphLayerAsXml", doc.Layers[layerNumber]);
@@ -290,9 +293,10 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Pastes a layer on the clipboard as new layer before the active layer.
+		/// Pastes a layer on the clipboard as new layer before the layer specified by index <paramref name="currentActiveLayerNumber"/>.
 		/// </summary>
-		/// <param name="ctrl"></param>
+		/// <param name="doc">Graph document in which to paste.</param>
+		/// <param name="currentActiveLayerNumber">Index of the layer follows after the pasted layer.</param>
 		public static void PasteFromClipboardAsNewLayerBeforeLayerNumber(this GraphDocument doc, int currentActiveLayerNumber)
 		{
 			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
@@ -305,9 +309,10 @@ namespace Altaxo.Graph.Gdi
 
 
 		/// <summary>
-		/// Pastes a layer on the clipboard as new layer after the active layer.
+		/// Pastes a layer on the clipboard as new layer after the layer at index <paramref name="currentActiveLayerNumber"/>.
 		/// </summary>
-		/// <param name="ctrl"></param>
+		/// <param name="doc">Graph document to paste to.</param>
+		/// <param name="currentActiveLayerNumber">Index of the layer after which to paste the layer from the clipboard.</param>
 		public static void PasteFromClipboardAsNewLayerAfterLayerNumber(this GraphDocument doc, int currentActiveLayerNumber)
 		{
 			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");

@@ -133,6 +133,7 @@ namespace Altaxo.Main.Commands
 		/// <summary>Copies the items to the clipboard. In principle, this can be all items that have Altaxo's XML serialization support. But the corresponding clipboard paste operation
 		/// is only supported for main project items (DataTables, Graphs).</summary>
 		/// <param name="items">The items.</param>
+		/// <param name="baseFolder">The base folder of all provided items (if one exists). This determines in which folder the items are pasted in the subsequent paste operation.</param>
 		public static void CopyItemsToClipboard(List<object> items, string baseFolder)
 		{
 			Altaxo.Serialization.ClipboardSerialization.PutObjectToClipboard(ClipboardFormat_ListOfProjectItems, new ProjectItemClipboardList(items, baseFolder));

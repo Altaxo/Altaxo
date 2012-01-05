@@ -305,7 +305,10 @@ namespace Altaxo.Calc.Probability
     /// in the intermediate range.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <param name="alpha"></param>
+    /// <param name="alpha">First parameter of the distribution (<see cref="StableDistributionFeller"/>).</param>
+		/// <param name="gamma">Second parameter of the distribution (<see cref="StableDistributionFeller"/>).</param>
+		/// <param name="tempStorage"></param>
+		/// <param name="precision">Relative precision goal for the calculation.</param>
     /// <returns></returns>
     public static double PDF(double x, double alpha, double gamma, ref object tempStorage, double precision)
     {
@@ -323,8 +326,11 @@ namespace Altaxo.Calc.Probability
     /// in the intermediate range.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <param name="aga">For alpha &lt;=1: This is either (alpha-gamma)/alpha for gamma &gt;=0, or (alpha+gamma)/alpha for gamma &lt; 1.
-    /// <param name="alpha"></param>
+		/// <param name="alpha"></param>
+		/// <param name="gamma"></param>
+    /// <param name="aga">For alpha &lt;=1: This is either (alpha-gamma)/alpha for gamma &gt;=0, or (alpha+gamma)/alpha for gamma &lt; 1.</param>
+		/// <param name="tempStorage"></param>
+		/// <param name="precision"></param>
     /// <returns></returns>
     public static double PDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
     {
@@ -834,6 +840,8 @@ namespace Altaxo.Calc.Probability
     /// <param name="gamma">The gamma value.</param>
     /// <param name="aga">For alpha &lt;=1: This is either (alpha-gamma)/alpha for gamma &gt;=0, or (alpha+gamma)/alpha for gamma &lt; 1.
     /// For alpha &gt;1, this is either (alpha-gamma) for gamma &gt; (alpha-1), or (2-alpha+gamma) for gamma &lt; (alpha-1).</param>
+		/// <param name="tempStorage">Object that can be used to speed up subsequent calculations of the function. At first use, provide an object initialized with <see languageref="null"/> and then provide this object in subsequent calls of this function.</param>
+		/// <param name="precision">Relative precision goal.</param>
     /// <returns></returns>
     public static double PDFforPositiveX(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
     {
@@ -1016,6 +1024,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x"></param>
     /// <param name="alpha"></param>
+		/// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
@@ -1037,6 +1047,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x"></param>
     /// <param name="alpha"></param>
+		/// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
@@ -1062,6 +1074,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x"></param>
     /// <param name="alpha"></param>
+		/// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
@@ -1089,6 +1103,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x"></param>
     /// <param name="alpha"></param>
+		/// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
@@ -1110,6 +1126,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x"></param>
     /// <param name="alpha"></param>
+		/// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
@@ -1130,6 +1148,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x"></param>
     /// <param name="alpha"></param>
+		/// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="precision"></param>
     /// <param name="tempStorage"></param>
     /// <returns></returns>
@@ -1151,10 +1171,11 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies.
     /// </summary>
-    /// <param name="alpha">Beta parameter.</param>
     /// <param name="z">Circular frequency.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+		/// <param name="alpha">Beta parameter.</param>
+		/// <param name="gamma"></param>
+		/// <param name="aga"></param>
+		/// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
     /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
     /// the return value here is positive!.</remarks>
     public static double PDFSeriesSmallXFeller(double z, double alpha, double gamma, double aga)
@@ -1239,9 +1260,10 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Series expansion for big x, Feller parametrization. x should be &gt; 0.
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="z"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <returns></returns>
     public static double PDFSeriesBigXFeller(double z, double alpha, double gamma, double aga)
     {
@@ -1338,8 +1360,8 @@ namespace Altaxo.Calc.Probability
     public static double PDFTaylorExpansionAroundAlphaOne(double x, double alpha, double gamma, double aga)
     {
       const double EulerGamma = 0.57721566490153286060651209008240243;
-      const double EulerGamma_P2 = EulerGamma * EulerGamma;
-      const double EulerGamma_P3 = EulerGamma_P2 * EulerGamma;
+      //const double EulerGamma_P2 = EulerGamma * EulerGamma;
+      //const double EulerGamma_P3 = EulerGamma_P2 * EulerGamma;
       const double Zeta3 = 1.202056903159594285399738; // Zeta[3]
       const double SQR_PI = Math.PI * Math.PI;
 
@@ -1472,6 +1494,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1506,6 +1529,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1526,6 +1550,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1572,6 +1597,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1603,6 +1629,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1623,6 +1650,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1669,6 +1697,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1693,6 +1722,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>
@@ -1713,6 +1743,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x"></param>
     /// <param name="alpha"></param>
     /// <param name="gamma"></param>
+		/// <param name="aga"></param>
     /// <param name="temp"></param>
     /// <param name="precision"></param>
     /// <returns></returns>

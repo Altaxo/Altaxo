@@ -105,13 +105,8 @@ namespace Altaxo.Calc.Probability
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified 
-        ///   <see cref="Generator"/> as underlying random number generator.
+        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the default generator.
         /// </summary>
-        /// <param name="generator">A <see cref="Generator"/> object.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-        /// </exception>
         public BetaPrimeDistribution(double alpha, double beta)
           : this(alpha, beta, DefaultGenerator)
         {
@@ -122,6 +117,8 @@ namespace Altaxo.Calc.Probability
         /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified 
         ///   <see cref="Generator"/> as underlying random number generator.
         /// </summary>
+				/// <param name="alpha">First parameter of the distribution.</param>
+				/// <param name="beta">Second parameter of the distribution.</param>
         /// <param name="generator">A <see cref="Generator"/> object.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).

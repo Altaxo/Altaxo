@@ -706,7 +706,7 @@ namespace Altaxo.Graph.Plot.Data
 
     /// <summary>
     /// One more than the index to the last valid plot data point. This is <b>not</b>
-    /// the number of plottable points, <seealso cref="PlottablePoints"/>
+    /// the number of plottable points!
     /// </summary>
     /// <remarks>This is not neccessarily (PlotRangeStart+PlotRangeLength), but always less or equal than this. This is because
     /// the underlying arrays can be smaller than the proposed plot range.</remarks>

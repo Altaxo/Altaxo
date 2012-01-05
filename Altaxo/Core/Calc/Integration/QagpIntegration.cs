@@ -102,7 +102,7 @@ namespace Altaxo.Calc.Integration
 		/// Adaptive integration with known singular points.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.Integration
 		/// Adaptive integration with known singular points using the integration rule and debug setting given in the constructor.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
@@ -150,7 +150,7 @@ namespace Altaxo.Calc.Integration
 		/// Adaptive integration with known singular points.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
 		/// <param name="limit">Maximum number of subintervals used for integration.</param>
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Integration
 		/// Adaptive integration with known singular points using the integration rule and debug setting given in the constructor.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
 		/// <param name="limit">Maximum number of subintervals used for integration.</param>
@@ -196,7 +196,7 @@ namespace Altaxo.Calc.Integration
 		/// Adaptive integration with known singular points.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
@@ -214,21 +214,21 @@ namespace Altaxo.Calc.Integration
 					double[] pts, int npts,
 					double epsabs, double epsrel,
 					int limit,
-					gsl_integration_rule q, bool debug,
+					gsl_integration_rule integrationRule, bool debug,
 					out double result, out double abserr,
 					ref object tempStorage)
 		{
 			QagpIntegration algo = tempStorage as QagpIntegration;
 			if (null == algo)
-				tempStorage = algo = new QagpIntegration(q, debug);
-			return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, q, debug, out result, out abserr);
+				tempStorage = algo = new QagpIntegration(integrationRule, debug);
+			return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
 		}
 
 		/// <summary>
 		/// Adaptive integration with known singular points using default settings for integration rule and debugging.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
@@ -256,7 +256,7 @@ namespace Altaxo.Calc.Integration
 		/// Adaptive integration with known singular points.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
@@ -267,19 +267,18 @@ namespace Altaxo.Calc.Integration
 		/// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
 		/// <param name="result">On return, contains the integration result.</param>
 		/// <param name="abserr">On return, contains the absolute error of integration.</param>
-		/// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
 		/// <returns>Null if successfull, otherwise the appropriate error code.</returns>
 		public static GSL_ERROR
 	 Integration(ScalarFunctionDD f,
 		 double[] pts, int npts,
 		 double epsabs, double epsrel,
 		 int limit,
-			gsl_integration_rule q, bool debug,
+			gsl_integration_rule integrationRule, bool debug,
 		 out double result, out double abserr
 		 )
 		{
 			object tempStorage = null;
-			return Integration(f, pts, npts, epsabs, epsrel, limit, q, debug, out result, out abserr, ref tempStorage);
+			return Integration(f, pts, npts, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr, ref tempStorage);
 		}
 
 
@@ -287,7 +286,7 @@ namespace Altaxo.Calc.Integration
 		/// Adaptive integration with known singular points using default settings for integration rule and debugging.
 		/// </summary>
 		/// <param name="f">Function to integrate.</param>
-		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+		/// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration"/></param>
 		/// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
 		/// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
 		/// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>

@@ -89,7 +89,7 @@ namespace Altaxo.Collections.Text
 
 			/// <summary>Initializes a new instance of the <see cref="MinimumOnSlidingWindow"/> class.</summary>
 			/// <param name="numberOfItems">The number of items N. The algorithm evaluates the minimum of the last N items that where added to this instance.</param>
-			/// <param name="startValue">The start value. This is the first entry to add to the instance. Thus, the <see cref="GetMinimum"/> always return a valid value.</param>
+			/// <param name="startValue">The start value. This is the first entry to add to the instance. Thus, <see cref="MinimumValue"/> always return a valid value.</param>
 			public void Initialize(int numberOfItems, int startValue)
 			{
 				_items = new Bucket[numberOfItems];
@@ -173,7 +173,7 @@ namespace Altaxo.Collections.Text
 		/// </summary>
 		protected int[] _wordIndices;
 		/// <summary>
-		/// Start positions of the words in which the original text was separated in the array <see cref="_text"/>.
+		/// Start positions of the words in which the original text was separated in the concenated text array.
 		/// </summary>
 		protected int[] _wordStartPositions;
 
@@ -287,7 +287,7 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>Returns the positions for common substrings for the given number of words</summary>
 		/// <param name="numberOfWordsWithCommonSubstring">Number of words</param>
-		/// <returns>An enumeration will all positions of substrings common to the given number of words. The amount of information returned depends on the state of <see cref=""/>.</returns>
+		/// <returns>An enumeration will all positions of substrings common to the given number of words. The amount of information returned depends on the state of <see cref="StoreVerboseResults"/>.</returns>
 		public IEnumerable<CommonSubstring> GetSubstringPositonsCommonToTheNumberOfWords(int numberOfWordsWithCommonSubstring)
 		{
 			int substringLength = _lcsOfNumberOfWords[numberOfWordsWithCommonSubstring];

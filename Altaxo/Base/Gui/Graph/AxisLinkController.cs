@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the type of the link.
     /// </summary>
-    /// <param name="linktype"></param>
+    /// <param name="isStraight">If <c>true</c>, the linke is initialized as 1:1 link and all other fields are disabled.</param>
     void LinkType_Initialize(bool isStraight);
 
     /// <summary>
@@ -95,10 +95,6 @@ namespace Altaxo.Gui.Graph
 		LinkedScaleParameters _tempDoc;
 
 		bool m_LinkType;
-		double m_OrgA;
-    double m_OrgB;
-    double m_EndA;
-    double m_EndB;
 
 
     public AxisLinkController(LinkedScaleParameters doc)

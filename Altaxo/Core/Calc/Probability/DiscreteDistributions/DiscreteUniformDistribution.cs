@@ -132,6 +132,8 @@ namespace Altaxo.Calc.Probability
         /// Initializes a new instance of the <see cref="DiscreteUniformDistribution"/> class, using the specified 
         ///   <see cref="Generator"/> as underlying random number generator.
         /// </summary>
+				/// <param name="lower">Lower boundary of the distributed values.</param>
+				/// <param name="upper">Upper boundary of the distributed values.</param>
         /// <param name="generator">A <see cref="Generator"/> object.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
@@ -145,26 +147,26 @@ namespace Altaxo.Calc.Probability
 
         #region instance methods
         /// <summary>
-        /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+        /// Determines whether the specified value is valid for parameter <see cref="LowerBound"/>.
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>
-        /// <see langword="true"/> if value is less than or equal to <see cref="Beta"/>; otherwise, <see langword="false"/>.
+        /// <see langword="true"/> if value is less than or equal to <see cref="UpperBound"/>; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool IsValidAlpha(int value)
+        public bool IsValidLowerBound(int value)
         {
             return (value <= this._upperBound);
         }
 
         /// <summary>
-        /// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
+        /// Determines whether the specified value is valid for parameter <see cref="UpperBound"/>.
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>
-        /// <see langword="true"/> if value is greater than or equal to <see cref="Alpha"/>, and less than 
+        /// <see langword="true"/> if value is greater than or equal to <see cref="LowerBound"/>, and less than 
         ///   <see cref="int.MaxValue"/>; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool IsValidBeta(int value)
+        public bool IsValidUpperBound(int value)
         {
             return (value >= this._lowerBound && value < int.MaxValue);
         }

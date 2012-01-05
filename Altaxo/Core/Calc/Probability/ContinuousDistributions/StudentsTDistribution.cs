@@ -94,6 +94,7 @@ namespace Altaxo.Calc.Probability
         /// Initializes a new instance of the <see cref="StudentsTDistribution"/> class, using the specified 
         ///   <see cref="Generator"/> as underlying random number generator.
         /// </summary>
+				/// <param name="nu">Parameter of the distribution.</param>
         /// <param name="generator">A <see cref="Generator"/> object.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).

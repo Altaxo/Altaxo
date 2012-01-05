@@ -92,13 +92,9 @@ namespace Altaxo.Calc.Probability
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChiDistribution"/> class, using the specified 
-        ///   <see cref="Generator"/> as underlying random number generator.
+        /// Initializes a new instance of the <see cref="ChiDistribution"/> class, using the default random number generator.
         /// </summary>
-        /// <param name="generator">A <see cref="Generator"/> object.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-        /// </exception>
+				/// <param name="N">Parameter of the distribution.</param>
         public ChiDistribution(int N)
           : this(N,DefaultGenerator)
         {
@@ -108,6 +104,7 @@ namespace Altaxo.Calc.Probability
         /// Initializes a new instance of the <see cref="ChiDistribution"/> class, using the specified 
         ///   <see cref="Generator"/> as underlying random number generator.
         /// </summary>
+				/// <param name="N">Parameter of the distribution.</param>
         /// <param name="generator">A <see cref="Generator"/> object.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
@@ -132,11 +129,10 @@ namespace Altaxo.Calc.Probability
     }
 
 		/// <summary>
-        /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+        /// Determines whether the specified value is valid for parameter <see cref="N"/>.
 		/// </summary>
 		/// <param name="value">The value to check.</param>
-		/// <returns>
-		/// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
+		/// <returns>Returns <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
 		/// </returns>
         public bool IsValidN(int value)
 		{

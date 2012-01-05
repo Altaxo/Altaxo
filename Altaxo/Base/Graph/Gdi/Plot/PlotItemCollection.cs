@@ -653,7 +653,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// This function therefore has no influence on items down in hierarchie, i.e. parental PlotItemCollections.
 		/// </summary>
 		/// <param name="parentGroupStyles">The parent plot group style collection.</param>
-		/// <param name="layer">The plot layer.</param>
 		/// <remarks>The application is used for example:
 		/// <para>BarGraph: to calculate the exact position of each plot item.</para>
 		/// <para>Color: To step forward through the available colors and apply each color to another PlotItem.</para>

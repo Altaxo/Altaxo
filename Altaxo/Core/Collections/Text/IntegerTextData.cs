@@ -194,7 +194,7 @@ namespace Altaxo.Collections.Text
 		/// <param name="lists">The list of individual words.</param>
 		/// <param name="withSeparators">If set to <c>true</c>, the converted text will contain the concenated 'words', separated by special separator elements. If set to <c>false</c>, the converted text will contain the concenated 'words' without separator elements.</param>
 		/// <param name="padding">Number of additional elements reserved in the allocated <see cref="Text"/> array. This is neccessary for some algorithms. The additional elements will contain zero values.</param>
-		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="HashSet"/> will be used to make a unique mapping of the elements to integers.</param>
+		/// <param name="useSortedMapping">If this parameter is true, a sorted mapping of the elements T to integers will be used. The type T then has to implement IComparable. If this parameter is <c>false</c>, a unsorted <see cref="System.Collections.Generic.HashSet&lt;T&gt;"/> will be used to make a unique mapping of the elements to integers.</param>
 		/// <param name="customSortingComparer">If <paramref name="useSortedMapping"/> is <c>true</c>, you can here provide a custom comparer for the elements of type T. Otherwise, if you want to use the default comparer, leave this parameter <c>null</c>.</param>
 		/// <returns>The integer text data, which holds the text converted to an integer alphabet.</returns>
 		public static IntegerText FromWords<T>(IEnumerable<IEnumerable<T>> lists, bool withSeparators, int padding, bool useSortedMapping, IComparer<T> customSortingComparer)

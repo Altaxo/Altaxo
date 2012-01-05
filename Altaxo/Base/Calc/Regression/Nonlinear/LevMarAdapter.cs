@@ -356,6 +356,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="parameter">The parameter used to calculate the values.</param>
 		/// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
 		/// at least <see cref="NumberOfData" />.</param>
+		/// <param name="calculateUnusedDependentVariablesAlso">If <c>true</c>, the unused dependent variables are also calculated (and plotted).</param>
 		/// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
 		/// than one used dependent variable per fit element, the output values are stored in interleaved order.
 		/// </remarks>
@@ -406,6 +407,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </summary>
 		/// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
 		/// at least <see cref="NumberOfData" />.</param>
+		/// <param name="calculateUnusedDependentVariablesAlso">If <c>true</c>, unused dependent variables are calculated and plotted too.</param>
 		/// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
 		/// than one used dependent variable per fit element, the output values are stored in interleaved order.
 		/// </remarks>

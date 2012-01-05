@@ -1019,23 +1019,25 @@ namespace Altaxo.Calc.Interpolation
 		//goto L760;
 		L750:
 			throw new ArgumentException("X VALUES OUT OF SEQUENCE");
+			/*
 		L760:
 			throw new ArgumentException(string.Format("ix ={0} x[ix]={1})", ix, x[ix]));
-
-			//goto L800;
+			goto L800;
+		 */
 		L770:
 			throw new ArgumentException("IDENTICAL Y VALUES");
 		//goto L790;
 		L780:
 			throw new ArgumentException("Y VALUES OUT OF SEQUENCE");
-		L790:
-			throw new ArgumentException(string.Format("iy ={0} y[iy]={1})", iy, y[iy]));
-		L800:
-			throw new ArgumentException(string.Format("LX ={0} LY ={1} N ={2} ERROR DETECTED IN ROUTINE ITPLBV)", ix, iy, n));
-			//return 0;
-			/* FORMAT STATEMENTS */
-
+			/*
+			L790:
+				throw new ArgumentException(string.Format("iy ={0} y[iy]={1})", iy, y[iy]));
+			L800:
+				throw new ArgumentException(string.Format("LX ={0} LY ={1} N ={2} ERROR DETECTED IN ROUTINE ITPLBV)", ix, iy, n));
+				//return 0;
+			// FORMAT STATEMENTS 
 			return 0;
+			*/
 		} /* itplbv_ */
 
 		#endregion

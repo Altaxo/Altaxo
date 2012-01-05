@@ -28,7 +28,6 @@ using Altaxo.Collections;
 using Altaxo.Data;
 
 using Altaxo.Main;
-using Altaxo.Data;
 
 namespace Altaxo.Gui.Worksheet
 {

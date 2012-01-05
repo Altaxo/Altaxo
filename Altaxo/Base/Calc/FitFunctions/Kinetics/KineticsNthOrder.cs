@@ -97,7 +97,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 		/// <remarks>The provided volume fraction of aggregating species <c>pSample</c>is influencing only the rate. It is important only
 		/// if you want to compare aggregation processes for sample with different content of aggregating species. If such a comparism is not neccessary,
 		/// you can set <c>pSample</c> to 1.
-		/// The kinetic equation for this problem (see <see cref="Core"/> is formulated with the number
+		/// The kinetic equation for this problem (see <see cref="CoreSolution"/> is formulated with the number
 		/// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y. 
 		/// The solution was reformulated with volume fractions, using a new kinetic constant scaled by the volume of one aggregating particel.
 		/// </remarks>

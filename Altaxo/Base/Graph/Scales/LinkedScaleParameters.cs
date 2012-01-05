@@ -127,7 +127,6 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Set all parameters of the axis link by once.
 		/// </summary>
-		/// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
 		/// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
 		/// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
 		/// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>

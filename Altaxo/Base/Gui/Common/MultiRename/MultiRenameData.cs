@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Common.MultiRename
 	/// In order to use this class for rename operations, after creating an instance of this class you have to:
 	/// <list type="bullet">
 	/// <item><description>Add some objects that you want to process (rename etc.) with <see cref="AddObjectsToRename"/></description></item>
-	/// <item><description>Add some shortcuts that can be used as variables for flexible renaming with <see cref="RegisterIntegerShortcut"/>, <see cref="RegisterStringShortcut"/>, <see cref="RegisterDateTimeShortcut"/> or <see cref="RegisterArrayShortcut"/>.</description></item>
+	/// <item><description>Add some shortcuts that can be used as variables for flexible renaming with <see cref="RegisterIntegerShortcut"/>, <see cref="RegisterStringShortcut"/>, <see cref="RegisterDateTimeShortcut"/> or <see cref="RegisterStringArrayShortcut"/>.</description></item>
 	/// <item><description>Add some columns for the list that should be shown in the rename dialog with <see cref="RegisterListColumn"/>. One of the calls to <see cref="RegisterListColumn"/> should designate the column with the new name of the objects, in this case the 2nd argument (the handler) should be null.</description></item>
 	/// <item><description>Add a handler that will do the processing of the items (renaming, exporting etc). with <see cref="RegisterRenameActionHandler"/>.</description></item>
 	/// <item><description>Set the value of <see cref="DefaultPatternString"/> to a value that should be initially shown as pattern when the rename dialog opens, for instance [N].</description></item>
@@ -329,6 +329,7 @@ namespace Altaxo.Gui.Common.MultiRename
 			return _integerShortcutToGetter.Keys;
 		}
 
+		/// <summary>
 		/// Retrieves the names of all string shortcuts.
 		/// </summary>
 		/// <returns>An enumeration of all string shortcut names.</returns>
@@ -337,6 +338,7 @@ namespace Altaxo.Gui.Common.MultiRename
 			return _stringShortcutToGetter.Keys;
 		}
 
+		/// <summary>
 		/// Retrieves the names of all DateTime shortcuts.
 		/// </summary>
 		/// <returns>An enumeration of all DateTime shortcut names.</returns>
@@ -345,6 +347,7 @@ namespace Altaxo.Gui.Common.MultiRename
 			return _dateTimeShortcutToGetter.Keys;
 		}
 
+		/// <summary>
 		/// Retrieves the names of all array shortcuts.
 		/// </summary>
 		/// <returns>An enumeration of all array shortcut names.</returns>

@@ -199,7 +199,7 @@ namespace Altaxo
     /// <summary>
     /// Sets the property service.
     /// </summary>
-    /// <param name="resourceservice">The instance of property service to use in this application.</param>
+    /// <param name="service">The instance of property service to use in this application.</param>
     public static void SetPropertyService(Altaxo.Main.Services.IPropertyService service)
     {
       if (null == sm_thePropertyService)

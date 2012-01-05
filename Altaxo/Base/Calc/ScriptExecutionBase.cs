@@ -443,6 +443,7 @@ namespace Altaxo.Calc
 		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
 		public virtual void Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
 		{
+			
 			Execute(myColumn);
 		}
 	}
@@ -498,7 +499,7 @@ namespace Altaxo.Calc
 		/// <summary>
 		/// Version 2 of the execute method. This method which must be overriden by the script in order to be able to execute the script.
 		/// This method is the entry point of the  script
-		/// </summary/>
+		/// </summary>
 		/// <param name="reporter">Can be used to report the execution progress of the script.</param>
 		public virtual void Execute(IProgressReporter reporter)
 		{

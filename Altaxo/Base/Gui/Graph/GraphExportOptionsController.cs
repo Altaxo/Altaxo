@@ -230,7 +230,6 @@ namespace Altaxo.Gui.Graph
 
 		public bool Apply()
 		{
-			string s;
 			double sr, dr;
 			
 			if (!Serialization.GUIConversion.IsDouble(_view.SourceDpiResolution, out sr))

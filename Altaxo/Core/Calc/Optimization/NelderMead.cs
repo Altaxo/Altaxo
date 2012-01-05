@@ -123,7 +123,7 @@ namespace Altaxo.Calc.Optimization
 		{
 			int n = x.Length;
 			DoubleVector[] simplex = new DoubleVector[n + 1];
-			DoubleVector direction;
+			//DoubleVector direction;
 			simplex[0] = new DoubleVector(x);
 			for (int i = 1; i <= n; i++)
 			{

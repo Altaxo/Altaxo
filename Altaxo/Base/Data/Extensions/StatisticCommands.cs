@@ -201,7 +201,6 @@ namespace Altaxo.Data
 		/// <param name="srctable">Source table.</param>
 		/// <param name="selectedColumns">Selected data columns in the source table.</param>
 		/// <param name="selectedRows">Selected rows in the source table.</param>
-		/// <param name="destinationTable">The table where the statistical results are written to.</param>
 		public static DataTable DoStatisticsOnRows(
 			this DataColumnCollection srctable,
 			IAscendingIntegerCollection selectedColumns,

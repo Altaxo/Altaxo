@@ -51,7 +51,7 @@ namespace Altaxo.Collections.Text
 		}
 
 		/// <summary>Evaluates the longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
-		/// the state of <see cref="StoreVerboseResults"/>.
+		/// the state of <see cref="P:StoreVerboseResults"/>.
 		/// </summary>
 		/// <returns>This instance.</returns>
 		public LongestCommonSubstringA Evaluate()
@@ -150,7 +150,7 @@ namespace Altaxo.Collections.Text
 
 
 
-		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LCS5"/>).</summary>
+		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonSubstringA"/>).</summary>
 		/// <param name="lcp_i">The lcp_i.</param>
 		/// <param name="index">The index.</param>
 		void lcp_update(int lcp_i, int index)
@@ -195,7 +195,7 @@ namespace Altaxo.Collections.Text
 			_lastLcp[lcp_i] = last_updated;
 		}
 
-		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LCS5"/>).</summary>
+		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonSubstringA"/>).</summary>
 		/// <param name="end">The end.</param>
 		/// <param name="begin">The begin.</param>
 		/// <param name="lcp">The LCP.</param>
@@ -212,7 +212,7 @@ namespace Altaxo.Collections.Text
 			L[end].IntervalSize = size;
 		}
 
-		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LCS5"/>).</summary>
+		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonSubstringA"/>).</summary>
 		/// <param name="i">The i.</param>
 		void list_update(int i)
 		{

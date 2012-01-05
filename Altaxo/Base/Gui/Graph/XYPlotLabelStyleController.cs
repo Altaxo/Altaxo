@@ -55,7 +55,6 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes/gets the font family combo box.
     /// </summary>
-    /// <param name="font">The actual font of the choice.</param>
 		Font SelectedFont { get; set; }
 
     /// <summary>
@@ -74,8 +73,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the horizontal aligment combo box.
     /// </summary>
-    /// <param name="names">The possible choices.</param>
-    /// <param name="name">The actual name of the choice.</param>
+    /// <param name="list">The possible choices.</param>
     void Init_HorizontalAlignment(SelectableListNodeList list);
 
 		ListNode SelectedHorizontalAlignment { get; }
@@ -83,8 +81,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the vertical alignement combo box.
     /// </summary>
-    /// <param name="names">The possible choices.</param>
-    /// <param name="name">The actual name of the choice.</param>
+    /// <param name="list">The possible choices.</param>
     void Init_VerticalAlignment(SelectableListNodeList list);
 
 		ListNode SelectedVerticalAlignment { get; }
@@ -100,7 +97,6 @@ namespace Altaxo.Gui.Graph
     /// Initializes the AttachedAxis combo box.
     /// </summary>
     /// <param name="names">The possible choices.</param>
-    /// <param name="sel">The actual choice.</param>
     void Init_AttachedAxis(SelectableListNodeList names);
 
 		ListNode AttachedAxis { get; }
@@ -130,7 +126,6 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the Independent color checkbox
     /// </summary>
-    /// <param name="bIndependent">True if the label has a white background.</param>
 		bool IsIndependentColorSelected { get; set; }
   }
 
@@ -184,7 +179,7 @@ namespace Altaxo.Gui.Graph
 
     UseDocument _useDocumentCopy;
 
-		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", new DimensionfulQuantity(1, LengthUnitPoint.Instance));
+		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, LengthUnitPoint.Instance));
 
     public XYPlotLabelStyleController()
     {
@@ -226,7 +221,7 @@ namespace Altaxo.Gui.Graph
         _yOffset      = _doc.YOffset;
         _labelColumn = _doc.LabelColumn;
         _backgroundStyle = _doc.BackgroundStyle;
-				_percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em size", new DimensionfulQuantity(_font.Size, LengthUnitPoint.Instance));
+				_percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em size", "%", new DimensionfulQuantity(_font.Size, LengthUnitPoint.Instance));
 			}
 
       if(null!=_view)
@@ -258,7 +253,6 @@ namespace Altaxo.Gui.Graph
 
 			var names = new SelectableListNodeList();
 
-      int idx = -1;
       if (layer != null)
       {
         foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.AttachedAxis }))

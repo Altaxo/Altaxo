@@ -45,7 +45,6 @@ namespace Altaxo.Graph.Procedures
     /// <param name="ctrl">The graph controller which controls the graph from which the points are to retrieve.</param>
     /// <param name="xarr">The array of the data point's x values.</param>
     /// <param name="yarr">The array of the data point's y values.</param>
-    /// <param name="nPlotPoints">The number of plot points (may be smaller than the length of x and y arrays.</param>
     /// <returns>Null if all is ok, or error message if not.</returns>
 		public static string GetActivePlotPoints(Altaxo.Gui.Graph.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
     {

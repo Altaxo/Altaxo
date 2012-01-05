@@ -92,7 +92,9 @@ namespace Altaxo.Serialization.AutoUpdates
 					fs.Write(versionData, 0, versionData.Length);
 					fs.Flush(); // write the new version to disc in order to change the write date
 
-					if (null == alreadyDownloadedVersion || Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0) // if the remote version is higher than the currently installed Altaxo version
+					Console.WriteLine("The remote package version is: {0}", parsedVersion.Version);
+
+					if (Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0) // if the remote version is higher than the currently installed Altaxo version
 					{
 						Console.Write("Cleaning download directory ...");
 						CleanDirectory(versionFileFullName); // Clean old downloaded files from the directory

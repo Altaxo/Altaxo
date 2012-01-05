@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Gdi
 				_shearX = (double)shearX;
 			if(null!=scaleX)
 				_scaleX = (double)scaleX;
-			if(null!=_scaleY)
+			if(null!=scaleY)
 				_scaleY = (double)scaleY;
 
 			OnChanged(suppressChangeEvent);

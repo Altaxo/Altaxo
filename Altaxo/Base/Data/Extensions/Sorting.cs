@@ -461,6 +461,7 @@ namespace Altaxo.Data
 		/// Sort the order of the data columns (not rows!) of a table based on a specified property column. The relationship of property data to data columns is maintained.
 		/// </summary>
 		/// <param name="table">The table where to sort the columns.</param>
+		/// <param name="selectedDataCols">Data columns to sort.</param>
 		/// <param name="propCol">The property column where the sorting order is based on.</param>
 		/// <param name="inAscendingOrder">If true, the sorting is in ascending order. If false, the sorting is in descending order.</param>
 		public static void SortDataColumnsByPropertyColumn(this DataTable table, IAscendingIntegerCollection selectedDataCols, DataColumn propCol, bool inAscendingOrder)

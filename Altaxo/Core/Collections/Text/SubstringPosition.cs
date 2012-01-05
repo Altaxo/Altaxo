@@ -83,7 +83,7 @@ namespace Altaxo.Collections.Text
 
 
 	/// <summary>
-	/// Designates the position of a substring in a list of words.
+	/// Stores the positions of a common substring in a list of words. This corresponds to a certain interval [begin, end] of the suffix array.
 	/// </summary>
 	public struct CommonSubstring
 	{
@@ -105,10 +105,14 @@ namespace Altaxo.Collections.Text
 		/// <summary>Length of the common substring.</summary>
 		int _substringLength;
 
-		/// <summary>Initializes a new instance of the <see cref="SubstringPosition"/> struct.</summary>
-		/// <param name="wordIndex">Index of the word in the word list.</param>
-		/// <param name="start">Starting position of the substring in the word.</param>
-		/// <param name="count">Number of elements of the substring.</param>
+
+		/// <summary>Initializes a new instance of the <see cref="CommonSubstring"/> struct.</summary>
+		/// <param name="subStringLength">Length of the substring.</param>
+		/// <param name="beg">Start of the range in the suffix array.</param>
+		/// <param name="end">End of the range in the suffix array.</param>
+		/// <param name="suffixArray">The suffix array.</param>
+		/// <param name="wordIndices">Array of word indices corresponding to the entries of the suffix array.</param>
+		/// <param name="wordStartPositions">The word start positions in the concentated array of all words (with or without separators).</param>
 		public CommonSubstring(int subStringLength, int beg, int end, int[] suffixArray, int[] wordIndices, int[] wordStartPositions)
 		{
 			_substringLength = subStringLength;
@@ -119,6 +123,7 @@ namespace Altaxo.Collections.Text
 			_end = end;
 		}
 
+		/// <summary>Gets the first position of the common substring.</summary>
 		public SubstringPosition FirstPosition
 		{
 			get
@@ -128,6 +133,7 @@ namespace Altaxo.Collections.Text
 		}
 
 
+		/// <summary>Enumerates through all positions of the common substring.</summary>
 		public IEnumerable<SubstringPosition> Positions
 		{
 			get
@@ -137,6 +143,9 @@ namespace Altaxo.Collections.Text
 			}
 		}
 
+		/// <summary>Gets the position of the i-th occurence of the common substring.</summary>
+		/// <param name="i">Index i.</param>
+		/// <returns>Position of the i-th occurence of the common substring.</returns>
 		private SubstringPosition GetSubstringPosition(int i)
 		{
 			int word = _wordIndices[i];
@@ -144,6 +153,8 @@ namespace Altaxo.Collections.Text
 		}
 
 
+		/// <summary>Returns a <see cref="System.String"/> that represents this instance.</summary>
+		/// <returns>A <see cref="System.String"/> that represents this instance.</returns>
 		public override string ToString()
 		{
 			return string.Format("CommonSubstring Length={0}, SuffixArray_Begin={1}, End={2}", _substringLength, _begin, _end);

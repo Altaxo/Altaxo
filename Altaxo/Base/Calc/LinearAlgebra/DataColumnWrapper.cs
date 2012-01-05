@@ -47,6 +47,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// Constructor
 			/// </summary>
 			/// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
+			/// <param name="start">Index of the element in <paramref name="column"/> that is used as first element of the wrapped vector.</param>
 			/// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
 			public NumericColumnToROVectorWrapper(Altaxo.Data.INumericColumn column, int start, int nRows)
 			{
@@ -129,6 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// Constructor
 			/// </summary>
 			/// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
+			/// <param name="start">Index of the element in <paramref name="column"/> that is used as first element of the wrapped vector.</param>
 			/// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
 			public DoubleColumnToVectorWrapper(DoubleColumn column, int start, int nRows)
 			{
@@ -215,8 +217,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Constructor
 			/// </summary>
-			/// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
-			/// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
+			/// <param name="columnRe">The real part of the resulting complex vector.</param>
+			/// <param name="columnIm">The imaginary part of the resulting complex vector.</param>
+			/// <param name="start">Start of the range both in <paramref name="columnRe"/> and <paramref name="columnRe"/> that is wrapped.</param>
+			/// <param name="nRows">The number of rows that are part of the wrapping vector.</param>
 			public DoubleColumnToComplexDoubleVectorWrapper(DoubleColumn columnRe, DoubleColumn columnIm, int start, int nRows)
 			{
 				_columnRe = columnRe;
@@ -744,7 +748,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="columnRe">The column that represents the real part of the vector.</param>
 		/// <param name="columnIm">The column that represents the imaginary part of the vector.</param>
-		/// <returns>An <see cref="IDoubleComplexVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
+		/// <returns>An <see cref="IComplexDoubleVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
 		public static IComplexDoubleVector ToComplexDoubleVector(this DoubleColumn columnRe, DoubleColumn columnIm)
 		{
 			if (columnIm.Count != columnRe.Count)
@@ -759,7 +763,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="columnRe">The column that represents the real part of the vector.</param>
 		/// <param name="columnIm">The column that represents the imaginary part of the vector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
-		/// <returns>An <see cref="IDoubleComplexVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
+		/// <returns>An <see cref="IComplexDoubleVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
 		public static IComplexDoubleVector ToComplexDoubleVector(this DoubleColumn columnRe, DoubleColumn columnIm, int nRows)
 		{
 			return new DoubleColumnToComplexDoubleVectorWrapper(columnRe, columnIm, 0, nRows);
@@ -772,7 +776,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="columnIm">The column that represents the imaginary part of the vector.</param>
 		/// <param name="nStart">The starting index of the wrapped column.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
-		/// <returns>An <see cref="IDoubleComplexVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
+		/// <returns>An <see cref="IComplexDoubleVector"/>  wrapping the <see cref="DoubleColumn" />s.</returns>
 		public static IComplexDoubleVector ToComplexDoubleVector(this DoubleColumn columnRe, DoubleColumn columnIm, int nStart, int nRows)
 		{
 			return new DoubleColumnToComplexDoubleVectorWrapper(columnRe, columnIm, nStart, nRows);

@@ -617,6 +617,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// </summary>
 		/// <param name="layer"></param>
 		/// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
+		/// <param name="inflateby">Value in points, that the calculated path is inflated.</param>
 		/// <returns>The graphics path of the selection rectangle.</returns>
 		protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, float inflateby)
 		{

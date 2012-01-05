@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Worksheet
 	#endregion
 
 	/// <summary>
-	/// The controller class which controls the <see cref="ExportGalacticSpcFileDialog"/> dialog.
+	/// The controller class which is responsible for showing a dialog to export into the Galactic SPC file format.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IExportGalacticSpcFileView))]
 	public class ExportGalacticSpcFileDialogController : IMVCAController
@@ -78,13 +78,13 @@ namespace Altaxo.Gui.Worksheet
 		/// <summary>The selected columns of the table (only this data are exported).</summary>
 		protected IAscendingIntegerCollection m_SelectedColumns;
 
-		/// <summary>Stores if one spectrum is created from one table row or from one table column (<see cref="Options.CreateSpectrumFrom"/>).</summary>
+		/// <summary>Stores if one spectrum is created from one table row or from one table column.</summary>
 		protected CreateSpectrumFrom m_CreateSpectrumFrom;
 
-		/// <summary>Stores if the x values stem from continuous numbering or from a data column (<see cref="Options.XValuesFrom"/></summary>
+		/// <summary>Stores if the x values stem from continuous numbering or from a data column.</summary>
 		protected XValuesFrom m_XValuesFrom;
 
-		/// <summary>Stores if the filename is extended by a continuous number or by the contents of a data column (<see cref="Options.ExtendFileNameWith"/></summary>
+		/// <summary>Stores if the filename is extended by a continuous number or by the contents of a data column.</summary>
 		protected ExtendFileNameWith m_ExtendFileNameWith;
 
 		/// <summary>
@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Worksheet
 
 			// Fill the Combo Box with Column names
 			var colnames = new SelectableListNodeList();
-			for (int i = 0, j = 0; i < colcol.ColumnCount; i++)
+			for (int i = 0; i < colcol.ColumnCount; i++)
 				if (colcol[i] is Altaxo.Data.INumericColumn)
 					colnames.Add(new SelectableListNode(colcol.GetColumnName(i),colcol[i],0==i));
 

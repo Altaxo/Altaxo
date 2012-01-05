@@ -190,9 +190,8 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-		/// Expands the rectangle r, so that it contains the point p.
+		/// Expands this rectangle, so that it contains the point p.
 		/// </summary>
-		/// <param name="r">The rectangle to expand.</param>
 		/// <param name="p">The point that should be contained in this rectangle.</param>
 		/// <returns>The new rectangle that now contains the point p.</returns>
 		public void ExpandToInclude(PointD2D p)

@@ -219,7 +219,7 @@ namespace Altaxo.Main
 
 			/// <summary>
 		/// Replaces parts of the part of the document node by another part. If the replacement was successful, the original document node is cleared.
-		/// See <see cref="DocumentNode.ReplacePathParts"/> for details of the part replacement.
+		/// See <see cref="M:DocumentPath.ReplacePathParts"/> for details of the part replacement.
 		/// </summary>
 		/// <param name="partToReplace">Part of the path that should be replaced. This part has to match the beginning of this part. The last item of the part
 		/// is allowed to be given only partially.</param>

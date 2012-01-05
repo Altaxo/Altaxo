@@ -231,6 +231,7 @@ namespace Altaxo.Main
 		/// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
 		/// </summary>
 		/// <param name="sender"></param>
+		/// <param name="source"></param>
 		/// <param name="e"></param>
     void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
     {

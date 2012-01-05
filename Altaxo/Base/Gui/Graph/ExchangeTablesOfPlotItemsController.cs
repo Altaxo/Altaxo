@@ -128,10 +128,10 @@ namespace Altaxo.Gui.Graph
 
 	
 
-		/// <summary>Exchanges the tables stored in < proxy visit.</summary>
-		/// <param name="proxy">The proxy.</param>
-		/// <param name="owner">The owner.</param>
-		/// <param name="propertyName">Name of the property.</param>
+		/// <summary>Exchanges the tables during a proxy visit.</summary>
+		/// <param name="proxy">The proxy which contain a reference to another project item.</param>
+		/// <param name="owner">The owner instance of the proxy.</param>
+		/// <param name="propertyName">Name of the property in the owner instance that returns the proxy.</param>
 		void ExchangeTablesProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
 		{
 			Altaxo.Data.DataTable substituteTable;

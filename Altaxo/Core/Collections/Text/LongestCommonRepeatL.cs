@@ -62,6 +62,7 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
 		/// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
+		/// <param name="x_repeats">Number of repeats in each of the words.</param>
 		public LongestCommonRepeatL(GeneralizedSuffixArray gsa, int x_repeats)
 			: base(gsa)
 		{
@@ -69,7 +70,7 @@ namespace Altaxo.Collections.Text
 		}
 
 		/// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
-		/// the state of <see cref="StoreVerboseResults"/>.
+		/// the state of <see cref="P:LongestCommonSubstringBase.StoreVerboseResults"/>.
 		/// </summary>
 		/// <returns>This instance.</returns>
 		public LongestCommonRepeatL Evaluate()
@@ -82,7 +83,7 @@ namespace Altaxo.Collections.Text
 
 
 		/// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
-		/// the state of <see cref="StoreVerboseResults"/>.
+		/// the state of <see cref="P:StoreVerboseResults"/>.
 		/// </summary>
 		/// <returns>This instance.</returns>
 		public LongestCommonRepeatL Evaluate(int x_repeats)
@@ -217,7 +218,7 @@ namespace Altaxo.Collections.Text
 			end.IntervalSize = size;
 		}
 
-		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LCS5"/>).</summary>
+		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonRepeatL"/>).</summary>
 		/// <param name="i">The i.</param>
 		void list_update(int i)
 		{
@@ -294,7 +295,7 @@ namespace Altaxo.Collections.Text
 
 
 
-		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LCS5"/>).</summary>
+		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonRepeatL"/>).</summary>
 		/// <param name="lcp_i">The lcp_i.</param>
 		/// <param name="index">The index.</param>
 		void lcp_update(int lcp_i, int index)

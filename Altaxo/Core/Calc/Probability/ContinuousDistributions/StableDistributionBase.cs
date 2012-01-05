@@ -571,7 +571,7 @@ namespace Altaxo.Calc.Probability
     }
 
 		/// <summary>Gets the skewness parameter beta (range: [-1,1]) from the 'alternative beta' value <paramref name="abe"/>.</summary>
-		/// <param name="abe">'Alternative beta' value. It is defined as (1-beta) for beta&gt=0, and as (1+beta) for beta&lt;0. Thus, abe is a value in the range [0,1].</param>
+		/// <param name="abe">'Alternative beta' value. It is defined as (1-beta) for beta&gt;=0, and as (1+beta) for beta&lt;0. Thus, abe is a value in the range [0,1].</param>
 		/// <param name="isBetaNegative">Specifies the sign of the original beta value. If false, the original beta is a nonnegative value. Of true, the original beta is negative.</param>
 		/// <returns>The skewness parameter beta (range: [-1,1]) as calculated from the 'alternative beta' value <paramref name="abe"/>.</returns>
     public static double GetBetaFromAbe(double abe, bool isBetaNegative)
@@ -810,8 +810,6 @@ namespace Altaxo.Calc.Probability
     {
       double V, W, X;
       const double M_PI = Math.PI;
-      const double M_PI_2 = Math.PI / 2;
-
 
       V = M_PI * (_contDist.NextDouble() - 0.5);
 
@@ -1137,9 +1135,8 @@ namespace Altaxo.Calc.Probability
           // Take the values in the vicinity of x0 and x1, respectively, but make sure
           // not to use too big differences
 
-          double y00, y11;
           double s0, s1;
-          double dx;
+          
 
           s0 = PDFCoreDerivative(x0);
           s1 = PDFCoreDerivative(x1);
@@ -1790,7 +1787,7 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
 
         xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -1857,7 +1854,7 @@ namespace Altaxo.Calc.Probability
         }
       }
 
-      public new double PDFFuncLogIntToLeft(double z)
+      public double PDFFuncLogIntToLeft(double z)
       {
         double x = Math.Max(-_xm, _x0 - Math.Exp(z));
         double f = PDFCoreMod(x);
@@ -1866,7 +1863,7 @@ namespace Altaxo.Calc.Probability
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
       }
-      public new double PDFFuncLogIntToRight(double z)
+      public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
         double f = PDFCoreMod(x);
@@ -2160,7 +2157,7 @@ namespace Altaxo.Calc.Probability
         }
       }
 
-      public new double PDFFuncLogIntToLeft(double z)
+      public double PDFFuncLogIntToLeft(double z)
       {
         double x = Math.Max(-_xm, _x0 - Math.Exp(z));
         double f = PDFCoreMod(x);
@@ -2169,7 +2166,7 @@ namespace Altaxo.Calc.Probability
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
       }
-      public new double PDFFuncLogIntToRight(double z)
+      public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
         double f = PDFCoreMod(x);
@@ -2380,7 +2377,7 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
 
         xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -2447,7 +2444,7 @@ namespace Altaxo.Calc.Probability
         }
       }
 
-      public new double PDFFuncLogIntToLeft(double z)
+      public double PDFFuncLogIntToLeft(double z)
       {
         double x = Math.Max(-_xm, _x0 - Math.Exp(z));
         double f = PDFCoreMod(x);
@@ -2456,7 +2453,7 @@ namespace Altaxo.Calc.Probability
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
       }
-      public new double PDFFuncLogIntToRight(double z)
+      public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
         double f = PDFCoreMod(x);
@@ -3001,7 +2998,7 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
         xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
         if ((xm * 10) < UpperIntegrationLimit)
@@ -3385,7 +3382,7 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
      
         xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -3569,7 +3566,7 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
 
         xm = FindIncreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
@@ -3753,7 +3750,7 @@ namespace Altaxo.Calc.Probability
         GSL_ERROR error1;
         double resultRight, abserrRight;
 
-        double xm, yfound;
+        double xm;
 
         xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 

@@ -57,6 +57,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <param name="alpha"></param>
+		/// <param name="tempStorage">Object which can be used to speed up subsequent calculations of the function. At the first call, provide an object initialized with <see languageref="null"/> and provide this object for the following calculations.</param>
+		/// <param name="precision">Goal for the relative precision.</param>
     /// <returns></returns>
     public static double PDF(double x, double alpha, ref object tempStorage, double precision)
     {
@@ -293,8 +295,8 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta&lt;=1/20..
     /// </summary>
-    /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency.</param>
+		/// <param name="alpha">Alpha (broadness) parameter.</param>
     /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or double.NaN if the series not converges.</returns>
     /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
     /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
@@ -351,9 +353,9 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies.
     /// </summary>
-    /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+		/// <param name="alpha">Alpha (broadness) parameter.</param>
+		/// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
     /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
     /// the return value here is positive!.</remarks>
     public static double PDFSeriesBigX(double z, double alpha)

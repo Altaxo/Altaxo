@@ -146,8 +146,8 @@ namespace Altaxo.Science
 			this._candela == b._candela;
 		}
 
-		/// <summary>Compares this unit with another unit <paramref name="b"/> and returns <c>true</c> when both are equal.</summary>
-		/// <param name="b">The other unit.</param>
+		/// <summary>Compares this unit with another unit <paramref name="obj"/> and returns <c>true</c> when both are equal.</summary>
+		/// <param name="obj">The other unit.</param>
 		/// <returns><c>True</c> when both units are equal.</returns>
 		public bool Equals(IUnit obj)
 		{

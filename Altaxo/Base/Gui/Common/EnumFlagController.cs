@@ -47,10 +47,7 @@ namespace Altaxo.Gui.Common
     long _tempDoc;
     IEnumFlagView _view;
 
-    Array _values;
 		SelectableListNodeList _list;
-    string[] _names;
-    bool[] _checks;
 
 		int _checkedChangeLock=0;
 

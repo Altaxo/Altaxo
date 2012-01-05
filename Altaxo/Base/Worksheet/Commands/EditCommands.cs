@@ -103,6 +103,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="xcol">Column of x-values.</param>
     /// <param name="ycol">Column of y-values.</param>
     /// <param name="vcol">Column of v-values.</param>
+		/// <param name="originalTable">The source table. This is only needed to get the names of the columns.</param>
     /// <param name="newtable">On return, contains the newly created table matrix.</param>
     /// <returns>Null if no error occurs, or an error message.</returns>
     public static string XYVToMatrix(DataColumn xcol, DataColumn ycol, DataColumn vcol, DataTable originalTable, out DataTable newtable)

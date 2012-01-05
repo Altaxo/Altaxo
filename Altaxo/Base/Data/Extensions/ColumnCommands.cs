@@ -103,7 +103,8 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Sets the group number of the currently selected columns to <code>nGroup</code>.
 		/// </summary>
-		/// <param name="ctrl">The worksheet controller.</param>
+		/// <param name="datacoll">The data column collection to which to apply this procedure.</param>
+		/// <param name="selected">Collection of column indices for which to set the group number.</param>
 		/// <param name="nGroup">The group number to set for the selected columns.</param>
 		public static void SetColumnGroupNumber(this DataColumnCollection datacoll, IAscendingIntegerCollection selected, int nGroup)
 		{
@@ -127,7 +128,9 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Sets the group number of the selected column
 		/// </summary>
-		/// <param name="ctrl">The worksheet controller for the table.</param>
+		/// <param name="dataTable">The data table</param>
+		/// <param name="selectedDataColumns">Indices of the currently selected data column of the table</param>
+		/// <param name="selectedPropColumns">Indices of the currently selected property columns of the table.</param>
 		public static bool ShowSetColumnGroupNumberDialog(this DataTable dataTable,
 			IAscendingIntegerCollection selectedDataColumns,
 			IAscendingIntegerCollection selectedPropColumns)

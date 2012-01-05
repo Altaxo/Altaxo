@@ -302,6 +302,7 @@ namespace Altaxo.Serialization.Ascii
     /// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
     /// </summary>
     /// <param name="stream">The stream to import ascii from. Is not (!) closed at the end of this function.</param>
+		/// <param name="defaultImportOptions">The default import options. The importer uses this options as base, but updates some fields by analyzing the data to import.</param>
     /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
     public static Altaxo.Data.DataTable Import(System.IO.Stream stream, Altaxo.Serialization.Ascii.AsciiImportOptions defaultImportOptions)
     {

@@ -60,8 +60,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the symbol size combobox.
     /// </summary>
-    /// <param name="arr">String array of possible selections</param>
-    /// <param name="sel">Current selection.</param>
+    /// <param name="value">Currently selected symbol size.</param>
     void InitializeSymbolSize(double value);
 
     /// <summary>
@@ -73,15 +72,13 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the symbol style combobox.
     /// </summary>
-    /// <param name="arr">String array of possible selections</param>
-    /// <param name="sel">Current selection.</param>
+    /// <param name="list">Possible selections</param>
     void InitializeSymbolStyle(SelectableListNodeList list);
 
     /// <summary>
     /// Initializes the symbol shape combobox.
     /// </summary>
-    /// <param name="arr">String array of possible selections</param>
-    /// <param name="sel">Current selection.</param>
+    /// <param name="list">Possible selections</param>
 		void InitializeSymbolShape(SelectableListNodeList list);
 
 

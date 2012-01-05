@@ -46,8 +46,6 @@ namespace Altaxo.Gui.Common.Drawing
 		class CC : IValueConverter
 		{
 			LinearGradientShapeComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
 
 			public CC(LinearGradientShapeComboBox c)
 			{

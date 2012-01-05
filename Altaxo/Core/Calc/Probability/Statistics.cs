@@ -171,14 +171,16 @@ namespace Altaxo.Calc.Probability
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="bw"></param>
+		/// <param name="bwSel"></param>
 		/// <param name="adjust"></param>
 		/// <param name="kernel"></param>
 		/// <param name="weights"></param>
+		/// <param name="width"></param>
+		/// <param name="widthSel"></param>
 		/// <param name="n"></param>
 		/// <param name="from"></param>
 		/// <param name="to"></param>
 		/// <param name="cut"></param>
-		/// <param name="removeNaN"></param>
 		/// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file density.R</remarks>
 		public static ProbabilityDensityResult ProbabilityDensity(
 			this IROVector x,
@@ -372,6 +374,7 @@ namespace Altaxo.Calc.Probability
 		/// <param name="xlow"></param>
 		/// <param name="xhigh"></param>
 		/// <param name="y"></param>
+		/// <param name="ny"></param>
 		/// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file massdist.c</remarks>
 		public static void MassDistribution(
 				this IROVector x,

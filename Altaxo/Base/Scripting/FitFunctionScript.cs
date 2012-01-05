@@ -1196,7 +1196,7 @@ namespace Altaxo.Scripting
         ((IFitFunction)_scriptObject).Evaluate(independent,parameters,result);
         return;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return;
       }

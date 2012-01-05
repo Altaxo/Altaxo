@@ -123,7 +123,7 @@ namespace Altaxo.Serialization.AutoUpdates
 				return true;
 			}
 
-			catch (Exception ex)
+			catch (Exception)
 			{
 				return false;
 			}

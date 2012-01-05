@@ -203,6 +203,7 @@ namespace Altaxo.Serialization.Ascii
   /// </summary>
   /// <param name="result"></param>
   /// <param name="sep"></param>
+	/// <param name="excludeLineStructureHashes"></param>
   /// <param name="maxNumberOfEqualLines"></param>
   /// <param name="bestLine"></param>
     public static void GetPriorityOf(List<AsciiLineAnalysis> result, IAsciiSeparationStrategy sep, HashSet<int> excludeLineStructureHashes,

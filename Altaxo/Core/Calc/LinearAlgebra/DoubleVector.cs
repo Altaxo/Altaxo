@@ -131,8 +131,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>
 		/// Resizes the vector. The previous element data are lost.
 		/// </summary>
-		/// <param name="lo">New lower boundary of the vector (first valid index).</param>
-		/// <param name="hi">New upper boundary of the vector (last valid index).</param>
+		/// <param name="length">New length of the vector.</param>
 		public void Resize(int length)
 		{
 			if (length < 0)

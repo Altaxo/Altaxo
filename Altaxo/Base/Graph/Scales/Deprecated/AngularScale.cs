@@ -52,9 +52,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 
     /// <summary>If true, use degree instead of radian.</summary>
     protected bool _useDegree;
-    /// <summary>Major tick divider. Should be one of the values of the table <see cref="_possibleDividers /></summary>
+    /// <summary>Major tick divider. Should be one of the values of the table <see cref="_possibleDividers"/>.</summary>
     protected int _majorTickDivider=8;
-    /// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers /></summary>
+    /// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers"/>.</summary>
     protected int _minorTickDivider=24;
     /// <summary>Origin of the scale in multiples of 90°</summary>
     protected int _scaleOrigin; // in 90°

@@ -46,9 +46,6 @@ namespace Altaxo.Main.Services
 		/// <param name="name">
 		/// The name of the requested bitmap.
 		/// </param>
-		/// <exception cref="ResourceNotFoundException">
-		/// Is thrown when the GlobalResource manager can't find a requested resource.
-		/// </exception>
     System.Drawing.Bitmap GetBitmap(string name);
   }
 }

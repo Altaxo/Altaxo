@@ -193,7 +193,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the <see cref="DefaultGenerator"/> as underlying random number generator.
+    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the <see cref="P:DefaultGenerator"/> as underlying random number generator.
     /// </summary>
 		/// <param name="mu">Mean value.</param>
 		/// <param name="sigma">Standard deviation.</param>

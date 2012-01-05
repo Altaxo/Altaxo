@@ -130,6 +130,7 @@ namespace Altaxo.Serialization.Ascii
     /// Furthermore you must provide a tab size that is used to calculate the tabbed positions.
     /// </summary>
     /// <param name="startPositions">List of starting tabbed positions.</param>
+		/// <param name="tabSize">Size of the tabulator (i.e. how many spaces at maximum substitutes one tabulator)</param>
     public FixedColumnWidthWithTabSeparationStrategy(List<int> startPositions, int tabSize)
     {
       if (tabSize < 1)

@@ -82,7 +82,7 @@ namespace Altaxo.Collections
 		/// Tries to go one point backward in the navigation list.
 		/// </summary>
 		/// <param name="point">On success, returns the previous navigation point.</param>
-		/// <returns>True if a previous navigation point could be returned in <paramref name="point"/>, otherwise <c>False/c>.</returns>
+		/// <returns>True if a previous navigation point could be returned in <paramref name="point"/>, otherwise <c>false</c>.</returns>
 		public bool TryNavigateBackward(out T point)
 		{
 			return TryNavigateBackward(out point, null, false);
@@ -123,7 +123,7 @@ namespace Altaxo.Collections
 		/// Tries to go one point forward in the navigation list.
 		/// </summary>
 		/// <param name="point">On success, returns the previous navigation point.</param>
-		/// <returns>True if a previous navigation point could be returned in <paramref name="point"/>, otherwise <c>False/c>.</returns>
+		/// <returns>True if a previous navigation point could be returned in <paramref name="point"/>, otherwise <c>false</c>.</returns>
 		public bool TryNavigateForward(out T point)
 		{
 			return TryNavigateForward(out point, null, false);

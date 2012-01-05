@@ -156,14 +156,14 @@ namespace Altaxo.Calc.Integration
 					double b,
 					double epsabs, double epsrel,
 					int limit,
-					gsl_integration_rule q, bool debug,
+					gsl_integration_rule integrationRule, bool debug,
 					out double result, out double abserr,
 					ref object tempStorage)
 		{
 			QagilIntegration algo = tempStorage as QagilIntegration;
 			if (null == algo)
-				tempStorage = algo = new QagilIntegration(q, debug);
-			return algo.Integrate(f, b, epsabs, epsrel, limit, q, debug, out result, out abserr);
+				tempStorage = algo = new QagilIntegration(integrationRule, debug);
+			return algo.Integrate(f, b, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
 		}
 
 		/// <summary>

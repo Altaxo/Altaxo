@@ -104,13 +104,10 @@ namespace Altaxo.Calc.Probability
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CauchyDistribution"/> class, using the specified 
-        ///   <see cref="Generator"/> as underlying random number generator.
+        /// Initializes a new instance of the <see cref="CauchyDistribution"/> class, using the default random number generator.
         /// </summary>
-        /// <param name="generator">A <see cref="Generator"/> object.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-        /// </exception>
+				/// <param name="alpha">First parameter of the distribution.</param>
+				/// <param name="gamma">Second parameter of the distribution.</param>
         public CauchyDistribution(double alpha, double gamma)
           : this(alpha, gamma, DefaultGenerator)
         {
@@ -119,6 +116,8 @@ namespace Altaxo.Calc.Probability
         /// Initializes a new instance of the <see cref="CauchyDistribution"/> class, using the specified 
         ///   <see cref="Generator"/> as underlying random number generator.
         /// </summary>
+				/// <param name="alpha">First parameter of the distribution.</param>
+				/// <param name="gamma">Second parameter of the distribution.</param>
         /// <param name="generator">A <see cref="Generator"/> object.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).

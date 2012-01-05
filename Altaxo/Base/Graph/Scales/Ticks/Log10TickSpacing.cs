@@ -256,6 +256,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// </summary>
 		/// <param name="org">Scale origin.</param>
 		/// <param name="end">Scale end.</param>
+		/// <param name="scale">The underlying scale.</param>
 		public override void FinalProcessScaleBoundaries(AltaxoVariant org, AltaxoVariant end, Scale scale)
 		{
 			double dorg = (double)org;

@@ -27,6 +27,11 @@ using System.Text;
 
 namespace Altaxo.Science
 {
+	/// <summary>
+	/// Represents a unit that refers to a reference quantity. Example: 'Percent of page with' is a unit, which refers to the quantity 'page width' (which has the dimension of length).
+	/// Thus this unit is a combination of a dimensionless unit (in the example: 'percent') and the reference quantity (in the example: 'page width'). This dimension of
+	/// this unit is equal to the dimension of the reference quantity (i.e. in the above example 'length').
+	/// </summary>
 	public interface IRelativeUnit : IUnit
 	{
 		/// <summary>
@@ -36,16 +41,19 @@ namespace Altaxo.Science
 
 
 		/// <summary>
-		/// Returns the RelativeValue. RelativeValue is defined in such a way, that one piece of this unit is equal to RelativeValue times <see cref="ReferenceQuantity"/>. 
-		/// Since the <see cref="Value"/> property can be different from the RelativeValue, it is neccessary to have a function for converting <see cref="Value"/> to RelativeValue.
-		/// For instance, the value can be expressed in percent, thus the <see cref="Value"/> property amounts to 100 times the RelativeValue.
+		/// Calculated the dimensionless prefactor to multiply the <see cref="ReferenceQuantity"/> with.
+		/// Example: Given that the relative unit is 'percent of page with', a value of <paramref name="x"/>=5 is converted to 0.05. The result can then be used 
+		/// to calculate the absolute quantity by multiplying the result of 0.05 with the 'page with'.
 		/// </summary>
+		/// <param name="x">Numerical value to convert.</param>
+		/// <returns>The prefactor to multiply the <see cref="ReferenceQuantity"/> with in order to get the absolute quantity.</returns>
 		double GetRelativeValueFromValue(double x);
 	}
 
 
 	/// <summary>
 	/// This unit refers to a reference quantity. Since the reference quantity can be changed, instances of this class are <b>not</b> immutable.
+	/// Example: 'percent of page width': here the page width can change depending on the user defined settings.
 	/// </summary>
 	public class ChangeableRelativeUnit : IRelativeUnit
 	{
@@ -54,6 +62,11 @@ namespace Altaxo.Science
 		protected double _divider;
 		DimensionfulQuantity _referenceQuantity;
 
+		/// <summary>Initializes a new instance of the <see cref="ChangeableRelativeUnit"/> class.</summary>
+		/// <param name="name">The full name of the unit (e.g. 'percent of page with').</param>
+		/// <param name="shortcut">The shortcut of the unit (e.g. %PW).</param>
+		/// <param name="divider">Used to calculate the relative value from the numeric value of the quantity. In the above example (percent of page width), the divider is 100.</param>
+		/// <param name="referenceQuantity">The reference quantity.</param>
 		public ChangeableRelativeUnit(string name, string shortcut, double divider, DimensionfulQuantity referenceQuantity)
 		{
 			_name = name;
@@ -62,16 +75,19 @@ namespace Altaxo.Science
 			_referenceQuantity = referenceQuantity;
 		}
 
+		/// <summary>Full name of the unit.</summary>
 		public string Name
 		{
 			get { return _name; }
 		}
 
+		/// <summary>Usual shortcut of the unit.</summary>
 		public string ShortCut
 		{
 			get { return _shortCut; }
 		}
 
+		/// <summary>The corresponding quantity that this unit encapsulates.</summary>
 		public DimensionfulQuantity ReferenceQuantity
 		{
 			get
@@ -84,43 +100,61 @@ namespace Altaxo.Science
 			}
 		}
 
+		/// <summary>Converts <paramref name="x"/> to the corresponding SI unit.</summary>
+		/// <param name="x">Value to convert.</param>
+		/// <returns>The corresponding value of <paramref name="x"/> in SI units.</returns>
 		public double ToSIUnit(double x)
 		{
 			return (x / _divider) * _referenceQuantity.InSIUnits;
 		}
 
+		/// <summary>Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.</summary>
+		/// <param name="x">Value in SI units.</param>
+		/// <returns>The corresponding value in this unit.</returns>
 		public double FromSIUnit(double x)
 		{
 			return _divider * x / _referenceQuantity.InSIUnits;
 		}
 
 
+
 		/// <summary>
-		/// Returns the RelativeValue. RelativeValue is defined in such a way, that one piece of this unit is equal to RelativeValue times <see cref="ReferenceQuantity"/>. 
-		/// Since the <see cref="Value"/> property can be different from the RelativeValue, it is neccessary to have a function for converting <see cref="Value"/> to RelativeValue.
-		/// For instance, the value can be expressed in percent, thus the <see cref="Value"/> property amounts to 100 times the RelativeValue.
+		/// Calculated the dimensionless prefactor to multiply the <see cref="ReferenceQuantity"/> with.
+		/// Example: Given that the relative unit is 'percent of page with', a value of <paramref name="x"/>=5 is converted to 0.05. The result can then be used
+		/// to calculate the absolute quantity by multiplying the result of 0.05 with the 'page with'.
 		/// </summary>
+		/// <param name="x">Numerical value to convert.</param>
+		/// <returns>The prefactor to multiply the <see cref="ReferenceQuantity"/> with in order to get the absolute quantity.</returns>
 		public double GetRelativeValueFromValue(double x)
 		{
 			return x / _divider;
 		}
 
 
+		/// <summary>Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).</summary>
 		public ISIPrefixList Prefixes
 		{
 			get { return SIPrefix.ListWithNonePrefixOnly; }
 		}
 
+		/// <summary>Returns the corresponding SI unit.</summary>
 		public SIUnit SIUnit
 		{
 			get { return _referenceQuantity.Unit.SIUnit; }
 		}
 	}
 
+	/// <summary>
+	/// Special case of <see cref="ChangeableRelativeUnit"/> which is based on 'percent of some quantity'.
+	/// </summary>
 	public class ChangeableRelativePercentUnit : ChangeableRelativeUnit
 	{
-		public ChangeableRelativePercentUnit(string fullName, DimensionfulQuantity valueForHundredPercent)
-			: base(fullName, "%", 100, valueForHundredPercent)
+		/// <summary>Initializes a new instance of the <see cref="ChangeableRelativePercentUnit"/> class.</summary>
+		/// <param name="name">The full name of the unit (e.g. 'percent of page with').</param>
+		/// <param name="shortcut">The shortcut of the unit (e.g. %PW).</param>
+		/// <param name="valueForHundredPercent">The quantity that corresponds to a value of hundred percent.</param>
+		public ChangeableRelativePercentUnit(string name, string shortcut, DimensionfulQuantity valueForHundredPercent)
+			: base(name, shortcut, 100, valueForHundredPercent)
 		{
 		}
 	}

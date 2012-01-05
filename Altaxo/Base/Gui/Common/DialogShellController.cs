@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Common
   #endregion
 
   /// <summary>
-  /// Controls the <see cref="DialogShellView"/>.
+  /// Responsible for hosting another controller in a dialog.
   /// </summary>
   public class DialogShellController 
   {

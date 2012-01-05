@@ -31,10 +31,12 @@ namespace Altaxo.Calc.Fourier
 	/// Class to provide convenient access to the result of a real valued fourier transform. See remarks for learning about different representations of a real valued Fourier transform.
 	/// </summary>
 	/// <remarks>
-	/// This class is a wrapper for different representations of the result of a real valued fourier transformation.
 	/// <para>
+	/// This class is a wrapper for different representations of the result of a real valued fourier transformation.
+	/// </para>
 	/// <para>1. Real value representation</para>
 	/// <para>----------------------------</para>
+	/// <para>
 	/// The first value of the array is the real part of the spectrum at zero frequency, followed by the real part of the spectrum at first frequency and so on.
 	/// The last value of the array is the imaginary part of the spectrum at first frequency, the value before this is the imaginary part of the spectrum at second frequency and so on.
 	/// If the length of the fourier transform is even, the value of the array at index of half the length (N/2) is the real part of the spectrum at nyquist frequency. If the length of the fourier
@@ -48,7 +50,7 @@ namespace Altaxo.Calc.Fourier
 	/// The element at zero frequency contains only the real part, the imaginary part of this element is zero.
 	/// The element at nyquist frequency contains only the real part at nyquist frequency, the imaginary part of this element is zero.
 	/// Note that if the length of the FFT is for instance 1024, there are 513 complex spectral values. If the length of the FFT is 1023 (odd), there are 512 complex spectral values.
-	/// <para/>
+	/// </para>
 	/// <para>3. Compact complex representation</para>
 	/// <para>---------------------------------</para>
 	/// <para>

@@ -61,8 +61,7 @@ namespace Altaxo.Collections
     /// Get the next range (i.e. a contiguous range of integers) in descending order.
     /// </summary>
     /// <param name="currentposition">The current position into this collection. Use Count-1 for the first time. On return, this is the next position.</param>
-    /// <param name="rangestart">Returns the starting index of the contiguous range.</param>
-    /// <param name="rangecount">Returns the width of the range.</param>
+		/// <param name="result">On return, contains the next contiguous integer range.</param>
     /// <returns>True if the range data are valid, false if there is no more data. Used as end-of-loop indicator.</returns>
     /// <remarks>You can use this function in a while loop:
     /// <code>

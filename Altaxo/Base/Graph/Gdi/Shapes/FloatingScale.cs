@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		double _scaleSpan = 0.25;
 
 		/// <summary>If true, the _scaleSpan is interpreted as a physical value. Otherwise, it is a logical span.</summary>
-		bool _scaleSpanIsPhysical;
+		bool _scaleSpanIsPhysical = false;
 
 		/// <summary>Number of the scale to measure (0: x-axis, 1: y-axis, 2: z-axis).</summary>
 		int _scaleNumber = 0;
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		static bool EhHitDoubleClick(IHitTestObject o)
+		static new bool EhHitDoubleClick(IHitTestObject o)
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Line properties", true);

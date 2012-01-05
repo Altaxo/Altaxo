@@ -26,7 +26,7 @@ namespace Altaxo.Main
 {
   /// <summary>
   /// DocumentPath holds a path to a document. This path reflects the internal organization of the class instances in Altaxo. Do not mix this
-	/// concept with the concept of document folders (see <see cref="DocumentFolder"/>).
+	/// concept with the concept of the folder in which a project item virtually exists  (see <see cref="ProjectFolder"/>).
   /// </summary>
   [Serializable]
   public class DocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable

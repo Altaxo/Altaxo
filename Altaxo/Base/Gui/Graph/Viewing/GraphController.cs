@@ -679,7 +679,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Handles the event when the size of the graph area is changed.
 		/// </summary>
-		/// <param name="e">EventArgs.</param>
 		public virtual void EhView_GraphPanelSizeChanged()
 		{
 			if (_isAutoZoomActive)
@@ -1191,7 +1190,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-		// <summary>
+		/// <summary>
 		/// Groups the selected objects to form a ShapeGroup.
 		/// </summary>
 		public void GroupSelectedObjects()
@@ -1255,7 +1254,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-		// <summary>
+		/// <summary>
 		/// Ungroups the selected objects (if they are ShapeGroup objects).
 		/// </summary>
 		public void UngroupSelectedObjects()

@@ -101,10 +101,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		void EhView_CurrentLayerChoosen(int currLayer, bool bAlternative);
 
 		
-		/// <summary>
-		/// Handles the event when the size of the graph area is changed.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
+		/// <summary>Handles the event when the size of the graph area is changed.</summary>
 		void EhView_GraphPanelSizeChanged();
 
 		void EhView_Scroll();

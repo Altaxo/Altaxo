@@ -368,7 +368,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Clears the content of the column and fires the <see cref="Disposed"/> event.
+		/// Clears the content of the column and fires the <see cref="E:Main.IEventIndicatedDisposable.Disposed"/> event.
 		/// </summary>
 		public void Dispose()
 		{

@@ -115,8 +115,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		}
 
 		/// <summary>
-		/// Creates a WorksheetController which shows the table data into the 
-		/// View <paramref name="view"/>.
+		/// Creates a WorksheetController which shows the table data using the specified <paramref name="layout"/>.
 		/// </summary>
 		/// <param name="layout">The worksheet layout.</param>
 		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)

@@ -962,7 +962,7 @@ if(!(k%100)){
       {
         /* determine d=max(1E-04*|p[j]|, delta), see HZ */
         d=(1E-04)*p[j]; // force evaluation
-        d=(d);
+        //d=(d);
         if(d<delta)
           d=delta;
 
@@ -1075,8 +1075,6 @@ if(!(k%100)){
    rnk=LEVMAR_PSEUDOINVERSE(JtJ, C, m);
    if(!rnk) return 0;
 #else
-
-#warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times
 
       rnk=LEVMAR_LUINVERSE(JtJ, C, m);
       if(rnk==0) return 0;

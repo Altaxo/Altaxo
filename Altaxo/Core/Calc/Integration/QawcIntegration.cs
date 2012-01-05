@@ -57,7 +57,6 @@ namespace Altaxo.Calc.Integration
 		/// <summary>
 		/// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
 		/// </summary>
-		/// <param name="integrationRule">Integration rule used for integration.</param>
 		/// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
 		/// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
 		/// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>

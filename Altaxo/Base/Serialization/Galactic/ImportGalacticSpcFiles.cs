@@ -307,7 +307,6 @@ namespace Altaxo.Serialization.Galactic
     /// <summary>
     /// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
     /// </summary>
-    /// <param name="owner">The windows owner of this dialog box.</param>
     /// <param name="table">The table to import the SPC files to.</param>
     public static void ShowDialog(Altaxo.Data.DataTable table)
     {

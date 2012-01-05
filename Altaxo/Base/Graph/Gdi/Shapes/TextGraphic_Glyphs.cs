@@ -246,7 +246,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <summary>Width of the object.</summary>
 			public double Width { get; set; }
 
-			/// <summary>Height of the object. Setting this propery, you will set <see cref="ExtendAboveLine" /> and <see cref="ExtendBelowLine" /> both to Height/2.</summary>
+			/// <summary>Height of the object. Setting this propery, you will set <see cref="ExtendAboveBaseline" /> and <see cref="ExtendBelowBaseline" /> both to Height/2.</summary>
 			public double Height
 			{
 				get { return ExtendAboveBaseline + ExtendBelowBaseline; }
@@ -783,7 +783,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
-			protected static StringFormat _stringFormat;
+			protected new static StringFormat _stringFormat;
 
 			int _layerNumber = -1;
 			int _plotNumber;
