@@ -11,7 +11,7 @@
     <AssemblyOriginatorKeyFile>..\..\ICSharpCode.SharpDevelop.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtDir\bin\</OutputPath>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <RegisterForComInterop>False</RegisterForComInterop>
@@ -232,6 +232,8 @@
     <Compile Include="Src\EasyCodeDom.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Configuration" />
+    <Folder Include="Src" />
     <ProjectReference Include="..\..\..\Libraries\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
@@ -240,6 +242,14 @@
       <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
       <Name>NRefactory</Name>
     </ProjectReference>
+    <Folder Include="Src\Implementations" />
+    <Folder Include="Src\NRefactoryResolver" />
+    <Folder Include="Src\ReflectionLayer" />
+    <Folder Include="Src\Interfaces" />
+    <Folder Include="Src\ProjectContent" />
+    <Folder Include="Src\Refactoring" />
+    <Folder Include="Src\CSharp" />
+    <Folder Include="Src\VBNet" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

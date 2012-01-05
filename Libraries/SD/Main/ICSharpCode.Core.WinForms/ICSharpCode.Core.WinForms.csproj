@@ -9,7 +9,7 @@
     <AssemblyName>ICSharpCode.Core.WinForms</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <OutputPath>..\..\..\bin\</OutputPath>
+    <OutputPath>..\..\..\..\rtDir\bin\</OutputPath>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>

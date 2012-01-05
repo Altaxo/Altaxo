@@ -83,6 +83,7 @@
     <Compile Include="Src\AddInTree\AddIn\AddIn.cs" />
     <Compile Include="Src\AddInTree\AddIn\AddInLoadException.cs" />
     <Compile Include="Src\AddInTree\AddIn\AssemblyLocator.cs" />
+    <Compile Include="Src\AddInTree\AddIn\BuildItemArgs.cs" />
     <Compile Include="Src\AddInTree\AddIn\Codon.cs" />
     <Compile Include="Src\AddInTree\AddIn\ComplexCondition.cs" />
     <Compile Include="Src\AddInTree\AddIn\Condition.cs" />
@@ -154,6 +155,10 @@
     <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\ITextBoxCommand.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Src\Services\LoggingService" />
+    <Folder Include="Src\Services\AnalyticsMonitor" />
+    <Folder Include="Src\Services\RegistryService" />
+    <Folder Include="Src\Services\ResourceService" />
     <Content Include="..\..\..\..\data\schemas\AddIn.xsd">
       <Link>Src\AddInTree\AddIn\AddIn.xsd</Link>
     </Content>

@@ -54,17 +54,17 @@ namespace Altaxo.Main
 			}
 		}
 
-		public object BuildItem(object caller, Codon codon, ArrayList subItems)
+		public object BuildItem(BuildItemArgs args)
 		{
-			string id = codon.Id;
-			string resource = codon.Properties["resource"];
+			string id = args.Codon.Id;
+			string resource = args.Codon.Properties["resource"];
 			if (!string.IsNullOrEmpty(resource))
 			{
 				ImageProxy proxy = ResourceImageProxy.FromResource(id, resource);
 				TextureManager.BuiltinTextures.Add(proxy);
 				return proxy;
 			}
-			string classname = codon.Properties["class"];
+			string classname = args.Codon.Properties["class"];
 			if (!string.IsNullOrEmpty(classname))
 			{
 				ImageProxy proxy = (ImageProxy)System.Activator.CreateInstance("AltaxoBase", classname).Unwrap();

@@ -184,15 +184,27 @@
   <ItemGroup>
     <Content Include="Src\Lexer\CSharp\KeywordList.txt" />
     <Content Include="Src\Lexer\VBNet\KeywordList.txt" />
+    <Folder Include="Src\Parser" />
+    <Folder Include="Src\Parser\CSharp" />
     <None Include="Src\Parser\CSharp\cs.ATG" />
+    <Folder Include="Src\Parser\Frames" />
     <Content Include="Src\Parser\Frames\Scanner.frame" />
     <Content Include="Src\Parser\Frames\SharpCoco.exe" />
+    <Folder Include="Src\Parser\VBNet" />
     <None Include="Src\Parser\VBNet\VBNET.ATG">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CustomToolNamespace>ICSharpCode.NRefactory.Parser.VB</CustomToolNamespace>
     </None>
     <Content Include="Src\Parser\gen.bat" />
+    <Folder Include="Src\PrettyPrinter" />
+    <Folder Include="Src\PrettyPrinter\CSharp" />
+    <Folder Include="Src\PrettyPrinter\VBNet" />
+    <Folder Include="Src\Visitors" />
+    <Folder Include="Src\Ast" />
+    <Folder Include="Src\Ast\General" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Src\AstBuilder" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
