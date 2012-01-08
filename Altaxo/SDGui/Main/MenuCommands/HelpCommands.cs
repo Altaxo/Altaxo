@@ -64,8 +64,14 @@ namespace Altaxo.Main.Commands
 
 	public class DevelopmentTest : AbstractMenuCommand
 	{
-
 		public override void Run()
+		{
+			var ctrl = new Altaxo.Gui.Settings.CultureSettingsController();
+			ctrl.InitializeDocument(null, this);
+			Current.Gui.ShowDialog(ctrl, "Culture settings");
+		}
+
+		public  void Run3()
 		{
 			GC.Collect();
 			GC.WaitForPendingFinalizers();

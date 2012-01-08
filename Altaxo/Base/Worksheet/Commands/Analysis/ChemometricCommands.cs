@@ -908,7 +908,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// Plots the cross prediction values of all y components invidually in a  graph.
     /// </summary>
     /// <param name="table">The table with the PLS model data.</param>
-		/// <param name="allowGuiForMessages">If <see languageref="true"/> and an error occurs, an error message box is presented to the user.</param>
+		/// <param name="allowGuiForMessages">If <see langword="true"/> and an error occurs, an error message box is presented to the user.</param>
     public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, bool allowGuiForMessages)
     {
       MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;

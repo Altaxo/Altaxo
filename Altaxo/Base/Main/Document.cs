@@ -41,71 +41,70 @@ namespace Altaxo
     Main.INamedObjectCollection ,
     Main.IChildChangedEventSink 
   {
-    protected Altaxo.Data.DataTableCollection m_DataSet = null; // The root of all the data
+		/// <summary>Collection of all data tables in this document.</summary>
+    protected Altaxo.Data.DataTableCollection _dataTables = null; // The root of all the data
 
-    protected Altaxo.Graph.Gdi.GraphDocumentCollection m_GraphSet = null; // all graphs are stored here
+		/// <summary>Collection of all graphs in this document.</summary>
+		protected Altaxo.Graph.Gdi.GraphDocumentCollection _graphs = null; // all graphs are stored here
 
-    protected Altaxo.Worksheet.WorksheetLayoutCollection m_TableLayoutList = null;
+		/// <summary>Collection of all data tables layouts in this document.</summary>
+		protected Altaxo.Worksheet.WorksheetLayoutCollection _tableLayouts = null;
 
-    private Altaxo.Scripting.FitFunctionScriptCollection _FitFunctionScripts;
+		/// <summary>Collection of all fit function scripts in this document.</summary>
+		private Altaxo.Scripting.FitFunctionScriptCollection _fitFunctionScripts;
 
+		/// <summary>Keeps track of the name of all project items, and admisters them in virtual folders.</summary>
 		protected ProjectFolders _projectFolders;
 
-		/// <summary>
-		/// A short string to identify the document. This string can be shown for instance in the graph windows.
-		/// </summary>
+		/// <summary>A short string to identify the document. This string can be shown for instance in the graph windows.</summary>
 		private DocumentInformation _documentInformation = new DocumentInformation();
 
-    //  protected System.Collections.ArrayList m_Worksheets;
-    /// <summary>The list of GraphForms for the document.</summary>
-    //  protected System.Collections.ArrayList m_GraphForms;
-
     [NonSerialized]
-    protected bool m_IsDirty=false;
+    protected bool _isDirty=false;
     public event EventHandler DirtyChanged;
     [NonSerialized]
-    private bool m_DeserializationFinished=false;
+    private bool _isDeserializationFinished=false;
 
     public AltaxoDocument()
     {
-      m_DataSet = new Altaxo.Data.DataTableCollection(this);
-      m_GraphSet = new GraphDocumentCollection(this);
-      m_TableLayoutList = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
-      _FitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
+      _dataTables = new Altaxo.Data.DataTableCollection(this);
+      _graphs = new GraphDocumentCollection(this);
+      _tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
+      _fitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
 			_projectFolders = new ProjectFolders(this);
     }
 
     #region Serialization
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+    class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         AltaxoDocument s = (AltaxoDocument)obj;
-        info.AddValue("DataTableCollection",s.m_DataSet);
+        info.AddValue("DataTableCollection",s._dataTables);
         //info.AddValue("Worksheets",s.m_Worksheets);
         //  info.AddValue("GraphForms",s.m_GraphForms);
       }
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
         AltaxoDocument s = (AltaxoDocument)obj;
-        s.m_DataSet = (Altaxo.Data.DataTableCollection)info.GetValue("DataTableCollection",typeof(Altaxo.Data.DataTableCollection));
+        s._dataTables = (Altaxo.Data.DataTableCollection)info.GetValue("DataTableCollection",typeof(Altaxo.Data.DataTableCollection));
         // s.tstObj    = (AltaxoTestObject02)info.GetValue("TstObj",typeof(AltaxoTestObject02));
         //s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
         //  s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
-        s.m_IsDirty = false;
+        s._isDirty = false;
         return s;
       }
     }
 
     public void OnDeserialization(object obj)
     {
-      if(!m_DeserializationFinished && obj is DeserializationFinisher)
+      if(!_isDeserializationFinished && obj is DeserializationFinisher)
       {
-        m_DeserializationFinished=true;
+        _isDeserializationFinished=true;
         DeserializationFinisher finisher = new DeserializationFinisher(this);
       
-        m_DataSet.ParentObject = this;
-        m_DataSet.OnDeserialization(finisher);
+        _dataTables.ParentObject = this;
+        _dataTables.OnDeserialization(finisher);
       }
     }
 
@@ -122,7 +121,7 @@ namespace Altaxo
      // DateTime time1 = DateTime.UtcNow;
 
       // first, we save all tables into the tables subdirectory
-      foreach(Altaxo.Data.DataTable table in this.m_DataSet)
+      foreach(Altaxo.Data.DataTable table in this._dataTables)
       {
         try
         {
@@ -141,7 +140,7 @@ namespace Altaxo
       }
 
       // second, we save all graphs into the Graphs subdirectory
-      foreach(GraphDocument graph in this.m_GraphSet)
+      foreach(GraphDocument graph in this._graphs)
       {
         try
         {
@@ -160,7 +159,7 @@ namespace Altaxo
       }
 
       // third, we save all TableLayouts into the TableLayouts subdirectory
-      foreach(Altaxo.Worksheet.WorksheetLayout layout in this.m_TableLayoutList)
+      foreach(Altaxo.Worksheet.WorksheetLayout layout in this._tableLayouts)
       {
         try 
         {
@@ -179,7 +178,7 @@ namespace Altaxo
       }
 
       // 4th, we save all FitFunctions into the FitFunctions subdirectory
-      foreach(Altaxo.Scripting.FitFunctionScript fit in this._FitFunctionScripts)
+      foreach(Altaxo.Scripting.FitFunctionScript fit in this._fitFunctionScripts)
       {
         try 
         {
@@ -225,7 +224,7 @@ namespace Altaxo
             info.BeginReading(zipinpstream);
             object readedobject = info.GetValue("Table",this);
             if(readedobject is Altaxo.Data.DataTable)
-              this.m_DataSet.Add((Altaxo.Data.DataTable)readedobject);
+              this._dataTables.Add((Altaxo.Data.DataTable)readedobject);
             info.EndReading();
         
           }
@@ -235,7 +234,7 @@ namespace Altaxo
             info.BeginReading(zipinpstream);
             object readedobject = info.GetValue("Graph",this);
             if(readedobject is GraphDocument)
-              this.m_GraphSet.Add((GraphDocument)readedobject);
+              this._graphs.Add((GraphDocument)readedobject);
             info.EndReading();
           
           }
@@ -245,7 +244,7 @@ namespace Altaxo
             info.BeginReading(zipinpstream);
             object readedobject = info.GetValue("WorksheetLayout",this);
             if(readedobject is Altaxo.Worksheet.WorksheetLayout)
-              this.m_TableLayoutList.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
+              this._tableLayouts.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
             info.EndReading();
           
           }
@@ -255,7 +254,7 @@ namespace Altaxo
             info.BeginReading(zipinpstream);
             object readedobject = info.GetValue("FitFunctionScript",this);
             if(readedobject is Altaxo.Scripting.FitFunctionScript)
-              this._FitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
+              this._fitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
             info.EndReading();
           
           }
@@ -299,21 +298,21 @@ namespace Altaxo
     
     public Altaxo.Data.DataTableCollection DataTableCollection
     {
-      get { return m_DataSet; }
+      get { return _dataTables; }
     }
     public Altaxo.Graph.Gdi.GraphDocumentCollection GraphDocumentCollection
     {
-      get { return m_GraphSet; }
+      get { return _graphs; }
     }
 
     public Altaxo.Worksheet.WorksheetLayoutCollection TableLayouts
     {
-      get { return this.m_TableLayoutList; }
+      get { return this._tableLayouts; }
     }
 
     public Altaxo.Scripting.FitFunctionScriptCollection FitFunctionScripts
     {
-      get { return _FitFunctionScripts; }
+      get { return _fitFunctionScripts; }
     }
 
 		/// <summary>
@@ -344,12 +343,12 @@ namespace Altaxo
 
     public bool IsDirty
     {
-      get { return m_IsDirty; }
+      get { return _isDirty; }
       set 
       {
-        bool oldValue = m_IsDirty;
-        m_IsDirty = value;
-        if(oldValue!=m_IsDirty)
+        bool oldValue = _isDirty;
+        _isDirty = value;
+        if(oldValue!=_isDirty)
         {
           OnDirtyChanged();
         }
@@ -398,7 +397,7 @@ namespace Altaxo
     public Altaxo.Worksheet.WorksheetLayout CreateNewTableLayout(Altaxo.Data.DataTable table)
     {
       Altaxo.Worksheet.WorksheetLayout layout = new Altaxo.Worksheet.WorksheetLayout(table);
-      this.m_TableLayoutList.Add(layout);
+      this._tableLayouts.Add(layout);
       return layout;
     }
 
@@ -413,11 +412,11 @@ namespace Altaxo
 
 			if (item is Altaxo.Data.DataTable)
 			{
-				m_DataSet.Add(item as Altaxo.Data.DataTable);
+				_dataTables.Add(item as Altaxo.Data.DataTable);
 			}
 			else if (item is Altaxo.Graph.Gdi.GraphDocument)
 			{
-				m_GraphSet.Add(item as Altaxo.Graph.Gdi.GraphDocument);
+				_graphs.Add(item as Altaxo.Graph.Gdi.GraphDocument);
 			}
 			else
 			{
@@ -431,13 +430,13 @@ namespace Altaxo
       switch(name)
       {
         case "Tables":
-          return this.m_DataSet;
+          return this._dataTables;
         case "Graphs":
-          return this.m_GraphSet;
+          return this._graphs;
         case "TableLayouts":
-          return this.m_TableLayoutList;
+          return this._tableLayouts;
         case "FitFunctionScripts":
-          return this._FitFunctionScripts;
+          return this._fitFunctionScripts;
       }
       return null;
     }
@@ -446,11 +445,11 @@ namespace Altaxo
     {
       if(null==o)
         return null;
-      else if(o.Equals(this.m_DataSet))
+      else if(o.Equals(this._dataTables))
         return "Tables";
-      else if(o.Equals(this.m_GraphSet))
+      else if(o.Equals(this._graphs))
         return "Graphs";
-      else if (o.Equals(this._FitFunctionScripts))
+      else if (o.Equals(this._fitFunctionScripts))
         return "FitFunctionScripts";
       else
         return null;

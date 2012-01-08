@@ -36,7 +36,7 @@ namespace Altaxo
   /// <summary>
   /// This class provides access to application wide unique objects.
   /// </summary>
-  public class Current
+  public static class Current
   {
     //private static object sm_theApplication;
 
@@ -102,7 +102,7 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Returns the console window, which can be used by your scripts for textual output.
+    /// Returns the Gui service, which can be used by your scripts to access the graphical user interface, displaying dialogs, message boxes, etc.
     /// </summary>
     public static Altaxo.Main.Services.GUIFactoryService Gui
     {
@@ -135,15 +135,15 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Sets the current output service.
+    /// Sets the Gui factory service.
     /// </summary>
-    /// <param name="service">The instance of the output service to use in this application.</param>
+    /// <param name="service">The instance of the Gui factory service to use in this application. Depends on the type of graphical user interface that is used by the application.</param>
     public static void SetGUIFactoryService(Altaxo.Main.Services.GUIFactoryService service)
     {
       if(null==sm_theGUIFactoryService)
         sm_theGUIFactoryService = service; 
       else
-        throw new ApplicationException("The  service can not be re-set to another value, only initialized for the first time!");
+        throw new ApplicationException("The service can not be re-set to another value, only initialized for the first time!");
 
     }
 
@@ -270,7 +270,5 @@ namespace Altaxo
         throw new ApplicationException("The data display service can not be re-set to another value, only initialized for the first time!");
 
     }
-
-
   }
 }

@@ -1262,6 +1262,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Handles the mouse wheel event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs.</param>
 		public void EhView_TableAreaMouseWheel(Point position, MouseWheelEventArgs e)
 		{

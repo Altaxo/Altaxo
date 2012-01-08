@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -22,28 +22,45 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-using ICSharpCode.Core;
-
-namespace Altaxo.Main.Commands
+namespace Altaxo.Gui.Settings
 {
-	public class AddTemporaryUserAssembly : AbstractMenuCommand
+	/// <summary>
+	/// Interaction logic for CultureSettingsControl.xaml
+	/// </summary>
+	public partial class CultureSettingsControl : UserControl, ICultureSettingsView
 	{
-		public override void Run()
+		public CultureSettingsControl()
 		{
-			Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
+			InitializeComponent();
+		}
+
+		public bool OverrideOperatingSystemSettings
+		{
+			get
+			{
+				return true == _guiOverrideCultureSettings.IsChecked;
+			}
+			set
+			{
+				_guiOverrideCultureSettings.IsChecked = value;
+			}
+		}
+
+		public void InitializeCultureFormatList(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiCultures, list);
 		}
 	}
-
-
-	public class ShowOptions : AbstractMenuCommand
-	{
-		public override void Run()
-		{
-			var ctrl = new Altaxo.Gui.Settings.SettingsController();
-			Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
-		}
-	}
-
 }

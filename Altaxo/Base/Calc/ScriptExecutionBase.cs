@@ -443,8 +443,9 @@ namespace Altaxo.Calc
 		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
 		public virtual void Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
 		{
-			
+#pragma warning disable	// calling the obsolete method is intended here		
 			Execute(myColumn);
+#pragma warning restore
 		}
 	}
 
@@ -503,7 +504,9 @@ namespace Altaxo.Calc
 		/// <param name="reporter">Can be used to report the execution progress of the script.</param>
 		public virtual void Execute(IProgressReporter reporter)
 		{
+#pragma warning disable // calling the obsolete method is intended here
 			Execute();
+#pragma warning restore
 		}
 	}
 

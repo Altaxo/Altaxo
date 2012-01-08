@@ -225,9 +225,12 @@
     <Compile Include="Gui\Scripting\SDPureScriptControlWpf.xaml.cs">
       <DependentUpon>SDPureScriptControlWpf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Settings\SettingsController.cs" />
     <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
     <Compile Include="Gui\SharpDevelop\SDWorksheetViewContentWpf.cs" />
+    <Compile Include="Main\OptionPanelDoozer.cs" />
+    <Compile Include="Main\DefaultOptionPanelDescriptor.cs" />
     <Compile Include="Main\MenuCommands\AutostartCommands.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -39,7 +39,7 @@ using Altaxo.Graph;
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
-	/// ComboBox for <see cref="Altaxo.Graph.Gdi.TextureImage"/>.
+	/// ComboBox to present all registered textures as <see cref="ImageProxy"/> instances.
 	/// </summary>
 	public partial class TextureImageComboBox : ImageComboBox
 	{

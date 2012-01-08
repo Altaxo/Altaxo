@@ -39,15 +39,13 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
-	/// ComboBox for <see cref="Altaxo.Graph.Gdi.LinearGradientMode"/>.
+	/// ComboBox for <see cref="LinearGradientMode"/>.
 	/// </summary>
 	public partial class LinearGradientModeComboBox : ImageComboBox
 	{
 		class CC : IValueConverter
 		{
 			LinearGradientModeComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
 
 			public CC(LinearGradientModeComboBox c)
 			{

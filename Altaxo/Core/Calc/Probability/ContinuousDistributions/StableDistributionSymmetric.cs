@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <param name="alpha"></param>
-		/// <param name="tempStorage">Object which can be used to speed up subsequent calculations of the function. At the first call, provide an object initialized with <see languageref="null"/> and provide this object for the following calculations.</param>
+		/// <param name="tempStorage">Object which can be used to speed up subsequent calculations of the function. At the first call, provide an object initialized with <see langword="null"/> and provide this object for the following calculations.</param>
 		/// <param name="precision">Goal for the relative precision.</param>
     /// <returns></returns>
     public static double PDF(double x, double alpha, ref object tempStorage, double precision)

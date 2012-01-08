@@ -49,6 +49,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse move event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
@@ -59,6 +60,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse up event. Stores the position of the mouse into <see cref="m_LastMouseUp"/>.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseUp(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -69,6 +71,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse down event. Stores the position of the mouse into <see cref="m_LastMouseDown"/>.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -80,6 +83,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse click event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -90,6 +94,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse doubleclick event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnDoubleClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -117,8 +122,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// This function is called if a key is pressed.
 		/// </summary>
-		/// <param name="msg"></param>
-		/// <param name="keyData"></param>
+		/// <param name="e">Key event arguments.</param>
 		/// <returns></returns>
 		public virtual bool ProcessCmdKey(KeyEventArgs e)
 		{

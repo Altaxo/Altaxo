@@ -81,6 +81,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the drawing of a straight single line.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs.</param>
 		/// <returns>The mouse state handler for handling the next mouse events.</returns>
 		public override void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)

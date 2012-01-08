@@ -286,6 +286,8 @@
     <Compile Include="Gui\Graph\LineGraphicController.cs" />
     <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
     <Compile Include="Gui\Settings\AutoUpdateSettingsController.cs" />
+    <Compile Include="Gui\Settings\CultureSettingsController.cs" />
+    <Compile Include="Gui\Settings\SettingsController.cs" />
     <Compile Include="Gui\Worksheet\PlotCommonColumnsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
@@ -545,6 +547,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Settings\AutoUpdateSettings.cs" />
+    <Compile Include="Settings\CultureSettings.cs" />
     <Compile Include="Worksheet\ColumnHeaderStyle.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -40,17 +40,15 @@ using Altaxo.Graph.Gdi;
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
-	/// ComboBox for <see cref="Altaxo.Graph.Gdi.Color"/>.
+	/// ComboBox for <see cref="AxoColor"/>.
 	/// </summary>
 	public partial class ColorComboBox : ColorComboBoxBase
 	{
 
-		/// <summary>Converts the <see cref="AxoColor"/> to a <see cref="ColorComboBoxItem"/> and vice versa.</summary>
+		/// <summary>Converts the <see cref="AxoColor"/> to a <see cref="ColorComboBoxBase.ColorComboBoxItem"/> and vice versa.</summary>
 		class CC : IValueConverter
 		{
 			ColorComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
 
 			public CC(ColorComboBox c)
 			{
@@ -58,7 +56,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 
 			/// <summary>
-			/// Converts a <see cref="AxoColor"/> to a <see cref="ColorComboBoxItem"/>.
+			/// Converts a <see cref="AxoColor"/> to a <see cref="ColorComboBoxBase.ColorComboBoxItem"/>.
 			/// </summary>
 			/// <param name="value"></param>
 			/// <param name="targetType"></param>
@@ -83,7 +81,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 
 			/// <summary>
-			/// Converts the <see cref="ColorComboBoxItem"/> to a <see cref="AxoColor"/>.
+			/// Converts the <see cref="ImageComboBoxItem"/> to a <see cref="AxoColor"/>.
 			/// </summary>
 			/// <param name="value"></param>
 			/// <param name="targetType"></param>

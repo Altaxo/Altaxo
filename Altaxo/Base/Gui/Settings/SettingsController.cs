@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -22,28 +22,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-using ICSharpCode.Core;
+using Altaxo.Collections;
 
-namespace Altaxo.Main.Commands
+namespace Altaxo.Gui.Settings
 {
-	public class AddTemporaryUserAssembly : AbstractMenuCommand
+	/// <summary>
+	/// Implemented by the Gui element that displays the settings (topics as a tree, and the selected topic in a control).
+	/// </summary>
+	public interface ISettingsView
 	{
-		public override void Run()
-		{
-			Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
-		}
+		/// <summary>Occurs when the user selected another topic.</summary>
+		event Action<NGTreeNode> TopicSelectionChanged;
+		
+		/// <summary>Initializes the topic tree.</summary>
+		/// <param name="topics">The topics tree structure.</param>
+		void InitializeTopics(NGTreeNodeCollection topics);
+		
+		/// <summary>Sets the currently selected topic view.</summary>
+		/// <param name="title">Titel (shown above the topic view).</param>
+		/// <param name="guiTopicObject">The Gui topic view object.</param>
+		void InitializeTopicView(string title, object guiTopicObject);
+
+		/// <summary>Sets the selected node in the topic view.</summary>
+		/// <param name="node">The node to select.</param>
+		void SetSelectedNode(NGTreeNode node);
 	}
-
-
-	public class ShowOptions : AbstractMenuCommand
-	{
-		public override void Run()
-		{
-			var ctrl = new Altaxo.Gui.Settings.SettingsController();
-			Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
-		}
-	}
-
 }

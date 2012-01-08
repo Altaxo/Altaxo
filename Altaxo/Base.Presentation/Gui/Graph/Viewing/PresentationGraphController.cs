@@ -260,8 +260,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Called if a key is pressed in the view.
 		/// </summary>
-		/// <param name="msg"></param>
-		/// <param name="keyData"></param>
+		/// <param name="e">Key event arguments.</param>
 		/// <returns></returns>
 		public bool EhView_ProcessCmdKey(KeyEventArgs e)
 		{
@@ -292,6 +291,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Handles the mouse up event onto the graph in the controller class.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs.</param>
 		public virtual void EhView_GraphPanelMouseUp(PointD2D position, MouseButtonEventArgs e)
 		{
@@ -301,6 +301,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Handles the mouse down event onto the graph in the controller class.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs.</param>
 		public virtual void EhView_GraphPanelMouseDown(PointD2D position, MouseButtonEventArgs e)
 		{
@@ -310,6 +311,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Handles the mouse move event onto the graph in the controller class.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs.</param>
 		public virtual void EhView_GraphPanelMouseMove(PointD2D position, MouseEventArgs e)
 		{
@@ -319,6 +321,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Handles the click onto the graph event in the controller class.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs.</param>
 		public virtual void EhView_GraphPanelMouseClick(PointD2D position, MouseButtonEventArgs e)
 		{
@@ -328,6 +331,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Handles the double click onto the graph event in the controller class.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e"></param>
 		public virtual void EhView_GraphPanelMouseDoubleClick(PointD2D position, MouseButtonEventArgs e)
 		{
@@ -645,7 +649,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		/// <summary>
 		/// Factor for horizontal conversion of page units (points=1/72 inch) to pixel.
-		/// The resolution used for this is <see cref="m_HorizRes"/>.
+		/// The resolution used for this is <see cref="_horizontalResolution"/>.
 		/// </summary>
 		/// <returns>The factor described above.</returns>
 		public float HorizFactorPageToPixel()
@@ -655,7 +659,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		/// <summary>
 		/// Factor for vertical conversion of page units (points=1/72 inch) to pixel.
-		/// The resolution used for this is <see cref="m_VertRes"/>.
+		/// The resolution used for this is <see cref="_verticalResolution"/>.
 		/// </summary>
 		/// <returns>The factor described above.</returns>
 		public float VertFactorPageToPixel()
@@ -664,8 +668,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Converts page coordinates (in points=1/72 inch) to pixel units. Uses the resolutions <see cref="m_HorizRes"/>
-		/// and <see cref="m_VertRes"/> for calculation-
+		/// Converts page coordinates (in points=1/72 inch) to pixel units. Uses the resolutions <see cref="_horizontalResolution"/>
+		/// and <see cref="_verticalResolution"/> for calculation-
 		/// </summary>
 		/// <param name="pagec">The page coordinates to convert.</param>
 		/// <returns>The coordinates as pixel coordinates.</returns>
@@ -676,8 +680,8 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 		/// <summary>
-		/// Converts pixel coordinates to page coordinates (in points=1/72 inch). Uses the resolutions <see cref="m_HorizRes"/>
-		/// and <see cref="m_VertRes"/> for calculation-
+		/// Converts pixel coordinates to page coordinates (in points=1/72 inch). Uses the resolutions <see cref="_horizontalResolution"/>
+		/// and <see cref="_verticalResolution"/> for calculation-
 		/// </summary>
 		/// <param name="pixelc">The pixel coordinates to convert.</param>
 		/// <returns>The coordinates as page coordinates (points=1/72 inch).</returns>
@@ -687,8 +691,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Converts pixel coordinates to page coordinates (in points=1/72 inch). Uses the resolutions <see cref="m_HorizRes"/>
-		/// and <see cref="m_VertRes"/> for calculation-
+		/// Converts pixel coordinates to page coordinates (in points=1/72 inch). Uses the resolutions <see cref="_horizontalResolution"/>
+		/// and <see cref="_verticalResolution"/> for calculation-
 		/// </summary>
 		/// <param name="pixelc">The pixel coordinates to convert.</param>
 		/// <returns>The coordinates as page coordinates (points=1/72 inch).</returns>
@@ -698,8 +702,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Converts pixel coordinates to unscaled page coordinates (in points=1/72 inch). Uses the resolutions <see cref="m_HorizRes"/>
-		/// and <see cref="m_VertRes"/> for calculation. 
+		/// Converts pixel coordinates to unscaled page coordinates (in points=1/72 inch). Uses the resolutions <see cref="_horizontalResolution"/>
+		/// and <see cref="_verticalResolution"/> for calculation. 
 		/// </summary>
 		/// <param name="pixelc">The pixel coordinates to convert.</param>
 		/// <returns>The coordinates as unscaled page coordinates in points=1/72 inch, i.e. the true x and y distance in points from
@@ -716,8 +720,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Converts page coordinates (in points=1/72 inch) to pixel coordinates . Uses the resolutions <see cref="m_HorizRes"/>
-		/// and <see cref="m_VertRes"/> for calculation-
+		/// Converts page coordinates (in points=1/72 inch) to pixel coordinates . Uses the resolutions <see cref="_horizontalResolution"/>
+		/// and <see cref="_verticalResolution"/> for calculation-
 		/// </summary>
 		/// <param name="pagec">The page coordinates to convert (points=1/72 inch).</param>
 		/// <returns>The coordinates as pixel coordinates.</returns>

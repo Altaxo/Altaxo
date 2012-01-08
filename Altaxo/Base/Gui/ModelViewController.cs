@@ -30,12 +30,12 @@ namespace Altaxo.Gui
   public interface IMVCController
   {
     /// <summary>
-    /// Returns the view that shows the model.
+    /// Returns the Gui element that shows the model to the user.
     /// </summary>
     object ViewObject { get; set; }
 
     /// <summary>
-    /// Returns the model (document) that this controller controls
+    /// Returns the model (document) that this controller manages.
     /// </summary>
     object ModelObject { get; }
   
@@ -72,7 +72,7 @@ namespace Altaxo.Gui
     /// Initialize the controller with the document. If successfull, the function has to return true.
     /// </summary>
     /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
-    /// <returns>True if successfull, else false.</returns>
+    /// <returns>Returns <see langword="true"/> if successfull; otherwise <see langword="false"/>.</returns>
     bool InitializeDocument(params object[] args);
 
     /// <summary>

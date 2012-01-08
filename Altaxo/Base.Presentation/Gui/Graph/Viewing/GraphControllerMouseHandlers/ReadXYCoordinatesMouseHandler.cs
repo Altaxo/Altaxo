@@ -78,8 +78,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the MouseDown event when the plot point tool is selected
     /// </summary>
-    /// <param name="e">The mouse event args</param>
-     
+		/// <param name="position">Mouse position.</param>
+		/// <param name="e">The mouse event args</param>
     public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseDown(position, e);
@@ -235,8 +235,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// This function is called if a key is pressed.
     /// </summary>
-    /// <param name="msg"></param>
-    /// <param name="keyData"></param>
+		/// <param name="e">Key event arguments.</param>
     /// <returns></returns>
 		public override bool ProcessCmdKey(KeyEventArgs e)
     {

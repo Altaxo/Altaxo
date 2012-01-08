@@ -156,8 +156,6 @@ namespace Altaxo.Gui.Common.Drawing
 			const int bmpHeight = 24;
 			const int bmpWidth = 48;
 			const double nominalHeight = 24; // height of a combobox item
-			const double nominalWidth = (nominalHeight * bmpWidth) / bmpHeight;
-			const double lineWidth = bmpHeight * 0.4;
 
 			if (null == _interopBitmap)
 				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);

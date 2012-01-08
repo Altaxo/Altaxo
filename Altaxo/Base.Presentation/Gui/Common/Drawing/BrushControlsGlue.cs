@@ -42,7 +42,6 @@ namespace Altaxo.Gui.Common.Drawing
 	public class BrushControlsGlue : FrameworkElement
 	{
 		bool _isAllPropertiesGlue;
-		MenuItem _customBrushMenuItem;
 
 		public BrushControlsGlue()
 		{

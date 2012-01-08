@@ -46,6 +46,7 @@ namespace Altaxo.Gui.Common.Drawing
 			object _originalToolTip;
 			bool _hasValidationError;
 
+
 			public CC(ComboBox c)
 			{
 				_cb = c;
@@ -100,6 +101,12 @@ namespace Altaxo.Gui.Common.Drawing
 
 				return error;
 			}
+
+			public bool HasValidationError
+			{
+				get { return _hasValidationError; }
+			}
+
 		}
 
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();

@@ -271,6 +271,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the MouseDown event when the object pointer tool is selected
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">The mouse event args</param>
 		/// <remarks>
 		/// The strategy to handle the mousedown event is as following:
@@ -381,6 +382,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse move event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public override void OnMouseMove(PointD2D position, MouseEventArgs e)
@@ -399,6 +401,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse up event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
@@ -432,6 +435,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse doubleclick event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public override void OnDoubleClick(PointD2D position, MouseButtonEventArgs e)
@@ -465,6 +469,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Handles the mouse click event.
 		/// </summary>
+		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public override void OnClick(PointD2D position, MouseButtonEventArgs e)
@@ -501,8 +506,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// This function is called if a key is pressed.
 		/// </summary>
-		/// <param name="msg"></param>
-		/// <param name="keyData"></param>
+		/// <param name="e">Key event args.</param>
 		/// <returns></returns>
 		public override bool ProcessCmdKey(KeyEventArgs e)
 		{

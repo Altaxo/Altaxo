@@ -165,7 +165,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 		#endregion
 
 		IFileTreeView _view;
-		TreeNode SelectedNode;
 		NGTreeNode _rootNode;
 		NGTreeNodeCollection Nodes;
 

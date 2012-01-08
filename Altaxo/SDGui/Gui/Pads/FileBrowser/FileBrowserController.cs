@@ -38,8 +38,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 		FileSystemTreeController _treeController;
 		FileListController _listController;
 
-		IFileBrowserView _view;
-
 		public FileBrowserController(IFileTreeView treeView, IFileListView listView)
 		{
 			_treeController = new FileSystemTreeController();

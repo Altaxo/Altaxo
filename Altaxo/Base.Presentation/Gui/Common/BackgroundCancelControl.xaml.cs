@@ -44,7 +44,6 @@ namespace Altaxo.Gui.Common
 	public partial class BackgroundCancelControl : UserControl
 	{
 		const int TimerTick_ms = 100;
-		System.Threading.ThreadStart _threadStart;
 		System.Exception _threadException;
 		System.Threading.Thread _thread;
 		IExternalDrivenBackgroundMonitor _monitor;
@@ -104,18 +103,7 @@ namespace Altaxo.Gui.Common
 				return _threadException;
 			}
 		}
-
-		private void MonitoredThreadEntryPoint()
-		{
-			try
-			{
-				_threadStart();
-			}
-			catch (Exception ex)
-			{
-				_threadException = ex;
-			}
-		}
+	
 
 		private void EhTimer(object sender, EventArgs e)
 		{

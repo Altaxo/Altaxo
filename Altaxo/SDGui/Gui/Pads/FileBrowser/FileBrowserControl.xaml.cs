@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 		#region ICSharpCode.SharpDevelop.Gui.IPadContent
 
-		public new object Control
+		public object Control
 		{
 			get { return this; }
 		}

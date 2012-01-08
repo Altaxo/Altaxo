@@ -39,7 +39,7 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
-	/// ComboBox for <see cref="Altaxo.Graph.Gdi.HatchStyle"/>.
+	/// ComboBox for <see cref="HatchStyle"/>.
 	/// </summary>
 	public partial class HatchStyleComboBox : ImageComboBox
 	{

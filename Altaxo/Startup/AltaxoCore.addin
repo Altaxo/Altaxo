@@ -976,6 +976,18 @@
 		<Texture id="Hatch/HorizontalLine" class ="Altaxo.Graph.HorizontalHatchTexture"/>
   </Path>
 
+	<Path name = "/Altaxo/Dialogs/SettingsDialog">
+		<!--OptionPanel id    = "UIOptions"
+		             label = "${res:Dialog.Options.LanguageSettings}">
+			<OptionPanel id    = "UILanguage"
+								 label = "${res:Dialog.Options.UILanguage}"
+								 class = "Altaxo.Gui.Settings.CultureSettingsController"/>
+		</OptionPanel -->
+		<OptionPanel id    = "AutoUpdates"
+			             label = "${res:Dialog.Options.AutoUpdates}"
+			             class = "Altaxo.Gui.Settings.AutoUpdateSettingsController"/>
+	</Path>
+
   <!-- End of Altaxo stuff -->
 
   <Path name = "/SharpDevelop/Workbench/Ambiences">

@@ -49,8 +49,7 @@ namespace Altaxo.Gui.SharpDevelop
 		}
 
 		/// <summary>
-		/// Creates a WorksheetController which shows the table data into the 
-		/// View <paramref name="view"/>.
+		/// Creates a wrapper around a <see cref="Altaxo.Gui.Worksheet.Viewing.WorksheetController"/> which shows the table layout.
 		/// </summary>
 		/// <param name="layout">The worksheet layout.</param>
 		/// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>

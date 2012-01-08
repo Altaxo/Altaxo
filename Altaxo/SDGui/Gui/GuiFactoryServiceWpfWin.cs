@@ -139,6 +139,7 @@ namespace Altaxo.Gui
     /// Shows a message box with the error text.
     /// </summary>
     /// <param name="errortxt">The error text.</param>
+		/// <param name="title">The titel (header) of the message box.</param>
 		public override void ErrorMessageBox(string errortxt, string title)
 		{
 			Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, errortxt, title ?? "Error(s)!", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
@@ -167,7 +168,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
     /// </summary>
-    /// <param name="txt">The question text.</param>
+    /// <param name="text">The question text.</param>
     /// <param name="caption">The caption of the dialog box.</param>
     /// <param name="defaultAnswer">If true, the default answer is "yes", if false the default answer is "no", if null the default answer is "Cancel".</param>
     /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
@@ -432,10 +433,11 @@ namespace Altaxo.Gui
 		/// <summary>
 		/// Creates and shows a context menu.
 		/// </summary>
-		/// <param name="x">The x coordinate of the location where to show the context menu.</param>
-		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
+		/// <param name="parent">Parent class of this context menu. This determines the Gui technology to be used.</param>
 		/// <param name="owner">The object that will be owner of this context menu.</param>
 		/// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
+		/// <param name="x">The x coordinate of the location where to show the context menu.</param>
+		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
 		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
 		public override void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y)
 		{

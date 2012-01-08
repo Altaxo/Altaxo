@@ -302,7 +302,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 					fdiag.OverwritePrompt = true;
 					fdiag.AddExtension = true;
 
-					string[] fileFilters = (string[])(AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
+					string[] fileFilters = AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems<string>(this).ToArray();
+					//string[] fileFilters = (string[])(AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
 					fdiag.Filter = String.Join("|", fileFilters);
 					for (int i = 0; i < fileFilters.Length; ++i)
 					{

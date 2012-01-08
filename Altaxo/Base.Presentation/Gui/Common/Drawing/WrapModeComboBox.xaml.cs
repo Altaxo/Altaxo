@@ -39,15 +39,13 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
-	/// ComboBox for <see cref="Altaxo.Graph.Gdi.WrapMode"/>.
+	/// ComboBox for <see cref="WrapMode"/>.
 	/// </summary>
 	public partial class WrapModeComboBox : ImageComboBox
 	{
 		class CC : IValueConverter
 		{
 			WrapModeComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
 
 			public CC(WrapModeComboBox c)
 			{

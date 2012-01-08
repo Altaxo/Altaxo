@@ -840,7 +840,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="gamma">The gamma value.</param>
     /// <param name="aga">For alpha &lt;=1: This is either (alpha-gamma)/alpha for gamma &gt;=0, or (alpha+gamma)/alpha for gamma &lt; 1.
     /// For alpha &gt;1, this is either (alpha-gamma) for gamma &gt; (alpha-1), or (2-alpha+gamma) for gamma &lt; (alpha-1).</param>
-		/// <param name="tempStorage">Object that can be used to speed up subsequent calculations of the function. At first use, provide an object initialized with <see languageref="null"/> and then provide this object in subsequent calls of this function.</param>
+		/// <param name="tempStorage">Object that can be used to speed up subsequent calculations of the function. At first use, provide an object initialized with <see langword="null"/> and then provide this object in subsequent calls of this function.</param>
 		/// <param name="precision">Relative precision goal.</param>
     /// <returns></returns>
     public static double PDFforPositiveX(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
