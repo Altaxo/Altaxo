@@ -41,10 +41,23 @@ namespace Altaxo.Gui.Settings
 	/// </summary>
 	public partial class SettingsView : UserControl, ISettingsView
 	{
+		/// <summary>Occurs when the current topic view was entered.</summary>
+		public event Action CurrentTopicViewMadeDirty;
+
 		public SettingsView()
 		{
 			InitializeComponent();
+			_guiControlHost.PreviewGotKeyboardFocus += new KeyboardFocusChangedEventHandler(EhHostControlKeyboardFocused);
 		}
+
+		void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			if (null != CurrentTopicViewMadeDirty)
+				CurrentTopicViewMadeDirty();
+		}
+
+		
+		
 
 		private void EhTopicChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{

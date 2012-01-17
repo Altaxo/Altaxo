@@ -32,8 +32,41 @@ namespace Altaxo.Serialization
   /// Responsible for converting user input (dialogs and controls) into data and vice versa. The user preferences for locality are
   /// used by this class.
   /// </summary>
-  public class GUIConversion
+  public static class GUIConversion
 	{
+		/// <summary>Settings how the data entered by the user should be interpreted and how the data should be presented in the user interface.</summary>
+		static Altaxo.Settings.UICultureSettings _cultureSettings;
+
+		static GUIConversion()
+		{
+			Current.PropertyService.PropertyChanged += new Action<string>(EhPropertyService_PropertyChanged);
+		}
+
+		static void EhPropertyService_PropertyChanged(string key)
+		{
+			if (key == Altaxo.Settings.UICultureSettings.SettingsStoragePath)
+			{
+				var result = Current.PropertyService.Get<Altaxo.Settings.UICultureSettings>(key,null);
+				if (null != result)
+					CultureSettings = result;
+			}
+		}
+
+		public static Altaxo.Settings.UICultureSettings CultureSettings
+		{
+			get
+			{
+				return _cultureSettings;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+				_cultureSettings = value;
+				System.Threading.Thread.CurrentThread.CurrentUICulture = value.ToCulture();
+			}
+		}
+
 		#region DateTime
 
 		/// <summary>

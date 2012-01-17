@@ -452,13 +452,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Settings\CultureSettingsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Gui\Settings\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Settings\UICultureSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Worksheet\PlotCommonColumnsControl.xaml">
       <SubType>Designer</SubType>
@@ -912,11 +912,11 @@
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Settings\CultureSettingsControl.xaml.cs">
-      <DependentUpon>CultureSettingsControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Settings\UICultureSettingsControl.xaml.cs">
+      <DependentUpon>UICultureSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\PlotCommonColumnsControl.xaml.cs">
       <DependentUpon>PlotCommonColumnsControl.xaml</DependentUpon>

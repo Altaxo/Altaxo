@@ -977,12 +977,12 @@
   </Path>
 
 	<Path name = "/Altaxo/Dialogs/SettingsDialog">
-		<!--OptionPanel id    = "UIOptions"
+		<OptionPanel id    = "Language"
 		             label = "${res:Dialog.Options.LanguageSettings}">
 			<OptionPanel id    = "UILanguage"
 								 label = "${res:Dialog.Options.UILanguage}"
-								 class = "Altaxo.Gui.Settings.CultureSettingsController"/>
-		</OptionPanel -->
+								 class = "Altaxo.Gui.Settings.UICultureSettingsController"/>
+		</OptionPanel>
 		<OptionPanel id    = "AutoUpdates"
 			             label = "${res:Dialog.Options.AutoUpdates}"
 			             class = "Altaxo.Gui.Settings.AutoUpdateSettingsController"/>

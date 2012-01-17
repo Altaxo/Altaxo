@@ -43,5 +43,50 @@ namespace Altaxo.Settings
 		/// <summary>Gets or sets a value indicating whether to install a new version of Altaxo at shutdown of Altaxo.</summary>
 		/// <value>If <see langword="true"/> and a new version is available, Altaxo asks at shutdown whether to install the download.</value>
 		public bool InstallAtShutdown { get; set; }
+
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AutoUpdateSettings), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (AutoUpdateSettings)obj;
+				info.AddValue("EnableAutoUpdates", s.EnableAutoUpdates);
+				info.AddValue("DownloadUnstableVersion", s.DownloadUnstableVersion);
+				info.AddValue("DownloadIntervalInDays", s.DownloadIntervalInDays);
+				info.AddValue("ShowDownloadWindow", s.ShowDownloadWindow);
+
+				info.AddValue("InstallAtStartup", s.InstallAtStartup);
+				info.AddValue("InstallAtShutDown", s.InstallAtShutdown);
+			}
+			protected virtual AutoUpdateSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new AutoUpdateSettings() : (AutoUpdateSettings)o);
+
+				s.EnableAutoUpdates = info.GetBoolean("EnableAutoUpdates");
+				s.DownloadUnstableVersion = info.GetBoolean("DownloadUnstableVersion");
+				s.DownloadIntervalInDays = info.GetInt32("DownloadIntervalInDays");
+				s.ShowDownloadWindow = info.GetBoolean("ShowDownloadWindow");
+
+				s.InstallAtStartup = info.GetBoolean("InstallAtStartup");
+				s.InstallAtShutdown = info.GetBoolean("InstallAtShutDown");
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+	
+		#endregion
+
+	
 	}
 }

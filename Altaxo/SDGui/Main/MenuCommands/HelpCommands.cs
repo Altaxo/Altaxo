@@ -66,7 +66,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			var ctrl = new Altaxo.Gui.Settings.CultureSettingsController();
+			var ctrl = new Altaxo.Gui.Settings.UICultureSettingsController();
 			ctrl.InitializeDocument(null, this);
 			Current.Gui.ShowDialog(ctrl, "Culture settings");
 		}

@@ -39,9 +39,13 @@ namespace Altaxo.Gui.Settings
 	/// <summary>
 	/// Interaction logic for CultureSettingsControl.xaml
 	/// </summary>
-	public partial class CultureSettingsControl : UserControl, ICultureSettingsView
+	public partial class UICultureSettingsControl : UserControl, IUICultureSettingsView
 	{
-		public CultureSettingsControl()
+		public event Action CultureChanged;
+
+		public event Action OverrideSystemCultureChanged;
+
+		public UICultureSettingsControl()
 		{
 			InitializeComponent();
 		}
@@ -61,6 +65,48 @@ namespace Altaxo.Gui.Settings
 		public void InitializeCultureFormatList(Collections.SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_guiCultures, list);
+		}
+
+
+		
+
+		public string NumberDecimalSeparator
+		{
+			get
+			{
+				return _guiNumberDecimalSeparator.Text;
+			}
+			set
+			{
+				_guiNumberDecimalSeparator.Text = value;
+			}
+		}
+
+		public string NumberGroupSeparator
+		{
+			get
+			{
+				return _guiNumberGroupSeparator.Text;
+			}
+			set
+			{
+				_guiNumberGroupSeparator.Text = value;
+			}
+		}
+
+		private void EhCultureChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiCultures);
+			if (null != CultureChanged)
+			{
+				CultureChanged();
+			}
+		}
+
+		private void EhOverrideCultureOverrideChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != OverrideSystemCultureChanged)
+				OverrideSystemCultureChanged();
 		}
 	}
 }

@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Settings
 	{
 		/// <summary>Occurs when the user selected another topic.</summary>
 		event Action<NGTreeNode> TopicSelectionChanged;
+
+		/// <summary>Occurs when the current topic view was entered.</summary>
+		event Action CurrentTopicViewMadeDirty;
 		
 		/// <summary>Initializes the topic tree.</summary>
 		/// <param name="topics">The topics tree structure.</param>

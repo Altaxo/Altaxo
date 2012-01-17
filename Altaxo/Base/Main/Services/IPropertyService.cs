@@ -42,5 +42,10 @@ namespace Altaxo.Main.Services
 		T Get<T>(string property, T defaultValue);
 		
 		void Set<T>(string property, T value);
+
+		/// <summary>Occurs when a property has changed. Argument is the property key.</summary>
+		event Action<string> PropertyChanged;
+
+
   }
 }
