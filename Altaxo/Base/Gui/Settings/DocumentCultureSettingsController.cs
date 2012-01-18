@@ -31,11 +31,10 @@ using Altaxo.Settings;
 
 namespace Altaxo.Gui.Settings
 {
-
 	/// <summary>
-	/// Interface that the Gui component has to implement in order to be a view for <see cref="UICultureSettingsController"/>.
+	/// Interface that the Gui component has to implement in order to be a view for <see cref="DocumentCultureSettingsController"/>.
 	/// </summary>
-	public interface IUICultureSettingsView
+	public interface IDocumentCultureSettingsView
 	{
 		/// <summary>Gets or sets a value indicating whether to use the operating system settings for the UI culture or use another one.</summary>
 		/// <value>If <see langword="true"/>, own settings are used; otherwise the operating system settings are used for the current UI culture.</value>
@@ -61,19 +60,19 @@ namespace Altaxo.Gui.Settings
 
 	}
 
-	/// <summary>Manages the user interaction to set the members of <see cref="UICultureSettings"/>.</summary>
-	[ExpectedTypeOfView(typeof(IUICultureSettingsView))]
-	[UserControllerForObject(typeof(UICultureSettings))]
-	public class UICultureSettingsController : IMVCANController
+	/// <summary>Manages the user interaction to set the members of <see cref="DocumentCultureSettings"/>.</summary>
+	[ExpectedTypeOfView(typeof(IDocumentCultureSettingsView))]
+	[UserControllerForObject(typeof(DocumentCultureSettings))]
+	public class DocumentCultureSettingsController : IMVCANController
 	{
-		IUICultureSettingsView _view;
-		UICultureSettings _originalDoc;
+		IDocumentCultureSettingsView _view;
+		DocumentCultureSettings _originalDoc;
 
 		/// <summary>Holds temporary the settings.</summary>
-		UICultureSettings _doc;
+		DocumentCultureSettings _doc;
 
 		/// <summary>Represents the document with the operation system settings.</summary>
-		UICultureSettings _sysSettingsDoc;
+		DocumentCultureSettings _sysSettingsDoc;
 
 		/// <summary>If true, indicates that the document was created by this controller and should be saved to Altaxo settings when <see cref="Apply"/> is called.</summary>
 		bool _isHoldingOwnDocument;
@@ -93,16 +92,16 @@ namespace Altaxo.Gui.Settings
 			if (null == args || args.Length == 0 || (null!=args[0] && !(args[0] is AutoUpdateSettings)))
 				return false;
 
-			_originalDoc = args[0] as UICultureSettings;
+			_originalDoc = args[0] as DocumentCultureSettings;
 
 			if (null == _originalDoc)
 			{
 				_isHoldingOwnDocument = true;
-				_originalDoc = Current.PropertyService.Get(UICultureSettings.SettingsStoragePath, UICultureSettings.FromDefault());
+				_originalDoc = Current.PropertyService.Get(DocumentCultureSettings.SettingsStoragePath, DocumentCultureSettings.FromDefault());
 			}
 
-			_doc = (UICultureSettings)_originalDoc.Clone();
-			_sysSettingsDoc = UICultureSettings.FromDefault();
+			_doc = (DocumentCultureSettings)_originalDoc.Clone();
+			_sysSettingsDoc = DocumentCultureSettings.FromDefault();
 
 			Initialize(true);
 			
@@ -167,7 +166,7 @@ namespace Altaxo.Gui.Settings
 					_view.OverrideSystemCultureChanged -= EhOverrideSystemCultureChanged;
 				}
 
-				_view = value as IUICultureSettingsView;
+				_view = value as IDocumentCultureSettingsView;
 
 				if (null != _view)
 				{
@@ -196,7 +195,7 @@ namespace Altaxo.Gui.Settings
 			}
 		}
 
-		void SetElementsAfterCultureChanged(UICultureSettings s)
+		void SetElementsAfterCultureChanged(DocumentCultureSettings s)
 		{
 			_view.NumberDecimalSeparator = s.NumberDecimalSeparator;
 			_view.NumberGroupSeparator = s.NumberGroupSeparator;
@@ -223,13 +222,10 @@ namespace Altaxo.Gui.Settings
 
 			if (_isHoldingOwnDocument)
 			{
-				
 
-
-				// first we set the properties that Sharpdevelop awaits to change its language,
-				Current.PropertyService.Set("CoreProperties.UILanguage", _originalDoc.NeutralCultureName);
 				// then we set our own culture settings
-				Current.PropertyService.Set(UICultureSettings.SettingsStoragePath, _originalDoc);
+				Current.PropertyService.Set(DocumentCultureSettings.SettingsStoragePath, _originalDoc);
+				System.Threading.Thread.CurrentThread.CurrentCulture = _originalDoc.ToCulture();
 			}
 
 			return true;

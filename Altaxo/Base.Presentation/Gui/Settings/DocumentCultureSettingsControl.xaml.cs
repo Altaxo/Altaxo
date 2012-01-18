@@ -37,61 +37,76 @@ using System.Windows.Shapes;
 namespace Altaxo.Gui.Settings
 {
 	/// <summary>
-	/// Interaction logic for SettingsView.xaml
+	/// Interaction logic for CultureSettingsControl.xaml
 	/// </summary>
-	public partial class SettingsView : UserControl, ISettingsView
+	public partial class DocumentCultureSettingsControl : UserControl, IDocumentCultureSettingsView
 	{
-		/// <summary>Occurs when the current topic view was entered.</summary>
-		public event Action CurrentTopicViewMadeDirty;
+		public event Action CultureChanged;
 
-		public SettingsView()
+		public event Action OverrideSystemCultureChanged;
+
+		public DocumentCultureSettingsControl()
 		{
 			InitializeComponent();
-			_guiControlHost.PreviewGotKeyboardFocus += new KeyboardFocusChangedEventHandler(EhHostControlKeyboardFocused);
 		}
 
-		void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
+		public bool OverrideOperatingSystemSettings
 		{
-			if (null != CurrentTopicViewMadeDirty)
-				CurrentTopicViewMadeDirty();
-		}
-
-		
-		
-
-		private void EhTopicChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-		{
-
-			if (TopicSelectionChanged != null)
-				TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
-		}
-
-		public event Action<Collections.NGTreeNode> TopicSelectionChanged;
-
-		public void InitializeTopics(Collections.NGTreeNodeCollection topics)
-		{
-			_guiTopics.ItemsSource = topics;
-		}
-
-		
-
-		public void InitializeTopicView(string title, object guiTopicObject)
-		{
-			_guiTopicLabel.Content = title;
-			_guiControlHost.Content = guiTopicObject as UIElement;
-		}
-
-
-		public void SetSelectedNode(Collections.NGTreeNode node)
-		{
-			var item = _guiTopics.ItemContainerGenerator.ContainerFromItem(node) as TreeViewItem;
-
-			if (null != item)
+			get
 			{
-				item.Focus();
-				item.IsSelected = true;
+				return true == _guiOverrideCultureSettings.IsChecked;
 			}
+			set
+			{
+				_guiOverrideCultureSettings.IsChecked = value;
+			}
+		}
 
+		public void InitializeCultureFormatList(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiCultures, list);
+		}
+
+
+		
+
+		public string NumberDecimalSeparator
+		{
+			get
+			{
+				return _guiNumberDecimalSeparator.Text;
+			}
+			set
+			{
+				_guiNumberDecimalSeparator.Text = value;
+			}
+		}
+
+		public string NumberGroupSeparator
+		{
+			get
+			{
+				return _guiNumberGroupSeparator.Text;
+			}
+			set
+			{
+				_guiNumberGroupSeparator.Text = value;
+			}
+		}
+
+		private void EhCultureChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiCultures);
+			if (null != CultureChanged)
+			{
+				CultureChanged();
+			}
+		}
+
+		private void EhOverrideCultureOverrideChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != OverrideSystemCultureChanged)
+				OverrideSystemCultureChanged();
 		}
 	}
 }

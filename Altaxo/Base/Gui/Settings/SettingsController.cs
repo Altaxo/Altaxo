@@ -49,6 +49,11 @@ namespace Altaxo.Gui.Settings
 		/// <param name="guiTopicObject">The Gui topic view object.</param>
 		void InitializeTopicView(string title, object guiTopicObject);
 
+		/// <summary>Initializes an indicator whether the topic view is dirty or not.</summary>
+		/// <param name="dirtyIndicator">The dirty indicator. Zero means: is not dirty, 1: is dirty, and 2 means: the topic view contains errors.</param>
+		void InitializeTopicViewDirtyIndicator(int dirtyIndicator);
+
+
 		/// <summary>Sets the selected node in the topic view.</summary>
 		/// <param name="node">The node to select.</param>
 		void SetSelectedNode(NGTreeNode node);

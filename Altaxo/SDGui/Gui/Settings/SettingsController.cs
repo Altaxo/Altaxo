@@ -35,8 +35,9 @@ namespace Altaxo.Gui.Settings
 	{
 		ISettingsView _view;
 		NGTreeNode _topics;
-
 		NGTreeNode _currentNode;
+
+		HashSet<NGTreeNode> _dirtyTopics = new HashSet<NGTreeNode>();
 
 		public SettingsController()
 		{
@@ -72,24 +73,13 @@ namespace Altaxo.Gui.Settings
 			if (null != desc.ChildOptionPanelDescriptors)
 			{
 				foreach (var child in desc.ChildOptionPanelDescriptors)
-					AddTopic(child,newNode.Nodes);
+					AddTopic(child, newNode.Nodes);
 			}
 			nodecoll.Add(newNode);
 		}
 
 		void EhTopicSelectionChanged(NGTreeNode obj)
 		{
-			if (_currentNode != null && !object.ReferenceEquals(obj,_currentNode))
-			{
-				var desc = (IOptionPanelDescriptor)_currentNode.Tag;
-				var ctrl = desc.OptionPanel;
-				if (!ctrl.Apply())
-				{
-					_view.SetSelectedNode(_currentNode);
-					return;
-				}
-			}
-
 			// if this node has a own control, use it, otherwise use the next child
 			var node = GetFirstNodeWithControl(obj);
 			string title = string.Empty;
@@ -98,22 +88,29 @@ namespace Altaxo.Gui.Settings
 			{
 				var desc = (IOptionPanelDescriptor)node.Tag;
 				var ctrl = desc.OptionPanel;
-				if(ctrl.ViewObject==null)
+				if (ctrl.ViewObject == null)
 					Current.Gui.FindAndAttachControlTo(ctrl);
 				title = desc.Label;
 				view = ctrl.ViewObject;
 				_currentNode = node;
 			}
 
-			_view.InitializeTopicView(title,view);
+			_view.InitializeTopicView(title, view);
+			_view.InitializeTopicViewDirtyIndicator(_dirtyTopics.Contains(_currentNode) ? 1 : 0);
 		}
 
+
+		void EhCurrentTopicViewMadeDirty()
+		{
+			if (!_dirtyTopics.Contains(_currentNode))
+				_dirtyTopics.Add(_currentNode);
+		}
 
 		NGTreeNode GetFirstNodeWithControl(NGTreeNode obj)
 		{
 			// if this node has a own control, use it, otherwise use the next child
 			var desc = (IOptionPanelDescriptor)obj.Tag;
-			if (desc!=null && desc.OptionPanel != null)
+			if (desc != null && desc.OptionPanel != null)
 				return obj;
 
 			if (obj.HasChilds)
@@ -145,6 +142,7 @@ namespace Altaxo.Gui.Settings
 				if (null != _view)
 				{
 					_view.TopicSelectionChanged -= EhTopicSelectionChanged;
+					_view.CurrentTopicViewMadeDirty -= EhCurrentTopicViewMadeDirty;
 				}
 
 				_view = value as ISettingsView;
@@ -153,11 +151,12 @@ namespace Altaxo.Gui.Settings
 				{
 					Initialize(false);
 					_view.TopicSelectionChanged += EhTopicSelectionChanged;
+					_view.CurrentTopicViewMadeDirty += EhCurrentTopicViewMadeDirty;
 				}
 			}
 		}
 
-	
+
 
 		public object ModelObject
 		{
@@ -166,15 +165,21 @@ namespace Altaxo.Gui.Settings
 
 		public bool Apply()
 		{
-			if (null != _currentNode)
+			// we have to call apply for all dirty topics
+
+			foreach (var node in _dirtyTopics)
 			{
-				var desc = (IOptionPanelDescriptor)_currentNode.Tag;
+				var desc = (IOptionPanelDescriptor)node.Tag;
 				var ctrl = desc.OptionPanel;
-				if (!ctrl.Apply())
+				if (null != ctrl && !ctrl.Apply())
+				{
+					_currentNode = node;
+					_view.SetSelectedNode(_currentNode);
+					_view.InitializeTopicView(desc.Label, ctrl.ViewObject);
+					_view.InitializeTopicViewDirtyIndicator(2);
 					return false;
+				}
 			}
-
-
 
 			return true;
 		}

@@ -982,6 +982,9 @@
 			<OptionPanel id    = "UILanguage"
 								 label = "${res:Dialog.Options.UILanguage}"
 								 class = "Altaxo.Gui.Settings.UICultureSettingsController"/>
+			<OptionPanel id    = "DocumentLanguage"
+								 label = "${res:Dialog.Options.DocumentLanguage}"
+								 class = "Altaxo.Gui.Settings.DocumentCultureSettingsController"/>
 		</OptionPanel>
 		<OptionPanel id    = "AutoUpdates"
 			             label = "${res:Dialog.Options.AutoUpdates}"

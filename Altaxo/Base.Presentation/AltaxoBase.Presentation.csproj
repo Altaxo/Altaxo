@@ -452,7 +452,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Settings\SettingsView.xaml">
+    <Page Include="Gui\Settings\DocumentCultureSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Settings\SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -912,8 +916,11 @@
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Settings\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
+    <Compile Include="Gui\Settings\DocumentCultureSettingsControl.xaml.cs">
+      <DependentUpon>DocumentCultureSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Settings\SettingsControl.xaml.cs">
+      <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\UICultureSettingsControl.xaml.cs">
       <DependentUpon>UICultureSettingsControl.xaml</DependentUpon>

@@ -55,9 +55,17 @@ namespace Altaxo.Main.Commands
 				Path.DirectorySeparatorChar + "doc" +
 				Path.DirectorySeparatorChar + "help" +
 				Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
-			if (FileUtility.TestFileExists(fileName))
+
+			if (System.IO.File.Exists(fileName))
 			{
 				Help.ShowHelp(null, fileName);
+			}
+			else
+			{
+				if (Current.Gui.YesNoMessageBox("Altaxo class reference was not found on local computer. Do you want to open the online class reference instead?", "Local class ref not found!", true))
+				{
+					System.Diagnostics.Process.Start("http://altaxo.sourceforge.net/AltaxoClassRef/Index.html");
+				}
 			}
 		}
 	}

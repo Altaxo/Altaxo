@@ -130,6 +130,10 @@ namespace ICSharpCode.SharpDevelop
 		
 		static void RunApplication()
 		{
+#if ModifiedForAltaxo
+		var originalUICulture = System.Globalization.CultureInfo.CurrentUICulture;
+		var originalCulture = System.Globalization.CultureInfo.CurrentCulture;
+#endif
 			// The output encoding differs based on whether SharpDevelop is a console app (debug mode)
 			// or Windows app (release mode). Because this flag also affects the default encoding
 			// when reading from other processes' standard output, we explicitly set the encoding to get
@@ -208,6 +212,8 @@ namespace ICSharpCode.SharpDevelop
 					}
 				};
 #if ModifiedForAltaxo
+				Altaxo.Settings.UICultureSettings.InitializeOriginalCulture(originalUICulture);
+				Altaxo.Settings.DocumentCultureSettings.InitializeOriginalCulture(originalCulture);
 				Altaxo.Main.Commands.AutostartCommand.EarlyRun();
 				if (Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(true, SharpDevelopMain.CommandLineArgs))
 					return;
