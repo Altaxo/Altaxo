@@ -81,7 +81,7 @@ namespace Altaxo.Settings
 			CultureInfo result;
 			if (!OverrideParentCulture)
 			{
-				result = CultureInfo.CurrentUICulture;
+				result = OriginalCulture;
 			}
 			else
 			{

@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which
          assemblies to include from solution and project documentation
@@ -7,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{f080fe3b-e2a9-4d5d-b7a3-bb5cb4436a52}</ProjectGuid>
-    <SHFBSchemaVersion>1.9.0.0</SHFBSchemaVersion>
+    <SHFBSchemaVersion>1.9.3.0</SHFBSchemaVersion>
     <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
          Studio adds them anyway -->
     <AssemblyName>Documentation</AssemblyName>
@@ -33,10 +34,11 @@
       <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.dll" />
       <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.xml" />
     </DocumentationSources>
-    <FrameworkVersion>4.0.30319</FrameworkVersion>
+    <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
     <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
-    <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <CopyrightHref>http://www.alice-dsl.net/dirklellinger/</CopyrightHref>
+    <NamingMethod>HashedMemberName</NamingMethod>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in
        order for Visual Studio to perform the build.  The others are optional

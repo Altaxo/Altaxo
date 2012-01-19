@@ -115,6 +115,7 @@ namespace Altaxo.Gui.Settings
 				_availableCulturesList = new SelectableListNodeList();
 				var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
 				Array.Sort(cultures, CompareCultures);
+				AddToCultureList(CultureInfo.InvariantCulture, CultureInfo.InvariantCulture.ThreeLetterISOLanguageName == _doc.ToCulture().ThreeLetterISOLanguageName);
 				foreach (var cult in cultures)
 					AddToCultureList(cult, cult.Name == _doc.CultureName);
 				if (null == _availableCulturesList.FirstSelectedNode)

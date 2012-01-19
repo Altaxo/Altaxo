@@ -15,6 +15,8 @@ namespace Altaxo.Settings
 		/// </summary>
 		public static string SettingsStoragePath = "Altaxo.Options.DocumentCulture";
 
+		static readonly string InvariantCultureThreeLetterISOLanguageName = CultureInfo.InvariantCulture.ThreeLetterISOLanguageName;
+
 		/// <summary>
 		/// Original UI culture, must be initialized before it can be used.
 		/// </summary>
@@ -63,6 +65,13 @@ namespace Altaxo.Settings
 			return result;
 		}
 
+		public override void SetMembersFromCulture(CultureInfo c)
+		{
+			base.SetMembersFromCulture(c);
+			if (c.ThreeLetterISOLanguageName == InvariantCultureThreeLetterISOLanguageName)
+				this._cultureName = c.ThreeLetterISOLanguageName;
+		}
+
 		/// <summary>Creates a new object that is a copy of the current instance.</summary>
 		/// <returns>A new object that is a copy of this instance.</returns>
 		public object Clone()
@@ -79,13 +88,16 @@ namespace Altaxo.Settings
 			CultureInfo result;
 			if (!OverrideParentCulture)
 			{
-				result = CultureInfo.CurrentUICulture;
+				result = OriginalCulture;
 			}
 			else
 			{
 				try
 				{
-					result = new CultureInfo(CultureName);
+					if (_cultureName == InvariantCultureThreeLetterISOLanguageName)
+						result = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+					else
+						result = new CultureInfo(CultureName);
 				}
 				catch (CultureNotFoundException)
 				{
