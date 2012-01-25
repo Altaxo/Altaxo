@@ -30,7 +30,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
   [TestFixture]
   public class ComplexFloatTest 
   {
-    private const float TOLERENCE = 0.001f;   
+    private const float TOLERANCE = 0.001f;   
     [Test]
     public void EqualsTest()
     {
@@ -44,7 +44,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     public void ConversionTest()
     {
       ComplexFloat cf1 = 2.2f;
-      Assert.AreEqual(cf1.Real,2.2);
+      Assert.AreEqual(cf1.Real,2.2f);
       Assert.AreEqual(cf1.Imag,0);
     }   
 
@@ -54,24 +54,20 @@ namespace AltaxoTest.Calc.LinearAlgebra
       ComplexFloat cf1 = new ComplexFloat(1.1f, -2.2f);
       ComplexFloat cf2 = new ComplexFloat(-3.3f, 4.4f);
       ComplexFloat test = cf1 * cf2;
-      Assert.AreEqual(test.Real,6.05);
-      Assert.AreEqual(test.Imag,12.1);
+      Assert.AreEqual(test.Real,6.05f);
+      Assert.AreEqual(test.Imag,12.1f);
       
       test = cf1 / cf2;
-      Assert.AreEqual(test.Real,-0.44);
-      Assert.AreEqual(test.Imag,0.08,TOLERENCE);
+      Assert.AreEqual(test.Real,-0.44f);
+      Assert.AreEqual(test.Imag,0.08f,TOLERANCE);
 
       test = cf1 + cf2;
-      Assert.AreEqual(test.Real,-2.2);
-      Assert.AreEqual(test.Imag,2.2);
+      Assert.AreEqual(test.Real,(1.1f-3.3f));
+      Assert.AreEqual(test.Imag,(-2.2f+4.4f));
     
       test = cf1 - cf2;
-      Assert.AreEqual(test.Real,4.4);
-      Assert.AreEqual(test.Imag,-6.6);
-
-      //test = cf1 ^ cf2;
-      //Assert.AreEqual(test.Real,1.593,TOLERENCE);
-      //Assert.AreEqual(test.Imag,6.503,TOLERENCE);
+      Assert.AreEqual(test.Real,(1.1f+3.3f));
+      Assert.AreEqual(test.Imag,(-2.2f-4.4f));
 
     }
 
@@ -239,7 +235,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       s = "(+1e1 , -2e-2i)";
       cf = new ComplexFloat(s);
       Assert.AreEqual(cf.Real, 10);
-      Assert.AreEqual(cf.Imag, -.02);   
+      Assert.AreEqual(cf.Imag, -0.02f);   
     
       s = "(-1e1 + -2e2i)";
       cf = new ComplexFloat(s);

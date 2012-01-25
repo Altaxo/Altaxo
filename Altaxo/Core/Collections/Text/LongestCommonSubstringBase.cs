@@ -273,13 +273,13 @@ namespace Altaxo.Collections.Text
 
 
 		/// <summary>Returns the positions for common substrings for the maximum number of words that have at least one common substring. The result
-		/// is identical to a call of <see cref="GetSubstringPositonsCommonToTheNumberOfWords"/> with the argument <see cref="MaximumNumberOfWordsWithCommonSubstring"/>
+		/// is identical to a call of <see cref="GetSubstringPositionsCommonToTheNumberOfWords"/> with the argument <see cref="MaximumNumberOfWordsWithCommonSubstring"/>
 		/// </summary>
 		public IEnumerable<CommonSubstring> CommonSubstringPositionsForMaximumNumberOfWords
 		{
 			get
 			{
-				return GetSubstringPositonsCommonToTheNumberOfWords(_maximumNumberOfWordsWithCommonSubstring);
+				return GetSubstringPositionsCommonToTheNumberOfWords(_maximumNumberOfWordsWithCommonSubstring);
 			}
 		}
 
@@ -288,7 +288,7 @@ namespace Altaxo.Collections.Text
 		/// <summary>Returns the positions for common substrings for the given number of words</summary>
 		/// <param name="numberOfWordsWithCommonSubstring">Number of words</param>
 		/// <returns>An enumeration will all positions of substrings common to the given number of words. The amount of information returned depends on the state of <see cref="StoreVerboseResults"/>.</returns>
-		public IEnumerable<CommonSubstring> GetSubstringPositonsCommonToTheNumberOfWords(int numberOfWordsWithCommonSubstring)
+		public IEnumerable<CommonSubstring> GetSubstringPositionsCommonToTheNumberOfWords(int numberOfWordsWithCommonSubstring)
 		{
 			int substringLength = _lcsOfNumberOfWords[numberOfWordsWithCommonSubstring];
 			if (substringLength > 0)

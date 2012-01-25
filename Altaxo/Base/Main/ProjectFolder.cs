@@ -115,10 +115,10 @@ namespace Altaxo.Main
 
 		#region Static Name functions
 
-		/// <summary>
-		/// Char used to separate directories of a name. 
-		/// </summary>
-		public static readonly char DirectorySeparatorChar = '\\';
+		/// <summary>Char used to separate project subfolders.</summary>
+		public const char  DirectorySeparatorChar = '\\';
+		/// <summary>Char used to separate project subfolders, here as a string for convenience..</summary>
+		public const string DirectorySeparatorString = "\\";
 
 		/// <summary>
 		/// Test for the validity of a single folder name. The folderName either has to be an empty string  (representing the root folder) or a string ending with a directory separator char and containing no other directory separator chars.
@@ -158,7 +158,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Gets the directory part of a full qualified name. Can either be the name of an item (worksheet, graph) or a full folder name.
 		/// If the name of a item is provided, the item's directory name is returned.
-		/// If a full folder path is provided  (i.e. either an empty string or a string ending with a <see cref="DirectorySeparatorChar"/>), the name of the parent folder (!) is returned.
+		/// If a full folder path is provided  (i.e. either an empty string or a string ending with a <see cref="DirectorySeparatorChar"/>), the unchanged argument is returned.
 		/// </summary>
 		/// <param name="fullName"></param>
 		/// <returns></returns>
@@ -170,16 +170,16 @@ namespace Altaxo.Main
 			if (IsRootFolderName(fullName))
 				return RootFolderName;
 
-			int lastIndex;
 			if (fullName[fullName.Length - 1] == DirectorySeparatorChar)
-				lastIndex = fullName.LastIndexOf(DirectorySeparatorChar, fullName.Length-2);
+				return fullName;
 			else
-				lastIndex = fullName.LastIndexOf(DirectorySeparatorChar);
-			
-			if (lastIndex < 0)
-				return RootFolderName;
-			else
-				return fullName.Substring(0, lastIndex+1);
+			{
+				int lastIndex = fullName.LastIndexOf(DirectorySeparatorChar);
+				if (lastIndex < 0)
+					return RootFolderName;
+				else
+					return fullName.Substring(0, lastIndex + 1);
+			}
 		}
 
 
@@ -196,10 +196,10 @@ namespace Altaxo.Main
 		public static string GetFolderPartWithoutTrailingDirectorySeparatorChar(string fullName)
 		{
 			string result = GetFolderPart(fullName);
-			if (result.Length > 0 && result[result.Length - 1] == DirectorySeparatorChar)
-				return result.Substring(0, result.Length - 1);
-			else
+			if(IsRootFolderName(result))
 				return result;
+			else
+				return result.Substring(0, result.Length - 1);
 		}
 
 		/// <summary>
@@ -213,20 +213,19 @@ namespace Altaxo.Main
 		{
 			if (null == fullName)
 				throw new ArgumentNullException("fullName");
-
 			if (IsRootFolderName(fullName))
-				return RootFolderName;
+				return string.Empty;
 
-			int lastIndex;
 			if (fullName[fullName.Length - 1] == DirectorySeparatorChar)
-				lastIndex = fullName.LastIndexOf(DirectorySeparatorChar, fullName.Length - 2);
+				return string.Empty; // name part of a full name that end with directory separator char is an empty string
 			else
-				lastIndex = fullName.LastIndexOf(DirectorySeparatorChar);
-
-			if (lastIndex < 0)
-				return fullName;
-			else
-				return fullName.Substring(lastIndex + 1);
+			{
+				int lastIndex = fullName.LastIndexOf(DirectorySeparatorChar);
+				if (lastIndex < 0)
+					return fullName;
+				else
+					return fullName.Substring(lastIndex + 1);
+			}
 		}
 
 		/// <summary>
@@ -245,21 +244,25 @@ namespace Altaxo.Main
 			if (null == fullName)
 				throw new ArgumentNullException("fullName");
 
-			int lastIndex;
-			if (fullName[fullName.Length - 1] == DirectorySeparatorChar)
-				lastIndex = fullName.LastIndexOf(DirectorySeparatorChar, fullName.Length - 2);
-			else
-				lastIndex = fullName.LastIndexOf(DirectorySeparatorChar);
-
-			if (lastIndex < 0) // no DirectorySeparatorChar
+			if (IsRootFolderName(fullName) || fullName[fullName.Length - 1] == DirectorySeparatorChar)
 			{
-				directoryPart = RootFolderName;
-				namePart = fullName;
+				directoryPart = fullName;
+				namePart = string.Empty;
 			}
 			else
 			{
-				directoryPart = fullName.Substring(0, lastIndex+1);
-				namePart = fullName.Substring(lastIndex + 1);
+				int lastIndex = fullName.LastIndexOf(DirectorySeparatorChar);
+
+				if (lastIndex < 0) // no DirectorySeparatorChar
+				{
+					directoryPart = RootFolderName;
+					namePart = fullName;
+				}
+				else
+				{
+					directoryPart = fullName.Substring(0, lastIndex + 1);
+					namePart = fullName.Substring(lastIndex + 1);
+				}
 			}
 		}
 
@@ -315,7 +318,7 @@ namespace Altaxo.Main
 			if (dirName == RootFolderName)
 				throw new InvalidOperationException("Can not get the parent directory of the root folder");
 
-			int lastIndex = dirName.LastIndexOf(DirectorySeparatorChar, dirName.Length - 2);
+			int lastIndex = dirName.Length<2 ? -1 : dirName.LastIndexOf(DirectorySeparatorChar, dirName.Length - 2);
 
 			if (lastIndex < 0)
 				return RootFolderName;

@@ -18,6 +18,9 @@ namespace Altaxo.Settings
 		{
 			EnableAutoUpdates = true;
 			InstallAtShutdown = true;
+#if DEBUG
+			DownloadUnstableVersion = true;
+#endif
 		}
 
 		/// <summary>Gets or sets a value indicating whether to globally enable auto updates or not.</summary>

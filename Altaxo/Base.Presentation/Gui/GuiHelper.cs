@@ -96,8 +96,11 @@ namespace Altaxo.Gui
 
 		public static void SynchronizeSelectionFromGui(ListBox view)
 		{
-			foreach (ISelectableItem it in view.ItemsSource)
-				it.IsSelected = false;
+			if (view.ItemsSource != null)
+			{
+				foreach (ISelectableItem it in view.ItemsSource)
+					it.IsSelected = false;
+			}
 
 			if (null != view.SelectedItem)
 				((ISelectableItem)view.SelectedItem).IsSelected = true;
@@ -119,9 +122,12 @@ namespace Altaxo.Gui
 			}
 			else
 			{
-				foreach (var n in data)
-					if (n.IsSelected)
-						view.SelectedItems.Add(n);
+				if (data != null)
+				{
+					foreach (var n in data)
+						if (n.IsSelected)
+							view.SelectedItems.Add(n);
+				}
 			}
 		}
 

@@ -74,18 +74,52 @@ namespace Altaxo.Collections.Text
 			}
 		}
 
+		/// <summary>Ending position of the substring in the word (next position after the last character of the word).</summary>
+		public int End
+		{
+			get
+			{
+				return _start + _count;
+			}
+		}
+
 		public override string ToString()
 		{
 			return string.Format("Word:{0}; Start:{1}; Length:{2}", _wordIndex, _start, _count);
 		}
 
+
+		/// <summary>Gets the common substring.</summary>
+		/// <param name="words">The words that were originally used to build the common substring query.</param>
+		/// <returns>The common substring that is represented by this instance.</returns>
+		public string GetCommonSubstring(IList<string> words)
+		{
+			string word = words[_wordIndex];
+			string result = word.Substring(_start, _count);
+			return result;
+		}
+
+		/// <summary>Gets the common substring.</summary>
+		/// <typeparam name="T">Type of the characters of the original words that are used to build the common substring query.</typeparam>
+		/// <param name="words">The words that were originally used to build the common substring query. If the original words were strings, please use the non-generic version of this function..</param>
+		/// <returns>The common substring that is represented by this instance.</returns>
+		public List<T> GetCommonSubstring<T>(IList<IList<T>> words)
+		{
+			IList<T> word = words[_wordIndex];
+			List<T> result = new List<T>(_count);
+			for (int i = 0; i < _count; ++i)
+			{
+				result.Add(word[i + _start]);
+			}
+			return result;
+		}
 	}
 
 
 	/// <summary>
 	/// Stores the positions of a common substring in a list of words. This corresponds to a certain interval [begin, end] of the suffix array.
 	/// </summary>
-	public struct CommonSubstring
+	public struct CommonSubstring : IEnumerable<SubstringPosition>
 	{
 		/// <summary>Suffix array.</summary>
 		int[] _suffixArray;
@@ -148,9 +182,29 @@ namespace Altaxo.Collections.Text
 		/// <returns>Position of the i-th occurence of the common substring.</returns>
 		private SubstringPosition GetSubstringPosition(int i)
 		{
-			int word = _wordIndices[i];
-			return new SubstringPosition(word, _suffixArray[i] - _wordStartPositions[word], _substringLength);
+			int wordIdx = _wordIndices[i];
+			return new SubstringPosition(wordIdx, _suffixArray[i] - _wordStartPositions[wordIdx], _substringLength);
 		}
+
+
+		/// <summary>Gets the common substring.</summary>
+		/// <param name="words">The words that were originally used to build the common substring query (only when the words were strings, otherwise please use the generic version of this function).</param>
+		/// <returns>The common substring that is represented by this instance.</returns>
+		public string GetCommonSubstring(IList<string> words)
+		{
+			return FirstPosition.GetCommonSubstring(words);
+		}
+
+		/// <summary>Gets the common substring.</summary>
+		/// <typeparam name="T">Type of the characters of the original words that are used to build the common substring query.</typeparam>
+		/// <param name="words">The words that were originally used to build the common substring query. If the original words were strings, please use this <see cref="M:Altaxo.Collections.Text.GetCommonSubstring(string)">this overloaded version of the function</see>.</param>
+		/// <returns>The common substring that is represented by this instance.</returns>
+		public List<T> GetCommonSubstring<T>(IList<IList<T>> words)
+		{
+			return FirstPosition.GetCommonSubstring<T>(words);
+		}
+
+		
 
 
 		/// <summary>Returns a <see cref="System.String"/> that represents this instance.</summary>
@@ -158,6 +212,18 @@ namespace Altaxo.Collections.Text
 		public override string ToString()
 		{
 			return string.Format("CommonSubstring Length={0}, SuffixArray_Begin={1}, End={2}", _substringLength, _begin, _end);
+		}
+
+		public IEnumerator<SubstringPosition> GetEnumerator()
+		{
+			for (int i = _begin; i <= _end; ++i)
+				yield return GetSubstringPosition(i);
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			for (int i = _begin; i <= _end; ++i)
+				yield return GetSubstringPosition(i);
 		}
 	}
 

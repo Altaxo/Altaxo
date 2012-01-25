@@ -44,9 +44,7 @@ namespace AltaxoTest.Calc.Probability
       }
 
       EntCalc.EntCalcResult result = calc.EndCalculation();
-      Assert.IsTrue(result.ChiProbability<0.01);
-
-
+			Assert.Less(result.ChiProbability, 0.01, "ChiProbability is too high, thus System.Random is not really random");
     }
   }
   #region EntCalc

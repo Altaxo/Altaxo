@@ -33,19 +33,21 @@ namespace Altaxo.Main
   [TestFixture]
   public class ProjectFolder_Test
   {
+		// 1st: fullName, 2nd: directoryPart, 3rd: name part
     static string[,] _testNames = new string[,]
      {
-      {"",null,""},
-      {"A",null,"A"},
-      {"ABCD",null,"ABCD"},
-      {@"AB\CD","AB","CD"},
-      {@"AB\CD\EF",@"AB\CD","EF"},
-      {@"\AB","","AB"},
-      {@"AB\","AB",""},
-      {@"\AB\",@"\AB",""},
-      {@"\AB\CD\EF",@"\AB\CD","EF"},
-      {@"\AB\CD\EF\",@"\AB\CD\EF",""},
-      {@"\\",@"\",""}
+      {"", "",	""}, // RootFolder should split in root folder and empty short name
+      {"A", "",	"A"},
+      {"ABCD","","ABCD"},
+      {@"AB\CD",	@"AB\","CD"},
+      {@"AB\CD\EF",@"AB\CD\","EF"},
+      {@"\AB",@"\","AB"},
+      {@"AB\",@"AB\",""},
+      {@"\AB\",@"\AB\",""},
+      {@"\AB\CD\EF",@"\AB\CD\","EF"},
+      {@"\AB\CD\EF\",@"\AB\CD\EF\",""},
+      {@"\\",@"\\",""},
+      {@"\",@"\",""}
      };
 
     [Test]
@@ -69,7 +71,12 @@ namespace Altaxo.Main
         Assert.That(result == namepart, ReportNameError("GetNamePart",i));
 
 				ProjectFolder.SplitIntoFolderAndNamePart(fullname, out result, out result1);
-        Assert.That(result == dirpart && result1 == namepart, ReportNameError("SplitIntoDirectoryAndNamePart",i));
+        Assert.That(result == dirpart && result1 == namepart, ReportNameError("SplitIntoFolderAndNamePart",i));
+
+				result = ProjectFolder.Combine(result, result1);
+				Assert.That(result==fullname, ReportNameError("Combine",i));
+
+				
       }
     }
 
@@ -78,5 +85,39 @@ namespace Altaxo.Main
 			return string.Format("{0} failed at i={1}, fullname=<<{2}>>", function, i, _testNames[i,0]);
 		}
 
+
+		string ReportNameError(string function, string[,] field, int i)
+		{
+			return string.Format("{0} failed at i={1}, fullname=<<{2}>>", function, i, field[i, 0]);
+		}
+
+		static string[,] _testParentFolderData1 = new string[,]
+     {
+      {@"A\B\",@"A\"},
+      {@"AB\",@""},
+      {@"\AB\",@"\"},
+      {@"\AB\CD\EF\",@"\AB\CD\"},
+      {@"\\",@"\"},
+      {@"\",@""}
+		 };
+
+		[Test]
+		public void TestFoldersParentFolder()
+		{
+			string result;
+
+      int len = _testParentFolderData1.GetLength(0);
+
+			for (int i = 0; i < len; i++)
+			{
+				string folderName = _testParentFolderData1[i, 0];
+				string parentFolderName = _testParentFolderData1[i, 1];
+
+				result = ProjectFolder.GetFoldersParentFolder(folderName);
+				Assert.That(result == parentFolderName, ReportNameError("GetFoldersParentFolder", _testParentFolderData1, i));
+			}
+
+			
+		}
   }
 }

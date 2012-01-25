@@ -31,16 +31,15 @@ namespace AltaxoTest.Calc.Integration
 	[TestFixture]
 	public class QAWCTests
 	{
-
-
 		[Test]
-		public void TestSin()
+		public void TestSqrt()
 		{
+			const double expected = 1.0656799507071;
 			double result, abserr;
 			GSL_ERROR error;
-			error = QawcIntegration.Integration(z=>Math.Sqrt(z)/(1+z), 0, 100, 1, 0, 1E-6, 100, out result, out abserr);
+			error = QawcIntegration.Integration(z=>Math.Sqrt(z), 0, 2, 1, 0, 1E-6, 100, out result, out abserr);
 
-			NUnit.Framework.Assert.AreEqual(1.37079, result, 1.37079 * 1E-6);
+			NUnit.Framework.Assert.AreEqual(expected, result, expected * 1E-6);
 		}
 	}
 }
