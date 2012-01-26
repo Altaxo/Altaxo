@@ -25,8 +25,8 @@
 					<CommandBinding Command="SelectAll" CanExecute="EhEnableCmdSelectAll" Executed="EhCmdSelectAll"/>
 				</Canvas.CommandBindings>
 			</Canvas>
-			<ScrollBar Grid.Row="1" Name="_horzScrollBar" Orientation="Horizontal" Scroll="EhWP_HorzScroll" />
+			<ScrollBar Grid.Row="1" Name="_horzScrollBar" Orientation="Horizontal" Scroll="EhWP_HorzScroll" SmallChange="1" LargeChange="10" Minimum="0" Maximum="100" ViewportSize="10"/>
 		</Grid>
-		<ScrollBar Grid.Column="1" Name="_vertScrollBar" Scroll="EhWP_VertScroll"/>
+		<ScrollBar Grid.Column="1" Name="_vertScrollBar" Scroll="EhWP_VertScroll" SmallChange="1" LargeChange="10" Minimum="0" Maximum="100" ViewportSize="10"/>
 	</Grid>
 </UserControl>

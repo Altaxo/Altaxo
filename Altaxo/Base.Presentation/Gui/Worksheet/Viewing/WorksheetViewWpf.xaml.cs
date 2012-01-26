@@ -145,6 +145,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
+		public double TableViewHorzViewPortSize
+		{
+			set
+			{
+				_horzScrollBar.ViewportSize = value;
+			}
+		}
+
 		public int TableViewVertScrollValue
 		{
 			get
@@ -154,6 +162,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			set
 			{
 				_vertScrollBar.Value = value;
+			}
+		}
+
+		public int TableViewVertViewPortSize
+		{
+			set
+			{
+				_vertScrollBar.ViewportSize = value;
 			}
 		}
 

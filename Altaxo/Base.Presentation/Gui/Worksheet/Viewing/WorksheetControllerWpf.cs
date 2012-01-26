@@ -445,10 +445,24 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			if (View != null)
 			{
+				AdjustXScrollBarViewPortSize();
 				View.TableAreaInvalidate();
 			}
+			
 		}
 
+		/// <summary>Adjusts the X scroll bar view port size (=size of the thumb). Should be called after the XScrollbarMaximum is adusted or when the width of the columns changed considerably.
+		/// Here, we want to avoid that the thumb size changed when we scroll through the worksheet. Thus, we calculate a average value for the thumb size that is relation of the table area width and 
+		/// the total width of all data columns.</summary>
+		public void AdjustXScrollBarViewPortSize()
+		{
+			if (View != null)
+			{
+				double left, width;
+				AM.GetXCoordinatesOfColumn(_numberOfTableCols - 1, _worksheetLayout, 0, out left, out width);
+				View.TableViewHorzViewPortSize = HorzScrollMaximum * TableAreaWidth / (left + width);
+			}
+		}
 
 		protected virtual void SetCachedNumberOfDataColumns()
 		{
@@ -856,7 +870,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			if (newCellRow < FirstVisibleColumn)
 				navigateToRow = newCellRow;
 			else if (newCellRow > LastFullyVisibleColumn)
-				navigateToRow = AM.GetFirstVisibleColumnForLastVisibleColumn(newCellCol, _worksheetLayout, HorzScrollPos, TableAreaWidth);
+				navigateToRow = AM.GetFirstVisibleColumnForLastVisibleColumn(newCellRow, _worksheetLayout, HorzScrollPos, TableAreaWidth);
 			else
 				navigateToRow = FirstVisibleColumn;
 
@@ -1117,7 +1131,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					// can not have negative values;
 					if (View != null)
 					{
-						this.View.TableViewVertScrollValue = newValue + this.TotalEnabledPropertyColumns;
+						newValue += this.TotalEnabledPropertyColumns;
+						this.View.TableViewVertScrollValue = newValue;
+						this.View.TableViewVertViewPortSize = AM.GetVisibleTableRows(0, this.TableAreaHeight, _worksheetLayout, newValue) + AM.GetVisiblePropertyColumns(0,this.TableAreaHeight,_worksheetLayout,newValue);
 						TableAreaInvalidate();
 					}
 				}

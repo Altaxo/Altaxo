@@ -401,7 +401,7 @@ namespace Altaxo.Worksheet
 		public static Altaxo.Graph.RectangleD GetCoordinatesOfPropertyCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
 		{
 			double x, y, w, h;
-			GetXCoordinatesOfColumn(nCol, layout, HorzScrollPos, out x, out w);
+			GetXCoordinatesOfColumn(nRow, layout, HorzScrollPos, out x, out w);
 
 			y = GetTopCoordinateOfPropertyColumn(nCol, layout, VertScrollPos);
 			h = layout.PropertyColumnHeaderStyle.Height;
