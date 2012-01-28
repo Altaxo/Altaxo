@@ -103,10 +103,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					ele.MoveGrip(newPosition);
 			}
 
-			public void Show(Graphics g)
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+			public void Show(Graphics g, double pageScale)
 			{
 				foreach (var ele in GripList)
-					ele.Show(g);
+					ele.Show(g, pageScale);
 			}
 
 			public bool IsGripHitted(PointD2D point)
@@ -241,7 +244,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				return;
 
 			for (int i = 0; i < DisplayedGrips.Length; i++)
-				DisplayedGrips[i].Show(g);
+				DisplayedGrips[i].Show(g, _grac.GC.ZoomFactor);
 		}
 
 

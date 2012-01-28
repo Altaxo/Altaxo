@@ -475,6 +475,15 @@ namespace Altaxo.Graph.Commands
 			ctrl.ZoomFactor = 0.5;
 		}
 	}
+
+	public class Zoom100Percent : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.ZoomFactor = 1.0;
+		}
+	}
+
 	public class Zoom200Percent : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
@@ -482,6 +491,55 @@ namespace Altaxo.Graph.Commands
 			ctrl.ZoomFactor = 2.0;
 		}
 	}
+
+	public class ZoomUserPercent : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			double zoom = ctrl.ZoomFactor*100;
+			if (Current.Gui.ShowDialog(ref zoom, "Choose zoom factor (percent)", false))
+			{
+				ctrl.ZoomFactor = zoom/100;
+			}
+		}
+	}
+
+	public class MarginUserPercent : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			double zoom = ctrl.Margin * 100;
+			if (Current.Gui.ShowDialog(ref zoom, "Choose margin around graph (percent)", false))
+			{
+				ctrl.Margin = zoom / 100;
+			}
+		}
+	}
+
+	public class Margin0Percent : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.Margin = 0;
+		}
+	}
+
+	public class Margin10Percent : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.Margin = 0.1;
+		}
+	}
+
+	public class Margin50Percent : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.Margin = 0.5;
+		}
+	}
+
 
 	public class AddScale : AbstractGraphControllerCommand
 	{

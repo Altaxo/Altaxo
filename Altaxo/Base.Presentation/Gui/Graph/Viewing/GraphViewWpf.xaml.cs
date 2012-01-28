@@ -130,6 +130,24 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
+		public void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement)
+		{
+			_horizontalScrollBar.IsEnabled = isEnabled;
+			_horizontalScrollBar.Maximum = maximum;
+			_horizontalScrollBar.SmallChange = smallIncrement;
+			_horizontalScrollBar.LargeChange = largeIncrement;
+			_horizontalScrollBar.Value = value;
+		}
+
+		public void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement)
+		{
+			_verticalScrollBar.IsEnabled = isEnabled;
+			_verticalScrollBar.Maximum = maximum;
+			_verticalScrollBar.SmallChange = smallIncrement;
+			_verticalScrollBar.LargeChange = largeIncrement;
+			_verticalScrollBar.Value = value;
+		}
+
 
 		/// <summary>
 		/// Called by the PresentationGraphController to get a new graphics context for painting.
@@ -222,6 +240,12 @@ namespace Altaxo.Gui.Graph.Viewing
 				_guiController.EhView_GraphPanelMouseUp(GetMousePosition(e),e);
 		}
 
+		private void EhGraphPanel_MouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			if (null != _guiController)
+				_guiController.EhView_GraphPanelMouseWheel(GetMousePosition(e), e);
+		}
+
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (null != _guiController)
@@ -244,6 +268,9 @@ namespace Altaxo.Gui.Graph.Viewing
 					_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
 					_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
 					gc.EhView_GraphPanelSizeChanged();
+
+					_horizontalScrollBar.ViewportSize = actWidth;
+					_verticalScrollBar.ViewportSize = actHeight;
 				}
 				else // either actWidth or actHeight was 0, thus the graph panel is momentarily invisible
 				{
@@ -510,5 +537,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				e.Handled = true;
 			}
 		}
+
+	
 	}
 }

@@ -55,6 +55,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		PointF GraphScrollPosition { get; set; }
 
+		void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement);
+		void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement);
+		
+
 		/// <summary>
 		/// Sets the number of layers that are in the graph. The view has to reflect the change in the number of layers
 		/// by adjusting the number of layer buttons or similar. The current layer number should be preserved.

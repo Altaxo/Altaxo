@@ -54,7 +54,17 @@ namespace Altaxo.Graph.Gdi
 		/// Draws the grip in the graphics context.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
-		void Show(Graphics g);
+		/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle (see remarks). Attention: this factor must not be used to transform the path of the handle.</param>
+		/// <remarks>
+		/// To paint a handle that should appear with a line width of 2.5 pts on the screen, you should create a pen as follows:
+		/// <code language="C#">
+		/// using(var pen = new Pen(Color.Blue, (float)(2.5/pageScale)))
+		///	{
+		///		// do your painting here
+		///	}
+		/// </code>
+		/// </remarks>
+		void Show(Graphics g, double pageScale);
 
 		/// <summary>
 		/// Tests if the grip is hitted.

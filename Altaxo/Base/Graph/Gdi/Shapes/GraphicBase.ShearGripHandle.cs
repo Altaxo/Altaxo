@@ -82,7 +82,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				GraphObject.SetShearFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialRotation, _initialShear, _initialScaleX, _initialScaleY);
 			}
 
-			public void Show(Graphics g)
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+			public void Show(Graphics g, double pageScale)
 			{
 				var pts = (PointF[])_shapePoints.Clone();
 				_spanningHalfYRhombus.TransformPoints(pts);
@@ -92,20 +95,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public bool IsGripHitted(PointD2D point)
 			{
 				point = _spanningHalfYRhombus.InverseTransformPoint(point);
-				return Calc.RMath.IsInIntervalCC(point.X, 0, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);
+				return Calc.RMath.IsInIntervalCC(point.X, 0, 2 * bigX) && Calc.RMath.IsInIntervalCC(point.Y, -bigY, bigY);
 			}
 
 			#endregion
 
+			const float arrY = 0.5f; // y top of arrow
+			const float bigY = 0.3f; // y 
+			const float smallY = 0.15f; // y at the base
+			const float bigX = 0.33f; // width of one arrow
 
 			static ShearGripHandle()
 			{
-				// The arrow has a length of 1 and a maximum witdth of 2*arrowWidth and a shaft width of 2*arrowShaft
-				const float arrY = 0.5f; // y top of arrow
-				const float bigY = 0.3f; // y 
-				const float smallY = 0.15f; // y at the base
-				const float bigX = 0.33f; // width of one arrow
-
 				_shapePoints = new PointF[] {
         new PointF(0,-smallY),
         new PointF(bigX, -smallY),

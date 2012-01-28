@@ -89,7 +89,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				GraphObject.SetScalesFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialScaleX, _initialScaleY);
 			}
 
-			public void Show(Graphics g)
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+			public void Show(Graphics g, double pageScale)
 			{
 				var pts = (PointF[])_shapePoints.Clone();
 				_spanningHalfYRhombus.TransformPoints(pts);
@@ -99,23 +102,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public bool IsGripHitted(PointD2D point)
 			{
 				point = _spanningHalfYRhombus.InverseTransformPoint(point);
-				return Calc.RMath.IsInIntervalCC(point.X, 0, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);
+				return Calc.RMath.IsInIntervalCC(point.X, 0, 2 * barX + stegX) && Calc.RMath.IsInIntervalCC(point.Y, -bigY, bigY);
 			}
 
 			#endregion
 
 
 
+			const float bigY = 0.5f; // half heigth of the bar
+			const float smallY = 0.125f; // half height of the steg
+			const float barX = 0.33f; // width of the bar
+			const float stegX = 0.2f; // width of the steg between the bars
 
 
 			static RescaleGripHandle()
 			{
-				// The arrow has a length of 1 and a maximum witdth of 2*arrowWidth and a shaft width of 2*arrowShaft
-				const float bigY = 0.5f; // half heigth of the bar
-				const float smallY = 0.125f; // half height of the steg
-				const float barX = 0.33f; // width of the bar
-				const float stegX = 0.2f; // width of the steg between the bars
-
 				_shapePoints = new PointF[] {
         new PointF(0,-bigY),
         new PointF(barX, -bigY),

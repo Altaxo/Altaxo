@@ -67,9 +67,15 @@ namespace Altaxo.Graph.Gdi
 			{
 			}
 
-			public void Show(Graphics g)
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+			public void Show(Graphics g, double pageScale)
 			{
-				g.DrawPath(Pens.Blue, _displayPath);
+				using (var pen = new Pen(Color.Blue, (float)(1 / pageScale)))
+				{
+					g.DrawPath(pen, _displayPath);
+				}
 			}
 
 			public bool IsGripHitted(PointD2D point)

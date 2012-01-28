@@ -34,6 +34,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected class ResizeGripHandle : IGripManipulationHandle
 		{
 			static readonly PointF[] _outsideArrowPoints;
+			const float _arrowHShaft = 0.15f;
+			const float _arrowHWidth = 0.3f;
 
 			IHitTestObject _parent;
 			PointD2D _drawrPosition;
@@ -89,7 +91,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			#region IGripManipulationHandle Members
 
 
-			public void Show(Graphics g)
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+			public void Show(Graphics g, double pageScale)
 			{
 				var pts = (PointF[])_outsideArrowPoints.Clone();
 				_spanningHalfYRhombus.TransformPoints(pts);
@@ -99,7 +104,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public bool IsGripHitted(PointD2D point)
 			{
 				point = _spanningHalfYRhombus.InverseTransformPoint(point);
-				return Calc.RMath.IsInIntervalCC(point.X, -0.5, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);
+				return Calc.RMath.IsInIntervalCC(point.X, -0.1, 1) && Calc.RMath.IsInIntervalCC(point.Y, -_arrowHWidth, _arrowHWidth);
 			}
 
 
@@ -112,16 +117,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			static ResizeGripHandle()
 			{
 				// The arrow has a length of 1 and a maximum witdth of 2*arrowWidth and a shaft width of 2*arrowShaft
-				const float arrowShaft = 0.15f;
-				const float arrowWidth = 0.3f;
 				_outsideArrowPoints = new PointF[] {
-        new PointF(0,arrowShaft),
-        new PointF(1-arrowWidth,arrowShaft),
-        new PointF(1-arrowWidth,arrowWidth),
+        new PointF(0,_arrowHShaft),
+        new PointF(1-_arrowHWidth,_arrowHShaft),
+        new PointF(1-_arrowHWidth,_arrowHWidth),
         new PointF(1,0),
-        new PointF(1-arrowWidth, -arrowWidth),
-        new PointF(1-arrowWidth, -arrowShaft),
-        new PointF(0,-arrowShaft)
+        new PointF(1-_arrowHWidth, -_arrowHWidth),
+        new PointF(1-_arrowHWidth, -_arrowHShaft),
+        new PointF(0,-_arrowHShaft)
       };
 			}
 

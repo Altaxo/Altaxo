@@ -105,7 +105,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 
-			public void Show(Graphics g)
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+			public void Show(Graphics g, double pageScale)
 			{
 				g.FillEllipse(Brushes.Blue,
 					(float)(_gripCenter.X - _gripRadius),

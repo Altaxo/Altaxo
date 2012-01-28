@@ -338,6 +338,51 @@ namespace Altaxo.Gui.Graph.Viewing
 			_mouseState.OnDoubleClick(position, e);
 		}
 
+		DateTime _nextScrollZoomAcceptTime;
+		/// <summary>Handles the mouse wheel event.</summary>
+		/// <param name="position">Mouse position.</param>
+		/// <param name="e">The <see cref="System.Windows.Input.MouseWheelEventArgs"/> instance containing the event data.</param>
+		public virtual void EhView_GraphPanelMouseWheel(PointD2D position, MouseWheelEventArgs e)
+		{
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+			{
+				e.Handled = true;
+
+				DateTime now = DateTime.UtcNow;
+				if (now < _nextScrollZoomAcceptTime)
+					return;
+				
+
+				var oldZoom = _view.GC.ZoomFactor;
+				var newZoom = oldZoom;
+				var autoZoomFactor = _view.GC.GetAutoZoomFactor();
+				bool isAutoZoomNext = false;
+				if (e.Delta > 0)
+				{
+					newZoom = oldZoom * 1.5;
+					isAutoZoomNext = newZoom >= autoZoomFactor && oldZoom<autoZoomFactor;
+				}
+				else if (e.Delta < 0)
+				{
+					newZoom = oldZoom / 1.5;
+					isAutoZoomNext = newZoom <= autoZoomFactor && oldZoom>autoZoomFactor;
+				}
+				// Do zoom action here
+				if (isAutoZoomNext)
+				{
+					_view.GC.IsAutoZoomActive = true;
+					_nextScrollZoomAcceptTime = now.AddMilliseconds(500);
+				}
+				else // manual zoom
+				{
+					var graphCoord = PixelToPrintableAreaCoordinates(position);
+					_view.GC.ZoomFactor = newZoom;
+					var ppc = PixelToPageCoordinates(position);
+					_view.GC.GraphViewOffset = new PointF(graphCoord.X - ppc.X, graphCoord.Y - ppc.Y);
+				}
+			}
+		}
+
 		#endregion
 
 		#region Event handlers set-up by this controller
@@ -539,6 +584,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				g.PageScale = (float)this.ZoomFactor;
 				float pointsh = (float)(UnitPerInch * _view.GraphScrollPosition.X / (this._horizontalResolution * this.ZoomFactor));
 				float pointsv = (float)(UnitPerInch * _view.GraphScrollPosition.Y / (this._verticalResolution * this.ZoomFactor));
+				//var gvo = _view.GC.GraphViewOffset;
 				g.TranslateTransform(pointsh, pointsv);
 			}
 		}

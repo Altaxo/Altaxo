@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Ratio of view port dimension to the dimension of the graph. 
 		/// Example: a values of 2 means that the view port size is two times the size of the graph. 
 		/// </summary>
-		protected double _areaFillingFactor = 1.2f;
+		protected double _areaFillingFactor = 1.2;
 
 		protected PointF _graphViewOffset;
 
@@ -217,9 +217,46 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+		/// <summary>Gets or sets the margin. A value of 0 indicates that if autozoom is active, there is no margin around the graph. 
+		/// A value of 1 means that there is a right and left margin of 100 percent of the graph width, and a top and bottom
+		/// margin of 100 percent of the graph heigth.</summary>
+		/// <value>The margin value. Must be a non-negative value, otherwise a <see cref="ArgumentOutOfRange"/> exception is thrown.</value>
+		public double Margin
+		{
+			get
+			{
+				return (_areaFillingFactor - 1)/2;
+			}
+			set
+			{
+				if (!(value >= 0))
+					throw new ArgumentException("Margin is not greater than or equal to zero");
+
+				var oldValue = _areaFillingFactor;
+				_areaFillingFactor = 1 + 2*value;
+				if (_areaFillingFactor != oldValue)
+				{
+					if (_isAutoZoomActive)
+						RefreshAutoZoom();
+					else
+						RefreshManualZoom();
+				}
+			}
+		}
+
 		public PointF GraphViewOffset
 		{
 			get { return _graphViewOffset; }
+			set
+			{
+				var oldVal = _graphViewOffset;
+				_graphViewOffset = value;
+				if (oldVal != value && null != _view)
+				{
+					SetupScrollbarParameters();
+					_view.InvalidateCachedGraphBitmapAndRepaint();
+				}
+			}
 		}
 
 		/// <summary>
@@ -257,6 +294,16 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				SizeF inch = _view.ViewportSizeInInch;
 				return new SizeF((float)(inch.Width * PtPerInch/_zoomFactor), (float)(inch.Height * PtPerInch/_zoomFactor));
+			}
+		}
+
+		/// <summary>Gets the size of the graph with padding with taking into account the current zoom factor. This can be much greater than the actual viewport size, if the zoom factor exceeds the auto zoom factor.</summary>
+		/// <value>The size of the zoomed graph with padding.</value>
+		public Altaxo.Graph.PointD2D SizeOfZoomedGraphWithPaddingPt
+		{
+			get
+			{
+				return new PointD2D(_zoomFactor * _doc.Layers.GraphSize.Width * _areaFillingFactor, _zoomFactor * _doc.Layers.GraphSize.Height * _areaFillingFactor);
 			}
 		}
 
@@ -714,13 +761,22 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
+		/// <summary>Gets the current zoom factor that would be used for auto zoom, but does not set it.</summary>
+		/// <returns>The zoom factor that would be used for autozoom.</returns>
+		public double GetAutoZoomFactor()
+		{
+			double zoomh = (PtPerInch * _view.ViewportSizeInInch.Width) / (_doc.Layers.GraphSize.Width * _areaFillingFactor);
+			double zoomv = (PtPerInch * _view.ViewportSizeInInch.Height) / (_doc.Layers.GraphSize.Height * _areaFillingFactor);
+			var zoomFactor = System.Math.Min(zoomh, zoomv);
+			if (zoomFactor <= 0)
+				zoomFactor = 1;
+
+			return zoomFactor;
+		}
+
 		void CalculateAutoZoom()
 		{
-			double zoomh = (PtPerInch * _view.ViewportSizeInInch.Width)  / (_doc.Layers.GraphSize.Width * _areaFillingFactor);
-			double zoomv = (PtPerInch * _view.ViewportSizeInInch.Height) / (_doc.Layers.GraphSize.Height * _areaFillingFactor);
-			_zoomFactor = System.Math.Min(zoomh, zoomv);
-      if (_zoomFactor <= 0)
-        _zoomFactor = 1;
+			_zoomFactor = GetAutoZoomFactor();
 			_graphViewOffset = GraphPaddingOffset;
 		}
 
@@ -746,7 +802,25 @@ namespace Altaxo.Gui.Graph.Viewing
 				_graphViewOffset = new PointF((gz.Width - vz.Width) / 2, (gz.Height - vz.Height) / 2);
 			}
 			if (null != _view)
+			{
 				_view.InvalidateCachedGraphBitmapAndRepaint();
+				SetupScrollbarParameters();
+			}
+		}
+
+		void SetupScrollbarParameters()
+		{
+			if (_isAutoZoomActive || _zoomFactor < GetAutoZoomFactor())
+			{
+				_view.SetHorizontalScrollbarParameter(false, 0, 1, 0, 0);
+				_view.SetVerticalScrollbarParameter(false, 0, 1, 0, 0);
+			}
+			else
+			{
+				var zoomSize = SizeOfZoomedGraphWithPaddingPt;
+				_view.SetHorizontalScrollbarParameter(true, GraphViewOffset.X*_zoomFactor, zoomSize.X, (_view.ViewportSizeInInch.Width * 72) / 25, (_view.ViewportSizeInInch.Width * 72 / 2));
+				_view.SetVerticalScrollbarParameter(true, GraphViewOffset.Y*_zoomFactor, zoomSize.Y, (_view.ViewportSizeInInch.Height * 72) / 25, (_view.ViewportSizeInInch.Height * 72 / 2));
+			}
 		}
 
 		#region Arrange

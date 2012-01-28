@@ -81,7 +81,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				GraphObject.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff);
 			}
 
-			public void Show(Graphics g)
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
+			public void Show(Graphics g, double pageScale)
 			{
 				var shape = (GraphicsPath)_rotationGripShape.Clone();
 				shape.Transform(_spanningHalfYRhombus);
@@ -100,8 +103,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				const float ra = 2.1f / 2;
 				const float ri = 1.5f / 2;
 				const float rotArrowWidth = 0.6f;
-				float rii = (ra + ri - rotArrowWidth) / 2;
-				float raa = (ra + ri + rotArrowWidth) / 2;
+				const float rii = (ra + ri - rotArrowWidth) / 2;
+				const float raa = (ra + ri + rotArrowWidth) / 2;
 				float cos45 = (float)Math.Sqrt(0.5);
 				float sin45 = cos45;
 				_rotationGripShape = new GraphicsPath();
