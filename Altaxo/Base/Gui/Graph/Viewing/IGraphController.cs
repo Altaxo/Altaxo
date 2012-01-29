@@ -53,10 +53,25 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Get /sets the scroll position of the graph
 		/// </summary>
-		PointF GraphScrollPosition { get; set; }
+		PointD2D GraphScrollPosition { get; }
 
-		void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement);
-		void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement);
+		/// <summary>Sets the horizontal scrollbar parameter.</summary>
+		/// <param name="isEnabled">If set to <c>true</c>, the scrollbar is enabled.</param>
+		/// <param name="value">The scroll value.</param>
+		/// <param name="maximum">The maximum value of the scroll bar.</param>
+		/// <param name="portSize">Size of the scrollbars view port (length of the thumb).</param>
+		/// <param name="largeIncrement">The large increment value.</param>
+		/// <param name="smallIncrement">The small increment value.</param>
+		void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double portSize,  double largeIncrement, double smallIncrement);
+
+		/// <summary>Sets the vertical scrollbar parameter.</summary>
+		/// <param name="isEnabled">If set to <c>true</c>, the scrollbar is enabled.</param>
+		/// <param name="value">The scroll value.</param>
+		/// <param name="maximum">The maximum value of the scroll bar.</param>
+		/// <param name="portSize">Size of the scrollbars view port (length of the thumb).</param>
+		/// <param name="largeIncrement">The large increment value.</param>
+		/// <param name="smallIncrement">The small increment value.</param>
+		void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double portSize, double largeIncrement, double smallIncrement);
 		
 
 		/// <summary>
@@ -76,9 +91,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 		/// <summary>
-		/// Returns the size (in inch) of the area, wherein the graph is painted.
+		/// Returns the size in points (=1/72 inch) of the area, wherein the graph is painted.
 		/// </summary>
-		SizeF ViewportSizeInInch { get; }
+		PointD2D ViewportSizeInPoints { get; }
 
 		IList<IHitTestObject> SelectedObjects { get; }
 

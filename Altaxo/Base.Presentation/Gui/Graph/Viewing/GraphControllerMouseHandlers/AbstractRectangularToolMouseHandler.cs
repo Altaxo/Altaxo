@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			base.OnMouseMove(position, e);
 
-			_currentMousePrintAreaCoord = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
+			_currentMousePrintAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
 
 			if (e.LeftButton == MouseButtonState.Pressed)
 			{

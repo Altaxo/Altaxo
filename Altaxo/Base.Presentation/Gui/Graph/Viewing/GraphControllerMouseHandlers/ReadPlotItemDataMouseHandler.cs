@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseDown(position, e);
 
-      PointF graphXY = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
+			PointF graphXY = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
        
       // search for a object first
       IHitTestObject clickedObject;
@@ -126,8 +126,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
           m_Cross = printableCoord;
 					// m_Cross.X -= _grac.GraphViewOffset.X;
 					// m_Cross.Y -= _grac.GraphViewOffset.Y;
-           
-          PointF newPixelCoord = _grac.GuiController.PrintableAreaToPixelCoordinates(printableCoord);
+
+					PointF newPixelCoord = (PointF)_grac.GuiController.ConvertGraphToMouseCoordinates(printableCoord);
 
 					// TODO (Wpf)
           //var newCursorPosition = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
@@ -165,8 +165,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       m_Cross = printableCoord;
 			// m_Cross.X -= _grac.GraphViewOffset.X;
 			// m_Cross.Y -= _grac.GraphViewOffset.Y;
-           
-      PointF newPixelCoord = _grac.GuiController.PrintableAreaToPixelCoordinates(printableCoord);
+
+			PointF newPixelCoord = (PointF)_grac.GuiController.ConvertGraphToMouseCoordinates(printableCoord);
       //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
       //Cursor.Position = ((Control)_grac.View).PointToScreen(newPixelCoord);
           

@@ -56,7 +56,10 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		// following default unit is point (1/72 inch)
 		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
-		protected const float UnitPerInch = 72;
+		protected const double PointsPerInch = 72;
+
+		/// <summary>Inches per point unit.</summary>
+		protected const double InchPerPoint = 1 / 72.0;
 
 		private static IList<IHitTestObject> _emptyReadOnlyList;
 
@@ -79,11 +82,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		protected BrushX _graphAreaBrush;
 
-		/// <summary>Current horizontal resolution of the paint method.</summary>
-		protected float _horizontalResolution;
-
-		/// <summary>Current vertical resolution of the paint method.</summary>
-		protected float _verticalResolution;
+		/// <summary>Screen resolution in dpi (in fact it is the factor that converts physical length on the screen (in inch) to the coordinate system used by Wpf (mouse coordinates, heights, widths, etc.).</summary>
+		protected PointD2D _screenResolutionDpi;
 
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
 		protected MouseStateHandler _mouseState;
@@ -113,9 +113,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			_graphAreaBrush = new BrushX(NamedColor.Snow);
 
-			_horizontalResolution = 300;
-
-			_verticalResolution = 300;
+			_screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
 
 			// A instance of a mouse handler class that currently handles the mouse events..</summary>
 			_mouseState = new ObjectPointerMouseHandler(this._view);
@@ -181,11 +179,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		private PointF GraphViewOffset
+		private PointD2D PositionOfViewportsUpperLeftCornerInGraphCoordinates
 		{
 			get
 			{
-				return _view.GC.GraphViewOffset;
+				return _view.GC.PositionOfViewportsUpperLeftCornerInGraphCoordinates;
 			}
 		}
 
@@ -355,7 +353,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 				var oldZoom = _view.GC.ZoomFactor;
 				var newZoom = oldZoom;
-				var autoZoomFactor = _view.GC.GetAutoZoomFactor();
+				var autoZoomFactor = _view.GC.AutoZoomFactor;
 				bool isAutoZoomNext = false;
 				if (e.Delta > 0)
 				{
@@ -371,14 +369,17 @@ namespace Altaxo.Gui.Graph.Viewing
 				if (isAutoZoomNext)
 				{
 					_view.GC.IsAutoZoomActive = true;
-					_nextScrollZoomAcceptTime = now.AddMilliseconds(500);
+					_nextScrollZoomAcceptTime = now.AddMilliseconds(700);
 				}
 				else // manual zoom
 				{
-					var graphCoord = PixelToPrintableAreaCoordinates(position);
+					var graphCoord = ConvertMouseToGraphCoordinates(position);
+					_view.GC.ZoomAroundPivotPoint(newZoom,graphCoord);
+					/*
 					_view.GC.ZoomFactor = newZoom;
-					var ppc = PixelToPageCoordinates(position);
-					_view.GC.GraphViewOffset = new PointF(graphCoord.X - ppc.X, graphCoord.Y - ppc.Y);
+					var ppc = PixelToPrintableAreaCoordinates(position);
+					_view.GC.PositionOfViewportsUpperLeftCornerInGraphCoordinates += new PointD2D((graphCoord.X - ppc.X), (graphCoord.Y - ppc.Y));
+					 */
 				}
 			}
 		}
@@ -473,7 +474,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline()
 		{
-			if (_view == null || _view.Doc == null || _view.GC == null || _view.ViewportSizeInInch == Size.Empty)
+			if (_view == null || _view.Doc == null || _view.GC == null || _view.ViewportSizeInPoints == PointD2D.Empty)
 				return;
 
 			if (this._cachedGraphImage != null && !this._isCachedGraphImageDirty)
@@ -553,7 +554,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				}
 
 				// special painting depending on current selected tool
-				g.TranslateTransform(-GraphViewOffset.X, -GraphViewOffset.Y);
+				g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
 				this._mouseState.AfterPaint(g);
 			}
 		}
@@ -570,8 +571,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			// get the dpi settings of the graphics context,
 			// for example; 96dpi on screen, 600dpi for the printer
 			// used to adjust grid and margin sizing.
-			this._horizontalResolution = g.DpiX;
-			this._verticalResolution = g.DpiY;
 
 			g.PageUnit = GraphicsUnit.Point;
 
@@ -582,10 +581,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			else
 			{
 				g.PageScale = (float)this.ZoomFactor;
-				float pointsh = (float)(UnitPerInch * _view.GraphScrollPosition.X / (this._horizontalResolution * this.ZoomFactor));
-				float pointsv = (float)(UnitPerInch * _view.GraphScrollPosition.Y / (this._verticalResolution * this.ZoomFactor));
-				//var gvo = _view.GC.GraphViewOffset;
-				g.TranslateTransform(pointsh, pointsv);
 			}
 		}
 
@@ -608,13 +603,13 @@ namespace Altaxo.Gui.Graph.Viewing
 					// Fill the page with its own color
 					//g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
 					//g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
-					g.FillRectangle(_graphAreaBrush, -GraphViewOffset.X, -GraphViewOffset.Y, Doc.Layers.GraphSize.Width, Doc.Layers.GraphSize.Height);
+					g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, Doc.Layers.GraphSize.Width, Doc.Layers.GraphSize.Height);
 					// DrawMargins(g);
 				}
 
 				// Paint the graph now
 				//g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
-				g.TranslateTransform(-GraphViewOffset.X, -GraphViewOffset.Y);
+				g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
 				Doc.DoPaint(g, bForPrinting);
 
 
@@ -630,10 +625,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					new System.Drawing.Font("Arial", 10),
 					System.Drawing.Brushes.Black,
 					Doc.PrintableBounds);
-
-
 			}
-
 		}
 
 
@@ -684,149 +676,30 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#region Scaling and Positioning
 
-	
-	
-
-
-
-
-
-
 
 		/// <summary>
-		/// Factor for horizontal conversion of page units (points=1/72 inch) to pixel.
-		/// The resolution used for this is <see cref="_horizontalResolution"/>.
+		/// Factor for conversion of graph units (in points = 1/72 inch) to mouse coordinates.
+		/// The resolution used for this is <see cref="__screenResolutionDpi"/>.
 		/// </summary>
-		/// <returns>The factor described above.</returns>
-		public float HorizFactorPageToPixel()
+		public PointD2D FactorForGraphToMouseCoordinateConversion
 		{
-			return (float)(this._horizontalResolution * this.ZoomFactor / UnitPerInch);
-		}
-
-		/// <summary>
-		/// Factor for vertical conversion of page units (points=1/72 inch) to pixel.
-		/// The resolution used for this is <see cref="_verticalResolution"/>.
-		/// </summary>
-		/// <returns>The factor described above.</returns>
-		public float VertFactorPageToPixel()
-		{
-			return (float)(this._verticalResolution * this.ZoomFactor / UnitPerInch);
-		}
-
-		/// <summary>
-		/// Converts page coordinates (in points=1/72 inch) to pixel units. Uses the resolutions <see cref="_horizontalResolution"/>
-		/// and <see cref="_verticalResolution"/> for calculation-
-		/// </summary>
-		/// <param name="pagec">The page coordinates to convert.</param>
-		/// <returns>The coordinates as pixel coordinates.</returns>
-		public PointF PageCoordinatesToPixel(PointF pagec)
-		{
-			return new PointF(pagec.X * HorizFactorPageToPixel(), pagec.Y * VertFactorPageToPixel());
-		}
-
-
-		/// <summary>
-		/// Converts pixel coordinates to page coordinates (in points=1/72 inch). Uses the resolutions <see cref="_horizontalResolution"/>
-		/// and <see cref="_verticalResolution"/> for calculation-
-		/// </summary>
-		/// <param name="pixelc">The pixel coordinates to convert.</param>
-		/// <returns>The coordinates as page coordinates (points=1/72 inch).</returns>
-		public PointF PixelToPageCoordinates(PointD2D pixelc)
-		{
-			return new PointF((float)(pixelc.X / HorizFactorPageToPixel()), (float)(pixelc.Y / VertFactorPageToPixel()));
-		}
-
-		/// <summary>
-		/// Converts pixel coordinates to page coordinates (in points=1/72 inch). Uses the resolutions <see cref="_horizontalResolution"/>
-		/// and <see cref="_verticalResolution"/> for calculation-
-		/// </summary>
-		/// <param name="pixelc">The pixel coordinates to convert.</param>
-		/// <returns>The coordinates as page coordinates (points=1/72 inch).</returns>
-		public PointF PixelToPageCoordinates(PointF pixelc)
-		{
-			return new PointF(pixelc.X / HorizFactorPageToPixel(), pixelc.Y / VertFactorPageToPixel());
-		}
-
-		/// <summary>
-		/// Converts pixel coordinates to unscaled page coordinates (in points=1/72 inch). Uses the resolutions <see cref="_horizontalResolution"/>
-		/// and <see cref="_verticalResolution"/> for calculation. 
-		/// </summary>
-		/// <param name="pixelc">The pixel coordinates to convert.</param>
-		/// <returns>The coordinates as unscaled page coordinates in points=1/72 inch, i.e. the true x and y distance in points from
-		/// the upper left corner of the visible area (ZoomFactor is not taken into account).</returns>
-		public PointF PixelToUnscaledPageCoordinates(PointF pixelc)
-		{
-			return new PointF(UnitPerInch * pixelc.X / _horizontalResolution, UnitPerInch * pixelc.Y / _verticalResolution);
-		}
-
-
-		public SizeF PixelToPageCoordinates(SizeF pixelc)
-		{
-			return new SizeF(PixelToPageCoordinates(new PointF(pixelc.Width, pixelc.Height)));
-		}
-
-		/// <summary>
-		/// Converts page coordinates (in points=1/72 inch) to pixel coordinates . Uses the resolutions <see cref="_horizontalResolution"/>
-		/// and <see cref="_verticalResolution"/> for calculation-
-		/// </summary>
-		/// <param name="pagec">The page coordinates to convert (points=1/72 inch).</param>
-		/// <returns>The coordinates as pixel coordinates.</returns>
-		public PointF PageToPixelCoordinates(PointF pagec)
-		{
-			return new PointF(pagec.X * HorizFactorPageToPixel(), pagec.Y * VertFactorPageToPixel());
-		}
-
-		/// <summary>
-		/// Converts x,y differences in pixels to the corresponding
-		/// differences in page coordinates
-		/// </summary>
-		/// <param name="pixeldiff">X,Y differences in pixel units</param>
-		/// <returns>X,Y differences in page coordinates</returns>
-		public PointF PixelToPageDifferences(PointF pixeldiff)
-		{
-			return new PointF(pixeldiff.X / HorizFactorPageToPixel(), pixeldiff.Y / VertFactorPageToPixel());
-		}
-
-
-		/// <summary>
-		/// converts from pixel to printable area coordinates
-		/// </summary>
-		/// <param name="pixelc">pixel coordinates as returned by MouseEvents</param>
-		/// <returns>coordinates of the printable area in 1/72 inch</returns>
-		public PointF PixelToPrintableAreaCoordinates(PointD2D pixelc)
-		{
-			var r = PixelToPageCoordinates(pixelc);
-			r.X += GraphViewOffset.X;
-			r.Y += GraphViewOffset.Y;
-			return r;
-		}
-		/// <summary>
-		/// converts from pixel to printable area coordinates
-		/// </summary>
-		/// <param name="pixelc">pixel coordinates as returned by MouseEvents</param>
-		/// <returns>coordinates of the printable area in 1/72 inch</returns>
-		public PointF PixelToPrintableAreaCoordinates(PointF pixelc)
-		{
-			PointF r = PixelToPageCoordinates(pixelc);
-			r.X += GraphViewOffset.X;
-			r.Y += GraphViewOffset.Y;
-			return r;
-		}
-		/// <summary>
-		/// Converts a cross from pixel to printable area coordinates
-		/// </summary>
-		/// <param name="pixelc">Cross in pixel coordinates.</param>
-		/// <returns>Cross converted to printable area coordinates.</returns>
-		public CrossF PixelToPrintableAreaCoordinates(CrossF pixelc)
-		{
-			return new CrossF()
+			get
 			{
-				Center = PixelToPrintableAreaCoordinates(pixelc.Center),
-				Top = PixelToPrintableAreaCoordinates(pixelc.Top),
-				Bottom = PixelToPrintableAreaCoordinates(pixelc.Bottom),
-				Left = PixelToPrintableAreaCoordinates(pixelc.Left),
-				Right = PixelToPrintableAreaCoordinates(pixelc.Right),
-			};
+				return _screenResolutionDpi * (ZoomFactor * InchPerPoint);
+			}
+		}
+
+
+		/// <summary>
+		/// Converts from mouse coordinates to graph coordinates.
+		/// </summary>
+		/// <param name="mouseCoord">Mouse coordinates as returned by MouseEvents.</param>
+		/// <returns>Position of the provided point in graph coordinates in points (1/72 inch).</returns>
+		public PointD2D ConvertMouseToGraphCoordinates(PointD2D mouseCoord)
+		{
+			var offset = PositionOfViewportsUpperLeftCornerInGraphCoordinates;
+			var factor = FactorForGraphToMouseCoordinateConversion;
+			return new PointD2D(offset.X + mouseCoord.X / factor.X, offset.Y + mouseCoord.Y / factor.Y);
 		}
 
 		/// <summary>
@@ -834,15 +707,12 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		/// <param name="printc">Printable area coordinates.</param>
 		/// <returns>Pixel coordinates as returned by MouseEvents</returns>
-		public PointF PrintableAreaToPixelCoordinates(PointF printc)
+		public PointD2D ConvertGraphToMouseCoordinates(PointD2D graphCoord)
 		{
-			printc.X -= GraphViewOffset.X;
-			printc.Y -= GraphViewOffset.Y;
-			return PageToPixelCoordinates(printc);
+			var offset = PositionOfViewportsUpperLeftCornerInGraphCoordinates;
+			var factor = FactorForGraphToMouseCoordinateConversion;
+			return new PointD2D((graphCoord.X-offset.X) * factor.X, (graphCoord.Y-offset.Y) * factor.Y);
 		}
-
-
-
 
 		#endregion // Scaling, Converting
 
@@ -861,7 +731,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
 		public bool FindGraphObjectAtPixelPosition(PointD2D pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int foundInLayerNumber)
 		{
-			var mousePT = PixelToPrintableAreaCoordinates(pixelPos);
+			var mousePT = ConvertMouseToGraphCoordinates(pixelPos);
 			var hitData = new HitTestPointData(mousePT, this.ZoomFactor);
 
 			for (int nLayer = 0; nLayer < Layers.Count; nLayer++)

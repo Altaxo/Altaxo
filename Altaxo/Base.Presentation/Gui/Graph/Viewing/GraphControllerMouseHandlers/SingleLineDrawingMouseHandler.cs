@@ -108,8 +108,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
     {
       base.OnMouseMove (position, e);
-     
-      _currentMousePrintAreaCoord = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
+
+			_currentMousePrintAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
 
       ModifyCurrentMousePrintAreaCoordinate();
 

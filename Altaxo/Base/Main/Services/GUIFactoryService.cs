@@ -923,6 +923,9 @@ namespace Altaxo.Main.Services
 		/// <returns>True if the function has successfully retrieved information, false otherwise.</returns>
 		public abstract Altaxo.Graph.RectangleD GetScreenInformation(double virtual_x, double virtual_y);
 
+		/// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
+		public abstract Altaxo.Graph.PointD2D ScreenResolutionDpi { get; }
+
 
 		public abstract bool ShowOpenFileDialog(OpenFileOptions options);
 		public abstract bool ShowSaveFileDialog(SaveFileOptions options);

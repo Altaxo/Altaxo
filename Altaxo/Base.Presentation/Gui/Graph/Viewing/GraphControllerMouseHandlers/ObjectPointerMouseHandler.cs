@@ -302,7 +302,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
 
 			PointF mouseXY = (PointF)position;                         // Mouse pixel coordinates
-			PointF graphXY = _grac.GuiController.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
+			PointF graphXY = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(mouseXY); // Graph area coordinates
 
 
 			ActiveGrip = GripHitTest(graphXY);
@@ -394,7 +394,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (null != ActiveGrip)
 			{
-				PointF printAreaCoord = _grac.GuiController.PixelToPrintableAreaCoordinates((PointF)position);
+				PointF printAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates((PointF)position);
 				ActiveGrip.MoveGrip(printAreaCoord);
 				_wereObjectsMoved = true;
 				_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();

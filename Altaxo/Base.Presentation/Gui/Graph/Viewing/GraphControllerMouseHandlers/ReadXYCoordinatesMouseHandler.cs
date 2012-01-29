@@ -86,13 +86,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) // if M is pressed, we don't move the cross, but instead we display not only the cross coordinates but also the differenz
 			{
-				var printableCoord = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
-				DisplayCrossCoordinatesAndDifference(printableCoord);
+				var printableCoord = _grac.GuiController.ConvertMouseToGraphCoordinates(position);
+				DisplayCrossCoordinatesAndDifference((PointF)printableCoord);
 
 			}
 			else
 			{
-				m_Cross = _grac.GuiController.PixelToPrintableAreaCoordinates(position);
+				m_Cross = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
 				DisplayCrossCoordinates();
 			}
 

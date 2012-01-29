@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	{
 		// following default unit is point (1/72 inch)
 		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
-		protected const float PtPerInch = 72;
+		protected const double PtPerInch = 72;
 
 		/// <summary>Holds the Graph document (the place were the layers, plots, graph elements... are stored).</summary>
 		protected GraphDocument _doc;
@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		protected double _areaFillingFactor = 1.2;
 
-		protected PointF _graphViewOffset;
+		protected PointD2D _positionOfViewportsUpperLeftCornerInGraphCoordinates;
 
 
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
@@ -167,7 +167,157 @@ namespace Altaxo.Gui.Graph.Viewing
 			get { return _doc.Layers; }
 		}
 
-		
+
+		#region Size
+
+		/// <summary>Gets the size (in points = 1/72 inch) of the graph with margin (without zoom).</summary>
+		/// <value>The size of the graph with margin arount it.</value>
+		public PointD2D SizeOfGraphWithMargin
+		{
+			get
+			{
+				return new PointD2D(_zoomFactor * _doc.Layers.GraphSize.Width * _areaFillingFactor, _zoomFactor * _doc.Layers.GraphSize.Height * _areaFillingFactor);
+			}
+		}
+
+
+		/// <summary>Gets the size (in points = 1/72 inch) of the graph with margin with taking into account the current zoom factor. This can be much greater than the actual viewport size, if the zoom factor exceeds the auto zoom factor.</summary>
+		/// <value>The size of the zoomed graph with padding.</value>
+		public PointD2D SizeOfGraphWithMarginZoomed
+		{
+			get
+			{
+				return new PointD2D(_zoomFactor * _doc.Layers.GraphSize.Width * _areaFillingFactor, _zoomFactor * _doc.Layers.GraphSize.Height * _areaFillingFactor);
+			}
+		}
+
+
+		/// <summary>
+		/// Size of the viewport window in points (1/72 inch). This is the physical size of the visible window in the graph panel.
+		/// </summary>
+		PointD2D SizeOfViewport
+		{
+			get
+			{
+				return _view.ViewportSizeInPoints;
+			}
+		}
+
+		/// <summary>
+		/// Size of the viewport in graph coordinates, taking the current zoom value into account (differences of the positions of the lower right corner and upper left corner of the view port in graph coordinates).
+		/// </summary>
+		PointD2D SizeOfViewportInGraphCoordinates
+		{
+			get
+			{
+				return _view.ViewportSizeInPoints / _zoomFactor;
+			}
+		}
+
+		#endregion
+
+		#region Position
+
+		/// <summary>Gets or sets the position of the view port window's upper left corner in graph coordinates.</summary>
+		/// <value>
+		/// The position of view port window's upper left corner in graph coordinates.
+		/// </value>
+		public PointD2D PositionOfViewportsUpperLeftCornerInGraphCoordinates
+		{
+			get { return _positionOfViewportsUpperLeftCornerInGraphCoordinates; }
+			set
+			{
+				var oldVal = _positionOfViewportsUpperLeftCornerInGraphCoordinates;
+				_positionOfViewportsUpperLeftCornerInGraphCoordinates = value;
+				if (oldVal != value && null != _view)
+				{
+					SetViewsScrollbarParameter();
+					_view.InvalidateCachedGraphBitmapAndRepaint();
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Position of the upper left corner of the graph's margin in graph coordinates. This depends only from the margin set.
+		/// </summary>
+		PointD2D PositionOfMarginsUpperLeftCornerInGraphCoordinates
+		{
+			get
+			{
+				return new PointD2D(
+					(-_doc.Layers.GraphSize.Width * (_areaFillingFactor - 1) / 2),
+					(-_doc.Layers.GraphSize.Height * (_areaFillingFactor - 1) / 2)
+					);
+			}
+		}
+
+		/// <summary>
+		/// Position of the lower right corner of the graph's margin in graph coordinates. This depends only from the margin set.
+		/// </summary>
+		PointD2D PositionOfMarginsLowerRightCornerInGraphCoordinates
+		{
+			get
+			{
+				return new PointD2D(
+					(_doc.Layers.GraphSize.Width * (_areaFillingFactor + 1) / 2),
+					(_doc.Layers.GraphSize.Height * (_areaFillingFactor + 1) / 2)
+					);
+			}
+		}
+
+		#endregion
+
+		#region Margin
+
+		/// <summary>Gets or sets the margin. A value of 0 indicates that if autozoom is active, there is no margin around the graph. 
+		/// A value of 1 means that there is a right and left margin of 100 percent of the graph width, and a top and bottom
+		/// margin of 100 percent of the graph heigth.</summary>
+		/// <value>The margin value. Must be a non-negative value, otherwise a <see cref="ArgumentOutOfRangeException"/> is thrown.</value>
+		public double Margin
+		{
+			get
+			{
+				return (_areaFillingFactor - 1) / 2;
+			}
+			set
+			{
+				if (!(value >= 0))
+					throw new ArgumentOutOfRangeException("Margin is not greater than or equal to zero");
+
+				var oldValue = _areaFillingFactor;
+				_areaFillingFactor = 1 + 2 * value;
+				if (_areaFillingFactor != oldValue)
+				{
+					if (_isAutoZoomActive)
+						RefreshAutoZoom();
+					else
+						RefreshManualZoom();
+				}
+			}
+		}
+
+		#endregion
+
+		#region Zoom
+
+
+		/// <summary>Gets the current zoom factor that would be used for auto zoom, but does not set it.</summary>
+		/// <returns>The zoom factor that would be used for autozoom.</returns>
+		public double AutoZoomFactor
+		{
+			get
+			{
+				double zoomh = (_view.ViewportSizeInPoints.X) / (_doc.Layers.GraphSize.Width * _areaFillingFactor);
+				double zoomv = (_view.ViewportSizeInPoints.Y) / (_doc.Layers.GraphSize.Height * _areaFillingFactor);
+				var zoomFactor = System.Math.Min(zoomh, zoomv);
+				if (zoomFactor <= 0)
+					zoomFactor = 1;
+
+				return zoomFactor;
+			}
+		}
+
 		/// <summary>
 		/// Enables / disable the autozoom feature.
 		/// </summary>
@@ -217,128 +367,129 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		/// <summary>Gets or sets the margin. A value of 0 indicates that if autozoom is active, there is no margin around the graph. 
-		/// A value of 1 means that there is a right and left margin of 100 percent of the graph width, and a top and bottom
-		/// margin of 100 percent of the graph heigth.</summary>
-		/// <value>The margin value. Must be a non-negative value, otherwise a <see cref="ArgumentOutOfRange"/> exception is thrown.</value>
-		public double Margin
-		{
-			get
-			{
-				return (_areaFillingFactor - 1)/2;
-			}
-			set
-			{
-				if (!(value >= 0))
-					throw new ArgumentException("Margin is not greater than or equal to zero");
 
-				var oldValue = _areaFillingFactor;
-				_areaFillingFactor = 1 + 2*value;
-				if (_areaFillingFactor != oldValue)
-				{
-					if (_isAutoZoomActive)
-						RefreshAutoZoom();
-					else
-						RefreshManualZoom();
-				}
-			}
+		/// <summary>Zooms around a pivot point. The pivot point is the point in graph coordinates that does not change the location in the viewport window when zooming.</summary>
+		/// <param name="newZoomValue">The new zoom value.</param>
+		/// <param name="graphCoordinate">The location of the pivot point in graph coordinates (points = 1/72 inch).</param>
+		public void ZoomAroundPivotPoint(double newZoomValue, PointD2D graphCoordinate)
+		{
+			var oldViewportCoord = (graphCoordinate - PositionOfViewportsUpperLeftCornerInGraphCoordinates) * _zoomFactor;
+			_positionOfViewportsUpperLeftCornerInGraphCoordinates = graphCoordinate - oldViewportCoord / newZoomValue;
+			var newPos = (graphCoordinate - PositionOfViewportsUpperLeftCornerInGraphCoordinates) * newZoomValue;
+			ZoomFactor = newZoomValue;
 		}
 
-		public PointF GraphViewOffset
-		{
-			get { return _graphViewOffset; }
-			set
-			{
-				var oldVal = _graphViewOffset;
-				_graphViewOffset = value;
-				if (oldVal != value && null != _view)
-				{
-					SetupScrollbarParameters();
-					_view.InvalidateCachedGraphBitmapAndRepaint();
-				}
-			}
-		}
 
 		/// <summary>
-		/// Location of the upper left point of the viewport in graph coordinates.
+		/// Recalculates and sets the value of m_Zoom so the whole page is visible
 		/// </summary>
-		PointF GraphPaddingOffset
+		protected void RefreshAutoZoom()
 		{
-			get
+			CalculateAutoZoom();
+			_view.ShowGraphScrollBars = false;
+			RefreshGraph();
+		}
+
+
+
+
+		void CalculateAutoZoom()
+		{
+			_zoomFactor = AutoZoomFactor;
+			_positionOfViewportsUpperLeftCornerInGraphCoordinates = PositionOfMarginsUpperLeftCornerInGraphCoordinates;
+		}
+
+
+		protected void RefreshManualZoom()
+		{
+			var virtualSize = SizeOfViewportInGraphCoordinates;
+			var xratio = virtualSize.X / _doc.Layers.GraphSize.Width;
+			var yratio = virtualSize.Y / _doc.Layers.GraphSize.Height;
+
+			bool showScrollbars = xratio < 1 || yratio < 1;
+			if (showScrollbars)
 			{
-				return new PointF(
-					(float)(-_doc.Layers.GraphSize.Width * (_areaFillingFactor - 1) / 2),
-					(float)(-_doc.Layers.GraphSize.Height * (_areaFillingFactor - 1) / 2)
-					);
+			}
+			else
+			{
+				// we center the graph in the viewport
+				SizeF gz = _doc.Layers.GraphSize;
+				var vz = SizeOfViewportInGraphCoordinates;
+				_positionOfViewportsUpperLeftCornerInGraphCoordinates = new PointD2D((gz.Width - vz.X) / 2, (gz.Height - vz.Y) / 2);
+			}
+
+			if (null != _view)
+			{
+				SetViewsScrollbarParameter();
+				_view.InvalidateCachedGraphBitmapAndRepaint();
 			}
 		}
 
-		/// <summary>
-		/// Size of the viewport (i.e. of the visible window in the graph panel) in units of point (1/72 inch).
-		/// </summary>
-		SizeF ViewportSizeInPt
+		#endregion Zoom
+
+		#region Scrolling
+
+		/// <summary>Converts the scrollbar values to the corresponding graph coordinate.</summary>
+		/// <param name="scrollbarValue">The scrollbar value.</param>
+		/// <returns>The graph coordinate corresponding to the upper left corner of the viewport window.</returns>
+		/// <remarks>
+		/// <para>The scroll bars are set as following:</para>
+		/// <list type="Bullet">
+		/// <item><description>The viewport value of the scrollbar is set to the physical viewport size of the window (all units in points = 1/72 inch)</description></item>
+		/// <item><description>The minimum value of the scrollbar is set to 0. This corresponds to the graph coordinate: PositionOfMarginsUpperLeftCornerInGraphCoordinates</description></item>
+		/// <item><description>The maximum value of the scrollbar is set to SizeOfZoomedGraphWithMargin</description></item>
+		/// <item><description>The value of the scrollbar in dependence on the visible upper left corner of the graph in graph coordinates is then calculated as:
+		///                                    ScrollBarValue = (GraphCoordinate - PositionOfMarginsUpperLeftCornerInGraphCoordinates)*zoom</description></item>
+		/// <item><description>or vice versa:  GraphCoordinate = ScrollBarValue/zoom + PositionOfMarginsUpperLeftCornerInGraphCoordinates;</description></item>
+		/// </list>
+		/// </remarks>
+		public PointD2D ConvertScrollbarValueToGraphCoordinate(PointD2D scrollbarValue)
 		{
-			get
+			return scrollbarValue / _zoomFactor + PositionOfMarginsUpperLeftCornerInGraphCoordinates;
+		}
+
+		/// <summary>Converts a graph coordinate to scrollbar values. See the remarks in <see cref="ConvertScrollbarValueToGraphCoordinate"/> to learn how the scroll bar parameters are set.</summary>
+		/// <param name="graphCoordinate">The graph coordinate that corresponds to the upper left corner of the view port window.</param>
+		/// <returns>The scroll bar values that should be set.</returns>
+		public PointD2D ConvertGraphCoordinateToScrollbarValue(PointD2D graphCoordinate)
+		{
+			return (graphCoordinate - PositionOfMarginsUpperLeftCornerInGraphCoordinates) * _zoomFactor;
+		}
+
+		/// <summary>Sets the views scrollbar parameter according to the current settings for zoom, offset, and viewport size.</summary>
+		void SetViewsScrollbarParameter()
+		{
+			if (_isAutoZoomActive || _zoomFactor < AutoZoomFactor)
 			{
-				SizeF inch = _view.ViewportSizeInInch;
-				return new SizeF(inch.Width*PtPerInch, inch.Height*PtPerInch);
+				_view.SetHorizontalScrollbarParameter(false, 0, 1, 1000000, 0, 0);
+				_view.SetVerticalScrollbarParameter(false, 0, 1, 1000000, 0, 0);
+			}
+			else
+			{
+				var scrollMaxima = SizeOfGraphWithMarginZoomed;
+				var scrollValues = ConvertGraphCoordinateToScrollbarValue(PositionOfViewportsUpperLeftCornerInGraphCoordinates);
+				var portSize = SizeOfViewport;
+				_view.SetHorizontalScrollbarParameter(true, scrollValues.X,scrollMaxima.X, portSize.X, portSize.X / 2, portSize.X / 25);
+				_view.SetVerticalScrollbarParameter(true, scrollValues.Y, scrollMaxima.Y, portSize.Y, portSize.Y / 2, portSize.Y / 25);
 			}
 		}
 
-		/// <summary>
-		/// Virtual size of the viewport (= size of the graph that can be shown fully), taking into account the ZoomFactor, in units of point (1/72 inch).
-		/// </summary>
-		SizeF VirtualViewportSizeInPt
-		{
-			get
-			{
-				SizeF inch = _view.ViewportSizeInInch;
-				return new SizeF((float)(inch.Width * PtPerInch/_zoomFactor), (float)(inch.Height * PtPerInch/_zoomFactor));
-			}
-		}
-
-		/// <summary>Gets the size of the graph with padding with taking into account the current zoom factor. This can be much greater than the actual viewport size, if the zoom factor exceeds the auto zoom factor.</summary>
-		/// <value>The size of the zoomed graph with padding.</value>
-		public Altaxo.Graph.PointD2D SizeOfZoomedGraphWithPaddingPt
-		{
-			get
-			{
-				return new PointD2D(_zoomFactor * _doc.Layers.GraphSize.Width * _areaFillingFactor, _zoomFactor * _doc.Layers.GraphSize.Height * _areaFillingFactor);
-			}
-		}
-
-		PointF ScrollPositionToGraphViewOffset(PointF scrollPos)
-		{
-			SizeF virtualSize = VirtualViewportSizeInPt;
-			PointF po = GraphPaddingOffset;
-
-			return new PointF(
-				(float)(scrollPos.X * (_doc.Layers.GraphSize.Width * _areaFillingFactor - virtualSize.Width) + po.X),
-				(float)(scrollPos.Y * (_doc.Layers.GraphSize.Height * _areaFillingFactor - virtualSize.Height) + po.Y)
-				);
-		}
-
-		PointF GraphViewOffsetToScrollPosition(PointF viewOffset)
-		{
-			SizeF virtualSize = VirtualViewportSizeInPt;
-			PointF po = GraphPaddingOffset;
-
-			double x = (viewOffset.X - po.X) / (_doc.Layers.GraphSize.Width * _areaFillingFactor - virtualSize.Width);
-			double y = (viewOffset.Y - po.Y) / (_doc.Layers.GraphSize.Height * _areaFillingFactor - virtualSize.Height);
-
-			if (!(x >= 0))
-				x = 0;
-			if (!(x <= 1))
-				x = 1;
-			if (!(y >= 0))
-				y = 0;
-			if (!(y <= 1))
-				y = 1;
-			return new PointF((float)x, (float)y);
-		}
+		#endregion Scrolling
 
 
-		#region Properties
+		
+		
+
+	
+
+	
+
+	
+
+	
+
+
+		#region Graph tools
 		/// <summary>
 		/// This event will be fired if the current graph tool has changed, either by the user
 		/// or by the program.
@@ -363,7 +514,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 		
 
-		#endregion // Properties
+		#endregion Graph tools
 
 
 		#endregion
@@ -734,94 +885,23 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			else
 			{
-				//double pixelh = System.Math.Ceiling(_doc.PageBounds.Width * this._horizontalResolution * this._zoomFactor / (UnitPerInch));
-				//double pixelv = System.Math.Ceiling(_doc.PageBounds.Height * this._verticalResolution * this._zoomFactor / (UnitPerInch));
-				_view.ShowGraphScrollBars = true;
+				SetViewsScrollbarParameter();
 			}
 
 		}
 
 		public void EhView_Scroll()
 		{
-			_graphViewOffset = ScrollPositionToGraphViewOffset(_view.GraphScrollPosition);
+			_positionOfViewportsUpperLeftCornerInGraphCoordinates = ConvertScrollbarValueToGraphCoordinate(_view.GraphScrollPosition);
 			_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
 
 		#endregion
 
-		/// <summary>
-		/// Recalculates and sets the value of m_Zoom so the whole page is visible
-		/// </summary>
-		protected void RefreshAutoZoom()
-		{
-			CalculateAutoZoom();
-			_view.ShowGraphScrollBars = false;
-			RefreshGraph();
-		}
+	
 
-
-		/// <summary>Gets the current zoom factor that would be used for auto zoom, but does not set it.</summary>
-		/// <returns>The zoom factor that would be used for autozoom.</returns>
-		public double GetAutoZoomFactor()
-		{
-			double zoomh = (PtPerInch * _view.ViewportSizeInInch.Width) / (_doc.Layers.GraphSize.Width * _areaFillingFactor);
-			double zoomv = (PtPerInch * _view.ViewportSizeInInch.Height) / (_doc.Layers.GraphSize.Height * _areaFillingFactor);
-			var zoomFactor = System.Math.Min(zoomh, zoomv);
-			if (zoomFactor <= 0)
-				zoomFactor = 1;
-
-			return zoomFactor;
-		}
-
-		void CalculateAutoZoom()
-		{
-			_zoomFactor = GetAutoZoomFactor();
-			_graphViewOffset = GraphPaddingOffset;
-		}
-
-
-		protected void RefreshManualZoom()
-		{
-			SizeF virtualSize = VirtualViewportSizeInPt;
-			float xratio = virtualSize.Width / _doc.Layers.GraphSize.Width;
-			float yratio = virtualSize.Height / _doc.Layers.GraphSize.Height;
-
-			bool showScrollbars = xratio < 1 || yratio < 1;
-			if (showScrollbars)
-			{
-				_view.GraphScrollPosition = GraphViewOffsetToScrollPosition(_graphViewOffset);
-				_view.ShowGraphScrollBars = true;
-			}
-			else
-			{
-				_view.ShowGraphScrollBars = false;
-				// we center the graph in the viewport
-				SizeF gz = _doc.Layers.GraphSize;
-				SizeF vz = VirtualViewportSizeInPt;
-				_graphViewOffset = new PointF((gz.Width - vz.Width) / 2, (gz.Height - vz.Height) / 2);
-			}
-			if (null != _view)
-			{
-				_view.InvalidateCachedGraphBitmapAndRepaint();
-				SetupScrollbarParameters();
-			}
-		}
-
-		void SetupScrollbarParameters()
-		{
-			if (_isAutoZoomActive || _zoomFactor < GetAutoZoomFactor())
-			{
-				_view.SetHorizontalScrollbarParameter(false, 0, 1, 0, 0);
-				_view.SetVerticalScrollbarParameter(false, 0, 1, 0, 0);
-			}
-			else
-			{
-				var zoomSize = SizeOfZoomedGraphWithPaddingPt;
-				_view.SetHorizontalScrollbarParameter(true, GraphViewOffset.X*_zoomFactor, zoomSize.X, (_view.ViewportSizeInInch.Width * 72) / 25, (_view.ViewportSizeInInch.Width * 72 / 2));
-				_view.SetVerticalScrollbarParameter(true, GraphViewOffset.Y*_zoomFactor, zoomSize.Y, (_view.ViewportSizeInInch.Height * 72) / 25, (_view.ViewportSizeInInch.Height * 72 / 2));
-			}
-		}
+		
 
 		#region Arrange
 

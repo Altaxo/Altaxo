@@ -171,8 +171,6 @@ namespace Altaxo.Graph
     {
       return new PointD2D(p.X / s, p.Y / s);
     }
-
-
    
 
     public void FlipXY()

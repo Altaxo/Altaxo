@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       base.OnClick(position, e);
 
       // get the page coordinates (in Point (1/72") units)
-      PointF printAreaCoord = _grac.GuiController.PixelToPrintableAreaCoordinates(m_LastMouseDown);
+			PointF printAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(m_LastMouseDown);
       // with knowledge of the current active layer, calculate the layer coordinates from them
       PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
 

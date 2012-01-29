@@ -57,6 +57,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			InitializeComponent();
 			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
 			_guiController = new PresentationGraphController(this);
+
+		
+
 		}
 
 		public virtual void Dispose()
@@ -130,23 +133,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-		public void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement)
-		{
-			_horizontalScrollBar.IsEnabled = isEnabled;
-			_horizontalScrollBar.Maximum = maximum;
-			_horizontalScrollBar.SmallChange = smallIncrement;
-			_horizontalScrollBar.LargeChange = largeIncrement;
-			_horizontalScrollBar.Value = value;
-		}
-
-		public void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double smallIncrement, double largeIncrement)
-		{
-			_verticalScrollBar.IsEnabled = isEnabled;
-			_verticalScrollBar.Maximum = maximum;
-			_verticalScrollBar.SmallChange = smallIncrement;
-			_verticalScrollBar.LargeChange = largeIncrement;
-			_verticalScrollBar.Value = value;
-		}
+	
 
 
 		/// <summary>
@@ -268,9 +255,6 @@ namespace Altaxo.Gui.Graph.Viewing
 					_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
 					_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
 					gc.EhView_GraphPanelSizeChanged();
-
-					_horizontalScrollBar.ViewportSize = actWidth;
-					_verticalScrollBar.ViewportSize = actHeight;
 				}
 				else // either actWidth or actHeight was 0, thus the graph panel is momentarily invisible
 				{
@@ -336,22 +320,42 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		public System.Drawing.PointF GraphScrollPosition
+		public Altaxo.Graph.PointD2D GraphScrollPosition
 		{
 			get
 			{
-				return new System.Drawing.PointF((float)(_horizontalScrollBar.Value / _horizontalScrollBar.Maximum), (float)(_verticalScrollBar.Value / _verticalScrollBar.Maximum));
+				return new Altaxo.Graph.PointD2D(_horizontalScrollBar.Value, _verticalScrollBar.Value);
 			}
-			set
-			{
-				var controller = _guiController;
-				_guiController = null; // suppress scrollbar events
+		}
 
-				this._horizontalScrollBar.Value = (int)(value.X * _horizontalScrollBar.Maximum);
-				this._verticalScrollBar.Value = (int)(value.Y * _verticalScrollBar.Maximum);
+		public void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
+		{
+			var controller = _guiController;
+			_guiController = null; // suppress scrollbar events
 
-				_guiController = controller;
-			}
+			_horizontalScrollBar.IsEnabled = isEnabled;
+			_horizontalScrollBar.Maximum = maximum;
+			_horizontalScrollBar.ViewportSize = viewportSize;
+			_horizontalScrollBar.SmallChange = smallIncrement;
+			_horizontalScrollBar.LargeChange = largeIncrement;
+			_horizontalScrollBar.Value = value;
+
+			_guiController = controller;
+		}
+
+		public void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
+		{
+			var controller = _guiController;
+			_guiController = null; // suppress scrollbar events
+
+			_verticalScrollBar.IsEnabled = isEnabled;
+			_verticalScrollBar.Maximum = maximum;
+			_verticalScrollBar.ViewportSize = viewportSize;
+			_verticalScrollBar.SmallChange = smallIncrement;
+			_verticalScrollBar.LargeChange = largeIncrement;
+			_verticalScrollBar.Value = value;
+
+			_guiController = controller;
 		}
 
 		public int NumberOfLayers
@@ -420,11 +424,12 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		public System.Drawing.SizeF ViewportSizeInInch
+		public Altaxo.Graph.PointD2D ViewportSizeInPoints
 		{
 			get 
 			{
-				return new System.Drawing.SizeF((float)(_graphPanel.ActualWidth / 96.0), (float)( _graphPanel.ActualHeight / 96.0));
+				const double factor = 72.0 / 96.0;
+				return new Altaxo.Graph.PointD2D(_graphPanel.ActualWidth * factor, _graphPanel.ActualHeight * factor);
 			}
 		}
 

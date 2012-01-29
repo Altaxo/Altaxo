@@ -44,7 +44,6 @@ namespace Altaxo.Gui
 
 		public override Altaxo.Graph.RectangleD GetScreenInformation(double virtual_x, double virtual_y)
 		{
-		
 			var wa = System.Windows.Forms.Screen.GetWorkingArea(new System.Drawing.Point((int)virtual_x, (int)virtual_y));
 
 			return new Altaxo.Graph.RectangleD(wa.X, wa.Y, wa.Width, wa.Height);
@@ -57,6 +56,23 @@ namespace Altaxo.Gui
 			get
 			{
 				return (System.Windows.Window)Current.Workbench.ViewObject;
+			}
+		}
+
+
+		Altaxo.Graph.PointD2D _screenResolution;
+		/// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
+		public override Altaxo.Graph.PointD2D ScreenResolutionDpi
+		{
+			get
+			{
+				if (_screenResolution.IsEmpty)
+				{
+					var MainWindowPresentationSource = System.Windows.PresentationSource.FromVisual((System.Windows.Window)Current.Workbench.ViewObject);
+					var m = MainWindowPresentationSource.CompositionTarget.TransformToDevice;
+					_screenResolution = new Altaxo.Graph.PointD2D(96 * m.M11, 96 * m.M22);
+				}
+				return _screenResolution;
 			}
 		}
 
