@@ -46,71 +46,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		public event EventHandler TitleNameChanged;
 
 
-		#region Serialization
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Worksheet.GUI.WorksheetController", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Worksheet.GUI.SDWorksheetController", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.SharpDevelop.SDWorksheetViewContent", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.SharpDevelop.SDWorksheetViewContent", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetController), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			DocumentPath _PathToLayout;
-			WorksheetController _TableController;
-
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				WorksheetController s = (WorksheetController)obj;
-				info.AddValue("Layout", DocumentPath.GetAbsolutePath(s.WorksheetLayout));
-			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-
-				WorksheetController s = null != o ? (WorksheetController)o : new WorksheetController();
-
-				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-				surr._TableController = s;
-				if (info.CurrentElementName == "Controller")
-				{
-					info.OpenElement();
-					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
-					info.CloseElement();
-				}
-				else
-				{
-					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
-				}
-				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-
-				return s;
-			}
-
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-			{
-
-				if (null != _PathToLayout)
-				{
-					object o = DocumentPath.GetObject(_PathToLayout, documentRoot, _TableController);
-					if (o is Altaxo.Worksheet.WorksheetLayout)
-					{
-						_TableController.WorksheetLayout =  (Altaxo.Worksheet.WorksheetLayout)o;
-						_PathToLayout = null;
-					}
-				}
-
-				if (null == _PathToLayout)
-				{
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-				}
-			}
-		}
-
-		#endregion
+	
 
 		#region Constructors
 
 		/// <summary>Deserialization constructor.</summary>
-		private WorksheetController()
+		public WorksheetController()
 		{
 		}
 
@@ -127,6 +68,24 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		}
 
+		public bool InitializeDocument(params object[] args)
+		{
+			if (null == args || args.Length == 0)
+				return false;
+			if (args[0] is WorksheetLayout)
+				this.WorksheetLayout = (WorksheetLayout)args[0];
+			else if (args[0] is WorksheetViewLayout)
+				this.WorksheetLayout = ((WorksheetViewLayout)args[0]).WorksheetLayout;
+			else
+				return false;
+
+			return true;
+		}
+
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
 
 		public void Dispose()
 		{
@@ -365,11 +324,21 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		public object ModelObject
 		{
-			get { return _worksheetLayout; }
+			get 
+			{
+				return new WorksheetViewLayout(_worksheetLayout);
+			}
 		}
 
 		#endregion
 
-	
+
+
+		
+
+		public bool Apply()
+		{
+			return true;
+		}
 	}
 }

@@ -107,11 +107,11 @@ namespace Altaxo.Gui
   }
 
   /// <summary>
-  /// Wraps an IMVCController in a wrapper class
+	/// Wraps an <see cref="Altaxo.Gui.IMVCANController"/> instance in a wrapper class
   /// </summary>
   public interface IMVCControllerWrapper
   {
-    Altaxo.Gui.IMVCController MVCController { get; }
+    Altaxo.Gui.IMVCANController MVCController { get; }
   }
 
 }

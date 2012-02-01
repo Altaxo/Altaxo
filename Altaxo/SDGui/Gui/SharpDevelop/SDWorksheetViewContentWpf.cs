@@ -96,7 +96,7 @@ namespace Altaxo.Gui.SharpDevelop
 			get { return _controller; }
 		}
 
-		public Altaxo.Gui.IMVCController MVCController
+		public Altaxo.Gui.IMVCANController MVCController
 		{
 			get { return _controller; }
 		}

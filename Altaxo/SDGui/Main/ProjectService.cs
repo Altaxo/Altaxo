@@ -134,20 +134,19 @@ namespace Altaxo.Main
 			int i = 0;
 			foreach (IViewContent ctrl in Current.Workbench.ViewContentCollection)
 			{
-				object mvc = null;
+				IMVCController mvc = null;
 				var mvcc = ctrl as Altaxo.Gui.IMVCControllerWrapper;
 				if (null != mvcc)
 					mvc = mvcc.MVCController;
-
-				if (mvc != null && info.IsSerializable(mvc))
+			
+				if (mvc != null && info.IsSerializable(mvc.ModelObject))
 				{
-
 					i++;
 					zippedStream.StartFile("Workbench/Views/View" + i.ToString() + ".xml", 0);
 					try
 					{
 						info.BeginWriting(zippedStream.Stream);
-						info.AddValue("WorkbenchViewContent", mvc);
+						info.AddValue("WorkbenchViewContent", mvc.ModelObject);
 						info.EndWriting();
 					}
 					catch (Exception exc)
@@ -180,11 +179,10 @@ namespace Altaxo.Main
 					object readedobject = info.GetValue("Table", this);
 					if (readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
 						restoredControllers.Add(readedobject);
-					else if (readedobject is Altaxo.Gui.Graph.Viewing.GraphController)
-						restoredControllers.Add(new Altaxo.Gui.SharpDevelop.SDGraphViewContent((Altaxo.Gui.Graph.Viewing.GraphController)readedobject));
-					else if (readedobject is Altaxo.Gui.Worksheet.Viewing.WorksheetController)
-						restoredControllers.Add(new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent((Altaxo.Gui.Worksheet.Viewing.WorksheetController)readedobject));
-
+					else if (readedobject is Altaxo.Graph.GraphViewLayout)
+						restoredControllers.Add(readedobject);
+					else if (readedobject is Altaxo.Worksheet.WorksheetViewLayout)
+						restoredControllers.Add(readedobject);
 					info.EndReading();
 				}
 			}
@@ -194,18 +192,35 @@ namespace Altaxo.Main
 
 			// now give all restored controllers a view and show them in the Main view
 
-			foreach (IViewContent viewcontent in restoredControllers)
+			foreach (object o in restoredControllers)
 			{
-				IMVCControllerWrapper wrapper = viewcontent as IMVCControllerWrapper;
-				if (wrapper != null && wrapper.MVCController.ViewObject == null)
-					Current.Gui.FindAndAttachControlTo(wrapper.MVCController);
-
-				if (viewcontent.Control != null)
+				if (o is Altaxo.Graph.GraphViewLayout)
 				{
-					Current.Workbench.ShowView(viewcontent);
+					var ctrl = new Altaxo.Gui.Graph.Viewing.GraphController();
+					ctrl.InitializeDocument(o as Altaxo.Graph.GraphViewLayout);
+					Current.Gui.FindAndAttachControlTo(ctrl);
+					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDGraphViewContent(ctrl));
+				}
+				else if (o is Altaxo.Worksheet.WorksheetViewLayout)
+				{
+					var ctrl = new Altaxo.Gui.Worksheet.Viewing.WorksheetController();
+					ctrl.InitializeDocument(o as Altaxo.Worksheet.WorksheetViewLayout);
+					Current.Gui.FindAndAttachControlTo(ctrl);
+					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(ctrl));
+				}
+				else if (o is IViewContent)
+				{
+					var viewcontent = o as IViewContent;
+					IMVCControllerWrapper wrapper = viewcontent as IMVCControllerWrapper;
+					if (wrapper != null && wrapper.MVCController.ViewObject == null)
+						Current.Gui.FindAndAttachControlTo(wrapper.MVCController);
+
+					if (viewcontent.Control != null)
+					{
+						Current.Workbench.ShowView(viewcontent);
+					}
 				}
 			}
-
 		}
 
 		/// <summary>

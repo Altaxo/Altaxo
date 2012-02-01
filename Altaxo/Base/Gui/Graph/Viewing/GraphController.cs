@@ -74,61 +74,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
 		protected object _mouseState;
 
-
-
-		#region Serialization
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GUI.GraphController", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Graph.GUI.SDGraphController", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.SharpDevelop.SDGraphViewContent", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphController), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			DocumentPath _PathToGraph;
-			GraphController _GraphController;
-
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				GraphController s = (GraphController)obj;
-				info.AddValue("AutoZoom", s._isAutoZoomActive);
-				info.AddValue("Zoom", s._zoomFactor);
-				info.AddValue("Graph", DocumentPath.GetAbsolutePath(s.Doc));
-			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-
-				GraphController s = null != o ? (GraphController)o : new GraphController();
-				s._isAutoZoomActive = info.GetBoolean("AutoZoom");
-				s._zoomFactor = info.GetSingle("Zoom");
-
-				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-				surr._GraphController = s;
-				surr._PathToGraph = (DocumentPath)info.GetValue("Graph", s);
-				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-
-				return s;
-			}
-
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-			{
-				object o = DocumentPath.GetObject(_PathToGraph, documentRoot, _GraphController);
-				if (o is GraphDocument)
-				{
-					_GraphController.InternalInitializeGraphDocument(o as GraphDocument);
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-				}
-			}
-		}
-
-		#endregion
-
-
 		#region Constructors
 
-		private GraphController()
+		public GraphController()
 		{
 		}
-
 
 		/// <summary>
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
@@ -140,6 +90,33 @@ namespace Altaxo.Gui.Graph.Viewing
 				throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
 
 			InternalInitializeGraphDocument(graphdoc); // Using DataTable here wires the event chain also
+		}
+
+		public bool InitializeDocument(params object[] args)
+		{
+			if (null == args || args.Length == 0)
+				return false;
+			if (args[0] is GraphDocument)
+			{
+				InternalInitializeGraphDocument(args[0] as GraphDocument);
+			}
+			else if (args[0] is GraphViewLayout)
+			{
+				var o = (GraphViewLayout)args[0];
+				_isAutoZoomActive = o.IsAutoZoomActive;
+				_zoomFactor = o.ZoomFactor;
+				InternalInitializeGraphDocument(o.GraphDocument);
+			}
+			else
+			{
+				return false;
+			}
+			return true;
+		}
+
+		public UseDocument UseDocumentCopy
+		{
+			set { }
 		}
 
 		#endregion
@@ -550,7 +527,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 		public object ModelObject
 		{
-			get { return _doc; }
+			get
+			{
+				return new GraphViewLayout(_isAutoZoomActive, _zoomFactor, _doc); 
+			}
 		}
 
 		/// <summary>
@@ -1465,6 +1445,13 @@ namespace Altaxo.Gui.Graph.Viewing
 				((IDisposable)_view).Dispose();
 
 			_view = null;
+		}
+
+		
+
+		public bool Apply()
+		{
+			return true;
 		}
 	}
 }

@@ -131,7 +131,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 	}
 
-	public interface IGraphController : IMVCController
+	public interface IGraphController : IMVCANController
 	{
 		/// <summary>
 		/// This returns the GraphDocument that is managed by this controller.

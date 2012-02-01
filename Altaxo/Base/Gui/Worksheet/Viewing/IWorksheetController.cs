@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		object GuiInitiallyFocusedElement { get; }
 	}
 
-  public interface IWorksheetController : IMVCController
+  public interface IWorksheetController : IMVCANController
   {
     /// <summary>
     /// This returns the Table that is managed by this controller.
