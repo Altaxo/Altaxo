@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		public EmbeddedImageGraphic(PointF graphicPosition, ImageProxy startingImage)
+		public EmbeddedImageGraphic(PointD2D graphicPosition, ImageProxy startingImage)
 			:
 			this()
 		{
@@ -81,58 +81,58 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.Image = startingImage;
 		}
 
-		public EmbeddedImageGraphic(float posX, float posY, ImageProxy startingImage)
+		public EmbeddedImageGraphic(double posX, double posY, ImageProxy startingImage)
 			:
-			this(new PointF(posX, posY), startingImage)
+			this(new PointD2D(posX, posY), startingImage)
 		{
 		}
 
-		public EmbeddedImageGraphic(PointF graphicPosition, SizeF graphicSize, ImageProxy startingImage)
+		public EmbeddedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, ImageProxy startingImage)
 			:
 			this(graphicPosition, startingImage)
 		{
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.Y);
 		}
 
-		public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, ImageProxy startingImage)
+		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, ImageProxy startingImage)
 			:
-			this(new PointF(posX, posY), graphicSize, startingImage)
+			this(new PointD2D(posX, posY), graphicSize, startingImage)
 		{
 		}
-		public EmbeddedImageGraphic(float posX, float posY, float width, float height, ImageProxy startingImage)
+		public EmbeddedImageGraphic(double posX, double posY, double width, double height, ImageProxy startingImage)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height), startingImage)
+			this(new PointD2D(posX, posY), new PointD2D(width, height), startingImage)
 		{
 		}
 
-		public EmbeddedImageGraphic(PointF graphicPosition, float Rotation, ImageProxy startingImage)
+		public EmbeddedImageGraphic(PointD2D graphicPosition, double Rotation, ImageProxy startingImage)
 			:
 			this(graphicPosition, startingImage)
 		{
 			this.Rotation = Rotation;
 		}
 
-		public EmbeddedImageGraphic(float posX, float posY, float Rotation, ImageProxy startingImage)
+		public EmbeddedImageGraphic(double posX, double posY, double Rotation, ImageProxy startingImage)
 			:
-			this(new PointF(posX, posY), Rotation, startingImage)
+			this(new PointD2D(posX, posY), Rotation, startingImage)
 		{
 		}
 
-		public EmbeddedImageGraphic(PointF graphicPosition, SizeF graphicSize, float Rotation, ImageProxy startingImage)
+		public EmbeddedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
 			:
 			this(graphicPosition, Rotation, startingImage)
 		{
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.Y);
 		}
-		public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, float Rotation, ImageProxy startingImage)
+		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
 			:
-			this(new PointF(posX, posY), graphicSize, Rotation, startingImage)
+			this(new PointD2D(posX, posY), graphicSize, Rotation, startingImage)
 		{
 		}
 
-		public EmbeddedImageGraphic(float posX, float posY, float width, float height, float Rotation, ImageProxy startingImage)
+		public EmbeddedImageGraphic(double posX, double posY, double width, double height, double Rotation, ImageProxy startingImage)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height), Rotation, startingImage)
+			this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation, startingImage)
 		{
 		}
 

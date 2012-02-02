@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_parent = parent;
 				_drawrPosition = relPos;
-				_fixrPosition = new PointD2D(0.5f, 0.5f);
+				_fixrPosition = new PointD2D(0.5, 0.5);
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 				_spanningHalfYRhombus = spanningHalfYRhombus;
 			}

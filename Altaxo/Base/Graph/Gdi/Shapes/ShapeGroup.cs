@@ -243,7 +243,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 				this._position.X += dx;
 				this._position.Y += dy;
-				bounds.Location = new PointF(0, 0);
+				bounds.Location = new PointD2D(0, 0);
 				this._bounds = bounds;
 				UpdateTransformationMatrix();
 			}

@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
-	public class GraphController : IGraphController, IGraphViewEventSink, IDisposable
+	public abstract class GraphController : IGraphController, IGraphViewEventSink, IDisposable
 	{
 		// following default unit is point (1/72 inch)
 		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
@@ -70,13 +70,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		protected PointD2D _positionOfViewportsUpperLeftCornerInGraphCoordinates;
 
-
-		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
-		protected object _mouseState;
-
 		#region Constructors
 
-		public GraphController()
+		protected GraphController()
 		{
 		}
 
@@ -84,7 +80,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
-		public GraphController(GraphDocument graphdoc)
+		protected GraphController(GraphDocument graphdoc)
 		{
 			if (null == graphdoc)
 				throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
@@ -121,7 +117,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion
 
-		void Initialize(bool initData)
+		protected void Initialize(bool initData)
 		{
 			if (null != _view)
 			{
@@ -454,18 +450,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		#endregion Scrolling
 
 
-		
-		
-
-	
-
-	
-
-	
-
-	
-
-
 		#region Graph tools
 		/// <summary>
 		/// This event will be fired if the current graph tool has changed, either by the user
@@ -664,28 +648,9 @@ namespace Altaxo.Gui.Graph.Viewing
 				_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.Controller = null;
-				}
+		public abstract object ViewObject { get; set; }
 
-				_view = value as IGraphView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.Controller = this;
-				}
-			}
-		}
+	
 
 		#endregion
 
@@ -885,13 +850,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#region Arrange
 
-		public IList<IHitTestObject> SelectedObjects
-		{
-			get
-			{
-				return _view == null ? new List<IHitTestObject>() : _view.SelectedObjects;
-			}
-		}
+		public abstract IList<IHitTestObject> SelectedObjects { get; }
 
 
 		public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
@@ -1031,17 +990,17 @@ namespace Altaxo.Gui.Graph.Viewing
 				return;
 
 
-			RectangleF firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
-			RectangleF lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
-			float step = (lastbound.X + lastbound.Width * 0.5f) - (firstbound.X + firstbound.Width * 0.5f);
+			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
+			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
+			var step = (lastbound.X + lastbound.Width * 0.5) - (firstbound.X + firstbound.Width * 0.5);
 			step /= (SelectedObjects.Count - 1);
 
 			// now move each object to the new position, which is the difference in the position of the bounds.X
 			for (int i = SelectedObjects.Count - 2; i > 0; i--)
 			{
 				IHitTestObject o = SelectedObjects[i];
-				RectangleF bounds = o.ObjectOutlineForArrangements.GetBounds();
-				o.ShiftPosition((firstbound.X + firstbound.Width * 0.5f) + i * step - (bounds.X + bounds.Width * 0.5f), 0);
+				var bounds = o.ObjectOutlineForArrangements.GetBounds();
+				o.ShiftPosition((firstbound.X + firstbound.Width * 0.5) + i * step - (bounds.X + bounds.Width * 0.5), 0);
 			}
 
 			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
@@ -1056,17 +1015,17 @@ namespace Altaxo.Gui.Graph.Viewing
 				return;
 
 
-			RectangleF firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
-			RectangleF lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
-			float step = (lastbound.Y + lastbound.Height * 0.5f) - (firstbound.Y + firstbound.Height * 0.5f);
+			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
+			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
+			var step = (lastbound.Y + lastbound.Height * 0.5) - (firstbound.Y + firstbound.Height * 0.5);
 			step /= (SelectedObjects.Count - 1);
 
 			// now move each object to the new position, which is the difference in the position of the bounds.X
 			for (int i = SelectedObjects.Count - 2; i > 0; i--)
 			{
 				IHitTestObject o = SelectedObjects[i];
-				RectangleF bounds = o.ObjectOutlineForArrangements.GetBounds();
-				o.ShiftPosition(0, (firstbound.Y + firstbound.Height * 0.5f) + i * step - (bounds.Y + bounds.Height * 0.5f));
+				var bounds = o.ObjectOutlineForArrangements.GetBounds();
+				o.ShiftPosition(0, (firstbound.Y + firstbound.Height * 0.5) + i * step - (bounds.Y + bounds.Height * 0.5));
 			}
 
 			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
@@ -1271,17 +1230,17 @@ namespace Altaxo.Gui.Graph.Viewing
 						img = ImageProxy.FromFile(filename);
 						if (img != null)
 						{
-							SizeF size = this.ActiveLayer.Size;
-              size.Width /= 2;
-							size.Height /= 2;
+							var size = this.ActiveLayer.Size;
+              size.X /= 2;
+							size.Y /= 2;
 
-              var imgSize = img.GetImage().PhysicalDimension;
+              PointD2D imgSize = img.GetImage().PhysicalDimension;
 
-              float scale = Math.Min(size.Width / imgSize.Width, size.Height / imgSize.Height);
-              imgSize.Width *= scale;
-              imgSize.Height *= scale;
+              double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
+              imgSize.X *= scale;
+              imgSize.Y *= scale;
 							
-							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, imgSize, img);
+							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD2D.Empty, imgSize, img);
 							this.ActiveLayer.GraphObjects.Add(item);
 							bSuccess = true;
 							continue;
@@ -1300,10 +1259,8 @@ namespace Altaxo.Gui.Graph.Viewing
 				System.Drawing.Imaging.Metafile img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
 				if (img != null)
 				{
-					SizeF size = this.ActiveLayer.Size;
-					size.Width /= 2;
-					size.Height /= 2;
-					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, ImageProxy.FromImage(img));
+					var size = 0.5*this.ActiveLayer.Size;
+					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD2D.Empty, size, ImageProxy.FromImage(img));
 					this.ActiveLayer.GraphObjects.Add(item);
 					return;
 				}
@@ -1313,10 +1270,8 @@ namespace Altaxo.Gui.Graph.Viewing
 				Image img = dao.GetImage();
 				if (img != null)
 				{
-					SizeF size = this.ActiveLayer.Size;
-					size.Width /= 2;
-					size.Height /= 2;
-					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, ImageProxy.FromImage(img));
+					var size = 0.5*this.ActiveLayer.Size;
+					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD2D.Empty, size, ImageProxy.FromImage(img));
 					this.ActiveLayer.GraphObjects.Add(item);
 					return;
 				}

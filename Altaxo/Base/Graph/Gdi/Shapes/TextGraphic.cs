@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected Font _font;
 		protected BrushX _textBrush = new BrushX(NamedColor.Black);
 		protected IBackgroundStyle _background = null;
-		protected float _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
+		protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 		protected XAnchorPositionType _xAnchorType = XAnchorPositionType.Left;
 		protected YAnchorPositionType _yAnchorType = YAnchorPositionType.Top;
 
@@ -62,8 +62,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		StructuralGlyph _rootNode;
 		protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
 		protected bool _isMeasureInSync = false; // true when all items are measured
-		protected PointF _cachedTextOffset; // offset of text to left upper corner of outer rectangle
-		protected RectangleF _cachedExtendedTextBounds; // the text bounds extended by some margin around it
+		protected PointD2D _cachedTextOffset; // offset of text to left upper corner of outer rectangle
+		protected RectangleD _cachedExtendedTextBounds; // the text bounds extended by some margin around it
 		#endregion // Cached or temporary variables
 
 
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_font = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.World);
 		}
 
-		public TextGraphic(PointF graphicPosition, string text,
+		public TextGraphic(PointD2D graphicPosition, string text,
 			Font textFont, NamedColor textColor)
 		{
 			this.SetPosition(graphicPosition);
@@ -218,26 +218,26 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		public TextGraphic(float posX, float posY,
+		public TextGraphic(double posX, double posY,
 			string text, Font textFont, NamedColor textColor)
-			: this(new PointF(posX, posY), text, textFont, textColor)
+			: this(new PointD2D(posX, posY), text, textFont, textColor)
 		{
 		}
 
 
-		public TextGraphic(PointF graphicPosition,
+		public TextGraphic(PointD2D graphicPosition,
 			string text, Font textFont,
-			NamedColor textColor, float Rotation)
+			NamedColor textColor, double Rotation)
 			: this(graphicPosition, text, textFont, textColor)
 		{
 			this.Rotation = Rotation;
 		}
 
-		public TextGraphic(float posX, float posY,
+		public TextGraphic(double posX, double posY,
 			string text,
 			Font textFont,
-			NamedColor textColor, float Rotation)
-			: this(new PointF(posX, posY), text, textFont, textColor, Rotation)
+			NamedColor textColor, double Rotation)
+			: this(new PointD2D(posX, posY), text, textFont, textColor, Rotation)
 		{
 		}
 
@@ -286,55 +286,55 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			var fontInfo = FontInfo.Create(g, _font);
 
-			float widthOfOne_n = g.MeasureString("n", _font).Width;
-			float widthOfThree_M = g.MeasureString("MMM", _font).Width;
+			double widthOfOne_n = g.MeasureString("n", _font).Width;
+			double widthOfThree_M = g.MeasureString("MMM", _font).Width;
 
 
-			float distanceXL = 0; // left distance bounds-text
-			float distanceXR = 0; // right distance text-bounds
-			float distanceYU = 0;   // upper y distance bounding rectangle-string
-			float distanceYL = 0; // lower y distance
+			double distanceXL = 0; // left distance bounds-text
+			double distanceXR = 0; // right distance text-bounds
+			double distanceYU = 0;   // upper y distance bounding rectangle-string
+			double distanceYL = 0; // lower y distance
 
 
 			if (this._background != null)
 			{
 				// the distance to the sides should be like the character n
-				distanceXL = 0.25f * widthOfOne_n; // left distance bounds-text
+				distanceXL = 0.25 * widthOfOne_n; // left distance bounds-text
 				distanceXR = distanceXL; // right distance text-bounds
-				distanceYU = (float)fontInfo.cyDescent;   // upper y distance bounding rectangle-string
+				distanceYU = fontInfo.cyDescent;   // upper y distance bounding rectangle-string
 				distanceYL = 0; // lower y distance
 			}
 
-			SizeF size = new SizeF((float)(textWidth + distanceXL + distanceXR), (float)(textHeight + distanceYU + distanceYL));
-			_cachedExtendedTextBounds = new RectangleF(PointF.Empty, size);
-			RectangleF textRectangle = new RectangleF(new PointF(-distanceXL, -distanceYU), size);
+			PointD2D size = new PointD2D((textWidth + distanceXL + distanceXR), (textHeight + distanceYU + distanceYL));
+			_cachedExtendedTextBounds = new RectangleD(PointD2D.Empty, size);
+			RectangleD textRectangle = new RectangleD(new PointD2D(-distanceXL, -distanceYU), size);
 
 			if (this._background != null)
 			{
-				RectangleF backgroundRect = this._background.MeasureItem(g, textRectangle);
+				var backgroundRect = this._background.MeasureItem(g, textRectangle);
 				_cachedExtendedTextBounds.Offset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y);
 
 				size = backgroundRect.Size;
 				distanceXL = -backgroundRect.Left;
-				distanceXR = (float)(backgroundRect.Right - textWidth);
+				distanceXR = (backgroundRect.Right - textWidth);
 				distanceYU = -backgroundRect.Top;
-				distanceYL = (float)(backgroundRect.Bottom - textHeight);
+				distanceYL = (backgroundRect.Bottom - textHeight);
 			}
 
-			float xanchor = 0;
-			float yanchor = 0;
+			double xanchor = 0;
+			double yanchor = 0;
 			if (_xAnchorType == XAnchorPositionType.Center)
-				xanchor = size.Width / 2.0f;
+				xanchor = size.X / 2.0;
 			else if (_xAnchorType == XAnchorPositionType.Right)
-				xanchor = size.Width;
+				xanchor = size.X;
 
 			if (_yAnchorType == YAnchorPositionType.Center)
-				yanchor = size.Height / 2.0f;
+				yanchor = size.Y / 2.0;
 			else if (_yAnchorType == YAnchorPositionType.Bottom)
-				yanchor = size.Height;
+				yanchor = size.Y;
 
-			this._bounds = new RectangleF(new PointF(-xanchor, -yanchor), size);
-			this._cachedTextOffset = new PointF(distanceXL, distanceYU);
+			this._bounds = new RectangleD(new PointD2D(-xanchor, -yanchor), size);
+			this._cachedTextOffset = new PointD2D(distanceXL, distanceYU);
 
 		}
 

@@ -522,7 +522,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					break;
 				case CachedImageType.Other:
 					{
-						gfrx.DrawImage(_cachedImage, 0, 0, gl.Size.Width, gl.Size.Height);
+						gfrx.DrawImage(_cachedImage, 0, 0, (float)gl.Size.X, (float)gl.Size.Y);
 					}
 					break;
 			}
@@ -760,8 +760,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// allocate a bitmap of same dimensions than the underlying layer
 			_imageType = CachedImageType.Other;
 
-			int dimX = (int)Math.Ceiling(gl.Size.Width / 72.0 * gfrx.DpiX);
-			int dimY = (int)Math.Ceiling(gl.Size.Height / 72.0 * gfrx.DpiY);
+			int dimX = (int)Math.Ceiling(gl.Size.X / 72.0 * gfrx.DpiX);
+			int dimY = (int)Math.Ceiling(gl.Size.Y / 72.0 * gfrx.DpiY);
 
 			dimX = Math.Min(2048, dimX);
 			dimY = Math.Min(2048, dimY);
@@ -780,8 +780,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			byte[] imageBytes = new byte[dimX * dimY * 4];
 
 
-			double widthByDimX = gl.Size.Width / dimX;
-			double heightByDimY = gl.Size.Height / dimY;
+			double widthByDimX = gl.Size.X / dimX;
+			double heightByDimY = gl.Size.Y / dimY;
 			Logical3D rel = new Logical3D();
 
 			double minRX = lx[0];

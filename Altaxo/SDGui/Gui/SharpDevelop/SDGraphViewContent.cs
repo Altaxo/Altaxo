@@ -96,7 +96,7 @@ namespace Altaxo.Gui.SharpDevelop
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
 		/// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
 		protected SDGraphViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
-			: this(new Altaxo.Gui.Graph.Viewing.GraphController(graphdoc))
+			: this(new Altaxo.Gui.Graph.Viewing.PresentationGraphController(graphdoc))
 		{
 		}
 

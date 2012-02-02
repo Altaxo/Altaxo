@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Gdi.Background
 	public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
 	{
 		protected BrushX _brush = new BrushX(NamedColor.White);
-		protected float _shadowLength = 5;
+		protected double _shadowLength = 5;
 
 		[NonSerialized]
 		protected BrushX _cachedShadowBrush;
@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Background
 			{
 				RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
 				s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
-				s._shadowLength = (float)info.GetDouble();
+				s._shadowLength = info.GetDouble();
 
 				return s;
 			}
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Background
 			{
 				RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
 				s.Brush = (BrushX)info.GetValue("Brush", parent);
-				s._shadowLength = (float)info.GetDouble();
+				s._shadowLength = info.GetDouble();
 
 				return s;
 			}
@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Gdi.Background
 
 		#region IBackgroundStyle Members
 
-		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public RectangleD MeasureItem(System.Drawing.Graphics g, RectangleD innerArea)
 		{
 			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2);
 			innerArea.Width += _shadowLength;
@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Background
 			return innerArea;
 		}
 
-		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
 		{
 			if (null == _cachedShadowBrush)
 				SetCachedBrushes();
@@ -174,13 +174,15 @@ namespace Altaxo.Graph.Gdi.Background
 			// first the shadow
 			_cachedShadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
 
-			g.TranslateTransform(_shadowLength, _shadowLength);
-			g.FillRectangle(_cachedShadowBrush, innerArea);
-			g.TranslateTransform(-_shadowLength, -_shadowLength);
+			// shortCuts to floats
+			RectangleF iArea = (RectangleF)innerArea; float shadowLength = (float)_shadowLength;
+			g.TranslateTransform(shadowLength, shadowLength);
+			g.FillRectangle(_cachedShadowBrush, iArea);
+			g.TranslateTransform(-shadowLength, -shadowLength);
 
 			_brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-			g.FillRectangle(_brush, innerArea);
-			g.DrawRectangle(Pens.Black, innerArea.Left, innerArea.Top, innerArea.Width, innerArea.Height);
+			g.FillRectangle(_brush, iArea);
+			g.DrawRectangle(Pens.Black, iArea.Left, iArea.Top, iArea.Width, iArea.Height);
 		}
 
 		public bool SupportsBrush

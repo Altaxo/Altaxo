@@ -647,6 +647,18 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+
+		/// <summary>
+		/// Sets the environment for the creation of native brush.
+		/// </summary>
+		/// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
+		/// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="M:GetEffectiveMaximumResolution"/></param>
+		/// <returns>True if changes to the brush were made. False otherwise.</returns>
+		public bool SetEnvironment(RectangleD boundingRectangle, double maxEffectiveResolution)
+		{
+			return SetEnvironment((RectangleF)boundingRectangle, maxEffectiveResolution);
+		}
+
 		/// <summary>
 		/// Sets the environment for the creation of native brush.
 		/// </summary>

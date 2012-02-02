@@ -643,7 +643,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (_fillArea)
 			{
 				if (null != _fillBrush)
-					_fillBrush.SetEnvironment(new RectangleF(PointF.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
+					_fillBrush.SetEnvironment(new RectangleD(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
 
 				layer.UpdateCSPlaneID(_fillDirection);
 			}
@@ -733,7 +733,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (_connectCircular) linepts[linepts.Length - 1] = linepts[0];
 			int lastIdx = range.Length - 1 + (_connectCircular ? 1 : 0);
 			GraphicsPath gp = new GraphicsPath();
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 
 			if (_fillArea)
 			{
@@ -828,7 +828,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
 			int lastIdx = range.Length - 1;
 			GraphicsPath gp = new GraphicsPath();
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 
 			if (_fillArea)
 			{
@@ -889,7 +889,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// so trim the range appropriately
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			PlotRange range = new PlotRange(rangeRaw);
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			range.UpperBound = range.LowerBound + 3 * ((range.Length + 2) / 3) - 2;
 			if (range.Length < 4)
 				return; // then to less points are in this range
@@ -923,7 +923,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// so trim the range appropriately
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			PlotRange range = new PlotRange(rangeRaw);
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			range.UpperBound = range.LowerBound + 3 * ((range.Length + 2) / 3) - 2;
 			if (range.Length < 4)
 				return; // then to less points are in this range
@@ -1029,7 +1029,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			out int lastIndex)
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			PointF[] linepts = new PointF[range.Length * 2 - 1];
 			int end = range.UpperBound - 1;
 			int i, j;
@@ -1152,7 +1152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		 out int lastIdx)
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			PointF[] linepts = new PointF[range.Length * 2 - 1];
 			int end = range.UpperBound - 1;
 			int i, j;
@@ -1273,7 +1273,7 @@ IPlotArea layer,
 	out int lastIdx)
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			PointF[] linepts = new PointF[range.Length * 3 - 2];
 			int end = range.UpperBound - 1;
 			int i, j;
@@ -1395,7 +1395,7 @@ IPlotArea layer,
  out int lastIdx)
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			PointF[] linepts = new PointF[range.Length * 3 - 2];
 			int end = range.UpperBound - 1;
 			int i, j;
@@ -1520,7 +1520,7 @@ IPlotArea layer,
  out int lastIdx)
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			PointF[] linepts = new PointF[range.Length];
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
 			lastIdx = range.Length - 1;
@@ -1645,7 +1645,7 @@ IPlotArea layer,
 out int lastIndex)
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			SizeF layerSize = layer.Size;
+			var layerSize = layer.Size;
 			PointF[] linepts = new PointF[range.Length];
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
 			lastIndex = 0;

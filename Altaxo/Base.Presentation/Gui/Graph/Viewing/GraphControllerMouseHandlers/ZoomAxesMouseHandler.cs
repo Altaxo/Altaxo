@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class ZoomAxesMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public ZoomAxesMouseHandler(GraphViewWpf grac)
+    public ZoomAxesMouseHandler(PresentationGraphController grac)
       : base(grac)
     {
 			NextMouseHandlerType = this.GraphToolType;
@@ -67,8 +67,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       // we must deduce from layer coordinates back to physical coordinates
       Logical3D r0, r1;
       XYPlotLayer layer = this._grac.ActiveLayer;
-      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[0].layerCoord.X, _Points[0].layerCoord.Y, out r0);
-      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[1].layerCoord.X, _Points[1].layerCoord.Y, out r1);
+      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[0].LayerCoordinates.X, _Points[0].LayerCoordinates.Y, out r0);
+      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[1].LayerCoordinates.X, _Points[1].LayerCoordinates.Y, out r1);
 
       double xr0 = r0.RX;
       double yr0 = r0.RY;
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
       // deselect the text tool
       // this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-      _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+      _grac.InvalidateCachedGraphImageAndRepaintOffline();
       
     }
 

@@ -27,6 +27,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Input;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
 
@@ -41,9 +42,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		#region Member variables
 
-		protected GraphViewWpf _grac;
+		protected PresentationGraphController _grac;
 
-		protected PointF _currentMousePrintAreaCoord;
+		protected PointD2D _positionCurrentMouseInGraphCoordinates;
 
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
@@ -51,8 +52,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected struct POINT
 		{
-			public PointF printAreaCoord;
-			public PointF layerCoord;
+			public PointD2D GraphCoordinates;
+			public PointD2D LayerCoordinates;
 		}
 
 		protected POINT[] _Points = new POINT[2];
@@ -61,9 +62,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		#endregion
 
-		public AbstractRectangularToolMouseHandler(GraphViewWpf view)
+		public AbstractRectangularToolMouseHandler(PresentationGraphController ctrl)
 		{
-			_grac = view;
+			_grac = ctrl;
 
 			if (_grac != null)
 				_grac.SetPanelCursor(Cursors.Pen);
@@ -78,13 +79,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			{
 				_currentPoint = 0;
 				// get the page coordinates (in Point (1/72") units)
-				//PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
-				PointF printAreaCoord = _currentMousePrintAreaCoord;
+				PointD2D graphCoord = _positionCurrentMouseInGraphCoordinates;
 				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
+				PointD2D layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
 
-				_Points[_currentPoint].layerCoord = layerCoord;
-				_Points[_currentPoint].printAreaCoord = printAreaCoord;
+				_Points[_currentPoint].LayerCoordinates = layerCoord;
+				_Points[_currentPoint].GraphCoordinates = graphCoord;
 				_currentPoint++;
 
 
@@ -96,17 +96,17 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			base.OnMouseMove(position, e);
 
-			_currentMousePrintAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
+			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToGraphCoordinates(position);
 
 			if (e.LeftButton == MouseButtonState.Pressed)
 			{
 				ModifyCurrentMousePrintAreaCoordinate();
-				_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+				_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 			}
 			else if (_currentPoint != 0)
 			{
 				_currentPoint = 0;
-				_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+				_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 			}
 
 		}
@@ -118,13 +118,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			if (e.ChangedButton == MouseButton.Left)
 			{
 				// get the page coordinates (in Point (1/72") units)
-				//PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
-				PointF printAreaCoord = _currentMousePrintAreaCoord;
+				PointD2D graphCoord = _positionCurrentMouseInGraphCoordinates;
 				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
+				PointD2D layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
 
-				_Points[_currentPoint].layerCoord = layerCoord;
-				_Points[_currentPoint].printAreaCoord = printAreaCoord;
+				_Points[_currentPoint].LayerCoordinates = layerCoord;
+				_Points[_currentPoint].GraphCoordinates = graphCoord;
 				_currentPoint++;
 
 				if (2 == _currentPoint)
@@ -150,31 +149,31 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				{
 					if (_grac.ActiveLayer != null) // with an active layer, we transform to layer coordinates
 					{
-						PointF currMouseLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_currentMousePrintAreaCoord);
-						double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].layerCoord.X;
-						double y = currMouseLayerCoord.Y - _Points[_currentPoint - 1].layerCoord.Y;
+						var currMouseLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_positionCurrentMouseInGraphCoordinates);
+						double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].LayerCoordinates.X;
+						double y = currMouseLayerCoord.Y - _Points[_currentPoint - 1].LayerCoordinates.Y;
 
 						double r = Math.Sqrt(x * x + y * y);
 
 						x = r * Math.Sign(x);
 						y = r * Math.Sign(y);
 
-						currMouseLayerCoord.X = (float)(x + _Points[_currentPoint - 1].layerCoord.X);
-						currMouseLayerCoord.Y = (float)(y + _Points[_currentPoint - 1].layerCoord.Y);
-						_currentMousePrintAreaCoord = _grac.ActiveLayer.LayerToGraphCoordinates(currMouseLayerCoord);
+						currMouseLayerCoord.X = (x + _Points[_currentPoint - 1].LayerCoordinates.X);
+						currMouseLayerCoord.Y = (y + _Points[_currentPoint - 1].LayerCoordinates.Y);
+						_positionCurrentMouseInGraphCoordinates = _grac.ActiveLayer.LayerToGraphCoordinates(currMouseLayerCoord);
 					}
 					else // without an active layer we use document coordinates
 					{
-						double x = _currentMousePrintAreaCoord.X - _Points[_currentPoint - 1].printAreaCoord.X;
-						double y = _currentMousePrintAreaCoord.Y - _Points[_currentPoint - 1].printAreaCoord.Y;
+						double x = _positionCurrentMouseInGraphCoordinates.X - _Points[_currentPoint - 1].GraphCoordinates.X;
+						double y = _positionCurrentMouseInGraphCoordinates.Y - _Points[_currentPoint - 1].GraphCoordinates.Y;
 
 						double r = Math.Sqrt(x * x + y * y);
 
 						x = r * Math.Sign(x);
 						y = r * Math.Sign(y);
 
-						_currentMousePrintAreaCoord.X = (float)(x + _Points[_currentPoint - 1].printAreaCoord.X);
-						_currentMousePrintAreaCoord.Y = (float)(y + _Points[_currentPoint - 1].printAreaCoord.Y);
+						_positionCurrentMouseInGraphCoordinates.X = (x + _Points[_currentPoint - 1].GraphCoordinates.X);
+						_positionCurrentMouseInGraphCoordinates.Y = (y + _Points[_currentPoint - 1].GraphCoordinates.Y);
 					}
 				}
 			}
@@ -192,36 +191,36 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				{
 					g.TranslateTransform(_grac.ActiveLayer.Position.X, _grac.ActiveLayer.Position.Y);
 					g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
-					PointF currLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_currentMousePrintAreaCoord);
-					DrawRectangleFromLTRB(g, _Points[0].layerCoord, currLayerCoord);
+					var currLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_positionCurrentMouseInGraphCoordinates);
+					DrawRectangleFromLTRB(g, _Points[0].LayerCoordinates, currLayerCoord);
 				}
 				else
 				{
-					DrawRectangleFromLTRB(g, _Points[0].printAreaCoord, _currentMousePrintAreaCoord);
+					DrawRectangleFromLTRB(g, _Points[0].GraphCoordinates, _positionCurrentMouseInGraphCoordinates);
 				}
 			}
 		}
 
 
-		public RectangleF GetNormalRectangle(PointF a, PointF b)
+		public RectangleD GetNormalRectangle(PointD2D a, PointD2D b)
 		{
-			float x = Math.Min(a.X, b.X);
-			float y = Math.Min(a.Y, b.Y);
+			var x = Math.Min(a.X, b.X);
+			var y = Math.Min(a.Y, b.Y);
 
-			float w = Math.Abs(a.X - b.X);
-			float h = Math.Abs(a.Y - b.Y);
+			var w = Math.Abs(a.X - b.X);
+			var h = Math.Abs(a.Y - b.Y);
 
-			return new RectangleF(x, y, w, h);
+			return new RectangleD(x, y, w, h);
 		}
 
-		void DrawRectangleFromLTRB(Graphics g, PointF a, PointF b)
+		void DrawRectangleFromLTRB(Graphics g, PointD2D a, PointD2D b)
 		{
-			RectangleF rect = RectangleF.FromLTRB(a.X, a.Y, b.X, b.Y);
+			var rect = RectangleD.FromLTRB(a.X, a.Y, b.X, b.Y);
 			Pen pen = Pens.Blue;
-			g.DrawLine(pen, a.X, a.Y, b.X, a.Y);
-			g.DrawLine(pen, b.X, a.Y, b.X, b.Y);
-			g.DrawLine(pen, b.X, b.Y, a.X, b.Y);
-			g.DrawLine(pen, a.X, b.Y, a.X, a.Y);
+			g.DrawLine(pen, (float)a.X, (float)a.Y, (float)b.X, (float)a.Y);
+			g.DrawLine(pen, (float)b.X, (float)a.Y, (float)b.X, (float)b.Y);
+			g.DrawLine(pen, (float)b.X, (float)b.Y, (float)a.X, (float)b.Y);
+			g.DrawLine(pen, (float)a.X, (float)b.Y, (float)a.X, (float)a.Y);
 			//      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);      
 		}
 

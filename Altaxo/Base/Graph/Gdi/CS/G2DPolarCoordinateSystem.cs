@@ -424,7 +424,7 @@ namespace Altaxo.Graph.Gdi.CS
 			return new Region(path);
 		}
 
-		public override void UpdateAreaSize(SizeF size)
+		public override void UpdateAreaSize(PointD2D size)
 		{
 			base.UpdateAreaSize(size);
 			_midX = _layerWidth / 2;

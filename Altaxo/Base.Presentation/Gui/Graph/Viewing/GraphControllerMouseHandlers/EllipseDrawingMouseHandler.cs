@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	/// </summary>
 	public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
 	{
-		public EllipseDrawingMouseHandler(GraphViewWpf grac)
+		public EllipseDrawingMouseHandler(PresentationGraphController grac)
 			: base(grac)
 		{
 
@@ -53,13 +53,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected override void FinishDrawing()
 		{
-			RectangleF rect = GetNormalRectangle(_Points[0].layerCoord, _Points[1].layerCoord);
+			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
 			EllipseShape go = new EllipseShape(rect.X, rect.Y, rect.Width, rect.Height);
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 			_grac.ActiveLayer.GraphObjects.Add(go);
-			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 
 		/// <summary>
@@ -70,8 +70,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			if (_currentPoint >= 1)
 			{
-				RectangleF rect = GetNormalRectangle(_Points[0].printAreaCoord, _currentMousePrintAreaCoord);
-				g.DrawEllipse(Pens.Blue, rect);
+				var rect = GetNormalRectangle(_Points[0].GraphCoordinates, _positionCurrentMouseInGraphCoordinates);
+				g.DrawEllipse(Pens.Blue, (RectangleF)rect);
 			}
 
 		}

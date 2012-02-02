@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			G2DCoordinateSystem coordSyst,
 			ScaleWithTicks scaleWithTicks,
 			CSAxisInformation styleInfo,
-			float outerDistance,
+			double outerDistance,
 			bool useMinorTicks);
 
 		#region IChangedEventSource Members
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public abstract IHitTestObject HitTest(IPlotArea layer, PointD2D pt);
 
-		public abstract float FontSize { get; set; }
+		public abstract double FontSize { get; set; }
 
 		#region IDocumentNode Members
 
@@ -114,7 +114,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				case "FontSize":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this.FontSize = (float)prop.Value;
+						this.FontSize = prop.Value;
 						OnChanged();
 					}
 					break;

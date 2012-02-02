@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Gdi.Background
 		/// <param name="g">Graphics context.</param>
 		/// <param name="innerArea">Inner area of the item.</param>
 		/// <returns>The rectangle that encloses the item including the background.</returns>
-		RectangleF MeasureItem(Graphics g, RectangleF innerArea);
+		RectangleD MeasureItem(Graphics g, RectangleD innerArea);
 
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace Altaxo.Graph.Gdi.Background
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="innerArea">The inner area of the item.</param>
-		void Draw(Graphics g, RectangleF innerArea);
+		void Draw(Graphics g, RectangleD innerArea);
 
 		/// <summary>
 		/// True if the classes color property can be set/reset;

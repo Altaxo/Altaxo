@@ -546,7 +546,7 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			var layer = ctrl.ActiveLayer;
-			var scale = new Gdi.Shapes.FloatingScale() { Size = new PointD2D(layer.Size.Width / 2, layer.Size.Height / 2) };
+			var scale = new Gdi.Shapes.FloatingScale() { Size = 0.5*layer.Size};
 			layer.GraphObjects.Add(scale);
 		}
 	}
@@ -560,7 +560,7 @@ namespace Altaxo.Graph.Commands
 				Current.Gui.ErrorMessageBox("Current plot item should be a density image plot!");
 
 			var plotItem = (DensityImagePlotItem)layer.PlotItems[ctrl.CurrentPlotNumber];
-			var legend = new Gdi.Shapes.DensityImageLegend(plotItem, new PointF(layer.Size.Width / 2, layer.Size.Height / 2), new SizeF(layer.Size.Width / 3, layer.Size.Height / 2));
+			var legend = new Gdi.Shapes.DensityImageLegend(plotItem, 0.5*layer.Size, new PointD2D(layer.Size.X / 3, layer.Size.Y / 2));
 			layer.GraphObjects.Add(legend);
 		}
 	}

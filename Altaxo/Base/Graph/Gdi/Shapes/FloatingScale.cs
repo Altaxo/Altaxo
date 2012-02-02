@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		int _scaleNumber = 0;
 
 		/// <summary>Distance between scale and label (points).</summary>
-		float _outerDistance = 10; // Point
+		double _outerDistance = 10; // Point
 
 		/// <summary>Side at which the label should appear.</summary>
 		CSAxisSide _labelSide = CSAxisSide.FirstUp;
@@ -176,12 +176,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return _cachedPath;
 		}
 
-		protected GraphicsPath GetPath(float minWidth)
+		protected GraphicsPath GetPath(double minWidth)
 		{
 			GraphicsPath gp = (GraphicsPath)_cachedPath.Clone();
 
 			if (Pen.Width != minWidth)
-				gp.Widen(new Pen(Color.Black, minWidth));
+				gp.Widen(new Pen(Color.Black, (float)minWidth));
 			else
 				gp.Widen(Pen);
 

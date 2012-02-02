@@ -49,7 +49,9 @@ namespace Altaxo.Gui.Graph.Viewing
 	/// <summary>
 	/// GraphController is our default implementation to control a graph view.
 	/// </summary>
-	public class PresentationGraphController
+	[ExpectedTypeOfView(typeof(GraphViewWpf))]
+	[UserControllerForObject(typeof(Altaxo.Graph.GraphViewLayout))]
+	public class PresentationGraphController : GraphController
 	{
 
 		#region Member variables
@@ -64,7 +66,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		private static IList<IHitTestObject> _emptyReadOnlyList;
 
 		/// <summary>Holds the view (the window where the graph is visualized).</summary>
-		protected GraphViewWpf _view;
+		protected GraphViewWpf _viewWpf;
 
 		/// <summary>
 		/// Color for the area of the view, where there is no page.
@@ -115,8 +117,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			_screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
 
-			// A instance of a mouse handler class that currently handles the mouse events..</summary>
-			_mouseState = new ObjectPointerMouseHandler(this._view);
 
 
 
@@ -125,9 +125,19 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-		public PresentationGraphController(GraphViewWpf view)
+		public PresentationGraphController()
+			: base()
 		{
-			_view = view;
+			SetMemberVariablesToDefault();
+		}
+
+		/// <summary>
+		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
+		/// </summary>
+		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
+		public PresentationGraphController(GraphDocument graphdoc)
+			: base(graphdoc)
+		{
 			SetMemberVariablesToDefault();
 		}
 
@@ -146,47 +156,31 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#region Shortcuts to implementations by view or controller
 
-		/// <summary>
-		/// This returns the GraphDocument that is managed by this controller.
-		/// </summary>
-		private GraphDocument Doc
-		{
-			get { return _view.Doc; }
-		}
-		/// <summary>
-		/// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.
-		/// </summary>
-		private XYPlotLayerCollection Layers
-		{
-			get { return _view.Doc.Layers; }
-		}
 
-		private XYPlotLayer ActiveLayer
-		{
-			get { return _view.ActiveLayer; }
-		}
-
-		private void SetActiveLayer(int layerNumber)
-		{
-			_view.SetActiveLayerFromInternal(layerNumber);
-		}
-
-		private double ZoomFactor
+		public override object ViewObject
 		{
 			get
 			{
-				return _view.GC.ZoomFactor;
+				return _viewWpf;
 			}
-		}
-
-		private PointD2D PositionOfViewportsUpperLeftCornerInGraphCoordinates
-		{
-			get
+			set
 			{
-				return _view.GC.PositionOfViewportsUpperLeftCornerInGraphCoordinates;
+				if (null != _viewWpf)
+				{
+					((IGraphView)_viewWpf).Controller = null;
+				}
+
+				_view = _viewWpf = value as GraphViewWpf;
+
+				if (null != _viewWpf)
+				{
+					// A instance of a mouse handler class that currently handles the mouse events..</summary>
+					_mouseState = new ObjectPointerMouseHandler(this);
+					Initialize(false);
+					((IGraphView)_viewWpf).Controller = this;
+				}
 			}
 		}
-
 
 		#endregion
 
@@ -206,48 +200,63 @@ namespace Altaxo.Gui.Graph.Viewing
 						_mouseState = null;
 						break;
 					case GraphToolType.ArrowLineDrawing:
-						_mouseState = new GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler(this);
 						break;
 					case GraphToolType.CurlyBraceDrawing:
-						_mouseState = new GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler(this);
 						break;
 					case GraphToolType.EllipseDrawing:
-						_mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(this);
 						break;
 					case GraphToolType.ObjectPointer:
-						_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this);
 						break;
 					case GraphToolType.ReadPlotItemData:
-						_mouseState = new GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler(this);
 						break;
 					case GraphToolType.ReadXYCoordinates:
-						_mouseState = new GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler(this);
 						break;
 					case GraphToolType.RectangleDrawing:
-						_mouseState = new GraphControllerMouseHandlers.RectangleDrawingMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.RectangleDrawingMouseHandler(this);
 						break;
 					case GraphToolType.RegularPolygonDrawing:
-						_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(this);
 						break;
 					case GraphToolType.SingleLineDrawing:
-						_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this);
 						break;
 					case GraphToolType.TextDrawing:
-						_mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(this);
 						break;
 					case GraphToolType.ZoomAxes:
-						_mouseState = new GraphControllerMouseHandlers.ZoomAxesMouseHandler(_view);
+						_mouseState = new GraphControllerMouseHandlers.ZoomAxesMouseHandler(this);
 						break;
 					case GraphToolType.OpenCardinalSplineDrawing:
-						_mouseState = new OpenCardinalSplineMouseHandler(_view);
+						_mouseState = new OpenCardinalSplineMouseHandler(_viewWpf);
 						break;
 					case GraphToolType.ClosedCardinalSplineDrawing:
-						_mouseState = new ClosedCardinalSplineMouseHandler(_view);
+						_mouseState = new ClosedCardinalSplineMouseHandler(_viewWpf);
 						break;
 					default:
 						throw new NotImplementedException("Type not implemented: " + value.ToString());
 				}
 			}
+		}
+
+		public void SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType value)
+		{
+			GraphTool = value;
+			if (null != _viewWpf)
+				_viewWpf.FocusOnGraphPanel();
+
+			EhView_CurrentGraphToolChanged();
+		}
+
+		public void SetPanelCursor(Cursor cursor)
+		{
+			if (null != _viewWpf)
+				_viewWpf.SetPanelCursor(cursor);
 		}
 
 		#endregion
@@ -351,9 +360,9 @@ namespace Altaxo.Gui.Graph.Viewing
 					return;
 				
 
-				var oldZoom = _view.GC.ZoomFactor;
+				var oldZoom = ZoomFactor;
 				var newZoom = oldZoom;
-				var autoZoomFactor = _view.GC.AutoZoomFactor;
+				var autoZoomFactor = AutoZoomFactor;
 				bool isAutoZoomNext = false;
 				if (e.Delta > 0)
 				{
@@ -368,18 +377,13 @@ namespace Altaxo.Gui.Graph.Viewing
 				// Do zoom action here
 				if (isAutoZoomNext)
 				{
-					_view.GC.IsAutoZoomActive = true;
+					IsAutoZoomActive = true;
 					_nextScrollZoomAcceptTime = now.AddMilliseconds(700);
 				}
 				else // manual zoom
 				{
 					var graphCoord = ConvertMouseToGraphCoordinates(position);
-					_view.GC.ZoomAroundPivotPoint(newZoom,graphCoord);
-					/*
-					_view.GC.ZoomFactor = newZoom;
-					var ppc = PixelToPrintableAreaCoordinates(position);
-					_view.GC.PositionOfViewportsUpperLeftCornerInGraphCoordinates += new PointD2D((graphCoord.X - ppc.X), (graphCoord.Y - ppc.Y));
-					 */
+					ZoomAroundPivotPoint(newZoom,graphCoord);
 				}
 			}
 		}
@@ -464,8 +468,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			this._isCachedGraphImageDirty = true;
 			//RepaintGraphAreaForMouseHandler();
 
-			if (_view != null)
-				_view.TriggerRenderingOfGraphArea();
+			if (_viewWpf != null)
+				_viewWpf.TriggerRenderingOfGraphArea();
 		}
 
 		/// <summary>
@@ -474,7 +478,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline()
 		{
-			if (_view == null || _view.Doc == null || _view.GC == null || _view.ViewportSizeInPoints == PointD2D.Empty)
+			if (_viewWpf == null || Doc == null ||  _viewWpf.ViewportSizeInPoints == PointD2D.Empty)
 				return;
 
 			if (this._cachedGraphImage != null && !this._isCachedGraphImageDirty)
@@ -483,7 +487,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			else
 			{
-				_view.TriggerRenderingOfGraphArea();
+				_viewWpf.TriggerRenderingOfGraphArea();
 			}
 		}
 
@@ -493,9 +497,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void RepaintGraphAreaImmediately()
 		{
-		Graphics g = this._view.BeginPaintingGraph();
+		Graphics g = this._viewWpf.BeginPaintingGraph();
 		this.DoPaint(g, false); // paint the cached graph image and the mouse handler drawings
-		_view.EndPaintingGraph(); // inform the view, that the painting is finished
+		_viewWpf.EndPaintingGraph(); // inform the view, that the painting is finished
 		}
 
 		/// <summary>
@@ -516,7 +520,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 
 				// if neccessary, create a new bitmap for caching the graph image.
-				if (_cachedGraphImage == null || _cachedGraphImage.Width != _view.GraphSize.Width || _cachedGraphImage.Height != _view.GraphSize.Height)
+				if (_cachedGraphImage == null || _cachedGraphImage.Width != _viewWpf.GraphSize.Width || _cachedGraphImage.Height != _viewWpf.GraphSize.Height)
 				{
 					if (_cachedGraphImage != null)
 					{
@@ -527,7 +531,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					// create a frozen bitmap of the graph
 					// using(Graphics g = m_View.CreateGraphGraphics())
 
-					_cachedGraphImage = new Bitmap(_view.GraphSize.Width, _view.GraphSize.Height, g);
+					_cachedGraphImage = new Bitmap(_viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height, g);
 					_isCachedGraphImageDirty = true;
 				}
 
@@ -544,12 +548,12 @@ namespace Altaxo.Gui.Graph.Viewing
 						_isCachedGraphImageDirty = false;
 					}
 
-					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, _view.GraphSize.Width, _view.GraphSize.Height);
+					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, _viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height);
 					ScaleForPaint(g, bForPrinting);
 				}
 				else
 				{
-					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, _view.GraphSize.Width, _view.GraphSize.Height);
+					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, _viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height);
 					ScaleForPaint(g, bForPrinting); // to be in the same state as when drawing unbuffered
 				}
 
@@ -633,7 +637,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#region Editing selected objects
 
-		public IList<IHitTestObject> SelectedObjects
+		public override IList<IHitTestObject> SelectedObjects
 		{
 			get
 			{
@@ -679,7 +683,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		/// <summary>
 		/// Factor for conversion of graph units (in points = 1/72 inch) to mouse coordinates.
-		/// The resolution used for this is <see cref="__screenResolutionDpi"/>.
+		/// The resolution used for this is <see cref="_screenResolutionDpi"/>.
 		/// </summary>
 		public PointD2D FactorForGraphToMouseCoordinateConversion
 		{
@@ -703,9 +707,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// converts printable area  to pixel coordinates
+		/// Converts graph coordinates to wpf coordinates.
 		/// </summary>
-		/// <param name="printc">Printable area coordinates.</param>
+		/// <param name="graphCoord">Graph coordinates.</param>
 		/// <returns>Pixel coordinates as returned by MouseEvents</returns>
 		public PointD2D ConvertGraphToMouseCoordinates(PointD2D graphCoord)
 		{

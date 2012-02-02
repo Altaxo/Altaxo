@@ -70,16 +70,16 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// The plot item where the mouse snaps in
     /// </summary>
-    protected XYColumnPlotItem m_PlotItem;
+    protected XYColumnPlotItem _PlotItem;
 
     /// <summary>
     /// Coordinates of the red data reader cross (in printable coordinates)
     /// </summary>
-    protected PointF m_Cross;
+    protected PointD2D _positionOfCrossInGraphCoordinates;
 
-    protected GraphViewWpf _grac;
+    protected PresentationGraphController _grac;
 
-    public ReadPlotItemDataMouseHandler(GraphViewWpf grac)
+    public ReadPlotItemDataMouseHandler(PresentationGraphController grac)
     {
       _grac = grac;
       if(_grac!=null)
@@ -101,19 +101,19 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseDown(position, e);
 
-			PointF graphXY = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
+			var graphXY = _grac.ConvertMouseToGraphCoordinates(position);
        
       // search for a object first
       IHitTestObject clickedObject;
       int clickedLayerNumber=0;
-      _grac.GuiController.FindGraphObjectAtPixelPosition(position, true, out clickedObject, out clickedLayerNumber);
+      _grac.FindGraphObjectAtPixelPosition(position, true, out clickedObject, out clickedLayerNumber);
       if(null!=clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
       {
-        m_PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
-        PointF transXY = clickedObject.Transformation.InverseTransformPoint(graphXY);
-        XYScatterPointInformation scatterPoint = m_PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY);
+        _PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
+        var transXY = clickedObject.Transformation.InverseTransformPoint(graphXY);
+        XYScatterPointInformation scatterPoint = _PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY);
 
-        this._PlotItemNumber = GetPlotItemNumber(clickedLayerNumber,m_PlotItem);
+        this._PlotItemNumber = GetPlotItemNumber(clickedLayerNumber,_PlotItem);
         this._LayerNumber = clickedLayerNumber;
 
 
@@ -122,28 +122,28 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
           this._PlotIndex = scatterPoint.PlotIndex;
           this._RowIndex = scatterPoint.RowIndex;
           // convert this layer coordinates first to PrintableAreaCoordinates
-          PointF printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
-          m_Cross = printableCoord;
+          var printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+          _positionOfCrossInGraphCoordinates = printableCoord;
 					// m_Cross.X -= _grac.GraphViewOffset.X;
 					// m_Cross.Y -= _grac.GraphViewOffset.Y;
 
-					PointF newPixelCoord = (PointF)_grac.GuiController.ConvertGraphToMouseCoordinates(printableCoord);
+					var newPixelCoord = _grac.ConvertGraphToMouseCoordinates(printableCoord);
 
 					// TODO (Wpf)
           //var newCursorPosition = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
 					//SetCursorPos(newCursorPosition.X, newCursorPosition.Y);
             
 					
-          this.DisplayData(m_PlotItem,scatterPoint.RowIndex,
-            m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
-            m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
+          this.DisplayData(_PlotItem,scatterPoint.RowIndex,
+            _PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
+            _PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
 
 
           
           
           // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
           // of the grac
-          _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+          _grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
         }
       }
        
@@ -161,26 +161,26 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       this._PlotIndex = scatterPoint.PlotIndex;
       this._RowIndex = scatterPoint.RowIndex;
       // convert this layer coordinates first to PrintableAreaCoordinates
-      PointF printableCoord = _grac.GC.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
-      m_Cross = printableCoord;
+      var printableCoord = _grac.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+      _positionOfCrossInGraphCoordinates = printableCoord;
 			// m_Cross.X -= _grac.GraphViewOffset.X;
 			// m_Cross.Y -= _grac.GraphViewOffset.Y;
 
-			PointF newPixelCoord = (PointF)_grac.GuiController.ConvertGraphToMouseCoordinates(printableCoord);
+			var newPixelCoord = _grac.ConvertGraphToMouseCoordinates(printableCoord);
       //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
       //Cursor.Position = ((Control)_grac.View).PointToScreen(newPixelCoord);
           
    
 
-      this.DisplayData(m_PlotItem,scatterPoint.RowIndex,
-        m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
-        m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
+      this.DisplayData(_PlotItem,scatterPoint.RowIndex,
+        _PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
+        _PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
 
 
           
       // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
       // of the grac
-      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+      _grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
        
     }
 
@@ -202,7 +202,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// <returns>True if the cross can be moved, false if one of the presumtions does not hold.</returns>
     bool TestMovementPresumtions()
     {
-      if(m_PlotItem==null)
+      if(_PlotItem==null)
         return false;
       if(_grac==null || _grac.Doc==null || _grac.Doc.Layers==null)
         return false;
@@ -221,7 +221,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       if(!TestMovementPresumtions())
         return;
 
-      XYScatterPointInformation scatterPoint = m_PlotItem.GetNextPlotPoint(_grac.Doc.Layers[this._LayerNumber],this._PlotIndex,increment);
+      XYScatterPointInformation scatterPoint = _PlotItem.GetNextPlotPoint(_grac.Doc.Layers[this._LayerNumber],this._PlotIndex,increment);
         
       if(null!=scatterPoint)
         ShowCross(scatterPoint);
@@ -236,7 +236,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       if(!TestMovementPresumtions())
         return;
 
-      int numlayers = _grac.GC.Layers.Count;
+      int numlayers = _grac.Layers.Count;
       int nextlayer = _LayerNumber;
       int nextplotitemnumber = this._PlotItemNumber;
 
@@ -248,9 +248,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
         if(nextplotitemnumber<0)
         {
           nextlayer-=1;
-          nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.GC.Layers[nextlayer].PlotItems.Flattened.Length-1;
+          nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.Layers[nextlayer].PlotItems.Flattened.Length-1;
         }
-        else if(nextplotitemnumber>=_grac.GC.Layers[nextlayer].PlotItems.Flattened.Length)
+        else if(nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
         {
           nextlayer+=1;
           nextplotitemnumber=0;
@@ -259,19 +259,19 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
         if(nextlayer<0 || nextlayer>=numlayers)
           break;
           
-        if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.GC.Layers[nextlayer].PlotItems.Flattened.Length)
+        if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
           continue;
   
-        plotitem =  _grac.GC.Layers[nextlayer].PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
+        plotitem =  _grac.Layers[nextlayer].PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
         if(null==plotitem)
           continue;
   
-        scatterPoint = plotitem.GetNextPlotPoint(_grac.GC.Layers[nextlayer],this._PlotIndex,0);
+        scatterPoint = plotitem.GetNextPlotPoint(_grac.Layers[nextlayer],this._PlotIndex,0);
       } while(scatterPoint==null);
       
       if(null!=scatterPoint)
       {
-        this.m_PlotItem = plotitem;
+        this._PlotItem = plotitem;
         this._LayerNumber = nextlayer;
         this._PlotItemNumber = nextplotitemnumber;
         this._PlotIndex = scatterPoint.PlotIndex;
@@ -286,10 +286,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     public override void AfterPaint( Graphics g)
     {
       // draw a red cross onto the selected data point
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X+1,m_Cross.Y,m_Cross.X+10,m_Cross.Y);
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X-1,m_Cross.Y,m_Cross.X-10,m_Cross.Y);
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y+1,m_Cross.X,m_Cross.Y+10);
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y-1,m_Cross.X,m_Cross.Y-10);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X + 1, (float)_positionOfCrossInGraphCoordinates.Y, (float)_positionOfCrossInGraphCoordinates.X + 10, (float)_positionOfCrossInGraphCoordinates.Y);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X - 1, (float)_positionOfCrossInGraphCoordinates.Y, (float)_positionOfCrossInGraphCoordinates.X - 10, (float)_positionOfCrossInGraphCoordinates.Y);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y + 1, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y + 10);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y - 1, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y - 10);
         
       base.AfterPaint (g);
     }

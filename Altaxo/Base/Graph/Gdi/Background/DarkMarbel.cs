@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Gdi.Background
 	public class DarkMarbel : IBackgroundStyle
 	{
 		protected BrushX _brush = new BrushX(NamedColor.LightGray);
-		protected float _shadowLength = 5;
+		protected double _shadowLength = 5;
 
 		#region Serialization
 
@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Background
 			{
 				DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
 				s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
-				s._shadowLength = (float)info.GetDouble();
+				s._shadowLength = info.GetDouble();
 
 				return s;
 			}
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Background
 			{
 				DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
 				s.Brush = (BrushX)info.GetValue("Brush", parent);
-				s._shadowLength = (float)info.GetDouble();
+				s._shadowLength = info.GetDouble();
 
 				return s;
 			}
@@ -113,41 +113,41 @@ namespace Altaxo.Graph.Gdi.Background
 
 		#region IBackgroundStyle Members
 
-		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public RectangleD MeasureItem(System.Drawing.Graphics g, RectangleD innerArea)
 		{
-			innerArea.Inflate(3.0f * _shadowLength / 2, 3.0f * _shadowLength / 2);
+			innerArea.Inflate(3.0 * _shadowLength / 2, 3.0 * _shadowLength / 2);
 			return innerArea;
 		}
 
-		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
 		{
-
-
 			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2); // Padding
-			RectangleF outerArea = innerArea;
+			var outerArea = innerArea;
 			outerArea.Inflate(_shadowLength, _shadowLength);
 
 			_brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-			g.FillRectangle(_brush, outerArea);
+			g.FillRectangle(_brush, (RectangleF)outerArea);
 
 			SolidBrush twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
+			RectangleF oA = (RectangleF)outerArea;
+			RectangleF iA = (RectangleF)innerArea;
 			g.FillPolygon(twhite, new PointF[] {
-                                                      new PointF(outerArea.Left,outerArea.Top), // upper left point
-                                                      new PointF(outerArea.Right,outerArea.Top), // go to the right
-                                                      new PointF(innerArea.Right,innerArea.Top), // go 45 deg left down in the upper right corner
-                                                      new PointF(innerArea.Left,innerArea.Top), // upper left corner of the inner rectangle
-                                                      new PointF(innerArea.Left,innerArea.Bottom), // lower left corner of the inner rectangle
-                                                      new PointF(outerArea.Left,outerArea.Bottom) // lower left corner
+                                                      new PointF(oA.Left,oA.Top), // upper left point
+                                                      new PointF(oA.Right,oA.Top), // go to the right
+                                                      new PointF(iA.Right,iA.Top), // go 45 deg left down in the upper right corner
+                                                      new PointF(iA.Left,iA.Top), // upper left corner of the inner rectangle
+                                                      new PointF(iA.Left,iA.Bottom), // lower left corner of the inner rectangle
+                                                      new PointF(oA.Left,oA.Bottom) // lower left corner
       });
 
 			SolidBrush tblack = new SolidBrush(Color.FromArgb(128, 0, 0, 0));
 			g.FillPolygon(tblack, new PointF[] {
-                                                      new PointF(outerArea.Right,outerArea.Bottom),  
-                                                      new PointF(outerArea.Right,outerArea.Top), 
-                                                      new PointF(innerArea.Right,innerArea.Top), 
-                                                      new PointF(innerArea.Right,innerArea.Bottom), // upper left corner of the inner rectangle
-                                                      new PointF(innerArea.Left,innerArea.Bottom), // lower left corner of the inner rectangle
-                                                      new PointF(outerArea.Left,outerArea.Bottom) // lower left corner
+                                                      new PointF(oA.Right,oA.Bottom),  
+                                                      new PointF(oA.Right,oA.Top), 
+                                                      new PointF(iA.Right,iA.Top), 
+                                                      new PointF(iA.Right,iA.Bottom), // upper left corner of the inner rectangle
+                                                      new PointF(iA.Left,iA.Bottom), // lower left corner of the inner rectangle
+                                                      new PointF(oA.Left,oA.Bottom) // lower left corner
       });
 
 		}

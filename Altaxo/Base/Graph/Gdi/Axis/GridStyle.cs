@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			Scale axis = layer.Scales[axisnumber].Scale;
 			TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
 
-			RectangleF layerRect = new RectangleF(new PointF(0, 0), layer.Size);
+			RectangleD layerRect = new RectangleD(PointD2D.Empty, layer.Size);
 
 			if (_showZeroOnly)
 			{

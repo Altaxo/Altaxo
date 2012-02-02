@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	/// </summary>
 	public class CurlyBraceDrawingMouseHandler : AbstractRectangularToolMouseHandler
 	{
-		public CurlyBraceDrawingMouseHandler(GraphViewWpf grac)
+		public CurlyBraceDrawingMouseHandler(PresentationGraphController grac)
 			: base(grac)
 		{
 
@@ -52,13 +52,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected override void FinishDrawing()
 		{
-			RectangleF rect = GetNormalRectangle(_Points[0].layerCoord, _Points[1].layerCoord);
+			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
 			CurlyBraceShape go = new CurlyBraceShape(new PointD2D(rect.X, rect.Y), new PointD2D(rect.Width, rect.Height));
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 			_grac.ActiveLayer.GraphObjects.Add(go);
-			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 
 	}

@@ -196,7 +196,7 @@ namespace Altaxo.Main
 			{
 				if (o is Altaxo.Graph.GraphViewLayout)
 				{
-					var ctrl = new Altaxo.Gui.Graph.Viewing.GraphController();
+					var ctrl = new Altaxo.Gui.Graph.Viewing.PresentationGraphController();
 					ctrl.InitializeDocument(o as Altaxo.Graph.GraphViewLayout);
 					Current.Gui.FindAndAttachControlTo(ctrl);
 					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDGraphViewContent(ctrl));

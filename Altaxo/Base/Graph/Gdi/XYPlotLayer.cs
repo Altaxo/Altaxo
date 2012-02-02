@@ -1388,8 +1388,8 @@ namespace Altaxo.Graph.Gdi
 
       // if the position of the old legend is outside, use a new position
       if (null == Legend || Legend.Position.X < 0 || Legend.Position.Y < 0 ||
-        Legend.Position.X > this.Size.Width || Legend.Position.Y > this.Size.Height)
-        tgo.SetPosition(new PointF(0.1f * this.Size.Width, 0.1f * this.Size.Height));
+        Legend.Position.X > this.Size.X || Legend.Position.Y > this.Size.Y)
+        tgo.SetPosition(new PointD2D(0.1 * this.Size.X, 0.1 * this.Size.Y));
       else
         tgo.SetPosition(Legend.Position);
 
@@ -1544,12 +1544,12 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public SizeF Size
+    public PointD2D Size
     {
       get { return this._cachedLayerSize; }
       set
       {
-        SetSize(value.Width, XYPlotLayerSizeType.AbsoluteValue, value.Height, XYPlotLayerSizeType.AbsoluteValue);
+        SetSize(value.X, XYPlotLayerSizeType.AbsoluteValue, value.Y, XYPlotLayerSizeType.AbsoluteValue);
       }
     }
 
@@ -1586,6 +1586,10 @@ namespace Altaxo.Graph.Gdi
     {
       return _transformation.InverseTransformPoint(pagecoordinates);
     }
+		public PointD2D GraphToLayerCoordinates(PointD2D pagecoordinates)
+		{
+			return _transformation.InverseTransformPoint(pagecoordinates);
+		}
 
     public CrossF GraphToLayerCoordinates(CrossF x)
 		{
@@ -1643,6 +1647,15 @@ namespace Altaxo.Graph.Gdi
       return _transformation.TransformPoint(layerCoordinates);
     }
 
+		/// <summary>
+		/// Transforms a <see cref="PointD2D" /> from layer coordinates to graph (=printable area) coordinates
+		/// </summary>
+		/// <param name="layerCoordinates">The layer coordinates to convert.</param>
+		/// <returns>graphics path now in graph coordinates</returns>
+		public PointD2D LayerToGraphCoordinates(PointD2D layerCoordinates)
+		{
+			return _transformation.TransformPoint(layerCoordinates);
+		}
 
 
     public void SetPosition(double x, XYPlotLayerPositionType xpostype, double y, XYPlotLayerPositionType ypostype)
@@ -1676,19 +1689,19 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if (LinkedLayer != null)
-            x = LinkedLayer.Position.X + x * LinkedLayer.Size.Width;
+            x = LinkedLayer.Position.X + x * LinkedLayer.Size.X;
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if (LinkedLayer != null)
-            x = LinkedLayer.Position.X + (1 + x) * LinkedLayer.Size.Width;
+            x = LinkedLayer.Position.X + (1 + x) * LinkedLayer.Size.X;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if (LinkedLayer != null)
-            x = LinkedLayer.Position.X - this.Size.Width + x * LinkedLayer.Size.Width;
+            x = LinkedLayer.Position.X - this.Size.X + x * LinkedLayer.Size.X;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if (LinkedLayer != null)
-            x = LinkedLayer.Position.X - this.Size.Width + (1 + x) * LinkedLayer.Size.Width;
+            x = LinkedLayer.Position.X - this.Size.X + (1 + x) * LinkedLayer.Size.X;
           break;
       }
       return x;
@@ -1715,19 +1728,19 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if (LinkedLayer != null)
-            y = LinkedLayer.Position.Y + y * LinkedLayer.Size.Height;
+            y = LinkedLayer.Position.Y + y * LinkedLayer.Size.Y;
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if (LinkedLayer != null)
-            y = LinkedLayer.Position.Y + (1 + y) * LinkedLayer.Size.Height;
+            y = LinkedLayer.Position.Y + (1 + y) * LinkedLayer.Size.Y;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if (LinkedLayer != null)
-            y = LinkedLayer.Position.Y - this.Size.Height + y * LinkedLayer.Size.Height;
+            y = LinkedLayer.Position.Y - this.Size.Y + y * LinkedLayer.Size.Y;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if (LinkedLayer != null)
-            y = LinkedLayer.Position.Y - this.Size.Height + (1 + y) * LinkedLayer.Size.Height;
+            y = LinkedLayer.Position.Y - this.Size.Y + (1 + y) * LinkedLayer.Size.Y;
           break;
       }
 
@@ -1757,19 +1770,19 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if (LinkedLayer != null)
-            x = (x - LinkedLayer.Position.X) / LinkedLayer.Size.Width;
+            x = (x - LinkedLayer.Position.X) / LinkedLayer.Size.X;
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if (LinkedLayer != null)
-            x = (x - LinkedLayer.Position.X) / LinkedLayer.Size.Width - 1;
+            x = (x - LinkedLayer.Position.X) / LinkedLayer.Size.X - 1;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if (LinkedLayer != null)
-            x = (x - LinkedLayer.Position.X + this.Size.Width) / LinkedLayer.Size.Width;
+            x = (x - LinkedLayer.Position.X + this.Size.X) / LinkedLayer.Size.X;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if (LinkedLayer != null)
-            x = (x - LinkedLayer.Position.X + this.Size.Width) / LinkedLayer.Size.Width - 1;
+            x = (x - LinkedLayer.Position.X + this.Size.X) / LinkedLayer.Size.X - 1;
           break;
       }
 
@@ -1797,19 +1810,19 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if (LinkedLayer != null)
-            y = (y - LinkedLayer.Position.Y) / LinkedLayer.Size.Height;
+            y = (y - LinkedLayer.Position.Y) / LinkedLayer.Size.Y;
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if (LinkedLayer != null)
-            y = (y - LinkedLayer.Position.Y) / LinkedLayer.Size.Height - 1;
+            y = (y - LinkedLayer.Position.Y) / LinkedLayer.Size.Y - 1;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if (LinkedLayer != null)
-            y = (y - LinkedLayer.Position.Y + this.Size.Height) / LinkedLayer.Size.Height;
+            y = (y - LinkedLayer.Position.Y + this.Size.Y) / LinkedLayer.Size.Y;
           break;
         case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if (LinkedLayer != null)
-            y = (y - LinkedLayer.Position.Y + this.Size.Height) / LinkedLayer.Size.Height - 1;
+            y = (y - LinkedLayer.Position.Y + this.Size.Y) / LinkedLayer.Size.Y - 1;
           break;
       }
 
@@ -1856,7 +1869,7 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if (null != LinkedLayer)
-            width *= LinkedLayer.Size.Width;
+            width *= LinkedLayer.Size.X;
           break;
       }
       return width;
@@ -1871,7 +1884,7 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if (null != LinkedLayer)
-            height *= LinkedLayer.Size.Height;
+            height *= LinkedLayer.Size.X;
           break;
       }
       return height;
@@ -1894,7 +1907,7 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if (null != LinkedLayer)
-            width /= LinkedLayer.Size.Width;
+            width /= LinkedLayer.Size.X;
           break;
       }
       return width;
@@ -1917,7 +1930,7 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if (null != LinkedLayer)
-            height /= LinkedLayer.Size.Height;
+            height /= LinkedLayer.Size.Y;
           break;
       }
       return height;
@@ -2338,17 +2351,17 @@ namespace Altaxo.Graph.Gdi
           PointF location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
           double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
-          float distance = 0;
+          double distance = 0;
           AxisStyle axisStyle = _axisStyles[id];
           if (null != axisStyle.AxisLineStyle)
             distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
-          float labelFontSize = 0;
+          double labelFontSize = 0;
           if (axisStyle.ShowMajorLabels)
             labelFontSize = Math.Max(labelFontSize, axisStyle.MajorLabelStyle.FontSize);
           if (axisStyle.ShowMinorLabels)
             labelFontSize = Math.Max(labelFontSize, axisStyle.MinorLabelStyle.FontSize);
-          const float scaleFontWidth = 4;
-          const float scaleFontHeight = 1.5f;
+          const double scaleFontWidth = 4;
+          const double scaleFontHeight = 1.5;
 
           if (-45 <= angle && angle <= 45)
           {
@@ -2384,7 +2397,7 @@ namespace Altaxo.Graph.Gdi
             distance += scaleFontWidth * labelFontSize;
           }
 
-          tg.Position = new PointF(location.X + distance * normDirection.X, location.Y + distance * normDirection.Y);
+          tg.Position = new PointD2D(location.X + distance * normDirection.X, location.Y + distance * normDirection.Y);
           tg.Text = newtitle;
           _axisStyles.AxisStyleEnsured(id).Title = tg;
         }

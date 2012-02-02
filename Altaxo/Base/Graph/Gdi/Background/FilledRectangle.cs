@@ -92,17 +92,17 @@ namespace Altaxo.Graph.Gdi.Background
 
 		#region IBackgroundStyle Members
 
-		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public RectangleD MeasureItem(System.Drawing.Graphics g, RectangleD innerArea)
 		{
 			return innerArea;
 		}
 
-		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
 		{
 			if (_brush != null)
 			{
 				_brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-				g.FillRectangle(_brush, innerArea);
+				g.FillRectangle(_brush, (RectangleF)innerArea);
 			}
 		}
 

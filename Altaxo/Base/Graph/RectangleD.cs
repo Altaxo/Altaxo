@@ -89,6 +89,14 @@ namespace Altaxo.Graph
       _h = height;
     }
 
+		public RectangleD(PointD2D position, PointD2D size)
+		{
+			_x = position.X;
+			_y = position.Y;
+			_w = size.X;
+			_h = size.Y;
+		}
+
     public static RectangleD Empty
     {
       get
@@ -97,8 +105,14 @@ namespace Altaxo.Graph
       }
     }
 
-		
-
+		public static RectangleD FromLTRB(PointD2D a, PointD2D b)
+		{
+			return new RectangleD(a.X,a.Y,b.X-a.X, b.Y-a.Y);
+		}
+		public static RectangleD FromLTRB(double ax, double ay, double bx, double by)
+		{
+			return new RectangleD(ax, ay, bx - ax, by - ay);
+		}
 
     public static bool operator ==(RectangleD p, RectangleD q)
     {
@@ -188,6 +202,26 @@ namespace Altaxo.Graph
       return p.X >= X && p.Y >= Y && p.X <= Right && p.Y <= Bottom;
     }
 
+
+		/// <summary>Inflates the rectangle by the specified values <paramref name="x"/> and <paramref name="y"/>.</summary>
+		/// <param name="x">The value used to inflate the rectangle in x-direction.</param>
+		/// <param name="y">The value used to inflate the rectangle in y-direction.</param>
+		public void Inflate(double x, double y)
+		{
+			this._x -= x;
+			this._w += x + x;
+			this._y -= y;
+			this._h += y + y;
+		}
+
+		/// <summary>Changes the location of the rectangle by the specified values for <paramref name="x"/> and <paramref name="y"/>.</summary>
+		/// <param name="x">The x offset.</param>
+		/// <param name="y">The y offset.</param>
+		public void Offset(double x, double y)
+		{
+			_x += x;
+			_y += y;
+		}
 
     /// <summary>
 		/// Expands this rectangle, so that it contains the point p.

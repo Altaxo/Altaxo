@@ -381,18 +381,18 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
 		/// <summary>The font size of the label.</summary>
-		public override float FontSize
+		public override double FontSize
 		{
 			get { return _font.Size; }
 			set
 			{
-				float oldValue = FontSize;
-				float newValue = Math.Max(0, value);
+				var oldValue = FontSize;
+				var newValue = Math.Max(0, value);
 
 				if (newValue != oldValue)
 				{
 					Font oldFont = _font;
-					_font = new Font(oldFont.FontFamily.Name, newValue, oldFont.Style, GraphicsUnit.World);
+					_font = new Font(oldFont.FontFamily.Name, (float)newValue, oldFont.Style, GraphicsUnit.World);
 					oldFont.Dispose();
 
 					OnChanged(); // Fire Changed event
@@ -614,14 +614,14 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 
-		public void AdjustRectangle(ref RectangleF r, StringAlignment horz, StringAlignment vert)
+		public void AdjustRectangle(ref RectangleD r, StringAlignment horz, StringAlignment vert)
 		{
 			switch (vert)
 			{
 				case StringAlignment.Near:
 					break;
 				case StringAlignment.Center:
-					r.Y -= 0.5f * r.Height;
+					r.Y -= 0.5 * r.Height;
 					break;
 				case StringAlignment.Far:
 					r.Y -= r.Height;
@@ -632,7 +632,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				case StringAlignment.Near:
 					break;
 				case StringAlignment.Center:
-					r.X -= 0.5f * r.Width;
+					r.X -= 0.5 * r.Width;
 					break;
 				case StringAlignment.Far:
 					r.X -= r.Width;
@@ -664,7 +664,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			G2DCoordinateSystem coordSyst,
 			ScaleWithTicks scaleWithTicks,
 			CSAxisInformation styleInfo,
-			float outerDistance,
+			double outerDistance,
 			bool useMinorTicks)
 		{
 			_cachedStyleID = styleInfo.Identifier;
@@ -682,9 +682,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			PointF outVector;
 			Logical3D outer;
-			//  float outerDistance = null == axisLineStyle ? 0 : axisLineStyle.GetOuterDistance(styleInfo.PreferedLabelSide);
-			float dist_x = outerDistance; // Distance from axis tick point to label
-			float dist_y = outerDistance; // y distance from axis tick point to label
+			var dist_x = outerDistance; // Distance from axis tick point to label
+			var dist_y = outerDistance; // y distance from axis tick point to label
 
 			// dist_x += this._font.SizeInPoints/3; // add some space to the horizontal direction in order to separate the chars a little from the ticks
 
@@ -730,25 +729,25 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
-			float emSize = _font.SizeInPoints;
+			double emSize = _font.SizeInPoints;
 			for (int i = 0; i < ticks.Length; i++)
 			{
 				double r = relpositions[i];
 
 				outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, styleInfo.PreferedLabelSide);
-				PointF tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-				PointF tickend = tickorg;
+				PointD2D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+				PointD2D tickend = tickorg;
 				tickend.X += outVector.X * outerDistance;
 				tickend.Y += outVector.Y * outerDistance;
 
 
-				SizeF msize = labels[i].Size;
-				PointF morg = tickend;
+				PointD2D msize = labels[i].Size;
+				PointD2D morg = tickend;
 
 				if (_automaticRotationShift)
 				{
 					double alpha = _rotation * Math.PI / 180 - Math.Atan2(outVector.Y, outVector.X);
-					double shift = msize.Height * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.Width + _font.SizeInPoints / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
+					double shift = msize.Y * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.X + _font.SizeInPoints / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
 					morg.X += (float)(outVector.X * shift);
 					morg.Y += (float)(outVector.Y * shift);
 				}
@@ -758,7 +757,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				}
 
 
-				RectangleF mrect = new RectangleF(morg, msize);
+				RectangleD mrect = new RectangleD(morg, msize);
 				if (_automaticRotationShift)
 					AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
 				else
@@ -777,14 +776,14 @@ namespace Altaxo.Graph.Gdi.Axis
 				g.MultiplyTransform(math);
 
 				if (this._backgroundStyle != null)
-					_backgroundStyle.Draw(g, new RectangleF(PointF.Empty, msize));
+					_backgroundStyle.Draw(g, new RectangleD(PointD2D.Empty, msize));
 
-				_brush.SetEnvironment(new RectangleF(PointF.Empty, msize), BrushX.GetEffectiveMaximumResolution(g, 1));
+				_brush.SetEnvironment(new RectangleD(PointD2D.Empty, msize), BrushX.GetEffectiveMaximumResolution(g, 1));
 				labels[i].Draw(g, _brush, new PointF(0, 0));
 				g.Restore(gs); // Restore the graphics state
 
 				helperPath.Reset();
-				helperPath.AddRectangle(new RectangleF(PointF.Empty, msize));
+				helperPath.AddRectangle(new RectangleF(PointF.Empty, (SizeF)msize));
 				helperPath.Transform(math);
 
 				_enclosingPath.AddPath(helperPath, true);

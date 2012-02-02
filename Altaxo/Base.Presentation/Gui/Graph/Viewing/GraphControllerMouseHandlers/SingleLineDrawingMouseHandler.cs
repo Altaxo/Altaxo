@@ -27,6 +27,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Input;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
@@ -41,9 +42,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
   {
     #region Member variables
 
-    protected GraphViewWpf _grac;
+    protected PresentationGraphController _grac;
 
-    protected PointF _currentMousePrintAreaCoord;
+    protected PointD2D _positionCurrentMouseInGraphCoordinates;
 
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
@@ -51,8 +52,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
     protected struct POINT
     {
-      public PointF printAreaCoord;
-      public PointF layerCoord;
+      public PointD2D GraphCoordinate;
+      public PointD2D LayerCoordinate;
     }
 
     protected POINT[] _Points = new POINT[2];
@@ -61,7 +62,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
     #endregion
 
-    public SingleLineDrawingMouseHandler(GraphViewWpf view)
+    public SingleLineDrawingMouseHandler(PresentationGraphController view)
     {
       this._grac = view;
 
@@ -86,13 +87,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       base.OnClick(position, e);
 
       // get the page coordinates (in Point (1/72") units)
-      //PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
-      PointF printAreaCoord = _currentMousePrintAreaCoord;
+      var graphCoord = _positionCurrentMouseInGraphCoordinates;
       // with knowledge of the current active layer, calculate the layer coordinates from them
-      PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
+      var layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
 
-      _Points[_currentPoint].layerCoord = layerCoord;
-      _Points[_currentPoint].printAreaCoord = printAreaCoord;
+      _Points[_currentPoint].LayerCoordinate = layerCoord;
+      _Points[_currentPoint].GraphCoordinate = graphCoord;
       _currentPoint++;
 
       if(2==_currentPoint)
@@ -109,11 +109,11 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseMove (position, e);
 
-			_currentMousePrintAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
+			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToGraphCoordinates(position);
 
       ModifyCurrentMousePrintAreaCoordinate();
 
-      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+      _grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
    
 
    
@@ -129,8 +129,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
         if(bShiftKey && _currentPoint>0)
         {
-          double x = _currentMousePrintAreaCoord.X - _Points[_currentPoint-1].printAreaCoord.X;
-          double y = _currentMousePrintAreaCoord.Y - _Points[_currentPoint-1].printAreaCoord.Y;
+          double x = _positionCurrentMouseInGraphCoordinates.X - _Points[_currentPoint-1].GraphCoordinate.X;
+          double y = _positionCurrentMouseInGraphCoordinates.Y - _Points[_currentPoint-1].GraphCoordinate.Y;
 
           double r = Math.Sqrt(x*x+y*y);
           double d = Math.Atan2(y,x);
@@ -141,8 +141,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
           x = r * Math.Cos(d);
           y = r * Math.Sin(d);
 
-          _currentMousePrintAreaCoord.X = (float)(x + _Points[_currentPoint-1].printAreaCoord.X);
-          _currentMousePrintAreaCoord.Y = (float)(y + _Points[_currentPoint-1].printAreaCoord.Y);
+          _positionCurrentMouseInGraphCoordinates.X = (x + _Points[_currentPoint-1].GraphCoordinate.X);
+          _positionCurrentMouseInGraphCoordinates.Y = (y + _Points[_currentPoint-1].GraphCoordinate.Y);
         }
       }
     }
@@ -157,22 +157,22 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       base.AfterPaint ( g);
 
       for(int i=1;i<this._currentPoint;i++)
-        g.DrawLine(Pens.Blue,_Points[i-1].printAreaCoord,_Points[i].printAreaCoord);
+				g.DrawLine(Pens.Blue, (PointF)_Points[i - 1].GraphCoordinate, (PointF)_Points[i].GraphCoordinate);
 
       if(_currentPoint>0)
-        g.DrawLine(Pens.Blue,_Points[_currentPoint-1].printAreaCoord,_currentMousePrintAreaCoord);
+        g.DrawLine(Pens.Blue,(PointF)_Points[_currentPoint-1].GraphCoordinate,(PointF)_positionCurrentMouseInGraphCoordinates);
       
     }
 
 
     protected virtual void FinishDrawing()
     {
-      LineShape go = new LineShape(_Points[0].layerCoord,_Points[1].layerCoord);
+      LineShape go = new LineShape(_Points[0].LayerCoordinate,_Points[1].LayerCoordinate);
 
       // deselect the text tool
 			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
       _grac.ActiveLayer.GraphObjects.Add(go);
-      _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+      _grac.InvalidateCachedGraphImageAndRepaintOffline();
       
     }
 

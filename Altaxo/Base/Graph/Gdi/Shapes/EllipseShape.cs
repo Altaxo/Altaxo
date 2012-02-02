@@ -104,39 +104,39 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public EllipseShape(PointF graphicPosition)
+		public EllipseShape(PointD2D graphicPosition)
 			:
 			this()
 		{
 			this.SetPosition(graphicPosition);
 		}
-		public EllipseShape(float posX, float posY)
+		public EllipseShape(double posX, double posY)
 			:
-			this(new PointF(posX, posY))
+			this(new PointD2D(posX, posY))
 		{
 		}
 
-		public EllipseShape(PointF graphicPosition, SizeF graphicSize)
+		public EllipseShape(PointD2D graphicPosition, PointD2D graphicSize)
 			:
 			this(graphicPosition)
 		{
 
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.Y);
 		}
 
-		public EllipseShape(float posX, float posY, SizeF graphicSize)
+		public EllipseShape(double posX, double posY, PointD2D graphicSize)
 			:
-			this(new PointF(posX, posY), graphicSize)
+			this(new PointD2D(posX, posY), graphicSize)
 		{
 		}
 
-		public EllipseShape(float posX, float posY, float width, float height)
+		public EllipseShape(double posX, double posY, double width, double height)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height))
+			this(new PointD2D(posX, posY), new PointD2D(width, height))
 		{
 		}
 
-		public EllipseShape(PointF graphicPosition, float Rotation)
+		public EllipseShape(PointD2D graphicPosition, double Rotation)
 			:
 			this()
 		{
@@ -144,28 +144,28 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.Rotation = Rotation;
 		}
 
-		public EllipseShape(float posX, float posY, float Rotation)
+		public EllipseShape(double posX, double posY, double Rotation)
 			:
-			this(new PointF(posX, posY), Rotation)
+			this(new PointD2D(posX, posY), Rotation)
 		{
 		}
 
-		public EllipseShape(PointF graphicPosition, SizeF graphicSize, float Rotation)
+		public EllipseShape(PointD2D graphicPosition, PointD2D graphicSize, double Rotation)
 			:
 			this(graphicPosition, Rotation)
 		{
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.Y);
 		}
 
-		public EllipseShape(float posX, float posY, SizeF graphicSize, float Rotation)
+		public EllipseShape(double posX, double posY, PointD2D graphicSize, double Rotation)
 			:
-			this(new PointF(posX, posY), graphicSize, Rotation)
+			this(new PointD2D(posX, posY), graphicSize, Rotation)
 		{
 		}
 
-		public EllipseShape(float posX, float posY, float width, float height, float Rotation)
+		public EllipseShape(double posX, double posY, double width, double height, double Rotation)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height), Rotation)
+			this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation)
 		{
 		}
 

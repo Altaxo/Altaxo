@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	/// </summary>
 	public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
 	{
-		public ArrowLineDrawingMouseHandler(GraphViewWpf grac)
+		public ArrowLineDrawingMouseHandler(PresentationGraphController grac)
 			: base(grac)
 		{
 			if (_grac != null)
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected override void FinishDrawing()
 		{
-			LineShape go = new LineShape(_Points[0].layerCoord, _Points[1].layerCoord);
+			LineShape go = new LineShape(_Points[0].LayerCoordinate, _Points[1].LayerCoordinate);
 			//go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
 			LineCapEx cap = LineCapEx.FromName("ArrowF10");
 			cap.Size = 10;
@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 			_grac.ActiveLayer.GraphObjects.Add(go);
-			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 
 		}
 	}

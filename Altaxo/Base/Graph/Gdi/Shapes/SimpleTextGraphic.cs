@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			base.CopyFrom(bfrom);
 		}
 
-		public SimpleTextGraphic(PointF graphicPosition, string text,
+		public SimpleTextGraphic(PointD2D graphicPosition, string text,
 			Font textFont, Color textColor)
 		{
 			this.SetPosition(graphicPosition);
@@ -114,25 +114,25 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		public SimpleTextGraphic(float posX, float posY,
+		public SimpleTextGraphic(double posX, double posY,
 			string text, Font textFont, Color textColor)
-			: this(new PointF(posX, posY), text, textFont, textColor)
+			: this(new PointD2D(posX, posY), text, textFont, textColor)
 		{
 		}
 
-		public SimpleTextGraphic(PointF graphicPosition,
+		public SimpleTextGraphic(PointD2D graphicPosition,
 			string text, Font textFont,
-			Color textColor, float Rotation)
+			Color textColor, double Rotation)
 			: this(graphicPosition, text, textFont, textColor)
 		{
 			this.Rotation = Rotation;
 		}
 
-		public SimpleTextGraphic(float posX, float posY,
+		public SimpleTextGraphic(double posX, double posY,
 			string text,
 			Font textFont,
-			Color textColor, float Rotation)
-			: this(new PointF(posX, posY), text, textFont, textColor, Rotation)
+			Color textColor, double Rotation)
+			: this(new PointD2D(posX, posY), text, textFont, textColor, Rotation)
 		{
 		}
 
@@ -211,7 +211,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (this.AutoSize)
 			{
-				SizeF mySize = g.MeasureString(_text, _font);
+				var mySize = g.MeasureString(_text, _font);
 				this.Width = mySize.Width;
 				this.Height = mySize.Height;
 				g.DrawString(_text, _font, new SolidBrush(_color), 0, 0, strfmt);

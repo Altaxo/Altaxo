@@ -291,7 +291,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <param name="layer">The layer in which this plot item is drawn into.</param>
 		/// <param name="hitpoint">The point where the mouse is pressed.</param>
 		/// <returns>The information about the point that is nearest to the location, or null if it can not be determined.</returns>
-		public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, PointF hitpoint)
+		public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, PointD2D hitpoint)
 		{
 
 

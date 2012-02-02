@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public RectangleDrawingMouseHandler(GraphViewWpf grac)
+    public RectangleDrawingMouseHandler(PresentationGraphController grac)
       : base(grac)
     {
       
@@ -53,13 +53,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
     protected override void FinishDrawing()
     {
-      RectangleF rect = GetNormalRectangle(_Points[0].layerCoord,_Points[1].layerCoord);
+      var rect = GetNormalRectangle(_Points[0].LayerCoordinates,_Points[1].LayerCoordinates);
       RectangleShape go =  new RectangleShape(rect.X,rect.Y,rect.Width,rect.Height);
 
       // deselect the text tool
 			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
       _grac.ActiveLayer.GraphObjects.Add(go);
-      _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+      _grac.InvalidateCachedGraphImageAndRepaintOffline();
     }
  
   }

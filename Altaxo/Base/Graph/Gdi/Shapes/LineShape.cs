@@ -150,17 +150,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public LineShape(PointF startPosition)
+		public LineShape(PointD2D startPosition)
 		{
 			this.Position = startPosition;
 		}
 
-		public LineShape(float posX, float posY)
-			: this(new PointF(posX, posY))
+		public LineShape(double posX, double posY)
+			: this(new PointD2D(posX, posY))
 		{
 		}
 
-		public LineShape(PointF startPosition, PointF endPosition)
+		public LineShape(PointD2D startPosition, PointD2D endPosition)
 			:
 			this(startPosition)
 		{
@@ -169,33 +169,33 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		public LineShape(float startX, float startY, PointF endPosition)
+		public LineShape(double startX, double startY, PointD2D endPosition)
 			:
-			this(new PointF(startX, startY), endPosition)
+			this(new PointD2D(startX, startY), endPosition)
 		{
 		}
 
-		public LineShape(float startX, float startY, float endX, float endY)
+		public LineShape(double startX, double startY, double endX, double endY)
 			:
-			this(new PointF(startX, startY), new PointF(endX, endY))
+			this(new PointD2D(startX, startY), new PointD2D(endX, endY))
 		{
 		}
 
-		public LineShape(PointF startPosition, PointF endPosition, float lineWidth, NamedColor lineColor)
+		public LineShape(PointD2D startPosition, PointD2D endPosition, double lineWidth, NamedColor lineColor)
 			:
 			this(startPosition)
 		{
 			this._bounds.Width = endPosition.X - startPosition.X;
 			this._bounds.Height = endPosition.Y - startPosition.Y;
-			this.Pen.Width = lineWidth;
+			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;
 		}
 
-		public LineShape(float startX, float startY, float endX, float endY, float lineWidth, NamedColor lineColor)
+		public LineShape(double startX, double startY, double endX, double endY, double lineWidth, NamedColor lineColor)
 			:
-			this(new PointF(startX, startY), new PointF(endX, endY))
+			this(new PointD2D(startX, startY), new PointD2D(endX, endY))
 		{
-			this.Pen.Width = lineWidth;
+			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;
 		}
 

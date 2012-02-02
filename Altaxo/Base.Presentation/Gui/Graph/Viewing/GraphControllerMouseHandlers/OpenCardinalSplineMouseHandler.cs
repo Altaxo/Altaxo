@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
@@ -44,7 +45,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected GraphViewWpf _grac;
 
-		protected PointF _currentMousePrintAreaCoord;
+		protected PointD2D _positionCurrentMouseInGraphCoordinates;
 
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
@@ -52,8 +53,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected struct POINT
 		{
-			public PointF printAreaCoord;
-			public PointF layerCoord;
+			public PointD2D GraphCoord;
+			public PointD2D LayerCoord;
 		}
 
 		protected List<POINT> _Points = new List<POINT>();
@@ -89,10 +90,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			base.OnClick(position, e);
 
 			// get the page coordinates (in Point (1/72") units)
-			//PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
-			PointF printAreaCoord = _currentMousePrintAreaCoord;
+			var graphCoord = _positionCurrentMouseInGraphCoordinates;
 			// with knowledge of the current active layer, calculate the layer coordinates from them
-			PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
+			var layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
 
 			if (e.ChangedButton == MouseButton.Right)
 			{
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 			else
 			{
-				_Points.Add(new POINT() { layerCoord = layerCoord, printAreaCoord = printAreaCoord });
+				_Points.Add(new POINT() { LayerCoord = layerCoord, GraphCoord = graphCoord });
 				_currentPoint++;
 			}
 
@@ -111,11 +111,11 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnMouseMove(position, e);
 
-			_currentMousePrintAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
+			_positionCurrentMouseInGraphCoordinates = _grac.Controller.ConvertMouseToGraphCoordinates(position);
 
 			ModifyCurrentMousePrintAreaCoordinate();
 
-			_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+			_grac.Controller.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 		}
 
 		public override void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -135,12 +135,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				case Key.OemPlus:
 					_tension *= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
-					_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+					_grac.Controller.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 					return true;
 				case Key.OemMinus:
 					_tension /= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
-					_grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+					_grac.Controller.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 					return true;
 			}
 
@@ -157,8 +157,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 				if (bShiftKey && _currentPoint > 0)
 				{
-					double x = _currentMousePrintAreaCoord.X - _Points[_currentPoint - 1].printAreaCoord.X;
-					double y = _currentMousePrintAreaCoord.Y - _Points[_currentPoint - 1].printAreaCoord.Y;
+					double x = _positionCurrentMouseInGraphCoordinates.X - _Points[_currentPoint - 1].GraphCoord.X;
+					double y = _positionCurrentMouseInGraphCoordinates.Y - _Points[_currentPoint - 1].GraphCoord.Y;
 
 					double r = Math.Sqrt(x * x + y * y);
 					double d = Math.Atan2(y, x);
@@ -169,8 +169,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					x = r * Math.Cos(d);
 					y = r * Math.Sin(d);
 
-					_currentMousePrintAreaCoord.X = (float)(x + _Points[_currentPoint - 1].printAreaCoord.X);
-					_currentMousePrintAreaCoord.Y = (float)(y + _Points[_currentPoint - 1].printAreaCoord.Y);
+					_positionCurrentMouseInGraphCoordinates.X = (x + _Points[_currentPoint - 1].GraphCoord.X);
+					_positionCurrentMouseInGraphCoordinates.Y = (y + _Points[_currentPoint - 1].GraphCoord.Y);
 				}
 			}
 		}
@@ -187,8 +187,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			PointF[] pts = new PointF[_Points.Count + 1];
 			for (int i = 0; i < _Points.Count; i++)
-				pts[i] = _Points[i].printAreaCoord;
-			pts[_Points.Count] = _currentMousePrintAreaCoord;
+				pts[i] = (PointF)_Points[i].GraphCoord;
+			pts[_Points.Count] = (PointF)_positionCurrentMouseInGraphCoordinates;
 
 			if(pts.Length>=2)
 			g.DrawCurve(Pens.Blue, pts, (float)_tension);
@@ -206,13 +206,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected virtual void FinishDrawing()
 		{
 			_currentPoint = 0;
-			var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.layerCoord);
+			var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoord);
 			var go = new OpenCardinalSpline(pts,_tension);
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(NextMouseHandlerType);
 			_grac.ActiveLayer.GraphObjects.Add(go);
-			_grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+			_grac.Controller.InvalidateCachedGraphImageAndRepaintOffline();
 
 		}
 

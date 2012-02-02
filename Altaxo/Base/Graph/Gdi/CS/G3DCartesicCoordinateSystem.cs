@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Gdi.CS
 		/// Updates the internal storage of the rectangular area size to a new value.
 		/// </summary>
 		/// <param name="size">The new size.</param>
-		public override void UpdateAreaSize(System.Drawing.SizeF size)
+		public override void UpdateAreaSize(PointD2D size)
 		{
 			base.UpdateAreaSize(size);
 			UpdateProjectionMatrix();

@@ -162,10 +162,10 @@ namespace Altaxo.Graph.Gdi
 		/// Updates the internal storage of the rectangular area size to a new value.
 		/// </summary>
 		/// <param name="size">The new size.</param>
-		public virtual void UpdateAreaSize(System.Drawing.SizeF size)
+		public virtual void UpdateAreaSize(PointD2D size)
 		{
-			_layerWidth = size.Width;
-			_layerHeight = size.Height;
+			_layerWidth = size.X;
+			_layerHeight = size.Y;
 		}
 
 

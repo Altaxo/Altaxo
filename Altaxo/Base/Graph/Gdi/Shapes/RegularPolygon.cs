@@ -113,40 +113,40 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public RegularPolygon(PointF graphicPosition)
+		public RegularPolygon(PointD2D graphicPosition)
 			:
 			this()
 		{
 			this.SetPosition(graphicPosition);
 		}
 
-		public RegularPolygon(float posX, float posY)
+		public RegularPolygon(double posX, double posY)
 			:
-			this(new PointF(posX, posY))
+			this(new PointD2D(posX, posY))
 		{
 		}
 
 
-		public RegularPolygon(PointF graphicPosition, SizeF graphicSize)
+		public RegularPolygon(PointD2D graphicPosition, PointD2D graphicSize)
 			:
 			this(graphicPosition)
 		{
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.Y);
 		}
 
-		public RegularPolygon(float posX, float posY, SizeF graphicSize)
+		public RegularPolygon(double posX, double posY, PointD2D graphicSize)
 			:
-			this(new PointF(posX, posY), graphicSize)
+			this(new PointD2D(posX, posY), graphicSize)
 		{
 		}
 
-		public RegularPolygon(float posX, float posY, float width, float height)
+		public RegularPolygon(double posX, double posY, double width, double height)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height))
+			this(new PointD2D(posX, posY), new PointD2D(width, height))
 		{
 		}
 
-		public RegularPolygon(PointF graphicPosition, float Rotation)
+		public RegularPolygon(PointD2D graphicPosition, double Rotation)
 			:
 			this()
 		{
@@ -155,38 +155,38 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.Rotation = Rotation;
 		}
 
-		public RegularPolygon(float posX, float posY, float Rotation)
+		public RegularPolygon(double posX, double posY, double Rotation)
 			:
-			this(new PointF(posX, posY), Rotation)
+			this(new PointD2D(posX, posY), Rotation)
 		{
 		}
 
-		public RegularPolygon(PointF graphicPosition, SizeF graphicSize, float Rotation)
+		public RegularPolygon(PointD2D graphicPosition, PointD2D graphicSize, double Rotation)
 			:
 			this(graphicPosition, Rotation)
 		{
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.Y);
 		}
 
-		public RegularPolygon(float posX, float posY, SizeF graphicSize, float Rotation)
+		public RegularPolygon(double posX, double posY, PointD2D graphicSize, double Rotation)
 			:
-			this(new PointF(posX, posY), graphicSize, Rotation)
+			this(new PointD2D(posX, posY), graphicSize, Rotation)
 		{
 		}
 
-		public RegularPolygon(float posX, float posY, float width, float height, float Rotation)
+		public RegularPolygon(double posX, double posY, double width, double height, double Rotation)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height), Rotation)
+			this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation)
 		{
 		}
 
-		static void Exchange(ref float x, ref float y)
+		static void Exchange(ref double x, ref double y)
 		{
-			float h = x;
+			double h = x;
 			x = y;
 			y = h;
 		}
-		public static RegularPolygon FromLTRB(float left, float top, float right, float bottom)
+		public static RegularPolygon FromLTRB(double left, double top, double right, double bottom)
 		{
 			if (left > right)
 				Exchange(ref left, ref right);

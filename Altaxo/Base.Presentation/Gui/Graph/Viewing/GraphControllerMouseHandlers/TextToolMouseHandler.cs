@@ -41,9 +41,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class TextToolMouseHandler : MouseStateHandler
   {
-    GraphViewWpf _grac;
+    PresentationGraphController _grac;
 
-    public TextToolMouseHandler(GraphViewWpf grac)
+    public TextToolMouseHandler(PresentationGraphController grac)
     {
       _grac = grac;
       if(_grac!=null)
@@ -67,9 +67,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       base.OnClick(position, e);
 
       // get the page coordinates (in Point (1/72") units)
-			PointF printAreaCoord = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(m_LastMouseDown);
+			var graphCoord = _grac.ConvertMouseToGraphCoordinates(_positionLastMouseDownInMouseCoordinates);
       // with knowledge of the current active layer, calculate the layer coordinates from them
-      PointF layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(printAreaCoord);
+      var layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
 
       TextGraphic tgo = new TextGraphic();
       tgo.Position = layerCoord;
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
         if (tgo!=null && !tgo.Empty)
         {
           _grac.ActiveLayer.GraphObjects.Add(tgo);
-          _grac.GuiController.InvalidateCachedGraphImageAndRepaintOffline();
+          _grac.InvalidateCachedGraphImageAndRepaintOffline();
         }
       }
 

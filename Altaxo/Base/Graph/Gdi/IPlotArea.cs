@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Returns the size of the rectangular layer area.
 		/// </summary>
-		SizeF Size { get; }
+		PointD2D Size { get; }
 
 		Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
 

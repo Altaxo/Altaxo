@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public LinkedImageGraphic(PointF graphicPosition, string ImagePath)
+		public LinkedImageGraphic(PointD2D graphicPosition, string ImagePath)
 			:
 			this()
 		{
@@ -89,58 +89,58 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.ImagePath = ImagePath;
 		}
 
-		public LinkedImageGraphic(float posX, float posY, string ImagePath)
+		public LinkedImageGraphic(double posX, double posY, string ImagePath)
 			:
-			this(new PointF(posX, posY), ImagePath)
+			this(new PointD2D(posX, posY), ImagePath)
 		{
 		}
-		public LinkedImageGraphic(PointF graphicPosition, SizeF graphicSize, string ImagePath)
+		public LinkedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, string ImagePath)
 			:
 			this(graphicPosition, ImagePath)
 		{
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.X);
 		}
 
-		public LinkedImageGraphic(float posX, float posY, SizeF graphicSize, string ImagePath)
+		public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, string ImagePath)
 			:
-			this(new PointF(posX, posY), graphicSize, ImagePath)
+			this(new PointD2D(posX, posY), graphicSize, ImagePath)
 		{
 		}
-		public LinkedImageGraphic(float posX, float posY, float width, float height, string ImagePath)
+		public LinkedImageGraphic(double posX, double posY, double width, double height, string ImagePath)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height), ImagePath)
+			this(new PointD2D(posX, posY), new PointD2D(width, height), ImagePath)
 		{
 		}
 
-		public LinkedImageGraphic(PointF graphicPosition, float Rotation, string ImagePath)
+		public LinkedImageGraphic(PointD2D graphicPosition, double Rotation, string ImagePath)
 			:
 			this(graphicPosition, ImagePath)
 		{
 			this.Rotation = Rotation;
 		}
 
-		public LinkedImageGraphic(float posX, float posY, float Rotation, string ImagePath)
+		public LinkedImageGraphic(double posX, double posY, double Rotation, string ImagePath)
 			:
-			this(new PointF(posX, posY), Rotation, ImagePath)
+			this(new PointD2D(posX, posY), Rotation, ImagePath)
 		{
 		}
 
-		public LinkedImageGraphic(PointF graphicPosition, SizeF graphicSize, float Rotation, string ImagePath)
+		public LinkedImageGraphic(PointD2D graphicPosition, PointD2D graphicSize, double Rotation, string ImagePath)
 			:
 			this(graphicPosition, Rotation, ImagePath)
 		{
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.X);
 		}
 
-		public LinkedImageGraphic(float posX, float posY, SizeF graphicSize, float Rotation, string ImagePath)
+		public LinkedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, string ImagePath)
 			:
-			this(new PointF(posX, posY), graphicSize, Rotation, ImagePath)
+			this(new PointD2D(posX, posY), graphicSize, Rotation, ImagePath)
 		{
 		}
 
-		public LinkedImageGraphic(float posX, float posY, float width, float height, float Rotation, string ImagePath)
+		public LinkedImageGraphic(double posX, double posY, double width, double height, double Rotation, string ImagePath)
 			:
-			this(new PointF(posX, posY), new SizeF(width, height), Rotation, ImagePath)
+			this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation, ImagePath)
 		{
 		}
 
@@ -212,8 +212,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				if (this.AutoSize)
 				{
-					float myNewWidth = (myImage.Width / myImage.HorizontalResolution) * g.DpiX;
-					float myNewHeight = (myImage.Height / myImage.VerticalResolution) * g.DpiY;
+					double myNewWidth = (myImage.Width / myImage.HorizontalResolution) * g.DpiX;
+					double myNewHeight = (myImage.Height / myImage.VerticalResolution) * g.DpiY;
 					this.Height = myNewHeight;
 					this.Width = myNewWidth;
 				}

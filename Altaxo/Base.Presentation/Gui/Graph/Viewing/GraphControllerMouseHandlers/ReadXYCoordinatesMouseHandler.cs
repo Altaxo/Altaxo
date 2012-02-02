@@ -47,21 +47,21 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Coordinates of the red data reader cross (in printable coordinates)
     /// </summary>
-    protected PointF m_Cross;
+    protected PointD2D _positionOfCrossInGraphCoordinates;
 
     /// <summary>
     /// The parent graph controller.
     /// </summary>
-    protected GraphViewWpf _grac;
+    protected PresentationGraphController _grac;
 
-    protected float _MovementIncrement=4;
+    protected double _MovementIncrement=4;
 
     /// <summary>
     /// If true, the tool show the printable coordinates instead of the physical values.
     /// </summary>
     protected bool _showPrintableCoordinates;
 
-    public ReadXYCoordinatesMouseHandler(GraphViewWpf grac)
+    public ReadXYCoordinatesMouseHandler(PresentationGraphController grac)
     {
       _grac = grac;
 
@@ -86,24 +86,24 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) // if M is pressed, we don't move the cross, but instead we display not only the cross coordinates but also the differenz
 			{
-				var printableCoord = _grac.GuiController.ConvertMouseToGraphCoordinates(position);
-				DisplayCrossCoordinatesAndDifference((PointF)printableCoord);
+				var printableCoord = _grac.ConvertMouseToGraphCoordinates(position);
+				DisplayCrossCoordinatesAndDifference(printableCoord);
 
 			}
 			else
 			{
-				m_Cross = (PointF)_grac.GuiController.ConvertMouseToGraphCoordinates(position);
+				_positionOfCrossInGraphCoordinates = _grac.ConvertMouseToGraphCoordinates(position);
 				DisplayCrossCoordinates();
 			}
 
       
-      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+      _grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
          
      
     } // end of function
 
 
-		bool CalculateCrossCoordinates(PointF cross, out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
+		bool CalculateCrossCoordinates(PointD2D cross, out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
 		{
 			XYPlotLayer layer = _grac.ActiveLayer;
 			if (layer == null)
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				return false;
 			}
 
-			PointF layerXY = layer.GraphToLayerCoordinates(cross);
+			var layerXY = layer.GraphToLayerCoordinates(cross);
 
 
 
@@ -131,13 +131,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
         Current.DataDisplay.WriteOneLine(string.Format(
         "Layer({0}) XS={1}, YS={2}",
         _grac.ActiveLayer.Number,
-        m_Cross.X,
-        m_Cross.Y));
+        _positionOfCrossInGraphCoordinates.X,
+        _positionOfCrossInGraphCoordinates.Y));
       }
       else
       {
         AltaxoVariant xphys, yphys;
-        if (CalculateCrossCoordinates(m_Cross, out xphys, out  yphys))
+        if (CalculateCrossCoordinates(_positionOfCrossInGraphCoordinates, out xphys, out  yphys))
           Current.DataDisplay.WriteOneLine(string.Format(
          "Layer({0}) X={1}, Y={2}",
          _grac.ActiveLayer.Number,
@@ -146,20 +146,20 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       }
     }
 
-		void DisplayCrossCoordinatesAndDifference(PointF printableAreaCoords)
+		void DisplayCrossCoordinatesAndDifference(PointD2D printableAreaCoords)
 		{
 			if (_showPrintableCoordinates)
 			{
 				Current.DataDisplay.WriteTwoLines(
-					string.Format("Layer({0}) XS={1}, YS={2}",_grac.ActiveLayer.Number,	m_Cross.X, m_Cross.Y),
-					string.Format("DeltaX={0}, DeltaY={1}, Distance={2}", printableAreaCoords.X-m_Cross.X, printableAreaCoords.Y-m_Cross.Y, Calc.RMath.Hypot(printableAreaCoords.X-m_Cross.X, printableAreaCoords.Y-m_Cross.Y))
+					string.Format("Layer({0}) XS={1}, YS={2}",_grac.ActiveLayer.Number,	_positionOfCrossInGraphCoordinates.X, _positionOfCrossInGraphCoordinates.Y),
+					string.Format("DeltaX={0}, DeltaY={1}, Distance={2}", printableAreaCoords.X-_positionOfCrossInGraphCoordinates.X, printableAreaCoords.Y-_positionOfCrossInGraphCoordinates.Y, Calc.RMath.Hypot(printableAreaCoords.X-_positionOfCrossInGraphCoordinates.X, printableAreaCoords.Y-_positionOfCrossInGraphCoordinates.Y))
 					);
 			}
 			else
 			{
 				AltaxoVariant xphys, yphys;
 				AltaxoVariant xphys2, yphys2;
-				if (CalculateCrossCoordinates(m_Cross, out xphys, out  yphys) && CalculateCrossCoordinates(printableAreaCoords, out xphys2, out yphys2))
+				if (CalculateCrossCoordinates(_positionOfCrossInGraphCoordinates, out xphys, out  yphys) && CalculateCrossCoordinates(printableAreaCoords, out xphys2, out yphys2))
 				{
 					double distance=double.NaN;
 					AltaxoVariant dx=double.NaN, dy=double.NaN;
@@ -189,28 +189,28 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// Moves the cross along the plot.
     /// </summary>
     /// <param name="increment"></param>
-    void MoveLeftRight(float increment)
+    void MoveLeftRight(double increment)
     {
       
-      m_Cross.X += increment;
+      _positionOfCrossInGraphCoordinates.X += increment;
 
       DisplayCrossCoordinates();
 
-      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+      _grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
     }
 
     /// <summary>
     /// Moves the cross to the next plot item. If no plot item is found in this layer, it moves the cross to the next layer.
     /// </summary>
     /// <param name="increment"></param>
-    void MoveUpDown(float increment)
+    void MoveUpDown(double increment)
     {
       
-      m_Cross.Y += increment;
+      _positionOfCrossInGraphCoordinates.Y += increment;
 
       DisplayCrossCoordinates();
 
-      _grac.GuiController.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+      _grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
 
       
     }
@@ -225,10 +225,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       base.AfterPaint (g);
       // draw a red cross onto the selected data point
 
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X+1,m_Cross.Y,m_Cross.X+10,m_Cross.Y);
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X-1,m_Cross.Y,m_Cross.X-10,m_Cross.Y);
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y+1,m_Cross.X,m_Cross.Y+10);
-      g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y-1,m_Cross.X,m_Cross.Y-10);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X + 1, (float)_positionOfCrossInGraphCoordinates.Y, (float)_positionOfCrossInGraphCoordinates.X + 10, (float)_positionOfCrossInGraphCoordinates.Y);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X - 1, (float)_positionOfCrossInGraphCoordinates.Y, (float)_positionOfCrossInGraphCoordinates.X - 10, (float)_positionOfCrossInGraphCoordinates.Y);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y + 1, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y + 10);
+			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y - 1, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y - 10);
     }
 
 
@@ -286,12 +286,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       {
         if (_showPrintableCoordinates)
         {
-          Current.Console.WriteLine("{0}\t{1}", m_Cross.X, m_Cross.Y);
+          Current.Console.WriteLine("{0}\t{1}", _positionOfCrossInGraphCoordinates.X, _positionOfCrossInGraphCoordinates.Y);
         }
         else
         {
           AltaxoVariant xphys, yphys;
-          if (CalculateCrossCoordinates(m_Cross, out xphys, out  yphys))
+          if (CalculateCrossCoordinates(_positionOfCrossInGraphCoordinates, out xphys, out  yphys))
             Current.Console.WriteLine("{0}\t{1}", xphys, yphys);
         }
         return true;

@@ -169,10 +169,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 
-		public DensityImageLegend(DensityImagePlotItem plotItem, PointF initialLocation, SizeF graphicSize)
+		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize)
 		{
 			this._position = initialLocation;
-			this.SetSize(graphicSize.Width, graphicSize.Height);
+			this.SetSize(graphicSize.X, graphicSize.Y);
 
 			_plotItemProxy = new Main.RelDocNodeProxy();
 			WirePlotItemProxyEvents();
@@ -362,7 +362,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 			// Update the coordinate system size to meet the size of the graph item
-			_cachedArea.CoordinateSystem.UpdateAreaSize((SizeF)Size);
+			_cachedArea.CoordinateSystem.UpdateAreaSize(Size);
 
 			Data.AltaxoVariant porg;
 			Data.AltaxoVariant pend;
@@ -514,7 +514,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_coordinateSystem = new Altaxo.Graph.Gdi.CS.G2DCartesicCoordinateSystem();
 				_coordinateSystem.IsXYInterchanged = isXYInterchanged;
 				_coordinateSystem.IsXReverse = isXReversed;
-				_coordinateSystem.UpdateAreaSize((SizeF)_size);
+				_coordinateSystem.UpdateAreaSize(_size);
 			}
 
 			public DensityLegendArea(DensityLegendArea from)
@@ -551,9 +551,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				get { return _coordinateSystem; }
 			}
 
-			public SizeF Size
+			public PointD2D Size
 			{
-				get { return (SizeF)_size; }
+				get { return _size; }
 				set { _size = value; }
 			}
 

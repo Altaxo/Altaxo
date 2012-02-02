@@ -40,9 +40,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	public abstract class MouseStateHandler
 	{
 		/// <summary>Stores the mouse position of the last mouse up event.</summary>
-		protected Altaxo.Graph.PointD2D m_LastMouseUp;
+		protected Altaxo.Graph.PointD2D _positionLastMouseUpInMouseCoordinates;
 		/// <summary>Stores the mouse position of the last mouse down event.</summary>
-		protected Altaxo.Graph.PointD2D m_LastMouseDown;
+		protected Altaxo.Graph.PointD2D _positionLastMouseDownInMouseCoordinates;
 
 		public abstract Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType { get; }
 
@@ -58,25 +58,25 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		}
 
 		/// <summary>
-		/// Handles the mouse up event. Stores the position of the mouse into <see cref="m_LastMouseUp"/>.
+		/// Handles the mouse up event. Stores the position of the mouse into <see cref="_positionLastMouseUpInMouseCoordinates"/>.
 		/// </summary>
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseUp(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
 		{
-			m_LastMouseUp = position;
+			_positionLastMouseUpInMouseCoordinates = position;
 		}
 
 		/// <summary>
-		/// Handles the mouse down event. Stores the position of the mouse into <see cref="m_LastMouseDown"/>.
+		/// Handles the mouse down event. Stores the position of the mouse into <see cref="_positionLastMouseDownInMouseCoordinates"/>.
 		/// </summary>
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
 		{
-			m_LastMouseDown = position;
+			_positionLastMouseDownInMouseCoordinates = position;
 
 		}
 

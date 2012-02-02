@@ -48,18 +48,12 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private WeakReference _controller = new WeakReference(null);
 
-		private Altaxo.Gui.Graph.Viewing.PresentationGraphController _guiController;
-
 		GdiToWpfBitmap _wpfGdiBitmap = new GdiToWpfBitmap(100,100);
 
 		public GraphViewWpf()
 		{
 			InitializeComponent();
 			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
-			_guiController = new PresentationGraphController(this);
-
-		
-
 		}
 
 		public virtual void Dispose()
@@ -70,59 +64,49 @@ namespace Altaxo.Gui.Graph.Viewing
 				_wpfGdiBitmap.Dispose();
 				_wpfGdiBitmap = null;
 			}
-			_guiController = null;
 			_controller = new WeakReference(null);
 		}
 
-		public Altaxo.Gui.Graph.Viewing.GraphController GC
+		public Altaxo.Gui.Graph.Viewing.PresentationGraphController Controller
 		{
 			get
 			{
-				return (Altaxo.Gui.Graph.Viewing.GraphController)_controller.Target;
+				return (Altaxo.Gui.Graph.Viewing.PresentationGraphController)_controller.Target;
 			}
 		}
 
-		public Altaxo.Gui.Graph.Viewing.PresentationGraphController GuiController
-		{
-			get
-			{
-				return _guiController;
-			}
-		}
-
-		public Altaxo.Graph.Gdi.GraphDocument Doc
-		{
-			get
-			{
-				var gc = GC;
-				return null != gc ? gc.Doc : null;
-			}
-		}
+		
 
 		public Altaxo.Graph.Gdi.XYPlotLayer ActiveLayer
 		{
 			get
 			{
-				var gc = GC;
+				var gc = Controller;
 				return null != gc ? gc.ActiveLayer : null;
 			}
+		}
+
+		public void FocusOnGraphPanel()
+		{
+			bool result = _graphPanel.Focus();
+			Keyboard.Focus(_graphPanel);
 		}
 
 		public void SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType value)
 		{
 
-			_guiController.GraphTool = value;
+			Controller.GraphTool = value;
 			bool result = _graphPanel.Focus();
 			Keyboard.Focus(_graphPanel);
 
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 				gc.EhView_CurrentGraphToolChanged();
 		}
 
 		public void SetActiveLayerFromInternal(int layerNumber)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if(null != gc)
 			gc.EhView_CurrentLayerChoosen(layerNumber, false);
 		}
@@ -203,48 +187,53 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private void EhGraphPanel_MouseMove(object sender, MouseEventArgs e)
 		{
-			if (null != _guiController)
-				_guiController.EhView_GraphPanelMouseMove(GetMousePosition(e),e);
+			var guiController = Controller;
+			if (null != guiController)
+				guiController.EhView_GraphPanelMouseMove(GetMousePosition(e),e);
 		}
 
 		private void EhGraphPanel_MouseDown(object sender, MouseButtonEventArgs e)
 		{
+			var guiController = Controller;
 			Keyboard.Focus(_graphPanel);
 			var pos = GetMousePosition(e);
-			if (null != _guiController)
+			if (null != guiController)
 			{
-				_guiController.EhView_GraphPanelMouseDown(pos, e);
+				guiController.EhView_GraphPanelMouseDown(pos, e);
 				if (e.ClickCount >= 2 && e.LeftButton == MouseButtonState.Pressed)
-					_guiController.EhView_GraphPanelMouseDoubleClick(pos, e);
+					guiController.EhView_GraphPanelMouseDoubleClick(pos, e);
 				else if (e.ClickCount == 1 && e.LeftButton == MouseButtonState.Pressed)
-					_guiController.EhView_GraphPanelMouseClick(pos, e);
+					guiController.EhView_GraphPanelMouseClick(pos, e);
 			}
 		}
 
 		private void EhGraphPanel_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			if (null != _guiController)
-				_guiController.EhView_GraphPanelMouseUp(GetMousePosition(e),e);
+			var guiController = Controller;
+			if (null != guiController)
+				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e),e);
 		}
 
 		private void EhGraphPanel_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
-			if (null != _guiController)
-				_guiController.EhView_GraphPanelMouseWheel(GetMousePosition(e), e);
+			var guiController = Controller;
+			if (null != guiController)
+				guiController.EhView_GraphPanelMouseWheel(GetMousePosition(e), e);
 		}
 
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (null != _guiController)
+			var guiController = Controller;
+			if (null != guiController)
 			{
-				bool result = _guiController.EhView_ProcessCmdKey(e);
+				bool result = guiController.EhView_ProcessCmdKey(e);
 				e.Handled = result;
 			}
 		}
 
 		private void EhGraphPanel_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 			{
 				int actWidth = (int)_graphPanel.ActualWidth;
@@ -292,14 +281,17 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			// TODO (Wpf) -> start a background thread which draws the image
 			// for the time being, we do the work directly
-			if (null != _guiController)
-				_guiController.InvalidateCachedGraphImage();
+			var guiController = Controller;
+			if (null != guiController)
+				guiController.InvalidateCachedGraphImage();
 			TriggerRenderingOfGraphArea();
 		}
 
 		protected override void OnRender(DrawingContext drawingContext)
 		{
-			_guiController.RepaintGraphAreaImmediately();
+			var guiController = Controller;
+			if(null!=guiController)
+				guiController.RepaintGraphAreaImmediately();
 			base.OnRender(drawingContext);
 		}
 
@@ -330,8 +322,8 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
 		{
-			var controller = _guiController;
-			_guiController = null; // suppress scrollbar events
+			var controller = _controller;
+			_controller = new WeakReference(null); // suppress scrollbar events
 
 			_horizontalScrollBar.IsEnabled = isEnabled;
 			_horizontalScrollBar.Maximum = maximum;
@@ -340,13 +332,13 @@ namespace Altaxo.Gui.Graph.Viewing
 			_horizontalScrollBar.LargeChange = largeIncrement;
 			_horizontalScrollBar.Value = value;
 
-			_guiController = controller;
+			_controller = controller;
 		}
 
 		public void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
 		{
-			var controller = _guiController;
-			_guiController = null; // suppress scrollbar events
+			var controller = _controller;
+			_controller = new WeakReference(null); // suppress scrollbar events
 
 			_verticalScrollBar.IsEnabled = isEnabled;
 			_verticalScrollBar.Maximum = maximum;
@@ -355,7 +347,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			_verticalScrollBar.LargeChange = largeIncrement;
 			_verticalScrollBar.Value = value;
 
-			_guiController = controller;
+			_controller = controller;
 		}
 
 		public int NumberOfLayers
@@ -394,7 +386,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		void EhLayerButton_Click(object sender, RoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 			{
 				int pushedLayerNumber = (int)((ButtonBase)sender).Tag;
@@ -405,11 +397,11 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		void EhLayerButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 			{
 				int i = (int)((ToggleButton)sender).Tag;
-				GC.EhView_ShowDataContextMenu(i, this, new System.Drawing.Point((int)e.CursorLeft, (int)e.CursorTop));
+				Controller.EhView_ShowDataContextMenu(i, this, new System.Drawing.Point((int)e.CursorLeft, (int)e.CursorTop));
 			}
 		}
 
@@ -437,7 +429,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get 
 			{
-				return _guiController.SelectedObjects;
+				var guiController = Controller;
+				return null!=guiController ? guiController.SelectedObjects : new List<Altaxo.Graph.Gdi.IHitTestObject>();
 			} 
 		}
 
@@ -445,11 +438,14 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return _guiController.GraphTool;
+				var guiController = Controller;
+				return null!=guiController ? guiController.GraphTool : GraphToolType.ObjectPointer;
 			}
 			set
 			{
-				_guiController.GraphTool = value;
+				var guiController = Controller;
+				if(null!=guiController)
+					guiController.GraphTool = value;
 			}
 		}
 
@@ -460,7 +456,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (e.ScrollEventType == ScrollEventType.ThumbTrack)
 				return;
 
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 				gc.EhView_Scroll();
 		}
@@ -470,42 +466,42 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (e.ScrollEventType == ScrollEventType.ThumbTrack)
 				return;
 
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 				gc.EhView_Scroll();
 		}
 
 		private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			e.CanExecute = null!=gc && gc.IsCmdCopyEnabled();
 			e.Handled = true;
 		}
 
 		private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			e.CanExecute = null!=gc && gc.IsCmdCutEnabled();
 			e.Handled = true;
 		}
 
 		private void EhEnableCmdDelete(object sender, CanExecuteRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			e.CanExecute = null != gc && gc.IsCmdDeleteEnabled();
 			e.Handled = true;
 		}
 
 		private void EhEnableCmdPaste(object sender, CanExecuteRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			e.CanExecute = null != gc && gc.IsCmdPasteEnabled();
 			e.Handled = true;
 		}
 
 		private void EhCmdCopy(object sender, ExecutedRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 			{
 				gc.CopySelectedObjectsToClipboard();
@@ -515,7 +511,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private void EhCmdCut(object sender, ExecutedRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if (null != gc)
 			{
 				gc.CutSelectedObjectsToClipboard();
@@ -525,7 +521,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private void EhCmdDelete(object sender, ExecutedRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if (null != _controller)
 			{
 				gc.CmdDelete();
@@ -535,7 +531,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private void EhCmdPaste(object sender, ExecutedRoutedEventArgs e)
 		{
-			var gc = GC;
+			var gc = Controller;
 			if (null != _controller)
 			{
 				gc.PasteObjectsFromClipboard();

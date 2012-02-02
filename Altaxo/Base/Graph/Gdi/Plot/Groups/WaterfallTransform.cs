@@ -413,7 +413,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				get { return _layer.CoordinateSystem; }
 			}
 
-			public SizeF Size
+			public PointD2D Size
 			{
 				get { return _layer.Size; }
 			}

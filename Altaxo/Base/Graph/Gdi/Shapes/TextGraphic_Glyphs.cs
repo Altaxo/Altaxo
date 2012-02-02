@@ -844,7 +844,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					var font = dc.FontCache.GetFont(g, Style.FontId);
 					IGPlotItem pa = layer.PlotItems.Flattened[_plotNumber];
 
-					PointF symbolpos = new PointF((float)xbase, (float)(ybase + 0.5f * fontInfo.cyDescent - 0.5f * fontInfo.cyAscent));
+					PointF symbolpos = new PointF((float)xbase, (float)(ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent));
 					RectangleF symbolRect = new RectangleF(symbolpos, new SizeF((float)Width, 0));
 					symbolRect.Inflate(0, (float)(fontInfo.Size));
 					pa.PaintSymbol(g, symbolRect);
@@ -852,7 +852,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					if (!dc.bForPreview)
 					{
 						GraphicsPath gp = new GraphicsPath();
-						gp.AddRectangle(new RectangleF((float)(symbolpos.X), (float)(symbolpos.Y - 0.5f * fontInfo.cyLineSpace), (float)Width, (float)(fontInfo.cyLineSpace)));
+						gp.AddRectangle(new RectangleF((float)(symbolpos.X), (float)(symbolpos.Y - 0.5 * fontInfo.cyLineSpace), (float)Width, (float)(fontInfo.cyLineSpace)));
 						gp.Transform(dc.transformMatrix);
 						dc._cachedSymbolPositions.Add(gp, pa);
 					}

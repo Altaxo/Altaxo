@@ -156,12 +156,12 @@ namespace Altaxo.Graph.Gdi
 						graph.Layers.Add(new XYPlotLayer(layerPosition, layerSize));
 						graph.Layers[nLayer].CreateDefaultAxes();
 					}
-					SizeF oldSize = graph.Layers[nLayer].Size;
+					var oldSize = graph.Layers[nLayer].Size;
 					graph.Layers[nLayer].SetSize(relHorzSize / 100, XYPlotLayerSizeType.RelativeToGraphDocument, relVertSize / 100, XYPlotLayerSizeType.RelativeToGraphDocument);
-					SizeF newSize = graph.Layers[nLayer].Size;
+					var newSize = graph.Layers[nLayer].Size;
 
 					if (oldSize != newSize)
-						graph.Layers[nLayer].RescaleInnerItemPositions(newSize.Width / oldSize.Width, newSize.Height / oldSize.Height);
+						graph.Layers[nLayer].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
 					graph.Layers[nLayer].SetPosition(relHorzPos / 100, XYPlotLayerPositionType.RelativeToGraphDocument, relVertPos / 100, XYPlotLayerPositionType.RelativeToGraphDocument);
 
 				}
@@ -179,19 +179,19 @@ namespace Altaxo.Graph.Gdi
 						break;
 					case SuperfluousLayersAction.OverlayFirstLayer:
 					case SuperfluousLayersAction.OverlayLastLayer:
-						SizeF size; PointF pos;
+						
 						int template = arrangement.SuperfluousLayersAction == SuperfluousLayersAction.OverlayFirstLayer ? 0 : numDestLayers - 1;
-						size = graph.Layers[template].Size;
-						pos = graph.Layers[template].Position;
+						var size = graph.Layers[template].Size;
+						var pos = graph.Layers[template].Position;
 
 						for (int i = numDestLayers; i < numPresentLayers; i++)
 						{
-							SizeF oldSize = graph.Layers[i].Size;
-							graph.Layers[i].SetSize(size.Width, XYPlotLayerSizeType.AbsoluteValue, size.Height, XYPlotLayerSizeType.AbsoluteValue);
-							SizeF newSize = graph.Layers[i].Size;
+							var oldSize = graph.Layers[i].Size;
+							graph.Layers[i].SetSize(size.X, XYPlotLayerSizeType.AbsoluteValue, size.Y, XYPlotLayerSizeType.AbsoluteValue);
+							var newSize = graph.Layers[i].Size;
 
 							if (oldSize != newSize)
-								graph.Layers[i].RescaleInnerItemPositions(newSize.Width / oldSize.Width, newSize.Height / oldSize.Height);
+								graph.Layers[i].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
 							graph.Layers[i].SetPosition(pos.X, XYPlotLayerPositionType.AbsoluteValue, pos.Y, XYPlotLayerPositionType.AbsoluteValue);
 						}
 

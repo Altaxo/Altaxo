@@ -78,14 +78,14 @@ namespace Altaxo.Graph.Gdi.Background
 
 		#region IBackgroundStyle Members
 
-		public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public RectangleD MeasureItem(System.Drawing.Graphics g, RectangleD innerArea)
 		{
 			return innerArea;
 		}
 
-		public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
+		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
 		{
-			g.DrawRectangle(Pens.Black, innerArea.Left, innerArea.Top, innerArea.Width, innerArea.Height);
+			g.DrawRectangle(Pens.Black, (float)innerArea.Left, (float)innerArea.Top, (float)innerArea.Width, (float)innerArea.Height);
 		}
 
 		public bool SupportsBrush { get { return false; } }
