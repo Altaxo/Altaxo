@@ -458,21 +458,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		public event EventHandler CurrentGraphToolChanged;
 
 
-		public GraphToolType CurrentGraphTool
-		{
-			get
-			{
-				return _view.GraphTool;
-			}
-			set
-			{
-				var oldValue = _view.GraphTool;
-				_view.GraphTool = value;
-				if (oldValue != value && null != CurrentGraphToolChanged)
-					CurrentGraphToolChanged(this, EventArgs.Empty);
-
-			}
-		}
+		public abstract GraphToolType CurrentGraphTool { get; set; }
 		
 
 		#endregion Graph tools
@@ -504,6 +490,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			OnTitleNameChanged(EventArgs.Empty);
 		}
+
 
 		public Altaxo.Graph.Gdi.GraphDocument Doc
 		{

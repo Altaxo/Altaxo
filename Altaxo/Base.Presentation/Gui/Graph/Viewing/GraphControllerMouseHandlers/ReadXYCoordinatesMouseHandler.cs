@@ -225,11 +225,20 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       base.AfterPaint (g);
       // draw a red cross onto the selected data point
 
-			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X + 1, (float)_positionOfCrossInGraphCoordinates.Y, (float)_positionOfCrossInGraphCoordinates.X + 10, (float)_positionOfCrossInGraphCoordinates.Y);
-			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X - 1, (float)_positionOfCrossInGraphCoordinates.Y, (float)_positionOfCrossInGraphCoordinates.X - 10, (float)_positionOfCrossInGraphCoordinates.Y);
-			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y + 1, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y + 10);
-			g.DrawLine(System.Drawing.Pens.Red, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y - 1, (float)_positionOfCrossInGraphCoordinates.X, (float)_positionOfCrossInGraphCoordinates.Y - 10);
-    }
+			// draw a red cross onto the selected data point
+			double startLine = 1 / _grac.ZoomFactor;
+			double endLine = 10 / _grac.ZoomFactor;
+			using (HatchBrush brush = new HatchBrush(HatchStyle.Percent50, Color.Red, Color.Yellow))
+			{
+				using (Pen pen = new Pen(brush, (float)(2 / _grac.ZoomFactor)))
+				{
+					g.DrawLine(pen, (float)(_positionOfCrossInGraphCoordinates.X + startLine), (float)_positionOfCrossInGraphCoordinates.Y, (float)(_positionOfCrossInGraphCoordinates.X + endLine), (float)_positionOfCrossInGraphCoordinates.Y);
+					g.DrawLine(pen, (float)(_positionOfCrossInGraphCoordinates.X - startLine), (float)_positionOfCrossInGraphCoordinates.Y, (float)(_positionOfCrossInGraphCoordinates.X - endLine), (float)_positionOfCrossInGraphCoordinates.Y);
+					g.DrawLine(pen, (float)_positionOfCrossInGraphCoordinates.X, (float)(_positionOfCrossInGraphCoordinates.Y + startLine), (float)_positionOfCrossInGraphCoordinates.X, (float)(_positionOfCrossInGraphCoordinates.Y + endLine));
+					g.DrawLine(pen, (float)_positionOfCrossInGraphCoordinates.X, (float)(_positionOfCrossInGraphCoordinates.Y - startLine), (float)_positionOfCrossInGraphCoordinates.X, (float)(_positionOfCrossInGraphCoordinates.Y - endLine));
+				}
+			}
+		}
 
 
     /// <summary>

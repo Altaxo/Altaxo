@@ -95,10 +95,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		PointD2D ViewportSizeInPoints { get; }
 
-		IList<IHitTestObject> SelectedObjects { get; }
-
-		GraphToolType GraphTool { get; set; }
-
 		/// <summary>
 		/// Returns the control that should be focused initially.
 		/// </summary>

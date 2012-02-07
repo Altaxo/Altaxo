@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	{
 		#region Member variables
 
-		protected GraphViewWpf _grac;
+		protected PresentationGraphController _grac;
 
 		protected PointD2D _positionCurrentMouseInGraphCoordinates;
 
@@ -63,9 +63,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		#endregion
 
-		public ClosedCardinalSplineMouseHandler(GraphViewWpf view)
+		public ClosedCardinalSplineMouseHandler(PresentationGraphController grac)
 		{
-			this._grac = view;
+			this._grac = grac;
 
 			if (_grac != null)
 				_grac.SetPanelCursor(Cursors.Pen);
@@ -111,11 +111,11 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnMouseMove(position, e);
 
-			_positionCurrentMouseInGraphCoordinates = _grac.Controller.ConvertMouseToGraphCoordinates(position);
+			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToGraphCoordinates(position);
 
 			ModifyCurrentMousePrintAreaCoordinate();
 
-			_grac.Controller.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+			_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 		}
 
 		public override void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -135,12 +135,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				case Key.OemPlus:
 					_tension *= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
-					_grac.Controller.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+					_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 					return true;
 				case Key.OemMinus:
 					_tension /= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
-					_grac.Controller.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+					_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 					return true;
 			}
 
@@ -209,7 +209,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(NextMouseHandlerType);
-			_grac.Controller.InvalidateCachedGraphImageAndRepaintOffline();
+			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 
 	}

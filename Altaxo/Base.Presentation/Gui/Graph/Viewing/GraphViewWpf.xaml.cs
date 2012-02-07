@@ -38,6 +38,7 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
+	using Altaxo.Graph;
 	/// <summary>
 	/// Interaction logic for GraphView.xaml
 	/// </summary>
@@ -67,49 +68,23 @@ namespace Altaxo.Gui.Graph.Viewing
 			_controller = new WeakReference(null);
 		}
 
-		public Altaxo.Gui.Graph.Viewing.PresentationGraphController Controller
+		private Altaxo.Gui.Graph.Viewing.PresentationGraphController Controller
 		{
 			get
 			{
 				return (Altaxo.Gui.Graph.Viewing.PresentationGraphController)_controller.Target;
 			}
 		}
-
-		
-
-		public Altaxo.Graph.Gdi.XYPlotLayer ActiveLayer
-		{
-			get
-			{
-				var gc = Controller;
-				return null != gc ? gc.ActiveLayer : null;
-			}
-		}
-
+	
 		public void FocusOnGraphPanel()
 		{
 			bool result = _graphPanel.Focus();
 			Keyboard.Focus(_graphPanel);
 		}
 
-		public void SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType value)
-		{
+	
 
-			Controller.GraphTool = value;
-			bool result = _graphPanel.Focus();
-			Keyboard.Focus(_graphPanel);
-
-			var gc = Controller;
-			if (null != gc)
-				gc.EhView_CurrentGraphToolChanged();
-		}
-
-		public void SetActiveLayerFromInternal(int layerNumber)
-		{
-			var gc = Controller;
-			if(null != gc)
-			gc.EhView_CurrentLayerChoosen(layerNumber, false);
-		}
+	
 
 		public void SetPanelCursor(Cursor cursor)
 		{
@@ -153,20 +128,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			Current.Gui.Execute(() => this.InvalidateVisual());
 		}
 
-	
-
-		public void OnViewSelection()
-		{
-
-		}
-
-		public void OnViewDeselection()
-		{
-			/* TODO (Wpf)
-			if (null != _graphToolsToolBar)
-				_graphToolsToolBar.Parent = null;
-			*/
-		}
 
 		/// <summary>
 		/// Gets the pixel dimensions of the graph bitmap.
@@ -179,7 +140,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		Altaxo.Graph.PointD2D GetMousePosition(MouseEventArgs e)
+		PointD2D GetMousePosition(MouseEventArgs e)
 		{
 			var p = e.GetPosition(_graphPanel);
 			return new Altaxo.Graph.PointD2D(p.X, p.Y);
@@ -425,29 +386,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		public IList<Altaxo.Graph.Gdi.IHitTestObject> SelectedObjects
-		{
-			get 
-			{
-				var guiController = Controller;
-				return null!=guiController ? guiController.SelectedObjects : new List<Altaxo.Graph.Gdi.IHitTestObject>();
-			} 
-		}
-
-		Altaxo.Gui.Graph.Viewing.GraphToolType Altaxo.Gui.Graph.Viewing.IGraphView.GraphTool
-		{
-			get
-			{
-				var guiController = Controller;
-				return null!=guiController ? guiController.GraphTool : GraphToolType.ObjectPointer;
-			}
-			set
-			{
-				var guiController = Controller;
-				if(null!=guiController)
-					guiController.GraphTool = value;
-			}
-		}
 
 		#endregion
 
