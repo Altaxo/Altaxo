@@ -77,9 +77,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// </summary>
     protected PointD2D _positionOfCrossInGraphCoordinates;
 
-    protected PresentationGraphController _grac;
+    protected GraphControllerWpf _grac;
 
-    public ReadPlotItemDataMouseHandler(PresentationGraphController grac)
+    public ReadPlotItemDataMouseHandler(GraphControllerWpf grac)
     {
       _grac = grac;
       if(_grac!=null)

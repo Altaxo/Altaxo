@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	/// </summary>
 	public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
 	{
-		public ArrowLineDrawingMouseHandler(PresentationGraphController grac)
+		public ArrowLineDrawingMouseHandler(GraphControllerWpf grac)
 			: base(grac)
 		{
 			if (_grac != null)

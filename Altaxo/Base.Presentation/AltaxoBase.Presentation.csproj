@@ -985,7 +985,7 @@
     <Compile Include="Gui\Graph\Viewing\GraphViewWpf.xaml.cs">
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Viewing\PresentationGraphController.cs" />
+    <Compile Include="Gui\Graph\Viewing\GraphControllerWpf.cs" />
     <Compile Include="Gui\Graph\WaterfallTransformControl.xaml.cs">
       <DependentUpon>WaterfallTransformControl.xaml</DependentUpon>
     </Compile>

@@ -68,11 +68,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			_controller = new WeakReference(null);
 		}
 
-		private Altaxo.Gui.Graph.Viewing.PresentationGraphController Controller
+		private Altaxo.Gui.Graph.Viewing.GraphControllerWpf Controller
 		{
 			get
 			{
-				return (Altaxo.Gui.Graph.Viewing.PresentationGraphController)_controller.Target;
+				return (Altaxo.Gui.Graph.Viewing.GraphControllerWpf)_controller.Target;
 			}
 		}
 	

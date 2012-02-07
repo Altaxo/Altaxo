@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		#region Member variables
 
-		protected PresentationGraphController _grac;
+		protected GraphControllerWpf _grac;
 
 		protected PointD2D _positionCurrentMouseInGraphCoordinates;
 
@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		#endregion
 
-		public AbstractRectangularToolMouseHandler(PresentationGraphController ctrl)
+		public AbstractRectangularToolMouseHandler(GraphControllerWpf ctrl)
 		{
 			_grac = ctrl;
 

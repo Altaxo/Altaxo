@@ -230,7 +230,7 @@ namespace Altaxo.Worksheet.Commands
 
       // end code for the selected rows
       ctrl.DataTable.Resume();
-      ctrl.UpdateTableView(); // necessary because we changed the selections
+      ctrl.TableAreaInvalidate(); // necessary because we changed the selections
 
 
 
@@ -286,7 +286,7 @@ namespace Altaxo.Worksheet.Commands
 
 			// end code for the selected rows
 			ctrl.DataTable.Resume();
-			ctrl.UpdateTableView(); // necessary because we changed the selections
+			ctrl.TableAreaInvalidate(); // necessary because we changed the selections
 		}
 
 
@@ -361,7 +361,7 @@ namespace Altaxo.Worksheet.Commands
 
       // end code for the selected rows
       ctrl.DataTable.Resume();
-      ctrl.UpdateTableView(); // necessary because we changed the selections
+      ctrl.TableAreaInvalidate(); // necessary because we changed the selections
     }
 
 

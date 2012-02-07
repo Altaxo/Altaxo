@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected bool _wereObjectsMoved = false;
 
 		/// <summary>The graph controller this mouse handler belongs to.</summary>
-		protected PresentationGraphController _grac;
+		protected GraphControllerWpf _grac;
 
 		/// <summary>Locker to suppress changed events during moving of objects.</summary>
 		IDisposable _graphDocumentChangedSuppressor;
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		#endregion
 
-		public ObjectPointerMouseHandler(PresentationGraphController grac)
+		public ObjectPointerMouseHandler(GraphControllerWpf grac)
 		{
 			_grac = grac;
 			if (_grac != null)

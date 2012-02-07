@@ -76,7 +76,7 @@ namespace Altaxo.Worksheet.Commands
 
       ctrl.ClearAllSelections();
 
-      ctrl.UpdateTableView();
+      ctrl.TableAreaInvalidate();
     }
     #endregion
 
@@ -93,7 +93,7 @@ namespace Altaxo.Worksheet.Commands
 
       ctrl.DataTable.DataColumns.InsertRows(rowBeforeToInsert, numberOfRows);
       ctrl.ClearAllSelections();
-      ctrl.UpdateTableView();
+      ctrl.TableAreaInvalidate();
     }
 
     /// <summary>

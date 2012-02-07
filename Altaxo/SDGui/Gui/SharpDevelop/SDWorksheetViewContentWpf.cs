@@ -54,17 +54,22 @@ namespace Altaxo.Gui.SharpDevelop
 		/// <param name="layout">The worksheet layout.</param>
 		/// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
 		protected SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
-			:
-				this(new Altaxo.Gui.Worksheet.Viewing.WorksheetController(layout))
+			: this(CreateControllerForLayout(layout))
 		{
 		}
 
 		public SDWorksheetViewContent(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
 			_controller = ctrl;
-
 			_controller.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => _controller.TitleNameChanged -= x);
 			SetTitle();
+		}
+
+		private static Altaxo.Gui.Worksheet.Viewing.WorksheetControllerWpf CreateControllerForLayout(Altaxo.Worksheet.WorksheetLayout layout)
+		{
+			var ctrl = new Altaxo.Gui.Worksheet.Viewing.WorksheetControllerWpf();
+			ctrl.InitializeDocument(layout);
+			return ctrl;
 		}
 
 		public override void Dispose()

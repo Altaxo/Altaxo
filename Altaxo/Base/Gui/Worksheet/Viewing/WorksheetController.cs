@@ -31,13 +31,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 {
 	[UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
 	[ExpectedTypeOfView(typeof(IWorksheetView))]
-	public class WorksheetController : IWorksheetController, IDisposable
+	public abstract class WorksheetController : IWorksheetController, IDisposable
 	{
-		IWorksheetView _view;
-
-		IGuiDependentWorksheetController _guiDependentController;
-
-
 		/// <summary>Holds the data table cached from the layout.</summary>
 		protected Altaxo.Data.DataTable _table;
 		protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
@@ -89,7 +84,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		public void Dispose()
 		{
-			var view = _view;
+			var view = ViewObject;
 			this.ViewObject = null;
 			if (view is IDisposable)
 				((IDisposable)view).Dispose();
@@ -120,134 +115,57 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		public WorksheetLayout WorksheetLayout
 		{
 			get { return _worksheetLayout; }
-			
+
 			set
 			{
-				if (null != _worksheetLayout)
-					throw new ApplicationException("This controller is already controlling a layout");
-				if (null == value)
-					throw new ArgumentNullException("value");
-
-				_worksheetLayout = value;
-
-				Altaxo.Data.DataTable oldTable = _table;
-				Altaxo.Data.DataTable newTable = null == _worksheetLayout ? null : _worksheetLayout.DataTable;
-
-				if (null != oldTable)
-				{
-					oldTable.NameChanged -= this.EhTableNameChanged;
-				}
-
-				_table = newTable;
-				if (null != newTable)
-				{
-					newTable.NameChanged += this.EhTableNameChanged;
-					OnTitleNameChanged();
-				}
-			}
-		}   
-
-		public IndexSelection SelectedDataColumns
-		{
-			get { return _guiDependentController.SelectedDataColumns; }
-		}
-
-		public IndexSelection SelectedDataRows
-		{
-			get { return _guiDependentController.SelectedDataRows; }
-		}
-
-		public IndexSelection SelectedPropertyColumns
-		{
-			get { return _guiDependentController.SelectedPropertyColumns; }
-		}
-
-		public IndexSelection SelectedPropertyRows
-		{
-			get { return _guiDependentController.SelectedPropertyRows; }
-		}
-
-		public bool ArePropertyCellsSelected
-		{
-			get { return _guiDependentController.ArePropertyCellsSelected; }
-		}
-
-		public bool AreDataCellsSelected
-		{
-			get { return _guiDependentController.AreDataCellsSelected; }
-		}
-
-		public bool AreColumnsOrRowsSelected
-		{
-			get { return _guiDependentController.AreColumnsOrRowsSelected; }
-		}
-
-		public void ClearAllSelections()
-		{
-			_guiDependentController.ClearAllSelections();
-		}
-
-		public void UpdateTableView()
-		{
-			_guiDependentController.TableAreaInvalidate();
-		}
-
-		public bool EnableCut
-		{
-			get
-			{
-				return _guiDependentController.EnableCut;
-			}
-		}
-		public bool EnableCopy
-		{
-			get
-			{
-				return _guiDependentController.EnableCopy;
-			}
-		}
-		public bool EnablePaste
-		{
-			get
-			{
-				return _guiDependentController.EnablePaste;
-			}
-		}
-		public bool EnableDelete
-		{
-			get
-			{
-				return _guiDependentController.EnableDelete;
-			}
-		}
-		public bool EnableSelectAll
-		{
-			get
-			{
-				return _guiDependentController.EnableSelectAll;
+				InternalInitializeWorksheetLayout(value);
 			}
 		}
 
-		public void Cut()
+		protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
 		{
-			_guiDependentController.Cut();
+			if (null != _worksheetLayout)
+				throw new ApplicationException("This controller is already controlling a layout");
+			if (null != _table)
+				throw new ApplicationException("This controller is already controlling a table");
+			if (null == value)
+				throw new ArgumentNullException("value");
+
+			_worksheetLayout = value;
+			_table = _worksheetLayout.DataTable;
+			_table.NameChanged += new WeakActionHandler<INameOwner, string>(this.EhTableNameChanged, x => _table.NameChanged -= x);
+			OnTitleNameChanged();
 		}
-		public void Copy()
-		{
-			_guiDependentController.Copy();
-		}
-		public void Paste()
-		{
-			_guiDependentController.Paste();
-		}
-		public void Delete()
-		{
-			_guiDependentController.Delete();
-		}
-		public void SelectAll()
-		{
-			_guiDependentController.SelectAll();
-		}
+
+		public abstract IndexSelection SelectedDataColumns { get; }
+
+		public abstract IndexSelection SelectedDataRows { get; }
+
+		public abstract IndexSelection SelectedPropertyColumns { get; }
+
+		public abstract IndexSelection SelectedPropertyRows { get; }
+
+		public abstract bool ArePropertyCellsSelected { get; }
+
+		public abstract bool AreDataCellsSelected { get; }
+
+		public abstract bool AreColumnsOrRowsSelected { get; }
+
+		public abstract void ClearAllSelections();
+
+		public abstract void TableAreaInvalidate();
+
+		public abstract bool EnableCut { get; }
+		public abstract bool EnableCopy { get; }
+		public abstract bool EnablePaste { get; }
+		public abstract bool EnableDelete { get; }
+		public abstract bool EnableSelectAll { get; }
+
+		public abstract void Cut();
+		public abstract void Copy();
+		public abstract void Paste();
+		public abstract void Delete();
+		public abstract void SelectAll();
 
 
 		void OnTitleNameChanged()
@@ -272,8 +190,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		}
 		private void EhTableNameChanged_Unsynchronized(INameOwner sender, string oldName)
 		{
-			if (_view != null)
-				_view.TableViewTitle = _table.Name;
+			var view = ViewObject as IWorksheetView;
+			if (view != null)
+				view.TableViewTitle = _table.Name;
 
 			this.TitleName = _table.Name;
 		}
@@ -297,30 +216,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_guiDependentController = null;
-					_view.Controller = null;
-				}
+		public abstract object ViewObject { get; set; }
 
-				_view = value as IWorksheetView;
-
-				if (null != _view)
-				{
-					_view.Controller = this;
-					_guiDependentController = _view.GuiDependentController;
-					_view.TableViewTitle = this.TitleName;
-				}
-			}
-		}
 
 		public object ModelObject
 		{

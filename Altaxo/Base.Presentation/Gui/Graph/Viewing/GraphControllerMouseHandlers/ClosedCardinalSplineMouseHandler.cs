@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	{
 		#region Member variables
 
-		protected PresentationGraphController _grac;
+		protected GraphControllerWpf _grac;
 
 		protected PointD2D _positionCurrentMouseInGraphCoordinates;
 
@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		#endregion
 
-		public ClosedCardinalSplineMouseHandler(PresentationGraphController grac)
+		public ClosedCardinalSplineMouseHandler(GraphControllerWpf grac)
 		{
 			this._grac = grac;
 

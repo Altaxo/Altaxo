@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public RectangleDrawingMouseHandler(PresentationGraphController grac)
+    public RectangleDrawingMouseHandler(GraphControllerWpf grac)
       : base(grac)
     {
       

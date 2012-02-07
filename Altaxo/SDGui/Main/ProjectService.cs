@@ -196,14 +196,14 @@ namespace Altaxo.Main
 			{
 				if (o is Altaxo.Graph.GraphViewLayout)
 				{
-					var ctrl = new Altaxo.Gui.Graph.Viewing.PresentationGraphController();
+					var ctrl = new Altaxo.Gui.Graph.Viewing.GraphControllerWpf();
 					ctrl.InitializeDocument(o as Altaxo.Graph.GraphViewLayout);
 					Current.Gui.FindAndAttachControlTo(ctrl);
 					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDGraphViewContent(ctrl));
 				}
 				else if (o is Altaxo.Worksheet.WorksheetViewLayout)
 				{
-					var ctrl = new Altaxo.Gui.Worksheet.Viewing.WorksheetController();
+					var ctrl = new Altaxo.Gui.Worksheet.Viewing.WorksheetControllerWpf();
 					ctrl.InitializeDocument(o as Altaxo.Worksheet.WorksheetViewLayout);
 					Current.Gui.FindAndAttachControlTo(ctrl);
 					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(ctrl));

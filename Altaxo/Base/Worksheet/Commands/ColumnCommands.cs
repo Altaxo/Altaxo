@@ -64,7 +64,7 @@ namespace Altaxo.Worksheet.Commands
 			if (ctrl.DataTable.ShowSetColumnGroupNumberDialog(ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns))
 			{
 				ctrl.ClearAllSelections();
-				ctrl.UpdateTableView();
+				ctrl.TableAreaInvalidate();
 			}
     }
 
@@ -126,7 +126,7 @@ namespace Altaxo.Worksheet.Commands
 
       ctrl.ClearAllSelections();
 
-      ctrl.UpdateTableView();
+      ctrl.TableAreaInvalidate();
     }
     #endregion
 
@@ -148,7 +148,7 @@ namespace Altaxo.Worksheet.Commands
         bChanged = true;
       }
       if(bChanged)
-        ctrl.UpdateTableView(); // draw new because 
+        ctrl.TableAreaInvalidate(); // draw new because 
 
     }
 
@@ -169,7 +169,7 @@ namespace Altaxo.Worksheet.Commands
         bChanged = true;
       }
       if (bChanged)
-        ctrl.UpdateTableView(); // draw new because 
+        ctrl.TableAreaInvalidate(); // draw new because 
 
     }
     /// <summary>
@@ -192,7 +192,7 @@ namespace Altaxo.Worksheet.Commands
       }
 
       if(bChanged)
-        ctrl.UpdateTableView(); // draw new because 
+        ctrl.TableAreaInvalidate(); // draw new because 
 
     }
 
@@ -215,7 +215,7 @@ namespace Altaxo.Worksheet.Commands
         bChanged = true;
       }
       if(bChanged)
-        ctrl.UpdateTableView(); // draw new because 
+        ctrl.TableAreaInvalidate(); // draw new because 
 
     }
 
@@ -238,7 +238,7 @@ namespace Altaxo.Worksheet.Commands
         bChanged = true;
       }
       if (bChanged)
-        ctrl.UpdateTableView(); // draw new because 
+        ctrl.TableAreaInvalidate(); // draw new because 
 
     }
     #endregion

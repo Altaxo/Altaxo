@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
   /// </summary>
   public class ZoomAxesMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public ZoomAxesMouseHandler(PresentationGraphController grac)
+    public ZoomAxesMouseHandler(GraphControllerWpf grac)
       : base(grac)
     {
 			NextMouseHandlerType = this.GraphToolType;

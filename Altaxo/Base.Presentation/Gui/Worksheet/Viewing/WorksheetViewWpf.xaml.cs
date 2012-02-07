@@ -41,18 +41,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 	/// </summary>
 	public partial class WorksheetViewWpf : UserControl, Altaxo.Gui.Worksheet.Viewing.IWorksheetView
 	{
-		IWorksheetController _controller;
 		WorksheetControllerWpf _guiController;
-
-		/// <summary>Function that creates the Gui dependent controller.</summary>
-		Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetViewWpf, WorksheetControllerWpf> _createGuiDependentController;
-
 
 		public WorksheetViewWpf()
 		{
 			InitializeComponent();
-
-			_createGuiDependentController = (x, y) => new WorksheetControllerWpf(x, y);
 		}
 
 			public WorksheetViewWpf(Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetViewWpf, WorksheetControllerWpf> createController)
@@ -61,7 +54,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				throw new ArgumentNullException("createController");
 
 			InitializeComponent();
-			_createGuiDependentController = createController;
 		}
 
 		#region Altaxo.Gui.Worksheet.Viewing.IWorksheetView
@@ -70,23 +62,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			set
 			{
-				if (null != value)
-				{
-					_controller = value;
-					_guiController = _createGuiDependentController(_controller, this);
-				}
-				else
-				{
-					_controller = null;
-					_guiController = null;
-				}
+					_guiController = value as WorksheetControllerWpf;
 			}
 		}
 
-		public IGuiDependentWorksheetController GuiDependentController
-		{
-			get { return _guiController; }
-		}
+	
 
 		public void TableAreaInvalidate()
 		{

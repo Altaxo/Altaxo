@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	/// </summary>
 	[ExpectedTypeOfView(typeof(GraphViewWpf))]
 	[UserControllerForObject(typeof(Altaxo.Graph.GraphViewLayout))]
-	public class PresentationGraphController : GraphController
+	public class GraphControllerWpf : GraphController
 	{
 
 		#region Member variables
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 
-		public PresentationGraphController()
+		public GraphControllerWpf()
 			: base()
 		{
 			SetMemberVariablesToDefault();
@@ -135,13 +135,13 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
-		public PresentationGraphController(GraphDocument graphdoc)
+		public GraphControllerWpf(GraphDocument graphdoc)
 			: base(graphdoc)
 		{
 			SetMemberVariablesToDefault();
 		}
 
-		static PresentationGraphController()
+		static GraphControllerWpf()
 		{
 			_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
 

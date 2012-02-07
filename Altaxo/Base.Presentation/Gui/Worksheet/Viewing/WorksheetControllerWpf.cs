@@ -54,21 +54,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
 	/// <summary>
 	/// Default controller which implements IWorksheetController.
 	/// </summary>
-	public class WorksheetControllerWpf : Altaxo.Gui.Worksheet.Viewing.IGuiDependentWorksheetController
+	[ExpectedTypeOfView(typeof(WorksheetViewWpf))]
+	[UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
+	public class WorksheetControllerWpf : WorksheetController
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
 
 
 		#region Member variables
 
-		Altaxo.Gui.Worksheet.Viewing.IWorksheetController _guiIndependentController;
-
-
-		/// <summary>Holds the data table cached from the layout.</summary>
-		protected Altaxo.Data.DataTable _table;
-
-
-		protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
 		/// <summary>Holds the view (the window where the graph is visualized).</summary>
 		protected WorksheetViewWpf _view;
@@ -89,10 +83,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		private int _scrollVertPos;
 		private int _scrollHorzMax;
 		private int _scrollVertMax;
-
-		private int _lastVisibleColumn;
-		private int _lastFullyVisibleColumn;
-
 
 		/// <summary>
 		/// Holds the indizes to the selected data columns.
@@ -157,10 +147,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// </summary>
 		protected virtual void SetMemberVariablesToDefault()
 		{
-			_table = null;
-			_worksheetLayout = null;
-			_view = null;
-
 			// The main menu of this controller.
 
 			// Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
@@ -173,10 +159,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			_scrollVertPos = 0;
 			_scrollHorzMax = 1;
 			_scrollVertMax = 1;
-
-			_lastVisibleColumn = 0;
-			_lastFullyVisibleColumn = 0;
-
 
 			// Holds the indizes to the selected data columns.
 			_selectedDataColumns = new IndexSelection(); // holds the selected columns
@@ -235,29 +217,17 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#region Constructors
 
-		public WorksheetControllerWpf(Altaxo.Gui.Worksheet.Viewing.IWorksheetController controller, WorksheetViewWpf view)
+		public WorksheetControllerWpf()
 		{
-
 			SetMemberVariablesToDefault();
-			_guiIndependentController = controller;
-			InternalInitializeWorksheetLayout(controller.WorksheetLayout);
-			view.LowerCanvas.Children.Add(_visualHost);
-			view.Canvas.Children.Add(_cellEditControl);
-			View = view;
 		}
 
-		private void InternalInitializeWorksheetLayout(WorksheetLayout layout)
+		protected override void InternalInitializeWorksheetLayout(WorksheetLayout layout)
 		{
-			if (null == layout)
-				throw new ArgumentNullException("layout");
-			if (null != _worksheetLayout)
-				throw new ApplicationException("This Gui controller has already a layout!");
+			base.InternalInitializeWorksheetLayout(layout);
 
-			_worksheetLayout = layout;
-			_table = layout.DataTable;
-
-			_table.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
-			_table.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
+			_table.DataColumns.Changed += new WeakEventHandler(this.EhTableDataChanged, x => _table.DataColumns.Changed -= x);
+			_table.PropCols.Changed += new WeakEventHandler(this.EhPropertyDataChanged, x => _table.PropCols.Changed -= x);
 			this.SetCachedNumberOfDataColumns();
 			this.SetCachedNumberOfDataRows();
 			this.SetCachedNumberOfPropertyColumns();
@@ -267,32 +237,20 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#region public properties
 
-		public Altaxo.Data.DataTable DataTable
-		{
-			get
-			{
-				return this._table;
-			}
-		}
+	
 
-		public Altaxo.Worksheet.WorksheetLayout WorksheetLayout
-		{
-			get
-			{
-				return this._worksheetLayout;
-			}
-		}
+	
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public double TableAreaWidth
 		{
-			get { return View.TableAreaSize.Width; }
+			get { return _view.TableAreaSize.Width; }
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public double TableAreaHeight
 		{
-			get { return View.TableAreaSize.Height; }
+			get { return _view.TableAreaSize.Height; }
 		}
 
 		#endregion
@@ -302,7 +260,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Returns the currently selected data columns
 		/// </summary>
-		public IndexSelection SelectedDataColumns
+		public override IndexSelection SelectedDataColumns
 		{
 			get { return _selectedDataColumns; }
 		}
@@ -310,7 +268,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Returns the currently selected data rows.
 		/// </summary>
-		public IndexSelection SelectedDataRows
+		public override IndexSelection SelectedDataRows
 		{
 			get { return _selectedDataRows; }
 		}
@@ -318,7 +276,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Returns the currently selected property columns.
 		/// </summary>
-		public IndexSelection SelectedPropertyColumns
+		public override IndexSelection SelectedPropertyColumns
 		{
 			get { return _selectedPropertyColumns; }
 		}
@@ -329,7 +287,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <remarks>Normally, if you select one or more data column, the corresponding property rows are selected by this. So it would be not possible to selected property rows without selecting the
 		/// data column also. In order to fix this, you can first select property columns and then columns. In this case the selection is not stored into 
 		/// SelectedColumns, but in SelectedPropertyRows, and SelectedColumns.Count returns 0.</remarks>
-		public IndexSelection SelectedPropertyRows
+		public override IndexSelection SelectedPropertyRows
 		{
 			get { return _selectedPropertyRows.Count > 0 ? _selectedPropertyRows : _selectedDataColumns; }
 		}
@@ -339,7 +297,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Returns true if one or more property columns or rows are selected.
 		/// </summary>
-		public bool ArePropertyCellsSelected
+		public override bool ArePropertyCellsSelected
 		{
 			get
 			{
@@ -351,7 +309,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Returns true if one or more data columns or rows are selected.
 		/// </summary>
-		public bool AreDataCellsSelected
+		public override bool AreDataCellsSelected
 		{
 			get { return this.DataTable.DataColumns.ColumnCount > 0 && SelectedDataColumns.Count > 0 || SelectedDataRows.Count > 0; }
 		}
@@ -360,7 +318,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Returns true if one or more columns, rows or property columns or rows are selected.
 		/// </summary>
-		public bool AreColumnsOrRowsSelected
+		public override bool AreColumnsOrRowsSelected
 		{
 			get { return AreDataCellsSelected || ArePropertyCellsSelected; }
 		}
@@ -368,7 +326,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>
 		/// Clears all selections of columns, rows or property columns.
 		/// </summary>
-		public void ClearAllSelections()
+		public override void ClearAllSelections()
 		{
 			SelectedDataColumns.Clear();
 			SelectedDataRows.Clear();
@@ -431,8 +389,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			if (this.VertScrollPos >= _numberOfTableRows)
 				VertScrollPos = _numberOfTableRows > 0 ? _numberOfTableRows - 1 : 0;
 
-			if (View != null)
-				View.TableAreaInvalidate();
+			if (_view != null)
+				_view.TableAreaInvalidate();
 		}
 
 		public void AdjustXScrollBarMaximum()
@@ -443,10 +401,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			if (HorzScrollPos + 1 > _numberOfTableCols)
 				HorzScrollPos = _numberOfTableCols > 0 ? _numberOfTableCols - 1 : 0;
 
-			if (View != null)
+			if (_view != null)
 			{
 				AdjustXScrollBarViewPortSize();
-				View.TableAreaInvalidate();
+				_view.TableAreaInvalidate();
 			}
 			
 		}
@@ -456,11 +414,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// the total width of all data columns.</summary>
 		public void AdjustXScrollBarViewPortSize()
 		{
-			if (View != null)
+			if (_view != null)
 			{
 				double left, width;
 				AM.GetXCoordinatesOfColumn(_numberOfTableCols - 1, _worksheetLayout, 0, out left, out width);
-				View.TableViewHorzViewPortSize = HorzScrollMaximum * TableAreaWidth / (left + width);
+				_view.TableViewHorzViewPortSize = HorzScrollMaximum * TableAreaWidth / (left + width);
 			}
 		}
 
@@ -767,7 +725,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			// 4. Invalidate the client area if scrolled in step (2)
 			if (bScrolled)
-				this.View.TableAreaInvalidate();
+				this._view.TableAreaInvalidate();
 
 			return true;
 		}
@@ -891,7 +849,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			// 4. Invalidate the client area if scrolled in step (2)
 			if (bScrolled)
-				this.View.TableAreaInvalidate();
+				this._view.TableAreaInvalidate();
 
 			return true;
 		}
@@ -1093,9 +1051,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 						ReadCellEditContentAndHide();
 					}
 
-					if (View != null)
+					if (_view != null)
 					{
-						View.TableViewHorzScrollValue = value;
+						_view.TableViewHorzScrollValue = value;
 						TableAreaInvalidate();
 					}
 				}
@@ -1129,11 +1087,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 					// The value of the ScrollBar in the view has an offset, since he
 					// can not have negative values;
-					if (View != null)
+					if (_view != null)
 					{
 						newValue += this.TotalEnabledPropertyColumns;
-						this.View.TableViewVertScrollValue = newValue;
-						this.View.TableViewVertViewPortSize = AM.GetVisibleTableRows(0, this.TableAreaHeight, _worksheetLayout, newValue) + AM.GetVisiblePropertyColumns(0,this.TableAreaHeight,_worksheetLayout,newValue);
+						this._view.TableViewVertScrollValue = newValue;
+						this._view.TableViewVertViewPortSize = AM.GetVisibleTableRows(0, this.TableAreaHeight, _worksheetLayout, newValue) + AM.GetVisiblePropertyColumns(0,this.TableAreaHeight,_worksheetLayout,newValue);
 						TableAreaInvalidate();
 					}
 				}
@@ -1146,8 +1104,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			set
 			{
 				this._scrollHorzMax = value;
-				if (View != null)
-					View.TableViewHorzScrollMaximum = value;
+				if (_view != null)
+					_view.TableViewHorzScrollMaximum = value;
 			}
 		}
 
@@ -1158,8 +1116,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			{
 				this._scrollVertMax = value;
 
-				if (View != null)
-					View.TableViewVertScrollMaximum = value + this.TotalEnabledPropertyColumns;
+				if (_view != null)
+					_view.TableViewVertScrollMaximum = value + this.TotalEnabledPropertyColumns;
 			}
 		}
 
@@ -1186,33 +1144,45 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#region IWorksheetController Members
 
-		private WorksheetViewWpf View
+		
+
+
+		public override object ViewObject
 		{
 			get
 			{
-				return _guiIndependentController == null ? null : _view;
+				return _view;
 			}
 			set
 			{
 				if (null != _view)
-					throw new ApplicationException("_view should be null");
-				if (null == value)
-					throw new ArgumentNullException("value");
+				{
+					_view.Controller = null;
+				}
 
-				_view = value;
+				_view = value as WorksheetViewWpf;
 
-				// Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
+				if (null != _view)
+				{
+					_view.Controller = this;
 
-				this.VertScrollMaximum = this._scrollVertMax;
-				this.HorzScrollMaximum = this._scrollHorzMax;
+					_view.LowerCanvas.Children.Add(_visualHost);
+					_view.Canvas.Children.Add(_cellEditControl);
 
-				this.VertScrollPos = this._scrollVertPos;
-				this.HorzScrollPos = this._scrollHorzPos;
+					_view.TableViewTitle = this.TitleName;
+
+					// Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
+					this.VertScrollMaximum = this._scrollVertMax;
+					this.HorzScrollMaximum = this._scrollHorzMax;
+
+					this.VertScrollPos = this._scrollVertPos;
+					this.HorzScrollPos = this._scrollHorzPos;
 
 
 
-				// Simulate a SizeChanged event 
-				this.EhView_TableAreaSizeChanged(new EventArgs());
+					// Simulate a SizeChanged event 
+					this.EhView_TableAreaSizeChanged(new EventArgs());
+				}
 			}
 		}
 
@@ -1254,9 +1224,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 				this._dragColumnWidth_InCapture = false;
 				this._dragColumnWidth_ColumnNumber = int.MinValue;
-				this.View.TableAreaCapture = false;
-				this.View.TableAreaCursor = Cursors.Arrow;
-				this.View.TableAreaInvalidate();
+				this._view.TableAreaCapture = false;
+				this._view.TableAreaCursor = Cursors.Arrow;
+				this._view.TableAreaInvalidate();
 
 			}
 		}
@@ -1269,7 +1239,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			if (this._dragColumnWidth_ColumnNumber >= -1)
 			{
-				this.View.TableAreaCapture = true;
+				this._view.TableAreaCapture = true;
 				_dragColumnWidth_OriginalPos = position.X;
 				_dragColumnWidth_InCapture = true;
 			}
@@ -1325,7 +1295,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 						if (pos - 5 < X && X < pos + 5)
 						{
-							this.View.TableAreaCursor = Cursors.SizeWE;
+							this._view.TableAreaCursor = Cursors.SizeWE;
 							this._dragColumnWidth_ColumnNumber = i + FirstVisibleColumn;
 							this._dragColumnWidth_OriginalWidth = _worksheetLayout.DataColumnStyles[DataTable[_dragColumnWidth_ColumnNumber]].WidthD;
 							return;
@@ -1334,7 +1304,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 					if (this._worksheetLayout.RowHeaderStyle.Width - 5 < X && X < _worksheetLayout.RowHeaderStyle.Width + 5)
 					{
-						this.View.TableAreaCursor = Cursors.SizeWE;
+						this._view.TableAreaCursor = Cursors.SizeWE;
 						this._dragColumnWidth_ColumnNumber = -1;
 						this._dragColumnWidth_OriginalWidth = this._worksheetLayout.RowHeaderStyle.Width;
 						return;
@@ -1342,7 +1312,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				}
 
 				this._dragColumnWidth_ColumnNumber = int.MinValue;
-				this.View.TableAreaCursor = Cursors.Arrow;
+				this._view.TableAreaCursor = Cursors.Arrow;
 			} // end else
 		}
 
@@ -1407,7 +1377,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					_lastSelectionType = SelectionType.DataColumnSelection;
 				}
 
-				this.View.TableAreaInvalidate();
+				this._view.TableAreaInvalidate();
 			}
 		}
 
@@ -1444,7 +1414,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			if (this.SelectedDataRows.Count != 0 || !bWasSelectedBefore)
 				_selectedDataRows.Select(clickedCell.RowNumber, bShiftKey, bControlKey);
 			_lastSelectionType = SelectionType.DataRowSelection;
-			this.View.TableAreaInvalidate();
+			this._view.TableAreaInvalidate();
 		}
 
 		protected virtual void OnLeftClickPropertyColumnHeader(AreaInfo clickedCell)
@@ -1468,7 +1438,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				_selectedPropertyColumns.Select(clickedCell.ColumnNumber, bShiftKey, bControlKey);
 
 			_lastSelectionType = SelectionType.PropertyColumnSelection;
-			this.View.TableAreaInvalidate();
+			this._view.TableAreaInvalidate();
 		}
 
 		[field: NonSerialized]
@@ -1659,7 +1629,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			_columnWidthResizingPositionsFirstColumnIndex = AM.GetColumnWidthResizingPositions(_columnWidthResizingPositions, _worksheetLayout, HorzScrollPos, TableAreaWidth);
 		}
 
-		public void TableAreaInvalidate()
+		public override void TableAreaInvalidate()
 		{
 			ForceTableAreaVisualUpdating();
 		}
@@ -1678,32 +1648,32 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#region ClipboardHandler Members
 
-		public bool EnableCut
+		public override bool EnableCut
 		{
 			get { return _cellEdit_IsArmed; }
 		}
 
-		public bool EnableCopy
+		public override bool EnableCopy
 		{
 			get { return true; }
 		}
 
-		public bool EnablePaste
+		public override bool EnablePaste
 		{
 			get { return true; }
 		}
 
-		public bool EnableDelete
+		public override bool EnableDelete
 		{
 			get { return !_cellEdit_IsArmed; }
 		}
 
-		public bool EnableSelectAll
+		public override bool EnableSelectAll
 		{
 			get { return true; }
 		}
 
-		public void Cut()
+		public override void Cut()
 		{
 			if (this._cellEdit_IsArmed)
 			{
@@ -1712,11 +1682,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			else if (this.AreColumnsOrRowsSelected)
 			{
 				// Copy the selected Columns to the clipboard
-				EditCommands.CopyToClipboard(_guiIndependentController);
+				EditCommands.CopyToClipboard(this);
 			}
 		}
 
-		public void Copy()
+		public override void Copy()
 		{
 			if (this._cellEdit_IsArmed)
 			{
@@ -1725,12 +1695,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			else if (this.AreColumnsOrRowsSelected)
 			{
 				// Copy the selected Columns to the clipboard
-				EditCommands.CopyToClipboard(_guiIndependentController);
+				EditCommands.CopyToClipboard(this);
 			}
 
 		}
 
-		public void Paste()
+		public override void Paste()
 		{
 			if (this._cellEdit_IsArmed)
 			{
@@ -1738,11 +1708,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 			else
 			{
-				EditCommands.PasteFromClipboard(_guiIndependentController);
+				EditCommands.PasteFromClipboard(this);
 			}
 		}
 
-		public void Delete()
+		public override void Delete()
 		{
 			if (this._cellEdit_IsArmed)
 			{
@@ -1750,7 +1720,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 			else if (this.AreColumnsOrRowsSelected)
 			{
-				EditCommands.RemoveSelected(_guiIndependentController);
+				EditCommands.RemoveSelected(this);
 			}
 			else
 			{
@@ -1758,14 +1728,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				Current.ProjectService.DeleteTable(this.DataTable, false);
 			}
 		}
-		public void SelectAll()
+		public override void SelectAll()
 		{
 			if (this.DataTable.DataColumns.ColumnCount > 0)
 			{
 				this.SelectedDataColumns.Select(0, false, false);
 				this.SelectedDataColumns.Select(this.DataTable.DataColumns.ColumnCount - 1, true, false);
-				if (View != null)
-					View.TableAreaInvalidate();
+				if (_view != null)
+					_view.TableAreaInvalidate();
 			}
 		}
 

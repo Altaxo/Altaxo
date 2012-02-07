@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	/// </summary>
 	public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
 	{
-		public EllipseDrawingMouseHandler(PresentationGraphController grac)
+		public EllipseDrawingMouseHandler(GraphControllerWpf grac)
 			: base(grac)
 		{
 
