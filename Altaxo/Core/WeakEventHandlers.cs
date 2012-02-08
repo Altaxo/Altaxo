@@ -91,11 +91,17 @@ namespace Altaxo
 			}
 			else
 			{
-				if (null != _removeAction)
-				{
-					_removeAction(this);
-					_removeAction = null;
-				}
+				Remove();
+			}
+		}
+
+		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
+		public void Remove()
+		{
+			if (null != _removeAction)
+			{
+				_removeAction(this);
+				_removeAction = null;
 			}
 		}
 
@@ -178,11 +184,17 @@ namespace Altaxo
 			}
 			else
 			{
-				if (null != _removeAction)
-				{
-					_removeAction(this);
-					_removeAction = null;
-				}
+				Remove();
+			}
+		}
+
+		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
+		public void Remove()
+		{
+			if (null != _removeAction)
+			{
+				_removeAction(this);
+				_removeAction = null;
 			}
 		}
 
@@ -262,11 +274,17 @@ namespace Altaxo
 			}
 			else
 			{
-				if (null != _removeAction)
-				{
-					_removeAction(this);
-					_removeAction = null;
-				}
+				Remove();
+			}
+		}
+
+		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
+		public void Remove()
+		{
+			if (null != _removeAction)
+			{
+				_removeAction(this);
+				_removeAction = null;
 			}
 		}
 
@@ -345,11 +363,17 @@ namespace Altaxo
 			}
 			else
 			{
-				if (null != _removeAction)
-				{
-					_removeAction(this);
-					_removeAction = null;
-				}
+				Remove();
+			}
+		}
+
+		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
+		public void Remove()
+		{
+			if (null != _removeAction)
+			{
+				_removeAction(this);
+				_removeAction = null;
 			}
 		}
 
@@ -430,11 +454,17 @@ namespace Altaxo
 			}
 			else
 			{
-				if (null != _removeAction)
-				{
-					_removeAction(this);
-					_removeAction = null;
-				}
+				Remove();
+			}
+		}
+
+		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
+		public void Remove()
+		{
+			if (null != _removeAction)
+			{
+				_removeAction(this);
+				_removeAction = null;
 			}
 		}
 
@@ -517,11 +547,17 @@ namespace Altaxo
 			}
 			else
 			{
-				if (null != _removeAction)
-				{
-					_removeAction(this);
-					_removeAction = null;
-				}
+				Remove();
+			}
+		}
+
+		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
+		public void Remove()
+		{
+			if (null != _removeAction)
+			{
+				_removeAction(this);
+				_removeAction = null;
 			}
 		}
 

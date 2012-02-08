@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <summary>Fired if the title name changed.</summary>
 		public event EventHandler TitleNameChanged;
 
-
+		public WeakActionHandler<INameOwner, string> _weakTableNameChangedHandler;
 	
 
 		#region Constructors
@@ -82,7 +82,23 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			set { }
 		}
 
-		public void Dispose()
+
+			protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
+		{
+			if (null != _worksheetLayout)
+				throw new ApplicationException("This controller is already controlling a layout");
+			if (null != _table)
+				throw new ApplicationException("This controller is already controlling a table");
+			if (null == value)
+				throw new ArgumentNullException("value");
+
+			_worksheetLayout = value;
+			_table = _worksheetLayout.DataTable;
+			_table.NameChanged += (_weakTableNameChangedHandler = new WeakActionHandler<INameOwner, string>(this.EhTableNameChanged, x => _table.NameChanged -= x));
+			OnTitleNameChanged();
+		}
+
+		public virtual void Dispose()
 		{
 			var view = ViewObject;
 			this.ViewObject = null;
@@ -91,7 +107,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			if (null != _table)
 			{
-				_table.NameChanged -= EhTableNameChanged;
+				_weakTableNameChangedHandler.Remove();
 			}
 
 			_table = null;
@@ -122,20 +138,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-		protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
-		{
-			if (null != _worksheetLayout)
-				throw new ApplicationException("This controller is already controlling a layout");
-			if (null != _table)
-				throw new ApplicationException("This controller is already controlling a table");
-			if (null == value)
-				throw new ArgumentNullException("value");
-
-			_worksheetLayout = value;
-			_table = _worksheetLayout.DataTable;
-			_table.NameChanged += new WeakActionHandler<INameOwner, string>(this.EhTableNameChanged, x => _table.NameChanged -= x);
-			OnTitleNameChanged();
-		}
+	
 
 		public abstract IndexSelection SelectedDataColumns { get; }
 

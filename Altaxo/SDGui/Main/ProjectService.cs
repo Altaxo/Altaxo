@@ -541,9 +541,23 @@ namespace Altaxo.Main
 					object modelobject = ((Altaxo.Gui.IMVCControllerWrapper)content).MVCController.ModelObject;
 
 					if (object.ReferenceEquals(modelobject, document))
+					{
 						contentList.Add(content);
-					else if ((modelobject is Altaxo.Worksheet.WorksheetLayout) && object.ReferenceEquals((modelobject as Altaxo.Worksheet.WorksheetLayout).DataTable, document))
-						contentList.Add(content);
+					}
+					else if (modelobject is Altaxo.Worksheet.WorksheetViewLayout)
+					{
+						var wvl = (Altaxo.Worksheet.WorksheetViewLayout)modelobject;
+						if(object.ReferenceEquals(wvl.WorksheetLayout, document))
+							contentList.Add(content);
+						else if(wvl.WorksheetLayout!=null && object.ReferenceEquals(wvl.WorksheetLayout.DataTable, document))
+							contentList.Add(content);
+					}
+					else if(modelobject is Altaxo.Graph.GraphViewLayout)
+					{
+						var gvl = (Altaxo.Graph.GraphViewLayout)modelobject;
+						if(object.ReferenceEquals(gvl.GraphDocument, document))
+							contentList.Add(content);
+					}
 				}
 
 				if (contentList.Count >= maxNumber)

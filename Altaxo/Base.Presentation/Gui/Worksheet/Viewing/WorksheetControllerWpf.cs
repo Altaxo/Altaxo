@@ -142,6 +142,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		protected TextBox _cellEditControl;
 		protected VisualHost _visualHost;
 
+		protected WeakEventHandler _weakEventHandlerDataColumnChanged;
+		protected WeakEventHandler _weakEventHandlerPropertyColumnChanged;
+
 		/// <summary>
 		/// Set the member variables to default values. Intended only for use in constructors and deserialization code.
 		/// </summary>
@@ -226,11 +229,21 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			base.InternalInitializeWorksheetLayout(layout);
 
-			_table.DataColumns.Changed += new WeakEventHandler(this.EhTableDataChanged, x => _table.DataColumns.Changed -= x);
-			_table.PropCols.Changed += new WeakEventHandler(this.EhPropertyDataChanged, x => _table.PropCols.Changed -= x);
+			_table.DataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(this.EhTableDataChanged, x => _table.DataColumns.Changed -= x));
+			_table.PropCols.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(this.EhPropertyDataChanged, x => _table.PropCols.Changed -= x));
 			this.SetCachedNumberOfDataColumns();
 			this.SetCachedNumberOfDataRows();
 			this.SetCachedNumberOfPropertyColumns();
+		}
+
+		public override void Dispose()
+		{
+			if (_table != null)
+			{
+				_weakEventHandlerDataColumnChanged.Remove();
+				_weakEventHandlerPropertyColumnChanged.Remove();
+			}
+			base.Dispose();
 		}
 
 		#endregion // Constructors
