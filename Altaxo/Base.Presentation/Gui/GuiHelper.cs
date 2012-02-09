@@ -377,5 +377,39 @@ namespace Altaxo.Gui
 
 		#endregion
 
+		#region Image Proxy converters
+
+		/// <summary>Converts <see cref="Altaxo.Graph.ImageProxy"/> instances to Wpf <see cref="ImageSource"/> instances.</summary>
+		/// <param name="proxy">The proxy.</param>
+		/// <returns></returns>
+		public static ImageSource ToWpf(Altaxo.Graph.ImageProxy proxy)
+		{
+				var stream = proxy.GetContentStream();
+				var decoder = System.Windows.Media.Imaging.BitmapDecoder.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.Default);
+				return decoder.Frames[0];
+		}
+
+		/// <summary>Converts a brush to a Wpf <see cref="ImageSource"/> instance.</summary>
+		/// <param name="brush">The brush to convert.</param>
+		/// <param name="xsize">The horizontal number of pixels of the image.</param>
+		/// <param name="ysize">The vertical number of pixels of the image.</param>
+		/// <returns>An image that represents the brush.</returns>
+		public static ImageSource ToWpf(Altaxo.Graph.Gdi.BrushX brush, int xsize, int ysize)
+		{
+			using (var bmp = new System.Drawing.Bitmap(xsize, ysize, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+			{
+				using (var g = System.Drawing.Graphics.FromImage(bmp))
+				{
+					brush.SetEnvironment(new Altaxo.Graph.RectangleD(0, 0, xsize, ysize), 96);
+					g.FillRectangle(brush, 0, 0, xsize, ysize);
+				}
+				var stream = Altaxo.Graph.ImageProxy.ImageToStream(bmp, System.Drawing.Imaging.ImageFormat.Png);
+				var decoder = System.Windows.Media.Imaging.BitmapDecoder.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.Default);
+				return decoder.Frames[0];
+			}
+		}
+
+		#endregion
+
 	}
 }

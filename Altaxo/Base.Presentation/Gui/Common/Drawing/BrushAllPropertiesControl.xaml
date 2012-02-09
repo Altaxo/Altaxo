@@ -62,6 +62,5 @@
 				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel"/>
 			</Grid>
 		</GroupBox>
-
 	</Grid>
 </UserControl>

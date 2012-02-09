@@ -62,9 +62,14 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		BrushX _brush;
+		WeakEventHandler _weakBrushChangedEventHandler;
 		public BrushX Brush
 		{
-			get { return _brush; }
+			get
+			{
+				// return a clone of the brush here, because we have the changed event wired to our brush, and we don't want to update our preview when the returned brush is changed externally.
+				return (BrushX)_brush.Clone();
+			}
 			set
 			{
 				if (_brush != null)
@@ -72,7 +77,8 @@ namespace Altaxo.Gui.Common.Drawing
 					_brush.Changed -= EhBrushChanged;
 				}
 
-				_brush = value;
+				// use a clone of the brush here, because we have the changed event wired to our brush, and we don't want to update our preview when the returned brush is changed externally.
+				_brush = null != value ? (BrushX)value.Clone() : null;
 
 				if (_brush != null)
 				{
@@ -771,7 +777,11 @@ namespace Altaxo.Gui.Common.Drawing
 				if (_lblTextureImage != null)
 					_lblTextureImage.Visibility = vis;
 				if (_cbTextureImage != null)
+				{
 					_cbTextureImage.Visibility = vis;
+					if (vis== System.Windows.Visibility.Visible && _cbTextureImage.SelectedIndex < 0)
+						_cbTextureImage.SelectedIndex = 0;
+				}
 			}
 		}
 

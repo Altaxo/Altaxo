@@ -80,6 +80,11 @@ namespace Altaxo.Graph
 
     public abstract string ContentHash { get; }
 
+		public virtual Stream GetContentStream()
+		{
+			return ImageToStream(GetImage(), ImageFormat.Png);
+		}
+
     public abstract bool IsValid { get; }
 
     public abstract string Name { get; }
@@ -89,6 +94,13 @@ namespace Altaxo.Graph
       return this.ContentHash == from.ContentHash;
     }
 
+		public static MemoryStream ImageToStream(Image image, ImageFormat format)
+		{
+			MemoryStream str = new MemoryStream();
+			image.Save(str, format);
+			str.Flush();
+			return str;
+		}
 
     #region ICloneable Members
 
@@ -234,8 +246,6 @@ namespace Altaxo.Graph
         return _url+"."+_name;
       }
     }
-
-
 
     #region ICloneable Members
 
@@ -392,13 +402,7 @@ namespace Altaxo.Graph
       return img;
     }
 
-    private static MemoryStream ImageToStream(Image image, ImageFormat format)
-    {
-      MemoryStream str = new MemoryStream();
-      image.Save(str, format);
-      str.Flush();
-      return str;
-    }
+  
 
     private void ComputeStreamHash()
     {
@@ -489,6 +493,18 @@ namespace Altaxo.Graph
       return _image;
     }
 
+		public override Stream GetContentStream()
+		{
+			if (null != _stream)
+			{
+				if (_stream.CanSeek)
+					_stream.Seek(0, SeekOrigin.Begin);
+				return _stream;
+			}
+			else
+				return base.GetContentStream();
+		}
+
     public override string  ContentHash
 {
 	get { return _hash; }
@@ -510,7 +526,7 @@ namespace Altaxo.Graph
   }
   #endregion
 
-#region HatchImageProxy
+	#region HatchImageProxy
 
 	/// <summary>
 	/// Class that creates images 'on the fly', by using an algorithmus.

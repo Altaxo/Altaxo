@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		protected class BrushComboBoxItem : ImageComboBoxItem
 		{
-			DrawingImage _cachedDrawing;
+			ImageSource _cachedDrawing;
 
 			public override string Text
 			{
@@ -75,7 +75,11 @@ namespace Altaxo.Gui.Common.Drawing
 							name = "CustBrush ";
 							break;
 					}
-					return name + brush.Color.Name;
+
+					if (brush.BrushType != BrushType.TextureBrush)
+						return name + brush.Color.Name;
+					else
+						return name.Trim();
 				}
 			}
 
@@ -220,7 +224,7 @@ namespace Altaxo.Gui.Common.Drawing
 				SelectedBrushChanged(obj, args);
 		}
 
-		public static DrawingImage GetImage(BrushX val)
+		public static ImageSource GetImage(BrushX val)
 		{
 
 			const double border = 0.1;
@@ -230,30 +234,38 @@ namespace Altaxo.Gui.Common.Drawing
 			// Create the Geometry to draw.
 			//
 
-			if (null == _checkerBrush)
-				_checkerBrush = CreateCheckerBrush(Math.Min(width, height) / 2);
+			if (val.BrushType == BrushType.SolidBrush)
+			{
 
-			var drawingGroup = new DrawingGroup();
+				if (null == _checkerBrush)
+					_checkerBrush = CreateCheckerBrush(Math.Min(width, height) / 2);
 
-			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0, 0, width, height)) };
-			geometryDrawing.Brush = Brushes.Black;
-			drawingGroup.Children.Add(geometryDrawing);
+				var drawingGroup = new DrawingGroup();
 
-			var innerRect = new Rect(border, border, width - 2 * border, height - 2 * border);
+				var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0, 0, width, height)) };
+				geometryDrawing.Brush = Brushes.Black;
+				drawingGroup.Children.Add(geometryDrawing);
 
-			geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
-			geometryDrawing.Brush = _checkerBrush;
-			drawingGroup.Children.Add(geometryDrawing);
+				var innerRect = new Rect(border, border, width - 2 * border, height - 2 * border);
 
-			geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
-			geometryDrawing.Brush = new SolidColorBrush(GuiHelper.ToWpf(val.Color));
-			drawingGroup.Children.Add(geometryDrawing);
+				geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
+				geometryDrawing.Brush = _checkerBrush;
+				drawingGroup.Children.Add(geometryDrawing);
 
-			DrawingImage geometryImage = new DrawingImage(drawingGroup);
+				geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
+				geometryDrawing.Brush = new SolidColorBrush(GuiHelper.ToWpf(val.Color));
+				drawingGroup.Children.Add(geometryDrawing);
 
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
+				DrawingImage geometryImage = new DrawingImage(drawingGroup);
+
+				// Freeze the DrawingImage for performance benefits.
+				geometryImage.Freeze();
+				return geometryImage;
+			}
+			else
+			{
+				return GuiHelper.ToWpf(val, 16, 16);
+			}
 		}
 
 
@@ -391,7 +403,11 @@ namespace Altaxo.Gui.Common.Drawing
 			ColorController ctrl = new ColorController(color);
 			ctrl.ViewObject = new ColorPickerControl(color);
 			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
-				this.SelectedBrush = new BrushX((NamedColor)ctrl.ModelObject);
+			{
+				Color c = (Color)ctrl.ModelObject;
+				var namedColor = NamedColor.FromArgb(c.A, c.R, c.G, c.B);
+				this.SelectedBrush = new BrushX(namedColor);
+			}
 		}
 	}
 }

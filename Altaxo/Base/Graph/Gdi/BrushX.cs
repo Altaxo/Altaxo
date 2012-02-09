@@ -722,8 +722,9 @@ namespace Altaxo.Graph.Gdi
 
 			if (changed)
 			{
+				// we consider this set of the environment not as a change of the brush properties itself
+				// thus we invalidate the cached brush, but we don't fire the Changed event
 				_SetBrushVariable(null);
-				OnChanged();
 			}
 
 			return changed;

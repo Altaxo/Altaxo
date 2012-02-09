@@ -12,5 +12,9 @@
 			</StackPanel>
 		</DataTemplate>
 	</ComboBox.Resources>
-	
+	<ComboBox.ContextMenu>
+		<ContextMenu x:Name="_contextMenu">
+			<MenuItem Header="Load texture from file .." Click="EhLoadFromFile"/>
+		</ContextMenu>
+	</ComboBox.ContextMenu>
 </local:ImageComboBox>

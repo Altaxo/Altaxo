@@ -186,26 +186,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 
-		public static DrawingImage GetImage(ImageProxy val)
+		public static ImageSource GetImage(ImageProxy val)
 		{
-			double height = 1;
-			double width = 2;
-
-			//
-			// Create the Geometry to draw.
-			//
-			GeometryGroup geometryGroup = new GeometryGroup();
-			geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
-
-			var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
-			geometryDrawing.Pen = new Pen(Brushes.Black, 1);
-
-
-			DrawingImage geometryImage = new DrawingImage(geometryDrawing);
-
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
+			return GuiHelper.ToWpf(val);
 		}
 	}
 }

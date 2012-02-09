@@ -39,7 +39,8 @@ namespace Altaxo.Serialization
 
 		static GUIConversion()
 		{
-			Current.PropertyService.PropertyChanged += new Action<string>(EhPropertyService_PropertyChanged);
+			if(null!=Current.PropertyService)
+				Current.PropertyService.PropertyChanged += new Action<string>(EhPropertyService_PropertyChanged);
 		}
 
 		static void EhPropertyService_PropertyChanged(string key)
