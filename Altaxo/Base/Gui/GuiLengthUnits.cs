@@ -26,7 +26,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Science;
+using Altaxo.Units;
+using Altaxo.Units.Length;
+
 
 namespace Altaxo.Gui
 {
@@ -38,9 +40,9 @@ namespace Altaxo.Gui
 		{
 			var instance = new List<IUnit>();
 
-			instance.Add(LengthUnitPoint.Instance);
-			instance.Add(new UnitWithLimitedPrefixes(LengthUnitMeter.Instance , new SIPrefix[]{SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci}));
-			instance.Add(LengthUnitInch.Instance);
+			instance.Add(Point.Instance);
+			instance.Add(new UnitWithLimitedPrefixes(Meter.Instance , new SIPrefix[]{SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci}));
+			instance.Add(Inch.Instance);
 			_instance = instance.AsReadOnly();
 		}
 

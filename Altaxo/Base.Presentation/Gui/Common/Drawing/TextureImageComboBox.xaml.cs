@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -35,6 +36,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -54,11 +56,19 @@ namespace Altaxo.Gui.Common.Drawing
 				_cb = c;
 			}
 
+			/// <summary>Converts an image proxy to the combobox item.</summary>
+			/// <param name="value">The value produced by the binding source.</param>
+			/// <param name="targetType">The type of the binding target property.</param>
+			/// <param name="parameter">The converter parameter to use.</param>
+			/// <param name="culture">The culture to use in the converter.</param>
+			/// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
 			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
 				if (value != null)
 				{
 					var val = (ImageProxy)value;
+					if(!_cb._cachedItems.ContainsKey(val.ContentHash))
+						_cb._cachedItems.Add(val.ContentHash,new ImageComboBoxItem(_cb,new KeyValuePair<string,ImageProxy>(val.Name,val)));
 					return _cb._cachedItems[val.ContentHash];
 				}
 				else
@@ -67,8 +77,17 @@ namespace Altaxo.Gui.Common.Drawing
 				}
 			}
 
+			/// <summary>Converts the combobox item to the image proxy.</summary>
+			/// <param name="value">The value that is produced by the binding target.</param>
+			/// <param name="targetType">The type to convert to.</param>
+			/// <param name="parameter">The converter parameter to use.</param>
+			/// <param name="culture">The culture to use in the converter.</param>
+			/// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
+				if (null == value)
+					return null;
+
 				var it = (ImageComboBoxItem)value;
 				var pair = (KeyValuePair<string, ImageProxy>)(it.Value);
 				return pair.Value;
@@ -81,6 +100,19 @@ namespace Altaxo.Gui.Common.Drawing
 		/// <summary>Cached items. Key is the content hash of the image proxy, value is the combobox item.</summary>
 		Dictionary<string, ImageComboBoxItem> _cachedItems = new Dictionary<string, ImageComboBoxItem>();
 
+
+		ObservableCollection<ImageComboBoxItem> _textureItems = new ObservableCollection<ImageComboBoxItem>();
+		ObservableCollection<ImageComboBoxItem> _hatchItems = new ObservableCollection<ImageComboBoxItem>();
+		ObservableCollection<ImageComboBoxItem> _syntheticItems = new ObservableCollection<ImageComboBoxItem>();
+		ObservableCollection<ImageComboBoxItem> _currentItemsSource;
+
+
+
+
+		public event DependencyPropertyChangedEventHandler TextureImageChanged;
+
+		public event DependencyPropertyChangedEventHandler TextureImageTypeChanged;
+
 		static TextureImageComboBox()
 		{
 		}
@@ -89,8 +121,10 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			InitializeComponent();
 
-			SetDataSource();
+			InitializeItemLists();
 
+			SetItemsSourceInDependenceOnTextureType();
+			
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
@@ -100,32 +134,93 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 
-		void SetDataSource()
+		void InitializeItemLists()
 		{
-			_cachedItems.Clear();
-
 			ImageComboBoxItem it;
 
-			foreach (KeyValuePair<string, ImageProxy> pair in TextureManager.BuiltinTextures)
+			// Texture items
 			{
-				_cachedItems.Add(pair.Value.ContentHash, it = new ImageComboBoxItem(this, pair));
-				this.Items.Add(it);
+				foreach (KeyValuePair<string, ImageProxy> pair in TextureManager.BuiltinTextures)
+				{
+					_cachedItems.Add(pair.Value.ContentHash, it = new ImageComboBoxItem(this, pair));
+					_textureItems.Add(it);
+				}
+
+				foreach (KeyValuePair<string, ImageProxy> pair in TextureManager.UserTextures)
+				{
+					_cachedItems.Add(pair.Value.ContentHash, it = new ImageComboBoxItem(this, pair));
+					_textureItems.Add(it);
+				}
+
+				if (!_cachedItems.ContainsKey(BrushX.DefaultTextureBrush.ContentHash))
+				{
+					_cachedItems.Add(BrushX.DefaultTextureBrush.ContentHash, it = new ImageComboBoxItem(this, new KeyValuePair<string, ImageProxy>(BrushX.DefaultTextureBrush.Name,BrushX.DefaultTextureBrush)));
+					_textureItems.Add(it);
+				}
 			}
 
-			foreach (KeyValuePair<string, ImageProxy> pair in TextureManager.UserTextures)
+			// Hatch items
 			{
-				_cachedItems.Add(pair.Value.ContentHash, it = new ImageComboBoxItem(this, pair));
-				this.Items.Add(it);
+				var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Gdi.HatchBrushes.HatchBrushBase));
+				foreach (var t in types)
+				{
+					Altaxo.Graph.Gdi.HatchBrushes.HatchBrushBase brush = null;
+					try
+					{
+						brush = Activator.CreateInstance(t) as Altaxo.Graph.Gdi.HatchBrushes.HatchBrushBase;
+					}
+					catch (Exception) { }
+					if (null != brush)
+					{
+						KeyValuePair<string, ImageProxy> pair = new KeyValuePair<string, ImageProxy>(t.Name, brush);
+						if(!_cachedItems.TryGetValue(brush.ContentHash, out it))
+							_cachedItems.Add(brush.ContentHash, it = new ImageComboBoxItem(this, pair));
+						_hatchItems.Add(it);
+					}
+				}
+				if (!_cachedItems.ContainsKey(BrushX.DefaultHatchBrush.ContentHash))
+				{
+					_cachedItems.Add(BrushX.DefaultHatchBrush.ContentHash, it = new ImageComboBoxItem(this, new KeyValuePair<string, ImageProxy>(BrushX.DefaultHatchBrush.Name, BrushX.DefaultHatchBrush)));
+					_hatchItems.Add(it);
+				}
+			}
+
+			// Synthetic items
+			{
+				var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase));
+				foreach (var t in types)
+				{
+					Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase brush = null;
+					try
+					{
+						brush = Activator.CreateInstance(t) as Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase;
+					}
+					catch (Exception) { }
+					if (null != brush)
+					{
+						KeyValuePair<string, ImageProxy> pair = new KeyValuePair<string, ImageProxy>(t.Name, brush);
+						if (!_cachedItems.TryGetValue(brush.ContentHash, out it))
+							_cachedItems.Add(brush.ContentHash, it = new ImageComboBoxItem(this, pair));
+						_syntheticItems.Add(it);
+					}
+				}
+				if (!_cachedItems.ContainsKey(BrushX.DefaultSyntheticBrush.ContentHash))
+				{
+					_cachedItems.Add(BrushX.DefaultSyntheticBrush.ContentHash, it = new ImageComboBoxItem(this, new KeyValuePair<string, ImageProxy>(BrushX.DefaultSyntheticBrush.Name, BrushX.DefaultSyntheticBrush)));
+					_syntheticItems.Add(it);
+				}
 			}
 		}
 
 		void AddImage(ImageProxy img)
 		{
+			if (null == img)
+				return;
 			if (_cachedItems.ContainsKey(img.ContentHash))
 				return;
 			ImageComboBoxItem it;
 			_cachedItems.Add(img.ContentHash, it = new ImageComboBoxItem(this, new KeyValuePair<string, ImageProxy>(img.Name, img)));
-			this.Items.Add(it);
+			_currentItemsSource.Add(it);
 		}
 
 		#region Dependency property
@@ -138,18 +233,73 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static readonly DependencyProperty TextureImageProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(ImageProxy), typeof(TextureImageComboBox),
-				new FrameworkPropertyMetadata(OnTextureImageChanged));
+				new FrameworkPropertyMetadata(EhTextureImageChanged));
 
-		private static void OnTextureImageChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhTextureImageChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((TextureImageComboBox)obj).EhTextureImageChanged(obj, args);
+			((TextureImageComboBox)obj).OnTextureImageChanged(obj, args);
 		}
 		#endregion
 
-		protected virtual void EhTextureImageChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		#region Dependency property TextureImageType
+		public Altaxo.Graph.Gdi.BrushType TextureImageType
 		{
-
+			get { return (Altaxo.Graph.Gdi.BrushType)GetValue(TextureImageTypeProperty); }
+			set { SetValue(TextureImageTypeProperty, value); }
 		}
+
+		public static readonly DependencyProperty TextureImageTypeProperty =
+				DependencyProperty.Register("TextureImageType", typeof(Altaxo.Graph.Gdi.BrushType), typeof(TextureImageComboBox),
+				new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.BrushType.HatchBrush, EhTextureImageTypeChanged));
+
+		private static void EhTextureImageTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			((TextureImageComboBox)obj).OnTextureImageTypeChanged(obj, args);
+		}
+		#endregion
+
+
+
+		protected virtual void OnTextureImageChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			if (null != TextureImageChanged)
+				TextureImageChanged(this, args);
+		}
+
+
+		protected virtual void OnTextureImageTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			SetItemsSourceInDependenceOnTextureType();
+
+			if (null != TextureImageTypeChanged)
+				TextureImageTypeChanged(this, args);
+		}
+
+
+		void SetItemsSourceInDependenceOnTextureType()
+		{
+			this.SelectedIndex = -1;
+			switch (TextureImageType)
+			{
+				case Altaxo.Graph.Gdi.BrushType.TextureBrush:
+					_currentItemsSource = _textureItems;
+					break;
+				case Altaxo.Graph.Gdi.BrushType.HatchBrush:
+					_currentItemsSource = _hatchItems;
+					break;
+				case Altaxo.Graph.Gdi.BrushType.SyntheticTextureBrush:
+					_currentItemsSource = _syntheticItems;
+					break;
+				default:
+					_currentItemsSource = new ObservableCollection<ImageComboBoxItem>();
+					break;
+			}
+
+			this.ItemsSource = _currentItemsSource;
+
+			_menuLoadTextureFromFile.IsEnabled = TextureImageType == Altaxo.Graph.Gdi.BrushType.TextureBrush;
+		}
+
 
 
 		void EhLoadFromFile(object sender, EventArgs e)

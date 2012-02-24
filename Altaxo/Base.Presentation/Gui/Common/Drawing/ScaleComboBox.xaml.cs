@@ -168,13 +168,13 @@ namespace Altaxo.Gui.Common.Drawing
 		public ScaleComboBox()
 		{
 			InitializeComponent();
-
-			this.Items.Add(new ImageComboBoxItem(this, -2.0));
-			this.Items.Add(new ImageComboBoxItem(this, -1.0));
-			this.Items.Add(new ImageComboBoxItem(this, -0.5));
+			this.Items.Add(new ImageComboBoxItem(this, 0.1));
+			this.Items.Add(new ImageComboBoxItem(this, 0.2));
 			this.Items.Add(new ImageComboBoxItem(this, 0.5));
 			this.Items.Add(new ImageComboBoxItem(this, 1.0));
 			this.Items.Add(new ImageComboBoxItem(this, 2.0));
+			this.Items.Add(new ImageComboBoxItem(this, 5.0));
+			this.Items.Add(new ImageComboBoxItem(this, 10.0));
 
 			_valueBinding = new Binding();
 			_valueBinding.Source = this;

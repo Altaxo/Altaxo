@@ -29,7 +29,7 @@ using Altaxo.Graph.Gdi;
 
 using Altaxo.Main;
 using Altaxo.Data;
-using Altaxo.Science;
+using Altaxo.Units;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -179,7 +179,7 @@ namespace Altaxo.Gui.Graph
 
     UseDocument _useDocumentCopy;
 
-		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, LengthUnitPoint.Instance));
+		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
     public XYPlotLabelStyleController()
     {
@@ -221,7 +221,7 @@ namespace Altaxo.Gui.Graph
         _yOffset      = _doc.YOffset;
         _labelColumn = _doc.LabelColumn;
         _backgroundStyle = _doc.BackgroundStyle;
-				_percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em size", "%", new DimensionfulQuantity(_font.Size, LengthUnitPoint.Instance));
+				_percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em size", "%", new DimensionfulQuantity(_font.Size, Units.Length.Point.Instance));
 			}
 
       if(null!=_view)
@@ -235,7 +235,7 @@ namespace Altaxo.Gui.Graph
         SetAttachmentDirection();
 				_view.SelectedRotation = _doc.Rotation;
 
-				_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_font.Size, LengthUnitPoint.Instance);
+				_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_font.Size, Units.Length.Point.Instance);
 
 				var xEnv = new QuantityWithUnitGuiEnvironment( GuiLengthUnits.Collection, _percentFontSizeUnit);
 				_view.Init_XOffset(xEnv, new DimensionfulQuantity(_xOffset * 100, _percentFontSizeUnit));
@@ -354,7 +354,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_FontSizeChanged()
 		{
-			_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_view.SelectedFont.Size, LengthUnitPoint.Instance);
+			_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_view.SelectedFont.Size, Units.Length.Point.Instance);
 		}
   
     #endregion
@@ -374,13 +374,13 @@ namespace Altaxo.Gui.Graph
 			if (xOffs.Unit is IRelativeUnit)
 				_doc.XOffset = ((IRelativeUnit)xOffs.Unit).GetRelativeValueFromValue(xOffs.Value);
 			else
-				_doc.XOffset = xOffs.AsValueIn(LengthUnitPoint.Instance) / _font.Size;
+				_doc.XOffset = xOffs.AsValueIn(Units.Length.Point.Instance) / _font.Size;
 
 			var yOffs = _view.YOffset;
 			if (yOffs.Unit is IRelativeUnit)
 				_doc.YOffset = ((IRelativeUnit)yOffs.Unit).GetRelativeValueFromValue(yOffs.Value);
 			else
-				_doc.YOffset = yOffs.AsValueIn(LengthUnitPoint.Instance) / _font.Size;
+				_doc.YOffset = yOffs.AsValueIn(Units.Length.Point.Instance) / _font.Size;
 
 			if (_view.AttachToAxis && null != _view.AttachedAxis)
 				_doc.AttachedAxis = (CSPlaneID)_view.AttachedAxis.Tag;

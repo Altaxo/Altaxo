@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Graph
     bool EhView_RangeTo(int val);
   }
 
-  public interface ILineScatterPlotDataView : IMVCView
+  public interface ILineScatterPlotDataView 
   {
 
     /// <summary>

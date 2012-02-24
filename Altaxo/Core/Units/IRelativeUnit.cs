@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units
 {
 	/// <summary>
 	/// Represents a unit that refers to a reference quantity. Example: 'Percent of page with' is a unit, which refers to the quantity 'page width' (which has the dimension of length).
@@ -105,7 +105,7 @@ namespace Altaxo.Science
 		/// <returns>The corresponding value of <paramref name="x"/> in SI units.</returns>
 		public double ToSIUnit(double x)
 		{
-			return (x / _divider) * _referenceQuantity.InSIUnits;
+			return (x / _divider) * _referenceQuantity.AsValueInSIUnits;
 		}
 
 		/// <summary>Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.</summary>
@@ -113,7 +113,7 @@ namespace Altaxo.Science
 		/// <returns>The corresponding value in this unit.</returns>
 		public double FromSIUnit(double x)
 		{
-			return _divider * x / _referenceQuantity.InSIUnits;
+			return _divider * x / _referenceQuantity.AsValueInSIUnits;
 		}
 
 

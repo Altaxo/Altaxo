@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units
 {
 	public interface ISIPrefixList : IEnumerable<SIPrefix>
 	{

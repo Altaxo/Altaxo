@@ -116,21 +116,25 @@ namespace Altaxo.Gui.Common.Drawing
 
 		CC _valueConverter;
 
+		/// <summary>Occurs when the selected color scale value changed.</summary>
+		public event DependencyPropertyChangedEventHandler SelectedColorScaleChanged;
+
+
 		#region Dependency property
-		private const string _nameOfValueProp = "ColorScale";
-		public double ColorScale
+		private const string _nameOfValueProp = "SelectedColorScale";
+		public double SelectedColorScale
 		{
-			get { var result = (double)GetValue(ColorScaleProperty); return result; }
-			set { SetValue(ColorScaleProperty, value); }
+			get { var result = (double)GetValue(SelectedColorScaleProperty); return result; }
+			set { SetValue(SelectedColorScaleProperty, value); }
 		}
 
-		public static readonly DependencyProperty ColorScaleProperty =
+		public static readonly DependencyProperty SelectedColorScaleProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(ColorScaleComboBox),
-				new FrameworkPropertyMetadata(1.0, OnColorScaleChanged));
+				new FrameworkPropertyMetadata(1.0, EhSelectedColorScaleChanged));
 
-		private static void OnColorScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhSelectedColorScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((ColorScaleComboBox)obj).EhColorScaleValueChanged(obj, args);
+			((ColorScaleComboBox)obj).OnSelectedColorScaleValueChanged(obj, args);
 		}
 		#endregion
 
@@ -153,7 +157,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_valueBinding.Converter = _valueConverter;
 			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
 			this.SetBinding(ComboBox.TextProperty, _valueBinding);
-			ColorScale = 0;
+			SelectedColorScale = 0;
 			_img.Source = GetImage(0.0); // since null is the default value, we have to set the image explicitely here
 		}
 
@@ -166,13 +170,16 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Height = h - 2 * hMargin;
 		}
 
-		protected virtual void EhColorScaleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnSelectedColorScaleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			if (null != _img)
 			{
 				var val = (double)args.NewValue;
 				_img.Source = GetImage(val);
 			}
+
+			if (null != SelectedColorScaleChanged)
+				SelectedColorScaleChanged(this, args);
 		}
 
 

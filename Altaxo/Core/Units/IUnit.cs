@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units
 {
 	/// <summary>
 	/// Represents an arbitrary unit (SI or any other unit).
@@ -62,42 +62,4 @@ namespace Altaxo.Science
 		/// </summary>
 		SIUnit SIUnit { get; }
 	}
-
-	/// <summary>
-	/// Represents no unit at all.
-	/// </summary>
-	public class Dimensionless : SIUnit
-	{
-		static readonly Dimensionless _instance = new Dimensionless();
-
-		/// <summary>Gets the (single) instance of this dimensionless unit.</summary>
-		public static Dimensionless Instance { get { return _instance; } }
-
-		/// <summary>Prevents a default instance of the <see cref="Dimensionless"/> class from being created.</summary>
-		private Dimensionless() : base(0, 0, 0, 0, 0, 0, 0) { }
-
-		/// <summary>Full name of the unit.</summary>
-		public override string Name
-		{
-			get { return ""; }
-		}
-
-		/// <summary>Usual shortcut of the unit.</summary>
-		public override string ShortCut
-		{
-			get { return ""; }
-		}
-
-		/// <summary>Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).</summary>
-		public override ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
-		}
-	}
-
-
-
-
-
-
 }

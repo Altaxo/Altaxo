@@ -34,6 +34,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
@@ -43,51 +44,371 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class BrushAllPropertiesControl : UserControl, IBrushViewAdvanced
 	{
-		BrushControlsGlue _glue;
-
 		public BrushAllPropertiesControl()
 		{
 			InitializeComponent();
 
-			_glue = new BrushControlsGlue(true);
-			_glue.CbBrushType = _cbBrushType;
-			_glue.CbColor1 = _cbColor;
-			_glue.CbColor2 = _cbBackColor;
-			_glue.LabelColor2 = _lblBackColor;
-			_glue.CbWrapMode = _cbWrapMode;
-			_glue.LabelWrapMode = _lblWrapMode;
-			_glue.CbGradientFocus = _cbGradientFocus;
-			_glue.LabelGradientFocus = _lblGradientFocus;
-			_glue.CbGradientScale = _cbColorScale;
-			_glue.LabelGradientScale = _lblColorScale;
-			_glue.CbTextureScale = _cbTextureScale;
-			_glue.LabelTextureScale = _lblTextureScale;
-
-			_glue.CbHatchStyle = _cbHatchStyle;
-			_glue.LabelHatchStyle = _lblHatchStyle;
-			_glue.CbGradientMode = _cbGradientMode;
-			_glue.LabelGradientMode = _lblGradientMode;
-			_glue.CbGradientShape = _cbGradientShape;
-			_glue.LabelGradientShape = _lblGradientShape;
-			_glue.ChkExchangeColors = _chkExchangeColors;
-			_glue.LabelExchangeColors = _lblExchangeColors;
-			_glue.CbTextureImage = _cbTextureImage;
-			_glue.LabelTextureImage = _lblTextureImage;
-
-			_glue.PreviewPanel = _previewPanel;
-
+			_guiTextureOffsetX.UnitEnvironment = RelationEnvironment.Instance;
+			_guiTextureOffsetY.UnitEnvironment = RelationEnvironment.Instance;
 		}
+		
 
-		public BrushX Brush
+		#region Brush type
+		public BrushType BrushType
 		{
-			get
-			{
-				return _glue.Brush;
-			}
-			set
-			{
-				_glue.Brush = value;
-			}
+			get { return _cbBrushType.BrushType; }
+			set { _cbBrushType.BrushType = value; }
 		}
+
+		public event Action BrushTypeChanged;
+		private void EhBrushTypeChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != BrushTypeChanged)
+				BrushTypeChanged();
+		}
+		#endregion Brush type
+
+		#region ForeColor
+		public NamedColor ForeColor
+		{
+			get { return _cbColor.SelectedColor; }
+			set { _cbColor.SelectedColor = value; }
+		}
+
+		public event Action ForeColorChanged;
+		private void EhForeColorChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != ForeColorChanged)
+				ForeColorChanged();
+		}
+
+		public void ForeColorEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_cbColor.Visibility = vis;
+			_lblForeColor.Visibility = vis;
+		}
+		#endregion ForeColor
+
+		#region BackColor
+		public NamedColor BackColor
+		{
+			get { return _cbBackColor.SelectedColor; }
+			set { _cbBackColor.SelectedColor = value; }
+		}
+
+		public event Action BackColorChanged;
+		private void EhBackColorChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != BackColorChanged)
+				BackColorChanged();
+		}
+
+		public void BackColorEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_cbBackColor.Visibility = vis;
+			_lblBackColor.Visibility = vis;
+		}
+		#endregion BackColor
+
+		#region ExchangeColors
+
+		public bool ExchangeColors
+		{
+			get { return _chkExchangeColors.IsChecked == true; }
+			set { _chkExchangeColors.IsChecked = value; }
+		}
+
+		public event Action ExchangeColorsChanged;
+		private void EhExchangeColorsChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != ExchangeColorsChanged)
+				ExchangeColorsChanged();
+		}
+
+		public void ExchangeColorsEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_chkExchangeColors.Visibility = vis;
+			_lblExchangeColors.Visibility = vis;
+		}
+
+		#endregion GradientFocus
+
+		#region WrapMode 
+
+		public System.Drawing.Drawing2D.WrapMode WrapMode
+		{
+			get { return _cbWrapMode.WrapMode; }
+			set { _cbWrapMode.WrapMode = value; }
+		}
+
+		public event Action WrapModeChanged;
+		private void EhWrapModeChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (null != WrapModeChanged)
+				WrapModeChanged();
+		}
+
+
+		public void WrapModeEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_cbWrapMode.Visibility = vis;
+			_lblWrapMode.Visibility = vis;
+		}
+
+		#endregion WrapMode
+
+		#region GradientFocus
+
+		public double GradientFocus
+		{
+			get { return _cbGradientFocus.SelectedGradientFocus; }
+			set { _cbGradientFocus.SelectedGradientFocus = value; }
+		}
+
+		public event Action GradientFocusChanged;
+		private void EhGradientFocusChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != GradientFocusChanged)
+				GradientFocusChanged();
+		}
+
+
+		public void GradientFocusEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_cbGradientFocus.Visibility = vis;
+			_lblGradientFocus.Visibility = vis;
+		}
+
+		#endregion GradientFocus
+
+		#region GradientScale
+
+		public double GradientColorScale
+		{
+			get { return _cbColorScale.SelectedColorScale; }
+			set { _cbColorScale.SelectedColorScale = value; }
+		}
+
+		public event Action GradientColorScaleChanged;
+		private void EhColorScaleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != GradientColorScaleChanged)
+				GradientColorScaleChanged();
+		}
+
+
+		public void GradientColorScaleEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_cbColorScale.Visibility = vis;
+			_lblColorScale.Visibility = vis;
+		}
+
+		#endregion GradientFocus
+
+		#region GradientAngle
+
+		public double GradientAngle
+		{
+			get { return _cbGradientAngle.SelectedRotation; }
+			set { _cbGradientAngle.SelectedRotation = value; }
+		}
+
+		public event Action GradientAngleChanged;
+		private void EhGradientAngleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != GradientAngleChanged)
+				GradientAngleChanged();
+		}
+
+
+		public void GradientAngleEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_cbGradientAngle.Visibility = vis;
+			_lblGradientAngle.Visibility = vis;
+		}
+
+		#endregion GradientMode
+
+
+		#region TextureOffsetX
+
+		public double TextureOffsetX
+		{
+			get { return _guiTextureOffsetX.SelectedQuantityAsValueInSIUnits; }
+			set { _guiTextureOffsetX.SelectedQuantityAsValueInSIUnits = value; }
+		}
+
+		public event Action TextureOffsetXChanged;
+		private void EhTextureOffsetXChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != TextureOffsetXChanged)
+				TextureOffsetXChanged();
+		}
+
+		public void TextureOffsetXEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_guiTextureOffsetX.Visibility = vis;
+			_lblTextureOffsetX.Visibility = vis;
+		}
+		
+
+		#endregion
+
+		#region TextureOffsetY
+
+		public double TextureOffsetY
+		{
+			get { return _guiTextureOffsetY.SelectedQuantityAsValueInSIUnits; }
+			set { _guiTextureOffsetY.SelectedQuantityAsValueInSIUnits = value; }
+		}
+
+		public event Action TextureOffsetYChanged;
+		private void EhTextureOffsetYChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != TextureOffsetYChanged)
+				TextureOffsetYChanged();
+		}
+
+		public void TextureOffsetYEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_guiTextureOffsetY.Visibility = vis;
+			_lblTextureOffsetY.Visibility = vis;
+		}
+
+		#endregion
+
+		#region TextureImage
+
+		public void InitTextureImage(ImageProxy proxy, BrushType imageType)
+		{
+			_cbTextureImage.TextureImageType = imageType;
+			_cbTextureImage.TextureImage = proxy;
+		}
+
+		public ImageProxy TextureImage
+		{
+			get { return _cbTextureImage.TextureImage; }
+		}
+
+		public event Action TextureImageChanged;
+		private void EhTextureImageChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (null != TextureImageChanged)
+				TextureImageChanged();
+		}
+
+
+		public void TextureImageEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_cbTextureImage.Visibility = vis;
+			_lblTextureImage.Visibility = vis;
+		}
+
+		#endregion GradientFocus
+
+		#region Texture scaling
+
+		public ITextureScalingView TextureScalingView 
+		{
+			get { return _guiTextureScaling; }
+		}
+
+		public void TextureScalingViewEnable(bool enable)
+		{
+			var vis = enable ? Visibility.Visible : Visibility.Collapsed;
+			_guiTextureScaling.Visibility = vis;
+		}
+
+		#endregion
+
+		#region Additional properties
+
+		public Main.IInstancePropertyView AdditionalPropertiesView
+		{
+			get { return _guiAdditionalProperties; }
+		}
+
+		#endregion
+
+
+
+		#region Preview Panel
+		GdiToWpfBitmap _previewBitmap;
+		public void UpdatePreview(BrushX brush)
+		{
+			if (null == _previewPanel || null == brush)
+				return;
+
+			int height = (int)_previewPanel.ActualHeight;
+			int width = (int)_previewPanel.ActualWidth;
+			if (height <= 0)
+				height = 64;
+			if (width <= 0)
+				width = 64;
+
+
+			if (null == _previewBitmap)
+			{
+				_previewBitmap = new GdiToWpfBitmap(width, height);
+				_previewPanel.Source = _previewBitmap.WpfBitmap;
+			}
+
+			if (width != _previewBitmap.GdiRectangle.Width || height != _previewBitmap.GdiRectangle.Height)
+			{
+				_previewBitmap.Resize(width, height);
+				_previewPanel.Source = _previewBitmap.WpfBitmap;
+			}
+
+			var grfx = _previewBitmap.GdiGraphics;
+
+			var fullRect = _previewBitmap.GdiRectangle;
+
+			grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+			grfx.FillRectangle(System.Drawing.Brushes.Transparent, fullRect);
+			grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+
+			var r2 = fullRect;
+			r2.Inflate(-r2.Width / 4, -r2.Height / 4);
+			//grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
+
+			brush.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
+			grfx.FillRectangle(brush, fullRect);
+
+			_previewBitmap.WpfBitmap.Invalidate();
+		}
+
+		public event Action PreviewPanelSizeChanged;
+		private void EhPreviewPanelSizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			if (null != PreviewPanelSizeChanged)
+				PreviewPanelSizeChanged();
+		}
+
+
+		#endregion
+
+		
+
+
+		
+
+	
+
+	
+
+		
+
+		
+
 	}
 }

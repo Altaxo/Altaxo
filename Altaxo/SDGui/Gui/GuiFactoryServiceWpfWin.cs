@@ -68,7 +68,11 @@ namespace Altaxo.Gui
 			{
 				if (_screenResolution.IsEmpty)
 				{
+					if (null == Current.Workbench.ViewObject)
+						return new Altaxo.Graph.PointD2D(96,96); // until we have a workbench, we assume 96 dpi
 					var MainWindowPresentationSource = System.Windows.PresentationSource.FromVisual((System.Windows.Window)Current.Workbench.ViewObject);
+					if (null == MainWindowPresentationSource)
+						return new Altaxo.Graph.PointD2D(96, 96); // until we have a valid presentation source, we assume 96 dpi
 					var m = MainWindowPresentationSource.CompositionTarget.TransformToDevice;
 					_screenResolution = new Altaxo.Graph.PointD2D(96 * m.M11, 96 * m.M22);
 				}

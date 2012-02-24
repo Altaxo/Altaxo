@@ -43,6 +43,25 @@ namespace Altaxo.Gui.Common.Drawing
 		protected Image _img;
 		protected ColumnDefinition _imgColumnDefinition;
 
+		/// <summary>
+		/// Get around the bug that the context menu of the editable part is not bound to the combobox 
+		/// (<see href="http://www.wpfmentor.com/2008/12/setting-context-menu-on-editable.html"/>)
+		/// </summary>
+		public override void OnApplyTemplate()
+		{
+			base.OnApplyTemplate();
+
+			// Use Snoop to find the name of the TextBox part  
+			// http://wpfmentor.blogspot.com/2008/11/understand-bubbling-and-tunnelling-in-5.html  
+			TextBox textBox = (TextBox)Template.FindName("PART_EditableTextBox", this);
+
+			// Create a template-binding in code  
+			Binding binding = new Binding("ContextMenu");
+			binding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
+			BindingOperations.SetBinding(textBox, FrameworkElement.ContextMenuProperty, binding);
+		}  
+
+
 		public EditableImageComboBox()
 		{
 			_img = new Image();
@@ -107,6 +126,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Stretch = Stretch.Uniform;
 			grid.Children.Add(_img);
 		}
+
 
 		protected virtual void SetImageFromContent()
 		{

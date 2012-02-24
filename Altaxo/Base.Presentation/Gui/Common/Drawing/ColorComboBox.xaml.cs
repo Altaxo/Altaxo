@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// ComboBox for <see cref="AxoColor"/>.
 	/// </summary>
-	public partial class ColorComboBox : ColorComboBoxBase
+	public partial class ColorComboBox : ColorComboBoxBase, Altaxo.Gui.Common.Drawing.INamedColorView
 	{
 
 		/// <summary>Converts the <see cref="AxoColor"/> to a <see cref="ColorComboBoxBase.ColorComboBoxItem"/> and vice versa.</summary>
@@ -113,6 +113,12 @@ namespace Altaxo.Gui.Common.Drawing
 		protected List<NamedColor> _colorCollection;
 
 		public event DependencyPropertyChangedEventHandler SelectedColorChanged;
+		private event Action ViewEvent_SelectedColorChanged;
+		event Action Altaxo.Gui.Common.Drawing.INamedColorView.SelectedColorChanged
+		{
+			add { ViewEvent_SelectedColorChanged += value; }
+			remove { ViewEvent_SelectedColorChanged -= value; }
+		}
 
 
 		public ColorType ColorType
@@ -204,6 +210,8 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (null != SelectedColorChanged)
 				SelectedColorChanged(obj, args);
+			if (null != ViewEvent_SelectedColorChanged)
+				ViewEvent_SelectedColorChanged();
 		}
 
 

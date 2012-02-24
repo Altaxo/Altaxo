@@ -34,7 +34,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Science;
+using Altaxo.Units;
+using Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -51,6 +52,7 @@ namespace Altaxo.Gui.Common.Drawing
 		public LengthImageComboBox()
 		{
 			SetBinding("SelectedQuantity");
+			this.IsTextSearchEnabled = false; // switch text search off since this interferes with the unit system
 		}
 
 		protected void SetBinding(string nameOfValueProperty)
@@ -59,14 +61,15 @@ namespace Altaxo.Gui.Common.Drawing
 			binding.Source = this;
 			binding.Path = new PropertyPath(nameOfValueProperty);
 			binding.Mode = BindingMode.TwoWay;
-			_converter = new QuantityWithUnitConverter();
+			_converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
 			binding.Converter = _converter;
 			binding.ValidationRules.Add(_converter);
 			_converter.BindingExpression = this.SetBinding(ComboBox.TextProperty, binding);
 
 			var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.TextProperty, typeof(LengthImageComboBox));
-
 			dpd.AddValueChanged(this, QuantityWithUnitTextBox_TextChanged);
+
+			var childs = this.LogicalChildren;
 		}
 
 		void QuantityWithUnitTextBox_TextChanged(object sender, EventArgs e)
@@ -74,12 +77,44 @@ namespace Altaxo.Gui.Common.Drawing
 			_converter.BindingExpression.ValidateWithoutUpdate();
 		}
 
-		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
+		protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
 		{
-			_converter.OnContextMenuOpening(this, SelectedQuantityProperty);
-			base.OnContextMenuOpening(e);
+			base.OnIsKeyboardFocusWithinChanged(e);
+
+			if (true==(bool)e.OldValue && false==(bool)e.NewValue)
+			{
+				if (!_converter.BindingExpression.HasError) // if text was successfully interpreted
+				{
+					_converter.ClearIntermediateConversionResults(); // clear the previous conversion, so that a full new conversion from quantity to string is done when UpdateTarget is called
+					_converter.BindingExpression.UpdateTarget(); // update the text with the full quanity including the unit
+				}
+			}
+
 		}
 
+
+		protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.F5) // interpret the text and update the quantity
+			{
+				e.Handled = true;
+				_converter.BindingExpression.UpdateSource(); // interpret the text
+				if (!_converter.BindingExpression.HasError) // if text was successfully interpreted
+				{
+					_converter.ClearIntermediateConversionResults(); // clear the previous conversion, so that a full new conversion from quantity to string is done when UpdateTarget is called
+					_converter.BindingExpression.UpdateTarget(); // update the text with the full quanity including the unit
+				}
+			}
+
+			base.OnKeyDown(e);
+		}
+		
+
+		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
+		{
+			_converter.OnContextMenuOpening();
+			base.OnContextMenuOpening(e);
+		}
 
 		#region Dependency property
 
@@ -94,7 +129,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static readonly DependencyProperty SelectedQuantityProperty =
 				DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(LengthImageComboBox),
-				new FrameworkPropertyMetadata(new DimensionfulQuantity(0, LengthUnitPoint.Instance), EhSelectedQuantityChanged));
+				new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Units.Length.Point.Instance), EhSelectedQuantityChanged));
 
 		private static void EhSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -117,10 +152,10 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public double SelectedQuantityInPoints
 		{
-			get { return SelectedQuantity.AsValueIn(Altaxo.Science.LengthUnitPoint.Instance); }
+			get { return SelectedQuantity.AsValueIn(Units.Length.Point.Instance); }
 			set
 			{
-				var quant = new Science.DimensionfulQuantity(value, Science.LengthUnitPoint.Instance);
+				var quant = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance);
 				if (null != UnitEnvironment)
 					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
 				SelectedQuantity = quant;

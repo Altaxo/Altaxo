@@ -36,7 +36,7 @@ using System.Windows.Shapes;
 
 using Altaxo.Graph;
 using Altaxo.Gui.Common.Drawing;
-using Altaxo.Science;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph
 {

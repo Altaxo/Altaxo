@@ -4,63 +4,85 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogm="clr-namespace:Altaxo.Gui.Main"
              mc:Ignorable="d" 
+						 Grid.IsSharedSizeScope="True"
              >
-    <Grid>
-		<Grid.RowDefinitions>
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+			</Style.Setters>
+		</Style>
+		<Style TargetType="FrameworkElement">
+			<Style.Setters>
+				<Setter Property="Margin" Value="4"/>
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<DockPanel>
+	<Grid DockPanel.Dock="Top">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn1"/>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn2"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
+			</Grid.RowDefinitions>
+	
 
-		<Label Grid.Column="0" Grid.Row="0">Color:</Label>
-		<Label Grid.Column="0" Grid.Row="2" x:Name="_lblBackColor">BackColor:</Label>
-		<Label Grid.Column="0" Grid.Row="4" x:Name="_lblWrapMode">Wrap mode:</Label>
-		<Label Grid.Column="0" Grid.Row="6" x:Name="_lblGradientFocus">Focus:</Label>
-		<Label Grid.Column="0" Grid.Row="8" x:Name="_lblColorScale">Color scale:</Label>
-		<Label Grid.Column="0" Grid.Row="10" x:Name="_lblTextureScale">Texture scale:</Label>
+		<Label Grid.Column="0" Grid.Row="0" x:Name="_lblBrushType">Brush type:</Label>
+		<axogcd:BrushTypeComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrushType" Margin="4" SelectedBrushTypeChanged="EhBrushTypeChanged"/>
 
-		<Label Grid.Column="2" Grid.Row="0" x:Name="_lblBrushType">Brush type:</Label>
-		<Label Grid.Column="2" Grid.Row="2" x:Name="_lblHatchStyle">Hatch style:</Label>
-		<Label Grid.Column="2" Grid.Row="4" x:Name="_lblGradientMode">Gradient mode:</Label>
-		<Label Grid.Column="2" Grid.Row="6" x:Name="_lblGradientShape">Gradient shape:</Label>
-		<Label Grid.Column="2" Grid.Row="8" x:Name="_lblExchangeColors">Exchange colors:</Label>
-		<Label Grid.Column="2" Grid.Row="10" x:Name="_lblTextureImage">Texture:</Label>
+		<Label Grid.Column="2" Grid.Row="0" x:Name="_lblForeColor">Color:</Label>
+		<axogcd:ColorComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbColor" Margin="4" SelectedColorChanged="EhForeColorChanged"/>
 
-		<axogcd:ColorComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbColor"/>
-		<axogcd:ColorComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbBackColor"/>
-		<axogcd:WrapModeComboBox Grid.Column="1" Grid.Row="4" x:Name="_cbWrapMode"/>
-		<axogcd:GradientFocusComboBox Grid.Column="1" Grid.Row="6" x:Name="_cbGradientFocus"/>
-		<axogcd:ColorScaleComboBox Grid.Column="1" Grid.Row="8" x:Name="_cbColorScale"/>
-		<axogcd:TextureScaleComboBox Grid.Column="1" Grid.Row="10" x:Name="_cbTextureScale"/>
+		<Label Grid.Column="0" Grid.Row="1" x:Name="_lblExchangeColors">Exchange colors:</Label>
+			<CheckBox Grid.Column="1" Grid.Row="1" x:Name="_chkExchangeColors" VerticalAlignment="Center" Margin="4" Checked="EhExchangeColorsChanged" Unchecked="EhExchangeColorsChanged" />
 
-		<axogcd:BrushTypeComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbBrushType"/>
-		<axogcd:HatchStyleComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbHatchStyle"/>
-		<axogcd:LinearGradientModeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbGradientMode"/>
-		<axogcd:LinearGradientShapeComboBox Grid.Column="3" Grid.Row="6" x:Name="_cbGradientShape"/>
-		<CheckBox Grid.Column="3" Grid.Row="8" x:Name="_chkExchangeColors" VerticalAlignment="Center" />
-		<axogcd:TextureImageComboBox Grid.Column="3" Grid.Row="10" x:Name="_cbTextureImage"/>
-		<GroupBox  Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="4"  Header="Preview:">
+		<Label Grid.Column="2" Grid.Row="1" x:Name="_lblBackColor">BackColor:</Label>
+			<axogcd:ColorComboBox Grid.Column="3" Grid.Row="1" x:Name="_cbBackColor" Margin="4" SelectedColorChanged="EhBackColorChanged"/>
+
+		<Label Grid.Column="0" Grid.Row="2" x:Name="_lblWrapMode">Wrap mode:</Label>
+			<axogcd:WrapModeComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbWrapMode" Margin="4" SelectionChanged="EhWrapModeChanged"/>
+
+		<Label Grid.Column="2" Grid.Row="2" x:Name="_lblGradientAngle">Angle:</Label>
+			<axogcd:RotationComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbGradientAngle" Margin="4" SelectedRotationChanged="EhGradientAngleChanged"/>
+
+		<Label Grid.Column="0" Grid.Row="3" x:Name="_lblGradientFocus">GradientFocus:</Label>
+			<axogcd:GradientFocusComboBox Grid.Column="1" Grid.Row="3" x:Name="_cbGradientFocus" Margin="4" SelectedGradientFocusChanged="EhGradientFocusChanged"  />
+
+		<Label Grid.Column="2" Grid.Row="3" x:Name="_lblColorScale">Gradient color scale:</Label>
+			<axogcd:ColorScaleComboBox Grid.Column="3" Grid.Row="3" x:Name="_cbColorScale" Margin="4" SelectedColorScaleChanged="EhColorScaleChanged"/>
+
+		<Label Grid.Column="0" Grid.Row="4" x:Name="_lblTextureImage">Texture:</Label>
+			<axogcd:TextureImageComboBox Grid.Column="1" Grid.Row="4" x:Name="_cbTextureImage" Margin="4" SelectionChanged="EhTextureImageChanged"/>
+
+			<Label Grid.Column="0" Grid.Row="5" x:Name="_lblTextureOffsetX">X offset:</Label>
+			<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="5" x:Name="_guiTextureOffsetX" Margin="4" SelectedQuantityChanged="EhTextureOffsetXChanged"/>
+
+			<Label Grid.Column="2" Grid.Row="5" x:Name="_lblTextureOffsetY">Y offset:</Label>
+			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="5" x:Name="_guiTextureOffsetY" Margin="4"  SelectedQuantityChanged="EhTextureOffsetYChanged" />
+		</Grid>
+
+		<axogcd:TextureScalingControl x:Name="_guiTextureScaling" DockPanel.Dock="Top" Margin="0,4,0,4"/>
+
+
+		<axogm:InstancePropertyControlTwoColumnStyle x:Name="_guiAdditionalProperties" Margin="0,4,0,4" DockPanel.Dock="Top"/>
+		
+		<GroupBox Header="Preview:" Margin="0,4,0,4">
 			<Grid>
 				<Rectangle Name="_previewRect" MinHeight="40" Fill="Azure"/>
-				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel"/>
+				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel" SizeChanged="EhPreviewPanelSizeChanged"/>
 			</Grid>
 		</GroupBox>
-	</Grid>
+	</DockPanel>
 </UserControl>

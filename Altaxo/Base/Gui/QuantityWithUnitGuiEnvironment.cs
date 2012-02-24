@@ -26,7 +26,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Science;
+using Altaxo.Units;
 
 namespace Altaxo.Gui
 {
@@ -54,7 +54,7 @@ namespace Altaxo.Gui
 		/// <summary>
 		/// Internal list where the units are sorted by its string length.
 		/// </summary>
-		List<IUnit> _unitsSortedByLength;
+		List<IUnit> _unitsSortedByLengthDescending;
 
 		IPrefixedUnit _defaultUnit;
 
@@ -96,7 +96,7 @@ namespace Altaxo.Gui
 		{
 			_fixedUnits = fixedUnits ?? _emptyUnitList;
 		_additionalUnits = new ObservableCollection<IUnit>(additionalUnits);
-		CreateUnitListSortedByShortcutLength();
+		CreateUnitListSortedByShortcutLengthDescending();
 		_additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
 		}
 
@@ -105,33 +105,33 @@ namespace Altaxo.Gui
 		{
 			_fixedUnits = from._fixedUnits;
 			_additionalUnits = new ObservableCollection<IUnit>(additionalUnits);
-			CreateUnitListSortedByShortcutLength();
+			CreateUnitListSortedByShortcutLengthDescending();
 			_additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
 		}
 
 		void EhAdditionalUnits_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			CreateUnitListSortedByShortcutLength();
+			CreateUnitListSortedByShortcutLengthDescending();
 		}
 
-		private void CreateUnitListSortedByShortcutLength()
+		private void CreateUnitListSortedByShortcutLengthDescending()
 		{
 			var list = new List<IUnit>();
 			list.AddRange(_fixedUnits);
 			list.AddRange(_additionalUnits);
-			list.Sort(UnitComparisonByShortcutLength);
-			_unitsSortedByLength = list;
+			list.Sort(UnitComparisonByShortcutLengthDescending);
+			_unitsSortedByLengthDescending = list;
 		}
 
-		private int UnitComparisonByShortcutLength(IUnit x, IUnit y)
+		private int UnitComparisonByShortcutLengthDescending(IUnit x, IUnit y)
 		{
 			string sx = x.ShortCut;
 			string sy = y.ShortCut;
 
 			if (sx.Length == sy.Length)
-				return string.Compare(sx, sy);
+				return string.Compare(sy, sx);
 			else
-				return sx.Length < sy.Length ? -1 : 1;
+				return sx.Length < sy.Length ? 1 : -1;
 		}
 
 		public IEnumerable<IUnit> FixedUnits
@@ -150,11 +150,11 @@ namespace Altaxo.Gui
 			}
 		}
 
-		public IEnumerable<IUnit> UnitsSortedByShortcutLength
+		public IEnumerable<IUnit> UnitsSortedByShortcutLengthDescending
 		{
 			get
 			{
-				return _unitsSortedByLength;
+				return _unitsSortedByLengthDescending;
 			}
 		}
 

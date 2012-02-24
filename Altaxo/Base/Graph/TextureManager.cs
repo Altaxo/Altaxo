@@ -67,7 +67,9 @@ namespace Altaxo.Graph
 
     public void Add(ImageProxy texture)
     {
-      _texturesByHash.Add(texture.ContentHash, texture);
+			var hash = texture.ContentHash;
+			if(!_texturesByHash.ContainsKey(hash))
+				_texturesByHash.Add(hash, texture);
     }
 
     public ImageProxy this[string hash]

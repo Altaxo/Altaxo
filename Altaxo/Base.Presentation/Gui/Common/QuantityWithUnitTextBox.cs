@@ -30,7 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-using Altaxo.Science;
+using Altaxo.Units;
 
 
 namespace Altaxo.Gui.Common
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Common
 	/// <summary>
 	/// Supports the entering of length values (units: cm, mm, points and so on), and optionally relative units (percent of something).
 	/// </summary>
-	public class QuantityWithUnitTextBox : TextBox
+	public class QuantityWithUnitTextBox : TextBox, IDimensionfulQuantityView
 	{
 		public event DependencyPropertyChangedEventHandler SelectedQuantityChanged;
 		QuantityWithUnitConverter _converter;
@@ -62,29 +62,74 @@ namespace Altaxo.Gui.Common
 			binding.Path = new PropertyPath("SelectedQuantity");
 			binding.Mode = BindingMode.TwoWay;
 			binding.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
-			_converter = new QuantityWithUnitConverter();
+			_converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
 			binding.Converter = _converter;
 			binding.ValidationRules.Add(_converter);
 			_converter.BindingExpression = this.SetBinding(TextBox.TextProperty, binding);
 
 			this.TextChanged += new TextChangedEventHandler(QuantityWithUnitTextBox_TextChanged);
-
-			this.Loaded += new RoutedEventHandler(EhLoaded);
-			this.Unloaded += new RoutedEventHandler(EhUnloaded);
 		}
 
+		#region Change selection behaviour
 
+		// The next three overrides change the selection behaviour of the text box as described in
+		// 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
+		// (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
-		void EhLoaded(object sender, RoutedEventArgs e)
+		protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
 		{
-
+			SelectAll();
+			base.OnGotKeyboardFocus(e);
 		}
 
-		void EhUnloaded(object sender, RoutedEventArgs e)
+		protected override void OnLostFocus(RoutedEventArgs e)
 		{
+			base.OnLostFocus(e); // update the Quantity by the default comversion mechanism
 
+			if (!_converter.BindingExpression.HasError)
+			{
+				_converter.ClearIntermediateConversionResults(); // clear the previous conversion, so that a full new conversion from quantity to string is done when UpdateTarget is called
+				_converter.BindingExpression.UpdateTarget();
+			}
 		}
 
+		protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.F5) // interpret the text and update the quantity
+			{
+				e.Handled = true;
+				_converter.BindingExpression.UpdateSource(); // interpret the text
+				if (!_converter.BindingExpression.HasError) // if text was successfully interpreted
+				{
+					_converter.ClearIntermediateConversionResults(); // clear the previous conversion, so that a full new conversion from quantity to string is done when UpdateTarget is called
+					_converter.BindingExpression.UpdateTarget(); // update the text with the full quanity including the unit
+					this.SelectAll(); // select all text so that the user can easily change it
+				}
+			}
+
+			base.OnKeyDown(e);
+		}
+
+		protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
+		{
+			SelectAll();
+			base.OnMouseDoubleClick(e);
+		}
+
+		protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
+		{
+			if (!IsKeyboardFocusWithin)
+			{
+				e.Handled = true;
+				Focus();
+			}
+			else
+			{
+				base.OnPreviewMouseLeftButtonDown(e);
+			}
+		}
+
+		#endregion Change selection behaviour
 
 		void QuantityWithUnitTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
@@ -93,7 +138,7 @@ namespace Altaxo.Gui.Common
 
 		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
 		{
-			_converter.OnContextMenuOpening(this, SelectedQuantityProperty);
+			_converter.OnContextMenuOpening();
 			base.OnContextMenuOpening(e);
 		}
 
@@ -126,6 +171,17 @@ namespace Altaxo.Gui.Common
 		{
 			if (null != SelectedQuantityChanged)
 				SelectedQuantityChanged(obj, args);
+			if (null != DimensionfulQuantityView_QuantityChanged)
+				DimensionfulQuantityView_QuantityChanged();
+		}
+
+
+		/// <summary>Gets or sets the selected quantity as value in SI units.</summary>
+		/// <value>The selected quantity as value in SI units.</value>
+		public double SelectedQuantityAsValueInSIUnits
+		{
+			get	{	return SelectedQuantity.AsValueInSIUnits; }
+			set { SelectedQuantity = new DimensionfulQuantity(value, _converter.UnitEnvironment.DefaultUnit.Unit.SIUnit).AsQuantityIn(_converter.UnitEnvironment.DefaultUnit); }
 		}
 
 		#endregion
@@ -144,5 +200,19 @@ namespace Altaxo.Gui.Common
 				_converter.UnitEnvironment = value;
 			}
 		}
+
+		#region IDimensionfulQuantityView
+		private event Action DimensionfulQuantityView_QuantityChanged;
+		event Action IDimensionfulQuantityView.SelectedQuantityChanged
+		{
+			add { DimensionfulQuantityView_QuantityChanged += value; }
+			remove { DimensionfulQuantityView_QuantityChanged -= value; }
+		}
+
+		QuantityWithUnitGuiEnvironment IDimensionfulQuantityView.UnitEnvironment
+		{
+			set { _converter.UnitEnvironment = value; }
+		}
+		#endregion
 	}
 }

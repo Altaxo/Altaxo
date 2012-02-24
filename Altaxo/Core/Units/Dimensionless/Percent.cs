@@ -25,58 +25,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units.Dimensionless
 {
-	/// <summary>
-	/// Encapsulates an existing unit, but limits the set of possible prefixes.
-	/// </summary>
-	public class UnitWithLimitedPrefixes : IUnit
+	public class Percent : IUnit
 	{
-		SIPrefixList _prefixes;
-		IUnit _unit;
+		static readonly Percent _instance = new Percent();
+		public static Percent Instance { get { return _instance; } }
 
-		public UnitWithLimitedPrefixes(IUnit unit, IEnumerable<SIPrefix> allowedPrefixes)
+		protected Percent()
 		{
-			if (null == unit)
-				throw new ArgumentNullException("unit must not be null");
-			_unit = unit;
-
-			if (null != allowedPrefixes)
-			{
-				var l = new HashSet<SIPrefix>(_unit.Prefixes);
-				l.IntersectWith(allowedPrefixes);
-				_prefixes = new SIPrefixList(l);
-			}
 		}
 
 		public string Name
 		{
-			get { return _unit.Name; }
+			get { return "Percent"; }
 		}
 
 		public string ShortCut
 		{
-			get { return _unit.ShortCut; }
+			get { return "%"; }
 		}
 
 		public double ToSIUnit(double x)
 		{
-			return _unit.ToSIUnit(x);
+			return x / 100;
 		}
 
 		public double FromSIUnit(double x)
 		{
-			return _unit.FromSIUnit(x);
+			return x * 100;
 		}
 
 		public ISIPrefixList Prefixes
 		{
-			get { return _prefixes; }
+			get { return SIPrefix.ListWithNonePrefixOnly; }
 		}
 
 		public SIUnit SIUnit
 		{
-			get { return _unit.SIUnit; }
+			get { return Unity.Instance; }
 		}
 	}
+
 }

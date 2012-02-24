@@ -116,21 +116,25 @@ namespace Altaxo.Gui.Common.Drawing
 
 		CC _valueConverter;
 
+		/// <summary>Occurs when the selected gradient focus value changed.</summary>
+		public event DependencyPropertyChangedEventHandler SelectedTextureScaleChanged;
+
+
 		#region Dependency property
-		private const string _nameOfValueProp = "TextureScale";
-		public double TextureScale
+		private const string _nameOfValueProp = "SelectedTextureScale";
+		public double SelectedTextureScale
 		{
-			get { var result = (double)GetValue(TextureScaleProperty); return result; }
-			set { SetValue(TextureScaleProperty, value); }
+			get { var result = (double)GetValue(SelectedTextureScaleProperty); return result; }
+			set { SetValue(SelectedTextureScaleProperty, value); }
 		}
 
-		public static readonly DependencyProperty TextureScaleProperty =
+		public static readonly DependencyProperty SelectedTextureScaleProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(TextureScaleComboBox),
-				new FrameworkPropertyMetadata(1.0, OnTextureScaleChanged));
+				new FrameworkPropertyMetadata(1.0, EhSelectedTextureScaleChanged));
 
-		private static void OnTextureScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhSelectedTextureScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((TextureScaleComboBox)obj).EhTextureScaleValueChanged(obj, args);
+			((TextureScaleComboBox)obj).OnSelectedTextureScaleValueChanged(obj, args);
 		}
 		#endregion
 
@@ -155,7 +159,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_valueBinding.Converter = _valueConverter;
 			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
 			this.SetBinding(ComboBox.TextProperty, _valueBinding);
-			TextureScale = 0;
+			SelectedTextureScale = 0;
 			_img.Source = GetImage(0.0); // since null is the default value, we have to set the image explicitely here
 		}
 
@@ -168,13 +172,16 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Height = h - 2 * hMargin;
 		}
 
-		protected virtual void EhTextureScaleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnSelectedTextureScaleValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			if (null != _img)
 			{
 				var val = (double)args.NewValue;
 				_img.Source = GetImage(val);
 			}
+
+			if (null != SelectedTextureScaleChanged)
+				SelectedTextureScaleChanged(this, args);
 		}
 
 

@@ -116,21 +116,24 @@ namespace Altaxo.Gui.Common.Drawing
 
 		CC _valueConverter;
 
+		/// <summary>Occurs when the selected gradient focus value changed.</summary>
+		public event DependencyPropertyChangedEventHandler SelectedGradientFocusChanged;
+
 		#region Dependency property
-		private const string _nameOfValueProp = "GradientFocus";
-		public double GradientFocus
+		private const string _nameOfValueProp = "SelectedGradientFocus";
+		public double SelectedGradientFocus
 		{
-			get { var result = (double)GetValue(GradientFocusProperty); return result; }
-			set { SetValue(GradientFocusProperty, value); }
+			get { var result = (double)GetValue(SelectedGradientFocusProperty); return result; }
+			set { SetValue(SelectedGradientFocusProperty, value); }
 		}
 
-		public static readonly DependencyProperty GradientFocusProperty =
+		public static readonly DependencyProperty SelectedGradientFocusProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(GradientFocusComboBox),
-				new FrameworkPropertyMetadata(0.5, OnGradientFocusChanged));
+				new FrameworkPropertyMetadata(0.5, EhSelectedGradientFocusChanged));
 
-		private static void OnGradientFocusChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void EhSelectedGradientFocusChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((GradientFocusComboBox)obj).EhGradientFocusValueChanged(obj, args);
+			((GradientFocusComboBox)obj).OnSelectedGradientFocusValueChanged(obj, args);
 		}
 		#endregion
 
@@ -153,7 +156,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_valueBinding.Converter = _valueConverter;
 			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
 			this.SetBinding(ComboBox.TextProperty, _valueBinding);
-			GradientFocus = 0;
+			SelectedGradientFocus = 0;
 			_img.Source = GetImage(0.0); // since null is the default value, we have to set the image explicitely here
 		}
 
@@ -166,13 +169,16 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Height = h - 2 * hMargin;
 		}
 
-		protected virtual void EhGradientFocusValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnSelectedGradientFocusValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			if (null != _img)
 			{
 				var val = (double)args.NewValue;
 				_img.Source = GetImage(val);
 			}
+
+			if (null != SelectedGradientFocusChanged)
+				SelectedGradientFocusChanged(this, args);
 		}
 
 

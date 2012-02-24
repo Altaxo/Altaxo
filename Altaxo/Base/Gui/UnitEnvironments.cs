@@ -27,15 +27,16 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-	public static class PositionEnvironment
+
+	public static class RelationEnvironment
 	{
 		static QuantityWithUnitGuiEnvironment _instance;
 
-		static PositionEnvironment()
+		static RelationEnvironment()
 		{
-			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
+			_instance = new QuantityWithUnitGuiEnvironment(GuiRelationUnits.Collection)
 			{
-				DefaultUnit = new Science.PrefixedUnit(Science.SIPrefix.None, Science.LengthUnitPoint.Instance)
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Altaxo.Units.Dimensionless.Unity.Instance)
 			};
 		}
 
@@ -51,6 +52,55 @@ namespace Altaxo.Gui
 		}
 	}
 
+	public static class PositionEnvironment
+	{
+		static QuantityWithUnitGuiEnvironment _instance;
+
+		static PositionEnvironment()
+		{
+			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
+			{
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance)
+			};
+		}
+
+		/// <summary>
+		/// Gets the common position environment for all position boxes.
+		/// </summary>
+		public static QuantityWithUnitGuiEnvironment Instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+	}
+
+	public static class SizeEnvironment
+	{
+		static QuantityWithUnitGuiEnvironment _instance;
+
+		static SizeEnvironment()
+		{
+			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
+			{
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance)
+			};
+		}
+
+		/// <summary>
+		/// Gets the common size environment for all size boxes.
+		/// </summary>
+		public static QuantityWithUnitGuiEnvironment Instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+	}
+
+
 	public static class FontSizeEnvironment
 	{
 		static QuantityWithUnitGuiEnvironment _instance;
@@ -59,7 +109,7 @@ namespace Altaxo.Gui
 		{
 			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
 			{
-				DefaultUnit = new Science.PrefixedUnit(Science.SIPrefix.None, Science.LengthUnitPoint.Instance)
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance)
 			};
 		}
 
@@ -83,7 +133,7 @@ namespace Altaxo.Gui
 		{
 			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
 			{
-				DefaultUnit = new Science.PrefixedUnit(Science.SIPrefix.None, Science.LengthUnitPoint.Instance)
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance)
 			};
 		}
 
@@ -107,7 +157,7 @@ namespace Altaxo.Gui
 		{
 			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
 			{
-				DefaultUnit = new Science.PrefixedUnit(Science.SIPrefix.None, Science.LengthUnitPoint.Instance)
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance)
 			};
 		}
 
@@ -131,7 +181,7 @@ namespace Altaxo.Gui
 		{
 			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
 			{
-				DefaultUnit = new Science.PrefixedUnit(Science.SIPrefix.None, Science.LengthUnitPoint.Instance)
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance)
 			};
 		}
 
@@ -155,7 +205,7 @@ namespace Altaxo.Gui
 		{
 			_instance = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection)
 			{
-				DefaultUnit = new Science.PrefixedUnit(Science.SIPrefix.None, Science.LengthUnitPoint.Instance)
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance)
 			};
 		}
 

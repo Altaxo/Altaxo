@@ -30,7 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-using Altaxo.Science;
+using Altaxo.Units;
 
 
 namespace Altaxo.Gui.Common
@@ -52,6 +52,9 @@ namespace Altaxo.Gui.Common
 		/// <summary>Used for the context menu helpers only.</summary>
 		DependencyProperty _quantityGetSetProperty;
 
+		WeakEventHandler _defaultUnitChangedHandler;
+		WeakEventHandler _numberOfDisplayedDigitsChangedHandler;
+
 		/// <summary>
 		/// Empty constructor. You should set as soon as possible the <see cref="BindingExpression"/> to the binding expression between your QuantityWithUnit property and the
 		/// Text property of your TextBox, ComboBox, or other Gui element. Furthermore, the <see cref="UnitEnvironment"/> property should be set
@@ -61,6 +64,17 @@ namespace Altaxo.Gui.Common
 		{
 		}
 
+		/// <summary>
+		/// Can be called if the context menu of the gui element is about to be opened. Extends the context menu by additional menu items
+		/// for unit conversion, and for the setting of the number of decimal places.
+		/// </summary>
+		/// <param name="gui"></param>
+		/// <param name="quantityGetSetProperty"></param>
+		public QuantityWithUnitConverter(FrameworkElement parent, DependencyProperty quantityGetSetProperty)
+		{
+			_parent = parent;
+			_quantityGetSetProperty = quantityGetSetProperty;
+		}
 
 
 
@@ -78,7 +92,20 @@ namespace Altaxo.Gui.Common
 			{
 				if (null == value)
 					throw new ArgumentNullException();
+
+				if(null!=_unitEnvironment)
+				{
+					_defaultUnitChangedHandler.Remove();
+					_numberOfDisplayedDigitsChangedHandler.Remove();
+				}
+
 				_unitEnvironment = value;
+
+				if (null != _unitEnvironment)
+				{
+					_unitEnvironment.DefaultUnitChanged += _defaultUnitChangedHandler = new WeakEventHandler(EhDefaultUnitChanged, x=> _unitEnvironment.DefaultUnitChanged -= x);
+					_unitEnvironment.NumberOfDisplayedDigitsChanged += _numberOfDisplayedDigitsChangedHandler = new WeakEventHandler(EhNumberOfDisplayedDigitsChanged, x => _unitEnvironment.NumberOfDisplayedDigitsChanged -= x);
+				}
 			}
 		}
 
@@ -99,6 +126,26 @@ namespace Altaxo.Gui.Common
 		}
 
 
+		void EhDefaultUnitChanged(object sender, EventArgs e)
+		{
+			if (null != _parent && null!=_quantityGetSetProperty && null!=_unitEnvironment)
+			{
+				SelectedQuantity = SelectedQuantity.AsQuantityIn(_unitEnvironment.DefaultUnit);
+			}
+		}
+		
+
+		void EhNumberOfDisplayedDigitsChanged(object sender, EventArgs e)
+		{
+			EhNumberOfDisplayedDigitsChanged();
+		}
+
+
+		public void ClearIntermediateConversionResults()
+		{
+			_lastConvertedQuantity = null;
+			_lastConvertedString = null;
+		}
 
 		/// <summary>
 		/// Converts from a <see cref="DimensionfulQuantity"/> to a string.
@@ -193,9 +240,9 @@ namespace Altaxo.Gui.Common
 				return new ValidationResult(false, "The text box is empty. You have to enter a valid numeric quantity");
 
 
-			foreach (IUnit u in _unitEnvironment.UnitsSortedByShortcutLength)
+			foreach (IUnit u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 			{
-				if (!s.EndsWith(u.ShortCut))
+				if (string.IsNullOrEmpty(u.ShortCut) || (!s.EndsWith(u.ShortCut)))
 					continue;
 
 				s = s.Substring(0, s.Length - u.ShortCut.Length);
@@ -278,7 +325,7 @@ namespace Altaxo.Gui.Common
 			stb.AppendFormat("The part \"{0}\" of your entered text is not recognized as a valid unit!\n", unrecognizedPart);
 			stb.AppendFormat("Valid units are: \n");
 
-			foreach (var u in _unitEnvironment.UnitsSortedByShortcutLength)
+			foreach (var u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 			{
 				stb.AppendFormat("{0}\t({1}, {2})\n", u.ShortCut, u.Name, u.Prefixes.ContainsNonePrefixOnly ? "without prefix" : "with prefixes possible");
 			}
@@ -301,18 +348,18 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		/// <param name="gui"></param>
 		/// <param name="quantityGetSetProperty"></param>
-		public void OnContextMenuOpening(FrameworkElement gui, DependencyProperty quantityGetSetProperty)
+		public void OnContextMenuOpening()
 		{
-			_parent = gui;
-			_quantityGetSetProperty = quantityGetSetProperty;
-
 			BindingExpression.UpdateSource();
 			MenuItem convertTo = null;
 			MenuItem changeUnitTo = null;
 			MenuItem setNoOfDigits = null;
-			if (gui.ContextMenu != null)
+			if (null == _parent)
+				return;
+
+			if (_parent.ContextMenu != null)
 			{
-				foreach (var item in gui.ContextMenu.Items)
+				foreach (var item in _parent.ContextMenu.Items)
 				{
 					if (!(item is FrameworkElement))
 						continue;
@@ -336,11 +383,11 @@ namespace Altaxo.Gui.Common
 				setNoOfDigits.Items.Clear();
 
 			// make menues only when there is no validation error
-			if (!(bool)gui.GetValue(Validation.HasErrorProperty))
+			if (!(bool)_parent.GetValue(Validation.HasErrorProperty))
 			{
 				// count the units multiplied with the possible prefixes to decided whether to show submenues or not
 				int count = 0;
-				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLength)
+				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 					count += u.Prefixes.Count;
 
 				bool makeSubMenusForEachUnit = count > 10;
@@ -360,7 +407,7 @@ namespace Altaxo.Gui.Common
 		{
 			if (makeSubMenusForEachUnit)
 			{
-				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLength)
+				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 				{
 					if (u.Prefixes.Count == 1)
 					{
@@ -387,7 +434,7 @@ namespace Altaxo.Gui.Common
 			}
 			else // do not make submenues for each unit
 			{
-				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLength)
+				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 				{
 					foreach (var p in u.Prefixes)
 					{
@@ -405,7 +452,7 @@ namespace Altaxo.Gui.Common
 		{
 			if (makeSubMenusForEachUnit)
 			{
-				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLength)
+				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 				{
 					if (u.Prefixes.Count == 1)
 					{
@@ -432,7 +479,7 @@ namespace Altaxo.Gui.Common
 			}
 			else // do not make submenues for each unit
 			{
-				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLength)
+				foreach (var u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 				{
 					foreach (var p in u.Prefixes)
 					{

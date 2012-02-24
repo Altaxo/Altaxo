@@ -31,9 +31,6 @@ namespace Altaxo.Gui.Common.Drawing
   {
     BrushX Brush { get; set; }
   }
-  public interface IBrushViewAdvanced : IBrushViewSimple
-  {
-  }
 
   [UserControllerForObject(typeof(BrushX))]
   [ExpectedTypeOfView(typeof(IBrushViewSimple))]
@@ -125,18 +122,5 @@ namespace Altaxo.Gui.Common.Drawing
   }
 
 
-  [UserControllerForObject(typeof(BrushX))]
-  [ExpectedTypeOfView(typeof(IBrushViewAdvanced))]
-  public class BrushControllerAdvanced : BrushControllerSimple
-  {
-    public BrushControllerAdvanced()
-    {
-    }
 
-    public BrushControllerAdvanced(BrushX doc)
-      : base(doc)
-    {
-    }
-
-  }
 }

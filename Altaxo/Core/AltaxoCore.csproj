@@ -559,19 +559,24 @@
     <Compile Include="Collections\Text\LongestCommonSubstringL.cs" />
     <Compile Include="Collections\Text\SubstringPosition.cs" />
     <Compile Include="Science\Energy.cs" />
-    <Compile Include="Science\IRelativeUnit.cs" />
-    <Compile Include="Science\Length.cs" />
-    <Compile Include="Science\PrefixedUnit.cs" />
-    <Compile Include="Science\DimensionfulQuantity.cs" />
+    <Compile Include="Units\IRelativeUnit.cs" />
+    <Compile Include="Units\PrefixedUnit.cs" />
+    <Compile Include="Units\DimensionfulQuantity.cs" />
     <Compile Include="Science\SIConstants.cs" />
-    <Compile Include="Science\SIPrefix.cs" />
-    <Compile Include="Science\SIPrefixList.cs" />
-    <Compile Include="Science\SIUnit.cs" />
+    <Compile Include="Units\SIPrefix.cs" />
+    <Compile Include="Units\SIPrefixList.cs" />
+    <Compile Include="Units\SIUnit.cs" />
     <Compile Include="Science\SIValue.cs" />
     <Compile Include="Science\Temperature.cs" />
-    <Compile Include="Science\IUnit.cs" />
-    <Compile Include="Science\UnitWithLimitedPrefixes.cs" />
+    <Compile Include="Units\IUnit.cs" />
+    <Compile Include="Units\Length\Inch.cs" />
+    <Compile Include="Units\Length\Meter.cs" />
+    <Compile Include="Units\Length\Point.cs" />
+    <Compile Include="Units\UnitWithLimitedPrefixes.cs" />
     <Compile Include="Science\ValueTransformation.cs" />
+    <Compile Include="Units\Dimensionless\Percent.cs" />
+    <Compile Include="Units\Dimensionless\Permille.cs" />
+    <Compile Include="Units\Dimensionless\Unity.cs" />
     <Compile Include="WeakEventHandlers.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -613,7 +618,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Units\Temperature\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

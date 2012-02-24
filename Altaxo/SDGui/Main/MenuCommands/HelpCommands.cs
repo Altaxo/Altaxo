@@ -74,6 +74,11 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
+			Run1();
+		}
+
+		public void Run4()
+		{
 			var ctrl = new Altaxo.Gui.Settings.UICultureSettingsController();
 			ctrl.InitializeDocument(null, this);
 			Current.Gui.ShowDialog(ctrl, "Culture settings");
@@ -96,7 +101,8 @@ namespace Altaxo.Main.Commands
 		public void Run1()
 		{
 			var brush = new Altaxo.Graph.Gdi.BrushX(Altaxo.Graph.NamedColor.Black);
-			var ctrl = new Altaxo.Gui.Common.Drawing.BrushControllerAdvanced(brush);
+			var ctrl = new Altaxo.Gui.Common.Drawing.BrushControllerAdvanced();
+			ctrl.InitializeDocument(brush);
 			Current.Gui.ShowDialog(ctrl, "Brush pros");
 		}
 	}

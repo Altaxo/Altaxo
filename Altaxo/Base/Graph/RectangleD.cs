@@ -105,6 +105,14 @@ namespace Altaxo.Graph
       }
     }
 
+		public bool IsEmpty
+		{
+			get
+			{
+				return 0 == _w && 0 == _h;
+			}
+		}
+
 		public static RectangleD FromLTRB(PointD2D a, PointD2D b)
 		{
 			return new RectangleD(a.X,a.Y,b.X-a.X, b.Y-a.Y);
@@ -251,6 +259,17 @@ namespace Altaxo.Graph
 				{
 					Height = p.Y - Y;
 				}
+			}
+		}
+
+		/// <summary>Gets a rectangle that includes the smallest circle around this rectangle.</summary>
+		/// <value>A rectangle that includes the smallest circle around this rectangle.</value>
+		public RectangleD OuterCircleBoundingBox
+		{
+			get
+			{
+				double d = Calc.BasicFunctions.hypot(_w, _h, 0);
+				return new RectangleD(_x + 0.5 * (_w - d), _y + 0.5 * (_h - d), d, d);
 			}
 		}
   }

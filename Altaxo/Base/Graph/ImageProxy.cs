@@ -560,26 +560,38 @@ namespace Altaxo.Graph
 	}
 
 
-	interface ISyntheticRepeatableTexture
+	public interface ISyntheticRepeatableTexture : Main.ICopyFrom, ICloneable
 	{
     /// <summary>
-    /// Gets an image of the texture with the provided number of pixels in x and y direction.
+		/// Gets an image of the texture. The image dimensions (pixels in x and y direction) are calculated using the provided <paramref name=" maxEffectiveResolutionDpi">maximum effective resolution.</paramref>.
     /// </summary>
-    /// <param name="pixelDim">Number of pixels in x and y direction.</param>
+		/// <param name="maxEffectiveResolutionDpi">Effective resolution used for later drawing of this image. The higher the resolution, the more pixels are allocated for the bitmap.</param>
     /// <returns>The image of the texture.</returns>
-		Image GetImage(int pixelDim);
+		Image GetImage(double maxEffectiveResolutionDpi);
 
     /// <summary>
     /// Physical size of both sides of the texture in points (1 point = 1/72 inch).
     /// </summary>
-    double Size { get; }
+    Altaxo.Graph.PointD2D Size { get; }
 	}
 
-  abstract class SyntheticRepeatableTexture : ImageProxy, ISyntheticRepeatableTexture
+	public interface IHatchBrushTexture : ISyntheticRepeatableTexture
+	{
+		/// <summary>
+		/// Gets an image of the texture. The image dimensions (pixels in x and y direction) are calculated using the provided <paramref name=" maxEffectiveResolutionDpi">maximum effective resolution.</paramref>.
+		/// </summary>
+		/// <param name="maxEffectiveResolutionDpi">Effective resolution used for later drawing of this image. The higher the resolution, the more pixels are allocated for the bitmap.</param>
+		/// <param name="foreColor">Foreground color of the hatch brush.</param>
+		/// <param name="backColor">Background color of the hatch brush.</param>
+		/// <returns>The image of the texture.</returns>
+		Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
+	}
+
+  public abstract class SyntheticRepeatableTexture : ImageProxy, ISyntheticRepeatableTexture
   {
     public override Image GetImage()
     {
-      return GetImage(32);
+      return GetImage(300);
     }
 
     public override bool IsValid
@@ -589,77 +601,34 @@ namespace Altaxo.Graph
 
     #region ISyntheticRepeatableTexture Members
 
-    public abstract Image GetImage(int pixelDim);
+    public abstract Image GetImage(double maxEffectiveResolutionDpi);
 
-    public abstract double Size { get; }
+    public abstract Altaxo.Graph.PointD2D Size { get; }
 
-    #endregion
-  }
+		protected const double InchesPerPoint = 1 / 72.0;
 
-	class HorizontalHatchTexture : SyntheticRepeatableTexture
-	{
-    /// <summary>
-    /// Repeatlength in points (1/72 inch).
-    /// </summary>
-		double RepeatLength=10;
-    /// <summary>
-    /// Linewidth in points (1/72 inch).
-    /// </summary>
-		double LineWidth=1;
-
-    Color _colorBack = Color.Transparent;
-    Color _colorFore = Color.Black;
-
-    public override double Size
-    {
-      get
-      {
-        return RepeatLength;
-      }
-    }
-
-		public override Image GetImage(int pixelDim)
+		public virtual bool CopyFrom(object obj)
 		{
-			Bitmap bmp = new Bitmap(pixelDim, pixelDim, PixelFormat.Format32bppArgb);
-			bmp.SetResolution(2000, 2000);
-			using(Graphics g = Graphics.FromImage(bmp))
+			var from = obj as SyntheticRepeatableTexture;
+			if (null != from)
 			{
-				using (var brush = new SolidBrush(_colorBack))
-				{
-					g.FillRectangle(brush, new Rectangle(Point.Empty, bmp.Size));
-				}
-
-				using (Pen pen = new Pen(_colorFore, (float)( LineWidth / RepeatLength )))
-				{
-				pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
-				//pen.DashPattern = 
-				g.DrawLine(pen, -bmp.Width,bmp.Height*0.5f, bmp.Width*2,bmp.Height*0.5f);
-				}
+				return true;
 			}
-
-			return bmp;
+			else
+			{
+				return false;
+			}
 		}
 
-    public override string ContentHash
-    {
-      get
-			{
-				string result = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}-{1}-{2}-{3}-{4}", GetType(), RepeatLength, LineWidth, _colorFore, _colorBack);
-				return result;
-			}
-    }
+    #endregion
 
-    public override string Name
-    {
-			get { return GetType().ToString(); }
-    }
+		
+	}
 
-    public override object Clone()
-    {
-			HorizontalHatchTexture result = new HorizontalHatchTexture();
-			return result;
-    }
-  }
+
+	
+
+
 
 #endregion
 }

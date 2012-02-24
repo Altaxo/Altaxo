@@ -14,7 +14,7 @@
 	</ComboBox.Resources>
 	<ComboBox.ContextMenu>
 		<ContextMenu x:Name="_contextMenu">
-			<MenuItem Header="Load texture from file .." Click="EhLoadFromFile"/>
+			<MenuItem Header="Load texture from file .." x:Name="_menuLoadTextureFromFile" Click="EhLoadFromFile"/>
 		</ContextMenu>
 	</ComboBox.ContextMenu>
 </local:ImageComboBox>

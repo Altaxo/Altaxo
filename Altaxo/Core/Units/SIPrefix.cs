@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units
 {
 	public class SIPrefix : IUnit, IEquatable<SIPrefix>, IComparable<SIPrefix>
 	{
@@ -192,7 +192,7 @@ namespace Altaxo.Science
 
 		public SIUnit SIUnit
 		{
-			get { return Dimensionless.Instance; }
+			get { return Units.Dimensionless.Unity.Instance; }
 		}
 
 		public bool Equals(SIPrefix other)

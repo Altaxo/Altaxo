@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units
 {
 	public interface IPrefixedUnit
 	{
@@ -45,7 +45,7 @@ namespace Altaxo.Science
 		}
 
 
-		public IUnit Unit { get { return _unit ?? Dimensionless.Instance; } }
+		public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }
 
 		public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
 

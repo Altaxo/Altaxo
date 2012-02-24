@@ -224,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Drawing\TextureScalingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\Drawing\WrapModeComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -448,6 +452,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Settings\AutoUpdateSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -660,6 +668,9 @@
       <DependentUpon>CheckableGroupBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
+    <Compile Include="Gui\Common\Drawing\TextureScalingControl.xaml.cs">
+      <DependentUpon>TextureScalingControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\ValidatingComboBox.cs" />
     <Compile Include="Gui\Common\EnumFlagControl.xaml.cs">
       <DependentUpon>EnumFlagControl.xaml</DependentUpon>
@@ -681,7 +692,6 @@
     <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.xaml.cs">
       <DependentUpon>BrushAllPropertiesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs" />
     <Compile Include="Gui\Common\Drawing\BrushSimpleConditionalControl.xaml.cs">
       <DependentUpon>BrushSimpleConditionalControl.xaml</DependentUpon>
     </Compile>
@@ -912,6 +922,9 @@
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
     <Compile Include="Gui\Graph\OrgEndSpanControl.xaml.cs">
       <DependentUpon>OrgEndSpanControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
+      <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>

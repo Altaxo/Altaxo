@@ -72,6 +72,10 @@ namespace Altaxo.Gui.Common.Drawing
 
 		Dictionary<BrushType, ImageComboBoxItem> _cachedItems = new Dictionary<BrushType, ImageComboBoxItem>();
 
+		/// <summary>Occurs when the selected type of brush changed.</summary>
+		public event DependencyPropertyChangedEventHandler SelectedBrushTypeChanged;
+
+
 		static BrushTypeComboBox()
 		{
 		}
@@ -81,15 +85,26 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			_cachedItems.Add(BrushType.SolidBrush, new ImageComboBoxItem(this, BrushType.SolidBrush));
-			_cachedItems.Add(BrushType.HatchBrush, new ImageComboBoxItem(this, BrushType.HatchBrush));
-			_cachedItems.Add(BrushType.LinearGradientBrush, new ImageComboBoxItem(this, BrushType.LinearGradientBrush)); // trick: MiterClipped is projected to Miter item here
+			_cachedItems.Add(BrushType.LinearGradientBrush, new ImageComboBoxItem(this, BrushType.LinearGradientBrush)); 
+			_cachedItems.Add(BrushType.TriangularShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapeLinearGradientBrush)); 
+			_cachedItems.Add(BrushType.SigmaBellShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapeLinearGradientBrush));
 			_cachedItems.Add(BrushType.PathGradientBrush, new ImageComboBoxItem(this, BrushType.PathGradientBrush));
+			_cachedItems.Add(BrushType.TriangularShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapePathGradientBrush));
+			_cachedItems.Add(BrushType.SigmaBellShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapePathGradientBrush));
+			_cachedItems.Add(BrushType.HatchBrush, new ImageComboBoxItem(this, BrushType.HatchBrush));
+			_cachedItems.Add(BrushType.SyntheticTextureBrush, new ImageComboBoxItem(this,BrushType.SyntheticTextureBrush));
 			_cachedItems.Add(BrushType.TextureBrush, new ImageComboBoxItem(this, BrushType.TextureBrush));
 
 
 			Items.Add(_cachedItems[BrushType.SolidBrush]);
 			Items.Add(_cachedItems[BrushType.LinearGradientBrush]);
+			Items.Add(_cachedItems[BrushType.TriangularShapeLinearGradientBrush]);
+			Items.Add(_cachedItems[BrushType.SigmaBellShapeLinearGradientBrush]);
 			Items.Add(_cachedItems[BrushType.PathGradientBrush]);
+			Items.Add(_cachedItems[BrushType.TriangularShapePathGradientBrush]);
+			Items.Add(_cachedItems[BrushType.SigmaBellShapePathGradientBrush]);
+			Items.Add(_cachedItems[BrushType.HatchBrush]);
+			Items.Add(_cachedItems[BrushType.SyntheticTextureBrush]);
 			Items.Add(_cachedItems[BrushType.TextureBrush]);
 
 
@@ -120,9 +135,14 @@ namespace Altaxo.Gui.Common.Drawing
 
 		protected virtual void EhBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
+			((BrushTypeComboBox)obj).OnSelectedBrushTypeChanged(obj, args);
 		}
 
+		protected virtual void OnSelectedBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			if (null != SelectedBrushTypeChanged)
+				SelectedBrushTypeChanged(obj, args);
+		}
 
 
 		public override string GetItemText(object item)
@@ -162,9 +182,31 @@ namespace Altaxo.Gui.Common.Drawing
 				case BrushType.LinearGradientBrush:
 					geometryDrawing.Brush = new LinearGradientBrush(Colors.Black, Colors.White, 0);
 					break;
+				case BrushType.TriangularShapeLinearGradientBrush:
+					{
+						var gStops = new GradientStopCollection();
+						gStops.Add(new GradientStop(Colors.Black, 0));
+						gStops.Add(new GradientStop(Colors.White, 0.5));
+						gStops.Add(new GradientStop(Colors.Black, 1));
+						geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
+					}
+					break;
+				case BrushType.SigmaBellShapeLinearGradientBrush:
+					{
+						var gStops = new GradientStopCollection();
+						gStops.Add(new GradientStop(Colors.Black, 0));
+						gStops.Add(new GradientStop(Colors.White, 0.5));
+						gStops.Add(new GradientStop(Colors.Black, 1));
+						geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
+					}
+					break;
 				case BrushType.PathGradientBrush:
+				case BrushType.TriangularShapePathGradientBrush:
+				case BrushType.SigmaBellShapePathGradientBrush:
 					geometryDrawing.Brush = new RadialGradientBrush(Colors.Black, Colors.White);
 					break;
+				case BrushType.HatchBrush:
+				case BrushType.SyntheticTextureBrush:
 				case BrushType.TextureBrush:
 					geometryDrawing.Brush = new SolidColorBrush(Colors.Black);
 					break;

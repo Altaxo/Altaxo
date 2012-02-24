@@ -989,8 +989,7 @@
     <Texture id="Metal/ScratchedSilver" resource = "Textures.Metal.ScratchedSilver"/>
     <Texture id="Paper/BrownPaper" resource = "Textures.Paper.BrownPaper"/>
     <Texture id="Paper/YellowPaper" resource = "Textures.Paper.YellowPaper"/>
-		<Texture id="Hatch/HorizontalLine" class ="Altaxo.Graph.HorizontalHatchTexture"/>
-  </Path>
+	</Path>
 
 	<Path name = "/Altaxo/Dialogs/SettingsDialog">
 		<OptionPanel id    = "Language"

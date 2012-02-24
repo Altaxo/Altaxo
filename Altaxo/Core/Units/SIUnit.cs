@@ -25,31 +25,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units
 {
-	public enum PhysicalDimension
-	{
-		DimensionLess,
-		Length,
-		Mass,
-		Time,
-		ElectricCurrent,
-		Temperature,
-		AmountOfSubstance,
-		LuminousIntensity,
-
-		// derived units
-		Area,
-		Volume,
-		Velocity,
-		Acceleration,
-		WaveNumber,
-		SpecificVolume,
-		CurrentDensity,
-		MagneticFieldStrength,
-	}
-
-
 	/// <summary>
 	/// Represents a SI unit.
 	/// </summary>

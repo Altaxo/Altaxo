@@ -83,28 +83,150 @@ namespace Altaxo.Gui
     UseDocument UseDocumentCopy { set; }
   }
 
-  /// <summary>
-  /// Extends IMVCController by the possibility to create a default view for it.
-  /// </summary>
-  public interface IMVCControllerEx : IMVCController
-  {
-    /// <summary>
-    /// Creates a default view object and assign it to the controller.
-    /// </summary>
-    /// <returns>The default view object, or null if there is no default view object.</returns>
-    /// <remarks>Don't forget not only to create the default view object, but also assign it to the controller!</remarks>
-    object CreateDefaultViewObject();
-  }
-  /// <summary>
-  /// The interface that a view of the MVC (Model-View-Controller) model must implement.
-  /// </summary>
-  public interface IMVCView
-  {
-    /// <summary>
-    /// Returns the controller object that controls this view.
-    /// </summary>
-    object ControllerObject { get; set; }
-  }
+	/// <summary>
+	/// Extends the <see cref="IMVCANController"/> by an event to signal that the user changed some data. This can be used for instance to update a preview panel etc.
+	/// </summary>
+	public interface IMVCANDController : IMVCANController
+	{
+		/// <summary>Event fired when the user changed some data that will change the model.</summary>
+		event Action<IMVCANDController> MadeDirty;
+
+		/// <summary>Gets the provisional model object. This is the model object that is based on the current user input.</summary>
+		object ProvisionalModelObject { get; }
+	}
+
+	public abstract class MVCANControllerBase<TModel, TView> : IMVCANController where TView : class
+	{
+		protected TModel _doc;
+		protected TModel _originalDoc;
+		protected TView _view;
+		protected bool _useDocumentCopy;
+
+		protected abstract void Initialize(bool initData);
+		protected virtual void AttachView() { }
+		protected virtual void DetachView() { }
+		public abstract bool Apply();
+
+		public virtual bool InitializeDocument(params object[] args)
+		{
+			if (null == args || 0 == args.Length || !(args[0] is TModel))
+				return false;
+
+			_doc = _originalDoc = (TModel)args[0];
+			if (_useDocumentCopy && _originalDoc is ICloneable)
+				_doc = (TModel)((ICloneable)_originalDoc).Clone();
+
+			Initialize(true);
+			return true;
+		}
+
+		public UseDocument UseDocumentCopy
+		{
+			set { _useDocumentCopy = value == UseDocument.Copy; }
+		}
+
+		public virtual object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (null != _view)
+				{
+					DetachView();
+				}
+
+				_view = value as TView;
+
+				if (null != _view)
+				{
+						Initialize(false);
+						AttachView();
+				}
+
+			}
+		}
+
+
+		public virtual object ModelObject
+		{
+			get { return _originalDoc; }
+		}
+
+
+	}
+
+
+	public abstract class MVCANDControllerBase<TModel, TView> : MVCANControllerBase<TModel,TView>, IMVCANDController where TView : class
+	{
+		protected Altaxo.Main.EventSuppressor _suppressDirtyEvent = new Altaxo.Main.EventSuppressor(null);
+		public event Action<IMVCANDController> MadeDirty;
+
+		public override bool InitializeDocument(params object[] args)
+		{
+			if (null == args || 0 == args.Length || !(args[0] is TModel))
+				return false;
+			
+			_doc = _originalDoc = (TModel)args[0];
+			if (_useDocumentCopy && _originalDoc is ICloneable)
+				_doc = (TModel)((ICloneable)_originalDoc).Clone();
+
+			using (var suppressor = _suppressDirtyEvent.Suspend())
+			{
+				Initialize(true);
+			}
+			return true;
+		}
+
+	
+		public override object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (null != _view)
+				{
+					DetachView();
+				}
+
+				_view = value as TView;
+				
+				if (null != _view)
+				{
+					using (var suppressor = _suppressDirtyEvent.Suspend())
+					{
+						Initialize(false);
+						AttachView();
+					}
+				}
+
+			}
+		}
+
+		protected virtual void OnMadeDirty()
+		{
+			if (_suppressDirtyEvent.PeekEnabled && null != MadeDirty)
+				MadeDirty(this);
+		}
+
+	
+
+		public object ProvisionalModelObject
+		{ 
+			get { return _doc; } 
+		}
+
+
+	
+	}
+
+ 
+  
 
   /// <summary>
 	/// Wraps an <see cref="Altaxo.Gui.IMVCANController"/> instance in a wrapper class

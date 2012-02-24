@@ -389,7 +389,8 @@ namespace Altaxo.Gui.Common.Drawing
 				return;
 
 			var localBrush = this.SelectedBrush.Clone();
-			var ctrl = new BrushControllerAdvanced(localBrush);
+			var ctrl = new BrushControllerAdvanced();
+			ctrl.InitializeDocument(localBrush);
 			if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
 				this.SelectedBrush = (BrushX)ctrl.ModelObject;
 		}

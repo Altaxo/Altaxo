@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Science
+namespace Altaxo.Units
 {
 	/// <summary>
 	/// Represents a quantity, consisting of a numeric value, the corresponding unit and, optionally, a SI prefix for the unit.
@@ -95,7 +95,7 @@ namespace Altaxo.Science
 		{
 			get
 			{
-				return _unit ?? Dimensionless.Instance;
+				return _unit ?? Units.Dimensionless.Unity.Instance;
 			}
 		}
 
@@ -118,7 +118,7 @@ namespace Altaxo.Science
 		}
 
 		/// <summary>Converts this quantity to its numerical value in SI units (without prefix).</summary>
-		public double InSIUnits
+		public double AsValueInSIUnits
 		{
 			get
 			{
@@ -141,7 +141,7 @@ namespace Altaxo.Science
 			if (unit.SIUnit != this.Unit.SIUnit)
 				throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this.Unit));
 
-			return unit.FromSIUnit(InSIUnits);
+			return unit.FromSIUnit(AsValueInSIUnits);
 		}
 
 		/// <summary>Converts this quantity to its numerical value in the given unit, with the given prefix.</summary>
@@ -157,7 +157,7 @@ namespace Altaxo.Science
 			if (unit.SIUnit != this.Unit.SIUnit)
 				throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this.Unit));
 
-			return prefix.FromSIUnit(unit.FromSIUnit(InSIUnits));
+			return prefix.FromSIUnit(unit.FromSIUnit(AsValueInSIUnits));
 		}
 
 		/// <summary>Converts this quantity to its numerical value in the given unit, with the given prefix.</summary>
@@ -174,7 +174,7 @@ namespace Altaxo.Science
 		{
 			get
 			{
-				return new DimensionfulQuantity(InSIUnits, _unit == null ? null : _unit.SIUnit);
+				return new DimensionfulQuantity(AsValueInSIUnits, _unit == null ? null : _unit.SIUnit);
 			}
 		}
 
