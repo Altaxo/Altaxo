@@ -165,8 +165,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public double GradientFocus
 		{
-			get { return _cbGradientFocus.SelectedGradientFocus; }
-			set { _cbGradientFocus.SelectedGradientFocus = value; }
+			get { return _cbGradientFocus.SelectedQuantityInSIUnits; }
+			set { _cbGradientFocus.SelectedQuantityInSIUnits = value; }
 		}
 
 		public event Action GradientFocusChanged;
@@ -190,8 +190,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public double GradientColorScale
 		{
-			get { return _cbColorScale.SelectedColorScale; }
-			set { _cbColorScale.SelectedColorScale = value; }
+			get { return _cbColorScale.SelectedQuantityInSIUnits; }
+			set { _cbColorScale.SelectedQuantityInSIUnits = value; }
 		}
 
 		public event Action GradientColorScaleChanged;

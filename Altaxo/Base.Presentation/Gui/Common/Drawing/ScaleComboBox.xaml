@@ -1,4 +1,4 @@
-﻿<local:EditableImageComboBox x:Class="Altaxo.Gui.Common.Drawing.ScaleComboBox"
+﻿<local:DimensionfulQuantityImageComboBox x:Class="Altaxo.Gui.Common.Drawing.ScaleComboBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
@@ -12,4 +12,4 @@
 			</StackPanel>
 		</DataTemplate>
 	</ComboBox.Resources>
-</local:EditableImageComboBox>
+</local:DimensionfulQuantityImageComboBox>

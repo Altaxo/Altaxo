@@ -38,90 +38,8 @@ using System.Diagnostics;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public partial class ScaleComboBox : EditableImageComboBox
+	public partial class ScaleComboBox : DimensionfulQuantityImageComboBox
 	{
-		#region Converter
-
-		class CC : IValueConverter
-		{
-			ComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
-
-			public CC(ComboBox c)
-			{
-				_cb = c;
-			}
-
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				var val = (double)value;
-				return Altaxo.Serialization.GUIConversion.ToString(val);
-			}
-
-			public object ConvertBack(object obj, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				double val;
-				string err = ValidateAndConvertText(obj, culture, out val);
-				if (null != err)
-					throw new ArgumentOutOfRangeException(err);
-				return val;
-			}
-
-			public string EhValidateText(object obj, System.Globalization.CultureInfo info)
-			{
-				double val;
-				return ValidateAndConvertText(obj, info, out val);
-			}
-
-			public string ValidateAndConvertText(object obj, System.Globalization.CultureInfo info, out double val)
-			{
-				string text = ((string)obj).Trim();
-				string error = null;
-				val = double.NaN;
-				bool isInPercent = false;
-
-				if (text.EndsWith("%"))
-				{
-					text = text.Substring(0, text.Length - 1).Trim();
-					isInPercent = true;
-				}
-
-				if (Altaxo.Serialization.GUIConversion.IsDouble(text, out val))
-				{
-					if (val == 0)
-						error = "Value must be non-zero";
-					else if (double.IsInfinity(val))
-						error = "Value must not be infinity";
-					if (double.IsNaN(val))
-						error = "Value must be a valid number";
-				}
-				else
-				{
-					error = "Provided text can not be converted to a numeric value";
-				}
-
-				if (isInPercent)
-					val = val / 100;
-
-				if (null != error)
-				{
-					_hasValidationError = true;
-					_originalToolTip = _cb.ToolTip;
-					_cb.ToolTip = error;
-				}
-				else
-				{
-					_hasValidationError = false;
-					_cb.ToolTip = _originalToolTip;
-					_originalToolTip = null;
-				}
-
-				return error;
-			}
-		}
-		#endregion
-
 		/// <summary>The items here were stored for the x scale only.</summary>
 		static Dictionary<double, ImageSource> _cachedXImages = new Dictionary<double, ImageSource>();
 
@@ -130,61 +48,38 @@ namespace Altaxo.Gui.Common.Drawing
 
 		bool _isForYScale;
 
-		Binding _valueBinding;
-		CC _valueConverter;
-
-		public event DependencyPropertyChangedEventHandler SelectedScaleChanged;
-
-		#region Dependency property
-		private const string _nameOfValueProp = "SelectedScale";
-		public double SelectedScale
-		{
-			get { var result = (double)GetValue(SelectedScaleProperty); return result; }
-			set { SetValue(SelectedScaleProperty, value); }
-		}
-
-		public static readonly DependencyProperty SelectedScaleProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(ScaleComboBox),
-				new FrameworkPropertyMetadata(1.0, EhSelectedScaleChanged));
-
-		private static void EhSelectedScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((ScaleComboBox)obj).OnSelectedScaleChanged(obj, args);
-		}
-		#endregion
-
-		protected virtual void OnSelectedScaleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			if (null != _img)
-			{
-				var val = (double)args.NewValue;
-				_img.Source = GetImage(val, _isForYScale);
-			}
-
-			if (SelectedScaleChanged != null)
-				SelectedScaleChanged(obj, args);
-		}
+		static readonly double[] _initialValues = new double[] { 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0 };
 
 		public ScaleComboBox()
 		{
-			InitializeComponent();
-			this.Items.Add(new ImageComboBoxItem(this, 0.1));
-			this.Items.Add(new ImageComboBoxItem(this, 0.2));
-			this.Items.Add(new ImageComboBoxItem(this, 0.5));
-			this.Items.Add(new ImageComboBoxItem(this, 1.0));
-			this.Items.Add(new ImageComboBoxItem(this, 2.0));
-			this.Items.Add(new ImageComboBoxItem(this, 5.0));
-			this.Items.Add(new ImageComboBoxItem(this, 10.0));
+			UnitEnvironment = RelationEnvironment.Instance;
+			_converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
 
-			_valueBinding = new Binding();
-			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
-			_valueConverter = new CC(this);
-			_valueBinding.Converter = _valueConverter;
-			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
-			this.SetBinding(ComboBox.TextProperty, _valueBinding);
-			_img.Source = GetImage(SelectedScale, _isForYScale);
+			InitializeComponent();
+
+			foreach (var e in _initialValues)
+				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+
+			_img.Source = GetImage(SelectedQuantityInSIUnits, _isForYScale);
 		}
+
+	
+
+
+		private static ValidationResult EhValidateQuantity(Units.DimensionfulQuantity quantity)
+		{
+			string error = null;
+			double val = quantity.Value;
+			if (val == 0)
+				error = "Value must be non-zero";
+			else if (double.IsInfinity(val))
+				error = "Value must not be infinity";
+			if (double.IsNaN(val))
+				error = "Value must be a valid number";
+
+			return error == null ? ValidationResult.ValidResult : new ValidationResult(false, error);
+		}
+
 
 		public bool IsForYScale
 		{
@@ -194,17 +89,21 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		public bool IsValidated
+		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			get
+			base.OnSelectedQuantityChanged(obj, args);
+
+			if (null != _img)
 			{
-				return false;
+				var val = SelectedQuantityInSIUnits;
+				_img.Source = GetImage(val, _isForYScale);
 			}
 		}
 
+
 		public override ImageSource GetItemImage(object item)
 		{
-			double value = (double)item;
+			double value = ((Units.DimensionfulQuantity)item).AsValueInSIUnits;
 			ImageSource result;
 			if (_isForYScale)
 			{
@@ -222,7 +121,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override string GetItemText(object item)
 		{
-			return (string)_valueConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
+			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
 		}
 
 		public static ImageSource GetImage(double scale, bool isForY)

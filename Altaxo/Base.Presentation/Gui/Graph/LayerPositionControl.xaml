@@ -64,7 +64,7 @@
 		<Label Grid.Column="0" Grid.Row="10" Content="Rotation:"/>
 		<axogcd:RotationComboBox  x:Name="m_Layer_edRotation" Grid.Column="1" Grid.Row="10" SelectedRotationChanged="EhRotation_Changed"/>
 		<Label Grid.Column="0" Grid.Row="12" Content="Scale:"/>
-		<axogcd:ScaleComboBox x:Name="m_Layer_edScale"  Grid.Column="1" Grid.Row="12" SelectedScaleChanged="EhScale_Validating"/>
+		<axogcd:ScaleComboBox x:Name="m_Layer_edScale"  Grid.Column="1" Grid.Row="12" SelectedQuantityChanged="EhScale_Validating"/>
 		<Label Grid.Column="0" Grid.Row="14" Content="Clip data to frame:"/>
 		<CheckBox x:Name="m_Layer_ClipDataToFrame"  Grid.Column="1" Grid.Row="14" VerticalAlignment="Center" Checked="EhClipDataToFrame_Validating" Unchecked="EhClipDataToFrame_Validating"/>
 

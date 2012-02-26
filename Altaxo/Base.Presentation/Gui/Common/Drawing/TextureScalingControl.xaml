@@ -52,7 +52,7 @@
 			
 		<Label Content="X scale:" Grid.Column="0" Grid.Row="1" x:Name="_guiLabelXScale"/>
 		<Label Content="Y scale:" Grid.Column="2" Grid.Row="1" x:Name="_guiLabelYScale"/>
-		<axogcd:ScaleComboBox x:Name="_guiXScale" Grid.Column="1" Grid.Row="1" IsForYScale="False" Margin="4" SelectedScaleChanged="EhXScaleChanged" />
-		<axogcd:ScaleComboBox x:Name="_guiYScale" Grid.Column="3" Grid.Row="1" IsForYScale="True" Margin="4" SelectedScaleChanged="EhYScaleChanged"  />
+		<axogcd:ScaleComboBox x:Name="_guiXScale" Grid.Column="1" Grid.Row="1" IsForYScale="False" Margin="4" SelectedQuantityChanged="EhXScaleChanged" />
+		<axogcd:ScaleComboBox x:Name="_guiYScale" Grid.Column="3" Grid.Row="1" IsForYScale="True" Margin="4" SelectedQuantityChanged="EhYScaleChanged"  />
 	</Grid>
 </UserControl>

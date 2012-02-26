@@ -143,7 +143,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_ScaleChanged(m_Layer_edScale.SelectedScale);
+				Controller.EhView_ScaleChanged(m_Layer_edScale.SelectedQuantityInSIUnits);
 			}
 		}
 

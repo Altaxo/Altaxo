@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _edShear)
-					return _edShear.Shear;
+					return _edShear.SelectedQuantityInSIUnits;
 				else
 					return _shear;
 			}
@@ -293,7 +293,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_shear = value;
 				if (_edShear != null)
-					_edShear.Shear = value;
+					_edShear.SelectedQuantityInSIUnits = value;
 			}
 		}
 
@@ -307,7 +307,7 @@ namespace Altaxo.Gui.Graph
 
 				if (_edShear != null)
 				{
-					_edShear.Shear = _shear;
+					_edShear.SelectedQuantityInSIUnits = _shear;
 				}
 			}
 		}
@@ -322,7 +322,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (_edScaleX != null)
-					return _edScaleX.SelectedScale;
+					return _edScaleX.SelectedQuantityInSIUnits;
 				else
 					return _scaleX;
 			}
@@ -330,7 +330,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_scaleX = value;
 				if (_edScaleX != null)
-					_edScaleX.SelectedScale = value;
+					_edScaleX.SelectedQuantityInSIUnits = value;
 			}
 		}
 
@@ -344,7 +344,7 @@ namespace Altaxo.Gui.Graph
 
 				if (_edScaleX != null)
 				{
-					_edScaleX.SelectedScale = _scaleX;
+					_edScaleX.SelectedQuantityInSIUnits = _scaleX;
 				}
 			}
 		}
@@ -359,7 +359,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (_edScaleY != null)
-					return _edScaleY.SelectedScale;
+					return _edScaleY.SelectedQuantityInSIUnits;
 				else
 					return _scaleY;
 			}
@@ -367,7 +367,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_scaleY = value;
 				if (_edScaleY != null)
-					_edScaleY.SelectedScale = value;
+					_edScaleY.SelectedQuantityInSIUnits = value;
 			}
 		}
 
@@ -380,7 +380,7 @@ namespace Altaxo.Gui.Graph
 				_edScaleY = value;
 				if (_edScaleY != null)
 				{
-					_edScaleY.SelectedScale = _scaleY;
+					_edScaleY.SelectedQuantityInSIUnits = _scaleY;
 				}
 			}
 		}

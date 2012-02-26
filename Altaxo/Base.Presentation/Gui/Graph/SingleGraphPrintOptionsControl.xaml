@@ -35,7 +35,7 @@
 		<CheckBox x:Name="_chkTilePages" Grid.Row="6" Grid.Column="0"  Content="Tile pages" Checked="EhTilePagesChanged" Unchecked="EhTilePagesChanged"/>
 		<CheckBox x:Name="_chkUseFixedZoomFactor" Grid.Row="8" Grid.Column="0"  Content="Use fixed zoom factor" Checked="EhUseFixedZoomFactorChanged" Unchecked="EhUseFixedZoomFactorChanged"/>
 		<Label Grid.Row="10" Grid.Column="0" Content="Zoom factor:"/>
-		<axogcd:ScaleComboBox x:Name="_edZoomFactor" Grid.Row="10" Grid.Column="2" SelectedScaleChanged="EhZoomFactorChanged"/>
+		<axogcd:ScaleComboBox x:Name="_edZoomFactor" Grid.Row="10" Grid.Column="2" SelectedQuantityChanged="EhZoomFactorChanged"/>
 
 	</Grid>
 </UserControl>

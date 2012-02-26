@@ -27,8 +27,8 @@
 		
 	</Style>
 
-	<!-- *********************** Styles for the ThicknessImageComboBox ************************************** -->
-	<Style TargetType="{x:Type axogcd:LengthImageComboBox}" xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" BasedOn="{StaticResource {x:Type ComboBox}}" >
+	<!-- *********************** Styles for the DimensionfulQuantityImageComboBox ************************************** -->
+	<Style TargetType="{x:Type axogcd:DimensionfulQuantityImageComboBox}" xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" BasedOn="{StaticResource {x:Type ComboBox}}" >
 		<Style.Triggers>
 			<Trigger Property="Validation.HasError" Value="true">
 				<Setter Property="ToolTip"

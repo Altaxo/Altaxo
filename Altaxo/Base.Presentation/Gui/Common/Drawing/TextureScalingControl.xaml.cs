@@ -136,11 +136,11 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			get
 			{
-				return _guiXScale.SelectedScale;
+				return _guiXScale.SelectedQuantityInSIUnits;
 			}
 			set
 			{
-				_guiXScale.SelectedScale = value;
+				_guiXScale.SelectedQuantityInSIUnits = value;
 			}
 		}
 
@@ -148,11 +148,11 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			get
 			{
-				return _guiYScale.SelectedScale;
+				return _guiYScale.SelectedQuantityInSIUnits;
 			}
 			set
 			{
-				_guiYScale.SelectedScale = value;
+				_guiYScale.SelectedQuantityInSIUnits = value;
 			}
 		}
 

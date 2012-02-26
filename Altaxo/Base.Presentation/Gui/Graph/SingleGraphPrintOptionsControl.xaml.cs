@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph
 		private void EhZoomFactorChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (null != ZoomFactorChanged)
-				ZoomFactorChanged(_edZoomFactor.SelectedScale);
+				ZoomFactorChanged(_edZoomFactor.SelectedQuantityInSIUnits);
 		}
 
 		#region  ISingleGraphPrintOptionsView
@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Graph
 
 		public void Init_ZoomFactor(double val)
 		{
-			_edZoomFactor.SelectedScale = val;
+			_edZoomFactor.SelectedQuantityInSIUnits = val;
 		}
 
 		public event Action PrintLocationChanged;

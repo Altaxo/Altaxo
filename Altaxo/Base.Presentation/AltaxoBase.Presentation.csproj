@@ -216,10 +216,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Common\Drawing\TextureScaleComboBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Gui\Common\Drawing\GradientFocusComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -668,6 +664,7 @@
       <DependentUpon>CheckableGroupBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
+    <Compile Include="Gui\Common\Drawing\DimensionfulQuantityImageComboBox.cs" />
     <Compile Include="Gui\Common\Drawing\TextureScalingControl.xaml.cs">
       <DependentUpon>TextureScalingControl.xaml</DependentUpon>
     </Compile>
@@ -741,9 +738,6 @@
     <Compile Include="Gui\Common\Drawing\TextureImageComboBox.xaml.cs">
       <DependentUpon>TextureImageComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.xaml.cs">
-      <DependentUpon>TextureScaleComboBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Common\Drawing\GradientFocusComboBox.xaml.cs">
       <DependentUpon>GradientFocusComboBox.xaml</DependentUpon>
     </Compile>
@@ -787,7 +781,6 @@
     <Compile Include="Gui\Common\Drawing\LineThicknessComboBox.xaml.cs">
       <DependentUpon>LineThicknessComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\PositionBox.cs" />
     <Compile Include="Gui\Common\Drawing\RotationComboBox.xaml.cs">
       <DependentUpon>RotationComboBox.xaml</DependentUpon>
     </Compile>

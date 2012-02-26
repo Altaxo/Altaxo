@@ -228,7 +228,7 @@ namespace Altaxo.Gui.Common
 			if (null != _lastConvertedQuantity && s == _lastConvertedString)
 			{
 				result = (DimensionfulQuantity)_lastConvertedQuantity;
-				return ValidationResult.ValidResult;
+				return ValidateSuccessfullyConvertedQuantity(result);
 			}
 
 			result = new DimensionfulQuantity();
@@ -266,7 +266,7 @@ namespace Altaxo.Gui.Common
 				if (double.TryParse(s, System.Globalization.NumberStyles.Float, cultureInfo, out parsedValue))
 				{
 					result = new DimensionfulQuantity(parsedValue, prefix, u);
-					return ValidationResult.ValidResult;
+					return ValidateSuccessfullyConvertedQuantity(result);
 				}
 				else
 				{
@@ -301,12 +301,12 @@ namespace Altaxo.Gui.Common
 				if (null != _lastConvertedQuantity)
 				{
 					result = new DimensionfulQuantity(parsedValue, ((DimensionfulQuantity)_lastConvertedQuantity).Prefix, ((DimensionfulQuantity)_lastConvertedQuantity).Unit);
-					return ValidationResult.ValidResult;
+					return ValidateSuccessfullyConvertedQuantity(result);
 				}
 				else if (null != _unitEnvironment && null != _unitEnvironment.DefaultUnit)
 				{
 					result = new DimensionfulQuantity(parsedValue, _unitEnvironment.DefaultUnit.Prefix, _unitEnvironment.DefaultUnit.Unit);
-					return ValidationResult.ValidResult;
+					return ValidateSuccessfullyConvertedQuantity(result);
 				}
 				else
 				{
@@ -318,6 +318,29 @@ namespace Altaxo.Gui.Common
 				return new ValidationResult(false, GetErrorStringForUnrecognizedUnit(unitString));
 			}
 		}
+
+
+		private Func<DimensionfulQuantity, ValidationResult> _validationAfterSuccessfulConversion;
+		/// <summary>Sets a function that validates the quantity after successful conversion. Such a function can be used to exclude certain values, for instance zero, by marking them as invalid.</summary>
+		/// <value>The function to validate the quantity after successful conversion. This function has to return a <see cref="ValidationResult"/>.</value>
+		public Func<DimensionfulQuantity, ValidationResult> ValidationAfterSuccessfulConversion
+		{
+			set
+			{
+				_validationAfterSuccessfulConversion = value;
+			}
+		}
+
+		/// <summary>Validates the successfully converted quantity. For instance, for some values (e.g. scale values) a value of zero is not appropriate.</summary>
+		/// <returns>The result of the validation</returns>
+		ValidationResult ValidateSuccessfullyConvertedQuantity(DimensionfulQuantity value)
+		{
+			if (null != _validationAfterSuccessfulConversion)
+				return _validationAfterSuccessfulConversion(value);
+			else
+				return ValidationResult.ValidResult;
+		}
+
 
 		string GetErrorStringForUnrecognizedUnit(string unrecognizedPart)
 		{

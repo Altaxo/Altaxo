@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph
 
     IMVCAController _grid1;
     IMVCAController _grid2;
-    IMVCAController _background;
+    IMVCANController _background;
 
     public GridPlaneController()
     {
@@ -80,8 +80,9 @@ namespace Altaxo.Gui.Graph
       Current.Gui.FindAndAttachControlTo(_grid2);
       ControlViewElement c2 = new ControlViewElement("Grid2", _grid2, _grid2.ViewObject);
 
-      _background = new BrushControllerSimple(_doc.Background);
-      Current.Gui.FindAndAttachControlUsingGuiTemplate(_background,_grid2.ViewObject);
+			_background = new BrushControllerAdvanced();
+			_background.InitializeDocument(_doc.Background ?? BrushX.Empty);
+      Current.Gui.FindAndAttachControlTo(_background);
       ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
       
         base.Initialize(new ControlViewElement[] { c1, c2, c3 }, false);
@@ -105,7 +106,8 @@ namespace Altaxo.Gui.Graph
 
       _doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
       _doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
-      _doc.Background = (BrushX)_background.ModelObject;
+			var backBrush = (BrushX)_background.ModelObject;
+			_doc.Background = backBrush.IsVisible ? backBrush : null;
 
       return true;
     }
