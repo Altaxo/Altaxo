@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 
 				/// <summary>
-				/// Calculates the ticks based on the org and end of the scale.
+				/// Calculates the ticks based on the org and end of the scale. Org and End now are given and can not be changed anymore.
 				/// </summary>
 				/// <param name="org">Scale origin.</param>
 				/// <param name="end">Scale end.</param>

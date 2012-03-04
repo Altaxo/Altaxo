@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Scales
   /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
   /// </summary>
   [Serializable]
-  public abstract class Scale : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
+  public abstract class Scale : ICloneable, Main.IChangedEventSource
   {
     /// <summary>
     /// Fired when the data of the axis has changed, for instance end point, org point, or tick spacing.

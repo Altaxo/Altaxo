@@ -26,12 +26,11 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// Helper class to suspend and resume change events (or other events).
-  /// </summary>
+	/// <summary>Helper class to suspend and resume change events (or other events).</summary>
   public class EventSuppressor
   {
     #region Inner class SuppressToken
+
     private class SuppressToken : IDisposable
     {
       EventSuppressor _parent;
@@ -39,7 +38,7 @@ namespace Altaxo.Main
       public SuppressToken(EventSuppressor parent)
       {
         _parent = parent;
-        _parent._suppressLevel++;
+				System.Threading.Interlocked.Increment(ref _parent._suppressLevel);
       }
 
 			/// <summary>
@@ -51,7 +50,7 @@ namespace Altaxo.Main
 				{
 					EventSuppressor parent = _parent;
 					_parent = null;
-					int oldLevel = parent._suppressLevel--;
+					int newLevel = System.Threading.Interlocked.Decrement(ref _parent._suppressLevel);
 				}
 			}
 
@@ -63,19 +62,29 @@ namespace Altaxo.Main
         {
           EventSuppressor parent = _parent;
           _parent = null;
-          int oldLevel = parent._suppressLevel--;
-          if (1 == oldLevel)
-          {
-            parent.OnResume();
-          }
+					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suppressLevel);
+					if (0 == newLevel)
+					{
+						parent.OnResume();
+					}
+					else if (newLevel < 0)
+					{
+						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+					}
         }
       }
 
       #endregion
     }
     #endregion
+
+		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
     private int _suppressLevel;
+
+		/// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
     Action _resumeEventHandler;
+
+		/// <summary>Counts the number of events during the suspend phase.</summary>
     int _eventCount;
 
     /// <summary>

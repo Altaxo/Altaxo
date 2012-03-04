@@ -140,5 +140,54 @@ namespace Altaxo.Graph.Scales.Ticks
 				return _suppressedTicksByNumber;
 			}
 		}
+
+		private class DescendingIntComparer : IComparer<int>
+		{
+			Comparer<int> _comparer = Comparer<int>.Default;
+			public int Compare(int x, int y)
+			{
+				return _comparer.Compare(y, x);
+			}
+		}
+
+		/// <summary>Gets all suppressed tick numbers in descending order with negative numbers transformed to positive numbers.</summary>
+		/// <param name="totalNumberOfTicks">The total number of ticks. This is used to transform negative numbers to real, positive, tick numbers.</param>
+		/// <returns>A list of suppressed tick numbers (all positive) in descending order.</returns>
+		public ICollection<int> GetValidTickNumbersDecendingWithNegativeNumbersTransformed( int totalNumberOfTicks)
+		{
+			SortedSet<int> result = new SortedSet<int>(new DescendingIntComparer());
+			foreach (int idx in _suppressedTicksByNumber)
+			{
+				if (idx >= 0 && idx<totalNumberOfTicks)
+					result.Add(idx);
+				else if(idx < 0 && totalNumberOfTicks+idx>=0)
+					result.Add(totalNumberOfTicks+idx);
+			}
+			return result;
+		}
+
+		/// <summary>Removes the suppressed ticks from the list given as argument.</summary>
+		/// <param name="ticks">The tick list. At return, the suppressed ticks are removed from that list.</param>
+		public void RemoveSuppressedTicks(IList<double> ticks)
+		{
+			// Remove suppressed ticks
+			if(_suppressedTicksByNumber.Count>0)
+			{
+			var suppressedTicksDescending = GetValidTickNumbersDecendingWithNegativeNumbersTransformed(ticks.Count);
+			foreach (var i in suppressedTicksDescending)
+				{
+					ticks.RemoveAt(i);
+				}
+			}
+
+			if(_suppressedTickValues.Count>0)
+			{
+				for (int i = ticks.Count - 1; i >= 0; --i)
+				{
+					if (_suppressedTickValues.Contains(ticks[i]))
+						ticks.RemoveAt(i);
+				}
+			}
+		}
 	}
 }

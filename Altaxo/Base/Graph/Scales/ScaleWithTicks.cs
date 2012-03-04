@@ -101,17 +101,8 @@ namespace Altaxo.Graph.Scales
 
 		public ScaleWithTicks(ScaleWithTicks from)
 		{
-			CopyFrom(from);
-		}
-
-		public void CopyFrom(ScaleWithTicks from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			SetTo(
-			 null == from._scale ? null : (Scale)from._scale.Clone(),
-			 null == from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
+			SetNewScale(null == from._scale ? null : (Scale)from._scale.Clone());
+			SetNewTickSpacing(null==from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
 		}
 
 		public object Clone()

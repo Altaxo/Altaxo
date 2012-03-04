@@ -45,6 +45,11 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		protected object _validationRuleAndConverter;
 
+		/// <summary>
+		/// The textbox used to show the text.
+		/// </summary>
+		protected TextBox _textBox;
+
 		#region Construction
 
 		/// <summary>
@@ -84,8 +89,8 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		protected virtual void SetupBindings()
 		{
-			var textBox = this.Template.FindName("_textBox", this) as TextBox;
-			if (null != textBox)
+			_textBox = this.Template.FindName("_textBox", this) as TextBox;
+			if (null != _textBox)
 			{
 				var binding = new Binding();
 				binding.Source = this;
@@ -93,9 +98,51 @@ namespace Altaxo.Gui.Common
 
 				binding.Converter = (IValueConverter)_validationRuleAndConverter;
 				binding.ValidationRules.Add((ValidationRule)_validationRuleAndConverter);
-				textBox.SetBinding(TextBox.TextProperty, binding);
+				_textBox.SetBinding(TextBox.TextProperty, binding);
+
+				_textBox.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(EhTextBox_GotKeyboardFocus);
+				_textBox.MouseDoubleClick += new MouseButtonEventHandler(EhTextBox_MouseDoubleClick);
+				_textBox.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(EhTextBox_PreviewMouseLeftButtonDown);
 			}
 		}
+
+
+
+		#region Change selection behaviour
+
+		// The next three overrides change the selection behaviour of the text box as described in
+		// 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
+		// (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
+
+		void EhTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			((TextBox)sender).SelectAll();
+		}
+
+
+		void EhTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			((TextBox)sender).SelectAll();
+		}
+
+
+		void EhTextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var textBox = (TextBox)sender;
+			if (!textBox.IsKeyboardFocusWithin)
+			{
+				e.Handled = true;
+				textBox.Focus();
+			}
+			else
+			{
+				base.OnPreviewMouseLeftButtonDown(e);
+			}
+		}
+	
+
+		#endregion Change selection behaviour
+
 
 		/// <summary>
 		/// Derived classes must provide a new instance of an object that derives from <see cref="ValidationRule"/> and implements <see cref="IValueConverter"/> here.

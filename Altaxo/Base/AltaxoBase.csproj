@@ -206,6 +206,7 @@
     <Compile Include="Gui\Common\Drawing\NamedColorController.cs" />
     <Compile Include="Gui\Common\Drawing\TextureScalingController.cs" />
     <Compile Include="Gui\Common\LengthValueInPointController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingController.cs" />
     <Compile Include="Gui\GuiRelationUnits.cs" />
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />

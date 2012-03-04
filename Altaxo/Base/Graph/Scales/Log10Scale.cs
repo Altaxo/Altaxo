@@ -35,10 +35,17 @@ namespace Altaxo.Graph.Scales
   [Serializable]
   public class Log10Scale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
   {
-    /// <summary>Decimal logarithm of axis org.</summary>
+    /// <summary>Decimal logarithm of axis org. Should always been set together with <see cref="_cachedOrg"/>.</summary>
     double _log10Org=0; // Log10 of physical axis org
-    /// <summary>Decimal logarithm of axis end.</summary>
+
+		/// <summary>Origin of the axis. This value is used to maintain numeric precision. Should always been set together with <see cref="_log10Org"/>.</summary>
+		double _cachedOrg = 1;
+
+		/// <summary>Decimal logarithm of axis end.  Should always been set together with <see cref="_cachedEnd"/>.</summary>
     double _log10End=1; // Log10 of physical axis end
+
+		/// <summary>Value of the end of the axis. This value is used to maintain numeric precision. Should always been set together with <see cref="_log10End"/>.</summary>
+		double _cachedEnd = 10;
 
 		/// <summary>True if org is allowed to be extended to smaller values.</summary>
 		protected bool _isOrgExtendable;
@@ -76,8 +83,10 @@ namespace Altaxo.Graph.Scales
         Log10Scale s = null!=o ? (Log10Scale)o : new Log10Scale();
 
         s._log10Org = (double)info.GetDouble("Log10Org");
-        s._log10End = (double)info.GetDouble("Log10End");
+				s._cachedOrg = Math.Pow(10, s._log10Org);
 
+        s._log10End = (double)info.GetDouble("Log10End");
+				s._cachedEnd = Math.Pow(10, s._log10End);
 				s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling", s);
 
 
@@ -119,8 +128,10 @@ namespace Altaxo.Graph.Scales
     {
       this._dataBounds   = null==from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
       _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
-      this._log10End = from._log10End;
-      this._log10Org = from._log10Org;
+			this._log10Org = from._log10Org;
+			this._cachedOrg = from._cachedOrg;
+			this._log10End = from._log10End;
+			this._cachedEnd = from._cachedEnd;
 
       this._rescaling = null==from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
 
@@ -214,11 +225,11 @@ namespace Altaxo.Graph.Scales
 
     public override double Org
     {
-      get { return Math.Pow(10,_log10Org); } 
+			get { return _cachedOrg; } 
     }
     public override double End 
     {
-      get { return Math.Pow(10,_log10End); } 
+			get { return _cachedEnd; } 
     }
 
 
@@ -251,8 +262,14 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		private void InternalSetOrgEnd(double lgorg, double lgend, bool isOrgExtendable, bool isEndExtendable)
+		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
 		{
+			double lgorg = Math.Log10(org);
+			double lgend = Math.Log10(end);
+
+			_cachedOrg = org;
+			_cachedEnd = end;
+
 			bool changed = _log10Org != lgorg ||
 				_log10End != lgend ||
 				_isOrgExtendable != isOrgExtendable ||
@@ -286,7 +303,7 @@ namespace Altaxo.Graph.Scales
 			if (!(xorg > 0) || !(xend > 0))
 				HandleInvalidOrgOrEnd(ref xorg, ref xend);
 
-			InternalSetOrgEnd(Math.Log10(xorg), Math.Log10(xend), isAutoOrg, isAutoEnd);
+			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
 		}
 
 		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
@@ -301,7 +318,7 @@ namespace Altaxo.Graph.Scales
 			if (!(e>0))
 				return "end is not positive";
 
-			InternalSetOrgEnd(Math.Log10(o), Math.Log10(e), false, false);
+			InternalSetOrgEnd(o, e, false, false);
 			return null;
 		}
 

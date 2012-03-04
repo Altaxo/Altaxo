@@ -464,7 +464,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		public double? MajorTick
+		public double? MajorTickSpan
 		{
 			get
 			{

@@ -448,6 +448,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Scales\Ticks\Log10TickSpacingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -915,6 +919,9 @@
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
     <Compile Include="Gui\Graph\OrgEndSpanControl.xaml.cs">
       <DependentUpon>OrgEndSpanControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingControl.xaml.cs">
+      <DependentUpon>Log10TickSpacingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>

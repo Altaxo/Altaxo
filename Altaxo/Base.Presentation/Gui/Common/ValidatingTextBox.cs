@@ -50,6 +50,39 @@ namespace Altaxo.Gui.Common
 			this.SetBinding(TextBox.TextProperty, binding);
 		}
 
+		#region Change selection behaviour
+
+		// The next three overrides change the selection behaviour of the text box as described in
+		// 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
+		// (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
+
+		protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
+		{
+			SelectAll();
+			base.OnGotKeyboardFocus(e);
+		}
+
+		protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
+		{
+			SelectAll();
+			base.OnMouseDoubleClick(e);
+		}
+
+		protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
+		{
+			if (!IsKeyboardFocusWithin)
+			{
+				e.Handled = true;
+				Focus();
+			}
+			else
+			{
+				base.OnPreviewMouseLeftButtonDown(e);
+			}
+		}
+
+		#endregion Change selection behaviour
+
 
 		#region Dependency property
 		public string ValidatedText

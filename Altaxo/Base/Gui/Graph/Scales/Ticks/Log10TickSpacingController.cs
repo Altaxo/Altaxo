@@ -36,22 +36,22 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 {
 	#region Interfaces
 
-	public interface ILinearTickSpacingView
+	public interface ILog10TickSpacingView
 	{
-		string MajorTicks { set; }
-		string MinorTicks { set; }
+		int? DecadesPerMajorTick { get; set; }
+		int? MinorTicks { get; set; }
 
-		string ZeroLever { set; }
-		string MinGrace { set; }
-		string MaxGrace { set; }
-    string TargetNumberMajorTicks { get; set; }
-    string TargetNumberMinorTicks { get; set; }
+		double OneLever { get;  set; }
+		double OrgPadding { get;  set; }
+		double EndPadding { get;  set; }
+
+    int TargetNumberMajorTicks { get; set; }
+    int TargetNumberMinorTicks { get; set; }
 
     SelectableListNodeList SnapTicksToOrg { set; }
     SelectableListNodeList SnapTicksToEnd { set; }
 
 		string DivideBy { set; }
-		string TransfoOffset { set; }
 		bool TransfoOperationIsMultiply { set; }
 
 		string SuppressMajorTickValues { get; set; }
@@ -61,27 +61,19 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		string AddMajorTickValues { get; set; }
 		string AddMinorTickValues { get; set; }
 
-
-
-		event Action<string,CancelEventArgs> MajorTicksValidating;
-		event Action<string, CancelEventArgs> MinorTicksValidating;
-		event Action<string, CancelEventArgs> ZeroLeverValidating;
-		event Action<string, CancelEventArgs> MinGraceValidating;
-		event Action<string, CancelEventArgs> MaxGraceValidating;
 		event Action<string, CancelEventArgs> DivideByValidating;
-		event Action<string, CancelEventArgs> TransfoOffsetValidating;
 		event Action<bool> TransfoOperationChanged;
 	}
 
 	#endregion
 
-	[UserControllerForObject(typeof(LinearTickSpacing))]
-	[ExpectedTypeOfView(typeof(ILinearTickSpacingView))]
-	public class LinearTickSpacingController : IMVCANController
+	[UserControllerForObject(typeof(Log10TickSpacing))]
+	[ExpectedTypeOfView(typeof(ILog10TickSpacingView))]
+	public class Log10TickSpacingController : IMVCANController
 	{
-		ILinearTickSpacingView _view;
-		LinearTickSpacing _originalDoc;
-		LinearTickSpacing _doc;
+		ILog10TickSpacingView _view;
+		Log10TickSpacing _originalDoc;
+		Log10TickSpacing _doc;
 
     SelectableListNodeList _snapTicksToOrg = new SelectableListNodeList();
     SelectableListNodeList _snapTicksToEnd = new SelectableListNodeList();
@@ -90,26 +82,25 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		{
 			if (_view != null)
 			{
-				_view.MajorTicks = GUIConversion.ToString(_doc.MajorTickSpan);
-				_view.MinorTicks = GUIConversion.ToString(_doc.MinorTicks);
-				_view.ZeroLever = GUIConversion.ToString(_doc.ZeroLever);
-				_view.MinGrace = GUIConversion.ToString(_doc.MinGrace);
-				_view.MaxGrace = GUIConversion.ToString(_doc.MaxGrace);
+				_view.DecadesPerMajorTick =_doc.DecadesPerMajorTick;
+				_view.MinorTicks = _doc.MinorTicks;
+				_view.OneLever = _doc.OneLever;
+				_view.OrgPadding = _doc.MinGrace;
+				_view.EndPadding = _doc.MaxGrace;
 
         _snapTicksToOrg.Clear();
         _snapTicksToEnd.Clear();
         foreach (BoundaryTickSnapping s in Enum.GetValues(typeof(BoundaryTickSnapping)))
         {
-          _snapTicksToOrg.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(s),s,s==_doc.SnapOrgToTick));
+          _snapTicksToOrg.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(s),s,s ==_doc.SnapOrgToTick));
           _snapTicksToEnd.Add(new SelectableListNode(Current.Gui.GetUserFriendlyName(s), s, s == _doc.SnapEndToTick));
         }
         _view.SnapTicksToOrg = _snapTicksToOrg;
         _view.SnapTicksToEnd = _snapTicksToEnd;
 
-        _view.TargetNumberMajorTicks = Serialization.GUIConversion.ToString(_doc.TargetNumberOfMajorTicks);
-        _view.TargetNumberMinorTicks = Serialization.GUIConversion.ToString(_doc.TargetNumberOfMinorTicks);
+        _view.TargetNumberMajorTicks = _doc.TargetNumberOfMajorTicks;
+        _view.TargetNumberMinorTicks = _doc.TargetNumberOfMinorTicks;
 
-				_view.TransfoOffset = GUIConversion.ToString(_doc.TransformationOffset);
 				_view.DivideBy = GUIConversion.ToString(_doc.TransformationDivider);
 				_view.TransfoOperationIsMultiply = _doc.TransformationOperationIsMultiply;
 
@@ -125,9 +116,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		void EhMajorSpanValidating(string txt, CancelEventArgs e)
 		{
-			double? val;
-			if (GUIConversion.IsDoubleOrNull(txt, out val))
-				_doc.MajorTickSpan = val;
+			int? val;
+			if (GUIConversion.IsInt32OrNull(txt, out val))
+				_doc.DecadesPerMajorTick = val;
 			else
 				e.Cancel = true;
 		}
@@ -142,31 +133,19 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		}
 
 
-		void EhZeroLeverValidating(string txt, CancelEventArgs e)
+		void EhOneLeverValidating(CancelEventArgs e)
 		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-				_doc.ZeroLever = val;
-			else
-				e.Cancel = true;
+			_doc.OneLever = _view.OneLever;
 		}
 
-		void EhMinGraceValidating(string txt, CancelEventArgs e)
+		void EhMinGraceValidating(CancelEventArgs e)
 		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-				_doc.MinGrace = val;
-			else
-				e.Cancel = true;
+			_doc.MinGrace = _view.OrgPadding;
 		}
 
-		void EhMaxGraceValidating(string txt, CancelEventArgs e)
+		void EhMaxGraceValidating(CancelEventArgs e)
 		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-				_doc.MaxGrace = val;
-			else
-				e.Cancel = true;
+			_doc.MaxGrace = _view.EndPadding;
 		}
 
 		void EhDivideByValidating(string txt, CancelEventArgs e)
@@ -186,22 +165,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			}
 		}
 
-		void EhTransformationOffsetValidating(string txt, CancelEventArgs e)
-		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-			{
-				if (!val.IsFinite())
-					e.Cancel = true;
-				else
-					_doc.TransformationOffset = val;
-			}
-			else
-			{
-				e.Cancel = true;
-			}
-		}
-
 		void EhTransformationOperationChanged(bool transfoOpIsMultiply)
 		{
 			_doc.TransformationOperationIsMultiply = transfoOpIsMultiply;
@@ -213,10 +176,10 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		{
 			if (args == null || args.Length == 0)
 				return false;
-			_originalDoc = args[0] as LinearTickSpacing;
+			_originalDoc = args[0] as Log10TickSpacing;
 			if (null == _originalDoc)
 				return false;
-			_doc = (LinearTickSpacing)_originalDoc.Clone();
+			_doc = (Log10TickSpacing)_originalDoc.Clone();
 
 			Initialize(true);
 			return true;
@@ -241,26 +204,14 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			{
 				if (null != _view)
 				{
-					_view.MajorTicksValidating -= EhMajorSpanValidating;
-					_view.MinorTicksValidating -= EhMinorTicksValidating;
-					_view.ZeroLeverValidating -= EhZeroLeverValidating;
-					_view.MinGraceValidating -= EhMinGraceValidating;
-					_view.MaxGraceValidating -= EhMaxGraceValidating;
 					_view.DivideByValidating -= EhDivideByValidating;
-					_view.TransfoOffsetValidating -= EhTransformationOffsetValidating;
 					_view.TransfoOperationChanged -= EhTransformationOperationChanged;
 				}
-				_view = value as ILinearTickSpacingView;
+				_view = value as ILog10TickSpacingView;
 
 				if (null != _view)
 				{
-					_view.MajorTicksValidating += EhMajorSpanValidating;
-					_view.MinorTicksValidating += EhMinorTicksValidating;
-					_view.ZeroLeverValidating += EhZeroLeverValidating;
-					_view.MinGraceValidating += EhMinGraceValidating;
-					_view.MaxGraceValidating += EhMaxGraceValidating;
 					_view.DivideByValidating += EhDivideByValidating;
-					_view.TransfoOffsetValidating += EhTransformationOffsetValidating;
 					_view.TransfoOperationChanged += EhTransformationOperationChanged;
 
 					Initialize(false);
@@ -349,15 +300,12 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if(Serialization.GUIConversion.IsInteger(_view.TargetNumberMajorTicks, out intVal))
-        _doc.TargetNumberOfMajorTicks = intVal;
-      else
-        return false;
+			_doc.TargetNumberOfMajorTicks = _view.TargetNumberMajorTicks;
+					_doc.TargetNumberOfMinorTicks = _view.TargetNumberMinorTicks;
 
-      if(Serialization.GUIConversion.IsInteger(_view.TargetNumberMinorTicks, out intVal))
-        _doc.TargetNumberOfMinorTicks = intVal;
-      else
-        return false;
+					_doc.DecadesPerMajorTick = _view.DecadesPerMajorTick;
+					_doc.MinorTicks = _view.MinorTicks;
+
 
       _doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
       _doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;
