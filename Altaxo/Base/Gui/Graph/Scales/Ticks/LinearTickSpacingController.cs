@@ -39,13 +39,13 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 	public interface ILinearTickSpacingView
 	{
 		string MajorTicks { set; }
-		string MinorTicks { set; }
+		int? MinorTicks { get; set; }
 
-		string ZeroLever { set; }
-		string MinGrace { set; }
-		string MaxGrace { set; }
-    string TargetNumberMajorTicks { get; set; }
-    string TargetNumberMinorTicks { get; set; }
+		double ZeroLever { get;  set; }
+		double MinGrace { get; set; }
+		double MaxGrace { get; set; }
+    int TargetNumberMajorTicks { get; set; }
+    int TargetNumberMinorTicks { get; set; }
 
     SelectableListNodeList SnapTicksToOrg { set; }
     SelectableListNodeList SnapTicksToEnd { set; }
@@ -64,10 +64,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 
 		event Action<string,CancelEventArgs> MajorTicksValidating;
-		event Action<string, CancelEventArgs> MinorTicksValidating;
-		event Action<string, CancelEventArgs> ZeroLeverValidating;
-		event Action<string, CancelEventArgs> MinGraceValidating;
-		event Action<string, CancelEventArgs> MaxGraceValidating;
 		event Action<string, CancelEventArgs> DivideByValidating;
 		event Action<string, CancelEventArgs> TransfoOffsetValidating;
 		event Action<bool> TransfoOperationChanged;
@@ -91,10 +87,10 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			if (_view != null)
 			{
 				_view.MajorTicks = GUIConversion.ToString(_doc.MajorTickSpan);
-				_view.MinorTicks = GUIConversion.ToString(_doc.MinorTicks);
-				_view.ZeroLever = GUIConversion.ToString(_doc.ZeroLever);
-				_view.MinGrace = GUIConversion.ToString(_doc.MinGrace);
-				_view.MaxGrace = GUIConversion.ToString(_doc.MaxGrace);
+				_view.MinorTicks = _doc.MinorTicks;
+				_view.ZeroLever = _doc.ZeroLever;
+				_view.MinGrace = _doc.MinGrace;
+				_view.MaxGrace = _doc.MaxGrace;
 
         _snapTicksToOrg.Clear();
         _snapTicksToEnd.Clear();
@@ -106,8 +102,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         _view.SnapTicksToOrg = _snapTicksToOrg;
         _view.SnapTicksToEnd = _snapTicksToEnd;
 
-        _view.TargetNumberMajorTicks = Serialization.GUIConversion.ToString(_doc.TargetNumberOfMajorTicks);
-        _view.TargetNumberMinorTicks = Serialization.GUIConversion.ToString(_doc.TargetNumberOfMinorTicks);
+        _view.TargetNumberMajorTicks = _doc.TargetNumberOfMajorTicks;
+        _view.TargetNumberMinorTicks = _doc.TargetNumberOfMinorTicks;
 
 				_view.TransfoOffset = GUIConversion.ToString(_doc.TransformationOffset);
 				_view.DivideBy = GUIConversion.ToString(_doc.TransformationDivider);
@@ -132,42 +128,13 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				e.Cancel = true;
 		}
 
-		void EhMinorTicksValidating(string txt, CancelEventArgs e)
-		{
-			int? val;
-			if (GUIConversion.IsInt32OrNull(txt, out val))
-				_doc.MinorTicks = val;
-			else
-				e.Cancel = true;
-		}
+		
 
 
-		void EhZeroLeverValidating(string txt, CancelEventArgs e)
-		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-				_doc.ZeroLever = val;
-			else
-				e.Cancel = true;
-		}
+	
 
-		void EhMinGraceValidating(string txt, CancelEventArgs e)
-		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-				_doc.MinGrace = val;
-			else
-				e.Cancel = true;
-		}
-
-		void EhMaxGraceValidating(string txt, CancelEventArgs e)
-		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-				_doc.MaxGrace = val;
-			else
-				e.Cancel = true;
-		}
+		
+	
 
 		void EhDivideByValidating(string txt, CancelEventArgs e)
 		{
@@ -242,10 +209,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				if (null != _view)
 				{
 					_view.MajorTicksValidating -= EhMajorSpanValidating;
-					_view.MinorTicksValidating -= EhMinorTicksValidating;
-					_view.ZeroLeverValidating -= EhZeroLeverValidating;
-					_view.MinGraceValidating -= EhMinGraceValidating;
-					_view.MaxGraceValidating -= EhMaxGraceValidating;
 					_view.DivideByValidating -= EhDivideByValidating;
 					_view.TransfoOffsetValidating -= EhTransformationOffsetValidating;
 					_view.TransfoOperationChanged -= EhTransformationOperationChanged;
@@ -255,10 +218,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				if (null != _view)
 				{
 					_view.MajorTicksValidating += EhMajorSpanValidating;
-					_view.MinorTicksValidating += EhMinorTicksValidating;
-					_view.ZeroLeverValidating += EhZeroLeverValidating;
-					_view.MinGraceValidating += EhMinGraceValidating;
-					_view.MaxGraceValidating += EhMaxGraceValidating;
 					_view.DivideByValidating += EhDivideByValidating;
 					_view.TransfoOffsetValidating += EhTransformationOffsetValidating;
 					_view.TransfoOperationChanged += EhTransformationOperationChanged;
@@ -349,15 +308,15 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if(Serialization.GUIConversion.IsInteger(_view.TargetNumberMajorTicks, out intVal))
-        _doc.TargetNumberOfMajorTicks = intVal;
-      else
-        return false;
+			// MajorTicks were validated and set before
+			_doc.MinorTicks = _view.MinorTicks;
+     
+      _doc.TargetNumberOfMajorTicks = _view.TargetNumberMajorTicks;
+			_doc.TargetNumberOfMinorTicks = _view.TargetNumberMinorTicks;
 
-      if(Serialization.GUIConversion.IsInteger(_view.TargetNumberMinorTicks, out intVal))
-        _doc.TargetNumberOfMinorTicks = intVal;
-      else
-        return false;
+			_doc.ZeroLever = _view.ZeroLever;
+			_doc.MinGrace = _view.MinGrace;
+			_doc.MaxGrace = _view.MaxGrace;
 
       _doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
       _doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;

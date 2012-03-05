@@ -212,35 +212,91 @@ namespace Altaxo.Graph.Scales.Ticks
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			_majorTicks.Clear();
-			_majorTicks.AddRange(from._majorTicks);
-
-			_minorTicks.Clear();
-			_minorTicks.AddRange(from._minorTicks);
+		
 
 			_userDefinedNumberOfDecadesPerMajorTick = from._userDefinedNumberOfDecadesPerMajorTick;
 			_userDefinedMinorTicks = from._userDefinedMinorTicks;
 
+			_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+			_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
+
 			_oneLever = from._oneLever;
 			_minGrace = from._minGrace;
 			_maxGrace = from._maxGrace;
-
-			_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
-			_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
+			_snapOrgToTick = from._snapOrgToTick;
+			_snapEndToTick = from._snapEndToTick;
+		
 
 			_transformationDivider = from._transformationDivider;
 			_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
 			_transformationExponent = from._transformationExponent;
 
-			_snapOrgToTick = from._snapOrgToTick;
-			_snapEndToTick = from._snapEndToTick;
-
-
 			_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
 			_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
 			_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
 			_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
+
+			_majorTicks.Clear();
+			_majorTicks.AddRange(from._majorTicks);
+
+			_minorTicks.Clear();
+			_minorTicks.AddRange(from._minorTicks);
 		}
+
+
+		public override bool Equals(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			else if (!(obj is Log10TickSpacing))
+				return false;
+			else
+			{
+				var from = (Log10TickSpacing)obj;
+
+				if (_userDefinedNumberOfDecadesPerMajorTick != from._userDefinedNumberOfDecadesPerMajorTick)
+					return false;
+				if (_userDefinedMinorTicks != from._userDefinedMinorTicks)
+					return false;
+
+				if (_targetNumberOfMajorTicks != from._targetNumberOfMajorTicks)
+					return false;
+				if (_targetNumberOfMinorTicks != from._targetNumberOfMinorTicks)
+					return false;
+
+				if (_oneLever != from._oneLever)
+					return false;
+				if (_minGrace != from._minGrace)
+					return false;
+				if (_maxGrace != from._maxGrace)
+					return false;
+
+				if (_snapOrgToTick != from._snapOrgToTick)
+					return false;
+				if (_snapEndToTick != from._snapEndToTick)
+					return false;
+
+				if (_transformationDivider != from._transformationDivider)
+					return false;
+				if (_transformationOperationIsMultiply != from._transformationOperationIsMultiply)
+					return false;
+
+				if (!_suppressedMajorTicks.Equals(from._suppressedMajorTicks))
+					return false;
+
+				if (!_suppressedMinorTicks.Equals(from._suppressedMinorTicks))
+					return false;
+
+				if (!_additionalMajorTicks.Equals(from._additionalMajorTicks))
+					return false;
+
+				if (!_additionalMinorTicks.Equals(from._additionalMinorTicks))
+					return false;
+			}
+
+			return true;
+		}
+
 
 
 		public override object Clone()
@@ -540,22 +596,15 @@ namespace Altaxo.Graph.Scales.Ticks
 			var lg10Org = Math.Log10(dorg);
 			var lg10End = Math.Log10(dend);
 
-			InternalCalculateMajorAndMinorTicks(lg10Org, lg10End);
-		}
-
-		#region Calculation of tick values
-
-		/// <summary>Calculates major and minor ticks for the logarithmic scale. It is assumed, <see cref="_cachedMajorMinor"/> contains valid information concerning the number of decades per major tick and
-		/// the number of minor ticks per major tick interval. The function filles the <see cref="_majorTicks"/> and <see cref="_minorTicks"/> collection with the tick values.</summary>
-		/// <param name="lg10Org">The Log10() value of the scale origin.</param>
-		/// <param name="lg10End">The Log10() value of the scale end.</param>
-		private void InternalCalculateMajorAndMinorTicks(double lg10Org, double lg10End)
-		{
 			_majorTicks.Clear();
 			_minorTicks.Clear();
 			InternalCalculateMajorTicks(lg10Org, lg10End);
 			InternalCalculateMinorTicks(lg10Org, lg10End);
 		}
+
+		#region Calculation of tick values
+
+	
 
 		/// <summary>Calculates the major ticks for the logarithmic scale. It is assumed, <see cref="_cachedMajorMinor"/> contains valid information concerning the number of decades per major tick and
 		/// the number of minor ticks per major tick interval. The function filles the <see cref="_majorTicks"/> collection with the major tick values.</summary>
@@ -678,14 +727,13 @@ namespace Altaxo.Graph.Scales.Ticks
 			_cachedMajorMinor = null;
 			bool modified = false;
 
-			if (!(xend >= xorg))
-				throw new ArgumentOutOfRangeException("xend is not greater or equal than xorg");
 
 			// both xorg and xend have to be positive finite
 			if (xorg == xend)
 			{
 				xorg /= 4;
 				xend *= 4;
+				modified = true;
 			}
 			if (!(xorg > 0 && xorg < double.MaxValue))
 			{
@@ -736,14 +784,6 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			return modified;
 		}
-
-
-
-
-
-
-
-
 
 		/// <summary>
 		/// Applies the value for <see cref="MinGrace"/>, <see cref="MaxGrace"/> and <see cref="ZeroLever"/> to the scale and calculated proposed values for the boundaries.

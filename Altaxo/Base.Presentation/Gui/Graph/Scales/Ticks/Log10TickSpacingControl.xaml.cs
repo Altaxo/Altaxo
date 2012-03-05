@@ -49,31 +49,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_edMaxGrace.UnitEnvironment = RelationEnvironment.Instance;
 		}
 
-	
-
-
-		private void EhOneLever_Changed(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != ZeroLeverValidating)
-				ZeroLeverValidating(c);
-		}
-
-		private void EhMinGrace_Changed(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != ZeroLeverValidating)
-				MinGraceValidating(c);
-		}
-
-		private void EhMaxGrace_Changed(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != ZeroLeverValidating)
-				MinGraceValidating(c);
-		}
-
-
 		private void _cbSnapTicksToOrg_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
@@ -164,13 +139,13 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			set { _edOneLever.SelectedQuantityAsValueInSIUnits = value; }
 		}
 
-		public double OrgPadding
+		public double MinGrace
 		{
 			get { return _edMinGrace.SelectedQuantityAsValueInSIUnits; }
 			set { _edMinGrace.SelectedQuantityAsValueInSIUnits = value; }
 		}
 
-		public double EndPadding
+		public double MaxGrace
 		{
 			get { return _edMaxGrace.SelectedQuantityAsValueInSIUnits;}
 			set { _edMaxGrace.SelectedQuantityAsValueInSIUnits = value; }
@@ -291,16 +266,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_edAddMinorTickValues.Text = value;
 			}
 		}
-
-		public event Action<string, System.ComponentModel.CancelEventArgs> MajorTicksValidating;
-
-		public event Action<string, System.ComponentModel.CancelEventArgs> MinorTicksValidating;
-
-		public event Action<System.ComponentModel.CancelEventArgs> ZeroLeverValidating;
-
-		public event Action<System.ComponentModel.CancelEventArgs> MinGraceValidating;
-
-		public event Action<System.ComponentModel.CancelEventArgs> MaxGraceValidating;
 
 		public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating;
 

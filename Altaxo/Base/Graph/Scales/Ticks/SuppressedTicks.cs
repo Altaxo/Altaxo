@@ -112,6 +112,24 @@ namespace Altaxo.Graph.Scales.Ticks
 			_suppressedTicksByNumber.AddRange(from._suppressedTicksByNumber);
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			else if (!(obj is SuppressedTicks))
+				return false;
+			else
+			{
+				var from = (SuppressedTicks)obj;
+				if (!_suppressedTicksByNumber.SequenceEqual(from._suppressedTicksByNumber))
+					return false;
+
+				if (!_suppressedTickValues.SequenceEqual(from._suppressedTickValues))
+					return false;
+			}
+			return true;
+		}
+
 		public object Clone()
 		{
 			return new SuppressedTicks(this);

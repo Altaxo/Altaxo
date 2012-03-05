@@ -189,8 +189,8 @@ namespace Altaxo.Graph.Scales
 
 			if (!object.ReferenceEquals(_tickSpacing, tickSpacing))
 			{
+				wasNewTickSpacing = null == _tickSpacing || !_tickSpacing.Equals(tickSpacing);
 				SetNewTickSpacing(tickSpacing);
-				wasNewTickSpacing = true;
 			}
 
 

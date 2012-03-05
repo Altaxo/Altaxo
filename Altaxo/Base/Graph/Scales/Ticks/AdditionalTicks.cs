@@ -94,6 +94,20 @@ namespace Altaxo.Graph.Scales.Ticks
 			_additionalMajorTicks.AddRange(from._additionalMajorTicks);
 		}
 
+		public override bool Equals(object obj)
+		{
+
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			else if (!(obj is AdditionalTicks))
+				return false;
+			else
+			{
+				var from = (AdditionalTicks)obj;
+				return _additionalMajorTicks.SequenceEqual(from._additionalMajorTicks);
+			}
+		}
+
 		public object Clone()
 		{
 			return new AdditionalTicks(this);

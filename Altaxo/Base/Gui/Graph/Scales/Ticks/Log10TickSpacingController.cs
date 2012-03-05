@@ -42,8 +42,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		int? MinorTicks { get; set; }
 
 		double OneLever { get;  set; }
-		double OrgPadding { get;  set; }
-		double EndPadding { get;  set; }
+		double MinGrace { get;  set; }
+		double MaxGrace { get;  set; }
 
     int TargetNumberMajorTicks { get; set; }
     int TargetNumberMinorTicks { get; set; }
@@ -85,8 +85,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.DecadesPerMajorTick =_doc.DecadesPerMajorTick;
 				_view.MinorTicks = _doc.MinorTicks;
 				_view.OneLever = _doc.OneLever;
-				_view.OrgPadding = _doc.MinGrace;
-				_view.EndPadding = _doc.MaxGrace;
+				_view.MinGrace = _doc.MinGrace;
+				_view.MaxGrace = _doc.MaxGrace;
 
         _snapTicksToOrg.Clear();
         _snapTicksToEnd.Clear();
@@ -140,12 +140,12 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		void EhMinGraceValidating(CancelEventArgs e)
 		{
-			_doc.MinGrace = _view.OrgPadding;
+			_doc.MinGrace = _view.MinGrace;
 		}
 
 		void EhMaxGraceValidating(CancelEventArgs e)
 		{
-			_doc.MaxGrace = _view.EndPadding;
+			_doc.MaxGrace = _view.MaxGrace;
 		}
 
 		void EhDivideByValidating(string txt, CancelEventArgs e)
@@ -300,11 +300,15 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-			_doc.TargetNumberOfMajorTicks = _view.TargetNumberMajorTicks;
-					_doc.TargetNumberOfMinorTicks = _view.TargetNumberMinorTicks;
+			_doc.DecadesPerMajorTick = _view.DecadesPerMajorTick;
+			_doc.MinorTicks = _view.MinorTicks;
 
-					_doc.DecadesPerMajorTick = _view.DecadesPerMajorTick;
-					_doc.MinorTicks = _view.MinorTicks;
+			_doc.TargetNumberOfMajorTicks = _view.TargetNumberMajorTicks;
+			_doc.TargetNumberOfMinorTicks = _view.TargetNumberMinorTicks;
+
+			_doc.OneLever = _view.OneLever;
+			_doc.MinGrace = _view.MinGrace;
+			_doc.MaxGrace = _view.MaxGrace;
 
 
       _doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;

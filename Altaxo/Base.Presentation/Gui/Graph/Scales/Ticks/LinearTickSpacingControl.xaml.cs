@@ -44,6 +44,10 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		public LinearTickSpacingControl()
 		{
 			InitializeComponent();
+			_edZeroLever.UnitEnvironment = RelationEnvironment.Instance;
+			_edMinGrace.UnitEnvironment = RelationEnvironment.Instance;
+			_edMaxGrace.UnitEnvironment = RelationEnvironment.Instance;
+
 		}
 
 		private void _edMajorSpan_Validating(object sender, ValidationEventArgs<string> e)
@@ -54,43 +58,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			if (c.Cancel)
 				e.AddError("The provided text can not be converted");
 		}
-
-		private void _edMinorTicks_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != MinorTicksValidating)
-				MinorTicksValidating(_edMinorTicks.Text, c);
-			if (c.Cancel)
-				e.AddError("The provided text can not be converted");
-		}
-
-		private void _edZeroLever_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != ZeroLeverValidating)
-				ZeroLeverValidating(_edZeroLever.Text, c);
-			if (c.Cancel)
-				e.AddError("The provided text can not be converted");
-		}
-
-		private void _edMinGrace_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != MinGraceValidating)
-				MinGraceValidating(_edMinGrace.Text, c);
-			if (c.Cancel)
-				e.AddError("The provided text can not be converted");
-		}
-
-		private void _edMaxGrace_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != MaxGraceValidating)
-				MaxGraceValidating(_edMaxGrace.Text, c);
-			if (c.Cancel)
-				e.AddError("The provided text can not be converted");
-		}
-
+	
 		private void _cbSnapTicksToOrg_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
@@ -135,47 +103,71 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			set { _edMajorSpan.Text = value; }
 		}
 
-		public string MinorTicks
-		{
-			set { _edMinorTicks.Text = value; }
-		}
-
-		public string ZeroLever
-		{
-			set { _edZeroLever.Text = value; }
-		}
-
-		public string MinGrace
-		{
-			set { _edMinGrace.Text = value; }
-		}
-
-		public string MaxGrace
-		{
-			set { _edMaxGrace.Text = value; }
-		}
-
-		public string TargetNumberMajorTicks
+		public int? MinorTicks
 		{
 			get
 			{
-				return _edTargetNumberMajorTicks.Text;
+				if (_rbMinorTicksManual.IsChecked == true)
+					return _edMinorTicks.Value;
+				else
+					return null;
 			}
-			set
+			set 
 			{
-				_edTargetNumberMajorTicks.Text = value;
+				if (value == null)
+					_rbMinorTicksAutomatic.IsChecked = true;
+				else
+				{
+					_edMinorTicks.Value = value.Value;
+					_rbMinorTicksManual.IsChecked = true;
+				}
 			}
 		}
 
-		public string TargetNumberMinorTicks
+		private void EhMinorTicks_ModeChanged(object sender, RoutedEventArgs e)
+		{
+			_edMinorTicks.IsEnabled = true == _rbMinorTicksManual.IsChecked;
+		}
+
+		public double ZeroLever
+		{
+			get { return _edZeroLever.SelectedQuantityAsValueInSIUnits; }
+			set { _edZeroLever.SelectedQuantityAsValueInSIUnits = value; }
+		}
+
+		public double MinGrace
+		{
+			get { return _edMinGrace.SelectedQuantityAsValueInSIUnits; }
+			set { _edMinGrace.SelectedQuantityAsValueInSIUnits = value; }
+		}
+
+		public double MaxGrace
+		{
+			get { return _edMaxGrace.SelectedQuantityAsValueInSIUnits; }
+			set { _edMaxGrace.SelectedQuantityAsValueInSIUnits = value; }
+		}
+
+		public int TargetNumberMajorTicks
 		{
 			get
 			{
-				return _edTargetNumberMinorTicks.Text;
+				return _edTargetNumberMajorTicks.Value;
 			}
 			set
 			{
-				_edTargetNumberMinorTicks.Text = value;
+				_edTargetNumberMajorTicks.Value = value;
+			}
+		}
+
+		public int TargetNumberMinorTicks
+		{
+			get
+			{
+				return _edTargetNumberMinorTicks.Value;
+			}
+			set
+			{
+				_edTargetNumberMinorTicks.Value = value;
 			}
 		}
 
@@ -277,14 +269,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		}
 
 		public event Action<string, System.ComponentModel.CancelEventArgs> MajorTicksValidating;
-
-		public event Action<string, System.ComponentModel.CancelEventArgs> MinorTicksValidating;
-
-		public event Action<string, System.ComponentModel.CancelEventArgs> ZeroLeverValidating;
-
-		public event Action<string, System.ComponentModel.CancelEventArgs> MinGraceValidating;
-
-		public event Action<string, System.ComponentModel.CancelEventArgs> MaxGraceValidating;
 
 		public event Action<string, System.ComponentModel.CancelEventArgs> DivideByValidating;
 
