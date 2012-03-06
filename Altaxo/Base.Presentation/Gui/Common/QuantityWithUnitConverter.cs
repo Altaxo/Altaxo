@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Common
 				string result;
 
 				if (null != _unitEnvironment)
-					result = q.Value.ToString("G" + _unitEnvironment.NumberOfDisplayedDigits.ToString(), culture);
+					result = q.Value.ToString("G" + _unitEnvironment.NumberOfDisplayedDigits.ToString(), System.Globalization.CultureInfo.CurrentUICulture); // bug: do not use culture parameter here, it is sometimes different from CurrentUICulture
 				else
 					result = q.Value.ToString(culture);
 
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Common
 		{
 			DimensionfulQuantity q;
 			string s = (string)value;
-			var result = ConvertValidate(s, culture, out q);
+			var result = ConvertValidate(s, System.Globalization.CultureInfo.CurrentUICulture, out q); // do not use culture parameter here, it is sometimes different from UICulture
 			if (result.IsValid)
 			{
 				_lastConvertedString = s;
@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Common
 		{
 			DimensionfulQuantity q;
 			string s = (string)value;
-			var result = ConvertValidate(s, cultureInfo, out q);
+			var result = ConvertValidate(s, System.Globalization.CultureInfo.CurrentUICulture, out q);
 			if (result.IsValid)
 			{
 				_lastConvertedString = s;
