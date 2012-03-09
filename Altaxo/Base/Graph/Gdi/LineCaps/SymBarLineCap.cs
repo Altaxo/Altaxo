@@ -33,20 +33,31 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// </summary>
 	public class SymBarLineCap : LineCapExtension
 	{
-		const float _designWidth = 2.5f;
+		public SymBarLineCap()
+		{
+		}
 
 
+		public SymBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+			: base(minimumAbsoluteSizePt, minimumRelativeSize)
+		{
+		}
+
+		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		{
+			return new SymBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+		}
 
 		public override string Name { get { return "BarSym"; } }
-		public override float DefaultSize { get { return 8; } }
+		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+		public override double DefaultMinimumRelativeSize { get { return 4; } }
+
+
 		CustomLineCap GetClone(Pen pen, float size)
 		{
 			float endPoint;
 
-			if (pen.Width * _designWidth < size)
 				endPoint = pen.Width == 0 ? 1 : size / pen.Width;
-			else
-				endPoint = _designWidth;
 
 
 

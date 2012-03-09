@@ -30,36 +30,42 @@ namespace Altaxo.Graph.Gdi.LineCaps
 {
 	public class ArrowF20LineCap : LineCapExtension
 	{
-		CustomLineCap _cap;
-		const float _designWidth = 2;
-
 		public ArrowF20LineCap()
 		{
-			GraphicsPath hPath = new GraphicsPath();
+		}
 
-			// Create the outline for our custom end cap.
-			hPath.AddLine(new PointF(0, -2 * _designWidth), new PointF(-_designWidth / 2, -2 * _designWidth));
-			hPath.AddLine(new PointF(-_designWidth / 2, -2 * _designWidth), new PointF(0, 0));
-			hPath.AddLine(new PointF(0, 0), new PointF(_designWidth / 2, -2 * _designWidth));
-			hPath.AddLine(new PointF(_designWidth / 2, -2 * _designWidth), new PointF(0, -2 * _designWidth));
+		public ArrowF20LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+			: base(minimumAbsoluteSizePt, minimumRelativeSize)
+		{
+		}
 
-			// Construct the hook-shaped end cap.
-			_cap = new CustomLineCap(hPath, null);
-			_cap.BaseInset = _designWidth * 2;
+		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		{
+			return new ArrowF20LineCap(minimumAbsoluteSizePt, minimumRelativeSize);
 		}
 
 		public override string Name { get { return "ArrowF20"; } }
-		public override float DefaultSize { get { return 8; } }
+		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+		public override double DefaultMinimumRelativeSize { get { return 4; } }
+
 
 		CustomLineCap GetClone(Pen pen, float size)
 		{
-			CustomLineCap clone = (CustomLineCap)_cap.Clone();
-			if (pen.Width * _designWidth < size)
-				clone.WidthScale = pen.Width == 0 ? 1 : size / (pen.Width * _designWidth);
-			else
-				clone.WidthScale = 1;
+			float scale = pen.Width == 0 ? 1 : size / pen.Width;
+			if (scale <= 0)
+				scale = 1e-3f;
 
-			//clone.WidthScale = 1;
+
+			GraphicsPath hPath = new GraphicsPath();
+			hPath.AddPolygon(new PointF[]{
+			new PointF(0, 0),
+			new PointF(-0.5f, -2),
+			new PointF(0.5f, -2),
+		});
+
+			// Construct the hook-shaped end cap.
+			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 1); // we set the stroke path only
+			clone.WidthScale = scale;
 			return clone;
 		}
 

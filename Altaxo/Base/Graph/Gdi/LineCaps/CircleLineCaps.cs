@@ -33,28 +33,35 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// </summary>
 	public class CircleOLineCap : LineCapExtension
 	{
-		const float _designWidth = 2f;
+		public CircleOLineCap() { }
 
+		public CircleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+			: base(minimumAbsoluteSizePt, minimumRelativeSize)
+		{
+		}
 
+		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		{
+			return new CircleOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+		}
 
 		public override string Name { get { return "CircleO"; } }
-		public override float DefaultSize { get { return 8; } }
+		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+		public override double DefaultMinimumRelativeSize { get { return 4; } }
+
 
 		CustomLineCap GetClone(Pen pen, float size)
 		{
 			float endPoint;
-
-			if (pen.Width * _designWidth < size)
-				endPoint = pen.Width == 0 ? 1 : size / pen.Width;
-			else
-				endPoint = _designWidth;
-
+			endPoint = pen.Width == 0 ? 1 : size / (pen.Width * 2) - 0.5f;
+			if (endPoint <= 0)
+				endPoint = 1e-3f;
 
 
 			GraphicsPath hPath = new GraphicsPath();
 			// Create the outline for our custom end cap.
-			hPath.AddEllipse(-endPoint / 2, -endPoint / 2, endPoint, endPoint);
-			CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint / 2); // we set the stroke path only
+			hPath.AddEllipse(-endPoint, -endPoint, 2*endPoint, 2*endPoint);
+			CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
 			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
 			return clone;
 		}
@@ -77,29 +84,36 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// </summary>
 	public class CircleFLineCap : LineCapExtension
 	{
-		const float _designWidth = 2f;
+		public CircleFLineCap()
+		{
+		}
 
+		public CircleFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+			: base(minimumAbsoluteSizePt, minimumRelativeSize)
+		{
+		}
 
+		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		{
+			return new CircleFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+		}
 
 		public override string Name { get { return "CircleF"; } }
-		public override float DefaultSize { get { return 8; } }
+		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+		public override double DefaultMinimumRelativeSize	{	get { return 4; }
+		}
 
 		CustomLineCap GetClone(Pen pen, float size)
 		{
-			float endPoint;
-
-			if (pen.Width * _designWidth < size)
-				endPoint = pen.Width == 0 ? 1 : size / pen.Width;
-			else
-				endPoint = _designWidth;
-
-
+			float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
+			if (scale <= 0)
+				scale = 1e-3f;
 
 			GraphicsPath hPath = new GraphicsPath();
-			// Create the outline for our custom end cap.
-			hPath.AddEllipse(-endPoint / 2, -endPoint / 2, endPoint, endPoint);
+			hPath.AddEllipse(-1, -1, 2, 2);
 			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
-			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
+			clone.WidthScale = scale;
+
 			return clone;
 		}
 

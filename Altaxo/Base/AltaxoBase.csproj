@@ -196,6 +196,11 @@
     <Compile Include="Graph\Gdi\HatchBrushes\VerticalHatchBrush.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HatchBrushBase.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HorizontalHatchBrush.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\ArrowF05LineCap.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\DiamondLineCaps.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\FlatCap.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\LineCapExtension.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\SquareLineCaps.cs" />
     <Compile Include="Graph\Gdi\SyntheticBrushes\PerlinNoiseBrush.cs" />
     <Compile Include="Graph\Gdi\SyntheticBrushes\RandomCircles.cs" />
     <Compile Include="Graph\Gdi\SyntheticBrushes\SyntheticBrushBase.cs" />

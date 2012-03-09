@@ -33,25 +33,36 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// </summary>
 	public class BreakLineCap : LineCapExtension
 	{
-		const float _designWidth = 4f;
 		const double _designAngle = 45;
 
+		public BreakLineCap()
+		{
+		}
+
+		public BreakLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+			: base(minimumAbsoluteSizePt, minimumRelativeSize)
+		{
+		}
+
+		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		{
+			return new BreakLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+		}
 
 
 		public override string Name { get { return "Break"; } }
-		public override float DefaultSize { get { return 8; } }
+		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+		public override double DefaultMinimumRelativeSize { get { return 4; } }
+
 
 
 		CustomLineCap GetClone(Pen pen, float size)
 		{
 			float endPoint;
-
-			if (pen.Width * _designWidth < size)
-				endPoint = pen.Width == 0 ? 1 : size / pen.Width;
-			else
-				endPoint = _designWidth;
-
+			endPoint = pen.Width == 0 ? 1 : size / pen.Width;
 			endPoint /= 2;
+			if (endPoint <= 0)
+				endPoint = 1e-3f;
 
 			GraphicsPath hPath = new GraphicsPath();
 

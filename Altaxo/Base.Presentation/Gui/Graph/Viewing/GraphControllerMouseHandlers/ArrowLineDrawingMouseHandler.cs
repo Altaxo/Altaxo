@@ -55,10 +55,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected override void FinishDrawing()
 		{
 			LineShape go = new LineShape(_Points[0].LayerCoordinate, _Points[1].LayerCoordinate);
-			//go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
-			LineCapEx cap = LineCapEx.FromName("ArrowF10");
-			cap.Size = 10;
-			go.Pen.EndCap = cap;
+			go.Pen.EndCap = new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(10,4);
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);

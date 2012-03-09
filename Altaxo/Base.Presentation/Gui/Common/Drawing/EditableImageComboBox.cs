@@ -54,6 +54,7 @@ namespace Altaxo.Gui.Common.Drawing
 			// Use Snoop to find the name of the TextBox part  
 			// http://wpfmentor.blogspot.com/2008/11/understand-bubbling-and-tunnelling-in-5.html  
 			TextBox textBox = (TextBox)Template.FindName("PART_EditableTextBox", this);
+			textBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Right;
 
 			// Create a template-binding in code  
 			Binding binding = new Binding("ContextMenu");

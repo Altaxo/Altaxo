@@ -47,6 +47,9 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			InitializeComponent();
 
+			_edStartCapRelSize.UnitEnvironment = RelationEnvironment.Instance;
+			_edEndCapRelSize.UnitEnvironment = RelationEnvironment.Instance;
+
 			_glue = new PenControlsGlue(true);
 
 			_glue.CbBrush = _cbBrush;
@@ -54,9 +57,11 @@ namespace Altaxo.Gui.Common.Drawing
 			_glue.CbDashStyle = _cbDashStyle;
 			_glue.CbDashCap = _cbDashCap;
 			_glue.CbStartCap = _cbStartCap;
-			_glue.CbStartCapSize = _cbStartCapSize;
+			_glue.CbStartCapAbsSize = _cbStartCapSize;
+			_glue.CbStartCapRelSize = _edStartCapRelSize;
 			_glue.CbEndCap = _cbEndCap;
-			_glue.CbEndCapSize = _cbEndCapSize;
+			_glue.CbEndCapAbsSize = _cbEndCapSize;
+			_glue.CbEndCapRelSize = _edEndCapRelSize;
 			_glue.CbLineJoin = _cbLineJoin;
 			_glue.CbMiterLimit = _cbMiterLimit;
 			_glue.PreviewPanel = _previewPanel;

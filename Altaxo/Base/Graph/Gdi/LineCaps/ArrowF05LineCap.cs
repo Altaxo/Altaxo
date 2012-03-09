@@ -26,58 +26,55 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Altaxo.Graph.Gdi.LineCaps
+namespace Altaxo.Graph.Gdi.LineCaps.Foo
 {
-	/// <summary>
-	/// Draws a cap that is a line perpendicular to the end of the line, and on the right side of the line.
-	/// </summary>
-	public class RightBarLineCap : LineCapExtension
+	public class ArrowF05LineCap : LineCapExtension
 	{
-		public RightBarLineCap()
+		public ArrowF05LineCap()
 		{
 		}
 
-		public RightBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
-			: base(minimumAbsoluteSizePt, minimumRelativeSize)
+		public ArrowF05LineCap(double minimumAbsoluteSizePt, double minimumRelativeSize) : base(minimumAbsoluteSizePt, minimumRelativeSize)
 		{
 		}
 
 		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
 		{
-			return new RightBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+			return new ArrowF05LineCap(minimumAbsoluteSizePt, minimumRelativeSize);
 		}
 
-		public override string Name { get { return "BarRight"; } }
+		public override string Name { get { return "ArrowF05"; } }
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-		public override double DefaultMinimumRelativeSize { get { return 4; } }
+		public override double DefaultMinimumRelativeSize {	get { return 4; }	}
 
-
-		protected CustomLineCap GetClone(Pen pen, float size, bool startCap)
+		CustomLineCap GetClone(Pen pen, float size)
 		{
-			float endPoint;
-
-			endPoint = pen.Width == 0 ? 1 : size / pen.Width;
-
-			if (startCap)
-				endPoint = -endPoint;
+			float scale = pen.Width == 0 ? 1 : size / (2*pen.Width);
+			if (scale <= 0)
+				scale = 1e-3f;
 
 			GraphicsPath hPath = new GraphicsPath();
-			// Create the outline for our custom end cap.
-			hPath.AddLine(new PointF(endPoint < 0 ? 0.5f : -0.5f, 0), new PointF(endPoint / 2, 0));
-			CustomLineCap clone = new CustomLineCap(null, hPath); // we set the stroke path only
-			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
+			hPath.AddPolygon(new PointF[]{
+			new PointF(0, 0),
+			new PointF(-1, -1),
+			new PointF(1, -1),
+		});
+
+			// Construct the hook-shaped end cap.
+			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 1);
+			clone.WidthScale = scale;
 			return clone;
 		}
 
 		public override void SetStartCap(Pen pen, float size)
 		{
 			pen.StartCap = LineCap.Custom;
-			pen.CustomStartCap = GetClone(pen, size, false);
+			pen.CustomStartCap = GetClone(pen, size);
 		}
 		public override void SetEndCap(Pen pen, float size)
 		{
 			pen.EndCap = LineCap.Custom;
-			pen.CustomEndCap = GetClone(pen, size, true);
+			pen.CustomEndCap = GetClone(pen, size);
 		}
 	}
 }

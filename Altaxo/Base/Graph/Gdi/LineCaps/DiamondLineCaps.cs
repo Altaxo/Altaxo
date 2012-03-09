@@ -31,23 +31,23 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// <summary>
 	/// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
 	/// </summary>
-	public class TriangleOLineCap : LineCapExtension
+	public class DiamondOLineCap : LineCapExtension
 	{
-		public TriangleOLineCap()
+		public DiamondOLineCap()
 		{
 		}
 
-		public TriangleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		public DiamondOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
 			: base(minimumAbsoluteSizePt, minimumRelativeSize)
 		{
 		}
 
 		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
 		{
-			return new TriangleOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+			return new DiamondOLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
 		}
 
-		public override string Name { get { return "TriangleO"; } }
+		public override string Name { get { return "DiamondO"; } }
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 		public override double DefaultMinimumRelativeSize { get { return 4; } }
 
@@ -55,23 +55,21 @@ namespace Altaxo.Graph.Gdi.LineCaps
 		{
 			float endPoint;
 
-			endPoint = pen.Width == 0 ? 1 : size / (pen.Width);
-			if (endPoint <= 0)
-				endPoint = 1e-3f;
+			endPoint = pen.Width == 0 ? 1 : size / (pen.Width * 2) - 0.70710678118654752440084436210485f;
 
-			float c = 0.8660254f; //  0.5 / Math.Tan(30°);
-
-			float r = 1; // 0.5/Math.Sin(30°);
+			if (endPoint < 0)
+				endPoint = 1e-3f * pen.Width;
 
 
 			GraphicsPath hPath = new GraphicsPath();
 			// Create the outline for our custom end cap.
 			hPath.AddPolygon(new PointF[]{
-        new PointF(0,-endPoint*0.866f+r),
-        new PointF(endPoint/2 -c,-0.5f),
-        new PointF(-endPoint/2 + c, -0.5f),
+        new PointF(0,-endPoint),
+        new PointF(endPoint,0),
+				new PointF(0, endPoint),
+        new PointF(-endPoint,0),
       });
-			CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint * 0.866f - r); // we set the stroke path only
+			CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
 			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
 			return clone;
 		}
@@ -92,42 +90,46 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// <summary>
 	/// Draws a cap that is a open circle. The midpoint of the circle is the designated end of the line.
 	/// </summary>
-	public class TriangleFLineCap : LineCapExtension
+	public class DiamondFLineCap : LineCapExtension
 	{
-		public TriangleFLineCap()
+		public DiamondFLineCap()
 		{
 		}
 
-		public TriangleFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		public DiamondFLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
 			: base(minimumAbsoluteSizePt, minimumRelativeSize)
 		{
 		}
 
 		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
 		{
-			return new TriangleFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+			return new DiamondFLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
 		}
 
-		public override string Name { get { return "TriangleF"; } }
+		public override string Name { get { return "DiamondF"; } }
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
 		public override double DefaultMinimumRelativeSize { get { return 4; } }
 
 
 		CustomLineCap GetClone(Pen pen, float size)
 		{
-			float scale = pen.Width == 0 ? 1 : size / pen.Width;
-			if (scale <= 0)
+			float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
+			if( scale <= 0)
 				scale = 1e-3f;
+
 
 			GraphicsPath hPath = new GraphicsPath();
 			// Create the outline for our custom end cap.
 			// Create the outline for our custom end cap.
 			hPath.AddPolygon(new PointF[]{
-        new PointF(0,-0.866f),
-        new PointF(0.5f,0),
-        new PointF(-0.5f,0),
+         new PointF(0,-1),
+				  new PointF(1,0),
+					new PointF(0, 1),
+        new PointF(-1,0)
+				
+       
       });
-			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0);
+			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
 			clone.WidthScale = scale;
 			return clone;
 		}

@@ -25,6 +25,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Serialization;
 
+using Altaxo.Graph.Gdi.LineCaps;
+
 namespace Altaxo.Graph.Gdi
 {
 	#region PenX
@@ -49,10 +51,10 @@ namespace Altaxo.Graph.Gdi
 		protected float m_DashOffset;
 		protected float[] m_DashPattern;
 		protected DashStyle m_DashStyle;
-		protected LineCapEx m_EndCap;
+		protected LineCapExtension m_EndCap;
 		protected LineJoin m_LineJoin;
 		protected float m_MiterLimit;
-		protected LineCapEx m_StartCap;
+		protected LineCapExtension m_StartCap;
 		protected Matrix m_Transform;
 		protected float m_Width; // Width of this Pen object
 		[NonSerialized()]
@@ -204,7 +206,7 @@ namespace Altaxo.Graph.Gdi
 			if (0 != (cp & PenX.Configured.EndCap))
 			{
 				info.AddValue("EndCap", s.m_EndCap.Name);
-				info.AddValue("EndCapSize", s.m_EndCap.Size);
+				info.AddValue("EndCapSize", s.m_EndCap.MinimumAbsoluteSizePt);
 			}
 			if (0 != (cp & PenX.Configured.LineJoin))
 				info.AddValue("LineJoin", s.LineJoin);
@@ -213,7 +215,7 @@ namespace Altaxo.Graph.Gdi
 			if (0 != (cp & PenX.Configured.StartCap))
 			{
 				info.AddValue("StartCap", s.m_StartCap.Name);
-				info.AddValue("StartCapSize", s.m_StartCap.Size);
+				info.AddValue("StartCapSize", s.m_StartCap.MinimumAbsoluteSizePt);
 			}
 			if (0 != (cp & PenX.Configured.Transform))
 				info.AddValue("Transform", s.Transform.Elements);
@@ -276,10 +278,10 @@ namespace Altaxo.Graph.Gdi
 			{
 				string name = info.GetString("EndCap");
 				float size = info.GetSingle("EndCapSize");
-				s.m_EndCap = new LineCapEx(name, size);
+				s.m_EndCap = LineCapExtension.FromNameAndAbsSize(name, size);
 			}
 			else
-				s.m_EndCap = LineCapEx.Flat;
+				s.m_EndCap = LineCapExtension.Flat;
 
 			if (0 != (cp & PenX.Configured.LineJoin))
 				s.m_LineJoin = (LineJoin)info.GetValue("LineJoin", typeof(LineJoin));
@@ -295,10 +297,10 @@ namespace Altaxo.Graph.Gdi
 			{
 				string name = info.GetString("StartCap");
 				float size = info.GetSingle("StartCapSize");
-				s.m_StartCap = new LineCapEx(name, size);
+				s.m_StartCap = LineCapExtension.FromNameAndAbsSize(name, size);
 			}
 			else
-				s.m_StartCap = LineCapEx.Flat;
+				s.m_StartCap = LineCapExtension.Flat;
 
 			if (0 != (cp & PenX.Configured.Transform))
 			{
@@ -425,9 +427,12 @@ namespace Altaxo.Graph.Gdi
 					s.m_DashPattern = null;
 
 				if (0 != (cp & PenX.Configured.EndCap))
-					s.m_EndCap = new LineCapEx((LineCap)info.GetEnum("EndCap", typeof(LineCap)));
+				{
+					LineCap cap = (LineCap)info.GetEnum("EndCap", typeof(LineCap));
+					s.m_EndCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
+				}
 				else
-					s.m_EndCap = LineCapEx.Flat;
+					s.m_EndCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.LineJoin))
 					s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
@@ -440,9 +445,12 @@ namespace Altaxo.Graph.Gdi
 					s.m_MiterLimit = 10;
 
 				if (0 != (cp & PenX.Configured.StartCap))
-					s.m_StartCap = new LineCapEx((LineCap)info.GetEnum("StartCap", typeof(LineCap)));
+				{
+					LineCap cap = (LineCap)info.GetEnum("StartCap", typeof(LineCap));
+					s.m_StartCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
+				}
 				else
-					s.m_StartCap = LineCapEx.Flat;
+					s.m_StartCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.Transform))
 				{
@@ -464,8 +472,162 @@ namespace Altaxo.Graph.Gdi
 
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PenHolder", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 2)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.PenX", 2)]
 		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new ApplicationException("Serialization into old versions is not supported");
+				/*
+				PenX s = (PenX)obj;
+				Configured cp = PenX._GetConfiguredPropertiesVariable(s);
+				if (s.Cached) cp |= PenX.Configured.InCachedMode;
+
+				info.AddValue("Configured", (int)cp);
+				if (0 != (cp & PenX.Configured.PenType))
+					info.AddEnum("Type", s.PenType);
+				if (0 != (cp & PenX.Configured.Alignment))
+					info.AddEnum("Alignment", s.Alignment);
+				if (0 != (cp & PenX.Configured.Brush))
+					info.AddValue("Brush", s.BrushHolder);
+				if (0 != (cp & PenX.Configured.Color))
+					info.AddValue("Color", s.Color);
+				if (0 != (cp & PenX.Configured.CompoundArray))
+					info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
+				if (0 != (cp & PenX.Configured.DashStyle))
+					info.AddEnum("DashStyle", s.DashStyle);
+				if (0 != (cp & PenX.Configured.DashCap))
+					info.AddEnum("DashCap", s.DashCap);
+				if (0 != (cp & PenX.Configured.DashOffset))
+					info.AddValue("DashOffset", s.DashOffset);
+				if (0 != (cp & PenX.Configured.DashPattern))
+					info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
+				if (0 != (cp & PenX.Configured.EndCap))
+				{
+					info.AddValue("EndCap", s.EndCap.Name);
+					info.AddValue("EndCapSize", s.m_EndCap.MinimumAbsoluteSizePt);
+				}
+				if (0 != (cp & PenX.Configured.LineJoin))
+					info.AddEnum("LineJoin", s.LineJoin);
+				if (0 != (cp & PenX.Configured.MiterLimit))
+					info.AddValue("MiterLimit", s.MiterLimit);
+				if (0 != (cp & PenX.Configured.StartCap))
+				{
+					info.AddValue("StartCap", s.StartCap.Name);
+					info.AddValue("StartCapSize", s.m_StartCap.MinimumAbsoluteSizePt);
+				}
+				if (0 != (cp & PenX.Configured.Transform))
+					info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
+				if (0 != (cp & PenX.Configured.Width))
+					info.AddValue("Width", s.Width);
+			*/
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				PenX s = null != o ? (PenX)o : new PenX();
+
+				s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
+				Configured cp = s.m_ConfiguredProperties;
+
+
+
+				if (0 != (cp & PenX.Configured.PenType))
+					s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
+				else
+					s.m_PenType = PenType.SolidColor;
+
+				if (0 != (cp & PenX.Configured.Alignment))
+					s.m_Alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
+				else
+					s.m_Alignment = PenAlignment.Center;
+
+				if (0 != (cp & PenX.Configured.Brush))
+					s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+				else
+					s.m_Brush = new BrushX(NamedColor.Black);
+
+				if (0 != (cp & PenX.Configured.Color))
+					s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
+				else
+					s.m_Color = NamedColor.Black;
+
+				if (0 != (cp & PenX.Configured.CompoundArray))
+					info.GetArray(out s.m_CompoundArray);
+				else
+					s.m_CompoundArray = new float[0];
+
+				if (0 != (cp & PenX.Configured.DashStyle))
+					s.m_DashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+				else
+					s.m_DashStyle = DashStyle.Solid;
+
+				if (0 != (cp & PenX.Configured.DashCap))
+					s.m_DashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
+				else
+					s.m_DashCap = DashCap.Flat;
+
+				if (0 != (cp & PenX.Configured.DashOffset))
+					s.m_DashOffset = (float)info.GetSingle("DashOffset");
+				else
+					s.m_DashOffset = 0;
+
+				if (0 != (cp & PenX.Configured.DashPattern))
+					info.GetArray(out s.m_DashPattern);
+				else
+					s.m_DashPattern = null;
+
+				if (0 != (cp & PenX.Configured.EndCap))
+				{
+					string name = info.GetString("EndCap");
+					var size = info.GetDouble("EndCapSize");
+					s.m_EndCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
+				}
+				else
+					s.m_EndCap = LineCapExtension.Flat;
+
+				if (0 != (cp & PenX.Configured.LineJoin))
+					s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
+				else
+					s.m_LineJoin = LineJoin.Miter;
+
+				if (0 != (cp & PenX.Configured.MiterLimit))
+					s.m_MiterLimit = info.GetSingle("MiterLimit");
+				else
+					s.m_MiterLimit = 10;
+
+				if (0 != (cp & PenX.Configured.StartCap))
+				{
+					string name = info.GetString("StartCap");
+					var size = info.GetDouble("StartCapSize");
+					s.m_StartCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
+				}
+				else
+					s.m_StartCap = LineCapExtension.Flat;
+
+				if (0 != (cp & PenX.Configured.Transform))
+				{
+					float[] el;
+					info.GetArray(out el);
+					s.m_Transform = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
+				}
+				else
+					s.m_Transform = new Matrix();
+
+				if (0 != (cp & PenX.Configured.Width))
+					s.m_Width = info.GetSingle("Width");
+				else
+					s.m_Width = 1;
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2012-03-07: New in version 3: StartCap and EndCap now have a RelativeSize property. The 'StartCapSize' and 'EndCapSize' property was renamed to 'StartCapAbsSize' and 'EndCapAbsSize'.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 3)]
+		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -495,7 +657,8 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
 					info.AddValue("EndCap", s.EndCap.Name);
-					info.AddValue("EndCapSize", s.m_EndCap.Size);
+					info.AddValue("EndCapAbsSize", s.m_EndCap.MinimumAbsoluteSizePt);
+					info.AddValue("EndCapRelSize", s.m_EndCap.MinimumRelativeSize);
 				}
 				if (0 != (cp & PenX.Configured.LineJoin))
 					info.AddEnum("LineJoin", s.LineJoin);
@@ -504,7 +667,8 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.StartCap))
 				{
 					info.AddValue("StartCap", s.StartCap.Name);
-					info.AddValue("StartCapSize", s.m_StartCap.Size);
+					info.AddValue("StartCapAbsSize", s.m_StartCap.MinimumAbsoluteSizePt);
+					info.AddValue("StartCapRelSize", s.m_StartCap.MinimumRelativeSize);
 				}
 				if (0 != (cp & PenX.Configured.Transform))
 					info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
@@ -569,11 +733,12 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
 					string name = info.GetString("EndCap");
-					float size = info.GetSingle("EndCapSize");
-					s.m_EndCap = new LineCapEx(name, size);
+					var absSize = info.GetDouble("EndCapAbsSize");
+					var relSize = info.GetDouble("EndCapRelSize");
+					s.m_EndCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
 				}
 				else
-					s.m_EndCap = LineCapEx.Flat;
+					s.m_EndCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.LineJoin))
 					s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
@@ -588,11 +753,12 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.StartCap))
 				{
 					string name = info.GetString("StartCap");
-					float size = info.GetSingle("StartCapSize");
-					s.m_StartCap = new LineCapEx(name, size);
+					var absSize = info.GetDouble("StartCapAbsSize");
+					var relSize = info.GetDouble("StartCapRelSize");
+					s.m_StartCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
 				}
 				else
-					s.m_StartCap = LineCapEx.Flat;
+					s.m_StartCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.Transform))
 				{
@@ -611,8 +777,6 @@ namespace Altaxo.Graph.Gdi
 				return s;
 			}
 		}
-
-
 
 
 		#endregion
@@ -637,6 +801,9 @@ namespace Altaxo.Graph.Gdi
 			this.m_PenType = PenType.SolidColor;
 			this.m_Color = c;
 			this.m_Width = width;
+
+			this.m_StartCap = LineCapExtension.Flat;
+			this.m_EndCap = LineCapExtension.Flat;
 
 			_SetProp(PenX.Configured.IsNotNull, true);
 			_SetProp(Configured.Color, NamedColor.Black != c);
@@ -822,13 +989,13 @@ namespace Altaxo.Graph.Gdi
 			if (0 != (cp & PenX.Configured.DashPattern))
 				pen.DashPattern = this.m_DashPattern;
 			if (0 != (cp & PenX.Configured.EndCap))
-				this.m_EndCap.SetPenEndCap(pen);
+				this.m_EndCap.SetEndCap(pen);
 			if (0 != (cp & PenX.Configured.LineJoin))
 				pen.LineJoin = this.m_LineJoin;
 			if (0 != (cp & PenX.Configured.MiterLimit))
 				pen.MiterLimit = this.m_MiterLimit;
 			if (0 != (cp & PenX.Configured.StartCap))
-				this.m_StartCap.SetPenStartCap(pen);
+				this.m_StartCap.SetStartCap(pen);
 			if (0 != (cp & PenX.Configured.Transform))
 				pen.Transform = this.m_Transform;
 
@@ -1216,7 +1383,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public LineCapEx EndCap
+		public LineCapExtension EndCap
 		{
 			get
 			{
@@ -1224,6 +1391,8 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
+				if (null == value)
+					value = LineCapExtension.Flat;
 				bool bChanged = (m_EndCap != value);
 				m_EndCap = value;
 
@@ -1265,7 +1434,7 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 		}
-		public LineCapEx StartCap
+		public LineCapExtension StartCap
 		{
 			get
 			{
@@ -1274,6 +1443,9 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
+				if (null == value)
+					value = LineCapExtension.Flat;
+
 				bool bChanged = (m_StartCap != value);
 				m_StartCap = value;
 				if (bChanged)
@@ -1353,7 +1525,7 @@ namespace Altaxo.Graph.Gdi
 		#endregion
 
 
-			/// <summary>
+		/// <summary>
 		/// Sets the environment for the creation of the pen's brush.
 		/// </summary>
 		/// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
@@ -1590,376 +1762,7 @@ namespace Altaxo.Graph.Gdi
 	}
 	#endregion
 
-	#region LineCapEx
 
-	[Serializable]
-	public abstract class LineCapExtension
-	{
-		public abstract string Name { get; }
-		public abstract float DefaultSize { get; }
-		public abstract void SetStartCap(Pen pen, float size);
-		public abstract void SetEndCap(Pen pen, float size);
-	}
-
-	[Serializable]
-	public struct LineCapEx : System.Runtime.Serialization.ISerializable
-	{
-		#region Inner classes
-		[Serializable]
-		class KnownLineCapWrapper : LineCapExtension
-		{
-			LineCap _cap;
-			string _name;
-			public KnownLineCapWrapper(LineCap cap)
-			{
-				_cap = cap;
-				_name = Enum.GetName(typeof(LineCap), _cap);
-			}
-
-			#region ILineCapExtension Members
-
-			public override string Name
-			{
-				get { return _name; }
-			}
-
-			public override float DefaultSize { get { return 0; } }
-			#endregion
-
-			#region ILineCapExtension Members
-
-
-			public override void SetStartCap(Pen pen, float size)
-			{
-				pen.StartCap = _cap;
-			}
-
-			public override void SetEndCap(Pen pen, float size)
-			{
-				pen.EndCap = _cap;
-			}
-
-			#endregion
-		}
-		[Serializable]
-		class DefaultLineCapWrapper : LineCapExtension
-		{
-			public DefaultLineCapWrapper()
-			{
-			}
-			public override string Name
-			{
-				get
-				{
-					return "Flat";
-				}
-			}
-			public override float DefaultSize { get { return 0; } }
-
-			public override void SetStartCap(Pen pen, float size)
-			{
-				pen.StartCap = LineCap.Flat;
-			}
-			public override void SetEndCap(Pen pen, float size)
-			{
-				pen.StartCap = LineCap.Flat;
-			}
-		}
-		#endregion
-
-
-		LineCapExtension _currentStyle;
-		float _size;
-
-		static DefaultLineCapWrapper _defaultStyle;
-		static System.Collections.Generic.SortedDictionary<string, LineCapExtension> _registeredStyles;
-
-		#region Clipboard Serialization
-		public LineCapEx(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			_currentStyle = null;
-			_size = 0;
-			SetObjectData(this, info, context, null);
-		}
-
-		public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			LineCapEx s = this;
-			info.AddValue("Name", s.Name);
-			info.AddValue("Size", s.Size);
-
-		}
-		public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			string name = info.GetString("Name");
-			float size = info.GetSingle("Size");
-			this.CopyFrom(new LineCapEx(name, size));
-			return this;
-		} // end of SetObjectData
-		#endregion
-
-		static LineCapEx()
-		{
-			_defaultStyle = new DefaultLineCapWrapper();
-			_registeredStyles = new System.Collections.Generic.SortedDictionary<string, LineCapExtension>();
-
-
-			// first register the predefined styles
-			foreach (LineCap cap in Enum.GetValues(typeof(LineCap)))
-			{
-				if (cap == LineCap.Custom)
-				{
-					continue;
-				}
-				if (cap == LineCap.Flat)
-				{
-					_registeredStyles.Add(_defaultStyle.Name, _defaultStyle);
-				}
-				else
-				{
-					LineCapExtension ex = new KnownLineCapWrapper(cap);
-					_registeredStyles.Add(ex.Name, ex);
-				}
-			}
-
-			// now the other linecaps
-			LineCapExtension more;
-			more = new LineCaps.ArrowF10LineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.ArrowF20LineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.LeftBarLineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.RightBarLineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.SymBarLineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.CircleOLineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.CircleFLineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.TriangleOLineCap();
-			_registeredStyles.Add(more.Name, more);
-			more = new LineCaps.BreakLineCap();
-			_registeredStyles.Add(more.Name, more);
-		}
-
-		public LineCapEx(LineCap style)
-		{
-			if (style == LineCap.Custom)
-				throw new ArgumentOutOfRangeException("Style must not be a custom style, use the other constructor instead");
-
-			_currentStyle = _registeredStyles[Enum.GetName(typeof(LineCap), style)];
-			_size = _currentStyle.DefaultSize;
-		}
-
-		public LineCapEx(string name)
-		{
-
-			_currentStyle = _registeredStyles[name];
-			if (_currentStyle == null)
-				throw new ArgumentException(string.Format("Unknown LineCapEx style: {0}", name), "name");
-
-			_size = _currentStyle.DefaultSize;
-		}
-
-		public LineCapEx(string name, float size)
-		{
-			_currentStyle = _registeredStyles[name];
-			if (_currentStyle == null)
-				throw new ArgumentException(string.Format("Unknown LineCapEx style: {0}", name), "name");
-
-			_size = size;
-		}
-
-		public LineCapEx(LineCapEx from)
-		{
-			_size = 0;
-			_currentStyle = null;
-			CopyFrom(from);
-		}
-
-		public void CopyFrom(LineCapEx from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			this._size = from._size;
-			this._currentStyle = from._currentStyle;
-		}
-
-		public LineCapEx(LineCapEx from, float size)
-		{
-			_size = 0;
-			_currentStyle = null;
-			CopyFrom(from);
-			_size = size;
-		}
-
-		private LineCapEx(LineCapExtension ex)
-		{
-			_currentStyle = ex;
-			_size = _currentStyle.DefaultSize;
-		}
-
-
-
-		public bool IsKnownStyle
-		{
-			get
-			{
-				return (_currentStyle == null) || (_currentStyle is KnownLineCapWrapper);
-			}
-		}
-
-		public bool IsCustomStyle
-		{
-			get
-			{
-				return !IsKnownStyle;
-			}
-		}
-
-		public bool IsDefaultStyle
-		{
-			get { return _currentStyle == null; }
-		}
-
-
-
-		public float Size
-		{
-			get
-			{
-				return _size;
-			}
-			set
-			{
-				_size = value;
-			}
-		}
-
-
-
-		public void SetPenStartCap(Pen pen)
-		{
-			if (_currentStyle != null)
-				_currentStyle.SetStartCap(pen, _size);
-			else
-				_defaultStyle.SetStartCap(pen, _size);
-		}
-
-		public void SetPenEndCap(Pen pen)
-		{
-			if (_currentStyle != null)
-				_currentStyle.SetEndCap(pen, _size);
-			else
-				_defaultStyle.SetEndCap(pen, _size);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (obj is LineCapEx)
-			{
-				LineCapEx from = (LineCapEx)obj;
-				return (this._size == from._size) && (this._currentStyle == from._currentStyle);
-			}
-			return false;
-		}
-
-		public static bool operator ==(LineCapEx a, LineCapEx b)
-		{
-			return (a._size == b._size) && (a._currentStyle == b._currentStyle);
-		}
-		public static bool operator !=(LineCapEx a, LineCapEx b)
-		{
-			return !(a == b);
-		}
-
-		public override int GetHashCode()
-		{
-			if (_currentStyle != null)
-				return _size.GetHashCode() + _currentStyle.GetHashCode();
-			else
-				return _size.GetHashCode();
-		}
-
-		public override string ToString()
-		{
-			return Name;
-		}
-		public string Name
-		{
-			get
-			{
-				if (_currentStyle != null)
-					return _currentStyle.Name;
-				else
-					return _defaultStyle.Name;
-			}
-		}
-
-
-		public static LineCapEx[] GetValues()
-		{
-			LineCapEx[] arr = new LineCapEx[_registeredStyles.Count];
-			int i = 0;
-			foreach (LineCapExtension ex in _registeredStyles.Values)
-				arr[i++] = new LineCapEx(ex);
-			return arr;
-		}
-
-		public static LineCapEx FromName(string name)
-		{
-			return new LineCapEx(name);
-		}
-		public static LineCapEx AnchorMask
-		{
-			get { return new LineCapEx("AnchorMask"); }
-		}
-		public static LineCapEx ArrowAnchor
-		{
-			get { return new LineCapEx("ArrowAnchor"); }
-		}
-		public static LineCapEx DiamondAnchor
-		{
-			get { return new LineCapEx("DiamondAnchor"); }
-		}
-		public static LineCapEx Flat
-		{
-			get { return new LineCapEx("Flat"); }
-		}
-		public static LineCapEx NoAnchor
-		{
-			get { return new LineCapEx("NoAnchor"); }
-		}
-		public static LineCapEx Round
-		{
-			get { return new LineCapEx("Round"); }
-		}
-		public static LineCapEx RoundAnchor
-		{
-			get { return new LineCapEx("RoundAnchor"); }
-		}
-		public static LineCapEx Square
-		{
-			get { return new LineCapEx("Square"); }
-		}
-		public static LineCapEx SquareAnchor
-		{
-			get { return new LineCapEx("SquareAnchor"); }
-		}
-		public static LineCapEx Triangle
-		{
-			get { return new LineCapEx("Triangle"); }
-		}
-
-
-
-
-
-	}
-	#endregion
 
 
 

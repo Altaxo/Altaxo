@@ -36,6 +36,7 @@ using System.Windows.Shapes;
 
 using sdd = System.Drawing.Drawing2D;
 using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.LineCaps;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -57,9 +58,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
-				var val = (LineCapEx)value;
-				if (val.IsDefaultStyle)
-					return _cb._cachedItems[LineCapEx.Flat.Name];
+				var val = (LineCapExtension)value;
+				if (null==val || val.IsDefaultStyle)
+					return _cb._cachedItems[LineCapExtension.Flat.Name];
 				else
 					return _cb._cachedItems[val.Name];
 
@@ -108,7 +109,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		void SetDefaultValues()
 		{
-			foreach (LineCapEx cap in LineCapEx.GetValues())
+			foreach (LineCapExtension cap in LineCapExtension.GetRegisteredValues())
 			{
 				var item = new ImageComboBoxItem(this, cap);
 				_cachedItems.Add(cap.Name, item);
@@ -120,15 +121,15 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#region Dependency property
 		private const string _nameOfValueProp = "SelectedLineCap";
-		public LineCapEx SelectedLineCap
+		public LineCapExtension SelectedLineCap
 		{
-			get { return (LineCapEx)GetValue(SelectedLineCapProperty); }
+			get { return (LineCapExtension)GetValue(SelectedLineCapProperty); }
 			set { SetValue(SelectedLineCapProperty, value); }
 		}
 
 		public static readonly DependencyProperty SelectedLineCapProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(LineCapEx), typeof(LineCapComboBox),
-				new FrameworkPropertyMetadata(LineCapEx.Flat, OnSelectedLineCapChanged));
+				DependencyProperty.Register(_nameOfValueProp, typeof(LineCapExtension), typeof(LineCapComboBox),
+				new FrameworkPropertyMetadata(LineCapExtension.Flat, OnSelectedLineCapChanged));
 
 		private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -140,14 +141,14 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override string GetItemText(object item)
 		{
-			var value = (LineCapEx)item;
+			var value = (LineCapExtension)item;
 			return value.Name;
 		}
 
 
 		public override ImageSource GetItemImage(object item)
 		{
-			var val = (LineCapEx)item;
+			var val = (LineCapExtension)item;
 			ImageSource result;
 			if (_isForEndCap)
 			{
@@ -162,7 +163,7 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-		public static ImageSource GetImage(LineCapEx join, bool isForEndCap)
+		public static ImageSource GetImage(LineCapExtension join, bool isForEndCap)
 		{
 
 
@@ -183,12 +184,12 @@ namespace Altaxo.Gui.Common.Drawing
 			var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
 			if (isForEndCap)
 			{
-				join.SetPenEndCap(linePen);
+				join.SetEndCap(linePen);
 				grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
 			}
 			else
 			{
-				join.SetPenStartCap(linePen);
+				join.SetStartCap(linePen);
 				grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
 			}
 

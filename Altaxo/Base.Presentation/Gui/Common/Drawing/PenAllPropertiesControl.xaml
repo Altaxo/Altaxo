@@ -4,16 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d" 
              >
-    <Grid>
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="0"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="0"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
@@ -26,31 +31,40 @@
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
+
 		<Label Grid.Column="0" Grid.Row="0">Brush:</Label>
-		<Label Grid.Column="0" Grid.Row="2">Style:</Label>
-		<Label Grid.Column="0" Grid.Row="4">StartCap:</Label>
-		<Label Grid.Column="0" Grid.Row="6">EndCap:</Label>
-		<Label Grid.Column="0" Grid.Row="8">Join:</Label>
-
-		<Label Grid.Column="2" Grid.Row="0">Thickness:</Label>
-		<Label Grid.Column="2" Grid.Row="2">Dash cap:</Label>
-		<Label Grid.Column="2" Grid.Row="4">Min. size:</Label>
-		<Label Grid.Column="2" Grid.Row="6">Min. size:</Label>
-		<Label Grid.Column="2" Grid.Row="8">Miter:</Label>
-
 		<axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrush"/>
-		<axogcd:DashStyleComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle"/>
-		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="4" IsForEndCap="False" x:Name="_cbStartCap"/>
-		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="6" IsForEndCap="True" x:Name="_cbEndCap"/>
-		<axogcd:LineJoinComboBox Grid.Column="1" Grid.Row="8" x:Name="_cbLineJoin"/>
-
+		<Label Grid.Column="2" Grid.Row="0">Thickness:</Label>
 		<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbThickness"/>
-		<axogcd:DashCapComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbDashCap"/>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbStartCapSize"/>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="6" x:Name="_cbEndCapSize"/>
-		<axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="8" x:Name="_cbMiterLimit"/>
 
-		<GroupBox Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="4" Header="Preview:">
+		<Label Grid.Column="0" Grid.Row="2">Style:</Label>
+		<axogcd:DashStyleComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle"/>
+		<Label Grid.Column="2" Grid.Row="2">Dash cap:</Label>
+		<axogcd:DashCapComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbDashCap"/>
+
+		<Label Grid.Column="0" Grid.Row="4" >StartCap:</Label>
+		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="4"  IsForEndCap="False" x:Name="_cbStartCap"/>
+		<Label Grid.Column="2" Grid.Row="4">Min. abs. size:</Label>
+		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbStartCapSize" ToolTip="Minimum absolute cap size"/>
+		<Label Grid.Column="2" Grid.Row="6" Content="Min. rel. size:"/>
+		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="6" x:Name="_edStartCapRelSize" ToolTip="Minimum cap size relative to pen width"/>
+
+		<Label Grid.Column="0" Grid.Row="8">EndCap:</Label>
+		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="8" IsForEndCap="True" x:Name="_cbEndCap"/>
+		<Label Grid.Column="2" Grid.Row="8">Min. abs. size:</Label>
+		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8" x:Name="_cbEndCapSize" ToolTip="Minimum absolute cap size"/>
+		<Label Grid.Column="2" Grid.Row="10" Content="Min. rel. size:"/>
+		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="10" x:Name="_edEndCapRelSize" ToolTip="Minimum cap size relative to pen width"/>
+
+
+
+
+		<Label Grid.Column="0" Grid.Row="12">Join:</Label>
+		<axogcd:LineJoinComboBox Grid.Column="1" Grid.Row="12" x:Name="_cbLineJoin"/>
+		<Label Grid.Column="2" Grid.Row="12">Miter:</Label>
+		<axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12" x:Name="_cbMiterLimit"/>
+
+		<GroupBox Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="4" Header="Preview:">
 			<Grid>
 				<Rectangle Name="_previewRect" MinHeight="40" Fill="Azure"/>
 				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel"/>
@@ -58,6 +72,6 @@
 
 		</GroupBox>
 	</Grid>
-	
-	
+
+
 </UserControl>

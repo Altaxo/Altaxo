@@ -11,6 +11,7 @@
 			</Trigger>
 		</Style.Triggers>
 		<Style.Setters>
+			<Setter Property="HorizontalContentAlignment" Value="Right"/>
 			<Setter Property="ContextMenu">
 				<Setter.Value>
 					<ContextMenu>

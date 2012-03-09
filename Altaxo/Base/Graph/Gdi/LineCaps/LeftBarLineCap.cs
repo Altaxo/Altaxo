@@ -34,6 +34,21 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	public class LeftBarLineCap : RightBarLineCap
 	{
 
+		public LeftBarLineCap()
+		{
+		}
+
+		public LeftBarLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
+			: base(minimumAbsoluteSizePt, minimumRelativeSize)
+		{
+		}
+
+		public override LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize)
+		{
+			return new LeftBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
+		}
+
+
 		public override string Name { get { return "BarLeft"; } }
 		public override void SetStartCap(Pen pen, float size)
 		{
