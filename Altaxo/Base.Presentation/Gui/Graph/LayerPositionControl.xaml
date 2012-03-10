@@ -62,7 +62,7 @@
 		<ComboBox x:Name="m_Layer_cbHeightType"  Grid.Column="2" Grid.Row="8" Style="{StaticResource CBWithMargin}" SelectionChanged="EhHeightType_SelectionChangeCommitted"/>
 
 		<Label Grid.Column="0" Grid.Row="10" Content="Rotation:"/>
-		<axogcd:RotationComboBox  x:Name="m_Layer_edRotation" Grid.Column="1" Grid.Row="10" SelectedRotationChanged="EhRotation_Changed"/>
+		<axogcd:RotationComboBox  x:Name="m_Layer_edRotation" Grid.Column="1" Grid.Row="10" SelectedQuantityChanged="EhRotation_Changed"/>
 		<Label Grid.Column="0" Grid.Row="12" Content="Scale:"/>
 		<axogcd:ScaleComboBox x:Name="m_Layer_edScale"  Grid.Column="1" Grid.Row="12" SelectedQuantityChanged="EhScale_Validating"/>
 		<Label Grid.Column="0" Grid.Row="14" Content="Clip data to frame:"/>

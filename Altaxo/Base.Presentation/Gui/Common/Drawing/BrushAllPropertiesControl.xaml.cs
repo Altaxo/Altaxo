@@ -215,8 +215,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public double GradientAngle
 		{
-			get { return _cbGradientAngle.SelectedRotation; }
-			set { _cbGradientAngle.SelectedRotation = value; }
+			get { return _cbGradientAngle.SelectedQuantityAsValueInDegrees; }
+			set { _cbGradientAngle.SelectedQuantityAsValueInDegrees = value; }
 		}
 
 		public event Action GradientAngleChanged;

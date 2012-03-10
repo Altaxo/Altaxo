@@ -210,11 +210,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return m_cbRotation.SelectedRotation;
+				return m_cbRotation.SelectedQuantityAsValueInDegrees;
 			}
 			set
 			{
-				m_cbRotation.SelectedRotation = value;
+				m_cbRotation.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 
@@ -234,11 +234,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return m_cbFontSize.SelectedQuantityInPoints;
+				return m_cbFontSize.SelectedQuantityAsValueInPoints;
 			}
 			set
 			{
-				m_cbFontSize.SelectedQuantityInPoints = value;
+				m_cbFontSize.SelectedQuantityAsValueInPoints = value;
 			}
 		}
 

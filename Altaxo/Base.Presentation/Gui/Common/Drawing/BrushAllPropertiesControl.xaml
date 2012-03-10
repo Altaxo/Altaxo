@@ -55,7 +55,7 @@
 			<axogcd:WrapModeComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbWrapMode" Margin="4" SelectionChanged="EhWrapModeChanged"/>
 
 		<Label Grid.Column="2" Grid.Row="2" x:Name="_lblGradientAngle">Angle:</Label>
-			<axogcd:RotationComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbGradientAngle" Margin="4" SelectedRotationChanged="EhGradientAngleChanged"/>
+			<axogcd:RotationComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbGradientAngle" Margin="4" SelectedQuantityChanged="EhGradientAngleChanged"/>
 
 		<Label Grid.Column="0" Grid.Row="3" x:Name="_lblGradientFocus">GradientFocus:</Label>
 			<axogcd:GradientFocusComboBox Grid.Column="1" Grid.Row="3" x:Name="_cbGradientFocus" Margin="4" SelectedQuantityChanged="EhGradientFocusChanged"  />

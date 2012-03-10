@@ -249,7 +249,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _cbRotation)
-					return _cbRotation.SelectedRotation;
+					return _cbRotation.SelectedQuantityAsValueInDegrees;
 				else
 					return _rotation;
 			}
@@ -257,7 +257,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_rotation = value;
 				if (_cbRotation != null)
-					_cbRotation.SelectedRotation = value;
+					_cbRotation.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 
@@ -270,7 +270,7 @@ namespace Altaxo.Gui.Graph
 				_cbRotation = value;
 				if (_cbRotation != null)
 				{
-					_cbRotation.SelectedRotation = _rotation;
+					_cbRotation.SelectedQuantityAsValueInDegrees = _rotation;
 				}
 			}
 		}

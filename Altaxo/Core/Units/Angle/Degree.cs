@@ -24,39 +24,48 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-using Altaxo.Units;
-using Altaxo.Units.Length;
-
-namespace Altaxo.Gui.Common.Drawing
+namespace Altaxo.Units.Angle
 {
-	public class LengthImageComboBox : DimensionfulQuantityImageComboBox
+	public class Degree : IUnit
 	{
+		static readonly Degree _instance = new Degree();
+		public static Degree Instance { get { return _instance; } }
+		const double DegreeToRad = Math.PI / 180;
 
-		static LengthImageComboBox()
+		protected Degree()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Units.Length.Point.Instance)));
 		}
 
-		public double SelectedQuantityAsValueInPoints
+		public string Name
 		{
-			get { return SelectedQuantity.AsValueIn(Units.Length.Point.Instance); }
-			set
-			{
-				var quant = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance);
-				if (null != UnitEnvironment)
-					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
-				SelectedQuantity = quant;
-			}
+			get { return "Degree"; }
+		}
+
+		public string ShortCut
+		{
+			get { return "°"; }
+		}
+
+		public double ToSIUnit(double x)
+		{
+			return x * DegreeToRad;
+		}
+
+		public double FromSIUnit(double x)
+		{
+			return x / DegreeToRad;
+		}
+
+		public ISIPrefixList Prefixes
+		{
+			get { return SIPrefix.ListWithNonePrefixOnly; }
+		}
+
+		public SIUnit SIUnit
+		{
+			get { return Radian.Instance; }
 		}
 	}
+
 }

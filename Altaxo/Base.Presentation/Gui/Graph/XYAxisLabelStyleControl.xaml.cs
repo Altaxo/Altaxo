@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_FontSizeChanged(m_cbFontSize.SelectedQuantityInPoints);
+				Controller.EhView_FontSizeChanged(m_cbFontSize.SelectedQuantityAsValueInPoints);
 			}
 		}
 
@@ -222,11 +222,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return this.m_edRotation.SelectedRotation;
+				return this.m_edRotation.SelectedQuantityAsValueInDegrees;
 			}
 			set
 			{
-				this.m_edRotation.SelectedRotation = value;
+				this.m_edRotation.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 

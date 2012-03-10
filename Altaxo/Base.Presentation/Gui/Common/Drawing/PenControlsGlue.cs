@@ -88,17 +88,17 @@ namespace Altaxo.Gui.Common.Drawing
 		void InitControlProperties()
 		{
 			if (null != CbBrush) CbBrush.SelectedBrush = _pen.BrushHolder;
-			if (null != CbLineThickness) CbLineThickness.SelectedQuantityInPoints = _pen.Width;
+			if (null != CbLineThickness) CbLineThickness.SelectedQuantityAsValueInPoints = _pen.Width;
 			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashStyleEx;
 			if (null != CbDashCap) CbDashCap.SelectedDashCap = _pen.DashCap;
 			if (null != CbStartCap) CbStartCap.SelectedLineCap = _pen.StartCap;
-			if (null != CbStartCapAbsSize) CbStartCapAbsSize.SelectedQuantityInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
+			if (null != CbStartCapAbsSize) CbStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
 			if (null != CbStartCapRelSize) CbStartCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.StartCap.MinimumRelativeSize;
 			if (null != CbEndCap) CbEndCap.SelectedLineCap = _pen.EndCap;
-			if (null != CbEndCapAbsSize) CbEndCapAbsSize.SelectedQuantityInPoints = _pen.EndCap.MinimumAbsoluteSizePt;
+			if (null != CbEndCapAbsSize) CbEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.EndCap.MinimumAbsoluteSizePt;
 			if (null != CbEndCapRelSize) CbEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.EndCap.MinimumRelativeSize;
 			if (null != CbLineJoin) CbLineJoin.SelectedLineJoin = _pen.LineJoin;
-			if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityInPoints = _pen.MiterLimit;
+			if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityAsValueInPoints = _pen.MiterLimit;
 
 			_userChangedAbsStartCapSize = false;
 			_userChangedAbsEndCapSize = false;
@@ -250,7 +250,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbThickness = value;
 				if (_pen != null && _cbThickness != null)
-					_cbThickness.SelectedQuantityInPoints = _pen.Width;
+					_cbThickness.SelectedQuantityAsValueInPoints = _pen.Width;
 
 				if (_cbThickness != null)
 					_cbThickness.SelectedQuantityChanged += EhThickness_ChoiceChanged;
@@ -262,7 +262,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (_pen != null)
 			{
 				BeginPenUpdate();
-				_pen.Width = (float)_cbThickness.SelectedQuantityInPoints;
+				_pen.Width = (float)_cbThickness.SelectedQuantityAsValueInPoints;
 				EndPenUpdate();
 
 				OnPenChanged();
@@ -301,7 +301,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var cap = _cbStartCap.SelectedLineCap;
 				if (_userChangedAbsStartCapSize && _cbStartCapAbsSize != null)
-					cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityInPoints, cap.MinimumRelativeSize);
+					cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 				if (_userChangedRelStartCapSize && _cbStartCapRelSize != null)
 					cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 
@@ -312,7 +312,7 @@ namespace Altaxo.Gui.Common.Drawing
 				if (_cbStartCapAbsSize != null && cap != null)
 				{
 					var oldValue = _userChangedAbsStartCapSize;
-					_cbStartCapAbsSize.SelectedQuantityInPoints = cap.MinimumAbsoluteSizePt;
+					_cbStartCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
 					_userChangedAbsStartCapSize = oldValue;
 				}
 				if (_cbStartCapRelSize != null && cap != null)
@@ -339,7 +339,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbStartCapAbsSize = value;
 				if (_pen != null && _cbStartCapAbsSize != null)
-					_cbStartCapAbsSize.SelectedQuantityInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
+					_cbStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
 
 				if (_cbStartCapAbsSize != null)
 					_cbStartCapAbsSize.SelectedQuantityChanged += EhStartCapAbsSize_SelectionChangeCommitted;
@@ -353,7 +353,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (_pen != null)
 			{
 				var cap = _pen.StartCap;
-				cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityInPoints, cap.MinimumRelativeSize);
+				cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
 				BeginPenUpdate();
 				_pen.StartCap = cap;
@@ -434,7 +434,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var cap = _cbEndCap.SelectedLineCap;
 				if (_userChangedAbsEndCapSize && _cbEndCapAbsSize != null)
-					cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityInPoints, cap.MinimumRelativeSize);
+					cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 				if (_userChangedRelEndCapSize && _cbEndCapRelSize != null)
 					cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
@@ -445,7 +445,7 @@ namespace Altaxo.Gui.Common.Drawing
 				if (_cbEndCapAbsSize != null)
 				{
 					var oldValue = _userChangedAbsEndCapSize;
-					_cbEndCapAbsSize.SelectedQuantityInPoints = cap.MinimumAbsoluteSizePt;
+					_cbEndCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
 					_userChangedAbsEndCapSize = oldValue;
 				}
 				if (_cbEndCapRelSize != null)
@@ -473,7 +473,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbEndCapAbsSize = value;
 				if (_pen != null && _cbEndCapAbsSize != null)
-					_cbEndCapAbsSize.SelectedQuantityInPoints = _pen.EndCap.MinimumAbsoluteSizePt;
+					_cbEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.EndCap.MinimumAbsoluteSizePt;
 
 				if (_cbEndCapAbsSize != null)
 					_cbEndCapAbsSize.SelectedQuantityChanged += EhEndCapAbsSize_SelectionChangeCommitted;
@@ -487,7 +487,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (_pen != null)
 			{
 				var cap = _pen.EndCap;
-				cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityInPoints, cap.MinimumRelativeSize);
+				cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
 				BeginPenUpdate();
 				_pen.EndCap = cap;
@@ -586,7 +586,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbMiterLimit = value;
 				if (_pen != null && _cbMiterLimit != null)
-					_cbMiterLimit.SelectedQuantityInPoints = _pen.MiterLimit;
+					_cbMiterLimit.SelectedQuantityAsValueInPoints = _pen.MiterLimit;
 
 				if (_cbLineJoin != null)
 					_cbMiterLimit.SelectedQuantityChanged += EhMiterLimit_SelectionChangeCommitted;
@@ -598,7 +598,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (_pen != null)
 			{
 				BeginPenUpdate();
-				_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityInPoints;
+				_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityAsValueInPoints;
 				EndPenUpdate();
 
 				OnPenChanged();

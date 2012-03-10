@@ -22,40 +22,36 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using Altaxo.Units;
-using Altaxo.Units.Length;
 
-namespace Altaxo.Gui.Common.Drawing
+namespace Altaxo.Gui
 {
-	public class LengthImageComboBox : DimensionfulQuantityImageComboBox
+	public static class GuiAngleUnits
 	{
+		static ReadOnlyCollection<IUnit> _instance;
 
-		static LengthImageComboBox()
+		static GuiAngleUnits()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Units.Length.Point.Instance)));
+			var instance = new List<IUnit>();
+
+			instance.Add(Units.Angle.Radian.Instance);
+			instance.Add(Units.Angle.Degree.Instance);
+			instance.Add(Units.Angle.Pi.Instance);
+			_instance = instance.AsReadOnly();
 		}
 
-		public double SelectedQuantityAsValueInPoints
+		/// <summary>
+		/// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+		/// </summary>
+		public static IList<IUnit> Collection
 		{
-			get { return SelectedQuantity.AsValueIn(Units.Length.Point.Instance); }
-			set
+			get
 			{
-				var quant = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance);
-				if (null != UnitEnvironment)
-					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
-				SelectedQuantity = quant;
+				return _instance;
 			}
 		}
 	}

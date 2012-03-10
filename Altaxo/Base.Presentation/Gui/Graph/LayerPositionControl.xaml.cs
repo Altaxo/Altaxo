@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_RotationChanged(m_Layer_edRotation.SelectedRotation);
+				Controller.EhView_RotationChanged(m_Layer_edRotation.SelectedQuantityAsValueInDegrees);
 			}
 
 		}
@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeRotation(float val)
 		{
-			this.m_Layer_edRotation.SelectedRotation = val;
+			this.m_Layer_edRotation.SelectedQuantityAsValueInDegrees = val;
 		}
 
 		public void InitializeScale(string txt)

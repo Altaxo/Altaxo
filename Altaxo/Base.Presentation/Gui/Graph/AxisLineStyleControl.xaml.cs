@@ -221,11 +221,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _lineMajorLength.SelectedQuantityInPoints;
+				return _lineMajorLength.SelectedQuantityAsValueInPoints;
 			}
 			set
 			{
-				_lineMajorLength.SelectedQuantityInPoints = value;
+				_lineMajorLength.SelectedQuantityAsValueInPoints = value;
 			}
 		}
 
@@ -233,11 +233,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _lineMinorLength.SelectedQuantityInPoints;
+				return _lineMinorLength.SelectedQuantityAsValueInPoints;
 			}
 			set
 			{
-				_lineMinorLength.SelectedQuantityInPoints = value;
+				_lineMinorLength.SelectedQuantityAsValueInPoints = value;
 			}
 		}
 

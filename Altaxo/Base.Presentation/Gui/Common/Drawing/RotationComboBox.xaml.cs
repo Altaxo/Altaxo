@@ -36,156 +36,70 @@ using System.Windows.Shapes;
 using System.Reflection;
 using System.Diagnostics;
 
+using Altaxo.Units;
+using Altaxo.Units.Angle;
+
 namespace Altaxo.Gui.Common.Drawing
 {
-	public partial class RotationComboBox : EditableImageComboBox
+	public partial class RotationComboBox : DimensionfulQuantityImageComboBox
 	{
-		class CC : IValueConverter
-		{
-			ComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
-
-
-			public CC(ComboBox c)
-			{
-				_cb = c;
-			}
-
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				var val = (double)value;
-				return Altaxo.Serialization.GUIConversion.ToString(val);
-
-
-			}
-
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				string text = (string)value;
-				double val;
-				if (Altaxo.Serialization.GUIConversion.IsDouble(text, out val))
-					return val;
-				else
-					throw new ArgumentOutOfRangeException("Provided text can not be converted to a numeric value");
-			}
-
-			public string EhValidateText(object obj, System.Globalization.CultureInfo info)
-			{
-				string error = null;
-				double val;
-				if (Altaxo.Serialization.GUIConversion.IsDouble((string)obj, out val))
-				{
-					if (double.IsInfinity(val))
-						error = "Value must not be infinity";
-					if (double.IsNaN(val))
-						error = "Value must be a valid number";
-				}
-				else
-				{
-					error = "Provided text can not be converted to a numeric value";
-				}
-
-				if (null != error)
-				{
-					_hasValidationError = true;
-					_originalToolTip = _cb.ToolTip;
-					_cb.ToolTip = error;
-				}
-				else
-				{
-					_hasValidationError = false;
-					_cb.ToolTip = _originalToolTip;
-					_originalToolTip = null;
-				}
-
-				return error;
-			}
-
-			public bool HasValidationError
-			{
-				get { return _hasValidationError; }
-			}
-
-		}
-
 		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
-		Binding _valueBinding;
-		CC _valueConverter;
-		public event DependencyPropertyChangedEventHandler SelectedRotationChanged;
 
-		#region Dependency property
-		private const string _nameOfValueProp = "SelectedRotation";
-		public double SelectedRotation
+		static readonly double[] _initialValues = new double[] { 0, 45, 90, 135, 180, 225, 270, 315 };
+
+		static RotationComboBox()
 		{
-			get { var result = (double)GetValue(SelectedRotationProperty); return result; }
-			set { SetValue(SelectedRotationProperty, value); }
+			SelectedQuantityProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Units.Angle.Degree.Instance)));
 		}
-
-		public static readonly DependencyProperty SelectedRotationProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(double), typeof(RotationComboBox),
-				new FrameworkPropertyMetadata(EhSelectedRotationChanged));
-
-		private static void EhSelectedRotationChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			((RotationComboBox)obj).OnSelectedRotationChanged(obj, args);
-		}
-		#endregion
-
-
 
 		public RotationComboBox()
 		{
-
+			UnitEnvironment = AngleEnvironment.Instance;
 			InitializeComponent();
 
-			_valueBinding = new Binding();
-			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
-			_valueConverter = new CC(this);
-			_valueBinding.Converter = _valueConverter;
-			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
-			this.SetBinding(ComboBox.TextProperty, _valueBinding);
+			foreach (var e in _initialValues)
+				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Angle.Degree.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
-			this.Items.Add(new ImageComboBoxItem(this, 0.0));
-			this.Items.Add(new ImageComboBoxItem(this, 45.0));
-			this.Items.Add(new ImageComboBoxItem(this, 90.0));
-			this.Items.Add(new ImageComboBoxItem(this, 135.0));
-			this.Items.Add(new ImageComboBoxItem(this, 180.0));
-			this.Items.Add(new ImageComboBoxItem(this, 225.0));
-			this.Items.Add(new ImageComboBoxItem(this, 270.0));
-			this.Items.Add(new ImageComboBoxItem(this, 315.0));
-
-			_img.Source = GetImage(SelectedRotation); // since 0 is the default value, we have to set the image here explicitly
-
+			_img.Source = GetImage(SelectedQuantityAsValueInDegrees);
 		}
 
-
-		protected virtual void OnSelectedRotationChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		public double SelectedQuantityAsValueInDegrees
 		{
+			get { return SelectedQuantity.AsValueIn(Units.Angle.Degree.Instance); }
+			set
+			{
+				var quant = new Units.DimensionfulQuantity(value, Units.Angle.Degree.Instance);
+				if (null != UnitEnvironment)
+					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
+				SelectedQuantity = quant;
+			}
+		}
+
+		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			base.OnSelectedQuantityChanged(obj, args);
+
 			if (null != _img)
 			{
-				var val = (double)args.NewValue;
+				var val = SelectedQuantityAsValueInDegrees;
 				_img.Source = GetImage(val);
 			}
-
-			if (null != SelectedRotationChanged)
-				SelectedRotationChanged(obj, args);
 		}
+
+
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double angle = (double)item;
+			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Angle.Degree.Instance);
 			ImageSource result;
-			if (!_cachedImages.TryGetValue(angle, out result))
-				_cachedImages.Add(angle, result = GetImage(angle));
-
+			if (!_cachedImages.TryGetValue(val, out result))
+				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
 
 		public override string GetItemText(object item)
 		{
-			return (string)_valueConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
+			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
 		}
 
 		public static ImageSource GetImage(double angle)

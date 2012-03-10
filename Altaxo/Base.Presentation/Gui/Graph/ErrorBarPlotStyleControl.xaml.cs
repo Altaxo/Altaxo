@@ -181,11 +181,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _cbSymbolSize.SelectedQuantityInPoints;
+				return _cbSymbolSize.SelectedQuantityAsValueInPoints;
 			}
 			set
 			{
-				_cbSymbolSize.SelectedQuantityInPoints = value;
+				_cbSymbolSize.SelectedQuantityAsValueInPoints = value;
 			}
 		}
 

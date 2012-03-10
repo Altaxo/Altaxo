@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph
 				var oldValue = _fontSize;
 				_fontSize = value;
 				if (_guiFontSize != null && oldValue != value)
-					_guiFontSize.SelectedQuantityInPoints = value;
+					_guiFontSize.SelectedQuantityAsValueInPoints = value;
 			}
 		}
 
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph
 					_guiFontSize.SelectedQuantityChanged -= _guiFontStyle_SelectedFontSizeChanged;
 
 				_guiFontSize = value;
-				_guiFontSize.SelectedQuantityInPoints = _fontSize;
+				_guiFontSize.SelectedQuantityAsValueInPoints = _fontSize;
 
 				if (null != _guiFontSize)
 					_guiFontSize.SelectedQuantityChanged += _guiFontStyle_SelectedFontSizeChanged;
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Graph
 		void _guiFontStyle_SelectedFontSizeChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var oldFontSize = _fontSize;
-			_fontSize = _guiFontSize.SelectedQuantityInPoints;
+			_fontSize = _guiFontSize.SelectedQuantityAsValueInPoints;
 
 			if (oldFontSize != _fontSize)
 				OnFontChanged();

@@ -52,6 +52,31 @@ namespace Altaxo.Gui
 		}
 	}
 
+	public static class AngleEnvironment
+	{
+		static QuantityWithUnitGuiEnvironment _instance;
+
+		static AngleEnvironment()
+		{
+			_instance = new QuantityWithUnitGuiEnvironment(GuiAngleUnits.Collection)
+			{
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Altaxo.Units.Angle.Degree.Instance)
+			};
+		}
+
+		/// <summary>
+		/// Gets the common position environment for all position boxes.
+		/// </summary>
+		public static QuantityWithUnitGuiEnvironment Instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+	}
+
+
 	public static class PositionEnvironment
 	{
 		static QuantityWithUnitGuiEnvironment _instance;

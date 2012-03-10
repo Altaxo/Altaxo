@@ -110,11 +110,11 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return this._cbRotation.SelectedRotation;
+				return this._cbRotation.SelectedQuantityAsValueInDegrees;
 			}
 			set
 			{
-				this._cbRotation.SelectedRotation = value;
+				this._cbRotation.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 

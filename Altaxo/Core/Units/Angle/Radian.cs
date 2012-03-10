@@ -24,39 +24,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-using Altaxo.Units;
-using Altaxo.Units.Length;
-
-namespace Altaxo.Gui.Common.Drawing
+namespace Altaxo.Units.Angle
 {
-	public class LengthImageComboBox : DimensionfulQuantityImageComboBox
+	public class Radian : SIUnit
 	{
+		static readonly Radian _instance = new Radian();
+		public static Radian Instance { get { return _instance; } }
 
-		static LengthImageComboBox()
+		private Radian() : base(0, 0, 0, 0, 0, 0, 0) { }
+
+		public override string Name
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Units.Length.Point.Instance)));
+			get { return "Radian"; }
 		}
 
-		public double SelectedQuantityAsValueInPoints
+		public override string ShortCut
 		{
-			get { return SelectedQuantity.AsValueIn(Units.Length.Point.Instance); }
-			set
-			{
-				var quant = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance);
-				if (null != UnitEnvironment)
-					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
-				SelectedQuantity = quant;
-			}
+			get { return "rad"; }
+		}
+
+		public override ISIPrefixList Prefixes
+		{
+			get { return SIPrefix.ListWithNonePrefixOnly; }
 		}
 	}
 }

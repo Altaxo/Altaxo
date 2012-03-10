@@ -559,6 +559,9 @@
     <Compile Include="Collections\Text\LongestCommonSubstringL.cs" />
     <Compile Include="Collections\Text\SubstringPosition.cs" />
     <Compile Include="Science\Energy.cs" />
+    <Compile Include="Units\Angle\Degree.cs" />
+    <Compile Include="Units\Angle\Pi.cs" />
+    <Compile Include="Units\Angle\Radian.cs" />
     <Compile Include="Units\IRelativeUnit.cs" />
     <Compile Include="Units\PrefixedUnit.cs" />
     <Compile Include="Units\DimensionfulQuantity.cs" />
