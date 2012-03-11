@@ -47,9 +47,6 @@ namespace Altaxo.Gui.Common.Drawing
 		public BrushAllPropertiesControl()
 		{
 			InitializeComponent();
-
-			_guiTextureOffsetX.UnitEnvironment = RelationEnvironment.Instance;
-			_guiTextureOffsetY.UnitEnvironment = RelationEnvironment.Instance;
 		}
 		
 

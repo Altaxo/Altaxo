@@ -44,9 +44,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		public Log10TickSpacingControl()
 		{
 			InitializeComponent();
-			_edOneLever.UnitEnvironment = RelationEnvironment.Instance;
-			_edMinGrace.UnitEnvironment = RelationEnvironment.Instance;
-			_edMaxGrace.UnitEnvironment = RelationEnvironment.Instance;
 		}
 
 		private void _cbSnapTicksToOrg_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)

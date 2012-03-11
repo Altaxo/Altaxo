@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Length.Point.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Length.Point.Instance)));
 
 			_img.Source = GetImage(SelectedQuantityAsValueInPoints);
 		}

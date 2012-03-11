@@ -44,10 +44,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		public LinearTickSpacingControl()
 		{
 			InitializeComponent();
-			_edZeroLever.UnitEnvironment = RelationEnvironment.Instance;
-			_edMinGrace.UnitEnvironment = RelationEnvironment.Instance;
-			_edMaxGrace.UnitEnvironment = RelationEnvironment.Instance;
-
 		}
 
 		private void _edMajorSpan_Validating(object sender, ValidationEventArgs<string> e)

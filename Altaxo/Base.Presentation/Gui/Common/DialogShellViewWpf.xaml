@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
 				SizeToContent="WidthAndHeight"
-				ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Loaded="EhViewLoaded">
+				ResizeMode="CanResizeWithGrip" 
+				WindowStyle="SingleBorderWindow"
+				Loaded="EhViewLoaded">
     <Grid Name="_grid" Margin="4,4,4,4">
 		<Grid.RowDefinitions>
 			<RowDefinition />

@@ -6,6 +6,7 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogm="clr-namespace:Altaxo.Gui.Main"
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
              mc:Ignorable="d" 
 						 Grid.IsSharedSizeScope="True"
              >
@@ -67,10 +68,10 @@
 			<axogcd:TextureImageComboBox Grid.Column="1" Grid.Row="4" x:Name="_cbTextureImage" Margin="4" SelectionChanged="EhTextureImageChanged"/>
 
 			<Label Grid.Column="0" Grid.Row="5" x:Name="_lblTextureOffsetX">X offset:</Label>
-			<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="5" x:Name="_guiTextureOffsetX" Margin="4" SelectedQuantityChanged="EhTextureOffsetXChanged"/>
+			<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="5" x:Name="_guiTextureOffsetX" Margin="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityChanged="EhTextureOffsetXChanged"/>
 
 			<Label Grid.Column="2" Grid.Row="5" x:Name="_lblTextureOffsetY">Y offset:</Label>
-			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="5" x:Name="_guiTextureOffsetY" Margin="4"  SelectedQuantityChanged="EhTextureOffsetYChanged" />
+			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="5" x:Name="_guiTextureOffsetY" Margin="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityChanged="EhTextureOffsetYChanged" />
 		</Grid>
 
 		<axogcd:TextureScalingControl x:Name="_guiTextureScaling" DockPanel.Dock="Top" Margin="0,4,0,4"/>

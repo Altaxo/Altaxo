@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
              mc:Ignorable="d" 
 						 Padding="4"
             >
@@ -71,11 +72,11 @@
 		<Label Grid.Column="0" Grid.Row="6" Content="Target number of minor ticks:"/>
 		<axogc:Int32UpDown x:Name="_edTargetNumberMinorTicks" Grid.Column="1" Grid.Row="6" Minimum="0" Change="1"/>
 		<Label Grid.Column="0" Grid.Row="8" Content="Zero lever:"/>
-		<axogc:QuantityWithUnitTextBox  x:Name="_edZeroLever" Grid.Column="1" Grid.Row="8" HorizontalContentAlignment="Right" />
+		<axogc:QuantityWithUnitTextBox  x:Name="_edZeroLever" Grid.Column="1" Grid.Row="8" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"/>
 		<Label Grid.Column="0" Grid.Row="10" Content="Min grace:"/>
-		<axogc:QuantityWithUnitTextBox x:Name="_edMinGrace" Grid.Column="1" Grid.Row="10" HorizontalContentAlignment="Right" />
+		<axogc:QuantityWithUnitTextBox x:Name="_edMinGrace" Grid.Column="1" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"  />
 		<Label Grid.Column="0" Grid.Row="12" Content="Max grace:"/>
-		<axogc:QuantityWithUnitTextBox x:Name="_edMaxGrace" Grid.Column="1" Grid.Row="12" HorizontalContentAlignment="Right"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edMaxGrace" Grid.Column="1" Grid.Row="12" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 		<Label Grid.Column="0" Grid.Row="14" Content="Snap to org:"/>
 		<ComboBox x:Name="_cbSnapTicksToOrg" Grid.Column="1" Grid.Row="14" SelectionChanged="_cbSnapTicksToOrg_SelectionChangeCommitted"/>
 		<Label Grid.Column="0" Grid.Row="16" Content="Snap to end:"/>

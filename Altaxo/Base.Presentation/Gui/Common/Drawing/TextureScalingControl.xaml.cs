@@ -44,8 +44,6 @@ namespace Altaxo.Gui.Common.Drawing
 		public TextureScalingControl()
 		{
 			InitializeComponent();
-			_guiXSize.UnitEnvironment = Altaxo.Gui.SizeEnvironment.Instance;
-			_guiYSize.UnitEnvironment = Altaxo.Gui.SizeEnvironment.Instance;
 		}
 
 		private void EhScalingModeChanged(object sender, RoutedEventArgs e)

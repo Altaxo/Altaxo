@@ -135,11 +135,20 @@ namespace Altaxo.Gui
       {
         var dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
 				dlgctrl.Owner = MainWindowWpf;
+				dlgctrl.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
+				var pos = System.Windows.Input.Mouse.GetPosition(MainWindowWpf);
+				dlgctrl.Top = pos.Y;
+				dlgctrl.Left = pos.X;
         return (true == dlgctrl.ShowDialog());
       }
 			else if (controller.ViewObject is System.Windows.UIElement)
 			{
 				var dlgview = new DialogShellViewWpf((System.Windows.UIElement)controller.ViewObject);
+				dlgview.Owner = MainWindowWpf;
+				dlgview.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
+				var pos = System.Windows.Input.Mouse.GetPosition(MainWindowWpf);
+				dlgview.Top = pos.Y;
+				dlgview.Left = pos.X;
 				var dlgctrl = new DialogShellController(dlgview, controller, title, showApplyButton);
 				return true == dlgview.ShowDialog();
 			}

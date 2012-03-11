@@ -100,13 +100,13 @@
 						<ColumnDefinition Width="4"/>
 					</Grid.ColumnDefinitions>
 					<Label Grid.Row="0" Grid.Column="0" Content="Left"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginLeft" Grid.Row="0" Grid.Column="2" SelectedQuantityChanged="EhMarginLeftChanged"/>
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginLeft" Grid.Row="0" Grid.Column="2" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginLeftChanged"/>
 					<Label Grid.Row="0" Grid.Column="4" Content="Right"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginRight" Grid.Row="0" Grid.Column="6" SelectedQuantityChanged="EhMarginRightChanged"/>
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginRight" Grid.Row="0" Grid.Column="6" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginRightChanged"/>
 					<Label Grid.Row="2" Grid.Column="0" Content="Top"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginTop" Grid.Row="2" Grid.Column="2" SelectedQuantityChanged="EhMarginTopChanged"/>
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginTop" Grid.Row="2" Grid.Column="2" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginTopChanged"/>
 					<Label Grid.Row="2" Grid.Column="4" Content="Bottom"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginBottom" Grid.Row="2" Grid.Column="6" SelectedQuantityChanged="EhMarginBottomChanged"/>
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginBottom" Grid.Row="2" Grid.Column="6" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginBottomChanged"/>
 
 				</Grid>
 			</GroupBox>

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
              mc:Ignorable="d" 
              >
 	<Grid>
@@ -47,14 +48,14 @@
 		<Label Grid.Column="2" Grid.Row="4">Min. abs. size:</Label>
 		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbStartCapSize" ToolTip="Minimum absolute cap size"/>
 		<Label Grid.Column="2" Grid.Row="6" Content="Min. rel. size:"/>
-		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="6" x:Name="_edStartCapRelSize" ToolTip="Minimum cap size relative to pen width"/>
+		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="6" x:Name="_edStartCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width"/>
 
 		<Label Grid.Column="0" Grid.Row="8">EndCap:</Label>
 		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="8" IsForEndCap="True" x:Name="_cbEndCap"/>
 		<Label Grid.Column="2" Grid.Row="8">Min. abs. size:</Label>
 		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8" x:Name="_cbEndCapSize" ToolTip="Minimum absolute cap size"/>
 		<Label Grid.Column="2" Grid.Row="10" Content="Min. rel. size:"/>
-		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="10" x:Name="_edEndCapRelSize" ToolTip="Minimum cap size relative to pen width"/>
+		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="10" x:Name="_edEndCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
 
 
 

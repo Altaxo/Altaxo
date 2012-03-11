@@ -27,7 +27,6 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
-
 	public static class RelationEnvironment
 	{
 		static QuantityWithUnitGuiEnvironment _instance;
@@ -76,7 +75,6 @@ namespace Altaxo.Gui
 		}
 	}
 
-
 	public static class PositionEnvironment
 	{
 		static QuantityWithUnitGuiEnvironment _instance;
@@ -124,7 +122,6 @@ namespace Altaxo.Gui
 			}
 		}
 	}
-
 
 	public static class FontSizeEnvironment
 	{
@@ -245,5 +242,4 @@ namespace Altaxo.Gui
 			}
 		}
 	}
-
 }

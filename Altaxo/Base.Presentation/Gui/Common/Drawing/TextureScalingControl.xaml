@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
              >
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -47,8 +48,8 @@
 		</GroupBox>
 		<Label Content="X size:" Grid.Column="0" Grid.Row="1" x:Name="_guiLabelXSize"/>
 		<Label Content="Y size:" Grid.Column="2" Grid.Row="1" x:Name="_guiLabelYSize" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize" Grid.Column="1" Grid.Row="1" Margin="4" SelectedQuantityChanged="EhXSizeChanged"/>
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize" Grid.Column="3" Grid.Row="1" Margin="4" SelectedQuantityChanged="EhYSizeChanged"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize" Grid.Column="1" Grid.Row="1" Margin="4" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" SelectedQuantityChanged="EhXSizeChanged"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize" Grid.Column="3" Grid.Row="1" Margin="4" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" SelectedQuantityChanged="EhYSizeChanged"/>
 			
 		<Label Content="X scale:" Grid.Column="0" Grid.Row="1" x:Name="_guiLabelXScale"/>
 		<Label Content="Y scale:" Grid.Column="2" Grid.Row="1" x:Name="_guiLabelYScale"/>

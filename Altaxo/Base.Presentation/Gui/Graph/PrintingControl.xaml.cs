@@ -72,10 +72,6 @@ namespace Altaxo.Gui.Graph
 		public PrintingControl()
 		{
 			InitializeComponent();
-			_guiMarginLeft.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
-			_guiMarginRight.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
-			_guiMarginTop.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
-			_guiMarginBottom.UnitEnvironment = Altaxo.Gui.PaperMarginEnvironment.Instance;
 		}
 
 
