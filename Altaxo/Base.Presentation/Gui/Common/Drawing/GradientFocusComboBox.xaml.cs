@@ -44,6 +44,11 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static readonly double[] _initialValues = new double[] { 0.0, 0.25, 0.5, 0.75, 1.0 };
 
+		static GradientFocusComboBox()
+		{
+			SelectedQuantityProperty.OverrideMetadata(typeof(GradientFocusComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0.5, Units.Dimensionless.Unity.Instance)));
+		}
+
 		public GradientFocusComboBox()
 		{
 			UnitEnvironment = RelationEnvironment.Instance;

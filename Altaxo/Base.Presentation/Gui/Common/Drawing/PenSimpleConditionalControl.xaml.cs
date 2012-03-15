@@ -53,28 +53,35 @@ namespace Altaxo.Gui.Common.Drawing
 			_glue.CbLineThickness = _cbThickness;
 		}
 
-
-		public bool IsStrokingEnabled
-		{
-			get
-			{
-				return _chkDoShowThis.IsChecked == true;
-			}
-			set
-			{
-				_chkDoShowThis.IsChecked = value;
-			}
-		}
-
 		public Altaxo.Graph.Gdi.PenX SelectedPen
 		{
 			get
 			{
-				return _glue.Pen;
+				if (_chkDoShowThis.IsChecked == true)
+				{
+					return _glue.Pen;
+				}
+				else
+				{
+					var pen = _glue.Pen;
+					pen.Color = Altaxo.Graph.NamedColor.Transparent;
+					return pen;
+				}
 			}
 			set
 			{
 				_glue.Pen = value;
+				_chkDoShowThis.IsChecked = value.IsVisible;
+			}
+		}
+
+		private void EhShowOutline_Checked(object sender, RoutedEventArgs e)
+		{
+			if (!_glue.Pen.IsVisible)
+			{
+				var pen = _glue.Pen;
+				pen.Color = Altaxo.Graph.NamedColor.Black;
+				_glue.Pen = pen;
 			}
 		}
 

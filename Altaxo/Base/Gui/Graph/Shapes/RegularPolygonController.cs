@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -28,53 +28,53 @@ using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Graph.Shapes
 {
-  public interface ILineGraphicView
-  {
-    PenX DocPen { get; set; }
-    PointD2D DocPosition { get; set; }
-    PointD2D DocSize { get; set; }
-    double DocRotation { get; set; }
-  }
+	public interface IRegularPolygonView
+	{
+		IShapeGraphicView ShapeGraphicView { get; }
 
-  [UserControllerForObject(typeof(OpenPathShapeBase),101)]
-  [ExpectedTypeOfView(typeof(ILineGraphicView))]
-  public class LineGraphicController : MVCANControllerBase<OpenPathShapeBase,ILineGraphicView>
-  {
-    #region IMVCController Members
+		int Vertices { get; set; }
 
-   
-		
-    protected override void Initialize(bool bInit)
-    {
-      if (_view != null)
-      {
-        _view.DocPen = _doc.Pen;
-        _view.DocPosition = _doc.Position;
-        _view.DocSize = _doc.Size;
-        _view.DocRotation = _doc.Rotation;
-      }
-    }
+		double CornerRadiusPt { get; set; }
+	}
 
- 
-    #endregion
+	[UserControllerForObject(typeof(RegularPolygon),110)]
+	[ExpectedTypeOfView(typeof(IRegularPolygonView))]
+	public class RegularPolygonController : MVCANControllerBase<RegularPolygon, IRegularPolygonView>
+	{
+		ShapeGraphicController _shapeCtrl;
 
-    #region IApplyController Members
+		protected override void Initialize(bool initData)
+		{
+			if (initData)
+			{
+				_shapeCtrl = new ShapeGraphicController() { UseDocumentCopy = UseDocument.Directly };
+				_shapeCtrl.InitializeDocument(_doc);
+			}
+			if (null != _view)
+			{
+				if (null == _shapeCtrl.ViewObject)
+					_shapeCtrl.ViewObject = _view.ShapeGraphicView;
 
-    public override bool Apply()
-    {
-      _originalDoc.Pen = _view.DocPen;
-      _originalDoc.Position = _view.DocPosition;
-      _originalDoc.Size = _view.DocSize;
-      _originalDoc.Rotation = _view.DocRotation;
+				_view.Vertices = _doc.NumberOfVertices;
+				_view.CornerRadiusPt = _doc.CornerRadius;
+			}
+		}
+
+		public override bool Apply()
+		{
+			if (!_shapeCtrl.Apply())
+				return false;
+
+			_doc.CornerRadius = _view.CornerRadiusPt;
+			_doc.NumberOfVertices = _view.Vertices;
 
 			if(_useDocumentCopy)
-			_doc = (OpenPathShapeBase)_originalDoc.Clone();
+				_originalDoc.CopyFrom(_doc);
 
-      return true;
-    }
+			return true;
+		}
 
-    #endregion
-  }
+	}
 }

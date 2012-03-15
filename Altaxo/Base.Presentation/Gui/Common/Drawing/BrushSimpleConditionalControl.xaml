@@ -13,7 +13,7 @@
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 		<Label Grid.Column="0" HorizontalAlignment="Right">Fill:</Label>
-		<CheckBox Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0"  x:Name="_chkEnableBrush"></CheckBox>
+		<CheckBox Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0"  x:Name="_chkEnableBrush" Checked="EhEnableFill_Checked" />
 		<Label Grid.Column="2" HorizontalAlignment="Right">Filling brush:</Label>
 		<axogcd:BrushComboBox Grid.Column="3" IsEnabled="{Binding ElementName=_chkEnableBrush, Path=IsChecked}" x:Name="_cbBrush"/>
 	</Grid>

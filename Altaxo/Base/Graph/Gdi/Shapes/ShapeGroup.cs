@@ -97,12 +97,26 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="from">Another shape group to copy from. The objects of this shape group are cloned before added to the new group.</param>
 		public ShapeGroup(ShapeGroup from)
-			: base(from)
+			: base(from) // all is done here, since CopyFrom is virtual!
 		{
-			// deep copy of the objects
-			_groupedObjects = new List<GraphicBase>(from._groupedObjects.Count);
-			foreach (GraphicBase obj in from._groupedObjects)
-				_groupedObjects.Add((GraphicBase)obj.Clone());
+		}
+
+
+		public override bool CopyFrom(object obj)
+		{
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as ShapeGroup;
+				if (null != from)
+				{
+					// deep copy of the objects
+					_groupedObjects = new List<GraphicBase>(from._groupedObjects.Count);
+					foreach (GraphicBase go in from._groupedObjects)
+						_groupedObjects.Add((GraphicBase)go.Clone());
+				}
+			}
+			return isCopied;
 		}
 
 		/// <summary>

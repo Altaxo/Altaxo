@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -34,68 +35,32 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph
+using Altaxo.Graph;
+using Altaxo.Units;
+
+
+namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
-	/// Interaction logic for LineGraphicControl.xaml
+	/// Interaction logic for RegularPolygonControl.xaml
 	/// </summary>
-	public partial class LineGraphicControl : UserControl, ILineGraphicView
+	public partial class OpenCardinalSplineControl : UserControl, IOpenCardinalSplineView
 	{
-		public LineGraphicControl()
+		public OpenCardinalSplineControl()
 		{
 			InitializeComponent();
 		}
 
-		#region ILineGraphicView
-
-		public Altaxo.Graph.Gdi.PenX DocPen
+		public ILineGraphicView LineGraphicView
 		{
-			get
-			{
-				return _penControl.Pen;
-			}
-			set
-			{
-				_penControl.Pen = value;
-			}
+			get { return _guiLineControl; }
 		}
 
-		public Altaxo.Graph.PointD2D DocPosition
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Position;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Position = value;
-			}
-		}
 
-		public Altaxo.Graph.PointD2D DocSize
+		public ICardinalSplinePointsView SplinePointsView
 		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Size;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Size = value;
-			}
+			get { return _guiPointsControl; }
 		}
-
-		public double DocRotation
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Rotation;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Rotation = value;
-			}
-		}
-
-		#endregion
+	
 	}
 }

@@ -136,17 +136,62 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 		public OpenCardinalSpline(OpenCardinalSpline from)
-			: base(from)
+			: base(from) // all is done here, since CopyFrom is virtual!
 		{
-			_tension = from._tension;
-			_curvePoints.Clear();
-			_curvePoints.AddRange(from._curvePoints);
+		}
+
+		public override bool CopyFrom(object obj)
+		{
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as OpenCardinalSpline;
+				if (null != from)
+				{
+					this._tension = from._tension;
+					this._curvePoints.Clear();
+					_curvePoints.AddRange(from._curvePoints);
+				}
+			}
+			return isCopied;
 		}
 
 		#endregion
 
 
 		public static double DefaultTension { get { return _defaultTension; } }
+
+		public double Tension
+		{
+			get
+			{
+				return _tension;
+			}
+			set
+			{
+				var oldValue = _tension;
+				value = Math.Max(value, 0);
+				value = Math.Min(value, float.MaxValue);
+				_tension = value;
+				if (value != oldValue)
+					OnChanged();
+			}
+		}
+
+		/// <summary>Gets a copied list (!) of the curve points. If set, the list is also copied to an internally kept list.</summary>
+		public List<PointD2D> CurvePoints
+		{
+			get
+			{
+				return new List<PointD2D>(_curvePoints);
+			}
+			set
+			{
+				_curvePoints.Clear();
+				_curvePoints.AddRange(value);
+				// TODO adjust width and size to reflect the new positions of the curve points
+			}
+		}
 
 		public override bool AllowNegativeSize
 		{

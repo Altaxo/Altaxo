@@ -233,7 +233,7 @@ namespace Altaxo.Graph.Gdi
 
 				s._layers = (XYPlotLayerCollection)info.GetValue("LayerList", s);
 				s._layers.ParentObject = s;
-
+				s._layers.SetGraphSize(s._printableBounds.Size, false);
 
 				return s;
 			}

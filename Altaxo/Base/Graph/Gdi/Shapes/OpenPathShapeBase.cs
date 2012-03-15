@@ -118,18 +118,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
-		protected override void CopyFrom(GraphicBase bfrom)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, bfrom))
-				return;
-
-			OpenPathShapeBase from = bfrom as OpenPathShapeBase;
-			if (from != null)
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				this._outlinePen = null == from._outlinePen ? null : (PenX)from._outlinePen.Clone();
-				this._linePen = (PenX)from._linePen.Clone();
+				var from = obj as OpenPathShapeBase;
+				if (from != null)
+				{
+					this._outlinePen = null == from._outlinePen ? null : (PenX)from._outlinePen.Clone();
+					this._linePen = (PenX)from._linePen.Clone();
+				}
 			}
-			base.CopyFrom(bfrom);
+			return isCopied;
 		}
 
 		public virtual PenX Pen

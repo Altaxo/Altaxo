@@ -84,7 +84,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="type">The type for which the name should be returned.</param>
     /// <param name="version">The version of this type.</param>
     /// <returns>The fully qualified name of the type.</returns>
-    public string GetFullyQualifiedTypeName(System.Type type, int version)
+    public static string GetFullyQualifiedTypeName(System.Type type, int version)
     {
       string[] assembly = type.Assembly.FullName.Split(new char[] { ',' }, 2);
       return string.Format("{0},{1},{2}", assembly[0], type.ToString(), version.ToString());

@@ -136,11 +136,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 
 				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic();
-				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+				info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
 
 				// we have changed the meaning of rotation in the meantime, This is not handled in GetBaseValueEmbedded, 
 				// since the former versions did not store the version number of embedded bases
-				s._rotation = -s._rotation;
+				//s._rotation = -s._rotation;
 
 				s._text = info.GetString("Text");
 				s._font = (Font)info.GetValue("Font", typeof(Font));
@@ -197,12 +197,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public TextGraphic(TextGraphic from)
-			:
-			base(from) // all is done here, since CopyFrom is overridden
-		{
-		}
-
 		public TextGraphic()
 		{
 			_font = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.World);
@@ -241,31 +235,37 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
+		public TextGraphic(TextGraphic from)
+			: base(from) // all is done here, since CopyFrom is virtual!
+		{
+		}
+
 		#endregion
 
 		#region Copying
 
-		protected override void CopyFrom(GraphicBase bfrom)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, bfrom))
-				return;
-
-			TextGraphic from = bfrom as TextGraphic;
-			if (from != null)
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				this._text = from._text;
-				this._font = from._font == null ? null : (Font)from._font.Clone();
-				this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
-				this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
-				this._lineSpacingFactor = from._lineSpacingFactor;
-				_xAnchorType = from._xAnchorType;
-				_yAnchorType = from._yAnchorType;
+				var from = obj as TextGraphic;
+				if (from != null)
+				{
+					this._text = from._text;
+					this._font = from._font == null ? null : (Font)from._font.Clone();
+					this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
+					this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
+					this._lineSpacingFactor = from._lineSpacingFactor;
+					_xAnchorType = from._xAnchorType;
+					_yAnchorType = from._yAnchorType;
 
-				// don't clone the cached items
-				this._isStructureInSync = false;
-				this._isMeasureInSync = false;
+					// don't clone the cached items
+					this._isStructureInSync = false;
+					this._isMeasureInSync = false;
+				}
 			}
-			base.CopyFrom(bfrom);
+			return isCopied;
 		}
 
 		public void CopyFrom(TextGraphic from)

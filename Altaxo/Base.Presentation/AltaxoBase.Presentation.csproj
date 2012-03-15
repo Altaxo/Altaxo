@@ -452,6 +452,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Shapes\CardinalSplinePointsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\Shapes\ClosedCardinalSplineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\Shapes\OpenCardinalSplineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\Shapes\RegularPolygonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -922,6 +938,18 @@
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingControl.xaml.cs">
       <DependentUpon>Log10TickSpacingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Shapes\CardinalSplinePointsControl.xaml.cs">
+      <DependentUpon>CardinalSplinePointsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Shapes\ClosedCardinalSplineControl.xaml.cs">
+      <DependentUpon>ClosedCardinalSplineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Shapes\OpenCardinalSplineControl.xaml.cs">
+      <DependentUpon>OpenCardinalSplineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Shapes\RegularPolygonControl.xaml.cs">
+      <DependentUpon>RegularPolygonControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>

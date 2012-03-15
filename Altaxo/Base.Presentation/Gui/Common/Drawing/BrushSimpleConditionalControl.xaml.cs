@@ -49,23 +49,31 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			get
 			{
-				return _cbBrush.SelectedBrush;
+				if (_chkEnableBrush.IsChecked == true)
+				{
+					return _cbBrush.SelectedBrush;
+				}
+				else
+				{
+					var brush = _cbBrush.SelectedBrush;
+					brush.Color = Altaxo.Graph.NamedColor.Transparent;
+					return brush;
+				}
 			}
 			set
 			{
 				_cbBrush.SelectedBrush = value;
+				_chkEnableBrush.IsChecked = value.IsVisible;
 			}
 		}
 
-		public bool IsBrushEnabled
+		private void EhEnableFill_Checked(object sender, RoutedEventArgs e)
 		{
-			get
+			var brush = _cbBrush.SelectedBrush.Clone();
+			if (!brush.IsVisible)
 			{
-				return _chkEnableBrush.IsChecked == true;
-			}
-			set
-			{
-				_chkEnableBrush.IsChecked = value;
+				brush.Color = Altaxo.Graph.NamedColor.AliceBlue;
+				_cbBrush.SelectedBrush = brush;
 			}
 		}
 	}

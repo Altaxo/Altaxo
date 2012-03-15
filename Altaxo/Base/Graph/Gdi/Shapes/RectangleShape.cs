@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public RectangleShape(RectangleShape from)
 			:
-			base(from)
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 

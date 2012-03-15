@@ -31,7 +31,7 @@
 				<DataGridTextColumn.Binding>
 					<Binding Path="Value">
 						<Binding.ValidationRules>
-							<axogc:NumericDoubleConverter AllowInfinity="True" AllowNaN="False"/>
+							<axogc:NumericDoubleConverter AllowInfiniteValues="True" AllowNaNValues="False"/>
 						</Binding.ValidationRules>
 					</Binding>
 				</DataGridTextColumn.Binding>
@@ -41,7 +41,7 @@
 				<DataGridTextColumn.Binding>
 					<Binding Path="Variance">
 						<Binding.ValidationRules>
-							<axogc:NumericDoubleConverter AllowInfinity="False" AllowNaN="False"/>
+							<axogc:NumericDoubleConverter AllowInfiniteValues="False" AllowNaNValues="False"/>
 						</Binding.ValidationRules>
 					</Binding>
 				</DataGridTextColumn.Binding>

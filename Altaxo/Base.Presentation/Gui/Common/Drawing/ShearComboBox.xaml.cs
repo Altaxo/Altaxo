@@ -44,6 +44,11 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static readonly double[] _initialValues = new double[] { -2.0, -1.0, 0.0, 1.0, 2.0 };
 
+		static ShearComboBox()
+		{
+			SelectedQuantityProperty.OverrideMetadata(typeof(ShearComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0, Units.Dimensionless.Unity.Instance)));
+		}
+
 		public ShearComboBox()
 		{
 			UnitEnvironment = RelationEnvironment.Instance;

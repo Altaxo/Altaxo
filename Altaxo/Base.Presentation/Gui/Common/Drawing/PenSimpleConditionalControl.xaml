@@ -20,12 +20,12 @@
 		</Grid.RowDefinitions>
 		
 		<Label Grid.Column="0" HorizontalAlignment="Right">Show outline:</Label>
-		<CheckBox Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0"  x:Name="_chkDoShowThis"></CheckBox>
+		<CheckBox x:Name="_chkDoShowThis" Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0"  Checked="EhShowOutline_Checked" />
 		<Label Grid.Column="2" HorizontalAlignment="Right">Pen brush:</Label>
-		<axogcd:BrushComboBox Grid.Column="3" IsEnabled="{Binding ElementName=_chkDoFillShape, Path=IsChecked}" x:Name="_cbBrush"/>
+		<axogcd:BrushComboBox x:Name="_cbBrush" Grid.Column="3" IsEnabled="{Binding ElementName=_chkDoShowThis, Path=IsChecked}" />
 		<Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Pen style:</Label>
-		<axogcd:DashStyleComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle"/>
+		<axogcd:DashStyleComboBox x:Name="_cbDashStyle" Grid.Column="1" Grid.Row="2"  IsEnabled="{Binding ElementName=_chkDoShowThis, Path=IsChecked}"/>
 		<Label Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right">Thickness:</Label>
-		 <axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbThickness"/>
+		<axogcd:LineThicknessComboBox x:Name="_cbThickness" Grid.Column="3" Grid.Row="2" IsEnabled="{Binding ElementName=_chkDoShowThis, Path=IsChecked}"/>
 	</Grid>
 </UserControl>

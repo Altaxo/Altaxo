@@ -40,6 +40,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IChangedEventSource,
 		Main.IDocumentNode,
+		Main.ICopyFrom,
 		System.ICloneable
 	{
 		/// <summary>
@@ -270,23 +271,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 			CopyFrom(from);
 		}
 
-		protected virtual void CopyFrom(GraphicBase from)
+		public virtual bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as GraphicBase;
+			if (null == from)
+				return false;
 
-			this._bounds = from._bounds;
-			this._position = from._position;
-			this._rotation = from._rotation;
-			this._scaleX = from._scaleX;
-			this._scaleY = from._scaleY;
-			this._shear = from._shear;
-			bool wasUsed = (null != this._parent);
-			this._parent = from._parent;
-			this.UpdateTransformationMatrix();
+				this._bounds = from._bounds;
+				this._position = from._position;
+				this._rotation = from._rotation;
+				this._scaleX = from._scaleX;
+				this._scaleY = from._scaleY;
+				this._shear = from._shear;
+				bool wasUsed = (null != this._parent);
+				this._parent = from._parent;
+				this.UpdateTransformationMatrix();
 
-			if (wasUsed)
-				OnChanged();
+				if (wasUsed)
+					OnChanged();
+				return true;
 		}
 
 

@@ -38,8 +38,10 @@ namespace Altaxo.Gui.Common
 {
 	public class NumericDoubleConverter : ValidationRule, IValueConverter
 	{
-		public bool AllowInfinity { get; set; }
-		public bool AllowNaN { get; set; }
+		public bool AllowInfiniteValues { get; set; }
+		public bool AllowNaNValues { get; set; }
+		public bool DisallowZeroValues { get; set; }
+		public bool DisallowNegativeValues { get; set; }
 
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -66,10 +68,14 @@ namespace Altaxo.Gui.Common
 			var val = (string)value;
 			if (!Altaxo.Serialization.GUIConversion.IsDouble(val, out result))
 				return new ValidationResult(false, "This string could not be converted to a number!");
-			if (double.IsNaN(result) && !AllowNaN)
-				return new ValidationResult(false, "This string represents NaN (not a number). This is not allowed here!");
-			if (double.IsInfinity(result) && !AllowInfinity)
-				return new ValidationResult(false, "This string represents Infinity. Please enter a finite number!");
+			if (double.IsNaN(result) && !AllowNaNValues)
+				return new ValidationResult(false, "This string represents NaN ('Not a Number'). This is not allowed here!");
+			if (double.IsInfinity(result) && !AllowInfiniteValues)
+				return new ValidationResult(false, "This string represents Infinity. Please enter a finite value!");
+			if(DisallowZeroValues && result==0)
+				return new ValidationResult(false, "A value of zero is not valid here. Please enter a nonzero value!");
+			if(DisallowNegativeValues && result<0)
+				return new ValidationResult(false, "A negative value is not valid here. Please enter a nonnegative value!");
 
 			return ValidationResult.ValidResult;
 		}

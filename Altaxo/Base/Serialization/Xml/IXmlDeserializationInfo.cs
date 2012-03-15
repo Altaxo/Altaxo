@@ -95,7 +95,8 @@ namespace Altaxo.Serialization.Xml
     object GetValue(string name, object parent);
 
     void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);
-    void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
+		void GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object parent);
+		void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
 
 
     /// <summary>

@@ -102,7 +102,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 		#endregion
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LineGraphic", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FloatingScale), 1)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -138,8 +137,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		public FloatingScale(FloatingScale from)
-			: base(from)
+			: base(from) // all is done here, since CopyFrom is virtual!
 		{
+		}
+
+		public override bool CopyFrom(object obj)
+		{
+			// TODO
+			throw new NotImplementedException();
+			//return base.CopyFrom(obj);
 		}
 
 		#endregion

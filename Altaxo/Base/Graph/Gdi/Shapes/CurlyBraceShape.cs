@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public CurlyBraceShape(CurlyBraceShape from)
 			:
-			base(from)
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 

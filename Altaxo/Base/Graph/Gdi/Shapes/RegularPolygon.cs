@@ -198,10 +198,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public RegularPolygon(RegularPolygon from)
 			:
-			base(from)
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
-			_vertices = from._vertices;
-			_cornerRadius = from._cornerRadius;
+		}
+
+		public override bool CopyFrom(object obj)
+		{
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as RegularPolygon;
+				if (null != from)
+				{
+					this._vertices = from._vertices;
+					this._cornerRadius = from._cornerRadius;
+				}
+			}
+			return isCopied;
 		}
 
 		#endregion
@@ -221,6 +234,42 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetPath();
 		}
 
+		public int NumberOfVertices
+		{
+			get
+			{
+				return _vertices;
+			}
+			set
+			{
+				var oldValue = _vertices;
+				value = Math.Max(3, value);
+				_vertices = value;
+				if (value != oldValue)
+				{
+					OnChanged();
+				}
+			}
+		}
+
+		public double CornerRadius
+		{
+			get
+			{
+				return _cornerRadius;
+			}
+			set
+			{
+				var oldValue = _cornerRadius;
+				value = Math.Max(0, value);
+				value = Math.Min(float.MaxValue, value);
+				_cornerRadius = value;
+				if (value != oldValue)
+				{
+					OnChanged();
+				}
+			}
+		}
 
 		public bool HasEvenNumberOfVertices
 		{

@@ -55,6 +55,34 @@ namespace Altaxo.Gui.Common
 		WeakEventHandler _defaultUnitChangedHandler;
 		WeakEventHandler _numberOfDisplayedDigitsChangedHandler;
 
+		bool _disallowNegativeValues;
+		public bool DisallowNegativeValues
+		{
+			get { return _disallowNegativeValues; }
+			set { _disallowNegativeValues = value; }
+		}
+
+		bool _disallowZeroValue;
+		public bool DisallowZeroValues
+		{
+			get { return _disallowZeroValue; }
+			set { _disallowZeroValue = value; }
+		}
+
+		bool _allowInfinity = true;
+		public bool AllowInfiniteValues
+		{
+			get { return _allowInfinity; }
+			set { _allowInfinity = value; }
+		}
+
+		bool _allowNaN;
+		public bool AllowNaNValues
+		{
+			get { return _allowNaN; }
+			set { _allowNaN = value; }
+		}
+
 		/// <summary>
 		/// Empty constructor. You should set as soon as possible the <see cref="BindingExpression"/> to the binding expression between your QuantityWithUnit property and the
 		/// Text property of your TextBox, ComboBox, or other Gui element. Furthermore, the <see cref="UnitEnvironment"/> property should be set
@@ -130,7 +158,9 @@ namespace Altaxo.Gui.Common
 		{
 			if (null != _parent && null!=_quantityGetSetProperty && null!=_unitEnvironment)
 			{
-				SelectedQuantity = SelectedQuantity.AsQuantityIn(_unitEnvironment.DefaultUnit);
+				var selectedQuantity = SelectedQuantity;
+				if(!selectedQuantity.IsEmpty)
+					SelectedQuantity = selectedQuantity.AsQuantityIn(_unitEnvironment.DefaultUnit);
 			}
 		}
 		
@@ -158,6 +188,9 @@ namespace Altaxo.Gui.Common
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
 			var q = (DimensionfulQuantity)value;
+
+			if (q.IsEmpty)
+				return string.Empty;
 
 			if (null != _lastConvertedQuantity && q.IsEqualInValuePrefixUnit(((DimensionfulQuantity)_lastConvertedQuantity)))
 			{
@@ -336,9 +369,22 @@ namespace Altaxo.Gui.Common
 		ValidationResult ValidateSuccessfullyConvertedQuantity(DimensionfulQuantity value)
 		{
 			if (null != _validationAfterSuccessfulConversion)
+			{
 				return _validationAfterSuccessfulConversion(value);
+			}
 			else
+			{
+				if (_disallowNegativeValues && value.Value < 0)
+					return new ValidationResult(false, "A negative value is not allowed here");
+				if (_disallowZeroValue && value.Value == 0)
+					return new ValidationResult(false, "A zero value is not allowed here");
+				if (!_allowInfinity && double.IsInfinity(value.Value))
+					return new ValidationResult(false, "An infinite value is not allowed here");
+				if (!_allowNaN && double.IsNaN(value.Value))
+					return new ValidationResult(false, "A NaN value ('Not a Number') is not allowed here");
+
 				return ValidationResult.ValidResult;
+			}
 		}
 
 

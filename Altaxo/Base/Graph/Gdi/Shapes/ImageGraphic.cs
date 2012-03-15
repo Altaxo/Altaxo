@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 		protected ImageGraphic(ImageGraphic from)
 			:
-			base(from)
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 

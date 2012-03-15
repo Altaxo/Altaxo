@@ -229,31 +229,35 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		public DensityImageLegend(DensityImageLegend from)
+			: base(from)  // all is done here, since CopyFrom is virtual!
 		{
-			_plotItemProxy = new Main.RelDocNodeProxy();
-			WirePlotItemProxyEvents();
-
-			CopyFrom(from);
 		}
 
-		public void CopyFrom(object o)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, o))
-				return;
-
-			base.CopyFrom((GraphicBase)o);
-			var from = o as DensityImageLegend;
-			if (null != from)
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				_cachedArea = new DensityLegendArea(from._cachedArea);
+				var from = obj as DensityImageLegend;
+				if (null != from)
+				{
+					_cachedArea = new DensityLegendArea(from._cachedArea);
 
-				this._axisStyles = (AxisStyleCollection)from._axisStyles.Clone();
-				this._axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
-				this._axisStyles.ParentObject = this;
+					this._axisStyles = (AxisStyleCollection)from._axisStyles.Clone();
+					this._axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
+					this._axisStyles.ParentObject = this;
 
-				this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
-				this._plotItemProxy.CopyPathOnlyFrom(from._plotItemProxy, this);
+					this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
+					
+					if (null == _plotItemProxy)
+					{
+						_plotItemProxy = new Main.RelDocNodeProxy();
+						WirePlotItemProxyEvents();
+					}
+					this._plotItemProxy.CopyPathOnlyFrom(from._plotItemProxy, this);
+				}
 			}
+				return isCopied;
 		}
 
 		public override object Clone()

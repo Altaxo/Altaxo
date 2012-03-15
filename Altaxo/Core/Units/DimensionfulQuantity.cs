@@ -39,7 +39,7 @@ namespace Altaxo.Units
 		/// <summary>Creates a dimensionless quantity with the provided value.</summary>
 		/// <param name="value">Value.</param>
 		public DimensionfulQuantity(double value)
-			: this(value, null, null)
+			: this(value, null, Altaxo.Units.Dimensionless.Unity.Instance)
 		{
 		}
 
@@ -57,6 +57,9 @@ namespace Altaxo.Units
 		/// <param name="unit">The unit of the created quantity.</param>
 		public DimensionfulQuantity(double value, SIPrefix prefix, IUnit unit)
 		{
+			if (null == unit)
+				throw new ArgumentNullException("unit");
+
 			_value = value;
 			_prefix = prefix;
 			_unit = unit;
@@ -77,7 +80,7 @@ namespace Altaxo.Units
 		/// <returns>Returns <c>true</c> if <paramref name="a"/> is equal in all three components(value, prefix, unit) to this quantity; otherwise, <c>false</c>.</returns>
 		public bool IsEqualInValuePrefixUnit(DimensionfulQuantity a)
 		{
-			return this.Value == a.Value && this.Prefix == a.Prefix && this.Unit == a.Unit; 
+			return this._value == a._value && this.Prefix == a.Prefix && this._unit == a._unit; 
 		}
 
 		/// <summary>
@@ -90,12 +93,31 @@ namespace Altaxo.Units
 			return new DimensionfulQuantity(value, _prefix, _unit);
 		}
 
+		/// <summary>Gets a value indicating whether this instance is empty. It is empty if no unit has been associated so far with this instance.</summary>
+		/// <value>Is <see langword="true"/> if this instance is empty; otherwise, <see langword="false"/>.</value>
+		public bool IsEmpty
+		{
+			get
+			{
+				return _unit == null;
+			}
+		}
+
+		/// <summary>Gets an empty, i.e. uninitialized, quantity.</summary>
+		public static DimensionfulQuantity Empty
+		{
+			get
+			{
+				return new DimensionfulQuantity();
+			}
+		}
+
 		/// <summary>Gets the unit of this quantity.</summary>
 		public IUnit Unit
 		{
 			get
 			{
-				return _unit ?? Units.Dimensionless.Unity.Instance;
+				return _unit;
 			}
 		}
 
@@ -122,6 +144,9 @@ namespace Altaxo.Units
 		{
 			get
 			{
+				if (null == _unit)
+					throw new InvalidOperationException("This instance is empty");
+
 				double result = _value;
 				if (null != _prefix)
 					result = _prefix.ToSIUnit(result);
@@ -138,8 +163,10 @@ namespace Altaxo.Units
 		{
 			if (null == unit)
 				throw new ArgumentNullException("unit");
-			if (unit.SIUnit != this.Unit.SIUnit)
-				throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this.Unit));
+			if (null == _unit)
+				throw new InvalidOperationException("This instance is empty");
+			if (unit.SIUnit != this._unit.SIUnit)
+				throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this._unit));
 
 			return unit.FromSIUnit(AsValueInSIUnits);
 		}
@@ -154,8 +181,10 @@ namespace Altaxo.Units
 				throw new ArgumentNullException("unit");
 			if (null == prefix)
 				throw new ArgumentNullException("prefix");
-			if (unit.SIUnit != this.Unit.SIUnit)
-				throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this.Unit));
+			if (null == _unit)
+				throw new InvalidOperationException("This instance is empty");
+			if (unit.SIUnit != this._unit.SIUnit)
+				throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this._unit));
 
 			return prefix.FromSIUnit(unit.FromSIUnit(AsValueInSIUnits));
 		}
@@ -210,7 +239,7 @@ namespace Altaxo.Units
 		/// <returns>The value is 1, if this quantity is greater than the other quantity; 0 if both quantities are equal, and -1 if this quantity is less than the other quantity.</returns>
 		public int CompareTo(DimensionfulQuantity other)
 		{
-			if(this._unit.SIUnit != other._unit.SIUnit)
+			if(null == this._unit || null== other._unit || this._unit.SIUnit != other._unit.SIUnit)
 				throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}",this._unit.Name, other._unit.Name));
 
 			double thisval = this.AsValueIn(_unit.SIUnit);

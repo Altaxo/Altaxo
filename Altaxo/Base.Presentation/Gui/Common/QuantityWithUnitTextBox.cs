@@ -66,9 +66,14 @@ namespace Altaxo.Gui.Common
 			binding.Converter = _converter;
 			binding.ValidationRules.Add(_converter);
 			_converter.BindingExpression = this.SetBinding(TextBox.TextProperty, binding);
-
 			this.TextChanged += new TextChangedEventHandler(QuantityWithUnitTextBox_TextChanged);
 		}
+
+		public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
+		public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
+		public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
+		public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
+
 
 		#region Change selection behaviour
 
@@ -131,9 +136,21 @@ namespace Altaxo.Gui.Common
 
 		#endregion Change selection behaviour
 
+		bool _validateWhenTextChange;
+		public bool UpdateQuantityIfTextChanged
+		{
+			set
+			{
+				_validateWhenTextChange = value;
+			}
+		}
+
 		void QuantityWithUnitTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			_converter.BindingExpression.ValidateWithoutUpdate();
+			if (_validateWhenTextChange)
+				_converter.BindingExpression.UpdateSource();
+			else
+				_converter.BindingExpression.ValidateWithoutUpdate();
 		}
 
 		protected override void OnContextMenuOpening(ContextMenuEventArgs e)

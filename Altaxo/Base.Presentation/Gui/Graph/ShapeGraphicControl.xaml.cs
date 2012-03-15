@@ -39,7 +39,6 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for ShapeGraphicControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IShapeGraphicViewEventSink))]
 	public partial class ShapeGraphicControl : UserControl, IShapeGraphicView
 	{
 		public ShapeGraphicControl()
@@ -69,18 +68,6 @@ namespace Altaxo.Gui.Graph
 			set
 			{
 				_fillingBrushControl.SelectedBrush = value;
-			}
-		}
-
-		public bool IsFilled
-		{
-			get
-			{
-				return _fillingBrushControl.IsBrushEnabled;
-			}
-			set
-			{
-				_fillingBrushControl.IsBrushEnabled = value;
 			}
 		}
 

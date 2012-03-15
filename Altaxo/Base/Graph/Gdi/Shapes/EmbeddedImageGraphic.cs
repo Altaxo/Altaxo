@@ -138,21 +138,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public EmbeddedImageGraphic(EmbeddedImageGraphic from)
 			:
-			base(from) // all is done here, since CopyFrom is overridden
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 
-		protected override void CopyFrom(GraphicBase bfrom)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, bfrom))
-				return;
-
-			EmbeddedImageGraphic from = bfrom as EmbeddedImageGraphic;
-			if (from != null)
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				this._imageProxy = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
+				var from = obj as EmbeddedImageGraphic;
+				if (null != from)
+				{
+					this._imageProxy = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
+				}
 			}
-			base.CopyFrom(bfrom);
+			return isCopied;
 		}
 
 		#endregion

@@ -34,7 +34,6 @@ namespace Altaxo.Gui.Graph
   {
     PenX DocPen { get; set; }
     BrushX DocBrush { get; set; }
-    bool IsFilled { get; set; }
     PointD2D DocPosition { get; set; }
     PointD2D DocSize { get; set; }
     double DocRotation { get; set; }
@@ -42,73 +41,33 @@ namespace Altaxo.Gui.Graph
     double DocScaleX { get; set; }
     double DocScaleY { get; set; }
   }
-  public interface IShapeGraphicViewEventSink
-  {
-  }
+ 
 
   [UserControllerForObject(typeof(ClosedPathShapeBase))]
   [ExpectedTypeOfView(typeof(IShapeGraphicView))]
-  public class ShapeGraphicController : IShapeGraphicViewEventSink, IMVCAController
+  public class ShapeGraphicController : MVCANControllerBase<ClosedPathShapeBase,IShapeGraphicView>
   {
-    IShapeGraphicView _view;
-    ClosedPathShapeBase _doc;
-    ClosedPathShapeBase _tempdoc;
-
-    #region IMVCController Members
-
-    public ShapeGraphicController(ClosedPathShapeBase doc)
-    {
-      _doc = doc;
-      _tempdoc = (ClosedPathShapeBase)doc.Clone();
-      Initialize(true);
-    }
-
-    void Initialize(bool bInit)
-    {
+		protected override void  Initialize(bool initData)
+{
       if (_view != null)
       {
-        _view.DocPen = _tempdoc.Pen;
-        _view.DocBrush = _tempdoc.Brush;
-        _view.IsFilled = _tempdoc.Brush.IsVisible;
-        _view.DocPosition = _tempdoc.Position;
-        _view.DocSize = _tempdoc.Size;
-        _view.DocRotation = _tempdoc.Rotation;
-        _view.DocShear = _tempdoc.Shear;
-        _view.DocScaleX = _tempdoc.ScaleX;
-        _view.DocScaleY = _tempdoc.ScaleY;
+        _view.DocPen = _doc.Pen;
+        _view.DocBrush = _doc.Brush;
+        _view.DocPosition = _doc.Position;
+        _view.DocSize = _doc.Size;
+        _view.DocRotation = _doc.Rotation;
+        _view.DocShear = _doc.Shear;
+        _view.DocScaleX = _doc.ScaleX;
+        _view.DocScaleY = _doc.ScaleY;
       }
     }
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        //     if (_view != null)
-        //       _view.Controller = null;
+  
 
-        _view = value as IShapeGraphicView;
 
-        Initialize(false);
 
-        //      if (_view != null)
-        //      _view.Controller = this;
-      }
-    }
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
-
-    #endregion
-
-    #region IApplyController Members
-
-    public bool Apply()
+    public override bool Apply()
     {
       _doc.Pen = _view.DocPen;
       _doc.Brush = _view.DocBrush;
@@ -118,9 +77,12 @@ namespace Altaxo.Gui.Graph
       _doc.Shear = _view.DocShear;
       _doc.ScaleX = _view.DocScaleX;
       _doc.ScaleY = _view.DocScaleY;
+
+			if (_useDocumentCopy)
+				_originalDoc.CopyFrom(_doc);
+
       return true;
     }
 
-    #endregion
   }
 }

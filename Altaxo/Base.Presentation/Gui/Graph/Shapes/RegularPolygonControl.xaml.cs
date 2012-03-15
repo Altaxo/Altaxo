@@ -34,68 +34,45 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
-	/// Interaction logic for LineGraphicControl.xaml
+	/// Interaction logic for RegularPolygonControl.xaml
 	/// </summary>
-	public partial class LineGraphicControl : UserControl, ILineGraphicView
+	public partial class RegularPolygonControl : UserControl, IRegularPolygonView
 	{
-		public LineGraphicControl()
+		public RegularPolygonControl()
 		{
 			InitializeComponent();
 		}
 
-		#region ILineGraphicView
+		public IShapeGraphicView ShapeGraphicView
+		{
+			get { return _guiShapeControl; }
+		}
 
-		public Altaxo.Graph.Gdi.PenX DocPen
+		public int Vertices
 		{
 			get
 			{
-				return _penControl.Pen;
+				return _guiNumberOfVertices.Value;
 			}
 			set
 			{
-				_penControl.Pen = value;
+				_guiNumberOfVertices.Value = value;
 			}
 		}
 
-		public Altaxo.Graph.PointD2D DocPosition
+		public double CornerRadiusPt
 		{
 			get
 			{
-				return _positioningControl.PositionSizeGlue.Position;
+				return _guiCornerRadius.SelectedQuantity.AsValueIn(Altaxo.Units.Length.Point.Instance);
 			}
 			set
 			{
-				_positioningControl.PositionSizeGlue.Position = value;
+				_guiCornerRadius.SelectedQuantity = new Units.DimensionfulQuantity(value, Altaxo.Units.Length.Point.Instance).AsQuantityIn(_guiCornerRadius.UnitEnvironment.DefaultUnit);
 			}
 		}
-
-		public Altaxo.Graph.PointD2D DocSize
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Size;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Size = value;
-			}
-		}
-
-		public double DocRotation
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Rotation;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Rotation = value;
-			}
-		}
-
-		#endregion
 	}
 }

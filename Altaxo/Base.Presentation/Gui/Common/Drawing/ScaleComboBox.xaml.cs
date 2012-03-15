@@ -50,6 +50,11 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static readonly double[] _initialValues = new double[] { 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0 };
 
+		static ScaleComboBox()
+		{
+			SelectedQuantityProperty.OverrideMetadata(typeof(ScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Units.Dimensionless.Unity.Instance)));
+		}
+
 		public ScaleComboBox()
 		{
 			UnitEnvironment = RelationEnvironment.Instance;

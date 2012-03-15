@@ -112,7 +112,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 
 				var s = null != o ? (DeprecatedLineShape)o : new DeprecatedLineShape();
-				info.GetBaseValueEmbedded(s, typeof(DeprecatedLineShape).BaseType, parent);
+
+				info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
+
+				var pen = (PenX)info.GetValue("LinePen", s);
+				info.GetBoolean("Fill");
+				info.GetValue("FillBrush", s);
+
 
 				var l = new LineShape();
 				l.CopyFrom(s);
@@ -200,7 +206,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		public LineShape(LineShape from)
-			: base(from)
+			: base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 

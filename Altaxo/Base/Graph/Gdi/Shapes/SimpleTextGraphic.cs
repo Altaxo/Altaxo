@@ -85,23 +85,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public SimpleTextGraphic(SimpleTextGraphic from)
 			:
-			base(from) // all is done here, since CopyFrom is overridden
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
 
 		}
-		protected override void CopyFrom(GraphicBase bfrom)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, bfrom))
-				return;
-
-			SimpleTextGraphic from = bfrom as SimpleTextGraphic;
-			if (from != null)
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				this._font = null == from._font ? null : (Font)from._font.Clone();
-				this._text = from._text;
-				this._color = from._color;
+				var from = obj as SimpleTextGraphic;
+				if (null != from)
+				{
+					this._font = null == from._font ? null : (Font)from._font.Clone();
+					this._text = from._text;
+					this._color = from._color;
+				}
 			}
-			base.CopyFrom(bfrom);
+			return isCopied;
 		}
 
 		public SimpleTextGraphic(PointD2D graphicPosition, string text,

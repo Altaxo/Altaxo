@@ -146,21 +146,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public LinkedImageGraphic(LinkedImageGraphic from)
 			:
-			base(from)
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
-		protected override void CopyFrom(GraphicBase bfrom)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, bfrom))
-				return;
-
-			LinkedImageGraphic from = bfrom as LinkedImageGraphic;
-			if (from != null)
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				this._imagePath = from._imagePath;
-				this._cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
+				var from = obj as LinkedImageGraphic;
+				if (from != null)
+				{
+					this._imagePath = from._imagePath;
+					this._cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
+				}
 			}
-			base.CopyFrom(bfrom);
+			return isCopied;
 		}
 
 		#endregion
