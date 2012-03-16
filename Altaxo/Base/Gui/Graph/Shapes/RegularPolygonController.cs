@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Graph.Shapes
 {
 	public interface IRegularPolygonView
 	{
-		IShapeGraphicView ShapeGraphicView { get; }
+		IClosedPathShapeView ShapeGraphicView { get; }
 
 		int Vertices { get; set; }
 
@@ -43,13 +43,13 @@ namespace Altaxo.Gui.Graph.Shapes
 	[ExpectedTypeOfView(typeof(IRegularPolygonView))]
 	public class RegularPolygonController : MVCANControllerBase<RegularPolygon, IRegularPolygonView>
 	{
-		ShapeGraphicController _shapeCtrl;
+		ClosedPathShapeController _shapeCtrl;
 
 		protected override void Initialize(bool initData)
 		{
 			if (initData)
 			{
-				_shapeCtrl = new ShapeGraphicController() { UseDocumentCopy = UseDocument.Directly };
+				_shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
 				_shapeCtrl.InitializeDocument(_doc);
 			}
 			if (null != _view)

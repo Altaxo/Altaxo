@@ -34,68 +34,78 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph
+using Altaxo.Graph;
+
+namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
-	/// Interaction logic for LineGraphicControl.xaml
+	/// Interaction logic for AnchoringControl.xaml
 	/// </summary>
-	public partial class LineGraphicControl : UserControl, ILineGraphicView
+	public partial class AnchoringControl : UserControl
 	{
-		public LineGraphicControl()
+		RadioButton[,] _buttons;
+
+		XAnchorPositionType _xAnchor;
+		YAnchorPositionType _yAnchor;
+
+		public AnchoringControl()
 		{
 			InitializeComponent();
+			_buttons = new RadioButton[3,3]{{_guiLeftTop, _guiCenterTop, _guiRightTop },{_guiLeftCenter, _guiCenterCenter, _guiRightCenter },{_guiLeftBottom, _guiCenterBottom, _guiRightBottom }};
+			SetRadioButton();
 		}
 
-		#region ILineGraphicView
+		private void EhRadioChecked(object sender, RoutedEventArgs e)
+		{
+			for (int i = 0; i < 3; ++i)
+			{
+				for (int j = 0; j < 3; ++j)
+				{
+					if (object.Equals(sender, _buttons[j, i]))
+					{
+						_xAnchor = (XAnchorPositionType)i;
+						_yAnchor = (YAnchorPositionType)j;
+					}
+				}
+			}
+		}
 
-		public Altaxo.Graph.Gdi.PenX DocPen
+		private void SetRadioButton()
+		{
+			int i = (int)_xAnchor;
+			int j = (int)_yAnchor;
+			_buttons[j, i].IsChecked = true;
+		}
+
+		public XAnchorPositionType SelectedXAnchor
 		{
 			get
 			{
-				return _penControl.Pen;
+				return _xAnchor;
 			}
 			set
 			{
-				_penControl.Pen = value;
+				var oldValue = _xAnchor;
+				_xAnchor = value;
+				if (value != oldValue)
+					SetRadioButton();
 			}
 		}
 
-		public Altaxo.Graph.PointD2D DocPosition
+
+		public YAnchorPositionType SelectedYAnchor
 		{
 			get
 			{
-				return _positioningControl.PositionSizeGlue.Position;
+				return _yAnchor;
 			}
 			set
 			{
-				_positioningControl.PositionSizeGlue.Position = value;
+				var oldValue = _yAnchor;
+				_yAnchor = value;
+				if (value != oldValue)
+					SetRadioButton();
 			}
 		}
-
-		public Altaxo.Graph.PointD2D DocSize
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Size;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Size = value;
-			}
-		}
-
-		public double DocRotation
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Rotation;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Rotation = value;
-			}
-		}
-
-		#endregion
 	}
 }

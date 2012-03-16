@@ -440,7 +440,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LineGraphicControl.xaml">
+    <Page Include="Gui\Graph\Shapes\AnchoringControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\Shapes\OpenPathShapeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -524,7 +528,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ShapeGraphicControl.xaml">
+    <Page Include="Gui\Graph\Shapes\ClosedPathShapeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -536,7 +540,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\TextGraphicControl.xaml">
+    <Page Include="Gui\Graph\Shapes\TextGraphicControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -929,8 +933,11 @@
     <Compile Include="Gui\Graph\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LineGraphicControl.xaml.cs">
-      <DependentUpon>LineGraphicControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\Shapes\AnchoringControl.xaml.cs">
+      <DependentUpon>AnchoringControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Shapes\OpenPathShapeControl.xaml.cs">
+      <DependentUpon>OpenPathShapeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
     <Compile Include="Gui\Graph\OrgEndSpanControl.xaml.cs">
@@ -993,8 +1000,8 @@
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.xaml.cs">
       <DependentUpon>LinearTickSpacingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ShapeGraphicControl.xaml.cs">
-      <DependentUpon>ShapeGraphicControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\Shapes\ClosedPathShapeControl.xaml.cs">
+      <DependentUpon>ClosedPathShapeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\SingleColumnChoiceControl.xaml.cs">
       <DependentUpon>SingleColumnChoiceControl.xaml</DependentUpon>
@@ -1002,7 +1009,7 @@
     <Compile Include="Gui\Graph\SingleGraphPrintOptionsControl.xaml.cs">
       <DependentUpon>SingleGraphPrintOptionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\TextGraphicControl.xaml.cs">
+    <Compile Include="Gui\Graph\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\TitleFormatLayerControl.xaml.cs">

@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Graph.Shapes
 {
 	public interface IClosedCardinalSplineView
 	{
-		IShapeGraphicView ShapeGraphicView { get; }
+		IClosedPathShapeView ShapeGraphicView { get; }
 		ICardinalSplinePointsView SplinePointsView { get; }
 	}
 
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Shapes
 	[ExpectedTypeOfView(typeof(IClosedCardinalSplineView))]
 	public class ClosedCardinalSplineController : MVCANControllerBase<ClosedCardinalSpline, IClosedCardinalSplineView>
 	{
-		ShapeGraphicController _shapeCtrl;
+		ClosedPathShapeController _shapeCtrl;
 		CardinalSplinePointsController _splinePointsCtrl;
 	
 
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		{
 			if (initData)
 			{
-				_shapeCtrl = new ShapeGraphicController() { UseDocumentCopy = UseDocument.Directly };
+				_shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
 				_shapeCtrl.InitializeDocument(_doc);
 			}
 			if (null != _view)
@@ -71,6 +71,12 @@ namespace Altaxo.Gui.Graph.Shapes
 
 			if (_splinePointsCtrl.Apply(out list, out tension))
 			{
+				if (!(list.Count >= 3))
+				{
+					Current.Gui.ErrorMessageBox("At least three points are required for the closed cardinal spline. Please enter more points!");
+					return false;
+				}
+
 				_doc.CurvePoints = list;
 				_doc.Tension = tension;
 			}

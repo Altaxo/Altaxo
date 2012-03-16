@@ -28,53 +28,61 @@ using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Graph.Shapes
 {
-  public interface ILineGraphicView
+  public interface IClosedPathShapeView
   {
     PenX DocPen { get; set; }
+    BrushX DocBrush { get; set; }
     PointD2D DocPosition { get; set; }
     PointD2D DocSize { get; set; }
     double DocRotation { get; set; }
+    double DocShear { get; set; }
+    double DocScaleX { get; set; }
+    double DocScaleY { get; set; }
   }
+ 
 
-  [UserControllerForObject(typeof(OpenPathShapeBase),101)]
-  [ExpectedTypeOfView(typeof(ILineGraphicView))]
-  public class LineGraphicController : MVCANControllerBase<OpenPathShapeBase,ILineGraphicView>
+  [UserControllerForObject(typeof(ClosedPathShapeBase))]
+  [ExpectedTypeOfView(typeof(IClosedPathShapeView))]
+  public class ClosedPathShapeController : MVCANControllerBase<ClosedPathShapeBase,IClosedPathShapeView>
   {
-    #region IMVCController Members
-
-   
-		
-    protected override void Initialize(bool bInit)
-    {
+		protected override void  Initialize(bool initData)
+{
       if (_view != null)
       {
         _view.DocPen = _doc.Pen;
+        _view.DocBrush = _doc.Brush;
         _view.DocPosition = _doc.Position;
         _view.DocSize = _doc.Size;
         _view.DocRotation = _doc.Rotation;
+        _view.DocShear = _doc.Shear;
+        _view.DocScaleX = _doc.ScaleX;
+        _view.DocScaleY = _doc.ScaleY;
       }
     }
 
- 
-    #endregion
+  
 
-    #region IApplyController Members
+
+
 
     public override bool Apply()
     {
-      _originalDoc.Pen = _view.DocPen;
-      _originalDoc.Position = _view.DocPosition;
-      _originalDoc.Size = _view.DocSize;
-      _originalDoc.Rotation = _view.DocRotation;
+      _doc.Pen = _view.DocPen;
+      _doc.Brush = _view.DocBrush;
+      _doc.Position = _view.DocPosition;
+      _doc.Size = _view.DocSize;
+      _doc.Rotation = _view.DocRotation;
+      _doc.Shear = _view.DocShear;
+      _doc.ScaleX = _view.DocScaleX;
+      _doc.ScaleY = _view.DocScaleY;
 
-			if(_useDocumentCopy)
-			_doc = (OpenPathShapeBase)_originalDoc.Clone();
+			if (_useDocumentCopy)
+				_originalDoc.CopyFrom(_doc);
 
       return true;
     }
 
-    #endregion
   }
 }

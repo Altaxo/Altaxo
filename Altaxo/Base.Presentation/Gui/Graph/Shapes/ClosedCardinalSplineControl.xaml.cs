@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			InitializeComponent();
 		}
 
-		public IShapeGraphicView ShapeGraphicView
+		public IClosedPathShapeView ShapeGraphicView
 		{
 			get { return _guiShapeControl; }
 		}

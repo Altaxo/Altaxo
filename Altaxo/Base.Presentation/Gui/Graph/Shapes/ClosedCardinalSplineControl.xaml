@@ -13,7 +13,7 @@
 	</UserControl.Resources>
 	<TabControl>
 		<TabItem Header="Appearance/Position">
-			<axogg:ShapeGraphicControl x:Name="_guiShapeControl"/>
+			<axoggs:ClosedPathShapeControl x:Name="_guiShapeControl"/>
 		</TabItem>
 		<TabItem Header="Curve">
 			<axoggs:CardinalSplinePointsControl x:Name="_guiPointsControl"/>

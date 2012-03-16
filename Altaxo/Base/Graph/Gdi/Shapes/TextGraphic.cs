@@ -497,6 +497,30 @@ namespace Altaxo.Graph.Gdi.Shapes
 			set { _yAnchorType = value; }
 		}
 
+		public double LineSpacing
+		{
+			get
+			{
+				return _lineSpacingFactor;
+			}
+			set
+			{
+				if (double.IsNaN(value) || double.IsInfinity(value))
+					throw new ArgumentException("LineSpacing is NaN or Infinity");
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("LineSpacing should be a non-negative value, but is: " + value.ToString());
+
+				var oldValue = _lineSpacingFactor;
+				_lineSpacingFactor = value;
+
+				if (value != oldValue)
+				{
+					_isStructureInSync = false; // TODO: LineSpacing should not affect the structure, but only the measurement
+					OnChanged();
+				}
+			}
+		}
+
 		#endregion
 
 		#region Interpreting and Painting
@@ -512,7 +536,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			StyleContext style = new StyleContext(new FontIdentifier(_font.FontFamily.Name, _font.Style, _font.Size), _textBrush);
 			style.BaseFontId = new FontIdentifier(_font.FontFamily.Name, _font.Style, _font.Size);
 
-			_rootNode = walker.VisitTree(tree, style);
+			_rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
 		}
 
 		void MeasureGlyphs(Graphics g, FontCache cache, object linkedObject)

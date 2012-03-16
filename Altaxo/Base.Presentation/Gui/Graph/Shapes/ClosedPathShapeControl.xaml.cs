@@ -34,14 +34,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
 	/// Interaction logic for ShapeGraphicControl.xaml
 	/// </summary>
-	public partial class ShapeGraphicControl : UserControl, IShapeGraphicView
+	public partial class ClosedPathShapeControl : UserControl, IClosedPathShapeView
 	{
-		public ShapeGraphicControl()
+		public ClosedPathShapeControl()
 		{
 			InitializeComponent();
 		}

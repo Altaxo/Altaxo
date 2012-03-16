@@ -53,12 +53,17 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected override void FinishDrawing()
 		{
 			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-			CurlyBraceShape go = new CurlyBraceShape(new PointD2D(rect.X, rect.Y), new PointD2D(rect.Width, rect.Height));
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-			_grac.ActiveLayer.GraphObjects.Add(go);
-			_grac.InvalidateCachedGraphImageAndRepaintOffline();
+
+			if (rect.Width != 0 && rect.Height != 0)
+			{
+				CurlyBraceShape go = new CurlyBraceShape(new PointD2D(rect.X, rect.Y), new PointD2D(rect.Width, rect.Height));
+				_grac.ActiveLayer.GraphObjects.Add(go);
+			}
+				_grac.InvalidateCachedGraphImageAndRepaintOffline();
+			
 		}
 
 	}

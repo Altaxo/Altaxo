@@ -37,42 +37,101 @@ using System.Windows.Shapes;
 namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
-	/// Interaction logic for RegularPolygonControl.xaml
+	/// Interaction logic for LineGraphicControl.xaml
 	/// </summary>
-	public partial class RegularPolygonControl : UserControl, IRegularPolygonView
+	public partial class OpenPathShapeControl : UserControl, IOpenPathShapeView
 	{
-		public RegularPolygonControl()
+		public OpenPathShapeControl()
 		{
 			InitializeComponent();
 		}
 
-		public IClosedPathShapeView ShapeGraphicView
-		{
-			get { return _guiShapeControl; }
-		}
+		#region ILineGraphicView
 
-		public int Vertices
+		public Altaxo.Graph.Gdi.PenX DocPen
 		{
 			get
 			{
-				return _guiNumberOfVertices.Value;
+				return _penControl.Pen;
 			}
 			set
 			{
-				_guiNumberOfVertices.Value = value;
+				_penControl.Pen = value;
 			}
 		}
 
-		public double CornerRadiusPt
+		public Altaxo.Graph.PointD2D DocPosition
 		{
 			get
 			{
-				return _guiCornerRadius.SelectedQuantity.AsValueIn(Altaxo.Units.Length.Point.Instance);
+				return _positioningControl.PositionSizeGlue.Position;
 			}
 			set
 			{
-				_guiCornerRadius.SelectedQuantity = new Units.DimensionfulQuantity(value, Altaxo.Units.Length.Point.Instance).AsQuantityIn(_guiCornerRadius.UnitEnvironment.DefaultUnit);
+				_positioningControl.PositionSizeGlue.Position = value;
 			}
 		}
+
+		public Altaxo.Graph.PointD2D DocSize
+		{
+			get
+			{
+				return _positioningControl.PositionSizeGlue.Size;
+			}
+			set
+			{
+				_positioningControl.PositionSizeGlue.Size = value;
+			}
+		}
+
+		public double DocRotation
+		{
+			get
+			{
+				return _positioningControl.PositionSizeGlue.Rotation;
+			}
+			set
+			{
+				_positioningControl.PositionSizeGlue.Rotation = value;
+			}
+		}
+
+		public double DocShear
+		{
+			get
+			{
+				return _positioningControl.PositionSizeGlue.Shear;
+			}
+			set
+			{
+				_positioningControl.PositionSizeGlue.Shear = value;
+			}
+		}
+
+		public double DocScaleX
+		{
+			get
+			{
+				return _positioningControl.PositionSizeGlue.ScaleX;
+			}
+			set
+			{
+				_positioningControl.PositionSizeGlue.ScaleX = value;
+			}
+		}
+
+		public double DocScaleY
+		{
+			get
+			{
+				return _positioningControl.PositionSizeGlue.ScaleY;
+			}
+			set
+			{
+				_positioningControl.PositionSizeGlue.ScaleY = value;
+			}
+		}
+
+		#endregion
 	}
 }

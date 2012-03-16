@@ -206,12 +206,17 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected virtual void FinishDrawing()
 		{
 			_currentPoint = 0;
-			var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoord);
-			var go = new OpenCardinalSpline(pts,_tension);
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(NextMouseHandlerType);
-			_grac.ActiveLayer.GraphObjects.Add(go);
+
+			if (_Points.Count >= 2)
+			{
+				var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoord);
+				var go = new OpenCardinalSpline(pts, _tension);
+				_grac.ActiveLayer.GraphObjects.Add(go);
+			}
+
 			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 
 		}

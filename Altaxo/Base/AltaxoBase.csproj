@@ -327,7 +327,7 @@
     <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleController.cs" />
     <Compile Include="Gui\Graph\ExchangeTablesOfPlotItemsController.cs" />
     <Compile Include="Gui\Graph\G2DPlotItemControllerOld.cs" />
-    <Compile Include="Gui\Graph\LineGraphicController.cs" />
+    <Compile Include="Gui\Graph\Shapes\OpenPathShapeController.cs" />
     <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
     <Compile Include="Gui\Settings\AutoUpdateSettingsController.cs" />
     <Compile Include="Gui\Settings\DocumentCultureSettingsController.cs" />
@@ -337,7 +337,7 @@
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
     <Compile Include="Gui\Graph\PrintingController.cs" />
-    <Compile Include="Gui\Graph\ShapeGraphicController.cs" />
+    <Compile Include="Gui\Graph\Shapes\ClosedPathShapeController.cs" />
     <Compile Include="Gui\Graph\SingleGraphPrintOptionsController.cs" />
     <Compile Include="Gui\Graph\XYAxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph\XYColumnPlotDataController.cs" />
@@ -966,7 +966,7 @@
     <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingController.cs" />
     <Compile Include="Gui\Graph\SingleColumnChoiceController.cs" />
-    <Compile Include="Gui\Graph\TextGraphicController.cs" />
+    <Compile Include="Gui\Graph\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph\TitleFormatLayerController.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphController.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphToolType.cs" />

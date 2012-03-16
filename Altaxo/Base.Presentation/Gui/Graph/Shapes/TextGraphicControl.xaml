@@ -1,0 +1,152 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Shapes.TextGraphicControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Shapes"
+             mc:Ignorable="d"
+						 Loaded="EhLoaded">
+	<UserControl.Resources>
+		<Style TargetType="Button">
+			<Style.Setters>
+				<Setter Property="Margin" Value="4,4,4,4"/>
+				<Setter Property="MinWidth" Value="24"/>
+			</Style.Setters>
+		</Style>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="0,0,4,0"/>
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+			</Style.Setters>
+		</Style>
+
+	</UserControl.Resources>
+	<TabControl>
+		<TabItem Header="Appearance">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="8"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="4"/>
+				</Grid.RowDefinitions>
+				<Label Grid.Column="0" Grid.Row="0" Content="Font:"/>
+				<axogcd:FontFamilyComboBox x:Name="m_cbFonts" Grid.Column="1" Grid.Row="0" SelectedFontFamilyChanged="EhFontFamilyChanged"/>
+				<Label Grid.Column="2" Grid.Row="0" Content="Size:"/>
+				<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="3" Grid.Row="0" SelectedQuantityChanged="EhFontSize_Changed"/>
+				<Label Grid.Column="4" Grid.Row="0" Content="Brush:"/>
+				<axogcd:BrushComboBox x:Name="m_cbFontColor" Grid.Column="5" Grid.Row="0" SelectedBrushChanged="EhTextBrush_SelectionChangeCommitted"/>
+
+				<Label Grid.Column="0" Grid.Row="2" Content="LineSpacing:"/>
+				<axogc:QuantityWithUnitTextBox x:Name="_guiLineSpacing" Grid.Column="1" Grid.Row="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" DisallowNegativeValues="True" SelectedQuantityChanged="EhLineSpacingChanged"/>
+				
+				<Label Grid.Column="2" Grid.Row="2" Content="Background:"/>
+				<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" Margin="0,0,8,0"/>
+				<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="5" Grid.Row="2"/>
+
+
+			
+
+				<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="8" Grid.Row="6" >
+					<Button Content="N" FontFamily="Times New Roman" ToolTip="Normal" Click="EhNormal_Click"/>
+					<Button Content="B" FontFamily="Times New Roman" FontWeight="Bold" ToolTip="Bold" Click="EhBold_Click"/>
+					<Button Content="I" FontFamily="Times New Roman" FontStyle="Italic" ToolTip="Italic" Click="EhItalic_Click"/>
+					<Button FontFamily="Times New Roman" ToolTip="Underline" Click="EhUnderline_Click">
+						<Grid>
+							<TextBlock Text="U"/>
+							<Rectangle Height="1" Width="10" Fill="Red" VerticalAlignment="Bottom"/>
+						</Grid>
+					</Button>
+					<Button FontFamily="Times New Roman" ToolTip="Strikeout" Click="EhStrikeout_Click">
+						<Grid>
+							<TextBlock Text="S"/>
+							<Rectangle Height="1" Width="10" Fill="Red"/>
+						</Grid>
+					</Button>
+					<Button FontFamily="Times New Roman" ToolTip="Superscript" Click="EhSupIndex_Click" >
+						<TextBlock  >
+					<Run FontFamily="Times New Roman" Text="x"/>
+					<Run FontFamily="Times New Roman" BaselineAlignment="Superscript"  FontSize="8" Text="2" Foreground="Red"/>
+						</TextBlock>
+					</Button>
+					<Button FontFamily="Times New Roman" ToolTip="Supscript" Click="EhSubIndex_Click">
+						<TextBlock  >
+					<Run FontFamily="Times New Roman" Text="x"/>
+					<Run FontFamily="Times New Roman" BaselineAlignment="Subscript" FontSize="8" Text="2" Foreground="Red"/>
+						</TextBlock>
+					</Button>
+					<Button Content="G" FontFamily="Symbol" ToolTip="Greek" Click="EhGreek_Click"/>
+				</StackPanel>
+
+				<ScrollViewer Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="8" MinHeight="120">
+					<TextBox x:Name="m_edText" AcceptsReturn="True" AcceptsTab="True" TextChanged="EhEditText_TextChanged" />
+				</ScrollViewer>
+
+				<Rectangle x:Name="_probePreviewSizeRectangle" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="8" MinHeight="120" SizeChanged="EhPreview_SizeChanged"/>
+				<Image x:Name="m_pnPreview" SnapsToDevicePixels="True" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="8" Width="{Binding ElementName=_probePreviewSizeRectangle, Path=ActualWidth}" Height="{Binding ElementName=_probePreviewSizeRectangle, Path=ActualHeight}"  Stretch="Uniform"/>
+			</Grid>
+		</TabItem>
+		<TabItem Header="Position">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto" MinWidth="80"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto" MinWidth="80"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="4"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="4"/>
+				</Grid.RowDefinitions>
+				<Label Content="Pos.X:" Grid.Column="0" Grid.Row="0"/>
+				<axogc:QuantityWithUnitTextBox x:Name="m_edPosX" Grid.Column="1" Grid.Row="0" />
+				<Label Content="Pos.Y:" Grid.Column="2" Grid.Row="0"/>
+				<axogc:QuantityWithUnitTextBox x:Name="m_edPosY" Grid.Column="3" Grid.Row="0" />
+				<Label Content="Rotation:" Grid.Column="0" Grid.Row="2"/>
+				<axogcd:RotationComboBox x:Name="m_cbRotation" Grid.Column="1" Grid.Row="2"/>
+				<Label Grid.Column="2" Grid.Row="2">Shear:</Label>
+				<axogcd:ShearComboBox Grid.Column="3" Grid.Row="2" x:Name="_edShear"/>
+
+				<Label Grid.Column="0" Grid.Row="4">ScaleX:</Label>
+				<axogcd:ScaleComboBox Grid.Column="1" Grid.Row="4" x:Name="_edScaleX" />
+				<Label Grid.Column="2" Grid.Row="4">ScaleY:</Label>
+				<axogcd:ScaleComboBox Grid.Column="3" Grid.Row="4" x:Name="_edScaleY" IsForYScale="True"/>
+				
+				<axoggs:AnchoringControl x:Name="_guiAnchoring" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4"/>
+				
+				<axogg:ObjectPositionAndSizeGlue x:Name="_positionSizeGlue" />
+			</Grid>
+		</TabItem>
+	</TabControl>
+</UserControl>

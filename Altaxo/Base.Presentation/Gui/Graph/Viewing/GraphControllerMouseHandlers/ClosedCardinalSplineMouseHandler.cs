@@ -200,6 +200,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected virtual void FinishDrawing()
 		{
 			_currentPoint = 0;
+
+			// deselect the drawing tool
+			_grac.SetGraphToolFromInternal(NextMouseHandlerType);
+
 			if (_Points.Count > 2)
 			{
 				var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoordinates);
@@ -207,8 +211,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				_grac.ActiveLayer.GraphObjects.Add(go);
 			}
 
-			// deselect the text tool
-			_grac.SetGraphToolFromInternal(NextMouseHandlerType);
 			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 

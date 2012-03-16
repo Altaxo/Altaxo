@@ -109,12 +109,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_sourceText = sourceText;
 			}
 
-			public StructuralGlyph VisitTree(PegNode root, StyleContext context)
+			public StructuralGlyph VisitTree(PegNode root, StyleContext context, double lineSpacingFactor, bool isFixedLineSpacing)
 			{
 				var rootGlyph = new VerticalStack();
 				rootGlyph.Style = context;
-				rootGlyph.LineSpacingFactor = 1.25;
-				rootGlyph.FixedLineSpacing = true;
+				rootGlyph.LineSpacingFactor = lineSpacingFactor;
+				rootGlyph.FixedLineSpacing = isFixedLineSpacing;
 
 				var line = new GlyphLine();
 				line.Style = context;

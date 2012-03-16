@@ -2244,7 +2244,6 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Accumulates the changes reported by the DataColumns.
 		/// </summary>

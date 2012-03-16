@@ -31,7 +31,7 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Shapes;
 
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Graph.Shapes
 {
   #region Interfaces
   public interface ITextGraphicView
@@ -44,9 +44,15 @@ namespace Altaxo.Gui.Graph
     string EditText { get; set; }
     PointD2D SelectedPosition { get; set; }
     double SelectedRotation { get; set; }
+		double SelectedShear { get; set; }
+		double SelectedScaleX { get; set; }
+		double SelectedScaleY { get; set; }
     System.Drawing.FontFamily SelectedFontFamily { get; set; }
     double SelectedFontSize { get; set; }
+		double SelectedLineSpacing { get; set; }
     BrushX SelectedFontBrush { get; set; }
+		XAnchorPositionType XAnchor { get; set; }
+		YAnchorPositionType YAnchor { get; set; }
 
     void InsertBeforeAndAfterSelectedText(string insbefore, string insafter);
     void RevertToNormal();
@@ -70,6 +76,7 @@ namespace Altaxo.Gui.Graph
     void EhView_FontFamilyChanged();
     void EhView_FontSizeChanged();
     void EhView_TextFillBrushChanged();
+		void EhView_LineSpacingChanged();
   }
 
   #endregion
@@ -104,11 +111,18 @@ namespace Altaxo.Gui.Graph
 
         _view.SelectedPosition = _doc.Position;
         _view.SelectedRotation = _doc.Rotation;
+				_view.SelectedShear = _doc.Shear;
+				_view.SelectedScaleX = _doc.ScaleX;
+				_view.SelectedScaleY = _doc.ScaleY;
 
         // fill the font name combobox with all fonts
         _view.SelectedFontFamily = _doc.Font.FontFamily;
 
         _view.SelectedFontSize = _doc.Font.Size;
+				_view.SelectedLineSpacing = _doc.LineSpacing;
+
+				_view.XAnchor = _doc.XAnchor;
+				_view.YAnchor = _doc.YAnchor;
 
         // fill the font size combobox with reasonable values
         //this.m_cbFontSize.Items.AddRange(new string[] { "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" });
@@ -210,6 +224,13 @@ namespace Altaxo.Gui.Graph
       _view.InvalidatePreviewPanel();
     }
 
+
+		public void EhView_LineSpacingChanged()
+		{
+			_doc.LineSpacing = _view.SelectedLineSpacing;
+			_view.InvalidatePreviewPanel();
+		}
+
     public void EhView_FontFamilyChanged()
     {
       FontFamily ff = _view.SelectedFontFamily;
@@ -297,6 +318,12 @@ namespace Altaxo.Gui.Graph
     {
       _doc.Position = _view.SelectedPosition;
       _doc.Rotation = _view.SelectedRotation;
+			_doc.Shear = _view.SelectedShear;
+			_doc.ScaleX = _view.SelectedScaleX;
+			_doc.ScaleY = _view.SelectedScaleY;
+
+			_doc.XAnchor = _view.XAnchor;
+			_doc.YAnchor = _view.YAnchor;
 
       if(!object.ReferenceEquals(_originalDoc,_doc))
         _originalDoc.CopyFrom(_doc);

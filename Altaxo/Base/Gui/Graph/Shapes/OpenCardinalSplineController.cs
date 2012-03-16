@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Graph.Shapes
 {
 	public interface IOpenCardinalSplineView
 	{
-		ILineGraphicView LineGraphicView { get; }
+		IOpenPathShapeView LineGraphicView { get; }
 		ICardinalSplinePointsView SplinePointsView { get; }
 	}
 
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Shapes
 	[ExpectedTypeOfView(typeof(IOpenCardinalSplineView))]
 	public class OpenCardinalSplineController : MVCANControllerBase<OpenCardinalSpline, IOpenCardinalSplineView>
 	{
-		LineGraphicController _lineCtrl;
+		OpenPathShapeController _lineCtrl;
 		CardinalSplinePointsController _splinePointsCtrl;
 	
 
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		{
 			if (initData)
 			{
-				_lineCtrl = new LineGraphicController() { UseDocumentCopy = UseDocument.Directly };
+				_lineCtrl = new OpenPathShapeController() { UseDocumentCopy = UseDocument.Directly };
 				_lineCtrl.InitializeDocument(_doc);
 			}
 			if (null != _view)
@@ -71,6 +71,12 @@ namespace Altaxo.Gui.Graph.Shapes
 
 			if (_splinePointsCtrl.Apply(out list, out tension))
 			{
+				if (!(list.Count >= 2))
+				{
+					Current.Gui.ErrorMessageBox("At least two points are required for the open cardinal spline. Please enter more points!");
+					return false;
+				}
+
 				_doc.CurvePoints = list;
 				_doc.Tension = tension;
 			}

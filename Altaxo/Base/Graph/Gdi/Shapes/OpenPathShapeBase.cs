@@ -172,11 +172,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 					_outlinePen.Changed += this.EhChildChanged;
 
 				OnChanged();
-
-
 			}
 		}
-
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
 		{

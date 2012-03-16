@@ -34,14 +34,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph
+using Altaxo.Graph;
+namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
 	/// Interaction logic for TextGraphicControl.xaml
 	/// </summary>
 	public partial class TextGraphicControl : UserControl, ITextGraphicView
 	{
-		ObjectPositionAndSizeGlue _positionSizeGlue;
 		BackgroundControlsGlue _backgroundGlue;
 		GdiToWpfBitmap _previewBitmap;
 
@@ -49,9 +49,14 @@ namespace Altaxo.Gui.Graph
 		{
 			InitializeComponent();
 
-			_positionSizeGlue = new ObjectPositionAndSizeGlue();
 			_positionSizeGlue.EdPositionX = m_edPosX;
 			_positionSizeGlue.EdPositionY = m_edPosY;
+			_positionSizeGlue.GuiShear = _edShear;
+			_positionSizeGlue.CbRotation = m_cbRotation;
+			_positionSizeGlue.GuiScaleX = _edScaleX;
+			_positionSizeGlue.GuiScaleY = _edScaleY;
+
+
 
 			_backgroundGlue = new BackgroundControlsGlue();
 			_backgroundGlue.CbStyle = _cbBackgroundStyle;
@@ -67,6 +72,12 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != _controller)
 				_controller.EhView_BackgroundStyleChanged();
+		}
+
+		private void EhLineSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if(null != _controller)
+				_controller.EhView_LineSpacingChanged();
 		}
 
 		private void EhFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -182,6 +193,12 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public double SelectedLineSpacing
+		{
+			get { return _guiLineSpacing.SelectedQuantityAsValueInSIUnits; }
+			set { _guiLineSpacing.SelectedQuantityAsValueInSIUnits = value; }
+		}
+
 		public string EditText
 		{
 			get
@@ -210,11 +227,47 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return m_cbRotation.SelectedQuantityAsValueInDegrees;
+				return _positionSizeGlue.Rotation;
 			}
 			set
 			{
-				m_cbRotation.SelectedQuantityAsValueInDegrees = value;
+				_positionSizeGlue.Rotation = value;
+			}
+		}
+
+		public double SelectedShear
+		{
+			get
+			{
+				return _positionSizeGlue.Shear;
+			}
+			set
+			{
+				_positionSizeGlue.Shear = value;
+			}
+		}
+
+		public double SelectedScaleX
+		{
+			get
+			{
+				return _positionSizeGlue.ScaleX;
+			}
+			set
+			{
+				_positionSizeGlue.ScaleX = value;
+			}
+		}
+
+		public double SelectedScaleY
+		{
+			get
+			{
+				return _positionSizeGlue.ScaleY;
+			}
+			set
+			{
+				_positionSizeGlue.ScaleY = value;
 			}
 		}
 
@@ -251,6 +304,30 @@ namespace Altaxo.Gui.Graph
 			set
 			{
 				m_cbFontColor.SelectedBrush = value;
+			}
+		}
+
+		public XAnchorPositionType XAnchor
+		{
+			get
+			{
+				return _guiAnchoring.SelectedXAnchor;
+			}
+			set
+			{
+				_guiAnchoring.SelectedXAnchor = value;
+			}
+		}
+
+		public YAnchorPositionType YAnchor
+		{
+			get
+			{
+				return _guiAnchoring.SelectedYAnchor;
+			}
+			set
+			{
+				_guiAnchoring.SelectedYAnchor = value;
 			}
 		}
 
@@ -307,6 +384,8 @@ namespace Altaxo.Gui.Graph
 		{
 			this.m_edText.Focus();
 		}
+
+	
 
 
 

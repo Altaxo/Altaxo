@@ -35,6 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		bool _useFrequencyInsteadOmega;
 		bool _useFlowTerm;
 		bool _isDielectricData;
+		int _numberOfTerms = 1;
 
 		#region Serialization
 
@@ -84,10 +85,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Trying to serialize old version");
+				/*
 				HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
 				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
 				info.AddValue("FlowTerm", s._useFlowTerm);
 				info.AddValue("IsDielectric", s._isDielectricData);
+				*/
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -100,11 +104,53 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 3)]
+		class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+				info.AddValue("FlowTerm", s._useFlowTerm);
+				info.AddValue("IsDielectric", s._isDielectricData);
+				info.AddValue("NumberOfTerms", s._numberOfTerms);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+				s._useFlowTerm = info.GetBoolean("FlowTerm");
+				s._isDielectricData = info.GetBoolean("IsDielectric");
+				s.NumberOfRelaxationTerms = info.GetInt32("NumberOfTerms");
+
+				return s;
+			}
+		}
+
 		#endregion
 
 		public HavriliakNegamiSusceptibility()
 		{
 
+		}
+
+		public int NumberOfRelaxationTerms
+		{
+			get
+			{
+				return _numberOfTerms;
+			}
+			set
+			{
+				var oldValue = _numberOfTerms;
+				value = Math.Max(value, 0);
+				_numberOfTerms = value;
+
+				if (value != oldValue)
+				{
+				}
+			}
 		}
 
 		public override string ToString()
@@ -196,31 +242,38 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		{
 			get
 			{
-				return this._useFlowTerm ? _parameterNameS.Length : _parameterNameS.Length - 1;
+				var result = 1 + 4 * _numberOfTerms;
+				if (_useFlowTerm)
+					result += 1;
+				return result;
 			}
 		}
 		public string ParameterName(int i)
 		{
-			return _isDielectricData ? _parameterNameD[i] : _parameterNameS[i];
+			var namearr = _isDielectricData ? _parameterNameD : _parameterNameS;
+
+			if (0==i)
+				return namearr[0]; // eps_inf
+
+			--i;
+
+			var idx = i % 4;
+			var term = i / 4;
+			if (term < NumberOfRelaxationTerms)
+				return namearr[idx+1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+				else
+				return namearr[namearr.Length - 1];
+			
 		}
+		
+
 
 		public double DefaultParameterValue(int i)
 		{
-			switch (i)
-			{
-				case 0:
-					return 1;
-				case 1:
-					return 1;
-				case 2:
-					return 1;
-				case 3:
-					return 1;
-				case 4:
-					return 1;
-			}
-
-			return 0;
+			if( i < (1 + 4*_numberOfTerms))
+				return 1;
+			else
+				return 0;
 		}
 
 		public IVarianceScaling DefaultVarianceScaling(int i)
@@ -236,15 +289,21 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			if (_useFrequencyInsteadOmega)
 				x *= (2 * Math.PI);
 
-			Complex result = P[0] + P[1] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[2], P[3]), P[4]);
+			Complex result = P[0];
+			int i, j;
+			for (i = 0, j = 1; i < _numberOfTerms; ++i, j+=4)
+			{
+				result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[1+j], P[2+j]), P[3+j]);
+			}
+
 			Y[0] = result.Re;
 
 			if (this._useFlowTerm)
 			{
 				if (this._isDielectricData)
-					Y[1] = -result.Im + P[5] / (x * 8.854187817e-12);
+					Y[1] = -result.Im + P[j] / (x * 8.854187817e-12);
 				else
-					Y[1] = -result.Im + P[5] / (x);
+					Y[1] = -result.Im + P[j] / (x);
 			}
 			else
 				Y[1] = -result.Im;
@@ -252,6 +311,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 		public void EvaluateGradient(double[] X, double[] P, double[][] DY)
 		{
+			throw new NotImplementedException();
+			/*
 			double x = X[0];
 			if (_useFrequencyInsteadOmega)
 				x *= (2 * Math.PI);
@@ -280,6 +341,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				DY[0][5] = 0;
 				DY[1][5] = _isDielectricData ? 1 / (x * 8.854187817e-12) : 1 / x;
 			}
+			*/
 		}
 		#endregion
 	}

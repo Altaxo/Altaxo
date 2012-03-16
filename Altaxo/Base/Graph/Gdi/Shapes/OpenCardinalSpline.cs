@@ -206,6 +206,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return new OpenCardinalSpline(this);
 		}
 
+		/// <summary>
+		/// Normally sets the size of the item. For the OpenCardinalSpline, the size is calculated internally. Thus, the function is overriden in order to ignore both parameters.
+		/// </summary>
+		/// <param name="width">Unscaled width of the item (ignored here).</param>
+		/// <param name="height">Unscaled height of the item (ignored here).</param>
+		public override void SetSize(double width, double height)
+		{
+		}
 
 		void CalculateAndSetBounds()
 		{

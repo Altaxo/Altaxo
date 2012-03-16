@@ -129,7 +129,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_tension = Math.Abs(tension);
 
 			if (!(_curvePoints.Count > 2))
-				throw new ArgumentException("Number of curve points has to be >= 2");
+				throw new ArgumentException("Number of curve points has to be > 2");
 
 			CalculateAndSetBounds();
 		}
@@ -206,6 +206,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return new ClosedCardinalSpline(this);
 		}
 
+		/// <summary>
+		/// Normally sets the size of the item. For the ClosedCardinalSpline, the size is calculated internally. Thus, the function is overriden in order to ignore both parameters.
+		/// </summary>
+		/// <param name="width">Unscaled width of the item (ignored here).</param>
+		/// <param name="height">Unscaled height of the item (ignored here).</param>
+		public override void SetSize(double width, double height)
+		{
+		}
 
 		void CalculateAndSetBounds()
 		{
