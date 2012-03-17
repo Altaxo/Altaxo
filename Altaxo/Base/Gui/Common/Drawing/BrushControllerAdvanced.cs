@@ -104,6 +104,8 @@ namespace Altaxo.Gui.Common.Drawing
 				_textureScalingController = new TextureScalingController() { UseDocumentCopy = UseDocument.Directly };
 				_textureScalingController.MadeDirty += EhTextureScalingChanged;
 				_textureScalingController.InitializeDocument(_doc.TextureScale);
+				if (null != _doc.TextureImage)
+					_textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
 			}
 
 			if (null != _view)

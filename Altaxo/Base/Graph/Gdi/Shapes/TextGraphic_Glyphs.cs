@@ -285,6 +285,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_stringFormat.Alignment = StringAlignment.Near;
 			}
 
+			/// <summary>Measures the string with the appropriate generic typographic format.</summary>
+			/// <param name="g">The graphics context.</param>
+			/// <param name="text">The text to measure.</param>
+			/// <param name="font">The font used.</param>
+			/// <returns>Width and height of the text packed into a <see cref="PointD2D"/> structure.</returns>
+			public static PointD2D MeasureString(Graphics g, string text, Font font)
+			{
+				var result = g.MeasureString(text, font, PointF.Empty, _stringFormat);
+				return new PointD2D(result.Width, result.Height);
+			}
+
 		}
 
 		#region Structural glyphs

@@ -286,8 +286,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			var fontInfo = FontInfo.Create(g, _font);
 
-			double widthOfOne_n = g.MeasureString("n", _font).Width;
-			double widthOfThree_M = g.MeasureString("MMM", _font).Width;
+			double widthOfOne_n = Glyph.MeasureString(g, "n", _font).X;
+			double widthOfThree_M = Glyph.MeasureString(g, "MMM", _font).X;
 
 
 			double distanceXL = 0; // left distance bounds-text
@@ -544,7 +544,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			MeasureContext mc = new MeasureContext();
 			mc.FontCache = cache;
 			mc.LinkedObject = linkedObject;
-			mc.TabStop = g.MeasureString("MMMM", _font, PointF.Empty, _rootNode.StringFormat).Width;
+			mc.TabStop = Glyph.MeasureString(g,"MMMM", _font).X;
 
 			if (null != _rootNode)
 				_rootNode.Measure(g, mc, 0);
@@ -552,7 +552,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		void DrawGlyphs(Graphics g, DrawContext dc, double x, double y)
 		{
-			_rootNode.Draw(g, dc, y, y + _rootNode.ExtendAboveBaseline);
+			_rootNode.Draw(g, dc, x, y + _rootNode.ExtendAboveBaseline);
 		}
 
 		/// <summary>
