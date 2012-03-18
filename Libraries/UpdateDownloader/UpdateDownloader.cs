@@ -26,6 +26,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Reflection;
+using System.Security;
+using System.Security.Principal;
+using System.Security.AccessControl;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -72,7 +75,10 @@ namespace Altaxo.Serialization.AutoUpdates
 		public void Run()
 		{
 			if (!Directory.Exists(_storagePath))
+			{
 				Directory.CreateDirectory(_storagePath);
+				SetDownloadDirectoryAccessRights(_storagePath);
+			}
 
 			var versionFileFullName = Path.Combine(_storagePath, PackageInfo.VersionFileName);
 			using (FileStream fs = new FileStream(versionFileFullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
@@ -129,6 +135,26 @@ namespace Altaxo.Serialization.AutoUpdates
 						}
 					}
 				}
+			}
+		}
+
+		/// <summary>It is neccessary to modify the download directory access rights, because as default only creator/owner has the right to change the newly created directory.
+		/// But of course we want to allow all authenticated users to download auto updates. Thus we modify the access to the download directory, so that authenticated users have the right to modify files/folders. </summary>
+		/// <param name="downloadDirectory">The download directory.</param>
+		void SetDownloadDirectoryAccessRights(string downloadDirectory)
+		{
+			try
+			{
+				var authenticatedUser = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
+				var inheritance = InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit;
+				var propagation = PropagationFlags.None;
+				var security = new DirectorySecurity();
+				security.AddAccessRule(new FileSystemAccessRule(authenticatedUser, FileSystemRights.Modify, inheritance, propagation, AccessControlType.Allow));
+				security.SetAccessRuleProtection(false, true);
+				Directory.SetAccessControl(downloadDirectory, security);
+			}
+			catch (Exception)
+			{
 			}
 		}
 
