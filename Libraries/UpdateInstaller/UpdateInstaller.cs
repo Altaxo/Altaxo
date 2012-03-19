@@ -38,10 +38,27 @@ namespace Altaxo.Serialization.AutoUpdates
 		static System.Threading.EventWaitHandle _eventWaitHandle;
 
 		const string PackListRelativePath = "doc\\PackList.txt";
+		
+		/// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
 		string _eventName;
+
+		/// <summary>Full name of the zip file that contains the update files.</summary>
 		string _packageName;
+
+		/// <summary>Full name of the Altaxo executable that should be updated.</summary>
 		string _altaxoExecutableFullName;
+
+		/// <summary>Full path to the installation directory (the directory in which the subdirs 'bin', 'doc', 'Addins' and 'data' resides).</summary>
 		string _pathToInstallation;
+
+		/// <summary>If true, this indicates that the waiting for the end of Altaxo was already done successfully. Thus in a possible second installation attempt we can skip this waiting.</summary>
+		bool _isWaitingForAltaxosEndDone;
+		
+		/// <summary>If true, this indicates that the removing of the old installation files was already done successfully. Thus in a possible second installation attempt we can skip this step.</summary>
+		bool _isRemovingOldFilesDone;
+		
+		/// <summary>If true, this indicates that the deletion of orphaned directories was already done successfully. Thus in a possible second installation attempt we can skip this step.</summary>
+		bool _isDeletingOrphanedDirectoriesDone;
 
 
 		/// <summary>Initializes a new instance of the <see cref="Downloader"/> class.</summary>
@@ -81,46 +98,71 @@ namespace Altaxo.Serialization.AutoUpdates
 			using (FileStream fs = new FileStream(_packageName, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				fs.Seek(0, SeekOrigin.Begin);
-				// signal Altaxo, that we have the stream now
-				SetEvent(_eventName);
-
-				// warte auf das Close von Altaxo
-				FileStream axoExe = null;
-				DateTime startWaitingTime = DateTime.UtcNow;
-				do
+			
+				if (!_isWaitingForAltaxosEndDone)
 				{
-					try
+					// signal Altaxo, that we have the stream now
+					SetEvent(_eventName);
+
+					// warte auf das Close von Altaxo
+
+					FileStream axoExe = null;
+					DateTime startWaitingTime = DateTime.UtcNow;
+					do
 					{
-						axoExe = new FileStream(_altaxoExecutableFullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+						try
+						{
+							axoExe = new FileStream(_altaxoExecutableFullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+						}
+						catch (Exception)
+						{
+							if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1))))
+								throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+							System.Threading.Thread.Sleep(250);
+						}
+						finally
+						{
+							if (null != axoExe)
+								axoExe.Close();
+						}
+					} while (axoExe == null);
+				}
+
+				_isWaitingForAltaxosEndDone = true;
+				ReportProgress(0,"Altaxo now has ended and is ready to be updated");
+
+				if (!_isRemovingOldFilesDone)
+				{
+					// remove the old files
+					ReportProgress(0, "Remove old installation files ...");
+					RemoveOldInstallationFiles();
+					if (ReportProgress(0, "Old installation files successfully removed!"))
+						throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+				}
+				_isRemovingOldFilesDone = true;
+
+				if (!_isDeletingOrphanedDirectoriesDone)
+				{
+					// now delete all orphaned directories in the installation directory
+					ReportProgress(0, "Deleting orphaned directories ...");
+					try // note: it is not really essential to delete orphaned directories. Thus, if this fails, an error is reported, but the installation will be continued.
+					{
+						DeleteDirIfOrphaned(new DirectoryInfo(_pathToInstallation), ReportProgress);
+						if (ReportProgress(0, "Orphaned directories successfully deleted!"))
+							throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
+					}
+					catch (System.Threading.ThreadInterruptedException ex)
+					{
+						throw ex;
 					}
 					catch (Exception ex)
 					{
-						if (ReportProgress(0, string.Format("Waiting for shutdown of Altaxo ... {0} s", Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds, 1))))
+						if (ReportProgress(0, "Failed to delete orphaned directories! Message: " + ex.Message))
 							throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
-						System.Threading.Thread.Sleep(250);
 					}
-					finally
-					{
-						if(null!=axoExe)
-							axoExe.Close();
-					}
-				} while (axoExe == null);
+				}
+				_isDeletingOrphanedDirectoriesDone = true;
 
-
-
-				ReportProgress(0,"Altaxo now has ended and is ready to be updated");
-
-				// remove the old files
-				ReportProgress(0, "Remove old installation files ...");
-				RemoveOldInstallationFiles();
-				if (ReportProgress(0, "Old installation files successfully removed!"))
-					throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
-
-				// now delete all orphaned directories in the installation directory
-				ReportProgress(0, "Deleting orphaned directories ...");
-				DeleteDirIfOrphaned(new DirectoryInfo(_pathToInstallation));
-				if (ReportProgress(0, "Orphaned directories successfully deleted!"))
-					throw new System.Threading.ThreadInterruptedException("Installation cancelled by user");
 
 				// and extract the new files
 				ReportProgress(0, "Extracting new installation files ...");
@@ -204,7 +246,7 @@ namespace Altaxo.Serialization.AutoUpdates
 					return true;
 				}
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 			}
 			return false;
@@ -249,14 +291,14 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// the operation is applied to all subfolders of the directory.</summary>
 		/// <param name="dir">The full path of the directory.</param>
 		/// <returns>True if this directory was orphaned and thus was deleted.</returns>
-		static bool DeleteDirIfOrphaned(DirectoryInfo dir)
+		static bool DeleteDirIfOrphaned(DirectoryInfo dir, Func<double,string,bool> ReportProgress)
 		{
 			bool isOrphaned = true;
 
 			// delete orphaned subdirectories
 			foreach (DirectoryInfo subdir in dir.GetDirectories())
 			{
-				if (!DeleteDirIfOrphaned(subdir))
+				if (!DeleteDirIfOrphaned(subdir, ReportProgress))
 					isOrphaned = false;
 			}
 
@@ -269,7 +311,21 @@ namespace Altaxo.Serialization.AutoUpdates
 			// if the directory is orphaned, the it can be deleted
 			if (isOrphaned)
 			{
-				dir.Delete();
+				for (int i = 1, j = 3; j >= 0; ++i, --j)
+				{
+					try
+					{
+						dir.Delete();
+						break;
+					}
+					catch (Exception ex)
+					{
+						ReportProgress(0, string.Format("Failed to delete orphaned directory '{0}' ({1}. try), Message: {2}. Please close all explorer windows or other programs that currently access this directory.", dir.FullName, i, ex.Message));
+						System.Threading.Thread.Sleep(1000);
+						if (j == 0)
+							throw ex;
+					}
+				}
 			}
 
 			return isOrphaned;

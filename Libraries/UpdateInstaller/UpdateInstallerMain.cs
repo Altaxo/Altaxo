@@ -69,6 +69,11 @@ namespace Altaxo.Serialization.AutoUpdates
 					return;
 				}
 
+				// try to set the current directory to this of the entry assembly in order to not block the removing of the Altaxo directories
+				try { System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location); }
+				catch (Exception) { }
+
+
 				string eventName = args[0];
 				int options = int.Parse(args[2]);
 				bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
