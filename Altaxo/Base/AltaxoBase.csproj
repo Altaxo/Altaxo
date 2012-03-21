@@ -944,7 +944,7 @@
     <Compile Include="Gui\Graph\DensityImagePlotStyleController.cs" />
     <Compile Include="Gui\Graph\DensityScaleController.cs" />
     <Compile Include="Gui\Graph\FillToCurvePlotStyleController.cs" />
-    <Compile Include="Gui\Graph\ImageGraphicController.cs" />
+    <Compile Include="Gui\Graph\Shapes\ImageGraphicController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotItemController.cs" />
     <Compile Include="Gui\Graph\ErrorBarPlotStyleController.cs" />
     <Compile Include="Gui\Graph\FitPolynomialDialogController.cs" />

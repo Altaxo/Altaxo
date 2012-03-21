@@ -319,8 +319,7 @@ namespace Altaxo.Gui.Graph.Shapes
       _doc.Position = _view.SelectedPosition;
       _doc.Rotation = _view.SelectedRotation;
 			_doc.Shear = _view.SelectedShear;
-			_doc.ScaleX = _view.SelectedScaleX;
-			_doc.ScaleY = _view.SelectedScaleY;
+			_doc.Scale = new PointD2D(_view.SelectedScaleX, _view.SelectedScaleY);
 
 			_doc.XAnchor = _view.XAnchor;
 			_doc.YAnchor = _view.YAnchor;

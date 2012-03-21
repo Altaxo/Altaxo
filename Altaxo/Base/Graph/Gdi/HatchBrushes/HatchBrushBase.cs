@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
 		public abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
-		public virtual Altaxo.Graph.PointD2D Size
+		public override Altaxo.Graph.PointD2D Size
 		{
 			get	{ return new Altaxo.Graph.PointD2D(_repeatLengthPt, _repeatLengthPt);	}
 		}

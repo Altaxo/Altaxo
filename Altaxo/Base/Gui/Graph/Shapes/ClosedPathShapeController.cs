@@ -75,8 +75,7 @@ namespace Altaxo.Gui.Graph.Shapes
       _doc.Size = _view.DocSize;
       _doc.Rotation = _view.DocRotation;
       _doc.Shear = _view.DocShear;
-      _doc.ScaleX = _view.DocScaleX;
-      _doc.ScaleY = _view.DocScaleY;
+			_doc.Scale = new PointD2D(_view.DocScaleX, _view.DocScaleY);
 
 			if (_useDocumentCopy)
 				_originalDoc.CopyFrom(_doc);

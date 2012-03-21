@@ -325,7 +325,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected GraphicBase(PointD2D graphicPosition, PointD2D graphicSize)
 			: this(graphicPosition)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y);
+			this.SetSize(graphicSize.X, graphicSize.Y, true);
 		}
 
 		protected GraphicBase(double posX, double posY, PointD2D graphicSize)
@@ -353,7 +353,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected GraphicBase(PointD2D graphicPosition, PointD2D graphicSize, double Rotation)
 			: this(graphicPosition, Rotation)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y);
+			this.SetSize(graphicSize.X, graphicSize.Y, true);
 		}
 		protected GraphicBase(double posX, double posY, PointD2D graphicSize, double Rotation)
 			: this(new PointD2D(posX, posY), graphicSize, Rotation)
@@ -513,14 +513,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="width">Unscaled width of the item.</param>
 		/// <param name="height">Unscaled height of the item.</param>
-		public virtual void SetSize(double width, double height)
+		/// <param name="suppressChangedEvent">If true, the change event is supressed even when the size has changed.</param>
+		protected virtual void SetSize(double width, double height, bool suppressChangedEvent)
 		{
 			var oldWidth = _bounds.Width;
 			var oldHeight = _bounds.Height;
 
 			_bounds.Width = width;
 			_bounds.Height = height;
-			if (width != oldWidth || height != oldHeight)
+			if (!suppressChangedEvent && (width != oldWidth || height != oldHeight))
 				OnChanged();
 		}
 
@@ -531,11 +532,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return new PointD2D(_bounds.Width, _bounds.Height);
+				return _bounds.Size;
 			}
 			set
 			{
-				SetSize(value.X, value.Y);
+				SetSize(value.X, value.Y, false);
 			}
 		}
 
@@ -560,18 +561,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <summary>
 		/// Get/sets the scale for the width of the item. Normally this number is one (1).
 		/// </summary>
-		public virtual double ScaleX
+		public double ScaleX
 		{
 			get
 			{
 				return _scaleX;
-			}
-			set
-			{
-				var oldvalue = _scaleX;
-				_scaleX = value;
-				if (value != oldvalue)
-					OnChanged();
 			}
 		}
 
@@ -584,11 +578,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				return _scaleY;
 			}
+		}
+
+		public virtual PointD2D Scale
+		{
+			get
+			{
+				return new PointD2D(_scaleX, _scaleY);
+			}
 			set
 			{
-				var oldvalue = _scaleY;
-				_scaleY = value;
-				if (value != oldvalue)
+				var oldValueX = _scaleX;
+				var oldValueY = _scaleY;
+				_scaleX = value.X;
+				_scaleY = value.Y;
+				if (oldValueX != _scaleX || oldValueY != _scaleY)
 					OnChanged();
 			}
 		}
@@ -693,6 +697,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
+		protected virtual IHitTestObject GetNewHitTestObject()
+		{
+			return new GraphicBaseHitTestObject(this);
+		}
+
 		/// <summary>
 		/// Tests a mouse click, whether or not it hits the object.
 		/// </summary>
@@ -703,7 +712,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var pt = hitData.GetHittedPointInWorldCoord(_transformation);
 			if (_bounds.Contains(pt))
 			{
-				return new GraphicBaseHitTestObject(this);
+				return GetNewHitTestObject();
 			}
 			else
 			{
@@ -714,7 +723,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public virtual IHitTestObject HitTest(HitTestRectangularData rectHit)
 		{
 			if (rectHit.IsCovering(_bounds))
-				return new GraphicBaseHitTestObject(this);
+				return GetNewHitTestObject();
 			else
 				return null;
 		}
@@ -918,10 +927,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var newWidth = initialSize.X + diff.X / (dx);
 			var newHeight = initialSize.Y + diff.Y / (dy);
 
+			var size = this.Size;
 			if (Math.Abs(dx) == 1 && (newWidth > 0 || AllowNegativeSize))
-				this._bounds.Width = newWidth;
+				size.X = newWidth;
 			if (Math.Abs(dy) == 1 && (newHeight > 0 || AllowNegativeSize))
-				this._bounds.Height = newHeight;
+				size.Y = newHeight;
+
+			this.SetSize(size.X, size.Y, true);
 
 			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
 			this._position.X += fixaPosition.X - currFixaPos.X;

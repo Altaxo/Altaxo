@@ -428,7 +428,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ImageGraphicControl.xaml">
+    <Page Include="Gui\Graph\Shapes\ImageGraphicControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -924,7 +924,7 @@
     <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
       <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ImageGraphicControl.xaml.cs">
+    <Compile Include="Gui\Graph\Shapes\ImageGraphicControl.xaml.cs">
       <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\LayerControl.xaml.cs">

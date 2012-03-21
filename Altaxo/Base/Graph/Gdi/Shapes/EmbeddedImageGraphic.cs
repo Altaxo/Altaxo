@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition, startingImage)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y);
+			this.SetSize(graphicSize.X, graphicSize.Y, true);
 		}
 
 		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, ImageProxy startingImage)
@@ -122,8 +122,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition, Rotation, startingImage)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y);
+			this.SetSize(graphicSize.X, graphicSize.Y, true);
 		}
+
 		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
 			:
 			this(new PointD2D(posX, posY), graphicSize, Rotation, startingImage)
@@ -176,6 +177,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
+
+		public override PointD2D GetImageSizePt()
+		{
+			return this._imageProxy == null ? new PointD2D(1,1) : _imageProxy.Size;
+		}
 
 
 		public override Image GetImage()

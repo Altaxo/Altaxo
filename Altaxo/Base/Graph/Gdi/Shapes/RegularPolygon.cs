@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y);
+			this.SetSize(graphicSize.X, graphicSize.Y, true);
 		}
 
 		public RegularPolygon(double posX, double posY, PointD2D graphicSize)
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition, Rotation)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y);
+			this.SetSize(graphicSize.X, graphicSize.Y, true);
 		}
 
 		public RegularPolygon(double posX, double posY, PointD2D graphicSize, double Rotation)

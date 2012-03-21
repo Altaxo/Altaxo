@@ -88,4 +88,28 @@ namespace Altaxo.Gui.Common
 			return ((Visibility)value) == Visibility.Visible;
 		}
 	}
+
+
+	/// <summary>
+	/// Converts true to Visibility.Visible and false to Visibility.Hidden.
+	/// </summary>
+	[ValueConversion(typeof(bool?), typeof(Visibility))]
+	public class NullableBooleanToVisibleHiddenConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			var val = (bool?)value;
+			return true == val ? Visibility.Visible : Visibility.Hidden;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			var val = (Visibility)value;
+			return val == Visibility.Visible ? true : false;
+		}
+	}
+
+
+
+
 }

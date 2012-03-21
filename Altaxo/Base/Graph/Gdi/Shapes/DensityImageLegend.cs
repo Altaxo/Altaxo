@@ -172,7 +172,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize)
 		{
 			this._position = initialLocation;
-			this.SetSize(graphicSize.X, graphicSize.Y);
+			this.SetSize(graphicSize.X, graphicSize.Y,true);
 
 			_plotItemProxy = new Main.RelDocNodeProxy();
 			WirePlotItemProxyEvents();
