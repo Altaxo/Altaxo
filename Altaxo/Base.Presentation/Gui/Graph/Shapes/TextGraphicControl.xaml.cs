@@ -385,6 +385,15 @@ namespace Altaxo.Gui.Graph.Shapes
 			this.m_edText.Focus();
 		}
 
+		private void EhMoreModifiersClicked(object sender, RoutedEventArgs e)
+		{
+			var menu = sender as MenuItem;
+			if (null != menu && menu.Tag is string)
+			{
+				m_edText.AppendText((string)menu.Tag);
+			}
+		}
+
 	
 
 

@@ -430,8 +430,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			if (_view != null)
 			{
 				double left, width;
-				AM.GetXCoordinatesOfColumn(_numberOfTableCols - 1, _worksheetLayout, 0, out left, out width);
-				_view.TableViewHorzViewPortSize = HorzScrollMaximum * TableAreaWidth / (left + width);
+				if (_numberOfTableCols > 0)
+				{
+					AM.GetXCoordinatesOfColumn(_numberOfTableCols - 1, _worksheetLayout, 0, out left, out width);
+					_view.TableViewHorzViewPortSize = HorzScrollMaximum * TableAreaWidth / (left + width);
+				}
+				else
+				{
+					_view.TableViewHorzViewPortSize = 1000000; // if the worksheet contains no columns, then ensure that the viewport is fully streched horizontally
+				}
 			}
 		}
 

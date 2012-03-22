@@ -560,8 +560,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					_child.Draw(g, dc, xbase, ybase);
 					Font font = dc.FontCache.GetFont(g, Style.FontId);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-					double psize = g.MeasureString(".", font, PointF.Empty, this.StringFormat).Width;
-					g.DrawString(".", font, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+					g.DrawString("_", font, Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
 			}
 		}

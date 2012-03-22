@@ -59,13 +59,13 @@
 
 				<Label Grid.Column="0" Grid.Row="2" Content="LineSpacing:"/>
 				<axogc:QuantityWithUnitTextBox x:Name="_guiLineSpacing" Grid.Column="1" Grid.Row="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" DisallowNegativeValues="True" SelectedQuantityChanged="EhLineSpacingChanged"/>
-				
+
 				<Label Grid.Column="2" Grid.Row="2" Content="Background:"/>
 				<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" Margin="0,0,8,0"/>
 				<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="5" Grid.Row="2"/>
 
 
-			
+
 
 				<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="8" Grid.Row="6" >
 					<Button Content="N" FontFamily="Times New Roman" ToolTip="Normal" Click="EhNormal_Click"/>
@@ -96,6 +96,29 @@
 						</TextBlock>
 					</Button>
 					<Button Content="G" FontFamily="Symbol" ToolTip="Greek" Click="EhGreek_Click"/>
+					<Menu VerticalAlignment="Center">
+						<MenuItem Header="More modifiers ...">
+							<MenuItem Header="\=(a,b)   (sub- and superscript)" Tag="\=(a,b)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Header="\ad(x)    (dot over)" Tag="\ad(x)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Header="\ab(x)    (bar over)" Tag="\ab(x)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Header="\c(red,abc)   (set font color)" Tag="\c(red,abc)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Header="\p(200%,abc)   (set relative font size)" Tag="\p(200%,abc)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Header="\p(20pt,abc)   (set absolute font size)" Tag="\p(20pt,abc)" Click="EhMoreModifiersClicked"/>
+
+							<MenuItem Header="\id($DI)  (include document identifier)" Tag="\id($DI)" Click="EhMoreModifiersClicked"/>
+
+							<MenuItem Header="\l(0)   (symbol for plot item 0)" Tag="\l(0)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Header="\l(0,0) (symbol for layer 0 / plot item 0)" Tag="\l(0,0)" Click="EhMoreModifiersClicked"/>
+
+							<MenuItem Header="\%(0) (text for plot item 0)" Tag="\%(0)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Header="\%(0,0) (text for layer 0 / plot item 0)" Tag="\%(0,0)" Click="EhMoreModifiersClicked"/>
+							<MenuItem Click="EhMoreModifiersClicked">
+								<MenuItem.Header>\%(0,0, "nameOfPropertyColum") (text for layer 0 / plot item 0, use the value of the property column)</MenuItem.Header>
+								<MenuItem.Tag>\%(0,0,"nameOfPropertyColumn")</MenuItem.Tag>
+							</MenuItem>
+
+						</MenuItem>
+					</Menu>
 				</StackPanel>
 
 				<ScrollViewer Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="8" MinHeight="120">
@@ -142,9 +165,9 @@
 				<axogcd:ScaleComboBox Grid.Column="1" Grid.Row="4" x:Name="_edScaleX" />
 				<Label Grid.Column="2" Grid.Row="4">ScaleY:</Label>
 				<axogcd:ScaleComboBox Grid.Column="3" Grid.Row="4" x:Name="_edScaleY" IsForYScale="True"/>
-				
+
 				<axoggs:AnchoringControl x:Name="_guiAnchoring" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4"/>
-				
+
 				<axogg:ObjectPositionAndSizeGlue x:Name="_positionSizeGlue" />
 			</Grid>
 		</TabItem>

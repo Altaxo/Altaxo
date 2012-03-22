@@ -231,6 +231,8 @@ namespace Altaxo.Main.Services
       System.Type ct = controller.GetType();
       object[] viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), false);
 
+			bool isInvokeRequired = InvokeRequired();
+
       if (viewattributes != null && viewattributes.Length > 0)
       {
         if (viewattributes.Length > 1)
@@ -261,31 +263,42 @@ namespace Altaxo.Main.Services
             }
 
             // all seems ok, so we can try to create the control
-            object controlinstance = System.Activator.CreateInstance(controltype);
-            if (null == controlinstance)
-              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but it was not possible to create a instance of this type.", ct, controltype));
-
-            controller.ViewObject = controlinstance;
-
-
+							
+						if(isInvokeRequired)
+							Execute(CreateAndAttachControlOfType, controller, controltype);
+						else
+							CreateAndAttachControlOfType(controller,controltype);
             return;
           }
         }
       }
       else // Controller has no ExpectedTypeOfView attribute
       {
-        object control =
-          ReflectionService.GetClassForClassInstanceByAttribute(
-          typeof(UserControlForControllerAttribute),
-          new System.Type[] { guiControlType },
-          new object[] { controller });
-
-        if (control == null)
-          return;
-
-        controller.ViewObject = control;
+				if (isInvokeRequired)
+					Execute(CreateControlForControllerWithNoExpectedTypeOfViewAttribute, controller, guiControlType);
+				else
+					CreateControlForControllerWithNoExpectedTypeOfViewAttribute(controller, guiControlType);
       }
     }
+
+		private static void CreateControlForControllerWithNoExpectedTypeOfViewAttribute(IMVCController controller, System.Type guiControlType)
+		{
+			object control =
+				ReflectionService.GetClassForClassInstanceByAttribute(
+				typeof(UserControlForControllerAttribute),
+				new System.Type[] { guiControlType },
+				new object[] { controller });
+			if (null != control)
+				controller.ViewObject = control;
+		}
+
+		private static void CreateAndAttachControlOfType(IMVCController controller, System.Type controltype)
+		{
+			object controlinstance = System.Activator.CreateInstance(controltype);
+			if (null == controlinstance)
+				throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but it was not possible to create a instance of this type.", controller.GetType(), controltype));
+			controller.ViewObject = controlinstance;
+		}
 
 
     /// <summary>
