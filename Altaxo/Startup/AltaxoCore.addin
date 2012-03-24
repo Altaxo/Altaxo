@@ -895,6 +895,12 @@
 	</Path>
 
 	<Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
+		<MenuItem id="Copy" label="${res:XML.MainMenu.EditMenu.Copy}" icon="Icons.16x16.CopyIcon"
+					description="${res:XML.MainMenu.EditMenu.Copy.Description}" shortcut="Control|C" command="Copy" />
+		<MenuItem id="Paste" label="${res:XML.MainMenu.EditMenu.Paste}" icon="Icons.16x16.PasteIcon"
+							description="${res:XML.MainMenu.EditMenu.Paste.Description}" shortcut="Control|V" command="Paste" />
+
+
 		<Condition name="ProjbrowserListItemSelection" selcount=">0" action="Exclude">
 			<MenuItem id="Show" label="${res:XML.ProjectBrowserMenu.Show}" description="${res:XML.ProjectBrowserMenu.Show.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemShow" />
@@ -904,7 +910,7 @@
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemDelete" />
 			<MenuItem id="Move" label="${res:XML.ProjectBrowserMenu.MoveToFolder}" description="${res:XML.ProjectBrowserMenu.MoveToFolder.Description}"
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemMoveTo" />
-      <MenuItem id="Copy" label="${res:XML.ProjectBrowserMenu.CopyToFolder}" description="${res:XML.ProjectBrowserMenu.CopyToFolder.Description}"
+      <MenuItem id="CopyToFolder" label="${res:XML.ProjectBrowserMenu.CopyToFolder}" description="${res:XML.ProjectBrowserMenu.CopyToFolder.Description}"
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemCopyTo" />
 			<MenuItem id="MultiRenameItems" label="${res:XML.ProjectBrowserMenu.MultiRenameItems}" description="${res:XML.ProjectBrowserMenu.MultiRenameItems.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiRenameItems" />
@@ -940,6 +946,8 @@
       <MenuItem id="ViewOnSelectOn" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOn}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOn.Description}" type="CheckBox"
                 class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectListNodeOn" />
     </MenuItem>
+
+	
   </Path>
 
   <Path name="/Altaxo/Pads/ProjectBrowser/TreeNode/ContextMenu">

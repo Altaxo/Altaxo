@@ -374,6 +374,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
  
 		}
 
+		private void EhListViewPreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			// ensures that the list view get focused even if the user only clicks with the right mouse button
+			// so it is ensured that the paste command will be available, even if the list view contains no items and the user only opens the context menu with the right mouse button click
+			if (!_listView.IsKeyboardFocusWithin)
+				_listView.Focus();
+		}
+
 	
 	}
 }
