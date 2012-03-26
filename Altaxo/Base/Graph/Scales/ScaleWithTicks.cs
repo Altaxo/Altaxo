@@ -175,7 +175,7 @@ namespace Altaxo.Graph.Scales
 
 			if (null != _tickSpacing)
 			{
-				_tickSpacing.Changed -= EhTickSpacingChanged;
+				_tickSpacing.Changed += EhTickSpacingChanged;
 			}
 		}
 

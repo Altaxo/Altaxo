@@ -180,6 +180,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return gp;
 		}
 
+		public override IHitTestObject HitTest(HitTestPointData htd)
+		{
+			IHitTestObject result = base.HitTest(htd);
+			if (result != null)
+				result.DoubleClick = EhHitDoubleClick;
+			return result;
+		}
+
+		protected static bool EhHitDoubleClick(IHitTestObject o)
+		{
+			object hitted = o.HittedObject;
+			Current.Gui.ShowDialog(ref hitted, "Shape group properties", true);
+			((ShapeGroup)hitted).OnChanged();
+			return true;
+		}
+
 		#region Addition of objects
 
 		/// <summary>
@@ -211,10 +227,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 			OnChanged();
 		}
 
+
+		/// <summary>Gets access to the grouped objects. This function has to be used with care. No size/position update of the ShapeGroup is done if the position/size/rotation/share values of one of the grouped objects is changed.
+		/// One the other hand, you can change other properties, like colors and brushes, of the individual grouped objects.</summary>
+		public IEnumerable<GraphicBase> GroupedObjects
+		{
+			get
+			{
+				return _groupedObjects.AsReadOnly();
+			}
+		}
+
 		/// <summary>
-		/// Adjusts the position and auto size of this group shape according to the contained elements.
+		/// Adjusts the position and auto size of this group shape according to the contained elements. Must be called after changing any of the contained elements.
 		/// </summary>
-		void AdjustPosition()
+		public void AdjustPosition()
 		{
 			RectangleD bounds = RectangleD.Empty;
 			bool boundsInitialized = false;

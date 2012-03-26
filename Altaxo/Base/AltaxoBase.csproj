@@ -214,8 +214,10 @@
     <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingController.cs" />
     <Compile Include="Gui\Graph\Shapes\CardinalSplinePointsController.cs" />
     <Compile Include="Gui\Graph\Shapes\ClosedCardinalSplineController.cs" />
+    <Compile Include="Gui\Graph\Shapes\FloatingScaleController.cs" />
     <Compile Include="Gui\Graph\Shapes\OpenCardinalSplineController.cs" />
     <Compile Include="Gui\Graph\Shapes\RegularPolygonController.cs" />
+    <Compile Include="Gui\Graph\Shapes\ShapeGroupController.cs" />
     <Compile Include="Gui\GuiAngleUnits.cs" />
     <Compile Include="Gui\GuiRelationUnits.cs" />
     <Compile Include="Gui\Main\InstancePropertyController.cs" />

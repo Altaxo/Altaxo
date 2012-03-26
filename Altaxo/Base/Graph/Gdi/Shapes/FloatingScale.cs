@@ -34,8 +34,94 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public class FloatingScale : ClosedPathShapeBase
 	{
+		#region Inner classes
 
-		/// <summary>The span this scale should show.</summary>
+		class PartialScale : Scale
+		{
+			Scale _underlyingScale;
+
+			double _logicalOrg;
+			double _logicalEnd;
+
+			public PartialScale(Scale underlyingScale, double orgAsNormal, double endAsNormal)
+			{
+				if (null == underlyingScale)
+					throw new ArgumentNullException("underlyingScale");
+				_underlyingScale = underlyingScale;
+
+				_logicalOrg = orgAsNormal;
+				_logicalEnd = endAsNormal;
+			}
+
+
+			#region Scale implementation
+
+			public override object Clone()
+			{
+				var result = new PartialScale(_underlyingScale,_logicalOrg,_logicalEnd);
+				return result;
+			}
+
+			public override double PhysicalVariantToNormal(Data.AltaxoVariant x)
+			{
+				var n = _underlyingScale.PhysicalVariantToNormal(x);
+				return (n - _logicalOrg) / (_logicalEnd - _logicalOrg);
+			}
+
+			public override Data.AltaxoVariant NormalToPhysicalVariant(double x)
+			{
+				var r = (1 - x) * _logicalOrg + x * _logicalEnd;
+				return _underlyingScale.NormalToPhysicalVariant(r);
+			}
+
+			public override object RescalingObject
+			{
+				get { return _underlyingScale.RescalingObject; }
+			}
+
+			public override Scales.Boundaries.IPhysicalBoundaries DataBoundsObject
+			{
+				get { return _underlyingScale.DataBoundsObject; }
+			}
+
+			public override Data.AltaxoVariant OrgAsVariant
+			{
+				get { return _underlyingScale.NormalToPhysicalVariant(_logicalOrg); }
+			}
+
+			public override Data.AltaxoVariant EndAsVariant
+			{
+				get { return _underlyingScale.NormalToPhysicalVariant(_logicalEnd); }
+			}
+
+			public override bool IsOrgExtendable
+			{
+				get { return false; }
+			}
+
+			public override bool IsEndExtendable
+			{
+				get { return false; }
+			}
+
+			public override string SetScaleOrgEnd(Data.AltaxoVariant org, Data.AltaxoVariant end)
+			{
+				_logicalOrg = _underlyingScale.PhysicalVariantToNormal(org);
+				_logicalEnd = _underlyingScale.PhysicalVariantToNormal(end);
+				return null;
+			}
+
+			public override void Rescale()
+			{
+
+			}
+			#endregion
+		}
+
+		#endregion
+
+
+		/// <summary>The span this scale should show. It is either a physical or a logical value, depending on <see cref="_scaleSpanIsPhysical"/>.</summary>
 		double _scaleSpan = 0.25;
 
 		/// <summary>If true, the _scaleSpan is interpreted as a physical value. Otherwise, it is a logical span.</summary>
@@ -43,9 +129,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		/// <summary>Number of the scale to measure (0: x-axis, 1: y-axis, 2: z-axis).</summary>
 		int _scaleNumber = 0;
-
-		/// <summary>Distance between scale and label (points).</summary>
-		double _outerDistance = 10; // Point
 
 		/// <summary>Side at which the label should appear.</summary>
 		CSAxisSide _labelSide = CSAxisSide.FirstUp;
@@ -60,47 +143,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Serialization
 
-		#region Clipboard serialization
-
-		protected FloatingScale(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes LineGraphic. 
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			FloatingScale s = this;
-			base.GetObjectData(info, context);
-		}
-		/// <summary>
-		/// Deserializes the LineGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty SLineGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized LineGraphic.</returns>
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			FloatingScale s = (FloatingScale)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
-
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FloatingScale), 1)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -143,14 +185,86 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override bool CopyFrom(object obj)
 		{
-			// TODO
-			throw new NotImplementedException();
-			//return base.CopyFrom(obj);
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as FloatingScale;
+				if (null != from)
+				{
+					_scaleSpan = from._scaleSpan;
+					_scaleSpanIsPhysical = from._scaleSpanIsPhysical;
+					_scaleNumber = from._scaleNumber;
+
+					_labelSide = from._labelSide;
+					_labelStyle = from._labelStyle;
+					_cachedPath = null;
+				}
+
+			}
+			return isCopied;
 		}
 
 		#endregion
 
+		public AxisLabelStyle LabelStyle
+		{
+			get
+			{
+				return _labelStyle;
+			}
+			set
+			{
+				_labelStyle = value;
+			}
+		}
+
+		public int ScaleNumber
+		{
+			get
+			{
+				return _scaleNumber;
+			}
+			set
+			{
+				_scaleNumber = value;
+			}
+		}
+
+		
+
+			public double ScaleSpan
+			{
+				get
+				{
+					return _scaleSpan;
+				}
+				set
+				{
+					_scaleSpan = value;
+				}
+			}
+
+			public bool IsScaleSpanPhysicalValue
+			{
+				get
+				{
+					return _scaleSpanIsPhysical;
+				}
+				set
+				{
+					_scaleSpanIsPhysical = value;
+				}
+			}
+
 		public override bool AllowNegativeSize
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public override bool AutoSize
 		{
 			get
 			{
@@ -196,7 +310,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
-			var pt = htd.GetHittedPointInWorldCoord(_transformation);
+			var pt = htd.GetHittedPointInWorldCoord();
 			HitTestObjectBase result = null;
 			GraphicsPath gp = GetSelectionPath();
 			if (gp.IsVisible((PointF)pt))
@@ -260,7 +374,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var swt = new Altaxo.Graph.Scales.ScaleWithTicks(layer.Scales[_scaleNumber].Scale, spanTickSpacing);
 			CSLineID isolineID = new CSLineID(_scaleNumber, rBegin);
 			var axisInfo = new CSAxisInformation(isolineID);
-			_labelStyle.Paint(g, layer.CoordinateSystem, swt, axisInfo, _outerDistance, false);
+			_labelStyle.Paint(g, layer.CoordinateSystem, swt, axisInfo, 0, false);
+
+			// calculate size information
+			RectangleD bounds1 = _cachedPath.GetBounds();
+			RectangleD bounds2 = _labelStyle.GetSelectionPath().GetBounds();
+			bounds1.ExpandToInclude(bounds2);
+			SetSize(bounds1.Width, bounds1.Height, true);
 		}
 
 		#region Inner classes

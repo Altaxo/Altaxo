@@ -219,6 +219,8 @@ namespace Altaxo.Graph.Scales.Ticks
 			if (object.ReferenceEquals(this, from))
 				return;
 
+			_cachedMajorMinor = null; // invalidate the cached setting
+
 			_userDefinedMajorSpan = from._userDefinedMajorSpan;
 			_userDefinedMinorTicks = from._userDefinedMinorTicks;
 

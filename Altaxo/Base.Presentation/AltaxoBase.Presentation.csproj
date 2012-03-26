@@ -428,6 +428,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Shapes\FloatingScaleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Shapes\ImageGraphicControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -469,6 +473,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph\Shapes\RegularPolygonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\Shapes\ShapeGroupControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -924,6 +932,9 @@
     <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
       <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\Shapes\FloatingScaleControl.xaml.cs">
+      <DependentUpon>FloatingScaleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Shapes\ImageGraphicControl.xaml.cs">
       <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
     </Compile>
@@ -957,6 +968,9 @@
     </Compile>
     <Compile Include="Gui\Graph\Shapes\RegularPolygonControl.xaml.cs">
       <DependentUpon>RegularPolygonControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Shapes\ShapeGroupControl.xaml.cs">
+      <DependentUpon>ShapeGroupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>

@@ -557,7 +557,10 @@ namespace Altaxo.Graph.Commands
 		{
 			var layer = ctrl.ActiveLayer;
 			if (null == layer || ctrl.CurrentPlotNumber < 0 || !(layer.PlotItems[ctrl.CurrentPlotNumber] is DensityImagePlotItem))
+			{
 				Current.Gui.ErrorMessageBox("Current plot item should be a density image plot!");
+				return;
+			}
 
 			var plotItem = (DensityImagePlotItem)layer.PlotItems[ctrl.CurrentPlotNumber];
 			var legend = new Gdi.Shapes.DensityImageLegend(plotItem, 0.5*layer.Size, new PointD2D(layer.Size.X / 3, layer.Size.Y / 2));

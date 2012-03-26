@@ -204,6 +204,11 @@ namespace Altaxo.Graph
 		public double Left { get { return _x; } }
 		public double Right { get { return _x + _w; } }
 
+		public PointD2D LeftTop { get { return new PointD2D(_x, _y); } }
+		public PointD2D LeftBottom { get { return new PointD2D(_x, _y+_h); } }
+		public PointD2D RightTop { get { return new PointD2D(_x+_w, _y); } }
+		public PointD2D RightBottom { get { return new PointD2D(_x+_w, _y + _h); } }
+
 
     public bool Contains(PointD2D p)
     {
@@ -261,6 +266,15 @@ namespace Altaxo.Graph
 				}
 			}
 		}
+
+		public void ExpandToInclude(RectangleD rect)
+		{
+			ExpandToInclude(rect.LeftTop);
+			ExpandToInclude(rect.LeftBottom);
+			ExpandToInclude(rect.RightTop);
+			ExpandToInclude(rect.RightBottom);
+		}
+
 
 		/// <summary>Gets a rectangle that includes the smallest circle around this rectangle.</summary>
 		/// <value>A rectangle that includes the smallest circle around this rectangle.</value>

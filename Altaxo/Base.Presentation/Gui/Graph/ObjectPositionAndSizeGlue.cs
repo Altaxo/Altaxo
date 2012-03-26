@@ -314,6 +314,25 @@ namespace Altaxo.Gui.Graph
 
 		#endregion
 
+		#region Scale
+
+
+		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public PointD2D Scale
+		{
+			get
+			{
+				return new PointD2D(ScaleX, ScaleY);
+			}
+			set
+			{
+				ScaleX = value.X;
+				ScaleY = value.Y;
+			}
+		}
+
+		#endregion
+
 		#region ScaleX
 
 		double _scaleX = 1;

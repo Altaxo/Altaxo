@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Shapes.FloatingScaleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+					  xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+						 xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 >
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition MinWidth="90"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition MinWidth="90"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="4"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="4"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="4"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="4"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0">Pos.X:</Label>
+			<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="0" x:Name="_edPositionX" UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}"/>
+
+			<Label Grid.Column="2" Grid.Row="0">Pos.Y:</Label>
+			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="0" x:Name="_edPositionY" UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}"/>
+
+
+		<GroupBox Header="Scale to measure:" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="4">
+			<StackPanel Orientation="Vertical">
+				<RadioButton x:Name="_guiScale0" Content="X-scale"/>
+				<RadioButton x:Name="_guiScale1" Content="Y-scale"/>
+			</StackPanel>
+		</GroupBox>
+
+			<GroupBox Header="ScaleSpan" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="6">
+			<Grid HorizontalAlignment="Stretch">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<RadioButton x:Name="_guiIsLogicalValue" Content="is logical value:" Grid.Column="0" Margin="0,4,0,0"/>
+				<axogc:QuantityWithUnitTextBox x:Name="_guiLogicalScaleSpan" Grid.Column="1" Grid.Row="0" Margin="0,4,0,0" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" IsEnabled="{Binding ElementName=_guiIsLogicalValue, Path=IsChecked}" />
+				<RadioButton x:Name="_guiIsPhysicalValue" Content="is physical value:" Grid.Column="0" Grid.Row="1" Margin="0,4,0,0"/>
+				<axogc:ValidatingTextBox x:Name="_guiScaleSpan" Grid.Column="1" Grid.Row="1" Margin="0,4,0,0" Validating="EhScaleSpanValidating" IsEnabled="{Binding ElementName=_guiIsPhysicalValue, Path=IsChecked}"/>
+			</Grid>
+		</GroupBox>
+
+		<axogg:XYAxisLabelStyleControl x:Name="_guiLabelStyleView" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="8"/>
+
+	</Grid>
+</UserControl>
