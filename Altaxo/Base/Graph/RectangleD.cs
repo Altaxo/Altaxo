@@ -276,6 +276,16 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>Expands the rectangle by the specified margin.</summary>
+		/// <param name="margin">The margin.</param>
+		public void Expand(Margin2D margin)
+		{
+			_x -= margin.Left;
+			_w += (margin.Left + margin.Right);
+			_y -= margin.Top;
+			_h += (margin.Top + margin.Bottom);
+		}
+
 		/// <summary>Gets a rectangle that includes the smallest circle around this rectangle.</summary>
 		/// <value>A rectangle that includes the smallest circle around this rectangle.</value>
 		public RectangleD OuterCircleBoundingBox

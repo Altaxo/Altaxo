@@ -349,6 +349,21 @@ namespace Altaxo.Graph.Gdi.CS
 
 		}
 
+		static readonly string[,] _axisNamesNormal = new string[,] { 
+		{ "Above", "Below", "Behind", "Before" },
+		{ "Right", "Left",  "Behind", "Before" },
+		{ "Right", "Left",  "Above", "Below" }
+		};
+
+		/// <summary>Gets the name of the axis side.</summary>
+		/// <param name="id">The axis identifier.</param>
+		/// <param name="side">The axis side.</param>
+		/// <returns>The name of the axis side for the axis line given by the identifier.</returns>
+		public override string GetAxisSideName(CSLineID id, CSAxisSide side)
+		{
+			return _axisNamesNormal[id.ParallelAxisNumber, (int)side];
+		}
+
 
 		public override object Clone()
 		{

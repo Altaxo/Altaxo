@@ -53,6 +53,7 @@ namespace Altaxo.Serialization.Xml
     System.IO.MemoryStream GetMemoryStream(string name);
 
     object GetEnum(string name, System.Type type); // see remarks on serialization
+		T? GetNullableEnum<T>(string name) where T : struct;
 
     string GetNodeContent(); // gets the inner text of the node directly
 

@@ -47,6 +47,8 @@ namespace Altaxo.Settings
 			}
 		}
 
+		public abstract object Clone();
+
 		/// <summary>Set the members of this instance from a given culture.</summary>
 		/// <param name="c">The culture to use as template.</param>
 		public virtual void SetMembersFromCulture(CultureInfo c)

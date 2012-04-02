@@ -205,6 +205,14 @@ namespace Altaxo.Collections
 		}
 
 
+		/// <summary>Adds items to this collection.</summary>
+		/// <param name="items">The items to add.</param>
+		public void AddRange(IEnumerable<SelectableListNode> items)
+		{
+			foreach (var item in items)
+				Add(item);
+		}
+
 		public SelectableListNode[] ToArray()
 		{
 			SelectableListNode[] result = new SelectableListNode[Count];

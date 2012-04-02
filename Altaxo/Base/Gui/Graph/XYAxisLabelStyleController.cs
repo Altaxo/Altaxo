@@ -21,10 +21,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Serialization;
 using System.Drawing;
 using Altaxo.Graph.Gdi;
 using Altaxo.Data;
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Axis;
 
@@ -174,6 +177,10 @@ namespace Altaxo.Gui.Graph
 
     string SuppressedLabelsByNumber { get; set; }
 
+		/// <summary>Sets the possible choices for the label side.</summary>
+		/// <value>The label sides.</value>
+		Collections.SelectableListNodeList LabelSides { set; }
+
   }
 
   public interface IXYAxisLabelStyleController : IMVCANController
@@ -223,6 +230,8 @@ namespace Altaxo.Gui.Graph
 
     protected IBackgroundStyle _backgroundStyle;
 
+		Collections.SelectableListNodeList _labelSides;
+
     public bool InitializeDocument(params object[] args)
     {
       if (args.Length == 0 || !(args[0] is AxisLabelStyle))
@@ -252,6 +261,19 @@ namespace Altaxo.Gui.Graph
         _yOffset      = _doc.YOffset;
         _currentLabelStyleInstance = _doc.LabelFormat;
         _backgroundStyle = _doc.BackgroundStyle;
+
+				_labelSides = new Collections.SelectableListNodeList();
+				_labelSides.Add(new Collections.SelectableListNode("Automatic", null, null == _doc.LabelSide));
+				var list = new List<Collections.SelectableListNode>();
+				if (_doc.CachedAxisInformation != null)
+				{
+					list.Add(new Collections.SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, CSAxisSide.FirstDown, _doc.LabelSide == CSAxisSide.FirstDown));
+					list.Add(new Collections.SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, CSAxisSide.FirstUp, _doc.LabelSide == CSAxisSide.FirstUp));
+				}
+				list.Sort((x, y) => string.Compare(x.Text, y.Text));
+				_labelSides.AddRange(list);
+			
+
       }
 
       if(null!=View)
@@ -269,7 +291,7 @@ namespace Altaxo.Gui.Graph
         View.Background = _backgroundStyle;
         View.SuppressedLabelsByValue = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
         View.SuppressedLabelsByNumber = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
-
+				_view.LabelSides = _labelSides;
         InitializeLabelStyle();
       }
     }
@@ -418,6 +440,9 @@ namespace Altaxo.Gui.Graph
       else
         return false;
 
+			var labelSideNode = _labelSides.FirstSelectedNode;
+			if (null != labelSideNode)
+				_doc.LabelSide = (CSAxisSide?)labelSideNode.Tag;
 
       return true;
     }

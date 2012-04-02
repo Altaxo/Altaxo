@@ -622,8 +622,8 @@ namespace Altaxo.Graph.Gdi.Axis
 		protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, float inflateby)
 		{
 
-			Logical3D r0 = _cachedAxisStyleInfo.Identifier.Begin;
-			Logical3D r1 = _cachedAxisStyleInfo.Identifier.End;
+			Logical3D r0 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisOrg);
+			Logical3D r1 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisEnd);
 			GraphicsPath gp = new GraphicsPath();
 			layer.CoordinateSystem.GetIsoline(gp, r0, r1);
 
@@ -656,8 +656,9 @@ namespace Altaxo.Graph.Gdi.Axis
 			Scale axis = layer.Scales[styleID.ParallelAxisNumber].Scale;
 			TickSpacing ticking = layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
-			Logical3D r0 = styleID.Begin;
-			Logical3D r1 = styleID.End;
+
+			Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
+			Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
 
 			layer.CoordinateSystem.DrawIsoline(g, _axisPen, r0, r1);
 

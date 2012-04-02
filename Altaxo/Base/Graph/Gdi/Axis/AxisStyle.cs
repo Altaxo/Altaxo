@@ -40,6 +40,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		Main.IChangedEventSource,
 		Main.IChildChangedEventSink,
 		Main.IDocumentNode,
+		Main.ICopyFrom,
 		ICloneable
 	{
 		/// <summary>
@@ -203,15 +204,22 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 		}
 
-		void CopyFrom(AxisStyle from)
+		public bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			var from = obj as AxisStyle;
+			if (null == from)
+				return false;
 
-			this._styleID = from._styleID.Clone();
-			CopyWithoutIdFrom(from);
-			this._cachedAxisInfo = from._cachedAxisInfo;
+			if (!object.ReferenceEquals(this, from))
+			{
+				this._styleID = from._styleID.Clone();
+				this._cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!
+				CopyWithoutIdFrom(from);
+			}
+			return true;
 		}
+
+
 		public void CopyWithoutIdFrom(AxisStyle from)
 		{
 			this.AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
@@ -247,6 +255,10 @@ namespace Altaxo.Graph.Gdi.Axis
 				_cachedAxisInfo = value;
 				if (_axisLineStyle != null)
 					_axisLineStyle.CachedAxisInformation = value;
+				if (_majorLabelStyle is AxisLabelStyle)
+					((AxisLabelStyle)_majorLabelStyle).CachedAxisInformation = value;
+				if (_minorLabelStyle is AxisLabelStyle)
+					((AxisLabelStyle)_minorLabelStyle).CachedAxisInformation = value;
 			}
 		}
 
@@ -279,6 +291,11 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public void Paint(Graphics g, IPlotArea layer)
 		{
+			Paint(g, layer, layer.CoordinateSystem.GetAxisStyleInformation);
+		}
+
+		public void Paint(Graphics g, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		{
 			// update the logical values of the physical axes before
 			if (_styleID.UsePhysicalValueOtherFirst)
 			{
@@ -293,21 +310,31 @@ namespace Altaxo.Graph.Gdi.Axis
 				_styleID.LogicalValueOtherSecond = logicalValue;
 			}
 
-			int axisnumber = _styleID.ParallelAxisNumber;
-			CSAxisInformation styleinfo = layer.CoordinateSystem.GetAxisStyleInformation(_styleID);
-			_cachedAxisInfo = styleinfo;
-
-			float outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(styleinfo.PreferedLabelSide);
+			CachedAxisInformation = GetAxisStyleInformation(_styleID);
 
 			if (ShowAxisLine)
-				_axisLineStyle.Paint(g, layer, styleinfo);
+			{
+				_axisLineStyle.Paint(g, layer, _cachedAxisInfo);
+			}
 			if (ShowMajorLabels)
-				this._majorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[styleinfo.Identifier.ParallelAxisNumber], styleinfo, outerDistance, false);
+			{
+				var labelSide = _majorLabelStyle.PredictLabelSide(_cachedAxisInfo);
+				var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
+				this._majorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[_cachedAxisInfo.Identifier.ParallelAxisNumber], _cachedAxisInfo, outerDistance, false);
+			}
 			if (ShowMinorLabels)
-				this._minorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[styleinfo.Identifier.ParallelAxisNumber], styleinfo, outerDistance, true);
+			{
+				var labelSide = _minorLabelStyle.PredictLabelSide(_cachedAxisInfo);
+				var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
+				this._minorLabelStyle.Paint(g, layer.CoordinateSystem, layer.Scales[_cachedAxisInfo.Identifier.ParallelAxisNumber], _cachedAxisInfo, outerDistance, true);
+			}
 			if (ShowTitle)
+			{
 				_axisTitle.Paint(g, layer);
+			}
 		}
+
+	
 
 		#region Properties
 		/// <summary>
@@ -342,7 +369,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value == false)
 					MajorLabelStyle = null;
 				else if (_majorLabelStyle == null)
-					MajorLabelStyle = new AxisLabelStyle();
+					MajorLabelStyle = new AxisLabelStyle() { CachedAxisInformation = _cachedAxisInfo };
 			}
 		}
 
@@ -360,7 +387,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value == false)
 					MinorLabelStyle = null;
 				else if (_minorLabelStyle == null)
-					MinorLabelStyle = new AxisLabelStyle();
+					MinorLabelStyle = new AxisLabelStyle() { CachedAxisInformation = _cachedAxisInfo };
 			}
 		}
 
@@ -404,8 +431,11 @@ namespace Altaxo.Graph.Gdi.Axis
 				AxisLabelStyleBase oldvalue = _majorLabelStyle;
 				_majorLabelStyle = value;
 
-				if (null != value)
-					value.ParentObject = this;
+
+				if (null != _majorLabelStyle)
+				{
+					_majorLabelStyle.ParentObject = this;
+				}
 
 				if (!object.ReferenceEquals(value, oldvalue))
 				{

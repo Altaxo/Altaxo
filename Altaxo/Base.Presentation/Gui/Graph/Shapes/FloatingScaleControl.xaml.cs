@@ -36,14 +36,25 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
+	using Altaxo.Graph.Gdi.Shapes;
+
 	/// <summary>
 	/// Interaction logic for FloatingScaleControl.xaml
 	/// </summary>
 	public partial class FloatingScaleControl : UserControl, IFloatingScaleView
 	{
+		BackgroundControlsGlue _backgroundGlue;
+		public event Action TickSpacingTypeChanged;
+
+
+
 		public FloatingScaleControl()
 		{
 			InitializeComponent();
+
+			_backgroundGlue = new BackgroundControlsGlue();
+			_backgroundGlue.CbStyle = _guiBackgroundStyle;
+			_backgroundGlue.CbBrush = _guiBackgroundBrush;
 		}
 
 		public Altaxo.Graph.PointD2D DocPosition
@@ -77,39 +88,82 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public double ScaleSpan
+		public double ScaleSpanValue
 		{
 			get
 			{
-				if (ScaleSpanIsPhysicalValue)
-					return _lastConvertedScaleSpan;
+				switch (ScaleSpanType)
+				{
+					default:
+					case FloatingScaleSpanType.IsLogicalValue:
+						return _guiLogicalScaleSpan.SelectedQuantityAsValueInSIUnits;
+					case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
+						return _guiSpanDifferenceValue.SelectedValue;
+					case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
+						return _guiSpanRatioValue.SelectedValue;
+				}
+			}
+			set
+			{
+				switch (ScaleSpanType)
+				{
+					case FloatingScaleSpanType.IsLogicalValue:
+						_guiLogicalScaleSpan.SelectedQuantityAsValueInSIUnits = value;
+						break;
+					case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
+						_guiSpanDifferenceValue.SelectedValue = value;
+						break;
+					case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
+						_guiSpanRatioValue.SelectedValue = value;
+						break;
+				}
+			}
+		}
+
+		public FloatingScaleSpanType ScaleSpanType
+		{
+			get
+			{
+				if (_guiIsLogicalValue.IsChecked == true)
+					return FloatingScaleSpanType.IsLogicalValue;
+				else if (_guiIsPhysicalEndOrgDifference.IsChecked == true)
+					return FloatingScaleSpanType.IsPhysicalEndOrgDifference;
 				else
-					return _guiLogicalScaleSpan.SelectedQuantityAsValueInSIUnits;
+					return FloatingScaleSpanType.IsPhysicalEndOrgRatio;
 			}
 			set
 			{
-				_lastConvertedScaleSpan = value;
-				_guiScaleSpan.Text = value.ToString(System.Globalization.CultureInfo.CurrentUICulture);
-				_guiLogicalScaleSpan.SelectedQuantityAsValueInSIUnits = value;
+				_guiIsLogicalValue.IsChecked = value == FloatingScaleSpanType.IsLogicalValue;
+				_guiIsPhysicalEndOrgDifference.IsChecked = value == FloatingScaleSpanType.IsPhysicalEndOrgDifference;
+				_guiIsPhysicalEndOrgRatio.IsChecked = value == FloatingScaleSpanType.IsPhysicalEndOrgRatio;
 			}
 		}
 
-		public bool ScaleSpanIsPhysicalValue
+		public object TitleFormatView
 		{
-			get
-			{
-				return _guiIsPhysicalValue.IsChecked == true;
-			}
 			set
 			{
-				_guiIsPhysicalValue.IsChecked = value;
-				_guiIsLogicalValue.IsChecked = !value;
+				_guiTabTitleFormat.Content = value;
 			}
 		}
 
-		public IXYAxisLabelStyleView LabelStyleView
+		public object MajorLabelView
 		{
-			get { return _guiLabelStyleView; }
+			set
+			{
+				_guiTabMajorLabels.Content = value;
+				_guiTabMajorLabels.Visibility = null == value ? Visibility.Collapsed : Visibility.Visible;
+			}
+		}
+
+
+		public object MinorLabelView
+		{
+			set
+			{
+				_guiTabMinorLabels.Content = value;
+				_guiTabMinorLabels.Visibility = null == value ? Visibility.Collapsed : Visibility.Visible;
+			}
 		}
 
 		double _lastConvertedScaleSpan;
@@ -119,6 +173,81 @@ namespace Altaxo.Gui.Graph.Shapes
 			{
 				e.AddError("The entered text could not be converted to a numeric value");
 				return;
+			}
+		}
+
+		private void EhTickSpacingType_SelectionChange(object sender, SelectionChangedEventArgs e)
+		{
+			e.Handled = true;
+			if (null != TickSpacingTypeChanged)
+			{
+				ComboBox _cbTickSpacingType = (ComboBox)sender;
+				GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
+				TickSpacingTypeChanged();
+			}
+		}
+
+
+		public Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType ScaleSegmentType
+		{
+			get
+			{
+				if (true == _guiScaleTypeRatio.IsChecked)
+					return Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.RatioToOrg;
+				else if(true == _guiScaleTypeDifference.IsChecked)
+					return Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.DifferenceToOrg;
+				else 
+					return Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.Normal;
+			}
+			set
+			{
+				_guiScaleTypeRatio.IsChecked = (value == Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.RatioToOrg);
+				_guiScaleTypeDifference.IsChecked = (value == Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.DifferenceToOrg);
+				_guiScaleTypeNormal.IsChecked = (value == Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.Normal);
+			}
+		}
+
+		public object TickSpacingView
+		{
+			set { _guiTickSpacingGroupBox.Content = value; }
+		}
+
+
+		public void InitializeTickSpacingTypes(Collections.SelectableListNodeList names)
+		{
+			GuiHelper.Initialize(_guiTickSpacingTypes, names);
+		}
+
+
+		public Altaxo.Graph.Gdi.Background.IBackgroundStyle SelectedBackground
+		{
+			get
+			{
+				return _backgroundGlue.BackgroundStyle;
+			}
+			set
+			{
+				_backgroundGlue.BackgroundStyle = value;
+			}
+		}
+
+		public Altaxo.Graph.Margin2D BackgroundPadding
+		{
+			get
+			{
+				var result = new Altaxo.Graph.Margin2D();
+				result.Left = _guiMarginLeft.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				result.Top = _guiMarginTop.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				result.Right = _guiMarginRight.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				result.Bottom = _guiMarginBottom.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				return result;
+			}
+			set
+			{
+				_guiMarginLeft.SelectedQuantity = new Units.DimensionfulQuantity(value.Left, Units.Length.Point.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
+				_guiMarginTop.SelectedQuantity = new Units.DimensionfulQuantity(value.Top, Units.Length.Point.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
+				_guiMarginRight.SelectedQuantity = new Units.DimensionfulQuantity(value.Right, Units.Length.Point.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
+				_guiMarginBottom.SelectedQuantity = new Units.DimensionfulQuantity(value.Bottom, Units.Length.Point.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
 			}
 		}
 	}

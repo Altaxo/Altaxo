@@ -136,6 +136,13 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected abstract void UpdateAxisInfo();
 
+
+		/// <summary>Gets the name of the axis side.</summary>
+		/// <param name="id">The axis identifier.</param>
+		/// <param name="side">The axis side.</param>
+		/// <returns>The name of the axis side for the axis line given by the identifier.</returns>
+		public abstract string GetAxisSideName(CSLineID id, CSAxisSide side);
+
 		protected virtual void ClearCachedObjects()
 		{
 			this._axisStyleInformation = null;
@@ -549,7 +556,16 @@ namespace Altaxo.Graph.Gdi
 			{
 				result.CopyWithoutIdentifierFrom(nearestInfo);
 				if (minDistance != 0)
+				{
 					result.NameOfAxisStyle += string.Format(" ({0}% offs.)", minDistance * 100);
+					result.NameOfFirstUpSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstUp);
+					result.NameOfFirstDownSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstDown);
+					if (Is3D)
+					{
+						result.NameOfSecondUpSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondUp);
+						result.NameOfSecondDownSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondDown);
+					}
+				}
 
 			}
 

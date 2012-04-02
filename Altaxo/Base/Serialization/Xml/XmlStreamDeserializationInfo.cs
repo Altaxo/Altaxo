@@ -190,7 +190,16 @@ namespace Altaxo.Serialization.Xml
       string val = m_Reader.ReadElementString(name);
       return System.Enum.Parse(type,val);
     }
-    
+
+		public T? GetNullableEnum<T>(string name) where T: struct
+		{
+			string val = m_Reader.ReadElementString(name);
+			if (string.IsNullOrEmpty(val))
+				return default(System.Nullable<T>);
+			else
+				return (T)System.Enum.Parse(typeof(T), val);
+		}
+
     public string GetNodeContent()
     {
       return m_Reader.ReadString();

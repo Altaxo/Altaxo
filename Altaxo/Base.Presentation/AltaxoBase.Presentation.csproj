@@ -428,6 +428,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Scales\Ticks\SpanTickSpacingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Shapes\FloatingScaleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -822,6 +826,7 @@
     <Compile Include="Gui\Common\MultiRename\MultiRenameControl.xaml.cs">
       <DependentUpon>MultiRenameControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\NumericDoubleTextBox.cs" />
     <Compile Include="Gui\Common\QuantityWithUnitConverter.cs" />
     <Compile Include="Gui\Common\QuantityWithUnitTextBox.cs" />
     <Compile Include="Gui\Common\MinMaxIntegerControl.xaml.cs">
@@ -931,6 +936,9 @@
     <Compile Include="Gui\Graph\GdiFontGlue.cs" />
     <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
       <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\SpanTickSpacingControl.xaml.cs">
+      <DependentUpon>SpanTickSpacingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Shapes\FloatingScaleControl.xaml.cs">
       <DependentUpon>FloatingScaleControl.xaml</DependentUpon>

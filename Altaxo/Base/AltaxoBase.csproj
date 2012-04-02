@@ -204,6 +204,8 @@
     <Compile Include="Graph\Gdi\SyntheticBrushes\PerlinNoiseBrush.cs" />
     <Compile Include="Graph\Gdi\SyntheticBrushes\RandomCircles.cs" />
     <Compile Include="Graph\Gdi\SyntheticBrushes\SyntheticBrushBase.cs" />
+    <Compile Include="Graph\Margin2D.cs" />
+    <Compile Include="Graph\Scales\Ticks\SpanTickSpacing.cs" />
     <Compile Include="Graph\TextureScaling.cs" />
     <Compile Include="Gui\Common\ValueInSomeUnitControllerBase.cs" />
     <Compile Include="Gui\Common\RelationValueInUnityController.cs" />
@@ -212,6 +214,7 @@
     <Compile Include="Gui\Common\Drawing\TextureScalingController.cs" />
     <Compile Include="Gui\Common\LengthValueInPointController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\SpanTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Shapes\CardinalSplinePointsController.cs" />
     <Compile Include="Gui\Graph\Shapes\ClosedCardinalSplineController.cs" />
     <Compile Include="Gui\Graph\Shapes\FloatingScaleController.cs" />
@@ -229,6 +232,7 @@
     <Compile Include="Main\Services\PropertyReflection\Property.cs" />
     <Compile Include="Main\Services\PropertyReflection\PropertyCategory.cs" />
     <Compile Include="Main\Services\PropertyReflection\PropertyCollection.cs" />
+    <Compile Include="Root\CopyHelper.cs" />
     <Compile Include="Worksheet\WorksheetViewLayout.cs" />
     <Content Include="AssemblyInfo.cs">
       <SubType>Code</SubType>

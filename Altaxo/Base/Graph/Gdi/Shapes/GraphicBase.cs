@@ -912,7 +912,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// Sets the position of the object without causing a Changed event.
 		/// </summary>
 		/// <param name="newPosition"></param>
-		public void SilentSetPosition(PointD2D newPosition)
+		public virtual void SilentSetPosition(PointD2D newPosition)
 		{
 			this._position = newPosition;
 			UpdateTransformationMatrix();

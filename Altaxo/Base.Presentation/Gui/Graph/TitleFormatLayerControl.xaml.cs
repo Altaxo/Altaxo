@@ -84,7 +84,9 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public event EventHandler ShowAxisLineChanged;
+		public event Action ShowAxisLineChanged;
+		public event Action ShowMajorLabelsChanged;
+		public event Action ShowMinorLabelsChanged;
 
 		UIElement _lineStyleControl;
 		public object LineStyleView
@@ -129,7 +131,19 @@ namespace Altaxo.Gui.Graph
 		private void EhShowAxisLineChanged(object sender, RoutedEventArgs e)
 		{
 			if (null != ShowAxisLineChanged)
-				ShowAxisLineChanged(this, EventArgs.Empty);
+				ShowAxisLineChanged();
+		}
+
+		private void EhShowMajorLabelsChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != ShowMajorLabelsChanged)
+				ShowMajorLabelsChanged();
+		}
+
+		private void EhShowMinorLabelsChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != ShowMinorLabelsChanged)
+				ShowMinorLabelsChanged();
 		}
 	}
 }

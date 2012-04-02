@@ -27,7 +27,7 @@ namespace Altaxo.Main
 	/// <summary>
 	/// Interface for instances that are able to copy properties from another object.
 	/// </summary>
-	public interface ICopyFrom
+	public interface ICopyFrom : ICloneable
 	{
 		/// <summary>
 		/// Try to copy from another object. Should try to copy even if the object to copy from is not of

@@ -168,7 +168,16 @@ namespace Altaxo.Serialization.Xml
     {
       m_Writer.WriteElementString(name, val.ToString());
     }
-    
+
+		public void AddNullableEnum<T>(string name, T? val) where T: struct
+		{
+			if (null == val)
+				m_Writer.WriteElementString(name, string.Empty);
+			else
+				m_Writer.WriteElementString(name, val.Value.ToString());
+		}
+
+
     public void SetNodeContent(string nodeContent)
     {
       m_Writer.WriteString(nodeContent);

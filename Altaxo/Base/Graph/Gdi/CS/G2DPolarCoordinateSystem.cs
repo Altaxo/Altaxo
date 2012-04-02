@@ -251,6 +251,35 @@ namespace Altaxo.Graph.Gdi.CS
 			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 		}
 
+
+		static readonly string[,] _axisNamesNormal = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };
+		static readonly string[,] _axisNamesOuterLines = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };
+
+		/// <summary>Gets the name of the axis side.</summary>
+		/// <param name="id">The axis identifier.</param>
+		/// <param name="side">The axis side.</param>
+		/// <returns>The name of the axis side for the axis line given by the identifier.</returns>
+		public override string GetAxisSideName(CSLineID id, CSAxisSide side)
+		{
+			bool isX = id.ParallelAxisNumber == 0;
+			isX ^= _isXYInterchanged;
+
+			bool isUp = side == CSAxisSide.FirstUp;
+			isUp ^= isX ? _isXreverse : _isYreverse;
+
+		
+
+			bool isOuterLine = (id.LogicalValueOtherFirst == 0 || id.LogicalValueOtherFirst == 1);
+
+			if (isOuterLine)
+				isUp ^= (0 == id.LogicalValueOtherFirst);
+
+			if (isOuterLine)
+				return _axisNamesOuterLines[isX ? 0 : 1, isUp ? 0 : 1];
+			else
+				return _axisNamesNormal[isX ? 0 : 1, isUp ? 0 : 1];
+		}
+
 		/// <summary>
 		/// Calculates from two logical values (values between 0 and 1) the coordinates of the point. Returns true if the conversion
 		/// is possible, otherwise false.

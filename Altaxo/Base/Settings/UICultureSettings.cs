@@ -8,7 +8,7 @@ namespace Altaxo.Settings
 	/// <summary>
 	/// Manages the settings for a culture, i.e. number and DateTime formats etc.
 	/// </summary>
-	public class UICultureSettings : CultureSettingsBase, ICloneable
+	public class UICultureSettings : CultureSettingsBase
 	{
 		/// <summary>
 		/// Storage path for storing this instance in the application properties.
@@ -67,7 +67,7 @@ namespace Altaxo.Settings
 
 		/// <summary>Creates a new object that is a copy of the current instance.</summary>
 		/// <returns>A new object that is a copy of this instance.</returns>
-		public object Clone()
+		public override object Clone()
 		{
 			var result = new UICultureSettings();
 			result.CopyFrom(this);

@@ -90,6 +90,11 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public abstract double FontSize { get; set; }
 
+		/// <summary>Predicts the side, where the label will be shown using the given axis information.</summary>
+		/// <param name="axisInformation">The axis information.</param>
+		/// <returns>The side of the axis where the label will be shown.</returns>
+		public abstract CSAxisSide PredictLabelSide(CSAxisInformation axisInformation);
+
 		#region IDocumentNode Members
 
 		public object ParentObject

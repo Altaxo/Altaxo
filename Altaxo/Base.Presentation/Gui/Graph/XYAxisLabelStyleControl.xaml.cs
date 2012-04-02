@@ -258,6 +258,13 @@ namespace Altaxo.Gui.Graph
 			set { _edSuppressLabelsByNumber.Text = value; }
 		}
 
+		public Collections.SelectableListNodeList LabelSides
+		{
+			set
+			{
+				_guiLabelSide.ItemsSource = value;
+			}
+		}
 
 		#endregion  IXYAxisLabelStyleView
 

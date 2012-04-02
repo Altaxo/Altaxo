@@ -42,7 +42,11 @@ namespace Altaxo.Graph
 
 		bool _hasTitleByDefault;
 
+		/// <summary>This is the logical value where the axis starts. Normally, this is 0 (zero). For a segment of an axis, this might be any value.</summary>
+		double _logicalValueAxisOrg;
 
+		/// <summary>This is the logical value where the axis ends. Normally, this is 1 (one). For a segment of an axis, this might be any value.</summary>
+		double _logicalValueAxisEnd = 1;
 
 		public CSAxisInformation(CSLineID identifier)
 		{
@@ -70,6 +74,8 @@ namespace Altaxo.Graph
 			this._preferedLabelSide = from._preferedLabelSide;
 			this._isShownByDefault = from._isShownByDefault;
 			this._hasTitleByDefault = from._hasTitleByDefault;
+			this._logicalValueAxisOrg = from._logicalValueAxisOrg;
+			this._logicalValueAxisEnd = from._logicalValueAxisEnd;
 		}
 
 		public void SetDefaultValues()
@@ -179,6 +185,32 @@ namespace Altaxo.Graph
 		{
 			get { return _hasTitleByDefault; }
 			set { _hasTitleByDefault = value; }
+		}
+
+		/// <summary>This is the logical value where the axis starts. Normally, this is 0 (zero). For a segment of an axis, this might be any value.</summary>
+		public double LogicalValueAxisOrg
+		{
+			get
+			{
+				return _logicalValueAxisOrg;
+			}
+			set
+			{
+				_logicalValueAxisOrg = value;
+			}
+		}
+
+		/// <summary>This is the logical value where the axis ends. Normally, this is 1 (one). For a segment of an axis, this might be be any value.</summary>
+		public double LogicalValueAxisEnd
+		{
+			get
+			{
+				return _logicalValueAxisEnd;
+			}
+			set
+			{
+				_logicalValueAxisEnd = value;
+			}
 		}
 	}
 }

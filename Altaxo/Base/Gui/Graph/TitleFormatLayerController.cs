@@ -36,7 +36,9 @@ namespace Altaxo.Gui.Graph
     bool ShowMajorLabels { get; set; }
     bool ShowMinorLabels { get; set; }
 
-    event EventHandler ShowAxisLineChanged;
+    event Action ShowAxisLineChanged;
+		event Action ShowMajorLabelsChanged;
+		event Action ShowMinorLabelsChanged;
 
     object LineStyleView { set; }
 
@@ -53,138 +55,114 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(AxisStyle),90)]
   [ExpectedTypeOfView(typeof(ITitleFormatLayerView))]
-  public class TitleFormatLayerController : IMVCANController
+  public class TitleFormatLayerController : MVCANDControllerBase<AxisStyle, ITitleFormatLayerView>
   {
-    protected ITitleFormatLayerView m_View;
-    protected AxisStyle _doc;
-
-    protected bool    m_ShowAxis;
-    protected bool    m_Original_ShowAxis;
-
-    protected string  m_Title;
-    protected string  m_Original_Title;
-
-    protected int     m_AxisPosition;
-    protected int     m_Original_AxisPosition;
-
-    protected string  m_AxisPositionValue;
-    protected string  m_Original_AxisPositionValue;
-
-    protected bool    m_AxisPositionValueEnabled = true;
-
     protected IMVCAController _axisLineStyleController;
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args.Length == 0 || !(args[0] is AxisStyle))
-        return false;
-      _doc = (AxisStyle)args[0];
-      this.SetElements(true);
-      return true;
-    }
-
-    public UseDocument UseDocumentCopy { set { } }
-
-    public void SetElements(bool bInit)
+    protected override void Initialize(bool bInit)
     {
       System.Collections.ArrayList arr = new System.Collections.ArrayList();
 
       if (bInit)
       {
-        if (_doc.AxisLineStyle != null)
-          _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
-        else
-        {
-          _axisLineStyleController = null;
-        }
-
+				if (_doc.AxisLineStyle != null)
+				{
+					_axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _originalDoc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
+				}
+				else
+				{
+					_axisLineStyleController = null;
+				}
       }
 
-      if (m_View != null)
+      if (_view != null)
       {
-        m_View.AxisTitle = _doc.TitleText;
-        m_View.ShowAxisLine = _doc.ShowAxisLine;
-        m_View.ShowMajorLabels = _doc.ShowMajorLabels;
-        m_View.ShowMinorLabels = _doc.ShowMinorLabels;
-        m_View.LineStyleView = _axisLineStyleController == null ? null : _axisLineStyleController.ViewObject;
+        _view.AxisTitle = _originalDoc.TitleText;
+        _view.ShowAxisLine = _originalDoc.ShowAxisLine;
+        _view.ShowMajorLabels = _originalDoc.ShowMajorLabels;
+        _view.ShowMinorLabels = _originalDoc.ShowMinorLabels;
+        _view.LineStyleView = _axisLineStyleController == null ? null : _axisLineStyleController.ViewObject;
       }
     }
 
-    private void EhShowAxisLineChanged(object sender, EventArgs e)
+		public override bool Apply()
+		{
+			// read axis title
+			_doc.TitleText = _view.AxisTitle;
+
+			if (null != _axisLineStyleController)
+			{
+				if (!_axisLineStyleController.Apply())
+					return false;
+				else
+					_doc.AxisLineStyle = (AxisLineStyle)_axisLineStyleController.ModelObject;
+			}
+
+			_doc.ShowMajorLabels = _view.ShowMajorLabels;
+			_doc.ShowMinorLabels = _view.ShowMinorLabels;
+
+			// if we have offset applying, create a brand new AxisStyle instance
+			double offset = _view.PositionOffset / 100;
+			if (0 != offset)
+			{
+				AxisStyle newDoc = new AxisStyle(CSLineID.FromIDandFirstLogicalOffset(_doc.StyleID, offset));
+				newDoc.CopyWithoutIdFrom(_doc);
+				_doc = newDoc;
+			}
+
+			if (!object.ReferenceEquals(_doc, _originalDoc))
+				_originalDoc.CopyFrom(_doc);
+
+			return true; // all ok
+		}
+
+
+
+		protected override void AttachView()
+		{
+			_view.ShowAxisLineChanged += EhShowAxisLineChanged;
+			_view.ShowMajorLabelsChanged += EhShowMajorLabelsChanged;
+			_view.ShowMinorLabelsChanged += EhShowMinorLabelsChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.ShowAxisLineChanged -= EhShowAxisLineChanged;
+			_view.ShowMajorLabelsChanged -= EhShowMajorLabelsChanged;
+			_view.ShowMinorLabelsChanged -= EhShowMinorLabelsChanged;
+		}
+
+    private void EhShowAxisLineChanged()
     {
-      if (m_View.ShowAxisLine && null==_doc.AxisLineStyle)
+			var oldValue = _doc.ShowAxisLine;
+      if (_view.ShowAxisLine && null==_originalDoc.AxisLineStyle)
       {
         _doc.ShowAxisLine = true;
-        this._axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController));
-        m_View.LineStyleView = _axisLineStyleController.ViewObject;
+        this._axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
+        _view.LineStyleView = _axisLineStyleController.ViewObject;
       }
-    }
-  
-
-
-    #region ITitleFormatLayerController Members
-
-    public object ViewObject
-    {
-      get { return m_View; }
-      set 
-      {
-        ITitleFormatLayerView oldvalue = m_View;
-        m_View = value as ITitleFormatLayerView;
-
-        if(!object.ReferenceEquals(oldvalue,value))
-        {
-          if (null != oldvalue)
-            oldvalue.ShowAxisLineChanged -= EhShowAxisLineChanged;
-          if (null != value)
-            m_View.ShowAxisLineChanged += EhShowAxisLineChanged;
-
-        SetElements(false);
-        }
-      }
+			if (oldValue != _doc.ShowAxisLine)
+				OnMadeDirty();
     }
 
-    
-    public object ModelObject
-    {
-      get { return this._doc; }
-    }
+		private void EhShowMajorLabelsChanged()
+		{
+			var oldValue = _doc.ShowMajorLabels;
+			_doc.ShowMajorLabels = _view.ShowMajorLabels;
 
-   
-
-    #endregion
-
-    #region IApplyController Members
-
-    public bool Apply()
-    {
-        // read axis title
-        _doc.TitleText = m_View.AxisTitle;
-
-        if (null != _axisLineStyleController)
-        {
-          if (!_axisLineStyleController.Apply())
-            return false;
-          else
-            _doc.AxisLineStyle = (AxisLineStyle)_axisLineStyleController.ModelObject;
-        }
-
-        _doc.ShowMajorLabels = m_View.ShowMajorLabels;
-        _doc.ShowMinorLabels = m_View.ShowMinorLabels;
-
-        // if we have offset applying, create a brand new AxisStyle instance
-        double offset = m_View.PositionOffset/100;
-        if (0 != offset)
-        {
-          AxisStyle newDoc = new AxisStyle(CSLineID.FromIDandFirstLogicalOffset(_doc.StyleID, offset));
-          newDoc.CopyWithoutIdFrom(_doc);
-          _doc = newDoc;
-        }
+			if (oldValue != _doc.ShowMajorLabels)
+				OnMadeDirty();
+		}
 
 
-      return true; // all ok
-    }
+		private void EhShowMinorLabelsChanged()
+		{
 
-    #endregion
+			var oldValue = _doc.ShowMinorLabels;
+			_doc.ShowMinorLabels = _view.ShowMinorLabels;
+
+			if (oldValue != _doc.ShowMinorLabels)
+				OnMadeDirty();
+		}
   }
 }

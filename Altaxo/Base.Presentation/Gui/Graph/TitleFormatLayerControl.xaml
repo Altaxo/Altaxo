@@ -32,9 +32,9 @@
 		<Label Grid.Column="2" Grid.Row="0"  Content="Shift axis position (%):"/>
 		<axogc:DecimalUpDown x:Name="m_Format_edAxisPositionValue" Grid.Column="3" Grid.Row="0" Change="10" />
 
-		<CheckBox x:Name="_chkShowMajorLabels" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"  Content="Show major labels:"/>
+		<CheckBox x:Name="_chkShowMajorLabels" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"  Content="Show major labels:" Checked="EhShowMajorLabelsChanged" Unchecked="EhShowMajorLabelsChanged" />
 
-		<CheckBox x:Name="_chkShowMinorLabels" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"  Content="Show minor labels:"/>
+		<CheckBox x:Name="_chkShowMinorLabels" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"  Content="Show minor labels:" Checked="EhShowMinorLabelsChanged" Unchecked="EhShowMinorLabelsChanged"/>
 
 		<GroupBox x:Name="_axisLineGroupBox" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4" >
 			<GroupBox.HeaderTemplate>

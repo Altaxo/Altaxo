@@ -69,6 +69,18 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		ILabelFormatting _labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto();
 
+		/// <summary>
+		/// If set, this overrides the preferred label side that comes along with the axis style.
+		/// </summary>
+		CSAxisSide? _labelSide;
+
+		string _prefixText;
+
+		string _postfixText;
+
+		CSAxisInformation _cachedAxisStyleInfo;
+
+
 		#region Serialization
 		/// <summary>Used to serialize the XYAxisLabelStyle Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -242,7 +254,8 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-
+				throw new InvalidOperationException("Trying to serialize old version");
+				/*
 				AxisLabelStyle s = (AxisLabelStyle)obj;
 				info.AddValue("Font", s._font);
 				info.AddValue("Brush", s._brush);
@@ -262,6 +275,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					info.AddValue("SuppressedLabels", s._suppressedLabels);
 
 				info.AddValue("LabelFormat", s._labelFormatting);
+				*/
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -298,6 +312,76 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 5)]
+		class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			// 2012-03-30 new member _labelSide, _prefixText and _postfixText
+
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+
+				AxisLabelStyle s = (AxisLabelStyle)obj;
+				info.AddValue("Font", s._font);
+				info.AddValue("Brush", s._brush);
+				info.AddValue("Background", s._backgroundStyle);
+
+				info.AddValue("AutoAlignment", s._automaticRotationShift);
+				info.AddEnum("HorzAlignment", s._horizontalAlignment);
+				info.AddEnum("VertAlignment", s._verticalAlignment);
+
+				info.AddValue("Rotation", s._rotation);
+				info.AddValue("XOffset", s._xOffset);
+				info.AddValue("YOffset", s._yOffset);
+
+				if (s._suppressedLabels.IsEmpty)
+					info.AddValue("SuppressedLabels", (object)null);
+				else
+					info.AddValue("SuppressedLabels", s._suppressedLabels);
+
+				info.AddValue("LabelFormat", s._labelFormatting);
+
+				info.AddNullableEnum("LabelSide", s._labelSide);
+				info.AddValue("PrefixText", s._prefixText);
+				info.AddValue("PostfixText", s._postfixText);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
+
+				s._font = (Font)info.GetValue("Font", s);
+				s._brush = (BrushX)info.GetValue("Brush", s);
+				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
+				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
+				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
+				s._rotation = info.GetDouble("Rotation");
+				s._xOffset = info.GetDouble("XOffset");
+				s._yOffset = info.GetDouble("YOffset");
+
+				s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
+				if (s._suppressedLabels == null)
+					s._suppressedLabels = new SuppressedTicks();
+
+				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+
+				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
+				s._prefixText = info.GetString("PrefixText");
+				s._postfixText = info.GetString("PostfixText");
+
+
+				// Modification of StringFormat is necessary to avoid 
+				// too big spaces between successive words
+				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
+				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -316,6 +400,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public AxisLabelStyle(AxisLabelStyle from)
 		{
+			_cachedAxisStyleInfo = from._cachedAxisStyleInfo;
+
 			_font = null == from._font ? null : (Font)from._font.Clone();
 			_stringFormat = (StringFormat)from._stringFormat.Clone();
 			_horizontalAlignment = from._horizontalAlignment;
@@ -327,6 +413,10 @@ namespace Altaxo.Graph.Gdi.Axis
 			_rotation = from._rotation;
 			_backgroundStyle = null == from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
 			_labelFormatting = (ILabelFormatting)from._labelFormatting.Clone();
+			_labelSide = from._labelSide;
+			_prefixText = from._prefixText;
+			_postfixText = from._postfixText;
+
 			_suppressedLabels = (SuppressedTicks)from._suppressedLabels.Clone();
 		}
 
@@ -475,6 +565,54 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
+		/// <summary>Gets or sets the label side. If the value is set to <c>null</c>, the label side is chosen automatically. If set to a value different from <c>null</c>,
+		/// the label is shown on this side of the axis.</summary>
+		/// <value>The label side where the label should be shown, or <c>null</c> to choose the side automatically.</value>
+		public CSAxisSide? LabelSide
+		{
+			get
+			{
+				return _labelSide;
+			}
+			set
+			{
+				var oldValue = _labelSide;
+				_labelSide = value;
+				if (value != oldValue)
+					OnChanged();
+			}
+		}
+
+		public string PrefixText
+		{
+			get
+			{
+				return _prefixText;
+			}
+			set
+			{
+				var oldValue = _prefixText;
+				_prefixText = value;
+				if (value != oldValue)
+					OnChanged();
+			}
+		}
+
+		public string PostfixText
+		{
+			get
+			{
+				return _postfixText;
+			}
+			set
+			{
+				var oldValue = _postfixText;
+				_postfixText = value;
+				if (value != oldValue)
+					OnChanged();
+			}
+		}
+
 		/// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
 		public double XOffset
 		{
@@ -574,14 +712,28 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		#endregion
 
-		CSLineID _cachedStyleID;
+	
 		public CSLineID AxisStyleID
 		{
 			get
 			{
-				return _cachedStyleID;
+				return _cachedAxisStyleInfo.Identifier;
 			}
 		}
+
+
+		public CSAxisInformation CachedAxisInformation
+		{
+			get
+			{
+				return _cachedAxisStyleInfo;
+			}
+			set
+			{
+				_cachedAxisStyleInfo = value;
+			}
+		}
+
 		public override IHitTestObject HitTest(IPlotArea layer, PointD2D pt)
 		{
 			GraphicsPath gp = GetSelectionPath();
@@ -650,6 +802,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		private GraphicsPath _enclosingPath = new GraphicsPath(); // with Winding also overlapping rectangles are selected
 
+		/// <summary>Predicts the side, where the label will be shown using the given axis information.</summary>
+		/// <param name="axisInformation">The axis information.</param>
+		/// <returns>The side of the axis where the label will be shown.</returns>
+		public override CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
+		{
+			return null != _labelSide ? _labelSide.Value : axisInformation.PreferedLabelSide;
+		}
+
 		/// <summary>
 		/// Paints the axis style labels.
 		/// </summary>
@@ -667,7 +827,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			double outerDistance,
 			bool useMinorTicks)
 		{
-			_cachedStyleID = styleInfo.Identifier;
+			_cachedAxisStyleInfo = styleInfo;
 			CSLineID styleID = styleInfo.Identifier;
 			Scale raxis = scaleWithTicks.Scale;
 			TickSpacing ticking = scaleWithTicks.TickSpacing;
@@ -677,8 +837,8 @@ namespace Altaxo.Graph.Gdi.Axis
 			GraphicsPath helperPath = new GraphicsPath();
 			Matrix math = new Matrix();
 
-			Logical3D r0 = _cachedStyleID.Begin;
-			Logical3D r1 = _cachedStyleID.End;
+			Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
+			Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
 
 			PointF outVector;
 			Logical3D outer;
@@ -730,11 +890,12 @@ namespace Altaxo.Graph.Gdi.Axis
 			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
 			double emSize = _font.SizeInPoints;
+			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferedLabelSide;
 			for (int i = 0; i < ticks.Length; i++)
 			{
 				double r = relpositions[i];
 
-				outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, styleInfo.PreferedLabelSide);
+				outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, labelSide);
 				PointD2D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
 				PointD2D tickend = tickorg;
 				tickend.X += outVector.X * outerDistance;
