@@ -38,18 +38,26 @@ namespace Altaxo.Graph.Gdi.Axis
 	/// <summary>
 	/// Responsible for setting position, rotation, font, color etc. of axis labels.
 	/// </summary>
-	public class AxisLabelStyle : AxisLabelStyleBase,
-		ICloneable,
+	public class AxisLabelStyle : 
 		Main.IChangedEventSource,
-		Main.IChildChangedEventSink
+		Main.IChildChangedEventSink,
+		IRoutedPropertyReceiver,
+		Main.IDocumentNode,
+		Main.ICopyFrom
 	{
-		protected Font _font = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.World);
+		[field: NonSerialized]
+		public event System.EventHandler Changed;
+
+		[NonSerialized]
+		object _parent;
+
+		protected Font _font;
 
 		protected StringAlignment _horizontalAlignment;
 		protected StringAlignment _verticalAlignment;
 
 		protected StringFormat _stringFormat;
-		protected BrushX _brush = new BrushX(NamedColor.Black);
+		protected BrushX _brush;
 
 		/// <summary>The x offset in EM units.</summary>
 		protected double _xOffset;
@@ -63,11 +71,11 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>The style for the background.</summary>
 		protected Gdi.Background.IBackgroundStyle _backgroundStyle;
 
-		protected bool _automaticRotationShift = true;
+		protected bool _automaticRotationShift;
 
-		protected SuppressedTicks _suppressedLabels = new SuppressedTicks();
+		protected SuppressedTicks _suppressedLabels;
 
-		ILabelFormatting _labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto();
+		ILabelFormatting _labelFormatting;
 
 		/// <summary>
 		/// If set, this overrides the preferred label side that comes along with the axis style.
@@ -395,32 +403,49 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public AxisLabelStyle()
 		{
+			_font = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.World);
+			_brush = new BrushX(NamedColor.Black);
+			_automaticRotationShift = true;
+			_suppressedLabels = new SuppressedTicks();
+			_labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto();
 			SetStringFormat();
 		}
 
 		public AxisLabelStyle(AxisLabelStyle from)
 		{
+			CopyFrom(from);
+		}
+
+		public virtual bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as AxisLabelStyle;
+			if (null == from)
+				return false;
+
+			_parent = from._parent;
 			_cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
-			_font = null == from._font ? null : (Font)from._font.Clone();
-			_stringFormat = (StringFormat)from._stringFormat.Clone();
+			CopyHelper.Copy(ref _font, from._font);
+			CopyHelper.Copy(ref _stringFormat, from._stringFormat);
 			_horizontalAlignment = from._horizontalAlignment;
 			_verticalAlignment = from._verticalAlignment;
-			_brush = (BrushX)from._brush.Clone();
+			CopyHelper.Copy(ref _brush, from._brush);
 			_automaticRotationShift = from._automaticRotationShift;
 			_xOffset = from._xOffset;
 			_yOffset = from._yOffset;
 			_rotation = from._rotation;
-			_backgroundStyle = null == from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
-			_labelFormatting = (ILabelFormatting)from._labelFormatting.Clone();
+			CopyHelper.Copy(ref _backgroundStyle, from._backgroundStyle);
+			CopyHelper.Copy(ref _labelFormatting, from._labelFormatting);
 			_labelSide = from._labelSide;
 			_prefixText = from._prefixText;
 			_postfixText = from._postfixText;
-
-			_suppressedLabels = (SuppressedTicks)from._suppressedLabels.Clone();
+			CopyHelper.Copy(ref _suppressedLabels, from._suppressedLabels);
+			return true;
 		}
 
-		public override object Clone()
+		public virtual object Clone()
 		{
 			return new AxisLabelStyle(this);
 		}
@@ -471,7 +496,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
 		/// <summary>The font size of the label.</summary>
-		public override double FontSize
+		public virtual double FontSize
 		{
 			get { return _font.Size; }
 			set
@@ -734,7 +759,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		public override IHitTestObject HitTest(IPlotArea layer, PointD2D pt)
+		public virtual IHitTestObject HitTest(IPlotArea layer, PointD2D pt)
 		{
 			GraphicsPath gp = GetSelectionPath();
 			if (gp.IsVisible((PointF)pt))
@@ -743,28 +768,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				return null;
 		}
 
-		public override void SetRoutedProperty(IRoutedSetterProperty property)
-		{
-			switch (property.Name)
-			{
-				case "FontFamily":
-					{
-						var prop = (RoutedSetterProperty<string>)property;
-						try
-						{
-							var newFont = new Font(prop.Value, _font.Size, _font.Style, GraphicsUnit.World);
-							_font = newFont;
-							OnChanged();
-						}
-						catch (Exception)
-						{
-						}
-					}
-					break;
-			}
-			base.SetRoutedProperty(property);
-		}
-
+		
 
 		public void AdjustRectangle(ref RectangleD r, StringAlignment horz, StringAlignment vert)
 		{
@@ -805,7 +809,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>Predicts the side, where the label will be shown using the given axis information.</summary>
 		/// <param name="axisInformation">The axis information.</param>
 		/// <returns>The side of the axis where the label will be shown.</returns>
-		public override CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
+		public virtual CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
 		{
 			return null != _labelSide ? _labelSide.Value : axisInformation.PreferedLabelSide;
 		}
@@ -819,7 +823,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <param name="styleInfo">Information about begin of axis, end of axis.</param>
 		/// <param name="outerDistance">Distance between axis and labels.</param>
 		/// <param name="useMinorTicks">If true, minor ticks are shown.</param>
-		public override void Paint(
+		public virtual void Paint(
 			Graphics g,
 			G2DCoordinateSystem coordSyst,
 			ScaleWithTicks scaleWithTicks,
@@ -956,6 +960,15 @@ namespace Altaxo.Graph.Gdi.Axis
 		#region IChangedEventSource Members
 
 
+		protected virtual void OnChanged()
+		{
+			if (_parent is Main.IChildChangedEventSink)
+				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+			if (null != Changed)
+				Changed(this, EventArgs.Empty);
+		}
+
 
 		#endregion
 
@@ -969,6 +982,67 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		#endregion
 
+
+
+		#region IDocumentNode Members
+
+		public object ParentObject
+		{
+			get { return _parent; }
+			set { _parent = value; }
+		}
+
+		public string Name
+		{
+			get { return this.GetType().Name; }
+		}
+
+		#endregion
+
+		#region IRoutedPropertyReceiver Members
+
+		public virtual void SetRoutedProperty(IRoutedSetterProperty property)
+		{
+			switch (property.Name)
+			{
+				case "FontSize":
+					{
+						var prop = (RoutedSetterProperty<double>)property;
+						this.FontSize = prop.Value;
+						OnChanged();
+					}
+					break;
+				case "FontFamily":
+					{
+						var prop = (RoutedSetterProperty<string>)property;
+						try
+						{
+							var newFont = new Font(prop.Value, _font.Size, _font.Style, GraphicsUnit.World);
+							_font = newFont;
+							OnChanged();
+						}
+						catch (Exception)
+						{
+						}
+					}
+					break;
+			}
+		}
+
+		
+
+
+		public virtual void GetRoutedProperty(IRoutedGetterProperty property)
+		{
+			switch (property.Name)
+			{
+				case "FontSize":
+					((RoutedGetterProperty<double>)property).Merge(this.FontSize);
+					break;
+			}
+		}
+
+		#endregion
 	}
 }
 

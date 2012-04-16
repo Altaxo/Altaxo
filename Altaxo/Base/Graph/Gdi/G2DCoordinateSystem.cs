@@ -521,30 +521,32 @@ namespace Altaxo.Graph.Gdi
 			double minDistance = double.MaxValue;
 			CSAxisInformation nearestInfo = null;
 
-			foreach (CSAxisInformation info in this._axisStyleInformation)
+			if (!styleID.UsePhysicalValueOtherFirst)
 			{
-				if (styleID.ParallelAxisNumber == info.Identifier.ParallelAxisNumber)
+				foreach (CSAxisInformation info in this._axisStyleInformation)
 				{
-					if (styleID == info.Identifier)
+					if (styleID.ParallelAxisNumber == info.Identifier.ParallelAxisNumber)
 					{
-						minDistance = 0;
-						nearestInfo = info;
-						break;
-					}
+						if (styleID == info.Identifier)
+						{
+							minDistance = 0;
+							nearestInfo = info;
+							break;
+						}
 
-					double dist = Math.Abs(styleID.LogicalValueOtherFirst - info.Identifier.LogicalValueOtherFirst);
-					if (styleID.Is3DIdentifier && info.Identifier.Is3DIdentifier)
-						dist += Math.Abs(styleID.LogicalValueOtherSecond - info.Identifier.LogicalValueOtherSecond);
+						double dist = Math.Abs(styleID.LogicalValueOtherFirst - info.Identifier.LogicalValueOtherFirst);
+						if (styleID.Is3DIdentifier && info.Identifier.Is3DIdentifier)
+							dist += Math.Abs(styleID.LogicalValueOtherSecond - info.Identifier.LogicalValueOtherSecond);
 
-					if (dist < minDistance)
-					{
-						minDistance = dist;
-						nearestInfo = info;
-						if (0 == minDistance)
-							break; // it can not be smaller than 0
+						if (dist < minDistance)
+						{
+							minDistance = dist;
+							nearestInfo = info;
+							if (0 == minDistance)
+								break; // it can not be smaller than 0
+						}
 					}
 				}
-
 			}
 
 			CSAxisInformation result = new CSAxisInformation(styleID);
@@ -558,15 +560,15 @@ namespace Altaxo.Graph.Gdi
 				if (minDistance != 0)
 				{
 					result.NameOfAxisStyle += string.Format(" ({0}% offs.)", minDistance * 100);
-					result.NameOfFirstUpSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstUp);
-					result.NameOfFirstDownSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstDown);
-					if (Is3D)
-					{
-						result.NameOfSecondUpSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondUp);
-						result.NameOfSecondDownSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondDown);
-					}
 				}
+			}
 
+			result.NameOfFirstUpSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstUp);
+			result.NameOfFirstDownSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstDown);
+			if (Is3D)
+			{
+				result.NameOfSecondUpSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondUp);
+				result.NameOfSecondDownSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondDown);
 			}
 
 			return result;

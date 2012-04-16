@@ -468,7 +468,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (_axisStyle.ShowMinorLabels)
 			{
-				var path = (_axisStyle.MinorLabelStyle as AxisLabelStyle).GetSelectionPath();
+				var path = _axisStyle.MinorLabelStyle.GetSelectionPath();
 				if (path.PointCount > 0)
 				{
 					_cachedPath.AddPath(path, false);
@@ -478,7 +478,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			if (_axisStyle.ShowMajorLabels)
 			{
-				var path = (_axisStyle.MajorLabelStyle as AxisLabelStyle).GetSelectionPath();
+				var path = _axisStyle.MajorLabelStyle.GetSelectionPath();
 				if (path.PointCount > 0)
 				{
 					_cachedPath.AddPath(path, false);

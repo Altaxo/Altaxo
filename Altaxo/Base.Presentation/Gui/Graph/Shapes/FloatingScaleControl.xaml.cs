@@ -36,6 +36,7 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
+	using Altaxo.Gui.Common;
 	using Altaxo.Graph.Gdi.Shapes;
 
 	/// <summary>
@@ -147,22 +148,20 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public object MajorLabelView
+		public IConditionalDocumentView MajorLabelView
 		{
 			set
 			{
 				_guiTabMajorLabels.Content = value;
-				_guiTabMajorLabels.Visibility = null == value ? Visibility.Collapsed : Visibility.Visible;
 			}
 		}
 
 
-		public object MinorLabelView
+		public IConditionalDocumentView MinorLabelView
 		{
 			set
 			{
 				_guiTabMinorLabels.Content = value;
-				_guiTabMinorLabels.Visibility = null == value ? Visibility.Collapsed : Visibility.Visible;
 			}
 		}
 

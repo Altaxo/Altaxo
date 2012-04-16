@@ -202,45 +202,53 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		public Log10TickSpacing(Log10TickSpacing from)
-			: this()
+			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
-			CopyFrom(from);
 		}
 
-		public void CopyFrom(Log10TickSpacing from)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as Log10TickSpacing;
+				if (null != from)
+				{
+					_userDefinedNumberOfDecadesPerMajorTick = from._userDefinedNumberOfDecadesPerMajorTick;
+					_userDefinedMinorTicks = from._userDefinedMinorTicks;
 
-		
+					_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+					_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-			_userDefinedNumberOfDecadesPerMajorTick = from._userDefinedNumberOfDecadesPerMajorTick;
-			_userDefinedMinorTicks = from._userDefinedMinorTicks;
+					_oneLever = from._oneLever;
+					_minGrace = from._minGrace;
+					_maxGrace = from._maxGrace;
+					_snapOrgToTick = from._snapOrgToTick;
+					_snapEndToTick = from._snapEndToTick;
 
-			_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
-			_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-			_oneLever = from._oneLever;
-			_minGrace = from._minGrace;
-			_maxGrace = from._maxGrace;
-			_snapOrgToTick = from._snapOrgToTick;
-			_snapEndToTick = from._snapEndToTick;
-		
+					_transformationDivider = from._transformationDivider;
+					_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
+					_transformationExponent = from._transformationExponent;
 
-			_transformationDivider = from._transformationDivider;
-			_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
-			_transformationExponent = from._transformationExponent;
+					_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
+					_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
+					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
+					_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
 
-			_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
-			_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
-			_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
-			_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
+					_majorTicks.Clear();
+					_majorTicks.AddRange(from._majorTicks);
 
-			_majorTicks.Clear();
-			_majorTicks.AddRange(from._majorTicks);
+					_minorTicks.Clear();
+					_minorTicks.AddRange(from._minorTicks);
+				}
+			}
+			return isCopied;
+		}
 
-			_minorTicks.Clear();
-			_minorTicks.AddRange(from._minorTicks);
+		public override object Clone()
+		{
+			return new Log10TickSpacing(this);
 		}
 
 
@@ -299,10 +307,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 
 
-		public override object Clone()
-		{
-			return new Log10TickSpacing(this);
-		}
+	
 
 
 		public double OneLever

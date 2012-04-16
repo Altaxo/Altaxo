@@ -34,58 +34,41 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph.Scales.Ticks
+namespace Altaxo.Gui.Common
 {
 	/// <summary>
-	/// Interaction logic for AngularTickSpacingControl.xaml
+	/// Interaction logic for ConditionalDocumentControl.xaml
 	/// </summary>
-	public partial class AngularTickSpacingControl : UserControl, IAngularTickSpacingView
+	public partial class ConditionalDocumentControl : UserControl, IConditionalDocumentView
 	{
-		public AngularTickSpacingControl()
+		public ConditionalDocumentControl()
 		{
 			InitializeComponent();
 		}
 
-		private void _cbMajorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
+		private void EhEnabledChanged(object sender, RoutedEventArgs e)
 		{
-			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
-			if (null != MajorTicksChanged)
-				MajorTicksChanged(sender, e);
+			if (null != ConditionalViewEnabledChanged)
+				ConditionalViewEnabledChanged();
 		}
 
-		private void _cbMinorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(_cbMinorTicks);
-		}
-
-		#region IAngularTickSpacingView
-
-		public bool UsePositiveNegativeValues
+		public bool IsConditionalViewEnabled
 		{
 			get
 			{
-				return true == _chkPosNegValues.IsChecked;
+				return _guiEnableState.IsChecked == true;
 			}
 			set
 			{
-				_chkPosNegValues.IsChecked = value;
+				_guiEnableState.IsChecked = value;
 			}
 		}
 
-		public Collections.SelectableListNodeList MajorTicks
-		{
-			set { GuiHelper.Initialize(_cbMajorTicks, value); }
-		}
+		public event Action ConditionalViewEnabledChanged;
 
-		public Collections.SelectableListNodeList MinorTicks
+		public object ConditionalView
 		{
-			set { GuiHelper.Initialize(_cbMinorTicks, value); }
+			set { _guiContentHost.Content = value; }
 		}
-
-		public event EventHandler MajorTicksChanged;
 	}
-
-		#endregion IAngularTickSpacingView
 }

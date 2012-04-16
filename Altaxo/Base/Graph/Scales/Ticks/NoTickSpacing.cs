@@ -38,6 +38,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new NoTickSpacing();
 		}
 
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoTickSpacing), 0)]

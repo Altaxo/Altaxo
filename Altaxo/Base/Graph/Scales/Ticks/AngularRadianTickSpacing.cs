@@ -66,18 +66,18 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		public AngularRadianTickSpacing(AngularRadianTickSpacing from)
-			: base(from)
+			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
 		}
 
 		public override object Clone()
 		{
-			return new AngularRadianTickSpacing();
+			return new AngularRadianTickSpacing(this);
 		}
 
 		public override bool UseDegree
 		{
-			get { return true; }
+			get { return false; }
 		}
 	}
 

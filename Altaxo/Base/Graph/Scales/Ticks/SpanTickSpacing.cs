@@ -90,9 +90,32 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 
+		public SpanTickSpacing(SpanTickSpacing from)
+			: base(from) // everything is done here, since CopyFrom is virtual!
+		{
+		}
+
+		public override bool CopyFrom(object obj)
+		{
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as SpanTickSpacing;
+				if (null != from)
+				{
+					_relTickPosition = from._relTickPosition;
+					_showRatioEndOrg = from._showRatioEndOrg;
+					_transformationDivider = from._transformationDivider;
+					_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
+				}
+			}
+			return isCopied;
+		}
+
+
 		public override object Clone()
 		{
-			return new SpanTickSpacing() { _relTickPosition = this._relTickPosition, _showRatioEndOrg = this._showRatioEndOrg, _transformationDivider = this._transformationDivider, _transformationOperationIsMultiply = this._transformationOperationIsMultiply };
+			return new SpanTickSpacing(this);
 		}
 
 		public double RelativeTickPosition

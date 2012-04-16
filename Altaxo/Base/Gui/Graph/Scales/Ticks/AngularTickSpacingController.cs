@@ -43,17 +43,14 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 	[UserControllerForObject(typeof(AngularTickSpacing))]
 	[ExpectedTypeOfView(typeof(IAngularTickSpacingView))]
-	public class AngularScaleController : IMVCANController
+	public class AngularScaleController : MVCANControllerBase<AngularTickSpacing, IAngularTickSpacingView>
 	{
-		IAngularTickSpacingView _view;
-		AngularTickSpacing _doc;
-
 		SelectableListNodeList _majorTickList;
 		SelectableListNodeList _minorTickList;
 		int _tempMajorDivider;
 
 
-		void Initialize(bool initDoc)
+		protected override void Initialize(bool initDoc)
 		{
 			if (initDoc)
 			{
@@ -105,67 +102,32 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		}
 
 
-		#region IMVCANController Members
 
-		public bool InitializeDocument(params object[] args)
+		protected override void AttachView()
 		{
-			if (args == null || args.Length == 0)
-				return false;
-			AngularTickSpacing doc = args[0] as AngularTickSpacing;
-			if (doc == null)
-				return false;
-			_doc = doc;
-			Initialize(true);
-			return true;
+			_view.MajorTicksChanged += EhMajorTicksChanged;
 		}
 
-		public UseDocument UseDocumentCopy
+		protected override void DetachView()
 		{
-			set { }
+			_view.MajorTicksChanged -= EhMajorTicksChanged;
 		}
 
-		#endregion
+		
 
-		#region IMVCController Members
+	
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-					_view.MajorTicksChanged -= EhMajorTicksChanged;
-				}
-				_view = value as IAngularTickSpacingView;
-				if (_view != null)
-				{
-					Initialize(false);
-					_view.MajorTicksChanged += EhMajorTicksChanged;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		#endregion
-
-		#region IApplyController Members
-
-		public bool Apply()
+		public override bool Apply()
 		{
 			_doc.UseSignedValues = _view.UsePositiveNegativeValues;
 			_doc.MajorTickDivider = _tempMajorDivider;
 			_doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Tag;
+
+			CopyHelper.Copy(ref _originalDoc, _doc);
+
 			return true;
 		}
 
-		#endregion
+	
 	}
 }

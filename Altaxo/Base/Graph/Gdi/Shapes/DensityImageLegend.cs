@@ -224,8 +224,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			// set the parent objects
 			_axisStyles.ParentObject = this;
-
-
+			this.UpdateTransformationMatrix();
 		}
 
 		public DensityImageLegend(DensityImageLegend from)

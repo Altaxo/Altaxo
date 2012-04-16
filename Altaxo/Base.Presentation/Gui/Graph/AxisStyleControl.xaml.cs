@@ -39,9 +39,9 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for TitleFormatLayerControl.xaml
 	/// </summary>
-	public partial class TitleFormatLayerControl : UserControl, ITitleFormatLayerView
+	public partial class AxisStyleControl : UserControl, IAxisStyleView
 	{
-		public TitleFormatLayerControl()
+		public AxisStyleControl()
 		{
 			InitializeComponent();
 		}
@@ -118,13 +118,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public double PositionOffset
-		{
-			get
-			{
-				return (double)m_Format_edAxisPositionValue.Value;
-			}
-		}
+	
 
 		#endregion
 

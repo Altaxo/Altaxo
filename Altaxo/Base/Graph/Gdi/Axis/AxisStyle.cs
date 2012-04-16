@@ -53,11 +53,11 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>
 		/// Determines the style of the major labels.
 		/// </summary>
-		AxisLabelStyleBase _majorLabelStyle;
+		AxisLabelStyle _majorLabelStyle;
 		/// <summary>
 		/// Determines the style of the minor labels.
 		/// </summary>
-		AxisLabelStyleBase _minorLabelStyle;
+		AxisLabelStyle _minorLabelStyle;
 		/// <summary>
 		/// The title of the axis.
 		/// </summary>
@@ -112,12 +112,12 @@ namespace Altaxo.Graph.Gdi.Axis
 				s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
 				bool showMajorLabels = info.GetBoolean("ShowMajorLabels");
 				if (showMajorLabels)
-					s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
+					s.MajorLabelStyle = (AxisLabelStyle)info.GetValue("MajorLabelStyle", s);
 				else s.MajorLabelStyle = null;
 
 				bool showMinorLabels = info.GetBoolean("ShowMinorLabels");
 				if (showMinorLabels)
-					s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
+					s.MinorLabelStyle = (AxisLabelStyle)info.GetValue("MinorLabelStyle", s);
 				else
 					s.MinorLabelStyle = null;
 
@@ -190,8 +190,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				// Styles
 				s._styleID = (CSLineID)info.GetValue("StyleID", s);
 				s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
-				s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
-				s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
+				s.MajorLabelStyle = (AxisLabelStyle)info.GetValue("MajorLabelStyle", s);
+				s.MinorLabelStyle = (AxisLabelStyle)info.GetValue("MinorLabelStyle", s);
 				s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
 
 
@@ -223,8 +223,8 @@ namespace Altaxo.Graph.Gdi.Axis
 		public void CopyWithoutIdFrom(AxisStyle from)
 		{
 			this.AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
-			this.MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyleBase)from._majorLabelStyle.Clone();
-			this.MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyleBase)from._minorLabelStyle.Clone();
+			this.MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyle)from._majorLabelStyle.Clone();
+			this.MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyle)from._minorLabelStyle.Clone();
 			this.Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
 		}
 
@@ -420,7 +420,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>
 		/// Determines the style of the major labels.
 		/// </summary>
-		public AxisLabelStyleBase MajorLabelStyle
+		public AxisLabelStyle MajorLabelStyle
 		{
 			get
 			{
@@ -428,7 +428,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-				AxisLabelStyleBase oldvalue = _majorLabelStyle;
+				var oldvalue = _majorLabelStyle;
 				_majorLabelStyle = value;
 
 
@@ -448,7 +448,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>
 		/// Determines the style of the minor labels.
 		/// </summary>
-		public AxisLabelStyleBase MinorLabelStyle
+		public AxisLabelStyle MinorLabelStyle
 		{
 			get
 			{
@@ -456,7 +456,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-				AxisLabelStyleBase oldvalue = _minorLabelStyle;
+				var oldvalue = _minorLabelStyle;
 				_minorLabelStyle = value;
 
 				if (null != value)

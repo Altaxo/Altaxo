@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Scales
     _cachedOneByAxisSpan = 1 / _cachedAxisSpan;
     _dataBounds = new Boundaries.DummyNumericalBoundaries();
 		_rescaling = new Rescaling.AngularRescaleConditions();
-
+		SetCachedValues();
     }
     public AngularScale(AngularScale from)
     {
@@ -221,6 +221,8 @@ namespace Altaxo.Graph.Scales
 
 		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
+			// ignore all this stuff, org and end are fixed here!
+			/*
 			double o = org.ToDouble();
 			double e = end.ToDouble();
 
@@ -228,7 +230,7 @@ namespace Altaxo.Graph.Scales
 				return "org is not less than end";
 
 			InternalSetOrgEnd(o, e, false, false);
-
+			*/
 			return null;
 		}
 

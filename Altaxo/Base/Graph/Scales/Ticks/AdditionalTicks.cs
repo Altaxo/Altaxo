@@ -29,7 +29,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
-	public class AdditionalTicks : ICloneable
+	public class AdditionalTicks : Main.ICopyFrom
 	{
 		List<AltaxoVariant> _additionalMajorTicks;
 
@@ -80,18 +80,26 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		public AdditionalTicks(AdditionalTicks from)
-			: this()
 		{
 			CopyFrom(from);
 		}
 
-		public void CopyFrom(AdditionalTicks from)
+		public bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			_additionalMajorTicks.Clear();
-			_additionalMajorTicks.AddRange(from._additionalMajorTicks);
+			var from = obj as AdditionalTicks;
+			if (null == from)
+				return false;
+
+			_additionalMajorTicks = new List<AltaxoVariant>(from._additionalMajorTicks);
+			return true;
+		}
+
+		public object Clone()
+		{
+			return new AdditionalTicks(this);
 		}
 
 		public override bool Equals(object obj)
@@ -108,10 +116,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		public object Clone()
-		{
-			return new AdditionalTicks(this);
-		}
+	
 
     public bool IsEmpty
     {

@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Common
 
 				if (null != _parent)
 				{
-					_parent.SetValue(ValueStringProperty, s);
+					_parent.SetValue(ValueStringPropertyKey, s);
 					s = s.Trim();
 
 					if (!string.IsNullOrEmpty(_parent.MinimumReplacementText) && _parent.MinimumReplacementText.Trim() == s)

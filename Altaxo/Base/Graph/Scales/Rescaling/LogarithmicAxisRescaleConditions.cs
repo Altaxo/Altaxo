@@ -56,6 +56,22 @@ namespace Altaxo.Graph.Scales.Rescaling
    
     #endregion
 
+		public LogarithmicAxisRescaleConditions()
+		{
+		}
+
+		public LogarithmicAxisRescaleConditions(LogarithmicAxisRescaleConditions from)
+			: base(from) // all is done here, since CopyFrom is virtual!
+		{
+		}
+
+
+		public override object Clone()
+		{
+			return new LogarithmicAxisRescaleConditions(this);
+		}
+
+
     /// <summary>
     /// This will process the temporary values for the axis origin and axis end. Depending on the rescaling conditions,
     /// the values of org and end are changed.
@@ -126,15 +142,6 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
-    #region ICloneable Members
-
-    public override  object Clone()
-    {
-      LogarithmicAxisRescaleConditions result = new LogarithmicAxisRescaleConditions();
-      result.CopyFrom(this);
-      return result;
-    }
-
-    #endregion
+  
   }
 }

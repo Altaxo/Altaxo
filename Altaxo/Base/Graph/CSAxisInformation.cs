@@ -96,12 +96,44 @@ namespace Altaxo.Graph
 					break;
 			}
 
-			_nameOfAxisStyle += string.Format(" (at L={0})", _identifier.LogicalValueOtherFirst.ToString());
+
+			// Axis name
+			if (_identifier.Is3DIdentifier)
+			{
+				_nameOfAxisStyle += string.Format(" (at {0}={1}; {2}={3})",
+					_identifier.UsePhysicalValueOtherFirst ? "P1" : "L1",
+					_identifier.UsePhysicalValueOtherFirst ? _identifier.PhysicalValueOtherFirst.ToString() : _identifier.LogicalValueOtherFirst.ToString(),
+					_identifier.UsePhysicalValueOtherSecond ? "P2" : "L2",
+					_identifier.UsePhysicalValueOtherSecond ? _identifier.PhysicalValueOtherSecond.ToString() : _identifier.LogicalValueOtherSecond.ToString());
+			}
+			else
+			{
+				if (_identifier.UsePhysicalValueOtherFirst)
+					_nameOfAxisStyle = string.Format("{0}={1}", _identifier.ParallelAxisNumber == 0 ? "Y" : "X", _identifier.PhysicalValueOtherFirst);
+				else
+					_nameOfAxisStyle += string.Format(" (at L={0})", _identifier.LogicalValueOtherFirst.ToString());
+			}
+
+
+			// Axis sides
 			_nameOfFirstDownSide = "FirstDown";
 			_nameOfFirstUpSide = "FirstUp";
+			if(_identifier.Is3DIdentifier)
+			{
+				_nameOfSecondDownSide = "SecondDown";
+				_nameOfSecondUpSide = "SecondUp";
+			}
+			else
+			{
 			_nameOfSecondDownSide = null;
 			_nameOfSecondUpSide = null;
+			}
+
+
+			// preferred label side
 			_preferedLabelSide = CSAxisSide.FirstDown;
+
+		
 
 
 		}

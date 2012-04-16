@@ -22,18 +22,11 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Content="Unit:" HorizontalAlignment="Right"/>
-			<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
-			<RadioButton x:Name="_rbDegree" Content="deg" Margin="4,0,0,0"/>
-			<RadioButton x:Name="_rbRadian" Content="rad" Margin="4,0,0,0"/>
-			</StackPanel>
-		<Label Grid.Column="0" Grid.Row="2" Content="Use pos./neg. values:" HorizontalAlignment="Right"/>
-		<CheckBox x:Name="_chkPosNegValues" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
-		<Label Grid.Column="0" Grid.Row="4" Content="Origin:" HorizontalAlignment="Right"/>
-		<ComboBox x:Name="_cbOrigin" Grid.Column="1" Grid.Row="4" SelectionChanged="_cbOrigin_SelectionChangeCommitted"/>
-		<Label Grid.Column="0" Grid.Row="6" Content="Major ticks:" HorizontalAlignment="Right"/>
-		<ComboBox x:Name="_cbMajorTicks" Grid.Column="1" Grid.Row="6" SelectionChanged="_cbMajorTicks_SelectedIndexChanged"/>
-		<Label Grid.Column="0" Grid.Row="8" Content="Minor ticks:" HorizontalAlignment="Right"/>
-		<ComboBox x:Name="_cbMinorTicks" Grid.Column="1" Grid.Row="8" SelectionChanged="_cbMinorTicks_SelectedIndexChanged"/>
+		<Label Grid.Column="0" Grid.Row="0" Content="Use pos./neg. values:" HorizontalAlignment="Right"/>
+		<CheckBox x:Name="_chkPosNegValues" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
+		<Label Grid.Column="0" Grid.Row="2" Content="Major ticks:" HorizontalAlignment="Right"/>
+		<ComboBox x:Name="_cbMajorTicks" Grid.Column="1" Grid.Row="2" SelectionChanged="_cbMajorTicks_SelectedIndexChanged"/>
+		<Label Grid.Column="0" Grid.Row="4" Content="Minor ticks:" HorizontalAlignment="Right"/>
+		<ComboBox x:Name="_cbMinorTicks" Grid.Column="1" Grid.Row="4" SelectionChanged="_cbMinorTicks_SelectedIndexChanged"/>
 	</Grid>
 </UserControl>

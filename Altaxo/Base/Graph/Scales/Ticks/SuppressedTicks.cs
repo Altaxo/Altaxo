@@ -29,7 +29,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
-	public class SuppressedTicks : ICloneable
+	public class SuppressedTicks : Main.ICopyFrom
 	{
 		List<AltaxoVariant> _suppressedTickValues;
 		List<int> _suppressedTicksByNumber;
@@ -95,22 +95,33 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		public SuppressedTicks(SuppressedTicks from)
-			: this()
 		{
 			CopyFrom(from);
 		}
 
-		public void CopyFrom(SuppressedTicks from)
+		public virtual bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			_suppressedTickValues.Clear();
-			_suppressedTicksByNumber.Clear();
-
-			_suppressedTickValues.AddRange(from._suppressedTickValues);
-			_suppressedTicksByNumber.AddRange(from._suppressedTicksByNumber);
+			var from = obj as SuppressedTicks;
+			if (null != from)
+			{
+				_suppressedTickValues = new List<AltaxoVariant>(from._suppressedTickValues);
+				_suppressedTicksByNumber = new List<int>(from._suppressedTicksByNumber);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
+
+		public object Clone()
+		{
+			return new SuppressedTicks(this);
+		}
+
 
 		public override bool Equals(object obj)
 		{
@@ -130,11 +141,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
-		public object Clone()
-		{
-			return new SuppressedTicks(this);
-		}
-
+	
     public bool IsEmpty
     {
       get

@@ -343,7 +343,7 @@ namespace Altaxo.Graph
 			{
 				return _logicalValueFirstOther;
 			}
-			set
+			set  // setting this value is only intended if UsePhysicalValue is true, and the logical value is calculated from the physical value. The result can then be stored here.
 			{
 				if (_usePhysicalValueFirstOther)
 					_logicalValueFirstOther = value;
@@ -353,7 +353,9 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// The logical value of the isoline. It can be set only in the constructor, or if the UsePhysicalValue property is true.
+		/// The logical value of the isoline. It can be set only in the constructor, with one exception:
+		/// If <see cref="UsePhysicalValue"/> property is true, then the logical value is calculated from the current scale, and the logical value
+		/// is set here for further reference during the painting.
 		/// </summary>
 		public double LogicalValueOtherSecond
 		{
@@ -361,9 +363,9 @@ namespace Altaxo.Graph
 			{
 				return _logicalValueSecondOther;
 			}
-			set
+			set // setting this value is only intended if UsePhysicalValue is true, and the logical value is calculated from the physical value. The result can then be stored here.
 			{
-				if (_usePhysicalValueSecondOther)
+				if (_usePhysicalValueSecondOther) 
 					_logicalValueSecondOther = value;
 				else
 					throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");

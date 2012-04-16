@@ -34,58 +34,84 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph.Scales.Ticks
+using Altaxo.Collections;
+namespace Altaxo.Gui.Graph
 {
 	/// <summary>
-	/// Interaction logic for AngularTickSpacingControl.xaml
+	/// Interaction logic for AxisCreationControl.xaml
 	/// </summary>
-	public partial class AngularTickSpacingControl : UserControl, IAngularTickSpacingView
+	public partial class AxisCreationControl : UserControl, IAxisCreationView
 	{
-		public AngularTickSpacingControl()
+		public event Action SelectedAxisTemplateChanged;
+
+		public AxisCreationControl()
 		{
 			InitializeComponent();
 		}
 
-		private void _cbMajorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
-			if (null != MajorTicksChanged)
-				MajorTicksChanged(sender, e);
-		}
 
-		private void _cbMinorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(_cbMinorTicks);
-		}
-
-		#region IAngularTickSpacingView
-
-		public bool UsePositiveNegativeValues
+		public bool UsePhysicalValue
 		{
 			get
 			{
-				return true == _chkPosNegValues.IsChecked;
+				return _guiUsePhysicalValue.IsChecked == true;
 			}
 			set
 			{
-				_chkPosNegValues.IsChecked = value;
+				_guiUsePhysicalValue.IsChecked = value;
+				_guiUseLogicalValue.IsChecked = !value;
 			}
 		}
 
-		public Collections.SelectableListNodeList MajorTicks
+		public double AxisPositionLogicalValue
 		{
-			set { GuiHelper.Initialize(_cbMajorTicks, value); }
+			get
+			{
+				return _guiLogicalValue.SelectedQuantityAsValueInSIUnits;
+			}
+			set
+			{
+				_guiLogicalValue.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
-		public Collections.SelectableListNodeList MinorTicks
+		public Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue
 		{
-			set { GuiHelper.Initialize(_cbMinorTicks, value); }
+			get
+			{
+				return _guiPhysicalValue.SelectedValue;
+			}
+			set
+			{
+				_guiPhysicalValue.SelectedValue = value;
+			}
 		}
 
-		public event EventHandler MajorTicksChanged;
+		public bool MoveAxis
+		{
+			get
+			{
+				return _guiMoveAxis.IsChecked == true;
+			}
+			set
+			{
+				_guiMoveAxis.IsChecked = value;
+				_guiCopyAxis.IsChecked = !value;
+			}
+		}
+
+		public void InitializeAxisTemplates(SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiTemplateAxis, list);
+		}
+
+		private void EhSelectedAxisTemplateChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiTemplateAxis);
+			if (null != SelectedAxisTemplateChanged)
+				SelectedAxisTemplateChanged();
+		}
+
+
 	}
-
-		#endregion IAngularTickSpacingView
 }

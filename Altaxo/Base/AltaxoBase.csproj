@@ -207,12 +207,16 @@
     <Compile Include="Graph\Margin2D.cs" />
     <Compile Include="Graph\Scales\Ticks\SpanTickSpacing.cs" />
     <Compile Include="Graph\TextureScaling.cs" />
+    <Compile Include="Gui\Common\ConditionalDocumentController.cs" />
     <Compile Include="Gui\Common\ValueInSomeUnitControllerBase.cs" />
     <Compile Include="Gui\Common\RelationValueInUnityController.cs" />
     <Compile Include="Gui\Common\Drawing\BrushControllerAdvanced.cs" />
     <Compile Include="Gui\Common\Drawing\NamedColorController.cs" />
     <Compile Include="Gui\Common\Drawing\TextureScalingController.cs" />
     <Compile Include="Gui\Common\LengthValueInPointController.cs" />
+    <Compile Include="Gui\Graph\AxisCreationController.cs" />
+    <Compile Include="Gui\Graph\AxisStyleControllerConditionalGlue.cs" />
+    <Compile Include="Gui\Graph\AxisStyleControllerGlue.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\SpanTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Shapes\CardinalSplinePointsController.cs" />
@@ -345,7 +349,7 @@
     <Compile Include="Gui\Graph\PrintingController.cs" />
     <Compile Include="Gui\Graph\Shapes\ClosedPathShapeController.cs" />
     <Compile Include="Gui\Graph\SingleGraphPrintOptionsController.cs" />
-    <Compile Include="Gui\Graph\XYAxisLabelStyleController.cs" />
+    <Compile Include="Gui\Graph\AxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph\XYColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph\G2DPlotItemController.cs" />
     <Compile Include="Gui\Graph\XYGridStyleController.cs" />
@@ -721,7 +725,6 @@
     <Compile Include="Graph\CSPlaneIDList.cs" />
     <Compile Include="Graph\CSPlaneInformation.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyle.cs" />
-    <Compile Include="Graph\Gdi\Axis\AxisLabelStyleBase.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLineStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisStyleCollection.cs" />
@@ -973,7 +976,7 @@
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingController.cs" />
     <Compile Include="Gui\Graph\SingleColumnChoiceController.cs" />
     <Compile Include="Gui\Graph\Shapes\TextGraphicController.cs" />
-    <Compile Include="Gui\Graph\TitleFormatLayerController.cs" />
+    <Compile Include="Gui\Graph\AxisStyleController.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphController.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphToolType.cs" />
     <Compile Include="Gui\Graph\Viewing\IGraphController.cs" />

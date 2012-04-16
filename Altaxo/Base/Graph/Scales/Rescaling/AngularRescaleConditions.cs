@@ -27,7 +27,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
-	public class AngularRescaleConditions : ICloneable, Altaxo.Main.IChangedEventSource
+	public class AngularRescaleConditions : Main.ICopyFrom, Altaxo.Main.IChangedEventSource
 	{
 		public event EventHandler Changed;
 
@@ -74,15 +74,26 @@ namespace Altaxo.Graph.Scales.Rescaling
 			CopyFrom(from);
 		}
 
-		public void CopyFrom(AngularRescaleConditions from)
+		public virtual bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as AngularRescaleConditions;
+			if (null == from)
+				return false;
 
 			this._scaleOrigin = from._scaleOrigin;
+			return true;
 		}
 
 
+		public virtual object Clone()
+		{
+			return new AngularRescaleConditions(this);
+		}
+
+	
 
 		public int ScaleOrigin
 		{
@@ -99,13 +110,5 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 	
 
-		#region ICloneable Members
-
-		public object Clone()
-		{
-			return new AngularRescaleConditions(this);
-		}
-
-		#endregion
-	}
+}
 }

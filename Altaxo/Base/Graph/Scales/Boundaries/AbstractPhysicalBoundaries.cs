@@ -30,7 +30,6 @@ namespace Altaxo.Graph.Scales.Boundaries
   [Serializable]
   public abstract class AbstractPhysicalBoundaries : IPhysicalBoundaries
   {
-
     protected int _numberOfItems=0;
  
 

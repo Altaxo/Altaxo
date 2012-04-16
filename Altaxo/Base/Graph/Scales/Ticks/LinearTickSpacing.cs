@@ -207,52 +207,59 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		public LinearTickSpacing(LinearTickSpacing from)
-			: this()
+			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
-			CopyFrom(from);
 		}
 
 
 
-		public virtual void CopyFrom(LinearTickSpacing from)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as LinearTickSpacing;
+				if (null != from)
+				{
+					_cachedMajorMinor = null; // invalidate the cached setting
 
-			_cachedMajorMinor = null; // invalidate the cached setting
+					_userDefinedMajorSpan = from._userDefinedMajorSpan;
+					_userDefinedMinorTicks = from._userDefinedMinorTicks;
 
-			_userDefinedMajorSpan = from._userDefinedMajorSpan;
-			_userDefinedMinorTicks = from._userDefinedMinorTicks;
+					_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+					_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-			_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
-			_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
+					_zeroLever = from._zeroLever;
+					_minGrace = from._minGrace;
+					_maxGrace = from._maxGrace;
 
-			_zeroLever = from._zeroLever;
-			_minGrace = from._minGrace;
-			_maxGrace = from._maxGrace;
-
-			_snapOrgToTick = from._snapOrgToTick;
-			_snapEndToTick = from._snapEndToTick;
-
-
-      _suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
-      _suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
-      _additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
-      _additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
-
-			_transformationOffset = from._transformationOffset;
-			_transformationDivider = from._transformationDivider;
-			_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
+					_snapOrgToTick = from._snapOrgToTick;
+					_snapEndToTick = from._snapEndToTick;
 
 
+					_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
+					_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
+					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
+					_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
 
-			_majorTicks.Clear();
-			_majorTicks.AddRange(from._majorTicks);
+					_transformationOffset = from._transformationOffset;
+					_transformationDivider = from._transformationDivider;
+					_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
 
-			_minorTicks.Clear();
-			_minorTicks.AddRange(from._minorTicks);
 
-			OnChanged();
+
+					_majorTicks = new List<double>(from._majorTicks);
+					_minorTicks = new List<double>(from._minorTicks);
+
+					OnChanged();
+				}
+			}
+			return isCopied;
+		}
+
+		public override object Clone()
+		{
+			return new LinearTickSpacing(this);
 		}
 
 		public override bool Equals(object obj)
@@ -311,10 +318,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 
-		public override object Clone()
-		{
-			return new LinearTickSpacing(this);
-		}
+		
 
 		public double ZeroLever
 		{

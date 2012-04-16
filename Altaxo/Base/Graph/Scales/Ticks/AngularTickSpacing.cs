@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Altaxo.Data;
+
 namespace Altaxo.Graph.Scales.Ticks
 {
 	public abstract class AngularTickSpacing : NumericTickSpacing
@@ -49,15 +51,15 @@ namespace Altaxo.Graph.Scales.Ticks
       };
 
 		/// <summary>Major tick divider. Should be one of the values of the table <see cref="_possibleDividers"/></summary>
-		protected int _majorTickDivider = 8;
+		protected int _majorTickDivider;
 		/// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers"/></summary>
-		protected int _minorTickDivider = 24;
+		protected int _minorTickDivider;
 		/// <summary>If true, the scale uses positive and negative values (-180..180°) instead of only positive values (0..360°).</summary>
 		protected bool _usePositiveNegativeAngles;
 
 
-		List<double> _majorTicks = new List<double>();
-		List<double> _minorTicks = new List<double>();
+		List<AltaxoVariant> _majorTicks;
+		List<AltaxoVariant> _minorTicks;
 
 		#region Serialization
 
@@ -90,13 +92,64 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public AngularTickSpacing()
 		{
+			_majorTickDivider = 8;
+			_minorTickDivider = 24;
+			_majorTicks = new List<AltaxoVariant>();
+			_minorTicks = new List<AltaxoVariant>();
 		}
 
 		public AngularTickSpacing(NumericTickSpacing from)
+			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
 		}
 
-		
+		public override bool CopyFrom(object obj)
+		{
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as AngularTickSpacing;
+				if (null != from)
+				{
+					_majorTickDivider = from._majorTickDivider;
+					_minorTickDivider = from._minorTickDivider;
+					_usePositiveNegativeAngles = from._usePositiveNegativeAngles;
+					_majorTicks = new List<AltaxoVariant>(from._majorTicks);
+					_minorTicks = new List<AltaxoVariant>(from._minorTicks);
+				}
+			}
+			return isCopied;
+		}
+
+		public override Data.AltaxoVariant[] GetMajorTicksAsVariant()
+		{
+			return _majorTicks.ToArray();
+		}
+
+		public override AltaxoVariant[] GetMinorTicksAsVariant()
+		{
+			return _minorTicks.ToArray();
+		}
+
+		public override double[] GetMajorTicksNormal(Scale scale)
+		{
+			double[] ticks = new double[_majorTicks.Count];
+			for (int i = 0; i < ticks.Length; i++)
+			{
+				ticks[i] = scale.PhysicalVariantToNormal(_majorTicks[i]);
+			}
+			return ticks;
+		}
+
+		public override double[] GetMinorTicksNormal(Scale scale)
+		{
+			double[] ticks = new double[_minorTicks.Count];
+			for (int i = 0; i < ticks.Length; i++)
+			{
+				ticks[i] = scale.PhysicalVariantToNormal(_minorTicks[i]);
+			}
+			return ticks;
+		}
 
 		public int[] GetPossibleDividers()
 		{

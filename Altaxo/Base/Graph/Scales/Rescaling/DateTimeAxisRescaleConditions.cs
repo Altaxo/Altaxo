@@ -28,7 +28,7 @@ namespace Altaxo.Graph.Scales.Rescaling
   /// Summary description for AxisRescaleConditions.
   /// </summary>
   [Serializable]
-  public class DateTimeAxisRescaleConditions : ICloneable, Altaxo.Main.IChangedEventSource
+  public class DateTimeAxisRescaleConditions : Main.ICopyFrom, Altaxo.Main.IChangedEventSource
   {
     protected BoundaryRescaling _orgRescaling;
     protected BoundaryRescaling _endRescaling;
@@ -74,14 +74,28 @@ namespace Altaxo.Graph.Scales.Rescaling
     #endregion
 
 
+		public DateTimeAxisRescaleConditions()
+		{
+		}
+
+		public DateTimeAxisRescaleConditions(DateTimeAxisRescaleConditions from)
+		{
+			CopyFrom(from);
+		}
+
+
     /// <summary>
     /// Copies the data from another object.
     /// </summary>
     /// <param name="from">The object to copy the data from.</param>
-    public void CopyFrom(DateTimeAxisRescaleConditions from)
+    public virtual bool CopyFrom(object obj)
     {
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as DateTimeAxisRescaleConditions;
+			if (null == from)
+				return false;
 
       bool bEqual = this.IsEqualTo(from);
       this._orgRescaling = from._orgRescaling;
@@ -93,7 +107,14 @@ namespace Altaxo.Graph.Scales.Rescaling
 
       if(!bEqual)
         OnChanged();
+
+			return true;
     }
+
+		public virtual object Clone()
+		{
+			return new DateTimeAxisRescaleConditions(this);
+		}
 
     #region Accessors
 
@@ -306,17 +327,7 @@ namespace Altaxo.Graph.Scales.Rescaling
         }
       }
     }
-    #region ICloneable Members
-
-    public virtual object Clone()
-    {
-      DateTimeAxisRescaleConditions result = new DateTimeAxisRescaleConditions();
-      result.CopyFrom(this);
-      return result;
-    }
-
-    #endregion
-
+ 
     protected virtual void OnChanged()
     {
       if(Changed!=null)

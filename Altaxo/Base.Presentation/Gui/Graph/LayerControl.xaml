@@ -10,7 +10,16 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="5*"/>
 		</Grid.ColumnDefinitions>
-		<ListBox Grid.Column="0" x:Name="_lbEdges" Background="Bisque" Padding="4,4,4,0" SelectionChanged="EhSecondChoice_SelectionChanged"/>
+		<Grid Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<ListBox x:Name="_lbEdges" Grid.Row="0" Background="Bisque" Padding="4,4,4,0" SelectionChanged="EhSecondChoice_SelectionChanged"/>
+			<Button x:Name="_guiMoveAxis" Grid.Row="1" Content="Move axis .." DockPanel.Dock="Bottom" Margin="4,4,4,0" Click="EhMoveAxis"/>
+			<Button x:Name="_guiCreateNewAxis" Grid.Row="2" Content="New axis .." DockPanel.Dock="Bottom" Margin="4,4,4,0" Click="EhCreateNewAxis"/>
+		</Grid>
 		<TabControl Grid.Column="1"  x:Name="_tabCtrl" SelectionChanged="EhTabControl_SelectionChanged"/>
 	</Grid>
 </UserControl>

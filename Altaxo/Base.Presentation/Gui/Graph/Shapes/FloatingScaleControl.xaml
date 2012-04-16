@@ -85,8 +85,10 @@
 			</StackPanel>
 		</TabItem>
 		<TabItem x:Name="_guiTabTitleFormat" Header="Title/Format"/>
-		<TabItem x:Name="_guiTabMajorLabels" Header="MajorLabels" Visibility="Collapsed"/>
-		<TabItem x:Name="_guiTabMinorLabels" Header="MinorLabels" Visibility="Collapsed"/>
+		<TabItem x:Name="_guiTabMajorLabels" Header="MajorLabels">
+		</TabItem>
+		<TabItem x:Name="_guiTabMinorLabels" Header="MinorLabels">
+		</TabItem>
 		<TabItem x:Name="_guiBackground" Header="Background">
 			<Grid>
 				<Grid.ColumnDefinitions>

@@ -238,10 +238,6 @@ namespace Altaxo.Gui
       return false;
     }
 
-   
-
-   
-
     private string GetFilterString(OpenFileOptions options)
     {
       StringBuilder stb = new StringBuilder();

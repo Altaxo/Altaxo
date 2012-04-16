@@ -28,7 +28,7 @@ namespace Altaxo.Graph.Scales.Rescaling
   /// Determines the behaviour of the axis when some of the data has changed.
   /// </summary>
   [Serializable]
-  public class NumericAxisRescaleConditions : ICloneable, Altaxo.Main.IChangedEventSource
+  public class NumericAxisRescaleConditions : Main.ICopyFrom, Altaxo.Main.IChangedEventSource
   {
     protected BoundaryRescaling _orgRescaling;
     protected BoundaryRescaling _endRescaling;
@@ -75,15 +75,26 @@ namespace Altaxo.Graph.Scales.Rescaling
    
     #endregion
 
+		public NumericAxisRescaleConditions()
+		{
+		}
 
-    /// <summary>
-    /// Copies the data from another object.
-    /// </summary>
-    /// <param name="from">The object to copy the data from.</param>
-    public void CopyFrom(NumericAxisRescaleConditions from)
+		public NumericAxisRescaleConditions(NumericAxisRescaleConditions from)
+		{
+			CopyFrom(from);
+		}
+
+
+		/// <summary>Copies from another instance.</summary>
+		/// <param name="obj">The other instance to copy from.</param>
+		/// <returns>True if at least some data could be copied.</returns>
+    public virtual bool CopyFrom(object obj)
     {
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as NumericAxisRescaleConditions;
+			if (null == from)
+				return false;
 
       bool bEqual = this.IsEqualTo(from);
       this._orgRescaling = from._orgRescaling;
@@ -95,7 +106,14 @@ namespace Altaxo.Graph.Scales.Rescaling
 
       if(!bEqual)
         OnChanged();
+
+			return true;
     }
+
+		public virtual object Clone()
+		{
+			return new NumericAxisRescaleConditions(this);
+		}
 
     #region Accessors
 
@@ -413,16 +431,6 @@ namespace Altaxo.Graph.Scales.Rescaling
         isAutoEnd = ProcessEnd(ref end);
       }
     }
-    #region ICloneable Members
-
-    public virtual object Clone()
-    {
-      NumericAxisRescaleConditions result = new NumericAxisRescaleConditions();
-      result.CopyFrom(this);
-      return result;
-    }
-
-    #endregion
 
     protected virtual void OnChanged()
     {

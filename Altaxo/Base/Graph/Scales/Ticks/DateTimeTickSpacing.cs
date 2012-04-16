@@ -260,12 +260,24 @@ namespace Altaxo.Graph.Scales.Ticks
 
 
 		public DateTimeTickSpacing(DateTimeTickSpacing from)
+			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
-			_majorTicks = new List<AltaxoVariant>();
-			_majorTicks.AddRange(from._majorTicks);
+			
+		}
 
-			_minorTicks = new List<AltaxoVariant>();
-			_minorTicks.AddRange(from._minorTicks);
+		public override bool CopyFrom(object obj)
+		{
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as DateTimeTickSpacing;
+				if (null != from)
+				{
+					_majorTicks = new List<AltaxoVariant>(from._majorTicks);
+					_minorTicks = new List<AltaxoVariant>(from._minorTicks);
+				}
+			}
+			return isCopied;
 		}
 
 		public override object Clone()

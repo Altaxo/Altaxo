@@ -72,9 +72,31 @@ namespace Altaxo.Graph.Scales.Ticks
 			_majorTextTicks = new List<AltaxoVariant>();
 		}
 
+		public TextTickSpacing(TextTickSpacing from)
+			: base(from)// everything is done here, since CopyFrom is virtual!
+		{
+		}
+
+
+		public override bool CopyFrom(object obj)
+		{
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as TextTickSpacing;
+				if (null != from)
+				{
+					_majorTicks = new List<AltaxoVariant>(from._majorTicks);
+					_minorTicks = new List<AltaxoVariant>(from._minorTicks);
+					_majorTextTicks = new List<AltaxoVariant>(from._majorTextTicks);
+				}
+			}
+			return isCopied;
+		}
+
 		public override object Clone()
 		{
-			return new TextTickSpacing();
+			return new TextTickSpacing(this);
 		}
 
 		public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)

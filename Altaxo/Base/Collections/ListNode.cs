@@ -491,7 +491,7 @@ namespace Altaxo.Collections
 				throw new ArgumentException("originalIndex>=Count");
 			if (destinationIndex >= list.Count)
 				throw new ArgumentException("destinationIndex>=Count");
-		
+
 
 			var item_i = list[originalIndex];
 
@@ -509,7 +509,7 @@ namespace Altaxo.Collections
 			list[destinationIndex] = item_i;
 		}
 
-	
+
 
 		/// <summary>
 		/// Moves the selected items towards higher indices (for steps &gt; 0) or lower indices (for steps &lt; 0).

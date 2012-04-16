@@ -66,13 +66,13 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		public AngularDegreeTickSpacing(AngularDegreeTickSpacing from)
-			: base(from)
+			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
 		}
 
 		public override object Clone()
 		{
-			return new AngularDegreeTickSpacing();
+			return new AngularDegreeTickSpacing(this);
 		}
 
 		public override bool UseDegree

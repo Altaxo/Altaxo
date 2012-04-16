@@ -32,6 +32,15 @@ namespace Altaxo.Graph.Scales.Ticks
 	public abstract class NumericTickSpacing : TickSpacing
 	{
 
+		public NumericTickSpacing()
+		{
+		}
+
+		public NumericTickSpacing(NumericTickSpacing from)
+			: base(from) // everything is done here, since CopyFrom is virtual!
+		{
+		}
+
 
 		/// <summary>
 		/// Returns the physical values

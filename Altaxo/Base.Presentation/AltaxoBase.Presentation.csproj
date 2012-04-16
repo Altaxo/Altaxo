@@ -148,6 +148,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\ConditionalDocumentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\DialogShellViewWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -349,6 +353,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph\ArrangeLayersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\AxisCreationControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -556,7 +564,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\TitleFormatLayerControl.xaml">
+    <Page Include="Gui\Graph\AxisStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -568,7 +576,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYAxisLabelStyleControl.xaml">
+    <Page Include="Gui\Graph\AxisLabelStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -698,6 +706,9 @@
     <Compile Include="Gui\Common\BooleanValueControl.cs" />
     <Compile Include="Gui\Common\CheckableGroupBox.xaml.cs">
       <DependentUpon>CheckableGroupBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\ConditionalDocumentControl.xaml.cs">
+      <DependentUpon>ConditionalDocumentControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
     <Compile Include="Gui\Common\Drawing\DimensionfulQuantityImageComboBox.cs" />
@@ -878,6 +889,9 @@
     <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
       <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\AxisCreationControl.xaml.cs">
+      <DependentUpon>AxisCreationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\AxisLineStyleControl.xaml.cs">
       <DependentUpon>AxisLineStyleControl.xaml</DependentUpon>
     </Compile>
@@ -1034,8 +1048,8 @@
     <Compile Include="Gui\Graph\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\TitleFormatLayerControl.xaml.cs">
-      <DependentUpon>TitleFormatLayerControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\AxisStyleControl.xaml.cs">
+      <DependentUpon>AxisStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
@@ -1059,8 +1073,8 @@
     <Compile Include="Gui\Graph\WaterfallTransformControl.xaml.cs">
       <DependentUpon>WaterfallTransformControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYAxisLabelStyleControl.xaml.cs">
-      <DependentUpon>XYAxisLabelStyleControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\AxisLabelStyleControl.xaml.cs">
+      <DependentUpon>AxisLabelStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\XYGridStyleControl.xaml.cs">
       <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
