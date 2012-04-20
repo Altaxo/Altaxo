@@ -117,7 +117,14 @@ namespace Altaxo.Gui.Common
 			if (_monitor != null)
 			{
 				if (_monitor.HasReportText)
-					this._progressText.Text = _monitor.GetReportText();
+				{
+					this._guiProgressText.Text = _monitor.GetReportText();
+					double frac = _monitor.GetProgressFraction();
+					if (!double.IsNaN(frac))
+					{
+						_guiProgressFraction.Value = Math.Min(1, Math.Max(0, frac));
+					}
+				}
 				_monitor.SetShouldReportNow();
 			}
 

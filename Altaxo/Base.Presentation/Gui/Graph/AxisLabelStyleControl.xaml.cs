@@ -190,6 +190,18 @@ namespace Altaxo.Gui.Graph
 			set { _edSuppressLabelsByNumber.Text = value; }
 		}
 
+		public string PrefixText
+		{
+			get { return _guiPrefixText.Text; }
+			set { _guiPrefixText.Text = value; }
+		}
+
+		public string PostfixText
+		{
+			get { return _guiPostfixText.Text; }
+			set { _guiPostfixText.Text = value; }
+		}
+
 		public Collections.SelectableListNodeList LabelSides
 		{
 			set
@@ -206,6 +218,16 @@ namespace Altaxo.Gui.Graph
 		{
 			m_cbHorizontalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
 			m_cbVerticalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
+		}
+
+		private void EhHorizontalAligment_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(m_cbHorizontalAlignment);
+		}
+
+		private void EhVerticalAligment_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(m_cbVerticalAlignment);
 		}
 	}
 }

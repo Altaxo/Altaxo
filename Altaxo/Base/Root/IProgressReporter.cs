@@ -45,6 +45,13 @@ namespace Altaxo
 		/// <param name="text">Report text</param>
 		void ReportProgress(string text);
 
+		/// <summary>
+		/// Reports the progress as a text string.
+		/// </summary>
+		/// <param name="text">Report text</param>
+		/// <param name="progressPercentage">The progress as fraction (0..1).</param>
+		void ReportProgress(string text, double progressValue);
+
 
 		/// <summary>
 		/// Returns true if the activity was cancelled by the user. The script has to check this value periodically. If it is set to true, the script should return.

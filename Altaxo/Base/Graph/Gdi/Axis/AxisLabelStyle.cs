@@ -881,7 +881,7 @@ namespace Altaxo.Graph.Gdi.Axis
 						continue;
 					if (_suppressedLabels.ByNumbers.Contains(i))
 						continue;
-					if (_suppressedLabels.ByNumbers.Contains(i - ticks.Length - 1))
+					if (_suppressedLabels.ByNumbers.Contains(i - ticks.Length))
 						continue;
 
 					filteredTicks.Add(ticks[i]);
@@ -891,7 +891,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				relpositions = filteredRelPositions.ToArray();
 			}
 
-			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
+			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks, _prefixText ?? string.Empty, _postfixText?? string.Empty);
 
 			double emSize = _font.SizeInPoints;
 			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferedLabelSide;
@@ -913,12 +913,12 @@ namespace Altaxo.Graph.Gdi.Axis
 				{
 					double alpha = _rotation * Math.PI / 180 - Math.Atan2(outVector.Y, outVector.X);
 					double shift = msize.Y * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.X + _font.SizeInPoints / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
-					morg.X += (float)(outVector.X * shift);
-					morg.Y += (float)(outVector.Y * shift);
+					morg.X += (outVector.X * shift);
+					morg.Y += (outVector.Y * shift);
 				}
 				else
 				{
-					morg.X += (float)(outVector.X * _font.SizeInPoints / 3);
+					morg.X += (outVector.X * _font.SizeInPoints / 3);
 				}
 
 

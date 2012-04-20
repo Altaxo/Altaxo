@@ -48,7 +48,7 @@ namespace Altaxo.Calc.Fourier
 			{
 				_method = Method.Trivial;
 			}
-			else if (Calc.BinaryMath.IsPowerOfTwo(length))
+			else if (Calc.BinaryMath.IsPowerOfTwoOrZero(length))
 			{
 				// use Hartley transform
 				_method = Method.Hartley;

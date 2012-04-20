@@ -115,6 +115,14 @@ namespace Altaxo.Gui.Graph
 		/// <value>The label sides.</value>
 		Collections.SelectableListNodeList LabelSides { set; }
 
+
+		/// <summary>Gets or sets the prefix text that appears before the label.</summary>
+		/// <value>The prefix text.</value>
+		string PrefixText { get; set; }
+
+		/// <summary>Gets or sets the postfix text that appears after the label.</summary>
+		/// <value>The postfix text.</value>
+		string PostfixText { get; set; }
 	}
 
 
@@ -186,6 +194,8 @@ namespace Altaxo.Gui.Graph
 				_view.Background = _doc.BackgroundStyle;
 				_view.SuppressedLabelsByValue = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
 				_view.SuppressedLabelsByNumber = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
+				_view.PrefixText = _doc.PrefixText;
+				_view.PostfixText = _doc.PostfixText;
 				_view.LabelSides = _labelSides;
 				_view.LabelStyle_Initialize(_labelStyles);
 			}
@@ -223,6 +233,9 @@ namespace Altaxo.Gui.Graph
 			}
 			else
 				return false;
+
+			_doc.PrefixText = _view.PrefixText;
+			_doc.PostfixText = _view.PostfixText;
 
 			var labelSideNode = _labelSides.FirstSelectedNode;
 			if (null != labelSideNode)

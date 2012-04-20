@@ -213,7 +213,7 @@ namespace Altaxo.Calc.Probability
 			int n_user = n;
 			n = Math.Max(n, 512);
 			if (n > 512)
-				n = BinaryMath.NextPowerOfTwo(n);
+				n = BinaryMath.NextPowerOfTwoGreaterOrEqualThan(n);
 
 
 			if (bw.IsNaN() && !(width.IsNaN() && null == widthSel))

@@ -73,7 +73,6 @@
 		<Label Grid.Column="0" Grid.Row="12" Content="Background:"/>
 		<Label Grid.Column="0" Grid.Row="14" Content="Suppress values:"/>
 		<Label Grid.Column="0" Grid.Row="16" Content="Supress label #:"/>
-		<Label Grid.Column="0" Grid.Row="18" Content="Label style:"/>
 
 		<Label Grid.Column="2" Grid.Row="2" Content="Style:"/>
 		<Label Grid.Column="2" Grid.Row="4" Content="Rotation:"/>
@@ -90,16 +89,21 @@
 		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="4" />
 		<axogcd:RotationComboBox x:Name="m_edRotation" Grid.Column="3" Grid.Row="4" />
 		<CheckBox x:Name="_chkAutomaticAlignment" Grid.Column="1" Grid.Row="6" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged"/>
-		<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="8" />
+		<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="8" SelectionChanged="EhHorizontalAligment_SelectionChanged"/>
 		<axogc:QuantityWithUnitTextBox x:Name="m_edXOffset" Grid.Column="3" Grid.Row="8" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0"/>
-		<ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="10" />
+		<ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhVerticalAligment_SelectionChanged"/>
 		<axogc:QuantityWithUnitTextBox x:Name="m_edYOffset" Grid.Column="3" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0"/>
 		<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="12"/>
 		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="12"/>
 		<TextBox x:Name="_edSuppressLabelValues" Grid.Column="1" Grid.Row="14"/>
-
-
 		<TextBox x:Name="_edSuppressLabelsByNumber" Grid.Column="1" Grid.Row="16"/>
-		<ComboBox x:Name="m_cbLabelStyle" Grid.Column="1" Grid.Row="18" Grid.ColumnSpan="3" SelectionChanged="m_cbLabelStyle_SelectionChangeCommitted"/>
+
+		<Label Grid.Column="0" Grid.Row="18" Content="Prefix text:"/>
+		<TextBox x:Name="_guiPrefixText" Grid.Column="1" Grid.Row="18"/>
+		<Label Grid.Column="2" Grid.Row="18" Content="Postfix text:"/>
+		<TextBox x:Name="_guiPostfixText" Grid.Column="3" Grid.Row="18"/>
+
+		<Label Grid.Column="0" Grid.Row="20" Content="Label style:"/>
+		<ComboBox x:Name="m_cbLabelStyle" Grid.Column="1" Grid.Row="20" Grid.ColumnSpan="3" SelectionChanged="m_cbLabelStyle_SelectionChangeCommitted"/>
 	</Grid>
 </UserControl>

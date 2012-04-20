@@ -186,6 +186,7 @@
     <Compile Include="Calc\Fourier\FourierDirection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Fourier\FastHadamardTransformation.cs" />
     <Compile Include="Calc\Fourier\NativeFourierMethods.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -433,6 +434,7 @@
     <Compile Include="Calc\Probability\Distribution.cs" />
     <Compile Include="Calc\Probability\Generator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\ALFGenerator.cs" />
+    <Compile Include="Calc\Probability\PseudoRNGs\MaximumLengthSequence.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\MT19937Generator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\StandardGenerator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\XorShift128Generator.cs" />

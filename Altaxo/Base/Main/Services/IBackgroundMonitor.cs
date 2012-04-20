@@ -39,6 +39,10 @@ namespace Altaxo.Main.Services
 		/// Gets the report text. When called, the function has to reset the <see cref="HasReportText"/> flag.
 		/// </summary>
 		string GetReportText();
+
+		/// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="System.Double.NaN"/>.</summary>
+		/// <returns>The progress as fraction value [0..1], or <see cref="System.Double.NaN"/>.</returns>
+		double GetProgressFraction();
 	}
  
 
@@ -72,6 +76,11 @@ namespace Altaxo.Main.Services
       
     }
 
+		public void ReportProgress(string text, double progressFraction)
+		{
+
+		}
+
     public string ReportText 
     {
       get 
@@ -98,6 +107,7 @@ namespace Altaxo.Main.Services
     protected bool _shouldReport;
     string _reportText;
 		bool _hasFreshReportText;
+		double _progressFraction = double.NaN;
 
     bool _cancellationPending;
 
@@ -123,6 +133,14 @@ namespace Altaxo.Main.Services
 			_hasFreshReportText = true;
     }
 
+		public void ReportProgress(string text, double progressFraction)
+		{
+			_shouldReport = false;
+			_reportText = text;
+			_hasFreshReportText = true;
+			_progressFraction = progressFraction;
+		}
+
 
 		public bool HasReportText
 		{
@@ -134,6 +152,11 @@ namespace Altaxo.Main.Services
 				_hasFreshReportText = false;
 				return _reportText; 
     }
+
+		public double GetProgressFraction()
+		{
+			return _progressFraction;
+		}
 
     public bool CancellationPending
     {
@@ -180,6 +203,7 @@ namespace Altaxo.Main.Services
     bool _shouldReport;
     bool _cancellationPending;
     string _reportText;
+		double _progressFraction = double.NaN;
 
     public event System.Timers.ElapsedEventHandler Elapsed;
 
@@ -221,11 +245,25 @@ namespace Altaxo.Main.Services
       
     }
 
+		public void ReportProgress(string text, double progressFraction)
+		{
+			_shouldReport = false;
+			_reportText = text;
+			_progressFraction = progressFraction;
+		}
+
     public string ReportText
     {
       set { _reportText = value; }
       get { return _reportText; }
     }
+
+		public double ProgressFraction
+		{
+			get { return _progressFraction; }
+			set { _progressFraction = value; }
+		}
+
 
     public bool CancellationPending
     {

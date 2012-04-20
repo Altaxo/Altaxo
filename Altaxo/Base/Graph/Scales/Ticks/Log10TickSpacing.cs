@@ -236,11 +236,8 @@ namespace Altaxo.Graph.Scales.Ticks
 					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
 					_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
 
-					_majorTicks.Clear();
-					_majorTicks.AddRange(from._majorTicks);
-
-					_minorTicks.Clear();
-					_minorTicks.AddRange(from._minorTicks);
+					_majorTicks = new List<double>(from._majorTicks);
+					_minorTicks = new List<double>(from._minorTicks);
 				}
 			}
 			return isCopied;
