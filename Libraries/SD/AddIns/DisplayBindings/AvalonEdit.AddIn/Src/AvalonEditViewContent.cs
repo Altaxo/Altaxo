@@ -135,9 +135,8 @@ namespace ICSharpCode.AvalonEdit.AddIn
 				return;
 			isLoading = true;
 			try {
-				BookmarksDetach();
-				codeEditor.SyntaxHighlighting =
-					HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(file.FileName));
+//				BookmarksDetach();
+				UpdateSyntaxHighlighting(file.FileName);
 				
 				if (!file.IsUntitled) {
 					codeEditor.PrimaryTextEditor.IsReadOnly = (File.GetAttributes(file.FileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
@@ -157,6 +156,12 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			}
 		}
 		
+		void UpdateSyntaxHighlighting(FileName fileName)
+		{
+			codeEditor.SyntaxHighlighting =
+				HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(fileName));
+		}
+		
 		protected override void OnFileNameChanged(OpenedFile file)
 		{
 			base.OnFileNameChanged(file);
@@ -174,6 +179,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 				// processes the file name change
 				
 				codeEditor.FileName = newFileName;
+				UpdateSyntaxHighlighting(newFileName);
 				
 				ParserService.BeginParse(file.FileName, codeEditor.DocumentAdapter);
 			}
@@ -207,8 +213,12 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		}
 		
 		#region Bookmark Handling
+		bool bookmarksAttached;
+		
 		void BookmarksAttach()
 		{
+			if (bookmarksAttached) return;
+			bookmarksAttached = true;
 			foreach (SDBookmark bookmark in BookmarkManager.GetBookmarks(codeEditor.FileName)) {
 				bookmark.Document = codeEditor.DocumentAdapter;
 				codeEditor.IconBarManager.Bookmarks.Add(bookmark);
@@ -265,7 +275,8 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		{
 			if (trackedFeature != null)
 				trackedFeature.EndTracking();
-			this.PrimaryFile.IsDirtyChanged -= PrimaryFile_IsDirtyChanged;
+			if (PrimaryFile != null)
+				this.PrimaryFile.IsDirtyChanged -= PrimaryFile_IsDirtyChanged;
 			base.Dispose();
 			BookmarksDetach();
 			codeEditor.Dispose();

@@ -72,14 +72,14 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 			listView.SetValue(Grid.RowProperty, 1);
 			myPanel.Children.Add(listView);
 			
-			BookmarkManager.Added   += new BookmarkEventHandler(BookmarkManagerAdded);
-			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManagerRemoved);
+			BookmarkManager.Added   += BookmarkManagerAdded;
+			BookmarkManager.Removed += BookmarkManagerRemoved;
 			
 			foreach (SDBookmark mark in BookmarkManager.Bookmarks) {
 				AddMark(mark);
 			}
 			
-			listView.ItemActivated += new EventHandler(listView_ItemActivated);
+			listView.ItemActivated += new EventHandler(OnItemActivated);
 		}
 		
 		public IEnumerable<ListViewPadItemModel> AllItems {
@@ -120,6 +120,12 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 			listView.CurrentItem = model;
 		}
 		
+		public override void Dispose()
+		{
+			BookmarkManager.Added   -= BookmarkManagerAdded;
+			BookmarkManager.Removed -= BookmarkManagerRemoved;
+		}
+		
 		void AddMark(SDBookmark mark)
 		{
 			if (!ShowBookmarkInThisPad(mark))
@@ -135,20 +141,7 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 			return mark.IsVisibleInBookmarkPad && !(mark is BreakpointBookmark);
 		}
 		
-		void BookmarkManagerAdded(object sender, BookmarkEventArgs e)
-		{
-			AddMark((SDBookmark)e.Bookmark);
-		}
-		
-		void BookmarkManagerRemoved(object sender, BookmarkEventArgs e)
-		{
-			if (ShowBookmarkInThisPad(e.Bookmark)) {
-				var model = listView.Remove(e.Bookmark);
-				model.PropertyChanged -= OnModelPropertyChanged;
-			}
-		}
-		
-		void listView_ItemActivated(object sender, EventArgs e)
+		protected virtual void OnItemActivated(object sender, EventArgs e)
 		{
 			var node = CurrentItem;
 			if (node != null) {
@@ -156,6 +149,20 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 				if (mark != null) {
 					FileService.JumpToFilePosition(mark.FileName, mark.LineNumber, 1);
 				}
+			}
+		}
+		
+		void BookmarkManagerAdded(object sender, BookmarkEventArgs e)
+		{
+			AddMark(e.Bookmark);
+		}
+		
+		void BookmarkManagerRemoved(object sender, BookmarkEventArgs e)
+		{
+			if (ShowBookmarkInThisPad(e.Bookmark)) {
+				var model = listView.Remove(e.Bookmark);
+				if (model != null)
+					model.PropertyChanged -= OnModelPropertyChanged;
 			}
 		}
 		

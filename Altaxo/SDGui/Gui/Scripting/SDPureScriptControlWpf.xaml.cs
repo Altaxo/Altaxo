@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Scripting
 
 		public void MarkText(int pos1, int pos2)
 		{
-			_codeView.PrimaryTextEditor.TextArea.Selection = new ICSharpCode.AvalonEdit.Editing.SimpleSelection(pos1,pos2);
+			_codeView.PrimaryTextEditor.TextArea.Selection = ICSharpCode.AvalonEdit.Editing.Selection.Create(_codeView.PrimaryTextEditor.TextArea, pos1, pos2);
 		}
 
 

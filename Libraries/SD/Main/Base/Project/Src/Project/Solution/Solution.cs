@@ -19,6 +19,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		public const int SolutionVersionVS2005 = 9;
 		public const int SolutionVersionVS2008 = 10;
 		public const int SolutionVersionVS2010 = 11;
+		public const int SolutionVersionVS11 = 12;
 		
 		/// <summary>contains &lt;GUID, (IProject/ISolutionFolder)&gt; pairs.</summary>
 		Dictionary<string, ISolutionFolder> guidDictionary = new Dictionary<string, ISolutionFolder>();
@@ -317,6 +318,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			changeWatcher.Disable();
 			changeWatcher.Rename(fileName);
 			this.fileName = fileName;
+			UpdateMSBuildProperties();
 			string outputDirectory = Path.GetDirectoryName(fileName);
 			if (!System.IO.Directory.Exists(outputDirectory)) {
 				System.IO.Directory.CreateDirectory(outputDirectory);
@@ -413,6 +415,8 @@ namespace ICSharpCode.SharpDevelop.Project
 					sw.WriteLine("# Visual Studio 2008");
 				} else if (versionNumber == SolutionVersionVS2010) {
 					sw.WriteLine("# Visual Studio 2010");
+				} else if (versionNumber == SolutionVersionVS11) {
+					sw.WriteLine("# Visual Studio 11");
 				}
 				sw.WriteLine("# SharpDevelop " + RevisionClass.FullVersion);
 				sw.Write(projectSection.ToString());
@@ -485,6 +489,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					case "9.00":
 					case "10.00":
 					case "11.00":
+					case "12.00":
 						break;
 					default:
 						MessageService.ShowErrorFormatted("${res:SharpDevelop.Solution.UnknownSolutionVersion}", match.Result("${Version}"));
@@ -1173,11 +1178,12 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static Solution Load(string fileName)
 		{
 			Solution newSolution = new Solution(new ProjectChangeWatcher(fileName));
-			solutionBeingLoaded = newSolution;
+			solutionBeingLoaded  = newSolution;
 			newSolution.Name     = Path.GetFileNameWithoutExtension(fileName);
 			
 			string extension = Path.GetExtension(fileName).ToUpperInvariant();
 			newSolution.fileName = fileName;
+			newSolution.UpdateMSBuildProperties();
 			newSolution.isLoading = true;
 			try {
 				if (!SetupSolution(newSolution)) {
@@ -1190,6 +1196,33 @@ namespace ICSharpCode.SharpDevelop.Project
 			solutionBeingLoaded = null;
 			return newSolution;
 		}
+		
+		public void UpdateMSBuildProperties()
+		{
+			var dict = new Dictionary<string, string>();
+			AddMSBuildSolutionProperties(dict);
+			foreach (var pair in dict) {
+				MSBuildProjectCollection.SetGlobalProperty(pair.Key, pair.Value);
+			}
+		}
+		
+		public void AddMSBuildSolutionProperties(IDictionary<string, string> propertyDict)
+		{
+			propertyDict["SolutionDir"] = EnsureBackslash(this.Directory);
+			propertyDict["SolutionExt"] = ".sln";
+			propertyDict["SolutionFileName"] = Path.GetFileName(this.FileName);
+			propertyDict["SolutionName"] = this.Name ?? string.Empty;
+			propertyDict["SolutionPath"] = this.FileName;
+		}
+		
+		static string EnsureBackslash(string path)
+		{
+			if (path.EndsWith("\\", StringComparison.Ordinal))
+				return path;
+			else
+				return path + "\\";
+		}
+		
 		#endregion
 		
 		#region System.IDisposable interface implementation

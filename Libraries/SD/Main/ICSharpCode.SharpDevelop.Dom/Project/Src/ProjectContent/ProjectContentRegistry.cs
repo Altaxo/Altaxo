@@ -309,6 +309,11 @@ namespace ICSharpCode.SharpDevelop.Dom
             return ass;
       }
 #endif	
+			return null;
+			/*
+			 * Special cases disabled: using these causes us the load the GAC assemblies,
+			 * but we need to load the reference assemblies instead to support multi-targeting.
+			 * 
 			// These assemblies are already loaded by SharpDevelop, so we
 			// don't need to load them in a separate AppDomain/with Cecil.
 			switch (shortName) {
@@ -341,7 +346,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					return Assembly.Load("Microsoft.VisualBasic, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 				default:
 					return null;
-			}
+			}*/
 		}
 	}
 }

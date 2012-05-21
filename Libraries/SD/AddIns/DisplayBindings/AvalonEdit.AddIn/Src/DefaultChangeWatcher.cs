@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using ICSharpCode.AvalonEdit.AddIn.MyersDiff;
+
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
+using ICSharpCode.SharpDevelop.Widgets.MyersDiff;
 
 namespace ICSharpCode.AvalonEdit.AddIn
 {
@@ -104,7 +105,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 				
 				Dictionary<string, int> hashes = new Dictionary<string, int>();
 				
-				MyersDiff.MyersDiff diff = new MyersDiff.MyersDiff(
+				MyersDiffAlgorithm diff = new MyersDiffAlgorithm(
 					new DocumentSequence(baseDocument, hashes),
 					new DocumentSequence(document, hashes)
 				);
@@ -196,8 +197,10 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			if (!disposed) {
 				if (watcher != null)
 					watcher.Dispose();
-				this.textDocument.LineTrackers.Remove(this);
-				this.textDocument.UndoStack.PropertyChanged -= UndoStackPropertyChanged;
+				if (this.textDocument != null) {
+					this.textDocument.LineTrackers.Remove(this);
+					this.textDocument.UndoStack.PropertyChanged -= UndoStackPropertyChanged;
+				}
 				disposed = true;
 			}
 		}

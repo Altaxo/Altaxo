@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			ProjectContentRegistry r = new ProjectContentRegistry();
 			msc = r.Mscorlib;
-			swf = r.GetProjectContentForReference("System.Windows.Forms", "System.Windows.Forms");
+			swf = r.GetProjectContentForReference("System.Windows.Forms", typeof(System.Windows.Forms.Form).Module.FullyQualifiedName);
 			
 			DefaultProjectContent dpc = new DefaultProjectContent();
 			dpc.ReferencedContents.Add(msc);
@@ -183,6 +183,8 @@ namespace ICSharpCode.SharpDevelop.Tests
 		[Test]
 		public void GetTypeInheritanceTreeOfClassDerivingFromListOfString()
 		{
+			if (DotnetDetection.IsDotnet45Installed())
+				Assert.Ignore(".NET 4.5 adds IReadOnlyList");
 			List<string> results = new List<IReturnType>(
 				MemberLookupHelper.GetTypeInheritanceTree(CreateClassDerivingFromListOfString().DefaultReturnType)
 			).ConvertAll<string>(delegate (IReturnType rt) { return rt.DotNetName; });

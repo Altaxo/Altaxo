@@ -28,6 +28,12 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		}
 		
 		[Test]
+		public void CSharpAwaitTest()
+		{
+			CSharpTestUnaryOperatorExpressionTest("await a", UnaryOperatorType.Await);
+		}
+		
+		[Test]
 		public void CSharpBitNotTest()
 		{
 			CSharpTestUnaryOperatorExpressionTest("~a", UnaryOperatorType.BitNot);
@@ -92,6 +98,33 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, ce.CastTo.PointerNestingLevel);
 			UnaryOperatorExpression adrOf = (UnaryOperatorExpression)ce.Expression;
 			Assert.AreEqual(UnaryOperatorType.AddressOf, adrOf.Op);
+		}
+		
+		[Test]
+		public void NestedAwait()
+		{
+			var uoe = ParseUtilCSharp.ParseExpression<UnaryOperatorExpression>("await await a");
+			Assert.AreEqual(UnaryOperatorType.Await, uoe.Op);
+			var nested = (UnaryOperatorExpression)uoe.Expression;
+			Assert.AreEqual(UnaryOperatorType.Await, nested.Op);
+			Assert.IsTrue(nested.Expression is IdentifierExpression);
+		}
+		
+		[Test]
+		public void AwaitStaticMethodCall()
+		{
+			var uoe = ParseUtilCSharp.ParseExpression<UnaryOperatorExpression>("await Task.WhenAll(a, b)");
+			Assert.AreEqual(UnaryOperatorType.Await, uoe.Op);
+			Assert.IsTrue(uoe.Expression is InvocationExpression);
+		}
+		
+		[Test]
+		public void AwaitStaticMethodCallStatement()
+		{
+			var es = ParseUtilCSharp.ParseStatement<ExpressionStatement>("await Task.WhenAll(a, b);");
+			UnaryOperatorExpression uoe = (UnaryOperatorExpression)es.Expression;
+			Assert.AreEqual(UnaryOperatorType.Await, uoe.Op);
+			Assert.IsTrue(uoe.Expression is InvocationExpression);
 		}
 		#endregion
 		

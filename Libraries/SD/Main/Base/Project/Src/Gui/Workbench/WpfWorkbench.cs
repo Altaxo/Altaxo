@@ -93,6 +93,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			// validate after PresentationSource is initialized
 			Rect bounds = new Rect(Left, Top, Width, Height);
 			bounds = FormLocationHelper.Validate(bounds.TransformToDevice(this).ToSystemDrawing()).ToWpf().TransformFromDevice(this);
+			SetBounds(bounds);
+			// Set WindowState after PresentationSource is initialized, because now bounds and location are properly set.
+			this.WindowState = lastNonMinimizedWindowState;
+		}
+
+		void SetBounds(Rect bounds)
+		{
 			this.Left = bounds.Left;
 			this.Top = bounds.Top;
 			this.Width = bounds.Width;
@@ -577,12 +584,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			Rect bounds = memento.Get("Bounds", new Rect(10, 10, 750, 550));
 			// bounds are validated after PresentationSource is initialized (see OnSourceInitialized)
-			this.Left = bounds.Left;
-			this.Top = bounds.Top;
-			this.Width = bounds.Width;
-			this.Height = bounds.Height;
 			lastNonMinimizedWindowState = memento.Get("WindowState", System.Windows.WindowState.Maximized);
-			this.WindowState = lastNonMinimizedWindowState;
+			SetBounds(bounds);
 		}
 		
 		protected override void OnClosing(CancelEventArgs e)
@@ -759,6 +762,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 						break;
 				}
 				this.StatusBar.SetMessage("TextRenderingMode=" + TextOptions.GetTextRenderingMode(this));
+			}
+			if (!e.Handled && e.Key == Key.G && e.KeyboardDevice.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt)) {
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+				this.StatusBar.SetMessage("Total memory = " + (GC.GetTotalMemory(true) / 1024 / 1024f).ToString("f1") + " MB");
 			}
 		}
 		#endif

@@ -47,6 +47,8 @@ namespace ICSharpCode.NRefactory.Ast
 		/// <summary>Only for VB properties.</summary>
 		WriteOnly  = 0x400000, // VB specific
 		
+		Async = 0x800000,
+		
 		Visibility						= Private | Public | Protected | Internal,
 		Classes							= New | Visibility | Abstract | Sealed | Partial | Static,
 		VBModules						= Visibility,
@@ -113,7 +115,8 @@ namespace ICSharpCode.NRefactory.Ast
 		Out = 2,
 		Ref = 4,
 		Params = 8,
-		Optional = 16
+		Optional = 16,
+		This = 32
 	}
 	
 	public enum VarianceModifier
@@ -250,7 +253,9 @@ namespace ICSharpCode.NRefactory.Ast
 		/// <summary>Dereferencing pointer</summary>
 		Dereference,
 		/// <summary>Get address of</summary>
-		AddressOf
+		AddressOf,
+		
+		Await
 	}
 	
 	public enum ContinueType

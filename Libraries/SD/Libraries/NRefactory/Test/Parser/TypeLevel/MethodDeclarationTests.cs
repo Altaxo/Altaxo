@@ -21,6 +21,47 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		}
 		
 		[Test]
+		public void CSharpAsyncMethodDeclarationTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("async void MyMethod() {} ");
+			Assert.AreEqual("System.Void", md.TypeReference.Type);
+			Assert.AreEqual(0, md.Parameters.Count);
+			Assert.AreEqual(Modifiers.Async, md.Modifier);
+		}
+		
+		[Test, Ignore("doesn't work")]
+		public void AsyncAsyncAsync()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("async async async(async async) { }");
+			Assert.AreEqual("async", md.TypeReference.Type);
+			Assert.AreEqual(Modifiers.Async, md.Modifier);
+			Assert.AreEqual("async", md.Name);
+			Assert.AreEqual("async", md.Parameters[0].TypeReference.Type);
+			Assert.AreEqual("async", md.Parameters[0].ParameterName);
+		}
+		
+		[Test]
+		public void AsyncVoidAsync()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("async void async(async async) { }");
+			Assert.AreEqual("System.Void", md.TypeReference.Type);
+			Assert.AreEqual(Modifiers.Async, md.Modifier);
+			Assert.AreEqual("async", md.Name);
+			Assert.AreEqual("async", md.Parameters[0].TypeReference.Type);
+			Assert.AreEqual("async", md.Parameters[0].ParameterName);
+		}
+		
+		[Test]
+		public void BoolAsyncParameter()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("void Work(bool async) { }");
+			Assert.AreEqual(Modifiers.None, md.Modifier);
+			Assert.AreEqual("Work", md.Name);
+			Assert.AreEqual("System.Boolean", md.Parameters[0].TypeReference.Type);
+			Assert.AreEqual("async", md.Parameters[0].ParameterName);
+		}
+		
+		[Test]
 		public void CSharpAbstractMethodDeclarationTest()
 		{
 			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("abstract void MyMethod();");
@@ -250,6 +291,19 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.IsTrue(md.IsExtensionMethod);
 			Assert.AreEqual("s", md.Parameters[0].ParameterName);
 			Assert.AreEqual("System.String", md.Parameters[0].TypeReference.Type);
+		}
+		
+		[Test]
+		public void CSharpExtensionMethodWithAttributeTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
+				"public static int ToInt32([Attr] this string s) { return int.Parse(s); }"
+			);
+			Assert.AreEqual("ToInt32", md.Name);
+			Assert.IsTrue(md.IsExtensionMethod);
+			Assert.AreEqual("s", md.Parameters[0].ParameterName);
+			Assert.AreEqual("System.String", md.Parameters[0].TypeReference.Type);
+			Assert.AreEqual(1, md.Parameters[0].Attributes.Count);
 		}
 		
 		[Test]

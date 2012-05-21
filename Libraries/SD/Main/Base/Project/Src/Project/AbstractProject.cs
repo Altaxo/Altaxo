@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 
 using ICSharpCode.Core;
@@ -53,7 +53,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		public virtual void Dispose()
 		{
 			WorkbenchSingleton.AssertMainThread();
-			watcher.Dispose();
+			if (watcher != null)
+				watcher.Dispose();
 			isDisposed = true;
 			if (Disposed != null) {
 				Disposed(this, EventArgs.Empty);
@@ -70,46 +71,12 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public virtual Properties CreateMemento()
 		{
-			WorkbenchSingleton.AssertMainThread();
-			
-			// breakpoints and files
-			Properties properties = new Properties();
-			properties.Set("bookmarks", ICSharpCode.SharpDevelop.Bookmarks.BookmarkManager.GetProjectBookmarks(this).ToArray());
-			List<string> files = new List<string>();
-			foreach (string fileName in FileService.GetOpenFiles()) {
-				if (fileName != null && IsFileInProject(fileName)) {
-					files.Add(fileName);
-				}
-			}
-			properties.Set("files", files.ToArray());
-			
-			// web project properties
-			var webOptions = WebProjectsOptions.Instance.GetWebProjectOptions(Name);
-			if (webOptions != null)
-				properties.Set("WebProjectOptions", webOptions);
-			
-			// other project data
-			properties.Set("projectSavedData", ProjectSpecificProperties ?? new Properties());
-			
-			return properties;
+			return GetOrCreateBehavior().CreateMemento();
 		}
 		
 		public virtual void SetMemento(Properties memento)
 		{
-			WorkbenchSingleton.AssertMainThread();
-			
-			foreach (ICSharpCode.SharpDevelop.Bookmarks.SDBookmark mark in memento.Get("bookmarks", new ICSharpCode.SharpDevelop.Bookmarks.SDBookmark[0])) {
-				ICSharpCode.SharpDevelop.Bookmarks.BookmarkManager.AddMark(mark);
-			}
-			foreach (string fileName in memento.Get("files", new string[0])) {
-				filesToOpenAfterSolutionLoad.Add(fileName);
-			}
-			
-			// web project properties
-			WebProjectsOptions.Instance.SetWebProjectOptions(Name, memento.Get("WebProjectOptions", new WebProjectOptions()) as WebProjectOptions);
-			
-			// other project data
-			ProjectSpecificProperties = memento.Get("projectSavedData", new Properties());
+			GetOrCreateBehavior().SetMemento(memento);
 		}
 		#endregion
 		
@@ -386,31 +353,13 @@ namespace ICSharpCode.SharpDevelop.Project
 		[Browsable(false)]
 		public virtual bool IsStartable {
 			get {
-				return false;
-			}
-		}
-		
-		[Browsable(false)]
-		public virtual bool IsWebProject {
-			get {
-				return false;
+				return GetOrCreateBehavior().IsStartable;
 			}
 		}
 		
 		public virtual void Start(bool withDebugging)
 		{
-			ProcessStartInfo psi;
-			try {
-				psi = CreateStartInfo();
-			} catch (ProjectStartException ex) {
-				MessageService.ShowError(ex.Message);
-				return;
-			}
-			if (withDebugging) {
-				DebuggerService.CurrentDebugger.Start(psi);
-			} else {
-				DebuggerService.CurrentDebugger.StartWithoutDebugging(psi);
-			}
+			GetOrCreateBehavior().Start(withDebugging);
 		}
 		
 		/// <summary>
@@ -421,7 +370,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// Note: this can be a ProcessStartInfo with a URL as filename!</returns>
 		public virtual ProcessStartInfo CreateStartInfo()
 		{
-			throw new NotSupportedException();
+			return GetOrCreateBehavior().CreateStartInfo();
 		}
 		
 		/// <summary>
@@ -481,7 +430,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public virtual ProjectItem CreateProjectItem(IProjectItemBackendStore item)
 		{
-			return new UnknownProjectItem(this, item);
+			return GetOrCreateBehavior().CreateProjectItem(item);
 		}
 		
 		#region Dirty
@@ -513,7 +462,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public virtual ItemType GetDefaultItemType(string fileName)
 		{
-			return ItemType.None;
+			return GetOrCreateBehavior().GetDefaultItemType(fileName);
 		}
 		
 		[Browsable(false)]
@@ -523,6 +472,31 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public virtual void ResolveAssemblyReferences()
 		{
+		}
+		
+		/// <summary>
+		/// Resolves assembly references for this project.
+		/// The resulting list of resolved references will include project references.
+		/// </summary>
+		public virtual IEnumerable<ReferenceProjectItem> ResolveAssemblyReferences(CancellationToken cancellationToken)
+		{
+			ResolveAssemblyReferences();
+			List<ReferenceProjectItem> referenceItems = new List<ReferenceProjectItem>();
+			bool mscorlib = false;
+			foreach (ProjectItem item in this.Items) {
+				cancellationToken.ThrowIfCancellationRequested();
+				if (ItemType.ReferenceItemTypes.Contains(item.ItemType)) {
+					ReferenceProjectItem reference = item as ReferenceProjectItem;
+					if (reference != null) {
+						referenceItems.Add(reference);
+						mscorlib |= "mscorlib".Equals(reference.Include, StringComparison.OrdinalIgnoreCase);
+					}
+				}
+			}
+			if (!mscorlib) {
+				referenceItems.Add(new ReferenceProjectItem(this, "mscorlib") { FileName = typeof(object).Module.FullyQualifiedName });
+			}
+			return referenceItems;
 		}
 		
 		public virtual void StartBuild(ProjectBuildOptions options, IBuildFeedbackSink feedbackSink)
@@ -586,6 +560,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public virtual void ProjectCreationComplete()
 		{
+			GetOrCreateBehavior().ProjectCreationComplete();
 		}
 		
 		public virtual XElement LoadProjectExtensions(string name)
@@ -597,9 +572,30 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 		}
 		
+		public virtual bool ContainsProjectExtension(string name)
+		{
+			return false;
+		}
+		
 		[Browsable(false)]
 		public Properties ProjectSpecificProperties {
-			get; protected set;
+			get; internal set;
+		}
+		
+		protected virtual ProjectBehavior CreateDefaultBehavior()
+		{
+			return new DefaultProjectBehavior(this);
+		}
+		
+		protected ProjectBehavior projectBehavior;
+		
+		protected virtual ProjectBehavior GetOrCreateBehavior()
+		{
+			lock (SyncRoot) {
+				if (projectBehavior == null)
+					projectBehavior = ProjectBehaviorService.LoadBehaviorsForProject(this, CreateDefaultBehavior());
+				return projectBehavior;
+			}
 		}
 	}
 }

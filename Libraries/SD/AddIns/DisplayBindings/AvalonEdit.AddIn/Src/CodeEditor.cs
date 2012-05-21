@@ -19,6 +19,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Core;
 using ICSharpCode.Core.Presentation;
@@ -28,14 +29,24 @@ using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Editor.AvalonEdit;
 using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
+using ICSharpCode.SharpDevelop.Widgets.MyersDiff;
 
 namespace ICSharpCode.AvalonEdit.AddIn
 {
+	public interface ICodeEditor
+	{
+		TextDocument Document { get; }
+		
+		void Redraw(ISegment segment, DispatcherPriority priority);
+		
+		event EventHandler DocumentChanged;
+	}
+	
 	/// <summary>
 	/// Integrates AvalonEdit with SharpDevelop.
 	/// Also provides support for Split-View (showing two AvalonEdit instances using the same TextDocument)
 	/// </summary>
-	public class CodeEditor : Grid, IDisposable
+	public class CodeEditor : Grid, IDisposable, ICodeEditor
 	{
 		const string contextMenuPath = "/SharpDevelop/ViewContent/AvalonEdit/ContextMenu";
 		
@@ -197,6 +208,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			codeEditorView.TextArea.Caret.PositionChanged += TextAreaCaretPositionChanged;
 			codeEditorView.TextArea.DefaultInputHandler.CommandBindings.Add(
 				new CommandBinding(CustomCommands.CtrlSpaceCompletion, OnCodeCompletion));
+			codeEditorView.TextArea.DefaultInputHandler.NestedInputHandlers.Add(new SearchInputHandler(codeEditorView.TextArea));
 			
 			textView.BackgroundRenderers.Add(textMarkerService);
 			textView.LineTransformers.Add(textMarkerService);
@@ -286,12 +298,12 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		{
 			if (UseFixedEncoding) {
 				using (StreamReader reader = new StreamReader(stream, primaryTextEditor.Encoding, detectEncodingFromByteOrderMarks: false)) {
-					primaryTextEditor.Text = reader.ReadToEnd();
+					ReloadDocument(primaryTextEditor.Document, reader.ReadToEnd());
 				}
 			} else {
 				// do encoding auto-detection
 				using (StreamReader reader = FileReader.OpenStream(stream, this.Encoding ?? FileService.DefaultFileEncoding.GetEncoding())) {
-					primaryTextEditor.Text = reader.ReadToEnd();
+					ReloadDocument(primaryTextEditor.Document, reader.ReadToEnd());
 					this.Encoding = reader.CurrentEncoding;
 				}
 			}
@@ -299,6 +311,13 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			if (LoadedFileContent != null)
 				LoadedFileContent(this, EventArgs.Empty);
 			NewLineConsistencyCheck.StartConsistencyCheck(this);
+		}
+		
+		void ReloadDocument(TextDocument document, string newContent)
+		{
+			var diff = new MyersDiffAlgorithm(new StringSequence(document.Text), new StringSequence(newContent));
+			document.Replace(0, document.TextLength, newContent, diff.GetEdits().ToOffsetChangeMap());
+			document.UndoStack.ClearAll();
 		}
 		
 		public event EventHandler LoadedFileContent;
@@ -572,7 +591,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 					quickClassBrowser = null;
 				}
 			}
-			iconBarManager.UpdateClassMemberBookmarks(parseInfo);
+			iconBarManager.UpdateClassMemberBookmarks(parseInfo, document);
 			primaryTextEditor.UpdateParseInformationForFolding(parseInfo);
 			if (secondaryTextEditor != null)
 				secondaryTextEditor.UpdateParseInformationForFolding(parseInfo);
@@ -591,6 +610,8 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			
 			if (errorPainter != null)
 				errorPainter.Dispose();
+			if (changeWatcher != null)
+				changeWatcher.Dispose();
 			this.Document = null;
 			DisposeTextEditor(primaryTextEditor);
 			if (secondaryTextEditor != null)

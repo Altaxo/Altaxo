@@ -11,7 +11,10 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.SharpDevelop.Bookmarks;
+using ICSharpCode.SharpDevelop.Debugging;
 using ICSharpCode.SharpDevelop.Editor;
+using ICSharpCode.SharpDevelop.Gui;
+using Mono.Cecil;
 
 namespace ICSharpCode.AvalonEdit.AddIn
 {
@@ -20,9 +23,9 @@ namespace ICSharpCode.AvalonEdit.AddIn
 	/// </summary>
 	public class IconBarMargin : AbstractMargin, IDisposable
 	{
-		readonly IconBarManager manager;
+		readonly IBookmarkMargin manager;
 		
-		public IconBarMargin(IconBarManager manager)
+		public IconBarMargin(IBookmarkMargin manager)
 		{
 			if (manager == null)
 				throw new ArgumentNullException("manager");
@@ -97,7 +100,8 @@ namespace ICSharpCode.AvalonEdit.AddIn
 					int lineNumber = line.FirstDocumentLine.LineNumber;
 					IBookmark bm;
 					if (bookmarkDict.TryGetValue(lineNumber, out bm)) {
-						Rect rect = new Rect(0, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
+						double lineMiddle = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextMiddle) - textView.VerticalOffset;
+						Rect rect = new Rect(0, PixelSnapHelpers.Round(lineMiddle - 8, pixelSize.Height), 16, 16);
 						if (dragDropBookmark == bm && dragStarted)
 							drawingContext.PushOpacity(0.5);
 						drawingContext.DrawImage((bm.Image ?? BookmarkBase.DefaultBookmarkImage).ImageSource, rect);
@@ -236,7 +240,18 @@ namespace ICSharpCode.AvalonEdit.AddIn
 					// no bookmark on the line: create a new breakpoint
 					ITextEditor textEditor = TextView.Services.GetService(typeof(ITextEditor)) as ITextEditor;
 					if (textEditor != null) {
-						ICSharpCode.SharpDevelop.Debugging.DebuggerService.ToggleBreakpointAt(textEditor, line);
+						DebuggerService.ToggleBreakpointAt(textEditor, line, typeof(BreakpointBookmark));
+						return;
+					}
+					
+					// create breakpoint for the other posible active contents
+					var viewContent = WorkbenchSingleton.Workbench.ActiveContent as AbstractViewContentWithoutFile;
+					if (viewContent != null) {
+						textEditor = viewContent.Services.GetService(typeof(ITextEditor)) as ITextEditor;
+						if (textEditor != null) {
+							DebuggerService.ToggleBreakpointAt(textEditor, line, typeof(DecompiledBreakpointBookmark));
+							return;
+						}
 					}
 				}
 			}

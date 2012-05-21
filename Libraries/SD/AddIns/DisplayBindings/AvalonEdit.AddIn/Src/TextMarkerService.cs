@@ -18,12 +18,12 @@ namespace ICSharpCode.AvalonEdit.AddIn
 	/// <summary>
 	/// Handles the text markers for a code editor.
 	/// </summary>
-	sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
+	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
 	{
-		readonly CodeEditor codeEditor;
+		readonly ICodeEditor codeEditor;
 		TextSegmentCollection<TextMarker> markers;
 		
-		public TextMarkerService(CodeEditor codeEditor)
+		public TextMarkerService(ICodeEditor codeEditor)
 		{
 			if (codeEditor == null)
 				throw new ArgumentNullException("codeEditor");
@@ -50,6 +50,9 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		#region ITextMarkerService
 		public ITextMarker Create(int startOffset, int length)
 		{
+			if (markers == null)
+				throw new InvalidOperationException("Cannot create a marker when not attached to a document");
+			
 			int textLength = codeEditor.Document.TextLength;
 			if (startOffset < 0 || startOffset > textLength)
 				throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between 0 and " + textLength);
@@ -64,20 +67,25 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		
 		public IEnumerable<ITextMarker> GetMarkersAtOffset(int offset)
 		{
-			return markers.FindSegmentsContaining(offset);
+			if (markers == null)
+				return Enumerable.Empty<ITextMarker>();
+			else
+				return markers.FindSegmentsContaining(offset);
 		}
 		
 		public IEnumerable<ITextMarker> TextMarkers {
-			get { return markers; }
+			get { return markers ?? Enumerable.Empty<ITextMarker>(); }
 		}
 		
 		public void RemoveAll(Predicate<ITextMarker> predicate)
 		{
 			if (predicate == null)
 				throw new ArgumentNullException("predicate");
-			foreach (TextMarker m in markers.ToArray()) {
-				if (predicate(m))
-					Remove(m);
+			if (markers != null) {
+				foreach (TextMarker m in markers.ToArray()) {
+					if (predicate(m))
+						Remove(m);
+				}
 			}
 		}
 		
@@ -86,7 +94,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			if (marker == null)
 				throw new ArgumentNullException("marker");
 			TextMarker m = marker as TextMarker;
-			if (markers.Remove(m)) {
+			if (markers != null && markers.Remove(m)) {
 				Redraw(m);
 				m.OnDeleted();
 			}
@@ -147,7 +155,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 			if (visualLines.Count == 0)
 				return;
 			int viewStart = visualLines.First().FirstDocumentLine.Offset;
-			int viewEnd = visualLines.Last().LastDocumentLine.Offset + visualLines.Last().LastDocumentLine.Length;
+			int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart)) {
 				if (marker.BackgroundColor != null) {
 					BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
@@ -200,7 +208,7 @@ namespace ICSharpCode.AvalonEdit.AddIn
 		#endregion
 	}
 	
-	sealed class TextMarker : TextSegment, ITextMarker
+	public sealed class TextMarker : TextSegment, ITextMarker
 	{
 		readonly TextMarkerService service;
 		
