@@ -61,6 +61,8 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Color:"/>
@@ -88,7 +90,7 @@
 		<axogcd:FontStyleComboBox x:Name="m_cbFontStyle" Grid.Column="3" Grid.Row="2" />
 		<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="4" />
 		<axogcd:RotationComboBox x:Name="m_edRotation" Grid.Column="3" Grid.Row="4" />
-		<CheckBox x:Name="_chkAutomaticAlignment" Grid.Column="1" Grid.Row="6" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged"/>
+		<CheckBox x:Name="_chkAutomaticAlignment" Grid.Column="1" Grid.Row="6" VerticalAlignment="Center" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged"/>
 		<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="8" SelectionChanged="EhHorizontalAligment_SelectionChanged"/>
 		<axogc:QuantityWithUnitTextBox x:Name="m_edXOffset" Grid.Column="3" Grid.Row="8" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0"/>
 		<ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhVerticalAligment_SelectionChanged"/>

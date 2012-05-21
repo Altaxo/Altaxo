@@ -57,7 +57,6 @@ namespace Altaxo.Graph.Gdi
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
-
 			string val = info.GetNodeContent();
 			return System.Enum.Parse(typeof(BrushType), val, true);
 		}

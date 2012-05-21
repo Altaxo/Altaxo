@@ -296,7 +296,7 @@ namespace Altaxo.Main
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 
-			System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open);
+			System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read);
 			ZipFile zipFile = new ZipFile(myStream);
 			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
 			AltaxoDocument newdocument = new AltaxoDocument();

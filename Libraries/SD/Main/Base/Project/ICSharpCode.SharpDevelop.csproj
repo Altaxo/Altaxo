@@ -262,7 +262,9 @@
     <Compile Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="ICSharpCode.SharpDevelop.addin" />
+    <None Include="ICSharpCode.SharpDevelop.addin">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
       <Link>Src\Services\RefactoringService\ExtractInterfaceDialog.cs</Link>
     </None>

@@ -139,6 +139,7 @@ namespace Altaxo.Gui.Scripting
 			{
 				var location = _codeView.Document.GetLocation(value);
 				_codeView.PrimaryTextEditor.TextArea.Caret.Location = location;
+				_codeView.PrimaryTextEditor.ScrollToLine(location.Line);
 
 			}
 
@@ -160,14 +161,26 @@ namespace Altaxo.Gui.Scripting
 		/// <param name="column">Script column (1-based).</param>
 		public void SetScriptCursorLocation(int line, int column)
 		{
+
+			/* to mark the word that causes the error
+			var offset = _codeView.Document.GetOffset(line, column);
+			var textLine = _codeView.Document.GetLineByNumber(line);
+			var lineStartOffset = textLine.Offset;
+			var lineLength = textLine.Length;
+			string stringAfterCursor = _codeView.Document.GetText(offset, lineLength - (offset - lineStartOffset));
+			string stringBeforeCursor = _codeView.Document.GetText(lineStartOffset, (offset - lineStartOffset));
+			// _codeView.PrimaryTextEditor.TextArea.Selection = new ICSharpCode.AvalonEdit.Editing.SimpleSelection();
+			*/
+
 			_codeView.PrimaryTextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
+			_codeView.PrimaryTextEditor.ScrollToLine(line);
 			_codeView.PrimaryTextEditor.TextArea.Focus();
 		}
 
 
 		public void MarkText(int pos1, int pos2)
 		{
-
+			_codeView.PrimaryTextEditor.TextArea.Selection = new ICSharpCode.AvalonEdit.Editing.SimpleSelection(pos1,pos2);
 		}
 
 
