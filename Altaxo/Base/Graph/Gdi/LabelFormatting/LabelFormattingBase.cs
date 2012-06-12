@@ -34,6 +34,8 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		protected string _prefix = string.Empty;
 		protected string _suffix = string.Empty;
 
+	
+
 
 		#region Serialization
 
@@ -50,8 +52,8 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LabelFormattingBase s = (LabelFormattingBase)o;
-				s._prefix = info.GetString("Prefix");
-				s._suffix = info.GetString("Suffix");
+				s.PrefixText = info.GetString("Prefix");
+				s.SuffixText = info.GetString("Suffix");
 				return s;
 			}
 		}
@@ -64,18 +66,41 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		protected LabelFormattingBase()
 		{
 		}
+
 		protected LabelFormattingBase(LabelFormattingBase from)
 		{
 			CopyFrom(from);
 		}
 
-		protected void CopyFrom(LabelFormattingBase from)
+	
+		public virtual bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			var from = obj as LabelFormattingBase;
+			if (null != from)
+			{
+				_prefix = from._prefix;
+				_suffix = from._suffix;
+				return true;
+			}
+			return false;
+		}
 
-			this._prefix = from._prefix;
-			this._suffix = from._suffix;
+		/// <summary>
+		/// Clones the instance.
+		/// </summary>
+		/// <returns>A new cloned instance of this class.</returns>
+		public abstract object Clone();
+
+		public string PrefixText
+		{
+			get { return _prefix; }
+			set	{	_prefix = value ?? string.Empty; }
+		}
+
+		public string SuffixText
+		{
+			get { return _suffix; }
+			set { _suffix = value ?? string.Empty; }
 		}
 
 		/// <summary>
@@ -85,11 +110,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <returns>The formatted text representation of this item.</returns>
 		protected abstract string FormatItem(Altaxo.Data.AltaxoVariant item);
 
-		/// <summary>
-		/// Clones the instance.
-		/// </summary>
-		/// <returns>A new cloned instance of this class.</returns>
-		public abstract object Clone();
+	
 
 		/// <summary>
 		/// Formats a couple of items as text. Special measured can be taken here to format all items the same way, for instance set the decimal separator to the same location.
@@ -120,9 +141,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location the item will be drawn.</param>
 		/// <returns>The size of the item if it would be drawn.</returns>
-		public virtual System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, string prefixText, string postfixText, System.Drawing.PointF morg)
+		public virtual System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
 		{
-			string text = prefixText + FormatItem(mtick) + postfixText;
+			string text = _prefix + FormatItem(mtick) + _suffix;
 			return g.MeasureString(text, font, morg, strfmt);
 		}
 
@@ -137,15 +158,15 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="prefixText">Text drawn before the label text.</param>
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location where the item is drawn to.</param>
-		public virtual void DrawItem(System.Drawing.Graphics g, BrushX brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, string prefixText, string postfixText, PointF morg)
+		public virtual void DrawItem(System.Drawing.Graphics g, BrushX brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
 		{
-			string text = prefixText + FormatItem(item) + postfixText;
+			string text = _prefix + FormatItem(item) + _suffix;
 			g.DrawString(text, font, brush, morg, strfmt);
 		}
 
 
 		/// <summary>
-		/// Measured a couple of items and prepares them for being drawn.
+		/// Measures a couple of items and prepares them for being drawn.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="font">Font used.</param>
@@ -154,13 +175,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="prefixText">Text drawn before the label text.</param>
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		public virtual IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items, string prefixText, string postfixText)
+		public virtual IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
 		{
 			string[] titems = FormatItems(items);
-			if (!string.IsNullOrEmpty(prefixText) || !string.IsNullOrEmpty(postfixText))
+			if (!string.IsNullOrEmpty(_prefix) || !string.IsNullOrEmpty(_suffix))
 			{
 				for (int i = 0; i < titems.Length; ++i)
-					titems[i] = prefixText + titems[i] + postfixText;
+					titems[i] = _prefix + titems[i] + _suffix;
 			}
 
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];

@@ -51,6 +51,15 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		#endregion
 
 
+		public NumericLabelFormattingRadian()
+		{
+		}
+
+		public NumericLabelFormattingRadian(NumericLabelFormattingRadian from)
+			: base(from) // everything is done here, since CopyFrom is virtual
+		{
+		}
+
 		protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
 		{
 			const double tolerance = 1E-8;
@@ -117,7 +126,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 		public override object Clone()
 		{
-			return new NumericLabelFormattingRadian();
+			return new NumericLabelFormattingRadian(this);
 		}
 	}
 }

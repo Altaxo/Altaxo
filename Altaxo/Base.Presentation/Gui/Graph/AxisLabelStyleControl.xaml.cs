@@ -210,6 +210,17 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+
+		/// <summary>Sets the label formatting specific GUI control. If no specific options are available, this property is set to <c>null</c>.</summary>
+		/// <value>The label formatting specific GUI control.</value>
+		public object LabelFormattingSpecificGuiControl
+		{
+			set
+			{
+				_guiLabelStyleSpecific.Child = value as UIElement;
+			}
+		}
+
 		#endregion  IXYAxisLabelStyleView
 
 		public EventHandler EhSelectedFontChanged { get; set; }

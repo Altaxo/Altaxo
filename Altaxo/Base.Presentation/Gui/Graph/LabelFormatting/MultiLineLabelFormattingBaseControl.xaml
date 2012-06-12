@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.LabelFormatting.MultiLineLabelFormattingBaseControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+ 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+             >
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Label Grid.Row="0" Grid.Column="0" Content="Line spacing: "/>
+		<axogc:QuantityWithUnitTextBox x:Name="_guiLineSpacing" Grid.Row="0" Grid.Column="1" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="1"/>
+		<Label Grid.Row="2" Grid.Column="0" Content="Text block aligment: "/>
+		<ComboBox x:Name="_guiTextBlockAligment" Grid.Row="2" Grid.Column="1" SelectionChanged="EhTextBlockAligmentChanged"/>
+	</Grid>
+
+</UserControl>

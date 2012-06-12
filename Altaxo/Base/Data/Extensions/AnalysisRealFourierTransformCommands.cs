@@ -92,13 +92,15 @@ namespace Altaxo.Data
 		{
 			var yCol = options.ColumnToTransform;
 			int fftLen = yCol.Count;
-			DoubleColumn resultCol = new DoubleColumn();
-			resultCol.Data = yCol;
+
+			double[] resultCol = new double[fftLen];
+			for (int i = 0; i < resultCol.Length; ++i)
+				resultCol[i] = yCol[i];
 
 			var transform = new Calc.Fourier.RealFourierTransform(fftLen);
-			transform.Transform(resultCol.Array, Calc.Fourier.FourierDirection.Forward);
+			transform.Transform(resultCol, Calc.Fourier.FourierDirection.Forward);
 
-			var wrapper = new Calc.Fourier.RealFFTResultWrapper(resultCol.Array);
+			var wrapper = new Calc.Fourier.RealFFTResultWrapper(resultCol);
 
 			DataTable outputTable = null;
 			switch (options.OutputPlacement)

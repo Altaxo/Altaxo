@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -21,67 +21,99 @@
 #endregion
 
 using System;
+using System.Drawing;
 
+using Altaxo.Data;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
 	/// <summary>
-	/// Summary description for NumericAxisLabelFormattingFixed.
+	/// Formatting with the help of a .NET framework formatting string.
 	/// </summary>
-	public class NumericLabelFormattingFixed : NumericLabelFormattingBase
+	public class FreeLabelFormatting : MultiLineLabelFormattingBase
 	{
-
+		string _formatString = "{0}";
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingFixed", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingFixed), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FreeLabelFormatting), 0)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				NumericLabelFormattingFixed s = (NumericLabelFormattingFixed)obj;
-				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
-
+				FreeLabelFormatting s = (FreeLabelFormatting)obj;
+				info.AddBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase));
+				info.AddValue("FormatString", s._formatString);
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				NumericLabelFormattingFixed s = null != o ? (NumericLabelFormattingFixed)o : new NumericLabelFormattingFixed();
-				info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
+				FreeLabelFormatting s = (FreeLabelFormatting)o ?? new FreeLabelFormatting();
+				info.GetBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase), parent);
+				s._formatString = info.GetString("FormatString");
 				return s;
 			}
 		}
 
 		#endregion
 
-
-		public NumericLabelFormattingFixed()
+		public FreeLabelFormatting()
 		{
 		}
 
-		public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
+		public FreeLabelFormatting(FreeLabelFormatting from)
 			: base(from) // everything is done here, since CopyFrom is virtual
 		{
 		}
 
+
+		public override bool CopyFrom(object obj)
+		{
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as FreeLabelFormatting;
+				if (null != from)
+				{
+					_formatString = from._formatString;
+				}
+			}
+			return isCopied;
+		}
+
+
 		public override object Clone()
 		{
-			return new NumericLabelFormattingFixed(this);
+			return new FreeLabelFormatting(this);
 		}
 
-
-		protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
+		public string FormatString
 		{
-			if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
-				return FormatItem((double)item);
-			else
-				return item.ToString();
+			get
+			{
+				return _formatString;
+			}
+			set
+			{
+				_formatString = value;
+			}
 		}
 
 
-		public string FormatItem(double tick)
+		protected override string FormatItem(AltaxoVariant item)
 		{
-			return _prefix + tick.ToString() + SuffixText;
+
+			if (!string.IsNullOrEmpty(_formatString))
+			{
+				try
+				{
+					return string.Format(_formatString, item.ToObject());
+				}
+				catch (Exception)
+				{
+				}
+			}
+			return item.ToString();
 		}
+
 
 	}
 }

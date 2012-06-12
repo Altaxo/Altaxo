@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Common
 		/// Can be called if the context menu of the gui element is about to be opened. Extends the context menu by additional menu items
 		/// for unit conversion, and for the setting of the number of decimal places.
 		/// </summary>
-		/// <param name="gui"></param>
+		/// <param name="parent"></param>
 		/// <param name="quantityGetSetProperty"></param>
 		public QuantityWithUnitConverter(FrameworkElement parent, DependencyProperty quantityGetSetProperty)
 		{
@@ -415,8 +415,6 @@ namespace Altaxo.Gui.Common
 		/// Can be called if the context menu of the gui element is about to be opened. Extends the context menu by additional menu items
 		/// for unit conversion, and for the setting of the number of decimal places.
 		/// </summary>
-		/// <param name="gui"></param>
-		/// <param name="quantityGetSetProperty"></param>
 		public void OnContextMenuOpening()
 		{
 			BindingExpression.UpdateSource();

@@ -34,37 +34,78 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Common
+using Altaxo.Graph.Gdi.LabelFormatting;
+using Altaxo.Collections;
+
+
+namespace Altaxo.Gui.Graph.LabelFormatting
 {
 	/// <summary>
-	/// Interaction logic for HelpAboutControl.xaml
+	/// Interaction logic for DateTimeLabelFormattingControl.xaml
 	/// </summary>
-	public partial class HelpAboutControl : Window
+	public partial class DateTimeLabelFormattingControl : UserControl, IDateTimeLabelFormattingView
 	{
-		public HelpAboutControl()
+		public DateTimeLabelFormattingControl()
 		{
 			InitializeComponent();
 		}
 
 
-		public string VersionString
+		public IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get { return _guiMultiLineLabelFormattingControl; } }
+
+		public void InitializeTimeConversion(SelectableListNodeList items)
+		{
+			GuiHelper.InitializeChoicePanel<RadioButton>(_guiTimeConversionPanel,items);
+		}
+
+
+		public string FormattingString
 		{
 			get
 			{
-				string result = "Version: ";
-
-				var ass = System.Reflection.Assembly.GetEntryAssembly();
-
-				result += ass.GetName().Version.ToString();
-
-				return result;
+				return _guiFormattingText.Text;
+			}
+			set
+			{
+				_guiFormattingText.Text = value;
 			}
 		}
 
-		private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
+		public string FormattingStringAlternate
 		{
-			var hyperlink = (Hyperlink)sender;
-			System.Diagnostics.Process.Start(hyperlink.NavigateUri.ToString());
+			get
+			{
+				return _guiAlternateFormattingText.Text;
+			}
+			set
+			{
+				_guiAlternateFormattingText.Text = value;
+			}
+		}
+
+
+		public bool ShowAlternateFormattingOnMidnight
+		{
+			get
+			{
+				return true == _guiShowAlternateFormattingOnMidnight.IsChecked;
+			}
+			set
+			{
+				_guiShowAlternateFormattingOnMidnight.IsChecked = value;
+			}
+		}
+
+		public bool ShowAlternateFormattingOnNoon
+		{
+			get
+			{
+				return true == _guiShowAlternateFormattingOnNoon.IsChecked;
+			}
+			set
+			{
+				_guiShowAlternateFormattingOnNoon.IsChecked = value;
+			}
 		}
 	}
 }

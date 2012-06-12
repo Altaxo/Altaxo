@@ -40,7 +40,8 @@ namespace Altaxo.Data
 		Altaxo.Data.DataColumn,
 		System.Runtime.Serialization.ISerializable,
 		System.Runtime.Serialization.IDeserializationCallback,
-		INumericColumn
+		INumericColumn,
+		Altaxo.Calc.LinearAlgebra.IROVector
 	{
 		private double[] _data;
 		private int _capacity; // shortcut to m_Array.Length;
@@ -56,10 +57,12 @@ namespace Altaxo.Data
 
 		public override int Count
 		{
-			get
-			{
-				return _count;
-			}
+			get { return _count; }
+		}
+
+		int Calc.LinearAlgebra.IROVector.Length
+		{
+			get { return _count; }
 		}
 
 		// indexers
@@ -2539,5 +2542,9 @@ namespace Altaxo.Data
 
 		#endregion
 
+
+	
+
+		
 	} // end Altaxo.Data.DoubleColumn
 }

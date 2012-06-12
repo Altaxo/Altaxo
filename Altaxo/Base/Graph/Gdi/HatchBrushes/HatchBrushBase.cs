@@ -32,7 +32,6 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 {
 	public abstract class HatchBrushBase : ImageProxy, IHatchBrushTexture
 	{
-		protected const double InchesPerPoint = 1 / 72.0;
 		protected const double DefaultEffectiveResolution = 300;
 		protected static readonly NamedColor _defaultBackColor = NamedColor.Transparent;
 		protected static readonly NamedColor _defaultForeColor = NamedColor.Black;
@@ -121,19 +120,19 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			get { return GetType().ToString(); }
 		}
 
-		public bool CopyFrom(object obj)
+		public override bool CopyFrom(object obj)
 		{
-			var from = obj as HatchBrushBase;
-			if (null != from)
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				_repeatLengthPt = from._repeatLengthPt;
-				_structureFactor = from._structureFactor;
-				return true;
+				var from = obj as HatchBrushBase;
+				if (null != from)
+				{
+					_repeatLengthPt = from._repeatLengthPt;
+					_structureFactor = from._structureFactor;
+				}
 			}
-			else
-			{
-				return false;
-			}
+			return isCopied;
 		}
 
 		public virtual Image GetImage(double maxEffectiveResolutionDpi)

@@ -788,7 +788,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		/// <summary>
-		/// Applies the value for <see cref="MinGrace"/>, <see cref="MaxGrace"/> and <see cref="ZeroLever"/> to the scale and calculated proposed values for the boundaries.
+		/// Applies the value for <see cref="MinGrace"/>, <see cref="MaxGrace"/> and <see cref="OneLever"/> to the scale and calculated proposed values for the boundaries.
 		/// </summary>
 		/// <param name="scaleOrg">Scale origin.</param>
 		/// <param name="scaleEnd">Scale end.</param>
@@ -927,7 +927,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// Adjusts the parameter <paramref name="x"/> so that <paramref name="x"/> snaps to a tick according to the setting of <paramref name="snapping"/>.
 		/// </summary>
 		/// <param name="x">The boundary value to adjust.</param>
-		/// <param name="majorSpan">Value of the major tick span.</param>
+		/// <param name="decadesPerMajorTick">Number of decades between the major ticks.</param>
 		/// <param name="minorTicks">Number of minor ticks.</param>
 		/// <param name="snapping">Setting of the tick snapping.</param>
 		/// <param name="upwards">If true, the value is towards higher values, if false it is adjusted towards smaller values.</param>
@@ -1086,6 +1086,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		/// <summary>Calculates the number of minor ticks.</summary>
+		/// <param name="overridenScaleDecades">Number of decades that the full scale should span.</param>
 		/// <param name="numberOfDecadesPerMajorTick">The number of decades per major tick.</param>
 		/// <param name="targetNumberOfMinorTicks">The target number of minor ticks.</param>
 		/// <returns>

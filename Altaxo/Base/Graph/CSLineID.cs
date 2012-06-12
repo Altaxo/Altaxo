@@ -354,7 +354,7 @@ namespace Altaxo.Graph
 
 		/// <summary>
 		/// The logical value of the isoline. It can be set only in the constructor, with one exception:
-		/// If <see cref="UsePhysicalValue"/> property is true, then the logical value is calculated from the current scale, and the logical value
+		/// If <see cref="UsePhysicalValueOtherSecond"/> property is true, then the logical value is calculated from the current scale, and the logical value
 		/// is set here for further reference during the painting.
 		/// </summary>
 		public double LogicalValueOtherSecond

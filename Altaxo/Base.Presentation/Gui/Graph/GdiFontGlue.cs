@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return new sd.Font(_fontFamily, (float)_fontSize, _fontStyle);
+				return new sd.Font(_fontFamily, (float)_fontSize, _fontStyle, sd.GraphicsUnit.World);
 			}
 			set
 			{

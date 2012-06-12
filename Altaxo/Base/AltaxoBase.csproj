@@ -196,6 +196,10 @@
     <Compile Include="Graph\Gdi\HatchBrushes\VerticalHatchBrush.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HatchBrushBase.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HorizontalHatchBrush.cs" />
+    <Compile Include="Graph\Gdi\LabelFormatting\DateTimeLabelFormatting.cs" />
+    <Compile Include="Graph\Gdi\LabelFormatting\FreeLabelFormatting.cs" />
+    <Compile Include="Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBase.cs" />
+    <Compile Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseController.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF05LineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\DiamondLineCaps.cs" />
     <Compile Include="Graph\Gdi\LineCaps\FlatCap.cs" />
@@ -217,6 +221,9 @@
     <Compile Include="Gui\Graph\AxisCreationController.cs" />
     <Compile Include="Gui\Graph\AxisStyleControllerConditionalGlue.cs" />
     <Compile Include="Gui\Graph\AxisStyleControllerGlue.cs" />
+    <Compile Include="Gui\Graph\LabelFormatting\DateTimeLabelFormattingController.cs" />
+    <Compile Include="Gui\Graph\LabelFormatting\FreeLabelFormattingController.cs" />
+    <Compile Include="Gui\Graph\LabelFormatting\NumericLabelFormattingScientificController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\SpanTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Shapes\CardinalSplinePointsController.cs" />

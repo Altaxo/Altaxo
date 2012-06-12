@@ -24,47 +24,47 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Common
+using Altaxo.Graph.Gdi.LabelFormatting;
+using Altaxo.Collections;
+
+namespace Altaxo.Gui.Graph.LabelFormatting
 {
-	/// <summary>
-	/// Interaction logic for HelpAboutControl.xaml
-	/// </summary>
-	public partial class HelpAboutControl : Window
+	public interface IMultiLineLabelFormattingBaseView
 	{
-		public HelpAboutControl()
-		{
-			InitializeComponent();
-		}
+		double LineSpacing { get; set; }
+		SelectableListNodeList TextBlockAlignement { set; }
 
+	}
 
-		public string VersionString
+	[UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
+	[ExpectedTypeOfView(typeof(IMultiLineLabelFormattingBaseView))]
+	public class MultiLineLabelFormattingBaseController : MVCANControllerBase<MultiLineLabelFormattingBase, IMultiLineLabelFormattingBaseView>
+	{
+		SelectableListNodeList _textBlockAlignmentChoices;
+
+		protected override void Initialize(bool initData)
 		{
-			get
+			if (initData)
 			{
-				string result = "Version: ";
+				_textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
+			}
+			if (null != _view)
+			{
+				_view.LineSpacing = _doc.LineSpacing;
+				_view.TextBlockAlignement = _textBlockAlignmentChoices;
 
-				var ass = System.Reflection.Assembly.GetEntryAssembly();
-
-				result += ass.GetName().Version.ToString();
-
-				return result;
 			}
 		}
 
-		private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
+		public override bool Apply()
 		{
-			var hyperlink = (Hyperlink)sender;
-			System.Diagnostics.Process.Start(hyperlink.NavigateUri.ToString());
+			_doc.LineSpacing = _view.LineSpacing;
+			_doc.TextBlockAlignment = (System.Drawing.StringAlignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
+
+			if (_useDocumentCopy)
+				CopyHelper.Copy(ref _originalDoc, _doc);
+			return true;
 		}
 	}
 }

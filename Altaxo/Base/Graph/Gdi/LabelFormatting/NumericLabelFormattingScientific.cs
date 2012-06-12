@@ -30,6 +30,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	/// </summary>
 	public class NumericLabelFormattingScientific : NumericLabelFormattingBase
 	{
+		bool _showExponentAlways;
 
 
 		#region Serialization
@@ -54,22 +55,29 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		#endregion
 
 
+
 		public NumericLabelFormattingScientific()
 		{
 
 		}
 
 		public NumericLabelFormattingScientific(NumericLabelFormattingScientific from)
+			: base(from) // everything is done here, since CopyFrom is virtual
 		{
-			CopyFrom(from);
 		}
 
-		public void CopyFrom(NumericLabelFormattingScientific from)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			base.CopyFrom(from);
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as NumericLabelFormattingScientific;
+				if (null != from)
+				{
+					this._showExponentAlways = from._showExponentAlways;
+				}
+			}
+			return isCopied;
 		}
 
 		public override object Clone()
@@ -77,6 +85,22 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			return new NumericLabelFormattingScientific(this);
 		}
 
+
+		/// <summary>Gets or sets a value indicating whether to show the exponent for all numeric values.</summary>
+		/// <value>
+		/// 	If <see langword="true"/>, the exponent is shown even for numbers inbetween 1 and 10. If false, for numbers between 1 and 10 only the mantissa is displayed.
+		/// </value>
+		public bool ShowExponentAlways
+		{
+			get
+			{
+				return _showExponentAlways;
+			}
+			set
+			{
+				_showExponentAlways = value;
+			}
+		}
 
 		protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
 		{
@@ -108,7 +132,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			int expo = int.Parse(sitem1.Substring(posOfE + 1));
 			mant = ditem * Calc.RMath.Pow(10, -expo);
 
-			if (expo != 0)
+			if (expo != 0 || _showExponentAlways)
 			{
 
 				firstpart = mant.ToString();
@@ -133,47 +157,47 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 		}
 
-		public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, string prefixText, string postfixText, System.Drawing.PointF morg)
+		public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
 			SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
 
-			SizeF size1 = g.MeasureString(prefixText + firstpart + middelpart, font, new PointF(0, 0), strfmt);
+			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, font, new PointF(0, 0), strfmt);
 			SizeF size2 = g.MeasureString(exponent, font, new PointF(size1.Width, 0), strfmt);
-			SizeF size3 = g.MeasureString(postfixText, font, new PointF(0, 0), strfmt);
+			SizeF size3 = g.MeasureString(_suffix, font, new PointF(0, 0), strfmt);
 
 			return new SizeF(size1.Width + size2.Width + size3.Width, size1.Height);
 		}
 
-		public override void DrawItem(Graphics g, BrushX brush, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, string prefixText, string postfixText, PointF morg)
+		public override void DrawItem(Graphics g, BrushX brush, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
 			SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
 
-			SizeF size1 = g.MeasureString(prefixText + firstpart + middelpart, font, morg, strfmt);
-			g.DrawString(prefixText + firstpart + middelpart, font, brush, morg, strfmt);
+			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, font, morg, strfmt);
+			g.DrawString(_prefix + firstpart + middelpart, font, brush, morg, strfmt);
 			var orginalY = morg.Y;
 			morg.X += size1.Width;
 			morg.Y += size1.Height / 3;
 			using (Font font2 = new Font(font.FontFamily, (float)(font.Size * 2 / 3.0)))
 			{
 				g.DrawString(exponent, font2, brush, morg);
-				if(!string.IsNullOrEmpty(postfixText))
+				if(!string.IsNullOrEmpty(_suffix))
 				{
 					morg.X += g.MeasureString(exponent, font2, morg, strfmt).Width;
 					morg.Y = orginalY;
 				}
 			}
 
-			if (!string.IsNullOrEmpty(postfixText))
+			if (!string.IsNullOrEmpty(_suffix))
 			{
-				g.DrawString(postfixText, font, brush, morg, strfmt);
+				g.DrawString(_suffix, font, brush, morg, strfmt);
 			}
 		}
 
-		public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant[] items, string prefixText, string postfixText)
+		public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant[] items)
 		{
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
 
@@ -227,7 +251,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 					else
 						mid = "\u00D710";
 				}
-				litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, localstrfmt, prefixText + firstp[i] + mid, expos[i], postfixText, maxexposize);
+				litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, localstrfmt, _prefix + firstp[i] + mid, expos[i], _suffix, maxexposize);
 			}
 
 			return litems;

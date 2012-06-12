@@ -327,7 +327,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-
+				throw new InvalidOperationException("Try to serialize outdated version");
+				/*
 				AxisLabelStyle s = (AxisLabelStyle)obj;
 				info.AddValue("Font", s._font);
 				info.AddValue("Brush", s._brush);
@@ -351,7 +352,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddNullableEnum("LabelSide", s._labelSide);
 				info.AddValue("PrefixText", s._prefixText);
 				info.AddValue("PostfixText", s._postfixText);
-
+				*/
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -375,8 +376,75 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
 
 				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
-				s._prefixText = info.GetString("PrefixText");
-				s._postfixText = info.GetString("PostfixText");
+				s._labelFormatting.PrefixText = info.GetString("PrefixText");
+				s._labelFormatting.SuffixText = info.GetString("PostfixText");
+				
+
+
+				// Modification of StringFormat is necessary to avoid 
+				// too big spaces between successive words
+				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
+				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+
+
+				return s;
+			}
+		}
+
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 6)]
+		class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			// 2012-05-28 _prefixText and _postfixText deprecated and moved to LabelFormattingBase
+
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+
+				AxisLabelStyle s = (AxisLabelStyle)obj;
+				info.AddValue("Font", s._font);
+				info.AddValue("Brush", s._brush);
+				info.AddValue("Background", s._backgroundStyle);
+
+				info.AddValue("AutoAlignment", s._automaticRotationShift);
+				info.AddEnum("HorzAlignment", s._horizontalAlignment);
+				info.AddEnum("VertAlignment", s._verticalAlignment);
+
+				info.AddValue("Rotation", s._rotation);
+				info.AddValue("XOffset", s._xOffset);
+				info.AddValue("YOffset", s._yOffset);
+
+				if (s._suppressedLabels.IsEmpty)
+					info.AddValue("SuppressedLabels", (object)null);
+				else
+					info.AddValue("SuppressedLabels", s._suppressedLabels);
+
+				info.AddValue("LabelFormat", s._labelFormatting);
+
+				info.AddNullableEnum("LabelSide", s._labelSide);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
+
+				s._font = (Font)info.GetValue("Font", s);
+				s._brush = (BrushX)info.GetValue("Brush", s);
+				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
+				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
+				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
+				s._rotation = info.GetDouble("Rotation");
+				s._xOffset = info.GetDouble("XOffset");
+				s._yOffset = info.GetDouble("YOffset");
+
+				s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
+				if (s._suppressedLabels == null)
+					s._suppressedLabels = new SuppressedTicks();
+
+				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+
+				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 
 
 				// Modification of StringFormat is necessary to avoid 
@@ -612,27 +680,27 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			get
 			{
-				return _prefixText;
+				return _labelFormatting.PrefixText;
 			}
 			set
 			{
-				var oldValue = _prefixText;
-				_prefixText = value;
+				var oldValue = _labelFormatting.PrefixText;
+				_labelFormatting.PrefixText = value;
 				if (value != oldValue)
 					OnChanged();
 			}
 		}
 
-		public string PostfixText
+		public string SuffixText
 		{
 			get
 			{
-				return _postfixText;
+				return _labelFormatting.SuffixText;
 			}
 			set
 			{
-				var oldValue = _postfixText;
-				_postfixText = value;
+				var oldValue = _labelFormatting.SuffixText;
+				_labelFormatting.SuffixText = value;
 				if (value != oldValue)
 					OnChanged();
 			}
@@ -891,7 +959,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				relpositions = filteredRelPositions.ToArray();
 			}
 
-			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks, _prefixText ?? string.Empty, _postfixText?? string.Empty);
+			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
 			double emSize = _font.SizeInPoints;
 			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferedLabelSide;

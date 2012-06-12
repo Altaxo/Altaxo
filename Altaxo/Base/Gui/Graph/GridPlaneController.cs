@@ -74,11 +74,12 @@ namespace Altaxo.Gui.Graph
       {
       _grid1 = new XYGridStyleController(_doc.GridStyleFirst);
       Current.Gui.FindAndAttachControlTo(_grid1);
-      ControlViewElement c1 = new ControlViewElement("Grid1", _grid1, _grid1.ViewObject);
+				
+      ControlViewElement c1 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber1), _grid1, _grid1.ViewObject);
 
       _grid2 = new XYGridStyleController(_doc.GridStyleSecond);
       Current.Gui.FindAndAttachControlTo(_grid2);
-      ControlViewElement c2 = new ControlViewElement("Grid2", _grid2, _grid2.ViewObject);
+			ControlViewElement c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
 
 			_background = new BrushControllerAdvanced();
 			_background.InitializeDocument(_doc.Background ?? BrushX.Empty);
@@ -88,6 +89,21 @@ namespace Altaxo.Gui.Graph
         base.Initialize(new ControlViewElement[] { c1, c2, c3 }, false);
       }
     }
+
+		static string GridName(int axisNumber)
+		{
+			switch (axisNumber)
+			{
+				case 0:
+					return "X-axis grid";
+				case 1:
+					return "Y-axis grid";
+				case 2:
+					return "Z-axis grid";
+				default:
+					return string.Format("Axis[{0}] grid", axisNumber);
+			}
+		}
 
    
 

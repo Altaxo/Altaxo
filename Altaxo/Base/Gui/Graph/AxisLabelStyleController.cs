@@ -44,7 +44,6 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Initializes the font family combo box.
 		/// </summary>
-		/// <param name="font">The actual font of the choice.</param>
 		Font LabelFont { get; set; }
 
 		/// <summary>
@@ -60,28 +59,24 @@ namespace Altaxo.Gui.Graph
 
 
 		/// <summary>
-		/// Initializes the font size combo box.
+		/// Value of the font size in points (1/72 inch).
 		/// </summary>
-		/// <param name="val">Value for the font size.</param>
 		double FontSize { get; set; }
 
 		/// <summary>
 		/// Initializes the horizontal aligment combo box.
 		/// </summary>
-		/// <param name="names">The possible choices.</param>
-		/// <param name="name">The actual name of the choice.</param>
+		/// <param name="items">The possible choices.</param>
 		void HorizontalAlignment_Initialize(Collections.SelectableListNodeList items);
 		/// <summary>
 		/// Initializes the vertical alignement combo box.
 		/// </summary>
-		/// <param name="names">The possible choices.</param>
-		/// <param name="name">The actual name of the choice.</param>
+		/// <param name="items">The possible choices.</param>
 		void VerticalAlignment_Initialize(Collections.SelectableListNodeList items);
 
 		/// <summary>
 		/// Sets the automatic alignment check box.
 		/// </summary>
-		/// <param name="value"></param>
 		bool AutomaticAlignment { get; set; }
 
 		/// <summary>
@@ -103,8 +98,7 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Initializes the label style combo box.
 		/// </summary>
-		/// <param name="names">The possible choices.</param>
-		/// <param name="name">The actual name of the choice.</param>
+		/// <param name="items">The possible choices.</param>
 		void LabelStyle_Initialize(Collections.SelectableListNodeList items);
 
 		string SuppressedLabelsByValue { get; set; }
@@ -123,6 +117,10 @@ namespace Altaxo.Gui.Graph
 		/// <summary>Gets or sets the postfix text that appears after the label.</summary>
 		/// <value>The postfix text.</value>
 		string PostfixText { get; set; }
+
+		/// <summary>Sets the label formatting specific GUI control. If no specific options are available, this property is set to <c>null</c>.</summary>
+		/// <value>The label formatting specific GUI control.</value>
+		object LabelFormattingSpecificGuiControl { set; }
 	}
 
 
@@ -140,6 +138,7 @@ namespace Altaxo.Gui.Graph
 		Collections.SelectableListNodeList _horizontalAlignmentChoices;
 		Collections.SelectableListNodeList _verticalAlignmentChoices;
 		Collections.SelectableListNodeList _labelStyles;
+		IMVCANController _labelFormattingSpecificController;
 
 
 		protected override void AttachView()
@@ -179,6 +178,8 @@ namespace Altaxo.Gui.Graph
 				{
 					_labelStyles.Add(new Collections.SelectableListNode(labelTypes[i].Name, labelTypes[i], labelTypes[i] == _doc.LabelFormat.GetType()));
 				}
+
+				_labelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
 			}
 
 			if (null != _view)
@@ -195,9 +196,10 @@ namespace Altaxo.Gui.Graph
 				_view.SuppressedLabelsByValue = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
 				_view.SuppressedLabelsByNumber = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
 				_view.PrefixText = _doc.PrefixText;
-				_view.PostfixText = _doc.PostfixText;
+				_view.PostfixText = _doc.SuffixText;
 				_view.LabelSides = _labelSides;
 				_view.LabelStyle_Initialize(_labelStyles);
+				_view.LabelFormattingSpecificGuiControl = null == _labelFormattingSpecificController ? null : _labelFormattingSpecificController.ViewObject;
 			}
 		}
 
@@ -235,11 +237,14 @@ namespace Altaxo.Gui.Graph
 				return false;
 
 			_doc.PrefixText = _view.PrefixText;
-			_doc.PostfixText = _view.PostfixText;
+			_doc.SuffixText = _view.PostfixText;
 
 			var labelSideNode = _labelSides.FirstSelectedNode;
 			if (null != labelSideNode)
 				_doc.LabelSide = (CSAxisSide?)labelSideNode.Tag;
+
+			if (null != _labelFormattingSpecificController && !_labelFormattingSpecificController.Apply())
+					return false;
 
 			_originalDoc.CopyFrom(_doc);
 
@@ -251,7 +256,12 @@ namespace Altaxo.Gui.Graph
 		{
 			var type = (System.Type)_labelStyles.FirstSelectedNode.Tag;
 			if (_doc.LabelFormat.GetType() != type)
+			{
 				_doc.LabelFormat = (Altaxo.Graph.Gdi.LabelFormatting.ILabelFormatting)Activator.CreateInstance(type);
+				_labelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
+				if(null!=_view)
+					_view.LabelFormattingSpecificGuiControl = null == _labelFormattingSpecificController ? null : _labelFormattingSpecificController.ViewObject;
+			}
 		}
 	}
 }

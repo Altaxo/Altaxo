@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	/// <summary>
 	/// Procedures to format an item of the <see cref="Altaxo.Data.AltaxoVariant" /> class.
 	/// </summary>
-	public interface ILabelFormatting : ICloneable
+	public interface ILabelFormatting : ICloneable, Main.ICopyFrom
 	{
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location the item will be drawn.</param>
 		/// <returns>The size of the item if it would be drawn.</returns>
-		SizeF MeasureItem(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Data.AltaxoVariant mtick, string prefixText, string postfixText, PointF morg);
+		SizeF MeasureItem(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Data.AltaxoVariant mtick, PointF morg);
 
 		/// <summary>
 		/// Draws the item to a specified location.
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="prefixText">Text drawn before the label text.</param>
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location where the item is drawn to.</param>
-		void DrawItem(Graphics g, BrushX brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant item, string prefixText, string postfixText, PointF morg);
+		void DrawItem(Graphics g, BrushX brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointF morg);
 
 		/// <summary>
 		/// Measured a couple of items and prepares them for being drawn.
@@ -73,6 +73,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="prefixText">Text drawn before the label text.</param>
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items, string prefixText, string postfixText);
+		IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items);
+
+		/// <summary>Fixed Text that appears before the formatted label.</summary>
+		string PrefixText { get; set; }
+
+		/// <summary>Fixed text that appears after the formatted label.</summary>
+		string SuffixText { get; set; }
 	}
 }

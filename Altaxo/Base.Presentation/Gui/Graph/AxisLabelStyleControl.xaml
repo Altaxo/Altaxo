@@ -34,12 +34,13 @@
 		</Style>
 		
 	</UserControl.Resources>
+	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
     <Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -63,6 +64,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Color:"/>
@@ -108,4 +110,6 @@
 		<Label Grid.Column="0" Grid.Row="20" Content="Label style:"/>
 		<ComboBox x:Name="m_cbLabelStyle" Grid.Column="1" Grid.Row="20" Grid.ColumnSpan="3" SelectionChanged="m_cbLabelStyle_SelectionChangeCommitted"/>
 	</Grid>
+		<Border x:Name="_guiLabelStyleSpecific" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="22"/>
+	</StackPanel>
 </UserControl>

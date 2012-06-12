@@ -57,13 +57,28 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 		#endregion
 
-		protected void CopyFrom(NumericLabelFormattingBase from)
+		protected NumericLabelFormattingBase()
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			this._decimalPlaces = from._decimalPlaces;
 		}
 
+		protected NumericLabelFormattingBase(NumericLabelFormattingBase from)
+			: base(from) // everything is done here, since CopyFrom is virtual
+		{
+		}
+
+
+		public override bool CopyFrom(object obj)
+		{
+			var isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
+			{
+				var from = obj as NumericLabelFormattingBase;
+				if (null != from)
+				{
+					this._decimalPlaces = from._decimalPlaces;
+				}
+			}
+			return isCopied;
+		}
 	}
 }

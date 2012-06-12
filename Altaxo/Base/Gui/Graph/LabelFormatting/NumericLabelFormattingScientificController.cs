@@ -25,37 +25,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo
+using Altaxo.Graph.Gdi.LabelFormatting;
+
+namespace Altaxo.Gui.Graph.LabelFormatting
 {
-
-	/// <summary>
-	/// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see cref="CancellationPending" />, and
-	/// if it is <c>true</c>, return in a safe way.
-	/// </summary>
-	public interface IProgressReporter
+	public interface INumericLabelFormattingScientificView
 	{
-		/// <summary>
-		/// True if we should report the progress now.
-		/// </summary>
-		bool ShouldReportNow { get; }
+		bool ShowExponentAlways { get; set; }
+	}
 
-		/// <summary>
-		/// Reports the progress as a text string.
-		/// </summary>
-		/// <param name="text">Report text</param>
-		void ReportProgress(string text);
+	[UserControllerForObject(typeof(NumericLabelFormattingScientific))]
+	[ExpectedTypeOfView(typeof(INumericLabelFormattingScientificView))]
+	public class NumericLabelFormattingScientificController : MVCANControllerBase<NumericLabelFormattingScientific, INumericLabelFormattingScientificView>
+	{
+		protected override void Initialize(bool initData)
+		{
+			if (null != _view)
+			{
+				_view.ShowExponentAlways = _doc.ShowExponentAlways;
+			}
+		}
 
-		/// <summary>
-		/// Reports the progress as a text string.
-		/// </summary>
-		/// <param name="text">Report text</param>
-		/// <param name="progressValue">The progress as fraction (0..1).</param>
-		void ReportProgress(string text, double progressValue);
-
-
-		/// <summary>
-		/// Returns true if the activity was cancelled by the user. The script has to check this value periodically. If it is set to true, the script should return.
-		/// </summary>
-		bool CancellationPending { get; }
+		public override bool Apply()
+		{
+			_doc.ShowExponentAlways = _view.ShowExponentAlways;
+			if(_useDocumentCopy)
+				CopyHelper.Copy(ref _originalDoc, _doc);
+			return true;
+		}
 	}
 }

@@ -32,7 +32,6 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 {
 	public abstract class SyntheticBrushBase : ImageProxy, IHatchBrushTexture
 	{
-		protected const double InchesPerPoint = 1 / 72.0;
 		protected const double DefaultEffectiveResolution = 300;
 		protected static readonly NamedColor _defaultBackColor = NamedColor.Transparent;
 		protected static readonly NamedColor _defaultForeColor = NamedColor.Black;
@@ -118,18 +117,18 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 			get { return GetType().ToString(); }
 		}
 
-		public virtual bool CopyFrom(object obj)
+		public override bool CopyFrom(object obj)
 		{
-			var from = obj as SyntheticBrushBase;
-			if (null != from)
+			bool isCopied = base.CopyFrom(obj);
+			if (isCopied && !object.ReferenceEquals(this, obj))
 			{
-				_repeatLengthPt = from._repeatLengthPt;
-				return true;
+				var from = obj as SyntheticBrushBase;
+				if (null != from)
+				{
+					_repeatLengthPt = from._repeatLengthPt;
+				}
 			}
-			else
-			{
-				return false;
-			}
+			return isCopied;
 		}
 
 		public virtual Image GetImage(double maxEffectiveResolutionDpi)

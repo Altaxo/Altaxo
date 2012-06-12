@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <summary>
     /// Copies the data from another object.
     /// </summary>
-    /// <param name="from">The object to copy the data from.</param>
+    /// <param name="obj">The object to copy the data from.</param>
     public virtual bool CopyFrom(object obj)
     {
 			if (object.ReferenceEquals(this, obj))

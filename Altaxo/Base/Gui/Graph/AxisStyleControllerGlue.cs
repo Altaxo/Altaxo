@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Glues a controller for the axis title/line style, and two conditional controllers for the major and minor label styles together. This class should be used if the existence of the axis style is ensured,
 	/// i.e. the axis style can neither be removed or created. 
-	/// If, in contrast, one should be able to remove or create an axis style, you should rather use an instance of the <see cref="AxisStyleConditionalControllerGlue"/> class.
+	/// If, in contrast, one should be able to remove or create an axis style, you should rather use an instance of the <see cref="AxisStyleControllerConditionalGlue"/> class.
 	/// </summary>
 	public class AxisStyleControllerGlue
 	{

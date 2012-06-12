@@ -736,6 +736,280 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 		#endregion
 
+
+		#region Minimum / Maximum
+
+		/// <summary>Return the index of a the maximum absolute value in a vector</summary>
+		/// <param name="X">The input array.</param>
+		/// <returns>The index of the maximum absolute value.</returns>
+		public static int IndexOfMaxValue(float[] X)
+		{
+			float max = 0;
+			int index = 0;
+			for (int i = 0; i < X.Length; ++i)
+			{
+				float test = System.Math.Abs(X[i]);
+				if (test > max)
+				{
+					index = i;
+					max = test;
+				}
+			}
+			return index;
+		}
+
+
+	
+
+		/// <summary>Return the index of a the (first) element with the maximum  value in a vector</summary>
+		/// <param name="X">The input vector.</param>
+		/// <returns>The index of the (first) element with the maximum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMaxValue(this IROVector X)
+		{
+			int index = -1;
+			int len = X.Length;
+			if (len > 0)
+			{
+				double max;
+				if (double.IsNaN(X[0]))
+				{
+					max = double.NegativeInfinity;
+				}
+				else
+				{
+					max = X[0];
+					index = 0;
+				}
+				for (int i = 1; i < len; ++i)
+				{
+					double test = X[i];
+					if (test > max)
+					{
+						index = i;
+						max = test;
+					}
+				}
+			}
+			return index;
+		}
+
+		/// <summary>Return the index of a the (first) element with the minimum value in a vector</summary>
+		/// <param name="X">The input vector.</param>
+		/// <returns>The index of the (first) element with the mimimum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMinValue(this IROVector X)
+		{
+			int index = -1;
+			int len = X.Length;
+			if (len > 0)
+			{
+				double min;
+				if (double.IsNaN(X[0]))
+				{
+					min = double.PositiveInfinity;
+				}
+				else
+				{
+					min = X[0];
+					index = 0;
+				}
+				for (int i = 1; i < len; ++i)
+				{
+					double test = X[i];
+					if (test < min)
+					{
+						index = i;
+						min = test;
+					}
+				}
+			}
+			return index;
+		}
+
+
+		/// <summary>Return the index of a the (first) element with the maximum absolute value in a vector</summary>
+		/// <param name="X">The input vector.</param>
+		/// <returns>The index of the (first) element with the maximum absolute value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMaxAbsValue(this IROVector X)
+		{
+			int index = -1;
+			int len = X.Length;
+			if (len > 0)
+			{
+				double max;
+				if (double.IsNaN(Math.Abs(X[0])))
+				{
+					max = double.NegativeInfinity;
+				}
+				else
+				{
+					max = Math.Abs(X[0]);
+					index = 0;
+				}
+
+				for (int i = 1; i < len; ++i)
+				{
+					double test = Math.Abs(X[i]);
+					if (test > max)
+					{
+						index = i;
+						max = test;
+					}
+				}
+			}
+			return index;
+		}
+
+
+
+		/// <summary>
+		/// Returns the maximum value of all the valid elements in x (nonvalid elements, i.e. NaN values are not considered).
+		/// </summary>
+		/// <param name="x">The vector to search for maximum element.</param>
+		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains NaN elements only.</returns>
+		public static double GetMaximumOfValidElements(this IROVector x)
+		{
+			double max = double.NaN;
+			int i;
+			for (i = x.Length - 1; i >= 0; --i)
+			{
+				if (!double.IsNaN(max = x[i]))
+					break;
+			}
+			for (i = i - 1; i >= 0; --i)
+			{
+				if (x[i] > max)
+					max = x[i];
+			}
+			return max;
+		}
+
+
+		/// <summary>
+		/// Returns the maximum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for maximum element.</param>
+		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMaximum(this IROVector x)
+		{
+			double max = double.NaN;
+			if (x.Length > 0)
+			{
+				max = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] < max))
+						max = x[i];
+				}
+			}
+			return max;
+		}
+
+		/// <summary>
+		/// Returns the maximum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for maximum element.</param>
+		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMaximum(this double[] x)
+		{
+			double max = double.NaN;
+			if (x.Length > 0)
+			{
+				max = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] < max))
+						max = x[i];
+				}
+			}
+			return max;
+		}
+
+		/// <summary>
+		/// Returns the minimum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for minimum element.</param>
+		/// <returns>Minimum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMinimum(this IROVector x)
+		{
+			double min = double.NaN;
+			if (x.Length > 0)
+			{
+				min = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] > min))
+						min = x[i];
+				}
+			}
+			return min;
+		}
+
+		/// <summary>
+		/// Returns the minimum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
+		/// </summary>
+		/// <param name="x">The vector to search for minimum element.</param>
+		/// <returns>Minimum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
+		public static double GetMinimum(this double[] x)
+		{
+			double min = double.NaN;
+			if (x.Length > 0)
+			{
+				min = x[0];
+				for (int i = x.Length - 1; i > 0; --i)
+				{
+					if (!(x[i] > min))
+						min = x[i];
+				}
+			}
+			return min;
+		}
+
+
+		/// <summary>
+		/// Gives the parallel maximum of vector v1 and v2. The first element of the resulting vector
+		/// is the maximum of the first element of v1 and the first element of v2. The second element of the 
+		/// resulting vector is the maximum of the second element of v1 and the second element of v2, and so on.
+		/// </summary>
+		/// <param name="v1">First vector.</param>
+		/// <param name="v2">Second vector.</param>
+		/// <param name="result">The resulting vector.</param>
+		/// <returns>The resulting vector (either the provided result vector or a new one). Each element result[i] is the maximum of v1[i] and v2[i].</returns>
+		public static IVector Max(IROVector v1, IROVector v2, IVector result)
+		{
+			int len = Math.Max(v1.Length, v2.Length);
+			
+			if (null == result)
+				result = _funcCreateNewVector(len);
+
+			for (int i = len - 1; i >= 0; --i)
+			{
+				result[i] = Math.Max(v1[i], v2[i]);
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Creates a new vector, whose elements are the maximum of the elements of a given input vector and a given number.
+		/// </summary>
+		/// <param name="v">Input vector.</param>
+		/// <param name="b">Number.</param>
+		/// <param name="result">Provide a vector whose elements are filled with the result. If null is provided, then a new vector will be allocated and returned.</param>
+		/// <returns>A vector (either the provided result vector or a new one). Each element r[i] is the maximum of v[i] and b.</returns>
+		public static IVector Max(this IROVector v, double b, IVector result)
+		{
+			if (null == result)
+				result = _funcCreateNewVector(v.Length);
+
+			for (int i = 0; i < v.Length; i++)
+				result[i] = Math.Max(v[i], b);
+
+			return result;
+		}
+
+
+		#endregion
+
 		/// <summary>
 		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
 		/// </summary>
@@ -766,23 +1040,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 
-		/// <summary>
-		/// Gives the parallel maximum of vector v1 and v2. The first element of the resulting vector
-		/// is the maximum of the first element of v1 and the first element of v2. The second element of the 
-		/// resulting vector is the maximum of the second element of v1 and the second element of v2, and so on.
-		/// </summary>
-		/// <param name="v1">First vector.</param>
-		/// <param name="v2">Second vector.</param>
-		/// <param name="result">The resulting vector.</param>
-		public static void PMax(IROVector v1, IROVector v2, IVector result)
-		{
-			int maxlen = Math.Max(v1.Length, v2.Length);
-			for (int i = maxlen - 1; i >= 0; --i)
-			{
-				result[i] = Math.Max(v1[i], v2[i]);
-			}
-		}
-
+		
 
 
 		/// <summary>
@@ -957,242 +1215,17 @@ namespace Altaxo.Calc.LinearAlgebra
 			return ret_val;
 		}
 
-		/// <summary>Return the index of a the maximum absolute value in a vector</summary>
-		/// <param name="X">The input array.</param>
-		/// <returns>The index of the maximum absolute value.</returns>
-		public static int IMax(float[] X)
-		{
-			float max = 0;
-			int index = 0;
-			for (int i = 0; i < X.Length; ++i)
-			{
-				float test = System.Math.Abs(X[i]);
-				if (test > max)
-				{
-					index = i;
-					max = test;
-				}
-			}
-			return index;
-		}
+		
 
-		/// <summary>Return the index of a the (first) element with the maximum absolute value in a vector</summary>
-		/// <param name="X">The input vector.</param>
-		/// <returns>The index of the (first) element with the maximum absolute value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
-		public static int IndexOfMaxAbsValue(this IROVector X)
-		{
-			int index = -1;
-			int len = X.Length;
-			if (len > 0)
-			{
-				double max;
-				if (double.IsNaN(Math.Abs(X[0])))
-				{
-					max = double.NegativeInfinity;
-				}
-				else
-				{
-					max = Math.Abs(X[0]);
-					index = 0;
-				}
+	
+	
 
-				for (int i = 1; i < len; ++i)
-				{
-					double test = Math.Abs(X[i]);
-					if (test > max)
-					{
-						index = i;
-						max = test;
-					}
-				}
-			}
-			return index;
-		}
+	
 
-		/// <summary>Return the index of a the (first) element with the maximum  value in a vector</summary>
-		/// <param name="X">The input vector.</param>
-		/// <returns>The index of the (first) element with the maximum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
-		public static int IndexOfMaxValue(this IROVector X)
-		{
-			int index = -1;
-			int len = X.Length;
-			if (len > 0)
-			{
-				double max;
-				if (double.IsNaN(X[0]))
-				{
-					max = double.NegativeInfinity;
-				}
-				else
-				{
-					max = X[0];
-					index = 0;
-				}
-				for (int i = 1; i < len; ++i)
-				{
-					double test = X[i];
-					if (test > max)
-					{
-						index = i;
-						max = test;
-					}
-				}
-			}
-			return index;
-		}
-
-		/// <summary>Return the index of a the (first) element with the minimum value in a vector</summary>
-		/// <param name="X">The input vector.</param>
-		/// <returns>The index of the (first) element with the mimimum value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
-		public static int IndexOfMinValue(this IROVector X)
-		{
-			int index = -1;
-			int len = X.Length;
-			if (len > 0)
-			{
-				double min;
-				if (double.IsNaN(X[0]))
-				{
-					min = double.PositiveInfinity;
-				}
-				else
-				{
-					min = X[0];
-					index = 0;
-				}
-				for (int i = 1; i < len; ++i)
-				{
-					double test = X[i];
-					if (test < min)
-					{
-						index = i;
-						min = test;
-					}
-				}
-			}
-			return index;
-		}
-
-		/// <summary>
-		/// Returns the maximum value of all the valid elements in x (nonvalid elements, i.e. NaN values are not considered).
-		/// </summary>
-		/// <param name="x">The vector to search for maximum element.</param>
-		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains NaN elements only.</returns>
-		public static double GetMaximumValid(this IROVector x)
-		{
-			double max = double.NaN;
-			int i;
-			for (i = x.Length - 1; i >= 0; --i)
-			{
-				if (!double.IsNaN(max = x[i]))
-					break;
-			}
-			for (i = i - 1; i >= 0; --i)
-			{
-				if (x[i] > max)
-					max = x[i];
-			}
-			return max;
-		}
-
-		/// <summary>
-		/// Returns the maximum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
-		/// </summary>
-		/// <param name="x">The vector to search for maximum element.</param>
-		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
-		public static double GetMaximum(this IROVector x)
-		{
-			double max = double.NaN;
-			if (x.Length > 0)
-			{
-				max = x[0];
-				for (int i = x.Length - 1; i > 0; --i)
-				{
-					if (!(x[i] < max))
-						max = x[i];
-				}
-			}
-			return max;
-		}
-
-		/// <summary>
-		/// Returns the maximum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
-		/// </summary>
-		/// <param name="x">The vector to search for maximum element.</param>
-		/// <returns>Maximum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
-		public static double GetMaximum(this double[] x)
-		{
-			double max = double.NaN;
-			if (x.Length > 0)
-			{
-				max = x[0];
-				for (int i = x.Length - 1; i > 0; --i)
-				{
-					if (!(x[i] < max))
-						max = x[i];
-				}
-			}
-			return max;
-		}
-
-		/// <summary>
-		/// Creates a new vector, whose elements are the maximum of the elements of a given input vector and a given number.
-		/// </summary>
-		/// <param name="v">Input vector.</param>
-		/// <param name="b">Number.</param>
-		/// <param name="result">Provide a vector whose elements are filled with the result. If null is provided, then a new vector will be allocated and returned.</param>
-		/// <returns>A vector (either the provided result vector or a new one). Each element r[i] is the maximum of v[i] and b.</returns>
-		public static IVector Max(this IROVector v, double b, IVector result)
-		{
-			if (null == result)
-				result = _funcCreateNewVector(v.Length);
-
-			for (int i = 0; i < v.Length; i++)
-				result[i] = Math.Max(v[i], b);
-
-			return result;
-		}
+		
 
 
-		/// <summary>
-		/// Returns the minimum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
-		/// </summary>
-		/// <param name="x">The vector to search for minimum element.</param>
-		/// <returns>Minimum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
-		public static double GetMinimum(this IROVector x)
-		{
-			double min = double.NaN;
-			if (x.Length > 0)
-			{
-				min = x[0];
-				for (int i = x.Length - 1; i > 0; --i)
-				{
-					if (!(x[i] > min))
-						min = x[i];
-				}
-			}
-			return min;
-		}
-
-		/// <summary>
-		/// Returns the minimum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
-		/// </summary>
-		/// <param name="x">The vector to search for minimum element.</param>
-		/// <returns>Minimum valid element of x. Returns NaN if the array is empty or contains at least one NaN element.</returns>
-		public static double GetMinimum(this double[] x)
-		{
-			double min = double.NaN;
-			if (x.Length > 0)
-			{
-				min = x[0];
-				for (int i = x.Length - 1; i > 0; --i)
-				{
-					if (!(x[i] > min))
-						min = x[i];
-				}
-			}
-			return min;
-		}
+		
 
 		/// <summary>
 		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.

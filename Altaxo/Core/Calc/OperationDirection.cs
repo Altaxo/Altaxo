@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -20,42 +20,27 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Altaxo
+namespace Altaxo.Calc
 {
 
 	/// <summary>
-	/// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see cref="CancellationPending" />, and
-	/// if it is <c>true</c>, return in a safe way.
+	/// The direction of the fourier transform.
 	/// </summary>
-	public interface IProgressReporter
+	public enum OperationDirection
 	{
 		/// <summary>
-		/// True if we should report the progress now.
+		/// Forward direction.
 		/// </summary>
-		bool ShouldReportNow { get; }
+		Forward = 1,
 
 		/// <summary>
-		/// Reports the progress as a text string.
+		/// Backward direction.
 		/// </summary>
-		/// <param name="text">Report text</param>
-		void ReportProgress(string text);
+		Inverse = -1,
 
 		/// <summary>
-		/// Reports the progress as a text string.
+		/// Backward direction. (equivalent to <see cref="Inverse"/>).
 		/// </summary>
-		/// <param name="text">Report text</param>
-		/// <param name="progressValue">The progress as fraction (0..1).</param>
-		void ReportProgress(string text, double progressValue);
-
-
-		/// <summary>
-		/// Returns true if the activity was cancelled by the user. The script has to check this value periodically. If it is set to true, the script should return.
-		/// </summary>
-		bool CancellationPending { get; }
+		Backward = -1
 	}
 }

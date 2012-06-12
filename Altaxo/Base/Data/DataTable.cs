@@ -1076,6 +1076,22 @@ namespace Altaxo.Data
 			set { _dataColumns[name] = value; }
 		}
 
+		/// <summary>Gets or sets a property cell, with is specified by the data column name (1st argument), and the property column name (2nd argument).
+		/// Attention: this order of arguments is opposite to the usual notation used for matrices (row, column)!</summary>
+		public AltaxoVariant this[string dataColumName, string propertyName]
+		{
+			get
+			{
+				int columnNumber = _dataColumns.GetColumnNumber(_dataColumns[dataColumName]);
+				return _propertyColumns[propertyName][columnNumber];
+			}
+			set
+			{
+				int columnNumber = _dataColumns.GetColumnNumber(_dataColumns[dataColumName]);
+				_propertyColumns[propertyName][columnNumber] = value;
+			}
+		}
+
 		/// <summary>
 		/// Tests if the table contains a data column with the provided name.
 		/// </summary>

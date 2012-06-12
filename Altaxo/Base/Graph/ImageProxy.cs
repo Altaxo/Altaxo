@@ -369,7 +369,7 @@ namespace Altaxo.Graph
 		{
 		}
 
-		private bool CopyFrom(object obj)
+		public override bool CopyFrom(object obj)
 		{
 			bool isCopied = base.CopyFrom(obj);
 			if (isCopied && !object.ReferenceEquals(this, obj))

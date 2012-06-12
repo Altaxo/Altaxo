@@ -58,10 +58,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <summary>Number of the scale to measure (0: x-axis, 1: y-axis, 2: z-axis).</summary>
 		int _scaleNumber;
 
-		/// <summary>If true, the _scaleSpan is interpreted as a physical value. Otherwise, it is a logical span.</summary>
+		/// <summary>Designates the type of scale span value, i.e. whether it is interpreted as a logical value, or a physical value (either as a span difference or as an end/org ratio).</summary>
 		FloatingScaleSpanType _scaleSpanType;
 
-		/// <summary>The span this scale should show. It is either a physical or a logical value, depending on <see cref="_scaleSpanIsPhysical"/>.</summary>
+		/// <summary>The span this scale should show. It is either a physical or a logical value, depending on <see cref="_scaleSpanType"/>.</summary>
 		double _scaleSpanValue;
 
 		ScaleSegmentType _scaleSegmentType;
@@ -375,7 +375,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		static new bool EhHitDoubleClick(IHitTestObject o)
+		static bool EhHitDoubleClick(IHitTestObject o)
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Floating scale properties", true);
@@ -384,7 +384,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		static new bool EhTitleRemove(IHitTestObject o)
+		static bool EhTitleRemove(IHitTestObject o)
 		{
 			object hitted = o.HittedObject;
 			var axStyle = ((TextGraphic)hitted).ParentObject as AxisStyle;

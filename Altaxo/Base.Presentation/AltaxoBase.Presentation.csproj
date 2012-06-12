@@ -436,6 +436,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\LabelFormatting\DateTimeLabelFormattingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\LabelFormatting\FreeLabelFormattingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\LabelFormatting\NumericLabelFormattingScientificControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Scales\Ticks\SpanTickSpacingControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -950,6 +966,18 @@
     <Compile Include="Gui\Graph\GdiFontGlue.cs" />
     <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
       <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LabelFormatting\DateTimeLabelFormattingControl.xaml.cs">
+      <DependentUpon>DateTimeLabelFormattingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LabelFormatting\FreeLabelFormattingControl.xaml.cs">
+      <DependentUpon>FreeLabelFormattingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseControl.xaml.cs">
+      <DependentUpon>MultiLineLabelFormattingBaseControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\LabelFormatting\NumericLabelFormattingScientificControl.xaml.cs">
+      <DependentUpon>NumericLabelFormattingScientificControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\SpanTickSpacingControl.xaml.cs">
       <DependentUpon>SpanTickSpacingControl.xaml</DependentUpon>

@@ -58,18 +58,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		}
 
 		public NumericLabelFormattingMantissa(NumericLabelFormattingMantissa from)
+			: base(from) // everything is done here, since CopyFrom is virtual
 		{
-			CopyFrom(from);
 		}
 
-		public void CopyFrom(NumericLabelFormattingMantissa from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			base.CopyFrom(from);
-
-		}
 
 		public override object Clone()
 		{

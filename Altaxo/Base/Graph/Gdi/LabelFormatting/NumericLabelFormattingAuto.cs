@@ -58,18 +58,11 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		{
 		}
 		public NumericLabelFormattingAuto(NumericLabelFormattingAuto from)
+			: base(from) // everything is done here, since CopyFrom is virtual
 		{
-			CopyFrom(from);
 		}
 
-		public void CopyFrom(NumericLabelFormattingAuto from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			base.CopyFrom(from);
-			this._decimalPlaces = from._decimalPlaces;
-		}
+	
 
 
 		public override object Clone()
