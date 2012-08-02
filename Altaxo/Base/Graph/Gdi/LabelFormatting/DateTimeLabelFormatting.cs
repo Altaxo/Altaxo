@@ -33,8 +33,8 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	{
 		public enum TimeConversion { Original, ToUtc, ToLocal };
 
-		string _formatString = "T";
-		string _formatStringAlternate = "T\r\nd";
+		string _formatString = "{0:T}";
+		string _formatStringAlternate = "{0:T}\r\n{0:d}";
 
 		bool _showAlternateFormattingAtMidnight=true;
 		bool _showAlternateFormattingAtNoon;
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 					try
 					{
-						return  FormatItem(dt, showAlternate ? _formatStringAlternate : _formatString);
+						return string.Format(showAlternate ? _formatStringAlternate : _formatString, dt);
 					}
 					catch(Exception)
 					{
@@ -139,28 +139,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				}
 				return item.ToString();
 		}
-
-		private string FormatItem(DateTime dt, string formatString)
-		{
-			string[] lines = formatString.Split(new char[] { '\n' });
-
-			for (int i = 0; i < lines.Length; ++i)
-			{
-				string trm = lines[i].Trim();
-				if (trm.Length == 1) // Special handling when there is only one character in the line => then it is treated as a standard DateTime format string
-				{
-					int idx = lines[i].IndexOf(trm);
-					lines[i] = lines[i].Substring(0, idx) + dt.ToString(trm) + lines[i].Substring(idx + 1, lines[i].Length - idx - 1);
-				}
-				else
-				{
-					lines[i] = dt.ToString(lines[i]);
-				}
-			}
-
-			return string.Join("\n", lines);
-		}
-
 
 		#region Properties
 

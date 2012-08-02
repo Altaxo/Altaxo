@@ -31,7 +31,7 @@ namespace Altaxo.Gui
 	/// <summary>
 	/// Encapsulates the logic to map a Gdi bitmap on a Wpf bitmap source.
 	/// </summary>
-	public class GdiToWpfBitmap : IDisposable
+	public class GdiToWpfBitmap : IDisposable, System.ComponentModel.INotifyPropertyChanged
 	{
 		#region Native calls
 
@@ -81,12 +81,13 @@ namespace Altaxo.Gui
 
 		#endregion
 
+		static long _totalBytesAllocated; // only for debugging, designates the total number of bytes allocated in all those objects
+
 		const int BytesPerPixel = 4; // it is only possible to use ARGB format, otherwise Imaging.CreateBitmapSourceFromMemorySection would copy the bitmap instead of mapping it
 
 		IntPtr _section;
 		IntPtr _map;
 		System.Drawing.Bitmap _bmp;
-		System.Drawing.Graphics _graphics;
 		System.Windows.Interop.InteropBitmap _interopBmp;
 		int _width, _height;
 		/// <summary>
@@ -111,7 +112,7 @@ namespace Altaxo.Gui
 		/// <param name="height"></param>
 		public void Resize(int width, int height)
 		{
-			InternalDeallocate();
+			InternalDeallocate(true);
 			InternalAllocate(width, height);
 		}
 
@@ -122,48 +123,62 @@ namespace Altaxo.Gui
 
 			_width = width;
 			_height = height;
+			uint numBytesToAllocate = (uint)(width * height * BytesPerPixel);
+
 			_section = CreateFileMapping(INVALID_HANDLE_VALUE,
 																				 IntPtr.Zero,
 																				 PAGE_READWRITE,
 																				 0,
-																				 (uint)(width * height * BytesPerPixel),
+																				 numBytesToAllocate,
 																				 null);
 
-			_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(_width * _height * BytesPerPixel));
+			if (_section == IntPtr.Zero)
+				throw new InvalidOperationException(string.Format("Unable to create file mapping for {0} x {1} pixel", width, height));
+
+			_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, numBytesToAllocate);
 
 			if (IntPtr.Zero == _map)
 			{
 				System.GC.Collect();
-				_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, (uint)(_width * _height * BytesPerPixel));
+				_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, numBytesToAllocate);
+			}
+
+			if (_map == IntPtr.Zero)
+			{
+				CloseHandle(_section);
+				_section = IntPtr.Zero;
+				string exception = string.Format("Unable to create view of file for {0} x {1} pixel", width, height);
+				width = height = 0;
+				throw new InvalidOperationException(exception);
 			}
 
 
 			_bmp = new System.Drawing.Bitmap(_width, _height, _width * BytesPerPixel, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _map);
 
-			GC.AddMemoryPressure(_width * _height * BytesPerPixel);
+			GC.AddMemoryPressure(numBytesToAllocate);
+			_totalBytesAllocated += numBytesToAllocate;
 
-			_interopBmp = null;
+			_interopBmp = (System.Windows.Interop.InteropBitmap)System.Windows.Interop.Imaging.CreateBitmapSourceFromMemorySection(_section, _width, _height, System.Windows.Media.PixelFormats.Bgra32, _width * BytesPerPixel, 0);
 		}
 
-		void InternalDeallocate()
+		void InternalDeallocate(bool disposing)
 		{
-			if (_graphics != null)
+			if (disposing)
 			{
-				_graphics.Dispose();
-				_graphics = null;
+				// free managed resources
+				if (_bmp != null)
+				{
+					_bmp.Dispose();
+					_bmp = null;
+				}
+
+				if (_interopBmp != null)
+				{
+					_interopBmp = null;
+				}
 			}
 
-			if (_bmp != null)
-			{
-				_bmp.Dispose();
-				_bmp = null;
-			}
-
-			if (_interopBmp != null)
-			{
-				_interopBmp = null;
-			}
-
+			// now free all unmanaged resources
 			if (IntPtr.Zero != _map)
 			{
 				UnmapViewOfFile(_map);
@@ -178,6 +193,7 @@ namespace Altaxo.Gui
 			}
 
 			GC.RemoveMemoryPressure(_width * _height * BytesPerPixel);
+			_totalBytesAllocated -= (_width * _height * BytesPerPixel);
 
 			_width = 0;
 			_height = 0;
@@ -192,15 +208,17 @@ namespace Altaxo.Gui
 			}
 		}
 
-		public System.Drawing.Graphics GdiGraphics
+		public System.Drawing.Graphics BeginGdiPainting()
 		{
-			get
-			{
-				if (null == _graphics)
-					_graphics = System.Drawing.Graphics.FromImage(_bmp);
-				return _graphics;
-			}
+			return System.Drawing.Graphics.FromImage(_bmp);
 		}
+
+		public void EndGdiPainting()
+		{
+			_interopBmp.Invalidate();
+			OnPropertyChanged("WpfBitmapSource");
+		}
+
 
 		public System.Drawing.Rectangle GdiRectangle
 		{
@@ -210,26 +228,50 @@ namespace Altaxo.Gui
 			}
 		}
 
+		
 		public System.Windows.Interop.InteropBitmap WpfBitmap
 		{
 			get
 			{
-				if (null == _interopBmp && IntPtr.Zero != _section)
-				{
-					_interopBmp = (System.Windows.Interop.InteropBitmap)System.Windows.Interop.Imaging.CreateBitmapSourceFromMemorySection(_section, _width, _height, System.Windows.Media.PixelFormats.Bgra32, _width * BytesPerPixel, 0);
-				}
-
 				return _interopBmp;
 			}
 		}
+		
+		public System.Windows.Media.Imaging.BitmapSource WpfBitmapSource
+		{
+			get
+			{
+				_interopBmp.Invalidate();
+				return ( System.Windows.Media.Imaging.BitmapSource)_interopBmp.GetAsFrozen();
+			}
+		}
+		
 
 		#region IDisposable Members
 
 		public void Dispose()
 		{
-			InternalDeallocate();
+			InternalDeallocate(true);
+			GC.SuppressFinalize(this);
 		}
 
+		~GdiToWpfBitmap()
+		{
+			// Do not re-create Dispose clean-up code here.
+			// Calling Dispose(false) is optimal in terms of
+			// readability and maintainability.
+			InternalDeallocate(false);
+		}
+
+
 		#endregion
+
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+		public virtual void OnPropertyChanged(string name)
+		{
+			if (null != PropertyChanged)
+				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+		}
 	}
 }

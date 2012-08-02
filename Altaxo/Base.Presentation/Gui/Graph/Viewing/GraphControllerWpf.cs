@@ -503,9 +503,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void RepaintGraphAreaImmediately()
 		{
-		Graphics g = this._viewWpf.BeginPaintingGraph();
-		this.DoPaint(g, false); // paint the cached graph image and the mouse handler drawings
-		_viewWpf.EndPaintingGraph(); // inform the view, that the painting is finished
+			using (var grfx = this._viewWpf.BeginPaintingGraph())
+			{
+				this.DoPaint(grfx, false); // paint the cached graph image and the mouse handler drawings
+				_viewWpf.EndPaintingGraph(); // inform the view, that the painting is finished
+			}
 		}
 
 		/// <summary>
@@ -536,8 +538,15 @@ namespace Altaxo.Gui.Graph.Viewing
 
 					// create a frozen bitmap of the graph
 					// using(Graphics g = m_View.CreateGraphGraphics())
+					try
+					{
+						_cachedGraphImage = new Bitmap(_viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height, g);
+					}
+					catch (Exception ex)
+					{
+						throw new InvalidOperationException("Failed to create _cachedGraphImage");
+					}
 
-					_cachedGraphImage = new Bitmap(_viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height, g);
 					_isCachedGraphImageDirty = true;
 				}
 

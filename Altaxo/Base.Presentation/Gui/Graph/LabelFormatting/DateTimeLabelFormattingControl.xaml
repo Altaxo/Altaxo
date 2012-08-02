@@ -9,7 +9,7 @@
  						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 >
-	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+	<StackPanel Orientation="Vertical" >
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
@@ -26,10 +26,11 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 			<Label Grid.Row="0" Grid.Column="0" Content="Time conversion: " VerticalAlignment="Center"/>
-			<StackPanel x:Name="_guiTimeConversionPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+			<StackPanel x:Name="_guiTimeConversionPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" >
 				<StackPanel.Resources>
 					<Style TargetType="RadioButton">
 						<Setter Property="Margin" Value="2,0,2,0"/>
+						<Setter Property="VerticalAlignment" Value="Center"/>
 					</Style>
 				</StackPanel.Resources>
 			</StackPanel>

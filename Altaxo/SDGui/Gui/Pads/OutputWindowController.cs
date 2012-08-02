@@ -96,8 +96,9 @@ namespace Altaxo.Gui.Pads
 
 				WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
 
-				// now focus back to the formerly active workbench window.
-				ww.SelectWindow();
+				
+				if(null!=ww)
+					ww.SelectWindow();
 
 			}
 		}

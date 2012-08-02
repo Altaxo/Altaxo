@@ -191,13 +191,15 @@ namespace Altaxo.Gui.Graph
 				destRect = new System.Drawing.Rectangle((int)dl, (int)(0.5 * (dh - rh) + dt), (int)dw, (int)rh);
 			}
 
-			_previewBitmap.GdiGraphics.FillRectangle(System.Drawing.Brushes.White, _previewBitmap.GdiRectangle);
-			_previewBitmap.GdiGraphics.DrawRectangle(System.Drawing.Pens.Black, destRect);
+			using (var grfx = _previewBitmap.BeginGdiPainting())
+			{
+				grfx.FillRectangle(System.Drawing.Brushes.White, _previewBitmap.GdiRectangle);
+				grfx.DrawRectangle(System.Drawing.Pens.Black, destRect);
 
-			_previewPageNumber = Math.Max(0, Math.Min(_previewPageNumber, _previewData.Length - 1));
-			_previewBitmap.GdiGraphics.DrawImage(_previewData[_previewPageNumber].Image, destRect);
-			_previewBitmap.WpfBitmap.Invalidate();
-
+				_previewPageNumber = Math.Max(0, Math.Min(_previewPageNumber, _previewData.Length - 1));
+				grfx.DrawImage(_previewData[_previewPageNumber].Image, destRect);
+				_previewBitmap.EndGdiPainting();
+			}
 		}
 
 

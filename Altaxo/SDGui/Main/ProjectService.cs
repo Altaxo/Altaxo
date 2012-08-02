@@ -223,23 +223,26 @@ namespace Altaxo.Main
 			}
 		}
 
-		/// <summary>
-		/// Opens a Altaxo project. If the current project is dirty, the user is ask for saving the current project.
-		/// </summary>
-		/// <param name="filename"></param>
-		public void OpenProject(string filename)
+    /// <summary>
+    /// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
+    /// </summary>
+    /// <param name="filename"></param>
+		/// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
+		/// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
+		/// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
+    public void OpenProject(string filename, bool withoutUserInteraction)
 		{
 			if (CurrentOpenProject != null)
 			{
 				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
-				if (this.CurrentOpenProject.IsDirty)
+				if (this.CurrentOpenProject.IsDirty && withoutUserInteraction==false)
 					AskForSavingOfProject(e);
 
 				if (e.Cancel == true)
 					return;
 
 
-				CloseProject();
+				CloseProject(true);
 			}
 
 			if (!FileUtility.TestFileExists(filename))
@@ -248,18 +251,30 @@ namespace Altaxo.Main
 			}
 			WorkbenchSingleton.Workbench.StatusBar.SetMessage("${res:MainWindow.StatusBar.OpeningCombineMessage}");
 
-			if (Path.GetExtension(filename).ToUpper() == ".AXOPRJ")
+			try
 			{
-				string validproject = Path.ChangeExtension(filename, ".axoprj");
-				if (File.Exists(validproject))
+
+				if (Path.GetExtension(filename).ToUpper() == ".AXOPRJ")
 				{
-					LoadProject(validproject);
+					string validproject = Path.ChangeExtension(filename, ".axoprj");
+					if (File.Exists(validproject))
+					{
+						LoadProject(validproject);
+					}
+
+				}
+				else
+				{
+					LoadProject(filename);
 				}
 
 			}
-			else
+			catch (Exception ex)
 			{
-				LoadProject(filename);
+				if (withoutUserInteraction)
+					throw;
+				else
+					Current.Gui.ErrorMessageBox(ex.Message);
 			}
 
 			WorkbenchSingleton.Workbench.StatusBar.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
@@ -321,7 +336,6 @@ namespace Altaxo.Main
 			catch (Exception exc)
 			{
 				errorText.Append(exc.ToString());
-				Current.Gui.ErrorMessageBox(errorText.ToString());
 			}
 			finally
 			{
@@ -489,15 +503,17 @@ namespace Altaxo.Main
 
 
 		/// <summary>
-		/// Closes a project. If the project is dirty, the user is asked for saving the project.
+		/// Closes a project. If the project is dirty, and <paramref name="forceClose"/> is <c>false</c>, the user is asked to save the project.
 		/// </summary>
-		public void CloseProject()
+		/// <param name="forceClose">If <c>false</c> and the project is dirty, the user will be asked whether he really wants to close the project.
+		/// If <c>true</c>, the project is closed without user interaction.</param>
+		public void CloseProject(bool forceClose)
 		{
 
 			if (CurrentOpenProject != null)
 			{
 				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
-				if (this.CurrentOpenProject.IsDirty)
+				if (this.CurrentOpenProject.IsDirty && !forceClose)
 					AskForSavingOfProject(e);
 
 				if (e.Cancel == false)

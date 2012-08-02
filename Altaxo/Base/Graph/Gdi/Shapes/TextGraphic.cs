@@ -178,7 +178,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 
 				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic();
-				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+				if (info.CurrentElementName == "BaseType") // that was included since 2006-06-20
+				{
+					info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+				}
+				else
+				{
+					info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent); // before 2006-06-20, it was version 0 of the GraphicsObject
+				}
+
 
 				s._text = info.GetString("Text");
 				s._font = (Font)info.GetValue("Font", typeof(Font));

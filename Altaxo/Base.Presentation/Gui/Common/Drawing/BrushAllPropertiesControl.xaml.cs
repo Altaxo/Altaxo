@@ -366,22 +366,23 @@ namespace Altaxo.Gui.Common.Drawing
 				_previewPanel.Source = _previewBitmap.WpfBitmap;
 			}
 
-			var grfx = _previewBitmap.GdiGraphics;
+			using (var grfx = _previewBitmap.BeginGdiPainting())
+			{
+				var fullRect = _previewBitmap.GdiRectangle;
 
-			var fullRect = _previewBitmap.GdiRectangle;
+				grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+				grfx.FillRectangle(System.Drawing.Brushes.Transparent, fullRect);
+				grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 
-			grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-			grfx.FillRectangle(System.Drawing.Brushes.Transparent, fullRect);
-			grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+				var r2 = fullRect;
+				r2.Inflate(-r2.Width / 4, -r2.Height / 4);
+				//grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
 
-			var r2 = fullRect;
-			r2.Inflate(-r2.Width / 4, -r2.Height / 4);
-			//grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
+				brush.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
+				grfx.FillRectangle(brush, fullRect);
 
-			brush.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
-			grfx.FillRectangle(brush, fullRect);
-
-			_previewBitmap.WpfBitmap.Invalidate();
+				_previewBitmap.EndGdiPainting();
+			}
 		}
 
 		public event Action PreviewPanelSizeChanged;

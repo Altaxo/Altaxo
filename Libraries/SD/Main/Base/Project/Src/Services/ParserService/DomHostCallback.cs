@@ -38,6 +38,7 @@ namespace ICSharpCode.SharpDevelop
 		
 		static void ShowAssemblyLoadError(string fileName, string include, string message)
 		{
+			// throw new NullReferenceException(string.Format("FileName={0}; include={1}, message={2}", fileName, include, message));
 			WorkbenchSingleton.Workbench.GetPad(typeof(CompilerMessageView)).BringPadToFront();
 			TaskService.BuildMessageViewCategory.AppendText(
 				StringParser.Parse(

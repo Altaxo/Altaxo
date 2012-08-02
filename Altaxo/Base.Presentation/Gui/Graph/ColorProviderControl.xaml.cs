@@ -87,8 +87,7 @@ namespace Altaxo.Gui.Graph
 
 		public void SetPreviewBitmap(System.Drawing.Bitmap bitmap)
 		{
-			_previewBitmap.WpfBitmap.Invalidate();
-
+			_previewBitmap.EndGdiPainting();
 		}
 
 		public event Action ColorProviderChanged;

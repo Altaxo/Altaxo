@@ -129,10 +129,13 @@ namespace Altaxo.Main
     string CurrentProjectFileName { get; }
 
     /// <summary>
-    /// Opens a Altaxo project. If the current project is dirty, the user is ask for saving the current project.
+    /// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
     /// </summary>
     /// <param name="filename"></param>
-    void OpenProject(string filename);
+		/// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
+		/// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
+		/// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
+    void OpenProject(string filename, bool withoutUserInteraction);
     
 
     /// <summary>
@@ -153,9 +156,11 @@ namespace Altaxo.Main
     void SaveProject();
 
     /// <summary>
-    /// Closes a project. If the project is dirty, the user is asked for saving the project.
+    /// Closes a project. If the project is dirty, and <paramref name="forceClose"/> is <c>false</c>, the user is asked to save the project.
     /// </summary>
-    void CloseProject();
+		/// <param name="forceClose">If <c>false</c> and the project is dirty, the user will be asked whether he really wants to close the project.
+		/// If <c>true</c>, the project is closed without user interaction.</param>
+    void CloseProject(bool forceClose);
 
     /// <summary>
     /// Saves the state of the main window into a zipped file.

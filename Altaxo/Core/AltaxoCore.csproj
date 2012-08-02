@@ -165,6 +165,7 @@
     <Compile Include="Calc\ComplexStats.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\DateTimeMath.cs" />
     <Compile Include="Calc\ErrorFunction.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -561,6 +562,7 @@
     <Compile Include="Collections\Text\LongestCommonSubstringBaseL.cs" />
     <Compile Include="Collections\Text\LongestCommonSubstringL.cs" />
     <Compile Include="Collections\Text\SubstringPosition.cs" />
+    <Compile Include="Calc\PrimeNumberMath.cs" />
     <Compile Include="Science\Energy.cs" />
     <Compile Include="Units\Angle\Degree.cs" />
     <Compile Include="Units\Angle\Pi.cs" />

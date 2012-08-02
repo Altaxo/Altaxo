@@ -248,7 +248,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 				{
 					case ".axoprj":
 					case ".axoprz":
-						Current.ProjectService.OpenProject(item.FullName);
+						Current.ProjectService.OpenProject(item.FullName, false);
 						break;
 					case ".spc":
 						if (Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)

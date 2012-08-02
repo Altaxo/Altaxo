@@ -165,8 +165,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static ImageSource GetImage(LineCapExtension join, bool isForEndCap)
 		{
-
-
 			const int bmpHeight = 24;
 			const int bmpWidth = 48;
 			const double nominalHeight = 24; // height of a combobox item
@@ -176,21 +174,23 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null == _interopBitmap)
 				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
 
-			var grfx = _interopBitmap.GdiGraphics;
-
-			grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
-			grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
-
-			var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
-			if (isForEndCap)
+			using (var grfx = _interopBitmap.BeginGdiPainting())
 			{
-				join.SetEndCap(linePen);
-				grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
-			}
-			else
-			{
-				join.SetStartCap(linePen);
-				grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
+				grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
+				grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
+
+				var linePen = new System.Drawing.Pen(System.Drawing.Brushes.Black, (float)Math.Ceiling(lineWidth));
+				if (isForEndCap)
+				{
+					join.SetEndCap(linePen);
+					grfx.DrawLine(linePen, 0, 0.5f * bmpHeight, bmpWidth * (1 - 0.25f), 0.5f * bmpHeight);
+				}
+				else
+				{
+					join.SetStartCap(linePen);
+					grfx.DrawLine(linePen, 0.25f * bmpWidth, 0.5f * bmpHeight, bmpWidth, 0.5f * bmpHeight);
+				}
+				_interopBitmap.EndGdiPainting();
 			}
 
 			var img = new WriteableBitmap(_interopBitmap.WpfBitmap);

@@ -74,7 +74,12 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Run1();
+			Run5();
+		}
+
+		public void Run5()
+		{
+			Altaxo.AltaxoDocument.VerifyOpeningOfDocumentsWithoutException("V:\\Messungen");
 		}
 
 		public void Run4()

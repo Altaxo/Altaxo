@@ -115,10 +115,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
 
-				var pen = (PenX)info.GetValue("LinePen", s);
-				info.GetBoolean("Fill");
-				info.GetValue("FillBrush", s);
-
+				if (info.CurrentElementName == "LinePen")// 2012-06-18 bugfix: the next three lines are in some cases deserialized in ClosedPathShapeBase
+				{
+					s.Pen =  (PenX)info.GetValue("LinePen", s); 
+					info.GetBoolean("Fill");
+					info.GetValue("FillBrush", s);
+				}
 
 				var l = new LineShape();
 				l.CopyFrom(s);

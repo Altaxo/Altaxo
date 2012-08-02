@@ -293,8 +293,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public static ImageSource GetImage(sd.FontFamily join)
 		{
-
-
 			const int bmpHeight = 24;
 			const int bmpWidth = 48;
 			const double nominalHeight = 24; // height of a combobox item
@@ -304,17 +302,19 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null == _interopBitmap)
 				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
 
-			var grfx = _interopBitmap.GdiGraphics;
-
-			grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
-			grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
-			using (var font = new sd.Font(join, bmpHeight, sd.FontStyle.Regular))
+			using (var grfx = _interopBitmap.BeginGdiPainting())
 			{
-				// grfx.DrawString("Abc", font, sd.Brushes.Black, 0, (bmpHeight * 3) / 4);
+				grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
+				grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
+				using (var font = new sd.Font(join, bmpHeight, sd.FontStyle.Regular))
+				{
+					// grfx.DrawString("Abc", font, sd.Brushes.Black, 0, (bmpHeight * 3) / 4);
+				}
+				grfx.DrawLine(sd.Pens.Black, 0, 0, bmpWidth, bmpHeight);
+				_interopBitmap.EndGdiPainting();
 			}
-			grfx.DrawLine(sd.Pens.Black, 0, 0, bmpWidth, bmpHeight);
 
-			var img = new WriteableBitmap(_interopBitmap.WpfBitmap);
+			var img = new WriteableBitmap(_interopBitmap.WpfBitmapSource);
 			img.Freeze();
 			return img;
 		}

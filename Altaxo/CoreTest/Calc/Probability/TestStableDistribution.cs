@@ -1485,7 +1485,7 @@ new double[]{50.0,-5.184705528587072464086453e21}
       string msg;
 
       msg = String.Format("i={0}", maxtoli);
-      Assert.Less(1, maxtol, msg);
+      Assert.Less(maxtol, 1, msg);
     }
     #endregion
   }

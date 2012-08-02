@@ -679,14 +679,15 @@ namespace Altaxo.Gui.Common.Drawing
 				_previewPanel.Source = _previewBitmap.WpfBitmap;
 			}
 
-			var grfx = _previewBitmap.GdiGraphics;
+			using (var grfx = _previewBitmap.BeginGdiPainting())
+			{
+				var fullRect = _previewBitmap.GdiRectangle;
+				grfx.FillRectangle(System.Drawing.Brushes.White, fullRect);
+				_pen.BrushHolder.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
+				grfx.DrawLine(_pen, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
 
-			var fullRect = _previewBitmap.GdiRectangle;
-			grfx.FillRectangle(System.Drawing.Brushes.White, fullRect);
-			_pen.BrushHolder.SetEnvironment(fullRect, BrushX.GetEffectiveMaximumResolution(grfx));
-			grfx.DrawLine(_pen, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
-
-			_previewBitmap.WpfBitmap.Invalidate();
+				_previewBitmap.EndGdiPainting();
+			}
 
 		}
 

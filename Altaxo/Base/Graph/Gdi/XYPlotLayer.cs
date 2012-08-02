@@ -1884,7 +1884,7 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if (null != LinkedLayer)
-            height *= LinkedLayer.Size.X;
+            height *= LinkedLayer.Size.Y;
           break;
       }
       return height;

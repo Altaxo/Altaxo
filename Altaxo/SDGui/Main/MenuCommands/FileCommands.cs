@@ -40,7 +40,7 @@ namespace Altaxo.Main.Commands
 	{
 		public void Load(string fileName)
 		{
-			Current.ProjectService.OpenProject(fileName);
+			Current.ProjectService.OpenProject(fileName, false);
 		}
 	}
 	/// <summary>
@@ -202,7 +202,7 @@ namespace Altaxo.Main.Commands
 
 			if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
 			{
-				Current.ProjectService.OpenProject(openFileDialog1.FileName);
+				Current.ProjectService.OpenProject(openFileDialog1.FileName, false);
 				FileService.RecentOpen.AddLastProject(openFileDialog1.FileName);
 			}
 			else // in case the user cancels the open file dialog
@@ -258,7 +258,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Current.ProjectService.CloseProject();
+			Current.ProjectService.CloseProject(false);
 		}
 	}
 
@@ -287,7 +287,7 @@ namespace Altaxo.Main.Commands
 					items[i].Click += delegate
 					{
 						// Original SharpDevelop: ProjectService.LoadSolution(recentProject);
-						FileUtility.ObservedLoad(new NamedFileOperationDelegate(Current.ProjectService.OpenProject), recentProject);
+						FileUtility.ObservedLoad(new NamedFileOperationDelegate(fileName => Current.ProjectService.OpenProject(fileName,false)), recentProject);
 					};
 				}
 				return items;

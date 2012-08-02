@@ -79,6 +79,10 @@ namespace Altaxo.Graph
 			{
 
 				var s = null != o ? (GraphViewLayout)o : new GraphViewLayout();
+
+				if (info.CurrentElementName == "BaseType")
+					info.GetString("BaseType");
+
 				s._isAutoZoomActive = info.GetBoolean("AutoZoom");
 				s._zoomFactor = info.GetSingle("Zoom");
 

@@ -96,8 +96,10 @@ namespace Altaxo.Graph.Gdi.Plot
 				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", typeof(XYLineScatterPlotStyle));
 
 				G2DPlotStyleCollection ps = new G2DPlotStyleCollection();
-				ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
-				ps.Add(new LinePlotStyle(lsps.XYPlotLineStyle));
+				if(null!=lsps.ScatterStyle)
+					ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
+				if(null!=lsps.XYPlotLineStyle)
+					ps.Add(new LinePlotStyle(lsps.XYPlotLineStyle));
 
 				if (null == o)
 				{

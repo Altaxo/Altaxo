@@ -22,6 +22,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Altaxo.Serialization;
 using Altaxo.Main;
@@ -445,11 +446,11 @@ namespace Altaxo
     {
       if(null==o)
         return null;
-      else if(o.Equals(this._dataTables))
+      else if(object.ReferenceEquals(o,this._dataTables))
         return "Tables";
-      else if(o.Equals(this._graphs))
+      else if(object.ReferenceEquals(o,this._graphs))
         return "Graphs";
-      else if (o.Equals(this._fitFunctionScripts))
+      else if (object.ReferenceEquals(o,this._fitFunctionScripts))
         return "FitFunctionScripts";
       else
         return null;
@@ -471,6 +472,88 @@ namespace Altaxo
 			var destPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
 			destPath.Add(destinationFolder);
 			options.AddPathReplacement(srcPath, destPath);
+		}
+
+		#endregion
+
+		#region Static test functions
+
+		static List<string> GetAltaxoProjectFileNames(string pathsSeparatedBySemicolon)
+		{
+			var list = new List<string>();
+
+
+			var paths = pathsSeparatedBySemicolon.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+			for (int i = 0; i < paths.Length; ++i)
+			{
+				var path = paths[i].Trim();
+				if (string.IsNullOrEmpty(path))
+					continue;
+
+				if (!System.IO.Directory.Exists(path))
+				{
+					Current.Console.WriteLine("Error: directory {0} does not exist", path);
+					continue;
+				}
+
+				var searchPattern = "*.axoprj";
+				var files = System.IO.Directory.EnumerateFiles(path, searchPattern, System.IO.SearchOption.AllDirectories);
+				list.AddRange(files);
+			}
+
+			if (list.Count == 0)
+			{
+				Current.Console.WriteLine("Error: no files found in {0}", pathsSeparatedBySemicolon);
+			}
+			return list;
+		}
+
+		public static void VerifyOpeningOfDocumentsWithoutException(string path)
+		{
+			System.Threading.Tasks.Task t = new System.Threading.Tasks.Task(()=>InternalVerifyOpeningOfDocumentsWithoutException(path));
+			t.Start();
+		}
+
+		public static void InternalVerifyOpeningOfDocumentsWithoutException(string path)
+		{
+			var filelist = GetAltaxoProjectFileNames(path);
+
+			string prevFileName = string.Empty;
+
+			int numberOfProjectsTested=0;
+			int numberOfProjectsFailedToLoad = 0;
+
+			foreach (var filename in filelist)
+			{
+				try
+				{
+					Current.Gui.Execute(Current.ProjectService.CloseProject,true);
+					System.Threading.Thread.Sleep(1000);
+				}
+				catch (Exception ex)
+				{
+					Current.Console.WriteLine("Error closing file {0}; Message: {1}", prevFileName, ex.Message);
+					Current.Console.WriteLine("Operation will be stopped here because of error on closing");
+					return;
+				}
+
+				try
+				{
+					++numberOfProjectsTested;
+					Current.Gui.Execute(Current.ProjectService.OpenProject,filename,true);
+					System.Threading.Thread.Sleep(1000);
+				}
+				catch (Exception ex)
+				{
+					++numberOfProjectsFailedToLoad;
+					Current.Console.WriteLine("Error opening file {0}", filename);
+				}
+
+				prevFileName = filename;
+			}
+
+			Current.Console.WriteLine("End of test. {0} projects tested, {1} projects failed to load", numberOfProjectsTested, numberOfProjectsFailedToLoad);
 		}
 
 		#endregion

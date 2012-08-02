@@ -160,14 +160,16 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null == _interopBitmap)
 				_interopBitmap = new GdiToWpfBitmap(bmpWidth, bmpHeight);
 
-			var grfx = _interopBitmap.GdiGraphics;
-
+			using(var grfx = _interopBitmap.BeginGdiPainting())
+			{
 			grfx.CompositingMode = sdd.CompositingMode.SourceCopy;
 			grfx.FillRectangle(System.Drawing.Brushes.Transparent, 0, 0, bmpWidth, bmpHeight);
 			using (var font = new sd.Font(sd.FontFamily.GenericSansSerif, bmpHeight, sd.FontStyle.Regular))
 			{
 				//grfx.DrawString("Abc", font, sd.Brushes.Black, 0, (bmpHeight * 3) / 4);
 			}
+			_interopBitmap.EndGdiPainting();
+		}
 
 			var img = new WriteableBitmap(_interopBitmap.WpfBitmap);
 			img.Freeze();

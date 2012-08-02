@@ -276,6 +276,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\TestKohlrausch.cs" />
+    <Compile Include="Calc\TestPrimeNumbers.cs" />
+    <Compile Include="Calc\TestRoundings.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

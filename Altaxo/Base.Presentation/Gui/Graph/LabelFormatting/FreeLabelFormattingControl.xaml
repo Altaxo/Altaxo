@@ -9,7 +9,7 @@
  						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              >
-	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+	<StackPanel Orientation="Vertical">
 		<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>

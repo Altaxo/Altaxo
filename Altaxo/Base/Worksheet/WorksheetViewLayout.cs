@@ -68,10 +68,16 @@ namespace Altaxo.Worksheet
 					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
 					info.CloseElement();
 				}
+				else if (info.CurrentElementName == "BaseType")
+				{
+					info.GetString("BaseType");
+					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
+				}
 				else
 				{
 					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
 				}
+
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 				return s;

@@ -101,11 +101,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <returns></returns>
 		public System.Drawing.Graphics BeginPaintingGraph()
 		{
-			var result = _wpfGdiBitmap.GdiGraphics;
-			result.ResetTransform();
-			result.PageScale = 1;
-			result.PageUnit = System.Drawing.GraphicsUnit.Pixel;
-			return result;
+			var grfx = _wpfGdiBitmap.BeginGdiPainting();
+			grfx.ResetTransform();
+			grfx.PageScale = 1;
+			grfx.PageUnit = System.Drawing.GraphicsUnit.Pixel;
+			return grfx;
 		}
 
 		/// <summary>
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void EndPaintingGraph()
 		{
-			_wpfGdiBitmap.WpfBitmap.Invalidate();
+			_wpfGdiBitmap.EndGdiPainting();
 		}
 
 

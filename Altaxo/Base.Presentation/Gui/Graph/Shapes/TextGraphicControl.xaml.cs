@@ -373,8 +373,11 @@ namespace Altaxo.Gui.Graph.Shapes
 		{
 			if (_controller != null)
 			{
-				_controller.EhView_PreviewPanelPaint(_previewBitmap.GdiGraphics);
-				_previewBitmap.WpfBitmap.Invalidate();
+				using (var grfx = _previewBitmap.BeginGdiPainting())
+				{
+					_controller.EhView_PreviewPanelPaint(grfx);
+					_previewBitmap.EndGdiPainting();
+				}
 			}
 		}
 

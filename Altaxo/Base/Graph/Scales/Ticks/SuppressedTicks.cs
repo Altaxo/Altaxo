@@ -214,5 +214,34 @@ namespace Altaxo.Graph.Scales.Ticks
 				}
 			}
 		}
+
+
+		/// <summary>Removes the suppressed ticks from the list given as argument.</summary>
+		/// <param name="ticks">The tick list. At return, the suppressed ticks are removed from that list.</param>
+		public void RemoveSuppressedTicks(IList<AltaxoVariant> ticks)
+		{
+			// Remove suppressed ticks
+			if (_suppressedTicksByNumber.Count > 0)
+			{
+				var suppressedTicksDescending = GetValidTickNumbersDecendingWithNegativeNumbersTransformed(ticks.Count);
+				foreach (var i in suppressedTicksDescending)
+				{
+					ticks.RemoveAt(i);
+				}
+			}
+
+			if (_suppressedTickValues.Count > 0)
+			{
+				for (int i = ticks.Count - 1; i >= 0; --i)
+				{
+					if (_suppressedTickValues.Contains(ticks[i]))
+						ticks.RemoveAt(i);
+				}
+			}
+		}
+
+
+
+
 	}
 }
