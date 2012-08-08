@@ -68,7 +68,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			{
 				FitElement s = (FitElement)obj;
 
-				s.InternalCheckAndCorrectArraySize(true); // make sure the fit function has not changed unnoticed
+				s.InternalCheckAndCorrectArraySize(true,false); // make sure the fit function has not changed unnoticed
 
 				info.AddValue("FitFunction", s._fitFunction);
 				info.AddValue("NumberOfRows", s._rangeOfRows.Count);
@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 
 				// now some afterwork
-				if (s.InternalCheckAndCorrectArraySize(false))
+				if (s.InternalCheckAndCorrectArraySize(false, false))
 					Current.Console.WriteLine("Error: Fitelement array size mismatch");
 
 
@@ -145,6 +145,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			this._fitFunction = from._fitFunction;
 			if (_fitFunction is ICloneable)
 				this._fitFunction = (IFitFunction)((ICloneable)from.FitFunction).Clone();
+			if (null != _fitFunction)
+				_fitFunction.Changed += EhFitFunctionChanged;
 
 			_rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(from._rangeOfRows.Start, from._rangeOfRows.Count);
 			_independentVariables = new NumericColumnProxy[from._independentVariables.Length];
@@ -197,8 +199,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </returns>
 		public string ParameterName(int i)
 		{
-			try
-			{
 				if (null != _fitFunction)
 				{
 					if (null != _parameterNames[i])
@@ -210,11 +210,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				{
 					return null;
 				}
-			}
-			catch (Exception ex)
-			{
-				return null;
-			}
 		}
 
 		/// <summary>
@@ -378,19 +373,35 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 			set
 			{
+				if (null != _fitFunction)
+				{
+					_fitFunction.Changed -= EhFitFunctionChanged;
+				}
+				
 				_fitFunction = value;
-				InternalCheckAndCorrectArraySize(false);
+
+				if (null != _fitFunction)
+				{
+					_fitFunction.Changed += EhFitFunctionChanged;
+				}
+
+				InternalCheckAndCorrectArraySize(false, false);
 			}
 		}
 
+		void EhFitFunctionChanged()
+		{
+			InternalCheckAndCorrectArraySize(false, true);
+		}
 
 		/// <summary>
 		/// Checks the size of the arrays (independent variables, dependent variables, parameters) against the corresponding values of the fit function and throws an InvalidOperationException when a mismatch is detected.
 		/// The most probably cause of this is when the fit function has changed the number of parameters (or dependent or independent) variables unnoticed by this FitElement.
 		/// </summary>
 		/// <param name="throwOnMismatch">If <c>true</c>, an InvalidOperationException is thrown if the corresponding number from the fit function and the array size mismatch.</param>
+		/// <param name="forceChangedEvent">If <c>true</c>, the <see cref="Changed"/> event is fired even if no mismatch was detected.</param>
 		/// <returns><c>True</c> if any mismatch occurred, so that the array size has changed. Otherwise, <c>False</c> is returned.</returns>
-		bool InternalCheckAndCorrectArraySize(bool throwOnMismatch)
+		bool InternalCheckAndCorrectArraySize(bool throwOnMismatch, bool forceChangedEvent)
 		{
 			if (_fitFunction == null)
 				return false;
@@ -423,7 +434,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					InternalReallocParameters(_fitFunction.NumberOfParameters);
 			}
 
-			if (hasMismatch)
+			if (hasMismatch | forceChangedEvent)
 				OnChanged();
 
 			return hasMismatch;

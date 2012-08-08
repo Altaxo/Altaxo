@@ -133,6 +133,26 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			return null;
 		}
 
+		#region Change event
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
+
+		#endregion
+
+
+
 		public virtual void Evaluate(double[] X, double[] P, double[] Y)
 		{
 			Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);

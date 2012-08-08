@@ -197,13 +197,14 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			Y[0] = TransformedValue.BaseValueToTransformedValue(yraw, _dependentVariableTransform);
 		}
 
+		/// <summary>
+		/// Not used here since this fit function never changed.
+		/// </summary>
+		public event Action Changed;
+
 		#endregion
 
-		#region IFitFunction Members
-
-
-
-		#endregion
+	
 	}
 
 

@@ -634,6 +634,27 @@ namespace Altaxo.Calc
 		/// <param name="result">On return, this array contains the one (or more) evaluated
 		/// function values at the point (independent).</param>
 		public abstract void Evaluate(double[] independent, double[] parameters, double[] result);
+
+
+		#region Change event
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
+
+		#endregion
+
+
 	}
 
 	/// <summary>

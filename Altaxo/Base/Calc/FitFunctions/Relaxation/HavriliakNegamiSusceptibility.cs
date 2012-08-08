@@ -147,8 +147,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				value = Math.Max(value, 0);
 				_numberOfTerms = value;
 
-				if (value != oldValue)
+				if (oldValue!=value)
 				{
+					OnChanged();
 				}
 			}
 		}
@@ -280,6 +281,22 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		{
 			return null;
 		}
+
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
+
 
 		#endregion
 

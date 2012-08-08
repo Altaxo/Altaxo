@@ -42,21 +42,39 @@ namespace Altaxo.Calc.FitFunctions.Materials
 		public EnergyRepresentation ParameterEnergyRepresentation
 		{
 			get { return _paramEnergyUnit; }
-			set { _paramEnergyUnit = value; }
+			set
+			{
+				var oldValue = _paramEnergyUnit;
+				_paramEnergyUnit = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		[Category("OptionsForDependentVariables")]
 		public TransformedValueRepresentation DependentVariableRepresentation
 		{
 			get { return _dependentVariableTransform; }
-			set { _dependentVariableTransform = value; }
+			set
+			{
+				var oldValue = _dependentVariableTransform;
+				_dependentVariableTransform = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		[Category("OptionsForIndependentVariables")]
 		public TemperatureRepresentation IndependentVariableRepresentation
 		{
 			get { return _temperatureUnitOfX; }
-			set { _temperatureUnitOfX = value; }
+			set
+			{
+				var oldValue = _temperatureUnitOfX;
+				_temperatureUnitOfX = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		#region Serialization
@@ -170,6 +188,26 @@ namespace Altaxo.Calc.FitFunctions.Materials
 		{
 			return null;
 		}
+
+		#region Change event
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
+
+		#endregion
+
+
 
 		public void Evaluate(double[] X, double[] P, double[] Y)
 		{

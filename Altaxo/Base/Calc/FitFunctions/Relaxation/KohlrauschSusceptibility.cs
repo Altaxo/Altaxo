@@ -91,25 +91,49 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		public bool UseFrequencyInsteadOmega
 		{
 			get { return _useFrequencyInsteadOmega; }
-			set { _useFrequencyInsteadOmega = value; }
+			set 
+			{
+				var oldValue = _useFrequencyInsteadOmega;
+				_useFrequencyInsteadOmega = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		public bool UseFlowTerm
 		{
 			get { return _useFlowTerm; }
-			set { _useFlowTerm = value; }
+			set
+			{
+				var oldValue = _useFlowTerm;
+				_useFlowTerm = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		public bool IsDielectricData
 		{
 			get { return _isDielectricData; }
-			set { _isDielectricData = value; }
+			set 
+			{
+				var oldValue = _isDielectricData;
+				_isDielectricData = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		public bool InvertViscosity
 		{
 			get { return _invertViscosity; }
-			set { _invertViscosity = value; }
+			set 
+			{
+				var oldValue = _invertViscosity;
+				_invertViscosity = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		public int NumberOfRelaxations
@@ -119,7 +143,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			{
 				if (value < 0)
 					throw new ArgumentOutOfRangeException("NumberOfRelaxations has to be a positive number");
+				var oldValue = _numberOfRelaxations;
 				_numberOfRelaxations = value;
+
+				if (oldValue != value)
+					OnChanged();
 			}
 		}
 
@@ -292,6 +320,21 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				Y[1] = -result.Im;
 			}
 		}
+
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
 
 		#endregion
 	}

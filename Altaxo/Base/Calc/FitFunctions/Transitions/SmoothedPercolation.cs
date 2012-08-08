@@ -257,6 +257,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		}
 
 
+		/// <summary>
+		/// Not used here since this fit function never changed.
+		/// </summary>
+		public event Action Changed;
+
 
 		#endregion
 

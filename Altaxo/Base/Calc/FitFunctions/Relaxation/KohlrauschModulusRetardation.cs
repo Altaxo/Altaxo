@@ -245,6 +245,22 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
+
+
 		#endregion
 	}
 }

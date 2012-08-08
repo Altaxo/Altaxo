@@ -137,13 +137,24 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			Y[0] = P[0] + P[1] * Math.Exp(-Math.Pow(X[0] / P[2], P[3]));
 		}
 
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
+
 		#endregion
 
-		#region IFitFunction Members
-
-
-
-		#endregion
+	
 	}
 
 

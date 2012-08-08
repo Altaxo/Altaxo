@@ -92,6 +92,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				_func(independent, parameters, FV);
 			}
 
+			/// <summary>
+			/// Not used here since this fit function never changed.
+			/// </summary>
+			public event Action Changed;
+
 			#endregion
 		}
 

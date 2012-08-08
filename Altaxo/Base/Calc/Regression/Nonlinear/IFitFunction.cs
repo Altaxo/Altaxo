@@ -99,6 +99,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="FV">On return, this array contains the one (or more) evaluated
 		/// function values at the point (independent).</param>
 		void Evaluate(double[] independent, double[] parameters, double[] FV);
+
+
+		/// <summary>
+		/// Occurs when the fit function changed, including number or name of parameters, independent variables, dependent variables, or the scaling.
+		/// </summary>
+		event Action Changed;
 	}
 
 	public interface IFitFunctionWithGradient : IFitFunction

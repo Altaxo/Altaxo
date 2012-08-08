@@ -75,6 +75,24 @@ namespace Altaxo.Calc.FitFunctions.General
 			return new PolynomialFit(9);
 		}
 
+		public int Order
+		{
+			get
+			{
+				return _order;
+			}
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("Order has to be greater than or equal to zero");
+
+				var oldValue = _order;
+				_order = value;
+				if (oldValue != value)
+					OnChanged();
+			}
+		}
+
 
 		#region IFitFunction Members
 
@@ -139,6 +157,20 @@ namespace Altaxo.Calc.FitFunctions.General
 
 			Y[0] = sum;
 		}
+
+		/// <summary>
+		/// Called when anything in this fit function has changed.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed();
+		}
+
+		/// <summary>
+		/// Fired when the fit function changed.
+		/// </summary>
+		public event Action Changed;
 
 		#endregion
 
