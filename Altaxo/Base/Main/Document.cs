@@ -509,14 +509,26 @@ namespace Altaxo
 			return list;
 		}
 
-		public static void VerifyOpeningOfDocumentsWithoutException(string path)
+		public static void VerifyOpeningOfDocumentsWithoutException()
 		{
-			System.Threading.Tasks.Task t = new System.Threading.Tasks.Task(()=>InternalVerifyOpeningOfDocumentsWithoutException(path));
-			t.Start();
+			var dlg = new Altaxo.Gui.Common.TextValueInputController("C:\\", 
+				"This command will search for all Altaxo projects in directories and all subdirectories therein. Then these projects will be opened and closed,"+
+				"and any errors will be reported in the output pane.\r\n" + 
+				"Please enter your root directory here. You can enter multiple directories by separating them with a semicolon (;)");
+
+			if (!Current.Gui.ShowDialog(dlg, "Test Altaxo project files on your disk"))
+				return;
+
+				string path = (string)dlg.ModelObject;
+
+				var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+				Current.Gui.ShowBackgroundCancelDialog(10, monitor, () => InternalVerifyOpeningOfDocumentsWithoutException(path, monitor));
 		}
 
-		public static void InternalVerifyOpeningOfDocumentsWithoutException(string path)
+		public static void InternalVerifyOpeningOfDocumentsWithoutException(string path, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
 		{
+			monitor.ReportProgress("Searching Altaxo project files ...", 0);
+
 			var filelist = GetAltaxoProjectFileNames(path);
 
 			string prevFileName = string.Empty;
@@ -524,8 +536,16 @@ namespace Altaxo
 			int numberOfProjectsTested=0;
 			int numberOfProjectsFailedToLoad = 0;
 
+			double totalFilesToTest = filelist.Count;
+
+			monitor.ReportProgress(string.Format("Searching done, {0} Altaxo project files found.", totalFilesToTest));
+
+
 			foreach (var filename in filelist)
 			{
+				if (monitor.CancellationPending)
+					break;
+
 				try
 				{
 					Current.Gui.Execute(Current.ProjectService.CloseProject,true);
@@ -538,15 +558,31 @@ namespace Altaxo
 					return;
 				}
 
+
+				if (monitor.CancellationPending)
+					break;
+
 				try
 				{
+					monitor.ReportProgress(string.Format(
+						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+						"Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest,  filename ), numberOfProjectsTested / totalFilesToTest);
+
 					++numberOfProjectsTested;
 					Current.Gui.Execute(Current.ProjectService.OpenProject,filename,true);
+
+					monitor.ReportProgress(string.Format(
+						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+						"Loaded successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+
 					System.Threading.Thread.Sleep(1000);
 				}
 				catch (Exception ex)
 				{
 					++numberOfProjectsFailedToLoad;
+					monitor.ReportProgress(string.Format(
+						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+						"Failed to load: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 					Current.Console.WriteLine("Error opening file {0}", filename);
 				}
 

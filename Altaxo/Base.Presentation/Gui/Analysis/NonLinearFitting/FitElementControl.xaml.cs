@@ -306,7 +306,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		private string GetTextShownForErrorEvaluation(int i)
 		{
-			string name = _fitElement.ErrorEvaluation(i) != null ? _fitElement.ErrorEvaluation(i).ShortName : string.Empty;
+			string name = _fitElement.GetErrorEvaluation(i) != null ? _fitElement.GetErrorEvaluation(i).ShortName : string.Empty;
 			return name;
 		}
 

@@ -33,18 +33,29 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// </summary>
 	public class FitElement : ICloneable
 	{
-
-		/// <summary>
-		/// Fitting function. Can be null if no fitting function was actually chosen.
-		/// </summary>
+		/// <summary>Fitting function. Can be null if no fitting function was actually chosen.</summary>
 		IFitFunction _fitFunction;
+
+		/// <summary>Holds the range of rows of the data source that are used for the fitting procedure.</summary>
 		ContiguousNonNegativeIntegerRange _rangeOfRows;
+
+		/// <summary>Array of columns that are used as data source for the independent variables.</summary>
 		NumericColumnProxy[] _independentVariables;
+
+		/// <summary>Array of columns that are used as data source for the dependent variables.</summary>
 		NumericColumnProxy[] _dependentVariables;
+
+		/// <summary>Holds for each dependent variable the kind of error evaluation (i.e. the kind of weighing of the difference between current dependent values and the calculated value of the fitting function)</summary>
 		IVarianceScaling[] _errorEvaluation;
+
+		/// <summary>Array of the current parameter names. The length of this array should be equal to that of <see cref="P:IFitFunction.NumberOfParameters"/>. If an element of this array is null, the parameter name
+		/// of the fit function is used. Otherwise, this value overrides the original parameter name of the fit function.</summary>
 		string[] _parameterNames = new string[0];
+
+		/// <summary></summary>
 		string _parameterNameStart = string.Empty;
 
+		/// <summary>Occurs when anything of this instance has changed.</summary>
 		public event EventHandler Changed;
 
 
@@ -56,6 +67,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				FitElement s = (FitElement)obj;
+
+				s.InternalCheckAndCorrectArraySize(true); // make sure the fit function has not changed unnoticed
 
 				info.AddValue("FitFunction", s._fitFunction);
 				info.AddValue("NumberOfRows", s._rangeOfRows.Count);
@@ -103,6 +116,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 						s._parameterNames[i] = null; // serialization can not distinguish between an empty string and a null string
 
 				s._parameterNameStart = info.GetString("ParameterNameStart");
+
+
+				// now some afterwork
+				if (s.InternalCheckAndCorrectArraySize(false))
+					Current.Console.WriteLine("Error: Fitelement array size mismatch");
+
+
 				return s;
 			}
 		}
@@ -170,19 +190,31 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <summary>
 		/// Gives the ith parameter name.
 		/// </summary>
-		/// <param name="i">Index.</param>
-		/// <returns>The ith parameter name.</returns>
+		/// <param name="i">Index of the parameter whose name is to be retrieved.</param>
+		/// <returns>The ith parameter name. Returns null if the <see cref="_fitFunction"/> is <c>null</c>.
+		/// Otherwise, if <see cref="_parameterNames"/>[i] is not null, returns this value.
+		/// If <see cref="_parameterNames"/>[i] is null then the value of <see cref="_parameterNameStart"/> is concenated with the original parameter name of the fit function and that value is returned.
+		/// </returns>
 		public string ParameterName(int i)
 		{
-			if (null != _fitFunction)
+			try
 			{
-				if (null == _parameterNames[i])
-					return _parameterNameStart + _fitFunction.ParameterName(i);
+				if (null != _fitFunction)
+				{
+					if (null != _parameterNames[i])
+						return _parameterNames[i];
+					else
+						return _parameterNameStart + _fitFunction.ParameterName(i);
+				}
 				else
-					return _parameterNames[i];
+				{
+					return null;
+				}
 			}
-			else
+			catch (Exception ex)
+			{
 				return null;
+			}
 		}
 
 		/// <summary>
@@ -216,12 +248,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			OnChanged();
 		}
 
+		/// <summary>
+		/// Sets the range of rows that are used for the regression.
+		/// </summary>
+		/// <param name="range">The row range to be set.</param>
 		public void SetRowRange(ContiguousNonNegativeIntegerRange range)
 		{
 			this._rangeOfRows = range;
 			OnChanged();
 		}
 
+		/// <summary>
+		/// Gets the row range that is used for the regression.
+		/// </summary>
+		/// <returns></returns>
 		public ContiguousNonNegativeIntegerRange GetRowRange()
 		{
 			return this._rangeOfRows;
@@ -281,11 +321,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		public IVarianceScaling ErrorEvaluation(int i)
+		/// <summary>
+		/// Gets the kind of error evaluation for the ith dependent variable.
+		/// </summary>
+		/// <param name="i">The index of the dependent variable.</param>
+		/// <returns>Kind of error evaluation for the ith dependent variable.</returns>
+		public IVarianceScaling GetErrorEvaluation(int i)
 		{
 			return this._errorEvaluation[i];
 		}
 
+		/// <summary>
+		/// Gets the kind of error evaluation for the ith dependent variable.
+		/// </summary>
+		/// <param name="i">The index of the dependent variable.</param>
+		/// <param name="val">Kind of error evaluation for the ith dependent variable.</param>
 		public void SetErrorEvaluation(int i, IVarianceScaling val)
 		{
 			this._errorEvaluation[i] = val;
@@ -293,7 +343,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		/// <summary>
 		/// Returns true if the regression procedure has to include weights in the calculation.
-		/// Else, if weights are not used for all used dependent variables (ConstantVarianceScaling with Scaling==1), <c>false</c> is returned.
+		/// Otherwise, if weights are not used for all used dependent variables (ConstantVarianceScaling with Scaling==1), <c>false</c> is returned.
 		/// </summary>
 		public bool UseWeights
 		{
@@ -329,23 +379,55 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			set
 			{
 				_fitFunction = value;
-
-				if (_fitFunction != null)
-				{
-					if (_fitFunction.NumberOfIndependentVariables != _independentVariables.Length)
-						InternalReallocIndependentVariables(_fitFunction.NumberOfIndependentVariables);
-					if (_fitFunction.NumberOfDependentVariables != _dependentVariables.Length)
-						InternalReallocDependentVariables(_fitFunction.NumberOfDependentVariables);
-					if (_fitFunction.NumberOfParameters != _parameterNames.Length)
-						InternalReallocParameters(_fitFunction.NumberOfParameters);
-				}
-
-				OnChanged();
-
+				InternalCheckAndCorrectArraySize(false);
 			}
 		}
 
 
+		/// <summary>
+		/// Checks the size of the arrays (independent variables, dependent variables, parameters) against the corresponding values of the fit function and throws an InvalidOperationException when a mismatch is detected.
+		/// The most probably cause of this is when the fit function has changed the number of parameters (or dependent or independent) variables unnoticed by this FitElement.
+		/// </summary>
+		/// <param name="throwOnMismatch">If <c>true</c>, an InvalidOperationException is thrown if the corresponding number from the fit function and the array size mismatch.</param>
+		/// <returns><c>True</c> if any mismatch occurred, so that the array size has changed. Otherwise, <c>False</c> is returned.</returns>
+		bool InternalCheckAndCorrectArraySize(bool throwOnMismatch)
+		{
+			if (_fitFunction == null)
+				return false;
+
+			bool hasMismatch = false;
+
+			if (_fitFunction.NumberOfIndependentVariables != _independentVariables.Length)
+			{
+				hasMismatch = true;
+				if (throwOnMismatch)
+					throw new InvalidOperationException("Mismatch between number of independent variables of the fit function and of the array. Probably the fit function was changed after assigning them to the fit element, and dit not fire the Changed event");
+				else
+					InternalReallocIndependentVariables(_fitFunction.NumberOfIndependentVariables);
+
+			}
+			if (_fitFunction.NumberOfDependentVariables != _dependentVariables.Length)
+			{
+				hasMismatch = true;
+				if (throwOnMismatch)
+					throw new InvalidOperationException("Mismatch between number of dependent variables of the fit function and of the array. Probably the fit function was changed after assigning them to the fit element, and dit not fire the Changed event");
+				else
+					InternalReallocDependentVariables(_fitFunction.NumberOfDependentVariables);
+			}
+			if (_fitFunction.NumberOfParameters != _parameterNames.Length)
+			{
+				hasMismatch = true;
+				if (throwOnMismatch)
+					throw new InvalidOperationException("Mismatch between number of parameters of the fit function and of the array. Probably the fit function was changed after assigning them to the fit element, and dit not fire the Changed event");
+				else
+					InternalReallocParameters(_fitFunction.NumberOfParameters);
+			}
+
+			if (hasMismatch)
+				OnChanged();
+
+			return hasMismatch;
+		}
 
 		void InternalReallocIndependentVariables(int noIndep)
 		{
@@ -384,24 +466,30 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		}
 
 
+		/// <summary>
+		/// Gets the number of independent variables of this fit element.
+		/// </summary>
 		public int NumberOfIndependentVariables
 		{
 			get
 			{
-				return this._fitFunction != null ? _fitFunction.NumberOfIndependentVariables : this._independentVariables.Length;
-			}
-		}
-
-		public int NumberOfDependentVariables
-		{
-			get
-			{
-				return this._fitFunction != null ? Math.Min(_fitFunction.NumberOfDependentVariables, _dependentVariables.Length) : this._dependentVariables.Length;
+				return this._fitFunction != null ? _fitFunction.NumberOfIndependentVariables : 0;
 			}
 		}
 
 		/// <summary>
-		/// Returns the number of dependent variables that are currently in use for fitting.
+		/// Gets the maximum possible number of dependent variables of this fit element. Please note that the actual used number of dependent variables can be less than this (see <see cref="NumberOfUsedDependentVariables"/>).
+		/// </summary>
+		public int NumberOfDependentVariables
+		{
+			get
+			{
+				return this._fitFunction != null ? _fitFunction.NumberOfDependentVariables : 0;
+			}
+		}
+
+		/// <summary>
+		/// Returns the number of dependent variables that are currently used for fitting.
 		/// </summary>
 		public int NumberOfUsedDependentVariables
 		{
@@ -410,14 +498,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				int sum = 0;
 				if (null != _dependentVariables)
 				{
-					for (int i = 0; i < _dependentVariables.Length; i++)
+					int len = _dependentVariables.Length;
+					if (null != _fitFunction)
+						len = Math.Min(len, _fitFunction.NumberOfDependentVariables);
+
+					for (int i = len - 1; i >= 0; --i)
 						if (_dependentVariables[i] != null && _dependentVariables[i].Document != null)
 							sum++;
 				}
-				return this._fitFunction != null ? Math.Min(_fitFunction.NumberOfDependentVariables, sum) : sum;
+				return sum;
 			}
 		}
 
+		/// <summary>
+		/// Gets the number of parameters.
+		/// </summary>
 		public int NumberOfParameters
 		{
 			get
@@ -426,6 +521,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
+		/// <summary>
+		/// Called when the Changed event should be fired.
+		/// </summary>
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
@@ -433,6 +531,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		}
 
 
+		/// <summary>
+		/// Calculates the valid numeric rows of the data source, i.e. that rows that can be used for fitting. Both dependent and independent variable sources are considered. A row is considered valid, if
+		/// all (independent and dependent) variables of this row have finite numeric values.
+		/// </summary>
+		/// <returns>The set of rows that can be used for fitting.</returns>
 		public IAscendingIntegerCollection CalculateValidNumericRows()
 		{
 			// also obtain the valid rows both of the independent and of the dependent variables
@@ -507,6 +610,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		#region ICloneable Members
 
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
 		public object Clone()
 		{
 			return new FitElement(this);

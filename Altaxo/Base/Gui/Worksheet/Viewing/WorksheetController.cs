@@ -91,6 +91,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				throw new ApplicationException("This controller is already controlling a table");
 			if (null == value)
 				throw new ArgumentNullException("value");
+			if (null == value.DataTable)
+				throw new ApplicationException("The DataTable of the WorksheetLayout is null");
 
 			_worksheetLayout = value;
 			_table = _worksheetLayout.DataTable;

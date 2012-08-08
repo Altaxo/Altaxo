@@ -203,10 +203,14 @@ namespace Altaxo.Main
 				}
 				else if (o is Altaxo.Worksheet.WorksheetViewLayout)
 				{
-					var ctrl = new Altaxo.Gui.Worksheet.Viewing.WorksheetControllerWpf();
-					ctrl.InitializeDocument(o as Altaxo.Worksheet.WorksheetViewLayout);
-					Current.Gui.FindAndAttachControlTo(ctrl);
-					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(ctrl));
+					var wksViewLayout = (Altaxo.Worksheet.WorksheetViewLayout)o;
+					if (null != wksViewLayout.WorksheetLayout && null != wksViewLayout.WorksheetLayout.DataTable)
+					{
+						var ctrl = new Altaxo.Gui.Worksheet.Viewing.WorksheetControllerWpf();
+						ctrl.InitializeDocument(wksViewLayout);
+						Current.Gui.FindAndAttachControlTo(ctrl);
+						Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(ctrl));
+					}
 				}
 				else if (o is IViewContent)
 				{

@@ -263,6 +263,9 @@ namespace Altaxo.Scripting
         surr._deserializedObject = s;
         info.DeserializationFinished +=new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
 
+				if(s._IsUsingUserDefinedParameterNames && s._NumberOfParameters != s._UserDefinedParameterNames.Length)
+					s.Compile(); // dirty quick fix in the case that the userdefined parameters where not updated before serialization
+
         return s;
       }
 

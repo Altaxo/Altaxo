@@ -281,7 +281,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					for (int j = 0; j < info.DependentVariablesInUse.Length; ++j)
 					{
 						double yreal = fitEle.DependentVariables(info.DependentVariablesInUse[j])[validRows[i]];
-						values[outputValuesPointer++] = fitEle.ErrorEvaluation(info.DependentVariablesInUse[j]).GetWeight(yreal, validRows[i]);
+						values[outputValuesPointer++] = fitEle.GetErrorEvaluation(info.DependentVariablesInUse[j]).GetWeight(yreal, validRows[i]);
 					}
 				}
 			}

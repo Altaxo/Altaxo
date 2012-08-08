@@ -30,7 +30,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// <param name="independent">The independent variables.</param>
 	/// <param name="parameters">Parameters for evaluation.</param>
 	/// <param name="FV">On return, this array contains the one (or more) evaluated
-	/// function values at the point (independent).</param>
+	/// function value(s) at the point designated by <paramref name="independent"/>.</param>
 	public delegate void FitEvaluationFunction(double[] independent, double[] parameters, double[] FV);
 
 	/// <summary>
@@ -44,7 +44,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		int NumberOfIndependentVariables { get; }
 
 		/// <summary>
-		/// Number of dependent variables (i.e. y, in Altaxo this is commonly called v like value).
+		/// Number of dependent variables (i.e. y, in Altaxo this is commonly called v (like value)).
 		/// </summary>
 		int NumberOfDependentVariables { get; }
 

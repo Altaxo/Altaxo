@@ -81,7 +81,10 @@ namespace Altaxo.Gui
 
 		#endregion
 
-		static long _totalBytesAllocated; // only for debugging, designates the total number of bytes allocated in all those objects
+		/// <summary>Only for debugging, designates the total number of bytes allocated in all those objects</summary>
+		static long _totalBytesAllocated;
+		/// <summary>Only for debugging, designates the number of instances of this class.</summary>
+		static long _activeInstances; // only for debugging
 
 		const int BytesPerPixel = 4; // it is only possible to use ARGB format, otherwise Imaging.CreateBitmapSourceFromMemorySection would copy the bitmap instead of mapping it
 
@@ -102,7 +105,6 @@ namespace Altaxo.Gui
 
 		public GdiToWpfBitmap()
 		{
-
 		}
 
 		/// <summary>
@@ -133,7 +135,7 @@ namespace Altaxo.Gui
 																				 null);
 
 			if (_section == IntPtr.Zero)
-				throw new InvalidOperationException(string.Format("Unable to create file mapping for {0} x {1} pixel", width, height));
+				throw new InvalidOperationException(string.Format("Unable to create file mapping for {0} x {1} pixel. ActiveInstances: {2}, NumberOfBytesAllocated={3} ", width, height, _activeInstances, _totalBytesAllocated));
 
 			_map = MapViewOfFile(_section, FILE_MAP_ALL_ACCESS, 0, 0, numBytesToAllocate);
 
@@ -147,7 +149,7 @@ namespace Altaxo.Gui
 			{
 				CloseHandle(_section);
 				_section = IntPtr.Zero;
-				string exception = string.Format("Unable to create view of file for {0} x {1} pixel", width, height);
+				string exception = string.Format("Unable to create view of file for {0} x {1} pixel. ActiveInstances: {2}, NumberOfBytesAllocated={3} ", width, height, _activeInstances, _totalBytesAllocated);
 				width = height = 0;
 				throw new InvalidOperationException(exception);
 			}
@@ -157,6 +159,7 @@ namespace Altaxo.Gui
 
 			GC.AddMemoryPressure(numBytesToAllocate);
 			_totalBytesAllocated += numBytesToAllocate;
+			++_activeInstances;
 
 			_interopBmp = (System.Windows.Interop.InteropBitmap)System.Windows.Interop.Imaging.CreateBitmapSourceFromMemorySection(_section, _width, _height, System.Windows.Media.PixelFormats.Bgra32, _width * BytesPerPixel, 0);
 		}
@@ -194,6 +197,7 @@ namespace Altaxo.Gui
 
 			GC.RemoveMemoryPressure(_width * _height * BytesPerPixel);
 			_totalBytesAllocated -= (_width * _height * BytesPerPixel);
+			--_activeInstances;
 
 			_width = 0;
 			_height = 0;

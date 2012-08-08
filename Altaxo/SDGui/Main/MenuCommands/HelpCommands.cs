@@ -79,7 +79,7 @@ namespace Altaxo.Main.Commands
 
 		public void Run5()
 		{
-			Altaxo.AltaxoDocument.VerifyOpeningOfDocumentsWithoutException("V:\\Messungen");
+			Altaxo.AltaxoDocument.VerifyOpeningOfDocumentsWithoutException();
 		}
 
 		public void Run4()

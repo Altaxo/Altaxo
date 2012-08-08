@@ -22,13 +22,16 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
 	/// <summary>
-	/// Holds a collection of <see cref="FitElement" />s and is responsible for parameter
-	/// bundling.
+	/// Holds a collection of <see cref="FitElement" />s and is responsible for parameter bundling.
 	/// </summary>
+	/// <remarks>The number of parameters in a FitEnsemble is less than or equal to the sum of the number of parameters of all FitElements bundeled in this instance.
+	/// (It is less than the sum of parameters if some parameters of different fit elements have equal names).</remarks>
 	public class FitEnsemble : System.Collections.CollectionBase, ICloneable
 	{
 		/// <summary>
@@ -39,7 +42,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <summary>
 		/// All parameters sorted by name.
 		/// </summary>
-		System.Collections.SortedList _ParametersSortedByName;
+		SortedList<string, int> _parametersSortedByName = new SortedList<string, int>();
 
 
 		public event EventHandler Changed;
@@ -123,35 +126,35 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		protected void CollectParameterNames()
 		{
-
-			_ParametersSortedByName = new System.Collections.SortedList();
+			_parametersSortedByName.Clear();
 
 			int nameposition = 0;
 			for (int i = 0; i < InnerList.Count; i++)
 			{
-				if (null == this[i].FitFunction)
-					continue;
-				IFitFunction func = this[i].FitFunction;
 				FitElement ele = this[i];
+				IFitFunction func = ele.FitFunction;
+
+				if (null == func)
+					continue;
 
 				for (int k = 0; k < func.NumberOfParameters; k++)
 				{
-					if (!(_ParametersSortedByName.ContainsKey(ele.ParameterName(k))))
+					if (!(_parametersSortedByName.ContainsKey(ele.ParameterName(k))))
 					{
-						_ParametersSortedByName.Add(ele.ParameterName(k), nameposition++);
+						_parametersSortedByName.Add(ele.ParameterName(k), nameposition++);
 					}
 				}
 			}
 
 			// now sort the items in the order of the namepositions
-			System.Collections.SortedList sortedbypos = new System.Collections.SortedList();
-			foreach (DictionaryEntry en in _ParametersSortedByName)
+			var sortedbypos = new SortedList<int, string>();
+			foreach (KeyValuePair<string,int> en in _parametersSortedByName)
 				sortedbypos.Add(en.Value, en.Key);
 
 
 			_parameterNames = new string[sortedbypos.Count];
 			for (int i = 0; i < _parameterNames.Length; i++)
-				_parameterNames[i] = (string)sortedbypos[i];
+				_parameterNames[i] = sortedbypos[i];
 
 		}
 

@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
     public void EhView_ChooseErrorFunction(int idx)
     {
-      SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling),_doc.ErrorEvaluation(idx));
+      SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling),_doc.GetErrorEvaluation(idx));
 
       object choiceAsObject = choice;
       if(Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
