@@ -74,13 +74,9 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Run5();
+			Run4();
 		}
 
-		public void Run5()
-		{
-			Altaxo.AltaxoDocument.VerifyOpeningOfDocumentsWithoutException();
-		}
 
 		public void Run4()
 		{

@@ -29,7 +29,10 @@ namespace Altaxo.Worksheet
 	/// <summary>
 	/// Stores the layout of a table to be shown in a WorksheetView.
 	/// </summary>
-	public class WorksheetLayout : Main.IDocumentNode
+	public class WorksheetLayout
+		:
+		Main.IDocumentNode,
+		Main.IEventIndicatedDisposable
 	{
 
 		#region Member variables
@@ -96,6 +99,12 @@ namespace Altaxo.Worksheet
 		/// The visibility of the property columns in the view. If true, the property columns are shown in the view.
 		/// </summary>
 		protected bool _doShowPropertyColumns;
+
+		/// <summary>
+		/// Fired for instance when this instance is about to dispose or is disposed.
+		/// </summary>
+		[field: NonSerialized]
+		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
 
 		#endregion
@@ -194,7 +203,7 @@ namespace Altaxo.Worksheet
 					object table = Main.DocumentPath.GetObject(this._pathToTable, this._worksheetLayout, documentRoot);
 					if (table is Altaxo.Data.DataTable)
 					{
-						this._worksheetLayout._dataTable = (Altaxo.Data.DataTable)table;
+						this._worksheetLayout.DataTable = (Altaxo.Data.DataTable)table;
 						this._pathToTable = null;
 					}
 				}
@@ -351,7 +360,8 @@ namespace Altaxo.Worksheet
 		public WorksheetLayout(Altaxo.Data.DataTable table)
 			: this()
 		{
-			_dataTable = table;
+			if(null!=table)
+				DataTable = table;
 		}
 
 		#endregion
@@ -374,7 +384,29 @@ namespace Altaxo.Worksheet
 		public Altaxo.Data.DataTable DataTable
 		{
 			get { return _dataTable; }
-			set { _dataTable = value; }
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("DataTable is null");
+
+				if (object.ReferenceEquals(_dataTable, value))
+					return;
+
+				if (null != _dataTable)
+					throw new InvalidOperationException("This instance is already bound to a data table. It is not allowed to assign another data table to it");
+
+				_dataTable = value;
+				_dataTable.TunneledEvent += EhDataTableTunneledEvent;
+
+			}
+		}
+
+		void EhDataTableTunneledEvent(object sender, object source, Main.TunnelingEventArgs args)
+		{
+			if (args is Main.PreviewDisposeEventArgs)
+			{
+				Dispose();
+			}
 		}
 
 		public IDictionary<Data.DataColumn, ColumnStyle> DataColumnStyles
@@ -448,5 +480,26 @@ namespace Altaxo.Worksheet
 		#endregion
 
 
+
+
+		public void Dispose()
+		{
+			if (null != TunneledEvent)
+				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
+
+
+			if (null != _dataTable)
+			{
+				_dataTable.TunneledEvent -= EhDataTableTunneledEvent;
+				_dataTable = null;
+			}
+
+			_dataColumnStyles.Clear();
+			_propertyColumnStyles.Clear();
+
+
+			if (null != TunneledEvent)
+				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
+		}
 	}
 }

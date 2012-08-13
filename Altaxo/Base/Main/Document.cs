@@ -511,10 +511,19 @@ namespace Altaxo
 
 		public static void VerifyOpeningOfDocumentsWithoutException()
 		{
+			if (Current.Project.IsDirty)
+			{
+				var e = new System.ComponentModel.CancelEventArgs();
+				Current.ProjectService.AskForSavingOfProject(e);
+				if (e.Cancel)
+					return;
+			}
+
+
 			var dlg = new Altaxo.Gui.Common.TextValueInputController("C:\\", 
-				"This command will search for all Altaxo projects in directories and all subdirectories therein. Then these projects will be opened and closed,"+
-				"and any errors will be reported in the output pane.\r\n" + 
-				"Please enter your root directory here. You can enter multiple directories by separating them with a semicolon (;)");
+				"This command will search for all Altaxo projects in the provided directories and all subdirectories therein. Then these projects will be opened and closed, "+
+				"and any errors (exceptions during loading) will be reported in the output pane.\r\n" + 
+				"Please enter your root directory here. You can even enter multiple directories by separating them with semicolons (;)");
 
 			if (!Current.Gui.ShowDialog(dlg, "Test Altaxo project files on your disk"))
 				return;
@@ -528,6 +537,7 @@ namespace Altaxo
 		public static void InternalVerifyOpeningOfDocumentsWithoutException(string path, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
 		{
 			monitor.ReportProgress("Searching Altaxo project files ...", 0);
+			Current.Console.WriteLine("Begin of test. Search path(s): {0}", path);
 
 			var filelist = GetAltaxoProjectFileNames(path);
 

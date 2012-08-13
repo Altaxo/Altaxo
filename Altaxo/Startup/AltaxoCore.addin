@@ -539,10 +539,14 @@
 								label="${res:XML.MainMenu.ToolsMenu.AddTempUserAssembly}"
 								description="${res:XML.MainMenu.ToolsMenu.AddTempUserAssembly.Description}"
 								class="Altaxo.Main.Commands.AddTemporaryUserAssembly" />
+			<MenuItem id="TestProjectLoading"
+								label="${res:XML.MainMenu.ToolsMenu.TestProjectLoading}"
+								description="${res:XML.MainMenu.ToolsMenu.TestProjectLoading.Description}"
+								class="Altaxo.Main.Commands.TestProjectLoading" />
 			<MenuItem id="Options"
-								label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
-								description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
-								class="Altaxo.Main.Commands.ShowOptions" />
+							label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
+							description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
+							class="Altaxo.Main.Commands.ShowOptions" />
 		</MenuItem>
 		<!-- Window menu -->
 		<MenuItem id="Window" label="${res:XML.MainMenu.WindowMenu}" type="Menu">

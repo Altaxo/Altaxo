@@ -30,7 +30,7 @@ namespace Altaxo.Main
   public interface IEventIndicatedDisposable : System.IDisposable
   {
     /// <summary>
-    /// The event that is fired when the object is disposed.
+    /// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
     /// </summary>
     event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
   }

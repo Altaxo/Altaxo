@@ -50,7 +50,7 @@ namespace Altaxo.Data
 		System.Runtime.Serialization.IDeserializationCallback,
 		ICloneable,
 		Altaxo.Main.IDocumentNode,
-		IDisposable,
+		Main.IEventIndicatedDisposable,
 		Main.INamedObjectCollection,
 		Main.INameOwner,
 		Main.IChildChangedEventSink,
@@ -165,6 +165,12 @@ namespace Altaxo.Data
 		/// </summary>
 		[field: NonSerialized]
 		public event Action<Main.INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
+
+		/// <summary>
+		/// Fired for instance if the data table is about to be disposed and is disposed.
+		/// </summary>
+		[field: NonSerialized]
+		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
 
 		#region "Serialization"
@@ -1233,8 +1239,14 @@ namespace Altaxo.Data
 		/// </summary>
 		public void Dispose()
 		{
+			if (null != TunneledEvent)
+				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
+
 			_dataColumns.Dispose();
 			_propertyColumns.Dispose();
+
+			if (null != TunneledEvent)
+				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
 		}
 
 		#endregion
@@ -1367,6 +1379,7 @@ namespace Altaxo.Data
 			else
 				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child, typeof(DataTable));
 		}
+
 
 
 

@@ -37,6 +37,14 @@ namespace Altaxo.Main.Commands
 	}
 
 
+	public class TestProjectLoading : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			AltaxoDocument.VerifyOpeningOfDocumentsWithoutException();
+		}
+	}
+
 	public class ShowOptions : AbstractMenuCommand
 	{
 		public override void Run()

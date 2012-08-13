@@ -96,19 +96,16 @@ namespace Altaxo.Worksheet
       get { return _items[guidAsString]; }   
     }
 
-    public void Add(WorksheetLayout layout)
-    {
-      layout.ParentObject = this;
+   
 
-      // Test if this Guid is already present
-			WorksheetLayout o = null;
-			_items.TryGetValue(layout.Guid.ToString(), out o);
-      if(o!=null && !object.ReferenceEquals(o,layout))
-        layout.NewGuid();
-
-      _items[layout.Guid.ToString()] = layout;
-    }
-
+		void EhChildNodeTunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
+		{
+			if(e is Main.DisposeEventArgs && source is WorksheetLayout)
+			{
+				var src = (WorksheetLayout)source;
+				Remove(src);
+			}
+		}
 	
     #region IDocumentNode Members
 
@@ -156,10 +153,56 @@ namespace Altaxo.Worksheet
 		#region ICollection<WorksheetLayout> Members
 
 
-		public void Clear()
+#region Collection changing methods
+
+		 public void Add(WorksheetLayout layout)
+    {
+			if(null==layout)
+				throw new ArgumentNullException("layout");
+
+      // Test if this Guid is already present
+			WorksheetLayout o = null;
+			_items.TryGetValue(layout.Guid.ToString(), out o);
+      if(o!=null)
+			{
+				if (object.ReferenceEquals(o, layout))
+					return;
+				else
+	        layout.NewGuid();
+			}
+
+			layout.ParentObject = this;
+			layout.TunneledEvent += EhChildNodeTunneledEvent;
+      _items[layout.Guid.ToString()] = layout;
+    }
+
+
+	
+
+			public bool Remove(WorksheetLayout item)
 		{
+			bool wasRemoved = _items.Remove(item.Guid.ToString());
+
+			if(wasRemoved)
+			{
+			item.ParentObject = null;
+			item.TunneledEvent -= EhChildNodeTunneledEvent;
+			}
+
+			return wasRemoved;
+		}
+
+			public void Clear()
+		{
+			foreach(var item in _items.Values)
+			{
+				item.ParentObject = null;
+				item.TunneledEvent -= EhChildNodeTunneledEvent;
+			}
 			_items.Clear();
 		}
+
+#endregion
 
 		public bool Contains(WorksheetLayout item)
 		{
@@ -181,10 +224,7 @@ namespace Altaxo.Worksheet
 			get { return false; }
 		}
 
-		public bool Remove(WorksheetLayout item)
-		{
-			return _items.Remove(item.Guid.ToString());
-		}
+	
 
 		#endregion
 
