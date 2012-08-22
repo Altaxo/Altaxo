@@ -44,6 +44,11 @@ namespace Altaxo.Gui.Common.Drawing
 		protected ColumnDefinition _imgColumnDefinition;
 
 		/// <summary>
+		/// This is the edit box inside the editable ComboBox that is used to enter text.
+		/// </summary>
+		TextBox _editBox;
+
+		/// <summary>
 		/// Get around the bug that the context menu of the editable part is not bound to the combobox 
 		/// (<see href="http://www.wpfmentor.com/2008/12/setting-context-menu-on-editable.html"/>)
 		/// </summary>
@@ -53,13 +58,13 @@ namespace Altaxo.Gui.Common.Drawing
 
 			// Use Snoop to find the name of the TextBox part  
 			// http://wpfmentor.blogspot.com/2008/11/understand-bubbling-and-tunnelling-in-5.html  
-			TextBox textBox = (TextBox)Template.FindName("PART_EditableTextBox", this);
-			textBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Right;
+			_editBox = (TextBox)Template.FindName("PART_EditableTextBox", this);
+			_editBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Right;
 
 			// Create a template-binding in code  
 			Binding binding = new Binding("ContextMenu");
 			binding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
-			BindingOperations.SetBinding(textBox, FrameworkElement.ContextMenuProperty, binding);
+			BindingOperations.SetBinding(_editBox, FrameworkElement.ContextMenuProperty, binding);
 		}  
 
 
@@ -93,7 +98,21 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			const double leftRightMargin = 4;
 			const double topDownMargin = 3;
-			var grid = VisualTreeHelper.GetChild(this, 0) as Grid;
+
+			Grid grid = _editBox.Parent as Grid;
+
+			if (grid == null)
+			{
+				var stb = new StringBuilder();
+				stb.AppendFormat("Unexpected location of grid within {0}", this.ToString());
+				stb.AppendLine();
+				stb.AppendFormat("The parent of the editbox is {0}", _editBox.Parent.ToString());
+				stb.AppendLine();
+				stb.AppendLine("The hierarchy of childs is as follows:");
+				PrintVisualChilds(this, 0, stb);
+				throw new ApplicationException(stb.ToString());
+			}
+
 			_imgColumnDefinition = new ColumnDefinition();
 			_imgColumnDefinition.Width = new GridLength(1, GridUnitType.Auto);
 			grid.ColumnDefinitions.Insert(0, _imgColumnDefinition);
@@ -128,6 +147,27 @@ namespace Altaxo.Gui.Common.Drawing
 			grid.Children.Add(_img);
 		}
 
+
+		/// <summary>Prints the visual childs recursively (intended only for debugging).</summary>
+		/// <param name="start">The parent.</param>
+		/// <param name="level">The level number.</param>
+		/// <param name="stb">The StringBuilder where the information should be printed to.</param>
+		private void PrintVisualChilds(DependencyObject start, int level, StringBuilder stb)
+		{
+			int count = VisualTreeHelper.GetChildrenCount(start);
+			for(int i=0;i<count;++i)
+			{
+				var child = VisualTreeHelper.GetChild(start, i);
+				for(int j=0;j<level;++j) 
+					stb.Append("  ");
+				if(child is Grid)
+					stb.AppendFormat("child[{0}]: {1} (#cols:{2})", i, child.ToString(), ((Grid)child).ColumnDefinitions.Count);
+				else
+					stb.AppendFormat("child[{0}]: {1}",i,child.ToString());
+				stb.AppendLine();
+				PrintVisualChilds(child, level + 1, stb);
+			}
+		}
 
 		protected virtual void SetImageFromContent()
 		{
