@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Common.Drawing
 		/// <summary>
 		/// This is the edit box inside the editable ComboBox that is used to enter text.
 		/// </summary>
-		TextBox _editBox;
+		protected TextBox _editBox;
 
 		/// <summary>
 		/// Get around the bug that the context menu of the editable part is not bound to the combobox 
@@ -96,12 +96,44 @@ namespace Altaxo.Gui.Common.Drawing
 
 		protected virtual void ImplantImage(double width, double height)
 		{
-			const double leftRightMargin = 4;
-			const double topDownMargin = 3;
+			_img.Height = _editBox.ActualHeight;
+			_img.Margin = _editBox.Margin;
+			_img.Stretch = Stretch.Uniform;
 
-			Grid grid = _editBox.Parent as Grid;
+			if (_editBox.Parent is Grid) // most Windows version have the TextBox located inside a Grid
+			{
+				var grid = _editBox.Parent as Grid;
+				_imgColumnDefinition = new ColumnDefinition();
+				_imgColumnDefinition.Width = new GridLength(1, GridUnitType.Auto);
+				grid.ColumnDefinitions.Insert(0, _imgColumnDefinition);
+				foreach (UIElement ele in grid.Children)
+				{
+					if (ele is TextBox || ele is System.Windows.Controls.Primitives.ToggleButton)
+					{
+						ele.SetValue(Grid.ColumnProperty, 1 + (int)ele.GetValue(Grid.ColumnProperty));
+					}
+					else
+					{
+						ele.SetValue(Grid.ColumnSpanProperty, 1 + (int)ele.GetValue(Grid.ColumnSpanProperty));
+					}
+				}
+				grid.Children.Add(_img);
+			}
+			else if (_editBox.Parent is DockPanel) // Some Windows XP versions have the TextBox sitting in a DockPanel instead of a Grid
+			{
+				var dockp = _editBox.Parent as DockPanel;
+				var list = new List<UIElement>();
+				foreach (UIElement child in dockp.Children) // collect the original children temporary in a list
+					list.Add(child);
 
-			if (grid == null)
+				dockp.Children.Clear(); // clear the children, because we need to dock them again
+
+				_img.SetValue(DockPanel.DockProperty, Dock.Left);
+				dockp.Children.Add(_img); // add the image to the left side
+				foreach (UIElement child in list) // now dock the original children again
+					dockp.Children.Add(child);
+			}
+			else
 			{
 				var stb = new StringBuilder();
 				stb.AppendFormat("Unexpected location of grid within {0}", this.ToString());
@@ -113,38 +145,7 @@ namespace Altaxo.Gui.Common.Drawing
 				throw new ApplicationException(stb.ToString());
 			}
 
-			_imgColumnDefinition = new ColumnDefinition();
-			_imgColumnDefinition.Width = new GridLength(1, GridUnitType.Auto);
-			grid.ColumnDefinitions.Insert(0, _imgColumnDefinition);
-			TextBox textBox = null;
-			foreach (UIElement ele in grid.Children)
-			{
-				if (ele is TextBox || ele is System.Windows.Controls.Primitives.ToggleButton)
-				{
-					ele.SetValue(Grid.ColumnProperty, 1 + (int)ele.GetValue(Grid.ColumnProperty));
-				}
-				else
-				{
-					ele.SetValue(Grid.ColumnSpanProperty, 1 + (int)ele.GetValue(Grid.ColumnSpanProperty));
-				}
-
-				if (ele is TextBox)
-					textBox = ele as TextBox;
-			}
-
-			if (textBox != null)
-			{
-				_img.Height = textBox.ActualHeight;
-				_img.Margin = textBox.Margin;
-			}
-			else
-			{
-				_img.Margin = new Thickness(leftRightMargin, topDownMargin, leftRightMargin, topDownMargin);
-				_img.Height = grid.ActualHeight;
-			}
-
-			_img.Stretch = Stretch.Uniform;
-			grid.Children.Add(_img);
+		
 		}
 
 
