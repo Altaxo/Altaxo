@@ -239,7 +239,7 @@
     <Content Include="data\templates\project\VB\ProjectCategorySortOrder.xml" />
     <Content Include="data\templates\project\VB\SharpDevelopCustomToolTemplate.xft.xml" />
     <Content Include="data\templates\project\VB\WPFAssemblyInfo.vb" />
-    <Content Include="doc\help\AltaxoClassRef.chw" />
+    <Content Include="doc\Contributions\CodeProjectOpenLicense1.02.txt" />
     <Content Include="data\templates\file\Misc\AppConfigFile.xft" />
     <None Include="app.config" />
     <None Include="data\schemas\complus.xsd">
@@ -273,9 +273,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="data\schemas\vs.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\xml.xsd">
       <SubType>Designer</SubType>
     </None>
     <Content Include="data\templates\project\CSharp\SilverlightApplication.xpt" />
@@ -319,14 +316,31 @@
     <Content Include="data\templates\project\VB\WebService.xpt" />
     <Content Include="data\templates\project\VB\WPFApplication.xpt" />
     <Content Include="data\templates\project\VB\WPFNavigationApplication.xpt" />
+    <Content Include="doc\readme.rtf" />
     <None Include="HelpConverter.InstallState" />
-    <Content Include="data\resources\StringResources.no.resources" />
     <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="data\resources\StringResources.pt.resources" />
-    <Content Include="data\resources\StringResources.cn-gb.resources" />
     <Content Include="data\templates\project\VB\NotifyIconResources.resx" />
+    <Content Include="data\resources\StringResources.cz.resx" />
+    <Content Include="data\resources\StringResources.de.resx" />
+    <Content Include="data\resources\StringResources.es-mx.resx" />
+    <Content Include="data\resources\StringResources.es.resx" />
+    <Content Include="data\resources\StringResources.fr.resx" />
+    <Content Include="data\resources\StringResources.hu.resx" />
+    <Content Include="data\resources\StringResources.it.resx" />
+    <Content Include="data\resources\StringResources.kr.resx" />
+    <Content Include="data\resources\StringResources.nl.resx" />
+    <Content Include="data\resources\StringResources.no.resx" />
+    <Content Include="data\resources\StringResources.pl.resx" />
+    <Content Include="data\resources\StringResources.pt-br.resx" />
+    <Content Include="data\resources\StringResources.pt.resx" />
+    <Content Include="data\resources\StringResources.resx" />
+    <Content Include="data\resources\StringResources.ro.resx" />
+    <Content Include="data\resources\StringResources.ru.resx" />
+    <Content Include="data\resources\StringResources.se.resx" />
+    <Content Include="data\resources\StringResources.tr.resx" />
+    <Content Include="data\resources\StringResources.zh.resx" />
     <EmbeddedResource Include="HelpSetup.resx">
       <DependentUpon>HelpSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -343,8 +357,6 @@
     <Content Include="data\options\TextLib\CSharpDocumentationTags.xml" />
     <Content Include="data\options\TextLib\Licenses.xml" />
     <Content Include="data\options\TextLib\XSLT.xml" />
-    <Content Include="data\resources\AltaxoBitmap.resources" />
-    <Content Include="data\resources\AltaxoString.resources" />
     <Content Include="data\resources\InstallerBitmaps\default-banner.bmp" />
     <Content Include="data\resources\InstallerBitmaps\default-dialog.bmp" />
     <Content Include="data\resources\InstallerBitmaps\exclamic.bmp" />
@@ -380,20 +392,6 @@
     <Content Include="data\resources\languages\sweden.png" />
     <Content Include="data\resources\languages\uk.png" />
     <Content Include="data\resources\languages\usa.png" />
-    <Content Include="data\resources\StringResources.cz.resources" />
-    <Content Include="data\resources\StringResources.de.resources" />
-    <Content Include="data\resources\StringResources.es.resources" />
-    <Content Include="data\resources\StringResources.es-mx.resources" />
-    <Content Include="data\resources\StringResources.fr.resources" />
-    <Content Include="data\resources\StringResources.hu.resources" />
-    <Content Include="data\resources\StringResources.it.resources" />
-    <Content Include="data\resources\StringResources.kr.resources" />
-    <Content Include="data\resources\StringResources.nl.resources" />
-    <Content Include="data\resources\StringResources.pl.resources" />
-    <Content Include="data\resources\StringResources.pt-br.resources" />
-    <Content Include="data\resources\StringResources.ro.resources" />
-    <Content Include="data\resources\StringResources.se.resources" />
-    <Content Include="data\resources\StringResources.tr.resources" />
     <Content Include="data\schemas\AddIn.xsd">
       <SubType>
       </SubType>
@@ -442,7 +440,6 @@
     <Content Include="data\templates\project\CSharp\FormsProject.xpt" />
     <Content Include="data\templates\project\CSharp\Library.xpt" />
     <Content Include="data\templates\project\CSharp\Service.xpt" />
-    <Content Include="data\templates\project\Misc\BlankCombine.xpt" />
     <Content Include="doc\BuiltWithSharpDevelop.png" />
     <Content Include="doc\ChangeLog.xml" />
     <Content Include="doc\CodingStyleGuide.pdf" />
@@ -452,7 +449,6 @@
     <Content Include="doc\Contributions\ExocortexDSP-license.txt" />
     <Content Include="doc\Contributions\LevMar-license.txt" />
     <Content Include="doc\copyright.txt" />
-    <Content Include="doc\help\AltaxoClassRef.chm" />
     <Content Include="doc\help\AltaxoHelp.chm" />
     <Content Include="doc\help\AltaxoHelp.hhc" />
     <Content Include="doc\help\HelpDescription.xml" />
@@ -486,6 +482,9 @@
       <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
       <Name>ICSharpCode.SharpZLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="data\templates\project\Misc\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
