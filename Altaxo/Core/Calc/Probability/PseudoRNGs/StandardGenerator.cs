@@ -28,7 +28,6 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-  using Resources;
     /// <summary>
     /// Represents a simple pseudo-random number generator.
     /// </summary>

@@ -99,9 +99,9 @@
     <Compile Include="Src\Project\VBNetToCSharpConvertVisitorWithMyFormsSupport.cs" />
     <Compile Include="Src\Project\CSharpMyNamespaceBuilder.cs" />
     <Compile Include="Src\Project\CSharpProject.cs" />
-    <None Include="CSharpBinding.addin">
+    <Content Include="CSharpBinding.addin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Compile Include="Src\CSharpCompletionBinding.cs" />
     <Compile Include="Src\Project\VBNetToCSharpConverter.cs" />
     <Compile Include="..\..\..\..\Main\GlobalAssemblyInfo.cs">

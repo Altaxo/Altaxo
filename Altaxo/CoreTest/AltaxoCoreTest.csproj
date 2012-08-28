@@ -278,6 +278,7 @@
     <Compile Include="Calc\TestKohlrausch.cs" />
     <Compile Include="Calc\TestPrimeNumbers.cs" />
     <Compile Include="Calc\TestRoundings.cs" />
+    <Compile Include="ResourceKeys.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

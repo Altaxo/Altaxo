@@ -28,7 +28,6 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-  using Resources;
 	/// <summary>
     /// Declares common functionality for all random number distributions.
 	/// </summary>

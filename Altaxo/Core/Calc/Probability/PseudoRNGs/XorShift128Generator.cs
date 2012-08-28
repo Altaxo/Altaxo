@@ -71,7 +71,6 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-  using Resources;
     /// <summary>
     /// Represents a xorshift pseudo-random number generator with period 2^128-1.
     /// </summary>

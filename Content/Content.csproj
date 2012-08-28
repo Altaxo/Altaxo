@@ -242,39 +242,39 @@
     <Content Include="doc\Contributions\CodeProjectOpenLicense1.02.txt" />
     <Content Include="data\templates\file\Misc\AppConfigFile.xft" />
     <None Include="app.config" />
-    <None Include="data\schemas\complus.xsd">
+    <Content Include="data\schemas\complus.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\difxapp.xsd">
+    </Content>
+    <Content Include="data\schemas\difxapp.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\firewall.xsd">
+    </Content>
+    <Content Include="data\schemas\firewall.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\gaming.xsd">
+    </Content>
+    <Content Include="data\schemas\gaming.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\iis.xsd">
+    </Content>
+    <Content Include="data\schemas\iis.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\msmq.xsd">
+    </Content>
+    <Content Include="data\schemas\msmq.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\netfx.xsd">
+    </Content>
+    <Content Include="data\schemas\netfx.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\ps.xsd">
+    </Content>
+    <Content Include="data\schemas\ps.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\sql.xsd">
+    </Content>
+    <Content Include="data\schemas\sql.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\util.xsd">
+    </Content>
+    <Content Include="data\schemas\util.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="data\schemas\vs.xsd">
+    </Content>
+    <Content Include="data\schemas\vs.xsd">
       <SubType>Designer</SubType>
-    </None>
+    </Content>
     <Content Include="data\templates\project\CSharp\SilverlightApplication.xpt" />
     <Content Include="data\templates\file\CSharp\CSharp.Exception.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.RecentFilesCollection.xft" />
@@ -317,6 +317,7 @@
     <Content Include="data\templates\project\VB\WPFApplication.xpt" />
     <Content Include="data\templates\project\VB\WPFNavigationApplication.xpt" />
     <Content Include="doc\readme.rtf" />
+    <Content Include="data\templates\project\Misc\BlankSolution.xpt" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
       <SubType>Designer</SubType>
@@ -483,9 +484,7 @@
       <Name>ICSharpCode.SharpZLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="data\templates\project\Misc\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

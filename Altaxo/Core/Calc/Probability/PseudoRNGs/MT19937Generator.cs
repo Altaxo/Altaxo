@@ -77,7 +77,6 @@ using System;
 
 namespace Altaxo.Calc.Probability
 {
-  using Resources;
     /// <summary>
     /// Represents a Mersenne Twister pseudo-random number generator with period 2^19937-1.
     /// </summary>

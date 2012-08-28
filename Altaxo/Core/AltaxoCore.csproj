@@ -425,6 +425,7 @@
     <Compile Include="Calc\Probability\ContinuousDistributions\StudentsTDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\StableDistributionSymmetric.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\TriangularDistribution.cs" />
+    <Compile Include="Calc\Probability\ExceptionMessages.cs" />
     <Compile Include="Calc\Probability\MultiContinuousDistributions\UnitSphereDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\WeibullDistribution.cs" />
     <Compile Include="Calc\Probability\DiscreteDistributions\BernoulliDistribution.cs" />
@@ -440,26 +441,6 @@
     <Compile Include="Calc\Probability\PseudoRNGs\MT19937Generator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\StandardGenerator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\XorShift128Generator.cs" />
-    <Compile Include="Calc\Probability\Resources\ExceptionMessages.de.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ExceptionMessages.de.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Calc\Probability\Resources\ExceptionMessages.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ExceptionMessages.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Calc\Probability\Resources\ExceptionMessages.es.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ExceptionMessages.es.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Calc\Probability\Resources\ExceptionMessages.fr.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ExceptionMessages.fr.resx</DependentUpon>
-    </Compile>
     <Compile Include="Calc\Probability\Statistics.cs" />
     <Compile Include="Calc\Regression\BurgAlgorithm.cs" />
     <Compile Include="Calc\Regression\BurgAlgorithmComplex.cs" />
@@ -563,7 +544,9 @@
     <Compile Include="Collections\Text\LongestCommonSubstringL.cs" />
     <Compile Include="Collections\Text\SubstringPosition.cs" />
     <Compile Include="Calc\PrimeNumberMath.cs" />
+    <Compile Include="StringResources.cs" />
     <Compile Include="Science\Energy.cs" />
+    <Compile Include="StringResourceKey.cs" />
     <Compile Include="Units\Angle\Degree.cs" />
     <Compile Include="Units\Angle\Pi.cs" />
     <Compile Include="Units\Angle\Radian.cs" />
@@ -588,26 +571,10 @@
     <Compile Include="WeakEventHandlers.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.de.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExceptionMessages.de.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.es.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExceptionMessages.es.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.fr.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExceptionMessages.fr.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\de.StringResources.resources" />
+    <EmbeddedResource Include="Resources\es.StringResources.resources" />
+    <EmbeddedResource Include="Resources\fr.StringResources.resources" />
+    <EmbeddedResource Include="Resources\StringResources.resources" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
