@@ -307,6 +307,14 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+	public class GraphMoveToFolder : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.Doc });
+		}
+	}
+
 	public class GraphRefresh : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)

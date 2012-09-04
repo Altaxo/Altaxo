@@ -83,13 +83,51 @@ namespace Altaxo.Worksheet.Commands
 			return result;
 		}
 
+		/// <summary>Determines whether all all tables included in this command are located in a single project folder.</summary>
+		/// <param name="folderName">On return, if all tables are located in one project folder, the name of this folder is returned (with trailing directory separator char). Otherwise, an empty string is returned.</param>
+		/// <returns><c>True</c> if all tables are located in one project folder; otherwise <c>False</c>.</returns>
+		public bool AreAllTablesFromOneProjectFolder(out string folderName)
+		{
+			var folderHash = new HashSet<string>();
+
+			foreach (DataTable table in _tables)
+			{
+				folderHash.Add(table.Folder);
+			}
+
+			if (folderHash.Count == 1)
+			{
+				folderName = folderHash.First();
+				return true;
+			}
+			else
+			{
+				folderName = string.Empty;
+				return false;
+			}
+		}
+
+
 		/// <summary>
 		/// Executes the 'Plot common column' command.
 		/// </summary>
 		public void Execute()
 		{
+			string folderName;
+
+			Altaxo.Gui.Graph.Viewing.IGraphController graphctrl;
+			
+			if(AreAllTablesFromOneProjectFolder(out folderName))
+				graphctrl = Current.ProjectService.CreateNewGraphInFolder(folderName);
+			else
+				graphctrl = Current.ProjectService.CreateNewGraph();
+
+
 			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;
-			var graphctrl = Current.ProjectService.CreateNewGraph();
+			
+
+
+
 			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.DefaultLayerPosition, graphctrl.Doc.DefaultLayerSize);
 			graphctrl.Doc.Layers.Add(layer);
 			layer.CreateDefaultAxes();
@@ -105,6 +143,7 @@ namespace Altaxo.Worksheet.Commands
 				var plotItemList = Altaxo.Worksheet.Commands.PlotCommands.CreatePlotItems(columnList, XCommonColumnNameForPlot, templateStyle, processedColumns);
 
 				var plotGroup = new Altaxo.Graph.Gdi.Plot.PlotItemCollection();
+				plotGroup.GroupStyles.Add(new Altaxo.Graph.Plot.Groups.ColorGroupStyle());
 				plotGroup.AddRange(plotItemList);
 				layer.PlotItems.Add(plotGroup);
 			}

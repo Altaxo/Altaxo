@@ -66,6 +66,18 @@ namespace Altaxo.Gui.Graph
 
 		object _lastControllerApplied;
 
+		public DensityImageLegendController()
+		{
+			_currentScale = 0;
+			_currentPageName = "Scale";
+			_currentAxisID = CSLineID.X0;
+		}
+
+		public override bool InitializeDocument(params object[] args)
+		{
+			return base.InitializeDocument(args);
+		}
+
 
 		public DensityImageLegendController(DensityImageLegend layer)
 			: this(layer, "Scale", 1, CSLineID.X0)

@@ -330,6 +330,14 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
+	public class WorksheetMoveTo : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.DataTable });
+		}
+	}
+
 
 	public class WorksheetDuplicate : AbstractWorksheetControllerCommand
 	{

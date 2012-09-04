@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <summary>
 		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
 		/// </summary>
-		/// <param name="list">List of items to delete.</param>
+		/// <param name="list">List of items to move.</param>
 		public static void MoveDocuments(IList<object> list)
 		{
 			var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringList(ProjectFolder.RootFolderName, true);

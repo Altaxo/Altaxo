@@ -1084,6 +1084,11 @@
                 description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
                 class="Altaxo.Graph.Commands.GraphRename" />
 
+			<MenuItem id="MoveToFolder"
+                label="${res:XML.MainMenu.GraphMenu.MoveToFolder}"
+                description="${res:XML.MainMenu.GraphMenu.MoveToFolder.Description}"
+                class="Altaxo.Graph.Commands.GraphMoveToFolder" />
+
 			<MenuItem id="Duplicate"
                 label="${res:XML.MainMenu.GraphMenu.Duplicate}"
                 icon="Icons.16x16.Duplicate"
@@ -1099,8 +1104,17 @@
 		</Condition>
 		<!-- Worksheet menu -->
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
-			<MenuItem id="Rename" label="${res:XML.MainMenu.WorksheetMenu.Rename}" description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
-        class="Altaxo.Worksheet.Commands.WorksheetRename" />
+			
+			<MenuItem id="Rename" 
+								label="${res:XML.MainMenu.WorksheetMenu.Rename}" 
+								description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
+								class="Altaxo.Worksheet.Commands.WorksheetRename" />
+			
+			<MenuItem id="MoveToFolder"
+								label="${res:XML.MainMenu.WorksheetMenu.MoveToFolder}"
+								description="${res:XML.MainMenu.WorksheetMenu.MoveToFolder.Description}"
+								class="Altaxo.Worksheet.Commands.WorksheetMoveToFolder" />
+
 			<MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
         class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
 			<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"

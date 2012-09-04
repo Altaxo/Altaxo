@@ -68,9 +68,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		public ColorProviderBase()
 		{
-			_colorBelow = NamedColor.Black;
-			_colorAbove = NamedColor.Snow;
-			_colorInvalid = NamedColor.Transparent;
+			this.ColorBelow = NamedColor.Black;
+			this.ColorAbove = NamedColor.Snow;
+			this.ColorInvalid = NamedColor.Transparent;
 			_alphaChannel = 255;
 			_colorSteps = 0;
 		}
@@ -90,8 +90,14 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			if (null != from)
 			{
 				this._colorBelow = from._colorBelow;
+				this._cachedGdiColorBelow = from._cachedGdiColorBelow;
+
 				this._colorAbove = from._colorAbove;
+				this._cachedGdiColorAbove = from._cachedGdiColorAbove;
+
 				this._colorInvalid = from._colorInvalid;
+				this._cachedGdiColorInvalid = from._cachedGdiColorInvalid;
+
 				this._alphaChannel = from._alphaChannel;
 				this._colorSteps = from._colorSteps;
 				result = true;
