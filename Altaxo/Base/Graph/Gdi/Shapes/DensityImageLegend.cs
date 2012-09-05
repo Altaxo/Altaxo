@@ -406,9 +406,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			var legendScale = (NumericalScale)ScaleWithTicks.Scale;
 			var legendTickSpacing = ScaleWithTicks.TickSpacing;
-			legendTickSpacing.PreProcessScaleBoundaries(ref porg, ref pend, true, true);
-			legendScale.SetScaleOrgEnd(porg, pend);
-			legendTickSpacing.FinalProcessScaleBoundaries(porg, pend, legendScale);
+
+			// We set the boundaries of our legend scale to the org and end of the z-scale of the density image item. 
+			legendScale.DataBounds.BeginUpdate();
+			legendScale.DataBounds.Reset();
+			legendScale.DataBounds.Add(originalZScale.OrgAsVariant);
+			legendScale.DataBounds.Add(originalZScale.EndAsVariant);
+			legendScale.DataBounds.EndUpdate();
+			legendScale.Rescale(); // and do a rescale to apply the changes to the boundaries
 
 
 			// Fill the bitmap
