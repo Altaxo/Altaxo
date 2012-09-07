@@ -22,6 +22,7 @@
 
 using System;
 using System.Drawing;
+using System.Collections.Generic;
 
 using Altaxo.Main;
 using Altaxo.Serialization;
@@ -82,6 +83,16 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     [field: NonSerialized]
     public event System.EventHandler Changed;
+
+		/// <summary>
+		/// Gets or sets the plot range start. Currently, this value is always 0.
+		/// </summary>
+		public int PlotRangeStart { get { return 0; } set { } }
+
+		/// <summary>
+		/// Gets or sets the plot range length. Currently, this value is always <c>int.MaxValue</c>.
+		/// </summary>
+		public int PlotRangeLength { get { return int.MaxValue; } set { } }
 
 
     #region Serialization
@@ -550,6 +561,28 @@ namespace Altaxo.Graph.Plot.Data
       }
     }
 
+		/// <summary>Clears all datacolumns present before and create new data columns.</summary>
+		/// <param name="columns">The columns.</param>
+		public void SetDataColumns(IEnumerable<IReadableColumn> columns)
+		{
+			// firstly, detach the old columns
+			if (null != _dataColumns)
+			{
+				foreach (var colProxy in _dataColumns)
+					colProxy.Changed -= EhColumnDataChangedEventHandler;
+			}
+
+			// now add the new columns
+			var list = new List<ReadableColumnProxy>();
+			foreach (var col in columns)
+			{
+				var colProxy = new ReadableColumnProxy(col);
+				colProxy.Changed += EhColumnDataChangedEventHandler;				// set the event chain
+				list.Add(colProxy);
+			}
+			_dataColumns = list.ToArray();
+		}
+
     public Altaxo.Data.IReadableColumn GetDataColumn(int i)
     {
       return _dataColumns[i] == null ? null : _dataColumns[i].Document;
@@ -557,12 +590,57 @@ namespace Altaxo.Graph.Plot.Data
 
     public Altaxo.Data.IReadableColumn XColumn
     {
-      get { return _xColumn == null ? null : _xColumn.Document; }
+      get
+			{
+				return _xColumn == null ? null : _xColumn.Document; 
+			}
+			set
+			{
+				IReadableColumn oldValue = null;
+
+				if (null != _xColumn)
+				{
+					_xColumn.Changed -= EhColumnDataChangedEventHandler;
+					oldValue = _xColumn.Document;
+				}
+
+				if (null == value)
+					value = new EquallySpacedColumn(0, 1);
+
+				_xColumn = new ReadableColumnProxy(value);
+				_xColumn.Changed += EhColumnDataChangedEventHandler;
+
+				if (!object.ReferenceEquals(oldValue, value))
+					EhColumnDataChangedEventHandler(value, EventArgs.Empty);
+
+			}
     }
 
     public Altaxo.Data.IReadableColumn YColumn
     {
-      get { return _yColumn == null ? null : _yColumn.Document; ; }
+      get
+			{
+				return _yColumn == null ? null : _yColumn.Document; ; 
+			}
+			set
+			{
+				IReadableColumn oldValue = null;
+
+				if (null != _yColumn)
+				{
+					_yColumn.Changed -= EhColumnDataChangedEventHandler;
+					oldValue = _yColumn.Document;
+				}
+
+				if (null == value)
+					value = new EquallySpacedColumn(0, 1);
+
+				_yColumn = new ReadableColumnProxy(value);
+				_yColumn.Changed += EhColumnDataChangedEventHandler;
+
+				if (!object.ReferenceEquals(oldValue, value))
+					EhColumnDataChangedEventHandler(value, EventArgs.Empty);
+			}
     }
 
 

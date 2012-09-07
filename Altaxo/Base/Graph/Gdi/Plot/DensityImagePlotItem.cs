@@ -160,19 +160,22 @@ namespace Altaxo.Graph.Gdi.Plot
 			CopyFrom(from);
 		}
 
-		protected override void CopyFrom(PlotItem fromb)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, fromb))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			base.CopyFrom(fromb);
-
-			DensityImagePlotItem from = fromb as DensityImagePlotItem;
-			if (null != from)
+			var copied = base.CopyFrom(obj);
+			if (copied)
 			{
-				this.Data = from._plotData.Clone();   // also wires the event
-				this.Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
+				var from = obj as DensityImagePlotItem;
+				if (null != from)
+				{
+					this.Data = from._plotData.Clone();   // also wires the event
+					this.Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
+				}
 			}
+			return copied;
 		}
 
 		public override object Clone()
@@ -225,6 +228,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			get { return _plotStyle; }
 			set { this.Style = (DensityImagePlotStyle)value; }
 		}
+
 		public DensityImagePlotStyle Style
 		{
 			get { return _plotStyle; }

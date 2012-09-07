@@ -384,11 +384,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\ColorProvider\VisibleLightSpectrumControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -726,6 +742,7 @@
     <Compile Include="Gui\Common\ConditionalDocumentControl.xaml.cs">
       <DependentUpon>ConditionalDocumentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\DoubleUpDown.cs" />
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
     <Compile Include="Gui\Common\Drawing\DimensionfulQuantityImageComboBox.cs" />
     <Compile Include="Gui\Common\Drawing\TextureScalingControl.xaml.cs">
@@ -847,6 +864,7 @@
     <Compile Include="Gui\Common\Drawing\RotationComboBox.xaml.cs">
       <DependentUpon>RotationComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\BorderWithSizeGreedLimit.cs" />
     <Compile Include="Gui\Common\MultiChoiceControl.xaml.cs">
       <DependentUpon>MultiChoiceControl.xaml</DependentUpon>
     </Compile>
@@ -927,11 +945,23 @@
     <Compile Include="Gui\Graph\ColorProviderControl.xaml.cs">
       <DependentUpon>ColorProviderControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientControl.xaml.cs">
+      <DependentUpon>ColorProviderAHSBGradientControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientControl.xaml.cs">
+      <DependentUpon>ColorProviderARGBGradientControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorProvider\VisibleLightSpectrumControl.xaml.cs">
+      <DependentUpon>VisibleLightSpectrumControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.xaml.cs">
       <DependentUpon>ColumnDrivenColorPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml.cs">
       <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml.cs">
+      <DependentUpon>XYZMeshedColumnPlotDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotStyleControl.xaml.cs">
       <DependentUpon>DensityImagePlotStyleControl.xaml</DependentUpon>

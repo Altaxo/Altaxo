@@ -297,6 +297,19 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
+		public virtual bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as PlotItemCollection;
+			if (null != from)
+			{
+				CopyFrom(from, GraphCopyOptions.All);
+			}
+			return false;
+		}
+
 		object ICloneable.Clone()
 		{
 			return new PlotItemCollection(this);

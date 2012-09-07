@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi.Plot
 	/// <summary>
 	/// Interface for a plottable item.
 	/// </summary>
-	public interface IGPlotItem : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
+	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentNode
 	{
 		/// <summary>
 		/// The name of the plot. It can be of different length. An argument of zero or less

@@ -23,26 +23,30 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
 			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
-		</Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2"/>
+			</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Colorization:"/>
-		<ComboBox x:Name="_cbColorProvider" Grid.Column="1" Grid.Row="0" SelectionChanged="EhColorProviderChanged"/>
+		<ComboBox x:Name="_cbColorProvider" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" SelectionChanged="EhColorProviderChanged"/>
 	</Grid>
 		<Border x:Name="_detailsPanel" HorizontalAlignment="Stretch" />
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
 				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="4"/>
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Content="Preview:"/>
-			<axogc:ImageWithNoSizeRequest x:Name="_previewPanel" Grid.Column="1" Grid.Row="0" Stretch="Fill" />
+			<axogc:ImageWithNoSizeRequest x:Name="_previewPanel" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" Stretch="Fill" />
 		</Grid>
 	</StackPanel>
 </UserControl>

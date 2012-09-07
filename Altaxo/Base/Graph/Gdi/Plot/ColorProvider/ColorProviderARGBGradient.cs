@@ -107,6 +107,144 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return hasCopied;
 		}
 
+
+		public double Red0
+		{
+			get
+			{
+				return _red0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_red0 != newValue)
+				{
+					_red0 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Red1
+		{
+			get
+			{
+				return _red1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_red1 != newValue)
+				{
+					_red1 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Green0
+		{
+			get
+			{
+				return _green0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_green0 != newValue)
+				{
+					_green0 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Green1
+		{
+			get
+			{
+				return _green1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_green1 != newValue)
+				{
+					_green1 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Blue0
+		{
+			get
+			{
+				return _blue0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_blue0 != newValue)
+				{
+					_blue0 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Blue1
+		{
+			get
+			{
+				return _blue1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_blue1 != newValue)
+				{
+					_blue1 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Opaqueness0
+		{
+			get
+			{
+				return _alpha0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_alpha0 != newValue)
+				{
+					_alpha0 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Opaqueness1
+		{
+			get
+			{
+				return _alpha1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_alpha1 != newValue)
+				{
+					_alpha1 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+
 		public Color ColorAtR0
 		{
 			get

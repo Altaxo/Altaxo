@@ -211,18 +211,23 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			CopyFrom((PlotItem)from);
 		}
-		protected override void CopyFrom(PlotItem fromb)
+
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, fromb))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			base.CopyFrom(fromb);
+			var copied = base.CopyFrom(obj);
 
-			XYColumnPlotItem from = fromb as XYColumnPlotItem;
-			if (null != from)
+			if (copied)
 			{
-				this.Data = (XYColumnPlotData)from.Data.Clone(); // also wires the event
+				var from = obj as XYColumnPlotItem;
+				if (null != from)
+				{
+					this.Data = (XYColumnPlotData)from.Data.Clone(); // also wires the event
+				}
 			}
+			return copied;
 		}
 
 

@@ -170,6 +170,7 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -199,6 +200,10 @@
     <Compile Include="Graph\Gdi\LabelFormatting\DateTimeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\FreeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBase.cs" />
+    <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
+    <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
+    <Compile Include="Gui\Graph\ColorProvider\VisibleLightSpectrumController.cs" />
+    <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseController.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF05LineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\DiamondLineCaps.cs" />

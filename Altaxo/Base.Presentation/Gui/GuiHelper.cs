@@ -102,8 +102,8 @@ namespace Altaxo.Gui
 					it.IsSelected = false;
 			}
 
-			if (null != view.SelectedItem)
-				((ISelectableItem)view.SelectedItem).IsSelected = true;
+			foreach (ISelectableItem it in view.SelectedItems)
+				it.IsSelected = true;
 		}
 
 		#endregion

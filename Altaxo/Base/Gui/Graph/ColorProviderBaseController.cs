@@ -73,14 +73,9 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IColorProviderBaseView))]
 	[UserControllerForObject(typeof(ColorProviderBase))]
-	public class ColorProviderBaseController : IMVCANController
+	public class ColorProviderBaseController : MVCANDControllerBase<ColorProviderBase,IColorProviderBaseView>
 	{
-		ColorProviderBase _originalDoc;
-		ColorProviderBase _doc;
-		IColorProviderBaseView _view;
-		UseDocument _useDocumentCopy;
-
-		void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
 			if (null != _view)
 			{
@@ -92,73 +87,31 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
+		protected override void AttachView()
 		{
-			if (args.Length == 0 || !(args[0] is ColorProviderBase))
-				return false;
-
-			_originalDoc = (ColorProviderBase)args[0];
-			if (_useDocumentCopy == UseDocument.Copy)
-				_doc = (ColorProviderBase)_originalDoc.Clone();
-			else
-				_doc = _originalDoc;
-
-			Initialize(true);
-			return true;
+			base.AttachView();
+			_view.ChoiceChanged += OnMadeDirty;
 		}
 
-		public UseDocument UseDocumentCopy
+		protected override void DetachView()
 		{
-			set { _useDocumentCopy = value; }
+			_view.ChoiceChanged -= OnMadeDirty;
+			base.DetachView();
 		}
 
-		#endregion
+	
 
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-				}
-
-				_view = value as IColorProviderBaseView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _originalDoc; }
-		}
-
-		#endregion
-
-		#region IApplyController Members
-
-		public bool Apply()
+		public override bool Apply()
 		{
 			_originalDoc.ColorBelow = _view.ColorBelow;
 			_originalDoc.ColorAbove = _view.ColorAbove;
 			_originalDoc.ColorInvalid = _view.ColorInvalid;
 			_originalDoc.Transparency = _view.Transparency;
 			_originalDoc.ColorSteps = _view.ColorSteps;
+	
 			return true;
 		}
 
-		#endregion
+	
 	}
 }

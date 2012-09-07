@@ -34,14 +34,17 @@ namespace Altaxo.Gui.Graph
   class DensityImagePlotItemController : TabbedElementController, IMVCANController
   {
 
-    UseDocument _useDocument;
+    bool _useDocumentCopy;
+    DensityImagePlotItem _originalDoc;
     DensityImagePlotItem _doc;
-    DensityImagePlotItem _tempdoc;
 
     IMVCANController _styleController;
 
 		/// <summary>Controls the option view where users can copy the image to disc or save the image.</summary>
 		IMVCANController _optionsController;
+
+		/// <summary>Controls the data view, in which the user can chose which columns to use in the plot item.</summary>
+		IMVCANController _dataController;
 
     public DensityImagePlotItemController()
     {
@@ -55,14 +58,15 @@ namespace Altaxo.Gui.Graph
       if (!(args[0] is DensityImagePlotItem))
         return false;
       else
-        _doc = _tempdoc = (DensityImagePlotItem)args[0];
+        _originalDoc = _doc = (DensityImagePlotItem)args[0];
 
      
 
-      if (_useDocument == UseDocument.Copy)
-        _tempdoc = (DensityImagePlotItem)_doc.Clone();
+      if (_useDocumentCopy)
+        _doc = (DensityImagePlotItem)_originalDoc.Clone();
 
       InitializeStyle();
+			InitializeDataView();
 			InitializeOptionView();
       BringTabToFront(0);
 
@@ -71,21 +75,29 @@ namespace Altaxo.Gui.Graph
 
     public UseDocument UseDocumentCopy
     {
-      set { _useDocument = value; }
+      set { _useDocumentCopy = UseDocument.Copy==value; }
     }
 
     void InitializeStyle()
     {
-      _styleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style }, typeof(IMVCANController), UseDocument.Directly);
+      _styleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IMVCANController), UseDocument.Directly);
       this.AddTab("Style", _styleController, _styleController.ViewObject);
     }
 
 		void InitializeOptionView()
 		{
 			_optionsController = new DensityImagePlotItemOptionController();
-			_optionsController.InitializeDocument(_tempdoc);
+			_optionsController.InitializeDocument(_doc);
 			Current.Gui.FindAndAttachControlTo(_optionsController);
 			this.AddTab("Options", _optionsController, _optionsController.ViewObject);
+		}
+
+		void InitializeDataView()
+		{
+			_dataController = new XYZMeshedColumnPlotDataController() { UseDocumentCopy = UseDocument.Directly };
+			_dataController.InitializeDocument(_doc.Data);
+			Current.Gui.FindAndAttachControlTo(_dataController);
+			this.AddTab("Data",_dataController, _dataController.ViewObject);
 		}
 
     #region IMVCController Members
@@ -93,7 +105,7 @@ namespace Altaxo.Gui.Graph
 
     public override object ModelObject
     {
-      get { return _doc; }
+      get { return _originalDoc; }
     }
 
     #endregion
@@ -108,11 +120,17 @@ namespace Altaxo.Gui.Graph
       {
         if (!_styleController.Apply())
           return false;
-        else
-        {
-          _doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.DensityImagePlotStyle)_styleController.ModelObject;
-        }
       }
+
+			if (_dataController != null)
+			{
+				if (!_dataController.Apply())
+					return false;
+			}
+
+
+			if (_useDocumentCopy)
+				CopyHelper.Copy(ref _originalDoc, _doc);
 
       return result;
     }

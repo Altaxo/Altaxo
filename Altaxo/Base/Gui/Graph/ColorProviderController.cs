@@ -153,19 +153,20 @@ namespace Altaxo.Gui.Graph
 			if (bInit)
 			{
 				object providerObject = _doc;
+
+				if (_detailController is IMVCANDController)
+					((IMVCANDController)_detailController).MadeDirty -= EhDetailsChanged;
+
 				_detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCANController), UseDocument.Directly);
+
+				if (_detailController is IMVCANDController)
+					((IMVCANDController)_detailController).MadeDirty += EhDetailsChanged;
+				
 			}
 			if (null != _view)
 			{
-				if (null != (_detailView as IColorProviderBaseView))
-					((IColorProviderBaseView)_detailView).ChoiceChanged -= EhDetailsChanged;
-
 				_detailView = null == _detailController ? null : _detailController.ViewObject;
 				_view.SetDetailView(_detailView);
-
-				if (null != (_detailView as IColorProviderBaseView))
-					((IColorProviderBaseView)_detailView).ChoiceChanged += EhDetailsChanged;
-
 			}
 		}
 
@@ -200,7 +201,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhDetailsChanged()
+		void EhDetailsChanged(IMVCANDController ctrl)
 		{
 			_detailController.Apply(); // we use the instance directly, thus no further taking of the instance is neccessary here
 			CreateAndSetPreviewBitmap();

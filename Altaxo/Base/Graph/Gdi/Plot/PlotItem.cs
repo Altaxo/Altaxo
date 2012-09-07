@@ -36,7 +36,6 @@ namespace Altaxo.Graph.Gdi.Plot
 	:
 		IGPlotItem,
 		Main.IChangedEventSource,
-		System.ICloneable,
 		Main.IDocumentNode,
 		Main.INamedObjectCollection
 	{
@@ -47,9 +46,18 @@ namespace Altaxo.Graph.Gdi.Plot
 		[NonSerialized]
 		protected object _parent;
 
-		protected virtual void CopyFrom(PlotItem from)
+		public virtual bool CopyFrom(object obj)
 		{
-			this._parent = from._parent;
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as PlotItem;
+			if (null!=from)
+			{
+				this._parent = from._parent;
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>

@@ -180,22 +180,21 @@ namespace Altaxo.Graph.Gdi.Plot
 			CopyFrom((PlotItem)from);
 		}
 
-		public void CopyFrom(XYFunctionPlotItem from)
+		public override bool CopyFrom(object obj)
 		{
-			CopyFrom((PlotItem)from);
-		}
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-		protected override void CopyFrom(PlotItem fromb)
-		{
-			if (object.ReferenceEquals(this, fromb))
-				return;
-
-			base.CopyFrom(fromb);
-			XYFunctionPlotItem from = fromb as XYFunctionPlotItem;
-			if (from != null)
+			var copied = base.CopyFrom(obj);
+			if (copied)
 			{
-				this.Data = from.Data;
+				var from = obj as XYFunctionPlotItem;
+				if (from != null)
+				{
+					this.Data = from.Data;
+				}
 			}
+			return copied;
 		}
 
 		public override object Clone()

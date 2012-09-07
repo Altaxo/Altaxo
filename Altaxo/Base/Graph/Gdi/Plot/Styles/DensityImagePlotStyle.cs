@@ -407,9 +407,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
 
 			if (null == xColumn || null == yColumn)
-				return; // this plotitem is only for x and y double columns
-
-
+				return;
+		
 
 			//double layerWidth = gl.Size.Width;
 			//double layerHeight = gl.Size.Height;

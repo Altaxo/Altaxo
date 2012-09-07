@@ -34,35 +34,34 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	public class DecimalUpDown : NumericUpDownBase
+	public class DoubleUpDown : NumericUpDownBase
 	{
-		private const decimal DefaultMinValue = 0;
-		private const decimal DefaultValue = DefaultMinValue;
-		private const decimal DefaultMaxValue = 100;
-		private const decimal DefaultChange = 1;
-		private const int DefaultDecimalPlaces = 0;
+		private const double DefaultMinValue = 0;
+		private const double DefaultValue = 0;
+		private const double DefaultMaxValue = 100;
+		private const double DefaultChange = 1;
 
 		#region Converter
 
 		protected override object GetNewValidationRuleAndConverter()
 		{
-			return new DecimalUpDownConverter(this);
+			return new DoubleUpDownConverter(this);
 		}
 
-		protected class DecimalUpDownConverter : ValidationRule, IValueConverter
+		protected class DoubleUpDownConverter : ValidationRule, IValueConverter
 		{
-			DecimalUpDown _parent;
+			DoubleUpDown _parent;
 
-			public DecimalUpDownConverter() { }
+			public DoubleUpDownConverter() { }
 
-			public DecimalUpDownConverter(DecimalUpDown parent)
+			public DoubleUpDownConverter(DoubleUpDown parent)
 			{
 				_parent = parent;
 			}
 
 			public object Convert(object obj, Type targetType, object parameter, CultureInfo culture)
 			{
-				decimal val = (decimal)obj;
+				var val = (double)obj;
 
 				if (null != _parent)
 				{
@@ -95,9 +94,10 @@ namespace Altaxo.Gui.Common
 
 				string s = (string)obj;
 
+
 				if (null != _parent)
 				{
-					_parent.SetValue(ValueStringPropertyKey, s);
+					_parent.SetValue(ValueStringPropertyKey, s); // we set the value string property to have the actual text value as a property
 					s = s.Trim();
 
 					if (!string.IsNullOrEmpty(_parent.MinimumReplacementText) && _parent.MinimumReplacementText.Trim() == s)
@@ -108,38 +108,28 @@ namespace Altaxo.Gui.Common
 						return _parent.ValueIfTextIsEmpty;
 				}
 
-				decimal result;
-				if (decimal.TryParse(s, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentUICulture, out result))
+				double result;
+				if (double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentUICulture, out result))
+				{
 					return result;
+				}
 				else
 				{
-					validationResult = new ValidationResult(false, string.Format("The provided string could not be converted to a numeric value, parent is {0}", _parent == null ? "Null" : "Set"));
+					validationResult = new ValidationResult(false, string.Format("The provided string could not be converted to an numeric value!"));
 					return System.Windows.Data.Binding.DoNothing;
 				}
 			}
-
-
-
 		}
-
-
-
 
 		#endregion
 
 		#region Properties
 
 		#region Value
-		public decimal Value
+		public double Value
 		{
-			get { return (decimal)GetValue(ValueProperty); }
+			get { return (double)GetValue(ValueProperty); }
 			set { SetValue(ValueProperty, value); }
-		}
-
-		public double ValueAsDouble
-		{
-			get { return (double)(decimal)GetValue(ValueProperty); }
-			set { SetValue(ValueProperty, (decimal)value); }
 		}
 
 		/// <summary>
@@ -147,7 +137,7 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		public static readonly DependencyProperty ValueProperty =
 				DependencyProperty.Register(
-						"Value", typeof(decimal), typeof(DecimalUpDown),
+						"Value", typeof(double), typeof(DoubleUpDown),
 						new FrameworkPropertyMetadata(DefaultValue,
 								new PropertyChangedCallback(OnValueChanged),
 								new CoerceValueCallback(CoerceValue)
@@ -156,22 +146,20 @@ namespace Altaxo.Gui.Common
 
 		private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			DecimalUpDown control = (DecimalUpDown)obj;
+			var control = (DoubleUpDown)obj;
 
-			decimal oldValue = (decimal)args.OldValue;
-			decimal newValue = (decimal)args.NewValue;
+			var oldValue = (double)args.OldValue;
+			var newValue = (double)args.NewValue;
 
 			#region Fire Automation events
-			DecimalUpDownAutomationPeer peer = UIElementAutomationPeer.FromElement(control) as DecimalUpDownAutomationPeer;
+			var peer = UIElementAutomationPeer.FromElement(control) as DoubleUpDownAutomationPeer;
 			if (peer != null)
 			{
 				peer.RaiseValueChangedEvent(oldValue, newValue);
 			}
 			#endregion
 
-			RoutedPropertyChangedEventArgs<decimal> e = new RoutedPropertyChangedEventArgs<decimal>(
-					oldValue, newValue, ValueChangedEvent);
-
+			var e = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue, ValueChangedEvent);
 			control.OnValueChanged(e);
 		}
 
@@ -179,27 +167,26 @@ namespace Altaxo.Gui.Common
 		/// Raises the ValueChanged event.
 		/// </summary>
 		/// <param name="args">Arguments associated with the ValueChanged event.</param>
-		protected virtual void OnValueChanged(RoutedPropertyChangedEventArgs<decimal> args)
+		protected virtual void OnValueChanged(RoutedPropertyChangedEventArgs<double> args)
 		{
 			RaiseEvent(args);
 		}
 
 		private static object CoerceValue(DependencyObject element, object value)
 		{
-			decimal newValue = (decimal)value;
-			DecimalUpDown control = (DecimalUpDown)element;
+			var newValue = (double)value;
+			var control = (DoubleUpDown)element;
 
 			newValue = Math.Max(control.Minimum, Math.Min(control.Maximum, newValue));
-			newValue = Decimal.Round(newValue, control.DecimalPlaces);
 
 			return newValue;
 		}
 		#endregion
 
 		#region ValueIfTextIsEmpty
-		public decimal? ValueIfTextIsEmpty
+		public double? ValueIfTextIsEmpty
 		{
-			get { return (decimal?)GetValue(ValueIfTextIsEmptyProperty); }
+			get { return (double?)GetValue(ValueIfTextIsEmptyProperty); }
 			set { SetValue(ValueIfTextIsEmptyProperty, value); }
 		}
 
@@ -208,7 +195,7 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		public static readonly DependencyProperty ValueIfTextIsEmptyProperty =
 				DependencyProperty.Register(
-						"ValueIfTextIsEmpty", typeof(decimal?), typeof(DecimalUpDown)
+						"ValueIfTextIsEmpty", typeof(double?), typeof(DoubleUpDown)
 		);
 
 		#endregion
@@ -223,22 +210,24 @@ namespace Altaxo.Gui.Common
 		}
 
 		private static readonly DependencyPropertyKey ValueStringPropertyKey =
-				DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof(string), typeof(DecimalUpDown), new PropertyMetadata());
+				DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof(string), typeof(DoubleUpDown), new PropertyMetadata());
 
 		public static readonly DependencyProperty ValueStringProperty = ValueStringPropertyKey.DependencyProperty;
+
+		private NumberFormatInfo _numberFormatInfo = new NumberFormatInfo();
 
 		#endregion
 
 		#region Minimum
-		public decimal Minimum
+		public double Minimum
 		{
-			get { return (decimal)GetValue(MinimumProperty); }
+			get { return (double)GetValue(MinimumProperty); }
 			set { SetValue(MinimumProperty, value); }
 		}
 
 		public static readonly DependencyProperty MinimumProperty =
 				DependencyProperty.Register(
-						"Minimum", typeof(decimal), typeof(DecimalUpDown),
+						"Minimum", typeof(double), typeof(DoubleUpDown),
 						new FrameworkPropertyMetadata(DefaultMinValue,
 								new PropertyChangedCallback(OnMinimumChanged), new CoerceValueCallback(CoerceMinimum)
 						)
@@ -249,24 +238,25 @@ namespace Altaxo.Gui.Common
 			element.CoerceValue(MaximumProperty);
 			element.CoerceValue(ValueProperty);
 		}
+
 		private static object CoerceMinimum(DependencyObject element, object value)
 		{
-			decimal minimum = (decimal)value;
-			DecimalUpDown control = (DecimalUpDown)element;
-			return Decimal.Round(minimum, control.DecimalPlaces);
+			double minimum = (double)value;
+			DoubleUpDown control = (DoubleUpDown)element;
+			return minimum;
 		}
 		#endregion
 
 		#region Maximum
-		public decimal Maximum
+		public double Maximum
 		{
-			get { return (decimal)GetValue(MaximumProperty); }
+			get { return (double)GetValue(MaximumProperty); }
 			set { SetValue(MaximumProperty, value); }
 		}
 
 		public static readonly DependencyProperty MaximumProperty =
 				DependencyProperty.Register(
-						"Maximum", typeof(decimal), typeof(DecimalUpDown),
+						"Maximum", typeof(double), typeof(DoubleUpDown),
 						new FrameworkPropertyMetadata(DefaultMaxValue,
 								new PropertyChangedCallback(OnMaximumChanged),
 								new CoerceValueCallback(CoerceMaximum)
@@ -280,29 +270,29 @@ namespace Altaxo.Gui.Common
 
 		private static object CoerceMaximum(DependencyObject element, object value)
 		{
-			DecimalUpDown control = (DecimalUpDown)element;
-			decimal newMaximum = (decimal)value;
-			return Decimal.Round(Math.Max(newMaximum, control.Minimum), control.DecimalPlaces);
+			DoubleUpDown control = (DoubleUpDown)element;
+			double newMaximum = (double)value;
+			return Math.Max(newMaximum, control.Minimum);
 		}
 		#endregion
 
 		#region Change
-		public decimal Change
+		public double Change
 		{
-			get { return (decimal)GetValue(ChangeProperty); }
+			get { return (double)GetValue(ChangeProperty); }
 			set { SetValue(ChangeProperty, value); }
 		}
 
 		public static readonly DependencyProperty ChangeProperty =
 				DependencyProperty.Register(
-						"Change", typeof(decimal), typeof(DecimalUpDown),
+						"Change", typeof(double), typeof(DoubleUpDown),
 						new FrameworkPropertyMetadata(DefaultChange, new PropertyChangedCallback(OnChangeChanged), new CoerceValueCallback(CoerceChange)),
 				new ValidateValueCallback(ValidateChange)
 				);
 
 		private static bool ValidateChange(object value)
 		{
-			decimal change = (decimal)value;
+			double change = (double)value;
 			return change > 0;
 		}
 
@@ -313,74 +303,13 @@ namespace Altaxo.Gui.Common
 
 		private static object CoerceChange(DependencyObject element, object value)
 		{
-			decimal newChange = (decimal)value;
-			DecimalUpDown control = (DecimalUpDown)element;
+			double newChange = (double)value;
+			DoubleUpDown control = (DoubleUpDown)element;
 
-			decimal coercedNewChange = Decimal.Round(newChange, control.DecimalPlaces);
-
-			//If Change is .1 and DecimalPlaces is changed from 1 to 0, we want Change to go to 1, not 0.
-			//Put another way, Change should always be rounded to DecimalPlaces, but never smaller than the 
-			//previous Change
-			if (coercedNewChange < newChange)
-			{
-				coercedNewChange = smallestForDecimalPlaces(control.DecimalPlaces);
-			}
-
-			return coercedNewChange;
-		}
-
-		private static decimal smallestForDecimalPlaces(int decimalPlaces)
-		{
-			if (decimalPlaces < 0)
-			{
-				throw new ArgumentException("decimalPlaces");
-			}
-
-			decimal d = 1;
-
-			for (int i = 0; i < decimalPlaces; i++)
-			{
-				d /= 10;
-			}
-
-			return d;
+			return newChange;
 		}
 
 		#endregion
-
-		#region DecimalPlaces
-		public int DecimalPlaces
-		{
-			get { return (int)GetValue(DecimalPlacesProperty); }
-			set { SetValue(DecimalPlacesProperty, value); }
-		}
-
-		public static readonly DependencyProperty DecimalPlacesProperty =
-				DependencyProperty.Register(
-						"DecimalPlaces", typeof(int), typeof(DecimalUpDown),
-						new FrameworkPropertyMetadata(DefaultDecimalPlaces,
-								new PropertyChangedCallback(OnDecimalPlacesChanged)
-						), new ValidateValueCallback(ValidateDecimalPlaces)
-				);
-
-		private static void OnDecimalPlacesChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
-		{
-			DecimalUpDown control = (DecimalUpDown)element;
-			control.CoerceValue(ChangeProperty);
-			control.CoerceValue(MinimumProperty);
-			control.CoerceValue(MaximumProperty);
-			control.CoerceValue(ValueProperty);
-		}
-
-		private static bool ValidateDecimalPlaces(object value)
-		{
-			int decimalPlaces = (int)value;
-			return decimalPlaces >= 0;
-		}
-
-		#endregion
-
-
 
 		#endregion
 
@@ -390,12 +319,12 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
 				"ValueChanged", RoutingStrategy.Bubble,
-				typeof(RoutedPropertyChangedEventHandler<decimal>), typeof(DecimalUpDown));
+				typeof(RoutedPropertyChangedEventHandler<double>), typeof(DoubleUpDown));
 
 		/// <summary>
 		/// Occurs when the Value property changes.
 		/// </summary>
-		public event RoutedPropertyChangedEventHandler<decimal> ValueChanged
+		public event RoutedPropertyChangedEventHandler<double> ValueChanged
 		{
 			add { AddHandler(ValueChangedEvent, value); }
 			remove { RemoveHandler(ValueChangedEvent, value); }
@@ -409,18 +338,18 @@ namespace Altaxo.Gui.Common
 		{
 			// avoid an overflow before coerce of the value
 			var val = this.Value;
-			if (this.Value <= (decimal.MaxValue - Change))
+			if (this.Value <= (double.MaxValue - Change))
 				this.Value += Change;
 			else
-				this.Value = decimal.MaxValue;
+				this.Value = double.MaxValue;
 		}
 		protected override void OnDecrease()
 		{
 			// avoid an underflow before coerce of the value
-			if (this.Value >= (decimal.MinValue + Change))
+			if (this.Value >= (double.MinValue + Change))
 				this.Value -= Change;
 			else
-				this.Value = decimal.MinValue;
+				this.Value = double.MinValue;
 		}
 		protected override void OnGotoMinimum()
 		{
@@ -435,23 +364,24 @@ namespace Altaxo.Gui.Common
 		#endregion
 
 		#region Automation
+
 		protected override AutomationPeer OnCreateAutomationPeer()
 		{
-			return new DecimalUpDownAutomationPeer(this);
+			return new DoubleUpDownAutomationPeer(this);
 		}
 		#endregion
 	}
 
-	public class DecimalUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
+	public class DoubleUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
 	{
-		public DecimalUpDownAutomationPeer(DecimalUpDown control)
+		public DoubleUpDownAutomationPeer(DoubleUpDown control)
 			: base(control)
 		{
 		}
 
 		protected override string GetClassNameCore()
 		{
-			return "DecimalUpDown";
+			return "DoubleUpDown";
 		}
 
 		protected override AutomationControlType GetAutomationControlTypeCore()
@@ -468,7 +398,7 @@ namespace Altaxo.Gui.Common
 			return base.GetPattern(patternInterface);
 		}
 
-		internal void RaiseValueChangedEvent(decimal oldValue, decimal newValue)
+		internal void RaiseValueChangedEvent(double oldValue, double newValue)
 		{
 			base.RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
 					(double)oldValue, (double)newValue);
@@ -506,7 +436,7 @@ namespace Altaxo.Gui.Common
 				throw new ElementNotEnabledException();
 			}
 
-			decimal val = (decimal)value;
+			double val = (double)value;
 			if (val < MyOwner.Minimum || val > MyOwner.Maximum)
 			{
 				throw new ArgumentOutOfRangeException("value");
@@ -527,11 +457,11 @@ namespace Altaxo.Gui.Common
 
 		#endregion
 
-		private DecimalUpDown MyOwner
+		private DoubleUpDown MyOwner
 		{
 			get
 			{
-				return (DecimalUpDown)base.Owner;
+				return (DoubleUpDown)base.Owner;
 			}
 		}
 

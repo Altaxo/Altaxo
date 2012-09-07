@@ -98,18 +98,21 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			CopyFrom((PlotItem)from);
 		}
-		protected override void CopyFrom(PlotItem fromb)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, fromb))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			base.CopyFrom(fromb);
-
-			G2DPlotItem from = fromb as G2DPlotItem;
-			if (from != null)
+			var copied = base.CopyFrom(obj);
+			if (copied)
 			{
-				this.Style = from.Style.Clone();
+				var from = obj as G2DPlotItem;
+				if (from != null)
+				{
+					this.Style = from.Style.Clone();
+				}
 			}
+			return copied;
 		}
 
 		/// <summary>

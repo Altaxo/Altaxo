@@ -108,8 +108,141 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		}
 
 
+		public double Hue0
+		{
+			get
+			{
+				return _hue0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_hue0 != newValue)
+				{
+					_hue0 = newValue;
+					OnChanged();
+				}
+			}
+		}
 
+		public double Hue1
+		{
+			get
+			{
+				return _hue1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_hue1 != newValue)
+				{
+					_hue1 = newValue;
+					OnChanged();
+				}
+			}
+		}
 
+		public double Saturation0
+		{
+			get
+			{
+				return _saturation0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_saturation0 != newValue)
+				{
+					_saturation0 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Saturation1
+		{
+			get
+			{
+				return _saturation1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_saturation1 != newValue)
+				{
+					_saturation1 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Brightness0
+		{
+			get
+			{
+				return _brightness0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_brightness0 != newValue)
+				{
+					_brightness0 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Brightness1
+		{
+			get
+			{
+				return _brightness1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_brightness1 != newValue)
+				{
+					_brightness1 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Opaqueness0
+		{
+			get
+			{
+				return _alpha0;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_alpha0 != newValue)
+				{
+					_alpha0 = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Opaqueness1
+		{
+			get
+			{
+				return _alpha1;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_alpha1 != newValue)
+				{
+					_alpha1 = newValue;
+					OnChanged();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Generates a color from alpha, hue, saturation and brightness values. All values are normalized values between 0 and 1.

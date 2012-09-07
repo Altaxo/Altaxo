@@ -40,25 +40,54 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <summary>Maximum wavelength of the light in nm which can be shown as color.</summary>
 		public static readonly int MaxVisibleWavelength_nm = 780;
 
-		/// <summary>Default maximum intensity (brightness) of the colors delivered.</summary>
-		public static readonly int DefaultIntensityMaximum = 255;
-
 		/// <summary>Default gamma value.</summary>
 		public static readonly double DefaultGamma = 1;
 
-		/// <summary>Maximum value of intensity (0..255).</summary>
-		private int _intensityMaximum;
+		/// <summary>Default brightness value.</summary>
+		public static readonly double DefaultBrightness = 1;
+
+		/// <summary>Brightness value (0..1)</summary>
+		private double _brightness = 1;
 
 		/// <summary>Gamma value for colorization.</summary>
 		private double _gamma = 1;
+
+		const double maxColorComponent = 255.999;
+
+
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VisibleLightSpectrum), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (VisibleLightSpectrum)obj;
+				info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
+				info.AddValue("Gamma", s._gamma);
+				info.AddValue("Brightness", s._brightness);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				var s = null != o ? (VisibleLightSpectrum)o : new VisibleLightSpectrum();
+				info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
+				s._gamma = info.GetDouble("Gramma");
+				s._brightness = info.GetDouble("Brightness");
+				return s;
+			}
+		}
+
+		#endregion
+
 
 		/// <summary>
 		/// Default constructor. The maximum intensity and the gamma value are set to their default values.
 		/// </summary>
 		public VisibleLightSpectrum()
 		{
-			_intensityMaximum = DefaultIntensityMaximum;
 			_gamma = DefaultGamma;
+			_brightness = DefaultBrightness;
 		}
 
 		/// <summary>
@@ -84,13 +113,47 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			var from = o as VisibleLightSpectrum;
 			if (null != from)
 			{
-				this._intensityMaximum = from._intensityMaximum;
 				this._gamma = from._gamma;
+				this._brightness = from._brightness;
 				result = true;
 			}
 			return result;
 		}
 
+
+		public double Gamma
+		{
+			get
+			{
+				return _gamma;
+			}
+			set
+			{
+				var newValue = Math.Max(0, value);
+				if (_gamma != newValue)
+				{
+					_gamma = newValue;
+					OnChanged();
+				}
+			}
+		}
+
+		public double Brightness
+		{
+			get
+			{
+				return _brightness;
+			}
+			set
+			{
+				var newValue = Math.Max(0, Math.Min(value, 1));
+				if (_brightness != newValue)
+				{
+					_brightness = newValue;
+					OnChanged();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets the color in dependence of the wavelength with <see cref="DefaultGamma"/> value, <see cref="DefaultIntensityMaximum"/> and no transparency.
@@ -99,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <returns>Color in dependence of the provided wavelength value.</returns>
 		public static Color GetColorFromWaveLength(double Wavelength)
 		{
-			return GetColorFromWaveLength(Wavelength, DefaultGamma, DefaultIntensityMaximum, 255);
+			return GetColorFromWaveLength(Wavelength, DefaultGamma, DefaultBrightness, 255);
 		}
 
 		/// <summary>
@@ -107,10 +170,10 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// </summary>
 		/// <param name="Wavelength">Wavelength in nm (ranging from 350 to 780).</param>
 		/// <param name="Gamma">Gamma value (positive).</param>
-		/// <param name="IntensityMax">Maximum brightness (0..255).</param>
+		/// <param name="brightness">Maximum brightness value (0..1).</param>
 		/// <param name="alphaChannel">Value of the alpha channel (0.255), corresponding to full transparent (0) to full opaque (255).</param>
 		/// <returns>The color in dependence of the provided arguments.</returns>
-		public static Color GetColorFromWaveLength(double Wavelength, double Gamma, int IntensityMax, int alphaChannel)
+		public static Color GetColorFromWaveLength(double Wavelength, double Gamma, double brightness, int alphaChannel)
 		{
 			double Blue;
 			double Green;
@@ -179,16 +242,16 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				Factor = 0.0;
 			}
 
-			int R = AdjustFactor(Red, Factor, IntensityMax, Gamma);
-			int G = AdjustFactor(Green, Factor, IntensityMax, Gamma);
-			int B = AdjustFactor(Blue, Factor, IntensityMax, Gamma);
+			int R = AdjustFactor(Red, Factor, brightness, Gamma);
+			int G = AdjustFactor(Green, Factor, brightness, Gamma);
+			int B = AdjustFactor(Blue, Factor, brightness, Gamma);
 
 			return Color.FromArgb(alphaChannel, R, G, B);
 		}
 
 		private static int AdjustFactor(double Color,
 		 double Factor,
-		 int IntensityMax,
+		 double brightness,
 		 double Gamma)
 		{
 			if (Color == 0.0)
@@ -197,7 +260,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 			else
 			{
-				return (int)Math.Round(IntensityMax * Math.Pow(Color * Factor, Gamma));
+				return (int)Math.Round(255* brightness * Math.Pow(Color * Factor, Gamma));
 			}
 		}
 
@@ -222,7 +285,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return GetColorFromWaveLength(
 				MinVisibleWavelength_nm + relVal * (MaxVisibleWavelength_nm - MinVisibleWavelength_nm),
 				_gamma,
-				_intensityMaximum,
+				_brightness,
 				_alphaChannel);
 		}
 	}
