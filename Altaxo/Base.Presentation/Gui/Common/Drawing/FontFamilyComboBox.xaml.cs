@@ -102,7 +102,7 @@ namespace Altaxo.Gui.Common.Drawing
 				_defaultChars = chars.ToArray();
 			}
 
-			public FontComboBoxItem(FontFamily fontFamily)
+			public FontComboBoxItem(sd.FontFamily fontFamily)
 			{
 				Value = fontFamily;
 			}
@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Common.Drawing
 				get
 				{
 					if (null == _imgSource)
-						_imgSource = GetImage((FontFamily)Value);
+						_imgSource = GetImage((sd.FontFamily)Value);
 					return _imgSource;
 				}
 			}
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				get
 				{
-					return ((FontFamily)Value).Source;
+					return ((sd.FontFamily)Value).Name;
 				}
 			}
 
@@ -143,7 +143,7 @@ namespace Altaxo.Gui.Common.Drawing
 				return chars.ToArray();
 			}
 
-			static ImageSource GetImage(FontFamily fontFamily)
+			static ImageSource GetImage(sd.FontFamily fontFamily)
 			{
 				const double border = 0.1;
 				const double height = 1;
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Common.Drawing
 				geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
 				drawingGroup.Children.Add(geometryDrawing);
 
-				Typeface typeface = new Typeface(fontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+				Typeface typeface = new Typeface(fontFamily.Name);
 				GlyphTypeface glyphTypeFace;
 				if (!typeface.TryGetGlyphTypeface(out glyphTypeFace))
 					glyphTypeFace = null;
@@ -213,7 +213,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static GdiToWpfBitmap _interopBitmap;
 
-		static FontFamily GenericSansSerif;
+		static sd.FontFamily GenericSansSerif;
 
 
 
@@ -221,20 +221,21 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static FontFamilyComboBox()
 		{
-			GenericSansSerif = new FontFamily(sd.FontFamily.GenericSansSerif.Name);
+			// GenericSansSerif = new FontFamily(sd.FontFamily.GenericSansSerif.Name);
+			GenericSansSerif = sd.FontFamily.GenericSansSerif;
 
-			foreach (var gdiFontFamily in sd.FontFamily.Families)
-				_gdiFontFamilyNames.Add(gdiFontFamily.Name);
+			var list = new List<sd.FontFamily>(sd.FontFamily.Families);
+			list.Sort((x, y) => string.Compare(x.Name, y.Name));
 
-			foreach (var fontFam in System.Windows.Media.Fonts.SystemFontFamilies)
+			// note: it seems always possible to get from a Gdi font family name and the Gdi font style a 
+			// System.Windows.Media.Typeface using the constructor with one string argument
+			// the string argument must be the Gdi font family name, and appended to this "Bold" or "Italic" or "Bold Italic"
+
+			foreach (var fontFam in list)
 			{
-				// use only those items, that have a corresponding Gdi font family
-				if (_gdiFontFamilyNames.Contains(fontFam.Source))
-				{
-					var item = new FontComboBoxItem(fontFam);
-					_allItems.Add(item);
-					_cachedItems.Add(fontFam.Source, item);
-				}
+				var item = new FontComboBoxItem(fontFam);
+				_allItems.Add(item);
+				_cachedItems.Add(fontFam.Name, item);
 			}
 		}
 
@@ -255,27 +256,32 @@ namespace Altaxo.Gui.Common.Drawing
 		private const string _nameOfValueProp = "SelectedFontFamily";
 		public FontFamily SelectedFontFamily
 		{
-			get { return (FontFamily)GetValue(SelectedFontFamilyProperty); }
-			set { SetValue(SelectedFontFamilyProperty, value); }
+			get
+			{
+				var gdiFF = (sd.FontFamily)GetValue(SelectedFontFamilyProperty);
+				return new System.Windows.Media.Typeface(gdiFF.Name).FontFamily;
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		public sd.FontFamily SelectedGdiFontFamily
 		{
 			get
 			{
-				var wpfFF = (FontFamily)GetValue(SelectedFontFamilyProperty);
-				return new sd.FontFamily(wpfFF.Source);
+				return (sd.FontFamily)GetValue(SelectedFontFamilyProperty); 
 			}
 			set
 			{
-				var wpfFF = new FontFamily(value.Name);
-				SetValue(SelectedFontFamilyProperty, wpfFF);
+				SetValue(SelectedFontFamilyProperty, value);
 			}
 		}
 
 
 		public static readonly DependencyProperty SelectedFontFamilyProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(FontFamily), typeof(FontFamilyComboBox),
+				DependencyProperty.Register(_nameOfValueProp, typeof(sd.FontFamily), typeof(FontFamilyComboBox),
 				new FrameworkPropertyMetadata(GenericSansSerif, EhSelectedFontFamilyChanged));
 
 		private static void EhSelectedFontFamilyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -290,7 +296,7 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 		#endregion
 
-
+		/*
 		public static ImageSource GetImage(sd.FontFamily join)
 		{
 			const int bmpHeight = 24;
@@ -318,5 +324,6 @@ namespace Altaxo.Gui.Common.Drawing
 			img.Freeze();
 			return img;
 		}
+		*/
 	}
 }
