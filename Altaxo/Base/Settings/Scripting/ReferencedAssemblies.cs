@@ -53,13 +53,24 @@ namespace Altaxo.Settings.Scripting
       // Add available assemblies including the application itself 
       foreach (Assembly asm in assembliesLoadedSoFar)
       {
-        // this will include only those assemblies that have an external file
-				if (!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location != null && asm.Location != String.Empty)
+				if (asm.IsDynamic || (asm is System.Reflection.Emit.AssemblyBuilder))
+					continue;
+				try
 				{
-					lock (_startupAssemblies)
-					{
-						_startupAssemblies.Add(asm);
-					}
+					// this will include only those assemblies that have an external file
+					// we put this in a try .. catch clause since for some assemblies asking for the location will cause an UnsupportedException
+					if (string.IsNullOrEmpty(asm.Location))
+						continue;
+				}
+				catch (Exception)
+				{
+					continue;
+				}
+
+        // now we can add the assemblies to the startup assembly list. Those assemblies that are added are not dynamic, and should have an external file location
+				lock (_startupAssemblies)
+				{
+					_startupAssemblies.Add(asm);
 				}
       }
 		
@@ -68,15 +79,28 @@ namespace Altaxo.Settings.Scripting
 		static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
 		{
 			var asm = args.LoadedAssembly;
-			// this will include only those assemblies that have an external file
-			if (!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location != null && asm.Location != String.Empty)
+
+			if (asm.IsDynamic || (asm is System.Reflection.Emit.AssemblyBuilder))
+				return;
+			try
 			{
-				lock (_startupAssemblies)
-				{
-					_startupAssemblies.Add(asm);
-				}
+				// this will include only those assemblies that have an external file
+				// we put this in a try .. catch clause since for some assemblies asking for the location will cause an UnsupportedException
+				if (string.IsNullOrEmpty(asm.Location))
+					return;
+			}
+			catch (Exception)
+			{
+				return;
+			}
+
+			// now our assembly is not a dynamic assembly, and has an an external file location
+			lock (_startupAssemblies)
+			{
+				_startupAssemblies.Add(asm);
 			}
 		}
+		
 
     public static void Initialize()
     {
