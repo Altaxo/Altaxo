@@ -133,9 +133,21 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#endregion GradientFocus
 
-		#region WrapMode 
+    #region RestrictColorToPlotColorsOnly
 
-		public System.Drawing.Drawing2D.WrapMode WrapMode
+    public bool RestrictBrushColorToPlotColorsOnly
+    {
+      set 
+      {
+        _cbColor.ShowPlotColorsOnly = value;
+      }
+    }
+
+    #endregion
+
+    #region WrapMode
+
+    public System.Drawing.Drawing2D.WrapMode WrapMode
 		{
 			get { return _cbWrapMode.WrapMode; }
 			set { _cbWrapMode.WrapMode = value; }
@@ -337,8 +349,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#endregion
 
-
-
 		#region Preview Panel
 		GdiToWpfBitmap _previewBitmap;
 		public void UpdatePreview(BrushX brush)
@@ -395,18 +405,21 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#endregion
 
-		
 
 
-		
 
-	
 
-	
 
-		
 
-		
 
-	}
+
+
+
+
+
+
+
+
+ 
+  }
 }

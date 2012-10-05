@@ -46,11 +46,11 @@ namespace Altaxo.Graph.Gdi.Axis
 	{
 
 		/// <summary>Pen used for painting of the axis.</summary>
-		protected PenX _axisPen = new PenX(NamedColor.Black, 1);
+		protected PenX _axisPen = new PenX(NamedColors.Black, 1);
 		/// <summary>Pen used for painting of the major ticks.</summary>
-		protected PenX _majorTickPen = new PenX(NamedColor.Black, 1);
+		protected PenX _majorTickPen = new PenX(NamedColors.Black, 1);
 		/// <summary>Pen used for painting of the minor ticks.</summary>
-		protected PenX _minorTickPen = new PenX(NamedColor.Black, 1);
+		protected PenX _minorTickPen = new PenX(NamedColors.Black, 1);
 		/// <summary>Length of the major ticks in points (1/72 inch).</summary>
 		protected float _majorTickLength = 8;
 		/// <summary>Length of the minor ticks in points (1/72 inch).</summary>

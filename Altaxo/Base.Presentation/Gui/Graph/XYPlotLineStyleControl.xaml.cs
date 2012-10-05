@@ -131,9 +131,9 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-			public void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection)
+			public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
 			{
-				_parent._penGlue.CbBrush.SetSelectableColors(colorSet,restrictChoiceToThisCollection);
+				_parent._penGlue.ShowPlotColorsOnly = restrictChoiceToThisCollection;
 			}
 		}
 

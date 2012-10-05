@@ -77,9 +77,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 
-		public void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection)
+		public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
 		{
-			_glue.CbBrush.SetSelectableColors(colorSet, restrictChoiceToThisCollection);
+			_glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
 		}
 
 

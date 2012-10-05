@@ -74,9 +74,16 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Run4();
+			Run5();
 		}
 
+
+    public void Run5()
+    {
+      var ctrl = new Altaxo.Gui.Common.Drawing.NamedColorController();
+      ctrl.InitializeDocument(Altaxo.Graph.NamedColors.Bisque);
+      Current.Gui.ShowDialog(ctrl, "ddd");
+    }
 
 		public void Run4()
 		{
@@ -94,14 +101,14 @@ namespace Altaxo.Main.Commands
 
 		public void Run2()
 		{
-			var pen = new Altaxo.Graph.Gdi.PenX(Altaxo.Graph.NamedColor.Red, 2);
+			var pen = new Altaxo.Graph.Gdi.PenX(Altaxo.Graph.NamedColors.Red, 2);
 			var ctrl = new Altaxo.Gui.Common.Drawing.PenAllPropertiesController(pen);
 			Current.Gui.ShowDialog(ctrl, "Pen properties");
 		}
 
 		public void Run1()
 		{
-			var brush = new Altaxo.Graph.Gdi.BrushX(Altaxo.Graph.NamedColor.Black);
+			var brush = new Altaxo.Graph.Gdi.BrushX(Altaxo.Graph.NamedColors.Black);
 			var ctrl = new Altaxo.Gui.Common.Drawing.BrushControllerAdvanced();
 			ctrl.InitializeDocument(brush);
 			Current.Gui.ShowDialog(ctrl, "Brush pros");

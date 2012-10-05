@@ -126,14 +126,15 @@ namespace Altaxo.Gui.Graph
 	public class XYPlotLineStyleController : IMVCANController
   {
     IXYPlotLineStyleView _view;
+    LinePlotStyle _originalDoc;
     LinePlotStyle _doc;
-    LinePlotStyle _tempDoc;
     ColorTypeThicknessPenController _penController;
 
 		/// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
 		Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
 
     UseDocument _useDocumentCopy;
+
     public XYPlotLineStyleController()
     {
     }
@@ -147,8 +148,8 @@ namespace Altaxo.Gui.Graph
 			var tempView = this.ViewObject; // deactivate the view to avoid cascading updates
 			this.ViewObject = null;
 
-      _doc = (LinePlotStyle)args[0];
-      _tempDoc = _useDocumentCopy == UseDocument.Directly ? _doc : (LinePlotStyle)_doc.Clone();
+      _originalDoc = (LinePlotStyle)args[0];
+      _doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (LinePlotStyle)_originalDoc.Clone();
       Initialize(true);
 
 			this.ViewObject = tempView;
@@ -185,7 +186,7 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        return _doc;
+        return _originalDoc;
       }
     }
 
@@ -211,16 +212,16 @@ namespace Altaxo.Gui.Graph
 				// try to get the color group style that is responsible for coloring this item
 				_colorGroupStyle = GetColorGroupStyle();
 
-				var penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
+				var penController = new ColorTypeThicknessPenController(_doc.PenHolder);
 				_penController = penController;
 
-				if (null != _colorGroupStyle && !_tempDoc.IndependentColor)
-					penController.SetSelectableColors( _colorGroupStyle.ColorSet, true);
+				if (null != _colorGroupStyle && !_doc.IndependentColor)
+					penController.SetShowPlotColorsOnly(true);
 			}
 
 			if (_view != null)
 			{
-				_view.InitializeIndependentColor(_tempDoc.IndependentColor);
+				_view.InitializeIndependentColor(_doc.IndependentColor);
 
 
 				// now we have to set all dialog elements to the right values
@@ -232,28 +233,28 @@ namespace Altaxo.Gui.Graph
 				SetFillCondition();
 				SetFillDirection();
 				SetFillColor();
-				_view.IndependentFillColor = _tempDoc.IndependentFillColor;
-				_view.ConnectCircular = _tempDoc.ConnectCircular;
+				_view.IndependentFillColor = _doc.IndependentFillColor;
+				_view.ConnectCircular = _doc.ConnectCircular;
 				_view.SetEnableDisableMain(_ActivateEnableDisableMain);
 			}
 		}
 
 		void EhIndependentColorChanged()
 		{
-			_tempDoc.IndependentColor = _view.IndependentColor;
-			if (!_tempDoc.IndependentColor && null != _colorGroupStyle)
+			_doc.IndependentColor = _view.IndependentColor;
+			if (!_doc.IndependentColor && null != _colorGroupStyle)
 			{
-				_penController.SetSelectableColors(_colorGroupStyle.ColorSet, true);
+				_penController.SetShowPlotColorsOnly(true);
 			}
 			else
 			{
-				_penController.SetSelectableColors(NamedColor.Collection, false);
+				_penController.SetShowPlotColorsOnly(false);
 			}
 		}
 
 		public Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle()
 		{
-			var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(_doc);
+			var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(_originalDoc);
 			if (null == plotItemCollection)
 				return null;
 
@@ -266,7 +267,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetLineSymbolGapCondition()
     {
-      _view.InitializeLineSymbolGapCondition( _tempDoc.LineSymbolGap );
+      _view.InitializeLineSymbolGapCondition( _doc.LineSymbolGap );
     }
 
 
@@ -275,17 +276,17 @@ namespace Altaxo.Gui.Graph
 
       string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle));
     
-      _view.InitializeLineConnect(names,_tempDoc.Connection.ToString());
+      _view.InitializeLineConnect(names,_doc.Connection.ToString());
     }
 
     public void SetFillCondition()
     {
-      _view.InitializeFillCondition( _tempDoc.FillArea );
+      _view.InitializeFillCondition( _doc.FillArea );
     }
 
     public void SetFillDirection()
     {
-      IPlotArea layer = DocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
+      IPlotArea layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
 
       List<ListNode> names = new List<ListNode>();
 
@@ -293,10 +294,10 @@ namespace Altaxo.Gui.Graph
       if (layer != null)
       {
         int count = -1;
-        foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.FillDirection }))
+        foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _originalDoc.FillDirection }))
         {
           count++;
-          if (id == _doc.FillDirection)
+          if (id == _originalDoc.FillDirection)
             idx = count;
 
           CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
@@ -308,7 +309,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetFillColor()
     {
-      _view.InitializeFillColor(_tempDoc.FillBrush);
+      _view.InitializeFillColor(_doc.FillBrush);
     }
 
 
@@ -325,29 +326,29 @@ namespace Altaxo.Gui.Graph
       {
 
         // Symbol Gap
-        _doc.LineSymbolGap = _view.LineSymbolGap;
+        _originalDoc.LineSymbolGap = _view.LineSymbolGap;
 
         // Pen
-        _doc.IndependentColor = _view.IndependentColor;
+        _originalDoc.IndependentColor = _view.IndependentColor;
         _penController.Apply();
-        _doc.PenHolder.CopyFrom( _tempDoc.PenHolder );
+        _originalDoc.PenHolder.CopyFrom( _doc.PenHolder );
 
        
         // Line Connect
-        _doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle), _view.LineConnect);
-        _doc.ConnectCircular = _view.ConnectCircular;
+        _originalDoc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle), _view.LineConnect);
+        _originalDoc.ConnectCircular = _view.ConnectCircular;
 
         // Fill Area
-        _doc.FillArea = _view.LineFillArea;
+        _originalDoc.FillArea = _view.LineFillArea;
         // Line fill direction
         CSPlaneID id = null;
-        if (_doc.FillArea && null != _view.LineFillDirection)
+        if (_originalDoc.FillArea && null != _view.LineFillDirection)
           id = ((CSPlaneID)_view.LineFillDirection.Tag);
 
-        _doc.FillDirection = id;
+        _originalDoc.FillDirection = id;
         // Line fill color
-        _doc.FillBrush = _view.LineFillColor;
-        _doc.IndependentFillColor = _view.IndependentFillColor;
+        _originalDoc.FillBrush = _view.LineFillColor;
+        _originalDoc.IndependentFillColor = _view.IndependentFillColor;
 
       }
       catch(Exception ex)

@@ -38,6 +38,8 @@ namespace Altaxo.Gui.Common.Drawing
 		event Action ForeColorChanged;
 		void ForeColorEnable(bool enable);
 
+    bool RestrictBrushColorToPlotColorsOnly { set; }
+
 		NamedColor BackColor { get; set; }
 		event Action BackColorChanged;
 		void BackColorEnable(bool enable);
@@ -92,6 +94,26 @@ namespace Altaxo.Gui.Common.Drawing
 		Main.InstancePropertyController _imageProxyController;
 
 		TextureScalingController _textureScalingController;
+    bool _restrictBrushColorToPlotColorsOnly;
+
+    public bool RestrictBrushColorToPlotColorsOnly
+    {
+      get
+      {
+        return _restrictBrushColorToPlotColorsOnly;
+      }
+      set
+      {
+        var oldValue = _restrictBrushColorToPlotColorsOnly;
+        _restrictBrushColorToPlotColorsOnly = value;
+        if (value != oldValue && null != _view)
+        {
+          _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
+        }
+      }
+    }
+
+
 
 		protected override void Initialize(bool initData)
 		{
@@ -110,6 +132,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 			if (null != _view)
 			{
+        _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
+
 				_view.BrushType = _doc.BrushType;
 				InitializeViewElementsWhenBrushTypeChanged();
 				
@@ -308,6 +332,7 @@ namespace Altaxo.Gui.Common.Drawing
 		void EhExchangeColorsChanged()
 		{
 			_doc.ExchangeColors = _view.ExchangeColors;
+      _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly; 
 			OnMadeDirty();
 		}
 

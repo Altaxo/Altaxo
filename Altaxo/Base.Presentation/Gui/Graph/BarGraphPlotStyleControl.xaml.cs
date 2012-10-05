@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Graph
 				if (value != null)
 					_framePenGlue.Pen = value;
 				else
-					_framePenGlue.Pen = new Altaxo.Graph.Gdi.PenX(NamedColor.Black);
+					_framePenGlue.Pen = new Altaxo.Graph.Gdi.PenX(NamedColors.Black);
 			}
 		}
 

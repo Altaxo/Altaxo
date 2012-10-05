@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Graph
       if (this._tempDoc != null && this._tempDoc.SupportsBrush)
         _view.BackgroundBrush_Initialize(this._tempDoc.Brush);
       else
-        _view.BackgroundBrush_Initialize(new BrushX(NamedColor.Transparent));
+        _view.BackgroundBrush_Initialize(new BrushX(NamedColors.Transparent));
 
       _view.BackgroundBrushEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsBrush);
 
@@ -196,7 +196,7 @@ namespace Altaxo.Gui.Graph
     public void EhView_BackgroundStyleChanged(int newValue)
     {
 
-      BrushX backgroundColor = new BrushX(NamedColor.Transparent);
+      BrushX backgroundColor = new BrushX(NamedColors.Transparent);
 
       if (newValue != 0)
       {

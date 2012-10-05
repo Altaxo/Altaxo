@@ -122,6 +122,10 @@ namespace Altaxo.Serialization.Xml
     {
       m_Writer.WriteAttributeString(name,XmlConvert.ToString(val));
     }
+		public void AddAttributeValue(string name, string val)
+		{
+			m_Writer.WriteAttributeString(name, val);
+		}
 
     public void AddValue(string name, float val)
     {

@@ -104,13 +104,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public OpenPathShapeBase()
 		{
-			Pen = new PenX(NamedColor.Black);
+			Pen = new PenX(NamedColors.Black);
 		}
 
 		public OpenPathShapeBase(PointD2D Position, PointD2D Size)
 			: base(Position, Size)
 		{
-			Pen = new PenX(NamedColor.Black);
+			Pen = new PenX(NamedColors.Black);
 		}
 
 		public OpenPathShapeBase(OpenPathShapeBase from)

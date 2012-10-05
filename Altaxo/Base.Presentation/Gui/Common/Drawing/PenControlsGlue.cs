@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Common.Drawing
 		#endregion
 
 		#region Brush
-
+		bool _showPlotColorsOnly;
 		BrushComboBox _cbBrush;
 		public BrushComboBox CbBrush
 		{
@@ -148,7 +148,10 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbBrush = value;
 				if (_cbBrush != null && null != _pen)
+				{
+					_cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
 					_cbBrush.SelectedBrush = _pen.BrushHolder;
+				}
 
 				if (_cbBrush != null)
 				{
@@ -161,6 +164,20 @@ namespace Altaxo.Gui.Common.Drawing
 						_cbBrush.ContextMenu.Items.Insert(0, menuItem);
 					}
 				}
+			}
+		}
+
+		public bool ShowPlotColorsOnly
+		{
+			get
+			{
+				return _showPlotColorsOnly;
+			}
+			set
+			{
+				_showPlotColorsOnly = value;
+				if (null != _cbBrush)
+					_cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
 			}
 		}
 
@@ -612,6 +629,7 @@ namespace Altaxo.Gui.Common.Drawing
 		void EhShowCustomPenDialog(object sender, EventArgs e)
 		{
 			PenAllPropertiesController ctrler = new PenAllPropertiesController((PenX)this.Pen.Clone());
+			ctrler.ShowPlotColorsOnly = this._showPlotColorsOnly;
 			ctrler.ViewObject = new PenAllPropertiesControl();
 			if (Current.Gui.ShowDialog(ctrler, "Edit pen properties"))
 			{

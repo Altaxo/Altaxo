@@ -472,7 +472,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		public AxisLabelStyle()
 		{
 			_font = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.World);
-			_brush = new BrushX(NamedColor.Black);
+			_brush = new BrushX(NamedColors.Black);
 			_automaticRotationShift = true;
 			_suppressedLabels = new SuppressedTicks();
 			_labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto();

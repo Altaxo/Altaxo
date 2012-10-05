@@ -330,11 +330,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public LinePlotStyle()
 		{
-			_penHolder = new PenX(NamedColor.Black) { LineJoin = LineJoin.Bevel };
+			_penHolder = new PenX(NamedColors.Black) { LineJoin = LineJoin.Bevel };
 			_useLineSymbolGap = true;
 			_ignoreMissingPoints = false;
 			_fillArea = false;
-			_fillBrush = new BrushX(NamedColor.Black);
+			_fillBrush = new BrushX(NamedColors.Black);
 			_fillDirection = null;
 			_connectionStyle = XYPlotLineStyles.ConnectionStyle.Straight;
 			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
@@ -543,7 +543,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._fillArea = value;
 				// ensure that if value is true, there is a fill brush which is not null
 				if (true == value && null == this._fillBrush)
-					this._fillBrush = new BrushX(NamedColor.White);
+					this._fillBrush = new BrushX(NamedColors.White);
 
 				OnChanged(); // Fire Changed event
 			}

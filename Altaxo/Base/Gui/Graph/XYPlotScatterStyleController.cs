@@ -58,6 +58,12 @@ namespace Altaxo.Gui.Graph
     void InitializePlotStyleColor(NamedColor sel);
 
     /// <summary>
+    /// Indicates, whether only colors of plot color sets should be shown.
+    /// </summary>
+    /// <param name="showPlotColorsOnly">True if only colors of plot color sets should be shown.</param>
+    void SetShowPlotColorsOnly(bool showPlotColorsOnly);
+
+    /// <summary>
     /// Initializes the symbol size combobox.
     /// </summary>
     /// <param name="value">Currently selected symbol size.</param>
@@ -110,6 +116,12 @@ namespace Altaxo.Gui.Graph
 		string RelativePenWidth { get; set; }
 
     #endregion // Getter
+
+    #region events
+
+    event Action IndependentColorChanged;
+
+    #endregion
   }
 
  
@@ -129,6 +141,10 @@ namespace Altaxo.Gui.Graph
     ScatterPlotStyle _doc;
     IXYPlotScatterStyleView _view;
     UseDocument _useDocumentCopy;
+
+    /// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
+    Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
+    bool _showPlotColorsOnly = false;
     
     public XYPlotScatterStyleController()
     { 
@@ -170,9 +186,16 @@ namespace Altaxo.Gui.Graph
 
     void Initialize(bool initData)
     {
+      if (initData)
+      {
+        // try to get the color group style that is responsible for coloring this item
+        _colorGroupStyle = GetColorGroupStyle();
+        _showPlotColorsOnly = (!_doc.IndependentColor && null != _colorGroupStyle);
+      }
       if(_view!=null)
       {
         // now we have to set all dialog elements to the right values
+        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
         _view.InitializeIndependentColor(_doc.IndependentColor);
         _view.InitializeIndependentSymbolSize(_doc.IndependentSymbolSize);
        
@@ -189,6 +212,26 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    public Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle()
+    {
+      var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(_originalDoc);
+      if (null == plotItemCollection)
+        return null;
+
+      if (plotItemCollection.GroupStyles.ContainsType(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle)))
+        return (Altaxo.Graph.Plot.Groups.ColorGroupStyle)plotItemCollection.GroupStyles.GetPlotGroupStyle(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle));
+      else
+        return null;
+    }
+
+
+    void EhIndependentColorChanged()
+    {
+      _doc.IndependentColor = _view.IndependentColor;
+      _showPlotColorsOnly = (!_doc.IndependentColor && null != _colorGroupStyle);
+      if (null != _view)
+        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
+    }
 
     public void SetSymbolSize()
     {
@@ -248,7 +291,7 @@ namespace Altaxo.Gui.Graph
       {
 				if (_view != null)
 				{
-					
+          _view.IndependentColorChanged -= EhIndependentColorChanged;
 				}
 
         _view = value as IXYPlotScatterStyleView;
@@ -256,6 +299,7 @@ namespace Altaxo.Gui.Graph
 				if (_view != null)
 				{
 					Initialize(false);
+          _view.IndependentColorChanged += EhIndependentColorChanged;
 				}
       }
     }

@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
+//    along with ctrl program; if not, write to the Free Software
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -34,144 +34,505 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Altaxo.Collections;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
+using Altaxo.Graph.ColorManagement;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public class ColorComboBoxBase : ImageComboBox
+	/// <summary>
+	/// Base class for <see cref="ColorComboBox"/> and <see cref="BrushComboBox"/>, which let the user choose between colors of different color sets.
+	/// </summary>
+	public abstract class ColorComboBoxBase : UserControl
 	{
 		#region Inner classes
 
-		protected class ColorComboBoxItem : ImageComboBoxItem
+		/// <summary>
+		/// Special tree node for a color set. This tree node fills its child items only when it gets expanded.
+		/// </summary>
+		class NGTreeNodeForColorSet : NGTreeNode
 		{
-			DrawingImage _cachedDrawing;
-
-			public override string Text
+			public NGTreeNodeForColorSet(IColorSet colorSet)
+				: base(true)
 			{
-				get
-				{
-					if (Value is NamedColor)
-						return ((NamedColor)Value).Name;
-					else
-						return NamedColor.GetColorName((AxoColor)Value);
-				}
+				_tag = colorSet;
+				_text = colorSet.Name;
 			}
 
-			public override ImageSource Image
+			protected override void LoadChildren()
 			{
-				get
-				{
-					if (null == _cachedDrawing)
-						_cachedDrawing = GetImage((NamedColor)Value);
+				base.LoadChildren();
 
-					return _cachedDrawing;
+				foreach (var c in (IColorSet)_tag)
+				{
+					Nodes.Add(new NGTreeNode() { Text = c.Name, Tag = c });
 				}
+			}
+		}
+
+		/// <summary>
+		/// Selects the data template for the TreeView: either for a <see cref="NamedColor"/>, for a <see cref="Altaxo.Graph.ColorManagement.IColorSet"/> or for another node.
+		/// </summary>
+		public class TreeViewDataTemplateSelector : DataTemplateSelector
+		{
+			FrameworkElement _parent;
+			DataTemplate _namedColorTemplate;
+			DataTemplate _colorSetTemplate;
+			DataTemplate _treeOtherTemplate;
+
+			public TreeViewDataTemplateSelector(FrameworkElement ele)
+			{
+				_parent = ele;
+			}
+
+			public override DataTemplate SelectTemplate(object item, DependencyObject container)
+			{
+				NGTreeNode node = item as NGTreeNode;
+				if (node != null)
+				{
+					if (node.Tag is Altaxo.Graph.NamedColor)
+					{
+						if (null == _namedColorTemplate)
+							_namedColorTemplate = (DataTemplate)_parent.TryFindResource("NamedColorTemplate");
+						if (null != _namedColorTemplate)
+							return _namedColorTemplate;
+					}
+					else if (node.Tag is Altaxo.Graph.ColorManagement.IColorSet)
+					{
+						if (null == _colorSetTemplate)
+							_colorSetTemplate = (DataTemplate)_parent.TryFindResource("ColorSetTemplate");
+						if (null != _colorSetTemplate)
+							return _colorSetTemplate;
+					}
+					else
+					{
+						if (null == _treeOtherTemplate)
+							_treeOtherTemplate = (DataTemplate)_parent.TryFindResource("TreeOtherTemplate");
+						if (null != _treeOtherTemplate)
+							return _treeOtherTemplate;
+					}
+				}
+
+
+				return base.SelectTemplate(item, container);
 			}
 		}
 
 		#endregion
 
-		protected static List<NamedColor> _knownColors = new List<NamedColor>();
-
-		/// <summary>Cached items of all known colors.</summary>
-		protected static Dictionary<NamedColor, ColorComboBoxItem> _knownColorItems = new Dictionary<NamedColor, ColorComboBoxItem>();
-
-		/// <summary>Helper brush.</summary>
-		protected static Brush _checkerBrush;
-
-		protected Dictionary<NamedColor, ImageComboBoxItem> _cachedItems = new Dictionary<NamedColor, ImageComboBoxItem>();
+		/// <summary>Maximum number of colors shown under "last used colors" (or "last used brushes").</summary>
+		protected const int MaxNumberOfLastLocalUsedColors = 5;
 
 
+		/// <summary>Gets access to the tree view, which shows the color sets.</summary>
+		protected abstract TreeView GuiTreeView { get; }
+		/// <summary>Gets access to the ComboBox, which shows the colors or brushes of the current color set.</summary>
+		protected abstract ComboBox GuiComboBox { get; }
+
+		/// <summary>
+		/// Gets or sets the selected color internally.
+		/// </summary>
+		/// <value>
+		/// The color to get/set;
+		/// </value>
+		protected abstract NamedColor InternalSelectedColor { get; set; }
+
+
+		/// <summary>
+		/// Fills the combo box with items, whose name starts with a given <paramref name="filterString"/> .
+		/// </summary>
+		/// <param name="filterString">The filter string.</param>
+		/// <param name="onlyIfItemsRemaining">If set to <c>false</c>, and no items match the filter criterium, the content of the ComboBox is left unchanged. Otherwise, even if no items match the filter criterium, the contents of the ComboBox is set to those items that match the criterium.</param>
+		/// <returns><c>True</c> if at least one item match the filter criterium. <c>False</c> if no item match the criterium.</returns>
+		protected abstract bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining);
+
+
+		/// <summary>
+		/// Temporary storage for the selected value of the TreeView when the Popup is opened
+		/// </summary>
+		protected object _selectedFromTreeView;
+
+		/// <summary>Data items for TreeView</summary>
+		protected NGTreeNode _treeRootNode = new NGTreeNode();
+
+		/// <summary>Filter string to filter the items in the ComboBox. The item names must start with the string stored here.</summary>
+		protected string _filterString = string.Empty;
+
+
+
+		/// <summary>Property that describes whether the TreeView dropdown is open.</summary>
+		public static readonly DependencyProperty IsTreeDropDownOpenProperty;
+		/// <summary>Poperty that describes whether only plot colors should be shown in the TreeView and the ComboBox.</summary>
+		public static readonly DependencyProperty ShowPlotColorsOnlyProperty;
+
+
+
+		#region Constructors
 
 		static ColorComboBoxBase()
 		{
-			foreach (var e in KnownAxoColors.Items)
+			IsTreeDropDownOpenProperty = DependencyProperty.Register("IsTreeDropDownOpen", typeof(bool), typeof(ColorComboBoxBase), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(EhIsTreeDropDownOpenChanged)));
+			ShowPlotColorsOnlyProperty = DependencyProperty.Register("ShowPlotColorsOnly", typeof(bool), typeof(ColorComboBoxBase), new FrameworkPropertyMetadata(false, EhShowPlotColorsOnlyChanged));
+		}
+		#endregion
+
+		#region Dependency property
+
+		/// <summary>
+		/// Gets or sets a value indicating whether to show only plot colors and plot color sets in the ComboBox and the TreeView.
+		/// </summary>
+		/// <value><c>True</c> if only plot colors are shown; otherwise, <c>false</c>.</value>
+		public bool ShowPlotColorsOnly
+		{
+			get { return (bool)GetValue(ShowPlotColorsOnlyProperty); }
+			set { SetValue(ShowPlotColorsOnlyProperty, value); }
+		}
+
+		private static void EhShowPlotColorsOnlyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			((ColorComboBoxBase)obj).OnShowPlotColorsOnlyChanged(obj, e);
+		}
+
+		/// <summary>
+		/// Called when the <see cref="ShowPlotColorsOnly"/> property has changed.
+		/// </summary>
+		/// <param name="obj">Sender of this event.</param>
+		/// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+		protected virtual void OnShowPlotColorsOnlyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			if (true == (bool)e.NewValue && false == (bool)e.OldValue) // show only plot colors
 			{
-				var item = new ColorComboBoxItem() { Value = e };
-				_knownColorItems.Add(e, item);
-				_knownColors.Add(e);
+				// if the current color is a plot color, we can leave everything as it is, except that we must update the tree view nodes
+				if (InternalSelectedColor.ParentColorSet != null && InternalSelectedColor.ParentColorSet.IsPlotColorSet)
+				{
+					UpdateTreeViewTreeNodes();
+					UpdateTreeViewSelection();
+				}
+				else
+				{
+					UpdateTreeViewTreeNodes();
+					InternalSelectedColor = InternalSelectedColorCoerce(InternalSelectedColor);
+				}
+			}
+			else if (false == (bool)e.NewValue && true == (bool)e.OldValue) // show all color sets
+			{
+				// we can leave the currently selected color as it is, we only need to update the items source for the tree view
+				UpdateTreeViewTreeNodes();
+				UpdateTreeViewSelection();
+			}
+		}
+
+		/// <summary>
+		/// Coerce the selected color to fulfill certain requirements: (i) the color must still be a member of the ParentColorSet of this color, and (ii) if the <see cref="ShowPlotColorsOnly"/>
+		/// property is set to <c>true</c>, the color must be a member of a plot color set.
+		/// </summary>
+		/// <param name="color">The color that fulfills the above stated requirements.</param>
+		/// <returns></returns>
+		protected virtual NamedColor InternalSelectedColorCoerce(NamedColor color)
+		{
+      color = color.CoerceParentColorSetToNullIfNotMember();
+
+			if (this.ShowPlotColorsOnly && (color.ParentColorSet == null || false == color.ParentColorSet.IsPlotColorSet))
+			{
+				return ColorSetManager.Instance.BuiltinDarkPlotColors[0];
+			}
+			return color;
+		}
+
+		#endregion
+
+		#region Tree View
+
+		/// <summary>
+		/// Provides public access to the <see cref="DataTemplateSelector"/> that selected the data template for different nodes of the TreeView.
+		/// </summary>
+		public DataTemplateSelector TreeViewItemTemplateSelector
+		{
+			get
+			{
+				return new TreeViewDataTemplateSelector(this);
+			}
+		}
+
+		#region Tree view event handlers
+
+		private static void EhIsTreeDropDownOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var thiss = d as ColorComboBoxBase;
+			if (false == (bool)e.OldValue && true == (bool)e.NewValue) // Tree popup is just opened
+				thiss.OnTreePopupOpened();
+			else if (true == (bool)e.OldValue && false == (bool)e.NewValue) // Tree popup is just closed
+				thiss.OnTreePopupClosed();
+		}
+
+
+		/// <summary>
+		/// Called when the TreeView popup is opened.
+		/// </summary>
+		protected virtual void OnTreePopupOpened()
+		{
+			_selectedFromTreeView = GuiTreeView.SelectedValue;
+		}
+
+		/// <summary>
+		/// Called when the TreeView popup is closed.
+		/// </summary>
+		protected virtual void OnTreePopupClosed()
+		{
+			var oldSelection = _selectedFromTreeView;
+			var newSelection = GuiTreeView.SelectedValue as NGTreeNode;
+			_selectedFromTreeView = newSelection;
+			if (null != newSelection && !newSelection.Equals(oldSelection))
+			{
+				if (newSelection.Tag is NamedColor)
+				{
+					InternalSelectedColor= (NamedColor)newSelection.Tag;
+					return; // no need here to open the combobox after selection
+				}
+				else if (newSelection.Tag is IColorSet)
+				{
+					IColorSet cset = (IColorSet)newSelection.Tag;
+					if (cset.Count > 0)
+					{
+						InternalSelectedColor = cset[0];
+						// then open the real popup
+						GuiComboBox.IsDropDownOpen = true;
+						return;
+					}
+				}
+				else
+				{
+					// search upwards until a colorset is found
+					// if no set is found, there is no need to do anything here
+				}
+			}
+		}
+
+		/// <summary>
+		/// Called when a tree view mouse double click occurs.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.Windows.Input.MouseButtonEventArgs"/> instance containing the event data.</param>
+		protected virtual void EhTreeViewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			SetValue(IsTreeDropDownOpenProperty, false);
+		}
+
+		/// <summary>
+		/// Called when the tree view received a KeyDown event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
+		protected virtual void EhTreeViewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter || e.Key == Key.Escape)
+			{
+				SetValue(IsTreeDropDownOpenProperty, false);
 			}
 		}
 
 
+		#endregion Tree view event handlers
 
-		public static Brush CreateCheckerBrush(double checkerRepeatLength)
+		#region Tree view data handling
+
+		/// <summary>
+		/// Updates/fills the data nodes used for the TreeView content.
+		/// </summary>
+		protected virtual void UpdateTreeViewTreeNodes()
 		{
-			DrawingBrush checkerBrush = new DrawingBrush();
+			var manager = Altaxo.Graph.ColorManagement.ColorSetManager.Instance;
 
-			GeometryDrawing backgroundSquare =
-					new GeometryDrawing(
-							Brushes.White,
-							null,
-							new RectangleGeometry(new Rect(0, 0, checkerRepeatLength, checkerRepeatLength)));
+			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = ColorSetLevel.Builtin };
+			var app = new NGTreeNode() { Text = "Application", Tag = ColorSetLevel.Application };
+			var user = new NGTreeNode() { Text = "User", Tag = ColorSetLevel.UserDefined };
+			var proj = new NGTreeNode() { Text = "Project", Tag = ColorSetLevel.Project };
 
-			double c2 = checkerRepeatLength / 2;
+			bool showPlotColorsOnly = this.ShowPlotColorsOnly;
 
-			GeometryGroup aGeometryGroup = new GeometryGroup();
-			aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, c2, c2)));
-			aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(c2, c2, c2, c2)));
-
-			GeometryDrawing checkers = new GeometryDrawing(Brushes.Black, null, aGeometryGroup);
-
-			DrawingGroup checkersDrawingGroup = new DrawingGroup();
-			checkersDrawingGroup.Children.Add(backgroundSquare);
-			checkersDrawingGroup.Children.Add(checkers);
-
-			checkerBrush.Drawing = checkersDrawingGroup;
-			checkerBrush.Viewport = new Rect(0, 0, 0.5, 0.5);
-			checkerBrush.TileMode = TileMode.Tile;
-
-			return checkerBrush;
-		}
-
-		public static DrawingImage GetImage(NamedColor namedColor)
-		{
-			Color val = GuiHelper.ToWpf(namedColor.Color);
-
-			const double border = 0.1;
-			const double height = 1;
-			const double width = 2;
-			//
-			// Create the Geometry to draw.
-			//
-
-			if (null == _checkerBrush)
-				_checkerBrush = CreateCheckerBrush(Math.Min(width, height) / 2);
-
-			var drawingGroup = new DrawingGroup();
-
-			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0, 0, width, height)) };
-			geometryDrawing.Brush = Brushes.Black;
-			drawingGroup.Children.Add(geometryDrawing);
-
-			var innerRect = new Rect(border, border, width - 2 * border, height - 2 * border);
-
-			geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
-			geometryDrawing.Brush = _checkerBrush;
-			drawingGroup.Children.Add(geometryDrawing);
-
-			geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
-			geometryDrawing.Brush = new SolidColorBrush(val);
-			drawingGroup.Children.Add(geometryDrawing);
-
-			DrawingImage geometryImage = new DrawingImage(drawingGroup);
-
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-
-		protected static List<NamedColor> GetFilteredList(List<NamedColor> originalList, string filterString)
-		{
-			var result = new List<NamedColor>();
-			filterString = filterString.ToLowerInvariant();
-			foreach (var item in originalList)
+			foreach (var set in manager.GetAllColorSets())
 			{
-				if (item.Name.ToLowerInvariant().StartsWith(filterString))
-					result.Add(item);
+				if (showPlotColorsOnly && !set.IsPlotColorSet)
+					continue;
+
+				switch (set.Level)
+				{
+					case Altaxo.Graph.ColorManagement.ColorSetLevel.Builtin:
+						builtIn.Nodes.Add(new NGTreeNodeForColorSet(set));
+						break;
+					case Altaxo.Graph.ColorManagement.ColorSetLevel.Application:
+						app.Nodes.Add(new NGTreeNodeForColorSet(set));
+						break;
+					case Altaxo.Graph.ColorManagement.ColorSetLevel.UserDefined:
+						user.Nodes.Add(new NGTreeNodeForColorSet(set));
+						break;
+					case Altaxo.Graph.ColorManagement.ColorSetLevel.Project:
+						proj.Nodes.Add(new NGTreeNodeForColorSet(set));
+						break;
+				}
 			}
-			return result;
+
+			_treeRootNode.Nodes.Clear();
+			_treeRootNode.Nodes.Add(builtIn);
+			_treeRootNode.Nodes.Add(app);
+			_treeRootNode.Nodes.Add(user);
+			_treeRootNode.Nodes.Add(proj);
 		}
+
+		/// <summary>
+		/// Updates the tree view node selection according to the currently selected color.
+		/// </summary>
+		protected virtual void UpdateTreeViewSelection()
+		{
+			var selColor = this.InternalSelectedColor;
+
+			GuiTreeView.ItemsSource = null;
+			_treeRootNode.FromHereToLeavesDo(node => { node.IsExpanded = false; node.IsSelected = false; }); // deselect and collapse all nodes
+
+			if (selColor.ParentColorSet != null)
+			{
+				var colorSet = selColor.ParentColorSet;
+				_treeRootNode.FromHereToLeavesDo(node =>
+				{
+					if ((node.Tag is ColorSetLevel) && (ColorSetLevel)node.Tag == colorSet.Level)
+					{
+						node.IsExpanded = true; // expand the node the current color set belongs to (like "Builtin", "Application" etc.)
+					}
+					else if (node.Tag is IColorSet && object.ReferenceEquals(node.Tag, colorSet))
+					{
+						node.IsSelected = true; // select the node of the current color set
+					}
+				});
+			};
+			GuiTreeView.ItemsSource = _treeRootNode.Nodes;
+		}
+
+		#endregion Tree view data handling
+
+		#endregion Tree view
+
+		#region ComboBox
+
+		/// <summary>
+		/// Chooses the color set whose colors are shown in the ComboBox.
+		/// </summary>
+		/// <returns>The color set whose colors are shown in the ComboBox. Normally, the color set the currently selected color belongs to is shown in the ComboBox. 
+		/// If the currently selected color has no parent color set, the 'Builtin/KnownColors' color set will be shown.</returns>
+		protected virtual IColorSet GetColorSetForComboBox()
+		{
+			NamedColor selColor = InternalSelectedColor;
+			if (selColor.ParentColorSet != null)
+				return selColor.ParentColorSet;
+			else
+				return NamedColors.Instance;
+		}
+
+
+		#endregion
+
+		#region Key processing of user control
+
+		/// <summary>
+		/// Handles the KeyDown event of the UserControl. Here, the filter string for the ComboBox content is updated according to the pressed key.
+		/// </summary>
+		/// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs"/> that contains the event data.</param>
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if (this.GuiComboBox.IsDropDownOpen)
+			{
+				Key pressedKey = e.Key;
+				string pressedString = new KeyConverter().ConvertToInvariantString(pressedKey);
+				char pressedChar = pressedString.Length == 1 ? pressedString[0] : '\0';
+
+				if (char.IsLetterOrDigit(pressedChar))
+				{
+					string filterString = _filterString + pressedChar;
+
+					if (FillComboBoxWithFilteredItems(filterString, true))
+						_filterString = filterString;
+				}
+				else if (pressedKey == Key.Delete || pressedKey == Key.Back)
+				{
+					if (_filterString.Length > 0)
+					{
+						_filterString = _filterString.Substring(0, _filterString.Length - 1);
+						FillComboBoxWithFilteredItems(_filterString, false);
+					}
+				}
+			}
+			base.OnKeyDown(e);
+		}
+
+		#endregion
+
+
+		#region Context menus
+
+		/// <summary>
+		/// Shows the custom color dialog (if the <see cref="ShowPlotColorsOnly"/> property is set to <c>true</c>, this command will be ignored.
+		/// </summary>
+		/// <param name="sender">The sender of this event.</param>
+		/// <param name="newColor">The user selected new color.</param>
+		/// <returns><c>True</c> if the user has chosen a new color. Otherwise, <c>false</c>.</returns>
+		protected virtual bool InternalShowCustomColorDialog(object sender, out NamedColor newColor)
+		{
+			if (ShowPlotColorsOnly)
+			{
+				newColor = InternalSelectedColor;
+				return false;
+			}
+
+			var SelectedWpfColor = GuiHelper.ToWpf(InternalSelectedColor);
+			ColorController ctrl = new ColorController(SelectedWpfColor);
+			ctrl.ViewObject = new ColorPickerControl(SelectedWpfColor);
+			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
+			{
+				newColor = new NamedColor(GuiHelper.ToAxo((Color)ctrl.ModelObject));
+				return true;
+			}
+			else
+			{
+				newColor = InternalSelectedColor;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Choose an opacity from the context menu. The opacity value in percent must be delived as a string in the Tag property of the sender, which normally is a context menu item.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="newNamedColor">If the return value is <c>true</c>, contains the new color with the chosen opacity value.</param>
+		/// <returns><c>True</c>, if a new color with the given opacity value could be created.</returns>
+		protected virtual bool InternalChooseOpacityFromContextMenu(object sender, out NamedColor newNamedColor)
+		{
+			if (ShowPlotColorsOnly)
+			{
+				newNamedColor = InternalSelectedColor;
+				return false;
+			}
+
+			var opacityInPercent = int.Parse((string)((MenuItem)sender).Tag, System.Globalization.CultureInfo.InvariantCulture);
+			newNamedColor = InternalSelectedColor.NewWithOpacityInPercent(opacityInPercent);
+			return true;
+		}
+
+
+		/// <summary>
+		/// Stores an item as last used item in a list.
+		/// </summary>
+		/// <typeparam name="T">Type of the item to store.</typeparam>
+		/// <param name="_listOfLocalLastUsedItems">The list of last used items.</param>
+		/// <param name="lastUsedItem">The item to store.</param>
+		protected void StoreAsLastUsedItem<T>(List<T> _listOfLocalLastUsedItems, T lastUsedItem)
+		{
+			if (_listOfLocalLastUsedItems.Contains(lastUsedItem))
+				return;
+			_listOfLocalLastUsedItems.Insert(0, lastUsedItem);
+			// Trim local used colors to maximum count
+			for (int i = _listOfLocalLastUsedItems.Count - 1; i >= MaxNumberOfLastLocalUsedColors; --i)
+				_listOfLocalLastUsedItems.RemoveAt(i);
+		}
+		#endregion
+
 	}
 }

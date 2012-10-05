@@ -26,7 +26,9 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>Helper class to suspend and resume change events (or other events).</summary>
+	/// <summary>Helper class to suspend and resume change events (or other events). In contrast to the simpler class <see cref="TemporaryDisabler"/>,
+	/// this class keeps also track of events that happen in the suspend period. Per default, the action on resume is
+	/// fired only if some events have happened during the suspend period.</summary>
   public class EventSuppressor
   {
     #region Inner class SuppressToken

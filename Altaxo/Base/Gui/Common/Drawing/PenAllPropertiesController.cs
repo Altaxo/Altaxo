@@ -34,6 +34,7 @@ namespace Altaxo.Gui.Common.Drawing
 	public interface IPenAllPropertiesView
 	{
 		PenX Pen { get; set; }
+		bool ShowPlotColorsOnly { set; }
 	}
 
 
@@ -44,6 +45,7 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		IPenAllPropertiesView _view;
 		PenX _doc;
+		bool _showPlotColorsOnly;
 
 		public PenAllPropertiesController(PenX doc)
 		{
@@ -55,7 +57,23 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_view != null)
 			{
+				_view.ShowPlotColorsOnly = _showPlotColorsOnly;
 				_view.Pen = _doc;
+
+			}
+		}
+
+		public bool ShowPlotColorsOnly
+		{
+			get
+			{
+				return _showPlotColorsOnly;
+			}
+			set
+			{
+				_showPlotColorsOnly = value;
+				if (null != _view)
+					_view.ShowPlotColorsOnly = value;
 			}
 		}
 

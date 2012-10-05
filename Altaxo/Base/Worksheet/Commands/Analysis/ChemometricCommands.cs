@@ -617,7 +617,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
       LabelPlotStyle labelStyle = new LabelPlotStyle(labelcol);
       labelStyle.FontSize = 10;
-      labelStyle.BackgroundStyle = new FilledRectangle(NamedColor.LightCyan);
+      labelStyle.BackgroundStyle = new FilledRectangle(NamedColors.LightCyan);
       ps.Add(labelStyle);
       
       layer.PlotItems.Add(new XYColumnPlotItem(pa,ps));

@@ -58,6 +58,7 @@ namespace Altaxo.Serialization.Xml
     string GetNodeContent(); // gets the inner text of the node directly
 
     int GetInt32Attribute(string name);
+		string GetStringAttribute(string name);
   
     int OpenArray(); // get Number of Array elements
     int OpenArray(string name);

@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public ErrorBarPlotStyle()
 		{
-			this._strokePen = new PenX(NamedColor.Black);
+			this._strokePen = new PenX(NamedColors.Black);
 		}
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from)
 		{

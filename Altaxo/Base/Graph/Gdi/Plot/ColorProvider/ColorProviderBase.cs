@@ -68,9 +68,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		public ColorProviderBase()
 		{
-			this.ColorBelow = NamedColor.Black;
-			this.ColorAbove = NamedColor.Snow;
-			this.ColorInvalid = NamedColor.Transparent;
+			this.ColorBelow = NamedColors.Black;
+			this.ColorAbove = NamedColors.Snow;
+			this.ColorInvalid = NamedColors.Transparent;
 			_alphaChannel = 255;
 			_colorSteps = 0;
 		}

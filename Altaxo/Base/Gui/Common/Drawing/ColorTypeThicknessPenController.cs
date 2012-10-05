@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Common.Drawing
   {
     IColorTypeThicknessPenViewEventSink Controller { get; set; }
     PenX DocPen  { get; set; }
-		void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection);
+		void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection);
   }
 
   public interface IColorTypeThicknessPenViewEventSink
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Common.Drawing
     PenX _tempDoc;
     IColorTypeThicknessPenView _view;
 		ICollection<Altaxo.Graph.NamedColor> _colorSet;
-		bool _restrictColorsToGivenSet;
+		bool _showPlotColorsOnly;
 
 	
 
@@ -71,16 +71,15 @@ namespace Altaxo.Gui.Common.Drawing
       if(_view!=null)
       {
         _view.DocPen = _tempDoc;
-				_view.SetSelectableColors(_colorSet, _restrictColorsToGivenSet);
+				_view.SetShowPlotColorsOnly(_showPlotColorsOnly);
       }
     }
 
-		public void SetSelectableColors(ICollection<Altaxo.Graph.NamedColor> colorSet, bool restrictChoiceToThisCollection)
+		public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
 		{
-			_colorSet = colorSet;
-			_restrictColorsToGivenSet = restrictChoiceToThisCollection;
+			_showPlotColorsOnly = showPlotColorsOnly;
 			if (null != _view)
-				_view.SetSelectableColors(_colorSet, _restrictColorsToGivenSet);
+				_view.SetShowPlotColorsOnly(_showPlotColorsOnly);
 		}
 
 		

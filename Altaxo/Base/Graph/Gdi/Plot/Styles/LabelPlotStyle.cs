@@ -390,7 +390,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			this._font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
 			this._independentColor = false;
-			this._brush = new BrushX(NamedColor.Black);
+			this._brush = new BrushX(NamedColors.Black);
 			this._xOffset = 0;
 			this._yOffset = 0;
 			this._rotation = 0;

@@ -229,6 +229,8 @@
     <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
     <Compile Include="Gui\SharpDevelop\SDWorksheetViewContentWpf.cs" />
+    <Compile Include="Main\ColorSetDoozer.cs" />
+    <Compile Include="Main\NamedColorDoozer.cs" />
     <Compile Include="Main\OptionPanelDoozer.cs" />
     <Compile Include="Main\DefaultOptionPanelDescriptor.cs" />
     <Compile Include="Main\MenuCommands\AutostartCommands.cs">

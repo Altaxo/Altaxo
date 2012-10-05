@@ -274,7 +274,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			if (brush is SolidColorBrush)
 				return new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
 			else
-				return NamedColor.Transparent;
+				return NamedColors.Transparent;
 		}
 
 		#endregion

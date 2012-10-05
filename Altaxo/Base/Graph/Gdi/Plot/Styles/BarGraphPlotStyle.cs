@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Brush to fill the bar.
 		/// </summary>
-		BrushX _fillBrush = new BrushX(NamedColor.Red);
+		BrushX _fillBrush = new BrushX(NamedColors.Red);
 
 		/// <summary>
 		/// Pen used to frame the bar. Can be null.

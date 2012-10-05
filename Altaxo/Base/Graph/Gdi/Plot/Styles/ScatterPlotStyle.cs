@@ -480,7 +480,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._shape = XYPlotScatterStyles.Shape.Square;
 			this._style = XYPlotScatterStyles.Style.Solid;
 			this._dropLine = new CSPlaneIDList();
-			this._pen = new PenX(NamedColor.Black);
+			this._pen = new PenX(NamedColors.Black);
 			this._independentColor = false;
 
 			this._symbolSize = 8;
@@ -488,7 +488,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._relativePenWidth = 0.1f;
 			this._skipFreq = 1;
 			this._cachedFillPath = true; // since default is solid
-			this._cachedFillBrush = new BrushX(NamedColor.Black);
+			this._cachedFillBrush = new BrushX(NamedColors.Black);
 			this._cachedPath = GetPath(_shape, _style, _symbolSize);
 			CreateEventChain();
 		}
@@ -510,7 +510,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 					// ensure that a pen is set if Shape is other than nosymbol
 					if (value != XYPlotScatterStyles.Shape.NoSymbol && null == this._pen)
-						_pen = new PenX(NamedColor.Black);
+						_pen = new PenX(NamedColors.Black);
 
 					SetCachedValues();
 
@@ -683,7 +683,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_cachedFillPath = _style == XYPlotScatterStyles.Style.Solid || _style == XYPlotScatterStyles.Style.Open || _style == XYPlotScatterStyles.Style.DotCenter;
 
 			if (this._style != XYPlotScatterStyles.Style.Solid)
-				_cachedFillBrush = new BrushX(NamedColor.White);
+				_cachedFillBrush = new BrushX(NamedColors.White);
 			else if (this._pen.PenType == PenType.SolidColor)
 				_cachedFillBrush = new BrushX(_pen.Color);
 			else

@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	{
 		protected string _text = ""; // the text, which contains the formatting symbols
 		protected Font _font;
-		protected BrushX _textBrush = new BrushX(NamedColor.Black);
+		protected BrushX _textBrush = new BrushX(NamedColors.Black);
 		protected IBackgroundStyle _background = null;
 		protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 		protected XAnchorPositionType _xAnchorType = XAnchorPositionType.Left;

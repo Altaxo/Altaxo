@@ -179,7 +179,7 @@ namespace Altaxo.Gui.Graph
 				_view.SetExportArea(_exportArea);
 				_view.SetSourceDpi(_sourceDpi);
 				_view.SetDestinationDpi(_destinationDpi);
-        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColor.Transparent) : _doc.BackgroundBrush;
+        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
 			}
 		}
 

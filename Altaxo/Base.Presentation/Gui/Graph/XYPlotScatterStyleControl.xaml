@@ -57,7 +57,7 @@
 		<Label Grid.Column="0" Grid.Row="2" Content="Style:"/>
 		<ComboBox x:Name="_cbSymbolStyle" Grid.Column="1" Grid.Row="2" SelectionChanged="EhSymbolShape_SelectionChangeCommit"/>
 
-		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" />
+    <CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
 		<axogcd:BrushComboBox x:Name="_cbColor" Grid.Column="1" Grid.Row="6"/>
 
 		<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. size:" />

@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Common.Drawing
 				else
 				{
 					var pen = _glue.Pen;
-					pen.Color = Altaxo.Graph.NamedColor.Transparent;
+					pen.Color = Altaxo.Graph.NamedColors.Transparent;
 					return pen;
 				}
 			}
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (!_glue.Pen.IsVisible)
 			{
 				var pen = _glue.Pen;
-				pen.Color = Altaxo.Graph.NamedColor.Black;
+				pen.Color = Altaxo.Graph.NamedColors.Black;
 				_glue.Pen = pen;
 			}
 		}

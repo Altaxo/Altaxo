@@ -53,6 +53,8 @@
 			<ConditionEvaluator name="ProjbrowserListItemSelection" class="Altaxo.Gui.Pads.ProjectBrowser.ListItemSelectionEvaluator"/>
 			<Doozer name="Texture" class="Altaxo.Main.TextureDoozer"/>
 			<Doozer name="OptionPanel" class="Altaxo.Main.OptionPanelDoozer"/>
+			<Doozer name="NamedColor" class="Altaxo.Main.NamedColorDoozer"/>
+			<Doozer name="ColorSet" class="Altaxo.Main.ColorSetDoozer"/>
 		</Import>
 	</Runtime>
 
@@ -1007,6 +1009,10 @@
 			             class = "Altaxo.Gui.Settings.AutoUpdateSettingsController"/>
 	</Path>
 
+	<Path name ="/Altaxo/ApplicationColorSets">
+	</Path>
+	
+	
 	<!-- End of Altaxo stuff -->
 
 	<Path name = "/SharpDevelop/Workbench/Ambiences">

@@ -75,7 +75,10 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		
 
+		public bool ShowPlotColorsOnly
+		{
+			set { _glue.ShowPlotColorsOnly = value; }
+		}
 	}
 }

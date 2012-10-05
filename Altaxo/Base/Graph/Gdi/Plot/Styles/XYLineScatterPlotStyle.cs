@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (m_ScatterStyle != null)
 					return this.m_ScatterStyle.Color;
 				else
-					return NamedColor.Black;
+					return NamedColors.Black;
 			}
 			set
 			{

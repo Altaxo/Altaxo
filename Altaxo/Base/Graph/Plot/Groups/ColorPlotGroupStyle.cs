@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Plot.Groups
     bool _isInitialized;
     NamedColor _color;
     bool _isStepEnabled = true;
-		IPlotColorSet _colorSet = PlotColorCollections.Instance.BuiltinDarkColors;
+    ColorManagement.IColorSet _colorSet;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 0)]
@@ -69,11 +69,10 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : new ColorGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._colorSet = (IPlotColorSet)info.GetValue("ColorSet");
+				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet");
 				return s;
 			}
 		}
-
 
     #endregion
 
@@ -89,6 +88,7 @@ namespace Altaxo.Graph.Plot.Groups
       this._isStepEnabled = from._isStepEnabled;
       this._isInitialized = from._isInitialized;
       this._color = from._color;
+      this._colorSet = from._colorSet;
     }
 
     #endregion
@@ -155,7 +155,8 @@ namespace Altaxo.Graph.Plot.Groups
     public int Step(int step)
     {
       int wraps;
-      this._color = _colorSet.GetNextPlotColor(this._color, step, out wraps);
+      this._color = ColorManagement.ColorSetExtensions.GetNextPlotColor(_color, step, out wraps);
+      this._colorSet = this._color.ParentColorSet;
       return wraps;
     }
 
@@ -187,8 +188,22 @@ namespace Altaxo.Graph.Plot.Groups
     }
     public void Initialize(NamedColor c)
     {
+      c = c.CoerceParentColorSetToNullIfNotMember();
+
+      if (c.ParentColorSet != null && c.ParentColorSet.IsPlotColorSet)
+      {
+        _color = c;
+        _colorSet = c.ParentColorSet;
+      }
+      else
+      {
+        if(null==_colorSet || !_colorSet.IsPlotColorSet)
+          _colorSet = ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors;
+        if (!_colorSet.TryGetValue(c.Color, out _color))
+          _color = _colorSet[0];
+      }
+
       _isInitialized = true;
-      _color = c;
       //System.Diagnostics.Debug.WriteLine(string.Format("ColorGroup.Initialize, col={0}", _color.Color));
     }
     public NamedColor Color
@@ -199,15 +214,11 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
-		public IPlotColorSet ColorSet
+		public ColorManagement.IColorSet ColorSet
 		{
 			get
 			{
 				return _colorSet;
-			}
-			set
-			{
-				_colorSet = value;
 			}
 		}
     #endregion

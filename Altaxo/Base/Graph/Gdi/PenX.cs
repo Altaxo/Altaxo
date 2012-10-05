@@ -120,7 +120,7 @@ namespace Altaxo.Graph.Gdi
 
 			c |= Configured.IsNotNull; // Pen is at least not null
 			if (pen.PenType != PenType.SolidColor) c |= Configured.PenType;
-			if (pen.PenType == PenType.SolidColor && pen.Color.ToArgb() != NamedColor.Black.Color.ToArgb()) c |= Configured.Color;
+			if (pen.PenType == PenType.SolidColor && pen.Color.ToArgb() != NamedColors.Black.Color.ToArgb()) c |= Configured.Color;
 			if (pen.PenType != PenType.SolidColor) c |= Configured.Brush;
 			if (pen.Alignment != PenAlignment.Center) c |= Configured.Alignment;
 			if (pen.CompoundArray != null && pen.CompoundArray.Length > 0) c |= Configured.CompoundArray;
@@ -147,7 +147,7 @@ namespace Altaxo.Graph.Gdi
 
 			c |= Configured.IsNotNull; // Pen is at least not null
 			if (pen.PenType != PenType.SolidColor) c |= Configured.PenType;
-			if (pen.PenType == PenType.SolidColor && pen.Color != NamedColor.Black) c |= Configured.Color;
+			if (pen.PenType == PenType.SolidColor && pen.Color != NamedColors.Black) c |= Configured.Color;
 			if (pen.PenType != PenType.SolidColor) c |= Configured.Brush;
 			if (pen.Alignment != PenAlignment.Center) c |= Configured.Alignment;
 			if (pen.CompoundArray != null && pen.CompoundArray.Length > 0) c |= Configured.CompoundArray;
@@ -242,12 +242,12 @@ namespace Altaxo.Graph.Gdi
 			if (0 != (cp & PenX.Configured.Brush))
 				s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 			else
-				s.m_Brush = new BrushX(NamedColor.Black);
+				s.m_Brush = new BrushX(NamedColors.Black);
 
 			if (0 != (cp & PenX.Configured.Color))
 				s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
 			else
-				s.m_Color = NamedColor.Black;
+				s.m_Color = NamedColors.Black;
 
 			if (0 != (cp & PenX.Configured.CompoundArray))
 				s.m_CompoundArray = (float[])info.GetValue("CompoundArray", typeof(float[]));
@@ -394,12 +394,12 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.Brush))
 					s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
-					s.m_Brush = new BrushX(NamedColor.Black);
+					s.m_Brush = new BrushX(NamedColors.Black);
 
 				if (0 != (cp & PenX.Configured.Color))
 					s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
 				else
-					s.m_Color = NamedColor.Black;
+					s.m_Color = NamedColors.Black;
 
 				if (0 != (cp & PenX.Configured.CompoundArray))
 					info.GetArray(out s.m_CompoundArray);
@@ -545,12 +545,12 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.Brush))
 					s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
-					s.m_Brush = new BrushX(NamedColor.Black);
+					s.m_Brush = new BrushX(NamedColors.Black);
 
 				if (0 != (cp & PenX.Configured.Color))
 					s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
 				else
-					s.m_Color = NamedColor.Black;
+					s.m_Color = NamedColors.Black;
 
 				if (0 != (cp & PenX.Configured.CompoundArray))
 					info.GetArray(out s.m_CompoundArray);
@@ -698,12 +698,12 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.Brush))
 					s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
-					s.m_Brush = new BrushX(NamedColor.Black);
+					s.m_Brush = new BrushX(NamedColors.Black);
 
 				if (0 != (cp & PenX.Configured.Color))
 					s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
 				else
-					s.m_Color = NamedColor.Black;
+					s.m_Color = NamedColors.Black;
 
 				if (0 != (cp & PenX.Configured.CompoundArray))
 					info.GetArray(out s.m_CompoundArray);
@@ -806,7 +806,7 @@ namespace Altaxo.Graph.Gdi
 			this.m_EndCap = LineCapExtension.Flat;
 
 			_SetProp(PenX.Configured.IsNotNull, true);
-			_SetProp(Configured.Color, NamedColor.Black != c);
+			_SetProp(Configured.Color, NamedColors.Black != c);
 			_SetProp(Configured.Width, 1 != width);
 
 			if (bCachedMode)
@@ -964,7 +964,7 @@ namespace Altaxo.Graph.Gdi
 			if (0 == (cp & PenX.Configured.IsNotNull))
 				return null;
 
-			Pen pen = new Pen(ToGdi(NamedColor.Black));
+			Pen pen = new Pen(ToGdi(NamedColors.Black));
 
 			// now set the optional Pen properties
 			if (0 != (cp & PenX.Configured.Width))
@@ -1169,7 +1169,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return (m_Brush != null && m_Brush.IsVisible) || m_Color != NamedColor.Transparent;
+				return (m_Brush != null && m_Brush.IsVisible) || m_Color != NamedColors.Transparent;
 			}
 		}
 
@@ -1188,7 +1188,7 @@ namespace Altaxo.Graph.Gdi
 				if (null == value)
 				{
 					_SetProp(Configured.PenType, false);
-					_SetProp(Configured.Color, NamedColor.Black != m_Color);
+					_SetProp(Configured.Color, NamedColors.Black != m_Color);
 					m_PenType = PenType.SolidColor;
 					_SetBrushVariable(null);
 				}
@@ -1199,7 +1199,7 @@ namespace Altaxo.Graph.Gdi
 					_SetBrushVariable(null);
 
 					_SetProp(Configured.PenType, PenType.SolidColor != m_PenType);
-					_SetProp(Configured.Color, NamedColor.Black != m_Color);
+					_SetProp(Configured.Color, NamedColors.Black != m_Color);
 					_SetProp(Configured.Brush, false);
 				} // if value is SolidBrush
 				else if (value.BrushType == BrushType.HatchBrush)
@@ -1253,7 +1253,7 @@ namespace Altaxo.Graph.Gdi
 				if (bChanged)
 				{
 					_SetProp(Configured.PenType, false);
-					_SetProp(Configured.Color, NamedColor.Black != value);
+					_SetProp(Configured.Color, NamedColors.Black != value);
 					_SetProp(Configured.Brush, false);
 
 					m_PenType = PenType.SolidColor;

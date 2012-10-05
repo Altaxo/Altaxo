@@ -33,6 +33,8 @@ namespace Altaxo.Serialization.Xml
     string GetProperty(string propertyname);
 
     void AddAttributeValue(string name, int val);
+
+		void AddAttributeValue(string name, string val);
     
     void AddValue(string name, bool val);
 

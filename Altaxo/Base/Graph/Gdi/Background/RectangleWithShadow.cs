@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Gdi.Background
 	[Serializable]
 	public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
 	{
-		protected BrushX _brush = new BrushX(NamedColor.White);
+		protected BrushX _brush = new BrushX(NamedColors.White);
 		protected double _shadowLength = 5;
 
 		[NonSerialized]
@@ -140,7 +140,7 @@ namespace Altaxo.Graph.Gdi.Background
 					this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
 					break;
 				case BrushType.TextureBrush:
-					this._cachedShadowBrush = new BrushX(NamedColor.Black);
+					this._cachedShadowBrush = new BrushX(NamedColors.Black);
 					break;
 				case BrushType.LinearGradientBrush:
 				case BrushType.PathGradientBrush:

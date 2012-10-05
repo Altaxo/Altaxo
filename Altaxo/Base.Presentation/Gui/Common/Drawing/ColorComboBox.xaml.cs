@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
+//    along with ctrl program; if not, write to the Free Software
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -34,83 +34,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Altaxo.Collections;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
+using Altaxo.Graph.ColorManagement;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
-	/// ComboBox for <see cref="AxoColor"/>.
+	/// Interaction logic for ColorComboBoxEx.xaml
 	/// </summary>
-	public partial class ColorComboBox : ColorComboBoxBase, Altaxo.Gui.Common.Drawing.INamedColorView
+	public partial class ColorComboBox : ColorComboBoxBase, INamedColorView
 	{
+		List<NamedColor> _lastLocalUsedItems = new List<NamedColor>();
 
-		/// <summary>Converts the <see cref="AxoColor"/> to a <see cref="ColorComboBoxBase.ColorComboBoxItem"/> and vice versa.</summary>
-		class CC : IValueConverter
-		{
-			ColorComboBox _cb;
-
-			public CC(ColorComboBox c)
-			{
-				_cb = c;
-			}
-
-			/// <summary>
-			/// Converts a <see cref="AxoColor"/> to a <see cref="ColorComboBoxBase.ColorComboBoxItem"/>.
-			/// </summary>
-			/// <param name="value"></param>
-			/// <param name="targetType"></param>
-			/// <param name="parameter"></param>
-			/// <param name="culture"></param>
-			/// <returns></returns>
-			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				var val = (NamedColor)value;
-				if (_knownColorItems.ContainsKey(val))
-					return _knownColorItems[val];
-
-				if (!_cb._lastLocalUsedColorsDict.ContainsKey(val))
-				{
-					// if not found, insert a new item for this color
-					var newItem = new ColorComboBoxItem() { Value = val };
-					_cb._lastLocalUsedColors.Insert(0, val);
-					_cb.Items.Insert(0, newItem);
-					_cb._lastLocalUsedColorsDict.Add(val, newItem);
-				}
-				return _cb._lastLocalUsedColorsDict[val];
-			}
-
-			/// <summary>
-			/// Converts the <see cref="ImageComboBoxItem"/> to a <see cref="AxoColor"/>.
-			/// </summary>
-			/// <param name="value"></param>
-			/// <param name="targetType"></param>
-			/// <param name="parameter"></param>
-			/// <param name="culture"></param>
-			/// <returns></returns>
-			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-			{
-				if (null != value)
-					return ((ImageComboBoxItem)value).Value;
-				else
-					return Binding.DoNothing;
-			}
-		}
-
-		/// <summary>Dictionary of cached images for each <see cref="AxoColor"/>.</summary>
-		static Dictionary<AxoColor, ImageSource> _cachedImages = new Dictionary<AxoColor, ImageSource>();
-
-		List<NamedColor> _lastLocalUsedColors = new List<NamedColor>();
-		Dictionary<NamedColor, ColorComboBoxItem> _lastLocalUsedColorsDict = new Dictionary<NamedColor, ColorComboBoxItem>();
-
-		ColorType _colorType;
-
-		/// <summary>If true, the user can choose among all colors contained in the color collection, but can not choose or create other colors.</summary>
-		protected bool _restrictColorChoiceToCollection;
-
-
-		/// <summary>Colors that are shown as choices in the combobox.</summary>
-		protected List<NamedColor> _colorCollection;
 
 		public event DependencyPropertyChangedEventHandler SelectedColorChanged;
 		private event Action ViewEvent_SelectedColorChanged;
@@ -120,56 +56,34 @@ namespace Altaxo.Gui.Common.Drawing
 			remove { ViewEvent_SelectedColorChanged -= value; }
 		}
 
+		#region Constructors
 
-		public ColorType ColorType
+		static ColorComboBox()
 		{
-			get
-			{
-				return _colorType;
-			}
-			set
-			{
-				_colorType = value;
-			}
-		}
-
-		public bool RestrictColorChoiceToCollection
-		{
-			get
-			{
-				return _restrictColorChoiceToCollection;
-			}
-			set
-			{
-				_restrictColorChoiceToCollection = value;
-			}
-		}
-
-		public ICollection<NamedColor> SelectableColors
-		{
-			set
-			{
-				_colorCollection = new List<NamedColor>(value);
-				_filterString = string.Empty;
-				FillWithFilteredItems(_filterString, false);
-			}
+			SelectedColorProperty = DependencyProperty.Register("SelectedColor", typeof(NamedColor), typeof(ColorComboBox), new FrameworkPropertyMetadata(NamedColors.Black, EhSelectedColorChanged, EhSelectedColorCoerce));
 		}
 
 		public ColorComboBox()
 		{
+			UpdateTreeViewTreeNodes();
+
 			InitializeComponent();
 
-			this.SelectableColors = _knownColors;
-
-			var _valueBinding = new Binding();
-			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
-			_valueBinding.Converter = new CC(this);
-			this.SetBinding(ComboBox.SelectedItemProperty, _valueBinding);
+			UpdateComboBoxSourceSelection(SelectedColor);
+			UpdateTreeViewSelection();
 		}
 
+		#endregion
+
+		#region Implementation of abstract base class members
+
+		protected override TreeView GuiTreeView { get { return _treeView; } }
+		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
+		protected override NamedColor InternalSelectedColor { get { return SelectedColor; } set { SelectedColor = value; } }
+
+		#endregion Implementation of abstract base class members
+
 		#region Dependency property
-		private const string _nameOfValueProp = "SelectedColor";
 		public NamedColor SelectedColor
 		{
 			get { return (NamedColor)GetValue(SelectedColorProperty); }
@@ -196,191 +110,169 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		public static readonly DependencyProperty SelectedColorProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(NamedColor), typeof(ColorComboBox),
-				new FrameworkPropertyMetadata(new NamedColor(KnownAxoColors.Black), EhSelectedColorChanged));
+		public static readonly DependencyProperty SelectedColorProperty;
 
 		private static void EhSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			((ColorComboBox)obj).OnSelectedColorChanged(obj, args);
 		}
-		#endregion
+
+		private static object EhSelectedColorCoerce(DependencyObject obj, object coerceValue)
+		{
+			var thiss = (ColorComboBox)obj;
+			return thiss.InternalSelectedColorCoerce((NamedColor)coerceValue);
+		}
 
 		protected virtual void OnSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
+			var oldColor = (NamedColor)args.OldValue;
+			var newColor = (NamedColor)args.NewValue;
+
+      // make sure, that the item is part of the data items of the ComboBox
+      if (newColor.ParentColorSet == null)
+      {
+        StoreAsLastUsedItem(_lastLocalUsedItems, newColor);
+      }
+
+			if (!newColor.Equals(_guiComboBox.SelectedValue))
+				this.UpdateComboBoxSourceSelection(newColor);
+
+			if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
+				this.UpdateTreeViewSelection();
+
+
 			if (null != SelectedColorChanged)
 				SelectedColorChanged(obj, args);
 			if (null != ViewEvent_SelectedColorChanged)
 				ViewEvent_SelectedColorChanged();
 		}
 
+		
+		#endregion
 
+		#region ComboBox
 
-		public override string GetItemText(object item)
+		#region ComboBox data handling
+
+		private void UpdateComboBoxSourceSelection(NamedColor color)
 		{
-			var val = (NamedColor)item;
-			return val.Name;
-		}
-
-		public override ImageSource GetItemImage(object item)
-		{
-			var val = (NamedColor)item;
-			ImageSource result;
-			if (!_cachedImages.TryGetValue(val.Color, out result))
-				_cachedImages.Add(val.Color, result = GetImage(val));
-			return result;
-		}
-
-
-
-
-		public static DrawingImage GetImage(Color val)
-		{
-
-			const double border = 0.1;
-			const double height = 1;
-			const double width = 2;
-			//
-			// Create the Geometry to draw.
-			//
-
-			if (null == _checkerBrush)
-				_checkerBrush = CreateCheckerBrush(Math.Min(width, height) / 2);
-
-			var drawingGroup = new DrawingGroup();
-
-			var geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(new Rect(0, 0, width, height)) };
-			geometryDrawing.Brush = Brushes.Black;
-			drawingGroup.Children.Add(geometryDrawing);
-
-			var innerRect = new Rect(border, border, width - 2 * border, height - 2 * border);
-
-			geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
-			geometryDrawing.Brush = _checkerBrush;
-			drawingGroup.Children.Add(geometryDrawing);
-
-			geometryDrawing = new GeometryDrawing() { Geometry = new RectangleGeometry(innerRect) };
-			geometryDrawing.Brush = new SolidColorBrush(val);
-			drawingGroup.Children.Add(geometryDrawing);
-
-			DrawingImage geometryImage = new DrawingImage(drawingGroup);
-
-			// Freeze the DrawingImage for performance benefits.
-			geometryImage.Freeze();
-			return geometryImage;
-		}
-
-		private void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
-		{
-			if (_restrictColorChoiceToCollection)
+			if (color.Equals(_guiComboBox.SelectedValue))
 				return;
 
-			ColorController ctrl = new ColorController(SelectedWpfColor);
-			ctrl.ViewObject = new ColorPickerControl(SelectedWpfColor);
-			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
-				this.SelectedWpfColor = (Color)ctrl.ModelObject;
-		}
-
-		private void EhChooseTransparencyFromContextMenu(object sender, RoutedEventArgs e)
-		{
-			if (_restrictColorChoiceToCollection)
-				return;
-
-			var a = (255 * (100 - int.Parse((string)((MenuItem)sender).Tag))) / 100;
-			AxoColor newColor = SelectedColor.Color.ToAlphaValue((byte)a);
-			SelectedColor = new NamedColor(newColor);
+			_filterString = string.Empty;
+			FillComboBoxWithFilteredItems(_filterString, false);
+			_guiComboBox.SelectedValue = color;
 		}
 
 
-		#region Special treatment for key processing
-
-		string _filterString = string.Empty;
 
 
-		bool FillWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
+		IColorSet GetColorSetForComboBox()
 		{
-			List<NamedColor> lastUsed;
-
-			if (_restrictColorChoiceToCollection)
-				lastUsed = new List<NamedColor>();
+			NamedColor selColor = this.SelectedColor;
+			if (selColor.ParentColorSet != null)
+				return selColor.ParentColorSet;
 			else
-				lastUsed = GetFilteredList(_lastLocalUsedColors, filterString);
+				return NamedColors.Instance;
+		}
 
-			var known = GetFilteredList(_colorCollection, filterString);
+		List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used colors" } };
+		List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
+		protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
+		{
+			List<object> lastUsed;
+
+			List<object> separator = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
+
+			if (ShowPlotColorsOnly)
+				lastUsed = new List<object>();
+			else
+				lastUsed = GetFilteredList(_lastLocalUsedItems, filterString);
+
+			var colorSet = GetColorSetForComboBox();
+			var known = GetFilteredList(colorSet, filterString);
+
 
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
 			{
-				Items.Clear();
-				foreach (var item in lastUsed)
-					Items.Add(GetCBItem(item));
-				foreach (var item in known)
-					Items.Add(GetCBItem(item));
+				IEnumerable<object> source = null;
 
+				if (lastUsed.Count > 0)
+				{
+					source = _comboBoxSeparator1.Concat(lastUsed);
+				}
+				if (known.Count > 0)
+				{
+					(_comboBoxSeparator2[0] as Separator).Tag = colorSet.Name;
+					if (source == null)
+						source = _comboBoxSeparator2.Concat(known);
+					else
+						source = source.Concat(_comboBoxSeparator2).Concat(known);
+				}
+				_guiComboBox.ItemsSource = source;
 				return true;
 			}
 
 			return false;
 		}
 
-		protected override void OnKeyDown(KeyEventArgs e)
+		protected static List<object> GetFilteredList(IList<NamedColor> originalList, string filterString)
 		{
-			if (this.IsDropDownOpen)
+			var result = new List<object>();
+			filterString = filterString.ToLowerInvariant();
+			foreach (var item in originalList)
 			{
-				Key pressedKey = e.Key;
-				string pressedString = new KeyConverter().ConvertToInvariantString(pressedKey);
-				char pressedChar = pressedString.Length == 1 ? pressedString[0] : '\0';
-
-				if (char.IsLetterOrDigit(pressedChar))
-				{
-					string filterString = _filterString + pressedChar;
-
-					if (FillWithFilteredItems(filterString, true))
-						_filterString = filterString;
-				}
-				else if (pressedKey == Key.Delete || pressedKey == Key.Back)
-				{
-					if (_filterString.Length > 0)
-					{
-						_filterString = _filterString.Substring(0, _filterString.Length - 1);
-						FillWithFilteredItems(_filterString, false);
-					}
-				}
+				if (item.Name.ToLowerInvariant().StartsWith(filterString))
+					result.Add(item);
 			}
-			base.OnKeyDown(e);
+			return result;
 		}
 
-		private ImageComboBoxItem GetCBItem(NamedColor c)
+		#endregion ComboBox data
+
+		#region ComboBox event handling
+
+		protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
 		{
-			ImageComboBoxItem result;
-			if (_cachedItems.TryGetValue(c, out result))
-				return result;
-
-			ColorComboBoxItem result1;
-			if (_knownColorItems.TryGetValue(c, out result1))
-				return result1;
-
-			var newItem = new ColorComboBoxItem { Value = c };
-			_cachedItems.Add(c, newItem);
-			return newItem;
-		}
-
-		protected override void OnDropDownClosed(EventArgs e)
-		{
-			base.OnDropDownClosed(e);
-
 			if (_filterString.Length > 0)
 			{
-				var selItem = this.SelectedItem;
-
+				var selItem = _guiComboBox.SelectedValue;
 				_filterString = string.Empty;
-				FillWithFilteredItems(_filterString, false);
+				FillComboBoxWithFilteredItems(_filterString, false);
+				_guiComboBox.SelectedValue = selItem;
+			}
 
-				this.SelectedItem = selItem;
+			if (_guiComboBox.SelectedValue == null)
+				_guiComboBox.SelectedValue = SelectedColor;
+			else
+				this.SelectedColor = (NamedColor)_guiComboBox.SelectedValue;
+		}
+
+		#endregion ComboBox event handling
+
+		#endregion ComboBox
+
+		#region Context menus
+
+		protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
+		{
+			NamedColor newColor;
+			if (base.InternalShowCustomColorDialog(sender, out newColor))
+			{
+				InternalSelectedColor = newColor;
 			}
 		}
 
+		protected void EhChooseOpacityFromContextMenu(object sender, RoutedEventArgs e)
+		{
+			NamedColor newColor;
+			if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
+			{
+				InternalSelectedColor = newColor;
+			}
+		}
 
-
+	
 		#endregion
 	}
 }

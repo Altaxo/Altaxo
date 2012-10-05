@@ -46,8 +46,13 @@ namespace Altaxo.Collections
 		void Swap(int i, int j);
 	}
 
+	public interface ITreeNode<T> where T : ITreeNode<T>
+	{
+		IEnumerable<T> Nodes { get; }
+	}
+
 	// Represents a non GUI tree node that can be used for interfacing/communication with Gui components.
-	public class NGTreeNode : System.ComponentModel.INotifyPropertyChanged
+	public class NGTreeNode : System.ComponentModel.INotifyPropertyChanged, ITreeNode<NGTreeNode>
 	{
 		static NGTreeNode _dummyNode = new NGTreeNode();
 
@@ -295,6 +300,16 @@ namespace Altaxo.Collections
 		/// Collection of the child nodes of this node.
 		/// </summary>
 		public NGTreeNodeCollection Nodes
+		{
+			get
+			{
+				if (null == _nodes)
+					_nodes = new MyColl3(this);
+
+				return _nodes;
+			}
+		}
+		IEnumerable<NGTreeNode> ITreeNode<NGTreeNode>.Nodes
 		{
 			get
 			{
@@ -661,6 +676,41 @@ namespace Altaxo.Collections
 
 		#endregion
 
+	
+	}
+
+	public static class TreeNodeExtensions
+	{
+		public static void FromHereToLeavesDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
+		{
+			action(node);
+			foreach (var childNode in node.Nodes)
+			{
+				FromHereToLeavesDo<T>(childNode, action);
+			}
+		}
+
+		public static void FromLeavesToHereDo<T>(this T node, Action<T> action) where T: ITreeNode<T>
+		{
+			foreach (var childNode in node.Nodes)
+			{
+				FromLeavesToHereDo<T>(childNode, action);
+			}
+			action(node);
+		}
+
+    public static T AnyBetweenHereAndLeaves<T>(this T node, Func<T, bool> condition) where T: ITreeNode<T>
+    {
+      if (condition(node))
+        return node;
+      foreach (var childNode in node.Nodes)
+      {
+        var result = AnyBetweenHereAndLeaves(childNode, condition);
+        if (null != result)
+          return result;
+      }
+      return default(T);
+    }
 	}
 
 

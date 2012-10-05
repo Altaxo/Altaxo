@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Gdi.Background
 	[Serializable]
 	public class DarkMarbel : IBackgroundStyle
 	{
-		protected BrushX _brush = new BrushX(NamedColor.LightGray);
+		protected BrushX _brush = new BrushX(NamedColors.LightGray);
 		protected double _shadowLength = 5;
 
 		#region Serialization

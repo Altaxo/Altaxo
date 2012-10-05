@@ -1,5 +1,5 @@
-<AddIn name        = "Custom View Content Sample"
-       url         = "http://www.icsharpcode.net"
+<AddIn name        = "AltaxoOriginConnector"
+       url         = "http://altaxo.sf.net"
        version     = "1.0.0">
 	
 	<Manifest>
@@ -31,4 +31,5 @@
                 label = "Push all tables to origin"
                 class = "Altaxo.Worksheet.Commands.PushAllTablesToOrigin"/>
   </Path>
+	
 </AddIn>

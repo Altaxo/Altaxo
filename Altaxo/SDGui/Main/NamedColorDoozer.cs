@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -21,60 +21,47 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ICSharpCode.Core;
+using Altaxo.Graph;
 
-namespace Altaxo.Gui.Common.Drawing
+namespace Altaxo.Main
 {
 	/// <summary>
-	/// Interaction logic for BrushSimpleConditionalControl.xaml
+	/// Creates a new named color from the id and the value
 	/// </summary>
-	public partial class BrushSimpleConditionalControl : UserControl
+	/// <attribute name="Value" use="required">
+	/// The value of the color as string in standard format.
+	/// </attribute>
+	/// <usage>Only in /Altaxo/ApplicationColorSets, embedded in a ColorSetDoozer</usage>
+	/// <returns>
+	/// An NamedColor object that represents the item.</returns>
+	public class NamedColorDoozer : IDoozer
 	{
-		public BrushSimpleConditionalControl()
-		{
-			InitializeComponent();
-		}
-		public Altaxo.Graph.Gdi.BrushX SelectedBrush
+		/// <summary>
+		/// Gets if the doozer handles codon conditions on its own.
+		/// If this property return false, the item is excluded when the condition is not met.
+		/// </summary>
+		public bool HandleConditions
 		{
 			get
 			{
-				if (_chkEnableBrush.IsChecked == true)
-				{
-					return _cbBrush.SelectedBrush;
-				}
-				else
-				{
-					var brush = _cbBrush.SelectedBrush;
-					brush.Color = Altaxo.Graph.NamedColors.Transparent;
-					return brush;
-				}
-			}
-			set
-			{
-				_cbBrush.SelectedBrush = value;
-				_chkEnableBrush.IsChecked = value.IsVisible;
+				return false;
 			}
 		}
 
-		private void EhEnableFill_Checked(object sender, RoutedEventArgs e)
+		public object BuildItem(BuildItemArgs args)
 		{
-			var brush = _cbBrush.SelectedBrush.Clone();
-			if (!brush.IsVisible)
+			string id = args.Codon.Id;
+			string value = args.Codon.Properties["Value"];
+			if (!string.IsNullOrEmpty(value))
 			{
-				brush.Color = Altaxo.Graph.NamedColors.AliceBlue;
-				_cbBrush.SelectedBrush = brush;
+				AxoColor c = AxoColor.FromInvariantString(value);
+				return new NamedColor(c, id);
 			}
+			return null;
 		}
 	}
 }

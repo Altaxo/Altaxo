@@ -172,6 +172,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\Drawing\ColorComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\Drawing\ColorPickerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -180,17 +184,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Common\Drawing\ColorComboBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\Drawing\BrushComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\Drawing\FontSizeComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -739,11 +739,19 @@
     <Compile Include="Gui\Common\CheckableGroupBox.xaml.cs">
       <DependentUpon>CheckableGroupBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\ColorConverter.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControl.xaml.cs">
       <DependentUpon>ConditionalDocumentControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\DoubleUpDown.cs" />
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
+    <Compile Include="Gui\Common\Drawing\ColorComboBox.xaml.cs">
+      <DependentUpon>ColorComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\ColorComboBoxBase.cs" />
+    <Compile Include="Gui\Common\Drawing\BrushComboBox.xaml.cs">
+      <DependentUpon>BrushComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\DimensionfulQuantityImageComboBox.cs" />
     <Compile Include="Gui\Common\Drawing\TextureScalingControl.xaml.cs">
       <DependentUpon>TextureScalingControl.xaml</DependentUpon>
@@ -778,19 +786,12 @@
     <Compile Include="Gui\Common\Drawing\ColorCombControl.xaml.cs">
       <DependentUpon>ColorCombControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\ColorComboBoxBase.cs" />
     <Compile Include="Gui\Common\Drawing\ColorController.cs" />
     <Compile Include="Gui\Common\Drawing\ColorPickerControl.xaml.cs">
       <DependentUpon>ColorPickerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\ColorScaleComboBox.xaml.cs">
       <DependentUpon>ColorScaleComboBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\ColorComboBox.xaml.cs">
-      <DependentUpon>ColorComboBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\BrushComboBox.xaml.cs">
-      <DependentUpon>BrushComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.xaml.cs">
       <DependentUpon>ColorTypeThicknessPenControl.xaml</DependentUpon>

@@ -33,8 +33,8 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 	public abstract class HatchBrushBase : ImageProxy, IHatchBrushTexture
 	{
 		protected const double DefaultEffectiveResolution = 300;
-		protected static readonly NamedColor _defaultBackColor = NamedColor.Transparent;
-		protected static readonly NamedColor _defaultForeColor = NamedColor.Black;
+		protected static readonly NamedColor _defaultBackColor = NamedColors.Transparent;
+		protected static readonly NamedColor _defaultForeColor = NamedColors.Black;
 
 		/// <summary>
 		/// Repeat length in points (1/72 inch) in x-direction.

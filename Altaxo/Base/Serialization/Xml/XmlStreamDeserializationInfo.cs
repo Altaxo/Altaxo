@@ -210,6 +210,10 @@ namespace Altaxo.Serialization.Xml
       return XmlConvert.ToInt32(m_Reader[name]);
     }
 
+		public string GetStringAttribute(string name)
+		{
+			return m_Reader[name];
+		}
 
 
 

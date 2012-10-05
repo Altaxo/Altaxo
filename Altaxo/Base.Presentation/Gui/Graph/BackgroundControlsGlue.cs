@@ -139,7 +139,7 @@ namespace Altaxo.Gui.Graph
 				}
 
 				_cbBrush = value;
-				_cbBrush.SelectedBrush = new BrushX(Altaxo.Graph.NamedColor.Aqua);
+				_cbBrush.SelectedBrush = new BrushX(Altaxo.Graph.NamedColors.Aqua);
 
 				if (_doc != null && _cbBrush != null && _doc.Brush != null)
 					_cbBrush.SelectedBrush = _doc.Brush;

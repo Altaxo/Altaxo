@@ -190,5 +190,19 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion
-	}
+
+    private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
+    {
+      if (null != IndependentColorChanged)
+        IndependentColorChanged();
+    }
+
+
+    public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
+    {
+      _cbColor.ShowPlotColorsOnly = showPlotColorsOnly;
+    }
+
+    public event Action IndependentColorChanged;
+  }
 }
