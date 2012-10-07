@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Graph
 	public partial class ErrorBarPlotStyleControl : UserControl, IErrorBarPlotStyleView
 	{
 		Altaxo.Gui.Common.Drawing.PenControlsGlue _strokePenGlue;
+		public event Action IndependentColorChanged;
+
+
 		public ErrorBarPlotStyleControl()
 		{
 			InitializeComponent();
@@ -249,6 +252,19 @@ namespace Altaxo.Gui.Graph
 		public event EventHandler ClearNegativeError;
 
 		#endregion
+
+
+
+		public bool ShowPlotColorsOnly
+		{
+			set { _strokePenGlue.ShowPlotColorsOnly = value; }
+		}
+
+		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentColorChanged)
+				IndependentColorChanged();
+		}
 
 	}
 }

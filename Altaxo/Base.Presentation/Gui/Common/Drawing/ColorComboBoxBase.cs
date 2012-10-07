@@ -230,13 +230,24 @@ namespace Altaxo.Gui.Common.Drawing
 		/// <returns></returns>
 		protected virtual NamedColor InternalSelectedColorCoerce(NamedColor color)
 		{
-      color = color.CoerceParentColorSetToNullIfNotMember();
+			color = color.CoerceParentColorSetToNullIfNotMember();
 
 			if (this.ShowPlotColorsOnly && (color.ParentColorSet == null || false == color.ParentColorSet.IsPlotColorSet))
 			{
 				return ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 			}
 			return color;
+		}
+
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the popup showing the TreeView is open.
+		/// </summary>
+		/// <value><c>True</c> if the TreeView popup is open; otherwise, <c>false</c>.</value>
+		public bool IsTreeDropDownOpen
+		{
+			get { return (bool)GetValue(IsTreeDropDownOpenProperty); }
+			set { SetValue(IsTreeDropDownOpenProperty, value); }
 		}
 
 		#endregion
@@ -272,13 +283,37 @@ namespace Altaxo.Gui.Common.Drawing
 		protected virtual void OnTreePopupOpened()
 		{
 			_selectedFromTreeView = GuiTreeView.SelectedValue;
+			Mouse.Capture(this, CaptureMode.SubTree);
 		}
+
+
+		/// <summary>
+		/// Closes the popup if it is open (meaning the mouse is captured) and the user clicked outside the popup.
+		/// Known bug: if the user has clicked on an item inside the tree view, the mouse is no longer captured by the UserControl, but by a item in the TreeView. Thus, OnMouseDown is no longer called,
+		/// and the popup will not close when the user then clicked outside the popup.
+		/// </summary>
+		/// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"/> that contains the event data. This event data reports details about the mouse button that was pressed and the handled state.</param>
+		protected override void OnMouseDown(MouseButtonEventArgs e)
+		{
+			base.OnMouseDown(e);
+			if (true==IsTreeDropDownOpen && Mouse.Captured == this && e.OriginalSource == this)
+			{
+				IsTreeDropDownOpen = false;
+			}
+		}
+	
+
+
+
 
 		/// <summary>
 		/// Called when the TreeView popup is closed.
 		/// </summary>
 		protected virtual void OnTreePopupClosed()
 		{
+			if (Mouse.Captured == this)
+				Mouse.Capture(null);
+
 			var oldSelection = _selectedFromTreeView;
 			var newSelection = GuiTreeView.SelectedValue as NGTreeNode;
 			_selectedFromTreeView = newSelection;
@@ -286,7 +321,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				if (newSelection.Tag is NamedColor)
 				{
-					InternalSelectedColor= (NamedColor)newSelection.Tag;
+					InternalSelectedColor = (NamedColor)newSelection.Tag;
 					return; // no need here to open the combobox after selection
 				}
 				else if (newSelection.Tag is IColorSet)
@@ -534,5 +569,36 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 		#endregion
 
+		#region Code to close the TreeView popup
+
+		protected virtual void EhComboBox_DropDownOpened(object sender, EventArgs e)
+		{
+			if (IsTreeDropDownOpen)
+				IsTreeDropDownOpen = false;
+		}
+
+		protected override void OnContextMenuClosing(ContextMenuEventArgs e)
+		{
+			base.OnContextMenuClosing(e);
+			if (IsTreeDropDownOpen)
+				IsTreeDropDownOpen = false;
+		}
+
+		/// <summary>If keyboard focus is lost from the user control, and is also not into the TreeView, the TreeView popup should be closed.</summary>
+		/// <param name="e">Event args.</param>
+		protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+		{
+			base.OnIsKeyboardFocusWithinChanged(e);
+			if (this.IsTreeDropDownOpen && !base.IsKeyboardFocusWithin && !GuiTreeView.IsKeyboardFocusWithin)
+			{
+				IsTreeDropDownOpen = false;
+			}
+		}
+
+
+		#endregion
+
 	}
+
+
 }

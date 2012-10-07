@@ -126,7 +126,23 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the Independent color checkbox
     /// </summary>
-		bool IsIndependentColorSelected { get; set; }
+		bool IndependentColor { get; set; }
+
+
+		/// <summary>
+		/// Indicates, whether only colors of plot color sets should be shown.
+		/// </summary>
+		/// <param name="showPlotColorsOnly">True if only colors of plot color sets should be shown.</param>
+		void SetShowPlotColorsOnly(bool showPlotColorsOnly);
+
+		#region events
+
+		/// <summary>
+		/// Occurs when the user choice for IndependentColor has changed.
+		/// </summary>
+		event Action IndependentColorChanged;
+
+		#endregion
   }
 
   #endregion
@@ -136,10 +152,10 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(LabelPlotStyle))]
   [ExpectedTypeOfView(typeof(IXYPlotLabelStyleView))]
-	public class XYPlotLabelStyleController : IMVCANController
+	public class XYPlotLabelStyleController : MVCANControllerBase<LabelPlotStyle, IXYPlotLabelStyleView>
   {
-    IXYPlotLabelStyleView _view;
-    LabelPlotStyle _doc;
+		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
+		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
     /// <summary>The font of the label.</summary>
     protected Font _font;
@@ -151,7 +167,6 @@ namespace Altaxo.Gui.Graph
 
     /// <summary>The color for the label.</summary>
     protected NamedColor  _color;
-  
    
     protected System.Drawing.StringAlignment _horizontalAlignment;
 
@@ -177,38 +192,18 @@ namespace Altaxo.Gui.Graph
 
     protected IBackgroundStyle _backgroundStyle;
 
-    UseDocument _useDocumentCopy;
-
 		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
     public XYPlotLabelStyleController()
     {
     }
 
-    public bool InitializeDocument(params object[] args)
+    protected override void Initialize(bool initData)
     {
-      if (args.Length == 0 || !(args[0] is LabelPlotStyle))
-        return false;
-
-			// if a view is momentarily coupled, deactivate it to avoid a lot of cascading updates
-			var tempView = _view;
-			this.ViewObject = null;
-
-      _doc = (LabelPlotStyle)args[0];
-      Initialize(true); // initialize always because we have to update the temporary variables
-
-			this.ViewObject = tempView; // reactivate the view
-
-      return true;
-    }
-
-    public UseDocument UseDocumentCopy { set { _useDocumentCopy = value; } } // not used here
-
-
-    void Initialize(bool bInit)
-    {
-      if(bInit)
+      if(initData)
       {
+				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
+
         _font = _doc.Font;
         _independentColor = _doc.IndependentColor;
         _color = _doc.Color;
@@ -226,14 +221,15 @@ namespace Altaxo.Gui.Graph
 
       if(null!=_view)
       {
+				_view.SetShowPlotColorsOnly(_colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor));
 				_view.SelectedFont = _font;
-				_view.IsIndependentColorSelected = _independentColor;
+				_view.IndependentColor = _independentColor;
 				_view.SelectedColor = _color;
 				_view.Init_HorizontalAlignment(new SelectableListNodeList(_horizontalAlignment));
 				_view.Init_VerticalAlignment(new SelectableListNodeList(_verticalAlignment));
 				_view.AttachToAxis = _attachToEdge;
         SetAttachmentDirection();
-				_view.SelectedRotation = _doc.Rotation;
+				_view.SelectedRotation = _originalDoc.Rotation;
 
 				_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_font.Size, Units.Length.Point.Instance);
 
@@ -249,16 +245,16 @@ namespace Altaxo.Gui.Graph
 
     public void SetAttachmentDirection()
     {
-      IPlotArea layer = DocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
+      IPlotArea layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
 
 			var names = new SelectableListNodeList();
 
       if (layer != null)
       {
-        foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.AttachedAxis }))
+        foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _originalDoc.AttachedAxis }))
         {
           CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-          names.Add(new SelectableListNode(info.Name, id, id==_doc.AttachedAxis));
+          names.Add(new SelectableListNode(info.Name, id, id==_originalDoc.AttachedAxis));
         }
       }
 
@@ -274,6 +270,16 @@ namespace Altaxo.Gui.Graph
 				_view.Init_LabelColumn(name);
       }
     }
+
+		void EhIndependentColorChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentColor = _view.IndependentColor;
+				_view.SetShowPlotColorsOnly(_colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor));
+			}
+		}
+
     #region IXYPlotLabelStyleController Members
 
   
@@ -361,11 +367,11 @@ namespace Altaxo.Gui.Graph
 
     #region IApplyController Members
 
-    public bool Apply()
+    public override bool Apply()
     {
       _doc.BackgroundStyle = _view.Background;
 			_doc.Font = _view.SelectedFont;
-			_doc.IndependentColor = _view.IsIndependentColorSelected;
+			_doc.IndependentColor = _view.IndependentColor;
 			_doc.Color = _view.SelectedColor;
 			_doc.HorizontalAlignment = (StringAlignment)(_view.SelectedHorizontalAlignment).Tag;
 			_doc.VerticalAlignment = (StringAlignment)(_view.SelectedVerticalAlignment).Tag;
@@ -391,6 +397,9 @@ namespace Altaxo.Gui.Graph
       
       _doc.LabelColumn  = _labelColumn;
 
+			if (_useDocumentCopy)
+				CopyHelper.Copy(ref _originalDoc, _doc);
+
       return true;
     }
 
@@ -398,38 +407,28 @@ namespace Altaxo.Gui.Graph
 
     #region IMVCController Members
 
-    public object ViewObject
-    {
-      get
-      {
-				return _view;
-      }
-      set
-      {
-				if (_view != null)
-				{
-					_view.LabelColumnSelected -= EhView_SelectLabelColumn;
-					_view.FontSizeChanged -= EhView_FontSizeChanged;
-				}
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.LabelColumnSelected += EhView_SelectLabelColumn;
+			_view.FontSizeChanged += EhView_FontSizeChanged;
+			_view.IndependentColorChanged += EhIndependentColorChanged;
+		}
 
-				_view = value as IXYPlotLabelStyleView;
+		protected override void DetachView()
+		{
+			_view.LabelColumnSelected -= EhView_SelectLabelColumn;
+			_view.FontSizeChanged -= EhView_FontSizeChanged;
+			_view.IndependentColorChanged -= EhIndependentColorChanged;
+			base.DetachView();
+		}
 
-				if (_view != null)
-				{
-					Initialize(false);
-					_view.LabelColumnSelected += EhView_SelectLabelColumn;
-					_view.FontSizeChanged += EhView_FontSizeChanged;
-				}
-      }
-    }
+
+  
 
 
 
-    public object ModelObject
-    {
-      get { return this._doc; }
-    }
-
+  
     #endregion
   }
 }

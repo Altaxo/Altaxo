@@ -201,13 +201,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 	[SerializationSurrogate(0, typeof(ScatterPlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class ScatterPlotStyle
-		:
-		IG2DPlotStyle,
-		ICloneable,
-		Main.IChangedEventSource,
-		System.Runtime.Serialization.IDeserializationCallback,
-		Main.IChildChangedEventSink
+	public class ScatterPlotStyle	:	IG2DPlotStyle,
+		System.Runtime.Serialization.IDeserializationCallback
 	{
 		protected XYPlotScatterStyles.Shape _shape;
 		protected XYPlotScatterStyles.Style _style;
@@ -421,6 +416,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 		#endregion
 
+
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as ScatterPlotStyle;
+			if (null != from)
+			{
+				CopyFrom(from, false);
+				return true;
+			}
+			return false;
+		}
 
 		public void CopyFrom(ScatterPlotStyle from, bool suppressChangeEvent)
 		{

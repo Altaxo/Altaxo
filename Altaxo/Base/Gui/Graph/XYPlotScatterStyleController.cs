@@ -135,42 +135,10 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(ScatterPlotStyle))]
   [ExpectedTypeOfView(typeof(IXYPlotScatterStyleView))]
-	public class XYPlotScatterStyleController : IMVCANController
+	public class XYPlotScatterStyleController : MVCANControllerBase<ScatterPlotStyle, IXYPlotScatterStyleView>
   {
-    ScatterPlotStyle _originalDoc;
-    ScatterPlotStyle _doc;
-    IXYPlotScatterStyleView _view;
-    UseDocument _useDocumentCopy;
-
-    /// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
-    Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
-    bool _showPlotColorsOnly = false;
-    
-    public XYPlotScatterStyleController()
-    { 
-    }
-
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args==null || args.Length == 0 || !(args[0] is ScatterPlotStyle))
-        return false;
-
-			var tempView = this.ViewObject;
-			this.ViewObject = null; // temporarily deactivate view to avoid cascading updates
-
-      _originalDoc = (ScatterPlotStyle)args[0];
-      _doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (ScatterPlotStyle)_originalDoc.Clone();
-      Initialize(true);
-
-			this.ViewObject = tempView;
-      return true;
-    }
-
-    public UseDocument UseDocumentCopy { set { _useDocumentCopy = value; } } // not used here
-
-
-  
-
+		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
+		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
     bool _ActivateEnableDisableMain = false;
     /// <summary>
@@ -184,18 +152,16 @@ namespace Altaxo.Gui.Graph
         _view.SetEnableDisableMain(bActivate);
     }
 
-    void Initialize(bool initData)
+    protected override void Initialize(bool initData)
     {
       if (initData)
       {
-        // try to get the color group style that is responsible for coloring this item
-        _colorGroupStyle = GetColorGroupStyle();
-        _showPlotColorsOnly = (!_doc.IndependentColor && null != _colorGroupStyle);
+				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
       }
       if(_view!=null)
       {
         // now we have to set all dialog elements to the right values
-        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
+        _view.SetShowPlotColorsOnly(_colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor));
         _view.InitializeIndependentColor(_doc.IndependentColor);
         _view.InitializeIndependentSymbolSize(_doc.IndependentSymbolSize);
        
@@ -212,25 +178,16 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle()
-    {
-      var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(_originalDoc);
-      if (null == plotItemCollection)
-        return null;
-
-      if (plotItemCollection.GroupStyles.ContainsType(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle)))
-        return (Altaxo.Graph.Plot.Groups.ColorGroupStyle)plotItemCollection.GroupStyles.GetPlotGroupStyle(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle));
-      else
-        return null;
-    }
+  
 
 
     void EhIndependentColorChanged()
     {
-      _doc.IndependentColor = _view.IndependentColor;
-      _showPlotColorsOnly = (!_doc.IndependentColor && null != _colorGroupStyle);
-      if (null != _view)
-        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
+			if (null != _view)
+			{
+				_doc.IndependentColor = _view.IndependentColor;
+				_view.SetShowPlotColorsOnly(_colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor));
+			}
     }
 
     public void SetSymbolSize()
@@ -284,38 +241,25 @@ namespace Altaxo.Gui.Graph
 
 
     #region IMVCController Members
-    public object ViewObject
-    {
-      get { return _view; }
-      set
-      {
-				if (_view != null)
-				{
-          _view.IndependentColorChanged -= EhIndependentColorChanged;
-				}
 
-        _view = value as IXYPlotScatterStyleView;
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.IndependentColorChanged += EhIndependentColorChanged;
+		}
 
-				if (_view != null)
-				{
-					Initialize(false);
-          _view.IndependentColorChanged += EhIndependentColorChanged;
-				}
-      }
-    }
+		protected override void DetachView()
+		{
+			_view.IndependentColorChanged -= EhIndependentColorChanged;
+			base.DetachView();
+		}
 
-    public object ModelObject
-    {
-      get
-      {
-        return _originalDoc;
-      }
-    }
+
     #endregion
   
     #region IApplyController Members
 
-    public bool Apply()
+    public override bool Apply()
     {
 
       // don't trust user input, so all into a try statement
@@ -324,30 +268,30 @@ namespace Altaxo.Gui.Graph
       
 
         // Symbol Color
-        _originalDoc.Color = _view.SymbolColor;
+        _doc.Color = _view.SymbolColor;
 
-        _originalDoc.IndependentColor = _view.IndependentColor;
+        _doc.IndependentColor = _view.IndependentColor;
       
-        _originalDoc.IndependentSymbolSize = _view.IndependentSymbolSize;
+        _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
         // Symbol Shape
-				_originalDoc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_view.SymbolShape.Tag;
+				_doc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_view.SymbolShape.Tag;
 
         // Symbol Style
-				_originalDoc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_view.SymbolStyle.Tag;
+				_doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_view.SymbolStyle.Tag;
 
         // Symbol Size
-				_originalDoc.SymbolSize = _view.SymbolSize;
+				_doc.SymbolSize = _view.SymbolSize;
 
         // Drop line left
-        _originalDoc.DropLine.Clear();
+        _doc.DropLine.Clear();
         foreach (SelectableListNode node in _view.DropLines)
 					if(node.IsSelected)
-						_originalDoc.DropLine.Add((CSPlaneID)node.Tag);
+						_doc.DropLine.Add((CSPlaneID)node.Tag);
 
         // Skip points
 
-        _originalDoc.SkipFrequency = _view.SkipPoints;
+        _doc.SkipFrequency = _view.SkipPoints;
 
 				double relPenWidth;
 				if (!Altaxo.Serialization.GUIConversion.IsDouble(_view.RelativePenWidth, out relPenWidth))
@@ -357,10 +301,12 @@ namespace Altaxo.Gui.Graph
 				}
 				else
 				{
-					_originalDoc.RelativePenWidth = (float)relPenWidth/100;
+					_doc.RelativePenWidth = (float)relPenWidth/100;
 				}
-       
 
+
+				if (_useDocumentCopy)
+					CopyHelper.Copy(ref _originalDoc, _doc);
       }
       catch(Exception ex)
       {

@@ -43,74 +43,76 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public interface IXYPlotLineStyleView
   {
-    /// <summary>
-    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
-    /// </summary>
-    /// <param name="bActivate"></param>
-    void SetEnableDisableMain(bool bActivate);    
+		bool ShowPlotColorsOnlyForLinePen { set; }
+		bool IndependentLineColor { get; set; }
+		PenX LinePen { get; set; }
 
-
-    void InitializeIndependentColor(bool val);
- 
-    void InitializePen(IColorTypeThicknessPenController controller);
 
     /// <summary>
     /// Initializes the LineSymbolGap check box.
     /// </summary>
     /// <param name="bGap">True if a gap between symbols and line should be shown.</param>
-    void InitializeLineSymbolGapCondition(bool bGap);
+		bool LineSymbolGap { get; set; }
 
+		bool ConnectCircular { get; set; }
 
     /// <summary>
     /// Initializes the Line connection combobox.
     /// </summary>
-    /// <param name="arr">String array of possible selections.</param>
-    /// <param name="sel">Current selection.</param>
-    void InitializeLineConnect(string[] arr , string sel);
-
-   
-
-    /// <summary>
-    /// Initializes the fill check box.
-    /// </summary>
-    /// <param name="bFill">True if the plot should be filled.</param>
-    void InitializeFillCondition(bool bFill);
-
-    /// <summary>
-    /// Initializes the fill direction combobox.
-    /// </summary>
     /// <param name="list">List of possible selections.</param>
-    /// <param name="sel">Current selection index.</param>
-    void InitializeFillDirection(List<ListNode> list, int sel);
+    void InitializeLineConnect(SelectableListNodeList list);
+
+		/// <summary>
+		/// Enables / disables all controls associated with line properties with exception of the Connection style combo box.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if [enable line controls]; otherwise, <c>false</c>.
+		/// </value>
+		bool EnableLineControls { set; }
+
+   
 
     /// <summary>
-    /// Initializes the fill color combobox.
+    /// Gets/sets the fill area check box.
     /// </summary>
-    /// <param name="sel">Current selection.</param>
-    void InitializeFillColor(BrushX sel);
+		bool UseFill { get; set; }
+
+		/// <summary>Sets a value indicating whether plot colors only should be shown for the fill brush.</summary>
+		/// <value><c>true</c> if only plot colors should be shown for fill brush; otherwise, <c>false</c>.</value>
+		bool ShowPlotColorsOnlyForFillBrush { set; }
+
+		bool IndependentFillColor { get; set; }
+
+    /// <summary>
+    /// Gets/sets the contents of the fill color combobox.
+    /// </summary>
+		BrushX FillBrush { get; set; }
+
+		/// <summary>
+		/// Initializes the fill direction combobox.
+		/// </summary>
+		/// <param name="list">List of possible selections.</param>
+		/// <param name="sel">Current selection index.</param>
+		void InitializeFillDirection(SelectableListNodeList list);
   
-
-    #region Getter
-
-    bool LineSymbolGap { get; }
-    bool IndependentColor { get; }
-   
- 
-    string LineConnect { get; }
-    bool ConnectCircular { get; set; }
-  
-    bool   LineFillArea { get; }
-    ListNode LineFillDirection { get; }
-    BrushX LineFillColor {get; }
-    bool IndependentFillColor { get; set; }
-
-    
-
-    #endregion // Getter
 
 		#region events
 
-		event Action IndependentColorChanged;
+		/// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
+		event Action IndependentFillColorChanged;
+
+		/// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
+		event Action IndependentLineColorChanged;
+
+		/// <summary>Occurs when the user checked or unchecked the "use fill" checkbox.</summary>
+		event Action UseFillChanged;
+		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
+		event Action UseLineChanged;
+
+		/// <summary>Occurs when the fill brush has changed by user interaction.</summary>
+		event Action FillBrushChanged;
+		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
+		event Action LinePenChanged;
 
 		#endregion
 	}
@@ -118,207 +120,247 @@ namespace Altaxo.Gui.Graph
 
   #endregion
 
+
   /// <summary>
   /// Summary description for XYPlotLineStyleController.
   /// </summary>
   [UserControllerForObject(typeof(LinePlotStyle))]
   [ExpectedTypeOfView(typeof(IXYPlotLineStyleView))]
-	public class XYPlotLineStyleController : IMVCANController
+	public class XYPlotLineStyleController : MVCANControllerBase<LinePlotStyle, IXYPlotLineStyleView>
   {
-    IXYPlotLineStyleView _view;
-    LinePlotStyle _originalDoc;
-    LinePlotStyle _doc;
-    ColorTypeThicknessPenController _penController;
+		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
+		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		/// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
-		Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
+		SelectableListNodeList _lineConnectChoices;
 
-    UseDocument _useDocumentCopy;
+		SelectableListNodeList _areaFillDirectionChoices;
 
-    public XYPlotLineStyleController()
-    {
-    }
-  
-
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args==null || args.Length == 0 || !(args[0] is LinePlotStyle))
-        return false;
-
-			var tempView = this.ViewObject; // deactivate the view to avoid cascading updates
-			this.ViewObject = null;
-
-      _originalDoc = (LinePlotStyle)args[0];
-      _doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (LinePlotStyle)_originalDoc.Clone();
-      Initialize(true);
-
-			this.ViewObject = tempView;
-
-      return true;
-    }
-
-    public UseDocument UseDocumentCopy { set { _useDocumentCopy = value; } } // not used here
-
-   
-    public object ViewObject
-    {
-      get { return _view; }
-      set
-      {
-				if (_view != null)
-				{
-					_view.IndependentColorChanged -= EhIndependentColorChanged;
-				}
-
-        _view = value as IXYPlotLineStyleView;
-
-				if (_view != null)
-				{
-					Initialize(false);
-					_view.IndependentColorChanged += EhIndependentColorChanged;
-				}
-      }
-    }
-
-	
-
-    public object ModelObject
-    {
-      get
-      {
-        return _originalDoc;
-      }
-    }
-
- 
-
-
-    bool _ActivateEnableDisableMain = false;
-    /// <summary>
-    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
-    /// </summary>
-    /// <param name="bActivate"></param>
-    public void SetEnableDisableMain(bool bActivate)
-    {
-      _ActivateEnableDisableMain = bActivate;
-      if(null!=_view)
-        _view.SetEnableDisableMain(bActivate);
-    }
-
-    void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
-			if(initData)
+			if (initData)
 			{
-				// try to get the color group style that is responsible for coloring this item
-				_colorGroupStyle = GetColorGroupStyle();
-
-				var penController = new ColorTypeThicknessPenController(_doc.PenHolder);
-				_penController = penController;
-
-				if (null != _colorGroupStyle && !_doc.IndependentColor)
-					penController.SetShowPlotColorsOnly(true);
+				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
+				_lineConnectChoices = new SelectableListNodeList(_doc.Connection);
+				InitializeFillDirectionChoices();
 			}
 
 			if (_view != null)
 			{
-				_view.InitializeIndependentColor(_doc.IndependentColor);
-
-
-				// now we have to set all dialog elements to the right values
-				_view.InitializePen(_penController);
-				SetLineSymbolGapCondition();
 
 				// Line properties
-				SetLineConnect();
-				SetFillCondition();
-				SetFillDirection();
-				SetFillColor();
-				_view.IndependentFillColor = _doc.IndependentFillColor;
+				_view.InitializeLineConnect(_lineConnectChoices);
+				_view.LineSymbolGap = _doc.LineSymbolGap;
 				_view.ConnectCircular = _doc.ConnectCircular;
-				_view.SetEnableDisableMain(_ActivateEnableDisableMain);
+				_view.IndependentLineColor = _doc.IndependentLineColor;
+				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
+				_view.LinePen = null != _doc.LinePen ? _doc.LinePen : new PenX(NamedColors.Transparent);
+
+				// Fill area
+				_view.UseFill = _doc.FillArea;
+				_view.IndependentFillColor = _doc.IndependentFillColor;
+				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				_view.FillBrush = null != _doc.FillBrush ? _doc.FillBrush : new BrushX(NamedColors.Transparent);
+				_view.InitializeFillDirection(_areaFillDirectionChoices);
 			}
 		}
 
-		void EhIndependentColorChanged()
+
+		public void InitializeFillDirectionChoices()
 		{
-			_doc.IndependentColor = _view.IndependentColor;
-			if (!_doc.IndependentColor && null != _colorGroupStyle)
+			_areaFillDirectionChoices = new SelectableListNodeList();
+			IPlotArea layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
+			if (layer != null)
 			{
-				_penController.SetShowPlotColorsOnly(true);
-			}
-			else
-			{
-				_penController.SetShowPlotColorsOnly(false);
+				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _originalDoc.FillDirection }))
+				{
+					CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+					_areaFillDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _originalDoc.FillDirection));
+				}
 			}
 		}
 
-		public Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle()
+	
+
+		#region Color management
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the line is shown or not. By definition here, the line is not shown only if the connection style is "Noline".
+		/// When setting this property, this influences not the connection style in the _view, but only the IsEnabled property of all Gui items associated with the line.
+		/// </summary>
+		/// <value>
+		/// 	<c>true</c> if the line used; otherwise, <c>false</c>.
+		/// </value>
+		private bool IsLineUsed
 		{
-			var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(_originalDoc);
-			if (null == plotItemCollection)
-				return null;
+			get
+			{
+				var selNode = _lineConnectChoices.FirstSelectedNode;
+				return Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine != (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
+			}
+			set
+			{
+				if (null != _view)
+					_view.EnableLineControls = value;
+			}
+		}
 
-			if (plotItemCollection.GroupStyles.ContainsType(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle)))
-				return (Altaxo.Graph.Plot.Groups.ColorGroupStyle)plotItemCollection.GroupStyles.GetPlotGroupStyle(typeof(Altaxo.Graph.Plot.Groups.ColorGroupStyle));
-			else
-				return null;
+		void EhColorGroupStyleAddedOrRemoved()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentFillColor = _view.IndependentFillColor;
+				_doc.IndependentLineColor = _view.IndependentLineColor;
+				if (_view.UseFill)
+					_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				if (IsLineUsed)
+					_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
+			}
+		}
+
+		void EhIndependentFillColorChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentFillColor = _view.IndependentFillColor;
+				if (false == _view.IndependentFillColor && IsLineUsed && false == _view.IndependentLineColor)
+					InternalSetFillColorToLineColor();
+				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+			}
+		}
+
+		void EhIndependentLineColorChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentLineColor = _view.IndependentLineColor;
+				if (false == _view.IndependentLineColor && _view.UseFill && false == _view.IndependentFillColor)
+					InternalSetLineColorToFillColor();
+				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
+			}
+		}
+
+		void EhFillBrushChanged()
+		{
+			if (null != _view)
+			{
+				if (_view.UseFill && false == _view.IndependentFillColor && IsLineUsed && false == _view.IndependentLineColor)
+				{
+					if (_view.LinePen.Color != _view.FillBrush.Color)
+						InternalSetLineColorToFillColor();
+				}
+			}
+		}
+		void EhLinePenChanged()
+		{
+			if (null != _view)
+			{
+				if (_view.UseFill && false == _view.IndependentFillColor && IsLineUsed && false == _view.IndependentLineColor)
+				{
+					if (_view.FillBrush.Color != _view.LinePen.Color)
+						InternalSetFillColorToLineColor();
+				}
+			}
+
+			
 		}
 
 
-    public void SetLineSymbolGapCondition()
-    {
-      _view.InitializeLineSymbolGapCondition( _doc.LineSymbolGap );
-    }
+		void InternalSetFillColorToLineColor()
+		{
+			var newBrush = _view.FillBrush.Clone();
+			newBrush.Color = _view.LinePen.Color;
+			_view.FillBrush = newBrush;
+		}
+
+		void InternalSetLineColorToFillColor()
+		{
+			var newPen = _view.LinePen.Clone();
+			newPen.Color = _view.FillBrush.Color;
+			_view.LinePen = newPen;
+		}
+
+		void EhUseFillChanged()
+		{
+			var newValue = _view.UseFill;
+
+			if (true == newValue)
+			{
+				if (IsLineUsed && false == _view.IndependentLineColor)
+				{
+					InternalSetFillColorToLineColor();
+				}
+				else if (null == _view.FillBrush || _view.FillBrush.IsInvisible)
+				{
+					_view.FillBrush = new BrushX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				}
+			}
+
+			if (true == newValue && null == _areaFillDirectionChoices.FirstSelectedNode && _areaFillDirectionChoices.Count > 0) // if no fill direction is currently selected, the select it now!
+			{
+				_areaFillDirectionChoices[0].IsSelected = true;
+				_view.InitializeFillDirection(_areaFillDirectionChoices);
+			}
+
+			_view.UseFill = newValue && _areaFillDirectionChoices.Count > 0; // to enable/disable gui items in the control
+		}
+
+		void EhUseLineChanged()
+		{
+			var newValue = IsLineUsed;
+
+			if (true == newValue)
+			{
+				if (_view.UseFill && false == _view.IndependentFillColor)
+				{
+					InternalSetLineColorToFillColor();
+				}
+				else if (null == _view.LinePen || _view.LinePen.IsInvisible)
+				{
+					_view.LinePen = new PenX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				}
+			}
+
+			IsLineUsed = newValue; // to enable/disable gui items in the control
+		}
+
+		#endregion
 
 
-    public void SetLineConnect()
-    {
+		#region IMVCController Members
 
-      string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle));
-    
-      _view.InitializeLineConnect(names,_doc.Connection.ToString());
-    }
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.UseFillChanged += EhUseFillChanged;
+			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
 
-    public void SetFillCondition()
-    {
-      _view.InitializeFillCondition( _doc.FillArea );
-    }
+			_view.UseLineChanged += EhUseLineChanged;
+			_view.IndependentLineColorChanged += EhIndependentLineColorChanged;
 
-    public void SetFillDirection()
-    {
-      IPlotArea layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
+			_view.FillBrushChanged += EhFillBrushChanged;
+			_view.LinePenChanged += EhLinePenChanged;
+		}
 
-      List<ListNode> names = new List<ListNode>();
+		protected override void DetachView()
+		{
+			_view.UseFillChanged -= EhUseFillChanged;
+			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
 
-      int idx = -1;
-      if (layer != null)
-      {
-        int count = -1;
-        foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _originalDoc.FillDirection }))
-        {
-          count++;
-          if (id == _originalDoc.FillDirection)
-            idx = count;
+			_view.UseLineChanged -= EhUseLineChanged;
+			_view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
 
-          CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-          names.Add(new ListNode(info.Name, id));
-        }
-      }
-      _view.InitializeFillDirection(names,Math.Max(idx,0)); // _tempDoc.FillDirection.ToString());
-    }
+			_view.FillBrushChanged -= EhFillBrushChanged;
+			_view.LinePenChanged -= EhLinePenChanged;
 
-    public void SetFillColor()
-    {
-      _view.InitializeFillColor(_doc.FillBrush);
-    }
+			base.DetachView();
+		}
 
-
- 
+		#endregion
 
 
     #region IApplyController Members
 
-    public bool Apply()
+    public override bool Apply()
     {
 
       // don't trust user input, so all into a try statement
@@ -326,29 +368,34 @@ namespace Altaxo.Gui.Graph
       {
 
         // Symbol Gap
-        _originalDoc.LineSymbolGap = _view.LineSymbolGap;
+        _doc.LineSymbolGap = _view.LineSymbolGap;
 
         // Pen
-        _originalDoc.IndependentColor = _view.IndependentColor;
-        _penController.Apply();
-        _originalDoc.PenHolder.CopyFrom( _doc.PenHolder );
+        _doc.IndependentLineColor = _view.IndependentLineColor;
+				_doc.LinePen.CopyFrom(_view.LinePen);
 
        
         // Line Connect
-        _originalDoc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle), _view.LineConnect);
-        _originalDoc.ConnectCircular = _view.ConnectCircular;
+				var selNode = _lineConnectChoices.FirstSelectedNode;
+				_doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
+        _doc.ConnectCircular = _view.ConnectCircular;
 
         // Fill Area
-        _originalDoc.FillArea = _view.LineFillArea;
-        // Line fill direction
-        CSPlaneID id = null;
-        if (_originalDoc.FillArea && null != _view.LineFillDirection)
-          id = ((CSPlaneID)_view.LineFillDirection.Tag);
+				_doc.FillArea = _view.UseFill;
 
-        _originalDoc.FillDirection = id;
+				// Line fill direction
+				selNode = _areaFillDirectionChoices.FirstSelectedNode;
+				if (_doc.FillArea && null != selNode)
+					_doc.FillDirection = ((CSPlaneID)selNode.Tag);
+				else
+					_doc.FillDirection = null;
+
         // Line fill color
-        _originalDoc.FillBrush = _view.LineFillColor;
-        _originalDoc.IndependentFillColor = _view.IndependentFillColor;
+				_doc.FillBrush = _view.FillBrush;
+        _doc.IndependentFillColor = _view.IndependentFillColor;
+
+				if (_useDocumentCopy)
+					CopyHelper.Copy(ref _originalDoc, _doc);
 
       }
       catch(Exception ex)

@@ -98,14 +98,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	/// </summary>
 	[SerializationSurrogate(0, typeof(LinePlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class LinePlotStyle
-		:
-		ICloneable,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentNode,
+	public class LinePlotStyle : IG2DPlotStyle,
 		System.Runtime.Serialization.IDeserializationCallback,
-		IG2DPlotStyle,
 		IRoutedPropertyReceiver
 	{
 		/// <summary>
@@ -345,6 +339,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as LinePlotStyle;
+			if (null != from)
+			{
+				CopyFrom(from, false);
+				return true;
+			}
+			return false;
+		}
+
 		public void CopyFrom(LinePlotStyle from, bool suppressChangeEvent)
 		{
 			if (object.ReferenceEquals(this, from))
@@ -462,7 +469,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public bool IndependentColor
+		public bool IndependentLineColor
 		{
 			get
 			{
@@ -524,13 +531,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			int len = System.Enum.GetValues(typeof(DashStyle)).Length;
 			int next = step + (int)template;
-			this.PenHolder.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next, len - 1);
+			this.LinePen.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next, len - 1);
 
 
 			OnChanged(); // Fire Changed event
 		}
 
-		public PenX PenHolder
+		public PenX LinePen
 		{
 			get { return _penHolder; }
 		}
@@ -1787,7 +1794,7 @@ out int lastIndex)
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
 
-			LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.PenHolder.DashStyle; });
+			LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashStyle; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -1798,7 +1805,7 @@ out int lastIndex)
 			if (this._fillArea && !this._independentFillColor)
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.SetFillColorRGB(c); });
 
-			LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(DashStyle c) { this.PenHolder.DashStyle = c; });
+			LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(DashStyle c) { this.LinePen.DashStyle = c; });
 
 			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this._symbolGap = size; }))
 			{

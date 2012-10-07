@@ -35,6 +35,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Plot.Groups;
 	using Plot.Data;
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public class BarGraphPlotStyle : IG2DPlotStyle
 	{
 		/// <summary>
@@ -49,9 +52,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		double _relOuterGapWidth = 1.0;
 
 		/// <summary>
-		/// Indicates wether the fill color is dependent (can be set by the ColorGroupStyle) or not.
+		/// Indicates whether the fill color is dependent (can be set by the ColorGroupStyle) or not.
 		/// </summary>
-		bool _independentColor;
+		bool _independentFillColor;
 
 
 		/// <summary>
@@ -60,7 +63,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		BrushX _fillBrush = new BrushX(NamedColors.Red);
 
 		/// <summary>
-		/// Pen used to frame the bar. Can be null.
+		/// Indicates whether the frame color is dependent (can be set by the ColorGroupStyle) or not.
+		/// </summary>
+		bool _independentFrameColor = true; // true because the standard value is transparent
+
+		/// <summary>
+		/// Pen used to frame the bar. Can be null!
 		/// </summary>
 		PenX _framePen;
 
@@ -111,7 +119,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
 				info.AddValue("InnerGapWidth", s._relInnerGapWidth);
 				info.AddValue("OuterGapWidth", s._relOuterGapWidth);
-				info.AddValue("IndependentColor", s._independentColor);
+				info.AddValue("IndependentColor", s._independentFillColor);
 				info.AddValue("FillBrush", s._fillBrush);
 				info.AddValue("FramePen", s._framePen);
 				info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
@@ -127,7 +135,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				s._relInnerGapWidth = info.GetDouble("InnerGapWidth");
 				s._relOuterGapWidth = info.GetDouble("OuterGapWidth");
-				s._independentColor = info.GetBoolean("IndependentColor");
+				s._independentFillColor = info.GetBoolean("IndependentColor");
 				s.FillBrush = (BrushX)info.GetValue("FillBrush", s);
 				s.FramePen = (PenX)info.GetValue("FramePen", s);
 				s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
@@ -142,11 +150,60 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				BarGraphPlotStyle s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// <para>Date: 2012-10-06</para>
+		/// <para>renamed: IndependentColor in IndependentFillColor</para>
+		/// <para>added: IndependentFrameColor</para>
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarGraphPlotStyle), 1)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
+				info.AddValue("InnerGapWidth", s._relInnerGapWidth);
+				info.AddValue("OuterGapWidth", s._relOuterGapWidth);
+				info.AddValue("IndependentFillColor", s._independentFillColor);
+				info.AddValue("FillBrush", s._fillBrush);
+				info.AddValue("IndependentFrameColor", s._independentFrameColor);
+				info.AddValue("FramePen", s._framePen);
+				info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
+				info.AddValue("BaseValue", (object)s._baseValue);
+				info.AddValue("StartAtPrevious", s._startAtPreviousItem);
+				info.AddValue("PreviousItemGap", s._previousItemYGap);
+				info.AddValue("ActualWidth", s._width);
+				info.AddValue("ActaulPosition", s._position);
+			}
+			protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle();
+
+				s._relInnerGapWidth = info.GetDouble("InnerGapWidth");
+				s._relOuterGapWidth = info.GetDouble("OuterGapWidth");
+				s._independentFillColor = info.GetBoolean("IndependentFillColor");
+				s.FillBrush = (BrushX)info.GetValue("FillBrush", s);
+				s._independentFrameColor = info.GetBoolean("IndependentFrameColor");
+				s.FramePen = (PenX)info.GetValue("FramePen", s);
+				s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
+				s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
+				s._startAtPreviousItem = info.GetBoolean("StartAtPrevious");
+				s._previousItemYGap = info.GetDouble("PreviousItemGap");
+				s._width = info.GetDouble("ActualWidth");
+				s._position = info.GetDouble("ActualPosition");
 
 				return s;
 			}
-
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				BarGraphPlotStyle s = SDeserialize(o, info, parent);
+				return s;
+			}
 		}
+
 
 		#endregion
 
@@ -155,37 +212,68 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 		}
 
+
+		public virtual bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as BarGraphPlotStyle;
+			if (null != from)
+			{
+				this._relInnerGapWidth = from._relInnerGapWidth;
+				this._relOuterGapWidth = from._relOuterGapWidth;
+				this._width = from._width;
+				this._position = from._position;
+				this._independentFillColor = from._independentFillColor;
+				this._fillBrush = from._fillBrush==null ? null : from._fillBrush.Clone();
+				this._independentFrameColor = from._independentFrameColor;
+				this._framePen = from._framePen == null ? null : from._framePen.Clone();
+				this._startAtPreviousItem = from._startAtPreviousItem;
+				this._previousItemYGap = from._previousItemYGap;
+				this._usePhysicalBaseValue = from._usePhysicalBaseValue;
+				this._baseValue = from._baseValue;
+				this._parent = from._parent;
+				return true;
+			}
+			return false;
+		}
+
 		public BarGraphPlotStyle(BarGraphPlotStyle from)
 		{
-			this._relInnerGapWidth = from._relInnerGapWidth;
-			this._relOuterGapWidth = from._relOuterGapWidth;
-			this._width = from._width;
-			this._position = from._position;
-			this._independentColor = from._independentColor;
-			this._fillBrush = from._fillBrush.Clone();
-			this._framePen = from._framePen == null ? null : (PenX)from._framePen.Clone();
-			this._startAtPreviousItem = from._startAtPreviousItem;
-			this._previousItemYGap = from._previousItemYGap;
-			this._usePhysicalBaseValue = from._usePhysicalBaseValue;
-			this._baseValue = from._baseValue;
+			CopyFrom(from);
+		}
 
-			this._parent = from._parent;
+		public BarGraphPlotStyle Clone()
+		{
+			return new BarGraphPlotStyle(this);
+		}
+
+		object ICloneable.Clone()
+		{
+			return new BarGraphPlotStyle(this);
 		}
 
 		public bool IsColorReceiver
 		{
-			get { return !this._independentColor; }
+			get 
+			{
+				return !(this._independentFillColor && this._independentFrameColor); 
+			}
 		}
 
-		public bool IndependentColor
+		public bool IndependentFillColor
 		{
 			get
 			{
-				return _independentColor;
+				return _independentFillColor;
 			}
 			set
 			{
-				_independentColor = value;
+				var oldValue = _independentFillColor;
+				_independentFillColor = value;
+				if (value != oldValue)
+					OnChanged();
 			}
 		}
 
@@ -194,10 +282,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _fillBrush; }
 			set
 			{
-				if (value == null)
-					throw new ArgumentNullException();
-
+				var oldValue = _fillBrush;
 				_fillBrush = value;
+				if (!object.ReferenceEquals(value, oldValue))
+					OnChanged();
+			}
+		}
+
+		public bool IndependentFrameColor
+		{
+			get
+			{
+				return _independentFrameColor;
+			}
+			set
+			{
+				var oldValue = _independentFrameColor;
+				_independentFrameColor = value;
+				if (value != oldValue)
+					OnChanged();
 			}
 		}
 
@@ -206,7 +309,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _framePen; }
 			set
 			{
+				var oldValue = _framePen;
 				_framePen = value;
+				if (!object.ReferenceEquals(value, oldValue))
+					OnChanged();
 			}
 		}
 
@@ -220,31 +326,61 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public double OuterGap
 		{
 			get { return _relOuterGapWidth; }
-			set { _relOuterGapWidth = value; }
+			set
+			{
+				var oldValue = _relOuterGapWidth;
+				_relOuterGapWidth = value;
+				if (value != oldValue)
+					OnChanged();
+			}
 		}
 
 		public double PreviousItemYGap
 		{
 			get { return _previousItemYGap; }
-			set { _previousItemYGap = value; }
+			set
+			{
+				var oldValue = _previousItemYGap;
+				_previousItemYGap = value;
+				if (value != oldValue)
+					OnChanged();
+			}
 		}
 
 		public bool StartAtPreviousItem
 		{
 			get { return _startAtPreviousItem; }
-			set { _startAtPreviousItem = value; }
+			set 
+			{
+				var oldValue = _startAtPreviousItem;
+				_startAtPreviousItem = value;
+				if (value != oldValue)
+					OnChanged();
+			}
 		}
 
 		public bool UsePhysicalBaseValue
 		{
 			get { return _usePhysicalBaseValue; }
-			set { _usePhysicalBaseValue = value; }
+			set
+			{
+				var oldValue = _usePhysicalBaseValue;
+				_usePhysicalBaseValue = value;
+				if (value != oldValue)
+					OnChanged();
+			}
 		}
 
 		public Altaxo.Data.AltaxoVariant BaseValue
 		{
 			get { return _baseValue; }
-			set { _baseValue = value; }
+			set
+			{
+				var oldValue = _baseValue;
+				_baseValue = value;
+				if (oldValue != value)
+					OnChanged();
+			}
 		}
 
 		#region IG2DPlotStyle Members
@@ -283,8 +419,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null != bwp)
 				bwp.Initialize(_relInnerGapWidth, _relOuterGapWidth);
 
-			if (this.IsColorReceiver)
+			if(!_independentFillColor && null!=_fillBrush)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._fillBrush.Color; });
+			else if (!_independentFrameColor && null!=_framePen) // else if is used here because fill color has precedence over frame color
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._framePen.Color; });
 
 		}
 
@@ -295,10 +433,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null != bwp)
 				bwp.Apply(out _relInnerGapWidth, out _relOuterGapWidth, out _width, out _position);
 
-			if (this.IsColorReceiver)
+			if (!_independentFillColor)
+			{
+				if (null == _fillBrush) _fillBrush = new BrushX(ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._fillBrush.Color = c; });
+			}
 
-
+			if (!_independentFrameColor)
+			{
+				if (null == _framePen) _framePen = new PenX(ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._framePen.Color = c; });
+			}
 		}
 
 		public void Paint(System.Drawing.Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
@@ -360,10 +505,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ynbase), new Logical3D(xln, ynbase));
 				path.CloseFigure();
 
-				_fillBrush.SetEnvironment(path.GetBounds(), BrushX.GetEffectiveMaximumResolution(g, 1));
-				g.FillPath(_fillBrush, path);
+				if (null != _fillBrush)
+				{
+					_fillBrush.SetEnvironment(path.GetBounds(), BrushX.GetEffectiveMaximumResolution(g, 1));
+					g.FillPath(_fillBrush, path);
+				}
 
-				if (_framePen != null)
+				if (null!=_framePen)
 				{
 					_framePen.SetEnvironment(path.GetBounds(), BrushX.GetEffectiveMaximumResolution(g, 1));
 					g.DrawPath(_framePen, path);
@@ -378,8 +526,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
 		{
 			bounds.Inflate(0, -bounds.Height / 4);
-			_fillBrush.SetEnvironment(bounds, BrushX.GetEffectiveMaximumResolution(g, 1));
-			g.FillRectangle(_fillBrush, bounds);
+			if (null != _fillBrush)
+			{
+				_fillBrush.SetEnvironment(bounds, BrushX.GetEffectiveMaximumResolution(g, 1));
+				g.FillRectangle(_fillBrush, bounds);
+			}
+			if (null != _framePen)
+			{
+				_framePen.SetEnvironment(bounds, BrushX.GetEffectiveMaximumResolution(g, 1));
+				g.DrawRectangle(_framePen, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+			}
 			return bounds;
 		}
 
@@ -393,16 +549,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (Changed != null)
 				Changed(this, EventArgs.Empty);
 		}
-
-
-		#region ICloneable Members
-
-		public object Clone()
-		{
-			return new BarGraphPlotStyle(this);
-		}
-
-		#endregion
 
 		#region IDocumentNode Members
 
@@ -427,5 +573,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion
+
+		public void EhChildChanged(object child, EventArgs e)
+		{
+			OnChanged();
+		}
+
+	
+
 	}
 }

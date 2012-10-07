@@ -82,7 +82,7 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="4"/>
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="0" Content="Indep. color:"/>
+				<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="0" Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged"/>
 				<axogcd:BrushComboBox x:Name="_cbPenColor" Grid.Column="1" Grid.Row="0"/>
 				<axogcd:LineThicknessComboBox x:Name="_cbThickness" Grid.Column="1" Grid.Row="2"/>
 				<axogcd:DashStyleComboBox x:Name="_cbDashStyle" Grid.Column="1" Grid.Row="4"/>

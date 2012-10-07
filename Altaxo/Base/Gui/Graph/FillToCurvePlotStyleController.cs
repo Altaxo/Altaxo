@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -33,81 +34,251 @@ namespace Altaxo.Gui.Graph
 {
 	public interface IFillToCurvePlotStyleView
 	{
+		bool UseFill { get; set; }
+		bool ShowPlotColorsOnlyForFillBrush { set; }
+		bool IndependentFillColor { get; set; }
+		BrushX FillBrush { get; set; }
+
+		bool UseFrame { get; set; }
+		bool ShowPlotColorsOnlyForFramePen { set; }
+		bool IndependentFrameColor { get; set; }
+		PenX FramePen { get; set; }
+
 		bool FillToPreviousItem { get; set; }
 		bool FillToNextItem { get; set; }
-		BrushX FillColor { get; set; }
+
+		/// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
+		event Action IndependentFillColorChanged;
+
+		/// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
+		event Action IndependentFrameColorChanged;
+
+		/// <summary>Occurs when the user checked or unchecked the "use fill" checkbox.</summary>
+		event Action UseFillChanged;
+		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
+		event Action UseFrameChanged;
+
+		/// <summary>Occurs when the fill brush has changed by user interaction.</summary>
+		event Action FillBrushChanged;
+		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
+		event Action FramePenChanged;
 	}
 
 	[UserControllerForObject(typeof(FillToCurvePlotStyle))]
 	[ExpectedTypeOfView(typeof(IFillToCurvePlotStyleView))]
-	public class FillToCurvePlotStyleController : IMVCANController
+	public class FillToCurvePlotStyleController : MVCANControllerBase<FillToCurvePlotStyle, IFillToCurvePlotStyleView>
 	{
-		FillToCurvePlotStyle _doc;
-		IFillToCurvePlotStyleView _view;
+		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
+		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		void Initialize(bool initData)
+		
+
+		protected override void Initialize(bool initData)
 		{
+			if (initData)
+			{
+				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
+			}
 			if (_view != null)
 			{
+				_view.UseFill = _doc.FillBrush != null && _doc.FillBrush.IsVisible;
+				_view.IndependentFillColor = _doc.IndependentFillColor;
+				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				_view.FillBrush = null != _doc.FillBrush ? _doc.FillBrush : new BrushX(NamedColors.Transparent);
+
+				_view.UseFrame = _doc.FramePen != null && _doc.FramePen.IsVisible;
+				_view.IndependentFrameColor = _doc.IndependentFrameColor;
+				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+				_view.FramePen = null != _doc.FramePen ? _doc.FramePen : new PenX(NamedColors.Transparent);
+		
+				
 				_view.FillToPreviousItem = _doc.FillToPreviousItem;
 				_view.FillToNextItem = _doc.FillToNextItem;
-				_view.FillColor = _doc.FillBrush;
 			}
 		}
 
-		#region IMVCANController Members
+#region Color management
 
-		public bool InitializeDocument(params object[] args)
+			void EhColorGroupStyleAddedOrRemoved()
 		{
-			if (args.Length == 0 || !(args[0] is FillToCurvePlotStyle))
-				return false;
-
-			_doc = (FillToCurvePlotStyle)args[0];
-			Initialize(true);
-
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set {  }
-		}
-
-		#endregion
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
+			if (null != _view)
 			{
-				return _view;
+				_doc.IndependentFillColor = _view.IndependentFillColor;
+				_doc.IndependentFrameColor = _view.IndependentFrameColor;
+				if(_view.UseFill)
+				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				if(_view.UseFrame)
+				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
 			}
-			set
-			{
-				_view = value as IFillToCurvePlotStyleView;
+		}
 
-				if (null != _view)
+		void EhIndependentFillColorChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentFillColor = _view.IndependentFillColor;
+				if (false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
+					InternalSetFillColorToFrameColor();
+				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+			}
+		}
+
+		void EhIndependentFrameColorChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentFrameColor = _view.IndependentFrameColor;
+				if (false == _view.IndependentFrameColor && _view.UseFill && false == _view.IndependentFillColor)
+					InternalSetFrameColorToFillColor();
+				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+			}
+		}
+
+		void EhFillBrushChanged()
+		{
+			if (null != _view)
+			{
+				if (_view.UseFill && false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
 				{
-					Initialize(false);
+					if (_view.FramePen.Color != _view.FillBrush.Color)
+						InternalSetFrameColorToFillColor();
+				}
+			}
+		}
+		void EhFramePenChanged()
+		{
+			if (null != _view)
+			{
+				if (_view.UseFill && false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
+				{
+					if (_view.FillBrush.Color != _view.FramePen.Color)
+						InternalSetFillColorToFrameColor();
 				}
 			}
 		}
 
-		public object ModelObject
+
+		void InternalSetFillColorToFrameColor()
 		{
-			get { return _doc; }
+			var newBrush = _view.FillBrush.Clone();
+			newBrush.Color = _view.FramePen.Color;
+			_view.FillBrush = newBrush;
 		}
+
+		void InternalSetFrameColorToFillColor()
+		{
+			var newPen = _view.FramePen.Clone();
+			newPen.Color = _view.FillBrush.Color;
+			_view.FramePen = newPen;
+		}
+
+		void EhUseFillChanged()
+		{
+			var newValue = _view.UseFill;
+
+			if (true == newValue)
+			{
+				if(_view.UseFrame && false == _view.IndependentFrameColor)
+				{
+					InternalSetFillColorToFrameColor();
+				}
+				else if (null == _view.FillBrush || _view.FillBrush.IsInvisible)
+				{
+					_view.FillBrush = new BrushX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				}
+			}
+			_view.UseFill = newValue; // to enable/disable gui items in the control
+		}
+
+		void EhUseFrameChanged()
+		{
+			var newValue = _view.UseFrame;
+
+			if (true == newValue)
+			{
+				if (_view.UseFill && false == _view.IndependentFillColor)
+				{
+					InternalSetFrameColorToFillColor();
+				}
+				else if (null == _view.FramePen || _view.FramePen.IsInvisible)
+				{
+					_view.FramePen = new PenX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				}
+			}
+
+			_view.UseFrame = newValue; // to enable/disable gui items in the control
+		}
+
+#endregion
+
+
+
+
+	
+
+		#region IMVCController Members
+
+
+			protected override void AttachView()
+		{
+			base.AttachView();
+			_view.UseFillChanged += EhUseFillChanged;
+			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
+
+			_view.UseFrameChanged += EhUseFrameChanged;
+			_view.IndependentFrameColorChanged += EhIndependentFrameColorChanged;
+
+			_view.FillBrushChanged += EhFillBrushChanged;
+			_view.FramePenChanged += EhFramePenChanged;
+			
+		}
+
+		protected override void DetachView()
+		{
+			_view.UseFillChanged -= EhUseFillChanged;
+			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
+
+			_view.UseFrameChanged -= EhUseFrameChanged;
+			_view.IndependentFrameColorChanged -= EhIndependentFrameColorChanged;
+
+			_view.FillBrushChanged -= EhFillBrushChanged;
+			_view.FramePenChanged -= EhFramePenChanged;
+
+			base.DetachView();
+		}
+
+	
 
 		#endregion
 
 		#region IApplyController Members
 
-		public bool Apply()
+		public override bool Apply()
 		{
+				if (_view.UseFill)
+			{
+				_doc.IndependentFillColor = _view.IndependentFillColor;
+				_doc.FillBrush = _view.UseFill ? _view.FillBrush : null;
+			}
+			else
+			{
+				_doc.IndependentFillColor = true;
+				_doc.FillBrush = null;
+			}
+
+			if (_view.UseFrame)
+			{
+				_doc.IndependentFrameColor = _view.IndependentFrameColor;
+				_doc.FramePen = _view.FramePen;
+			}
+			else
+			{
+				_doc.IndependentFrameColor = true;
+				_doc.FramePen = null;
+			}
+
 			_doc.FillToPreviousItem = _view.FillToPreviousItem;
 			_doc.FillToNextItem = _view.FillToNextItem;
-			_doc.FillBrush = _view.FillColor;
 
 			return true;
 		}

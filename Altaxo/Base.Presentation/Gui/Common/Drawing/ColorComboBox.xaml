@@ -145,7 +145,7 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
-		<ComboBox x:Name="_guiComboBox" ItemTemplate="{StaticResource CombinedTemplate}" DropDownClosed="EhComboBox_DropDownClosed">
+		<ComboBox x:Name="_guiComboBox" ItemTemplate="{StaticResource CombinedTemplate}" DropDownOpened="EhComboBox_DropDownOpened" DropDownClosed="EhComboBox_DropDownClosed">
 		</ComboBox>
 		<ToggleButton Grid.Column="1" IsChecked="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=local:ColorComboBox}, Mode=TwoWay}" Content="{StaticResource ColorGroupButtonContent}" />
 		<Popup x:Name="_treePopup" 

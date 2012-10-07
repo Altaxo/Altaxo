@@ -31,14 +31,36 @@
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0" Content="Fill to previous:"/>
-		<CheckBox x:Name="_chkFillPrevious" Grid.Column="1" Grid.Row="0"/>
-		<Label Grid.Column="0" Grid.Row="2" Content="Fill to next:"/>
-		<CheckBox x:Name="_chkFillNext" Grid.Column="1" Grid.Row="2"/>
-		<Label Grid.Column="0" Grid.Row="4" Content="Fill color:"/>
-		<axogcd:BrushComboBox x:Name="_cbFillColor" Grid.Column="1" Grid.Row="4"/>
+		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">
+			<CheckBox x:Name="_guiUseFill" Content="Use fill" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged"/>
+			<CheckBox x:Name="_guiIndependentFillColor" Content="Independent fill color:" Checked="EhIndependentFillColorChanged" Unchecked="EhIndependentFillColorChanged"/>
+		</StackPanel>
+		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Column="1" Grid.Row="0" Margin="0,0,0,4" SelectedBrushChanged="EhFillBrushChanged"/>
+		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2">
+			<CheckBox x:Name="_guiUseFrame" Content="Use frame" Checked="EhUseFrameChanged" Unchecked="EhUseFrameChanged"/>
+			<CheckBox x:Name="_guiIndependentFrameColor" Content="Independent frame color:" Checked="EhIndependentFrameColorChanged" Unchecked="EhIndependentFrameColorChanged"/>
+		</StackPanel>
+		<axogcd:BrushComboBox x:Name="_guiFramePen" Grid.Column="1" Grid.Row="2"/>
+		<Label Content="Frame thickness:" Grid.Column="0" Grid.Row="4"/>
+		<axogcd:LineThicknessComboBox x:Name="_guiFramePenWidth" Grid.Column="1" Grid.Row="4"/>
+
+		<Label Content="Frame line style:" Grid.Column="0" Grid.Row="6"/>
+		<axogcd:DashStyleComboBox x:Name="_guiFrameDashStyle" Grid.Column="1" Grid.Row="6"/>
+
+
+		<Label Grid.Column="0" Grid.Row="8" Content="Fill to previous:"/>
+		<CheckBox x:Name="_chkFillPrevious" Grid.Column="1" Grid.Row="8"/>
+		
+		<Label Grid.Column="0" Grid.Row="10" Content="Fill to next:"/>
+		<CheckBox x:Name="_chkFillNext" Grid.Column="1" Grid.Row="10"/>
 
 	</Grid>
 </UserControl>

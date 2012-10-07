@@ -101,6 +101,7 @@ namespace Altaxo.Data
 			return new ReadableColumnProxy(this);
 		}
 
+
 		public string GetName(int level)
 		{
 			IReadableColumn col = this.Document; // this may have the side effect that the object is tried to resolve, is this o.k.?

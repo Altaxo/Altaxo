@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
              mc:Ignorable="d" 
@@ -21,7 +22,7 @@
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
-    <Grid>
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="*"/>
@@ -39,19 +40,38 @@
 			<RowDefinition Height="4"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
-		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="0" Content="Independent fill color:"/>
-		<axogcd:BrushComboBox x:Name="_cbFillBrush" Grid.Column="1" Grid.Row="0" />
-		<CheckBox x:Name="_chkFrameBar" Grid.Column="0" Grid.Row="2" Content="Frame color:" Checked="_chkFrameBar_CheckedChanged" Unchecked="_chkFrameBar_CheckedChanged"/>
-		<axogcd:BrushComboBox x:Name="_cbPenColor" Grid.Column="1" Grid.Row="2"/>
-		<Label Grid.Column="0" Grid.Row="4" Content="Inner gap (%):"/>
-		<axogc:ValidatingTextBox x:Name="_edInnerGap" Grid.Column="1" Grid.Row="4"/>
-		<Label Grid.Column="0" Grid.Row="6" Content="Outer gap (%):"/>
-		<axogc:ValidatingTextBox x:Name="_edOuterGap" Grid.Column="1" Grid.Row="6"/>
-		<Label Grid.Column="0" Grid.Row="8" Content="Base value (%):"/>
-		<axogc:ValidatingTextBox x:Name="_edBaseValue" Grid.Column="1" Grid.Row="8"/>
-		<CheckBox x:Name="_chkUsePreviousItem" Grid.Column="0" Grid.Row="10" Content="Start at prev. item with Y-gap (%):" Checked="_chkUsePreviousItem_CheckedChanged" Unchecked="_chkUsePreviousItem_CheckedChanged"/>
-		<axogc:ValidatingTextBox x:Name="_edYGap" Grid.Column="1" Grid.Row="10"/>
+		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">
+			<CheckBox x:Name="_guiUseFill" Content="Use fill" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged"/>
+			<CheckBox x:Name="_guiIndependentFillColor" Content="Independent fill color:" Checked="EhIndependentFillColorChanged" Unchecked="EhIndependentFillColorChanged"/>
+		</StackPanel>
+		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Column="1" Grid.Row="0" Margin="0,0,0,4" SelectedBrushChanged="EhFillBrushChanged"/>
+		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2">
+			<CheckBox x:Name="_guiUseFrame" Content="Use frame" Checked="EhUseFrameChanged" Unchecked="EhUseFrameChanged"/>
+			<CheckBox x:Name="_guiIndependentFrameColor" Content="Independent frame color:" Checked="EhIndependentFrameColorChanged" Unchecked="EhIndependentFrameColorChanged"/>
+		</StackPanel>
+		<axogcd:BrushComboBox x:Name="_guiFramePen" Grid.Column="1" Grid.Row="2"/>
+		<Label Content="Frame thickness:" Grid.Column="0" Grid.Row="4"/>
+		<axogcd:LineThicknessComboBox x:Name="_guiFramePenWidth" Grid.Column="1" Grid.Row="4"/>
+
+		<Label Content="Frame line style:" Grid.Column="0" Grid.Row="6"/>
+		<axogcd:DashStyleComboBox x:Name="_guiFrameDashStyle" Grid.Column="1" Grid.Row="6"/>
+
+		<Label Grid.Column="0" Grid.Row="8" Content="Inner gap:"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edInnerGap" Grid.Column="1" Grid.Row="8" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"/>
+
+		<Label Grid.Column="0" Grid.Row="10" Content="Outer gap:"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edOuterGap" Grid.Column="1" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"/>
+
+		<Label Grid.Column="0" Grid.Row="12" Content="Base value:"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edBaseValue" Grid.Column="1" Grid.Row="12"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"/>
+
+		<CheckBox x:Name="_chkUsePreviousItem" Grid.Column="0" Grid.Row="14" Content="Start at prev. item with y-gap:" Checked="EhUsePreviousItem_CheckedChanged" Unchecked="EhUsePreviousItem_CheckedChanged"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edYGap" Grid.Column="1" Grid.Row="14"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"/>
 
 	</Grid>
 </UserControl>

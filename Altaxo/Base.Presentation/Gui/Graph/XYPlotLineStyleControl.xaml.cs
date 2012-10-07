@@ -36,210 +36,245 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Graph;
+	using Altaxo.Gui.Common;
+	using Altaxo.Gui.Common.Drawing;
+	using Altaxo.Collections;
+
 	/// <summary>
 	/// Interaction logic for XYPlotLineStyleControl.xaml
 	/// </summary>
 	public partial class XYPlotLineStyleControl : UserControl, IXYPlotLineStyleView
 	{
-		private bool _enableDisableAll = false;
-		private int _suppressEvents = 0;
-		Altaxo.Gui.Common.Drawing.PenControlsGlue _penGlue;
-		CTTPV _cttpv;
-		public event Action IndependentColorChanged;
+		Altaxo.Gui.Common.Drawing.PenControlsGlue _linePenGlue;
+
+		public event Action IndependentFillColorChanged;
+		public event Action IndependentLineColorChanged;
+		public event Action UseFillChanged;
+		public event Action UseLineChanged;
+		public event Action FillBrushChanged;
+		public event Action LinePenChanged;
 
 		public XYPlotLineStyleControl()
 		{
 			InitializeComponent();
 
-			_penGlue = new Common.Drawing.PenControlsGlue(false);
-			_penGlue.CbBrush = _cbLineColor;
-			_penGlue.CbDashStyle = _cbLineStyle;
-			_penGlue.CbLineThickness = _cbLineThickness;
-			_cttpv = new CTTPV(this);
-
+			_linePenGlue = new Common.Drawing.PenControlsGlue(false);
+			_linePenGlue.PenChanged += new EventHandler(EhLinePenChanged);
+			_linePenGlue.CbBrush = _guiLineBrush;
+			_linePenGlue.CbDashStyle = _guiLineDashStyle;
+			_linePenGlue.CbLineThickness = _guiLineWidth;
 		}
 
-		private void EhLineConnect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		#region Event handlers
+
+		private void EhUseFillChanged(object sender, RoutedEventArgs e)
 		{
-			if (this._enableDisableAll)
-				EnableDisableMain(this.ShouldEnableMain());
+			if (null != UseFillChanged)
+				UseFillChanged();
 		}
+
+		private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentFillColorChanged)
+				IndependentFillColorChanged();
+		}
+
+		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != FillBrushChanged)
+				FillBrushChanged();
+		}
+
+
+		private void EhUseLineConnectChanged(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiLineConnect);
+			if (null!=_guiLineConnect.SelectedItem && null != UseLineChanged) // null for SelectedItem can happen when the DataSource is chaning
+				UseLineChanged();
+		}
+
+		private void EhIndependentLineColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentLineColorChanged)
+				IndependentLineColorChanged();
+		}
+
+		void EhLinePenChanged(object sender, EventArgs e)
+		{
+			if (null != LinePenChanged)
+				LinePenChanged();
+		}
+
+		#endregion
+
+
+	
 
 		
 
-		private void EhLineFillArea_CheckedChanged(object sender, RoutedEventArgs e)
+		
+
+
+		public bool EnableLineControls
 		{
-			bool bFill = true==_chkLineFillArea.IsChecked;
-			this._cbLineFillColor.IsEnabled = bFill;
-			this._cbLineFillDirection.IsEnabled = bFill;
-
-			if (this._enableDisableAll)
-				EnableDisableMain(this.ShouldEnableMain());
-		}
-
-
-		public void EnableDisableMain(bool bEnable)
-		{
-			this._chkIndependentColor.IsEnabled = bEnable;
-
-			this._cbLineColor.IsEnabled = bEnable;
-			this._cbLineStyle.IsEnabled = bEnable;
-			this._cbLineThickness.IsEnabled = bEnable;
-
-			this._cbLineFillColor.IsEnabled = bEnable;
-			this._chkLineSymbolGap.IsEnabled = bEnable;
-		}
-
-		bool ShouldEnableMain()
-		{
-			return this._cbLineConnect.SelectedIndex != 0 || true==_chkLineFillArea.IsChecked;
-		}
-
-		#region Inner class
-
-		class CTTPV : Altaxo.Gui.Common.Drawing.IColorTypeThicknessPenView
-		{
-			Common.Drawing.IColorTypeThicknessPenViewEventSink _controller;
-			XYPlotLineStyleControl _parent;
-
-			public CTTPV(XYPlotLineStyleControl parent)
+			set
 			{
-				_parent = parent;
-			}
+				this._guiLineBrush.IsEnabled = value;
+				this._guiLineDashStyle.IsEnabled = value;
+				this._guiLineWidth.IsEnabled = value;
 
-			public Common.Drawing.IColorTypeThicknessPenViewEventSink Controller
-			{
-				get
-				{
-					return _controller;
-				}
-				set
-				{
-					_controller = value;
-				}
-			}
-
-			public Altaxo.Graph.Gdi.PenX DocPen
-			{
-				get
-				{
-					return _parent._penGlue.Pen;
-				}
-				set
-				{
-					_parent._penGlue.Pen = value;
-				}
-			}
-
-			public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
-			{
-				_parent._penGlue.ShowPlotColorsOnly = restrictChoiceToThisCollection;
+				this._guiConnectCircular.IsEnabled = value;
+				this._guiLineSymbolGap.IsEnabled = value;
+				this._guiIndependentLineColor.IsEnabled = value;
 			}
 		}
-
-		#endregion
-
 
 		#region  IXYPlotLineStyleView
 
-		public void SetEnableDisableMain(bool bActivate)
-		{
-			this._enableDisableAll = bActivate;
-			this.EnableDisableMain(_enableDisableAll == false || this.ShouldEnableMain());
-		}
+		#region Line pen
 
-		public void InitializeIndependentColor(bool val)
-		{
-			this._chkIndependentColor.IsChecked = val;
-		}
+	
 
-		public void InitializePen(Common.Drawing.IColorTypeThicknessPenController controller)
-		{
-			controller.ViewObject = _cttpv;
-		}
-
-		public void InitializeLineSymbolGapCondition(bool bGap)
-		{
-			++_suppressEvents;
-			this._chkLineSymbolGap.IsChecked = bGap;
-			--_suppressEvents;
-		}
-
-		public void InitializeLineConnect(string[] arr, string sel)
-		{
-			_cbLineConnect.ItemsSource = arr;
-			_cbLineConnect.SelectedItem = sel;
-		}
-
-		public void InitializeFillCondition(bool bFill)
-		{
-			this._chkLineFillArea.IsChecked = bFill;
-			this._cbLineFillColor.IsEnabled = bFill;
-			this._cbLineFillDirection.IsEnabled = bFill;
-		}
-
-		public void InitializeFillDirection(List<Collections.ListNode> list, int sel)
-		{
-			this._cbLineFillDirection.ItemsSource = list;
-			this._cbLineFillDirection.SelectedIndex= sel;
-		}
-
-		public void InitializeFillColor(Altaxo.Graph.Gdi.BrushX sel)
-		{
-			_cbLineFillColor.SelectedBrush = sel;
-		}
-
-		public bool LineSymbolGap
-		{
-			get { return true==_chkLineSymbolGap.IsChecked; }
-		}
-
-		public bool IndependentColor
+		public bool IndependentLineColor
 		{
 			get
 			{
-				return true==_chkIndependentColor.IsChecked;
+				return true == _guiIndependentLineColor.IsChecked;
+			}
+			set
+			{
+				_guiIndependentLineColor.IsChecked = value;
 			}
 		}
 
-		public string LineConnect
+		public bool ShowPlotColorsOnlyForLinePen
 		{
-			get { return (string)_cbLineConnect.SelectedItem; }
+			set { _linePenGlue.ShowPlotColorsOnly = value; }
 		}
 
-		public bool ConnectCircular
-		{
-			get { return true==_chkConnectCircular.IsChecked; }
-			set { _chkConnectCircular.IsChecked = value; }
-		}
 
-		public bool LineFillArea
+		public Altaxo.Graph.Gdi.PenX LinePen
 		{
-			get { return true==_chkLineFillArea.IsChecked; }
-		}
-
-		public Collections.ListNode LineFillDirection
-		{
-			get { return (Collections.ListNode)_cbLineFillDirection.SelectedItem; }
-		}
-
-		public Altaxo.Graph.Gdi.BrushX LineFillColor
-		{
-			get { return _cbLineFillColor.SelectedBrush; }
-		}
-
-		public bool IndependentFillColor
-		{
-			get { return true==_chkIndependentFillColor.IsChecked; }
-			set { _chkIndependentFillColor.IsChecked = value; }
+			get
+			{
+				return _linePenGlue.Pen;
+			}
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException("FramePen");
+				_linePenGlue.Pen = value;
+			}
 		}
 
 		#endregion
 
-		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
+
+		#region Area fill
+
+		public bool UseFill
 		{
-			if (null != IndependentColorChanged)
-				IndependentColorChanged();
+			get
+			{
+				return true == _guiUseFill.IsChecked;
+			}
+			set
+			{
+				_guiUseFill.IsChecked = value;
+				_guiIndependentFillColor.IsEnabled = value;
+				_guiFillBrush.IsEnabled = value;
+				_guiFillDirection.IsEnabled = value;
+			}
 		}
+
+
+		public bool IndependentFillColor
+		{
+			get
+			{
+				return true == _guiIndependentFillColor.IsChecked;
+			}
+			set
+			{
+				_guiIndependentFillColor.IsChecked = value;
+			}
+		}
+
+		public bool ShowPlotColorsOnlyForFillBrush
+		{
+			set { _guiFillBrush.ShowPlotColorsOnly = value; }
+		}
+
+
+		public Altaxo.Graph.Gdi.BrushX FillBrush
+		{
+			get
+			{
+				return this._guiFillBrush.SelectedBrush;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("FillBrush");
+				_guiFillBrush.SelectedBrush = value;
+			}
+		}
+		#endregion
+
+
+		public bool LineSymbolGap
+		{
+			set
+			{
+				this._guiLineSymbolGap.IsChecked = value;
+			}
+			get
+			{
+				return true == this._guiLineSymbolGap.IsChecked;
+			}
+		}
+
+		public void InitializeLineConnect(SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiLineConnect, list);
+		}
+
+	
+
+		public void InitializeFillDirection(SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiFillDirection, list);
+		}
+
+		private void EhFillDirectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiFillDirection);
+		}
+	
+
+		
+		
+
+		
+
+		public bool ConnectCircular
+		{
+			get { return true==_guiConnectCircular.IsChecked; }
+			set { _guiConnectCircular.IsChecked = value; }
+		}
+
+	
+
+	
+	
+
+		
+
+		#endregion
+
+	
+
+		
 	}
 }

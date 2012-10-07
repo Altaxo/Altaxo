@@ -36,17 +36,176 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Graph;
+	using Altaxo.Gui.Common;
+	using Altaxo.Gui.Common.Drawing;
+
 	/// <summary>
 	/// Interaction logic for FillToCurvePlotStyleControl.xaml
 	/// </summary>
 	public partial class FillToCurvePlotStyleControl : UserControl, IFillToCurvePlotStyleView
 	{
+		PenControlsGlue _framePenGlue;
+
+		public event Action IndependentFillColorChanged;
+		public event Action IndependentFrameColorChanged;
+		public event Action UseFillChanged;
+		public event Action UseFrameChanged;
+		public event Action FillBrushChanged;
+		public event Action FramePenChanged;
+
+
+
 		public FillToCurvePlotStyleControl()
 		{
 			InitializeComponent();
+
+			_framePenGlue = new PenControlsGlue(false);
+			_framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
+			_framePenGlue.CbBrush = _guiFramePen;
+			_framePenGlue.CbLineThickness = _guiFramePenWidth;
+			_framePenGlue.CbDashStyle = _guiFrameDashStyle;
 		}
 
+
+		#region Event handlers
+
+		private void EhUseFillChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != UseFillChanged)
+				UseFillChanged();
+		}
+
+		private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentFillColorChanged)
+				IndependentFillColorChanged();
+		}
+
+		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != FillBrushChanged)
+				FillBrushChanged();
+		}
+	
+
+		private void EhUseFrameChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != UseFrameChanged)
+				UseFrameChanged();
+		}
+
+		private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentFrameColorChanged)
+				IndependentFrameColorChanged();
+		}
+
+		void EhFramePenChanged(object sender, EventArgs e)
+		{
+			if (null != FramePenChanged)
+				FramePenChanged();
+		}
+
+		#endregion
+
 		#region IFillToCurvePlotStyleView Members
+
+		public bool UseFill
+		{
+			get
+			{
+				return true == _guiUseFill.IsChecked;
+			}
+			set
+			{
+				_guiUseFill.IsChecked = value;
+				_guiIndependentFillColor.IsEnabled = value;
+				_guiFillBrush.IsEnabled = value;
+			}
+		}
+
+
+		public bool IndependentFillColor
+		{
+			get
+			{
+				return true == _guiIndependentFillColor.IsChecked;
+			}
+			set
+			{
+				_guiIndependentFillColor.IsChecked = value;
+			}
+		}
+
+		public bool ShowPlotColorsOnlyForFillBrush
+		{
+			set { _guiFillBrush.ShowPlotColorsOnly = value; }
+		}
+
+
+		public Altaxo.Graph.Gdi.BrushX FillBrush
+		{
+			get
+			{
+				return this._guiFillBrush.SelectedBrush;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("FillBrush");
+				_guiFillBrush.SelectedBrush = value;
+			}
+		}
+
+
+		public bool UseFrame
+		{
+			get
+			{
+				return true == _guiUseFrame.IsChecked;
+			}
+			set
+			{
+				_guiUseFrame.IsChecked = value;
+				_guiIndependentFrameColor.IsEnabled = value;
+				_guiFramePen.IsEnabled = value;
+				_guiFramePenWidth.IsEnabled = value;
+				_guiFrameDashStyle.IsEnabled = value;
+			}
+		}
+
+		public bool IndependentFrameColor
+		{
+			get
+			{
+				return true == _guiIndependentFrameColor.IsChecked;
+			}
+			set
+			{
+				_guiIndependentFrameColor.IsChecked = value;
+			}
+		}
+
+		public bool ShowPlotColorsOnlyForFramePen
+		{
+			set { _framePenGlue.ShowPlotColorsOnly = value; }
+		}
+
+
+		public Altaxo.Graph.Gdi.PenX FramePen
+		{
+			get
+			{
+				return _framePenGlue.Pen;
+			}
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException("FramePen");
+				_framePenGlue.Pen = value;
+			}
+		}
 
 		public bool FillToPreviousItem
 		{
@@ -72,17 +231,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public Altaxo.Graph.Gdi.BrushX FillColor
-		{
-			get
-			{
-				return _cbFillColor.SelectedBrush;
-			}
-			set
-			{
-				_cbFillColor.SelectedBrush = value;
-			}
-		}
+	
 
 		#endregion
 

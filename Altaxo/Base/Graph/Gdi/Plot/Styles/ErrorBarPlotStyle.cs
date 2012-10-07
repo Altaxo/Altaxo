@@ -162,22 +162,37 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CopyFrom(from);
 		}
 
-		void CopyFrom(ErrorBarPlotStyle from)
+		public bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as ErrorBarPlotStyle;
+			if (null != from)
+			{
+				this._independentSymbolSize = from._independentSymbolSize;
+				this._symbolSize = from._symbolSize;
+				this._symbolGap = from._symbolGap;
+				this._independentColor = from._independentColor;
+				this._showEndBars = from._showEndBars;
+				this._isHorizontalStyle = from._isHorizontalStyle;
+				this._doNotShiftHorizontalPosition = from._doNotShiftHorizontalPosition;
+				this._strokePen = (PenX)from._strokePen.Clone();
+				this._positiveErrorColumn = (NumericColumnProxy)from._positiveErrorColumn.Clone();
+				this._negativeErrorColumn = (NumericColumnProxy)from._negativeErrorColumn.Clone();
+				this._cachedLogicalShiftOfIndependent = from._cachedLogicalShiftOfIndependent;
+				return true;
+			}
+			return false;
+		}
 
-			this._independentSymbolSize = from._independentSymbolSize;
-			this._symbolSize = from._symbolSize;
-			this._symbolGap = from._symbolGap;
-			this._independentColor = from._independentColor;
-			this._showEndBars = from._showEndBars;
-			this._isHorizontalStyle = from._isHorizontalStyle;
-			this._doNotShiftHorizontalPosition = from._doNotShiftHorizontalPosition;
-			this._strokePen = (PenX)from._strokePen.Clone();
-			this._positiveErrorColumn = (NumericColumnProxy)from._positiveErrorColumn.Clone();
-			this._negativeErrorColumn = (NumericColumnProxy)from._negativeErrorColumn.Clone();
-			this._cachedLogicalShiftOfIndependent = from._cachedLogicalShiftOfIndependent;
+		public ErrorBarPlotStyle Clone()
+		{
+			return new ErrorBarPlotStyle(this);
+		}
+
+		object ICloneable.Clone()
+		{
+			return new ErrorBarPlotStyle(this);
 		}
 
 		#region Properties
@@ -609,15 +624,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion
 
-		#region ICloneable Members
-
-		public object Clone()
-		{
-			return new ErrorBarPlotStyle(this);
-		}
-
-		#endregion
-
 		#region IChangedEventSource Members
 
 		protected virtual void OnChanged()
@@ -627,6 +633,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (Changed != null)
 				Changed(this, EventArgs.Empty);
+		}
+
+		public void EhChildChanged(object child, EventArgs e)
+		{
+			OnChanged();
 		}
 
 		#endregion

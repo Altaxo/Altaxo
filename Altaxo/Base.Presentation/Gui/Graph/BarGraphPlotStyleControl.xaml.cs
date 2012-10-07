@@ -47,34 +47,63 @@ namespace Altaxo.Gui.Graph
 	{
 		PenControlsGlue _framePenGlue;
 
+		public event Action IndependentFillColorChanged;
+		public event Action IndependentFrameColorChanged;
+		public event Action UseFillChanged;
+		public event Action UseFrameChanged;
+		public event Action FillBrushChanged;
+		public event Action FramePenChanged;
+
 		public BarGraphPlotStyleControl()
 		{
 			InitializeComponent();
 			_framePenGlue = new PenControlsGlue(false);
-			_framePenGlue.CbBrush = _cbPenColor;
+			_framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
+			_framePenGlue.CbBrush = _guiFramePen;
+			_framePenGlue.CbLineThickness = _guiFramePenWidth;
+			_framePenGlue.CbDashStyle = _guiFrameDashStyle;
 		}
 
-		private void _chkFrameBar_CheckedChanged(object sender, RoutedEventArgs e)
-		{
+	
 
+		private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentFrameColorChanged)
+				IndependentFrameColorChanged();
 		}
 
-		private void _chkUsePreviousItem_CheckedChanged(object sender, RoutedEventArgs e)
+		private void EhUsePreviousItem_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-
+			bool usePrevItem = true == _chkUsePreviousItem.IsChecked;
+			_edYGap.IsEnabled = usePrevItem;
 		}
 
 		#region IBarGraphPlotStyleView
 
-		public bool IndependentColor
+		public bool UseFill
 		{
 			get
 			{
-				return true == _chkIndependentColor.IsChecked;
+				return true == _guiUseFill.IsChecked;
 			}
 			set
 			{
-				_chkIndependentColor.IsChecked = value;
+				_guiUseFill.IsChecked = value;
+				_guiIndependentFillColor.IsEnabled = value;
+				_guiFillBrush.IsEnabled = value;
+			}
+		}
+
+
+		public bool IndependentFillColor
+		{
+			get
+			{
+				return true == _guiIndependentFillColor.IsChecked;
+			}
+			set
+			{
+				_guiIndependentFillColor.IsChecked = value;
 			}
 		}
 
@@ -82,55 +111,80 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return this._cbFillBrush.SelectedBrush;
+				return this._guiFillBrush.SelectedBrush;
 			}
 			set
 			{
-				_cbFillBrush.SelectedBrush = value;
+				if (null == value)
+					throw new ArgumentNullException("FillBrush");
+				_guiFillBrush.SelectedBrush = value;
 			}
 		}
 
-		public Altaxo.Graph.Gdi.PenX FillPen
+
+		public bool UseFrame
 		{
 			get
 			{
-				if (true == _chkFrameBar.IsChecked)
+				return true == _guiUseFrame.IsChecked;
+			}
+			set
+			{
+				_guiUseFrame.IsChecked = value;
+				_guiIndependentFrameColor.IsEnabled = value;
+				_guiFramePen.IsEnabled = value;
+				_guiFramePenWidth.IsEnabled = value;
+				_guiFrameDashStyle.IsEnabled = value;
+			}
+		}
+
+		public bool IndependentFrameColor
+		{
+			get
+			{
+				return true == _guiIndependentFrameColor.IsChecked;
+			}
+			set
+			{
+				_guiIndependentFrameColor.IsChecked = value;
+			}
+		}
+
+		public Altaxo.Graph.Gdi.PenX FramePen
+		{
+			get
+			{
 					return _framePenGlue.Pen;
-				else
-					return null;
 			}
 			set
 			{
-				_chkFrameBar.IsChecked = (value != null);
-				_cbPenColor.IsEnabled = (value != null);
-				if (value != null)
-					_framePenGlue.Pen = value;
-				else
-					_framePenGlue.Pen = new Altaxo.Graph.Gdi.PenX(NamedColors.Black);
+				if (value == null)
+					throw new ArgumentNullException("FramePen");
+				_framePenGlue.Pen = value;
 			}
 		}
 
-		public string InnerGap
+		public double InnerGap
 		{
 			get
 			{
-				return _edInnerGap.Text;
+				return _edInnerGap.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-				_edInnerGap.Text = value;
+				_edInnerGap.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
-		public string OuterGap
+		public double OuterGap
 		{
 			get
 			{
-				return _edOuterGap.Text;
+				return _edOuterGap.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-				_edOuterGap.Text = value;
+				_edOuterGap.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
@@ -145,15 +199,15 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public string BaseValue
+		public double BaseValue
 		{
 			get
 			{
-				return _edBaseValue.Text;
+				return _edBaseValue.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-				_edBaseValue.Text = value;
+				_edBaseValue.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
@@ -170,18 +224,63 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public string YGap
+		public double YGap
 		{
 			get
 			{
-				return _edYGap.Text;
+				return _edYGap.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-				_edYGap.Text = value;
+				_edYGap.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
 		#endregion
+
+		public bool ShowPlotColorsOnlyForFillBrush
+		{
+			set { _guiFillBrush.ShowPlotColorsOnly = value; }
+		}
+
+		public bool ShowPlotColorsOnlyForFramePen
+		{
+			set { _framePenGlue.ShowPlotColorsOnly = value; }
+		}
+
+	
+
+		private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentFillColorChanged)
+				IndependentFillColorChanged();
+		}
+
+		private void EhUseFillChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != UseFillChanged)
+				UseFillChanged();
+		}
+
+		private void EhUseFrameChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != UseFrameChanged)
+				UseFrameChanged();
+		}
+
+		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != FillBrushChanged)
+				FillBrushChanged();
+		}
+
+		void EhFramePenChanged(object sender, EventArgs e)
+		{
+			if (null != FramePenChanged)
+				FramePenChanged();
+		}
+	
+
+		
 	}
 }

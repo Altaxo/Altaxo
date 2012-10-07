@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get
 			{
 				if (m_LineStyle != null)
-					return this.m_LineStyle.PenHolder.Color;
+					return this.m_LineStyle.LinePen.Color;
 				if (m_ScatterStyle != null)
 					return this.m_ScatterStyle.Color;
 				else
@@ -214,7 +214,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set
 			{
 				if (m_LineStyle != null)
-					this.m_LineStyle.PenHolder.Color = value;
+					this.m_LineStyle.LinePen.Color = value;
 				if (m_ScatterStyle != null)
 					this.m_ScatterStyle.Color = value;
 			}

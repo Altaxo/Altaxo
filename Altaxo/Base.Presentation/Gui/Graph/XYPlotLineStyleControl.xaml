@@ -50,21 +50,23 @@
 			<RowDefinition Height="4"/>
 		</Grid.RowDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0" Content="Connect:"/>
-		<ComboBox x:Name="_cbLineConnect" Grid.Column="1" Grid.Row="0" SelectionChanged="EhLineConnect_SelectionChanged"/>
-		<CheckBox x:Name="_chkConnectCircular" Grid.Column="1" Grid.Row="2" Content="Circular connection"/>
-		<CheckBox x:Name="_chkLineSymbolGap" Grid.Column="1" Grid.Row="4" Content="Line/symbol gap"/>
-		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
-		<axogcd:BrushComboBox x:Name="_cbLineColor" Grid.Column="1" Grid.Row="6"/>
+		<Label Grid.Column="0" Grid.Row="0" Content="Line connection:"/>
+		<ComboBox x:Name="_guiLineConnect" Grid.Column="1" Grid.Row="0" SelectionChanged="EhUseLineConnectChanged"/>
+		<CheckBox x:Name="_guiConnectCircular" Grid.Column="1" Grid.Row="2" Content="Circular connection"/>
+		<CheckBox x:Name="_guiLineSymbolGap" Grid.Column="1" Grid.Row="4" Content="Line/symbol gap"/>
+		<CheckBox x:Name="_guiIndependentLineColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentLineColorChanged" Unchecked="EhIndependentLineColorChanged" />
+		<axogcd:BrushComboBox x:Name="_guiLineBrush" Grid.Column="1" Grid.Row="6"/>
 		<Label Grid.Column="0" Grid.Row="8" Content="Style:"/>
-		<axogcd:DashStyleComboBox x:Name="_cbLineStyle" Grid.Column="1" Grid.Row="8"/>
+		<axogcd:DashStyleComboBox x:Name="_guiLineDashStyle" Grid.Column="1" Grid.Row="8"/>
 		<Label Grid.Column="0" Grid.Row="10" Content="Thickness:"/>
-		<axogcd:LineThicknessComboBox x:Name="_cbLineThickness" Grid.Column="1" Grid.Row="10"/>
-		<CheckBox x:Name="_chkLineFillArea" Grid.Column="0" Grid.Row="12" Content="Fill area" Checked="EhLineFillArea_CheckedChanged" Unchecked="EhLineFillArea_CheckedChanged"/>
-		<CheckBox x:Name="_chkIndependentFillColor" Grid.Column="0" Grid.Row="14" Content="Indep. fill color:"/>
-		<axogcd:BrushComboBox x:Name="_cbLineFillColor" Grid.Column="1" Grid.Row="14" />
+		<axogcd:LineThicknessComboBox x:Name="_guiLineWidth" Grid.Column="1" Grid.Row="10"/>
+		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="14" VerticalAlignment="Center">
+		<CheckBox x:Name="_guiUseFill" Content="Fill area" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged"/>
+		<CheckBox x:Name="_guiIndependentFillColor" Content="Indep. fill color:" Checked="EhIndependentFillColorChanged" Unchecked="EhIndependentFillColorChanged"/>
+		</StackPanel>
+		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Column="1" Grid.Row="14" SelectedBrushChanged="EhFillBrushChanged" />
 		<Label Grid.Column="0" Grid.Row="16" Content="Fill direction:"/>
-		<ComboBox x:Name="_cbLineFillDirection" Grid.Column="1" Grid.Row="16"/>
+		<ComboBox x:Name="_guiFillDirection" Grid.Column="1" Grid.Row="16" SelectionChanged="EhFillDirectionChanged"/>
 
 
 	</Grid>

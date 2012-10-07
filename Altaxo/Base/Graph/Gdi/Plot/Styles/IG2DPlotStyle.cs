@@ -32,7 +32,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Graph.Plot.Groups;
 	using Groups;
 
-	public interface IG2DPlotStyle : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
+	public interface IG2DPlotStyle :
+		Main.ICopyFrom,
+		Main.IChangedEventSource,
+		Main.IChildChangedEventSink,
+		Main.IDocumentNode
 	{
 		/// <summary>
 		/// Adds all plot group styles that are not already in the externalGroups collection, and that

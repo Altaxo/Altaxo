@@ -212,6 +212,7 @@
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\VisibleLightSpectrumController.cs" />
+    <Compile Include="Gui\Graph\GroupStylePresenceTrackers.cs" />
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseController.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF05LineCap.cs" />

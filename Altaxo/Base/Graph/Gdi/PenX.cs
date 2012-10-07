@@ -1169,7 +1169,18 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return (m_Brush != null && m_Brush.IsVisible) || m_Color != NamedColors.Transparent;
+				return (m_Brush != null && m_Brush.IsVisible) || m_Color.Color.A != 0;
+			}
+		}
+
+		/// <summary>
+		/// Determines if this pen is invisible. It is invisible if it has an invisible brush or the color is transparent.
+		/// </summary>
+		public bool IsInvisible
+		{
+			get
+			{
+				return (m_Brush != null && m_Brush.IsInvisible) || m_Color.Color.A==0;
 			}
 		}
 
@@ -1492,7 +1503,12 @@ namespace Altaxo.Graph.Gdi
 
 		}
 
-		public object Clone()
+		public PenX Clone()
+		{
+			return new PenX(this);
+		}
+
+		object ICloneable.Clone()
 		{
 			return new PenX(this);
 		}

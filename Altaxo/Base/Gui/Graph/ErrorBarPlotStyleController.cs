@@ -35,6 +35,7 @@ namespace Altaxo.Gui.Graph
   public interface IErrorBarPlotStyleView
   {
     bool IndependentColor { get; set; }
+		bool ShowPlotColorsOnly { set; }
     PenX StrokePen { get; set; }
     bool IndependentSize { get; set; }
     bool LineSymbolGap { get; set; }
@@ -46,21 +47,27 @@ namespace Altaxo.Gui.Graph
     string PositiveError { get; set; }
     string NegativeError { get; set; }
     int SkipFrequency { get; set; }
+
     event EventHandler ChoosePositiveError;
     event EventHandler ChooseNegativeError;
     event EventHandler IndependentNegativeError_CheckChanged;
     event EventHandler ClearPositiveError;
     event EventHandler ClearNegativeError;
+		/// <summary>
+		/// Occurs when the user choice for IndependentColor of the fill brush has changed.
+		/// </summary>
+		event Action IndependentColorChanged;
+
   }
 
   #endregion
 
   [UserControllerForObject(typeof(ErrorBarPlotStyle))]
   [ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
-  public class ErrorBarPlotStyleController : Gui.IMVCANController
+	public class ErrorBarPlotStyleController : MVCANControllerBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
   {
-    IErrorBarPlotStyleView _view;
-    ErrorBarPlotStyle _doc;
+		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
+		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
     INumericColumn _tempPosErrorColumn;
     INumericColumn _tempNegErrorColumn;
@@ -68,11 +75,16 @@ namespace Altaxo.Gui.Graph
     int _tempSkipFreq;
 
 
-    void Initialize(bool initData)
+		protected override void Initialize(bool initData)
     {
+			if (initData)
+			{
+				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
+			}
       if (_view != null)
       {
         _view.IndependentColor = _doc.IndependentColor;
+				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
         _view.StrokePen = _doc.Pen;
         _view.IndependentSize = _doc.IndependentSymbolSize;
         _view.LineSymbolGap = _doc.SymbolGap;
@@ -169,77 +181,51 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
 			_tempSkipFreq = _view.SkipFrequency;
     }
 
+		void EhIndependentColorChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentColor = _view.IndependentColor;
+				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+			}
+		}
 
-    #region IMVCANController Members
-
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0 || !(args[0] is ErrorBarPlotStyle))
-        return false;
-
-			var tempView = this.ViewObject;
-			this.ViewObject = null; // temporarity deactivate view to avoid cascading updates
-
-			_doc = (ErrorBarPlotStyle)args[0];
-      Initialize(true);
-
-			this.ViewObject = tempView; // reactivate the view
-    
-			return true;
-    }
-
-    public UseDocument UseDocumentCopy
-    {
-      set { }
-    }
-
-    #endregion
 
     #region IMVCController Members
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view != null)
-        {
-          _view.ChoosePositiveError -= EhView_ChoosePositiveError;
-          _view.ChooseNegativeError -= EhView_ChooseNegativeError;
-          _view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
-          _view.ClearPositiveError -= EhView_ClearPositiveError;
-          _view.ClearNegativeError -= EhView_ClearNegativeError;
+		protected override void AttachView()
+		{
+			base.AttachView();
 
-        }
+			_view.ChoosePositiveError += EhView_ChoosePositiveError;
+			_view.ChooseNegativeError += EhView_ChooseNegativeError;
+			_view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
+			_view.ClearPositiveError += EhView_ClearPositiveError;
+			_view.ClearNegativeError += EhView_ClearNegativeError;
+			_view.IndependentColorChanged += EhIndependentColorChanged;
 
-        _view = value as IErrorBarPlotStyleView;
+		}
 
-        if (_view != null)
-        {
-					Initialize(false);
-					
-					_view.ChoosePositiveError += EhView_ChoosePositiveError;
-          _view.ChooseNegativeError += EhView_ChooseNegativeError;
-          _view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
-          _view.ClearPositiveError += EhView_ClearPositiveError;
-          _view.ClearNegativeError += EhView_ClearNegativeError;
-        }
-      }
-    }
+		protected override void DetachView()
+		{
+			_view.ChoosePositiveError -= EhView_ChoosePositiveError;
+			_view.ChooseNegativeError -= EhView_ChooseNegativeError;
+			_view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
+			_view.ClearPositiveError -= EhView_ClearPositiveError;
+			_view.ClearNegativeError -= EhView_ClearNegativeError;
+			_view.IndependentColorChanged -= EhIndependentColorChanged;
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+			base.DetachView();
+		}
+
+
+  
 
     #endregion
 
     #region IApplyController Members
 
-    public bool Apply()
+    public override bool Apply()
     {
       _doc.IndependentColor = _view.IndependentColor;
       _doc.Pen = _view.StrokePen;
@@ -251,13 +237,16 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
 
 
       //_view.InitializeSymbolSizeList
-      _doc.SymbolSize = (float)_tempSymbolSize;
-
+      _doc.SymbolSize = _tempSymbolSize;
       _doc.SkipFrequency = _tempSkipFreq;
 
       // Errors
       _doc.PositiveErrorColumn = _tempPosErrorColumn;
       _doc.NegativeErrorColumn = _tempNegErrorColumn;
+
+			if (_useDocumentCopy)
+				CopyHelper.Copy(ref _originalDoc, _doc);
+
       return true;
     }
 

@@ -184,13 +184,10 @@ namespace Altaxo.Gui.Common.Drawing
 
 			List<object> separator = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 
-			if (ShowPlotColorsOnly)
-				lastUsed = new List<object>();
-			else
-				lastUsed = GetFilteredList(_lastLocalUsedItems, filterString);
+			lastUsed = GetFilteredList(_lastLocalUsedItems, filterString, ShowPlotColorsOnly);
 
 			var colorSet = GetColorSetForComboBox();
-			var known = GetFilteredList(colorSet, filterString);
+			var known = GetFilteredList(colorSet, filterString, false); // False as 3rd argument is acceptable here because we know that if ShowPlotColorsOnly is set, then the colorSet is for sure a plot color set
 
 
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
@@ -216,12 +213,15 @@ namespace Altaxo.Gui.Common.Drawing
 			return false;
 		}
 
-		protected static List<object> GetFilteredList(IList<NamedColor> originalList, string filterString)
+
+		protected static List<object> GetFilteredList(IList<NamedColor> originalList, string filterString, bool showPlotColorsOnly)
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();
 			foreach (var item in originalList)
 			{
+				if (showPlotColorsOnly && (item.ParentColorSet == null || !item.ParentColorSet.IsPlotColorSet))
+					continue;
 				if (item.Name.ToLowerInvariant().StartsWith(filterString))
 					result.Add(item);
 			}

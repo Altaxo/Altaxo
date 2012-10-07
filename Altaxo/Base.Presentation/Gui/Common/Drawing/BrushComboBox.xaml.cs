@@ -101,7 +101,10 @@ namespace Altaxo.Gui.Common.Drawing
 		public BrushX SelectedBrush
 		{
 			get { return (BrushX)GetValue(SelectedBrushProperty); }
-			set { SetValue(SelectedBrushProperty, value); }
+			set
+			{
+				SetValue(SelectedBrushProperty, value); 
+			}
 		}
 
     private static object EhSelectedBrushCoerce(DependencyObject obj, object coerceValue)
@@ -112,6 +115,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected virtual BrushX InternalSelectedBrushCoerce(DependencyObject obj, BrushX brush)
     {
+			if (null == brush)
+				brush = new BrushX(NamedColors.Transparent);
+
       var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
       if (!brush.Color.Equals(coercedColor))
       {
@@ -179,13 +185,10 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			List<object> lastUsed;
 
-			if (ShowPlotColorsOnly)
-				lastUsed = new List<object>();
-			else
-				lastUsed = GetFilteredList(_lastLocalUsedItems, filterString);
+			lastUsed = GetFilteredList(_lastLocalUsedItems, filterString, ShowPlotColorsOnly);
 
 			var colorSet = GetColorSetForComboBox();
-			var known = GetFilteredList(colorSet, filterString);
+			var known = GetFilteredList(colorSet, filterString); 
 
 
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
@@ -223,12 +226,15 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-		protected static List<object> GetFilteredList(IList<BrushX> originalList, string filterString)
+		protected static List<object> GetFilteredList(IList<BrushX> originalList, string filterString, bool showPlotColorsOnly)
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();
 			foreach (var item in originalList)
 			{
+				if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !item.Color.ParentColorSet.IsPlotColorSet))
+					continue;
+
 				if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))
 					result.Add(item);
 			}

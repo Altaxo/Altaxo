@@ -45,12 +45,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	/// This plot style is non-visual, i.e. it has no visual equivalent,
 	/// since it is only intended to provide the symbol size to other plot styles.
 	/// </summary>
-	public class ColumnDrivenColorPlotStyle
-		:
-		IG2DPlotStyle,
-		ICloneable,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink
+	public class ColumnDrivenColorPlotStyle	:	IG2DPlotStyle
+	
 	{
 
 		#region Members

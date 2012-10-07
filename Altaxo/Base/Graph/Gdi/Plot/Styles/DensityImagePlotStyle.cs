@@ -44,7 +44,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	[Serializable]
 	public class DensityImagePlotStyle
 		:
-		System.ICloneable,
 		Main.ICopyFrom,
 		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IChangedEventSource,

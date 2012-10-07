@@ -49,6 +49,7 @@ namespace Altaxo.Gui.Graph
 		BackgroundControlsGlue _backgroundGlue;
 		public event Action LabelColumnSelected;
 		public event Action FontSizeChanged;
+		public event Action IndependentColorChanged;
 
 		public XYPlotLabelStyleControl()
 		{
@@ -76,7 +77,8 @@ namespace Altaxo.Gui.Graph
 
 		private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
 		{
-				this._cbColor.IsEnabled = true==_chkIndependentColor.IsChecked;
+			if (null != IndependentColorChanged)
+				IndependentColorChanged();
 		}
 
 		private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
@@ -206,7 +208,7 @@ namespace Altaxo.Gui.Graph
 			get { return (Collections.ListNode)_cbAttachedAxis.SelectedItem; }
 		}
 
-		public bool IsIndependentColorSelected
+		public bool IndependentColor
 		{
 			get
 			{
@@ -215,14 +217,23 @@ namespace Altaxo.Gui.Graph
 			set
 			{
 				_chkIndependentColor.IsChecked = value;
-				_cbColor.IsEnabled = value;
 			}
 		}
 
 
-		#endregion
+		public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
+		{
+			_cbColor.ShowPlotColorsOnly = showPlotColorsOnly;
+		}
 
 	
+
+		#endregion
+
+
+
+
+
 
 
 

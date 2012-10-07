@@ -40,10 +40,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		:
 		IEnumerable<IG2DPlotStyle>,
 		IG2DPlotStyle,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		IRoutedPropertyReceiver,
-		Main.IDocumentNode
+		IRoutedPropertyReceiver
 	{
 		/// <summary>
 		/// Holds the plot styles
@@ -187,6 +184,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			CopyFrom(from);
 		}
+
 		public void CopyFrom(G2DPlotStyleCollection from)
 		{
 			if (object.ReferenceEquals(this, from))
@@ -204,6 +202,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			Resume();
 		}
+
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as G2DPlotStyleCollection;
+			if (null != from)
+			{
+				CopyFrom(from);
+				return true;
+			}
+			return false;
+		}
+
 		public void SetFromTemplate(G2DPlotStyleCollection from, PlotGroupStrictness strictness)
 		{
 			if (strictness == PlotGroupStrictness.Strict)
