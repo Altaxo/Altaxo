@@ -215,8 +215,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static sd.FontFamily GenericSansSerif;
 
-
-
 		public event DependencyPropertyChangedEventHandler SelectedFontFamilyChanged;
 
 		static FontFamilyComboBox()
@@ -254,7 +252,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#region Dependency property
 		private const string _nameOfValueProp = "SelectedFontFamily";
-		public FontFamily SelectedFontFamily
+		public FontFamily SelectedWpfFontFamily
 		{
 			get
 			{
@@ -263,11 +261,11 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 			set
 			{
-				throw new NotImplementedException();
+				
 			}
 		}
 
-		public sd.FontFamily SelectedGdiFontFamily
+		public sd.FontFamily SelectedFontFamily
 		{
 			get
 			{

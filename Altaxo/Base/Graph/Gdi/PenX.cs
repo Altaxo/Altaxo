@@ -1263,12 +1263,9 @@ namespace Altaxo.Graph.Gdi
 				m_Color = value;
 				if (bChanged)
 				{
-					_SetProp(Configured.PenType, false);
+					if (null != m_Brush)
+						m_Brush.Color = value;
 					_SetProp(Configured.Color, NamedColors.Black != value);
-					_SetProp(Configured.Brush, false);
-
-					m_PenType = PenType.SolidColor;
-					m_Brush = null;
 
 					_SetBrushVariable(null);
 					_SetPenVariable(null);

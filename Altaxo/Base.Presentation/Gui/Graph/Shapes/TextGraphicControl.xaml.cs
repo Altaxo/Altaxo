@@ -275,11 +275,11 @@ namespace Altaxo.Gui.Graph.Shapes
 		{
 			get
 			{
-				return m_cbFonts.SelectedGdiFontFamily;
+				return m_cbFonts.SelectedFontFamily;
 			}
 			set
 			{
-				m_cbFonts.SelectedGdiFontFamily = value;
+				m_cbFonts.SelectedFontFamily = value;
 			}
 		}
 

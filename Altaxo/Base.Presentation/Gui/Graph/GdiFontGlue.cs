@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph
 				var oldValue = _fontFamily;
 				_fontFamily = value;
 				if (null != _guiFontFamily && oldValue != value)
-					_guiFontFamily.SelectedGdiFontFamily = value;
+					_guiFontFamily.SelectedFontFamily = value;
 			}
 		}
 
@@ -131,7 +131,7 @@ namespace Altaxo.Gui.Graph
 					_guiFontFamily.SelectedFontFamilyChanged -= _guiFontStyle_SelectedFontFamilyChanged;
 
 				_guiFontFamily = value;
-				_guiFontFamily.SelectedGdiFontFamily = _fontFamily;
+				_guiFontFamily.SelectedFontFamily = _fontFamily;
 
 
 				if (null != _guiFontFamily)
@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Graph
 		void _guiFontStyle_SelectedFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var oldFontFamily = _fontFamily;
-			_fontFamily = _guiFontFamily.SelectedGdiFontFamily;
+			_fontFamily = _guiFontFamily.SelectedFontFamily;
 			if (oldFontFamily != _fontFamily)
 				OnFontChanged();
 		}

@@ -43,37 +43,28 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public interface IXYPlotScatterStyleView
   {
-   
-  
-    /// <summary>
-    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
-    /// </summary>
-    /// <param name="bActivate"></param>
-    void SetEnableDisableMain(bool bActivate);    
-    
     /// <summary>
     /// Initializes the plot style color combobox.
     /// </summary>
-    /// <param name="sel">Current selection.</param>
-    void InitializePlotStyleColor(NamedColor sel);
+    PenX SymbolPen { get; set; }
 
     /// <summary>
     /// Indicates, whether only colors of plot color sets should be shown.
     /// </summary>
-    /// <param name="showPlotColorsOnly">True if only colors of plot color sets should be shown.</param>
-    void SetShowPlotColorsOnly(bool showPlotColorsOnly);
+    bool ShowPlotColorsOnly { set; }
 
     /// <summary>
     /// Initializes the symbol size combobox.
     /// </summary>
-    /// <param name="value">Currently selected symbol size.</param>
-    void InitializeSymbolSize(double value);
+    double SymbolSize { get; set; }
+
 
     /// <summary>
     /// Initializes the independent symbol size check box.
     /// </summary>
     /// <param name="val">True when independent symbol size is choosen.</param>
-    void InitializeIndependentSymbolSize(bool val);
+    bool IndependentSymbolSize { get; set; }
+
 
     /// <summary>
     /// Initializes the symbol style combobox.
@@ -95,27 +86,12 @@ namespace Altaxo.Gui.Graph
     void InitializeDropLineConditions(SelectableListNodeList names);
 
     
-    void InitializeIndependentColor(bool val);
+    bool IndependentColor { get; set;  }
    
-    void InitializeSkipPoints(int val);
-   
+    int SkipPoints { get; set;  }
 
-    #region Getter
+    double RelativePenWidth { get; set; }
 
-    bool IndependentColor { get; }
-    
-    NamedColor SymbolColor { get; }
-    SelectableListNode SymbolShape {get; }
-    bool   IndependentSymbolSize { get; }
-    SelectableListNode SymbolStyle {get; }
-    double SymbolSize  {get; }
-
-    SelectableListNodeList DropLines { get; }
-    int SkipPoints { get; }
-
-		string RelativePenWidth { get; set; }
-
-    #endregion // Getter
 
     #region events
 
@@ -140,44 +116,54 @@ namespace Altaxo.Gui.Graph
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-    bool _ActivateEnableDisableMain = false;
-    /// <summary>
-    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
-    /// </summary>
-    /// <param name="bActivate"></param>
-    public void SetEnableDisableMain(bool bActivate)
-    {
-      _ActivateEnableDisableMain = bActivate;
-      if(null!=_view)
-        _view.SetEnableDisableMain(bActivate);
-    }
+    SelectableListNodeList _dropLineChoices;
+    SelectableListNodeList _symbolShapeChoices;
+    SelectableListNodeList _symbolStyleChoices;
+
 
     protected override void Initialize(bool initData)
     {
       if (initData)
       {
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
+
+        _symbolShapeChoices = new SelectableListNodeList(_doc.Shape);
+        _symbolStyleChoices = new SelectableListNodeList(_doc.Style);
+
+        InitializeDropLineChoices();
       }
       if(_view!=null)
       {
         // now we have to set all dialog elements to the right values
-        _view.SetShowPlotColorsOnly(_colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor));
-        _view.InitializeIndependentColor(_doc.IndependentColor);
-        _view.InitializeIndependentSymbolSize(_doc.IndependentSymbolSize);
-       
-        SetPlotStyleColor();
+        _view.IndependentColor = _doc.IndependentColor;
+        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+				_view.SymbolPen = _doc.Pen;
 
-        // Scatter properties
-        SetSymbolShape();
-        SetSymbolStyle();
-        SetSymbolSize();
-        SetDropLineConditions();
-        _view.SetEnableDisableMain(_ActivateEnableDisableMain);
-        _view.InitializeSkipPoints(_doc.SkipFrequency);
-				_view.RelativePenWidth = Altaxo.Serialization.GUIConversion.ToString(Math.Round(100*_doc.RelativePenWidth, 3));
+        _view.InitializeSymbolShape(_symbolShapeChoices);
+        _view.InitializeSymbolStyle(_symbolStyleChoices);
+
+        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
+        _view.SymbolSize = _doc.SymbolSize;
+        _view.SkipPoints = _doc.SkipFrequency;
+        _view.RelativePenWidth = _doc.RelativePenWidth;
+
+        _view.InitializeDropLineConditions(_dropLineChoices); 
       }
     }
 
+    public void InitializeDropLineChoices()
+    {
+      XYPlotLayer layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(XYPlotLayer)) as XYPlotLayer;
+
+      _dropLineChoices = new SelectableListNodeList();
+      foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropLine))
+      {
+
+        bool sel = _doc.DropLine.Contains(id);
+        CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+        _dropLineChoices.Add(new SelectableListNode(info.Name, id, sel));
+      }
+    }
   
 
 
@@ -186,59 +172,11 @@ namespace Altaxo.Gui.Graph
 			if (null != _view)
 			{
 				_doc.IndependentColor = _view.IndependentColor;
-				_view.SetShowPlotColorsOnly(_colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor));
+				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 			}
     }
 
-    public void SetSymbolSize()
-    {
-      string[] SymbolSizes = 
-      { "0","1","3","5","8","12","15","18","24","30"};
-
-      _view.InitializeSymbolSize(_doc.SymbolSize);
-    }
-
-  
-    public void SetSymbolStyle()
-    {
-      _view.InitializeSymbolStyle(new SelectableListNodeList(_doc.Style));
-    }
-
-  
-    public void SetSymbolShape()
-    {
-      _view.InitializeSymbolShape(new SelectableListNodeList(_doc.Shape));
-    }
-   
-
-    
-
-
-    public void SetDropLineConditions()
-    {
-      XYPlotLayer layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(XYPlotLayer)) as XYPlotLayer;
-
-      SelectableListNodeList names = new SelectableListNodeList();
-
-      foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropLine))
-      {
-
-        bool sel = _doc.DropLine.Contains(id);
-        CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-        names.Add(new SelectableListNode(info.Name, id, sel));
-      }
-
-      _view.InitializeDropLineConditions(names); 
-    }
-
-
-
-
-    public void SetPlotStyleColor()
-    {
-      _view.InitializePlotStyleColor(_doc.Pen.Color);
-    }
-
+ 
 
     #region IMVCController Members
 
@@ -265,27 +203,25 @@ namespace Altaxo.Gui.Graph
       // don't trust user input, so all into a try statement
       try
       {
-      
-
         // Symbol Color
-        _doc.Color = _view.SymbolColor;
+        _doc.Pen = _view.SymbolPen;
 
         _doc.IndependentColor = _view.IndependentColor;
       
         _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
         // Symbol Shape
-				_doc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_view.SymbolShape.Tag;
+        _doc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_symbolShapeChoices.FirstSelectedNode.Tag;
 
         // Symbol Style
-				_doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_view.SymbolStyle.Tag;
+        _doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_symbolStyleChoices.FirstSelectedNode.Tag;
 
         // Symbol Size
 				_doc.SymbolSize = _view.SymbolSize;
 
         // Drop line left
         _doc.DropLine.Clear();
-        foreach (SelectableListNode node in _view.DropLines)
+        foreach (SelectableListNode node in _dropLineChoices)
 					if(node.IsSelected)
 						_doc.DropLine.Add((CSPlaneID)node.Tag);
 
@@ -293,17 +229,7 @@ namespace Altaxo.Gui.Graph
 
         _doc.SkipFrequency = _view.SkipPoints;
 
-				double relPenWidth;
-				if (!Altaxo.Serialization.GUIConversion.IsDouble(_view.RelativePenWidth, out relPenWidth))
-				{
-					Current.Gui.ErrorMessageBox("Relative pen width is not a number");
-					return false;
-				}
-				else
-				{
-					_doc.RelativePenWidth = (float)relPenWidth/100;
-				}
-
+        _doc.RelativePenWidth = _view.RelativePenWidth;
 
 				if (_useDocumentCopy)
 					CopyHelper.Copy(ref _originalDoc, _doc);

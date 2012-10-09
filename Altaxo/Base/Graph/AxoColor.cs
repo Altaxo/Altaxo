@@ -195,25 +195,44 @@ namespace Altaxo.Graph
 
 		public override int GetHashCode()
 		{
-			return ScA.GetHashCode() + ScB.GetHashCode() + ScG.GetHashCode() + ScR.GetHashCode();
+      if (this._isFromArgb)
+        return _a << 24 + _b << 16 + _g << 8 + _r;
+      else
+        return (_scA * 4294967296.0 + _scB * 16777216.0 + _scG * 65536.0 + _scR * 256.0).GetHashCode();
 		}
+
+    public bool Equals(AxoColor from)
+    {
+      if (this._isFromArgb && from._isFromArgb)
+        return 
+          this._a == from._a &&
+          this._b == from._b &&
+          this._g == from._g &&
+          this._r == from._r;
+      else if (!this._isFromArgb && !from._isFromArgb)
+        return 
+          this._scA == from._scA && 
+          this._scB == from._scB && 
+          this._scG == from._scG &&
+          this._scR == from._scR;
+      else
+        return
+          this._a == from._a &&
+          this._b == from._b && 
+          this._g == from._g && 
+          this._r == from._r &&
+          this._scA == from._scA &&
+          this._scB == from._scB &&
+          this._scG == from._scG &&
+          this._scR == from._scR;
+    }
 
 		public override bool Equals(object obj)
 		{
 			if (obj is AxoColor)
-			{
-				var from = (AxoColor)obj;
-				return this.ScA == from.ScA && this.ScB == from.ScB && this.ScG == from.ScG && this.ScR == from.ScR;
-			}
+        return Equals((AxoColor)obj);
 			else
-			{
 				return false;
-			}
-		}
-
-		public bool Equals(AxoColor from)
-		{
-			return this.ScA == from.ScA && this.ScB == from.ScB && this.ScG == from.ScG && this.ScR == from.ScR;
 		}
 
 		public override string ToString()

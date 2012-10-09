@@ -50,18 +50,49 @@ namespace Altaxo.Gui.Common.Drawing
 		private bool _isAllPropertiesGlue;
 
 		public PenControlsGlue()
+			: this(false)
 		{
 		}
 
 		public PenControlsGlue(bool isAllPropertiesGlue)
 		{
+			this.InternalSelectedPen = new PenX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
 			_isAllPropertiesGlue = isAllPropertiesGlue;
 		}
 
 		#region Pen
 
 		PenX _pen;
+
+		/// <summary>
+		/// Gets or sets the pen. The pen you get is a clone of the pen that is used internally. Similarly, when setting the pen, a clone is created, so that the pen 
+		/// can be used internally, without interfering with external functions that changes the pen.
+		/// </summary>
+		/// <value>
+		/// The pen.
+		/// </value>
 		public PenX Pen
+		{
+			get
+			{
+				return _pen.Clone(); // Pen is not immutable. Before giving it out, make a copy, so an external program can meddle with this without disturbing us
+			}
+			set
+			{
+				if (null == value)
+					throw new NotImplementedException("Pen is null");
+				InternalSelectedPen = value.Clone(); // Pen is not immutable. Before changing it here in this control, make a copy, so an external program can change the old pen without interference
+			}
+		}
+
+
+		/// <summary>
+		/// Gets or sets the selected pen internally, <b>but without cloning it. Use this function only internally.</b>
+		/// </summary>
+		/// <value>
+		/// The selected pen.
+		/// </value>
+		protected PenX InternalSelectedPen
 		{
 			get
 			{
@@ -69,17 +100,16 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 			set
 			{
-				if (null != _pen)
-				{
-					_pen.Changed -= EhPenChanged;
-				}
+				if (null == value)
+					throw new NotImplementedException("Pen is null");
+
+				if(null!=_pen)
+				_pen.Changed -= EhPenChanged;
+
 				_pen = value;
 
-				if (null != _pen)
-				{
-					_pen.Changed += EhPenChanged;
-					InitControlProperties();
-				}
+				if(null!=_pen)
+				_pen.Changed += EhPenChanged;
 
 			}
 		}

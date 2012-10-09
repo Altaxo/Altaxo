@@ -13,6 +13,7 @@
 		<axogc:NamedColorToColorSetNameConverter x:Key="Nc2ColorSetName"/>
 		<axogc:BrushXToImageSourceConverter x:Key="Bx2WpfImgSrc" Width="16" Height="16"/>
     <axogc:BrushXToImageSourceConverter x:Key="Bx2WpfImgSrc_16x12" Width="16" Height="12"/>
+		<axogc:BrushXToBrushNameConverter x:Key="Bx2BName"/>
 		
 		<!-- Checkerboard brush for the background of brush items -->
     <DrawingBrush x:Key="CheckerboardBrush" 
@@ -63,7 +64,7 @@
 				<Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True">
 					<Image Source="{Binding Path=., Converter={StaticResource Bx2WpfImgSrc}}"/>
 				</Border>
-				<TextBlock Text="{Binding Color.Name}" Margin="4 0 4 0" VerticalAlignment="Center"/>
+				<TextBlock Text="{Binding ., Converter={StaticResource Bx2BName}}" Margin="4 0 4 0" VerticalAlignment="Center"/>
 			</StackPanel>
 		</DataTemplate>
 		
@@ -84,7 +85,7 @@
           <Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True" VerticalAlignment="Center">
             <Image Source="{Binding Path=., Converter={StaticResource Bx2WpfImgSrc_16x12}}"/>
 					</Border>
-					<TextBlock Text="{Binding Color.Name}" Margin="4 0 4 0" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding ., Converter={StaticResource Bx2BName}}" Margin="4 0 4 0" VerticalAlignment="Center"/>
 			</StackPanel>
 			</StackPanel>
 		</DataTemplate>

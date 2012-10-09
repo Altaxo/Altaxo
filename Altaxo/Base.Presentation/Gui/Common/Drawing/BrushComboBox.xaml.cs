@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 			InitializeComponent();
 
-			UpdateComboBoxSourceSelection(SelectedBrush);
+			UpdateComboBoxSourceSelection(InternalSelectedBrush);
 			UpdateTreeViewSelection();
 		}
 
@@ -80,17 +80,17 @@ namespace Altaxo.Gui.Common.Drawing
 		protected override NamedColor InternalSelectedColor 
 		{
 			get
-			{ 
-				return SelectedBrush.Color; 
+			{
+				return InternalSelectedBrush.Color; 
 			}
 			set
 			{
-				var selBrush = SelectedBrush;
+				var selBrush = InternalSelectedBrush;
 				if (null != selBrush)
 				{
 					selBrush = selBrush.Clone();
 					selBrush.Color = value;
-					SelectedBrush = selBrush;
+					InternalSelectedBrush = selBrush;
 				}
 			}
 		}
@@ -98,12 +98,48 @@ namespace Altaxo.Gui.Common.Drawing
 		#endregion Implementation of abstract base class members
 
 		#region Dependency property
+		/// <summary>
+		/// Gets/sets the selected brush. Since <see cref="BrushX"/> is not immutable, the Brush is cloned when setting the property, as well as when getting the property.
+		/// </summary>
+		/// <remarks>
+		/// <para>Reasons to clone the brush at setting/getting:</para>
+		/// <para>
+		/// Scenario 1: the SelectedBrush property is set without cloning, then an external function changes the brush color: the BrushComboBox will not show the new color, since it don't know anything about the changed color.
+		/// </para>
+		/// <para>
+		/// The user selects a brush in this BrushComboBox, the value is used by an external function, which changes the color. Here also, the new color is not shown in the BrushComboBox.
+		/// </para>
+		/// </remarks>
 		public BrushX SelectedBrush
 		{
-			get { return (BrushX)GetValue(SelectedBrushProperty); }
+			get
+      { 
+        return ((BrushX)GetValue(SelectedBrushProperty)).Clone(); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
+      }
 			set
 			{
+				if (null != value)
+					value = value.Clone(); // BrushX is not immutable, so it must be ensured that SelectedBrush stored here can not be changed externally
 				SetValue(SelectedBrushProperty, value); 
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the selected brush. Here, the getting/setting is done without cloning the brush before. Thus, it must be absolutely ensured, that the brush's properties are not changed.
+		/// When some properties must be changed, it is absolutely neccessary to clone the brush <b>before</b>, then make the changes at the cloned brush, and then using the cloned brush for setting this property.
+		/// </summary>
+		/// <value>
+		/// The selected brush.
+		/// </value>
+		protected BrushX InternalSelectedBrush
+		{
+			get
+			{
+				return ((BrushX)GetValue(SelectedBrushProperty));
+			}
+			set
+			{
+				SetValue(SelectedBrushProperty, value);
 			}
 		}
 
@@ -121,7 +157,7 @@ namespace Altaxo.Gui.Common.Drawing
       var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
       if (!brush.Color.Equals(coercedColor))
       {
-        brush = brush.Clone();
+        brush = brush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
         brush.Color = coercedColor;
       }
 
@@ -266,14 +302,14 @@ namespace Altaxo.Gui.Common.Drawing
 
 			if (_guiComboBox.SelectedValue == null)
 			{
-				_guiComboBox.SelectedValue = SelectedBrush;
+				_guiComboBox.SelectedValue = InternalSelectedBrush;
 			}
 			else
 			{
 				if (_guiComboBox.SelectedValue is BrushX)
-					this.SelectedBrush = (BrushX)_guiComboBox.SelectedValue;
+					this.InternalSelectedBrush = (BrushX)_guiComboBox.SelectedValue;
 				else
-					this.SelectedBrush = new BrushX((NamedColor)_guiComboBox.SelectedValue);
+					this.InternalSelectedBrush = new BrushX((NamedColor)_guiComboBox.SelectedValue);
 			}
 		}
 
@@ -285,12 +321,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
     {
-      var localBrush = this.SelectedBrush.Clone();
+			var localBrush = this.InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
       var ctrl = new BrushControllerAdvanced();
       ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
       ctrl.InitializeDocument(localBrush);
       if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
-        this.SelectedBrush = (BrushX)ctrl.ModelObject;
+				this.InternalSelectedBrush = (BrushX)ctrl.ModelObject;
     }
 
 		protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
@@ -298,9 +334,9 @@ namespace Altaxo.Gui.Common.Drawing
 			NamedColor newColor;
 			if (base.InternalShowCustomColorDialog(sender, out newColor))
 			{
-				var newBrush = SelectedBrush.Clone();
+				var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
 				newBrush.Color = newColor;
-				SelectedBrush = newBrush;
+				InternalSelectedBrush = newBrush;
 			}
 		}
 
@@ -309,9 +345,9 @@ namespace Altaxo.Gui.Common.Drawing
 			NamedColor newColor;
 			if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
 			{
-				var newBrush = SelectedBrush.Clone();
+				var newBrush = InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
 				newBrush.Color = newColor;
-				SelectedBrush = newBrush;
+				InternalSelectedBrush = newBrush;
 			}
 		}
 

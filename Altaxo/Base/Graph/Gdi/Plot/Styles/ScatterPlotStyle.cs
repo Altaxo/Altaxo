@@ -466,12 +466,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CreateEventChain();
 		}
 
-		public ScatterPlotStyle(XYPlotScatterStyles.Shape shape, XYPlotScatterStyles.Style style, float size, float penWidth, NamedColor penColor)
+		public ScatterPlotStyle(XYPlotScatterStyles.Shape shape, XYPlotScatterStyles.Style style, double size, double penWidth, NamedColor penColor)
 		{
 			_shape = shape;
 			_style = style;
 			_dropLine = new CSPlaneIDList();
-			_pen = new PenX(penColor, penWidth);
+			_pen = new PenX(penColor, (float)penWidth);
 			_symbolSize = size;
 
 			_relativePenWidth = penWidth / size;

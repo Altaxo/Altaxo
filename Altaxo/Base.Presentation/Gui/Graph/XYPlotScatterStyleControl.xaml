@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d" 
@@ -55,31 +56,23 @@
 		<ComboBox x:Name="_cbSymbolShape" Grid.Column="1" Grid.Row="0" SelectionChanged="EhSymbolShape_SelectionChangeCommit"/>
 
 		<Label Grid.Column="0" Grid.Row="2" Content="Style:"/>
-		<ComboBox x:Name="_cbSymbolStyle" Grid.Column="1" Grid.Row="2" SelectionChanged="EhSymbolShape_SelectionChangeCommit"/>
+		<ComboBox x:Name="_cbSymbolStyle" Grid.Column="1" Grid.Row="2" SelectionChanged="EhSymbolStyle_SelectionChangeCommit"/>
 
     <CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
 		<axogcd:BrushComboBox x:Name="_cbColor" Grid.Column="1" Grid.Row="6"/>
 
-		<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. size:" />
+		<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. symbol size:" />
 		<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Column="1" Grid.Row="8"/>
 
-		<Label Grid.Column="0" Grid.Row="10" Content="Show every nth point:"/>
-		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Column="1" Grid.Row="10" Minimum="1"/>
+		<Label Grid.Column="0" Grid.Row="10" Content="Pen width (rel. to symbol size):"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_edRelativePenWidth" Grid.Column="1" Grid.Row="10"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"/>
 
-		<Label Grid.Column="0" Grid.Row="12" Content="Relative pen width (%):"/>
-		<axogc:ValidatingTextBox x:Name="_edRelativePenWidth" Grid.Column="1" Grid.Row="12"/>
+		<Label Grid.Column="0" Grid.Row="12" Content="Show every nth point:"/>
+		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Column="1" Grid.Row="12" Minimum="1"/>
 
-		<GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="14" Header="Drop lines:">
-			<ListBox x:Name="_lbDropLines">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-							<TextBlock Text="{Binding Text}"/>
-						</StackPanel>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+
+    <GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="14" Header="Drop lines:">
+      <axogc:EnumFlagControl  x:Name="_lbDropLines" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="Aqua"/>
 		</GroupBox>
 
 	</Grid>

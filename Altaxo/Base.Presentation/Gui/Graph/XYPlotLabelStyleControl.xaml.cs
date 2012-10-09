@@ -60,9 +60,6 @@ namespace Altaxo.Gui.Graph
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
 		}
 
-		
-
-
 		private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
 		{
 			if (null != LabelColumnSelected)
@@ -83,7 +80,7 @@ namespace Altaxo.Gui.Graph
 
 		private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			this._cbAttachedAxis.IsEnabled = true==_chkAttachToAxis.IsChecked;
+			this._guiAttachedAxis.IsEnabled = true==_guiAttachToAxis.IsChecked;
 		}
 		
 
@@ -91,7 +88,7 @@ namespace Altaxo.Gui.Graph
 
 		public void Init_LabelColumn(string labelColumnAsText)
 		{
-			this._edLabelColumn.Text = labelColumnAsText;
+			this._guiLabelColumn.Text = labelColumnAsText;
 		}
 
 
@@ -112,33 +109,33 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return this._cbRotation.SelectedQuantityAsValueInDegrees;
+				return this._guiRotation.SelectedQuantityAsValueInDegrees;
 			}
 			set
 			{
-				this._cbRotation.SelectedQuantityAsValueInDegrees = value;
+				this._guiRotation.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 
 		public void Init_XOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
 		{
-			this._edXOffset.UnitEnvironment = environment;
-			this._edXOffset.SelectedQuantity = value;
+			this._guiXOffset.UnitEnvironment = environment;
+			this._guiXOffset.SelectedQuantity = value;
 		}
 
 		public void Init_YOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
 		{
-			this._edYOffset.UnitEnvironment = environment;
-			this._edYOffset.SelectedQuantity = value;
+			this._guiYOffset.UnitEnvironment = environment;
+			this._guiYOffset.SelectedQuantity = value;
 		}
 
 		public DimensionfulQuantity XOffset
 		{
-			get { return _edXOffset.SelectedQuantity; }
+			get { return _guiXOffset.SelectedQuantity; }
 		}
 		public DimensionfulQuantity YOffset
 		{
-			get { return _edYOffset.SelectedQuantity; }
+			get { return _guiYOffset.SelectedQuantity; }
 		}
 
 		public System.Drawing.Font SelectedFont
@@ -153,82 +150,92 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public NamedColor SelectedColor
+		public Altaxo.Graph.Gdi.BrushX LabelBrush
 		{
 			get
 			{
-				return _cbColor.SelectedColor;
+				return _guiLabelBrush.SelectedBrush;
 			}
 			set
 			{
-				_cbColor.SelectedColor = value;
+				_guiLabelBrush.SelectedBrush = value;
 			}
 		}
 
 		public void Init_HorizontalAlignment(Collections.SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_cbHorizontalAlignment, list);
+			GuiHelper.Initialize(_guiHorizontalAlignment, list);
 		}
 
-		public Collections.ListNode SelectedHorizontalAlignment
-		{
-			get { return (Collections.ListNode)_cbHorizontalAlignment.SelectedItem; }
-		}
+	
 
 		public void Init_VerticalAlignment(Collections.SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_cbVerticalAlignment, list);
+			GuiHelper.Initialize(_guiVerticalAlignment, list);
 		}
 
-		public Collections.ListNode SelectedVerticalAlignment
-		{
-			get { return (Collections.ListNode)_cbVerticalAlignment.SelectedItem; }
-		}
+	
 
 		public bool AttachToAxis
 		{
 			get
 			{
-				return true == _chkAttachToAxis.IsChecked;
+				return true == _guiAttachToAxis.IsChecked;
 			}
 			set
 			{
-				_chkAttachToAxis.IsChecked = value;
-				_cbAttachedAxis.IsEnabled = value;
+				_guiAttachToAxis.IsChecked = value;
+				_guiAttachedAxis.IsEnabled = value;
 			}
 		}
 
 		public void Init_AttachedAxis(Collections.SelectableListNodeList names)
 		{
-			GuiHelper.Initialize(_cbAttachedAxis, names);
+			GuiHelper.Initialize(_guiAttachedAxis, names);
 		}
 
-		public Collections.ListNode AttachedAxis
-		{
-			get { return (Collections.ListNode)_cbAttachedAxis.SelectedItem; }
-		}
+		
 
 		public bool IndependentColor
 		{
 			get
 			{
-				return true == _chkIndependentColor.IsChecked;
+				return true == _guiIndependentLabelColor.IsChecked;
 			}
 			set
 			{
-				_chkIndependentColor.IsChecked = value;
+				_guiIndependentLabelColor.IsChecked = value;
 			}
 		}
 
 
-		public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
+		public  bool ShowPlotColorsOnly
 		{
-			_cbColor.ShowPlotColorsOnly = showPlotColorsOnly;
+      set
+      {
+        _guiLabelBrush.ShowPlotColorsOnly = value;
+      }
 		}
 
 	
 
 		#endregion
+
+    private void EhHorizontalAlignementChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiHorizontalAlignment);
+    }
+
+    private void EhVerticalAlignementChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiVerticalAlignment);
+    }
+
+    private void EhAttachedAxisChanged(object sender, SelectionChangedEventArgs e)
+    {
+      GuiHelper.SynchronizeSelectionFromGui(_guiAttachedAxis);
+
+    }
 
 
 

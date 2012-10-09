@@ -37,29 +37,49 @@ using System.Windows.Shapes;
 using Altaxo.Collections;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 
 using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
+ 
 	/// <summary>
 	/// Interaction logic for XYPlotScatterStyleControl.xaml
 	/// </summary>
 	public partial class XYPlotScatterStyleControl : UserControl, IXYPlotScatterStyleView
 	{
+    public event Action IndependentColorChanged;
+		PenControlsGlue _symbolPenGlue;
+
 		private bool _enableDisableAll = false;
 		private int _suppressEvents = 0;
 
 		public XYPlotScatterStyleControl()
 		{
 			InitializeComponent();
+
+			_symbolPenGlue = new PenControlsGlue();
+			_symbolPenGlue.CbBrush = _cbColor;
 		}
+
+	
 
 		private void EhSymbolShape_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
-			if (this._enableDisableAll)
-				EnableDisableMain(this.ShouldEnableMain());
+      if (null != _cbSymbolShape)
+      {
+        GuiHelper.SynchronizeSelectionFromGui(_cbSymbolShape);
+      }
 		}
+
+    private void EhSymbolStyle_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
+    {
+      if (null != _cbSymbolStyle)
+      {
+        GuiHelper.SynchronizeSelectionFromGui(_cbSymbolStyle);
+      }
+    }
 
 
 		public void EnableDisableMain(bool bEnable)
@@ -73,38 +93,10 @@ namespace Altaxo.Gui.Graph
 			this._edSymbolSkipFrequency.IsEnabled = bEnable;
 		}
 
-		bool ShouldEnableMain()
-		{
-			return this._cbSymbolShape.SelectedIndex != 0 ||
-				this._lbDropLines.SelectedItems.Count > 0;
-
-		}
+	
 
 		#region IXYPlotScatterStyleView
 
-	
-
-
-		public void SetEnableDisableMain(bool bActivate)
-		{
-			this._enableDisableAll = bActivate;
-			this.EnableDisableMain(_enableDisableAll == false || this.ShouldEnableMain());
-		}
-
-		public void InitializePlotStyleColor(NamedColor sel)
-		{
-			_cbColor.SelectedBrush = new Altaxo.Graph.Gdi.BrushX(sel);
-		}
-
-		public void InitializeSymbolSize(double size)
-		{
-			_cbSymbolSize.SelectedQuantityAsValueInPoints = size;
-		}
-
-		public void InitializeIndependentSymbolSize(bool val)
-		{
-			this._chkIndependentSize.IsChecked = val;
-		}
 
 		public void InitializeSymbolStyle(SelectableListNodeList list)
 		{
@@ -118,17 +110,7 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeDropLineConditions(SelectableListNodeList names)
 		{
-			_lbDropLines.ItemsSource = names;
-		}
-
-		public void InitializeIndependentColor(bool val)
-		{
-			this._chkIndependentColor.IsChecked = val;
-		}
-
-		public void InitializeSkipPoints(int val)
-		{
-			this._edSymbolSkipFrequency.Value = val;
+			_lbDropLines.Initialize( names );
 		}
 
 		public bool IndependentColor
@@ -137,11 +119,16 @@ namespace Altaxo.Gui.Graph
 			{
 				return true==_chkIndependentColor.IsChecked;
 			}
+      set
+      {
+        this._chkIndependentColor.IsChecked = value;
+      }
 		}
 
-		public NamedColor SymbolColor
+		public PenX SymbolPen
 		{
-			get { return _cbColor.SelectedBrush.Color; }
+			get { return _symbolPenGlue.Pen; }
+			set { _symbolPenGlue.Pen = value; }
 		}
 
 		public SelectableListNode SymbolShape
@@ -152,7 +139,9 @@ namespace Altaxo.Gui.Graph
 		public bool IndependentSymbolSize
 		{
 			get { return true==_chkIndependentSize.IsChecked; }
+      set { this._chkIndependentSize.IsChecked = value; }
 		}
+
 
 		public SelectableListNode SymbolStyle
 		{
@@ -162,11 +151,7 @@ namespace Altaxo.Gui.Graph
 		public double SymbolSize
 		{
 			get { return _cbSymbolSize.SelectedQuantityAsValueInPoints; }
-		}
-
-		public SelectableListNodeList DropLines
-		{
-			get { return (SelectableListNodeList)(_lbDropLines.ItemsSource); }
+      set { _cbSymbolSize.SelectedQuantityAsValueInPoints = value; }
 		}
 
 		public int SkipPoints
@@ -175,17 +160,22 @@ namespace Altaxo.Gui.Graph
 			{
 					return _edSymbolSkipFrequency.Value;
 			}
+      set
+      {
+        this._edSymbolSkipFrequency.Value = value;
+      }
 		}
+    
 
-		public string RelativePenWidth
+		public double RelativePenWidth
 		{
 			get
 			{
-				return _edRelativePenWidth.Text;
+        return _edRelativePenWidth.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-				_edRelativePenWidth.Text = value;
+        _edRelativePenWidth.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
@@ -198,11 +188,15 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
+    public  bool ShowPlotColorsOnly
     {
-      _cbColor.ShowPlotColorsOnly = showPlotColorsOnly;
+      set
+      {
+        _symbolPenGlue.ShowPlotColorsOnly = value;
+      }
     }
 
-    public event Action IndependentColorChanged;
+  
+
   }
 }

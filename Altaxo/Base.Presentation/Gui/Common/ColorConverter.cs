@@ -66,17 +66,32 @@ namespace Altaxo.Gui.Common
 		}
 	}
 
-
-
 	public class NamedColorToColorSetNameConverter : IValueConverter
 	{
+		public string GetLevelString(Altaxo.Graph.ColorManagement.ColorSetLevel level)
+		{
+			switch (level)
+			{
+				case Altaxo.Graph.ColorManagement.ColorSetLevel.Builtin:
+					return "Builtin";
+				case Altaxo.Graph.ColorManagement.ColorSetLevel.Application:
+					return "App";
+				case Altaxo.Graph.ColorManagement.ColorSetLevel.UserDefined:
+					return "User";
+				case Altaxo.Graph.ColorManagement.ColorSetLevel.Project:
+					return "Project";
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
 			if (value is Altaxo.Graph.NamedColor)
 			{
 				var c = (Altaxo.Graph.NamedColor)value;
 				if (c.ParentColorSet != null)
-					return c.ParentColorSet.Name;
+					return string.Format("{0}/{1}", GetLevelString(c.ParentColorSet.Level), c.ParentColorSet.Name);
 				else
 					return "<<no color set>>";
 			}
@@ -152,6 +167,88 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
+	}
+
+	/// <summary>
+	/// Converts a <see cref="BrushX"/> to a string, which represents the name of this brush.
+	/// </summary>
+	public class BrushXToBrushNameConverter : IValueConverter
+	{
+
+		/// <summary>
+		/// Converts a <see cref="BrushX"/> to the name of this brush.
+		/// </summary>
+		/// <param name="value">A <see cref="BrushX"/> object.</param>
+		/// <param name="targetType">Ignored. Return type is always string.</param>
+		/// <param name="parameter">Ignored</param>
+		/// <param name="culture">The culture to use in the converter. Ignored.</param>
+		/// <returns>
+		/// The name of the brush.
+		/// </returns>
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (value is BrushX)
+				return GetNameForBrushX((BrushX)value);
+			else if (value is NamedColor)
+				return ((NamedColor)value).Name;
+			else
+				return null;
+		}
+
+		public static string GetNameForBrushX(BrushX brush)
+		{
+			string name;
+			if (brush.BrushType == BrushType.SolidBrush)
+			{
+				name = brush.Color.Name;
+			}
+			else
+			{
+
+				switch (brush.BrushType)
+				{
+					case BrushType.SolidBrush:
+						name = "CustSB ";
+						break;
+					case BrushType.SigmaBellShapeLinearGradientBrush:
+					case BrushType.TriangularShapeLinearGradientBrush:
+					case BrushType.LinearGradientBrush:
+						name = "CustLGB ";
+						break;
+					case BrushType.SigmaBellShapePathGradientBrush:
+					case BrushType.TriangularShapePathGradientBrush:
+					case BrushType.PathGradientBrush:
+						name = "CustPGB ";
+						break;
+					case BrushType.TextureBrush:
+						name = "CustTB ";
+						break;
+					case BrushType.SyntheticTextureBrush:
+						name = "CustSTB";
+						break;
+					case BrushType.HatchBrush:
+						name = "CustHB ";
+						break;
+					default:
+						name = "CustBrush ";
+						break;
+				}
+
+				if (brush.BrushType != BrushType.TextureBrush)
+					name += brush.Color.Name;
+				else
+					name = name.Trim();
+			}
+			return name;
+		}
+
+		
+
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 }

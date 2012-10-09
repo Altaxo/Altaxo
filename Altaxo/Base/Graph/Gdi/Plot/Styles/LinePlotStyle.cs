@@ -1727,10 +1727,7 @@ out int lastIndex)
 
 		public bool IsColorProvider
 		{
-			get
-			{
-				return true;
-			}
+				get { return !this._independentColor; }
 		}
 
 		public NamedColor Color

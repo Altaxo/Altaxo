@@ -503,20 +503,34 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		/// <summary>The brush color.</summary>
-		public NamedColor Color
-		{
-			get { return this._brush.Color; }
-			set
-			{
-				var oldColor = this.Color;
-				if (value != oldColor)
-				{
-					this._brush.SetSolidBrush(value);
-					OnChanged(); // Fire Changed event
-				}
-			}
-		}
+    public BrushX LabelBrush
+    {
+      get
+      {
+        return _brush;
+      }
+      set
+      {
+        if(null==value)
+          throw new ArgumentNullException("LabelBrush is null");
+
+        if (null != _brush)
+        {
+          _brush.Changed -= EhChildChanged;
+        }
+        
+        var oldValue = _brush;
+        _brush = value;
+
+        if (null != _brush)
+        {
+          _brush.Changed += EhChildChanged;
+        }
+
+        if (!object.ReferenceEquals(oldValue, value))
+          OnChanged();
+      }
+    }
 
 		/// <summary>The background style.</summary>
 		public Gdi.Background.IBackgroundStyle BackgroundStyle
@@ -787,7 +801,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public bool IsColorProvider
 		{
-			get { return true; }
+			get { return this._independentColor == false; }
 		}
 
 		public bool IsColorReceiver
@@ -836,14 +850,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
 		{
 			if (this.IsColorProvider)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.LabelBrush.Color; });
 
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			if (this.IsColorReceiver)
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.LabelBrush.Color = c; });
 		}
 
 		#endregion

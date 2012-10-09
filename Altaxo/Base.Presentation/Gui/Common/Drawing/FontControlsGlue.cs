@@ -37,175 +37,177 @@ using sd = System.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public class FontControlsGlue : FrameworkElement
-	{
-		public FontControlsGlue()
-		{
+  public class FontControlsGlue : FrameworkElement
+  {
+    public FontControlsGlue()
+    {
 
-		}
+    }
 
-		#region Font
+    #region Font
 
-		public sd.GraphicsUnit _fontUnit = sd.GraphicsUnit.World;
-		/// <summary>
-		/// The unit used to create the font.
-		/// </summary>
-		public sd.GraphicsUnit FontUnit
-		{
-			get
-			{
-				return _fontUnit;
-			}
-			set
-			{
-				sd.GraphicsUnit oldValue = _fontUnit;
-				_fontUnit = value;
-				if (value != oldValue)
-				{
-					if (_font != null)
-						this.SelectedFont = new sd.Font(_font.FontFamily, _font.Size, _font.Style, _fontUnit);
-				}
-			}
-		}
+    public sd.GraphicsUnit _fontUnit = sd.GraphicsUnit.World;
+    /// <summary>
+    /// The unit used to create the font.
+    /// </summary>
+    public sd.GraphicsUnit FontUnit
+    {
+      get
+      {
+        return _fontUnit;
+      }
+      set
+      {
+        sd.GraphicsUnit oldValue = _fontUnit;
+        _fontUnit = value;
+        if (value != oldValue)
+        {
+          if (_font != null)
+            this.SelectedFont = new sd.Font(_font.FontFamily, _font.Size, _font.Style, _fontUnit);
+        }
+      }
+    }
 
-		sd.Font _font;
-		public sd.Font SelectedFont
-		{
-			get
-			{
-				return _font;
-			}
-			set
-			{
-				_font = value;
-				_fontUnit = value.Unit;
+    sd.Font _font;
+    public sd.Font SelectedFont
+    {
+      get
+      {
+        return _font;
+      }
+      set
+      {
+        _font = value;
+        _fontUnit = value.Unit;
 
-				if (null != CbFontFamily) CbFontFamily.SelectedGdiFontFamily = _font.FontFamily;
-				if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
-				if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
-			}
-		}
+        if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = _font.FontFamily;
+        if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
+        if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
+      }
+    }
 
-		public event EventHandler SelectedFontChanged;
-		protected virtual void OnSelectedFontChanged()
-		{
-			if (SelectedFontChanged != null)
-				SelectedFontChanged(this, EventArgs.Empty);
-		}
+    public event EventHandler SelectedFontChanged;
+    protected virtual void OnSelectedFontChanged()
+    {
+      if (SelectedFontChanged != null)
+        SelectedFontChanged(this, EventArgs.Empty);
+    }
 
-		#endregion
-
-
-
-		#region Font
-
-		FontFamilyComboBox _cbFontFamily;
-		public FontFamilyComboBox CbFontFamily
-		{
-			get { return _cbFontFamily; }
-			set
-			{
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontFamilyComboBox.SelectedFontFamilyProperty, typeof(FontFamilyComboBox));
-
-				if (_cbFontFamily != null)
-					dpd.RemoveValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
-
-				_cbFontFamily = value;
-				if (_font != null && _cbFontFamily != null)
-					_cbFontFamily.SelectedGdiFontFamily = _font.FontFamily;
-
-				if (_cbFontFamily != null)
-					dpd.AddValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
-			}
-		}
-
-		void EhFontFamily_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			if (_font != null)
-			{
-				_font = new sd.Font(_cbFontFamily.SelectedGdiFontFamily, _font.Size, _font.Style, _fontUnit);
-				OnSelectedFontChanged();
-			}
-		}
-
-		#endregion
-
-		#region Style
-
-		FontStyleComboBox _cbFontStyle;
-		public FontStyleComboBox CbFontStyle
-		{
-			get { return _cbFontStyle; }
-			set
-			{
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontStyleComboBox.SelectedFontStyleProperty, typeof(FontStyleComboBox));
-
-				if (_cbFontStyle != null)
-				{
-					dpd.RemoveValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
-				}
-
-				_cbFontStyle = value;
-				if (_font != null && _cbFontStyle != null)
-					_cbFontStyle.SelectedFontStyle = _font.Style;
-
-				if (_cbFontStyle != null)
-				{
-					dpd.AddValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
-				}
-			}
-		}
-
-		void EhFontStyle_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			if (_font != null)
-			{
-				_font = new sd.Font(_font.FontFamily, _font.Size, _cbFontStyle.SelectedFontStyle, _fontUnit);
-				OnSelectedFontChanged();
-			}
-		}
-
-
-		#endregion
-
-		#region Size
-
-		FontSizeComboBox _cbFontSize;
-		public FontSizeComboBox CbFontSize
-		{
-			get { return _cbFontSize; }
-			set
-			{
-				if (_cbFontSize != null)
-				{
-					_cbFontSize.SelectedQuantityChanged -= EhFontSize_SelectionChangeCommitted;
-				}
-
-				_cbFontSize = value;
-				if (_font != null && _cbFontSize != null)
-					_cbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
-
-				if (_cbFontSize != null)
-				{
-					_cbFontSize.SelectedQuantityChanged += EhFontSize_SelectionChangeCommitted;
-				}
-			}
-		}
-
-		void EhFontSize_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-		{
-			if (_font != null)
-			{
-				_font = new sd.Font(_font.FontFamily, (float)_cbFontSize.SelectedQuantityAsValueInPoints, _font.Style, _fontUnit);
-				OnSelectedFontChanged();
-			}
-		}
-
-
-		#endregion
+    #endregion
 
 
 
+    #region Font
 
-	}
+    FontFamilyComboBox _cbFontFamily;
+    public FontFamilyComboBox CbFontFamily
+    {
+      get { return _cbFontFamily; }
+      set
+      {
+        var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontFamilyComboBox.SelectedFontFamilyProperty, typeof(FontFamilyComboBox));
+        if (null == dpd)
+          throw new InvalidOperationException("DependencePropertyDescriptor is null! Please check the corresponding DependencyProperty");
+
+        if (_cbFontFamily != null)
+          dpd.RemoveValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
+
+        _cbFontFamily = value;
+        if (_font != null && _cbFontFamily != null)
+          _cbFontFamily.SelectedFontFamily = _font.FontFamily;
+
+        if (_cbFontFamily != null)
+          dpd.AddValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
+      }
+    }
+
+    void EhFontFamily_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_font != null)
+      {
+        _font = new sd.Font(_cbFontFamily.SelectedFontFamily, _font.Size, _font.Style, _fontUnit);
+        OnSelectedFontChanged();
+      }
+    }
+
+    #endregion
+
+    #region Style
+
+    FontStyleComboBox _cbFontStyle;
+    public FontStyleComboBox CbFontStyle
+    {
+      get { return _cbFontStyle; }
+      set
+      {
+        var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontStyleComboBox.SelectedFontStyleProperty, typeof(FontStyleComboBox));
+
+        if (_cbFontStyle != null)
+        {
+          dpd.RemoveValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
+        }
+
+        _cbFontStyle = value;
+        if (_font != null && _cbFontStyle != null)
+          _cbFontStyle.SelectedFontStyle = _font.Style;
+
+        if (_cbFontStyle != null)
+        {
+          dpd.AddValueChanged(_cbFontStyle, EhFontStyle_SelectionChangeCommitted);
+        }
+      }
+    }
+
+    void EhFontStyle_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_font != null)
+      {
+        _font = new sd.Font(_font.FontFamily, _font.Size, _cbFontStyle.SelectedFontStyle, _fontUnit);
+        OnSelectedFontChanged();
+      }
+    }
+
+
+    #endregion
+
+    #region Size
+
+    FontSizeComboBox _cbFontSize;
+    public FontSizeComboBox CbFontSize
+    {
+      get { return _cbFontSize; }
+      set
+      {
+        if (_cbFontSize != null)
+        {
+          _cbFontSize.SelectedQuantityChanged -= EhFontSize_SelectionChangeCommitted;
+        }
+
+        _cbFontSize = value;
+        if (_font != null && _cbFontSize != null)
+          _cbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
+
+        if (_cbFontSize != null)
+        {
+          _cbFontSize.SelectedQuantityChanged += EhFontSize_SelectionChangeCommitted;
+        }
+      }
+    }
+
+    void EhFontSize_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+    {
+      if (_font != null)
+      {
+        _font = new sd.Font(_font.FontFamily, (float)_cbFontSize.SelectedQuantityAsValueInPoints, _font.Style, _fontUnit);
+        OnSelectedFontChanged();
+      }
+    }
+
+
+    #endregion
+
+
+
+
+  }
 }
