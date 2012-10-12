@@ -50,7 +50,7 @@ namespace Altaxo.Main
 				{
 					EventSuppressor parent = _parent;
 					_parent = null;
-					int newLevel = System.Threading.Interlocked.Decrement(ref _parent._suppressLevel);
+					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suppressLevel);
 				}
 			}
 
