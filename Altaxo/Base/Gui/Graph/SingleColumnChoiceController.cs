@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph
 	{
 		#region My private nodes
 
-		class TableNode : NGTreeNode
+		internal class TableNode : NGTreeNode
 		{
 			const int MaxNumberOfColumnsInOneNode = 100;
 			DataColumnCollection _collection;
@@ -93,6 +93,24 @@ namespace Altaxo.Gui.Graph
 				_columnCount = columnCount;
 				_collection = coll;
 				Text = string.Format("Cols {0}-{1}", firstColumn, firstColumn + columnCount - 1);
+			}
+
+			public DataColumnCollection Collection
+			{
+				get { return _collection; }
+				set { _collection = value; }
+			}
+
+			public int FirstColumn
+			{
+				get { return _firstColumn; }
+				set { _firstColumn = value; }
+			}
+
+			public int ColumnCount
+			{
+				get { return _columnCount; }
+				set { _columnCount = value; }
 			}
 
 			protected override void LoadChildren()
