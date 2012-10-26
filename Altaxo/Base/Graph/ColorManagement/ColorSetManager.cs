@@ -292,8 +292,86 @@ namespace Altaxo.Graph.ColorManagement
 			}
 		}
 
+		
+
 		#endregion
-	}
+
+    #region Deserialization of color sets
+
+    public IColorSet GetDeserializedColorSet(string colorSetName, ColorSetLevel colorSetLevel, DateTime creationDate, bool isPlotColorSet, IList<NamedColor> set)
+    {
+      // the given color set can have three levels:
+      // Application: if an equal color set on Application level is found in Altaxo, use this instead. Otherwise, when an equal color set is found on user level, use that. Else, if an equal color set is found on project level, use that.
+      //							Else, create a new color set on project level.
+      // User:				Same procedure as above
+      // Project:			Same procedure as above
+
+      foreach (var builtinSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.Builtin))
+      {
+        if (builtinSet.HasSameContentAs(set) && (isPlotColorSet==false || builtinSet.IsPlotColorSet))
+          return builtinSet;
+      }
+      foreach (var appSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.Application))
+      {
+        if (appSet.HasSameContentAs(set) && (isPlotColorSet == false || appSet.IsPlotColorSet))
+          return appSet;
+      }
+      foreach (var userSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.UserDefined))
+      {
+        if (userSet.HasSameContentAs(set) && (isPlotColorSet == false || userSet.IsPlotColorSet))
+          return userSet;
+      }
+      foreach (var projSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.Project))
+      {
+        if (projSet.HasSameContentAs(set) && (isPlotColorSet == false || projSet.IsPlotColorSet))
+          return projSet;
+      }
+
+      // no such set found, then we should include the set at the project level
+      // find an available name at the project level
+
+      var newSet = new ColorSet(FindAvailableName(colorSetName, ColorSetLevel.Project), ColorSetLevel.Project, set);
+      if (isPlotColorSet)
+        newSet.DeclareThisSetAsPlotColorSet();
+
+      this.Add(newSet);
+
+      return newSet;
+    }
+
+    /// <summary>
+    /// Finds an available name that can be used for a new color set, at the given color set level.
+    /// </summary>
+    /// <param name="name">The proposed name. Must not be null or empty.</param>
+    /// <param name="level">The color set level.</param>
+    /// <returns>A name (either the given name or a name with an appended number), that can be used for a new color set in this collection.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown if name is null or empty.</exception>
+    public string FindAvailableName(string name, ColorSetLevel level)
+    {
+      if (string.IsNullOrEmpty(name))
+        throw new ArgumentOutOfRangeException("name is null or empty");
+
+      if (!_colorSetCollection.Keys.Contains(new ColorSetKey(level, name)))
+        return name;
+      // else try to append a number to the name
+      int firstIdx;
+      if (name[name.Length - 1] == ')' && (firstIdx = name.LastIndexOf('(')) > 0)
+      {
+        int number;
+        if(int.TryParse(name.Substring(firstIdx+1,name.Length-firstIdx-2),System.Globalization.NumberStyles.Integer,System.Globalization.CultureInfo.InvariantCulture, out number))
+          name = name.Substring(firstIdx);
+      }
+
+     for(int n=2;;++n)
+     {
+       string result = string.Format(System.Globalization.CultureInfo.InvariantCulture,"{0}({1})",name,n);
+       if(!_colorSetCollection.Keys.Contains(new ColorSetKey(level, result)))
+         return result;
+     }
+    }
+
+    #endregion
+  }
 
 
 }

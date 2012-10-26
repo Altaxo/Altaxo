@@ -121,12 +121,17 @@ namespace Altaxo.Graph.Gdi.Background
 
 		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
 		{
+			Draw(g, _brush, innerArea);
+		}
+
+		public void Draw(Graphics g, BrushX brush, RectangleD innerArea)
+		{
 			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2); // Padding
 			var outerArea = innerArea;
 			outerArea.Inflate(_shadowLength, _shadowLength);
 
-			_brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-			g.FillRectangle(_brush, (RectangleF)outerArea);
+			brush.SetEnvironment(outerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+			g.FillRectangle(brush, (RectangleF)outerArea);
 
 			SolidBrush twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
 			RectangleF oA = (RectangleF)outerArea;
@@ -173,6 +178,9 @@ namespace Altaxo.Graph.Gdi.Background
 			}
 		}
 		#endregion
+
+
+	
 	}
 }
 

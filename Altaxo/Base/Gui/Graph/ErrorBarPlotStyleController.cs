@@ -35,14 +35,14 @@ namespace Altaxo.Gui.Graph
   public interface IErrorBarPlotStyleView
   {
     bool IndependentColor { get; set; }
-		bool ShowPlotColorsOnly { set; }
+    bool ShowPlotColorsOnly { set; }
     PenX StrokePen { get; set; }
     bool IndependentSize { get; set; }
     bool LineSymbolGap { get; set; }
     bool ShowEndBars { get; set; }
     bool DoNotShiftIndependentVariable { get; set; }
     bool IsHorizontalStyle { get; set; }
-		double SymbolSize { get; set; }
+    double SymbolSize { get; set; }
     bool IndependentNegativeError { get; set; }
     string PositiveError { get; set; }
     string NegativeError { get; set; }
@@ -53,10 +53,10 @@ namespace Altaxo.Gui.Graph
     event EventHandler IndependentNegativeError_CheckChanged;
     event EventHandler ClearPositiveError;
     event EventHandler ClearNegativeError;
-		/// <summary>
-		/// Occurs when the user choice for IndependentColor of the fill brush has changed.
-		/// </summary>
-		event Action IndependentColorChanged;
+    /// <summary>
+    /// Occurs when the user choice for IndependentColor of the fill brush has changed.
+    /// </summary>
+    event Action IndependentColorChanged;
 
   }
 
@@ -64,27 +64,25 @@ namespace Altaxo.Gui.Graph
 
   [UserControllerForObject(typeof(ErrorBarPlotStyle))]
   [ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
-	public class ErrorBarPlotStyleController : MVCANControllerBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
+  public class ErrorBarPlotStyleController : MVCANControllerBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
   {
-		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
-		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
+    /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
+    ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
     INumericColumn _tempPosErrorColumn;
     INumericColumn _tempNegErrorColumn;
-    double _tempSymbolSize;
-    int _tempSkipFreq;
 
 
-		protected override void Initialize(bool initData)
+    protected override void Initialize(bool initData)
     {
-			if (initData)
-			{
-				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
-			}
+      if (initData)
+      {
+        _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
+      }
       if (_view != null)
       {
         _view.IndependentColor = _doc.IndependentColor;
-				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
         _view.StrokePen = _doc.Pen;
         _view.IndependentSize = _doc.IndependentSymbolSize;
         _view.LineSymbolGap = _doc.SymbolGap;
@@ -92,11 +90,8 @@ namespace Altaxo.Gui.Graph
         _view.DoNotShiftIndependentVariable = _doc.DoNotShiftIndependentVariable;
         _view.IsHorizontalStyle = _doc.IsHorizontalStyle;
 
-        _tempSymbolSize = _doc.SymbolSize;
-				_view.SymbolSize = _tempSymbolSize;
-
-        _tempSkipFreq = _doc.SkipFrequency;
-        _view.SkipFrequency =_tempSkipFreq;
+        _view.SymbolSize = _doc.SymbolSize;
+        _view.SkipFrequency = _doc.SkipFrequency;
 
 
         // Errors
@@ -110,27 +105,27 @@ namespace Altaxo.Gui.Graph
       }
     }
 
- void EhView_ChoosePositiveError(object sender, EventArgs e)
- {
-   SingleColumnChoice choice = new SingleColumnChoice();
-   choice.SelectedColumn = _tempPosErrorColumn != null ? _tempPosErrorColumn as DataColumn : _doc.PositiveErrorColumn as DataColumn;
-   object choiceAsObject = choice;
-   if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error column"))
-   {
-     choice = (SingleColumnChoice)choiceAsObject;
-     if (choice.SelectedColumn is INumericColumn)
-     {
-       _tempPosErrorColumn = (INumericColumn)choice.SelectedColumn;
-       _view.PositiveError = _tempPosErrorColumn.FullName;
-       if (!_view.IndependentNegativeError)
-       {
-         _tempNegErrorColumn = (INumericColumn)choice.SelectedColumn;
-         _view.NegativeError = _tempNegErrorColumn.FullName;
-       }
+    void EhView_ChoosePositiveError(object sender, EventArgs e)
+    {
+      SingleColumnChoice choice = new SingleColumnChoice();
+      choice.SelectedColumn = _tempPosErrorColumn != null ? _tempPosErrorColumn as DataColumn : _doc.PositiveErrorColumn as DataColumn;
+      object choiceAsObject = choice;
+      if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error column"))
+      {
+        choice = (SingleColumnChoice)choiceAsObject;
+        if (choice.SelectedColumn is INumericColumn)
+        {
+          _tempPosErrorColumn = (INumericColumn)choice.SelectedColumn;
+          _view.PositiveError = _tempPosErrorColumn.FullName;
+          if (!_view.IndependentNegativeError)
+          {
+            _tempNegErrorColumn = (INumericColumn)choice.SelectedColumn;
+            _view.NegativeError = _tempNegErrorColumn.FullName;
+          }
 
-     }
-   }
- }
+        }
+      }
+    }
 
     void EhView_ClearPositiveError(object sender, EventArgs e)
     {
@@ -139,87 +134,79 @@ namespace Altaxo.Gui.Graph
     }
 
 
- void EhView_ChooseNegativeError(object sender, EventArgs e)
- {
-   SingleColumnChoice choice = new SingleColumnChoice();
-   choice.SelectedColumn = _tempNegErrorColumn != null ? _tempNegErrorColumn as DataColumn: _doc.NegativeErrorColumn as DataColumn;
-   object choiceAsObject = choice;
-   if (Current.Gui.ShowDialog(ref choiceAsObject, "Select negative error column"))
-   {
-     choice = (SingleColumnChoice)choiceAsObject;
+    void EhView_ChooseNegativeError(object sender, EventArgs e)
+    {
+      SingleColumnChoice choice = new SingleColumnChoice();
+      choice.SelectedColumn = _tempNegErrorColumn != null ? _tempNegErrorColumn as DataColumn : _doc.NegativeErrorColumn as DataColumn;
+      object choiceAsObject = choice;
+      if (Current.Gui.ShowDialog(ref choiceAsObject, "Select negative error column"))
+      {
+        choice = (SingleColumnChoice)choiceAsObject;
 
-     if (choice.SelectedColumn is INumericColumn)
-     {
-       _tempNegErrorColumn = (INumericColumn)choice.SelectedColumn;
-			 _view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
-     }
-   }
- }
+        if (choice.SelectedColumn is INumericColumn)
+        {
+          _tempNegErrorColumn = (INumericColumn)choice.SelectedColumn;
+          _view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
+        }
+      }
+    }
 
     void EhView_ClearNegativeError(object sender, EventArgs e)
     {
-			_tempNegErrorColumn = null;
+      _tempNegErrorColumn = null;
       _view.NegativeError = string.Empty;
     }
 
 
-void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
-{
-	if (false == _view.IndependentNegativeError && null == _tempNegErrorColumn)
-	{
-		_tempNegErrorColumn = _tempPosErrorColumn;
-		_view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
-	}
-}
-    void EhView_VerifySymbolSize(object sender, System.ComponentModel.CancelEventArgs e)
+    void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
     {
-			_tempSymbolSize = _view.SymbolSize;
+      if (false == _view.IndependentNegativeError && null == _tempNegErrorColumn)
+      {
+        _tempNegErrorColumn = _tempPosErrorColumn;
+        _view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
+      }
     }
 
-    void EhView_VerifySkipFrequency(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-			_tempSkipFreq = _view.SkipFrequency;
-    }
 
-		void EhIndependentColorChanged()
-		{
-			if (null != _view)
-			{
-				_doc.IndependentColor = _view.IndependentColor;
-				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-			}
-		}
+    void EhIndependentColorChanged()
+    {
+      if (null != _view)
+      {
+        _doc.IndependentColor = _view.IndependentColor;
+        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+      }
+    }
 
 
     #region IMVCController Members
 
-		protected override void AttachView()
-		{
-			base.AttachView();
+    protected override void AttachView()
+    {
+      base.AttachView();
 
-			_view.ChoosePositiveError += EhView_ChoosePositiveError;
-			_view.ChooseNegativeError += EhView_ChooseNegativeError;
-			_view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
-			_view.ClearPositiveError += EhView_ClearPositiveError;
-			_view.ClearNegativeError += EhView_ClearNegativeError;
-			_view.IndependentColorChanged += EhIndependentColorChanged;
+      _view.ChoosePositiveError += EhView_ChoosePositiveError;
+      _view.ChooseNegativeError += EhView_ChooseNegativeError;
+      _view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
+      _view.ClearPositiveError += EhView_ClearPositiveError;
+      _view.ClearNegativeError += EhView_ClearNegativeError;
+      _view.IndependentColorChanged += EhIndependentColorChanged;
 
-		}
+    }
 
-		protected override void DetachView()
-		{
-			_view.ChoosePositiveError -= EhView_ChoosePositiveError;
-			_view.ChooseNegativeError -= EhView_ChooseNegativeError;
-			_view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
-			_view.ClearPositiveError -= EhView_ClearPositiveError;
-			_view.ClearNegativeError -= EhView_ClearNegativeError;
-			_view.IndependentColorChanged -= EhIndependentColorChanged;
+    protected override void DetachView()
+    {
+      _view.ChoosePositiveError -= EhView_ChoosePositiveError;
+      _view.ChooseNegativeError -= EhView_ChooseNegativeError;
+      _view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
+      _view.ClearPositiveError -= EhView_ClearPositiveError;
+      _view.ClearNegativeError -= EhView_ClearNegativeError;
+      _view.IndependentColorChanged -= EhIndependentColorChanged;
 
-			base.DetachView();
-		}
+      base.DetachView();
+    }
 
 
-  
+
 
     #endregion
 
@@ -236,16 +223,16 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
       _doc.IsHorizontalStyle = _view.IsHorizontalStyle;
 
 
-      //_view.InitializeSymbolSizeList
-      _doc.SymbolSize = _tempSymbolSize;
-      _doc.SkipFrequency = _tempSkipFreq;
+      _doc.IndependentSymbolSize = _view.IndependentSize;
+      _doc.SymbolSize = _view.SymbolSize;
+      _doc.SkipFrequency = _view.SkipFrequency;
 
       // Errors
       _doc.PositiveErrorColumn = _tempPosErrorColumn;
       _doc.NegativeErrorColumn = _tempNegErrorColumn;
 
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
+      if (_useDocumentCopy)
+        CopyHelper.Copy(ref _originalDoc, _doc);
 
       return true;
     }

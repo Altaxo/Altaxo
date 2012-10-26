@@ -60,8 +60,12 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+    /// <summary>
+    /// Occurs when the background style instance changed to another instance. This event is <b>not</b> fired when only members of the background style changed (e.g. the brush).
+    /// </summary>
 		public event EventHandler BackgroundStyleChanged;
-		protected virtual void OnBackgroundStyleChanged()
+
+    protected virtual void OnBackgroundStyleChanged()
 		{
 			if (BackgroundStyleChanged != null)
 				BackgroundStyleChanged(this, EventArgs.Empty);
@@ -127,6 +131,18 @@ namespace Altaxo.Gui.Graph
 
 		#region Brush
 
+
+    /// <summary>
+    /// Occurs when the background brush changed.
+    /// </summary>
+    public event EventHandler BackgroundBrushChanged;
+
+    protected virtual void OnBackgroundBrushChanged()
+    {
+      if (BackgroundBrushChanged != null)
+        BackgroundBrushChanged(this, EventArgs.Empty);
+    }
+
 		BrushComboBox _cbBrush;
 		public BrushComboBox CbBrush
 		{
@@ -139,6 +155,7 @@ namespace Altaxo.Gui.Graph
 				}
 
 				_cbBrush = value;
+        _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
 				_cbBrush.SelectedBrush = new BrushX(Altaxo.Graph.NamedColors.Aqua);
 
 				if (_doc != null && _cbBrush != null && _doc.Brush != null)
@@ -158,7 +175,7 @@ namespace Altaxo.Gui.Graph
 			if (_doc != null)
 			{
 				_doc.Brush = _cbBrush.SelectedBrush;
-				OnBackgroundStyleChanged();
+				OnBackgroundBrushChanged();
 			}
 		}
 
@@ -189,7 +206,25 @@ namespace Altaxo.Gui.Graph
 		#endregion
 
 
+    #region ShowPlotColorsOnly
+
+    private bool _showPlotColorsOnly;
+
+    public bool ShowPlotColorsOnly
+    {
+      get { return _showPlotColorsOnly; }
+      set
+      {
+        _showPlotColorsOnly = value;
+        if (null != _cbBrush)
+          _cbBrush.ShowPlotColorsOnly = value;
+      }
+    }
+    
 
 
-	}
+
+    #endregion
+
+  }
 }

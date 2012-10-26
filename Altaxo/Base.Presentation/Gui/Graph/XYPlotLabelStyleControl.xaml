@@ -55,7 +55,7 @@
     <TextBox x:Name="_guiLabelColumn" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Margin="0,0,8,0" IsEnabled="False"/>
     <Button Grid.Column="3" Grid.Row="0" Content="Select.." Click="EhSelectLabelColumn_Click"/>
     <CheckBox x:Name="_guiIndependentLabelColor" Grid.Column="0" Grid.Row="2" Content="Indep. color:" Checked="EhIndependentColor_CheckChanged" Unchecked="EhIndependentColor_CheckChanged"/>
-    <axogcd:BrushComboBox x:Name="_guiLabelBrush" Grid.Column="1" Grid.Row="2" />
+    <axogcd:BrushComboBox x:Name="_guiLabelBrush" Grid.Column="1" Grid.Row="2" SelectedBrushChanged="EhLabelBrushChanged" />
 
     <Label Grid.Column="0" Grid.Row="4" Content="Font:"/>
     <axogcd:FontFamilyComboBox x:Name="_cbFontFamily" Grid.Column="1" Grid.Row="4" />
@@ -88,5 +88,10 @@
     <ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="16"/>
     <Label Grid.Column="2" Grid.Row="16" Content="Brush:"/>
     <axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="16"/>
+		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="18" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+			<TextBlock Text="Background"/>
+			<TextBlock Text="color linkage:"/>
+		</StackPanel>
+		<axogc:SingleChoiceRadioStackPanel x:Name="_guiBackgroundColorLinkage" Grid.Column="1" Grid.Row="18" SelectionChanged="EhBackgroundColorLinkageChanged"/>
   </Grid>
 </UserControl>

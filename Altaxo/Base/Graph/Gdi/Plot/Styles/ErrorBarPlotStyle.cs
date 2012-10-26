@@ -95,6 +95,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
+    /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
+    [field: NonSerialized]
+    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+    /// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
+    [field: NonSerialized]
+    protected Func<int, Color> _cachedColorForIndexFunction;
+
+
+
 		#region Serialization
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarPlotStyle), 0)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -349,9 +358,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups)
 		{
-			// color
-			if (!_independentColor)
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._strokePen.Color = c; });
+      _cachedColorForIndexFunction = null;
+      _cachedSymbolSizeForIndexFunction = null;
+      // color
+      if (!_independentColor)
+      {
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._strokePen.Color = c; });
+
+        // but if there is a color evaluation function, then use that function with higher priority
+        VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+      }
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency = c; });
@@ -363,6 +379,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					this._symbolSize = 0;
 				}
+
+        // but if there is an symbol size evaluation function, then use this with higher priority.
+        VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
 			}
 
 			// bar position
@@ -407,15 +426,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			Region oldClippingRegion = g.Clip;
 			Region newClip = (Region)oldClippingRegion.Clone();
+      var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
+
 
 			foreach (PlotRange r in rangeList)
 			{
 				int lower = r.LowerBound;
 				int upper = r.UpperBound;
 				int offset = r.OffsetToOriginal;
+
 				for (int j = lower; j < upper; j++)
 				{
-					AltaxoVariant y = pdata.GetYPhysical(j + offset);
+          double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+          if (null != _cachedColorForIndexFunction)
+            strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
+          
+          AltaxoVariant y = pdata.GetYPhysical(j + offset);
 					Logical3D lm = layer.GetLogical3D(pdata, j + offset);
 					lm.RX += _cachedLogicalShiftOfIndependent;
 					if (lm.IsNaN)
@@ -444,7 +470,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						double xlm, ylm;
 						layer.CoordinateSystem.LogicalToLayerCoordinates(lm, out xlm, out ylm);
 						newClip.Union(oldClippingRegion);
-						newClip.Exclude(new RectangleF((float)(xlm - _symbolSize / 2), (float)(ylm - _symbolSize / 2), (float)(_symbolSize), (float)(_symbolSize)));
+						newClip.Exclude(new RectangleF((float)(xlm - symbolSize / 2), (float)(ylm - symbolSize / 2), (float)(symbolSize), (float)(symbolSize)));
 						g.Clip = newClip;
 					}
 
@@ -453,15 +479,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						errorBarPath.Reset();
 						layer.CoordinateSystem.GetIsoline(errorBarPath, ll, lm);
 						layer.CoordinateSystem.GetIsoline(errorBarPath, lm, lh);
-						g.DrawPath(_strokePen, errorBarPath);
+						g.DrawPath(strokePen, errorBarPath);
 					}
 					else if (llvalid)
 					{
-						layer.CoordinateSystem.DrawIsoline(g, _strokePen, ll, lm);
+						layer.CoordinateSystem.DrawIsoline(g, strokePen, ll, lm);
 					}
 					else if (lhvalid)
 					{
-						layer.CoordinateSystem.DrawIsoline(g, _strokePen, lm, lh);
+						layer.CoordinateSystem.DrawIsoline(g, strokePen, lm, lh);
 					}
 
 
@@ -472,24 +498,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						{
 							PointF outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(1, 0), out outDir);
-							outDir.X *= (float)(_symbolSize / 2);
-							outDir.Y *= (float)(_symbolSize / 2);
+							outDir.X *= (float)(symbolSize / 2);
+							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
 							// Draw a line from x,y to 
-							g.DrawLine(_strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
+							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
 
 						if (llvalid)
 						{
 							PointF outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(1, 0), out outDir);
-							outDir.X *= (float)(_symbolSize / 2);
-							outDir.Y *= (float)(_symbolSize / 2);
+							outDir.X *= (float)(symbolSize / 2);
+							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
 							// Draw a line from x,y to 
-							g.DrawLine(_strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
+							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
 
 					}
@@ -517,14 +543,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Region oldClippingRegion = g.Clip;
 			Region newClip = (Region)oldClippingRegion.Clone();
 
+      var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
+
 			foreach (PlotRange r in rangeList)
 			{
 				int lower = r.LowerBound;
 				int upper = r.UpperBound;
 				int offset = r.OffsetToOriginal;
+
 				for (int j = lower; j < upper; j++)
 				{
-					AltaxoVariant x = pdata.GetXPhysical(j + offset);
+          double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+          if (null != _cachedColorForIndexFunction)
+            strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
+          
+          AltaxoVariant x = pdata.GetXPhysical(j + offset);
 					Logical3D lm = layer.GetLogical3D(pdata, j + offset);
 					lm.RX += _cachedLogicalShiftOfIndependent;
 					if (lm.IsNaN)
@@ -553,7 +586,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						double xlm, ylm;
 						layer.CoordinateSystem.LogicalToLayerCoordinates(lm, out xlm, out ylm);
 						newClip.Union(oldClippingRegion);
-						newClip.Exclude(new RectangleF((float)(xlm - _symbolSize / 2), (float)(ylm - _symbolSize / 2), (float)(_symbolSize), (float)(_symbolSize)));
+						newClip.Exclude(new RectangleF((float)(xlm - symbolSize / 2), (float)(ylm - symbolSize / 2), (float)(symbolSize), (float)(symbolSize)));
 						g.Clip = newClip;
 					}
 
@@ -562,15 +595,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						errorBarPath.Reset();
 						layer.CoordinateSystem.GetIsoline(errorBarPath, ll, lm);
 						layer.CoordinateSystem.GetIsoline(errorBarPath, lm, lh);
-						g.DrawPath(_strokePen, errorBarPath);
+						g.DrawPath(strokePen, errorBarPath);
 					}
 					else if (llvalid)
 					{
-						layer.CoordinateSystem.DrawIsoline(g, _strokePen, ll, lm);
+						layer.CoordinateSystem.DrawIsoline(g, strokePen, ll, lm);
 					}
 					else if (lhvalid)
 					{
-						layer.CoordinateSystem.DrawIsoline(g, _strokePen, lm, lh);
+						layer.CoordinateSystem.DrawIsoline(g, strokePen, lm, lh);
 					}
 
 
@@ -581,24 +614,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						{
 							PointF outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(0, 1), out outDir);
-							outDir.X *= (float)(_symbolSize / 2);
-							outDir.Y *= (float)(_symbolSize / 2);
+							outDir.X *= (float)(symbolSize / 2);
+							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
 							// Draw a line from x,y to 
-							g.DrawLine(_strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
+							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
 
 						if (llvalid)
 						{
 							PointF outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(0, 1), out outDir);
-							outDir.X *= (float)(_symbolSize / 2);
-							outDir.Y *= (float)(_symbolSize / 2);
+							outDir.X *= (float)(symbolSize / 2);
+							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
 							// Draw a line from x,y to 
-							g.DrawLine(_strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
+							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
 
 					}

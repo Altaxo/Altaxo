@@ -111,6 +111,7 @@ namespace Altaxo.Gui.Common.Drawing
 				if(null!=_pen)
 				_pen.Changed += EhPenChanged;
 
+				InitControlProperties();
 			}
 		}
 

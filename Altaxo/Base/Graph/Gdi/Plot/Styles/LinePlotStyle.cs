@@ -133,6 +133,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CSPlaneID fillDirection);
 
 
+		protected bool _independentColor;
 		protected PenX _penHolder;
 		protected XYPlotLineStyles.ConnectionStyle _connectionStyle;
 		protected bool _useLineSymbolGap;
@@ -141,9 +142,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected bool _fillArea;
 		protected BrushX _fillBrush; // brush to fill the area under the line
 		protected CSPlaneID _fillDirection; // the direction to fill
-		protected bool _independentColor;
-		/// <summary>If true, the fill color is not set by the color group style, but is independent.</summary>
-		protected bool _independentFillColor;
+		/// <summary>Designates if the fill color is independent or dependent.</summary>
+		protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
 
@@ -266,9 +266,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Try to serialize old version");
+				/*
 				base.Serialize(obj, info);
 				LinePlotStyle s = (LinePlotStyle)obj;
 				info.AddValue("IndependentColor", s._independentColor);
+				*/
 
 			}
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -286,10 +289,46 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Try to serialize old version");
+				/*
 				base.Serialize(obj, info);
 				LinePlotStyle s = (LinePlotStyle)obj;
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("IndependentFillColor", s._independentFillColor);
+				info.AddValue("ConnectCircular", s._connectCircular);
+				*/
+			}
+			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
+
+				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
+				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
+				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
+				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._fillArea = info.GetBoolean("FillArea");
+				s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
+				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
+				s._independentColor = info.GetBoolean("IndependentColor");
+				s._fillColorLinkage = info.GetBoolean("IndependentFillColor") ? ColorLinkage.Independent : ColorLinkage.PreserveAlpha;
+				s._connectCircular = info.GetBoolean("ConnectCircular");
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// <para>Date: 2012-10-10</para>
+		/// Change: instead _independentFillColor being a boolean value, it is now a ColorLinkage enumeration value
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 4)]
+		class XmlSerializationSurrogate4 : XmlSerializationSurrogate0
+		{
+			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				base.Serialize(obj, info);
+				LinePlotStyle s = (LinePlotStyle)obj;
+				info.AddValue("IndependentColor", s._independentColor);
+				info.AddEnum("FillColorLinkage", s._fillColorLinkage);
 				info.AddValue("ConnectCircular", s._connectCircular);
 			}
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -304,7 +343,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
 				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
-				s._independentFillColor = info.GetBoolean("IndependentFillColor");
+				s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
 				s._connectCircular = info.GetBoolean("ConnectCircular");
 				return s;
 			}
@@ -366,7 +405,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._fillDirection = null == from._fillDirection ? null : from._fillDirection.Clone();
 			this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
 			this._independentColor = from._independentColor;
-			this._independentFillColor = from._independentFillColor;
+			this._fillColorLinkage = from._fillColorLinkage;
 			this._connectCircular = from._connectCircular;
 
 			this._parentObject = from._parentObject;
@@ -484,16 +523,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public bool IndependentFillColor
+		public ColorLinkage FillColorLinkage
 		{
 			get
 			{
-				return _independentFillColor;
+				return _fillColorLinkage;
 			}
 			set
 			{
-				bool oldValue = _independentFillColor;
-				_independentFillColor = value;
+				var oldValue = _fillColorLinkage;
+				_fillColorLinkage = value;
 				if (value != oldValue)
 					OnChanged();
 			}
@@ -1748,15 +1787,6 @@ out int lastIndex)
 			get { return !this._independentColor; }
 		}
 
-		/// <summary>
-		/// Sets the fill brush color from a color, but leaves the opacity value unchanged.
-		/// </summary>
-		/// <param name="c">The color to set. Only the RGB values are used from here; the A value (opacity) is ignored and remains unchanged.</param>
-		public void SetFillColorRGB(NamedColor c)
-		{
-			_fillBrush.Color = NamedColor.FromArgb(_fillBrush.Color.Color.A, c.Color.R, c.Color.G, c.Color.B);
-		}
-
 
 		float SymbolSize
 		{
@@ -1790,6 +1820,8 @@ out int lastIndex)
 		{
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
+			else if(this._fillColorLinkage== ColorLinkage.Dependent && this._fillBrush!=null)
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._fillBrush.Color; });
 
 			LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashStyle; });
 		}
@@ -1799,8 +1831,16 @@ out int lastIndex)
 			if (this.IsColorReceiver)
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
 
-			if (this._fillArea && !this._independentFillColor)
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.SetFillColorRGB(c); });
+			if (this._fillArea && ColorLinkage.Independent != _fillColorLinkage)
+			{
+				if (null == _fillBrush)
+					_fillBrush = new BrushX(NamedColors.Black);
+
+				if(_fillColorLinkage== ColorLinkage.Dependent)
+					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { _fillBrush.Color = c; });
+				else if(ColorLinkage.PreserveAlpha == _fillColorLinkage)
+					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { _fillBrush.Color = c.NewWithAlphaValue(_fillBrush.Color.Color.A); });
+			}
 
 			LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(DashStyle c) { this.LinePen.DashStyle = c; });
 

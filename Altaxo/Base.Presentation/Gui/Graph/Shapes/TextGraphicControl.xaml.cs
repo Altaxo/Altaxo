@@ -62,6 +62,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			_backgroundGlue.CbStyle = _cbBackgroundStyle;
 			_backgroundGlue.CbBrush = _cbBackgroundBrush;
 			_backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
+      _backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
 
 			_previewBitmap = new GdiToWpfBitmap(16, 16);
 			m_pnPreview.Source = _previewBitmap.WpfBitmap;

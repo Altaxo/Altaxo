@@ -31,9 +31,10 @@ namespace Altaxo.Graph.Plot.Groups
   public class ColorGroupStyle : IPlotGroupStyle
   {
     bool _isInitialized;
-    NamedColor _color;
     bool _isStepEnabled = true;
     ColorManagement.IColorSet _colorSet;
+		/// <summary>Index of the current color in the color set.</summary>
+    int _colorIndex;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 0)]
@@ -54,6 +55,9 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 1)] // 2011-05-11 adding ColorSet
 		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -74,6 +78,31 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
+    /// <summary>
+    /// <para>Date: 2012-10-25</para>
+    /// <para>Add: ColorIndex</para>
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 2)] 
+    class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ColorGroupStyle s = (ColorGroupStyle)obj;
+        info.AddValue("StepEnabled", s._isStepEnabled);
+        info.AddValue("ColorSet", s._colorSet);
+				info.AddValue("ColorIndex", s._colorIndex);
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : new ColorGroupStyle();
+        s._isStepEnabled = info.GetBoolean("StepEnabled");
+        s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet");
+				s._colorIndex = info.GetInt32("ColorIndex");
+        return s;
+      }
+    }
+
     #endregion
 
     #region Constructors
@@ -87,7 +116,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       this._isStepEnabled = from._isStepEnabled;
       this._isInitialized = from._isInitialized;
-      this._color = from._color;
+			this._colorIndex = from._colorIndex;
       this._colorSet = from._colorSet;
     }
 
@@ -113,9 +142,10 @@ namespace Altaxo.Graph.Plot.Groups
     public void TransferFrom(IPlotGroupStyle fromb)
     {
       ColorGroupStyle from = (ColorGroupStyle)fromb;
-      System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, _color.Color.ToString(), from._isInitialized, from._color.Color.ToString()));
+      //System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, _color.Color.ToString(), from._isInitialized, from._color.Color.ToString()));
       this._isInitialized = from._isInitialized;
-      this._color = from._color;
+			this._colorSet = from._colorSet;
+			this._colorIndex = from._colorIndex;
     }
 
     public void BeginPrepare()
@@ -130,7 +160,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void EndPrepare()
     {
-      System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.EndPrepare, ini={0}, col={1}",_isInitialized,_color.Color.ToString()));
+      //System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.EndPrepare, ini={0}, col={1}",_isInitialized,_color.Color.ToString()));
     }
 
    
@@ -154,9 +184,11 @@ namespace Altaxo.Graph.Plot.Groups
 
     public int Step(int step)
     {
-      int wraps;
-      this._color = ColorManagement.ColorSetExtensions.GetNextPlotColor(_color, step, out wraps);
-      this._colorSet = this._color.ParentColorSet;
+			if (this._colorSet == null)
+				return 0;
+
+			int wraps;
+			this._colorIndex = ColorManagement.ColorSetExtensions.GetNextPlotColorIndex(_colorSet, _colorIndex, step, out wraps);
       return wraps;
     }
 
@@ -190,17 +222,18 @@ namespace Altaxo.Graph.Plot.Groups
     {
       c = c.CoerceParentColorSetToNullIfNotMember();
 
-      if (c.ParentColorSet != null && c.ParentColorSet.IsPlotColorSet)
+      if (c.ParentColorSet != null && c.ParentColorSet.IsPlotColorSet && c.ParentColorSet.Count>0)
       {
-        _color = c;
         _colorSet = c.ParentColorSet;
+				_colorIndex = _colorSet.IndexOf(c);
       }
       else
       {
-        if(null==_colorSet || !_colorSet.IsPlotColorSet)
+        if(null==_colorSet || !_colorSet.IsPlotColorSet || _colorSet.Count==0)
           _colorSet = ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors;
-        if (!_colorSet.TryGetValue(c.Color, out _color))
-          _color = _colorSet[0];
+				_colorIndex = _colorSet.IndexOf(c.Color);
+				if(_colorIndex<0)
+					_colorIndex = 0;
       }
 
       _isInitialized = true;
@@ -210,7 +243,18 @@ namespace Altaxo.Graph.Plot.Groups
     {
       get
       {
-        return _color;
+				if (_colorSet != null && _colorSet.Count > 0)
+				{
+					if (_colorIndex < 0)
+						_colorIndex = 0;
+					if (_colorIndex >= _colorSet.Count)
+						_colorIndex = _colorSet.Count - 1;
+					return _colorSet[_colorIndex];
+				}
+				else
+				{
+					return ColorManagement.BuiltinDarkPlotColorSet.Instance[0];
+				}
       }
     }
 

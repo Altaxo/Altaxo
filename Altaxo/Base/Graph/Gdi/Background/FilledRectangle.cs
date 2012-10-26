@@ -99,10 +99,15 @@ namespace Altaxo.Graph.Gdi.Background
 
 		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
 		{
-			if (_brush != null)
+			Draw(g, _brush, innerArea);
+		}
+
+		public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD innerArea)
+		{
+			if (brush != null)
 			{
-				_brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-				g.FillRectangle(_brush, (RectangleF)innerArea);
+				brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+				g.FillRectangle(brush, (RectangleF)innerArea);
 			}
 		}
 

@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Graph
 				UseFillChanged();
 		}
 
-		private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
+		private void EhIndependentFillColorChanged()
 		{
 			if (null != IndependentFillColorChanged)
 				IndependentFillColorChanged();
@@ -182,23 +182,16 @@ namespace Altaxo.Gui.Graph
 			set
 			{
 				_guiUseFill.IsChecked = value;
-				_guiIndependentFillColor.IsEnabled = value;
+				_guiFillColorLinkage.IsEnabled = value;
 				_guiFillBrush.IsEnabled = value;
 				_guiFillDirection.IsEnabled = value;
 			}
 		}
 
 
-		public bool IndependentFillColor
+		public void InitializeFillColorLinkage(SelectableListNodeList list)
 		{
-			get
-			{
-				return true == _guiIndependentFillColor.IsChecked;
-			}
-			set
-			{
-				_guiIndependentFillColor.IsChecked = value;
-			}
+			_guiFillColorLinkage.Initialize(list);
 		}
 
 		public bool ShowPlotColorsOnlyForFillBrush

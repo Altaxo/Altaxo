@@ -47,6 +47,15 @@ namespace Altaxo.Graph.Gdi.Background
 		void Draw(Graphics g, RectangleD innerArea);
 
 		/// <summary>
+		/// Draws the background with a custom brush. This function must be implemented only if <see cref="SupportsBrush"/> returns <c>true</c>.
+		/// The brush stored in the instance implementing this interface is unchanged and ignored during the drawing.
+		/// </summary>
+		/// <param name="g">Graphics context.</param>
+		/// <param name="brush">Brush used for drawing during this operation.</param>
+		/// <param name="innerArea">The inner area of the item.</param>
+		void Draw(Graphics g, BrushX brush, RectangleD innerArea);
+
+		/// <summary>
 		/// True if the classes color property can be set/reset;
 		/// </summary>
 		bool SupportsBrush { get; }

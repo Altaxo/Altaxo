@@ -35,7 +35,11 @@ namespace Altaxo.Gui.Common
 {
 	public class SingleChoiceRadioStackPanel : StackPanel
 	{
+		public event Action SelectionChanged;
+
 		SelectableListNodeList _choices;
+
+
 
 		public void Initialize(SelectableListNodeList choices)
 		{
@@ -62,6 +66,9 @@ namespace Altaxo.Gui.Common
 				_choices.ClearSelectionsAll();
 				node.IsSelected = true == rb.IsChecked;
 			}
+
+			if (null != SelectionChanged)
+				SelectionChanged();
 		}
 	}
 }

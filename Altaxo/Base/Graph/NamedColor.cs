@@ -163,8 +163,16 @@ namespace Altaxo.Graph
 
 		public NamedColor NewWithOpacityInPercent(int opacityInPercent)
 		{
-			if(opacityInPercent<0 || opacityInPercent>100)
-				throw new ArgumentOutOfRangeException("OpacityInPercent should be a value between 0 and 100");
+			if (opacityInPercent < 0 || opacityInPercent > 100)
+				throw new ArgumentOutOfRangeException("opacityInPercent should be a value between 0 and 100");
+
+			return NewWithAlphaValue((opacityInPercent*255)/100);
+		}
+
+		public NamedColor NewWithAlphaValue(int alphaValue)
+		{
+			if(alphaValue<0 || alphaValue>255)
+				throw new ArgumentOutOfRangeException("alphaValue should be a value between 0 and 255");
 
 			string name = this.Name;
 			if (this.Color.A != 255)
@@ -172,15 +180,15 @@ namespace Altaxo.Graph
 				// Try to retrieve the original name
 				int percIdx = name.LastIndexOf('%');
 				int spaceIdx = name.LastIndexOf(' ');
-				int dummyNumber;
-				if (percIdx == name.Length - 1 && spaceIdx > 0 && int.TryParse(name.Substring(spaceIdx + 1, percIdx - spaceIdx - 1), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out dummyNumber))
+				double dummyNumber;
+				if (percIdx == name.Length - 1 && spaceIdx > 0 && double.TryParse(name.Substring(spaceIdx + 1, percIdx - spaceIdx - 1), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out dummyNumber))
 					name = name.Substring(0, spaceIdx);
 			}
 
-			if (100 == opacityInPercent)
+			if (255 == alphaValue)
 				return new NamedColor(this.Color.ToAlphaValue(255), name);
 			else
-				return new NamedColor(this.Color.ToAlphaValue((byte)((255*opacityInPercent)/100)), string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} {1}%", name, opacityInPercent));
+				return new NamedColor(this.Color.ToAlphaValue((byte)alphaValue), string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} {1:F1}%", name, Math.Round(alphaValue/2.55,0)));
 		}
 
 		public AxoColor Color { get { return _color; } }

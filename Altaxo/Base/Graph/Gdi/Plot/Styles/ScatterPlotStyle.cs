@@ -1047,7 +1047,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// try to get a constant color ...
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
 				// but if there is a color evaluation function, then use that function with higher priority
-				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+				if (!VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; }))
+					_cachedColorForIndexFunction = null;
 			}
 
 			SymbolShapeStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(ShapeAndStyle c) { this.ShapeAndStyle = c; });
@@ -1059,7 +1060,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// try to get a constant symbol size ...
 				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this.SymbolSize = size; });
 				// but if there is an symbol size evaluation function, then use this with higher priority.
-				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+				if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; }))
+					_cachedSymbolSizeForIndexFunction = null;
 			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property

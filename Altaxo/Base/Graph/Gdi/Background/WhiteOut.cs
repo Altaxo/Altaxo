@@ -91,6 +91,11 @@ namespace Altaxo.Graph.Gdi.Background
 			g.FillRectangle(Brushes.White, (float)innerArea.Left, (float)innerArea.Top, (float)innerArea.Width, (float)innerArea.Height);
 		}
 
+		public void Draw(Graphics g, BrushX brush, RectangleD innerArea)
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool SupportsBrush { get { return false; } }
 
 		public BrushX Brush
@@ -105,6 +110,9 @@ namespace Altaxo.Graph.Gdi.Background
 			}
 		}
 		#endregion
+
+
+	
 	}
 }
 

@@ -81,5 +81,34 @@ namespace Altaxo.Graph.ColorManagement
 				return colorSet[0];
 			}
 		}
+
+		/// <summary>
+		/// Gets the index in the plot color set that is the specified number of steps away from the given color index.
+		/// </summary>
+		/// <param name="colorSet">The given color set.</param>
+		/// <param name="idx">Original index in the given color set.</param>
+		/// <param name="step">The number of step.</param>
+		/// <param name="wraps">On return, this value contains the number of wraps that have been made to find the return color. That means, that when by the specified number of steps the end of the color set is reached, a value of one is added to the wraps value.</param>
+		/// <returns>The index in the plot color set that is the specified number of steps away of the specified color index in the set.</returns>
+		public static int GetNextPlotColorIndex(this IColorSet colorSet, int idx, int step, out int wraps)
+		{
+			if (colorSet == null)
+			{
+				wraps = 0;
+				return idx;
+			}
+			if (idx >= 0)
+			{
+				wraps = Calc.BasicFunctions.NumberOfWraps(colorSet.Count, idx, step);
+				return Calc.BasicFunctions.PMod(idx + step, colorSet.Count);
+
+			}
+			else
+			{
+				// default if idx<0
+				wraps = 0;
+				return 0;
+			}
+		}
 	}
 }

@@ -51,9 +51,13 @@ namespace Altaxo.Graph
 	{
 		public static NamedColor ToNamedColor(System.Drawing.Color c)
 		{
-			var r = AxoColor.FromArgb(c.A, c.R, c.G, c.B);
-			return new NamedColor(r);
+			return new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B));
 		}
+
+    public static NamedColor ToNamedColor(System.Drawing.Color c, string name)
+    {
+      return new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), name);
+    }
 
 		public static System.Drawing.Color ToGdi(NamedColor color)
 		{
@@ -234,6 +238,15 @@ namespace Altaxo.Graph
 			else
 				return false;
 		}
+
+    public static bool operator ==(AxoColor x, AxoColor y)
+    {
+      return x.Equals(y);
+    }
+    public static bool operator !=(AxoColor x, AxoColor y)
+    {
+      return !(x.Equals(y));
+    }
 
 		public override string ToString()
 		{

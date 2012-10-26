@@ -344,6 +344,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Tools\TestAllProjectsInFolderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\TypeAndInstanceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -910,6 +914,9 @@
       <DependentUpon>TabbedElementControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\TextBlockUtilities.cs" />
+    <Compile Include="Gui\Common\Tools\TestAllProjectsInFolderControl.xaml.cs">
+      <DependentUpon>TestAllProjectsInFolderControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\TypeAndInstanceControl.xaml.cs">
       <DependentUpon>TypeAndInstanceControl.xaml</DependentUpon>
     </Compile>

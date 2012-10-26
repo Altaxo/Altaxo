@@ -49,7 +49,11 @@ namespace Altaxo.Gui.Graph
 		BackgroundControlsGlue _backgroundGlue;
 		public event Action LabelColumnSelected;
 		public event Action FontSizeChanged;
-		public event Action IndependentColorChanged;
+		public event Action LabelColorLinkageChanged;
+		public event Action BackgroundColorLinkageChanged;
+		public event Action LabelBrushChanged;
+		public event Action BackgroundBrushChanged;
+		public event Action UseBackgroundChanged;
 
 		public XYPlotLabelStyleControl()
 		{
@@ -58,7 +62,12 @@ namespace Altaxo.Gui.Graph
 			_fontControlsGlue = new FontControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize };
 			_fontControlsGlue.SelectedFontChanged += EhFontSizeChanged;
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
+      _backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
+      _backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
+
 		}
+
+    
 
 		private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
 		{
@@ -74,8 +83,8 @@ namespace Altaxo.Gui.Graph
 
 		private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != IndependentColorChanged)
-				IndependentColorChanged();
+			if (null != LabelColorLinkageChanged)
+				LabelColorLinkageChanged();
 		}
 
 		private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
@@ -237,18 +246,40 @@ namespace Altaxo.Gui.Graph
 
     }
 
+		private void EhLabelBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (null != LabelBrushChanged)
+				LabelBrushChanged();
+		}
+
+		private void EhBackgroundBrushChanged(object sender, EventArgs e)
+		{
+			if (null != BackgroundBrushChanged)
+				BackgroundBrushChanged();
+		}
+
+		private void EhBackgroundColorLinkageChanged()
+		{
+			if (null != BackgroundColorLinkageChanged)
+				BackgroundColorLinkageChanged();
+		}
 
 
+		public void InitializeBackgroundColorLinkage(Collections.SelectableListNodeList list)
+		{
+			_guiBackgroundColorLinkage.Initialize(list);
+		}
+
+		public bool ShowPlotColorsOnlyForBackgroundBrush
+		{
+      set { _backgroundGlue.ShowPlotColorsOnly = value; }
+		}
 
 
-
-
-
-
-
-
-
-
-	
+    void EhBackgroundStyleInstanceChanged(object sender, EventArgs e)
+    {
+      if (null != UseBackgroundChanged)
+        UseBackgroundChanged();
+    }
 	}
 }

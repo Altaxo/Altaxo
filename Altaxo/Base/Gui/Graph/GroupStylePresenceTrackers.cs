@@ -27,6 +27,8 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Graph.Plot.Groups;
+
 	/// <summary>
 	/// Tracks the presence or absence of a <see cref="Altaxo.Graph.Plot.Groups.ColorGroupStyle"/> in the group style collection relevant that is relevant for a plot style.
 	/// </summary>
@@ -68,6 +70,16 @@ namespace Altaxo.Gui.Graph
 			return null != _colorGroupStyle && !isIndependentColorChosen;
 		}
 
+
+		/// <summary>
+		/// Queries, if only plot colors should be shown in the Gui interface of the plot style.
+		/// </summary>
+		/// <param name="colorLinkage">Indicates how the color is linked to other colors in the same or in other plot styles, <see cref="ColorLinkage"/>.</param>
+		/// <returns><c>True</c> if in the Gui interface of the plot style only plot colors are allowed to choose; otherwise, <c>false</c>.</returns>
+		public bool MustUsePlotColorsOnly(ColorLinkage colorLinkage)
+		{
+			return null != _colorGroupStyle && colorLinkage == ColorLinkage.Dependent;
+		}
 
 
 		public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentNode doc)

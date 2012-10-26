@@ -35,8 +35,26 @@ namespace Altaxo.Graph.ColorManagement
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BuiltinDarkPlotColorSet), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BuiltinPlotColorSet", 0)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old versions not supported");
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				info.GetString("Name");
+				return BuiltinDarkPlotColorSet.Instance;
+			}
+		}
+
+		/// <summary>
+		/// <para>Date: 2012-10-25</para>
+		/// <para>This is the initial version of serialization of this instance. It is labelled with version 1, because this class is the predecessor of the original Altaxo.Graph.BuiltinPlotColorSet.</para>
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BuiltinDarkPlotColorSet), 1)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{

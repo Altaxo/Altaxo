@@ -97,11 +97,35 @@ namespace Altaxo.Graph.ColorManagement
 		bool TryGetValue(AxoColor colorValue, string colorName, out NamedColor namedColor);
 
 		/// <summary>
+		/// Get the indexes of a color with a given color value.
+		/// </summary>
+		/// <param name="colorValue">The color value.</param>
+		/// <returns>The index of the color in this color set, if a such a color was found in the set. Otherwise, a negative value is returned.</returns>
+		int IndexOf(AxoColor colorValue);
+
+		/// <summary>
+		/// Get the indexes of a color with a given color value and name.
+		/// </summary>
+		/// <param name="colorValue">The named color value.</param>
+		/// <returns>The index of the color in this color set, if a such a color was found in the set. The color must match with both color value and name. Otherwise, when such a color is not found, a negative value is returned.</returns>
+		int IndexOf(NamedColor colorValue);
+
+
+		/// <summary>
 		/// Adds a color with the specified color value and name to the collection.
 		/// </summary>
 		/// <param name="colorValue">The color value.</param>
 		/// <param name="name">The name of the color.</param>
 		/// <returns>The freshly added named color with the color value and name provided by the arguments.</returns>
 		NamedColor Add(AxoColor colorValue, string name);
+
+    /// <summary>
+    /// Determines whether this color set has the same colors (matching by name and color value, and index) as another set.
+    /// </summary>
+    /// <param name="other">The other set to compare with.</param>
+    /// <returns>
+    ///   <c>true</c> if this set has the same colors as the other set; otherwise, <c>false</c>.
+    /// </returns>
+    bool HasSameContentAs(IList<NamedColor> other);
 	}
 }

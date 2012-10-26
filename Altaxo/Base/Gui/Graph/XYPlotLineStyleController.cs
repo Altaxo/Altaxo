@@ -32,6 +32,7 @@ using Altaxo.Main;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Plot.Groups;
 
 using Altaxo.Gui.Common.Drawing;
 
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Graph
 		/// <value><c>true</c> if only plot colors should be shown for fill brush; otherwise, <c>false</c>.</value>
 		bool ShowPlotColorsOnlyForFillBrush { set; }
 
-		bool IndependentFillColor { get; set; }
+		void InitializeFillColorLinkage(SelectableListNodeList list);
 
     /// <summary>
     /// Gets/sets the contents of the fill color combobox.
@@ -134,6 +135,7 @@ namespace Altaxo.Gui.Graph
 		SelectableListNodeList _lineConnectChoices;
 
 		SelectableListNodeList _areaFillDirectionChoices;
+		SelectableListNodeList _fillColorLinkageChoices;
 
 		protected override void Initialize(bool initData)
 		{
@@ -141,6 +143,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
 				_lineConnectChoices = new SelectableListNodeList(_doc.Connection);
+				_fillColorLinkageChoices = new SelectableListNodeList(_doc.FillColorLinkage);
 				InitializeFillDirectionChoices();
 			}
 
@@ -157,8 +160,8 @@ namespace Altaxo.Gui.Graph
 
 				// Fill area
 				_view.UseFill = _doc.FillArea;
-				_view.IndependentFillColor = _doc.IndependentFillColor;
-				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				_view.InitializeFillColorLinkage(_fillColorLinkageChoices);
+				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
 				_view.FillBrush = null != _doc.FillBrush ? _doc.FillBrush : new BrushX(NamedColors.Transparent);
 				_view.InitializeFillDirection(_areaFillDirectionChoices);
 			}
@@ -208,10 +211,10 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != _view)
 			{
-				_doc.IndependentFillColor = _view.IndependentFillColor;
+				_doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
 				_doc.IndependentLineColor = _view.IndependentLineColor;
 				if (_view.UseFill)
-					_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+					_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
 				if (IsLineUsed)
 					_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
 			}
@@ -221,10 +224,13 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != _view)
 			{
-				_doc.IndependentFillColor = _view.IndependentFillColor;
-				if (false == _view.IndependentFillColor && IsLineUsed && false == _view.IndependentLineColor)
+				_doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
+				if (ColorLinkage.Dependent == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
 					InternalSetFillColorToLineColor();
-				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				if (ColorLinkage.PreserveAlpha == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
+					InternalSetFillColorRGBToLineColor();
+
+				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
 			}
 		}
 
@@ -233,7 +239,7 @@ namespace Altaxo.Gui.Graph
 			if (null != _view)
 			{
 				_doc.IndependentLineColor = _view.IndependentLineColor;
-				if (false == _view.IndependentLineColor && _view.UseFill && false == _view.IndependentFillColor)
+				if (false == _view.IndependentLineColor && _view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage)
 					InternalSetLineColorToFillColor();
 				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
 			}
@@ -243,7 +249,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != _view)
 			{
-				if (_view.UseFill && false == _view.IndependentFillColor && IsLineUsed && false == _view.IndependentLineColor)
+				if (_view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
 				{
 					if (_view.LinePen.Color != _view.FillBrush.Color)
 						InternalSetLineColorToFillColor();
@@ -254,10 +260,15 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != _view)
 			{
-				if (_view.UseFill && false == _view.IndependentFillColor && IsLineUsed && false == _view.IndependentLineColor)
+				if (_view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
 				{
 					if (_view.FillBrush.Color != _view.LinePen.Color)
 						InternalSetFillColorToLineColor();
+				}
+				else if (_view.UseFill && ColorLinkage.PreserveAlpha == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
+				{
+					if (_view.FillBrush.Color != _view.LinePen.Color)
+						InternalSetFillColorRGBToLineColor();
 				}
 			}
 
@@ -265,6 +276,9 @@ namespace Altaxo.Gui.Graph
 		}
 
 
+		/// <summary>
+		/// Internal sets the fill color to the color of the line.
+		/// </summary>
 		void InternalSetFillColorToLineColor()
 		{
 			var newBrush = _view.FillBrush.Clone();
@@ -272,6 +286,20 @@ namespace Altaxo.Gui.Graph
 			_view.FillBrush = newBrush;
 		}
 
+		/// <summary>
+		/// Internal sets the fill color to the color of the line, but here only the RGB component is used from the line color. The A component of the fill color remains unchanged.
+		/// </summary>
+		void InternalSetFillColorRGBToLineColor()
+		{
+			var newBrush = _view.FillBrush.Clone();
+			var c = _view.LinePen.Color.NewWithAlphaValue(newBrush.Color.Color.A); ;
+			newBrush.Color = c;
+			_view.FillBrush = newBrush;
+		}
+
+		/// <summary>
+		/// Internal sets the color of the line to the color of the fill brush.
+		/// </summary>
 		void InternalSetLineColorToFillColor()
 		{
 			var newPen = _view.LinePen.Clone();
@@ -310,7 +338,7 @@ namespace Altaxo.Gui.Graph
 
 			if (true == newValue)
 			{
-				if (_view.UseFill && false == _view.IndependentFillColor)
+				if (_view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage)
 				{
 					InternalSetLineColorToFillColor();
 				}
@@ -392,7 +420,7 @@ namespace Altaxo.Gui.Graph
 
         // Line fill color
 				_doc.FillBrush = _view.FillBrush;
-        _doc.IndependentFillColor = _view.IndependentFillColor;
+				// _doc.FillColorLinkage = _view.FillColorLinkage; // already done during showing the view, see EhFillColorLinkageChanged()
 
 				if (_useDocumentCopy)
 					CopyHelper.Copy(ref _originalDoc, _doc);

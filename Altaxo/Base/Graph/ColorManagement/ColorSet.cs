@@ -32,6 +32,7 @@ namespace Altaxo.Graph.ColorManagement
 		protected readonly string _name;
 		protected readonly ColorSetLevel _colorSetLevel;
 		bool _isPlotColorSet;
+    DateTime _creationDate;
 
 		protected Dictionary<string, int> _nameToIndexDictionary;
 		protected Dictionary<AxoColor, int> _colorToIndexDictionary;
@@ -54,7 +55,8 @@ namespace Altaxo.Graph.ColorManagement
 				var s = (ColorSet)obj;
 				info.AddValue("Name", s._name);
 				info.AddEnum("Level", s._colorSetLevel);
-				info.AddValue("IsPlotColorSet", s._isPlotColorSet);
+        info.AddValue("CreationDate", s._creationDate);
+        info.AddValue("IsPlotColorSet", s._isPlotColorSet);
 
 				info.CreateArray("Colors", s.Count);
 
@@ -73,26 +75,23 @@ namespace Altaxo.Graph.ColorManagement
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				string name = info.GetString("Name");
+				string colorSetName = info.GetString("Name");
 				var colorSetLevel = (ColorManagement.ColorSetLevel)info.GetEnum("Level", typeof(ColorManagement.ColorSetLevel));
-
-				var s = (null == o) ? new ColorSet(name, colorSetLevel) : (ColorSet)o;
-
-
-				s._isPlotColorSet = info.GetBoolean("IsPlotColorSet");
+        var creationDate = info.GetDateTime("CreationDate");
+				var isPlotColorSet = info.GetBoolean("IsPlotColorSet");
 
 				int count = info.OpenArray("Colors");
-
+        var colors = new NamedColor[count];
 				for (int i = 0; i < count; ++i)
 				{
-					name = info.GetStringAttribute("Name");
+					string name = info.GetStringAttribute("Name");
 					string cvalue = info.GetString("e");
-					s.Add(new NamedColor(AxoColor.FromInvariantString(cvalue), name));
+					colors[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name);
 				}
 
 				info.CloseArray(count);
 
-				return s;
+				return ColorSetManager.Instance.GetDeserializedColorSet(colorSetName, colorSetLevel,creationDate,isPlotColorSet,colors);
 			}
 		}
 
@@ -131,6 +130,7 @@ namespace Altaxo.Graph.ColorManagement
 			if (colorSetLevel == ColorSetLevel.Builtin)
 				throw new ArgumentOutOfRangeException("Argument colorSetLevel must not be 'ColorSetLevel.Builtin'. Please use a separate class for a new built-in color set");
 
+      _creationDate = DateTime.UtcNow;
 			_bulkChanger = new Main.TemporaryDisabler(BuildSideDictionaries);
 
 
@@ -341,6 +341,42 @@ namespace Altaxo.Graph.ColorManagement
       }
     }
 
+    /// <summary>
+    /// Get the index of the given color in the ColorSet.
+    /// </summary>
+    /// <param name="color">The color.</param>
+    /// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
+    public new virtual int IndexOf(NamedColor color)
+    {
+      int idx;
+      if (_namecolorToIndexDictionary.TryGetValue(new ColorNameKey(color.Color, color.Name), out idx))
+      {
+        return idx;
+      }
+      else
+      {
+        return -1;
+      }
+    }
+
+		/// <summary>
+		/// Get the index of the given color in the ColorSet.
+		/// </summary>
+		/// <param name="color">The color.</param>
+		/// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
+		public virtual int IndexOf(AxoColor color)
+		{
+			int idx;
+			if (_colorToIndexDictionary.TryGetValue(color, out idx))
+			{
+				return idx;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+
 		/// <summary>
 		/// Adds a color with the specified color value and name to the collection.
 		/// </summary>
@@ -375,6 +411,18 @@ namespace Altaxo.Graph.ColorManagement
 		{
 			_isPlotColorSet = true;
 		}
+
+    /// <summary>
+    /// Determines whether this color set has the same colors (matching by name and color value, and index) as another set.
+    /// </summary>
+    /// <param name="other">The other set to compare with.</param>
+    /// <returns>
+    ///   <c>true</c> if this set has the same colors as the other set; otherwise, <c>false</c>.
+    /// </returns>
+    public bool HasSameContentAs(IList<NamedColor> other)
+    {
+      return BuiltinColorSet.HaveSameNamedColors(this, other);
+    }
 	}
 
 }

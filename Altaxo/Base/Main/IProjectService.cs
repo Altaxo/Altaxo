@@ -151,6 +151,12 @@ namespace Altaxo.Main
     void SaveProjectAs();
 
     /// <summary>
+    /// Saves the project under the given file name.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    void SaveProject(string fileName);
+
+    /// <summary>
     /// Saves a project under the current file name.
     /// </summary>
     void SaveProject();

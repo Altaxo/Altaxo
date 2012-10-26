@@ -90,7 +90,6 @@ namespace Altaxo.Graph.Gdi.Background
 
 		public void OnDeserialization(object sender)
 		{
-			SetCachedBrushes();
 		}
 
 		#endregion
@@ -128,28 +127,29 @@ namespace Altaxo.Graph.Gdi.Background
 			this._cachedShadowBrush = null;
 		}
 
-		private void SetCachedBrushes()
+		private static BrushX GetShadowBrush(BrushX mainBrush)
 		{
-			switch (_brush.BrushType)
+			BrushX cachedShadowBrush = null;
+			switch (mainBrush.BrushType)
 			{
 				default:
 				case BrushType.SolidBrush:
-					this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
+					cachedShadowBrush = new BrushX(NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0));
 					break;
 				case BrushType.HatchBrush:
-					this._cachedShadowBrush = new BrushX(NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0));
+					cachedShadowBrush = new BrushX(NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0));
 					break;
 				case BrushType.TextureBrush:
-					this._cachedShadowBrush = new BrushX(NamedColors.Black);
+					cachedShadowBrush = new BrushX(NamedColors.Black);
 					break;
 				case BrushType.LinearGradientBrush:
 				case BrushType.PathGradientBrush:
-					this._cachedShadowBrush = (BrushX)_brush.Clone();
-					this._cachedShadowBrush.Color = NamedColor.FromArgb(_brush.Color.Color.A, 0, 0, 0);
-					this._cachedShadowBrush.BackColor = NamedColor.FromArgb(_brush.BackColor.Color.A, 0, 0, 0);
+					cachedShadowBrush = (BrushX)mainBrush.Clone();
+					cachedShadowBrush.Color = NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0);
+					cachedShadowBrush.BackColor = NamedColor.FromArgb(mainBrush.BackColor.Color.A, 0, 0, 0);
 					break;
 			}
-
+			return cachedShadowBrush;
 		}
 
 		#region IBackgroundStyle Members
@@ -164,24 +164,39 @@ namespace Altaxo.Graph.Gdi.Background
 
 		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
 		{
-			if (null == _cachedShadowBrush)
-				SetCachedBrushes();
+			Draw(g, _brush, innerArea);
+		}
+
+		public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD innerArea)
+		{
+			BrushX shadowBrush = null;
+			if (object.ReferenceEquals(brush, _brush))
+			{
+				if (null == _cachedShadowBrush)
+					shadowBrush = _cachedShadowBrush = GetShadowBrush(brush);
+				else
+					shadowBrush = _cachedShadowBrush;
+			}
+			else
+			{
+				shadowBrush = GetShadowBrush(brush);
+			}
 
 			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2);
 
 			// please note: m_Bounds is already extended to the shadow
 
 			// first the shadow
-			_cachedShadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+			shadowBrush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
 
 			// shortCuts to floats
 			RectangleF iArea = (RectangleF)innerArea; float shadowLength = (float)_shadowLength;
 			g.TranslateTransform(shadowLength, shadowLength);
-			g.FillRectangle(_cachedShadowBrush, iArea);
+			g.FillRectangle(shadowBrush, iArea);
 			g.TranslateTransform(-shadowLength, -shadowLength);
 
-			_brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-			g.FillRectangle(_brush, iArea);
+			brush.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
+			g.FillRectangle(brush, iArea);
 			g.DrawRectangle(Pens.Black, iArea.Left, iArea.Top, iArea.Width, iArea.Height);
 		}
 
@@ -207,5 +222,8 @@ namespace Altaxo.Graph.Gdi.Background
 		}
 		#endregion
 
+
+
+		
 	}
 }

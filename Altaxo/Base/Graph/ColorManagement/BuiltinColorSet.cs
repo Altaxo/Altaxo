@@ -27,6 +27,9 @@ using System.Text;
 
 namespace Altaxo.Graph.ColorManagement
 {
+  /// <summary>
+  /// 
+  /// </summary>
 	public abstract class BuiltinColorSet : IColorSet
   {
 		protected List<NamedColor> _innerList;
@@ -216,6 +219,24 @@ namespace Altaxo.Graph.ColorManagement
 		}
 
 		/// <summary>
+		/// Get the index of the given color in the ColorSet.
+		/// </summary>
+		/// <param name="color">The color.</param>
+		/// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
+		public virtual int IndexOf(AxoColor color)
+		{
+			int idx;
+			if (_colorToIndexDictionary.TryGetValue(color, out idx))
+			{
+				return idx;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+
+		/// <summary>
 		/// Gets the index of the <see cref="NamedColor"/> item in the set.
 		/// </summary>
 		/// <param name="item">The item to look for.</param>
@@ -354,6 +375,61 @@ namespace Altaxo.Graph.ColorManagement
 			if (!IsPlotColorSet)
 				throw new InvalidOperationException("This is a built-in color set that can not be declared as plot color set");
 		}
+
+
+    /// <summary>
+    /// Determines whether this color set has the same colors (matching by name and color value, and index) as another set.
+    /// </summary>
+    /// <param name="other">The other set to compare with.</param>
+    /// <returns>
+    ///   <c>true</c> if this set has the same colors as the other set; otherwise, <c>false</c>.
+    /// </returns>
+    public bool HasSameContentAs(IList<NamedColor> other)
+    {
+      return HaveSameNamedColors(this,other);
+    }
+
+    static System.Security.Cryptography.MD5CryptoServiceProvider _md5Evaluator = new System.Security.Cryptography.MD5CryptoServiceProvider();
+    static System.Text.UTF8Encoding _textEncoder = new UTF8Encoding();
+
+
+    /// <summary>
+    /// Computes from a set of named colors an MD5 hash value. The hash value considers both the name and the value of the colors (but not the set the color belongs to).
+    /// </summary>
+    /// <param name="colors">The enumeration of named colors.</param>
+    /// <returns>An hash value that is unique to this enumeration of colors.</returns>
+    public static byte[] ComputeNamedColorHash(IEnumerable<NamedColor> colors)
+    {
+      var stb = new StringBuilder();
+      foreach(var color in colors)
+      {
+        stb.Append(color.Name);
+        stb.Append(color.Color.ToInvariantString());
+      }
+
+      if (stb.Length == 0)                 // if the enumeration is empty
+        stb.Append("EmptyAltaxoColorSet"); // then use this string to compute the hash
+
+      var bytes = _textEncoder.GetBytes(stb.ToString());
+      return _md5Evaluator.ComputeHash(bytes);
+    }
+
+    public static bool HaveSameNamedColors(IColorSet first, IList<NamedColor> other)
+    {
+      if (first.Count != other.Count)
+        return false;
+      int len = first.Count;
+
+      for (int i = 0; i < len; ++i)
+        if (first[i].Name != other[i].Name)
+          return false;
+
+      for (int i = 0; i < len; ++i)
+        if (first[i].Color != other[i].Color)
+          return false;
+
+      return true;
+    }
 	}
 
 }

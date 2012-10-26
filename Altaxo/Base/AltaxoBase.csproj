@@ -207,8 +207,10 @@
     <Compile Include="Graph\Gdi\LabelFormatting\DateTimeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\FreeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBase.cs" />
+    <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Graph\NamedColor.cs" />
     <Compile Include="Graph\NamedColors.cs" />
+    <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\VisibleLightSpectrumController.cs" />
@@ -250,6 +252,7 @@
     <Compile Include="Gui\GuiAngleUnits.cs" />
     <Compile Include="Gui\GuiRelationUnits.cs" />
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
+    <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />
     <Compile Include="Main\Services\PropertyReflection\DisplayOrderAttribute.cs" />
     <Compile Include="Main\Services\PropertyReflection\ExpandableProperty.cs" />
