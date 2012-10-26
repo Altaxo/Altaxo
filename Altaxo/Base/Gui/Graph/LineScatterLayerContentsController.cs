@@ -115,42 +115,6 @@ namespace Altaxo.Gui.Graph
   [ExpectedTypeOfView(typeof(ILineScatterLayerContentsView))]
   public class LineScatterLayerContentsController : ILineScatterLayerContentsViewEventSink, IMVCANController
 	{
-		#region Special tree nodes
-
-		class TableNode : NGTreeNode
-		{
-			public TableNode(string tableName)
-				: base(true)
-			{
-				base.Text = tableName;
-			}
-
-			public override bool IsSelected
-			{
-				get
-				{
-					return false;
-				}
-				set
-				{
-				}
-			}
-
-			protected override void LoadChildren()
-			{
-				if(!Current.Project.DataTableCollection.Contains(Text))
-					return;
-
-				var table = Current.Project.DataTableCollection[Text];
-
-				for(int i=0;i<table.DataColumnCount;++i)
-					Nodes.Add(new NGTreeNode(table.DataColumns.GetColumnName(i)));
-				base.LoadChildren();
-			}
-		}
-
-		#endregion
-
 		protected ILineScatterLayerContentsView _view;
     protected PlotItemCollection _doc;
     protected PlotItemCollection _originalDoc;
@@ -440,28 +404,59 @@ namespace Altaxo.Gui.Graph
     /// <param name="selNodes"></param>
     public void EhView_PutData(NGTreeNode[] selNodes)
     {
+			var columnsAlreadyProcessed = new HashSet<Altaxo.Data.DataColumn>();
+
+			var validNodes = NGTreeNode.NodesWithoutSelectedChilds(selNodes);
+
 
       // first, put the selected node into the list, even if it is not checked
-      foreach (NGTreeNode sn  in selNodes)
+      foreach (NGTreeNode sn  in validNodes)
       {
-        if(sn.Tag is Altaxo.Data.DataColumn)
+				var dataCol = sn.Tag as Altaxo.Data.DataColumn;
+				if (null!=dataCol && !columnsAlreadyProcessed.Contains(dataCol))
         {
-          IGPlotItem newItem = this.CreatePlotItem(sn.Tag as Altaxo.Data.DataColumn);
-					if (null != newItem)
-					{
-						_doc.Add(newItem);
-						NGTreeNode newNode = new NGTreeNode();
-						newNode.Text = newItem.GetName(2);
-						newNode.Tag = newItem;
-						_plotItemsTree.Add(newNode);
-					}
+					columnsAlreadyProcessed.Add(dataCol);
+					CreatePlotItemNode(dataCol);
         }
+				else if (sn is SingleColumnChoiceController.TableNode)
+				{
+					var rangeNode = sn as SingleColumnChoiceController.TableNode;
+					var coll = rangeNode.Collection;
+					var firstCol = rangeNode.FirstColumn;
+					var columnCount = rangeNode.ColumnCount;
+
+					for (int i = firstCol; i < firstCol + columnCount; ++i)
+					{
+						dataCol = coll[i];
+						if (coll.GetColumnKind(i) == ColumnKind.V && !columnsAlreadyProcessed.Contains(dataCol)) // add only value columns as plot items
+						{
+							columnsAlreadyProcessed.Add(dataCol);
+							CreatePlotItemNode(dataCol);
+						}
+					}
+				}
       }
 
       _view.Contents_SetItems(_plotItemsTree);
       _view.DataAvailable_ClearSelection();
       SetDirty();
     }
+
+
+
+
+		private void CreatePlotItemNode(DataColumn dataCol)
+		{
+			IGPlotItem newItem = this.CreatePlotItem(dataCol);
+			if (null != newItem)
+			{
+				_doc.Add(newItem);
+				NGTreeNode newNode = new NGTreeNode();
+				newNode.Text = newItem.GetName(2);
+				newNode.Tag = newItem;
+				_plotItemsTree.Add(newNode);
+			}
+		}
 
     public void EhView_PullDataClick(NGTreeNode[] selNodes)
     {
