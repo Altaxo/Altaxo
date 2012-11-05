@@ -249,7 +249,7 @@ namespace Altaxo.Gui.Graph.Shapes
     {
       var newSize = _view.SelectedFontSize;
       FontX oldFont = this._doc.Font;
-      this._doc.Font = GdiFontManager.GetFontWithNewSize(oldFont, newSize);
+      this._doc.Font = oldFont.GetFontWithNewSize(newSize);
       _view.InvalidatePreviewPanel();
 
     }

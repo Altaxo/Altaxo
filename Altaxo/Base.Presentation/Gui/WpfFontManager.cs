@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 
 using sd = System.Drawing;
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui
@@ -37,117 +39,86 @@ namespace Altaxo.Gui
   // GlyphTypeface: corresponds to a specific font file on the disk
 
 
+	/// <summary>
+	/// Manages Wpf fonts and correspondes them to the Altaxo font class (<see cref="FontX"/>).
+	/// </summary>
   public static class WpfFontManager
   {
 
-    static Dictionary<string, Typeface> _fontDictionary = new Dictionary<string, Typeface>();
-    static Dictionary<string, int> _fontReferenceCounter = new Dictionary<string, int>();
+    static ConcurrentDictionary<string, Typeface> _fontDictionary = new ConcurrentDictionary<string, Typeface>();
+    static ConcurrentDictionary<string, int> _fontReferenceCounter = new ConcurrentDictionary<string, int>();
 
 
-    static void Register()
+    public static void Register()
     {
       // empty function - but when called, the static constructor is called, which then registers this FontManager with FontX
     }
 
     static WpfFontManager()
     {
-      FontX.FontConstructed += EhAnnounceCreationOfFontX;
-      FontX.FontDestructed += EhAnnounceDisposalOfFontX;
+      FontX.FontConstructed += EhAnnounceConstructionOfFontX;
+      FontX.FontDestructed += EhAnnounceDestructionOfFontX;
     }
 
-    static void EnumerateGlyphTypefaces()
-    {
-      var gdiStyles = Enum.GetValues(typeof(sd.FontStyle));
-      var gdiFamilies = sd.FontFamily.Families;
-      foreach (var gdiFamily in gdiFamilies)
-      {
-        var wpfFamily = new FontFamily(gdiFamily.Name);
 
-        foreach (sd.FontStyle gdiStyle in gdiStyles)
-        {
-          if (gdiFamily.IsStyleAvailable(gdiStyle))
-          {
-            foreach (FamilyTypeface wpfTypeface in wpfFamily.FamilyTypefaces)
-            {
-              if (Matches(wpfTypeface, gdiStyle))
-              {
 
-              }
-            }
-          }
-        }
-      }
-    }
-
-    static bool Matches(FamilyTypeface tf, sd.FontStyle gdiStyle)
-    {
-      bool isGdiItalic = gdiStyle.HasFlag(sd.FontStyle.Italic);
-      bool isWpfItalic = tf.Style == System.Windows.FontStyles.Italic;
-      if (isGdiItalic != isWpfItalic)
-        return false;
-
-      bool isGdiBold = gdiStyle.HasFlag(sd.FontStyle.Bold);
-      bool isWpfBold = tf.Weight >= System.Windows.FontWeights.Bold;
-      if (isGdiBold != isWpfBold)
-        return false;
-
-      return true;
-    }
-
+		/// <summary>
+		/// Retrieves a Wpf <see cref="System.Windows.Media.Typeface"/> from a given <see cref="FontX"/> instance. Since a <see cref="System.Windows.Media.Typeface"/> doesn't contain
+		/// information about the font size, you are responsible for drawing the font with the intended size. You can use <see cref="FontX.Size"/>, but be aware that the size is returned in units
+		/// of points (1/72 inch), but Wpf expects units of 1/96 inch.
+		/// </summary>
+		/// <param name="fontX">The font X to convert to a Wpf typeface.</param>
+		/// <returns>The Wpf typeface that corresponds to the provided <see cref="FontX"/> instance.</returns>
     public static System.Windows.Media.Typeface ToWpf(this FontX fontX)
     {
-      System.Windows.Media.Typeface result;
-      if (!_fontDictionary.TryGetValue(fontX.InvariantDescriptionString, out result))
+      string fontID = fontX.InvariantDescriptionString;
+      Typeface result;
+      if (!_fontDictionary.TryGetValue(fontID, out result))
       {
-        const string stylePrefix = ", style=";
-        string fontID = fontX.InvariantDescriptionString;
-
-        int idx1 = fontID.IndexOf(','); // first comma after the font name
-        string fontName = fontID.Substring(0, idx1);
-        int idx2 = fontID.IndexOf(stylePrefix);
-        bool isBold = false;
-        bool isItalic = false;
-        if (idx2 > 0)
-        {
-          idx2 += stylePrefix.Length;
-          isBold = fontID.IndexOf("Bold", idx2) > 0;
-          isItalic = fontID.IndexOf("Italic", idx2) > 0;
-        }
-
-        result = new Typeface(new FontFamily(fontName), isItalic ? System.Windows.FontStyles.Italic : System.Windows.FontStyles.Normal, isBold ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal, System.Windows.FontStretches.Normal);
-        _fontDictionary.Add(fontID, result);
+        result = _fontDictionary.AddOrUpdate(fontID,
+          x => CreateNewTypeface(fontX),
+          (x, y) => y);
       }
       return result;
-      
     }
 
-    private static void EhAnnounceCreationOfFontX(FontX font)
+		/// <summary>
+		/// Creates a new typeface from a given <see cref="FontX"/> instance.
+		/// </summary>
+		/// <param name="font">The font instance..</param>
+		/// <returns>The typeface corresponding with the provided <see cref="FontX"/> instance.</returns>
+    private static Typeface CreateNewTypeface(FontX font)
     {
+      var style = font.Style;
+      var result = new Typeface(new FontFamily(font.FontFamilyName),
+         style.HasFlag(FontXStyle.Italic) ? System.Windows.FontStyles.Italic : System.Windows.FontStyles.Normal,
+         style.HasFlag(FontXStyle.Bold) ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal,
+         System.Windows.FontStretches.Normal);
+      return result;
+    }
 
-      int refCount;
-      string fontID = font.InvariantDescriptionString;
-      if (!_fontReferenceCounter.TryGetValue(fontID, out refCount))
-        _fontReferenceCounter.Add(fontID, 1);
-      else
-        _fontReferenceCounter[fontID] = refCount + 1;
+		/// <summary>
+		/// Is called upon every construction of a <see cref="FontX"/> instance.
+		/// </summary>
+		/// <param name="fontID">The invariant description string of the constructed <see cref="FontX"/> instance.</param>
+		private static void EhAnnounceConstructionOfFontX(string fontID)
+    {
+      _fontReferenceCounter.AddOrUpdate(fontID, 1, (x, y) => y + 1);
     }
 
 
-    private static void EhAnnounceDisposalOfFontX(FontX font)
+		/// <summary>
+		/// Is called upon every destruction of a <see cref="FontX"/> instance.
+		/// </summary>
+		/// <param name="fontID">The invariant description string of the destructed <see cref="FontX"/> instance.</param>
+		private static void EhAnnounceDestructionOfFontX(string fontID)
     {
-      int refCount;
-      string fontID = font.InvariantDescriptionString;
-      if (_fontReferenceCounter.TryGetValue(fontID, out refCount))
+      int refCount = _fontReferenceCounter.AddOrUpdate(fontID, 0, (x, y) => Math.Max(0, y - 1));
+      if (0 == refCount)
       {
-        if (refCount <= 1)
-        {
-          _fontReferenceCounter.Remove(fontID);
-          _fontDictionary.Remove(fontID);
-        }
-        else
-        {
-          _fontReferenceCounter[fontID] = refCount - 1;
-        }
+        _fontReferenceCounter.TryRemove(fontID, out refCount);
+        Typeface nativeFont;
+        _fontDictionary.TryRemove(fontID, out nativeFont);
       }
     }
   }

@@ -183,7 +183,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			var orginalY = morg.Y;
 			morg.X += size1.Width;
 			morg.Y += size1.Height / 3;
-      FontX font2 = GdiFontManager.GetFontWithNewSize(font, font.Size * 2 / 3.0);
+      FontX font2 = font.GetFontWithNewSize(font.Size * 2 / 3.0);
       var gdiFont2 = font2.ToGdi();
 				g.DrawString(exponent, gdiFont2, brush, morg);
 				if(!string.IsNullOrEmpty(_suffix))
@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
 
 			FontX localfont1 = font;
-			FontX localfont2 = GdiFontManager.GetFontWithNewSize(font, font.Size * 2 / 3);
+			FontX localfont2 = font.GetFontWithNewSize(font.Size * 2 / 3);
 
 			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 

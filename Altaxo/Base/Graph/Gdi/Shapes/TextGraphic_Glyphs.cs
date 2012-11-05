@@ -42,23 +42,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		class FontInfo 
 		{
-			public FontX Font { get; private set; } // Font of this font identifier
 			public double cyLineSpace { get; private set; } // cached linespace value of the font
 			public double cyAscent { get; private set; }    // cached ascent value of the font
 			public double cyDescent { get; private set; } /// cached descent value of the font
       public double Size { get; private set; }                                                    
 
-			private FontInfo(FontX id)
+			private FontInfo()
 			{
-				Font = id;
 			}
-
-			
-		
 
 			public static FontInfo Create(Graphics g, FontX font)
 			{
-				FontInfo result = new FontInfo(font);
+				FontInfo result = new FontInfo();
 				InternalGetInformation(g, result, font);
 				return result;
 			}
@@ -75,8 +70,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				result.cyAscent = result.cyLineSpace * iCellAscent / iCellSpace;
 				result.cyDescent = result.cyLineSpace * iCellDescent / iCellSpace;
 			}
-
-
 		}
 
 		class FontCache : IDisposable
@@ -128,16 +121,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return (StyleContext)MemberwiseClone();
 			}
 
-			public void SetFont(FontFamily family, double size, FontStyle style)
-			{
-				FontId = GdiFontManager.GetFont(family.Name, size, style);
-			}
-
-			public void SetFont(string family, double size, FontStyle style)
-			{
-        FontId = GdiFontManager.GetFont(family, size, style);
-			}
-
       public void SetFont(FontX font)
       {
         FontId = font;
@@ -145,12 +128,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public void ScaleFont(double scale)
 			{
-				FontId = GdiFontManager.GetFontWithNewSize(FontId, scale * FontId.Size);
+				FontId = FontId.GetFontWithNewSize(scale * FontId.Size);
 			}
 
-			public void StyleFont(FontStyle style)
+			public void StyleFont(FontXStyle style)
 			{
-				FontId = GdiFontManager.GetFontWithNewStyle(FontId, style);
+				FontId = FontId.GetFontWithNewStyle(style);
 			}
 
 		}

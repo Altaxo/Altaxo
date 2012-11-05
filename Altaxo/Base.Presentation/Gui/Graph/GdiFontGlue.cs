@@ -37,7 +37,9 @@ using System.Windows.Shapes;
 
 
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+
 using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph
@@ -46,7 +48,7 @@ namespace Altaxo.Gui.Graph
 	{
 		double _fontSize = 12;
 		sd.FontFamily _fontFamily = sd.FontFamily.GenericSansSerif;
-		sd.FontStyle _fontStyle = sd.FontStyle.Regular;
+		FontXStyle _fontStyle = FontXStyle.Regular;
 
 		public double FontSize
 		{
@@ -74,7 +76,7 @@ namespace Altaxo.Gui.Graph
 		}
 
 
-		public sd.FontStyle FontStyle
+		public FontXStyle FontStyle
 		{
 			get { return _fontStyle; }
 			set
@@ -93,12 +95,12 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return GdiFontManager.GetFont(_fontFamily, _fontSize, _fontStyle);
+				return GdiFontManager.GetFont(_fontFamily.Name, _fontSize, _fontStyle);
 			}
 			set
 			{
 				FontSize = value.Size;
-				FontStyle = value.Style();
+				FontStyle = value.Style;
 				FontFamily = value.GdiFontFamily();
 			}
 		}

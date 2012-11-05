@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Common.Drawing
         _font = value;
 
         if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = _font.GdiFontFamily();
-        if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style();
+        if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
         if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
       }
     }
@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_font != null)
       {
-        _font = GdiFontManager.GetFontWithNewFamily(_font, _cbFontFamily.SelectedFontFamily.Name);
+        _font = _font.GetFontWithNewFamily(_cbFontFamily.SelectedFontFamily.Name);
         OnSelectedFontChanged();
       }
     }
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Common.Drawing
 
         _cbFontStyle = value;
         if (_font != null && _cbFontStyle != null)
-          _cbFontStyle.SelectedFontStyle = _font.Style();
+          _cbFontStyle.SelectedFontStyle = _font.Style;
 
         if (_cbFontStyle != null)
         {
@@ -143,7 +143,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_font != null)
       {
-        _font = GdiFontManager.GetFontWithNewStyle(_font, _cbFontStyle.SelectedFontStyle);
+        _font = _font.GetFontWithNewStyle(_cbFontStyle.SelectedFontStyle);
         OnSelectedFontChanged();
       }
     }
@@ -179,7 +179,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_font != null)
       {
-        _font = GdiFontManager.GetFontWithNewSize(_font, _cbFontSize.SelectedQuantityAsValueInPoints);
+        _font = _font.GetFontWithNewSize(_cbFontSize.SelectedQuantityAsValueInPoints);
         OnSelectedFontChanged();
       }
     }

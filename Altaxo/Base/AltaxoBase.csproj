@@ -193,8 +193,8 @@
     <Compile Include="Graph\ColorManagement\ColorSetExtensions.cs" />
     <Compile Include="Graph\ColorManagement\ColorSetManager.cs" />
     <Compile Include="Graph\ColorManagement\IColorSet.cs" />
-    <Compile Include="Graph\Gdi\FontX.cs" />
-    <Compile Include="Graph\Gdi\FontXStyle.cs" />
+    <Compile Include="Graph\FontX.cs" />
+    <Compile Include="Graph\FontXStyle.cs" />
     <Compile Include="Graph\Gdi\GdiFontManager.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\CircleHatchBrush.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\BackwardDiagonalHatchBrush.cs" />

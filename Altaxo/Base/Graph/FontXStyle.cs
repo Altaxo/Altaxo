@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Gdi
+namespace Altaxo.Graph
 {
   /// <summary>
   /// Font styles that are numerically compatible to the <see cref="System.Drawing.FontStyle"/> enumeration.
@@ -41,7 +41,27 @@ namespace Altaxo.Graph.Gdi
     Italic = 2,
     /// <summary>Underlined text.</summary>
     Underline = 4,
-    /// <summary>Text striked out.</summary>
+    /// <summary>Striked out text.</summary>
     Strikeout = 8
   }
+
+
+	/// <summary>
+	/// Designates whether for a given font the specified styles are available.
+	/// </summary>
+	[Flags]
+	public enum FontStylePresence
+	{
+		/// <summary>No style is available at all.</summary>
+		NoStyleAvailable = 0,
+		/// <summary>A regular style is available for the font.</summary>
+		RegularStyleAvailable = 1,
+		/// <summary>The bold style is available for the font.</summary>
+		BoldStyleAvailable = 2,
+		/// <summary>The italic style is available for the font.</summary>
+		ItalicStyleAvailable = 4,
+		/// <summary>The bold and italic style is available for the font.</summary>
+		BoldAndItalicStyleAvailable = 8 
+	};
+
 }

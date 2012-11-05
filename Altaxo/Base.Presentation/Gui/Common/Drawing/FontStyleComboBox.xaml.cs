@@ -36,6 +36,7 @@ using System.Windows.Shapes;
 
 using sd = System.Drawing;
 using sdd = System.Drawing.Drawing2D;
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
-				var val = (sd.FontStyle)value;
+				var val = (FontXStyle)value;
 				return _cb._cachedItems[val];
 			}
 
@@ -71,8 +72,8 @@ namespace Altaxo.Gui.Common.Drawing
 		#endregion
 
 
-		static Dictionary<sd.FontStyle, ImageSource> _cachedImages = new Dictionary<sd.FontStyle, ImageSource>();
-		Dictionary<sd.FontStyle, ImageComboBoxItem> _cachedItems = new Dictionary<sd.FontStyle, ImageComboBoxItem>();
+		static Dictionary<FontXStyle, ImageSource> _cachedImages = new Dictionary<FontXStyle, ImageSource>();
+		Dictionary<FontXStyle, ImageComboBoxItem> _cachedItems = new Dictionary<FontXStyle, ImageComboBoxItem>();
 		static GdiToWpfBitmap _interopBitmap;
 
 		public event DependencyPropertyChangedEventHandler SelectedFontStyleChanged;
@@ -96,7 +97,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		void SetDefaultValues()
 		{
-			foreach (sd.FontStyle ff in Enum.GetValues(typeof(sd.FontStyle)))
+			foreach (FontXStyle ff in Enum.GetValues(typeof(FontXStyle)))
 			{
 				var item = new ImageComboBoxItem(this, ff);
 				_cachedItems.Add(ff, item);
@@ -108,15 +109,15 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#region Dependency property
 		private const string _nameOfValueProp = "SelectedFontStyle";
-		public sd.FontStyle SelectedFontStyle
+		public FontXStyle SelectedFontStyle
 		{
-			get { return (sd.FontStyle)GetValue(SelectedFontStyleProperty); }
+			get { return (FontXStyle)GetValue(SelectedFontStyleProperty); }
 			set { SetValue(SelectedFontStyleProperty, value); }
 		}
 
 		public static readonly DependencyProperty SelectedFontStyleProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(sd.FontStyle), typeof(FontStyleComboBox),
-				new FrameworkPropertyMetadata(sd.FontStyle.Regular, EhSelectedFontStyleChanged));
+				DependencyProperty.Register(_nameOfValueProp, typeof(FontXStyle), typeof(FontStyleComboBox),
+				new FrameworkPropertyMetadata(FontXStyle.Regular, EhSelectedFontStyleChanged));
 
 		private static void EhSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -134,14 +135,14 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override string GetItemText(object item)
 		{
-			var value = (sd.FontStyle)item;
+			var value = (FontXStyle)item;
 			return value.ToString();
 		}
 
 
 		public override ImageSource GetItemImage(object item)
 		{
-			var val = (sd.FontStyle)item;
+			var val = (FontXStyle)item;
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));
@@ -149,7 +150,7 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-		public static ImageSource GetImage(sd.FontStyle join)
+		public static ImageSource GetImage(FontXStyle join)
 		{
 
 

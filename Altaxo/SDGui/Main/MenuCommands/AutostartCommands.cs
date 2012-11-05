@@ -61,6 +61,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 
 			Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
 
+			Altaxo.Graph.Gdi.GdiFontManager.Register();
+			Altaxo.Gui.WpfFontManager.Register();
+
 			// we construct the main document (for now)
 			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
 

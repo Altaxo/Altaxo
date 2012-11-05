@@ -712,7 +712,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				case "FontSize":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this.Font = GdiFontManager.GetFontWithNewSize(_font, prop.Value);
+						this.Font = _font.GetFontWithNewSize(prop.Value);
 						OnChanged();
 					}
 					break;

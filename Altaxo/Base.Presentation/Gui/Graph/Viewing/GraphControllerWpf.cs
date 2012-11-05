@@ -641,7 +641,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				g.PageScale = 1;
 
 				g.DrawString(ex.ToString(),
-					new System.Drawing.Font(FontFamily.GenericSansSerif, 10),
+					new System.Drawing.Font(FontFamily.GenericSansSerif, 8),
 					System.Drawing.Brushes.Black,
 					Doc.PrintableBounds);
 			}

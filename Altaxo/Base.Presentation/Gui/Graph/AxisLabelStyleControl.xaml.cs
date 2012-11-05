@@ -36,7 +36,8 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Graph.Gdi;
+  using Altaxo.Graph;
+  using Altaxo.Graph.Gdi;
 
 	/// <summary>
 	/// Interaction logic for XYAxisLabelStyleControl.xaml

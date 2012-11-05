@@ -48,7 +48,7 @@ namespace Altaxo.Worksheet
     protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.Highlight));
     protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.WindowText));
     protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.HighlightText));
-    protected static FontX _defaultTextFont = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 10, FontStyle.Regular);
+    protected static FontX _defaultTextFont = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 9, FontStyle.Regular);
     protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor( SystemColors.InactiveBorder), 1);
 
     protected ColumnStyleType _columnStyleType;

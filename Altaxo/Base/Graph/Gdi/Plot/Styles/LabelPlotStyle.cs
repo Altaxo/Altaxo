@@ -553,7 +553,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         if (newValue != oldValue)
         {
-          _font = GdiFontManager.GetFontWithNewSize(_font, newValue);
+          _font = _font.GetFontWithNewSize(newValue);
           OnChanged(); // Fire Changed event
         }
       }
