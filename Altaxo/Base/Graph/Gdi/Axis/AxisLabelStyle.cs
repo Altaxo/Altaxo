@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		[NonSerialized]
 		object _parent;
 
-		protected Font _font;
+		protected FontX _font;
 
 		protected StringAlignment _horizontalAlignment;
 		protected StringAlignment _verticalAlignment;
@@ -116,7 +116,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			{
 				AxisLabelStyle s = (AxisLabelStyle)obj;
 
-				s._font = (Font)info.GetValue("Font", typeof(Font));
+				s._font = (FontX)info.GetValue("Font", typeof(FontX));
 				return s;
 			}
 		}
@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				Edge edge = (Edge)info.GetValue("Edge", s);
-				s._font = (Font)info.GetValue("Font", s);
+				s._font = (FontX)info.GetValue("Font", s);
 				s.SetStringFormat();
 				return s;
 			}
@@ -177,7 +177,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				Edge edge = (Edge)info.GetValue("Edge", s);
-				s._font = (Font)info.GetValue("Font", s);
+				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
@@ -231,7 +231,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
-				s._font = (Font)info.GetValue("Font", s);
+				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
@@ -290,7 +290,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
-				s._font = (Font)info.GetValue("Font", s);
+				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
@@ -359,7 +359,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
-				s._font = (Font)info.GetValue("Font", s);
+				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
@@ -428,7 +428,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
-				s._font = (Font)info.GetValue("Font", s);
+				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
@@ -471,7 +471,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public AxisLabelStyle()
 		{
-			_font = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.World);
+			_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
 			_brush = new BrushX(NamedColors.Black);
 			_automaticRotationShift = true;
 			_suppressedLabels = new SuppressedTicks();
@@ -495,7 +495,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			_parent = from._parent;
 			_cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
-			CopyHelper.Copy(ref _font, from._font);
+			_font = from._font;
 			CopyHelper.Copy(ref _stringFormat, from._stringFormat);
 			_horizontalAlignment = from._horizontalAlignment;
 			_verticalAlignment = from._verticalAlignment;
@@ -552,13 +552,19 @@ namespace Altaxo.Graph.Gdi.Axis
 		#region Properties
 
 		/// <summary>The font of the label.</summary>
-		public Font Font
+		public FontX Font
 		{
 			get { return _font; }
 			set
 			{
+				if (null == value)
+					throw new ArgumentNullException();
+
+				var oldValue = _font;
 				_font = value;
-				OnChanged();
+
+				if(value.Equals(oldValue))
+					OnChanged();
 			}
 		}
 
@@ -569,14 +575,13 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _font.Size; }
 			set
 			{
-				var oldValue = FontSize;
+				var oldValue = _font.Size;
 				var newValue = Math.Max(0, value);
 
 				if (newValue != oldValue)
 				{
-					Font oldFont = _font;
-					_font = new Font(oldFont.FontFamily.Name, (float)newValue, oldFont.Style, GraphicsUnit.World);
-					oldFont.Dispose();
+					FontX oldFont = _font;
+          _font = GdiFontManager.GetFontWithNewSize(oldFont, newValue);
 
 					OnChanged(); // Fire Changed event
 				}
@@ -961,7 +966,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
-			double emSize = _font.SizeInPoints;
+			double emSize = _font.Size;
 			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferedLabelSide;
 			for (int i = 0; i < ticks.Length; i++)
 			{
@@ -980,13 +985,13 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (_automaticRotationShift)
 				{
 					double alpha = _rotation * Math.PI / 180 - Math.Atan2(outVector.Y, outVector.X);
-					double shift = msize.Y * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.X + _font.SizeInPoints / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
+					double shift = msize.Y * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.X + _font.Size / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
 					morg.X += (outVector.X * shift);
 					morg.Y += (outVector.Y * shift);
 				}
 				else
 				{
-					morg.X += (outVector.X * _font.SizeInPoints / 3);
+					morg.X += (outVector.X * _font.Size / 3);
 				}
 
 
@@ -1085,7 +1090,7 @@ namespace Altaxo.Graph.Gdi.Axis
 						var prop = (RoutedSetterProperty<string>)property;
 						try
 						{
-							var newFont = new Font(prop.Value, _font.Size, _font.Style, GraphicsUnit.World);
+							var newFont = GdiFontManager.GetFontWithNewFamily(_font, prop.Value);
 							_font = newFont;
 							OnChanged();
 						}

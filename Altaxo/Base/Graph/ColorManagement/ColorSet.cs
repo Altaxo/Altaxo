@@ -38,7 +38,10 @@ namespace Altaxo.Graph.ColorManagement
 		protected Dictionary<AxoColor, int> _colorToIndexDictionary;
     protected Dictionary<ColorNameKey, int> _namecolorToIndexDictionary;
 
-
+    /// <summary>Original name of the color set (name as it was in deserialized content).</summary>
+    protected readonly string _originalName;
+    /// <summary>Original level of the color set (level as it was in deserialized content).</summary>
+    protected readonly ColorSetLevel _originalColorSetLevel;
 
 		/// <summary>
 		/// Used to suppress Changed events when a bulk of changes has to be made.
@@ -53,8 +56,8 @@ namespace Altaxo.Graph.ColorManagement
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (ColorSet)obj;
-				info.AddValue("Name", s._name);
-				info.AddEnum("Level", s._colorSetLevel);
+				info.AddValue("Name", s._originalName);
+				info.AddEnum("Level", s._originalColorSetLevel);
         info.AddValue("CreationDate", s._creationDate);
         info.AddValue("IsPlotColorSet", s._isPlotColorSet);
 
@@ -97,22 +100,13 @@ namespace Altaxo.Graph.ColorManagement
 
 		#endregion
 
-
-		/// <summary>
-		/// For deserialization only. Initializes a new instance of the <see cref="ColorSet"/> class.
-		/// </summary>
-		protected ColorSet()
-		{
-			_bulkChanger = new Main.TemporaryDisabler(BuildSideDictionaries);
-		}
-
 		/// <summary>
 		/// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
 		/// </summary>
 		/// <param name="name">Name of this plot color collection.</param>
 		/// <param name="colorSetLevel">Hierarchie level of this color set.</param>
 		public ColorSet(string name, ColorSetLevel colorSetLevel)
-			: this(name, colorSetLevel, null)
+			: this(name, colorSetLevel, name, colorSetLevel, null)
 		{
 		}
 
@@ -124,27 +118,46 @@ namespace Altaxo.Graph.ColorManagement
 		/// <param name="colorSetLevel">Hierarchie level of this color set.</param>
 		/// <param name="basedOn">Another plot color collection from which to copy the initial items.</param>
 		public ColorSet(string name, ColorSetLevel colorSetLevel, IEnumerable<NamedColor> basedOn)
+      : this(name, colorSetLevel, name, colorSetLevel, basedOn)
 		{
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentOutOfRangeException("Argument name must not be null or empty!");
-			if (colorSetLevel == ColorSetLevel.Builtin)
-				throw new ArgumentOutOfRangeException("Argument colorSetLevel must not be 'ColorSetLevel.Builtin'. Please use a separate class for a new built-in color set");
+		}
+
+    /// <summary>
+    /// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
+    /// The direct use of this constructor is intended mainly after deserialization, when the name and/or level deviates from the original name or level, because such a name-level combination is already present in the color set manager.
+    /// </summary>
+    /// <param name="name">Name of this plot color collection.</param>
+    /// <param name="colorSetLevel">Hierarchie level of this color set.</param>
+    /// <param name="basedOn">Another plot color collection from which to copy the initial items.</param>
+    protected internal ColorSet(string name, ColorSetLevel colorSetLevel, string originalName, ColorSetLevel originalColorSetLevel, IEnumerable<NamedColor> basedOn)
+    {
+      if (string.IsNullOrEmpty(name))
+        throw new ArgumentOutOfRangeException("Argument name must not be null or empty!");
+      if (string.IsNullOrEmpty(originalName))
+        throw new ArgumentOutOfRangeException("Argument originalName must not be null or empty!");
+      if (colorSetLevel == ColorSetLevel.Builtin)
+        throw new ArgumentOutOfRangeException("Argument colorSetLevel must not be 'ColorSetLevel.Builtin'. Please use a separate class for a new built-in color set");
+      if (originalColorSetLevel == ColorSetLevel.Builtin)
+        throw new ArgumentOutOfRangeException("Argument originalColorSetLevel must not be 'ColorSetLevel.Builtin'. Please use a separate class for a new built-in color set");
 
       _creationDate = DateTime.UtcNow;
-			_bulkChanger = new Main.TemporaryDisabler(BuildSideDictionaries);
+      _bulkChanger = new Main.TemporaryDisabler(BuildSideDictionaries);
 
 
-			_name = name;
-			_colorSetLevel = colorSetLevel;
-			if (null != basedOn)
-			{
-				using (var updateToken = _bulkChanger.Disable())
-				{
-					foreach (var item in basedOn)
-						Add(new NamedColor(item, this));
-				}
-			}
-		}
+      _name = name;
+      _colorSetLevel = colorSetLevel;
+      _originalName = originalName;
+      _originalColorSetLevel = originalColorSetLevel;
+
+      if (null != basedOn)
+      {
+        using (var updateToken = _bulkChanger.Disable())
+        {
+          foreach (var item in basedOn)
+            Add(new NamedColor(item, this));
+        }
+      }
+    }
 
 		/// <summary>
 		/// Begins a relatively large number of changes.

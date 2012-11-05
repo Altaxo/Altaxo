@@ -330,7 +330,7 @@ namespace Altaxo.Graph.ColorManagement
       // no such set found, then we should include the set at the project level
       // find an available name at the project level
 
-      var newSet = new ColorSet(FindAvailableName(colorSetName, ColorSetLevel.Project), ColorSetLevel.Project, set);
+      var newSet = new ColorSet(FindAvailableName(colorSetName, ColorSetLevel.Project), ColorSetLevel.Project, colorSetName, colorSetLevel, set);
       if (isPlotColorSet)
         newSet.DeclareThisSetAsPlotColorSet();
 

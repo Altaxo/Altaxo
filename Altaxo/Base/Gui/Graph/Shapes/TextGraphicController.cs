@@ -116,7 +116,7 @@ namespace Altaxo.Gui.Graph.Shapes
 				_view.SelectedScaleY = _doc.ScaleY;
 
         // fill the font name combobox with all fonts
-        _view.SelectedFontFamily = _doc.Font.FontFamily;
+        _view.SelectedFontFamily = _doc.Font.GdiFontFamily();
 
         _view.SelectedFontSize = _doc.Font.Size;
 				_view.SelectedLineSpacing = _doc.LineSpacing;
@@ -236,11 +236,11 @@ namespace Altaxo.Gui.Graph.Shapes
       FontFamily ff = _view.SelectedFontFamily;
       // make sure that regular style is available
       if (ff.IsStyleAvailable(FontStyle.Regular))
-        this._doc.Font = new Font(ff, this._doc.Font.Size, FontStyle.Regular, GraphicsUnit.World);
+        this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Regular);
       else if (ff.IsStyleAvailable(FontStyle.Bold))
-        this._doc.Font = new Font(ff, this._doc.Font.Size, FontStyle.Bold, GraphicsUnit.World);
+				this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Bold);
       else if (ff.IsStyleAvailable(FontStyle.Italic))
-        this._doc.Font = new Font(ff, this._doc.Font.Size, FontStyle.Italic, GraphicsUnit.World);
+        this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Italic);
 
       _view.InvalidatePreviewPanel();
     }
@@ -248,8 +248,8 @@ namespace Altaxo.Gui.Graph.Shapes
     public void EhView_FontSizeChanged()
     {
       var newSize = _view.SelectedFontSize;
-      Font oldFont = this._doc.Font;
-      this._doc.Font = new Font(oldFont.FontFamily, (float)newSize, oldFont.Style, GraphicsUnit.World);
+      FontX oldFont = this._doc.Font;
+      this._doc.Font = GdiFontManager.GetFontWithNewSize(oldFont, newSize);
       _view.InvalidatePreviewPanel();
 
     }

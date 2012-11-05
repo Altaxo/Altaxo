@@ -141,10 +141,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location the item will be drawn.</param>
 		/// <returns>The size of the item if it would be drawn.</returns>
-		public virtual System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
+		public virtual System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
 		{
 			string text = _prefix + FormatItem(mtick) + _suffix;
-			return g.MeasureString(text, font, morg, strfmt);
+			return g.MeasureString(text, font.ToGdi(), morg, strfmt);
 		}
 
 		/// <summary>
@@ -158,10 +158,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="prefixText">Text drawn before the label text.</param>
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location where the item is drawn to.</param>
-		public virtual void DrawItem(System.Drawing.Graphics g, BrushX brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
+		public virtual void DrawItem(System.Drawing.Graphics g, BrushX brush, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
 		{
 			string text = _prefix + FormatItem(item) + _suffix;
-			g.DrawString(text, font, brush, morg, strfmt);
+			g.DrawString(text, font.ToGdi(), brush, morg, strfmt);
 		}
 
 
@@ -175,7 +175,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="prefixText">Text drawn before the label text.</param>
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		public virtual IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
+		public virtual IMeasuredLabelItem[] GetMeasuredItems(Graphics g, FontX font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
 		{
 			string[] titems = FormatItems(items);
 			if (!string.IsNullOrEmpty(_prefix) || !string.IsNullOrEmpty(_suffix))
@@ -186,7 +186,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
 
-			Font localfont = (Font)font.Clone();
+			FontX localfont = font;
 			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 
 			for (int i = 0; i < titems.Length; ++i)
@@ -200,18 +200,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		protected class MeasuredLabelItem : IMeasuredLabelItem
 		{
 			protected string _text;
-			protected Font _font;
+			protected FontX _font;
 			protected System.Drawing.StringFormat _strfmt;
 			protected SizeF _size;
 
 			#region IMeasuredLabelItem Members
 
-			public MeasuredLabelItem(Graphics g, Font font, StringFormat strfmt, string itemtext)
+			public MeasuredLabelItem(Graphics g, FontX font, StringFormat strfmt, string itemtext)
 			{
 				_text = itemtext;
 				_font = font;
 				_strfmt = strfmt;
-				_size = g.MeasureString(_text, _font, new PointF(0, 0), strfmt);
+				_size = g.MeasureString(_text, _font.ToGdi(), new PointF(0, 0), strfmt);
 			}
 
 			public virtual SizeF Size
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			public virtual void Draw(Graphics g, BrushX brush, PointF point)
 			{
-				g.DrawString(_text, _font, brush, point, _strfmt);
+				g.DrawString(_text, _font.ToGdi(), brush, point, _strfmt);
 			}
 
 			#endregion

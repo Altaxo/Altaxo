@@ -37,6 +37,7 @@ using System.Windows.Shapes;
 
 
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Graph.Gdi;
 using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph
@@ -88,17 +89,17 @@ namespace Altaxo.Gui.Graph
 
 		public event EventHandler SelectedFontChanged;
 
-		public sd.Font SelectedFont
+		public FontX SelectedFont
 		{
 			get
 			{
-				return new sd.Font(_fontFamily, (float)_fontSize, _fontStyle, sd.GraphicsUnit.World);
+				return GdiFontManager.GetFont(_fontFamily, _fontSize, _fontStyle);
 			}
 			set
 			{
 				FontSize = value.Size;
-				FontStyle = value.Style;
-				FontFamily = value.FontFamily;
+				FontStyle = value.Style();
+				FontFamily = value.GdiFontFamily();
 			}
 		}
 

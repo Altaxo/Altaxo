@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Serialization;
-
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
@@ -137,9 +137,9 @@ namespace Altaxo.Worksheet
       string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
     
       if(bSelected)
-        dc.DrawString(myString, _textFont, _defaultSelectedTextBrush, cellRectangle, _textFormat);
+        dc.DrawString(myString, _textFont.ToGdi(), _defaultSelectedTextBrush, cellRectangle, _textFormat);
       else
-        dc.DrawString(myString,_textFont,_textBrush,cellRectangle,_textFormat);
+        dc.DrawString(myString,_textFont.ToGdi(),_textBrush,cellRectangle,_textFormat);
     }
 
 

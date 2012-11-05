@@ -157,52 +157,53 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 		}
 
-		public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
+		public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
 			SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
 
-			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, font, new PointF(0, 0), strfmt);
-			SizeF size2 = g.MeasureString(exponent, font, new PointF(size1.Width, 0), strfmt);
-			SizeF size3 = g.MeasureString(_suffix, font, new PointF(0, 0), strfmt);
+      var gdiFont = font.ToGdi();
+			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, new PointF(0, 0), strfmt);
+			SizeF size2 = g.MeasureString(exponent, gdiFont, new PointF(size1.Width, 0), strfmt);
+			SizeF size3 = g.MeasureString(_suffix, gdiFont, new PointF(0, 0), strfmt);
 
 			return new SizeF(size1.Width + size2.Width + size3.Width, size1.Height);
 		}
 
-		public override void DrawItem(Graphics g, BrushX brush, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
+		public override void DrawItem(Graphics g, BrushX brush, FontX font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
 			SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
-
-			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, font, morg, strfmt);
-			g.DrawString(_prefix + firstpart + middelpart, font, brush, morg, strfmt);
+      
+      var gdiFont = font.ToGdi();
+			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, morg, strfmt);
+			g.DrawString(_prefix + firstpart + middelpart, gdiFont, brush, morg, strfmt);
 			var orginalY = morg.Y;
 			morg.X += size1.Width;
 			morg.Y += size1.Height / 3;
-			using (Font font2 = new Font(font.FontFamily, (float)(font.Size * 2 / 3.0)))
-			{
-				g.DrawString(exponent, font2, brush, morg);
+      FontX font2 = GdiFontManager.GetFontWithNewSize(font, font.Size * 2 / 3.0);
+      var gdiFont2 = font2.ToGdi();
+				g.DrawString(exponent, gdiFont2, brush, morg);
 				if(!string.IsNullOrEmpty(_suffix))
 				{
-					morg.X += g.MeasureString(exponent, font2, morg, strfmt).Width;
+					morg.X += g.MeasureString(exponent, gdiFont2, morg, strfmt).Width;
 					morg.Y = orginalY;
 				}
-			}
 
 			if (!string.IsNullOrEmpty(_suffix))
 			{
-				g.DrawString(_suffix, font, brush, morg, strfmt);
+				g.DrawString(_suffix, gdiFont, brush, morg, strfmt);
 			}
 		}
 
-		public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant[] items)
+		public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, FontX font, StringFormat strfmt, Altaxo.Data.AltaxoVariant[] items)
 		{
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
 
-			Font localfont1 = (Font)font.Clone();
-			Font localfont2 = new Font(font.FontFamily, font.Size * 2 / 3, font.Style, GraphicsUnit.World);
+			FontX localfont1 = font;
+			FontX localfont2 = GdiFontManager.GetFontWithNewSize(font, font.Size * 2 / 3);
 
 			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 
@@ -232,7 +233,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				}
 				firstp[i] = firstpart;
 				expos[i] = exponent;
-				maxexposize = Math.Max(maxexposize, g.MeasureString(exponent, localfont2, new PointF(0, 0), strfmt).Width);
+				maxexposize = Math.Max(maxexposize, g.MeasureString(exponent, localfont2.ToGdi(), new PointF(0, 0), strfmt).Width);
 			}
 
 			if (firstpartmax > 0 && firstpartmax > firstpartmin) // then we must use special measures to equilibrate the mantissa
@@ -263,8 +264,8 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			protected string _firstpart;
 			protected string _exponent;
 			protected string _lastpart;
-			protected Font _font1;
-			protected Font _font2;
+			protected FontX _font1;
+			protected FontX _font2;
 			protected System.Drawing.StringFormat _strfmt;
 			protected SizeF _size1;
 			protected SizeF _size2;
@@ -273,7 +274,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			#region IMeasuredLabelItem Members
 
-			public MeasuredLabelItem(Graphics g, Font font1, Font font2, StringFormat strfmt, string firstpart, string exponent, string lastpart, float maxexposize)
+			public MeasuredLabelItem(Graphics g, FontX font1, FontX font2, StringFormat strfmt, string firstpart, string exponent, string lastpart, float maxexposize)
 			{
 				_firstpart = firstpart;
 				_exponent = exponent;
@@ -281,9 +282,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				_font1 = font1;
 				_font2 = font2;
 				_strfmt = strfmt;
-				_size1 = g.MeasureString(_firstpart, _font1, new PointF(0, 0), strfmt);
-				_size2 = g.MeasureString(_exponent, _font2, new PointF(_size1.Width, 0), strfmt);
-				_size3 = g.MeasureString(_lastpart, _font1, new PointF(0, 0), strfmt);
+				_size1 = g.MeasureString(_firstpart, _font1.ToGdi(), new PointF(0, 0), strfmt);
+				_size2 = g.MeasureString(_exponent, _font2.ToGdi(), new PointF(_size1.Width, 0), strfmt);
+				_size3 = g.MeasureString(_lastpart, _font1.ToGdi(), new PointF(0, 0), strfmt);
 				_rightPadding = maxexposize - _size2.Width;
 
 			}
@@ -298,15 +299,15 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			public virtual void Draw(Graphics g, BrushX brush, PointF point)
 			{
-				g.DrawString(_firstpart, _font1, brush, point, _strfmt);
+				g.DrawString(_firstpart, _font1.ToGdi(), brush, point, _strfmt);
 
 				point.X += _size1.Width;
 				point.Y += 0;
 
-				g.DrawString(_exponent, _font2, brush, point, _strfmt);
+				g.DrawString(_exponent, _font2.ToGdi(), brush, point, _strfmt);
 
 				point.X += _size2.Width;
-				g.DrawString(_lastpart, _font1, brush, point, _strfmt);
+				g.DrawString(_lastpart, _font1.ToGdi(), brush, point, _strfmt);
 			}
 
 			#endregion

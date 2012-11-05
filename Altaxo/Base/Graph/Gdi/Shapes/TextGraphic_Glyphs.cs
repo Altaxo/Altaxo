@@ -38,86 +38,40 @@ namespace Altaxo.Graph.Gdi.Shapes
 	public partial class TextGraphic : GraphicBase
 	{
 		/// <summary>
-		/// FontIdentifier is an immutable object used to identify a font.
-		/// </summary>
-		public class FontIdentifier
-		{
-			public string FamilyName { get; private set; }
-			public FontStyle Style { get; private set; }
-			public double Size { get; private set; }
-
-			public FontIdentifier(string name, FontStyle style, double size)
-			{
-				FamilyName = name;
-				Style = style;
-				Size = size;
-			}
-
-			public override bool Equals(object obj)
-			{
-				var from = obj as FontIdentifier;
-				if (from == null)
-					return false;
-				else
-					return this.Size == from.Size && this.Style == from.Style && this.FamilyName == from.FamilyName;
-			}
-
-			public override int GetHashCode()
-			{
-				return Size.GetHashCode() + Style.GetHashCode() + FamilyName.GetHashCode();
-			}
-		}
-
-		/// <summary>
 		/// Holds Information about the metrics of a font.
 		/// </summary>
-		class FontInfo : FontIdentifier
+		class FontInfo 
 		{
-
+			public FontX Font { get; private set; } // Font of this font identifier
 			public double cyLineSpace { get; private set; } // cached linespace value of the font
 			public double cyAscent { get; private set; }    // cached ascent value of the font
 			public double cyDescent { get; private set; } /// cached descent value of the font
+      public double Size { get; private set; }                                                    
 
-			private FontInfo(FontIdentifier id)
-				: base(id.FamilyName, id.Style, id.Size)
+			private FontInfo(FontX id)
 			{
+				Font = id;
 			}
 
-			private FontInfo(string familyName, FontStyle style, double size)
-				: base(familyName, style, size)
+			
+		
+
+			public static FontInfo Create(Graphics g, FontX font)
 			{
-			}
-
-			public static FontInfo Create(FontIdentifier id, Graphics g, out Font font)
-			{
-				FontInfo result = new FontInfo(id);
-				font = new Font(result.FamilyName, (float)result.Size, result.Style, GraphicsUnit.World);
-
-				// get some properties of the font
-				result.cyLineSpace = font.GetHeight(g); // space between two lines
-				int iCellSpace = font.FontFamily.GetLineSpacing(font.Style);
-				int iCellAscent = font.FontFamily.GetCellAscent(font.Style);
-				int iCellDescent = font.FontFamily.GetCellDescent(font.Style);
-				result.cyAscent = result.cyLineSpace * iCellAscent / iCellSpace;
-				result.cyDescent = result.cyLineSpace * iCellDescent / iCellSpace;
-
-				return result;
-			}
-
-			public static FontInfo Create(Graphics g, Font font)
-			{
-				FontInfo result = new FontInfo(font.FontFamily.Name, font.Style, font.Size);
+				FontInfo result = new FontInfo(font);
 				InternalGetInformation(g, result, font);
 				return result;
 			}
 
-			private static void InternalGetInformation(Graphics g, FontInfo result, Font font)
+			private static void InternalGetInformation(Graphics g, FontInfo result, FontX font)
 			{
 				// get some properties of the font
-				result.cyLineSpace = font.GetHeight(g); // space between two lines
-				int iCellSpace = font.FontFamily.GetLineSpacing(font.Style);
-				int iCellAscent = font.FontFamily.GetCellAscent(font.Style);
-				int iCellDescent = font.FontFamily.GetCellDescent(font.Style);
+				var gdiFont = font.ToGdi();
+        result.Size = gdiFont.Size;
+				result.cyLineSpace = gdiFont.GetHeight(g); // space between two lines
+				int iCellSpace = gdiFont.FontFamily.GetLineSpacing(gdiFont.Style);
+				int iCellAscent = gdiFont.FontFamily.GetCellAscent(gdiFont.Style);
+				int iCellDescent = gdiFont.FontFamily.GetCellDescent(gdiFont.Style);
 				result.cyAscent = result.cyLineSpace * iCellAscent / iCellSpace;
 				result.cyDescent = result.cyLineSpace * iCellDescent / iCellSpace;
 			}
@@ -127,36 +81,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		class FontCache : IDisposable
 		{
-			Dictionary<FontIdentifier, FontInfo> _fontInfoDictionary = new Dictionary<FontIdentifier, FontInfo>();
-			Dictionary<FontIdentifier, Font> _fontDictionary = new Dictionary<FontIdentifier, Font>();
+			Dictionary<FontX, FontInfo> _fontInfoDictionary = new Dictionary<FontX, FontInfo>();
 
-			public FontInfo GetFontInfo(Graphics g, FontIdentifier id)
+			public FontInfo GetFontInfo(Graphics g, FontX id)
 			{
 				FontInfo result;
 				if (!_fontInfoDictionary.TryGetValue(id, out result))
 				{
-					Font font;
-					result = FontInfo.Create(id, g, out font);
+					result = FontInfo.Create(g, id);
 					_fontInfoDictionary.Add(id, result);
-					_fontDictionary.Add(id, font);
 				}
 				return result;
 			}
 
-			public Font GetFont(Graphics g, FontIdentifier id)
-			{
-				Font result;
-				if (!_fontDictionary.TryGetValue(id, out result))
-				{
-					FontInfo info = GetFontInfo(g, id);
-					result = _fontDictionary[id];
-				}
-				return result;
-			}
+		
 
 			public void Clear()
 			{
-				_fontDictionary.Clear();
 				_fontInfoDictionary.Clear();
 			}
 
@@ -172,11 +113,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		class StyleContext
 		{
-			public FontIdentifier BaseFontId { get; set; }
-			public FontIdentifier FontId { get; set; }
+			public FontX BaseFontId { get; set; }
+			public FontX FontId { get; set; }
 			public Brush brush;
 
-			public StyleContext(FontIdentifier font, Brush brush)
+			public StyleContext(FontX font, Brush brush)
 			{
 				FontId = font;
 				this.brush = brush;
@@ -189,22 +130,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public void SetFont(FontFamily family, double size, FontStyle style)
 			{
-				FontId = new FontIdentifier(family.Name, style, size);
+				FontId = GdiFontManager.GetFont(family.Name, size, style);
 			}
 
 			public void SetFont(string family, double size, FontStyle style)
 			{
-				FontId = new FontIdentifier(family, style, size);
+        FontId = GdiFontManager.GetFont(family, size, style);
 			}
+
+      public void SetFont(FontX font)
+      {
+        FontId = font;
+      }
 
 			public void ScaleFont(double scale)
 			{
-				FontId = new FontIdentifier(FontId.FamilyName, FontId.Style, scale * FontId.Size);
+				FontId = GdiFontManager.GetFontWithNewSize(FontId, scale * FontId.Size);
 			}
 
 			public void StyleFont(FontStyle style)
 			{
-				FontId = new FontIdentifier(FontId.FamilyName, style, FontId.Size);
+				FontId = GdiFontManager.GetFontWithNewStyle(FontId, style);
 			}
 
 		}
@@ -290,9 +236,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <param name="text">The text to measure.</param>
 			/// <param name="font">The font used.</param>
 			/// <returns>Width and height of the text packed into a <see cref="PointD2D"/> structure.</returns>
-			public static PointD2D MeasureString(Graphics g, string text, Font font)
+			public static PointD2D MeasureString(Graphics g, string text, FontX font)
 			{
-				var result = g.MeasureString(text, font, PointF.Empty, _stringFormat);
+				var result = g.MeasureString(text, font.ToGdi(), PointF.Empty, _stringFormat);
 				return new PointD2D(result.Width, result.Height);
 			}
 
@@ -529,10 +475,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (_child != null)
 				{
 					_child.Draw(g, dc, xbase, ybase);
-					Font font = dc.FontCache.GetFont(g, Style.FontId);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-					double psize = g.MeasureString(".", font, PointF.Empty, this.StringFormat).Width;
-					g.DrawString(".", font, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+          var gdiFont = Style.FontId.ToGdi();
+          double psize = g.MeasureString(".", gdiFont, PointF.Empty, this.StringFormat).Width;
+					g.DrawString(".", gdiFont, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
 			}
 		}
@@ -558,9 +504,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (_child != null)
 				{
 					_child.Draw(g, dc, xbase, ybase);
-					Font font = dc.FontCache.GetFont(g, Style.FontId);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-					g.DrawString("_", font, Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+          g.DrawString("_", Style.FontId.ToGdi(), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
 			}
 		}
@@ -663,9 +608,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
 				var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
-				var font = mc.FontCache.GetFont(g, Style.FontId);
-
-				Width = g.MeasureString(_text, font, PointF.Empty, _stringFormat).Width;
+        Width = g.MeasureString(_text, Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
 				ExtendAboveBaseline = fontInfo.cyAscent;
 				ExtendBelowBaseline = fontInfo.cyDescent;
 			}
@@ -673,8 +616,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-				var font = dc.FontCache.GetFont(g, Style.FontId);
-				g.DrawString(_text, font, Style.brush, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
+        g.DrawString(_text, Style.FontId.ToGdi(), Style.brush, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
 			}
 
 			public override string ToString()
@@ -693,7 +635,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				double tab = mc.TabStop;
 
 				if (!(tab > 0))
-					tab = g.MeasureString("MMMM", mc.FontCache.GetFont(g, Style.BaseFontId), PointF.Empty, _stringFormat).Width;
+					tab = g.MeasureString("MMMM", Style.BaseFontId.ToGdi(), PointF.Empty, _stringFormat).Width;
 
 				if (!(tab > 0))
 					tab = Style.BaseFontId.Size * 4;
@@ -833,8 +775,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					if (_plotNumber < layer.PlotItems.Flattened.Length)
 					{
 						var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
-						var font = mc.FontCache.GetFont(g, Style.FontId);
-						Width = g.MeasureString("MMM", font, PointF.Empty, _stringFormat).Width;
+						Width = g.MeasureString("MMM", Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
 						ExtendAboveBaseline = fontInfo.cyAscent;
 						ExtendBelowBaseline = fontInfo.cyDescent;
 					}
@@ -851,7 +792,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (_plotNumber < layer.PlotItems.Flattened.Length)
 				{
 					var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-					var font = dc.FontCache.GetFont(g, Style.FontId);
 					IGPlotItem pa = layer.PlotItems.Flattened[_plotNumber];
 
 					PointF symbolpos = new PointF((float)xbase, (float)(ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent));

@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public class SimpleTextGraphic : GraphicBase
 	{
-		protected Font _font;
+		protected FontX _font;
 		protected string _text = "";
 		protected Color _color = Color.Black;
 
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType, parent);
 
 				s._text = info.GetString("Text");
-				s._font = (Font)info.GetValue("Font", typeof(Font));
+				s._font = (FontX)info.GetValue("Font", typeof(FontX));
 				s._color = (Color)info.GetValue("Color", typeof(Color));
 				return s;
 			}
@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var from = obj as SimpleTextGraphic;
 				if (null != from)
 				{
-					this._font = null == from._font ? null : (Font)from._font.Clone();
+					this._font = from._font;
 					this._text = from._text;
 					this._color = from._color;
 				}
@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		public SimpleTextGraphic(PointD2D graphicPosition, string text,
-			Font textFont, Color textColor)
+			FontX textFont, Color textColor)
 		{
 			this.SetPosition(graphicPosition);
 			this.Font = textFont;
@@ -116,13 +116,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 		public SimpleTextGraphic(double posX, double posY,
-			string text, Font textFont, Color textColor)
+			string text, FontX textFont, Color textColor)
 			: this(new PointD2D(posX, posY), text, textFont, textColor)
 		{
 		}
 
 		public SimpleTextGraphic(PointD2D graphicPosition,
-			string text, Font textFont,
+			string text, FontX textFont,
 			Color textColor, double Rotation)
 			: this(graphicPosition, text, textFont, textColor)
 		{
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public SimpleTextGraphic(double posX, double posY,
 			string text,
-			Font textFont,
+			FontX textFont,
 			Color textColor, double Rotation)
 			: this(new PointD2D(posX, posY), text, textFont, textColor, Rotation)
 		{
@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 
-		public Font Font
+		public FontX Font
 		{
 			get
 			{
@@ -212,15 +212,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (this.AutoSize)
 			{
-				var mySize = g.MeasureString(_text, _font);
+				var mySize = g.MeasureString(_text, _font.ToGdi());
 				this.Width = mySize.Width;
 				this.Height = mySize.Height;
-				g.DrawString(_text, _font, new SolidBrush(_color), 0, 0, strfmt);
+				g.DrawString(_text, _font.ToGdi(), new SolidBrush(_color), 0, 0, strfmt);
 			}
 			else
 			{
 				System.Drawing.RectangleF rect = new RectangleF(0, 0, (float)this.Width, (float)this.Height);
-				g.DrawString(_text, _font, new SolidBrush(_color), rect, strfmt);
+				g.DrawString(_text, _font.ToGdi(), new SolidBrush(_color), rect, strfmt);
 			}
 
 			g.Restore(gs);

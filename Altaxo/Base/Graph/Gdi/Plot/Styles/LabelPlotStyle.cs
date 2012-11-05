@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     System.Runtime.Serialization.IDeserializationCallback
   {
     /// <summary>The font of the label.</summary>
-    protected System.Drawing.Font _font;
+    protected FontX _font;
 
     /// <summary>
     /// True if the color of the label is not dependent on the color of the parent plot style.
@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
-        s._font = (Font)info.GetValue("Font", s);
+        s._font = (FontX)info.GetValue("Font", s);
         s._independentColor = info.GetBoolean("IndependentColor");
         s._brush = (BrushX)info.GetValue("Brush", s);
         s._xOffset = info.GetDouble("XOffset");
@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
-        s._font = (Font)info.GetValue("Font", s);
+        s._font = (FontX)info.GetValue("Font", s);
         s._independentColor = info.GetBoolean("IndependentColor");
         s._brush = (BrushX)info.GetValue("Brush", s);
         s._xOffset = info.GetDouble("XOffset");
@@ -319,7 +319,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
-        s._font = (Font)info.GetValue("Font", s);
+        s._font = (FontX)info.GetValue("Font", s);
         s._independentColor = info.GetBoolean("IndependentColor");
         s._brush = (BrushX)info.GetValue("Brush", s);
         s._xOffset = info.GetDouble("XOffset");
@@ -381,7 +381,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
-        s._font = (Font)info.GetValue("Font", s);
+        s._font = (FontX)info.GetValue("Font", s);
         s._independentColor = info.GetBoolean("IndependentColor");
         s._brush = (BrushX)info.GetValue("Brush", s);
         s._xOffset = info.GetDouble("XOffset");
@@ -437,7 +437,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var from = obj as LabelPlotStyle;
       if (null != from)
       {
-        this._font = (Font)from._font.Clone();
+				this._font = from._font;
         this._independentColor = from._independentColor;
         this._brush = from._brush.Clone();
         this._xOffset = from._xOffset;
@@ -466,7 +466,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn)
     {
-      this._font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
+      this._font = GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 8, FontStyle.Regular);
       this._independentColor = false;
       this._brush = new BrushX(NamedColors.Black);
       this._xOffset = 0;
@@ -528,31 +528,32 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>The font of the label.</summary>
-    public Font Font
+    public FontX Font
     {
       get { return _font; }
       set
       {
+				if (null != value)
+					throw new ArgumentNullException();
+				var oldValue = Font;
         _font = value;
-        OnChanged();
+				if(!value.Equals(oldValue))
+					OnChanged();
       }
     }
 
     /// <summary>The font size of the label.</summary>
-    public float FontSize
+    public double FontSize
     {
       get { return _font.Size; }
       set
       {
-        float oldValue = FontSize;
-        float newValue = Math.Max(0, value);
+				var oldValue = _font.Size;
+        var newValue = Math.Max(0, value);
 
         if (newValue != oldValue)
         {
-          Font oldFont = _font;
-          _font = new Font(oldFont.FontFamily.Name, newValue, oldFont.Style, GraphicsUnit.World);
-          oldFont.Dispose();
-
+          _font = GdiFontManager.GetFontWithNewSize(_font, newValue);
           OnChanged(); // Fire Changed event
         }
       }
@@ -750,10 +751,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="variableBackBrush"></param>
     public void Paint(Graphics g, string label, BrushX variableTextBrush, BrushX variableBackBrush)
     {
-      float fontSize = this.FontSize;
+      var fontSize = this.FontSize;
       float xpos = (float)(_xOffset * fontSize);
       float ypos = (float)(-_yOffset * fontSize);
-      SizeF stringsize = g.MeasureString(label, this._font, new PointF(xpos, ypos), _cachedStringFormat);
+      var gdiFont = _font.ToGdi();
+      SizeF stringsize = g.MeasureString(label, gdiFont, new PointF(xpos, ypos), _cachedStringFormat);
 
       if (this._backgroundStyle != null)
       {
@@ -788,7 +790,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       var brush = null != variableTextBrush ? variableTextBrush : _brush;
       brush.SetEnvironment(new RectangleF(new PointF(xpos, ypos), stringsize), BrushX.GetEffectiveMaximumResolution(g, 1));
-      g.DrawString(label, _font, brush, xpos, ypos, _cachedStringFormat);
+      g.DrawString(label, gdiFont, brush, xpos, ypos, _cachedStringFormat);
     }
 
 

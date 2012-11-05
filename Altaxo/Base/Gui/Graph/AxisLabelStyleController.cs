@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Initializes the font family combo box.
 		/// </summary>
-		Font LabelFont { get; set; }
+		FontX LabelFont { get; set; }
 
 		/// <summary>
 		/// Initializes the content of the Color combo box.

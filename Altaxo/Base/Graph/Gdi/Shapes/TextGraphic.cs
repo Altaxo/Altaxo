@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	public partial class TextGraphic : GraphicBase, IRoutedPropertyReceiver
 	{
 		protected string _text = ""; // the text, which contains the formatting symbols
-		protected Font _font;
+		protected FontX _font;
 		protected BrushX _textBrush = new BrushX(NamedColors.Black);
 		protected IBackgroundStyle _background = null;
 		protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			base.SetObjectData(obj, info, context, selector);
 
 			_text = info.GetString("Text");
-			_font = (Font)info.GetValue("Font", typeof(Font));
+			_font = (FontX)info.GetValue("Font", typeof(FontX));
 			_textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 			_background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
 			_lineSpacingFactor = info.GetSingle("LineSpacing");
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				//s._rotation = -s._rotation;
 
 				s._text = info.GetString("Text");
-				s._font = (Font)info.GetValue("Font", typeof(Font));
+				s._font = (FontX)info.GetValue("Font", typeof(FontX));
 				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", typeof(BackgroundStyle));
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 				s._text = info.GetString("Text");
-				s._font = (Font)info.GetValue("Font", typeof(Font));
+				s._font = (FontX)info.GetValue("Font", typeof(FontX));
 				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
@@ -207,11 +207,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public TextGraphic()
 		{
-			_font = new Font(FontFamily.GenericSansSerif, 18, GraphicsUnit.World);
+			_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
 		}
 
 		public TextGraphic(PointD2D graphicPosition, string text,
-			Font textFont, NamedColor textColor)
+			FontX textFont, NamedColor textColor)
 		{
 			this.SetPosition(graphicPosition);
 			this.Font = textFont;
@@ -221,14 +221,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 		public TextGraphic(double posX, double posY,
-			string text, Font textFont, NamedColor textColor)
+			string text, FontX textFont, NamedColor textColor)
 			: this(new PointD2D(posX, posY), text, textFont, textColor)
 		{
 		}
 
 
 		public TextGraphic(PointD2D graphicPosition,
-			string text, Font textFont,
+			string text, FontX textFont,
 			NamedColor textColor, double Rotation)
 			: this(graphicPosition, text, textFont, textColor)
 		{
@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public TextGraphic(double posX, double posY,
 			string text,
-			Font textFont,
+			FontX textFont,
 			NamedColor textColor, double Rotation)
 			: this(new PointD2D(posX, posY), text, textFont, textColor, Rotation)
 		{
@@ -261,7 +261,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (from != null)
 				{
 					this._text = from._text;
-					this._font = from._font == null ? null : (Font)from._font.Clone();
+					this._font = from._font;
 					this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
 					this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
 					this._lineSpacingFactor = from._lineSpacingFactor;
@@ -432,7 +432,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public Font Font
+		public FontX Font
 		{
 			get
 			{
@@ -541,8 +541,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var tree = parser.GetRoot();
 
 			TreeWalker walker = new TreeWalker(_text);
-			StyleContext style = new StyleContext(new FontIdentifier(_font.FontFamily.Name, _font.Style, _font.Size), _textBrush);
-			style.BaseFontId = new FontIdentifier(_font.FontFamily.Name, _font.Style, _font.Size);
+			StyleContext style = new StyleContext(_font, _textBrush);
+      style.BaseFontId = _font;
 
 			_rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
 		}
@@ -712,7 +712,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				case "FontSize":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this.Font = new Font(this.Font.FontFamily, (float)prop.Value, this.Font.Style, GraphicsUnit.World);
+						this.Font = GdiFontManager.GetFontWithNewSize(_font, prop.Value);
 						OnChanged();
 					}
 					break;
@@ -721,7 +721,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 						var prop = (RoutedSetterProperty<string>)property;
 						try
 						{
-							var newFont = new Font(prop.Value, _font.Size, _font.Style, GraphicsUnit.World);
+							var newFont = _font.GetFontWithNewFamily(prop.Value);
 							_font = newFont;
 							_isStructureInSync = false;
 							OnChanged();
@@ -742,7 +742,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					((RoutedGetterProperty<double>)property).Merge(this.Font.Size);
 					break;
 				case "FontFamily":
-					((RoutedGetterProperty<string>)property).Merge(this.Font.FontFamily.Name);
+					((RoutedGetterProperty<string>)property).Merge(this.Font.FontFamilyName);
 					break;
 			}
 		}

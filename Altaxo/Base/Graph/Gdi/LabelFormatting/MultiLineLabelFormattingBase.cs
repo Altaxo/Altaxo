@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="prefixText">Text drawn before the label text.</param>
 		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
+		public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, FontX font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
 		{
 			string[] titems = FormatItems(items);
 			if (!string.IsNullOrEmpty(_prefix) || !string.IsNullOrEmpty(_suffix))
@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
 
-			Font localfont = (Font)font.Clone();
+			FontX localfont = font;
 			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 
 			StringAlignment horizontalAlignment = localstrfmt.Alignment;
@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		{
 			protected string[] _text;
 			protected PointD2D[] _stringSize;
-			protected Font _font;
+			protected FontX _font;
 			protected System.Drawing.StringFormat _strfmt;
 			protected PointD2D _size;
 
@@ -166,7 +166,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			#region IMeasuredLabelItem Members
 
-			public MeasuredLabelItem(Graphics g, Font font, StringFormat strfmt, string itemtext, double lineSpacing, StringAlignment horizontalAlignment, StringAlignment verticalAlignment, StringAlignment textBlockAligment)
+			public MeasuredLabelItem(Graphics g, FontX font, StringFormat strfmt, string itemtext, double lineSpacing, StringAlignment horizontalAlignment, StringAlignment verticalAlignment, StringAlignment textBlockAligment)
 			{
 				_text = itemtext.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				_stringSize = new PointD2D[_text.Length];
@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				var position = new PointD2D();
 				for (int i = 0; i < _text.Length; ++i)
 				{
-					_stringSize[i] = g.MeasureString(_text[i], _font, new PointF(0, 0), strfmt);
+					_stringSize[i] = g.MeasureString(_text[i], _font.ToGdi(), new PointF(0, 0), strfmt);
 					bounds.ExpandToInclude(new RectangleD(position, _stringSize[i]));
 					position.Y += _stringSize[i].Y * _lineSpacing;
 
@@ -215,7 +215,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 							break;
 					}
 
-					g.DrawString(_text[i], _font, brush, new PointF((float)posX, (float)positionY), _strfmt);
+					g.DrawString(_text[i], _font.ToGdi(), brush, new PointF((float)posX, (float)positionY), _strfmt);
 					positionY += _stringSize[i].Y * _lineSpacing;
 				}
 			}

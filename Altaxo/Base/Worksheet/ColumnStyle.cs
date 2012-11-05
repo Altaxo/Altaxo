@@ -48,7 +48,7 @@ namespace Altaxo.Worksheet
     protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.Highlight));
     protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.WindowText));
     protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.HighlightText));
-    protected static Font _defaultTextFont = new Font("Arial", 8);
+    protected static FontX _defaultTextFont = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 10, FontStyle.Regular);
     protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor( SystemColors.InactiveBorder), 1);
 
     protected ColumnStyleType _columnStyleType;
@@ -58,8 +58,8 @@ namespace Altaxo.Worksheet
 
     protected bool _isCellPenCustom;
     protected PenX _cellPen = new PenX(GdiColorHelper.ToNamedColor( SystemColors.InactiveBorder),1);
-    
-    protected Font _textFont = new Font("Arial",8);
+
+		protected FontX _textFont = _defaultTextFont;
 
     protected bool _isTextBrushCustom;
     protected BrushX _textBrush = new BrushX(GdiColorHelper.ToNamedColor( SystemColors.WindowText));
@@ -82,7 +82,7 @@ namespace Altaxo.Worksheet
         info.AddValue("Alignment",s._textFormat.Alignment);
         
 
-        info.AddValue("Font",s._textFont); // Serialization is possible in NET1SP2, but deserialization fails (Tested with SOAP formatter)
+        info.AddValue("Font",s._textFont); 
         
        
 
@@ -102,7 +102,7 @@ namespace Altaxo.Worksheet
 
 
         // Deserialising a font with SoapFormatter raises an error at least in Net1SP2, so I had to circuumvent this
-        s._textFont = (Font)info.GetValue("Font",typeof(Font)); 
+        s._textFont = (FontX)info.GetValue("Font",typeof(FontX)); 
         //  s.m_TextFont = new Font("Arial",8);               
 
 
@@ -144,7 +144,7 @@ namespace Altaxo.Worksheet
 
         notneeded = info.GetValue("SelBkgBrush",s);
         s._textFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment),info.GetString("Alignment"));
-        s._textFont = (Font)info.GetValue("Font",s);
+        s._textFont = (FontX)info.GetValue("Font",s);
         return s;
       }
     }
@@ -217,7 +217,7 @@ namespace Altaxo.Worksheet
 
         bool isCustomFont = info.GetBoolean("CustomFont");
         if (isCustomFont)
-          s.TextFont = (Font)info.GetValue("Font", s);
+          s.TextFont = (FontX)info.GetValue("Font", s);
         else
           s.SetDefaultTextFont();
 
@@ -274,7 +274,7 @@ namespace Altaxo.Worksheet
       _isCellPenCustom = s._isCellPenCustom;
       _cellPen = (PenX)s._cellPen.Clone();
       _textFormat = (StringFormat)s._textFormat.Clone();
-      _textFont = (Font)s._textFont.Clone();
+			_textFont = s._textFont;
       
       _isTextBrushCustom = s._isTextBrushCustom;
       _textBrush = (BrushX)s._textBrush.Clone();
@@ -328,9 +328,9 @@ namespace Altaxo.Worksheet
     }
 
 
-    public static Font GetDefaultTextFont(ColumnStyleType type)
+    public static FontX GetDefaultTextFont(ColumnStyleType type)
     {
-      return (Font)_defaultTextFont.Clone();
+			return _defaultTextFont;
     }
     public void SetDefaultTextFont()
     {
@@ -457,7 +457,7 @@ namespace Altaxo.Worksheet
       _isTextBrushCustom = true;
     }
 
-    public Font TextFont
+    public FontX TextFont
     {
       get
       {
@@ -476,7 +476,7 @@ namespace Altaxo.Worksheet
     {
       get
       {
-        return _textFont == _defaultTextFont;
+        return _textFont != _defaultTextFont;
       }
     }
 

@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Serialization;
-
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
@@ -148,9 +148,9 @@ namespace Altaxo.Worksheet
       PaintBackground(dc, cellRectangle, bSelected);
     
       if(bSelected)
-        dc.DrawString("[" + nRow + "]", _textFont, _defaultSelectedTextBrush, cellRectangle, _textFormat);
+        dc.DrawString("[" + nRow + "]", _textFont.ToGdi(), _defaultSelectedTextBrush, cellRectangle, _textFormat);
       else
-        dc.DrawString("["+nRow+"]",_textFont,_textBrush,cellRectangle,_textFormat);
+        dc.DrawString("["+nRow+"]",_textFont.ToGdi(),_textBrush,cellRectangle,_textFormat);
     }
 
 		public static Dictionary<System.Type, Action<RowHeaderStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<RowHeaderStyle, object, Graph.RectangleD, int, Data.DataColumn, bool>>();

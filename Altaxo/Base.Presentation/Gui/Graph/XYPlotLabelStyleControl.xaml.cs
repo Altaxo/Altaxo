@@ -35,6 +35,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Units;
 
@@ -147,7 +148,7 @@ namespace Altaxo.Gui.Graph
 			get { return _guiYOffset.SelectedQuantity; }
 		}
 
-		public System.Drawing.Font SelectedFont
+		public FontX SelectedFont
 		{
 			get
 			{

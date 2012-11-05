@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Graph
 
 
 
-		public System.Drawing.Font LabelFont
+		public FontX LabelFont
 		{
 			get
 			{

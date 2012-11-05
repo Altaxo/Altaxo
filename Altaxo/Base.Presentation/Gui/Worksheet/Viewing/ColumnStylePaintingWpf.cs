@@ -68,8 +68,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			string text = "[" + nRow + "]";
 
-			var font = new Typeface("Arial");
-			var fontSize = thiss.TextFont.Height;
+      var font = WpfFontManager.ToWpf(thiss.TextFont);
+			var fontSize = (thiss.TextFont.Size * 96) / 72;
 			var txtBrush = bSelected ? thiss.DefaultSelectedTextBrush.ToWpf() : thiss.TextBrush.ToWpf();
 
 			FormattedText t;
@@ -93,15 +93,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)DocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
 			string columnnumber = dataColCol.GetColumnNumber(data).ToString();
 			string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
-			int fontheight = thiss.TextFont.Height;
+      var font = WpfFontManager.ToWpf(thiss.TextFont);
+      var fontSize = (thiss.TextFont.Size * 96) / 72;
+      var fontheight = font.FontFamily.LineSpacing * fontSize;
 			var nameRectangle = cellRectangle;
 			nameRectangle.Height = Math.Max(fontheight, cellRectangle.Height - fontheight);
 			var numRectangle = cellRectangle;
 			numRectangle.Height = fontheight;
 			numRectangle.Y = Math.Max(cellRectangle.Y + cellRectangle.Height - fontheight, cellRectangle.Y);
 
-			var font = new Typeface("Arial");
-			var fontSize = thiss.TextFont.Height;
 			var txtBrush = bSelected ? thiss.DefaultSelectedTextBrush.ToWpf() : thiss.TextBrush.ToWpf();
 
 			FormattedText t;
@@ -155,8 +155,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			thiss.PaintBackground(dc, cellRect, bSelected);
 
 
-			var font = new Typeface("Arial");
-			var fontSize = thiss.TextFont.Height;
+      var font = WpfFontManager.ToWpf(thiss.TextFont);
+			var fontSize = ( thiss.TextFont.Size * 96 )/ 72;
 			var txtBrush = bSelected ? thiss.DefaultSelectedTextBrush.ToWpf() : thiss.TextBrush.ToWpf();
 
 			FormattedText t;

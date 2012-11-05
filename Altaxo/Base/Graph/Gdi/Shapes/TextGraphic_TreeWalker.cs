@@ -267,7 +267,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					case @"\g(":
 						{
 							var newContext = context.Clone();
-							newContext.SetFont("Symbol", context.FontId.Size, context.FontId.Style);
+              newContext.SetFont(GdiFontManager.GetFontWithNewFamily(context.FontId, "Symbol"));
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
@@ -403,7 +403,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 								numberString = s1.Substring(0, s1.Length - 1);
 								if (double.TryParse(numberString, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out val))
 								{
-									newContext.BaseFontId = new FontIdentifier(context.BaseFontId.FamilyName, context.BaseFontId.Style, context.BaseFontId.Size * val / 100);
+									newContext.BaseFontId = GdiFontManager.GetFontWithNewSize(context.BaseFontId, context.BaseFontId.Size * val / 100);
 									newContext.ScaleFont(val / 100);
 								}
 							}
@@ -412,15 +412,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 								)
 							{
 								double newSize = val * (double)(lengthUnit.UnitInMeter / Altaxo.Serialization.LengthUnit.Point.UnitInMeter);
-								newContext.BaseFontId = new FontIdentifier(context.BaseFontId.FamilyName, context.BaseFontId.Style, newSize);
-								newContext.FontId = new FontIdentifier(context.FontId.FamilyName, context.FontId.Style, newSize);
+                newContext.BaseFontId = GdiFontManager.GetFontWithNewSize(context.BaseFontId, newSize);
+                newContext.FontId = GdiFontManager.GetFontWithNewSize(context.FontId, newSize);
 							}
 							else if (double.TryParse(s1, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out val)
 								)
 							{
 								double newSize = val;
-								newContext.BaseFontId = new FontIdentifier(context.BaseFontId.FamilyName, context.BaseFontId.Style, newSize);
-								newContext.FontId = new FontIdentifier(context.FontId.FamilyName, context.FontId.Style, newSize);
+                newContext.BaseFontId = GdiFontManager.GetFontWithNewSize(context.BaseFontId, newSize);
+                newContext.FontId = GdiFontManager.GetFontWithNewSize(context.FontId, newSize);
 							}
 							VisitNode(childNode.next_, newContext, parent);
 						}

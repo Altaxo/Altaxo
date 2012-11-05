@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Serialization;
-
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
@@ -143,24 +143,27 @@ namespace Altaxo.Worksheet
       Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
       string columnnumber = dataColCol.GetColumnNumber(data).ToString();
       string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(),dataColCol.GetColumnGroup(data));
-      int fontheight = _textFont.Height;
+
+      var gdiTextFont = _textFont.ToGdi();
+
+      var fontheight = gdiTextFont.GetHeight(dc);
       Rectangle nameRectangle = cellRectangle;
-      nameRectangle.Height = Math.Max(fontheight,cellRectangle.Height-fontheight);
+      nameRectangle.Height = (int)Math.Max(fontheight,cellRectangle.Height-fontheight);
       Rectangle numRectangle = cellRectangle;
-      numRectangle.Height = fontheight;
-      numRectangle.Y = Math.Max(cellRectangle.Y+cellRectangle.Height-fontheight,cellRectangle.Y);
+      numRectangle.Height = (int)fontheight;
+      numRectangle.Y = (int)Math.Max(cellRectangle.Y+cellRectangle.Height-fontheight,cellRectangle.Y);
       
       if(bSelected)
       {
-        dc.DrawString(columnnumber,_textFont,_defaultSelectedTextBrush,numRectangle,_leftUpperTextFormat);
-        dc.DrawString(kindandgroup, _textFont, _defaultSelectedTextBrush, numRectangle, _rightUpperTextFormat);
-        dc.DrawString(data.Name, _textFont, _defaultSelectedTextBrush, nameRectangle, _textFormat);
+        dc.DrawString(columnnumber, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _leftUpperTextFormat);
+        dc.DrawString(kindandgroup, gdiTextFont, _defaultSelectedTextBrush, numRectangle, _rightUpperTextFormat);
+        dc.DrawString(data.Name, gdiTextFont, _defaultSelectedTextBrush, nameRectangle, _textFormat);
       }
       else
       {
-        dc.DrawString(columnnumber,_textFont,_textBrush,numRectangle,_leftUpperTextFormat);
-        dc.DrawString(kindandgroup,_textFont,_textBrush,numRectangle,_rightUpperTextFormat);
-        dc.DrawString(data.Name,_textFont,_textBrush,nameRectangle,_textFormat);
+        dc.DrawString(columnnumber, gdiTextFont, _textBrush, numRectangle, _leftUpperTextFormat);
+        dc.DrawString(kindandgroup, gdiTextFont, _textBrush, numRectangle, _rightUpperTextFormat);
+        dc.DrawString(data.Name, gdiTextFont, _textBrush, nameRectangle, _textFormat);
       }
     }
 

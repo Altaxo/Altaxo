@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Serialization;
-
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Worksheet
 {
@@ -140,9 +140,9 @@ namespace Altaxo.Worksheet
         t.ToString("o");
     
       if(bSelected)
-        dc.DrawString(myString, _textFont, _defaultSelectedTextBrush, cellRectangle, _textFormat);
+        dc.DrawString(myString, _textFont.ToGdi(), _defaultSelectedTextBrush, cellRectangle, _textFormat);
       else
-        dc.DrawString(myString,_textFont,_textBrush,cellRectangle,_textFormat);
+        dc.DrawString(myString,_textFont.ToGdi(),_textBrush,cellRectangle,_textFormat);
     }
 
 		public static Dictionary<System.Type, Action<DateTimeColumnStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DateTimeColumnStyle, object, Graph.RectangleD, int, Data.DataColumn, bool>>();

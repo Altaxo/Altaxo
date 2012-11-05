@@ -48,27 +48,7 @@ namespace System.Drawing
     }
   }
 
-
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.Font),0)]
-  public class FontXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    System.Drawing.FontConverter sm_Converter = new System.Drawing.FontConverter();
-
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-    {
-      System.Drawing.Font s = (System.Drawing.Font)obj;
-      
-      info.SetNodeContent(sm_Converter.ConvertToInvariantString(s));
-    }
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-    {
-      
-      string val = info.GetNodeContent();
-      return (Font)sm_Converter.ConvertFromInvariantString(val);
-    }
-  }
-
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.SizeF),0)]
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.SizeF),0)]
   public class SizeFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
 
