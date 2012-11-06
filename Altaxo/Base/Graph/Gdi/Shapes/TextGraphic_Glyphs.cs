@@ -131,9 +131,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 				FontId = FontId.GetFontWithNewSize(scale * FontId.Size);
 			}
 
-			public void StyleFont(FontXStyle style)
+			public void SetFontStyle(FontXStyle style)
 			{
 				FontId = FontId.GetFontWithNewStyle(style);
+			}
+
+			/// <summary>
+			/// Merges the providedstyle into the present style. Example: if the present style is Bold, and the style parameter is Italic, then the merged style is 'Bold Italic'.
+			/// </summary>
+			/// <param name="style">The style to merge with the present style.</param>
+			public void MergeFontStyle(FontXStyle style)
+			{
+				var newStyle = FontId.Style | style;
+				FontId = FontId.GetFontWithNewStyle(newStyle);
 			}
 
 		}

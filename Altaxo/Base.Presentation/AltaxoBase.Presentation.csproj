@@ -197,8 +197,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Common\Drawing\FontStyleComboBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Common\Drawing\FontFamilyComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -757,6 +757,9 @@
       <DependentUpon>BrushComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\DimensionfulQuantityImageComboBox.cs" />
+    <Compile Include="Gui\Common\Drawing\FontStyleComboBox.xaml.cs">
+      <DependentUpon>FontStyleComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\TextureScalingControl.xaml.cs">
       <DependentUpon>TextureScalingControl.xaml</DependentUpon>
     </Compile>
@@ -803,9 +806,6 @@
     <Compile Include="Gui\Common\Drawing\FontControlsGlue.cs" />
     <Compile Include="Gui\Common\Drawing\FontSizeComboBox.xaml.cs">
       <DependentUpon>FontSizeComboBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Common\Drawing\FontStyleComboBox.xaml.cs">
-      <DependentUpon>FontStyleComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\FontFamilyComboBox.xaml.cs">
       <DependentUpon>FontFamilyComboBox.xaml</DependentUpon>

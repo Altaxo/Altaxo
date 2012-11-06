@@ -533,9 +533,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _font; }
       set
       {
-				if (null != value)
+				if (null == value)
 					throw new ArgumentNullException();
-				var oldValue = Font;
+				var oldValue = _font;
         _font = value;
 				if(!value.Equals(oldValue))
 					OnChanged();

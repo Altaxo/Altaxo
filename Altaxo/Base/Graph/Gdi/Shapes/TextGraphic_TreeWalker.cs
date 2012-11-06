@@ -274,35 +274,35 @@ namespace Altaxo.Graph.Gdi.Shapes
 					case @"\i(":
 						{
 							var newContext = context.Clone();
-							newContext.StyleFont(FontXStyle.Italic);
+							newContext.MergeFontStyle(FontXStyle.Italic);
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
 					case @"\b(":
 						{
 							var newContext = context.Clone();
-							newContext.StyleFont(FontXStyle.Bold);
+							newContext.MergeFontStyle(FontXStyle.Bold);
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
 					case @"\u(":
 						{
 							var newContext = context.Clone();
-							newContext.StyleFont(FontXStyle.Underline);
+							newContext.MergeFontStyle(FontXStyle.Underline);
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
 					case @"\s(":
 						{
 							var newContext = context.Clone();
-							newContext.StyleFont(FontXStyle.Strikeout);
+							newContext.MergeFontStyle(FontXStyle.Strikeout);
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
 					case @"\n(":
 						{
 							var newContext = context.Clone();
-							newContext.StyleFont(FontXStyle.Regular);
+							newContext.SetFontStyle(FontXStyle.Regular);
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
