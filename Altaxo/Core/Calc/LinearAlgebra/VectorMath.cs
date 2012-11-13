@@ -318,6 +318,155 @@ namespace Altaxo.Calc.LinearAlgebra
 			public int Length { get { return _length; } }  // change this later to length property
 		}
 
+
+		/// <summary>
+		/// Serves as Wrapper for an short array to plug-in where a IROVector is neccessary.
+		/// </summary>
+		private class ROIntArraySectionWrapper : IROVector
+		{
+			protected int[] _x;
+			protected int _start;
+			protected int _length;
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			public ROIntArraySectionWrapper(int[] x)
+			{
+				_x = x;
+				_start = 0;
+				_length = _x.Length;
+			}
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
+			/// <param name="usedlength">The length used for the vector.</param>
+			public ROIntArraySectionWrapper(int[] x, int start, int usedlength)
+			{
+				if (start < 0)
+					throw new ArgumentException("start is negative");
+				if (usedlength < 0)
+					throw new ArgumentException("usedlength is negative");
+
+				if ((start + usedlength) > x.Length)
+					throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+				_x = x;
+				_start = start;
+				_length = usedlength;
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public double this[int i] { get { return _x[i + _start]; } }
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length { get { return _length; } }  // change this later to length property
+		}
+
+		/// <summary>
+		/// Serves as Wrapper for an short array to plug-in where a IROVector is neccessary.
+		/// </summary>
+		private class ROShortArraySectionWrapper : IROVector
+		{
+			protected short[] _x;
+			protected int _start;
+			protected int _length;
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			public ROShortArraySectionWrapper(short[] x)
+			{
+				_x = x;
+				_start = 0;
+				_length = _x.Length;
+			}
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
+			/// <param name="usedlength">The length used for the vector.</param>
+			public ROShortArraySectionWrapper(short[] x, int start, int usedlength)
+			{
+				if (start < 0)
+					throw new ArgumentException("start is negative");
+				if (usedlength < 0)
+					throw new ArgumentException("usedlength is negative");
+
+				if ((start + usedlength) > x.Length)
+					throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+				_x = x;
+				_start = start;
+				_length = usedlength;
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public double this[int i] { get { return _x[i + _start]; } }
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length { get { return _length; } }  // change this later to length property
+		}
+
+		/// <summary>
+		/// Serves as Wrapper for an signed byte array to plug-in where a IROVector is neccessary.
+		/// </summary>
+		private class ROSByteArraySectionWrapper : IROVector
+		{
+			protected sbyte[] _x;
+			protected int _start;
+			protected int _length;
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			public ROSByteArraySectionWrapper(sbyte[] x)
+			{
+				_x = x;
+				_start = 0;
+				_length = _x.Length;
+			}
+
+			/// <summary>
+			/// Constructor, takes a double array for wrapping.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
+			/// <param name="usedlength">The length used for the vector.</param>
+			public ROSByteArraySectionWrapper(sbyte[] x, int start, int usedlength)
+			{
+				if (start < 0)
+					throw new ArgumentException("start is negative");
+				if (usedlength < 0)
+					throw new ArgumentException("usedlength is negative");
+
+				if ((start + usedlength) > x.Length)
+					throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+				_x = x;
+				_start = start;
+				_length = usedlength;
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public double this[int i] { get { return _x[i + _start]; } }
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length { get { return _length; } }  // change this later to length property
+		}
+
+
 		private class ExtensibleVector : IExtensibleVector
 		{
 			double[] _arr;
@@ -516,6 +665,43 @@ namespace Altaxo.Calc.LinearAlgebra
 				return new RODoubleArrayWrapper(x, usedlength);
 			else
 				return new RODoubleArraySectionWrapper(x, start, usedlength);
+		}
+
+
+		/// <summary>
+		/// Wraps an int[] array till a given length to get a IROVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static IROVector ToROVector(int[] x, int start, int usedlength)
+		{
+				return new ROIntArraySectionWrapper(x, start, usedlength);
+		}
+
+		/// <summary>
+		/// Wraps a short[] array till a given length to get a IROVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static IROVector ToROVector(short[] x, int start, int usedlength)
+		{
+			return new ROShortArraySectionWrapper(x, start, usedlength);
+		}
+
+		/// <summary>
+		/// Wraps a sbyte[] array till a given length to get a IROVector.
+		/// </summary>
+		/// <param name="x">The array to wrap.</param>
+		/// <param name="start">Index of the element in <paramref name="x"/> used as the first element of the vector.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static IROVector ToROVector(sbyte[] x, int start, int usedlength)
+		{
+			return new ROSByteArraySectionWrapper(x, start, usedlength);
 		}
 
 
