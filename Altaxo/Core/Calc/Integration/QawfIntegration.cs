@@ -80,7 +80,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public GSL_ERROR
-		 Integrate(ScalarFunctionDD f,
+		 Integrate(Func<double, double> f,
 		 double a,
 		 OscillatoryTerm oscTerm,
 		 double omega,
@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public GSL_ERROR
-			Integrate(ScalarFunctionDD f,
+			Integrate(Func<double, double> f,
 			double a,
 			OscillatoryTerm oscTerm,
 			double omega,
@@ -118,7 +118,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 					double a,
 			OscillatoryTerm oscTerm,
 		 double omega,
@@ -160,7 +160,7 @@ namespace Altaxo.Calc.Integration
 
 
 		static GSL_ERROR
-		gsl_integration_qawf(ScalarFunctionDD f,
+		gsl_integration_qawf(Func<double, double> f,
 													double a,
 													double epsabs,
 													int limit,

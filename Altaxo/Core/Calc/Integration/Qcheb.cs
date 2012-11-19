@@ -40,12 +40,12 @@ namespace Altaxo.Calc.Integration
 		{
 		}
 
-		public void Approximate(ScalarFunctionDD f, double a, double b, double[] cheb12, double[] cheb24)
+		public void Approximate(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24)
 		{
 			gsl_integration_qcheb(f, a, b, cheb12, cheb24, _fval, _v);
 		}
 
-		public static void Approximation(ScalarFunctionDD f, double a, double b, double[] cheb12, double[] cheb24)
+		public static void Approximation(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24)
 		{
 			double[] fval = new double[25]; // working space
 			double[] v = new double[12]; // working space
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="cheb24"></param>
 		/// <param name="fval">working space, must be of length 25</param>
 		/// <param name="v">working space, must be of length 12</param>
-		static void gsl_integration_qcheb(ScalarFunctionDD f, double a, double b, double[] cheb12, double[] cheb24,
+		static void gsl_integration_qcheb(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24,
 			double[] fval, // working space, must be of length 25
 			double[] v     // working space, must be of length 12
 			)

@@ -63,7 +63,7 @@ namespace Altaxo.Calc.Integration
 
 
 		static GSL_ERROR
-		qag(ScalarFunctionDD f,
+		qag(Func<double, double> f,
 				 double a, double b,
 				 double epsabs, double epsrel,
 				 int limit,

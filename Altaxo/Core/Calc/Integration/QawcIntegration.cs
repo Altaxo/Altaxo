@@ -65,7 +65,7 @@ namespace Altaxo.Calc.Integration
 			_debug = debug;
 		}
 
-		public GSL_ERROR Integrate(ScalarFunctionDD f,
+		public GSL_ERROR Integrate(Func<double, double> f,
 			 double a, double b, double c,
 			 double epsabs, double epsrel,
 			 int limit,
@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Integration
 			return gsl_integration_qawc(f, a, b, c, epsabs, epsrel, limit, _workSpace, out result, out abserr, debug);
 		}
 
-		public GSL_ERROR Integrate(ScalarFunctionDD f,
+		public GSL_ERROR Integrate(Func<double, double> f,
 				 double a, double b, double c,
 					double epsabs, double epsrel,
 					int limit,
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.Integration
 
 
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 				 double a, double b, double c,
 					double epsabs, double epsrel,
 					int limit,
@@ -105,7 +105,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 					double a, double b, double c,
 					double epsabs, double epsrel,
 					int limit,
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Integration
 
 
 		public static GSL_ERROR
-	 Integration(ScalarFunctionDD f,
+	 Integration(Func<double, double> f,
 				double a, double b, double c,
 				 double epsabs, double epsrel,
 				 int limit,
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 					double a, double b, double c,
 					double epsabs, double epsrel,
 					int limit,
@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Integration
 
 
 		static GSL_ERROR
-		gsl_integration_qawc(ScalarFunctionDD f,
+		gsl_integration_qawc(Func<double, double> f,
 													double a, double b, double c,
 													double epsabs, double epsrel,
 													int limit,
@@ -377,7 +377,7 @@ namespace Altaxo.Calc.Integration
 
 		struct fn_cauchy_params
 		{
-			public ScalarFunctionDD function;
+			public Func<double, double> function;
 			public double singularity;
 		}
 
@@ -385,7 +385,7 @@ namespace Altaxo.Calc.Integration
 
 
 		static void
-		qc25c(ScalarFunctionDD f, double a, double b, double c,
+		qc25c(Func<double, double> f, double a, double b, double c,
 					 out double result, out double abserr, out bool err_reliable)
 		{
 			double cc = (2 * c - b - a) / (b - a);
@@ -398,7 +398,7 @@ namespace Altaxo.Calc.Integration
 				fn_params.function = f;
 				fn_params.singularity = c;
 
-				ScalarFunctionDD weighted_function = delegate(double t) { return fn_cauchy(t, fn_params); };
+				Func<double, double> weighted_function = delegate(double t) { return fn_cauchy(t, fn_params); };
 
 
 				QK15.Integration(weighted_function, a, b, out result, out abserr,
@@ -446,7 +446,7 @@ namespace Altaxo.Calc.Integration
 		static double
 		fn_cauchy(double x, fn_cauchy_params p)
 		{
-			ScalarFunctionDD f = p.function;
+			Func<double, double> f = p.function;
 			double c = p.singularity;
 			return f(x) / (x - c);
 		}

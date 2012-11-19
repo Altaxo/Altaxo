@@ -678,7 +678,7 @@ qelg(out double result, out double abserr)
 	}
 
 	public delegate void gsl_integration_rule(
-		ScalarFunctionDD f, double a, double b,
+		Func<double, double> f, double a, double b,
 		out double result, out double abserr,
 																	out double defabs, out double resabs);
 	public class IntegrationBase
@@ -742,7 +742,7 @@ qelg(out double result, out double abserr)
 		/* Main integration function */
 
 		protected static GSL_ERROR
-		qags(ScalarFunctionDD f,
+		qags(Func<double, double> f,
 					double a, double b,
 					double epsabs, double epsrel,
 					int limit,

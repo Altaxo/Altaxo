@@ -300,7 +300,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		/// <param name="x0"></param>
 		/// <param name="x1"></param>
 		/// <returns></returns>
-		private static double FindDecreasingYEqualToZero(ScalarFunctionDD func, double x0, double x1)
+		private static double FindDecreasingYEqualToZero(Func<double, double> func, double x0, double x1)
 		{
 			double low = x0;
 			double high = x1;

@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="result">On return, contains the integration result.</param>
 		/// <param name="abserr">On return, contains the absolute error of integration.</param>
 		/// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-		public GSL_ERROR Integrate(ScalarFunctionDD f,
+		public GSL_ERROR Integrate(Func<double, double> f,
 			 double a, double b,
 			 double epsabs, double epsrel, int limit,
 			 gsl_integration_rule integrationRule, bool debug,
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="result">On return, contains the integration result.</param>
 		/// <param name="abserr">On return, contains the absolute error of integration.</param>
 		/// <returns>Null if successfull, otherwise the appropriate error code.</returns>
-		public GSL_ERROR Integrate(ScalarFunctionDD f,
+		public GSL_ERROR Integrate(Func<double, double> f,
 					double a, double b,
 					double epsabs, double epsrel, int limit,
 					out double result, out double abserr)
@@ -156,7 +156,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
 		/// <returns>Null if successfull, otherwise the appropriate error code.</returns>
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 					double a, double b,
 					double epsabs, double epsrel,
 					int limit,
@@ -184,7 +184,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
 		/// <returns>Null if successfull, otherwise the appropriate error code.</returns>
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 					double a, double b,
 					double epsabs, double epsrel,
 					int limit,
@@ -215,7 +215,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="abserr">On return, contains the absolute error of integration.</param>
 		/// <returns>Null if successfull, otherwise the appropriate error code.</returns>
 		public static GSL_ERROR
-	 Integration(ScalarFunctionDD f,
+	 Integration(Func<double, double> f,
 		 double a, double b,
 		 double epsabs, double epsrel,
 		 int limit,
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Integration
 		/// <param name="abserr">On return, contains the absolute error of integration.</param>
 		/// <returns>Null if successfull, otherwise the appropriate error code.</returns>
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 			double a, double b,
 			double epsabs, double epsrel,
 			int limit,

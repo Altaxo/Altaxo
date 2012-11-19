@@ -40,7 +40,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="x0">Starting parameter of x0, at the end the lower value of the bracket interval.</param>
     /// <param name="x1">Starting parameter of x1, at the end the upper value of the bracket interval.</param>
     /// <returns>True if a bracket interval was found. If such an interval could not be found, the return value is false.</returns>
-    public static bool BracketRootByExtensionOnly(ScalarFunctionDD func, double ysearch, ref double x0, ref double x1)
+    public static bool BracketRootByExtensionOnly(Func<double, double> func, double ysearch, ref double x0, ref double x1)
     {
       if (!(x0 != x1))
         return false;
@@ -173,7 +173,7 @@ namespace Altaxo.Calc.RootFinding
     public double fa, fb, fc;
   }
     static GSL_ERROR
-    brent_init(ScalarFunctionDD f, double x_lower, double x_upper, out double root, out brent_state_t state)
+    brent_init(Func<double, double> f, double x_lower, double x_upper, out double root, out brent_state_t state)
     {
       double f_lower, f_upper;
 
@@ -204,7 +204,7 @@ namespace Altaxo.Calc.RootFinding
 
 
     static GSL_ERROR
-brent_iterate(ref brent_state_t state, ScalarFunctionDD f, out double root, ref double x_lower, ref double x_upper)
+brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, ref double x_lower, ref double x_upper)
     {
 
       double tol, m;
@@ -358,12 +358,12 @@ brent_iterate(ref brent_state_t state, ScalarFunctionDD f, out double root, ref 
       return null;
     }
 
-    public static double ByBrentsAlgorithm(ScalarFunctionDD f, double x0, double x1)
+    public static double ByBrentsAlgorithm(Func<double, double> f, double x0, double x1)
     {
       return ByBrentsAlgorithm(f, x0, x1, 0, DoubleConstants.DBL_EPSILON);
     }
 
-    public static double ByBrentsAlgorithm(ScalarFunctionDD f, double x0, double x1, double epsabs, double epsrel)
+    public static double ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel)
     {
       double root;
       if (null == ByBrentsAlgorithm(f, x0, x1, epsabs, epsrel, out root))
@@ -372,7 +372,7 @@ brent_iterate(ref brent_state_t state, ScalarFunctionDD f, out double root, ref 
         return double.NaN;
     }
 
-    public static GSL_ERROR ByBrentsAlgorithm(ScalarFunctionDD f, double x0, double x1, double epsabs, double epsrel, out double root)
+    public static GSL_ERROR ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel, out double root)
     {
       brent_state_t state;
       GSL_ERROR err;

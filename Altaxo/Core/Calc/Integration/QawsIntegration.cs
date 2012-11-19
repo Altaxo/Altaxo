@@ -60,7 +60,7 @@ namespace Altaxo.Calc.Integration
 
 
 		static GSL_ERROR
-		gsl_integration_qaws(ScalarFunctionDD f,
+		gsl_integration_qaws(Func<double, double> f,
 													double a, double b,
 													gsl_integration_qaws_table t,
 													double epsabs, double epsrel,
@@ -272,7 +272,7 @@ namespace Altaxo.Calc.Integration
 
 		struct fn_qaws_params
 		{
-			public ScalarFunctionDD function;
+			public Func<double, double> function;
 			public double a;
 			public double b;
 			public gsl_integration_qaws_table table;
@@ -280,7 +280,7 @@ namespace Altaxo.Calc.Integration
 
 
 		static void
-		qc25s(ScalarFunctionDD f, double a, double b, double a1, double b1,
+		qc25s(Func<double, double> f, double a, double b, double a1, double b1,
 					 gsl_integration_qaws_table t,
 					 out double result, out double abserr, out bool err_reliable)
 		{
@@ -290,7 +290,7 @@ namespace Altaxo.Calc.Integration
 			fn_params.b = b;
 			fn_params.table = t;
 
-			ScalarFunctionDD weighted_function;
+			Func<double, double> weighted_function;
 
 			if (a1 == a && (t.alpha != 0.0 || t.mu != 0))
 			{
@@ -395,7 +395,7 @@ namespace Altaxo.Calc.Integration
 		static double
 		fn_qaws(double x, fn_qaws_params p)
 		{
-			ScalarFunctionDD f = p.function;
+			Func<double, double> f = p.function;
 			gsl_integration_qaws_table t = p.table;
 
 			double factor = 1.0;
@@ -418,7 +418,7 @@ namespace Altaxo.Calc.Integration
 		static double
 		fn_qaws_L(double x, fn_qaws_params p)
 		{
-			ScalarFunctionDD f = p.function;
+			Func<double, double> f = p.function;
 			gsl_integration_qaws_table t = p.table;
 
 			double factor = 1.0;
@@ -435,7 +435,7 @@ namespace Altaxo.Calc.Integration
 		static double
 		fn_qaws_R(double x, fn_qaws_params p)
 		{
-			ScalarFunctionDD f = p.function;
+			Func<double, double> f = p.function;
 			gsl_integration_qaws_table t = p.table;
 
 			double factor = 1.0;

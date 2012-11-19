@@ -84,7 +84,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public GSL_ERROR
-		 Integrate(ScalarFunctionDD f,
+		 Integrate(Func<double, double> f,
 		 double a, double b,
 		 OscillatoryTerm oscTerm,
 		 double omega,
@@ -95,7 +95,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public GSL_ERROR
-			Integrate(ScalarFunctionDD f,
+			Integrate(Func<double, double> f,
 			double a, double b,
 			OscillatoryTerm oscTerm,
 			double omega,
@@ -118,7 +118,7 @@ namespace Altaxo.Calc.Integration
 		}
 
 		public static GSL_ERROR
-		Integration(ScalarFunctionDD f,
+		Integration(Func<double, double> f,
 					double a, double b,
 			OscillatoryTerm oscTerm,
 		 double omega,
@@ -501,7 +501,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 
 		protected static GSL_ERROR
-		gsl_integration_qawo(ScalarFunctionDD f,
+		gsl_integration_qawo(Func<double, double> f,
 													double a,
 													double epsabs, double epsrel,
 													int limit,
@@ -948,12 +948,12 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 		struct fn_fourier_params
 		{
-			public ScalarFunctionDD function;
+			public Func<double, double> function;
 			public double omega;
 		}
 
 		static void
-		qc25f(ScalarFunctionDD f, double a, double b,
+		qc25f(Func<double, double> f, double a, double b,
 					 gsl_integration_qawo_table wf, int level,
 					 out double result, out double abserr, out double resabs, out double resasc)
 		{
@@ -965,7 +965,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 			if (Math.Abs(par) < 2)
 			{
-				ScalarFunctionDD weighted_function;
+				Func<double, double> weighted_function;
 				fn_fourier_params fn_params;
 
 				fn_params.function = f;
@@ -1058,7 +1058,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 		static double fn_sin(double x, fn_fourier_params p)
 		{
-			ScalarFunctionDD f = p.function;
+			Func<double, double> f = p.function;
 			double w = p.omega;
 			double wx = w * x;
 			double sinwx = Math.Sin(wx);
@@ -1067,7 +1067,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 		static double fn_cos(double x, fn_fourier_params p)
 		{
-			ScalarFunctionDD f = p.function;
+			Func<double, double> f = p.function;
 			double w = p.omega;
 			double wx = w * x;
 			double coswx = Math.Cos(wx);

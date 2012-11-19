@@ -307,7 +307,7 @@ namespace Altaxo.Calc.Integration
 
 
 		static GSL_ERROR
-		gsl_integration_qng(ScalarFunctionDD f,
+		gsl_integration_qng(Func<double, double> f,
 												 double a, double b,
 												 double epsabs, double epsrel,
 												 out double result, out double abserr, out int neval, bool bDebug)

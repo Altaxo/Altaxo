@@ -151,7 +151,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x0">Lower bound of the search range.</param>
     /// <param name="x1">Upper bound of the search range.</param>
 		/// <returns>The value x at which func(x)=1±-1E-5.</returns>
-    protected static double FindIncreasingYEqualToOne(ScalarFunctionDD func, double x0, double x1)
+    protected static double FindIncreasingYEqualToOne(Func<double, double> func, double x0, double x1)
     {
       const double ConsideredAsZero = 2 * double.Epsilon;
       double low = x0;
@@ -189,7 +189,7 @@ namespace Altaxo.Calc.Probability
 		/// <param name="x0">Lower bound of the search range.</param>
 		/// <param name="x1">Upper bound of the search range.</param>
 		/// <returns>The value x at which func(x)=1±-1E-5.</returns>
-    protected static double FindDecreasingYEqualToOne(ScalarFunctionDD func, double x0, double x1)
+    protected static double FindDecreasingYEqualToOne(Func<double, double> func, double x0, double x1)
     {
       double low = x0;
       double high = x1;
@@ -227,7 +227,7 @@ namespace Altaxo.Calc.Probability
 		/// <param name="tol">Tolerable deviation of the searched function value.</param>
 		/// <param name="y">On return, this is the function value that corresponds to the returned x value.</param>
 		/// <returns>The value x at which func(x)=<paramref name="ysearch"/>±<paramref name="tol"/>.</returns>
-		protected static double FindIncreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
+		protected static double FindIncreasingYEqualTo(Func<double, double> func, double x0, double x1, double ysearch, double tol, out double y)
     {
       const double ConsideredAsZero = 2 * double.Epsilon;
 
@@ -265,7 +265,7 @@ namespace Altaxo.Calc.Probability
 		/// <param name="tol">Tolerable deviation of the searched function value.</param>
 		/// <param name="y">On return, this is the function value that corresponds to the returned x value.</param>
 		/// <returns>The value x at which func(x)=<paramref name="ysearch"/>±<paramref name="tol"/>.</returns>
-		protected static double FindDecreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
+		protected static double FindDecreasingYEqualTo(Func<double, double> func, double x0, double x1, double ysearch, double tol, out double y)
     {
       double low = x0;
       double high = x1;
@@ -299,7 +299,7 @@ namespace Altaxo.Calc.Probability
 		/// <param name="x0">Starting parameter of x0, at the end the lower value of the bracket interval.</param>
 		/// <param name="x1">Starting parameter of x1, at the end the upper value of the bracket interval.</param>
 		/// <returns>True if a bracket interval was found. If such an interval could not be found, the return value is false.</returns>
-		public static bool BracketRootByExtensionOnly(ScalarFunctionDD func, double ysearch, ref double x0, ref double x1)
+		public static bool BracketRootByExtensionOnly(Func<double, double> func, double ysearch, ref double x0, ref double x1)
 		{
 			if (!(x0 != x1))
 				return false;
@@ -963,8 +963,8 @@ namespace Altaxo.Calc.Probability
 
       protected double _x0;
 
-      protected ScalarFunctionDD pdfCore;
-      protected ScalarFunctionDD pdfFunc;
+      protected Func<double, double> pdfCore;
+      protected Func<double, double> pdfFunc;
 
       public Alt1GnI(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
       {
@@ -980,8 +980,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
       public double PDFCore(double thetas)
@@ -1673,7 +1673,7 @@ namespace Altaxo.Calc.Probability
 
         _x0 = -xinc;
         error = Calc.Integration.QagpIntegration.Integration(
-                    new ScalarFunctionDD(this.PDFFuncLogIntToRight),
+                    new Func<double, double>(this.PDFFuncLogIntToRight),
                     new double[] { Math.Log(-_x0), Math.Log(Math.PI - dev - _xm - _x0) }, 2,
                     0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
 
@@ -1764,8 +1764,8 @@ namespace Altaxo.Calc.Probability
       protected double dev;
       protected double logPdfPrefactor;
       protected double _x0;
-      protected ScalarFunctionDD pdfCore;
-      ScalarFunctionDD pdfFunc;
+      protected Func<double, double> pdfCore;
+      Func<double, double> pdfFunc;
 
       public Alt1GnD()
       {
@@ -1785,8 +1785,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
     
@@ -2059,8 +2059,8 @@ namespace Altaxo.Calc.Probability
       protected double dev;
       protected double logPdfPrefactor;
       protected double _x0;
-      protected ScalarFunctionDD pdfCore;
-      ScalarFunctionDD pdfFunc;
+      protected Func<double, double> pdfCore;
+      Func<double, double> pdfFunc;
 
       public Alt1GpI(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
       {
@@ -2076,8 +2076,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
     
@@ -2355,8 +2355,8 @@ namespace Altaxo.Calc.Probability
       protected double dev;
       protected double logPdfPrefactor;
       protected double _x0;
-      protected ScalarFunctionDD pdfCore;
-      ScalarFunctionDD pdfFunc;
+      protected Func<double, double> pdfCore;
+      Func<double, double> pdfFunc;
 
       public Alt1GpD(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
       {
@@ -2372,8 +2372,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
     
@@ -3158,8 +3158,8 @@ namespace Altaxo.Calc.Probability
       double dev;
       double logPdfPrefactor;
       double _x0;
-      ScalarFunctionDD pdfCore;
-      ScalarFunctionDD pdfFunc;
+      Func<double, double> pdfCore;
+      Func<double, double> pdfFunc;
 
       public Agt1GnI(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
@@ -3175,8 +3175,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
       public double PDFCore(double thetas)
@@ -3355,8 +3355,8 @@ namespace Altaxo.Calc.Probability
       double logPdfPrefactor;
       double _x0;
 
-      ScalarFunctionDD pdfCore;
-      ScalarFunctionDD pdfFunc;
+      Func<double, double> pdfCore;
+      Func<double, double> pdfFunc;
 
       public Agt1GnD(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
@@ -3372,8 +3372,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
      
@@ -3541,8 +3541,8 @@ namespace Altaxo.Calc.Probability
       double logPdfPrefactor;
       double _x0;
 
-      ScalarFunctionDD pdfCore;
-      ScalarFunctionDD pdfFunc;
+      Func<double, double> pdfCore;
+      Func<double, double> pdfFunc;
 
       public Agt1GpI(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
@@ -3558,8 +3558,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
 
@@ -3725,8 +3725,8 @@ namespace Altaxo.Calc.Probability
       double logPdfPrefactor;
       double _x0;
 
-      ScalarFunctionDD pdfCore;
-      ScalarFunctionDD pdfFunc;
+      Func<double, double> pdfCore;
+      Func<double, double> pdfFunc;
 
       public Agt1GpD(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
       {
@@ -3742,8 +3742,8 @@ namespace Altaxo.Calc.Probability
 
       public void Initialize()
       {
-        pdfCore = new ScalarFunctionDD(PDFCore);
-        pdfFunc = new ScalarFunctionDD(PDFFunc);
+        pdfCore = new Func<double, double>(PDFCore);
+        pdfFunc = new Func<double, double>(PDFFunc);
       }
 
 

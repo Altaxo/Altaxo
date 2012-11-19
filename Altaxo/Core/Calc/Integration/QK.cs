@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Integration
 		gsl_integration_qk(int n,
 												double[] xgk, double[] wg, double[] wgk,
 												double[] fv1, double[] fv2,
-												ScalarFunctionDD f, double a, double b,
+												Func<double, double> f, double a, double b,
 												out double result, out double abserr,
 												out double resabs, out double resasc)
 		{
@@ -258,14 +258,14 @@ namespace Altaxo.Calc.Integration
 			_fv1 = new double[_fvlength];
 			_fv2 = new double[_fvlength];
 		}
-		public void Integrate(ScalarFunctionDD f, double a, double b,
+		public void Integrate(Func<double, double> f, double a, double b,
 								out double result, out double abserr,
 								out double resabs, out double resasc)
 		{
 			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
 		}
 
-		public static void Integration(ScalarFunctionDD f, double a, double b,
+		public static void Integration(Func<double, double> f, double a, double b,
 								 out double result, out double abserr,
 								 out double resabs, out double resasc)
 		{
@@ -358,14 +358,14 @@ namespace Altaxo.Calc.Integration
 			_fv1 = new double[_fvlength];
 			_fv2 = new double[_fvlength];
 		}
-		public void Integrate(ScalarFunctionDD f, double a, double b,
+		public void Integrate(Func<double, double> f, double a, double b,
 								out double result, out double abserr,
 								out double resabs, out double resasc)
 		{
 			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
 		}
 
-		public static void Integration(ScalarFunctionDD f, double a, double b,
+		public static void Integration(Func<double, double> f, double a, double b,
 								 out double result, out double abserr,
 								 out double resabs, out double resasc)
 		{
@@ -468,14 +468,14 @@ namespace Altaxo.Calc.Integration
 			_fv1 = new double[_fvlength];
 			_fv2 = new double[_fvlength];
 		}
-		public void Integrate(ScalarFunctionDD f, double a, double b,
+		public void Integrate(Func<double, double> f, double a, double b,
 								out double result, out double abserr,
 								out double resabs, out double resasc)
 		{
 			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
 		}
 
-		public static void Integration(ScalarFunctionDD f, double a, double b,
+		public static void Integration(Func<double, double> f, double a, double b,
 								 out double result, out double abserr,
 								 out double resabs, out double resasc)
 		{
@@ -589,14 +589,14 @@ namespace Altaxo.Calc.Integration
 			_fv1 = new double[_fvlength];
 			_fv2 = new double[_fvlength];
 		}
-		public void Integrate(ScalarFunctionDD f, double a, double b,
+		public void Integrate(Func<double, double> f, double a, double b,
 								out double result, out double abserr,
 								out double resabs, out double resasc)
 		{
 			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
 		}
 
-		public static void Integration(ScalarFunctionDD f, double a, double b,
+		public static void Integration(Func<double, double> f, double a, double b,
 								 out double result, out double abserr,
 								 out double resabs, out double resasc)
 		{
@@ -726,14 +726,14 @@ namespace Altaxo.Calc.Integration
 			_fv1 = new double[_fvlength];
 			_fv2 = new double[_fvlength];
 		}
-		public void Integrate(ScalarFunctionDD f, double a, double b,
+		public void Integrate(Func<double, double> f, double a, double b,
 								out double result, out double abserr,
 								out double resabs, out double resasc)
 		{
 			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
 		}
 
-		public static void Integration(ScalarFunctionDD f, double a, double b,
+		public static void Integration(Func<double, double> f, double a, double b,
 								 out double result, out double abserr,
 								 out double resabs, out double resasc)
 		{
@@ -872,14 +872,14 @@ namespace Altaxo.Calc.Integration
 			_fv1 = new double[_fvlength];
 			_fv2 = new double[_fvlength];
 		}
-		public void Integrate(ScalarFunctionDD f, double a, double b,
+		public void Integrate(Func<double, double> f, double a, double b,
 								out double result, out double abserr,
 								out double resabs, out double resasc)
 		{
 			gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
 		}
 
-		public static void Integration(ScalarFunctionDD f, double a, double b,
+		public static void Integration(Func<double, double> f, double a, double b,
 								 out double result, out double abserr,
 								 out double resabs, out double resasc)
 		{

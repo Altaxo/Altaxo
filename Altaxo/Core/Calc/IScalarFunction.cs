@@ -25,12 +25,7 @@ using System;
 
 namespace Altaxo.Calc
 {
-	/// <summary>
-	/// Provides a delegate for function evaluation.
-	/// </summary>
-	/// <param name="x">The one and only parameter of the function.</param>
-	/// <returns>The functional value.</returns>
-	public delegate double ScalarFunctionDD(double x);
+
 
 	/// <summary>
 	/// Provides the interface to a function with one double argument, and one resulting double value.
