@@ -55,6 +55,10 @@ AltaxoCore contains contributions from the following projects (in alphabetic ord
 	Licence: no explicit license attached 
 	URL: http://www.codeproject.com/KB/recipes/Random.aspx
 
+- One dimensional root finding algorithms by bsargos, Software Developer, France 
+	Licence: Code project open license (CPOL) 
+	URL: http://www.codeproject.com/Articles/16083/One-dimensional-root-finding-algorithms
+
 
 
 Please note also the license files from some of the contributors in the same directory where you found this file.

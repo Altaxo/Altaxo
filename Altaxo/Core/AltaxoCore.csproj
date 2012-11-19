@@ -513,7 +513,34 @@
     <Compile Include="Calc\RMath.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Calc\RootFinding.cs" />
+    <Compile Include="Calc\RootFinding\QuickRootFinding.cs" />
+    <Compile Include="Calc\RootFinding\AbstractRootFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\BisectionRootFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\BrentRootFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\FalsePositionRootFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\NewtonRootFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\RidderRootFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\RootFinderException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\SecantRootFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RootFinding\UnaryFunctions.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Calc\Rounding.cs">
       <SubType>Code</SubType>
     </Compile>

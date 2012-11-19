@@ -32,7 +32,7 @@ using Altaxo.Calc;
 
 namespace Altaxo.Data
 {
-
+	using Altaxo.Calc.RootFinding;
 
 	public static class MasterCurveCreation
 	{
@@ -358,7 +358,7 @@ namespace Altaxo.Data
 						case OptimizationMethod.OptimizeSignedDifference:
 							{
 								currentShiftFactor =
-								RootFinding.ByBrentsAlgorithm(
+								QuickRootFinding.ByBrentsAlgorithm(
 									shiftFactor => GetMeanSignedPenalty(interpolations, currentColumns, shiftFactor, options), globalMinShift, globalMaxShift);
 							}
 							break;

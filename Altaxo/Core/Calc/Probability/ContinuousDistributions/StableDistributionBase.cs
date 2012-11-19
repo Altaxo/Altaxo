@@ -289,6 +289,120 @@ namespace Altaxo.Calc.Probability
       }
       return xm;
     }
+
+		/// <summary>
+		/// Find the bracket of a root, i.e. values for x0 and x1, so that ysearch is inbetween f(x0) and f(x1). This is done be extension of the interval [x0,x1] either
+		/// to the left or the right side or both. <c>True</c> is returned when a bracket was found.
+		/// </summary>
+		/// <param name="func">The function used to evaluate the function values.</param>
+		/// <param name="ysearch">The value to find.</param>
+		/// <param name="x0">Starting parameter of x0, at the end the lower value of the bracket interval.</param>
+		/// <param name="x1">Starting parameter of x1, at the end the upper value of the bracket interval.</param>
+		/// <returns>True if a bracket interval was found. If such an interval could not be found, the return value is false.</returns>
+		public static bool BracketRootByExtensionOnly(ScalarFunctionDD func, double ysearch, ref double x0, ref double x1)
+		{
+			if (!(x0 != x1))
+				return false;
+
+			if (x0 > x1) // make sure that x0<x1
+			{
+				double xh = x0;
+				x0 = x1;
+				x1 = xh;
+			}
+
+			double y0 = func(x0);
+			if (double.IsNaN(y0))
+				return false;
+
+			double y1 = func(x1);
+			if (double.IsNaN(y1))
+				return false;
+
+			if (y0 == ysearch || y1 == ysearch)
+				return true;
+
+			for (; ; )
+			{
+
+				if (y0 < y1) // increasing
+				{
+					if (y0 <= ysearch && ysearch <= y1)
+					{
+						return true;
+					}
+					else if (y0 > ysearch)
+					{
+						// extend the interval in the direction of x0
+						double oldx0 = x0;
+						x0 -= x1 - x0;
+						y0 = func(x0);
+						if (!(x0 != oldx0) || double.IsNaN(y0))
+							return false;
+					}
+					else if (y1 < ysearch)
+					{
+						// extend the interval in the direction of x1
+						double oldx1 = x1;
+						x1 += x1 - x0;
+						y1 = func(x1);
+						if (!(x1 != oldx1) || double.IsNaN(y1))
+							return false;
+					}
+					else
+					{
+						return false; // something else happend, for instance some of the value is infinite
+					}
+				}
+				else if (y0 > y1)
+				{
+					if (y1 <= ysearch && ysearch <= y0)
+					{
+						return true;
+					}
+					else if (y0 < ysearch)
+					{
+						// extend the interval in the direction of x0
+						double oldx0 = x0;
+						x0 -= x1 - x0;
+						y0 = func(x0);
+						if (!(x0 != oldx0) || double.IsNaN(y0))
+							return false;
+					}
+					else if (y1 > ysearch)
+					{
+						// extend the interval in the direction of x1
+						double oldx1 = x1;
+						x1 += x1 - x0;
+						y1 = func(x1);
+						if (!(x1 != oldx1) || double.IsNaN(y1))
+							return false;
+					}
+					else
+					{
+						return false; // something else happend, for instance some of the value is infinite
+					}
+				}
+				else // both values are equal
+				{
+					// extend the interval in both directions
+					double oldx0 = x0;
+					double oldx1 = x1;
+
+					x0 -= oldx1 - oldx0;
+					x1 += oldx1 - oldx0;
+					y0 = func(x0);
+					y1 = func(x1);
+					if (!(x0 != oldx0) || !(x1 != oldx1))
+						return false;
+					if (double.IsNaN(y0) || double.IsNaN(y1))
+						return false;
+				}
+			}
+		}
+
+
+
     #endregion
 
     #region Parameter conversion between different parametrizations

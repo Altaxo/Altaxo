@@ -26,6 +26,7 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
+	using Altaxo.Calc.RootFinding;
 
   public class StableDistributionFeller : StableDistributionBase
   {
@@ -664,9 +665,9 @@ namespace Altaxo.Calc.Probability
 
       object temp = tempStorage;
       double root = double.NaN;
-      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, 0, ref x0, ref x1))
+      if (QuickRootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, 0, ref x0, ref x1))
       {
-        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        if (null != QuickRootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
           root = double.NaN;
       }
       tempStorage = temp;
@@ -708,9 +709,9 @@ namespace Altaxo.Calc.Probability
 
       object temp = tempStorage;
       double root = double.NaN;
-      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, 0, ref x0, ref x1))
+      if (QuickRootFinding.BracketRootByExtensionOnly(delegate(double x) { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, 0, ref x0, ref x1))
       {
-        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        if (null != QuickRootFinding.ByBrentsAlgorithm(delegate(double x) { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
           root = double.NaN;
       }
       tempStorage = temp;

@@ -26,6 +26,8 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
+	using Altaxo.Calc.RootFinding;
+
 	/// <summary>
 	///  Represents a stable distribution in Nolan's S0 parametrization.
 	/// </summary>
@@ -498,9 +500,9 @@ namespace Altaxo.Calc.Probability
 
       object temp = tempStorage;
       double root = double.NaN;
-      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
+      if (QuickRootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
       {
-        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        if (null != QuickRootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
           root = double.NaN;
       }
       tempStorage = temp;

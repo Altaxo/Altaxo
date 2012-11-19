@@ -24,9 +24,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Calc
+namespace Altaxo.Calc.RootFinding
 {
-  public class RootFinding
+	/// <summary>
+	/// Provides static methods for quick and dirty root finding without instantiating a class.
+	/// </summary>
+  public class QuickRootFinding
   {
     /// <summary>
     /// Find the bracket of a root, i.e. values for x0 and x1, so that ysearch is inbetween f(x0) and f(x1). This is done be extension of the interval [x0,x1] either
