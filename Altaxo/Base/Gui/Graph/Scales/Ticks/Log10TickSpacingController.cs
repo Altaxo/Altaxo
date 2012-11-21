@@ -31,6 +31,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Serialization;
 using Altaxo.Calc;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
@@ -104,13 +105,13 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.DivideBy = GUIConversion.ToString(_doc.TransformationDivider);
 				_view.TransfoOperationIsMultiply = _doc.TransformationOperationIsMultiply;
 
-        _view.SuppressMajorTickValues = Serialization.GUIConversion.ToString(_doc.SuppressedMajorTicks.ByValues);
-        _view.SuppressMinorTickValues = Serialization.GUIConversion.ToString(_doc.SuppressedMinorTicks.ByValues);
-        _view.SuppressMajorTicksByNumber = Serialization.GUIConversion.ToString(_doc.SuppressedMajorTicks.ByNumbers);
-        _view.SuppressMinorTicksByNumber = Serialization.GUIConversion.ToString(_doc.SuppressedMinorTicks.ByNumbers);
+        _view.SuppressMajorTickValues = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByValues);
+        _view.SuppressMinorTickValues = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByValues);
+        _view.SuppressMajorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByNumbers);
+        _view.SuppressMinorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByNumbers);
 
-        _view.AddMajorTickValues = Serialization.GUIConversion.ToString(_doc.AdditionalMajorTicks.ByValues);
-        _view.AddMinorTickValues = Serialization.GUIConversion.ToString(_doc.AdditionalMinorTicks.ByValues);
+        _view.AddMajorTickValues = GUIConversion.ToString(_doc.AdditionalMajorTicks.ByValues);
+        _view.AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.ByValues);
       }
 		}
 
@@ -234,7 +235,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       int[] intVals;
       int intVal;
 
-      if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMajorTickValues, out varVals))
+      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMajorTickValues, out varVals))
       {
         _doc.SuppressedMajorTicks.ByValues.Clear();
         foreach (AltaxoVariant v in varVals)
@@ -245,7 +246,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMinorTickValues, out varVals))
+      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMinorTickValues, out varVals))
       {
         _doc.SuppressedMinorTicks.ByValues.Clear();
         foreach (AltaxoVariant v in varVals)
@@ -256,7 +257,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if (Serialization.GUIConversion.TryParseMultipleInt32(_view.SuppressMajorTicksByNumber, out intVals))
+      if (GUIConversion.TryParseMultipleInt32(_view.SuppressMajorTicksByNumber, out intVals))
       {
         _doc.SuppressedMajorTicks.ByNumbers.Clear();
         foreach (int v in intVals)
@@ -267,7 +268,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if (Serialization.GUIConversion.TryParseMultipleInt32(_view.SuppressMinorTicksByNumber, out intVals))
+      if (GUIConversion.TryParseMultipleInt32(_view.SuppressMinorTicksByNumber, out intVals))
       {
         _doc.SuppressedMinorTicks.ByNumbers.Clear();
         foreach (int v in intVals)
@@ -278,7 +279,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMajorTickValues, out varVals))
+      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMajorTickValues, out varVals))
       {
         _doc.AdditionalMajorTicks.ByValues.Clear();
         foreach (AltaxoVariant v in varVals)
@@ -289,7 +290,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         return false;
       }
 
-      if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMinorTickValues, out varVals))
+      if (GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMinorTickValues, out varVals))
       {
         _doc.AdditionalMinorTicks.ByValues.Clear();
         foreach (AltaxoVariant v in varVals)

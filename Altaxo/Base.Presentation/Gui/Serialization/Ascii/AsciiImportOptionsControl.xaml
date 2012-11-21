@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="Altaxo.Gui.Serialization.Ascii.AsciiImportOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             mc:Ignorable="d" 
+             >
+	<StackPanel Orientation="Vertical">
+		<GroupBox Header="Analyzing options">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Label Content="Number of lines to analyze:"/>
+				<axogc:Int32UpDown x:Name="_guiNumberOfLinesToAnalyze" Grid.Row="0" Grid.Column="1"/>
+			</Grid>
+		</GroupBox>
+		<Button x:Name="_guiAnalyzeAscii"  Content="Analyze!" Click="EhAnalyzeAscii"/>
+
+		<GroupBox Header="Analyzing results">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Label Grid.Row="0" Grid.Column="0" Content="Number of main header lines:"/>
+				<axogc:Int32UpDown x:Name="_guiNumberOfMainHeaderLines" Grid.Row="0" Grid.Column="1"/>
+				<Label Grid.Row="1" Grid.Column="0" Content="Index of caption line:"/>
+				<axogc:Int32UpDown x:Name="_guiIndexOfCaptionLine" Grid.Row="1" Grid.Column="1"/>
+				<Label Grid.Row="2" Grid.Column="0" Content="Decimal separator dots:"/>
+				<axogc:Int32UpDown x:Name="_guiNumberOfDecimalSeparatorDots" Grid.Row="2" Grid.Column="1"/>
+				<Label Grid.Row="3" Grid.Column="0" Content="Decimal separator commas:"/>
+				<axogc:Int32UpDown x:Name="_guiNumberOfDecimalSeparatorCommas" Grid.Row="3" Grid.Column="1"/>
+				<Label Grid.Row="4" Grid.Column="0" Content="Separation:"/>
+				<ComboBox x:Name="_guiSeparationStrategy" Grid.Row="4" Grid.Column="1"/>
+			</Grid>
+		</GroupBox>
+		<GroupBox Header="User options">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<CheckBox x:Name="_guiRenameColumnsWithHeaderNames" Grid.Row="0" Grid.ColumnSpan="2" Content="Rename columns with header names" ToolTip="If checked, renames the columns if the first line contains the column names."/>
+				<CheckBox x:Name="_guiRenameWorksheetWithFileName" Grid.Row="1" Grid.ColumnSpan="2" Content="Rename worksheet with file name" ToolTip="If checked, renames the worksheet to the data file name."/>
+			</Grid>
+		</GroupBox>
+
+	</StackPanel>
+</UserControl>

@@ -31,6 +31,7 @@ namespace Altaxo.Serialization.Ascii
   {
     /// <summary>If true, rename the columns if 1st line contain  the column names.</summary>
     public bool RenameColumns; 
+
     /// <summary>If true, rename the worksheet to the data file name.</summary>
     public bool RenameWorksheet;
 
@@ -43,6 +44,7 @@ namespace Altaxo.Serialization.Ascii
 
     /// <summary>Number of dots that act as decimal separator in numeric strings.</summary>
     public int DecimalSeparatorDotCount;
+
     /// <summary>Number of commas that act as decimal separator in numeric strings.</summary>
     public int DecimalSeparatorCommaCount;
 

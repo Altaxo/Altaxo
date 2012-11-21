@@ -48,9 +48,10 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="dataTable">The data table where the first ascii file is imported to. Can be null.</param>
 		/// <param name="filenames">The names of the files to import.</param>
-		public static void ImportAsciiToMultipleWorksheets(this DataTable dataTable, string[] filenames)
+		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		public static void ImportAsciiToMultipleWorksheets(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
-			AsciiImporter.ImportAsciiToMultipleWorksheets(filenames, dataTable);
+			AsciiImporter.ImportAsciiToMultipleWorksheets(filenames, dataTable, importOptions);
 		}
 
 		/// <summary>
@@ -58,10 +59,11 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="dataTable">The data table where to import the data.</param>
 		/// <param name="filenames">The files names. The names will be sorted before use.</param>
-		public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames)
+		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
 			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportMultipleAsciiHorizontally(filenames, dataTable);
+			AsciiImporter.ImportMultipleAsciiHorizontally(filenames, dataTable, importOptions);
 		}
 
 		/// <summary>
@@ -69,10 +71,11 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="dataTable">The data table where to import the data.</param>
 		/// <param name="filenames">The files names. The names will be sorted before use.</param>
-		public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames)
+		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
 			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportMultipleAsciiVertically(filenames, dataTable);
+			AsciiImporter.ImportMultipleAsciiVertically(filenames, dataTable, importOptions);
 		}
 
 		/// <summary>
@@ -82,6 +85,15 @@ namespace Altaxo.Data
 		public static void ShowImportAsciiDialog(this DataTable dataTable)
 		{
 			ShowImportAsciiDialog(dataTable, true, false);
+		}
+
+		/// <summary>
+		/// Asks for file name(s) and imports the file(s) into multiple worksheets.
+		/// </summary>
+		/// <param name="dataTable">The data table to import to. Can be null (in this case the data are imported into a new data table).</param>
+		public static void ShowImportAsciiDialogAndOptions(this DataTable dataTable)
+		{
+			ShowImportAsciiDialogAndOptions(dataTable, true, false);
 		}
 
 		/// <summary>
@@ -102,17 +114,81 @@ namespace Altaxo.Data
 			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
 			{
 				if (toMultipleWorksheets)
-					ImportAsciiToMultipleWorksheets(dataTable, options.FileNames);
+					ImportAsciiToMultipleWorksheets(dataTable, options.FileNames, null);
 				else
 				{
 					if (vertically)
-						ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames);
+						ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames, null);
 					else
-						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames);
+						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames, null);
 				}
 			}
 
 		}
+
+
+		/// <summary>
+		/// Asks for file name(s) and imports the file(s) into one or multiple worksheets. After the user chooses one or multiple files, one of the chosen files is used for analysis.
+		/// The result of the structure analysis of this file is then presented to the user. The user may change some of the options and starts a re-analysis. Finally, the import options
+		/// are confirmed by the user and the import process can start.
+		/// </summary>
+		/// <param name="dataTable">The data table to import to. Can be null if <paramref name="toMultipleWorksheets"/> is set to <c>true</c>.</param>
+		/// <param name="toMultipleWorksheets">If true, multiple files are imported into multiple worksheets. New worksheets were then created automatically.</param>
+		/// <param name="vertically">If <c>toMultipleWorksheets</c> is false, and this option is true, the data will be exported vertically (in the same columns) instead of horizontally.</param>
+		public static void ShowImportAsciiDialogAndOptions(this DataTable dataTable, bool toMultipleWorksheets, bool vertically)
+		{
+			var options = new Altaxo.Gui.OpenFileOptions();
+			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
+			options.AddFilter("*.*", "All files (*.*)");
+			options.FilterIndex = 0;
+			options.RestoreDirectory = true;
+			options.Multiselect = true;
+
+			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
+			{
+				AsciiImportOptions importOptions;
+				if (!ShowAsciiImportOptionsDialog(options.FileName, out importOptions))
+					return;
+
+				if (toMultipleWorksheets)
+				{
+					ImportAsciiToMultipleWorksheets(dataTable, options.FileNames, importOptions);
+				}
+				else
+				{
+					if (vertically)
+						ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames, importOptions);
+					else
+						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames, importOptions);
+				}
+			}
+
+		}
+
+		/// <summary>
+		/// Shows the ASCII analysis dialog.
+		/// </summary>
+		/// <param name="fileName">Name of the file to analyze.</param>
+		/// <param name="importOptions">On return, contains the ASCII import options the user has confirmed.</param>
+		/// <returns><c>True</c> if the user confirms this dialog (clicks OK). False if the user cancels this dialog.</returns>
+		public static bool ShowAsciiImportOptionsDialog(string fileName, out AsciiImportOptions importOptions)
+		{
+			importOptions = new AsciiImportOptions();
+
+			using (FileStream str = AsciiImporter.GetAsciiInputFileStream(fileName))
+			{
+				importOptions = AsciiDocumentAnalysis.Analyze(str, new AsciiImportOptions());
+				object[] args = new object[] { importOptions, str };
+				var controller = (Altaxo.Gui.IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
+
+				if (!Current.Gui.ShowDialog(controller, "Choose ASCII import options"))
+					return false;
+
+				importOptions = (AsciiImportOptions)controller.ModelObject;
+				return true;
+			}
+		}
+
 
 		/// <summary>
 		/// Asks for a file name and exports the table data into that file as Ascii.

@@ -45,10 +45,6 @@ namespace Altaxo.Serialization.Ascii
       this._stream = stream;
     }
 
-
-   
-   
-
     public void ImportAscii(AsciiImportOptions impopt, Altaxo.Data.DataTable table)
     {
       string sLine;
@@ -221,8 +217,6 @@ namespace Altaxo.Serialization.Ascii
             } // end outer if null==newcol
           }
         } // end of for all cols
-
-
       } // end of for all lines
 
       // insert the new columns or replace the old ones
@@ -250,8 +244,11 @@ namespace Altaxo.Serialization.Ascii
       table.Resume();
     } // end of function ImportAscii
 
-
-
+		/// <summary>
+		/// Helper function. Gets an <see cref="System.IO.FileStream"/> by providing a file name. The stream is opened with read access and with the FileShare.Read flag.
+		/// </summary>
+		/// <param name="filename">The filename.</param>
+		/// <returns>The stream. You are responsible for closing / disposing this stream.</returns>
     public static System.IO.FileStream GetAsciiInputFileStream(string filename)
     {
       return new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
@@ -357,9 +354,27 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="myStream">The stream to import from.</param>
     public static void Import(System.IO.Stream myStream, DataTable dataTable)
 		{
-      var importer = new AsciiImporter(myStream);
-			var recognizedOptions = AsciiDocumentAnalysis.Analyze(myStream, _defaultImportOptions);
-      importer.ImportAscii(recognizedOptions, dataTable);
+			Import(myStream, dataTable, null);
+		}
+
+		/// <summary>
+		/// Imports Ascii data from a stream into the data table.
+		/// </summary>
+		/// <param name="dataTable">The table where to import into.</param>
+		/// <param name="myStream">The stream to import from.</param>
+		/// <param name="importOptions">The options used to import ASCII. If this parameter is <c>null</c>, an analysis of the stream is done in order to determine the import stragegy to use.</param>
+		public static void Import(System.IO.Stream myStream, DataTable dataTable, AsciiImportOptions importOptions)
+		{
+			var importer = new AsciiImporter(myStream);
+			if (null != importOptions)
+			{
+				importer.ImportAscii(importOptions, dataTable);
+			}
+			else
+			{
+				var recognizedOptions = AsciiDocumentAnalysis.Analyze(myStream, _defaultImportOptions);
+				importer.ImportAscii(recognizedOptions, dataTable);
+			}
 		}
 
 
@@ -388,8 +403,9 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the data should be imported to.</param>
-    /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string ImportMultipleAsciiHorizontally(string[] filenames, Altaxo.Data.DataTable table)
+		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		/// <returns>Null if no error occurs, or an error description.</returns>
+    public static string ImportMultipleAsciiHorizontally(string[] filenames, Altaxo.Data.DataTable table, AsciiImportOptions importOptions)
     {
       Altaxo.Data.DataColumn xcol = null;
       Altaxo.Data.DataColumn xvalues;
@@ -411,8 +427,8 @@ namespace Altaxo.Serialization.Ascii
         Altaxo.Data.DataTable newtable = null;
         using (var stream = GetAsciiInputFileStream(filename))
         {
-          newtable = null;
-          newtable = Import(stream);
+					newtable = new DataTable();
+          Import(stream, newtable, importOptions);
           stream.Close();
         }
 
@@ -487,8 +503,9 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the data should be imported to.</param>
-    /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string ImportMultipleAsciiVertically(string[] filenames, Altaxo.Data.DataTable table)
+		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		/// <returns>Null if no error occurs, or an error description.</returns>
+    public static string ImportMultipleAsciiVertically(string[] filenames, Altaxo.Data.DataTable table, AsciiImportOptions importOptions)
     {
       System.Text.StringBuilder errorList = new System.Text.StringBuilder();
       int lastDestinationRow = table.DataColumns.RowCount;
@@ -504,8 +521,8 @@ namespace Altaxo.Serialization.Ascii
         Altaxo.Data.DataTable srctable = null;
         using (var stream = GetAsciiInputFileStream(filename))
         {
-          srctable = null;
-          srctable = Import(stream);
+					srctable = new DataTable();
+          Import(stream, srctable, importOptions);
           stream.Close();
         }
 
@@ -558,7 +575,8 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="dataTable">The data table where the first ascii file is imported to. Can be null.</param>
     /// <param name="filenames">The names of the files to import.</param>
-    public static void ImportAsciiToMultipleWorksheets(string[] filenames, DataTable dataTable)
+		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analyzation of each file.</param>
+    public static void ImportAsciiToMultipleWorksheets(string[] filenames, DataTable dataTable, AsciiImportOptions importOptions)
     {
       int startrest = 0;
 
@@ -568,7 +586,7 @@ namespace Altaxo.Serialization.Ascii
       {
         using (var myStream = GetAsciiInputFileStream(filenames[0]))
         {
-          Import(myStream,dataTable);
+          Import(myStream,dataTable, importOptions);
           myStream.Close();
           startrest = 1;
         }
@@ -581,7 +599,7 @@ namespace Altaxo.Serialization.Ascii
         {
           var newTable = new DataTable(System.IO.Path.GetFileNameWithoutExtension(filenames[i]));
           Current.ProjectService.CreateNewWorksheet(newTable);
-          Import(myStream, newTable);
+          Import(myStream, newTable, importOptions);
           myStream.Close();
         }
       } // for all files

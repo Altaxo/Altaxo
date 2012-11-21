@@ -26,6 +26,8 @@ using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui;
 using Altaxo.Collections;
+
+
 namespace Altaxo.Gui.Graph
 {
 
@@ -128,7 +130,7 @@ namespace Altaxo.Gui.Graph
         InitializeTopValue();
 
         View.InitializeRotation((float)_rotation);
-        View.InitializeScale(Serialization.GUIConversion.GetPercentMeasureText(_scale));
+        View.InitializeScale(GUIConversion.GetPercentMeasureText(_scale));
         View.InitializeClipDataToFrame(_clipDataToFrame);
 
         InitializePositionTypes();
@@ -217,16 +219,16 @@ namespace Altaxo.Gui.Graph
     void InitializeLeftValue()
     {
       string text = (_leftPositionType== XYPlotLayerPositionType.AbsoluteValue)?
-        Serialization.GUIConversion.GetLengthMeasureText(_left):
-        Serialization.GUIConversion.GetPercentMeasureText(_left);
+        GUIConversion.GetLengthMeasureText(_left):
+        GUIConversion.GetPercentMeasureText(_left);
 
       View.InitializeLeft(text);
     }
     void InitializeTopValue()
     {
       string text = (_topPositionType == XYPlotLayerPositionType.AbsoluteValue) ?
-        Serialization.GUIConversion.GetLengthMeasureText(_top) :
-        Serialization.GUIConversion.GetPercentMeasureText(_top);
+        GUIConversion.GetLengthMeasureText(_top) :
+        GUIConversion.GetPercentMeasureText(_top);
 
       View.InitializeTop(text);
     }
@@ -251,16 +253,16 @@ namespace Altaxo.Gui.Graph
     void InitializeWidthValue()
     {
       string text = (_widthType == XYPlotLayerSizeType.AbsoluteValue) ?
-        Serialization.GUIConversion.GetLengthMeasureText(_width) :
-        Serialization.GUIConversion.GetPercentMeasureText(_width);
+        GUIConversion.GetLengthMeasureText(_width) :
+        GUIConversion.GetPercentMeasureText(_width);
 
       View.InitializeWidth(text);
     }
     void InitializeHeightValue()
     {
       string text = (_heightType == XYPlotLayerSizeType.AbsoluteValue) ?
-        Serialization.GUIConversion.GetLengthMeasureText(_height) :
-        Serialization.GUIConversion.GetPercentMeasureText(_height);
+        GUIConversion.GetLengthMeasureText(_height) :
+        GUIConversion.GetPercentMeasureText(_height);
 
       View.InitializeHeight(text);
     }

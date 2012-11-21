@@ -532,6 +532,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Serialization\Ascii\AsciiImportOptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Settings\AutoUpdateSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1062,6 +1066,9 @@
     </Compile>
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Serialization\Ascii\AsciiImportOptionsControl.xaml.cs">
+      <DependentUpon>AsciiImportOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>

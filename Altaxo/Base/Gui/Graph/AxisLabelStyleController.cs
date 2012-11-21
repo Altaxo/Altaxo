@@ -193,8 +193,8 @@ namespace Altaxo.Gui.Graph
 				_view.XOffset = _doc.XOffset;
 				_view.YOffset = _doc.YOffset;
 				_view.Background = _doc.BackgroundStyle;
-				_view.SuppressedLabelsByValue = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
-				_view.SuppressedLabelsByNumber = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
+				_view.SuppressedLabelsByValue = GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
+				_view.SuppressedLabelsByNumber = GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
 				_view.PrefixText = _doc.PrefixText;
 				_view.PostfixText = _doc.SuffixText;
 				_view.LabelSides = _labelSides;
@@ -217,7 +217,7 @@ namespace Altaxo.Gui.Graph
 			_doc.BackgroundStyle = _view.Background;
 
 			AltaxoVariant[] varVals;
-			if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressedLabelsByValue, out varVals))
+			if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressedLabelsByValue, out varVals))
 			{
 				_doc.SuppressedLabels.ByValues.Clear();
 				foreach (AltaxoVariant v in varVals)
@@ -227,7 +227,7 @@ namespace Altaxo.Gui.Graph
 				return false;
 
 			int[] intVals;
-			if (Serialization.GUIConversion.TryParseMultipleInt32(_view.SuppressedLabelsByNumber, out intVals))
+			if (GUIConversion.TryParseMultipleInt32(_view.SuppressedLabelsByNumber, out intVals))
 			{
 				_doc.SuppressedLabels.ByNumbers.Clear();
 				foreach (int v in intVals)

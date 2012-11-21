@@ -32,9 +32,9 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Serialization;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
-
 
 
 namespace Altaxo.Gui.Graph
@@ -739,12 +739,12 @@ namespace Altaxo.Gui.Graph
 
 			SelNodesToTempDoc(selNodes, coll);
 
-      Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
+      ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
     }
 
 		public bool EhView_CanPasteFromClipboard()
 		{
-			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
+			object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
 			PlotItemCollection coll = o as PlotItemCollection;
 			return null != coll;
 			
@@ -752,7 +752,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_PasteClipboard()
     {
-			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
+			object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
 			PlotItemCollection coll = o as PlotItemCollection;
         // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
       if (null!=coll)

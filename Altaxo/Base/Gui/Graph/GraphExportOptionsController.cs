@@ -31,6 +31,7 @@ using System.Drawing.Imaging;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph
 {
@@ -194,7 +195,7 @@ namespace Altaxo.Gui.Graph
 
 			var result = new SelectableListNodeList();
 			foreach (double res in resolutions.Keys)
-				result.Add(new SelectableListNode(Serialization.GUIConversion.ToString(res), res, res == actualResolution));
+				result.Add(new SelectableListNode(GUIConversion.ToString(res), res, res == actualResolution));
 
 			return result;
 
@@ -232,9 +233,9 @@ namespace Altaxo.Gui.Graph
 		{
 			double sr, dr;
 			
-			if (!Serialization.GUIConversion.IsDouble(_view.SourceDpiResolution, out sr))
+			if (!GUIConversion.IsDouble(_view.SourceDpiResolution, out sr))
 				return false;
-			if (!Serialization.GUIConversion.IsDouble(_view.DestinationDpiResolution, out dr))
+			if (!GUIConversion.IsDouble(_view.DestinationDpiResolution, out dr))
 				return false;
 
 			if(!(sr>0))

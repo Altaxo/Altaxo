@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Graph.Gdi.Shapes;
+	using Altaxo.Serialization;
 
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
@@ -1138,7 +1139,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				{
 						objectList.Add(o.HittedObject);
 				}
-				Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
+				ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
 			}
 		}
 
@@ -1158,7 +1159,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				objectList.Add(o.HittedObject);
 			}
 
-			Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
+			ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
 
 
 			// Remove the not serialized objects from the selection, so they are not removed from the graph..
@@ -1180,7 +1181,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			if (dao.GetDataPresent("Altaxo.Graph.GraphObjectListAsXml"))
 			{
-				object obj = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphObjectListAsXml");
+				object obj = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphObjectListAsXml");
 				if (obj is ICollection)
 				{
 					ICollection list = (ICollection)obj;

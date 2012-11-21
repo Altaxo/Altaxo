@@ -111,10 +111,10 @@ namespace Altaxo.Gui.Graph
       if(null!=_view)
       {
         _view.LinkType_Initialize(m_LinkType);
-        _view.OrgA_Initialize(Serialization.GUIConversion.ToString(_tempDoc.OrgA));
-				_view.OrgB_Initialize(Serialization.GUIConversion.ToString(_tempDoc.OrgB));
-				_view.EndA_Initialize(Serialization.GUIConversion.ToString(_tempDoc.EndA));
-				_view.EndB_Initialize(Serialization.GUIConversion.ToString(_tempDoc.EndB));
+        _view.OrgA_Initialize(GUIConversion.ToString(_tempDoc.OrgA));
+				_view.OrgB_Initialize(GUIConversion.ToString(_tempDoc.OrgB));
+				_view.EndA_Initialize(GUIConversion.ToString(_tempDoc.EndA));
+				_view.EndB_Initialize(GUIConversion.ToString(_tempDoc.EndB));
       }
     }
     #region ILinkAxisController Members

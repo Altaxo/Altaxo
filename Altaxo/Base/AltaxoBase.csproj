@@ -255,6 +255,7 @@
     <Compile Include="Gui\GuiAngleUnits.cs" />
     <Compile Include="Gui\GuiRelationUnits.cs" />
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
+    <Compile Include="Gui\Serialization\Ascii\AsciiImportOptionsController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />
     <Compile Include="Main\Services\PropertyReflection\DisplayOrderAttribute.cs" />

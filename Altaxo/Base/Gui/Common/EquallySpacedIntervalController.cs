@@ -26,6 +26,8 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
+using Altaxo.Serialization;
+
 namespace Altaxo.Gui.Common
 {
 	public class EquallySpacedInterval
@@ -114,16 +116,16 @@ namespace Altaxo.Gui.Common
 				string sStart = null, sEnd = null, sCount = null, sInterval = null;
 
 				if (!double.IsNaN(_start))
-					sStart = Serialization.GUIConversion.ToString(_start);
+					sStart = GUIConversion.ToString(_start);
 
 				if (!double.IsNaN(_end))
-					sStart = Serialization.GUIConversion.ToString(_end);
+					sStart = GUIConversion.ToString(_end);
 
 				if (!double.IsNaN(_count))
-					sStart = Serialization.GUIConversion.ToString(_count);
+					sStart = GUIConversion.ToString(_count);
 
 				if (!double.IsNaN(_interval))
-					sStart = Serialization.GUIConversion.ToString(_interval);
+					sStart = GUIConversion.ToString(_interval);
 
 				_view.InitializeStart(sStart);
 				_view.InitializeStart(sEnd);
@@ -181,19 +183,19 @@ namespace Altaxo.Gui.Common
 			{
 				case EquallySpacedIntervalSpecificationMethod.StartEndCount:
 					_interval = GetInterval();
-					_view.InitializeInterval(Serialization.GUIConversion.ToString(_interval));
+					_view.InitializeInterval(GUIConversion.ToString(_interval));
 					break;
 				case EquallySpacedIntervalSpecificationMethod.StartEndInterval:
 					_count = GetCount();
-					_view.InitializeCount(Serialization.GUIConversion.ToString(_count));
+					_view.InitializeCount(GUIConversion.ToString(_count));
 					break;
 				case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
 					_end = GetEnd();
-					_view.InitializeEnd(Serialization.GUIConversion.ToString(_end));
+					_view.InitializeEnd(GUIConversion.ToString(_end));
 					break;
 				case EquallySpacedIntervalSpecificationMethod.EndCountInterval:
 					_start = GetStart();
-					_view.InitializeStart(Serialization.GUIConversion.ToString(_start));
+					_view.InitializeStart(GUIConversion.ToString(_start));
 					break;
 				default:
 					throw new ArgumentException("method unknown");
@@ -206,7 +208,7 @@ namespace Altaxo.Gui.Common
 				return;
 
 			double start;
-			if (!Serialization.GUIConversion.IsDouble(text, out start))
+			if (!GUIConversion.IsDouble(text, out start))
 				return;
 			_start = start;
 
@@ -219,7 +221,7 @@ namespace Altaxo.Gui.Common
 				return;
 
 			double end;
-			if (!Serialization.GUIConversion.IsDouble(text, out end))
+			if (!GUIConversion.IsDouble(text, out end))
 				return;
 			_end = end;
 
@@ -232,7 +234,7 @@ namespace Altaxo.Gui.Common
 				return;
 
 			double count;
-			if (!Serialization.GUIConversion.IsDouble(text, out count))
+			if (!GUIConversion.IsDouble(text, out count))
 				return;
 			_count = count;
 
@@ -245,7 +247,7 @@ namespace Altaxo.Gui.Common
 				return;
 
 			double interval;
-			if (!Serialization.GUIConversion.IsDouble(text, out interval))
+			if (!GUIConversion.IsDouble(text, out interval))
 				return;
 			_interval = interval;
 
@@ -276,12 +278,12 @@ namespace Altaxo.Gui.Common
 				case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
 				case EquallySpacedIntervalSpecificationMethod.EndCountInterval:
 					RoundCountToInteger();
-					_view.InitializeCount(Serialization.GUIConversion.ToString(_count));
+					_view.InitializeCount(GUIConversion.ToString(_count));
 					break;
 				case  EquallySpacedIntervalSpecificationMethod.StartEndCount:
 					RoundCountToIntegerAndAdjustInterval();
-				_view.InitializeInterval(Serialization.GUIConversion.ToString(_interval));
-				_view.InitializeCount(Serialization.GUIConversion.ToString(_count));
+				_view.InitializeInterval(GUIConversion.ToString(_interval));
+				_view.InitializeCount(GUIConversion.ToString(_count));
 				break;
 			}
 		}
@@ -296,8 +298,8 @@ namespace Altaxo.Gui.Common
 					_count = GetCount();
 				}
 				RoundCountToIntegerAndAdjustInterval();
-				_view.InitializeInterval(Serialization.GUIConversion.ToString(_interval));
-				_view.InitializeCount(Serialization.GUIConversion.ToString(_count));
+				_view.InitializeInterval(GUIConversion.ToString(_interval));
+				_view.InitializeCount(GUIConversion.ToString(_count));
 			}
 
 		}

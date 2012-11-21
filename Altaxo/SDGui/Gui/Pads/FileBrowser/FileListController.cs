@@ -264,7 +264,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 						{
 							Altaxo.Data.FileCommands.ImportAsciiToMultipleWorksheets(
 								null,
-								new string[] { item.FullName });
+								new string[] { item.FullName }, null);
 						}
 						break;
 					default:
