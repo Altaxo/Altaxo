@@ -14,12 +14,15 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
+	using Altaxo.Collections;
+
 	/// <summary>
 	/// Interaction logic for AsciiImportOptionsControl.xaml
 	/// </summary>
 	public partial class AsciiImportOptionsControl : UserControl, IAsciiImportOptionsView
 	{
 		public event Action DoAnalyze;
+		public event Action SeparationStrategyChanged;
 
 		public AsciiImportOptionsControl()
 		{
@@ -32,39 +35,43 @@ namespace Altaxo.Gui.Serialization.Ascii
 				DoAnalyze();
 		}
 
-		public int NumberOfLinesToAnalyze
+	
+
+		public int? NumberOfMainHeaderLines
 		{
 			get
 			{
-				return _guiNumberOfLinesToAnalyze.Value;
+				if (true == _guiKnownNumberOfHeaderLines.IsChecked)
+					return _guiNumberOfHeaderLines.Value;
+				else
+					return null;
 			}
 			set
 			{
-				_guiNumberOfLinesToAnalyze.Value = value;
+				_guiKnownNumberOfHeaderLines.IsChecked = value.HasValue;
+				if (value.HasValue)
+					_guiNumberOfHeaderLines.Value = value.Value;
+				else
+					_guiNumberOfHeaderLines.Value = 0;
 			}
 		}
 
-		public int NumberOfMainHeaderLines
+		public int? IndexOfCaptionLine
 		{
 			get
 			{
-				return _guiNumberOfMainHeaderLines.Value;
+				if (true == _guiKnownIndexOfCaptionLine.IsChecked)
+					return _guiIndexOfCaptionLine.Value - 1; // for the Gui, we have a 1 based index
+				else
+					return null;
 			}
 			set
 			{
-				_guiNumberOfMainHeaderLines.Value = value;
-			}
-		}
-
-		public int IndexOfCaptionLine
-		{
-			get
-			{
-				return _guiIndexOfCaptionLine.Value;
-			}
-			set
-			{
-				_guiIndexOfCaptionLine.Value = value;
+				_guiKnownIndexOfCaptionLine.IsChecked = value.HasValue;
+				if (value.HasValue)
+					_guiIndexOfCaptionLine.Value = value.Value + 1; // for the Gui, we have a 1 based index
+				else
+					_guiIndexOfCaptionLine.Value = 0;
 			}
 		}
 
@@ -73,15 +80,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			GuiHelper.Initialize(_guiSeparationStrategy, list);
 		}
 
-		public int NumberOfDecimalSeparatorDots
-		{
-			set { _guiNumberOfDecimalSeparatorDots.Value = value; }
-		}
-
-		public int NumberOfDecimalSeparatorCommas
-		{
-			set { _guiNumberOfDecimalSeparatorCommas.Value = value; }
-		}
+	
 
 		public bool RenameColumnsWithHeaderNames
 		{
@@ -107,6 +106,120 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 		}
 
-		
+		public SelectableListNodeList HeaderLinesDestination
+		{
+			set
+			{
+				_guiHeaderLinesDestination.Initialize(value);
+			}
+		}
+
+		public object AsciiSeparationStrategyDetailView
+		{
+			set { _guiSeparationStrategyDetailsHost.Content = value; }
+		}
+
+
+		private void EhSeparationStrategyChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiSeparationStrategy);
+			if (null != SeparationStrategyChanged)
+				SeparationStrategyChanged();
+		}
+
+
+		public bool GuiSeparationStrategyIsKnown
+		{
+			get
+			{
+				return true == _guiKnownSeparationStrategy.IsChecked;
+			}
+			set
+			{
+				_guiKnownSeparationStrategy.IsChecked = value;
+			}
+		}
+
+		public void SetNumberFormatCulture(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiNumberFormats, list);
+		}
+
+		private void EhNumberFormatChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiNumberFormats);
+		}
+
+		public bool NumberFormatCultureIsKnowm
+		{
+			get
+			{
+				return true == _guiKnownNumberFormat.IsChecked;
+			}
+			set
+			{
+				_guiKnownNumberFormat.IsChecked = value;
+			}
+		}
+
+		public void SetDateTimeFormatCulture(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiDateTimeFormats, list);
+		}
+
+		private void EhDateTimeFormatChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiDateTimeFormats);
+		}
+
+		public bool DateTimeFormatCultureIsKnown
+		{
+			get
+			{
+				return true == _guiKnownDateTimeFormat.IsChecked;
+			}
+			set
+			{
+				_guiKnownDateTimeFormat.IsChecked = value;
+			}
+		}
+
+
+
+
+
+
+
+
+		public bool TableStructureIsKnown
+		{
+			get
+			{
+				return true == _guiKnownTableColumns.IsChecked;
+			}
+			set
+			{
+				_guiKnownTableColumns.IsChecked = value;
+			}
+		}
+
+		public System.Collections.ObjectModel.ObservableCollection<Boxed<Altaxo.Serialization.Ascii.AsciiColumnType>> TableStructure
+		{
+			set 
+			{
+				_guiColumnTypes.ItemsSource = null;
+				_guiColumnTypes.ItemsSource = value;
+			}
+		}
+
+
+
+
+	
+
+		public object AsciiDocumentAnalysisOptionsView
+		{
+			get { return _guiAnalysisControl; }
+		}
 	}
 }

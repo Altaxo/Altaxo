@@ -26,296 +26,266 @@ using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
+	public enum AsciiColumnType
+	{
+		DBNull,
+		Int64,
+		Double,
+		DateTime,
+		Text
+	}
 
 
-  /// <summary>
-  /// Represents the structure of one single line of imported ascii text.
-  /// </summary>
-  public class AsciiLineStructure 
-  {
-    /// <summary>
-    /// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
-    /// </summary>
-    protected List<Type> _recognizedTypes = new List<Type>();
-    /// <summary>The line number of the ascii file that is represented by this instance.</summary>
-    protected int _lineNumber;
-    protected bool _containsDBNull;
-
-    /// <summary>
-    /// If true, the cached data in this class are invalid and needs to be recalculated. 
-    /// </summary>
-    protected bool _isCachedDataInvalid=true;
-    protected int _priorityValue;
-    protected int _hashValue;
-    protected int _countDecimalSeparatorDot; // used for statistics of use of decimal separator
-    protected int _countDecimalSeparatorComma; // used for statistics of use of decimal separator
-
-    static char[] __exponentChars = { 'e', 'E' };
+	/// <summary>
+	/// Represents the structure of one single line of imported ascii text.
+	/// </summary>
+	public class AsciiLineStructure : IList<AsciiColumnType>
+	{
+		/// <summary>
+		/// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
+		/// </summary>
+		protected List<AsciiColumnType> _recognizedTypes = new List<AsciiColumnType>();
+	
 
 
-    /// <summary>
-    /// Number of recognized items in the line.
-    /// </summary>
-    public int Count
-    {
-      get
-      {
-        return _recognizedTypes.Count;
-      }
-    }
-
-    /// <summary>
-    /// Adds a recognized item.
-    /// </summary>
-    /// <param name="o">The recognized item represented by its type, i.e. typeof(double) represents a recognized double number.</param>
-    public void Add(System.Type o)
-    {
-      _recognizedTypes.Add(o);
-      _isCachedDataInvalid=true;
-    }
-
-
-    /// <summary>
-    /// Returns the number of recognized dots that could be a decimal separator.
-    /// </summary>
-    /// <remarks>Not all dots are counted by this method. For instance, if in one number occur two dots,
-    /// they can not be decimal separators (in one number there can be only one of them), and therefore, none of 
-    /// the two dots counts here.</remarks>
-    public int DecimalSeparatorDotCount
-    {
-      get { return _countDecimalSeparatorDot; }
-    }
-
-    /// <summary>
-    /// Returns the number of recognized commas that could be a decimal separator.
-    /// </summary>
-    /// <remarks>Not all commas are counted by this method. For instance, if in one number occur two commas,
-    /// they can not be decimal separators (in one number there can be only one of them), and therefore, none of 
-    /// the two commas counts here.</remarks>
-    public int DecimalSeparatorCommaCount
-    {
-      get { return _countDecimalSeparatorComma; }
-    }
-
-
-    /// <summary>
-    /// Getter / setter of the items of the line.
-    /// </summary>
-    public System.Type this[int i]
-    {
-      get
-      {
-        return _recognizedTypes[i];
-      }
-      set
-      {
-        _recognizedTypes[i]=value;
-        _isCachedDataInvalid=true;
-      }
-    }
-    
-    /// <summary>
-    /// Get / sets the line number of the line reflected by this instance.
-    /// </summary>
-    public int LineNumber
-    {
-      get
-      {
-        return _lineNumber;
-      }
-      set
-      {
-        _lineNumber=value;
-      }
-    }
-
-    public bool ContainsDBNull
-    {
-      get
-      {
-        if(_isCachedDataInvalid)
-          CalculateCachedData();
-        return _containsDBNull;
-      }
-    }
-
-    public int Priority
-    {
-      get
-      {
-        if(_isCachedDataInvalid)
-          CalculateCachedData();
-        return _priorityValue;
-      }
-    }
-    
-    protected void CalculateCachedData()
-    {
-      _isCachedDataInvalid = false;
-      
-      // Calculate priority and hash
-
-      int len = Count;
-      var stb = new StringBuilder(); // for calculating the hash
-      stb.Append(len.ToString());
-
-      _priorityValue = 0;
-      for(int i=0;i<len;i++)
-      {
-        Type t = (Type) this[i];
-        if (t == typeof(DateTime))
-        {
-          _priorityValue += 15;
-          stb.Append('T');
-        }
-        else if (t == typeof(Double))
-        {
-          _priorityValue += 7;
-          stb.Append('D');
-        }
-        else if (t == typeof(Int64))
-        {
-          _priorityValue += 3;
-          stb.Append('D'); // note that it shoud have the same marker than Double, since a column can contain both integer and noninteger numeric data
-        }
-        else if (t == typeof(String))
-        {
-          _priorityValue += 2;
-          stb.Append('S');
-        }
-        else if (t == typeof(DBNull))
-        {
-          _priorityValue += 1;
-          stb.Append('N');
-          _containsDBNull = true;
-        }
-      } // for
-
-      // calculate hash
-      _hashValue = stb.ToString().GetHashCode();
-    }
+		/// <summary>
+		/// If true, the cached data in this class are invalid and needs to be recalculated. 
+		/// </summary>
+		protected bool _isCachedDataInvalid = true;
+		protected int _priorityValue;
+		protected int _hashValue;
 
 
 
-    public override int GetHashCode()
-    {
-      if(_isCachedDataInvalid)
-        CalculateCachedData();
-      return _hashValue;
-    }
-    public bool IsCompatibleWith(AsciiLineStructure ano)
-    {
-      // our structure can have more columns, but not lesser than ano
-      if(this.Count<ano.Count)
-        return false;
+		/// <summary>
+		/// Number of recognized items in the line.
+		/// </summary>
+		public int Count
+		{
+			get
+			{
+				return _recognizedTypes.Count;
+			}
+		}
 
-      for(int i=0;i<ano.Count;i++)
-      {
-        if(this[i]==typeof(DBNull) || ano[i]==typeof(DBNull))
-          continue;
-				if (this[i] == typeof(long) && ano[i] == typeof(double))
+		/// <summary>
+		/// Adds a recognized item.
+		/// </summary>
+		/// <param name="o">The recognized item represented by its type, i.e. typeof(double) represents a recognized double number.</param>
+		public void Add(AsciiColumnType o)
+		{
+			_recognizedTypes.Add(o);
+			_isCachedDataInvalid = true;
+		}
+
+		/// <summary>
+		/// Getter / setter of the items of the line.
+		/// </summary>
+		public AsciiColumnType this[int i]
+		{
+			get
+			{
+				return _recognizedTypes[i];
+			}
+			set
+			{
+				_recognizedTypes[i] = value;
+				_isCachedDataInvalid = true;
+			}
+		}
+
+	
+
+	
+
+		public int LineStructureScoring
+		{
+			get
+			{
+				if (_isCachedDataInvalid)
+					CalculateCachedData();
+				return _priorityValue;
+			}
+		}
+
+		protected void CalculateCachedData()
+		{
+			_isCachedDataInvalid = false;
+
+			// Calculate priority and hash
+
+			int len = Count;
+			var stb = new StringBuilder(); // for calculating the hash
+			stb.Append(len.ToString());
+
+			_priorityValue = 0;
+			for (int i = 0; i < len; i++)
+			{
+				var t = this[i];
+				if (t == AsciiColumnType.DateTime)
+				{
+					_priorityValue += 15;
+					stb.Append('T');
+				}
+				else if (t == AsciiColumnType.Double)
+				{
+					_priorityValue += 7;
+					stb.Append('D');
+				}
+				else if (t == AsciiColumnType.Int64)
+				{
+					_priorityValue += 3;
+					stb.Append('D'); // note that it shoud have the same marker than Double, since a column can contain both integer and noninteger numeric data
+				}
+				else if (t == AsciiColumnType.Text)
+				{
+					_priorityValue += 2;
+					stb.Append('S');
+				}
+				else if (t == AsciiColumnType.DBNull)
+				{
+					_priorityValue += 1;
+					stb.Append('N');
+				}
+			} // for
+
+			// calculate hash
+			_hashValue = stb.ToString().GetHashCode();
+		}
+
+
+
+		public override int GetHashCode()
+		{
+			if (_isCachedDataInvalid)
+				CalculateCachedData();
+			return _hashValue;
+		}
+		public bool IsCompatibleWith(AsciiLineStructure ano)
+		{
+			// our structure can have more columns, but not lesser than ano
+			if (this.Count < ano.Count)
+				return false;
+
+			for (int i = 0; i < ano.Count; i++)
+			{
+				if (this[i] == AsciiColumnType.DBNull || ano[i] == AsciiColumnType.DBNull)
 					continue;
-				if (this[i] == typeof(double) && ano[i] == typeof(long))
+				if (this[i] == AsciiColumnType.Int64 && ano[i] == AsciiColumnType.Double)
 					continue;
-        if(this[i]!=ano[i])
-          return false;
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// make a statistics on the use of the decimal separator
-    /// the aim is to recognize automatically which is the decimal separator
-    /// the function analyses the string for commas and dots and adds a statistics
-    /// </summary>
-    /// <param name="numstring">a string which represents a numeric value</param>
-    public void AddToDecimalSeparatorStatistics(string numstring)
-    {
-      // some rules:
-      // 1.) if more than one comma (dot) is existant, it can not be the decimal separator -> it seems that the alternative character is then the decimal separator
-      // 2.) if only one comma (dot) is existent, and three digits before or back is not a comma (dot), than this is a good hint for the character to be the decimal separator
-
-      int ds,de,cs,ce;
-
-      ds=numstring.IndexOf('.'); // ds -> dot start
-      de= ds<0 ? -1 : numstring.LastIndexOf('.'); // de -> dot end
-      cs=numstring.IndexOf(','); // cs -> comma start
-      ce= cs<0 ? -1 : numstring.LastIndexOf(','); // ce -> comma end
-
-      if(ds>=0 && de!=ds)
-      {
-        _countDecimalSeparatorComma++;
-      }
-      if(cs>=0 && ce!=cs)
-      {
-        _countDecimalSeparatorDot++;
-      }
-
-      // if there is only one dot and no comma
-      if(ds>=0 && de==ds && cs<0)
-      {
-        if(numstring.IndexOfAny(__exponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
-          _countDecimalSeparatorDot++;
-        else if((ds>=4 && Char.IsDigit(numstring,ds-4)) || ((ds+4)<numstring.Length && Char.IsDigit(numstring,ds+4)))
-          _countDecimalSeparatorDot++;       // analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
-      }
-
-      // if there is only one comma and no dot
-      if(cs>=0 && ce==cs && ds<0)
-      {
-        if(numstring.IndexOfAny(__exponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
-          _countDecimalSeparatorComma++;
-        else if((cs>=4 && Char.IsDigit(numstring,cs-4)) || ((cs+4)<numstring.Length && Char.IsDigit(numstring,cs+4)))
-          _countDecimalSeparatorComma++;       // analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
-      }
-
-    }
+				if (this[i] == AsciiColumnType.Double && ano[i] == AsciiColumnType.Int64)
+					continue;
+				if (this[i] != ano[i])
+					return false;
+			}
+			return true;
+		}
 
 
-    static char ShortFormOfType(System.Type type)
-    {
-      if (type == typeof(Double))
-        return 'D';
-      else if (type == typeof(string))
-        return 'S';
-      else if (type == typeof(DateTime))
-        return 'T';
-      else if (type == typeof(DBNull))
-        return 'N';
-      else if(type == typeof(Int64))
-        return 'I';
-      else
-        return '?';
-    }
+
+		static char ShortFormOfType(AsciiColumnType type)
+		{
+			switch(type)
+			{
+				case AsciiColumnType.Double:
+					return 'D';
+				case AsciiColumnType.Text:
+					return 'S';
+				case AsciiColumnType.DateTime:
+					return 'T';
+				case AsciiColumnType.DBNull:
+					return 'N';
+				case AsciiColumnType.Int64:
+					return 'I';
+				default:
+					throw new ArgumentOutOfRangeException("Option not considered: " + type.ToString());
+			}
+		}
 
 
-    public override string ToString()
-    {
-      var stb = new StringBuilder();
+		public override string ToString()
+		{
+			var stb = new StringBuilder();
 
-      stb.AppendFormat("C={0} H={1:X8}", Count, GetHashCode());
-      for (int i = 0; i < Count; i++)
-        {
-          stb.Append(' ');
-          stb.Append(ShortFormOfType(this[i]));
-        }
-      return stb.ToString();
-    }
-
-
-  } // end class AsciiLineStructure
+			stb.AppendFormat("C={0} H={1:X8}", Count, GetHashCode());
+			for (int i = 0; i < Count; i++)
+			{
+				stb.Append(' ');
+				stb.Append(ShortFormOfType(this[i]));
+			}
+			return stb.ToString();
+		}
 
 
-  /// <summary>
-  /// Helper structure to count how many lines have the same structure.
-  /// </summary>
-  public struct NumberAndStructure
-  {
-    /// <summary>Number of lines that have the same structure.</summary>
-    public int NumberOfLines;
 
-    /// <summary>The structure that these lines have.</summary>
-    public AsciiLineStructure LineStructure;
-  } // end class
+		public int IndexOf(AsciiColumnType item)
+		{
+			return _recognizedTypes.IndexOf(item);
+		}
+
+		public void Insert(int index, AsciiColumnType item)
+		{
+			_recognizedTypes.Insert(index, item);
+			_isCachedDataInvalid = true;
+		}
+
+		public void RemoveAt(int index)
+		{
+			_recognizedTypes.RemoveAt(index);
+			_isCachedDataInvalid = true;
+		}
+
+
+		public void Clear()
+		{
+			_recognizedTypes.Clear();
+			_isCachedDataInvalid = true;
+		}
+
+		public bool Contains(AsciiColumnType item)
+		{
+			return _recognizedTypes.Contains(item);
+		}
+
+		public void CopyTo(AsciiColumnType[] array, int arrayIndex)
+		{
+			_recognizedTypes.CopyTo(array, arrayIndex);
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(AsciiColumnType item)
+		{
+			var r = _recognizedTypes.Remove(item);
+			if (r) _isCachedDataInvalid = true;
+			return r;
+		}
+
+		public IEnumerator<AsciiColumnType> GetEnumerator()
+		{
+			return _recognizedTypes.GetEnumerator();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _recognizedTypes.GetEnumerator();
+		}
+	} // end class AsciiLineStructure
+
+
+	/// <summary>
+	/// Helper structure to count how many lines have the same structure.
+	/// </summary>
+	public struct NumberAndStructure
+	{
+		/// <summary>Number of lines that have the same structure.</summary>
+		public int NumberOfLines;
+
+		/// <summary>The structure that these lines have.</summary>
+		public AsciiLineStructure LineStructure;
+	} // end class
 
 }

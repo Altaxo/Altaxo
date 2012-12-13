@@ -1,28 +1,29 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Serialization.Ascii.AsciiImportOptionsControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-             mc:Ignorable="d" 
-             >
-	<StackPanel Orientation="Vertical">
-		<GroupBox Header="Analyzing options">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-				<Label Content="Number of lines to analyze:"/>
-				<axogc:Int32UpDown x:Name="_guiNumberOfLinesToAnalyze" Grid.Row="0" Grid.Column="1"/>
-			</Grid>
-		</GroupBox>
-		<Button x:Name="_guiAnalyzeAscii"  Content="Analyze!" Click="EhAnalyzeAscii"/>
+						 xmlns:core="clr-namespace:System;assembly=mscorlib"
+						 xmlns:axosa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoBase"
+						 xmlns:local="clr-namespace:Altaxo.Gui.Serialization.Ascii"
+						 mc:Ignorable="d" 
+						 >
+	<UserControl.Resources>
+		<ObjectDataProvider x:Key="columnTypeEnum" MethodName="GetValues" ObjectType="{x:Type core:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type Type="axosa:AsciiColumnType"/>
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
 
-		<GroupBox Header="Analyzing results">
+	</UserControl.Resources>
+	<StackPanel Orientation="Vertical">
+		<GroupBox Header="Analyzing options" Padding="0,4,0,4">
+			<local:AsciiDocumentAnalysisOptionsControl x:Name="_guiAnalysisControl"/>
+		</GroupBox>
+		<Button x:Name="_guiAnalyzeAscii"  Content="Analyze!" Click="EhAnalyzeAscii" Margin="4"/>
+
+		<GroupBox Header="Analyzing results" Padding="0,4,0,4">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
@@ -36,17 +37,27 @@
 					<RowDefinition/>
 					<RowDefinition/>
 					<RowDefinition/>
+					<RowDefinition/>
 				</Grid.RowDefinitions>
-				<Label Grid.Row="0" Grid.Column="0" Content="Number of main header lines:"/>
-				<axogc:Int32UpDown x:Name="_guiNumberOfMainHeaderLines" Grid.Row="0" Grid.Column="1"/>
-				<Label Grid.Row="1" Grid.Column="0" Content="Index of caption line:"/>
-				<axogc:Int32UpDown x:Name="_guiIndexOfCaptionLine" Grid.Row="1" Grid.Column="1"/>
-				<Label Grid.Row="2" Grid.Column="0" Content="Decimal separator dots:"/>
-				<axogc:Int32UpDown x:Name="_guiNumberOfDecimalSeparatorDots" Grid.Row="2" Grid.Column="1"/>
-				<Label Grid.Row="3" Grid.Column="0" Content="Decimal separator commas:"/>
-				<axogc:Int32UpDown x:Name="_guiNumberOfDecimalSeparatorCommas" Grid.Row="3" Grid.Column="1"/>
-				<Label Grid.Row="4" Grid.Column="0" Content="Separation:"/>
-				<ComboBox x:Name="_guiSeparationStrategy" Grid.Row="4" Grid.Column="1"/>
+				<CheckBox x:Name="_guiKnownNumberOfHeaderLines" Grid.Row="0" Grid.Column="0" Content="Known number of main header lines:"/>
+				<axogc:Int32UpDown x:Name="_guiNumberOfHeaderLines" Grid.Row="0" Grid.Column="1" Minimum="0" />
+				<CheckBox x:Name="_guiKnownIndexOfCaptionLine" Grid.Row="1" Grid.Column="0" Content="Known index of caption line (0 for no caption):"/>
+				<axogc:Int32UpDown x:Name="_guiIndexOfCaptionLine" Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="{Binding ElementName=_guiNumberOfHeaderLines, Path=Value}"/>
+				<CheckBox x:Name="_guiKnownNumberFormat" Grid.Row="2" Grid.Column="0" Content="Known number format:"/>
+				<ComboBox x:Name="_guiNumberFormats" Grid.Row="2" Grid.Column="1" SelectionChanged="EhNumberFormatChanged"/>
+				<CheckBox x:Name="_guiKnownDateTimeFormat" Grid.Row="3" Grid.Column="0" Content="Known date/time format:"/>
+				<ComboBox x:Name="_guiDateTimeFormats" Grid.Row="3" Grid.Column="1" SelectionChanged="EhDateTimeFormatChanged"/>
+
+				<CheckBox x:Name="_guiKnownSeparationStrategy" Grid.Row="4" Grid.Column="0" Content="Known separation strategy:"/>
+				<ComboBox x:Name="_guiSeparationStrategy" Grid.Row="4" Grid.Column="1" SelectionChanged="EhSeparationStrategyChanged"/>
+				<GroupBox x:Name="_guiSeparationStrategyDetailsHost" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Header="Separation strategy details:" Padding="0,4,0,4"/>
+
+				<CheckBox x:Name="_guiKnownTableColumns" Grid.Row="6" Grid.Column="0" Content="Known column types:"/>
+				<DataGrid x:Name="_guiColumnTypes" Grid.Row="7" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" MinWidth="100" MinHeight="50" Margin="0,10,0,0">
+					<DataGrid.Columns>
+						<DataGridComboBoxColumn Header="Column type" SelectedItemBinding="{Binding Path=Value}"  ItemsSource="{Binding Source={StaticResource columnTypeEnum}}"  MinWidth="100"></DataGridComboBoxColumn>
+					</DataGrid.Columns>
+				</DataGrid>
 			</Grid>
 		</GroupBox>
 		<GroupBox Header="User options">
@@ -64,8 +75,11 @@
 					<RowDefinition/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_guiRenameColumnsWithHeaderNames" Grid.Row="0" Grid.ColumnSpan="2" Content="Rename columns with header names" ToolTip="If checked, renames the columns if the first line contains the column names."/>
+				<CheckBox x:Name="_guiRenameColumnsWithHeaderNames" Grid.Row="0" Grid.ColumnSpan="2" Content="Rename columns with names from caption line" ToolTip="If checked, renames the columns if the first line contains the column names."/>
 				<CheckBox x:Name="_guiRenameWorksheetWithFileName" Grid.Row="1" Grid.ColumnSpan="2" Content="Rename worksheet with file name" ToolTip="If checked, renames the worksheet to the data file name."/>
+				<GroupBox Header="Header lines destination:" Grid.Row="2" Grid.ColumnSpan="2">
+					<axogc:SingleChoiceRadioWrapPanel x:Name="_guiHeaderLinesDestination" Orientation="Horizontal"/>
+				</GroupBox>
 			</Grid>
 		</GroupBox>
 

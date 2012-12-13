@@ -38,9 +38,10 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="dataTable">The table where to import into.</param>
 		/// <param name="myStream">The stream to import from.</param>
-		public static void ImportAscii(this DataTable dataTable, System.IO.Stream myStream)
+		/// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
+		public static void ImportAscii(this DataTable dataTable, System.IO.Stream myStream, string streamOriginHint)
 		{
-			AsciiImporter.Import(myStream, dataTable);
+			AsciiImporter.Import(myStream, streamOriginHint, dataTable);
 		}
 
 		/// <summary>
@@ -177,7 +178,7 @@ namespace Altaxo.Data
 
 			using (FileStream str = AsciiImporter.GetAsciiInputFileStream(fileName))
 			{
-				importOptions = AsciiDocumentAnalysis.Analyze(str, new AsciiImportOptions());
+				importOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), str);
 				object[] args = new object[] { importOptions, str };
 				var controller = (Altaxo.Gui.IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
 

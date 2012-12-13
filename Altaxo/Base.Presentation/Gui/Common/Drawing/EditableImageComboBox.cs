@@ -100,6 +100,61 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Margin = _editBox.Margin;
 			_img.Stretch = Stretch.Uniform;
 
+
+			var parent = _editBox.Parent;
+
+
+			var stackPanel = new StackPanel();
+			stackPanel.Orientation = Orientation.Horizontal;
+			stackPanel.Children.Add(_img);
+			// stackPanel.Children.Add(_editBox); // this must be postponed here, since _editBox is still into the hierarchy
+
+			if (parent is ContentControl)
+			{
+				((ContentControl)parent).Content = stackPanel;
+			}
+			else if (parent is Decorator)
+			{
+				((Decorator)parent).Child = stackPanel;
+			}
+			else if (parent is Panel)
+			{
+				var panel = (Panel)parent;
+				var idx = panel.Children.IndexOf(_editBox);
+				if (idx < 0)
+					throw new InvalidOperationException(string.Format("The parent of the EditBox is a {0}, but the parent's children collection does not contain the EditBox", panel.GetType()));
+				panel.Children.RemoveAt(idx);
+				panel.Children.Insert(idx, stackPanel);
+			}
+			else
+			{
+				var stb = new StringBuilder();
+				stb.AppendFormat("Unexpected location of the EditBox within {0}", this.ToString());
+				stb.AppendLine();
+				stb.AppendFormat("The parent of the editbox is {0}", _editBox.Parent.ToString());
+				stb.AppendLine();
+				stb.AppendLine("The hierarchy of childs is as follows:");
+				PrintVisualChilds(this, 0, stb);
+				throw new ApplicationException(stb.ToString());
+			}
+
+			stackPanel.Children.Add(_editBox);
+
+			// now some special properties
+			if (parent is Grid)
+			{
+				foreach(DependencyProperty dp in new DependencyProperty[]{ Grid.RowProperty, Grid.ColumnProperty, Grid.RowSpanProperty, Grid.ColumnSpanProperty})
+				{
+				stackPanel.SetValue(dp, _editBox.GetValue(dp));
+				}
+			}
+			if (parent is DockPanel)
+			{
+				stackPanel.SetValue(DockPanel.DockProperty, _editBox.GetValue(DockPanel.DockProperty));
+			}
+			
+			/*
+
 			if (_editBox.Parent is Grid) // most Windows version have the TextBox located inside a Grid
 			{
 				var grid = _editBox.Parent as Grid;
@@ -145,6 +200,7 @@ namespace Altaxo.Gui.Common.Drawing
 				throw new ApplicationException(stb.ToString());
 			}
 
+			*/
 		
 		}
 

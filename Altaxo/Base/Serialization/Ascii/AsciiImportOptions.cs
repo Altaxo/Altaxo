@@ -24,45 +24,132 @@ using System;
 
 namespace Altaxo.Serialization.Ascii
 {
-  /// <summary>
-  /// Denotes options about how to import data from an ascii text file.
-  /// </summary>
-  public class AsciiImportOptions
-  {
-    /// <summary>If true, rename the columns if 1st line contain  the column names.</summary>
-    public bool RenameColumns; 
 
-    /// <summary>If true, rename the worksheet to the data file name.</summary>
-    public bool RenameWorksheet;
+	/// <summary>
+	/// Designates what to do with the main header lines of an ASCII file.
+	/// </summary>
+	public enum AsciiHeaderLinesDestination
+	{
+		/// <summary>Ignore the main header lines (throw them away).</summary>
+		Ignore,
 
-    /// <summary>Number of lines to skip (the main header).</summary>
-    public int NumberOfMainHeaderLines;
+		/// <summary>Try to import the items in the header lines as property columns.</summary>
+		ImportToProperties,
 
-    /// <summary>Index of the line, where we can extract the column names from.</summary>
-    public int IndexOfCaptionLine;
+		/// <summary>Try to import the items in the header line(s) as properties. If the number of items doesn't match with that of the table, those header line is imported into the notes of the worksheet.</summary>
+		ImportToPropertiesOrNotes,
+
+		/// <summary>Store the main header lines as notes in the worksheet.</summary>
+		ImportToNotes,
+
+		/// <summary>Try to import the items in the header lines as property columns. Additionally, those lines are added to the notes of the table.</summary>
+		ImportToPropertiesAndNotes
+	}
+
+	/// <summary>
+	/// Denotes options about how to import data from an ascii text file.
+	/// </summary>
+	public class AsciiImportOptions : Main.ICopyFrom
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AsciiImportOptions"/> class with default properties.
+		/// </summary>
+		public AsciiImportOptions()
+		{
+			HeaderLinesDestination = AsciiHeaderLinesDestination.ImportToProperties;
+		}
+
+		/// <summary>If true, rename the columns if 1st line contain  the column names. This option must be set programmatically or by user interaction.</summary>
+		public bool RenameColumns { get; set; }
+
+		/// <summary>If true, rename the worksheet to the data file name.  This option must be set programmatically or by user interaction.</summary>
+		public bool RenameWorksheet;
+
+		/// <summary>Designates the destination of main header lines. This option must be set programmatically or by user interaction.</summary>
+		public AsciiHeaderLinesDestination HeaderLinesDestination { get; set; }
+
+		/// <summary>Number of lines to skip (the main header).</summary>
+		public int? NumberOfMainHeaderLines { get; set; }
+
+		/// <summary>Index of the line, where we can extract the column names from.</summary>
+		public int? IndexOfCaptionLine { get; set; }
+
+		/// <summary>Method to separate the tokens in each line of ascii text.</summary>
+		public IAsciiSeparationStrategy SeparationStrategy { get; set; }
+
+		/// <summary>Gets or sets the culture that formats numbers.</summary>
+		public System.Globalization.CultureInfo NumberFormatCulture { get; set; }
+
+		/// <summary>Gets or sets the culture that formats date/time values.</summary>
+		public System.Globalization.CultureInfo DateTimeFormatCulture { get; set; }
+
+		/// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
+		public AsciiLineStructure RecognizedStructure;
+
+		/// <summary>
+		/// Gets a value indicating whether everything is fully specified now, so that the instance can be used to import Ascii data.
+		/// If this value is false, the Ascii data have to be analyzed in order to find the missing values.
+		/// </summary>
+		public bool IsFullySpecified
+		{
+			get
+			{
+				return
+					null != NumberOfMainHeaderLines &&
+					null != IndexOfCaptionLine &&
+					null != SeparationStrategy &&
+					null != RecognizedStructure &&
+					null != NumberFormatCulture &&
+					null != DateTimeFormatCulture;
+			}
+		}
+
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as AsciiImportOptions;
+			if (null != from)
+			{
+				this.RenameColumns = from.RenameColumns;
+				this.RenameWorksheet = from.RenameWorksheet;
+				this.HeaderLinesDestination = from.HeaderLinesDestination;
+
+				this.NumberOfMainHeaderLines = from.NumberOfMainHeaderLines;
+
+				this.IndexOfCaptionLine = from.IndexOfCaptionLine;
+
+				this.SeparationStrategy = null == from.SeparationStrategy ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
+
+				this.NumberFormatCulture = null == from.NumberFormatCulture ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
+
+				this.DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
+
+				this.RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
 
 
-    /// <summary>Number of dots that act as decimal separator in numeric strings.</summary>
-    public int DecimalSeparatorDotCount;
+				return true;
+			}
+			return false;
+		}
 
-    /// <summary>Number of commas that act as decimal separator in numeric strings.</summary>
-    public int DecimalSeparatorCommaCount;
+		object ICloneable.Clone()
+		{
+			var result = new AsciiImportOptions();
+			result.CopyFrom(this);
+			return result;
+		}
 
-    /// <summary>Method to separate the tokens in each line of ascii text.</summary>
-    public IAsciiSeparationStrategy SeparationStrategy;      
-
-    /// <summary>Structur of the file (which data type is placed in which column).</summary>
-    public AsciiLineStructure RecognizedStructure;
-
-    /// <summary>Returns the number of lines that should be used for analysis of the Ascii file.</summary>
-    public int NumberOfLinesToAnalyze = 30;
-
+		public AsciiImportOptions Clone()
+		{
+			var result = new AsciiImportOptions();
+			result.CopyFrom(this);
+			return result;
+		}
+	}
 
 
-    /// <summary>Clones the options. This is a shallow copy, so the class members are not cloned.</summary>
-    public AsciiImportOptions Clone()
-    {
-      return (AsciiImportOptions)MemberwiseClone();
-    }
-  }
+
+
 }

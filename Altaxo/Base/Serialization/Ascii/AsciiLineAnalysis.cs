@@ -26,119 +26,125 @@ using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
+	/// <summary>
+	/// Analyse a single line of text with regard to different separation strategies, and store
+	/// the result in a dictionary that contains entries for the separation strategy and the resulting structure.
+	/// </summary>
+	public class AsciiLineAnalysis
+	{
+		/// <summary>
+		/// The dictionary containing entries for separation strategies and the corresponding resulting line structure.
+		/// </summary>
+		Dictionary<AsciiLineAnalysisOption, AsciiLineStructure> _structureForSeparation;
 
-  /// <summary>
-  /// Analyse a single line of text with regard to different separation strategies, and store
-  /// the result in a dictionary that contains entries for the separation strategy and the resulting structure.
-  /// </summary>
-  public class AsciiLineAnalysis
-  {
-    /// <summary>
-    /// The dictionary containing entries for separation stragegies and the corresponding resulting line structure.
-    /// </summary>
-    Dictionary<IAsciiSeparationStrategy,AsciiLineStructure> _structureForSeparation;
 
+		public AsciiLineStructure this[AsciiLineAnalysisOption separationStrategy]
+		{
+			get
+			{
+				return _structureForSeparation[separationStrategy];
+			}
+		}
 
-    public AsciiLineStructure this[IAsciiSeparationStrategy separationStrategy]
-    {
-      get
-      {
-        return _structureForSeparation[separationStrategy];
-      }
-    }
+		/// <summary>
+		/// Performs the analysis of a line with regard to different separation stragegies.
+		/// </summary>
+		/// <param name="nLine">Line number.</param>
+		/// <param name="sLine">The line to analyse.</param>
+		/// <param name="separationStrategies">List of separation stragegies to test with the provided text line.</param>
+		public AsciiLineAnalysis(int nLine,string sLine, List<AsciiLineAnalysisOption> separationStrategies)
+		{
+			_structureForSeparation = new Dictionary<AsciiLineAnalysisOption, AsciiLineStructure>();
 
-    /// <summary>
-    /// Performs the analysis of a line with regard to different separation stragegies.
-    /// </summary>
-    /// <param name="nLine">Line number.</param>
-    /// <param name="sLine">The line to analyse.</param>
-    /// <param name="separationStrategies">List of separation stragegies to test with the provided text line.</param>
-    public AsciiLineAnalysis(int nLine,string sLine, List<IAsciiSeparationStrategy> separationStrategies)
-    {
-      _structureForSeparation = new Dictionary<IAsciiSeparationStrategy, AsciiLineStructure>();
-      foreach (IAsciiSeparationStrategy separation in separationStrategies)
-        _structureForSeparation.Add(separation, GetStructure(nLine, sLine, separation));
-    }
+			var tokenDictionary = new Dictionary<IAsciiSeparationStrategy,List<string>>();
 
-    /// <summary>
-    /// Analyse the provided line of text with regard to one separation stragegy and returns the resulting structure.
-    /// </summary>
-    /// <param name="nLine">Line number.</param>
-    /// <param name="sLine">The line to analyse.</param>
-    /// <param name="separation">The separation stragegy that is used to separate the tokens of the line.</param>
-    /// <returns>The resulting structure.</returns>
-    public static AsciiLineStructure GetStructure(int nLine, string sLine, IAsciiSeparationStrategy separation)
-    {
-      AsciiLineStructure tabStruc = new AsciiLineStructure();
-      tabStruc.LineNumber = nLine;
+			foreach (AsciiLineAnalysisOption separation in separationStrategies)
+			{
+				List<string> tokens;
+				if (!tokenDictionary.TryGetValue(separation.SeparationStrategy, out tokens))
+				{
+					tokens = new List<string>(separation.SeparationStrategy.GetTokens(sLine));
+					tokenDictionary.Add(separation.SeparationStrategy, tokens);
+				}
 
-      foreach(string substring in separation.GetTokens(sLine))
-      {
-        if (string.IsNullOrEmpty(substring)) // just this char is a tab, so nothing is between the last and this
-        {
-          tabStruc.Add(typeof(DBNull));
-        }
-        else if (IsNumeric(substring))
-        {
-					if (IsIntegral(substring))
+				_structureForSeparation.Add(separation, GetStructure(nLine, tokens, separation.NumberFormat, separation.DateTimeFormat));
+			}
+		}
+
+		/// <summary>
+		/// Analyse the provided line of text with regard to one separation stragegy and returns the resulting structure.
+		/// </summary>
+		/// <param name="nLine">Line number.</param>
+		/// <param name="sLine">The line to analyse.</param>
+		/// <param name="separation">The separation stragegy that is used to separate the tokens of the line.</param>
+		/// <returns>The resulting structure.</returns>
+		public static AsciiLineStructure GetStructure(int nLine, IEnumerable<string> tokens, System.Globalization.CultureInfo numberFormat, System.Globalization.CultureInfo dateTimeFormat)
+		{
+			AsciiLineStructure tabStruc = new AsciiLineStructure();
+
+			foreach(string substring in tokens)
+			{
+				if (string.IsNullOrEmpty(substring)) // just this char is a tab, so nothing is between the last and this
+				{
+					tabStruc.Add( AsciiColumnType.DBNull);
+				}
+				else if (IsNumeric(substring, numberFormat))
+				{
+					if (IsIntegral(substring, numberFormat))
 					{
-						tabStruc.Add(typeof(long));
+						tabStruc.Add(AsciiColumnType.Int64);
 					}
 					else
 					{
-						tabStruc.Add(typeof(double));
-						tabStruc.AddToDecimalSeparatorStatistics(substring); // make a statistics of the use of decimal separator
+						tabStruc.Add(AsciiColumnType.Double);
 					}
-        }
-        else if (IsDateTime(substring))
-        {
-          tabStruc.Add(typeof(System.DateTime));
-        }
-        else
-        {
-          tabStruc.Add(typeof(string));
-        }
-      } // end for
-      return tabStruc;
-    }
+				}
+				else if (IsDateTime(substring, dateTimeFormat))
+				{
+					tabStruc.Add(AsciiColumnType.DateTime);
+				}
+				else
+				{
+					tabStruc.Add(AsciiColumnType.Text);
+				}
+			} // end for
+			return tabStruc;
+		}
 
-    /// <summary>
-    /// Tests wether or not the string s is a date/time string.
-    /// </summary>
-    /// <param name="s">The string to test.</param>
-    /// <returns>True if the string can be parsed to a date/time value.</returns>
-    public static bool IsDateTime(string s)
-    {
-      DateTime result;
-      return DateTime.TryParse(s, out result);
-    }
+		/// <summary>
+		/// Tests wether or not the string s is a date/time string.
+		/// </summary>
+		/// <param name="s">The string to test.</param>
+		/// <returns>True if the string can be parsed to a date/time value.</returns>
+		public static bool IsDateTime(string s, System.Globalization.CultureInfo dateTimeFormat)
+		{
+			DateTime result;
+			return DateTime.TryParse(s, dateTimeFormat.DateTimeFormat, System.Globalization.DateTimeStyles.None, out result);
+		}
 
-    /// <summary>
-    /// Tests if the string <c>s</c> is numeric. This is a very generic test here. We accept dots and commas as decimal separators, because the decimal separator statistics
-    /// is made afterwards.
-    /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
-    public static bool IsNumeric(string s)
-    {
-      double result;
-      if (double.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.CurrentInfo, out result))
-        return true;
-
-      return double.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out result);
-    }
+		/// <summary>
+		/// Tests if the string <c>s</c> is numeric. This is a very generic test here. We accept dots and commas as decimal separators, because the decimal separator statistics
+		/// is made afterwards.
+		/// </summary>
+		/// <param name="s"></param>
+		/// <returns></returns>
+		public static bool IsNumeric(string s, System.Globalization.CultureInfo numberFormat)
+		{
+			double result;
+			return double.TryParse(s, System.Globalization.NumberStyles.Any, numberFormat.NumberFormat, out result);
+		}
 
 		/// <summary>
 		/// Tests if the string <c>s</c> is an integral numeric value.
 		/// </summary>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		public static bool IsIntegral(string s)
+		public static bool IsIntegral(string s, System.Globalization.CultureInfo numberFormat)
 		{
 			long result;
-			return long.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out result);
+			return long.TryParse(s, System.Globalization.NumberStyles.Integer, numberFormat.NumberFormat, out result);
 		}
-    
-  } // end class
+		
+	} // end class
 
 }
