@@ -68,17 +68,22 @@ namespace Altaxo.Gui.Pads
 
 		void _view_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
 		{
-			StoreCurrentText();
+			SaveTextBoxTextToNotes();
 		}
 
 		void _view_LostFocus(object sender, System.Windows.RoutedEventArgs e)
 		{
-			StoreCurrentText();
+			SaveTextBoxTextToNotes();
 		}
 
 		void EhActiveWorkbenchWindowChanged(object sender, EventArgs e)
 		{
-			StoreCurrentText(); // Saves the old text
+			SaveTextBoxTextToNotes(); // Saves the old text
+
+			// Clears the old binding
+			_textBinding = null; // to avoid updates when the text changed in the next line, and then the TextChanged event of the TextBox is triggered
+			System.Windows.Data.BindingOperations.ClearBinding(_view, System.Windows.Controls.TextBox.TextProperty);
+
 
 			_currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
 
@@ -88,11 +93,11 @@ namespace Altaxo.Gui.Pads
 			var wvc = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 			if (null != wvc && null != wvc.Controller)
 			{
-				UpdateTextAndBinding(wvc.Controller.DataTable.Notes);
+				GetTextFromNotesAndSetBinding(wvc.Controller.DataTable.Notes);
 			}
 			else if (null != gvc && null != gvc.Controller)
 			{
-				UpdateTextAndBinding(gvc.Controller.Doc.Notes);
+				GetTextFromNotesAndSetBinding(gvc.Controller.Doc.Notes);
 			}
 			else
 			{
@@ -114,9 +119,8 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-		private void UpdateTextAndBinding(Altaxo.Main.ITextBackedConsole con)
+		private void GetTextFromNotesAndSetBinding(Altaxo.Main.ITextBackedConsole con)
 		{
-			_textBinding = null; // to avoid updates when the text changed in the next line, and then the TextChanged event of the TextBox is triggered
 			_view.Text = con.Text;
 
 			var binding = new System.Windows.Data.Binding();
@@ -131,7 +135,7 @@ namespace Altaxo.Gui.Pads
 		/// <summary>
 		/// Stores the text in the text control back to the graph document or worksheet.
 		/// </summary>
-		void StoreCurrentText()
+		void SaveTextBoxTextToNotes()
 		{
 			if (null != _view)
 			{
