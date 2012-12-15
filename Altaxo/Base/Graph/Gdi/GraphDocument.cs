@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Notes concerning this graph.
 		/// </summary>
-		protected string _notes;
+		protected Main.TextBackedConsole _notes;
 
 		/// <summary>
 		/// An identifier that can be shown on the graph and that is searchable.
@@ -319,7 +319,7 @@ namespace Altaxo.Graph.Gdi
 				base.Serialize(obj, info);
 				GraphDocument s = (GraphDocument)obj;
 				info.AddValue("GraphIdentifier", s._graphIdentifier);
-				info.AddValue("Notes", s._notes);
+				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
 
@@ -329,7 +329,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				base.Deserialize(s, info, parent);
 				s._graphIdentifier = info.GetString("GraphIdentifier");
-				s._notes = info.GetString("Notes");
+				s._notes.Text = info.GetString("Notes");
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 			}
@@ -353,11 +353,18 @@ namespace Altaxo.Graph.Gdi
 		{
 			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
+			_notes = new TextBackedConsole();
+			_notes.PropertyChanged += EhNotesChanged;
 			this._layers = new XYPlotLayerCollection();
 			this._layers.ParentObject = this;
 
 			SetGraphPageBoundsToPrinterSettings();
 			this._layers.SetGraphSize(_printableBounds.Size, false);
+		}
+
+		void EhNotesChanged(object sender, PropertyChangedEventArgs e)
+		{
+			OnChanged();
 		}
 
 		public GraphDocument(GraphDocument from)
@@ -388,7 +395,9 @@ namespace Altaxo.Graph.Gdi
 
 			if (0 != (options & GraphCopyOptions.CloneNotes))
 			{
-				this._notes = from._notes;
+				if (null != _notes) _notes.PropertyChanged -= EhNotesChanged;
+				this._notes = from._notes.Clone();
+				this._notes.PropertyChanged += EhNotesChanged;
 			}
 
 			if (0 != (options & GraphCopyOptions.CloneProperties))
@@ -525,16 +534,11 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Notes concerning this graph.
 		/// </summary>
-		public string Notes
+		public Main.ITextBackedConsole Notes
 		{
 			get
 			{
 				return _notes;
-			}
-			set
-			{
-				_notes = value;
-				OnChanged();
 			}
 		}
 

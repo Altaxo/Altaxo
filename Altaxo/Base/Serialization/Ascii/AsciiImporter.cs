@@ -272,7 +272,7 @@ namespace Altaxo.Serialization.Ascii
 			}
 
 
-			table.Notes += notesHeader.ToString();
+			table.Notes.Write(notesHeader.ToString());
 
 			table.Resume();
 		} // end of function ImportAscii

@@ -262,6 +262,7 @@
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithoutTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithTabSeparationStrategyController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
+    <Compile Include="Main\ITextBackedConsole.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />
     <Compile Include="Main\Services\PropertyReflection\DisplayOrderAttribute.cs" />
     <Compile Include="Main\Services\PropertyReflection\ExpandableProperty.cs" />

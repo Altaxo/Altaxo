@@ -39,6 +39,8 @@ namespace Altaxo.Gui.Pads
 		/// <summary>The currently active view content to which the text belongs.</summary>
 		WeakReference _currentActiveViewContent = new WeakReference(null);
 
+		System.Windows.Data.BindingExpressionBase _textBinding;
+
 		public NotesController()
 		{
 			_view = new System.Windows.Controls.TextBox();
@@ -53,7 +55,15 @@ namespace Altaxo.Gui.Pads
 			WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += EhActiveWorkbenchWindowChanged;
 			_view.LostFocus += new System.Windows.RoutedEventHandler(_view_LostFocus);
 			_view.LostKeyboardFocus += new System.Windows.Input.KeyboardFocusChangedEventHandler(_view_LostKeyboardFocus);
+			_view.TextChanged += new System.Windows.Controls.TextChangedEventHandler(_view_TextChanged);
 			_view.IsEnabled = false;
+		}
+
+		void _view_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+		{
+			var tb = _textBinding;
+			if (null != tb)
+				tb.UpdateSource();
 		}
 
 		void _view_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
@@ -78,11 +88,11 @@ namespace Altaxo.Gui.Pads
 			var wvc = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 			if (null != wvc && null != wvc.Controller)
 			{
-				_view.Text = wvc.Controller.DataTable.Notes;
+				UpdateTextAndBinding(wvc.Controller.DataTable.Notes);
 			}
 			else if (null != gvc && null != gvc.Controller)
 			{
-				_view.Text = gvc.Controller.Doc.Notes;
+				UpdateTextAndBinding(gvc.Controller.Doc.Notes);
 			}
 			else
 			{
@@ -104,6 +114,18 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
+		private void UpdateTextAndBinding(Altaxo.Main.ITextBackedConsole con)
+		{
+			_textBinding = null; // to avoid updates when the text changed in the next line, and then the TextChanged event of the TextBox is triggered
+			_view.Text = con.Text;
+
+			var binding = new System.Windows.Data.Binding();
+			binding.Source = con;
+			binding.Path = new System.Windows.PropertyPath("Text");
+			binding.Mode = System.Windows.Data.BindingMode.TwoWay;
+			_textBinding = _view.SetBinding(System.Windows.Controls.TextBox.TextProperty, binding);
+		}
+
 
 
 		/// <summary>
@@ -116,9 +138,9 @@ namespace Altaxo.Gui.Pads
 				var wvc = _currentActiveViewContent.Target as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 				var gvc = _currentActiveViewContent.Target as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 				if (null != wvc && null != wvc.Controller)
-					wvc.Controller.DataTable.Notes = _view.Text;
+					wvc.Controller.DataTable.Notes.Text = _view.Text;
 				else if (null != gvc && null != gvc.Controller)
-					gvc.Controller.Doc.Notes = _view.Text;
+					gvc.Controller.Doc.Notes.Text = _view.Text;
 			}
 		}
 

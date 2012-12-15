@@ -96,7 +96,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Notes concerning this table.
 		/// </summary>
-		protected string _notes;
+		protected Main.TextBackedConsole _notes;
 
 		/// <summary>
 		/// The table script that belongs to this table.
@@ -366,7 +366,7 @@ namespace Altaxo.Data
 			{
 				base.Serialize(obj, info);
 				DataTable s = (DataTable)obj;
-				info.AddValue("Notes", s._notes);
+				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
 
@@ -374,7 +374,7 @@ namespace Altaxo.Data
 			public override void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				base.Deserialize(s, info, parent);
-				s._notes = info.GetString("Notes");
+				s._notes.Text = info.GetString("Notes");
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 			}
@@ -535,7 +535,8 @@ namespace Altaxo.Data
 			this._tableName = from._tableName;
 			this._tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
 			this._creationTime = this._lastChangeTime = DateTime.UtcNow;
-			this._notes = from._notes;
+			this._notes = from._notes.Clone();
+			this._notes.PropertyChanged += this.EhNotesChanged;
 
 			// Clone also the table properties (deep copy)
 			if (from._tableProperties != null)
@@ -564,6 +565,13 @@ namespace Altaxo.Data
 			this._propertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
 			_propertyColumns.ParentChanged += new Main.ParentChangedEventHandler(this.EhChildParentChanged);
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
+			_notes = new Main.TextBackedConsole();
+			_notes.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNotesChanged);
+		}
+
+		void EhNotesChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			OnChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -840,16 +848,11 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Notes concerning this table.
 		/// </summary>
-		public string Notes
+		public Main.ITextBackedConsole Notes
 		{
 			get
 			{
 				return _notes;
-			}
-			set
-			{
-				_notes = value;
-				OnChanged(EventArgs.Empty);
 			}
 		}
 
