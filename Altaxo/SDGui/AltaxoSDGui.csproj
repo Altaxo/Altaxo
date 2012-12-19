@@ -265,6 +265,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\Services\ParserServiceConnector.cs" />
+    <Compile Include="Main\Services\PropertyService.cs" />
     <Compile Include="Main\TextureDoozer.cs" />
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>

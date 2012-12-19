@@ -1,9 +1,9 @@
 ﻿<AddIn name        = "SharpDevelop"
-       author      = "Mike Krueger"
-       copyright   = "prj:///doc/copyright.txt"
-       url         = "http://www.icsharpcode.net"
-       description = "SharpDevelop main module"
-       addInManagerHidden = "true">
+			 author      = "Mike Krueger"
+			 copyright   = "prj:///doc/copyright.txt"
+			 url         = "http://www.icsharpcode.net"
+			 description = "SharpDevelop main module"
+			 addInManagerHidden = "true">
 
 	<Manifest>
 		<Identity name = "SharpDevelop" version = "@SharpDevelopCoreVersion"/>
@@ -63,41 +63,41 @@
 	<Path name = "/Altaxo/Workbench/Pads">
 
 		<Pad id       = "SideBar"
-		     category = "Main"
-		     title    = "${res:MainWindow.Windows.ToolbarLabel}"
-		     icon     = "PadIcons.Toolbar"
-		     shortcut = "Control|Alt|X"
-		     class    = "ICSharpCode.SharpDevelop.Gui.ToolsPad"/>
+				 category = "Main"
+				 title    = "${res:MainWindow.Windows.ToolbarLabel}"
+				 icon     = "PadIcons.Toolbar"
+				 shortcut = "Control|Alt|X"
+				 class    = "ICSharpCode.SharpDevelop.Gui.ToolsPad"/>
 
 		<Pad id       = "FileScout"
-		     category = "Main"
-		     title    = "${res:MainWindow.Windows.FileScoutLabel}"
-		     icon     = "PadIcons.FileBrowser"
-		     shortcut = "Control|Alt|F"
-		     class    = "Altaxo.Gui.Pads.FileBrowser.FileBrowserControl"/>
+				 category = "Main"
+				 title    = "${res:MainWindow.Windows.FileScoutLabel}"
+				 icon     = "PadIcons.FileBrowser"
+				 shortcut = "Control|Alt|F"
+				 class    = "Altaxo.Gui.Pads.FileBrowser.FileBrowserControl"/>
 
 		<Pad id       = "AltaxoProjectScout"
-        category = "Main"
-        title    = "${res:MainWindow.Windows.ProjectScoutLabel}"
-        icon     = "PadIcons.ProjectBrowser"
-        shortcut = "Control|Alt|P"
-        class    = "Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowseControl"/>
+				category = "Main"
+				title    = "${res:MainWindow.Windows.ProjectScoutLabel}"
+				icon     = "PadIcons.ProjectBrowser"
+				shortcut = "Control|Alt|P"
+				class    = "Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowseControl"/>
 
 		<Pad id       = "AltaxoOutputWindow"
-        category = "Main"
-        title    = "${res:MainWindow.Windows.OutputWindow}"
-        icon     = "PadIcons.Output"
-        shortcut = "Control|Alt|O"
-        precreated ="true"
-        class    = "Altaxo.Gui.Pads.OutputWindowController"/>
+				category = "Main"
+				title    = "${res:MainWindow.Windows.OutputWindow}"
+				icon     = "PadIcons.Output"
+				shortcut = "Control|Alt|O"
+				precreated ="true"
+				class    = "Altaxo.Gui.Pads.OutputWindowController"/>
 
 		<Pad id       = "AltaxoDataDisplayWindow"
-        category = "Main"
-        title    = "${res:MainWindow.Windows.DataDisplayWindow}"
-        icon     = "Icons.16x16.ReadData"
-        shortcut = "Control|Alt|D"
-        precreated ="true"
-        class    = "Altaxo.Gui.Pads.DataDisplayController"/>
+				category = "Main"
+				title    = "${res:MainWindow.Windows.DataDisplayWindow}"
+				icon     = "Icons.16x16.ReadData"
+				shortcut = "Control|Alt|D"
+				precreated ="true"
+				class    = "Altaxo.Gui.Pads.DataDisplayController"/>
 
 		<Pad id       = "AltaxoNotesWindow"
 			 category = "Main"
@@ -214,8 +214,8 @@
 				<MenuItem id = "RecentProjectsBuilder" type = "Builder" class = "Altaxo.Main.Commands.RecentProjectsMenuBuilder" />
 				<MenuItem id = "RecentProjectsSeparator" type = "Separator"  />
 				<MenuItem id = "ClearRecentFiles"
-				          label = "${res:XML.MainMenu.FileMenu.ClearRecentProjects}"
-				          class = "ICSharpCode.SharpDevelop.Commands.ClearRecentProjects" />
+									label = "${res:XML.MainMenu.FileMenu.ClearRecentProjects}"
+									class = "ICSharpCode.SharpDevelop.Commands.ClearRecentProjects" />
 			</MenuItem>
 			<MenuItem id="ExitSeparator" type = "Separator"/>
 			<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"
@@ -236,45 +236,45 @@
 			<MenuItem id="CopySpec" label="${res:XML.MainMenu.CopySpecificMenu}"  type="Menu">
 				<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
 					<MenuItem id="CopyGraphActiveLayer" label="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer}" description="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer.Description}"
-            class="Altaxo.Graph.Commands.CopyActiveLayer" />
+						class="Altaxo.Graph.Commands.CopyActiveLayer" />
 				</Condition>
 			</MenuItem>
 			<MenuItem id="PasteSpec" label="${res:XML.MainMenu.PasteSpecificMenu}"  type="Menu">
 				<Condition name="Clipboard" content="Altaxo.Graph.GraphLayerAsXml" action="Exclude">
 					<MenuItem id="PasteAsNewLayer" label="${res:XML.MainMenu.EditMenu.PasteAsNewLayer}" description="${res:XML.MainMenu.EditMenu.PasteAsNewLayer.Description}"
-            class="Altaxo.Graph.Commands.PasteAsNewLayer" />
+						class="Altaxo.Graph.Commands.PasteAsNewLayer" />
 				</Condition>
 			</MenuItem>
 			<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
 				<MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
-          description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
+					description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
 				<MenuItem id="CopyPageAsBitmap" label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap}"  type="Menu">
 					<MenuItem id="SetCopyPageOptions"
-                    label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
-                    icon="Icons.16x16.NewDocumentIcon"
-                    description="${res:XML.MainMenu.EditMenu.SetCopyPageOptions.Description}"
-                    class="Altaxo.Graph.Commands.SetCopyPageOptions" />
+										label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
+										icon="Icons.16x16.NewDocumentIcon"
+										description="${res:XML.MainMenu.EditMenu.SetCopyPageOptions.Description}"
+										class="Altaxo.Graph.Commands.SetCopyPageOptions" />
 					<MenuItem id="GraphCopyPageAsBitmap150dpiARGB"
-                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB}"
-                    icon="Icons.16x16.NewDocumentIcon"
-                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB.Description}"
-                    class="Altaxo.Graph.Commands.CopyPageAsBitmap150dpiARGB" />
+										label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB}"
+										icon="Icons.16x16.NewDocumentIcon"
+										description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB.Description}"
+										class="Altaxo.Graph.Commands.CopyPageAsBitmap150dpiARGB" />
 					<MenuItem id="GraphCopyPageAsBitmap300dpiRGB"
-                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB}"
-                    icon="Icons.16x16.NewDocumentIcon"
-                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB.Description}"
-                    class="Altaxo.Graph.Commands.CopyPageAsBitmap150dpiRGB" />
+										label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB}"
+										icon="Icons.16x16.NewDocumentIcon"
+										description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB.Description}"
+										class="Altaxo.Graph.Commands.CopyPageAsBitmap150dpiRGB" />
 
 					<MenuItem id="GraphCopyPageAsBitmap300dpiARGB"
-                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB}"
-                    icon="Icons.16x16.NewDocumentIcon"
-                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB.Description}"
-                    class="Altaxo.Graph.Commands.CopyPageAsBitmap300dpiARGB" />
+										label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB}"
+										icon="Icons.16x16.NewDocumentIcon"
+										description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB.Description}"
+										class="Altaxo.Graph.Commands.CopyPageAsBitmap300dpiARGB" />
 					<MenuItem id="GraphCopyPageAsBitmap300dpiRGB"
-                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB}"
-                    icon="Icons.16x16.NewDocumentIcon"
-                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB.Description}"
-                    class="Altaxo.Graph.Commands.CopyPageAsBitmap300dpiRGB" />
+										label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB}"
+										icon="Icons.16x16.NewDocumentIcon"
+										description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB.Description}"
+										class="Altaxo.Graph.Commands.CopyPageAsBitmap300dpiRGB" />
 				</MenuItem>
 			</Condition>
 
@@ -284,8 +284,8 @@
 		<!-- View menu -->
 		<MenuItem id="View" label="${res:XML.MainMenu.ViewMenu}"  type="Menu">
 			<MenuItem id    = "MainViewMenuBuilder"
-            type  = "Builder"
-            class = "ICSharpCode.SharpDevelop.Commands.MainViewMenuBuilder" />
+						type  = "Builder"
+						class = "ICSharpCode.SharpDevelop.Commands.MainViewMenuBuilder" />
 			<MenuItem id="ViewItemsSeparator" type = "Separator"/>
 			<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
 				<MenuItem id="AutoZoom" label="${res:XML.MainMenu.ViewMenu.AutoZoom}" icon="Icons.16x16.NewDocumentIcon"
@@ -339,47 +339,47 @@
 						class="Altaxo.Worksheet.Commands.PlotLinePolar" />
 					<MenuItem id="BarChart" label="${res:XML.MainMenu.Plot.BarChartMenu}"  type="Menu">
 						<MenuItem id="PlotBarChartNormal" label="${res:XML.MainMenu.PlotMenu.PlotBarChartNormal}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartNormal.Description}"
-              class="Altaxo.Worksheet.Commands.PlotBarChartNormal" />
+							class="Altaxo.Worksheet.Commands.PlotBarChartNormal" />
 						<MenuItem id="PlotBarChartStack" label="${res:XML.MainMenu.PlotMenu.PlotBarChartStack}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartStack.Description}"
-              class="Altaxo.Worksheet.Commands.PlotBarChartStack" />
+							class="Altaxo.Worksheet.Commands.PlotBarChartStack" />
 						<MenuItem id="PlotBarChartRelStack" label="${res:XML.MainMenu.PlotMenu.PlotBarChartRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartRelStack.Description}"
-              class="Altaxo.Worksheet.Commands.PlotBarChartRelativeStack" />
+							class="Altaxo.Worksheet.Commands.PlotBarChartRelativeStack" />
 					</MenuItem>
 					<MenuItem id="ColumnChart" label="${res:XML.MainMenu.Plot.ColumnChartMenu}"  type="Menu">
 						<MenuItem id="PlotColumnChartNormal" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartNormal}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartNormal.Description}"
-              class="Altaxo.Worksheet.Commands.PlotColumnChartNormal" />
+							class="Altaxo.Worksheet.Commands.PlotColumnChartNormal" />
 						<MenuItem id="PlotBarColumnChartStack" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartStack}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartStack.Description}"
-              class="Altaxo.Worksheet.Commands.PlotColumnChartStack" />
+							class="Altaxo.Worksheet.Commands.PlotColumnChartStack" />
 						<MenuItem id="PlotColumnChartRelStack" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartRelStack.Description}"
-              class="Altaxo.Worksheet.Commands.PlotColumnChartRelativeStack" />
+							class="Altaxo.Worksheet.Commands.PlotColumnChartRelativeStack" />
 					</MenuItem>
 				</Condition>
 				<Condition name="ContainsPLSModelData" ContainsPLSModelData="*" action="Exclude">
 					<MenuItem id="PLS" label="${res:XML.MainMenu.PLSPlotMenu}" type="Menu">
 						<MenuItem id="SetNumFactors" label="${res:XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors}" icon="Icons.16x16.Question"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors.Description}" class="Altaxo.Worksheet.Commands.PLSQuestPreferredNumberOfFactors" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors.Description}" class="Altaxo.Worksheet.Commands.PLSQuestPreferredNumberOfFactors" />
 						<MenuItem id="PlotPRESS" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPRESSValue}" icon="Icons.16x16.PlotLine"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotPRESSValue.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPRESSValue" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotPRESSValue.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPRESSValue" />
 						<MenuItem id="PlotCrossPRESS" label="${res:XML.MainMenu.PlotMenu.PLS.PlotCrossPRESSValue}" icon="Icons.16x16.PlotLine"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotCrossPRESSValue.Description}" class="Altaxo.Worksheet.Commands.PLSPlotCrossPRESSValue" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotCrossPRESSValue.Description}" class="Altaxo.Worksheet.Commands.PLSPlotCrossPRESSValue" />
 						<MenuItem id="PlotYResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotYResiduals}" icon="Icons.16x16.PlotScatter"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotYResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotYResidualsIndividually" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotYResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotYResidualsIndividually" />
 						<MenuItem id="PlotYCrossResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotYCrossResiduals}" icon="Icons.16x16.PlotScatter"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotYCrossResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotYCrossResidualsIndividually" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotYCrossResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotYCrossResidualsIndividually" />
 						<MenuItem id="PlotXResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXResiduals}" icon="Icons.16x16.PlotScatter"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotXResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXResidualsIndividually" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotXResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXResidualsIndividually" />
 						<MenuItem id="PlotXCrossResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals}" icon="Icons.16x16.PlotScatter"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXCrossResidualsIndividually" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXCrossResidualsIndividually" />
 						<MenuItem id="PlotActualVersusPredictedY" label="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY}" icon="Icons.16x16.PlotScatter"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictedVersusActualYIndividually" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictedVersusActualYIndividually" />
 						<MenuItem id="PlotActualVersusCrossPredictedY" label="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY}" icon="Icons.16x16.PlotScatter"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotCrossPredictedVersusActualYIndividually" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotCrossPredictedVersusActualYIndividually" />
 						<MenuItem id="PlotXLeverage" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage}" icon="Icons.16x16.PlotScatter"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXLeverage" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXLeverage" />
 						<MenuItem id="PlotPreprocessedSpectra" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra}" icon="Icons.16x16.PlotLine"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPreprocessedSpectra" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPreprocessedSpectra" />
 						<MenuItem id="PlotPredictionScores" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPredictionScores}" icon="Icons.16x16.PlotLine"
-                      description="${res:XML.MainMenu.PlotMenu.PLS.PlotPredictionScores.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictionScores" />
+											description="${res:XML.MainMenu.PlotMenu.PLS.PlotPredictionScores.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictionScores" />
 					</MenuItem>
 				</Condition>
 			</MenuItem>
@@ -510,19 +510,19 @@
 					<MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisPCAOnCols" />
 					<MenuItem id="PCAOnRows" label="${res:XML.MainMenu.AnalysisMenu.PCAOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnRows.Description}"
-            class="Altaxo.Worksheet.Commands.AnalysisPCAOnRows" />
+						class="Altaxo.Worksheet.Commands.AnalysisPCAOnRows" />
 					<MenuItem id="PLSOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns.Description}"
-            class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols" />
+						class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols" />
 					<MenuItem id="PLSOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnRows.Description}"
-            class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows" />
+						class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows" />
 					<MenuItem id="PLSPredictOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns.Description}"
-            class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnCols" />
+						class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnCols" />
 					<MenuItem id="PLSPredictOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows.Description}"
-            class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnRows" />
+						class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnRows" />
 					<MenuItem id="ExportPLSCalibration" label="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration}" description="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration.Description}"
-            class="Altaxo.Worksheet.Commands.AnalysisExportPLSCalibration" />
+						class="Altaxo.Worksheet.Commands.AnalysisExportPLSCalibration" />
 					<MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}"
-            description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix" />
+						description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix" />
 				</MenuItem>
 			</MenuItem>
 		</Condition>
@@ -564,24 +564,24 @@
 				<MenuItem id="NxtPrvSeparator" type = "Separator"/>
 				<MenuItem id="SortBy" label="${res:XML.MainMenu.WindowMenu.SortBy}" type="Menu">
 					<MenuItem id="SortByCreation" label="${res:XML.MainMenu.WindowMenu.SortByCreation}"
-            description="${res:XML.MainMenu.WindowMenu.SortByCreation.Description}" class="Altaxo.Main.Commands.SortGraphTablesByCreationTime" />
+						description="${res:XML.MainMenu.WindowMenu.SortByCreation.Description}" class="Altaxo.Main.Commands.SortGraphTablesByCreationTime" />
 					<MenuItem id="SortByTypeCreation" label="${res:XML.MainMenu.WindowMenu.SortByTypeAndCreation}"
-            description="${res:XML.MainMenu.WindowMenu.SortByTypeAndCreation.Description}" class="Altaxo.Main.Commands.SortGraphTablesByTypeAndCreationTime" />
+						description="${res:XML.MainMenu.WindowMenu.SortByTypeAndCreation.Description}" class="Altaxo.Main.Commands.SortGraphTablesByTypeAndCreationTime" />
 					<MenuItem id="SortByName" label="${res:XML.MainMenu.WindowMenu.SortByName}"
-            description="${res:XML.MainMenu.WindowMenu.SortByName.Description}" class="Altaxo.Main.Commands.SortGraphTablesByName" />
+						description="${res:XML.MainMenu.WindowMenu.SortByName.Description}" class="Altaxo.Main.Commands.SortGraphTablesByName" />
 					<MenuItem id="SortByTypeName" label="${res:XML.MainMenu.WindowMenu.SortByTypeAndName}"
-            description="${res:XML.MainMenu.WindowMenu.SortByTypeAndName.Description}" class="Altaxo.Main.Commands.SortGraphTablesByTypeAndName" />
+						description="${res:XML.MainMenu.WindowMenu.SortByTypeAndName.Description}" class="Altaxo.Main.Commands.SortGraphTablesByTypeAndName" />
 				</MenuItem>
 				<MenuItem id="CloseAll" label="${res:XML.MainMenu.FileMenu.CloseAll}" icon="Icons.16x16.CloseAllDocuments"
 					description="${res:XML.MainMenu.FileMenu.CloseAll.Description}" class="ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
 			</Condition>
 			<MenuItem id="OpenAll" label="${res:XML.MainMenu.WindowMenu.OpenAll}" type="Menu">
 				<MenuItem id="OpenAllWorksheets" label="${res:XML.MainMenu.WindowMenu.OpenAllWorksheets}"
-          description="${res:XML.MainMenu.WindowMenu.OpenAllWorksheets.Description}" class="Altaxo.Main.Commands.OpenAllWorksheets" />
+					description="${res:XML.MainMenu.WindowMenu.OpenAllWorksheets.Description}" class="Altaxo.Main.Commands.OpenAllWorksheets" />
 				<MenuItem id="OpenAllGraphs" label="${res:XML.MainMenu.WindowMenu.OpenAllGraphs}"
-          description="${res:XML.MainMenu.WindowMenu.OpenAllGraphs.Description}" class="Altaxo.Main.Commands.OpenAllGraphs" />
+					description="${res:XML.MainMenu.WindowMenu.OpenAllGraphs.Description}" class="Altaxo.Main.Commands.OpenAllGraphs" />
 				<MenuItem id="OpenAllWorksheetsAndGraphs" label="${res:XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs}"
-          description="${res:XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs.Description}" class="Altaxo.Main.Commands.OpenAllWorksheetsAndGraphs" />
+					description="${res:XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs.Description}" class="Altaxo.Main.Commands.OpenAllWorksheetsAndGraphs" />
 			</MenuItem>
 			<MenuItem id = "ContentBuilder"  type="Builder" class="ICSharpCode.SharpDevelop.Commands.OpenContentsMenuBuilder"/>
 		</MenuItem>
@@ -627,7 +627,7 @@
 			</MenuItem>
 			<MenuItem id="Separator2" type = "Separator"/>
 			<MenuItem id="ForceException" label="${res:XML.MainMenu.HelpMenu.ForceException}"
-        description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.AltaxoProvokeException" />
+				description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.AltaxoProvokeException" />
 			<MenuItem id="DevelopmentTest" label="DevelopmentTester"
 			 description="Development test" class="Altaxo.Main.Commands.DevelopmentTest" />
 			<MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
@@ -640,23 +640,23 @@
 		<ToolbarItem id="New" icon="Icons.16x16.NewDocumentIcon" tooltip="${res:XML.MainMenu.FileMenu.Close.Description}"
 				class="Altaxo.Main.Commands.CloseProject" />
 		<ToolbarItem id="Open" icon="Icons.16x16.OpenFileIcon" tooltip="${res:XML.MainMenu.FileMenu.Open.Project.Description}"
-      class="Altaxo.Main.Commands.FileOpen" />
+			class="Altaxo.Main.Commands.FileOpen" />
 		<ToolbarItem id="Save" icon="Icons.16x16.SaveIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveProject.Description}"
-      class="Altaxo.Main.Commands.FileSave" />
+			class="Altaxo.Main.Commands.FileSave" />
 		<ToolbarItem id="StandardWorksheet" icon="Icons.16x16.StandardWorksheet" tooltip="${res:XML.MainMenu.FileMenu.New.StandardWorksheet.Description}"
-      class="Altaxo.Main.Commands.CreateNewStandardWorksheet" />
+			class="Altaxo.Main.Commands.CreateNewStandardWorksheet" />
 		<ToolbarItem id="EmptyWorksheet" icon="Icons.16x16.EmptyWorksheet" tooltip="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"
-      class="Altaxo.Main.Commands.CreateNewWorksheet" />
+			class="Altaxo.Main.Commands.CreateNewWorksheet" />
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">
 			<ToolbarItem id="GraphPrint" icon="Icons.16x16.Printer" tooltip="${res:XML.MainMenu.FileMenu.Print.Description}"
-        class="Altaxo.Graph.Commands.Print" />
+				class="Altaxo.Graph.Commands.Print" />
 		</Condition>
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Disable">
 			<ToolbarItem id="ImportAscii" icon="Icons.16x16.ImportAscii" tooltip="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}"
-        class="Altaxo.Worksheet.Commands.ImportAscii" />
+				class="Altaxo.Worksheet.Commands.ImportAscii" />
 		</Condition>
 		<ToolbarItem id="Duplicate" icon="Icons.16x16.Duplicate" tooltip="${res:XML.MainMenu.EditMenu.Duplicate.Description}"
-        class="Altaxo.Main.Commands.Duplicate" />
+				class="Altaxo.Main.Commands.Duplicate" />
 		<ToolbarItem id="Separator1"  type = "Separator"/>
 		<ToolbarItem id="Cut" icon="Icons.16x16.CutIcon" tooltip="${res:XML.MainMenu.EditMenu.Cut.Description}"
 			command="Cut" />
@@ -670,163 +670,163 @@
 		<ToolbarItem id="GraphToolSeparator"  type = "Separator"/>
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">
 			<ToolbarItem id="GraphPointer" type="CheckBox" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
-        loadclasslazy="false" class="Altaxo.Graph.Commands.SelectPointerTool" />
+				loadclasslazy="false" class="Altaxo.Graph.Commands.SelectPointerTool" />
 			<ToolbarItem id="TextPointer" type="CheckBox" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
-        class="Altaxo.Graph.Commands.SelectTextTool" />
+				class="Altaxo.Graph.Commands.SelectTextTool" />
 			<ToolbarItem id="LineDrawingTool" type="CheckBox" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.SingleLine.Description}"
-        class="Altaxo.Graph.Commands.SingleLineDrawingTool" />
+				class="Altaxo.Graph.Commands.SingleLineDrawingTool" />
 			<ToolbarItem id="ArrowDrawingTool" type="CheckBox" icon="Icons.16x16.StraightArrow" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ArrowLine.Description}"
-        class="Altaxo.Graph.Commands.ArrowLineDrawingTool" />
+				class="Altaxo.Graph.Commands.ArrowLineDrawingTool" />
 			<ToolbarItem id="RectangleDrawingTool" type="CheckBox" icon="Icons.16x16.Rectangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Rectangle.Description}"
-        class="Altaxo.Graph.Commands.RectangleDrawingTool" />
+				class="Altaxo.Graph.Commands.RectangleDrawingTool" />
 			<ToolbarItem id="EllipseDrawingTool" type="CheckBox" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
-        class="Altaxo.Graph.Commands.EllipseDrawingTool" />
+				class="Altaxo.Graph.Commands.EllipseDrawingTool" />
 			<ToolbarItem id="CurlyBraceDrawingTool" type="CheckBox" icon="Icons.16x16.CurlyBrace" tooltip="${res:XML.MainMenu.GraphMenu.Tools.CurlyBrace.Description}"
-        class="Altaxo.Graph.Commands.CurlyBraceDrawingTool" />
+				class="Altaxo.Graph.Commands.CurlyBraceDrawingTool" />
 			<ToolbarItem id="RegularPolygonDrawingTool" type="CheckBox" icon="Icons.16x16.Triangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.RegularPolygon.Description}"
-        class="Altaxo.Graph.Commands.RegularPolygonDrawingTool" />
+				class="Altaxo.Graph.Commands.RegularPolygonDrawingTool" />
 			<ToolbarItem id="OpenCardinalSplineDrawingTool" type="CheckBox" icon="Icons.16x16.OpenSplineCurve" tooltip="${res:XML.MainMenu.GraphMenu.Tools.OpenCardinalSpline.Description}"
-        class="Altaxo.Graph.Commands.OpenCardinalSplineDrawingTool" />
+				class="Altaxo.Graph.Commands.OpenCardinalSplineDrawingTool" />
 			<ToolbarItem id="ClosedCardinalSplineDrawingTool" type="CheckBox" icon="Icons.16x16.ClosedSplineCurve" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ClosedCardinalSpline.Description}"
-        class="Altaxo.Graph.Commands.ClosedCardinalSplineDrawingTool" />
+				class="Altaxo.Graph.Commands.ClosedCardinalSplineDrawingTool" />
 			<ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
-        class="Altaxo.Graph.Commands.NewLayerLegend" />
+				class="Altaxo.Graph.Commands.NewLayerLegend" />
 			<ToolbarItem id="GraphCmdsSeparator"  type = "Separator"/>
 			<ToolbarItem id="ReadPlotItemData" type="CheckBox" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadPlotItemData.Description}"
-        class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
+				class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
 			<ToolbarItem id="ReadLayerCoordinates" type="CheckBox" icon="Icons.16x16.ReadLayer" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadLayerCoordinates.Description}"
-        class="Altaxo.Graph.Commands.ReadXYCoordinatesTool" />
+				class="Altaxo.Graph.Commands.ReadXYCoordinatesTool" />
 			<ToolbarItem id="ZoomAxes" type="CheckBox" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
-        class="Altaxo.Graph.Commands.ZoomAxesTool" />
+				class="Altaxo.Graph.Commands.ZoomAxesTool" />
 			<ToolbarItem id="RescaleAxes" icon="Icons.16x16.RescaleAxes" tooltip="${res:XML.MainMenu.GraphMenu.RescaleAxes.Description}"
-        class="Altaxo.Graph.Commands.RescaleAxes" />
+				class="Altaxo.Graph.Commands.RescaleAxes" />
 			<ToolbarItem id    = "FontSizeChooser"
-		             type    = "ComboBox"
-		             tooltip = "${res:XML.MainToolBar.FontSizeChooser.ToolTip}"
-		             class   = "Altaxo.Graph.Commands.FontSizeChooser"/>
+								 type    = "ComboBox"
+								 tooltip = "${res:XML.MainToolBar.FontSizeChooser.ToolTip}"
+								 class   = "Altaxo.Graph.Commands.FontSizeChooser"/>
 			<ToolbarItem id    = "FontFamilyChooser"
-		             type    = "ComboBox"
-		             tooltip = "${res:XML.MainToolBar.FontFamilyChooser.ToolTip}"
-		             class   = "Altaxo.Graph.Commands.FontFamilyChooser"/>
+								 type    = "ComboBox"
+								 tooltip = "${res:XML.MainToolBar.FontFamilyChooser.ToolTip}"
+								 class   = "Altaxo.Graph.Commands.FontFamilyChooser"/>
 			<ToolbarItem id    = "StrokeWidthChooser"
-                type    = "ComboBox"
-                tooltip = "${res:XML.MainToolBar.StrokeWidthChooser.ToolTip}"
-                class   = "Altaxo.Graph.Commands.StrokeWidthChooser"/>
+								type    = "ComboBox"
+								tooltip = "${res:XML.MainToolBar.StrokeWidthChooser.ToolTip}"
+								class   = "Altaxo.Graph.Commands.StrokeWidthChooser"/>
 		</Condition>
 		<ToolbarItem id="PlotSeparator"  type = "Separator"/>
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Disable">
 
 			<ToolbarItem id="PlotLine" icon="Icons.16x16.PlotLine" tooltip="${res:XML.MainMenu.PlotMenu.PlotLine.Description}"
-        class="Altaxo.Worksheet.Commands.PlotLine" />
+				class="Altaxo.Worksheet.Commands.PlotLine" />
 			<ToolbarItem id="PlotScatter" icon="Icons.16x16.PlotScatter" tooltip="${res:XML.MainMenu.PlotMenu.PlotScatter.Description}"
-        class="Altaxo.Worksheet.Commands.PlotScatter" />
+				class="Altaxo.Worksheet.Commands.PlotScatter" />
 			<ToolbarItem id="PlotLineScatter" icon="Icons.16x16.PlotLineScatter" tooltip="${res:XML.MainMenu.PlotMenu.PlotLineAndScatter.Description}"
-        class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
+				class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
 		</Condition>
 		<ToolbarItem id="ArrangeSeparator"  type = "Separator"/>
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">
 			<ToolbarItem id="ArrangeTop" icon="Icons.16x16.ArrangeTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTop.Description}"
-        class="Altaxo.Graph.Commands.ArrangeTop" />
+				class="Altaxo.Graph.Commands.ArrangeTop" />
 			<ToolbarItem id="ArrangeBottom" icon="Icons.16x16.ArrangeBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottom.Description}"
-        class="Altaxo.Graph.Commands.ArrangeBottom" />
+				class="Altaxo.Graph.Commands.ArrangeBottom" />
 			<ToolbarItem id="ArrangeTopToBottom" icon="Icons.16x16.ArrangeTopToBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTopToBottom.Description}"
-        class="Altaxo.Graph.Commands.ArrangeTopToBottom" />
+				class="Altaxo.Graph.Commands.ArrangeTopToBottom" />
 			<ToolbarItem id="ArrangeBottomToTop" icon="Icons.16x16.ArrangeBottomToTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottomToTop.Description}"
-        class="Altaxo.Graph.Commands.ArrangeBottomToTop" />
+				class="Altaxo.Graph.Commands.ArrangeBottomToTop" />
 			<ToolbarItem id="ArrangeLeft" icon="Icons.16x16.ArrangeLeft" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeLeft.Description}"
-        class="Altaxo.Graph.Commands.ArrangeLeft" />
+				class="Altaxo.Graph.Commands.ArrangeLeft" />
 			<ToolbarItem id="ArrangeRight" icon="Icons.16x16.ArrangeRight" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeRight.Description}"
-        class="Altaxo.Graph.Commands.ArrangeRight" />
+				class="Altaxo.Graph.Commands.ArrangeRight" />
 			<ToolbarItem id="ArrangeLeftToRight" icon="Icons.16x16.ArrangeLeftToRight" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeLeftToRight.Description}"
-        class="Altaxo.Graph.Commands.ArrangeLeftToRight" />
+				class="Altaxo.Graph.Commands.ArrangeLeftToRight" />
 			<ToolbarItem id="ArrangeRightToLeft" icon="Icons.16x16.ArrangeRightToLeft" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeRightToLeft.Description}"
-        class="Altaxo.Graph.Commands.ArrangeRightToLeft" />
+				class="Altaxo.Graph.Commands.ArrangeRightToLeft" />
 			<ToolbarItem id="ArrangeHorizontal" icon="Icons.16x16.ArrangeHorizontal" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeHorizontal.Description}"
-        class="Altaxo.Graph.Commands.ArrangeHorizontal" />
+				class="Altaxo.Graph.Commands.ArrangeHorizontal" />
 			<ToolbarItem id="ArrangeVertical" icon="Icons.16x16.ArrangeVertical" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVertical.Description}"
-        class="Altaxo.Graph.Commands.ArrangeVertical" />
+				class="Altaxo.Graph.Commands.ArrangeVertical" />
 			<ToolbarItem id="ArrangeHorizontalTable" icon="Icons.16x16.ArrangeHorizontalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeHorizontalTable.Description}"
-        class="Altaxo.Graph.Commands.ArrangeHorizontalTable" />
+				class="Altaxo.Graph.Commands.ArrangeHorizontalTable" />
 			<ToolbarItem id="ArrangeVerticalTable" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVerticalTable.Description}"
-        class="Altaxo.Graph.Commands.ArrangeVerticalTable" />
+				class="Altaxo.Graph.Commands.ArrangeVerticalTable" />
 			<ToolbarItem id="GroupObjects" icon="Icons.16x16.GroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.GroupShapes.Description}"
-        class="Altaxo.Graph.Commands.GroupSelectedObjects" />
+				class="Altaxo.Graph.Commands.GroupSelectedObjects" />
 			<ToolbarItem id="UngroupObjects" icon="Icons.16x16.UngroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.UngroupShapes.Description}"
-        class="Altaxo.Graph.Commands.UngroupSelectedObjects" />
+				class="Altaxo.Graph.Commands.UngroupSelectedObjects" />
 			<ToolbarItem id="SelectionUp" icon="Icons.16x16.MoveUp" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemUp.Description}"
-        class="Altaxo.Graph.Commands.MoveGraphItemUp" />
+				class="Altaxo.Graph.Commands.MoveGraphItemUp" />
 			<ToolbarItem id="SelectionDown" icon="Icons.16x16.MoveDown" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemDown.Description}"
-        class="Altaxo.Graph.Commands.MoveGraphItemDown" />
+				class="Altaxo.Graph.Commands.MoveGraphItemDown" />
 			<ToolbarItem id="SelectionToTop" icon="Icons.16x16.MoveToTop" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToTop.Description}"
-        class="Altaxo.Graph.Commands.MoveGraphItemToTop" />
+				class="Altaxo.Graph.Commands.MoveGraphItemToTop" />
 			<ToolbarItem id="SelectionToBottom" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
-        class="Altaxo.Graph.Commands.MoveGraphItemToBottom" />
+				class="Altaxo.Graph.Commands.MoveGraphItemToBottom" />
 		</Condition>
 	</Path>
 
 	<Path name = "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu">
 		<Condition name="SelectedDataColumns" selected="one" action="Disable">
 			<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
-        class="Altaxo.Worksheet.Commands.RenameColumn" />
+				class="Altaxo.Worksheet.Commands.RenameColumn" />
 			<MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
-        class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
+				class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
 			<MenuItem	id="SetColumnAsX"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}"
-        class="Altaxo.Worksheet.Commands.SetColumnAsX" />
+				class="Altaxo.Worksheet.Commands.SetColumnAsX" />
 			<MenuItem	id="SortTableAsc"	label="${res:XML.MainMenu.ColumnMenu.SortTableAscending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableAscending.Description}"
-        class="Altaxo.Worksheet.Commands.SortTableAscending" />
+				class="Altaxo.Worksheet.Commands.SortTableAscending" />
 			<MenuItem	id="SortTableDesc"	label="${res:XML.MainMenu.ColumnMenu.SortTableDescending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableDescending.Description}"
-        class="Altaxo.Worksheet.Commands.SortTableDescending" />
+				class="Altaxo.Worksheet.Commands.SortTableDescending" />
 		</Condition>
 		<MenuItem	id="SetColumnAsV"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue.Description}"
-      class="Altaxo.Worksheet.Commands.SetColumnAsValue" />
+			class="Altaxo.Worksheet.Commands.SetColumnAsValue" />
 		<MenuItem	id="SetColumnAsLabel"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel.Description}"
-      class="Altaxo.Worksheet.Commands.SetColumnAsLabel" />
+			class="Altaxo.Worksheet.Commands.SetColumnAsLabel" />
 		<MenuItem id="SetColumnAsError" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsError}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsError.Description}"
-  class="Altaxo.Worksheet.Commands.SetColumnAsError" />
+	class="Altaxo.Worksheet.Commands.SetColumnAsError" />
 		<MenuItem id="SetColumnAsPosError" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsPosError}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsPosError.Description}"
-      class="Altaxo.Worksheet.Commands.SetColumnAsPositiveError" />
+			class="Altaxo.Worksheet.Commands.SetColumnAsPositiveError" />
 		<MenuItem id="SetColumnAsNegError" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsNegError}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsNegError.Description}"
-      class="Altaxo.Worksheet.Commands.SetColumnAsNegativeError" />
+			class="Altaxo.Worksheet.Commands.SetColumnAsNegativeError" />
 		<MenuItem	id="SetGroupNumber"	label="${res:XML.MainMenu.ColumnMenu.SetGroupNumber}"	description="${res:XML.MainMenu.ColumnMenu.SetGroupNumber.Description}"
-      class="Altaxo.Worksheet.Commands.SetColumnGroupNumber" />
+			class="Altaxo.Worksheet.Commands.SetColumnGroupNumber" />
 		<MenuItem	id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}"	description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}"
-      class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
+			class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
 
 		<MenuItem id="CleanSeparator"  type = "Separator"/>
 		<MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
-      description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
+			description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
 		<MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
-      description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
+			description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
 		<MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.DeleteAllButSelected}" icon="Icons.16x16.DeleteIcon"
-      description="${res:XML.MainMenu.EditMenu.DeleteAllButSelected.Description}" class="Altaxo.Worksheet.Commands.RemoveAllButSelected" />
+			description="${res:XML.MainMenu.EditMenu.DeleteAllButSelected.Description}" class="Altaxo.Worksheet.Commands.RemoveAllButSelected" />
 	</Path>
 
 	<Path name = "/Altaxo/Views/Worksheet/DataRowHeader/ContextMenu">
 
 		<MenuItem id="InsertOneRow" label="${res:XML.MainMenu.WorksheetMenu.InsertOneRow}"
-      description="${res:XML.MainMenu.WorksheetMenu.InsertOneRow.Description}" class="Altaxo.Worksheet.Commands.InsertOneDataRow" />
+			description="${res:XML.MainMenu.WorksheetMenu.InsertOneRow.Description}" class="Altaxo.Worksheet.Commands.InsertOneDataRow" />
 		<MenuItem id="InsertRows" label="${res:XML.MainMenu.WorksheetMenu.InsertDataRows}"
-      description="${res:XML.MainMenu.WorksheetMenu.InsertDataRows.Description}" class="Altaxo.Worksheet.Commands.InsertDataRows" />
+			description="${res:XML.MainMenu.WorksheetMenu.InsertDataRows.Description}" class="Altaxo.Worksheet.Commands.InsertDataRows" />
 		<MenuItem id="ChangeRowsToPropCols" label="${res:XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns}"
-      description="${res:XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.ChangeRowsToPropertyColumns" />
+			description="${res:XML.MainMenu.WorksheetMenu.ChangeRowsToPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.ChangeRowsToPropertyColumns" />
 		<MenuItem id="CleanSeparator"  type = "Separator"/>
 		<MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
-      description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
+			description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
 		<MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
-      description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
+			description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
 
 	</Path>
 
 	<Path name = "/Altaxo/Views/Worksheet/PropertyColumnHeader/ContextMenu">
 		<Condition name="SelectedPropertyColumns" selected="one" action="Disable">
 			<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
-        class="Altaxo.Worksheet.Commands.RenameColumn" />
+				class="Altaxo.Worksheet.Commands.RenameColumn" />
 			<MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
-        class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
+				class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
 			<MenuItem	id="SortTableAsc"	label="${res:XML.MainMenu.ColumnMenu.SortTableAscending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableAscending.Description}"
-        class="Altaxo.Worksheet.Commands.SortTableAscending" />
+				class="Altaxo.Worksheet.Commands.SortTableAscending" />
 			<MenuItem	id="SortTableDesc"	label="${res:XML.MainMenu.ColumnMenu.SortTableDescending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableDescending.Description}"
-        class="Altaxo.Worksheet.Commands.SortTableDescending" />
+				class="Altaxo.Worksheet.Commands.SortTableDescending" />
 
 			<MenuItem id="SortPropColAsc" label="${res:XML.MainMenu.WorksheetMenu.SortPropColAscending}"
 				description="${res:XML.MainMenu.WorksheetMenu.SortPropColAscending.Description}" class="Altaxo.Worksheet.Commands.SortColumnsByPropertyColumnAscending" />
@@ -835,36 +835,36 @@
 
 		</Condition>
 		<MenuItem	id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}"
-      description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}" class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
+			description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}" class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
 		<MenuItem id="ExtractPropertyValues" label="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues}"
-      description="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description}" class="Altaxo.Worksheet.Commands.ExtractPropertyValues" />
+			description="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description}" class="Altaxo.Worksheet.Commands.ExtractPropertyValues" />
 
 		<MenuItem id="CleanSeparator"  type = "Separator"/>
 		<MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
-      description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
+			description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
 		<MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
-      description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
+			description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
 
 	</Path>
 
 	<Path name = "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu">
 		<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
-      class="Altaxo.Worksheet.Commands.AddDataColumns" />
+			class="Altaxo.Worksheet.Commands.AddDataColumns" />
 		<MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
-      description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
+			description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
 	</Path>
 
 	<Path name = "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu">
 		<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
-      class="Altaxo.Worksheet.Commands.AddDataColumns" />
+			class="Altaxo.Worksheet.Commands.AddDataColumns" />
 		<MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
-      description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
+			description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
 		<MenuItem id="ClearDataAll" label="${res:XML.MainMenu.WorksheetMenu.ClearDataAll}" description="${res:XML.MainMenu.WorksheetMenu.ClearDataAll.Description}"
-      class="Altaxo.Worksheet.Commands.WorksheetClearDataAll" />
+			class="Altaxo.Worksheet.Commands.WorksheetClearDataAll" />
 		<MenuItem id="ClearDataOnly" label="${res:XML.MainMenu.WorksheetMenu.ClearDataOnly}" description="${res:XML.MainMenu.WorksheetMenu.ClearDataOnly.Description}"
-      class="Altaxo.Worksheet.Commands.WorksheetClearDataOnly" />
+			class="Altaxo.Worksheet.Commands.WorksheetClearDataOnly" />
 		<MenuItem id="RemoveDataColumnsOnly" label="${res:XML.MainMenu.WorksheetMenu.RemoveDataColumnsOnly}" description="${res:XML.MainMenu.WorksheetMenu.RemoveDataColumnsOnly.Description}"
-      class="Altaxo.Worksheet.Commands.WorksheetRemoveDataColumnsOnly" />
+			class="Altaxo.Worksheet.Commands.WorksheetRemoveDataColumnsOnly" />
 	</Path>
 
 	<Path name = "/Altaxo/Views/Graph/LayerButton/ContextMenu">
@@ -931,17 +931,17 @@
 
 		<MenuItem id="NewWindow" label="${res:XML.MainMenu.FileMenu.New}" type="Menu">
 			<MenuItem id="NewEmptyWorksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"
-                icon="Icons.16x16.EmptyWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewEmptyWorksheet" />
+								icon="Icons.16x16.EmptyWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewEmptyWorksheet" />
 			<MenuItem id="NewStandardWorksheet" label="${res:XML.MainMenu.FileMenu.New.StandardWorksheet}" description="${res:XML.MainMenu.FileMenu.New.StandardWorksheet.Description}"
-                icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
+								icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
 			<MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
-                icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
+								icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
 		</MenuItem>
 		<MenuItem id="ViewOnSelect" label="${res:XML.ProjectBrowserMenu.ViewOnSelect}" type="Menu">
 			<MenuItem id="ViewOnSelectOff" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOff}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOff.Description}" type="CheckBox"
-                class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectListNodeOff" />
+								class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectListNodeOff" />
 			<MenuItem id="ViewOnSelectOn" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOn}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOn.Description}" type="CheckBox"
-                class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectListNodeOn" />
+								class="Altaxo.Gui.Pads.ProjectBrowser.CmdViewOnSelectListNodeOn" />
 		</MenuItem>
 
 
@@ -959,11 +959,11 @@
 		<MenuItem id="Separator1" type = "Separator"/>
 		<MenuItem id="NewWindow" label="${res:XML.MainMenu.FileMenu.New}" type="Menu">
 			<MenuItem id="NewEmptyWorksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"
-                icon="Icons.16x16.EmptyWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewEmptyWorksheet" />
+								icon="Icons.16x16.EmptyWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewEmptyWorksheet" />
 			<MenuItem id="NewStandardWorksheet" label="${res:XML.MainMenu.FileMenu.New.StandardWorksheet}" description="${res:XML.MainMenu.FileMenu.New.StandardWorksheet.Description}"
-                icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
+								icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
 			<MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
-                icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
+								icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
 		</MenuItem>
 		<MenuItem id="Separator2" type = "Separator"/>
 		<MenuItem id="Rename" label="${res:XML.ProjectBrowserMenu.RenameFolder}" description="${res:XML.ProjectBrowserMenu.RenameFolder.Description}"
@@ -998,17 +998,20 @@
 
 	<Path name = "/Altaxo/Dialogs/SettingsDialog">
 		<OptionPanel id    = "Language"
-		             label = "${res:Dialog.Options.LanguageSettings}">
+								 label = "${res:Dialog.Options.LanguageSettings}">
 			<OptionPanel id    = "UILanguage"
 								 label = "${res:Dialog.Options.UILanguage}"
 								 class = "Altaxo.Gui.Settings.UICultureSettingsController"/>
 			<OptionPanel id    = "DocumentLanguage"
 								 label = "${res:Dialog.Options.DocumentLanguage}"
 								 class = "Altaxo.Gui.Settings.DocumentCultureSettingsController"/>
+			<OptionPanel id    = "AsciiAnalysis"
+						 label = "${res:Dialog.Options.AsciiAnalysis}"
+						 class = "Altaxo.Gui.Settings.AsciiAnalysisSettingsController"/>
 		</OptionPanel>
 		<OptionPanel id    = "AutoUpdates"
-			             label = "${res:Dialog.Options.AutoUpdates}"
-			             class = "Altaxo.Gui.Settings.AutoUpdateSettingsController"/>
+									 label = "${res:Dialog.Options.AutoUpdates}"
+									 class = "Altaxo.Gui.Settings.AutoUpdateSettingsController"/>
 	</Path>
 
 	<Path name ="/Altaxo/ApplicationColorSets">
@@ -1019,61 +1022,61 @@
 
 	<Path name = "/SharpDevelop/Workbench/Ambiences">
 		<Class id    = ".NET"
-		       class = "ICSharpCode.Core.NetAmbience"/>
+					 class = "ICSharpCode.Core.NetAmbience"/>
 	</Path>
 
 	<Path name = "/SharpDevelop/Workbench/DisplayBindings">
 		<DisplayBinding id               = "Browser"
-		                supportedformats = "Web Pages"
-		                class            = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.BrowserDisplayBinding"/>
+										supportedformats = "Web Pages"
+										class            = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.BrowserDisplayBinding"/>
 	</Path>
 
 	<Path name = "/SharpDevelop/Workbench/FileFilter">
 		<FileFilter id         = "AllFiles"
-		            name       = "${res:SharpDevelop.FileFilter.AllFiles}"
-		            extensions = "*.*"/>
+								name       = "${res:SharpDevelop.FileFilter.AllFiles}"
+								extensions = "*.*"/>
 	</Path>
 
 
 	<Path name = "/SharpDevelop/Workbench/Combine/FileFilter">
 		<FileFilter id         = "AltaxoProject"
-		            name       = "Altaxo project file (*.axoprj)"
-		            class      = "Altaxo.Main.Commands.LoadProject"
-		            extensions = "*.axoprj"/>
+								name       = "Altaxo project file (*.axoprj)"
+								class      = "Altaxo.Main.Commands.LoadProject"
+								extensions = "*.axoprj"/>
 
 		<FileFilter id         = "AltaxoWorksheet"
-              name       = "Altaxo worksheet file/template (*.axowks)"
-              class      = "Altaxo.Main.Commands.LoadWorksheet"
-              extensions = "*.axowks"/>
+							name       = "Altaxo worksheet file/template (*.axowks)"
+							class      = "Altaxo.Main.Commands.LoadWorksheet"
+							extensions = "*.axowks"/>
 
 		<FileFilter id         = "AltaxoGraph"
-              name       = "Altaxo graph file (*.axogrp)"
-              class      = "Altaxo.Main.Commands.LoadGraph"
-              extensions = "*.axogrp"/>
+							name       = "Altaxo graph file (*.axogrp)"
+							class      = "Altaxo.Main.Commands.LoadGraph"
+							extensions = "*.axogrp"/>
 
 		<FileFilter id         = "Solution"
-		            name       = "Solutions (*.sln)"
-		            class      = "ICSharpCode.SharpDevelop.Project.LoadSolution"
-		            extensions = "*.sln"/>
+								name       = "Solutions (*.sln)"
+								class      = "ICSharpCode.SharpDevelop.Project.LoadSolution"
+								extensions = "*.sln"/>
 
 		<FileFilter id         = "Combine"
-		            name       = "${res:SharpDevelop.FileFilter.CombineFiles}"
-		            class      = "ICSharpCode.SharpDevelop.Project.LoadSolution"
-		            extensions = "*.cmbx"/>
+								name       = "${res:SharpDevelop.FileFilter.CombineFiles}"
+								class      = "ICSharpCode.SharpDevelop.Project.LoadSolution"
+								extensions = "*.cmbx"/>
 
 		<FileFilter id         = "Prjx"
-		            name       = "${res:SharpDevelop.FileFilter.PrjxFiles}"
-		            class      = "ICSharpCode.SharpDevelop.Project.LoadSolution"
-		            extensions = "*.prjx"/>
+								name       = "${res:SharpDevelop.FileFilter.PrjxFiles}"
+								class      = "ICSharpCode.SharpDevelop.Project.LoadSolution"
+								extensions = "*.prjx"/>
 
 		<FileFilter id         = "Project"
-		            name       = "${res:SharpDevelop.FileFilter.ProjectFiles}"
-		            class      = "ICSharpCode.SharpDevelop.Project.LoadProject"
-		            extensions = "*.vbproj;*.csproj"/>
+								name       = "${res:SharpDevelop.FileFilter.ProjectFiles}"
+								class      = "ICSharpCode.SharpDevelop.Project.LoadProject"
+								extensions = "*.vbproj;*.csproj"/>
 
 		<FileFilter id         = "AllFiles"
-		            name       = "${res:SharpDevelop.FileFilter.AllFiles}"
-		            extensions = "*.*"/>
+								name       = "${res:SharpDevelop.FileFilter.AllFiles}"
+								extensions = "*.*"/>
 	</Path>
 
 
@@ -1088,26 +1091,26 @@
 		<!-- Graph menu -->
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
 			<MenuItem id="Rename"
-                label="${res:XML.MainMenu.GraphMenu.Rename}"
-                description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
-                class="Altaxo.Graph.Commands.GraphRename" />
+								label="${res:XML.MainMenu.GraphMenu.Rename}"
+								description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
+								class="Altaxo.Graph.Commands.GraphRename" />
 
 			<MenuItem id="MoveToFolder"
-                label="${res:XML.MainMenu.GraphMenu.MoveToFolder}"
-                description="${res:XML.MainMenu.GraphMenu.MoveToFolder.Description}"
-                class="Altaxo.Graph.Commands.GraphMoveToFolder" />
+								label="${res:XML.MainMenu.GraphMenu.MoveToFolder}"
+								description="${res:XML.MainMenu.GraphMenu.MoveToFolder.Description}"
+								class="Altaxo.Graph.Commands.GraphMoveToFolder" />
 
 			<MenuItem id="Duplicate"
-                label="${res:XML.MainMenu.GraphMenu.Duplicate}"
-                icon="Icons.16x16.Duplicate"
-                description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}"
-                class="Altaxo.Graph.Commands.DuplicateGraph" />
+								label="${res:XML.MainMenu.GraphMenu.Duplicate}"
+								icon="Icons.16x16.Duplicate"
+								description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}"
+								class="Altaxo.Graph.Commands.DuplicateGraph" />
 
 			<MenuItem id="SaveGraphAsTemplate"
-                  label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
-                  icon="Icons.16x16.NewDocumentIcon"
-                  description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
-                  class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
+									label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
+									icon="Icons.16x16.NewDocumentIcon"
+									description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
+									class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
 
 		</Condition>
 		<!-- Worksheet menu -->
@@ -1124,7 +1127,7 @@
 								class="Altaxo.Worksheet.Commands.WorksheetMoveToFolder" />
 
 			<MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
-        class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
+				class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
 			<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
 					class="Altaxo.Worksheet.Commands.AddDataColumns" />
 			<MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}"
@@ -1135,10 +1138,10 @@
 				class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
 
 			<MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.SaveIcon"
-  description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}" class="Altaxo.Worksheet.Commands.SaveAs" />
+	description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}" class="Altaxo.Worksheet.Commands.SaveAs" />
 			<MenuItem id="SaveWorksheetAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}"
-        icon="Icons.16x16.SaveIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
-        class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
+				icon="Icons.16x16.SaveIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
+				class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
 
 
 		</Condition>
@@ -1147,21 +1150,21 @@
 
 
 		<MenuItem id = "Close"
-          label = "${res:OpenFileTabEventHandler.ContextMenu.Close}"
-          icon  = "Icons.16x16.CloseFileIcon"
-          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CloseFileTab"/>
+					label = "${res:OpenFileTabEventHandler.ContextMenu.Close}"
+					icon  = "Icons.16x16.CloseFileIcon"
+					class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CloseFileTab"/>
 		<MenuItem id    = "CloseAll"
-		          icon  = "Icons.16x16.CloseAllDocuments"
-		          label = "${res:XML.MainMenu.FileMenu.CloseAll}"
-		          class = "ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
+							icon  = "Icons.16x16.CloseAllDocuments"
+							label = "${res:XML.MainMenu.FileMenu.CloseAll}"
+							class = "ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
 		<MenuItem id    = "CloseAllButThis"
-		          label = "${res:OpenFileTabEventHandler.ContextMenu.CloseAllButThis}"
-		          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CloseAllButThisFileTab" />
+							label = "${res:OpenFileTabEventHandler.ContextMenu.CloseAllButThis}"
+							class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CloseAllButThisFileTab" />
 
 		<MenuItem id="Delete"
-              icon="Icons.16x16.DeleteIcon"
-              label="${res:XML.MainMenu.EditMenu.Delete}"
-              command="Delete" />
+							icon="Icons.16x16.DeleteIcon"
+							label="${res:XML.MainMenu.EditMenu.Delete}"
+							command="Delete" />
 
 
 
@@ -1182,46 +1185,46 @@
 
 	<Path name = "/SharpDevelop/ViewContent/Browser/Toolbar">
 		<ToolbarItem id      = "Back"
-		             icon    = "Icons.16x16.BrowserBefore"
-		             tooltip = "${res:AddIns.HtmlHelp2.Back}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoBack"/>
+								 icon    = "Icons.16x16.BrowserBefore"
+								 tooltip = "${res:AddIns.HtmlHelp2.Back}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoBack"/>
 
 		<ToolbarItem id      = "Forward"
-		             icon    = "Icons.16x16.BrowserAfter"
-		             tooltip = "${res:AddIns.HtmlHelp2.Forward}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoForward"/>
+								 icon    = "Icons.16x16.BrowserAfter"
+								 tooltip = "${res:AddIns.HtmlHelp2.Forward}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoForward"/>
 
 		<ToolbarItem id      = "Stop"
-		             icon    = "Icons.16x16.BrowserCancel"
-		             tooltip = "${res:AddIns.HtmlHelp2.Stop}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.Stop"/>
+								 icon    = "Icons.16x16.BrowserCancel"
+								 tooltip = "${res:AddIns.HtmlHelp2.Stop}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.Stop"/>
 
 		<ToolbarItem id      = "Refresh"
-		             icon    = "Icons.16x16.BrowserRefresh"
-		             tooltip = "${res:AddIns.HtmlHelp2.Refresh}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.Refresh"/>
+								 icon    = "Icons.16x16.BrowserRefresh"
+								 tooltip = "${res:AddIns.HtmlHelp2.Refresh}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.Refresh"/>
 
 		<ToolbarItem id = "Separator" type  = "Separator"/>
 
 		<ToolbarItem id      = "GoHome"
-		             icon    = "Icons.16x16.BrowserHome"
-		             tooltip = "${res:AddIns.HtmlHelp2.Homepage}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoHome"/>
+								 icon    = "Icons.16x16.BrowserHome"
+								 tooltip = "${res:AddIns.HtmlHelp2.Homepage}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoHome"/>
 
 		<ToolbarItem id      = "GoSearch"
-		             icon    = "Icons.16x16.FindIcon"
-		             tooltip = "${res:AddIns.HtmlHelp2.Search}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoSearch"/>
+								 icon    = "Icons.16x16.FindIcon"
+								 tooltip = "${res:AddIns.HtmlHelp2.Search}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoSearch"/>
 
 		<ToolbarItem id      = "URLComboBox"
-		             type    = "ComboBox"
-		             tooltip = "${res:AddIns.HtmlHelp2.EnterURL}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.UrlComboBox"/>
+								 type    = "ComboBox"
+								 tooltip = "${res:AddIns.HtmlHelp2.EnterURL}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.UrlComboBox"/>
 
 		<ToolbarItem id      = "NewWindow"
-		             icon    = "Icons.16x16.BrowserWindow"
-		             tooltip = "${res:AddIns.HtmlHelp2.NewWindow}"
-		             class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.NewWindow"/>
+								 icon    = "Icons.16x16.BrowserWindow"
+								 tooltip = "${res:AddIns.HtmlHelp2.NewWindow}"
+								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.NewWindow"/>
 	</Path>
 
 

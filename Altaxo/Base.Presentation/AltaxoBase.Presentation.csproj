@@ -560,6 +560,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Settings\AsciiAnalysisSettingsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Settings\DocumentCultureSettingsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1108,6 +1112,9 @@
     </Compile>
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Settings\AsciiAnalysisSettingsControl.xaml.cs">
+      <DependentUpon>AsciiAnalysisSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\DocumentCultureSettingsControl.xaml.cs">
       <DependentUpon>DocumentCultureSettingsControl.xaml</DependentUpon>

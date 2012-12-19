@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 						_numberFormatsToAnalyze.Add(item);
 
 				_dateTimeFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>>();
-			
+
 				foreach (var item in _availableCultureList)
 					if (_doc.DateTimeFormatsToTest.Contains((CultureInfo)item.Tag))
 						_dateTimeFormatsToAnalyze.Add(item);
@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 			if (null != _view)
 			{
-				_view.NumberOfLinesToAnalyze = AsciiDocumentAnalysis.DefaultNumberOfLinesToAnalyze;
+				_view.NumberOfLinesToAnalyze = _doc.NumberOfLinesToAnalyze;
 				_view.SetNumberFormatsToAnalyze(_availableCultureList, _numberFormatsToAnalyze);
 				_view.SetDateTimeFormatsToAnalyze(_availableCultureList, _dateTimeFormatsToAnalyze);
 			}

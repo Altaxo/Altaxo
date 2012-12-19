@@ -222,6 +222,10 @@ namespace ICSharpCode.Core
 				sortedProperties.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Key, b.Key));
 				foreach (KeyValuePair<string, object> entry in sortedProperties) {
 					object val = entry.Value;
+#if ModifiedForAltaxo
+					if (null == val)
+						continue; // don't save null values
+#endif
 					if (val is Properties) {
 						writer.WriteStartElement("Properties");
 						writer.WriteAttributeString("name", entry.Key);

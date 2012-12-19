@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 		System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
 
-		AsciiDocumentAnalysisOptions _analysisOptions = new AsciiDocumentAnalysisOptions();
+		AsciiDocumentAnalysisOptions _analysisOptions = AsciiDocumentAnalysisOptions.UserDefault;
 
 		public override bool InitializeDocument(params object[] args)
 		{

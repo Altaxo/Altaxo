@@ -45,7 +45,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 
 		public static void EarlyRun()
 		{
-			Altaxo.Current.SetPropertyService(new PropertyServiceWrapper());
+			Altaxo.Current.SetPropertyService(new Altaxo.Main.Services.PropertyService());
 
 			// set as early as possible the UI culture
 			Altaxo.Serialization.GUIConversion.CultureSettings = Current.PropertyService.Get(Altaxo.Settings.UICultureSettings.SettingsStoragePath, Altaxo.Settings.UICultureSettings.FromDefault());
@@ -109,48 +109,5 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		}
 
 
-		private class PropertyServiceWrapper : Altaxo.Main.Services.IPropertyService
-		{
-			/// <summary>Occurs when a property changed, argument is the key to the property that changed.</summary>
-			public event Action<string> PropertyChanged;
-
-
-
-			public PropertyServiceWrapper()
-			{
-				ICSharpCode.Core.PropertyService.PropertyChanged += new PropertyChangedEventHandler(PropertyService_PropertyChanged);
-
-			}
-
-			void PropertyService_PropertyChanged(object sender, PropertyChangedEventArgs e)
-			{
-				if (null != PropertyChanged)
-					PropertyChanged(e.Key);
-			}
-
-
-			public string ConfigDirectory
-			{
-				get
-				{
-					return ICSharpCode.Core.PropertyService.ConfigDirectory;
-				}
-			}
-
-			public string Get(string property)
-			{
-				return ICSharpCode.Core.PropertyService.Get(property);
-			}
-
-			public T Get<T>(string property, T defaultValue)
-			{
-				return ICSharpCode.Core.PropertyService.Get(property, defaultValue);
-			}
-
-			public void Set<T>(string property, T value)
-			{
-				ICSharpCode.Core.PropertyService.Set(property, value);
-			}
-		}
 	}
 }

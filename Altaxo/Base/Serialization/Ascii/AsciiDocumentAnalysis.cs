@@ -35,9 +35,6 @@ namespace Altaxo.Serialization.Ascii
 	/// </summary>
 	public class AsciiDocumentAnalysis
 	{
-		public const int DefaultNumberOfLinesToAnalyze = 30;
-
-
 		/// <summary>If the number of main header lines is known before this analysis, this list contains the main header lines.</summary>
 		List<string> _headerLines;
 
@@ -76,7 +73,7 @@ namespace Altaxo.Serialization.Ascii
 		/// The same instance is returned as given by the parameter <paramref name="importOptions"/>. If <paramref name="importOptions"/> was <c>null</c>, a new instance is created.</returns>
 		public static AsciiImportOptions Analyze(AsciiImportOptions importOptions, System.IO.Stream stream)
 		{
-			return Analyze(importOptions, stream, AsciiDocumentAnalysisOptions.DefaultInstance);
+			return Analyze(importOptions, stream, AsciiDocumentAnalysisOptions.UserDefault);
 		}
 
 		/// <summary>
