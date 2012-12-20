@@ -21,6 +21,10 @@ namespace Altaxo.Settings
 #if DEBUG
 			DownloadUnstableVersion = true;
 #endif
+
+			ConfirmInstallation = true;
+			ShowInstallationWindow = true;
+			InstallationWindowClosingTime = int.MaxValue;
 		}
 
 		/// <summary>Gets or sets a value indicating whether to globally enable auto updates or not.</summary>
@@ -47,6 +51,24 @@ namespace Altaxo.Settings
 		/// <value>If <see langword="true"/> and a new version is available, Altaxo asks at shutdown whether to install the download.</value>
 		public bool InstallAtShutdown { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the user has to confirm the installation of a new version
+		/// </summary>
+		/// <value>
+		/// If <c>true</c>, the user is asked for confirmation before installing a new version.
+		/// </value>
+		public bool ConfirmInstallation { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether to show installation window. If <c>false</c>, the installation window will only be shown up if an error occurs.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the installation window is shown; otherwise, <c>false</c>.
+		/// </value>
+		public bool ShowInstallationWindow { get; set; }
+
+		public int InstallationWindowClosingTime { get; set; }
+
 
 		#region Serialization
 
@@ -63,6 +85,9 @@ namespace Altaxo.Settings
 
 				info.AddValue("InstallAtStartup", s.InstallAtStartup);
 				info.AddValue("InstallAtShutDown", s.InstallAtShutdown);
+				info.AddValue("ConfirmInstallation", s.ConfirmInstallation);
+				info.AddValue("ShowInstallationWindow", s.ShowInstallationWindow);
+				info.AddValue("InstallationWindowClosingTime", s.InstallationWindowClosingTime);
 			}
 			protected virtual AutoUpdateSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -75,7 +100,9 @@ namespace Altaxo.Settings
 
 				s.InstallAtStartup = info.GetBoolean("InstallAtStartup");
 				s.InstallAtShutdown = info.GetBoolean("InstallAtShutDown");
-
+				s.ConfirmInstallation = info.GetBoolean("ConfirmInstallation");
+				s.ShowInstallationWindow = info.GetBoolean("ShowInstallationWindow");
+				s.InstallationWindowClosingTime = info.GetInt32("InstallationWindowClosingTime");
 				return s;
 			}
 
@@ -87,9 +114,9 @@ namespace Altaxo.Settings
 			}
 		}
 
-	
+
 		#endregion
 
-	
+
 	}
 }

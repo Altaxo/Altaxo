@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Settings
 	{
 		/// <summary>Gets or sets a value indicating whether to use the operating system settings for the UI culture or use another one.</summary>
 		/// <value>If <see langword="true"/>, own settings are used; otherwise the operating system settings are used for the current UI culture.</value>
-		bool OverrideOperatingSystemSettings { get; set; }
+		bool UseCustomUserSettings { get; set; }
 
 		/// <summary>Initializes the culture format list.</summary>
 		/// <param name="list">List containing all selectable cultures.</param>
@@ -71,6 +71,8 @@ namespace Altaxo.Gui.Settings
 		/// <summary>Holds temporary the settings.</summary>
 		DocumentCultureSettings _doc;
 
+		bool _useCustomUserSettings;
+
 		/// <summary>Represents the document with the operation system settings.</summary>
 		DocumentCultureSettings _sysSettingsDoc;
 
@@ -89,22 +91,13 @@ namespace Altaxo.Gui.Settings
 		/// <returns>Returns <see langword="true"/> if successfull; otherwise <see langword="false"/>.</returns>
 		public bool InitializeDocument(params object[] args)
 		{
-			if (null == args || args.Length == 0 || (null!=args[0] && !(args[0] is AutoUpdateSettings)))
-				return false;
-
-			_originalDoc = args[0] as DocumentCultureSettings;
-
-			if (null == _originalDoc)
-			{
-				_isHoldingOwnDocument = true;
-				_originalDoc = Current.PropertyService.Get(DocumentCultureSettings.SettingsStoragePath, DocumentCultureSettings.FromDefault());
-			}
-
+			_useCustomUserSettings = DocumentCultureSettings.UseCustomUserSettings;
+			_originalDoc = DocumentCultureSettings.UserDefault;
 			_doc = (DocumentCultureSettings)_originalDoc.Clone();
-			_sysSettingsDoc = DocumentCultureSettings.FromDefault();
+			_sysSettingsDoc = DocumentCultureSettings.SystemDefault;
 
 			Initialize(true);
-			
+
 			return true;
 		}
 
@@ -115,22 +108,22 @@ namespace Altaxo.Gui.Settings
 				_availableCulturesList = new SelectableListNodeList();
 				var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
 				Array.Sort(cultures, CompareCultures);
-				AddToCultureList(CultureInfo.InvariantCulture, CultureInfo.InvariantCulture.ThreeLetterISOLanguageName == _doc.ToCulture().ThreeLetterISOLanguageName);
+				AddToCultureList(CultureInfo.InvariantCulture, CultureInfo.InvariantCulture.LCID == _doc.CultureID);
 				foreach (var cult in cultures)
-					AddToCultureList(cult, cult.Name == _doc.CultureName);
+					AddToCultureList(cult, cult.LCID == _doc.CultureID);
 				if (null == _availableCulturesList.FirstSelectedNode)
 					_availableCulturesList[0].IsSelected = true;
 
-				var defCult = _sysSettingsDoc.ToCulture();
+				var defCult = _sysSettingsDoc.Culture;
 				_sysSettingsCultureList = new SelectableListNodeList();
-				_sysSettingsCultureList.Add(new SelectableListNode(defCult.DisplayName,defCult,true));
+				_sysSettingsCultureList.Add(new SelectableListNode(defCult.DisplayName, defCult, true));
 
 			}
 
 			if (null != _view)
 			{
-				_view.OverrideOperatingSystemSettings = _doc.OverrideParentCulture;
-				_view.InitializeCultureFormatList(_doc.OverrideParentCulture ? _availableCulturesList : _sysSettingsCultureList);
+				_view.UseCustomUserSettings = _useCustomUserSettings;
+				_view.InitializeCultureFormatList(_useCustomUserSettings ? _availableCulturesList : _sysSettingsCultureList);
 
 				_view.NumberDecimalSeparator = _doc.NumberDecimalSeparator;
 				_view.NumberGroupSeparator = _doc.NumberGroupSeparator;
@@ -139,7 +132,7 @@ namespace Altaxo.Gui.Settings
 
 		void AddToCultureList(CultureInfo cult, bool isSelected)
 		{
-			_availableCulturesList.Add(new SelectableListNode(cult.DisplayName, cult, cult.Name == _doc.CultureName));
+			_availableCulturesList.Add(new SelectableListNode(cult.DisplayName, cult, cult.LCID == _doc.CultureID));
 		}
 
 		private int CompareCultures(CultureInfo x, CultureInfo y)
@@ -149,7 +142,7 @@ namespace Altaxo.Gui.Settings
 
 		public UseDocument UseDocumentCopy
 		{
-			set {  }
+			set { }
 		}
 
 		/// <summary>Returns the Gui element that shows the model to the user.</summary>
@@ -180,9 +173,9 @@ namespace Altaxo.Gui.Settings
 
 		void EhOverrideSystemCultureChanged()
 		{
-			bool overrideSysSettings = _view.OverrideOperatingSystemSettings;
-			_view.InitializeCultureFormatList(overrideSysSettings ? _availableCulturesList : _sysSettingsCultureList);
-			SetElementsAfterCultureChanged(overrideSysSettings ? _doc : _sysSettingsDoc);
+			_useCustomUserSettings = _view.UseCustomUserSettings;
+			_view.InitializeCultureFormatList(_useCustomUserSettings ? _availableCulturesList : _sysSettingsCultureList);
+			SetElementsAfterCultureChanged(_useCustomUserSettings ? _doc : _sysSettingsDoc);
 		}
 
 		void EhCultureChanged()
@@ -191,7 +184,7 @@ namespace Altaxo.Gui.Settings
 			if (node != null)
 			{
 				CultureInfo c = (CultureInfo)node.Tag;
-				_doc.SetMembersFromCulture(c);
+				_doc = new DocumentCultureSettings(c);
 				SetElementsAfterCultureChanged(_doc);
 			}
 		}
@@ -209,25 +202,22 @@ namespace Altaxo.Gui.Settings
 
 		public bool Apply()
 		{
-			if (_view.OverrideOperatingSystemSettings)
+			_useCustomUserSettings = _view.UseCustomUserSettings;
+			if (_useCustomUserSettings)
 			{
-				_doc.OverrideParentCulture = true;
-				_doc.NumberDecimalSeparator = _view.NumberDecimalSeparator;
-				_doc.NumberGroupSeparator = _view.NumberGroupSeparator;
-				_originalDoc.CopyFrom(_doc);
+				_useCustomUserSettings = true;
+				var doc = (CultureInfo)_doc.Culture.Clone();
+				doc.NumberFormat.NumberDecimalSeparator = _view.NumberDecimalSeparator;
+				doc.NumberFormat.NumberGroupSeparator = _view.NumberGroupSeparator;
+				_doc = new DocumentCultureSettings(doc);
+				_originalDoc = (DocumentCultureSettings)_doc.Clone();
+				DocumentCultureSettings.UserDefault = _doc;
 			}
 			else
 			{
-				_originalDoc.CopyFrom(_sysSettingsDoc);
+				DocumentCultureSettings.UserDefault = null;
 			}
 
-			if (_isHoldingOwnDocument)
-			{
-
-				// then we set our own culture settings
-				Current.PropertyService.Set(DocumentCultureSettings.SettingsStoragePath, _originalDoc);
-				System.Threading.Thread.CurrentThread.CurrentCulture = _originalDoc.ToCulture();
-			}
 
 			return true;
 		}

@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Settings
 			InitializeComponent();
 		}
 
-		public bool OverrideOperatingSystemSettings
+		public bool UseCustomUserSettings
 		{
 			get
 			{

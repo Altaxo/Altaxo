@@ -51,13 +51,29 @@ namespace Altaxo.Serialization.AutoUpdates
 		bool _isCancellationRequested = false;
 		bool _installerFinishedSuccessfully = false;
 
+		bool _showInstallationWindow;
+		int _timeoutAfterSucessfullInstallation;
+
+		int _timeLeftBeforeClosing;
+
 		/// <summary>Initializes a new instance of the <see cref="InstallerMainWindow"/> class.</summary>
-		public InstallerMainWindow()
+		public InstallerMainWindow(bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
 		{
+			_showInstallationWindow = showInstallationWindow;
+			_timeoutAfterSucessfullInstallation = timeoutAfterSuccessfullInstallation;
+
+			if (_showInstallationWindow)
+				this.Visibility = System.Windows.Visibility.Visible;
+			else
+				this.Visibility = System.Windows.Visibility.Hidden;
+
 			InitializeComponent();
 			_normalBackground = _guiMessages.Background;
 			Loaded += new RoutedEventHandler(EhLoaded);
 		}
+
+	
+
 
 		/// <summary>Called when the window is loaded.</summary>
 		/// <param name="sender">The sender.</param>
@@ -82,7 +98,7 @@ namespace Altaxo.Serialization.AutoUpdates
 			_guiMessages.Background = _normalBackground;
 
 			_timer = new System.Windows.Threading.DispatcherTimer();
-			_timer.Tick += new EventHandler(EhTimerTick);
+			_timer.Tick += new EventHandler(EhInstallationTimerTick);
 			_timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
 			_timer.Start();
 
@@ -94,7 +110,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <returns>If the task has thrown an exception, this exeption is returned. Otherwise, the return value is <c>null</c>.</returns>
 		private AggregateException InstallerTaskCleanup()
 		{
-			_timer.Tick -= EhTimerTick;
+			_timer.Tick -= EhInstallationTimerTick;
 			_timer.Stop();
 			_timer = null;
 
@@ -118,6 +134,8 @@ namespace Altaxo.Serialization.AutoUpdates
 			_guiProgress.Value = 0;
 			_guiMessages.Text = message;
 			_guiMessages.Background = new SolidColorBrush(Colors.LightPink);
+			
+			this.Visibility = System.Windows.Visibility.Visible;
 		}
 
 
@@ -136,9 +154,10 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <summary>Called when the timer event occured.</summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		void EhTimerTick(object sender, EventArgs e)
+		void EhInstallationTimerTick(object sender, EventArgs e)
 		{
 			_guiProgress.Value = _progress;
+			_guiProgressText.Content = string.Format("{0:F1}% completed", _progress);
 			_guiMessages.Text = _message.ToString();
 
 			if (_installerTask.IsCompleted)
@@ -148,6 +167,49 @@ namespace Altaxo.Serialization.AutoUpdates
 				{
 					SetErrorMessage(UpdateInstallerMain.ErrorIntroduction + exception.ToString());
 				}
+				else
+				{
+					// Successfully finished the installation
+					if (false == _showInstallationWindow || _timeoutAfterSucessfullInstallation <= 0)
+					{
+						Close(); // Close if either the window is not visible or the timeout is 0 sec
+					}
+					else if (_timeoutAfterSucessfullInstallation >= int.MaxValue)
+					{
+						// Time too high for count down, simply leave window open
+					}
+					else
+					{
+						// Set up a new timer that now count's down
+						_timeLeftBeforeClosing = _timeoutAfterSucessfullInstallation;
+						_timer = new System.Windows.Threading.DispatcherTimer();
+						_timer.Tick += new EventHandler(EhCountDownTimerTick);
+						_timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
+						_timer.Start();
+					}
+				}
+			}
+		}
+
+
+		/// <summary>Called when the timer event occured.</summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		void EhCountDownTimerTick(object sender, EventArgs e)
+		{
+			--_timeLeftBeforeClosing;
+
+			if (_timeLeftBeforeClosing <= 0)
+			{
+				_timer.Tick -= EhCountDownTimerTick;
+				_timer.Stop();
+				_timer = null;
+				Close();
+			}
+			else
+			{
+				_guiProgress.Value = 100 * (1 - _timeLeftBeforeClosing / (double)_timeoutAfterSucessfullInstallation);
+				_guiProgressText.Content = string.Format("Time left before closing: {0} s", _timeLeftBeforeClosing);
 			}
 		}
 

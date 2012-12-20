@@ -142,8 +142,45 @@ namespace Altaxo.Gui.Settings
 			}
 		}
 
-		
 
-	
+
+
+
+
+		public bool ShowInstallationWindow
+		{
+			get
+			{
+				return _guiShowInstallationWindow.IsChecked == true;
+			}
+			set
+			{
+				_guiShowInstallationWindow.IsChecked = value;
+			}
+		}
+
+		public bool ConfirmInstallation
+		{
+			get
+			{
+				return _guiConfirmInstallation.IsChecked == true;
+			}
+			set
+			{
+				_guiConfirmInstallation.IsChecked = value;
+			}
+		}
+
+		public int InstallationWindowClosingTime
+		{
+			get
+			{
+				return _guiCloseInstallationWindowTime.Value;
+			}
+			set
+			{
+				_guiCloseInstallationWindowTime.Value = value;
+			}
+		}
 	}
 }

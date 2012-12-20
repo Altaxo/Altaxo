@@ -1,9 +1,10 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Settings.AutoUpdateSettingsControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" >
+						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:axogc ="clr-namespace:Altaxo.Gui.Common"
+						 mc:Ignorable="d" >
 	<UserControl.Resources>
 		<Style TargetType="CheckBox">
 			<Style.Setters>
@@ -52,6 +53,18 @@
 				<GroupBox.Header>
 					<Label Content="Installation" FontWeight="Bold" FontStyle="Italic"/>
 				</GroupBox.Header>
+				<StackPanel>
+					<GroupBox Header="User interaction">
+						<StackPanel>
+						<CheckBox x:Name="_guiConfirmInstallation" Content="Confirm installation"/>
+						<CheckBox x:Name="_guiShowInstallationWindow" Content="Show installation window"/>
+							<StackPanel Orientation="Horizontal">
+								<Label Content="      Close installation window automatically after" VerticalAlignment="Center"/>
+								<axogc:Int32UpDown x:Name="_guiCloseInstallationWindowTime" Minimum="0" MaximumReplacementText="Never" IsGotoMinimumAndMaximumVisible="True" IsEnabled="{Binding ElementName=_guiShowInstallationWindow, Path=IsChecked}" />
+								<Label Content="sec" VerticalAlignment="Center"/>
+							</StackPanel>
+						</StackPanel>
+					</GroupBox>
 				<GroupBox Header="Install a new version">
 					<StackPanel>
 						<RadioButton x:Name="_guiInstallAtStartup"  Content="When Altaxo is starting"/>
@@ -59,6 +72,7 @@
 						<RadioButton x:Name="_guiInstallEitherStartupOrShutdown" Content="Either Altaxo is starting or ending"/>
 					</StackPanel>
 				</GroupBox>
+				</StackPanel>
 			</GroupBox>
 		</StackPanel>
 	</GroupBox>

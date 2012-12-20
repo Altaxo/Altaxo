@@ -67,6 +67,13 @@ namespace ICSharpCode.Core
 		{
 			properties.Set(property, value);
 		}
+
+#if ModifiedForAltaxo
+		public static bool Remove(string property)
+		{
+			return properties.Remove(property);
+		}
+#endif
 		
 		public static void Load()
 		{

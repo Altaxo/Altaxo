@@ -8,66 +8,101 @@ namespace Altaxo.Settings
 	/// <summary>
 	/// Manages the settings for a culture, i.e. number and DateTime formats etc.
 	/// </summary>
-	public abstract class CultureSettingsBase : Main.ICopyFrom
+	public abstract class CultureSettingsBase : ICloneable
 	{
-		/// <summary>Gets or sets a value indicating whether to override the parent culture or use it.</summary>
-		protected bool _overrideParentCulture;
-		
+		protected static readonly int InvariantCultureID = CultureInfo.InvariantCulture.LCID;
+
+
+		/// <summary>Value that uniquely identifies a culture.</summary>
+		protected int _cultureID;
+
 		/// <summary>Gets or sets the name of the culture (with region identifier).</summary>
 		protected string _cultureName;
-		
+
 		/// <summary>Gets or sets the number decimal separator.</summary>
 		protected string _numberDecimalSeparator;
-		
+
 		/// <summary>Gets or sets the number group separator.</summary>
 		protected string _numberGroupSeparator;
+
+		protected CultureInfo _cachedCultureAsReadOnly;
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CultureSettingsBase), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (CultureSettingsBase)obj;
+				info.AddValue("CultureID", s._cultureID);
+				info.AddValue("CultureName", s._cultureName);
+				info.AddValue("NumberDecimalSeparator", s._numberDecimalSeparator);
+				info.AddValue("NumberGroupSeparator", s._numberGroupSeparator);
+			}
+			protected virtual CultureSettingsBase SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (CultureSettingsBase)o;
+
+				s._cultureID = info.GetInt32("CultureID");
+				s._cultureName = info.GetString("CultureName");
+				s._numberDecimalSeparator = info.GetString("NumberDecimalSeparator");
+				s._numberGroupSeparator = info.GetString("NumberGroupSeparator");
+				s.SetCachedCultureInfo();
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion
+
 
 		/// <summary>Initializes a new instance of the <see cref="UICultureSettings"/> class with nothing initialized.</summary>
 		protected CultureSettingsBase()
 		{
 		}
 
-		/// <summary>Copies from another instance.</summary>
-		/// <param name="ffrom">Other instance to copy from.</param>
-		/// <returns>True if data was copied from the other instance; otherwise false.</returns>
-		public virtual bool CopyFrom(object ffrom)
+		public CultureSettingsBase(CultureInfo c)
 		{
-			var from = ffrom as CultureSettingsBase;
-			if (null != from)
-			{
-				this._overrideParentCulture = from._overrideParentCulture;
-				this._cultureName = from._cultureName;
-				this._numberDecimalSeparator = from._numberDecimalSeparator;
-				this._numberGroupSeparator = from._numberGroupSeparator;
-				return true;
-			}
+			_cachedCultureAsReadOnly = CultureInfo.ReadOnly(c);
+			_cultureID = c.LCID;
+			if (c.LCID == CultureInfo.InvariantCulture.LCID)
+				_cultureName = c.ThreeLetterISOLanguageName;
 			else
-			{
-				return false;
-			}
+				_cultureName = c.Name;
+			_numberDecimalSeparator = c.NumberFormat.NumberDecimalSeparator;
+			_numberGroupSeparator = c.NumberFormat.NumberGroupSeparator;
+		}
+
+		/// <summary>Copies from another instance.</summary>
+		/// <param name="from">Other instance to copy from.</param>
+		protected CultureSettingsBase(CultureSettingsBase from)
+		{
+			this._cultureID = from._cultureID;
+			this._cultureName = from._cultureName;
+			this._numberDecimalSeparator = from._numberDecimalSeparator;
+			this._numberGroupSeparator = from._numberGroupSeparator;
+			this._cachedCultureAsReadOnly = from._cachedCultureAsReadOnly;
 		}
 
 		public abstract object Clone();
 
-		/// <summary>Set the members of this instance from a given culture.</summary>
-		/// <param name="c">The culture to use as template.</param>
-		public virtual void SetMembersFromCulture(CultureInfo c)
-		{
-			CultureName = c.Name;
-			NumberDecimalSeparator = c.NumberFormat.NumberDecimalSeparator;
-			NumberGroupSeparator = c.NumberFormat.NumberGroupSeparator;
-		}
 
-		/// <summary>Gets or sets a value indicating whether to override the parent culture or use it.</summary>
-		/// <value> If <see langword="true"/>, the culture that is stored in this object is applied. Otherwise, the culture of the superior object (for instance the operating system) is used.</value>
-		public virtual bool OverrideParentCulture
+
+
+
+		public int CultureID
 		{
-			get { return _overrideParentCulture; }
-			set
+			get
 			{
-				_overrideParentCulture = value;
-				if (value == false)
-					SetMembersFromCulture(OriginalCulture);
+				return _cultureID;
 			}
 		}
 
@@ -76,7 +111,7 @@ namespace Altaxo.Settings
 		public string CultureName
 		{
 			get { return _cultureName; }
-			set { _cultureName = value; }
+
 		}
 
 		/// <summary>Gets the neutral name of the culture, i.e. without region identifier..</summary>
@@ -96,7 +131,7 @@ namespace Altaxo.Settings
 		public string NumberDecimalSeparator
 		{
 			get { return _numberDecimalSeparator; }
-			set { _numberDecimalSeparator = value; }
+
 		}
 
 		/// <summary>Gets or sets the number group separator.</summary>
@@ -104,12 +139,39 @@ namespace Altaxo.Settings
 		public string NumberGroupSeparator
 		{
 			get { return _numberGroupSeparator; }
-			set { _numberGroupSeparator = value; }
+
 		}
 
-		/// <summary>Gets the parent culture, i.e. the culture set in the operating system settings.</summary>
-		public abstract CultureInfo OriginalCulture	{	get; }
 
-	
+		public CultureInfo Culture
+		{
+			get
+			{
+				return _cachedCultureAsReadOnly;
+			}
+		}
+
+
+		/// <summary>Assembles the members of this instance to a resulting culture.</summary>
+		/// <returns>A culture info which contains the values of the member variables.</returns>
+		public virtual void SetCachedCultureInfo()
+		{
+			CultureInfo result;
+			try
+			{
+				result = new CultureInfo(_cultureID);
+			}
+			catch (CultureNotFoundException)
+			{
+				result = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+			}
+			result.NumberFormat.NumberDecimalSeparator = NumberDecimalSeparator;
+			result.NumberFormat.NumberGroupSeparator = NumberGroupSeparator;
+
+			_cachedCultureAsReadOnly = CultureInfo.ReadOnly(result);
+		}
+
+
+
 	}
 }

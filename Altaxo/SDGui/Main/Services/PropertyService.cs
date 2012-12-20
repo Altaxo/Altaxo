@@ -84,7 +84,12 @@ namespace Altaxo.Main.Services
 		public void Set<T>(string property, T value)
 		{
 			if (Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper.IsSerializableType(typeof(T)))
-				ICSharpCode.Core.PropertyService.Set(property, new Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper(value));
+			{
+				if (null != value)
+					ICSharpCode.Core.PropertyService.Set(property, new Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper(value));
+				else
+					ICSharpCode.Core.PropertyService.Remove(property);
+			}
 			else
 				ICSharpCode.Core.PropertyService.Set(property, value);
 		}

@@ -15,102 +15,120 @@ namespace Altaxo.Settings
 		/// </summary>
 		public static string SettingsStoragePath = "Altaxo.Options.DocumentCulture";
 
-		static readonly string InvariantCultureThreeLetterISOLanguageName = CultureInfo.InvariantCulture.ThreeLetterISOLanguageName;
 
 		/// <summary>
 		/// Original UI culture, must be initialized before it can be used.
 		/// </summary>
-		static CultureInfo _originalCulture;
+		static DocumentCultureSettings _systemSettings;
 
-		/// <summary>Initializes this class with the original culture (i.e. the culture that the user has chosen in system control panel). This must be done before the current UI culture is changed by some routine.</summary>
-		/// <param name="originalCulture">The original culture.</param>
-		public static void InitializeOriginalCulture(CultureInfo originalCulture)
+		static DocumentCultureSettings _userSettings;
+
+
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentCultureSettings), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			_originalCulture = (CultureInfo)originalCulture.Clone();
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, typeof(DocumentCultureSettings).BaseType);
+			}
+			protected virtual DocumentCultureSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (DocumentCultureSettings)o : new DocumentCultureSettings();
+				info.GetBaseValueEmbedded(s, typeof(DocumentCultureSettings).BaseType, parent);
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
 		}
+
+		#endregion
+
 
 		/// <summary>Initializes a new instance of the <see cref="DocumentCultureSettings"/> class with nothing initialized.</summary>
 		private DocumentCultureSettings()
 		{
 		}
 
-		public override CultureInfo OriginalCulture
+
+		public DocumentCultureSettings(CultureInfo c)
+			: base(c)
+		{
+		}
+
+		public DocumentCultureSettings(DocumentCultureSettings dcs)
+			: base(dcs)
+		{
+		}
+
+
+		/// <summary>Gets or sets a value indicating whether to override the parent culture or use it.</summary>
+		/// <value> If <see langword="true"/>, the culture that is stored in this object is applied. Otherwise, the culture of the superior object (for instance the operating system) is used.</value>
+		public static bool UseCustomUserSettings
+		{
+			get { return null != _userSettings; }
+		}
+
+		public static DocumentCultureSettings UserDefault
 		{
 			get
 			{
-				if (null == _originalCulture)
-					throw new InvalidOperationException("DocumentCultureSettings have not been initialized with the original culture. This must be done at the very beginning of the program. Please report this bug!");
-				return _originalCulture;
+				if (null != _userSettings)
+					return _userSettings;
+				else
+					return _systemSettings;
+			}
+			set
+			{
+				if (null != value)
+				{
+					_userSettings = (DocumentCultureSettings)value.Clone();
+				}
+				else
+				{
+					_userSettings = null;
+				}
+
+				System.Threading.Thread.CurrentThread.CurrentCulture = UserDefault._cachedCultureAsReadOnly;
+				Current.PropertyService.Set<DocumentCultureSettings>(SettingsStoragePath, _userSettings);
 			}
 		}
 
-		/// <summary>Initializes a new instance of the <see cref="DocumentCultureSettings"/> class from the current UI culture.</summary>
-		/// <returns>An instance of this class with the current UI culture set and the <see cref="P:Altaxo.Settings.CultureSettingsBase.OverrideParentCulture"/> flag set to false.</returns>
-		public static DocumentCultureSettings FromDefault()
+		public static DocumentCultureSettings SystemDefault
 		{
-			var result = new DocumentCultureSettings();
-			result._overrideParentCulture = false;
-			result.SetMembersFromCulture(result.OriginalCulture);
-			return result;
+			get
+			{
+				return _systemSettings;
+			}
 		}
 
-		/// <summary>Initializes a new instance of the <see cref="DocumentCultureSettings"/> class with a given culture.</summary>
-		/// <param name="c">An instance of this class with the provided UI culture set and the <see cref="P:Altaxo.Settings.CultureSettingsBase.OverrideParentCulture"/> flag set to true.</param>
-		/// <returns></returns>
-		public static DocumentCultureSettings FromCulture(CultureInfo c)
+
+		/// <summary>Initializes this class with the original culture (i.e. the culture that the user has chosen in system control panel). This must be done before the current UI culture is changed by some routine.</summary>
+		/// <param name="originalCulture">The original culture.</param>
+		public static void InitializeSystemSettings(CultureInfo originalCulture)
 		{
-			var result = new DocumentCultureSettings();
-			result._overrideParentCulture = true;
-			result.SetMembersFromCulture(c);
-			return result;
+			_systemSettings = new DocumentCultureSettings(originalCulture);
 		}
 
-		public override void SetMembersFromCulture(CultureInfo c)
+		public static void InitializeUserSettings()
 		{
-			base.SetMembersFromCulture(c);
-			if (c.ThreeLetterISOLanguageName == InvariantCultureThreeLetterISOLanguageName)
-				this._cultureName = c.ThreeLetterISOLanguageName;
+			UserDefault = Current.PropertyService.Get<DocumentCultureSettings>(SettingsStoragePath, null);
 		}
+
+
 
 		/// <summary>Creates a new object that is a copy of the current instance.</summary>
 		/// <returns>A new object that is a copy of this instance.</returns>
 		public override object Clone()
 		{
-			var result = new DocumentCultureSettings();
-			result.CopyFrom(this);
-			return result;
+			return new DocumentCultureSettings(this);
 		}
-
-		/// <summary>Assembles the members of this instance to a resulting culture.</summary>
-		/// <returns>A culture info which contains the values of the member variables.</returns>
-		public CultureInfo ToCulture()
-		{
-			CultureInfo result;
-			if (!OverrideParentCulture)
-			{
-				result = OriginalCulture;
-			}
-			else
-			{
-				try
-				{
-					if (_cultureName == InvariantCultureThreeLetterISOLanguageName)
-						result = (CultureInfo)CultureInfo.InvariantCulture.Clone();
-					else
-						result = new CultureInfo(CultureName);
-				}
-				catch (CultureNotFoundException)
-				{
-					result = (CultureInfo)CultureInfo.InvariantCulture.Clone();
-				}
-				result.NumberFormat.NumberDecimalSeparator = NumberDecimalSeparator;
-				result.NumberFormat.NumberGroupSeparator = NumberGroupSeparator;
-			}
-			return result;
-		}
-
-
-
-		
 	}
 }

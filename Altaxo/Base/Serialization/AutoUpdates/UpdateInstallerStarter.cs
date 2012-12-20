@@ -73,14 +73,17 @@ namespace Altaxo.Serialization.AutoUpdates
 				if (info.Version <= entryAssemblyVersion)
 					return false; // no need to update
 
-				var question = string.Format(
-					"A new Altaxo update is available (from current version {0} to new {1} version {2}).\r\n\r\n" +
-					"If you don't want to have auto updates, please deactivate them by choosing 'Tools'->'Options' menu in Altaxo.\r\n" +
-					"\r\n"+
-				"Do you want to update to {1} version {2} now?", entryAssemblyVersion, PackageInfo.GetStableIdentifier(info.IsUnstableVersion).ToLower(), info.Version);
-				
-				if (false == Current.Gui.YesNoMessageBox(question, "Altaxo update available", true))
-					return false; // user don't want to update
+				if (updateSettings.ConfirmInstallation)
+				{
+					var question = string.Format(
+						"A new Altaxo update is available (from current version {0} to new {1} version {2}).\r\n\r\n" +
+						"If you don't want to have auto updates, please deactivate them by choosing 'Tools'->'Options' menu in Altaxo.\r\n" +
+						"\r\n" +
+					"Do you want to update to {1} version {2} now?", entryAssemblyVersion, PackageInfo.GetStableIdentifier(info.IsUnstableVersion).ToLower(), info.Version);
+
+					if (false == Current.Gui.YesNoMessageBox(question, "Altaxo update available", true))
+						return false; // user don't want to update
+				}
 
 				// copy the Updater executable to the download folder
 				var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location);
@@ -98,7 +101,14 @@ namespace Altaxo.Serialization.AutoUpdates
 				var processInfo = new System.Diagnostics.ProcessStartInfo();
 				processInfo.FileName = installerFullDestName;
 				StringBuilder stb = new StringBuilder();
-				stb.AppendFormat("\"{0}\"\t\"{1}\"\t{2}\t\"{3}\"", eventName, packageStream.Name, isAltaxoCurrentlyStarting ? 1 : 0, entryAssembly.Location);
+				stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
+					"\"{0}\"\t\"{1}\"\t{2}\t{3}\t{4}\t\"{5}\"", 
+					eventName, 
+					packageStream.Name, 
+					updateSettings.ShowInstallationWindow ? 1 : 0,
+					updateSettings.InstallationWindowClosingTime,
+					isAltaxoCurrentlyStarting ? 1 : 0, 
+					entryAssembly.Location);
 				if (isAltaxoCurrentlyStarting && commandLineArgs != null && commandLineArgs.Length > 0)
 				{
 					foreach (var s in commandLineArgs)

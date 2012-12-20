@@ -52,19 +52,23 @@ namespace Altaxo.Serialization.AutoUpdates
 			{
 				// args[0]: the name of the event that must be signalled when the installer is ready to install
 				// args[1]: name of the package file to use
-				// args[2]: either 0 or 1, if 1 then Altaxo should be restarted after installation. Furthermore, Bit1=1 indicates that this process was started with elevated privileges.
-				// args[3]: argument full name of the Altaxo executable
-				// args[4]: and more arguments: the original arguments of the Altaxo executable
+				// args[2]: either 0 or 1. If 0, the installation should take place silently. If 1, the installer window should be visible." +
+				// args[3]: integer, designates the number of seconds before the installer window is closed after a sucessfull installation" +
+				// args[4]: either 0 or 1, if 1 then Altaxo should be restarted after installation. Furthermore, Bit1=1 indicates that this process was started with elevated privileges.
+				// args[5]: argument full name of the Altaxo executable
+				// args[6]: and more arguments: the original arguments of the Altaxo executable
 
-				if (args.Length < 4)
+				if (args.Length < 6)
 				{
 					StartVisualAppWithErrorMessage(null, 
 						"Programm called with less than 4 arguments, but at least 4 arguments are required:\r\n\r\n"+
 						"args[0]: name of the event the installer is signalling when it is ready to install\r\n"+
 						"args[1]: full path to the auto update package file\r\n"+
-						"args[2]: either 0,1, or 2. If 1, Altaxo is restarted after the installation is finished. A value of 2 is an indication that this program was started with elevated privileges\r\n"+
-						"args[3]: full path to the old Altaxo executable\r\n"+
-						"args[4..n]: arguments that will be used to restart Altaxo (if args[2] is 1)\r\n"
+						"args[2]: either 0 or 1. If 0, the installer window will be hidden. If 1, the installer window is visible." +
+						"args[3]: integer, designates the number of seconds before the installer window is closed after a sucessfull installation" +
+						"args[4]: either 0,1, or 2. If 1, Altaxo is restarted after the installation is finished. A value of 2 is an indication that this program was started with elevated privileges\r\n"+
+						"args[5]: full path to the old Altaxo executable\r\n"+
+						"args[6..n]: arguments that will be used to restart Altaxo (if args[4] is 1)\r\n"
 						);
 					return;
 				}
@@ -75,16 +79,22 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
 				string eventName = args[0];
-				int options = int.Parse(args[2]);
+				string packageFullFileName = args[1];
+				bool showInstallationWindow = 0 != int.Parse(args[2], System.Globalization.CultureInfo.InvariantCulture);
+				int timeoutAfterSuccessfullInstallation = int.Parse(args[3], System.Globalization.CultureInfo.InvariantCulture);
+				int options = int.Parse(args[4], System.Globalization.CultureInfo.InvariantCulture);
+				string fullPathOfTheAltaxoExecutable = args[5];
 				bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
 				bool restartAltaxo = (0 != (options & 1)) && !wasStartedWithElevatedPrivileges;
 
-				var installer = new UpdateInstaller(args[0], args[1], args[3]);
+
+
+				var installer = new UpdateInstaller(eventName, packageFullFileName, fullPathOfTheAltaxoExecutable);
 				if (installer.PackListFileExists())
 				{
 					if (installer.PackListFileIsWriteable())
 					{
-						StartVisualApp(installer);
+						StartVisualApp(installer, showInstallationWindow, timeoutAfterSuccessfullInstallation);
 					}
 					else // Package file is not writetable
 					{
@@ -99,7 +109,7 @@ namespace Altaxo.Serialization.AutoUpdates
 							// Start a new process with elevated privileges and wait for exit 
 							var proc = new System.Diagnostics.ProcessStartInfo();
 							proc.FileName = System.Reflection.Assembly.GetEntryAssembly().Location;
-							args[2] = "2";
+							args[4] = "2";
 							var stb = new StringBuilder();
 							foreach (var s in args)
 								stb.AppendFormat("\"{0}\"\t", s);
@@ -121,9 +131,9 @@ namespace Altaxo.Serialization.AutoUpdates
 				if (restartAltaxo)
 				{
 					StringBuilder stb = new StringBuilder();
-					for (int i = 4; i < args.Length; ++i)
+					for (int i = 6; i < args.Length; ++i)
 						stb.AppendFormat("\"{0}\"\t", args[i]);
-					System.Diagnostics.Process.Start(args[3], stb.ToString());
+					System.Diagnostics.Process.Start(args[5], stb.ToString());
 				}
 			}
 			catch (Exception ex)
@@ -134,7 +144,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
 		/// <summary>Starts the window of the application, and then runs the provided installer program.</summary>
 		/// <param name="installer">The installer program to run..</param>
-		static void StartVisualApp(UpdateInstaller installer)
+		static void StartVisualApp(UpdateInstaller installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
 		{
 			if (null == app)
 			{
@@ -142,7 +152,7 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 			if (null == mainWindow)
 			{
-				mainWindow = new InstallerMainWindow();
+				mainWindow = new InstallerMainWindow(showInstallationWindow, timeoutAfterSuccessfullInstallation);
 				mainWindow._installer = installer;
 				app.Run(mainWindow);
 			}
@@ -162,7 +172,7 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 			if (null == mainWindow)
 			{
-				mainWindow = new InstallerMainWindow();
+				mainWindow = new InstallerMainWindow(true, int.MaxValue);
 				mainWindow.SetErrorMessage(message);
 				app.Run(mainWindow);
 			}

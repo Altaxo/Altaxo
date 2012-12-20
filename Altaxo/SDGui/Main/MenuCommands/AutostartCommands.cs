@@ -48,8 +48,8 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Current.SetPropertyService(new Altaxo.Main.Services.PropertyService());
 
 			// set as early as possible the UI culture
-			Altaxo.Serialization.GUIConversion.CultureSettings = Current.PropertyService.Get(Altaxo.Settings.UICultureSettings.SettingsStoragePath, Altaxo.Settings.UICultureSettings.FromDefault());
-			System.Threading.Thread.CurrentThread.CurrentCulture = Current.PropertyService.Get(Altaxo.Settings.DocumentCultureSettings.SettingsStoragePath, Altaxo.Settings.DocumentCultureSettings.FromDefault()).ToCulture();
+			Altaxo.Settings.UICultureSettings.InitializeUserSettings();
+			Altaxo.Settings.DocumentCultureSettings.InitializeUserSettings();
 
 			Altaxo.Current.SetResourceService(new ResourceServiceWrapper());
 			Altaxo.Current.SetProjectService(new Altaxo.Main.ProjectService());

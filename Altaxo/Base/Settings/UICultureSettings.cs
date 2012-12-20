@@ -19,14 +19,35 @@ namespace Altaxo.Settings
 		/// <summary>
 		/// Original UI culture, must be initialized before it can be used.
 		/// </summary>
-		static CultureInfo _originalCulture;
+		static UICultureSettings _systemSettings;
 
-		/// <summary>Initializes this class with the original UI culture (i.e. the culture that the user has chosen in system control panel). This must be done before the current UI culture is changed by some routine.</summary>
-		/// <param name="originalCulture">The original culture.</param>
-		public static void InitializeOriginalCulture(CultureInfo originalCulture)
+		static UICultureSettings _userSettings;
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UICultureSettings), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			_originalCulture = (CultureInfo)originalCulture.Clone();
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, typeof(UICultureSettings).BaseType);
+			}
+			protected virtual UICultureSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (UICultureSettings)o : new UICultureSettings();
+				info.GetBaseValueEmbedded(s, typeof(UICultureSettings).BaseType, parent);
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
 		}
+
+		#endregion
 
 
 		/// <summary>Initializes a new instance of the <see cref="UICultureSettings"/> class with nothing initialized.</summary>
@@ -34,73 +55,84 @@ namespace Altaxo.Settings
 		{
 		}
 
-		public override CultureInfo OriginalCulture
+
+
+		public UICultureSettings(CultureInfo c)
+			: base(c)
+		{
+		}
+
+		public UICultureSettings(UICultureSettings dcs)
+			: base(dcs)
+		{
+		}
+
+
+		/// <summary>Gets or sets a value indicating whether to override the parent culture or use it.</summary>
+		/// <value> If <see langword="true"/>, the culture that is stored in this object is applied. Otherwise, the culture of the superior object (for instance the operating system) is used.</value>
+		public static bool UseCustomUserSettings
+		{
+			get { return null != _userSettings; }
+		}
+
+		public static UICultureSettings UserDefault
 		{
 			get
 			{
-				if (null == _originalCulture)
-					throw new InvalidOperationException("UICultureSettings have not been initialized with the original culture. This must be done at the very beginning of the program. Please report this bug!");
-				return _originalCulture;
+				if (null != _userSettings)
+					return _userSettings;
+				else
+					return _systemSettings;
+			}
+			set
+			{
+				if (null != value)
+				{
+					_userSettings = (UICultureSettings)value.Clone();
+				}
+				else
+				{
+					_userSettings = null;
+				}
+
+				// first we set the properties that Sharpdevelop awaits to change its language,
+				Current.PropertyService.Set("CoreProperties.UILanguage", UserDefault.NeutralCultureName);
+				Current.PropertyService.Set(SettingsStoragePath, _userSettings);
+				System.Threading.Thread.CurrentThread.CurrentUICulture = UserDefault.Culture;
+				Altaxo.Serialization.GUIConversion.CultureSettings = UserDefault.Culture;
 			}
 		}
 
-		/// <summary>Initializes a new instance of the <see cref="UICultureSettings"/> class from the current UI culture.</summary>
-		/// <returns>An instance of this class with the current UI culture set and the <see cref="P:Altaxo.Settings.CultureSettingsBase.OverrideParentCulture"/> flag set to false.</returns>
-		public static UICultureSettings FromDefault()
+		public static UICultureSettings SystemDefault
 		{
-			var result = new UICultureSettings();
-			result._overrideParentCulture = false;
-			result.SetMembersFromCulture(result.OriginalCulture);
-			return result;
+			get
+			{
+				return _systemSettings;
+			}
 		}
 
-		/// <summary>Initializes a new instance of the <see cref="UICultureSettings"/> class with a given culture.</summary>
-		/// <param name="c">An instance of this class with the provided UI culture set and the <see cref="P:Altaxo.Settings.CultureSettingsBase.OverrideParentCulture"/> flag set to true.</param>
-		/// <returns></returns>
-		public static UICultureSettings FromCulture(CultureInfo c)
+		/// <summary>Initializes this class with the original UI culture (i.e. the culture that the user has chosen in system control panel). This must be done before the current UI culture is changed by some routine.</summary>
+		/// <param name="originalCulture">The original culture.</param>
+		public static void InitializeSystemSettings(CultureInfo originalCulture)
 		{
-			var result = new UICultureSettings();
-			result._overrideParentCulture = true;
-			result.SetMembersFromCulture(c);
-			return result;
+			_systemSettings = new UICultureSettings(originalCulture);
 		}
+
+
+		public static void InitializeUserSettings()
+		{
+			UserDefault = Current.PropertyService.Get<UICultureSettings>(SettingsStoragePath, null);
+		}
+
+
+
 
 		/// <summary>Creates a new object that is a copy of the current instance.</summary>
 		/// <returns>A new object that is a copy of this instance.</returns>
 		public override object Clone()
 		{
-			var result = new UICultureSettings();
-			result.CopyFrom(this);
-			return result;
+			return new UICultureSettings(this);
 		}
 
-		/// <summary>Assembles the members of this instance to a resulting culture.</summary>
-		/// <returns>A culture info which contains the values of the member variables.</returns>
-		public CultureInfo ToCulture()
-		{
-			CultureInfo result;
-			if (!OverrideParentCulture)
-			{
-				result = OriginalCulture;
-			}
-			else
-			{
-				try
-				{
-					result = new CultureInfo(CultureName);
-				}
-				catch (CultureNotFoundException)
-				{
-					result = (CultureInfo)CultureInfo.InvariantCulture.Clone();
-				}
-				result.NumberFormat.NumberDecimalSeparator = NumberDecimalSeparator;
-				result.NumberFormat.NumberGroupSeparator = NumberGroupSeparator;
-			}
-			return result;
-		}
-
-
-
-		
 	}
 }

@@ -47,6 +47,12 @@ namespace Altaxo.Gui.Settings
 
 		/// <summary>Gets or sets the Gui element(s) that indicate when to install auto updates. Here: Bit0=1: at startup; Bit1=1: at shutdown</summary>
 		int InstallAt { get; set; }
+
+		bool ShowInstallationWindow { get; set; }
+
+		bool ConfirmInstallation { get; set; }
+
+		int InstallationWindowClosingTime { get; set; }
 	}
 
 
@@ -93,6 +99,9 @@ namespace Altaxo.Gui.Settings
 				_view.DownloadInterval = _doc.DownloadIntervalInDays;
 				_view.ShowDownloadWindow = _doc.ShowDownloadWindow;
 				_view.InstallAt = (_doc.InstallAtStartup ? 1 : 0) + ( _doc.InstallAtShutdown ? 2 : 0);
+				_view.ConfirmInstallation = _doc.ConfirmInstallation;
+				_view.ShowInstallationWindow = _doc.ShowInstallationWindow;
+				_view.InstallationWindowClosingTime = _doc.InstallationWindowClosingTime;
 			}
 		}
 
@@ -135,6 +144,10 @@ namespace Altaxo.Gui.Settings
 			_doc.ShowDownloadWindow = _view.ShowDownloadWindow;
 			_doc.InstallAtStartup = 0 != (_view.InstallAt & 1);
 			_doc.InstallAtShutdown =0 != (_view.InstallAt & 2);
+
+			_doc.ConfirmInstallation = _view.ConfirmInstallation;
+			_doc.ShowInstallationWindow = _view.ShowInstallationWindow;
+			_doc.InstallationWindowClosingTime = _view.InstallationWindowClosingTime;
 
 			if(_isHoldingOwnDocument)
 				Current.PropertyService.Set(AutoUpdateSettings.SettingsStoragePath, _doc);
