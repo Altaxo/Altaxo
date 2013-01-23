@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingScientific", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.LabelFormatting.NumericLabelFormattingScientific", 1)]
 		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -48,6 +48,24 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			{
 				NumericLabelFormattingScientific s = null != o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
 				info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
+				return s;
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific), 2)]
+		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				NumericLabelFormattingScientific s = (NumericLabelFormattingScientific)obj;
+				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
+				info.AddValue("ShowExponentAlways", s._showExponentAlways);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				NumericLabelFormattingScientific s = null != o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
+				info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingBase), parent);
+				s._showExponentAlways = info.GetBoolean("ShowExponentAlways");
 				return s;
 			}
 		}
@@ -163,7 +181,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			double mant;
 			SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
 
-      var gdiFont = font.ToGdi();
+			var gdiFont = font.ToGdi();
 			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, new PointF(0, 0), strfmt);
 			SizeF size2 = g.MeasureString(exponent, gdiFont, new PointF(size1.Width, 0), strfmt);
 			SizeF size3 = g.MeasureString(_suffix, gdiFont, new PointF(0, 0), strfmt);
@@ -176,21 +194,21 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			string firstpart, middelpart, exponent;
 			double mant;
 			SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
-      
-      var gdiFont = font.ToGdi();
+
+			var gdiFont = font.ToGdi();
 			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, morg, strfmt);
 			g.DrawString(_prefix + firstpart + middelpart, gdiFont, brush, morg, strfmt);
 			var orginalY = morg.Y;
 			morg.X += size1.Width;
 			morg.Y += size1.Height / 3;
-      FontX font2 = font.GetFontWithNewSize(font.Size * 2 / 3.0);
-      var gdiFont2 = font2.ToGdi();
-				g.DrawString(exponent, gdiFont2, brush, morg);
-				if(!string.IsNullOrEmpty(_suffix))
-				{
-					morg.X += g.MeasureString(exponent, gdiFont2, morg, strfmt).Width;
-					morg.Y = orginalY;
-				}
+			FontX font2 = font.GetFontWithNewSize(font.Size * 2 / 3.0);
+			var gdiFont2 = font2.ToGdi();
+			g.DrawString(exponent, gdiFont2, brush, morg);
+			if (!string.IsNullOrEmpty(_suffix))
+			{
+				morg.X += g.MeasureString(exponent, gdiFont2, morg, strfmt).Width;
+				morg.Y = orginalY;
+			}
 
 			if (!string.IsNullOrEmpty(_suffix))
 			{
