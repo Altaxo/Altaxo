@@ -31,6 +31,8 @@ namespace Altaxo.Serialization.Ascii
 		DBNull,
 		Int64,
 		Double,
+		/// <summary>Number in any form with exception of NumberStyle.Integer and NumberStyle.Float.</summary>
+		AnyNumber,
 		DateTime,
 		Text
 	}
@@ -45,7 +47,7 @@ namespace Altaxo.Serialization.Ascii
 		/// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
 		/// </summary>
 		protected List<AsciiColumnType> _recognizedTypes = new List<AsciiColumnType>();
-	
+
 
 
 		/// <summary>
@@ -94,9 +96,9 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-	
 
-	
+
+
 
 		public int LineStructureScoring
 		{
@@ -119,34 +121,37 @@ namespace Altaxo.Serialization.Ascii
 			stb.Append(len.ToString());
 
 			_priorityValue = 0;
-			for (int i = 0; i < len; i++)
+			foreach (var colType in _recognizedTypes)
 			{
-				var t = this[i];
-				if (t == AsciiColumnType.DateTime)
+				switch(colType)
 				{
+					case AsciiColumnType.DateTime:
 					_priorityValue += 15;
 					stb.Append('T');
-				}
-				else if (t == AsciiColumnType.Double)
-				{
+						break;
+					case AsciiColumnType.Double:
 					_priorityValue += 7;
 					stb.Append('D');
-				}
-				else if (t == AsciiColumnType.Int64)
-				{
+						break;
+					case AsciiColumnType.Int64:
 					_priorityValue += 3;
 					stb.Append('D'); // note that it shoud have the same marker than Double, since a column can contain both integer and noninteger numeric data
-				}
-				else if (t == AsciiColumnType.Text)
-				{
+						break;
+					case AsciiColumnType.AnyNumber:
+					_priorityValue += 3;
+					stb.Append('D'); // note that it shoud have the same marker than Double, since a column can contain both integer and noninteger numeric data
+						break;
+					case AsciiColumnType.Text:
 					_priorityValue += 2;
 					stb.Append('S');
-				}
-				else if (t == AsciiColumnType.DBNull)
-				{
+						break;
+					case AsciiColumnType.DBNull:
 					_priorityValue += 1;
 					stb.Append('N');
-				}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException(string.Format("Unconsidered AsciiColumnType: {0}. Please report this error!", colType));
+				} // switch
 			} // for
 
 			// calculate hash
@@ -161,6 +166,15 @@ namespace Altaxo.Serialization.Ascii
 				CalculateCachedData();
 			return _hashValue;
 		}
+
+
+		/// <summary>
+		/// Determines whether this line structure is is compatible with another line structure.
+		/// </summary>
+		/// <param name="ano">The other line structure to compare with.</param>
+		/// <returns><c>True</c> if this line structure is compatible with the line structure specified in <paramref name="ano"/>; otherwise, <c>false</c>.
+		/// It is compatible if the values of all columns of this line structure could be stored in the columns specified by the other line structure.
+		/// </returns>
 		public bool IsCompatibleWith(AsciiLineStructure ano)
 		{
 			// our structure can have more columns, but not lesser than ano
@@ -169,23 +183,38 @@ namespace Altaxo.Serialization.Ascii
 
 			for (int i = 0; i < ano.Count; i++)
 			{
-				if (this[i] == AsciiColumnType.DBNull || ano[i] == AsciiColumnType.DBNull)
-					continue;
-				if (this[i] == AsciiColumnType.Int64 && ano[i] == AsciiColumnType.Double)
-					continue;
-				if (this[i] == AsciiColumnType.Double && ano[i] == AsciiColumnType.Int64)
-					continue;
-				if (this[i] != ano[i])
+				if (!IsCompatibleWith(this[i], ano[i]))
 					return false;
 			}
 			return true;
 		}
 
+		/// <summary>
+		/// Determines whether the <see cref="AsciiColumnType"/> <paramref name="a"/> is compatible with <paramref name="b"/>.
+		/// </summary>
+		/// <param name="a">First column type.</param>
+		/// <param name="b">Second column type.</param>
+		/// <returns><c>True</c> if  <see cref="AsciiColumnType"/> <paramref name="a"/> is compatible with <paramref name="b"/>, i.e. values of type <paramref name="a"/> could be stored in columns of type <paramref name="b"/>; otherwise, <c>false</c>.</returns>
+		/// <remarks>
+		/// <para>The column type <see cref="AsciiColumnType.DBNull"/> is compatible to all other column types.</para>
+		/// <para>Since all numeric types will be stored in Double format, all numeric column types are compatible with each other.</para>
+		/// </remarks>
+		public static bool IsCompatibleWith(AsciiColumnType a, AsciiColumnType b)
+		{
+			if (a == AsciiColumnType.DBNull || b == AsciiColumnType.DBNull)
+				return true;
+
+			if ((a == AsciiColumnType.AnyNumber || a == AsciiColumnType.Double || a == AsciiColumnType.Int64) &&
+				(b == AsciiColumnType.AnyNumber || b == AsciiColumnType.Double || b == AsciiColumnType.Int64))
+				return true;
+
+			return a == b;
+		}
 
 
 		static char ShortFormOfType(AsciiColumnType type)
 		{
-			switch(type)
+			switch (type)
 			{
 				case AsciiColumnType.Double:
 					return 'D';
@@ -194,9 +223,11 @@ namespace Altaxo.Serialization.Ascii
 				case AsciiColumnType.DateTime:
 					return 'T';
 				case AsciiColumnType.DBNull:
-					return 'N';
+					return '_';
 				case AsciiColumnType.Int64:
 					return 'I';
+				case AsciiColumnType.AnyNumber:
+					return 'N';
 				default:
 					throw new ArgumentOutOfRangeException("Option not considered: " + type.ToString());
 			}

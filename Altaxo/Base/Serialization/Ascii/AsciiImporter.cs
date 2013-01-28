@@ -32,8 +32,6 @@ namespace Altaxo.Serialization.Ascii
 	/// </summary>
 	public class AsciiImporter
 	{
-		static AsciiImportOptions _defaultImportOptions = new AsciiImportOptions();
-
 		protected System.IO.Stream _stream;
 
 		/// <summary>If set, this string designates the origin of the stream. This can be e.g. the filename of the file, the clipboard etc.</summary>
@@ -79,6 +77,9 @@ namespace Altaxo.Serialization.Ascii
 							newcols.Add(new Altaxo.Data.DoubleColumn());
 							break;
 						case AsciiColumnType.Int64:
+							newcols.Add(new Altaxo.Data.DoubleColumn());
+							break;
+						case AsciiColumnType.AnyNumber:
 							newcols.Add(new Altaxo.Data.DoubleColumn());
 							break;
 						case AsciiColumnType.DateTime:
@@ -332,7 +333,7 @@ namespace Altaxo.Serialization.Ascii
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
 			var importer = new Altaxo.Serialization.Ascii.AsciiImporter(memstream, "text");
 
-			Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(_defaultImportOptions, memstream);
+			Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), memstream);
 
 			if (options != null)
 			{
@@ -438,7 +439,7 @@ namespace Altaxo.Serialization.Ascii
 			}
 			else
 			{
-				var recognizedOptions = AsciiDocumentAnalysis.Analyze(_defaultImportOptions, myStream);
+				var recognizedOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), myStream);
 				importer.ImportAscii(recognizedOptions, dataTable);
 			}
 		}

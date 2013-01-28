@@ -94,9 +94,13 @@ namespace Altaxo.Serialization.Ascii
 					{
 						tabStruc.Add(AsciiColumnType.Int64);
 					}
-					else
+					else if (IsFloat(substring, numberFormat))
 					{
 						tabStruc.Add(AsciiColumnType.Double);
+					}
+					else
+					{
+						tabStruc.Add(AsciiColumnType.AnyNumber);
 					}
 				}
 				else if (IsDateTime(substring, dateTimeFormat))
@@ -143,6 +147,17 @@ namespace Altaxo.Serialization.Ascii
 		{
 			long result;
 			return long.TryParse(s, System.Globalization.NumberStyles.Integer, numberFormat.NumberFormat, out result);
+		}
+
+		/// <summary>
+		/// Tests if the string <c>s</c> is an numeric value with <see cref="NumberStyles.Float"/>.
+		/// </summary>
+		/// <param name="s"></param>
+		/// <returns></returns>
+		public static bool IsFloat(string s, System.Globalization.CultureInfo numberFormat)
+		{
+			double result;
+			return double.TryParse(s, System.Globalization.NumberStyles.Float, numberFormat.NumberFormat, out result);
 		}
 		
 	} // end class
