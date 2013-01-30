@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 				if (_doc.RecognizedStructure != null)
 				{
-					_tableStructure = new System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>>(Boxed<AsciiColumnType>.ToBoxedItems(_doc.RecognizedStructure));
+					_tableStructure = new System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>>(Boxed<AsciiColumnType>.ToBoxedItems(_doc.RecognizedStructure.ColumnTypes));
 				}
 				else
 				{
@@ -317,7 +317,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			if (_view.TableStructureIsKnown)
 			{
 				_doc.RecognizedStructure.Clear();
-				Boxed<AsciiColumnType>.AddRange(_doc.RecognizedStructure, _tableStructure);
+				Boxed<AsciiColumnType>.AddRange(_doc.RecognizedStructure.ColumnTypes, _tableStructure);
 				if (_doc.RecognizedStructure.Count == 0)
 					_doc.RecognizedStructure = null;
 			}

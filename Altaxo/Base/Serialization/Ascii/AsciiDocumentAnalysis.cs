@@ -250,6 +250,8 @@ namespace Altaxo.Serialization.Ascii
 				}
 				if (separationStrategiesToTest.Count == 0)
 					separationStrategiesToTest.Add(new SkipWhiteSpaceSeparationStrategy());
+
+				separationStrategiesToTest.Add(new SingleLineSeparationStrategy()); // this separation strategy must always be considered
 			}
 
 			// make a full outer join of all three categories

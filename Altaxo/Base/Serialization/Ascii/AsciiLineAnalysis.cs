@@ -52,11 +52,11 @@ namespace Altaxo.Serialization.Ascii
 		/// <param name="nLine">Line number.</param>
 		/// <param name="sLine">The line to analyse.</param>
 		/// <param name="separationStrategies">List of separation stragegies to test with the provided text line.</param>
-		public AsciiLineAnalysis(int nLine,string sLine, List<AsciiLineAnalysisOption> separationStrategies)
+		public AsciiLineAnalysis(int nLine, string sLine, List<AsciiLineAnalysisOption> separationStrategies)
 		{
 			_structureForSeparation = new Dictionary<AsciiLineAnalysisOption, AsciiLineStructure>();
 
-			var tokenDictionary = new Dictionary<IAsciiSeparationStrategy,List<string>>();
+			var tokenDictionary = new Dictionary<IAsciiSeparationStrategy, List<string>>();
 
 			foreach (AsciiLineAnalysisOption separation in separationStrategies)
 			{
@@ -86,30 +86,33 @@ namespace Altaxo.Serialization.Ascii
 			{
 				if (string.IsNullOrEmpty(substring)) // just this char is a tab, so nothing is between the last and this
 				{
-					tabStruc.Add( AsciiColumnType.DBNull);
+					tabStruc.Add(AsciiColumnInfo.DBNull);
 				}
 				else if (IsNumeric(substring, numberFormat))
 				{
 					if (IsIntegral(substring, numberFormat))
 					{
-						tabStruc.Add(AsciiColumnType.Int64);
+						tabStruc.Add(AsciiColumnInfo.Integer);
 					}
 					else if (IsFloat(substring, numberFormat))
 					{
-						tabStruc.Add(AsciiColumnType.Double);
+						if (substring.Contains(numberFormat.NumberFormat.NumberDecimalSeparator))
+							tabStruc.Add(AsciiColumnInfo.FloatWithDecimalSeparator);
+						else
+							tabStruc.Add(AsciiColumnInfo.FloatWithoutDecimalSeparator);
 					}
 					else
 					{
-						tabStruc.Add(AsciiColumnType.AnyNumber);
+						tabStruc.Add(AsciiColumnInfo.GeneralNumber);
 					}
 				}
 				else if (IsDateTime(substring, dateTimeFormat))
 				{
-					tabStruc.Add(AsciiColumnType.DateTime);
+					tabStruc.Add(AsciiColumnInfo.DateTime);
 				}
 				else
 				{
-					tabStruc.Add(AsciiColumnType.Text);
+					tabStruc.Add(AsciiColumnInfo.Text);
 				}
 			} // end for
 			return tabStruc;
@@ -159,7 +162,7 @@ namespace Altaxo.Serialization.Ascii
 			double result;
 			return double.TryParse(s, System.Globalization.NumberStyles.Float, numberFormat.NumberFormat, out result);
 		}
-		
+
 	} // end class
 
 }

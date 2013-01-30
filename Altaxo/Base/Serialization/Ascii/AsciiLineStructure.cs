@@ -31,23 +31,155 @@ namespace Altaxo.Serialization.Ascii
 		DBNull,
 		Int64,
 		Double,
-		/// <summary>Number in any form with exception of NumberStyle.Integer and NumberStyle.Float.</summary>
-		AnyNumber,
 		DateTime,
 		Text
 	}
 
 
+	public struct AsciiColumnInfo
+	{
+		private AsciiColumnType _columnType;
+		private int _scoreValue;
+		private char _shortCut;
+
+		private AsciiColumnInfo(AsciiColumnType t, int scoreValue, char shortCut)
+		{
+			_columnType = t;
+			_scoreValue = scoreValue;
+			_shortCut = shortCut;
+		}
+
+		public AsciiColumnType ColumnType { get { return _columnType; } }
+		public int ScoreValue { get { return _scoreValue; } }
+		public char ShortCut { get { return _shortCut; } }
+
+		static AsciiColumnInfo()
+		{
+			_instDBNull = new AsciiColumnInfo(AsciiColumnType.DBNull, 1, 'N');
+			_instText = new AsciiColumnInfo(AsciiColumnType.Text, 2, 'T');
+			_instFloatWithDecimalSeparator = new AsciiColumnInfo(AsciiColumnType.Double, 8, 'F');
+			_instFloatWithoutDecimalSeparator = new AsciiColumnInfo(AsciiColumnType.Double, 4, 'E');
+			_instInteger = new AsciiColumnInfo(AsciiColumnType.Int64, 3, 'I');
+			_instGeneralNumber = new AsciiColumnInfo(AsciiColumnType.Double, 3, 'N');
+			_instDateTime = new AsciiColumnInfo(AsciiColumnType.DateTime, 17, 'D');
+		}
+
+		private static AsciiColumnInfo _instDBNull;
+		public static AsciiColumnInfo DBNull { get { return _instDBNull; } }
+
+		private static AsciiColumnInfo _instText;
+		public static AsciiColumnInfo Text { get { return _instText; } }
+
+		private static AsciiColumnInfo _instFloatWithDecimalSeparator;
+		public static AsciiColumnInfo FloatWithDecimalSeparator { get { return _instFloatWithDecimalSeparator; } }
+
+		private static AsciiColumnInfo _instFloatWithoutDecimalSeparator;
+		public static AsciiColumnInfo FloatWithoutDecimalSeparator { get { return _instFloatWithoutDecimalSeparator; } }
+
+		private static AsciiColumnInfo _instInteger;
+		public static AsciiColumnInfo Integer { get { return _instInteger; } }
+
+		private static AsciiColumnInfo _instGeneralNumber;
+		public static AsciiColumnInfo GeneralNumber { get { return _instGeneralNumber; } }
+
+		private static AsciiColumnInfo _instDateTime;
+		public static AsciiColumnInfo DateTime { get { return _instDateTime; } }
+	}
+
 	/// <summary>
 	/// Represents the structure of one single line of imported ascii text.
 	/// </summary>
-	public class AsciiLineStructure : IList<AsciiColumnType>
+	public class AsciiLineStructure : IList<AsciiColumnInfo>
 	{
+
+		#region Inner items
+
+		private class CollectionWrapper : ICollection<AsciiColumnType>
+		{
+			AsciiLineStructure _parent;
+
+			public CollectionWrapper(AsciiLineStructure parent)
+			{
+				_parent = parent;
+			}
+
+
+			public void Add(AsciiColumnType item)
+			{
+				switch (item)
+				{
+					case AsciiColumnType.DBNull:
+						_parent.Add(AsciiColumnInfo.DBNull);
+						break;
+					case AsciiColumnType.Int64:
+						_parent.Add(AsciiColumnInfo.Integer);
+						break;
+					case AsciiColumnType.Double:
+							_parent.Add(AsciiColumnInfo.FloatWithDecimalSeparator);
+							break;
+					case AsciiColumnType.DateTime:
+							_parent.Add(AsciiColumnInfo.DateTime);
+							break;
+					case AsciiColumnType.Text:
+							_parent.Add(AsciiColumnInfo.Text);
+							break;
+					default:
+							throw new ArgumentOutOfRangeException("item");
+				}
+			}
+
+			public void Clear()
+			{
+				_parent.Clear();
+			}
+
+			public bool Contains(AsciiColumnType item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void CopyTo(AsciiColumnType[] array, int arrayIndex)
+			{
+				throw new NotImplementedException();
+			}
+
+			public int Count
+			{
+				get { return _parent.Count; }
+			}
+
+			public bool IsReadOnly
+			{
+				get { return false; }
+			}
+
+			public bool Remove(AsciiColumnType item)
+			{
+				throw new NotImplementedException();
+			}
+
+			public IEnumerator<AsciiColumnType> GetEnumerator()
+			{
+				foreach (var entry in _parent._recognizedTypes)
+					yield return entry.ColumnType;
+			}
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+			{
+				foreach (var entry in _parent._recognizedTypes)
+					yield return entry.ColumnType;
+			}
+		}
+
+
+		#endregion
+
+
 		/// <summary>
 		/// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
 		/// </summary>
-		protected List<AsciiColumnType> _recognizedTypes = new List<AsciiColumnType>();
-
+		protected List<AsciiColumnInfo> _recognizedTypes = new List<AsciiColumnInfo>();
+		private CollectionWrapper _columnTypeCollectionWrapper;
 
 
 		/// <summary>
@@ -57,6 +189,17 @@ namespace Altaxo.Serialization.Ascii
 		protected int _priorityValue;
 		protected int _hashValue;
 
+
+		public ICollection<AsciiColumnType> ColumnTypes
+		{
+			get
+			{
+				if (null == _columnTypeCollectionWrapper)
+					_columnTypeCollectionWrapper = new CollectionWrapper(this);
+				return _columnTypeCollectionWrapper;
+
+			}
+		}
 
 
 		/// <summary>
@@ -70,11 +213,13 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
+	
+
 		/// <summary>
 		/// Adds a recognized item.
 		/// </summary>
 		/// <param name="o">The recognized item represented by its type, i.e. typeof(double) represents a recognized double number.</param>
-		public void Add(AsciiColumnType o)
+		public void Add(AsciiColumnInfo o)
 		{
 			_recognizedTypes.Add(o);
 			_isCachedDataInvalid = true;
@@ -83,7 +228,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>
 		/// Getter / setter of the items of the line.
 		/// </summary>
-		public AsciiColumnType this[int i]
+		public AsciiColumnInfo this[int i]
 		{
 			get
 			{
@@ -95,10 +240,6 @@ namespace Altaxo.Serialization.Ascii
 				_isCachedDataInvalid = true;
 			}
 		}
-
-
-
-
 
 		public int LineStructureScoring
 		{
@@ -112,50 +253,22 @@ namespace Altaxo.Serialization.Ascii
 
 		protected void CalculateCachedData()
 		{
-			_isCachedDataInvalid = false;
-
 			// Calculate priority and hash
-
-			int len = Count;
 			var stb = new StringBuilder(); // for calculating the hash
-			stb.Append(len.ToString());
+			stb.Append(Count.ToString());
 
-			_priorityValue = 0;
-			foreach (var colType in _recognizedTypes)
+			int priorityValue = 0;
+			foreach (var entry in _recognizedTypes)
 			{
-				switch(colType)
-				{
-					case AsciiColumnType.DateTime:
-					_priorityValue += 15;
-					stb.Append('T');
-						break;
-					case AsciiColumnType.Double:
-					_priorityValue += 7;
-					stb.Append('D');
-						break;
-					case AsciiColumnType.Int64:
-					_priorityValue += 3;
-					stb.Append('D'); // note that it shoud have the same marker than Double, since a column can contain both integer and noninteger numeric data
-						break;
-					case AsciiColumnType.AnyNumber:
-					_priorityValue += 3;
-					stb.Append('D'); // note that it shoud have the same marker than Double, since a column can contain both integer and noninteger numeric data
-						break;
-					case AsciiColumnType.Text:
-					_priorityValue += 2;
-					stb.Append('S');
-						break;
-					case AsciiColumnType.DBNull:
-					_priorityValue += 1;
-					stb.Append('N');
-						break;
-					default:
-						throw new ArgumentOutOfRangeException(string.Format("Unconsidered AsciiColumnType: {0}. Please report this error!", colType));
-				} // switch
-			} // for
+				priorityValue += entry.ScoreValue;
+				stb.Append(entry.ShortCut);
+			} // foreach
 
+			_priorityValue = priorityValue;
 			// calculate hash
 			_hashValue = stb.ToString().GetHashCode();
+
+			_isCachedDataInvalid = false;
 		}
 
 
@@ -183,7 +296,7 @@ namespace Altaxo.Serialization.Ascii
 
 			for (int i = 0; i < ano.Count; i++)
 			{
-				if (!IsCompatibleWith(this[i], ano[i]))
+				if (!IsCompatibleWith(_recognizedTypes[i].ColumnType, ano._recognizedTypes[i].ColumnType))
 					return false;
 			}
 			return true;
@@ -204,57 +317,34 @@ namespace Altaxo.Serialization.Ascii
 			if (a == AsciiColumnType.DBNull || b == AsciiColumnType.DBNull)
 				return true;
 
-			if ((a == AsciiColumnType.AnyNumber || a == AsciiColumnType.Double || a == AsciiColumnType.Int64) &&
-				(b == AsciiColumnType.AnyNumber || b == AsciiColumnType.Double || b == AsciiColumnType.Int64))
+			if ((a == AsciiColumnType.Double || a == AsciiColumnType.Int64) &&
+				(b == AsciiColumnType.Double || b == AsciiColumnType.Int64))
 				return true;
 
 			return a == b;
 		}
-
-
-		static char ShortFormOfType(AsciiColumnType type)
-		{
-			switch (type)
-			{
-				case AsciiColumnType.Double:
-					return 'D';
-				case AsciiColumnType.Text:
-					return 'S';
-				case AsciiColumnType.DateTime:
-					return 'T';
-				case AsciiColumnType.DBNull:
-					return '_';
-				case AsciiColumnType.Int64:
-					return 'I';
-				case AsciiColumnType.AnyNumber:
-					return 'N';
-				default:
-					throw new ArgumentOutOfRangeException("Option not considered: " + type.ToString());
-			}
-		}
-
 
 		public override string ToString()
 		{
 			var stb = new StringBuilder();
 
 			stb.AppendFormat("C={0} H={1:X8}", Count, GetHashCode());
-			for (int i = 0; i < Count; i++)
+			foreach(var entry in _recognizedTypes)
 			{
 				stb.Append(' ');
-				stb.Append(ShortFormOfType(this[i]));
+				stb.Append(entry.ShortCut);
 			}
 			return stb.ToString();
 		}
 
 
 
-		public int IndexOf(AsciiColumnType item)
+		public int IndexOf(AsciiColumnInfo item)
 		{
 			return _recognizedTypes.IndexOf(item);
 		}
 
-		public void Insert(int index, AsciiColumnType item)
+		public void Insert(int index, AsciiColumnInfo item)
 		{
 			_recognizedTypes.Insert(index, item);
 			_isCachedDataInvalid = true;
@@ -273,12 +363,12 @@ namespace Altaxo.Serialization.Ascii
 			_isCachedDataInvalid = true;
 		}
 
-		public bool Contains(AsciiColumnType item)
+		public bool Contains(AsciiColumnInfo item)
 		{
 			return _recognizedTypes.Contains(item);
 		}
 
-		public void CopyTo(AsciiColumnType[] array, int arrayIndex)
+		public void CopyTo(AsciiColumnInfo[] array, int arrayIndex)
 		{
 			_recognizedTypes.CopyTo(array, arrayIndex);
 		}
@@ -288,14 +378,14 @@ namespace Altaxo.Serialization.Ascii
 			get { return false; }
 		}
 
-		public bool Remove(AsciiColumnType item)
+		public bool Remove(AsciiColumnInfo item)
 		{
 			var r = _recognizedTypes.Remove(item);
 			if (r) _isCachedDataInvalid = true;
 			return r;
 		}
 
-		public IEnumerator<AsciiColumnType> GetEnumerator()
+		public IEnumerator<AsciiColumnInfo> GetEnumerator()
 		{
 			return _recognizedTypes.GetEnumerator();
 		}

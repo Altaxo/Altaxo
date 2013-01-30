@@ -59,7 +59,7 @@ namespace AltaxoTest
 							null,
 							new object[] { });
 
-						string resourceString = StringResources.AltaxoCore.GetString(resourceKey);
+						string resourceString = StringResources.AltaxoCore.GetString(resourceKey,false);
 
 						Assert.That(!string.IsNullOrEmpty(resourceString), string.Format("The resource string for the resource key '{0}' is null or empty", resourceKey));
 					}

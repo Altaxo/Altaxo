@@ -32,7 +32,7 @@ namespace Altaxo
 	/// </summary>
 	public class StringResources
 	{
-		System.Resources.ResourceManager _enResourceMgr;
+		System.Resources.ResourceManager _defaultResourceMgr;
 		Dictionary<string, System.Resources.ResourceManager> _resourceManagersByLanguage;
 		System.Reflection.Assembly _assemblyContainingTheResources;
 		string _resourcePath;
@@ -45,7 +45,7 @@ namespace Altaxo
 		/// <summary>
 		/// Gets the altaxo core string resources.
 		/// </summary>
-		public static StringResources AltaxoCore { get { return _AltaxoCoreResources; }}
+		public static StringResources AltaxoCore { get { return _AltaxoCoreResources; } }
 
 
 		/// <summary>
@@ -70,18 +70,30 @@ namespace Altaxo
 			_resourcePath = path;
 			_resourceName = resourceName;
 			_assemblyContainingTheResources = assemblyContainingTheResources;
-			_enResourceMgr = new System.Resources.ResourceManager(path + "." + resourceName, assemblyContainingTheResources);
+			_defaultResourceMgr = new System.Resources.ResourceManager(path + "." + resourceName, assemblyContainingTheResources);
 			_resourceManagersByLanguage = new Dictionary<string, System.Resources.ResourceManager>();
-			_resourceManagersByLanguage.Add("en", _enResourceMgr);
+			_resourceManagersByLanguage.Add("en", _defaultResourceMgr);
 		}
 
 
-		/// <summary>
+			/// <summary>
 		/// Gets a resource string for a given resource key.
 		/// </summary>
 		/// <param name="resourceKey">The resource key.</param>
 		/// <returns>The resource string corresponding to the given resource key.</returns>
 		public string GetString(StringResourceKey resourceKey)
+		{
+			return GetString(resourceKey, true);
+		}
+
+		/// <summary>
+		/// Gets a resource string for a given resource key.
+		/// </summary>
+		/// <param name="resourceKey">The resource key.</param>
+		/// <param name="fallbackToExampleValue">If <c>true</c>, and the resource key is not found, the method will return the example value that
+		/// comes with the resource key. If <c>false</c>, the method will return <c>Null</c> in this case.</param>
+		/// <returns>The resource string corresponding to the given resource key.</returns>
+		public string GetString(StringResourceKey resourceKey, bool fallbackToExampleValue)
 		{
 			System.Resources.ResourceManager mgr;
 
@@ -101,11 +113,20 @@ namespace Altaxo
 				_resourceManagersByLanguage.Add(cu, mgr); // add the manager even if it is null -> this then indicates that no such resource localization exists.
 			}
 
+
+			string result;
 			mgr = _resourceManagersByLanguage[cu];
-			if (null != mgr)
-				return mgr.GetString(resourceKey.Key);
-			else
-				return _enResourceMgr.GetString(resourceKey.Key);
+			if (null != mgr && null != (result = mgr.GetString(resourceKey.Key)))
+				return result;
+
+			if(null != (result = _defaultResourceMgr.GetString(resourceKey.Key)))
+					return result;
+
+				return resourceKey.ExampleStringValue;
 		}
+
+
+		
+
 	}
 }

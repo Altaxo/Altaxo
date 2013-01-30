@@ -63,6 +63,12 @@ namespace Altaxo
 		/// Gets the description of the resource string to help translating it into other languages.
 		/// </summary>
 		public string Description { get { return _description; } }
+
+
+		public override string ToString()
+		{
+			return this.Key;
+		}
 	}
 
 

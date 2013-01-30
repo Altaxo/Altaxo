@@ -71,15 +71,12 @@ namespace Altaxo.Serialization.Ascii
 			{
 				for (int i = 0; i < impopt.RecognizedStructure.Count; i++)
 				{
-					switch (impopt.RecognizedStructure[i])
+					switch (impopt.RecognizedStructure[i].ColumnType)
 					{
 						case AsciiColumnType.Double:
 							newcols.Add(new Altaxo.Data.DoubleColumn());
 							break;
 						case AsciiColumnType.Int64:
-							newcols.Add(new Altaxo.Data.DoubleColumn());
-							break;
-						case AsciiColumnType.AnyNumber:
 							newcols.Add(new Altaxo.Data.DoubleColumn());
 							break;
 						case AsciiColumnType.DateTime:
