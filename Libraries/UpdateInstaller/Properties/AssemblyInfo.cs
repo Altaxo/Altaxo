@@ -31,11 +31,11 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("AltaxoUpdateInstaller")]
 [assembly: AssemblyDescription("Installer for Altaxo's auto update files")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Altaxo")]
-[assembly: AssemblyProduct("AltaxoUpdateInstaller")]
-[assembly: AssemblyCopyright("Copyright © 2012 D.Lellinger")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
+[assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
+[assembly: AssemblyProduct("Altaxo")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -63,15 +63,6 @@ using System.Windows;
 )]
 
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
+
+[assembly: AssemblyVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyFileVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]

@@ -17,14 +17,14 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("4.0.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
 
 [assembly: AssemblyDelaySign(false)]
 
 internal static class RevisionClass
 {
-  public const string Major = "4";
-  public const string Minor = "0";
+  public const string Major = "$MAJORVERSION$";
+  public const string Minor = "$MINORVERSION$";
   public const string Build = "$REVNUM$";
   public const string Revision = "$DIRTY$";
 
