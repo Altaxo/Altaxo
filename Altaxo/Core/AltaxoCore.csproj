@@ -558,6 +558,8 @@
     <Compile Include="Collections\IROVector.cs" />
     <Compile Include="Collections\ContiguousNonNegativeIntegerRange.cs" />
     <Compile Include="Collections\Operations\MinimumOnSlidingWindow.cs" />
+    <Compile Include="Collections\PartitionableList_PartialView.cs" />
+    <Compile Include="Collections\PartitionableList.cs" />
     <Compile Include="Collections\Text\GeneralizedSuffixArray.cs" />
     <Compile Include="Collections\Text\IntegerTextData.cs" />
     <Compile Include="Collections\Text\LongestCommonGeneralizedRepeatA.cs" />
