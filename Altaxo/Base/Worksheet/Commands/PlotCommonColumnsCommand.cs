@@ -143,7 +143,7 @@ namespace Altaxo.Worksheet.Commands
 				var plotItemList = Altaxo.Worksheet.Commands.PlotCommands.CreatePlotItems(columnList, XCommonColumnNameForPlot, templateStyle, processedColumns);
 
 				var plotGroup = new Altaxo.Graph.Gdi.Plot.PlotItemCollection();
-				plotGroup.GroupStyles.Add(new Altaxo.Graph.Plot.Groups.ColorGroupStyle());
+				plotGroup.GroupStyles.Add(Altaxo.Graph.Plot.Groups.ColorGroupStyle.NewExternalGroupStyle());
 				plotGroup.AddRange(plotItemList);
 				layer.PlotItems.Add(plotGroup);
 			}

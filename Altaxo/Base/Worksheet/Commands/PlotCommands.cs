@@ -232,7 +232,7 @@ namespace Altaxo.Worksheet.Commands
       get
       {
         PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-        IPlotGroupStyle s1 = new ColorGroupStyle();
+        IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
         c.Add(s1);
         IPlotGroupStyle s2 = new LineStyleGroupStyle();
         c.Add(s2,s1.GetType());
@@ -272,7 +272,7 @@ namespace Altaxo.Worksheet.Commands
       get
       {
         PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-        IPlotGroupStyle s1 = new ColorGroupStyle();
+        IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
         c.Add(s1);
         IPlotGroupStyle s2 = new SymbolShapeStyleGroupStyle();
         c.Add(s2, s1.GetType());
@@ -284,7 +284,7 @@ namespace Altaxo.Worksheet.Commands
       get
       {
         PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-        IPlotGroupStyle s1 = new ColorGroupStyle();
+        IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
         c.Add(s1);
         IPlotGroupStyle s2 = new LineStyleGroupStyle();
         c.Add(s2, s1.GetType());
@@ -302,7 +302,7 @@ namespace Altaxo.Worksheet.Commands
         IPlotGroupStyle s1 = new BarWidthPositionGroupStyle();
         c.Add(s1);
         
-        IPlotGroupStyle s2 = new ColorGroupStyle();
+        IPlotGroupStyle s2 = ColorGroupStyle.NewExternalGroupStyle();
         c.Add(s2);
         return c;
       }
@@ -316,7 +316,7 @@ namespace Altaxo.Worksheet.Commands
         s1.IsStepEnabled = false;
         c.Add(s1);
 
-        IPlotGroupStyle s2 = new ColorGroupStyle();
+        IPlotGroupStyle s2 = ColorGroupStyle.NewExternalGroupStyle();
         c.Add(s2);
 
         c.CoordinateTransformingStyle = new AbsoluteStackTransform();
@@ -332,7 +332,7 @@ namespace Altaxo.Worksheet.Commands
         s1.IsStepEnabled = false;
         c.Add(s1);
 
-        IPlotGroupStyle s2 = new ColorGroupStyle();
+        IPlotGroupStyle s2 = ColorGroupStyle.NewExternalGroupStyle();
         c.Add(s2);
 
         c.CoordinateTransformingStyle = new RelativeStackTransform();

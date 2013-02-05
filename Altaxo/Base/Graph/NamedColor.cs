@@ -196,7 +196,7 @@ namespace Altaxo.Graph
 		public ColorManagement.IColorSet ParentColorSet { get { return _parent; } }
 
     /// <summary>
-    /// Tests if this color is still a member of the parent color set.
+    /// Tests if this color is still a member of the parent color set, and sets the parent property to <c>null</c> if it is no longer a member of the parent color set.
     /// </summary>
     /// <returns>If the parent color set is null, or the color is still a member of the parent color set, the color is returned unchanged.
     /// Otherwise, a <see cref="NamedColor"/> with the same color and name but with <see cref="ParentColorSet"/> set to <c>null</c> will be returned.

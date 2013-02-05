@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Gdi.Plot
 							IPlotGroupStyle prev = null;
 							if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Color))
 							{
-								curr = new ColorGroupStyle();
+								curr = ColorGroupStyle.NewExternalGroupStyle();
 								newColl.GroupStyles.Add(curr);
 							}
 							if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Line))

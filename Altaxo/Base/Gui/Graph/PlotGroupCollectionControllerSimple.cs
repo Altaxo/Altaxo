@@ -244,7 +244,7 @@ namespace Altaxo.Gui.Graph
 
 			if (color)
 			{
-				_doc.Add(new ColorGroupStyle());
+				_doc.Add(ColorGroupStyle.NewExternalGroupStyle());
 			}
 			if (linestyle)
 			{

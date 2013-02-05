@@ -28,13 +28,38 @@ namespace Altaxo.Graph.Plot.Groups
 {
   using Gdi.Plot.Groups;
 
+	/// <summary>
+	/// Style used to group plot items by color, and to step between the colors in a plot color set.
+	/// </summary>
+	/// <remarks>
+	/// We must take into account, that some plot color sets could not be reconstructed on deserialization (for instance special user or application color sets). This is for instance
+	/// the case for a single plot item, that uses a plot color, but is not member of an external plot group style. Because normally, if an external plot group style is present, the colors in 
+	/// the plot color set of the PlotGroupStyle will all be serialized. But here, without an external plot group style, this is not the case, and on deserialization, the plot color set could not be 
+	/// reconstructed. 
+	/// The issue is, that the color of the deserialized plot item should not change. Before 2013-02-05, the color changed because the substyle of the plot style of the plot item acts as a ColorProvider,
+	/// and as such, was creating a PlotGroupStyle for local use. And the PlotGroupStyle coerced the value of the color to a valid plot color during initialization, and thus changed the color.
+	/// This problem was solved 2013-02-05 by distinguishing between local use and external use of the ColorGroupStyle. For external use, the color is (as before) coerced to a valid plot color
+	/// during initialization. For local use, the rules are not so strict, and it is allowed to provide an non plot color or an invalid plot color during initialization without changing the color value.
+	/// </remarks>
   public class ColorGroupStyle : IPlotGroupStyle
   {
     bool _isInitialized;
-    bool _isStepEnabled = true;
+    bool _isStepEnabled;
     ColorManagement.IColorSet _colorSet;
 		/// <summary>Index of the current color in the color set.</summary>
     int _colorIndex;
+
+		/// <summary>
+		/// The current color of this group style. This color is cached and should never be serialized. It is allowed that this color is not a valid plot color, but only when the group style is used only locally (inside of a plot style collection),
+		/// so that it is never serialized. In this case the <see cref="_colorSet"/> is <c>null</c>, and the _colorIndex is undefined.
+		/// </summary>
+		NamedColor _cachedColor;
+
+		/// <summary>
+		/// If <c>true</c> indicates that this group style is used only inside a plot style collection and thus should never be serialized. In this case it is allowed the group style is initialized with
+		/// an invalid plot color.
+		/// </summary>
+		bool _isLocalGroupStyle;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 0)]
@@ -49,7 +74,7 @@ namespace Altaxo.Graph.Plot.Groups
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : new ColorGroupStyle();
+        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         return s;
       }
@@ -71,7 +96,7 @@ namespace Altaxo.Graph.Plot.Groups
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : new ColorGroupStyle();
+				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
 				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet");
 				return s;
@@ -91,11 +116,14 @@ namespace Altaxo.Graph.Plot.Groups
         info.AddValue("StepEnabled", s._isStepEnabled);
         info.AddValue("ColorSet", s._colorSet);
 				info.AddValue("ColorIndex", s._colorIndex);
+
+				if (s._isLocalGroupStyle)
+					throw new ArgumentOutOfRangeException("Trying to serialize a local ColorPlotGroupStyle is not allowed. Please report this bug to the forum.");
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : new ColorGroupStyle();
+        ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
         s._isStepEnabled = info.GetBoolean("StepEnabled");
         s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet");
 				s._colorIndex = info.GetInt32("ColorIndex");
@@ -107,10 +135,36 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Constructors
 
-    public ColorGroupStyle()
+    protected ColorGroupStyle(bool isLocalGroupStyle)
     {
-      _isStepEnabled = true;
+			_isLocalGroupStyle = isLocalGroupStyle;
+			if (isLocalGroupStyle)
+			{
+				_isStepEnabled = false;
+			}
+			else
+			{
+				_isStepEnabled = true;
+			}
     }
+
+		/// <summary>
+		/// Creates a new group style for external use. See the remarks of the class documentation for what is the difference between instances for external use and local use.
+		/// </summary>
+		/// <returns>A new <see cref="ColorGroupStyle"/> instance for external use.</returns>
+		public static ColorGroupStyle NewExternalGroupStyle()
+		{
+			return new ColorGroupStyle(false);
+		}
+
+		/// <summary>
+		/// Creates a new group style for local use only. See the remarks of the class documentation for what is the difference between instances for external use and local use.
+		/// </summary>
+		/// <returns>A new <see cref="ColorGroupStyle"/> instance for local use. Those instances could not be serialized.</returns>
+		public static ColorGroupStyle NewLocalGroupStyle()
+		{
+			return new ColorGroupStyle(true);
+		}
 
     public ColorGroupStyle(ColorGroupStyle from)
     {
@@ -118,6 +172,8 @@ namespace Altaxo.Graph.Plot.Groups
       this._isInitialized = from._isInitialized;
 			this._colorIndex = from._colorIndex;
       this._colorSet = from._colorSet;
+			this._cachedColor = from._cachedColor;
+			this._isLocalGroupStyle = from._isLocalGroupStyle;
     }
 
     #endregion
@@ -146,6 +202,7 @@ namespace Altaxo.Graph.Plot.Groups
       this._isInitialized = from._isInitialized;
 			this._colorSet = from._colorSet;
 			this._colorIndex = from._colorIndex;
+			this._cachedColor = from._cachedColor;
     }
 
     public void BeginPrepare()
@@ -189,6 +246,7 @@ namespace Altaxo.Graph.Plot.Groups
 
 			int wraps;
 			this._colorIndex = ColorManagement.ColorSetExtensions.GetNextPlotColorIndex(_colorSet, _colorIndex, step, out wraps);
+			this._cachedColor = InternalGetColorFromColorSetAndIndex();
       return wraps;
     }
 
@@ -226,14 +284,26 @@ namespace Altaxo.Graph.Plot.Groups
       {
         _colorSet = c.ParentColorSet;
 				_colorIndex = _colorSet.IndexOf(c);
+				_cachedColor = c;
       }
       else
       {
-        if(null==_colorSet || !_colorSet.IsPlotColorSet || _colorSet.Count==0)
-          _colorSet = ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors;
-				_colorIndex = _colorSet.IndexOf(c.Color);
-				if(_colorIndex<0)
+				if (_isLocalGroupStyle)
+				{
+					_colorSet = null;
 					_colorIndex = 0;
+					_cachedColor = c;
+				}
+				else
+				{
+					if (null == _colorSet || !_colorSet.IsPlotColorSet || _colorSet.Count == 0)
+						_colorSet = ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors;
+					_colorIndex = _colorSet.IndexOf(c.Color);
+					if (_colorIndex < 0)
+						_colorIndex = 0;
+
+					_cachedColor = InternalGetColorFromColorSetAndIndex();
+				}
       }
 
       _isInitialized = true;
@@ -243,18 +313,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       get
       {
-				if (_colorSet != null && _colorSet.Count > 0)
-				{
-					if (_colorIndex < 0)
-						_colorIndex = 0;
-					if (_colorIndex >= _colorSet.Count)
-						_colorIndex = _colorSet.Count - 1;
-					return _colorSet[_colorIndex];
-				}
-				else
-				{
-					return ColorManagement.BuiltinDarkPlotColorSet.Instance[0];
-				}
+				return _cachedColor;
       }
     }
 
@@ -265,6 +324,23 @@ namespace Altaxo.Graph.Plot.Groups
 				return _colorSet;
 			}
 		}
+
+		private NamedColor InternalGetColorFromColorSetAndIndex()
+		{
+			if (_colorSet != null && _colorSet.Count > 0)
+			{
+				if (_colorIndex < 0)
+					_colorIndex = 0;
+				if (_colorIndex >= _colorSet.Count)
+					_colorIndex = _colorSet.Count - 1;
+				return _colorSet[_colorIndex];
+			}
+			else
+			{
+				return ColorManagement.BuiltinDarkPlotColorSet.Instance[0];
+			}
+		}
+
     #endregion
 
     #region Static helpers
@@ -274,8 +350,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ColorGroupStyle)))
       {
-        ColorGroupStyle gstyle = new ColorGroupStyle();
-        gstyle.IsStepEnabled = true;
+        ColorGroupStyle gstyle = ColorGroupStyle.NewExternalGroupStyle();
         externalGroups.Add(gstyle);
       }
     }
@@ -286,7 +361,7 @@ namespace Altaxo.Graph.Plot.Groups
       IPlotGroupStyleCollection localGroups)
     {
       if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(ColorGroupStyle)))
-        localGroups.Add(new ColorGroupStyle());
+        localGroups.Add(ColorGroupStyle.NewLocalGroupStyle());
     }
 
     public delegate NamedColor Getter();
@@ -299,7 +374,7 @@ namespace Altaxo.Graph.Plot.Groups
         && null != localGroups
         && !localGroups.ContainsType(typeof(ColorGroupStyle)))
       {
-        localGroups.Add(new ColorGroupStyle());
+        localGroups.Add(ColorGroupStyle.NewLocalGroupStyle());
       }
 
       ColorGroupStyle grpStyle = null;
