@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<!-- Please edit the global variables UPGRADECODE, MAJORVERSION and MINORVERSION in the MSBuildVersion.xml file in the source root directory only -->
+	<?define UpgradeCode="$UPGRADECODE$" ?>
+	<!--  Versioning. These have to be changed for upgrades.  It's not enough to just include newer files.  --> 
+	<?define MajorVersion="$MAJORVERSION$" ?>
+	<?define MinorVersion="$MINORVERSION$" ?>
+	<?define BuildVersion="$REVNUM$" ?>
+	<!-- Revision is NOT used by WiX in the upgrade procedure -->
+	<?define Revision="$DIRTY$" ?>
+	<!-- Full version number to display --> 
+	<?define VersionNumber="$(var.MajorVersion).$(var.MinorVersion).$(var.BuildVersion).$(var.Revision)" ?> 
+	<!--  The name of your application exe file. This will be used to kill the process when updating  and creating the desktop shortcut  --> 
+	<?define ExeProcessName="AltaxoStartup.exe" ?>
+	</Include>
