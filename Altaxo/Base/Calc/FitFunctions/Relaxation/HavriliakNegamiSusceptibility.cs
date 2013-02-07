@@ -36,6 +36,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		bool _useFlowTerm;
 		bool _isDielectricData;
 		int _numberOfTerms = 1;
+		bool _invertViscosity = true;
+		bool _invertResult;
+		bool _logarithmizeResults;
 
 		#region Serialization
 
@@ -122,7 +125,40 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
 				s._useFlowTerm = info.GetBoolean("FlowTerm");
 				s._isDielectricData = info.GetBoolean("IsDielectric");
-				s.NumberOfRelaxationTerms = info.GetInt32("NumberOfTerms");
+				s.NumberOfRelaxations = info.GetInt32("NumberOfTerms");
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Extended 2013-02-07 by InvertViscosity, InvertResult and LogarithmizeResults
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 4)]
+		class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+				info.AddValue("FlowTerm", s._useFlowTerm);
+				info.AddValue("IsDielectric", s._isDielectricData);
+				info.AddValue("InvertViscosity", s._invertViscosity);
+				info.AddValue("NumberOfRelaxations", s._numberOfTerms);
+				info.AddValue("InvertResult", s._invertResult);
+				info.AddValue("LogarithmizeResults", s._logarithmizeResults);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+				s._useFlowTerm = info.GetBoolean("FlowTerm");
+				s._isDielectricData = info.GetBoolean("IsDielectric");
+				s._invertViscosity = info.GetBoolean("InvertViscosity");
+				s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+				s._invertResult = info.GetBoolean("InvertResult");
+				s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
 
 				return s;
 			}
@@ -135,7 +171,55 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 		}
 
-		public int NumberOfRelaxationTerms
+		public bool UseFrequencyInsteadOmega
+		{
+			get { return _useFrequencyInsteadOmega; }
+			set
+			{
+				var oldValue = _useFrequencyInsteadOmega;
+				_useFrequencyInsteadOmega = value;
+				if (oldValue != value)
+					OnChanged();
+			}
+		}
+
+		public bool UseFlowTerm
+		{
+			get { return _useFlowTerm; }
+			set
+			{
+				var oldValue = _useFlowTerm;
+				_useFlowTerm = value;
+				if (oldValue != value)
+					OnChanged();
+			}
+		}
+
+		public bool IsDielectricData
+		{
+			get { return _isDielectricData; }
+			set
+			{
+				var oldValue = _isDielectricData;
+				_isDielectricData = value;
+				if (oldValue != value)
+					OnChanged();
+			}
+		}
+
+		public bool InvertViscosity
+		{
+			get { return _invertViscosity; }
+			set
+			{
+				var oldValue = _invertViscosity;
+				_invertViscosity = value;
+				if (oldValue != value)
+					OnChanged();
+			}
+		}
+
+		public int NumberOfRelaxations
 		{
 			get
 			{
@@ -151,6 +235,48 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				{
 					OnChanged();
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the complex dependent variable (the output of the fit function) should be inverted.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
+		/// </value>
+		public bool InvertResult
+		{
+			get
+			{
+				return _invertResult;
+			}
+			set
+			{
+				var oldValue = _invertResult;
+				_invertResult = value;
+				if (value != oldValue)
+					OnChanged();
+			}
+		}
+
+		/// <summary>
+		/// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
+		/// </value>
+		public bool LogarithmizeResults
+		{
+			get
+			{
+				return _logarithmizeResults;
+			}
+			set
+			{
+				var oldValue = _logarithmizeResults;
+				_logarithmizeResults = value;
+				if (value != oldValue)
+					OnChanged();
 			}
 		}
 
@@ -260,7 +386,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 			var idx = i % 4;
 			var term = i / 4;
-			if (term < NumberOfRelaxationTerms)
+			if (term < NumberOfRelaxations)
 				return namearr[idx+1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
 				else
 				return namearr[namearr.Length - 1];
@@ -313,17 +439,31 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[1+j], P[2+j]), P[3+j]);
 			}
 
-			Y[0] = result.Re;
+			// note: because it is a susceptiblity, the imaginary part is still negative
 
 			if (this._useFlowTerm)
 			{
 				if (this._isDielectricData)
-					Y[1] = -result.Im + P[j] / (x * 8.854187817e-12);
+					result.Im -= P[j] / (x * 8.854187817e-12);
+				else if (this._invertViscosity)
+					result.Im -= P[j] / (x);
 				else
-					Y[1] = -result.Im + P[j] / (x);
+					result.Im -= 1 / (P[j] * x);
 			}
+
+			if (_invertResult)
+				result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
 			else
-				Y[1] = -result.Im;
+				result.Im = -result.Im; // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
+
+			if (_logarithmizeResults)
+			{
+				result.Re = Math.Log10(result.Re);
+				result.Im = Math.Log10(result.Im);
+			}
+
+			Y[0] = result.Re;
+			Y[1] = result.Im;
 		}
 
 		public void EvaluateGradient(double[] X, double[] P, double[][] DY)

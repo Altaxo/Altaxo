@@ -36,6 +36,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		bool _isDielectricData;
 		bool _invertViscosity = true;
 		int _numberOfRelaxations = 1;
+		bool _invertResult;
+		bool _logarithmizeResults;
+
 
 		#region Serialization
 
@@ -85,13 +88,46 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
+		/// <summary>
+		/// 2013-02-07 extended by InvertResult und LogarithmizeResults
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschSusceptibility), 2)]
+		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				KohlrauschSusceptibility s = (KohlrauschSusceptibility)obj;
+				info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+				info.AddValue("FlowTerm", s._useFlowTerm);
+				info.AddValue("IsDielectric", s._isDielectricData);
+				info.AddValue("InvertViscosity", s._invertViscosity);
+				info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
+				info.AddValue("InvertResult", s._invertResult);
+				info.AddValue("LogarithmizeResults", s._logarithmizeResults);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				KohlrauschSusceptibility s = o != null ? (KohlrauschSusceptibility)o : new KohlrauschSusceptibility();
+				s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+				s._useFlowTerm = info.GetBoolean("FlowTerm");
+				s._isDielectricData = info.GetBoolean("IsDielectric");
+				s._invertViscosity = info.GetBoolean("InvertViscosity");
+				s._numberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+				s._invertResult = info.GetBoolean("InvertResult");
+				s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
+
+				return s;
+			}
+		}
+
 		#endregion
 
 
 		public bool UseFrequencyInsteadOmega
 		{
 			get { return _useFrequencyInsteadOmega; }
-			set 
+			set
 			{
 				var oldValue = _useFrequencyInsteadOmega;
 				_useFrequencyInsteadOmega = value;
@@ -115,7 +151,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		public bool IsDielectricData
 		{
 			get { return _isDielectricData; }
-			set 
+			set
 			{
 				var oldValue = _isDielectricData;
 				_isDielectricData = value;
@@ -127,7 +163,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		public bool InvertViscosity
 		{
 			get { return _invertViscosity; }
-			set 
+			set
 			{
 				var oldValue = _invertViscosity;
 				_invertViscosity = value;
@@ -147,6 +183,48 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				_numberOfRelaxations = value;
 
 				if (oldValue != value)
+					OnChanged();
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the complex dependent variable (the output of the fit function) should be inverted.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
+		/// </value>
+		public bool InvertResult
+		{
+			get
+			{
+				return _invertResult;
+			}
+			set
+			{
+				var oldValue = _invertResult;
+				_invertResult = value;
+				if (value != oldValue)
+					OnChanged();
+			}
+		}
+
+		/// <summary>
+		/// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
+		/// </value>
+		public bool LogarithmizeResults
+		{
+			get
+			{
+				return _logarithmizeResults;
+			}
+			set
+			{
+				var oldValue = _logarithmizeResults;
+				_logarithmizeResults = value;
+				if (value != oldValue)
 					OnChanged();
 			}
 		}
@@ -304,21 +382,31 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				result += P[0 + iPar] * Kohlrausch.ReIm(P[2 + iPar], P[1 + iPar] * x);
 			}
 
-			Y[0] = result.Re;
+			// note: because it is a susceptiblity, the imaginary part is still negative
 
 			if (this._useFlowTerm)
 			{
 				if (this._isDielectricData)
-					Y[1] = -result.Im + P[iPar] / (x * 8.854187817e-12);
+					result.Im -= P[iPar] / (x * 8.854187817e-12);
 				else if (this._invertViscosity)
-					Y[1] = -result.Im + P[iPar] / (x);
+					result.Im -= P[iPar] / (x);
 				else
-					Y[1] = -result.Im + 1 / (P[iPar] * x);
+					result.Im -= 1 / (P[iPar] * x);
 			}
+
+			if (_invertResult)
+				result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
 			else
+				result.Im = -result.Im; // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
+
+			if (_logarithmizeResults)
 			{
-				Y[1] = -result.Im;
+				result.Re = Math.Log10(result.Re);
+				result.Im = Math.Log10(result.Im);
 			}
+
+			Y[0] = result.Re;
+			Y[1] = result.Im;
 		}
 
 

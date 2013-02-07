@@ -31,6 +31,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 	[FitFunctionClass]
 	public class KohlrauschDecay : IFitFunction
 	{
+		int _numberOfRelaxations = 1;
+		bool _logarithmizeResult;
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 0)]
@@ -48,11 +51,76 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
+		/// <summary>
+		/// 2013-02-07 extended by NumberOfRelaxations and LogarithmizeResult
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 1)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				KohlrauschDecay s = (KohlrauschDecay)obj;
+				info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
+				info.AddValue("LogarithmizeResult", s._logarithmizeResult);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
+				s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+				s._logarithmizeResult = info.GetBoolean("LogarithmizeResult");
+				return s;
+			}
+		}
+
 		#endregion
+
 		public KohlrauschDecay()
 		{
 
 		}
+
+		public int NumberOfRelaxations
+		{
+			get
+			{
+				return _numberOfRelaxations;
+			}
+			set
+			{
+				var oldValue = _numberOfRelaxations;
+				value = Math.Max(value, 0);
+				_numberOfRelaxations = value;
+
+				if (oldValue != value)
+				{
+					OnChanged();
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
+		/// </value>
+		public bool LogarithmizeResult
+		{
+			get
+			{
+				return _logarithmizeResult;
+			}
+			set
+			{
+				var oldValue = _logarithmizeResult;
+				_logarithmizeResult = value;
+				if (value != oldValue)
+					OnChanged();
+			}
+		}
+
 
 		public override string ToString()
 		{
@@ -90,7 +158,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		{
 			get
 			{
-				return 4;
+				return 1+3*_numberOfRelaxations;
 			}
 		}
 
@@ -102,29 +170,38 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 		public string DependentVariableName(int i)
 		{
-			return "y";
+			return _logarithmizeResult ? "lg y" : "y";
 		}
 
+		static readonly string[] _parameterNames = new string[] { "offset", "amplitude", "tau", "beta" };
 		public string ParameterName(int i)
 		{
-			return (new string[] { "offset", "amplitude", "tau", "beta" })[i];
+			var namearr = _parameterNames;
+			if (0 == i)
+				return namearr[0]; // eps_inf
+
+			--i;
+			var idx = i % 3;
+			var term = i / 3;
+			return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+
 		}
 
 		public double DefaultParameterValue(int i)
 		{
-			switch (i)
-			{
-				case 0:
-					return 0;
-				case 1:
-					return 1;
-				case 2:
-					return 1;
-				case 3:
-					return 1;
-			}
+			if (0 == i)
+				return 0; // offset
+			--i;
+			var idx = i % 3;
+			var term = i / 3;
 
-			return 0;
+			if (term == 0)
+				return 1; // 1 for all parameters in relaxation term1
+
+			if (idx == 1 || idx==2)
+				return 1; // 1 for all taus and betas
+
+			return 0; // 0 for all amplitudes
 		}
 
 		public IVarianceScaling DefaultVarianceScaling(int i)
@@ -134,7 +211,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 		public void Evaluate(double[] X, double[] P, double[] Y)
 		{
-			Y[0] = P[0] + P[1] * Math.Exp(-Math.Pow(X[0] / P[2], P[3]));
+			double sum = P[0];
+
+			for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j+=3)
+				sum += P[j] * Math.Exp(-Math.Pow(X[0] / P[j+1], P[j+2]));
+
+
+			Y[0] =  _logarithmizeResult ? Math.Log10(sum) : sum;
 		}
 
 
