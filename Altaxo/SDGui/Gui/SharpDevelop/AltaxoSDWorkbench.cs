@@ -67,7 +67,7 @@ namespace Altaxo.Gui.SharpDevelop
 			_wb.mainMenuPath = "/Altaxo/Workbench/MainMenu";
 			_wb.viewContentPath = "/Altaxo/Workbench/Pads";
 			_wb.toolBarPath = "/Altaxo/Workbench/ToolBar";
-			_wb.Icon = PresentationResourceService.GetBitmapSource("Icons.32x32.Altaxo");
+			_wb.Icon = null; // PresentationResourceService.GetBitmapSource("Icons.MainApplicationIcon");
 
 			// events
 			_wb.Closing += EhOnClosing;
