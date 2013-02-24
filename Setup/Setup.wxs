@@ -15,7 +15,7 @@
 		<Package	Comments="Altaxo data analysis and plotting program"
 							Compressed="yes"
 							InstallerVersion="200"
-							Keywords="plotting,data processing, special functions, graph, fitting"
+							Keywords="plotting, data processing, special functions, graph, fitting"
 							Languages="1033"
 							Manufacturer="Dr. Dirk Lellinger"
 							Platform="x86" />
@@ -24,7 +24,7 @@
 		<PropertyRef Id="NETFRAMEWORK40FULL"/>
 		<Media Id='1' Cabinet='Altaxo.cab' EmbedCab='yes'/>
 
-		<Condition Message="This application requires .NET Framework 4.0 (full version). Please install the .NET Framework then run this installer again.">
+		<Condition Message="This application requires the Microsoft .NET Framework 4.0 (full version). Please download the Microsoft .NET Framework 4.0 (full version) from the Microsoft Web site, install it, and then re-run this installer again.">
 			<![CDATA[Installed OR NETFRAMEWORK40FULL]]>
 		</Condition>
 
@@ -78,6 +78,18 @@
 					<Extension Id="axoprj">
 						<!-- The trick to use a TargetProperty instead of a TargetFile is described here: http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Problem-with-file-association-and-harvesting-files-td7016927.html -->
 						<Verb Id="open" Command="&amp;Open" Argument="&quot;%1&quot;" TargetProperty="FileAssociationProperty" /> 
+					</Extension>
+				</ProgId>
+				<ProgId Id="AltaxoWorksheet" Description="Altaxo worksheet" Icon="filA05E81D60406FC97A60A59138305091A" IconIndex="0">
+					<Extension Id="axowks">
+						<!-- The trick to use a TargetProperty instead of a TargetFile is described here: http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Problem-with-file-association-and-harvesting-files-td7016927.html -->
+						<Verb Id="open" Command="&amp;Open" Argument="&quot;%1&quot;" TargetProperty="FileAssociationProperty" />
+					</Extension>
+				</ProgId>
+				<ProgId Id="AltaxoGraph" Description="Altaxo graph" Icon="filA05E81D60406FC97A60A59138305091A" IconIndex="0">
+					<Extension Id="axogrp">
+						<!-- The trick to use a TargetProperty instead of a TargetFile is described here: http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Problem-with-file-association-and-harvesting-files-td7016927.html -->
+						<Verb Id="open" Command="&amp;Open" Argument="&quot;%1&quot;" TargetProperty="FileAssociationProperty" />
 					</Extension>
 				</ProgId>
 				<RegistryValue Root="HKLM" Key="Software\[Manufacturer]\[ProductName]" Name="AltaxoVerbInstalled" Type="integer" Value="1" KeyPath="yes"/>
