@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-        Current.Gui.ShowBackgroundCancelDialog(10000, null, new System.Threading.ThreadStart(fitAdapter.DoSimplexMinimization));
+				Current.Gui.ShowBackgroundCancelDialog(10000, null, new System.Threading.ThreadStart(fitAdapter.DoSimplexMinimization));
 
 				this._chiSquare = fitAdapter.ResultingChiSquare;
 
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-        Current.Gui.ShowBackgroundCancelDialog(10000, null, new System.Threading.ThreadStart(fitAdapter.Fit));
+				Current.Gui.ShowBackgroundCancelDialog(10000, null, new System.Threading.ThreadStart(fitAdapter.Fit));
 
 				this._chiSquare = fitAdapter.ResultingChiSquare;
 
@@ -357,7 +357,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 			// calculate the resulting values
 			double[] resultingValues = new double[numberOfData];
-			fitAdapter.EvaluateFitValues(resultingValues,calculateUnusedDependentVariablesAlso);
+			fitAdapter.EvaluateFitValues(resultingValues, calculateUnusedDependentVariablesAlso);
 
 			int nextStartOfDependentValues = 0;
 			for (int i = 0; i < _doc.FitEnsemble.Count; i++)
@@ -394,20 +394,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 						for (int j = 0; j < validRows.Count; j++)
 							col[validRows[j]] = resultingValues[startOfDependentValues + k + j * inUse.Length];
 
-            string name=null;
-            int groupNumber = 0;
-            if (fitEle.DependentVariables(inUse[k]) is DataColumn)
-            {
-              var srcCol = (DataColumn)fitEle.DependentVariables(inUse[k]);
-              var srcTable = DataColumnCollection.GetParentDataColumnCollectionOf(srcCol);
-              if(srcTable!=null)
-              {
-                name = srcTable.GetColumnName(srcCol);
-                groupNumber = srcTable.GetColumnGroup(srcCol);
-              }
-            }
-            if (null == name)
-              fitEle.FitFunction.DependentVariableName(inUse[k]);
+						string name = null;
+						int groupNumber = 0;
+						if (fitEle.DependentVariables(inUse[k]) is DataColumn)
+						{
+							var srcCol = (DataColumn)fitEle.DependentVariables(inUse[k]);
+							var srcTable = DataColumnCollection.GetParentDataColumnCollectionOf(srcCol);
+							if (srcTable != null)
+							{
+								name = srcTable.GetColumnName(srcCol);
+								groupNumber = srcTable.GetColumnGroup(srcCol);
+							}
+						}
+						if (null == name)
+							fitEle.FitFunction.DependentVariableName(inUse[k]);
 
 						parentTable.DataColumns.Add(col, name + ".Sim", ColumnKind.V, groupNumber);
 					}
@@ -443,7 +443,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					yCols[k] = new DoubleColumn();
 
 				fitAdapter.GetParameters(i, P);
-				for(int k=0;k<intervalCount;k++)
+				for (int k = 0; k < intervalCount; k++)
 				{
 					double xx = interval[k];
 
@@ -461,20 +461,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 
 				for (int k = 0; k < fitEle.NumberOfIndependentVariables; k++)
-					parentTable.DataColumns.Add(xCols[k], fitEle.FitFunction.DependentVariableName(k) + ".Sim", ColumnKind.X,newGroup);
+					parentTable.DataColumns.Add(xCols[k], fitEle.FitFunction.DependentVariableName(k) + ".Sim", ColumnKind.X, newGroup);
 
 				if (calculateUnusedDependentVariablesAlso)
 				{
 					// now we have the parent table, we can add columns to it as we need for the independent variables
 					for (int k = 0; k < fitEle.NumberOfDependentVariables; k++)
-						parentTable.DataColumns.Add(yCols[k], fitEle.FitFunction.DependentVariableName(k) + ".Sim", ColumnKind.V,newGroup);
+						parentTable.DataColumns.Add(yCols[k], fitEle.FitFunction.DependentVariableName(k) + ".Sim", ColumnKind.V, newGroup);
 				}
 				else // use only the used dependent variables
 				{
 					int[] inUse = fitAdapter.GetDependentVariablesInUse(i);
 					// copy the evaluation result to the output array (interleaved)
 					for (int k = 0; k < inUse.Length; ++k)
-						parentTable.DataColumns.Add(yCols[inUse[k]], fitEle.FitFunction.DependentVariableName(inUse[k]) + ".Sim", ColumnKind.V,newGroup);
+						parentTable.DataColumns.Add(yCols[inUse[k]], fitEle.FitFunction.DependentVariableName(inUse[k]) + ".Sim", ColumnKind.V, newGroup);
 				}
 			}
 		}
@@ -537,11 +537,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				System.Text.StringBuilder stb = new System.Text.StringBuilder();
 				for (int i = 0; i < _doc.CurrentParameters.Count; i++)
 				{
-					stb.Append("double ");
-					stb.Append(_doc.CurrentParameters[i].Name);
-					stb.Append(" = ");
-					stb.Append(Altaxo.Serialization.NumberConversion.ToString(_doc.CurrentParameters[i].Parameter));
-					stb.Append(";\r\n");
+					stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "double {0} = {1};\r\n", _doc.CurrentParameters[i].Name, _doc.CurrentParameters[i].Parameter);
 				}
 				dao.SetData(typeof(string), stb.ToString());
 				Current.Gui.SetClipboardDataObject(dao, true);
