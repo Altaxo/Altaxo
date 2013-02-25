@@ -9,7 +9,9 @@
 	<!-- Revision is NOT used by WiX in the upgrade procedure -->
 	<?define Revision="$DIRTY$" ?>
 	<!-- Full version number to display --> 
-	<?define VersionNumber="$(var.MajorVersion).$(var.MinorVersion).$(var.BuildVersion).$(var.Revision)" ?> 
+	<?define VersionNumber="$(var.MajorVersion).$(var.MinorVersion).$(var.BuildVersion).$(var.Revision)" ?>
+	<!-- The ProductGuid is calculated by MSBuildVersioning by a combination of UPGRADECODE, MAJORVERSION, MINORVERSION and REVNUM -->
+	<?define ProductGuid="$PRODUCTGUID$" ?>
 	<!--  The name of your application exe file. This will be used to kill the process when updating  and creating the desktop shortcut  --> 
 	<?define ExeProcessName="AltaxoStartup.exe" ?>
 	</Include>
