@@ -104,14 +104,6 @@ namespace Altaxo.Graph.ColorManagement
 		int IndexOf(AxoColor colorValue);
 
 		/// <summary>
-		/// Get the indexes of a color with a given color value and name.
-		/// </summary>
-		/// <param name="colorValue">The named color value.</param>
-		/// <returns>The index of the color in this color set, if a such a color was found in the set. The color must match with both color value and name. Otherwise, when such a color is not found, a negative value is returned.</returns>
-		int IndexOf(NamedColor colorValue);
-
-
-		/// <summary>
 		/// Adds a color with the specified color value and name to the collection.
 		/// </summary>
 		/// <param name="colorValue">The color value.</param>

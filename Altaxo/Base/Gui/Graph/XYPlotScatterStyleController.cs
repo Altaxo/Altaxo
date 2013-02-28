@@ -62,7 +62,6 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the independent symbol size check box.
     /// </summary>
-    /// <param name="val">True when independent symbol size is choosen.</param>
     bool IndependentSymbolSize { get; set; }
 
 

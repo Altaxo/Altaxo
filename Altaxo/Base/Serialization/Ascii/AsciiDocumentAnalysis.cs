@@ -38,7 +38,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>If the number of main header lines is known before this analysis, this list contains the main header lines.</summary>
 		List<string> _headerLines;
 
-		/// <summary>First lines of the document to analyze. Note that this not neccessarily have to be the first lines. The line number of the first line in this collection is designated by <see cref="_headerLines.Count"/>.</summary>
+		/// <summary>First lines of the document to analyze. Note that this not neccessarily have to be the first lines. The line number of the first line in this collection is designated by <see cref="P:_headerLines.Count"/>.</summary>
 		List<string> _bodyLines;
 
 

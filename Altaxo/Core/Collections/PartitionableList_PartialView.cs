@@ -31,14 +31,14 @@ namespace Altaxo.Collections
 {
 	public partial class PartitionableList<T> : System.Collections.ObjectModel.ObservableCollection<T>
 	{
-		private class PartialView<T> : IList<T>
+		private class PartialView<M> : IList<M>
 		{
-			PartitionableList<T> _collection;
-			public Func<T, bool> _selectionCriterium;
+			PartitionableList<M> _collection;
+			public Func<M, bool> _selectionCriterium;
 			public List<int> _itemIndex;
 
 
-			protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium)
+			protected internal PartialView(PartitionableList<M> list, Func<M, bool> selectionCriterium)
 			{
 				_collection = list;
 				_selectionCriterium = selectionCriterium;
@@ -50,8 +50,8 @@ namespace Altaxo.Collections
 			/// Finds the item in the list that is equal to <paramref name="value"/>.
 			/// </summary>
 			/// <param name="value">The value to found.</param>
-			/// <param name="index">On return, contains the index of the item in <see cref="_itemList"/> that is equal to contains <paramref name="value"/> (if such an item is found). Otherwise, contains the index of the first item which is greater than <paramref name="value"/>.</param>
-			/// <returns>True if <see cref="_itemList"/> contains an item equal to <paramref name="value"/>. Otherwise, the return value is <c>false</c>.</returns>
+			/// <param name="indexFound">On return, contains the index of the item in <see cref="_itemIndex"/> that is equal to contains <paramref name="value"/> (if such an item is found). Otherwise, contains the index of the first item which is greater than <paramref name="value"/>.</param>
+			/// <returns>True if <see cref="_itemIndex"/> contains an item equal to <paramref name="value"/>. Otherwise, the return value is <c>false</c>.</returns>
 			public bool TryFindIndexOfItemGreaterThanOrEqualTo(int value, out int indexFound)
 			{
 				int upperIndex = _itemIndex.Count - 1;
@@ -95,7 +95,7 @@ namespace Altaxo.Collections
 
 			#region IList implementations
 
-			public int IndexOf(T item)
+			public int IndexOf(M item)
 			{
 				for (int i = 0; i < _itemIndex.Count; ++i)
 				{
@@ -105,7 +105,7 @@ namespace Altaxo.Collections
 				return -1;
 			}
 
-			public void Insert(int index, T item)
+			public void Insert(int index, M item)
 			{
 				if (index < 0 && index > _itemIndex.Count)
 					throw new ArgumentOutOfRangeException("index");
@@ -138,7 +138,7 @@ namespace Altaxo.Collections
 				_collection.RemoveAt(j);
 			}
 
-			public T this[int index]
+			public M this[int index]
 			{
 				get
 				{
@@ -153,7 +153,7 @@ namespace Altaxo.Collections
 				}
 			}
 
-			public void Add(T item)
+			public void Add(M item)
 			{
 				if (!_selectionCriterium(item))
 					throw new ArgumentException("item to insert does not fulfill the selection criterion");
@@ -186,7 +186,7 @@ namespace Altaxo.Collections
 				}
 			}
 
-			public bool Contains(T item)
+			public bool Contains(M item)
 			{
 				for (int i = 0; i < _itemIndex.Count; ++i)
 				{
@@ -196,7 +196,7 @@ namespace Altaxo.Collections
 				return false;
 			}
 
-			public void CopyTo(T[] array, int arrayIndex)
+			public void CopyTo(M[] array, int arrayIndex)
 			{
 				for (int i = 0; i < _itemIndex.Count; ++i)
 					array[i + arrayIndex] = _collection[_itemIndex[i]];
@@ -212,7 +212,7 @@ namespace Altaxo.Collections
 				get { return false; }
 			}
 
-			public bool Remove(T item)
+			public bool Remove(M item)
 			{
 				int i = IndexOf(item);
 				if (i < 0)
@@ -226,7 +226,7 @@ namespace Altaxo.Collections
 				}
 			}
 
-			public IEnumerator<T> GetEnumerator()
+			public IEnumerator<M> GetEnumerator()
 			{
 				foreach (int j in _itemIndex)
 					yield return _collection[j];

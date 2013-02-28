@@ -43,8 +43,7 @@ namespace Altaxo.Graph
 		/// <summary>Occurs when a <see cref="FontX"/> instance was disposed. Argument is the invariant description string of the destructed <see cref="FontX"/> instance.</summary>
 		public static event Action<string> FontDestructed;
 
-		/// <summary>String describing the current font. It can be different from the <see cref="_originalInvariantDescriptionString"/> if the font is not found during deserialization.
-		/// In this case, the original font is substituted by another font (probably by Microsoft Sans Serif).</summary>
+		/// <summary>String describing the original font. It can be different from the constructed font (if the original font is not found on this machine).</summary>
 		string _invariantDescriptionString;
 
 		/// <summary>Font family name.</summary>

@@ -120,8 +120,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="font">Font used.</param>
 		/// <param name="strfmt">String format used.</param>
 		/// <param name="items">Array of items to be drawn.</param>
-		/// <param name="prefixText">Text drawn before the label text.</param>
-		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
 		public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, FontX font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
 		{

@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using Altaxo.Calc;
 using NUnit.Framework;
 
-using Altaxo.Calc;
 
 namespace AltaxoTest.Calc
 {

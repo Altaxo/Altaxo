@@ -128,6 +128,8 @@ namespace Altaxo.Graph.ColorManagement
     /// </summary>
     /// <param name="name">Name of this plot color collection.</param>
     /// <param name="colorSetLevel">Hierarchie level of this color set.</param>
+		/// <param name="originalName">Original name of the color set (name as it was in deserialized content).</param>
+		/// <param name="originalColorSetLevel">Original level of the color set (level as it was in deserialized content).</param>
     /// <param name="basedOn">Another plot color collection from which to copy the initial items.</param>
     protected internal ColorSet(string name, ColorSetLevel colorSetLevel, string originalName, ColorSetLevel originalColorSetLevel, IEnumerable<NamedColor> basedOn)
     {

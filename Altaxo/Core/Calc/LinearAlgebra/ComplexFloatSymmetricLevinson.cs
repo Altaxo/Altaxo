@@ -49,7 +49,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// This class provides members for inverting a symmetric square Toeplitz matrix
 	/// (see <see cref="GetInverse"/> member), calculating the determinant of the matrix
 	/// (see <see cref="GetDeterminant"/> member) and solving linear systems associated
-	/// with the matrix (see <see cref="M:Solve"/> members).
+	/// with the matrix (see <c>Solve</c> members).
 	/// <para>
 	/// The class implements a <B>UDL</B> decomposition of the inverse of the Toeplitz matrix.
 	/// The decomposition is based upon Levinson's algorithm. As a consequence, all operations
@@ -264,11 +264,11 @@ namespace Altaxo.Calc.LinearAlgebra
 					// managed implementation
 					m_LowerTriangle[i].CopyTo(Lower.data[i], 0);
 #else
-          // native implementation
-          for( int j = 0; j < i+1; j++ )
-          {
-            Lower[i, j] = m_LowerTriangle[i][j];
-          }
+					// native implementation
+					for( int j = 0; j < i+1; j++ )
+					{
+						Lower[i, j] = m_LowerTriangle[i][j];
+					}
 #endif
 				}
 
@@ -307,8 +307,8 @@ namespace Altaxo.Calc.LinearAlgebra
 					// managed implementation
 					Diagonal.data[i][i] = m_Diagonal[i];
 #else
-          // native implementation
-          Diagonal.data[i*m_Order+i] = m_Diagonal[i];
+					// native implementation
+					Diagonal.data[i*m_Order+i] = m_Diagonal[i];
 #endif
 				}
 
@@ -518,33 +518,33 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 #else
-      if (m_Order > 1)
-      {
-        ComplexFloat[] top = new ComplexFloat[m_Order];
-        Array.Copy(m_LeftColumn.data, 0, top, 0, m_Order);
-        tm.SetRow(0, top);
+			if (m_Order > 1)
+			{
+				ComplexFloat[] top = new ComplexFloat[m_Order];
+				Array.Copy(m_LeftColumn.data, 0, top, 0, m_Order);
+				tm.SetRow(0, top);
 
-        // fill bottom row (reverse order)
-        ComplexFloat[] bottom = new ComplexFloat[m_Order];
+				// fill bottom row (reverse order)
+				ComplexFloat[] bottom = new ComplexFloat[m_Order];
 
-        for (i = 0, j = m_Order - 1; i < m_Order; i++, j--)
-        {
-          bottom[i] = m_LeftColumn[j];
-        }
+				for (i = 0, j = m_Order - 1; i < m_Order; i++, j--)
+				{
+					bottom[i] = m_LeftColumn[j];
+				}
 
-        // fill rows in-between
-        for (i = 1, j = m_Order - 1 ; j > 0; i++)
-        {
-          ComplexFloat[] temp = new ComplexFloat[m_Order];
-          Array.Copy(top, 0, temp, i, j--);
-          Array.Copy(bottom, j, temp, 0, i);
-          tm.SetRow(i, temp);
-        }
-      }
-      else
-      {
-        Array.Copy(m_LeftColumn.data, 0, tm.data, 0, m_Order);
-      }
+				// fill rows in-between
+				for (i = 1, j = m_Order - 1 ; j > 0; i++)
+				{
+					ComplexFloat[] temp = new ComplexFloat[m_Order];
+					Array.Copy(top, 0, temp, i, j--);
+					Array.Copy(bottom, j, temp, 0, i);
+					tm.SetRow(i, temp);
+				}
+			}
+			else
+			{
+				Array.Copy(m_LeftColumn.data, 0, tm.data, 0, m_Order);
+			}
 #endif
 
 			return tm;
@@ -733,7 +733,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				X.data[0][m] = scalar * Y[0, m];
 #else
 
-        X.data[m*m_Order] = scalar * Y[0,m];
+				X.data[m*m_Order] = scalar * Y[0,m];
 #endif
 			}
 
@@ -746,7 +746,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
 					Inner[m] = Y[i, m];
 #else
-          Inner[m] = Y[i,m];
+					Inner[m] = Y[i,m];
 #endif
 				}
 
@@ -758,7 +758,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
 						Inner[m] -= scalar * X.data[j][m];
 #else
-            Inner[m] -= scalar * X.data[m*m_Order+j];
+						Inner[m] -= scalar * X.data[m*m_Order+j];
 #endif
 					}
 				}
@@ -779,7 +779,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
 						X.data[j][m] += scalar * G[m];
 #else
-            X.data[m*m_Order+j] += scalar * G[m];
+						X.data[m*m_Order+j] += scalar * G[m];
 #endif
 					}
 				}
@@ -845,25 +845,25 @@ namespace Altaxo.Calc.LinearAlgebra
 
 #else
 
-      int i, j, k, l;
+			int i, j, k, l;
 
-      // setup the first row in wedge
-      scale = m_Diagonal[m_Order-1];
-      for (i = 0, j = m_Order - 1; i < m_Order; i++, j--)
-      {
-        I[0, i] = scale* A[j];
-      }
+			// setup the first row in wedge
+			scale = m_Diagonal[m_Order-1];
+			for (i = 0, j = m_Order - 1; i < m_Order; i++, j--)
+			{
+				I[0, i] = scale* A[j];
+			}
 
-      // calculate values in the rest of the wedge
-      for (i = 1; i < (1 + m_Order) / 2; i++)
-      {
-        A1 = A[m_Order - i - 1];
-        A2 = A[i - 1];
-        for (j = i, k = i - 1, l = m_Order - i - 1; j < m_Order - i; j++, k++, l--)
-        {
-          I[i, j] = I[i - 1, k] + scale * (A1 * A[l] - A2 * A[k]);
-        }
-      }
+			// calculate values in the rest of the wedge
+			for (i = 1; i < (1 + m_Order) / 2; i++)
+			{
+				A1 = A[m_Order - i - 1];
+				A2 = A[i - 1];
+				for (j = i, k = i - 1, l = m_Order - i - 1; j < m_Order - i; j++, k++, l--)
+				{
+					I[i, j] = I[i - 1, k] + scale * (A1 * A[l] - A2 * A[k]);
+				}
+			}
 
 #endif
 

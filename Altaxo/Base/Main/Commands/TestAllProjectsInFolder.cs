@@ -149,7 +149,7 @@ namespace Altaxo.Main.Commands
               "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
               "Saved successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             ++numberOfProjectsFailedToLoad;
             monitor.ReportProgress(string.Format(

@@ -893,7 +893,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 
 		/// <summary>
-		/// Applies the value for <see cref="MinGrace"/>, <see cref="MaxGrace"/> and <see cref="OneLever"/> to the scale and calculated proposed values for the boundaries.
+		/// Applies the value for <see cref="MinGrace"/> and <see cref="MaxGrace"/> to the scale and calculated proposed values for the boundaries.
 		/// </summary>
 		/// <param name="scaleOrg">Scale origin.</param>
 		/// <param name="scaleEnd">Scale end.</param>

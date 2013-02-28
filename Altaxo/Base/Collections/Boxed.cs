@@ -41,7 +41,7 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Boxed&lt;T&gt;"/> class with the value set to the default value of  <see cref="T"/>.
+		/// Initializes a new instance of the <see cref="Boxed&lt;T&gt;"/> class with the value set to the default value of  <see cref="T:T"/>.
 		/// </summary>
 		public Boxed()
 		{
@@ -57,7 +57,7 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Performs an implicit conversion from <see cref="Altaxo.Collections.Boxed&lt;T&gt;"/> to <see cref="T"/>.
+		/// Performs an implicit conversion from <see cref="Altaxo.Collections.Boxed&lt;T&gt;"/> to <see cref="T:T"/>.
 		/// </summary>
 		/// <param name="val">The boxed value</param>
 		/// <returns>
@@ -69,7 +69,7 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Performs an implicit conversion from <see cref="T"/> to <see cref="Altaxo.Collections.Boxed&lt;T&gt;"/>.
+		/// Performs an implicit conversion from <see cref="T:T"/> to <see cref="Altaxo.Collections.Boxed&lt;T&gt;"/>.
 		/// </summary>
 		/// <param name="val">The value to be boxed.</param>
 		/// <returns>

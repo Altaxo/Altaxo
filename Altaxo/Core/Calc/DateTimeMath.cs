@@ -229,7 +229,7 @@ namespace Altaxo.Calc
 		/// The resulting month number then is 1 + k*<paramref name="n"/>, with k being an integer.</summary>
 		/// <param name="x">The date.</param>
 		/// <param name="n">The number of months to round down. Must be greater than or equal to 1.</param>
-		/// <returns>A date &lt;=<paramref name="x"/>, and with a month number which is 1 + k*<paramref name="month"/>. If the resulting month is &lt;1, the year number is decreased accordingly.</returns>
+		/// <returns>A date &lt;=<paramref name="x"/>, and with a month number which is 1 + k*<paramref name="n"/>. If the resulting month is &lt;1, the year number is decreased accordingly.</returns>
 		public static DateTime RoundDownMonths(DateTime x, int n)
 		{
 			if (n <= 0)
@@ -249,7 +249,7 @@ namespace Altaxo.Calc
 		/// The resulting month number then is 1 + k*<paramref name="n"/>, with k being an integer.</summary>
 		/// <param name="x">The date.</param>
 		/// <param name="n">The number of months to round up. Must be greater than or equal to 1.</param>
-		/// <returns>A date &gt;=<paramref name="x"/>, and with a month number which is 1 + k*<paramref name="month"/>. If the resulting month is &gt;12, the year number is increased accordingly.</returns>
+		/// <returns>A date &gt;=<paramref name="x"/>, and with a month number which is 1 + k*<paramref name="n"/>. If the resulting month is &gt;12, the year number is increased accordingly.</returns>
 		public static DateTime RoundUpMonths(DateTime x, int n)
 		{
 			int totalMonth = Altaxo.Calc.Rounding.RoundUp((x.Year - 1) * 12 + (x.Month - 1), n);

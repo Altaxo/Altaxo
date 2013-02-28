@@ -29,11 +29,17 @@
 		</Condition>
 
 		<Feature Id="Complete" Title="Altaxo" Level="1" ConfigurableDirectory='APPLICATIONFOLDER' Description='The complete Altaxo package.' Display='expand' >
-			<ComponentGroupRef Id="AltaxoFiles" />
-			<ComponentRef Id="ProgramMenuDir"/>
-			<ComponentRef Id="ApplicationShortcut"/>
-			<ComponentRef Id="DesktopShortcut"/>
-			<ComponentRef Id="Extensions"/>
+			<Feature Id='feaMainProgram' Title='Program' Description='The main executable(s).' Level='1'>
+				<ComponentGroupRef Id="AltaxoFiles" />
+				<ComponentRef Id="Extensions"/>
+			</Feature>
+			<Feature Id='feaProgMenuShortcut' Title='Program menu shortcut' Description='Creates a shortcut in the program menu.' Level='1'>
+				<ComponentRef Id="ProgramMenuDir"/>
+				<ComponentRef Id="ApplicationShortcut"/>
+			</Feature>
+			<Feature Id='feaDesktopShortcut' Title='Desktop shortcut' Description='Creates a shortcut on the desktop.' Level='1'>
+				<ComponentRef Id="DesktopShortcut"/>
+			</Feature>
 		</Feature>
 	</Product>
 
@@ -77,7 +83,7 @@
 				<ProgId Id="AltaxoDocument" Description="Altaxo document" Icon="filA05E81D60406FC97A60A59138305091A" IconIndex="0">
 					<Extension Id="axoprj">
 						<!-- The trick to use a TargetProperty instead of a TargetFile is described here: http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Problem-with-file-association-and-harvesting-files-td7016927.html -->
-						<Verb Id="open" Command="&amp;Open" Argument="&quot;%1&quot;" TargetProperty="FileAssociationProperty" /> 
+						<Verb Id="open" Command="&amp;Open" Argument="&quot;%1&quot;" TargetProperty="FileAssociationProperty" />
 					</Extension>
 				</ProgId>
 				<ProgId Id="AltaxoWorksheet" Description="Altaxo worksheet" Icon="filA05E81D60406FC97A60A59138305091A" IconIndex="0">

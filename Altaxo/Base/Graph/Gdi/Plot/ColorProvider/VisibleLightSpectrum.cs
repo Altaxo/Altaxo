@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		}
 
 		/// <summary>
-		/// Gets the color in dependence of the wavelength with <see cref="DefaultGamma"/> value, <see cref="DefaultIntensityMaximum"/> and no transparency.
+		/// Gets the color in dependence of the wavelength with <see cref="DefaultGamma"/> value, <see cref="DefaultBrightness"/> and no transparency.
 		/// </summary>
 		/// <param name="Wavelength">Wavelength in nm (ranging from 350 to 780).</param>
 		/// <returns>Color in dependence of the provided wavelength value.</returns>

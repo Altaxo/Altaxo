@@ -44,8 +44,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="font">The font that is used to draw the item.</param>
 		/// <param name="strfmt">String format used to draw the item.</param>
 		/// <param name="mtick">The item to draw.</param>
-		/// <param name="prefixText">Text drawn before the label text.</param>
-		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location the item will be drawn.</param>
 		/// <returns>The size of the item if it would be drawn.</returns>
 		SizeF MeasureItem(Graphics g, FontX font, System.Drawing.StringFormat strfmt, Data.AltaxoVariant mtick, PointF morg);
@@ -58,8 +56,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="font">Font used to draw the item.</param>
 		/// <param name="strfmt">String format.</param>
 		/// <param name="item">The item to draw.</param>
-		/// <param name="prefixText">Text drawn before the label text.</param>
-		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <param name="morg">The location where the item is drawn to.</param>
 		void DrawItem(Graphics g, BrushX brush, FontX font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointF morg);
 
@@ -70,8 +66,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="font">Font used.</param>
 		/// <param name="strfmt">String format used.</param>
 		/// <param name="items">Array of items to be drawn.</param>
-		/// <param name="prefixText">Text drawn before the label text.</param>
-		/// <param name="postfixText">Text drawn after the label text.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
 		IMeasuredLabelItem[] GetMeasuredItems(Graphics g, FontX font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items);
 

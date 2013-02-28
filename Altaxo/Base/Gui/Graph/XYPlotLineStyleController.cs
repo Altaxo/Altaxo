@@ -52,7 +52,6 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the LineSymbolGap check box.
     /// </summary>
-    /// <param name="bGap">True if a gap between symbols and line should be shown.</param>
 		bool LineSymbolGap { get; set; }
 
 		bool ConnectCircular { get; set; }
@@ -93,7 +92,6 @@ namespace Altaxo.Gui.Graph
 		/// Initializes the fill direction combobox.
 		/// </summary>
 		/// <param name="list">List of possible selections.</param>
-		/// <param name="sel">Current selection index.</param>
 		void InitializeFillDirection(SelectableListNodeList list);
   
 

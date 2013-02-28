@@ -210,8 +210,8 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Finds the item in the list that than or equal to.
 		/// </summary>
-		/// <param name="itemIndex">Index of the item.</param>
-		/// <param name="index">The index.</param>
+		/// <param name="itemIndex">List with the ordered list of item indices.</param>
+		/// <param name="value">The index to find.</param>
 		/// <returns></returns>
 		private static int FindIndexOfItemGreaterThanOrEqualTo(IList<int> itemIndex, int value)
 		{

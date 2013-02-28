@@ -75,8 +75,9 @@ namespace Altaxo.Serialization.Ascii
 		/// Analyse the provided line of text with regard to one separation stragegy and returns the resulting structure.
 		/// </summary>
 		/// <param name="nLine">Line number.</param>
-		/// <param name="sLine">The line to analyse.</param>
-		/// <param name="separation">The separation stragegy that is used to separate the tokens of the line.</param>
+		/// <param name="tokens">The content of the line, already separated into tokens.</param>
+		/// <param name="numberFormat">The number culture to use.</param>
+		/// <param name="dateTimeFormat">The DateTime format culture to use.</param>
 		/// <returns>The resulting structure.</returns>
 		public static AsciiLineStructure GetStructure(int nLine, IEnumerable<string> tokens, System.Globalization.CultureInfo numberFormat, System.Globalization.CultureInfo dateTimeFormat)
 		{
@@ -122,6 +123,7 @@ namespace Altaxo.Serialization.Ascii
 		/// Tests wether or not the string s is a date/time string.
 		/// </summary>
 		/// <param name="s">The string to test.</param>
+		/// <param name="dateTimeFormat">The culture info used to test if <paramref name="s"/> is a date/time string.</param>
 		/// <returns>True if the string can be parsed to a date/time value.</returns>
 		public static bool IsDateTime(string s, System.Globalization.CultureInfo dateTimeFormat)
 		{
@@ -134,6 +136,7 @@ namespace Altaxo.Serialization.Ascii
 		/// is made afterwards.
 		/// </summary>
 		/// <param name="s"></param>
+		/// <param name="numberFormat">Culture info used to decide if <paramref name="s"/> is a number.</param>
 		/// <returns></returns>
 		public static bool IsNumeric(string s, System.Globalization.CultureInfo numberFormat)
 		{
@@ -145,6 +148,7 @@ namespace Altaxo.Serialization.Ascii
 		/// Tests if the string <c>s</c> is an integral numeric value.
 		/// </summary>
 		/// <param name="s"></param>
+		/// <param name="numberFormat">Culture info used to decide if <paramref name="s"/> is an integer.</param>
 		/// <returns></returns>
 		public static bool IsIntegral(string s, System.Globalization.CultureInfo numberFormat)
 		{
@@ -153,9 +157,10 @@ namespace Altaxo.Serialization.Ascii
 		}
 
 		/// <summary>
-		/// Tests if the string <c>s</c> is an numeric value with <see cref="NumberStyles.Float"/>.
+		/// Tests if the string <c>s</c> is an numeric value with <see cref="P:System.Globalization.NumberStyles.Float"/>.
 		/// </summary>
 		/// <param name="s"></param>
+		/// <param name="numberFormat">Culture info used to decide if <paramref name="s"/> is a floating point number.</param>
 		/// <returns></returns>
 		public static bool IsFloat(string s, System.Globalization.CultureInfo numberFormat)
 		{

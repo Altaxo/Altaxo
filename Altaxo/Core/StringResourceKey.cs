@@ -37,7 +37,7 @@ namespace Altaxo
 		readonly string _description;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ResourceKey"/> struct.
+		/// Initializes a new instance of the <see cref="StringResourceKey"/> struct.
 		/// </summary>
 		/// <param name="key">The resource key.</param>
 		/// <param name="exampleValue">An example of the resource string (always in the english language).</param>
