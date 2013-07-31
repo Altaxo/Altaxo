@@ -265,6 +265,7 @@
     <Compile Include="Calc\Probability\TestStableDistribution.cs" />
     <Compile Include="Calc\Regression\NonLinearFit_Tests.cs" />
     <Compile Include="Calc\Regression\TestNonlinearFit2.cs" />
+    <Compile Include="Calc\RootFinding\PolynomialRootFindingTest.cs" />
     <Compile Include="Calc\TestBesselRelated.cs">
       <SubType>Code</SubType>
     </Compile>

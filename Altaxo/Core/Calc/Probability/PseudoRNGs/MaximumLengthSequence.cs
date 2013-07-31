@@ -229,6 +229,32 @@ namespace Altaxo.Calc.Probability
 			}
 		}
 
+		/// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
+		/// <param name="sequenceLength">The minimum length of the binary sequency. </param>
+		/// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
+		public static int GetSequenceLengthFromMinimumSequenceLength(int sequenceLength)
+		{
+			var result = sequenceLength;
+			if (!(sequenceLength >= MinimumSequenceLength))
+				result = MinimumSequenceLength;
+
+			int stages = 1 + BinaryMath.Ld(sequenceLength);
+			return (int)GetSequenceLengthFromNumberOfStages(stages);
+		}
+
+		/// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
+		/// <param name="sequenceLength">The minimum length of the binary sequency. </param>
+		/// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
+		public static ulong GetSequenceLengthFromMinimumSequenceLength(ulong sequenceLength)
+		{
+			var result = sequenceLength;
+			if (!(sequenceLength >= MinimumSequenceLength))
+				result = MinimumSequenceLength;
+
+			int stages = 1 + BinaryMath.Ld(sequenceLength);
+			return GetSequenceLengthFromNumberOfStages(stages);
+		}
+
 		private static ulong GetSequenceLengthFromNumberOfStages(int numberOfStages)
 		{
 			ulong result = 1UL << (numberOfStages - 1);

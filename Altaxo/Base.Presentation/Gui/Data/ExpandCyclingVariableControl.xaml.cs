@@ -52,6 +52,12 @@ namespace Altaxo.Gui.Data
 			GuiHelper.Initialize(_cbColWithCyclingVar, list);
 		}
 
+		private void EhCyclicVarChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_cbColWithCyclingVar);
+		}
+
+
 		public void InitializeColumnsToAverage(SelectableListNodeList list)
 		{
 			_lbColsToAverage.Initialize(list);
@@ -76,6 +82,7 @@ namespace Altaxo.Gui.Data
 		{
 			_chDestinationRowSort.Initialize(list);
 		}
+
 
 
 

@@ -595,7 +595,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			_cellEditControl.Visibility = Visibility.Hidden;
 			_cellEdit_IsArmed = false;
-			_view.Canvas.Focus();
+			if(null!=_view) // view can already be closed
+				_view.Canvas.Focus();
 		}
 
 		void ShowCellEditControl()

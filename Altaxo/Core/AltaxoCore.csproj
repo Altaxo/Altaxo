@@ -513,6 +513,8 @@
     <Compile Include="Calc\RMath.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\RootFinding\ComplexPolynomialRootFinder_JenkinsTraub.cs" />
+    <Compile Include="Calc\RootFinding\RealPolynomialRootFinder_JenkinsTraub.cs" />
     <Compile Include="Calc\RootFinding\QuickRootFinding.cs" />
     <Compile Include="Calc\RootFinding\AbstractRootFinder.cs">
       <SubType>Code</SubType>
