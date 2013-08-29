@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           list.Add(item);
         }
 
-        _view.Initialize(list);
+        Current.Gui.Execute(()=>_view.Initialize(list));
       }
     }
 
