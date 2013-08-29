@@ -193,8 +193,8 @@ namespace Altaxo.Graph.Gdi
 				return false;
 		}
 
-		XYPlotLayer _parentLayer;
-		public XYPlotLayer ParentLayer
+		HostLayer _parentLayer;
+		public HostLayer ParentLayer
 		{
 			get { return _parentLayer; }
 			set { _parentLayer = value; }

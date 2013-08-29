@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public class GraphicCollection
 		:
-		IList<GraphicBase>,
+		IList<IGraphicBase>,
 		Main.IChangedEventSource,
 		Main.IChildChangedEventSink,
 		Main.IDocumentNode
@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		[NonSerialized]
 		object _parent;
 
-		List<GraphicBase> _items = new List<GraphicBase>();
+		PartitionableList<IGraphicBase> _items = new PartitionableList<IGraphicBase>();
 
 
 
@@ -119,6 +119,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.AddRange(g);
 		}
 
+			/// <summary>
+		/// Creates a partial view. A partial view is a view of the list of items of the original collection, that fulfill a certain condition.
+		/// </summary>
+		/// <param name="selectionCriterium">The selection condition. If this function returns <c>true</c> on an item of the original collection, that item is member of the partial view.</param>
+		/// <returns>List of items of the original collection, that fullfils the selection condition. The returned list is automatically updated, when the original collection changed or when
+		/// the user changed the partial view itself.</returns>
+		public IObservableList<IGraphicBase> CreatePartialView(Func<IGraphicBase, bool> selectionCriterium)
+		{
+			return _items.CreatePartialView(selectionCriterium);
+		}
+
+
+		public IObservableList<M> CreatePartialViewOfType<M>(Action<M> actionBeforeInsertion) where M : IGraphicBase
+		{
+			return _items.CreatePartialViewOfType<M>(actionBeforeInsertion);
+		}
+
+
 		public void Paint(Graphics g, double Scale, object container)
 		{
 			int len = this._items.Count;
@@ -133,17 +151,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 			 // hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
 				for(int i=this._items.Count-1;i>=0;--i)
 				{
-          var hit = _items[i].HitTest(layerHitTestData);
-          if (null != hit)
-          {
-            if (null == hit.Remove && (hit.HittedObject is GraphicBase))
-              hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
-            return hit;
-          }
-        }
+					var hit = _items[i].HitTest(layerHitTestData);
+					if (null != hit)
+					{
+						if (null == hit.Remove && (hit.HittedObject is GraphicBase))
+							hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
+						return hit;
+					}
+				}
 
 				return null;
-      }
+			}
 
 		static bool EhGraphicsObject_Remove(IHitTestObject o)
 		{
@@ -180,7 +198,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public GraphicBase this[int index]
+		public IGraphicBase this[int index]
 		{
 			get
 			{
@@ -194,7 +212,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public void Add(GraphicBase go, bool fireChangedEvent)
+		public void Add(IGraphicBase go, bool fireChangedEvent)
 		{
 			go.ParentObject = this;
 			_items.Add(go);
@@ -203,7 +221,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				OnChanged();
 		}
 
-		public void AddRange(GraphicBase[] gos)
+		public void AddRange(IGraphicBase[] gos)
 		{
 			int len = gos.Length;
 			for (int i = 0; i < len; i++)
@@ -221,21 +239,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 			OnChanged();
 		}
 
-		public bool Contains(GraphicBase go)
+		public bool Contains(IGraphicBase go)
 		{
 			return _items.Contains(go);
 		}
 
-		public void CopyTo(GraphicBase[] array, int index)
+		public void CopyTo(IGraphicBase[] array, int index)
 		{
 			_items.CopyTo(array, index);
 		}
 
-		public int IndexOf(GraphicBase go)
+		public int IndexOf(IGraphicBase go)
 		{
 			return _items.IndexOf(go);
 		}
-		public void Insert(int index, GraphicBase go)
+		public void Insert(int index, IGraphicBase go)
 		{
 			go.ParentObject = this;
 			_items.Insert(index, go);
@@ -247,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="selectedObjects">List of objects that should be moved. These objects must be part of this GraphicCollection.</param>
 		/// <param name="steps">Number of steps to move. Positive values move the objects to higher indices, thus to the top of the drawing.</param>
-		public void Move(ISet<GraphicBase> selectedObjects, int steps)
+		public void Move(ISet<IGraphicBase> selectedObjects, int steps)
 		{
 			Altaxo.Collections.ListMoveOperations.MoveSelectedItems(this, i => selectedObjects.Contains(this[i]), steps);
 		}
@@ -298,7 +316,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region ICollection<GraphicBase> Members
 
-		public void Add(GraphicBase item)
+		public void Add(IGraphicBase item)
 		{
 			Add(item, true);
 		}
@@ -319,7 +337,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			get { return false; }
 		}
 
-		public bool Remove(GraphicBase item)
+		public bool Remove(IGraphicBase item)
 		{
 			bool result = _items.Remove(item);
 			if (result)
@@ -331,7 +349,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region IEnumerable<GraphicBase> Members
 
-		public IEnumerator<GraphicBase> GetEnumerator()
+		public IEnumerator<IGraphicBase> GetEnumerator()
 		{
 			return _items.GetEnumerator();
 		}

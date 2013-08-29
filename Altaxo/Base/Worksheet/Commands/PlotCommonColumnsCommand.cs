@@ -129,7 +129,7 @@ namespace Altaxo.Worksheet.Commands
 
 
 			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.DefaultLayerPosition, graphctrl.Doc.DefaultLayerSize);
-			graphctrl.Doc.Layers.Add(layer);
+			graphctrl.Doc.RootLayer.Layers.Add(layer);
 			layer.CreateDefaultAxes();
 
 			var processedColumns = new HashSet<Altaxo.Data.DataColumn>();

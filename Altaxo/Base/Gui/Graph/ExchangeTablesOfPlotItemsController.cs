@@ -31,6 +31,7 @@ namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Data;
 	using Altaxo.Main;
+	using Altaxo.Graph.Gdi;
 
 	/// <summary>
 	/// Holds all information that is neccessary to replace the tables used as data source for the plot items in graphs by other tables with the same structure.
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Graph
 		/// <param name="doc">The graph document to collect the plot items from..</param>
 		void CollectPlotItemsForGraph(Altaxo.Graph.Gdi.GraphDocument doc)
 		{
-			foreach (var layer in doc.Layers)
+			foreach (var layer in doc.RootLayer.TakeFromHereToFirstLeaves().OfType<XYPlotLayer>())
 			{
 				var pis = layer.PlotItems.Flattened;
 				foreach (var pi in pis)

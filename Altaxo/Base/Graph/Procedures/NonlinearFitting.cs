@@ -24,6 +24,7 @@ using System;
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -42,8 +43,11 @@ namespace Altaxo.Graph.Procedures
     {
       if(ctrl.CurrentPlotNumber<0)
         return "No active plot!";
+			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
+			if (null == xylayer)
+				return "No XYPlotLayer active";
 
-      IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
+      IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 

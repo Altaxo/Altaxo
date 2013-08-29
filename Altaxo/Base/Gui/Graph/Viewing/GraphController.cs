@@ -34,6 +34,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Graph.Gdi.Shapes;
 	using Altaxo.Serialization;
+	using Altaxo.Collections;
 
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
@@ -51,8 +52,8 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 
-		/// <summary>Number of the currently selected layer (or -1 if no layer is present).</summary>
-		protected int _currentLayerNumber=-1;
+		/// <summary>Number of the currently selected layer (or null if no layer is present).</summary>
+		protected IList<int> _currentLayerNumber=null;
 
 		/// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
 		protected int _currentPlotNumber=-1;
@@ -70,6 +71,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		protected double _areaFillingFactor = 1.2;
 
 		protected PointD2D _positionOfViewportsUpperLeftCornerInGraphCoordinates;
+
+		NGTreeNode _layerStructure;
 
 		#region Constructors
 
@@ -120,14 +123,25 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		protected void Initialize(bool initData)
 		{
+			if (initData)
+			{
+				InitLayerStructure();
+			}
+
 			if (null != _view)
 			{
-				_view.NumberOfLayers = _doc.Layers.Count; // tell the view how many layers we have
-				_view.CurrentLayer = this.CurrentLayerNumber;
+				_view.NumberOfLayers = _layerStructure; // tell the view how many layers we have
+				_view.CurrentLayer = this.CurrentLayerNumber.ToArray();
 
 				// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
 				this.EhView_GraphPanelSizeChanged();
 			}
+		}
+
+
+		void InitLayerStructure()
+		{
+			_layerStructure = Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(_doc.RootLayer, new List<int>(), (sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = indices.ToString() }, (parent, child) => parent.Nodes.Add(child));
 		}
 
 		#region Properties
@@ -136,9 +150,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.
 		/// </summary>
-		public XYPlotLayerCollection Layers
+		public HostLayer RootLayer
 		{
-			get { return _doc.Layers; }
+			get { return _doc.RootLayer; }
 		}
 
 
@@ -150,7 +164,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return new PointD2D(_zoomFactor * _doc.Layers.GraphSize.Width * _areaFillingFactor, _zoomFactor * _doc.Layers.GraphSize.Height * _areaFillingFactor);
+				return new PointD2D(_zoomFactor * _doc.RootLayer.Size.X * _areaFillingFactor, _zoomFactor * _doc.RootLayer.Size.Y * _areaFillingFactor);
 			}
 		}
 
@@ -161,7 +175,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return new PointD2D(_zoomFactor * _doc.Layers.GraphSize.Width * _areaFillingFactor, _zoomFactor * _doc.Layers.GraphSize.Height * _areaFillingFactor);
+				return new PointD2D(_zoomFactor * _doc.RootLayer.Size.X * _areaFillingFactor, _zoomFactor * _doc.RootLayer.Size.Y * _areaFillingFactor);
 			}
 		}
 
@@ -220,8 +234,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				return new PointD2D(
-					(-_doc.Layers.GraphSize.Width * (_areaFillingFactor - 1) / 2),
-					(-_doc.Layers.GraphSize.Height * (_areaFillingFactor - 1) / 2)
+					(-_doc.RootLayer.Size.X * (_areaFillingFactor - 1) / 2),
+					(-_doc.RootLayer.Size.Y * (_areaFillingFactor - 1) / 2)
 					);
 			}
 		}
@@ -234,8 +248,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				return new PointD2D(
-					(_doc.Layers.GraphSize.Width * (_areaFillingFactor + 1) / 2),
-					(_doc.Layers.GraphSize.Height * (_areaFillingFactor + 1) / 2)
+					(_doc.RootLayer.Size.X * (_areaFillingFactor + 1) / 2),
+					(_doc.RootLayer.Size.Y * (_areaFillingFactor + 1) / 2)
 					);
 			}
 		}
@@ -282,8 +296,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				double zoomh = (_view.ViewportSizeInPoints.X) / (_doc.Layers.GraphSize.Width * _areaFillingFactor);
-				double zoomv = (_view.ViewportSizeInPoints.Y) / (_doc.Layers.GraphSize.Height * _areaFillingFactor);
+				double zoomh = (_view.ViewportSizeInPoints.X) / (_doc.RootLayer.Size.X * _areaFillingFactor);
+				double zoomv = (_view.ViewportSizeInPoints.Y) / (_doc.RootLayer.Size.Y * _areaFillingFactor);
 				var zoomFactor = System.Math.Min(zoomh, zoomv);
 				if (zoomFactor <= 0)
 					zoomFactor = 1;
@@ -377,8 +391,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		protected void RefreshManualZoom()
 		{
 			var virtualSize = SizeOfViewportInGraphCoordinates;
-			var xratio = virtualSize.X / _doc.Layers.GraphSize.Width;
-			var yratio = virtualSize.Y / _doc.Layers.GraphSize.Height;
+			var xratio = virtualSize.X / _doc.RootLayer.Size.X;
+			var yratio = virtualSize.Y / _doc.RootLayer.Size.Y;
 
 			bool showScrollbars = xratio < 1 || yratio < 1;
 			if (showScrollbars)
@@ -387,9 +401,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			else
 			{
 				// we center the graph in the viewport
-				SizeF gz = _doc.Layers.GraphSize;
+				var gz = _doc.RootLayer.Size;
 				var vz = SizeOfViewportInGraphCoordinates;
-				_positionOfViewportsUpperLeftCornerInGraphCoordinates = new PointD2D((gz.Width - vz.X) / 2, (gz.Height - vz.Y) / 2);
+				_positionOfViewportsUpperLeftCornerInGraphCoordinates = new PointD2D((gz.X - vz.X) / 2, (gz.Y - vz.Y) / 2);
 			}
 
 			if (null != _view)
@@ -481,7 +495,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			// we are using weak events here, to avoid that _doc will maintain strong references to the controller
 			_doc.Changed += new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x);
-			_doc.Layers.LayerCollectionChanged += new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.Layers.LayerCollectionChanged -= x);
+			_doc.RootLayer.LayerCollectionChanged += new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.RootLayer.LayerCollectionChanged -= x);
 			_doc.BoundsChanged += new WeakEventHandler(this.EhGraph_BoundsChanged, x => _doc.BoundsChanged -= x);
 			_doc.NameChanged += new WeakActionHandler<INameOwner, string>(this.EhGraphDocumentNameChanged, x => _doc.NameChanged -= x);
 
@@ -508,22 +522,22 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Returns the currently active layer, or null if there is no active layer.
 		/// </summary>
-		public XYPlotLayer ActiveLayer
+		public HostLayer ActiveLayer
 		{
 			get
 			{
-				return this._currentLayerNumber < 0 ? null : _doc.Layers[this._currentLayerNumber];
+				return this._currentLayerNumber ==null ? null :  _doc.RootLayer.ElementAt(this._currentLayerNumber);
 			}
 			set
 			{
-				CurrentLayerNumber = value.Number;
+				CurrentLayerNumber = value.IndexOf();
 			}
 		}
 
 		/// <summary>
 		/// Get / sets the currently active layer by number.
 		/// </summary>
-		public int CurrentLayerNumber
+		public IList<int> CurrentLayerNumber
 		{
 			get
 			{
@@ -532,23 +546,24 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			set
 			{
-				int oldValue = this._currentLayerNumber;
+				var oldValue = new List<int>(_currentLayerNumber);
 
 				// negative values are only accepted if there is no layer
-				if (value < 0 && _doc.Layers.Count > 0)
+				if (value ==null && _doc.RootLayer !=null)
 					throw new ArgumentOutOfRangeException("CurrentLayerNumber", value, "Accepted values must be >=0 if there is at least one layer in the graph!");
 
-				if (value >= _doc.Layers.Count)
-					throw new ArgumentOutOfRangeException("CurrentLayerNumber", value, "Accepted values must be less than the number of layers in the graph(currently " + _doc.Layers.Count.ToString() + ")!");
+				if(null != value && _doc.RootLayer.EnsureValidityOfNodeIndex(value))
+					throw new ArgumentOutOfRangeException("CurrentLayerNumber", value, "The provided layer number was invalid");
 
-				_currentLayerNumber = value < 0 ? -1 : value;
+				_currentLayerNumber = value;
+
 
 				// if something changed
-				if (oldValue != this._currentLayerNumber)
+				if (System.Linq.Enumerable.SequenceEqual(oldValue, value))
 				{
 					// reflect the change in layer number in the layer tool bar
 					if (_view != null)
-						_view.CurrentLayer = this._currentLayerNumber;
+						_view.CurrentLayer = this._currentLayerNumber.ToArray();
 
 					// since the layer changed, also the plots changed, so the menu has
 					// to reflect the new plots
@@ -568,11 +583,13 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			set
 			{
-				if (CurrentLayerNumber >= 0 && 0 != this._doc.Layers[CurrentLayerNumber].PlotItems.Flattened.Length && value < 0)
+				var layer = ActiveLayer as XYPlotLayer;
+
+				if (null!=layer && 0 != layer.PlotItems.Flattened.Length && value < 0)
 					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to be greater or equal than zero");
 
-				if (CurrentLayerNumber >= 0 && value >= _doc.Layers[CurrentLayerNumber].PlotItems.Flattened.Length)
-					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to  be lesser than actual count: " + _doc.Layers[CurrentLayerNumber].PlotItems.Flattened.Length.ToString());
+				if (null!=layer && value >= layer.PlotItems.Flattened.Length)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to  be lesser than actual count: " + layer.PlotItems.Flattened.Length.ToString());
 
 				_currentPlotNumber = value < 0 ? -1 : value;
 			}
@@ -583,18 +600,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void EnsureValidityOfCurrentLayerNumber()
 		{
-			if (_doc.Layers.Count > 0) // if at least one layer is present
-			{
-				if (_currentLayerNumber < 0)
-					CurrentLayerNumber = 0;
-				else if (_currentLayerNumber >= _doc.Layers.Count)
-					CurrentLayerNumber = _doc.Layers.Count - 1;
-			}
-			else // no layers present
-			{
-				if (-1 != _currentLayerNumber)
-					CurrentLayerNumber = -1;
-			}
+			if (null == _currentLayerNumber)
+				_currentLayerNumber = new List<int>();
+			_doc.RootLayer.EnsureValidityOfNodeIndex(_currentLayerNumber);
 		}
 
 
@@ -606,15 +614,18 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			EnsureValidityOfCurrentLayerNumber();
 
+
+			var layer = ActiveLayer as XYPlotLayer;
+
 			// if XYPlotLayer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
-			if (null != ActiveLayer) // if the ActiveLayer exists
+			if (null != layer) // if the ActiveLayer exists
 			{
 				// if the XYColumnPlotData don't exist anymore, correct it
-				if (ActiveLayer.PlotItems.Flattened.Length > 0) // if at least one plotitem exists
+				if (layer.PlotItems.Flattened.Length > 0) // if at least one plotitem exists
 				{
 					if (_currentPlotNumber < 0)
 						CurrentPlotNumber = 0;
-					else if (_currentPlotNumber > ActiveLayer.PlotItems.Flattened.Length)
+					else if (_currentPlotNumber > layer.PlotItems.Flattened.Length)
 						CurrentPlotNumber = 0;
 				}
 				else
@@ -690,15 +701,15 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 		protected void EhGraph_LayerCollectionChanged_Unsynchronized()
 		{
-			int oldActiveLayer = this._currentLayerNumber;
+			var oldActiveLayer = new List<int>(this._currentLayerNumber);
 
 			// Ensure that the current layer and current plot are valid anymore
 			EnsureValidityOfCurrentLayerNumber();
 
-			if (oldActiveLayer != this._currentLayerNumber)
+			if (!oldActiveLayer.SequenceEqual(this._currentLayerNumber))
 			{
 				if (_view != null)
-					_view.CurrentLayer = this._currentLayerNumber;
+					_view.CurrentLayer = this._currentLayerNumber.ToArray();
 			}
 
 			// even if the active layer number not changed, it can be that the layer itself has changed from
@@ -706,8 +717,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			EnsureValidityOfCurrentPlotNumber();
 
 			// make sure the view knows about when the number of layers changed
+			InitLayerStructure();
 			if (_view != null)
-				_view.NumberOfLayers = _doc.Layers.Count;
+			{
+				_view.NumberOfLayers = _layerStructure;
+			}
 		}
 
 		public void EhGraphDocumentNameChanged(INameOwner sender, string oldName)
@@ -759,11 +773,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="currLayer">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
 		/// <param name="parent">The parent control which is the parent of the context menu.</param>
 		/// <param name="pt">The location where the context menu should be shown.</param>
-		public virtual void EhView_ShowDataContextMenu(int currLayer, object parent, Point pt)
+		public virtual void EhView_ShowDataContextMenu(int[] currLayer, object parent, Point pt)
 		{
 			int oldCurrLayer = this.ActiveLayer.Number;
-		
-			this.CurrentLayerNumber = currLayer;
+
+			this.CurrentLayerNumber = new List<int>(currLayer);
 
 			if (null != this.ActiveLayer)
 			{
@@ -792,18 +806,21 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		/// <param name="currLayer">The current layer number as selected by the user.</param>
 		/// <param name="bAlternative">Normally false, can be set to true if the user clicked for instance with the right mouse button on the layer button.</param>
-		public virtual void EhView_CurrentLayerChoosen(int currLayer, bool bAlternative)
+		public virtual void EhView_CurrentLayerChoosen(int[] currLayer, bool bAlternative)
 		{
-			int oldCurrLayer = this.CurrentLayerNumber;
-			this.CurrentLayerNumber = currLayer;
+			var oldCurrLayer = this.CurrentLayerNumber;
+			this.CurrentLayerNumber = new List<int>( currLayer);
 
 
 			// if we have clicked the button already down then open the layer dialog
-			if (null != ActiveLayer && currLayer == oldCurrLayer && false == bAlternative)
+			if (null != ActiveLayer && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
 			{
-				LayerController.ShowDialog(ActiveLayer);
-				//LayerDialog dlg = new LayerDialog(ActiveLayer,LayerDialog.Tab.Scale,EdgeType.Bottom);
-				//dlg.ShowDialog(this.m_View.Window);
+				var activeLayer = ActiveLayer;
+				if (activeLayer is XYPlotLayer)
+					XYPlotLayerController.ShowDialog((XYPlotLayer)activeLayer);
+				else
+					HostLayerController.ShowDialog(activeLayer);
+
 			}
 		}
 
@@ -1026,7 +1043,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			foreach (var hittestobject in SelectedObjects)
 				selectedItems.Add(hittestobject.HittedObject);
 
-			foreach (var layer in _doc.Layers)
+			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
 				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsTowardsHigherIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
 			}
@@ -1038,7 +1055,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			foreach (var hittestobject in SelectedObjects)
 				selectedItems.Add(hittestobject.HittedObject);
 
-			foreach (var layer in _doc.Layers)
+			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
 				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsTowardsLowerIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
 			}
@@ -1050,7 +1067,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			foreach (var hittestobject in SelectedObjects)
 				selectedItems.Add(hittestobject.HittedObject);
 
-			foreach (var layer in _doc.Layers)
+			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
 				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsToMaximumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
 			}
@@ -1063,7 +1080,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			foreach (var hittestobject in SelectedObjects)
 				selectedItems.Add(hittestobject.HittedObject);
 
-			foreach (var layer in _doc.Layers)
+			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
 				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsToMinimumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
 			}
@@ -1189,8 +1206,8 @@ namespace Altaxo.Gui.Graph.Viewing
 					{
 						if (item is GraphicBase)
 							this.ActiveLayer.GraphObjects.Add(item as GraphicBase);
-						else if (item is Altaxo.Graph.Gdi.Plot.IGPlotItem)
-							this.ActiveLayer.PlotItems.Add((Altaxo.Graph.Gdi.Plot.IGPlotItem)item);
+						else if (item is Altaxo.Graph.Gdi.Plot.IGPlotItem && ActiveLayer is XYPlotLayer)
+							((XYPlotLayer)ActiveLayer).PlotItems.Add((Altaxo.Graph.Gdi.Plot.IGPlotItem)item);
 					}
 				}
 				return;

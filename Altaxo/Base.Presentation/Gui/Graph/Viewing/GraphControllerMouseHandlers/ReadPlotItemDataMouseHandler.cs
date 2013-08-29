@@ -47,9 +47,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		static extern bool SetCursorPos(int X, int Y);
 
     /// <summary>
-    /// Number of the layer, in which the plot item resides which is currently selected.
+    /// Layer, in which the plot item resides which is currently selected.
     /// </summary>
-    protected int _LayerNumber;
+		protected XYPlotLayer _layer;
      
     /// <summary>
     /// The number of the plot item where the cross is currently.
@@ -105,16 +105,17 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
        
       // search for a object first
       IHitTestObject clickedObject;
-      int clickedLayerNumber=0;
+      int[] clickedLayerNumber=null;
       _grac.FindGraphObjectAtPixelPosition(position, true, out clickedObject, out clickedLayerNumber);
       if(null!=clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
       {
         _PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
         var transXY = clickedObject.Transformation.InverseTransformPoint(graphXY);
-        XYScatterPointInformation scatterPoint = _PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY);
-
-        this._PlotItemNumber = GetPlotItemNumber(clickedLayerNumber,_PlotItem);
-        this._LayerNumber = clickedLayerNumber;
+				
+				this._layer = (XYPlotLayer)(clickedObject.ParentLayer);
+				XYScatterPointInformation scatterPoint = _PlotItem.GetNearestPlotPoint(_layer, transXY);
+        this._PlotItemNumber = GetPlotItemNumber(_layer,_PlotItem);
+				
 
 
         if(null!=scatterPoint)
@@ -161,7 +162,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       this._PlotIndex = scatterPoint.PlotIndex;
       this._RowIndex = scatterPoint.RowIndex;
       // convert this layer coordinates first to PrintableAreaCoordinates
-      var printableCoord = _grac.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+      var printableCoord = _layer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
       _positionOfCrossInGraphCoordinates = printableCoord;
 			// m_Cross.X -= _grac.GraphViewOffset.X;
 			// m_Cross.Y -= _grac.GraphViewOffset.Y;
@@ -204,9 +205,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     {
       if(_PlotItem==null)
         return false;
-      if(_grac==null || _grac.Doc==null || _grac.Doc.Layers==null)
+      if(_grac==null || _grac.Doc==null || _grac.Doc.RootLayer==null)
         return false;
-      if(this._LayerNumber<0 || this._LayerNumber>=_grac.Doc.Layers.Count)
+      if(null==this._layer)
         return false;
 
       return true;
@@ -221,7 +222,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       if(!TestMovementPresumtions())
         return;
 
-      XYScatterPointInformation scatterPoint = _PlotItem.GetNextPlotPoint(_grac.Doc.Layers[this._LayerNumber],this._PlotIndex,increment);
+      XYScatterPointInformation scatterPoint = _PlotItem.GetNextPlotPoint(_layer,this._PlotIndex,increment);
         
       if(null!=scatterPoint)
         ShowCross(scatterPoint);
@@ -236,8 +237,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       if(!TestMovementPresumtions())
         return;
 
-      int numlayers = _grac.Layers.Count;
-      int nextlayer = _LayerNumber;
+			var layerList = _layer.ParentLayerList;
+			int numlayers = layerList.Count;
+			var nextlayer = _layer as XYPlotLayer;
+			int indexOfNextLayer = layerList.IndexOf(_layer);
       int nextplotitemnumber = this._PlotItemNumber;
 
       XYScatterPointInformation scatterPoint=null;
@@ -245,34 +248,39 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       do
       {
         nextplotitemnumber = nextplotitemnumber + Math.Sign(increment);
-        if(nextplotitemnumber<0)
+        if(nextplotitemnumber<0) // then try to use the previous layer
         {
-          nextlayer-=1;
-          nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.Layers[nextlayer].PlotItems.Flattened.Length-1;
+					--indexOfNextLayer;
+					nextlayer = indexOfNextLayer >= 0 ? layerList[indexOfNextLayer] as XYPlotLayer : null;
+          nextplotitemnumber = nextlayer==null ? int.MaxValue : nextlayer.PlotItems.Flattened.Length-1;
         }
-        else if(nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
+        else if(nextplotitemnumber>=nextlayer.PlotItems.Flattened.Length)
         {
-          nextlayer+=1;
-          nextplotitemnumber=0;
+					++indexOfNextLayer;
+					nextlayer = indexOfNextLayer < layerList.Count ? layerList[indexOfNextLayer] as XYPlotLayer : null;
+					nextplotitemnumber = 0;
         }
         // check if this results in a valid information
-        if(nextlayer<0 || nextlayer>=numlayers)
-          break;
-          
-        if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
+				if (indexOfNextLayer < 0 || indexOfNextLayer >= numlayers)
+          break; // no more layers available
+
+				if (nextlayer == null)
+					continue; // this is not an XYPlotLayer
+
+        if(nextplotitemnumber<0 || nextplotitemnumber>=nextlayer.PlotItems.Flattened.Length)
           continue;
   
-        plotitem =  _grac.Layers[nextlayer].PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
+        plotitem =  nextlayer.PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
         if(null==plotitem)
           continue;
   
-        scatterPoint = plotitem.GetNextPlotPoint(_grac.Layers[nextlayer],this._PlotIndex,0);
+        scatterPoint = plotitem.GetNextPlotPoint(nextlayer,this._PlotIndex,0);
       } while(scatterPoint==null);
       
       if(null!=scatterPoint)
       {
         this._PlotItem = plotitem;
-        this._LayerNumber = nextlayer;
+        this._layer = nextlayer;
         this._PlotItemNumber = nextplotitemnumber;
         this._PlotIndex = scatterPoint.PlotIndex;
         this._RowIndex = scatterPoint.RowIndex;
@@ -348,12 +356,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     /// <param name="layernumber"></param>
     /// <param name="plotitem"></param>
     /// <returns></returns>
-    int GetPlotItemNumber(int layernumber, XYColumnPlotItem plotitem)
+    int GetPlotItemNumber(XYPlotLayer layer, XYColumnPlotItem plotitem)
     {
-      if(layernumber<_grac.Doc.Layers.Count)
+      if(null!=layer)
       {
-        for(int i=0;i<_grac.Doc.Layers[layernumber].PlotItems.Flattened.Length;i++)
-          if(object.ReferenceEquals(_grac.Doc.Layers[layernumber].PlotItems.Flattened[i],plotitem))
+        for(int i=0;i<layer.PlotItems.Flattened.Length;i++)
+          if(object.ReferenceEquals(layer.PlotItems.Flattened[i],plotitem))
             return i;
       }
       return -1;

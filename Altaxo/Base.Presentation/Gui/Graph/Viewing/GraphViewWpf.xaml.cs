@@ -36,6 +36,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Altaxo.Collections;
+
 namespace Altaxo.Gui.Graph.Viewing
 {
 	using Altaxo.Graph;
@@ -45,7 +47,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	public partial class GraphViewWpf : UserControl, Altaxo.Gui.Graph.Viewing.IGraphView, IDisposable
 	{
 		[Browsable(false)]
-		private int _cachedCurrentLayer = -1;
+		private int[] _cachedCurrentLayer = null;
 
 		private WeakReference _controller = new WeakReference(null);
 
@@ -311,11 +313,13 @@ namespace Altaxo.Gui.Graph.Viewing
 			_controller = controller;
 		}
 
-		public int NumberOfLayers
+		public NGTreeNode NumberOfLayers
 		{
 			set
 			{
 				{
+					_guiLayerTree.ItemsSource = new[]{value};
+					/*
 					int nNumButtons = _layerToolBar.Children.Count;
 
 					if (value > nNumButtons)
@@ -341,7 +345,9 @@ namespace Altaxo.Gui.Graph.Viewing
 						var button = (ToggleButton)_layerToolBar.Children[i];
 						button.IsChecked = (i == _cachedCurrentLayer);
 					}
+					 */
 				}
+				
 			}
 		}
 
@@ -350,7 +356,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			var gc = Controller;
 			if (null != gc)
 			{
-				int pushedLayerNumber = (int)((ButtonBase)sender).Tag;
+				var pushedLayerNumber = (int[])((ButtonBase)sender).Tag;
 
 				gc.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
 			}
@@ -361,19 +367,20 @@ namespace Altaxo.Gui.Graph.Viewing
 			var gc = Controller;
 			if (null != gc)
 			{
-				int i = (int)((ToggleButton)sender).Tag;
+				var i = (int[])((ToggleButton)sender).Tag;
 				Controller.EhView_ShowDataContextMenu(i, this, new System.Drawing.Point((int)e.CursorLeft, (int)e.CursorTop));
 			}
 		}
 
-		public int CurrentLayer
+		public int[] CurrentLayer
 		{
 			set
 			{
 				_cachedCurrentLayer = value;
-
+				/*
 				for (int i = 0; i < _layerToolBar.Children.Count; i++)
-					((ToggleButton)_layerToolBar.Children[i]).IsChecked = (i == _cachedCurrentLayer);
+					((ToggleButton)_layerToolBar.Children[i]).IsChecked = (i == _cachedCurrentLayer[0]);
+				 */
 			}
 		}
 

@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		bool CalculateCrossCoordinates(PointD2D cross, out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
 		{
-			XYPlotLayer layer = _grac.ActiveLayer;
+			XYPlotLayer layer = _grac.ActiveLayer as XYPlotLayer;
 			if (layer == null)
 			{
 				x = new AltaxoVariant();

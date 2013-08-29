@@ -71,26 +71,53 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void RescaleAxes(this GraphDocument doc)
 		{
-			for (int i = 0; i < doc.Layers.Count; i++)
-			{
-				doc.Layers[i].RescaleXAxis();
-				doc.Layers[i].RescaleYAxis();
-			}
+			doc.RootLayer.ExecuteFromTopmostChildToRoot(
+				(layer) =>
+				{
+					var xylayer = layer as XYPlotLayer;
+					if (null != xylayer)
+					{
+						xylayer.RescaleXAxis();
+						xylayer.RescaleYAxis();
+					}
+				});
 		}
 
 
 		#region Layer manipulation
 
-		public static bool IsValidLayerNumber(this GraphDocument doc, int layerNumber)
+		public static bool IsValidLayerNumber(HostLayer doc, int layerNumber)
 		{
 			return layerNumber >= 0 && layerNumber < doc.Layers.Count;
 		}
 
-
-		public static void ShowLayerDialog(this GraphDocument doc, int layerNumber)
+		public static bool IsValidLayerNumber(this GraphDocument doc, IList<int> layerNumber, out HostLayer layer)
 		{
-			if (IsValidLayerNumber(doc, layerNumber))
-				Altaxo.Gui.Graph.LayerController.ShowDialog(doc.Layers[layerNumber]);
+			layer = null;
+			if (layerNumber.Count == 0)
+				return false;
+			if (layerNumber[0] != 0)
+				return false;
+
+			HostLayer parent = doc.RootLayer;
+			for (int i = 1; i < layerNumber.Count; ++i)
+			{
+				var n = layerNumber[i];
+				if (n < 0 || n >= parent.Layers.Count)
+					return false;
+				parent = parent.Layers[n];
+			}
+
+			layer = parent;
+			return true;
+		}
+
+
+		public static void ShowLayerDialog(this GraphDocument doc, IList<int> layerNumber)
+		{
+			HostLayer l;
+			if (IsValidLayerNumber(doc, layerNumber, out l))
+				Altaxo.Gui.Graph.HostLayerController.ShowDialog(l);
 		}
 
 
@@ -100,15 +127,16 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="doc">Graph document.</param>
 		/// <param name="layerNumber">Number of the layer to delete.</param>
 		/// <param name="withGui">If true, a message box will ask the user for approval.</param>
-		public static void DeleteLayer(this GraphDocument doc, int layerNumber, bool withGui)
+		public static void DeleteLayer(this GraphDocument doc, IList<int> layerNumber, bool withGui)
 		{
-			if (!IsValidLayerNumber(doc, layerNumber))
+			HostLayer l;
+			if (!IsValidLayerNumber(doc, layerNumber, out l))
 				return;
 
 			if (withGui && false == Current.Gui.YesNoMessageBox("This will delete the active layer. Are you sure?", "Attention", false))
 				return;
 
-			doc.Layers.RemoveAt(layerNumber);
+			l.ParentLayerList.Remove(l);
 		}
 
 		/// <summary>
@@ -117,18 +145,18 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="doc">Graph document.</param>
 		/// <param name="sourcePosition">Original index of the layer.</param>
 		/// <param name="destposition">New index of the layer.</param>
-		public static void MoveLayerToPosition(this GraphDocument doc, int sourcePosition, int destposition)
+		public static void MoveLayerToPosition(this GraphDocument doc, HostLayer parentLayer, int sourcePosition, int destposition)
 		{
-			if (!IsValidLayerNumber(doc, sourcePosition))
+			if (!IsValidLayerNumber(parentLayer, sourcePosition))
 				return;
 
-			XYPlotLayer layer = doc.Layers[sourcePosition];
+			var layer = parentLayer.Layers[sourcePosition];
 
-			doc.Layers.RemoveAt(sourcePosition);
+			parentLayer.Layers.RemoveAt(sourcePosition);
 
 			if (destposition > sourcePosition)
 				destposition--;
-			doc.Layers.Insert(destposition, layer);
+			parentLayer.Layers.Insert(destposition, layer);
 		}
 
 
@@ -137,8 +165,12 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="doc">Graph document.</param>
 		/// <param name="layerNumber">Number of the layer to move.</param>
-		public static void ShowMoveLayerToPositionDialog(this GraphDocument doc, int layerNumber)
+		public static void ShowMoveLayerToPositionDialog(this GraphDocument doc, IList<int> layerNumber)
 		{
+			HostLayer l;
+			if (IsValidLayerNumber(doc, layerNumber, out l))
+				return;
+
 			var ivictrl = new Altaxo.Gui.Common.IntegerValueInputController(0, "Please enter the new position (>=0):");
 			ivictrl.Validator = new Altaxo.Gui.Common.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
 			int newposition;
@@ -146,7 +178,9 @@ namespace Altaxo.Graph.Gdi
 				return;
 
 			newposition = ivictrl.EnteredContents;
-			MoveLayerToPosition(doc, layerNumber, newposition);
+
+
+			MoveLayerToPosition(doc, l.ParentLayer, layerNumber[layerNumber.Count-1], newposition);
 		}
 
 

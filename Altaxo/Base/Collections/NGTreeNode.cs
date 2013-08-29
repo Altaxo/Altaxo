@@ -46,10 +46,7 @@ namespace Altaxo.Collections
 		void Swap(int i, int j);
 	}
 
-	public interface ITreeNode<T> where T : ITreeNode<T>
-	{
-		IEnumerable<T> Nodes { get; }
-	}
+	
 
 	/// <summary>
 	/// Represents a non GUI tree node that can be used for interfacing/communication with Gui components.
@@ -727,39 +724,7 @@ namespace Altaxo.Collections
 
 	}
 
-	public static class TreeNodeExtensions
-	{
-		public static void FromHereToLeavesDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
-		{
-			action(node);
-			foreach (var childNode in node.Nodes)
-			{
-				FromHereToLeavesDo<T>(childNode, action);
-			}
-		}
 
-		public static void FromLeavesToHereDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
-		{
-			foreach (var childNode in node.Nodes)
-			{
-				FromLeavesToHereDo<T>(childNode, action);
-			}
-			action(node);
-		}
-
-		public static T AnyBetweenHereAndLeaves<T>(this T node, Func<T, bool> condition) where T : ITreeNode<T>
-		{
-			if (condition(node))
-				return node;
-			foreach (var childNode in node.Nodes)
-			{
-				var result = AnyBetweenHereAndLeaves(childNode, condition);
-				if (null != result)
-					return result;
-			}
-			return default(T);
-		}
-	}
 
 
 }

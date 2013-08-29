@@ -273,8 +273,8 @@ namespace Altaxo.Graph.Gdi
 			{
 				case GraphExportArea.GraphSize:
 					// round the pixels to multiples of 4, many programs rely on this
-					width = (int)(4 * Math.Ceiling(0.25 * doc.Layers.GraphSize.Width * scale));
-					height = (int)(4 * Math.Ceiling(0.25 * doc.Layers.GraphSize.Height * scale));
+					width = (int)(4 * Math.Ceiling(0.25 * doc.RootLayer.Size.X * scale));
+					height = (int)(4 * Math.Ceiling(0.25 * doc.RootLayer.Size.Y * scale));
 					break;
 				case GraphExportArea.Page:
 					// round the pixels to multiples of 4, many programs rely on this
@@ -316,12 +316,12 @@ namespace Altaxo.Graph.Gdi
 				case GraphExportArea.GraphSize:
 					break;
 				case GraphExportArea.Page:
-					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, (SizeF)doc.RootLayer.Size, out zoom, out startLocationOnPage, false);
 					grfx.TranslateTransform(-startLocationOnPage.X, -startLocationOnPage.Y);
 					grfx.ScaleTransform(zoom, zoom);
 					break;
 				case GraphExportArea.PrintableArea:
-					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, (SizeF)doc.RootLayer.Size, out zoom, out startLocationOnPage, false);
 					grfx.TranslateTransform(-startLocationOnPage.X + doc.PrintableBounds.X, -startLocationOnPage.Y + doc.PrintableBounds.Y);
 					grfx.ScaleTransform(zoom, zoom);
 					break;
@@ -495,7 +495,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				default:
 				case GraphExportArea.GraphSize:
-					metaFileBounds = new RectangleF(0, 0, (float)(doc.Layers.GraphSize.Width * scale), (float)(doc.Layers.GraphSize.Height * scale));
+					metaFileBounds = new RectangleF(0, 0, (float)(doc.RootLayer.Size.X * scale), (float)(doc.RootLayer.Size.Y * scale));
 					break;
 				case GraphExportArea.Page:
 					metaFileBounds = new RectangleF(0, 0, (float)(doc.PageBounds.Width * scale), (float)(doc.PageBounds.Height * scale));
@@ -525,12 +525,12 @@ namespace Altaxo.Graph.Gdi
 				switch (area)
 				{
 					case GraphExportArea.Page:
-						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, (SizeF)doc.RootLayer.Size, out zoom, out startLocationOnPage, false);
 						grfx2.TranslateTransform(-startLocationOnPage.X, -startLocationOnPage.Y);
 						grfx2.ScaleTransform(zoom, zoom);
 						break;
 					case GraphExportArea.PrintableArea:
-						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, (SizeF)doc.RootLayer.Size, out zoom, out startLocationOnPage, false);
 						grfx2.TranslateTransform(-startLocationOnPage.X + doc.PrintableBounds.X, -startLocationOnPage.Y + doc.PrintableBounds.Y);
 						grfx2.ScaleTransform(zoom, zoom);
 						break;

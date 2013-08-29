@@ -385,7 +385,7 @@ namespace Altaxo.Worksheet.Commands
   
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
       layer.CreateDefaultAxes();
-      graph.Layers.Add(layer);
+			graph.RootLayer.Layers.Add(layer);
       Current.Project.GraphDocumentCollection.Add(graph);
 
       return Plot(table, selectedColumns, graph, templatePlotStyle, groupStyles);
@@ -409,23 +409,25 @@ namespace Altaxo.Worksheet.Commands
       List<IGPlotItem> pilist = CreatePlotItems(table, selectedColumns, templatePlotStyle);
       // now create a new Graph with this plot associations
       var gc = Current.ProjectService.CreateNewGraph(graph);
+			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+
       // Set x and y axes according to the first plot item in the list
       if (pilist.Count > 0 && (pilist[0] is XYColumnPlotItem))
       {
         XYColumnPlotItem firstitem = (XYColumnPlotItem)pilist[0];
         if (firstitem.Data.XColumn is TextColumn)
-          gc.Doc.Layers[0].Scales.SetScale(0, new TextScale());
+					xylayer.Scales.SetScale(0, new TextScale());
         else if (firstitem.Data.XColumn is DateTimeColumn)
-          gc.Doc.Layers[0].Scales.SetScale(0, new DateTimeScale());
+					xylayer.Scales.SetScale(0, new DateTimeScale());
 
         if (firstitem.Data.YColumn is TextColumn)
-          gc.Doc.Layers[0].Scales.SetScale(1, new TextScale());
+					xylayer.Scales.SetScale(1, new TextScale());
         else if (firstitem.Data.YColumn is DateTimeColumn)
-          gc.Doc.Layers[0].Scales.SetScale(1, new DateTimeScale());
+					xylayer.Scales.SetScale(1, new DateTimeScale());
       }
 
 
-      PlotItemCollection newPlotGroup = new PlotItemCollection(gc.Doc.Layers[0].PlotItems);
+			PlotItemCollection newPlotGroup = new PlotItemCollection(xylayer.PlotItems);
       foreach (IGPlotItem pi in pilist)
       {
         newPlotGroup.Add(pi);
@@ -434,8 +436,8 @@ namespace Altaxo.Worksheet.Commands
         newPlotGroup.GroupStyles = groupStyles;
       else
         newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
-  
-      gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
+
+			xylayer.PlotItems.Add(newPlotGroup);
 
       return gc;
     }
@@ -514,7 +516,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
       Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition,graph.DefaultLayerSize,new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
       layer.CreateDefaultAxes();
-      graph.Layers.Add(layer);
+			graph.RootLayer.Layers.Add(layer);
       Current.Project.GraphDocumentCollection.Add(graph);
       var gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line, GroupStyle_Color_Line);
     }
@@ -526,7 +528,8 @@ namespace Altaxo.Worksheet.Commands
     public static void PlotBarChartNormal(IWorksheetController dg)
     {
       var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
-      ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
+			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+      ((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
     }
 
     /// <summary>
@@ -536,7 +539,8 @@ namespace Altaxo.Worksheet.Commands
     public static void PlotBarChartStack(IWorksheetController dg)
     {
       var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
-      ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
+			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+      ((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
     }
 
     /// <summary>
@@ -546,7 +550,8 @@ namespace Altaxo.Worksheet.Commands
     public static void PlotBarChartRelativeStack(IWorksheetController dg)
     {
       var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
-      ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
+			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+      ((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
     }
 
 
@@ -626,10 +631,10 @@ namespace Altaxo.Worksheet.Commands
       var gc = Current.ProjectService.CreateNewGraphInFolder(Main.ProjectFolder.GetFolderPart(table.Name));
       var layer = new Altaxo.Graph.Gdi.XYPlotLayer(gc.Doc.DefaultLayerPosition, gc.Doc.DefaultLayerSize);
       layer.CreateDefaultAxes();
-      gc.Doc.Layers.Add(layer);
+      gc.Doc.RootLayer.Layers.Add(layer);
 
       IGPlotItem pi = new DensityImagePlotItem(assoc,plotStyle);
-      gc.Doc.Layers[0].PlotItems.Add(pi);
+      layer.PlotItems.Add(pi);
 
     }
 

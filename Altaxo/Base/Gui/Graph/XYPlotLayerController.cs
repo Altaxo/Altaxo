@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph
 	#region Interfaces
 
 
-	public interface ILayerView
+	public interface IXYPlotLayerView
 	{
 		void AddTab(string name, string text);
 
@@ -75,8 +75,8 @@ namespace Altaxo.Gui.Graph
 	/// Summary description for LayerController.
 	/// </summary>
 	[UserControllerForObject(typeof(XYPlotLayer))]
-	[ExpectedTypeOfView(typeof(ILayerView))]
-	public class LayerController : MVCANControllerBase<XYPlotLayer, ILayerView>
+	[ExpectedTypeOfView(typeof(IXYPlotLayerView))]
+	public class XYPlotLayerController : MVCANControllerBase<XYPlotLayer, IXYPlotLayerView>
 	{
 		protected IDisposable _docSuspendLock;
 
@@ -108,17 +108,17 @@ namespace Altaxo.Gui.Graph
 
 
 
-		public LayerController(XYPlotLayer layer)
+		public XYPlotLayerController(XYPlotLayer layer)
 			: this(layer, "Scale", 1, null)
 		{
 		}
-		public LayerController(XYPlotLayer layer, string currentPage, CSLineID id)
+		public XYPlotLayerController(XYPlotLayer layer, string currentPage, CSLineID id)
 			: this(layer, currentPage, id.ParallelAxisNumber, id)
 		{
 		}
 
 
-		LayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
+		XYPlotLayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
 		{
 			_originalDoc = layer;
 			_doc = (XYPlotLayer)layer.Clone();
@@ -507,7 +507,7 @@ namespace Altaxo.Gui.Graph
 		}
 		public static bool ShowDialog(XYPlotLayer layer, string currentPage, CSLineID currentEdge)
 		{
-			LayerController ctrl = new LayerController(layer, currentPage, currentEdge);
+			XYPlotLayerController ctrl = new XYPlotLayerController(layer, currentPage, currentEdge);
 			return Current.Gui.ShowDialog(ctrl, layer.Name, true);
 		}
 
@@ -545,8 +545,9 @@ namespace Altaxo.Gui.Graph
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-
-			ShowDialog(hit.ParentLayer, "Scale", style.AxisStyleID);
+			var xylayer = hit.ParentLayer as XYPlotLayer;
+			if(null!=xylayer)
+			ShowDialog(xylayer, "Scale", style.AxisStyleID);
 
 			return false;
 		}
@@ -557,7 +558,9 @@ namespace Altaxo.Gui.Graph
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-			ShowDialog(hit.ParentLayer, "TitleAndFormat", style.AxisStyleID);
+			var xylayer = hit.ParentLayer as XYPlotLayer;
+			if (null != xylayer)
+				ShowDialog(xylayer, "TitleAndFormat", style.AxisStyleID);
 
 			return false;
 		}
@@ -568,7 +571,9 @@ namespace Altaxo.Gui.Graph
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-			ShowDialog(hit.ParentLayer, "MajorLabels", style.AxisStyleID);
+			var xylayer = hit.ParentLayer as XYPlotLayer;
+			if (null != xylayer)
+				ShowDialog(xylayer, "MajorLabels", style.AxisStyleID);
 
 			return false;
 		}
@@ -578,7 +583,9 @@ namespace Altaxo.Gui.Graph
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-			ShowDialog(hit.ParentLayer, "MinorLabels", style.AxisStyleID);
+			var xylayer = hit.ParentLayer as XYPlotLayer;
+			if (null != xylayer)
+				ShowDialog(xylayer, "MinorLabels", style.AxisStyleID);
 
 			return false;
 		}

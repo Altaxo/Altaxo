@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for LayerControl.xaml
 	/// </summary>
-	public partial class LayerControl : UserControl, ILayerView
+	public partial class LayerControl : UserControl, IXYPlotLayerView
 	{
 		private int _suppressEventCounter = 0;
 

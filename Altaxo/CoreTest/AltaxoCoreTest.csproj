@@ -279,6 +279,7 @@
     <Compile Include="Calc\TestPrimeNumbers.cs" />
     <Compile Include="Calc\TestRoundings.cs" />
     <Compile Include="Collections\Operations\MinimumOnSlidingWindowTest.cs" />
+    <Compile Include="Collections\TestPartitionableList.cs" />
     <Compile Include="ResourceKeys.cs" />
   </ItemGroup>
   <ItemGroup>

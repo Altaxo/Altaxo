@@ -29,7 +29,8 @@ namespace Altaxo.Main
 {
 
 	/// <summary>
-	/// Handler to report owned <see cref="DocNodeProxy"/> instances to a visitor.
+	/// Handler to report owned <see cref="DocNodeProxy"/> instances to a visitor. If the visited object owns <see cref="DocNodeProxy"/> objects as childs, it must call this delegate with
+	/// the first argument being the owned <see cref="DocNodeProxy"/>, the second argument being the visited object itself, and the third argument being the property to access the <see cref="DocNodeProxy"/> instance.
 	/// </summary>
 	/// <param name="proxy">The proxy that is owned by the instance.</param>
 	/// <param name="owner">The instance that owns the proxy.</param>

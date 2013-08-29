@@ -27,6 +27,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Linq;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Graph.Gdi.Plot;
@@ -41,6 +42,7 @@ using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
 using Altaxo.Graph;
 using Altaxo.Main;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
@@ -146,7 +148,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
 
 			// register here editor methods
-			LayerController.RegisterEditHandlers();
+			XYPlotLayerController.RegisterEditHandlers();
 			XYPlotLayer.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
 			TextGraphic.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
 			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
@@ -405,7 +407,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <returns>True if the object should be deleted, false otherwise.</returns>
 		protected static bool EhEditPlotItem(IHitTestObject hit)
 		{
-			XYPlotLayer actLayer = hit.ParentLayer;
+			XYPlotLayer actLayer = hit.ParentLayer as XYPlotLayer;
 			IGPlotItem pa = (IGPlotItem)hit.HittedObject;
 
 
@@ -424,7 +426,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <returns>True if the object should be deleted, false otherwise.</returns>
 		protected static bool EhEditTextGraphics(IHitTestObject hit)
 		{
-			XYPlotLayer layer = hit.ParentLayer;
+			var layer = hit.ParentLayer;
 			TextGraphic tg = (TextGraphic)hit.HittedObject;
 
 			bool shouldDeleted = false;
@@ -622,7 +624,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					// Fill the page with its own color
 					//g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
 					//g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
-					g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, Doc.Layers.GraphSize.Width, Doc.Layers.GraphSize.Height);
+					g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.RootLayer.Size.X, (float)Doc.RootLayer.Size.Y);
 					// DrawMargins(g);
 				}
 
@@ -748,23 +750,22 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="foundObject">Found object if there is one found, else null</param>
 		/// <param name="foundInLayerNumber">The layer the found object belongs to, otherwise 0</param>
 		/// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
-		public bool FindGraphObjectAtPixelPosition(PointD2D pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int foundInLayerNumber)
+		public bool FindGraphObjectAtPixelPosition(PointD2D pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int[] foundInLayerNumber)
 		{
 			var mousePT = ConvertMouseToGraphCoordinates(pixelPos);
 			var hitData = new HitTestPointData(mousePT, this.ZoomFactor);
 
-			for (int nLayer = 0; nLayer < Layers.Count; nLayer++)
+			foreach(var layer in RootLayer.TakeFromFirstLeavesToHere())
 			{
-				XYPlotLayer layer = Layers[nLayer];
 				foundObject = layer.HitTest(hitData, plotItemsOnly);
 				if (null != foundObject)
 				{
-					foundInLayerNumber = nLayer;
+					foundInLayerNumber = layer.IndexOf().ToArray();
 					return true;
 				}
 			}
 			foundObject = null;
-			foundInLayerNumber = 0;
+			foundInLayerNumber = null;
 			return false;
 		}
 

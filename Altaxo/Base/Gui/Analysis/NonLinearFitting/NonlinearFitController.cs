@@ -296,39 +296,44 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			{
 				// for every dependent variable in the FitEnsemble, create a function graph
 				var graph = _doc.FitContext as Altaxo.Gui.Graph.Viewing.IGraphController;
+				var xylayer = graph.ActiveLayer as XYPlotLayer;
 
-				int funcNumber = 0;
-				for (int i = 0; i < _doc.FitEnsemble.Count; i++)
+				if (null != xylayer)
 				{
-					FitElement fitEle = _doc.FitEnsemble[i];
-
-					for (int k = 0; k < fitEle.NumberOfDependentVariables; k++, funcNumber++)
+					int funcNumber = 0;
+					for (int i = 0; i < _doc.FitEnsemble.Count; i++)
 					{
-						if (funcNumber < _functionPlotItems.Count && _functionPlotItems[funcNumber] != null)
+						FitElement fitEle = _doc.FitEnsemble[i];
+
+						for (int k = 0; k < fitEle.NumberOfDependentVariables; k++, funcNumber++)
 						{
-							XYFunctionPlotItem plotItem = (XYFunctionPlotItem)_functionPlotItems[funcNumber];
-							FitFunctionToScalarFunctionDDWrapper wrapper = (FitFunctionToScalarFunctionDDWrapper)plotItem.Data.Function;
-							wrapper.Initialize(fitEle.FitFunction, k, 0, _doc.GetParametersForFitElement(i));
-						}
-						else
-						{
-							FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction, k, _doc.GetParametersForFitElement(i));
-							XYFunctionPlotData plotdata = new XYFunctionPlotData(wrapper);
-							XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
-							graph.ActiveLayer.PlotItems.Add(plotItem);
-							_functionPlotItems.Add(plotItem);
+							if (funcNumber < _functionPlotItems.Count && _functionPlotItems[funcNumber] != null)
+							{
+								XYFunctionPlotItem plotItem = (XYFunctionPlotItem)_functionPlotItems[funcNumber];
+								FitFunctionToScalarFunctionDDWrapper wrapper = (FitFunctionToScalarFunctionDDWrapper)plotItem.Data.Function;
+								wrapper.Initialize(fitEle.FitFunction, k, 0, _doc.GetParametersForFitElement(i));
+							}
+							else
+							{
+								FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction, k, _doc.GetParametersForFitElement(i));
+								XYFunctionPlotData plotdata = new XYFunctionPlotData(wrapper);
+								XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
+								xylayer.PlotItems.Add(plotItem);
+								_functionPlotItems.Add(plotItem);
+							}
 						}
 					}
-				}
 
-				// if there are more elements in _functionPlotItems, remove them from the graph
-				for (int i = _functionPlotItems.Count - 1; i >= funcNumber; --i)
-				{
-					if (_functionPlotItems[i] != null)
+
+					// if there are more elements in _functionPlotItems, remove them from the graph
+					for (int i = _functionPlotItems.Count - 1; i >= funcNumber; --i)
 					{
-						graph.ActiveLayer.PlotItems.Remove((IGPlotItem)_functionPlotItems[i]);
-						_functionPlotItems.RemoveAt(i);
+						if (_functionPlotItems[i] != null)
+						{
+							xylayer.PlotItems.Remove((IGPlotItem)_functionPlotItems[i]);
+							_functionPlotItems.RemoveAt(i);
 
+						}
 					}
 				}
 				graph.RefreshGraph();

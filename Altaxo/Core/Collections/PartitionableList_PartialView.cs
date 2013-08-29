@@ -29,22 +29,29 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+	public interface IObservableList<T> : IList<T>, INotifyCollectionChanged { }
+
 	public partial class PartitionableList<T> : System.Collections.ObjectModel.ObservableCollection<T>
 	{
-		private class PartialView<M> : IList<M>
+
+		#region PartialViewBase
+		/// <summary>
+		/// We had to split PartialView into a non-generic base class and the generic class itself.
+		/// By that it is possible to safely cast to PartialViewBase whenever it is neccessary, whereas a cast to PartialViewBase&lt;T&gt; may fail because
+		/// it is infact a PartialViewBase&lt;M&gt; type.
+		/// </summary>
+		protected class PartialViewBase
 		{
-			PartitionableList<M> _collection;
-			public Func<M, bool> _selectionCriterium;
-			public List<int> _itemIndex;
+			protected internal PartitionableList<T> _collection;
+			protected internal Func<T, bool> _selectionCriterium;
+			protected internal List<int> _itemIndex;
 
-
-			protected internal PartialView(PartitionableList<M> list, Func<M, bool> selectionCriterium)
+			protected internal PartialViewBase(PartitionableList<T> list, Func<T, bool> selectionCriterium)
 			{
 				_collection = list;
 				_selectionCriterium = selectionCriterium;
 				_itemIndex = new List<int>();
 			}
-
 
 			/// <summary>
 			/// Finds the item in the list that is equal to <paramref name="value"/>.
@@ -93,6 +100,37 @@ namespace Altaxo.Collections
 				}
 			}
 
+
+			public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+
+			public virtual void OnNotifyCollectionChanged()
+			{
+				var eventCall = CollectionChanged;
+				if (null != eventCall)
+					eventCall(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+			}
+		}
+
+		#endregion
+
+
+		protected class PartialView<M> : PartialViewBase, IObservableList<M> where M: T
+		{
+			protected Action<M> _actionBeforeInsertion;
+
+
+			protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium)
+				: base(list, selectionCriterium)
+			{
+			}
+
+			protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium, Action<M> actionBeforeInsertion)
+				: base(list, selectionCriterium)
+			{
+				_actionBeforeInsertion = actionBeforeInsertion;
+			}
+
 			#region IList implementations
 
 			public int IndexOf(M item)
@@ -129,6 +167,10 @@ namespace Altaxo.Collections
 				{
 					insertPoint = _itemIndex[index];
 				}
+
+				if (null != _actionBeforeInsertion)
+					_actionBeforeInsertion(item);
+
 				_collection.Insert(insertPoint, item);
 			}
 
@@ -142,12 +184,15 @@ namespace Altaxo.Collections
 			{
 				get
 				{
-					return _collection[_itemIndex[index]];
+					return (M)_collection[_itemIndex[index]];
 				}
 				set
 				{
 					if (!_selectionCriterium(value))
 						throw new ArgumentException("item does not fulfill the selection criterion");
+
+					if (null != _actionBeforeInsertion)
+						_actionBeforeInsertion(value);
 
 					_collection[_itemIndex[index]] = value;
 				}
@@ -158,14 +203,14 @@ namespace Altaxo.Collections
 				if (!_selectionCriterium(item))
 					throw new ArgumentException("item to insert does not fulfill the selection criterion");
 
+				if (null != _actionBeforeInsertion)
+					_actionBeforeInsertion(item);
+
 				if (_itemIndex.Count == 0)
-				{
 					_collection.Add(item);
-				}
 				else
-				{
 					_collection.Insert(_itemIndex[_itemIndex.Count - 1] + 1, item);
-				}
+				
 			}
 
 			public void Clear()
@@ -199,7 +244,7 @@ namespace Altaxo.Collections
 			public void CopyTo(M[] array, int arrayIndex)
 			{
 				for (int i = 0; i < _itemIndex.Count; ++i)
-					array[i + arrayIndex] = _collection[_itemIndex[i]];
+					array[i + arrayIndex] = (M)_collection[_itemIndex[i]];
 			}
 
 			public int Count
@@ -229,7 +274,7 @@ namespace Altaxo.Collections
 			public IEnumerator<M> GetEnumerator()
 			{
 				foreach (int j in _itemIndex)
-					yield return _collection[j];
+					yield return (M)_collection[j];
 			}
 
 			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -239,7 +284,6 @@ namespace Altaxo.Collections
 			}
 
 			#endregion
-
 		}
 	}
 }

@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			{
 				if (null != _grac.ActiveLayer)
 				{
-					g.TranslateTransform(_grac.ActiveLayer.Position.X, _grac.ActiveLayer.Position.Y);
+					g.TranslateTransform((float)_grac.ActiveLayer.Position.X, (float)_grac.ActiveLayer.Position.Y);
 					g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
 					var currLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_positionCurrentMouseInGraphCoordinates);
 					DrawRectangleFromLTRB(g, _Points[0].LayerCoordinates, currLayerCoord);

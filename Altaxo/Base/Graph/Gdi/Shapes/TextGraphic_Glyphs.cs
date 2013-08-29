@@ -677,45 +677,49 @@ namespace Altaxo.Graph.Gdi.Shapes
 				string result = string.Empty;
 
 				// first of all, retrieve the actual name
-				if (obj is XYPlotLayer)
-				{
-					XYPlotLayer layer = (XYPlotLayer)obj;
-					if (_layerNumber >= 0 && _layerNumber < layer.ParentLayerList.Count)
-						layer = layer.ParentLayerList[_layerNumber];
+				var mylayer = obj as HostLayer;
+				if (null == mylayer)
+					return result;
 
-					IGPlotItem pa = null;
-					if (_plotNumber < layer.PlotItems.Flattened.Length)
-					{
-						pa = layer.PlotItems.Flattened[_plotNumber];
-					}
-					if (pa != null)
-					{
-						result = pa.GetName(0);
-
-						if (_plotLabelStyle != null && !_plotLabelStyleIsPropColName && pa is XYColumnPlotItem)
+				
+					XYPlotLayer layer = null;
+					if (_layerNumber >= 0 && mylayer.ParentLayerList != null && _layerNumber < mylayer.ParentLayerList.Count)
+						layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
+					if (null == layer)
+						return result;
+						IGPlotItem pa = null;
+						if (_plotNumber < layer.PlotItems.Flattened.Length)
 						{
-							XYColumnPlotItemLabelTextStyle style = XYColumnPlotItemLabelTextStyle.YS;
-							try { style = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle), _plotLabelStyle, true); }
-							catch (Exception) { }
-							result = ((XYColumnPlotItem)pa).GetName(style);
+							pa = layer.PlotItems.Flattened[_plotNumber];
 						}
-
-						if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYColumnPlotItem)
+						if (pa != null)
 						{
-							XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
-							Data.DataTable tbl = null;
-							if (pb.YColumn is Data.DataColumn)
-								tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
+							result = pa.GetName(0);
 
-							if (tbl != null)
+							if (_plotLabelStyle != null && !_plotLabelStyleIsPropColName && pa is XYColumnPlotItem)
 							{
-								int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
-								if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
-									result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
+								XYColumnPlotItemLabelTextStyle style = XYColumnPlotItemLabelTextStyle.YS;
+								try { style = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle), _plotLabelStyle, true); }
+								catch (Exception) { }
+								result = ((XYColumnPlotItem)pa).GetName(style);
+							}
+
+							if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYColumnPlotItem)
+							{
+								XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
+								Data.DataTable tbl = null;
+								if (pb.YColumn is Data.DataColumn)
+									tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
+
+								if (tbl != null)
+								{
+									int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
+									if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
+										result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
+								}
 							}
 						}
-					}
-				}
+				
 
 				return result;
 			}
@@ -758,12 +762,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Width = 0;
 				Height = 0;
 
-				object obj = mc.LinkedObject;
-				if (obj is XYPlotLayer)
-				{
-					XYPlotLayer layer = (XYPlotLayer)obj;
-					if (_layerNumber >= 0 && _layerNumber < layer.ParentLayerList.Count)
-						layer = layer.ParentLayerList[_layerNumber];
+				var mylayer = mc.LinkedObject as HostLayer;
+				if (null == mylayer)
+					return;
+					XYPlotLayer layer = null;
+					if (_layerNumber >= 0 && null!=mylayer.ParentLayerList && _layerNumber < mylayer.ParentLayerList.Count)
+						layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
+
+					if (null == layer)
+						return;
 
 					if (_plotNumber < layer.PlotItems.Flattened.Length)
 					{
@@ -773,14 +780,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 						ExtendBelowBaseline = fontInfo.cyDescent;
 					}
 				}
-			}
+			
 
 			public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
 			{
-				XYPlotLayer layer = (XYPlotLayer)dc.LinkedObject;
+				var mylayer = (HostLayer)dc.LinkedObject;
 
-				if (_layerNumber >= 0 && _layerNumber < layer.ParentLayerList.Count)
-					layer = layer.ParentLayerList[_layerNumber];
+				XYPlotLayer layer = null;
+				if (_layerNumber >= 0 &&  mylayer.ParentLayerList!=null && _layerNumber < mylayer.ParentLayerList.Count)
+					layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
 
 				if (_plotNumber < layer.PlotItems.Flattened.Length)
 				{

@@ -75,12 +75,12 @@ namespace Altaxo.Graph.Gdi
 		public static bool ShowPrintableSizeSetupDialog(this GraphDocument doc)
 		{
 			var options = new Altaxo.Gui.Graph.PrintableAreaSetupOptions();
-			options.AreaSize = doc.Layers.GraphSize;
+			options.AreaSize = doc.RootLayer.Size;
 			object resultobj = options;
 			if (Current.Gui.ShowDialog(ref resultobj, "Setup printable area"))
 			{
 				var result = (Altaxo.Gui.Graph.PrintableAreaSetupOptions)resultobj;
-				doc.Layers.SetGraphSize((SizeF)result.AreaSize, result.Rescale);
+				doc.RootLayer.SetParentLayerSize((SizeF)result.AreaSize, result.Rescale);
 				return true;
 			}
 			return false;
@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public class GraphDocumentPrintTask
 	{
-		XYPlotLayerCollection _layers;
+		HostLayer _layers;
 		Altaxo.Graph.SingleGraphPrintOptions _printOptions;
 		int _page;
 		bool _isPrintPreview;
@@ -160,13 +160,13 @@ namespace Altaxo.Graph.Gdi
 
 
 		public GraphDocumentPrintTask(GraphDocument doc)
-			: this(doc.Layers, doc.PrintOptions)
+			: this(doc.RootLayer, doc.PrintOptions)
 		{
 		}
 
-		public GraphDocumentPrintTask(XYPlotLayerCollection layers, Altaxo.Graph.SingleGraphPrintOptions options)
+		public GraphDocumentPrintTask(HostLayer rootLayer, Altaxo.Graph.SingleGraphPrintOptions options)
 		{
-			_layers = layers;
+			_layers = rootLayer;
 			_printOptions = options;
 
 			_page = 0;
@@ -185,7 +185,7 @@ namespace Altaxo.Graph.Gdi
 			if (_printOptions.RotatePageAutomatically)
 			{
 				bool needLandscape = false;
-				if (_layers.GraphSize.Width > _layers.GraphSize.Height)
+				if (_layers.Size.X > _layers.Size.Y)
 					needLandscape = true;
 
 				e.PageSettings.Landscape = needLandscape;
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Gdi
 
 			float zoom;
 			PointF startLocationOnPage;
-			SizeF graphSize = _layers.GraphSize;
+			SizeF graphSize = (SizeF)_layers.Size;
 			_printOptions.GetZoomAndStartLocation(e.PageBounds, e.MarginBounds, graphSize, out zoom, out startLocationOnPage, true);
 			graphSize = graphSize.Scale(zoom);
 

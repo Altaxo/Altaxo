@@ -41,8 +41,8 @@ namespace Altaxo.Gui.Graph
 	/// Summary description for LayerController.
 	/// </summary>
 	[UserControllerForObject(typeof(DensityImageLegend))]
-	[ExpectedTypeOfView(typeof(ILayerView))]
-	public class DensityImageLegendController : MVCANControllerBase<DensityImageLegend, ILayerView>
+	[ExpectedTypeOfView(typeof(IXYPlotLayerView))]
+	public class DensityImageLegendController : MVCANControllerBase<DensityImageLegend, IXYPlotLayerView>
 	{
 		private string _currentPageName;
 		LayerControllerTabType _primaryChoice; // which tab type is currently choosen

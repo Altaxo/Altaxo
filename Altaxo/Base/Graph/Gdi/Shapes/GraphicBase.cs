@@ -36,12 +36,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public abstract partial class GraphicBase
 		:
+		Altaxo.Graph.Gdi.Shapes.IGraphicBase,
 		System.Runtime.Serialization.ISerializable,
-		System.Runtime.Serialization.IDeserializationCallback,
-		Main.IChangedEventSource,
-		Main.IDocumentNode,
-		Main.ICopyFrom,
-		System.ICloneable
+		System.Runtime.Serialization.IDeserializationCallback
+	
+		
 	{
 		/// <summary>
 		/// The bounds of this object.
@@ -1079,17 +1078,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region IGrippableObject Members
 
 		static readonly PointD2D[] _gripRelPositions = new PointD2D[]
-      {
-      new PointD2D(0.5, 0.5),
-      new PointD2D(0, 0),
-      new PointD2D(0.5, 0),
-      new PointD2D(1, 0), 
-      new PointD2D(1, 0.5), 
-       new PointD2D(1, 1),
-      new PointD2D(0.5, 1),
-      new PointD2D(0, 1), 
-      new PointD2D(0, 0.5), 
-      };
+			{
+			new PointD2D(0.5, 0.5),
+			new PointD2D(0, 0),
+			new PointD2D(0.5, 0),
+			new PointD2D(1, 0), 
+			new PointD2D(1, 0.5), 
+			 new PointD2D(1, 1),
+			new PointD2D(0.5, 1),
+			new PointD2D(0, 1), 
+			new PointD2D(0, 0.5), 
+			};
 
 		[Flags]
 		protected enum GripKind { Move = 1, Resize = 2, Rotate = 4, Rescale = 8, Shear = 16 }

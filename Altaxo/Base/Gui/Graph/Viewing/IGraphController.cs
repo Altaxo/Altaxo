@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Sets the number of layers that are in the graph. The view has to reflect the change in the number of layers
 		/// by adjusting the number of layer buttons or similar. The current layer number should be preserved.
 		/// </summary>
-		int NumberOfLayers { set; }
+		Altaxo.Collections.NGTreeNode NumberOfLayers { set; }
 
 		/// <summary>
 		/// Sets the currently active layer. If the view has some means to show the
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
 		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
-		int CurrentLayer { set; }
+		int[] CurrentLayer { set; }
 
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	{
 		GraphDocument Doc { get; }
 
-		XYPlotLayer ActiveLayer { get; }
+		HostLayer ActiveLayer { get; }
 
 
 			/// <summary>
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		/// <param name="currLayer">The current layer number as selected by the user.</param>
 		/// <param name="bAlternative">Normally false, can be set to true if the user clicked for instance with the right mouse button on the layer button.</param>
-		void EhView_CurrentLayerChoosen(int currLayer, bool bAlternative);
+		void EhView_CurrentLayerChoosen(int[] currLayer, bool bAlternative);
 
 		
 		/// <summary>Handles the event when the size of the graph area is changed.</summary>
@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		void EhView_CurrentGraphToolChanged();
 
-		void EhView_ShowDataContextMenu(int layerNumber, object guiParent, Point pt);
+		void EhView_ShowDataContextMenu(int[] layerNumber, object guiParent, Point pt);
 
 	}
 
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Returns the currently active layer, or null if there is no active layer.
 		/// </summary>
-		XYPlotLayer ActiveLayer { get; }
+		HostLayer ActiveLayer { get; }
 
 		/// <summary>
 		/// Get / sets the currently active plot by number.

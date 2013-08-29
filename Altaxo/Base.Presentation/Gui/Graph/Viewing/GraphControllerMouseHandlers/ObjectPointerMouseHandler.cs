@@ -27,10 +27,12 @@ using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Linq;
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
@@ -327,7 +329,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			// search for a object first
 			IHitTestObject clickedObject;
-			int clickedLayerNumber = 0;
+			int[] clickedLayerNumber = null;
 			_grac.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
 
 			if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
@@ -454,7 +456,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 				// Set the currently active layer to the layer the clicked object is belonging to.
 				if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
-					_grac.EhView_CurrentLayerChoosen(graphObject.ParentLayer.Number, false); // Sets the current active layer
+					_grac.EhView_CurrentLayerChoosen(graphObject.ParentLayer.IndexOf().ToArray(), false); // Sets the current active layer
 
 				if (graphObject.DoubleClick != null)
 				{

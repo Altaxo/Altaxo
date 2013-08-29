@@ -209,12 +209,15 @@
     <Compile Include="Graph\Gdi\HatchBrushes\VerticalHatchBrush.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HatchBrushBase.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HorizontalHatchBrush.cs" />
+    <Compile Include="Graph\Gdi\HostLayer.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\DateTimeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\FreeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBase.cs" />
+    <Compile Include="Graph\Gdi\Shapes\IGraphicBase.cs" />
     <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Graph\NamedColor.cs" />
     <Compile Include="Graph\NamedColors.cs" />
+    <Compile Include="Gui\Graph\HostLayerController.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
@@ -873,7 +876,6 @@
     <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphic.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerCollection.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerPositionAndSize.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerPositionType.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerSizeType.cs" />
@@ -1003,7 +1005,7 @@
     <Compile Include="Gui\Graph\G2DPolarCSController.cs" />
     <Compile Include="Gui\Graph\GraphExportOptionsController.cs" />
     <Compile Include="Gui\Graph\GridPlaneController.cs" />
-    <Compile Include="Gui\Graph\LayerController.cs" />
+    <Compile Include="Gui\Graph\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\LayerPositionController.cs" />
     <Compile Include="Gui\Graph\LineScatterLayerContentsController.cs" />
     <Compile Include="Gui\Graph\LineScatterPlotDataController.cs" />

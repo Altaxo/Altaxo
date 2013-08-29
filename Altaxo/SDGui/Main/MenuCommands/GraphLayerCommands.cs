@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Commands
 			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 			if (null == ctrl)
 				return null;
-			var activeLayer = ctrl.Controller.ActiveLayer;
+			var activeLayer = ctrl.Controller.ActiveLayer as XYPlotLayer;
 			if (null == activeLayer)
 				return null;
 
@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Commands
 			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 			if (null == ctrl)
 				return;
-			var activeLayer = ctrl.Controller.ActiveLayer;
+			var activeLayer = ctrl.Controller.ActiveLayer as XYPlotLayer;
 			if (null == activeLayer)
 				return;
 

@@ -15,6 +15,7 @@
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
 		<StackPanel Grid.Column="0"  Name="_layerToolBar" MinWidth="16" >
+			<TreeView x:Name="_guiLayerTree"/>
 		</StackPanel>
 		<Grid Grid.Column="1">
 			<Grid.RowDefinitions>

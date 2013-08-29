@@ -117,7 +117,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="arrangement">The layer arrangement options (contain the information how to arrange the layers).</param>
 		public static void ArrangeLayers(this GraphDocument graph, ArrangeLayersDocument arrangement)
 		{
-			int numPresentLayers = graph.Layers.Count;
+			int numPresentLayers = graph.RootLayer.Layers.Count;
 			int numDestLayers = arrangement.NumberOfColumns * arrangement.NumberOfRows;
 
 			int additionalLayers = Math.Max(0, numDestLayers - numPresentLayers);
@@ -153,16 +153,17 @@ namespace Altaxo.Graph.Gdi
 
 					if (nLayer >= numPresentLayers)
 					{
-						graph.Layers.Add(new XYPlotLayer(layerPosition, layerSize));
-						graph.Layers[nLayer].CreateDefaultAxes();
+						var newLayer = new XYPlotLayer(layerPosition, layerSize);
+						graph.RootLayer.Layers.Add(newLayer);
+						newLayer.CreateDefaultAxes();
 					}
-					var oldSize = graph.Layers[nLayer].Size;
-					graph.Layers[nLayer].SetSize(relHorzSize / 100, XYPlotLayerSizeType.RelativeToGraphDocument, relVertSize / 100, XYPlotLayerSizeType.RelativeToGraphDocument);
-					var newSize = graph.Layers[nLayer].Size;
+					var oldSize = graph.RootLayer.Layers[nLayer].Size;
+					graph.RootLayer.Layers[nLayer].SetSize(relHorzSize / 100, XYPlotLayerSizeType.RelativeToGraphDocument, relVertSize / 100, XYPlotLayerSizeType.RelativeToGraphDocument);
+					var newSize = graph.RootLayer.Layers[nLayer].Size;
 
 					if (oldSize != newSize)
-						graph.Layers[nLayer].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
-					graph.Layers[nLayer].SetPosition(relHorzPos / 100, XYPlotLayerPositionType.RelativeToGraphDocument, relVertPos / 100, XYPlotLayerPositionType.RelativeToGraphDocument);
+						graph.RootLayer.Layers[nLayer].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
+					graph.RootLayer.Layers[nLayer].SetPosition(relHorzPos / 100, XYPlotLayerPositionType.RelativeToGraphDocument, relVertPos / 100, XYPlotLayerPositionType.RelativeToGraphDocument);
 
 				}
 
@@ -175,24 +176,24 @@ namespace Altaxo.Graph.Gdi
 				{
 					case SuperfluousLayersAction.Remove:
 						for (int i = numPresentLayers - 1; i >= numDestLayers; i--)
-							graph.Layers.RemoveAt(i);
+							graph.RootLayer.Layers.RemoveAt(i);
 						break;
 					case SuperfluousLayersAction.OverlayFirstLayer:
 					case SuperfluousLayersAction.OverlayLastLayer:
 						
 						int template = arrangement.SuperfluousLayersAction == SuperfluousLayersAction.OverlayFirstLayer ? 0 : numDestLayers - 1;
-						var size = graph.Layers[template].Size;
-						var pos = graph.Layers[template].Position;
+						var size = graph.RootLayer.Layers[template].Size;
+						var pos = graph.RootLayer.Layers[template].Position;
 
 						for (int i = numDestLayers; i < numPresentLayers; i++)
 						{
-							var oldSize = graph.Layers[i].Size;
-							graph.Layers[i].SetSize(size.X, XYPlotLayerSizeType.AbsoluteValue, size.Y, XYPlotLayerSizeType.AbsoluteValue);
-							var newSize = graph.Layers[i].Size;
+							var oldSize = graph.RootLayer.Layers[i].Size;
+							graph.RootLayer.Layers[i].SetSize(size.X, XYPlotLayerSizeType.AbsoluteValue, size.Y, XYPlotLayerSizeType.AbsoluteValue);
+							var newSize = graph.RootLayer.Layers[i].Size;
 
 							if (oldSize != newSize)
-								graph.Layers[i].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
-							graph.Layers[i].SetPosition(pos.X, XYPlotLayerPositionType.AbsoluteValue, pos.Y, XYPlotLayerPositionType.AbsoluteValue);
+								graph.RootLayer.Layers[i].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
+							graph.RootLayer.Layers[i].SetPosition(pos.X, XYPlotLayerPositionType.AbsoluteValue, pos.Y, XYPlotLayerPositionType.AbsoluteValue);
 						}
 
 						break;

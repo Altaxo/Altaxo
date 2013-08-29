@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi
 			set { _printOptions = value; }
 		}
 
-		XYPlotLayerCollection _layers;
+		HostLayer _layers;
 
 		string _name;
 
@@ -231,10 +231,10 @@ namespace Altaxo.Graph.Gdi
 				s._pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
 
-				s._layers = (XYPlotLayerCollection)info.GetValue("LayerList", s);
-				s._layers.ParentObject = s;
-				s._layers.SetGraphSize(s._printableBounds.Size, false);
-
+				var layers = (HostLayer)info.GetValue("LayerList", s);
+				layers.SetSize(s._printableBounds.X, XYPlotLayerSizeType.AbsoluteValue, s._printableBounds.Y, XYPlotLayerSizeType.AbsoluteValue);
+				layers.FixAndTestParentChildRelationShipOfLayers();
+				s._layers = layers;
 				return s;
 			}
 		}
@@ -290,10 +290,10 @@ namespace Altaxo.Graph.Gdi
 				s._pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
 
-				s._layers = (XYPlotLayerCollection)info.GetValue("LayerList", s);
-				s._layers.ParentObject = s;
-				if (s._layers.GraphSize.IsEmpty)
-					s._layers.SetGraphSize(s._printableBounds.Size, false);
+				var layers = (HostLayer)info.GetValue("LayerList", s);
+				layers.SetSize(s._printableBounds.X, XYPlotLayerSizeType.AbsoluteValue, s._printableBounds.Y, XYPlotLayerSizeType.AbsoluteValue);
+				layers.FixAndTestParentChildRelationShipOfLayers();
+				s._layers = layers;
 
 				// new in version 1 - Add graph properties
 				int numberproperties = info.OpenArray(); // "GraphProperties"
@@ -355,11 +355,11 @@ namespace Altaxo.Graph.Gdi
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole();
 			_notes.PropertyChanged += EhNotesChanged;
-			this._layers = new XYPlotLayerCollection();
+			this._layers = new HostLayer(new SizeF(814, 567) );
 			this._layers.ParentObject = this;
 
 			SetGraphPageBoundsToPrinterSettings();
-			this._layers.SetGraphSize(_printableBounds.Size, false);
+			this._layers.SetParentLayerSize(_printableBounds.Size, false);
 		}
 
 		void EhNotesChanged(object sender, PropertyChangedEventArgs e)
@@ -371,7 +371,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
-			this._layers = new XYPlotLayerCollection();
+			this._layers = new HostLayer(new SizeF(814, 567));
 			this._layers.ParentObject = this;
 
 			CopyFrom(from, GraphCopyOptions.All);
@@ -390,7 +390,7 @@ namespace Altaxo.Graph.Gdi
 
 			if (0 != (options & GraphCopyOptions.CopyGraphSize))
 			{
-				this._layers.SetGraphSize(from._layers.GraphSize, false);
+				this._layers.SetSize(from._layers.UserWidth, from._layers.UserWidthType, from._layers.UserHeight, from._layers.UserHeightType);
 			}
 
 			if (0 != (options & GraphCopyOptions.CloneNotes))
@@ -418,17 +418,13 @@ namespace Altaxo.Graph.Gdi
 			// properties, otherwise some errors will happen
 			if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
 			{
-				this._layers = (XYPlotLayerCollection)from._layers.Clone();
+				this._layers = (HostLayer)from._layers.Clone();
 			}
 			else if (0 != (options & GraphCopyOptions.CopyLayerAll))
 			{
-				// copy the style for each of thelayers
-				int len = Math.Min(this._layers.Count, from._layers.Count);
-				for (int i = 0; i < len; i++)
-				{
-					this._layers[i].CopyFrom(from._layers[i], options);
-					this._layers[i].ParentLayerList = this._layers;
-				}
+				// don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this is to be done recursively
+				this._layers.CopyFrom(from._layers, options);
+				this._layers.ParentLayer = this._layers;
 			}
 			this._layers.ParentObject = this;
 		}
@@ -503,10 +499,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			foreach (var layer in _layers)
-			{
-				layer.PlotItems.VisitDocumentReferences(Report);
-			}
+			_layers.VisitDocumentReferences(Report);
 		}
 
 		/// <summary>
@@ -639,7 +632,7 @@ namespace Altaxo.Graph.Gdi
 			if (_printableBounds != oldBounds)
 			{
 				if (setGraphSize)
-					Layers.SetGraphSize(bounds.Size, rescaleGraph);
+					RootLayer.SetParentLayerSize(bounds.Size, rescaleGraph);
 				OnBoundsChanged();
 			}
 		}
@@ -648,7 +641,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// The collection of layers of the graph.
 		/// </summary>
-		public XYPlotLayerCollection Layers
+		public HostLayer RootLayer
 		{
 			get { return _layers; }
 		}
@@ -668,7 +661,7 @@ namespace Altaxo.Graph.Gdi
 			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
 			try
 			{
-				Layers.Paint(g, bForPrinting);
+				RootLayer.Paint(g, bForPrinting);
 			}
 			finally
 			{

@@ -34,6 +34,7 @@ using Altaxo.Gui;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
+using Altaxo.Collections;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -563,7 +564,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			var layer = ctrl.ActiveLayer;
+			var layer = ctrl.ActiveLayer as XYPlotLayer;
 			if (null == layer || ctrl.CurrentPlotNumber < 0 || !(layer.PlotItems[ctrl.CurrentPlotNumber] is DensityImagePlotItem))
 			{
 				Current.Gui.ErrorMessageBox("Current plot item should be a density image plot!");
@@ -597,8 +598,18 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
-			if (null != ctrl.ActiveLayer)
-				LayerController.ShowDialog(ctrl.ActiveLayer);
+			var t1 = ctrl.ActiveLayer as XYPlotLayer;
+			if (null != t1)
+			{
+				XYPlotLayerController.ShowDialog(t1);
+				return;
+			}
+			var t2 = ctrl.ActiveLayer;
+			if (null != t2)
+			{
+				HostLayerController.ShowDialog(t2);
+				return;
+			}
 		}
 	}
 
@@ -607,7 +618,9 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
-			ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[] { 0, 0, 1 })), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line)));
+			var xylayer = ctrl.Doc.RootLayer.ElementAt(ctrl.CurrentLayerNumber) as XYPlotLayer;
+			if(null!=xylayer)
+				xylayer.PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[] { 0, 0, 1 })), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line)));
 		}
 	}
 
@@ -618,7 +631,11 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.Layers[ctrl.CurrentLayerNumber].CreateNewLayerLegend();
+			HostLayer l;
+			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
+
+			if(l is XYPlotLayer)
+				((XYPlotLayer)l).CreateNewLayerLegend();
 		}
 	}
 
@@ -629,8 +646,14 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.Layers[ctrl.CurrentLayerNumber].RescaleXAxis();
-			ctrl.Doc.Layers[ctrl.CurrentLayerNumber].RescaleYAxis();
+			HostLayer l;
+			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
+
+			if (l is XYPlotLayer)
+			{
+				((XYPlotLayer)l).RescaleXAxis();
+				((XYPlotLayer)l).RescaleYAxis();
+			}
 		}
 	}
 
@@ -681,6 +704,12 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
+			HostLayer l;
+			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
+
+			if (!(l is XYPlotLayer))
+				return;
+
 			FunctionEvaluationScript script = null; // 
 
 			if (script == null)
@@ -693,7 +722,7 @@ namespace Altaxo.Graph.Commands
 
 				script = (FunctionEvaluationScript)args[0];
 				XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
-				ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(functItem);
+				((XYPlotLayer)l).PlotItems.Add(functItem);
 			}
 		}
 
