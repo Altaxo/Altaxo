@@ -31,7 +31,7 @@
 		<Label Grid.Column="0" Grid.Row="8">Destination column sorting:</Label>
 		<Label Grid.Column="0" Grid.Row="10">Destination row sorting:</Label>
 
-		<ComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbColWithCyclingVar"/>
+		<ComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbColWithCyclingVar" SelectionChanged="EhCyclicVarChanged"/>
 		<AltaxoCommon:MultipleChoiceListView Grid.Column="1" Grid.Row="2" x:Name="_lbColsToAverage" MaxHeight="200"/>
 		<AltaxoCommon:SingleChoiceRadioStackPanel Grid.Column="1" Grid.Row="4" Orientation="Vertical" x:Name="_chDestinationOutput"/>
 		<AltaxoCommon:SingleChoiceRadioStackPanel Grid.Column="1" Grid.Row="6" Orientation="Vertical" x:Name="_chDestinationX"/>

@@ -464,7 +464,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion Scrolling
 
-
 		#region Graph tools
 		/// <summary>
 		/// This event will be fired if the current graph tool has changed, either by the user
@@ -477,7 +476,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		
 
 		#endregion Graph tools
-
 
 		#endregion
 

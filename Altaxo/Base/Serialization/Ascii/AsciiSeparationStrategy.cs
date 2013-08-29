@@ -91,6 +91,14 @@ namespace Altaxo.Serialization.Ascii
 			_separatorChar = separator;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SingleCharSeparationStrategy"/> class with tabulator as the separator char.
+		/// </summary>
+		public SingleCharSeparationStrategy()
+			: this('\t')
+		{
+		}
+
 		public char SeparatorChar { get { return _separatorChar; } set { _separatorChar = value; } }
 
 		public IEnumerable<string> GetTokens(string line)
