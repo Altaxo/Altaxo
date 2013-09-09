@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for LayerControl.xaml
 	/// </summary>
-	public partial class LayerControl : UserControl, IXYPlotLayerView
+	public partial class XYPlotLayerControl : UserControl, IXYPlotLayerView
 	{
 		private int _suppressEventCounter = 0;
 
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph
 		public event Action<string> PageChanged;
 
 
-		public LayerControl()
+		public XYPlotLayerControl()
 		{
 			InitializeComponent();
 		}

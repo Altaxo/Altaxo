@@ -318,34 +318,17 @@ namespace Altaxo.Gui.Graph.Viewing
 			set
 			{
 				{
-					_guiLayerTree.ItemsSource = new[]{value};
-					/*
-					int nNumButtons = _layerToolBar.Children.Count;
+					_layerToolBar.Children.Clear();
 
-					if (value > nNumButtons)
+					foreach(var node in value.TakeFromHereToFirstLeaves())
 					{
-						for (int i = nNumButtons; i < value; i++)
-						{
-
-							var newbutton = new ToggleButton() { Content = i.ToString(), Tag = i };
+						var newbutton = new ToggleButton() { Content = node.Text, Tag = node.Tag };
+						newbutton.Margin = new Thickness(node.Level * 8, 2, 1, 0);
+						newbutton.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
 							newbutton.Click += new RoutedEventHandler(EhLayerButton_Click);
 							newbutton.ContextMenuOpening += new ContextMenuEventHandler(EhLayerButton_ContextMenuOpening);
 							_layerToolBar.Children.Add(newbutton);
-						}
 					}
-					else if (nNumButtons > value)
-					{
-						for (int i = nNumButtons - 1; i >= value; i--)
-							_layerToolBar.Children.RemoveAt(i);
-					}
-
-					// now press the currently active layer button
-					for (int i = 0; i < _layerToolBar.Children.Count; i++)
-					{
-						var button = (ToggleButton)_layerToolBar.Children[i];
-						button.IsChecked = (i == _cachedCurrentLayer);
-					}
-					 */
 				}
 				
 			}
@@ -377,10 +360,15 @@ namespace Altaxo.Gui.Graph.Viewing
 			set
 			{
 				_cachedCurrentLayer = value;
-				/*
+
+				var ccl = (IList<int>)_cachedCurrentLayer;
+
 				for (int i = 0; i < _layerToolBar.Children.Count; i++)
-					((ToggleButton)_layerToolBar.Children[i]).IsChecked = (i == _cachedCurrentLayer[0]);
-				 */
+				{
+					var button = (ToggleButton)_layerToolBar.Children[i];
+					button.IsChecked = ccl.SequenceEqual((int[])button.Tag);
+				}
+				
 			}
 		}
 

@@ -639,19 +639,19 @@ namespace Altaxo.Gui.Graph
 
       for(int i=0;i<selNodes.Length;i++)
       {
-        if (selNodes[i].Nodes.Count==0 && selNodes[i].Parent!=null && selNodes[i].Parent.Parent!=null)
+        if (selNodes[i].Nodes.Count==0 && selNodes[i].ParentNode!=null && selNodes[i].ParentNode.ParentNode!=null)
         {
-          NGTreeNode parent = selNodes[i].Parent;
-          NGTreeNode grandParent = parent.Parent;
+          NGTreeNode parent = selNodes[i].ParentNode;
+          NGTreeNode grandParent = parent.ParentNode;
           selNodes[i].Remove();
           grandParent.Nodes.Add(selNodes[i]);
 
           if (parent.Nodes.Count == 0)
             parent.Remove();
         }
-        else if (selNodes[i].Nodes.Count > 0 && selNodes[i].Parent != null)
+        else if (selNodes[i].Nodes.Count > 0 && selNodes[i].ParentNode != null)
         {
-          NGTreeNode parent = selNodes[i].Parent;
+          NGTreeNode parent = selNodes[i].ParentNode;
           while(selNodes[i].Nodes.Count>0)
           {
             NGTreeNode no = selNodes[i].Nodes[0];

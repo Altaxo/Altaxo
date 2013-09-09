@@ -433,7 +433,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// Sets the position of the object.
 		/// </summary>
 		/// <param name="value">The position to set.</param>
-		public virtual void SetPosition(PointD2D value)
+		protected virtual void SetPosition(PointD2D value)
 		{
 			var oldvalue = _position;
 			this._position = value;
@@ -462,12 +462,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="o">The graphics object whose position is scaled.</param>
 		/// <param name="xscale">The xscale ratio.</param>
 		/// <param name="yscale">The yscale ratio.</param>
-		public static void ScalePosition(GraphicBase o, double xscale, double yscale)
+		public static void ScalePosition(IGraphicBase o, double xscale, double yscale)
 		{
 			if (o != null)
 			{
 				PointD2D oldP = o.Position;
-				o.SetPosition(new PointD2D((oldP.X * xscale), (oldP.Y * yscale)));
+				o.Position = new PointD2D((oldP.X * xscale), (oldP.Y * yscale));
 			}
 		}
 

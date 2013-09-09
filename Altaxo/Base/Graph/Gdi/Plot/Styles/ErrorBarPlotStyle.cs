@@ -496,7 +496,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					{
 						if (lhvalid)
 						{
-							PointF outDir;
+							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(1, 0), out outDir);
 							outDir.X *= (float)(symbolSize / 2);
 							outDir.Y *= (float)(symbolSize / 2);
@@ -508,7 +508,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 						if (llvalid)
 						{
-							PointF outDir;
+							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(1, 0), out outDir);
 							outDir.X *= (float)(symbolSize / 2);
 							outDir.Y *= (float)(symbolSize / 2);
@@ -612,7 +612,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					{
 						if (lhvalid)
 						{
-							PointF outDir;
+							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(0, 1), out outDir);
 							outDir.X *= (float)(symbolSize / 2);
 							outDir.Y *= (float)(symbolSize / 2);
@@ -624,7 +624,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 						if (llvalid)
 						{
-							PointF outDir;
+							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(0, 1), out outDir);
 							outDir.X *= (float)(symbolSize / 2);
 							outDir.Y *= (float)(symbolSize / 2);

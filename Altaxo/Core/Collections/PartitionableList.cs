@@ -56,14 +56,26 @@ namespace Altaxo.Collections
 		/// </summary>
 		protected Action<T> _actionBeforeInsertion;
 
+		/// <summary>
+		/// Get information whether the CollectionChanged events are enabled or disabled.
+		/// </summary>
+		protected TemporaryDisabler _eventState;
+
+		/// <summary>
+		/// Holds the last fired CollectionChanged event in case the event state is disabled.
+		/// </summary>
+		NotifyCollectionChangedEventArgs _pendingEvent;
+
 		#region Constructors
 
 		public PartitionableList()
 		{
+			_eventState = new TemporaryDisabler(OnReenableEvents);
 		}
 
 		public PartitionableList(Action<T> actionBeforeInsertion)
 		{
+			_eventState = new TemporaryDisabler(OnReenableEvents);
 			_actionBeforeInsertion = actionBeforeInsertion;
 		}
 
@@ -162,10 +174,12 @@ namespace Altaxo.Collections
 		#endregion
 
 
+		#region Event management
 
 		/// <summary>
 		/// Notifies the partial views that have changed after each operation.
 		/// </summary>
+		/// 
 		protected void NotifyPartialViewsThatHaveChanged()
 		{
 			foreach (var pv in _partialViewsToNotify)
@@ -173,6 +187,68 @@ namespace Altaxo.Collections
 
 			_partialViewsToNotify.Clear();
 		}
+
+
+		/// <summary>
+		/// Gets a token that will temporarily disable the CollectionChanged events from this collection. The best practice is to use this token inside a using statement, because at the end
+		/// of the using statement the Dispose function of the token is called automatically, which then reenables the events.
+		/// </summary>
+		/// <returns></returns>
+		public IDisposable GetEventDisableToken()
+		{
+			return _eventState.Disable();
+		}
+
+
+		protected virtual void OnReenableEvents()
+		{
+			if (null != _pendingEvent)
+			{
+				var e = _pendingEvent;
+				_pendingEvent = null;
+				base.OnCollectionChanged(e);
+			}
+		}
+
+		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+		{
+			if (_eventState.IsDisabled)
+			{
+				if (null == _pendingEvent)
+					_pendingEvent = e;
+				else if (_pendingEvent.Action != NotifyCollectionChangedAction.Reset)
+					_pendingEvent = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+			}
+			else
+			{
+				if (null == _pendingEvent)
+				{
+					base.OnCollectionChanged(e);
+				}
+				else
+				{
+					_pendingEvent = null;
+					base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+				}
+			}
+		}
+
+		#endregion
+
+
+		#region Some special list operations
+
+		public void AddRange(IEnumerable<T> enumeration)
+		{
+			using (var token = _eventState.Disable())
+			{
+				foreach (var item in enumeration)
+					this.Add(item);
+			}
+		}
+
+		#endregion
+
 
 		#region List change operation overrides
 
@@ -208,8 +284,6 @@ namespace Altaxo.Collections
 			if (null != _actionBeforeInsertion)
 				_actionBeforeInsertion(item);
 
-			base.InsertItem(index, item);
-
 			for (var node = _partialViews.First; null != node; node = node.Next)
 			{
 				var pv = node.Value.Target as PartialViewBase;
@@ -234,56 +308,62 @@ namespace Altaxo.Collections
 				}
 			}
 
+			base.InsertItem(index, item);
+
 			NotifyPartialViewsThatHaveChanged();
 		}
 
 		protected override void MoveItem(int oldIndex, int newIndex)
 		{
-			for (var node = _partialViews.First; null != node; node = node.Next)
+			if (oldIndex != newIndex)
 			{
-				var pv = node.Value.Target as PartialViewBase;
-				if (null != pv)
-				{
-					var itemIndex = pv._itemIndex;
-					int i, j;
-					int oIdx = FindIndexOfItemGreaterThanOrEqualTo(itemIndex, oldIndex);
-					bool isItemIncluded = oIdx < itemIndex.Count && itemIndex[oIdx] == oldIndex;
 
-					if (oldIndex < newIndex) // item is moved to higher index
-					{
-						if (isItemIncluded)
-						{
-							for (i = oIdx, j = oIdx + 1; j < itemIndex.Count && itemIndex[j] < newIndex; ++i, ++j)
-								itemIndex[i] = itemIndex[j] - 1;
-							itemIndex[i] = newIndex;
-							_partialViewsToNotify.Add(pv);
-						}
-						else // item is not included - we only need to adjust the item indices
-						{
-							for (i = oIdx; i < itemIndex.Count && itemIndex[i] < newIndex; ++i)
-								--itemIndex[i];
-						}
-					}
-					else // item is moved to lower index
-					{
-						if (isItemIncluded)
-						{
-							for (i = oIdx, j = oIdx - 1; j >= 0 && itemIndex[j] >= newIndex; --i, --j)
-								itemIndex[i] = itemIndex[j] + 1;
-							itemIndex[i] = newIndex;
-							_partialViewsToNotify.Add(pv);
-						}
-						else // item is not included - we only need to adjust the item indices
-						{
-							for (i = oIdx; i >= 0 && itemIndex[i] >= newIndex; --i)
-								++itemIndex[i];
-						}
-					}
-				}
-				else
+				for (var node = _partialViews.First; null != node; node = node.Next)
 				{
-					var oldNode = node;
-					_partialViews.Remove(node);
+					var pv = node.Value.Target as PartialViewBase;
+					if (null != pv)
+					{
+						var itemIndex = pv._itemIndex;
+						int i, j;
+						int oIdx = FindIndexOfItemGreaterThanOrEqualTo(itemIndex, oldIndex);
+						bool isItemIncluded = oIdx < itemIndex.Count && itemIndex[oIdx] == oldIndex;
+
+						if (oldIndex < newIndex) // item is moved to higher index
+						{
+							if (isItemIncluded)
+							{
+								for (i = oIdx, j = oIdx + 1; j < itemIndex.Count && itemIndex[j] <= newIndex; ++i, ++j)
+									itemIndex[i] = itemIndex[j] - 1;
+								itemIndex[i] = newIndex;
+								_partialViewsToNotify.Add(pv);
+							}
+							else // item is not included - we only need to adjust the item indices
+							{
+								for (i = oIdx; i < itemIndex.Count && itemIndex[i] <= newIndex; ++i)
+									--itemIndex[i];
+							}
+						}
+						else // item is moved to lower index
+						{
+							if (isItemIncluded)
+							{
+								for (i = oIdx, j = oIdx - 1; j >= 0 && itemIndex[j] >= newIndex; --i, --j)
+									itemIndex[i] = itemIndex[j] + 1;
+								itemIndex[i] = newIndex;
+								_partialViewsToNotify.Add(pv);
+							}
+							else // item is not included - we only need to adjust the item indices
+							{
+								for (i = oIdx-1; i >= 0 && itemIndex[i] >= newIndex; --i)
+									++itemIndex[i];
+							}
+						}
+					}
+					else
+					{
+						var oldNode = node;
+						_partialViews.Remove(node);
+					}
 				}
 			}
 
@@ -328,13 +408,12 @@ namespace Altaxo.Collections
 			if (null != _actionBeforeInsertion)
 				_actionBeforeInsertion(item);
 
-			base.SetItem(index, item);
-
 			for (var node = _partialViews.First; null != node; node = node.Next)
 			{
 				var pv = node.Value.Target as PartialViewBase;
 				if (null != pv)
 				{
+					bool partialViewChanged = false;
 					bool isIncluded = pv._selectionCriterium(item);
 					var itemIndex = pv._itemIndex;
 					int i = FindIndexOfItemGreaterThanOrEqualTo(itemIndex, index);
@@ -343,16 +422,30 @@ namespace Altaxo.Collections
 						if (itemIndex[i] == index)
 						{
 							if (!isIncluded)
+							{
 								itemIndex.RemoveAt(i);
+								partialViewChanged = true;
+							}
 						}
 						else
 						{
 							if (isIncluded)
+							{
 								itemIndex.Insert(i, index);
+								partialViewChanged = true;
+							}
+						}
+					}
+					else // at the end of the collection
+					{
+						if (isIncluded)
+						{
+							itemIndex.Add(index);
+							partialViewChanged = true;
 						}
 					}
 
-					if (isIncluded) // if the item fulfills the selection criterion,
+					if (partialViewChanged) // if the item fulfills the selection criterion,
 						_partialViewsToNotify.Add(pv); // the partial view must be notified in any case
 				}
 				else
@@ -361,6 +454,8 @@ namespace Altaxo.Collections
 					_partialViews.Remove(node);
 				}
 			}
+
+			base.SetItem(index, item);
 			NotifyPartialViewsThatHaveChanged();
 		}
 
@@ -380,7 +475,7 @@ namespace Altaxo.Collections
 			int upperValue = itemIndex[upperIndex];
 			int lowerValue = itemIndex[lowerIndex];
 
-			while (lowerValue < value && value < upperValue && lowerIndex < upperIndex)
+			while (lowerValue < value && value < upperValue && (lowerIndex+1) < upperIndex)
 			{
 				int middleIndex = upperIndex - ((upperIndex - lowerIndex) / 2);
 				int middleValue = itemIndex[middleIndex];
@@ -395,9 +490,132 @@ namespace Altaxo.Collections
 					upperValue = middleValue;
 				}
 			}
-			return value > upperValue ? upperIndex + 1 : upperIndex;
+			return value<=lowerValue ? lowerIndex : (value > upperValue ? upperIndex + 1 : upperIndex);
 		}
 
 		#endregion List change operation overrides
+
+
+		#region EventDisabler
+
+		/// <summary>
+		/// Helper class to temporarily disable something, e.g. some events. By calling <see cref="Disable"/> one gets a disposable token, that,
+		/// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="Disable"/>. In this case all tokens
+		/// must be disposed before the <see cref="IsEnabled"/> is again <c>true</c> and the re-enabling action is fired.
+		/// </summary>
+		protected class TemporaryDisabler
+		{
+			#region Inner class SuppressToken
+			private class SuppressToken : IDisposable
+			{
+				TemporaryDisabler _parent;
+
+				public SuppressToken(TemporaryDisabler parent)
+				{
+					_parent = parent;
+					System.Threading.Interlocked.Increment(ref _parent._disablingLevel);
+				}
+
+				/// <summary>
+				/// Disarms this SuppressToken so that it can not raise the suspend event anymore.
+				/// </summary>
+				public void Disarm()
+				{
+					if (_parent != null)
+					{
+						var parent = _parent;
+						_parent = null;
+						int newLevel = System.Threading.Interlocked.Decrement(ref _parent._disablingLevel);
+					}
+				}
+
+				#region IDisposable Members
+
+				public void Dispose()
+				{
+					if (_parent != null)
+					{
+						var parent = _parent;
+						_parent = null;
+						int newLevel = System.Threading.Interlocked.Decrement(ref parent._disablingLevel);
+						if (0 == newLevel)
+						{
+							parent.OnReenabling();
+						}
+						else if (newLevel < 0)
+						{
+							throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+						}
+					}
+				}
+
+				#endregion
+			}
+			#endregion
+
+			/// <summary>How many times was the <see cref="Disable"/> function called (without disposing the tokens got in these calls)</summary>
+			private int _disablingLevel;
+
+			/// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
+			Action _reenablingEventHandler;
+
+
+			/// <summary>
+			/// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
+			/// </summary>
+			/// <param name="reenablingEventHandler">The callback function called when the events resume. See remarks when the callback function is called.</param>
+			/// <remarks>The callback function is called only (i) if the event resumes (exactly: the _suppressLevel changes from 1 to 0),
+			/// and (ii) in that moment the _eventCount is &gt;0.
+			/// To get the _eventCount&gt;0, someone must call either GetEnabledWithCounting or GetDisabledWithCounting
+			/// during the suspend period.</remarks>
+			public TemporaryDisabler(Action reenablingEventHandler)
+			{
+				_reenablingEventHandler = reenablingEventHandler;
+			}
+
+			/// <summary>
+			/// Increase the SuspendLevel.
+			/// </summary>
+			/// <returns>An object, which must be disposed in order to re-enabling again.
+			/// The most convenient way is to use a using statement with this function call
+			/// </returns>
+			public IDisposable Disable()
+			{
+				return new SuppressToken(this);
+			}
+
+			/// <summary>
+			/// Returns true when the disabling level is equal to zero (initial state).
+			/// Otherwise false.
+			/// </summary>
+			public bool IsEnabled { get { return _disablingLevel == 0; } }
+
+			/// <summary>
+			/// Returns true when the disabling level is greater than zero (after calling the <see cref="Disable"/> function).
+			/// Returns false if the disabling level is zero.
+			/// </summary>
+			public bool IsDisabled { get { return _disablingLevel != 0; } }
+
+
+			/// <summary>
+			/// Just fires the reenabling action that was given in the constructor, 
+			/// without changing the disabling level.
+			/// </summary>
+			public void ReenableShortly()
+			{
+				OnReenabling();
+			}
+
+			/// <summary>
+			/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
+			/// Per default, the resume event handler is called that you provided in the constructor.
+			/// </summary>
+			protected virtual void OnReenabling()
+			{
+				if (_reenablingEventHandler != null)
+					_reenablingEventHandler();
+			}
+		}
+		#endregion
 	}
 }

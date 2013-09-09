@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Collections;
 using NUnit.Framework;
 
@@ -403,7 +404,430 @@ namespace AltaxoTest.Collections
 		}
 
 
+		[Test]
+		public void TestSet1()
+		{
+			var list = new PartitionableList<int>();
+			var part = list.CreatePartialView(x => 0 == x % 2);
+
+			list.Add(33);
+			Assert.AreEqual(0, part.Count);
+
+			list[0] = 44;
+			Assert.AreEqual(1, part.Count);
+			Assert.AreEqual(44, part[0]);
+		}
+
+		[Test]
+		public void TestSet2()
+		{
+			var list = new PartitionableList<int>();
+			var part = list.CreatePartialView(x => 0 == x % 2);
+
+			list.Add(44);
+			Assert.AreEqual(1, part.Count);
+			Assert.AreEqual(44, part[0]);
+
+			list[0] = 33;
+			Assert.AreEqual(0, part.Count);
+		}
+
+
+		[Test]
+		public void TestSet3()
+		{
+			var list = new PartitionableList<int>();
+			var part = list.CreatePartialView(x => 0 == x % 2);
+
+			list.Add(64);
+			list.Add(66);
+			Assert.AreEqual(2, part.Count);
+
+			list[0] = 51;
+			Assert.AreEqual(1, part.Count);
+			Assert.AreEqual(66, part[0]);
+		}
+
+
+		[Test]
+		public void TestSet4()
+		{
+			var list = new PartitionableList<int>();
+			var part = list.CreatePartialView(x => 0 == x % 3);
+
+			list.Add(31);
+			list.Add(42);
+			list.Add(30);
+
+			Assert.AreEqual(2, part.Count);
+
+			list[0] = 15;
+			Assert.AreEqual(3, part.Count);
+			Assert.AreEqual(15, part[0]);
+			Assert.AreEqual(42, part[1]);
+			Assert.AreEqual(30, part[2]);
+		}
+
+
+		[Test]
+		public void TestMove1()
+		{
+			var list = new PartitionableList<int>();
+			var part = list.CreatePartialView(x => 0 == x % 2);
+
+			list.Add(81);
+			list.Add(67);
+			list.Add(46);
+			list.Add(49);
+
+			Assert.AreEqual(1, part.Count);
+
+			list.Move(0, 2);
+			Assert.AreEqual(1, part.Count);
+			Assert.AreEqual(46, part[0]);
+		}
+
+		[Test]
+		public void TestMove2()
+		{
+			var list = new PartitionableList<int>();
+			var part = list.CreatePartialView(x => 0 == x % 2);
+
+			list.Add(24);
+			list.Add(74);
+			list.Add(84);
+
+			Assert.AreEqual(3, part.Count);
+
+			list.Move(1, 2);
+			Assert.AreEqual(3, part.Count);
+			Assert.AreEqual(24, part[0]);
+			Assert.AreEqual(84, part[1]);
+			Assert.AreEqual(74, part[2]);
+		}
+
 		#endregion
+
+
+		#region Test with probabilities
+
+		enum ListAction
+		{
+			Clear = 0,
+			RemoveAt,
+			Add, 
+			InsertAt,
+			Set,
+			Move
+		}
+
+		class ActionGenerator
+		{
+			System.Random _actionRnd = new Random();
+
+			double[] _weights = new double[6];
+
+			double[] _prob = new double[6];
+
+			public ActionGenerator()
+			{
+				for (int i = 0; i < _weights.Length; ++i)
+					_weights[i] = 40;
+
+				_weights[0] = 1; // Clear should be weighted low
+			}
+
+			public ListAction GetNextAction<T>(IList<T> list)
+			{
+				_weights[0] = list.Count;
+
+				double sum = ((IList<double>)_weights).Sum();
+
+				double accu = 0;
+				for (int i = 0; i < _weights.Length; ++i)
+				{
+					_prob[i] = accu + _weights[i] / sum;
+					accu = _prob[i];
+				}
+
+				var rnd = _actionRnd.NextDouble();
+
+				for (int i = 0; i < _prob.Length; ++i)
+				{
+					if (_prob[i] >= rnd)
+						return (ListAction)i;
+				}
+				return ListAction.Set;
+			}
+
+		}
+
+		static bool Condition1(int i) { return 0 == (i % 3); }
+		static bool Condition2(int i) { return 0 == (i % 2); }
+		static bool Condition3(int i) { return 0 != (i % 3); }
+
+
+		[Test]
+		public void TestRandomActions1()
+		{
+			var actionGenerator = new ActionGenerator();
+			System.Random rndIndex = new System.Random();
+			System.Random rndNewNumber = new System.Random();
+
+			var list = new PartitionableList<int>();
+
+			var part1 = list.CreatePartialView(Condition1);
+			var part2 = list.CreatePartialView(Condition2);
+			var part3 = list.CreatePartialView(Condition3);
+
+			var maxTimeToRun = TimeSpan.FromSeconds(1);
+			var watch = new System.Diagnostics.Stopwatch();
+			watch.Start();
+			var actionStatistics = new int[Enum.GetValues(typeof(ListAction)).Length];
+			long accumulatedListCount = 0;
+			int maxListCount = 0;
+
+			int numberOfActionsTested = 0;
+			
+			for (; watch.Elapsed < maxTimeToRun; ++numberOfActionsTested)
+			{
+				var action = actionGenerator.GetNextAction(list);
+				++actionStatistics[(int)action];
+				int idx;
+				int idx2;
+				int newNumber;
+				int? oldItem = null;
+
+				switch (action)
+				{
+					case ListAction.Clear:
+						list.Clear();
+						Assert.AreEqual(0, list.Count);
+						break;
+					case ListAction.RemoveAt:
+						if (list.Count > 0)
+						{
+							var oldCount = list.Count;
+							idx = rndIndex.Next(list.Count);
+							oldItem = list[idx];
+							list.RemoveAt(idx);
+							Assert.AreEqual(oldCount - 1, list.Count);
+						}
+						break;
+					case ListAction.Add:
+						{
+							var oldCount = list.Count;
+							list.Add(newNumber = rndNewNumber.Next(100));
+							Assert.AreEqual(oldCount + 1, list.Count);
+							Assert.AreEqual(newNumber, list[list.Count - 1]);
+						}
+						break;
+					case ListAction.InsertAt:
+						{
+							var oldCount = list.Count;
+							idx = rndIndex.Next(list.Count + 1);
+							list.Insert(idx, newNumber = rndNewNumber.Next(100));
+							Assert.AreEqual(oldCount + 1, list.Count);
+							Assert.AreEqual(newNumber, list[idx]);
+						}
+						break;
+					case ListAction.Set:
+						if (list.Count > 0)
+						{
+							var oldCount = list.Count;
+							idx = rndIndex.Next(list.Count);
+							oldItem = list[idx];
+							list[idx] = (newNumber = rndNewNumber.Next(100));
+							Assert.AreEqual(oldCount, list.Count);
+							Assert.AreEqual(newNumber, list[idx]);
+						}
+						break;
+					case ListAction.Move:
+						if(list.Count > 0)
+						{
+							var oldCount = list.Count;
+							idx = rndIndex.Next(list.Count);
+							idx2 = rndIndex.Next(list.Count);
+							oldItem = list[idx];
+							list.Move(idx, idx2);
+							Assert.AreEqual(oldCount, list.Count);
+							Assert.AreEqual(oldItem, list[idx2]);
+						}
+						break;
+					default:
+						break;
+				}
+
+				accumulatedListCount += list.Count;
+				maxListCount = Math.Max(maxListCount, list.Count);
+
+				bool succ1 = IsOrderingTestSuccessfull(list, part1, Condition1);
+				bool succ2 = IsOrderingTestSuccessfull(list, part2, Condition2);
+				bool succ3 = IsOrderingTestSuccessfull(list, part3, Condition3);
+
+				if (!succ1)
+				{
+
+				}
+				if (!succ2)
+				{
+
+				}
+				if (!succ3)
+				{
+
+				}
+
+				Assert.IsTrue(succ1);
+				Assert.IsTrue(succ2);
+				Assert.IsTrue(succ3);
+			}
+
+			double averageListCount = accumulatedListCount / numberOfActionsTested;
+
+			watch.Stop();
+		}
+
+
+
+		[Test]
+		public void TestRandomActions2()
+		{
+			var actionGenerator = new ActionGenerator();
+			System.Random rndIndex = new System.Random();
+			System.Random rndNewNumber = new System.Random();
+
+			var list = new PartitionableList<int>();
+
+			var part1 = list.CreatePartialView(Condition1);
+			var part2 = list.CreatePartialView(Condition2);
+			var part3 = list.CreatePartialView(Condition3);
+
+			var maxTimeToRun = TimeSpan.FromSeconds(1);
+			var watch = new System.Diagnostics.Stopwatch();
+			watch.Start();
+			var actionStatistics = new int[6];
+			long accumulatedListCount = 0;
+			int maxListCount = 0;
+
+			int numberOfActionsTested = 0;
+			for (; watch.Elapsed < maxTimeToRun; ++numberOfActionsTested)
+			{
+				var action = actionGenerator.GetNextAction(list);
+				++actionStatistics[(int)action];
+				int idx, idx2;
+				int newNumber;
+				int? oldItem = null;
+
+
+				switch (action)
+				{
+					case ListAction.Clear:
+						part1.Clear();
+						Assert.AreEqual(0, part1.Count);
+
+						idx = rndIndex.Next(5);
+						if (idx == 0)
+						{
+							list.Clear();
+							idx = rndIndex.Next(10);
+							for (int i = 0; i < idx; ++i)
+								list.Add(rndNewNumber.Next(100)); // add some numbers to the parent list that not neccessarily fullfil the criterion of part1
+						}
+						
+
+							break;
+					case ListAction.RemoveAt:
+						if (part1.Count > 0)
+						{
+							var oldCount = part1.Count;
+							idx = rndIndex.Next(part1.Count);
+							oldItem = part1[idx];
+							part1.RemoveAt(idx);
+							Assert.AreEqual(oldCount - 1, part1.Count);
+						}
+						break;
+					case ListAction.Add:
+						{
+							var oldCount = part1.Count;
+							part1.Add(newNumber = 3 * rndNewNumber.Next(100));
+							Assert.AreEqual(oldCount + 1, part1.Count);
+							Assert.AreEqual(newNumber, part1[part1.Count-1]);
+						}
+						break;
+					case ListAction.InsertAt:
+						{
+							var oldCount = part1.Count;
+							idx = rndIndex.Next(part1.Count + 1);
+							part1.Insert(idx, newNumber = 3 * rndNewNumber.Next(100));
+							Assert.AreEqual(oldCount + 1, part1.Count);
+							Assert.AreEqual(newNumber, part1[idx]);
+						}
+						break;
+					case ListAction.Set:
+						if (part1.Count > 0)
+						{
+							var oldCount = part1.Count;
+							idx = rndIndex.Next(part1.Count);
+							part1[idx] = (newNumber = 3*rndNewNumber.Next(100));
+							Assert.AreEqual(oldCount, part1.Count);
+							Assert.AreEqual(newNumber, part1[idx]);
+						}
+						break;
+					case ListAction.Move:
+						if (part1.Count > 0)
+						{
+							var oldCount = part1.Count;
+							idx = rndIndex.Next(part1.Count);
+							idx2 = rndIndex.Next(part1.Count);
+							oldItem = part1[idx];
+							part1.Move(idx, idx2);
+							Assert.AreEqual(oldCount, part1.Count);
+							Assert.AreEqual(oldItem, part1[idx2]);
+						}
+						break;
+					default:
+						break;
+				}
+
+				accumulatedListCount += list.Count;
+				maxListCount = Math.Max(maxListCount, list.Count);
+
+				bool succ1 = IsOrderingTestSuccessfull(list, part1, Condition1);
+				bool succ2 = IsOrderingTestSuccessfull(list, part2, Condition2);
+				bool succ3 = IsOrderingTestSuccessfull(list, part3, Condition3);
+
+				if (!succ1)
+				{
+
+				}
+				if (!succ2)
+				{
+
+				}
+				if (!succ3)
+				{
+
+				}
+
+				Assert.IsTrue(succ1);
+				Assert.IsTrue(succ2);
+				Assert.IsTrue(succ3);
+			}
+
+			double averageListCount = accumulatedListCount / numberOfActionsTested;
+
+			watch.Stop();
+		}
+
+
+		static bool IsOrderingTestSuccessfull<T>(IList<T> parent, IList<T> child, Func<T, bool> selection)
+		{
+			return child.SequenceEqual(parent.Where(selection));
+		}
+
+		#endregion
+
 
 	}
 }

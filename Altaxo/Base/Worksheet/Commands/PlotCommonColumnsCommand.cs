@@ -124,11 +124,11 @@ namespace Altaxo.Worksheet.Commands
 
 
 			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;
-			
 
 
 
-			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.DefaultLayerPosition, graphctrl.Doc.DefaultLayerSize);
+
+			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.RootLayer.DefaultChildLayerPosition, graphctrl.Doc.RootLayer.DefaultChildLayerSize);
 			graphctrl.Doc.RootLayer.Layers.Add(layer);
 			layer.CreateDefaultAxes();
 

@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
           this._PlotIndex = scatterPoint.PlotIndex;
           this._RowIndex = scatterPoint.RowIndex;
           // convert this layer coordinates first to PrintableAreaCoordinates
-          var printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+          var printableCoord = clickedObject.ParentLayer.TransformCoordinatesFromHereToParent(scatterPoint.LayerCoordinates);
           _positionOfCrossInGraphCoordinates = printableCoord;
 					// m_Cross.X -= _grac.GraphViewOffset.X;
 					// m_Cross.Y -= _grac.GraphViewOffset.Y;
@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
       this._PlotIndex = scatterPoint.PlotIndex;
       this._RowIndex = scatterPoint.RowIndex;
       // convert this layer coordinates first to PrintableAreaCoordinates
-      var printableCoord = _layer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+      var printableCoord = _layer.TransformCoordinatesFromHereToParent(scatterPoint.LayerCoordinates);
       _positionOfCrossInGraphCoordinates = printableCoord;
 			// m_Cross.X -= _grac.GraphViewOffset.X;
 			// m_Cross.Y -= _grac.GraphViewOffset.Y;

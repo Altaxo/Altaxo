@@ -322,8 +322,8 @@ namespace Altaxo.Gui.Graph
 
     protected NGTreeNode GetRootNode(NGTreeNode node)
     {
-      while(node.Parent!=null)
-        node = node.Parent;
+      while(node.ParentNode!=null)
+        node = node.ParentNode;
 
       return node;
     }

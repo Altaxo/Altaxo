@@ -917,7 +917,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
 			Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
 
-			PointF outVector;
+			PointD2D outVector;
 			Logical3D outer;
 			var dist_x = outerDistance; // Distance from axis tick point to label
 			var dist_y = outerDistance; // y distance from axis tick point to label

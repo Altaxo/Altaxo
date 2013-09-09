@@ -408,6 +408,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\HostLayerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -484,7 +488,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LayerControl.xaml">
+    <Page Include="Gui\Graph\XYPlotLayerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -997,6 +1001,9 @@
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml.cs">
       <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\HostLayerControl.xaml.cs">
+      <DependentUpon>HostLayerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml.cs">
       <DependentUpon>XYZMeshedColumnPlotDataControl.xaml</DependentUpon>
     </Compile>
@@ -1055,8 +1062,8 @@
     <Compile Include="Gui\Graph\Shapes\ImageGraphicControl.xaml.cs">
       <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LayerControl.xaml.cs">
-      <DependentUpon>LayerControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\XYPlotLayerControl.xaml.cs">
+      <DependentUpon>XYPlotLayerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>

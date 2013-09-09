@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				return false;
 			}
 
-			var layerXY = layer.GraphToLayerCoordinates(cross);
+			var layerXY = layer.TransformCoordinatesFromParentToHere(cross);
 
 
 

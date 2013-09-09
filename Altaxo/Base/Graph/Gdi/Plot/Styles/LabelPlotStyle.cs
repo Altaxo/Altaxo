@@ -871,7 +871,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           if (null != this._attachedPlane)
           {
             Logical3D r3d = layer.GetLogical3D(pdata, j + offset);
-            PointF pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane, r3d);
+            var pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane, r3d);
             xpre = pp.X;
             ypre = pp.Y;
           }

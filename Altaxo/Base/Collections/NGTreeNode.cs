@@ -51,7 +51,7 @@ namespace Altaxo.Collections
 	/// <summary>
 	/// Represents a non GUI tree node that can be used for interfacing/communication with Gui components.
 	/// </summary>
-	public class NGTreeNode : System.ComponentModel.INotifyPropertyChanged, ITreeNode<NGTreeNode>
+	public class NGTreeNode : System.ComponentModel.INotifyPropertyChanged, ITreeListNodeWithParent<NGTreeNode>
 	{
 		static NGTreeNode _dummyNode = new NGTreeNode();
 
@@ -189,8 +189,7 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Parent tree node.
 		/// </summary>
-		public NGTreeNode Parent { get { return _parent; } }
-
+		public NGTreeNode ParentNode { get { return _parent; } }
 
 
 		/// <summary>
@@ -318,6 +317,16 @@ namespace Altaxo.Collections
 				return _nodes;
 			}
 		}
+		IList<NGTreeNode> ITreeListNode<NGTreeNode>.Nodes
+		{
+			get
+			{
+				if (null == _nodes)
+					_nodes = new MyColl3(this);
+
+				return _nodes;
+			}
+		}
 
 		/// <summary>
 		/// Frees this node, i.e. removes the node from it's parent collection (and set the parent node to <c>null</c>.
@@ -364,7 +373,7 @@ namespace Altaxo.Collections
 				for (int i = result.Length - 1; i >= 0; i--)
 				{
 					result[i] = n.Index;
-					n = n.Parent;
+					n = n.ParentNode;
 				}
 
 				return result;
@@ -400,7 +409,7 @@ namespace Altaxo.Collections
 			for (int i = 0; i < nodes.Length; i++)
 			{
 				bool isContained = false;
-				for (NGTreeNode currNode = nodes[i].Parent; currNode != null; currNode = currNode.Parent)
+				for (NGTreeNode currNode = nodes[i].ParentNode; currNode != null; currNode = currNode.ParentNode)
 				{
 					if (hash.ContainsKey(currNode))
 					{
@@ -444,9 +453,9 @@ namespace Altaxo.Collections
 			if (nodes.Length <= 1)
 				return true;
 
-			NGTreeNode parent = nodes[0].Parent;
+			NGTreeNode parent = nodes[0].ParentNode;
 			for (int i = 1; i < nodes.Length; i++)
-				if (nodes[i].Parent != parent)
+				if (nodes[i].ParentNode != parent)
 					return false;
 
 			return true;
@@ -508,7 +517,7 @@ namespace Altaxo.Collections
 		/// <returns>The first parent node in the hierarchy, which is selected, or <c>null</c> if such a node does not exist.</returns>
 		public static NGTreeNode FindFirstSelectedNodeParent(NGTreeNode node)
 		{
-			while (null != (node = node.Parent))
+			while (null != (node = node.ParentNode))
 			{
 				if (node.IsSelected)
 					return node;
@@ -568,7 +577,7 @@ namespace Altaxo.Collections
 			System.Diagnostics.Debug.Assert(selNodes.Length > 0);
 
 
-			NGTreeNode parent = selNodes[0].Parent;
+			NGTreeNode parent = selNodes[0].ParentNode;
 			if (parent == null)
 				throw new ArgumentException("Parent of the nodes is null");
 

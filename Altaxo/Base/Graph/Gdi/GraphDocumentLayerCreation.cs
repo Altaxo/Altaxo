@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerNormalBottomXLeftY(this GraphDocument doc)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
+			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
 			newlayer.CreateDefaultAxes();
 			doc.RootLayer.Layers.Add(newlayer);
 		}
@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi
 			HostLayer linkedLayer;
 			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
 
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
+			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
 			if (isValidIndex)
 				doc.RootLayer.InsertLast(linklayernumber, newlayer);
 			else
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
+			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
 			HostLayer linkedLayer;
 			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
 			if (isValidIndex)
@@ -91,7 +91,7 @@ namespace Altaxo.Graph.Gdi
 		public static void CreateNewLayerLinkedTopXRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
 
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
+			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
 
 			HostLayer linkedLayer;
 			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
@@ -117,7 +117,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopXRightY_XAxisStraight(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
+			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
 			HostLayer linkedLayer;
 			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
 			if (isValidIndex)

@@ -55,6 +55,11 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
 		protected const float UnitPerInch = 72;
 
+		protected const double DefaultRootLayerSizeX = 697.68054;
+		protected const double DefaultRootLayerSizeY = 451.44;
+
+
+
 		/// <summary>
 		/// Overall size of the page (usually the size of the sheet of paper that is selected as printing document) in point (1/72 inch)
 		/// </summary>
@@ -77,7 +82,7 @@ namespace Altaxo.Graph.Gdi
 			set { _printOptions = value; }
 		}
 
-		HostLayer _layers;
+		HostLayer _rootLayer;
 
 		string _name;
 
@@ -218,7 +223,7 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("Name", s._name);
 				info.AddValue("PageBounds", s._pageBounds);
 				info.AddValue("PrintableBounds", s._printableBounds);
-				info.AddValue("Layers", s._layers);
+				info.AddValue("Layers", s._rootLayer);
 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -234,7 +239,7 @@ namespace Altaxo.Graph.Gdi
 				var layers = (HostLayer)info.GetValue("LayerList", s);
 				layers.SetSize(s._printableBounds.X, XYPlotLayerSizeType.AbsoluteValue, s._printableBounds.Y, XYPlotLayerSizeType.AbsoluteValue);
 				layers.FixAndTestParentChildRelationShipOfLayers();
-				s._layers = layers;
+				s._rootLayer = layers;
 				return s;
 			}
 		}
@@ -252,7 +257,7 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("Name", s._name);
 				info.AddValue("PageBounds", s._pageBounds);
 				info.AddValue("PrintableBounds", s._printableBounds);
-				info.AddValue("Layers", s._layers);
+				info.AddValue("Layers", s._rootLayer);
 
 				// new in version 1 - Add graph properties
 				int numberproperties = s._graphProperties == null ? 0 : s._graphProperties.Keys.Count;
@@ -293,7 +298,7 @@ namespace Altaxo.Graph.Gdi
 				var layers = (HostLayer)info.GetValue("LayerList", s);
 				layers.SetSize(s._printableBounds.X, XYPlotLayerSizeType.AbsoluteValue, s._printableBounds.Y, XYPlotLayerSizeType.AbsoluteValue);
 				layers.FixAndTestParentChildRelationShipOfLayers();
-				s._layers = layers;
+				s._rootLayer = layers;
 
 				// new in version 1 - Add graph properties
 				int numberproperties = info.OpenArray(); // "GraphProperties"
@@ -355,11 +360,12 @@ namespace Altaxo.Graph.Gdi
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole();
 			_notes.PropertyChanged += EhNotesChanged;
-			this._layers = new HostLayer(new SizeF(814, 567) );
-			this._layers.ParentObject = this;
+			this._rootLayer = new HostLayer(new PointD2D(0,0), new PointD2D(814, 567) );
+			this._rootLayer.ParentObject = this;
 
 			SetGraphPageBoundsToPrinterSettings();
-			this._layers.SetParentLayerSize(_printableBounds.Size, false);
+			this._rootLayer.SetParentLayerSize(_printableBounds.Size, false);
+			this._rootLayer.SetSize(_printableBounds.Size.Width, XYPlotLayerSizeType.AbsoluteValue, _printableBounds.Size.Height, XYPlotLayerSizeType.AbsoluteValue);
 		}
 
 		void EhNotesChanged(object sender, PropertyChangedEventArgs e)
@@ -371,8 +377,8 @@ namespace Altaxo.Graph.Gdi
 		{
 			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
-			this._layers = new HostLayer(new SizeF(814, 567));
-			this._layers.ParentObject = this;
+			this._rootLayer = new HostLayer(new PointD2D(0, 0), new PointD2D(814, 567));
+			this._rootLayer.ParentObject = this;
 
 			CopyFrom(from, GraphCopyOptions.All);
 		}
@@ -390,7 +396,7 @@ namespace Altaxo.Graph.Gdi
 
 			if (0 != (options & GraphCopyOptions.CopyGraphSize))
 			{
-				this._layers.SetSize(from._layers.UserWidth, from._layers.UserWidthType, from._layers.UserHeight, from._layers.UserHeightType);
+				this._rootLayer.SetSize(from._rootLayer.UserWidth, from._rootLayer.UserWidthType, from._rootLayer.UserHeight, from._rootLayer.UserHeightType);
 			}
 
 			if (0 != (options & GraphCopyOptions.CloneNotes))
@@ -418,15 +424,15 @@ namespace Altaxo.Graph.Gdi
 			// properties, otherwise some errors will happen
 			if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
 			{
-				this._layers = (HostLayer)from._layers.Clone();
+				this._rootLayer = (HostLayer)from._rootLayer.Clone();
 			}
 			else if (0 != (options & GraphCopyOptions.CopyLayerAll))
 			{
 				// don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this is to be done recursively
-				this._layers.CopyFrom(from._layers, options);
-				this._layers.ParentLayer = this._layers;
+				this._rootLayer.CopyFrom(from._rootLayer, options);
+				this._rootLayer.ParentLayer = this._rootLayer;
 			}
-			this._layers.ParentObject = this;
+			this._rootLayer.ParentObject = this;
 		}
 
 		/// <summary>
@@ -499,7 +505,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			_layers.VisitDocumentReferences(Report);
+			_rootLayer.VisitDocumentReferences(Report);
 		}
 
 		/// <summary>
@@ -643,7 +649,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public HostLayer RootLayer
 		{
-			get { return _layers; }
+			get { return _rootLayer; }
 		}
 
 
@@ -661,7 +667,11 @@ namespace Altaxo.Graph.Gdi
 			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
 			try
 			{
+				RootLayer.PreparePainting();
+
 				RootLayer.Paint(g, bForPrinting);
+
+				RootLayer.FinishPainting();
 			}
 			finally
 			{
@@ -671,24 +681,7 @@ namespace Altaxo.Graph.Gdi
 
 
 
-		/// <summary>
-		/// Gets the default layer position in points (1/72 inch).
-		/// </summary>
-		/// <value>The default position of a (new) layer in points (1/72 inch).</value>
-		public PointF DefaultLayerPosition
-		{
-			get { return new PointF(0.145f * this.PrintableBounds.Width, 0.139f * this.PrintableBounds.Height); }
-		}
-
-
-		/// <summary>
-		/// Gets the default layer size in points (1/72 inch).
-		/// </summary>
-		/// <value>The default size of a (new) layer in points (1/72 inch).</value>
-		public SizeF DefaultLayerSize
-		{
-			get { return new SizeF(0.763f * this.PrintableBounds.Width, 0.708f * this.PrintableBounds.Height); }
-		}
+	
 
 
 

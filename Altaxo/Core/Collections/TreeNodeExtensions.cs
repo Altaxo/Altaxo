@@ -1,30 +1,90 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2013 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Collections
 {
+	/// <summary>
+	/// Defines a simple tree node, where the child nodes are enumerable. There is no reference to the node's parent.
+	/// </summary>
+	/// <typeparam name="T">Type of the node.</typeparam>
 	public interface ITreeNode<T> where T : ITreeNode<T>
 	{
+		/// <summary>
+		/// Gets the child nodes.
+		/// </summary>
+		/// <value>
+		/// The child nodes.
+		/// </value>
 		IEnumerable<T> Nodes { get; }
 	}
 
+	/// <summary>
+	/// Defines a tree node, where the childs can be accessed by index. There is no reference to the node's parent.
+	/// </summary>
+	/// <typeparam name="T">Type of the node.</typeparam>
 	public interface ITreeListNode<T> : ITreeNode<T> where T : ITreeListNode<T>
 	{
+		/// <summary>
+		/// Gets the child nodes.
+		/// </summary>
+		/// <value>
+		/// The child nodes.
+		/// </value>
 		new IList<T> Nodes { get; }
 	}
 
-	public interface NodeWithParentNode<T>
+	/// <summary>
+	/// Defines an interface of a node, with has a parent node.
+	/// </summary>
+	/// <typeparam name="T">Type of the node.</typeparam>
+	public interface INodeWithParentNode<T>
 	{
+		/// <summary>
+		/// Gets the parent node of this node.
+		/// </summary>
+		/// <value>
+		/// The parent node.
+		/// </value>
 		T ParentNode { get; }
 	}
 
-	public interface ITreeNodeWithParent<T> : ITreeNode<T>, NodeWithParentNode<T> where T : ITreeNodeWithParent<T>
+	/// <summary>
+	/// Defines a simple tree node with parent.
+	/// </summary>
+	/// <typeparam name="T">Type of the node.</typeparam>
+	public interface ITreeNodeWithParent<T> : ITreeNode<T>, INodeWithParentNode<T> where T : ITreeNodeWithParent<T>
 	{
 	}
 
-	public interface ITreeListNodeWithParent<T> : ITreeListNode<T>, NodeWithParentNode<T> where T : ITreeListNodeWithParent<T>
+	/// <summary>
+	/// Defines a tree node with parent. The child nodes can be accessed by index.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public interface ITreeListNodeWithParent<T> : ITreeListNode<T>, INodeWithParentNode<T> where T : ITreeListNodeWithParent<T>
 	{
 	}
 
@@ -284,8 +344,6 @@ namespace Altaxo.Collections
 		{
 			if (null == indices)
 				indices = new List<int>();
-			if (0 == indices.Count)
-				indices.Add(0);
 			var destRoot = createDestinationNodeFromSourceNode(sourceRoot, indices);
 
 			var sourceChildNodes = sourceRoot.Nodes;
@@ -363,6 +421,9 @@ namespace Altaxo.Collections
 
 			return false;
 		}
+
+
+	
 
 		/// <summary>
 		/// Gets a node inside a tree by using an index array.
@@ -643,7 +704,7 @@ namespace Altaxo.Collections
 		/// <typeparam name="T">Type of node</typeparam>
 		/// <param name="node">The node to start the enumeration with.</param>
 		/// <returns>All tree nodes from <paramref name="node"/> down to the root of the tree.</returns>
-		public static IEnumerable<T> TakeFromHereToRoot<T>(this T node) where T : NodeWithParentNode<T>
+		public static IEnumerable<T> TakeFromHereToRoot<T>(this T node) where T : INodeWithParentNode<T>
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
@@ -666,7 +727,7 @@ namespace Altaxo.Collections
 		/// <param name="node">The node inside a tree that the enumeration ends with.</param>
 		/// <returns>All tree nodes from the root node of the tree up to <paramref name="node"/>.</returns>
 		/// <exception cref="System.ArgumentNullException">Node is null.</exception>
-		public static IEnumerable<T> TakeFromRootToHere<T>(this T node)	where T : NodeWithParentNode<T>
+		public static IEnumerable<T> TakeFromRootToHere<T>(this T node)	where T : INodeWithParentNode<T>
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
@@ -689,7 +750,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <param name="node">The node to start with.</param>
 		/// <returns>The root node of the tree to which the given node <paramref name="node"/> belongs.</returns>
-		public static T RootNode<T>(this T node)	where T : NodeWithParentNode<T>
+		public static T RootNode<T>(this T node)	where T : INodeWithParentNode<T>
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
@@ -702,6 +763,31 @@ namespace Altaxo.Collections
 			}
 
 			return node;
+		}
+
+
+		/// <summary>
+		/// Determines the level of the specified node. The root node (= node that has no parent) will return a level of 0, the child nodes of the root node a level of 1 and so on.
+		/// </summary>
+		/// <typeparam name="T">Type of node</typeparam>
+		/// <param name="node">The node for which the level is returned.</param>
+		/// <returns>The node's level.</returns>
+		/// <exception cref="System.ArgumentNullException">node is null.</exception>
+		public static int Level<T>(this T node) where T : INodeWithParentNode<T>
+		{
+			if (null == node)
+				throw new ArgumentNullException("node");
+
+			var level = 0;
+			var parent = node.ParentNode;
+			while (null != parent)
+			{
+				++level;
+				node = parent;
+				parent = node.ParentNode;
+			}
+
+			return level;
 		}
 	}
 }

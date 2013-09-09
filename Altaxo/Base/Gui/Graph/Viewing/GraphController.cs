@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 
 		/// <summary>Number of the currently selected layer (or null if no layer is present).</summary>
-		protected IList<int> _currentLayerNumber=null;
+		protected IList<int> _currentLayerNumber = new List<int>();
 
 		/// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
 		protected int _currentPlotNumber=-1;
@@ -130,6 +130,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			if (null != _view)
 			{
+				InitLayerStructure();
 				_view.NumberOfLayers = _layerStructure; // tell the view how many layers we have
 				_view.CurrentLayer = this.CurrentLayerNumber.ToArray();
 
@@ -141,8 +142,16 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		void InitLayerStructure()
 		{
-			_layerStructure = Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(_doc.RootLayer, new List<int>(), (sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = indices.ToString() }, (parent, child) => parent.Nodes.Add(child));
+
+			_layerStructure =  Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(
+				_doc.RootLayer, 
+				new List<int>(),
+				(sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = HostLayer.GetDefaultNameOfLayer(indices) }, (parent, child) => parent.Nodes.Add(child));
+
 		}
+
+		
+
 
 		#region Properties
 
@@ -479,7 +488,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion
 
-
 		#region IGraphController Members
 
 		private void InternalInitializeGraphDocument(GraphDocument doc)
@@ -518,13 +526,13 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Returns the currently active layer, or null if there is no active layer.
+		/// Returns the currently active layer. There is always an active layer.
 		/// </summary>
 		public HostLayer ActiveLayer
 		{
 			get
 			{
-				return this._currentLayerNumber ==null ? null :  _doc.RootLayer.ElementAt(this._currentLayerNumber);
+				return _doc.RootLayer.ElementAt(this._currentLayerNumber);
 			}
 			set
 			{
@@ -544,28 +552,24 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			set
 			{
-				var oldValue = new List<int>(_currentLayerNumber);
-
 				// negative values are only accepted if there is no layer
-				if (value ==null && _doc.RootLayer !=null)
-					throw new ArgumentOutOfRangeException("CurrentLayerNumber", value, "Accepted values must be >=0 if there is at least one layer in the graph!");
+				if (value ==null)
+					throw new ArgumentNullException("CurrentLayerNumber");
 
-				if(null != value && _doc.RootLayer.EnsureValidityOfNodeIndex(value))
+				if(!_doc.RootLayer.IsValidIndex(value))
 					throw new ArgumentOutOfRangeException("CurrentLayerNumber", value, "The provided layer number was invalid");
+
+				bool isDifferent = !System.Linq.Enumerable.SequenceEqual(value, _currentLayerNumber);
 
 				_currentLayerNumber = value;
 
 
 				// if something changed
-				if (System.Linq.Enumerable.SequenceEqual(oldValue, value))
+				if (isDifferent)
 				{
 					// reflect the change in layer number in the layer tool bar
 					if (_view != null)
 						_view.CurrentLayer = this._currentLayerNumber.ToArray();
-
-					// since the layer changed, also the plots changed, so the menu has
-					// to reflect the new plots
-					//this.UpdateDataPopup();
 				}
 			}
 		}
@@ -1043,7 +1047,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
-				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsTowardsHigherIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
+				Altaxo.Collections.ListExtensions.MoveSelectedItemsTowardsHigherIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
 			}
 		}
 
@@ -1055,7 +1059,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
-				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsTowardsLowerIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
+				Altaxo.Collections.ListExtensions.MoveSelectedItemsTowardsLowerIndices(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]), 1);
 			}
 		}
 
@@ -1067,7 +1071,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
-				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsToMaximumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
+				Altaxo.Collections.ListExtensions.MoveSelectedItemsToMaximumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
 			}
 
 		}
@@ -1080,7 +1084,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			foreach (var layer in _doc.RootLayer.TakeFromHereToFirstLeaves())
 			{
-				Altaxo.Collections.ListMoveOperations.MoveSelectedItemsToMinimumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
+				Altaxo.Collections.ListExtensions.MoveSelectedItemsToMinimumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
 			}
 
 		}

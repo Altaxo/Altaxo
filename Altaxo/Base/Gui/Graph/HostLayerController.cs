@@ -46,13 +46,10 @@ namespace Altaxo.Gui.Graph
 		object CurrentContent { get; set; }
 
 		void SelectTab(string name);
-		void InitializeSecondaryChoice(SelectableListNodeList items, LayerControllerTabType primaryChoice);
 
 		event CancelEventHandler TabValidating;
-		event Action<bool> CreateOrMoveAxis;
-		event Action SecondChoiceChanged;
-		event Action<string> PageChanged;
 
+		event Action<string> PageChanged;
 	}
 
 	#endregion
@@ -87,7 +84,7 @@ namespace Altaxo.Gui.Graph
 		HostLayerController(HostLayer layer, string currentPage)
 		{
 			_originalDoc = layer;
-			_doc = (XYPlotLayer)layer.Clone();
+			_doc = (HostLayer)layer.Clone();
 
 			_currentPageName = currentPage;
 

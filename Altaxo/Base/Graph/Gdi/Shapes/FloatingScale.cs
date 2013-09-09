@@ -306,7 +306,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public override void SetPosition(PointD2D value)
+		protected override void SetPosition(PointD2D value)
 		{
 			var oldPosition = this._position;
 			base.SetPosition(value);

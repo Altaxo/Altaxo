@@ -667,7 +667,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
 			// now the major ticks
-			PointF outVector;
+			PointD2D outVector;
 			double[] majorticks = ticking.GetMajorTicksNormal(axis);
 			for (int i = 0; i < majorticks.Length; i++)
 			{
@@ -676,20 +676,20 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (_showFirstUpMajorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
-					PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					PointF tickend = tickorg;
+					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickend = tickorg;
 					tickend.X += outVector.X * _majorTickLength;
 					tickend.Y += outVector.Y * _majorTickLength;
-					g.DrawLine(_majorTickPen, tickorg, tickend);
+					g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 				if (_showFirstDownMajorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-					PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					PointF tickend = tickorg;
+					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickend = tickorg;
 					tickend.X += outVector.X * _majorTickLength;
 					tickend.Y += outVector.Y * _majorTickLength;
-					g.DrawLine(_majorTickPen, tickorg, tickend);
+					g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 			}
 			// now the major ticks
@@ -701,20 +701,20 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (_showFirstUpMinorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
-					PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					PointF tickend = tickorg;
+					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickend = tickorg;
 					tickend.X += outVector.X * _minorTickLength;
 					tickend.Y += outVector.Y * _minorTickLength;
-					g.DrawLine(_minorTickPen, tickorg, tickend);
+					g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 				if (_showFirstDownMinorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-					PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					PointF tickend = tickorg;
+					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickend = tickorg;
 					tickend.X += outVector.X * _minorTickLength;
 					tickend.Y += outVector.Y * _minorTickLength;
-					g.DrawLine(_minorTickPen, tickorg, tickend);
+					g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 			}
 		}

@@ -295,7 +295,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public PointF GetPointOnPlane(CSPlaneID id, Logical3D r)
+		public PointD2D GetPointOnPlane(CSPlaneID id, Logical3D r)
 		{
 			double x, y;
 			if (id.PerpendicularAxisNumber == 0)
@@ -305,7 +305,7 @@ namespace Altaxo.Graph.Gdi
 			else
 				LogicalToLayerCoordinates(new Logical3D(r.RX, r.RY, id.LogicalValue), out x, out y);
 
-			return new PointF((float)x, (float)y);
+			return new PointD2D(x, y);
 		}
 
 
@@ -368,11 +368,11 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="normalizeddirection">Returns the normalized direction vector,i.e. a vector of norm 1, that
 		/// has the angle <paramref name="angle"/> to the tangent of the isoline. </param>
 		/// <returns>The location (in layer coordinates) of the isoline point.</returns>
-		public PointF GetNormalizedDirection(
+		public PointD2D GetNormalizedDirection(
 			Logical3D r0, Logical3D r1,
 			double t,
 			double angle,
-			out PointF normalizeddirection)
+			out PointD2D normalizeddirection)
 		{
 			double ax, ay, adx, ady;
 			this.LogicalToLayerCoordinatesAndDirection(
@@ -398,10 +398,10 @@ namespace Altaxo.Graph.Gdi
 				ady /= rr;
 			}
 
-			normalizeddirection = new PointF((float)adx, (float)ady);
+			normalizeddirection = new PointD2D(adx, ady);
 
 
-			return new PointF((float)ax, (float)ay);
+			return new PointD2D(ax, ay);
 		}
 
 		/// <summary>
@@ -416,11 +416,11 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="normalizeddirection">Returns the normalized direction vector,i.e. a vector of norm 1, that
 		/// goes in the logical direction provided by the previous argument. </param>
 		/// <returns>The location (in layer coordinates) of the isoline point.</returns>
-		public virtual PointF GetNormalizedDirection(
+		public virtual PointD2D GetNormalizedDirection(
 				Logical3D r0, Logical3D r1,
 				double t,
 				Logical3D direction,
-				out PointF normalizeddirection)
+				out PointD2D normalizeddirection)
 		{
 			double ax, ay, adx, ady;
 			Logical3D rn0 = Logical3D.Interpolate(r0, r1, t);
@@ -450,10 +450,10 @@ namespace Altaxo.Graph.Gdi
 				ady /= hypot;
 			}
 
-			normalizeddirection = new PointF((float)adx, (float)ady);
+			normalizeddirection = new PointD2D(adx, ady);
 
 
-			return new PointF((float)ax, (float)ay);
+			return new PointD2D(ax, ay);
 		}
 
 		/// <summary>

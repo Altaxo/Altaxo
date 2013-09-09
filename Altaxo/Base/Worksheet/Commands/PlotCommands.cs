@@ -382,8 +382,8 @@ namespace Altaxo.Worksheet.Commands
 			{
 				graph.Name = preferredGraphName;
 			}
-  
-			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
+
+			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer.DefaultChildLayerPosition, graph.RootLayer.DefaultChildLayerSize);
       layer.CreateDefaultAxes();
 			graph.RootLayer.Layers.Add(layer);
       Current.Project.GraphDocumentCollection.Add(graph);
@@ -514,7 +514,7 @@ namespace Altaxo.Worksheet.Commands
     public static void PlotLinePolar(IWorksheetController dg)
     {
       Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
-      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition,graph.DefaultLayerSize,new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
+			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer.DefaultChildLayerPosition, graph.RootLayer.DefaultChildLayerSize, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
       layer.CreateDefaultAxes();
 			graph.RootLayer.Layers.Add(layer);
       Current.Project.GraphDocumentCollection.Add(graph);
@@ -629,7 +629,7 @@ namespace Altaxo.Worksheet.Commands
       // now create a new Graph with this plot associations
 
       var gc = Current.ProjectService.CreateNewGraphInFolder(Main.ProjectFolder.GetFolderPart(table.Name));
-      var layer = new Altaxo.Graph.Gdi.XYPlotLayer(gc.Doc.DefaultLayerPosition, gc.Doc.DefaultLayerSize);
+			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(gc.Doc.RootLayer.DefaultChildLayerPosition, gc.Doc.RootLayer.DefaultChildLayerSize);
       layer.CreateDefaultAxes();
       gc.Doc.RootLayer.Layers.Add(layer);
 

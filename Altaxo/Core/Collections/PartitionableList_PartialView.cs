@@ -29,7 +29,15 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
-	public interface IObservableList<T> : IList<T>, INotifyCollectionChanged { }
+	public interface IObservableList<T> : IList<T>, INotifyCollectionChanged 
+	{
+		/// <summary>
+		/// Moves the item at the old index to the new index.
+		/// </summary>
+		/// <param name="oldIndex">The old index.</param>
+		/// <param name="newIndex">The new index.</param>
+		void Move(int oldIndex, int newIndex ); 
+	}
 
 	public partial class PartitionableList<T> : System.Collections.ObjectModel.ObservableCollection<T>
 	{
@@ -129,6 +137,19 @@ namespace Altaxo.Collections
 				: base(list, selectionCriterium)
 			{
 				_actionBeforeInsertion = actionBeforeInsertion;
+			}
+
+
+			public void Move(int oldIndex, int newIndex)
+			{
+				if (oldIndex < 0 || oldIndex >= _itemIndex.Count)
+					throw new ArgumentOutOfRangeException("newIndex");
+				if (newIndex < 0 || newIndex >= _itemIndex.Count)
+					throw new ArgumentOutOfRangeException("newIndex");
+
+				int o = _itemIndex[oldIndex];
+				int n = _itemIndex[newIndex];
+				_collection.Move(o, n);
 			}
 
 			#region IList implementations

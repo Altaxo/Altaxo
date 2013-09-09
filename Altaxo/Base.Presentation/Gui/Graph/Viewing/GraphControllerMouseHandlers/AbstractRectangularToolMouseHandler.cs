@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				// get the page coordinates (in Point (1/72") units)
 				PointD2D graphCoord = _positionCurrentMouseInGraphCoordinates;
 				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointD2D layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
+				PointD2D layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
 
 				_Points[_currentPoint].LayerCoordinates = layerCoord;
 				_Points[_currentPoint].GraphCoordinates = graphCoord;
@@ -120,7 +120,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				// get the page coordinates (in Point (1/72") units)
 				PointD2D graphCoord = _positionCurrentMouseInGraphCoordinates;
 				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointD2D layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
+				PointD2D layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
 
 				_Points[_currentPoint].LayerCoordinates = layerCoord;
 				_Points[_currentPoint].GraphCoordinates = graphCoord;
@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				{
 					if (_grac.ActiveLayer != null) // with an active layer, we transform to layer coordinates
 					{
-						var currMouseLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_positionCurrentMouseInGraphCoordinates);
+						var currMouseLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInGraphCoordinates);
 						double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].LayerCoordinates.X;
 						double y = currMouseLayerCoord.Y - _Points[_currentPoint - 1].LayerCoordinates.Y;
 
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 						currMouseLayerCoord.X = (x + _Points[_currentPoint - 1].LayerCoordinates.X);
 						currMouseLayerCoord.Y = (y + _Points[_currentPoint - 1].LayerCoordinates.Y);
-						_positionCurrentMouseInGraphCoordinates = _grac.ActiveLayer.LayerToGraphCoordinates(currMouseLayerCoord);
+						_positionCurrentMouseInGraphCoordinates = _grac.ActiveLayer.TransformCoordinatesFromHereToParent(currMouseLayerCoord);
 					}
 					else // without an active layer we use document coordinates
 					{
@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				{
 					g.TranslateTransform((float)_grac.ActiveLayer.Position.X, (float)_grac.ActiveLayer.Position.Y);
 					g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
-					var currLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_positionCurrentMouseInGraphCoordinates);
+					var currLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInGraphCoordinates);
 					DrawRectangleFromLTRB(g, _Points[0].LayerCoordinates, currLayerCoord);
 				}
 				else

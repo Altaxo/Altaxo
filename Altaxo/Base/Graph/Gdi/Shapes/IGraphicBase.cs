@@ -7,7 +7,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		Main.IDocumentNode,
 		Main.ICopyFrom
 	{
-		object ParentObject { set; }
+		new object ParentObject { set; }
 		//bool AllowNegativeSize { get; }
 		//bool AutoSize { get; }
 		//System.Drawing.Drawing2D.GraphicsPath GetObjectOutlineForArrangements();
@@ -18,7 +18,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		//void OnDeserialization(object obj);
 		void Paint(System.Drawing.Graphics g, object obj);
 		//Altaxo.Graph.PointD2D ParentCoordinatesToLocalDifference(Altaxo.Graph.PointD2D pivot, Altaxo.Graph.PointD2D point);
-		//Altaxo.Graph.PointD2D Position { get; set; }
+		Altaxo.Graph.PointD2D Position { get; set; }
 		//Altaxo.Graph.PointD2D RelativeLocalToAbsoluteLocalCoordinates(Altaxo.Graph.PointD2D p);
 		//Altaxo.Graph.PointD2D RelativeLocalToAbsoluteParentCoordinates(Altaxo.Graph.PointD2D p);
 		//Altaxo.Graph.PointD2D RelativeLocalToAbsoluteParentVector(Altaxo.Graph.PointD2D p);

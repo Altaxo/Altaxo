@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2013 Dr. Dirk Lellinger
@@ -18,26 +19,27 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Graph.Gdi.Background;
-using Altaxo.Collections;
+using Altaxo.Serialization;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Reflection;
 
 namespace Altaxo.Graph.Gdi
 {
-	using Shapes;
 	using Axis;
 	using Plot;
+	using Shapes;
 
 	public class HostLayer
 		:
@@ -47,6 +49,20 @@ namespace Altaxo.Graph.Gdi
 		Altaxo.Main.INamedObjectCollection,
 		Altaxo.Main.IChildChangedEventSink
 	{
+		#region Constants
+
+		protected const double _xDefPositionLandscape = 0.14;
+		protected const double _yDefPositionLandscape = 0.14;
+		protected const double _xDefSizeLandscape = 0.76;
+		protected const double _yDefSizeLandscape = 0.7;
+
+		protected const double _xDefPositionPortrait = 0.14;
+		protected const double _yDefPositionPortrait = 0.14;
+		protected const double _xDefSizePortrait = 0.7;
+		protected const double _yDefSizePortrait = 0.76;
+
+		#endregion Constants
+
 		#region Cached member variables
 
 		/// <summary>
@@ -80,7 +96,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected IObservableList<HostLayer> _childLayers;
 
-		#endregion // Cached member variables
+		#endregion Cached member variables
 
 		#region Member variables
 
@@ -94,7 +110,7 @@ namespace Altaxo.Graph.Gdi
 		[NonSerialized]
 		protected object _parent;
 
-		#endregion
+		#endregion Member variables
 
 		#region Event definitions
 
@@ -113,14 +129,13 @@ namespace Altaxo.Graph.Gdi
 		[field: NonSerialized]
 		public event System.EventHandler LayerCollectionChanged;
 
-		#endregion
+		#endregion Event definitions
 
 		#region Serialization
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerCollection", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -134,6 +149,7 @@ namespace Altaxo.Graph.Gdi
 				info.CommitArray();
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = null != o ? (HostLayer)o : new HostLayer();
@@ -151,7 +167,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 2)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -167,6 +183,7 @@ namespace Altaxo.Graph.Gdi
 				info.CommitArray();
 				 */
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = null != o ? (HostLayer)o : new HostLayer();
@@ -186,14 +203,13 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		#region Version 0
 
 		/// <summary>
 		/// In Version 0 we changed the Scales and divided into pure Scale and TickSpacing
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HostLayer), 0)]
-		class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -208,12 +224,10 @@ namespace Altaxo.Graph.Gdi
 
 				// Graphic objects
 				info.AddValue("GraphObjects", s._graphObjects);
-
 			}
 
 			protected virtual HostLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				HostLayer s = (o == null ? new HostLayer() : (HostLayer)o);
 
 				// size, position, rotation and scale
@@ -222,35 +236,26 @@ namespace Altaxo.Graph.Gdi
 				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
 
 				// Graphic objects
-				s.GraphObjects = (GraphicCollection)info.GetValue("GraphObjects", s);
+				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
 				return s;
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = SDeserialize(o, info, parent);
 				s.CalculateMatrix();
 				return s;
 			}
 		}
-		#endregion
 
-		#endregion
+		#endregion Version 0
+
+		#endregion Serialization
 
 		#region Constructors
 
 		#region Copying
-		/// <summary>
-		/// The copy constructor.
-		/// </summary>
-		/// <param name="from"></param>
-		public HostLayer(HostLayer from)
-		{
-			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
-			CopyFrom(from, GraphCopyOptions.All);
-		}
 
 		public virtual bool CopyFrom(object obj)
 		{
@@ -281,12 +286,12 @@ namespace Altaxo.Graph.Gdi
 			OnChanged(); // make sure that the change event is called
 		}
 
-
 		/// <summary>
 		/// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
 		/// it is not neccessary to call the OnChanged event, since this is called in the calling routine.
 		/// </summary>
 		/// <param name="from">From.</param>
+		/// <param name="options"></param>
 		protected virtual void InternalCopyFrom(HostLayer from, GraphCopyOptions options)
 		{
 			// XYPlotLayer style
@@ -301,11 +306,15 @@ namespace Altaxo.Graph.Gdi
 				this._cachedParentLayerSize = from._cachedParentLayerSize;
 			}
 
-
 			if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
 			{
 				// The layers and graph itens should be cloned -> this is easy -> just clone the _graphObject collection
-				this.GraphObjects = null == from._graphObjects ? null : new GraphicCollection(from._graphObjects);
+				using (this._graphObjects.GetEventDisableToken())
+				{
+					this._graphObjects.Clear();
+					for (int i = 0; i < from._graphObjects.Count; i++)
+						this._graphObjects.Add((IGraphicBase)from._graphObjects[i].Clone());
+				}
 			}
 			else if (0 != (options & GraphCopyOptions.CopyLayerAll))
 			{
@@ -327,15 +336,17 @@ namespace Altaxo.Graph.Gdi
 			return new HostLayer(this);
 		}
 
-		#endregion
+		#endregion Copying
 
 		/// <summary>
-		/// Creates a layer with standard position and size using the size of the printable area.
+		/// The copy constructor.
 		/// </summary>
-		/// <param name="prtSize">Size of the printable area in points (1/72 inch).</param>
-		public HostLayer(SizeF prtSize)
-			: this(new PointF(prtSize.Width * 0.14f, prtSize.Height * 0.14f), new SizeF(prtSize.Width * 0.76f, prtSize.Height * 0.7f))
+		/// <param name="from"></param>
+		public HostLayer(HostLayer from)
 		{
+			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
+			InternalInitializeGraphObjectsCollection();
+			CopyFrom(from, GraphCopyOptions.All);
 		}
 
 		/// <summary>
@@ -344,44 +355,46 @@ namespace Altaxo.Graph.Gdi
 		protected HostLayer()
 		{
 			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
-			this.GraphObjects = new GraphicCollection();
+			InternalInitializeGraphObjectsCollection();
 		}
-
-
 
 		/// <summary>
 		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
 		/// </summary>
-		/// <param name="position">The position of the layer on the printable area in points (1/72 inch).</param>
-		/// <param name="size">The size of the layer in points (1/72 inch).</param>
-		/// <param name="coordinateSystem">The coordinate system to use for the layer.</param>
+		/// <param name="position">The position of this layer on the parent in points (1/72 inch).</param>
+		/// <param name="size">The size of this layer in points (1/72 inch).</param>
 		public HostLayer(PointD2D position, PointD2D size)
 		{
 			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			this.Location = new XYPlotLayerPositionAndSize();
 			this.Size = size;
 			this.Position = position;
-			this.GraphObjects = new GraphicCollection();
+			InternalInitializeGraphObjectsCollection();
 
 			CalculateMatrix();
 		}
 
-
-
-		#endregion
+		#endregion Constructors
 
 		#region Position and Size
 
-		const double _xDefPositionLandscape = 0.14;
-		const double _yDefPositionLandscape = 0.14;
-		const double _xDefSizeLandscape = 0.76;
-		const double _yDefSizeLandscape = 0.7;
+		/// <summary>
+		/// Gets the default child layer position in points (1/72 inch).
+		/// </summary>
+		/// <value>The default position of a (new) layer in points (1/72 inch).</value>
+		public PointD2D DefaultChildLayerPosition
+		{
+			get { return new PointD2D(0.145 * Size.X, 0.139 * Size.Y); }
+		}
 
-		const double _xDefPositionPortrait = 0.14;
-		const double _yDefPositionPortrait = 0.14;
-		const double _xDefSizePortrait = 0.7;
-		const double _yDefSizePortrait = 0.76;
-
+		/// <summary>
+		/// Gets the default child layer size in points (1/72 inch).
+		/// </summary>
+		/// <value>The default size of a (new) layer in points (1/72 inch).</value>
+		public PointD2D DefaultChildLayerSize
+		{
+			get { return new PointD2D(0.763 * Size.X, 0.708 * Size.Y); }
+		}
 
 		public XYPlotLayerPositionAndSize Location
 		{
@@ -400,23 +413,21 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
-
 		/// <summary>
 		/// Set this layer to the default size and position.
 		/// </summary>
-		/// <param name="prtSize">The size of the printable area of the page.</param>
-		public void SizeToDefault(SizeF prtSize)
+		/// <param name="parentSize">The size of the parent's area.</param>
+		public void SizeToDefault(PointD2D parentSize)
 		{
-			if (prtSize.Width > prtSize.Height)
+			if (parentSize.X > parentSize.Y)
 			{
-				this.Size = new SizeF(prtSize.Width * 0.76f, prtSize.Height * 0.7f);
-				this.Position = new PointF(prtSize.Width * 0.14f, prtSize.Height * 0.14f);
+				this.Size = new PointD2D(parentSize.X * _xDefSizeLandscape, parentSize.Y * _yDefSizeLandscape);
+				this.Position = new PointD2D(parentSize.X * _xDefPositionLandscape, parentSize.Y * _yDefPositionLandscape);
 			}
 			else // Portrait
 			{
-				this.Size = new SizeF(prtSize.Width * 0.76f, prtSize.Height * 0.7f);
-				this.Position = new PointF(prtSize.Width * 0.14f, prtSize.Height * 0.14f);
+				this.Size = new PointD2D(parentSize.X * _xDefSizePortrait, parentSize.Y * _yDefSizePortrait);
+				this.Position = new PointD2D(parentSize.X * _xDefPositionPortrait, parentSize.Y * _yDefPositionPortrait);
 			}
 			this.CalculateMatrix();
 		}
@@ -435,18 +446,14 @@ namespace Altaxo.Graph.Gdi
 			var newSize = val;
 			_cachedParentLayerSize = val;
 
-
-
 			if (_cachedParentLayerSize != oldSize && bRescale)
 			{
 				var oldLayerSize = this._cachedLayerSize;
-
 
 				double oldxdefsize = oldSize.X * (oldSize.X > oldSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
 				double newxdefsize = newSize.X * (newSize.X > newSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
 				double oldydefsize = oldSize.Y * (oldSize.X > oldSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
 				double newydefsize = newSize.Y * (newSize.X > newSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
-
 
 				double oldxdeforg = oldSize.X * (oldSize.X > oldSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
 				double newxdeforg = newSize.X * (newSize.X > newSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
@@ -461,7 +468,6 @@ namespace Altaxo.Graph.Gdi
 
 				if (this._location.XPositionType == XYPlotLayerPositionType.AbsoluteValue)
 					this._location.XPosition = xoffs + this._location.XPosition * xscale;
-
 
 				if (this._location.WidthType == XYPlotLayerSizeType.AbsoluteValue)
 					this._location.Width *= xscale;
@@ -542,14 +548,16 @@ namespace Altaxo.Graph.Gdi
 			_transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Angle, 0, _location.Scale, _location.Scale);
 		}
 
-
-		public PointF GraphToLayerCoordinates(PointF pagecoordinates)
+		public PointD2D TransformCoordinatesFromParentToHere(PointD2D pagecoordinates)
 		{
 			return _transformation.InverseTransformPoint(pagecoordinates);
 		}
-		public PointD2D GraphToLayerCoordinates(PointD2D pagecoordinates)
+
+		public PointD2D TransformCoordinatesFromRootToHere(PointD2D pagecoordinates)
 		{
-			return _transformation.InverseTransformPoint(pagecoordinates);
+			foreach (var layer in this.TakeFromRootToHere())
+				pagecoordinates = _transformation.InverseTransformPoint(pagecoordinates);
+			return pagecoordinates;
 		}
 
 		public CrossF GraphToLayerCoordinates(CrossF x)
@@ -568,9 +576,8 @@ namespace Altaxo.Graph.Gdi
 		/// This switches the graphics context from printable area coordinates to layer coordinates.
 		/// </summary>
 		/// <param name="g">The graphics state to change.</param>
-		public void GraphToLayerCoordinates(Graphics g)
+		public void TransformCoordinatesFromParentToHere(Graphics g)
 		{
-			//g.MultiplyTransform(_cachedForwardMatrix);
 			g.MultiplyTransform(_transformation);
 		}
 
@@ -579,33 +586,20 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="pagediff">X,Y coordinate differences in graph units</param>
 		/// <returns>the convertes X,Y coordinate differences in layer units</returns>
-		public PointF GraphToLayerDifferences(PointF pagediff)
+		public PointD2D TransformCoordinateDifferencesFromParentToHere(PointD2D pagediff)
 		{
 			return _transformation.InverseTransformVector(pagediff);
 		}
-
-
 
 		/// <summary>
 		/// Transforms a graphics path from layer coordinates to graph (page) coordinates
 		/// </summary>
 		/// <param name="gp">the graphics path to convert</param>
 		/// <returns>graphics path now in graph coordinates</returns>
-		public GraphicsPath LayerToGraphCoordinates(GraphicsPath gp)
+		public GraphicsPath TransformCoordinatesFromHereToParent(GraphicsPath gp)
 		{
 			gp.Transform(_transformation);
 			return gp;
-		}
-
-
-		/// <summary>
-		/// Transforms a <see cref="PointF" /> from layer coordinates to graph (=printable area) coordinates
-		/// </summary>
-		/// <param name="layerCoordinates">The layer coordinates to convert.</param>
-		/// <returns>graphics path now in graph coordinates</returns>
-		public PointF LayerToGraphCoordinates(PointF layerCoordinates)
-		{
-			return _transformation.TransformPoint(layerCoordinates);
 		}
 
 		/// <summary>
@@ -613,11 +607,17 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="layerCoordinates">The layer coordinates to convert.</param>
 		/// <returns>graphics path now in graph coordinates</returns>
-		public PointD2D LayerToGraphCoordinates(PointD2D layerCoordinates)
+		public PointD2D TransformCoordinatesFromHereToParent(PointD2D layerCoordinates)
 		{
 			return _transformation.TransformPoint(layerCoordinates);
 		}
 
+		public PointD2D TransformCoordinatesFromHereToRoot(PointD2D coordinates)
+		{
+			foreach (var layer in this.TakeFromHereToRoot())
+				coordinates = _transformation.TransformPoint(coordinates);
+			return coordinates;
+		}
 
 		public void SetPosition(double x, XYPlotLayerPositionType xpostype, double y, XYPlotLayerPositionType ypostype)
 		{
@@ -645,9 +645,11 @@ namespace Altaxo.Graph.Gdi
 			{
 				case XYPlotLayerPositionType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerPositionType.RelativeToGraphDocument:
 					x = x * ParentLayerSize.X;
 					break;
+
 				default:
 					throw new NotImplementedException(xpostype.ToString());
 			}
@@ -670,16 +672,17 @@ namespace Altaxo.Graph.Gdi
 			{
 				case XYPlotLayerPositionType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerPositionType.RelativeToGraphDocument:
 					y = y * ParentLayerSize.Y;
 					break;
+
 				default:
 					throw new NotImplementedException(ypostype.ToString());
 			}
 
 			return y;
 		}
-
 
 		/// <summary>
 		/// Calculates from the x position value in points (1/72 inch), the corresponding value in user units.
@@ -692,22 +695,21 @@ namespace Altaxo.Graph.Gdi
 		/// graph or the linked layer for the calculations.</remarks>
 		public double XPositionToUserUnits(double x, XYPlotLayerPositionType xpostype_to_convert_to)
 		{
-
-
 			switch (xpostype_to_convert_to)
 			{
 				case XYPlotLayerPositionType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerPositionType.RelativeToGraphDocument:
 					x = x / ParentLayerSize.X;
 					break;
+
 				default:
 					throw new NotImplementedException(xpostype_to_convert_to.ToString());
 			}
 
 			return x;
 		}
-
 
 		/// <summary>
 		/// Calculates from the y position value in points (1/72 inch), the corresponding value in user units.
@@ -724,9 +726,11 @@ namespace Altaxo.Graph.Gdi
 			{
 				case XYPlotLayerPositionType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerPositionType.RelativeToGraphDocument:
 					y = y / ParentLayerSize.Y;
 					break;
+
 				default:
 					throw new NotImplementedException(ypostype_to_convert_to.ToString());
 			}
@@ -734,17 +738,16 @@ namespace Altaxo.Graph.Gdi
 			return y;
 		}
 
-
 		/// <summary>
 		/// Sets the cached position value in <see cref="_cachedLayerPosition"/> by calculating it
-		/// from the position values (<see cref="_location"/>.XPosition and .YPosition) 
+		/// from the position values (<see cref="_location"/>.XPosition and .YPosition)
 		/// and the position types (<see cref="_location"/>.XPositionType and YPositionType).
 		/// </summary>
 		protected void CalculateCachedPosition()
 		{
-			PointF newPos = new PointF(
-				(float)XPositionToPointUnits(this._location.XPosition, this._location.XPositionType),
-				(float)YPositionToPointUnits(this._location.YPosition, this._location.YPositionType));
+			var newPos = new PointD2D(
+				XPositionToPointUnits(this._location.XPosition, this._location.XPositionType),
+				YPositionToPointUnits(this._location.YPosition, this._location.YPositionType));
 			if (newPos != this._cachedLayerPosition)
 			{
 				this._cachedLayerPosition = newPos;
@@ -752,7 +755,6 @@ namespace Altaxo.Graph.Gdi
 				OnPositionChanged();
 			}
 		}
-
 
 		public void SetSize(double width, XYPlotLayerSizeType widthtype, double height, XYPlotLayerSizeType heighttype)
 		{
@@ -764,16 +766,17 @@ namespace Altaxo.Graph.Gdi
 			CalculateCachedSize();
 		}
 
-
 		public double WidthToPointUnits(double width, XYPlotLayerSizeType widthtype)
 		{
 			switch (widthtype)
 			{
 				case XYPlotLayerSizeType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerSizeType.RelativeToGraphDocument:
 					width *= ParentLayerSize.X;
 					break;
+
 				default:
 					throw new NotImplementedException(widthtype.ToString());
 			}
@@ -786,15 +789,16 @@ namespace Altaxo.Graph.Gdi
 			{
 				case XYPlotLayerSizeType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerSizeType.RelativeToGraphDocument:
 					height *= ParentLayerSize.Y;
 					break;
+
 				default:
 					throw new NotImplementedException(heighttype.ToString());
 			}
 			return height;
 		}
-
 
 		/// <summary>
 		/// Convert the width in points (1/72 inch) to user units of the type <paramref name="widthtype_to_convert_to"/>.
@@ -808,15 +812,16 @@ namespace Altaxo.Graph.Gdi
 			{
 				case XYPlotLayerSizeType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerSizeType.RelativeToGraphDocument:
 					width /= ParentLayerSize.X;
 					break;
+
 				default:
 					throw new NotImplementedException(widthtype_to_convert_to.ToString());
 			}
 			return width;
 		}
-
 
 		/// <summary>
 		/// Convert the heigth in points (1/72 inch) to user units of the type <paramref name="heighttype_to_convert_to"/>.
@@ -826,31 +831,31 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The value of the height in user units.</returns>
 		public double HeightToUserUnits(double height, XYPlotLayerSizeType heighttype_to_convert_to)
 		{
-
 			switch (heighttype_to_convert_to)
 			{
 				case XYPlotLayerSizeType.AbsoluteValue:
 					break;
+
 				case XYPlotLayerSizeType.RelativeToGraphDocument:
 					height /= ParentLayerSize.Y;
 					break;
+
 				default:
 					throw new NotImplementedException(heighttype_to_convert_to.ToString());
 			}
 			return height;
 		}
 
-
 		/// <summary>
 		/// Sets the cached size value in <see cref="_cachedLayerSize"/> by calculating it
-		/// from the position values (<see cref="_location"/>.Width and .Height) 
+		/// from the position values (<see cref="_location"/>.Width and .Height)
 		/// and the size types (<see cref="_location"/>.WidthType and .HeightType).
 		/// </summary>
 		protected void CalculateCachedSize()
 		{
-			SizeF newSize = new SizeF(
-				(float)WidthToPointUnits(this._location.Width, this._location.WidthType),
-				(float)HeightToPointUnits(this._location.Height, this._location.HeightType));
+			var newSize = new PointD2D(
+				WidthToPointUnits(this._location.Width, this._location.WidthType),
+				HeightToPointUnits(this._location.Height, this._location.HeightType));
 			if (newSize != this._cachedLayerSize)
 			{
 				this._cachedLayerSize = newSize;
@@ -858,7 +863,6 @@ namespace Altaxo.Graph.Gdi
 				OnSizeChanged();
 			}
 		}
-
 
 		/// <summary>Returns the user x position value of the layer.</summary>
 		/// <value>User x position value of the layer.</value>
@@ -916,8 +920,6 @@ namespace Altaxo.Graph.Gdi
 			get { return this._location.HeightType; }
 		}
 
-
-
 		/// <summary>
 		/// Measures to do when the position of the linked layer changed.
 		/// </summary>
@@ -939,11 +941,9 @@ namespace Altaxo.Graph.Gdi
 			CalculateCachedPosition();
 		}
 
-
-		#endregion // Position and Size
+		#endregion Position and Size
 
 		#region XYPlotLayer properties and methods
-
 
 		/// <summary>
 		/// Gets the child layers of this layer.
@@ -979,10 +979,9 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		public IList<HostLayer> ParentLayerList
 		{
-			get 
+			get
 			{
 				var hl = _parent as HostLayer;
 				return hl == null ? null : hl._childLayers;
@@ -998,45 +997,43 @@ namespace Altaxo.Graph.Gdi
 		public GraphicCollection GraphObjects
 		{
 			get { return _graphObjects; }
-			protected set
-			{
-				GraphicCollection oldvalue = _graphObjects;
-
-				if (null != _graphObjects)
-				{
-
-				}
-
-				_graphObjects = value;
-
-				if (null != _graphObjects)
-				{
-					_graphObjects.ParentObject = this;
-
-					if (null != _childLayers)
-					{
-						_childLayers.CollectionChanged -= EhChildLayers_CollectionChanged;
-					}
-					_childLayers = value.CreatePartialViewOfType<HostLayer>(EhBeforeInsertChildLayer);
-					if (null != _childLayers)
-					{
-						_childLayers.CollectionChanged += EhChildLayers_CollectionChanged;
-					}
-				}
-
-				if (!object.ReferenceEquals(value, oldvalue))
-				{
-					OnChanged();
-				}
-			}
 		}
 
-		void EhBeforeInsertChildLayer(HostLayer child)
+		/// <summary>
+		/// Initialize the graph objects collection internally.
+		/// </summary>
+		/// <exception cref="System.InvalidOperationException">
+		/// _graphObjects was already set!
+		/// or
+		/// _childLayers was already set!
+		/// </exception>
+		private void InternalInitializeGraphObjectsCollection()
+		{
+			if (null != _graphObjects)
+				throw new InvalidOperationException("_graphObjects was already set!");
+			if (null != _childLayers)
+				throw new InvalidOperationException("_childLayers was already set!");
+
+			_graphObjects = new GraphicCollection(x => x.ParentObject = this);
+
+			_childLayers = _graphObjects.CreatePartialViewOfType<HostLayer>((Action<HostLayer>)EhBeforeInsertChildLayer);
+			_childLayers.CollectionChanged += EhChildLayers_CollectionChanged;
+			OnGraphObjectsCollectionInstanceInitialized();
+		}
+
+		/// <summary>
+		/// Called after the instance of the <see cref="GraphicCollection"/> <see cref="GraphObjects"/> has been initialized.
+		/// </summary>
+		protected virtual void OnGraphObjectsCollectionInstanceInitialized()
+		{
+		}
+
+		private void EhBeforeInsertChildLayer(HostLayer child)
 		{
 			child.ParentLayer = this;
 		}
 
-		void EhChildLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void EhChildLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
 			if (null != LayerCollectionChanged)
 				LayerCollectionChanged(this, EventArgs.Empty);
@@ -1048,14 +1045,11 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
-		public void Remove(GraphicBase go)
+		public virtual void Remove(GraphicBase go)
 		{
 			if (_graphObjects.Contains(go))
 				_graphObjects.Remove(go);
-
 		}
-
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
@@ -1067,15 +1061,14 @@ namespace Altaxo.Graph.Gdi
 			foreach (var hl in _childLayers)
 				hl.VisitDocumentReferences(Report);
 		}
-	
 
-		#endregion // XYPlotLayer Properties and Methods
+		#endregion XYPlotLayer properties and methods
 
 		#region Painting and Hit testing
 
 		/// <summary>
 		/// This function is called by the graph document before _any_ layer is painted. We have to make sure that all of our cached data becomes valid.
-		/// 
+		///
 		/// </summary>
 
 		public virtual void PreparePainting()
@@ -1094,7 +1087,6 @@ namespace Altaxo.Graph.Gdi
 				obj.FinishPainting();
 		}
 
-
 		public virtual void Paint(Graphics g, object o)
 		{
 			Paint(g);
@@ -1106,7 +1098,11 @@ namespace Altaxo.Graph.Gdi
 
 			g.MultiplyTransform(_transformation);
 
-			_graphObjects.Paint(g, 1, this);
+			int len = _graphObjects.Count;
+			for (int i = 0; i < len; i++)
+			{
+				_graphObjects[i].Paint(g, this);
+			}
 
 			g.Restore(savedgstate);
 		}
@@ -1122,7 +1118,6 @@ namespace Altaxo.Graph.Gdi
 		{
 			return HitTest(hitData, false);
 		}
-
 
 		public virtual IHitTestObject HitTest(HitTestPointData pageC, bool plotItemsOnly)
 		{
@@ -1149,25 +1144,22 @@ namespace Altaxo.Graph.Gdi
 					return ForwardTransform(hit);
 				}
 
-
 				// now hit testing the other objects in the layer
 				hit = _graphObjects.HitTest(layerHitTestData);
 				if (null != hit)
 					return ForwardTransform(hit);
 			}
 
-
 			return null;
 		}
 
-
-		#endregion // Painting and Hit testing
+		#endregion Painting and Hit testing
 
 		#region Editor methods
 
 		public static DoubleClickHandler LayerPositionEditorMethod;
 
-		#endregion
+		#endregion Editor methods
 
 		#region Event firing
 
@@ -1211,12 +1203,9 @@ namespace Altaxo.Graph.Gdi
 				if (_parent is Main.IChildChangedEventSink)
 					((Main.IChildChangedEventSink)this._parent).EhChildChanged(this, EventArgs.Empty);
 			}
-
 		}
 
-
-
-		#endregion
+		#endregion Event firing
 
 		#region Handler of child events
 
@@ -1225,7 +1214,7 @@ namespace Altaxo.Graph.Gdi
 			OnChanged();
 		}
 
-		#endregion
+		#endregion Handler of child events
 
 		#region IDocumentNode Members
 
@@ -1249,18 +1238,25 @@ namespace Altaxo.Graph.Gdi
 				if (ParentObject is Main.INamedObjectCollection)
 					return ((Main.INamedObjectCollection)ParentObject).GetNameOfChildObject(this);
 				else
-					return GetDefaultNameOfLayer(this.Number);
+					return GetDefaultNameOfLayer(this.IndexOf());
 			}
 		}
 
 		/// <summary>
 		/// Returns the document name of the layer at index i. Actually, this is a name of the form L0, L1, L2 and so on.
 		/// </summary>
-		/// <param name="i">The layer index.</param>
+		/// <param name="layerIndex">The layer index.</param>
 		/// <returns>The name of the layer at index i.</returns>
-		public static string GetDefaultNameOfLayer(int i)
+		public static string GetDefaultNameOfLayer(IList<int> layerIndex)
 		{
-			return "L" + i.ToString(); // do not change it, since the name is used in serialization
+			if (layerIndex.Count == 0)
+				return "RL";
+
+			var stb = new System.Text.StringBuilder();
+			stb.AppendFormat("L{0}", layerIndex[0]);
+			for (int k = 1; k < layerIndex.Count; ++k)
+				stb.AppendFormat("-{0}", layerIndex[k]);
+			return stb.ToString();
 		}
 
 		/// <summary>
@@ -1270,6 +1266,11 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The object with the specified name.</returns>
 		public virtual object GetChildObjectNamed(string name)
 		{
+			foreach (var childLayer in _childLayers)
+			{
+				if (GetDefaultNameOfLayer(childLayer.IndexOf()) == name)
+					return childLayer;
+			}
 			return null;
 		}
 
@@ -1280,7 +1281,9 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
 		public virtual string GetNameOfChildObject(object o)
 		{
-			return null;
+			if (o is HostLayer)
+				return GetDefaultNameOfLayer(((HostLayer)o).IndexOf());
+			return string.Empty;
 		}
 
 		public virtual bool FixAndTestParentChildRelationShipOfLayers()
@@ -1288,7 +1291,7 @@ namespace Altaxo.Graph.Gdi
 			return this.FixAndTestParentChildRelations((l, p) => l.ParentLayer = p);
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region Enumeration through layers
 
@@ -1310,11 +1313,10 @@ namespace Altaxo.Graph.Gdi
 			action(start);
 		}
 
-	
-
-		#endregion
+		#endregion Enumeration through layers
 
 		#region ITreeListNodeWithParent implementation
+
 		IList<HostLayer> ITreeListNode<HostLayer>.Nodes
 		{
 			get { return _childLayers; }
@@ -1325,13 +1327,11 @@ namespace Altaxo.Graph.Gdi
 			get { return _childLayers; }
 		}
 
-		HostLayer NodeWithParentNode<HostLayer>.ParentNode
+		HostLayer INodeWithParentNode<HostLayer>.ParentNode
 		{
 			get { return _parent as HostLayer; }
 		}
 
-		#endregion
-
-
+		#endregion ITreeListNodeWithParent implementation
 	}
 }

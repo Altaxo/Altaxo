@@ -1050,7 +1050,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       var graphctrl = Current.ProjectService.CreateNewGraph(preferredName);
       var graph = graphctrl.Doc;
-      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
+			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer.DefaultChildLayerPosition, graph.RootLayer.DefaultChildLayerSize);
       layer.CreateDefaultAxes();
       graph.RootLayer.Layers.Add(layer);
       return graphctrl;
