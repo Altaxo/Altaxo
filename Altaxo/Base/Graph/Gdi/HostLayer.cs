@@ -96,6 +96,11 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected IObservableList<HostLayer> _childLayers;
 
+		/// <summary>
+		/// The number of this layer in the parent's layer collection.
+		/// </summary>
+		protected int _cachedLayerNumber;
+
 		#endregion Cached member variables
 
 		#region Member variables
@@ -296,6 +301,8 @@ namespace Altaxo.Graph.Gdi
 		{
 			// XYPlotLayer style
 			//this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
+
+			this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
 
 			// size, position, rotation and scale
 			if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
@@ -1040,15 +1047,38 @@ namespace Altaxo.Graph.Gdi
 			child.ParentLayer = this;
 		}
 
+		/// <summary>
+		/// Get the index of this layer in the parent's layer collection.
+		/// </summary>
+		/// <value>
+		/// The layer number.
+		/// </value>
+		public int LayerNumber { get { return _cachedLayerNumber; } }
+
+		/// <summary>
+		/// Is called by the parent layer if the index of this layer has changed.
+		/// </summary>
+		/// <param name="newLayerNumber">The new layer number. This number is cached in <paramref name="_cachedLayerNumber"/></param>
+		protected virtual void OnLayerNumberChanged(int newLayerNumber)
+		{
+			_cachedLayerNumber = newLayerNumber;
+		}
+
 		private void EhChildLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
+			for (int i = 0; i < _childLayers.Count; ++i)
+			{
+				if (i != _childLayers[i].LayerNumber)
+					_childLayers[i].OnLayerNumberChanged(i);
+			}
+
 			if (null != LayerCollectionChanged)
 				LayerCollectionChanged(this, EventArgs.Empty);
 
 			var pl = ParentLayer;
 			if (null != pl)
 			{
-				pl.EhChildLayers_CollectionChanged(sender, e);
+				pl.EhChildLayers_CollectionChanged(sender, e); // DODO is this not an endless loop?
 			}
 		}
 

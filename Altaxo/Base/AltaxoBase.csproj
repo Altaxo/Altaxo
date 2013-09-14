@@ -987,7 +987,7 @@
     <Compile Include="Gui\ExpectedTypeOfView.cs" />
     <Compile Include="Gui\Graph\AxisLineStyleController.cs" />
     <Compile Include="Gui\Graph\AxisLinkController.cs" />
-    <Compile Include="Gui\Graph\AxisScaleController.cs" />
+    <Compile Include="Gui\Graph\ScaleWithTicksController.cs" />
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\ColorProviderBaseController.cs" />
     <Compile Include="Gui\Graph\ColorProviderController.cs" />

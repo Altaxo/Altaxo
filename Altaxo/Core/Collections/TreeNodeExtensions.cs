@@ -868,5 +868,28 @@ namespace Altaxo.Collections
 
 			return level;
 		}
+
+		/// <summary>
+		/// Returns the firstsanchestor of this node that has the type M.
+		/// </summary>
+		/// <typeparam name="M">The type to search for.</typeparam>
+		/// <typeparam name="T">Type of the node.</typeparam>
+		/// <param name="node">The node. The first node being considered is the parent node of this node.</param>
+		/// <returns></returns>
+		public static M FirstAnchestorImplementing<M, T>(this T node)
+			where T : INodeWithParentNode<T>
+			where M : class
+		{
+			if (node.ParentNode != null)
+			{
+				foreach (var n in TakeFromHereToRoot(node.ParentNode))
+				{
+					M nodeAsM = n as M;
+					if (null != nodeAsM)
+						return nodeAsM;
+				}
+			}
+			return null;
+		}
 	}
 }

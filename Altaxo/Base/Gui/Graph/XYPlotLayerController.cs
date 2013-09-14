@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+#endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
@@ -32,12 +31,13 @@ using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
-using Altaxo.Collections;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Altaxo.Gui.Graph
 {
 	#region Interfaces
-
 
 	public interface IXYPlotLayerView
 	{
@@ -46,30 +46,35 @@ namespace Altaxo.Gui.Graph
 		object CurrentContent { get; set; }
 
 		void SelectTab(string name);
+
 		void InitializeSecondaryChoice(SelectableListNodeList items, LayerControllerTabType primaryChoice);
 
 		event CancelEventHandler TabValidating;
-		event Action<bool> CreateOrMoveAxis;
-		event Action SecondChoiceChanged;
-		event Action<string> PageChanged;
 
+		event Action<bool> CreateOrMoveAxis;
+
+		event Action SecondChoiceChanged;
+
+		event Action<string> PageChanged;
 	}
 
 	/// <summary>Designates, which type of tab is choosen in the layer view. Dependent on this choise a list of secondary choices will be shown.</summary>
 	public enum LayerControllerTabType
 	{
-
 		/// <summary>No secondary choice available (i.e. for layer position, layer background).</summary>
 		Unique,
+
 		/// <summary>List of scales as secondary choice (e.g. x-scale, y-scale).</summary>
 		Scales,
+
 		/// <summary>List of axes as secondary choice (e.g. left, top, bottom, right, x=0 etc.)</summary>
 		Axes,
+
 		/// <summary>List of planes as secondary choice (e.g. front, back etc.).</summary>
 		Planes
 	};
 
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Summary description for LayerController.
@@ -82,43 +87,39 @@ namespace Altaxo.Gui.Graph
 
 		private string _currentPageName;
 
-		LayerControllerTabType _primaryChoice; // which tab type is currently choosen
+		private LayerControllerTabType _primaryChoice; // which tab type is currently choosen
 		private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
 
 		private CSLineID _currentAxisID; // which style is currently choosen
 		private CSPlaneID _currentPlaneID; // which plane is currently chosen for the grid
 
-
-		IMVCAController _currentController;
-
+		private IMVCAController _currentController;
 
 		protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
 		protected IMVCAController _layerPositionController;
 		protected IMVCANController _layerContentsController;
 		protected IMVCAController[] _axisScaleController;
 
-		Dictionary<CSLineID, AxisStyleControllerConditionalGlue> _axisControl;
-		Dictionary<CSPlaneID, IMVCANController> _GridStyleController;
-		object _lastControllerApplied;
+		private Dictionary<CSLineID, AxisStyleControllerConditionalGlue> _axisControl;
+		private Dictionary<CSPlaneID, IMVCANController> _GridStyleController;
+		private object _lastControllerApplied;
 
-		SelectableListNodeList _listOfScales;
-		SelectableListNodeList _listOfAxes;
-		SelectableListNodeList _listOfPlanes;
-		SelectableListNodeList _listOfUniqueItem;
-
-
+		private SelectableListNodeList _listOfScales;
+		private SelectableListNodeList _listOfAxes;
+		private SelectableListNodeList _listOfPlanes;
+		private SelectableListNodeList _listOfUniqueItem;
 
 		public XYPlotLayerController(XYPlotLayer layer)
 			: this(layer, "Scale", 1, null)
 		{
 		}
+
 		public XYPlotLayerController(XYPlotLayer layer, string currentPage, CSLineID id)
 			: this(layer, currentPage, id.ParallelAxisNumber, id)
 		{
 		}
 
-
-		XYPlotLayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
+		private XYPlotLayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
 		{
 			_originalDoc = layer;
 			_doc = (XYPlotLayer)layer.Clone();
@@ -185,15 +186,15 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		void SetCoordinateSystemDependentObjects()
+		private void SetCoordinateSystemDependentObjects()
 		{
 			SetCoordinateSystemDependentObjects(null);
 		}
-		void SetCoordinateSystemDependentObjects(CSLineID id)
+
+		private void SetCoordinateSystemDependentObjects(CSLineID id)
 		{
 			// Scales
-			_axisScaleController = new AxisScaleController[_doc.Scales.Count];
+			_axisScaleController = new ScaleWithTicksController[_doc.Scales.Count];
 			_listOfScales = new SelectableListNodeList();
 			if (_doc.Scales.Count > 0)
 				_listOfScales.Add(new SelectableListNode("X-Scale", 0, false));
@@ -201,7 +202,6 @@ namespace Altaxo.Gui.Graph
 				_listOfScales.Add(new SelectableListNode("Y-Scale", 1, false));
 			if (_doc.Scales.Count > 2)
 				_listOfScales.Add(new SelectableListNode("Z-Scale", 2, false));
-
 
 			// collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
 			_axisControl = new Dictionary<CSLineID, AxisStyleControllerConditionalGlue>();
@@ -220,12 +220,10 @@ namespace Altaxo.Gui.Graph
 			_currentPlaneID = CSPlaneID.Front;
 			_listOfPlanes.Add(new SelectableListNode("Front", _currentPlaneID, true));
 
-
-
 			_GridStyleController = new Dictionary<CSPlaneID, IMVCANController>();
 		}
 
-		void SetCurrentTabController(bool pageChanged)
+		private void SetCurrentTabController(bool pageChanged)
 		{
 			switch (_currentPageName)
 			{
@@ -242,6 +240,7 @@ namespace Altaxo.Gui.Graph
 					_currentController = _layerContentsController;
 					_view.CurrentContent = _currentController.ViewObject;
 					break;
+
 				case "Position":
 					if (pageChanged)
 					{
@@ -257,7 +256,6 @@ namespace Altaxo.Gui.Graph
 					_view.CurrentContent = _layerPositionController.ViewObject;
 					break;
 
-
 				case "Scale":
 					if (pageChanged)
 					{
@@ -266,7 +264,9 @@ namespace Altaxo.Gui.Graph
 					}
 					if (_axisScaleController[_currentScale] == null)
 					{
-						_axisScaleController[_currentScale] = new AxisScaleController(_doc, _currentScale);
+						var ctrl = new ScaleWithTicksController();
+						ctrl.InitializeDocument(_doc.Scales[_currentScale]);
+						_axisScaleController[_currentScale] = ctrl;
 						Current.Gui.FindAndAttachControlTo(_axisScaleController[_currentScale]);
 					}
 					_currentController = _axisScaleController[_currentScale];
@@ -307,7 +307,6 @@ namespace Altaxo.Gui.Graph
 					_currentController = _GridStyleController[_currentPlaneID];
 					_view.CurrentContent = this._currentController.ViewObject;
 
-
 					break;
 
 				case "TitleAndFormat":
@@ -321,6 +320,7 @@ namespace Altaxo.Gui.Graph
 					_currentController = _axisControl[_currentAxisID].AxisStyleCondController;
 
 					break;
+
 				case "MajorLabels":
 					if (pageChanged)
 					{
@@ -331,8 +331,8 @@ namespace Altaxo.Gui.Graph
 					_view.CurrentContent = _axisControl[_currentAxisID].MajorLabelCondView;
 					_currentController = _axisControl[_currentAxisID].MajorLabelCondController;
 
-
 					break;
+
 				case "MinorLabels":
 					if (pageChanged)
 					{
@@ -343,20 +343,17 @@ namespace Altaxo.Gui.Graph
 					_view.CurrentContent = _axisControl[_currentAxisID].MinorLabelCondView;
 					_currentController = _axisControl[_currentAxisID].MinorLabelCondController;
 
-
 					break;
-
 			}
 		}
 
-
-		void SetSecondaryChoiceToUnique()
+		private void SetSecondaryChoiceToUnique()
 		{
 			this._primaryChoice = LayerControllerTabType.Unique;
 			_view.InitializeSecondaryChoice(_listOfUniqueItem, this._primaryChoice);
 		}
 
-		void SetSecondaryChoiceToScales()
+		private void SetSecondaryChoiceToScales()
 		{
 			_listOfScales.ClearSelectionsAll();
 			_listOfScales[_currentScale].IsSelected = true;
@@ -365,7 +362,7 @@ namespace Altaxo.Gui.Graph
 			_view.InitializeSecondaryChoice(_listOfScales, this._primaryChoice);
 		}
 
-		void SetSecondaryChoiceToAxes()
+		private void SetSecondaryChoiceToAxes()
 		{
 			foreach (var item in _listOfAxes)
 				item.IsSelected = ((CSLineID)item.Tag) == _currentAxisID;
@@ -374,7 +371,7 @@ namespace Altaxo.Gui.Graph
 			_view.InitializeSecondaryChoice(_listOfAxes, this._primaryChoice);
 		}
 
-		void SetSecondaryChoiceToPlanes()
+		private void SetSecondaryChoiceToPlanes()
 		{
 			this._primaryChoice = LayerControllerTabType.Planes;
 			_view.InitializeSecondaryChoice(_listOfPlanes, this._primaryChoice);
@@ -409,12 +406,11 @@ namespace Altaxo.Gui.Graph
 			SetCurrentTabController(false);
 		}
 
-		void EhView_TabValidating(object sender, CancelEventArgs e)
+		private void EhView_TabValidating(object sender, CancelEventArgs e)
 		{
 			if (!ApplyCurrentController(true))
 				e.Cancel = true;
 		}
-
 
 		public void EhView_CreateOrMoveAxis(bool moveAxis)
 		{
@@ -458,13 +454,12 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-
 			_currentAxisID = newIdentity;
 			SetSecondaryChoiceToAxes();
 			SetCurrentTabController(false);
 		}
 
-		bool ApplyCurrentController(bool force)
+		private bool ApplyCurrentController(bool force)
 		{
 			if (_currentController == null)
 				return true;
@@ -491,28 +486,25 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-
-
-
-
 		#region Dialog
 
 		public static bool ShowDialog(XYPlotLayer layer)
 		{
 			return ShowDialog(layer, "Scale", new CSLineID(0, 0));
 		}
+
 		public static bool ShowDialog(XYPlotLayer layer, string currentPage)
 		{
 			return ShowDialog(layer, currentPage, new CSLineID(0, 0));
 		}
+
 		public static bool ShowDialog(XYPlotLayer layer, string currentPage, CSLineID currentEdge)
 		{
 			XYPlotLayerController ctrl = new XYPlotLayerController(layer, currentPage, currentEdge);
 			return Current.Gui.ShowDialog(ctrl, layer.Name, true);
 		}
 
-
-		#endregion
+		#endregion Dialog
 
 		#region Edit Handlers
 
@@ -525,7 +517,6 @@ namespace Altaxo.Gui.Graph
 			XYPlotLayer.AxisLabelMajorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMajorStyleEdit);
 			XYPlotLayer.AxisLabelMinorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMinorStyleEdit);
 			XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
-
 		}
 
 		public static bool EhLayerPositionEdit(IHitTestObject hit)
@@ -546,8 +537,8 @@ namespace Altaxo.Gui.Graph
 				return false;
 
 			var xylayer = hit.ParentLayer as XYPlotLayer;
-			if(null!=xylayer)
-			ShowDialog(xylayer, "Scale", style.AxisStyleID);
+			if (null != xylayer)
+				ShowDialog(xylayer, "Scale", style.AxisStyleID);
 
 			return false;
 		}
@@ -577,6 +568,7 @@ namespace Altaxo.Gui.Graph
 
 			return false;
 		}
+
 		public static bool EhAxisLabelMinorStyleEdit(IHitTestObject hit)
 		{
 			AxisLabelStyle style = hit.HittedObject as AxisLabelStyle;
@@ -590,8 +582,6 @@ namespace Altaxo.Gui.Graph
 			return false;
 		}
 
-		#endregion
-
-
+		#endregion Edit Handlers
 	}
 }

@@ -26,6 +26,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -36,6 +37,7 @@ namespace Altaxo.Graph.Scales
 	[Serializable]
 	public class ScaleCollection
 	:
+	IEnumerable<ScaleWithTicks>,
 	Main.IChangedEventSource,
 	Main.IDocumentNode
 	{
@@ -283,5 +285,17 @@ namespace Altaxo.Graph.Scales
 		}
 
 		#endregion IDocumentNode Members
+
+		public IEnumerator<ScaleWithTicks> GetEnumerator()
+		{
+			for (int i = 0; i < _scales.Length; ++i)
+				yield return _scales[i];
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			for (int i = 0; i < _scales.Length; ++i)
+				yield return _scales[i];
+		}
 	}
 }

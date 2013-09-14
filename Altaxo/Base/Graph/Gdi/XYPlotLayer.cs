@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Gdi
 
 			if (isLinked)
 			{
-				LinkedScale ls = new LinkedScale(transScale, LinkedLayer != null ? LinkedLayer.Scales[idx].Scale : null, idx);
+				LinkedScale ls = new LinkedScale(transScale, LinkedLayer != null ? LinkedLayer.Scales[idx].Scale : null, idx, LinkedLayer != null ? LinkedLayer.LayerNumber : 0);
 				ls.SetLinkParameter(orgA, orgB, endA, endB);
 				transScale = ls;
 			}
@@ -1541,6 +1541,72 @@ namespace Altaxo.Graph.Gdi
 			return this.IsYAxisLinked;
 		}
 
+		/// <summary>
+		/// Ensures that all linked scales have their scalesLinkedTo instances updated (in case the layer instance or the scale instance has changed in the meantime).
+		/// Note that here we should not enforce the link properties (like xOrg = SomeCalculation depending on scaleLinkedTo). This is done later, after the plot items are updated
+		/// </summary>
+		protected void UpdateScaleLinks()
+		{
+			foreach (var swt in Scales.Where(s => s.Scale is LinkedScale))
+			{
+				UpdateScaleLink(swt);
+			}
+		}
+
+		/// <summary>
+		/// Updates the scale link of a <see cref="ScaleWithTicks"/> where the Scale is of type <see cref="LinkedScale"/>
+		/// </summary>
+		/// <param name="swt">The <see cref="ScaleWithTicks"/> instance.</param>
+		/// <remarks>
+		/// <para>This updates either the scaleLinkedTo and/or the scale number and layer number.</para>
+		/// <para>The scaleLinkedTo has precedence: if it still exist in any of the sibling layers, the layer number and scale number will be updated and the scaleLinked to will be preserved</para>
+		/// <para>The other case is when the scaleLinkedTo no longer exists in any of the sibling layers: then it is tried to find a layer with the stored layer number and the scale with the stored scale number</para>
+		/// <para>If both cases fail, then the scale is transformed from a linked scale to a normal scale.</para>
+		/// </remarks>
+		protected void UpdateScaleLink(ScaleWithTicks swt)
+		{
+			LinkedScale ls = (LinkedScale)swt.Scale;
+			Scale scaleLinkedTo = ls.ScaleLinkedTo;
+
+			var layerLinkedTo = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(ls);
+			int layerLinkedToIndex, scaleLinkedToIndex;
+
+			if (layerLinkedTo != null &&
+					object.ReferenceEquals(this.ParentLayer, layerLinkedTo.ParentLayer) &&
+					!object.ReferenceEquals(this, layerLinkedTo) &&
+					(scaleLinkedToIndex = layerLinkedTo.Scales.IndexOfFirst(x => object.ReferenceEquals(x.Scale, ls))) >= 0
+				)
+			{
+				// then we have the first case: the linked layer still exist
+				layerLinkedToIndex = layerLinkedTo.LayerNumber;
+				ls.LinkedLayerIndex = layerLinkedToIndex;
+				ls.LinkedScaleIndex = scaleLinkedToIndex;
+				return; // first case handled
+			}
+
+			// we assume the second case and try to find a layer with the stored layer index, and therein a scale with the stored scale index
+			layerLinkedToIndex = ls.LinkedLayerIndex;
+			scaleLinkedToIndex = ls.LinkedScaleIndex;
+
+			scaleLinkedTo = null;
+			layerLinkedTo = null;
+			if (layerLinkedToIndex >= 0 && layerLinkedToIndex < ParentLayerList.Count)
+				layerLinkedTo = ParentLayerList[layerLinkedToIndex] as XYPlotLayer;
+
+			if (null != layerLinkedTo && scaleLinkedToIndex >= 0 && scaleLinkedToIndex < layerLinkedTo.Scales.Count)
+				scaleLinkedTo = layerLinkedTo.Scales[scaleLinkedToIndex].Scale;
+
+			if (scaleLinkedTo != null)
+			{
+				ls.ScaleLinkedTo = scaleLinkedTo;
+				return; // second case successfully handled
+			}
+
+			// both cases fail, so we must convert the linked scale to a normal scale
+			swt.Scale = ls.WrappedScale; // set the scale to the wrapped scale
+			ls.ScaleLinkedTo = null; // free the event wiring
+		}
+
 		/*
 		/// <summary>
 		/// Draws an isoline on the plot area.
@@ -1742,27 +1808,6 @@ namespace Altaxo.Graph.Gdi
 		///
 		/// </summary>
 
-		public override void PreparePainting()
-		{
-			base.PreparePainting();
-
-			// Before we paint the axis, we have to make sure that all plot items
-			// had their data updated, so that the axes are updated before they are drawn!
-			_plotItems.PrepareScales(this);
-
-			// after deserialisation the data bounds object of the scale is empty:
-			// then we have to rescale the axis
-			if (Scales.X.Scale.DataBoundsObject.IsEmpty)
-				RescaleXAxis();
-			if (Scales.Y.Scale.DataBoundsObject.IsEmpty)
-				RescaleYAxis();
-
-			_plotItems.PrepareGroupStyles(null, this);
-			_plotItems.ApplyGroupStyles(null);
-
-			EnsureAppropriatePlotItemPlaceHolders();
-		}
-
 		private void EnsureAppropriatePlotItemPlaceHolders()
 		{
 			using (var token = _graphObjects.GetEventDisableToken())
@@ -1790,6 +1835,29 @@ namespace Altaxo.Graph.Gdi
 				for (int i = _plotItemPlaceHolders.Count - 1; i > idx; --i)
 					_plotItemPlaceHolders.RemoveAt(i);
 			}
+		}
+
+		public override void PreparePainting()
+		{
+			base.PreparePainting();
+
+			UpdateScaleLinks();
+
+			// Before we paint the axis, we have to make sure that all plot items
+			// had their data updated, so that the axes are updated before they are drawn!
+			_plotItems.PrepareScales(this);
+
+			// after deserialisation the data bounds object of the scale is empty:
+			// then we have to rescale the axis
+			if (Scales.X.Scale.DataBoundsObject.IsEmpty)
+				RescaleXAxis();
+			if (Scales.Y.Scale.DataBoundsObject.IsEmpty)
+				RescaleYAxis();
+
+			_plotItems.PrepareGroupStyles(null, this);
+			_plotItems.ApplyGroupStyles(null);
+
+			EnsureAppropriatePlotItemPlaceHolders();
 		}
 
 		/// <summary>

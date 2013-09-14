@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -39,9 +41,9 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for AxisScaleControl.xaml
 	/// </summary>
-	public partial class AxisScaleControl : UserControl, IAxisScaleView
+	public partial class ScaleWithTicksControl : UserControl, IScaleWithTicksView
 	{
-		public AxisScaleControl()
+		public ScaleWithTicksControl()
 		{
 			InitializeComponent();
 		}
@@ -63,14 +65,6 @@ namespace Altaxo.Gui.Graph
 			{
 				GuiHelper.SynchronizeSelectionFromGui(this._cbLinkTarget);
 				LinkTargetChanged();
-			}
-		}
-
-		private void EhLinked_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != LinkChanged)
-			{
-				LinkChanged(_chkLinkScale.IsChecked == true);
 			}
 		}
 
@@ -98,32 +92,19 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_cbTickSpacingType, names);
 		}
 
-
 		public void InitializeLinkTargets(Collections.SelectableListNodeList names)
 		{
 			GuiHelper.Initialize(this._cbLinkTarget, names);
 		}
 
-		public bool ScaleIsLinked
-		{
-			get
-			{
-				return _chkLinkScale.IsChecked == true;
-			}
-			set
-			{
-				_chkLinkScale.IsChecked = value;
-			}
-		}
-
 		private UIElement _boundaryControl = null;
+
 		public void SetBoundaryView(object guiobject)
 		{
 			if (null != _boundaryControl)
 				_tlp_Main.Children.Remove(_boundaryControl);
 
 			_boundaryControl = guiobject as UIElement;
-
 
 			if (_boundaryControl != null)
 			{
@@ -135,13 +116,13 @@ namespace Altaxo.Gui.Graph
 		}
 
 		private UIElement _scaleControl = null;
+
 		public void SetScaleView(object guiobject)
 		{
 			if (null != _boundaryControl)
 				_tlp_Main.Children.Remove(_scaleControl);
 
 			_scaleControl = guiobject as UIElement;
-
 
 			if (_scaleControl != null)
 			{
@@ -151,14 +132,15 @@ namespace Altaxo.Gui.Graph
 				_tlp_Main.Children.Add(_scaleControl);
 			}
 		}
+
 		private UIElement _tickSpacingControl = null;
+
 		public void SetTickSpacingView(object guiobject)
 		{
 			if (null != _tickSpacingControl)
 				_tickSpacingGroupBox.Content = null;
 
 			_tickSpacingControl = guiobject as UIElement;
-
 
 			if (_tickSpacingControl != null)
 			{
@@ -180,8 +162,6 @@ namespace Altaxo.Gui.Graph
 
 		public event Action<bool> LinkChanged;
 
-		#endregion
-
-
+		#endregion IAxisScaleView
 	}
 }

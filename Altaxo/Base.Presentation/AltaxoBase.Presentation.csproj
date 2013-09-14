@@ -372,7 +372,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\AxisScaleControl.xaml">
+    <Page Include="Gui\Graph\ScaleWithTicksControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -973,8 +973,8 @@
     <Compile Include="Gui\Graph\AxisLinkControl.xaml.cs">
       <DependentUpon>AxisLinkControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\AxisScaleControl.xaml.cs">
-      <DependentUpon>AxisScaleControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\ScaleWithTicksControl.xaml.cs">
+      <DependentUpon>ScaleWithTicksControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs" />
     <Compile Include="Gui\Graph\BarGraphPlotStyleControl.xaml.cs">

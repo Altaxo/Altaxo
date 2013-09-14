@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Altaxo.Collections;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -90,7 +92,6 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopXRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-
 			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
 
 			HostLayer linkedLayer;
@@ -108,9 +109,7 @@ namespace Altaxo.Graph.Gdi
 			// set enabling of axis
 			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
 			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
-
 		}
-
 
 		/// <summary>
 		/// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis. The x axis is linked straight to the x axis of the linked layer.
@@ -126,28 +125,24 @@ namespace Altaxo.Graph.Gdi
 				doc.RootLayer.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
 
 			// link the new layer to the last old layer
+			var linkedLayerAsXYPlotLayer = linkedLayer as XYPlotLayer;
 			newlayer.LinkedLayer = linkedLayer as XYPlotLayer;
 			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
 			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
 
-			if (null != newlayer.LinkedLayer)
+			if (null != linkedLayerAsXYPlotLayer)
 			{
 				// create a linked x axis of the same type than in the linked layer
 				var scaleLinkedTo = newlayer.LinkedLayer.Scales.X.Scale;
-				var xScale = new Scales.LinkedScale((Scales.Scale)scaleLinkedTo.Clone(), scaleLinkedTo, 0);
+				var xScale = new Scales.LinkedScale((Scales.Scale)scaleLinkedTo.Clone(), scaleLinkedTo, 0, linkedLayerAsXYPlotLayer.LayerNumber);
 				newlayer.Scales.SetScaleWithTicks(0, xScale, (Scales.Ticks.TickSpacing)newlayer.LinkedLayer.Scales.X.TickSpacing.Clone());
 			}
 
 			// set enabling of axis
 			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
 			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
-
-
 		}
 
-
-
-		#endregion
-
+		#endregion XYPlotLayer Creation
 	}
 }

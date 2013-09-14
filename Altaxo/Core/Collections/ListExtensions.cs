@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2013 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -85,7 +87,6 @@ namespace Altaxo.Collections
 				return;
 			}
 
-
 			var item_i = list[originalIndex];
 
 			if (destinationIndex > originalIndex)
@@ -101,8 +102,6 @@ namespace Altaxo.Collections
 
 			list[destinationIndex] = item_i;
 		}
-
-
 
 		/// <summary>
 		/// Moves the selected items towards higher indices (for steps &gt; 0) or lower indices (for steps &lt; 0).
@@ -169,7 +168,6 @@ namespace Altaxo.Collections
 				return 0;
 			else
 				return list.Count - 1 - last;
-
 		}
 
 		/// <summary>
@@ -251,7 +249,6 @@ namespace Altaxo.Collections
 				if (isSelected(i))
 					MoveItemToIndex(list, i, i + steps);
 			}
-
 		}
 
 		/// <summary>
@@ -259,15 +256,37 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <typeparam name="T">Type of items in the list</typeparam>
 		/// <param name="list">The list.</param>
-		/// <param name="predicate">The predicate.</param>
+		/// <param name="predicate">The predicate function. The first argument is the item. If the return value is true, the index of this item is returned.</param>
 		/// <returns>Index the of first item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such item could be found.</returns>
-		public static int IndexOfFirst<T>(this IList<T> list, Func<T, bool> predicate)
+		public static int IndexOfFirst<T>(this IEnumerable<T> list, Func<T, bool> predicate)
 		{
-			for (int i = 0; i < list.Count; ++i)
-				if (predicate(list[i]))
+			int i = 0;
+			foreach (var item in list)
+			{
+				if (predicate(item))
 					return i;
+				++i;
+			}
 			return -1;
 		}
 
+		/// <summary>
+		/// Gets the index the of first item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>
+		/// </summary>
+		/// <typeparam name="T">Type of items in the list</typeparam>
+		/// <param name="list">The list.</param>
+		/// <param name="predicate">The predicate function. The first argument is the item, the second argument is the item's index in the enumeration. If the return value is true, the index of this item is returned.</param>
+		/// <returns>Index the of first item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such item could be found.</returns>
+		public static int IndexOfFirst<T>(this IEnumerable<T> list, Func<T, int, bool> predicate)
+		{
+			int i = 0;
+			foreach (var item in list)
+			{
+				if (predicate(item, i))
+					return i;
+				++i;
+			}
+			return -1;
+		}
 	}
 }
