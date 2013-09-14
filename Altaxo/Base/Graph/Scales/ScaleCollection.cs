@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.ComponentModel;
-using System.Reflection;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
+#endregion Copyright
+
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Serialization;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Reflection;
 
 namespace Altaxo.Graph.Scales
 {
@@ -37,7 +39,7 @@ namespace Altaxo.Graph.Scales
 	Main.IChangedEventSource,
 	Main.IDocumentNode
 	{
-		ScaleWithTicks[] _scales = new ScaleWithTicks[2];
+		private ScaleWithTicks[] _scales = new ScaleWithTicks[2];
 
 		/// <summary>
 		/// Fired if something in this class or in its child has changed.
@@ -52,13 +54,12 @@ namespace Altaxo.Graph.Scales
 		public event Action<int, Scale, Scale> ScaleInstanceChanged;
 
 		[NonSerialized]
-		object _parent;
-
+		private object _parentObject;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleCollection), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -76,7 +77,6 @@ namespace Altaxo.Graph.Scales
 				return s;
 			}
 
-
 			protected virtual ScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ScaleCollection s = null != o ? (ScaleCollection)o : new ScaleCollection();
@@ -84,15 +84,14 @@ namespace Altaxo.Graph.Scales
 				int count = info.OpenArray("Members");
 				s._scales = new ScaleWithTicks[count];
 				for (int i = 0; i < count; ++i)
-					s.SetScaleWithTicks(i,(ScaleWithTicks)info.GetValue("e", s));
+					s.SetScaleWithTicks(i, (ScaleWithTicks)info.GetValue("e", s));
 				info.CloseArray(count);
 
 				return s;
 			}
 		}
-		#endregion
 
-
+		#endregion Serialization
 
 		public ScaleCollection()
 		{
@@ -139,10 +138,13 @@ namespace Altaxo.Graph.Scales
 			{
 				case 0:
 					return "X";
+
 				case 1:
 					return "Y";
+
 				case 2:
 					return "Z";
+
 				default:
 					return "Scale" + idx.ToString();
 			}
@@ -183,7 +185,7 @@ namespace Altaxo.Graph.Scales
 
 		public void SetScale(int i, Scale ax)
 		{
-      SetScaleWithTicks(i, new ScaleWithTicks(ax));
+			SetScaleWithTicks(i, new ScaleWithTicks(ax));
 		}
 
 		public void SetScaleWithTicks(int i, Scale scale, Ticks.TickSpacing ticks)
@@ -223,17 +225,17 @@ namespace Altaxo.Graph.Scales
 				{
 					newvalue.ScaleInstanceChanged += EhScaleInstanceChanged;
 					newvalue.Changed += EhChildChanged;
+					newvalue.ParentObject = this._parentObject; // we refer directly to the layer
 				}
 			}
 		}
 
-		void EhChildChanged(object sender, EventArgs e)
+		private void EhChildChanged(object sender, EventArgs e)
 		{
 			OnChanged();
 		}
 
-
-		void EhScaleInstanceChanged(Scale oldScale, Scale newScale)
+		private void EhScaleInstanceChanged(Scale oldScale, Scale newScale)
 		{
 			if (ScaleInstanceChanged != null)
 				ScaleInstanceChanged(IndexOf(newScale), oldScale, newScale);
@@ -246,25 +248,33 @@ namespace Altaxo.Graph.Scales
 
 			if (Y.Scale is LinkedScale)
 				((LinkedScale)Y.Scale).EhLinkedLayerScaleInstanceChanged(idx, oldScale, newScale);
-
 		}
 
 		protected virtual void OnChanged()
 		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+			if (_parentObject is Main.IChildChangedEventSink)
+				((Main.IChildChangedEventSink)_parentObject).EhChildChanged(this, EventArgs.Empty);
 
 			if (null != Changed)
 				Changed(this, EventArgs.Empty);
 		}
 
-
 		#region IDocumentNode Members
 
 		public object ParentObject
 		{
-			get { return _parent; }
-			set { _parent = value; }
+			get { return _parentObject; }
+			set
+			{
+				var oldValue = _parentObject;
+				_parentObject = value;
+
+				if (!object.ReferenceEquals(oldValue, value))
+				{
+					foreach (var child in _scales)
+						child.ParentObject = value;
+				}
+			}
 		}
 
 		public string Name
@@ -272,11 +282,6 @@ namespace Altaxo.Graph.Scales
 			get { return "Scales"; }
 		}
 
-		#endregion
-
-
+		#endregion IDocumentNode Members
 	}
-
-
 }
-

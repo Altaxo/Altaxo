@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-
-using Altaxo.Main;
-using Altaxo.Graph.Plot.Groups;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
@@ -35,7 +37,7 @@ namespace Altaxo.Graph.Gdi.Plot
 	/// <summary>
 	/// Interface for a plottable item.
 	/// </summary>
-	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentNode
+	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentNode, ITreeListNodeWithParent<IGPlotItem>
 	{
 		/// <summary>
 		/// The name of the plot. It can be of different length. An argument of zero or less
@@ -113,7 +115,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
 		void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
-
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources.
 		/// </summary>
@@ -135,15 +136,11 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
 		IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint);
 
-
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.
 		/// </summary>
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		void VisitDocumentReferences(DocNodeProxyReporter Report);
-
 	}
-
-
 }

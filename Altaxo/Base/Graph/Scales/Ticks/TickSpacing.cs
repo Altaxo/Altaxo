@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,27 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
 	/// <summary>
 	/// Base class responsible for the spacing of ticks (major and minor) along a scale.
 	/// </summary>
-	public abstract class TickSpacing : Main.ICopyFrom, Main.IChangedEventSource
+	public abstract class TickSpacing : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentNode
 	{
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
 		[NonSerialized]
 		protected Main.EventSuppressor _suppressorOfChangedEvent;
+
+		[NonSerialized]
+		protected object _parentObject;
 
 		protected TickSpacing()
 		{
@@ -56,13 +60,12 @@ namespace Altaxo.Graph.Scales.Ticks
 			return _suppressorOfChangedEvent.Suspend();
 		}
 
-
 		public abstract object Clone();
+
 		public virtual bool CopyFrom(object obj)
 		{
 			return obj is TickSpacing;
 		}
-
 
 		/// <summary>
 		/// Decides giving a raw org and end value, whether or not the scale boundaries should be extended to
@@ -75,7 +78,6 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <param name="isEndExtendable">True when the scale end can be extended.</param>
 		/// <returns>True when org or end are changed. False otherwise.</returns>
 		public abstract bool PreProcessScaleBoundaries(ref AltaxoVariant org, ref AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable);
-
 
 		/// <summary>
 		/// Calculates the ticks based on the org and end of the scale. Org and End now are given and can not be changed anymore.
@@ -91,13 +93,11 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <returns>The array with major tick values.</returns>
 		public abstract AltaxoVariant[] GetMajorTicksAsVariant();
 
-
 		/// <summary>
 		/// This will return the minor ticks as array of <see cref="AltaxoVariant" />.
 		/// </summary>
 		/// <returns>The array with minor tick values.</returns>
 		public abstract AltaxoVariant[] GetMinorTicksAsVariant();
-
 
 		public virtual double[] GetMajorTicksNormal(Scale scale)
 		{
@@ -119,7 +119,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			return result;
 		}
 
-
 		protected void OnChanged()
 		{
 			if (_suppressorOfChangedEvent.GetDisabledWithCounting())
@@ -127,6 +126,17 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (null != Changed)
 				Changed(this, EventArgs.Empty);
+		}
+
+		public object ParentObject
+		{
+			get { return _parentObject; }
+			set { _parentObject = value; }
+		}
+
+		public string Name
+		{
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

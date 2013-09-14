@@ -313,7 +313,11 @@ namespace Altaxo.Graph.Gdi
 				{
 					this._graphObjects.Clear();
 					for (int i = 0; i < from._graphObjects.Count; i++)
-						this._graphObjects.Add((IGraphicBase)from._graphObjects[i].Clone());
+					{
+						var fromobj = from._graphObjects[i];
+						if (!(fromobj is ILayerItemPlaceHolder) || ((ILayerItemPlaceHolder)fromobj).IsUsedForLayer(this)) // don't copy placeholders that are not intended for our type of layer
+							this._graphObjects.Add((IGraphicBase)fromobj.Clone());
+					}
 				}
 			}
 			else if (0 != (options & GraphCopyOptions.CopyLayerAll))
@@ -499,7 +503,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="yscale">The ratio the layer has changed its size in vertical direction.</param>
 		public virtual void RescaleInnerItemPositions(double xscale, double yscale)
 		{
-			this._graphObjects.ScalePosition(xscale, yscale);
+			foreach (IGraphicBase o in _graphObjects)
+			{
+				GraphicBase.ScalePosition(o, xscale, yscale);
+			}
 		}
 
 		public PointD2D Position
@@ -1144,13 +1151,27 @@ namespace Altaxo.Graph.Gdi
 					return ForwardTransform(hit);
 				}
 
-				// now hit testing the other objects in the layer
-				hit = _graphObjects.HitTest(layerHitTestData);
-				if (null != hit)
-					return ForwardTransform(hit);
+				// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+				for (int i = _graphObjects.Count - 1; i >= 0; --i)
+				{
+					hit = _graphObjects[i].HitTest(layerHitTestData);
+					if (null != hit)
+					{
+						if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
+							hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
+						return ForwardTransform(hit);
+					}
+				}
 			}
 
 			return null;
+		}
+
+		private static bool EhGraphicsObject_Remove(IHitTestObject o)
+		{
+			var go = (IGraphicBase)o.HittedObject;
+			o.ParentLayer.GraphObjects.Remove(go);
+			return true;
 		}
 
 		#endregion Painting and Hit testing

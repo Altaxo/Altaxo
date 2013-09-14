@@ -90,6 +90,9 @@ namespace Altaxo.Graph.Gdi
 		[NonSerialized]
 		private IObservableList<PlaceHolder> _placeHolders;
 
+		[NonSerialized]
+		private IObservableList<PlotItemPlaceHolder> _plotItemPlaceHolders;
+
 		#endregion Member variables
 
 		#region Event definitions
@@ -895,7 +898,7 @@ namespace Altaxo.Graph.Gdi
 
 			int gridPlanesIndex = _placeHolders.IndexOfFirst(x => x is GridPlanesPlaceHolder);
 			int axisStylesIndex = _placeHolders.IndexOfFirst(x => x is AxisStylePlaceHolder);
-			int plotItemsIndex = _placeHolders.IndexOfFirst(x => x is PlotItemsPlaceHolder);
+			int plotItemsIndex = _placeHolders.IndexOfFirst(x => x is PlotItemPlaceHolder);
 
 			if (gridPlanesIndex < 0)
 			{
@@ -913,7 +916,7 @@ namespace Altaxo.Graph.Gdi
 			if (plotItemsIndex < 0)
 			{
 				plotItemsIndex = axisStylesIndex + 1;
-				_placeHolders.Insert(plotItemsIndex, new PlotItemsPlaceHolder());
+				_placeHolders.Insert(plotItemsIndex, new PlotItemPlaceHolder());
 			}
 		}
 
@@ -1228,6 +1231,7 @@ namespace Altaxo.Graph.Gdi
 			{
 			}
 			_placeHolders = _graphObjects.CreatePartialViewOfType<PlaceHolder>();
+			_plotItemPlaceHolders = _graphObjects.CreatePartialViewOfType<PlotItemPlaceHolder>();
 			if (null != _placeHolders)
 			{
 			}
@@ -1755,6 +1759,37 @@ namespace Altaxo.Graph.Gdi
 
 			_plotItems.PrepareGroupStyles(null, this);
 			_plotItems.ApplyGroupStyles(null);
+
+			EnsureAppropriatePlotItemPlaceHolders();
+		}
+
+		private void EnsureAppropriatePlotItemPlaceHolders()
+		{
+			using (var token = _graphObjects.GetEventDisableToken())
+			{
+				int idx = -1;
+				int maxIdx = _plotItemPlaceHolders.Count;
+				foreach (var ele in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToLeavesWithIndex<IGPlotItem>(
+					_plotItems,
+					0,
+					true, x => x is PlotItemCollection ? ((PlotItemCollection)x).ChildIndexDirection : IndexDirection.Ascending))
+				{
+					PlotItemPlaceHolder placeHolder;
+					++idx;
+					if (idx < maxIdx)
+						placeHolder = _plotItemPlaceHolders[idx];
+					else
+						_plotItemPlaceHolders.Add(placeHolder = new PlotItemPlaceHolder());
+
+					placeHolder.PlotItemParent = ele.Item1.ParentCollection;
+					placeHolder.PlotItemIndex = ele.Item2;
+				}
+
+				// items from 0 including to idx are in use, thus we can delete items from idx-1 up to the end
+
+				for (int i = _plotItemPlaceHolders.Count - 1; i > idx; --i)
+					_plotItemPlaceHolders.RemoveAt(i);
+			}
 		}
 
 		/// <summary>
@@ -2394,7 +2429,7 @@ namespace Altaxo.Graph.Gdi
 
 		#region IGraphicShape placeholder for items in XYPlotLayer
 
-		private abstract class PlaceHolder : IGraphicBase
+		private abstract class PlaceHolder : IGraphicBase, ILayerItemPlaceHolder
 		{
 			public event EventHandler Changed;
 
@@ -2437,6 +2472,18 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			public abstract object Clone();
+
+			/// <summary>
+			/// Determines whether this place holder item is used by the specified layer type.
+			/// </summary>
+			/// <param name="layer">The layer. The item that implements this function should only use the type of the provided layer, not the specific layer instance.</param>
+			/// <returns>
+			///   <c>true</c> if this placeholder item can be used for the provided (type of) layer; otherwise, <c>false</c>.
+			/// </returns>
+			public bool IsUsedForLayer(HostLayer layer)
+			{
+				return layer is XYPlotLayer;
+			}
 		}
 
 		private class AxisStylePlaceHolder : PlaceHolder
@@ -2496,8 +2543,12 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		private class PlotItemsPlaceHolder : PlaceHolder
+		private class PlotItemPlaceHolder : PlaceHolder
 		{
+			public PlotItemCollection PlotItemParent { get; set; }
+
+			public int PlotItemIndex { get; set; }
+
 			public override void Paint(Graphics g, object obj)
 			{
 				var layer = ParentObject as XYPlotLayer;
@@ -2508,7 +2559,10 @@ namespace Altaxo.Graph.Gdi
 						g.Clip = layer.CoordinateSystem.GetRegion();
 					}
 
-					layer._plotItems.Paint(g, layer, null, null);
+					if (null == PlotItemParent)
+						layer._plotItems.Paint(g, layer, null, null);
+					else
+						PlotItemParent.PaintChild(g, layer, PlotItemIndex);
 
 					if (layer.ClipDataToFrame == LayerDataClipping.StrictToCS)
 					{
@@ -2519,7 +2573,7 @@ namespace Altaxo.Graph.Gdi
 
 			public override object Clone()
 			{
-				var r = new PlotItemsPlaceHolder();
+				var r = new PlotItemPlaceHolder();
 				r.CopyFrom(this);
 				return r;
 			}

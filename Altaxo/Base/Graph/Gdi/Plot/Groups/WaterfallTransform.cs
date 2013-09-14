@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+#endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales;
-
+using Altaxo.Graph.Scales.Boundaries;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
@@ -41,19 +41,23 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	public class WaterfallTransform : ICoordinateTransformingGroupStyle
 	{
 		/// <summary>User defined scale. The multiplication with _xinc results in the xinc that is used for the waterfall.</summary>
-		double _scaleXInc = 1;
+		private double _scaleXInc = 1;
+
 		/// <summary>User defined scale. The multiplication with _yinc results in the yinc that is used for the waterfall.</summary>
-		double _scaleYInc = 1;
+		private double _scaleYInc = 1;
+
 		/// <summary>If true, the actual plot item is clipped by the previous plot items.</summary>
-		bool _useClipping;
+		private bool _useClipping;
 
 		// Cached values
-		double _xinc = 0;
-		double _yinc = 0;
+		private double _xinc = 0;
+
+		private double _yinc = 0;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WaterfallTransform), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -63,9 +67,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				info.AddValue("UseClipping", s._useClipping);
 				info.AddValue("XInc", s._xinc);
 				info.AddValue("YInc", s._yinc);
-
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -79,8 +81,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		public WaterfallTransform()
 		{
@@ -111,6 +112,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				_scaleXInc = value;
 			}
 		}
+
 		public double YScale
 		{
 			get
@@ -122,6 +124,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				_scaleYInc = value;
 			}
 		}
+
 		public bool UseClipping
 		{
 			get
@@ -134,10 +137,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-
 		#region ICoordinateTransformingGroupStyle Members
-
-
 
 		public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
 		{
@@ -160,9 +160,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				}
 				if (pi is G2DPlotItem)
 					nItems++;
-
 			}
-
 
 			if (nItems == 0)
 				_xinc = 0;
@@ -183,9 +181,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				if (pi is G2DPlotItem)
 					idx++;
 			}
-
 		}
-
 
 		public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
 		{
@@ -208,9 +204,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				}
 				if (pi is G2DPlotItem)
 					nItems++;
-
 			}
-
 
 			if (nItems == 0)
 				_yinc = 0;
@@ -231,10 +225,126 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				if (pi is G2DPlotItem)
 					idx++;
 			}
-
 		}
 
+		// members that are created at PaintParent and must be released at latest at FinishPainting
+		private System.Drawing.Region[] _clippingColl;
 
+		private Processed2DPlotData[] _plotDataColl;
+		private double[] _xincColl;
+		private double[] _yincColl;
+
+		public void PaintBegin(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		{
+			_clippingColl = new System.Drawing.Region[coll.Count];
+			_plotDataColl = new Processed2DPlotData[coll.Count];
+			_xincColl = new double[coll.Count];
+			_yincColl = new double[coll.Count];
+
+			// First prepare
+			int idx = -1;
+			Processed2DPlotData previousPlotData = null;
+			for (int i = 0; i < coll.Count; i++)
+			{
+				if (coll[i] is G2DPlotItem)
+				{
+					idx++;
+					double currxinc = _xincColl[i] = idx * _xinc * _scaleXInc;
+					double curryinc = _yincColl[i] = idx * _yinc * _scaleYInc;
+
+					G2DPlotItem gpi = coll[i] as G2DPlotItem;
+					Processed2DPlotData plotdata = _plotDataColl[i] = gpi.GetRangesAndPoints(layer);
+					plotdata.PreviousItemData = previousPlotData;
+					previousPlotData = plotdata;
+
+					int j = -1;
+					foreach (int rowIndex in plotdata.RangeList.OriginalRowIndices())
+					{
+						j++;
+
+						AltaxoVariant xx = plotdata.GetXPhysical(rowIndex) + currxinc;
+						AltaxoVariant yy = plotdata.GetYPhysical(rowIndex) + curryinc;
+
+						Logical3D rel = new Logical3D(layer.XAxis.PhysicalVariantToNormal(xx), layer.YAxis.PhysicalVariantToNormal(yy));
+						double xabs, yabs;
+						layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+						plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+					}
+
+					// if clipping is used, we must get a clipping region for every plot item
+					// and combine the regions from
+					if (_useClipping)
+					{
+						if (i == 0)
+							_clippingColl[i] = g.Clip;
+
+						Plot.Styles.LinePlotStyle linestyle = null;
+						foreach (Plot.Styles.IG2DPlotStyle st in gpi.Style)
+						{
+							if (st is Plot.Styles.LinePlotStyle)
+							{
+								linestyle = st as Plot.Styles.LinePlotStyle;
+								break;
+							}
+						}
+
+						if (null != linestyle)
+						{
+							GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+							linestyle.GetFillPath(path, layer, plotdata, CSPlaneID.Bottom);
+							if ((i + 1) < _clippingColl.Length)
+							{
+								_clippingColl[i + 1] = (Region)_clippingColl[i].Clone();
+								_clippingColl[i + 1].Exclude(path);
+							}
+						}
+						else
+						{
+							if ((i + 1) < _clippingColl.Length)
+								_clippingColl[i + 1] = _clippingColl[i];
+						}
+					}
+				}
+			}
+		}
+
+		public void PaintEnd()
+		{
+			_clippingColl = null;
+			_plotDataColl = null;
+			_xincColl = null;
+			_yincColl = null;
+		}
+
+		public void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll, int i)
+		{
+			if (_useClipping)
+			{
+				//g.SetClip(clippingColl[i], CombineMode.Replace);
+				g.Clip = _clippingColl[i];
+			}
+
+			if (null == _plotDataColl[i])
+			{
+				coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i - 1], i == 0 ? null : coll[i - 1]);
+			}
+			else
+			{
+				TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, _xincColl[i], _yincColl[i]);
+				((G2DPlotItem)coll[i]).Paint(g, layerwrapper, _plotDataColl[i], i == coll.Count - 1 ? null : _plotDataColl[i + 1], i == 0 ? null : _plotDataColl[i - 1]);
+			}
+
+			// The clipping region is no longer needed, so we can dispose it
+			if (_useClipping)
+			{
+				if (i == 0)
+					g.Clip = _clippingColl[0]; // restore the original clipping region
+				else
+					_clippingColl[i].Dispose(); // for i!=0 dispose the clipping region
+			}
+		}
+
+		/*
 		public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
 		{
 			System.Drawing.Region[] clippingColl = new System.Drawing.Region[coll.Count];
@@ -273,7 +383,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					}
 
 					// if clipping is used, we must get a clipping region for every plot item
-					// and combine the regions from 
+					// and combine the regions from
 					if (_useClipping)
 					{
 						if (i == 0)
@@ -304,7 +414,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 							if ((i + 1) < clippingColl.Length)
 								clippingColl[i + 1] = clippingColl[i];
 						}
-
 					}
 				}
 			}
@@ -338,8 +447,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				}
 			}
 		}
+		*/
 
-		#endregion
+		#endregion ICoordinateTransformingGroupStyle Members
 
 		#region ICloneable Members
 
@@ -348,30 +458,28 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return new WaterfallTransform(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region ICoordinateTransformingGroupStyle Members
 
-
-
-		#endregion
+		#endregion ICoordinateTransformingGroupStyle Members
 
 		#region Inner Classes - TransformedLayerWrapper
 
-		class TransformedLayerWrapper : IPlotArea
+		private class TransformedLayerWrapper : IPlotArea
 		{
-			IPlotArea _layer;
-			ScaleCollection _scales;
+			private IPlotArea _layer;
+			private ScaleCollection _scales;
 
 			/// <summary>
 			/// Only a shortcut to _scales[0].Scale
 			/// </summary>
-			TransformedScale _xScale;
+			private TransformedScale _xScale;
 
 			/// <summary>
 			/// Only a shortcut to _scales[1].Scale
 			/// </summary>
-			TransformedScale _yScale;
+			private TransformedScale _yScale;
 
 			public TransformedLayerWrapper(IPlotArea layer, double xinc, double yinc)
 			{
@@ -431,7 +539,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				get { return _layer.AxisStyleIDs; }
 			}
 
-
 			public void UpdateCSPlaneID(CSPlaneID id)
 			{
 				if (id.UsePhysicalValue)
@@ -442,9 +549,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 						case 0:
 							id.LogicalValue = _xScale.PhysicalVariantToNormal(id.PhysicalValue);
 							break;
+
 						case 1:
 							id.LogicalValue = _yScale.PhysicalVariantToNormal(id.PhysicalValue);
 							break;
+
 						default:
 							_layer.UpdateCSPlaneID(id);
 							break;
@@ -452,17 +561,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				}
 			}
 
-
-
-
-
-			#endregion
+			#endregion IPlotArea Members
 
 			#region Helper Scale Wrapper
-			class TransformedScale : Scale
+
+			private class TransformedScale : Scale
 			{
-				Scale _originalScale;
-				double _offset;
+				private Scale _originalScale;
+				private double _offset;
 
 				public TransformedScale(Scale scale, double offset)
 				{
@@ -526,10 +632,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					get { throw new NotImplementedException(); }
 				}
 			}
-			#endregion
+
+			#endregion Helper Scale Wrapper
 		}
 
-
-		#endregion
+		#endregion Inner Classes - TransformedLayerWrapper
 	}
 }

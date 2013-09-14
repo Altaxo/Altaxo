@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
 	using Altaxo.Main;
-	using Groups;
 	using Graph.Plot.Groups;
+	using Groups;
 
 	[Serializable]
 	public abstract class PlotItem
@@ -39,7 +42,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		Main.IDocumentNode,
 		Main.INamedObjectCollection
 	{
-
 		/// <summary>
 		/// The parent object.
 		/// </summary>
@@ -52,7 +54,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				return true;
 
 			var from = obj as PlotItem;
-			if (null!=from)
+			if (null != from)
 			{
 				this._parent = from._parent;
 				return true;
@@ -64,7 +66,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// Get/sets the style object of this plot.
 		/// </summary>
 		public abstract object StyleObject { get; set; }
-
 
 		/// <summary>
 		/// The name of the plot. It can be of different length. An argument of zero or less
@@ -115,7 +116,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <remarks>The data (DataColumns which belongs to a table in the document's DataTableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
 		public abstract object Clone();
 
-
 		public virtual object ParentObject
 		{
 			get { return _parent; }
@@ -127,6 +127,30 @@ namespace Altaxo.Graph.Gdi.Plot
 			get
 			{
 				return _parent as PlotItemCollection;
+			}
+		}
+
+		IGPlotItem INodeWithParentNode<IGPlotItem>.ParentNode
+		{
+			get
+			{
+				return _parent as PlotItemCollection;
+			}
+		}
+
+		IList<IGPlotItem> ITreeListNode<IGPlotItem>.Nodes
+		{
+			get
+			{
+				return null; // PlotItems don't have parent nodes.
+			}
+		}
+
+		IEnumerable<IGPlotItem> ITreeNode<IGPlotItem>.Nodes
+		{
+			get
+			{
+				return null; // PlotItems don't have parent nodes.
 			}
 		}
 
@@ -191,7 +215,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				Changed(this, new System.EventArgs());
 		}
 
-
 		/// <summary>
 		/// Intended to use by derived classes, serves as event sink for the Changed event from the Data object and fires the DataChanged event.
 		/// </summary>
@@ -248,7 +271,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			return null;
 		}
 
-
 		#region IPlotItem Members
 
 		public abstract void CollectStyles(PlotGroupStyleCollection styles);
@@ -282,7 +304,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 		}
 
-		#endregion
-
+		#endregion IPlotItem Members
 	} // end of class PlotItem
 }

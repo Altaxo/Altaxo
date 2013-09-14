@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,66 +19,68 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Graph.Gdi;
 using Altaxo.Gui;
-using Altaxo.Collections;
+using System;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-	
-	public interface IAxisScaleView 
+	#region Interfaces
+
+	public interface IAxisScaleView
 	{
 		void InitializeAxisType(SelectableListNodeList names);
+
 		void InitializeTickSpacingType(SelectableListNodeList names);
+
 		void InitializeLinkTargets(SelectableListNodeList names);
+
 		bool ScaleIsLinked { get; set; }
 
-
 		void SetBoundaryView(object guiobject);
+
 		void SetScaleView(object guiobject);
+
 		void SetTickSpacingView(object guiobject);
 
 		event Action AxisTypeChanged;
+
 		event Action TickSpacingTypeChanged;
+
 		event Action LinkTargetChanged;
 
 		/// <summary>Argument is true if the scale is linked, otherwise false.</summary>
 		event Action<bool> LinkChanged;
 	}
 
- 
+	#endregion Interfaces
 
- 
-  #endregion
-
-  /// <summary>
-  /// Summary description for AxisScaleController.
-  /// </summary>
+	/// <summary>
+	/// Summary description for AxisScaleController.
+	/// </summary>
 	[ExpectedTypeOfView(typeof(IAxisScaleView))]
-  public class AxisScaleController : IMVCAController
-  {
-    protected IAxisScaleView _view;
-    protected XYPlotLayer _layer;
-    protected int _axisNumber;
-    
-    // Cached values
+	public class AxisScaleController : IMVCAController
+	{
+		protected IAxisScaleView _view;
+		protected XYPlotLayer _layer;
+		protected int _axisNumber;
+
+		// Cached values
 
 		protected ScaleWithTicks _scaleWithTicks;
 
-    protected Scale _originalScale;
+		protected Scale _originalScale;
 
-    protected Scale _tempScale;
+		protected Scale _tempScale;
 		protected TickSpacing _tempTickSpacing;
 
-
-    protected IMVCAController _boundaryController;
+		protected IMVCAController _boundaryController;
 
 		protected SelectableListNodeList _scaleTypes;
 		protected IMVCAController _scaleController;
@@ -91,13 +94,13 @@ namespace Altaxo.Gui.Graph
 		protected LinkedScaleParameters _linkedScaleParameters;
 		protected IMVCAController _linkedScaleParameterController;
 
-		bool _isScaleLinked;
+		private bool _isScaleLinked;
 
-    public AxisScaleController(XYPlotLayer layer, int axisnumber)
-    {
-      _layer = layer;
-      _axisNumber = axisnumber;
-      _originalScale = _layer.Scales[axisnumber].Scale;
+		public AxisScaleController(XYPlotLayer layer, int axisnumber)
+		{
+			_layer = layer;
+			_axisNumber = axisnumber;
+			_originalScale = _layer.Scales[axisnumber].Scale;
 			_scaleWithTicks = _layer.Scales[axisnumber];
 			if (_originalScale is LinkedScale)
 			{
@@ -116,9 +119,8 @@ namespace Altaxo.Gui.Graph
 
 			_tempTickSpacing = (TickSpacing)_layer.Scales[axisnumber].TickSpacing.Clone();
 
-
-      Initialize(true);
-    }
+			Initialize(true);
+		}
 
 		public AxisScaleController(ScaleWithTicks scaleWithTicks)
 		{
@@ -143,7 +145,6 @@ namespace Altaxo.Gui.Graph
 
 			_tempTickSpacing = (TickSpacing)scaleWithTicks.TickSpacing.Clone();
 
-
 			Initialize(true);
 		}
 
@@ -157,14 +158,12 @@ namespace Altaxo.Gui.Graph
 			InitTickSpacingController(initData);
 		}
 
-	 
-
-		void InitLinkProperties(bool bInit)
+		private void InitLinkProperties(bool bInit)
 		{
 			if (bInit)
 			{
 				_linkScaleNumbers = new SelectableListNodeList();
-				if (null!=_layer && null!=_layer.LinkedLayer)
+				if (null != _layer && null != _layer.LinkedLayer)
 				{
 					for (int i = 0; i < _layer.LinkedLayer.Scales.Count; i++)
 					{
@@ -183,8 +182,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-    public void InitScaleTypes(bool bInit)
-    {
+		public void InitScaleTypes(bool bInit)
+		{
 			if (bInit)
 			{
 				_scaleTypes = new SelectableListNodeList();
@@ -198,10 +197,9 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-      if(null!=_view)
-        _view.InitializeAxisType(_scaleTypes);
-    }
-
+			if (null != _view)
+				_view.InitializeAxisType(_scaleTypes);
+		}
 
 		public void InitTickSpacingTypes(bool bInit)
 		{
@@ -220,43 +218,43 @@ namespace Altaxo.Gui.Graph
 				_view.InitializeTickSpacingType(_tickSpacingTypes);
 		}
 
-    public void InitScaleController(bool bInit)
-    {
-      if (bInit)
-      {
-        object scaleObject = _tempScale;
-        _scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
-      }
-      if (null != _view)
-      {
-        _view.SetScaleView(null==_scaleController ? null : _scaleController.ViewObject);
-      }
-    }
+		public void InitScaleController(bool bInit)
+		{
+			if (bInit)
+			{
+				object scaleObject = _tempScale;
+				_scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
+			}
+			if (null != _view)
+			{
+				_view.SetScaleView(null == _scaleController ? null : _scaleController.ViewObject);
+			}
+		}
 
-    public void InitBoundaryController(bool bInit)
-    {
-      if(bInit)
-      {
-        object rescalingObject = _tempScale.RescalingObject;
-        if (rescalingObject != null)
-          _boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _tempScale }, typeof(IMVCAController));
-        else
-          _boundaryController = null;
-      }
-      if(null!=_view)
-      {
+		public void InitBoundaryController(bool bInit)
+		{
+			if (bInit)
+			{
+				object rescalingObject = _tempScale.RescalingObject;
+				if (rescalingObject != null)
+					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _tempScale }, typeof(IMVCAController));
+				else
+					_boundaryController = null;
+			}
+			if (null != _view)
+			{
 				if (_isScaleLinked)
 					_view.SetBoundaryView(_linkedScaleParameterController.ViewObject);
 				else
-					_view.SetBoundaryView(null!=_boundaryController ? _boundaryController.ViewObject : null);
-      }
-    }
+					_view.SetBoundaryView(null != _boundaryController ? _boundaryController.ViewObject : null);
+			}
+		}
 
 		public void InitTickSpacingController(bool bInit)
 		{
 			if (bInit)
 			{
-			if(_tempTickSpacing!=null)
+				if (_tempTickSpacing != null)
 					_tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempTickSpacing }, typeof(IMVCAController));
 				else
 					_tickSpacingController = null;
@@ -266,7 +264,6 @@ namespace Altaxo.Gui.Graph
 				_view.SetTickSpacingView(null != _tickSpacingController ? _tickSpacingController.ViewObject : null);
 			}
 		}
-
 
 		#region View event handlers
 
@@ -300,7 +297,6 @@ namespace Altaxo.Gui.Graph
 					InitTickSpacingTypes(true);
 					InitTickSpacingController(true);
 				}
-
 			}
 			catch (Exception)
 			{
@@ -322,7 +318,6 @@ namespace Altaxo.Gui.Graph
 			InitTickSpacingController(true);
 		}
 
-
 		public void EhView_LinkTargetChanged()
 		{
 			_linkScaleNumber = (int)_linkScaleNumbers.FirstSelectedNode.Tag;
@@ -332,8 +327,7 @@ namespace Altaxo.Gui.Graph
 		{
 		}
 
-		#endregion
-
+		#endregion View event handlers
 
 		#region IMVCAController
 
@@ -348,7 +342,6 @@ namespace Altaxo.Gui.Graph
 					_view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
 					_view.LinkTargetChanged -= this.EhView_LinkTargetChanged;
 					_view.LinkChanged -= this.EhView_LinkChanged;
-
 				}
 
 				_view = value as IAxisScaleView;
@@ -360,7 +353,6 @@ namespace Altaxo.Gui.Graph
 					_view.LinkTargetChanged += this.EhView_LinkTargetChanged;
 					_view.LinkChanged += this.EhView_LinkChanged;
 
-
 					Initialize(false);
 				}
 			}
@@ -371,10 +363,8 @@ namespace Altaxo.Gui.Graph
 			get { return this._originalScale; }
 		}
 
-    public bool Apply()
-    {
-
-
+		public bool Apply()
+		{
 			if (null != _scaleController)
 			{
 				if (false == _scaleController.Apply())
@@ -396,13 +386,13 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-			if (null!=_tickSpacingController && false == _tickSpacingController.Apply())
+			if (null != _tickSpacingController && false == _tickSpacingController.Apply())
 				return false;
 
 			// wrap the scale if it is linked
 			if (_view.ScaleIsLinked)
 			{
-				LinkedScale ls = new LinkedScale(_tempScale, _layer.LinkedLayer!=null ? _layer.LinkedLayer.Scales[_linkScaleNumber].Scale : null, _linkScaleNumber);
+				LinkedScale ls = new LinkedScale(_tempScale, _layer.LinkedLayer != null ? _layer.LinkedLayer.Scales[_linkScaleNumber].Scale : null, _linkScaleNumber);
 				ls.LinkParameters.SetTo(_linkedScaleParameters);
 				//_layer.Scales.SetScaleWithTicks(this._axisNumber,ls, _tempTickSpacing);
 				_scaleWithTicks.SetTo(ls, _tempTickSpacing);
@@ -412,12 +402,10 @@ namespace Altaxo.Gui.Graph
 				//_layer.Scales.SetScaleWithTicks(this._axisNumber, _tempScale, _tempTickSpacing);
 				_scaleWithTicks.SetTo(_tempScale, _tempTickSpacing);
 			}
-      
-      return true; // all ok
+
+			return true; // all ok
 		}
 
-		#endregion
-
+		#endregion IMVCAController
 	}
-
 }

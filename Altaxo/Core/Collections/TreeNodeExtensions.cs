@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2013 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -157,11 +159,105 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Enumerates through all tree nodes from the provided node <paramref name="node"/> up to the leaves of the tree. If <paramref name="includeThisNode"/> is <c>true</c>, the provided node <paramref name="node"/> is included in the enumeration.
+		/// The direction of the enumeration of the child nodes depend on the return value of a function <paramref name="directionSelector"/>, which is applied to the parent node.
+		///
+		/// </summary>
+		/// <typeparam name="T">Type of node</typeparam>
+		/// <param name="node">The node to start the enumeration with.</param>
+		/// <param name="includeThisNode">If set to <c>true</c> the node <paramref name="node"/> is included in the enumeration, otherwise, it is not part of the enumeration.</param>
+		/// <param name="directionSelector">Function to determine the enumeration order of the child nodes of a parent node. The function is called with the parent node as argument.
+		/// If the direction selector always returns <see cref="IndexDirection.Ascending"/>, the result is equal to that of <see cref="TakeFromHereToFirstLeaves{T}(T, bool)"/>.</param>
+		/// <returns>All tree nodes from <paramref name="node"/> up to the leaves of the tree.</returns>
+		public static IEnumerable<T> TakeFromHereToLeaves<T>(this T node, bool includeThisNode, Func<T, IndexDirection> directionSelector) where T : ITreeNode<T>
+		{
+			if (includeThisNode)
+				yield return node;
+
+			var childNodes = node.Nodes;
+			if (null != childNodes)
+			{
+				var direction = directionSelector(node);
+				switch (direction)
+				{
+					case IndexDirection.Ascending:
+						foreach (var childNode in childNodes)
+						{
+							foreach (var subchild in TakeFromHereToLeaves(childNode, true, directionSelector))
+								yield return subchild;
+						}
+						break;
+
+					case IndexDirection.Descending:
+						foreach (var childNode in childNodes.Reverse())
+						{
+							foreach (var subchild in TakeFromHereToLeaves(childNode, true, directionSelector))
+								yield return subchild;
+						}
+						break;
+
+					default:
+						throw new NotImplementedException(direction.ToString());
+				}
+			}
+		}
+
+		/// <summary>
+		/// Enumerates through all tree nodes from the provided node <paramref name="node"/> up to the leaves of the tree. If <paramref name="includeThisNode"/> is <c>true</c>, the provided node <paramref name="node"/> is included in the enumeration.
+		/// The direction of the enumeration of the child nodes depend on the return value of a function <paramref name="directionSelector"/>, which is applied to the parent node.
+		/// In addition to the node itself, the enumeration also delivers the index of the node in the parent's collection.
+		///
+		/// </summary>
+		/// <typeparam name="T">Type of node</typeparam>
+		/// <param name="node">The node to start the enumeration with.</param>
+		/// <param name="nodeIndex">The index of the node provided in the argument <paramref name="node"/>.</param>
+		/// <param name="includeThisNode">If set to <c>true</c> the node <paramref name="node"/> is included in the enumeration, otherwise, it is not part of the enumeration.</param>
+		/// <param name="directionSelector">Function to determine the enumeration order of the child nodes of a parent node. The function is called with the parent node as argument.
+		/// If the direction selector always returns <see cref="IndexDirection.Ascending"/>, the result is equal to that of <see cref="TakeFromHereToFirstLeaves{T}(T, bool)"/>.</param>
+		/// <returns>All tree nodes from <paramref name="node"/> up to the leaves of the tree.</returns>
+		public static IEnumerable<Tuple<T, int>> TakeFromHereToLeavesWithIndex<T>(this T node, int nodeIndex, bool includeThisNode, Func<T, IndexDirection> directionSelector) where T : ITreeNode<T>
+		{
+			if (includeThisNode)
+				yield return new Tuple<T, int>(node, nodeIndex);
+
+			var childNodes = node.Nodes;
+			if (null != childNodes)
+			{
+				var direction = directionSelector(node);
+				switch (direction)
+				{
+					case IndexDirection.Ascending:
+						nodeIndex = -1;
+						foreach (var childNode in childNodes)
+						{
+							++nodeIndex;
+							foreach (var subchild in TakeFromHereToLeavesWithIndex(childNode, nodeIndex, true, directionSelector))
+								yield return subchild;
+						}
+						break;
+
+					case IndexDirection.Descending:
+						nodeIndex = childNodes.Count();
+						foreach (var childNode in childNodes.Reverse())
+						{
+							--nodeIndex;
+							foreach (var subchild in TakeFromHereToLeavesWithIndex(childNode, nodeIndex, true, directionSelector))
+								yield return subchild;
+						}
+						break;
+
+					default:
+						throw new NotImplementedException(direction.ToString());
+				}
+			}
+		}
+
+		/// <summary>
 		/// Enumerates through all tree nodes from (and including) the provided node <paramref name="node"/> up to the leaves of the tree.
 		/// </summary>
 		/// <typeparam name="T">Type of node</typeparam>
 		/// <param name="node">The node to start the enumeration with.</param>
-		/// <returns>All tree nodes from <paramref name="node"/> up to the leaves of the tree./returns>
+		/// <returns>All tree nodes from <paramref name="node"/> up to the leaves of the tree.</returns>
 		public static IEnumerable<T> TakeFromHereToFirstLeaves<T>(this T node) where T : ITreeNode<T>
 		{
 			return TakeFromHereToFirstLeaves(node, true);
@@ -173,7 +269,7 @@ namespace Altaxo.Collections
 		/// <typeparam name="T">Type of node</typeparam>
 		/// <param name="node">The node to start the enumeration with.</param>
 		/// <param name="includeThisNode">If set to <c>true</c> the node <paramref name="node"/> is included in the enumeration, otherwise, it is not part of the enumeration.</param>
-		/// <returns>All tree nodes from <paramref name="node"/> up to the leaves of the tree./returns>
+		/// <returns>All tree nodes from <paramref name="node"/> up to the leaves of the tree.</returns>
 		public static IEnumerable<T> TakeFromHereToFirstLeaves<T>(this T node, bool includeThisNode) where T : ITreeNode<T>
 		{
 			if (includeThisNode)
@@ -189,7 +285,6 @@ namespace Altaxo.Collections
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Enumerates through all tree nodes from (and including) the provided node <paramref name="node"/> to the leaves of the tree. The downmost leaves will be enumerated first.
@@ -226,7 +321,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-
 		/// <summary>
 		/// Enumerates through all tree nodes from the upmost leaf of the tree down to the provided node <paramref name="node"/>. The provided node <paramref name="node"/> is included in the enumeration.
 		/// Attention: Since the order of the nodes must be reversed, this enumeration is only efficient for <see cref="ITreeListNode{T}"/> types.
@@ -262,8 +356,6 @@ namespace Altaxo.Collections
 				yield return node;
 		}
 
-
-
 		/// <summary>
 		/// Enumerates through all tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>. The provided node <paramref name="node"/> is included in the enumeration.
 		/// Attention: Since the order of the nodes must be reversed, this enumeration is only efficient for <see cref="ITreeListNode{T}"/> types.
@@ -275,7 +367,6 @@ namespace Altaxo.Collections
 		{
 			return TakeFromLastLeavesToHere(node, true);
 		}
-
 
 		/// <summary>
 		/// Enumerates through all tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>. If <paramref name="includeThisNode"/> is <c>true</c>, the provided node <paramref name="node"/> is included in the enumeration.
@@ -422,9 +513,6 @@ namespace Altaxo.Collections
 			return false;
 		}
 
-
-	
-
 		/// <summary>
 		/// Gets a node inside a tree by using an index array.
 		/// </summary>
@@ -474,7 +562,6 @@ namespace Altaxo.Collections
 				return nodes[idx];
 		}
 
-
 		/// <summary>
 		/// Determines whether the given <paramref name="index"/> is valid or not.
 		/// </summary>
@@ -521,7 +608,6 @@ namespace Altaxo.Collections
 			return result;
 		}
 
-
 		private static bool IsValidIndex<T>(IList<T> nodes, IEnumerator<int> it, int level, out T nodeAtIndex) where T : ITreeListNode<T>
 		{
 			nodeAtIndex = default(T);
@@ -546,7 +632,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-
 		/// <summary>
 		/// Inserts the specified node at a certain index in the tree.
 		/// </summary>
@@ -562,7 +647,7 @@ namespace Altaxo.Collections
 				throw new ArgumentNullException("index");
 			if (null == nodeToInsert)
 				throw new ArgumentNullException("nodeToInsert");
-		
+
 			var parent = ElementAt(rootNode, index.TakeAllButLast());
 			parent.Nodes.Insert(index.Last(), nodeToInsert);
 		}
@@ -585,9 +670,8 @@ namespace Altaxo.Collections
 
 			var parent = ElementAt(rootNode, index.TakeAllButLast());
 			var idx = index.Last();
-			parent.Nodes.Insert(idx+1, nodeToInsert);
+			parent.Nodes.Insert(idx + 1, nodeToInsert);
 		}
-
 
 		/// <summary>
 		/// Inserts the specified node after all other siblings of the node at a certain index in the tree.
@@ -655,7 +739,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-
 		/// <summary>
 		/// Fixes the and test the parent-child relationship in a tree.
 		/// </summary>
@@ -664,7 +747,7 @@ namespace Altaxo.Collections
 		/// <param name="Set1stArgParentNodeTo2ndArg">Action to set the Parent node property of a node given as the 1st argument to a node given as 2nd argument.</param>
 		/// <returns>True if something changed (i.e. the parent-child relationship was broken), false otherwise.</returns>
 		/// <exception cref="System.ArgumentNullException">
-		/// node is null 
+		/// node is null
 		/// or
 		/// Set1stArgParentNodeTo2ndArg is null.
 		/// </exception>
@@ -677,7 +760,7 @@ namespace Altaxo.Collections
 			return FixAndTestParentChildRelationsInternal(node, Set1stArgParentNodeTo2ndArg);
 		}
 
-		private static bool FixAndTestParentChildRelationsInternal<T>(this T node, Action<T,T> Set1stArgParentNodeTo2ndArg) where T : ITreeListNodeWithParent<T>
+		private static bool FixAndTestParentChildRelationsInternal<T>(this T node, Action<T, T> Set1stArgParentNodeTo2ndArg) where T : ITreeListNodeWithParent<T>
 		{
 			bool changed = false;
 			if (null != node.Nodes)
@@ -695,8 +778,6 @@ namespace Altaxo.Collections
 			}
 			return changed;
 		}
-
-
 
 		/// <summary>
 		/// Enumerates through all tree nodes from (and including) the provided node <paramref name="node"/> down to the root node.
@@ -719,7 +800,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-
 		/// <summary>
 		/// Enumerates through all tree nodes from the root node of the tree to (and including) the provided node <paramref name="node"/>.
 		/// </summary>
@@ -727,7 +807,7 @@ namespace Altaxo.Collections
 		/// <param name="node">The node inside a tree that the enumeration ends with.</param>
 		/// <returns>All tree nodes from the root node of the tree up to <paramref name="node"/>.</returns>
 		/// <exception cref="System.ArgumentNullException">Node is null.</exception>
-		public static IEnumerable<T> TakeFromRootToHere<T>(this T node)	where T : INodeWithParentNode<T>
+		public static IEnumerable<T> TakeFromRootToHere<T>(this T node) where T : INodeWithParentNode<T>
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
@@ -750,7 +830,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <param name="node">The node to start with.</param>
 		/// <returns>The root node of the tree to which the given node <paramref name="node"/> belongs.</returns>
-		public static T RootNode<T>(this T node)	where T : INodeWithParentNode<T>
+		public static T RootNode<T>(this T node) where T : INodeWithParentNode<T>
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
@@ -764,7 +844,6 @@ namespace Altaxo.Collections
 
 			return node;
 		}
-
 
 		/// <summary>
 		/// Determines the level of the specified node. The root node (= node that has no parent) will return a level of 0, the child nodes of the root node a level of 1 and so on.
