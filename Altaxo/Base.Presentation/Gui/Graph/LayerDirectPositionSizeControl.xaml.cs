@@ -42,55 +42,79 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for LayerPositionControl.xaml
 	/// </summary>
-	public partial class LayerPositionControl : UserControl, ILayerPositionView
+	public partial class LayerDirectPositionSizeControl : UserControl, ILayerDirectPositionSizeView
 	{
-		public LayerPositionControl()
+		public LayerDirectPositionSizeControl()
 		{
 			InitializeComponent();
 		}
 
-		public event Action PositioningTypeChanged;
+		public void InitializeXPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		{
+			_guiXPosition.UnitEnvironment = env;
+			_guiXPosition.SelectedQuantity = x;
+		}
 
-		private bool _useDirectPositioning;
+		public void InitializeYPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		{
+			_guiYPosition.UnitEnvironment = env;
+			_guiYPosition.SelectedQuantity = x;
+		}
 
-		public bool UseDirectPositioning
+		public void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		{
+			_guiYSize.UnitEnvironment = env;
+			_guiYSize.SelectedQuantity = x;
+		}
+
+		public void InitializeXSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		{
+			_guiXSize.UnitEnvironment = env;
+			_guiXSize.SelectedQuantity = x;
+		}
+
+		public Units.DimensionfulQuantity XPosition
+		{
+			get { return _guiXPosition.SelectedQuantity; }
+		}
+
+		public Units.DimensionfulQuantity YPosition
+		{
+			get { return _guiYPosition.SelectedQuantity; }
+		}
+
+		public new Units.DimensionfulQuantity XSize
+		{
+			get { return _guiXSize.SelectedQuantity; }
+		}
+
+		public new Units.DimensionfulQuantity YSize
+		{
+			get { return _guiYSize.SelectedQuantity; }
+		}
+
+		public double Rotation
 		{
 			get
 			{
-				return _useDirectPositioning;
+				return _guiRotation.SelectedQuantityAsValueInDegrees;
 			}
 			set
 			{
-				_useDirectPositioning = value;
-
-				if (_useDirectPositioning)
-					_guiDirectPositioning.IsChecked = true;
-				else
-					_guiGridPositioning.IsChecked = true;
+				_guiRotation.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 
-		public object SubPositionView
+		public double Scale
 		{
-			set { _guiSubPositioningHost.Child = (System.Windows.UIElement)value; }
-		}
-
-		private void EhPositioningTypeChangedToDirect(object sender, RoutedEventArgs e)
-		{
-			var oldValue = _useDirectPositioning;
-			_useDirectPositioning = true;
-
-			if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
-				PositioningTypeChanged();
-		}
-
-		private void EhPositioningTypeChangedToGrid(object sender, RoutedEventArgs e)
-		{
-			var oldValue = _useDirectPositioning;
-			_useDirectPositioning = false;
-
-			if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
-				PositioningTypeChanged();
+			get
+			{
+				return _guiScale.SelectedQuantityInSIUnits;
+			}
+			set
+			{
+				_guiScale.SelectedQuantityInSIUnits = value;
+			}
 		}
 	}
 }

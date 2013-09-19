@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Main;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Drawing.Drawing2D;
 using System.Diagnostics;
-using Altaxo.Serialization;
-using Altaxo.Main;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -58,8 +60,6 @@ namespace Altaxo.Graph.Gdi
 		protected const double DefaultRootLayerSizeX = 697.68054;
 		protected const double DefaultRootLayerSizeY = 451.44;
 
-
-
 		/// <summary>
 		/// Overall size of the page (usually the size of the sheet of paper that is selected as printing document) in point (1/72 inch)
 		/// </summary>
@@ -67,7 +67,6 @@ namespace Altaxo.Graph.Gdi
 		/// is the top left corner of the printable area. The hosting class has to translate the graphics origin
 		/// to that point before calling the painting routine <see cref="DoPaint"/>.</remarks>
 		private RectangleF _pageBounds = new RectangleF(0, 0, 842, 595);
-
 
 		/// <summary>
 		/// The printable area of the document, i.e. the page size minus the margins at each side in points (1/72 inch)
@@ -82,12 +81,12 @@ namespace Altaxo.Graph.Gdi
 			set { _printOptions = value; }
 		}
 
-		HostLayer _rootLayer;
+		private HostLayer _rootLayer;
 
-		string _name;
+		private string _name;
 
 		[NonSerialized]
-		object _parent;
+		private object _parent;
 
 		/// <summary>
 		/// The date/time of creation of this graph.
@@ -122,11 +121,11 @@ namespace Altaxo.Graph.Gdi
 		public event System.EventHandler Changed;
 
 		[NonSerialized]
-		Main.EventSuppressor _changedEventSuppressor;
+		private Main.EventSuppressor _changedEventSuppressor;
 
 		/// <summary>Events which are fired from this thread are not distributed.</summary>
 		[NonSerialized]
-		System.Threading.Thread _paintThread;
+		private System.Threading.Thread _paintThread;
 
 		/// <summary>
 		/// Event to signal that the name of this object has changed.
@@ -143,8 +142,6 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>Event fired if either the PageBounds or the PrintableBounds changed.</summary>
 		[field: NonSerialized]
 		public event EventHandler BoundsChanged;
-
-
 
 		#region "Serialization"
 
@@ -173,7 +170,6 @@ namespace Altaxo.Graph.Gdi
 				{
 					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
 				}
-
 
 				// now the data of our class
 				info.AddValue("PageBounds", s._pageBounds);
@@ -212,7 +208,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -224,11 +220,10 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("PageBounds", s._pageBounds);
 				info.AddValue("PrintableBounds", s._printableBounds);
 				info.AddValue("Layers", s._rootLayer);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
 
 				//  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
@@ -237,16 +232,15 @@ namespace Altaxo.Graph.Gdi
 				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
 
 				var layers = (HostLayer)info.GetValue("LayerList", s);
-				layers.SetSize(s._printableBounds.X, XYPlotLayerSizeType.AbsoluteValue, s._printableBounds.Y, XYPlotLayerSizeType.AbsoluteValue);
+				layers.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.X), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Y) };
 				layers.FixAndTestParentChildRelationShipOfLayers();
 				s._rootLayer = layers;
 				return s;
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -276,13 +270,10 @@ namespace Altaxo.Graph.Gdi
 					}
 				}
 				info.CommitArray();
-
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
 				Deserialize(s, info, parent);
 				return s;
@@ -296,7 +287,7 @@ namespace Altaxo.Graph.Gdi
 				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
 
 				var layers = (HostLayer)info.GetValue("LayerList", s);
-				layers.SetSize(s._printableBounds.X, XYPlotLayerSizeType.AbsoluteValue, s._printableBounds.Y, XYPlotLayerSizeType.AbsoluteValue);
+				layers.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.X), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Y) };
 				layers.FixAndTestParentChildRelationShipOfLayers();
 				s._rootLayer = layers;
 
@@ -314,10 +305,9 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 2)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 3)]
-		class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
+		private class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -327,9 +317,8 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
-
-
 			}
+
 			public override void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				base.Deserialize(s, info, parent);
@@ -340,7 +329,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -348,8 +336,8 @@ namespace Altaxo.Graph.Gdi
 		public void OnDeserialization(object obj)
 		{
 		}
-		#endregion
 
+		#endregion "Serialization"
 
 		/// <summary>
 		/// Creates a empty GraphDocument with no layers and a standard size of A4 landscape.
@@ -360,15 +348,15 @@ namespace Altaxo.Graph.Gdi
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole();
 			_notes.PropertyChanged += EhNotesChanged;
-			this._rootLayer = new HostLayer(new PointD2D(0,0), new PointD2D(814, 567) );
+			this._rootLayer = new HostLayer();
 			this._rootLayer.ParentObject = this;
 
 			SetGraphPageBoundsToPrinterSettings();
-			this._rootLayer.SetParentLayerSize(_printableBounds.Size, false);
-			this._rootLayer.SetSize(_printableBounds.Size.Width, XYPlotLayerSizeType.AbsoluteValue, _printableBounds.Size.Height, XYPlotLayerSizeType.AbsoluteValue);
+			this._rootLayer.EhParentLayerSizeChanged(_printableBounds.Size, false);
+			this._rootLayer.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_printableBounds.Size.Width), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_printableBounds.Size.Height) };
 		}
 
-		void EhNotesChanged(object sender, PropertyChangedEventArgs e)
+		private void EhNotesChanged(object sender, PropertyChangedEventArgs e)
 		{
 			OnChanged();
 		}
@@ -377,7 +365,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
-			this._rootLayer = new HostLayer(new PointD2D(0, 0), new PointD2D(814, 567));
+			this._rootLayer = new HostLayer(null, new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(814), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(567) });
 			this._rootLayer.ParentObject = this;
 
 			CopyFrom(from, GraphCopyOptions.All);
@@ -396,7 +384,7 @@ namespace Altaxo.Graph.Gdi
 
 			if (0 != (options & GraphCopyOptions.CopyGraphSize))
 			{
-				this._rootLayer.SetSize(from._rootLayer.UserWidth, from._rootLayer.UserWidthType, from._rootLayer.UserHeight, from._rootLayer.UserHeightType);
+				this._rootLayer.Location = (IItemLocation)from._rootLayer.Location.Clone();
 			}
 
 			if (0 != (options & GraphCopyOptions.CloneNotes))
@@ -457,7 +445,6 @@ namespace Altaxo.Graph.Gdi
 				printableBounds.Width = pageBounds.Width - ((ma.Left + ma.Right) * UnitPerInch / 100);
 				printableBounds.Height = pageBounds.Height - ((ma.Top + ma.Bottom) * UnitPerInch / 100);
 
-
 				this.PageBounds = pageBounds;
 				this.PrintableBounds = printableBounds;
 			}
@@ -489,8 +476,6 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 		}
-
-
 
 		public virtual void OnNameChanged(string oldValue)
 		{
@@ -550,7 +535,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		/// <summary>
 		/// Gets an arbitrary object that was stored as graph property by <see cref="SetGraphProperty" />.
 		/// </summary>
@@ -563,7 +547,6 @@ namespace Altaxo.Graph.Gdi
 				_graphProperties.TryGetValue(key, out result);
 			return result;
 		}
-
 
 		/// <summary>
 		/// The table properties, key is a string, val is a object you want to store here.
@@ -581,8 +564,6 @@ namespace Altaxo.Graph.Gdi
 			else
 				_graphProperties.Add(key, val);
 		}
-
-
 
 		/// <summary>
 		/// Fires the <see cref="BoundsChanged" /> event.
@@ -638,11 +619,10 @@ namespace Altaxo.Graph.Gdi
 			if (_printableBounds != oldBounds)
 			{
 				if (setGraphSize)
-					RootLayer.SetParentLayerSize(bounds.Size, rescaleGraph);
+					RootLayer.EhParentLayerSizeChanged(bounds.Size, rescaleGraph);
 				OnBoundsChanged();
 			}
 		}
-
 
 		/// <summary>
 		/// The collection of layers of the graph.
@@ -651,7 +631,6 @@ namespace Altaxo.Graph.Gdi
 		{
 			get { return _rootLayer; }
 		}
-
 
 		/// <summary>
 		/// Paints the graph.
@@ -679,12 +658,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		} // end of function DoPaint
 
-
-
-	
-
-
-
 		#region Change event handling
 
 		protected System.EventArgs _changeEventData = null;
@@ -695,6 +668,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			return _changedEventSuppressor.Suspend();
 		}
+
 		public void EndUpdate(ref IDisposable locker)
 		{
 			_changedEventSuppressor.Resume(ref locker);
@@ -708,8 +682,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
-
 		/// <summary>
 		/// Fires the Invalidate event.
 		/// </summary>
@@ -719,8 +691,7 @@ namespace Altaxo.Graph.Gdi
 			OnChanged();
 		}
 
-
-		void AccumulateChildChangeData(object sender, EventArgs e)
+		private void AccumulateChildChangeData(object sender, EventArgs e)
 		{
 			if (sender != null && _changeEventData == null)
 				this._changeEventData = new EventArgs();
@@ -735,7 +706,6 @@ namespace Altaxo.Graph.Gdi
 		{
 			EhChildChanged(null, EventArgs.Empty);
 		}
-
 
 		/// <summary>
 		/// Handle the change notification from the child layers.
@@ -775,7 +745,7 @@ namespace Altaxo.Graph.Gdi
 			OnChanged(); // Fire the changed event
 		}
 
-		void EhChangedEventResumes()
+		private void EhChangedEventResumes()
 		{
 			if (null != Changed)
 				Changed(this, _changeEventData);
@@ -793,11 +763,10 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		#endregion
+		#endregion Change event handling
 
 		#region IChangedEventSource Members
 
-
-		#endregion
+		#endregion IChangedEventSource Members
 	} // end of class GraphDocument
 } // end of namespace

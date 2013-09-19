@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi
 	/// <summary>
 	/// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
 	/// </summary>
-	public class XYPlotLayer
+	public partial class XYPlotLayer
 		:
 		HostLayer,
 		IPlotArea
@@ -54,25 +54,14 @@ namespace Altaxo.Graph.Gdi
 
 		protected G2DCoordinateSystem _coordinateSystem;
 
-		/// <summary>The layer to which this layer is linked to, or null if this layer is not linked.</summary>
-		protected Main.RelDocNodeProxy _linkedLayerProxy;
-
-		/// <summary>Cached linked layer.</summary>
-		protected XYPlotLayer _linkedLayer;
-
 		private ScaleCollection _scales;
-
-		// <summary>
-		// The background style of the layer.
-		// </summary>
-		//protected LayerBackground _layerBackground;
-
-		/// <summary>If true, the data are clipped to the frame.</summary>
-		protected LayerDataClipping _dataClipping = LayerDataClipping.StrictToCS;
 
 		protected GridPlaneCollection _gridPlanes;
 
 		protected AxisStyleCollection _axisStyles;
+
+		/// <summary>If true, the data are clipped to the frame.</summary>
+		protected LayerDataClipping _dataClipping = LayerDataClipping.StrictToCS;
 
 		protected PlotItemCollection _plotItems;
 
@@ -132,9 +121,12 @@ namespace Altaxo.Graph.Gdi
 
 			if (isLinked)
 			{
-				LinkedScale ls = new LinkedScale(transScale, LinkedLayer != null ? LinkedLayer.Scales[idx].Scale : null, idx, LinkedLayer != null ? LinkedLayer.LayerNumber : 0);
+				throw new NotImplementedException("Decide what to do with linked layer!");
+				// uncomment this after decision!
+				/*LinkedScale ls = new LinkedScale(transScale, LinkedLayer != null ? LinkedLayer.Scales[idx].Scale : null, idx, LinkedLayer != null ? LinkedLayer.LayerNumber : 0);
 				ls.SetLinkParameter(orgA, orgB, endA, endB);
 				transScale = ls;
+				*/
 			}
 
 			_scales.SetScaleWithTicks(idx, transScale, ticks);
@@ -238,7 +230,7 @@ namespace Altaxo.Graph.Gdi
 
 			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYPlotLayer s = null != o ? (XYPlotLayer)o : new XYPlotLayer();
+				XYPlotLayer s = null != o ? (XYPlotLayer)o : new XYPlotLayer(info);
 
 				bool fillLayerArea = info.GetBoolean("FillLayerArea");
 				BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", typeof(BrushX));
@@ -252,21 +244,56 @@ namespace Altaxo.Graph.Gdi
 
 				// size, position, rotation and scale
 
-				s._location.WidthType = (XYPlotLayerSizeType)info.GetValue("WidthType", typeof(XYPlotLayerSizeType));
-				s._location.HeightType = (XYPlotLayerSizeType)info.GetValue("HeightType", typeof(XYPlotLayerSizeType));
-				s._location.Width = info.GetDouble("Width");
-				s._location.Height = info.GetDouble("Height");
+				var layerLocation = new ItemLocationDirect();
+				Func<XYPlotLayerSizeType, double, double, Calc.RelativeOrAbsoluteValue> sizeConversion = (type, val, defVal) =>
+					{
+						switch (type)
+						{
+							case XYPlotLayerSizeType.AbsoluteValue:
+								return Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(val);
+
+							case XYPlotLayerSizeType.RelativeToGraphDocument:
+								return Calc.RelativeOrAbsoluteValue.NewRelativeValue(val);
+
+							default:
+								return Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(defVal);
+						}
+					};
+				Func<XYPlotLayerPositionType, double, double, Calc.RelativeOrAbsoluteValue> positionConversion = (type, val, defVal) =>
+				{
+					switch (type)
+					{
+						case XYPlotLayerPositionType.AbsoluteValue:
+							return Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(val);
+
+						case XYPlotLayerPositionType.RelativeToGraphDocument:
+							return Calc.RelativeOrAbsoluteValue.NewRelativeValue(val);
+
+						default:
+							return Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(defVal);
+					}
+				};
+
+				var widthType = (XYPlotLayerSizeType)info.GetValue("WidthType", typeof(XYPlotLayerSizeType));
+				var heightType = (XYPlotLayerSizeType)info.GetValue("HeightType", typeof(XYPlotLayerSizeType));
+				var width = info.GetDouble("Width");
+				var height = info.GetDouble("Height");
 				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
 				s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
-				s._location.XPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType", typeof(XYPlotLayerPositionType));
-				s._location.YPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType", typeof(XYPlotLayerPositionType));
-				s._location.XPosition = info.GetDouble("XPosition");
-				s._location.YPosition = info.GetDouble("YPosition");
+				var xPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType", typeof(XYPlotLayerPositionType));
+				var yPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType", typeof(XYPlotLayerPositionType));
+				var xPosition = info.GetDouble("XPosition");
+				var yPosition = info.GetDouble("YPosition");
 				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
 
-				s._location.Angle = info.GetSingle("Rotation");
-				s._location.Scale = info.GetSingle("Scale");
+				layerLocation.XSize = sizeConversion(widthType, width, s._cachedLayerSize.X);
+				layerLocation.YSize = sizeConversion(heightType, height, s._cachedLayerSize.Y);
+				layerLocation.XPosition = positionConversion(xPositionType, xPosition, s._cachedLayerPosition.X);
+				layerLocation.YPosition = positionConversion(yPositionType, yPosition, s._cachedLayerPosition.Y);
+				layerLocation.Rotation = info.GetSingle("Rotation");
+				layerLocation.Scale = info.GetSingle("Scale");
+				s.Location = layerLocation;
 
 				// axis related
 
@@ -346,8 +373,9 @@ namespace Altaxo.Graph.Gdi
 
 				if (linkedLayer is XYPlotLayer)
 				{
-					this._Layer.LinkedLayer = (XYPlotLayer)linkedLayer;
+					//this._Layer.LinkedLayer = (XYPlotLayer)linkedLayer;
 					this._LinkedLayerPath = null;
+					throw new NotImplementedException("Decide what to do with linkedLayer!");
 				}
 				else
 				{
@@ -444,7 +472,7 @@ namespace Altaxo.Graph.Gdi
 
 			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYPlotLayer s = (o == null ? new XYPlotLayer() : (XYPlotLayer)o);
+				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
 				int count;
 
 				// Background
@@ -457,7 +485,7 @@ namespace Altaxo.Graph.Gdi
 				}
 
 				// size, position, rotation and scale
-				s.Location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
+				s.Location = (ItemLocationDirect)info.GetValue("LocationAndSize", s);
 				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
 				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
 				s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
@@ -486,7 +514,8 @@ namespace Altaxo.Graph.Gdi
 
 				// XYPlotLayer specific
 				count = info.OpenArray("LinkedLayers");
-				s.SetLinkedLayerLink((Main.RelDocNodeProxy)info.GetValue("e", s));
+				var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+				if (null != linkedLayer) throw new NotImplementedException("Decide what to do with linked layer");
 				info.CloseArray(count);
 
 				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphicGlyphs", s));
@@ -550,11 +579,11 @@ namespace Altaxo.Graph.Gdi
 
 			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYPlotLayer s = (o == null ? new XYPlotLayer() : (XYPlotLayer)o);
+				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
 				int count;
 
 				// size, position, rotation and scale
-				s.Location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
+				s.Location = (ItemLocationDirect)info.GetValue("LocationAndSize", s);
 				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
 				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
 
@@ -564,7 +593,9 @@ namespace Altaxo.Graph.Gdi
 
 				// linked layers
 				count = info.OpenArray("LinkedLayers");
-				s.SetLinkedLayerLink((Main.RelDocNodeProxy)info.GetValue("e", s));
+				var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+				if (null != linkedLayer) throw new NotImplementedException("Decide what to do with linked layer");
+
 				info.CloseArray(count);
 
 				// Scales
@@ -663,11 +694,11 @@ namespace Altaxo.Graph.Gdi
 
 			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYPlotLayer s = (o == null ? new XYPlotLayer() : (XYPlotLayer)o);
+				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
 				int count;
 
 				// size, position, rotation and scale
-				s.Location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
+				s.Location = (ItemLocationDirect)info.GetValue("LocationAndSize", s);
 				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
 				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
 
@@ -677,7 +708,8 @@ namespace Altaxo.Graph.Gdi
 
 				// linked layers
 				count = info.OpenArray("LinkedLayers");
-				s.SetLinkedLayerLink((Main.RelDocNodeProxy)info.GetValue("e", s));
+				var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+				if (null != linkedLayer) throw new NotImplementedException("Decide what to do with linked layer");
 				info.CloseArray(count);
 
 				// Scales
@@ -723,16 +755,6 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion Version 5
 
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public void OnDeserialization(object obj)
-		{
-			_transformation = new TransformationMatrix2D();
-			CalculateMatrix();
-		}
-
 		#endregion Serialization
 
 		#region Constructors
@@ -763,7 +785,7 @@ namespace Altaxo.Graph.Gdi
 			// size, position, rotation and scale
 			if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
 			{
-				this.Location = from._location.Clone();
+				this.Location = (IItemLocation)from._location.Clone();
 				this._cachedLayerSize = from._cachedLayerSize;
 				this._cachedLayerPosition = from._cachedLayerPosition;
 				this._cachedParentLayerSize = from._cachedParentLayerSize;
@@ -797,9 +819,6 @@ namespace Altaxo.Graph.Gdi
 
 			if (0 != (options & GraphCopyOptions.CopyLayerLinks))
 			{
-				// XYPlotLayer specific
-				this.SetLinkedLayerLink(null == from._linkedLayerProxy ? null : from._linkedLayerProxy.ClonePathOnly(this));
-				this._linkedLayer = from._linkedLayer; // this is not good, but neccessary in order to let the Layer control dialog work
 			}
 
 			this.GraphObjects.Clear();
@@ -839,24 +858,25 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Constructor for deserialization purposes only.
 		/// </summary>
-		protected XYPlotLayer()
+		protected XYPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
 		{
 			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
 			this.AxisStyles = new AxisStyleCollection();
 			this.Scales = new ScaleCollection();
-			this.Location = new XYPlotLayerPositionAndSize();
+			this.Location = new ItemLocationDirect();
 			this.GridPlanes = new GridPlaneCollection();
 			this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
 		}
 
-		/// <summary>
-		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
-		/// </summary>
-		/// <param name="position">The position of the layer on the printable area in points (1/72 inch).</param>
-		/// <param name="size">The size of the layer in points (1/72 inch).</param>
-		public XYPlotLayer(PointD2D position, PointD2D size)
-			: this(position, size, new CS.G2DCartesicCoordinateSystem())
+		public XYPlotLayer(HostLayer parentLayer)
+			: this(parentLayer, GetChildLayerDefaultLocation(), new CS.G2DCartesicCoordinateSystem())
+		{
+		}
+
+		public XYPlotLayer(HostLayer parentLayer, G2DCoordinateSystem coordinateSystem)
+			: this(parentLayer, GetChildLayerDefaultLocation(), coordinateSystem)
 		{
 		}
 
@@ -865,21 +885,26 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="position">The position of the layer on the printable area in points (1/72 inch).</param>
 		/// <param name="size">The size of the layer in points (1/72 inch).</param>
+		public XYPlotLayer(HostLayer parentLayer, IItemLocation location)
+			: this(parentLayer, location, new CS.G2DCartesicCoordinateSystem())
+		{
+		}
+
+		/// <summary>
+		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
+		/// </summary>
+		/// <param name="parentLayer">The parent layer of the newly created layer.</param>
+		/// <param name="location">The position of the layer on the printable area in points (1/72 inch).</param>
 		/// <param name="coordinateSystem">The coordinate system to use for the layer.</param>
-		public XYPlotLayer(PointD2D position, PointD2D size, G2DCoordinateSystem coordinateSystem)
-			: base(position, size)
+		public XYPlotLayer(HostLayer parentLayer, IItemLocation location, G2DCoordinateSystem coordinateSystem)
+			: base(parentLayer, location)
 		{
 			this.CoordinateSystem = coordinateSystem;
-
 			this.AxisStyles = new AxisStyleCollection();
 			this.Scales = new ScaleCollection();
 			this.GridPlanes = new GridPlaneCollection();
 			this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-
-			CalculateMatrix();
-
-			SetLinkedLayerLink(new Main.RelDocNodeProxy(null, this));
-			PlotItems = new PlotItemCollection(this);
+			this.PlotItems = new PlotItemCollection(this);
 
 			AddDefaultPlaceHolders();
 		}
@@ -1070,157 +1095,6 @@ namespace Altaxo.Graph.Gdi
 				return;
 			else
 				base.Remove(go);
-		}
-
-		private void SetLinkedLayerLink(Altaxo.Main.RelDocNodeProxy value)
-		{
-			if (object.ReferenceEquals(_linkedLayerProxy, value))
-				return;
-
-			if (null != _linkedLayerProxy)
-			{
-				_linkedLayerProxy.DocumentInstanceChanged -= new Main.DocumentInstanceChangedEventHandler(this.EhLinkedLayerInstanceChanged);
-			}
-
-			Altaxo.Main.RelDocNodeProxy oldvalue = _linkedLayerProxy;
-			_linkedLayerProxy = value;
-
-			if (null != _linkedLayerProxy)
-			{
-				_linkedLayerProxy.DocumentInstanceChanged += new Main.DocumentInstanceChangedEventHandler(this.EhLinkedLayerInstanceChanged);
-			}
-		}
-
-		/// <summary>
-		/// Called by the proxy, when the instance of the linked layer has changed.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="oldvalue">Instance of the plot layer that was linked before to this layer.</param>
-		/// <param name="newvalue">Instance of the plot layer that is linked now to this layer.</param>
-		protected void EhLinkedLayerInstanceChanged(object sender, object oldvalue, object newvalue)
-		{
-			this.LinkedLayer = newvalue as XYPlotLayer;
-		}
-
-		protected void OnLinkedLayerInstanceChanged(XYPlotLayer oldvalue, XYPlotLayer newvalue)
-		{
-			for (int i = 0; i < Scales.Count; i++)
-			{
-				LinkedScale ls = Scales[i].Scale as LinkedScale;
-				if (null == ls)
-					continue;
-
-				ls.ScaleLinkedTo = newvalue == null ? null : newvalue.Scales[ls.LinkedScaleIndex].Scale;
-			}
-		}
-
-		/// <summary>
-		/// Get / sets the layer this layer is linked to.
-		/// </summary>
-		/// <value>The layer this layer is linked to, or null if not linked.</value>
-		public XYPlotLayer LinkedLayer
-		{
-			get
-			{
-				return _linkedLayer;
-			}
-			set
-			{
-				// ignore the value if it would create a circular dependency
-				if (IsLayerDependentOnMe(value))
-					return;
-
-				XYPlotLayer oldLinkedLayer = SetLinkedLayerWithoutProxyAndEvents(value);
-				SetLinkedLayerLink(null == _linkedLayer ? null : new Main.RelDocNodeProxy(_linkedLayer, this)); // Note here: the connection/disconnection to the event handlers of the linked layer
-
-				if (!object.ReferenceEquals(oldLinkedLayer, _linkedLayer))
-				{
-					OnLinkedLayerInstanceChanged(oldLinkedLayer, _linkedLayer);
-				}
-			}
-		}
-
-		private void SetLinkedLayerFromProxy()
-		{
-			XYPlotLayer oldLayer = SetLinkedLayerWithoutProxyAndEvents((XYPlotLayer)_linkedLayerProxy.DocumentObject);
-
-			if (!object.ReferenceEquals(oldLayer, _linkedLayer))
-				OnLinkedLayerInstanceChanged(oldLayer, _linkedLayer);
-		}
-
-		private XYPlotLayer SetLinkedLayerWithoutProxyAndEvents(XYPlotLayer layer)
-		{
-			if (object.ReferenceEquals(_linkedLayer, layer))
-				return _linkedLayer;
-
-			// unbind the old linked layer
-			if (null != _linkedLayer)
-			{
-				_linkedLayer.SizeChanged -= this.EhLinkedLayerSizeChanged;
-				_linkedLayer.PositionChanged -= this.EhLinkedLayerPositionChanged;
-				_linkedLayer.ScaleInstanceChanged -= this.EhLinkedLayerScaleInstanceChanged;
-			}
-			XYPlotLayer oldLinkedLayer = _linkedLayer;
-			_linkedLayer = layer;
-
-			// bind event handlers to new linked layer
-			if (null != _linkedLayer)
-			{
-				_linkedLayer.SizeChanged += this.EhLinkedLayerSizeChanged;
-				_linkedLayer.PositionChanged += this.EhLinkedLayerPositionChanged;
-				_linkedLayer.ScaleInstanceChanged += this.EhLinkedLayerScaleInstanceChanged;
-			}
-
-			return oldLinkedLayer;
-		}
-
-		/// <summary>
-		/// Is this layer linked to another layer?
-		/// </summary>
-		/// <value>True if this layer is linked to another layer. See <see cref="LinkedLayer"/> to
-		/// find out to which layer this layer is linked to.</value>
-		public bool IsLinked
-		{
-			get { return null != LinkedLayer; }
-		}
-
-		/// <summary>
-		/// Checks if the provided layer or a linked layer of it is dependent on this layer.
-		/// </summary>
-		/// <param name="layer">The layer to check.</param>
-		/// <returns>True if the provided layer or one of its linked layers is dependend on this layer.</returns>
-		public bool IsLayerDependentOnMe(XYPlotLayer layer)
-		{
-			while (null != layer)
-			{
-				if (XYPlotLayer.ReferenceEquals(layer, this))
-				{
-					// this means a circular dependency, so return true
-					return true;
-				}
-				layer = layer.LinkedLayer;
-			}
-			return false; // no dependency detected
-		}
-
-		/// <summary>
-		///  Only intended to use by XYPlotLayerCollection! Sets the parent layer collection for this layer.
-		/// </summary>
-		/// <param name="lc">The layer collection this layer belongs to.</param>
-		/// <param name="number">The layer number assigned to this layer.</param>
-		protected internal void SetParentAndNumber(HostLayer lc, int number)
-		{
-			base.ParentLayer = lc;
-
-			if (_parent == null)
-			{
-				LinkedLayer = null;
-			}
-			else
-			{
-				if (null != _linkedLayerProxy)
-					SetLinkedLayerFromProxy();
-			}
 		}
 
 		protected override void OnGraphObjectsCollectionInstanceInitialized()

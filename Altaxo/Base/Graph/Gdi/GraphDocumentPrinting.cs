@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Gdi
 			if (Current.Gui.ShowDialog(ref resultobj, "Setup printable area"))
 			{
 				var result = (Altaxo.Gui.Graph.PrintableAreaSetupOptions)resultobj;
-				doc.RootLayer.SetParentLayerSize((SizeF)result.AreaSize, result.Rescale);
+				doc.RootLayer.EhParentLayerSizeChanged((SizeF)result.AreaSize, result.Rescale);
 				return true;
 			}
 			return false;

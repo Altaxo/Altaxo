@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Altaxo.Data;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -33,17 +35,18 @@ namespace Altaxo.Worksheet.Commands
 	/// </summary>
 	public class PlotCommonColumnsCommand
 	{
-		List<Altaxo.Data.DataTable> _tables = new List<Altaxo.Data.DataTable>();
-		List<string> _yCommonColumnNamesForPlotting = new List<string>();
+		private List<Altaxo.Data.DataTable> _tables = new List<Altaxo.Data.DataTable>();
+		private List<string> _yCommonColumnNamesForPlotting = new List<string>();
 
 		/// <summary>The tables that contain the common columns to plot.</summary>
 		public List<Altaxo.Data.DataTable> Tables { get { return _tables; } }
+
 		/// <summary>
 		/// Name of the x column to use for the plot. If this member is null, the current X column of each y column to plot is used.
 		/// </summary>
 		public string XCommonColumnNameForPlot { get; set; }
 
-		/// <summary>Names of the y columns to plot. For each name, the columns in all the tables where used to build a plot group of plot items, resulting in n plot groups containing m 
+		/// <summary>Names of the y columns to plot. For each name, the columns in all the tables where used to build a plot group of plot items, resulting in n plot groups containing m
 		/// plot items, where n is the number of selected column names, and m is the number of tables.</summary>
 		public List<string> YCommonColumnNamesForPlotting { get { return _yCommonColumnNamesForPlotting; } }
 
@@ -107,7 +110,6 @@ namespace Altaxo.Worksheet.Commands
 			}
 		}
 
-
 		/// <summary>
 		/// Executes the 'Plot common column' command.
 		/// </summary>
@@ -116,19 +118,15 @@ namespace Altaxo.Worksheet.Commands
 			string folderName;
 
 			Altaxo.Gui.Graph.Viewing.IGraphController graphctrl;
-			
-			if(AreAllTablesFromOneProjectFolder(out folderName))
+
+			if (AreAllTablesFromOneProjectFolder(out folderName))
 				graphctrl = Current.ProjectService.CreateNewGraphInFolder(folderName);
 			else
 				graphctrl = Current.ProjectService.CreateNewGraph();
 
-
 			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;
 
-
-
-
-			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.RootLayer.DefaultChildLayerPosition, graphctrl.Doc.RootLayer.DefaultChildLayerSize);
+			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.RootLayer);
 			graphctrl.Doc.RootLayer.Layers.Add(layer);
 			layer.CreateDefaultAxes();
 

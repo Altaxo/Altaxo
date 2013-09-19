@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -28,38 +30,39 @@ namespace Altaxo.Calc
 	/// This structure holds a value, which is either absolute or relative to another value.
 	/// </summary>
 	[Serializable]
-	public struct RelativeOrAbsoluteValue
+	public struct RelativeOrAbsoluteValue : IEquatable<RelativeOrAbsoluteValue>
 	{
 		/// <summary>True if the value m_Value is relative, false if m_Value is absolute.</summary>
-		private bool m_bIsRelative; // per default, m_bRelative is false, so the value is interpreted as absolute
+		private bool _isRelative; // per default, m_bRelative is false, so the value is interpreted as absolute
+
 		/// <summary>
 		/// The value to hold, either absolute, or relative. If relative, the value 1 means the same value
 		/// as the value it is relative to.
 		/// </summary>
-		private double m_Value;
+		private double _value;
 
 		#region Serialization
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeOrAbsoluteValue), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeOrAbsoluteValue), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				RelativeOrAbsoluteValue s = (RelativeOrAbsoluteValue)obj;
 
-				info.AddValue("IsRelative", s.m_bIsRelative);
-				info.AddValue("Value", s.m_Value);
+				info.AddValue("IsRelative", s._isRelative);
+				info.AddValue("Value", s._value);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				bool rel = info.GetBoolean("IsRelative");
 				double val = info.GetDouble("Value");
 				return new RelativeOrAbsoluteValue(val, rel);
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		/// <summary>
 		/// This creates the structure with the absolute value absval.
@@ -67,8 +70,8 @@ namespace Altaxo.Calc
 		/// <param name="absval"></param>
 		public RelativeOrAbsoluteValue(double absval)
 		{
-			m_bIsRelative = false;
-			m_Value = absval;
+			_isRelative = false;
+			_value = absval;
 		}
 
 		/// <summary>
@@ -79,28 +82,43 @@ namespace Altaxo.Calc
 		/// <param name="isRelative">True if the value is relative, else false.</param>
 		public RelativeOrAbsoluteValue(double val, bool isRelative)
 		{
-			m_bIsRelative = isRelative;
-			m_Value = val;
+			_isRelative = isRelative;
+			_value = val;
 		}
 
+		public static RelativeOrAbsoluteValue NewAbsoluteValue(double val)
+		{
+			return new RelativeOrAbsoluteValue(val, false);
+		}
+
+		public static RelativeOrAbsoluteValue NewRelativeValue(double val)
+		{
+			return new RelativeOrAbsoluteValue(val, true);
+		}
 
 		/// <summary>
 		/// Get / set the information, if the value is relative or absolute.
 		/// </summary>
 		public bool IsRelative
 		{
-			get { return m_bIsRelative; }
-			set { m_bIsRelative = value; }
+			get { return _isRelative; }
+		}
+
+		/// <summary>
+		/// Get / set the information, if the value is relative or absolute.
+		/// </summary>
+		public bool IsAbsolute
+		{
+			get { return !_isRelative; }
 		}
 
 		/// <summary>
 		///  Get / set the raw value. Careful! the value you get is not relative to another, even
-		///  in the case that the sructure holds a relative value, it is the raw value in m_Value instead. 
+		///  in the case that the sructure holds a relative value, it is the raw value in m_Value instead.
 		/// </summary>
 		public double Value
 		{
-			get { return m_Value; }
-			set { Value = value; }
+			get { return _value; }
 		}
 
 		/// <summary>
@@ -112,12 +130,12 @@ namespace Altaxo.Calc
 		/// <returns>If absolute, the stored value; if relative, the product of the stored value with <paramref name="r"/></returns>
 		public double GetValueRelativeTo(double r)
 		{
-			return m_bIsRelative ? r * m_Value : m_Value;
+			return _isRelative ? r * _value : _value;
 		}
 
 		public static bool operator ==(RelativeOrAbsoluteValue a, RelativeOrAbsoluteValue b)
 		{
-			return a.m_bIsRelative == b.m_bIsRelative && a.m_Value == b.m_Value;
+			return a._isRelative == b._isRelative && a._value == b._value;
 		}
 
 		public static bool operator !=(RelativeOrAbsoluteValue a, RelativeOrAbsoluteValue b)
@@ -128,16 +146,24 @@ namespace Altaxo.Calc
 		public override bool Equals(object o)
 		{
 			if (!(o is RelativeOrAbsoluteValue))
+			{
 				return false;
+			}
 			else
-				return ((RelativeOrAbsoluteValue)o) == this;
+			{
+				var other = (RelativeOrAbsoluteValue)o;
+				return _value == other._value && _isRelative == other._isRelative;
+			}
 		}
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return _value.GetHashCode() + _isRelative.GetHashCode();
 		}
 
-
+		public bool Equals(RelativeOrAbsoluteValue other)
+		{
+			return _value == other._value && _isRelative == other._isRelative;
+		}
 	}
 }

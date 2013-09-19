@@ -249,7 +249,7 @@ namespace Altaxo.Gui.Graph
 					}
 					if (null == _layerPositionController)
 					{
-						_layerPositionController = new LayerPositionController(_doc);
+						_layerPositionController = new LayerPositionController().Initialize(_doc.Location, _doc);
 						Current.Gui.FindAndAttachControlTo(_layerPositionController);
 					}
 					_currentController = _layerPositionController;

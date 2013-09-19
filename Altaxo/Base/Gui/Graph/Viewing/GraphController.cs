@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,24 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
-	using Altaxo.Main;
+	using Altaxo.Collections;
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Graph.Gdi.Shapes;
+	using Altaxo.Main;
 	using Altaxo.Serialization;
-	using Altaxo.Collections;
-
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
 	public abstract class GraphController : IGraphController, IGraphViewEventSink, IDisposable
@@ -50,29 +51,27 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>Holds the view (the window where the graph is visualized).</summary>
 		protected IGraphView _view;
 
-
-
 		/// <summary>Number of the currently selected layer (or null if no layer is present).</summary>
 		protected IList<int> _currentLayerNumber = new List<int>();
 
 		/// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
-		protected int _currentPlotNumber=-1;
+		protected int _currentPlotNumber = -1;
 
 		/// <summary>Current zoom factor. If AutoZoom is on, this factor is calculated automatically.</summary>
 		protected double _zoomFactor;
 
 		/// <summary>If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
-		protected bool _isAutoZoomActive=true; // if true, the sheet is zoomed as big as possible to fit into window
+		protected bool _isAutoZoomActive = true; // if true, the sheet is zoomed as big as possible to fit into window
 
 		/// <summary>
-		/// Ratio of view port dimension to the dimension of the graph. 
-		/// Example: a values of 2 means that the view port size is two times the size of the graph. 
+		/// Ratio of view port dimension to the dimension of the graph.
+		/// Example: a values of 2 means that the view port size is two times the size of the graph.
 		/// </summary>
 		protected double _areaFillingFactor = 1.2;
 
 		protected PointD2D _positionOfViewportsUpperLeftCornerInGraphCoordinates;
 
-		NGTreeNode _layerStructure;
+		private NGTreeNode _layerStructure;
 
 		#region Constructors
 
@@ -119,7 +118,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			set { }
 		}
 
-		#endregion
+		#endregion Constructors
 
 		protected void Initialize(bool initData)
 		{
@@ -139,22 +138,15 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
-		void InitLayerStructure()
+		private void InitLayerStructure()
 		{
-
-			_layerStructure =  Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(
-				_doc.RootLayer, 
+			_layerStructure = Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(
+				_doc.RootLayer,
 				new List<int>(),
 				(sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = HostLayer.GetDefaultNameOfLayer(indices) }, (parent, child) => parent.Nodes.Add(child));
-
 		}
 
-		
-
-
 		#region Properties
-
 
 		/// <summary>
 		/// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.
@@ -163,7 +155,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get { return _doc.RootLayer; }
 		}
-
 
 		#region Size
 
@@ -177,7 +168,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
 		/// <summary>Gets the size (in points = 1/72 inch) of the graph with margin with taking into account the current zoom factor. This can be much greater than the actual viewport size, if the zoom factor exceeds the auto zoom factor.</summary>
 		/// <value>The size of the zoomed graph with padding.</value>
 		public PointD2D SizeOfGraphWithMarginZoomed
@@ -188,11 +178,10 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
 		/// <summary>
 		/// Size of the viewport window in points (1/72 inch). This is the physical size of the visible window in the graph panel.
 		/// </summary>
-		PointD2D SizeOfViewport
+		private PointD2D SizeOfViewport
 		{
 			get
 			{
@@ -203,7 +192,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Size of the viewport in graph coordinates, taking the current zoom value into account (differences of the positions of the lower right corner and upper left corner of the view port in graph coordinates).
 		/// </summary>
-		PointD2D SizeOfViewportInGraphCoordinates
+		private PointD2D SizeOfViewportInGraphCoordinates
 		{
 			get
 			{
@@ -211,7 +200,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		#endregion
+		#endregion Size
 
 		#region Position
 
@@ -234,11 +223,10 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
 		/// <summary>
 		/// Position of the upper left corner of the graph's margin in graph coordinates. This depends only from the margin set.
 		/// </summary>
-		PointD2D PositionOfMarginsUpperLeftCornerInGraphCoordinates
+		private PointD2D PositionOfMarginsUpperLeftCornerInGraphCoordinates
 		{
 			get
 			{
@@ -252,7 +240,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Position of the lower right corner of the graph's margin in graph coordinates. This depends only from the margin set.
 		/// </summary>
-		PointD2D PositionOfMarginsLowerRightCornerInGraphCoordinates
+		private PointD2D PositionOfMarginsLowerRightCornerInGraphCoordinates
 		{
 			get
 			{
@@ -263,11 +251,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		#endregion
+		#endregion Position
 
 		#region Margin
 
-		/// <summary>Gets or sets the margin. A value of 0 indicates that if autozoom is active, there is no margin around the graph. 
+		/// <summary>Gets or sets the margin. A value of 0 indicates that if autozoom is active, there is no margin around the graph.
 		/// A value of 1 means that there is a right and left margin of 100 percent of the graph width, and a top and bottom
 		/// margin of 100 percent of the graph heigth.</summary>
 		/// <value>The margin value. Must be a non-negative value, otherwise a <see cref="ArgumentOutOfRangeException"/> is thrown.</value>
@@ -294,10 +282,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		#endregion
+		#endregion Margin
 
 		#region Zoom
-
 
 		/// <summary>Gets the current zoom factor that would be used for auto zoom, but does not set it.</summary>
 		/// <returns>The zoom factor that would be used for autozoom.</returns>
@@ -340,7 +327,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
 		/// <summary>
 		/// Zoom value of the graph view. If this property is set, AutoZoom will be set to false.
 		/// </summary>
@@ -364,7 +350,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
 		/// <summary>Zooms around a pivot point. The pivot point is the point in graph coordinates that does not change the location in the viewport window when zooming.</summary>
 		/// <param name="newZoomValue">The new zoom value.</param>
 		/// <param name="graphCoordinate">The location of the pivot point in graph coordinates (points = 1/72 inch).</param>
@@ -376,7 +361,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			ZoomFactor = newZoomValue;
 		}
 
-
 		/// <summary>
 		/// Recalculates and sets the value of m_Zoom so the whole page is visible
 		/// </summary>
@@ -387,15 +371,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			RefreshGraph();
 		}
 
-
-
-
-		void CalculateAutoZoom()
+		private void CalculateAutoZoom()
 		{
 			_zoomFactor = AutoZoomFactor;
 			_positionOfViewportsUpperLeftCornerInGraphCoordinates = PositionOfMarginsUpperLeftCornerInGraphCoordinates;
 		}
-
 
 		protected void RefreshManualZoom()
 		{
@@ -454,7 +434,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>Sets the views scrollbar parameter according to the current settings for zoom, offset, and viewport size.</summary>
-		void SetViewsScrollbarParameter()
+		private void SetViewsScrollbarParameter()
 		{
 			if (_isAutoZoomActive || _zoomFactor < AutoZoomFactor)
 			{
@@ -466,7 +446,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				var scrollMaxima = SizeOfGraphWithMarginZoomed;
 				var scrollValues = ConvertGraphCoordinateToScrollbarValue(PositionOfViewportsUpperLeftCornerInGraphCoordinates);
 				var portSize = SizeOfViewport;
-				_view.SetHorizontalScrollbarParameter(true, scrollValues.X,scrollMaxima.X, portSize.X, portSize.X / 2, portSize.X / 25);
+				_view.SetHorizontalScrollbarParameter(true, scrollValues.X, scrollMaxima.X, portSize.X, portSize.X / 2, portSize.X / 25);
 				_view.SetVerticalScrollbarParameter(true, scrollValues.Y, scrollMaxima.Y, portSize.Y, portSize.Y / 2, portSize.Y / 25);
 			}
 		}
@@ -474,19 +454,18 @@ namespace Altaxo.Gui.Graph.Viewing
 		#endregion Scrolling
 
 		#region Graph tools
+
 		/// <summary>
 		/// This event will be fired if the current graph tool has changed, either by the user
 		/// or by the program.
 		/// </summary>
 		public event EventHandler CurrentGraphToolChanged;
 
-
 		public abstract GraphToolType CurrentGraphTool { get; set; }
-		
 
 		#endregion Graph tools
 
-		#endregion
+		#endregion Properties
 
 		#region IGraphController Members
 
@@ -512,16 +491,16 @@ namespace Altaxo.Gui.Graph.Viewing
 			OnTitleNameChanged(EventArgs.Empty);
 		}
 
-
 		public Altaxo.Graph.Gdi.GraphDocument Doc
 		{
 			get { return _doc; }
 		}
+
 		public object ModelObject
 		{
 			get
 			{
-				return new GraphViewLayout(_isAutoZoomActive, _zoomFactor, _doc); 
+				return new GraphViewLayout(_isAutoZoomActive, _zoomFactor, _doc);
 			}
 		}
 
@@ -553,16 +532,15 @@ namespace Altaxo.Gui.Graph.Viewing
 			set
 			{
 				// negative values are only accepted if there is no layer
-				if (value ==null)
+				if (value == null)
 					throw new ArgumentNullException("CurrentLayerNumber");
 
-				if(!_doc.RootLayer.IsValidIndex(value))
+				if (!_doc.RootLayer.IsValidIndex(value))
 					throw new ArgumentOutOfRangeException("CurrentLayerNumber", value, "The provided layer number was invalid");
 
 				bool isDifferent = !System.Linq.Enumerable.SequenceEqual(value, _currentLayerNumber);
 
 				_currentLayerNumber = value;
-
 
 				// if something changed
 				if (isDifferent)
@@ -587,10 +565,10 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				var layer = ActiveLayer as XYPlotLayer;
 
-				if (null!=layer && 0 != layer.PlotItems.Flattened.Length && value < 0)
+				if (null != layer && 0 != layer.PlotItems.Flattened.Length && value < 0)
 					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to be greater or equal than zero");
 
-				if (null!=layer && value >= layer.PlotItems.Flattened.Length)
+				if (null != layer && value >= layer.PlotItems.Flattened.Length)
 					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to  be lesser than actual count: " + layer.PlotItems.Flattened.Length.ToString());
 
 				_currentPlotNumber = value < 0 ? -1 : value;
@@ -607,7 +585,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			_doc.RootLayer.EnsureValidityOfNodeIndex(_currentLayerNumber);
 		}
 
-
 		/// <summary>
 		/// This ensures that the current plot number is valid. If there is no plot on the currently active layer,
 		/// the current plot number is set to -1.
@@ -615,7 +592,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		public void EnsureValidityOfCurrentPlotNumber()
 		{
 			EnsureValidityOfCurrentLayerNumber();
-
 
 			var layer = ActiveLayer as XYPlotLayer;
 
@@ -651,9 +627,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public abstract object ViewObject { get; set; }
 
-	
-
-		#endregion
+		#endregion IGraphController Members
 
 		#region Event handlers from GraphDocument
 
@@ -681,6 +655,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			Current.Gui.BeginExecute(EhGraph_BoundsChanged_Unsynchronized);
 		}
+
 		protected void EhGraph_BoundsChanged_Unsynchronized()
 		{
 			if (_view != null)
@@ -691,7 +666,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
 		/// <summary>
 		/// Handler of the event LayerCollectionChanged of the graph document. Forces to
 		/// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
@@ -701,6 +675,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			Current.Gui.BeginExecute(EhGraph_LayerCollectionChanged_Unsynchronized);
 		}
+
 		protected void EhGraph_LayerCollectionChanged_Unsynchronized()
 		{
 			var oldActiveLayer = new List<int>(this._currentLayerNumber);
@@ -730,7 +705,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, sender, oldName);
 		}
-		void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
+
+		private void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
 		{
 			if (null != _view)
 				_view.GraphViewTitle = Doc.Name;
@@ -765,7 +741,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				TitleNameChanged(this, e);
 		}
 
-		#endregion
+		#endregion Event handlers from GraphDocument
 
 		#region IGraphViewEventSink
 
@@ -798,10 +774,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public virtual void EhView_CurrentGraphToolChanged()
 		{
-			if(null!=CurrentGraphToolChanged)
+			if (null != CurrentGraphToolChanged)
 				CurrentGraphToolChanged(this, EventArgs.Empty);
 		}
-
 
 		/// <summary>
 		/// Handles the selection of the current layer by the <b>user</b>.
@@ -811,8 +786,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		public virtual void EhView_CurrentLayerChoosen(int[] currLayer, bool bAlternative)
 		{
 			var oldCurrLayer = this.CurrentLayerNumber;
-			this.CurrentLayerNumber = new List<int>( currLayer);
-
+			this.CurrentLayerNumber = new List<int>(currLayer);
 
 			// if we have clicked the button already down then open the layer dialog
 			if (null != ActiveLayer && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
@@ -822,7 +796,6 @@ namespace Altaxo.Gui.Graph.Viewing
 					XYPlotLayerController.ShowDialog((XYPlotLayer)activeLayer);
 				else
 					HostLayerController.ShowDialog(activeLayer);
-
 			}
 		}
 
@@ -839,7 +812,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				SetViewsScrollbarParameter();
 			}
-
 		}
 
 		public void EhView_Scroll()
@@ -848,17 +820,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
-
-		#endregion
-
-	
-
-		
+		#endregion IGraphViewEventSink
 
 		#region Arrange
 
 		public abstract IList<IHitTestObject> SelectedObjects { get; }
-
 
 		public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
 
@@ -870,7 +836,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			if (SelectedObjects.Count < 2)
 				return;
-
 
 			RectangleF masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
 
@@ -966,7 +931,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			);
 		}
 
-
 		/// <summary>
 		/// Arranges the objects so they share the horizontal middle line of the last selected object.
 		/// </summary>
@@ -987,7 +951,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			);
 		}
 
-
 		/// <summary>
 		/// Arranges the objects so they their vertical middle line is uniform spaced between the first and the last selected object.
 		/// </summary>
@@ -995,7 +958,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			if (SelectedObjects.Count < 3)
 				return;
-
 
 			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
 			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
@@ -1021,7 +983,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (SelectedObjects.Count < 3)
 				return;
 
-
 			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements.GetBounds();
 			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
 			var step = (lastbound.Y + lastbound.Height * 0.5) - (firstbound.Y + firstbound.Height * 0.5);
@@ -1037,7 +998,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
 		}
-
 
 		public void MoveSelectedGraphItemsUp()
 		{
@@ -1073,7 +1033,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				Altaxo.Collections.ListExtensions.MoveSelectedItemsToMaximumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
 			}
-
 		}
 
 		public void MoveSelectedGraphItemsToBottom()
@@ -1086,10 +1045,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				Altaxo.Collections.ListExtensions.MoveSelectedItemsToMinimumIndex(layer.GraphObjects, i => selectedItems.Contains(layer.GraphObjects[i]));
 			}
-
 		}
-
-
 
 		public bool IsCmdDeleteEnabled()
 		{
@@ -1135,7 +1091,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
 		public bool IsCmdCopyEnabled()
 		{
 			return true;
@@ -1156,7 +1111,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				var objectList = new ArrayList();
 				foreach (IHitTestObject o in SelectedObjects)
 				{
-						objectList.Add(o.HittedObject);
+					objectList.Add(o.HittedObject);
 				}
 				ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
 			}
@@ -1179,7 +1134,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 
 			ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphObjectListAsXml", objectList);
-
 
 			// Remove the not serialized objects from the selection, so they are not removed from the graph..
 			foreach (IHitTestObject o in notSerialized)
@@ -1238,15 +1192,15 @@ namespace Altaxo.Gui.Graph.Viewing
 						if (img != null)
 						{
 							var size = this.ActiveLayer.Size;
-              size.X /= 2;
+							size.X /= 2;
 							size.Y /= 2;
 
-              PointD2D imgSize = img.GetImage().PhysicalDimension;
+							PointD2D imgSize = img.GetImage().PhysicalDimension;
 
-              double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
-              imgSize.X *= scale;
-              imgSize.Y *= scale;
-							
+							double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
+							imgSize.X *= scale;
+							imgSize.Y *= scale;
+
 							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD2D.Empty, imgSize, img);
 							this.ActiveLayer.GraphObjects.Add(item);
 							bSuccess = true;
@@ -1266,7 +1220,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				System.Drawing.Imaging.Metafile img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
 				if (img != null)
 				{
-					var size = 0.5*this.ActiveLayer.Size;
+					var size = 0.5 * this.ActiveLayer.Size;
 					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD2D.Empty, size, ImageProxy.FromImage(img));
 					this.ActiveLayer.GraphObjects.Add(item);
 					return;
@@ -1277,14 +1231,13 @@ namespace Altaxo.Gui.Graph.Viewing
 				Image img = dao.GetImage();
 				if (img != null)
 				{
-					var size = 0.5*this.ActiveLayer.Size;
+					var size = 0.5 * this.ActiveLayer.Size;
 					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD2D.Empty, size, ImageProxy.FromImage(img));
 					this.ActiveLayer.GraphObjects.Add(item);
 					return;
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Groups the selected objects to form a ShapeGroup.
@@ -1349,7 +1302,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
-
 		/// <summary>
 		/// Ungroups the selected objects (if they are ShapeGroup objects).
 		/// </summary>
@@ -1358,20 +1310,20 @@ namespace Altaxo.Gui.Graph.Viewing
 			foreach (IHitTestObject o in SelectedObjects)
 			{
 				var shapeGroup = o.HittedObject as Altaxo.Graph.Gdi.Shapes.ShapeGroup;
-				if (null!=shapeGroup)
+				if (null != shapeGroup)
 				{
 					var parentColl = shapeGroup.ParentObject as GraphicCollection;
-					if(null!=parentColl)
+					if (null != parentColl)
 					{
 						int idx = parentColl.IndexOf(shapeGroup);
-            parentColl.RemoveAt(idx);
-            var separateObjects = shapeGroup.Ungroup();
-						for(int i=separateObjects.Length-1;i>=0;i--)
-							parentColl.Insert(idx,separateObjects[i]);
+						parentColl.RemoveAt(idx);
+						var separateObjects = shapeGroup.Ungroup();
+						for (int i = separateObjects.Length - 1; i >= 0; i--)
+							parentColl.Insert(idx, separateObjects[i]);
 					}
 				}
 			}
-      SelectedObjects.Clear();
+			SelectedObjects.Clear();
 		}
 
 		public void SetSelectedObjectsProperty(IRoutedSetterProperty property)
@@ -1396,10 +1348,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
-
-		#endregion
-
+		#endregion Arrange
 
 		public void Dispose()
 		{
@@ -1408,8 +1357,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			_view = null;
 		}
-
-		
 
 		public bool Apply()
 		{

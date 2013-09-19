@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+#endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
@@ -32,12 +31,13 @@ using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
-using Altaxo.Collections;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Altaxo.Gui.Graph
 {
 	#region Interfaces
-
 
 	public interface IHostLayerView
 	{
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
 		event Action<string> PageChanged;
 	}
 
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Summary description for LayerController.
@@ -65,23 +65,21 @@ namespace Altaxo.Gui.Graph
 
 		private string _currentPageName;
 
-		IMVCAController _currentController;
+		private IMVCAController _currentController;
 
 		protected IMVCAController _layerPositionController;
 		protected IMVCANController _layerContentsController;
 
-		object _lastControllerApplied;
+		private object _lastControllerApplied;
 
-		SelectableListNodeList _listOfUniqueItem;
-
-
+		private SelectableListNodeList _listOfUniqueItem;
 
 		public HostLayerController(HostLayer layer)
 			: this(layer, "Position")
 		{
 		}
 
-		HostLayerController(HostLayer layer, string currentPage)
+		private HostLayerController(HostLayer layer, string currentPage)
 		{
 			_originalDoc = layer;
 			_doc = (HostLayer)layer.Clone();
@@ -133,10 +131,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		
-
-		void SetCurrentTabController(bool pageChanged)
+		private void SetCurrentTabController(bool pageChanged)
 		{
 			switch (_currentPageName)
 			{
@@ -152,6 +147,7 @@ namespace Altaxo.Gui.Graph
 					_currentController = _layerContentsController;
 					_view.CurrentContent = _currentController.ViewObject;
 					break;
+
 				case "Position":
 					if (pageChanged)
 					{
@@ -159,21 +155,14 @@ namespace Altaxo.Gui.Graph
 					}
 					if (null == _layerPositionController)
 					{
-						_layerPositionController = new LayerPositionController(_doc);
+						_layerPositionController = new LayerPositionController().Initialize(_doc.Location, _doc);
 						Current.Gui.FindAndAttachControlTo(_layerPositionController);
 					}
 					_currentController = _layerPositionController;
 					_view.CurrentContent = _layerPositionController.ViewObject;
 					break;
-
-
-			
-
 			}
 		}
-
-
-	
 
 		public void EhView_PageChanged(string firstChoice)
 		{
@@ -183,17 +172,13 @@ namespace Altaxo.Gui.Graph
 			SetCurrentTabController(true);
 		}
 
-	
-
-		void EhView_TabValidating(object sender, CancelEventArgs e)
+		private void EhView_TabValidating(object sender, CancelEventArgs e)
 		{
 			if (!ApplyCurrentController(true))
 				e.Cancel = true;
 		}
 
-
-
-		bool ApplyCurrentController(bool force)
+		private bool ApplyCurrentController(bool force)
 		{
 			if (_currentController == null)
 				return true;
@@ -204,8 +189,6 @@ namespace Altaxo.Gui.Graph
 			if (!_currentController.Apply())
 				return false;
 			_lastControllerApplied = _currentController;
-
-		
 
 			return true;
 		}
@@ -223,8 +206,7 @@ namespace Altaxo.Gui.Graph
 			return Current.Gui.ShowDialog(ctrl, layer.Name, true);
 		}
 
-
-		#endregion
+		#endregion Dialog
 
 		#region Edit Handlers
 
@@ -233,7 +215,6 @@ namespace Altaxo.Gui.Graph
 			// register here editor methods
 
 			HostLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
-
 		}
 
 		public static bool EhLayerPositionEdit(IHitTestObject hit)
@@ -247,9 +228,6 @@ namespace Altaxo.Gui.Graph
 			return false;
 		}
 
-
-		#endregion
-
-
+		#endregion Edit Handlers
 	}
 }

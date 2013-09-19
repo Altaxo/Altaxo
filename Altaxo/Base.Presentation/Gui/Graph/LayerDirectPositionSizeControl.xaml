@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.LayerDirectPositionSizeControl"
+						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 mc:Ignorable="d"
+>
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,2" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+		<Style x:Key="CBWithMargin" TargetType="Control">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,0" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="16" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Label Grid.Column="0" Grid.Row="2" Content="Left:" />
+		<Label Grid.Column="0" Grid.Row="4" Content="Top:" />
+		<Label Grid.Column="0" Grid.Row="6" Content="Width:" />
+		<Label Grid.Column="0" Grid.Row="8" Content="Height:" />
+
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXPosition"  Grid.Column="1" Grid.Row="2" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYPosition" Grid.Column="1" Grid.Row="4" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize"  Grid.Column="1" Grid.Row="6" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize"  Grid.Column="1" Grid.Row="8" />
+
+		<Label Grid.Column="0" Grid.Row="10" Content="Rotation:" />
+		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="10" />
+		<Label Grid.Column="0" Grid.Row="12" Content="Scale:" />
+		<axogcd:ScaleComboBox x:Name="_guiScale"  Grid.Column="1" Grid.Row="12" />
+	</Grid>
+</UserControl>

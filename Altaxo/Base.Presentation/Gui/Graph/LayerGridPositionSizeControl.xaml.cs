@@ -42,55 +42,83 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for LayerPositionControl.xaml
 	/// </summary>
-	public partial class LayerPositionControl : UserControl, ILayerPositionView
+	public partial class LayerGridPositionSizeControl : UserControl, ILayerGridPositionSizeView
 	{
-		public LayerPositionControl()
+		public LayerGridPositionSizeControl()
 		{
 			InitializeComponent();
 		}
 
-		public event Action PositioningTypeChanged;
-
-		private bool _useDirectPositioning;
-
-		public bool UseDirectPositioning
+		public double Rotation
 		{
 			get
 			{
-				return _useDirectPositioning;
+				return _guiRotation.SelectedQuantityAsValueInDegrees;
 			}
 			set
 			{
-				_useDirectPositioning = value;
-
-				if (_useDirectPositioning)
-					_guiDirectPositioning.IsChecked = true;
-				else
-					_guiGridPositioning.IsChecked = true;
+				_guiRotation.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 
-		public object SubPositionView
+		public double Scale
 		{
-			set { _guiSubPositioningHost.Child = (System.Windows.UIElement)value; }
+			get
+			{
+				return _guiScale.SelectedQuantityInSIUnits;
+			}
+			set
+			{
+				_guiScale.SelectedQuantityInSIUnits = value;
+			}
 		}
 
-		private void EhPositioningTypeChangedToDirect(object sender, RoutedEventArgs e)
+		public double XPosition
 		{
-			var oldValue = _useDirectPositioning;
-			_useDirectPositioning = true;
-
-			if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
-				PositioningTypeChanged();
+			get
+			{
+				return _guiXPosition.Value;
+			}
+			set
+			{
+				_guiXPosition.Value = value;
+			}
 		}
 
-		private void EhPositioningTypeChangedToGrid(object sender, RoutedEventArgs e)
+		public double YPosition
 		{
-			var oldValue = _useDirectPositioning;
-			_useDirectPositioning = false;
+			get
+			{
+				return _guiYPosition.Value;
+			}
+			set
+			{
+				_guiYPosition.Value = value;
+			}
+		}
 
-			if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
-				PositioningTypeChanged();
+		public double XSize
+		{
+			get
+			{
+				return _guiXSize.Value;
+			}
+			set
+			{
+				_guiXSize.Value = value;
+			}
+		}
+
+		public double YSize
+		{
+			get
+			{
+				return _guiYSize.Value;
+			}
+			set
+			{
+				_guiYSize.Value = value;
+			}
 		}
 	}
 }

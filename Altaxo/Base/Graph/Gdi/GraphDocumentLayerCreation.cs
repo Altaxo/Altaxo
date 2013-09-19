@@ -34,14 +34,44 @@ namespace Altaxo.Graph.Gdi
 	{
 		#region XYPlotLayer Creation
 
+		private static XYPlotLayer CreateNewLayerAtSamePosition(this GraphDocument doc, IEnumerable<int> linklayernumber)
+		{
+			HostLayer oldLayer;
+			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out oldLayer);
+			if (!isValidIndex)
+				throw new ArgumentOutOfRangeException("index was not valid");
+
+			IItemLocation location;
+			if (oldLayer.Location is ItemLocationByGrid)
+			{
+				location = (IItemLocation)oldLayer.Location.Clone();
+			}
+			else
+			{
+				// TODO change absolute positioning into grid positioning
+				location = (IItemLocation)oldLayer.Location.Clone();
+			}
+
+			var newLayer = new XYPlotLayer(oldLayer.ParentLayer, location);
+			doc.RootLayer.InsertLast(linklayernumber, newLayer);
+
+			return newLayer;
+		}
+
 		/// <summary>
 		/// Creates a new layer with bottom x axis and left y axis, which is not linked.
 		/// </summary>
 		public static void CreateNewLayerNormalBottomXLeftY(this GraphDocument doc)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
-			newlayer.CreateDefaultAxes();
+			var location = new ItemLocationDirect();
+			location.XPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X);
+			location.YPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.Y);
+			location.XSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.X);
+			location.YSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.Y);
+
+			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer, location);
 			doc.RootLayer.Layers.Add(newlayer);
+			newlayer.CreateDefaultAxes();
 		}
 
 		/// <summary>
@@ -49,19 +79,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopX(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			HostLayer linkedLayer;
-			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
-
-			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
-			if (isValidIndex)
-				doc.RootLayer.InsertLast(linklayernumber, newlayer);
-			else
-				doc.RootLayer.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-
-			// link the new layer to the last old layer
-			newlayer.LinkedLayer = linkedLayer as XYPlotLayer;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
 		}
 
@@ -70,20 +88,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
-			HostLayer linkedLayer;
-			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
-			if (isValidIndex)
-				doc.RootLayer.InsertLast(linklayernumber, newlayer);
-			else
-				doc.RootLayer.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-
-			// link the new layer to the last old layer
-			newlayer.LinkedLayer = linkedLayer as XYPlotLayer;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-			// set enabling of axis
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
 		}
 
@@ -92,21 +97,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopXRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
-
-			HostLayer linkedLayer;
-			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
-			if (isValidIndex)
-				doc.RootLayer.InsertLast(linklayernumber, newlayer);
-			else
-				doc.RootLayer.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-
-			// link the new layer to the last old layer
-			newlayer.LinkedLayer = linkedLayer as XYPlotLayer;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-			// set enabling of axis
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
 			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
 		}
@@ -116,26 +107,18 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopXRightY_XAxisStraight(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer.DefaultChildLayerPosition, doc.RootLayer.DefaultChildLayerSize);
-			HostLayer linkedLayer;
-			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out linkedLayer);
-			if (isValidIndex)
-				doc.RootLayer.InsertLast(linklayernumber, newlayer);
-			else
-				doc.RootLayer.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 
-			// link the new layer to the last old layer
-			var linkedLayerAsXYPlotLayer = linkedLayer as XYPlotLayer;
-			newlayer.LinkedLayer = linkedLayer as XYPlotLayer;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
+			HostLayer oldLayer;
+			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out oldLayer);
+			var linkedLayerAsXYPlotLayer = oldLayer as XYPlotLayer;
 
 			if (null != linkedLayerAsXYPlotLayer)
 			{
 				// create a linked x axis of the same type than in the linked layer
-				var scaleLinkedTo = newlayer.LinkedLayer.Scales.X.Scale;
+				var scaleLinkedTo = linkedLayerAsXYPlotLayer.Scales.X.Scale;
 				var xScale = new Scales.LinkedScale((Scales.Scale)scaleLinkedTo.Clone(), scaleLinkedTo, 0, linkedLayerAsXYPlotLayer.LayerNumber);
-				newlayer.Scales.SetScaleWithTicks(0, xScale, (Scales.Ticks.TickSpacing)newlayer.LinkedLayer.Scales.X.TickSpacing.Clone());
+				newlayer.Scales.SetScaleWithTicks(0, xScale, (Scales.Ticks.TickSpacing)linkedLayerAsXYPlotLayer.Scales.X.TickSpacing.Clone());
 			}
 
 			// set enabling of axis

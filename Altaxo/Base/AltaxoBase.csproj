@@ -215,9 +215,17 @@
     <Compile Include="Graph\Gdi\LabelFormatting\FreeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\IGraphicBase.cs" />
+    <Compile Include="Graph\ItemLocationByGrid.cs" />
+    <Compile Include="Graph\GridPartitioning.cs" />
+    <Compile Include="Graph\IItemLocation.cs" />
+    <Compile Include="Graph\ItemLocationDirect.cs" />
     <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Graph\NamedColor.cs" />
     <Compile Include="Graph\NamedColors.cs" />
+    <Compile Include="Graph\RectangleExtensions.cs" />
+    <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Gui\Graph\LayerGridPositionSizeController.cs" />
+    <Compile Include="Gui\Graph\LayerDirectPositionSizeController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
@@ -877,9 +885,6 @@
     <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphic.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerPositionAndSize.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerPositionType.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerSizeType.cs" />
     <Compile Include="Graph\ImageProxy.cs" />
     <Compile Include="Graph\LayerDataClipping.cs" />
     <Compile Include="Graph\Logical3D.cs" />

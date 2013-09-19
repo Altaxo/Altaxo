@@ -204,6 +204,26 @@ namespace Altaxo.Graph.Scales
 				ScaleLinkedTo = newScale;
 		}
 
+		/// <summary>
+		/// Checks if the scale in the argument is dependend on this Scale. This would mean a circular dependency, which should be avoided.
+		/// </summary>
+		/// <param name="scale">The scale to check.</param>
+		/// <returns>True if the provided scale or one of its linked scales is dependend on this scale.</returns>
+		public bool IsScaleDependentOnMe(Scale scale)
+		{
+			var linkedScale = scale as LinkedScale;
+			while (null != linkedScale)
+			{
+				if (object.ReferenceEquals(this, linkedScale))
+				{
+					// this means a circular dependency, so return true
+					return true;
+				}
+				linkedScale = linkedScale.ScaleLinkedTo as LinkedScale;
+			}
+			return false; // no dependency detected
+		}
+
 		public bool IsStraightLink
 		{
 			get

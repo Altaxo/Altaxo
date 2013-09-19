@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Calc;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
@@ -105,7 +106,7 @@ namespace Altaxo.Graph.Gdi
 
 		#region Member variables
 
-		protected XYPlotLayerPositionAndSize _location;
+		protected IItemLocation _location;
 
 		protected GraphicCollection _graphObjects;
 
@@ -114,6 +115,11 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		[NonSerialized]
 		protected object _parent;
+
+		/// <summary>
+		/// Defines a grid that child layers can use to arrange.
+		/// </summary>
+		private GridPartitioning _grid;
 
 		#endregion Member variables
 
@@ -157,7 +163,7 @@ namespace Altaxo.Graph.Gdi
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (HostLayer)o : new HostLayer();
+				var s = null != o ? (HostLayer)o : new HostLayer(info);
 
 				int count = info.OpenArray();
 				for (int i = 0; i < count; i++)
@@ -191,10 +197,11 @@ namespace Altaxo.Graph.Gdi
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (HostLayer)o : new HostLayer();
+				var s = null != o ? (HostLayer)o : new HostLayer(info);
 
 				var size = (SizeF)info.GetValue("Size", parent);
-				s.SetSize(size.Width, XYPlotLayerSizeType.AbsoluteValue, size.Height, XYPlotLayerSizeType.AbsoluteValue);
+				var location = new ItemLocationDirect() { XSize = new RelativeOrAbsoluteValue(size.Width), YSize = new RelativeOrAbsoluteValue(size.Height) };
+				s.Location = location;
 
 				int count = info.OpenArray();
 				for (int i = 0; i < count; i++)
@@ -233,10 +240,10 @@ namespace Altaxo.Graph.Gdi
 
 			protected virtual HostLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				HostLayer s = (o == null ? new HostLayer() : (HostLayer)o);
+				HostLayer s = (o == null ? new HostLayer(info) : (HostLayer)o);
 
 				// size, position, rotation and scale
-				s.Location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
+				s.Location = (ItemLocationDirect)info.GetValue("LocationAndSize", s);
 				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
 				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
 
@@ -307,7 +314,7 @@ namespace Altaxo.Graph.Gdi
 			// size, position, rotation and scale
 			if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
 			{
-				this.Location = from._location.Clone();
+				this.Location = (IItemLocation)from._location.Clone();
 				this._cachedLayerSize = from._cachedLayerSize;
 				this._cachedLayerPosition = from._cachedLayerPosition;
 				this._cachedParentLayerSize = from._cachedParentLayerSize;
@@ -363,7 +370,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Constructor for deserialization purposes only.
 		/// </summary>
-		protected HostLayer()
+		protected HostLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			InternalInitializeGraphObjectsCollection();
@@ -372,22 +379,36 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
 		/// </summary>
-		/// <param name="position">The position of this layer on the parent in points (1/72 inch).</param>
-		/// <param name="size">The size of this layer in points (1/72 inch).</param>
-		public HostLayer(PointD2D position, PointD2D size)
+		/// <param name="parentLayer">The parent layer of the newly created layer.</param>
+		/// <param name="location">The position and size of this layer</param>
+		public HostLayer(HostLayer parentLayer, IItemLocation location)
 		{
 			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
-			this.Location = new XYPlotLayerPositionAndSize();
-			this.Size = size;
-			this.Position = position;
-			InternalInitializeGraphObjectsCollection();
 
+			if (null != parentLayer) // this helps to get the real layer size from the beginning
+			{
+				this.ParentLayer = parentLayer;
+				this._cachedParentLayerSize = parentLayer.Size;
+			}
+
+			this.Location = location;
+			InternalInitializeGraphObjectsCollection();
 			CalculateMatrix();
+		}
+
+		public HostLayer()
+			: this(null, new ItemLocationDirect())
+		{
 		}
 
 		#endregion Constructors
 
 		#region Position and Size
+
+		public static PointD2D DefaultChildLayerRelativePosition
+		{
+			get { return new PointD2D(0.145, 0.139); }
+		}
 
 		/// <summary>
 		/// Gets the default child layer position in points (1/72 inch).
@@ -395,7 +416,12 @@ namespace Altaxo.Graph.Gdi
 		/// <value>The default position of a (new) layer in points (1/72 inch).</value>
 		public PointD2D DefaultChildLayerPosition
 		{
-			get { return new PointD2D(0.145 * Size.X, 0.139 * Size.Y); }
+			get { return DefaultChildLayerRelativePosition * Size; }
+		}
+
+		public static PointD2D DefaultChildLayerRelativeSize
+		{
+			get { return new PointD2D(0.763, 0.708); }
 		}
 
 		/// <summary>
@@ -404,10 +430,45 @@ namespace Altaxo.Graph.Gdi
 		/// <value>The default size of a (new) layer in points (1/72 inch).</value>
 		public PointD2D DefaultChildLayerSize
 		{
-			get { return new PointD2D(0.763 * Size.X, 0.708 * Size.Y); }
+			get { return DefaultChildLayerRelativeSize * Size; }
 		}
 
-		public XYPlotLayerPositionAndSize Location
+		public static IItemLocation GetChildLayerDefaultLocation()
+		{
+			return new ItemLocationDirect
+			{
+				XSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.X),
+				YSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.Y),
+				XPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X),
+				YPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X)
+			};
+		}
+
+		/// <summary>
+		/// Creates the default grid. It consists of three rows and three columns. Columns 0 and 2 are the left and right margin, respectively. Rows 0 and 2 are the top and bottom margin.
+		/// The cell column 1 / row 1 is intended to hold the child layer.
+		/// </summary>
+		public void CreateDefaultGrid()
+		{
+			_grid = new GridPartitioning();
+			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.X));
+			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.X));
+			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.X - DefaultChildLayerRelativeSize.X));
+
+			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.Y));
+			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.Y));
+			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.Y - DefaultChildLayerRelativeSize.Y));
+		}
+
+		public GridPartitioning Grid
+		{
+			get
+			{
+				return _grid;
+			}
+		}
+
+		public IItemLocation Location
 		{
 			get
 			{
@@ -415,12 +476,23 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				XYPlotLayerPositionAndSize oldvalue = _location;
+				if (object.ReferenceEquals(_location, value))
+					return;
+
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				if (null == ParentLayer && value is ItemLocationByGrid)
+					return;
+
 				_location = value;
 				value.ParentObject = this;
 
-				if (!object.ReferenceEquals(oldvalue, value))
-					OnChanged();
+				// Note: there is no event link here to Changed event of new location instance,
+				// instead the event is and must be  handled in the EhChildChanged function of this layer
+
+				CalculateCachedSizeAndPosition();
+				OnChanged();
 			}
 		}
 
@@ -451,55 +523,64 @@ namespace Altaxo.Graph.Gdi
 			get { return _cachedParentLayerSize; }
 		}
 
-		public void SetParentLayerSize(PointD2D val, bool bRescale)
+		public void EhParentLayerSizeChanged(PointD2D newParentLayerSize, bool bRescale)
 		{
 			var oldSize = _cachedParentLayerSize;
-			var newSize = val;
-			_cachedParentLayerSize = val;
+			var newSize = newParentLayerSize;
+			_cachedParentLayerSize = newParentLayerSize;
 
-			if (_cachedParentLayerSize != oldSize && bRescale)
+			if (_cachedParentLayerSize != oldSize)
 			{
-				var oldLayerSize = this._cachedLayerSize;
+				if (bRescale)
+				{
+					var oldLayerSize = this._cachedLayerSize;
 
-				double oldxdefsize = oldSize.X * (oldSize.X > oldSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
-				double newxdefsize = newSize.X * (newSize.X > newSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
-				double oldydefsize = oldSize.Y * (oldSize.X > oldSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
-				double newydefsize = newSize.Y * (newSize.X > newSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
+					double oldxdefsize = oldSize.X * (oldSize.X > oldSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
+					double newxdefsize = newSize.X * (newSize.X > newSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
+					double oldydefsize = oldSize.Y * (oldSize.X > oldSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
+					double newydefsize = newSize.Y * (newSize.X > newSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
 
-				double oldxdeforg = oldSize.X * (oldSize.X > oldSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
-				double newxdeforg = newSize.X * (newSize.X > newSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
-				double oldydeforg = oldSize.Y * (oldSize.X > oldSize.Y ? _yDefPositionLandscape : _yDefPositionPortrait);
-				double newydeforg = newSize.Y * (newSize.X > newSize.Y ? _yDefPositionLandscape : _yDefPositionPortrait);
+					double oldxdeforg = oldSize.X * (oldSize.X > oldSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
+					double newxdeforg = newSize.X * (newSize.X > newSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
+					double oldydeforg = oldSize.Y * (oldSize.X > oldSize.Y ? _yDefPositionLandscape : _yDefPositionPortrait);
+					double newydeforg = newSize.Y * (newSize.X > newSize.Y ? _yDefPositionLandscape : _yDefPositionPortrait);
 
-				double xscale = newxdefsize / oldxdefsize;
-				double yscale = newydefsize / oldydefsize;
+					double xscale = newxdefsize / oldxdefsize;
+					double yscale = newydefsize / oldydefsize;
 
-				double xoffs = newxdeforg - oldxdeforg * xscale;
-				double yoffs = newydeforg - oldydeforg * yscale;
+					double xoffs = newxdeforg - oldxdeforg * xscale;
+					double yoffs = newydeforg - oldydeforg * yscale;
 
-				if (this._location.XPositionType == XYPlotLayerPositionType.AbsoluteValue)
-					this._location.XPosition = xoffs + this._location.XPosition * xscale;
+					if (_location is ItemLocationDirect)
+					{
+						var location = (ItemLocationDirect)_location;
+						if (location.XPosition.IsAbsolute)
+							location.XPosition = new RelativeOrAbsoluteValue(xoffs + location.XPosition.Value * xscale);
 
-				if (this._location.WidthType == XYPlotLayerSizeType.AbsoluteValue)
-					this._location.Width *= xscale;
+						if (location.XSize.IsAbsolute)
+							location.XSize = new RelativeOrAbsoluteValue(location.XSize.Value * xscale);
 
-				if (this._location.YPositionType == XYPlotLayerPositionType.AbsoluteValue)
-					this._location.YPosition = yoffs + this._location.YPosition * yscale;
+						if (location.YPosition.IsAbsolute)
+							location.YPosition = new RelativeOrAbsoluteValue(yoffs + location.YPosition.Value * yscale);
 
-				if (this._location.HeightType == XYPlotLayerSizeType.AbsoluteValue)
-					this._location.Height *= yscale;
+						if (location.YSize.IsAbsolute)
+							location.YSize = new RelativeOrAbsoluteValue(location.YSize.Value * yscale);
+					}
 
-				CalculateMatrix();
-				this.CalculateCachedSize();
-				this.CalculateCachedPosition();
+					this.CalculateCachedSizeAndPosition();
 
-				// scale the position of the inner items according to the ratio of the new size to the old size
-				// note: only the size is important here, since all inner items are relative to the layer origin
-				var newLayerSize = this._cachedLayerSize;
-				xscale = newLayerSize.X / oldLayerSize.X;
-				yscale = newLayerSize.Y / oldLayerSize.Y;
+					// scale the position of the inner items according to the ratio of the new size to the old size
+					// note: only the size is important here, since all inner items are relative to the layer origin
+					var newLayerSize = this._cachedLayerSize;
+					xscale = newLayerSize.X / oldLayerSize.X;
+					yscale = newLayerSize.Y / oldLayerSize.Y;
 
-				RescaleInnerItemPositions(xscale, yscale);
+					RescaleInnerItemPositions(xscale, yscale);
+				}
+				else // not rescale
+				{
+					this.CalculateCachedSizeAndPosition();
+				}
 			}
 		}
 
@@ -521,7 +602,7 @@ namespace Altaxo.Graph.Gdi
 			get { return this._cachedLayerPosition; }
 			set
 			{
-				SetPosition(value.X, XYPlotLayerPositionType.AbsoluteValue, value.Y, XYPlotLayerPositionType.AbsoluteValue);
+				SetPositionSize(new RelativeOrAbsoluteValue(value.X), new RelativeOrAbsoluteValue(value.Y), new RelativeOrAbsoluteValue(_cachedLayerSize.X), new RelativeOrAbsoluteValue(_cachedLayerSize.Y));
 			}
 		}
 
@@ -530,18 +611,30 @@ namespace Altaxo.Graph.Gdi
 			get { return this._cachedLayerSize; }
 			set
 			{
-				SetSize(value.X, XYPlotLayerSizeType.AbsoluteValue, value.Y, XYPlotLayerSizeType.AbsoluteValue);
+				var ls = _location as ItemLocationDirect;
+				if (null != ls)
+				{
+					if (ls.XPosition.IsAbsolute)
+						ls.XPosition = new Calc.RelativeOrAbsoluteValue(value.X);
+					if (ls.YPosition.IsAbsolute)
+						ls.YPosition = new Calc.RelativeOrAbsoluteValue(value.Y);
+				}
 			}
 		}
 
 		public double Rotation
 		{
-			get { return this._location.Angle; }
+			get { return this._location.Rotation; }
 			set
 			{
-				this._location.Angle = value;
-				this.CalculateMatrix();
-				this.OnChanged();
+				var oldValue = this._location.Rotation;
+				this._location.Rotation = value;
+
+				if (value != oldValue)
+				{
+					this.CalculateMatrix();
+					this.OnChanged();
+				}
 			}
 		}
 
@@ -550,16 +643,21 @@ namespace Altaxo.Graph.Gdi
 			get { return this._location.Scale; }
 			set
 			{
+				var oldValue = this._location.Scale;
 				this._location.Scale = value;
-				this.CalculateMatrix();
-				this.OnChanged();
+
+				if (value != oldValue)
+				{
+					this.CalculateMatrix();
+					this.OnChanged();
+				}
 			}
 		}
 
 		protected void CalculateMatrix()
 		{
 			_transformation.Reset();
-			_transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Angle, 0, _location.Scale, _location.Scale);
+			_transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Rotation, 0, _location.Scale, _location.Scale);
 		}
 
 		public PointD2D TransformCoordinatesFromParentToHere(PointD2D pagecoordinates)
@@ -633,231 +731,18 @@ namespace Altaxo.Graph.Gdi
 			return coordinates;
 		}
 
-		public void SetPosition(double x, XYPlotLayerPositionType xpostype, double y, XYPlotLayerPositionType ypostype)
+		public void SetPositionSize(RelativeOrAbsoluteValue x, RelativeOrAbsoluteValue y, RelativeOrAbsoluteValue width, RelativeOrAbsoluteValue height)
 		{
-			this._location.XPosition = x;
-			this._location.XPositionType = xpostype;
-			this._location.YPosition = y;
-			this._location.YPositionType = ypostype;
+			ItemLocationDirect newlocation;
 
-			CalculateCachedPosition();
-		}
+			if (!(_location is ItemLocationDirect))
+				newlocation = new ItemLocationDirect(_location);
+			else
+				newlocation = (ItemLocationDirect)Location;
 
-		/// <summary>
-		/// Calculates from the x position value, which can be absolute or relative, the
-		/// x position in points.
-		/// </summary>
-		/// <param name="x">The horizontal position value of type xpostype.</param>
-		/// <param name="xpostype">The type of the horizontal position value, see <see cref="XYPlotLayerPositionType"/>.</param>
-		/// <returns>Calculated absolute position of the layer in units of points (1/72 inch).</returns>
-		/// <remarks>The function does not change the member variables of the layer and can therefore used
-		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
-		/// graph or the linked layer for the calculations.</remarks>
-		public double XPositionToPointUnits(double x, XYPlotLayerPositionType xpostype)
-		{
-			switch (xpostype)
-			{
-				case XYPlotLayerPositionType.AbsoluteValue:
-					break;
+			newlocation.SetPositionAndSize(x, y, width, height);
 
-				case XYPlotLayerPositionType.RelativeToGraphDocument:
-					x = x * ParentLayerSize.X;
-					break;
-
-				default:
-					throw new NotImplementedException(xpostype.ToString());
-			}
-			return x;
-		}
-
-		/// <summary>
-		/// Calculates from the y position value, which can be absolute or relative, the
-		///  y position in points.
-		/// </summary>
-		/// <param name="y">The vertical position value of type xpostype.</param>
-		/// <param name="ypostype">The type of the vertical position value, see <see cref="XYPlotLayerPositionType"/>.</param>
-		/// <returns>Calculated absolute position of the layer in units of points (1/72 inch).</returns>
-		/// <remarks>The function does not change the member variables of the layer and can therefore used
-		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
-		/// graph or the linked layer for the calculations.</remarks>
-		public double YPositionToPointUnits(double y, XYPlotLayerPositionType ypostype)
-		{
-			switch (ypostype)
-			{
-				case XYPlotLayerPositionType.AbsoluteValue:
-					break;
-
-				case XYPlotLayerPositionType.RelativeToGraphDocument:
-					y = y * ParentLayerSize.Y;
-					break;
-
-				default:
-					throw new NotImplementedException(ypostype.ToString());
-			}
-
-			return y;
-		}
-
-		/// <summary>
-		/// Calculates from the x position value in points (1/72 inch), the corresponding value in user units.
-		/// </summary>
-		/// <param name="x">The vertical position value in points.</param>
-		/// <param name="xpostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="XYPlotLayerPositionType"/>.</param>
-		/// <returns>Calculated value of x in user units.</returns>
-		/// <remarks>The function does not change the member variables of the layer and can therefore used
-		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
-		/// graph or the linked layer for the calculations.</remarks>
-		public double XPositionToUserUnits(double x, XYPlotLayerPositionType xpostype_to_convert_to)
-		{
-			switch (xpostype_to_convert_to)
-			{
-				case XYPlotLayerPositionType.AbsoluteValue:
-					break;
-
-				case XYPlotLayerPositionType.RelativeToGraphDocument:
-					x = x / ParentLayerSize.X;
-					break;
-
-				default:
-					throw new NotImplementedException(xpostype_to_convert_to.ToString());
-			}
-
-			return x;
-		}
-
-		/// <summary>
-		/// Calculates from the y position value in points (1/72 inch), the corresponding value in user units.
-		/// </summary>
-		/// <param name="y">The vertical position value in points.</param>
-		/// <param name="ypostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="XYPlotLayerPositionType"/>.</param>
-		/// <returns>Calculated value of y in user units.</returns>
-		/// <remarks>The function does not change the member variables of the layer and can therefore used
-		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
-		/// graph or the linked layer for the calculations.</remarks>
-		public double YPositionToUserUnits(double y, XYPlotLayerPositionType ypostype_to_convert_to)
-		{
-			switch (ypostype_to_convert_to)
-			{
-				case XYPlotLayerPositionType.AbsoluteValue:
-					break;
-
-				case XYPlotLayerPositionType.RelativeToGraphDocument:
-					y = y / ParentLayerSize.Y;
-					break;
-
-				default:
-					throw new NotImplementedException(ypostype_to_convert_to.ToString());
-			}
-
-			return y;
-		}
-
-		/// <summary>
-		/// Sets the cached position value in <see cref="_cachedLayerPosition"/> by calculating it
-		/// from the position values (<see cref="_location"/>.XPosition and .YPosition)
-		/// and the position types (<see cref="_location"/>.XPositionType and YPositionType).
-		/// </summary>
-		protected void CalculateCachedPosition()
-		{
-			var newPos = new PointD2D(
-				XPositionToPointUnits(this._location.XPosition, this._location.XPositionType),
-				YPositionToPointUnits(this._location.YPosition, this._location.YPositionType));
-			if (newPos != this._cachedLayerPosition)
-			{
-				this._cachedLayerPosition = newPos;
-				this.CalculateMatrix();
-				OnPositionChanged();
-			}
-		}
-
-		public void SetSize(double width, XYPlotLayerSizeType widthtype, double height, XYPlotLayerSizeType heighttype)
-		{
-			this._location.Width = width;
-			this._location.WidthType = widthtype;
-			this._location.Height = height;
-			this._location.HeightType = heighttype;
-
-			CalculateCachedSize();
-		}
-
-		public double WidthToPointUnits(double width, XYPlotLayerSizeType widthtype)
-		{
-			switch (widthtype)
-			{
-				case XYPlotLayerSizeType.AbsoluteValue:
-					break;
-
-				case XYPlotLayerSizeType.RelativeToGraphDocument:
-					width *= ParentLayerSize.X;
-					break;
-
-				default:
-					throw new NotImplementedException(widthtype.ToString());
-			}
-			return width;
-		}
-
-		public double HeightToPointUnits(double height, XYPlotLayerSizeType heighttype)
-		{
-			switch (heighttype)
-			{
-				case XYPlotLayerSizeType.AbsoluteValue:
-					break;
-
-				case XYPlotLayerSizeType.RelativeToGraphDocument:
-					height *= ParentLayerSize.Y;
-					break;
-
-				default:
-					throw new NotImplementedException(heighttype.ToString());
-			}
-			return height;
-		}
-
-		/// <summary>
-		/// Convert the width in points (1/72 inch) to user units of the type <paramref name="widthtype_to_convert_to"/>.
-		/// </summary>
-		/// <param name="width">The height value to convert (in point units).</param>
-		/// <param name="widthtype_to_convert_to">The user unit type to convert to.</param>
-		/// <returns>The value of the width in user units.</returns>
-		public double WidthToUserUnits(double width, XYPlotLayerSizeType widthtype_to_convert_to)
-		{
-			switch (widthtype_to_convert_to)
-			{
-				case XYPlotLayerSizeType.AbsoluteValue:
-					break;
-
-				case XYPlotLayerSizeType.RelativeToGraphDocument:
-					width /= ParentLayerSize.X;
-					break;
-
-				default:
-					throw new NotImplementedException(widthtype_to_convert_to.ToString());
-			}
-			return width;
-		}
-
-		/// <summary>
-		/// Convert the heigth in points (1/72 inch) to user units of the type <paramref name="heighttype_to_convert_to"/>.
-		/// </summary>
-		/// <param name="height">The height value to convert (in point units).</param>
-		/// <param name="heighttype_to_convert_to">The user unit type to convert to.</param>
-		/// <returns>The value of the height in user units.</returns>
-		public double HeightToUserUnits(double height, XYPlotLayerSizeType heighttype_to_convert_to)
-		{
-			switch (heighttype_to_convert_to)
-			{
-				case XYPlotLayerSizeType.AbsoluteValue:
-					break;
-
-				case XYPlotLayerSizeType.RelativeToGraphDocument:
-					height /= ParentLayerSize.Y;
-					break;
-
-				default:
-					throw new NotImplementedException(heighttype_to_convert_to.ToString());
-			}
-			return height;
+			_location = newlocation;
 		}
 
 		/// <summary>
@@ -865,94 +750,50 @@ namespace Altaxo.Graph.Gdi
 		/// from the position values (<see cref="_location"/>.Width and .Height)
 		/// and the size types (<see cref="_location"/>.WidthType and .HeightType).
 		/// </summary>
-		protected void CalculateCachedSize()
+		protected void CalculateCachedSizeAndPosition()
 		{
-			var newSize = new PointD2D(
-				WidthToPointUnits(this._location.Width, this._location.WidthType),
-				HeightToPointUnits(this._location.Height, this._location.HeightType));
-			if (newSize != this._cachedLayerSize)
+			RectangleD newRect;
+
+			if (_location is ItemLocationDirect)
 			{
-				this._cachedLayerSize = newSize;
-				this.CalculateMatrix();
-				OnSizeChanged();
+				var lps = _location as ItemLocationDirect;
+				newRect = lps.GetAbsoluteEnclosingRectangle(_cachedParentLayerSize);
 			}
-		}
+			else if (_location is ItemLocationByGrid)
+			{
+				if (ParentLayer != null)
+				{
+					var gps = _location as ItemLocationByGrid;
+					var gridRect = newRect = gps.GetAbsolute(ParentLayer._grid, _cachedParentLayerSize);
 
-		/// <summary>Returns the user x position value of the layer.</summary>
-		/// <value>User x position value of the layer.</value>
-		public double UserXPosition
-		{
-			get { return this._location.XPosition; }
-		}
+					if (gps.TakeScaleAngleIntoAccountToFitInCell)
+					{
+						newRect = RectangleExtensions.GetIncludedRotatedRectanglePositionSize(gridRect, this.Rotation);
+					}
+				}
+				else // ParentLayer is null, this is probably the root layer, thus use the _cachedParentLayersSize
+				{
+					newRect = new RectangleD(0, 0, _cachedParentLayerSize.X, _cachedParentLayerSize.Y);
+				}
+			}
+			else
+			{
+				throw new NotImplementedException(string.Format("_location is {0}", _location));
+			}
 
-		/// <summary>Returns the user y position value of the layer.</summary>
-		/// <value>User y position value of the layer.</value>
-		public double UserYPosition
-		{
-			get { return this._location.YPosition; }
-		}
+			bool isPositionChanged = newRect.LeftTop != _cachedLayerPosition;
+			bool isSizeChanged = newRect.Size != _cachedLayerSize;
+			if (isPositionChanged || isSizeChanged)
+			{
+				this._cachedLayerSize = newRect.Size;
+				this._cachedLayerPosition = newRect.LeftTop;
+				this.CalculateMatrix();
+				if (isSizeChanged)
+					OnSizeChanged();
 
-		/// <summary>Returns the user width value of the layer.</summary>
-		/// <value>User width value of the layer.</value>
-		public double UserWidth
-		{
-			get { return this._location.Width; }
-		}
-
-		/// <summary>Returns the user height value of the layer.</summary>
-		/// <value>User height value of the layer.</value>
-		public double UserHeight
-		{
-			get { return this._location.Height; }
-		}
-
-		/// <summary>Returns the type of the user x position value of the layer.</summary>
-		/// <value>Type of the user x position value of the layer.</value>
-		public XYPlotLayerPositionType UserXPositionType
-		{
-			get { return this._location.XPositionType; }
-		}
-
-		/// <summary>Returns the type of the user y position value of the layer.</summary>
-		/// <value>Type of the User y position value of the layer.</value>
-		public XYPlotLayerPositionType UserYPositionType
-		{
-			get { return this._location.YPositionType; }
-		}
-
-		/// <summary>Returns the type of the the user width value of the layer.</summary>
-		/// <value>Type of the User width value of the layer.</value>
-		public XYPlotLayerSizeType UserWidthType
-		{
-			get { return this._location.WidthType; }
-		}
-
-		/// <summary>Returns the the type of the user height value of the layer.</summary>
-		/// <value>Type of the User height value of the layer.</value>
-		public XYPlotLayerSizeType UserHeightType
-		{
-			get { return this._location.HeightType; }
-		}
-
-		/// <summary>
-		/// Measures to do when the position of the linked layer changed.
-		/// </summary>
-		/// <param name="sender">The sender of the event.</param>
-		/// <param name="e">The event args.</param>
-		protected void EhLinkedLayerPositionChanged(object sender, System.EventArgs e)
-		{
-			CalculateCachedPosition();
-		}
-
-		/// <summary>
-		/// Measures to do when the size of the linked layer changed.
-		/// </summary>
-		/// <param name="sender">The sender of the event.</param>
-		/// <param name="e">The event args.</param>
-		protected void EhLinkedLayerSizeChanged(object sender, System.EventArgs e)
-		{
-			CalculateCachedSize();
-			CalculateCachedPosition();
+				if (isPositionChanged)
+					OnPositionChanged();
+			}
 		}
 
 		#endregion Position and Size
@@ -1045,6 +886,7 @@ namespace Altaxo.Graph.Gdi
 		private void EhBeforeInsertChildLayer(HostLayer child)
 		{
 			child.ParentLayer = this;
+			child.EhParentLayerSizeChanged(_cachedLayerSize, false);
 		}
 
 		/// <summary>
@@ -1262,6 +1104,9 @@ namespace Altaxo.Graph.Gdi
 
 		public void EhChildChanged(object sender, EventArgs e)
 		{
+			if (sender is IItemLocation)
+				CalculateCachedSizeAndPosition();
+
 			OnChanged();
 		}
 

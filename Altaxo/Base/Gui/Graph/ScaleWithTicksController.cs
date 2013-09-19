@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Graph
 				_linkScaleChoices.Add(new SelectableListNode("None", null, false));
 
 				// find the parent layer
-				var mylayer = (XYPlotLayer)Altaxo.Main.DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(XYPlotLayer));
+				var mylayer = Altaxo.Main.DocumentPath.GetRootNodeImplementing<HostLayer>(_originalDoc);
 				var parentLayerList = mylayer.ParentLayerList;
 
 				var scaleLinkedTo = _doc.Scale is LinkedScale ? ((LinkedScale)_doc.Scale).ScaleLinkedTo : null;
@@ -292,6 +292,8 @@ namespace Altaxo.Gui.Graph
 		public void EhView_LinkTargetChanged()
 		{
 			_scaleLinkedTo = (Scale)_linkScaleChoices.FirstSelectedNode.Tag;
+
+			InitBoundaryController(false);
 		}
 
 		public void EhView_LinkChanged(bool linked)
