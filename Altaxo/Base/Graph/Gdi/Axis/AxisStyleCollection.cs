@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Gdi.Shapes;
+using System.Reflection;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -45,36 +47,30 @@ namespace Altaxo.Graph.Gdi.Axis
 		Main.IDocumentNode,
 		IEnumerable<AxisStyle>
 	{
-		List<AxisStyle> _axisStyles;
+		private List<AxisStyle> _axisStyles;
 
-		G2DCoordinateSystem _cachedCoordinateSystem;
+		private G2DCoordinateSystem _cachedCoordinateSystem;
 
 		[field: NonSerialized]
-		event EventHandler _changed;
+		private event EventHandler _changed;
 
 		[NonSerialized]
-		object _parent;
-
+		private object _parent;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleCollection), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				AxisStyleCollection s = (AxisStyleCollection)obj;
-
-
 
 				info.CreateArray("AxisStyles", s._axisStyles.Count);
 				for (int i = 0; i < s._axisStyles.Count; ++i)
 					info.AddValue("e", s._axisStyles[i]);
 				info.CommitArray();
 			}
-
-
-
 
 			protected virtual AxisStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -99,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Default constructor. Defines neither a grid style nor an axis style.
@@ -109,8 +105,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			_axisStyles = new List<AxisStyle>();
 		}
 
-
-		void CopyFrom(AxisStyleCollection from)
+		private void CopyFrom(AxisStyleCollection from)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -123,6 +118,16 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			this._parent = from._parent;
 			this._cachedCoordinateSystem = from._cachedCoordinateSystem;
+		}
+
+		public AxisStyle ItemAt(int idx)
+		{
+			return _axisStyles[idx];
+		}
+
+		public int Count
+		{
+			get { return _axisStyles.Count; }
 		}
 
 		public AxisStyle this[CSLineID id]
@@ -199,7 +204,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			return prop;
 		}
 
-
 		public bool Contains(CSLineID id)
 		{
 			return null != this[id];
@@ -214,8 +218,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
-
 		public void UpdateCoordinateSystem(G2DCoordinateSystem cs)
 		{
 			_cachedCoordinateSystem = cs;
@@ -223,7 +225,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			foreach (AxisStyle style in this._axisStyles)
 				style.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(style.StyleID);
 		}
-
 
 		public bool Remove(GraphicBase go)
 		{
@@ -234,14 +235,25 @@ namespace Altaxo.Graph.Gdi.Axis
 			return false;
 		}
 
+		public void PaintPreprocessing(IPlotArea layer)
+		{
+			for (int i = 0; i < _axisStyles.Count; ++i)
+				_axisStyles[i].PaintPreprocessing(layer);
+		}
+
 		public void Paint(Graphics g, IPlotArea layer)
 		{
 			for (int i = 0; i < _axisStyles.Count; ++i)
 				_axisStyles[i].Paint(g, layer);
 		}
 
-		#region IChangedEventSource Members
+		public void PaintPostprocessing()
+		{
+			for (int i = 0; i < _axisStyles.Count; ++i)
+				_axisStyles[i].PaintPostprocessing();
+		}
 
+		#region IChangedEventSource Members
 
 		public event EventHandler Changed
 		{
@@ -258,12 +270,12 @@ namespace Altaxo.Graph.Gdi.Axis
 				_changed(this, EventArgs.Empty);
 		}
 
-		void EhChildChanged(object sender, EventArgs e)
+		private void EhChildChanged(object sender, EventArgs e)
 		{
 			OnChanged();
 		}
 
-		#endregion
+		#endregion IChangedEventSource Members
 
 		#region ICloneable Members
 
@@ -274,8 +286,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			return result;
 		}
 
-		#endregion
-
+		#endregion ICloneable Members
 
 		#region IDocumentNode Members
 
@@ -290,7 +301,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return "AxisStyles"; }
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region IEnumerable<AxisStyle> Members
 
@@ -299,7 +310,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			return _axisStyles.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<AxisStyle> Members
 
 		#region IEnumerable Members
 
@@ -308,7 +319,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			return _axisStyles.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 
 		#region IChildChangedEventSink Members
 
@@ -317,8 +328,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			OnChanged();
 		}
 
-		#endregion
+		#endregion IChildChangedEventSink Members
 	}
-
-
 }

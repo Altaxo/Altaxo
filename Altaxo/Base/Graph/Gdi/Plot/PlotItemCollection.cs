@@ -347,7 +347,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		IList<IGPlotItem> ITreeListNode<IGPlotItem>.Nodes
+		IList<IGPlotItem> ITreeListNode<IGPlotItem>.ChildNodes
 		{
 			get
 			{
@@ -355,7 +355,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		IEnumerable<IGPlotItem> ITreeNode<IGPlotItem>.Nodes
+		IEnumerable<IGPlotItem> ITreeNode<IGPlotItem>.ChildNodes
 		{
 			get
 			{
@@ -819,7 +819,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources.
 		/// </summary>
-		public void FinishPainting()
+		public void PaintPostprocessing()
 		{
 		}
 

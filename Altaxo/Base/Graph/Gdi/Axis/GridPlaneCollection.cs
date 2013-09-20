@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -37,18 +39,19 @@ namespace Altaxo.Graph.Gdi.Axis
 		Main.IDocumentNode,
 		Main.IChangedEventSource
 	{
-		List<GridPlane> _innerList = new List<GridPlane>();
+		private List<GridPlane> _innerList = new List<GridPlane>();
 
 		[NonSerialized]
-		object _parent;
+		private object _parent;
 
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
 		#region Serialization
-		#endregion
 
-		void CopyFrom(GridPlaneCollection from)
+		#endregion Serialization
+
+		private void CopyFrom(GridPlaneCollection from)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -57,13 +60,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			foreach (GridPlane plane in from)
 				this.Add((GridPlane)plane.Clone());
-
 		}
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlaneCollection), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -73,8 +77,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				foreach (GridPlane plane in s)
 					info.AddValue("e", plane);
 				info.CommitArray();
-
 			}
+
 			protected virtual GridPlaneCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				GridPlaneCollection s = (o == null ? new GridPlaneCollection() : (GridPlaneCollection)o);
@@ -92,26 +96,29 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				GridPlaneCollection s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
 
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public GridPlaneCollection()
 		{
 		}
+
 		public GridPlaneCollection(GridPlaneCollection from)
 		{
 			CopyFrom(from);
 		}
+
 		public GridPlaneCollection Clone()
 		{
 			return new GridPlaneCollection(this);
 		}
+
 		object ICloneable.Clone()
 		{
 			return new GridPlaneCollection(this);
@@ -126,6 +133,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				return _innerList[idx];
 			}
 		}
+
 		public GridPlane this[CSPlaneID planeid]
 		{
 			get
@@ -156,15 +164,17 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		void Attach(GridPlane plane)
+		private void Attach(GridPlane plane)
 		{
 			plane.ParentObject = this;
 			plane.Changed += EhPlaneChanged;
 		}
-		void Detach(GridPlane plane)
+
+		private void Detach(GridPlane plane)
 		{
 			plane.Changed -= EhPlaneChanged;
 		}
+
 		public void Add(GridPlane plane)
 		{
 			Attach(plane);
@@ -207,8 +217,27 @@ namespace Altaxo.Graph.Gdi.Axis
 				_innerList[i].Paint(g, layer);
 		}
 
+		/// <summary>
+		/// Paints only the background of all planes (but not the grid).
+		/// </summary>
+		/// <param name="g">The graphics context.</param>
+		/// <param name="layer">The layer.</param>
+		public void PaintBackground(Graphics g, IPlotArea layer)
+		{
+			for (int i = 0; i < _innerList.Count; ++i)
+				_innerList[i].PaintBackground(g, layer);
+		}
 
-
+		/// <summary>
+		/// Paints the grid of all planes, but not the background.
+		/// </summary>
+		/// <param name="g">The g.</param>
+		/// <param name="layer">The layer.</param>
+		public void PaintGrid(Graphics g, IPlotArea layer)
+		{
+			for (int i = 0; i < _innerList.Count; ++i)
+				_innerList[i].PaintGrid(g, layer);
+		}
 
 		#region IDocumentNode Members
 
@@ -229,7 +258,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return "GridPlanes"; }
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region IEnumerable<GridPlane> Members
 
@@ -238,7 +267,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			return _innerList.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<GridPlane> Members
 
 		#region IEnumerable Members
 
@@ -247,7 +276,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			return _innerList.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 
 		#region IChangedEventSource Members
 
@@ -268,6 +297,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			remove { throw new Exception("The method or operation is not implemented."); }
 		}
 
-		#endregion
+		#endregion IChangedEventSource Members
 	}
 }

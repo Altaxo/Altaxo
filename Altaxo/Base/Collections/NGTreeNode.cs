@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -46,14 +48,12 @@ namespace Altaxo.Collections
 		void Swap(int i, int j);
 	}
 
-	
-
 	/// <summary>
 	/// Represents a non GUI tree node that can be used for interfacing/communication with Gui components.
 	/// </summary>
 	public class NGTreeNode : System.ComponentModel.INotifyPropertyChanged, ITreeListNodeWithParent<NGTreeNode>
 	{
-		static NGTreeNode _dummyNode = new NGTreeNode();
+		private static NGTreeNode _dummyNode = new NGTreeNode();
 
 		protected object _tag;
 		protected object _guiTag;
@@ -64,15 +64,14 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Collection of child nodes.
 		/// </summary>
-		NGTreeNodeCollection _nodes;
+		private NGTreeNodeCollection _nodes;
 
 		/// <summary>
 		/// Parent node.
 		/// </summary>
-		NGTreeNode _parent;
+		private NGTreeNode _parent;
 
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
 
 		/// <summary>
 		/// Empty constructor.
@@ -122,7 +121,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-
 		protected virtual void OnPropertyChanged(string name)
 		{
 			if (null != PropertyChanged)
@@ -166,7 +164,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-
 		/// <summary>
 		/// Text a Gui node can display.
 		/// </summary>
@@ -185,15 +182,13 @@ namespace Altaxo.Collections
 			}
 		}
 
-
 		/// <summary>
 		/// Parent tree node.
 		/// </summary>
 		public NGTreeNode ParentNode { get { return _parent; } }
 
-
 		/// <summary>
-		/// Gets/sets whether the TreeViewItem 
+		/// Gets/sets whether the TreeViewItem
 		/// associated with this object is expanded.
 		/// </summary>
 		public virtual bool IsExpanded
@@ -221,7 +216,7 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Gets/sets whether the TreeViewItem 
+		/// Gets/sets whether the TreeViewItem
 		/// associated with this object is selected.
 		/// </summary>
 		public virtual bool IsSelected
@@ -244,7 +239,6 @@ namespace Altaxo.Collections
 				n.ClearSelectionRecursively();
 		}
 
-
 		/// <summary>
 		/// Returns true if this object's Children have not yet been populated.
 		/// </summary>
@@ -260,7 +254,6 @@ namespace Altaxo.Collections
 		protected virtual void LoadChildren()
 		{
 		}
-
 
 		/// <summary>
 		/// Returns an image index, or -1 if no image is set. The default implementation here returns -1, but this behaviour can be overriden in a derived class.
@@ -281,7 +274,6 @@ namespace Altaxo.Collections
 			get { return -1; }
 			set { }
 		}
-
 
 		/// <summary>
 		/// Tests for childs without creating a child collection.
@@ -307,7 +299,8 @@ namespace Altaxo.Collections
 				return _nodes;
 			}
 		}
-		IEnumerable<NGTreeNode> ITreeNode<NGTreeNode>.Nodes
+
+		IEnumerable<NGTreeNode> ITreeNode<NGTreeNode>.ChildNodes
 		{
 			get
 			{
@@ -317,7 +310,8 @@ namespace Altaxo.Collections
 				return _nodes;
 			}
 		}
-		IList<NGTreeNode> ITreeListNode<NGTreeNode>.Nodes
+
+		IList<NGTreeNode> ITreeListNode<NGTreeNode>.ChildNodes
 		{
 			get
 			{
@@ -481,7 +475,6 @@ namespace Altaxo.Collections
 				nodes[i++] = item.Value;
 		}
 
-
 		/// <summary>
 		/// Returns only those nodes of the provided list, which have no child nodes (immediate childs or higher level child nodes), that are not selected.
 		/// </summary>
@@ -525,11 +518,8 @@ namespace Altaxo.Collections
 			return null;
 		}
 
-
-
 		private class IntArrayComparer : IComparer<int[]>
 		{
-
 			#region IComparer<int[]> Members
 
 			public int Compare(int[] x, int[] y)
@@ -547,13 +537,12 @@ namespace Altaxo.Collections
 				return 0;
 			}
 
-			#endregion
+			#endregion IComparer<int[]> Members
 		}
 
-		#endregion
+		#endregion Filtering
 
 		#region Moving
-
 
 		/// <summary>
 		/// This procedure will move up or move down some nodes in the tree.
@@ -576,7 +565,6 @@ namespace Altaxo.Collections
 
 			System.Diagnostics.Debug.Assert(selNodes.Length > 0);
 
-
 			NGTreeNode parent = selNodes[0].ParentNode;
 			if (parent == null)
 				throw new ArgumentException("Parent of the nodes is null");
@@ -595,7 +583,7 @@ namespace Altaxo.Collections
 			}
 		}
 
-		static void MoveUp(NGTreeNode[] selNodes, NGTreeNode parent)
+		private static void MoveUp(NGTreeNode[] selNodes, NGTreeNode parent)
 		{
 			if (selNodes[0].Index == 0) // if the first item is selected, we can't move upwards
 				return;
@@ -607,8 +595,7 @@ namespace Altaxo.Collections
 			}
 		}
 
-
-		static void MoveDown(NGTreeNode[] selNodes, NGTreeNode parent)
+		private static void MoveDown(NGTreeNode[] selNodes, NGTreeNode parent)
 		{
 			if (selNodes[selNodes.Length - 1].Index == parent.Nodes.Count - 1)    // if last item is selected, we can't move downwards
 				return;
@@ -620,14 +607,13 @@ namespace Altaxo.Collections
 			}
 		}
 
-
-		#endregion
+		#endregion Moving
 
 		#region MyNGTreeNodeCollection
 
 		private class MyColl2 : System.Collections.ObjectModel.ObservableCollection<NGTreeNode>
 		{
-			NGTreeNode _parent;
+			private NGTreeNode _parent;
 
 			public MyColl2(NGTreeNode parent)
 			{
@@ -681,7 +667,7 @@ namespace Altaxo.Collections
 
 		private class MyColl3 : System.Collections.ObjectModel.ObservableCollection<NGTreeNode>, NGTreeNodeCollection
 		{
-			readonly NGTreeNode _parent;
+			private readonly NGTreeNode _parent;
 
 			public MyColl3(NGTreeNode parent)
 			{
@@ -706,8 +692,6 @@ namespace Altaxo.Collections
 				base[j] = node_i;
 			}
 
-
-
 			protected override void InsertItem(int index, NGTreeNode item)
 			{
 				item._parent = _parent;
@@ -725,15 +709,8 @@ namespace Altaxo.Collections
 				base[index]._parent = null;
 				base.RemoveItem(index);
 			}
-
 		}
 
-		#endregion
-
-
+		#endregion MyNGTreeNodeCollection
 	}
-
-
-
-
 }

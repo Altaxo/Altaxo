@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,90 +19,87 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
- 
+	/// <summary>
+	/// This class handles the mouse events in case the text tool is selected.
+	/// </summary>
+	public class TextToolMouseHandler : MouseStateHandler
+	{
+		private GraphControllerWpf _grac;
 
-  /// <summary>
-  /// This class handles the mouse events in case the text tool is selected.
-  /// </summary>
-  public class TextToolMouseHandler : MouseStateHandler
-  {
-    GraphControllerWpf _grac;
-
-    public TextToolMouseHandler(GraphControllerWpf grac)
-    {
-      _grac = grac;
-      if(_grac!=null)
-        _grac.SetPanelCursor(Cursors.IBeam);
-    }
+		public TextToolMouseHandler(GraphControllerWpf grac)
+		{
+			_grac = grac;
+			if (_grac != null)
+				_grac.SetPanelCursor(Cursors.IBeam);
+		}
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
 		{
 			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.TextDrawing; }
 		}
 
-
-    /// <summary>
-    /// Handles the click event by opening the text tool dialog.
-    /// </summary>
-    /// <param name="e">EventArgs.</param>
+		/// <summary>
+		/// Handles the click event by opening the text tool dialog.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
 		/// <param name="position">Mouse position.</param>
 		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-    public override void OnClick(PointD2D position, MouseButtonEventArgs e)
-    {
-      base.OnClick(position, e);
+		public override void OnClick(PointD2D position, MouseButtonEventArgs e)
+		{
+			base.OnClick(position, e);
 
-      // get the page coordinates (in Point (1/72") units)
+			// get the page coordinates (in Point (1/72") units)
 			var graphCoord = _grac.ConvertMouseToGraphCoordinates(_positionLastMouseDownInMouseCoordinates);
-      // with knowledge of the current active layer, calculate the layer coordinates from them
-      var layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
+			// with knowledge of the current active layer, calculate the layer coordinates from them
+			var layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
 
-      TextGraphic tgo = new TextGraphic();
-      tgo.Position = layerCoord;
-      tgo.ParentObject = _grac.ActiveLayer.GraphObjects;
+			TextGraphic tgo = new TextGraphic();
+			tgo.Position = layerCoord;
+			tgo.ParentObject = _grac.ActiveLayer;
 
-      // deselect the text tool
-			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+			// deselect the text tool
+			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 
-      object tgoo = tgo;
-      if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
-      {
-        tgo = (TextGraphic)tgoo;
-        if (tgo!=null && !tgo.Empty)
-        {
-          _grac.ActiveLayer.GraphObjects.Add(tgo);
-          _grac.InvalidateCachedGraphImageAndRepaintOffline();
-        }
-      }
+			object tgoo = tgo;
+			if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
+			{
+				tgo = (TextGraphic)tgoo;
+				if (tgo != null && !tgo.Empty)
+				{
+					_grac.ActiveLayer.GraphObjects.Add(tgo);
+					_grac.InvalidateCachedGraphImageAndRepaintOffline();
+				}
+			}
 
-      /*
-      TextControlDialog dlg = new TextControlDialog(_grac.Layers[_grac.CurrentLayerNumber],tgo);
-      if(DialogResult.OK==dlg.ShowDialog(_grac.View.Window))
-      {
-        // add the resulting textgraphobject to the layer
-        if(!dlg.SimpleTextGraphics.Empty)
-        {
-          _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(dlg.SimpleTextGraphics);
-          _grac.RefreshGraph();
-        }
-      }
-      */
-			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-    }
-  }
+			/*
+			TextControlDialog dlg = new TextControlDialog(_grac.Layers[_grac.CurrentLayerNumber],tgo);
+			if(DialogResult.OK==dlg.ShowDialog(_grac.View.Window))
+			{
+				// add the resulting textgraphobject to the layer
+				if(!dlg.SimpleTextGraphics.Empty)
+				{
+					_grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(dlg.SimpleTextGraphics);
+					_grac.RefreshGraph();
+				}
+			}
+			*/
+			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+		}
+	}
 }

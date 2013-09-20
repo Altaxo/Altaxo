@@ -227,6 +227,7 @@
     <Compile Include="Gui\Graph\LayerGridPositionSizeController.cs" />
     <Compile Include="Gui\Graph\LayerDirectPositionSizeController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
+    <Compile Include="Gui\Graph\TickSpacingController.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />

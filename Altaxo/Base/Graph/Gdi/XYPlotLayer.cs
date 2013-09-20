@@ -905,44 +905,55 @@ namespace Altaxo.Graph.Gdi
 			this.GridPlanes = new GridPlaneCollection();
 			this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
 			this.PlotItems = new PlotItemCollection(this);
-
-			AddDefaultPlaceHolders();
 		}
 
 		#endregion Constructors
 
-		protected void AddDefaultPlaceHolders()
+		private void EnsureAppropriateGridAndAxisStylePlaceHolders()
 		{
-			// wir habe PlaceHolder für
-			// 0. Background ???
-			// 1. GridPlanes
-			// 2. AxisStyles
-			// 3. PlotItems
-
-			// Note: we do not need to add PlotItem PlaceHolders, since those items  will be added at PreparePainting
-
-			int gridPlanesIndex = _placeHolders.IndexOfFirst(x => x is GridPlanesPlaceHolder);
-			int axisStylesIndex = _placeHolders.IndexOfFirst(x => x is AxisStylePlaceHolder);
-			int plotItemsIndex = _placeHolders.IndexOfFirst(x => x is PlotItemPlaceHolder);
-
-			if (gridPlanesIndex < 0)
+			var gridIndex = _graphObjects.IndexOfFirst(x => x is GridPlanesPlaceHolder);
+			if (gridIndex < 0)
 			{
-				gridPlanesIndex = 0;
-				_placeHolders.Insert(gridPlanesIndex, new GridPlanesPlaceHolder());
+				_graphObjects.Insert(0, new GridPlanesPlaceHolder());
+				gridIndex = 0;
+			}
+			else
+			{
+				// make sure that no more GridPlanesPlaceHolders are in the collection
+				_graphObjects.RemoveWhere((item, i) => (i > gridIndex) && (item is GridPlanesPlaceHolder));
 			}
 
-			// now insert the items in reverse order as they should apper in the collection
-			if (axisStylesIndex < 0)
-			{
-				axisStylesIndex = gridPlanesIndex + 1;
-				_placeHolders.Insert(gridPlanesIndex, new AxisStylePlaceHolder());
-			}
+			// we try to place AxisStyleLinePlaceHolders after the GridPlanesPlaceHolder
+			// find the first of any placeholders for axis line styles, store as insert position, if not found use insert position after grid place holder
+			// from i= to count look for placeholders for axis line styles i, if not found insert it at insert position, store next position as insert position
 
-			if (plotItemsIndex < 0)
+			var insertIdx = gridIndex + 1;
+			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleLinePlaceHolder>(insertIdx);
+			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleMajorLabelPlaceHolder>(insertIdx);
+			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleMinorLabelPlaceHolder>(insertIdx);
+			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleTitlePlaceHolder>(insertIdx);
+
+			// remove superfluous place holders
+			int maxCount = _axisStyles.Count;
+			_graphObjects.RemoveWhere(x => { var s = x as AxisStylePlaceHolderBase; return null != s && s.Index > maxCount; });
+		}
+
+		private int InsertMissingAxisStylePlaceHolders<T>(int insertIdx) where T : AxisStylePlaceHolderBase, new()
+		{
+			for (int i = 0; i < _axisStyles.Count; ++i)
 			{
-				plotItemsIndex = axisStylesIndex + 1;
-				_placeHolders.Insert(plotItemsIndex, new PlotItemPlaceHolder());
+				var idx = _graphObjects.IndexOfFirst(x => x is T && (x as T).Index == i);
+				if (idx >= 0)
+				{
+					insertIdx = idx + 1;
+				}
+				else
+				{
+					_graphObjects.Insert(insertIdx, new T { Index = i });
+					++insertIdx;
+				}
 			}
+			return insertIdx;
 		}
 
 		#region IPlotLayer methods
@@ -1006,7 +1017,10 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public AxisStyleCollection AxisStyles
 		{
-			get { return _axisStyles; }
+			get
+			{
+				return _axisStyles;
+			}
 			protected set
 			{
 				AxisStyleCollection oldvalue = _axisStyles;
@@ -1711,9 +1725,9 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public override void PreparePainting()
+		public override void PaintPreprocessing()
 		{
-			base.PreparePainting();
+			base.PaintPreprocessing();
 
 			UpdateScaleLinks();
 
@@ -1731,18 +1745,30 @@ namespace Altaxo.Graph.Gdi
 			_plotItems.PrepareGroupStyles(null, this);
 			_plotItems.ApplyGroupStyles(null);
 
+			_axisStyles.PaintPreprocessing(this);
+
+			EnsureAppropriateGridAndAxisStylePlaceHolders();
 			EnsureAppropriatePlotItemPlaceHolders();
+		}
+
+		protected override void PaintInternal(Graphics g)
+		{
+			// paint the background very first
+			_gridPlanes.PaintBackground(g, this);
+
+			// then paint the graph items
+			base.PaintInternal(g);
 		}
 
 		/// <summary>
 		/// This function is called when painting is finished. Can be used to release the resources
 		/// not neccessary any more.
 		/// </summary>
-		public override void FinishPainting()
+		public override void PaintPostprocessing()
 		{
-			_plotItems.FinishPainting();
+			_plotItems.PaintPostprocessing();
 
-			base.FinishPainting();
+			base.PaintPostprocessing();
 		}
 
 		public override IHitTestObject HitTest(HitTestPointData pageC, bool plotItemsOnly)
@@ -2428,6 +2454,103 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+		private abstract class AxisStylePlaceHolderBase : PlaceHolder
+		{
+			public int Index { get; set; }
+
+			public override bool CopyFrom(object obj)
+			{
+				if (!base.CopyFrom(obj))
+					return false;
+
+				var from = obj as AxisStylePlaceHolderBase;
+				if (null != from)
+					this.Index = from.Index;
+
+				return true;
+			}
+		}
+
+		private class AxisStyleLinePlaceHolder : AxisStylePlaceHolderBase
+		{
+			public override void Paint(Graphics g, object obj)
+			{
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer)
+				{
+					if (Index >= 0 && Index < layer._axisStyles.Count)
+						layer._axisStyles.ItemAt(Index).PaintLine(g, layer);
+				}
+			}
+
+			public override object Clone()
+			{
+				var r = new AxisStyleLinePlaceHolder();
+				r.CopyFrom(this);
+				return r;
+			}
+		}
+
+		private class AxisStyleMajorLabelPlaceHolder : AxisStylePlaceHolderBase
+		{
+			public override void Paint(Graphics g, object obj)
+			{
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer)
+				{
+					if (Index >= 0 && Index < layer._axisStyles.Count)
+						layer._axisStyles.ItemAt(Index).PaintMajorLabels(g, layer);
+				}
+			}
+
+			public override object Clone()
+			{
+				var r = new AxisStyleMajorLabelPlaceHolder();
+				r.CopyFrom(this);
+				return r;
+			}
+		}
+
+		private class AxisStyleMinorLabelPlaceHolder : AxisStylePlaceHolderBase
+		{
+			public override void Paint(Graphics g, object obj)
+			{
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer)
+				{
+					if (Index >= 0 && Index < layer._axisStyles.Count)
+						layer._axisStyles.ItemAt(Index).PaintMinorLabels(g, layer);
+				}
+			}
+
+			public override object Clone()
+			{
+				var r = new AxisStyleMinorLabelPlaceHolder();
+				r.CopyFrom(this);
+				return r;
+			}
+		}
+
+		private class AxisStyleTitlePlaceHolder : AxisStylePlaceHolderBase
+		{
+			public override void Paint(Graphics g, object obj)
+			{
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer)
+				{
+					if (Index >= 0 && Index < layer._axisStyles.Count)
+						layer._axisStyles.ItemAt(Index).PaintTitle(g, layer);
+				}
+			}
+
+			public override object Clone()
+			{
+				var r = new AxisStyleTitlePlaceHolder();
+				r.CopyFrom(this);
+				return r;
+			}
+		}
+
 		private class AxisStylePlaceHolder : PlaceHolder
 		{
 			public override void Paint(Graphics g, object obj)
@@ -2447,25 +2570,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		private class BackgroundPlaceHolder : PlaceHolder
-		{
-			public override void Paint(Graphics g, object obj)
-			{
-				var layer = ParentObject as XYPlotLayer;
-				if (null != layer)
-				{
-					layer._gridPlanes.Paint(g, layer);
-				}
-			}
-
-			public override object Clone()
-			{
-				var r = new BackgroundPlaceHolder();
-				r.CopyFrom(this);
-				return r;
-			}
-		}
-
 		private class GridPlanesPlaceHolder : PlaceHolder
 		{
 			public override void Paint(Graphics g, object obj)
@@ -2473,7 +2577,7 @@ namespace Altaxo.Graph.Gdi
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer)
 				{
-					layer._gridPlanes.Paint(g, layer);
+					layer._gridPlanes.PaintGrid(g, layer);
 				}
 			}
 

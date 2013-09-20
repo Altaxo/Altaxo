@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
+
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
@@ -34,21 +36,23 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 	public interface IAngularTickSpacingView
 	{
 		bool UsePositiveNegativeValues { get; set; }
+
 		SelectableListNodeList MajorTicks { set; }
+
 		SelectableListNodeList MinorTicks { set; }
+
 		event EventHandler MajorTicksChanged;
 	}
 
-	#endregion
+	#endregion Interfaces
 
-	[UserControllerForObject(typeof(AngularTickSpacing))]
+	[UserControllerForObject(typeof(AngularTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(IAngularTickSpacingView))]
 	public class AngularScaleController : MVCANControllerBase<AngularTickSpacing, IAngularTickSpacingView>
 	{
-		SelectableListNodeList _majorTickList;
-		SelectableListNodeList _minorTickList;
-		int _tempMajorDivider;
-
+		private SelectableListNodeList _majorTickList;
+		private SelectableListNodeList _minorTickList;
+		private int _tempMajorDivider;
 
 		protected override void Initialize(bool initDoc)
 		{
@@ -67,9 +71,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			}
 		}
 
-		
-
-		void BuildMajorTickList()
+		private void BuildMajorTickList()
 		{
 			int[] possibleDividers = _doc.GetPossibleDividers();
 			int selected = _tempMajorDivider;
@@ -80,7 +82,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			}
 		}
 
-		void BuildMinorTickList()
+		private void BuildMinorTickList()
 		{
 			int[] possibleDividers = _doc.GetPossibleDividers();
 			int selected = _doc.MinorTickDivider;
@@ -94,14 +96,12 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			}
 		}
 
-		void EhMajorTicksChanged(object sender, EventArgs e)
+		private void EhMajorTicksChanged(object sender, EventArgs e)
 		{
 			_tempMajorDivider = (int)_majorTickList.FirstSelectedNode.Tag;
 			BuildMinorTickList();
 			_view.MinorTicks = _minorTickList;
 		}
-
-
 
 		protected override void AttachView()
 		{
@@ -113,10 +113,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_view.MajorTicksChanged -= EhMajorTicksChanged;
 		}
 
-		
-
-	
-
 		public override bool Apply()
 		{
 			_doc.UseSignedValues = _view.UsePositiveNegativeValues;
@@ -127,7 +123,5 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 			return true;
 		}
-
-	
 	}
 }

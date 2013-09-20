@@ -646,11 +646,11 @@ namespace Altaxo.Graph.Gdi
 			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
 			try
 			{
-				RootLayer.PreparePainting();
+				RootLayer.PaintPreprocessing();
 
 				RootLayer.Paint(g, bForPrinting);
 
-				RootLayer.FinishPainting();
+				RootLayer.PaintPostprocessing();
 			}
 			finally
 			{

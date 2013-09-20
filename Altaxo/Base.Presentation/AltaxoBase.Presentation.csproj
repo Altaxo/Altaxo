@@ -420,6 +420,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\TickSpacingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1017,6 +1021,9 @@
     </Compile>
     <Compile Include="Gui\Graph\HostLayerControl.xaml.cs">
       <DependentUpon>HostLayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\TickSpacingControl.xaml.cs">
+      <DependentUpon>TickSpacingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml.cs">
       <DependentUpon>XYZMeshedColumnPlotDataControl.xaml</DependentUpon>

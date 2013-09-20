@@ -177,7 +177,7 @@ namespace Altaxo.Graph.Scales
 			if (null != _tickSpacing)
 			{
 				_tickSpacing.Changed += EhTickSpacingChanged;
-				_parentObject = this;
+				_tickSpacing.ParentObject = this;
 			}
 		}
 
@@ -310,8 +310,14 @@ namespace Altaxo.Graph.Scales
 
 		public object ParentObject
 		{
-			get { return _parentObject; }
-			set { _parentObject = value; }
+			get
+			{
+				return _parentObject;
+			}
+			set
+			{
+				_parentObject = value;
+			}
 		}
 
 		string Main.IDocumentNode.Name

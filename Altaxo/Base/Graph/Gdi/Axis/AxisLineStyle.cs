@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
-
 
 namespace Altaxo.Graph.Gdi.Axis
 {
-
 	/// <summary>
 	/// XYAxisStyle is responsible for painting the axes on rectangular two dimensional layers.
 	/// </summary>
@@ -44,25 +44,33 @@ namespace Altaxo.Graph.Gdi.Axis
 		IRoutedPropertyReceiver,
 		ICloneable
 	{
-
 		/// <summary>Pen used for painting of the axis.</summary>
 		protected PenX _axisPen = new PenX(NamedColors.Black, 1);
+
 		/// <summary>Pen used for painting of the major ticks.</summary>
 		protected PenX _majorTickPen = new PenX(NamedColors.Black, 1);
+
 		/// <summary>Pen used for painting of the minor ticks.</summary>
 		protected PenX _minorTickPen = new PenX(NamedColors.Black, 1);
+
 		/// <summary>Length of the major ticks in points (1/72 inch).</summary>
 		protected float _majorTickLength = 8;
+
 		/// <summary>Length of the minor ticks in points (1/72 inch).</summary>
 		protected float _minorTickLength = 4;
+
 		/// <summary>True if major ticks should be painted outside of the layer.</summary>
 		protected bool _showFirstUpMajorTicks = true; // true if right major ticks should be visible
+
 		/// <summary>True if major ticks should be painted inside of the layer.</summary>
 		protected bool _showFirstDownMajorTicks = true; // true if left major ticks should be visible
+
 		/// <summary>True if minor ticks should be painted outside of the layer.</summary>
 		protected bool _showFirstUpMinorTicks = true; // true if right minor ticks should be visible
+
 		/// <summary>True if major ticks should be painted inside of the layer.</summary>
 		protected bool _showFirstDownMinorTicks = true; // true if left minor ticks should be visible
+
 		/// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
 		protected Calc.RelativeOrAbsoluteValue _axisPosition; // if relative, then relative to layer size, if absolute then in points
 
@@ -70,14 +78,13 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		/// <summary>Fired if anything on this style changed</summary>
 		[field: NonSerialized]
-		event System.EventHandler _changed;
+		private event System.EventHandler _changed;
 
 		[NonSerialized]
-		object _parent;
-
-
+		private object _parent;
 
 		#region Serialization
+
 		/// <summary>Used to serialize the axis style Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -101,6 +108,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddValue("MinorLeft", s._showFirstDownMinorTicks);
 				info.AddValue("AxisPosition", s._axisPosition);
 			}
+
 			/// <summary>
 			/// Deserializes the axis style (version 0).
 			/// </summary>
@@ -130,7 +138,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisStyle", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -138,8 +146,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				/*
 				XYAxisStyle s = (XYAxisStyle)obj;
 				info.AddValue("Edge",s.m_Edge);
-				info.AddValue("AxisPen",s.m_AxisPen);  
-				info.AddValue("MajorPen",s.m_MajorTickPen);  
+				info.AddValue("AxisPen",s.m_AxisPen);
+				info.AddValue("MajorPen",s.m_MajorTickPen);
 				info.AddValue("MinorPen",s.m_MinorTickPen);
 				info.AddValue("MajorLength",s.m_MajorTickLength);
 				info.AddValue("MinorLength",s.m_MinorTickLength);
@@ -150,9 +158,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddValue("AxisPosition",s.m_AxisPosition);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle();
 
 				Edge edge = (Edge)info.GetValue("Edge", s);
@@ -189,10 +197,9 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
 		// 2006-09-08 Renaming XYAxisStyle in G2DAxisLineStyle
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLineStyle), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -207,11 +214,10 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddValue("Major1Dw", s._showFirstDownMajorTicks);
 				info.AddValue("Minor1Up", s._showFirstUpMinorTicks);
 				info.AddValue("Minor1Dw", s._showFirstDownMinorTicks);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle();
 
 				s._axisPen = (PenX)info.GetValue("AxisPen", s);
@@ -232,7 +238,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>
@@ -241,8 +246,8 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			WireEventChain(true);
 		}
-		#endregion
 
+		#endregion Serialization
 
 		/// <summary>
 		/// Wires the neccessary child events with event handlers in this class.
@@ -269,11 +274,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public AxisLineStyle()
 		{
-
 			WireEventChain(true);
-
 		}
-
 
 		/// <summary>
 		/// Copy constructor.
@@ -283,6 +285,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			CopyFrom(from);
 		}
+
 		/// <summary>
 		/// Copy operation.
 		/// </summary>
@@ -313,8 +316,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			WireEventChain(true);
 		}
 
-
-
 		/// <summary>
 		/// Creates a clone of this object.
 		/// </summary>
@@ -343,9 +344,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				_cachedAxisStyleInfo = value;
 			}
 		}
+
 		public virtual IHitTestObject HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
 		{
-
 			GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
 			return selectionPath.IsVisible((PointF)pt) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
 		}
@@ -379,8 +380,8 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>
 		/// GetOffset returns the distance of the axis to the layer edge in points
 		/// in most cases, the axis position is exactly onto the layer edge and offset is zero,
-		/// if the axis is outside the layer, offset is a positive value, 
-		/// if the axis is shifted inside the layer, offset is negative 
+		/// if the axis is outside the layer, offset is a positive value,
+		/// if the axis is shifted inside the layer, offset is negative
 		/// </summary>
 		public float GetOffset(SizeF layerSize)
 		{
@@ -589,7 +590,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
 		/// <summary>
 		/// Gives the path which encloses the axis line only.
 		/// </summary>
@@ -621,7 +621,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <returns>The graphics path of the selection rectangle.</returns>
 		protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, float inflateby)
 		{
-
 			Logical3D r0 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisOrg);
 			Logical3D r1 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisEnd);
 			GraphicsPath gp = new GraphicsPath();
@@ -642,20 +641,20 @@ namespace Altaxo.Graph.Gdi.Axis
 			return gp;
 		}
 
-
 		/// <summary>
 		/// Paint the axis in the Graphics context.
 		/// </summary>
 		/// <param name="g">The graphics context painting to.</param>
 		/// <param name="layer">The layer the axis belongs to.</param>
 		/// <param name="styleInfo">The axis information of the axis to paint.</param>
-		public void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo)
+		/// <param name="customTickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
+		public void Paint(Graphics g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
 		{
 			CSLineID styleID = styleInfo.Identifier;
 			_cachedAxisStyleInfo = styleInfo.Clone();
 			Scale axis = layer.Scales[styleID.ParallelAxisNumber].Scale;
-			TickSpacing ticking = layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
+			TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
 			Logical3D r0 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisOrg);
 			Logical3D r1 = styleID.GetLogicalPoint(styleInfo.LogicalValueAxisEnd);
@@ -663,8 +662,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			layer.CoordinateSystem.DrawIsoline(g, _axisPen, r0, r1);
 
 			Logical3D outer;
-
-
 
 			// now the major ticks
 			PointD2D outVector;
@@ -719,8 +716,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
-
 		protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
 		{
 			OnChanged();
@@ -754,7 +749,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return this.GetType().Name; }
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region IRoutedPropertyReceiver Members
 
@@ -773,6 +768,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					break;
 			}
 		}
+
 		public void GetRoutedProperty(IRoutedGetterProperty property)
 		{
 			switch (property.Name)
@@ -787,6 +783,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					break;
 			}
 		}
-		#endregion
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

@@ -288,5 +288,37 @@ namespace Altaxo.Collections
 			}
 			return -1;
 		}
+
+		/// <summary>
+		/// Removes all items for which the predicate function returns <c>true.</c>
+		/// </summary>
+		/// <typeparam name="T">Type of list items</typeparam>
+		/// <param name="list">The list.</param>
+		/// <param name="predicate">The predicate function. The first argument is the item. If the function returns <c>true</c>, the item is removed from the list.</param>
+		/// <remarks>The list is iterated backwards, starting from the last item in the list, and ending with the first item in the list.</remarks>
+		public static void RemoveWhere<T>(this IList<T> list, Func<T, bool> predicate)
+		{
+			for (int i = list.Count - 1; i >= 0; --i)
+			{
+				if (predicate(list[i]))
+					list.RemoveAt(i);
+			}
+		}
+
+		/// <summary>
+		/// Removes all items for which the predicate function returns <c>true.</c>
+		/// </summary>
+		/// <typeparam name="T">Type of list items</typeparam>
+		/// <param name="list">The list.</param>
+		/// <param name="predicate">The predicate function. The first argument is the item, the second argument is the item's index. If the function returns <c>true</c>, the item is removed from the list.</param>
+		/// <remarks>The list is iterated backwards, starting from the last item in the list, and ending with the first item in the list.</remarks>
+		public static void RemoveWhere<T>(this IList<T> list, Func<T, int, bool> predicate)
+		{
+			for (int i = list.Count - 1; i >= 0; --i)
+			{
+				if (predicate(list[i], i))
+					list.RemoveAt(i);
+			}
+		}
 	}
 }

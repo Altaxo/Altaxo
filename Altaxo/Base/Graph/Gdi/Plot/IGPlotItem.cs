@@ -118,7 +118,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources.
 		/// </summary>
-		void FinishPainting();
+		void PaintPostprocessing();
 
 		/// <summary>
 		/// Paints a symbol for this plot item for use in a legend.

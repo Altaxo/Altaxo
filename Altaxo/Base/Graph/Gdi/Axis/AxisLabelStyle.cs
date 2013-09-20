@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Gdi.Background;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Data;
-using Altaxo.Graph.Gdi.Background;
-
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -38,7 +39,7 @@ namespace Altaxo.Graph.Gdi.Axis
 	/// <summary>
 	/// Responsible for setting position, rotation, font, color etc. of axis labels.
 	/// </summary>
-	public class AxisLabelStyle : 
+	public class AxisLabelStyle :
 		Main.IChangedEventSource,
 		Main.IChildChangedEventSink,
 		IRoutedPropertyReceiver,
@@ -49,7 +50,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		public event System.EventHandler Changed;
 
 		[NonSerialized]
-		object _parent;
+		private object _parent;
 
 		protected FontX _font;
 
@@ -75,21 +76,21 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		protected SuppressedTicks _suppressedLabels;
 
-		ILabelFormatting _labelFormatting;
+		private ILabelFormatting _labelFormatting;
 
 		/// <summary>
 		/// If set, this overrides the preferred label side that comes along with the axis style.
 		/// </summary>
-		CSAxisSide? _labelSide;
+		private CSAxisSide? _labelSide;
 
-		string _prefixText;
+		private string _prefixText;
 
-		string _postfixText;
+		private string _postfixText;
 
-		CSAxisInformation _cachedAxisStyleInfo;
-
+		private CSAxisInformation _cachedAxisStyleInfo;
 
 		#region Serialization
+
 		/// <summary>Used to serialize the XYAxisLabelStyle Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -104,6 +105,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				AxisLabelStyle s = (AxisLabelStyle)obj;
 				info.AddValue("Font", s._font);
 			}
+
 			/// <summary>
 			/// Deserializes the XYAxisLabelStyle Version 0.
 			/// </summary>
@@ -122,20 +124,20 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
 				/*
 				XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
-				info.AddValue("Edge",s._edge);  
-				info.AddValue("Font",s._font);  
+				info.AddValue("Edge",s._edge);
+				info.AddValue("Font",s._font);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				Edge edge = (Edge)info.GetValue("Edge", s);
@@ -145,17 +147,16 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
 				/*
 				XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
-				info.AddValue("Edge",s._edge);  
-				info.AddValue("Font",s._font);  
+				info.AddValue("Edge",s._edge);
+				info.AddValue("Font",s._font);
 				info.AddValue("Brush",s._brush);
 				info.AddValue("Background",s._backgroundStyle);
 
@@ -169,11 +170,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				info.AddValue("LabelFormat",s._labelFormatting);
 				*/
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				Edge edge = (Edge)info.GetValue("Edge", s);
@@ -189,28 +189,21 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
 
-
-
-
-				// Modification of StringFormat is necessary to avoid 
+				// Modification of StringFormat is necessary to avoid
 				// too big spaces between successive words
 				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-
 
 				return s;
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 2)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 3)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-
 				AxisLabelStyle s = (AxisLabelStyle)obj;
 				info.AddValue("Font", s._font);
 				info.AddValue("Brush", s._brush);
@@ -226,9 +219,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				info.AddValue("LabelFormat", s._labelFormatting);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				s._font = (FontX)info.GetValue("Font", s);
@@ -243,22 +236,17 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
 
-
-
-
-				// Modification of StringFormat is necessary to avoid 
+				// Modification of StringFormat is necessary to avoid
 				// too big spaces between successive words
 				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-
 
 				return s;
 			}
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 4)]
-		class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -285,9 +273,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddValue("LabelFormat", s._labelFormatting);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				s._font = (FontX)info.GetValue("Font", s);
@@ -306,22 +294,17 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
 
-
-
-
-				// Modification of StringFormat is necessary to avoid 
+				// Modification of StringFormat is necessary to avoid
 				// too big spaces between successive words
 				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-
 
 				return s;
 			}
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 5)]
-		class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			// 2012-03-30 new member _labelSide, _prefixText and _postfixText
 
@@ -354,9 +337,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddValue("PostfixText", s._postfixText);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				s._font = (FontX)info.GetValue("Font", s);
@@ -378,29 +361,23 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 				s._labelFormatting.PrefixText = info.GetString("PrefixText");
 				s._labelFormatting.SuffixText = info.GetString("PostfixText");
-				
 
-
-				// Modification of StringFormat is necessary to avoid 
+				// Modification of StringFormat is necessary to avoid
 				// too big spaces between successive words
 				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-
 
 				return s;
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 6)]
-		class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			// 2012-05-28 _prefixText and _postfixText deprecated and moved to LabelFormattingBase
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-
 				AxisLabelStyle s = (AxisLabelStyle)obj;
 				info.AddValue("Font", s._font);
 				info.AddValue("Brush", s._brush);
@@ -423,9 +400,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				info.AddNullableEnum("LabelSide", s._labelSide);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
 				s._font = (FontX)info.GetValue("Font", s);
@@ -446,13 +423,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 
-
-				// Modification of StringFormat is necessary to avoid 
+				// Modification of StringFormat is necessary to avoid
 				// too big spaces between successive words
 				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-
 
 				return s;
 			}
@@ -465,9 +439,8 @@ namespace Altaxo.Graph.Gdi.Axis
 		public virtual void OnDeserialization(object obj)
 		{
 		}
-		#endregion
 
-
+		#endregion Serialization
 
 		public AxisLabelStyle()
 		{
@@ -520,7 +493,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		private void SetStringFormat()
 		{
-			// Modification of StringFormat is necessary to avoid 
+			// Modification of StringFormat is necessary to avoid
 			// too big spaces between successive words
 			_stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 			_stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
@@ -533,14 +506,17 @@ namespace Altaxo.Graph.Gdi.Axis
 					_verticalAlignment = StringAlignment.Near;
 					_horizontalAlignment = StringAlignment.Center;
 					break;
+
 				case EdgeType.Top:
 					_verticalAlignment = StringAlignment.Far;
 					_horizontalAlignment = StringAlignment.Center;
 					break;
+
 				case EdgeType.Left:
 					_verticalAlignment = StringAlignment.Center;
 					_horizontalAlignment = StringAlignment.Far;
 					break;
+
 				case EdgeType.Right:
 					_verticalAlignment = StringAlignment.Center;
 					_horizontalAlignment = StringAlignment.Near;
@@ -563,11 +539,10 @@ namespace Altaxo.Graph.Gdi.Axis
 				var oldValue = _font;
 				_font = value;
 
-				if(value.Equals(oldValue))
+				if (value.Equals(oldValue))
 					OnChanged();
 			}
 		}
-
 
 		/// <summary>The font size of the label.</summary>
 		public virtual double FontSize
@@ -581,12 +556,13 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (newValue != oldValue)
 				{
 					FontX oldFont = _font;
-          _font = oldFont.GetFontWithNewSize(newValue);
+					_font = oldFont.GetFontWithNewSize(newValue);
 
 					OnChanged(); // Fire Changed event
 				}
 			}
 		}
+
 		/// <summary>The brush color. If you set this, the font brush will be set to a solid brush.</summary>
 		public NamedColor Color
 		{
@@ -611,7 +587,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-
 				this._brush = (BrushX)value.Clone();
 				OnChanged(); // Fire Changed event
 			}
@@ -756,8 +731,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
-
 		public bool AutomaticAlignment
 		{
 			get
@@ -808,9 +781,8 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
-	
 		public CSLineID AxisStyleID
 		{
 			get
@@ -818,7 +790,6 @@ namespace Altaxo.Graph.Gdi.Axis
 				return _cachedAxisStyleInfo.Identifier;
 			}
 		}
-
 
 		public CSAxisInformation CachedAxisInformation
 		{
@@ -841,17 +812,17 @@ namespace Altaxo.Graph.Gdi.Axis
 				return null;
 		}
 
-		
-
 		public void AdjustRectangle(ref RectangleD r, StringAlignment horz, StringAlignment vert)
 		{
 			switch (vert)
 			{
 				case StringAlignment.Near:
 					break;
+
 				case StringAlignment.Center:
 					r.Y -= 0.5 * r.Height;
 					break;
+
 				case StringAlignment.Far:
 					r.Y -= r.Height;
 					break;
@@ -860,14 +831,17 @@ namespace Altaxo.Graph.Gdi.Axis
 			{
 				case StringAlignment.Near:
 					break;
+
 				case StringAlignment.Center:
 					r.X -= 0.5 * r.Width;
 					break;
+
 				case StringAlignment.Far:
 					r.X -= r.Width;
 					break;
 			}
 		}
+
 		/// <summary>
 		/// Gives the path where the hit test is successfull.
 		/// </summary>
@@ -892,22 +866,17 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// </summary>
 		/// <param name="g">Graphics environment.</param>
 		/// <param name="coordSyst">The coordinate system. Used to get the path along the axis.</param>
-		/// <param name="scaleWithTicks">Scale and appropriate ticks.</param>
+		/// <param name="scale">Scale.</param>
+		/// <param name="tickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
 		/// <param name="styleInfo">Information about begin of axis, end of axis.</param>
 		/// <param name="outerDistance">Distance between axis and labels.</param>
 		/// <param name="useMinorTicks">If true, minor ticks are shown.</param>
-		public virtual void Paint(
-			Graphics g,
-			G2DCoordinateSystem coordSyst,
-			ScaleWithTicks scaleWithTicks,
-			CSAxisInformation styleInfo,
-			double outerDistance,
-			bool useMinorTicks)
+		public virtual void Paint(Graphics g, G2DCoordinateSystem coordSyst, Scale scale, TickSpacing tickSpacing, CSAxisInformation styleInfo, double outerDistance, bool useMinorTicks)
 		{
 			_cachedAxisStyleInfo = styleInfo;
 			CSLineID styleID = styleInfo.Identifier;
-			Scale raxis = scaleWithTicks.Scale;
-			TickSpacing ticking = scaleWithTicks.TickSpacing;
+			Scale raxis = scale;
+			TickSpacing ticking = tickSpacing;
 
 			_enclosingPath.Reset();
 			_enclosingPath.FillMode = FillMode.Winding; // with Winding also overlapping rectangles are selected
@@ -978,7 +947,6 @@ namespace Altaxo.Graph.Gdi.Axis
 				tickend.X += outVector.X * outerDistance;
 				tickend.Y += outVector.Y * outerDistance;
 
-
 				PointD2D msize = labels[i].Size;
 				PointD2D morg = tickend;
 
@@ -994,7 +962,6 @@ namespace Altaxo.Graph.Gdi.Axis
 					morg.X += (outVector.X * _font.Size / 3);
 				}
 
-
 				RectangleD mrect = new RectangleD(morg, msize);
 				if (_automaticRotationShift)
 					AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
@@ -1008,7 +975,6 @@ namespace Altaxo.Graph.Gdi.Axis
 					math.Rotate((float)-this._rotation);
 				}
 				math.Translate((float)(mrect.X - morg.X + emSize * _xOffset), (float)(mrect.Y - morg.Y + emSize * _yOffset));
-
 
 				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 				g.MultiplyTransform(math);
@@ -1028,10 +994,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
-
 		#region IChangedEventSource Members
-
 
 		protected virtual void OnChanged()
 		{
@@ -1042,20 +1005,16 @@ namespace Altaxo.Graph.Gdi.Axis
 				Changed(this, EventArgs.Empty);
 		}
 
-
-		#endregion
+		#endregion IChangedEventSource Members
 
 		#region IChildChangedEventSink Members
-
 
 		public void EhChildChanged(object child, EventArgs e)
 		{
 			OnChanged();
 		}
 
-		#endregion
-
-
+		#endregion IChildChangedEventSink Members
 
 		#region IDocumentNode Members
 
@@ -1070,7 +1029,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return this.GetType().Name; }
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region IRoutedPropertyReceiver Members
 
@@ -1085,6 +1044,7 @@ namespace Altaxo.Graph.Gdi.Axis
 						OnChanged();
 					}
 					break;
+
 				case "FontFamily":
 					{
 						var prop = (RoutedSetterProperty<string>)property;
@@ -1102,9 +1062,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		
-
-
 		public virtual void GetRoutedProperty(IRoutedGetterProperty property)
 		{
 			switch (property.Name)
@@ -1115,7 +1072,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		#endregion
+		#endregion IRoutedPropertyReceiver Members
 	}
 }
-

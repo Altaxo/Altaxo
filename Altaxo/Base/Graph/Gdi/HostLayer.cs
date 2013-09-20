@@ -950,20 +950,20 @@ namespace Altaxo.Graph.Gdi
 		///
 		/// </summary>
 
-		public virtual void PreparePainting()
+		public virtual void PaintPreprocessing()
 		{
 			foreach (var obj in _childLayers)
-				obj.PreparePainting();
+				obj.PaintPreprocessing();
 		}
 
 		/// <summary>
 		/// This function is called when painting is finished. Can be used to release the resources
 		/// not neccessary any more.
 		/// </summary>
-		public virtual void FinishPainting()
+		public virtual void PaintPostprocessing()
 		{
 			foreach (var obj in _childLayers)
-				obj.FinishPainting();
+				obj.PaintPostprocessing();
 		}
 
 		public virtual void Paint(Graphics g, object o)
@@ -977,13 +977,22 @@ namespace Altaxo.Graph.Gdi
 
 			g.MultiplyTransform(_transformation);
 
+			PaintInternal(g);
+
+			g.Restore(savedgstate);
+		}
+
+		/// <summary>
+		/// Internal Paint routine. The graphics state saving and transform is already done here!
+		/// </summary>
+		/// <param name="g">The graphics context</param>
+		protected virtual void PaintInternal(Graphics g)
+		{
 			int len = _graphObjects.Count;
 			for (int i = 0; i < len; i++)
 			{
 				_graphObjects[i].Paint(g, this);
 			}
-
-			g.Restore(savedgstate);
 		}
 
 		protected IHitTestObject ForwardTransform(IHitTestObject o)
@@ -1213,12 +1222,12 @@ namespace Altaxo.Graph.Gdi
 
 		#region ITreeListNodeWithParent implementation
 
-		IList<HostLayer> ITreeListNode<HostLayer>.Nodes
+		IList<HostLayer> ITreeListNode<HostLayer>.ChildNodes
 		{
 			get { return _childLayers; }
 		}
 
-		IEnumerable<HostLayer> ITreeNode<HostLayer>.Nodes
+		IEnumerable<HostLayer> ITreeNode<HostLayer>.ChildNodes
 		{
 			get { return _childLayers; }
 		}

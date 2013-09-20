@@ -41,7 +41,7 @@ namespace Altaxo.Collections
 		/// <value>
 		/// The child nodes.
 		/// </value>
-		IEnumerable<T> Nodes { get; }
+		IEnumerable<T> ChildNodes { get; }
 	}
 
 	/// <summary>
@@ -56,7 +56,7 @@ namespace Altaxo.Collections
 		/// <value>
 		/// The child nodes.
 		/// </value>
-		new IList<T> Nodes { get; }
+		new IList<T> ChildNodes { get; }
 	}
 
 	/// <summary>
@@ -98,7 +98,7 @@ namespace Altaxo.Collections
 		public static void FromHereToLeavesDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
 		{
 			action(node);
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes)
@@ -110,7 +110,7 @@ namespace Altaxo.Collections
 
 		public static void FromLeavesToHereDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
 		{
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes)
@@ -126,7 +126,7 @@ namespace Altaxo.Collections
 			if (condition(node))
 				return node;
 
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes)
@@ -141,7 +141,7 @@ namespace Altaxo.Collections
 
 		public static T AnyBetweenLeavesAndHere<T>(this T node, Func<T, bool> condition) where T : ITreeNode<T>
 		{
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes)
@@ -174,7 +174,7 @@ namespace Altaxo.Collections
 			if (includeThisNode)
 				yield return node;
 
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				var direction = directionSelector(node);
@@ -220,7 +220,7 @@ namespace Altaxo.Collections
 			if (includeThisNode)
 				yield return new Tuple<T, int>(node, nodeIndex);
 
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				var direction = directionSelector(node);
@@ -275,7 +275,7 @@ namespace Altaxo.Collections
 			if (includeThisNode)
 				yield return node;
 
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes)
@@ -310,7 +310,7 @@ namespace Altaxo.Collections
 			if (includeThisNode)
 				yield return node;
 
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes.Reverse())
@@ -342,7 +342,7 @@ namespace Altaxo.Collections
 		/// <returns>All tree nodes from the upmost leaf of the tree down to the provided node <paramref name="node"/>.</returns>
 		public static IEnumerable<T> TakeFromFirstLeavesToHere<T>(this T node, bool includeThisNode) where T : ITreeNode<T>
 		{
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes)
@@ -378,7 +378,7 @@ namespace Altaxo.Collections
 		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>./returns>
 		public static IEnumerable<T> TakeFromLastLeavesToHere<T>(this T node, bool includeThisNode) where T : ITreeNode<T>
 		{
-			var childNodes = node.Nodes;
+			var childNodes = node.ChildNodes;
 			if (null != childNodes)
 			{
 				foreach (var childNode in childNodes.Reverse())
@@ -407,7 +407,7 @@ namespace Altaxo.Collections
 		{
 			var destRoot = createDestinationNodeFromSourceNode(sourceRoot);
 
-			var sourceChildNodes = sourceRoot.Nodes;
+			var sourceChildNodes = sourceRoot.ChildNodes;
 			if (null != sourceChildNodes)
 			{
 				foreach (var sourceChild in sourceChildNodes)
@@ -437,7 +437,7 @@ namespace Altaxo.Collections
 				indices = new List<int>();
 			var destRoot = createDestinationNodeFromSourceNode(sourceRoot, indices);
 
-			var sourceChildNodes = sourceRoot.Nodes;
+			var sourceChildNodes = sourceRoot.ChildNodes;
 			if (null != sourceChildNodes)
 			{
 				indices.Add(0);
@@ -468,7 +468,7 @@ namespace Altaxo.Collections
 				throw new ArgumentNullException("index");
 
 			if (index.Count > 0)
-				return EnsureValidityOfNodeIndex(rootNode.Nodes, index, 0);
+				return EnsureValidityOfNodeIndex(rootNode.ChildNodes, index, 0);
 
 			return false;
 		}
@@ -507,7 +507,7 @@ namespace Altaxo.Collections
 
 			if (index.Count > (level + 1))
 			{
-				return EnsureValidityOfNodeIndex(nodes[index[level]].Nodes, index, level + 1);
+				return EnsureValidityOfNodeIndex(nodes[index[level]].ChildNodes, index, level + 1);
 			}
 
 			return false;
@@ -536,7 +536,7 @@ namespace Altaxo.Collections
 			using (var it = index.GetEnumerator())
 			{
 				if (it.MoveNext())
-					result = ElementAtInternal(rootNode.Nodes, it, 1);
+					result = ElementAtInternal(rootNode.ChildNodes, it, 1);
 				else
 					result = rootNode; // List is empty => return the root node.
 			}
@@ -557,7 +557,7 @@ namespace Altaxo.Collections
 				throw new ArgumentOutOfRangeException(string.Format("index at level {0} is greater than number of child nodes", level));
 
 			if (it.MoveNext())
-				return ElementAtInternal(nodes[idx].Nodes, it, level + 1);
+				return ElementAtInternal(nodes[idx].ChildNodes, it, level + 1);
 			else
 				return nodes[idx];
 		}
@@ -598,7 +598,7 @@ namespace Altaxo.Collections
 			using (var it = index.GetEnumerator())
 			{
 				if (it.MoveNext())
-					result = IsValidIndex(rootNode.Nodes, it, 1, out nodeAtIndex);
+					result = IsValidIndex(rootNode.ChildNodes, it, 1, out nodeAtIndex);
 				else
 				{
 					nodeAtIndex = rootNode;
@@ -623,7 +623,7 @@ namespace Altaxo.Collections
 
 			if (it.MoveNext())
 			{
-				return IsValidIndex(nodes[idx].Nodes, it, level + 1, out nodeAtIndex);
+				return IsValidIndex(nodes[idx].ChildNodes, it, level + 1, out nodeAtIndex);
 			}
 			else
 			{
@@ -649,7 +649,7 @@ namespace Altaxo.Collections
 				throw new ArgumentNullException("nodeToInsert");
 
 			var parent = ElementAt(rootNode, index.TakeAllButLast());
-			parent.Nodes.Insert(index.Last(), nodeToInsert);
+			parent.ChildNodes.Insert(index.Last(), nodeToInsert);
 		}
 
 		/// <summary>
@@ -670,7 +670,7 @@ namespace Altaxo.Collections
 
 			var parent = ElementAt(rootNode, index.TakeAllButLast());
 			var idx = index.Last();
-			parent.Nodes.Insert(idx + 1, nodeToInsert);
+			parent.ChildNodes.Insert(idx + 1, nodeToInsert);
 		}
 
 		/// <summary>
@@ -691,7 +691,7 @@ namespace Altaxo.Collections
 
 			var parent = ElementAt(rootNode, index.TakeAllButLast());
 			var idx = index.Last();
-			parent.Nodes.Add(nodeToInsert);
+			parent.ChildNodes.Add(nodeToInsert);
 		}
 
 		/// <summary>
@@ -731,7 +731,7 @@ namespace Altaxo.Collections
 			else
 			{
 				IndexOfInternal(node.ParentNode, list);
-				var childColl = node.ParentNode.Nodes;
+				var childColl = node.ParentNode.ChildNodes;
 				int idx = null == childColl ? -1 : childColl.IndexOf(node);
 				if (idx < 0)
 					throw new InvalidOperationException(string.Format("Tree node {0} is not contained in the Nodes collection of its parent", node));
@@ -763,9 +763,9 @@ namespace Altaxo.Collections
 		private static bool FixAndTestParentChildRelationsInternal<T>(this T node, Action<T, T> Set1stArgParentNodeTo2ndArg) where T : ITreeListNodeWithParent<T>
 		{
 			bool changed = false;
-			if (null != node.Nodes)
+			if (null != node.ChildNodes)
 			{
-				foreach (var child in node.Nodes)
+				foreach (var child in node.ChildNodes)
 				{
 					if (!object.ReferenceEquals(node, child.ParentNode))
 					{
