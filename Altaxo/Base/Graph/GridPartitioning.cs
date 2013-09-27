@@ -8,6 +8,49 @@ namespace Altaxo.Graph
 {
 	public class LinearPartitioning : System.Collections.ObjectModel.ObservableCollection<Altaxo.Calc.RelativeOrAbsoluteValue>
 	{
+		#region Serialization
+
+		#region Version 0
+
+		/// <summary>
+		/// 2013-09-25 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearPartitioning), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (LinearPartitioning)obj;
+
+				info.CreateArray("Partitioning", s.Count);
+				foreach (var v in s)
+					info.AddValue("e", v);
+				info.CommitArray();
+			}
+
+			protected virtual LinearPartitioning SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new LinearPartitioning() : (LinearPartitioning)o);
+
+				int count = info.OpenArray("Partitioning");
+				for (int i = 0; i < count; ++i)
+					s.Add((RelativeOrAbsoluteValue)info.GetValue("e"));
+				info.CloseArray(count);
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 0
+
+		#endregion Serialization
+
 		public double[] GetPartitionPositions(double totalSize)
 		{
 			double relSum = this.Sum(x => x.IsRelative ? x.Value : 0);
@@ -74,6 +117,45 @@ namespace Altaxo.Graph
 	{
 		private LinearPartitioning _xPartitioning;
 		private LinearPartitioning _yPartitioning;
+
+		#region Serialization
+
+		#region Version 0
+
+		/// <summary>
+		/// 2013-09-25 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPartitioning), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (GridPartitioning)obj;
+
+				info.AddValue("XPartitioning", s._xPartitioning);
+				info.AddValue("YPartitioning", s._yPartitioning);
+			}
+
+			protected virtual GridPartitioning SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new GridPartitioning() : (GridPartitioning)o);
+
+				s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning");
+				s._yPartitioning = (LinearPartitioning)info.GetValue("YPartitioning");
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public GridPartitioning()
 		{

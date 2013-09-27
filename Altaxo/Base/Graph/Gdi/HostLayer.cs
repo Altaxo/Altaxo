@@ -144,84 +144,13 @@ namespace Altaxo.Graph.Gdi
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerCollection", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 1)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
-				var s = (HostLayer)obj;
-
-				info.CreateArray("LayerArray", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("XYPlotLayer", s[i]);
-				info.CommitArray();
-				*/
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (HostLayer)o : new HostLayer(info);
-
-				int count = info.OpenArray();
-				for (int i = 0; i < count; i++)
-				{
-					XYPlotLayer l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
-					s.Layers.Add(l);
-				}
-				info.CloseArray(count);
-
-				return s;
-			}
-		}
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 2)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
-				XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
-
-				info.AddValue("Size", s._graphSize);
-
-				info.CreateArray("LayerArray", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("XYPlotLayer", s[i]);
-				info.CommitArray();
-				 */
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = null != o ? (HostLayer)o : new HostLayer(info);
-
-				var size = (SizeF)info.GetValue("Size", parent);
-				var location = new ItemLocationDirect() { XSize = new RelativeOrAbsoluteValue(size.Width), YSize = new RelativeOrAbsoluteValue(size.Height) };
-				s.Location = location;
-
-				int count = info.OpenArray();
-				for (int i = 0; i < count; i++)
-				{
-					XYPlotLayer l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
-					s.Layers.Add(l);
-				}
-				info.CloseArray(count);
-
-				return s;
-			}
-		}
-
 		#region Version 0
 
 		/// <summary>
 		/// In Version 0 we changed the Scales and divided into pure Scale and TickSpacing
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HostLayer), 0)]
-		private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -230,9 +159,11 @@ namespace Altaxo.Graph.Gdi
 				throw new InvalidOperationException("Set cachedSize and cachedPosition to double objects");
 
 				// size, position, rotation and scale
-				info.AddValue("LocationAndSize", s._location);
+				info.AddValue("CachedParentSize", s._cachedParentLayerSize);
 				info.AddValue("CachedSize", s._cachedLayerSize);
 				info.AddValue("CachedPosition", s._cachedLayerPosition);
+				info.AddValue("LocationAndSize", s._location);
+				info.AddValue("Grid", s._grid);
 
 				// Graphic objects
 				info.AddValue("GraphObjects", s._graphObjects);
@@ -243,9 +174,11 @@ namespace Altaxo.Graph.Gdi
 				HostLayer s = (o == null ? new HostLayer(info) : (HostLayer)o);
 
 				// size, position, rotation and scale
-				s.Location = (ItemLocationDirect)info.GetValue("LocationAndSize", s);
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
+				s._cachedParentLayerSize = (PointD2D)info.GetValue("CachedParentSize");
+				s._cachedLayerSize = (PointD2D)info.GetValue("CachedSize");
+				s._cachedLayerPosition = (PointD2D)info.GetValue("CachedPosition");
+				s.Location = (IItemLocation)info.GetValue("LocationAndSize", s);
+				s.Grid = (GridPartitioning)info.GetValue("Grid");
 
 				// Graphic objects
 				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
@@ -465,6 +398,10 @@ namespace Altaxo.Graph.Gdi
 			get
 			{
 				return _grid;
+			}
+			private set
+			{
+				_grid = value;
 			}
 		}
 

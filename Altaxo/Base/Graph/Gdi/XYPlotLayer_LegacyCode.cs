@@ -229,6 +229,95 @@ namespace Altaxo.Graph.Gdi
 			[NonSerialized]
 			private object _parent;
 
+			public XYPlotLayerPositionAndSize_V0()
+			{
+			}
+
+			public XYPlotLayerPositionAndSize_V0(XYPlotLayerSizeType xzt, double xs, XYPlotLayerSizeType yzt, double ys, XYPlotLayerPositionType xpt, double xp, XYPlotLayerPositionType ypt, double yp, double rotation, double scale)
+			{
+				_layerWidthType = xzt;
+				_layerWidth = xs;
+				_layerHeightType = yzt;
+				_layerHeight = ys;
+
+				_layerXPositionType = xpt;
+				_layerXPosition = xp;
+				_layerYPositionType = ypt;
+				_layerYPosition = yp;
+
+				_layerAngle = rotation;
+				_layerScale = scale;
+			}
+
+			public IItemLocation ConvertToCurrentLocationVersion(PointD2D cachedLayerSize, PointD2D cachedLayerPosition)
+			{
+				var newLoc = new ItemLocationDirect();
+				switch (_layerWidthType)
+				{
+					case XYPlotLayerSizeType.AbsoluteValue:
+						newLoc.XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerWidth);
+						break;
+
+					case XYPlotLayerSizeType.RelativeToGraphDocument:
+						newLoc.XSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerWidth);
+						break;
+
+					default:
+						newLoc.XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerSize.X);
+						break;
+				}
+
+				switch (_layerHeightType)
+				{
+					case XYPlotLayerSizeType.AbsoluteValue:
+						newLoc.YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerHeight);
+						break;
+
+					case XYPlotLayerSizeType.RelativeToGraphDocument:
+						newLoc.YSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerHeight);
+						break;
+
+					default:
+						newLoc.YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerSize.Y);
+						break;
+				}
+
+				switch (_layerXPositionType)
+				{
+					case XYPlotLayerPositionType.AbsoluteValue:
+						newLoc.XPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerXPosition);
+						break;
+
+					case XYPlotLayerPositionType.RelativeToGraphDocument:
+						newLoc.XPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerXPosition);
+						break;
+
+					default:
+						newLoc.XPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerPosition.X);
+						break;
+				}
+
+				switch (_layerYPositionType)
+				{
+					case XYPlotLayerPositionType.AbsoluteValue:
+						newLoc.YPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerYPosition);
+						break;
+
+					case XYPlotLayerPositionType.RelativeToGraphDocument:
+						newLoc.YPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerYPosition);
+						break;
+
+					default:
+						newLoc.YPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerPosition.Y);
+						break;
+				}
+
+				newLoc.Rotation = _layerAngle;
+				newLoc.Scale = _layerScale;
+
+				return newLoc;
+			}
+
 			#region Serialization
 
 			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerPositionAndSize", 0)]
@@ -282,5 +371,87 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#endregion XYPlotLayerPositionAndSize
+
+		#region XYPlotLayerCollection
+
+		public class XYPlotLayerCollection : List<XYPlotLayer>
+		{
+			public SizeF _graphSize;
+
+			#region "Serialization"
+
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerCollection", 0)]
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 1)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					throw new InvalidOperationException();
+					/*
+					XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
+
+					info.CreateArray("LayerArray",s.Count);
+					for(int i=0;i<s.Count;i++)
+						info.AddValue("XYPlotLayer",s[i]);
+					info.CommitArray();
+					*/
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					XYPlotLayerCollection s = null != o ? (XYPlotLayerCollection)o : new XYPlotLayerCollection();
+
+					int count = info.OpenArray();
+					for (int i = 0; i < count; i++)
+					{
+						XYPlotLayer l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
+						s.Add(l);
+					}
+					info.CloseArray(count);
+
+					return s;
+				}
+			}
+
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.XYPlotLayerCollection", 2)]
+			private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					throw new InvalidOperationException();
+					/*
+					XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
+
+					info.AddValue("Size", s._graphSize);
+
+					info.CreateArray("LayerArray", s.Count);
+					for (int i = 0; i < s.Count; i++)
+						info.AddValue("XYPlotLayer", s[i]);
+					info.CommitArray();
+					*/
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					XYPlotLayerCollection s = null != o ? (XYPlotLayerCollection)o : new XYPlotLayerCollection();
+
+					s._graphSize = (SizeF)info.GetValue("Size", parent);
+
+					int count = info.OpenArray();
+					for (int i = 0; i < count; i++)
+					{
+						XYPlotLayer l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
+						s.Add(l);
+					}
+					info.CloseArray(count);
+
+					return s;
+				}
+			}
+
+			#endregion "Serialization"
+
+		#endregion XYPlotLayerCollection
+		}
 	}
 }

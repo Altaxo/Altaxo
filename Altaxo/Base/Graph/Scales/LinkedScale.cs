@@ -81,13 +81,13 @@ namespace Altaxo.Graph.Scales
 				s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
 				s._linkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
 				s._linkedScaleIndex = info.GetInt32("LinkedScaleIndex");
-
-				throw new NotImplementedException("Is it ensured, that after deserializing the old layer version (with linked layer property), the number of the linked layer is set here in the LinkedScale?");
-
 				return s;
 			}
 		}
 
+		/// <summary>
+		/// 2013-09-26 LinkedLayerIndex added, thus scale is now directly linked
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 3)]
 		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{

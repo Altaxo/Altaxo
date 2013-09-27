@@ -215,6 +215,7 @@
     <Compile Include="Graph\Gdi\LabelFormatting\FreeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBase.cs" />
     <Compile Include="Graph\Gdi\Shapes\IGraphicBase.cs" />
+    <Compile Include="Graph\Gdi\XYPlotLayer_Serialization.cs" />
     <Compile Include="Graph\ItemLocationByGrid.cs" />
     <Compile Include="Graph\GridPartitioning.cs" />
     <Compile Include="Graph\IItemLocation.cs" />

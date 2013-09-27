@@ -42,11 +42,8 @@ namespace Altaxo.Graph.Gdi
 	/// <remarks>The coordinate system of the graph is in units of points (1/72 inch). The origin (0,0) of the graph
 	/// is the top left corner of the printable area (and therefore _not_ the page bounds). The value of the page
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
-	[SerializationSurrogate(0, typeof(GraphDocument.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class GraphDocument
 		:
-		System.Runtime.Serialization.IDeserializationCallback,
 		System.ICloneable,
 		IChangedEventSource,
 		Main.IChildChangedEventSink,
@@ -145,73 +142,13 @@ namespace Altaxo.Graph.Gdi
 
 		#region "Serialization"
 
-		/// <summary>Used to serialize the GraphDocument Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes GraphDocument Version 0.
-			/// </summary>
-			/// <param name="obj">The GraphDocument to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				GraphDocument s = (GraphDocument)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					// get the serialization surrogate of the base type
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-					// stream the data of the base class
-					surr.GetObjectData(obj, info, context);
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-
-				// now the data of our class
-				info.AddValue("PageBounds", s._pageBounds);
-				info.AddValue("PrintableBounds", s._printableBounds);
-			}
-
-			/// <summary>
-			/// Deserializes the GraphDocument Version 0.
-			/// </summary>
-			/// <param name="obj">The empty GraphDocument object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized GraphDocument.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				GraphDocument s = (GraphDocument)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					// get the serialization surrogate of the base type
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-
-					// deserialize the base type
-					surr.SetObjectData(obj, info, context, selector);
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-				s._pageBounds = (RectangleF)info.GetValue("PageBounds", typeof(RectangleF));
-				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", typeof(RectangleF));
-				return s;
-			}
-		}
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
 				GraphDocument s = (GraphDocument)obj;
 
 				// info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
@@ -220,6 +157,7 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("PageBounds", s._pageBounds);
 				info.AddValue("PrintableBounds", s._printableBounds);
 				info.AddValue("Layers", s._rootLayer);
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -231,10 +169,11 @@ namespace Altaxo.Graph.Gdi
 				s._pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
 
-				var layers = (HostLayer)info.GetValue("LayerList", s);
-				layers.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.X), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Y) };
-				layers.FixAndTestParentChildRelationShipOfLayers();
-				s._rootLayer = layers;
+				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
+				s._rootLayer.Size = s._printableBounds.Size;
+				s._rootLayer.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Width), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Height) };
+				foreach (var l in layers)
+					s._rootLayer.Layers.Add(l);
 				return s;
 			}
 		}
@@ -244,6 +183,8 @@ namespace Altaxo.Graph.Gdi
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
 				GraphDocument s = (GraphDocument)obj;
 
 				// info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
@@ -270,6 +211,7 @@ namespace Altaxo.Graph.Gdi
 					}
 				}
 				info.CommitArray();
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -285,11 +227,10 @@ namespace Altaxo.Graph.Gdi
 				s._name = info.GetString("Name");
 				s._pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
-
-				var layers = (HostLayer)info.GetValue("LayerList", s);
-				layers.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.X), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Y) };
-				layers.FixAndTestParentChildRelationShipOfLayers();
-				s._rootLayer = layers;
+				s._rootLayer.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Width), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Height) };
+				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
+				foreach (var l in layers)
+					s._rootLayer.Layers.Add(l);
 
 				// new in version 1 - Add graph properties
 				int numberproperties = info.OpenArray(); // "GraphProperties"
@@ -306,17 +247,20 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 2)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 3)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.GraphDocument", 3)]
 		private class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
 				base.Serialize(obj, info);
 				GraphDocument s = (GraphDocument)obj;
 				info.AddValue("GraphIdentifier", s._graphIdentifier);
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+				*/
 			}
 
 			public override void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -327,14 +271,6 @@ namespace Altaxo.Graph.Gdi
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public void OnDeserialization(object obj)
-		{
 		}
 
 		#endregion "Serialization"
