@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Reflection;
 
 namespace Altaxo.Graph.Gdi
@@ -239,18 +240,17 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="options"></param>
 		protected virtual void InternalCopyFrom(HostLayer from, GraphCopyOptions options)
 		{
-			// XYPlotLayer style
-			//this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
+			this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
 
 			this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
 
 			// size, position, rotation and scale
 			if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
 			{
-				this.Location = (IItemLocation)from._location.Clone();
 				this._cachedLayerSize = from._cachedLayerSize;
 				this._cachedLayerPosition = from._cachedLayerPosition;
 				this._cachedParentLayerSize = from._cachedParentLayerSize;
+				this.Location = (IItemLocation)from._location.Clone(); // Location must be last to copy
 			}
 
 			if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
@@ -734,6 +734,62 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#endregion Position and Size
+
+		#region Grid creation
+
+		/// <summary>
+		/// If the <see cref="Grid"/> is <c>null</c>, then create a grid that represents the boundaries of the child layers.
+		/// </summary>
+		public void CreateGridIfNull()
+		{
+			if (null != _grid)
+				return;
+
+			var xPositions = new HashSet<double>();
+			var yPositions = new HashSet<double>();
+
+			// Take only those positions into account, that are inside this layer
+
+			foreach (var l in Layers)
+			{
+				xPositions.Add(l.Position.X);
+				xPositions.Add(l.Position.X + l.Size.X);
+				yPositions.Add(l.Position.Y);
+				yPositions.Add(l.Position.Y + l.Size.Y);
+			}
+
+			xPositions.Add(this.Size.X);
+			yPositions.Add(this.Size.Y);
+
+			var xPosPurified = new SortedSet<double>(xPositions.Where(x => x >= 0 && x <= this.Size.X));
+			var yPosPurified = new SortedSet<double>(yPositions.Where(y => y >= 0 && y <= this.Size.Y));
+
+			_grid = new GridPartitioning();
+
+			double prev;
+
+			prev = 0;
+			foreach (var x in xPosPurified)
+			{
+				_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue((x - prev) / this.Size.X));
+				prev = x;
+			}
+			prev = 0;
+			foreach (var y in yPosPurified)
+			{
+				_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue((y - prev) / this.Size.Y));
+				prev = y;
+			}
+
+			// ensure that we always have an odd number of columns and rows
+			// if there is no child layer present, then at least one row and one column should be present
+			if (0 == _grid.XPartitioning.Count % 2)
+				_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(_grid.XPartitioning.Count == 0 ? 1 : 0));
+			if (0 == _grid.YPartitioning.Count % 2)
+				_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(_grid.YPartitioning.Count == 0 ? 1 : 0));
+		}
+
+		#endregion Grid creation
 
 		#region XYPlotLayer properties and methods
 

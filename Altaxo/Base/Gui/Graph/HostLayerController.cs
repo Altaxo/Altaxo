@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Graph
 
 		private IMVCAController _currentController;
 
-		protected IMVCAController _layerPositionController;
+		protected IMVCANController _layerPositionController;
 		protected IMVCANController _layerContentsController;
 
 		private object _lastControllerApplied;
@@ -155,7 +155,8 @@ namespace Altaxo.Gui.Graph
 					}
 					if (null == _layerPositionController)
 					{
-						_layerPositionController = new LayerPositionController().Initialize(_doc.Location, _doc);
+						_layerPositionController = new LayerPositionController() { UseDocumentCopy = UseDocument.Directly };
+						_layerPositionController.InitializeDocument(_doc.Location, _doc);
 						Current.Gui.FindAndAttachControlTo(_layerPositionController);
 					}
 					_currentController = _layerPositionController;
@@ -188,6 +189,12 @@ namespace Altaxo.Gui.Graph
 
 			if (!_currentController.Apply())
 				return false;
+
+			if (object.ReferenceEquals(_currentController, _layerPositionController))
+			{
+				_doc.Location = (IItemLocation)_currentController.ModelObject;
+			}
+
 			_lastControllerApplied = _currentController;
 
 			return true;

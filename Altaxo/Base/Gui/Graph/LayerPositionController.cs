@@ -82,6 +82,9 @@ namespace Altaxo.Gui.Graph
 				_instances = new Dictionary<Type, IItemLocation>();
 				_instances.Add(_doc.GetType(), _doc);
 
+				if (_layer.ParentLayer == null && !(_doc is ItemLocationDirect))
+					_doc = new ItemLocationDirect();
+
 				CreateSubController();
 			}
 
@@ -101,17 +104,23 @@ namespace Altaxo.Gui.Graph
 			}
 			else if (_doc is ItemLocationByGrid)
 			{
+				if (null == _layer.ParentLayer)
+					throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
+				_layer.ParentLayer.CreateGridIfNull();
 				_subController = new LayerGridPositionSizeController();
-				_subController.InitializeDocument(_doc, _layer.Grid);
+				_subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
 			}
 			Current.Gui.FindAndAttachControlTo(_subController);
 		}
 
 		private void EhPositioningTypeChanged()
 		{
-			_subController.Apply();
+			if (_subController.Apply())
+				_instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
-			if (_view.UseDirectPositioning)
+			bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer == null; // if this is the root layer, then choice of grid positioning is not available
+
+			if (useDirectPositioning)
 			{
 				if (_instances.ContainsKey(typeof(ItemLocationDirect)))
 					_doc = _instances[typeof(ItemLocationDirect)];
@@ -128,6 +137,7 @@ namespace Altaxo.Gui.Graph
 
 			CreateSubController();
 
+			_view.UseDirectPositioning = useDirectPositioning;
 			_view.SubPositionView = _subController.ViewObject;
 		}
 
@@ -145,7 +155,16 @@ namespace Altaxo.Gui.Graph
 
 		public override bool Apply()
 		{
-			return _subController.Apply();
+			var result = _subController.Apply();
+			if (result == false)
+				return result;
+
+			_doc = (IItemLocation)_subController.ModelObject;
+
+			if (!object.ReferenceEquals(_doc, _originalDoc))
+				CopyHelper.Copy(ref _originalDoc, _doc);
+
+			return true;
 		}
 	}
 }

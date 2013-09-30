@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Gui;
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop;
+using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,19 +34,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
-
-using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.Core;
-using ICSharpCode.SharpZipLib.Zip;
-
-using Altaxo.Gui;
-
 namespace Altaxo.Main
 {
-
-
-
 	/// <summary>
 	/// Handles administrative tasks concerning an Altaxo project.
 	/// </summary>
@@ -50,12 +46,12 @@ namespace Altaxo.Main
 		/// <summary>
 		/// The currently opened Altaxo project.
 		/// </summary>
-		Altaxo.AltaxoDocument openProject = null;
+		private Altaxo.AltaxoDocument openProject = null;
 
 		/// <summary>
 		/// The file name of the currently opened Altaxo project.
 		/// </summary>
-		string openProjectFileName = null;
+		private string openProjectFileName = null;
 
 		public ProjectService()
 		{
@@ -63,7 +59,6 @@ namespace Altaxo.Main
 
 		//FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 		//ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
-
 
 		/// <summary>
 		/// The currently open Altaxo project.
@@ -81,12 +76,10 @@ namespace Altaxo.Main
 				if (oldProject != null)
 					oldProject.DirtyChanged -= new EventHandler(this.EhProjectDirtyChanged);
 
-
 				openProject = value;
 
 				if (openProject != null)
 					openProject.DirtyChanged += new EventHandler(this.EhProjectDirtyChanged);
-
 
 				if (!object.Equals(oldProject, value))
 				{
@@ -116,7 +109,7 @@ namespace Altaxo.Main
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 
 			{
-				// first, we save our own state 
+				// first, we save our own state
 				zippedStream.StartFile("Workbench/MainWindow.xml", 0);
 				try
 				{
@@ -130,7 +123,7 @@ namespace Altaxo.Main
 				}
 			}
 
-			// second, we save all workbench windows into the Workbench/Views 
+			// second, we save all workbench windows into the Workbench/Views
 			int i = 0;
 			foreach (IViewContent ctrl in Current.Workbench.ViewContentCollection)
 			{
@@ -138,7 +131,7 @@ namespace Altaxo.Main
 				var mvcc = ctrl as Altaxo.Gui.IMVCControllerWrapper;
 				if (null != mvcc)
 					mvc = mvcc.MVCController;
-			
+
 				if (mvc != null && info.IsSerializable(mvc.ModelObject))
 				{
 					i++;
@@ -159,7 +152,6 @@ namespace Altaxo.Main
 			if (errorText.Length != 0)
 				throw new ApplicationException(errorText.ToString());
 		}
-
 
 		/// <summary>
 		/// Restores the state of the main window from a zipped Altaxo project file.
@@ -227,24 +219,23 @@ namespace Altaxo.Main
 			}
 		}
 
-    /// <summary>
-    /// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
-    /// </summary>
-    /// <param name="filename"></param>
+		/// <summary>
+		/// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
+		/// </summary>
+		/// <param name="filename"></param>
 		/// <param name="withoutUserInteraction">If <c>false</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
 		/// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
 		/// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    public void OpenProject(string filename, bool withoutUserInteraction)
+		public void OpenProject(string filename, bool withoutUserInteraction)
 		{
 			if (CurrentOpenProject != null)
 			{
 				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
-				if (this.CurrentOpenProject.IsDirty && withoutUserInteraction==false)
+				if (this.CurrentOpenProject.IsDirty && withoutUserInteraction == false)
 					AskForSavingOfProject(e);
 
 				if (e.Cancel == true)
 					return;
-
 
 				CloseProject(true);
 			}
@@ -257,7 +248,6 @@ namespace Altaxo.Main
 
 			try
 			{
-
 				if (Path.GetExtension(filename).ToUpper() == ".AXOPRJ")
 				{
 					string validproject = Path.ChangeExtension(filename, ".axoprj");
@@ -265,13 +255,11 @@ namespace Altaxo.Main
 					{
 						LoadProject(validproject);
 					}
-
 				}
 				else
 				{
 					LoadProject(filename);
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -288,7 +276,7 @@ namespace Altaxo.Main
 		/// Loads a existing Altaxo project with the provided name.
 		/// </summary>
 		/// <param name="filename">The file name of the project to load.</param>
-		void LoadProject(string filename)
+		private void LoadProject(string filename)
 		{
 			if (!FileUtility.TestFileExists(filename))
 			{
@@ -305,7 +293,6 @@ namespace Altaxo.Main
 
 			// RestoreCombinePreferences(CurrentOpenCombine, openCombineFileName);
 		}
-
 
 		/// <summary>
 		/// Opens a Altaxo project from a project file (without asking the user).
@@ -346,7 +333,6 @@ namespace Altaxo.Main
 				myStream.Close();
 			}
 
-
 			if (errorText.Length != 0)
 				throw new ApplicationException(errorText.ToString());
 		}
@@ -360,8 +346,6 @@ namespace Altaxo.Main
 			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 
 			bool fileAlreadyExists = System.IO.File.Exists(filename);
-
-
 
 			System.IO.Stream myStream;
 			string tempFileName = null;
@@ -421,7 +405,6 @@ namespace Altaxo.Main
 				System.IO.File.Delete(tempFileName);
 			}
 
-
 			if (null != savingException)
 				throw savingException;
 
@@ -448,7 +431,6 @@ namespace Altaxo.Main
 			if (oldFileName != filename)
 				this.OnRenameProject(new ProjectRenameEventArgs(this.openProject, oldFileName, filename));
 
-
 			FileUtility.ObservedSave(new NamedFileOperationDelegate(this.Save),
 				filename,
 				ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
@@ -463,7 +445,6 @@ namespace Altaxo.Main
 			SaveFileDialog fdiag = new SaveFileDialog();
 			fdiag.OverwritePrompt = true;
 			fdiag.AddExtension = true;
-
 
 			fdiag.Filter = StringParser.Parse("${res:Altaxo.FileFilter.ProjectFiles}|*.axoprj|${res:Altaxo.FileFilter.AllFiles}|*.*");
 
@@ -487,14 +468,12 @@ namespace Altaxo.Main
 			string caption = ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
 			bool? dlgresult = Current.Gui.YesNoCancelMessageBox(text, caption, null);
 
-
 			if (null == dlgresult) // Cancel
 			{
 				e.Cancel = true;
 			}
 			else if (true == dlgresult) // Yes
 			{
-
 				if (this.CurrentProjectFileName != null)
 					this.SaveProject();
 				else
@@ -505,7 +484,6 @@ namespace Altaxo.Main
 			}
 		}
 
-
 		/// <summary>
 		/// Closes a project. If the project is dirty, and <paramref name="forceClose"/> is <c>false</c>, the user is asked to save the project.
 		/// </summary>
@@ -513,7 +491,6 @@ namespace Altaxo.Main
 		/// If <c>true</c>, the project is closed without user interaction.</param>
 		public void CloseProject(bool forceClose)
 		{
-
 			if (CurrentOpenProject != null)
 			{
 				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
@@ -536,11 +513,9 @@ namespace Altaxo.Main
 					// now create a new project
 					CurrentOpenProject = new Altaxo.AltaxoDocument();
 					OnProjectOpened(new ProjectEventArgs(CurrentOpenProject));
-
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Returns all currently open views that show the given document object <code>document</code>.
@@ -567,15 +542,15 @@ namespace Altaxo.Main
 					else if (modelobject is Altaxo.Worksheet.WorksheetViewLayout)
 					{
 						var wvl = (Altaxo.Worksheet.WorksheetViewLayout)modelobject;
-						if(object.ReferenceEquals(wvl.WorksheetLayout, document))
+						if (object.ReferenceEquals(wvl.WorksheetLayout, document))
 							contentList.Add(content);
-						else if(wvl.WorksheetLayout!=null && object.ReferenceEquals(wvl.WorksheetLayout.DataTable, document))
+						else if (wvl.WorksheetLayout != null && object.ReferenceEquals(wvl.WorksheetLayout.DataTable, document))
 							contentList.Add(content);
 					}
-					else if(modelobject is Altaxo.Graph.GraphViewLayout)
+					else if (modelobject is Altaxo.Graph.GraphViewLayout)
 					{
 						var gvl = (Altaxo.Graph.GraphViewLayout)modelobject;
-						if(object.ReferenceEquals(gvl.GraphDocument, document))
+						if (object.ReferenceEquals(gvl.GraphDocument, document))
 							contentList.Add(content);
 					}
 				}
@@ -628,6 +603,7 @@ namespace Altaxo.Main
 		{
 			Current.Gui.Execute(CloseDocumentViews_Unsynchronized, document);
 		}
+
 		private void CloseDocumentViews_Unsynchronized(object document)
 		{
 			var list = SearchContentForDocument(document, int.MaxValue);
@@ -645,6 +621,7 @@ namespace Altaxo.Main
 		{
 			Current.Gui.Execute(ShowDocumentView_Unsynchronized, document);
 		}
+
 		private void ShowDocumentView_Unsynchronized(object document)
 		{
 			if (document is Altaxo.Data.DataTable)
@@ -653,7 +630,7 @@ namespace Altaxo.Main
 				OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)document);
 		}
 
-		void SelectFirstAvailableView()
+		private void SelectFirstAvailableView()
 		{
 			/*
 			// the following sequence is related to a bug encountered when closing a tabbed window by the program:
@@ -666,14 +643,12 @@ namespace Altaxo.Main
 				break;
 			}
 
-
 			if (firstView != null)
 				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowView(firstView, true);
 			 */
 		}
 
 		#region Worksheet functions
-
 
 		/// <summary>
 		/// Creates a table and the view content for that table.
@@ -683,7 +658,6 @@ namespace Altaxo.Main
 		/// <returns>The view content for the provided table.</returns>
 		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
 		{
-
 			Altaxo.Data.DataTable dt1 = this.CurrentOpenProject.CreateNewTable(worksheetName, bCreateDefaultColumns);
 			return CreateNewWorksheet(dt1);
 		}
@@ -716,7 +690,6 @@ namespace Altaxo.Main
 			return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableNameInFolder(folder), false);
 		}
 
-
 		/// <summary>
 		/// Creates a view content for a table.
 		/// </summary>
@@ -746,7 +719,7 @@ namespace Altaxo.Main
 			return Current.Gui.Evaluate(CreateNewWorksheet_Unsynchronized, table, layout);
 		}
 
-			/// <summary>
+		/// <summary>
 		/// Creates a view content for a table.
 		/// </summary>
 		/// <param name="table">The table which should be viewed.</param>
@@ -758,7 +731,6 @@ namespace Altaxo.Main
 			var ctrl = new Altaxo.Gui.SharpDevelop.SDWorksheetViewContent(layout);
 			var view = new Altaxo.Gui.Worksheet.Viewing.WorksheetViewWpf();
 			ctrl.Controller.ViewObject = view;
-
 
 			if (null != Current.Workbench)
 				Current.Workbench.ShowView(ctrl);
@@ -777,7 +749,7 @@ namespace Altaxo.Main
 			return Current.Gui.Evaluate(OpenOrCreateWorksheetForTable_Unsynchronized, table);
 		}
 
-			/// <summary>
+		/// <summary>
 		/// Opens a view that shows the table <code>table</code>. If no view for the table can be found,
 		/// a new default view is created for the table.
 		/// </summary>
@@ -785,7 +757,6 @@ namespace Altaxo.Main
 		/// <returns>The view content for the provided table.</returns>
 		private object OpenOrCreateWorksheetForTable_Unsynchronized(Altaxo.Data.DataTable table)
 		{
-
 			// if a content exist that show that table, activate that content
 			List<IViewContent> foundContent = SearchContentForDocument(table, 1);
 			if (foundContent.Count > 0)
@@ -793,7 +764,6 @@ namespace Altaxo.Main
 				foundContent[0].WorkbenchWindow.SelectWindow();
 				return foundContent[0];
 			}
-
 
 			// otherwise create a new Worksheet
 			return CreateNewWorksheet_Unsynchronized(table);
@@ -809,6 +779,7 @@ namespace Altaxo.Main
 		{
 			Current.Gui.Execute(DeleteTable_Unsynchronized, table, force);
 		}
+
 		private void DeleteTable_Unsynchronized(Altaxo.Data.DataTable table, bool force)
 		{
 			if (!force &&
@@ -824,7 +795,6 @@ namespace Altaxo.Main
 
 			Current.Project.DataTableCollection.Remove(table);
 
-
 			// the following sequence is related to a bug encountered when closing a tabbed window by the program:
 			// the active view content is not updated because the dockpanel lost the focus
 			// to circumvent this, we focus on a new viewcontent, in this case the first one
@@ -838,6 +808,7 @@ namespace Altaxo.Main
 		{
 			Current.Gui.Execute(RemoveWorksheet_Unsynchronized, ctrl);
 		}
+
 		private void RemoveWorksheet_Unsynchronized(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl)
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
@@ -848,14 +819,10 @@ namespace Altaxo.Main
 					content.WorkbenchWindow.CloseWindow(true);
 					break;
 				}
-
 			}
-
 		}
 
-
-
-		#endregion
+		#endregion Worksheet functions
 
 		#region Graph functions
 
@@ -867,6 +834,7 @@ namespace Altaxo.Main
 		{
 			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized);
 		}
+
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized()
 		{
 			return CreateNewGraph_Unsynchronized(CurrentOpenProject.CreateNewGraphDocument());
@@ -881,6 +849,7 @@ namespace Altaxo.Main
 		{
 			return Current.Gui.Evaluate(CreateNewGraphInFolder_Unsynchronized, folderName);
 		}
+
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder_Unsynchronized(string folderName)
 		{
 			return CreateNewGraph_Unsynchronized(this.CurrentOpenProject.CreateNewGraphDocument(ProjectFolder.Combine(folderName, "GRAPH")));
@@ -895,12 +864,11 @@ namespace Altaxo.Main
 		{
 			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized, preferredName);
 		}
+
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(string preferredName)
 		{
 			return CreateNewGraph_Unsynchronized(this.CurrentOpenProject.CreateNewGraphDocument(preferredName));
 		}
-
-
 
 		/// <summary>
 		/// Creates a new view content for a graph document.
@@ -909,8 +877,9 @@ namespace Altaxo.Main
 		/// <returns>The view content for the provided graph document.</returns>
 		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
-			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized,graph);
+			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized, graph);
 		}
+
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
 			if (graph == null)
@@ -939,9 +908,9 @@ namespace Altaxo.Main
 		{
 			return Current.Gui.Evaluate(OpenOrCreateGraphForGraphDocument_Unsynchronized, graph);
 		}
+
 		private object OpenOrCreateGraphForGraphDocument_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
-
 			// if a content exist that show that graph, activate that content
 			List<IViewContent> foundContent = SearchContentForDocument(graph, 1);
 			if (foundContent.Count > 0)
@@ -950,11 +919,9 @@ namespace Altaxo.Main
 				return foundContent[0];
 			}
 
-
 			// otherwise create a new graph view
 			return CreateNewGraph_Unsynchronized(graph);
 		}
-
 
 		/// <summary>
 		/// This function will delete a graph document and close all corresponding views.
@@ -966,9 +933,9 @@ namespace Altaxo.Main
 		{
 			Current.Gui.Execute(DeleteGraphDocument_Unsynchronized, graph, force);
 		}
+
 		private void DeleteGraphDocument_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph, bool force)
 		{
-
 			if (!force &&
 				false == Current.Gui.YesNoMessageBox("Are you sure to remove the graph document and the corresponding views?", "Attention", false))
 				return;
@@ -982,17 +949,11 @@ namespace Altaxo.Main
 
 			Current.Project.GraphDocumentCollection.Remove(graph);
 
-
-
 			// the following sequence is related to a bug encountered when closing a tabbed window by the program:
 			// the active view content is not updated because the dockpanel lost the focus
 			// to circumvent this, we focus on a new viewcontent, in this case the first one
 			SelectFirstAvailableView();
 		}
-
-
-
-
 
 		/// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
 		/// <param name="ctrl">The GraphController to remove.</param>
@@ -1001,6 +962,7 @@ namespace Altaxo.Main
 		{
 			Current.Gui.Execute(RemoveGraph_Unsynchronized, ctrl);
 		}
+
 		private void RemoveGraph_Unsynchronized(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
@@ -1014,16 +976,12 @@ namespace Altaxo.Main
 			}
 		}
 
+		#endregion Graph functions
 
-		#endregion
-
-
-
-		void EhProjectDirtyChanged(object sender, EventArgs e)
+		private void EhProjectDirtyChanged(object sender, EventArgs e)
 		{
 			OnProjectDirtyChanged(new Altaxo.Main.ProjectEventArgs(this.openProject));
 		}
-
 
 		//********* own events
 
@@ -1084,7 +1042,7 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Fires the <see cref="ProjectChanged" /> event. This occurs <b>after</b> the events <see cref="ProjectOpened" />, 
+		/// Fires the <see cref="ProjectChanged" /> event. This occurs <b>after</b> the events <see cref="ProjectOpened" />,
 		/// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" /> event. Usefull if
 		/// you not want to subscribe to the above mentioned single events.
 		/// </summary>
@@ -1092,9 +1050,7 @@ namespace Altaxo.Main
 		{
 			if (ProjectChanged != null)
 				ProjectChanged(this, new ProjectEventArgs(this.CurrentOpenProject));
-
 		}
-
 
 		/// <summary>
 		/// Fired when a project is opened or a new empty project is created.
@@ -1110,17 +1066,16 @@ namespace Altaxo.Main
 		/// Fired when the current open project is renamed.
 		/// </summary>
 		public event ProjectRenameEventHandler ProjectRenamed;
+
 		/// <summary>
 		/// Fired when the dirty state of the project changed.
 		/// </summary>
 		public event ProjectEventHandler ProjectDirtyChanged;
 
 		/// <summary>
-		/// Event fired <b>after</b> any of the following other events is fired: <see cref="ProjectOpened" />, 
+		/// Event fired <b>after</b> any of the following other events is fired: <see cref="ProjectOpened" />,
 		/// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" />.
 		/// </summary>
 		public event ProjectEventHandler ProjectChanged;
 	}
-
-
 }

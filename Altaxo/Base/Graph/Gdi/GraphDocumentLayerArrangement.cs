@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi
 				grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.LeftMargin));
 				for (int i = arrangement.NumberOfColumns - 1; i >= 0; --i)
 				{
-					grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(columnSize));
+					grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(columnSize / arrangement.NumberOfColumns));
 					if (i != 0)
 						grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.ColumnSpacing));
 				}
@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Gdi
 				grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.TopMargin));
 				for (int i = arrangement.NumberOfRows - 1; i >= 0; --i)
 				{
-					grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(rowSize));
+					grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(rowSize / arrangement.NumberOfRows));
 					if (i != 0)
 						grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.RowSpacing));
 				}
@@ -165,6 +165,9 @@ namespace Altaxo.Graph.Gdi
 
 			int additionalLayers = Math.Max(0, numDestLayers - numPresentLayers);
 
+			if (null == parentLayer.Grid)
+				parentLayer.CreateDefaultGrid();
+
 			ArrangeGrid(arrangement, parentLayer.Grid);
 
 			int nLayer = -1;
@@ -182,7 +185,7 @@ namespace Altaxo.Graph.Gdi
 					}
 
 					var oldSize = parentLayer.Layers[nLayer].Size;
-					parentLayer.Layers[nLayer].Location = new ItemLocationByGrid { GridColumn = j + 1, GridRow = i - 1, GridColumnSpan = 1, GridRowSpan = 1 };
+					parentLayer.Layers[nLayer].Location = new ItemLocationByGrid { GridColumn = 2 * j + 1, GridRow = 2 * i + 1, GridColumnSpan = 1, GridRowSpan = 1 };
 					var newSize = parentLayer.Layers[nLayer].Size;
 
 					if (oldSize != newSize)

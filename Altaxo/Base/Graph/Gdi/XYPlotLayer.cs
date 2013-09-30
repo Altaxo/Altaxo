@@ -114,18 +114,6 @@ namespace Altaxo.Graph.Gdi
 			if (null == from)
 				return;
 
-			// XYPlotLayer style
-			//this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
-
-			// size, position, rotation and scale
-			if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
-			{
-				this.Location = (IItemLocation)from._location.Clone();
-				this._cachedLayerSize = from._cachedLayerSize;
-				this._cachedLayerPosition = from._cachedLayerPosition;
-				this._cachedParentLayerSize = from._cachedParentLayerSize;
-			}
-
 			if (0 != (options & GraphCopyOptions.CopyLayerScales))
 			{
 				this.CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
@@ -1106,81 +1094,23 @@ namespace Altaxo.Graph.Gdi
 			base.PaintPostprocessing();
 		}
 
-		public override IHitTestObject HitTest(HitTestPointData pageC, bool plotItemsOnly)
+		public override IHitTestObject HitTest(HitTestPointData parentHitTestData, bool plotItemsOnly)
 		{
 			IHitTestObject hit;
 
-			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, Scale, Scale, 0);
-
-			var layerC = layerHitTestData.GetHittedPointInWorldCoord();
-
-			List<GraphicBase> specObjects = new List<GraphicBase>();
-			foreach (AxisStyle style in _axisStyles)
-				specObjects.Add(style.Title);
+			HitTestPointData layerHitTestData = parentHitTestData.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, Scale, Scale, 0);
 
 			if (!plotItemsOnly)
 			{
-				// do the hit test first for the special objects of the layer
-				foreach (GraphicBase go in specObjects)
-				{
-					if (null != go)
-					{
-						hit = go.HitTest(layerHitTestData);
-						if (null != hit)
-						{
-							if (null == hit.Remove && (hit.HittedObject is GraphicBase))
-								hit.Remove = new DoubleClickHandler(EhTitlesOrLegend_Remove);
-							return ForwardTransform(hit);
-						}
-					}
-				}
-
-				if (null != (hit = base.HitTest(pageC, plotItemsOnly)))
+				if (null != (hit = base.HitTest(parentHitTestData, plotItemsOnly)))
 					return hit;
-
-				// hit testing the axes - first a small area around the axis line
-				// if hitting this, the editor for scaling the axis should be shown
-				foreach (AxisStyle style in this._axisStyles)
-				{
-					if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, false)))
-					{
-						hit.DoubleClick = AxisScaleEditorMethod;
-						return ForwardTransform(hit);
-					}
-				}
-
-				// hit testing the axes - secondly now with the ticks
-				// in this case the TitleAndFormat editor for the axis should be shown
-				foreach (AxisStyle style in this._axisStyles)
-				{
-					if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, true)))
-					{
-						hit.DoubleClick = AxisStyleEditorMethod;
-						return ForwardTransform(hit);
-					}
-				}
-
-				// hit testing the major and minor labels
-				foreach (AxisStyle style in this._axisStyles)
-				{
-					if (style.ShowMajorLabels && null != (hit = style.MajorLabelStyle.HitTest(this, layerC)))
-					{
-						hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
-						hit.Remove = EhAxisLabelMajorStyleRemove;
-						return ForwardTransform(hit);
-					}
-					if (style.ShowMinorLabels && null != (hit = style.MinorLabelStyle.HitTest(this, layerC)))
-					{
-						hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
-						hit.Remove = EhAxisLabelMinorStyleRemove;
-						return ForwardTransform(hit);
-					}
-				}
 			}
 
-			if (null != (hit = _plotItems.HitTest(this, layerC)))
+			var layerCoord = layerHitTestData.GetHittedPointInWorldCoord();
+			if (null != (hit = _plotItems.HitTest(this, layerCoord)))
 			{
-				if (hit.DoubleClick == null) hit.DoubleClick = PlotItemEditorMethod;
+				if (hit.DoubleClick == null)
+					hit.DoubleClick = PlotItemEditorMethod;
 				return ForwardTransform(hit);
 			}
 
@@ -1738,14 +1668,14 @@ namespace Altaxo.Graph.Gdi
 
 			public object ParentObject { get; set; }
 
-			public IHitTestObject HitTest(HitTestPointData hitData)
+			public virtual IHitTestObject HitTest(HitTestPointData hitData)
 			{
 				return null;
 			}
 
 			public abstract void Paint(Graphics g, object obj);
 
-			public PointD2D Position
+			public virtual PointD2D Position
 			{
 				get
 				{
@@ -1804,30 +1734,91 @@ namespace Altaxo.Graph.Gdi
 
 				return true;
 			}
+
+			/// <summary>
+			/// Gets the axis style this place holder substitutes.
+			/// </summary>
+			/// <returns></returns>
+			protected AxisStyle GetAxisStyle()
+			{
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+					return layer._axisStyles.ItemAt(Index);
+				else
+					return null;
+			}
 		}
 
 		private class AxisStyleLinePlaceHolder : AxisStylePlaceHolderBase
 		{
-			public override void Paint(Graphics g, object obj)
-			{
-				var layer = ParentObject as XYPlotLayer;
-				if (null != layer)
-				{
-					if (Index >= 0 && Index < layer._axisStyles.Count)
-						layer._axisStyles.ItemAt(Index).PaintLine(g, layer);
-				}
-			}
-
 			public override object Clone()
 			{
 				var r = new AxisStyleLinePlaceHolder();
 				r.CopyFrom(this);
 				return r;
 			}
+
+			public override void Paint(Graphics g, object obj)
+			{
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+					layer._axisStyles.ItemAt(Index).Paint(g, layer);
+			}
+
+			public override IHitTestObject HitTest(HitTestPointData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (axisStyle.ShowAxisLine && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord(), false)))
+					{
+						hit.DoubleClick = AxisScaleEditorMethod;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
+			public override PointD2D Position // Position of the line is fixed
+			{
+				get
+				{
+					return new PointD2D(0, 0);
+				}
+				set
+				{
+				}
+			}
 		}
 
 		private class AxisStyleMajorLabelPlaceHolder : AxisStylePlaceHolderBase
 		{
+			public override object Clone()
+			{
+				var r = new AxisStyleMajorLabelPlaceHolder();
+				r.CopyFrom(this);
+				return r;
+			}
+
+			public override IHitTestObject HitTest(HitTestPointData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (axisStyle.ShowMajorLabels && null != (hit = axisStyle.MajorLabelStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+					{
+						hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
+						hit.Remove = layer.EhAxisLabelMajorStyleRemove;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
 			public override void Paint(Graphics g, object obj)
 			{
 				var layer = ParentObject as XYPlotLayer;
@@ -1838,16 +1829,44 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 
-			public override object Clone()
+			public override PointD2D Position // Position of the line is fixed
 			{
-				var r = new AxisStyleMajorLabelPlaceHolder();
-				r.CopyFrom(this);
-				return r;
+				get
+				{
+					return new PointD2D(0, 0);
+				}
+				set
+				{
+				}
 			}
 		}
 
 		private class AxisStyleMinorLabelPlaceHolder : AxisStylePlaceHolderBase
 		{
+			public override object Clone()
+			{
+				var r = new AxisStyleMinorLabelPlaceHolder();
+				r.CopyFrom(this);
+				return r;
+			}
+
+			public override IHitTestObject HitTest(HitTestPointData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (axisStyle.ShowMinorLabels && null != (hit = axisStyle.MinorLabelStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+					{
+						hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
+						hit.Remove = layer.EhAxisLabelMinorStyleRemove;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
 			public override void Paint(Graphics g, object obj)
 			{
 				var layer = ParentObject as XYPlotLayer;
@@ -1858,16 +1877,44 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 
-			public override object Clone()
+			public override PointD2D Position // Position of the line is fixed
 			{
-				var r = new AxisStyleMinorLabelPlaceHolder();
-				r.CopyFrom(this);
-				return r;
+				get
+				{
+					return new PointD2D(0, 0);
+				}
+				set
+				{
+				}
 			}
 		}
 
 		private class AxisStyleTitlePlaceHolder : AxisStylePlaceHolderBase
 		{
+			public override object Clone()
+			{
+				var r = new AxisStyleTitlePlaceHolder();
+				r.CopyFrom(this);
+				return r;
+			}
+
+			public override IHitTestObject HitTest(HitTestPointData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (null != axisStyle && null != axisStyle.Title && null != (hit = axisStyle.Title.HitTest(hitData)))
+					{
+						//hit.DoubleClick =  Tit AxisLabelMinorStyleEditorMethod;
+						hit.Remove = EhTitlesOrLegend_Remove;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
 			public override void Paint(Graphics g, object obj)
 			{
 				var layer = ParentObject as XYPlotLayer;
@@ -1878,30 +1925,19 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 
-			public override object Clone()
+			public override PointD2D Position // Position of the line is fixed
 			{
-				var r = new AxisStyleTitlePlaceHolder();
-				r.CopyFrom(this);
-				return r;
-			}
-		}
-
-		private class AxisStylePlaceHolder : PlaceHolder
-		{
-			public override void Paint(Graphics g, object obj)
-			{
-				var layer = ParentObject as XYPlotLayer;
-				if (null != layer)
+				get
 				{
-					layer._axisStyles.Paint(g, layer);
+					var layer = ParentObject as XYPlotLayer;
+					if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+						return layer._axisStyles.ItemAt(Index).Title.Position;
+					else
+						return PointD2D.Empty;
 				}
-			}
-
-			public override object Clone()
-			{
-				var r = new AxisStylePlaceHolder();
-				r.CopyFrom(this);
-				return r;
+				set
+				{
+				}
 			}
 		}
 

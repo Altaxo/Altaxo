@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-using ICSharpCode.Core;
 
 namespace Altaxo.Main.Commands
 {
@@ -36,12 +37,11 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-
 	public class TestProjectLoading : AbstractMenuCommand
 	{
 		public override void Run()
 		{
-      Altaxo.Main.Commands.TestAllProjectsInFolder.VerifyOpeningOfDocumentsWithoutException();
+			Altaxo.Main.Commands.TestAllProjectsInFolder.VerifyOpeningOfDocumentsWithoutException();
 		}
 	}
 
@@ -53,5 +53,4 @@ namespace Altaxo.Main.Commands
 			Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
 		}
 	}
-
 }

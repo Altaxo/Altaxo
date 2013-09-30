@@ -690,7 +690,6 @@ namespace Altaxo.Collections
 				throw new ArgumentNullException("nodeToInsert");
 
 			var parent = ElementAt(rootNode, index.TakeAllButLast());
-			var idx = index.Last();
 			parent.ChildNodes.Add(nodeToInsert);
 		}
 

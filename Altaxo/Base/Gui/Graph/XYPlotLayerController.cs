@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph
 		private IMVCAController _currentController;
 
 		protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
-		protected IMVCAController _layerPositionController;
+		protected IMVCANController _layerPositionController;
 		protected IMVCANController _layerContentsController;
 		protected IMVCAController[] _axisScaleController;
 
@@ -249,7 +249,8 @@ namespace Altaxo.Gui.Graph
 					}
 					if (null == _layerPositionController)
 					{
-						_layerPositionController = new LayerPositionController().Initialize(_doc.Location, _doc);
+						_layerPositionController = new LayerPositionController() { UseDocumentCopy = UseDocument.Directly };
+						_layerPositionController.InitializeDocument(_doc.Location, _doc);
 						Current.Gui.FindAndAttachControlTo(_layerPositionController);
 					}
 					_currentController = _layerPositionController;
@@ -475,6 +476,11 @@ namespace Altaxo.Gui.Graph
 			{
 				_doc.CoordinateSystem = (G2DCoordinateSystem)_coordinateController.ModelObject;
 				SetCoordinateSystemDependentObjects();
+			}
+
+			if (object.ReferenceEquals(_currentController, _layerPositionController))
+			{
+				_doc.Location = (IItemLocation)_currentController.ModelObject;
 			}
 
 			else if (_currentPageName == "GridStyle")
