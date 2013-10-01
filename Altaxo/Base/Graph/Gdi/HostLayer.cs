@@ -68,14 +68,13 @@ namespace Altaxo.Graph.Gdi
 		#region Cached member variables
 
 		/// <summary>
-		/// The size of the area of the entire graph document.
-		/// Needed to calculate "relative to page size" layer size values.
+		/// The cached size of the parent layer. If this here is the root layer, and hence no parent layer exist, the cached size is set to 100 x 100 mm².
 		/// </summary>
-		protected PointD2D _cachedParentLayerSize;
+		protected PointD2D _cachedParentLayerSize = new PointD2D((1000 * 72) / 254.0, (1000 * 72) / 254.0);
 
 		/// <summary>
 		/// The cached layer position in points (1/72 inch) relative to the upper left corner
-		/// of the graph document (upper left corner of the printable area).
+		/// of the parent layer (upper left corner of the printable area).
 		/// </summary>
 		protected PointD2D _cachedLayerPosition;
 
@@ -86,7 +85,7 @@ namespace Altaxo.Graph.Gdi
 		/// In case the size is absolute (see <see cref="XYPlotLayerSizeType"/>), this is the size of the layer. Otherwise
 		/// it is only the cached value for the size, since the size is calculated then.
 		/// </remarks>
-		protected PointD2D _cachedLayerSize = new PointD2D(0, 0);
+		protected PointD2D _cachedLayerSize;
 
 		protected TransformationMatrix2D _transformation = new TransformationMatrix2D();
 
@@ -225,23 +224,19 @@ namespace Altaxo.Graph.Gdi
 			using (IDisposable updateLock = BeginUpdate())
 			{
 				InternalCopyFrom(from, options);
+				OnChanged(); // make sure that the change event is called
 			}
-
-			// 2008-12-12: parent is neccessary for the layer dialog, otherwise linked layer properties are broken
-			this._parent = from._parent; // outside the update, because clone operations should not cause an update of the old parent
-			OnChanged(); // make sure that the change event is called
 		}
 
 		/// <summary>
 		/// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
 		/// it is not neccessary to call the OnChanged event, since this is called in the calling routine.
 		/// </summary>
-		/// <param name="from">From.</param>
-		/// <param name="options"></param>
+		/// <param name="from">The layer from which to copy.</param>
+		/// <param name="options">Copy options.</param>
 		protected virtual void InternalCopyFrom(HostLayer from, GraphCopyOptions options)
 		{
 			this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
-
 			this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
 
 			// size, position, rotation and scale
@@ -296,8 +291,16 @@ namespace Altaxo.Graph.Gdi
 		public HostLayer(HostLayer from)
 		{
 			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
-			InternalInitializeGraphObjectsCollection();
-			CopyFrom(from, GraphCopyOptions.All);
+			var updateLock = _changeEventSuppressor.Suspend(); // see below, this is to suppress the change event when cloning the layer.
+			try
+			{
+				InternalInitializeGraphObjectsCollection();
+				CopyFrom(from, GraphCopyOptions.All);
+			}
+			finally
+			{
+				_changeEventSuppressor.Resume(ref updateLock, true); // when we clone from another layer, the new layer has still the parent of the old layer. Thus we don't want that the parent of the old layer receives the changed event, since nothing has changed for it.
+			}
 		}
 
 		/// <summary>
@@ -539,7 +542,19 @@ namespace Altaxo.Graph.Gdi
 			get { return this._cachedLayerPosition; }
 			set
 			{
-				SetPositionSize(new RelativeOrAbsoluteValue(value.X), new RelativeOrAbsoluteValue(value.Y), new RelativeOrAbsoluteValue(_cachedLayerSize.X), new RelativeOrAbsoluteValue(_cachedLayerSize.Y));
+				var ls = _location as ItemLocationDirect;
+				if (null != ls)
+				{
+					if (ls.XPosition.IsAbsolute)
+						ls.XPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
+					else
+						ls.XPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
+
+					if (ls.YPosition.IsAbsolute)
+						ls.YPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
+					else
+						ls.YPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
+				}
 			}
 		}
 
@@ -551,10 +566,15 @@ namespace Altaxo.Graph.Gdi
 				var ls = _location as ItemLocationDirect;
 				if (null != ls)
 				{
-					if (ls.XPosition.IsAbsolute)
-						ls.XPosition = new Calc.RelativeOrAbsoluteValue(value.X);
-					if (ls.YPosition.IsAbsolute)
-						ls.YPosition = new Calc.RelativeOrAbsoluteValue(value.Y);
+					if (ls.XSize.IsAbsolute)
+						ls.XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
+					else
+						ls.XSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
+
+					if (ls.YSize.IsAbsolute)
+						ls.YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
+					else
+						ls.YSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
 				}
 			}
 		}

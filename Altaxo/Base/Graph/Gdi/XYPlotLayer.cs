@@ -101,11 +101,16 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="from"></param>
 		public XYPlotLayer(XYPlotLayer from)
+			: base(from)
 		{
-			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
-			CopyFrom(from, GraphCopyOptions.All);
 		}
 
+		/// <summary>
+		/// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
+		/// it is not neccessary to call the OnChanged event, since this is called in the calling routine.
+		/// </summary>
+		/// <param name="from">The layer from which to copy.</param>
+		/// <param name="options">Copy options.</param>
 		protected override void InternalCopyFrom(HostLayer obj, GraphCopyOptions options)
 		{
 			base.InternalCopyFrom(obj, options.WithClearedFlag(GraphCopyOptions.CopyLayerGraphItems)); // in the base class GraphItems should not be copied, since this is handled in this class
