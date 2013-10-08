@@ -481,7 +481,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			// we are using weak events here, to avoid that _doc will maintain strong references to the controller
 			_doc.Changed += new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x);
 			_doc.RootLayer.LayerCollectionChanged += new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.RootLayer.LayerCollectionChanged -= x);
-			_doc.BoundsChanged += new WeakEventHandler(this.EhGraph_BoundsChanged, x => _doc.BoundsChanged -= x);
+			_doc.SizeChanged += new WeakEventHandler(this.EhGraph_SizeChanged, x => _doc.SizeChanged -= x);
 			_doc.NameChanged += new WeakActionHandler<INameOwner, string>(this.EhGraphDocumentNameChanged, x => _doc.NameChanged -= x);
 
 			// Ensure the current layer and plot numbers are valid
@@ -651,7 +651,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
 		/// <param name="sender">The sender of the event (the GraphDocument).</param>
 		/// <param name="e">The event arguments.</param>
-		protected void EhGraph_BoundsChanged(object sender, System.EventArgs e)
+		protected void EhGraph_SizeChanged(object sender, System.EventArgs e)
 		{
 			Current.Gui.BeginExecute(EhGraph_BoundsChanged_Unsynchronized);
 		}

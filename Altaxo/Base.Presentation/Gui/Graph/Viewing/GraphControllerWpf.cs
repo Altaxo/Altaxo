@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,31 +19,31 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Groups;
+using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Graph;
+using Altaxo.Main;
+using Altaxo.Serialization;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Input;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Shapes;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Graph.Gdi.Plot.Styles;
-using Altaxo.Graph.Gdi.Plot.Groups;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Serialization;
-
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Graph;
-using Altaxo.Graph;
-using Altaxo.Main;
-using Altaxo.Collections;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
@@ -55,7 +56,6 @@ namespace Altaxo.Gui.Graph.Viewing
 	[UserControllerForObject(typeof(Altaxo.Graph.GraphViewLayout))]
 	public class GraphControllerWpf : GraphController
 	{
-
 		#region Member variables
 
 		// following default unit is point (1/72 inch)
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		/// <summary>
 		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
-		/// this brush fills only the non printable margins of the page. 
+		/// this brush fills only the non printable margins of the page.
 		/// </summary>
 		protected BrushX _pageGroundBrush;
 
@@ -92,8 +92,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
 		protected MouseStateHandler _mouseState;
 
-
-
 		/// <summary>
 		/// This holds a frozen image of the graph during the moving time
 		/// </summary>
@@ -104,7 +102,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		#endregion Member variables
 
 		#region Constructors
-
 
 		/// <summary>
 		/// Set the member variables to default values. Intended only for use in constructors and deserialization code.
@@ -119,13 +116,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			_screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
 
-
-
-
 			// This holds a frozen image of the graph during the moving time
 			_cachedGraphImage = null;
 		}
-
 
 		public GraphControllerWpf()
 			: base()
@@ -154,10 +147,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
 		}
 
-		#endregion // Constructors
+		#endregion Constructors
 
 		#region Shortcuts to implementations by view or controller
-
 
 		public override object ViewObject
 		{
@@ -184,7 +176,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		#endregion
+		#endregion Shortcuts to implementations by view or controller
 
 		#region Functions used by View
 
@@ -199,51 +191,64 @@ namespace Altaxo.Gui.Graph.Viewing
 				GraphToolType oldType = CurrentGraphTool;
 				if (oldType != value)
 				{
-
 					switch (value)
 					{
 						case GraphToolType.None:
 							_mouseState = null;
 							break;
+
 						case GraphToolType.ArrowLineDrawing:
 							_mouseState = new GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler(this);
 							break;
+
 						case GraphToolType.CurlyBraceDrawing:
 							_mouseState = new GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler(this);
 							break;
+
 						case GraphToolType.EllipseDrawing:
 							_mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(this);
 							break;
+
 						case GraphToolType.ObjectPointer:
 							_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this);
 							break;
+
 						case GraphToolType.ReadPlotItemData:
 							_mouseState = new GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler(this);
 							break;
+
 						case GraphToolType.ReadXYCoordinates:
 							_mouseState = new GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler(this);
 							break;
+
 						case GraphToolType.RectangleDrawing:
 							_mouseState = new GraphControllerMouseHandlers.RectangleDrawingMouseHandler(this);
 							break;
+
 						case GraphToolType.RegularPolygonDrawing:
 							_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(this);
 							break;
+
 						case GraphToolType.SingleLineDrawing:
 							_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this);
 							break;
+
 						case GraphToolType.TextDrawing:
 							_mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(this);
 							break;
+
 						case GraphToolType.ZoomAxes:
 							_mouseState = new GraphControllerMouseHandlers.ZoomAxesMouseHandler(this);
 							break;
+
 						case GraphToolType.OpenCardinalSplineDrawing:
 							_mouseState = new OpenCardinalSplineMouseHandler(this);
 							break;
+
 						case GraphToolType.ClosedCardinalSplineDrawing:
 							_mouseState = new ClosedCardinalSplineMouseHandler(this);
 							break;
+
 						default:
 							throw new NotImplementedException("Type not implemented: " + value.ToString());
 					} // end switch
@@ -267,10 +272,9 @@ namespace Altaxo.Gui.Graph.Viewing
 				_viewWpf.SetPanelCursor(cursor);
 		}
 
-		#endregion
+		#endregion Functions used by View
 
 		#region Event handlers forwarded by view
-
 
 		/// <summary>
 		/// Called if a key is pressed in the view.
@@ -285,7 +289,6 @@ namespace Altaxo.Gui.Graph.Viewing
 				return false;
 		}
 
-
 		/// <summary>
 		/// Called if the host window is about to be closed.
 		/// </summary>
@@ -294,7 +297,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			if (!Current.ApplicationIsClosing)
 			{
-
 				if (false == Current.Gui.YesNoMessageBox("Do you really want to close this graph?", "Attention", false))
 				{
 					return true; // cancel the closing
@@ -353,7 +355,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			_mouseState.OnDoubleClick(position, e);
 		}
 
-		DateTime _nextScrollZoomAcceptTime;
+		private DateTime _nextScrollZoomAcceptTime;
+
 		/// <summary>Handles the mouse wheel event.</summary>
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">The <see cref="System.Windows.Input.MouseWheelEventArgs"/> instance containing the event data.</param>
@@ -366,7 +369,6 @@ namespace Altaxo.Gui.Graph.Viewing
 				DateTime now = DateTime.UtcNow;
 				if (now < _nextScrollZoomAcceptTime)
 					return;
-				
 
 				var oldZoom = ZoomFactor;
 				var newZoom = oldZoom;
@@ -375,12 +377,12 @@ namespace Altaxo.Gui.Graph.Viewing
 				if (e.Delta > 0)
 				{
 					newZoom = oldZoom * 1.5;
-					isAutoZoomNext = newZoom >= autoZoomFactor && oldZoom<autoZoomFactor;
+					isAutoZoomNext = newZoom >= autoZoomFactor && oldZoom < autoZoomFactor;
 				}
 				else if (e.Delta < 0)
 				{
 					newZoom = oldZoom / 1.5;
-					isAutoZoomNext = newZoom <= autoZoomFactor && oldZoom>autoZoomFactor;
+					isAutoZoomNext = newZoom <= autoZoomFactor && oldZoom > autoZoomFactor;
 				}
 				// Do zoom action here
 				if (isAutoZoomNext)
@@ -391,12 +393,12 @@ namespace Altaxo.Gui.Graph.Viewing
 				else // manual zoom
 				{
 					var graphCoord = ConvertMouseToGraphCoordinates(position);
-					ZoomAroundPivotPoint(newZoom,graphCoord);
+					ZoomAroundPivotPoint(newZoom, graphCoord);
 				}
 			}
 		}
 
-		#endregion
+		#endregion Event handlers forwarded by view
 
 		#region Event handlers set-up by this controller
 
@@ -409,7 +411,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			XYPlotLayer actLayer = hit.ParentLayer as XYPlotLayer;
 			IGPlotItem pa = (IGPlotItem)hit.HittedObject;
-
 
 			// get plot group
 			PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
@@ -449,12 +450,10 @@ namespace Altaxo.Gui.Graph.Viewing
 				}
 			}
 
-
-
 			return shouldDeleted;
 		}
 
-		#endregion
+		#endregion Event handlers set-up by this controller
 
 		#region Painting
 
@@ -468,7 +467,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Marks the cached graph image as invalid, and triggers a repainting of the graph area with Gui render priority. 
+		/// Marks the cached graph image as invalid, and triggers a repainting of the graph area with Gui render priority.
 		/// Thus, in the next rendering cycle, the cached graph image is recreated and used to repaint the graph area, followed by the custom mouse handler drawing.
 		/// </summary>
 		public void InvalidateCachedGraphImageAndRepaintOffline()
@@ -486,7 +485,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline()
 		{
-			if (_viewWpf == null || Doc == null ||  _viewWpf.ViewportSizeInPoints == PointD2D.Empty)
+			if (_viewWpf == null || Doc == null || _viewWpf.ViewportSizeInPoints == PointD2D.Empty)
 				return;
 
 			if (this._cachedGraphImage != null && !this._isCachedGraphImageDirty)
@@ -528,7 +527,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			else // not for printing
 			{
-
 				// if neccessary, create a new bitmap for caching the graph image.
 				if (_cachedGraphImage == null || _cachedGraphImage.Width != _viewWpf.GraphSize.Width || _cachedGraphImage.Height != _viewWpf.GraphSize.Height)
 				{
@@ -551,7 +549,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 					_isCachedGraphImageDirty = true;
 				}
-
 
 				if (_cachedGraphImage == null)
 				{
@@ -632,10 +629,6 @@ namespace Altaxo.Gui.Graph.Viewing
 				//g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
 				g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
 				Doc.DoPaint(g, bForPrinting);
-
-
-
-
 			}
 			catch (System.Exception ex)
 			{
@@ -645,12 +638,11 @@ namespace Altaxo.Gui.Graph.Viewing
 				g.DrawString(ex.ToString(),
 					new System.Drawing.Font(FontFamily.GenericSansSerif, 8),
 					System.Drawing.Brushes.Black,
-					Doc.PrintableBounds);
+					new RectangleF(0, 0, (float)Doc.RootLayer.Size.X, (float)Doc.RootLayer.Size.Y));
 			}
 		}
 
-
-		#endregion // Painting
+		#endregion Painting
 
 		#region Editing selected objects
 
@@ -679,24 +671,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		#endregion
+		#endregion Editing selected objects
 
 		#region Scaling and Positioning
-
 
 		/// <summary>
 		/// Factor for conversion of graph units (in points = 1/72 inch) to mouse coordinates.
@@ -709,7 +686,6 @@ namespace Altaxo.Gui.Graph.Viewing
 				return _screenResolutionDpi * (ZoomFactor * InchPerPoint);
 			}
 		}
-
 
 		/// <summary>
 		/// Converts from mouse coordinates to graph coordinates.
@@ -732,15 +708,12 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			var offset = PositionOfViewportsUpperLeftCornerInGraphCoordinates;
 			var factor = FactorForGraphToMouseCoordinateConversion;
-			return new PointD2D((graphCoord.X-offset.X) * factor.X, (graphCoord.Y-offset.Y) * factor.Y);
+			return new PointD2D((graphCoord.X - offset.X) * factor.X, (graphCoord.Y - offset.Y) * factor.Y);
 		}
 
-		#endregion // Scaling, Converting
+		#endregion Scaling and Positioning
 
 		#region Finding objects at position
-
-
-
 
 		/// <summary>
 		/// Looks for a graph object at pixel position <paramref name="pixelPos"/> and returns true if one is found.
@@ -755,7 +728,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			var mousePT = ConvertMouseToGraphCoordinates(pixelPos);
 			var hitData = new HitTestPointData(mousePT, this.ZoomFactor);
 
-			foreach(var layer in RootLayer.TakeFromFirstLeavesToHere())
+			foreach (var layer in RootLayer.TakeFromFirstLeavesToHere())
 			{
 				foundObject = layer.HitTest(hitData, plotItemsOnly);
 				if (null != foundObject)
@@ -769,7 +742,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			return false;
 		}
 
-
-		#endregion
+		#endregion Finding objects at position
 	}
 }

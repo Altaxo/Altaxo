@@ -95,14 +95,14 @@ namespace Altaxo.Gui.Graph
 			}
 			if (null != _view)
 			{
-				var xSize = _doc.XSize.IsAbsolute ? new DimensionfulQuantity(_doc.XSize.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.XSize.Value * 100, _percentLayerXSizeUnit);
+				var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
 				_view.InitializeXSize(xSize, _xSizeEnvironment);
-				var ySize = _doc.YSize.IsAbsolute ? new DimensionfulQuantity(_doc.YSize.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.YSize.Value * 100, _percentLayerYSizeUnit);
+				var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
 				_view.InitializeYSize(ySize, _ySizeEnvironment);
 
-				var xPos = _doc.XPosition.IsAbsolute ? new DimensionfulQuantity(_doc.XPosition.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.XPosition.Value * 100, _percentLayerXSizeUnit);
+				var xPos = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
 				_view.InitializeXPosition(xPos, _xPositionEnvironment);
-				var yPos = _doc.YPosition.IsAbsolute ? new DimensionfulQuantity(_doc.YPosition.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.YPosition.Value * 100, _percentLayerYSizeUnit);
+				var yPos = _doc.PositionY.IsAbsolute ? new DimensionfulQuantity(_doc.PositionY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionY.Value * 100, _percentLayerYSizeUnit);
 				_view.InitializeYPosition(yPos, _yPositionEnvironment);
 
 				_view.Rotation = _doc.Rotation;
@@ -126,24 +126,24 @@ namespace Altaxo.Gui.Graph
 				var yPos = _view.YPosition;
 
 				if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
-					_doc.XSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(xSize.Value / 100);
+					_doc.SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(xSize.Value / 100);
 				else
-					_doc.XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(xSize.AsValueIn(Units.Length.Point.Instance));
+					_doc.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(xSize.AsValueIn(Units.Length.Point.Instance));
 
 				if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
-					_doc.YSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(ySize.Value / 100);
+					_doc.SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(ySize.Value / 100);
 				else
-					_doc.YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(ySize.AsValueIn(Units.Length.Point.Instance));
+					_doc.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(ySize.AsValueIn(Units.Length.Point.Instance));
 
 				if (object.ReferenceEquals(xPos.Unit, _percentLayerXSizeUnit))
-					_doc.XPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(xPos.Value / 100);
+					_doc.PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(xPos.Value / 100);
 				else
-					_doc.XPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(xPos.AsValueIn(Units.Length.Point.Instance));
+					_doc.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(xPos.AsValueIn(Units.Length.Point.Instance));
 
 				if (object.ReferenceEquals(yPos.Unit, _percentLayerYSizeUnit))
-					_doc.YPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(yPos.Value / 100);
+					_doc.PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(yPos.Value / 100);
 				else
-					_doc.YPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(yPos.AsValueIn(Units.Length.Point.Instance));
+					_doc.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(yPos.AsValueIn(Units.Length.Point.Instance));
 
 				_originalDoc.CopyFrom(_doc);
 			}

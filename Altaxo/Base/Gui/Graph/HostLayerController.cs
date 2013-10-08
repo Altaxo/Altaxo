@@ -68,7 +68,8 @@ namespace Altaxo.Gui.Graph
 		private IMVCAController _currentController;
 
 		protected IMVCANController _layerPositionController;
-		protected IMVCANController _layerContentsController;
+		protected IMVCANController _layerGraphItemsController;
+		protected IMVCANController _layerGridController;
 
 		private object _lastControllerApplied;
 
@@ -123,8 +124,9 @@ namespace Altaxo.Gui.Graph
 			if (null != _view)
 			{
 				// add all necessary Tabs
-				_view.AddTab("Contents", "Contents");
+				_view.AddTab("GraphicItems", "GraphicItems");
 				_view.AddTab("Position", "Position");
+				_view.AddTab("HostGrid", "HostGrid");
 
 				// Set the controller of the current visible Tab
 				SetCurrentTabController(true);
@@ -135,16 +137,16 @@ namespace Altaxo.Gui.Graph
 		{
 			switch (_currentPageName)
 			{
-				case "Contents":
+				case "GraphicItems":
 					if (pageChanged)
 					{
 						_view.SelectTab(_currentPageName);
 					}
-					if (null == _layerContentsController)
+					if (null == _layerGraphItemsController)
 					{
-						// _layerContentsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.PlotItems }, typeof(IMVCANController), UseDocument.Directly);
+						_layerGraphItemsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.GraphObjects }, typeof(IMVCANController), UseDocument.Directly);
 					}
-					_currentController = _layerContentsController;
+					_currentController = _layerGraphItemsController;
 					_view.CurrentContent = _currentController.ViewObject;
 					break;
 
@@ -161,6 +163,21 @@ namespace Altaxo.Gui.Graph
 					}
 					_currentController = _layerPositionController;
 					_view.CurrentContent = _layerPositionController.ViewObject;
+					break;
+
+				case "HostGrid":
+					if (pageChanged)
+					{
+						_view.SelectTab(_currentPageName);
+					}
+					if (null == _layerGridController)
+					{
+						_layerGridController = new GridPartitioningController() { UseDocumentCopy = UseDocument.Directly };
+						_layerGridController.InitializeDocument(_doc.Grid, _doc);
+						Current.Gui.FindAndAttachControlTo(_layerGridController);
+					}
+					_currentController = _layerGridController;
+					_view.CurrentContent = _layerGridController.ViewObject;
 					break;
 			}
 		}

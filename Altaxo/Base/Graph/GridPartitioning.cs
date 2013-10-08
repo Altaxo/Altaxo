@@ -1,4 +1,5 @@
 ﻿using Altaxo.Calc;
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,7 +114,7 @@ namespace Altaxo.Graph
 		}
 	}
 
-	public class GridPartitioning
+	public class GridPartitioning : Main.ICopyFrom
 	{
 		private LinearPartitioning _xPartitioning;
 		private LinearPartitioning _yPartitioning;
@@ -163,9 +164,40 @@ namespace Altaxo.Graph
 			_yPartitioning = new LinearPartitioning();
 		}
 
+		public GridPartitioning(GridPartitioning from)
+		{
+			_xPartitioning = new LinearPartitioning();
+			_yPartitioning = new LinearPartitioning();
+			CopyFrom(from);
+		}
+
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as GridPartitioning;
+			if (null != from)
+			{
+				_xPartitioning.Clear();
+				_yPartitioning.Clear();
+				_xPartitioning.AddRange(from._xPartitioning);
+				_yPartitioning.AddRange(from._yPartitioning);
+				return true;
+			}
+			return false;
+		}
+
+		public object Clone()
+		{
+			return new GridPartitioning(this);
+		}
+
 		public LinearPartitioning XPartitioning { get { return _xPartitioning; } }
 
 		public LinearPartitioning YPartitioning { get { return _yPartitioning; } }
+
+		public bool IsEmpty { get { return _xPartitioning.Count == 0 && _yPartitioning.Count == 0; } }
 
 		public RectangleD GetTileRectangle(double column, double row, double columnSpan, double rowSpan, PointD2D totalSize)
 		{

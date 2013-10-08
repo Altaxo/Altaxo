@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="Altaxo.Gui.Common.QuantityWithUnitList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="8" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<StackPanel Orientation="Vertical" Name="_guiItemStack" Grid.Row="1" />
+	</Grid>
+</UserControl>

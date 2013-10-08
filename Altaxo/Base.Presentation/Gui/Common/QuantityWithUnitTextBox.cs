@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-
-using Altaxo.Units;
-
 
 namespace Altaxo.Gui.Common
 {
@@ -41,8 +40,10 @@ namespace Altaxo.Gui.Common
 	public class QuantityWithUnitTextBox : TextBox, IDimensionfulQuantityView
 	{
 		public event DependencyPropertyChangedEventHandler SelectedQuantityChanged;
-		QuantityWithUnitConverter _converter;
 
+		public event DependencyPropertyChangedEventHandler SelectedQuantityWithUnitEnvironmentChanged;
+
+		private QuantityWithUnitConverter _converter;
 
 		/// <summary>
 		/// Static initialization.
@@ -70,10 +71,12 @@ namespace Altaxo.Gui.Common
 		}
 
 		public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
-		public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
-		public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
-		public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
+		public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
+
+		public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
+
+		public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
 		#region Change selection behaviour
 
@@ -136,7 +139,8 @@ namespace Altaxo.Gui.Common
 
 		#endregion Change selection behaviour
 
-		bool _validateWhenTextChange;
+		private bool _validateWhenTextChange;
+
 		public bool UpdateQuantityIfTextChanged
 		{
 			set
@@ -145,7 +149,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		void QuantityWithUnitTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		private void QuantityWithUnitTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (_validateWhenTextChange)
 				_converter.BindingExpression.UpdateSource();
@@ -190,18 +194,19 @@ namespace Altaxo.Gui.Common
 				SelectedQuantityChanged(obj, args);
 			if (null != DimensionfulQuantityView_QuantityChanged)
 				DimensionfulQuantityView_QuantityChanged();
+			if (null != SelectedQuantityWithUnitEnvironmentChanged)
+				SelectedQuantityWithUnitEnvironmentChanged(obj, args);
 		}
-
 
 		/// <summary>Gets or sets the selected quantity as value in SI units.</summary>
 		/// <value>The selected quantity as value in SI units.</value>
 		public double SelectedQuantityAsValueInSIUnits
 		{
-			get	{	return SelectedQuantity.AsValueInSIUnits; }
+			get { return SelectedQuantity.AsValueInSIUnits; }
 			set { SelectedQuantity = new DimensionfulQuantity(value, _converter.UnitEnvironment.DefaultUnit.Unit.SIUnit).AsQuantityIn(_converter.UnitEnvironment.DefaultUnit); }
 		}
 
-		#endregion
+		#endregion Dependency property
 
 		/// <summary>
 		/// Sets the unit environment. The unit environment determines the units the user is able to enter.
@@ -219,7 +224,9 @@ namespace Altaxo.Gui.Common
 		}
 
 		#region IDimensionfulQuantityView
+
 		private event Action DimensionfulQuantityView_QuantityChanged;
+
 		event Action IDimensionfulQuantityView.SelectedQuantityChanged
 		{
 			add { DimensionfulQuantityView_QuantityChanged += value; }
@@ -230,6 +237,7 @@ namespace Altaxo.Gui.Common
 		{
 			set { _converter.UnitEnvironment = value; }
 		}
-		#endregion
+
+		#endregion IDimensionfulQuantityView
 	}
 }

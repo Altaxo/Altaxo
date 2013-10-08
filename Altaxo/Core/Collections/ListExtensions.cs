@@ -320,5 +320,17 @@ namespace Altaxo.Collections
 					list.RemoveAt(i);
 			}
 		}
+
+		/// <summary>
+		/// Adds a range of items to a collection.
+		/// </summary>
+		/// <typeparam name="T">Type of item</typeparam>
+		/// <param name="destination">The collection where to add the items.</param>
+		/// <param name="itemsToAdd">The items to add.</param>
+		public static void AddRange<T>(this ICollection<T> destination, IEnumerable<T> itemsToAdd)
+		{
+			foreach (var t in itemsToAdd)
+				destination.Add(t);
+		}
 	}
 }

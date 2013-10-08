@@ -320,6 +320,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\QuantityWithUnitList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\Resources\styledictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -369,6 +373,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\AxisLinkControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\GraphicItemsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\GridPartitioningControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -791,6 +803,9 @@
     <Compile Include="Gui\Common\ConditionalDocumentControl.xaml.cs">
       <DependentUpon>ConditionalDocumentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\QuantityWithUnitList.xaml.cs">
+      <DependentUpon>QuantityWithUnitList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\SingleChoiceRadioWrapPanel.cs" />
     <Compile Include="Gui\Common\DoubleUpDown.cs" />
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
@@ -984,6 +999,12 @@
     </Compile>
     <Compile Include="Gui\Graph\AxisLinkControl.xaml.cs">
       <DependentUpon>AxisLinkControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\GraphicItemsControl.xaml.cs">
+      <DependentUpon>GraphicItemsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\GridPartitioningControl.xaml.cs">
+      <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\LayerGridPositionSizeControl.xaml.cs">
       <DependentUpon>LayerGridPositionSizeControl.xaml</DependentUpon>

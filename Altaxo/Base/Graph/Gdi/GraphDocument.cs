@@ -63,12 +63,12 @@ namespace Altaxo.Graph.Gdi
 		/// <remarks>The value is only used by hosting classes, since the reference point (0,0) of the GraphDocument
 		/// is the top left corner of the printable area. The hosting class has to translate the graphics origin
 		/// to that point before calling the painting routine <see cref="DoPaint"/>.</remarks>
-		private RectangleF _pageBounds = new RectangleF(0, 0, 842, 595);
+		//private RectangleF _pageBounds = new RectangleF(0, 0, 842, 595);
 
 		/// <summary>
 		/// The printable area of the document, i.e. the page size minus the margins at each side in points (1/72 inch)
 		/// </summary>
-		private RectangleF _printableBounds = new RectangleF(14, 14, 814, 567);
+		//private RectangleF _printableBounds = new RectangleF(14, 14, 814, 567);
 
 		private SingleGraphPrintOptions _printOptions;
 
@@ -136,9 +136,19 @@ namespace Altaxo.Graph.Gdi
 		[field: NonSerialized]
 		public event Action<Main.INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
 
-		/// <summary>Event fired if either the PageBounds or the PrintableBounds changed.</summary>
+		/// <summary>Event fired if the size of this document (i.e. the size of the root layer) changed.</summary>
 		[field: NonSerialized]
-		public event EventHandler BoundsChanged;
+		public event EventHandler SizeChanged;
+
+		/// <summary>The root layer size, cached here only for deciding whether to raise the <see cref="SizeChanged"/> event. Do not use it otherwise.</summary>
+		[NonSerialized]
+		private PointD2D _cachedRootLayerSize;
+
+		protected System.EventArgs _changeEventData = null;
+
+		protected bool _isResumeInProgress = false;
+
+		protected System.Collections.ArrayList _suspendedChildCollection = new System.Collections.ArrayList();
 
 		#region "Serialization"
 
@@ -166,12 +176,12 @@ namespace Altaxo.Graph.Gdi
 
 				//  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
 				s._name = info.GetString("Name");
-				s._pageBounds = (RectangleF)info.GetValue("PageBounds", s);
-				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
+				var pageBounds = (RectangleF)info.GetValue("PageBounds", s);
+				var printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
 
 				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
-				s._rootLayer.Size = s._printableBounds.Size;
-				s._rootLayer.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Width), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Height) };
+				s._rootLayer.Size = printableBounds.Size;
+				s._rootLayer.Location = new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Width), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Height) };
 				foreach (var l in layers)
 					s._rootLayer.Layers.Add(l);
 				return s;
@@ -225,9 +235,9 @@ namespace Altaxo.Graph.Gdi
 			{
 				//  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
 				s._name = info.GetString("Name");
-				s._pageBounds = (RectangleF)info.GetValue("PageBounds", s);
-				s._printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
-				s._rootLayer.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Width), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(s._printableBounds.Size.Height) };
+				var pageBounds = (RectangleF)info.GetValue("PageBounds", s);
+				var printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
+				s._rootLayer.Location = new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Width), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Height) };
 				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
 				foreach (var l in layers)
 					s._rootLayer.Layers.Add(l);
@@ -286,10 +296,7 @@ namespace Altaxo.Graph.Gdi
 			_notes.PropertyChanged += EhNotesChanged;
 			this._rootLayer = new HostLayer();
 			this._rootLayer.ParentObject = this;
-
-			SetGraphPageBoundsToPrinterSettings();
-			this._rootLayer.EhParentLayerSizeChanged(_printableBounds.Size, false);
-			this._rootLayer.Location = new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_printableBounds.Size.Width), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_printableBounds.Size.Height) };
+			this._rootLayer.Location = new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(DefaultRootLayerSizeX), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(DefaultRootLayerSizeY) };
 		}
 
 		private void EhNotesChanged(object sender, PropertyChangedEventArgs e)
@@ -300,23 +307,25 @@ namespace Altaxo.Graph.Gdi
 		public GraphDocument(GraphDocument from)
 		{
 			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
-			_creationTime = _lastChangeTime = DateTime.UtcNow;
-			this._rootLayer = new HostLayer(null, new ItemLocationDirect { XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(814), YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(567) });
-			this._rootLayer.ParentObject = this;
+			var suppressToken = _changedEventSuppressor.Suspend();
+			try
+			{
+				_creationTime = _lastChangeTime = DateTime.UtcNow;
+				this._rootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(814), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(567) });
+				this._rootLayer.ParentObject = this;
 
-			CopyFrom(from, GraphCopyOptions.All);
+				CopyFrom(from, GraphCopyOptions.All);
+			}
+			finally
+			{
+				_changedEventSuppressor.Resume(ref suppressToken, true);
+			}
 		}
 
 		public void CopyFrom(GraphDocument from, GraphCopyOptions options)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
-
-			if (0 != (options & GraphCopyOptions.CopyPageSize))
-			{
-				this._pageBounds = from._pageBounds;
-				this._printableBounds = from._printableBounds;
-			}
 
 			if (0 != (options & GraphCopyOptions.CopyGraphSize))
 			{
@@ -357,33 +366,6 @@ namespace Altaxo.Graph.Gdi
 				this._rootLayer.ParentLayer = this._rootLayer;
 			}
 			this._rootLayer.ParentObject = this;
-		}
-
-		/// <summary>
-		/// Sets the page bounds of the graph document according to the current printer settings
-		/// </summary>
-		public void SetGraphPageBoundsToPrinterSettings()
-		{
-			if (null != Current.PrintingService) // if we are at design time, this is null and we use the default values above
-			{
-				RectangleF pageBounds = Current.PrintingService.PrintingBounds;
-				System.Drawing.Printing.Margins ma = Current.PrintingService.PrintingMargins;
-
-				// since Bounds are in 100th inch, we have to adjust them to points (72th inch)
-				pageBounds.X *= UnitPerInch / 100;
-				pageBounds.Y *= UnitPerInch / 100;
-				pageBounds.Width *= UnitPerInch / 100;
-				pageBounds.Height *= UnitPerInch / 100;
-
-				RectangleF printableBounds = new RectangleF();
-				printableBounds.X = ma.Left * UnitPerInch / 100;
-				printableBounds.Y = ma.Top * UnitPerInch / 100;
-				printableBounds.Width = pageBounds.Width - ((ma.Left + ma.Right) * UnitPerInch / 100);
-				printableBounds.Height = pageBounds.Height - ((ma.Top + ma.Bottom) * UnitPerInch / 100);
-
-				this.PageBounds = pageBounds;
-				this.PrintableBounds = printableBounds;
-			}
 		}
 
 		public object Clone()
@@ -502,62 +484,12 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Fires the <see cref="BoundsChanged" /> event.
+		/// Fires the <see cref="SizeChanged" /> event.
 		/// </summary>
-		protected void OnBoundsChanged()
+		protected void OnSizeChanged()
 		{
-			if (BoundsChanged != null)
-				BoundsChanged(this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// The boundaries of the page in points (1/72 inch).
-		/// </summary>
-		/// <remarks>The value is only used by hosting classes, since the reference point (0,0) of the GraphDocument
-		/// is the top left corner of the printable area. The hosting class has to translate the graphics origin
-		/// to that point before calling the painting routine <see cref="DoPaint"/>.</remarks>
-		public RectangleF PageBounds
-		{
-			get { return _pageBounds; }
-			set
-			{
-				RectangleF oldValue = _pageBounds;
-				_pageBounds = value;
-				if (value != oldValue)
-					OnBoundsChanged();
-			}
-		}
-
-		/// <summary>
-		/// The boundaries of the printable area of the page in points (1/72 inch). Dependend on the last printer settings
-		/// applied to this graph.
-		/// </summary>
-		public RectangleF PrintableBounds
-		{
-			get { return _printableBounds; }
-			set
-			{
-				SetPrintableBounds(value, false, false);
-			}
-		}
-
-		/// <summary>
-		/// Sets the boundaries of the printable area of the page in points (1/72 inch).
-		/// </summary>
-		/// <param name="bounds">The new boundaries.</param>
-		/// <param name="setGraphSize">If true, the size of the graph is set to the size of the printable bounds.</param>
-		/// <param name="rescaleGraph">If true, the layers will be rescaled according to the ratio of new size to old size.</param>
-		public void SetPrintableBounds(RectangleF bounds, bool setGraphSize, bool rescaleGraph)
-		{
-			RectangleF oldBounds = _printableBounds;
-			_printableBounds = bounds;
-
-			if (_printableBounds != oldBounds)
-			{
-				if (setGraphSize)
-					RootLayer.EhParentLayerSizeChanged(bounds.Size, rescaleGraph);
-				OnBoundsChanged();
-			}
+			if (SizeChanged != null)
+				SizeChanged(this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -595,10 +527,6 @@ namespace Altaxo.Graph.Gdi
 		} // end of function DoPaint
 
 		#region Change event handling
-
-		protected System.EventArgs _changeEventData = null;
-		protected bool _isResumeInProgress = false;
-		protected System.Collections.ArrayList _suspendedChildCollection = new System.Collections.ArrayList();
 
 		public IDisposable BeginUpdate()
 		{
@@ -676,6 +604,12 @@ namespace Altaxo.Graph.Gdi
 					this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
 					return;
 				}
+			}
+
+			if (_cachedRootLayerSize != _rootLayer.Size)
+			{
+				_cachedRootLayerSize = _rootLayer.Size;
+				OnSizeChanged();
 			}
 
 			OnChanged(); // Fire the changed event

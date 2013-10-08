@@ -79,12 +79,8 @@ namespace Altaxo.Graph.Gdi
 		protected PointD2D _cachedLayerPosition;
 
 		/// <summary>
-		/// The size of the layer in points (1/72 inch).
+		/// The absolute size of the layer in points (1/72 inch).
 		/// </summary>
-		/// <remarks>
-		/// In case the size is absolute (see <see cref="XYPlotLayerSizeType"/>), this is the size of the layer. Otherwise
-		/// it is only the cached value for the size, since the size is calculated then.
-		/// </remarks>
 		protected PointD2D _cachedLayerSize;
 
 		protected TransformationMatrix2D _transformation = new TransformationMatrix2D();
@@ -238,6 +234,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
 			this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
+			this._grid.CopyFrom(from._grid);
 
 			// size, position, rotation and scale
 			if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
@@ -285,12 +282,23 @@ namespace Altaxo.Graph.Gdi
 		#endregion Copying
 
 		/// <summary>
+		/// Constructor for deserialization purposes only.
+		/// </summary>
+		protected HostLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
+			InternalInitializeGraphObjectsCollection();
+		}
+
+		/// <summary>
 		/// The copy constructor.
 		/// </summary>
 		/// <param name="from"></param>
 		public HostLayer(HostLayer from)
 		{
 			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
+			Grid = new GridPartitioning();
+
 			var updateLock = _changeEventSuppressor.Suspend(); // see below, this is to suppress the change event when cloning the layer.
 			try
 			{
@@ -304,15 +312,6 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Constructor for deserialization purposes only.
-		/// </summary>
-		protected HostLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
-			InternalInitializeGraphObjectsCollection();
-		}
-
-		/// <summary>
 		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
 		/// </summary>
 		/// <param name="parentLayer">The parent layer of the newly created layer.</param>
@@ -320,6 +319,7 @@ namespace Altaxo.Graph.Gdi
 		public HostLayer(HostLayer parentLayer, IItemLocation location)
 		{
 			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
+			Grid = new GridPartitioning();
 
 			if (null != parentLayer) // this helps to get the real layer size from the beginning
 			{
@@ -373,10 +373,10 @@ namespace Altaxo.Graph.Gdi
 		{
 			return new ItemLocationDirect
 			{
-				XSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.X),
-				YSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.Y),
-				XPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X),
-				YPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X)
+				SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.X),
+				SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.Y),
+				PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X),
+				PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X)
 			};
 		}
 
@@ -494,17 +494,17 @@ namespace Altaxo.Graph.Gdi
 					if (_location is ItemLocationDirect)
 					{
 						var location = (ItemLocationDirect)_location;
-						if (location.XPosition.IsAbsolute)
-							location.XPosition = new RelativeOrAbsoluteValue(xoffs + location.XPosition.Value * xscale);
+						if (location.PositionX.IsAbsolute)
+							location.PositionX = new RelativeOrAbsoluteValue(xoffs + location.PositionX.Value * xscale);
 
-						if (location.XSize.IsAbsolute)
-							location.XSize = new RelativeOrAbsoluteValue(location.XSize.Value * xscale);
+						if (location.SizeX.IsAbsolute)
+							location.SizeX = new RelativeOrAbsoluteValue(location.SizeX.Value * xscale);
 
-						if (location.YPosition.IsAbsolute)
-							location.YPosition = new RelativeOrAbsoluteValue(yoffs + location.YPosition.Value * yscale);
+						if (location.PositionY.IsAbsolute)
+							location.PositionY = new RelativeOrAbsoluteValue(yoffs + location.PositionY.Value * yscale);
 
-						if (location.YSize.IsAbsolute)
-							location.YSize = new RelativeOrAbsoluteValue(location.YSize.Value * yscale);
+						if (location.SizeY.IsAbsolute)
+							location.SizeY = new RelativeOrAbsoluteValue(location.SizeY.Value * yscale);
 					}
 
 					this.CalculateCachedSizeAndPosition();
@@ -545,15 +545,15 @@ namespace Altaxo.Graph.Gdi
 				var ls = _location as ItemLocationDirect;
 				if (null != ls)
 				{
-					if (ls.XPosition.IsAbsolute)
-						ls.XPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
+					if (ls.PositionX.IsAbsolute)
+						ls.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
 					else
-						ls.XPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
+						ls.PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
 
-					if (ls.YPosition.IsAbsolute)
-						ls.YPosition = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
+					if (ls.PositionY.IsAbsolute)
+						ls.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
 					else
-						ls.YPosition = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
+						ls.PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
 				}
 			}
 		}
@@ -566,15 +566,15 @@ namespace Altaxo.Graph.Gdi
 				var ls = _location as ItemLocationDirect;
 				if (null != ls)
 				{
-					if (ls.XSize.IsAbsolute)
-						ls.XSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
+					if (ls.SizeX.IsAbsolute)
+						ls.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
 					else
-						ls.XSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
+						ls.SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
 
-					if (ls.YSize.IsAbsolute)
-						ls.YSize = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
+					if (ls.SizeY.IsAbsolute)
+						ls.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
 					else
-						ls.YSize = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
+						ls.SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
 				}
 			}
 		}
@@ -714,7 +714,7 @@ namespace Altaxo.Graph.Gdi
 			if (_location is ItemLocationDirect)
 			{
 				var lps = _location as ItemLocationDirect;
-				newRect = lps.GetAbsoluteEnclosingRectangle(_cachedParentLayerSize);
+				newRect = lps.GetAbsoluteEnclosingRectangleWithoutSSRS(_cachedParentLayerSize);
 			}
 			else if (_location is ItemLocationByGrid)
 			{
@@ -760,9 +760,9 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// If the <see cref="Grid"/> is <c>null</c>, then create a grid that represents the boundaries of the child layers.
 		/// </summary>
-		public void CreateGridIfNull()
+		public void CreateGridIfNullOrEmpty()
 		{
-			if (null != _grid)
+			if (null != _grid && !_grid.IsEmpty)
 				return;
 
 			var xPositions = new HashSet<double>();
@@ -965,6 +965,15 @@ namespace Altaxo.Graph.Gdi
 
 		public virtual void PaintPreprocessing()
 		{
+			var parentLayer = this.ParentLayer;
+			if (null != parentLayer)
+			{
+				if (_cachedParentLayerSize != parentLayer.Size)
+				{
+					EhParentLayerSizeChanged(parentLayer.Size, false);
+				}
+			}
+
 			foreach (var obj in _childLayers)
 				obj.PaintPreprocessing();
 		}
@@ -1080,6 +1089,13 @@ namespace Altaxo.Graph.Gdi
 
 		protected virtual void OnSizeChanged()
 		{
+			// first inform our childs
+			if (null != _childLayers)
+			{
+				foreach (var layer in _childLayers)
+					layer.EhParentLayerSizeChanged(Size, false);
+			}
+
 			// now inform other listeners
 			if (null != SizeChanged)
 				SizeChanged(this, new System.EventArgs());

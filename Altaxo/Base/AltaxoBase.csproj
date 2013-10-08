@@ -225,6 +225,8 @@
     <Compile Include="Graph\NamedColors.cs" />
     <Compile Include="Graph\RectangleExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Gui\Graph\GraphicItemsController.cs" />
+    <Compile Include="Gui\Graph\GridPartitioningController.cs" />
     <Compile Include="Gui\Graph\LayerGridPositionSizeController.cs" />
     <Compile Include="Gui\Graph\LayerDirectPositionSizeController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
