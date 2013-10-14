@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -31,48 +33,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 	public class LineShape : OpenPathShapeBase
 	{
 		#region Serialization
-
-		#region Clipboard serialization
-
-		protected LineShape(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes LineGraphic. 
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			LineShape s = this;
-			base.GetObjectData(info, context);
-		}
-		/// <summary>
-		/// Deserializes the LineGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty SLineGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized LineGraphic.</returns>
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			LineShape s = (LineShape)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
-
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
 
 		private class DeprecatedLineShape : ClosedPathShapeBase
 		{
@@ -98,7 +58,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LineGraphic", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.LineShape", 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -108,16 +68,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (DeprecatedLineShape)o : new DeprecatedLineShape();
 
 				info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
 
 				if (info.CurrentElementName == "LinePen")// 2012-06-18 bugfix: the next three lines are in some cases deserialized in ClosedPathShapeBase
 				{
-					s.Pen =  (PenX)info.GetValue("LinePen", s); 
+					s.Pen = (PenX)info.GetValue("LinePen", s);
 					info.GetBoolean("Fill");
 					info.GetValue("FillBrush", s);
 				}
@@ -130,19 +90,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineShape), 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (LineShape)obj;
 				info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (LineShape)o : new LineShape();
 				info.GetBaseValueEmbedded(s, typeof(LineShape).BaseType, parent);
 
@@ -150,10 +108,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		#region Constructors
+
 		public LineShape()
 		{
 		}
@@ -172,10 +130,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-			this._bounds.Width = endPosition.X - startPosition.X;
-			this._bounds.Height = endPosition.Y - startPosition.Y;
+			this._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.X - startPosition.X);
+			this._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.Y - startPosition.Y);
 		}
-
 
 		public LineShape(double startX, double startY, PointD2D endPosition)
 			:
@@ -193,8 +150,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-			this._bounds.Width = endPosition.X - startPosition.X;
-			this._bounds.Height = endPosition.Y - startPosition.Y;
+			this._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.X - startPosition.X);
+			this._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.Y - startPosition.Y);
 			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;
 		}
@@ -212,7 +169,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		#endregion
+		#endregion Constructors
 
 		public override bool AllowNegativeSize
 		{
@@ -226,7 +183,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			return new LineShape(this);
 		}
-
 
 		public GraphicsPath GetSelectionPath()
 		{
@@ -249,7 +205,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected GraphicsPath GetPath()
 		{
 			GraphicsPath gp = new GraphicsPath();
-			gp.AddLine((float)(_bounds.X), (float)(_bounds.Y), (float)(_bounds.X + Width), (float)(_bounds.Y + Height));
+			var bounds = Bounds;
+			gp.AddLine((float)(bounds.X), (float)(bounds.Y), (float)(bounds.X + Width), (float)(bounds.Y + Height));
 			return gp;
 		}
 
@@ -276,7 +233,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		static bool EhHitDoubleClick(IHitTestObject o)
+		private static bool EhHitDoubleClick(IHitTestObject o)
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Line properties", true);
@@ -284,30 +241,26 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
-
-
-
-
 		public override void Paint(Graphics g, object obj)
 		{
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);
-			Pen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
-			g.DrawLine(Pen, (float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
+
+			var bounds = Bounds;
+			Pen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+			g.DrawLine(Pen, (float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
 
 			if (_outlinePen != null && _outlinePen.IsVisible)
 			{
 				GraphicsPath p = new GraphicsPath();
-				p.AddLine((float)_bounds.X, (float)_bounds.Y, (float)_bounds.Right, (float)_bounds.Bottom);
+				p.AddLine((float)bounds.X, (float)bounds.Y, (float)bounds.Right, (float)bounds.Bottom);
 				p.Widen(Pen);
-				OutlinePen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				OutlinePen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.DrawPath(OutlinePen, p);
 			}
 
 			g.Restore(gs);
 		}
-
-
 
 		protected class LineShapeHitTestObject : GraphicBaseHitTestObject
 		{

@@ -380,34 +380,6 @@ namespace Altaxo.Graph.Gdi
 			};
 		}
 
-		/// <summary>
-		/// Creates the default grid. It consists of three rows and three columns. Columns 0 and 2 are the left and right margin, respectively. Rows 0 and 2 are the top and bottom margin.
-		/// The cell column 1 / row 1 is intended to hold the child layer.
-		/// </summary>
-		public void CreateDefaultGrid()
-		{
-			_grid = new GridPartitioning();
-			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.X));
-			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.X));
-			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.X - DefaultChildLayerRelativeSize.X));
-
-			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.Y));
-			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.Y));
-			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.Y - DefaultChildLayerRelativeSize.Y));
-		}
-
-		public GridPartitioning Grid
-		{
-			get
-			{
-				return _grid;
-			}
-			private set
-			{
-				_grid = value;
-			}
-		}
-
 		public IItemLocation Location
 		{
 			get
@@ -756,6 +728,34 @@ namespace Altaxo.Graph.Gdi
 		#endregion Position and Size
 
 		#region Grid creation
+
+		public GridPartitioning Grid
+		{
+			get
+			{
+				return _grid;
+			}
+			private set
+			{
+				_grid = value;
+			}
+		}
+
+		/// <summary>
+		/// Creates the default grid. It consists of three rows and three columns. Columns 0 and 2 are the left and right margin, respectively. Rows 0 and 2 are the top and bottom margin.
+		/// The cell column 1 / row 1 is intended to hold the child layer.
+		/// </summary>
+		public void CreateDefaultGrid()
+		{
+			_grid = new GridPartitioning();
+			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.X));
+			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.X));
+			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.X - DefaultChildLayerRelativeSize.X));
+
+			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.Y));
+			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.Y));
+			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.Y - DefaultChildLayerRelativeSize.Y));
+		}
 
 		/// <summary>
 		/// If the <see cref="Grid"/> is <c>null</c>, then create a grid that represents the boundaries of the child layers.
@@ -1116,7 +1116,7 @@ namespace Altaxo.Graph.Gdi
 			return _changeEventSuppressor.Suspend();
 		}
 
-		public void EndUpdate(ref IDisposable locker)
+		public void EndUpdate(ref Main.ISuppressToken locker)
 		{
 			_changeEventSuppressor.Resume(ref locker);
 		}

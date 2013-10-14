@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 using System.IO;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-
 	[Serializable]
 	public abstract class ImageGraphic : GraphicBase
 	{
@@ -37,19 +37,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// If true, the size of this object is calculated based on the source size, taking into account the scaling for x and y.
 		/// If false, the size of this object is used, and the scaling values will be ignored.
 		/// </summary>
-		bool _isSizeCalculationBasedOnSourceSize;
+		private bool _isSizeCalculationBasedOnSourceSize;
 
 		/// <summary>
 		/// Indicates the aspect preserving of this object.
 		/// </summary>
-		AspectRatioPreservingMode _aspectPreserving;
-
+		private AspectRatioPreservingMode _aspectPreserving;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ImageGraphic", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ImageGraphic", 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -59,9 +58,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				ImageGraphic s = (ImageGraphic)o;
 				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
 
@@ -73,20 +72,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		// 2012-03-21: Properties 'SizeBasedOnSourceSize' and 'AspectPreserving' added
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 2)] 
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 2)]
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				ImageGraphic s = (ImageGraphic)obj;
 				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
-				
+
 				info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
 				info.AddEnum("AspectPreserving", s._aspectPreserving);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				ImageGraphic s = (ImageGraphic)o;
 				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
 
@@ -97,20 +96,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-		}
-		#endregion
+		#endregion Serialization
 
 		protected ImageGraphic()
 			:
 			base()
 		{
 		}
+
 		protected ImageGraphic(ImageGraphic from)
 			:
 			base(from) // all is done here, since CopyFrom is virtual!
@@ -131,7 +124,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			return isCopied;
 		}
-
 
 		public override bool AutoSize
 		{
@@ -176,33 +168,32 @@ namespace Altaxo.Graph.Gdi.Shapes
 			PointD2D sourceSize = GetImageSizePt();
 
 			PointD2D destSize = Size;
-			PointD2D currentSize = new PointD2D(destSize.X * _scaleX, destSize.Y * _scaleY);
+			PointD2D currentSize = new PointD2D(destSize.X * ScaleX, destSize.Y * ScaleY);
 			switch (_aspectPreserving)
 			{
 				case AspectRatioPreservingMode.PreserveXPriority:
 					// calculate y-scale based on x-scale
-					destSize.Y = (currentSize.X * sourceSize.Y / sourceSize.X) / _scaleY;
+					destSize.Y = (currentSize.X * sourceSize.Y / sourceSize.X) / ScaleY;
 					break;
+
 				case AspectRatioPreservingMode.PreserveYPriority:
-					destSize.X = (currentSize.Y * sourceSize.X / sourceSize.Y) / _scaleX;
+					destSize.X = (currentSize.Y * sourceSize.X / sourceSize.Y) / ScaleX;
 					break;
 			}
-			_bounds.Size = destSize;
-
+			this.Size = destSize;
 		}
 
 		public void NormalizeToScaleOne()
 		{
 			PointD2D size = Size;
-			size.X *= _scaleX;
-			size.Y *= _scaleY;
-			_scaleX = _scaleY = 1;
-			_bounds.Size = size;
+			size.X *= ScaleX;
+			size.Y *= ScaleY;
+			this.Scale = new PointD2D(1, 1);
+			this.Size = size;
 		}
 
 		protected override void SetSize(double width, double height, bool suppressChangeEvent)
 		{
-
 			if (_aspectPreserving == AspectRatioPreservingMode.PreserveXPriority)
 			{
 				var srcSize = GetImageSizePt();
@@ -214,10 +205,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				width = height * srcSize.X / srcSize.Y;
 			}
 
-			_scaleX = _scaleY = 1;
+			this.Scale = new PointD2D(1, 1);
 			base.SetSize(width, height, suppressChangeEvent);
 		}
-
 
 		public override PointD2D Scale
 		{
@@ -236,6 +226,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		/// <summary>Get the size of the original image in points (1/72 inch).</summary>
 		public abstract PointD2D GetImageSizePt();
+
 		public abstract Image GetImage();
 
 		/// <summary>
@@ -255,7 +246,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		static bool EhHitDoubleClick(IHitTestObject o)
+		private static bool EhHitDoubleClick(IHitTestObject o)
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Image properties", true);
@@ -272,7 +263,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return new MyHitTestObject(this);
 		}
 
-		class MyHitTestObject : GraphicBaseHitTestObject
+		private class MyHitTestObject : GraphicBaseHitTestObject
 		{
 			public MyHitTestObject(ImageGraphic obj)
 				: base(obj)
@@ -285,20 +276,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					case 0:
 						return ((ImageGraphic)_hitobject).GetGrips(this, pageScale, GripKind.Move);
+
 					case 1:
 						return ((ImageGraphic)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Resize);
+
 					case 2:
 						return ((ImageGraphic)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Rotate);
+
 					case 3:
 						return ((ImageGraphic)_hitobject).GetGrips(this, pageScale, GripKind.Move | GripKind.Shear);
 				}
 				return null;
 			}
-
 		}
 
-		#endregion
-
+		#endregion HitTestObject
 	} //  End Class
-
 }

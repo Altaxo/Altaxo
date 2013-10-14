@@ -28,6 +28,19 @@ using System.Text;
 
 namespace Altaxo.Main
 {
+	/// <summary>
+	/// Interface for a token that is used to suppress events. If the token is disposed, the suppress counter of the parent is decremented by one. If the suppress count of the parent
+	/// falls to zero, the events are enabled again.
+	/// </summary>
+	public interface ISuppressToken : IDisposable
+	{
+		/// <summary>
+		/// Disarms this SuppressToken and decrements the supress count of the parent. Thus, when the suppress count falls to zero during this can,
+		/// the resume event is not fired, but events are enabled again.
+		/// </summary>
+		void Disarm();
+	}
+
 	/// <summary>Helper class to suspend and resume change events (or other events). In contrast to the simpler class <see cref="TemporaryDisabler"/>,
 	/// this class keeps also track of events that happen in the suspend period. Per default, the action on resume is
 	/// fired only if some events have happened during the suspend period.</summary>
@@ -35,7 +48,7 @@ namespace Altaxo.Main
 	{
 		#region Inner class SuppressToken
 
-		private class SuppressToken : IDisposable
+		private class SuppressToken : ISuppressToken
 		{
 			private EventSuppressor _parent;
 
@@ -110,7 +123,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <returns>An object, which must be handed to the resume function to decrease the suspend level. Alternatively,
 		/// the object can be used in an using statement. In this case, the call to the Resume function is not neccessary.</returns>
-		public IDisposable Suspend()
+		public ISuppressToken Suspend()
 		{
 			return new SuppressToken(this);
 		}
@@ -120,7 +133,7 @@ namespace Altaxo.Main
 		/// if the suppress level falls to zero.
 		/// </summary>
 		/// <param name="token"></param>
-		public void Resume(ref IDisposable token)
+		public void Resume(ref ISuppressToken token)
 		{
 			if (token != null)
 			{
@@ -135,15 +148,13 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="token"></param>
 		/// <param name="suppressResumeEvent">If true, the resume event is suppressed.</param>
-		public void Resume(ref IDisposable token, bool suppressResumeEvent)
+		public void Resume(ref ISuppressToken token, bool suppressResumeEvent)
 		{
 			if (token != null)
 			{
 				if (suppressResumeEvent)
 				{
-					var stoken = token as SuppressToken;
-					if (null != stoken)
-						stoken.Disarm();
+					token.Disarm();
 				}
 
 				token.Dispose(); // the OnResume function is called from the SuppressToken

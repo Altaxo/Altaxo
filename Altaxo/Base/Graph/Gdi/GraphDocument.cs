@@ -533,7 +533,7 @@ namespace Altaxo.Graph.Gdi
 			return _changedEventSuppressor.Suspend();
 		}
 
-		public void EndUpdate(ref IDisposable locker)
+		public void EndUpdate(ref ISuppressToken locker)
 		{
 			_changedEventSuppressor.Resume(ref locker);
 		}

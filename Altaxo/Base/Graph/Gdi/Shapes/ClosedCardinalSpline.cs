@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,71 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	[Serializable]
 	public class ClosedCardinalSpline : ClosedPathShapeBase
 	{
-		static double _defaultTension = 0.5;
+		private static double _defaultTension = 0.5;
 
-		List<PointD2D> _curvePoints = new List<PointD2D>();
-		double _tension = _defaultTension;
-
+		private List<PointD2D> _curvePoints = new List<PointD2D>();
+		private double _tension = _defaultTension;
 
 		#region Serialization
 
-		#region Clipboard serialization
-
-		protected ClosedCardinalSpline(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes LineGraphic. 
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			ClosedCardinalSpline s = this;
-			base.GetObjectData(info, context);
-		}
-		/// <summary>
-		/// Deserializes the LineGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty SLineGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized LineGraphic.</returns>
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			ClosedCardinalSpline s = (ClosedCardinalSpline)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
-
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClosedCardinalSpline), 0)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -94,9 +53,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 					info.AddValue("e", s._curvePoints[i]);
 				info.CommitArray();
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (ClosedCardinalSpline)o : new ClosedCardinalSpline();
 				info.GetBaseValueEmbedded(s, typeof(ClosedCardinalSpline).BaseType, parent);
 				s._tension = info.GetDouble("Tension");
@@ -109,10 +68,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		#region Constructors
+
 		public ClosedCardinalSpline()
 		{
 		}
@@ -121,7 +80,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			: this(points, DefaultTension)
 		{
 		}
-
 
 		public ClosedCardinalSpline(IEnumerable<PointD2D> points, double tension)
 		{
@@ -133,7 +91,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			CalculateAndSetBounds();
 		}
-
 
 		public ClosedCardinalSpline(ClosedCardinalSpline from)
 			: base(from)  // all is done here, since CopyFrom is virtual!
@@ -156,8 +113,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return isCopied;
 		}
 
-		#endregion
-
+		#endregion Constructors
 
 		public static double DefaultTension { get { return _defaultTension; } }
 
@@ -216,14 +172,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		void CalculateAndSetBounds()
+		private void CalculateAndSetBounds()
 		{
 			var path = GetPath();
 			var bounds = path.GetBounds();
-			_position += bounds.Location;
+			this.ShiftPosition(bounds.Location);
 			for (int i = 0; i < _curvePoints.Count; i++)
 				_curvePoints[i] -= bounds.Location;
-			_bounds = new RectangleD(0, 0, bounds.Width, bounds.Height);
+
+			this._leftTop = PointD2D.Empty;
+			this.Size = bounds.Size;
 			UpdateTransformationMatrix();
 		}
 
@@ -289,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		static new bool EhHitDoubleClick(IHitTestObject o)
+		private new static bool EhHitDoubleClick(IHitTestObject o)
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Line properties", true);
@@ -304,21 +262,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			var path = GetPath();
 
+			var bounds = Bounds;
+
 			if (Brush.IsVisible)
 			{
-				Brush.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				Brush.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.FillPath(Brush, path);
 			}
 
 			if (Pen.IsVisible)
 			{
-				Pen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				Pen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.DrawPath(Pen, path);
 			}
 			g.Restore(gs);
 		}
-
-
 
 		protected class ClosedCardinalSplineHitTestObject : GraphicBaseHitTestObject
 		{
@@ -365,19 +323,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 					return base.GetGrips(pageScale, gripLevel);
 				}
 			}
-
 		}
 
-		class ClosedCardinalSplinePathNodeGripHandle : PathNodeGripHandle
+		private class ClosedCardinalSplinePathNodeGripHandle : PathNodeGripHandle
 		{
-			int _pointNumber;
+			private int _pointNumber;
 
 			public ClosedCardinalSplinePathNodeGripHandle(IHitTestObject parent, int pointNr, PointD2D gripCenter, double gripRadius)
 				: base(parent, new PointD2D(0, 0), gripCenter, gripRadius)
 			{
 				_pointNumber = pointNr;
 			}
-
 
 			public override void MoveGrip(PointD2D newPosition)
 			{

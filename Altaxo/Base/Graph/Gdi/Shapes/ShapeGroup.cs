@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-using System.Collections.Generic;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -35,14 +36,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 	public class ShapeGroup : GraphicBase
 	{
 		/// <summary>List of grouped objects</summary>
-		List<GraphicBase> _groupedObjects;
-
+		private List<GraphicBase> _groupedObjects;
 
 		#region Serialization
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeGroup), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -53,11 +52,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				foreach (var e in s._groupedObjects)
 					info.AddValue("e", e);
 				info.CommitArray();
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (ShapeGroup)o : new ShapeGroup();
 				info.GetBaseValueEmbedded(s, typeof(ShapeGroup).BaseType, parent);
 
@@ -72,7 +70,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		private ShapeGroup()
 		{
@@ -100,7 +98,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			: base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
-
 
 		public override bool CopyFrom(object obj)
 		{
@@ -164,16 +161,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 			g.Restore(gs);
 		}
 
-
 		public GraphicsPath GetSelectionPath()
 		{
 			GraphicsPath gp = new GraphicsPath();
 			Matrix myMatrix = new Matrix();
 
-			gp.AddRectangle(new RectangleF((float)(X + _bounds.X), (float)(Y + _bounds.Y), (float)Width, (float)Height));
+			var bounds = this.Bounds;
+			gp.AddRectangle(new RectangleF((float)(X + bounds.X), (float)(Y + bounds.Y), (float)bounds.Width, (float)bounds.Height));
 			if (this.Rotation != 0)
 			{
-				myMatrix.RotateAt((float)(-this._rotation), (PointF)Position, MatrixOrder.Append);
+				myMatrix.RotateAt((float)(-this.Rotation), (PointF)Position, MatrixOrder.Append);
 			}
 
 			gp.Transform(myMatrix);
@@ -227,7 +224,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			OnChanged();
 		}
 
-
 		/// <summary>Gets access to the grouped objects. This function has to be used with care. No size/position update of the ShapeGroup is done if the position/size/rotation/share values of one of the grouped objects is changed.
 		/// One the other hand, you can change other properties, like colors and brushes, of the individual grouped objects.</summary>
 		public IEnumerable<GraphicBase> GroupedObjects
@@ -271,21 +267,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 				bounds.ExpandToInclude(p4);
 			}
 
-			if (bounds != _bounds)
+			if (bounds != Bounds)
 			{
 				// adjust position in this way that bounds.X and bounds.Y get zero
 				var dx = bounds.X;
 				var dy = bounds.Y;
 
-
 				foreach (var e in _groupedObjects)
 				{
 					e.ShiftPosition(-dx, -dy);
 				}
-				this._position.X += dx;
-				this._position.Y += dy;
+				this.ShiftPosition(dx, dy);
 				bounds.Location = new PointD2D(0, 0);
-				this._bounds = bounds;
+				this._leftTop = bounds.LeftTop;
 				UpdateTransformationMatrix();
 			}
 		}
@@ -307,6 +301,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		#endregion
+		#endregion Addition of objects
 	}
 }

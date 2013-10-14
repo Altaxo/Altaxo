@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -35,44 +37,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Serialization
 
-		#region Clipboard serialization
-
-		protected ClosedPathShapeBase(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			ClosedPathShapeBase s = this;
-			base.GetObjectData(info, context);
-
-			info.AddValue("LinePen", s._linePen);
-			info.AddValue("FillBrush", s._fillBrush);
-
-		}
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			ClosedPathShapeBase s = (ClosedPathShapeBase)base.SetObjectData(obj, info, context, selector);
-
-			s.Pen = (PenX)info.GetValue("LinePen", typeof(PenX));
-			s.Brush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
-
-			return s;
-		} // end of SetObjectData
-
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-
-		#endregion
-
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ShapeGraphic", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ShapeGraphic", 1)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClosedPathShapeBase), 2)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -83,12 +51,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddValue("Fill", s._fillBrush.IsVisible);
 				info.AddValue("FillBrush", s._fillBrush);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				ClosedPathShapeBase s = (ClosedPathShapeBase)o;
 				info.GetBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType, parent);
-
 
 				s.Pen = (PenX)info.GetValue("LinePen", s);
 				bool fill = info.GetBoolean("Fill");
@@ -97,8 +64,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public ClosedPathShapeBase()
 		{
@@ -116,6 +82,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
+
 		public override bool CopyFrom(object obj)
 		{
 			var isCopied = base.CopyFrom(obj);
@@ -145,11 +112,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (_linePen != null)
 					_linePen.Changed -= this.EhChildChanged;
 
-
 				_linePen = (PenX)value.Clone();
 				_linePen.Changed += this.EhChildChanged;
 				OnChanged();
-
 			}
 		}
 
@@ -167,16 +132,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (_fillBrush != null)
 					_fillBrush.Changed -= this.EhChildChanged;
 
-
-
 				_fillBrush = (BrushX)value.Clone();
 				_fillBrush.Changed += this.EhChildChanged;
 				OnChanged();
-
-
 			}
 		}
-
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
@@ -201,7 +161,5 @@ namespace Altaxo.Graph.Gdi.Shapes
 			((ClosedPathShapeBase)hitted).OnChanged();
 			return true;
 		}
-
-
 	} //  End Class
 } // end Namespace

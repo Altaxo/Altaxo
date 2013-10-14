@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -33,56 +35,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public class RegularPolygon : ClosedPathShapeBase
 	{
-		int _vertices = 7;
-		double _cornerRadius = 0;
+		private int _vertices = 7;
+		private double _cornerRadius = 0;
 
 		#region Serialization
 
-		#region Clipboard serialization
-
-		protected RegularPolygon(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes RectangleGraphic Version 0.
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			RegularPolygon s = this;
-			base.GetObjectData(info, context);
-		}
-
-		/// <summary>
-		/// Deserializes the RectangleGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty RectangleGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized RectangleGraphic.</returns>
-		public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			RegularPolygon s = (RegularPolygon)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
-
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RegularPolygon), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -90,11 +49,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddBaseValueEmbedded(s, typeof(RegularPolygon).BaseType);
 				info.AddValue("NumberOfVertices", s._vertices);
 				info.AddValue("CornerRadius", s._cornerRadius);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				RegularPolygon s = null != o ? (RegularPolygon)o : new RegularPolygon();
 				info.GetBaseValueEmbedded(s, typeof(RegularPolygon).BaseType, parent);
 
@@ -104,11 +62,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-
-		#endregion
-
+		#endregion Serialization
 
 		#region Constructors
+
 		public RegularPolygon()
 		{
 		}
@@ -125,7 +82,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this(new PointD2D(posX, posY))
 		{
 		}
-
 
 		public RegularPolygon(PointD2D graphicPosition, PointD2D graphicSize)
 			:
@@ -150,7 +106,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this()
 		{
-
 			this.SetPosition(graphicPosition);
 			this.Rotation = Rotation;
 		}
@@ -180,12 +135,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		static void Exchange(ref double x, ref double y)
+		private static void Exchange(ref double x, ref double y)
 		{
 			double h = x;
 			x = y;
 			y = h;
 		}
+
 		public static RegularPolygon FromLTRB(double left, double top, double right, double bottom)
 		{
 			if (left > right)
@@ -217,13 +173,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return isCopied;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		public override object Clone()
 		{
 			return new RegularPolygon(this);
 		}
-
 
 		/// <summary>
 		/// Get the object outline for arrangements in object world coordinates.
@@ -278,6 +233,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return 0 == (_vertices % 2);
 			}
 		}
+
 		/// <summary>
 		/// Gets the path of the object in object world coordinates.
 		/// </summary>
@@ -307,8 +263,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				int ridx = (int)Math.Round((2 + _vertices) / 4.0);
 				relWidth = 2 * Math.Cos(Math.PI * ((2 * ridx - 1) / (double)_vertices - 0.5));
 			}
-
-
 
 			var pts = new PointD2D[_vertices];
 			for (int i = 0; i < _vertices; i++)
@@ -392,7 +346,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return gp;
 		}
 
-
 		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
 			HitTestObjectBase result = null;
@@ -428,18 +381,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			var path = GetPath();
 
-			var boundsF = (RectangleF)_bounds;
+			var bounds = Bounds;
+			var boundsF = (RectangleF)bounds;
 			if (Brush.IsVisible)
 			{
-				Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.FillPath(Brush, path);
 			}
 
-			Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+			Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 			g.DrawPath(Pen, path);
 			g.Restore(gs);
 		}
 	} // End Class
-
 } // end Namespace
-

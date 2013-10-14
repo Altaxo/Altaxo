@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,76 +19,33 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	[Serializable]
 	public class EllipseShape : ClosedPathShapeBase
 	{
-
 		#region Serialization
-
-		#region Clipboard serialization
-
-		protected EllipseShape(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes EllipseGraphic Version 0.
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			EllipseShape s = this;
-			base.GetObjectData(info, context);
-		}
-
-
-		/// <summary>
-		/// Deserializes the EllipseGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty EllipseGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized EllipseGraphic.</returns>
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			EllipseShape s = (EllipseShape)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.EllipseGraphic", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EllipseShape), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				EllipseShape s = (EllipseShape)obj;
 				info.AddBaseValueEmbedded(s, typeof(EllipseShape).BaseType);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				EllipseShape s = null != o ? (EllipseShape)o : new EllipseShape();
 				info.GetBaseValueEmbedded(s, typeof(EllipseShape).BaseType, parent);
 
@@ -95,8 +53,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		#region Constructors
 
@@ -110,6 +67,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			this.SetPosition(graphicPosition);
 		}
+
 		public EllipseShape(double posX, double posY)
 			:
 			this(new PointD2D(posX, posY))
@@ -120,7 +78,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition)
 		{
-
 			this.SetSize(graphicSize.X, graphicSize.Y, true);
 		}
 
@@ -175,14 +132,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		#endregion
+		#endregion Constructors
 
 		public override object Clone()
 		{
 			return new EllipseShape(this);
 		}
-
-
 
 		/// <summary>
 		/// Get the object outline for arrangements in object world coordinates.
@@ -191,28 +146,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public override GraphicsPath GetObjectOutlineForArrangements()
 		{
 			GraphicsPath gp = new GraphicsPath();
-			gp.AddEllipse(new RectangleF((float)(_bounds.X), (float)(_bounds.Y), (float)Width, (float)Height));
+			var bounds = this.Bounds;
+			gp.AddEllipse(new RectangleF((float)(bounds.X), (float)(bounds.Y), (float)bounds.Width, (float)bounds.Height));
 			return gp;
 		}
-
 
 		public override void Paint(Graphics g, object obj)
 		{
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);
 
-			var boundsF = (RectangleF)_bounds;
+			var bounds = Bounds;
+			var boundsF = (RectangleF)bounds;
 			if (Brush.IsVisible)
 			{
-				Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.FillEllipse(Brush, boundsF);
 			}
 
-			Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+			Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 			g.DrawEllipse(Pen, boundsF);
 			g.Restore(gs);
 		}
 	} // end class
-
-
 } // end Namespace
