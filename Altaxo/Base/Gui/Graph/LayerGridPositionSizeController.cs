@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph
 				_view.XSize = DocToUserSize(_doc.GridColumnSpan);
 				_view.YSize = DocToUserSize(_doc.GridRowSpan);
 				_view.Rotation = _doc.Rotation;
-				_view.Scale = _doc.Scale;
+				_view.Scale = _doc.ScaleX;
 			}
 		}
 
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph
 				_doc.GridRow = UserToDocPosition(_view.YPosition);
 				_doc.GridColumnSpan = UserToDocSize(_view.XSize);
 				_doc.GridRowSpan = UserToDocSize(_view.YSize);
-				_doc.Scale = _view.Scale;
+				_doc.ScaleX = _view.Scale;
 				_doc.Rotation = _view.Rotation;
 
 				_originalDoc.CopyFrom(_doc);

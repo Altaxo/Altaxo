@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +37,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Graph;
 namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
@@ -42,8 +44,8 @@ namespace Altaxo.Gui.Graph.Shapes
 	/// </summary>
 	public partial class TextGraphicControl : UserControl, ITextGraphicView
 	{
-		BackgroundControlsGlue _backgroundGlue;
-		GdiToWpfBitmap _previewBitmap;
+		private BackgroundControlsGlue _backgroundGlue;
+		private GdiToWpfBitmap _previewBitmap;
 
 		public TextGraphicControl()
 		{
@@ -56,20 +58,17 @@ namespace Altaxo.Gui.Graph.Shapes
 			_positionSizeGlue.GuiScaleX = _edScaleX;
 			_positionSizeGlue.GuiScaleY = _edScaleY;
 
-
-
 			_backgroundGlue = new BackgroundControlsGlue();
 			_backgroundGlue.CbStyle = _cbBackgroundStyle;
 			_backgroundGlue.CbBrush = _cbBackgroundBrush;
 			_backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
-      _backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
+			_backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
 
 			_previewBitmap = new GdiToWpfBitmap(16, 16);
 			m_pnPreview.Source = _previewBitmap.WpfBitmap;
-
 		}
 
-		void EhBackgroundStyleChanged(object sender, EventArgs e)
+		private void EhBackgroundStyleChanged(object sender, EventArgs e)
 		{
 			if (null != _controller)
 				_controller.EhView_BackgroundStyleChanged();
@@ -77,7 +76,7 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		private void EhLineSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			if(null != _controller)
+			if (null != _controller)
 				_controller.EhView_LineSpacingChanged();
 		}
 
@@ -166,21 +165,19 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		#region  ITextGraphicView
+		#region ITextGraphicView
 
 		public void BeginUpdate()
 		{
-
 		}
 
 		public void EndUpdate()
 		{
-
 		}
 
-		ITextGraphicViewEventSink _controller;
-		public ITextGraphicViewEventSink Controller { set { _controller = value; } }
+		private ITextGraphicViewEventSink _controller;
 
+		public ITextGraphicViewEventSink Controller { set { _controller = value; } }
 
 		public Altaxo.Graph.Gdi.Background.IBackgroundStyle SelectedBackground
 		{
@@ -308,27 +305,45 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public XAnchorPositionType XAnchor
+		public void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
+		{
+			_guiAnchoring.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+		}
+
+		public RADouble XAnchor
 		{
 			get
 			{
-				return _guiAnchoring.SelectedXAnchor;
-			}
-			set
-			{
-				_guiAnchoring.SelectedXAnchor = value;
+				return _guiAnchoring.SelectedPivotX;
 			}
 		}
 
-		public YAnchorPositionType YAnchor
+		public RADouble YAnchor
 		{
 			get
 			{
-				return _guiAnchoring.SelectedYAnchor;
+				return _guiAnchoring.SelectedPivotY;
 			}
-			set
+		}
+
+		public void InitializeParentReferencePoint(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
+		{
+			_guiParentReferencePoint.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+		}
+
+		public RADouble ParentReferenceX
+		{
+			get
 			{
-				_guiAnchoring.SelectedYAnchor = value;
+				return _guiParentReferencePoint.SelectedPivotX;
+			}
+		}
+
+		public RADouble ParentReferenceY
+		{
+			get
+			{
+				return _guiParentReferencePoint.SelectedPivotY;
 			}
 		}
 
@@ -382,7 +397,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		#endregion
+		#endregion ITextGraphicView
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
@@ -397,11 +412,5 @@ namespace Altaxo.Gui.Graph.Shapes
 				m_edText.AppendText((string)menu.Tag);
 			}
 		}
-
-	
-
-
-
-
 	}
 }

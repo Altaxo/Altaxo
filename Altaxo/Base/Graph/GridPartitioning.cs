@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	public class LinearPartitioning : System.Collections.ObjectModel.ObservableCollection<Altaxo.Calc.RelativeOrAbsoluteValue>
+	public class LinearPartitioning : System.Collections.ObjectModel.ObservableCollection<RADouble>
 	{
 		#region Serialization
 
@@ -35,7 +35,7 @@ namespace Altaxo.Graph
 
 				int count = info.OpenArray("Partitioning");
 				for (int i = 0; i < count; ++i)
-					s.Add((RelativeOrAbsoluteValue)info.GetValue("e"));
+					s.Add((RADouble)info.GetValue("e"));
 				info.CloseArray(count);
 
 				return s;

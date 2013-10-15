@@ -107,17 +107,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public CurlyBraceShape(PointD2D Position, PointD2D Size)
+		public CurlyBraceShape(CurlyBraceShape from)
 			:
-			base(Position, Size)
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
-		}
-
-		private static void Exchange(ref double x, ref double y)
-		{
-			var h = x;
-			x = y;
-			y = h;
 		}
 
 		public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom)
@@ -127,13 +120,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (top > bottom)
 				Exchange(ref top, ref bottom);
 
-			return new CurlyBraceShape(new PointD2D(left, top), new PointD2D(right - left, bottom - top));
-		}
-
-		public CurlyBraceShape(CurlyBraceShape from)
-			:
-			base(from) // all is done here, since CopyFrom is virtual!
-		{
+			var result = new CurlyBraceShape();
+			result._location.SizeX = RADouble.NewAbs(right - left);
+			result._location.SizeY = RADouble.NewAbs(bottom - top);
+			result._location.PositionX = RADouble.NewAbs(left);
+			result._location.PositionY = RADouble.NewAbs(top);
+			return result;
 		}
 
 		#endregion Constructors
@@ -252,6 +244,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			 (float)bounds.Height,
 			 angle, -angle);
 			return path;
+		}
+
+		private static void Exchange(ref double x, ref double y)
+		{
+			var h = x;
+			x = y;
+			y = h;
 		}
 	} // End Class
 } // end Namespace

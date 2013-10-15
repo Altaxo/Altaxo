@@ -255,65 +255,65 @@ namespace Altaxo.Graph.Gdi
 				switch (_layerWidthType)
 				{
 					case XYPlotLayerSizeType.AbsoluteValue:
-						newLoc.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerWidth);
+						newLoc.SizeX = RADouble.NewAbs(_layerWidth);
 						break;
 
 					case XYPlotLayerSizeType.RelativeToGraphDocument:
-						newLoc.SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerWidth);
+						newLoc.SizeX = RADouble.NewRel(_layerWidth);
 						break;
 
 					default:
-						newLoc.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerSize.X);
+						newLoc.SizeX = RADouble.NewAbs(cachedLayerSize.X);
 						break;
 				}
 
 				switch (_layerHeightType)
 				{
 					case XYPlotLayerSizeType.AbsoluteValue:
-						newLoc.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerHeight);
+						newLoc.SizeY = RADouble.NewAbs(_layerHeight);
 						break;
 
 					case XYPlotLayerSizeType.RelativeToGraphDocument:
-						newLoc.SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerHeight);
+						newLoc.SizeY = RADouble.NewRel(_layerHeight);
 						break;
 
 					default:
-						newLoc.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerSize.Y);
+						newLoc.SizeY = RADouble.NewAbs(cachedLayerSize.Y);
 						break;
 				}
 
 				switch (_layerXPositionType)
 				{
 					case XYPlotLayerPositionType.AbsoluteValue:
-						newLoc.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerXPosition);
+						newLoc.PositionX = RADouble.NewAbs(_layerXPosition);
 						break;
 
 					case XYPlotLayerPositionType.RelativeToGraphDocument:
-						newLoc.PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerXPosition);
+						newLoc.PositionX = RADouble.NewRel(_layerXPosition);
 						break;
 
 					default:
-						newLoc.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerPosition.X);
+						newLoc.PositionX = RADouble.NewAbs(cachedLayerPosition.X);
 						break;
 				}
 
 				switch (_layerYPositionType)
 				{
 					case XYPlotLayerPositionType.AbsoluteValue:
-						newLoc.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(_layerYPosition);
+						newLoc.PositionY = RADouble.NewAbs(_layerYPosition);
 						break;
 
 					case XYPlotLayerPositionType.RelativeToGraphDocument:
-						newLoc.PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(_layerYPosition);
+						newLoc.PositionY = RADouble.NewRel(_layerYPosition);
 						break;
 
 					default:
-						newLoc.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(cachedLayerPosition.Y);
+						newLoc.PositionY = RADouble.NewAbs(cachedLayerPosition.Y);
 						break;
 				}
 
 				newLoc.Rotation = _layerAngle;
-				newLoc.Scale = _layerScale;
+				newLoc.ScaleX = newLoc.ScaleY = _layerScale;
 
 				return newLoc;
 			}

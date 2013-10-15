@@ -97,17 +97,17 @@ namespace Altaxo.Gui.Graph
 			foreach (var val in _columnCollection)
 			{
 				if (object.ReferenceEquals(val.Unit, _percentLayerXSizeUnit))
-					_doc.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(val.Value / 100));
+					_doc.XPartitioning.Add(RADouble.NewRel(val.Value / 100));
 				else
-					_doc.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(val.AsValueIn(Units.Length.Point.Instance)));
+					_doc.XPartitioning.Add(RADouble.NewAbs(val.AsValueIn(Units.Length.Point.Instance)));
 			}
 
 			foreach (var val in _rowCollection)
 			{
 				if (object.ReferenceEquals(val.Unit, _percentLayerYSizeUnit))
-					_doc.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(val.Value / 100));
+					_doc.YPartitioning.Add(RADouble.NewRel(val.Value / 100));
 				else
-					_doc.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(val.AsValueIn(Units.Length.Point.Instance)));
+					_doc.YPartitioning.Add(RADouble.NewAbs(val.AsValueIn(Units.Length.Point.Instance)));
 			}
 
 			return true;

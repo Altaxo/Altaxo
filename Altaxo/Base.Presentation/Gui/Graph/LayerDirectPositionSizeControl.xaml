@@ -5,6 +5,7 @@
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Shapes"
 						 mc:Ignorable="d"
 >
 	<UserControl.Resources>
@@ -24,6 +25,7 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
@@ -44,19 +46,31 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="2" Content="Left:" />
-		<Label Grid.Column="0" Grid.Row="4" Content="Top:" />
-		<Label Grid.Column="0" Grid.Row="6" Content="Width:" />
-		<Label Grid.Column="0" Grid.Row="8" Content="Height:" />
+		<Label Grid.Column="0" Grid.Row="2" Content="Size X:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize"  Grid.Column="1" Grid.Row="2" />
 
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXPosition"  Grid.Column="1" Grid.Row="2" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYPosition" Grid.Column="1" Grid.Row="4" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize"  Grid.Column="1" Grid.Row="6" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize"  Grid.Column="1" Grid.Row="8" />
+		<Label Grid.Column="2" Grid.Row="2" Content="Size Y:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize"  Grid.Column="3" Grid.Row="2" />
 
-		<Label Grid.Column="0" Grid.Row="10" Content="Rotation:" />
-		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="10" />
-		<Label Grid.Column="0" Grid.Row="12" Content="Scale:" />
-		<axogcd:ScaleComboBox x:Name="_guiScale"  Grid.Column="1" Grid.Row="12" />
+		<Label Grid.Column="0" Grid.Row="4" Content="Pos. X:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXPosition"  Grid.Column="1" Grid.Row="4" />
+
+		<Label Grid.Column="2" Grid.Row="4" Content="Pos. Y:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYPosition" Grid.Column="3" Grid.Row="4" />
+
+		<Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
+		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="6" />
+
+		<Label Grid.Column="2" Grid.Row="6">Shear:</Label>
+		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="6" x:Name="_guiShear" />
+
+		<Label Grid.Column="0" Grid.Row="8" Content="ScaleX:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="8" />
+
+		<Label Grid.Column="2" Grid.Row="8" Content="ScaleY:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="8" />
+
+		<axoggs:AnchoringControl x:Name="_guiAnchoring" Title="My anchor" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="2" />
+		<axoggs:AnchoringControl x:Name="_guiParentReferencePoint" Title="Parent reference point" Grid.Column="2" Grid.Row="10" Grid.ColumnSpan="2" />
 	</Grid>
 </UserControl>

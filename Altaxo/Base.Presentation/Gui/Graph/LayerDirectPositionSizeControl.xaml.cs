@@ -39,6 +39,8 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Graph;
+
 	/// <summary>
 	/// Interaction logic for LayerPositionControl.xaml
 	/// </summary>
@@ -105,15 +107,81 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public double Scale
+		public double Shear
 		{
 			get
 			{
-				return _guiScale.SelectedQuantityInSIUnits;
+				return _guiShear.SelectedQuantityInSIUnits;
 			}
 			set
 			{
-				_guiScale.SelectedQuantityInSIUnits = value;
+				_guiShear.SelectedQuantityInSIUnits = value;
+			}
+		}
+
+		public double ScaleX
+		{
+			get
+			{
+				return _guiScaleX.SelectedQuantityInSIUnits;
+			}
+			set
+			{
+				_guiScaleX.SelectedQuantityInSIUnits = value;
+			}
+		}
+
+		public double ScaleY
+		{
+			get
+			{
+				return _guiScaleY.SelectedQuantityInSIUnits;
+			}
+			set
+			{
+				_guiScaleY.SelectedQuantityInSIUnits = value;
+			}
+		}
+
+		public void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
+		{
+			_guiAnchoring.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+		}
+
+		public RADouble PivotX
+		{
+			get
+			{
+				return _guiAnchoring.SelectedPivotX;
+			}
+		}
+
+		public RADouble PivotY
+		{
+			get
+			{
+				return _guiAnchoring.SelectedPivotY;
+			}
+		}
+
+		public void InitializeReference(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
+		{
+			_guiParentReferencePoint.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+		}
+
+		public RADouble ReferenceX
+		{
+			get
+			{
+				return _guiParentReferencePoint.SelectedPivotX;
+			}
+		}
+
+		public RADouble ReferenceY
+		{
+			get
+			{
+				return _guiParentReferencePoint.SelectedPivotY;
 			}
 		}
 	}

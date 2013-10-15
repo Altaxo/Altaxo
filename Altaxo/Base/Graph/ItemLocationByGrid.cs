@@ -57,8 +57,14 @@ namespace Altaxo.Graph
 		/// <summary>The rotation angle (in degrees) of the layer.</summary>
 		private double _rotation = 0; // Rotation
 
+		/// <summary>The shear factor of the layer, normally 0.</summary>
+		private double _shear = 0;
+
 		/// <summary>The scaling factor of the layer, normally 1.</summary>
-		private double _scale = 1;  // Scale
+		private double _scaleX = 1;  // Scale
+
+		/// <summary>The scaling factor of the layer, normally 1.</summary>
+		private double _scaleY = 1;  // Scale
 
 		[field: NonSerialized]
 		private event EventHandler _changed;
@@ -80,9 +86,9 @@ namespace Altaxo.Graph
 				info.AddValue("ColumnSpan", s._gridColumnSpan);
 				info.AddValue("RowSpan", s._gridRowSpan);
 				info.AddValue("Rotation", s._rotation);
-				info.AddValue("ScaleX", s._scale);
-				info.AddValue("ScaleY", s._scale);
-				info.AddValue("Shear", 0);
+				info.AddValue("Shear", s._shear);
+				info.AddValue("ScaleX", s._scaleX);
+				info.AddValue("ScaleY", s._scaleY);
 				info.AddValue("ForceFitInCell", s._takeScaleAngleIntoAccountToFitInCell);
 			}
 
@@ -95,14 +101,11 @@ namespace Altaxo.Graph
 				s._gridColumnSpan = info.GetDouble("ColumnSpan");
 				s._gridRowSpan = info.GetDouble("RowSpan");
 				s._rotation = info.GetDouble("Rotation");
-				s._scale = info.GetDouble("ScaleX");
-				var scaleY = info.GetDouble("ScaleY");
-				var shear = info.GetDouble("Shear");
+				s._shear = info.GetDouble("Shear");
+				s._scaleX = info.GetDouble("ScaleX");
+				s._scaleY = info.GetDouble("ScaleY");
 
 				s._takeScaleAngleIntoAccountToFitInCell = info.GetBoolean("ForceFitInCell");
-
-				if (shear != 0 || scaleY != s._scale)
-					throw new NotImplementedException("Shear or ScaleY not implemented yet.");
 
 				return s;
 			}
@@ -139,14 +142,18 @@ namespace Altaxo.Graph
 				this._gridRowSpan = from._gridRowSpan;
 
 				this._rotation = from._rotation;
-				this._scale = from._scale;
+				this._shear = from._shear;
+				this._scaleX = from._scaleX;
+				this._scaleY = from._scaleY;
 				return true;
 			}
 			else if (obj is IItemLocation)
 			{
 				var from = (IItemLocation)obj;
 				this._rotation = from.Rotation;
-				this._scale = from.Scale;
+				this._shear = from.ShearX;
+				this._scaleX = from.ScaleX;
+				this._scaleY = from.ScaleY;
 				return true;
 			}
 			return false;
@@ -265,13 +272,39 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>The scaling factor of the layer, normally 1.</summary>
-		public double Scale
+		public double ShearX
 		{
-			get { return _scale; }
+			get { return _shear; }
 			set
 			{
-				double oldvalue = _scale;
-				_scale = value;
+				double oldvalue = _shear;
+				_shear = value;
+				if (value != oldvalue)
+					OnChanged();
+			}
+		}
+
+		/// <summary>The scaling factor of the layer, normally 1.</summary>
+		public double ScaleX
+		{
+			get { return _scaleX; }
+			set
+			{
+				double oldvalue = _scaleX;
+				_scaleX = value;
+				if (value != oldvalue)
+					OnChanged();
+			}
+		}
+
+		/// <summary>The scaling factor of the layer, normally 1.</summary>
+		public double ScaleY
+		{
+			get { return _scaleY; }
+			set
+			{
+				double oldvalue = _scaleY;
+				_scaleY = value;
 				if (value != oldvalue)
 					OnChanged();
 			}

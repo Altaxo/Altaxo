@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,52 +19,47 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
-  /// <summary>
-  /// Summary description for RectangleDrawingMouseHandler.
-  /// </summary>
-  public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
-  {
-    public RectangleDrawingMouseHandler(GraphControllerWpf grac)
-      : base(grac)
-    {
-      
-    }
+	/// <summary>
+	/// Summary description for RectangleDrawingMouseHandler.
+	/// </summary>
+	public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
+	{
+		public RectangleDrawingMouseHandler(GraphControllerWpf grac)
+			: base(grac)
+		{
+		}
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
 		{
 			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.RectangleDrawing; }
 		}
 
-
-    protected override void FinishDrawing()
-    {
-      var rect = GetNormalRectangle(_Points[0].LayerCoordinates,_Points[1].LayerCoordinates);
-      RectangleShape go =  new RectangleShape(rect.X,rect.Y,rect.Width,rect.Height);
-
-      // deselect the text tool
-			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
-      _grac.InvalidateCachedGraphImageAndRepaintOffline();
-    }
- 
-  }
-
-
- 
+		protected override void FinishDrawing()
+		{
+			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
+			RectangleShape go = new RectangleShape();
+			go.SetParentSize(_grac.ActiveLayer.Size, false);
+			go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
+			// deselect the text tool
+			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+			_grac.ActiveLayer.GraphObjects.Add(go);
+			_grac.InvalidateCachedGraphImageAndRepaintOffline();
+		}
+	}
 }

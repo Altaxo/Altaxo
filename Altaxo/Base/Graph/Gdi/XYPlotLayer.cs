@@ -954,24 +954,24 @@ namespace Altaxo.Graph.Gdi
 					{
 						//case EdgeType.Right:
 						tg.Rotation = 90;
-						tg.XAnchor = XAnchorPositionType.Center;
-						tg.YAnchor = YAnchorPositionType.Top;
+						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
+						tg.Location.PivotY = RADouble.NewRel(0); // Top
 						distance += scaleFontWidth * labelFontSize;
 					}
 					else if (-135 <= angle && angle <= -45)
 					{
 						//case Top:
 						tg.Rotation = 0;
-						tg.XAnchor = XAnchorPositionType.Center;
-						tg.YAnchor = YAnchorPositionType.Bottom;
+						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
+						tg.Location.PivotY = RADouble.NewRel(1); // Bottom
 						distance += scaleFontHeight * labelFontSize;
 					}
 					else if (45 <= angle && angle <= 135)
 					{
 						//case EdgeType.Bottom:
 						tg.Rotation = 0;
-						tg.XAnchor = XAnchorPositionType.Center;
-						tg.YAnchor = YAnchorPositionType.Top;
+						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
+						tg.Location.PivotY = RADouble.NewRel(0); // Top
 						distance += scaleFontHeight * labelFontSize;
 					}
 					else
@@ -979,8 +979,8 @@ namespace Altaxo.Graph.Gdi
 						//case EdgeType.Left:
 
 						tg.Rotation = 90;
-						tg.XAnchor = XAnchorPositionType.Center;
-						tg.YAnchor = YAnchorPositionType.Bottom;
+						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
+						tg.Location.PivotY = RADouble.NewRel(1); // Bottom
 						distance += scaleFontWidth * labelFontSize;
 					}
 
@@ -1103,7 +1103,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			IHitTestObject hit;
 
-			HitTestPointData layerHitTestData = parentHitTestData.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, Scale, Scale, 0);
+			HitTestPointData layerHitTestData = parentHitTestData.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
 
 			if (!plotItemsOnly)
 			{

@@ -70,68 +70,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public RegularPolygon(PointD2D graphicPosition)
+		public RegularPolygon(RegularPolygon from)
 			:
-			this()
-		{
-			this.SetPosition(graphicPosition);
-		}
-
-		public RegularPolygon(double posX, double posY)
-			:
-			this(new PointD2D(posX, posY))
-		{
-		}
-
-		public RegularPolygon(PointD2D graphicPosition, PointD2D graphicSize)
-			:
-			this(graphicPosition)
-		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
-		}
-
-		public RegularPolygon(double posX, double posY, PointD2D graphicSize)
-			:
-			this(new PointD2D(posX, posY), graphicSize)
-		{
-		}
-
-		public RegularPolygon(double posX, double posY, double width, double height)
-			:
-			this(new PointD2D(posX, posY), new PointD2D(width, height))
-		{
-		}
-
-		public RegularPolygon(PointD2D graphicPosition, double Rotation)
-			:
-			this()
-		{
-			this.SetPosition(graphicPosition);
-			this.Rotation = Rotation;
-		}
-
-		public RegularPolygon(double posX, double posY, double Rotation)
-			:
-			this(new PointD2D(posX, posY), Rotation)
-		{
-		}
-
-		public RegularPolygon(PointD2D graphicPosition, PointD2D graphicSize, double Rotation)
-			:
-			this(graphicPosition, Rotation)
-		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
-		}
-
-		public RegularPolygon(double posX, double posY, PointD2D graphicSize, double Rotation)
-			:
-			this(new PointD2D(posX, posY), graphicSize, Rotation)
-		{
-		}
-
-		public RegularPolygon(double posX, double posY, double width, double height, double Rotation)
-			:
-			this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation)
+			base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 
@@ -149,13 +90,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (top > bottom)
 				Exchange(ref top, ref bottom);
 
-			return new RegularPolygon(left, top, right - left, bottom - top);
-		}
+			var result = new RegularPolygon();
+			result._location.SizeX = RADouble.NewAbs(right - left);
+			result._location.SizeY = RADouble.NewAbs(bottom - top);
+			result._location.PositionX = RADouble.NewAbs(left);
+			result._location.PositionY = RADouble.NewAbs(top);
 
-		public RegularPolygon(RegularPolygon from)
-			:
-			base(from) // all is done here, since CopyFrom is virtual!
-		{
+			return result;
 		}
 
 		public override bool CopyFrom(object obj)

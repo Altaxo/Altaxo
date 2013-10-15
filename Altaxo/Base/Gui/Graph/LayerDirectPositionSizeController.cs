@@ -54,7 +54,23 @@ namespace Altaxo.Gui.Graph
 
 		double Rotation { get; set; }
 
-		double Scale { get; set; }
+		double Shear { get; set; }
+
+		double ScaleX { get; set; }
+
+		double ScaleY { get; set; }
+
+		void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfOwnGraphic);
+
+		RADouble PivotX { get; }
+
+		RADouble PivotY { get; }
+
+		void InitializeReference(RADouble referenceX, RADouble referenceY, PointD2D sizeOfParent);
+
+		RADouble ReferenceX { get; }
+
+		RADouble ReferenceY { get; }
 	}
 
 	#endregion Interfaces
@@ -106,7 +122,11 @@ namespace Altaxo.Gui.Graph
 				_view.InitializeYPosition(yPos, _yPositionEnvironment);
 
 				_view.Rotation = _doc.Rotation;
-				_view.Scale = _doc.Scale;
+				_view.Shear = _doc.ShearX;
+				_view.ScaleX = _doc.ScaleX;
+				_view.ScaleY = _doc.ScaleY;
+				_view.InitializePivot(_doc.PivotX, _doc.PivotY, _doc.AbsoluteSize);
+				_view.InitializeReference(_doc.ReferenceX, _doc.ReferenceY, _doc.ParentSize);
 			}
 		}
 
@@ -116,8 +136,10 @@ namespace Altaxo.Gui.Graph
 		{
 			try
 			{
-				_doc.Scale = _view.Scale;
 				_doc.Rotation = _view.Rotation;
+				_doc.ShearX = _view.Shear;
+				_doc.ScaleX = _view.ScaleX;
+				_doc.ScaleY = _view.ScaleY;
 
 				var xSize = _view.XSize;
 				var ySize = _view.YSize;
@@ -126,24 +148,30 @@ namespace Altaxo.Gui.Graph
 				var yPos = _view.YPosition;
 
 				if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
-					_doc.SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(xSize.Value / 100);
+					_doc.SizeX = RADouble.NewRel(xSize.Value / 100);
 				else
-					_doc.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(xSize.AsValueIn(Units.Length.Point.Instance));
+					_doc.SizeX = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
 
 				if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
-					_doc.SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(ySize.Value / 100);
+					_doc.SizeY = RADouble.NewRel(ySize.Value / 100);
 				else
-					_doc.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(ySize.AsValueIn(Units.Length.Point.Instance));
+					_doc.SizeY = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
 
 				if (object.ReferenceEquals(xPos.Unit, _percentLayerXSizeUnit))
-					_doc.PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(xPos.Value / 100);
+					_doc.PositionX = RADouble.NewRel(xPos.Value / 100);
 				else
-					_doc.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(xPos.AsValueIn(Units.Length.Point.Instance));
+					_doc.PositionX = RADouble.NewAbs(xPos.AsValueIn(Units.Length.Point.Instance));
 
 				if (object.ReferenceEquals(yPos.Unit, _percentLayerYSizeUnit))
-					_doc.PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(yPos.Value / 100);
+					_doc.PositionY = RADouble.NewRel(yPos.Value / 100);
 				else
-					_doc.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(yPos.AsValueIn(Units.Length.Point.Instance));
+					_doc.PositionY = RADouble.NewAbs(yPos.AsValueIn(Units.Length.Point.Instance));
+
+				_doc.PivotX = _view.PivotX;
+				_doc.PivotY = _view.PivotY;
+
+				_doc.ReferenceX = _view.ReferenceX;
+				_doc.ReferenceY = _view.ReferenceY;
 
 				_originalDoc.CopyFrom(_doc);
 			}

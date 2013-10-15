@@ -342,7 +342,7 @@
     <Compile Include="Calc\Regression\Nonlinear\LevMarAdapter.cs" />
     <Compile Include="Calc\Regression\Nonlinear\NonlinearFitDocument.cs" />
     <Compile Include="Calc\Regression\Nonlinear\ParameterSet.cs" />
-    <Compile Include="Calc\RelativeOrAbsoluteValue.cs">
+    <Compile Include="Root\RADouble.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\ScriptExecutionBase.cs">

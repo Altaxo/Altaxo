@@ -120,34 +120,34 @@ namespace Altaxo.Graph.Gdi
 
 			if (arrangement.NumberOfColumns > 0)
 			{
-				grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.LeftMargin));
+				grid.XPartitioning.Add(RADouble.NewRel(arrangement.LeftMargin));
 				for (int i = arrangement.NumberOfColumns - 1; i >= 0; --i)
 				{
-					grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(columnSize / arrangement.NumberOfColumns));
+					grid.XPartitioning.Add(RADouble.NewRel(columnSize / arrangement.NumberOfColumns));
 					if (i != 0)
-						grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.ColumnSpacing));
+						grid.XPartitioning.Add(RADouble.NewRel(arrangement.ColumnSpacing));
 				}
-				grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.RightMargin));
+				grid.XPartitioning.Add(RADouble.NewRel(arrangement.RightMargin));
 			}
 			else
 			{
-				grid.XPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(100));
+				grid.XPartitioning.Add(RADouble.NewRel(100));
 			}
 
 			if (arrangement.NumberOfRows > 0)
 			{
-				grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.TopMargin));
+				grid.YPartitioning.Add(RADouble.NewRel(arrangement.TopMargin));
 				for (int i = arrangement.NumberOfRows - 1; i >= 0; --i)
 				{
-					grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(rowSize / arrangement.NumberOfRows));
+					grid.YPartitioning.Add(RADouble.NewRel(rowSize / arrangement.NumberOfRows));
 					if (i != 0)
-						grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.RowSpacing));
+						grid.YPartitioning.Add(RADouble.NewRel(arrangement.RowSpacing));
 				}
-				grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(arrangement.BottomMargin));
+				grid.YPartitioning.Add(RADouble.NewRel(arrangement.BottomMargin));
 			}
 			else
 			{
-				grid.YPartitioning.Add(Calc.RelativeOrAbsoluteValue.NewRelativeValue(100));
+				grid.YPartitioning.Add(RADouble.NewRel(100));
 			}
 		}
 

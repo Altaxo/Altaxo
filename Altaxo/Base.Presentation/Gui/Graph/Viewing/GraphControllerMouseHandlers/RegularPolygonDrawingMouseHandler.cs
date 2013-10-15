@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
@@ -42,7 +43,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		public RegularPolygonDrawingMouseHandler(GraphControllerWpf grac)
 			: base(grac)
 		{
-
 		}
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
@@ -50,11 +50,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.RegularPolygonDrawing; }
 		}
 
-
 		protected override void FinishDrawing()
 		{
 			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-			var go = new RegularPolygon(rect.X, rect.Y, rect.Width, rect.Height);
+			var go = new RegularPolygon();
+			go.SetParentSize(_grac.ActiveLayer.Size, false);
+			go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);

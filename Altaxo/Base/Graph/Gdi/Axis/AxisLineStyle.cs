@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		protected bool _showFirstDownMinorTicks = true; // true if left minor ticks should be visible
 
 		/// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
-		protected Calc.RelativeOrAbsoluteValue _axisPosition; // if relative, then relative to layer size, if absolute then in points
+		protected RADouble _axisPosition; // if relative, then relative to layer size, if absolute then in points
 
 		protected CSAxisInformation _cachedAxisStyleInfo;
 
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._showFirstDownMajorTicks = (bool)info.GetBoolean("MajorLeft");
 				s._showFirstUpMinorTicks = (bool)info.GetBoolean("MinorRight");
 				s._showFirstDownMinorTicks = (bool)info.GetBoolean("MinorLeft");
-				s._axisPosition = (Calc.RelativeOrAbsoluteValue)info.GetValue("AxisPosition", typeof(Calc.RelativeOrAbsoluteValue));
+				s._axisPosition = (RADouble)info.GetValue("AxisPosition", typeof(RADouble));
 
 				return s;
 			}
@@ -174,7 +174,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				bool bInnerMajorTicks = (bool)info.GetBoolean("MajorInner");
 				bool bOuterMinorTicks = (bool)info.GetBoolean("MinorOuter");
 				bool bInnerMinorTicks = (bool)info.GetBoolean("MinorInner");
-				s._axisPosition = (Calc.RelativeOrAbsoluteValue)info.GetValue("AxisPosition", s);
+				s._axisPosition = (RADouble)info.GetValue("AxisPosition", s);
 
 				if (edge.TypeOfEdge == EdgeType.Top || edge.TypeOfEdge == EdgeType.Right)
 				{
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._majorTickLength = (float)info.GetSingle("MajorLength");
 				s._minorTickLength = (float)info.GetSingle("MinorLength");
-				s._axisPosition = (Calc.RelativeOrAbsoluteValue)info.GetValue("AxisPosition", s);
+				s._axisPosition = (RADouble)info.GetValue("AxisPosition", s);
 				s._showFirstUpMajorTicks = (bool)info.GetBoolean("Major1Up");
 				s._showFirstDownMajorTicks = (bool)info.GetBoolean("Major1Dw");
 				s._showFirstUpMinorTicks = (bool)info.GetBoolean("Minor1Up");
@@ -577,7 +577,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// </summary>
 		/// <value>Zero if the axis is not shifted (normal case). Else the shift value, either as
 		/// absolute value in point units (1/72 inch), or relative to the corresponding layer dimension (i.e layer width for bottom axis).</value>
-		public Calc.RelativeOrAbsoluteValue Position
+		public RADouble Position
 		{
 			get { return this._axisPosition; }
 			set

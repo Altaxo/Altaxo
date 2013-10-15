@@ -24,13 +24,13 @@
 
 using System;
 
-namespace Altaxo.Calc
+namespace Altaxo
 {
 	/// <summary>
 	/// This structure holds a value, which is either absolute or relative to another value.
 	/// </summary>
 	[Serializable]
-	public struct RelativeOrAbsoluteValue : IEquatable<RelativeOrAbsoluteValue>
+	public struct RADouble : IEquatable<RADouble>
 	{
 		/// <summary>True if the value m_Value is relative, false if m_Value is absolute.</summary>
 		private bool _isRelative; // per default, m_bRelative is false, so the value is interpreted as absolute
@@ -43,12 +43,13 @@ namespace Altaxo.Calc
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeOrAbsoluteValue), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.RelativeOrAbsoluteValue", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RADouble), 1)] // 2013-10-15 renaming and namespace move
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				RelativeOrAbsoluteValue s = (RelativeOrAbsoluteValue)obj;
+				RADouble s = (RADouble)obj;
 
 				info.AddValue("IsRelative", s._isRelative);
 				info.AddValue("Value", s._value);
@@ -58,7 +59,7 @@ namespace Altaxo.Calc
 			{
 				bool rel = info.GetBoolean("IsRelative");
 				double val = info.GetDouble("Value");
-				return new RelativeOrAbsoluteValue(val, rel);
+				return new RADouble(val, rel);
 			}
 		}
 
@@ -68,7 +69,7 @@ namespace Altaxo.Calc
 		/// This creates the structure with the absolute value absval.
 		/// </summary>
 		/// <param name="absval"></param>
-		public RelativeOrAbsoluteValue(double absval)
+		public RADouble(double absval)
 		{
 			_isRelative = false;
 			_value = absval;
@@ -80,20 +81,20 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="val">The value, either absolute or relative.</param>
 		/// <param name="isRelative">True if the value is relative, else false.</param>
-		public RelativeOrAbsoluteValue(double val, bool isRelative)
+		public RADouble(double val, bool isRelative)
 		{
 			_isRelative = isRelative;
 			_value = val;
 		}
 
-		public static RelativeOrAbsoluteValue NewAbsoluteValue(double val)
+		public static RADouble NewAbs(double val)
 		{
-			return new RelativeOrAbsoluteValue(val, false);
+			return new RADouble(val, false);
 		}
 
-		public static RelativeOrAbsoluteValue NewRelativeValue(double val)
+		public static RADouble NewRel(double val)
 		{
-			return new RelativeOrAbsoluteValue(val, true);
+			return new RADouble(val, true);
 		}
 
 		/// <summary>
@@ -133,25 +134,25 @@ namespace Altaxo.Calc
 			return _isRelative ? r * _value : _value;
 		}
 
-		public static bool operator ==(RelativeOrAbsoluteValue a, RelativeOrAbsoluteValue b)
+		public static bool operator ==(RADouble a, RADouble b)
 		{
 			return a._isRelative == b._isRelative && a._value == b._value;
 		}
 
-		public static bool operator !=(RelativeOrAbsoluteValue a, RelativeOrAbsoluteValue b)
+		public static bool operator !=(RADouble a, RADouble b)
 		{
 			return !(a == b);
 		}
 
 		public override bool Equals(object o)
 		{
-			if (!(o is RelativeOrAbsoluteValue))
+			if (!(o is RADouble))
 			{
 				return false;
 			}
 			else
 			{
-				var other = (RelativeOrAbsoluteValue)o;
+				var other = (RADouble)o;
 				return _value == other._value && _isRelative == other._isRelative;
 			}
 		}
@@ -161,7 +162,7 @@ namespace Altaxo.Calc
 			return _value.GetHashCode() + _isRelative.GetHashCode();
 		}
 
-		public bool Equals(RelativeOrAbsoluteValue other)
+		public bool Equals(RADouble other)
 		{
 			return _value == other._value && _isRelative == other._isRelative;
 		}

@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Gdi
 
 				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
 				s._rootLayer.Size = printableBounds.Size;
-				s._rootLayer.Location = new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Width), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Height) };
+				s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(printableBounds.Size.Width), SizeY = RADouble.NewAbs(printableBounds.Size.Height) };
 				foreach (var l in layers)
 					s._rootLayer.Layers.Add(l);
 				return s;
@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Gdi
 				s._name = info.GetString("Name");
 				var pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				var printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
-				s._rootLayer.Location = new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Width), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(printableBounds.Size.Height) };
+				s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(printableBounds.Size.Width), SizeY = RADouble.NewAbs(printableBounds.Size.Height) };
 				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
 				foreach (var l in layers)
 					s._rootLayer.Layers.Add(l);
@@ -296,7 +296,7 @@ namespace Altaxo.Graph.Gdi
 			_notes.PropertyChanged += EhNotesChanged;
 			this._rootLayer = new HostLayer();
 			this._rootLayer.ParentObject = this;
-			this._rootLayer.Location = new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(DefaultRootLayerSizeX), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(DefaultRootLayerSizeY) };
+			this._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
 		}
 
 		private void EhNotesChanged(object sender, PropertyChangedEventArgs e)
@@ -311,7 +311,7 @@ namespace Altaxo.Graph.Gdi
 			try
 			{
 				_creationTime = _lastChangeTime = DateTime.UtcNow;
-				this._rootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(814), SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(567) });
+				this._rootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) });
 				this._rootLayer.ParentObject = this;
 
 				CopyFrom(from, GraphCopyOptions.All);

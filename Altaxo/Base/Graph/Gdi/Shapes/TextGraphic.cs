@@ -49,8 +49,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected BrushX _textBrush = new BrushX(NamedColors.Black);
 		protected IBackgroundStyle _background = null;
 		protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
-		protected XAnchorPositionType _xAnchorType = XAnchorPositionType.Left;
-		protected YAnchorPositionType _yAnchorType = YAnchorPositionType.Top;
 
 		#region Cached or temporary variables
 
@@ -103,19 +101,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", typeof(BackgroundStyle));
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				info.GetSingle("ShadowLength");
-				s._xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
-				s._yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
+				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				s._location.PivotX = RADouble.NewRel(0.5 * (int)xAnchorType);
+				s._location.PivotY = RADouble.NewRel(0.5 * (int)yAnchorType);
 
 				return s;
 			}
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 2)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.TextGraphics", 2)]
 		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old type");
+				/*
 				TextGraphic s = (TextGraphic)obj;
 				info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
 
@@ -126,6 +128,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddValue("LineSpacing", s._lineSpacingFactor);
 				info.AddValue("XAnchor", s._xAnchorType);
 				info.AddValue("YAnchor", s._yAnchorType);
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -145,9 +148,43 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
-				s._xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
-				s._yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
+				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				s._location.PivotX = RADouble.NewRel(0.5 * (int)xAnchorType);
+				s._location.PivotY = RADouble.NewRel(0.5 * (int)yAnchorType);
+				return s;
+			}
+		}
 
+		/// <summary>
+		/// 2013-10-15 XAnchor and YAnchor now superfluous and thus removed
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (TextGraphic)obj;
+				info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
+
+				info.AddValue("Text", s._text);
+				info.AddValue("Font", s._font);
+				info.AddValue("Brush", s._textBrush);
+				info.AddValue("BackgroundStyle", s._background);
+				info.AddValue("LineSpacing", s._lineSpacingFactor);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (TextGraphic)o : new TextGraphic();
+
+				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+
+				s._text = info.GetString("Text");
+				s._font = (FontX)info.GetValue("Font", typeof(FontX));
+				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
+				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				return s;
 			}
 		}
@@ -214,8 +251,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 					this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
 					this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
 					this._lineSpacingFactor = from._lineSpacingFactor;
-					_xAnchorType = from._xAnchorType;
-					_yAnchorType = from._yAnchorType;
 
 					// don't clone the cached items
 					this._isStructureInSync = false;
@@ -276,17 +311,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				distanceYL = (backgroundRect.Bottom - textHeight);
 			}
 
-			double xanchor = 0;
-			double yanchor = 0;
-			if (_xAnchorType == XAnchorPositionType.Center)
-				xanchor = size.X / 2.0;
-			else if (_xAnchorType == XAnchorPositionType.Right)
-				xanchor = size.X;
-
-			if (_yAnchorType == YAnchorPositionType.Center)
-				yanchor = size.Y / 2.0;
-			else if (_yAnchorType == YAnchorPositionType.Bottom)
-				yanchor = size.Y;
+			var xanchor = _location.PivotX.GetValueRelativeTo(size.X);
+			var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
 
 			this._leftTop = new PointD2D(-xanchor, -yanchor);
 			this.Size = size;
@@ -442,18 +468,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_textBrush = value.Clone();
 				_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
 			}
-		}
-
-		public XAnchorPositionType XAnchor
-		{
-			get { return _xAnchorType; }
-			set { _xAnchorType = value; }
-		}
-
-		public YAnchorPositionType YAnchor
-		{
-			get { return _yAnchorType; }
-			set { _yAnchorType = value; }
 		}
 
 		public double LineSpacing

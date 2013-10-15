@@ -72,15 +72,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			Pen = new PenX(NamedColors.Black);
 		}
 
-		public ClosedPathShapeBase(PointD2D Position, PointD2D Size)
-			: base(Position, Size)
-		{
-		}
-
 		public ClosedPathShapeBase(ClosedPathShapeBase from)
-			:
-			base(from) // all is done here, since CopyFrom is virtual!
+			: base(from)
 		{
+			// all is done already, since CopyFrom is virtual
 		}
 
 		public override bool CopyFrom(object obj)

@@ -64,10 +64,10 @@ namespace Altaxo.Graph.Gdi
 		public static void CreateNewLayerNormalBottomXLeftY(this GraphDocument doc)
 		{
 			var location = new ItemLocationDirect();
-			location.PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X);
-			location.PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.Y);
-			location.SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.X);
-			location.SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.Y);
+			location.PositionX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X);
+			location.PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.Y);
+			location.SizeX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.X);
+			location.SizeY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.Y);
 
 			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer, location);
 			doc.RootLayer.Layers.Add(newlayer);

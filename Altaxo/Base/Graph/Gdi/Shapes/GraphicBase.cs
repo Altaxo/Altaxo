@@ -37,7 +37,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public abstract partial class GraphicBase
 		:
-		Altaxo.Graph.Gdi.Shapes.IGraphicBase
+		Altaxo.Graph.Gdi.Shapes.IGraphicBase,
+		Main.IChildChangedEventSink
 	{
 		private Main.EventSuppressor _eventSuppressor;
 
@@ -96,11 +97,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var bounds = (RectangleF)info.GetValue("Bounds", s);
 				var rotation = -info.GetSingle("Rotation"); // meaning of rotation reversed in version 2
 
-				s._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(bounds.Width);
-				s._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(bounds.Height);
+				s._location.SizeX = RADouble.NewAbs(bounds.Width);
+				s._location.SizeY = RADouble.NewAbs(bounds.Height);
 				s._leftTop = new PointD2D(bounds.Left, bounds.Top);
-				s._location.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
-				s._location.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
+				s._location.PositionX = RADouble.NewAbs(position.X);
+				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
 
 				/*s._autoSize =*/
@@ -135,11 +136,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var bounds = (RectangleF)info.GetValue("Bounds", s);
 				var rotation = info.GetSingle("Rotation");
 
-				s._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(bounds.Width);
-				s._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(bounds.Height);
+				s._location.SizeX = RADouble.NewAbs(bounds.Width);
+				s._location.SizeY = RADouble.NewAbs(bounds.Height);
 				s._leftTop = new PointD2D(bounds.Left, bounds.Top);
-				s._location.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
-				s._location.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
+				s._location.PositionX = RADouble.NewAbs(position.X);
+				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
 
 				/*s._autoSize = */
@@ -180,11 +181,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var scaleY = info.GetSingle("ScaleY");
 				var shear = info.GetSingle("Shear");
 
-				s._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(bounds.Width);
-				s._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(bounds.Height);
+				s._location.SizeX = RADouble.NewAbs(bounds.Width);
+				s._location.SizeY = RADouble.NewAbs(bounds.Height);
 				s._leftTop = new PointD2D(bounds.Left, bounds.Top);
-				s._location.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
-				s._location.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
+				s._location.PositionX = RADouble.NewAbs(position.X);
+				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
 				s._location.ScaleX = scaleX;
 				s._location.ScaleY = scaleY;
@@ -238,11 +239,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var scaleY = info.GetSingle("ScaleY");
 				var shear = info.GetSingle("Shear");
 
-				s._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(w);
-				s._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(h);
+				s._location.SizeX = RADouble.NewAbs(w);
+				s._location.SizeY = RADouble.NewAbs(h);
 				s._leftTop = new PointD2D(x, y);
-				s._location.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
-				s._location.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(position.X);
+				s._location.PositionX = RADouble.NewAbs(position.X);
+				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
 				s._location.ScaleX = scaleX;
 				s._location.ScaleY = scaleY;
@@ -257,14 +258,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#endregion Serialization
 
 		/// <summary>
-		/// Copy constructor.
+		/// Initializes a fresh instance of this class with default values
 		/// </summary>
-		/// <param name="from">The object to copy the data from.</param>
-		protected GraphicBase(GraphicBase from)
+		protected GraphicBase()
 		{
 			_eventSuppressor = new Main.EventSuppressor(EhFireChangeEvent);
 			_location = new ItemLocationDirect();
+			_location.ParentObject = this;
+		}
 
+		protected GraphicBase(GraphicBase from)
+			: this()
+		{
 			CopyFrom(from);
 		}
 
@@ -288,79 +293,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
-		/// <summary>
-		/// Initializes with default values.
-		/// </summary>
-		protected GraphicBase()
-			: this(new PointD2D(0, 0))
+		public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
 		{
+			_location.SetParentSize(parentSize, shouldTriggerChangeEvent);
 		}
 
-		/// <summary>
-		/// Initializes with a certain position in points (1/72 inch).
-		/// </summary>
-		/// <param name="graphicPosition">The initial position of the graphical object.</param>
-		protected GraphicBase(PointD2D graphicPosition)
+		public PointD2D ParentSize
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhFireChangeEvent);
-			_location = new ItemLocationDirect();
-			_location.ParentObject = this;
-
-			SetPosition(graphicPosition);
-		}
-
-		/// <summary>
-		/// Initializes the GraphicsObject with a certain position in points (1/72 inch).
-		/// </summary>
-		/// <param name="posX">The initial x position of the graphical object.</param>
-		/// <param name="posY">The initial y position of the graphical object.</param>
-		protected GraphicBase(double posX, double posY)
-			: this(new PointD2D(posX, posY))
-		{
-		}
-
-		protected GraphicBase(PointD2D graphicPosition, PointD2D graphicSize)
-			: this(graphicPosition)
-		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
-		}
-
-		protected GraphicBase(double posX, double posY, PointD2D graphicSize)
-			: this(new PointD2D(posX, posY), graphicSize)
-		{
-		}
-
-		protected GraphicBase(double posX, double posY,
-			double width, double height)
-			: this(new PointD2D(posX, posY), new PointD2D(width, height))
-		{
-		}
-
-		protected GraphicBase(PointD2D graphicPosition, double Rotation)
-			: this(graphicPosition)
-		{
-			this.Rotation = Rotation;
-		}
-
-		protected GraphicBase(double posX, double posY, double Rotation)
-			: this(new PointD2D(posX, posY), Rotation)
-		{
-		}
-
-		protected GraphicBase(PointD2D graphicPosition, PointD2D graphicSize, double Rotation)
-			: this(graphicPosition, Rotation)
-		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
-		}
-
-		protected GraphicBase(double posX, double posY, PointD2D graphicSize, double Rotation)
-			: this(new PointD2D(posX, posY), graphicSize, Rotation)
-		{
-		}
-
-		protected GraphicBase(double posX, double posY, double width, double height, double Rotation)
-			: this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation)
-		{
+			get
+			{
+				return _location.ParentSize;
+			}
 		}
 
 		public virtual bool AutoSize
@@ -386,11 +329,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return _location.GetAbsolutePositionX(_cachedParentSize.X);
+				return _location.AbsolutePositionX;
 			}
 			set
 			{
-				_location.SetAbsolutePositionX(value, _cachedParentSize.X);
+				_location.AbsolutePositionX = value;
 			}
 		}
 
@@ -401,11 +344,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return _location.GetAbsolutePositionY(_cachedParentSize.Y);
+				return _location.AbsolutePositionY;
 			}
 			set
 			{
-				_location.SetAbsolutePositionY(value, _cachedParentSize.Y);
+				_location.AbsolutePositionY = value;
 			}
 		}
 
@@ -434,7 +377,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <returns>The position of the object (the reference point).</returns>
 		protected virtual PointD2D GetPosition()
 		{
-			return new PointD2D(_location.GetAbsolutePositionX(_cachedParentSize.X), _location.GetAbsolutePositionY(_cachedParentSize.Y));
+			return _location.AbsolutePosition;
 		}
 
 		/// <summary>
@@ -443,8 +386,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="value">The position to set.</param>
 		protected virtual void SetPosition(PointD2D value)
 		{
-			_location.SetAbsolutePositionX(value.X, _cachedParentSize.X);
-			_location.SetAbsolutePositionY(value.Y, _cachedParentSize.Y);
+			_location.AbsolutePosition = value;
 		}
 
 		/// <summary>
@@ -484,11 +426,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return _location.GetAbsoluteSizeY(_cachedParentSize.Y);
+				return _location.AbsoluteSizeY;
 			}
 			set
 			{
-				_location.SetAbsoluteSizeY(value, _cachedParentSize.Y);
+				_location.AbsoluteSizeY = value;
 			}
 		}
 
@@ -499,11 +441,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return _location.GetAbsoluteSizeX(_cachedParentSize.X);
+				return _location.AbsoluteSizeX;
 			}
 			set
 			{
-				_location.SetAbsoluteSizeX(value, _cachedParentSize.X);
+				_location.AbsoluteSizeX = value;
 			}
 		}
 
@@ -522,6 +464,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 			Height = height;
 			if (!suppressChangedEvent && (width != oldWidth || height != oldHeight))
 				OnChanged();
+		}
+
+		/// <summary>
+		/// Sets the size and position of this item in relative units, calculated from absolute values. Note that the ParentSize must be set prior to calling this function.
+		/// </summary>
+		/// <param name="absSize">Absolute size of the item.</param>
+		/// <param name="absPos">Absolute position of the item.</param>
+		public virtual void SetRelativeSizePositionFromAbsoluteValues(PointD2D absSize, PointD2D absPos)
+		{
+			_location.SetRelativeSizePositionFromAbsoluteValues(absSize, absPos);
 		}
 
 		/// <summary>
@@ -648,7 +600,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Changed(this, new Main.ChangedEventArgs(this, null));
 		}
 
-		protected void EhChildChanged(object sender, EventArgs e)
+		public void EhChildChanged(object child, EventArgs e)
 		{
 			OnChanged();
 		}

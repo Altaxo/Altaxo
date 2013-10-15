@@ -37,7 +37,11 @@ Altaxo.Main.IDocumentNode
 	{
 		double Rotation { get; set; }
 
-		double Scale { get; set; }
+		double ShearX { get; set; }
+
+		double ScaleX { get; set; }
+
+		double ScaleY { get; set; }
 
 		new object ParentObject { set; }
 	}

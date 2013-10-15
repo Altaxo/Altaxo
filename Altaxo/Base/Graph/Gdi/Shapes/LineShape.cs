@@ -116,6 +116,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
+		public LineShape(LineShape from)
+			: base(from) // all is done here, since CopyFrom is virtual!
+		{
+		}
+
 		public LineShape(PointD2D startPosition)
 		{
 			this.Position = startPosition;
@@ -130,8 +135,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-			this._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.X - startPosition.X);
-			this._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.Y - startPosition.Y);
+			this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
+			this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
 		}
 
 		public LineShape(double startX, double startY, PointD2D endPosition)
@@ -150,8 +155,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(startPosition)
 		{
-			this._location.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.X - startPosition.X);
-			this._location.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(endPosition.Y - startPosition.Y);
+			this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
+			this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
 			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;
 		}
@@ -162,11 +167,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;
-		}
-
-		public LineShape(LineShape from)
-			: base(from) // all is done here, since CopyFrom is virtual!
-		{
 		}
 
 		#endregion Constructors

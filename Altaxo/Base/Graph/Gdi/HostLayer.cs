@@ -373,10 +373,10 @@ namespace Altaxo.Graph.Gdi
 		{
 			return new ItemLocationDirect
 			{
-				SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.X),
-				SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativeSize.Y),
-				PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X),
-				PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(HostLayer.DefaultChildLayerRelativePosition.X)
+				SizeX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.X),
+				SizeY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.Y),
+				PositionX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X),
+				PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X)
 			};
 		}
 
@@ -398,7 +398,9 @@ namespace Altaxo.Graph.Gdi
 					return;
 
 				_location = value;
-				value.ParentObject = this;
+				_location.ParentObject = this;
+				if (_location is ItemLocationDirect)
+					((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false);
 
 				// Note: there is no event link here to Changed event of new location instance,
 				// instead the event is and must be  handled in the EhChildChanged function of this layer
@@ -441,6 +443,9 @@ namespace Altaxo.Graph.Gdi
 			var newSize = newParentLayerSize;
 			_cachedParentLayerSize = newParentLayerSize;
 
+			if (_location is ItemLocationDirect)
+				((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false);
+
 			if (_cachedParentLayerSize != oldSize)
 			{
 				if (bRescale)
@@ -467,16 +472,16 @@ namespace Altaxo.Graph.Gdi
 					{
 						var location = (ItemLocationDirect)_location;
 						if (location.PositionX.IsAbsolute)
-							location.PositionX = new RelativeOrAbsoluteValue(xoffs + location.PositionX.Value * xscale);
+							location.PositionX = new RADouble(xoffs + location.PositionX.Value * xscale);
 
 						if (location.SizeX.IsAbsolute)
-							location.SizeX = new RelativeOrAbsoluteValue(location.SizeX.Value * xscale);
+							location.SizeX = new RADouble(location.SizeX.Value * xscale);
 
 						if (location.PositionY.IsAbsolute)
-							location.PositionY = new RelativeOrAbsoluteValue(yoffs + location.PositionY.Value * yscale);
+							location.PositionY = new RADouble(yoffs + location.PositionY.Value * yscale);
 
 						if (location.SizeY.IsAbsolute)
-							location.SizeY = new RelativeOrAbsoluteValue(location.SizeY.Value * yscale);
+							location.SizeY = new RADouble(location.SizeY.Value * yscale);
 					}
 
 					this.CalculateCachedSizeAndPosition();
@@ -518,14 +523,14 @@ namespace Altaxo.Graph.Gdi
 				if (null != ls)
 				{
 					if (ls.PositionX.IsAbsolute)
-						ls.PositionX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
+						ls.PositionX = RADouble.NewAbs(value.X);
 					else
-						ls.PositionX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
+						ls.PositionX = RADouble.NewRel(value.X / _cachedParentLayerSize.X);
 
 					if (ls.PositionY.IsAbsolute)
-						ls.PositionY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
+						ls.PositionY = RADouble.NewAbs(value.Y);
 					else
-						ls.PositionY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
+						ls.PositionY = RADouble.NewRel(value.Y / _cachedParentLayerSize.Y);
 				}
 			}
 		}
@@ -539,14 +544,14 @@ namespace Altaxo.Graph.Gdi
 				if (null != ls)
 				{
 					if (ls.SizeX.IsAbsolute)
-						ls.SizeX = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.X);
+						ls.SizeX = RADouble.NewAbs(value.X);
 					else
-						ls.SizeX = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.X / _cachedParentLayerSize.X);
+						ls.SizeX = RADouble.NewRel(value.X / _cachedParentLayerSize.X);
 
 					if (ls.SizeY.IsAbsolute)
-						ls.SizeY = Calc.RelativeOrAbsoluteValue.NewAbsoluteValue(value.Y);
+						ls.SizeY = RADouble.NewAbs(value.Y);
 					else
-						ls.SizeY = Calc.RelativeOrAbsoluteValue.NewRelativeValue(value.Y / _cachedParentLayerSize.Y);
+						ls.SizeY = RADouble.NewRel(value.Y / _cachedParentLayerSize.Y);
 				}
 			}
 		}
@@ -567,13 +572,45 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public double Scale
+		public double ShearX
 		{
-			get { return this._location.Scale; }
+			get { return this._location.ShearX; }
 			set
 			{
-				var oldValue = this._location.Scale;
-				this._location.Scale = value;
+				var oldValue = this._location.ShearX;
+				this._location.ShearX = value;
+
+				if (value != oldValue)
+				{
+					this.CalculateMatrix();
+					this.OnChanged();
+				}
+			}
+		}
+
+		public double ScaleX
+		{
+			get { return this._location.ScaleX; }
+			set
+			{
+				var oldValue = this._location.ScaleX;
+				this._location.ScaleX = value;
+
+				if (value != oldValue)
+				{
+					this.CalculateMatrix();
+					this.OnChanged();
+				}
+			}
+		}
+
+		public double ScaleY
+		{
+			get { return this._location.ScaleY; }
+			set
+			{
+				var oldValue = this._location.ScaleY;
+				this._location.ScaleY = value;
 
 				if (value != oldValue)
 				{
@@ -586,7 +623,7 @@ namespace Altaxo.Graph.Gdi
 		protected void CalculateMatrix()
 		{
 			_transformation.Reset();
-			_transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Rotation, 0, _location.Scale, _location.Scale);
+			_transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Rotation, _location.ShearX, _location.ScaleX, _location.ScaleY);
 		}
 
 		public PointD2D TransformCoordinatesFromParentToHere(PointD2D pagecoordinates)
@@ -660,7 +697,7 @@ namespace Altaxo.Graph.Gdi
 			return coordinates;
 		}
 
-		public void SetPositionSize(RelativeOrAbsoluteValue x, RelativeOrAbsoluteValue y, RelativeOrAbsoluteValue width, RelativeOrAbsoluteValue height)
+		public void SetPositionSize(RADouble x, RADouble y, RADouble width, RADouble height)
 		{
 			ItemLocationDirect newlocation;
 
@@ -748,13 +785,13 @@ namespace Altaxo.Graph.Gdi
 		public void CreateDefaultGrid()
 		{
 			_grid = new GridPartitioning();
-			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.X));
-			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.X));
-			_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.X - DefaultChildLayerRelativeSize.X));
+			_grid.XPartitioning.Add(RADouble.NewRel(DefaultChildLayerRelativePosition.X));
+			_grid.XPartitioning.Add(RADouble.NewRel(DefaultChildLayerRelativeSize.X));
+			_grid.XPartitioning.Add(RADouble.NewRel(1 - DefaultChildLayerRelativePosition.X - DefaultChildLayerRelativeSize.X));
 
-			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativePosition.Y));
-			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(DefaultChildLayerRelativeSize.Y));
-			_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(1 - DefaultChildLayerRelativePosition.Y - DefaultChildLayerRelativeSize.Y));
+			_grid.YPartitioning.Add(RADouble.NewRel(DefaultChildLayerRelativePosition.Y));
+			_grid.YPartitioning.Add(RADouble.NewRel(DefaultChildLayerRelativeSize.Y));
+			_grid.YPartitioning.Add(RADouble.NewRel(1 - DefaultChildLayerRelativePosition.Y - DefaultChildLayerRelativeSize.Y));
 		}
 
 		/// <summary>
@@ -791,22 +828,22 @@ namespace Altaxo.Graph.Gdi
 			prev = 0;
 			foreach (var x in xPosPurified)
 			{
-				_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue((x - prev) / this.Size.X));
+				_grid.XPartitioning.Add(RADouble.NewRel((x - prev) / this.Size.X));
 				prev = x;
 			}
 			prev = 0;
 			foreach (var y in yPosPurified)
 			{
-				_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue((y - prev) / this.Size.Y));
+				_grid.YPartitioning.Add(RADouble.NewRel((y - prev) / this.Size.Y));
 				prev = y;
 			}
 
 			// ensure that we always have an odd number of columns and rows
 			// if there is no child layer present, then at least one row and one column should be present
 			if (0 == _grid.XPartitioning.Count % 2)
-				_grid.XPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(_grid.XPartitioning.Count == 0 ? 1 : 0));
+				_grid.XPartitioning.Add(RADouble.NewRel(_grid.XPartitioning.Count == 0 ? 1 : 0));
 			if (0 == _grid.YPartitioning.Count % 2)
-				_grid.YPartitioning.Add(RelativeOrAbsoluteValue.NewRelativeValue(_grid.YPartitioning.Count == 0 ? 1 : 0));
+				_grid.YPartitioning.Add(RADouble.NewRel(_grid.YPartitioning.Count == 0 ? 1 : 0));
 		}
 
 		#endregion Grid creation
@@ -1033,7 +1070,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			IHitTestObject hit;
 
-			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, Scale, Scale, 0);
+			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
 
 			var layerC = layerHitTestData.GetHittedPointInWorldCoord();
 
