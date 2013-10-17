@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Graph
 {
 	#region Interfaces
 
-	public interface ILayerDirectPositionSizeView
+	public interface IItemLocationDirectView
 	{
 		void InitializeXPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
@@ -78,32 +78,24 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Summary description for LayerPositionController.
 	/// </summary>
-	[ExpectedTypeOfView(typeof(ILayerDirectPositionSizeView))]
-	public class LayerDirectPositionSizeController : MVCANControllerBase<ItemLocationDirect, ILayerDirectPositionSizeView>
+	[ExpectedTypeOfView(typeof(IItemLocationDirectView))]
+	[UserControllerForObject(typeof(ItemLocationDirect))]
+	public class ItemLocationDirectController : MVCANControllerBase<ItemLocationDirect, IItemLocationDirectView>
 	{
-		private PointD2D _parentLayerSize;
+		private PointD2D _parentSize;
 		private QuantityWithUnitGuiEnvironment _xSizeEnvironment, _xPositionEnvironment;
 		private QuantityWithUnitGuiEnvironment _ySizeEnvironment, _yPositionEnvironment;
 
 		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% Parent X-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Parent Y-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
-		public override bool InitializeDocument(params object[] args)
-		{
-			if (args.Length < 2)
-				return false;
-			if (!(args[1] is PointD2D))
-				return false;
-			_parentLayerSize = (PointD2D)args[1];
-			return base.InitializeDocument(args);
-		}
-
 		protected override void Initialize(bool initData)
 		{
 			if (initData)
 			{
-				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.X, Units.Length.Point.Instance);
-				_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.Y, Units.Length.Point.Instance);
+				_parentSize = _doc.ParentSize;
+				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.X, Units.Length.Point.Instance);
+				_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.Y, Units.Length.Point.Instance);
 				_xSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
 				_ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
 				_xPositionEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);

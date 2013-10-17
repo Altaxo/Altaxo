@@ -44,9 +44,9 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for LayerPositionControl.xaml
 	/// </summary>
-	public partial class LayerDirectPositionSizeControl : UserControl, ILayerDirectPositionSizeView
+	public partial class ItemLocationDirectControl : UserControl, IItemLocationDirectView
 	{
-		public LayerDirectPositionSizeControl()
+		public ItemLocationDirectControl()
 		{
 			InitializeComponent();
 		}

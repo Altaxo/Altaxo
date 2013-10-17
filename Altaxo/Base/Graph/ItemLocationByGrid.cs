@@ -86,7 +86,7 @@ namespace Altaxo.Graph
 				info.AddValue("ColumnSpan", s._gridColumnSpan);
 				info.AddValue("RowSpan", s._gridRowSpan);
 				info.AddValue("Rotation", s._rotation);
-				info.AddValue("Shear", s._shear);
+				info.AddValue("ShearX", s._shear);
 				info.AddValue("ScaleX", s._scaleX);
 				info.AddValue("ScaleY", s._scaleY);
 				info.AddValue("ForceFitInCell", s._takeScaleAngleIntoAccountToFitInCell);
@@ -101,7 +101,7 @@ namespace Altaxo.Graph
 				s._gridColumnSpan = info.GetDouble("ColumnSpan");
 				s._gridRowSpan = info.GetDouble("RowSpan");
 				s._rotation = info.GetDouble("Rotation");
-				s._shear = info.GetDouble("Shear");
+				s._shear = info.GetDouble("ShearX");
 				s._scaleX = info.GetDouble("ScaleX");
 				s._scaleY = info.GetDouble("ScaleY");
 

@@ -34,19 +34,23 @@ namespace Altaxo.Gui.Graph
 {
 	#region Interfaces
 
-	public interface ILayerGridPositionSizeView
+	public interface IItemLocationByGridView
 	{
-		double XPosition { get; set; }
+		double GridColumn { get; set; }
 
-		double YPosition { get; set; }
+		double GridRow { get; set; }
 
-		double XSize { get; set; }
+		double GridColumnSpan { get; set; }
 
-		double YSize { get; set; }
+		double GridRowSpan { get; set; }
 
 		double Rotation { get; set; }
 
-		double Scale { get; set; }
+		double ShearX { get; set; }
+
+		double ScaleX { get; set; }
+
+		double ScaleY { get; set; }
 	}
 
 	#endregion Interfaces
@@ -54,8 +58,9 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Summary description for LayerPositionController.
 	/// </summary>
-	[ExpectedTypeOfView(typeof(ILayerGridPositionSizeView))]
-	public class LayerGridPositionSizeController : MVCANControllerBase<ItemLocationByGrid, ILayerGridPositionSizeView>
+	[ExpectedTypeOfView(typeof(IItemLocationByGridView))]
+	[UserControllerForObject(typeof(ItemLocationByGrid))]
+	public class ItemLocationByGridController : MVCANControllerBase<ItemLocationByGrid, IItemLocationByGridView>
 	{
 		private GridPartitioning _parentLayerGrid;
 
@@ -96,12 +101,14 @@ namespace Altaxo.Gui.Graph
 			}
 			if (null != _view)
 			{
-				_view.XPosition = DocToUserPosition(_doc.GridColumn);
-				_view.YPosition = DocToUserPosition(_doc.GridRow);
-				_view.XSize = DocToUserSize(_doc.GridColumnSpan);
-				_view.YSize = DocToUserSize(_doc.GridRowSpan);
+				_view.GridColumn = DocToUserPosition(_doc.GridColumn);
+				_view.GridRow = DocToUserPosition(_doc.GridRow);
+				_view.GridColumnSpan = DocToUserSize(_doc.GridColumnSpan);
+				_view.GridRowSpan = DocToUserSize(_doc.GridRowSpan);
 				_view.Rotation = _doc.Rotation;
-				_view.Scale = _doc.ScaleX;
+				_view.ShearX = _doc.ShearX;
+				_view.ScaleX = _doc.ScaleX;
+				_view.ScaleY = _doc.ScaleY;
 			}
 		}
 
@@ -111,12 +118,14 @@ namespace Altaxo.Gui.Graph
 		{
 			try
 			{
-				_doc.GridColumn = UserToDocPosition(_view.XPosition);
-				_doc.GridRow = UserToDocPosition(_view.YPosition);
-				_doc.GridColumnSpan = UserToDocSize(_view.XSize);
-				_doc.GridRowSpan = UserToDocSize(_view.YSize);
-				_doc.ScaleX = _view.Scale;
+				_doc.GridColumn = UserToDocPosition(_view.GridColumn);
+				_doc.GridRow = UserToDocPosition(_view.GridRow);
+				_doc.GridColumnSpan = UserToDocSize(_view.GridColumnSpan);
+				_doc.GridRowSpan = UserToDocSize(_view.GridRowSpan);
 				_doc.Rotation = _view.Rotation;
+				_doc.ShearX = _view.ShearX;
+				_doc.ScaleX = _view.ScaleX;
+				_doc.ScaleY = _view.ScaleY;
 
 				_originalDoc.CopyFrom(_doc);
 			}

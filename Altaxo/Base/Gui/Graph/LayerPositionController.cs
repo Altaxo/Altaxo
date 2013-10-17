@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (_doc is ItemLocationDirect)
 			{
-				_subController = new LayerDirectPositionSizeController();
+				_subController = new ItemLocationDirectController();
 				_subController.InitializeDocument(_doc, _layer.ParentLayerSize);
 			}
 			else if (_doc is ItemLocationByGrid)
@@ -107,7 +107,7 @@ namespace Altaxo.Gui.Graph
 				if (null == _layer.ParentLayer)
 					throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
 				_layer.ParentLayer.CreateGridIfNullOrEmpty();
-				_subController = new LayerGridPositionSizeController();
+				_subController = new ItemLocationByGridController();
 				_subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
 			}
 			Current.Gui.FindAndAttachControlTo(_subController);

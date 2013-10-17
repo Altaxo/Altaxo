@@ -42,9 +42,9 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for LayerPositionControl.xaml
 	/// </summary>
-	public partial class LayerGridPositionSizeControl : UserControl, ILayerGridPositionSizeView
+	public partial class ItemLocationByGridControl : UserControl, IItemLocationByGridView
 	{
-		public LayerGridPositionSizeControl()
+		public ItemLocationByGridControl()
 		{
 			InitializeComponent();
 		}
@@ -61,19 +61,43 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public double Scale
+		public double ShearX
 		{
 			get
 			{
-				return _guiScale.SelectedQuantityInSIUnits;
+				return _guiShear.SelectedQuantityInSIUnits;
 			}
 			set
 			{
-				_guiScale.SelectedQuantityInSIUnits = value;
+				_guiShear.SelectedQuantityInSIUnits = value;
 			}
 		}
 
-		public double XPosition
+		public double ScaleX
+		{
+			get
+			{
+				return _guiScaleX.SelectedQuantityInSIUnits;
+			}
+			set
+			{
+				_guiScaleX.SelectedQuantityInSIUnits = value;
+			}
+		}
+
+		public double ScaleY
+		{
+			get
+			{
+				return _guiScaleY.SelectedQuantityInSIUnits;
+			}
+			set
+			{
+				_guiScaleY.SelectedQuantityInSIUnits = value;
+			}
+		}
+
+		public double GridColumn
 		{
 			get
 			{
@@ -85,7 +109,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public double YPosition
+		public double GridRow
 		{
 			get
 			{
@@ -97,7 +121,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public double XSize
+		public double GridColumnSpan
 		{
 			get
 			{
@@ -109,7 +133,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public double YSize
+		public double GridRowSpan
 		{
 			get
 			{

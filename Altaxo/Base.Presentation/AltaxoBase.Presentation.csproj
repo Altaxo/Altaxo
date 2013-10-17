@@ -384,11 +384,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LayerGridPositionSizeControl.xaml">
+    <Page Include="Gui\Graph\ItemLocationByGridControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\LayerDirectPositionSizeControl.xaml">
+    <Page Include="Gui\Graph\ItemLocationDirectControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1006,11 +1006,11 @@
     <Compile Include="Gui\Graph\GridPartitioningControl.xaml.cs">
       <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LayerGridPositionSizeControl.xaml.cs">
-      <DependentUpon>LayerGridPositionSizeControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\ItemLocationByGridControl.xaml.cs">
+      <DependentUpon>ItemLocationByGridControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LayerDirectPositionSizeControl.xaml.cs">
-      <DependentUpon>LayerDirectPositionSizeControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\ItemLocationDirectControl.xaml.cs">
+      <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ScaleWithTicksControl.xaml.cs">
       <DependentUpon>ScaleWithTicksControl.xaml</DependentUpon>

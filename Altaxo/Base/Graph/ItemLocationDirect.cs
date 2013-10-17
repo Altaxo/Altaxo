@@ -99,9 +99,9 @@ namespace Altaxo.Graph
 				info.AddValue("ReferenceY", s._referenceY);
 
 				info.AddValue("Rotation", s._rotation);
+				info.AddValue("ShearX", s._shear);
 				info.AddValue("ScaleX", s._scaleX);
 				info.AddValue("ScaleY", s._scaleY);
-				info.AddValue("ShearX", s._shear);
 			}
 
 			protected virtual ItemLocationDirect SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -121,9 +121,9 @@ namespace Altaxo.Graph
 				s._referenceY = (RADouble)info.GetValue("ReferenceY");
 
 				s._rotation = info.GetDouble("Rotation");
+				s._shear = info.GetDouble("ShearX");
 				s._scaleX = info.GetDouble("ScaleX");
 				s._scaleY = info.GetDouble("ScaleY");
-				s._shear = info.GetDouble("ShearX");
 
 				return s;
 			}

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -47,6 +49,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		}
 
 		#region IShapeGraphicView
+
 		public Altaxo.Graph.Gdi.PenX DocPen
 		{
 			get
@@ -71,77 +74,14 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public Altaxo.Graph.PointD2D DocPosition
+		public object LocationView
 		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Position;
-			}
 			set
 			{
-				_positioningControl.PositionSizeGlue.Position = value;
+				_guiLocationHost.Child = (UIElement)value;
 			}
 		}
 
-		public Altaxo.Graph.PointD2D DocSize
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Size;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Size = value;
-			}
-		}
-
-		public double DocRotation
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Rotation;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Rotation = value;
-			}
-		}
-
-		public double DocShear
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Shear;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Shear = value;
-			}
-		}
-
-		public double DocScaleX
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.ScaleX;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.ScaleX = value;
-			}
-		}
-
-		public double DocScaleY
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.ScaleY;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.ScaleY = value;
-			}
-		}
-		#endregion
+		#endregion IShapeGraphicView
 	}
 }
