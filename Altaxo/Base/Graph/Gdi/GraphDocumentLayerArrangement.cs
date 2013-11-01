@@ -187,9 +187,6 @@ namespace Altaxo.Graph.Gdi
 					var oldSize = parentLayer.Layers[nLayer].Size;
 					parentLayer.Layers[nLayer].Location = new ItemLocationByGrid { GridColumn = 2 * j + 1, GridRow = 2 * i + 1, GridColumnSpan = 1, GridRowSpan = 1 };
 					var newSize = parentLayer.Layers[nLayer].Size;
-
-					if (oldSize != newSize)
-						parentLayer.Layers[nLayer].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
 				}
 			}
 
@@ -214,9 +211,6 @@ namespace Altaxo.Graph.Gdi
 							var oldSize = parentLayer.Layers[i].Size;
 							parentLayer.Layers[i].Location = (IItemLocation)templateLayer.Location.Clone();
 							var newSize = parentLayer.Layers[i].Size;
-
-							if (oldSize != newSize)
-								parentLayer.Layers[i].RescaleInnerItemPositions(newSize.X / oldSize.X, newSize.Y / oldSize.Y);
 						}
 
 						break;

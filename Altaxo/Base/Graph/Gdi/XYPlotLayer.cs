@@ -553,25 +553,6 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion XYPlotLayer properties and methods
 
-		#region Position and Size
-
-		/// <summary>
-		/// Recalculates the positions of inner items in case the layer has changed its size.
-		/// </summary>
-		/// <param name="xscale">The ratio the layer has changed its size in horizontal direction.</param>
-		/// <param name="yscale">The ratio the layer has changed its size in vertical direction.</param>
-		public override void RescaleInnerItemPositions(double xscale, double yscale)
-		{
-			foreach (AxisStyle style in this.AxisStyles)
-			{
-				GraphicBase.ScalePosition(style.Title, xscale, yscale);
-			}
-
-			base.RescaleInnerItemPositions(xscale, yscale);
-		}
-
-		#endregion Position and Size
-
 		#region Scale related
 
 		/// <summary>
@@ -924,6 +905,8 @@ namespace Altaxo.Graph.Gdi
 				else
 				{
 					TextGraphic tg = new TextGraphic();
+					tg.SetParentSize(this.Size, false);
+
 					CSAxisInformation info = CoordinateSystem.GetAxisStyleInformation(id);
 
 					// find out the position and orientation of the item
@@ -937,6 +920,9 @@ namespace Altaxo.Graph.Gdi
 					Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
 					var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
 					double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
+
+					tg.Location.ReferenceX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
+					tg.Location.ReferenceY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
 
 					double distance = 0;
 					AxisStyle axisStyle = _axisStyles[id];
@@ -984,7 +970,8 @@ namespace Altaxo.Graph.Gdi
 						distance += scaleFontWidth * labelFontSize;
 					}
 
-					tg.Position = new PointD2D(location.X + distance * normDirection.X, location.Y + distance * normDirection.Y);
+					tg.Location.PositionX = RADouble.NewAbs(distance * normDirection.X); // because this is relative to the reference point, we don't need to take the location into account here, it is set above
+					tg.Location.PositionY = RADouble.NewAbs(distance * normDirection.Y);
 					tg.Text = newtitle;
 					_axisStyles.AxisStyleEnsured(id).Title = tg;
 				}
@@ -1673,6 +1660,10 @@ namespace Altaxo.Graph.Gdi
 
 			public object ParentObject { get; set; }
 
+			public virtual void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent)
+			{
+			}
+
 			public virtual IHitTestObject HitTest(HitTestPointData hitData)
 			{
 				return null;
@@ -1901,6 +1892,20 @@ namespace Altaxo.Graph.Gdi
 				var r = new AxisStyleTitlePlaceHolder();
 				r.CopyFrom(this);
 				return r;
+			}
+
+			public override void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent)
+			{
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer)
+				{
+					if (Index >= 0 && Index < layer._axisStyles.Count)
+					{
+						var title = layer._axisStyles.ItemAt(Index).Title;
+						if (null != title)
+							title.SetParentSize(parentSize, isTriggeringChangedEvent);
+					}
+				}
 			}
 
 			public override IHitTestObject HitTest(HitTestPointData hitData)

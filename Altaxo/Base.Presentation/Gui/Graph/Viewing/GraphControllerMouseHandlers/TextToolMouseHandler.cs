@@ -70,6 +70,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			var layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
 
 			TextGraphic tgo = new TextGraphic();
+			tgo.SetParentSize(_grac.ActiveLayer.Size, false);
 			tgo.Position = layerCoord;
 			tgo.ParentObject = _grac.ActiveLayer;
 

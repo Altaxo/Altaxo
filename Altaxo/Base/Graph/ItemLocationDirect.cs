@@ -180,6 +180,7 @@ namespace Altaxo.Graph
 				this._scaleX = from._scaleX;
 				this._scaleY = from._scaleY;
 				this._shear = from._shear;
+				OnChanged();
 				return true;
 			}
 			else if (obj is IItemLocation)
@@ -189,6 +190,7 @@ namespace Altaxo.Graph
 				this._shear = from.ShearX;
 				this._scaleX = from.ScaleX;
 				this._scaleY = from.ScaleY;
+				OnChanged();
 				return true;
 			}
 
@@ -200,7 +202,7 @@ namespace Altaxo.Graph
 			return new ItemLocationDirect(this);
 		}
 
-		public ItemLocationDirect Clone()
+		public virtual ItemLocationDirect Clone()
 		{
 			return new ItemLocationDirect(this);
 		}
@@ -227,6 +229,38 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether the this location belongs to a graphical element which is auto sized.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if [can set size]; otherwise, <c>false</c>.
+		/// </value>
+		public virtual bool IsAutoSized
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// If the <see cref="IsAutoSize"/> property is <c>true</c> for this instance, the graphical object has to use this function to indicate its size.
+		/// </summary>
+		/// <param name="autoSize">Size of the graphical object.</param>
+		/// <exception cref="System.InvalidOperationException">Using SetAutoSize is not supported because IsAutoSized is false</exception>
+		public void SetSizeInAutoSizeMode(PointD2D autoSize)
+		{
+			if (!IsAutoSized)
+				throw new InvalidOperationException("Using SetAutoSize is not supported because IsAutoSized is false");
+
+			if (_sizeX.IsRelative || _sizeY.IsRelative || _sizeX.Value != autoSize.X || _sizeY.Value != autoSize.Y)
+			{
+				_sizeX = RADouble.NewAbs(autoSize.X);
+				_sizeY = RADouble.NewAbs(autoSize.Y);
+				OnChanged();
+			}
+		}
+
+		/// <summary>
 		/// The width of the layer, either as absolute value in point (1/72 inch), or as
 		/// relative value as pointed out by <see cref="_layerWidthType"/>.
 		/// </summary>
@@ -235,6 +269,9 @@ namespace Altaxo.Graph
 			get { return _sizeX; }
 			set
 			{
+				if (IsAutoSized)
+					throw new InvalidOperationException("Setting the size is not supported because CanSetSize is false");
+
 				var oldvalue = _sizeX;
 				_sizeX = value;
 
@@ -252,6 +289,8 @@ namespace Altaxo.Graph
 			get { return _sizeY; }
 			set
 			{
+				if (IsAutoSized)
+					throw new InvalidOperationException("Setting the size is not supported because CanSetSize is false");
 				var oldvalue = _sizeY;
 				_sizeY = value;
 
@@ -374,8 +413,12 @@ namespace Altaxo.Graph
 
 			_positionX = x;
 			_positionY = y;
-			_sizeX = width;
-			_sizeY = height;
+
+			if (!IsAutoSized)
+			{
+				_sizeX = width;
+				_sizeY = height;
+			}
 
 			if (isChanged)
 				OnChanged();
@@ -390,11 +433,10 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				var oldvalueX = _scaleX;
-				var oldValueY = _scaleY;
+				bool isChanged = _scaleX != value.X || _scaleY != value.Y;
 				_scaleX = value.X;
 				_scaleY = value.Y;
-				if (value.X != oldvalueX || value.Y != oldValueY)
+				if (isChanged)
 					OnChanged();
 			}
 		}
@@ -493,9 +535,8 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Gets the absolute enclosing rectangle without taking into account ScaleX, ScaleY, Rotation and Shear (SSRS).
 		/// </summary>
-		/// <param name="_parentSize">Size of the parent object (needed when relative values for size or position where used).</param>
 		/// <returns>The enclosing rectangle in absolute values.</returns>
-		public RectangleD GetAbsoluteEnclosingRectangleWithoutSSRS(PointD2D _parentSize)
+		public RectangleD GetAbsoluteEnclosingRectangleWithoutSSRS()
 		{
 			var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
 			var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
@@ -506,6 +547,26 @@ namespace Altaxo.Graph
 			return new RectangleD(myPosX, myPosY, mySizeX, mySizeY);
 		}
 
+		private void InternalSetAbsoluteSizeXSilent(double value)
+		{
+			if (_sizeX.IsAbsolute)
+				_sizeX = RADouble.NewAbs(value);
+			else if (_parentSize.X != 0 && !double.IsNaN(_parentSize.X))
+				_sizeX = RADouble.NewRel(value / _parentSize.X);
+			else
+				throw new InvalidOperationException("_parentSize.X is undefined or zero");
+		}
+
+		private void InternalSetAbsoluteSizeYSilent(double value)
+		{
+			if (_sizeY.IsAbsolute)
+				_sizeY = RADouble.NewAbs(value);
+			else if (_parentSize.Y != 0 && !double.IsNaN(_parentSize.Y))
+				_sizeY = RADouble.NewRel(value / _parentSize.Y);
+			else
+				throw new InvalidOperationException("_parentSize.Y is undefined or zero");
+		}
+
 		public double AbsoluteSizeX
 		{
 			get
@@ -514,12 +575,10 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				if (_sizeX.IsAbsolute)
-					_sizeX = RADouble.NewAbs(value);
-				else if (_parentSize.X != 0 && !double.IsNaN(_parentSize.X))
-					_sizeX = RADouble.NewRel(value / _parentSize.X);
-				else
-					throw new InvalidOperationException("_parentSize.X is undefined or zero");
+				var oldValue = _sizeX;
+				InternalSetAbsoluteSizeXSilent(value);
+				if (oldValue != _sizeX)
+					OnChanged();
 			}
 		}
 
@@ -531,12 +590,10 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				if (_sizeY.IsAbsolute)
-					_sizeY = RADouble.NewAbs(value);
-				else if (_parentSize.Y != 0 && !double.IsNaN(_parentSize.Y))
-					_sizeY = RADouble.NewRel(value / _parentSize.Y);
-				else
-					throw new InvalidOperationException("_parentSize.Y is undefined or zero");
+				var oldValue = _sizeY;
+				InternalSetAbsoluteSizeYSilent(value);
+				if (oldValue != _sizeY)
+					OnChanged();
 			}
 		}
 
@@ -548,9 +605,36 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				AbsoluteSizeX = value.X;
-				AbsoluteSizeY = value.Y;
+				var oldSizeX = _sizeX;
+				var oldSizeY = _sizeY;
+				InternalSetAbsoluteSizeXSilent(value.X);
+				InternalSetAbsoluteSizeYSilent(value.Y);
+
+				if (oldSizeX != _sizeX || oldSizeY != _sizeY)
+					OnChanged();
 			}
+		}
+
+		private void InternalSetAbsolutePositionXSilent(double value)
+		{
+			var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
+			if (_positionX.IsAbsolute)
+				_positionX = RADouble.NewAbs(value - _referenceX.GetValueRelativeTo(_parentSize.X) + _pivotX.GetValueRelativeTo(mySizeX));
+			else if (0 != _parentSize.X && _parentSize.X.IsFinite())
+				_positionX = RADouble.NewRel((value - _referenceX.GetValueRelativeTo(_parentSize.X) + _pivotX.GetValueRelativeTo(mySizeX)) / _parentSize.X);
+			else
+				throw new InvalidOperationException("_parentSize.X is undefined or zero");
+		}
+
+		private void InternalSetAbsolutePositionYSilent(double value)
+		{
+			var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
+			if (_positionY.IsAbsolute)
+				_positionY = RADouble.NewAbs(value - _referenceY.GetValueRelativeTo(_parentSize.Y) + _pivotY.GetValueRelativeTo(mySizeY));
+			else if (0 != _parentSize.Y && _parentSize.Y.IsFinite())
+				_positionY = RADouble.NewRel((value - _referenceY.GetValueRelativeTo(_parentSize.Y) + _pivotY.GetValueRelativeTo(mySizeY)) / _parentSize.Y);
+			else
+				throw new InvalidOperationException("_parentSize.Y is undefined or zero");
 		}
 
 		public double AbsolutePositionX
@@ -562,13 +646,10 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
-				if (_positionX.IsAbsolute)
-					_positionX = RADouble.NewAbs(value - _referenceX.GetValueRelativeTo(_parentSize.X) + _pivotX.GetValueRelativeTo(mySizeX));
-				else if (0 != _parentSize.X && _parentSize.X.IsFinite())
-					_positionX = RADouble.NewRel((value - _referenceX.GetValueRelativeTo(_parentSize.X) + _pivotX.GetValueRelativeTo(mySizeX)) / _parentSize.X);
-				else
-					throw new InvalidOperationException("_parentSize.X is undefined or zero");
+				var oldValue = _positionX;
+				InternalSetAbsolutePositionXSilent(value);
+				if (oldValue != _positionX)
+					OnChanged();
 			}
 		}
 
@@ -581,13 +662,10 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
-				if (_positionY.IsAbsolute)
-					_positionY = RADouble.NewAbs(value - _referenceY.GetValueRelativeTo(_parentSize.Y) + _pivotY.GetValueRelativeTo(mySizeY));
-				else if (0 != _parentSize.Y && _parentSize.Y.IsFinite())
-					_positionY = RADouble.NewRel((value - _referenceY.GetValueRelativeTo(_parentSize.Y) + _pivotY.GetValueRelativeTo(mySizeY)) / _parentSize.Y);
-				else
-					throw new InvalidOperationException("_parentSize.Y is undefined or zero");
+				var oldValue = _positionY;
+				InternalSetAbsolutePositionYSilent(value);
+				if (oldValue != _positionY)
+					OnChanged();
 			}
 		}
 
@@ -599,8 +677,117 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				AbsolutePositionX = value.X;
-				AbsolutePositionY = value.Y;
+				var oldValueX = _positionX;
+				var oldValueY = _positionY;
+
+				InternalSetAbsolutePositionXSilent(value.X);
+				InternalSetAbsolutePositionYSilent(value.Y);
+
+				if (oldValueX != _positionX || oldValueY != _positionY)
+					OnChanged();
+			}
+		}
+
+		private void InternalSetAbsolutePivotPositionXSilent(double value)
+		{
+			var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
+			if (_positionX.IsAbsolute)
+				_positionX = RADouble.NewAbs(value - _referenceX.GetValueRelativeTo(_parentSize.X));
+			else if (0 != _parentSize.X && _parentSize.X.IsFinite())
+				_positionX = RADouble.NewRel((value - _referenceX.GetValueRelativeTo(_parentSize.X)) / _parentSize.X);
+			else
+				throw new InvalidOperationException("_parentSize.X is undefined or zero");
+		}
+
+		private void InternalSetAbsolutePivotPositionYSilent(double value)
+		{
+			var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
+			if (_positionY.IsAbsolute)
+				_positionY = RADouble.NewAbs(value - _referenceY.GetValueRelativeTo(_parentSize.Y));
+			else if (0 != _parentSize.Y && _parentSize.Y.IsFinite())
+				_positionY = RADouble.NewRel((value - _referenceY.GetValueRelativeTo(_parentSize.Y)) / _parentSize.Y);
+			else
+				throw new InvalidOperationException("_parentSize.Y is undefined or zero");
+		}
+
+		/// <summary>
+		/// Gets or sets the absolute x position of the pivot point of the item.
+		/// </summary>
+		/// <value>
+		/// The absolute pivot x position.
+		/// </value>
+		/// <exception cref="System.InvalidOperationException">_parentSize.X is undefined or zero</exception>
+		public double AbsolutePivotPositionX
+		{
+			get
+			{
+				var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
+				return _referenceX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X);
+			}
+			set
+			{
+				var oldValue = _positionX;
+				InternalSetAbsolutePivotPositionXSilent(value);
+				if (oldValue != _positionX)
+					OnChanged();
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the absolute y position of the pivot point of the item.
+		/// </summary>
+		/// <value>
+		/// The absolute pivot y position.
+		/// </value>
+		/// <exception cref="System.InvalidOperationException">_parentSize.Y is undefined or zero</exception>
+		public double AbsolutePivotPositionY
+		{
+			get
+			{
+				var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
+				return _referenceY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y);
+			}
+			set
+			{
+				var oldValue = _positionY;
+				InternalSetAbsolutePositionXSilent(value);
+				if (oldValue != _positionY)
+					OnChanged();
+			}
+		}
+
+		public PointD2D AbsolutePivotPosition
+		{
+			get
+			{
+				return new PointD2D(AbsolutePivotPositionX, AbsolutePivotPositionY);
+			}
+			set
+			{
+				var oldValueX = _positionX;
+				var oldValueY = _positionY;
+
+				InternalSetAbsolutePivotPositionXSilent(value.X);
+				InternalSetAbsolutePivotPositionYSilent(value.Y);
+
+				if (oldValueX != _positionX || oldValueY != _positionY)
+					OnChanged();
+			}
+		}
+
+		/// <summary>
+		/// Gets the absolute vector between the pivot point of the item and its left upper edge.
+		/// </summary>
+		/// <value>
+		/// The absolute vector between the pivot point of the item and its left upper edge.
+		/// </value>
+		public PointD2D AbsoluteVectorPivotToLeftUpper
+		{
+			get
+			{
+				var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
+				var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
+				return new PointD2D(-_pivotX.GetValueRelativeTo(mySizeX), -_pivotY.GetValueRelativeTo(mySizeY));
 			}
 		}
 
@@ -616,13 +803,13 @@ namespace Altaxo.Graph
 			if (_parentSize.Y == 0)
 				throw new InvalidOperationException("ParentSize.Y is zero. This would lead to an undefined relative value!");
 
-			SizeX = RADouble.NewRel(absSize.X / _parentSize.X);
-			SizeY = RADouble.NewRel(absSize.Y / _parentSize.Y);
+			_sizeX = RADouble.NewRel(absSize.X / _parentSize.X);
+			_sizeY = RADouble.NewRel(absSize.Y / _parentSize.Y);
 
-			PositionX = RADouble.NewRel(absPos.X / _parentSize.X);
-			PositionY = RADouble.NewRel(absPos.Y / _parentSize.Y);
+			_positionX = RADouble.NewRel(absPos.X / _parentSize.X);
+			_positionY = RADouble.NewRel(absPos.Y / _parentSize.Y);
 
-			if (oldSizeX != SizeX || oldSizeY != SizeY || oldPosX != PositionX || oldPosY != PositionY)
+			if (oldSizeX != _sizeX || oldSizeY != _sizeY || oldPosX != _positionX || oldPosY != _positionY)
 				OnChanged();
 		}
 

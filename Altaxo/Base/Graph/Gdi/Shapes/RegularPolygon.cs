@@ -176,12 +176,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
-		/// Gets the path of the object in object world coordinates.
+		/// Gets the path of the object in object world coordinates, relative to the left upper corner of the object.
 		/// </summary>
 		/// <returns></returns>
 		protected GraphicsPath GetPath()
 		{
 			// we adjust the lower edge to be parallel to the x-axis
+
 			GraphicsPath gp = new GraphicsPath();
 
 			double angleStep = 2 * Math.PI / _vertices;
@@ -263,6 +264,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			gp.CloseFigure();
 
+			// adjust the path so that it's point are relative to the local anchor instead of the left upper corner
+			var offset = _location.AbsoluteVectorPivotToLeftUpper;
+			var translationMatrix = new Matrix();
+			translationMatrix.Translate((float)offset.X, (float)offset.Y);
+			gp.Transform(translationMatrix);
+
 			return gp;
 		}
 
@@ -317,12 +324,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override void Paint(Graphics g, object obj)
 		{
+			var path = GetPath();
+			var bounds = Bounds;
+
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);
-
-			var path = GetPath();
-
-			var bounds = Bounds;
 			var boundsF = (RectangleF)bounds;
 			if (Brush.IsVisible)
 			{

@@ -40,17 +40,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		Altaxo.Graph.Gdi.Shapes.IGraphicBase,
 		Main.IChildChangedEventSink
 	{
-		private Main.EventSuppressor _eventSuppressor;
+		protected Main.EventSuppressor _eventSuppressor;
 
 		/// <summary>
 		/// The size of the parent object.
 		/// </summary>
 		protected PointD2D _cachedParentSize;
-
-		/// <summary>
-		/// The bounds of this object.
-		/// </summary>
-		public PointD2D _leftTop;
 
 		/// <summary>
 		/// The item's location (size, position, rotation, shear, scale ..)
@@ -99,7 +94,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				s._location.SizeX = RADouble.NewAbs(bounds.Width);
 				s._location.SizeY = RADouble.NewAbs(bounds.Height);
-				s._leftTop = new PointD2D(bounds.Left, bounds.Top);
+				var leftTop = new PointD2D(bounds.Left, bounds.Top);
+				throw new NotImplementedException("leftTop must be used somehow");
 				s._location.PositionX = RADouble.NewAbs(position.X);
 				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
@@ -138,7 +134,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				s._location.SizeX = RADouble.NewAbs(bounds.Width);
 				s._location.SizeY = RADouble.NewAbs(bounds.Height);
-				s._leftTop = new PointD2D(bounds.Left, bounds.Top);
+				var _leftTop = new PointD2D(bounds.Left, bounds.Top);
+				throw new NotImplementedException("leftTop must be implemented");
 				s._location.PositionX = RADouble.NewAbs(position.X);
 				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
@@ -183,7 +180,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				s._location.SizeX = RADouble.NewAbs(bounds.Width);
 				s._location.SizeY = RADouble.NewAbs(bounds.Height);
-				s._leftTop = new PointD2D(bounds.Left, bounds.Top);
+				var leftTop = new PointD2D(bounds.Left, bounds.Top);
+				throw new NotImplementedException("leftTop");
 				s._location.PositionX = RADouble.NewAbs(position.X);
 				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
@@ -241,7 +239,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				s._location.SizeX = RADouble.NewAbs(w);
 				s._location.SizeY = RADouble.NewAbs(h);
-				s._leftTop = new PointD2D(x, y);
+				var _leftTop = new PointD2D(x, y);
+				throw new NotImplementedException("leftTop");
 				s._location.PositionX = RADouble.NewAbs(position.X);
 				s._location.PositionY = RADouble.NewAbs(position.X);
 				s._location.Rotation = rotation;
@@ -263,7 +262,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected GraphicBase()
 		{
 			_eventSuppressor = new Main.EventSuppressor(EhFireChangeEvent);
-			_location = new ItemLocationDirect();
+			if (AutoSize)
+				_location = new ItemLocationDirectAutoSize();
+			else
+				_location = new ItemLocationDirect();
+
 			_location.ParentObject = this;
 		}
 
@@ -282,7 +285,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return false;
 
 			this._cachedParentSize = from._cachedParentSize;
-			this._leftTop = from._leftTop;
 			this._location.CopyFrom(from._location);
 			bool wasUsed = (null != this._parent);
 			this._parent = from._parent;
@@ -295,7 +297,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
 		{
-			_location.SetParentSize(parentSize, shouldTriggerChangeEvent);
+			var oldParentSize = _location.ParentSize;
+			_location.SetParentSize(parentSize, false); // do not trigger change event here
+
+			if (oldParentSize != parentSize)
+			{
+				UpdateTransformationMatrix(); // update the matrix in every case
+
+				if (shouldTriggerChangeEvent)
+					OnChanged();
+			}
 		}
 
 		public PointD2D ParentSize
@@ -356,7 +367,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return new RectangleD(_leftTop, Size);
+				return new RectangleD(_location.AbsoluteVectorPivotToLeftUpper, Size);
 			}
 		}
 
@@ -372,25 +383,25 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
-		/// Returns the position of the reference point in layer coordinates.
+		/// Returns the position of the pivot point of the object in parent coordinates (strictly speaking: as vector from the parent's reference point to the pivot point of the object).
 		/// </summary>
-		/// <returns>The position of the object (the reference point).</returns>
+		/// <returns>The position of the object (the object's pivot point) with reference to the parent's reference point).</returns>
 		protected virtual PointD2D GetPosition()
 		{
-			return _location.AbsolutePosition;
+			return _location.AbsolutePivotPosition;
 		}
 
 		/// <summary>
-		/// Sets the position of the object.
+		/// Sets the position of the object's pivot point.
 		/// </summary>
-		/// <param name="value">The position to set.</param>
+		/// <param name="value">The position to set (the object's pivot point) with reference to the parent's reference point).</param>
 		protected virtual void SetPosition(PointD2D value)
 		{
-			_location.AbsolutePosition = value;
+			_location.AbsolutePivotPosition = value;
 		}
 
 		/// <summary>
-		/// Get/set the position of the object
+		/// Get/set the position of the object. This is defined as the vector from the parent's reference point to the object's pivot point.
 		/// </summary>
 		public PointD2D Position
 		{
@@ -563,7 +574,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="g">Graphics context (should be saved beforehand).</param>
 		protected void TransformGraphics(Graphics g)
 		{
-			g.TranslateTransform((float)X, (float)Y);
+			g.TranslateTransform((float)_location.AbsolutePivotPositionX, (float)_location.AbsolutePivotPositionY);
 			if (Rotation != 0)
 				g.RotateTransform((float)(-Rotation));
 			if (Shear != 0)
@@ -573,11 +584,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
-		/// Updates the internal transformation matrix to reflect the settings for position, rotation, scaleX, scaleY and shear
+		/// Updates the internal transformation matrix to reflect the settings for position, rotation, scaleX, scaleY and shear. It is designed here by default so that
+		/// the local anchor point of the object is located at the world coordinates (0,0). The transformation matrix update can be overridden in derived classes so
+		/// that for instance the left upper corner of the object is located at (0,0).
 		/// </summary>
-		protected void UpdateTransformationMatrix()
+		protected virtual void UpdateTransformationMatrix()
 		{
-			_transformation.SetTranslationRotationShearxScale(X, Y, -Rotation, Shear, ScaleX, ScaleY);
+			_transformation.SetTranslationRotationShearxScale(_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, -Rotation, Shear, ScaleX, ScaleY);
 		}
 
 		/// <summary>
@@ -684,17 +697,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <returns>The absolute object coordinates of this point (not layer coordinates!).</returns>
 		public PointD2D RelativeLocalToAbsoluteLocalCoordinates(PointD2D p)
 		{
-			return new PointD2D(p.X * Width + _leftTop.X, p.Y * Height + _leftTop.Y);
+			var bounds = this.Bounds;
+			return new PointD2D(bounds.Left + p.X * bounds.Width, bounds.Top + p.Y * bounds.Height);
 		}
 
 		/// <summary>
-		/// Converts relative positions (0..1, 0..1) to coordinates in the world coordinate system of the parent (normally the layer).
+		/// Converts relative positions of the object (0..1, 0..1) to coordinates in the world coordinate system of the parent (normally the layer).
 		/// </summary>
 		/// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
 		/// <returns>The absolute parent coordinates of this point (i.e. normally layer coordinates).</returns>
 		public PointD2D RelativeLocalToAbsoluteParentCoordinates(PointD2D p)
 		{
-			return _transformation.TransformPoint(new PointD2D(p.X * Width + _leftTop.X, p.Y * Height + _leftTop.Y));
+			var bounds = this.Bounds;
+			return _transformation.TransformPoint(new PointD2D(bounds.Left + p.X * bounds.Width, bounds.Top + p.Y * bounds.Height));
 		}
 
 		/// <summary>
@@ -704,7 +719,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <returns>The absolute parent coordinates of this point.</returns>
 		public PointD2D RelativeLocalToAbsoluteParentVector(PointD2D p)
 		{
-			return _transformation.TransformVector(new PointD2D(p.X * Width + _leftTop.X, p.Y * Height + _leftTop.Y));
+			var bounds = this.Bounds;
+			return _transformation.TransformVector(new PointD2D(p.X * bounds.Width + bounds.X, p.Y * bounds.Height + bounds.Y));
 		}
 
 		/// <summary>
@@ -732,11 +748,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <returns>The coordinates of this point.</returns>
 		public PointD2D RelativeToAbsolutePosition(PointD2D p, bool withRotation)
 		{
-			double dx = p.X * Width;
-			double dy = p.Y * Height;
+			var bounds = this.Bounds;
 
-			dx += _leftTop.X;
-			dy += _leftTop.Y;
+			double dx = p.X * bounds.Width;
+			double dy = p.Y * bounds.Height;
+
+			dx += bounds.X;
+			dy += bounds.Y;
 
 			if (withRotation && Rotation != 0)
 			{
@@ -856,6 +874,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
+		/// <summary>
+		/// Sets the bounds from.
+		/// </summary>
+		/// <param name="fixrPosition">The relative position of the object's edge or vertex, which is held fixed during the operation.</param>
+		/// <param name="fixaPosition">The paramter <paramref name="fixrPosition"/>, converted to parent's coordinates.</param>
+		/// <param name="relDrawGrip">The relative position of the draw grip (0..1, 0..1).</param>
+		/// <param name="diff">The movement vector of the grip handle.</param>
+		/// <param name="initialSize">The initial size of the object.</param>
 		public void SetBoundsFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, PointD2D initialSize)
 		{
 			var dx = relDrawGrip.X - fixrPosition.X;

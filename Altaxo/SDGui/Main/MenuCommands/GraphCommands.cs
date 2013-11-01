@@ -74,17 +74,6 @@ namespace Altaxo.Graph.Commands
 	}
 
 	/// <summary>
-	/// Handler for the menu item "File" - "Setup Page".
-	/// </summary>
-	public class PrintableSizeSetup : AbstractGraphControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
-		{
-			ctrl.Doc.ShowPrintableSizeSetupDialog();
-		}
-	}
-
-	/// <summary>
 	/// Handler for the menu item "File" - "Print".
 	/// </summary>
 	public class Print : AbstractGraphControllerCommand

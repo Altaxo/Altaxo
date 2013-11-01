@@ -63,6 +63,19 @@ namespace Altaxo.Gui.Graph
 			_guiYPosition.SelectedQuantity = x;
 		}
 
+		public bool ShowSizeElements
+		{
+			set
+			{
+				var vis = value ? Visibility.Visible : Visibility.Collapsed;
+
+				_guiXSize.Visibility = vis;
+				_guiYSize.Visibility = vis;
+				_guiXSizeLabel.Visibility = vis;
+				_guiYSizeLabel.Visibility = vis;
+			}
+		}
+
 		public void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
 			_guiYSize.UnitEnvironment = env;

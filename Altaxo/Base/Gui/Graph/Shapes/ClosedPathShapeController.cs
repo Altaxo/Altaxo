@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			_doc.Brush = _view.DocBrush;
 			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-			if (_useDocumentCopy)
+			if (!object.ReferenceEquals(_doc, _originalDoc))
 				_originalDoc.CopyFrom(_doc);
 
 			return true;

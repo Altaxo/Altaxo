@@ -125,46 +125,7 @@
 			</Grid>
 		</TabItem>
 		<TabItem Header="Position">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" MinWidth="80" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" MinWidth="80" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="4" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="4" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="4" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="4" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="4" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="4" />
-				</Grid.RowDefinitions>
-				<Label Content="Pos.X:" Grid.Column="0" Grid.Row="0" />
-				<axogc:QuantityWithUnitTextBox x:Name="m_edPosX" Grid.Column="1" Grid.Row="0" />
-				<Label Content="Pos.Y:" Grid.Column="2" Grid.Row="0" />
-				<axogc:QuantityWithUnitTextBox x:Name="m_edPosY" Grid.Column="3" Grid.Row="0" />
-				<Label Content="Rotation:" Grid.Column="0" Grid.Row="2" />
-				<axogcd:RotationComboBox x:Name="m_cbRotation" Grid.Column="1" Grid.Row="2" />
-				<Label Grid.Column="2" Grid.Row="2">Shear:</Label>
-				<axogcd:ShearComboBox Grid.Column="3" Grid.Row="2" x:Name="_edShear" />
-
-				<Label Grid.Column="0" Grid.Row="4">ScaleX:</Label>
-				<axogcd:ScaleComboBox Grid.Column="1" Grid.Row="4" x:Name="_edScaleX" />
-				<Label Grid.Column="2" Grid.Row="4">ScaleY:</Label>
-				<axogcd:ScaleComboBox Grid.Column="3" Grid.Row="4" x:Name="_edScaleY" IsForYScale="True" />
-
-				<axoggs:AnchoringControl x:Name="_guiAnchoring" Title="My anchor" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" />
-				<axoggs:AnchoringControl x:Name="_guiParentReferencePoint" Title="Parent reference point" Grid.Column="2" Grid.Row="6" Grid.ColumnSpan="2" />
-				<axogg:ObjectPositionAndSizeGlue x:Name="_positionSizeGlue" />
-			</Grid>
+			<Border x:Name="_guiPositionHost" />
 		</TabItem>
 	</TabControl>
 </UserControl>

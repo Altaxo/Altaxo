@@ -220,6 +220,7 @@
     <Compile Include="Graph\GridPartitioning.cs" />
     <Compile Include="Graph\IItemLocation.cs" />
     <Compile Include="Graph\ItemLocationDirect.cs" />
+    <Compile Include="Graph\ItemLocationDirectAutoSize.cs" />
     <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Graph\NamedColor.cs" />
     <Compile Include="Graph\NamedColors.cs" />

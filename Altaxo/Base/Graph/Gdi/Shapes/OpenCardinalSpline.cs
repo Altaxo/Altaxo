@@ -179,7 +179,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.ShiftPosition(bounds.Location);
 			for (int i = 0; i < _curvePoints.Count; i++)
 				_curvePoints[i] -= bounds.Location;
-			_leftTop = new PointD2D(0, 0);
 			this.Size = bounds.Size;
 			UpdateTransformationMatrix();
 		}

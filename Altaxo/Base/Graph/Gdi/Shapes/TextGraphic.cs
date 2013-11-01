@@ -311,11 +311,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 				distanceYL = (backgroundRect.Bottom - textHeight);
 			}
 
-			var xanchor = _location.PivotX.GetValueRelativeTo(size.X);
-			var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
+			//var xanchor = _location.PivotX.GetValueRelativeTo(size.X);
+			//var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
 
-			this._leftTop = new PointD2D(-xanchor, -yanchor);
-			this.Size = size;
+			// this._leftTop = new PointD2D(-xanchor, -yanchor);
+			this.SetSize(size.X, size.Y, true);
+
 			this._cachedTextOffset = new PointD2D(distanceXL, distanceYU);
 		}
 
@@ -576,7 +577,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var bounds = Bounds;
 
 				Matrix transformmatrix = new Matrix();
-				transformmatrix.Translate((float)X, (float)Y);
+				transformmatrix.Translate((float)_location.AbsolutePivotPositionX, (float)_location.AbsolutePivotPositionY);
 				transformmatrix.Rotate((float)(-Rotation));
 				transformmatrix.Shear((float)Shear, 0);
 				transformmatrix.Scale((float)ScaleX, (float)ScaleY);

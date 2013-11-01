@@ -46,17 +46,17 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="2" Content="Size X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize"  Grid.Column="1" Grid.Row="2" />
+		<Label Grid.Column="0" Grid.Row="2" Content="Pos. X:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXPosition"  Grid.Column="1" Grid.Row="2" />
 
-		<Label Grid.Column="2" Grid.Row="2" Content="Size Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize"  Grid.Column="3" Grid.Row="2" />
+		<Label Grid.Column="2" Grid.Row="2" Content="Pos. Y:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYPosition" Grid.Column="3" Grid.Row="2" />
 
-		<Label Grid.Column="0" Grid.Row="4" Content="Pos. X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXPosition"  Grid.Column="1" Grid.Row="4" />
+		<Label x:Name="_guiXSizeLabel" Grid.Column="0" Grid.Row="4" Content="Size X:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize"  Grid.Column="1" Grid.Row="4" />
 
-		<Label Grid.Column="2" Grid.Row="4" Content="Pos. Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYPosition" Grid.Column="3" Grid.Row="4" />
+		<Label x:Name="_guiYSizeLabel" Grid.Column="2" Grid.Row="4" Content="Size Y:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize"  Grid.Column="3" Grid.Row="4" />
 
 		<Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
 		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="6" />

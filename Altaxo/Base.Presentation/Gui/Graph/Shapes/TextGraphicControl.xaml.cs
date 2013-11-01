@@ -51,13 +51,6 @@ namespace Altaxo.Gui.Graph.Shapes
 		{
 			InitializeComponent();
 
-			_positionSizeGlue.EdPositionX = m_edPosX;
-			_positionSizeGlue.EdPositionY = m_edPosY;
-			_positionSizeGlue.GuiShear = _edShear;
-			_positionSizeGlue.CbRotation = m_cbRotation;
-			_positionSizeGlue.GuiScaleX = _edScaleX;
-			_positionSizeGlue.GuiScaleY = _edScaleY;
-
 			_backgroundGlue = new BackgroundControlsGlue();
 			_backgroundGlue.CbStyle = _cbBackgroundStyle;
 			_backgroundGlue.CbBrush = _cbBackgroundBrush;
@@ -209,66 +202,6 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public Altaxo.Graph.PointD2D SelectedPosition
-		{
-			get
-			{
-				return _positionSizeGlue.Position;
-			}
-			set
-			{
-				_positionSizeGlue.Position = value;
-			}
-		}
-
-		public double SelectedRotation
-		{
-			get
-			{
-				return _positionSizeGlue.Rotation;
-			}
-			set
-			{
-				_positionSizeGlue.Rotation = value;
-			}
-		}
-
-		public double SelectedShear
-		{
-			get
-			{
-				return _positionSizeGlue.Shear;
-			}
-			set
-			{
-				_positionSizeGlue.Shear = value;
-			}
-		}
-
-		public double SelectedScaleX
-		{
-			get
-			{
-				return _positionSizeGlue.ScaleX;
-			}
-			set
-			{
-				_positionSizeGlue.ScaleX = value;
-			}
-		}
-
-		public double SelectedScaleY
-		{
-			get
-			{
-				return _positionSizeGlue.ScaleY;
-			}
-			set
-			{
-				_positionSizeGlue.ScaleY = value;
-			}
-		}
-
 		public System.Drawing.FontFamily SelectedFontFamily
 		{
 			get
@@ -302,48 +235,6 @@ namespace Altaxo.Gui.Graph.Shapes
 			set
 			{
 				m_cbFontColor.SelectedBrush = value;
-			}
-		}
-
-		public void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
-		{
-			_guiAnchoring.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
-		}
-
-		public RADouble XAnchor
-		{
-			get
-			{
-				return _guiAnchoring.SelectedPivotX;
-			}
-		}
-
-		public RADouble YAnchor
-		{
-			get
-			{
-				return _guiAnchoring.SelectedPivotY;
-			}
-		}
-
-		public void InitializeParentReferencePoint(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
-		{
-			_guiParentReferencePoint.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
-		}
-
-		public RADouble ParentReferenceX
-		{
-			get
-			{
-				return _guiParentReferencePoint.SelectedPivotX;
-			}
-		}
-
-		public RADouble ParentReferenceY
-		{
-			get
-			{
-				return _guiParentReferencePoint.SelectedPivotY;
 			}
 		}
 
@@ -410,6 +301,14 @@ namespace Altaxo.Gui.Graph.Shapes
 			if (null != menu && menu.Tag is string)
 			{
 				m_edText.AppendText((string)menu.Tag);
+			}
+		}
+
+		public object LocationView
+		{
+			set
+			{
+				_guiPositionHost.Child = value as UIElement;
 			}
 		}
 	}

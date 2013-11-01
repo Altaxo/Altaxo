@@ -279,7 +279,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 				this.ShiftPosition(dx, dy);
 				bounds.Location = new PointD2D(0, 0);
-				this._leftTop = bounds.LeftTop;
 				UpdateTransformationMatrix();
 			}
 		}

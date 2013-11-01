@@ -46,17 +46,9 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		IBackgroundStyle SelectedBackground { get; set; }
 
+		object LocationView { set; }
+
 		string EditText { get; set; }
-
-		PointD2D SelectedPosition { get; set; }
-
-		double SelectedRotation { get; set; }
-
-		double SelectedShear { get; set; }
-
-		double SelectedScaleX { get; set; }
-
-		double SelectedScaleY { get; set; }
 
 		System.Drawing.FontFamily SelectedFontFamily { get; set; }
 
@@ -65,18 +57,6 @@ namespace Altaxo.Gui.Graph.Shapes
 		double SelectedLineSpacing { get; set; }
 
 		BrushX SelectedFontBrush { get; set; }
-
-		void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic);
-
-		RADouble XAnchor { get; }
-
-		RADouble YAnchor { get; }
-
-		void InitializeParentReferencePoint(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic);
-
-		RADouble ParentReferenceX { get; }
-
-		RADouble ParentReferenceY { get; }
 
 		void InsertBeforeAndAfterSelectedText(string insbefore, string insafter);
 
@@ -130,6 +110,8 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		private XYPlotLayer m_Layer;
 
+		private IMVCANController _locationController;
+
 		public TextGraphicController()
 		{
 		}
@@ -139,6 +121,9 @@ namespace Altaxo.Gui.Graph.Shapes
 			if (initDocument)
 			{
 				m_Layer = DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
+
+				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+				Current.Gui.FindAndAttachControlTo(_locationController);
 			}
 
 			if (_view != null)
@@ -149,20 +134,11 @@ namespace Altaxo.Gui.Graph.Shapes
 
 				_view.EditText = _doc.Text;
 
-				_view.SelectedPosition = _doc.Position;
-				_view.SelectedRotation = _doc.Rotation;
-				_view.SelectedShear = _doc.Shear;
-				_view.SelectedScaleX = _doc.ScaleX;
-				_view.SelectedScaleY = _doc.ScaleY;
-
 				// fill the font name combobox with all fonts
 				_view.SelectedFontFamily = _doc.Font.GdiFontFamily();
 
 				_view.SelectedFontSize = _doc.Font.Size;
 				_view.SelectedLineSpacing = _doc.LineSpacing;
-
-				_view.InitializePivot(_doc.Location.PivotX, _doc.Location.PivotY, _doc.Size);
-				_view.InitializeParentReferencePoint(_doc.Location.ReferenceX, _doc.Location.ReferenceY, _doc.ParentSize);
 
 				// fill the font size combobox with reasonable values
 				//this.m_cbFontSize.Items.AddRange(new string[] { "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" });
@@ -170,6 +146,8 @@ namespace Altaxo.Gui.Graph.Shapes
 
 				// fill the color dialog box
 				_view.SelectedFontBrush = this._doc.TextFillBrush;
+
+				_view.LocationView = _locationController.ViewObject;
 
 				_view.EndUpdate();
 			}
@@ -342,16 +320,10 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		public bool Apply()
 		{
-			_doc.Position = _view.SelectedPosition;
-			_doc.Rotation = _view.SelectedRotation;
-			_doc.Shear = _view.SelectedShear;
-			_doc.Scale = new PointD2D(_view.SelectedScaleX, _view.SelectedScaleY);
+			if (!_locationController.Apply())
+				return false;
 
-			_doc.Location.PivotX = _view.XAnchor;
-			_doc.Location.PivotY = _view.YAnchor;
-
-			_doc.Location.ReferenceX = _view.ParentReferenceX;
-			_doc.Location.ReferenceY = _view.ParentReferenceY;
+			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))
 				_originalDoc.CopyFrom(_doc);

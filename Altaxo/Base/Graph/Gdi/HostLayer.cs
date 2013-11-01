@@ -437,80 +437,20 @@ namespace Altaxo.Graph.Gdi
 			get { return _cachedParentLayerSize; }
 		}
 
-		public void EhParentLayerSizeChanged(PointD2D newParentLayerSize, bool bRescale)
+		public void SetParentSize(PointD2D newParentSize, bool isTriggeringChangedEvent)
 		{
-			var oldSize = _cachedParentLayerSize;
-			var newSize = newParentLayerSize;
-			_cachedParentLayerSize = newParentLayerSize;
+			var oldParentSize = _cachedParentLayerSize;
+			_cachedParentLayerSize = newParentSize;
 
 			if (_location is ItemLocationDirect)
-				((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false);
+				((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false); // don't trigger change event now
 
-			if (_cachedParentLayerSize != oldSize)
+			if (oldParentSize != newParentSize)
 			{
-				if (bRescale)
-				{
-					var oldLayerSize = this._cachedLayerSize;
+				this.CalculateCachedSizeAndPosition();
 
-					double oldxdefsize = oldSize.X * (oldSize.X > oldSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
-					double newxdefsize = newSize.X * (newSize.X > newSize.Y ? _xDefSizeLandscape : _xDefSizePortrait);
-					double oldydefsize = oldSize.Y * (oldSize.X > oldSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
-					double newydefsize = newSize.Y * (newSize.X > newSize.Y ? _yDefSizeLandscape : _yDefSizePortrait);
-
-					double oldxdeforg = oldSize.X * (oldSize.X > oldSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
-					double newxdeforg = newSize.X * (newSize.X > newSize.Y ? _xDefPositionLandscape : _xDefPositionPortrait);
-					double oldydeforg = oldSize.Y * (oldSize.X > oldSize.Y ? _yDefPositionLandscape : _yDefPositionPortrait);
-					double newydeforg = newSize.Y * (newSize.X > newSize.Y ? _yDefPositionLandscape : _yDefPositionPortrait);
-
-					double xscale = newxdefsize / oldxdefsize;
-					double yscale = newydefsize / oldydefsize;
-
-					double xoffs = newxdeforg - oldxdeforg * xscale;
-					double yoffs = newydeforg - oldydeforg * yscale;
-
-					if (_location is ItemLocationDirect)
-					{
-						var location = (ItemLocationDirect)_location;
-						if (location.PositionX.IsAbsolute)
-							location.PositionX = new RADouble(xoffs + location.PositionX.Value * xscale);
-
-						if (location.SizeX.IsAbsolute)
-							location.SizeX = new RADouble(location.SizeX.Value * xscale);
-
-						if (location.PositionY.IsAbsolute)
-							location.PositionY = new RADouble(yoffs + location.PositionY.Value * yscale);
-
-						if (location.SizeY.IsAbsolute)
-							location.SizeY = new RADouble(location.SizeY.Value * yscale);
-					}
-
-					this.CalculateCachedSizeAndPosition();
-
-					// scale the position of the inner items according to the ratio of the new size to the old size
-					// note: only the size is important here, since all inner items are relative to the layer origin
-					var newLayerSize = this._cachedLayerSize;
-					xscale = newLayerSize.X / oldLayerSize.X;
-					yscale = newLayerSize.Y / oldLayerSize.Y;
-
-					RescaleInnerItemPositions(xscale, yscale);
-				}
-				else // not rescale
-				{
-					this.CalculateCachedSizeAndPosition();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Recalculates the positions of inner items in case the layer has changed its size.
-		/// </summary>
-		/// <param name="xscale">The ratio the layer has changed its size in horizontal direction.</param>
-		/// <param name="yscale">The ratio the layer has changed its size in vertical direction.</param>
-		public virtual void RescaleInnerItemPositions(double xscale, double yscale)
-		{
-			foreach (IGraphicBase o in _graphObjects)
-			{
-				GraphicBase.ScalePosition(o, xscale, yscale);
+				if (isTriggeringChangedEvent)
+					OnChanged();
 			}
 		}
 
@@ -723,7 +663,7 @@ namespace Altaxo.Graph.Gdi
 			if (_location is ItemLocationDirect)
 			{
 				var lps = _location as ItemLocationDirect;
-				newRect = lps.GetAbsoluteEnclosingRectangleWithoutSSRS(_cachedParentLayerSize);
+				newRect = lps.GetAbsoluteEnclosingRectangleWithoutSSRS();
 			}
 			else if (_location is ItemLocationByGrid)
 			{
@@ -919,7 +859,7 @@ namespace Altaxo.Graph.Gdi
 			if (null != _childLayers)
 				throw new InvalidOperationException("_childLayers was already set!");
 
-			_graphObjects = new GraphicCollection(x => x.ParentObject = this);
+			_graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(this.Size, false); });
 
 			_childLayers = _graphObjects.CreatePartialViewOfType<HostLayer>((Action<HostLayer>)EhBeforeInsertChildLayer);
 			_childLayers.CollectionChanged += EhChildLayers_CollectionChanged;
@@ -936,7 +876,7 @@ namespace Altaxo.Graph.Gdi
 		private void EhBeforeInsertChildLayer(HostLayer child)
 		{
 			child.ParentLayer = this;
-			child.EhParentLayerSizeChanged(_cachedLayerSize, false);
+			child.SetParentSize(_cachedLayerSize, true);
 		}
 
 		/// <summary>
@@ -1002,14 +942,9 @@ namespace Altaxo.Graph.Gdi
 
 		public virtual void PaintPreprocessing()
 		{
-			var parentLayer = this.ParentLayer;
-			if (null != parentLayer)
-			{
-				if (_cachedParentLayerSize != parentLayer.Size)
-				{
-					EhParentLayerSizeChanged(parentLayer.Size, false);
-				}
-			}
+			var mySize = this.Size;
+			foreach (var graphObj in _graphObjects)
+				graphObj.SetParentSize(mySize, false);
 
 			foreach (var obj in _childLayers)
 				obj.PaintPreprocessing();
@@ -1130,7 +1065,7 @@ namespace Altaxo.Graph.Gdi
 			if (null != _childLayers)
 			{
 				foreach (var layer in _childLayers)
-					layer.EhParentLayerSizeChanged(Size, false);
+					layer.SetParentSize(Size, true);
 			}
 
 			// now inform other listeners

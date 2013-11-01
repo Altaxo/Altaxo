@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	public interface IGraphicBase
@@ -8,17 +9,28 @@ namespace Altaxo.Graph.Gdi.Shapes
 		Main.ICopyFrom
 	{
 		new object ParentObject { set; }
+
+		/// <summary>
+		/// Announces the size of the parent layer in order to make own calculations for size and position.
+		/// </summary>
+		/// <param name="parentSize">Size of the parent layer.</param>
+		/// <param name="isTriggeringChangedEvent">If set to <c>true</c>, the Changed event is triggered if the size of the parent differs from the cached parent's size.</param>
+		void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent);
+
 		//bool AllowNegativeSize { get; }
 		//bool AutoSize { get; }
 		//System.Drawing.Drawing2D.GraphicsPath GetObjectOutlineForArrangements();
 		//System.Drawing.Drawing2D.GraphicsPath GetRectangularObjectOutline();
 		//double Height { get; set; }
 		Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestPointData hitData);
+
 		//Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData rectHit);
 		//void OnDeserialization(object obj);
 		void Paint(System.Drawing.Graphics g, object obj);
+
 		//Altaxo.Graph.PointD2D ParentCoordinatesToLocalDifference(Altaxo.Graph.PointD2D pivot, Altaxo.Graph.PointD2D point);
 		Altaxo.Graph.PointD2D Position { get; set; }
+
 		//Altaxo.Graph.PointD2D RelativeLocalToAbsoluteLocalCoordinates(Altaxo.Graph.PointD2D p);
 		//Altaxo.Graph.PointD2D RelativeLocalToAbsoluteParentCoordinates(Altaxo.Graph.PointD2D p);
 		//Altaxo.Graph.PointD2D RelativeLocalToAbsoluteParentVector(Altaxo.Graph.PointD2D p);

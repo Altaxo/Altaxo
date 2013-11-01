@@ -40,6 +40,8 @@ namespace Altaxo.Gui.Graph
 
 		void InitializeYPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
+		bool ShowSizeElements { set; }
+
 		void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
 		void InitializeXSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
@@ -103,10 +105,15 @@ namespace Altaxo.Gui.Graph
 			}
 			if (null != _view)
 			{
-				var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
-				_view.InitializeXSize(xSize, _xSizeEnvironment);
-				var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
-				_view.InitializeYSize(ySize, _ySizeEnvironment);
+				_view.ShowSizeElements = !_doc.IsAutoSized;
+
+				if (!_doc.IsAutoSized)
+				{
+					var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
+					_view.InitializeXSize(xSize, _xSizeEnvironment);
+					var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
+					_view.InitializeYSize(ySize, _ySizeEnvironment);
+				}
 
 				var xPos = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
 				_view.InitializeXPosition(xPos, _xPositionEnvironment);
@@ -133,21 +140,24 @@ namespace Altaxo.Gui.Graph
 				_doc.ScaleX = _view.ScaleX;
 				_doc.ScaleY = _view.ScaleY;
 
-				var xSize = _view.XSize;
-				var ySize = _view.YSize;
+				if (!_doc.IsAutoSized)
+				{
+					var xSize = _view.XSize;
+					var ySize = _view.YSize;
+
+					if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
+						_doc.SizeX = RADouble.NewRel(xSize.Value / 100);
+					else
+						_doc.SizeX = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
+
+					if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
+						_doc.SizeY = RADouble.NewRel(ySize.Value / 100);
+					else
+						_doc.SizeY = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
+				}
 
 				var xPos = _view.XPosition;
 				var yPos = _view.YPosition;
-
-				if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
-					_doc.SizeX = RADouble.NewRel(xSize.Value / 100);
-				else
-					_doc.SizeX = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
-
-				if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
-					_doc.SizeY = RADouble.NewRel(ySize.Value / 100);
-				else
-					_doc.SizeY = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
 
 				if (object.ReferenceEquals(xPos.Unit, _percentLayerXSizeUnit))
 					_doc.PositionX = RADouble.NewRel(xPos.Value / 100);
