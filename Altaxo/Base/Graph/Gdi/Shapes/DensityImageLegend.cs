@@ -144,13 +144,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_axisStyles.Add(sy1);
 
 			sx0.Title.Rotation = 90;
-			sx0.Title.Location.PivotX = RADouble.NewRel(0.5); // Center
-			sx0.Title.Location.PivotY = RADouble.NewRel(1); // Bottom
+			sx0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+			sx0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
 			sx0.Title.X = -Width / 3;
 			sx0.Title.Y = Height / 2;
 
-			sx0.Title.Location.PivotX = RADouble.NewRel(0.5); // Center
-			sx0.Title.Location.PivotY = RADouble.NewRel(1); // Bottom
+			sx0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+			sx0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
 			sy0.Title.X = Width / 2;
 			sy0.Title.Y = sy0.Title.Height / 2;
 

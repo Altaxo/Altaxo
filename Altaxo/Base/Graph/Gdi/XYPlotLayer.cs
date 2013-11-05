@@ -921,8 +921,8 @@ namespace Altaxo.Graph.Gdi
 					var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
 					double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
-					tg.Location.ReferenceX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
-					tg.Location.ReferenceY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
+					tg.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
+					tg.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
 
 					double distance = 0;
 					AxisStyle axisStyle = _axisStyles[id];
@@ -940,24 +940,24 @@ namespace Altaxo.Graph.Gdi
 					{
 						//case EdgeType.Right:
 						tg.Rotation = 90;
-						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
-						tg.Location.PivotY = RADouble.NewRel(0); // Top
+						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+						tg.Location.LocalAnchorY = RADouble.NewRel(0); // Top
 						distance += scaleFontWidth * labelFontSize;
 					}
 					else if (-135 <= angle && angle <= -45)
 					{
 						//case Top:
 						tg.Rotation = 0;
-						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
-						tg.Location.PivotY = RADouble.NewRel(1); // Bottom
+						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+						tg.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
 						distance += scaleFontHeight * labelFontSize;
 					}
 					else if (45 <= angle && angle <= 135)
 					{
 						//case EdgeType.Bottom:
 						tg.Rotation = 0;
-						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
-						tg.Location.PivotY = RADouble.NewRel(0); // Top
+						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+						tg.Location.LocalAnchorY = RADouble.NewRel(0); // Top
 						distance += scaleFontHeight * labelFontSize;
 					}
 					else
@@ -965,8 +965,8 @@ namespace Altaxo.Graph.Gdi
 						//case EdgeType.Left:
 
 						tg.Rotation = 90;
-						tg.Location.PivotX = RADouble.NewRel(0.5); // Center
-						tg.Location.PivotY = RADouble.NewRel(1); // Bottom
+						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+						tg.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
 						distance += scaleFontWidth * labelFontSize;
 					}
 

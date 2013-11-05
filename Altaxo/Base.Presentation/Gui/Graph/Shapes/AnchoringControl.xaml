@@ -56,8 +56,8 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Label Content="Pivot X:" Grid.Column="0" Grid.Row="0" />
-				<Label Content="Pivot Y:" Grid.Column="0" Grid.Row="1" />
+				<Label Content="Anchor X:" Grid.Column="0" Grid.Row="0" />
+				<Label Content="Anchor Y:" Grid.Column="0" Grid.Row="1" />
 				<axogc:QuantityWithUnitTextBox x:Name="_guiPivotX" Grid.Column="1" Grid.Row="0" SelectedQuantityChanged="EhNumericPivotXChanged" />
 				<axogc:QuantityWithUnitTextBox x:Name="_guiPivotY" Grid.Column="1" Grid.Row="1" SelectedQuantityChanged="EhNumericPivotYChanged" />
 			</Grid>

@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_curvePoints.Clear();
 				_curvePoints.AddRange(value);
-				// TODO adjust width and size to reflect the new positions of the curve points
+				CalculateAndSetBounds();
 			}
 		}
 
@@ -172,15 +172,26 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
+		public override bool AutoSize
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		private void CalculateAndSetBounds()
 		{
-			var path = GetPath();
+			var path = InternalGetPath(PointD2D.Empty);
 			var bounds = path.GetBounds();
-			this.ShiftPosition(bounds.Location);
 			for (int i = 0; i < _curvePoints.Count; i++)
 				_curvePoints[i] -= bounds.Location;
-			this.Size = bounds.Size;
-			UpdateTransformationMatrix();
+
+			using (var token = _eventSuppressor.Suspend())
+			{
+				this.ShiftPosition(bounds.Location);
+				_location.SetSizeInAutoSizeMode(bounds.Size);
+			}
 		}
 
 		public void SetPoint(int idx, PointD2D newPos)
@@ -202,11 +213,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetPath();
 		}
 
-		/// <summary>
-		/// Gets the path of the object in object world coordinates.
-		/// </summary>
-		/// <returns></returns>
-		protected GraphicsPath GetPath()
+		private GraphicsPath InternalGetPath(PointD2D offset)
 		{
 			GraphicsPath gp = new GraphicsPath();
 
@@ -214,11 +221,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				PointF[] pt = new PointF[_curvePoints.Count];
 				for (int i = 0; i < _curvePoints.Count; i++)
-					pt[i] = new PointF((float)_curvePoints[i].X, (float)_curvePoints[i].Y);
+					pt[i] = new PointF((float)(_curvePoints[i].X + offset.X), (float)(_curvePoints[i].Y + offset.Y));
 
 				gp.AddCurve(pt, (float)_tension);
 			}
 			return gp;
+		}
+
+		/// <summary>
+		/// Gets the path of the object in object world coordinates.
+		/// </summary>
+		/// <returns></returns>
+		protected GraphicsPath GetPath()
+		{
+			return InternalGetPath(_location.AbsoluteVectorPivotToLeftUpper);
 		}
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
@@ -257,8 +273,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);
 			var bounds = Bounds;
+			var path = InternalGetPath(bounds.LeftTop);
+
 			Pen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
-			var path = GetPath();
 			g.DrawPath(Pen, path);
 			if (_outlinePen != null && _outlinePen.IsVisible)
 			{
@@ -283,9 +300,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					OpenCardinalSpline ls = (OpenCardinalSpline)_hitobject;
 					PointF[] pts = new PointF[ls._curvePoints.Count];
+					var offset = ls.Location.AbsoluteVectorPivotToLeftUpper;
 					for (int i = 0; i < pts.Length; i++)
 					{
-						pts[i] = (PointF)ls._curvePoints[i];
+						pts[i] = (PointF)(ls._curvePoints[i] + offset);
 						var pt = ls._transformation.TransformPoint(pts[i]);
 						pt = this.Transformation.TransformPoint(pt);
 						pts[i] = pt;
@@ -320,11 +338,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private class BSplinePathNodeGripHandle : PathNodeGripHandle
 		{
 			private int _pointNumber;
+			private PointD2D _offset;
 
 			public BSplinePathNodeGripHandle(IHitTestObject parent, int pointNr, PointD2D gripCenter, double gripRadius)
 				: base(parent, new PointD2D(0, 0), gripCenter, gripRadius)
 			{
 				_pointNumber = pointNr;
+				_offset = ((OpenCardinalSpline)GraphObject).Location.AbsoluteVectorPivotToLeftUpper;
 			}
 
 			public override void MoveGrip(PointD2D newPosition)
@@ -332,13 +352,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 				var obj = (OpenCardinalSpline)GraphObject;
 				newPosition = obj._transformation.InverseTransformPoint(newPosition);
-				obj.SetPoint(_pointNumber, newPosition);
+				obj.SetPoint(_pointNumber, newPosition - _offset);
 			}
 
 			public override bool Deactivate()
 			{
 				var obj = (OpenCardinalSpline)GraphObject;
-				obj.CalculateAndSetBounds();
+				using (var token = obj._eventSuppressor.Suspend())
+				{
+					int otherPointIndex = _pointNumber == 0 ? 1 : 0;
+					PointD2D oldOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + _offset); // transformiere in ParentCoordinaten
+
+					// Calculate the new Size
+					obj.CalculateAndSetBounds();
+					obj.UpdateTransformationMatrix();
+					PointD2D newOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + obj.Location.AbsoluteVectorPivotToLeftUpper);
+					obj.ShiftPosition(oldOtherPointCoord - newOtherPointCoord);
+				}
 				return false;
 			}
 		}

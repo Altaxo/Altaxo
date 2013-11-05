@@ -374,9 +374,10 @@ namespace Altaxo.Graph.Gdi
 
 		#region XYPlotLayerCollection
 
+		[Obsolete("Used only for deserialization of old Altaxo projects.")]
 		public class XYPlotLayerCollection : List<XYPlotLayer>
 		{
-			public SizeF _graphSize;
+			public SizeF GraphSize { get; private set; }
 
 			#region "Serialization"
 
@@ -435,7 +436,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					XYPlotLayerCollection s = null != o ? (XYPlotLayerCollection)o : new XYPlotLayerCollection();
 
-					s._graphSize = (SizeF)info.GetValue("Size", parent);
+					s.GraphSize = (SizeF)info.GetValue("Size", parent);
 
 					int count = info.OpenArray();
 					for (int i = 0; i < count; i++)

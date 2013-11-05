@@ -43,13 +43,13 @@ namespace Altaxo.Graph
 
 		private RADouble _sizeY;
 
-		private RADouble _pivotX;
+		private RADouble _localAnchorX;
 
-		private RADouble _pivotY;
+		private RADouble _localAnchorY;
 
-		private RADouble _referenceX;
+		private RADouble _parentAnchorX;
 
-		private RADouble _referenceY;
+		private RADouble _parentAnchorY;
 
 		/// <summary>The rotation angle (in degrees) of the layer.</summary>
 		private double _rotation; // Rotation
@@ -92,11 +92,11 @@ namespace Altaxo.Graph
 				info.AddValue("PositionX", s._positionX);
 				info.AddValue("PositionY", s._positionY);
 
-				info.AddValue("PivotX", s._pivotX);
-				info.AddValue("PivotY", s._pivotY);
+				info.AddValue("LocalAnchorX", s._localAnchorX);
+				info.AddValue("LocalAnchorY", s._localAnchorY);
 
-				info.AddValue("ReferenceX", s._referenceX);
-				info.AddValue("ReferenceY", s._referenceY);
+				info.AddValue("ParentAnchorX", s._parentAnchorX);
+				info.AddValue("ParentAnchorY", s._parentAnchorY);
 
 				info.AddValue("Rotation", s._rotation);
 				info.AddValue("ShearX", s._shear);
@@ -114,11 +114,11 @@ namespace Altaxo.Graph
 				s._positionX = (RADouble)info.GetValue("PositionX");
 				s._positionY = (RADouble)info.GetValue("PositionY");
 
-				s._pivotX = (RADouble)info.GetValue("PivotX");
-				s._pivotY = (RADouble)info.GetValue("PivotY");
+				s._localAnchorX = (RADouble)info.GetValue("LocalAnchorX");
+				s._localAnchorY = (RADouble)info.GetValue("LocalAnchorY");
 
-				s._referenceX = (RADouble)info.GetValue("ReferenceX");
-				s._referenceY = (RADouble)info.GetValue("ReferenceY");
+				s._parentAnchorX = (RADouble)info.GetValue("ParentAnchorX");
+				s._parentAnchorY = (RADouble)info.GetValue("ParentAnchorY");
 
 				s._rotation = info.GetDouble("Rotation");
 				s._shear = info.GetDouble("ShearX");
@@ -141,10 +141,10 @@ namespace Altaxo.Graph
 
 		public ItemLocationDirect()
 		{
-			_pivotX = RADouble.NewRel(0);
-			_pivotY = RADouble.NewRel(0);
-			_referenceX = RADouble.NewRel(0);
-			_referenceY = RADouble.NewRel(0);
+			_localAnchorX = RADouble.NewRel(0);
+			_localAnchorY = RADouble.NewRel(0);
+			_parentAnchorX = RADouble.NewRel(0);
+			_parentAnchorY = RADouble.NewRel(0);
 			_scaleX = 1;
 			_scaleY = 1;
 		}
@@ -172,10 +172,10 @@ namespace Altaxo.Graph
 				this._positionY = from._positionY;
 				this._sizeX = from._sizeX;
 				this._sizeY = from._sizeY;
-				this._pivotX = from._pivotX;
-				this._pivotY = from._pivotY;
-				this._referenceX = from._referenceX;
-				this._referenceY = from._referenceY;
+				this._localAnchorX = from._localAnchorX;
+				this._localAnchorY = from._localAnchorY;
+				this._parentAnchorX = from._parentAnchorX;
+				this._parentAnchorY = from._parentAnchorY;
 				this._rotation = from._rotation;
 				this._scaleX = from._scaleX;
 				this._scaleY = from._scaleY;
@@ -337,13 +337,13 @@ namespace Altaxo.Graph
 		/// <value>
 		/// The pivot y coordinate.
 		/// </value>
-		public RADouble PivotX
+		public RADouble LocalAnchorX
 		{
-			get { return _pivotX; }
+			get { return _localAnchorX; }
 			set
 			{
-				var oldvalue = _pivotX;
-				_pivotX = value;
+				var oldvalue = _localAnchorX;
+				_localAnchorX = value;
 
 				if (value != oldvalue)
 					OnChanged();
@@ -356,13 +356,13 @@ namespace Altaxo.Graph
 		/// <value>
 		/// The pivot y coordinate.
 		/// </value>
-		public RADouble PivotY
+		public RADouble LocalAnchorY
 		{
-			get { return _pivotY; }
+			get { return _localAnchorY; }
 			set
 			{
-				var oldvalue = _pivotY;
-				_pivotY = value;
+				var oldvalue = _localAnchorY;
+				_localAnchorY = value;
 
 				if (value != oldvalue)
 					OnChanged();
@@ -375,13 +375,13 @@ namespace Altaxo.Graph
 		/// <value>
 		/// The reference x coordinate.
 		/// </value>
-		public RADouble ReferenceX
+		public RADouble ParentAnchorX
 		{
-			get { return _referenceX; }
+			get { return _parentAnchorX; }
 			set
 			{
-				var oldvalue = _referenceX;
-				_referenceX = value;
+				var oldvalue = _parentAnchorX;
+				_parentAnchorX = value;
 
 				if (value != oldvalue)
 					OnChanged();
@@ -394,13 +394,13 @@ namespace Altaxo.Graph
 		/// <value>
 		/// The reference x coordinate.
 		/// </value>
-		public RADouble ReferenceY
+		public RADouble ParentAnchorY
 		{
-			get { return _referenceY; }
+			get { return _parentAnchorY; }
 			set
 			{
-				var oldvalue = _referenceY;
-				_referenceY = value;
+				var oldvalue = _parentAnchorY;
+				_parentAnchorY = value;
 
 				if (value != oldvalue)
 					OnChanged();
@@ -541,8 +541,8 @@ namespace Altaxo.Graph
 			var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
 			var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
 
-			var myPosX = _referenceX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X) - _pivotX.GetValueRelativeTo(mySizeX);
-			var myPosY = _referenceY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y) - _pivotY.GetValueRelativeTo(mySizeY);
+			var myPosX = _parentAnchorX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X) - _localAnchorX.GetValueRelativeTo(mySizeX);
+			var myPosY = _parentAnchorY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y) - _localAnchorY.GetValueRelativeTo(mySizeY);
 
 			return new RectangleD(myPosX, myPosY, mySizeX, mySizeY);
 		}
@@ -619,9 +619,9 @@ namespace Altaxo.Graph
 		{
 			var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
 			if (_positionX.IsAbsolute)
-				_positionX = RADouble.NewAbs(value - _referenceX.GetValueRelativeTo(_parentSize.X) + _pivotX.GetValueRelativeTo(mySizeX));
+				_positionX = RADouble.NewAbs(value - _parentAnchorX.GetValueRelativeTo(_parentSize.X) + _localAnchorX.GetValueRelativeTo(mySizeX));
 			else if (0 != _parentSize.X && _parentSize.X.IsFinite())
-				_positionX = RADouble.NewRel((value - _referenceX.GetValueRelativeTo(_parentSize.X) + _pivotX.GetValueRelativeTo(mySizeX)) / _parentSize.X);
+				_positionX = RADouble.NewRel((value - _parentAnchorX.GetValueRelativeTo(_parentSize.X) + _localAnchorX.GetValueRelativeTo(mySizeX)) / _parentSize.X);
 			else
 				throw new InvalidOperationException("_parentSize.X is undefined or zero");
 		}
@@ -630,9 +630,9 @@ namespace Altaxo.Graph
 		{
 			var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
 			if (_positionY.IsAbsolute)
-				_positionY = RADouble.NewAbs(value - _referenceY.GetValueRelativeTo(_parentSize.Y) + _pivotY.GetValueRelativeTo(mySizeY));
+				_positionY = RADouble.NewAbs(value - _parentAnchorY.GetValueRelativeTo(_parentSize.Y) + _localAnchorY.GetValueRelativeTo(mySizeY));
 			else if (0 != _parentSize.Y && _parentSize.Y.IsFinite())
-				_positionY = RADouble.NewRel((value - _referenceY.GetValueRelativeTo(_parentSize.Y) + _pivotY.GetValueRelativeTo(mySizeY)) / _parentSize.Y);
+				_positionY = RADouble.NewRel((value - _parentAnchorY.GetValueRelativeTo(_parentSize.Y) + _localAnchorY.GetValueRelativeTo(mySizeY)) / _parentSize.Y);
 			else
 				throw new InvalidOperationException("_parentSize.Y is undefined or zero");
 		}
@@ -642,7 +642,7 @@ namespace Altaxo.Graph
 			get
 			{
 				var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
-				return _referenceX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X) - _pivotX.GetValueRelativeTo(mySizeX);
+				return _parentAnchorX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X) - _localAnchorX.GetValueRelativeTo(mySizeX);
 			}
 			set
 			{
@@ -658,7 +658,7 @@ namespace Altaxo.Graph
 			get
 			{
 				var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
-				return _referenceY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y) - _pivotY.GetValueRelativeTo(mySizeY);
+				return _parentAnchorY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y) - _localAnchorY.GetValueRelativeTo(mySizeY);
 			}
 			set
 			{
@@ -692,9 +692,9 @@ namespace Altaxo.Graph
 		{
 			var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
 			if (_positionX.IsAbsolute)
-				_positionX = RADouble.NewAbs(value - _referenceX.GetValueRelativeTo(_parentSize.X));
+				_positionX = RADouble.NewAbs(value - _parentAnchorX.GetValueRelativeTo(_parentSize.X));
 			else if (0 != _parentSize.X && _parentSize.X.IsFinite())
-				_positionX = RADouble.NewRel((value - _referenceX.GetValueRelativeTo(_parentSize.X)) / _parentSize.X);
+				_positionX = RADouble.NewRel((value - _parentAnchorX.GetValueRelativeTo(_parentSize.X)) / _parentSize.X);
 			else
 				throw new InvalidOperationException("_parentSize.X is undefined or zero");
 		}
@@ -703,9 +703,9 @@ namespace Altaxo.Graph
 		{
 			var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
 			if (_positionY.IsAbsolute)
-				_positionY = RADouble.NewAbs(value - _referenceY.GetValueRelativeTo(_parentSize.Y));
+				_positionY = RADouble.NewAbs(value - _parentAnchorY.GetValueRelativeTo(_parentSize.Y));
 			else if (0 != _parentSize.Y && _parentSize.Y.IsFinite())
-				_positionY = RADouble.NewRel((value - _referenceY.GetValueRelativeTo(_parentSize.Y)) / _parentSize.Y);
+				_positionY = RADouble.NewRel((value - _parentAnchorY.GetValueRelativeTo(_parentSize.Y)) / _parentSize.Y);
 			else
 				throw new InvalidOperationException("_parentSize.Y is undefined or zero");
 		}
@@ -722,7 +722,7 @@ namespace Altaxo.Graph
 			get
 			{
 				var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
-				return _referenceX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X);
+				return _parentAnchorX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X);
 			}
 			set
 			{
@@ -745,7 +745,7 @@ namespace Altaxo.Graph
 			get
 			{
 				var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
-				return _referenceY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y);
+				return _parentAnchorY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y);
 			}
 			set
 			{
@@ -787,7 +787,7 @@ namespace Altaxo.Graph
 			{
 				var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
 				var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
-				return new PointD2D(-_pivotX.GetValueRelativeTo(mySizeX), -_pivotY.GetValueRelativeTo(mySizeY));
+				return new PointD2D(-_localAnchorX.GetValueRelativeTo(mySizeX), -_localAnchorY.GetValueRelativeTo(mySizeY));
 			}
 		}
 

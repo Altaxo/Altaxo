@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_curvePoints.Clear();
 				_curvePoints.AddRange(value);
-				// TODO adjust width and size to reflect the new positions of the curve points
+				CalculateAndSetBounds();
 			}
 		}
 

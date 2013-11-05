@@ -56,6 +56,7 @@ namespace Altaxo.Gui.Graph
 
 		protected IMVCANController _axisScaleController;
 		protected IMVCAController _coordinateController;
+		protected IMVCANController _layerPositionController;
 
 		private Dictionary<CSLineID, AxisStyleControllerConditionalGlue> _axisControl;
 
@@ -141,7 +142,7 @@ namespace Altaxo.Gui.Graph
 				_view.AddTab("Scale", "Scale");
 				_view.AddTab("CS", "Coord.System");
 				// _view.AddTab("Contents", "Contents");
-				// _view.AddTab("Position", "Position");
+				_view.AddTab("Position", "Position");
 				_view.AddTab("TitleAndFormat", "Title&&Format");
 				_view.AddTab("MajorLabels", "Major labels");
 				_view.AddTab("MinorLabels", "Minor labels");
@@ -197,6 +198,21 @@ namespace Altaxo.Gui.Graph
 					}
 					_currentController = this._coordinateController;
 					_view.CurrentContent = this._coordinateController.ViewObject;
+					break;
+
+				case "Position":
+					if (pageChanged)
+					{
+						_view.SelectTab(_currentPageName);
+					}
+					if (null == _layerPositionController)
+					{
+						_layerPositionController = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
+						_layerPositionController.InitializeDocument(_doc.Location);
+						Current.Gui.FindAndAttachControlTo(_layerPositionController);
+					}
+					_currentController = _layerPositionController;
+					_view.CurrentContent = _layerPositionController.ViewObject;
 					break;
 
 				case "Scale":
@@ -381,6 +397,10 @@ namespace Altaxo.Gui.Graph
 			{
 				//_doc.CoordinateSystem = (G2DCoordinateSystem)_coordinateController.ModelObject;
 				SetCoordinateSystemDependentObjects();
+			}
+			else if (object.ReferenceEquals(_currentController, _layerPositionController))
+			{
+				_doc.Location.CopyFrom((Altaxo.Graph.IItemLocation)_currentController.ModelObject);
 			}
 
 			return true;

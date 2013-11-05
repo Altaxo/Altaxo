@@ -57,19 +57,6 @@ namespace Altaxo.Graph.Gdi
 		protected const double DefaultRootLayerSizeX = 697.68054;
 		protected const double DefaultRootLayerSizeY = 451.44;
 
-		/// <summary>
-		/// Overall size of the page (usually the size of the sheet of paper that is selected as printing document) in point (1/72 inch)
-		/// </summary>
-		/// <remarks>The value is only used by hosting classes, since the reference point (0,0) of the GraphDocument
-		/// is the top left corner of the printable area. The hosting class has to translate the graphics origin
-		/// to that point before calling the painting routine <see cref="DoPaint"/>.</remarks>
-		//private RectangleF _pageBounds = new RectangleF(0, 0, 842, 595);
-
-		/// <summary>
-		/// The printable area of the document, i.e. the page size minus the margins at each side in points (1/72 inch)
-		/// </summary>
-		//private RectangleF _printableBounds = new RectangleF(14, 14, 814, 567);
-
 		private SingleGraphPrintOptions _printOptions;
 
 		public SingleGraphPrintOptions PrintOptions
@@ -178,9 +165,7 @@ namespace Altaxo.Graph.Gdi
 				s._name = info.GetString("Name");
 				var pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				var printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
-
-				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
-				s._rootLayer.Size = printableBounds.Size;
+				var layers = (XYPlotLayer.XYPlotLayerCollection)info.GetValue("LayerList", s);
 				s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(printableBounds.Size.Width), SizeY = RADouble.NewAbs(printableBounds.Size.Height) };
 				foreach (var l in layers)
 					s._rootLayer.Layers.Add(l);
@@ -237,8 +222,12 @@ namespace Altaxo.Graph.Gdi
 				s._name = info.GetString("Name");
 				var pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				var printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
-				s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(printableBounds.Size.Width), SizeY = RADouble.NewAbs(printableBounds.Size.Height) };
-				var layers = (IList<XYPlotLayer>)info.GetValue("LayerList", s);
+				var layers = (XYPlotLayer.XYPlotLayerCollection)info.GetValue("LayerList", s);
+				if (layers.GraphSize.IsEmpty)
+					s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(printableBounds.Size.Width), SizeY = RADouble.NewAbs(printableBounds.Size.Height) };
+				else
+					s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(layers.GraphSize.Width), SizeY = RADouble.NewAbs(layers.GraphSize.Height) };
+
 				foreach (var l in layers)
 					s._rootLayer.Layers.Add(l);
 

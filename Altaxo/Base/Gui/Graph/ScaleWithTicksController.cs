@@ -118,26 +118,31 @@ namespace Altaxo.Gui.Graph
 
 				// find the parent layer
 				var mylayer = Altaxo.Main.DocumentPath.GetRootNodeImplementing<HostLayer>(_originalDoc);
-				var parentLayerList = mylayer.ParentLayerList;
-
-				var scaleLinkedTo = _doc.Scale is LinkedScale ? ((LinkedScale)_doc.Scale).ScaleLinkedTo : null;
-
-				for (int i = 0; i < parentLayerList.Count; ++i)
+				if (null != mylayer)
 				{
-					var l = parentLayerList[i];
-					if (l.LayerNumber == mylayer.LayerNumber)
-						continue;
-					var lxy = l as XYPlotLayer; // must have scales
-					if (null == lxy)
-						return;
-
-					for (int j = 0; j < lxy.Scales.Count; ++j)
+					var parentLayerList = mylayer.ParentLayerList;
+					if (null != parentLayerList)
 					{
-						var scale = lxy.Scales[j].Scale;
-						var scaleName = j == 0 ? "x" : (j == 1 ? "y" : (j == 2 ? "z" : string.Format("{0}.", j)));
+						var scaleLinkedTo = _doc.Scale is LinkedScale ? ((LinkedScale)_doc.Scale).ScaleLinkedTo : null;
 
-						string name = string.Format("Layer[{0}] - {1} scale", i, scaleName);
-						_linkScaleChoices.Add(new SelectableListNode(name, scale, object.ReferenceEquals(scale, scaleLinkedTo)));
+						for (int i = 0; i < parentLayerList.Count; ++i)
+						{
+							var l = parentLayerList[i];
+							if (l.LayerNumber == mylayer.LayerNumber)
+								continue;
+							var lxy = l as XYPlotLayer; // must have scales
+							if (null == lxy)
+								return;
+
+							for (int j = 0; j < lxy.Scales.Count; ++j)
+							{
+								var scale = lxy.Scales[j].Scale;
+								var scaleName = j == 0 ? "x" : (j == 1 ? "y" : (j == 2 ? "z" : string.Format("{0}.", j)));
+
+								string name = string.Format("Layer[{0}] - {1} scale", i, scaleName);
+								_linkScaleChoices.Add(new SelectableListNode(name, scale, object.ReferenceEquals(scale, scaleLinkedTo)));
+							}
+						}
 					}
 				}
 

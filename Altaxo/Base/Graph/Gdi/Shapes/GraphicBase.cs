@@ -92,12 +92,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var bounds = (RectangleF)info.GetValue("Bounds", s);
 				var rotation = -info.GetSingle("Rotation"); // meaning of rotation reversed in version 2
 
-				s._location.SizeX = RADouble.NewAbs(bounds.Width);
-				s._location.SizeY = RADouble.NewAbs(bounds.Height);
-				var leftTop = new PointD2D(bounds.Left, bounds.Top);
-				throw new NotImplementedException("leftTop must be used somehow");
+				if (s._location.IsAutoSized)
+				{
+					s._location.SetSizeInAutoSizeMode(new PointD2D(bounds.Width, bounds.Height));
+				}
+				else
+				{
+					s._location.SizeX = RADouble.NewAbs(bounds.Width);
+					s._location.SizeY = RADouble.NewAbs(bounds.Height);
+				}
+
 				s._location.PositionX = RADouble.NewAbs(position.X);
-				s._location.PositionY = RADouble.NewAbs(position.X);
+				s._location.PositionY = RADouble.NewAbs(position.Y);
 				s._location.Rotation = rotation;
 
 				/*s._autoSize =*/
@@ -132,12 +138,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var bounds = (RectangleF)info.GetValue("Bounds", s);
 				var rotation = info.GetSingle("Rotation");
 
-				s._location.SizeX = RADouble.NewAbs(bounds.Width);
-				s._location.SizeY = RADouble.NewAbs(bounds.Height);
-				var _leftTop = new PointD2D(bounds.Left, bounds.Top);
-				throw new NotImplementedException("leftTop must be implemented");
+				if (s._location.IsAutoSized)
+				{
+					s._location.SetSizeInAutoSizeMode(new PointD2D(bounds.Width, bounds.Height));
+				}
+				else
+				{
+					s._location.SizeX = RADouble.NewAbs(bounds.Width);
+					s._location.SizeY = RADouble.NewAbs(bounds.Height);
+				}
+
 				s._location.PositionX = RADouble.NewAbs(position.X);
-				s._location.PositionY = RADouble.NewAbs(position.X);
+				s._location.PositionY = RADouble.NewAbs(position.Y);
 				s._location.Rotation = rotation;
 
 				/*s._autoSize = */
@@ -178,12 +190,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var scaleY = info.GetSingle("ScaleY");
 				var shear = info.GetSingle("Shear");
 
-				s._location.SizeX = RADouble.NewAbs(bounds.Width);
-				s._location.SizeY = RADouble.NewAbs(bounds.Height);
-				var leftTop = new PointD2D(bounds.Left, bounds.Top);
-				throw new NotImplementedException("leftTop");
+				if (s._location.IsAutoSized)
+				{
+					s._location.SetSizeInAutoSizeMode(new PointD2D(bounds.Width, bounds.Height));
+				}
+				else
+				{
+					s._location.SizeX = RADouble.NewAbs(bounds.Width);
+					s._location.SizeY = RADouble.NewAbs(bounds.Height);
+				}
+
 				s._location.PositionX = RADouble.NewAbs(position.X);
-				s._location.PositionY = RADouble.NewAbs(position.X);
+				s._location.PositionY = RADouble.NewAbs(position.Y);
 				s._location.Rotation = rotation;
 				s._location.ScaleX = scaleX;
 				s._location.ScaleY = scaleY;
@@ -225,24 +243,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				double w = info.GetDouble("Width");
 				double h = info.GetDouble("Height");
-				double x = info.GetDouble("OffsetX");
-				double y = info.GetDouble("OffsetY");
-				//s._bounds = new RectangleD(x, y, w, h);
+				double left = info.GetDouble("OffsetX");
+				double top = info.GetDouble("OffsetY");
+				double x = info.GetDouble("X");
+				double y = info.GetDouble("Y");
 
-				x = info.GetDouble("X");
-				y = info.GetDouble("Y");
-				var position = new PointD2D(x, y);
 				var rotation = info.GetSingle("Rotation");
 				var scaleX = info.GetSingle("ScaleX");
 				var scaleY = info.GetSingle("ScaleY");
 				var shear = info.GetSingle("Shear");
+				if (s._location.IsAutoSized)
+				{
+					s._location.SetSizeInAutoSizeMode(new PointD2D(w, h));
+				}
+				else
+				{
+					s._location.SizeX = RADouble.NewAbs(w);
+					s._location.SizeY = RADouble.NewAbs(h);
+				}
 
-				s._location.SizeX = RADouble.NewAbs(w);
-				s._location.SizeY = RADouble.NewAbs(h);
-				var _leftTop = new PointD2D(x, y);
-				throw new NotImplementedException("leftTop");
-				s._location.PositionX = RADouble.NewAbs(position.X);
-				s._location.PositionY = RADouble.NewAbs(position.X);
+				s._location.PositionX = RADouble.NewAbs(x);
+				s._location.PositionY = RADouble.NewAbs(y);
 				s._location.Rotation = rotation;
 				s._location.ScaleX = scaleX;
 				s._location.ScaleY = scaleY;

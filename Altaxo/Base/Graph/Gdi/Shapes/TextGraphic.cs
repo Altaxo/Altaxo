@@ -103,15 +103,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetSingle("ShadowLength");
 				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
 				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
-				s._location.PivotX = RADouble.NewRel(0.5 * (int)xAnchorType);
-				s._location.PivotY = RADouble.NewRel(0.5 * (int)yAnchorType);
+				s._location.LocalAnchorX = RADouble.NewRel(0.5 * (int)xAnchorType);
+				s._location.LocalAnchorY = RADouble.NewRel(0.5 * (int)yAnchorType);
 
 				return s;
 			}
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.TextGraphics", 2)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.TextGraphic", 2)]
 		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -150,14 +150,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
 				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
-				s._location.PivotX = RADouble.NewRel(0.5 * (int)xAnchorType);
-				s._location.PivotY = RADouble.NewRel(0.5 * (int)yAnchorType);
+				s._location.LocalAnchorX = RADouble.NewRel(0.5 * (int)xAnchorType);
+				s._location.LocalAnchorY = RADouble.NewRel(0.5 * (int)yAnchorType);
 				return s;
 			}
 		}
 
 		/// <summary>
-		/// 2013-10-15 XAnchor and YAnchor now superfluous and thus removed
+		/// 2013-10-15 XAnchor and YAnchor now are superfluous and thus are removed
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 3)]
 		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

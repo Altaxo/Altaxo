@@ -124,8 +124,8 @@ namespace Altaxo.Gui.Graph
 				_view.Shear = _doc.ShearX;
 				_view.ScaleX = _doc.ScaleX;
 				_view.ScaleY = _doc.ScaleY;
-				_view.InitializePivot(_doc.PivotX, _doc.PivotY, _doc.AbsoluteSize);
-				_view.InitializeReference(_doc.ReferenceX, _doc.ReferenceY, _doc.ParentSize);
+				_view.InitializePivot(_doc.LocalAnchorX, _doc.LocalAnchorY, _doc.AbsoluteSize);
+				_view.InitializeReference(_doc.ParentAnchorX, _doc.ParentAnchorY, _doc.ParentSize);
 			}
 		}
 
@@ -169,11 +169,11 @@ namespace Altaxo.Gui.Graph
 				else
 					_doc.PositionY = RADouble.NewAbs(yPos.AsValueIn(Units.Length.Point.Instance));
 
-				_doc.PivotX = _view.PivotX;
-				_doc.PivotY = _view.PivotY;
+				_doc.LocalAnchorX = _view.PivotX;
+				_doc.LocalAnchorY = _view.PivotY;
 
-				_doc.ReferenceX = _view.ReferenceX;
-				_doc.ReferenceY = _view.ReferenceY;
+				_doc.ParentAnchorX = _view.ReferenceX;
+				_doc.ParentAnchorY = _view.ReferenceY;
 
 				_originalDoc.CopyFrom(_doc);
 			}

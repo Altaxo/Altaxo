@@ -292,6 +292,12 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
+				var rlsize = _doc.RootLayer.Size;
+				if (0 == _areaFillingFactor)
+					throw new InvalidOperationException("AreaFillingFactor is 0, thus AutoZoomFactor can not be calculated");
+				if (0 == rlsize.X || 0 == rlsize.Y)
+					throw new InvalidOperationException("Root layer size x or y is 0, thus AutoZoomFactor can not be calculated");
+
 				double zoomh = (_view.ViewportSizeInPoints.X) / (_doc.RootLayer.Size.X * _areaFillingFactor);
 				double zoomv = (_view.ViewportSizeInPoints.Y) / (_doc.RootLayer.Size.Y * _areaFillingFactor);
 				var zoomFactor = System.Math.Min(zoomh, zoomv);
@@ -341,12 +347,21 @@ namespace Altaxo.Gui.Graph.Viewing
 				_isAutoZoomActive = false;
 				var oldValue = _zoomFactor;
 
-				if (value > 0.05)
+				if (value > 0 && value < double.MaxValue)
+				{
+					if (!(value >= 0.0009765625))
+						value = 0.0009765625;
+					else if (!(value <= 1024))
+						value = 1024;
 					_zoomFactor = value;
+				}
 				else
-					_zoomFactor = 0.05f;
+				{
+					_zoomFactor = 1;
+				}
 
-				RefreshManualZoom();
+				if (!(oldValue == _zoomFactor))
+					RefreshManualZoom();
 			}
 		}
 

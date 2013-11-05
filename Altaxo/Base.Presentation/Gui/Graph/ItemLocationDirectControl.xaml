@@ -70,7 +70,7 @@
 		<Label Grid.Column="2" Grid.Row="8" Content="ScaleY:" />
 		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="8" />
 
-		<axoggs:AnchoringControl x:Name="_guiAnchoring" Title="My anchor" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="2" />
-		<axoggs:AnchoringControl x:Name="_guiParentReferencePoint" Title="Parent reference point" Grid.Column="2" Grid.Row="10" Grid.ColumnSpan="2" />
+		<axoggs:AnchoringControl x:Name="_guiAnchoring" Title="Local anchor" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="2" />
+		<axoggs:AnchoringControl x:Name="_guiParentReferencePoint" Title="Parent anchor" Grid.Column="2" Grid.Row="10" Grid.ColumnSpan="2" />
 	</Grid>
 </UserControl>

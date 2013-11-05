@@ -470,9 +470,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-			this.Size = bounds1.Size;
+			_location.SetSizeInAutoSizeMode(bounds1.Size);
 			//this._leftTop = bounds1.Location - this.GetPosition();
-			throw new NotImplementedException("debug the previous statement");
+			//throw new NotImplementedException("debug the previous statement");
 			if (_background != null)
 			{
 				bounds1.Expand(_backgroundPadding);
