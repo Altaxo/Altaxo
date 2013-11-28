@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
+#endregion Copyright
 
-using System.Runtime.InteropServices;
+using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common;
-using Altaxo.Collections;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -41,8 +42,8 @@ namespace Altaxo.Graph.Gdi
 	{
 		public static readonly GraphCopyOptions DefaultGraphDocumentPasteOptions;
 		public static readonly GraphCopyOptions DefaultGraphLayerPasteOptions;
-		static GraphCopyOptions _lastChoosenGraphDocumentPasteOptions;
-		static GraphCopyOptions _lastChoosenGraphLayerPasteOptions;
+		private static GraphCopyOptions _lastChoosenGraphDocumentPasteOptions;
+		private static GraphCopyOptions _lastChoosenGraphLayerPasteOptions;
 
 		static GraphDocumentClipboardActions()
 		{
@@ -55,8 +56,6 @@ namespace Altaxo.Graph.Gdi
 		#region Image formats
 
 		public static GraphExportOptions CopyPageOptions = new GraphExportOptions();
-
-
 
 		/// <summary>
 		/// Shows the copy page options dialog and stores the result as the static field <see cref="CopyPageOptions"/> here in this class
@@ -130,10 +129,8 @@ namespace Altaxo.Graph.Gdi
 			Current.Gui.SetClipboardDataObject(dao);
 		}
 
-
-		static string InternalAddClipboardDropDownList(Altaxo.Gui.IClipboardSetDataObject dao, System.Drawing.Bitmap bmp, GraphExportOptions options)
+		private static string InternalAddClipboardDropDownList(Altaxo.Gui.IClipboardSetDataObject dao, System.Drawing.Bitmap bmp, GraphExportOptions options)
 		{
-
 			string filepath = System.IO.Path.GetTempPath();
 			string filename = filepath + "AltaxoGraphCopyPage" + options.GetDefaultFileNameExtension(); ;
 			if (System.IO.File.Exists(filename))
@@ -152,7 +149,6 @@ namespace Altaxo.Graph.Gdi
 		{
 			CopyToClipboardAsBitmap(doc, CopyPageOptions);
 		}
-
 
 		static public void CopyToClipboardAsMetafile(this GraphDocument doc)
 		{
@@ -182,11 +178,7 @@ namespace Altaxo.Graph.Gdi
 			Current.Gui.SetClipboardDataObject(dao);
 		}
 
-
-
-
-
-		#endregion
+		#endregion Image formats
 
 		#region native formats
 
@@ -214,7 +206,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		/// <summary>
 		/// Try to paste the entire GraphDocument from the clipboard.
 		/// </summary>
@@ -237,7 +228,6 @@ namespace Altaxo.Graph.Gdi
 				PasteFromClipboard(doc, options);
 			}
 		}
-
 
 		/// <summary>
 		/// Puts the layer with index <paramref name="layerNumber"/> to the clipboard in XML format.
@@ -262,9 +252,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
-
-
 		public static void PasteFromClipboardAsTemplateForLayer(this GraphDocument doc, IEnumerable<int> layerNumber)
 		{
 			/*
@@ -272,7 +259,7 @@ namespace Altaxo.Graph.Gdi
 			if (false == Current.Gui.ShowDialog(ref options, "Choose what to paste"))
 				return;
 				PasteFromClipboardAsTemplateForLayer(doc, layerNumber, (options as PasteLayerOptions).GetCopyOptions());
-			 * 
+			 *
 			*/
 
 			GraphCopyOptions options = _lastChoosenGraphLayerPasteOptions;
@@ -308,7 +295,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		/// <summary>
 		/// Pastes a layer on the clipboard as new layer after the layer at index <paramref name="currentActiveLayerNumber"/>.
 		/// </summary>
@@ -324,10 +310,22 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+		/// <summary>
+		/// Pastes a layer on the clipboard as new layer after the layer at index <paramref name="currentActiveLayerNumber"/>.
+		/// </summary>
+		/// <param name="doc">Graph document to paste to.</param>
+		/// <param name="currentActiveLayerNumber">Index of the layer after which to paste the layer from the clipboard.</param>
+		public static void PasteFromClipboardAsNewChildLayerOfLayerNumber(this GraphDocument doc, IEnumerable<int> currentActiveLayerNumber)
+		{
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+			XYPlotLayer layer = o as XYPlotLayer;
+			if (null != layer)
+			{
+				var parentLayer = doc.RootLayer.ElementAt(currentActiveLayerNumber);
+				parentLayer.Layers.Insert(0, layer);
+			}
+		}
 
-		#endregion
-
-
-
+		#endregion native formats
 	}
 }

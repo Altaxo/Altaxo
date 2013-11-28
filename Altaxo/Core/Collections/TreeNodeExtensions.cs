@@ -369,7 +369,8 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Enumerates through all tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>. If <paramref name="includeThisNode"/> is <c>true</c>, the provided node <paramref name="node"/> is included in the enumeration.
+		/// Enumerates through all tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>.
+		/// If <paramref name="includeThisNode"/> is <c>true</c>, the provided node <paramref name="node"/> is included in the enumeration.
 		/// Attention: Since the order of the nodes must be reversed, this enumeration is only efficient for <see cref="ITreeListNode{T}"/> types.
 		/// </summary>
 		/// <typeparam name="T">Type of node</typeparam>
@@ -390,6 +391,36 @@ namespace Altaxo.Collections
 
 			if (includeThisNode)
 				yield return node;
+		}
+
+		/// <summary>
+		/// Enumerates through all tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>.
+		/// Local data is provided for each enumerated node. The local data is calculated from the root node up to the enumerated node.
+		/// If <paramref name="includeThisNode"/> is <c>true</c>, the provided node <paramref name="node"/> is included in the enumeration.
+		/// Attention: Since the order of the nodes must be reversed, this enumeration is only efficient for <see cref="ITreeListNode{T}"/> types.
+		/// </summary>
+		/// <typeparam name="T">Type of node</typeparam>
+		/// <param name="node">The node from which to start visiting the tree.</param>
+		/// <param name="nodesLocalData">Local data belonging to the provided <paramref name="node"/>.</param>
+		/// <param name="includeThisNode">If set to <c>true</c> the node <paramref name="node"/> is included in action execution, otherwise, it is not part of the action execution.</param>
+		/// <param name="transformLocalDataFromParentToChild">When traversing the tree from the root node up to the leaves, the provided local data can be transformed so that the data always reflect the state of the nodes. First argument is the child node,
+		/// second argument is the local data from the parent node. The return value should be the local data for the child node fiven in the first argument.</param>
+		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>./returns>
+		public static IEnumerable<Tuple<T, D>> TakeFromLastLeavesToHere<T, D>(this T node, D nodesLocalData, bool includeThisNode, Func<T, D, D> transformLocalDataFromParentToChild) where T : ITreeNode<T>
+		{
+			var childNodes = node.ChildNodes;
+			if (null != childNodes)
+			{
+				foreach (var childNode in childNodes.Reverse())
+				{
+					var childNodesLocalData = transformLocalDataFromParentToChild(childNode, nodesLocalData);
+					foreach (var subchildTuple in TakeFromLastLeavesToHere(childNode, childNodesLocalData, true, transformLocalDataFromParentToChild))
+						yield return subchildTuple;
+				}
+			}
+
+			if (includeThisNode)
+				yield return new Tuple<T, D>(node, nodesLocalData);
 		}
 
 		/// <summary>

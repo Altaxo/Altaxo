@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnMouseMove(position, e);
 
-			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToGraphCoordinates(position);
+			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
 
 			ModifyCurrentMousePrintAreaCoordinate();
 

@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		// 2010-03-16 ScaleX, ScaleY, and Shear added
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase), 4)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.GraphicBase", 4)]
 		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -269,6 +269,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._location.ScaleY = scaleY;
 				s._location.ShearX = shear;
 
+				s.UpdateTransformationMatrix();
+
+				return s;
+			}
+		}
+
+		// 2013-11-27
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase), 5)]
+		private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphicBase s = (GraphicBase)obj;
+				info.AddValue("Location", s._location);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				GraphicBase s = (GraphicBase)o;
+
+				s._location = (ItemLocationDirect)info.GetValue("Location");
 				s.UpdateTransformationMatrix();
 
 				return s;

@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
     {
       base.OnMouseDown(position, e);
 
-			var graphXY = _grac.ConvertMouseToGraphCoordinates(position);
+			var graphXY = _grac.ConvertMouseToRootLayerCoordinates(position);
        
       // search for a object first
       IHitTestObject clickedObject;

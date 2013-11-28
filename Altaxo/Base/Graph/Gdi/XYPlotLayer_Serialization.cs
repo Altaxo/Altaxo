@@ -649,6 +649,76 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion Version 5
 
+		#region Version 6
+
+		/// <summary>
+		/// 2013-11-27 we now have <see cref="HostLayer"/> as base class.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 6)]
+		private class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYPlotLayer s = (XYPlotLayer)obj;
+
+				info.AddBaseValueEmbedded(obj, typeof(HostLayer));
+
+				// CoordinateSystem
+				info.AddValue("CoordinateSystem", s._coordinateSystem);
+
+				// Scales
+				info.AddValue("Scales", s._scales);
+
+				// Grid planes
+				info.AddValue("GridPlanes", s._gridPlanes);
+
+				// Axis styles
+				info.AddValue("AxisStyles", s._axisStyles);
+
+				// Data clipping
+				info.AddValue("DataClipping", s._dataClipping);
+
+				// Plots
+				info.AddValue("Plots", s._plotItems);
+			}
+
+			protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				XYPlotLayer s = (o == null ? new XYPlotLayer(info) : (XYPlotLayer)o);
+
+				info.GetBaseValueEmbedded(s, typeof(HostLayer), parent);
+
+				// CoordinateSystem
+				s.CoordinateSystem = (G2DCoordinateSystem)info.GetValue("CoordinateSystem", s);
+				s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
+
+				// Scales
+				s.Scales = (ScaleCollection)info.GetValue("Scales", s);
+
+				// Grid planes
+				s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
+
+				// Axis Styles
+				s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
+
+				// Data Clipping
+				s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
+
+				// PlotItemCollection
+				s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				XYPlotLayer s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 6
+
 		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer)
 		{
 			if (null != linkedLayer && !linkedLayer.IsEmpty)

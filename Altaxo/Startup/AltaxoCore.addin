@@ -872,6 +872,8 @@
 								class="Altaxo.Graph.Commands.PasteAsNewLayerBefore" />
 			<MenuItem id="PasteNewAfter" label="${res:XML.MainMenu.LayerMenu.PasteNewLayerAfter}" description="${res:XML.MainMenu.LayerMenu.PasteNewLayerAfter.Description}"
 								class="Altaxo.Graph.Commands.PasteAsNewLayerAfter" />
+			<MenuItem id="PasteNewAsChild" label="${res:XML.MainMenu.LayerMenu.PasteNewLayerAsChild}" description="${res:XML.MainMenu.LayerMenu.PasteNewLayerAsChild.Description}"
+							class="Altaxo.Graph.Commands.PasteNewLayerAsChild" />
 			<MenuItem id="PasteHere" label="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer}" description="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer.Description}"
 								class="Altaxo.Graph.Commands.PasteInActiveLayer" />
 		</Condition>

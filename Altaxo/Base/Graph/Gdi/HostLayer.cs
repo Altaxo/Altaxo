@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Gdi
 		#region Version 0
 
 		/// <summary>
-		/// In Version 0 we changed the Scales and divided into pure Scale and TickSpacing
+		/// 2013-11-27 initial version.
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HostLayer), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -151,8 +151,6 @@ namespace Altaxo.Graph.Gdi
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				HostLayer s = (HostLayer)obj;
-
-				throw new InvalidOperationException("Set cachedSize and cachedPosition to double objects");
 
 				// size, position, rotation and scale
 				info.AddValue("CachedParentSize", s._cachedParentLayerSize);
@@ -563,7 +561,16 @@ namespace Altaxo.Graph.Gdi
 		protected void CalculateMatrix()
 		{
 			_transformation.Reset();
-			_transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Rotation, _location.ShearX, _location.ScaleX, _location.ScaleY);
+			if (_location is ItemLocationDirect)
+			{
+				var locD = (ItemLocationDirect)_location;
+				_transformation.SetTranslationRotationShearxScale(locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, -locD.Rotation, locD.ShearX, locD.ScaleX, locD.ScaleY);
+				_transformation.TranslatePrepend(locD.AbsoluteVectorPivotToLeftUpper.X, locD.AbsoluteVectorPivotToLeftUpper.Y);
+			}
+			else
+			{
+				_transformation.SetTranslationRotationShearxScale(_cachedLayerPosition.X, _cachedLayerPosition.Y, -_location.Rotation, _location.ShearX, _location.ScaleX, _location.ScaleY);
+			}
 		}
 
 		public PointD2D TransformCoordinatesFromParentToHere(PointD2D pagecoordinates)
@@ -574,8 +581,16 @@ namespace Altaxo.Graph.Gdi
 		public PointD2D TransformCoordinatesFromRootToHere(PointD2D pagecoordinates)
 		{
 			foreach (var layer in this.TakeFromRootToHere())
-				pagecoordinates = _transformation.InverseTransformPoint(pagecoordinates);
+				pagecoordinates = layer._transformation.InverseTransformPoint(pagecoordinates);
 			return pagecoordinates;
+		}
+
+		public TransformationMatrix2D TransformationFromRootToHere()
+		{
+			TransformationMatrix2D result = new TransformationMatrix2D();
+			foreach (var layer in this.TakeFromRootToHere())
+				result.AppendTransform(layer._transformation);
+			return result;
 		}
 
 		public CrossF GraphToLayerCoordinates(CrossF x)
@@ -992,7 +1007,6 @@ namespace Altaxo.Graph.Gdi
 		protected IHitTestObject ForwardTransform(IHitTestObject o)
 		{
 			o.Transform(_transformation);
-			o.ParentLayer = this;
 			return o;
 		}
 
@@ -1001,16 +1015,30 @@ namespace Altaxo.Graph.Gdi
 			return HitTest(hitData, false);
 		}
 
-		public virtual IHitTestObject HitTest(HitTestPointData pageC, bool plotItemsOnly)
+		public virtual IHitTestObject HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
 		{
 			IHitTestObject hit;
 
-			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
-
-			var layerC = layerHitTestData.GetHittedPointInWorldCoord();
+			//			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
+			HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(this._transformation);
 
 			if (!plotItemsOnly)
 			{
+				// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+				for (int i = _graphObjects.Count - 1; i >= 0; --i)
+				{
+					hit = _graphObjects[i].HitTest(localCoord);
+					if (null != hit)
+					{
+						if (null == hit.ParentLayer)
+							hit.ParentLayer = this;
+
+						if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
+							hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
+						return ForwardTransform(hit);
+					}
+				}
+
 				// first hit testing all four corners of the layer
 				GraphicsPath layercorners = new GraphicsPath();
 				float catchrange = 6;
@@ -1019,23 +1047,13 @@ namespace Altaxo.Graph.Gdi
 				layercorners.AddEllipse(0 - catchrange, (float)(_cachedLayerSize.Y - catchrange), 2 * catchrange, 2 * catchrange);
 				layercorners.AddEllipse((float)(_cachedLayerSize.X - catchrange), (float)(_cachedLayerSize.Y - catchrange), 2 * catchrange, 2 * catchrange);
 				layercorners.CloseAllFigures();
+
+				var layerC = localCoord.GetHittedPointInWorldCoord();
 				if (layercorners.IsVisible((PointF)layerC))
 				{
 					hit = new HitTestObject(layercorners, this);
 					hit.DoubleClick = LayerPositionEditorMethod;
 					return ForwardTransform(hit);
-				}
-
-				// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
-				for (int i = _graphObjects.Count - 1; i >= 0; --i)
-				{
-					hit = _graphObjects[i].HitTest(layerHitTestData);
-					if (null != hit)
-					{
-						if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
-							hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
-						return ForwardTransform(hit);
-					}
 				}
 			}
 

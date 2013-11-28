@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,49 +19,48 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
-
 	/// <summary>
 	/// Handles the drawing of a rectangle.
 	/// </summary>
 	public abstract class AbstractRectangularToolMouseHandler : MouseStateHandler
 	{
-
 		#region Member variables
 
 		protected GraphControllerWpf _grac;
 
-		protected PointD2D _positionCurrentMouseInGraphCoordinates;
+		protected PointD2D _positionCurrentMouseInRootLayerCoordinates;
 
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
-
+		protected HostLayer _cachedActiveLayer;
+		protected TransformationMatrix2D _cachedActiveLayerTransformation;
+		protected Matrix _cachedActiveLayerTransformationGdi;
 
 		protected struct POINT
 		{
-			public PointD2D GraphCoordinates;
+			public PointD2D RootLayerCoordinates;
 			public PointD2D LayerCoordinates;
 		}
 
 		protected POINT[] _Points = new POINT[2];
 		protected int _currentPoint;
 
-
-		#endregion
+		#endregion Member variables
 
 		public AbstractRectangularToolMouseHandler(GraphControllerWpf ctrl)
 		{
@@ -70,33 +70,33 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				_grac.SetPanelCursor(Cursors.Pen);
 		}
 
-
 		public override void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
 		{
 			base.OnMouseDown(position, e);
 
 			if (e.ChangedButton == MouseButton.Left)
 			{
+				_cachedActiveLayer = _grac.ActiveLayer;
+				_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+				_cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+
 				_currentPoint = 0;
 				// get the page coordinates (in Point (1/72") units)
-				PointD2D graphCoord = _positionCurrentMouseInGraphCoordinates;
+				PointD2D rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
 				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointD2D layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
+				PointD2D layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
 				_Points[_currentPoint].LayerCoordinates = layerCoord;
-				_Points[_currentPoint].GraphCoordinates = graphCoord;
+				_Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
 				_currentPoint++;
-
-
 			}
 		}
 
 		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
 		{
-
 			base.OnMouseMove(position, e);
 
-			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToGraphCoordinates(position);
+			_positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
 
 			if (e.LeftButton == MouseButtonState.Pressed)
 			{
@@ -108,7 +108,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				_currentPoint = 0;
 				_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 			}
-
 		}
 
 		public override void OnMouseUp(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
@@ -118,12 +117,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			if (e.ChangedButton == MouseButton.Left)
 			{
 				// get the page coordinates (in Point (1/72") units)
-				PointD2D graphCoord = _positionCurrentMouseInGraphCoordinates;
+				PointD2D rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
 				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointD2D layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
+				PointD2D layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
 				_Points[_currentPoint].LayerCoordinates = layerCoord;
-				_Points[_currentPoint].GraphCoordinates = graphCoord;
+				_Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
 				_currentPoint++;
 
 				if (2 == _currentPoint)
@@ -134,8 +133,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				}
 			}
 		}
-
-
 
 		protected virtual void ModifyCurrentMousePrintAreaCoordinate()
 		{
@@ -149,7 +146,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				{
 					if (_grac.ActiveLayer != null) // with an active layer, we transform to layer coordinates
 					{
-						var currMouseLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInGraphCoordinates);
+						var currMouseLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInRootLayerCoordinates);
 						double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].LayerCoordinates.X;
 						double y = currMouseLayerCoord.Y - _Points[_currentPoint - 1].LayerCoordinates.Y;
 
@@ -160,20 +157,20 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 						currMouseLayerCoord.X = (x + _Points[_currentPoint - 1].LayerCoordinates.X);
 						currMouseLayerCoord.Y = (y + _Points[_currentPoint - 1].LayerCoordinates.Y);
-						_positionCurrentMouseInGraphCoordinates = _grac.ActiveLayer.TransformCoordinatesFromHereToParent(currMouseLayerCoord);
+						_positionCurrentMouseInRootLayerCoordinates = _grac.ActiveLayer.TransformCoordinatesFromHereToParent(currMouseLayerCoord);
 					}
 					else // without an active layer we use document coordinates
 					{
-						double x = _positionCurrentMouseInGraphCoordinates.X - _Points[_currentPoint - 1].GraphCoordinates.X;
-						double y = _positionCurrentMouseInGraphCoordinates.Y - _Points[_currentPoint - 1].GraphCoordinates.Y;
+						double x = _positionCurrentMouseInRootLayerCoordinates.X - _Points[_currentPoint - 1].RootLayerCoordinates.X;
+						double y = _positionCurrentMouseInRootLayerCoordinates.Y - _Points[_currentPoint - 1].RootLayerCoordinates.Y;
 
 						double r = Math.Sqrt(x * x + y * y);
 
 						x = r * Math.Sign(x);
 						y = r * Math.Sign(y);
 
-						_positionCurrentMouseInGraphCoordinates.X = (x + _Points[_currentPoint - 1].GraphCoordinates.X);
-						_positionCurrentMouseInGraphCoordinates.Y = (y + _Points[_currentPoint - 1].GraphCoordinates.Y);
+						_positionCurrentMouseInRootLayerCoordinates.X = (x + _Points[_currentPoint - 1].RootLayerCoordinates.X);
+						_positionCurrentMouseInRootLayerCoordinates.Y = (y + _Points[_currentPoint - 1].RootLayerCoordinates.Y);
 					}
 				}
 			}
@@ -189,18 +186,18 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			{
 				if (null != _grac.ActiveLayer)
 				{
-					g.TranslateTransform((float)_grac.ActiveLayer.Position.X, (float)_grac.ActiveLayer.Position.Y);
-					g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
-					var currLayerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(_positionCurrentMouseInGraphCoordinates);
+					g.MultiplyTransform(_cachedActiveLayerTransformationGdi);
+					//					g.TranslateTransform((float)_grac.ActiveLayer.Position.X, (float)_grac.ActiveLayer.Position.Y);
+					//				g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
+					var currLayerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(_positionCurrentMouseInRootLayerCoordinates);
 					DrawRectangleFromLTRB(g, _Points[0].LayerCoordinates, currLayerCoord);
 				}
 				else
 				{
-					DrawRectangleFromLTRB(g, _Points[0].GraphCoordinates, _positionCurrentMouseInGraphCoordinates);
+					DrawRectangleFromLTRB(g, _Points[0].RootLayerCoordinates, _positionCurrentMouseInRootLayerCoordinates);
 				}
 			}
 		}
-
 
 		public RectangleD GetNormalRectangle(PointD2D a, PointD2D b)
 		{
@@ -213,7 +210,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			return new RectangleD(x, y, w, h);
 		}
 
-		void DrawRectangleFromLTRB(Graphics g, PointD2D a, PointD2D b)
+		private void DrawRectangleFromLTRB(Graphics g, PointD2D a, PointD2D b)
 		{
 			var rect = RectangleD.FromLTRB(a.X, a.Y, b.X, b.Y);
 			Pen pen = Pens.Blue;
@@ -221,10 +218,9 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			g.DrawLine(pen, (float)b.X, (float)a.Y, (float)b.X, (float)b.Y);
 			g.DrawLine(pen, (float)b.X, (float)b.Y, (float)a.X, (float)b.Y);
 			g.DrawLine(pen, (float)a.X, (float)b.Y, (float)a.X, (float)a.Y);
-			//      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);      
+			//      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);
 		}
 
 		protected abstract void FinishDrawing();
-
 	}
 }

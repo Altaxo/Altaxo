@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			if (_currentPoint >= 1)
 			{
-				var rect = GetNormalRectangle(_Points[0].GraphCoordinates, _positionCurrentMouseInGraphCoordinates);
+				var rect = GetNormalRectangle(_Points[0].RootLayerCoordinates, _positionCurrentMouseInRootLayerCoordinates);
 				g.DrawEllipse(Pens.Blue, (RectangleF)rect);
 			}
 		}

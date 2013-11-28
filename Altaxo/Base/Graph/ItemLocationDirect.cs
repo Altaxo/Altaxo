@@ -35,13 +35,13 @@ namespace Altaxo.Graph
 	{
 		#region Members
 
-		private RADouble _positionX;
-
-		private RADouble _positionY;
-
 		private RADouble _sizeX;
 
 		private RADouble _sizeY;
+
+		private RADouble _positionX;
+
+		private RADouble _positionY;
 
 		private RADouble _localAnchorX;
 
@@ -54,12 +54,12 @@ namespace Altaxo.Graph
 		/// <summary>The rotation angle (in degrees) of the layer.</summary>
 		private double _rotation; // Rotation
 
+		private double _shear; // Shear
+
 		/// <summary>The scaling factor of the layer, normally 1.</summary>
 		private double _scaleX;  // X-Scale
 
 		private double _scaleY; // Y-Scale
-
-		private double _shear; // Shear
 
 		// Cached and not-to-serialize members
 
@@ -69,7 +69,6 @@ namespace Altaxo.Graph
 		[NonSerialized]
 		private object _parent;
 
-		[NonSerialized]
 		protected PointD2D _parentSize;
 
 		#endregion Members
@@ -85,6 +84,8 @@ namespace Altaxo.Graph
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (ItemLocationDirect)obj;
+
+				info.AddValue("ParentSize", s._parentSize);
 
 				info.AddValue("SizeX", s._sizeX);
 				info.AddValue("SizeY", s._sizeY);
@@ -107,6 +108,8 @@ namespace Altaxo.Graph
 			protected virtual ItemLocationDirect SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = null != o ? (ItemLocationDirect)o : new ItemLocationDirect();
+
+				s._parentSize = (PointD2D)info.GetValue("ParentSize");
 
 				s._sizeX = (RADouble)info.GetValue("SizeX");
 				s._sizeY = (RADouble)info.GetValue("SizeY");

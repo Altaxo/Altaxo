@@ -392,7 +392,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				}
 				else // manual zoom
 				{
-					var graphCoord = ConvertMouseToGraphCoordinates(position);
+					var graphCoord = ConvertMouseToRootLayerCoordinates(position);
 					ZoomAroundPivotPoint(newZoom, graphCoord);
 				}
 			}
@@ -692,7 +692,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		/// <param name="mouseCoord">Mouse coordinates as returned by MouseEvents.</param>
 		/// <returns>Position of the provided point in graph coordinates in points (1/72 inch).</returns>
-		public PointD2D ConvertMouseToGraphCoordinates(PointD2D mouseCoord)
+		public PointD2D ConvertMouseToRootLayerCoordinates(PointD2D mouseCoord)
 		{
 			var offset = PositionOfViewportsUpperLeftCornerInGraphCoordinates;
 			var factor = FactorForGraphToMouseCoordinateConversion;
@@ -725,18 +725,16 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
 		public bool FindGraphObjectAtPixelPosition(PointD2D pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int[] foundInLayerNumber)
 		{
-			var mousePT = ConvertMouseToGraphCoordinates(pixelPos);
+			var mousePT = ConvertMouseToRootLayerCoordinates(pixelPos);
 			var hitData = new HitTestPointData(mousePT, this.ZoomFactor);
 
-			foreach (var layer in RootLayer.TakeFromFirstLeavesToHere())
+			foundObject = RootLayer.HitTest(hitData, plotItemsOnly);
+			if (null != foundObject)
 			{
-				foundObject = layer.HitTest(hitData, plotItemsOnly);
-				if (null != foundObject)
-				{
-					foundInLayerNumber = layer.IndexOf().ToArray();
-					return true;
-				}
+				foundInLayerNumber = foundObject.ParentLayer.IndexOf().ToArray();
+				return true;
 			}
+
 			foundObject = null;
 			foundInLayerNumber = null;
 			return false;

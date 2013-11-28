@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			base.OnClick(position, e);
 
 			// get the page coordinates (in Point (1/72") units)
-			var graphCoord = _grac.ConvertMouseToGraphCoordinates(_positionLastMouseDownInMouseCoordinates);
+			var graphCoord = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
 			// with knowledge of the current active layer, calculate the layer coordinates from them
 			var layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
 

@@ -1090,17 +1090,19 @@ namespace Altaxo.Graph.Gdi
 		{
 			IHitTestObject hit;
 
-			HitTestPointData layerHitTestData = parentHitTestData.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
-
 			if (!plotItemsOnly)
 			{
 				if (null != (hit = base.HitTest(parentHitTestData, plotItemsOnly)))
 					return hit;
 			}
 
+			HitTestPointData layerHitTestData = parentHitTestData.NewFromAdditionalTransformation(_transformation);
 			var layerCoord = layerHitTestData.GetHittedPointInWorldCoord();
 			if (null != (hit = _plotItems.HitTest(this, layerCoord)))
 			{
+				if (hit.ParentLayer == null)
+					hit.ParentLayer = this;
+
 				if (hit.DoubleClick == null)
 					hit.DoubleClick = PlotItemEditorMethod;
 				return ForwardTransform(hit);
@@ -1747,6 +1749,30 @@ namespace Altaxo.Graph.Gdi
 
 		private class AxisStyleLinePlaceHolder : AxisStylePlaceHolderBase
 		{
+			#region Serialization
+
+			/// <summary>
+			/// 2013-11-27 Initial version
+			/// </summary>
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleLinePlaceHolder), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (AxisStyleLinePlaceHolder)obj;
+					info.AddValue("Index", s.Index);
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (AxisStyleLinePlaceHolder)o : new AxisStyleLinePlaceHolder();
+					s.Index = info.GetInt32("Index");
+					return s;
+				}
+			}
+
+			#endregion Serialization
+
 			public override object Clone()
 			{
 				var r = new AxisStyleLinePlaceHolder();
@@ -1758,7 +1784,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
-					layer._axisStyles.ItemAt(Index).Paint(g, layer);
+					layer._axisStyles.ItemAt(Index).PaintLine(g, layer);
 			}
 
 			public override IHitTestObject HitTest(HitTestPointData hitData)
@@ -1791,6 +1817,30 @@ namespace Altaxo.Graph.Gdi
 
 		private class AxisStyleMajorLabelPlaceHolder : AxisStylePlaceHolderBase
 		{
+			#region Serialization
+
+			/// <summary>
+			/// 2013-11-27 Initial version
+			/// </summary>
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleMajorLabelPlaceHolder), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (AxisStyleMajorLabelPlaceHolder)obj;
+					info.AddValue("Index", s.Index);
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (AxisStyleMajorLabelPlaceHolder)o : new AxisStyleMajorLabelPlaceHolder();
+					s.Index = info.GetInt32("Index");
+					return s;
+				}
+			}
+
+			#endregion Serialization
+
 			public override object Clone()
 			{
 				var r = new AxisStyleMajorLabelPlaceHolder();
@@ -1839,6 +1889,30 @@ namespace Altaxo.Graph.Gdi
 
 		private class AxisStyleMinorLabelPlaceHolder : AxisStylePlaceHolderBase
 		{
+			#region Serialization
+
+			/// <summary>
+			/// 2013-11-27 Initial version
+			/// </summary>
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleMinorLabelPlaceHolder), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (AxisStyleMinorLabelPlaceHolder)obj;
+					info.AddValue("Index", s.Index);
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (AxisStyleMinorLabelPlaceHolder)o : new AxisStyleMinorLabelPlaceHolder();
+					s.Index = info.GetInt32("Index");
+					return s;
+				}
+			}
+
+			#endregion Serialization
+
 			public override object Clone()
 			{
 				var r = new AxisStyleMinorLabelPlaceHolder();
@@ -1887,6 +1961,30 @@ namespace Altaxo.Graph.Gdi
 
 		private class AxisStyleTitlePlaceHolder : AxisStylePlaceHolderBase
 		{
+			#region Serialization
+
+			/// <summary>
+			/// 2013-11-27 Initial version
+			/// </summary>
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleTitlePlaceHolder), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (AxisStyleTitlePlaceHolder)obj;
+					info.AddValue("Index", s.Index);
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (AxisStyleTitlePlaceHolder)o : new AxisStyleTitlePlaceHolder();
+					s.Index = info.GetInt32("Index");
+					return s;
+				}
+			}
+
+			#endregion Serialization
+
 			public override object Clone()
 			{
 				var r = new AxisStyleTitlePlaceHolder();
@@ -1953,6 +2051,28 @@ namespace Altaxo.Graph.Gdi
 
 		private class GridPlanesPlaceHolder : PlaceHolder
 		{
+			#region Serialization
+
+			/// <summary>
+			/// 2013-11-27 Initial version
+			/// </summary>
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlanesPlaceHolder), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (GridPlanesPlaceHolder)obj;
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (GridPlanesPlaceHolder)o : new GridPlanesPlaceHolder();
+					return s;
+				}
+			}
+
+			#endregion Serialization
+
 			public override void Paint(Graphics g, object obj)
 			{
 				var layer = ParentObject as XYPlotLayer;
@@ -1975,6 +2095,28 @@ namespace Altaxo.Graph.Gdi
 			public PlotItemCollection PlotItemParent { get; set; }
 
 			public int PlotItemIndex { get; set; }
+
+			#region Serialization
+
+			/// <summary>
+			/// 2013-11-27 Initial version
+			/// </summary>
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemPlaceHolder), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					// Note there is no need to serialize PlotItemParent nor PlotItemIndex, since these variables are used only temporarily
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (PlotItemPlaceHolder)o : new PlotItemPlaceHolder();
+					return s;
+				}
+			}
+
+			#endregion Serialization
 
 			public override void Paint(Graphics g, object obj)
 			{
@@ -2008,6 +2150,29 @@ namespace Altaxo.Graph.Gdi
 
 		private class LegendText : TextGraphic
 		{
+			#region Serialization
+
+			/// <summary>
+			/// 2013-11-27 Initial version
+			/// </summary>
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LegendText), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (LegendText)obj;
+					info.AddBaseValueEmbedded(s, typeof(LegendText).BaseType);
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (LegendText)o : new LegendText();
+					info.GetBaseValueEmbedded(s, typeof(LegendText).BaseType, this);
+					return s;
+				}
+			}
+
+			#endregion Serialization
 		}
 
 		#endregion IGraphicShape placeholder for items in XYPlotLayer

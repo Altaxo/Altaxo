@@ -298,16 +298,16 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			bool bControlKey = keyboardModifiers.HasFlag(ModifierKeys.Control);
 			bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
 
-			var mouseXY = position;                         // Mouse pixel coordinates
-			var graphXY = _grac.ConvertMouseToGraphCoordinates(mouseXY); // Graph area coordinates
+			var mousePixelCoord = position;                         // Mouse pixel coordinates
+			var rootLayerCoord = _grac.ConvertMouseToRootLayerCoordinates(mousePixelCoord); // Graph area coordinates
 
-			ActiveGrip = GripHitTest(graphXY);
+			ActiveGrip = GripHitTest(rootLayerCoord);
 			if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
 			{
 				var superGrip = ActiveGrip as SuperGrip;
 				IHitTestObject hitTestObj;
 				IGripManipulationHandle gripHandle;
-				if (superGrip.GetHittedElement(graphXY, out gripHandle, out hitTestObj))
+				if (superGrip.GetHittedElement(rootLayerCoord, out gripHandle, out hitTestObj))
 				{
 					_selectedObjects.Remove(hitTestObj);
 					superGrip.Remove(gripHandle);
@@ -317,20 +317,20 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 			else if (ActiveGrip != null)
 			{
-				ActiveGrip.Activate(graphXY, false);
+				ActiveGrip.Activate(rootLayerCoord, false);
 				return;
 			}
 
 			// search for a object first
 			IHitTestObject clickedObject;
 			int[] clickedLayerNumber = null;
-			_grac.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
+			_grac.FindGraphObjectAtPixelPosition(mousePixelCoord, false, out clickedObject, out clickedLayerNumber);
 
 			if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
 				ClearSelections();
 
 			if (null != clickedObject)
-				AddSelectedObject(graphXY, clickedObject);
+				AddSelectedObject(rootLayerCoord, clickedObject);
 		} // end of function
 
 		private void AddSelectedObject(PointD2D graphXY, IHitTestObject clickedObject)
@@ -389,7 +389,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (null != ActiveGrip)
 			{
-				PointD2D graphCoord = _grac.ConvertMouseToGraphCoordinates(position);
+				PointD2D graphCoord = _grac.ConvertMouseToRootLayerCoordinates(position);
 				ActiveGrip.MoveGrip(graphCoord);
 				_wereObjectsMoved = true;
 				_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();

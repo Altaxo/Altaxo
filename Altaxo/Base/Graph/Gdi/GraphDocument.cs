@@ -272,6 +272,71 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+		/// <summary>
+		/// 2013-11-27 Reflect the new situation that we have now only a host layer, but not printable bounds and so on.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 4)]
+		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphDocument s = (GraphDocument)obj;
+
+				info.AddValue("Name", s._name);
+				info.AddValue("GraphIdentifier", s._graphIdentifier);
+				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
+				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+				info.AddValue("Notes", s._notes.Text);
+				info.AddValue("RootLayer", s._rootLayer);
+
+				// Add graph properties
+				int numberproperties = s._graphProperties == null ? 0 : s._graphProperties.Keys.Count;
+				info.CreateArray("GraphProperties", numberproperties);
+				if (s._graphProperties != null)
+				{
+					foreach (string propkey in s._graphProperties.Keys)
+					{
+						if (propkey.StartsWith("tmp/"))
+							continue;
+						info.CreateElement("e");
+						info.AddValue("Key", propkey);
+						object val = s._graphProperties[propkey];
+						info.AddValue("Value", info.IsSerializable(val) ? val : null);
+						info.CommitElement();
+					}
+				}
+				info.CommitArray();
+			}
+
+			public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				s._name = info.GetString("Name");
+				s._graphIdentifier = info.GetString("GraphIdentifier");
+				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
+				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
+				s._notes.Text = info.GetString("Notes");
+				s._rootLayer = (HostLayer)info.GetValue("RootLayer", s);
+
+				int numberproperties = info.OpenArray("GraphProperties");
+				for (int i = 0; i < numberproperties; i++)
+				{
+					info.OpenElement(); // "e"
+					string propkey = info.GetString("Key");
+					object propval = info.GetValue("Value", parent);
+					info.CloseElement(); // "e"
+					s.SetGraphProperty(propkey, propval);
+				}
+				info.CloseArray(numberproperties);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
+				Deserialize(s, info, parent);
+				return s;
+			}
+		}
+
 		#endregion "Serialization"
 
 		/// <summary>
