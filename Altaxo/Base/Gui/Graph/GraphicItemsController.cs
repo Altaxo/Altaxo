@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Graph
 
 				foreach (var item in _doc)
 				{
-					var node = new SelectableListNode(item.GetType().ToString(), item, false);
+					var node = new SelectableListNode(item.ToString(), item, false);
 					_itemsList.Add(node);
 				}
 			}

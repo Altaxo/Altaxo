@@ -290,6 +290,22 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Gets the index the of last item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>
+		/// </summary>
+		/// <typeparam name="T">Type of items in the list</typeparam>
+		/// <param name="list">The list.</param>
+		/// <param name="predicate">The predicate function. The first argument is the item, the second argument is the item's index in the list. If the return value is true, the index of this item is returned.</param>
+		/// <returns>Index the of last item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such an item could be found.</returns>
+		public static int IndexOfLast<T>(this IList<T> list, Func<T, int, bool> predicate)
+		{
+			for (int i = list.Count - 1; i >= 0; --i)
+				if (predicate(list[i], i))
+					return i;
+
+			return -1;
+		}
+
+		/// <summary>
 		/// Removes all items for which the predicate function returns <c>true.</c>
 		/// </summary>
 		/// <typeparam name="T">Type of list items</typeparam>

@@ -100,6 +100,8 @@ namespace Altaxo.Gui.Graph
 		protected IMVCANController _layerContentsController;
 		protected IMVCAController[] _axisScaleController;
 
+		protected IMVCANController _layerGraphItemsController;
+
 		private Dictionary<CSLineID, AxisStyleControllerConditionalGlue> _axisControl;
 		private Dictionary<CSPlaneID, IMVCANController> _GridStyleController;
 		private object _lastControllerApplied;
@@ -180,6 +182,7 @@ namespace Altaxo.Gui.Graph
 				_view.AddTab("MajorLabels", "Major labels");
 				_view.AddTab("MinorLabels", "Minor labels");
 				_view.AddTab("GridStyle", "Grid style");
+				_view.AddTab("GraphicItems", "GraphicItems");
 
 				// Set the controller of the current visible Tab
 				SetCurrentTabController(true);
@@ -227,6 +230,19 @@ namespace Altaxo.Gui.Graph
 		{
 			switch (_currentPageName)
 			{
+				case "GraphicItems":
+					if (pageChanged)
+					{
+						_view.SelectTab(_currentPageName);
+					}
+					if (null == _layerGraphItemsController)
+					{
+						_layerGraphItemsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.GraphObjects }, typeof(IMVCANController), UseDocument.Directly);
+					}
+					_currentController = _layerGraphItemsController;
+					_view.CurrentContent = _currentController.ViewObject;
+					break;
+
 				case "Contents":
 					if (pageChanged)
 					{

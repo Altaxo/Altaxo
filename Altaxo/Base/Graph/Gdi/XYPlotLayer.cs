@@ -1017,6 +1017,12 @@ namespace Altaxo.Graph.Gdi
 			{
 				int idx = -1;
 				int maxIdx = _plotItemPlaceHolders.Count;
+
+				if (maxIdx == 0) // take special measures if not one plot item place holder -> this can happen when deserializing old versions prior to the introduction of place holders
+				{
+					InsertTheVeryFirstPlotItemPlaceHolder();
+				}
+
 				foreach (var ele in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToLeavesWithIndex<IGPlotItem>(
 					_plotItems,
 					0,
@@ -1038,6 +1044,29 @@ namespace Altaxo.Graph.Gdi
 				for (int i = _plotItemPlaceHolders.Count - 1; i > idx; --i)
 					_plotItemPlaceHolders.RemoveAt(i);
 			}
+		}
+
+		/// <summary>
+		/// Inserts the very first plot item place holder at the right place. It is not tested if this is the first - Thus make sure that no plot item place holder is there.
+		/// </summary>
+		private void InsertTheVeryFirstPlotItemPlaceHolder()
+		{
+			// we should place the first plot item place holder after all of these types:
+			// Background, all kind of axis styles
+
+			var predicate = new Func<IGraphicBase, int, bool>(
+				(item, i) =>
+				{
+					return (item is GridPlanesPlaceHolder) || (item is AxisStylePlaceHolderBase);
+				}
+				);
+
+			int idx = _graphObjects.IndexOfLast(predicate);
+
+			if (idx < 0)
+				idx = 0;
+
+			_graphObjects.Insert(idx, new PlotItemPlaceHolder());
 		}
 
 		public override void PaintPreprocessing()
@@ -1266,7 +1295,7 @@ namespace Altaxo.Graph.Gdi
 			if (object.ReferenceEquals(_plotItems, o))
 				return _plotItems.Name;
 
-			return null;
+			return base.GetNameOfChildObject(o);
 		}
 
 		#endregion IDocumentNode Members
@@ -1773,6 +1802,11 @@ namespace Altaxo.Graph.Gdi
 
 			#endregion Serialization
 
+			public override string ToString()
+			{
+				return string.Format("Axis line style #{0}", Index);
+			}
+
 			public override object Clone()
 			{
 				var r = new AxisStyleLinePlaceHolder();
@@ -1840,6 +1874,11 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			#endregion Serialization
+
+			public override string ToString()
+			{
+				return string.Format("Axis major labels #{0}", Index);
+			}
 
 			public override object Clone()
 			{
@@ -1913,6 +1952,11 @@ namespace Altaxo.Graph.Gdi
 
 			#endregion Serialization
 
+			public override string ToString()
+			{
+				return string.Format("Axis minor labels #{0}", Index);
+			}
+
 			public override object Clone()
 			{
 				var r = new AxisStyleMinorLabelPlaceHolder();
@@ -1984,6 +2028,11 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			#endregion Serialization
+
+			public override string ToString()
+			{
+				return string.Format("Axis title #{0}", Index);
+			}
 
 			public override object Clone()
 			{
@@ -2073,6 +2122,11 @@ namespace Altaxo.Graph.Gdi
 
 			#endregion Serialization
 
+			public override string ToString()
+			{
+				return string.Format("Grid plane(s)");
+			}
+
 			public override void Paint(Graphics g, object obj)
 			{
 				var layer = ParentObject as XYPlotLayer;
@@ -2117,6 +2171,11 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			#endregion Serialization
+
+			public override string ToString()
+			{
+				return "Plot item";
+			}
 
 			public override void Paint(Graphics g, object obj)
 			{
@@ -2173,6 +2232,11 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			#endregion Serialization
+
+			public override string ToString()
+			{
+				return string.Format("Legend text");
+			}
 		}
 
 		#endregion IGraphicShape placeholder for items in XYPlotLayer

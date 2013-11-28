@@ -284,7 +284,8 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected HostLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
+			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
+			Grid = new GridPartitioning();
 			InternalInitializeGraphObjectsCollection();
 		}
 
