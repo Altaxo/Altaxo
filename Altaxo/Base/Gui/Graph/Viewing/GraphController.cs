@@ -825,7 +825,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			else
 			{
-				SetViewsScrollbarParameter();
+				if (null != _view && 0 != _view.ViewportSizeInPoints.X && 0 != _view.ViewportSizeInPoints.Y)
+					SetViewsScrollbarParameter();
 			}
 		}
 

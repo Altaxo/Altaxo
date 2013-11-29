@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -36,11 +39,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Graph.Viewing
 {
 	using Altaxo.Graph;
+
 	/// <summary>
 	/// Interaction logic for GraphView.xaml
 	/// </summary>
@@ -51,12 +53,15 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private WeakReference _controller = new WeakReference(null);
 
-		GdiToWpfBitmap _wpfGdiBitmap = new GdiToWpfBitmap(100,100);
+		private GdiToWpfBitmap _wpfGdiBitmap = new GdiToWpfBitmap(100, 100);
+		private int _cachedGraphSizeX, _cachedGraphSizeY;
 
 		public GraphViewWpf()
 		{
 			InitializeComponent();
 			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
+
+			_renderTrigger.RenderTriggered += EhRenderingTriggered;
 		}
 
 		public virtual void Dispose()
@@ -77,25 +82,17 @@ namespace Altaxo.Gui.Graph.Viewing
 				return (Altaxo.Gui.Graph.Viewing.GraphControllerWpf)_controller.Target;
 			}
 		}
-	
+
 		public void FocusOnGraphPanel()
 		{
 			bool result = _graphPanel.Focus();
 			Keyboard.Focus(_graphPanel);
 		}
 
-	
-
-	
-
 		public void SetPanelCursor(Cursor cursor)
 		{
 			_graphPanel.Cursor = cursor;
 		}
-
-
-	
-
 
 		/// <summary>
 		/// Called by the PresentationGraphController to get a new graphics context for painting.
@@ -118,18 +115,42 @@ namespace Altaxo.Gui.Graph.Viewing
 			_wpfGdiBitmap.EndGdiPainting();
 		}
 
-
-
-
-
 		/// <summary>
 		/// Triggers the rendering of the graph area by invalidating its visual. This function is safe to call from other threads.
 		/// </summary>
 		public void TriggerRenderingOfGraphArea()
 		{
-			Current.Gui.Execute(() => this.InvalidateVisual());
+			Current.Gui.Execute(() => _renderTrigger.InvalidateVisual());
 		}
 
+		/// <summary>
+		/// This event is triggered by the render trigger.
+		/// </summary>
+		private void EhRenderingTriggered(double xsize, double ysize)
+		{
+			int actWidth = (int)xsize;
+			int actHeight = (int)ysize;
+
+			if (actWidth <= 0 || actHeight <= 0)
+				return;
+
+			var gc = Controller;
+			if (null != gc)
+			{
+				if (_cachedGraphSizeX != actWidth || _cachedGraphSizeY != actHeight)
+				{
+					_cachedGraphSizeX = actWidth;
+					_cachedGraphSizeY = actHeight;
+
+					_wpfGdiBitmap.Resize(_cachedGraphSizeX, _cachedGraphSizeY); ;
+					_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
+					_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
+					gc.EhView_GraphPanelSizeChanged(); // inform
+				}
+
+				gc.RepaintGraphAreaImmediately(); // triggers the rendering of the graph into a bitmap. At the end of the rendering process
+			}
+		}
 
 		/// <summary>
 		/// Gets the pixel dimensions of the graph bitmap.
@@ -138,11 +159,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return _wpfGdiBitmap.GdiBitmap.Size;
+				return new System.Drawing.Size(_cachedGraphSizeX, _cachedGraphSizeY);
 			}
 		}
 
-		PointD2D GetMousePosition(MouseEventArgs e)
+		private PointD2D GetMousePosition(MouseEventArgs e)
 		{
 			var p = e.GetPosition(_graphPanel);
 			return new Altaxo.Graph.PointD2D(p.X, p.Y);
@@ -152,7 +173,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			var guiController = Controller;
 			if (null != guiController)
-				guiController.EhView_GraphPanelMouseMove(GetMousePosition(e),e);
+				guiController.EhView_GraphPanelMouseMove(GetMousePosition(e), e);
 		}
 
 		private void EhGraphPanel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -174,7 +195,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			var guiController = Controller;
 			if (null != guiController)
-				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e),e);
+				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e), e);
 		}
 
 		private void EhGraphPanel_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -196,6 +217,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private void EhGraphPanel_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
+			/*
 			var gc = Controller;
 			if (null != gc)
 			{
@@ -212,10 +234,10 @@ namespace Altaxo.Gui.Graph.Viewing
 				{
 				}
 			}
+			 * */
 		}
 
-
-		#region  Altaxo.Gui.Graph.Viewing.IGraphView
+		#region Altaxo.Gui.Graph.Viewing.IGraphView
 
 		object Altaxo.Gui.Graph.Viewing.IGraphView.GuiInitiallyFocusedElement
 		{
@@ -232,7 +254,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			set
 			{
-					_controller = new WeakReference(value as Altaxo.Gui.Graph.Viewing.GraphController); 
+				_controller = new WeakReference(value as Altaxo.Gui.Graph.Viewing.GraphController);
 			}
 		}
 
@@ -240,7 +262,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Causes a complete redrawing of the graph. The cached graph bitmap will be marked as dirty and a repainting of the graph area is triggered with Gui render priority.
 		/// Note: it is save to call this function from non-Gui threads.
 		/// </summary>
-			void Altaxo.Gui.Graph.Viewing.IGraphView.InvalidateCachedGraphBitmapAndRepaint()
+		void Altaxo.Gui.Graph.Viewing.IGraphView.InvalidateCachedGraphBitmapAndRepaint()
 		{
 			// TODO (Wpf) -> start a background thread which draws the image
 			// for the time being, we do the work directly
@@ -252,15 +274,12 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		protected override void OnRender(DrawingContext drawingContext)
 		{
-			var guiController = Controller;
-			if(null!=guiController)
-				guiController.RepaintGraphAreaImmediately();
 			base.OnRender(drawingContext);
 		}
 
 		public string GraphViewTitle
 		{
-			set 
+			set
 			{
 				// TODO (Wpf)
 			}
@@ -268,7 +287,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public bool ShowGraphScrollBars
 		{
-			set 
+			set
 			{
 				_horizontalScrollBar.IsEnabled = value;
 				_verticalScrollBar.IsEnabled = value;
@@ -320,21 +339,20 @@ namespace Altaxo.Gui.Graph.Viewing
 				{
 					_layerToolBar.Children.Clear();
 
-					foreach(var node in value.TakeFromHereToFirstLeaves())
+					foreach (var node in value.TakeFromHereToFirstLeaves())
 					{
 						var newbutton = new ToggleButton() { Content = node.Text, Tag = node.Tag };
 						newbutton.Margin = new Thickness(node.Level * 8, 2, 1, 0);
 						newbutton.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-							newbutton.Click += new RoutedEventHandler(EhLayerButton_Click);
-							newbutton.ContextMenuOpening += new ContextMenuEventHandler(EhLayerButton_ContextMenuOpening);
-							_layerToolBar.Children.Add(newbutton);
+						newbutton.Click += new RoutedEventHandler(EhLayerButton_Click);
+						newbutton.ContextMenuOpening += new ContextMenuEventHandler(EhLayerButton_ContextMenuOpening);
+						_layerToolBar.Children.Add(newbutton);
 					}
 				}
-				
 			}
 		}
 
-		void EhLayerButton_Click(object sender, RoutedEventArgs e)
+		private void EhLayerButton_Click(object sender, RoutedEventArgs e)
 		{
 			var gc = Controller;
 			if (null != gc)
@@ -345,7 +363,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		void EhLayerButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		private void EhLayerButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
 			var gc = Controller;
 			if (null != gc)
@@ -368,21 +386,19 @@ namespace Altaxo.Gui.Graph.Viewing
 					var button = (ToggleButton)_layerToolBar.Children[i];
 					button.IsChecked = ccl.SequenceEqual((int[])button.Tag);
 				}
-				
 			}
 		}
 
 		public Altaxo.Graph.PointD2D ViewportSizeInPoints
 		{
-			get 
+			get
 			{
 				const double factor = 72.0 / 96.0;
-				return new Altaxo.Graph.PointD2D(_graphPanel.ActualWidth * factor, _graphPanel.ActualHeight * factor);
+				return new Altaxo.Graph.PointD2D(_cachedGraphSizeX * factor, _cachedGraphSizeY * factor);
 			}
 		}
 
-
-		#endregion
+		#endregion Altaxo.Gui.Graph.Viewing.IGraphView
 
 		private void EhHorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
 		{
@@ -407,14 +423,14 @@ namespace Altaxo.Gui.Graph.Viewing
 		private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var gc = Controller;
-			e.CanExecute = null!=gc && gc.IsCmdCopyEnabled();
+			e.CanExecute = null != gc && gc.IsCmdCopyEnabled();
 			e.Handled = true;
 		}
 
 		private void EhEnableCmdCut(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var gc = Controller;
-			e.CanExecute = null!=gc && gc.IsCmdCutEnabled();
+			e.CanExecute = null != gc && gc.IsCmdCutEnabled();
 			e.Handled = true;
 		}
 
@@ -471,7 +487,5 @@ namespace Altaxo.Gui.Graph.Viewing
 				e.Handled = true;
 			}
 		}
-
-	
 	}
 }

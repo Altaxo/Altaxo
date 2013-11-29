@@ -527,8 +527,12 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			else // not for printing
 			{
+				var viewWpfGraphSize = _viewWpf.GraphSize;
+				if (viewWpfGraphSize.IsEmpty)
+					return; // nothing to do so far
+
 				// if neccessary, create a new bitmap for caching the graph image.
-				if (_cachedGraphImage == null || _cachedGraphImage.Width != _viewWpf.GraphSize.Width || _cachedGraphImage.Height != _viewWpf.GraphSize.Height)
+				if (_cachedGraphImage == null || _cachedGraphImage.Width != viewWpfGraphSize.Width || _cachedGraphImage.Height != viewWpfGraphSize.Height)
 				{
 					if (_cachedGraphImage != null)
 					{
@@ -540,7 +544,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					// using(Graphics g = m_View.CreateGraphGraphics())
 					try
 					{
-						_cachedGraphImage = new Bitmap(_viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height, g);
+						_cachedGraphImage = new Bitmap(viewWpfGraphSize.Width, viewWpfGraphSize.Height, g);
 					}
 					catch (Exception ex)
 					{
@@ -562,12 +566,12 @@ namespace Altaxo.Gui.Graph.Viewing
 						_isCachedGraphImageDirty = false;
 					}
 
-					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, _viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height);
+					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, viewWpfGraphSize.Width, viewWpfGraphSize.Height);
 					ScaleForPaint(g, bForPrinting);
 				}
 				else
 				{
-					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, _viewWpf.GraphSize.Width, _viewWpf.GraphSize.Height);
+					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, viewWpfGraphSize.Width, viewWpfGraphSize.Height);
 					ScaleForPaint(g, bForPrinting); // to be in the same state as when drawing unbuffered
 				}
 
