@@ -847,7 +847,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </summary>
 		/// <param name="target">The target hit (should be plot item) to remove.</param>
 		/// <returns>True if the item was removed.</returns>
-		private bool EhHitTestObject_Remove(IHitTestObject target)
+		public bool EhHitTestObject_Remove(IHitTestObject target)
 		{
 			return this.Remove(target.HittedObject as IGPlotItem);
 		}

@@ -1064,7 +1064,9 @@ namespace Altaxo.Graph.Gdi
 			int idx = _graphObjects.IndexOfLast(predicate);
 
 			if (idx < 0)
-				idx = 0;
+				idx = 0; // insert at first position if nothing was found
+			else
+				++idx; // insert after the found item
 
 			_graphObjects.Insert(idx, new PlotItemPlaceHolder());
 		}
@@ -1213,25 +1215,6 @@ namespace Altaxo.Graph.Gdi
 		#endregion Event firing
 
 		#region Handler of child events
-
-		private static bool EhTitlesOrLegend_Remove(IHitTestObject o)
-		{
-			GraphicBase go = (GraphicBase)o.HittedObject;
-			var layer = o.ParentLayer as XYPlotLayer;
-			if (null != layer)
-			{
-				foreach (AxisStyle style in layer._axisStyles)
-				{
-					if (object.ReferenceEquals(go, style.Title))
-					{
-						style.Title = null;
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
 
 		/// <summary>
 		/// This handler is called if a x-boundary from any of the plotassociations of this layer
@@ -1856,6 +1839,14 @@ namespace Altaxo.Graph.Gdi
 						hit.DoubleClick = AxisScaleEditorMethod;
 						return hit;
 					}
+
+					// hit testing the axes - secondly now with the ticks
+					// in this case the TitleAndFormat editor for the axis should be shown
+					if (axisStyle.ShowAxisLine && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord(), true)))
+					{
+						hit.DoubleClick = AxisStyleEditorMethod;
+						return hit;
+					}
 				}
 				return base.HitTest(hitData);
 			}
@@ -2052,6 +2043,10 @@ namespace Altaxo.Graph.Gdi
 
 			#endregion Serialization
 
+			public AxisStyleTitlePlaceHolder()
+			{
+			}
+
 			public override string ToString()
 			{
 				return string.Format("Axis title #{0}", Index);
@@ -2087,12 +2082,30 @@ namespace Altaxo.Graph.Gdi
 					var axisStyle = layer._axisStyles.ItemAt(Index);
 					if (null != axisStyle && null != axisStyle.Title && null != (hit = axisStyle.Title.HitTest(hitData)))
 					{
-						//hit.DoubleClick =  Tit AxisLabelMinorStyleEditorMethod;
-						hit.Remove = EhTitlesOrLegend_Remove;
+						if (null == hit.Remove)
+							hit.Remove = EhRemoveAxisStyleTitle;
 						return hit;
 					}
 				}
 				return base.HitTest(hitData);
+			}
+
+			private static bool EhRemoveAxisStyleTitle(IHitTestObject o)
+			{
+				GraphicBase go = (GraphicBase)o.HittedObject;
+				var layer = o.ParentLayer as XYPlotLayer;
+				if (null != layer)
+				{
+					foreach (AxisStyle style in layer._axisStyles)
+					{
+						if (object.ReferenceEquals(go, style.Title))
+						{
+							style.Title = null;
+							return true;
+						}
+					}
+				}
+				return false;
 			}
 
 			public override void Paint(Graphics g, object obj)
@@ -2197,6 +2210,21 @@ namespace Altaxo.Graph.Gdi
 
 			public override string ToString()
 			{
+				if (null == PlotItemParent)
+				{
+					return "Plot item collection (root)";
+				}
+				else
+				{
+					if (0 <= PlotItemIndex && PlotItemIndex < PlotItemParent.Count)
+					{
+						var pi = PlotItemParent[PlotItemIndex];
+						if (pi is PlotItemCollection)
+							return "Plot item collection";
+						else
+							return "Plot item " + pi.ToString();
+					}
+				}
 				return "Plot item";
 			}
 
@@ -2239,7 +2267,15 @@ namespace Altaxo.Graph.Gdi
 				if (null == layer)
 					return null;
 
-				return PlotItemParent[PlotItemIndex].HitTest(layer, hitData.GetHittedPointInWorldCoord());
+				var result = PlotItemParent[PlotItemIndex].HitTest(layer, hitData.GetHittedPointInWorldCoord());
+				if (null != result)
+				{
+					if (null == result.DoubleClick)
+						result.DoubleClick = PlotItemEditorMethod;
+					if (null == result.Remove)
+						result.Remove = PlotItemParent.EhHitTestObject_Remove;
+				}
+				return result;
 			}
 		}
 

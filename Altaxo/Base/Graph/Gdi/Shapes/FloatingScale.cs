@@ -381,7 +381,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override void Paint(Graphics g, object obj)
 		{
-			var layer = (XYPlotLayer)obj;
+			var layer = obj as XYPlotLayer;
+
+			if (null == layer)
+			{
+				PaintErrorInvalidLayerType(g, obj);
+				return;
+			}
 
 			Logical3D rBegin;
 			layer.CoordinateSystem.LayerToLogicalCoordinates(X, Y, out rBegin);
@@ -479,6 +485,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_background.Draw(g, bounds1);
 				_axisStyle.Paint(g, privLayer, privLayer.GetAxisStyleInformation);
 			}
+		}
+
+		private void PaintErrorInvalidLayerType(Graphics g, object obj)
+		{
+			string errorMsg = "FloatingScale:Error: Invalid layer type";
+			var font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Regular, GraphicsUnit.World);
+			var size = g.MeasureString(errorMsg, font);
+			if (obj is HostLayer)
+			{
+				var destSizeX = 0.2 * ((HostLayer)obj).Size.X;
+				var factor = destSizeX / size.Width;
+				font = new Font(FontFamily.GenericSansSerif, (float)(font.Size * factor), FontStyle.Regular, GraphicsUnit.World);
+			}
+
+			g.DrawString(errorMsg, font, Brushes.Red, (PointF)this.Position);
+			size = g.MeasureString(errorMsg, font);
+
+			_cachedPath = new GraphicsPath();
+			_cachedPath.AddRectangle(new RectangleF((PointF)this.Position, size));
+
+			this._location.SetSizeInAutoSizeMode(size);
 		}
 
 		#region Inner classes
