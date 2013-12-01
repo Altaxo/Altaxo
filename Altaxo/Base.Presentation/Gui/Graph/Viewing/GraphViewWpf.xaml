@@ -7,7 +7,7 @@
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Viewing"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition />
 		</Grid.RowDefinitions>
@@ -24,7 +24,7 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<local:RenderTrigger x:Name="_renderTrigger" />
-			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown" SizeChanged="EhGraphPanel_SizeChanged">
+			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown">
 				<Image.CommandBindings>
 					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy" />
 					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut" />

@@ -64,10 +64,14 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnClick(position, e);
 
+			_cachedActiveLayer = _grac.ActiveLayer;
+			_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+			_cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+
 			// get the page coordinates (in Point (1/72") units)
-			var graphCoord = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
+			var rootLayerCoord = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
 			// with knowledge of the current active layer, calculate the layer coordinates from them
-			var layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
+			var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
 			TextGraphic tgo = new TextGraphic();
 			tgo.SetParentSize(_grac.ActiveLayer.Size, false);

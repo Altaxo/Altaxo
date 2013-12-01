@@ -116,7 +116,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Triggers the rendering of the graph area by invalidating its visual. This function is safe to call from other threads.
+		/// Triggers the rendering of the graph area by invalidating the render trigger visual (this function is safe to call from other threads).
+		/// When the RenderTrigger's OnRender function is called, the RenderTrigger fires the event that called then <see cref="EhRenderingTriggered"/>.
+		///
 		/// </summary>
 		public void TriggerRenderingOfGraphArea()
 		{
@@ -124,7 +126,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// This event is triggered by the render trigger.
+		/// This event is triggered by the render trigger. Since it is an event from a framework element, it is
+		/// always called in Gui thread.
 		/// </summary>
 		private void EhRenderingTriggered(double xsize, double ysize)
 		{
@@ -213,28 +216,6 @@ namespace Altaxo.Gui.Graph.Viewing
 				bool result = guiController.EhView_ProcessCmdKey(e);
 				e.Handled = result;
 			}
-		}
-
-		private void EhGraphPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			/*
-			var gc = Controller;
-			if (null != gc)
-			{
-				int actWidth = (int)_graphPanel.ActualWidth;
-				int actHeight = (int)_graphPanel.ActualHeight;
-				if (actWidth > 0 && actHeight > 0)
-				{
-					_wpfGdiBitmap.Resize((int)_graphPanel.ActualWidth, (int)_graphPanel.ActualHeight);
-					_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
-					_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
-					gc.EhView_GraphPanelSizeChanged();
-				}
-				else // either actWidth or actHeight was 0, thus the graph panel is momentarily invisible
-				{
-				}
-			}
-			 * */
 		}
 
 		#region Altaxo.Gui.Graph.Viewing.IGraphView

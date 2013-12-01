@@ -43,19 +43,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected GraphControllerWpf _grac;
 
-		protected PointD2D _positionCurrentMouseInRootLayerCoordinates;
-
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
-
-		protected HostLayer _cachedActiveLayer;
-		protected TransformationMatrix2D _cachedActiveLayerTransformation;
-		protected Matrix _cachedActiveLayerTransformationGdi;
-
-		protected struct POINT
-		{
-			public PointD2D RootLayerCoordinates;
-			public PointD2D LayerCoordinates;
-		}
 
 		protected POINT[] _Points = new POINT[2];
 		protected int _currentPoint;

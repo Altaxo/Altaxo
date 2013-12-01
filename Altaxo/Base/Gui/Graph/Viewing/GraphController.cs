@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		protected double _areaFillingFactor = 1.2;
 
-		protected PointD2D _positionOfViewportsUpperLeftCornerInGraphCoordinates;
+		protected PointD2D _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
 
 		private NGTreeNode _layerStructure;
 
@@ -104,6 +104,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				var o = (GraphViewLayout)args[0];
 				_isAutoZoomActive = o.IsAutoZoomActive;
 				_zoomFactor = o.ZoomFactor;
+				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = o.PositionOfViewportsUpperLeftCornerInRootLayerCoordinates;
 				InternalInitializeGraphDocument(o.GraphDocument);
 			}
 			else
@@ -210,11 +211,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </value>
 		public PointD2D PositionOfViewportsUpperLeftCornerInGraphCoordinates
 		{
-			get { return _positionOfViewportsUpperLeftCornerInGraphCoordinates; }
+			get { return _positionOfViewportsUpperLeftCornerInRootLayerCoordinates; }
 			set
 			{
-				var oldVal = _positionOfViewportsUpperLeftCornerInGraphCoordinates;
-				_positionOfViewportsUpperLeftCornerInGraphCoordinates = value;
+				var oldVal = _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
+				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = value;
 				if (oldVal != value && null != _view)
 				{
 					SetViewsScrollbarParameter();
@@ -371,7 +372,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		public void ZoomAroundPivotPoint(double newZoomValue, PointD2D graphCoordinate)
 		{
 			var oldViewportCoord = (graphCoordinate - PositionOfViewportsUpperLeftCornerInGraphCoordinates) * _zoomFactor;
-			_positionOfViewportsUpperLeftCornerInGraphCoordinates = graphCoordinate - oldViewportCoord / newZoomValue;
+			_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = graphCoordinate - oldViewportCoord / newZoomValue;
 			var newPos = (graphCoordinate - PositionOfViewportsUpperLeftCornerInGraphCoordinates) * newZoomValue;
 			ZoomFactor = newZoomValue;
 		}
@@ -389,7 +390,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		private void CalculateAutoZoom()
 		{
 			_zoomFactor = AutoZoomFactor;
-			_positionOfViewportsUpperLeftCornerInGraphCoordinates = PositionOfMarginsUpperLeftCornerInGraphCoordinates;
+			_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = PositionOfMarginsUpperLeftCornerInGraphCoordinates;
 		}
 
 		protected void RefreshManualZoom()
@@ -407,7 +408,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				// we center the graph in the viewport
 				var gz = _doc.RootLayer.Size;
 				var vz = SizeOfViewportInGraphCoordinates;
-				_positionOfViewportsUpperLeftCornerInGraphCoordinates = new PointD2D((gz.X - vz.X) / 2, (gz.Y - vz.Y) / 2);
+				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = new PointD2D((gz.X - vz.X) / 2, (gz.Y - vz.Y) / 2);
 			}
 
 			if (null != _view)
@@ -515,7 +516,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return new GraphViewLayout(_isAutoZoomActive, _zoomFactor, _doc);
+				return new GraphViewLayout(_isAutoZoomActive, _zoomFactor, _doc, _positionOfViewportsUpperLeftCornerInRootLayerCoordinates);
 			}
 		}
 
@@ -832,7 +833,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public void EhView_Scroll()
 		{
-			_positionOfViewportsUpperLeftCornerInGraphCoordinates = ConvertScrollbarValueToGraphCoordinate(_view.GraphScrollPosition);
+			_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = ConvertScrollbarValueToGraphCoordinate(_view.GraphScrollPosition);
 			_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 

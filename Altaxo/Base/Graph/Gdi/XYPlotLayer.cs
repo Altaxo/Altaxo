@@ -477,7 +477,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public void ClearLegends()
 		{
-			for (int i = this.GraphObjects.Count; i >= 0; --i)
+			for (int i = this.GraphObjects.Count - 1; i >= 0; --i)
 			{
 				if (GraphObjects[i] is LegendText)
 					GraphObjects.RemoveAt(i);
@@ -1119,22 +1119,45 @@ namespace Altaxo.Graph.Gdi
 		{
 			IHitTestObject hit;
 
-			if (!plotItemsOnly)
-			{
-				if (null != (hit = base.HitTest(parentHitTestData, plotItemsOnly)))
-					return hit;
-			}
+			// first test the items in the child layers, since they are plotted on top of our own items
+			if (null != (hit = base.HitTest(parentHitTestData, plotItemsOnly)))
+				return hit;
 
-			HitTestPointData layerHitTestData = parentHitTestData.NewFromAdditionalTransformation(_transformation);
-			var layerCoord = layerHitTestData.GetHittedPointInWorldCoord();
-			if (null != (hit = _plotItems.HitTest(this, layerCoord)))
-			{
-				if (hit.ParentLayer == null)
-					hit.ParentLayer = this;
+			/*
+				if (plotItemsOnly)
+				{
+					HitTestPointData layerHitTestData = parentHitTestData.NewFromAdditionalTransformation(_transformation);
+					var layerCoord = layerHitTestData.GetHittedPointInWorldCoord();
+					if (null != (hit = _plotItems.HitTest(this, layerCoord)))
+					{
+						if (hit.ParentLayer == null)
+							hit.ParentLayer = this;
 
-				if (hit.DoubleClick == null)
-					hit.DoubleClick = PlotItemEditorMethod;
-				return ForwardTransform(hit);
+						if (hit.DoubleClick == null)
+							hit.DoubleClick = PlotItemEditorMethod;
+						return ForwardTransform(hit);
+					}
+				}
+			 */
+
+			if (plotItemsOnly)
+			{
+				HitTestPointData localCoord = parentHitTestData.NewFromAdditionalTransformation(this._transformation);
+
+				// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+				for (int i = _graphObjects.Count - 1; i >= 0; --i)
+				{
+					var plotItemPlaceHolder = _graphObjects[i] as PlotItemPlaceHolder;
+					if (null == plotItemPlaceHolder)
+						continue;
+
+					hit = plotItemPlaceHolder.HitTest(localCoord);
+					if (null != hit)
+					{
+						hit.ParentLayer = this;
+						return ForwardTransform(hit);
+					}
+				}
 			}
 
 			return null;
@@ -2204,6 +2227,19 @@ namespace Altaxo.Graph.Gdi
 				var r = new PlotItemPlaceHolder();
 				r.CopyFrom(this);
 				return r;
+			}
+
+			public override IHitTestObject HitTest(HitTestPointData hitData)
+			{
+				if (null == PlotItemParent)
+					return null;
+				if (PlotItemIndex < 0 || PlotItemIndex >= PlotItemParent.Count)
+					return null;
+				var layer = ParentObject as IPlotArea;
+				if (null == layer)
+					return null;
+
+				return PlotItemParent[PlotItemIndex].HitTest(layer, hitData.GetHittedPointInWorldCoord());
 			}
 		}
 

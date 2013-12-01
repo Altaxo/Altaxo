@@ -590,7 +590,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			TransformationMatrix2D result = new TransformationMatrix2D();
 			foreach (var layer in this.TakeFromRootToHere())
-				result.AppendTransform(layer._transformation);
+				result.PrependTransform(layer._transformation);
 			return result;
 		}
 
@@ -649,7 +649,7 @@ namespace Altaxo.Graph.Gdi
 		public PointD2D TransformCoordinatesFromHereToRoot(PointD2D coordinates)
 		{
 			foreach (var layer in this.TakeFromHereToRoot())
-				coordinates = _transformation.TransformPoint(coordinates);
+				coordinates = layer._transformation.TransformPoint(coordinates);
 			return coordinates;
 		}
 
@@ -1055,6 +1055,22 @@ namespace Altaxo.Graph.Gdi
 					hit = new HitTestObject(layercorners, this);
 					hit.DoubleClick = LayerPositionEditorMethod;
 					return ForwardTransform(hit);
+				}
+			}
+			else // Plot Items Only
+			{
+				// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+				for (int i = _graphObjects.Count - 1; i >= 0; --i)
+				{
+					var layer = _graphObjects[i] as HostLayer;
+					if (null == layer)
+						continue;
+					hit = layer.HitTest(localCoord, plotItemsOnly);
+					if (null != hit)
+					{
+						System.Diagnostics.Debug.Assert(hit.ParentLayer != null, "Parent layer must be set, because the hitted plot item originates from another layer!");
+						return ForwardTransform(hit);
+					}
 				}
 			}
 

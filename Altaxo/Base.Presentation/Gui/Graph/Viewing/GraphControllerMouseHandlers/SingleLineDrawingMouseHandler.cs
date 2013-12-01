@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,163 +19,147 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
+	/// <summary>
+	/// Handles the drawing of a straight single line.
+	/// </summary>
+	public class SingleLineDrawingMouseHandler : MouseStateHandler
+	{
+		#region Member variables
 
-  /// <summary>
-  /// Handles the drawing of a straight single line.
-  /// </summary>
-  public class SingleLineDrawingMouseHandler : MouseStateHandler
-  {
-    #region Member variables
-
-    protected GraphControllerWpf _grac;
-
-    protected PointD2D _positionCurrentMouseInGraphCoordinates;
+		protected GraphControllerWpf _grac;
 
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
-    
+		protected POINT[] _Points = new POINT[2];
+		protected int _currentPoint;
 
-    protected struct POINT
-    {
-      public PointD2D GraphCoordinate;
-      public PointD2D LayerCoordinate;
-    }
+		#endregion Member variables
 
-    protected POINT[] _Points = new POINT[2];
-    protected int _currentPoint;
+		public SingleLineDrawingMouseHandler(GraphControllerWpf view)
+		{
+			this._grac = view;
 
-
-    #endregion
-
-    public SingleLineDrawingMouseHandler(GraphControllerWpf view)
-    {
-      this._grac = view;
-
-      if(_grac!=null)
-        _grac.SetPanelCursor(Cursors.Pen);
-    }
+			if (_grac != null)
+				_grac.SetPanelCursor(Cursors.Pen);
+		}
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
 		{
 			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.SingleLineDrawing; }
 		}
 
-
-    /// <summary>
-    /// Handles the drawing of a straight single line.
-    /// </summary>
+		/// <summary>
+		/// Handles the drawing of a straight single line.
+		/// </summary>
 		/// <param name="position">Mouse position.</param>
-    /// <param name="e">EventArgs.</param>
-    /// <returns>The mouse state handler for handling the next mouse events.</returns>
+		/// <param name="e">EventArgs.</param>
+		/// <returns>The mouse state handler for handling the next mouse events.</returns>
 		public override void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
-    {
-      base.OnClick(position, e);
+		{
+			base.OnClick(position, e);
 
-      // get the page coordinates (in Point (1/72") units)
-      var graphCoord = _positionCurrentMouseInGraphCoordinates;
-      // with knowledge of the current active layer, calculate the layer coordinates from them
-      var layerCoord = _grac.ActiveLayer.TransformCoordinatesFromParentToHere(graphCoord);
+			if (0 == _currentPoint)
+			{
+				_cachedActiveLayer = _grac.ActiveLayer;
+				_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+				_cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+			}
 
-      _Points[_currentPoint].LayerCoordinate = layerCoord;
-      _Points[_currentPoint].GraphCoordinate = graphCoord;
-      _currentPoint++;
+			// get the page coordinates (in Point (1/72") units)
+			var rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
+			// with knowledge of the current active layer, calculate the layer coordinates from them
+			var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
-      if(2==_currentPoint)
-      {
-        FinishDrawing();
-        _currentPoint=0;
-        _grac.SetGraphToolFromInternal( NextMouseHandlerType);
-      }
-     
-    }
+			_Points[_currentPoint].LayerCoordinates = layerCoord;
+			_Points[_currentPoint].RootLayerCoordinates = rootLayerCoord;
+			_currentPoint++;
 
+			if (2 == _currentPoint)
+			{
+				FinishDrawing();
+				_currentPoint = 0;
+				_grac.SetGraphToolFromInternal(NextMouseHandlerType);
+			}
+		}
 
 		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
-    {
-      base.OnMouseMove (position, e);
+		{
+			base.OnMouseMove(position, e);
 
-			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
+			_positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
 
-      ModifyCurrentMousePrintAreaCoordinate();
+			ModifyCurrentMousePrintAreaCoordinate();
 
-      _grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
-   
+			_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+		}
 
-   
-    }
-
-    protected virtual void ModifyCurrentMousePrintAreaCoordinate()
-    {
-      if(_currentPoint>0)
-      {
+		protected virtual void ModifyCurrentMousePrintAreaCoordinate()
+		{
+			if (_currentPoint > 0)
+			{
 				bool bControlKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Control); // Control pressed
-				bool bShiftKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);      
-        // draw a temporary lines of all points to the current mouse position
+				bool bShiftKey = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+				// draw a temporary lines of all points to the current mouse position
 
-        if(bShiftKey && _currentPoint>0)
-        {
-          double x = _positionCurrentMouseInGraphCoordinates.X - _Points[_currentPoint-1].GraphCoordinate.X;
-          double y = _positionCurrentMouseInGraphCoordinates.Y - _Points[_currentPoint-1].GraphCoordinate.Y;
+				if (bShiftKey && _currentPoint > 0)
+				{
+					double x = _positionCurrentMouseInRootLayerCoordinates.X - _Points[_currentPoint - 1].RootLayerCoordinates.X;
+					double y = _positionCurrentMouseInRootLayerCoordinates.Y - _Points[_currentPoint - 1].RootLayerCoordinates.Y;
 
-          double r = Math.Sqrt(x*x+y*y);
-          double d = Math.Atan2(y,x);
+					double r = Math.Sqrt(x * x + y * y);
+					double d = Math.Atan2(y, x);
 
-          d = Math.Floor(0.5 + 12*d/Math.PI); // lock every 15 degrees
-          d = d*Math.PI/12;
+					d = Math.Floor(0.5 + 12 * d / Math.PI); // lock every 15 degrees
+					d = d * Math.PI / 12;
 
-          x = r * Math.Cos(d);
-          y = r * Math.Sin(d);
+					x = r * Math.Cos(d);
+					y = r * Math.Sin(d);
 
-          _positionCurrentMouseInGraphCoordinates.X = (x + _Points[_currentPoint-1].GraphCoordinate.X);
-          _positionCurrentMouseInGraphCoordinates.Y = (y + _Points[_currentPoint-1].GraphCoordinate.Y);
-        }
-      }
-    }
+					_positionCurrentMouseInRootLayerCoordinates.X = (x + _Points[_currentPoint - 1].RootLayerCoordinates.X);
+					_positionCurrentMouseInRootLayerCoordinates.Y = (y + _Points[_currentPoint - 1].RootLayerCoordinates.Y);
+				}
+			}
+		}
 
+		/// <summary>
+		/// Draws the temporary line(s) from the first point to the mouse.
+		/// </summary>
+		/// <param name="g"></param>
+		public override void AfterPaint(Graphics g)
+		{
+			base.AfterPaint(g);
 
-    /// <summary>
-    /// Draws the temporary line(s) from the first point to the mouse.
-    /// </summary>
-    /// <param name="g"></param>
-    public override void AfterPaint(Graphics g)
-    {
-      base.AfterPaint ( g);
+			for (int i = 1; i < this._currentPoint; i++)
+				g.DrawLine(Pens.Blue, (PointF)_Points[i - 1].RootLayerCoordinates, (PointF)_Points[i].RootLayerCoordinates);
 
-      for(int i=1;i<this._currentPoint;i++)
-				g.DrawLine(Pens.Blue, (PointF)_Points[i - 1].GraphCoordinate, (PointF)_Points[i].GraphCoordinate);
+			if (_currentPoint > 0)
+				g.DrawLine(Pens.Blue, (PointF)_Points[_currentPoint - 1].RootLayerCoordinates, (PointF)_positionCurrentMouseInRootLayerCoordinates);
+		}
 
-      if(_currentPoint>0)
-        g.DrawLine(Pens.Blue,(PointF)_Points[_currentPoint-1].GraphCoordinate,(PointF)_positionCurrentMouseInGraphCoordinates);
-      
-    }
+		protected virtual void FinishDrawing()
+		{
+			LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
 
-
-    protected virtual void FinishDrawing()
-    {
-      LineShape go = new LineShape(_Points[0].LayerCoordinate,_Points[1].LayerCoordinate);
-
-      // deselect the text tool
-			_grac.SetGraphToolFromInternal( Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-      _grac.ActiveLayer.GraphObjects.Add(go);
-      _grac.InvalidateCachedGraphImageAndRepaintOffline();
-      
-    }
-
-  }
+			// deselect the text tool
+			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
+			_grac.ActiveLayer.GraphObjects.Add(go);
+			_grac.InvalidateCachedGraphImageAndRepaintOffline();
+		}
+	}
 }
