@@ -58,7 +58,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			// Trigger the rendering
 			var action = RenderTriggered;
 			if (null != action)
+			{
+				//System.Diagnostics.Debug.WriteLine("Before firing event RenderTriggered");
 				action(this.ActualWidth, this.ActualHeight);
+				//System.Diagnostics.Debug.WriteLine("After firing event RenderTriggered");
+			}
 		}
 	}
 }

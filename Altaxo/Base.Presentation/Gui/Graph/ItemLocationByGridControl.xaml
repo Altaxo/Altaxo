@@ -36,6 +36,8 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Grid column:" />
@@ -61,5 +63,7 @@
 
 		<Label Grid.Column="2" Grid.Row="6" Content="ScaleY:" />
 		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="6" />
+		
+		<CheckBox x:Name="_guiForceFitIntoCell" Grid.ColumnSpan="4" Grid.Row="8" Content="Force content into grid cell (if rotated/sheared)"/>
 	</Grid>
 </UserControl>

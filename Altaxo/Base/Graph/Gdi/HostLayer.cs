@@ -688,7 +688,7 @@ namespace Altaxo.Graph.Gdi
 					var gps = _location as ItemLocationByGrid;
 					var gridRect = newRect = gps.GetAbsolute(ParentLayer._grid, _cachedParentLayerSize);
 
-					if (gps.TakeScaleAngleIntoAccountToFitInCell)
+					if (gps.ForceFitIntoCell)
 					{
 						newRect = RectangleExtensions.GetIncludedRotatedRectanglePositionSize(gridRect, this.Rotation);
 					}
@@ -876,10 +876,16 @@ namespace Altaxo.Graph.Gdi
 				throw new InvalidOperationException("_childLayers was already set!");
 
 			_graphObjects = new GraphicCollection(x => { x.ParentObject = this; x.SetParentSize(this.Size, false); });
+			_graphObjects.CollectionChanged += EhGraphObjectCollectionChanged;
 
 			_childLayers = _graphObjects.CreatePartialViewOfType<HostLayer>((Action<HostLayer>)EhBeforeInsertChildLayer);
 			_childLayers.CollectionChanged += EhChildLayers_CollectionChanged;
 			OnGraphObjectsCollectionInstanceInitialized();
+		}
+
+		void EhGraphObjectCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			OnChanged();
 		}
 
 		/// <summary>

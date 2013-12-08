@@ -39,8 +39,8 @@ namespace Altaxo.Graph
 			if (!(0 <= rotationAngleDegree && rotationAngleDegree <= 90))
 				throw new ArgumentOutOfRangeException("rotationAngleDegree");
 
-			var cosPhi = Math.Cos(rotationAngleDegree * Math.PI / 180);
-			var sinPhi = Math.Sin(rotationAngleDegree * Math.PI / 180);
+			var cosPhi = Math.Cos(Math.PI * (rotationAngleDegree / 180));
+			var sinPhi = Math.Sin(Math.PI * (rotationAngleDegree / 180));
 
 			if (outerRectangleSize.X == outerRectangleSize.Y) // Special case outer rectangle is a square
 			{
@@ -59,8 +59,8 @@ namespace Altaxo.Graph
 				{
 					var denominator = cosPhi * cosPhi - sinPhi * sinPhi;
 					return new PointD2D(
-							(outerRectangleSize.Y * sinPhi - outerRectangleSize.X * cosPhi) / denominator,
-							(outerRectangleSize.Y * cosPhi - outerRectangleSize.X * sinPhi) / denominator
+							Math.Abs((outerRectangleSize.Y * sinPhi - outerRectangleSize.X * cosPhi) / denominator),
+							Math.Abs((outerRectangleSize.Y * cosPhi - outerRectangleSize.X * sinPhi) / denominator)
 							);
 				}
 				else
@@ -70,15 +70,15 @@ namespace Altaxo.Graph
 			}
 			else if (outerRectangleSize.X > outerRectangleSize.Y)// case more width than height
 			{
-				var wth = outerRectangleSize.X / outerRectangleSize.X;
+				var wth = outerRectangleSize.X / outerRectangleSize.Y;
 				var phiLimit1 = 180 * Math.Atan(wth - Math.Sqrt(wth * wth - 1)) / Math.PI;
 				var phiLimit2 = 180 * Math.Atan(wth + Math.Sqrt(wth * wth - 1)) / Math.PI;
 				if (rotationAngleDegree < phiLimit1 || rotationAngleDegree > phiLimit2)
 				{
 					var denominator = cosPhi * cosPhi - sinPhi * sinPhi;
 					return new PointD2D(
-							(outerRectangleSize.Y * sinPhi - outerRectangleSize.X * cosPhi) / denominator,
-							(outerRectangleSize.Y * cosPhi - outerRectangleSize.X * sinPhi) / denominator
+							Math.Abs((outerRectangleSize.Y * sinPhi - outerRectangleSize.X * cosPhi) / denominator),
+							Math.Abs((outerRectangleSize.Y * cosPhi - outerRectangleSize.X * sinPhi) / denominator)
 							);
 				}
 				else
@@ -96,17 +96,17 @@ namespace Altaxo.Graph
 		{
 			var childSize = GetIncludedRotatedRectangleSize(outerRectangleSize, rotationAngleDegree);
 
-			var center = childSize / 2;
+			var center = outerRectangleSize / 2;
 			rotationAngleDegree -= 360 * Math.Floor(rotationAngleDegree / 360);
 			var cosPhi = Math.Cos(Math.PI * rotationAngleDegree / 180);
-			var sinPhi = Math.Cos(Math.PI * rotationAngleDegree / 180);
+			var sinPhi = Math.Sin(Math.PI * rotationAngleDegree / 180);
 
 			var childLeftUpper = new PointD2D(-childSize.X / 2, -childSize.Y / 2);
 
 			// rotate childLeftUpper by Phi
 			var rotChildLeftUpper = new PointD2D(cosPhi * childLeftUpper.X + sinPhi * childLeftUpper.Y, -sinPhi * childLeftUpper.X + cosPhi * childLeftUpper.Y);
 
-			var childPos = rotChildLeftUpper - center;
+			var childPos = rotChildLeftUpper + center;
 
 			return new RectangleD(childPos, childSize);
 		}

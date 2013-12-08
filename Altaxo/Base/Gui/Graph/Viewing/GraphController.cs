@@ -225,7 +225,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
-		/// Position of the upper left corner of the graph's margin in graph coordinates. This depends only from the margin set.
+		/// Calculates the position of the upper left corner of the graph's margin in graph coordinates. This depends only from the margin set. Does not change any member variables.
 		/// </summary>
 		private PointD2D PositionOfMarginsUpperLeftCornerInGraphCoordinates
 		{
@@ -276,7 +276,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				if (_areaFillingFactor != oldValue)
 				{
 					if (_isAutoZoomActive)
-						RefreshAutoZoom();
+						RefreshAutoZoom(true);
 					else
 						RefreshManualZoom();
 				}
@@ -287,7 +287,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#region Zoom
 
-		/// <summary>Gets the current zoom factor that would be used for auto zoom, but does not set it.</summary>
+		/// <summary>Gets the current zoom factor that would be used for auto zoom, but does not set it. Does not change any member variables.</summary>
 		/// <returns>The zoom factor that would be used for autozoom.</returns>
 		public double AutoZoomFactor
 		{
@@ -325,7 +325,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				this._isAutoZoomActive = value;
 				if (this._isAutoZoomActive)
 				{
-					RefreshAutoZoom();
+					RefreshAutoZoom(true);
 				}
 				else
 				{
@@ -380,17 +380,29 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Recalculates and sets the value of m_Zoom so the whole page is visible
 		/// </summary>
-		protected void RefreshAutoZoom()
+		/// <param name="triggerRepaintIfChanged">If true, and either the zoom factor or the view port offset has changed, a refresh of the graph is triggered.</param>
+		protected void RefreshAutoZoom(bool triggerRepaintIfChanged)
 		{
-			CalculateAutoZoom();
+			var hasChanged = CalculateAutoZoom();
 			_view.ShowGraphScrollBars = false;
-			RefreshGraph();
+
+			if(hasChanged && triggerRepaintIfChanged)
+				RefreshGraph();
 		}
 
-		private void CalculateAutoZoom()
+		/// <summary>
+		/// Calculates the automatic zoom factor and the position of the view ports upper left corner (in Auto zoom mode).
+		/// </summary>
+		/// <returns>True if either the zoom factor or the view port origin has changed; otherweise <c>false</c>.</returns>
+		private bool CalculateAutoZoom()
 		{
+			var oldZoomFactor = _zoomFactor;
 			_zoomFactor = AutoZoomFactor;
+
+			var oldPositionOfViewportsUpperLeftCornerInRootLayerCoordinates = _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
 			_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = PositionOfMarginsUpperLeftCornerInGraphCoordinates;
+
+			return oldZoomFactor != _zoomFactor || oldPositionOfViewportsUpperLeftCornerInRootLayerCoordinates != _positionOfViewportsUpperLeftCornerInRootLayerCoordinates;
 		}
 
 		protected void RefreshManualZoom()
@@ -677,7 +689,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (_view != null)
 			{
 				if (this._isAutoZoomActive)
-					this.RefreshAutoZoom();
+					this.RefreshAutoZoom(false);
 				_view.InvalidateCachedGraphBitmapAndRepaint();
 			}
 		}
@@ -822,7 +834,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			if (_isAutoZoomActive)
 			{
-				RefreshAutoZoom();
+				RefreshAutoZoom(false);
 			}
 			else
 			{

@@ -1015,13 +1015,13 @@ namespace Altaxo.Graph.Gdi
 		{
 			using (var token = _graphObjects.GetEventDisableToken())
 			{
-				int idx = -1;
-				int maxIdx = _plotItemPlaceHolders.Count;
-
-				if (maxIdx == 0) // take special measures if not one plot item place holder -> this can happen when deserializing old versions prior to the introduction of place holders
+				if (0 == _plotItemPlaceHolders.Count) // take special measures if not one plot item place holder -> this can happen when deserializing old versions prior to the introduction of place holders
 				{
 					InsertTheVeryFirstPlotItemPlaceHolder();
 				}
+
+				int idx = -1;
+				int maxIdx = _plotItemPlaceHolders.Count;
 
 				foreach (var ele in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToLeavesWithIndex<IGPlotItem>(
 					_plotItems,

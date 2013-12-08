@@ -52,7 +52,7 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// If true, the angle and scale is taken into account, so that the layer fits exactly into the grid cell.
 		/// </summary>
-		private bool _takeScaleAngleIntoAccountToFitInCell;
+		private bool _forceFitIntoCell;
 
 		/// <summary>The rotation angle (in degrees) of the layer.</summary>
 		private double _rotation = 0; // Rotation
@@ -74,6 +74,9 @@ namespace Altaxo.Graph
 
 		#region Serialization
 
+		/// <summary>
+		/// 2013-12-01 initial version.
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationByGrid), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -89,7 +92,7 @@ namespace Altaxo.Graph
 				info.AddValue("ShearX", s._shear);
 				info.AddValue("ScaleX", s._scaleX);
 				info.AddValue("ScaleY", s._scaleY);
-				info.AddValue("ForceFitInCell", s._takeScaleAngleIntoAccountToFitInCell);
+				info.AddValue("ForceFitIntoCell", s._forceFitIntoCell);
 			}
 
 			protected virtual ItemLocationByGrid SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -104,8 +107,7 @@ namespace Altaxo.Graph
 				s._shear = info.GetDouble("ShearX");
 				s._scaleX = info.GetDouble("ScaleX");
 				s._scaleY = info.GetDouble("ScaleY");
-
-				s._takeScaleAngleIntoAccountToFitInCell = info.GetBoolean("ForceFitInCell");
+				s._forceFitIntoCell = info.GetBoolean("ForceFitIntoCell");
 
 				return s;
 			}
@@ -145,6 +147,8 @@ namespace Altaxo.Graph
 				this._shear = from._shear;
 				this._scaleX = from._scaleX;
 				this._scaleY = from._scaleY;
+				this._forceFitIntoCell = from._forceFitIntoCell;
+
 				return true;
 			}
 			else if (obj is IItemLocation)
@@ -244,13 +248,13 @@ namespace Altaxo.Graph
 		/// <value>
 		/// <c>true</c> if scale and angle are taken into account to calculate the cell size; otherwise, <c>false</c>.
 		/// </value>
-		public bool TakeScaleAngleIntoAccountToFitInCell
+		public bool ForceFitIntoCell
 		{
-			get { return _takeScaleAngleIntoAccountToFitInCell; }
+			get { return _forceFitIntoCell; }
 			set
 			{
-				var oldvalue = _takeScaleAngleIntoAccountToFitInCell;
-				_takeScaleAngleIntoAccountToFitInCell = value;
+				var oldvalue = _forceFitIntoCell;
+				_forceFitIntoCell = value;
 
 				if (value != oldvalue)
 					OnChanged();

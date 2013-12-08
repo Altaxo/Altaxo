@@ -51,6 +51,8 @@ namespace Altaxo.Gui.Graph
 		double ScaleX { get; set; }
 
 		double ScaleY { get; set; }
+
+		bool ForceFitIntoCell { get; set; }
 	}
 
 	#endregion Interfaces
@@ -109,6 +111,7 @@ namespace Altaxo.Gui.Graph
 				_view.ShearX = _doc.ShearX;
 				_view.ScaleX = _doc.ScaleX;
 				_view.ScaleY = _doc.ScaleY;
+				_view.ForceFitIntoCell = _doc.ForceFitIntoCell;
 			}
 		}
 
@@ -126,6 +129,7 @@ namespace Altaxo.Gui.Graph
 				_doc.ShearX = _view.ShearX;
 				_doc.ScaleX = _view.ScaleX;
 				_doc.ScaleY = _view.ScaleY;
+				_doc.ForceFitIntoCell = _view.ForceFitIntoCell;
 
 				_originalDoc.CopyFrom(_doc);
 			}

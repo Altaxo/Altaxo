@@ -188,7 +188,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			PointD2D size = Size;
 			size.X *= ScaleX;
 			size.Y *= ScaleY;
-			this.Scale = new PointD2D(1, 1);
+			base.Scale = new PointD2D(1, 1);
 			this.Size = size;
 		}
 
@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				width = height * srcSize.X / srcSize.Y;
 			}
 
-			this.Scale = new PointD2D(1, 1);
+			base.Scale = new PointD2D(1, 1);
 			base.SetSize(width, height, suppressChangeEvent);
 		}
 
@@ -217,6 +217,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
+				var scale11 = new PointD2D(1, 1);
+				var oldScale = base.Scale; // should always be one, because when setting the scale, as a result the size changed
+				if (oldScale == scale11)
+				{
+					if (value == oldScale)
+						return;
+				}
+				else // oops..., the old scale was not (1,1)!
+				{
+					base.Scale = scale11; // then set it now to (1,1)
+					value = value * oldScale; // and multiply it with the now intended value for the scale
+				}
+
 				// completely ignore this, Scale should always be one.
 				var w = Size.X * value.X;
 				var h = Size.Y * value.Y;

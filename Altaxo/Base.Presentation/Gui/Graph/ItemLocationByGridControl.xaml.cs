@@ -144,5 +144,18 @@ namespace Altaxo.Gui.Graph
 				_guiYSize.Value = value;
 			}
 		}
+
+
+		public bool ForceFitIntoCell
+		{
+			get
+			{
+				return true == _guiForceFitIntoCell.IsChecked;
+			}
+			set
+			{
+				_guiForceFitIntoCell.IsChecked = value;
+			}
+		}
 	}
 }

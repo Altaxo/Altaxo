@@ -322,12 +322,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public GraphicsPath GetSelectionPath()
 		{
-			return _cachedPath;
+			return (GraphicsPath)_cachedPath.Clone();
 		}
 
 		public override GraphicsPath GetObjectOutlineForArrangements()
 		{
-			return _cachedPath;
+			return (GraphicsPath)_cachedPath.Clone();
 		}
 
 		protected GraphicsPath GetPath(double minWidth)
