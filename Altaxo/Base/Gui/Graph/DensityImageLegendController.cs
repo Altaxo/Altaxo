@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Graph
 
 		public override bool Apply()
 		{
-			ApplyCurrentController(false);
+			ApplyCurrentController(true);
 
 			_originalDoc.CopyFrom(_doc); // _doc remains suspended
 

@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				EmbeddedImageGraphic s = null != o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
 				info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType, parent);
-				s._imageProxy = (ImageProxy)info.GetValue("Image", s);
+				s.Image = (ImageProxy)info.GetValue("Image", s);
 				return s;
 			}
 		}
@@ -146,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var from = obj as EmbeddedImageGraphic;
 				if (null != from)
 				{
-					this._imageProxy = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
+					this.Image = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
 				}
 			}
 			return isCopied;
@@ -168,6 +168,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			set
 			{
 				_imageProxy = value;
+				PointD2D originalItemSize = new PointD2D(10, 10);
+				if (null != _imageProxy)
+				{
+					Image img = _imageProxy == null ? null : _imageProxy.GetImage();
+					if (null != img)
+						originalItemSize = new PointD2D((72.0 * img.Width / img.HorizontalResolution), (72.0 * img.Height / img.VerticalResolution));
+				}
+				((ItemLocationDirectAspectPreserving)_location).OriginalItemSize = originalItemSize;
 			}
 		}
 
@@ -190,13 +198,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (null != img)
 			{
-				if (this.AutoSize)
-				{
-					this.Width = (img.Width / img.HorizontalResolution) * g.DpiX;
-					this.Height = (img.Height / img.VerticalResolution) * g.DpiY;
-				}
+				var bounds = this.Bounds;
 
-				g.DrawImage(img, 0, 0, (float)Width, (float)Height);
+				g.DrawImage(img, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
 			}
 
 			g.Restore(gs);

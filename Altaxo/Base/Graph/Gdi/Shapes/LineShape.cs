@@ -36,6 +36,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class DeprecatedLineShape : ClosedPathShapeBase
 		{
+			public DeprecatedLineShape()
+				: base(new ItemLocationDirect())
+			{
+			}
+
 			/// <summary>
 			/// Get the object outline for arrangements in object world coordinates.
 			/// </summary>
@@ -113,6 +118,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Constructors
 
 		public LineShape()
+			: base(new ItemLocationDirect())
 		{
 		}
 
@@ -122,6 +128,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		public LineShape(PointD2D startPosition)
+			: base(new ItemLocationDirect())
 		{
 			this.Position = startPosition;
 		}

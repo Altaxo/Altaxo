@@ -35,31 +35,31 @@ namespace Altaxo.Graph
 	{
 		#region Members
 
-		private RADouble _sizeX;
+		protected RADouble _sizeX;
 
-		private RADouble _sizeY;
+		protected RADouble _sizeY;
 
-		private RADouble _positionX;
+		protected RADouble _positionX;
 
-		private RADouble _positionY;
+		protected RADouble _positionY;
 
-		private RADouble _localAnchorX;
+		protected RADouble _localAnchorX;
 
-		private RADouble _localAnchorY;
+		protected RADouble _localAnchorY;
 
-		private RADouble _parentAnchorX;
+		protected RADouble _parentAnchorX;
 
-		private RADouble _parentAnchorY;
+		protected RADouble _parentAnchorY;
 
 		/// <summary>The rotation angle (in degrees) of the layer.</summary>
-		private double _rotation; // Rotation
+		protected double _rotation; // Rotation
 
-		private double _shear; // Shear
+		protected double _shear; // Shear
 
 		/// <summary>The scaling factor of the layer, normally 1.</summary>
-		private double _scaleX;  // X-Scale
+		protected double _scaleX;  // X-Scale
 
-		private double _scaleY; // Y-Scale
+		protected double _scaleY; // Y-Scale
 
 		// Cached and not-to-serialize members
 
@@ -162,7 +162,7 @@ namespace Altaxo.Graph
 			CopyFrom(from);
 		}
 
-		public bool CopyFrom(object obj)
+		public virtual bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -214,7 +214,7 @@ namespace Altaxo.Graph
 
 		#region Properties
 
-		public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangedEvent)
+		public virtual void SetParentSize(PointD2D parentSize, bool shouldTriggerChangedEvent)
 		{
 			var oldValue = _parentSize;
 			_parentSize = parentSize;
@@ -246,64 +246,41 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// If the <see cref="IsAutoSize"/> property is <c>true</c> for this instance, the graphical object has to use this function to indicate its size.
+		/// The width of the item, either as absolute value in point (1/72 inch), or as
+		/// value relative to the parent's width.
 		/// </summary>
-		/// <param name="autoSize">Size of the graphical object.</param>
-		/// <exception cref="System.InvalidOperationException">Using SetAutoSize is not supported because IsAutoSized is false</exception>
-		public void SetSizeInAutoSizeMode(PointD2D autoSize)
-		{
-			if (!IsAutoSized)
-				throw new InvalidOperationException("Using SetAutoSize is not supported because IsAutoSized is false");
-
-			if (_sizeX.IsRelative || _sizeY.IsRelative || _sizeX.Value != autoSize.X || _sizeY.Value != autoSize.Y)
-			{
-				_sizeX = RADouble.NewAbs(autoSize.X);
-				_sizeY = RADouble.NewAbs(autoSize.Y);
-				OnChanged();
-			}
-		}
-
-		/// <summary>
-		/// The width of the layer, either as absolute value in point (1/72 inch), or as
-		/// relative value as pointed out by <see cref="_layerWidthType"/>.
-		/// </summary>
-		public RADouble SizeX
+		public virtual RADouble SizeX
 		{
 			get { return _sizeX; }
 			set
 			{
-				if (IsAutoSized)
-					throw new InvalidOperationException("Setting the size is not supported because CanSetSize is false");
+				var chg = _sizeX != value;
+				InternalSetSizeXSilent(value);
 
-				var oldvalue = _sizeX;
-				_sizeX = value;
-
-				if (value != oldvalue)
+				if (chg)
 					OnChanged();
 			}
 		}
 
 		/// <summary>
-		/// The width of the layer, either as absolute value in point (1/72 inch), or as
-		/// relative value as pointed out by <see cref="_layerWidthType"/>.
+		/// The height of the item, either as absolute value in point (1/72 inch), or as
+		/// value relative to the parent's height.
 		/// </summary>
-		public RADouble SizeY
+		public virtual RADouble SizeY
 		{
 			get { return _sizeY; }
 			set
 			{
-				if (IsAutoSized)
-					throw new InvalidOperationException("Setting the size is not supported because CanSetSize is false");
-				var oldvalue = _sizeY;
-				_sizeY = value;
+				var chg = _sizeY != value;
+				InternalSetSizeYSilent(value);
 
-				if (value != oldvalue)
+				if (chg)
 					OnChanged();
 			}
 		}
 
 		/// <summary>
-		/// The layers x position value, either absolute or relative, as determined by <see cref="_layerXPositionType"/>.
+		/// The x position of the item, either absolute in points or relative to the parent's width.
 		/// </summary>
 		public RADouble PositionX
 		{
@@ -319,7 +296,7 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// The layers y position value, either absolute or relative, as determined by <see cref="_layerYPositionType"/>.
+		/// The y position of the item, either absolute or relative to the parent's height.
 		/// </summary>
 		public RADouble PositionY
 		{
@@ -335,10 +312,12 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Gets or sets the pivot x coordinate. This is a absolute value or a value relative to the own x-size and designates the point from the left upper corner of the own shape, which is the position of the object.
+		/// Gets or sets the local anchor's x position. This is an absolute value (in points = 1/72 inch) or a value relative to the own item width.
+		/// The local anchor point is the point, for which the location can be set in the position/size dialog of the item.
+		/// A relative value of 0 designates the left boundary of the item, a relative value of 0.5 designates the horizontal center of the item, and a relative value of 1 designates the right boundary of the item.
 		/// </summary>
 		/// <value>
-		/// The pivot y coordinate.
+		/// The local anchor's x position.
 		/// </value>
 		public RADouble LocalAnchorX
 		{
@@ -354,10 +333,12 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Gets or sets the pivot y coordinate. This is a absolute value or a value relative to the own y-size and designates the point from the left upper corner of the own shape, which is the position of the object.
+		/// Gets or sets the local anchor's y position. This is an absolute value (in points = 1/72 inch) or a value relative to the own item height.
+		/// The local anchor point is the point, for which the location can be set in the position/size dialog of the item.
+		/// A relative value of 0 designates the upper boundary of the item, a relative value of 0.5 designates the vertical center of the item, and a relative value of 1 designates the lower boundary of the item.
 		/// </summary>
 		/// <value>
-		/// The pivot y coordinate.
+		/// The local anchor's x position.
 		/// </value>
 		public RADouble LocalAnchorY
 		{
@@ -373,10 +354,13 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Gets or sets the reference x coordinate. This is a absolute value or a value relative to the parent SizeX and designates the parent coordinate, where the positioning is referenced to.
+		/// Gets or sets the parent anchor's x position. This is an absolute value (in points = 1/72 inch) or a value relative to the parent's width.
+		/// The parent anchor point is the point inside the parent item, from which the location of the item is measured. Stricly speaking, the position of the item (as shown in the dialog) is the vector from
+		/// the parent's anchor point to the local anchor point).
+		/// A relative value of 0 designates the left boundary of the parent, a relative value of 0.5 designates the horizontal center of the parent, and a relative value of 1 designates the right boundary of the parent.
 		/// </summary>
 		/// <value>
-		/// The reference x coordinate.
+		/// The parent anchor's x position.
 		/// </value>
 		public RADouble ParentAnchorX
 		{
@@ -392,10 +376,13 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Gets or sets the reference x coordinate. This is a absolute value or a value relative to the parent SizeX and designates the parent coordinate, where the positioning is referenced to.
+		/// Gets or sets the parent anchor's y position. This is an absolute value (in points = 1/72 inch) or a value relative to the parent's height.
+		/// The parent anchor point is the point inside the parent item, from which the location of the item is measured. Stricly speaking, the position of the item (as shown in the dialog) is the vector from
+		/// the parent's anchor point to the local anchor point).
+		/// A relative value of 0 designates the upper boundary of the parent, a relative value of 0.5 designates the vertical center of the parent, and a relative value of 1 designates the lower boundary of the parent.
 		/// </summary>
 		/// <value>
-		/// The reference x coordinate.
+		/// The parent anchor's y position.
 		/// </value>
 		public RADouble ParentAnchorY
 		{
@@ -410,21 +397,39 @@ namespace Altaxo.Graph
 			}
 		}
 
-		public void SetPositionAndSize(RADouble x, RADouble y, RADouble width, RADouble height)
+		public virtual void SetPositionAndSize(RADouble x, RADouble y, RADouble width, RADouble height)
 		{
 			bool isChanged = x != _positionX || y != _positionY || width != _sizeX || height != _sizeY;
 
 			_positionX = x;
 			_positionY = y;
-
-			if (!IsAutoSized)
-			{
-				_sizeX = width;
-				_sizeY = height;
-			}
+			
+			InternalSetSizeSilent(width, height);
 
 			if (isChanged)
 				OnChanged();
+		}
+
+		protected virtual bool InternalSetScaleXSilent(double value)
+		{
+			bool chg = _scaleX != value;
+			_scaleX = value;
+			return chg;
+		}
+
+		protected virtual bool InternalSetScaleYSilent(double value)
+		{
+			bool chg = _scaleY != value;
+			_scaleY = value;
+			return chg;
+		}
+
+		protected virtual bool InternalSetScaleSilent(PointD2D value)
+		{
+			bool chg = _scaleX != value.X || _scaleY != value.Y;
+			_scaleX = value.X;
+			_scaleY = value.Y;
+			return chg;
 		}
 
 		/// <summary>The scaling factor of the item, normally 1.</summary>
@@ -436,9 +441,7 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				bool isChanged = _scaleX != value.X || _scaleY != value.Y;
-				_scaleX = value.X;
-				_scaleY = value.Y;
+				bool isChanged = InternalSetScaleSilent(value);
 				if (isChanged)
 					OnChanged();
 			}
@@ -450,9 +453,7 @@ namespace Altaxo.Graph
 			get { return _scaleX; }
 			set
 			{
-				double oldvalue = _scaleX;
-				_scaleX = value;
-				if (value != oldvalue)
+				if (InternalSetScaleXSilent(value))
 					OnChanged();
 			}
 		}
@@ -463,9 +464,7 @@ namespace Altaxo.Graph
 			get { return _scaleY; }
 			set
 			{
-				double oldvalue = _scaleY;
-				_scaleY = value;
-				if (value != oldvalue)
+				if (InternalSetScaleYSilent(value))
 					OnChanged();
 			}
 		}
@@ -550,27 +549,64 @@ namespace Altaxo.Graph
 			return new RectangleD(myPosX, myPosY, mySizeX, mySizeY);
 		}
 
-		private void InternalSetAbsoluteSizeXSilent(double value)
+		protected virtual void InternalSetSizeXSilent(RADouble value)
+		{
+			_sizeX = value;
+		}
+
+		protected virtual void InternalSetSizeYSilent(RADouble value)
+		{
+			_sizeY = value;
+		}
+
+		protected virtual void InternalSetSizeSilent(RADouble valueX, RADouble valueY)
+		{
+			_sizeX = valueX;
+			_sizeY = valueY;
+		}
+
+		protected virtual void InternalSetAbsoluteSizeXSilent(double value)
 		{
 			if (_sizeX.IsAbsolute)
-				_sizeX = RADouble.NewAbs(value);
+				InternalSetSizeXSilent(RADouble.NewAbs(value));
 			else if (_parentSize.X != 0 && !double.IsNaN(_parentSize.X))
-				_sizeX = RADouble.NewRel(value / _parentSize.X);
+				InternalSetSizeXSilent(RADouble.NewRel(value / _parentSize.X));
 			else
 				throw new InvalidOperationException("_parentSize.X is undefined or zero");
 		}
 
-		private void InternalSetAbsoluteSizeYSilent(double value)
+		protected virtual void InternalSetAbsoluteSizeYSilent(double value)
 		{
 			if (_sizeY.IsAbsolute)
-				_sizeY = RADouble.NewAbs(value);
+				InternalSetSizeYSilent(RADouble.NewAbs(value));
 			else if (_parentSize.Y != 0 && !double.IsNaN(_parentSize.Y))
-				_sizeY = RADouble.NewRel(value / _parentSize.Y);
+				InternalSetSizeYSilent(RADouble.NewRel(value / _parentSize.Y));
 			else
 				throw new InvalidOperationException("_parentSize.Y is undefined or zero");
 		}
 
-		public double AbsoluteSizeX
+		protected virtual void InternalSetAbsoluteSizeSilent(PointD2D value)
+		{
+			RADouble sizeX, sizeY;
+
+			if (_sizeX.IsAbsolute)
+				sizeX = RADouble.NewAbs(value.X);
+			else if (_parentSize.X != 0 && !double.IsNaN(_parentSize.X))
+				sizeX = RADouble.NewRel(value.X / _parentSize.X);
+			else
+				throw new InvalidOperationException("_parentSize.X is undefined or zero");
+
+			if (_sizeY.IsAbsolute)
+				sizeY = RADouble.NewAbs(value.Y);
+			else if (_parentSize.Y != 0 && !double.IsNaN(_parentSize.Y))
+				sizeY = RADouble.NewRel(value.Y / _parentSize.Y);
+			else
+				throw new InvalidOperationException("_parentSize.Y is undefined or zero");
+
+			InternalSetSizeSilent(sizeX, sizeY);
+		}
+
+		public virtual double AbsoluteSizeX
 		{
 			get
 			{
@@ -585,7 +621,7 @@ namespace Altaxo.Graph
 			}
 		}
 
-		public double AbsoluteSizeY
+		public virtual double AbsoluteSizeY
 		{
 			get
 			{
@@ -600,7 +636,7 @@ namespace Altaxo.Graph
 			}
 		}
 
-		public PointD2D AbsoluteSize
+		public virtual PointD2D AbsoluteSize
 		{
 			get
 			{
@@ -610,8 +646,7 @@ namespace Altaxo.Graph
 			{
 				var oldSizeX = _sizeX;
 				var oldSizeY = _sizeY;
-				InternalSetAbsoluteSizeXSilent(value.X);
-				InternalSetAbsoluteSizeYSilent(value.Y);
+				InternalSetAbsoluteSizeSilent(value);
 
 				if (oldSizeX != _sizeX || oldSizeY != _sizeY)
 					OnChanged();
@@ -806,8 +841,10 @@ namespace Altaxo.Graph
 			if (_parentSize.Y == 0)
 				throw new InvalidOperationException("ParentSize.Y is zero. This would lead to an undefined relative value!");
 
-			_sizeX = RADouble.NewRel(absSize.X / _parentSize.X);
-			_sizeY = RADouble.NewRel(absSize.Y / _parentSize.Y);
+			InternalSetSizeSilent(
+			 RADouble.NewRel(absSize.X / _parentSize.X),
+			 RADouble.NewRel(absSize.Y / _parentSize.Y)
+			);
 
 			_positionX = RADouble.NewRel(absPos.X / _parentSize.X);
 			_positionY = RADouble.NewRel(absPos.Y / _parentSize.Y);
@@ -815,6 +852,43 @@ namespace Altaxo.Graph
 			if (oldSizeX != _sizeX || oldSizeY != _sizeY || oldPosX != _positionX || oldPosY != _positionY)
 				OnChanged();
 		}
+
+
+		public void ChangeRelativeSizeValuesToAbsoluteSizeValues()
+		{
+			if (_sizeX.IsRelative)
+				_sizeX = RADouble.NewAbs(AbsoluteSizeX);
+			if (_sizeY.IsRelative)
+				_sizeY = RADouble.NewAbs(AbsoluteSizeY);
+		}
+
+		public void ChangeRelativePositionValuesToAbsolutePositionValues()
+		{
+			if (this._positionX.IsRelative)
+				_positionX = RADouble.NewAbs(AbsolutePositionX);
+			if (_positionY.IsRelative)
+				_positionY = RADouble.NewAbs(AbsolutePositionY);
+		}
+
+		public void ChangeParentAnchorButKeepPosition(RADouble newParentAnchorX, RADouble newParentAnchorY)
+		{
+			var oldRefX = _parentAnchorX.GetValueRelativeTo(_parentSize.X);
+			var oldRefY = _parentAnchorY.GetValueRelativeTo(_parentSize.Y);
+			var newRefX = newParentAnchorX.GetValueRelativeTo(_parentSize.X);
+			var newRefY = newParentAnchorY.GetValueRelativeTo(_parentSize.Y);
+
+			var oldPos = this.AbsolutePosition;
+			this.InternalSetAbsolutePositionXSilent(oldPos.X + (oldRefX - newRefX));
+			this.InternalSetAbsolutePositionYSilent(oldPos.Y + (oldRefX - newRefX));
+			_parentAnchorX = newParentAnchorX;
+			_parentAnchorY = newParentAnchorY;
+		}
+
+		public void ChangeParentAnchorToLeftTopButKeepPosition()
+		{
+			ChangeParentAnchorButKeepPosition(RADouble.NewRel(0), RADouble.NewRel(0));
+		}
+
 
 		#endregion Methods
 	}

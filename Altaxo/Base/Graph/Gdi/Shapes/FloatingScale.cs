@@ -126,10 +126,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <summary>Constructor only for deserialization purposes.</summary>
 		/// <param name="info">Not used here.</param>
 		private FloatingScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirectAutoSize())
 		{
 		}
 
 		public FloatingScale()
+			: base(new ItemLocationDirectAutoSize())
 		{
 			_scaleSpanValue = 0.25;
 			_tickSpacing = new SpanTickSpacing();
@@ -476,7 +478,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-			_location.SetSizeInAutoSizeMode(bounds1.Size);
+			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds1.Size);
 			//this._leftTop = bounds1.Location - this.GetPosition();
 			//throw new NotImplementedException("debug the previous statement");
 			if (_background != null)
@@ -505,7 +507,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_cachedPath = new GraphicsPath();
 			_cachedPath.AddRectangle(new RectangleF((PointF)this.Position, size));
 
-			this._location.SetSizeInAutoSizeMode(size);
+			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size);
 		}
 
 		#region Inner classes

@@ -39,11 +39,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		private bool _isSizeCalculationBasedOnSourceSize;
 
-		/// <summary>
-		/// Indicates the aspect preserving of this object.
-		/// </summary>
-		private AspectRatioPreservingMode _aspectPreserving;
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ImageGraphic", 0)]
@@ -65,23 +60,27 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
 
 				s._isSizeCalculationBasedOnSourceSize = false;
-				s._aspectPreserving = AspectRatioPreservingMode.None;
+				var aspectPreserving = AspectRatioPreservingMode.None;
+				((ItemLocationDirectAspectPreserving)s._location).AspectRatioPreserving = aspectPreserving;
 
 				return s;
 			}
 		}
 
 		// 2012-03-21: Properties 'SizeBasedOnSourceSize' and 'AspectPreserving' added
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 2)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ImageGraphic", 2)]
 		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
 				ImageGraphic s = (ImageGraphic)obj;
 				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
 
 				info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
 				info.AddEnum("AspectPreserving", s._aspectPreserving);
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -90,7 +89,33 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
 
 				s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
-				s._aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
+				var aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
+				((ItemLocationDirectAspectPreserving)s._location).AspectRatioPreserving = aspectPreserving;
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2013-12-12: Properties 'AspectPreserving' removed, because now it is part of ItemLocationDirectAspectPreserving
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ImageGraphic s = (ImageGraphic)obj;
+				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
+
+				info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ImageGraphic s = (ImageGraphic)o;
+				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
+
+				s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
 
 				return s;
 			}
@@ -100,8 +125,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		protected ImageGraphic()
 			:
-			base()
+			base(new ItemLocationDirectAspectPreserving())
 		{
+			_location = new ItemLocationDirectAspectPreserving();
 		}
 
 		protected ImageGraphic(ImageGraphic from)
@@ -119,7 +145,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (from != null)
 				{
 					this._isSizeCalculationBasedOnSourceSize = from._isSizeCalculationBasedOnSourceSize;
-					this._aspectPreserving = from._aspectPreserving;
 				}
 			}
 			return isCopied;
@@ -150,90 +175,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return _aspectPreserving;
+				return ((ItemLocationDirectAspectPreserving)_location).AspectRatioPreserving;
 			}
 			set
 			{
-				var oldValue = _aspectPreserving;
-				_aspectPreserving = value;
-				if (value != oldValue)
-				{
-					ClampSizeAndScaleDueToAspectRatioKeeping();
-				}
-			}
-		}
-
-		public void ClampSizeAndScaleDueToAspectRatioKeeping()
-		{
-			PointD2D sourceSize = GetImageSizePt();
-
-			PointD2D destSize = Size;
-			PointD2D currentSize = new PointD2D(destSize.X * ScaleX, destSize.Y * ScaleY);
-			switch (_aspectPreserving)
-			{
-				case AspectRatioPreservingMode.PreserveXPriority:
-					// calculate y-scale based on x-scale
-					destSize.Y = (currentSize.X * sourceSize.Y / sourceSize.X) / ScaleY;
-					break;
-
-				case AspectRatioPreservingMode.PreserveYPriority:
-					destSize.X = (currentSize.Y * sourceSize.X / sourceSize.Y) / ScaleX;
-					break;
-			}
-			this.Size = destSize;
-		}
-
-		public void NormalizeToScaleOne()
-		{
-			PointD2D size = Size;
-			size.X *= ScaleX;
-			size.Y *= ScaleY;
-			base.Scale = new PointD2D(1, 1);
-			this.Size = size;
-		}
-
-		protected override void SetSize(double width, double height, bool suppressChangeEvent)
-		{
-			if (_aspectPreserving == AspectRatioPreservingMode.PreserveXPriority)
-			{
-				var srcSize = GetImageSizePt();
-				height = width * srcSize.Y / srcSize.X;
-			}
-			else if (_aspectPreserving == AspectRatioPreservingMode.PreserveYPriority)
-			{
-				var srcSize = GetImageSizePt();
-				width = height * srcSize.X / srcSize.Y;
-			}
-
-			base.Scale = new PointD2D(1, 1);
-			base.SetSize(width, height, suppressChangeEvent);
-		}
-
-		public override PointD2D Scale
-		{
-			get
-			{
-				return base.Scale;
-			}
-			set
-			{
-				var scale11 = new PointD2D(1, 1);
-				var oldScale = base.Scale; // should always be one, because when setting the scale, as a result the size changed
-				if (oldScale == scale11)
-				{
-					if (value == oldScale)
-						return;
-				}
-				else // oops..., the old scale was not (1,1)!
-				{
-					base.Scale = scale11; // then set it now to (1,1)
-					value = value * oldScale; // and multiply it with the now intended value for the scale
-				}
-
-				// completely ignore this, Scale should always be one.
-				var w = Size.X * value.X;
-				var h = Size.Y * value.Y;
-				SetSize(w, h, false);
+				((ItemLocationDirectAspectPreserving)_location).AspectRatioPreserving = value;
 			}
 		}
 

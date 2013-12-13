@@ -195,6 +195,7 @@
     <Compile Include="Graph\ColorManagement\ColorSetExtensions.cs" />
     <Compile Include="Graph\ColorManagement\ColorSetManager.cs" />
     <Compile Include="Graph\ColorManagement\IColorSet.cs" />
+    <Compile Include="Graph\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\FontX.cs" />
     <Compile Include="Graph\FontXStyle.cs" />
     <Compile Include="Graph\Gdi\GdiFontManager.cs" />

@@ -194,12 +194,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Constructors
 
 		public TextGraphic()
+			: base(new ItemLocationDirectAutoSize())
 		{
 			_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
 		}
 
 		public TextGraphic(PointD2D graphicPosition, string text,
 			FontX textFont, NamedColor textColor)
+			: base(new ItemLocationDirectAutoSize())
 		{
 			this.SetPosition(graphicPosition);
 			this.Font = textFont;
@@ -315,7 +317,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			//var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
 
 			// this._leftTop = new PointD2D(-xanchor, -yanchor);
-			this.SetSize(size.X, size.Y, true);
+			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size, true);
 
 			this._cachedTextOffset = new PointD2D(distanceXL, distanceYU);
 		}

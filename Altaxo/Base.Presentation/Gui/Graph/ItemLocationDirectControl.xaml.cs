@@ -63,17 +63,27 @@ namespace Altaxo.Gui.Graph
 			_guiYPosition.SelectedQuantity = x;
 		}
 
-		public bool ShowSizeElements
+		public void ShowSizeElements(bool isVisible, bool isEnabled)
 		{
-			set
-			{
-				var vis = value ? Visibility.Visible : Visibility.Collapsed;
+			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+			_guiXSize.Visibility = vis;
+			_guiXSize.IsEnabled = isEnabled;
+			_guiYSize.Visibility = vis;
+			_guiYSize.IsEnabled = isEnabled;
+			_guiXSizeLabel.Visibility = vis;
+			_guiYSizeLabel.Visibility = vis;
+		}
 
-				_guiXSize.Visibility = vis;
-				_guiYSize.Visibility = vis;
-				_guiXSizeLabel.Visibility = vis;
-				_guiYSizeLabel.Visibility = vis;
-			}
+		public void ShowScaleElements(bool isVisible, bool isEnabled)
+		{
+			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+
+			_guiScaleX.Visibility = vis;
+			_guiScaleX.IsEnabled = isEnabled;
+			_guiScaleY.Visibility = vis;
+			_guiScaleY.IsEnabled = isEnabled;
+			_guiLabelScaleX.Visibility = vis;
+			_guiLabelScaleY.Visibility = vis;
 		}
 
 		public void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
@@ -196,6 +206,42 @@ namespace Altaxo.Gui.Graph
 			{
 				return _guiParentReferencePoint.SelectedPivotY;
 			}
+		}
+
+		public event Action SizeXChanged;
+
+		private void EhSizeXChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var actn = SizeXChanged;
+			if (null != actn)
+				actn();
+		}
+
+		public event Action SizeYChanged;
+
+		private void EhSizeYChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var actn = SizeYChanged;
+			if (null != actn)
+				actn();
+		}
+
+		public event Action ScaleXChanged;
+
+		private void EhScaleXChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var actn = ScaleXChanged;
+			if (null != actn)
+				actn();
+		}
+
+		public event Action ScaleYChanged;
+
+		private void EhScaleYChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var actn = ScaleYChanged;
+			if (null != actn)
+				actn();
 		}
 	}
 }

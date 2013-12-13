@@ -32,12 +32,11 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Rectangle Grid.Row="1" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}"/>
-		<Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}"/>
+		<Rectangle Grid.Row="1" Style="{StaticResource HorzSeparatorStyle}"/>
+		<Rectangle Grid.Row="3" Style="{StaticResource HorzSeparatorStyle}"/>
 
-	
-		<GroupBox  Grid.Row="0" Header="Positioning">
-			<axogg:PositionSizeRotationScaleControl x:Name="_positioningControl"/>
+		<GroupBox  Grid.Row="0" Header="Location">
+			<Border x:Name="_guiLocationHost" />
 		</GroupBox>
 		<GroupBox Grid.Row="2" Header="Items">
 			<ListBox x:Name="_guiShapeGroupItems" MouseDoubleClick="EhItemListDoubleClick">

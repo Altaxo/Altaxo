@@ -46,66 +46,16 @@ namespace Altaxo.Gui.Graph.Shapes
 			InitializeComponent();
 		}
 
+
+		public object LocationView
+		{
+			set
+			{
+				_guiLocationHost.Child = (UIElement)value;
+			}
+		}
 	
-		public Altaxo.Graph.PointD2D DocPosition
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Position;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Position = value;
-			}
-		}
-
-		public Altaxo.Graph.PointD2D DocSize
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Size;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Size = value;
-			}
-		}
-
-		public double DocRotation
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Rotation;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Rotation = value;
-			}
-		}
-
-		public double DocShear
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Shear;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Shear = value;
-			}
-		}
-
-		public Altaxo.Graph.PointD2D DocScale
-		{
-			get
-			{
-				return _positioningControl.PositionSizeGlue.Scale;
-			}
-			set
-			{
-				_positioningControl.PositionSizeGlue.Scale = value;
-			}
-		}
+	
 
 		public void InitializeItemList(Collections.SelectableListNodeList list)
 		{

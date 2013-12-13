@@ -67,6 +67,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Constructors
 
 		public RegularPolygon()
+			: base(new ItemLocationDirect())
 		{
 		}
 

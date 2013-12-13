@@ -53,10 +53,10 @@
 		<axogc:QuantityWithUnitTextBox x:Name="_guiYPosition" Grid.Column="3" Grid.Row="2" />
 
 		<Label x:Name="_guiXSizeLabel" Grid.Column="0" Grid.Row="4" Content="Size X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize"  Grid.Column="1" Grid.Row="4" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize"  Grid.Column="1" Grid.Row="4" SelectedQuantityChanged="EhSizeXChanged" />
 
 		<Label x:Name="_guiYSizeLabel" Grid.Column="2" Grid.Row="4" Content="Size Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize"  Grid.Column="3" Grid.Row="4" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize"  Grid.Column="3" Grid.Row="4"  SelectedQuantityChanged="EhSizeYChanged" />
 
 		<Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
 		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="6" />
@@ -64,11 +64,11 @@
 		<Label Grid.Column="2" Grid.Row="6">Shear:</Label>
 		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="6" x:Name="_guiShear" />
 
-		<Label Grid.Column="0" Grid.Row="8" Content="ScaleX:" />
-		<axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="8" />
+		<Label x:Name="_guiLabelScaleX" Grid.Column="0" Grid.Row="8" Content="ScaleX:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="8"  SelectedQuantityChanged="EhScaleXChanged" />
 
-		<Label Grid.Column="2" Grid.Row="8" Content="ScaleY:" />
-		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="8" />
+		<Label x:Name="_guiLabelScaleY" Grid.Column="2" Grid.Row="8" Content="ScaleY:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="8"  SelectedQuantityChanged="EhScaleYChanged" />
 
 		<axoggs:AnchoringControl x:Name="_guiAnchoring" Title="Local anchor" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="2" />
 		<axoggs:AnchoringControl x:Name="_guiParentReferencePoint" Title="Parent anchor" Grid.Column="2" Grid.Row="10" Grid.ColumnSpan="2" />

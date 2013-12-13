@@ -66,7 +66,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#endregion Serialization
 
-		public ClosedPathShapeBase()
+		public ClosedPathShapeBase(ItemLocationDirect location)
+			: base(location)
 		{
 			Brush = new BrushX(NamedColors.Transparent);
 			Pen = new PenX(NamedColors.Black);

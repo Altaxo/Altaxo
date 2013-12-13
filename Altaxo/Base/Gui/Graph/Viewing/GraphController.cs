@@ -1277,22 +1277,22 @@ namespace Altaxo.Gui.Graph.Viewing
 			do
 			{
 				objectsToGroup.Clear();
-				GraphicCollection currentCollection = null;
+				HostLayer currentLayer = null;
 				foreach (IHitTestObject o in SelectedObjects)
 				{
 					var graphObject = o.HittedObject as GraphicBase;
 					if (null == graphObject)
 						continue;
-					var graphCollection = graphObject.ParentObject as GraphicCollection;
-					if (null == graphCollection)
+					var layer = graphObject.ParentObject as HostLayer;
+					if (null == layer)
 						continue;
 
-					if (null == currentCollection)
+					if (null == currentLayer)
 					{
-						currentCollection = graphCollection;
+						currentLayer = layer;
 						objectsToGroup.Add(o);
 					}
-					else if (object.ReferenceEquals(currentCollection, graphCollection))
+					else if (object.ReferenceEquals(currentLayer, layer))
 					{
 						objectsToGroup.Add(o);
 					}
@@ -1311,8 +1311,8 @@ namespace Altaxo.Gui.Graph.Viewing
 					foreach (var hit in objectsToGroup)
 						elements.Add(hit.HittedObject as GraphicBase);
 					var group = new Altaxo.Graph.Gdi.Shapes.ShapeGroup(elements);
-					int index = currentCollection.IndexOf(elements[0]);
-					currentCollection.Insert(index, group);
+					int index = currentLayer.GraphObjects.IndexOf(elements[0]);
+					currentLayer.GraphObjects.Insert(index, group);
 
 					foreach (var ele in objectsToGroup)
 					{
@@ -1341,14 +1341,14 @@ namespace Altaxo.Gui.Graph.Viewing
 				var shapeGroup = o.HittedObject as Altaxo.Graph.Gdi.Shapes.ShapeGroup;
 				if (null != shapeGroup)
 				{
-					var parentColl = shapeGroup.ParentObject as GraphicCollection;
-					if (null != parentColl)
+					var parentLayer = shapeGroup.ParentObject as HostLayer;
+					if (null != parentLayer)
 					{
-						int idx = parentColl.IndexOf(shapeGroup);
-						parentColl.RemoveAt(idx);
+						int idx = parentLayer.GraphObjects.IndexOf(shapeGroup);
+						parentLayer.GraphObjects.RemoveAt(idx);
 						var separateObjects = shapeGroup.Ungroup();
 						for (int i = separateObjects.Length - 1; i >= 0; i--)
-							parentColl.Insert(idx, separateObjects[i]);
+							parentLayer.GraphObjects.Insert(idx, separateObjects[i]);
 					}
 				}
 			}

@@ -396,6 +396,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				Scale scale = layer.Scales[styleID.ParallelAxisNumber].Scale;
 				_customTickSpacing.FinalProcessScaleBoundaries(scale.OrgAsVariant, scale.EndAsVariant, scale);
 			}
+
+			if (null != _axisTitle)
+				_axisTitle.SetParentSize(layer.Size, false);
 		}
 
 		public void Paint(Graphics g, IPlotArea layer)
@@ -639,7 +642,9 @@ namespace Altaxo.Graph.Gdi.Axis
 					else
 					{
 						if (_axisTitle == null)
+						{
 							this.Title = new TextGraphic();
+						}
 
 						_axisTitle.Text = value;
 					}

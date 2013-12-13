@@ -73,6 +73,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#endregion Serialization
 
 		private ShapeGroup()
+			: base(new ItemLocationDirectAutoSize())
 		{
 		}
 
@@ -81,6 +82,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="objectsToGroup">Objects to group together. An exception is thrown if the list contains less than 2 items.</param>
 		public ShapeGroup(ICollection<GraphicBase> objectsToGroup)
+			: base(new ItemLocationDirectAutoSize())
 		{
 			if (objectsToGroup.Count < 2)
 				throw new ArgumentException("objectsToGroup must contain at least two elements");
@@ -132,6 +134,46 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return true;
 			}
 		}
+
+		#region Overrides to set the internal reference point of this object to left-top so that (0,0) in item coordinates is always the left-top corner of this item
+
+		/// <summary>
+		/// Updates the internal transformation matrix to reflect the settings for position, rotation, scaleX, scaleY and shear. It is designed here by default so that
+		/// the local anchor point of the object is located at the world coordinates (0,0). The transformation matrix update can be overridden in derived classes so
+		/// that for instance the left upper corner of the object is located at (0,0).
+		/// </summary>
+		protected override void UpdateTransformationMatrix()
+		{
+			var locD = _location;
+			_transformation.SetTranslationRotationShearxScale(locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, -locD.Rotation, locD.ShearX, locD.ScaleX, locD.ScaleY);
+			_transformation.TranslatePrepend(locD.AbsoluteVectorPivotToLeftUpper.X, locD.AbsoluteVectorPivotToLeftUpper.Y);
+		}
+
+		/// <summary>
+		/// Transforms the graphics context is such a way, that the object can be drawn in local coordinates.
+		/// </summary>
+		/// <param name="g">Graphics context (should be saved beforehand).</param>
+		protected override void TransformGraphics(Graphics g)
+		{
+			g.MultiplyTransform(_transformation);
+		}
+
+		/// <summary>
+		/// Gets the bound of the object. The X and Y positions depend on the transformation model chosen for this graphic object: if the transformation takes into account the local anchor point, 
+		/// then the X and Y of the bounds are always 0 (which is the case here). 
+		/// </summary>
+		/// <value>
+		/// The bounds of the graphical object.
+		/// </value>
+		public override RectangleD Bounds
+		{
+			get
+			{
+				return new RectangleD(0, 0, Size.X, Size.Y);
+			}
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Get the object outline for arrangements in object world coordinates.
@@ -216,6 +258,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			foreach (var obj in list)
 			{
+				obj.Location.ChangeRelativeSizeValuesToAbsoluteSizeValues(); // all sizes of grouped objects must be absolute
+				obj.Location.ChangeRelativePositionValuesToAbsolutePositionValues(); // all position values must be absolute
+				obj.Location.ChangeParentAnchorToLeftTopButKeepPosition(); // Parent's anchor left top - this is our reference point
+
 				obj.SetCoordinatesByAppendInverseTransformation(this._transformation, true);
 				_groupedObjects.Add(obj);
 				obj.ParentObject = this;
@@ -223,6 +269,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			AdjustPosition();
 			OnChanged();
 		}
+
 
 		/// <summary>Gets access to the grouped objects. This function has to be used with care. No size/position update of the ShapeGroup is done if the position/size/rotation/share values of one of the grouped objects is changed.
 		/// One the other hand, you can change other properties, like colors and brushes, of the individual grouped objects.</summary>
@@ -278,6 +325,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 					e.ShiftPosition(-dx, -dy);
 				}
 				this.ShiftPosition(dx, dy);
+
+				((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size, false);
+
 				bounds.Location = new PointD2D(0, 0);
 				UpdateTransformationMatrix();
 			}

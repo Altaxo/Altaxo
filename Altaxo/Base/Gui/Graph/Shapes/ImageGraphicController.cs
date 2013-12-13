@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,189 +19,184 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
 	public interface IImageGraphicView
 	{
-		PointD2D DocPosition { get; set; }
-		PointD2D DocSize { get; set; }
 		PointD2D SourceSize { set; }
-		PointD2D DocScale { get; set; }
-		double DocRotation { get; set; }
-		double DocShear { get; set; }
+
 		Altaxo.Graph.AspectRatioPreservingMode AspectPreserving { get; set; }
+
 		bool IsSizeCalculationBasedOnSourceSize { get; set; }
 
 		event Action AspectPreservingChanged;
+
 		event Action ScalingModeChanged;
 
-		event Action ScaleXChanged;
-		event Action ScaleYChanged;
-		event Action SizeXChanged;
-		event Action SizeYChanged;
-
+		object LocationView { set; }
 	}
 
 	[UserControllerForObject(typeof(ImageGraphic))]
 	[ExpectedTypeOfView(typeof(IImageGraphicView))]
 	public class ImageGraphicController : MVCANControllerBase<ImageGraphic, IImageGraphicView>
 	{
-		PointD2D _srcSize;
-		PointD2D _docScale;
+		private PointD2D _srcSize;
+		private PointD2D _docScale;
+		private ItemLocationDirect _docLocation;
+		private ItemLocationDirectController _locationController;
+
 		protected override void Initialize(bool initData)
 		{
 			if (initData)
 			{
-				_doc.NormalizeToScaleOne();
 				_srcSize = _doc.GetImageSizePt();
 				_docScale = new PointD2D(_doc.Size.X / _srcSize.X, _doc.Size.Y / _srcSize.Y);
+				_docLocation = new ItemLocationDirect();
+				_docLocation.CopyFrom(_doc.Location);
+				_docLocation.Scale = new PointD2D(_doc.Size.X / _srcSize.X, _doc.Size.Y / _srcSize.Y);
+				_locationController = new ItemLocationDirectController();
+				_locationController.InitializeDocument(new object[] { _docLocation });
+				Current.Gui.FindAndAttachControlTo(_locationController);
+
+				_locationController.SizeXChanged += EhLocController_SizeXChanged;
+				_locationController.SizeYChanged += EhLocController_SizeYChanged;
+				_locationController.ScaleXChanged += EhLocController_ScaleXChanged;
+				_locationController.ScaleYChanged += EhLocController_ScaleYChanged;
+				_locationController.ShowSizeElements(true, !_doc.IsSizeCalculationBasedOnSourceSize);
+				_locationController.ShowScaleElements(true, _doc.IsSizeCalculationBasedOnSourceSize);
 			}
 			if (_view != null)
 			{
-				_view.DocPosition = _doc.Position;
-				_view.DocRotation = _doc.Rotation;
-				_view.DocShear = _doc.Shear;
-
 				_view.SourceSize = _srcSize;
-				_view.DocSize = _doc.Size;
-				_view.DocScale = _docScale;
 				_view.AspectPreserving = _doc.AspectRatioPreserving;
 				_view.IsSizeCalculationBasedOnSourceSize = _doc.IsSizeCalculationBasedOnSourceSize;
+				_view.LocationView = _locationController.ViewObject;
 			}
 		}
 
 		public override bool Apply()
 		{
+			if (!_locationController.Apply())
+				return false;
 
-			_doc.Position = _view.DocPosition;
-			_doc.Rotation = _view.DocRotation;
-			_doc.Shear = _view.DocShear;
+			_docLocation = (ItemLocationDirect)_locationController.ModelObject;
+
+			_doc.Location.CopyFrom(_docLocation);
 
 			// all other properties where already set during the session
-
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))
 				_originalDoc.CopyFrom(_doc);
 
-
 			return true;
 		}
-
 
 		protected override void AttachView()
 		{
 			_view.AspectPreservingChanged += EhAspectRatioPreservingChanged;
 			_view.ScalingModeChanged += EhScalingModeChanged;
-
-			_view.ScaleXChanged += EhScaleXChanged;
-			_view.ScaleYChanged += EhScaleYChanged;
-			_view.SizeXChanged += EhSizeXChanged;
-			_view.SizeYChanged += EhSizeYChanged;
 		}
 
 		protected override void DetachView()
 		{
 			_view.AspectPreservingChanged -= EhAspectRatioPreservingChanged;
 			_view.ScalingModeChanged -= EhScalingModeChanged;
-
-			_view.ScaleXChanged -= EhScaleXChanged;
-			_view.ScaleYChanged -= EhScaleYChanged;
-			_view.SizeXChanged -= EhSizeXChanged;
-			_view.SizeYChanged -= EhSizeYChanged;
 		}
 
-		void EhAspectRatioPreservingChanged()
+		private void EhAspectRatioPreservingChanged()
 		{
 			_doc.AspectRatioPreserving = _view.AspectPreserving;
 			_docScale = new PointD2D(_doc.Size.X / _srcSize.X, _doc.Size.Y / _srcSize.Y);
-			_view.DocScale = _docScale;
-			_view.DocSize = _doc.Size;
+			//_view.DocScale = _docScale;
+			//_view.DocSize = _doc.Size;
 		}
 
-
-
-
-		void EhScalingModeChanged()
+		private void EhScalingModeChanged()
 		{
-			_doc.IsSizeCalculationBasedOnSourceSize = _view.IsSizeCalculationBasedOnSourceSize;
+			_doc.IsSizeCalculationBasedOnSourceSize = _view.IsSizeCalculationBasedOnSourceSize; // false if Size should be used directly, true if the Scale should be used
+
+			_locationController.ShowSizeElements(true, !_doc.IsSizeCalculationBasedOnSourceSize);
+			_locationController.ShowScaleElements(true, _doc.IsSizeCalculationBasedOnSourceSize);
 		}
 
-
-		void EhScaleXChanged()
-		{
-			if (_doc.IsSizeCalculationBasedOnSourceSize)
-			{
-				_docScale.X = _view.DocScale.X;
-				if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority)
-				{
-					_docScale.Y = _docScale.X;
-				}
-				_doc.Size = new PointD2D(_srcSize.X * _docScale.X, _srcSize.Y * _docScale.Y);
-				_view.DocScale = _docScale;
-				_view.DocSize = _doc.Size;
-			}
-		}
-
-		void EhScaleYChanged()
-		{
-			if (_doc.IsSizeCalculationBasedOnSourceSize)
-			{
-				_docScale.Y = _view.DocScale.Y;
-				if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority)
-				{
-					_docScale.X = _docScale.Y;
-				}
-				_doc.Size = new PointD2D(_srcSize.X * _docScale.X, _srcSize.Y * _docScale.Y);
-				_view.DocScale = _docScale;
-				_view.DocSize = _doc.Size;
-			}
-		}
-
-		void EhSizeXChanged()
+		private void EhLocController_SizeXChanged(RADouble sizeX)
 		{
 			if (!_doc.IsSizeCalculationBasedOnSourceSize)
 			{
-				PointD2D size = _view.DocSize;
+				var sizeY = _docLocation.SizeY;
 				if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority)
 				{
-					size.Y = size.X * _srcSize.Y / _srcSize.X;
+					_docLocation.SizeY = sizeX * (_srcSize.Y / _srcSize.X);
 				}
-				_doc.Size = size;
-				size = _doc.Size;
-				_docScale = new PointD2D(size.X / _srcSize.X, size.Y / _srcSize.Y);
-				_view.DocScale = _docScale;
-				_view.DocSize = size;
-
+				_docLocation.SizeX = sizeX;
+				_docScale = new PointD2D(_docLocation.AbsoluteSizeX / _srcSize.X, _docLocation.AbsoluteSizeY / _srcSize.Y);
+				_locationController.ScaleX = _docScale.X;
+				_locationController.ScaleY = _docScale.Y;
+				_locationController.SizeY = _docLocation.SizeY;
 			}
 		}
 
-		void EhSizeYChanged()
+		private void EhLocController_SizeYChanged(RADouble sizeY)
 		{
 			if (!_doc.IsSizeCalculationBasedOnSourceSize)
 			{
-				PointD2D size = _view.DocSize;
-				if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority)
+				var sizeX = _docLocation.SizeX;
+				if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
 				{
-					size.X = size.Y * _srcSize.X / _srcSize.Y;
+					_docLocation.SizeX = sizeY * (_srcSize.X / _srcSize.Y);
 				}
-				_doc.Size = size;
-				size = _doc.Size;
-				_docScale = new PointD2D(size.X / _srcSize.X, size.Y / _srcSize.Y);
-				_view.DocScale = _docScale;
-				_view.DocSize = size;
-
+				_docLocation.SizeY = sizeY;
+				_docScale = new PointD2D(_docLocation.AbsoluteSizeX / _srcSize.X, _docLocation.AbsoluteSizeY / _srcSize.Y);
+				_locationController.ScaleX = _docScale.X;
+				_locationController.ScaleY = _docScale.Y;
+				_locationController.SizeX = _docLocation.SizeX;
 			}
 		}
 
+		private void EhLocController_ScaleXChanged(double scaleX)
+		{
+			_docLocation.ScaleX = scaleX;
+			if (_doc.IsSizeCalculationBasedOnSourceSize)
+			{
+				if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority)
+				{
+					_docLocation.ScaleY = scaleX;
+				}
+				var size = new PointD2D(_srcSize.X * _docLocation.ScaleX, _srcSize.Y * _docLocation.ScaleY);
+				_docLocation.AbsoluteSize = size;
+
+				_locationController.ScaleY = _docLocation.ScaleY;
+				_locationController.SizeX = _docLocation.SizeX;
+				_locationController.SizeY = _docLocation.SizeY;
+			}
+		}
+
+		private void EhLocController_ScaleYChanged(double scaleY)
+		{
+			_docLocation.ScaleY = scaleY;
+			if (_doc.IsSizeCalculationBasedOnSourceSize)
+			{
+				if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority)
+				{
+					_docLocation.ScaleX = scaleY;
+				}
+				var size = new PointD2D(_srcSize.X * _docLocation.ScaleX, _srcSize.Y * _docLocation.ScaleY);
+				_docLocation.AbsoluteSize = size;
+
+				_locationController.ScaleX = _docLocation.ScaleX;
+				_locationController.SizeX = _docLocation.SizeX;
+				_locationController.SizeY = _docLocation.SizeY;
+			}
+		}
 	}
 }

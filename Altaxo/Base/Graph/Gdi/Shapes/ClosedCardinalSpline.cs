@@ -73,6 +73,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Constructors
 
 		public ClosedCardinalSpline()
+			: base(new ItemLocationDirectAutoSize())
 		{
 		}
 
@@ -82,6 +83,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		public ClosedCardinalSpline(IEnumerable<PointD2D> points, double tension)
+			: base(new ItemLocationDirectAutoSize())
 		{
 			_curvePoints.AddRange(points);
 			_tension = Math.Abs(tension);
@@ -190,7 +192,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			using (var token = _eventSuppressor.Suspend())
 			{
 				this.ShiftPosition(bounds.Location);
-				_location.SetSizeInAutoSizeMode(bounds.Size);
+				((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size);
 			}
 		}
 

@@ -36,6 +36,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
 		{
+			public DeprecatedCurlyBraceShape()
+				: base(new ItemLocationDirect()) { }
+
 			/// <summary>
 			/// Get the object outline for arrangements in object world coordinates.
 			/// </summary>
@@ -104,6 +107,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Constructors
 
 		public CurlyBraceShape()
+			: base(new ItemLocationDirect())
 		{
 		}
 

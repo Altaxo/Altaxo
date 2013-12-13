@@ -168,7 +168,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			try
 			{
 				if (_cachedImage == null)
+				{
 					_cachedImage = new Bitmap(_imagePath);
+					((ItemLocationDirectAspectPreserving)_location).OriginalItemSize = new PointD2D(72.0 * _cachedImage.Width / _cachedImage.HorizontalResolution, 72.0 * _cachedImage.Height / _cachedImage.HorizontalResolution);
+				}
+
 				return _cachedImage;
 			}
 			catch (System.Exception)
@@ -208,14 +212,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (null != myImage)
 			{
-				if (this.AutoSize)
-				{
-					double myNewWidth = (myImage.Width / myImage.HorizontalResolution) * g.DpiX;
-					double myNewHeight = (myImage.Height / myImage.VerticalResolution) * g.DpiY;
-					this.Height = myNewHeight;
-					this.Width = myNewWidth;
-				}
-				g.DrawImage(myImage, 0, 0, (float)Width, (float)Height);
+				var bounds = this.Bounds;
+				g.DrawImage(myImage, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
 			}
 
 			g.Restore(gs);

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
@@ -40,7 +41,9 @@ namespace Altaxo.Gui.Graph
 
 		void InitializeYPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
-		bool ShowSizeElements { set; }
+		void ShowSizeElements(bool isVisible, bool isEnabled);
+
+		void ShowScaleElements(bool isVisible, bool isEnabled);
 
 		void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
@@ -73,6 +76,14 @@ namespace Altaxo.Gui.Graph
 		RADouble ReferenceX { get; }
 
 		RADouble ReferenceY { get; }
+
+		event Action SizeXChanged;
+
+		event Action SizeYChanged;
+
+		event Action ScaleXChanged;
+
+		event Action ScaleYChanged;
 	}
 
 	#endregion Interfaces
@@ -105,7 +116,7 @@ namespace Altaxo.Gui.Graph
 			}
 			if (null != _view)
 			{
-				_view.ShowSizeElements = !_doc.IsAutoSized;
+				_view.ShowSizeElements(!_doc.IsAutoSized, true);
 
 				if (!_doc.IsAutoSized)
 				{
@@ -127,6 +138,24 @@ namespace Altaxo.Gui.Graph
 				_view.InitializePivot(_doc.LocalAnchorX, _doc.LocalAnchorY, _doc.AbsoluteSize);
 				_view.InitializeReference(_doc.ParentAnchorX, _doc.ParentAnchorY, _doc.ParentSize);
 			}
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.SizeXChanged += EhSizeXChanged;
+			_view.SizeYChanged += EhSizeYChanged;
+			_view.ScaleXChanged += EhScaleXChanged;
+			_view.ScaleYChanged += EhScaleYChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.SizeXChanged -= EhSizeXChanged;
+			_view.SizeYChanged -= EhSizeYChanged;
+			_view.ScaleXChanged -= EhScaleXChanged;
+			_view.ScaleYChanged -= EhScaleYChanged;
+			base.DetachView();
 		}
 
 		#region IApplyController Members
@@ -185,5 +214,149 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion IApplyController Members
+
+		#region Service members
+
+		public event Action<RADouble> SizeXChanged;
+
+		private void EhSizeXChanged()
+		{
+			var actn = SizeXChanged;
+			if (null != actn)
+			{
+				RADouble result;
+				var xSize = _view.XSize;
+
+				if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
+					result = RADouble.NewRel(xSize.Value / 100);
+				else
+					result = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
+				actn(result);
+			}
+		}
+
+		public event Action<RADouble> SizeYChanged;
+
+		private void EhSizeYChanged()
+		{
+			var actn = SizeYChanged;
+			if (null != actn)
+			{
+				RADouble result;
+				var ySize = _view.YSize;
+
+				if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
+					result = RADouble.NewRel(ySize.Value / 100);
+				else
+					result = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
+				actn(result);
+			}
+		}
+
+		public event Action<double> ScaleXChanged;
+
+		private void EhScaleXChanged()
+		{
+			var actn = ScaleXChanged;
+			if (null != actn)
+			{
+				actn(_view.ScaleX);
+			}
+		}
+
+		public event Action<double> ScaleYChanged;
+
+		private void EhScaleYChanged()
+		{
+			var actn = ScaleYChanged;
+			if (null != actn)
+			{
+				actn(_view.ScaleY);
+			}
+		}
+
+		public void ShowSizeElements(bool isVisible, bool isEnabled)
+		{
+			if (null != _view)
+				_view.ShowSizeElements(isVisible, isEnabled);
+			else
+				throw new InvalidOperationException("Setting is possible only if _view is not null");
+		}
+
+		public void ShowScaleElements(bool isVisible, bool isEnabled)
+		{
+			if (null != _view)
+				_view.ShowScaleElements(isVisible, isEnabled);
+			else
+				throw new InvalidOperationException("Setting is possible only if _view is not null");
+		}
+
+		public RADouble SizeX
+		{
+			get
+			{
+				RADouble result;
+				var xSize = _view.XSize;
+
+				if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
+					result = RADouble.NewRel(xSize.Value / 100);
+				else
+					result = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
+
+				return result;
+			}
+			set
+			{
+				var xSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerXSizeUnit);
+				_view.InitializeXSize(xSize, _xSizeEnvironment);
+			}
+		}
+
+		public RADouble SizeY
+		{
+			get
+			{
+				RADouble result;
+				var ySize = _view.YSize;
+
+				if (object.ReferenceEquals(ySize.Unit, _percentLayerXSizeUnit))
+					result = RADouble.NewRel(ySize.Value / 100);
+				else
+					result = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
+
+				return result;
+			}
+			set
+			{
+				var ySize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerYSizeUnit);
+				_view.InitializeYSize(ySize, _ySizeEnvironment);
+			}
+		}
+
+		public double ScaleX
+		{
+			get
+			{
+				return _view.ScaleX;
+			}
+			set
+			{
+				_view.ScaleX = value;
+			}
+		}
+
+		public double ScaleY
+		{
+			get
+			{
+				return _view.ScaleY;
+			}
+			set
+			{
+				_view.ScaleY = value;
+			}
+		}
+
+		#endregion Service members
 	}
 }

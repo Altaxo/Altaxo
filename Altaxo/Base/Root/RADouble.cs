@@ -134,6 +134,13 @@ namespace Altaxo
 			return _isRelative ? r * _value : _value;
 		}
 
+		public static RADouble operator *(RADouble r, double scale)
+		{
+			var result = r;
+			r._value *= scale;
+			return result;
+		}
+
 		public static bool operator ==(RADouble a, RADouble b)
 		{
 			return a._isRelative == b._isRelative && a._value == b._value;

@@ -315,7 +315,7 @@ namespace Altaxo.Graph.Gdi
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 				s._notes.Text = info.GetString("Notes");
-				s._rootLayer = (HostLayer)info.GetValue("RootLayer", s);
+				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
 
 				int numberproperties = info.OpenArray("GraphProperties");
 				for (int i = 0; i < numberproperties; i++)
@@ -348,9 +348,8 @@ namespace Altaxo.Graph.Gdi
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole();
 			_notes.PropertyChanged += EhNotesChanged;
-			this._rootLayer = new HostLayer();
-			this._rootLayer.ParentObject = this;
-			this._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
+			this.RootLayer = new HostLayer();
+			this.RootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
 		}
 
 		private void EhNotesChanged(object sender, PropertyChangedEventArgs e)
@@ -365,8 +364,7 @@ namespace Altaxo.Graph.Gdi
 			try
 			{
 				_creationTime = _lastChangeTime = DateTime.UtcNow;
-				this._rootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) });
-				this._rootLayer.ParentObject = this;
+				this.RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) });
 
 				CopyFrom(from, GraphCopyOptions.All);
 			}
@@ -409,17 +407,17 @@ namespace Altaxo.Graph.Gdi
 
 			// the order is important here: clone the layers only before setting the printable graph bounds and other
 			// properties, otherwise some errors will happen
+			var newRootLayer = RootLayer;
 			if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
 			{
-				this._rootLayer = (HostLayer)from._rootLayer.Clone();
+				newRootLayer = (HostLayer)from._rootLayer.Clone();
 			}
 			else if (0 != (options & GraphCopyOptions.CopyLayerAll))
 			{
-				// don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this is to be done recursively
-				this._rootLayer.CopyFrom(from._rootLayer, options);
-				this._rootLayer.ParentLayer = this._rootLayer;
+				// don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this has to be done recursively
+				newRootLayer.CopyFrom(from._rootLayer, options);
 			}
-			this._rootLayer.ParentObject = this;
+			this.RootLayer = newRootLayer;
 		}
 
 		public object Clone()
@@ -552,6 +550,11 @@ namespace Altaxo.Graph.Gdi
 		public HostLayer RootLayer
 		{
 			get { return _rootLayer; }
+			private set
+			{
+				_rootLayer = value;
+				_rootLayer.ParentObject = this;
+			}
 		}
 
 		/// <summary>

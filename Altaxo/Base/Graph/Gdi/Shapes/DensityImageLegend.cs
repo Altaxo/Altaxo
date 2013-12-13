@@ -95,6 +95,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		private DensityImageLegend()
+			: base(new ItemLocationDirect())
 		{
 		}
 
@@ -106,6 +107,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#endregion Serialization
 
 		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize)
+			: base(new ItemLocationDirect())
 		{
 			this.SetSize(graphicSize.X, graphicSize.Y, true);
 			this.SetPosition(initialLocation);
@@ -144,14 +146,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_axisStyles.Add(sy1);
 
 			sx0.Title.Rotation = 90;
+			sx0.Title.Location.ParentAnchorX = RADouble.NewRel(0); // Left
+			sx0.Title.Location.ParentAnchorY = RADouble.NewRel(0.5); // Center
 			sx0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
 			sx0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
 			sx0.Title.X = -Width / 3;
-			sx0.Title.Y = Height / 2;
+			sx0.Title.Y = 0;
 
-			sx0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-			sx0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
-			sy0.Title.X = Width / 2;
+			sy0.Title.Location.ParentAnchorX = RADouble.NewRel(0.5); // Center
+			sy0.Title.Location.ParentAnchorY = RADouble.NewRel(0); // Top
+			sy0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+			sy0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
+			sy0.Title.X = 0;
 			sy0.Title.Y = sy0.Title.Height / 2;
 
 			// set the parent objects
@@ -270,16 +276,56 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
+		/// Updates the internal transformation matrix to reflect the settings for position, rotation, scaleX, scaleY and shear. It is designed here by default so that
+		/// the local anchor point of the object is located at the world coordinates (0,0). The transformation matrix update can be overridden in derived classes so
+		/// that for instance the left upper corner of the object is located at (0,0).
+		/// </summary>
+		protected override void UpdateTransformationMatrix()
+		{
+			var locD = _location;
+			_transformation.SetTranslationRotationShearxScale(locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, -locD.Rotation, locD.ShearX, locD.ScaleX, locD.ScaleY);
+			_transformation.TranslatePrepend(locD.AbsoluteVectorPivotToLeftUpper.X, locD.AbsoluteVectorPivotToLeftUpper.Y);
+		}
+
+		/// <summary>
+		/// Transforms the graphics context is such a way, that the object can be drawn in local coordinates.
+		/// </summary>
+		/// <param name="g">Graphics context (should be saved beforehand).</param>
+		protected override void TransformGraphics(Graphics g)
+		{
+			g.MultiplyTransform(_transformation);
+		}
+
+		/// <summary>
+		/// Gets the bound of the object. The X and Y positions depend on the transformation model chosen for this graphic object: if the transformation takes into account the local anchor point, 
+		/// then the X and Y of the bounds are always 0 (which is the case here). 
+		/// </summary>
+		/// <value>
+		/// The bounds of the graphical object.
+		/// </value>
+		public override RectangleD Bounds
+		{
+			get
+			{
+				return new RectangleD(0,0, Size.X, Size.Y);
+			}
+		}
+
+		/// <summary>
 		/// Get the object outline for arrangements in object world coordinates.
 		/// </summary>
 		/// <returns>Object outline for arrangements in object world coordinates</returns>
 		public override GraphicsPath GetObjectOutlineForArrangements()
 		{
-			return GetRectangularObjectOutline();
+			var result = new GraphicsPath();
+			result.AddRectangle((RectangleF)Bounds);
+			return result;
 		}
 
 		public override void Paint(System.Drawing.Graphics g, object obj)
 		{
+			
+
 			bool orientationIsVertical = IsOrientationVertical;
 			bool scaleIsReversed = IsScaleReversed;
 
@@ -295,7 +341,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 			// Update the coordinate system size to meet the size of the graph item
-			_cachedArea.CoordinateSystem.UpdateAreaSize(Size);
+			_cachedArea.Size = Size;
+			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
 
 			Data.AltaxoVariant porg;
 			Data.AltaxoVariant pend;
@@ -484,7 +531,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public PointD2D Size
 			{
 				get { return _size; }
-				set { _size = value; }
+				set
+				{
+					var chg = _size != value;
+					_size = value;
+					if (chg)
+					{
+						_coordinateSystem.UpdateAreaSize(_size);
+					}
+				}
 			}
 
 			public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)

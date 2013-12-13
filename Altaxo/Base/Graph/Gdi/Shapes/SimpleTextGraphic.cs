@@ -72,6 +72,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Constructors
 
 		public SimpleTextGraphic()
+			: base(new ItemLocationDirectAutoSize())
 		{
 		}
 
@@ -99,6 +100,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public SimpleTextGraphic(PointD2D graphicPosition, string text,
 			FontX textFont, Color textColor)
+			: base(new ItemLocationDirectAutoSize())
 		{
 			this.SetPosition(graphicPosition);
 			this.Font = textFont;

@@ -58,6 +58,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Constructors
 
 		public RectangleShape()
+			: base(new ItemLocationDirect())
 		{
 		}
 
