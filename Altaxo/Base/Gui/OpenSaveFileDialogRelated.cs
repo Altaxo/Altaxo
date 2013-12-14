@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -32,7 +34,7 @@ namespace Altaxo.Gui
 	/// </summary>
 	public class OpenFileOptions
 	{
-		List<KeyValuePair<string, string>> _filterList = new List<KeyValuePair<string, string>>();
+		private List<KeyValuePair<string, string>> _filterList = new List<KeyValuePair<string, string>>();
 
 		/// <summary>
 		/// Adds a file filter string to show in the open file dialog.
@@ -56,14 +58,14 @@ namespace Altaxo.Gui
 		/// <value>
 		/// The filter list.
 		/// </value>
-		public IList<KeyValuePair<string,string>> FilterList
+		public IList<KeyValuePair<string, string>> FilterList
 		{
 			get
 			{
 				return _filterList.AsReadOnly();
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets or sets the title of the open file dialog.
 		/// </summary>
@@ -71,7 +73,7 @@ namespace Altaxo.Gui
 		/// The title.
 		/// </value>
 		public string Title { get; set; }
-		
+
 		/// <summary>
 		/// Gets or sets the index of the filter that is shown by default.
 		/// </summary>
@@ -79,7 +81,7 @@ namespace Altaxo.Gui
 		/// The index of the default file filter.
 		/// </value>
 		public int FilterIndex { get; set; }
-		
+
 		/// <summary>
 		/// Gets or sets a value indicating whether multiple files can be selected.
 		/// </summary>
@@ -121,11 +123,13 @@ namespace Altaxo.Gui
 		public string FileName { get; set; }
 	}
 
-
 	/// <summary>
 	/// Data to control the save file dialog and to get the results.
 	/// </summary>
 	public class SaveFileOptions : OpenFileOptions
 	{
+		public bool OverwritePrompt { get; set; }
+
+		public bool AddExtension { get; set; }
 	}
 }

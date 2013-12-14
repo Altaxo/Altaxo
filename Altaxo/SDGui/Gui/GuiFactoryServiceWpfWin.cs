@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing.Printing;
+#endregion Copyright
 
-using Altaxo.Main.Services;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
+using System;
+using System.Collections.Generic;
+using System.Drawing.Printing;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui
 {
-  public class GuiFactoryServiceWpfWin : Altaxo.Main.Services.GUIFactoryService
+	public class GuiFactoryServiceWpfWin : Altaxo.Main.Services.GUIFactoryService
 	{
-
 		#region Still dependent on Windows Forms
 
 		public override IntPtr MainWindowHandle
@@ -49,7 +49,7 @@ namespace Altaxo.Gui
 			return new Altaxo.Graph.RectangleD(wa.X, wa.Y, wa.Width, wa.Height);
 		}
 
-		#endregion
+		#endregion Still dependent on Windows Forms
 
 		public System.Windows.Window MainWindowWpf
 		{
@@ -59,8 +59,8 @@ namespace Altaxo.Gui
 			}
 		}
 
+		private Altaxo.Graph.PointD2D _screenResolution;
 
-		Altaxo.Graph.PointD2D _screenResolution;
 		/// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
 		public override Altaxo.Graph.PointD2D ScreenResolutionDpi
 		{
@@ -69,7 +69,7 @@ namespace Altaxo.Gui
 				if (_screenResolution.IsEmpty)
 				{
 					if (null == Current.Workbench.ViewObject)
-						return new Altaxo.Graph.PointD2D(96,96); // until we have a workbench, we assume 96 dpi
+						return new Altaxo.Graph.PointD2D(96, 96); // until we have a workbench, we assume 96 dpi
 					var MainWindowPresentationSource = System.Windows.PresentationSource.FromVisual((System.Windows.Window)Current.Workbench.ViewObject);
 					if (null == MainWindowPresentationSource)
 						return new Altaxo.Graph.PointD2D(96, 96); // until we have a valid presentation source, we assume 96 dpi
@@ -80,10 +80,10 @@ namespace Altaxo.Gui
 			}
 		}
 
-    public override bool InvokeRequired()
-    {
+		public override bool InvokeRequired()
+		{
 			return Current.Workbench.SynchronizingObject.InvokeRequired;
-    }
+		}
 
 		/// <summary>
 		/// Consider using rather either one of the methods Execute or Evaluate instead of this. This is only a basic function for invoking a method synchronously with the Gui.
@@ -91,56 +91,55 @@ namespace Altaxo.Gui
 		/// <param name="act">Method to invoke.</param>
 		/// <param name="args">Method parameter.</param>
 		/// <returns>The return value of the method.</returns>
-    public override object Invoke(Delegate act, object[] args)
-    {
-      return Current.Workbench.SynchronizingObject.Invoke(act,args);
-    }
+		public override object Invoke(Delegate act, object[] args)
+		{
+			return Current.Workbench.SynchronizingObject.Invoke(act, args);
+		}
 
 		public override IAsyncResult BeginInvoke(Delegate act, object[] args)
 		{
 			return Current.Workbench.SynchronizingObject.BeginInvoke(act, args);
 		}
 
-
-    /// <summary>
-    /// Shows a configuration dialog for an object.
-    /// </summary>
-    /// <param name="controller">The controller to show in the dialog</param>
-    /// <param name="title">The title of the dialog to show.</param>
-    /// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+		/// <summary>
+		/// Shows a configuration dialog for an object.
+		/// </summary>
+		/// <param name="controller">The controller to show in the dialog</param>
+		/// <param name="title">The title of the dialog to show.</param>
+		/// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
 		public override bool ShowDialog(IMVCAController controller, string title, bool showApplyButton)
 		{
 			return Evaluate(InternalShowDialog, controller, title, showApplyButton);
 		}
 
-			  /// <summary>
-    /// Shows a configuration dialog for an object.
-    /// </summary>
-    /// <param name="controller">The controller to show in the dialog</param>
-    /// <param name="title">The title of the dialog to show.</param>
-    /// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    private bool InternalShowDialog(IMVCAController controller, string title, bool showApplyButton)
-    {
-      if (controller.ViewObject == null)
-      {
-        FindAndAttachControlTo(controller);
-      }
+		/// <summary>
+		/// Shows a configuration dialog for an object.
+		/// </summary>
+		/// <param name="controller">The controller to show in the dialog</param>
+		/// <param name="title">The title of the dialog to show.</param>
+		/// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		private bool InternalShowDialog(IMVCAController controller, string title, bool showApplyButton)
+		{
+			if (controller.ViewObject == null)
+			{
+				FindAndAttachControlTo(controller);
+			}
 
-      if (controller.ViewObject == null)
-        throw new ArgumentException("Can't find a view object for controller of type " + controller.GetType());
+			if (controller.ViewObject == null)
+				throw new ArgumentException("Can't find a view object for controller of type " + controller.GetType());
 
-      if (controller is Altaxo.Gui.Scripting.IScriptController)
-      {
-        var dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
+			if (controller is Altaxo.Gui.Scripting.IScriptController)
+			{
+				var dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
 				dlgctrl.Owner = MainWindowWpf;
 				dlgctrl.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
 				var pos = System.Windows.Input.Mouse.GetPosition(MainWindowWpf);
 				dlgctrl.Top = pos.Y;
 				dlgctrl.Left = pos.X;
-        return (true == dlgctrl.ShowDialog());
-      }
+				return (true == dlgctrl.ShowDialog());
+			}
 			else if (controller.ViewObject is System.Windows.UIElement)
 			{
 				var dlgview = new DialogShellViewWpf((System.Windows.UIElement)controller.ViewObject);
@@ -161,98 +160,96 @@ namespace Altaxo.Gui
 				return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 				*/
 			}
-    }
+		}
 
-
-		  /// <summary>
-    /// Shows a message box with the error text.
-    /// </summary>
-    /// <param name="errortxt">The error text.</param>
+		/// <summary>
+		/// Shows a message box with the error text.
+		/// </summary>
+		/// <param name="errortxt">The error text.</param>
 		/// <param name="title">The titel (header) of the message box.</param>
 		public override void ErrorMessageBox(string errortxt, string title)
 		{
 			Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, errortxt, title ?? "Error(s)!", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
 		}
 
-    public override void InfoMessageBox(string infotxt, string title)
-    {
-      Evaluate(System.Windows.MessageBox.Show,MainWindowWpf, infotxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
-    }
+		public override void InfoMessageBox(string infotxt, string title)
+		{
+			Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, infotxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+		}
 
-    /// <summary>
-    /// Shows a message box with a question to be answered either yes or no.
-    /// </summary>
-    /// <param name="txt">The question text.</param>
-    /// <param name="caption">The caption of the dialog box.</param>
-    /// <param name="defaultanswer">If true, the default answer is "yes", otherwise "no".</param>
-    /// <returns>True if the user answered with Yes, otherwise false.</returns>
-    public override bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
-    {
-			if(null!=Current.Workbench)
+		/// <summary>
+		/// Shows a message box with a question to be answered either yes or no.
+		/// </summary>
+		/// <param name="txt">The question text.</param>
+		/// <param name="caption">The caption of the dialog box.</param>
+		/// <param name="defaultanswer">If true, the default answer is "yes", otherwise "no".</param>
+		/// <returns>True if the user answered with Yes, otherwise false.</returns>
+		public override bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
+		{
+			if (null != Current.Workbench)
 				return System.Windows.MessageBoxResult.Yes == Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
 			else
 				return System.Windows.MessageBoxResult.Yes == System.Windows.MessageBox.Show(txt, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, defaultanswer ? System.Windows.MessageBoxResult.OK : System.Windows.MessageBoxResult.No);
-    }
+		}
 
-    /// <summary>
-    /// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
-    /// </summary>
-    /// <param name="text">The question text.</param>
-    /// <param name="caption">The caption of the dialog box.</param>
-    /// <param name="defaultAnswer">If true, the default answer is "yes", if false the default answer is "no", if null the default answer is "Cancel".</param>
-    /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
-    public override bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer)
-    {
-      var defaultButton = System.Windows.MessageBoxResult.Cancel;
-      if(defaultAnswer!=null)
+		/// <summary>
+		/// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
+		/// </summary>
+		/// <param name="text">The question text.</param>
+		/// <param name="caption">The caption of the dialog box.</param>
+		/// <param name="defaultAnswer">If true, the default answer is "yes", if false the default answer is "no", if null the default answer is "Cancel".</param>
+		/// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
+		public override bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer)
+		{
+			var defaultButton = System.Windows.MessageBoxResult.Cancel;
+			if (defaultAnswer != null)
 				defaultButton = ((bool)defaultAnswer) ? System.Windows.MessageBoxResult.Yes : System.Windows.MessageBoxResult.No;
 
 			var result = Evaluate(System.Windows.MessageBox.Show, MainWindowWpf, text, caption, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question, defaultButton);
 
 			if (result == System.Windows.MessageBoxResult.Yes)
-        return true;
+				return true;
 			else if (result == System.Windows.MessageBoxResult.No)
-      return false;
-      else
-      return null;
-    }
+				return false;
+			else
+				return null;
+		}
 
-
-    public override bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread)
-    {
+		public override bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread)
+		{
 			if (InvokeRequired())
-				throw new ApplicationException("Trying to show a BackgroundCancelDialog initiated by a background thread. This nesting is not supported"); 
+				throw new ApplicationException("Trying to show a BackgroundCancelDialog initiated by a background thread. This nesting is not supported");
 
-      for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
-        System.Threading.Thread.Sleep(10);
+			for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
+				System.Threading.Thread.Sleep(10);
 
-      if (thread.IsAlive)
-      {
-        var dlg = new BackgroundCancelDialogWpf(thread, monitor);
-        if (thread.IsAlive)
-        {
+			if (thread.IsAlive)
+			{
+				var dlg = new BackgroundCancelDialogWpf(thread, monitor);
+				if (thread.IsAlive)
+				{
 					dlg.Owner = MainWindowWpf;
 					return true == dlg.ShowDialog();
-        }
-      }
-      return false;
-    }
+				}
+			}
+			return false;
+		}
 
-    private string GetFilterString(OpenFileOptions options)
-    {
-      StringBuilder stb = new StringBuilder();
-      foreach (var entry in options.FilterList)
-      {
-        stb.Append(entry.Value);
-        stb.Append('|');
-        stb.Append(entry.Key);
-        stb.Append('|');
-      }
-      if (stb.Length > 0)
-        stb.Length -= 1; // account for the trailing | char
+		private string GetFilterString(OpenFileOptions options)
+		{
+			StringBuilder stb = new StringBuilder();
+			foreach (var entry in options.FilterList)
+			{
+				stb.Append(entry.Value);
+				stb.Append('|');
+				stb.Append(entry.Key);
+				stb.Append('|');
+			}
+			if (stb.Length > 0)
+				stb.Length -= 1; // account for the trailing | char
 
-      return stb.ToString();
-    }
+			return stb.ToString();
+		}
 
 		public override bool ShowOpenFileDialog(OpenFileOptions options)
 		{
@@ -279,17 +276,15 @@ namespace Altaxo.Gui
 				dlg.InitialDirectory = options.InitialDirectory;
 			dlg.RestoreDirectory = options.RestoreDirectory;
 
-
-			if(true==dlg.ShowDialog(MainWindowWpf))
+			if (true == dlg.ShowDialog(MainWindowWpf))
 			{
 				options.FileName = dlg.FileName;
 				options.FileNames = dlg.FileNames;
 				return true;
 			}
 			else
-			return false;
+				return false;
 		}
-
 
 		public override bool ShowSaveFileDialog(SaveFileOptions options)
 		{
@@ -299,43 +294,43 @@ namespace Altaxo.Gui
 				return InternalShowSaveFileDialog(options);
 		}
 
-    private bool InternalShowSaveFileDialog(SaveFileOptions options)
-    {
+		private bool InternalShowSaveFileDialog(SaveFileOptions options)
+		{
 			var dlg = new Microsoft.Win32.SaveFileDialog();
-      dlg.Filter = GetFilterString(options);
-      dlg.FilterIndex = options.FilterIndex;
-      //dlg.Multiselect = options.Multiselect;
-      if (options.Title != null)
-        dlg.Title = options.Title;
-      if (options.InitialDirectory != null)
-        dlg.InitialDirectory = options.InitialDirectory;
-      dlg.RestoreDirectory = options.RestoreDirectory;
+			dlg.Filter = GetFilterString(options);
+			dlg.FilterIndex = options.FilterIndex;
+			//dlg.Multiselect = options.Multiselect;
+			if (options.Title != null)
+				dlg.Title = options.Title;
+			if (options.InitialDirectory != null)
+				dlg.InitialDirectory = options.InitialDirectory;
+			dlg.RestoreDirectory = options.RestoreDirectory;
+			dlg.OverwritePrompt = options.OverwritePrompt;
+			dlg.AddExtension = options.AddExtension;
 
-      if(true== dlg.ShowDialog(MainWindowWpf))
-      {
-        options.FileName = dlg.FileName;
-        options.FileNames = dlg.FileNames;
+			if (true == dlg.ShowDialog(MainWindowWpf))
+			{
+				options.FileName = dlg.FileName;
+				options.FileNames = dlg.FileNames;
 				return true;
-      }
-      else
-      {
-        options.FileName = null;
-        options.FileNames = null;
+			}
+			else
+			{
+				options.FileName = null;
+				options.FileNames = null;
 				return false;
-      }
+			}
 		}
 
 		#region Clipboard
 
-	
+		/* old WinForm Clipboard wrappers
 
-		/* old WinForm Clipboard wrappers 
-		
 		private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
 		{
 			public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
 		}
-		 
+
 		private class ClipGetDataWrapper : IClipboardGetDataObject
 		{
 			System.Windows.Forms.DataObject _dao;
@@ -354,14 +349,12 @@ namespace Altaxo.Gui
 			public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
 			public bool ContainsImage() { return _dao.ContainsImage(); }
 			public System.Drawing.Image GetImage() { return _dao.GetImage(); }
-
 		}
 		*/
 
-
 		private class WpfClipSetDataWrapper : IClipboardSetDataObject
 		{
-			System.Windows.DataObject _dao = new System.Windows.DataObject();
+			private System.Windows.DataObject _dao = new System.Windows.DataObject();
 
 			public System.Windows.IDataObject DataObject { get { return _dao; } }
 
@@ -391,39 +384,70 @@ namespace Altaxo.Gui
 			}
 		}
 
-
 		private class WpfClipGetDataWrapper : IClipboardGetDataObject
 		{
-			System.Windows.DataObject _dao;
+			private System.Windows.DataObject _dao;
 
 			public WpfClipGetDataWrapper(System.Windows.DataObject value)
 			{
 				_dao = value;
 			}
 
-			public string[] GetFormats() { return _dao.GetFormats(); }
-			public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
-			public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
-			public object GetData(string format) { return _dao.GetData(format); }
-			public object GetData(System.Type type) { return _dao.GetData(type); }
-			public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
-			public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
-			public bool ContainsImage() { return _dao.ContainsImage(); }
-			public System.Drawing.Image GetImage() 
+			public string[] GetFormats()
+			{
+				return _dao.GetFormats();
+			}
+
+			public bool GetDataPresent(string format)
+			{
+				return _dao.GetDataPresent(format);
+			}
+
+			public bool GetDataPresent(System.Type type)
+			{
+				return _dao.GetDataPresent(type);
+			}
+
+			public object GetData(string format)
+			{
+				return _dao.GetData(format);
+			}
+
+			public object GetData(System.Type type)
+			{
+				return _dao.GetData(type);
+			}
+
+			public bool ContainsFileDropList()
+			{
+				return _dao.ContainsFileDropList();
+			}
+
+			public System.Collections.Specialized.StringCollection GetFileDropList()
+			{
+				return _dao.GetFileDropList();
+			}
+
+			public bool ContainsImage()
+			{
+				return _dao.ContainsImage();
+			}
+
+			public System.Drawing.Image GetImage()
 			{
 				try
 				{
-				if (_dao.GetDataPresent("EnhancedMetafile"))
-					return (System.Drawing.Imaging.Metafile)_dao.GetData("EnhancedMetafile");
-				else if (_dao.GetDataPresent("System.Drawing.Imaging.Metafile"))
-					return (System.Drawing.Imaging.Metafile)_dao.GetData("System.Drawing.Imaging.Metafile");
-				else if(_dao.GetDataPresent("System.Drawing.Bitmap"))
-					return (System.Drawing.Bitmap)_dao.GetData("System.Drawing.Bitmap");
+					if (_dao.GetDataPresent("EnhancedMetafile"))
+						return (System.Drawing.Imaging.Metafile)_dao.GetData("EnhancedMetafile");
+					else if (_dao.GetDataPresent("System.Drawing.Imaging.Metafile"))
+						return (System.Drawing.Imaging.Metafile)_dao.GetData("System.Drawing.Imaging.Metafile");
+					else if (_dao.GetDataPresent("System.Drawing.Bitmap"))
+						return (System.Drawing.Bitmap)_dao.GetData("System.Drawing.Bitmap");
 				}
-				catch(Exception)
+				catch (Exception)
 				{
 				}
-				
+
 				return null;
 			}
 		}
@@ -442,16 +466,13 @@ namespace Altaxo.Gui
 			return new WpfClipGetDataWrapper(dao);
 		}
 
-
 		public override void SetClipboardDataObject(IClipboardSetDataObject dataObject, bool copy)
 		{
 			//System.Windows.Forms.Clipboard.SetDataObject(dataObject, copy);
 			System.Windows.Clipboard.SetDataObject(((WpfClipSetDataWrapper)dataObject).DataObject, copy);
 		}
 
-
-		#endregion
-
+		#endregion Clipboard
 
 		#region Context menu
 
@@ -476,9 +497,6 @@ namespace Altaxo.Gui
 			}
 		}
 
-		#endregion
-
-
-	
+		#endregion Context menu
 	}
 }

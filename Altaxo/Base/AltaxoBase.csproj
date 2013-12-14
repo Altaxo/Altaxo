@@ -281,6 +281,7 @@
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithoutTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Settings\AsciiAnalysisSettingsController.cs" />
+    <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />

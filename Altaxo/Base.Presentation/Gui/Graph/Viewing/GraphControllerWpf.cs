@@ -733,7 +733,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			var hitData = new HitTestPointData(mousePT, this.ZoomFactor);
 
 			foundObject = RootLayer.HitTest(hitData, plotItemsOnly);
-			if (null != foundObject)
+			if (null != foundObject && null != foundObject.ParentLayer)
 			{
 				foundInLayerNumber = foundObject.ParentLayer.IndexOf().ToArray();
 				return true;

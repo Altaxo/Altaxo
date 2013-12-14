@@ -732,6 +732,8 @@ namespace Altaxo.Collections
 		/// <returns>Index of the node inside the tree.</returns>
 		public static IList<int> IndexOf<T>(this T node) where T : ITreeListNodeWithParent<T>
 		{
+			if (null == node)
+				throw new ArgumentException("node");
 			var result = new List<int>();
 			IndexOfInternal(node, result);
 			return result;

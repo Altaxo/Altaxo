@@ -152,6 +152,9 @@
 				<MenuItem id="SaveGraphAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
 					icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
 					class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
+				<MenuItem id="SaveGraphMiniProject" label="${res:XML.MainMenu.FileMenu.SaveGraphAsMiniProject}"
+					icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveGraphAsMiniProject.Description}"
+					class="Altaxo.Graph.Commands.SaveAsMiniProject" />
 			</Condition>
 			<MenuItem id="SaveWindowSeparator"  type = "Separator" />
 			<MenuItem id="PrintSeparator" type = "Separator" />

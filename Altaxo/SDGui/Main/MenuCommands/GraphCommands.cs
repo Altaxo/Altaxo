@@ -713,6 +713,63 @@ namespace Altaxo.Graph.Commands
 	}
 
 	/// <summary>
+	/// Handler for the menu item "Graph" - "New layer legend.
+	/// </summary>
+	public class SaveAsMiniProject : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
+			var newDocument = miniProjectBuilder.GetMiniProject(ctrl.Doc);
+			SaveProjectAs(newDocument);
+		}
+
+		/// <summary>
+		/// Asks the user for a file name for the current project, and then saves the project under the given name.
+		/// </summary>
+		public void SaveProjectAs(Altaxo.AltaxoDocument projectToSave)
+		{
+			var dlg = new Altaxo.Gui.SaveFileOptions();
+
+			string description = StringParser.Parse("${res:Altaxo.FileFilter.ProjectFiles})"); ;
+			dlg.AddFilter(".axoprj", description);
+			dlg.OverwritePrompt = true;
+			dlg.AddExtension = true;
+
+			if (!Current.Gui.ShowSaveFileDialog(dlg))
+				return;
+
+			try
+			{
+				SaveProject(projectToSave, dlg.FileName);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox(ex.Message, "Error during saving of the mini project");
+			}
+		}
+
+		/// <summary>
+		/// Internal routine to save a project under a given name.
+		/// </summary>
+		/// <param name="filename"></param>
+		private void SaveProject(Altaxo.AltaxoDocument projectToSave, string filename)
+		{
+			using (var myStream = new System.IO.FileStream(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None))
+			{
+				using (var zippedStream = new ZipOutputStream(myStream))
+				{
+					var zippedStreamWrapper = new ZipOutputStreamWrapper(zippedStream);
+					var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+					projectToSave.SaveToZippedFile(zippedStreamWrapper, info);
+					zippedStream.Close();
+				}
+				myStream.Close();
+			}
+		}
+	}
+
+	/// <summary>
 	/// Provides a abstract class for issuing commands that apply to worksheet controllers.
 	/// </summary>
 	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand, System.ComponentModel.INotifyPropertyChanged
