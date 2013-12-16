@@ -5,8 +5,11 @@ namespace Altaxo.Com
 {
 	internal class ClassFactoryBase : IClassFactory
 	{
-		public ClassFactoryBase()
+		protected ComManager _comManager;
+
+		public ClassFactoryBase(ComManager comManager)
 		{
+			_comManager = comManager;
 		}
 
 		protected UInt32 m_locked = 0;
@@ -118,15 +121,15 @@ namespace Altaxo.Com
 		{
 			if (bLock)
 			{
-				ComManager.InterlockedIncrementServerLockCount();
+				_comManager.InterlockedIncrementServerLockCount();
 			}
 			else
 			{
-				ComManager.InterlockedDecrementServerLockCount();
+				_comManager.InterlockedDecrementServerLockCount();
 			}
 
 			// Always attempt to see if we need to shutdown this server application.
-			ComManager.AttemptToTerminateServer();
+			_comManager.AttemptToTerminateServer();
 		}
 
 		#endregion IClassFactory Implementations

@@ -221,12 +221,18 @@ namespace ICSharpCode.SharpDevelop
         Altaxo.Current.SetWorkbench(altaxoWb);
         WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.AvalonDockLayout());
         new Altaxo.Main.Commands.AutostartCommand().Run();
-				if (Altaxo.Com.ComManager.ApplicationShouldExitAfterProcessingArgs)
+
+
+				var comManager = new Altaxo.Com.ComManager();
+				Altaxo.Current.SetComManager(comManager);
+				comManager.ApplicationAdapter = new Altaxo.Com.AltaxoComApplicationAdapter();
+				comManager.ProcessArguments(CommandLineArgs);
+				if (comManager.ApplicationShouldExitAfterProcessingArgs)
 					return;
-				if (Altaxo.Com.ComManager.ApplicationWasStartedWithEmbeddingArg)
+				if (comManager.ApplicationWasStartedWithEmbeddingArg)
 				{
 					System.Diagnostics.Debugger.Launch();
-					Altaxo.Com.ComManager.StartLocalServer();
+					comManager.StartLocalServer();
 				}
 #endif
 				

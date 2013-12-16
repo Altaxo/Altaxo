@@ -8,6 +8,11 @@ namespace Altaxo.Com
 
 	internal class ClassFactory_FileCOMObject : ClassFactoryBase
 	{
+		public ClassFactory_FileCOMObject(ComManager comManager) 
+			: base(comManager)
+		{
+		}
+
 		public override void virtual_CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
 		{
 #if COMLOGGING
@@ -20,10 +25,10 @@ namespace Altaxo.Com
 				riid == InterfaceGuid.IID_IDispatch ||
 				riid == InterfaceGuid.IID_IUnknown)
 			{
-				if (null == ComManager.FileComObject)
-					ComManager.FileComObject = new FileComObject();
+				if (null == _comManager.FileComObject)
+					_comManager.FileComObject = new FileComObject(_comManager);
 
-				ppvObject = Marshal.GetComInterfaceForObject(ComManager.FileComObject, typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)); ;
+				ppvObject = Marshal.GetComInterfaceForObject(_comManager.FileComObject, typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)); ;
 			}
 			else
 			{

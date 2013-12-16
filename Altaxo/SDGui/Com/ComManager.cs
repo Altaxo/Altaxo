@@ -14,38 +14,38 @@ namespace Altaxo.Com
 	// Note that ComManager is NOT declared as public.
 	// This is so that it will not be exposed to COM when we call regasm
 	// or tlbexp.
-	public static class ComManager
+	public class ComManager
 	{
-		private static int _numberOfObjectsInUse;  // Keeps a count on the total number of objects alive.
-		private static int _numberOfServerLocks;// Keeps a lock count on this application.
+		private int _numberOfObjectsInUse;  // Keeps a count on the total number of objects alive.
+		private int _numberOfServerLocks;// Keeps a lock count on this application.
 
-		private static ClassFactory_DocumentComObject _classFactoryOfDocumentComObject;
+		private ClassFactory_DocumentComObject _classFactoryOfDocumentComObject;
 
-		private static ClassFactory_FileCOMObject _classFactoryOfFileComObject;
+		private ClassFactory_FileCOMObject _classFactoryOfFileComObject;
 
-		private static GarbageCollector _garbageCollector;
+		private GarbageCollector _garbageCollector;
 
-		public static Dictionary<Altaxo.Graph.Gdi.GraphDocument, DocumentComObject> _documentsComObject = new Dictionary<Altaxo.Graph.Gdi.GraphDocument, DocumentComObject>();
+		public Dictionary<Altaxo.Graph.Gdi.GraphDocument, DocumentComObject> _documentsComObject = new Dictionary<Altaxo.Graph.Gdi.GraphDocument, DocumentComObject>();
 
-		public static FileComObject _fileComObject;
+		public FileComObject _fileComObject;
 
 		/// <summary>
 		/// The application is in embedded mode. This does <b>not</b> mean that the application was started with the -embedding flag in the command line! (Since this happens also when the application is
 		/// started by clicking a linked object). We can only be sure to be in embedding mode when IOleObject.SetHostNames is called on the DocumentComObject.
 		/// </summary>
-		public static bool IsInEmbeddedObjectMode { get; set; }
+		public bool IsInEmbeddedObjectMode { get; set; }
 
-		public static string ContainerApp { get; set; }
+		public string ContainerApp { get; set; }
 
-		public static string ContainerObject { get; set; }
+		public string ContainerObject { get; set; }
 
-		public static bool ApplicationWasStartedWithEmbeddingArg { get; private set; }
+		public bool ApplicationWasStartedWithEmbeddingArg { get; private set; }
 
-		public static bool ApplicationShouldExitAfterProcessingArgs { get; private set; }
+		public bool ApplicationShouldExitAfterProcessingArgs { get; private set; }
 
-		public static AltaxoComApplicationAdapter ApplicationAdapter { get; set; }
+		public AltaxoComApplicationAdapter ApplicationAdapter { get; set; }
 
-		public static DocumentComObject GetDocumentsComObjectForDocument(Altaxo.Graph.Gdi.GraphDocument doc)
+		public DocumentComObject GetDocumentsComObjectForDocument(Altaxo.Graph.Gdi.GraphDocument doc)
 		{
 			if (_documentsComObject.ContainsKey(doc))
 				return _documentsComObject[doc];
@@ -53,14 +53,14 @@ namespace Altaxo.Com
 			// else we must create a new DocumentComObject
 
 			if (null == FileComObject)
-				FileComObject = new FileComObject();
+				FileComObject = new FileComObject(this);
 
-			var newComObject = new DocumentComObject(doc, _fileComObject);
+			var newComObject = new DocumentComObject(doc, _fileComObject, this);
 			_documentsComObject.Add(doc, newComObject);
 			return newComObject;
 		}
 
-		public static bool IsInEmbeddedMode
+		public bool IsInEmbeddedMode
 		{
 			get { return IsInEmbeddedObjectMode; }
 			set
@@ -69,7 +69,7 @@ namespace Altaxo.Com
 			}
 		}
 
-		public static void SetHostNames(string containerApplicationName, string containerFileName, bool isInEmbeddedMode)
+		public void SetHostNames(string containerApplicationName, string containerFileName, bool isInEmbeddedMode)
 		{
 			// see Brockschmidt, Inside Ole 2nd ed. page 992
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
@@ -82,7 +82,7 @@ namespace Altaxo.Com
 			ApplicationAdapter.SetHostNames(containerApplicationName, containerFileName, isInEmbeddedMode);
 		}
 
-		public static FileComObject FileComObject
+		public FileComObject FileComObject
 		{
 			get
 			{
@@ -98,21 +98,21 @@ namespace Altaxo.Com
 		}
 
 		// This method performs a thread-safe incrementation of the objects count.
-		public static int InterlockedIncrementObjectsCount()
+		public int InterlockedIncrementObjectsCount()
 		{
 			// Increment the global count of objects.
 			return Interlocked.Increment(ref _numberOfObjectsInUse);
 		}
 
 		// This method performs a thread-safe decrementation the objects count.
-		public static int InterlockedDecrementObjectsCount()
+		public int InterlockedDecrementObjectsCount()
 		{
 			// Decrement the global count of objects.
 			return Interlocked.Decrement(ref _numberOfObjectsInUse);
 		}
 
 		// Returns the total number of objects alive currently.
-		public static int ObjectsCount
+		public int ObjectsCount
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace Altaxo.Com
 
 		// This method performs a thread-safe incrementation the
 		// server lock count.
-		public static int InterlockedIncrementServerLockCount()
+		public int InterlockedIncrementServerLockCount()
 		{
 			// Increment the global lock count of this server.
 			return Interlocked.Increment(ref _numberOfServerLocks);
@@ -133,14 +133,14 @@ namespace Altaxo.Com
 
 		// This method performs a thread-safe decrementation the
 		// server lock count.
-		public static int InterlockedDecrementServerLockCount()
+		public int InterlockedDecrementServerLockCount()
 		{
 			// Decrement the global lock count of this server.
 			return Interlocked.Decrement(ref _numberOfServerLocks);
 		}
 
 		// Returns the current server lock count.
-		public static int ServerLockCount
+		public int ServerLockCount
 		{
 			get
 			{
@@ -157,7 +157,7 @@ namespace Altaxo.Com
 		// If so, we post a WM_QUIT message to the main thread's
 		// message loop. This will cause the message loop to
 		// exit and hence the termination of this application.
-		public static void AttemptToTerminateServer()
+		public void AttemptToTerminateServer()
 		{
 			lock (typeof(ComManager))
 			{
@@ -192,16 +192,15 @@ namespace Altaxo.Com
 			}
 		}
 
-
-		private static void UnRegister(RegistryKey root)
+		private void UnRegister(RegistryKey root)
 		{
-				root.DeleteSubKey(".axoprj");
-				root.DeleteSubKey("Altaxo.Project");
-				root.DeleteSubKey("Altaxo.Graph.0");
-				root.DeleteSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(DocumentComObject)).ToString("B").ToUpperInvariant());
+			root.DeleteSubKey(".axoprj");
+			root.DeleteSubKey("Altaxo.Project");
+			root.DeleteSubKey("Altaxo.Graph.0");
+			root.DeleteSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(DocumentComObject)).ToString("B").ToUpperInvariant());
 		}
 
-		private static void Register(RegistryKey root)
+		private void Register(RegistryKey root)
 		{
 			RegistryKey key = null;
 			RegistryKey key2 = null;
@@ -287,6 +286,7 @@ namespace Altaxo.Com
 			catch (Exception ex)
 			{
 				MessageBox.Show("Error while registering the server:\n" + ex.ToString());
+				throw;
 			}
 			finally
 			{
@@ -307,7 +307,7 @@ namespace Altaxo.Com
 		// on and start this application.
 		// If the return value is false, we terminate
 		// this application immediately.
-		public static bool ProcessArguments(string[] args)
+		public bool ProcessArguments(string[] args)
 		{
 			bool bRet = true;
 
@@ -333,7 +333,6 @@ namespace Altaxo.Com
 						}
 						catch (Exception)
 						{
-
 						}
 						try
 						{
@@ -345,7 +344,6 @@ namespace Altaxo.Com
 						}
 						catch (Exception)
 						{
-
 						}
 						break;
 
@@ -358,7 +356,6 @@ namespace Altaxo.Com
 						}
 						catch (Exception)
 						{
-
 						}
 						try
 						{
@@ -370,9 +367,7 @@ namespace Altaxo.Com
 						}
 						catch (Exception)
 						{
-
 						}
-
 
 						try
 						{
@@ -405,7 +400,7 @@ namespace Altaxo.Com
 			return bRet;
 		}
 
-		public static void StartLocalServer()
+		public void StartLocalServer()
 		{
 #if COMLOGGING
 			Debug.ReportInfo("Starting local server");
@@ -416,14 +411,14 @@ namespace Altaxo.Com
 			_numberOfServerLocks = 0;
 
 			// Register the FileComObject
-			_classFactoryOfFileComObject = new ClassFactory_FileCOMObject();
+			_classFactoryOfFileComObject = new ClassFactory_FileCOMObject(this);
 			_classFactoryOfFileComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
 			_classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(FileComObject));
 			_classFactoryOfFileComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 			_classFactoryOfFileComObject.RegisterClassObject();
 
 			// Register the SimpleCOMObjectClassFactory.
-			_classFactoryOfDocumentComObject = new ClassFactory_DocumentComObject();
+			_classFactoryOfDocumentComObject = new ClassFactory_DocumentComObject(this);
 			_classFactoryOfDocumentComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
 			_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(DocumentComObject));
 			_classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
@@ -442,7 +437,7 @@ namespace Altaxo.Com
 			GarbageCollectionThread.Start();
 		}
 
-		public static void StopLocalServer()
+		public void StopLocalServer()
 		{
 #if COMLOGGING
 			Debug.ReportInfo("Stop local server");
@@ -483,7 +478,6 @@ namespace Altaxo.Com
 			}
 		}
 
-
 		#region Static helper functions
 
 		public static string NormalStringToMonikerNameString(string rawString)
@@ -497,9 +491,11 @@ namespace Altaxo.Com
 					case '!':
 						stb.Append("%21");
 						break;
+
 					case '%':
 						stb.Append("%25");
 						break;
+
 					default:
 						stb.Append(c);
 						break;
@@ -532,10 +528,12 @@ namespace Altaxo.Com
 							stb.Append('!');
 							startIndex += 3;
 							break;
+
 						case "%25":
 							stb.Append('%');
 							startIndex += 3;
 							break;
+
 						default:
 							stb.Append(rawString[idx]);
 							startIndex += 1;
@@ -551,6 +549,6 @@ namespace Altaxo.Com
 			return stb.ToString();
 		}
 
-		#endregion
+		#endregion Static helper functions
 	}
 }

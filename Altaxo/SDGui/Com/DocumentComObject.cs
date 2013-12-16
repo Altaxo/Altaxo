@@ -47,7 +47,8 @@ namespace Altaxo.Com
 
 		private DocumentComObjectRenderer _renderHelper;
 
-		public DocumentComObject(GraphDocument doc, FileComObject fileComObject)
+		public DocumentComObject(GraphDocument doc, FileComObject fileComObject, ComManager comManager)
+			: base(comManager)
 		{
 #if COMLOGGING
 			Debug.ReportInfo("DocumentComObject constructor.");
@@ -64,6 +65,7 @@ namespace Altaxo.Com
 
 		/// <summary>Copy an object for placing on the clipboard.</summary>
 		public DocumentComObject(DocumentComObject from)
+			: base(from._comManager)
 		{
 			Init(from._document, false, from.Moniker);
 		}
@@ -204,10 +206,6 @@ namespace Altaxo.Com
 			// Trick to create a new document moniker, and send the advise
 			EhFileMonikerChanged(fileMoniker);
 		}
-
-
-	
-
 
 		private void EhFileMonikerChanged(IMoniker fileMoniker)
 		{
@@ -613,7 +611,7 @@ namespace Altaxo.Com
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
 			// this means that we have to switch the user interface from within this function
 
-			ComManager.SetHostNames(szContainerApp, szContainerObj, true);
+			_comManager.SetHostNames(szContainerApp, szContainerObj, true);
 			return ComReturnValue.NOERROR;
 		}
 
@@ -682,7 +680,7 @@ namespace Altaxo.Com
 #if COMLOGGING
 				Debug.ReportInfo("IOleObject.Close -> BeginInvoke MainWindow.Close");
 #endif
-				ComManager.ApplicationAdapter.BeginClosingApplication();
+				_comManager.ApplicationAdapter.BeginClosingApplication();
 				return ComReturnValue.NOERROR;
 			}
 			catch (Exception e)
@@ -764,7 +762,7 @@ namespace Altaxo.Com
 #if COMLOGGING
 						Debug.ReportInfo("OLEIVERB_HIDE");
 #endif
-						ComManager.ApplicationAdapter.HideMainWindow();
+						_comManager.ApplicationAdapter.HideMainWindow();
 						SendAdvise(AdviseKind.HideWindow);
 						break;
 
@@ -777,7 +775,7 @@ namespace Altaxo.Com
 						if ((int)OLEIVERB.OLEIVERB_SHOW == iVerb) Debug.ReportInfo("Do verb : OLEIVERB_SHOW");
 						if ((int)OLEIVERB.OLEIVERB_OPEN == iVerb) Debug.ReportInfo("Do verb : OLEIVERB_OPEN");
 #endif
-						ComManager.ApplicationAdapter.ShowMainWindow();
+						_comManager.ApplicationAdapter.ShowMainWindow();
 						if (pActiveSite != null)
 						{
 #if COMLOGGING
@@ -1001,14 +999,20 @@ namespace Altaxo.Com
 #if COMLOGGING
 			Debug.ReportInfo("IPersistStorage.Load");
 #endif
-			byte[] buffer;
-
 			try
 			{
 				IStream istrm = pstg.OpenStream("AltaxoProjectZipStream", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0);
 				try
 				{
-					Current.ProjectService.LoadProject(new ComStreamWrapper(istrm));
+					var streamWrapper = new ComStreamWrapper(istrm);
+					Current.Gui.Execute(() => Current.ProjectService.LoadProject(streamWrapper));
+					try
+					{
+						_document = Current.Project.GraphDocumentCollection.First();
+					}
+					catch (Exception ex)
+					{
+					}
 
 #if COMLOGGING
 					Debug.ReportInfo("Content loaded, Title was: {0}", _document.Title);
@@ -1050,11 +1054,14 @@ namespace Altaxo.Com
 				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
 				//Win32.WriteFmtUserTypeStg(pStgSave, (uint)Win32.RegisterClipboardFormat("Box"), GraphBox.USER_TYPE);
 				IStream istrm = pStgSave.CreateStream("AltaxoProjectZipStream", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0);
-				Current.ProjectService.SaveProject(new ComStreamWrapper(istrm));
-
+				var streamWrapper = new ComStreamWrapper(istrm);
+				Exception saveEx = null; ;
+				saveEx = Current.ProjectService.SaveProject(streamWrapper);
 				Marshal.ReleaseComObject(istrm);
-
 				_isDocumentDirty = false;
+
+				if (null != saveEx)
+					throw saveEx;
 			}
 			catch (Exception ex)
 			{

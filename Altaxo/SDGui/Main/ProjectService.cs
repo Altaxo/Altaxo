@@ -334,7 +334,6 @@ namespace Altaxo.Main
 				return errorText.ToString(); // this is unrecoverable - we must return
 			}
 
-
 			try
 			{
 				newdocument.RestoreFromZippedFile(zipFileWrapper, info);
@@ -364,7 +363,6 @@ namespace Altaxo.Main
 		/// <param name="filename"></param>
 		private void Save(string filename)
 		{
-
 			bool fileAlreadyExists = System.IO.File.Exists(filename);
 
 			System.IO.Stream myStream;
@@ -426,14 +424,18 @@ namespace Altaxo.Main
 			try
 			{
 				this.openProject.SaveToZippedFile(zippedStreamWrapper, info);
-				SaveWindowStateToZippedFile(zippedStreamWrapper, info);
+
+				if (!Current.Gui.InvokeRequired())
+					SaveWindowStateToZippedFile(zippedStreamWrapper, info);
 			}
 			catch (Exception exc)
 			{
 				savingException = exc;
 			}
 
+			zippedStream.Flush();
 			zippedStream.Close();
+			myStream.Flush();
 			myStream.Close();
 			return savingException;
 		}

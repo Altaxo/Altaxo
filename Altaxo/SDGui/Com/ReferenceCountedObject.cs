@@ -9,15 +9,17 @@ namespace Altaxo.Com
 	[ComVisible(false)]  // This ComVisibleAttribute is set to false so that TLBEXP and REGASM will not expose it nor COM-register it.
 	public class ReferenceCountedObjectBase
 	{
-		public ReferenceCountedObjectBase()
+		protected ComManager _comManager;
+		public ReferenceCountedObjectBase(ComManager comManager)
 		{
-			ComManager.InterlockedIncrementObjectsCount();
+			_comManager = comManager;
+			_comManager.InterlockedIncrementObjectsCount();
 		}
 
 		~ReferenceCountedObjectBase()
 		{
-			ComManager.InterlockedDecrementObjectsCount();
-			ComManager.AttemptToTerminateServer();
+			_comManager.InterlockedDecrementObjectsCount();
+			_comManager.AttemptToTerminateServer();
 		}
 	}
 }

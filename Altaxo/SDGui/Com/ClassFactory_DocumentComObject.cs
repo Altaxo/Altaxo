@@ -8,6 +8,11 @@ namespace Altaxo.Com
 
 	internal class ClassFactory_DocumentComObject : ClassFactoryBase
 	{
+		public ClassFactory_DocumentComObject(ComManager comManager)
+		: base(comManager)
+		{
+		}
+
 		public override void virtual_CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
 		{
 #if COMLOGGING
@@ -20,7 +25,7 @@ namespace Altaxo.Com
 				riid == InterfaceGuid.IID_IUnknown)
 			{
 				var newDocument = Current.ProjectService.CreateNewGraph().Doc;
-				var documentComObject = ComManager.GetDocumentsComObjectForDocument(newDocument);
+				var documentComObject = _comManager.GetDocumentsComObjectForDocument(newDocument);
 
 				ppvObject = Marshal.GetComInterfaceForObject(documentComObject, typeof(System.Runtime.InteropServices.ComTypes.IDataObject));
 			}

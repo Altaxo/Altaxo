@@ -43,7 +43,8 @@ namespace Altaxo.Com
 
 		private List<DocumentComObject> _documentComObjects;
 
-		public FileComObject()
+		public FileComObject(ComManager comManager)
+			: base(comManager)
 		{
 			// 1. Monitor the change of the project instance
 			Current.ProjectService.ProjectChanged += EhCurrentProjectInstanceChanged;
@@ -304,7 +305,7 @@ namespace Altaxo.Com
 				riid == InterfaceGuid.IID_IDispatch ||
 				riid == InterfaceGuid.IID_IUnknown)
 			{
-				var documentComObject = ComManager.GetDocumentsComObjectForDocument(doc);
+				var documentComObject = _comManager.GetDocumentsComObjectForDocument(doc);
 				IntPtr ppvObject = Marshal.GetComInterfaceForObject(documentComObject, typeof(System.Runtime.InteropServices.ComTypes.IDataObject));
 
 				var action = new Action(() => Current.ProjectService.ShowDocumentView(doc));

@@ -58,6 +58,8 @@ namespace Altaxo
 
     private static Altaxo.Main.Services.IFitFunctionService sm_theFitFunctionService;
 
+		private static object sm_ComManager;
+
     private static bool sm_theApplicationIsClosing;
 
     /// <summary>
@@ -133,6 +135,11 @@ namespace Altaxo
     {
       get { return sm_theFitFunctionService; }
     }
+
+		public static object ComManager
+		{
+			get { return sm_ComManager; }
+		}
 
     /// <summary>
     /// Sets the Gui factory service.
@@ -270,5 +277,10 @@ namespace Altaxo
         throw new ApplicationException("The data display service can not be re-set to another value, only initialized for the first time!");
 
     }
+
+		public static void SetComManager(object value)
+		{
+			sm_ComManager = value;
+		}
   }
 }

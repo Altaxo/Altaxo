@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Altaxo.Com
@@ -10,9 +11,11 @@ namespace Altaxo.Com
 	/// </summary>
 	public class ComStreamWrapper : System.IO.Stream
 	{
-		System.Runtime.InteropServices.ComTypes.IStream _istream;
+		private System.Runtime.InteropServices.ComTypes.IStream _istream;
+		private System.Runtime.InteropServices.ComTypes.STATSTG _streamStatus;
 
-		System.Runtime.InteropServices.ComTypes.STATSTG _streamStatus;
+		private IntPtr _int64Ptr;
+		private IntPtr _int32Ptr;
 
 		private static class STREAM_SEEK
 		{
@@ -37,7 +40,6 @@ namespace Altaxo.Com
 			public const int CONSOLIDATE = 8;
 		}
 
-
 		public ComStreamWrapper(System.Runtime.InteropServices.ComTypes.IStream istream)
 		{
 			if (null == istream)
@@ -45,15 +47,24 @@ namespace Altaxo.Com
 
 			_istream = istream;
 
+			_int64Ptr = Marshal.AllocCoTaskMem(8);
+			_int32Ptr = Marshal.AllocCoTaskMem(4);
+
 			_streamStatus = new System.Runtime.InteropServices.ComTypes.STATSTG();
 			_istream.Stat(out _streamStatus, STATFLAG.NONAME);
+		}
+
+		~ComStreamWrapper()
+		{
+			Marshal.FreeCoTaskMem(_int64Ptr);
+			Marshal.FreeCoTaskMem(_int32Ptr);
 		}
 
 		#region Implementation of System.IO.Stream
 
 		public override bool CanRead
 		{
-			get { return true; }
+			get { return 1 != (_streamStatus.grfMode & 0x03); }
 		}
 
 		public override bool CanSeek
@@ -63,7 +74,7 @@ namespace Altaxo.Com
 
 		public override bool CanWrite
 		{
-			get { return 0 != (_streamStatus.grfMode & 1); }
+			get { return 0 != (_streamStatus.grfMode & 0x03); }
 		}
 
 		public override void Flush()
@@ -73,7 +84,7 @@ namespace Altaxo.Com
 
 		public override long Length
 		{
-			get 
+			get
 			{
 				var stat = new System.Runtime.InteropServices.ComTypes.STATSTG();
 				_istream.Stat(out stat, STATFLAG.NONAME);
@@ -85,32 +96,33 @@ namespace Altaxo.Com
 		{
 			get
 			{
-				IntPtr p = new IntPtr();
-				_istream.Seek(0, STREAM_SEEK.CUR, p);
-				return p.ToInt64();
+				_istream.Seek(0, STREAM_SEEK.CUR, _int64Ptr);
+				return Marshal.ReadInt64(_int64Ptr);
 			}
 			set
 			{
-				IntPtr p = new IntPtr();
-				_istream.Seek(0, STREAM_SEEK.SET, p);
+				Marshal.WriteInt64(_int64Ptr, value);
+				_istream.Seek(0, STREAM_SEEK.SET, _int64Ptr);
 			}
 		}
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			IntPtr pcbRead = new IntPtr();
+			int read = 0;
 			if (0 == offset)
 			{
-				_istream.Read(buffer, count, pcbRead);
+				_istream.Read(buffer, count, _int32Ptr);
+				read = Marshal.ReadInt32(_int32Ptr);
 			}
 			else
 			{
-				var len = Math.Max(0,Math.Min(count, buffer.Length-offset));
+				var len = Math.Max(0, Math.Min(count, buffer.Length - offset));
 				var tempBuffer = new byte[len];
-				_istream.Read(tempBuffer, len, pcbRead);
-				Buffer.BlockCopy(tempBuffer,0,buffer,offset, pcbRead.ToInt32());
+				_istream.Read(tempBuffer, len, _int32Ptr);
+				read = Marshal.ReadInt32(_int32Ptr);
+				Buffer.BlockCopy(tempBuffer, 0, buffer, offset, read);
 			}
-			return pcbRead.ToInt32();
+			return read;
 		}
 
 		public override long Seek(long offset, System.IO.SeekOrigin origin)
@@ -121,20 +133,22 @@ namespace Altaxo.Com
 				case System.IO.SeekOrigin.Begin:
 					seekType = STREAM_SEEK.SET;
 					break;
+
 				case System.IO.SeekOrigin.Current:
 					seekType = STREAM_SEEK.CUR;
 					break;
+
 				case System.IO.SeekOrigin.End:
 					seekType = STREAM_SEEK.END;
 					break;
+
 				default:
 					seekType = STREAM_SEEK.SET;
 					break;
 			}
 
-			IntPtr result = new IntPtr(0L);
-			_istream.Seek(offset, seekType, result);
-			return result.ToInt64();
+			_istream.Seek(offset, seekType, _int64Ptr);
+			return Marshal.ReadInt64(_int64Ptr);
 		}
 
 		public override void SetLength(long value)
@@ -144,20 +158,18 @@ namespace Altaxo.Com
 
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			IntPtr pcbWritten = new IntPtr();
-			if(0==offset)
+			if (0 == offset)
 			{
-				_istream.Write(buffer, count, pcbWritten);
+				_istream.Write(buffer, count, _int32Ptr);
 			}
 			else
 			{
 				var tempBuffer = new byte[count];
 				Buffer.BlockCopy(buffer, offset, tempBuffer, 0, count);
-				_istream.Write(tempBuffer, count, pcbWritten);
+				_istream.Write(tempBuffer, count, _int32Ptr);
 			}
 		}
 
-		#endregion
-
+		#endregion Implementation of System.IO.Stream
 	}
 }

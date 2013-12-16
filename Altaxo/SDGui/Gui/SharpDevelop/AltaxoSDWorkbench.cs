@@ -84,6 +84,14 @@ namespace Altaxo.Gui.SharpDevelop
 					projectService.AskForSavingOfProject(e);
 				}
 			}
+
+			if (!e.Cancel)
+			{
+				// Stop the Com-Server already here, it seems to be too late if we try to stop it in OnClosed()
+				var comManager = Current.ComManager as Altaxo.Com.ComManager;
+				if(null!=comManager)
+					comManager.StopLocalServer();
+			}
 		}
 
 		#region IWorkbench Members
