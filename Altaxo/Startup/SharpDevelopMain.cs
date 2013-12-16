@@ -214,13 +214,20 @@ namespace ICSharpCode.SharpDevelop
 #if ModifiedForAltaxo
 				Altaxo.Settings.UICultureSettings.InitializeSystemSettings(originalUICulture);
 				Altaxo.Settings.DocumentCultureSettings.InitializeSystemSettings(originalCulture);
-				Altaxo.Main.Commands.AutostartCommand.EarlyRun();
+				Altaxo.Main.Commands.AutostartCommand.EarlyRun(CommandLineArgs);
 				if (Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(true, SharpDevelopMain.CommandLineArgs))
 					return;
 				var altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
         Altaxo.Current.SetWorkbench(altaxoWb);
         WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.AvalonDockLayout());
         new Altaxo.Main.Commands.AutostartCommand().Run();
+				if (Altaxo.Com.ComManager.ApplicationShouldExitAfterProcessingArgs)
+					return;
+				if (Altaxo.Com.ComManager.ApplicationWasStartedWithEmbeddingArg)
+				{
+					System.Diagnostics.Debugger.Launch();
+					Altaxo.Com.ComManager.StartLocalServer();
+				}
 #endif
 				
 				WorkbenchSettings workbenchSettings = new WorkbenchSettings();

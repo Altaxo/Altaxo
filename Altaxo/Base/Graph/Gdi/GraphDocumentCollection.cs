@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
+
 using Altaxo;
 using Altaxo.Main;
+using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -36,6 +38,7 @@ namespace Altaxo.Graph.Gdi
 		Altaxo.Main.INamedObjectCollection
 	{
 		#region ChangedEventArgs
+
 		/// <summary>
 		/// Holds information about what has changed in the table.
 		/// </summary>
@@ -45,10 +48,12 @@ namespace Altaxo.Graph.Gdi
 			/// If true, one or more tables where added.
 			/// </summary>
 			public bool ItemAdded;
+
 			/// <summary>
 			/// If true, one or more table where removed.
 			/// </summary>
 			public bool ItemRemoved;
+
 			/// <summary>
 			/// If true, one or more tables where renamed.
 			/// </summary>
@@ -81,6 +86,7 @@ namespace Altaxo.Graph.Gdi
 					return e;
 				}
 			}
+
 			/// <summary>
 			/// Returns an instance with TableRemoved set to true.
 			/// </summary>
@@ -93,6 +99,7 @@ namespace Altaxo.Graph.Gdi
 					return e;
 				}
 			}
+
 			/// <summary>
 			/// Returns an  instance with TableRenamed set to true.
 			/// </summary>
@@ -105,7 +112,6 @@ namespace Altaxo.Graph.Gdi
 					return e;
 				}
 			}
-
 
 			/// <summary>
 			/// Merges information from another instance in this ChangedEventArg.
@@ -127,10 +133,11 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		#endregion
+		#endregion ChangedEventArgs
 
 		// Data
 		protected SortedDictionary<string, GraphDocument> m_GraphsByName = new SortedDictionary<string, GraphDocument>();
+
 		protected bool bIsDirty = false;
 
 		[NonSerialized]
@@ -150,8 +157,7 @@ namespace Altaxo.Graph.Gdi
 
 		public event System.EventHandler Changed;
 
-		#endregion
-
+		#endregion IChangedEventSource Members
 
 		public GraphDocumentCollection(AltaxoDocument parent)
 		{
@@ -175,6 +181,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#region Serialization
+
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -183,6 +190,7 @@ namespace Altaxo.Graph.Gdi
 				// info.AddValue("Parent",s.parent);
 				info.AddValue("Graphs", s.m_GraphsByName);
 			}
+
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				GraphDocumentCollection s = (GraphDocumentCollection)obj;
@@ -197,10 +205,7 @@ namespace Altaxo.Graph.Gdi
 		{
 		}
 
-		#endregion
-
-
-
+		#endregion Serialization
 
 		public bool IsDirty
 		{
@@ -218,7 +223,6 @@ namespace Altaxo.Graph.Gdi
 			return arr;
 		}
 
-
 		public GraphDocument this[string name]
 		{
 			get
@@ -230,6 +234,11 @@ namespace Altaxo.Graph.Gdi
 		public bool Contains(string graphname)
 		{
 			return m_GraphsByName.ContainsKey(graphname);
+		}
+
+		public bool TryGetValue(string graphName, out GraphDocument doc)
+		{
+			return m_GraphsByName.TryGetValue(graphName, out doc);
 		}
 
 		public void Add(GraphDocument theGraph)
@@ -325,9 +334,9 @@ namespace Altaxo.Graph.Gdi
 
 		[NonSerialized()]
 		protected bool m_ResumeInProgress = false;
+
 		[NonSerialized()]
 		protected System.Collections.ArrayList m_SuspendedChildCollection = new System.Collections.ArrayList();
-
 
 		public bool IsSuspended
 		{
@@ -340,14 +349,14 @@ namespace Altaxo.Graph.Gdi
 #if false
     public void Suspend()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");
 
       ++m_SuspendCount; // suspend one step higher
     }
 
     public void Resume()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");
       if(m_SuspendCount>0 && (--m_SuspendCount)==0)
       {
         this.m_ResumeInProgress = true;
@@ -366,13 +375,12 @@ namespace Altaxo.Graph.Gdi
           if(!IsSuspended)
           {
             OnChanged(); // Fire the changed event
-          }   
+          }
         }
       }
     }
 
 #endif
-
 
 		/// <summary>
 		/// Fires the Invalidate event.
@@ -383,7 +391,7 @@ namespace Altaxo.Graph.Gdi
 			OnChanged();
 		}
 
-		void AccumulateChildChangeData(object sender, EventArgs e)
+		private void AccumulateChildChangeData(object sender, EventArgs e)
 		{
 			if (m_ChangeData == null)
 				this.m_ChangeData = ChangedEventArgs.Empty;
@@ -397,12 +405,10 @@ namespace Altaxo.Graph.Gdi
 			return false; // not handled
 		}
 
-
 		protected virtual void OnSelfChanged(EventArgs e)
 		{
 			EhChildChanged(null, e);
 		}
-
 
 		/// <summary>
 		/// Handle the change notification from the child layers.
@@ -453,8 +459,7 @@ namespace Altaxo.Graph.Gdi
 				CollectionChanged(changeType, item, oldName, item.Name);
 		}
 
-		#endregion
-
+		#endregion Change event handling
 
 		/// <summary>
 		/// Gets the parent GraphDocumentCollection of a child graph.
@@ -466,8 +471,6 @@ namespace Altaxo.Graph.Gdi
 			return (GraphDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
 		}
 
-
-
 		#region IEnumerable<GraphDocument> Members
 
 		IEnumerator<GraphDocument> IEnumerable<GraphDocument>.GetEnumerator()
@@ -475,7 +478,7 @@ namespace Altaxo.Graph.Gdi
 			return m_GraphsByName.Values.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<GraphDocument> Members
 
 		#region IEnumerable Members
 
@@ -484,6 +487,6 @@ namespace Altaxo.Graph.Gdi
 			return m_GraphsByName.Values.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 	}
 }

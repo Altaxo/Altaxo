@@ -536,6 +536,20 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
+		/// Gets the size of this graph in points (1/72 inch). The value returned is exactly the size of the root layer.
+		/// </summary>
+		/// <value>
+		/// The size of the graph in points (1/72 inch).
+		/// </value>
+		public PointD2D Size
+		{
+			get
+			{
+				return _rootLayer.Size;
+			}
+		}
+
+		/// <summary>
 		/// Fires the <see cref="SizeChanged" /> event.
 		/// </summary>
 		protected void OnSizeChanged()

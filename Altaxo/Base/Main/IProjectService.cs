@@ -136,6 +136,13 @@ namespace Altaxo.Main
 		/// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>true</c>, then the old document is forced
 		/// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
     void OpenProject(string filename, bool withoutUserInteraction);
+
+		/// <summary>
+		/// Loads the project for an input stream
+		/// </summary>
+		/// <param name="Stream">The input stream.</param>
+		string LoadProject(System.IO.Stream istream);
+
     
 
     /// <summary>
@@ -155,6 +162,14 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
     void SaveProject(string fileName);
+
+
+		/// <summary>
+		/// Saves the project in the provided stream.
+		/// </summary>
+		/// <param name="fileName">Stream to save the project into</param>
+		/// <returns>Null if everything was saved sucessfully, or an exception if not.</returns>
+		Exception SaveProject(System.IO.Stream stream);
 
     /// <summary>
     /// Saves a project under the current file name.

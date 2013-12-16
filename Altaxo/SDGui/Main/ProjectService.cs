@@ -300,13 +300,40 @@ namespace Altaxo.Main
 		/// <param name="filename"></param>
 		private void Load(string filename)
 		{
-			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
-
 			System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read);
-			ZipFile zipFile = new ZipFile(myStream);
-			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-			AltaxoDocument newdocument = new AltaxoDocument();
-			ZipFileWrapper zipFileWrapper = new ZipFileWrapper(zipFile);
+			string errorText = LoadProject(myStream);
+			myStream.Close();
+
+			if (errorText.Length != 0)
+				throw new ApplicationException(errorText);
+		}
+
+		/// <summary>
+		/// Opens a Altaxo project from a project file (without asking the user).
+		/// </summary>
+		/// <param name="filename"></param>
+		public string LoadProject(System.IO.Stream myStream)
+		{
+			var errorText = new System.Text.StringBuilder();
+
+			ZipFile zipFile = null; ;
+			AltaxoDocument newdocument = null; ;
+			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
+			ZipFileWrapper zipFileWrapper;
+
+			try
+			{
+				zipFile = new ZipFile(myStream);
+				info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+				newdocument = new AltaxoDocument();
+				zipFileWrapper = new ZipFileWrapper(zipFile);
+			}
+			catch (Exception exc)
+			{
+				errorText.Append(exc.ToString());
+				return errorText.ToString(); // this is unrecoverable - we must return
+			}
+
 
 			try
 			{
@@ -328,13 +355,7 @@ namespace Altaxo.Main
 			{
 				errorText.Append(exc.ToString());
 			}
-			finally
-			{
-				myStream.Close();
-			}
-
-			if (errorText.Length != 0)
-				throw new ApplicationException(errorText.ToString());
+			return errorText.ToString();
 		}
 
 		/// <summary>
@@ -343,7 +364,6 @@ namespace Altaxo.Main
 		/// <param name="filename"></param>
 		private void Save(string filename)
 		{
-			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 
 			bool fileAlreadyExists = System.IO.File.Exists(filename);
 
@@ -357,22 +377,7 @@ namespace Altaxo.Main
 			else
 				myStream = new System.IO.FileStream(filename, System.IO.FileMode.Create, FileAccess.Write, FileShare.None);
 
-			ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-			ZipOutputStreamWrapper zippedStreamWrapper = new ZipOutputStreamWrapper(zippedStream);
-
-			Exception savingException = null;
-			try
-			{
-				this.openProject.SaveToZippedFile(zippedStreamWrapper, info);
-				SaveWindowStateToZippedFile(zippedStreamWrapper, info);
-			}
-			catch (Exception exc)
-			{
-				savingException = exc;
-			}
-
-			zippedStream.Close();
-			myStream.Close();
+			Exception savingException = SaveProject(myStream);
 
 			try
 			{
@@ -409,6 +414,28 @@ namespace Altaxo.Main
 				throw savingException;
 
 			this.openProject.IsDirty = false;
+		}
+
+		public Exception SaveProject(System.IO.Stream myStream)
+		{
+			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+			ZipOutputStream zippedStream = new ZipOutputStream(myStream);
+			ZipOutputStreamWrapper zippedStreamWrapper = new ZipOutputStreamWrapper(zippedStream);
+
+			Exception savingException = null;
+			try
+			{
+				this.openProject.SaveToZippedFile(zippedStreamWrapper, info);
+				SaveWindowStateToZippedFile(zippedStreamWrapper, info);
+			}
+			catch (Exception exc)
+			{
+				savingException = exc;
+			}
+
+			zippedStream.Close();
+			myStream.Close();
+			return savingException;
 		}
 
 		/// <summary>

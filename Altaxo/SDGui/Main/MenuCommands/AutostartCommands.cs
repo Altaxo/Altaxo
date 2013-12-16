@@ -42,9 +42,12 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 	public class AutostartCommand : AbstractCommand
 	{
 		const string workbenchMemento = "SharpDevelop.Workbench.WorkbenchMemento";
+		static string[] _commandLineArgs;
 
-		public static void EarlyRun()
+		public static void EarlyRun(string[] commandLineArgs)
 		{
+			_commandLineArgs = commandLineArgs;
+
 			Altaxo.Current.SetPropertyService(new Altaxo.Main.Services.PropertyService());
 
 			// set as early as possible the UI culture
@@ -89,6 +92,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Graph.ColorManagement.ColorSetManager.Instance.AddRange(AddInTree.GetTreeNode("/Altaxo/ApplicationColorSets").BuildChildItems<Altaxo.Graph.ColorManagement.ColorSet>(this));
 			Altaxo.Main.Services.ParserServiceConnector.Initialize();
 			Altaxo.Serialization.AutoUpdates.UpdateDownloaderStarter.Run();
+
+			Altaxo.Com.ComManager.ApplicationAdapter = new Altaxo.Com.AltaxoComApplicationAdapter();
+			Altaxo.Com.ComManager.ProcessArguments(_commandLineArgs);
 		}
 
 		private class ResourceServiceWrapper : Altaxo.Main.Services.IResourceService
