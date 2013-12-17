@@ -53,7 +53,7 @@ namespace Altaxo.Com
 				AddFormat(CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor, renderings);
 
 				// Nice because it is resolution independent.
-				//AddFormat((short)ComApi.CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile, renderings);
+				AddFormat((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile, renderings);
 
 				// Nice because it is resolution independent.
 				AddFormat(CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderMetaFile, renderings);
@@ -91,7 +91,7 @@ namespace Altaxo.Com
 
 		private Bitmap RenderBitmap(string mode)
 		{
-			float dpi_x = 96, dpi_y = 96;
+			float dpi_x = 300, dpi_y = 300;
 
 			var docSize_pt = _document.Size;
 			int ptx = (int)(dpi_x * docSize_pt.X / 72.0);
@@ -205,10 +205,10 @@ namespace Altaxo.Com
 				Gdi32Func.LineTo(hdc, RECTsquare.Right, RECTsquare.Bottom);
 				Gdi32Func.MoveToEx(hdc, RECTsquare.Left, RECTsquare.Bottom, IntPtr.Zero);
 				Gdi32Func.LineTo(hdc, RECTsquare.Right, RECTsquare.Top);
-			//	using (Graphics g = Graphics.FromHdc(hdc))
-			//	{
-			//		_document.DoPaint(g, false);
-			//	}
+				//	using (Graphics g = Graphics.FromHdc(hdc))
+				//	{
+				//		_document.DoPaint(g, false);
+				//	}
 			}
 			finally
 			{

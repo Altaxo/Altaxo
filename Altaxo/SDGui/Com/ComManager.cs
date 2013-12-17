@@ -43,7 +43,9 @@ namespace Altaxo.Com
 
 		public bool ApplicationShouldExitAfterProcessingArgs { get; private set; }
 
-		public AltaxoComApplicationAdapter ApplicationAdapter { get; set; }
+		public AltaxoComApplicationAdapter ApplicationAdapter { get; private set; }
+
+		private GuiThreadStack _guiThreadStack;
 
 		public DocumentComObject GetDocumentsComObjectForDocument(Altaxo.Graph.Gdi.GraphDocument doc)
 		{
@@ -58,6 +60,44 @@ namespace Altaxo.Com
 			var newComObject = new DocumentComObject(doc, _fileComObject, this);
 			_documentsComObject.Add(doc, newComObject);
 			return newComObject;
+		}
+
+		public void NotifyDocumentOfDocumentsComObjectChanged(DocumentComObject documentComObject, Altaxo.Graph.Gdi.GraphDocument oldDocument, Altaxo.Graph.Gdi.GraphDocument newDocument)
+		{
+			_documentsComObject.Remove(oldDocument);
+			_documentsComObject.Add(newDocument, documentComObject);
+		}
+
+		public ComManager(AltaxoComApplicationAdapter appAdapter)
+		{
+			ApplicationAdapter = appAdapter;
+			_guiThreadStack = new GuiThreadStack(appAdapter.IsInvokeRequiredForGuiThread, appAdapter.InvokeGuiThread);
+		}
+
+		public bool IsInvokeRequiredForGuiThread()
+		{
+			return ApplicationAdapter.IsInvokeRequiredForGuiThread();
+		}
+
+		/// <summary>
+		/// Invokes the GUI thread (blocking). The special feature is here that there is no deadlock even if another action executed in the Gui tasks waits for completion, supposed
+		/// that it has used the <see cref="FromGuiThreadExecute"/> method.
+		/// </summary>
+		/// <param name="action">The action to be executed in the Gui thread.</param>
+		public void InvokeGuiThread(Action action)
+		{
+			_guiThreadStack.InvokeGuiThread(action);
+		}
+
+		/// <summary>
+		/// Executes an action <paramref name="action"/> in a separate task (blocking). If the action (or a child task) wants to invoke the Gui thread again, this is possible without deadlock.
+		/// This procedure must be called only from the Gui thread. The procedure returns when the action has been finished.
+		/// </summary>
+		/// <param name="action">The action. Please not that the action is executed in a thread other than the Gui thread.</param>
+		/// <exception cref="System.InvalidOperationException">Is thrown if this procedure is called from a thread that is not the Gui thread.</exception>
+		public void FromGuiThreadExecute(Action action)
+		{
+			_guiThreadStack.FromGuiThreadExecute(action);
 		}
 
 		public bool IsInEmbeddedMode
@@ -438,6 +478,14 @@ namespace Altaxo.Com
 		}
 
 		public void StopLocalServer()
+		{
+			if (IsInvokeRequiredForGuiThread())
+				InternalStopLocalServer();
+			else
+				FromGuiThreadExecute(InternalStopLocalServer);
+		}
+
+		private void InternalStopLocalServer()
 		{
 #if COMLOGGING
 			Debug.ReportInfo("Stop local server");

@@ -47,14 +47,14 @@ namespace Altaxo.Com
 
 		private DocumentComObjectRenderer _renderHelper;
 
-		public DocumentComObject(GraphDocument doc, FileComObject fileComObject, ComManager comManager)
+		public DocumentComObject(GraphDocument graphDocument, FileComObject fileComObject, ComManager comManager)
 			: base(comManager)
 		{
 #if COMLOGGING
 			Debug.ReportInfo("DocumentComObject constructor.");
 #endif
 
-			Init(doc, true, null);
+			Init(graphDocument, true, null);
 
 			if (null != fileComObject)
 			{
@@ -80,14 +80,11 @@ namespace Altaxo.Com
 			Debug.ReportInfo("DocumentComObject init.");
 #endif
 
-			_document = doc;
-			_documentMoniker = moniker;
-
-			_renderHelper = new DocumentComObjectRenderer(doc, this);
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
+			_documentMoniker = moniker;
 
-			_document.Changed += EhDocumentChanged;
+			Document = doc;
 		}
 
 		~DocumentComObject()
@@ -184,7 +181,36 @@ namespace Altaxo.Com
 
 		#endregion Running Object Table management (ROT)
 
-		public GraphDocument Document { get { return _document; } }
+		public GraphDocument Document
+		{
+			get
+			{
+				return _document;
+			}
+			private set
+			{
+				if (object.ReferenceEquals(_document, value))
+					return;
+
+				if (null != _document)
+				{
+					_document.Changed -= EhDocumentChanged;
+				}
+
+				var oldValue = _document;
+				_document = value;
+
+				if (null != _document)
+				{
+					_document.Changed += EhDocumentChanged;
+				}
+
+				_renderHelper = new DocumentComObjectRenderer(_document, this);
+
+				if (null != oldValue)
+					_comManager.NotifyDocumentOfDocumentsComObjectChanged(this, oldValue, _document);
+			}
+		}
 
 		private void EhDocumentChanged(object sender, EventArgs e)
 		{
@@ -631,24 +657,24 @@ namespace Altaxo.Com
 						break;
 
 					case tagOLECLOSE.OLECLOSE_PROMPTSAVE:
-						Current.Gui.Execute(
-							new Action(() =>
-						{
-							// If asked to prompt, do so only if dirty: if we get a YES, save as
-							// usual and close.  On NO, just close.  On CANCEL, return
-							// OLE_E_PROMPTSAVECANCELLED.
-							var r = System.Windows.MessageBox.Show("Save?", "Box", System.Windows.MessageBoxButton.YesNoCancel);
-							switch (r)
-							{
-								case System.Windows.MessageBoxResult.Yes:
-									save = true;
-									break;
+						_comManager.InvokeGuiThread(
+							 new Action(() =>
+						 {
+							 // If asked to prompt, do so only if dirty: if we get a YES, save as
+							 // usual and close.  On NO, just close.  On CANCEL, return
+							 // OLE_E_PROMPTSAVECANCELLED.
+							 var r = System.Windows.MessageBox.Show("Save?", "Box", System.Windows.MessageBoxButton.YesNoCancel);
+							 switch (r)
+							 {
+								 case System.Windows.MessageBoxResult.Yes:
+									 save = true;
+									 break;
 
-								case System.Windows.MessageBoxResult.Cancel:
-									cancelled = true;
-									break;
-							}
-						}));
+								 case System.Windows.MessageBoxResult.Cancel:
+									 cancelled = true;
+									 break;
+							 }
+						 }));
 						break;
 
 					case tagOLECLOSE.OLECLOSE_NOSAVE:
@@ -996,22 +1022,40 @@ namespace Altaxo.Com
 
 		public int Load(IStorage pstg)
 		{
+			string graphDocumentName = null;
 #if COMLOGGING
 			Debug.ReportInfo("IPersistStorage.Load");
 #endif
 			try
 			{
-				IStream istrm = pstg.OpenStream("AltaxoProjectZipStream", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0);
 				try
 				{
-					var streamWrapper = new ComStreamWrapper(istrm);
-					Current.Gui.Execute(() => Current.ProjectService.LoadProject(streamWrapper));
-					try
+					using (var streamWrapper = new ComStreamWrapper(pstg.OpenStream("AltaxoProjectZipStream", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
 					{
-						_document = Current.Project.GraphDocumentCollection.First();
+						_comManager.InvokeGuiThread(() =>
+						{
+							Current.ProjectService.CloseProject(true);
+							Current.ProjectService.LoadProject(streamWrapper);
+						});
 					}
-					catch (Exception ex)
+#if COMLOGGING
+					Debug.ReportInfo("Content loaded, Title was: {0}", _document.Title);
+#endif
+				}
+				catch (Exception ex)
+				{
+#if COMLOGGING
+					Debug.ReportError("IPersistStorage.Load", ex);
+#endif
+				}
+
+				try
+				{
+					using (var stream = new ComStreamWrapper(pstg.OpenStream("GraphDocumentName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
 					{
+						var bytes = new byte[stream.Length];
+						stream.Read(bytes, 0, bytes.Length);
+						graphDocumentName = System.Text.Encoding.UTF8.GetString(bytes);
 					}
 
 #if COMLOGGING
@@ -1023,10 +1067,6 @@ namespace Altaxo.Com
 #if COMLOGGING
 					Debug.ReportError("IPersistStorage.Load", ex);
 #endif
-				}
-				finally
-				{
-					Marshal.ReleaseComObject(istrm);
 				}
 			}
 			catch (Exception ex)
@@ -1040,6 +1080,19 @@ namespace Altaxo.Com
 				Marshal.ReleaseComObject(pstg);
 			}
 
+			Altaxo.Graph.Gdi.GraphDocument newDocument = null;
+
+			if (null != graphDocumentName && Current.Project.GraphDocumentCollection.Contains(graphDocumentName))
+				newDocument = Current.Project.GraphDocumentCollection[graphDocumentName];
+			else if (null != Current.Project.GraphDocumentCollection.FirstOrDefault())
+				newDocument = Current.Project.GraphDocumentCollection.First();
+
+			if (null != newDocument)
+			{
+				Document = newDocument;
+				_comManager.InvokeGuiThread(() => Current.ProjectService.ShowDocumentView(_document));
+			}
+
 			return ComReturnValue.S_OK;
 		}
 
@@ -1051,13 +1104,21 @@ namespace Altaxo.Com
 
 			try
 			{
+				Exception saveEx = null;
+
 				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
-				//Win32.WriteFmtUserTypeStg(pStgSave, (uint)Win32.RegisterClipboardFormat("Box"), GraphBox.USER_TYPE);
-				IStream istrm = pStgSave.CreateStream("AltaxoProjectZipStream", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0);
-				var streamWrapper = new ComStreamWrapper(istrm);
-				Exception saveEx = null; ;
-				saveEx = Current.ProjectService.SaveProject(streamWrapper);
-				Marshal.ReleaseComObject(istrm);
+
+				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZipStream", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+				{
+					_comManager.InvokeGuiThread(() => saveEx = Current.ProjectService.SaveProject(stream));
+				}
+
+				// Store the name of the item
+				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("GraphDocumentName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+				{
+					byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(_document.Name);
+					stream.Write(nameBytes, 0, nameBytes.Length);
+				}
 				_isDocumentDirty = false;
 
 				if (null != saveEx)

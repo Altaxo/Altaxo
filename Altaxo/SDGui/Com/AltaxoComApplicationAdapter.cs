@@ -10,6 +10,16 @@ namespace Altaxo.Com
 	/// </summary>
 	public class AltaxoComApplicationAdapter
 	{
+		public bool IsInvokeRequiredForGuiThread()
+		{
+			return Current.Gui.InvokeRequired();
+		}
+
+		public void InvokeGuiThread(Action action)
+		{
+			Current.Gui.Execute(action);
+		}
+
 		/// <summary>
 		/// Sets the host names. The application should show the containerApplicationName and containerFileName in the title bar. Additionally, if <paramref name="isInEmbeddedMode"/> is <c>true</c>,
 		/// the application should switch the user interface.
@@ -22,21 +32,19 @@ namespace Altaxo.Com
 			// see Brockschmidt, Inside Ole 2nd ed. page 992
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
 			// this means that we have to switch the user interface from within this function
-			
+
 #if COMLOGGING
 			Debug.ReportInfo("IOleObject.SetHostNames szContainerApp={0}, szContainerObj={1}", szContainerApp, szContainerObj);
 #endif
 
 			string title = string.Format("{0} - {1}", containerApplicationName, containerFileName);
 			Current.Gui.BeginExecute(new Action(
-				() => 
+				() =>
 				{
 					((System.Windows.Window)Current.Workbench.ViewObject).Title = title;
 				})
 			);
-
 		}
-
 
 		/// <summary>
 		/// Starts the closing of the application asynchronously.
@@ -45,7 +53,6 @@ namespace Altaxo.Com
 		{
 			Current.Gui.BeginExecute(new Action(() => ((System.Windows.Window)Current.Workbench.ViewObject).Close())); // Begin Closing the main window
 		}
-
 
 		/// <summary>
 		/// Makes the main window invisible to the user (but doesn't close the application);
@@ -63,7 +70,6 @@ namespace Altaxo.Com
 			Current.Gui.Execute(hiding);
 		}
 
-
 		/// <summary>
 		/// Makes the main window of the application visible to the user.
 		/// </summary>
@@ -78,6 +84,5 @@ namespace Altaxo.Com
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Visible;
 			});
 		}
-
 	}
 }

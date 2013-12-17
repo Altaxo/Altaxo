@@ -17,6 +17,11 @@ namespace Altaxo.Com
 		private IntPtr _int64Ptr;
 		private IntPtr _int32Ptr;
 
+		/// <summary>
+		/// True when this instance is the stream owner and is responsible for disposing the stream.
+		/// </summary>
+		private bool _isStreamOwner;
+
 		private static class STREAM_SEEK
 		{
 			public const int SET = 0;
@@ -40,7 +45,13 @@ namespace Altaxo.Com
 			public const int CONSOLIDATE = 8;
 		}
 
-		public ComStreamWrapper(System.Runtime.InteropServices.ComTypes.IStream istream)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ComStreamWrapper"/> class.
+		/// </summary>
+		/// <param name="istream">The istream to wrap.</param>
+		/// <param name="isStreamOwner">If set to <c>true</c>, this instance should be the owner of the wrapped stream and thus is responsible for disposing it.</param>
+		/// <exception cref="System.ArgumentNullException">istream is null.</exception>
+		public ComStreamWrapper(System.Runtime.InteropServices.ComTypes.IStream istream, bool isStreamOwner)
 		{
 			if (null == istream)
 				throw new ArgumentNullException("istream");
@@ -54,10 +65,28 @@ namespace Altaxo.Com
 			_istream.Stat(out _streamStatus, STATFLAG.NONAME);
 		}
 
-		~ComStreamWrapper()
+		/// <summary>
+		/// Gibt die vom <see cref="T:System.IO.Stream" /> verwendeten nicht verwalteten Ressourcen und optional auch die verwalteten Ressourcen frei.
+		/// </summary>
+		/// <param name="disposing">true, um sowohl verwaltete als auch nicht verwaltete Ressourcen freizugeben. false, um ausschließlich nicht verwaltete Ressourcen freizugeben.</param>
+		protected override void Dispose(bool disposing)
 		{
+			base.Dispose(disposing);
+
 			Marshal.FreeCoTaskMem(_int64Ptr);
+			_int64Ptr = IntPtr.Zero;
+
 			Marshal.FreeCoTaskMem(_int32Ptr);
+			_int32Ptr = IntPtr.Zero;
+
+			if (null != _istream)
+			{
+				if (_isStreamOwner)
+				{
+					Marshal.ReleaseComObject(_istream);
+				}
+				_istream = null;
+			}
 		}
 
 		#region Implementation of System.IO.Stream

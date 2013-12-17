@@ -253,12 +253,12 @@ namespace Altaxo.Main
 					string validproject = Path.ChangeExtension(filename, ".axoprj");
 					if (File.Exists(validproject))
 					{
-						LoadProject(validproject);
+						InternalLoadProjectFromFile(validproject);
 					}
 				}
 				else
 				{
-					LoadProject(filename);
+					InternalLoadProjectFromFile(filename);
 				}
 			}
 			catch (Exception ex)
@@ -276,7 +276,7 @@ namespace Altaxo.Main
 		/// Loads a existing Altaxo project with the provided name.
 		/// </summary>
 		/// <param name="filename">The file name of the project to load.</param>
-		private void LoadProject(string filename)
+		private void InternalLoadProjectFromFile(string filename)
 		{
 			if (!FileUtility.TestFileExists(filename))
 			{
@@ -300,19 +300,33 @@ namespace Altaxo.Main
 		/// <param name="filename"></param>
 		private void Load(string filename)
 		{
-			System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read);
-			string errorText = LoadProject(myStream);
-			myStream.Close();
+			string errorText;
+			using (System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				errorText = InternalLoadProjectFromStream(myStream);
+				myStream.Close();
+			}
 
 			if (errorText.Length != 0)
 				throw new ApplicationException(errorText);
 		}
 
 		/// <summary>
-		/// Opens a Altaxo project from a project file (without asking the user).
+		/// Opens an Altaxo project from a stream.
 		/// </summary>
 		/// <param name="filename"></param>
 		public string LoadProject(System.IO.Stream myStream)
+		{
+			var errors = InternalLoadProjectFromStream(myStream);
+			OnProjectOpened(new ProjectEventArgs(this.CurrentOpenProject));
+			return errors;
+		}
+
+		/// <summary>
+		/// Opens a Altaxo project from a stream.
+		/// </summary>
+		/// <param name="filename"></param>
+		private string InternalLoadProjectFromStream(System.IO.Stream myStream)
 		{
 			var errorText = new System.Text.StringBuilder();
 
@@ -435,7 +449,6 @@ namespace Altaxo.Main
 
 			zippedStream.Flush();
 			zippedStream.Close();
-			myStream.Flush();
 			myStream.Close();
 			return savingException;
 		}
