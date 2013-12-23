@@ -165,7 +165,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return new PointD2D(_zoomFactor * _doc.RootLayer.Size.X * _areaFillingFactor, _zoomFactor * _doc.RootLayer.Size.Y * _areaFillingFactor);
+				return new PointD2D(_zoomFactor * _doc.Size.X * _areaFillingFactor, _zoomFactor * _doc.Size.Y * _areaFillingFactor);
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return new PointD2D(_zoomFactor * _doc.RootLayer.Size.X * _areaFillingFactor, _zoomFactor * _doc.RootLayer.Size.Y * _areaFillingFactor);
+				return new PointD2D(_zoomFactor * _doc.Size.X * _areaFillingFactor, _zoomFactor * _doc.Size.Y * _areaFillingFactor);
 			}
 		}
 
@@ -232,8 +232,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				return new PointD2D(
-					(-_doc.RootLayer.Size.X * (_areaFillingFactor - 1) / 2),
-					(-_doc.RootLayer.Size.Y * (_areaFillingFactor - 1) / 2)
+					(-_doc.Size.X * (_areaFillingFactor - 1) / 2),
+					(-_doc.Size.Y * (_areaFillingFactor - 1) / 2)
 					);
 			}
 		}
@@ -246,8 +246,8 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				return new PointD2D(
-					(_doc.RootLayer.Size.X * (_areaFillingFactor + 1) / 2),
-					(_doc.RootLayer.Size.Y * (_areaFillingFactor + 1) / 2)
+					(_doc.Size.X * (_areaFillingFactor + 1) / 2),
+					(_doc.Size.Y * (_areaFillingFactor + 1) / 2)
 					);
 			}
 		}
@@ -293,14 +293,14 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				var rlsize = _doc.RootLayer.Size;
+				var rlsize = _doc.Size;
 				if (0 == _areaFillingFactor)
 					throw new InvalidOperationException("AreaFillingFactor is 0, thus AutoZoomFactor can not be calculated");
 				if (0 == rlsize.X || 0 == rlsize.Y)
 					throw new InvalidOperationException("Root layer size x or y is 0, thus AutoZoomFactor can not be calculated");
 
-				double zoomh = (_view.ViewportSizeInPoints.X) / (_doc.RootLayer.Size.X * _areaFillingFactor);
-				double zoomv = (_view.ViewportSizeInPoints.Y) / (_doc.RootLayer.Size.Y * _areaFillingFactor);
+				double zoomh = (_view.ViewportSizeInPoints.X) / (_doc.Size.X * _areaFillingFactor);
+				double zoomv = (_view.ViewportSizeInPoints.Y) / (_doc.Size.Y * _areaFillingFactor);
 				var zoomFactor = System.Math.Min(zoomh, zoomv);
 				if (zoomFactor <= 0)
 					zoomFactor = 1;
@@ -386,7 +386,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			var hasChanged = CalculateAutoZoom();
 			_view.ShowGraphScrollBars = false;
 
-			if(hasChanged && triggerRepaintIfChanged)
+			if (hasChanged && triggerRepaintIfChanged)
 				RefreshGraph();
 		}
 
@@ -408,8 +408,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		protected void RefreshManualZoom()
 		{
 			var virtualSize = SizeOfViewportInGraphCoordinates;
-			var xratio = virtualSize.X / _doc.RootLayer.Size.X;
-			var yratio = virtualSize.Y / _doc.RootLayer.Size.Y;
+			var xratio = virtualSize.X / _doc.Size.X;
+			var yratio = virtualSize.Y / _doc.Size.Y;
 
 			bool showScrollbars = xratio < 1 || yratio < 1;
 			if (showScrollbars)
@@ -418,7 +418,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			else
 			{
 				// we center the graph in the viewport
-				var gz = _doc.RootLayer.Size;
+				var gz = _doc.Size;
 				var vz = SizeOfViewportInGraphCoordinates;
 				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = new PointD2D((gz.X - vz.X) / 2, (gz.Y - vz.Y) / 2);
 			}

@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Gdi
 
 		/// <summary>Events which are fired from this thread are not distributed.</summary>
 		[NonSerialized]
-		private System.Threading.Thread _paintThread;
+		private volatile System.Threading.Thread _paintThread;
 
 		/// <summary>
 		/// Event to signal that the name of this object has changed.
@@ -536,7 +536,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Gets the size of this graph in points (1/72 inch). The value returned is exactly the size of the root layer.
+		/// Gets/sets the size of this graph in points (1/72 inch). The value returned is exactly the size of the root layer.
 		/// </summary>
 		/// <value>
 		/// The size of the graph in points (1/72 inch).
@@ -545,7 +545,22 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
+				var s = _rootLayer.Size;
+				var p1 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, 0));
+				var p2 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(s.X, 0));
+				var p3 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, s.Y));
+				var p4 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(s.X, s.Y));
+
+				var r = new RectangleD(p1, PointD2D.Empty);
+				r.ExpandToInclude(p2);
+				r.ExpandToInclude(p3);
+				r.ExpandToInclude(p4);
+
 				return _rootLayer.Size;
+			}
+			set
+			{
+				_rootLayer.Size = value;
 			}
 		}
 
@@ -581,7 +596,14 @@ namespace Altaxo.Graph.Gdi
 		/// to the top left corner of the printable area before calling this routine.</remarks>
 		public void DoPaint(Graphics g, bool bForPrinting)
 		{
-			System.Diagnostics.Debug.Assert(null == _paintThread, "DoPaint was called reentrant or from different threads");
+			if (System.Threading.Thread.CurrentThread == _paintThread)
+				throw new InvalidOperationException("DoPaint is called reentrant (i.e. from the same thread that is already executing DoPaint");
+
+			while (null != _paintThread) // seems that another thread also wants to paint, this can happen when a Com Container want to have a image at the same time as the user interface
+				System.Threading.Thread.Sleep(1); // then the other thread must wait, until the first paint operation is finished
+
+			System.Diagnostics.Debug.Assert(null == _paintThread, "We waited, thus _paintThread should be null");
+
 			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
 			try
 			{

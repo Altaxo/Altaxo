@@ -65,12 +65,33 @@ namespace Altaxo.Com
 			_istream.Stat(out _streamStatus, STATFLAG.NONAME);
 		}
 
+		public override void Close()
+		{
+			if (null != _istream)
+			{
+				//_istream.Commit(0);
+				if (_isStreamOwner)
+				{
+					Marshal.ReleaseComObject(_istream);
+#if COMLOGGING
+					Debug.ReportInfo("ComStreamWrapper.Close: istream released");
+#endif
+				}
+				_istream = null;
+			}
+			base.Close();
+		}
+
 		/// <summary>
 		/// Gibt die vom <see cref="T:System.IO.Stream" /> verwendeten nicht verwalteten Ressourcen und optional auch die verwalteten Ressourcen frei.
 		/// </summary>
 		/// <param name="disposing">true, um sowohl verwaltete als auch nicht verwaltete Ressourcen freizugeben. false, um ausschließlich nicht verwaltete Ressourcen freizugeben.</param>
 		protected override void Dispose(bool disposing)
 		{
+#if COMLOGGING
+			Debug.ReportInfo("ComStreamWrapper.Dispose({0})", disposing);
+#endif
+
 			base.Dispose(disposing);
 
 			Marshal.FreeCoTaskMem(_int64Ptr);
@@ -84,6 +105,9 @@ namespace Altaxo.Com
 				if (_isStreamOwner)
 				{
 					Marshal.ReleaseComObject(_istream);
+#if COMLOGGING
+					Debug.ReportInfo("ComStreamWrapper.Dispose: istream released");
+#endif
 				}
 				_istream = null;
 			}
@@ -108,7 +132,10 @@ namespace Altaxo.Com
 
 		public override void Flush()
 		{
-			_istream.Commit(STGC.DEFAULT);
+			//_istream.Commit(STGC.DEFAULT);
+#if COMLOGGING
+			Debug.ReportWarning("ComStreamWrapper.Flush: nothing done here");
+#endif
 		}
 
 		public override long Length

@@ -26,15 +26,15 @@ namespace Altaxo.Com
 		/// </summary>
 		/// <param name="containerApplicationName">Name of the container application.</param>
 		/// <param name="containerFileName">Name of the container file.</param>
-		/// <param name="isInEmbeddedMode">if set to <c>true</c> the application is in embedded mode.</param>
-		public void SetHostNames(string containerApplicationName, string containerFileName, bool isInEmbeddedMode)
+		/// <param name="embeddedObject">The Altaxo object (for instance graph document) that is embedded in the container application.</param>
+		public void SetHostNames(string containerApplicationName, string containerFileName, object embeddedObject)
 		{
 			// see Brockschmidt, Inside Ole 2nd ed. page 992
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
 			// this means that we have to switch the user interface from within this function
 
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.SetHostNames szContainerApp={0}, szContainerObj={1}", szContainerApp, szContainerObj);
+			Debug.ReportInfo("IOleObject.SetHostNames szContainerApp={0}, szContainerObj={1}", containerApplicationName, containerFileName);
 #endif
 
 			string title = string.Format("{0} - {1}", containerApplicationName, containerFileName);
@@ -62,7 +62,7 @@ namespace Altaxo.Com
 			Action hiding = () =>
 			{
 #if COMLOGGING
-							Debug.ReportInfo("Hide main window");
+				Debug.ReportInfo("Hide main window");
 #endif
 				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = false;
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Hidden;
@@ -78,7 +78,7 @@ namespace Altaxo.Com
 			Current.Gui.Execute(() =>
 			{
 #if COMLOGGING
-							Debug.ReportInfo("Make main window visible");
+				Debug.ReportInfo("Make main window visible");
 #endif
 				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = true;
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Visible;

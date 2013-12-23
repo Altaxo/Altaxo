@@ -2,6 +2,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 
@@ -14,7 +15,7 @@ namespace Altaxo.Com
 	// Note that ComManager is NOT declared as public.
 	// This is so that it will not be exposed to COM when we call regasm
 	// or tlbexp.
-	public class ComManager
+	public class ComManager : Altaxo.Main.IComManager
 	{
 		private int _numberOfObjectsInUse;  // Keeps a count on the total number of objects alive.
 		private int _numberOfServerLocks;// Keeps a lock count on this application.
@@ -33,11 +34,13 @@ namespace Altaxo.Com
 		/// The application is in embedded mode. This does <b>not</b> mean that the application was started with the -embedding flag in the command line! (Since this happens also when the application is
 		/// started by clicking a linked object). We can only be sure to be in embedding mode when IOleObject.SetHostNames is called on the DocumentComObject.
 		/// </summary>
-		public bool IsInEmbeddedObjectMode { get; set; }
+		public bool IsInEmbeddedObjectMode { get; private set; }
 
-		public string ContainerApp { get; set; }
+		public string ContainerApplicationName { get; private set; }
 
-		public string ContainerObject { get; set; }
+		public string ContainerDocumentName { get; private set; }
+
+		public object EmbeddedObject { get; private set; }
 
 		public bool ApplicationWasStartedWithEmbeddingArg { get; private set; }
 
@@ -47,9 +50,9 @@ namespace Altaxo.Com
 
 		private GuiThreadStack _guiThreadStack;
 
-		public DocumentComObject GetDocumentsComObjectForDocument(Altaxo.Graph.Gdi.GraphDocument doc)
+		public DocumentComObject GetDocumentsComObjectForGraphDocument(Altaxo.Graph.Gdi.GraphDocument doc)
 		{
-			if (_documentsComObject.ContainsKey(doc))
+			if (null != doc && _documentsComObject.ContainsKey(doc))
 				return _documentsComObject[doc];
 
 			// else we must create a new DocumentComObject
@@ -58,14 +61,27 @@ namespace Altaxo.Com
 				FileComObject = new FileComObject(this);
 
 			var newComObject = new DocumentComObject(doc, _fileComObject, this);
-			_documentsComObject.Add(doc, newComObject);
+
+			// note: the addition to the dictionary is done by the DocumentComObject itself, that's why it is not done here
+
 			return newComObject;
+		}
+
+		public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object doc)
+		{
+			if (doc is Altaxo.Graph.Gdi.GraphDocument)
+				return GetDocumentsComObjectForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)doc);
+
+			return null;
 		}
 
 		public void NotifyDocumentOfDocumentsComObjectChanged(DocumentComObject documentComObject, Altaxo.Graph.Gdi.GraphDocument oldDocument, Altaxo.Graph.Gdi.GraphDocument newDocument)
 		{
-			_documentsComObject.Remove(oldDocument);
-			_documentsComObject.Add(newDocument, documentComObject);
+			if (null != oldDocument)
+				_documentsComObject.Remove(oldDocument);
+
+			if (null != newDocument)
+				_documentsComObject.Add(newDocument, documentComObject);
 		}
 
 		public ComManager(AltaxoComApplicationAdapter appAdapter)
@@ -109,17 +125,18 @@ namespace Altaxo.Com
 			}
 		}
 
-		public void SetHostNames(string containerApplicationName, string containerFileName, bool isInEmbeddedMode)
+		public void SetHostNames(string containerApplicationName, string containerFileName, object embeddedObject)
 		{
 			// see Brockschmidt, Inside Ole 2nd ed. page 992
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
 			// this means that we have to switch the user interface from within this function
 
-			ContainerApp = containerApplicationName;
-			ContainerObject = containerFileName;
-			IsInEmbeddedMode = isInEmbeddedMode;
+			IsInEmbeddedMode = true;
+			ContainerApplicationName = containerApplicationName;
+			ContainerDocumentName = containerFileName;
+			EmbeddedObject = embeddedObject;
 
-			ApplicationAdapter.SetHostNames(containerApplicationName, containerFileName, isInEmbeddedMode);
+			ApplicationAdapter.SetHostNames(containerApplicationName, containerFileName, embeddedObject);
 		}
 
 		public FileComObject FileComObject
@@ -232,7 +249,60 @@ namespace Altaxo.Com
 			}
 		}
 
-		private void UnRegister(RegistryKey root)
+		public void RegisterApplicationForCom()
+		{
+			try
+			{
+				Register(Registry.ClassesRoot);
+				return; // if it was successful to register the computer account, we return
+			}
+			catch (Exception)
+			{
+			}
+
+			// if not successful to register into HKLM, we use the user's registry
+			try
+			{
+				using (var sf = Registry.CurrentUser.OpenSubKey("Software", true))
+				{
+					using (var cl = sf.OpenSubKey("Classes", true))
+					{
+						Register(cl);
+					}
+				}
+			}
+			catch (Exception)
+			{
+			}
+		}
+
+		public void UnregisterApplicationForCom()
+		{
+			try
+			{
+				Unregister(Registry.ClassesRoot);
+			}
+			catch (Exception)
+			{
+			}
+
+			// unregister also from the user's registry
+			try
+			{
+				using (var sf = Registry.CurrentUser.OpenSubKey("Software", true))
+				{
+					using (var cl = sf.OpenSubKey("Classes", true))
+					{
+						Register(cl);
+					}
+				}
+			}
+			catch (Exception)
+			{
+			}
+		}
+
+		private void Unregister(RegistryKey root)
 		{
 			root.DeleteSubKey(".axoprj");
 			root.DeleteSubKey("Altaxo.Project");
@@ -317,11 +387,11 @@ namespace Altaxo.Com
 				key3 = key2.CreateSubKey("3");
 				key3.SetValue(null, "Altaxo Graph Document");
 
-				key2 = key.CreateSubKey("MiscStatus");
-				key2.SetValue(null, "16");
+				key2 = key.CreateSubKey("MiscStatus"); // see Brockschmidt, Inside Ole 2nd ed. page 832
+				key2.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE)).ToString(System.Globalization.CultureInfo.InvariantCulture)); // DEFAULT: OLEMISC_CANTLINKINSIDE
 
-				key3 = key2.CreateSubKey("1");
-				key3.SetValue(null, "17");
+				key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture)); // For DVASPECT_CONTENT
+				key3.SetValue(null, ((int)(OLEMISC.OLEMISC_RECOMPOSEONRESIZE | OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
 			}
 			catch (Exception ex)
 			{
@@ -353,9 +423,6 @@ namespace Altaxo.Com
 
 			if (args.Length > 0)
 			{
-				RegistryKey key = null;
-				RegistryKey key2 = null;
-
 				switch (args[0].ToLower())
 				{
 					case "-embedding":
@@ -364,69 +431,12 @@ namespace Altaxo.Com
 
 					case "-register":
 					case "/register":
-						ApplicationShouldExitAfterProcessingArgs = true;
-						bRet = false;
-						try
-						{
-							Register(Registry.ClassesRoot);
-							break;
-						}
-						catch (Exception)
-						{
-						}
-						try
-						{
-							var sf = Registry.CurrentUser.OpenSubKey("Software", true);
-							var cl = sf.OpenSubKey("Classes", true);
-							Register(cl);
-							cl.Close();
-							sf.Close();
-						}
-						catch (Exception)
-						{
-						}
+						RegisterApplicationForCom();
 						break;
 
 					case "-unregister":
 					case "/unregister":
-						try
-						{
-							UnRegister(Registry.ClassesRoot);
-							break;
-						}
-						catch (Exception)
-						{
-						}
-						try
-						{
-							var sf = Registry.CurrentUser.OpenSubKey("Software", true);
-							var cl = sf.OpenSubKey("Classes", true);
-							UnRegister(cl);
-							cl.Close();
-							sf.Close();
-						}
-						catch (Exception)
-						{
-						}
-
-						try
-						{
-							key = Registry.ClassesRoot.OpenSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(DocumentComObject)).ToString("B"), true);
-							key.DeleteSubKey("LocalServer32");
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show("Error while unregistering the server:\n" + ex.ToString());
-						}
-						finally
-						{
-							if (key != null)
-								key.Close();
-							if (key2 != null)
-								key2.Close();
-						}
-						bRet = false;
-						ApplicationShouldExitAfterProcessingArgs = true;
+						UnregisterApplicationForCom();
 						break;
 
 					default:

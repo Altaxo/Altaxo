@@ -269,7 +269,7 @@ namespace ICSharpCode.SharpDevelop
 					return;
 				if (comManager.ApplicationWasStartedWithEmbeddingArg)
 				{
-					System.Diagnostics.Debugger.Launch();
+					//System.Diagnostics.Debugger.Launch();
 					comManager.StartLocalServer();
 				}
 #endif

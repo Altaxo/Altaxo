@@ -58,7 +58,7 @@ namespace Altaxo
 
     private static Altaxo.Main.Services.IFitFunctionService sm_theFitFunctionService;
 
-		private static object sm_ComManager;
+		private static Altaxo.Main.IComManager sm_ComManager;
 
     private static bool sm_theApplicationIsClosing;
 
@@ -136,7 +136,7 @@ namespace Altaxo
       get { return sm_theFitFunctionService; }
     }
 
-		public static object ComManager
+		public static Altaxo.Main.IComManager ComManager
 		{
 			get { return sm_ComManager; }
 		}
@@ -278,7 +278,7 @@ namespace Altaxo
 
     }
 
-		public static void SetComManager(object value)
+		public static void SetComManager(Altaxo.Main.IComManager value)
 		{
 			sm_ComManager = value;
 		}

@@ -24,8 +24,7 @@ namespace Altaxo.Com
 				riid == InterfaceGuid.IID_IDispatch ||
 				riid == InterfaceGuid.IID_IUnknown)
 			{
-				var newDocument = Current.ProjectService.CreateNewGraph().Doc;
-				var documentComObject = _comManager.GetDocumentsComObjectForDocument(newDocument);
+				var documentComObject = _comManager.GetDocumentsComObjectForGraphDocument(null);
 
 				ppvObject = Marshal.GetComInterfaceForObject(documentComObject, typeof(System.Runtime.InteropServices.ComTypes.IDataObject));
 			}

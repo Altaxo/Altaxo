@@ -207,8 +207,7 @@ namespace Altaxo.Com
 
 				_renderHelper = new DocumentComObjectRenderer(_document, this);
 
-				if (null != oldValue)
-					_comManager.NotifyDocumentOfDocumentsComObjectChanged(this, oldValue, _document);
+				_comManager.NotifyDocumentOfDocumentsComObjectChanged(this, oldValue, _document);
 			}
 		}
 
@@ -316,7 +315,15 @@ namespace Altaxo.Com
 			}
 			private set
 			{
-				//NeedsSave();
+				const double pointsToHimetric = 2540 / 72.0;
+				double docSizeX_pt = value.cx / pointsToHimetric;
+				double docSizeY_pt = value.cy / pointsToHimetric;
+
+				if (null != _document)
+				{
+					//	_document.Size = new Graph.PointD2D(docSizeX_pt, docSizeY_pt);
+				}
+
 				SendAdvise(AdviseKind.DataChanged);
 				//NeedsSave();
 			}
@@ -330,7 +337,10 @@ namespace Altaxo.Com
 		{
 			int misc = (int)OLEMISC.OLEMISC_CANTLINKINSIDE;
 			if (aspect == (int)DVASPECT.DVASPECT_CONTENT)
+			{
 				misc |= (int)OLEMISC.OLEMISC_RECOMPOSEONRESIZE;
+				misc |= (int)OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT;
+			}
 			return misc;
 		}
 
@@ -546,7 +556,11 @@ namespace Altaxo.Com
 					medium.pUnkForRelease = null;
 					var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
 
-					Save(stg, false);
+					// we don't save the document directly, since this would mean to save the whole (and probably huge) project
+					// instead we first make a mini project with the neccessary data only and then save this instead
+					//InternalSaveAsMiniProject(stg);
+					Save(stg, true);
+
 					return;
 				}
 				if (format.cfFormat == DocumentComObjectRenderer.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
@@ -631,13 +645,13 @@ namespace Altaxo.Com
 			return _clientSite;
 		}
 
-		public int SetHostNames(string szContainerApp, string szContainerObj)
+		public int SetHostNames(string containerApplicationName, string containerDocumentName)
 		{
 			// see Brockschmidt, Inside Ole 2nd ed. page 992
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
 			// this means that we have to switch the user interface from within this function
 
-			_comManager.SetHostNames(szContainerApp, szContainerObj, true);
+			_comManager.SetHostNames(containerApplicationName, containerDocumentName, _document);
 			return ComReturnValue.NOERROR;
 		}
 
@@ -1016,69 +1030,63 @@ namespace Altaxo.Com
 #if COMLOGGING
 			Debug.ReportInfo("IPersistStorage.InitNew (not needed)");
 #endif
+
+			Document = Current.ProjectService.CreateNewGraph().Doc;
+
 			// We don't need an IStorage except at Load/Save.
 			_isDocumentDirty = true; // but we set the document dirty flag thus it is saved
 		}
 
 		public int Load(IStorage pstg)
 		{
+			//System.Diagnostics.Debugger.Launch();
+
 			string graphDocumentName = null;
 #if COMLOGGING
 			Debug.ReportInfo("IPersistStorage.Load");
 #endif
+
 			try
 			{
-				try
+				using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoGraphName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
 				{
-					using (var streamWrapper = new ComStreamWrapper(pstg.OpenStream("AltaxoProjectZipStream", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
-					{
-						_comManager.InvokeGuiThread(() =>
-						{
-							Current.ProjectService.CloseProject(true);
-							Current.ProjectService.LoadProject(streamWrapper);
-						});
-					}
-#if COMLOGGING
-					Debug.ReportInfo("Content loaded, Title was: {0}", _document.Title);
-#endif
+					var bytes = new byte[stream.Length];
+					stream.Read(bytes, 0, bytes.Length);
+					graphDocumentName = System.Text.Encoding.UTF8.GetString(bytes);
 				}
-				catch (Exception ex)
-				{
 #if COMLOGGING
-					Debug.ReportError("IPersistStorage.Load", ex);
+				Debug.ReportInfo("Name of GraphDocument retrieved, Name: {0}", graphDocumentName);
 #endif
-				}
-
-				try
-				{
-					using (var stream = new ComStreamWrapper(pstg.OpenStream("GraphDocumentName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
-					{
-						var bytes = new byte[stream.Length];
-						stream.Read(bytes, 0, bytes.Length);
-						graphDocumentName = System.Text.Encoding.UTF8.GetString(bytes);
-					}
-
-#if COMLOGGING
-					Debug.ReportInfo("Content loaded, Title was: {0}", _document.Title);
-#endif
-				}
-				catch (Exception ex)
-				{
-#if COMLOGGING
-					Debug.ReportError("IPersistStorage.Load", ex);
-#endif
-				}
 			}
 			catch (Exception ex)
 			{
 #if COMLOGGING
-				Debug.ReportError("IPersistStorage.Load", ex);
+				Debug.ReportInfo("IPersistStorage.Load, failed to load stream GraphName, exception: {0}", ex);
 #endif
 			}
-			finally
+
+			try
 			{
-				Marshal.ReleaseComObject(pstg);
+				using (var streamWrapper = new ComStreamWrapper(pstg.OpenStream("AltaxoProjectZip", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
+				{
+					_comManager.InvokeGuiThread(() =>
+					{
+						Current.ProjectService.CloseProject(true);
+						Current.ProjectService.LoadProject(streamWrapper);
+					});
+				}
+#if COMLOGGING
+				Debug.ReportInfo("Project loaded");
+#endif
 			}
+			catch (Exception ex)
+			{
+#if COMLOGGING
+				Debug.ReportInfo("IPersistStorage.Load, failed to load stream AltaxoProjectZip, exception: {0}", ex);
+#endif
+			}
+
+			Marshal.ReleaseComObject(pstg);
 
 			Altaxo.Graph.Gdi.GraphDocument newDocument = null;
 
@@ -1093,7 +1101,68 @@ namespace Altaxo.Com
 				_comManager.InvokeGuiThread(() => Current.ProjectService.ShowDocumentView(_document));
 			}
 
+			if (null == Document)
+			{
+#if COMLOGGING
+				Debug.ReportError("IPersistStorage.Load, something goes wrong, must use emergency document to avoid NullPointerExceptions!");
+#endif
+				Document = Current.ProjectService.CreateNewGraph().Doc;
+			}
+
 			return ComReturnValue.S_OK;
+		}
+
+		private void InternalSaveAsMiniProject(IStorage pStgSave)
+		{
+			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
+			var altaxoMiniProject = miniProjectBuilder.GetMiniProject(_document);
+			InternalSaveMiniProject(pStgSave, altaxoMiniProject, _document.Name);
+		}
+
+		private void InternalSaveMiniProject(IStorage pStgSave, AltaxoDocument projectToSave, string graphDocumentName)
+		{
+#if COMLOGGING
+			Debug.ReportInfo("InternalSaveMiniProject");
+#endif
+
+			try
+			{
+				Exception saveEx = null;
+				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
+
+				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZipStream", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+				{
+					using (var zippedStream = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(stream))
+					{
+						var zippedStreamWrapper = new Altaxo.Main.ZipOutputStreamWrapper(zippedStream);
+						var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+						projectToSave.SaveToZippedFile(zippedStreamWrapper, info);
+						zippedStream.Close();
+					}
+					stream.Close();
+				}
+
+				// Store the name of the item
+				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("GraphDocumentName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+				{
+					byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(graphDocumentName);
+					stream.Write(nameBytes, 0, nameBytes.Length);
+				}
+				_isDocumentDirty = false;
+
+				if (null != saveEx)
+					throw saveEx;
+			}
+			catch (Exception ex)
+			{
+#if COMLOGGING
+				Debug.ReportError("InternalSaveMiniProject, Exception ", ex);
+#endif
+			}
+			finally
+			{
+				Marshal.ReleaseComObject(pStgSave);
+			}
 		}
 
 		public void Save(IStorage pStgSave, bool fSameAsLoad)
@@ -1108,17 +1177,19 @@ namespace Altaxo.Com
 
 				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
 
-				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZipStream", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
-				{
-					_comManager.InvokeGuiThread(() => saveEx = Current.ProjectService.SaveProject(stream));
-				}
-
 				// Store the name of the item
-				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("GraphDocumentName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoGraphName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
 				{
 					byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(_document.Name);
 					stream.Write(nameBytes, 0, nameBytes.Length);
 				}
+
+				// Store the project
+				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZip", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+				{
+					_comManager.InvokeGuiThread(() => saveEx = Current.ProjectService.SaveProject(stream));
+				}
+
 				_isDocumentDirty = false;
 
 				if (null != saveEx)
@@ -1127,7 +1198,7 @@ namespace Altaxo.Com
 			catch (Exception ex)
 			{
 #if COMLOGGING
-				Debug.ReportError("IPersistStorage:Save, Exception ", ex);
+				Debug.ReportError("IPersistStorage:Save, Exception: {0}", ex);
 #endif
 			}
 			finally

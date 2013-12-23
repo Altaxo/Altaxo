@@ -283,6 +283,7 @@
     <Compile Include="Gui\Settings\AsciiAnalysisSettingsController.cs" />
     <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
+    <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />
     <Compile Include="Main\Services\PropertyReflection\DisplayOrderAttribute.cs" />

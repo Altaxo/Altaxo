@@ -548,6 +548,20 @@
 							label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
 							description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
 							class="Altaxo.Main.Commands.ShowOptions" />
+			<MenuItem id="Com" label="${res:XML.MainMenu.ComMenu}" type="Menu">
+				<MenuItem id="RegAppCom"
+							label="${res:XML.MainMenu.ToolsMenu.RegisterApplicationForCom}"
+							description="${res:XML.MainMenu.ToolsMenu.RegisterApplicationForCom.Description}"
+							class="Altaxo.Main.Commands.RegisterApplicationForCom" />
+				<MenuItem id="UnregAppCom"
+							label="${res:XML.MainMenu.ToolsMenu.UnregisterApplicationForCom}"
+							description="${res:XML.MainMenu.ToolsMenu.UnregisterApplicationForCom.Description}"
+							class="Altaxo.Main.Commands.UnregisterApplicationForCom" />
+				<MenuItem id="CopyAsComObject"
+						label="${res:XML.MainMenu.ToolsMenu.CopyAsComObject}"
+						description="${res:XML.MainMenu.ToolsMenu.CopyAsComObject.Description}"
+						class="Altaxo.Main.Commands.CopyDocumentAsComObjectToClipboard" />
+			</MenuItem>
 		</MenuItem>
 		<!-- Window menu -->
 		<MenuItem id="Window" label="${res:XML.MainMenu.WindowMenu}" type="Menu">

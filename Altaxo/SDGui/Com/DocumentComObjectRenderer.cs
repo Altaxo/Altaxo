@@ -517,7 +517,7 @@ namespace Altaxo.Com
 			Debug.ReportInfo("-> DV_E_FORMATETC");
 #endif
 			medium = new STGMEDIUM();
-			Marshal.ThrowExceptionForHR(ComReturnValue.DV_E_FORMATETC);
+			// Marshal.ThrowExceptionForHR(ComReturnValue.DV_E_FORMATETC);
 		}
 
 		public IEnumFORMATETC EnumFormatEtc()

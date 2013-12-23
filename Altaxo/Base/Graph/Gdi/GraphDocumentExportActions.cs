@@ -270,8 +270,8 @@ namespace Altaxo.Graph.Gdi
 				case GraphExportArea.Page:
 				case GraphExportArea.GraphSize:
 					// round the pixels to multiples of 4, many programs rely on this
-					width = (int)(4 * Math.Ceiling(0.25 * doc.RootLayer.Size.X * scale));
-					height = (int)(4 * Math.Ceiling(0.25 * doc.RootLayer.Size.Y * scale));
+					width = (int)(4 * Math.Ceiling(0.25 * doc.Size.X * scale));
+					height = (int)(4 * Math.Ceiling(0.25 * doc.Size.Y * scale));
 					break;
 
 				default:
@@ -454,7 +454,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				default:
 				case GraphExportArea.GraphSize:
-					metaFileBounds = new RectangleF(0, 0, (float)(doc.RootLayer.Size.X * scale), (float)(doc.RootLayer.Size.Y * scale));
+					metaFileBounds = new RectangleF(0, 0, (float)(doc.Size.X * scale), (float)(doc.Size.Y * scale));
 					break;
 			}
 

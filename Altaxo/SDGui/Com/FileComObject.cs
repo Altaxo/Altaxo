@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;  
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
@@ -13,7 +13,7 @@ namespace Altaxo.Com
 	ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _SimpleCOMObject.
 	]
 	public class FileComObject :
-		ReferenceCountedObjectBase, 
+		ReferenceCountedObjectBase,
 		IPersistFile,
 		IOleItemContainer
 	{
@@ -213,11 +213,11 @@ namespace Altaxo.Com
 
 		public void GetCurFile(out string ppszFileName)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("FileComObject.GetCurFile -> {0}", _currentProject.FileName);
-#endif
-
 			ppszFileName = Current.ProjectService.CurrentProjectFileName;
+
+#if COMLOGGING
+			Debug.ReportInfo("FileComObject.GetCurFile -> {0}", ppszFileName);
+#endif
 		}
 
 		public int IsDirty()
@@ -305,7 +305,7 @@ namespace Altaxo.Com
 				riid == InterfaceGuid.IID_IDispatch ||
 				riid == InterfaceGuid.IID_IUnknown)
 			{
-				var documentComObject = _comManager.GetDocumentsComObjectForDocument(doc);
+				var documentComObject = _comManager.GetDocumentsComObjectForGraphDocument(doc);
 				IntPtr ppvObject = Marshal.GetComInterfaceForObject(documentComObject, typeof(System.Runtime.InteropServices.ComTypes.IDataObject));
 
 				var action = new Action(() => Current.ProjectService.ShowDocumentView(doc));

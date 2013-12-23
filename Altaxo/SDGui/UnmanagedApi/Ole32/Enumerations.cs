@@ -229,4 +229,33 @@ namespace Altaxo.UnmanagedApi.Ole32
 		public const string CFSTR_OBJECTDESCRIPTOR = "Object Descriptor";
 		public const string CFSTR_LINKSRCDESCRIPTOR = "Link Source Descriptor";
 	}
+
+	/*
+	/// <summary>
+	/// Specifies the desired data or view aspect of the object when drawing or getting data. See the documentation in the Microsoft Libary for more information (<see href="http://msdn.microsoft.com/en-us/library"/>).
+	/// </summary>
+	[Flags]
+	public enum DVASPECT
+	{
+		/// <summary>
+		/// Provides a representation of an object so it can be displayed as an embedded object inside of a container. This value is typically specified for compound document objects. The presentation can be provided for the screen or printer.
+		/// </summary>
+		CONTENT = 1,
+
+		/// <summary>
+		/// Provides a thumbnail representation of an object so it can be displayed in a browsing tool. The thumbnail is approximately a 120 by 120 pixel, 16-color (recommended) device-independent bitmap potentially wrapped in a metafile.
+		/// </summary>
+		THUMBNAIL = 2,
+
+		/// <summary>
+		/// Provides an iconic representation of an object.
+		/// </summary>
+		ICON = 4,
+
+		/// <summary>
+		/// Provides a representation of the object on the screen as though it were printed to a printer using the Print command from the File menu. The described data may represent a sequence of pages.
+		/// </summary>
+		DOCPRINT = 8
+	}
+	*/
 }

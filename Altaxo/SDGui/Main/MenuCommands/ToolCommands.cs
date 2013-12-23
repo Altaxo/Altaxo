@@ -53,4 +53,37 @@ namespace Altaxo.Main.Commands
 			Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
 		}
 	}
+
+	public class RegisterApplicationForCom : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Current.ComManager.RegisterApplicationForCom();
+		}
+	}
+
+	public class UnregisterApplicationForCom : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Current.ComManager.UnregisterApplicationForCom();
+		}
+	}
+
+	public class CopyDocumentAsComObjectToClipboard : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			{
+				Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+				if (null != ctrl)
+				{
+					var doc = ((Altaxo.Gui.Graph.Viewing.GraphController)ctrl.MVCController).Doc;
+					var dataObject = Current.ComManager.GetDocumentsComObjectForDocument(doc);
+					if (null != dataObject)
+						System.Windows.Clipboard.SetDataObject(dataObject);
+				}
+			}
+		}
+	}
 }
