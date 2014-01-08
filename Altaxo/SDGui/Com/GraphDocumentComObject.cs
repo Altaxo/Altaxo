@@ -19,7 +19,7 @@ namespace Altaxo.Com
 		ProgId("Altaxo.Graph.0"),  // This ProgId is used by default. Not 100% necessary.
 		ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _DocumentComObject.
 		]
-	public partial class DocumentComObject :
+	public partial class GraphDocumentComObject :
 		ReferenceCountedObjectBase, // DocumentComObject is derived from ReferenceCountedObjectBase so that we can track its creation and destruction.
 		System.Runtime.InteropServices.ComTypes.IDataObject,  // DocumentComObject must implement the IDocumentComObject interface.
 		IOleObject,
@@ -45,9 +45,9 @@ namespace Altaxo.Com
 
 		private GraphDocument _document;
 
-		private DocumentComObjectRenderer _renderHelper;
+		private GraphDocumentComObjectRenderer _renderHelper;
 
-		public DocumentComObject(GraphDocument graphDocument, FileComObject fileComObject, ComManager comManager)
+		public GraphDocumentComObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 			: base(comManager)
 		{
 #if COMLOGGING
@@ -64,7 +64,7 @@ namespace Altaxo.Com
 		}
 
 		/// <summary>Copy an object for placing on the clipboard.</summary>
-		public DocumentComObject(DocumentComObject from)
+		public GraphDocumentComObject(GraphDocumentComObject from)
 			: base(from._comManager)
 		{
 			Init(from._document, false, from.Moniker);
@@ -87,7 +87,7 @@ namespace Altaxo.Com
 			Document = doc;
 		}
 
-		~DocumentComObject()
+		~GraphDocumentComObject()
 		{
 			// ReferenceCountedObjectBase destructor will be invoked.
 #if COMLOGGING
@@ -100,15 +100,15 @@ namespace Altaxo.Com
 #if COMLOGGING
 			Debug.ReportInfo("DocumentComObject.Dispose Step 1 : SaveObject");
 #endif
-			SendAdvise(DocumentComObject.AdviseKind.SaveObject);
+			SendAdvise(GraphDocumentComObject.AdviseKind.SaveObject);
 #if COMLOGGING
 			Debug.ReportInfo("DocumentComObject.Dispose Step 2 : Calling SendAdvise.HideWindow");
 #endif
-			SendAdvise(DocumentComObject.AdviseKind.HideWindow);
+			SendAdvise(GraphDocumentComObject.AdviseKind.HideWindow);
 #if COMLOGGING
 			Debug.ReportInfo("DocumentComObject.Dispose Step 3 : Calling SendAdvise.Closed");
 #endif
-			SendAdvise(DocumentComObject.AdviseKind.Closed);
+			SendAdvise(GraphDocumentComObject.AdviseKind.Closed);
 #if COMLOGGING
 			Debug.ReportInfo("DocumentComObject.Dispose Step 4 : ROTUnregister(ref _documentMonikerRotCookie)");
 #endif
@@ -136,22 +136,9 @@ namespace Altaxo.Com
 			return rot;
 		}
 
-		public static string GetDisplayName(IMoniker m)
-		{
-			string s;
-			IBindCtx bc = CreateBindCtx();
-			m.GetDisplayName(bc, null, out s);
-			Marshal.ReleaseComObject(bc);  // seems to be recommended
-			return s;
-		}
 
-		public static IBindCtx CreateBindCtx()
-		{
-			IBindCtx bc;
-			int rc = Ole32Func.CreateBindCtx(0, out bc);
-			System.Diagnostics.Debug.Assert(rc == ComReturnValue.S_OK);
-			return bc;
-		}
+
+	
 
 		internal static void ROTUnregister(ref int cookie)
 		{
@@ -171,7 +158,7 @@ namespace Altaxo.Com
 
 			// Register the moniker in the running object table (ROT).
 #if COMLOGGING
-			Debug.ReportInfo("Registering {0} in ROT", GetDisplayName(new_moniker));
+			Debug.ReportInfo("Registering {0} in ROT", DataObjectHelper.GetDisplayName(new_moniker));
 #endif
 			IRunningObjectTable rot = GetROT();
 			// This flag solved a terrible problem where Word would stop
@@ -205,7 +192,7 @@ namespace Altaxo.Com
 					_document.Changed += EhDocumentChanged;
 				}
 
-				_renderHelper = new DocumentComObjectRenderer(_document, this);
+				_renderHelper = new GraphDocumentComObjectRenderer(_document, this);
 
 				_comManager.NotifyDocumentOfDocumentsComObjectChanged(this, oldValue, _document);
 			}
@@ -265,7 +252,7 @@ namespace Altaxo.Com
 		private void SaveMonikerToStream(IMoniker moniker, IStream strm)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("SaveMonikerToStream:{0}", GetDisplayName(moniker));
+			Debug.ReportInfo("SaveMonikerToStream:{0}", DataObjectHelper.GetDisplayName(moniker));
 #endif
 			int hr = Ole32Func.OleSaveToStream((IPersistStream)moniker, strm);
 			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
@@ -282,13 +269,7 @@ namespace Altaxo.Com
 		//int attempt = 0;
 		public IntPtr RenderLink(TYMED tymed)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ISTREAM);
-			IStream strm;
-			int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
-			SaveMonikerToStream(this.Moniker, strm);
-
-			return Marshal.GetIUnknownForObject(strm);  // Increments ref count
+			return DataObjectHelper.RenderMonikerToNewStream(tymed, this.Moniker);
 		}
 
 		#endregion Moniker
@@ -445,7 +426,7 @@ namespace Altaxo.Com
 		public int DAdvise(ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.DAdvise {0}, {1}", DocumentComObjectRenderer.FormatEtcToString(pFormatetc), advf);
+			Debug.ReportInfo("IDataObject.DAdvise {0}, {1}", GraphDocumentComObjectRenderer.FormatEtcToString(pFormatetc), advf);
 #endif
 			try
 			{
@@ -526,7 +507,7 @@ namespace Altaxo.Com
 		public int GetCanonicalFormatEtc(ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, out System.Runtime.InteropServices.ComTypes.FORMATETC formatOut)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetCanonicalFormatEtc {0}", DocumentComObjectRenderer.FormatEtcToString(formatIn));
+			Debug.ReportInfo("IDataObject.GetCanonicalFormatEtc {0}", GraphDocumentComObjectRenderer.FormatEtcToString(formatIn));
 #endif
 
 			formatOut = formatIn;
@@ -537,7 +518,7 @@ namespace Altaxo.Com
 		public void GetData(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, out System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetData({0})", DocumentComObjectRenderer.FormatEtcToString(format));
+			Debug.ReportInfo("IDataObject.GetData({0})", GraphDocumentComObjectRenderer.FormatEtcToString(format));
 #endif
 			_renderHelper.GetData(ref format, out medium);
 		}
@@ -545,12 +526,12 @@ namespace Altaxo.Com
 		public void GetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetDataHere({0})", DocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
+			Debug.ReportInfo("IDataObject.GetDataHere({0})", GraphDocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
 #endif
 			// Allows containers to duplicate this into their own storage.
 			try
 			{
-				if (format.cfFormat == DocumentComObjectRenderer.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
+				if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
 				{
 					medium.tymed = TYMED.TYMED_ISTORAGE;
 					medium.pUnkForRelease = null;
@@ -558,12 +539,12 @@ namespace Altaxo.Com
 
 					// we don't save the document directly, since this would mean to save the whole (and probably huge) project
 					// instead we first make a mini project with the neccessary data only and then save this instead
-					//InternalSaveAsMiniProject(stg);
-					Save(stg, true);
+					InternalSaveAsMiniProject(stg);
+					
 
 					return;
 				}
-				if (format.cfFormat == DocumentComObjectRenderer.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
+				if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
 				{
 					var moniker = Moniker;
 					if (null != moniker)
@@ -600,7 +581,7 @@ namespace Altaxo.Com
 		public int QueryGetData(ref System.Runtime.InteropServices.ComTypes.FORMATETC format)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.QueryGetData({0})", DocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
+			Debug.ReportInfo("IDataObject.QueryGetData({0})", GraphDocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
 #endif
 			try
 			{
@@ -903,8 +884,12 @@ namespace Altaxo.Com
 		public int SetExtent(int dwDrawAspect, tagSIZEL pSizel)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.SetExtent({0}x{1})", pSizel.cx, pSizel.cy);
+			Debug.ReportInfo("IOleObject.SetExtent({0}x{1}) -> not implemented.", pSizel.cx, pSizel.cy);
 #endif
+
+			return ComReturnValue.E_FAIL;
+
+			/*
 			try
 			{
 				if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) == 0)
@@ -924,6 +909,7 @@ namespace Altaxo.Com
 #endif
 				throw;
 			}
+			*/
 		}
 
 		public int GetExtent(int dwDrawAspect, tagSIZEL pSizel)
@@ -1116,54 +1102,9 @@ namespace Altaxo.Com
 		{
 			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
 			var altaxoMiniProject = miniProjectBuilder.GetMiniProject(_document);
-			InternalSaveMiniProject(pStgSave, altaxoMiniProject, _document.Name);
+			GraphDocumentDataObject.InternalSaveMiniProject(pStgSave, altaxoMiniProject, _document.Name);
 		}
 
-		private void InternalSaveMiniProject(IStorage pStgSave, AltaxoDocument projectToSave, string graphDocumentName)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("InternalSaveMiniProject");
-#endif
-
-			try
-			{
-				Exception saveEx = null;
-				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
-
-				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZipStream", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
-				{
-					using (var zippedStream = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(stream))
-					{
-						var zippedStreamWrapper = new Altaxo.Main.ZipOutputStreamWrapper(zippedStream);
-						var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-						projectToSave.SaveToZippedFile(zippedStreamWrapper, info);
-						zippedStream.Close();
-					}
-					stream.Close();
-				}
-
-				// Store the name of the item
-				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("GraphDocumentName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
-				{
-					byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(graphDocumentName);
-					stream.Write(nameBytes, 0, nameBytes.Length);
-				}
-				_isDocumentDirty = false;
-
-				if (null != saveEx)
-					throw saveEx;
-			}
-			catch (Exception ex)
-			{
-#if COMLOGGING
-				Debug.ReportError("InternalSaveMiniProject, Exception ", ex);
-#endif
-			}
-			finally
-			{
-				Marshal.ReleaseComObject(pStgSave);
-			}
-		}
 
 		public void Save(IStorage pStgSave, bool fSameAsLoad)
 		{

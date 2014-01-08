@@ -11,6 +11,14 @@ namespace Altaxo.Main
 	public interface IComManager
 	{
 		/// <summary>
+		/// Gets a value indicating whether the application was started with the -embedding argument.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the application was started with -embedding argument; otherwise, <c>false</c>.
+		/// </value>
+		bool ApplicationWasStartedWithEmbeddingArg { get; }
+
+		/// <summary>
 		/// Gets a value indicating whether Altaxo is in embedded mode, i.e. a object (graph document) is embedded in another application. If <c>true</c>, the properties
 		/// <see cref="ContainerApplicationName"/>, <see cref="ContainerDocumentName"/> and <see cref="EmbeddedObject"/> can be used to set the title in the title bar of Altaxo.
 		/// </summary>
@@ -60,5 +68,18 @@ namespace Altaxo.Main
 		/// <param name="altaxoObject">The altaxo object (for instance graph document).</param>
 		/// <returns>The document's Com object.</returns>
 		System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object altaxoObject);
+
+
+		/// <summary>
+		/// Gets the documents data object for the document. The document's data object must only implement <see cref="System.Runtime.InteropServices.ComTypes.IDataObject"/>.
+		/// </summary>
+		/// <param name="altaxoObject">The altaxo object (for instance graph document).</param>
+		/// <returns>The document's data object.</returns>
+		System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsDataObjectForDocument(object altaxoObject);
+
+		/// <summary>
+		/// Stops the ComManager.
+		/// </summary>
+		void StopLocalServer();
 	}
 }

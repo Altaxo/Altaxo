@@ -545,23 +545,40 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				var s = _rootLayer.Size;
-				var p1 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, 0));
-				var p2 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(s.X, 0));
-				var p3 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, s.Y));
-				var p4 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(s.X, s.Y));
+				var r = GetBounds();
 
-				var r = new RectangleD(p1, PointD2D.Empty);
-				r.ExpandToInclude(p2);
-				r.ExpandToInclude(p3);
-				r.ExpandToInclude(p4);
-
-				return _rootLayer.Size;
+				return r.Size;
 			}
 			set
 			{
 				_rootLayer.Size = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets the bounds of the root layer.
+		/// </summary>
+		/// <returns></returns>
+		private RectangleD GetBounds()
+		{
+			var s = _rootLayer.Size;
+			var p1 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, 0));
+			var p2 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(s.X, 0));
+			var p3 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, s.Y));
+			var p4 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(s.X, s.Y));
+
+			var r = new RectangleD(p1, PointD2D.Empty);
+			r.ExpandToInclude(p2);
+			r.ExpandToInclude(p3);
+			r.ExpandToInclude(p4);
+			return r;
+		}
+
+		private void AdjustRootLayerPositionToFitIntoZeroOffsetRectangle()
+		{
+			var r = GetBounds();
+
+			_rootLayer.Position = _rootLayer.Position - r.LeftTop;
 		}
 
 		/// <summary>
@@ -607,6 +624,8 @@ namespace Altaxo.Graph.Gdi
 			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
 			try
 			{
+				AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
+
 				RootLayer.PaintPreprocessing();
 
 				RootLayer.Paint(g, bForPrinting);

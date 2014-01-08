@@ -56,6 +56,7 @@ namespace Altaxo.Com
 			if (null == istream)
 				throw new ArgumentNullException("istream");
 
+			_isStreamOwner = isStreamOwner;
 			_istream = istream;
 
 			_int64Ptr = Marshal.AllocCoTaskMem(8);

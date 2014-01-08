@@ -79,7 +79,12 @@ namespace Altaxo.Main.Commands
 				if (null != ctrl)
 				{
 					var doc = ((Altaxo.Gui.Graph.Viewing.GraphController)ctrl.MVCController).Doc;
-					var dataObject = Current.ComManager.GetDocumentsComObjectForDocument(doc);
+
+					var comManager = (Com.ComManager)Current.ComManager;
+					//var dataObject = comManager.GetDocumentsComObjectForDocument(doc);
+
+					var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
+
 					if (null != dataObject)
 						System.Windows.Clipboard.SetDataObject(dataObject);
 				}

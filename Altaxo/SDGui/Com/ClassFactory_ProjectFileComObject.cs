@@ -6,27 +6,26 @@ namespace Altaxo.Com
 {
 	using UnmanagedApi.Ole32;
 
-	internal class ClassFactory_DocumentComObject : ClassFactoryBase
+	internal class ClassFactory_ProjectFileComObject : ClassFactoryBase
 	{
-		public ClassFactory_DocumentComObject(ComManager comManager)
-		: base(comManager)
+		public ClassFactory_ProjectFileComObject(ComManager comManager) 
+			: base(comManager)
 		{
 		}
 
 		public override void virtual_CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("SimpleCOMObjectClassFactory.CreateInstance()");
+			Debug.ReportInfo("FileCOMObjectClassFactory.CreateInstance()");
 			Debug.ReportInfo("Requesting Interface : {0}", riid);
 #endif
 
-			if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IDataObject)) ||
+			if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)) ||
+					riid == Marshal.GenerateGuidForType(typeof(IOleItemContainer)) ||
 				riid == InterfaceGuid.IID_IDispatch ||
 				riid == InterfaceGuid.IID_IUnknown)
 			{
-				var documentComObject = _comManager.GetDocumentsComObjectForGraphDocument(null);
-
-				ppvObject = Marshal.GetComInterfaceForObject(documentComObject, typeof(System.Runtime.InteropServices.ComTypes.IDataObject));
+				ppvObject = Marshal.GetComInterfaceForObject(_comManager.FileComObject, typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)); ;
 			}
 			else
 			{

@@ -1,3 +1,4 @@
+using Altaxo.Graph.Gdi;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -11,24 +12,31 @@ using System.Windows;
 namespace Altaxo.Com
 {
 	using UnmanagedApi.Ole32;
+	using UnmanagedApi.User32;
 
 	// Note that ComManager is NOT declared as public.
 	// This is so that it will not be exposed to COM when we call regasm
 	// or tlbexp.
 	public class ComManager : Altaxo.Main.IComManager
 	{
+		//		private Font _font;
+	
+
+
+		public bool IsActive { get; private set; }
+
 		private int _numberOfObjectsInUse;  // Keeps a count on the total number of objects alive.
 		private int _numberOfServerLocks;// Keeps a lock count on this application.
 
-		private ClassFactory_DocumentComObject _classFactoryOfDocumentComObject;
+		private ClassFactory_GraphDocumentComObject _classFactoryOfDocumentComObject;
 
-		private ClassFactory_FileCOMObject _classFactoryOfFileComObject;
+		private ClassFactory_ProjectFileComObject _classFactoryOfFileComObject;
 
 		private GarbageCollector _garbageCollector;
 
-		public Dictionary<Altaxo.Graph.Gdi.GraphDocument, DocumentComObject> _documentsComObject = new Dictionary<Altaxo.Graph.Gdi.GraphDocument, DocumentComObject>();
+		public Dictionary<GraphDocument, GraphDocumentComObject> _documentsComObject = new Dictionary<GraphDocument, GraphDocumentComObject>();
 
-		public FileComObject _fileComObject;
+		public ProjectFileComObject _fileComObject;
 
 		/// <summary>
 		/// The application is in embedded mode. This does <b>not</b> mean that the application was started with the -embedding flag in the command line! (Since this happens also when the application is
@@ -50,44 +58,63 @@ namespace Altaxo.Com
 
 		private GuiThreadStack _guiThreadStack;
 
-		public DocumentComObject GetDocumentsComObjectForGraphDocument(Altaxo.Graph.Gdi.GraphDocument doc)
+		public ComManager(AltaxoComApplicationAdapter appAdapter)
 		{
-			if (null != doc && _documentsComObject.ContainsKey(doc))
+			ApplicationAdapter = appAdapter;
+			_guiThreadStack = new GuiThreadStack(appAdapter.IsInvokeRequiredForGuiThread, appAdapter.InvokeGuiThread);
+		}
+
+
+	
+
+		public GraphDocumentComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
+		{
+			if (null!=doc && _documentsComObject.ContainsKey(doc))
 				return _documentsComObject[doc];
 
 			// else we must create a new DocumentComObject
-
-			if (null == FileComObject)
-				FileComObject = new FileComObject(this);
-
-			var newComObject = new DocumentComObject(doc, _fileComObject, this);
+			var newComObject = new GraphDocumentComObject(doc, _fileComObject, this);
 
 			// note: the addition to the dictionary is done by the DocumentComObject itself, that's why it is not done here
 
 			return newComObject;
 		}
 
-		public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object doc)
+		public GraphDocumentDataObject GetDocumentsDataObjectForGraphDocument(GraphDocument doc)
 		{
-			if (doc is Altaxo.Graph.Gdi.GraphDocument)
-				return GetDocumentsComObjectForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)doc);
+			var newComObject = new GraphDocumentDataObject(doc, _fileComObject, this);
+			return newComObject;
+		}
+
+		public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object obj)
+		{
+			if (obj is GraphDocument)
+			{
+				var doc = (GraphDocument)obj;
+				return GetDocumentsComObjectForGraphDocument(doc);
+			}
 
 			return null;
 		}
 
-		public void NotifyDocumentOfDocumentsComObjectChanged(DocumentComObject documentComObject, Altaxo.Graph.Gdi.GraphDocument oldDocument, Altaxo.Graph.Gdi.GraphDocument newDocument)
+		public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsDataObjectForDocument(object obj)
+		{
+			if (obj is GraphDocument)
+			{
+				var doc = (GraphDocument)obj;
+				return GetDocumentsDataObjectForGraphDocument(doc);
+			}
+
+			return null;
+		}
+
+		public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentComObject documentComObject, GraphDocument oldDocument, GraphDocument newDocument)
 		{
 			if (null != oldDocument)
 				_documentsComObject.Remove(oldDocument);
 
 			if (null != newDocument)
 				_documentsComObject.Add(newDocument, documentComObject);
-		}
-
-		public ComManager(AltaxoComApplicationAdapter appAdapter)
-		{
-			ApplicationAdapter = appAdapter;
-			_guiThreadStack = new GuiThreadStack(appAdapter.IsInvokeRequiredForGuiThread, appAdapter.InvokeGuiThread);
 		}
 
 		public bool IsInvokeRequiredForGuiThread()
@@ -139,18 +166,14 @@ namespace Altaxo.Com
 			ApplicationAdapter.SetHostNames(containerApplicationName, containerFileName, embeddedObject);
 		}
 
-		public FileComObject FileComObject
+		public ProjectFileComObject FileComObject
 		{
 			get
 			{
-				return _fileComObject;
-			}
-			set
-			{
-				if (null != _fileComObject && null != value)
-					throw new ArgumentException("Trying to set ComObject, but another object is already present");
+				if (null == _fileComObject)
+					_fileComObject = new ProjectFileComObject(this);
 
-				_fileComObject = value;
+				return _fileComObject;
 			}
 		}
 
@@ -216,7 +239,7 @@ namespace Altaxo.Com
 		// exit and hence the termination of this application.
 		public void AttemptToTerminateServer()
 		{
-			lock (typeof(ComManager))
+			lock (this)
 			{
 				// Get the most up-to-date values of these critical data.
 				int iObjsInUse = ObjectsCount;
@@ -307,7 +330,7 @@ namespace Altaxo.Com
 			root.DeleteSubKey(".axoprj");
 			root.DeleteSubKey("Altaxo.Project");
 			root.DeleteSubKey("Altaxo.Graph.0");
-			root.DeleteSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(DocumentComObject)).ToString("B").ToUpperInvariant());
+			root.DeleteSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentComObject)).ToString("B").ToUpperInvariant());
 		}
 
 		private void Register(RegistryKey root)
@@ -325,7 +348,7 @@ namespace Altaxo.Com
 				key = root.CreateSubKey("Altaxo.Project"); // set ProgID
 				key2 = key.CreateSubKey("NotInsertable");
 				key2 = key.CreateSubKey("CLSID");
-				var fileComObject_IID = Marshal.GenerateGuidForType(typeof(FileComObject)).ToString("B").ToUpperInvariant();
+				var fileComObject_IID = Marshal.GenerateGuidForType(typeof(ProjectFileComObject)).ToString("B").ToUpperInvariant();
 				key2.SetValue(null, fileComObject_IID);
 
 				key = root.CreateSubKey("CLSID\\" + fileComObject_IID); // associate CLSID of FileComObject with Application
@@ -336,10 +359,10 @@ namespace Altaxo.Com
 				key = root.CreateSubKey("Altaxo.Graph.0");
 				key.SetValue(null, "Altaxo Graph-Document");
 				key2 = key.CreateSubKey("CLSID");
-				key2.SetValue(null, Marshal.GenerateGuidForType(typeof(DocumentComObject)).ToString("B").ToUpperInvariant());
+				key2.SetValue(null, Marshal.GenerateGuidForType(typeof(GraphDocumentComObject)).ToString("B").ToUpperInvariant());
 				key2 = key.CreateSubKey("Insertable");
 
-				key = root.CreateSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(DocumentComObject)).ToString("B").ToUpperInvariant());
+				key = root.CreateSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentComObject)).ToString("B").ToUpperInvariant());
 				key.SetValue(null, "Altaxo Graph-Document");
 
 				key2 = key.CreateSubKey("LocalServer32");
@@ -452,6 +475,8 @@ namespace Altaxo.Com
 
 		public void StartLocalServer()
 		{
+			IsActive = true;
+
 #if COMLOGGING
 			Debug.ReportInfo("Starting local server");
 #endif
@@ -461,16 +486,16 @@ namespace Altaxo.Com
 			_numberOfServerLocks = 0;
 
 			// Register the FileComObject
-			_classFactoryOfFileComObject = new ClassFactory_FileCOMObject(this);
+			_classFactoryOfFileComObject = new ClassFactory_ProjectFileComObject(this);
 			_classFactoryOfFileComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
-			_classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(FileComObject));
+			_classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(ProjectFileComObject));
 			_classFactoryOfFileComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 			_classFactoryOfFileComObject.RegisterClassObject();
 
 			// Register the SimpleCOMObjectClassFactory.
-			_classFactoryOfDocumentComObject = new ClassFactory_DocumentComObject(this);
+			_classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentComObject(this);
 			_classFactoryOfDocumentComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
-			_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(DocumentComObject));
+			_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentComObject));
 			_classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 			_classFactoryOfDocumentComObject.RegisterClassObject();
 			ClassFactoryBase.ResumeClassObjects();
@@ -480,7 +505,7 @@ namespace Altaxo.Com
 			Thread GarbageCollectionThread = new Thread(new ThreadStart(_garbageCollector.GCWatch));
 
 			// Set the name of the thread object.
-			GarbageCollectionThread.Name = "Garbage Collection Thread";
+			GarbageCollectionThread.Name = "GarbCollThread";
 			GarbageCollectionThread.IsBackground = true;
 
 			// Start the thread.
@@ -534,6 +559,7 @@ namespace Altaxo.Com
 				Debug.ReportInfo("StopLocalServer: GarbageCollector thread stopped.");
 #endif
 			}
+			IsActive = false;
 		}
 
 		#region Static helper functions

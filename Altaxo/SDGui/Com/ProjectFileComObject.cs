@@ -12,7 +12,7 @@ namespace Altaxo.Com
 	[Guid("072CDB1D-745E-4213-9124-53667725B839"),  // We indicate a specific CLSID for "SimpleCOMObject" for convenience of searching the registry.
 	ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _SimpleCOMObject.
 	]
-	public class FileComObject :
+	public class ProjectFileComObject :
 		ReferenceCountedObjectBase,
 		IPersistFile,
 		IOleItemContainer
@@ -41,9 +41,9 @@ namespace Altaxo.Com
 
 		public event Action<IMoniker> FileMonikerChanged;
 
-		private List<DocumentComObject> _documentComObjects;
+		private List<GraphDocumentComObject> _documentComObjects;
 
-		public FileComObject(ComManager comManager)
+		public ProjectFileComObject(ComManager comManager)
 			: base(comManager)
 		{
 			// 1. Monitor the change of the project instance
@@ -54,7 +54,7 @@ namespace Altaxo.Com
 
 			// 2. inside the project, monitor the change of any child documents that are Com objects (graphs)
 			_currentProject.GraphDocumentCollection.CollectionChanged += EhGraphDocumentRenamed;
-			_documentComObjects = new List<DocumentComObject>();
+			_documentComObjects = new List<GraphDocumentComObject>();
 
 			EhCurrentProjectInstanceChanged(null, null);
 		}
@@ -88,7 +88,7 @@ namespace Altaxo.Com
 		{
 			if (changeType == Main.NamedObjectCollectionChangeType.ItemRenamed)
 			{
-				foreach (DocumentComObject comObj in _documentComObjects)
+				foreach (GraphDocumentComObject comObj in _documentComObjects)
 				{
 					if (object.ReferenceEquals(comObj.Document, item))
 						comObj.EhDocumentRenamed(_fileMoniker);
@@ -137,7 +137,7 @@ namespace Altaxo.Com
 			}
 		}
 
-		public IList<DocumentComObject> DocumentComObjects
+		public IList<GraphDocumentComObject> DocumentComObjects
 		{
 			get
 			{

@@ -15,20 +15,14 @@ namespace Altaxo.Com
 	using UnmanagedApi.Ole32;
 	using UnmanagedApi.User32;
 
-	public class DocumentComObjectRenderer
+	public class GraphDocumentComObjectRenderer
 	{
-		//		private Font _font;
-		public static short CF_EMBEDDEDOBJECT = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_EMBEDDEDOBJECT);
-
-		public static short CF_EMBEDSOURCE = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_EMBEDSOURCE);
-		public static short CF_LINKSOURCE = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_LINKSOURCE);
-		public static short CF_OBJECTDESCRIPTOR = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_OBJECTDESCRIPTOR);
-		public static short CF_LINKSRCDESCRIPTOR = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_LINKSRCDESCRIPTOR);
+	
 
 		private GraphDocument _document;
-		private DocumentComObject _comObject;
+		private GraphDocumentComObject _comObject;
 
-		public DocumentComObjectRenderer(GraphDocument doc, DocumentComObject comObject)
+		public GraphDocumentComObjectRenderer(GraphDocument doc, GraphDocumentComObject comObject)
 		{
 			_document = doc;
 			_comObject = comObject;
@@ -48,12 +42,12 @@ namespace Altaxo.Com
 				// No callback because this should go via GetDataHere.
 				// EMBEDSOURCE and OBJECTDESCRIPTOR should be placed after private data,
 				// but before the presentations (Brockschmidt, Inside Ole 2nd ed. page 911)
-				AddFormat(CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null, renderings);
+				AddFormat(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null, renderings);
 
-				AddFormat(CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor, renderings);
+				AddFormat(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderObjectDescriptor, renderings);
 
 				// Nice because it is resolution independent.
-				AddFormat((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile, renderings);
+				AddFormat((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile3, renderings);
 
 				// Nice because it is resolution independent.
 				AddFormat(CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderMetaFile, renderings);
@@ -68,8 +62,8 @@ namespace Altaxo.Com
 				// it should not happen by default.
 				if (_comObject != null && _comObject.Moniker != null)
 				{
-					AddFormat(CF_LINKSOURCE, TYMED.TYMED_ISTREAM, _comObject.RenderLink, renderings);
-					AddFormat(CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor, renderings);
+					AddFormat(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, _comObject.RenderLink, renderings);
+					AddFormat(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderObjectDescriptor, renderings);
 				}
 
 				return renderings;
@@ -396,60 +390,69 @@ namespace Altaxo.Com
 			}
 		}
 
-		private IntPtr RenderObjectDescriptor(TYMED tymed)
+
+		public static Metafile RenderAsMetafile(Graphics grfxRef, GraphDocument doc)
 		{
-			// Brockschmidt, Inside Ole 2nd ed. page 991
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
-			// Fill in the basic information.
-			OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
-			// According to the documentation this is used just to find an icon.
-			od.clsid = typeof(DocumentComObject).GUID;
-			od.dwDrawAspect = DVASPECT.DVASPECT_CONTENT;
-			od.sizelcx = 0; // zero in imitation of Word/Excel, but could be box.Extent.cx;
-			od.sizelcy = 0; // zero in imitation of Word/Excel, but could be box.Extent.cy;
-			od.pointlx = 0;
-			od.pointly = 0;
-			od.dwStatus = DocumentComObject.MiscStatus((int)od.dwDrawAspect);
+			grfxRef.PageUnit = GraphicsUnit.Point;
+			IntPtr ipHdc = grfxRef.GetHdc();
 
-			// Descriptive strings to tack on after the struct.
-			string name = DocumentComObject.USER_TYPE;
-			int name_size = (name.Length + 1) * sizeof(char);
-			string source = "Altaxo";
-			int source_size = (source.Length + 1) * sizeof(char);
-			int od_size = Marshal.SizeOf(typeof(OBJECTDESCRIPTOR));
-			od.dwFullUserTypeName = od_size;
-			od.dwSrcOfCopy = od_size + name_size;
-			int full_size = od_size + name_size + source_size;
-			od.cbSize = full_size;
+			RectangleF metaFileBounds;
+			metaFileBounds = new RectangleF(0, 0, (float)(doc.Size.X), (float)(doc.Size.Y));
+			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, MetafileFrameUnit.Point);
 
-			// To avoid 'unsafe', we will arrange the strings in a byte array.
-			byte[] strings = new byte[full_size];
-			Encoding unicode = Encoding.Unicode;
-			Array.Copy(unicode.GetBytes(name), 0, strings, od.dwFullUserTypeName, name.Length * sizeof(char));
-			Array.Copy(unicode.GetBytes(source), 0, strings, od.dwSrcOfCopy, source.Length * sizeof(char));
+			using (Graphics grfxMF = Graphics.FromImage(mf))
+			{
+				if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
+				{
+					grfxMF.PageUnit = GraphicsUnit.Point;
+					grfxMF.PageScale = 1; // that would not work properly (a bug?) in Windows Vista, instead we have to use the following:
+				}
+				else
+				{
+					grfxMF.PageScale = (float)(Math.Min(72.0f / grfxMF.DpiX, 72.0f / grfxMF.DpiY)); // this works in Vista with display mode
+				}
 
-			// Combine the strings and the struct into a single block of mem.
-			IntPtr hod = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, full_size);
-			System.Diagnostics.Debug.Assert(hod != IntPtr.Zero);
-			IntPtr buf = Kernel32Func.GlobalLock(hod);
-			Marshal.Copy(strings, 0, buf, full_size);
-			Marshal.StructureToPtr(od, buf, false);
 
-			Kernel32Func.GlobalUnlock(hod);
-			return hod;
+				using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(doc, Brushes.White, PixelFormat.Format32bppArgb, GraphExportArea.GraphSize, 300, 300))
+				{
+					grfxMF.DrawImage(bmp, 0f, 0f);
+				}
+			}
+
+			grfxRef.ReleaseHdc(ipHdc);
+			return mf;
 		}
+
+
+		private IntPtr RenderEnhMetaFile3(TYMED tymed)
+		{
+			Metafile mf;
+			using (var pd = new System.Drawing.Printing.PrintDocument())
+			{
+				using (var grfx = pd.PrinterSettings.CreateMeasurementGraphics())
+				{
+					mf = RenderAsMetafile(grfx, _document);
+				}
+			}
+			return mf.GetHenhmetafile();
+		}
+
+	
 
 		public int QueryGetData(ref FORMATETC format)
 		{
+#if COMLOGGING
+			Debug.ReportInfo("QueryGetData, tymed={0}, aspect={1}", format.tymed, format.dwAspect);
+#endif
+
 			// We only support CONTENT aspect
 			if ((DVASPECT.DVASPECT_CONTENT & format.dwAspect) == 0)
+			{
 				return ComReturnValue.DV_E_DVASPECT;
+			}
 
 			int ret = ComReturnValue.DV_E_TYMED;
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}", format.tymed);
-#endif
 			// Try to locate the data
 			// TODO: The ret, if not S_OK, is only relevant to the last item
 			foreach (var rendering in Renderings)
@@ -475,7 +478,7 @@ namespace Altaxo.Com
 			}
 
 #if COMLOGGING
-			Debug.ReportInfo("   returning {0:x}", ret);
+			Debug.ReportInfo("QueryGetData returning {0:x}", ret);
 #endif
 			return ret;
 		}

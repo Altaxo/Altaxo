@@ -163,13 +163,15 @@ namespace Altaxo.Com
 
 		private static string _fullFileName;
 
+		private static object _syncContext = new object();
+
 		static Debug()
 		{
 			var startTime = System.Diagnostics.Process.GetCurrentProcess().StartTime;
 
 			string path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 
-			var dateTimeString = startTime.ToString("yyyy-MM-dd hh-mm-ss");
+			var dateTimeString = startTime.ToString("yyyy-MM-dd hh-mm-ss.fff");
 
 			string fileName = "ErrorLog_Process_" + dateTimeString + ".txt";
 
@@ -189,7 +191,7 @@ namespace Altaxo.Com
 
 			stb.Append(level);
 			stb.Append('\t');
-			stb.AppendFormat(DateTime.UtcNow.ToLongTimeString());
+			stb.Append(DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss.fff"));
 			stb.Append('\t');
 			stb.Append(System.Threading.Thread.CurrentThread.Name ?? System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
 			stb.Append('\t');
@@ -197,9 +199,12 @@ namespace Altaxo.Com
 
 			try
 			{
+				lock(_syncContext)
+				{
 				_output.WriteLine(stb);
 				_output.Flush();
 				_output.BaseStream.Flush();
+				}
 			}
 			catch (ObjectDisposedException)
 			{

@@ -625,7 +625,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					// Fill the page with its own color
 					//g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
 					//g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
-					g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.RootLayer.Size.X, (float)Doc.RootLayer.Size.Y);
+					g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.Size.X, (float)Doc.Size.Y);
 					// DrawMargins(g);
 				}
 
@@ -642,7 +642,7 @@ namespace Altaxo.Gui.Graph.Viewing
 				g.DrawString(ex.ToString(),
 					new System.Drawing.Font(FontFamily.GenericSansSerif, 8),
 					System.Drawing.Brushes.Black,
-					new RectangleF(0, 0, (float)Doc.RootLayer.Size.X, (float)Doc.RootLayer.Size.Y));
+					new RectangleF(0, 0, (float)Doc.Size.X, (float)Doc.Size.Y));
 			}
 		}
 

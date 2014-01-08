@@ -458,7 +458,13 @@ namespace Altaxo.Graph.Gdi
 					break;
 			}
 
-			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, metaFileBounds, MetafileFrameUnit.Point);
+			System.Drawing.Imaging.Metafile mf;
+
+			if(null != stream)
+				mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, metaFileBounds, MetafileFrameUnit.Point);
+			else
+				mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, MetafileFrameUnit.Point);
+
 			using (Graphics grfx2 = Graphics.FromImage(mf))
 			{
 				if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
@@ -560,6 +566,7 @@ namespace Altaxo.Graph.Gdi
 		#endregion with stream
 
 		#region with filename
+
 
 		public static Metafile RenderAsMetafile(this GraphDocument doc, string filename, GraphExportOptions options)
 		{

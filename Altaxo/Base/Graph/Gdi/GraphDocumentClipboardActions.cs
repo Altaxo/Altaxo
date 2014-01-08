@@ -95,6 +95,24 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+
+		/// <summary>
+		/// Get the image that should be placed on the clipboard.
+		/// </summary>
+		/// <param name="doc">The graph document to render.</param>
+		public static Image GetImageForClipbard(this GraphDocument doc)
+		{
+			var options = CopyPageOptions;
+			if (options.ImageFormat == ImageFormat.Emf || options.ImageFormat == ImageFormat.Wmf)
+			{
+				return GraphDocumentExportActions.RenderAsMetafile(doc, null, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			}
+			else
+			{
+				return GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			}
+		}
+
 		/// <summary>
 		/// Copies the current graph as an bitmap image to the clipboard in native bmp format.
 		/// </summary>
