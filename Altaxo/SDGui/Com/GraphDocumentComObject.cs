@@ -219,6 +219,10 @@ namespace Altaxo.Com
 			EhFileMonikerChanged(fileMoniker);
 		}
 
+		
+
+		#region Moniker
+
 		private void EhFileMonikerChanged(IMoniker fileMoniker)
 		{
 			// see Brockschmidt, Inside Ole 2nd ed., p.998
@@ -246,8 +250,6 @@ namespace Altaxo.Com
 
 			SendAdvise(AdviseKind.Renamed);
 		}
-
-		#region Moniker
 
 		private void SaveMonikerToStream(IMoniker moniker, IStream strm)
 		{
@@ -426,7 +428,7 @@ namespace Altaxo.Com
 		public int DAdvise(ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.DAdvise {0}, {1}", GraphDocumentComObjectRenderer.FormatEtcToString(pFormatetc), advf);
+			Debug.ReportInfo("IDataObject.DAdvise {0}, {1}", DataObjectHelper.FormatEtcToString(pFormatetc), advf);
 #endif
 			try
 			{
@@ -491,7 +493,7 @@ namespace Altaxo.Com
 			{
 				// We only support GET
 				if (DATADIR.DATADIR_GET == direction)
-					return _renderHelper.EnumFormatEtc();
+					return _renderHelper.EnumFormatEtc(direction);
 			}
 			catch (Exception e)
 			{
@@ -507,7 +509,7 @@ namespace Altaxo.Com
 		public int GetCanonicalFormatEtc(ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, out System.Runtime.InteropServices.ComTypes.FORMATETC formatOut)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetCanonicalFormatEtc {0}", GraphDocumentComObjectRenderer.FormatEtcToString(formatIn));
+			Debug.ReportInfo("IDataObject.GetCanonicalFormatEtc {0}", DataObjectHelper.FormatEtcToString(formatIn));
 #endif
 
 			formatOut = formatIn;
@@ -518,7 +520,7 @@ namespace Altaxo.Com
 		public void GetData(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, out System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetData({0})", GraphDocumentComObjectRenderer.FormatEtcToString(format));
+			Debug.ReportInfo("IDataObject.GetData({0})", DataObjectHelper.FormatEtcToString(format));
 #endif
 			_renderHelper.GetData(ref format, out medium);
 		}
@@ -526,7 +528,7 @@ namespace Altaxo.Com
 		public void GetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetDataHere({0})", GraphDocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
+			Debug.ReportInfo("IDataObject.GetDataHere({0})", DataObjectHelper.ClipboardFormatName(format.cfFormat));
 #endif
 			// Allows containers to duplicate this into their own storage.
 			try
@@ -581,7 +583,7 @@ namespace Altaxo.Com
 		public int QueryGetData(ref System.Runtime.InteropServices.ComTypes.FORMATETC format)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IDataObject.QueryGetData({0})", GraphDocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
+			Debug.ReportInfo("IDataObject.QueryGetData({0})", DataObjectHelper.ClipboardFormatName(format.cfFormat));
 #endif
 			try
 			{

@@ -11,7 +11,7 @@ namespace Altaxo.Com
 	using UnmanagedApi.Ole32;
 	using UnmanagedApi.Kernel32;
 
-	public class GraphDocumentDataObject : System.Runtime.InteropServices.ComTypes.IDataObject
+	public class GraphDocumentDataObject : DataObjectBase, System.Runtime.InteropServices.ComTypes.IDataObject
 	{
 		private ManagedDataAdviseHolder _dataAdviseHolder;
 		private AltaxoDocument _altaxoMiniProject;
@@ -43,21 +43,24 @@ namespace Altaxo.Com
 
 		#region Renderings
 
-		private List<Rendering> GetRenderings()
+		protected override IList<Rendering> Renderings
 		{
-			var list = new List<Rendering>();
-
-			list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
-			list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor));
-			list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
-
-			if (!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
+			get
 			{
-				list.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderMoniker));
-				list.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor));
-			}
+				var list = new List<Rendering>();
 
-			return list;
+				list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
+				list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor));
+				list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+
+				if (!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
+				{
+					list.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderMoniker));
+					list.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor));
+				}
+
+				return list;
+			}
 		}
 
 		private IntPtr RenderEnhMetaFile(TYMED tymed)
@@ -207,236 +210,39 @@ namespace Altaxo.Com
 
 		#endregion
 
-		#region Implementation of  System.Runtime.InteropServices.ComTypes.IDataObject
-
-		public int DAdvise(ref FORMATETC pFormatetc, ADVF advf, IAdviseSink adviseSink, out int connection)
+		protected override ManagedDataAdviseHolder DataAdviseHolder
 		{
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.DAdvise {0}, {1}", GraphDocumentComObjectRenderer.FormatEtcToString(pFormatetc), advf);
-#endif
-			try
+			get { return _dataAdviseHolder; }
+		}
+
+		protected override void InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		{
+
+			if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
 			{
-				if (pFormatetc.cfFormat != 0) // if a special format is required
+				medium.tymed = TYMED.TYMED_ISTORAGE;
+				medium.pUnkForRelease = null;
+				var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
+				// we don't save the document directly, since this would mean to save the whole (and probably huge) project
+				// instead we first make a mini project with the neccessary data only and then save this instead
+				InternalSaveMiniProject(stg, _altaxoMiniProject, _altaxoGraphDocumentName);
+				return;
+			}
+
+
+			if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
+			{
+				IMoniker documentMoniker = CreateNewDocumentMoniker();
+
+				if (null != documentMoniker)
 				{
-					int res = QueryGetData(ref pFormatetc); // ask the render helper for availability of that format
-					if (res != ComReturnValue.S_OK) // if the required format is not available
-					{
-						connection = 0; //  return an invalid connection cookie
-						return res; // and the error
-					}
-				}
-				FORMATETC etc = pFormatetc;
-				int conn = 0;
-				_dataAdviseHolder.Advise((IDataObject)this, ref etc, advf, adviseSink, out conn);
-				connection = conn;
-				return ComReturnValue.NOERROR;
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("GraphDocumentDataObject.DAdvise exception: {0}", e);
-#endif
-				throw;
-			}
-		}
-
-		public void DUnadvise(int connection)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.DUnadvise connection={0}", connection);
-#endif
-			try
-			{
-				_dataAdviseHolder.Unadvise(connection);
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("GraphDocumentDataObject.DUnadvise exception {0}", e);
-#endif
-				throw;
-			}
-		}
-
-		public int EnumDAdvise(out IEnumSTATDATA enumAdvise)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.EnumAdvise");
-#endif
-			enumAdvise = _dataAdviseHolder.EnumAdvise();
-			return ComReturnValue.S_OK;
-		}
-
-		public IEnumFORMATETC EnumFormatEtc(DATADIR direction)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.EnumFormatEtc");
-#endif
-			try
-			{
-				// We only support GET
-				if (DATADIR.DATADIR_GET == direction)
-					return new EnumFormatEtc(new List<FORMATETC>(GetRenderings().Select(x => x.format)));
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("GraphDocumentDataObject.EnumFormatEtc exception: {0}", e);
-#endif
-				throw;
-			}
-
-			throw new NotImplementedException("Can not use registry here because a return value is not supported");
-		}
-
-		public int GetCanonicalFormatEtc(ref FORMATETC formatIn, out FORMATETC formatOut)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.GetCanonicalFormatEtc {0}", GraphDocumentComObjectRenderer.FormatEtcToString(formatIn));
-#endif
-
-			formatOut = formatIn;
-
-			return ComReturnValue.DV_E_FORMATETC;
-		}
-
-		public void GetData(ref FORMATETC format, out STGMEDIUM medium)
-		{
-			try
-			{
-				// Locate the data
-				foreach (var rendering in GetRenderings())
-				{
-					if ((rendering.format.tymed & format.tymed) > 0
-							&& rendering.format.dwAspect == format.dwAspect
-							&& rendering.format.cfFormat == format.cfFormat
-							&& rendering.renderer != null)
-					{
-						// Found it. Return a copy of the data.
-
-						medium = new STGMEDIUM();
-						medium.tymed = format.tymed;
-						medium.unionmember = rendering.renderer(format.tymed);
-						if (medium.tymed == TYMED.TYMED_ISTORAGE || medium.tymed == TYMED.TYMED_ISTREAM)
-							medium.pUnkForRelease = Marshal.GetObjectForIUnknown(medium.unionmember);
-						else
-							medium.pUnkForRelease = null;
-						return;
-					}
-				}
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("GetData occured an exception.", e);
-#endif
-				throw;
-			}
-
-#if COMLOGGING
-			Debug.ReportInfo("-> DV_E_FORMATETC");
-#endif
-			medium = new STGMEDIUM();
-			// Marshal.ThrowExceptionForHR(ComReturnValue.DV_E_FORMATETC);
-		}
-
-		public void GetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.GetDataHere({0})", GraphDocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
-#endif
-			// Allows containers to duplicate this into their own storage.
-			try
-			{
-				if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
-				{
-					medium.tymed = TYMED.TYMED_ISTORAGE;
+					medium.tymed = TYMED.TYMED_ISTREAM;
 					medium.pUnkForRelease = null;
-					var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
-					// we don't save the document directly, since this would mean to save the whole (and probably huge) project
-					// instead we first make a mini project with the neccessary data only and then save this instead
-					InternalSaveMiniProject(stg, _altaxoMiniProject, _altaxoGraphDocumentName);
+					IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
+					DataObjectHelper.SaveMonikerToStream(documentMoniker, strm);
 					return;
 				}
-
-
-				if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
-				{
-					IMoniker documentMoniker = CreateNewDocumentMoniker();
-
-					if (null != documentMoniker)
-					{
-						medium.tymed = TYMED.TYMED_ISTREAM;
-						medium.pUnkForRelease = null;
-						IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
-						DataObjectHelper.SaveMonikerToStream(documentMoniker, strm);
-						return;
-					}
-				}
 			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("GraphDocumentDataObject.GetDataHere, exception: {0}", e);
-#endif
-				throw;
-			}
-			Marshal.ThrowExceptionForHR(ComReturnValue.DATA_E_FORMATETC);
 		}
-
-		public int QueryGetData(ref FORMATETC format)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.QueryGetData, tymed={0}, aspect={1}", format.tymed, format.dwAspect);
-#endif
-
-			// We only support CONTENT aspect
-			if ((DVASPECT.DVASPECT_CONTENT & format.dwAspect) == 0)
-			{
-				return ComReturnValue.DV_E_DVASPECT;
-			}
-
-			int ret = ComReturnValue.DV_E_TYMED;
-
-			// Try to locate the data
-			// TODO: The ret, if not S_OK, is only relevant to the last item
-			foreach (var rendering in GetRenderings())
-			{
-				if ((rendering.format.tymed & format.tymed) > 0)
-				{
-					if (rendering.format.cfFormat == format.cfFormat)
-					{
-						// Found it, return S_OK;
-						return ComReturnValue.S_OK;
-					}
-					else
-					{
-						// Found the medium type, but wrong format
-						ret = ComReturnValue.DV_E_FORMATETC;
-					}
-				}
-				else
-				{
-					// Mismatch on medium type
-					ret = ComReturnValue.DV_E_TYMED;
-				}
-			}
-
-#if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.QueryGetData returning {0:x}", ret);
-#endif
-			return ret;
-		}
-
-		public void SetData(ref FORMATETC formatIn, ref STGMEDIUM medium, bool release)
-		{
-#if COMLOGGING
-			Debug.ReportError("GraphDocumentDataObject.SetData - NOT SUPPORTED!");
-#endif
-			throw new NotSupportedException();
-		}
-
-		#endregion
-
 	}
 }

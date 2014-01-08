@@ -66,6 +66,95 @@ namespace Altaxo.Com
 		}
 
 
+		public static string FormatEtcToString(FORMATETC format)
+		{
+			return String.Format("({0}, {1}, {2})",
+													 ClipboardFormatName(format.cfFormat),
+													 (DVASPECT)format.dwAspect,
+													 (TYMED)format.tymed);
+		}
+
+		public static string ClipboardFormatName(short format)
+		{
+			switch (format)
+			{
+				case CF.CF_TEXT:
+					return "CF_TEXT";
+
+				case CF.CF_BITMAP:
+					return "CF_BITMAP";
+
+				case CF.CF_METAFILEPICT:
+					return "CF_METAFILEPICT";
+
+				case CF.CF_SYLK:
+					return "CF_SYLK";
+
+				case CF.CF_DIF:
+					return "CF_DIF";
+
+				case CF.CF_TIFF:
+					return "CF_TIFF";
+
+				case CF.CF_OEMTEXT:
+					return "CF_OEMTEXT";
+
+				case CF.CF_DIB:
+					return "CF_DIB";
+
+				case CF.CF_PALETTE:
+					return "CF_PALETTE";
+
+				case CF.CF_PENDATA:
+					return "CF_PENDATA";
+
+				case CF.CF_RIFF:
+					return "CF_RIFF";
+
+				case CF.CF_WAVE:
+					return "CF_WAVE";
+
+				case CF.CF_UNICODETEXT:
+					return "CF_UNICODETEXT";
+
+				case CF.CF_ENHMETAFILE:
+					return "CF_ENHMETAFILE";
+
+				case CF.CF_HDROP:
+					return "CF_HDROP";
+
+				case CF.CF_LOCALE:
+					return "CF_LOCALE";
+
+				case CF.CF_MAX:
+					return "CF_MAX";
+
+				case CF.CF_OWNERDISPLAY:
+					return "CF_OWNERDISPLAY";
+
+				case CF.CF_DSPTEXT:
+					return "CF_DSPTEXT";
+
+				case CF.CF_DSPBITMAP:
+					return "CF_DSPBITMAP";
+
+				case CF.CF_DSPMETAFILEPICT:
+					return "CF_DSPMETAFILEPICT";
+
+				case CF.CF_DSPENHMETAFILE:
+					return "CF_DSPENHMETAFILE";
+
+				default:
+					{
+						StringBuilder formatName = new StringBuilder(100);
+						if (User32Func.GetClipboardFormatName((uint)format, formatName, 100) != 0)
+							return formatName.ToString();
+						else
+							return String.Format("unknown ({0})", format);
+					}
+			}
+		}
+
 		#region Metafile rendering
 
 		/// <summary>

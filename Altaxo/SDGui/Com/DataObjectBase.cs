@@ -33,7 +33,7 @@ namespace Altaxo.Com
 		/// <value>
 		/// The renderings.
 		/// </value>
-		protected abstract List<Rendering> Renderings { get; }
+		protected abstract IList<Rendering> Renderings { get; }
 
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace Altaxo.Com
 			else
 			{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.DAdvise {1}, {2}", this.GetType().Name, GraphDocumentComObjectRenderer.FormatEtcToString(pFormatetc), advf);
+			Debug.ReportInfo("{0}.DAdvise {1}, {2}", this.GetType().Name, DataObjectHelper.FormatEtcToString(pFormatetc), advf);
 #endif
 				
 			try
@@ -163,7 +163,7 @@ namespace Altaxo.Com
 		public int GetCanonicalFormatEtc(ref FORMATETC formatIn, out FORMATETC formatOut)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.GetCanonicalFormatEtc {1}", this.GetType().Name, GraphDocumentComObjectRenderer.FormatEtcToString(formatIn));
+			Debug.ReportInfo("{0}.GetCanonicalFormatEtc {1}", this.GetType().Name, DataObjectHelper.FormatEtcToString(formatIn));
 #endif
 
 			formatOut = formatIn;
@@ -214,12 +214,13 @@ namespace Altaxo.Com
 		public void GetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.GetDataHere({1})", this.GetType().Name, GraphDocumentComObjectRenderer.ClipboardFormatName(format.cfFormat));
+			Debug.ReportInfo("{0}.GetDataHere({1})", this.GetType().Name, DataObjectHelper.ClipboardFormatName(format.cfFormat));
 #endif
 			// Allows containers to duplicate this into their own storage.
 			try
 			{
 				InternalGetDataHere(ref format, ref medium);
+				return;
 			}
 			catch (Exception e)
 			{
