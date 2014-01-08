@@ -6,11 +6,10 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
-
 namespace Altaxo.Com
 {
-	using UnmanagedApi.Ole32;
 	using UnmanagedApi.Kernel32;
+	using UnmanagedApi.Ole32;
 
 	/// <summary>
 	/// Base for the implementation of classed that use IDataObject. Note that this class does not implement IDataObject, but all functions in IDataObject are implemented here.
@@ -26,7 +25,6 @@ namespace Altaxo.Com
 		/// </value>
 		protected abstract ManagedDataAdviseHolder DataAdviseHolder { get; }
 
-
 		/// <summary>
 		/// Gets the list of all renderings that are currently supported.
 		/// </summary>
@@ -35,15 +33,14 @@ namespace Altaxo.Com
 		/// </value>
 		protected abstract IList<Rendering> Renderings { get; }
 
-
 		/// <summary>
 		/// Internal implementation of the GetDataHere procedure. It is not neccessary to catch exceptions into this implementations, since the exceptions are catched and reported
 		/// in the outer <see cref="GetDataHere"/> function.
 		/// </summary>
 		/// <param name="format">The format.</param>
 		/// <param name="medium">The medium.</param>
-		protected abstract void InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium);
-
+		/// <returns><c>True</c> if the data could be provided, otherwise <c>False</c>.</returns>
+		protected abstract bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium);
 
 		#region Implementation of IDataObject
 
@@ -52,7 +49,7 @@ namespace Altaxo.Com
 			if (null == DataAdviseHolder)
 			{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.DAdvise -> not implemented!", this.GetType().Name);
+				Debug.ReportInfo("{0}.DAdvise -> not implemented!", this.GetType().Name);
 #endif
 				connection = 0;
 				return ComReturnValue.E_NOTIMPL;
@@ -60,33 +57,33 @@ namespace Altaxo.Com
 			else
 			{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.DAdvise {1}, {2}", this.GetType().Name, DataObjectHelper.FormatEtcToString(pFormatetc), advf);
+				Debug.ReportInfo("{0}.DAdvise {1}, {2}", this.GetType().Name, DataObjectHelper.FormatEtcToString(pFormatetc), advf);
 #endif
-				
-			try
-			{
-				if (pFormatetc.cfFormat != 0) // if a special format is required
+
+				try
 				{
-					int res = QueryGetData(ref pFormatetc); // ask the render helper for availability of that format
-					if (res != ComReturnValue.S_OK) // if the required format is not available
+					if (pFormatetc.cfFormat != 0) // if a special format is required
 					{
-						connection = 0; //  return an invalid connection cookie
-						return res; // and the error
+						int res = QueryGetData(ref pFormatetc); // ask the render helper for availability of that format
+						if (res != ComReturnValue.S_OK) // if the required format is not available
+						{
+							connection = 0; //  return an invalid connection cookie
+							return res; // and the error
+						}
 					}
+					FORMATETC etc = pFormatetc;
+					int conn = 0;
+					DataAdviseHolder.Advise((IDataObject)this, ref etc, advf, adviseSink, out conn);
+					connection = conn;
+					return ComReturnValue.NOERROR;
 				}
-				FORMATETC etc = pFormatetc;
-				int conn = 0;
-				DataAdviseHolder.Advise((IDataObject)this, ref etc, advf, adviseSink, out conn);
-				connection = conn;
-				return ComReturnValue.NOERROR;
-			}
-			catch (Exception e)
-			{
+				catch (Exception e)
+				{
 #if COMLOGGING
-				Debug.ReportError("{0}.DAdvise exception: {1}", this.GetType().Name, e);
+					Debug.ReportError("{0}.DAdvise exception: {1}", this.GetType().Name, e);
 #endif
-				throw;
-			}
+					throw;
+				}
 			}
 		}
 
@@ -141,7 +138,7 @@ namespace Altaxo.Com
 		public IEnumFORMATETC EnumFormatEtc(DATADIR direction)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.EnumFormatEtc",this.GetType().Name);
+			Debug.ReportInfo("{0}.EnumFormatEtc", this.GetType().Name);
 #endif
 			try
 			{
@@ -173,6 +170,10 @@ namespace Altaxo.Com
 
 		public void GetData(ref FORMATETC format, out STGMEDIUM medium)
 		{
+#if COMLOGGING
+			Debug.ReportInfo("{0}.GetData({1})", this.GetType().Name, DataObjectHelper.FormatEtcToString(format));
+#endif
+
 			try
 			{
 				// Locate the data
@@ -199,13 +200,13 @@ namespace Altaxo.Com
 			catch (Exception e)
 			{
 #if COMLOGGING
-				Debug.ReportError("{0}.GetData threw an exception {0}", this.GetType().Name, e);
+				Debug.ReportError("{0}.GetData threw an exception {1}", this.GetType().Name, e);
 #endif
 				throw;
 			}
 
 #if COMLOGGING
-			Debug.ReportInfo("{0}.GetData, no data delivered!",this.GetType().Name);
+			Debug.ReportInfo("{0}.GetData, no data delivered!", this.GetType().Name);
 #endif
 			medium = new STGMEDIUM();
 			// Marshal.ThrowExceptionForHR(ComReturnValue.DV_E_FORMATETC);
@@ -219,8 +220,8 @@ namespace Altaxo.Com
 			// Allows containers to duplicate this into their own storage.
 			try
 			{
-				InternalGetDataHere(ref format, ref medium);
-				return;
+				if (InternalGetDataHere(ref format, ref medium))
+					return; // data could be provided
 			}
 			catch (Exception e)
 			{
@@ -284,7 +285,6 @@ namespace Altaxo.Com
 			throw new NotSupportedException();
 		}
 
-		#endregion
-
+		#endregion Implementation of IDataObject
 	}
 }

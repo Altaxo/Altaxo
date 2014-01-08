@@ -133,10 +133,6 @@ namespace Altaxo.Com
 
 		public override void Flush()
 		{
-			//_istream.Commit(STGC.DEFAULT);
-#if COMLOGGING
-			Debug.ReportWarning("ComStreamWrapper.Flush: nothing done here");
-#endif
 		}
 
 		public override long Length

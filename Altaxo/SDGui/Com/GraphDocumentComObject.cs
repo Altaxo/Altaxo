@@ -15,26 +15,26 @@ namespace Altaxo.Com
 	/// This is the class that will be exported to unmanaged COM client apps.
 	/// </summary>
 	[
-		Guid("0915F010-2A4C-43F5-B230-A89340CF862C"),  // We indicate a specific CLSID for "DocumentComObject" for convenience of searching the registry.
-		ProgId("Altaxo.Graph.0"),  // This ProgId is used by default. Not 100% necessary.
+		Guid(GraphDocumentComObject.GUID_STRING),  // We indicate a specific CLSID for "DocumentComObject" for convenience of searching the registry.
+		ProgId(GraphDocumentComObject.USER_TYPE), //  "Altaxo.Graph.0"),  // This ProgId is used by default. Not 100% necessary.
 		ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _DocumentComObject.
 		]
-	public partial class GraphDocumentComObject :
-		ReferenceCountedObjectBase, // DocumentComObject is derived from ReferenceCountedObjectBase so that we can track its creation and destruction.
+	public class GraphDocumentComObject :
+		ReferenceCountedDataObjectBase, // DocumentComObject is derived from ReferenceCountedObjectBase so that we can track its creation and destruction.
 		System.Runtime.InteropServices.ComTypes.IDataObject,  // DocumentComObject must implement the IDocumentComObject interface.
 		IOleObject,
 		IPersistStorage
 	{
+		public const string GUID_STRING = "0915F010-2A4C-43F5-B230-A89340CF862C";
 		public const string USER_TYPE = "Altaxo.Graph.0";
 		public const string USER_TYPE_LONG = "Altaxo Graph-Document";
+		public const double PointsToHimetric = 2540 / 72.0;
 
 		// Manages our communication with the container.
 		private IOleClientSite _clientSite;
 
 		private ManagedOleAdviseHolderUO _oleAdviseHolder;
 		private ManagedDataAdviseHolder _dataAdviseHolder;
-
-		private tagSIZEL _extent;
 
 		private int _lastVerb;
 
@@ -44,8 +44,6 @@ namespace Altaxo.Com
 		private bool _isDocumentDirty;
 
 		private GraphDocument _document;
-
-		private GraphDocumentComObjectRenderer _renderHelper;
 
 		public GraphDocumentComObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 			: base(comManager)
@@ -136,10 +134,6 @@ namespace Altaxo.Com
 			return rot;
 		}
 
-
-
-	
-
 		internal static void ROTUnregister(ref int cookie)
 		{
 			// Revoke any existing file moniker. p988
@@ -168,6 +162,8 @@ namespace Altaxo.Com
 
 		#endregion Running Object Table management (ROT)
 
+		#region Document management
+
 		public GraphDocument Document
 		{
 			get
@@ -191,8 +187,6 @@ namespace Altaxo.Com
 				{
 					_document.Changed += EhDocumentChanged;
 				}
-
-				_renderHelper = new GraphDocumentComObjectRenderer(_document, this);
 
 				_comManager.NotifyDocumentOfDocumentsComObjectChanged(this, oldValue, _document);
 			}
@@ -219,12 +213,15 @@ namespace Altaxo.Com
 			EhFileMonikerChanged(fileMoniker);
 		}
 
-		
+		#endregion Document management
 
 		#region Moniker
 
 		private void EhFileMonikerChanged(IMoniker fileMoniker)
 		{
+			if (null == _document)
+				return;
+
 			// see Brockschmidt, Inside Ole 2nd ed., p.998
 			// TODO we must pimp up this function
 
@@ -234,7 +231,7 @@ namespace Altaxo.Com
 			if (null != fileMoniker)
 			{
 				IMoniker itemMoniker;
-				Ole32Func.CreateItemMoniker("!", ComManager.NormalStringToMonikerNameString(_document.Name), out itemMoniker);
+				Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_document.Name), out itemMoniker);
 
 				IMoniker compositeMoniker;
 				if (null != itemMoniker)
@@ -283,32 +280,6 @@ namespace Altaxo.Com
 			get
 			{
 				return _documentMoniker;
-			}
-		}
-
-		public tagSIZEL Extent
-		{
-			get
-			{
-				const double pointsToHimetric = 2540 / 72.0;
-				var docSize_pt = _document.Size;
-
-				_extent = new tagSIZEL((int)(docSize_pt.X * pointsToHimetric), (int)(docSize_pt.Y * pointsToHimetric));
-				return _extent;
-			}
-			private set
-			{
-				const double pointsToHimetric = 2540 / 72.0;
-				double docSizeX_pt = value.cx / pointsToHimetric;
-				double docSizeY_pt = value.cy / pointsToHimetric;
-
-				if (null != _document)
-				{
-					//	_document.Size = new Graph.PointD2D(docSizeX_pt, docSizeY_pt);
-				}
-
-				SendAdvise(AdviseKind.DataChanged);
-				//NeedsSave();
 			}
 		}
 
@@ -425,185 +396,85 @@ namespace Altaxo.Com
 
 		#region IDataObject members
 
-		public int DAdvise(ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection)
+		protected override IList<Rendering> Renderings
 		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.DAdvise {0}, {1}", DataObjectHelper.FormatEtcToString(pFormatetc), advf);
-#endif
-			try
+			get
 			{
-				if (pFormatetc.cfFormat != 0)
+				List<Rendering> renderings = new List<Rendering>();
+
+				// We add them in order of preference.  Embedding is best because user can resize and edit),
+				// then enhanced metafile mainly because it contains size information
+
+				// Allows us to be embedded with an OLE container.
+				// No callback because this should go via GetDataHere.
+				// EMBEDSOURCE and OBJECTDESCRIPTOR should be placed after private data,
+				// but before the presentations (Brockschmidt, Inside Ole 2nd ed. page 911)
+				renderings.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
+				renderings.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderObjectDescriptor));
+
+				// Nice because it is resolution independent.
+				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+
+				// And allow linking, where we have a moniker.  This is last because
+				// it should not happen by default.
+				if (Moniker != null)
 				{
-					int res = _renderHelper.QueryGetData(ref pFormatetc);
-					if (res != ComReturnValue.S_OK)
-					{
-						connection = 0;
-						return res;
-					}
-				}
-				FORMATETC etc = pFormatetc;
-				int conn = 0;
-				//_dataAdviseHolder.Invoke("Advising", () => _dataAdviseHolder.Holder.Advise((IDataObject)this, ref etc, advf, adviseSink, out conn));
-				_dataAdviseHolder.Advise((IDataObject)this, ref etc, advf, adviseSink, out conn);
-				connection = conn;
-				return ComReturnValue.NOERROR;
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("DAdvise occured an exception: {0}", e);
-#endif
-				throw;
-			}
-		}
-
-		public void DUnadvise(int connection)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.DUnadvise connection={0}", connection);
-#endif
-			try
-			{
-				_dataAdviseHolder.Unadvise(connection);
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("DUnadvise occured an exception.", e);
-#endif
-				throw;
-			}
-		}
-
-		public int EnumDAdvise(out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA enumAdvise)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.EnumAdvise");
-#endif
-			enumAdvise = _dataAdviseHolder.EnumAdvise();
-			return ComReturnValue.S_OK;
-		}
-
-		public System.Runtime.InteropServices.ComTypes.IEnumFORMATETC EnumFormatEtc(System.Runtime.InteropServices.ComTypes.DATADIR direction)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.EnumFormatEtc");
-#endif
-			try
-			{
-				// We only support GET
-				if (DATADIR.DATADIR_GET == direction)
-					return _renderHelper.EnumFormatEtc(direction);
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("EnumFormatEtc occured an exception.", e);
-#endif
-				throw;
-			}
-
-			throw new NotImplementedException("Can not use registry here because a return value is not supported");
-		}
-
-		public int GetCanonicalFormatEtc(ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, out System.Runtime.InteropServices.ComTypes.FORMATETC formatOut)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetCanonicalFormatEtc {0}", DataObjectHelper.FormatEtcToString(formatIn));
-#endif
-
-			formatOut = formatIn;
-
-			return ComReturnValue.DV_E_FORMATETC;
-		}
-
-		public void GetData(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, out System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetData({0})", DataObjectHelper.FormatEtcToString(format));
-#endif
-			_renderHelper.GetData(ref format, out medium);
-		}
-
-		public void GetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.GetDataHere({0})", DataObjectHelper.ClipboardFormatName(format.cfFormat));
-#endif
-			// Allows containers to duplicate this into their own storage.
-			try
-			{
-				if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
-				{
-					medium.tymed = TYMED.TYMED_ISTORAGE;
-					medium.pUnkForRelease = null;
-					var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
-
-					// we don't save the document directly, since this would mean to save the whole (and probably huge) project
-					// instead we first make a mini project with the neccessary data only and then save this instead
-					InternalSaveAsMiniProject(stg);
-					
-
-					return;
-				}
-				if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
-				{
-					var moniker = Moniker;
-					if (null != moniker)
-					{
-						medium.tymed = TYMED.TYMED_ISTREAM;
-						medium.pUnkForRelease = null;
-						IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
-						SaveMonikerToStream(Moniker, strm);
-						return;
-					}
+					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, this.RenderLink));
+					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderObjectDescriptor));
 				}
 
-				/*
-				if (format.cfFormat == Renderer.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0 && GraphBox.Moniker != null)
+				return renderings;
+			}
+		}
+
+		private IntPtr RenderEnhMetaFile(TYMED tymed)
+		{
+#if COMLOGGING
+			Debug.ReportInfo("{0}.RenderEnhMetafile", this.GetType().Name);
+#endif
+
+			var docSize = _document.Size;
+			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, GraphExportArea.GraphSize, 300, 300))
+			{
+				return DataObjectHelper.RenderEnhMetaFile(docSize.X, docSize.Y,
+				(grfx) =>
+				{
+					grfx.DrawImage(bmp, 0, 0);
+				}
+				);
+			}
+		}
+
+		protected override ManagedDataAdviseHolder DataAdviseHolder
+		{
+			get { return _dataAdviseHolder; }
+		}
+
+		protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		{
+			if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
+			{
+				medium.tymed = TYMED.TYMED_ISTORAGE;
+				medium.pUnkForRelease = null;
+				var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
+
+				Save(stg, false);
+				return true;
+			}
+
+			if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
+			{
+				var moniker = Moniker;
+				if (null != moniker)
 				{
 					medium.tymed = TYMED.TYMED_ISTREAM;
 					medium.pUnkForRelease = null;
 					IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
-					SaveMonikerToStream(GraphBox.Moniker, strm);
-					return;
+					SaveMonikerToStream(Moniker, strm);
+					return true;
 				}
-				*/
 			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("GetDataHere occured an exception.", e);
-#endif
-				throw;
-			}
-			Marshal.ThrowExceptionForHR(ComReturnValue.DATA_E_FORMATETC);
-		}
-
-		public int QueryGetData(ref System.Runtime.InteropServices.ComTypes.FORMATETC format)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("IDataObject.QueryGetData({0})", DataObjectHelper.ClipboardFormatName(format.cfFormat));
-#endif
-			try
-			{
-				return _renderHelper.QueryGetData(ref format);
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("QueryGetData occured an exception", e);
-#endif
-				throw;
-			}
-		}
-
-		public void SetData(ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium, bool release)
-		{
-#if COMLOGGING
-			Debug.ReportError("IDataObject.SetData - NOT SUPPORTED!");
-#endif
-			throw new NotSupportedException();
+			return false;
 		}
 
 		#endregion IDataObject members
@@ -922,7 +793,9 @@ namespace Altaxo.Com
 			if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) == 0)
 				return ComReturnValue.E_FAIL;
 
-			pSizel = Extent;
+			var docSize_pt = _document.Size;
+
+			pSizel = new tagSIZEL((int)(docSize_pt.X * PointsToHimetric), (int)(docSize_pt.Y * PointsToHimetric));
 
 			return ComReturnValue.NOERROR;
 		}
@@ -1099,14 +972,6 @@ namespace Altaxo.Com
 
 			return ComReturnValue.S_OK;
 		}
-
-		private void InternalSaveAsMiniProject(IStorage pStgSave)
-		{
-			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-			var altaxoMiniProject = miniProjectBuilder.GetMiniProject(_document);
-			GraphDocumentDataObject.InternalSaveMiniProject(pStgSave, altaxoMiniProject, _document.Name);
-		}
-
 
 		public void Save(IStorage pStgSave, bool fSameAsLoad)
 		{

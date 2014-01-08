@@ -21,8 +21,6 @@ namespace Altaxo.Com
 
 		ComManager _comManager;
 
-
-
 		public GraphDocumentDataObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 		{
 			_comManager = comManager;
@@ -150,7 +148,7 @@ namespace Altaxo.Com
 			if (null != fileMoniker)
 			{
 				IMoniker itemMoniker;
-				Ole32Func.CreateItemMoniker("!", ComManager.NormalStringToMonikerNameString(_altaxoGraphDocumentName), out itemMoniker);
+				Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_altaxoGraphDocumentName), out itemMoniker);
 				if (null != itemMoniker)
 				{
 					fileMoniker.ComposeWith(itemMoniker, false, out documentMoniker);
@@ -215,7 +213,7 @@ namespace Altaxo.Com
 			get { return _dataAdviseHolder; }
 		}
 
-		protected override void InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 
 			if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
@@ -226,12 +224,15 @@ namespace Altaxo.Com
 				// we don't save the document directly, since this would mean to save the whole (and probably huge) project
 				// instead we first make a mini project with the neccessary data only and then save this instead
 				InternalSaveMiniProject(stg, _altaxoMiniProject, _altaxoGraphDocumentName);
-				return;
+				return true;
 			}
-
 
 			if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
 			{
+				// we should make sure that ComManager is already started, so that the moniker can be used by the program
+				if (!_comManager.IsActive)
+					_comManager.StartLocalServer();
+
 				IMoniker documentMoniker = CreateNewDocumentMoniker();
 
 				if (null != documentMoniker)
@@ -240,9 +241,11 @@ namespace Altaxo.Com
 					medium.pUnkForRelease = null;
 					IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
 					DataObjectHelper.SaveMonikerToStream(documentMoniker, strm);
-					return;
+					return true;
 				}
 			}
+
+			return false;
 		}
 	}
 }

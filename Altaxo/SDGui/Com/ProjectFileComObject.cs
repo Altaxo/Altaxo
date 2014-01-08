@@ -49,11 +49,7 @@ namespace Altaxo.Com
 			// 1. Monitor the change of the project instance
 			Current.ProjectService.ProjectChanged += EhCurrentProjectInstanceChanged;
 			Current.ProjectService.ProjectRenamed += EhCurrentProjectFileNameChanged;
-
-			_currentProject = Current.Project;
-
-			// 2. inside the project, monitor the change of any child documents that are Com objects (graphs)
-			_currentProject.GraphDocumentCollection.CollectionChanged += EhGraphDocumentRenamed;
+		
 			_documentComObjects = new List<GraphDocumentComObject>();
 
 			EhCurrentProjectInstanceChanged(null, null);
@@ -104,6 +100,15 @@ namespace Altaxo.Com
 		private void EhCurrentProjectFileNameChanged(string fileName)
 		{
 			// see Brockschmidt, Inside Ole 2nd ed., page 996
+
+			// make sure that if we have a valid file name, then the ComManager should be Active in order that this Com object is made public
+			if (!string.IsNullOrEmpty(fileName) && !_comManager.IsActive)
+			{
+#if COMLOGGING
+				Debug.ReportInfo("FileComObject.EhCurrentProjectFileNameChanged StartLocalServer because we have a valid file name. FileName: {0}", fileName);
+#endif
+				_comManager.StartLocalServer();
+			}
 
 #if COMLOGGING
 			Debug.ReportInfo("FileComObject.EhCurrentProjectFileNameChanged");
@@ -286,6 +291,8 @@ namespace Altaxo.Com
 		public IntPtr GetObject(string pszItem, int dwSpeedNeeded, IBindCtx pbc, ref Guid riid)
 		{
 			// Brockschmidt, Inside Ole 2nd ed. page 1003
+
+			pszItem = DataObjectHelper.MonikerNameStringToNormalString(pszItem);
 
 #if COMLOGGING
 			Debug.ReportInfo("FileComObject.GetObject {0}, Requesting Interface : {	}", pszItem, riid);

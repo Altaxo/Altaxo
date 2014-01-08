@@ -121,12 +121,17 @@ namespace Altaxo.Main
     /// <summary>
     /// Getter / setter for the currently open project.
     /// </summary>
-    Altaxo.AltaxoDocument CurrentOpenProject {  get; set; } 
+    Altaxo.AltaxoDocument CurrentOpenProject {  get; } 
 
     /// <summary>
     /// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
     /// </summary>
     string CurrentProjectFileName { get; }
+
+		/// <summary>
+		/// Creates the very first document. Used internal into the autostart command.
+		/// </summary>
+		void CreateInitialDocument();
 
     /// <summary>
     /// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.

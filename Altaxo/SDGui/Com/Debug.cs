@@ -171,7 +171,7 @@ namespace Altaxo.Com
 
 			string path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 
-			var dateTimeString = startTime.ToString("yyyy-MM-dd hh-mm-ss.fff");
+			var dateTimeString = startTime.ToString("yyyy-MM-dd HH-mm-ss.fff");
 
 			string fileName = "ErrorLog_Process_" + dateTimeString + ".txt";
 
@@ -191,7 +191,7 @@ namespace Altaxo.Com
 
 			stb.Append(level);
 			stb.Append('\t');
-			stb.Append(DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss.fff"));
+			stb.Append(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 			stb.Append('\t');
 			stb.Append(System.Threading.Thread.CurrentThread.Name ?? System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
 			stb.Append('\t');
@@ -199,11 +199,11 @@ namespace Altaxo.Com
 
 			try
 			{
-				lock(_syncContext)
+				lock (_syncContext)
 				{
-				_output.WriteLine(stb);
-				_output.Flush();
-				_output.BaseStream.Flush();
+					_output.WriteLine(stb);
+					_output.Flush();
+					_output.BaseStream.Flush();
 				}
 			}
 			catch (ObjectDisposedException)

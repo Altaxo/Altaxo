@@ -227,7 +227,6 @@
     <Compile Include="Com\ClassFactory_ProjectFileComObject.cs" />
     <Compile Include="Com\ComManager.cs" />
     <Compile Include="Com\GraphDocumentComObject.cs" />
-    <Compile Include="Com\GraphDocumentComObjectRenderer.cs" />
     <Compile Include="Com\ProjectFileComObject.cs" />
     <Compile Include="Com\GarbageCollector.cs" />
     <Compile Include="Com\InvokeableThread.cs" />

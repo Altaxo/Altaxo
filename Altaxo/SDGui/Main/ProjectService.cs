@@ -46,19 +46,56 @@ namespace Altaxo.Main
 		/// <summary>
 		/// The currently opened Altaxo project.
 		/// </summary>
-		private Altaxo.AltaxoDocument openProject = null;
+		private Altaxo.AltaxoDocument _currentProject;
 
 		/// <summary>
 		/// The file name of the currently opened Altaxo project.
 		/// </summary>
-		private string openProjectFileName = null;
+		private string _currentProjectFileName;
 
 		public ProjectService()
 		{
 		}
 
-		//FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-		//ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
+		public void SetCurrentProject(Altaxo.AltaxoDocument project, string projectFileName)
+		{
+			Altaxo.AltaxoDocument oldProject = _currentProject;
+			string oldProjectFileName = _currentProjectFileName;
+
+
+			if (_currentProject != null)
+				_currentProject.DirtyChanged -= new EventHandler(this.EhProjectDirtyChanged);
+
+			_currentProject = project;
+			_currentProjectFileName = projectFileName;
+
+			if (_currentProject != null)
+				_currentProject.DirtyChanged += new EventHandler(this.EhProjectDirtyChanged);
+
+			if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
+			{
+				if (string.IsNullOrEmpty(oldProjectFileName) && null!= _currentProject)
+					OnProjectOpened(new ProjectEventArgs(_currentProject));
+
+				OnProjectChanged();
+			}
+			else // Project instance has not changed
+			{
+			if(oldProjectFileName != _currentProjectFileName)
+				OnRenameProject(new ProjectRenameEventArgs(_currentProject, oldProjectFileName, _currentProjectFileName));
+			}
+
+		}
+
+		public void CreateInitialDocument()
+		{
+			if (null != _currentProject)
+				throw new InvalidOperationException("There should be no document before creating the initial document");
+
+			SetCurrentProject(new AltaxoDocument(), null);
+		}
+
+
 
 		/// <summary>
 		/// The currently open Altaxo project.
@@ -67,27 +104,7 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				return openProject;
-			}
-			set
-			{
-				Altaxo.AltaxoDocument oldProject = openProject;
-
-				if (oldProject != null)
-					oldProject.DirtyChanged -= new EventHandler(this.EhProjectDirtyChanged);
-
-				openProject = value;
-
-				if (openProject != null)
-					openProject.DirtyChanged += new EventHandler(this.EhProjectDirtyChanged);
-
-				if (!object.Equals(oldProject, value))
-				{
-					if (value != null && oldProject == null)
-						OnProjectOpened(new ProjectEventArgs(openProject));
-
-					OnProjectChanged();
-				}
+				return _currentProject;
 			}
 		}
 
@@ -96,7 +113,7 @@ namespace Altaxo.Main
 		/// </summary>
 		public string CurrentProjectFileName
 		{
-			get { return this.openProjectFileName; }
+			get { return this._currentProjectFileName; }
 		}
 
 		/// <summary>
@@ -284,14 +301,8 @@ namespace Altaxo.Main
 			}
 
 			this.Load(filename);
-			openProjectFileName = filename;
 
-			//IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
 			FileService.RecentOpen.AddLastProject(filename);
-
-			OnProjectOpened(new ProjectEventArgs(openProject));
-
-			// RestoreCombinePreferences(CurrentOpenCombine, openCombineFileName);
 		}
 
 		/// <summary>
@@ -303,7 +314,7 @@ namespace Altaxo.Main
 			string errorText;
 			using (System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				errorText = InternalLoadProjectFromStream(myStream);
+				errorText = InternalLoadProjectFromStream(myStream,filename);
 				myStream.Close();
 			}
 
@@ -317,16 +328,15 @@ namespace Altaxo.Main
 		/// <param name="filename"></param>
 		public string LoadProject(System.IO.Stream myStream)
 		{
-			var errors = InternalLoadProjectFromStream(myStream);
-			OnProjectOpened(new ProjectEventArgs(this.CurrentOpenProject));
+			var errors = InternalLoadProjectFromStream(myStream,null);
 			return errors;
 		}
 
 		/// <summary>
 		/// Opens a Altaxo project from a stream.
 		/// </summary>
-		/// <param name="filename"></param>
-		private string InternalLoadProjectFromStream(System.IO.Stream myStream)
+		/// <param name="filename">Either the filename of the file which stored the document, or null (e.g. myStream is a MemoryStream).</param>
+		private string InternalLoadProjectFromStream(System.IO.Stream myStream, string filename)
 		{
 			var errorText = new System.Text.StringBuilder();
 
@@ -360,7 +370,7 @@ namespace Altaxo.Main
 			try
 			{
 				Current.Workbench.CloseAllViews();
-				this.CurrentOpenProject = newdocument;
+				this.SetCurrentProject(newdocument, filename);
 				RestoreWindowStateFromZippedFile(zipFile, info, newdocument);
 				this.CurrentOpenProject.IsDirty = false;
 			}
@@ -425,7 +435,7 @@ namespace Altaxo.Main
 			if (null != savingException)
 				throw savingException;
 
-			this.openProject.IsDirty = false;
+			this._currentProject.IsDirty = false;
 		}
 
 		public Exception SaveProject(System.IO.Stream myStream)
@@ -437,7 +447,7 @@ namespace Altaxo.Main
 			Exception savingException = null;
 			try
 			{
-				this.openProject.SaveToZippedFile(zippedStreamWrapper, info);
+				this._currentProject.SaveToZippedFile(zippedStreamWrapper, info);
 
 				if (!Current.Gui.InvokeRequired())
 					SaveWindowStateToZippedFile(zippedStreamWrapper, info);
@@ -458,7 +468,7 @@ namespace Altaxo.Main
 		/// </summary>
 		public void SaveProject()
 		{
-			SaveProject(openProjectFileName);
+			SaveProject(_currentProjectFileName);
 		}
 
 		/// <summary>
@@ -468,10 +478,10 @@ namespace Altaxo.Main
 		/// <param name="filename">The new project file name.</param>
 		public void SaveProject(string filename)
 		{
-			string oldFileName = this.openProjectFileName;
-			this.openProjectFileName = filename;
+			string oldFileName = this._currentProjectFileName;
+			this._currentProjectFileName = filename;
 			if (oldFileName != filename)
-				this.OnRenameProject(new ProjectRenameEventArgs(this.openProject, oldFileName, filename));
+				this.OnRenameProject(new ProjectRenameEventArgs(this._currentProject, oldFileName, filename));
 
 			FileUtility.ObservedSave(new NamedFileOperationDelegate(this.Save),
 				filename,
@@ -547,14 +557,13 @@ namespace Altaxo.Main
 					Altaxo.AltaxoDocument closedProject = CurrentOpenProject;
 					//CurrentSelectedProject = null;
 					//CurrentOpenCombine = CurrentSelectedCombine = null;
-					openProjectFileName = null;
+					_currentProjectFileName = null;
 					WorkbenchSingleton.Workbench.CloseAllViews();
 					OnProjectClosed(new ProjectEventArgs(closedProject));
 					//closedProject.Dispose();
 
 					// now create a new project
-					CurrentOpenProject = new Altaxo.AltaxoDocument();
-					OnProjectOpened(new ProjectEventArgs(CurrentOpenProject));
+					this.SetCurrentProject(new Altaxo.AltaxoDocument(), null);
 				}
 			}
 		}
@@ -1022,7 +1031,7 @@ namespace Altaxo.Main
 
 		private void EhProjectDirtyChanged(object sender, EventArgs e)
 		{
-			OnProjectDirtyChanged(new Altaxo.Main.ProjectEventArgs(this.openProject));
+			OnProjectDirtyChanged(new Altaxo.Main.ProjectEventArgs(this._currentProject));
 		}
 
 		//********* own events

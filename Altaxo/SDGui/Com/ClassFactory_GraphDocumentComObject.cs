@@ -9,15 +9,14 @@ namespace Altaxo.Com
 	internal class ClassFactory_GraphDocumentComObject : ClassFactoryBase
 	{
 		public ClassFactory_GraphDocumentComObject(ComManager comManager)
-		: base(comManager)
+			: base(comManager)
 		{
 		}
 
 		public override void virtual_CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("SimpleCOMObjectClassFactory.CreateInstance()");
-			Debug.ReportInfo("Requesting Interface : {0}", riid);
+			Debug.ReportInfo("{0}.CreateInstance(), requesting interface {1}", this.GetType().Name, riid);
 #endif
 
 			if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IDataObject)) ||

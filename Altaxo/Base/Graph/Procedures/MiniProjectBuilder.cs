@@ -96,7 +96,8 @@ namespace Altaxo.Graph.Procedures
 			{
 				var oldPropCol = oldPropColleciton[i];
 				var newPropCol = (DataColumn)oldPropCol.Clone();
-				newTable.PropCols.Add((DataColumn)oldPropColleciton[i].Clone(), oldPropColleciton.GetColumnName(i), oldPropColleciton.GetColumnKind(i), oldPropColleciton.GetColumnGroup(i));
+				newPropCol.Clear();
+				newTable.PropCols.Add(newPropCol, oldPropColleciton.GetColumnName(i), oldPropColleciton.GetColumnKind(i), oldPropColleciton.GetColumnGroup(i));
 
 				for (int k = 0; k < newTable.DataColumns.ColumnCount; ++k)
 					newPropCol[k] = oldPropCol[newToOldDataColIndex[k]];

@@ -14,15 +14,8 @@ namespace Altaxo.Com
 	using UnmanagedApi.Ole32;
 	using UnmanagedApi.User32;
 
-	// Note that ComManager is NOT declared as public.
-	// This is so that it will not be exposed to COM when we call regasm
-	// or tlbexp.
 	public class ComManager : Altaxo.Main.IComManager
 	{
-		//		private Font _font;
-	
-
-
 		public bool IsActive { get; private set; }
 
 		private int _numberOfObjectsInUse;  // Keeps a count on the total number of objects alive.
@@ -62,10 +55,8 @@ namespace Altaxo.Com
 		{
 			ApplicationAdapter = appAdapter;
 			_guiThreadStack = new GuiThreadStack(appAdapter.IsInvokeRequiredForGuiThread, appAdapter.InvokeGuiThread);
+			_fileComObject = new ProjectFileComObject(this);
 		}
-
-
-	
 
 		public GraphDocumentComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
 		{
@@ -562,77 +553,6 @@ namespace Altaxo.Com
 			IsActive = false;
 		}
 
-		#region Static helper functions
-
-		public static string NormalStringToMonikerNameString(string rawString)
-		{
-			var stb = new StringBuilder(rawString.Length + 20);
-
-			foreach (char c in rawString)
-			{
-				switch (c)
-				{
-					case '!':
-						stb.Append("%21");
-						break;
-
-					case '%':
-						stb.Append("%25");
-						break;
-
-					default:
-						stb.Append(c);
-						break;
-				}
-			}
-			return stb.ToString();
-		}
-
-		public static string MonikerNameStringToNormalString(string rawString)
-		{
-			var stb = new StringBuilder(rawString.Length);
-
-			int startIndex = 0;
-			while (startIndex < rawString.Length)
-			{
-				int idx = rawString.IndexOf('%', startIndex);
-
-				if (idx < 0)
-					stb.Append(rawString.Substring(startIndex, rawString.Length - startIndex)); // no Escape sequence found -> we append the rest of the string
-				else if ((idx - 1) > startIndex)
-					stb.Append(rawString.Substring(startIndex, idx - 1 - startIndex)); // possible escape sequence found, -> we append until (but not including) the escape char
-
-				int remainingChars = rawString.Length - idx;
-				if (remainingChars >= 3)
-				{
-					string subString = rawString.Substring(idx, 3);
-					switch (subString)
-					{
-						case "%21":
-							stb.Append('!');
-							startIndex += 3;
-							break;
-
-						case "%25":
-							stb.Append('%');
-							startIndex += 3;
-							break;
-
-						default:
-							stb.Append(rawString[idx]);
-							startIndex += 1;
-							break;
-					}
-				}
-				else // to less remaining chars
-				{
-					stb.Append(rawString[idx]);
-					startIndex += 1;
-				}
-			}
-			return stb.ToString();
-		}
-
-		#endregion Static helper functions
+	
 	}
 }

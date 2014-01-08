@@ -65,6 +65,74 @@ namespace Altaxo.Com
 			return bc;
 		}
 
+		public static string NormalStringToMonikerNameString(string rawString)
+		{
+			var stb = new StringBuilder(rawString.Length + 20);
+
+			foreach (char c in rawString)
+			{
+				switch (c)
+				{
+					case '!':
+						stb.Append("%21");
+						break;
+
+					case '%':
+						stb.Append("%25");
+						break;
+
+					default:
+						stb.Append(c);
+						break;
+				}
+			}
+			return stb.ToString();
+		}
+
+		public static string MonikerNameStringToNormalString(string rawString)
+		{
+			var stb = new StringBuilder(rawString.Length);
+
+			int startIndex = 0;
+			while (startIndex < rawString.Length)
+			{
+				int idx = rawString.IndexOf('%', startIndex);
+
+				if (idx < 0)
+					stb.Append(rawString.Substring(startIndex, rawString.Length - startIndex)); // no Escape sequence found -> we append the rest of the string
+				else if ((idx - 1) > startIndex)
+					stb.Append(rawString.Substring(startIndex, idx - 1 - startIndex)); // possible escape sequence found, -> we append until (but not including) the escape char
+
+				int remainingChars = rawString.Length - idx;
+				if (remainingChars >= 3)
+				{
+					string subString = rawString.Substring(idx, 3);
+					switch (subString)
+					{
+						case "%21":
+							stb.Append('!');
+							startIndex += 3;
+							break;
+
+						case "%25":
+							stb.Append('%');
+							startIndex += 3;
+							break;
+
+						default:
+							stb.Append(rawString[idx]);
+							startIndex += 1;
+							break;
+					}
+				}
+				else // to less remaining chars
+				{
+					stb.Append(rawString[idx]);
+					startIndex += 1;
+				}
+			}
+			return stb.ToString();
+		}
 
 		public static string FormatEtcToString(FORMATETC format)
 		{

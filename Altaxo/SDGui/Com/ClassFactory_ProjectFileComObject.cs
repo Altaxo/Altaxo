@@ -8,7 +8,7 @@ namespace Altaxo.Com
 
 	internal class ClassFactory_ProjectFileComObject : ClassFactoryBase
 	{
-		public ClassFactory_ProjectFileComObject(ComManager comManager) 
+		public ClassFactory_ProjectFileComObject(ComManager comManager)
 			: base(comManager)
 		{
 		}
@@ -16,8 +16,7 @@ namespace Altaxo.Com
 		public override void virtual_CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("FileCOMObjectClassFactory.CreateInstance()");
-			Debug.ReportInfo("Requesting Interface : {0}", riid);
+			Debug.ReportInfo("{0}.CreateInstance(), requesting interface {1}", this.GetType().Name, riid);
 #endif
 
 			if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)) ||

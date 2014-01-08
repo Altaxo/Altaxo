@@ -22,4 +22,20 @@ namespace Altaxo.Com
 			_comManager.AttemptToTerminateServer();
 		}
 	}
+
+	public abstract class ReferenceCountedDataObjectBase : DataObjectBase
+	{
+		protected ComManager _comManager;
+		public ReferenceCountedDataObjectBase(ComManager comManager)
+		{
+			_comManager = comManager;
+			_comManager.InterlockedIncrementObjectsCount();
+		}
+
+		~ReferenceCountedDataObjectBase()
+		{
+			_comManager.InterlockedDecrementObjectsCount();
+			_comManager.AttemptToTerminateServer();
+		}
+	}
 }

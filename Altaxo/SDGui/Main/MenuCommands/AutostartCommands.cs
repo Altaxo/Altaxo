@@ -68,7 +68,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Gui.WpfFontManager.Register();
 
 			// we construct the main document (for now)
-			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
+			Altaxo.Current.ProjectService.CreateInitialDocument();
 
 		}
 
