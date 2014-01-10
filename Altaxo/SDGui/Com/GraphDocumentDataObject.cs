@@ -46,13 +46,13 @@ namespace Altaxo.Com
 				var list = new List<Rendering>();
 
 				list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
-				list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor));
+				list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
 				list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
 
 				if (!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
 				{
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderMoniker));
-					list.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderObjectDescriptor));
+					list.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderLinkedObjectDescriptor));
 				}
 
 				return list;
@@ -138,10 +138,10 @@ namespace Altaxo.Com
 			return misc;
 		}
 
-		public static IntPtr RenderObjectDescriptor(TYMED tymed)
+		public static IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.RenderObjectDescriptor");
+			Debug.ReportInfo("GraphDocumentDataObject.RenderEmbeddedObjectDescriptor");
 #endif
 
 			// Brockschmidt, Inside Ole 2nd ed. page 991
@@ -149,7 +149,7 @@ namespace Altaxo.Com
 			// Fill in the basic information.
 			OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
 			// According to the documentation this is used just to find an icon.
-			od.clsid = typeof(GraphDocumentComObject).GUID;
+			od.clsid = typeof(GraphDocumentEmbeddedComObject).GUID;
 			od.dwDrawAspect = DVASPECT.DVASPECT_CONTENT;
 			od.sizelcx = 0; // zero in imitation of Word/Excel, but could be box.Extent.cx;
 			od.sizelcy = 0; // zero in imitation of Word/Excel, but could be box.Extent.cy;
@@ -158,7 +158,54 @@ namespace Altaxo.Com
 			od.dwStatus = MiscStatus((int)od.dwDrawAspect);
 
 			// Descriptive strings to tack on after the struct.
-			string name = GraphDocumentComObject.USER_TYPE;
+			string name = GraphDocumentEmbeddedComObject.USER_TYPE;
+			int name_size = (name.Length + 1) * sizeof(char);
+			string source = "Altaxo";
+			int source_size = (source.Length + 1) * sizeof(char);
+			int od_size = Marshal.SizeOf(typeof(OBJECTDESCRIPTOR));
+			od.dwFullUserTypeName = od_size;
+			od.dwSrcOfCopy = od_size + name_size;
+			int full_size = od_size + name_size + source_size;
+			od.cbSize = full_size;
+
+			// To avoid 'unsafe', we will arrange the strings in a byte array.
+			byte[] strings = new byte[full_size];
+			Encoding unicode = Encoding.Unicode;
+			Array.Copy(unicode.GetBytes(name), 0, strings, od.dwFullUserTypeName, name.Length * sizeof(char));
+			Array.Copy(unicode.GetBytes(source), 0, strings, od.dwSrcOfCopy, source.Length * sizeof(char));
+
+			// Combine the strings and the struct into a single block of mem.
+			IntPtr hod = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, full_size);
+			System.Diagnostics.Debug.Assert(hod != IntPtr.Zero);
+			IntPtr buf = Kernel32Func.GlobalLock(hod);
+			Marshal.Copy(strings, 0, buf, full_size);
+			Marshal.StructureToPtr(od, buf, false);
+
+			Kernel32Func.GlobalUnlock(hod);
+			return hod;
+		}
+
+		public static IntPtr RenderLinkedObjectDescriptor(TYMED tymed)
+		{
+#if COMLOGGING
+			Debug.ReportInfo("GraphDocumentDataObject.RenderLinkedObjectDescriptor");
+#endif
+
+			// Brockschmidt, Inside Ole 2nd ed. page 991
+			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			// Fill in the basic information.
+			OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
+			// According to the documentation this is used just to find an icon.
+			od.clsid = typeof(GraphDocumentEmbeddedComObject).GUID;
+			od.dwDrawAspect = DVASPECT.DVASPECT_CONTENT;
+			od.sizelcx = 0; // zero in imitation of Word/Excel, but could be box.Extent.cx;
+			od.sizelcy = 0; // zero in imitation of Word/Excel, but could be box.Extent.cy;
+			od.pointlx = 0;
+			od.pointly = 0;
+			od.dwStatus = MiscStatus((int)od.dwDrawAspect);
+
+			// Descriptive strings to tack on after the struct.
+			string name = GraphDocumentLinkedComObject.USER_TYPE;
 			int name_size = (name.Length + 1) * sizeof(char);
 			string source = "Altaxo";
 			int source_size = (source.Length + 1) * sizeof(char);
@@ -217,7 +264,7 @@ namespace Altaxo.Com
 			try
 			{
 				Exception saveEx = null;
-				Ole32Func.WriteClassStg(pStgSave, typeof(GraphDocumentComObject).GUID);
+				Ole32Func.WriteClassStg(pStgSave, typeof(GraphDocumentEmbeddedComObject).GUID);
 
 				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZip", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
 				{

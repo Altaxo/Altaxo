@@ -10,15 +10,25 @@ namespace Altaxo.Com
 	public class ReferenceCountedObjectBase
 	{
 		protected ComManager _comManager;
+
 		public ReferenceCountedObjectBase(ComManager comManager)
 		{
 			_comManager = comManager;
 			_comManager.InterlockedIncrementObjectsCount();
+
+#if COMLOGGING
+			Debug.ReportInfo("{0}.Constructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
+#endif
 		}
 
 		~ReferenceCountedObjectBase()
 		{
 			_comManager.InterlockedDecrementObjectsCount();
+
+#if COMLOGGING
+			Debug.ReportInfo("{0}.Destructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
+#endif
+
 			_comManager.AttemptToTerminateServer();
 		}
 	}
@@ -26,15 +36,25 @@ namespace Altaxo.Com
 	public abstract class ReferenceCountedDataObjectBase : DataObjectBase
 	{
 		protected ComManager _comManager;
+
 		public ReferenceCountedDataObjectBase(ComManager comManager)
 		{
 			_comManager = comManager;
 			_comManager.InterlockedIncrementObjectsCount();
+
+#if COMLOGGING
+			Debug.ReportInfo("{0}.Constructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
+#endif
 		}
 
 		~ReferenceCountedDataObjectBase()
 		{
 			_comManager.InterlockedDecrementObjectsCount();
+
+#if COMLOGGING
+			Debug.ReportInfo("{0}.Destructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
+#endif
+
 			_comManager.AttemptToTerminateServer();
 		}
 	}

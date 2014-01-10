@@ -8,7 +8,7 @@ using System.Text;
 namespace Altaxo.Com
 {
 	/// <summary>
-	/// Class that mimics an IOleAdviseHolder in a managed class. This implementation is fully managed (..FM), thus it does not use any Ole helper class.
+	/// Class that mimics an IOleAdviseHolder in a managed class. This implementation is fully managed (..FM), i.e. it does not use any OLE/COM helper class.
 	/// </summary>
 	public class ManagedOleAdviseHolderFM
 	{

@@ -21,13 +21,15 @@ namespace Altaxo.Com
 		private int _numberOfObjectsInUse;  // Keeps a count on the total number of objects alive.
 		private int _numberOfServerLocks;// Keeps a lock count on this application.
 
-		private ClassFactory_GraphDocumentComObject _classFactoryOfDocumentComObject;
+		private ClassFactory_GraphDocumentEmbeddedComObject _classFactoryOfDocumentComObject;
 
 		private ClassFactory_ProjectFileComObject _classFactoryOfFileComObject;
 
 		private GarbageCollector _garbageCollector;
 
-		public Dictionary<GraphDocument, GraphDocumentComObject> _documentsComObject = new Dictionary<GraphDocument, GraphDocumentComObject>();
+		public Dictionary<GraphDocument, GraphDocumentLinkedComObject> _documentsComObject = new Dictionary<GraphDocument, GraphDocumentLinkedComObject>();
+
+		private GraphDocumentEmbeddedComObject _embeddedComObject;
 
 		public ProjectFileComObject _fileComObject;
 
@@ -58,16 +60,29 @@ namespace Altaxo.Com
 			_fileComObject = new ProjectFileComObject(this);
 		}
 
-		public GraphDocumentComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
+		public GraphDocumentEmbeddedComObject GetNewEmbeddedGraphDocumentComObject()
 		{
+			if (null != _embeddedComObject)
+				throw new InvalidOperationException("There is already an embedded object present in this application instance!");
+
+			return new GraphDocumentEmbeddedComObject(_fileComObject, this);
+		}
+
+		public GraphDocumentLinkedComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
+		{
+			if (null == doc)
+				throw new ArgumentNullException();
+
+#if COMLOGGING
+			Debug.ReportInfo("{0}.GetDocumentsComObjectForGraphDocument Name={1}", this.GetType().Name, doc.Name);
+#endif
+
 			if (null != doc && _documentsComObject.ContainsKey(doc))
 				return _documentsComObject[doc];
 
 			// else we must create a new DocumentComObject
-			var newComObject = new GraphDocumentComObject(doc, _fileComObject, this);
-
-			// note: the addition to the dictionary is done by the DocumentComObject itself, that's why it is not done here
-
+			var newComObject = new GraphDocumentLinkedComObject(doc, _fileComObject, this);
+			_documentsComObject.Add(doc, newComObject);
 			return newComObject;
 		}
 
@@ -99,13 +114,12 @@ namespace Altaxo.Com
 			return null;
 		}
 
-		public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentComObject documentComObject, GraphDocument oldDocument, GraphDocument newDocument)
+		public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentEmbeddedComObject documentComObject, GraphDocument oldDocument, GraphDocument newDocument)
 		{
-			if (null != oldDocument)
-				_documentsComObject.Remove(oldDocument);
-
-			if (null != newDocument)
-				_documentsComObject.Add(newDocument, documentComObject);
+			System.Diagnostics.Debug.Assert(null == oldDocument);
+			System.Diagnostics.Debug.Assert(null != newDocument);
+			_embeddedComObject = documentComObject;
+			EnterEmbeddedObjectMode();
 		}
 
 		public bool IsInvokeRequiredForGuiThread()
@@ -184,10 +198,7 @@ namespace Altaxo.Com
 		{
 			get
 			{
-				lock (typeof(ComManager))
-				{
-					return _numberOfObjectsInUse;
-				}
+				return _numberOfObjectsInUse;
 			}
 		}
 
@@ -212,10 +223,7 @@ namespace Altaxo.Com
 		{
 			get
 			{
-				lock (typeof(ComManager))
-				{
-					return _numberOfServerLocks;
-				}
+				return _numberOfServerLocks;
 			}
 		}
 
@@ -318,7 +326,7 @@ namespace Altaxo.Com
 			root.DeleteSubKey(".axoprj");
 			root.DeleteSubKey("Altaxo.Project");
 			root.DeleteSubKey("Altaxo.Graph.0");
-			root.DeleteSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentComObject)).ToString("B").ToUpperInvariant());
+			root.DeleteSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant());
 		}
 
 		private void Register(RegistryKey root)
@@ -347,10 +355,10 @@ namespace Altaxo.Com
 				key = root.CreateSubKey("Altaxo.Graph.0");
 				key.SetValue(null, "Altaxo Graph-Document");
 				key2 = key.CreateSubKey("CLSID");
-				key2.SetValue(null, Marshal.GenerateGuidForType(typeof(GraphDocumentComObject)).ToString("B").ToUpperInvariant());
+				key2.SetValue(null, Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant());
 				key2 = key.CreateSubKey("Insertable");
 
-				key = root.CreateSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentComObject)).ToString("B").ToUpperInvariant());
+				key = root.CreateSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant());
 				key.SetValue(null, "Altaxo Graph-Document");
 
 				key2 = key.CreateSubKey("LocalServer32");
@@ -469,10 +477,6 @@ namespace Altaxo.Com
 			Debug.ReportInfo("Starting local server");
 #endif
 
-			// Initialize critical member variables.
-			_numberOfObjectsInUse = 0;
-			_numberOfServerLocks = 0;
-
 			{
 				// Register the FileComObject
 				_classFactoryOfFileComObject = new ClassFactory_ProjectFileComObject(this);
@@ -488,9 +492,9 @@ namespace Altaxo.Com
 			if (ApplicationWasStartedWithEmbeddingArg)
 			{
 				// Register the SimpleCOMObjectClassFactory.
-				_classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentComObject(this);
+				_classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentEmbeddedComObject(this);
 				_classFactoryOfDocumentComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
-				_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentComObject));
+				_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject));
 				_classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 				_classFactoryOfDocumentComObject.RegisterClassObject();
 #if COMLOGGING
@@ -537,9 +541,21 @@ namespace Altaxo.Com
 			{
 				_classFactoryOfDocumentComObject.RevokeClassObject();
 #if COMLOGGING
-				Debug.ReportInfo("{0}.StopClassFactoryOfDocumentComObject Revoked: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
+				Debug.ReportInfo("{0}.EnterLinkedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
 #endif
 				_classFactoryOfDocumentComObject = null;
+			}
+		}
+
+		public void EnterEmbeddedObjectMode()
+		{
+			if (null != _classFactoryOfFileComObject)
+			{
+				_classFactoryOfFileComObject.RevokeClassObject();
+#if COMLOGGING
+				Debug.ReportInfo("{0}.EnterEmbeddedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
+#endif
+				_classFactoryOfFileComObject = null;
 			}
 		}
 

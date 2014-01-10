@@ -10,8 +10,8 @@ namespace Altaxo.Com
 {
 	using UnmanagedApi.Ole32;
 
-	[Guid("072CDB1D-745E-4213-9124-53667725B839"),  // We indicate a specific CLSID for "SimpleCOMObject" for convenience of searching the registry.
-	ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _SimpleCOMObject.
+	[Guid("072CDB1D-745E-4213-9124-53667725B839"),
+	ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface
 	]
 	public class ProjectFileComObject :
 		ReferenceCountedObjectBase,
@@ -42,7 +42,7 @@ namespace Altaxo.Com
 
 		public event Action<IMoniker> FileMonikerChanged;
 
-		private List<GraphDocumentComObject> _documentComObjects;
+		private List<GraphDocumentLinkedComObject> _documentComObjects;
 
 		public ProjectFileComObject(ComManager comManager)
 			: base(comManager)
@@ -51,7 +51,7 @@ namespace Altaxo.Com
 			Current.ProjectService.ProjectChanged += EhCurrentProjectInstanceChanged;
 			Current.ProjectService.ProjectRenamed += EhCurrentProjectFileNameChanged;
 
-			_documentComObjects = new List<GraphDocumentComObject>();
+			_documentComObjects = new List<GraphDocumentLinkedComObject>();
 
 			EhCurrentProjectInstanceChanged(null, null);
 		}
@@ -85,7 +85,7 @@ namespace Altaxo.Com
 		{
 			if (changeType == Main.NamedObjectCollectionChangeType.ItemRenamed)
 			{
-				foreach (GraphDocumentComObject comObj in _documentComObjects)
+				foreach (var comObj in _documentComObjects)
 				{
 					if (object.ReferenceEquals(comObj.Document, item))
 						comObj.EhDocumentRenamed(_fileMoniker);
@@ -140,14 +140,6 @@ namespace Altaxo.Com
 						ROTRegisterAsRunning(_fileWithWildCardItemMoniker, this, ref _fileWithWildCardItemMonikerRotCookie, typeof(IOleItemContainer));
 					}
 				}
-			}
-		}
-
-		public IList<GraphDocumentComObject> DocumentComObjects
-		{
-			get
-			{
-				return _documentComObjects;
 			}
 		}
 

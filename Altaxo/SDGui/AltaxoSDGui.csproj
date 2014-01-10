@@ -202,6 +202,7 @@
     <Compile Include="Com\AdviseKind.cs" />
     <Compile Include="Com\AltaxoComApplicationAdapter.cs" />
     <Compile Include="Com\ComStreamWrapper.cs" />
+    <Compile Include="Com\GraphDocumentLinkedComObject.cs" />
     <Compile Include="Com\DataObjectBase.cs" />
     <Compile Include="Com\DataObjectHelper.cs" />
     <Compile Include="Com\Debug.cs" />
@@ -224,10 +225,10 @@
       <SubType>Code</SubType>
     </Content>
     <Compile Include="Com\ClassFactoryBase.cs" />
-    <Compile Include="Com\ClassFactory_GraphDocumentComObject.cs" />
+    <Compile Include="Com\ClassFactory_GraphDocumentEmbeddedComObject.cs" />
     <Compile Include="Com\ClassFactory_ProjectFileComObject.cs" />
     <Compile Include="Com\ComManager.cs" />
-    <Compile Include="Com\GraphDocumentComObject.cs" />
+    <Compile Include="Com\GraphDocumentEmbeddedComObject.cs" />
     <Compile Include="Com\ProjectFileComObject.cs" />
     <Compile Include="Com\GarbageCollector.cs" />
     <Compile Include="Com\InvokeableThread.cs" />

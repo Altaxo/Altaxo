@@ -11,15 +11,14 @@ namespace Altaxo.Com
 	using UnmanagedApi.Ole32;
 
 	/// <summary>
-	/// Summary description for DocumentComObject.
-	/// This is the class that will be exported to unmanaged COM client apps.
+	/// Supports the embedding of a Altaxo Graph document as a mini-project.
 	/// </summary>
 	[
-		Guid(GraphDocumentComObject.GUID_STRING),  // We indicate a specific CLSID for "DocumentComObject" for convenience of searching the registry.
-		ProgId(GraphDocumentComObject.USER_TYPE), //  "Altaxo.Graph.0"),  // This ProgId is used by default. Not 100% necessary.
+		Guid(GraphDocumentEmbeddedComObject.GUID_STRING),  // We indicate a specific CLSID for "DocumentComObject" for convenience of searching the registry.
+		ProgId(GraphDocumentEmbeddedComObject.USER_TYPE), //  "Altaxo.Graph.0"),  // This ProgId is used by default. Not 100% necessary.
 		ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _DocumentComObject.
 		]
-	public class GraphDocumentComObject :
+	public class GraphDocumentEmbeddedComObject :
 		ReferenceCountedDataObjectBase, // DocumentComObject is derived from ReferenceCountedObjectBase so that we can track its creation and destruction.
 		System.Runtime.InteropServices.ComTypes.IDataObject,  // DocumentComObject must implement the IDocumentComObject interface.
 		IOleObject,
@@ -45,14 +44,14 @@ namespace Altaxo.Com
 
 		private GraphDocument _document;
 
-		public GraphDocumentComObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
+		public GraphDocumentEmbeddedComObject(ProjectFileComObject fileComObject, ComManager comManager)
 			: base(comManager)
 		{
 #if COMLOGGING
 			Debug.ReportInfo("{0} constructor.", this.GetType().Name);
 #endif
 
-			Init(graphDocument, true, null);
+			Init(true, null);
 
 			if (null != fileComObject)
 			{
@@ -61,14 +60,7 @@ namespace Altaxo.Com
 			}
 		}
 
-		/// <summary>Copy an object for placing on the clipboard.</summary>
-		public GraphDocumentComObject(GraphDocumentComObject from)
-			: base(from._comManager)
-		{
-			Init(from._document, false, from.Moniker);
-		}
-
-		private void Init(GraphDocument doc, bool hasForm, IMoniker moniker)
+		private void Init(bool hasForm, IMoniker moniker)
 		{
 			// Note: we do not create a event link to Document.DocumentRenamed here
 			// because this would keep the DocumentComObject alive as long as the document is alive
@@ -81,11 +73,9 @@ namespace Altaxo.Com
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
 			_documentMoniker = moniker;
-
-			Document = doc;
 		}
 
-		~GraphDocumentComObject()
+		~GraphDocumentEmbeddedComObject()
 		{
 			// ReferenceCountedObjectBase destructor will be invoked.
 #if COMLOGGING
@@ -404,7 +394,7 @@ namespace Altaxo.Com
 				// EMBEDSOURCE and OBJECTDESCRIPTOR should be placed after private data,
 				// but before the presentations (Brockschmidt, Inside Ole 2nd ed. page 911)
 				renderings.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
-				renderings.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderObjectDescriptor));
+				renderings.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderEmbeddedObjectDescriptor));
 
 				// Nice because it is resolution independent.
 				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
@@ -414,7 +404,7 @@ namespace Altaxo.Com
 				if (Moniker != null)
 				{
 					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, this.RenderLink));
-					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderObjectDescriptor));
+					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderEmbeddedObjectDescriptor));
 				}
 
 				return renderings;

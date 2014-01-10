@@ -2238,10 +2238,19 @@ namespace Altaxo.Graph.Gdi
 						g.Clip = layer.CoordinateSystem.GetRegion();
 					}
 
-					if (null == PlotItemParent)
+					if (null == PlotItemParent) // this is the root plot item of the layer
+					{
+						if (layer._plotItems == null)
+						{
+							throw new InvalidOperationException("The member _plotItems is null on this layer!");
+						}
+
 						layer._plotItems.Paint(g, layer, null, null);
+					}
 					else
+					{
 						PlotItemParent.PaintChild(g, layer, PlotItemIndex);
+					}
 
 					if (layer.ClipDataToFrame == LayerDataClipping.StrictToCS)
 					{

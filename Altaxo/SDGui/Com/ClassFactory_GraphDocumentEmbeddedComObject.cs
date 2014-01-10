@@ -6,9 +6,9 @@ namespace Altaxo.Com
 {
 	using UnmanagedApi.Ole32;
 
-	internal class ClassFactory_GraphDocumentComObject : ClassFactoryBase
+	internal class ClassFactory_GraphDocumentEmbeddedComObject : ClassFactoryBase
 	{
-		public ClassFactory_GraphDocumentComObject(ComManager comManager)
+		public ClassFactory_GraphDocumentEmbeddedComObject(ComManager comManager)
 			: base(comManager)
 		{
 		}
@@ -23,7 +23,7 @@ namespace Altaxo.Com
 				riid == InterfaceGuid.IID_IDispatch ||
 				riid == InterfaceGuid.IID_IUnknown)
 			{
-				var documentComObject = _comManager.GetDocumentsComObjectForGraphDocument(null);
+				var documentComObject = _comManager.GetNewEmbeddedGraphDocumentComObject();
 
 				ppvObject = Marshal.GetComInterfaceForObject(documentComObject, typeof(System.Runtime.InteropServices.ComTypes.IDataObject));
 			}
