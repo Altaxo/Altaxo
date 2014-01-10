@@ -21,11 +21,10 @@ namespace Altaxo.Com
 	public class GraphDocumentLinkedComObject :
 		ReferenceCountedDataObjectBase,
 		System.Runtime.InteropServices.ComTypes.IDataObject,
-		IOleObject,
-		IPersistStorage
+		IOleObject
 	{
 		public const string GUID_STRING = "070BA50F-5F5E-40F8-9A24-1565B6CA9B66";
-		public const string USER_TYPE = "Altaxo.Graph.Linked";
+		public const string USER_TYPE = "Altaxo.Graph(linked)";
 		public const string USER_TYPE_LONG = "Altaxo Graph-Document";
 		public const double PointsToHimetric = 2540 / 72.0;
 
@@ -426,16 +425,6 @@ namespace Altaxo.Com
 
 		protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
-			if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
-			{
-				medium.tymed = TYMED.TYMED_ISTORAGE;
-				medium.pUnkForRelease = null;
-				var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
-
-				Save(stg, false);
-				return true;
-			}
-
 			if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
 			{
 				var moniker = Moniker;
@@ -846,180 +835,5 @@ namespace Altaxo.Com
 		}
 
 		#endregion IOleObject members
-
-		#region IPersistStorage mebers
-
-		public void GetClassID(out Guid pClassID)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.GetClassID", this.GetType().Name);
-#endif
-			pClassID = this.GetType().GUID;
-		}
-
-		public int IsDirty()
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.IsDirty returning {1}", this.GetType().Name, _isDocumentDirty);
-#endif
-
-			if (_isDocumentDirty)
-				return ComReturnValue.S_OK;
-			else
-				return ComReturnValue.S_FALSE;
-		}
-
-		public void InitNew(IStorage pstg)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.InitNew", this.GetType().Name);
-#endif
-
-			Document = Current.ProjectService.CreateNewGraph().Doc;
-
-			// We don't need an IStorage except at Load/Save.
-			_isDocumentDirty = true; // but we set the document dirty flag thus it is saved
-		}
-
-		public int Load(IStorage pstg)
-		{
-			System.Diagnostics.Debug.Assert(null == _document);
-
-			string documentName = null;
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.Load", this.GetType().Name);
-#endif
-
-			try
-			{
-				using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoGraphName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
-				{
-					var bytes = new byte[stream.Length];
-					stream.Read(bytes, 0, bytes.Length);
-					documentName = System.Text.Encoding.UTF8.GetString(bytes);
-				}
-#if COMLOGGING
-				Debug.ReportInfo("{0}.IPersistStorage.Load -> Name of GraphDocument: {1}", this.GetType().Name, documentName);
-#endif
-			}
-			catch (Exception ex)
-			{
-#if COMLOGGING
-				Debug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream GraphName, exception: {1}", this.GetType().Name, ex);
-#endif
-			}
-
-			try
-			{
-				using (var streamWrapper = new ComStreamWrapper(pstg.OpenStream("AltaxoProjectZip", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
-				{
-					_comManager.InvokeGuiThread(() =>
-					{
-						Current.ProjectService.CloseProject(true);
-						Current.ProjectService.LoadProject(streamWrapper);
-					});
-				}
-#if COMLOGGING
-				Debug.ReportInfo("{0}.IPersistStorage.Load Project loaded", this.GetType().Name);
-#endif
-			}
-			catch (Exception ex)
-			{
-#if COMLOGGING
-				Debug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoProjectZip, exception: {1}", this.GetType().Name, ex);
-#endif
-			}
-
-			Marshal.ReleaseComObject(pstg);
-
-			Altaxo.Graph.Gdi.GraphDocument newDocument = null;
-
-			if (null != documentName && Current.Project.GraphDocumentCollection.Contains(documentName))
-				newDocument = Current.Project.GraphDocumentCollection[documentName];
-			else if (null != Current.Project.GraphDocumentCollection.FirstOrDefault())
-				newDocument = Current.Project.GraphDocumentCollection.First();
-
-			if (null != newDocument)
-			{
-				Document = newDocument;
-				_comManager.InvokeGuiThread(() => Current.ProjectService.ShowDocumentView(_document));
-			}
-
-			if (null == Document)
-			{
-#if COMLOGGING
-				Debug.ReportError("{0}.IPersistStorage.Load Document is null, have to throw an exception now!!", this.GetType().Name);
-#endif
-				throw new InvalidOperationException();
-			}
-
-			_isDocumentDirty = false;
-			return ComReturnValue.S_OK;
-		}
-
-		public void Save(IStorage pStgSave, bool fSameAsLoad)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.Save", this.GetType().Name);
-#endif
-
-			try
-			{
-				Exception saveEx = null;
-
-				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
-
-				// Store the name of the item
-				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoGraphName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
-				{
-					byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(_document.Name);
-					stream.Write(nameBytes, 0, nameBytes.Length);
-				}
-
-				// Store the project
-				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZip", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
-				{
-					_comManager.InvokeGuiThread(() =>
-					{
-						saveEx = Current.ProjectService.SaveProject(stream);
-					}
-					);
-				}
-
-				_isDocumentDirty = false;
-
-				if (null != saveEx)
-					throw saveEx;
-			}
-			catch (Exception ex)
-			{
-#if COMLOGGING
-				Debug.ReportError("{0}.IPersistStorage:Save threw an exception: {1}", this.GetType().Name, ex);
-#endif
-			}
-			finally
-			{
-				Marshal.ReleaseComObject(pStgSave);
-			}
-		}
-
-		public void SaveCompleted(IStorage pStgNew)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.SaveCompleted", this.GetType().Name);
-#endif
-
-			SendAdvise(AdviseKind.Saved);
-		}
-
-		public int HandsOffStorage()
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.HandsOffStorage", this.GetType().Name);
-#endif
-			return ComReturnValue.S_OK;
-		}
-
-		#endregion IPersistStorage mebers
 	}
 }

@@ -331,86 +331,101 @@ namespace Altaxo.Com
 
 		private void Register(RegistryKey root)
 		{
-			RegistryKey key = null;
+			RegistryKey key1 = null;
 			RegistryKey key2 = null;
 			RegistryKey key3 = null;
 			RegistryKey key4 = null;
 
 			try
 			{
-				key = root.CreateSubKey(".axoprj");
-				key.SetValue(null, "Altaxo.Project");
+				{
+					// Register the project file extension
+					key1 = root.CreateSubKey(".axoprj");
+					key1.SetValue(null, "Altaxo.Project");
+				}
 
-				key = root.CreateSubKey("Altaxo.Project"); // set ProgID
-				key2 = key.CreateSubKey("NotInsertable");
-				key2 = key.CreateSubKey("CLSID");
-				var fileComObject_IID = Marshal.GenerateGuidForType(typeof(ProjectFileComObject)).ToString("B").ToUpperInvariant();
-				key2.SetValue(null, fileComObject_IID);
+				{
+					// Register the project file Com object
+					key1 = root.CreateSubKey("Altaxo.Project"); // set ProgID
+					key2 = key1.CreateSubKey("NotInsertable");
+					key2 = key1.CreateSubKey("CLSID");
+					var fileComObject_IID = typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant();
+					key2.SetValue(null, fileComObject_IID);
+				}
 
-				key = root.CreateSubKey("CLSID\\" + fileComObject_IID); // associate CLSID of FileComObject with Application
-				key.SetValue(null, "Altaxo project");
-				key2 = key.CreateSubKey("LocalServer32");
-				key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location);
+				{
+					// publish CLSID of file Com object and associate it with the application
+					key1 = root.CreateSubKey("CLSID\\" + typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant());
+					key1.SetValue(null, "Altaxo project");
+					key2 = key1.CreateSubKey("LocalServer32");
+					key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location);
+				}
 
-				key = root.CreateSubKey("Altaxo.Graph.0");
-				key.SetValue(null, "Altaxo Graph-Document");
-				key2 = key.CreateSubKey("CLSID");
-				key2.SetValue(null, Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant());
-				key2 = key.CreateSubKey("Insertable");
+				{
+					// register the Graph document embedded object (note that this is an Altaxo mini project)
+					key1 = root.CreateSubKey(GraphDocumentEmbeddedComObject.USER_TYPE);
+					key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
+					key2 = key1.CreateSubKey("CLSID");
+					key2.SetValue(null, typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant());
+					key2 = key1.CreateSubKey("Insertable");
+				}
 
-				key = root.CreateSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant());
-				key.SetValue(null, "Altaxo Graph-Document");
+				{
+					// publish CLSID of file GraphDocumentEmbeddedObject and associate it with the application
+					key1 = root.CreateSubKey("CLSID\\" + typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant());
+					key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
 
-				key2 = key.CreateSubKey("LocalServer32");
-				key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location);
+					key2 = key1.CreateSubKey("LocalServer32");
+					key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location);
 
-				key2 = key.CreateSubKey("InprocHandler32");
-				key2.SetValue(null, "OLE32.DLL"); // The entry InprocHandler32 is neccessary! Without this entry Word does not start the server. (Brockschmidt Inside Ole 2nd ed. says that it isn't neccessary).
+					key2 = key1.CreateSubKey("InprocHandler32");
+					key2.SetValue(null, "OLE32.DLL"); // The entry InprocHandler32 is neccessary! Without this entry Word does not start the server. (Brockschmidt Inside Ole 2nd ed. says that it isn't neccessary).
 
-				key2 = key.CreateSubKey("ProgID");
-				key2.SetValue(null, "Altaxo.Graph.0");
+					key2 = key1.CreateSubKey("ProgID");
+					key2.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE);
 
-				key2 = key.CreateSubKey("VersionIndependentProgID");
-				key2.SetValue(null, "Altaxo.Graph");
+					key2 = key1.CreateSubKey("VersionIndependentProgID");
+					key2.SetValue(null, "Altaxo.Graph");
 
-				key2 = key.CreateSubKey("Insertable");
+					key2 = key1.CreateSubKey("Insertable");
 
-				key2 = key.CreateSubKey("DataFormats");
-				key3 = key2.CreateSubKey("GetSet");
-				key4 = key3.CreateSubKey("0");
-				key4.SetValue(null, "3,9,32,1"); // Metafile on MFPICT in get-direction
+					key2 = key1.CreateSubKey("DataFormats");
+					key3 = key2.CreateSubKey("GetSet");
+					key4 = key3.CreateSubKey("0");
+					key4.SetValue(null, "3,9,32,1"); // Metafile on MFPICT in get-direction
 
-				key4 = key3.CreateSubKey("1");
-				key4.SetValue(null, "2,9,1,1"); // Bitmap on HGlobal in get-direction
+					key4 = key3.CreateSubKey("1");
+					key4.SetValue(null, "2,9,1,1"); // Bitmap on HGlobal in get-direction
 
-				key2 = key.CreateSubKey("DefaultIcon");
-				key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location + ",0");
+					key2 = key1.CreateSubKey("DefaultIcon");
+					key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location + ",0");
 
-				key2 = key.CreateSubKey("verb");
-				key3 = key2.CreateSubKey("0");
-				key3.SetValue(null, "&Edit,0,2");
+					key2 = key1.CreateSubKey("verb");
+					key3 = key2.CreateSubKey("0");
+					key3.SetValue(null, "&Edit,0,2");
 
-				key3 = key2.CreateSubKey("-1");
-				key3.SetValue(null, "Show,0,0");
+					key3 = key2.CreateSubKey("-1");
+					key3.SetValue(null, "Show,0,0");
 
-				key3 = key2.CreateSubKey("-2");
-				key3.SetValue(null, "Open,0,0");
+					key3 = key2.CreateSubKey("-2");
+					key3.SetValue(null, "Open,0,0");
 
-				key3 = key2.CreateSubKey("-3");
-				key3.SetValue(null, "Hide,0,1");
+					key3 = key2.CreateSubKey("-3");
+					key3.SetValue(null, "Hide,0,1");
 
-				key2 = key.CreateSubKey("AuxUserType");
-				key3 = key2.CreateSubKey("2");
-				key3.SetValue(null, "Altaxo");
+					key2 = key1.CreateSubKey("AuxUserType");
+					key3 = key2.CreateSubKey("2");
+					key3.SetValue(null, "Altaxo");
 
-				key3 = key2.CreateSubKey("3");
-				key3.SetValue(null, "Altaxo Graph Document");
+					key3 = key2.CreateSubKey("3");
+					key3.SetValue(null, "Altaxo Graph Document");
 
-				key2 = key.CreateSubKey("MiscStatus"); // see Brockschmidt, Inside Ole 2nd ed. page 832
-				key2.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE)).ToString(System.Globalization.CultureInfo.InvariantCulture)); // DEFAULT: OLEMISC_CANTLINKINSIDE
+					key2 = key1.CreateSubKey("MiscStatus"); // see Brockschmidt, Inside Ole 2nd ed. page 832
+					key2.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE)).ToString(System.Globalization.CultureInfo.InvariantCulture)); // DEFAULT: OLEMISC_CANTLINKINSIDE
 
-				key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture)); // For DVASPECT_CONTENT
-				key3.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
+					key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture)); // For DVASPECT_CONTENT
+					key3.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
+				}
 			}
 			catch (Exception ex)
 			{
@@ -425,8 +440,8 @@ namespace Altaxo.Com
 					key3.Close();
 				if (key2 != null)
 					key2.Close();
-				if (key != null)
-					key.Close();
+				if (key1 != null)
+					key1.Close();
 			}
 		}
 

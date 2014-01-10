@@ -15,7 +15,7 @@ namespace Altaxo.Com
 	{
 		private ManagedDataAdviseHolder _dataAdviseHolder;
 		private AltaxoDocument _altaxoMiniProject;
-		private string _altaxoGraphDocumentName;
+		private string _graphDocumentName;
 		private Altaxo.Graph.PointD2D _graphDocumentSize;
 		private System.Drawing.Image _graphDocumentClipboardImage;
 
@@ -30,7 +30,7 @@ namespace Altaxo.Com
 #endif
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 
-			_altaxoGraphDocumentName = graphDocument.Name;
+			_graphDocumentName = graphDocument.Name;
 			_graphDocumentSize = graphDocument.Size;
 			_graphDocumentClipboardImage = Altaxo.Graph.Gdi.GraphDocumentClipboardActions.GetImageForClipbard(graphDocument);
 			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
@@ -73,7 +73,7 @@ namespace Altaxo.Com
 				var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
 				// we don't save the document directly, since this would mean to save the whole (and probably huge) project
 				// instead we first make a mini project with the neccessary data only and then save this instead
-				InternalSaveMiniProject(stg, _altaxoMiniProject, _altaxoGraphDocumentName);
+				InternalSaveMiniProject(stg, _altaxoMiniProject, _graphDocumentName);
 				return true;
 			}
 
@@ -196,7 +196,7 @@ namespace Altaxo.Com
 			// Fill in the basic information.
 			OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
 			// According to the documentation this is used just to find an icon.
-			od.clsid = typeof(GraphDocumentEmbeddedComObject).GUID;
+			od.clsid = typeof(GraphDocumentLinkedComObject).GUID;
 			od.dwDrawAspect = DVASPECT.DVASPECT_CONTENT;
 			od.sizelcx = 0; // zero in imitation of Word/Excel, but could be box.Extent.cx;
 			od.sizelcy = 0; // zero in imitation of Word/Excel, but could be box.Extent.cy;
@@ -246,7 +246,7 @@ namespace Altaxo.Com
 			if (null != fileMoniker)
 			{
 				IMoniker itemMoniker;
-				Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_altaxoGraphDocumentName), out itemMoniker);
+				Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_graphDocumentName), out itemMoniker);
 				if (null != itemMoniker)
 				{
 					fileMoniker.ComposeWith(itemMoniker, false, out documentMoniker);
