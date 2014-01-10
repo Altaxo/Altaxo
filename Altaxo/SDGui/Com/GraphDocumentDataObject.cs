@@ -8,8 +8,8 @@ using System.Text;
 
 namespace Altaxo.Com
 {
-	using UnmanagedApi.Ole32;
 	using UnmanagedApi.Kernel32;
+	using UnmanagedApi.Ole32;
 
 	public class GraphDocumentDataObject : DataObjectBase, System.Runtime.InteropServices.ComTypes.IDataObject
 	{
@@ -19,7 +19,7 @@ namespace Altaxo.Com
 		private Altaxo.Graph.PointD2D _graphDocumentSize;
 		private System.Drawing.Image _graphDocumentClipboardImage;
 
-		ComManager _comManager;
+		private ComManager _comManager;
 
 		public GraphDocumentDataObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 		{
@@ -30,8 +30,6 @@ namespace Altaxo.Com
 #endif
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 
-
-
 			_altaxoGraphDocumentName = graphDocument.Name;
 			_graphDocumentSize = graphDocument.Size;
 			_graphDocumentClipboardImage = Altaxo.Graph.Gdi.GraphDocumentClipboardActions.GetImageForClipbard(graphDocument);
@@ -39,7 +37,7 @@ namespace Altaxo.Com
 			_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument);
 		}
 
-		#region Renderings
+		#region Base class overrides
 
 		protected override IList<Rendering> Renderings
 		{
@@ -61,12 +59,54 @@ namespace Altaxo.Com
 			}
 		}
 
+		protected override ManagedDataAdviseHolder DataAdviseHolder
+		{
+			get { return _dataAdviseHolder; }
+		}
+
+		protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		{
+			if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
+			{
+				medium.tymed = TYMED.TYMED_ISTORAGE;
+				medium.pUnkForRelease = null;
+				var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
+				// we don't save the document directly, since this would mean to save the whole (and probably huge) project
+				// instead we first make a mini project with the neccessary data only and then save this instead
+				InternalSaveMiniProject(stg, _altaxoMiniProject, _altaxoGraphDocumentName);
+				return true;
+			}
+
+			if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
+			{
+				// we should make sure that ComManager is already started, so that the moniker can be used by the program
+				if (!_comManager.IsActive)
+					_comManager.StartLocalServer();
+
+				IMoniker documentMoniker = CreateNewDocumentMoniker();
+
+				if (null != documentMoniker)
+				{
+					medium.tymed = TYMED.TYMED_ISTREAM;
+					medium.pUnkForRelease = null;
+					IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
+					DataObjectHelper.SaveMonikerToStream(documentMoniker, strm);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		#endregion Base class overrides
+
+		#region Renderings
+
 		private IntPtr RenderEnhMetaFile(TYMED tymed)
 		{
 #if COMLOGGING
 			Debug.ReportInfo("GraphDocumentDataObject.RenderEnhMetafile");
 #endif
-
 
 			if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
 				return ((System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage).GetHenhmetafile();
@@ -82,9 +122,20 @@ namespace Altaxo.Com
 		private IntPtr RenderMoniker(TYMED tymed)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject.RenderMoniker");
+			Debug.ReportInfo("{0}.RenderMoniker", this.GetType().Name);
 #endif
 			return DataObjectHelper.RenderMonikerToNewStream(tymed, CreateNewDocumentMoniker());
+		}
+
+		public static int MiscStatus(int aspect)
+		{
+			int misc = (int)OLEMISC.OLEMISC_CANTLINKINSIDE;
+			if (aspect == (int)DVASPECT.DVASPECT_CONTENT)
+			{
+				// misc |= (int)OLEMISC.OLEMISC_RECOMPOSEONRESIZE;
+				misc |= (int)OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT;
+			}
+			return misc;
 		}
 
 		public static IntPtr RenderObjectDescriptor(TYMED tymed)
@@ -104,7 +155,7 @@ namespace Altaxo.Com
 			od.sizelcy = 0; // zero in imitation of Word/Excel, but could be box.Extent.cy;
 			od.pointlx = 0;
 			od.pointly = 0;
-			od.dwStatus = GraphDocumentComObject.MiscStatus((int)od.dwDrawAspect);
+			od.dwStatus = MiscStatus((int)od.dwDrawAspect);
 
 			// Descriptive strings to tack on after the struct.
 			string name = GraphDocumentComObject.USER_TYPE;
@@ -134,7 +185,7 @@ namespace Altaxo.Com
 			return hod;
 		}
 
-		#endregion
+		#endregion Renderings
 
 		#region Helper Functions
 
@@ -206,46 +257,6 @@ namespace Altaxo.Com
 #endif
 		}
 
-		#endregion
-
-		protected override ManagedDataAdviseHolder DataAdviseHolder
-		{
-			get { return _dataAdviseHolder; }
-		}
-
-		protected override bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
-		{
-
-			if (format.cfFormat == DataObjectHelper.CF_EMBEDSOURCE && (format.tymed & TYMED.TYMED_ISTORAGE) != 0)
-			{
-				medium.tymed = TYMED.TYMED_ISTORAGE;
-				medium.pUnkForRelease = null;
-				var stg = (IStorage)Marshal.GetObjectForIUnknown(medium.unionmember);
-				// we don't save the document directly, since this would mean to save the whole (and probably huge) project
-				// instead we first make a mini project with the neccessary data only and then save this instead
-				InternalSaveMiniProject(stg, _altaxoMiniProject, _altaxoGraphDocumentName);
-				return true;
-			}
-
-			if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
-			{
-				// we should make sure that ComManager is already started, so that the moniker can be used by the program
-				if (!_comManager.IsActive)
-					_comManager.StartLocalServer();
-
-				IMoniker documentMoniker = CreateNewDocumentMoniker();
-
-				if (null != documentMoniker)
-				{
-					medium.tymed = TYMED.TYMED_ISTREAM;
-					medium.pUnkForRelease = null;
-					IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
-					DataObjectHelper.SaveMonikerToStream(documentMoniker, strm);
-					return true;
-				}
-			}
-
-			return false;
-		}
+		#endregion Helper Functions
 	}
 }

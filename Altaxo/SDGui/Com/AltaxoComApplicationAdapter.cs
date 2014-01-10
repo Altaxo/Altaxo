@@ -20,6 +20,11 @@ namespace Altaxo.Com
 			Current.Gui.Execute(action);
 		}
 
+		public void BeginInvokeGuiThread(Action action)
+		{
+			Current.Gui.BeginExecute(action);
+		}
+
 		/// <summary>
 		/// Sets the host names. The application should show the containerApplicationName and containerFileName in the title bar. Additionally, if <paramref name="isInEmbeddedMode"/> is <c>true</c>,
 		/// the application should switch the user interface.
@@ -38,7 +43,7 @@ namespace Altaxo.Com
 #endif
 
 			string title = string.Format("{0} - {1}", containerApplicationName, containerFileName);
-			Current.Gui.BeginExecute(new Action(
+			BeginInvokeGuiThread(new Action(
 				() =>
 				{
 					((System.Windows.Window)Current.Workbench.ViewObject).Title = title;
@@ -51,7 +56,7 @@ namespace Altaxo.Com
 		/// </summary>
 		public void BeginClosingApplication()
 		{
-			Current.Gui.BeginExecute(new Action(() => ((System.Windows.Window)Current.Workbench.ViewObject).Close())); // Begin Closing the main window
+			BeginInvokeGuiThread(new Action(() => ((System.Windows.Window)Current.Workbench.ViewObject).Close())); // Begin Closing the main window
 		}
 
 		/// <summary>
@@ -67,7 +72,7 @@ namespace Altaxo.Com
 				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = false;
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Hidden;
 			};
-			Current.Gui.Execute(hiding);
+			InvokeGuiThread(hiding);
 		}
 
 		/// <summary>
@@ -75,7 +80,7 @@ namespace Altaxo.Com
 		/// </summary>
 		public void ShowMainWindow()
 		{
-			Current.Gui.Execute(() =>
+			InvokeGuiThread(() =>
 			{
 #if COMLOGGING
 				Debug.ReportInfo("Make main window visible");

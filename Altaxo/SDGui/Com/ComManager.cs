@@ -60,7 +60,7 @@ namespace Altaxo.Com
 
 		public GraphDocumentComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
 		{
-			if (null!=doc && _documentsComObject.ContainsKey(doc))
+			if (null != doc && _documentsComObject.ContainsKey(doc))
 				return _documentsComObject[doc];
 
 			// else we must create a new DocumentComObject
@@ -161,9 +161,6 @@ namespace Altaxo.Com
 		{
 			get
 			{
-				if (null == _fileComObject)
-					_fileComObject = new ProjectFileComObject(this);
-
 				return _fileComObject;
 			}
 		}
@@ -405,7 +402,7 @@ namespace Altaxo.Com
 				key2.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE)).ToString(System.Globalization.CultureInfo.InvariantCulture)); // DEFAULT: OLEMISC_CANTLINKINSIDE
 
 				key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture)); // For DVASPECT_CONTENT
-				key3.SetValue(null, ((int)(OLEMISC.OLEMISC_RECOMPOSEONRESIZE | OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
+				key3.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
 			}
 			catch (Exception ex)
 			{
@@ -476,19 +473,31 @@ namespace Altaxo.Com
 			_numberOfObjectsInUse = 0;
 			_numberOfServerLocks = 0;
 
-			// Register the FileComObject
-			_classFactoryOfFileComObject = new ClassFactory_ProjectFileComObject(this);
-			_classFactoryOfFileComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
-			_classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(ProjectFileComObject));
-			_classFactoryOfFileComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
-			_classFactoryOfFileComObject.RegisterClassObject();
+			{
+				// Register the FileComObject
+				_classFactoryOfFileComObject = new ClassFactory_ProjectFileComObject(this);
+				_classFactoryOfFileComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
+				_classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(ProjectFileComObject));
+				_classFactoryOfFileComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
+				_classFactoryOfFileComObject.RegisterClassObject();
+#if COMLOGGING
+				Debug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
+#endif
+			}
 
-			// Register the SimpleCOMObjectClassFactory.
-			_classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentComObject(this);
-			_classFactoryOfDocumentComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
-			_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentComObject));
-			_classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
-			_classFactoryOfDocumentComObject.RegisterClassObject();
+			if (ApplicationWasStartedWithEmbeddingArg)
+			{
+				// Register the SimpleCOMObjectClassFactory.
+				_classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentComObject(this);
+				_classFactoryOfDocumentComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
+				_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentComObject));
+				_classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
+				_classFactoryOfDocumentComObject.RegisterClassObject();
+#if COMLOGGING
+				Debug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
+#endif
+			}
+
 			ClassFactoryBase.ResumeClassObjects();
 
 			// Start up the garbage collection thread.
@@ -511,6 +520,29 @@ namespace Altaxo.Com
 				FromGuiThreadExecute(InternalStopLocalServer);
 		}
 
+		/// <summary>
+		/// Notifies the ComManager that we are about to enter linked object mode.
+		/// </summary>
+		/// <remarks>
+		/// We do the following here:
+		/// <para>
+		/// We revoke the class factory of the GraphDocumentComObject. If this is not done and a user copies an embedded graph object, the container application would try
+		/// to open the graph mini project just here in this application instance, because the class factory of the GraphDocumentComObject is still active. In order to avoid this,
+		/// the class factory of the GraphDocumentComObject is revoked here (if it is active).
+		/// </para>
+		/// </remarks>
+		public void EnterLinkedObjectMode()
+		{
+			if (null != _classFactoryOfDocumentComObject)
+			{
+				_classFactoryOfDocumentComObject.RevokeClassObject();
+#if COMLOGGING
+				Debug.ReportInfo("{0}.StopClassFactoryOfDocumentComObject Revoked: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
+#endif
+				_classFactoryOfDocumentComObject = null;
+			}
+		}
+
 		private void InternalStopLocalServer()
 		{
 #if COMLOGGING
@@ -530,14 +562,20 @@ namespace Altaxo.Com
 
 			if (null != _classFactoryOfDocumentComObject)
 			{
-				// Revoke the class factory immediately.
-				// Don't wait until the thread has stopped before
-				// we perform revokation.
 				_classFactoryOfDocumentComObject.RevokeClassObject();
-				_classFactoryOfDocumentComObject = null;
 #if COMLOGGING
-				Debug.ReportInfo("StopLocalServer: SimpleCOMObjectClassFactory Revoked.");
+				Debug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
 #endif
+				_classFactoryOfDocumentComObject = null;
+			}
+
+			if (null != _classFactoryOfFileComObject)
+			{
+				_classFactoryOfFileComObject.RevokeClassObject();
+#if COMLOGGING
+				Debug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
+#endif
+				_classFactoryOfFileComObject = null;
 			}
 
 			if (null != _garbageCollector)
@@ -552,7 +590,5 @@ namespace Altaxo.Com
 			}
 			IsActive = false;
 		}
-
-	
 	}
 }

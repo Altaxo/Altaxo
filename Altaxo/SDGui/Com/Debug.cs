@@ -193,7 +193,7 @@ namespace Altaxo.Com
 			stb.Append('\t');
 			stb.Append(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 			stb.Append('\t');
-			stb.Append(System.Threading.Thread.CurrentThread.Name ?? System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
+			stb.AppendFormat("{0,15}",System.Threading.Thread.CurrentThread.Name ?? System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
 			stb.Append('\t');
 			stb.AppendFormat(format, args);
 

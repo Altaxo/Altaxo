@@ -1,11 +1,7 @@
-﻿using Altaxo.Graph.Gdi;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;  // For use of the GuidAttribute, ProgIdAttribute and ClassInterfaceAttribute.
 using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-
 
 namespace Altaxo.Com
 {
@@ -29,19 +25,17 @@ namespace Altaxo.Com
 
 		public Rendering(short format, TYMED tymed, RenderDataProcedure renderer)
 		{
-			
 			this.format = new FORMATETC()
 			{
-			cfFormat = format,
-			ptd = IntPtr.Zero,
-			dwAspect = DVASPECT.DVASPECT_CONTENT,
-			lindex = -1, // all
-			tymed = tymed
+				cfFormat = format,
+				ptd = IntPtr.Zero,
+				dwAspect = DVASPECT.DVASPECT_CONTENT,
+				lindex = -1, // all
+				tymed = tymed
 			};
 			this.renderer = renderer;
 		}
 	}
-
 
 	/// <summary>
 	/// Helps enumerate the formats available in our DataObject class.
@@ -49,7 +43,7 @@ namespace Altaxo.Com
 	[ComVisible(true)]
 	public class EnumFormatEtc : ManagedEnumBase<FORMATETC>, IEnumFORMATETC
 	{
-		public  EnumFormatEtc(IEnumerable<FORMATETC> formats)
+		public EnumFormatEtc(IEnumerable<FORMATETC> formats)
 			: base(formats)
 		{
 		}

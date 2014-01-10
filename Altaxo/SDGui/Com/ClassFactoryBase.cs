@@ -7,16 +7,17 @@ namespace Altaxo.Com
 	{
 		protected ComManager _comManager;
 
-		public ClassFactoryBase(ComManager comManager)
-		{
-			_comManager = comManager;
-		}
-
 		protected UInt32 m_locked = 0;
 		protected uint m_ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
 		protected Guid m_ClassId;
 		protected uint m_Flags;
 		protected uint m_Cookie;
+
+
+		public ClassFactoryBase(ComManager comManager)
+		{
+			_comManager = comManager;
+		}
 
 		public virtual void virtual_CreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
 		{

@@ -98,37 +98,42 @@ namespace Altaxo.Com
 			{
 				int idx = rawString.IndexOf('%', startIndex);
 
-				if (idx < 0)
+				if (idx < 0) // no Escape char found -> we append the rest of the string
+				{
 					stb.Append(rawString.Substring(startIndex, rawString.Length - startIndex)); // no Escape sequence found -> we append the rest of the string
-				else if ((idx - 1) > startIndex)
-					stb.Append(rawString.Substring(startIndex, idx - 1 - startIndex)); // possible escape sequence found, -> we append until (but not including) the escape char
+					break;
+				}
+				else
+				{
+					stb.Append(rawString.Substring(startIndex, idx - startIndex)); // possible escape sequence found, -> we append until (but not including) the escape char
+					startIndex = idx;
+				}
 
 				int remainingChars = rawString.Length - idx;
-				if (remainingChars >= 3)
+
+				if (remainingChars < 3) // too few remaining chars
 				{
-					string subString = rawString.Substring(idx, 3);
-					switch (subString)
-					{
-						case "%21":
-							stb.Append('!');
-							startIndex += 3;
-							break;
-
-						case "%25":
-							stb.Append('%');
-							startIndex += 3;
-							break;
-
-						default:
-							stb.Append(rawString[idx]);
-							startIndex += 1;
-							break;
-					}
+					stb.Append(rawString.Substring(startIndex, remainingChars)); // append the rest of the string
+					break;
 				}
-				else // to less remaining chars
+
+				string subString = rawString.Substring(idx, 3);
+				switch (subString)
 				{
-					stb.Append(rawString[idx]);
-					startIndex += 1;
+					case "%21":
+						stb.Append('!');
+						startIndex += 3;
+						break;
+
+					case "%25":
+						stb.Append('%');
+						startIndex += 3;
+						break;
+
+					default:
+						stb.Append(rawString[idx]);
+						startIndex += 1;
+						break;
 				}
 			}
 			return stb.ToString();

@@ -49,7 +49,7 @@ namespace Altaxo.Com
 			: base(comManager)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject constructor.");
+			Debug.ReportInfo("{0} constructor.", this.GetType().Name);
 #endif
 
 			Init(graphDocument, true, null);
@@ -75,7 +75,7 @@ namespace Altaxo.Com
 			// instead, we let the FileComObject watch if documents are renamed and then let it call the function EhDocumentRenamed here in this instance
 
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject init.");
+			Debug.ReportInfo("{0} init.", this.GetType().Name);
 #endif
 
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
@@ -89,38 +89,46 @@ namespace Altaxo.Com
 		{
 			// ReferenceCountedObjectBase destructor will be invoked.
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject destructor.");
+			Debug.ReportInfo("{0} destructor.", this.GetType().Name);
 #endif
 		}
 
 		public void Dispose()
 		{
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject.Dispose Step 1 : SaveObject");
+			Debug.ReportInfo("{0}.Dispose Step 1 : SaveObject", this.GetType().Name);
 #endif
-			SendAdvise(GraphDocumentComObject.AdviseKind.SaveObject);
+
+			SendAdvise(AdviseKind.SaveObject);
+
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject.Dispose Step 2 : Calling SendAdvise.HideWindow");
+			Debug.ReportInfo("{0}.Dispose Step 2 : Calling SendAdvise.HideWindow", this.GetType().Name);
 #endif
-			SendAdvise(GraphDocumentComObject.AdviseKind.HideWindow);
+
+			SendAdvise(AdviseKind.HideWindow);
+
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject.Dispose Step 3 : Calling SendAdvise.Closed");
+			Debug.ReportInfo("{0}.Dispose Step 3 : Calling SendAdvise.Closed", this.GetType().Name);
 #endif
-			SendAdvise(GraphDocumentComObject.AdviseKind.Closed);
+
+			SendAdvise(AdviseKind.Closed);
+
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject.Dispose Step 4 : ROTUnregister(ref _documentMonikerRotCookie)");
+			Debug.ReportInfo("{0}.Dispose Step 4 : ROTUnregister(ref _documentMonikerRotCookie)", this.GetType().Name);
 #endif
+
 			ROTUnregister(ref _documentMonikerRotCookie);
 			_documentMoniker = null;
 
 			// Disconnect the container.
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject.Dispose Step 5 : Disconnecting this object");
+			Debug.ReportInfo("{0}.Dispose Step 5 : Disconnecting this object", this.GetType().Name);
 #endif
+
 			Ole32Func.CoDisconnectObject(this, 0);
 
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject.Dispose completed.");
+			Debug.ReportInfo("{0}.Dispose completed.", this.GetType().Name);
 #endif
 		}
 
@@ -195,7 +203,7 @@ namespace Altaxo.Com
 		private void EhDocumentChanged(object sender, EventArgs e)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("DocumentComObject.EhDocumentChanged");
+			Debug.ReportInfo("{0}.EhDocumentChanged", this.GetType().Name);
 #endif
 			_isDocumentDirty = true;
 
@@ -251,7 +259,7 @@ namespace Altaxo.Com
 		private void SaveMonikerToStream(IMoniker moniker, IStream strm)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("SaveMonikerToStream:{0}", DataObjectHelper.GetDisplayName(moniker));
+			Debug.ReportInfo("{0}.SaveMonikerToStream:{1}", this.GetType().Name, DataObjectHelper.GetDisplayName(moniker));
 #endif
 			int hr = Ole32Func.OleSaveToStream((IPersistStream)moniker, strm);
 			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
@@ -287,29 +295,6 @@ namespace Altaxo.Com
 
 		#region Functions
 
-		public static int MiscStatus(int aspect)
-		{
-			int misc = (int)OLEMISC.OLEMISC_CANTLINKINSIDE;
-			if (aspect == (int)DVASPECT.DVASPECT_CONTENT)
-			{
-				misc |= (int)OLEMISC.OLEMISC_RECOMPOSEONRESIZE;
-				misc |= (int)OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT;
-			}
-			return misc;
-		}
-
-		public enum AdviseKind
-		{
-			Saved,
-			Closed,
-			Renamed,
-			SaveObject,
-			DataChanged,
-			ShowWindow,
-			HideWindow,
-			ShowObject
-		}
-
 		public void SendAdvise(AdviseKind kind)
 		{
 			switch (kind)
@@ -329,19 +314,28 @@ namespace Altaxo.Com
 					break;
 
 				case AdviseKind.SaveObject:
-#if COMLOGGING
-					Debug.ReportInfo("Calling IOleClientSite.SaveObject()");
-#endif
 					if (_isDocumentDirty && null != _clientSite)
+					{
+#if COMLOGGING
+						Debug.ReportInfo("{0}.SendAdvise.SaveObject -> calling IOleClientSite.SaveObject()", this.GetType().Name);
+#endif
 						_clientSite.SaveObject();
+					}
+					else
+					{
+#if COMLOGGING
+						Debug.ReportInfo("{0}.SendAdvise.SaveObject -> NOT DONE! isDirty={1}, isClientSiteNull={2} )", this.GetType().Name, _isDocumentDirty, null == _clientSite);
+#endif
+					}
 					break;
 
 				case AdviseKind.DataChanged:
-#if COMLOGGING
-					Debug.ReportInfo("Calling dataAdviseHolders IAdviseHolder.SendOnDataChange()");
-#endif
+
 					if (null != _dataAdviseHolder)
 					{
+#if COMLOGGING
+						Debug.ReportInfo("{0}.SendAdvise.DataChanged -> Calling _dataAdviseHolder.SendOnDataChange()", this.GetType().Name);
+#endif
 						_dataAdviseHolder.SendOnDataChange((IDataObject)this, 0, 0);
 					}
 					// we must also note the change time to the running object table, see
@@ -356,7 +350,7 @@ namespace Altaxo.Com
 
 				case AdviseKind.ShowWindow:
 #if COMLOGGING
-					Debug.ReportInfo("Calling IOleClientSite.OnShowWindow(true)");
+					Debug.ReportInfo("{0}.SendAdvise.ShowWindow -> Calling IOleClientSite.OnShowWindow(true)", this.GetType().Name);
 #endif
 					if (null != _clientSite)
 						_clientSite.OnShowWindow(true);
@@ -364,7 +358,7 @@ namespace Altaxo.Com
 
 				case AdviseKind.HideWindow:
 #if COMLOGGING
-					Debug.ReportInfo("Calling IOleClientSite.OnShowWindow(false)");
+					Debug.ReportInfo("{0}.SendAdvise.HideWindow -> Calling IOleClientSite.OnShowWindow(false)", this.GetType().Name);
 #endif
 					try
 					{
@@ -374,14 +368,14 @@ namespace Altaxo.Com
 					catch (Exception ex)
 					{
 #if COMLOGGING
-						Debug.ReportError("Exception while calling _clientSite.OnShowWindow(false), Details: {0}", ex.Message);
+						Debug.ReportError("{0}.SendAdvise.HideWindow -> Exception while calling _clientSite.OnShowWindow(false), Details: {0}", this.GetType().Name, ex.Message);
 #endif
 					}
 					break;
 
 				case AdviseKind.ShowObject:
 #if COMLOGGING
-					Debug.ReportInfo("Calling IOleClientSite.ShowObject()");
+					Debug.ReportInfo("{0}.SendAdvise.ShowObject -> Calling IOleClientSite.ShowObject()", this.GetType().Name);
 #endif
 					if (null != _clientSite)
 						_clientSite.ShowObject();
@@ -484,7 +478,7 @@ namespace Altaxo.Com
 		public int SetClientSite(IOleClientSite pClientSite)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.SetClientSite");
+			Debug.ReportInfo("{0}.IOleObject.SetClientSite", this.GetType().Name);
 #endif
 			_clientSite = pClientSite;
 			return ComReturnValue.NOERROR;
@@ -493,7 +487,7 @@ namespace Altaxo.Com
 		public IOleClientSite GetClientSite()
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.GetClientSite");
+			Debug.ReportInfo("{0}.IOleObject.GetClientSite", this.GetType().Name);
 #endif
 
 			return _clientSite;
@@ -505,6 +499,10 @@ namespace Altaxo.Com
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
 			// this means that we have to switch the user interface from within this function
 
+#if COMLOGGING
+			Debug.ReportInfo("{0}.IOleObject.SetHostNames ContainerAppName={1}, ContainerDocName={2}", this.GetType().Name, containerApplicationName, containerDocumentName);
+#endif
+
 			_comManager.SetHostNames(containerApplicationName, containerDocumentName, _document);
 			return ComReturnValue.NOERROR;
 		}
@@ -512,7 +510,7 @@ namespace Altaxo.Com
 		public int Close(tagOLECLOSE dwSaveOption)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.Close {0}", dwSaveOption);
+			Debug.ReportInfo("{0}.IOleObject.Close {1}", this.GetType().Name, dwSaveOption);
 #endif
 			try
 			{
@@ -550,7 +548,7 @@ namespace Altaxo.Com
 
 					default:
 #if COMLOGGING
-						Debug.ReportError("IOleObject.Close called with unknown parameter: {0}", dwSaveOption);
+						Debug.ReportError("{0}.IOleObject.Close called with unknown parameter: {1}", this.GetType().Name, dwSaveOption);
 #endif
 						break;
 				}
@@ -558,7 +556,7 @@ namespace Altaxo.Com
 				if (cancelled)
 				{
 #if COMLOGGING
-					Debug.ReportInfo("-> OLE_E_PROMPTSAVECANCELLED");
+					Debug.ReportInfo("{0}.IOleObject.Close -> OLE_E_PROMPTSAVECANCELLED", this.GetType().Name);
 #endif
 					return ComReturnValue.OLE_E_PROMPTSAVECANCELLED;
 				}
@@ -572,7 +570,7 @@ namespace Altaxo.Com
 				// Regardless of whether the form has been shown we must
 				// do all the normal shutdown actions.  (e.g. WinWord 2007)
 #if COMLOGGING
-				Debug.ReportInfo("IOleObject.Close -> BeginInvoke MainWindow.Close");
+				Debug.ReportInfo("{0}.IOleObject.Close -> BeginInvoke MainWindow.Close", this.GetType().Name);
 #endif
 				_comManager.ApplicationAdapter.BeginClosingApplication();
 				return ComReturnValue.NOERROR;
@@ -580,7 +578,7 @@ namespace Altaxo.Com
 			catch (Exception e)
 			{
 #if COMLOGGING
-				Debug.ReportError("Close occured an exception.", e);
+				Debug.ReportError("{0}.IOleObject.Close threw an exception: {1}", this.GetType().Name, e);
 #endif
 				throw;
 			}
@@ -592,7 +590,7 @@ namespace Altaxo.Com
 			// Brockschmidt Inside Ole 2nd ed. page 993
 			// see there if you want to support linking to embedding
 #if COMLOGGING
-			Debug.ReportWarning("IOleObject.SetMoniker => not impl.");
+			Debug.ReportWarning("{0}.IOleObject.SetMoniker => not implemented!", this.GetType().Name);
 #endif
 			return ComReturnValue.E_NOTIMPL;
 		}
@@ -601,7 +599,7 @@ namespace Altaxo.Com
 		{
 			// Brockschmidt Inside Ole 2nd ed. page 994
 #if COMLOGGING
-			Debug.ReportWarning("IOleObject.GetMoniker");
+			Debug.ReportWarning("{0}.IOleObject.GetMoniker", this.GetType().Name);
 #endif
 			if (null != _documentMoniker)
 			{
@@ -616,7 +614,7 @@ namespace Altaxo.Com
 		public int InitFromData(System.Runtime.InteropServices.ComTypes.IDataObject pDataObject, int fCreation, int dwReserved)
 		{
 #if COMLOGGING
-			Debug.ReportWarning("IOleObject.InitFromData => not impl.");
+			Debug.ReportWarning("{0}.IOleObject.InitFromData => not implemented!", this.GetType().Name);
 #endif
 			return ComReturnValue.E_NOTIMPL;
 		}
@@ -624,7 +622,7 @@ namespace Altaxo.Com
 		public int GetClipboardData(int dwReserved, out System.Runtime.InteropServices.ComTypes.IDataObject data)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.GetClipboardData => not impl.");
+			Debug.ReportInfo("{0}.IOleObject.GetClipboardData => not implemented!", this.GetType().Name);
 #endif
 			data = null;
 			return ComReturnValue.E_NOTIMPL;
@@ -633,7 +631,7 @@ namespace Altaxo.Com
 		public int DoVerb(int iVerb, IntPtr lpmsg, IOleClientSite pActiveSite, int lindex, IntPtr hwndParent, COMRECT lprcPosRect)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.DoVerb {0}", iVerb);
+			Debug.ReportInfo("{0}.IOleObject.DoVerb {1}", this.GetType().Name, iVerb);
 #endif
 			try
 			{
@@ -643,7 +641,7 @@ namespace Altaxo.Com
 				{
 					int new_iverb = iVerb - 256;
 #if COMLOGGING
-					Debug.ReportWarning("Fixing iVerb: {0} -> {1}", iVerb, new_iverb);
+					Debug.ReportWarning("{0}.IOleObject.DoVerb -> Fixing iVerb: {1} -> {2}", this.GetType().Name, iVerb, new_iverb);
 #endif
 					iVerb = new_iverb;
 				}
@@ -654,7 +652,7 @@ namespace Altaxo.Com
 				{
 					case (int)OLEIVERB.OLEIVERB_HIDE:
 #if COMLOGGING
-						Debug.ReportInfo("OLEIVERB_HIDE");
+						Debug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_HIDE", this.GetType().Name);
 #endif
 						_comManager.ApplicationAdapter.HideMainWindow();
 						SendAdvise(AdviseKind.HideWindow);
@@ -665,15 +663,15 @@ namespace Altaxo.Com
 					case (int)OLEIVERB.OLEIVERB_OPEN:
 
 #if COMLOGGING
-						if ((int)OLEIVERB.OLEIVERB_PRIMARY == iVerb) Debug.ReportInfo("Do verb : OLEIVERB_PRIMARY");
-						if ((int)OLEIVERB.OLEIVERB_SHOW == iVerb) Debug.ReportInfo("Do verb : OLEIVERB_SHOW");
-						if ((int)OLEIVERB.OLEIVERB_OPEN == iVerb) Debug.ReportInfo("Do verb : OLEIVERB_OPEN");
+						if ((int)OLEIVERB.OLEIVERB_PRIMARY == iVerb) Debug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_PRIMARY", this.GetType().Name);
+						if ((int)OLEIVERB.OLEIVERB_SHOW == iVerb) Debug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_SHOW", this.GetType().Name);
+						if ((int)OLEIVERB.OLEIVERB_OPEN == iVerb) Debug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_OPEN", this.GetType().Name);
 #endif
 						_comManager.ApplicationAdapter.ShowMainWindow();
 						if (pActiveSite != null)
 						{
 #if COMLOGGING
-							Debug.ReportInfo("ClientSite.ShowObject()");
+							Debug.ReportInfo("{0}.IOleObject.DoVerb -> calling ClientSite.ShowObject()", this.GetType().Name);
 #endif
 							try
 							{
@@ -682,7 +680,7 @@ namespace Altaxo.Com
 							catch (Exception ex)
 							{
 #if COMLOGGING
-								Debug.ReportInfo("pActiveSite.ShowObject caused an exception: " + ex.ToString());
+								Debug.ReportInfo("{0}.IOleObject.DoVerb pActiveSite.ShowObject caused an exception: {1}", this.GetType().Name, ex);
 #endif
 							}
 
@@ -693,19 +691,19 @@ namespace Altaxo.Com
 
 					default:
 #if COMLOGGING
-						Debug.ReportError("Unexpected verb: " + iVerb.ToString());
+						Debug.ReportError("{0}.IOleObject.DoVerb Unexpected verb: {1}", this.GetType().Name, iVerb);
 #endif
 						return ComReturnValue.OLEOBJ_S_INVALIDVERB;
 				}
 #if COMLOGGING
-				Debug.ReportInfo("IOleObject.DoVerb -> returning NOERROR");
+				Debug.ReportInfo("{0}.IOleObject.DoVerb -> returning NOERROR", this.GetType().Name);
 #endif
 				return ComReturnValue.NOERROR;
 			}
 			catch (Exception e)
 			{
 #if COMLOGGING
-				Debug.ReportError("DoVerb caused an exception. Details: {0}", e);
+				Debug.ReportError("{0}.IOleObject.DoVerb throw an exception. Details: {1}", this.GetType().Name, e);
 #endif
 				throw;
 			}
@@ -714,7 +712,7 @@ namespace Altaxo.Com
 		public int EnumVerbs(out IEnumOLEVERB e)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.EnumVerbs");
+			Debug.ReportInfo("{0}.IOleObject.EnumVerbs -> use registry", this.GetType().Name);
 #endif
 			e = null;
 			return ComReturnValue.OLE_S_USEREG;
@@ -723,7 +721,7 @@ namespace Altaxo.Com
 		public int OleUpdate()
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.OleUpdate");
+			Debug.ReportInfo("{0}.IOleObject.OleUpdate", this.GetType().Name);
 #endif
 			return ComReturnValue.NOERROR;
 		}
@@ -731,7 +729,7 @@ namespace Altaxo.Com
 		public int IsUpToDate()
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.IsUpToDate");
+			Debug.ReportInfo("{0}.IOleObject.IsUpToDate", this.GetType().Name);
 #endif
 			return ComReturnValue.NOERROR;
 		}
@@ -739,7 +737,7 @@ namespace Altaxo.Com
 		public int GetUserClassID(ref Guid pClsid)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.GetUserClassID");
+			Debug.ReportInfo("{0}.IOleObject.GetUserClassID", this.GetType().Name);
 #endif
 			pClsid = this.GetType().GUID;
 			return ComReturnValue.NOERROR;
@@ -748,7 +746,7 @@ namespace Altaxo.Com
 		public int GetUserType(int dwFormOfType, out string userType)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.GetUserType");
+			Debug.ReportInfo("{0}.IOleObject.GetUserType -> use registry.", this.GetType().Name);
 #endif
 			userType = null;
 			return ComReturnValue.OLE_S_USEREG;
@@ -757,7 +755,7 @@ namespace Altaxo.Com
 		public int SetExtent(int dwDrawAspect, tagSIZEL pSizel)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.SetExtent({0}x{1}) -> not implemented.", pSizel.cx, pSizel.cy);
+			Debug.ReportInfo("{0}.IOleObject.SetExtent({1}x{2}) -> not supported.", this.GetType().Name, pSizel.cx, pSizel.cy);
 #endif
 
 			return ComReturnValue.E_FAIL;
@@ -788,7 +786,7 @@ namespace Altaxo.Com
 		public int GetExtent(int dwDrawAspect, tagSIZEL pSizel)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.GetExtent");
+			Debug.ReportInfo("{0}.IOleObject.GetExtent", this.GetType().Name);
 #endif
 			if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) == 0)
 				return ComReturnValue.E_FAIL;
@@ -803,7 +801,7 @@ namespace Altaxo.Com
 		public int Advise(System.Runtime.InteropServices.ComTypes.IAdviseSink pAdvSink, out int cookie)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.Advise");
+			Debug.ReportInfo("{0}.IOleObject.Advise", this.GetType().Name);
 #endif
 			try
 			{
@@ -813,7 +811,7 @@ namespace Altaxo.Com
 			catch (Exception e)
 			{
 #if COMLOGGING
-				Debug.ReportError("Advise caused an exception. Details: {0}", e);
+				Debug.ReportError("{0}.IOleObject.Advise caused an exception: {1}", this.GetType().Name, e);
 #endif
 				throw;
 			}
@@ -822,9 +820,8 @@ namespace Altaxo.Com
 		public int Unadvise(int dwConnection)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.Unadvise");
+			Debug.ReportInfo("{0}.IOleObject.Unadvise", this.GetType().Name);
 #endif
-			//using (new IndentLog("IOleObject.Unadvise")) {
 			try
 			{
 				_oleAdviseHolder.Unadvise(dwConnection);
@@ -833,7 +830,7 @@ namespace Altaxo.Com
 			catch (Exception e)
 			{
 #if COMLOGGING
-				Debug.ReportError("Unadvise caused an exception. Details: {0}", e);
+				Debug.ReportError("{0}.IOleObject.Unadvise threw an exception: {0}", this.GetType().Name, e);
 #endif
 				throw;
 			}
@@ -841,23 +838,29 @@ namespace Altaxo.Com
 
 		public int EnumAdvise(out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA e)
 		{
+#if COMLOGGING
+			Debug.ReportInfo("{0}.IOleObject.EnumAdvise", this.GetType().Name);
+#endif
+
 			e = _oleAdviseHolder.EnumAdvise();
 			return ComReturnValue.NOERROR;
 		}
 
 		public int GetMiscStatus(int dwAspect, out int misc)
 		{
+			misc = GraphDocumentDataObject.MiscStatus(dwAspect);
+
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.GetMiscStatus -> use the registry");
+			Debug.ReportInfo("{0}.IOleObject.GetMiscStatus -> returning 0x{1:X}", this.GetType().Name, misc);
 #endif
-			misc = 0;
-			return ComReturnValue.OLE_S_USEREG;
+
+			return ComReturnValue.S_OK;
 		}
 
 		public int SetColorScheme(tagLOGPALETTE pLogpal)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IOleObject.SetColorScheme (not implemented)");
+			Debug.ReportInfo("{0}.IOleObject.SetColorScheme (not implemented)", this.GetType().Name);
 #endif
 			return ComReturnValue.E_NOTIMPL;
 		}
@@ -869,7 +872,7 @@ namespace Altaxo.Com
 		public void GetClassID(out Guid pClassID)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IPersistStorage.GetClassID");
+			Debug.ReportInfo("{0}.IPersistStorage.GetClassID", this.GetType().Name);
 #endif
 			pClassID = this.GetType().GUID;
 		}
@@ -877,7 +880,7 @@ namespace Altaxo.Com
 		public int IsDirty()
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IPersistStorage.IsDirty returning {0}", _isDocumentDirty);
+			Debug.ReportInfo("{0}.IPersistStorage.IsDirty returning {1}", this.GetType().Name, _isDocumentDirty);
 #endif
 
 			if (_isDocumentDirty)
@@ -889,7 +892,7 @@ namespace Altaxo.Com
 		public void InitNew(IStorage pstg)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IPersistStorage.InitNew (not needed)");
+			Debug.ReportInfo("{0}.IPersistStorage.InitNew", this.GetType().Name);
 #endif
 
 			Document = Current.ProjectService.CreateNewGraph().Doc;
@@ -900,11 +903,11 @@ namespace Altaxo.Com
 
 		public int Load(IStorage pstg)
 		{
-			//System.Diagnostics.Debugger.Launch();
+			System.Diagnostics.Debug.Assert(null == _document);
 
-			string graphDocumentName = null;
+			string documentName = null;
 #if COMLOGGING
-			Debug.ReportInfo("IPersistStorage.Load");
+			Debug.ReportInfo("{0}.IPersistStorage.Load", this.GetType().Name);
 #endif
 
 			try
@@ -913,16 +916,16 @@ namespace Altaxo.Com
 				{
 					var bytes = new byte[stream.Length];
 					stream.Read(bytes, 0, bytes.Length);
-					graphDocumentName = System.Text.Encoding.UTF8.GetString(bytes);
+					documentName = System.Text.Encoding.UTF8.GetString(bytes);
 				}
 #if COMLOGGING
-				Debug.ReportInfo("Name of GraphDocument retrieved, Name: {0}", graphDocumentName);
+				Debug.ReportInfo("{0}.IPersistStorage.Load -> Name of GraphDocument: {1}", this.GetType().Name, documentName);
 #endif
 			}
 			catch (Exception ex)
 			{
 #if COMLOGGING
-				Debug.ReportInfo("IPersistStorage.Load, failed to load stream GraphName, exception: {0}", ex);
+				Debug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream GraphName, exception: {1}", this.GetType().Name, ex);
 #endif
 			}
 
@@ -937,13 +940,13 @@ namespace Altaxo.Com
 					});
 				}
 #if COMLOGGING
-				Debug.ReportInfo("Project loaded");
+				Debug.ReportInfo("{0}.IPersistStorage.Load Project loaded", this.GetType().Name);
 #endif
 			}
 			catch (Exception ex)
 			{
 #if COMLOGGING
-				Debug.ReportInfo("IPersistStorage.Load, failed to load stream AltaxoProjectZip, exception: {0}", ex);
+				Debug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoProjectZip, exception: {1}", this.GetType().Name, ex);
 #endif
 			}
 
@@ -951,8 +954,8 @@ namespace Altaxo.Com
 
 			Altaxo.Graph.Gdi.GraphDocument newDocument = null;
 
-			if (null != graphDocumentName && Current.Project.GraphDocumentCollection.Contains(graphDocumentName))
-				newDocument = Current.Project.GraphDocumentCollection[graphDocumentName];
+			if (null != documentName && Current.Project.GraphDocumentCollection.Contains(documentName))
+				newDocument = Current.Project.GraphDocumentCollection[documentName];
 			else if (null != Current.Project.GraphDocumentCollection.FirstOrDefault())
 				newDocument = Current.Project.GraphDocumentCollection.First();
 
@@ -965,18 +968,19 @@ namespace Altaxo.Com
 			if (null == Document)
 			{
 #if COMLOGGING
-				Debug.ReportError("IPersistStorage.Load, something goes wrong, must use emergency document to avoid NullPointerExceptions!");
+				Debug.ReportError("{0}.IPersistStorage.Load Document is null, have to throw an exception now!!", this.GetType().Name);
 #endif
-				Document = Current.ProjectService.CreateNewGraph().Doc;
+				throw new InvalidOperationException();
 			}
 
+			_isDocumentDirty = false;
 			return ComReturnValue.S_OK;
 		}
 
 		public void Save(IStorage pStgSave, bool fSameAsLoad)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IPersistStorage:Save");
+			Debug.ReportInfo("{0}.IPersistStorage.Save", this.GetType().Name);
 #endif
 
 			try
@@ -995,7 +999,11 @@ namespace Altaxo.Com
 				// Store the project
 				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZip", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
 				{
-					_comManager.InvokeGuiThread(() => saveEx = Current.ProjectService.SaveProject(stream));
+					_comManager.InvokeGuiThread(() =>
+					{
+						saveEx = Current.ProjectService.SaveProject(stream);
+					}
+					);
 				}
 
 				_isDocumentDirty = false;
@@ -1006,7 +1014,7 @@ namespace Altaxo.Com
 			catch (Exception ex)
 			{
 #if COMLOGGING
-				Debug.ReportError("IPersistStorage:Save, Exception: {0}", ex);
+				Debug.ReportError("{0}.IPersistStorage:Save threw an exception: {1}", this.GetType().Name, ex);
 #endif
 			}
 			finally
@@ -1018,7 +1026,7 @@ namespace Altaxo.Com
 		public void SaveCompleted(IStorage pStgNew)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IPersistStorage.SaveCompleted");
+			Debug.ReportInfo("{0}.IPersistStorage.SaveCompleted", this.GetType().Name);
 #endif
 
 			SendAdvise(AdviseKind.Saved);
@@ -1027,7 +1035,7 @@ namespace Altaxo.Com
 		public int HandsOffStorage()
 		{
 #if COMLOGGING
-			Debug.ReportInfo("IPersistStorage.HandsOffStorage");
+			Debug.ReportInfo("{0}.IPersistStorage.HandsOffStorage", this.GetType().Name);
 #endif
 			return ComReturnValue.S_OK;
 		}

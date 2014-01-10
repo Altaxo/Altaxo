@@ -24,7 +24,9 @@ namespace Altaxo.Com
 				riid == InterfaceGuid.IID_IDispatch ||
 				riid == InterfaceGuid.IID_IUnknown)
 			{
-				ppvObject = Marshal.GetComInterfaceForObject(_comManager.FileComObject, typeof(System.Runtime.InteropServices.ComTypes.IPersistFile)); ;
+				// notify the ComManager that we are about to enter linked object mode.
+				_comManager.EnterLinkedObjectMode();
+				ppvObject = Marshal.GetComInterfaceForObject(_comManager.FileComObject, typeof(System.Runtime.InteropServices.ComTypes.IPersistFile));
 			}
 			else
 			{
