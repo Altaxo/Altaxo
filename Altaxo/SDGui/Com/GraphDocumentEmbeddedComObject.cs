@@ -42,29 +42,12 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0} constructor.", this.GetType().Name);
 #endif
 
-			Init(true, null);
-		}
-
-		private void Init(bool hasForm, IMoniker moniker)
-		{
 			// Note: we do not create a event link to Document.DocumentRenamed here
 			// because this would keep the DocumentComObject alive as long as the document is alive
 			// instead, we let the FileComObject watch if documents are renamed and then let it call the function EhDocumentRenamed here in this instance
 
-#if COMLOGGING
-			Debug.ReportInfo("{0} init.", this.GetType().Name);
-#endif
-
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
-		}
-
-		~GraphDocumentEmbeddedComObject()
-		{
-			// ReferenceCountedObjectBase destructor will be invoked.
-#if COMLOGGING
-			Debug.ReportInfo("{0} destructor.", this.GetType().Name);
-#endif
 		}
 
 		public void Dispose()
@@ -73,19 +56,19 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0}.Dispose Step 1 : SaveObject", this.GetType().Name);
 #endif
 
-			SendAdvise(AdviseKind.SaveObject);
+			SendAdvise_SaveObject();
 
 #if COMLOGGING
 			Debug.ReportInfo("{0}.Dispose Step 2 : Calling SendAdvise.HideWindow", this.GetType().Name);
 #endif
 
-			SendAdvise(AdviseKind.HideWindow);
+			SendAdvise_HideWindow();
 
 #if COMLOGGING
 			Debug.ReportInfo("{0}.Dispose Step 3 : Calling SendAdvise.Closed", this.GetType().Name);
 #endif
 
-			SendAdvise(AdviseKind.Closed);
+			SendAdvise_Closed();
 
 			// if we had a document moniker, we should unregister it here
 			// but since this is an embedded object,we have no document moniker
@@ -141,7 +124,7 @@ namespace Altaxo.Com
 
 			// see Brockschmidt Inside Ole 2nd edition, page 909
 			// we must send IDataAdviseHolder:SendOnDataChange
-			SendAdvise(AdviseKind.DataChanged);
+			SendAdvise_DataChanged();
 		}
 
 		/// <summary>
@@ -154,87 +137,6 @@ namespace Altaxo.Com
 		}
 
 		#endregion Document management
-
-		#region Functions
-
-		public void SendAdvise(AdviseKind kind)
-		{
-			switch (kind)
-			{
-				case AdviseKind.Saved:
-					_oleAdviseHolder.SendOnSave();
-					break;
-
-				case AdviseKind.Closed:
-					_oleAdviseHolder.SendOnClose();
-					break;
-
-				case AdviseKind.SaveObject:
-					if (_isDocumentDirty && null != _clientSite)
-					{
-#if COMLOGGING
-						Debug.ReportInfo("{0}.SendAdvise.SaveObject -> calling IOleClientSite.SaveObject()", this.GetType().Name);
-#endif
-						_clientSite.SaveObject();
-					}
-					else
-					{
-#if COMLOGGING
-						Debug.ReportInfo("{0}.SendAdvise.SaveObject -> NOT DONE! isDirty={1}, isClientSiteNull={2} )", this.GetType().Name, _isDocumentDirty, null == _clientSite);
-#endif
-					}
-					break;
-
-				case AdviseKind.DataChanged:
-
-					if (null != _dataAdviseHolder)
-					{
-#if COMLOGGING
-						Debug.ReportInfo("{0}.SendAdvise.DataChanged -> Calling _dataAdviseHolder.SendOnDataChange()", this.GetType().Name);
-#endif
-						_dataAdviseHolder.SendOnDataChange((IDataObject)this, 0, 0);
-					}
-					break;
-
-				case AdviseKind.ShowWindow:
-#if COMLOGGING
-					Debug.ReportInfo("{0}.SendAdvise.ShowWindow -> Calling IOleClientSite.OnShowWindow(true)", this.GetType().Name);
-#endif
-					if (null != _clientSite)
-						_clientSite.OnShowWindow(true);
-					break;
-
-				case AdviseKind.HideWindow:
-#if COMLOGGING
-					Debug.ReportInfo("{0}.SendAdvise.HideWindow -> Calling IOleClientSite.OnShowWindow(false)", this.GetType().Name);
-#endif
-					try
-					{
-						if (null != _clientSite)
-							_clientSite.OnShowWindow(false);
-					}
-					catch (Exception ex)
-					{
-#if COMLOGGING
-						Debug.ReportError("{0}.SendAdvise.HideWindow -> Exception while calling _clientSite.OnShowWindow(false), Details: {0}", this.GetType().Name, ex.Message);
-#endif
-					}
-					break;
-
-				case AdviseKind.ShowObject:
-#if COMLOGGING
-					Debug.ReportInfo("{0}.SendAdvise.ShowObject -> Calling IOleClientSite.ShowObject()", this.GetType().Name);
-#endif
-					if (null != _clientSite)
-						_clientSite.ShowObject();
-					break;
-
-				default:
-					break;
-			}
-		}
-
-		#endregion Functions
 
 		#region IDataObject members
 
@@ -359,8 +261,8 @@ namespace Altaxo.Com
 
 				if (save)
 				{
-					SendAdvise(AdviseKind.SaveObject);
-					SendAdvise(AdviseKind.Saved);
+					SendAdvise_SaveObject();
+					SendAdvise_Saved();
 				}
 
 				// Begin shutdown of the application
@@ -395,7 +297,7 @@ namespace Altaxo.Com
 						Debug.ReportInfo("{0}.IOleObject.DoVerb OLEIVERB_HIDE", this.GetType().Name);
 #endif
 						_comManager.ApplicationAdapter.HideMainWindow();
-						SendAdvise(AdviseKind.HideWindow);
+						SendAdvise_HideWindow();
 						break;
 
 					case (int)OLEIVERB.OLEIVERB_PRIMARY:
@@ -424,7 +326,7 @@ namespace Altaxo.Com
 #endif
 							}
 
-							SendAdvise(AdviseKind.ShowWindow);
+							SendAdvise_ShowWindow();
 						}
 
 						return ComReturnValue.NOERROR;
@@ -670,7 +572,7 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0}.IPersistStorage.SaveCompleted", this.GetType().Name);
 #endif
 
-			SendAdvise(AdviseKind.Saved);
+			SendAdvise_Saved();
 		}
 
 		public int HandsOffStorage()

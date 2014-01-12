@@ -41,38 +41,16 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0} constructor.", this.GetType().Name);
 #endif
 
-			Init(graphDocument, true, null);
+			_dataAdviseHolder = new ManagedDataAdviseHolder();
+			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
+
+			Document = graphDocument;
 
 			if (null != fileComObject)
 			{
 				fileComObject.FileMonikerChanged += EhFileMonikerChanged;
 				EhFileMonikerChanged(fileComObject.FileMoniker);
 			}
-		}
-
-		private void Init(GraphDocument doc, bool hasForm, IMoniker moniker)
-		{
-			// Note: we do not create a event link to Document.DocumentRenamed here
-			// because this would keep the DocumentComObject alive as long as the document is alive
-			// instead, we let the FileComObject watch if documents are renamed and then let it call the function EhDocumentRenamed here in this instance
-
-#if COMLOGGING
-			Debug.ReportInfo("{0} init.", this.GetType().Name);
-#endif
-
-			_dataAdviseHolder = new ManagedDataAdviseHolder();
-			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
-			_documentMoniker = moniker;
-
-			Document = doc;
-		}
-
-		~GraphDocumentLinkedComObject()
-		{
-			// ReferenceCountedObjectBase destructor will be invoked.
-#if COMLOGGING
-			Debug.ReportInfo("{0} destructor.", this.GetType().Name);
-#endif
 		}
 
 		public void Dispose()
