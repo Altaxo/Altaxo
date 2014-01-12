@@ -19,7 +19,7 @@ namespace Altaxo.Com
 		ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _DocumentComObject.
 		]
 	public class GraphDocumentEmbeddedComObject :
-		ReferenceCountedDataObjectBase, // DocumentComObject is derived from ReferenceCountedObjectBase so that we can track its creation and destruction.
+		OleObjectBase, // DocumentComObject is derived from ReferenceCountedObjectBase so that we can track its creation and destruction.
 		System.Runtime.InteropServices.ComTypes.IDataObject,  // DocumentComObject must implement the IDocumentComObject interface.
 		IOleObject,
 		IPersistStorage
@@ -29,22 +29,13 @@ namespace Altaxo.Com
 		public const string USER_TYPE_LONG = "Altaxo Graph-Document";
 		public const double PointsToHimetric = 2540 / 72.0;
 
-		// Manages our communication with the container.
-		private IOleClientSite _clientSite;
-
-		private ManagedOleAdviseHolderUO _oleAdviseHolder;
 		private ManagedDataAdviseHolder _dataAdviseHolder;
 
 		private int _lastVerb;
 
-		private IMoniker _documentMoniker;
-		private int _documentMonikerRotCookie;
-
-		private bool _isDocumentDirty;
-
 		private GraphDocument _document;
 
-		public GraphDocumentEmbeddedComObject(ProjectFileComObject fileComObject, ComManager comManager)
+		public GraphDocumentEmbeddedComObject(ComManager comManager)
 			: base(comManager)
 		{
 #if COMLOGGING
@@ -52,12 +43,6 @@ namespace Altaxo.Com
 #endif
 
 			Init(true, null);
-
-			if (null != fileComObject)
-			{
-				fileComObject.FileMonikerChanged += EhFileMonikerChanged;
-				EhFileMonikerChanged(fileComObject.FileMoniker);
-			}
 		}
 
 		private void Init(bool hasForm, IMoniker moniker)
@@ -72,7 +57,6 @@ namespace Altaxo.Com
 
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
-			_documentMoniker = moniker;
 		}
 
 		~GraphDocumentEmbeddedComObject()
@@ -103,16 +87,12 @@ namespace Altaxo.Com
 
 			SendAdvise(AdviseKind.Closed);
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.Dispose Step 4 : ROTUnregister(ref _documentMonikerRotCookie)", this.GetType().Name);
-#endif
-
-			ROTUnregister(ref _documentMonikerRotCookie);
-			_documentMoniker = null;
+			// if we had a document moniker, we should unregister it here
+			// but since this is an embedded object,we have no document moniker
 
 			// Disconnect the container.
 #if COMLOGGING
-			Debug.ReportInfo("{0}.Dispose Step 5 : Disconnecting this object", this.GetType().Name);
+			Debug.ReportInfo("{0}.Dispose Step 4 : Disconnecting this object", this.GetType().Name);
 #endif
 
 			Ole32Func.CoDisconnectObject(this, 0);
@@ -121,44 +101,6 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0}.Dispose completed.", this.GetType().Name);
 #endif
 		}
-
-		#region Running Object Table management (ROT)
-
-		internal static IRunningObjectTable GetROT()
-		{
-			IRunningObjectTable rot;
-			Int32 hr = Ole32Func.GetRunningObjectTable(0, out rot);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.NOERROR);
-			return rot;
-		}
-
-		internal static void ROTUnregister(ref int cookie)
-		{
-			// Revoke any existing file moniker. p988
-			IRunningObjectTable rot = GetROT();
-			if (0 != cookie)
-			{
-				rot.Revoke(cookie);
-				cookie = 0;
-			}
-		}
-
-		private static void ROTRegisterAsRunning(IMoniker new_moniker, object o, ref int rot_cookie, Type intf)
-		{
-			// Revoke any existing file moniker. p988
-			ROTUnregister(ref rot_cookie);
-
-			// Register the moniker in the running object table (ROT).
-#if COMLOGGING
-			Debug.ReportInfo("Registering {0} in ROT", DataObjectHelper.GetDisplayName(new_moniker));
-#endif
-			IRunningObjectTable rot = GetROT();
-			// This flag solved a terrible problem where Word would stop
-			// communicating after its first call to GetObject().
-			rot_cookie = rot.Register(1 /*ROTFLAGS_REGISTRATIONKEEPSALIVE*/, o, new_moniker);
-		}
-
-		#endregion Running Object Table management (ROT)
 
 		#region Document management
 
@@ -208,80 +150,10 @@ namespace Altaxo.Com
 		public void EhDocumentRenamed(IMoniker fileMoniker)
 		{
 			// Trick to create a new document moniker, and send the advise
-			EhFileMonikerChanged(fileMoniker);
+			_isDocumentDirty = true;
 		}
 
 		#endregion Document management
-
-		#region Moniker
-
-		private void EhFileMonikerChanged(IMoniker fileMoniker)
-		{
-			if (null == _document)
-				return;
-
-			// see Brockschmidt, Inside Ole 2nd ed., p.998
-			// TODO we must pimp up this function
-
-			ROTUnregister(ref _documentMonikerRotCookie);
-			_documentMoniker = null;
-
-			if (null != fileMoniker)
-			{
-				IMoniker itemMoniker;
-				Ole32Func.CreateItemMoniker("!", DataObjectHelper.NormalStringToMonikerNameString(_document.Name), out itemMoniker);
-
-				IMoniker compositeMoniker;
-				if (null != itemMoniker)
-				{
-					fileMoniker.ComposeWith(itemMoniker, false, out compositeMoniker);
-					if (null != compositeMoniker)
-					{
-						_documentMoniker = compositeMoniker;
-						ROTRegisterAsRunning(_documentMoniker, this, ref _documentMonikerRotCookie, typeof(IOleObject));
-					}
-				}
-			}
-
-			SendAdvise(AdviseKind.Renamed);
-		}
-
-		private void SaveMonikerToStream(IMoniker moniker, IStream strm)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.SaveMonikerToStream:{1}", this.GetType().Name, DataObjectHelper.GetDisplayName(moniker));
-#endif
-			int hr = Ole32Func.OleSaveToStream((IPersistStream)moniker, strm);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
-			// I write this in imitation of Brockschmidt, but I do not see why
-			// it is here.
-			// BoxesDoc seems best when linking because when Word reloads a
-			// document containing saved images then this is the class it
-			// instantiates.  Otherwise it wrongly instantiates Box.
-			// cf IOleObject.GetUserClassID
-			//Win32.WriteClassStm(strm, BoxesDoc.ClsID);
-			//System.Diagnostics.Debug.Assert(hr == (int)ComApi.ComReturnValue.S_OK);
-		}
-
-		//int attempt = 0;
-		public IntPtr RenderLink(TYMED tymed)
-		{
-			return DataObjectHelper.RenderMonikerToNewStream(tymed, this.Moniker);
-		}
-
-		#endregion Moniker
-
-		#region Properties
-
-		public IMoniker Moniker
-		{
-			get
-			{
-				return _documentMoniker;
-			}
-		}
-
-		#endregion Properties
 
 		#region Functions
 
@@ -295,12 +167,6 @@ namespace Altaxo.Com
 
 				case AdviseKind.Closed:
 					_oleAdviseHolder.SendOnClose();
-					break;
-
-				case AdviseKind.Renamed:
-					var moniker = Moniker;
-					if (null != moniker)
-						_oleAdviseHolder.SendOnRename(moniker);
 					break;
 
 				case AdviseKind.SaveObject:
@@ -327,14 +193,6 @@ namespace Altaxo.Com
 						Debug.ReportInfo("{0}.SendAdvise.DataChanged -> Calling _dataAdviseHolder.SendOnDataChange()", this.GetType().Name);
 #endif
 						_dataAdviseHolder.SendOnDataChange((IDataObject)this, 0, 0);
-					}
-					// we must also note the change time to the running object table, see
-					// Brockschmidt, Inside Ole 2nd ed., page 989
-					if (_documentMonikerRotCookie != 0)
-					{
-						System.Runtime.InteropServices.ComTypes.FILETIME ft = new System.Runtime.InteropServices.ComTypes.FILETIME();
-						Ole32Func.CoFileTimeNow(out ft);
-						GetROT().NoteChangeTime(_documentMonikerRotCookie, ref ft);
 					}
 					break;
 
@@ -399,14 +257,6 @@ namespace Altaxo.Com
 				// Nice because it is resolution independent.
 				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
 
-				// And allow linking, where we have a moniker.  This is last because
-				// it should not happen by default.
-				if (Moniker != null)
-				{
-					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, this.RenderLink));
-					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderEmbeddedObjectDescriptor));
-				}
-
 				return renderings;
 			}
 		}
@@ -446,56 +296,12 @@ namespace Altaxo.Com
 				return true;
 			}
 
-			if (format.cfFormat == DataObjectHelper.CF_LINKSOURCE && (format.tymed & TYMED.TYMED_ISTREAM) != 0)
-			{
-				var moniker = Moniker;
-				if (null != moniker)
-				{
-					medium.tymed = TYMED.TYMED_ISTREAM;
-					medium.pUnkForRelease = null;
-					IStream strm = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
-					SaveMonikerToStream(Moniker, strm);
-					return true;
-				}
-			}
 			return false;
 		}
 
 		#endregion IDataObject members
 
 		#region IOleObject members
-
-		public int SetClientSite(IOleClientSite pClientSite)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.SetClientSite", this.GetType().Name);
-#endif
-			_clientSite = pClientSite;
-			return ComReturnValue.NOERROR;
-		}
-
-		public IOleClientSite GetClientSite()
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.GetClientSite", this.GetType().Name);
-#endif
-
-			return _clientSite;
-		}
-
-		public int SetHostNames(string containerApplicationName, string containerDocumentName)
-		{
-			// see Brockschmidt, Inside Ole 2nd ed. page 992
-			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
-			// this means that we have to switch the user interface from within this function
-
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.SetHostNames ContainerAppName={1}, ContainerDocName={2}", this.GetType().Name, containerApplicationName, containerDocumentName);
-#endif
-
-			_comManager.SetHostNames(containerApplicationName, containerDocumentName, _document);
-			return ComReturnValue.NOERROR;
-		}
 
 		public int Close(tagOLECLOSE dwSaveOption)
 		{
@@ -557,8 +363,7 @@ namespace Altaxo.Com
 					SendAdvise(AdviseKind.Saved);
 				}
 
-				// Regardless of whether the form has been shown we must
-				// do all the normal shutdown actions.  (e.g. WinWord 2007)
+				// Begin shutdown of the application
 #if COMLOGGING
 				Debug.ReportInfo("{0}.IOleObject.Close -> BeginInvoke MainWindow.Close", this.GetType().Name);
 #endif
@@ -575,49 +380,6 @@ namespace Altaxo.Com
 			// }
 		}
 
-		public int SetMoniker(int dwWhichMoniker, object pmk)
-		{
-			// Brockschmidt Inside Ole 2nd ed. page 993
-			// see there if you want to support linking to embedding
-#if COMLOGGING
-			Debug.ReportWarning("{0}.IOleObject.SetMoniker => not implemented!", this.GetType().Name);
-#endif
-			return ComReturnValue.E_NOTIMPL;
-		}
-
-		public int GetMoniker(int dwAssign, int dwWhichMoniker, out object moniker)
-		{
-			// Brockschmidt Inside Ole 2nd ed. page 994
-#if COMLOGGING
-			Debug.ReportWarning("{0}.IOleObject.GetMoniker", this.GetType().Name);
-#endif
-			if (null != _documentMoniker)
-			{
-				moniker = _documentMoniker;
-				return ComReturnValue.S_OK;
-			}
-			// see Brockschmidt if we want to support linking to embedding
-			moniker = null;
-			return ComReturnValue.E_FAIL;
-		}
-
-		public int InitFromData(System.Runtime.InteropServices.ComTypes.IDataObject pDataObject, int fCreation, int dwReserved)
-		{
-#if COMLOGGING
-			Debug.ReportWarning("{0}.IOleObject.InitFromData => not implemented!", this.GetType().Name);
-#endif
-			return ComReturnValue.E_NOTIMPL;
-		}
-
-		public int GetClipboardData(int dwReserved, out System.Runtime.InteropServices.ComTypes.IDataObject data)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.GetClipboardData => not implemented!", this.GetType().Name);
-#endif
-			data = null;
-			return ComReturnValue.E_NOTIMPL;
-		}
-
 		public int DoVerb(int iVerb, IntPtr lpmsg, IOleClientSite pActiveSite, int lindex, IntPtr hwndParent, COMRECT lprcPosRect)
 		{
 #if COMLOGGING
@@ -625,19 +387,7 @@ namespace Altaxo.Com
 #endif
 			try
 			{
-				// I saw OLEIVERB_HIDE come in as 253.  Perhaps a unsigned
-				// byte conversion happening somewhere.
-				if (iVerb >= 250 && iVerb <= 255)
-				{
-					int new_iverb = iVerb - 256;
-#if COMLOGGING
-					Debug.ReportWarning("{0}.IOleObject.DoVerb -> Fixing iVerb: {1} -> {2}", this.GetType().Name, iVerb, new_iverb);
-#endif
-					iVerb = new_iverb;
-				}
-
 				_lastVerb = iVerb;
-
 				switch (iVerb)
 				{
 					case (int)OLEIVERB.OLEIVERB_HIDE:
@@ -699,49 +449,6 @@ namespace Altaxo.Com
 			}
 		}
 
-		public int EnumVerbs(out IEnumOLEVERB e)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.EnumVerbs -> use registry", this.GetType().Name);
-#endif
-			e = null;
-			return ComReturnValue.OLE_S_USEREG;
-		}
-
-		public int OleUpdate()
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.OleUpdate", this.GetType().Name);
-#endif
-			return ComReturnValue.NOERROR;
-		}
-
-		public int IsUpToDate()
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.IsUpToDate", this.GetType().Name);
-#endif
-			return ComReturnValue.NOERROR;
-		}
-
-		public int GetUserClassID(ref Guid pClsid)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.GetUserClassID", this.GetType().Name);
-#endif
-			pClsid = this.GetType().GUID;
-			return ComReturnValue.NOERROR;
-		}
-
-		public int GetUserType(int dwFormOfType, out string userType)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.GetUserType -> use registry.", this.GetType().Name);
-#endif
-			userType = null;
-			return ComReturnValue.OLE_S_USEREG;
-		}
-
 		public int SetExtent(int dwDrawAspect, tagSIZEL pSizel)
 		{
 #if COMLOGGING
@@ -788,54 +495,6 @@ namespace Altaxo.Com
 			return ComReturnValue.NOERROR;
 		}
 
-		public int Advise(System.Runtime.InteropServices.ComTypes.IAdviseSink pAdvSink, out int cookie)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.Advise", this.GetType().Name);
-#endif
-			try
-			{
-				_oleAdviseHolder.Advise(pAdvSink, out cookie);
-				return ComReturnValue.NOERROR;
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("{0}.IOleObject.Advise caused an exception: {1}", this.GetType().Name, e);
-#endif
-				throw;
-			}
-		}
-
-		public int Unadvise(int dwConnection)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.Unadvise", this.GetType().Name);
-#endif
-			try
-			{
-				_oleAdviseHolder.Unadvise(dwConnection);
-				return ComReturnValue.NOERROR;
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("{0}.IOleObject.Unadvise threw an exception: {0}", this.GetType().Name, e);
-#endif
-				throw;
-			}
-		}
-
-		public int EnumAdvise(out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA e)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.EnumAdvise", this.GetType().Name);
-#endif
-
-			e = _oleAdviseHolder.EnumAdvise();
-			return ComReturnValue.NOERROR;
-		}
-
 		public int GetMiscStatus(int dwAspect, out int misc)
 		{
 			misc = GraphDocumentDataObject.MiscStatus(dwAspect);
@@ -845,14 +504,6 @@ namespace Altaxo.Com
 #endif
 
 			return ComReturnValue.S_OK;
-		}
-
-		public int SetColorScheme(tagLOGPALETTE pLogpal)
-		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IOleObject.SetColorScheme (not implemented)", this.GetType().Name);
-#endif
-			return ComReturnValue.E_NOTIMPL;
 		}
 
 		#endregion IOleObject members
@@ -970,7 +621,7 @@ namespace Altaxo.Com
 		public void Save(IStorage pStgSave, bool fSameAsLoad)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.IPersistStorage.Save", this.GetType().Name);
+			Debug.ReportInfo("{0}.IPersistStorage.Save fSameAsLoad={1}", this.GetType().Name, fSameAsLoad);
 #endif
 
 			try

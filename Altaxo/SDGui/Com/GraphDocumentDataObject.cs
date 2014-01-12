@@ -19,14 +19,11 @@ namespace Altaxo.Com
 		private Altaxo.Graph.PointD2D _graphDocumentSize;
 		private System.Drawing.Image _graphDocumentClipboardImage;
 
-		private ComManager _comManager;
-
 		public GraphDocumentDataObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
+			: base(comManager)
 		{
-			_comManager = comManager;
-
 #if COMLOGGING
-			Debug.ReportInfo("GraphDocumentDataObject constructor.");
+			Debug.ReportInfo("{0} constructor.", this.GetType().Name);
 #endif
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 
@@ -35,6 +32,13 @@ namespace Altaxo.Com
 			_graphDocumentClipboardImage = Altaxo.Graph.Gdi.GraphDocumentClipboardActions.GetImageForClipbard(graphDocument);
 			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
 			_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument);
+		}
+
+		~GraphDocumentDataObject()
+		{
+#if COMLOGGING
+			Debug.ReportInfo("{0} destructor.", this.GetType().Name);
+#endif
 		}
 
 		#region Base class overrides

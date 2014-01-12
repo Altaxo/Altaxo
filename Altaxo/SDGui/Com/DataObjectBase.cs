@@ -14,8 +14,15 @@ namespace Altaxo.Com
 	/// <summary>
 	/// Base for the implementation of classed that use IDataObject. Note that this class does not implement IDataObject, but all functions in IDataObject are implemented here.
 	/// </summary>
-	public abstract class DataObjectBase
+	public abstract class DataObjectBase : ReferenceCountedObjectBase
 	{
+		public DataObjectBase(ComManager comManager)
+			: base(comManager)
+		{
+		}
+
+		#region Abstracts
+
 		/// <summary>
 		/// Gets a data advise holder. You can return <c>null</c> if a data advise holder is unneccessary, e.g. for static data objects.
 		/// Otherwise, you should maintain an instance of <see cref="ManagedDataAdviseHolder"/> in your derived class and return it here.
@@ -41,6 +48,23 @@ namespace Altaxo.Com
 		/// <param name="medium">The medium.</param>
 		/// <returns><c>True</c> if the data could be provided, otherwise <c>False</c>.</returns>
 		protected abstract bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium);
+
+		#endregion Abstracts
+
+		#region Advise function
+
+		public virtual void SendAdvise_DataChanged()
+		{
+			if (null != DataAdviseHolder)
+			{
+#if COMLOGGING
+				Debug.ReportInfo("{0}.SendAdvise.DataChanged -> Calling _dataAdviseHolder.SendOnDataChange()", this.GetType().Name);
+#endif
+				DataAdviseHolder.SendOnDataChange((IDataObject)this, 0, 0);
+			}
+		}
+
+		#endregion Advise function
 
 		#region Implementation of IDataObject
 

@@ -42,8 +42,6 @@ namespace Altaxo.Com
 
 		public event Action<IMoniker> FileMonikerChanged;
 
-		private List<GraphDocumentLinkedComObject> _documentComObjects;
-
 		public ProjectFileComObject(ComManager comManager)
 			: base(comManager)
 		{
@@ -51,9 +49,22 @@ namespace Altaxo.Com
 			Current.ProjectService.ProjectChanged += EhCurrentProjectInstanceChanged;
 			Current.ProjectService.ProjectRenamed += EhCurrentProjectFileNameChanged;
 
-			_documentComObjects = new List<GraphDocumentLinkedComObject>();
-
 			EhCurrentProjectInstanceChanged(null, null);
+		}
+
+		public void Dispose()
+		{
+#if COMLOGGING
+			Debug.ReportInfo("{0}.Dispose", this.GetType().Name);
+#endif
+
+			if (null != _currentProject)
+			{
+				_currentProject.GraphDocumentCollection.CollectionChanged -= EhGraphDocumentRenamed;
+				_currentProject = null;
+			}
+			Current.ProjectService.ProjectChanged -= EhCurrentProjectInstanceChanged;
+			Current.ProjectService.ProjectRenamed -= EhCurrentProjectFileNameChanged;
 		}
 
 		public IMoniker FileMoniker { get { return _fileMoniker; } }
@@ -85,7 +96,7 @@ namespace Altaxo.Com
 		{
 			if (changeType == Main.NamedObjectCollectionChangeType.ItemRenamed)
 			{
-				foreach (var comObj in _documentComObjects)
+				foreach (var comObj in _comManager._linkedDocumentsComObjects.Values)
 				{
 					if (object.ReferenceEquals(comObj.Document, item))
 						comObj.EhDocumentRenamed(_fileMoniker);
@@ -115,9 +126,9 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0}.EhCurrentProjectFileNameChanged", this.GetType().Name);
 #endif
 
-			ROTUnregister(ref _fileWithWildCardItemMonikerRotCookie);
+			RunningObjectTableHelper.ROTUnregister(ref _fileWithWildCardItemMonikerRotCookie);
 			_fileWithWildCardItemMoniker = null;
-			ROTUnregister(ref _fileMonikerRotCookie);
+			RunningObjectTableHelper.ROTUnregister(ref _fileMonikerRotCookie);
 			_fileMoniker = null;
 
 			if (!string.IsNullOrEmpty(fileName))
@@ -125,7 +136,7 @@ namespace Altaxo.Com
 				Ole32Func.CreateFileMoniker(fileName, out _fileMoniker);
 				if (null != _fileMoniker)
 				{
-					ROTRegisterAsRunning(_fileMoniker, this, ref _fileMonikerRotCookie, typeof(IPersistFile));
+					RunningObjectTableHelper.ROTRegisterAsRunning(_fileMoniker, this, ref _fileMonikerRotCookie, typeof(IPersistFile));
 
 					// Notify all other item Com objects of the new _fileMoniker
 					if (null != FileMonikerChanged)
@@ -137,66 +148,11 @@ namespace Altaxo.Com
 					if (null != wildCardItemMoniker)
 					{
 						_fileMoniker.ComposeWith(wildCardItemMoniker, false, out _fileWithWildCardItemMoniker);
-						ROTRegisterAsRunning(_fileWithWildCardItemMoniker, this, ref _fileWithWildCardItemMonikerRotCookie, typeof(IOleItemContainer));
+						RunningObjectTableHelper.ROTRegisterAsRunning(_fileWithWildCardItemMoniker, this, ref _fileWithWildCardItemMonikerRotCookie, typeof(IOleItemContainer));
 					}
 				}
 			}
 		}
-
-		#region Running Object Table management (ROT)
-
-		internal static IRunningObjectTable GetROT()
-		{
-			IRunningObjectTable rot;
-			Int32 hr = Ole32Func.GetRunningObjectTable(0, out rot);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.NOERROR);
-			return rot;
-		}
-
-		public static string GetDisplayName(IMoniker m)
-		{
-			string s;
-			IBindCtx bc = CreateBindCtx();
-			m.GetDisplayName(bc, null, out s);
-			Marshal.ReleaseComObject(bc);  // seems to be recommended
-			return s;
-		}
-
-		public static IBindCtx CreateBindCtx()
-		{
-			IBindCtx bc;
-			int rc = Ole32Func.CreateBindCtx(0, out bc);
-			System.Diagnostics.Debug.Assert(rc == ComReturnValue.S_OK);
-			return bc;
-		}
-
-		internal static void ROTUnregister(ref int cookie)
-		{
-			// Revoke any existing file moniker. p988
-			IRunningObjectTable rot = GetROT();
-			if (0 != cookie)
-			{
-				rot.Revoke(cookie);
-				cookie = 0;
-			}
-		}
-
-		private static void ROTRegisterAsRunning(IMoniker new_moniker, object o, ref int rot_cookie, Type intf)
-		{
-			// Revoke any existing file moniker. p988
-			ROTUnregister(ref rot_cookie);
-
-			// Register the moniker in the running object table (ROT).
-#if COMLOGGING
-			Debug.ReportInfo("Registering {0} in ROT", GetDisplayName(new_moniker));
-#endif
-			IRunningObjectTable rot = GetROT();
-			// This flag solved a terrible problem where Word would stop
-			// communicating after its first call to GetObject().
-			rot_cookie = rot.Register(1 /*ROTFLAGS_REGISTRATIONKEEPSALIVE*/, o, new_moniker);
-		}
-
-		#endregion Running Object Table management (ROT)
 
 		#region Interface IPersistFile
 

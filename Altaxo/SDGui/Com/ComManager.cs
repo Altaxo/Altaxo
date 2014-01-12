@@ -27,7 +27,7 @@ namespace Altaxo.Com
 
 		private GarbageCollector _garbageCollector;
 
-		public Dictionary<GraphDocument, GraphDocumentLinkedComObject> _documentsComObject = new Dictionary<GraphDocument, GraphDocumentLinkedComObject>();
+		public Dictionary<GraphDocument, GraphDocumentLinkedComObject> _linkedDocumentsComObjects = new Dictionary<GraphDocument, GraphDocumentLinkedComObject>();
 
 		private GraphDocumentEmbeddedComObject _embeddedComObject;
 
@@ -43,7 +43,7 @@ namespace Altaxo.Com
 
 		public string ContainerDocumentName { get; private set; }
 
-		public object EmbeddedObject { get; private set; }
+		public object EmbeddedObject { get { return _embeddedComObject != null ? _embeddedComObject.Document : null; } }
 
 		public bool ApplicationWasStartedWithEmbeddingArg { get; private set; }
 
@@ -65,7 +65,7 @@ namespace Altaxo.Com
 			if (null != _embeddedComObject)
 				throw new InvalidOperationException("There is already an embedded object present in this application instance!");
 
-			return new GraphDocumentEmbeddedComObject(_fileComObject, this);
+			return new GraphDocumentEmbeddedComObject(this);
 		}
 
 		public GraphDocumentLinkedComObject GetDocumentsComObjectForGraphDocument(GraphDocument doc)
@@ -77,12 +77,12 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0}.GetDocumentsComObjectForGraphDocument Name={1}", this.GetType().Name, doc.Name);
 #endif
 
-			if (null != doc && _documentsComObject.ContainsKey(doc))
-				return _documentsComObject[doc];
+			if (null != doc && _linkedDocumentsComObjects.ContainsKey(doc))
+				return _linkedDocumentsComObjects[doc];
 
 			// else we must create a new DocumentComObject
 			var newComObject = new GraphDocumentLinkedComObject(doc, _fileComObject, this);
-			_documentsComObject.Add(doc, newComObject);
+			_linkedDocumentsComObjects.Add(doc, newComObject);
 			return newComObject;
 		}
 
@@ -157,7 +157,7 @@ namespace Altaxo.Com
 			}
 		}
 
-		public void SetHostNames(string containerApplicationName, string containerFileName, object embeddedObject)
+		public void SetHostNames(string containerApplicationName, string containerFileName)
 		{
 			// see Brockschmidt, Inside Ole 2nd ed. page 992
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
@@ -166,9 +166,7 @@ namespace Altaxo.Com
 			IsInEmbeddedMode = true;
 			ContainerApplicationName = containerApplicationName;
 			ContainerDocumentName = containerFileName;
-			EmbeddedObject = embeddedObject;
-
-			ApplicationAdapter.SetHostNames(containerApplicationName, containerFileName, embeddedObject);
+			ApplicationAdapter.SetHostNames(containerApplicationName, containerFileName, EmbeddedObject);
 		}
 
 		public ProjectFileComObject FileComObject
@@ -580,14 +578,21 @@ namespace Altaxo.Com
 			Debug.ReportInfo("Stop local server");
 #endif
 
-			foreach (var co in _documentsComObject.Values)
+			if (null != _embeddedComObject)
+			{
+				_embeddedComObject.Dispose();
+				_embeddedComObject = null;
+			}
+
+			foreach (var co in _linkedDocumentsComObjects.Values)
 			{
 				co.Dispose();
 			}
-			_documentsComObject.Clear();
+			_linkedDocumentsComObjects.Clear();
 
 			if (null != _fileComObject)
 			{
+				_fileComObject.Dispose();
 				_fileComObject = null;
 			}
 

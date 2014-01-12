@@ -209,6 +209,8 @@
     <Compile Include="Com\EnumFormatEtc.cs" />
     <Compile Include="Com\GraphDocumentDataObject.cs" />
     <Compile Include="Com\GuiThreadStack.cs" />
+    <Compile Include="Com\OleObjectBase.cs" />
+    <Compile Include="Com\RunningObjectTableHelper.cs" />
     <Compile Include="UnmanagedApi\Gdi32\Enums.cs" />
     <Compile Include="UnmanagedApi\Gdi32\Gdi32Func.cs" />
     <Compile Include="UnmanagedApi\Gdi32\Structs.cs" />
