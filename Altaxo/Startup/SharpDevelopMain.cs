@@ -112,6 +112,8 @@ namespace ICSharpCode.SharpDevelop
 			{
 				if ("nologo".Equals(parameter, StringComparison.OrdinalIgnoreCase))
 					noLogo = true;
+				if ("embedding".Equals(parameter, StringComparison.OrdinalIgnoreCase))
+					noLogo = true;
 			}
 
 			if (!CheckEnvironment())
@@ -257,16 +259,18 @@ namespace ICSharpCode.SharpDevelop
 				Altaxo.Main.Commands.AutostartCommand.EarlyRun(CommandLineArgs);
 				if (Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(true, SharpDevelopMain.CommandLineArgs))
 					return;
-				var altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
-				Altaxo.Current.SetWorkbench(altaxoWb);
-				WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.AvalonDockLayout());
-				new Altaxo.Main.Commands.AutostartCommand().Run();
 
 				var comManager = new Altaxo.Com.ComManager(new Altaxo.Com.AltaxoComApplicationAdapter());
 				Altaxo.Current.SetComManager(comManager);
 				comManager.ProcessArguments(CommandLineArgs);
 				if (comManager.ApplicationShouldExitAfterProcessingArgs)
 					return;
+
+				var altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
+				Altaxo.Current.SetWorkbench(altaxoWb);
+				WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.AvalonDockLayout());
+				new Altaxo.Main.Commands.AutostartCommand().Run();
+
 				if (comManager.ApplicationWasStartedWithEmbeddingArg)
 				{
 					//System.Diagnostics.Debugger.Launch();

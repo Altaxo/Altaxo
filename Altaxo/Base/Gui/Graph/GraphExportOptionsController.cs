@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,67 +19,79 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Drawing;
-using System.Drawing.Imaging;
+#endregion Copyright
 
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
-
-
 	public interface IGraphExportOptionsView
 	{
 		void SetImageFormat(SelectableListNodeList list);
+
 		void SetPixelFormat(SelectableListNodeList list);
+
 		void SetExportArea(SelectableListNodeList list);
+
 		void SetSourceDpi(SelectableListNodeList list);
+
 		void SetDestinationDpi(SelectableListNodeList list);
-    void SetClipboardFormat(SelectableListNodeList list);
-    bool EnableClipboardFormat { set; }
+
+		void SetClipboardFormatView(object viewObject);
+
+		bool EnableClipboardFormat { set; }
+
 		string SourceDpiResolution { get; }
+
 		string DestinationDpiResolution { get; }
-    BrushX BackgroundBrush { get; set; }
+
+		BrushX BackgroundBrush { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IGraphExportOptionsView))]
 	[UserControllerForObject(typeof(GraphExportOptions))]
 	public class GraphExportOptionsController : IMVCANController
 	{
-		IGraphExportOptionsView _view;
-		GraphExportOptions _doc;
-		GraphExportOptions _tempDoc;
+		private IGraphExportOptionsView _view;
+		private GraphExportOptions _doc;
+		private GraphExportOptions _tempDoc;
 
-		SelectableListNodeList _imageFormat;
-		SelectableListNodeList _pixelFormat;
-		SelectableListNodeList _exportArea;
-		SelectableListNodeList _sourceDpi;
-		SelectableListNodeList _destinationDpi;
-    SelectableListNodeList _clipboardFormat;
-    static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
-		static readonly ImageFormat[] ImageFormats = new ImageFormat[]
-		{ ImageFormat.Bmp,
+		private SelectableListNodeList _imageFormat;
+		private SelectableListNodeList _pixelFormat;
+		private SelectableListNodeList _exportArea;
+		private SelectableListNodeList _sourceDpi;
+		private SelectableListNodeList _destinationDpi;
+		private SelectableListNodeList _clipboardFormat;
+
+		private IMVCANController _clipboardFormatController;
+
+		private static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
+
+		private static readonly ImageFormat[] ImageFormats = new ImageFormat[]
+		{
+			ImageFormat.Bmp,
 			ImageFormat.Emf,
 			ImageFormat.Exif,
 			ImageFormat.Gif,
 			//ImageFormat.Icon,
-			ImageFormat.Jpeg, 
+			ImageFormat.Jpeg,
 			//ImageFormat.MemoryBmp,
 			ImageFormat.Png,
 			ImageFormat.Tiff,
-			ImageFormat.Wmf};
+			ImageFormat.Wmf
+		};
 
-		static readonly PixelFormat[] PixelFormats = new PixelFormat[]
+		private static readonly PixelFormat[] PixelFormats = new PixelFormat[]
 		{
 			// The next three formats are the most used, so we have them on top
 			PixelFormat.Format24bppRgb,
@@ -88,14 +101,14 @@ namespace Altaxo.Gui.Graph
 			PixelFormat.Format1bppIndexed,
 			PixelFormat.Format4bppIndexed,
 			PixelFormat.Format8bppIndexed,
-			
+
 			PixelFormat.Format16bppArgb1555,
 			PixelFormat.Format16bppGrayScale,
 			PixelFormat.Format16bppRgb555,
 			PixelFormat.Format16bppRgb565,
 
 			PixelFormat.Format24bppRgb,
-			
+
 			PixelFormat.Format32bppRgb,
 			PixelFormat.Format32bppArgb,
 			PixelFormat.Format32bppPArgb,
@@ -108,11 +121,6 @@ namespace Altaxo.Gui.Graph
 			PixelFormat.Alpha,
 			PixelFormat.PAlpha
 		};
-
-
-
-		
-	
 
 		#region IMVCANController Members
 
@@ -136,9 +144,9 @@ namespace Altaxo.Gui.Graph
 			set { }
 		}
 
-		#endregion
+		#endregion IMVCANController Members
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -158,14 +166,13 @@ namespace Altaxo.Gui.Graph
 					hasMatched |= select;
 				}
 
-
 				_exportArea = new SelectableListNodeList();
 				foreach (GraphExportArea item in Enum.GetValues(typeof(GraphExportArea)))
 					_exportArea.Add(new SelectableListNode(item.ToString(), item, _doc.ExportArea == item));
 
-        _clipboardFormat = new SelectableListNodeList();
-        foreach (GraphCopyPageClipboardFormat item in Enum.GetValues(typeof(GraphCopyPageClipboardFormat)))
-          _clipboardFormat.Add(new SelectableListNode(item.ToString(), item, _doc.ClipboardFormat == item));
+				_clipboardFormatController = new Altaxo.Gui.Common.EnumFlagController();
+				_clipboardFormatController.InitializeDocument(_doc.ClipboardFormat);
+				Current.Gui.FindAndAttachControlTo(_clipboardFormatController);
 
 				_sourceDpi = GetResolutions(_doc.SourceDpiResolution);
 				_destinationDpi = GetResolutions(_doc.DestinationDpiResolution);
@@ -173,20 +180,20 @@ namespace Altaxo.Gui.Graph
 
 			if (null != _view)
 			{
-        _view.EnableClipboardFormat = _doc.IsIntentedForClipboardOperation;
-        _view.SetClipboardFormat(_clipboardFormat);
+				_view.EnableClipboardFormat = _doc.IsIntentedForClipboardOperation;
+				_view.SetClipboardFormatView(_clipboardFormatController.ViewObject);
 				_view.SetImageFormat(_imageFormat);
 				_view.SetPixelFormat(_pixelFormat);
 				_view.SetExportArea(_exportArea);
 				_view.SetSourceDpi(_sourceDpi);
 				_view.SetDestinationDpi(_destinationDpi);
-        _view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
+				_view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
 			}
 		}
 
-		SelectableListNodeList GetResolutions(double actualResolution)
+		private SelectableListNodeList GetResolutions(double actualResolution)
 		{
-			var resolutions = new SortedList<double,object>();
+			var resolutions = new SortedList<double, object>();
 			foreach (int res in Resolutions)
 				resolutions.Add(res, null);
 
@@ -198,7 +205,6 @@ namespace Altaxo.Gui.Graph
 				result.Add(new SelectableListNode(GUIConversion.ToString(res), res, res == actualResolution));
 
 			return result;
-
 		}
 
 		#region IMVCController Members
@@ -225,22 +231,22 @@ namespace Altaxo.Gui.Graph
 			get { return _doc; }
 		}
 
-		#endregion
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
 		public bool Apply()
 		{
 			double sr, dr;
-			
+
 			if (!GUIConversion.IsDouble(_view.SourceDpiResolution, out sr))
 				return false;
 			if (!GUIConversion.IsDouble(_view.DestinationDpiResolution, out dr))
 				return false;
 
-			if(!(sr>0))
+			if (!(sr > 0))
 				return false;
-			if(!(dr>0))
+			if (!(dr > 0))
 				return false;
 
 			var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
@@ -251,20 +257,24 @@ namespace Altaxo.Gui.Graph
 				Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
 				return false;
 			}
-			
+
 			_doc.ExportArea = (GraphExportArea)_exportArea.FirstSelectedNode.Tag;
-      _doc.ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormat.FirstSelectedNode.Tag;
+
+			if (!_clipboardFormatController.Apply())
+				return false;
+			_doc.ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormatController.ModelObject;
+
 			_doc.SourceDpiResolution = sr;
 			_doc.DestinationDpiResolution = dr;
 
-      if (_view.BackgroundBrush.IsVisible)
-        _doc.BackgroundBrush = _view.BackgroundBrush;
-      else
-        _doc.BackgroundBrush = null;
+			if (_view.BackgroundBrush.IsVisible)
+				_doc.BackgroundBrush = _view.BackgroundBrush;
+			else
+				_doc.BackgroundBrush = null;
 
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

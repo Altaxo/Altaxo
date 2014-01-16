@@ -62,7 +62,6 @@ namespace Altaxo.Main
 			Altaxo.AltaxoDocument oldProject = _currentProject;
 			string oldProjectFileName = _currentProjectFileName;
 
-
 			if (_currentProject != null)
 				_currentProject.DirtyChanged -= new EventHandler(this.EhProjectDirtyChanged);
 
@@ -74,17 +73,16 @@ namespace Altaxo.Main
 
 			if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
 			{
-				if (string.IsNullOrEmpty(oldProjectFileName) && null!= _currentProject)
+				if (string.IsNullOrEmpty(oldProjectFileName) && null != _currentProject)
 					OnProjectOpened(new ProjectEventArgs(_currentProject));
 
 				OnProjectChanged();
 			}
 			else // Project instance has not changed
 			{
-			if(oldProjectFileName != _currentProjectFileName)
-				OnRenameProject(new ProjectRenameEventArgs(_currentProject, oldProjectFileName, _currentProjectFileName));
+				if (oldProjectFileName != _currentProjectFileName)
+					OnRenameProject(new ProjectRenameEventArgs(_currentProject, oldProjectFileName, _currentProjectFileName));
 			}
-
 		}
 
 		public void CreateInitialDocument()
@@ -94,8 +92,6 @@ namespace Altaxo.Main
 
 			SetCurrentProject(new AltaxoDocument(), null);
 		}
-
-
 
 		/// <summary>
 		/// The currently open Altaxo project.
@@ -314,7 +310,7 @@ namespace Altaxo.Main
 			string errorText;
 			using (System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				errorText = InternalLoadProjectFromStream(myStream,filename);
+				errorText = InternalLoadProjectFromStream(myStream, filename);
 				myStream.Close();
 			}
 
@@ -328,7 +324,7 @@ namespace Altaxo.Main
 		/// <param name="filename"></param>
 		public string LoadProject(System.IO.Stream myStream)
 		{
-			var errors = InternalLoadProjectFromStream(myStream,null);
+			var errors = InternalLoadProjectFromStream(myStream, null);
 			return errors;
 		}
 
@@ -504,9 +500,33 @@ namespace Altaxo.Main
 			{
 				string filename = fdiag.FileName;
 				SaveProject(filename);
-				FileService.RecentOpen.AddLastProject(filename);
+				//FileService.RecentOpen.AddLastProject(filename);
 				WorkbenchSingleton.Workbench.StatusBar.SetMessage(filename + ": " + ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
 				//MessageService.ShowMessage(filename, ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
+			}
+		}
+
+		/// <summary>
+		/// This command is used if in embedded object mode. It saves the current project to a file,
+		/// but don't set the current file name of the project (in project service). Furthermore, the title in the title bar is not influenced by the saving.
+		/// </summary>
+		public void SaveProjectCoypAs()
+		{
+			SaveFileDialog fdiag = new SaveFileDialog();
+			fdiag.OverwritePrompt = true;
+			fdiag.AddExtension = true;
+
+			fdiag.Filter = StringParser.Parse("${res:Altaxo.FileFilter.ProjectFiles}|*.axoprj|${res:Altaxo.FileFilter.AllFiles}|*.*");
+
+			if (fdiag.ShowDialog() == DialogResult.OK)
+			{
+				string filename = fdiag.FileName;
+
+				FileUtility.ObservedSave(
+					new NamedFileOperationDelegate(this.Save),
+					filename,
+					ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
+					FileErrorPolicy.ProvideAlternative); FileService.RecentOpen.AddLastProject(filename);
 			}
 		}
 

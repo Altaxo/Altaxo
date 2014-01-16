@@ -50,6 +50,7 @@
 			<ConditionEvaluator name="SelectedPropertyColumns" class="Altaxo.Worksheet.Commands.SelectedPropertyConditionEvaluator" />
 			<ConditionEvaluator name="ContainsPLSModelData" class="Altaxo.Worksheet.Commands.PLSModelConditionEvaluator" />
 			<ConditionEvaluator name="Clipboard" class="Altaxo.Main.Commands.ClipboardContentConditionEvaluator" />
+			<ConditionEvaluator name="IsInEmbeddedObjectMode" class="Altaxo.Main.Commands.EmbeddedObjectModeEvaluator" />
 			<ConditionEvaluator name="ProjbrowserListItemSelection" class="Altaxo.Gui.Pads.ProjectBrowser.ListItemSelectionEvaluator" />
 			<Doozer name="Texture" class="Altaxo.Main.TextureDoozer" />
 			<Doozer name="OptionPanel" class="Altaxo.Main.OptionPanelDoozer" />
@@ -128,16 +129,22 @@
 					icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.InstanceScript.Description}"
 					class="Altaxo.Main.Commands.NewInstanceScript" />
 			</MenuItem>
-			<MenuItem id="Open" label="${res:XML.MainMenu.FileMenu.Open}" icon="Icons.16x16.OpenProjectIcon"
-				description="${res:XML.MainMenu.FileMenu.Open.Description}" shortcut="Control|O" class="Altaxo.Main.Commands.FileOpen" />
-			<MenuItem id="Close" label="${res:XML.MainMenu.FileMenu.Close}" icon="Icons.16x16.CloseAllDocuments"
-				description="${res:XML.MainMenu.FileMenu.Close.Desription}" class="Altaxo.Main.Commands.CloseProject" />
-			<MenuItem id="CloseSeparator" type = "Separator" />
-			<MenuItem id="SaveProject" label="${res:XML.MainMenu.FileMenu.SaveProject}" icon="Icons.16x16.SaveAllIcon"
-				description="${res:XML.MainMenu.FileMenu.SaveProject.Description}" shortcut="Control|S"
-				class="Altaxo.Main.Commands.FileSave" />
-			<MenuItem id="SaveProjectAs" label="${res:XML.MainMenu.FileMenu.SaveProjectAs}" icon="Icons.16x16.SaveAllIcon"
-				description="${res:XML.MainMenu.FileMenu.SaveProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveAs" />
+			<Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
+				<MenuItem id="Open" label="${res:XML.MainMenu.FileMenu.Open}" icon="Icons.16x16.OpenProjectIcon"
+					description="${res:XML.MainMenu.FileMenu.Open.Description}" shortcut="Control|O" class="Altaxo.Main.Commands.FileOpen" />
+				<MenuItem id="Close" label="${res:XML.MainMenu.FileMenu.Close}" icon="Icons.16x16.CloseAllDocuments"
+					description="${res:XML.MainMenu.FileMenu.Close.Desription}" class="Altaxo.Main.Commands.CloseProject" />
+				<MenuItem id="CloseSeparator" type = "Separator" />
+				<MenuItem id="SaveProject" label="${res:XML.MainMenu.FileMenu.SaveProject}" icon="Icons.16x16.SaveAllIcon"
+					description="${res:XML.MainMenu.FileMenu.SaveProject.Description}" shortcut="Control|S"
+					class="Altaxo.Main.Commands.FileSave" />
+				<MenuItem id="SaveProjectAs" label="${res:XML.MainMenu.FileMenu.SaveProjectAs}" icon="Icons.16x16.SaveAllIcon"
+					description="${res:XML.MainMenu.FileMenu.SaveProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveAs" />
+			</Condition>
+			<Condition name="IsInEmbeddedObjectMode" value="true" action="Exclude">
+				<MenuItem id="SaveCopyOfProjectAs" label="${res:XML.MainMenu.FileMenu.SaveCopyOfProjectAs}" icon="Icons.16x16.SaveAllIcon"
+					description="${res:XML.MainMenu.FileMenu.SaveCopyOfProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveCopyAs" />
+			</Condition>
 			<MenuItem id="NewDocId" label="${res:XML.MainMenu.FileMenu.NewDocumentIdentifier}"
 				description="${res:XML.MainMenu.FileMenu..NewDocumentIdentifier.Description}" class="Altaxo.Main.Commands.NewDocumentIdentifier" />
 			<MenuItem id="SaveProjectSeparator" type = "Separator" />
@@ -218,8 +225,14 @@
 									class = "ICSharpCode.SharpDevelop.Commands.ClearRecentProjects" />
 			</MenuItem>
 			<MenuItem id="ExitSeparator" type = "Separator" />
-			<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"
+			<Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
+				<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"
 				class="Altaxo.Main.Commands.FileExit" />
+			</Condition>
+			<Condition name="IsInEmbeddedObjectMode" value="true" action="Exclude">
+				<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.ExitAndReturn}" description="${res:XML.MainMenu.FileMenu.ExitAndReturn.Desription}"
+			class="Altaxo.Main.Commands.FileExit" />
+			</Condition>
 		</MenuItem>
 		<!-- Edit menu -->
 		<MenuItem id="Edit" label="${res:XML.MainMenu.EditMenu}"  type="Menu">

@@ -56,11 +56,6 @@ namespace Altaxo.UnmanagedApi.Ole32
 		[DllImport("ole32.dll")]
 		public static extern int OleRegGetUserType([In] ref Guid clsid, uint dwFormOfType, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszUserType);
 
-		/// <summary>
-		/// Ð´CLSIDµ½´æ´¢ÖÐ£¬Í¬IStorage::SetClass()
-		/// </summary>
-		/// <param name="pStg">´æ´¢¶ÔÏó</param>
-		/// <param name="rclsid">ÒªÐ´ÈëµÄCLSID</param>
 		[DllImport("ole32.dll", ExactSpelling = true, PreserveSig = false)]
 		public static extern void WriteClassStg(IStorage pStg, [In, MarshalAs(UnmanagedType.LPStruct)] Guid rclsid);
 
@@ -84,6 +79,9 @@ namespace Altaxo.UnmanagedApi.Ole32
 
 		[DllImport("ole32.dll")]
 		public static extern int OleSaveToStream(IPersistStream pPStm, IStream pStm);
+
+		[DllImport("ole32.dll")]
+		public static extern int OleIsCurrentClipboard([In]IDataObject pDataObject);
 
 		[DllImport("ole32.dll")]
 		public static extern int CreateStreamOnHGlobal(IntPtr hGlobal, bool fDeleteOnRelease, out IStream ppstm);

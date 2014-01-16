@@ -8,113 +8,98 @@ namespace Altaxo.Graph
 	public static class RectangleExtensions
 	{
 		/// <summary>
-		/// Calculates the dimensions of the greatest (by area) rectangle included in an outer rectangle, where the inner rectangle is rotated by some degrees with respect to the outer rectangle.
+		/// Calculates the dimensions of the greatest (by area) rectangle included in an outer rectangle, where the inner rectangle is rotated/sheared/scaled.
 		/// </summary>
-		/// <param name="outerRectangleSize">Size of the outer rectangle.</param>
-		/// <param name="rotationAngleDegree">The rotation angle of the inner rectangle with respect to the outer rectangle (in degrees).</param>
-		/// <returns>The size of the greatest (by area) inner rectangle that fits into the outer rectangle.</returns>
+		/// <param name="outerRectangle">The outer rectangle.</param>
+		/// <param name="sx">SX component of the transformation matrix that is applied to the inner rectangle.</param>
+		/// <param name="rx">RX component of the transformation matrix that is applied to the inner rectangle.</param>
+		/// <param name="ry">RY component of the transformation matrix that is applied to the inner rectangle.</param>
+		/// <param name="sy">SY component of the transformation matrix that is applied to the inner rectangle.</param>
+		/// <returns>The inner rectangle with the greatest area that fits (when transformed with the transformation elements) into the outer rectangle.
+		/// The position of the returned rectangle is calculated so that it centers into the outer rectangle.</returns>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// X-Size of outer rectangle must be > 0
 		/// or
 		/// Y-Size of outer rectangle must be > 0
-		/// or
-		/// rotationAngleDegree was invalid
 		/// </exception>
-		public static PointD2D GetIncludedRotatedRectangleSize(this PointD2D outerRectangleSize, double rotationAngleDegree)
+		public static RectangleD GetIncludedTransformedRectangle(this RectangleD outerRectangle, double sx, double rx, double ry, double sy)
 		{
+			PointD2D outerRectangleSize = outerRectangle.Size;
+
 			if (!(outerRectangleSize.X > 0))
 				throw new ArgumentOutOfRangeException("X-Size of outer rectangle must be > 0");
 			if (!(outerRectangleSize.Y > 0))
 				throw new ArgumentOutOfRangeException("Y-Size of outer rectangle must be > 0");
 
-			// fix rotationAngleDegree in a range of -180 to <180
-			rotationAngleDegree = Math.Abs(rotationAngleDegree); // only positive angles
-			var div = Math.Floor(rotationAngleDegree / 360);
-			rotationAngleDegree -= div * 360; // 0..360
-			if (rotationAngleDegree > 180)
-				rotationAngleDegree = 360 - rotationAngleDegree; // 0..180
-			if (rotationAngleDegree > 90)
-				rotationAngleDegree = 180 - rotationAngleDegree; // 0..90
+			double a = Math.Abs(sx);
+			double b = Math.Abs(rx);
+			double c = Math.Abs(ry);
+			double d = Math.Abs(sy);
 
-			if (!(0 <= rotationAngleDegree && rotationAngleDegree <= 90))
-				throw new ArgumentOutOfRangeException("rotationAngleDegree");
+			double maxArea = 0;
+			double sizeX = 0, sizeY = 0;
+			double x, y, area;
 
-			var cosPhi = Math.Cos(Math.PI * (rotationAngleDegree / 180));
-			var sinPhi = Math.Sin(Math.PI * (rotationAngleDegree / 180));
-
-			if (outerRectangleSize.X == outerRectangleSize.Y) // Special case outer rectangle is a square
 			{
-				var denominator = cosPhi + sinPhi;
-				return new PointD2D(
-					outerRectangleSize.X / denominator,
-					outerRectangleSize.Y / denominator
-					);
-			}
-			else if (outerRectangleSize.Y > outerRectangleSize.X) // Special case more height than width
-			{
-				var htw = outerRectangleSize.Y / outerRectangleSize.X;
-				var phiLimit1 = 180 * Math.Atan(htw - Math.Sqrt(htw * htw - 1)) / Math.PI;
-				var phiLimit2 = 180 * Math.Atan(htw + Math.Sqrt(htw * htw - 1)) / Math.PI;
-				if (rotationAngleDegree < phiLimit1 || rotationAngleDegree > phiLimit2)
+				// solution 1, which touches all walls
+				double bcMad = b * c - a * d;
+				if (bcMad != 0)
 				{
-					var denominator = cosPhi * cosPhi - sinPhi * sinPhi;
-					return new PointD2D(
-							Math.Abs((outerRectangleSize.Y * sinPhi - outerRectangleSize.X * cosPhi) / denominator),
-							Math.Abs((outerRectangleSize.Y * cosPhi - outerRectangleSize.X * sinPhi) / denominator)
-							);
-				}
-				else
-				{
-					return new PointD2D(0.5 * outerRectangleSize.X / cosPhi, 0.5 * outerRectangleSize.X / sinPhi);
+					x = (b * outerRectangleSize.Y - d * outerRectangleSize.X) / bcMad;
+					y = (c * outerRectangleSize.X - a * outerRectangleSize.Y) / bcMad;
+					area = x * y;
+					if (maxArea < area)
+					{
+						maxArea = area;
+						sizeX = x;
+						sizeY = y;
+					}
 				}
 			}
-			else if (outerRectangleSize.X > outerRectangleSize.Y)// case more width than height
+
 			{
-				var wth = outerRectangleSize.X / outerRectangleSize.Y;
-				var phiLimit1 = 180 * Math.Atan(wth - Math.Sqrt(wth * wth - 1)) / Math.PI;
-				var phiLimit2 = 180 * Math.Atan(wth + Math.Sqrt(wth * wth - 1)) / Math.PI;
-				if (rotationAngleDegree < phiLimit1 || rotationAngleDegree > phiLimit2)
+				// solution2 (which does not touch the left and right walls of the outer retangle
+				var eps2 = outerRectangleSize.X - outerRectangleSize.Y * (b * c + a * d) / (2 * c * d);
+				if (eps2 >= 0 && eps2 < outerRectangleSize.X)
 				{
-					var denominator = cosPhi * cosPhi - sinPhi * sinPhi;
-					return new PointD2D(
-							Math.Abs((outerRectangleSize.Y * sinPhi - outerRectangleSize.X * cosPhi) / denominator),
-							Math.Abs((outerRectangleSize.Y * cosPhi - outerRectangleSize.X * sinPhi) / denominator)
-							);
-				}
-				else
-				{
-					return new PointD2D(0.5 * outerRectangleSize.Y / sinPhi, 0.5 * outerRectangleSize.Y / cosPhi);
+					area = outerRectangleSize.Y * outerRectangleSize.Y / (4 * c * d);
+					x = outerRectangleSize.Y / (2 * c);
+					y = outerRectangleSize.Y / (2 * d);
+					if (maxArea < area)
+					{
+						maxArea = area;
+						sizeX = x;
+						sizeY = y;
+					}
 				}
 			}
-			else
+
 			{
-				throw new InvalidProgramException("Check this case, it should be handled anywhere above");
+				// solution3 (which does not touch the top and bottom walls of the outer rectangle
+				var eps3 = outerRectangleSize.Y - outerRectangleSize.X * (b * c + a * d) / (2 * a * b);
+				if (eps3 >= 0 && eps3 < outerRectangleSize.Y)
+				{
+					area = outerRectangleSize.X * outerRectangleSize.X / (4 * a * b);
+					x = outerRectangleSize.X / (2 * a);
+					y = outerRectangleSize.X / (2 * b);
+					if (maxArea < area)
+					{
+						maxArea = area;
+						sizeX = x;
+						sizeY = y;
+					}
+				}
 			}
-		}
 
-		public static RectangleD GetIncludedRotatedRectanglePositionSize(this PointD2D outerRectangleSize, double rotationAngleDegree)
-		{
-			var childSize = GetIncludedRotatedRectangleSize(outerRectangleSize, rotationAngleDegree);
+			RectangleD innerRect = new RectangleD();
+			innerRect.ExpandToInclude(new PointD2D(sx * sizeX + rx * sizeY, ry * sizeX + sy * sizeY));
+			innerRect.ExpandToInclude(new PointD2D(sx * sizeX, ry * sizeX));
+			innerRect.ExpandToInclude(new PointD2D(rx * sizeY, sy * sizeY));
 
-			var center = outerRectangleSize / 2;
-			rotationAngleDegree -= 360 * Math.Floor(rotationAngleDegree / 360);
-			var cosPhi = Math.Cos(Math.PI * rotationAngleDegree / 180);
-			var sinPhi = Math.Sin(Math.PI * rotationAngleDegree / 180);
+			var outerMiddle = outerRectangle.CenterCenter;
+			var innerMiddle = innerRect.CenterCenter;
 
-			var childLeftUpper = new PointD2D(-childSize.X / 2, -childSize.Y / 2);
-
-			// rotate childLeftUpper by Phi
-			var rotChildLeftUpper = new PointD2D(cosPhi * childLeftUpper.X + sinPhi * childLeftUpper.Y, -sinPhi * childLeftUpper.X + cosPhi * childLeftUpper.Y);
-
-			var childPos = rotChildLeftUpper + center;
-
-			return new RectangleD(childPos, childSize);
-		}
-
-		public static RectangleD GetIncludedRotatedRectanglePositionSize(this RectangleD outerRectangle, double rotationAngleDegree)
-		{
-			var rect = GetIncludedRotatedRectanglePositionSize(outerRectangle.Size, rotationAngleDegree);
-			return new RectangleD(rect.LeftTop + outerRectangle.LeftTop, rect.Size);
+			return new RectangleD((outerMiddle.X - innerMiddle.X), (outerMiddle.Y - innerMiddle.Y), sizeX, sizeY);
 		}
 	}
 }

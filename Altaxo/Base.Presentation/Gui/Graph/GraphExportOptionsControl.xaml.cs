@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -49,24 +51,16 @@ namespace Altaxo.Gui.Graph
 		private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
-
 		}
 
 		private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
-
 		}
 
 		private void EhExportAreaSelected(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_cbExportArea);
-
-		}
-
-		private void EhClipboardFormatSelected(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbClipboardFormat);
 		}
 
 		#region IGraphExportView Members
@@ -89,7 +83,6 @@ namespace Altaxo.Gui.Graph
 		public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_cbSourceResolution, list);
-
 		}
 
 		public void SetDestinationDpi(Altaxo.Collections.SelectableListNodeList list)
@@ -101,15 +94,14 @@ namespace Altaxo.Gui.Graph
 		{
 			set
 			{
-				_cbClipboardFormat.IsEnabled = value;
+				_guiClipboardFormatHost.IsEnabled = value;
 				_lblClipboardFormat.IsEnabled = value;
 			}
 		}
 
-
-		public void SetClipboardFormat(Altaxo.Collections.SelectableListNodeList list)
+		public void SetClipboardFormatView(object viewObject)
 		{
-			GuiHelper.Initialize(_cbClipboardFormat, list);
+			_guiClipboardFormatHost.Child = viewObject as UIElement;
 		}
 
 		public string SourceDpiResolution
@@ -134,7 +126,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
-
+		#endregion IGraphExportView Members
 	}
 }

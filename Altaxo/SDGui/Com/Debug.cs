@@ -8,7 +8,6 @@
 
 #endregion Copyright
 
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,118 +39,6 @@ namespace Altaxo.Com
 
 		/// <summary>Verbose infos, normal infos, warnings, errors and fatal errors are logged.</summary>
 		VerboseInfo = 5
-	}
-
-	/// <summary>
-	/// Collects errors, warnings, infos and debug information.
-	/// </summary>
-	public static class DebugToLog
-	{
-		private static ILog log;
-
-		private static ILog errorLog;
-
-		private static ILog statisticsLog;
-
-		static DebugToLog()
-		{
-			log4net.Config.XmlConfigurator.Configure();
-			log = log4net.LogManager.GetLogger(typeof(ComManager));
-
-			errorLog = log4net.LogManager.GetLogger("ErrorLogger");
-
-			statisticsLog = log4net.LogManager.GetLogger("StatisticsLogger");
-
-			if (log.IsDebugEnabled)
-				VerboseLevel = VerboseLevel.VerboseInfo;
-			else if (log.IsInfoEnabled)
-				VerboseLevel = VerboseLevel.Info;
-			else if (log.IsWarnEnabled)
-				VerboseLevel = VerboseLevel.Warnings;
-			else if (log.IsErrorEnabled)
-				VerboseLevel = VerboseLevel.Errors;
-			else if (log.IsFatalEnabled)
-				VerboseLevel = VerboseLevel.FatalErrors;
-			else
-				VerboseLevel = VerboseLevel.None;
-		}
-
-		/// <summary>
-		/// Determines the amount of debug information that is logged.
-		/// </summary>
-		public static VerboseLevel VerboseLevel { get; private set; }
-
-		/// <summary>
-		/// Reports a fatal error.
-		/// </summary>
-		/// <param name="format">Format string.</param>
-		/// <param name="args">Additional arguments.</param>
-		public static void ReportFatalError(string format, params object[] args)
-		{
-			if (null != errorLog)
-				errorLog.FatalFormat(format, args);
-			else
-				log.FatalFormat(format, args);
-		}
-
-		/// <summary>
-		/// Reports an error.
-		/// </summary>
-		/// <param name="format">Format string.</param>
-		/// <param name="args">Additional arguments.</param>
-		public static void ReportError(string format, params object[] args)
-		{
-			if (null != errorLog)
-				errorLog.ErrorFormat(format, args);
-			else
-				log.ErrorFormat(format, args);
-		}
-
-		/// <summary>
-		/// Reports a warning.
-		/// </summary>
-		/// <param name="format">Format string.</param>
-		/// <param name="args">Additional arguments.</param>
-		public static void ReportWarning(string format, params object[] args)
-		{
-			if (null != errorLog)
-				errorLog.WarnFormat(format, args);
-			else
-				log.WarnFormat(format, args);
-		}
-
-		/// <summary>
-		/// Reports an informational message.
-		/// </summary>
-		/// <param name="format">Format string.</param>
-		/// <param name="args">Additional arguments.</param>
-		public static void ReportInfo(string format, params object[] args)
-		{
-			if (null != errorLog)
-				errorLog.InfoFormat(format, args);
-			else
-				log.InfoFormat(format, args);
-		}
-
-		/// <summary>
-		/// Reports a debug string.
-		/// </summary>
-		/// <param name="format">Format string.</param>
-		/// <param name="args">Additional arguments.</param>
-		public static void ReportDebug(string format, params object[] args)
-		{
-			log.DebugFormat(format, args);
-		}
-
-		/// <summary>
-		/// Reports a statistical information.
-		/// </summary>
-		/// <param name="format">Format string.</param>
-		/// <param name="args">Additional arguments.</param>
-		public static void ReportStatistics(string format, params object[] args)
-		{
-			statisticsLog.InfoFormat(format, args);
-		}
 	}
 
 	/// <summary>
@@ -193,7 +80,7 @@ namespace Altaxo.Com
 			stb.Append('\t');
 			stb.Append(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 			stb.Append('\t');
-			stb.AppendFormat("{0,15}",System.Threading.Thread.CurrentThread.Name ?? System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
+			stb.AppendFormat("{0,15}", System.Threading.Thread.CurrentThread.Name ?? System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
 			stb.Append('\t');
 			stb.AppendFormat(format, args);
 

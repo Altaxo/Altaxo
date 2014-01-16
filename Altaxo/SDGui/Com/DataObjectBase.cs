@@ -49,6 +49,15 @@ namespace Altaxo.Com
 		/// <returns><c>True</c> if the data could be provided, otherwise <c>False</c>.</returns>
 		protected abstract bool InternalGetDataHere(ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium);
 
+		/// <summary>
+		/// Converts this data object to a .NET data object (supports only those formats that can be supported by the .NET data object).
+		/// This base implementation just does nothing. You have to override this function in order to implement some functionality.
+		/// </summary>
+		/// <returns>The .NET data object.</returns>
+		public virtual void ConvertToNetDataObjectAndPutToClipboard()
+		{
+		}
+
 		#endregion Abstracts
 
 		#region Advise function

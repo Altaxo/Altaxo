@@ -1,16 +1,16 @@
 ﻿using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;  // For use of the GuidAttribute, ProgIdAttribute and ClassInterfaceAttribute.
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
-
 
 namespace Altaxo.Com
 {
+	using UnmanagedApi.Gdi32;
 	using UnmanagedApi.Ole32;
 	using UnmanagedApi.User32;
 
@@ -22,6 +22,34 @@ namespace Altaxo.Com
 		public static short CF_OBJECTDESCRIPTOR = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_OBJECTDESCRIPTOR);
 		public static short CF_LINKSRCDESCRIPTOR = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_LINKSRCDESCRIPTOR);
 
+		/// <summary>
+		/// Creates a new IStream as global data and renders data into it.
+		/// </summary>
+		/// <param name="tymed">The tymed. Used only to make sure we have the right tymed.</param>
+		/// <param name="RenderToStreamProcedure">The render to stream procedure.</param>
+		/// <returns>Global pointer to that stream.</returns>
+		public static IntPtr RenderToNewStream(TYMED tymed, Action<IStream> RenderToStreamProcedure)
+		{
+			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ISTREAM);
+			IStream strm;
+			int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
+			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
+			RenderToStreamProcedure(strm);
+			return Marshal.GetIUnknownForObject(strm);  // Increments the reference count
+		}
+
+		public static IntPtr RenderToNewStream(TYMED tymed, Action<System.IO.Stream> RenderToStreamProcedure)
+		{
+			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ISTREAM);
+			IStream strm;
+			int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
+			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
+			using (var strmWrapper = new ComStreamWrapper(strm, true))
+			{
+				RenderToStreamProcedure(strmWrapper);
+			}
+			return Marshal.GetIUnknownForObject(strm);  // Increments the reference count
+		}
 
 		/// <summary>
 		/// Creates a new stream and renders the moniker into this stream. This function is intended for use with GetData(), but (!) not with GetDataHere().
@@ -272,8 +300,8 @@ namespace Altaxo.Com
 		/// <param name="docSizeX">The document size x (in points = 1/72 inch).</param>
 		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
 		/// <param name="drawingRoutine">The drawing routine. The first argument is the graphics context of the meta file.</param>
-		/// <returns>The handle to the newly created metafile.</returns>
-		public static IntPtr RenderEnhMetaFile(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
+		/// <returns>The newly created metafile.</returns>
+		public static System.Drawing.Imaging.Metafile RenderEnhMetafile(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
 		{
 			Metafile mf;
 			using (var pd = new System.Drawing.Printing.PrintDocument())
@@ -283,10 +311,60 @@ namespace Altaxo.Com
 					mf = RenderEnhMetafile(grfx, docSizeX, docSizeY, drawingRoutine);
 				}
 			}
+			return mf;
+		}
+
+		/// <summary>
+		/// Creates a new metafile and renders some graphics into it.
+		/// </summary>
+		/// <param name="docSizeX">The document size x (in points = 1/72 inch).</param>
+		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
+		/// <param name="drawingRoutine">The drawing routine. The first argument is the graphics context of the meta file.</param>
+		/// <returns>The handle to the newly created metafile.</returns>
+		public static IntPtr RenderEnhMetafileIntPtr(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
+		{
+			Metafile mf = RenderEnhMetafile(docSizeX, docSizeY, drawingRoutine);
 			return mf.GetHenhmetafile();
 		}
 
+		#endregion Metafile rendering
 
-		#endregion
+		#region Dropfiles rendering
+
+		/// <summary>
+		/// Renders the file names in a DROPFILE structure that can be used along with the CF_DROP.
+		/// </summary>
+		/// <param name="fileNames">The file names.</param>
+		/// <returns>A pointer to a global memory handle containing the DROPFILES structure with the file names appended behind.</returns>
+		public static IntPtr RenderFiles(IEnumerable<string> fileNames)
+		{
+			// build array with zero terminated file names and double zero at the end
+			var str = new List<byte>();
+			var enc = System.Text.Encoding.Unicode;
+			foreach (var fileName in fileNames)
+			{
+				str.AddRange(enc.GetBytes(fileName));
+				str.AddRange(enc.GetBytes("\0")); // Terminate each fileName with a zero
+			}
+			str.AddRange(enc.GetBytes("\0")); // Terminate with an additional zero
+			var byteData = str.ToArray();
+
+			// Allocate and get pointer to global memory
+			DROPFILES dropFiles = new DROPFILES();
+			int totalLength = Marshal.SizeOf(dropFiles) + byteData.Length;
+			var ipGlobal = Marshal.AllocHGlobal(totalLength);
+			if (ipGlobal != IntPtr.Zero)
+			{
+				// Build DROPFILES structure in global memory.
+				dropFiles.pFiles = Marshal.SizeOf(dropFiles);
+				dropFiles.fWide = 1; // for unicode-encoding
+				Marshal.StructureToPtr(dropFiles, ipGlobal, true);
+				IntPtr ipNew = new IntPtr(ipGlobal.ToInt32() + Marshal.SizeOf(dropFiles));
+				Marshal.Copy(byteData, 0, ipNew, byteData.Length);
+			}
+			return ipGlobal;
+		}
+
+		#endregion Dropfiles rendering
 	}
 }

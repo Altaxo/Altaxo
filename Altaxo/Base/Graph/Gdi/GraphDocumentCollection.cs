@@ -263,7 +263,11 @@ namespace Altaxo.Graph.Gdi
 			if (theGraph != null && theGraph.Name != null)
 			{
 				GraphDocument gr = (GraphDocument)m_GraphsByName[theGraph.Name];
-				if (gr.Equals(theGraph))
+
+				if (null != Current.ComManager && object.ReferenceEquals(gr, Current.ComManager.EmbeddedObject)) // test if the graph is currently the embedded Com object
+					return; // it is not allowed to remove the current embedded graph object.
+
+				if (object.ReferenceEquals(gr, theGraph))
 				{
 					m_GraphsByName.Remove(theGraph.Name);
 					theGraph.ParentObject = null;

@@ -27,11 +27,13 @@ namespace Altaxo.Com
 
 		private GarbageCollector _garbageCollector;
 
-		public Dictionary<GraphDocument, GraphDocumentLinkedComObject> _linkedDocumentsComObjects = new Dictionary<GraphDocument, GraphDocumentLinkedComObject>();
+		private Dictionary<GraphDocument, GraphDocumentLinkedComObject> _linkedDocumentsComObjects = new Dictionary<GraphDocument, GraphDocumentLinkedComObject>();
 
 		private GraphDocumentEmbeddedComObject _embeddedComObject;
 
-		public ProjectFileComObject _fileComObject;
+		private ProjectFileComObject _fileComObject;
+
+		protected WeakReference _lastUsedDataObject;
 
 		/// <summary>
 		/// The application is in embedded mode. This does <b>not</b> mean that the application was started with the -embedding flag in the command line! (Since this happens also when the application is
@@ -89,6 +91,7 @@ namespace Altaxo.Com
 		public GraphDocumentDataObject GetDocumentsDataObjectForGraphDocument(GraphDocument doc)
 		{
 			var newComObject = new GraphDocumentDataObject(doc, _fileComObject, this);
+			_lastUsedDataObject = new WeakReference(newComObject);
 			return newComObject;
 		}
 
@@ -120,6 +123,14 @@ namespace Altaxo.Com
 			System.Diagnostics.Debug.Assert(null != newDocument);
 			_embeddedComObject = documentComObject;
 			EnterEmbeddedObjectMode();
+		}
+
+		public IEnumerable<GraphDocumentLinkedComObject> GraphDocumentLinkedComObjects
+		{
+			get
+			{
+				return _linkedDocumentsComObjects.Values;
+			}
 		}
 
 		public bool IsInvokeRequiredForGuiThread()
@@ -529,12 +540,39 @@ namespace Altaxo.Com
 			GarbageCollectionThread.Start();
 		}
 
+		private void ConvertCurrentClipboardToPermanentDataObject()
+		{
+			if (IsInvokeRequiredForGuiThread())
+				throw new ApplicationException("This function requires to be in the Gui thread");
+
+			DataObjectBase lastUsedDataObject = null;
+			// convert the clipboard data object to a permanent .NET data object
+			if (null != _lastUsedDataObject && null != (lastUsedDataObject = _lastUsedDataObject.Target as DataObjectBase))
+			{
+				lastUsedDataObject.ConvertToNetDataObjectAndPutToClipboard();
+			}
+			lastUsedDataObject = null;
+		}
+
 		public void StopLocalServer()
 		{
 			if (IsInvokeRequiredForGuiThread())
+			{
+				InvokeGuiThread(ConvertCurrentClipboardToPermanentDataObject);
+			}
+			else // we are running in the Gui thread
+			{
+				ConvertCurrentClipboardToPermanentDataObject();
+			}
+
+			if (IsInvokeRequiredForGuiThread())
+			{
 				InternalStopLocalServer();
-			else
+			}
+			else // we are running in the Gui thread
+			{
 				FromGuiThreadExecute(InternalStopLocalServer);
+			}
 		}
 
 		/// <summary>
@@ -624,6 +662,7 @@ namespace Altaxo.Com
 				Debug.ReportInfo("StopLocalServer: GarbageCollector thread stopped.");
 #endif
 			}
+
 			IsActive = false;
 		}
 	}

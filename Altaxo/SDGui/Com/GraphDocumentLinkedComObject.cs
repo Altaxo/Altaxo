@@ -42,7 +42,7 @@ namespace Altaxo.Com
 #endif
 
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
-			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
+			_oleAdviseHolder = new ManagedOleAdviseHolderFM();
 
 			Document = graphDocument;
 
@@ -230,7 +230,7 @@ namespace Altaxo.Com
 			var docSize = _document.Size;
 			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, GraphExportArea.GraphSize, 300, 300))
 			{
-				return DataObjectHelper.RenderEnhMetaFile(docSize.X, docSize.Y,
+				return DataObjectHelper.RenderEnhMetafileIntPtr(docSize.X, docSize.Y,
 				(grfx) =>
 				{
 					grfx.DrawImage(bmp, 0, 0);

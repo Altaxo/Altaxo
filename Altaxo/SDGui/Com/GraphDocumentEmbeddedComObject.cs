@@ -47,11 +47,19 @@ namespace Altaxo.Com
 			// instead, we let the FileComObject watch if documents are renamed and then let it call the function EhDocumentRenamed here in this instance
 
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
-			_oleAdviseHolder = new ManagedOleAdviseHolderUO();
+			_oleAdviseHolder = new ManagedOleAdviseHolderFM();
 		}
 
 		public void Dispose()
 		{
+			if (_isDocumentDirty)
+			{
+#if COMLOGGING
+				Debug.ReportInfo("{0}.Dispose Step 0 : Document is dirty -> Advise DataChanged", this.GetType().Name);
+#endif
+				SendAdvise_DataChanged();
+			}
+
 #if COMLOGGING
 			Debug.ReportInfo("{0}.Dispose Step 1 : SaveObject", this.GetType().Name);
 #endif
@@ -124,7 +132,7 @@ namespace Altaxo.Com
 
 			// see Brockschmidt Inside Ole 2nd edition, page 909
 			// we must send IDataAdviseHolder:SendOnDataChange
-			SendAdvise_DataChanged();
+			//SendAdvise_DataChanged();
 		}
 
 		/// <summary>
@@ -172,7 +180,7 @@ namespace Altaxo.Com
 			var docSize = _document.Size;
 			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, GraphExportArea.GraphSize, 300, 300))
 			{
-				return DataObjectHelper.RenderEnhMetaFile(docSize.X, docSize.Y,
+				return DataObjectHelper.RenderEnhMetafileIntPtr(docSize.X, docSize.Y,
 				(grfx) =>
 				{
 					grfx.DrawImage(bmp, 0, 0);

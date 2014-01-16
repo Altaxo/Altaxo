@@ -18,6 +18,8 @@ namespace Altaxo.Com
 		private string _graphDocumentName;
 		private Altaxo.Graph.PointD2D _graphDocumentSize;
 		private System.Drawing.Image _graphDocumentClipboardImage;
+		private string _graphDocumentDropdownFileName;
+		private GraphExportOptions _graphExportOptions;
 
 		public GraphDocumentDataObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 			: base(comManager)
@@ -29,7 +31,10 @@ namespace Altaxo.Com
 
 			_graphDocumentName = graphDocument.Name;
 			_graphDocumentSize = graphDocument.Size;
-			_graphDocumentClipboardImage = Altaxo.Graph.Gdi.GraphDocumentClipboardActions.GetImageForClipbard(graphDocument);
+
+			_graphExportOptions = new GraphExportOptions();
+			_graphExportOptions.CopyFrom(GraphDocumentClipboardActions.CopyPageOptions);
+			GraphDocumentClipboardActions.GetImageForClipboard(graphDocument, _graphExportOptions, out _graphDocumentClipboardImage, out _graphDocumentDropdownFileName);
 			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
 			_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument);
 		}
@@ -49,11 +54,30 @@ namespace Altaxo.Com
 			{
 				var list = new List<Rendering>();
 
-				list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
-				list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
-				list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+				if (_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject))
+				{
+					list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
+					list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
+				}
 
-				if (!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
+				if ((_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile) || _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
+				{
+					list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+				}
+
+				if (_graphDocumentClipboardImage is System.Drawing.Bitmap)
+				{
+					list.Add(new Rendering(CF.CF_BITMAP, TYMED.TYMED_GDI, RenderBitmap));
+				}
+
+				if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName))
+				{
+					list.Add(new Rendering(CF.CF_HDROP, TYMED.TYMED_HGLOBAL, RenderBitmapAsDropFile));
+				}
+
+				if (
+					_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject) &&
+					!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
 				{
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderMoniker));
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderLinkedObjectDescriptor));
@@ -61,6 +85,39 @@ namespace Altaxo.Com
 
 				return list;
 			}
+		}
+
+		public override void ConvertToNetDataObjectAndPutToClipboard()
+		{
+			var result = new System.Windows.Forms.DataObject();
+
+			if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
+			{
+				result.SetImage(_graphDocumentClipboardImage);
+			}
+			else if (_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
+			{
+				result.SetImage(DataObjectHelper.RenderEnhMetafile(_graphDocumentSize.X, _graphDocumentSize.Y,
+				(grfx) =>
+				{
+					grfx.DrawImage(_graphDocumentClipboardImage, 0, 0);
+				}
+				));
+			}
+
+			if (_graphDocumentClipboardImage is System.Drawing.Bitmap)
+			{
+				result.SetImage(_graphDocumentClipboardImage);
+			}
+
+			if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName))
+			{
+				var coll = new System.Collections.Specialized.StringCollection();
+				coll.Add(_graphDocumentDropdownFileName);
+				result.SetFileDropList(coll);
+			}
+
+			System.Windows.Forms.Clipboard.SetDataObject(result, true);
 		}
 
 		protected override ManagedDataAdviseHolder DataAdviseHolder
@@ -113,14 +170,56 @@ namespace Altaxo.Com
 #endif
 
 			if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
-				return ((System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage).GetHenhmetafile();
+			{
+				var mf = (System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage;
+				var mfCloned = (System.Drawing.Imaging.Metafile)mf.Clone();
+				return mfCloned.GetHenhmetafile();
+			}
 			else
-				return DataObjectHelper.RenderEnhMetaFile(_graphDocumentSize.X, _graphDocumentSize.Y,
+			{
+				return DataObjectHelper.RenderEnhMetafileIntPtr(_graphDocumentSize.X, _graphDocumentSize.Y,
 				(grfx) =>
 				{
 					grfx.DrawImage(_graphDocumentClipboardImage, 0, 0);
 				}
 				);
+			}
+		}
+
+		private IntPtr RenderBitmap(TYMED tymed)
+		{
+			if (_graphDocumentClipboardImage is System.Drawing.Bitmap)
+			{
+				var bmp = _graphDocumentClipboardImage as System.Drawing.Bitmap;
+				var bmpCloned = (System.Drawing.Bitmap)bmp.Clone();
+				return bmpCloned.GetHbitmap();
+			}
+			else if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
+			{
+				var mf = (System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage;
+				int dpi = 300;
+				int pixelsX = (int)(dpi * _graphDocumentSize.X / 72.0);
+				int pixelsY = (int)(dpi * _graphDocumentSize.Y / 72.0);
+				var bmp = new System.Drawing.Bitmap(pixelsX, pixelsY, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+				bmp.SetResolution(dpi, dpi);
+				using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
+				{
+					g.PageUnit = System.Drawing.GraphicsUnit.Pixel;
+					g.DrawImage(mf, new System.Drawing.Rectangle(0, 0, pixelsX, pixelsY));
+				}
+
+				return bmp.GetHbitmap();
+			}
+			return IntPtr.Zero;
+		}
+
+		private IntPtr RenderBitmapAsDropFile(TYMED tymed)
+		{
+			if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName))
+			{
+				return DataObjectHelper.RenderFiles(new string[] { _graphDocumentDropdownFileName });
+			}
+			return IntPtr.Zero;
 		}
 
 		private IntPtr RenderMoniker(TYMED tymed)

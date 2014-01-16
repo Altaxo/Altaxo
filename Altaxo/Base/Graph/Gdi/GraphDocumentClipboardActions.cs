@@ -95,12 +95,11 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		/// <summary>
 		/// Get the image that should be placed on the clipboard.
 		/// </summary>
 		/// <param name="doc">The graph document to render.</param>
-		public static Image GetImageForClipbard(this GraphDocument doc)
+		public static Image GetImageForClipboard(this GraphDocument doc)
 		{
 			var options = CopyPageOptions;
 			if (options.ImageFormat == ImageFormat.Emf || options.ImageFormat == ImageFormat.Wmf)
@@ -110,6 +109,71 @@ namespace Altaxo.Graph.Gdi
 			else
 			{
 				return GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			}
+		}
+
+		/// <summary>
+		/// Renders the graph document to an image intended for the clipboard. If the image should also be copied as dropdown file, the image is saved into a temporary file,
+		/// and the fileName of the temporary file is returned as output parameter.
+		/// </summary>
+		/// <param name="doc">The graph document to export.</param>
+		/// <param name="image">Output: the rendered image of the graph document. Is either a metafile or a bitmap dependend on the export options.</param>
+		/// <param name="fileName">Output: name of the file for the dropdown list, or null if the image should not be copyied as dropdown file.</param>
+		public static void GetImageForClipboard(this GraphDocument doc, out Image image, out string fileName)
+		{
+			GetImageForClipboard(doc, CopyPageOptions, out image, out fileName);
+		}
+
+		/// <summary>
+		/// Renders the graph document to an image intended for the clipboard. If the image should also be copied as dropdown file, the image is saved into a temporary file,
+		/// and the fileName of the temporary file is returned as output parameter.
+		/// </summary>
+		/// <param name="doc">The graph document to export.</param>
+		/// <param name="image">Output: the rendered image of the graph document. Is either a metafile or a bitmap dependend on the export options.</param>
+		/// <param name="fileName">Output: name of the file for the dropdown list, or null if the image should not be copyied as dropdown file.</param>
+		/// <param name="options">The export and render options for the graph document.</param>
+		public static void GetImageForClipboard(this GraphDocument doc, GraphExportOptions options, out Image image, out string fileName)
+		{
+			bool isMetafile = options.ImageFormat == ImageFormat.Emf || options.ImageFormat == ImageFormat.Wmf;
+
+			fileName = null;
+			if (options.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsDropDownList))
+			{
+				string filepath = System.IO.Path.GetTempPath();
+				if (isMetafile)
+					fileName = filepath + "AltaxoClipboardMetafile.emf";
+				else
+					fileName = filepath + "AltaxoGraphCopyPage" + options.GetDefaultFileNameExtension();
+
+				if (System.IO.File.Exists(fileName))
+					System.IO.File.Delete(fileName);
+			}
+
+			if (isMetafile)
+			{
+				Metafile mf;
+				if (!string.IsNullOrEmpty(fileName))
+				{
+					using (System.IO.Stream str = new System.IO.FileStream(fileName, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
+					{
+						mf = GraphDocumentExportActions.RenderAsMetafile(doc, str, options.BackgroundBrush, options.PixelFormat, GraphExportArea.PrintableArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+						str.Close();
+					}
+				}
+				else
+				{
+					mf = GraphDocumentExportActions.RenderAsMetafile(doc, null, options.BackgroundBrush, options.PixelFormat, GraphExportArea.PrintableArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+				}
+				image = mf;
+			}
+			else
+			{
+				System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+
+				if (!string.IsNullOrEmpty(fileName))
+					bitmap.Save(fileName, options.ImageFormat);
+
+				image = bitmap;
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,48 +19,45 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System.Diagnostics;
-using System.CodeDom.Compiler;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.Xml;
+#endregion Copyright
 
-using ICSharpCode.SharpDevelop;
 using ICSharpCode.Core;
+
 //using ICSharpCode.Core.WinForms;
 using ICSharpCode.Core.Presentation;
-
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
-
-
+using System.CodeDom.Compiler;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.Xml;
 
 namespace Altaxo.Gui.SharpDevelop
 {
 	public class AltaxoSDWorkbench : Altaxo.Gui.Common.IWorkbench, ICSharpCode.SharpDevelop.Gui.IWorkbench // , System.Windows.Forms.IWin32Window
 	{
-		WpfWorkbench _wb;
+		private WpfWorkbench _wb;
 
 		#region "Serialization"
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "ICSharpCode.SharpDevelop.Gui.Workbench1", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoSDWorkbench), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				AltaxoSDWorkbench s = (AltaxoSDWorkbench)obj;
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				return o;
 			}
 		}
 
-		#endregion
-
-
+		#endregion "Serialization"
 
 		public AltaxoSDWorkbench()
 		{
@@ -71,13 +69,22 @@ namespace Altaxo.Gui.SharpDevelop
 
 			// events
 			_wb.Closing += EhOnClosing;
+
+			_wb.Initialized += EhInitialized;
 		}
 
-		void EhOnClosing(object sender, CancelEventArgs e)
+		private void EhInitialized(object sender, System.EventArgs e)
+		{
+			_wb.Initialized -= EhInitialized;
+			if (Current.ComManager != null && Current.ComManager.ApplicationWasStartedWithEmbeddingArg)
+				_wb.Visibility = System.Windows.Visibility.Hidden;
+		}
+
+		private void EhOnClosing(object sender, CancelEventArgs e)
 		{
 			Altaxo.Main.IProjectService projectService = Altaxo.Current.ProjectService;
 
-			if (projectService != null)
+			if (projectService != null && (Current.ComManager == null || Current.ComManager.IsInEmbeddedMode == false))
 			{
 				if (projectService.CurrentOpenProject != null && projectService.CurrentOpenProject.IsDirty)
 				{
@@ -89,18 +96,18 @@ namespace Altaxo.Gui.SharpDevelop
 			{
 				// Stop the Com-Server already here, it seems to be too late if we try to stop it in OnClosed()
 				var comManager = Current.ComManager as Altaxo.Com.ComManager;
-				if(null!=comManager)
+				if (null != comManager)
 					comManager.StopLocalServer();
 			}
 		}
 
 		#region IWorkbench Members
-		
+
 		public System.Windows.Forms.IWin32Window MainWin32Window
 		{
 			get { return _wb.MainWin32Window; }
 		}
-		
+
 		public ISynchronizeInvoke SynchronizingObject
 		{
 			get { return _wb.SynchronizingObject; }
@@ -270,7 +277,7 @@ namespace Altaxo.Gui.SharpDevelop
 			}
 		}
 
-		#endregion
+		#endregion IWorkbench Members
 
 		#region IMementoCapable Members
 
@@ -284,7 +291,7 @@ namespace Altaxo.Gui.SharpDevelop
 			_wb.SetMemento(memento);
 		}
 
-		#endregion
+		#endregion IMementoCapable Members
 
 		#region IWin32Window Members
 
@@ -293,7 +300,7 @@ namespace Altaxo.Gui.SharpDevelop
 			get { return ((IWin32Window)_wb).Handle; }
 		}
 
-		#endregion
+		#endregion IWin32Window Members
 
 		#region Altaxo.Gui.Common.IWorkbench Members
 
@@ -336,7 +343,6 @@ namespace Altaxo.Gui.SharpDevelop
 			return true;
 		}
 
-
 		public event System.EventHandler ActiveWorkbenchWindowChanged
 		{
 			add
@@ -353,34 +359,49 @@ namespace Altaxo.Gui.SharpDevelop
 		{
 			Current.Gui.Execute(EhProjectChanged_Nosync, sender, e);
 		}
+
 		private void EhProjectChanged_Nosync(object sender, Altaxo.Main.ProjectEventArgs e)
 		{
 			// UpdateMenu(null, null); // 2006-11-07 hope this is not needed any longer because of the menu update timer
 			System.Text.StringBuilder title = new System.Text.StringBuilder();
-			title.Append(ResourceService.GetString("MainWindow.DialogName"));
-			if (Altaxo.Current.ProjectService != null)
+
+			if (Current.ComManager != null && Current.ComManager.IsInEmbeddedMode && null != Current.ComManager.EmbeddedObject)
 			{
-				if (Altaxo.Current.ProjectService.CurrentProjectFileName == null)
-				{
-					title.Append(" - ");
-					title.Append(ResourceService.GetString("Altaxo.Project.UntitledName"));
-				}
-				else
-				{
-					title.Append(" - ");
-					title.Append(Altaxo.Current.ProjectService.CurrentProjectFileName);
-				}
+				// we are in embedded mode
+				title.Append(ResourceService.GetString("MainWindow.DialogName"));
+				title.Append(" ");
+				title.Append(Current.ComManager.EmbeddedObject.GetType().Name);
 				if (Altaxo.Current.ProjectService.CurrentOpenProject != null && Altaxo.Current.ProjectService.CurrentOpenProject.IsDirty)
 					title.Append("*");
+
+				title.Append(" in ");
+				title.Append(Current.ComManager.ContainerDocumentName);
+				title.Append(" - ");
+				title.Append(Current.ComManager.ContainerApplicationName);
+			}
+			else // normal, non-embedded mode
+			{
+				title.Append(ResourceService.GetString("MainWindow.DialogName"));
+				if (Altaxo.Current.ProjectService != null)
+				{
+					if (Altaxo.Current.ProjectService.CurrentProjectFileName == null)
+					{
+						title.Append(" - ");
+						title.Append(ResourceService.GetString("Altaxo.Project.UntitledName"));
+					}
+					else
+					{
+						title.Append(" - ");
+						title.Append(Altaxo.Current.ProjectService.CurrentProjectFileName);
+					}
+					if (Altaxo.Current.ProjectService.CurrentOpenProject != null && Altaxo.Current.ProjectService.CurrentOpenProject.IsDirty)
+						title.Append("*");
+				}
 			}
 
 			this.MainWindow.Title = title.ToString();
 		}
 
-		#endregion
-
-
-
-
+		#endregion Altaxo.Gui.Common.IWorkbench Members
 	}
 }

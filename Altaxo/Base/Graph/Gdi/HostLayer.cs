@@ -690,7 +690,10 @@ namespace Altaxo.Graph.Gdi
 
 					if (gps.ForceFitIntoCell)
 					{
-						newRect = RectangleExtensions.GetIncludedRotatedRectanglePositionSize(gridRect, this.Rotation);
+						var t = new TransformationMatrix2D();
+						t.SetTranslationRotationShearxScale(0, 0, -this.Rotation, this.ShearX, this.ScaleX, this.ScaleY);
+						var ele = t.Elements;
+						newRect = RectangleExtensions.GetIncludedTransformedRectangle(gridRect, t.SX, t.RX, t.RY, t.SY);
 					}
 				}
 				else // ParentLayer is null, this is probably the root layer, thus use the _cachedParentLayersSize
@@ -883,7 +886,7 @@ namespace Altaxo.Graph.Gdi
 			OnGraphObjectsCollectionInstanceInitialized();
 		}
 
-		void EhGraphObjectCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void EhGraphObjectCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
 			OnChanged();
 		}

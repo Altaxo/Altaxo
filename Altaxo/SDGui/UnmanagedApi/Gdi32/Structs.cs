@@ -74,4 +74,13 @@ namespace Altaxo.UnmanagedApi.Gdi32
 		public int cx;
 		public int cy;
 	}
+
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	public struct DROPFILES
+	{
+		public Int32 pFiles;
+		public System.Drawing.Point pt;
+		public UInt32 fNC;
+		public UInt32 fWide;
+	}
 }

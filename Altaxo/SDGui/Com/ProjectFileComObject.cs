@@ -96,7 +96,7 @@ namespace Altaxo.Com
 		{
 			if (changeType == Main.NamedObjectCollectionChangeType.ItemRenamed)
 			{
-				foreach (var comObj in _comManager._linkedDocumentsComObjects.Values)
+				foreach (var comObj in _comManager.GraphDocumentLinkedComObjects)
 				{
 					if (object.ReferenceEquals(comObj.Document, item))
 						comObj.EhDocumentRenamed(_fileMoniker);

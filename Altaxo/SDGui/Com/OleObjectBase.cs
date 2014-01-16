@@ -15,7 +15,7 @@ namespace Altaxo.Com
 		// Manages our communication with the container.
 		protected IOleClientSite _clientSite;
 
-		protected ManagedOleAdviseHolderUO _oleAdviseHolder;
+		protected ManagedOleAdviseHolderFM _oleAdviseHolder;
 
 		/// <summary>
 		/// Value indicating whether the internal document is out of sync with the document linked or embedded in the container application.

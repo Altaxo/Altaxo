@@ -18,5 +18,5 @@ namespace Altaxo.UnmanagedApi.Ole32
 		public int dwFullUserTypeName;
 		public int dwSrcOfCopy;
 		/* variable sized string data may appear here */
-	};
+	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo;
 using Altaxo.Main;
 using ICSharpCode.Core;
 using ICSharpCode.Core.Presentation;
-using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpZipLib.Zip;
+using System;
 
 namespace Altaxo.Main.Commands
 {
@@ -43,6 +45,7 @@ namespace Altaxo.Main.Commands
 			Current.ProjectService.OpenProject(fileName, false);
 		}
 	}
+
 	/// <summary>
 	/// Loader for altaxo project files
 	/// </summary>
@@ -53,6 +56,7 @@ namespace Altaxo.Main.Commands
 			CreateNewWorksheetOrGraphFromFile.OpenWorksheetOrGraph(fileName);
 		}
 	}
+
 	/// <summary>
 	/// Loader for altaxo project files
 	/// </summary>
@@ -63,7 +67,6 @@ namespace Altaxo.Main.Commands
 			CreateNewWorksheetOrGraphFromFile.OpenWorksheetOrGraph(fileName);
 		}
 	}
-
 
 	public class CreateNewWorksheet : AbstractMenuCommand
 	{
@@ -154,11 +157,8 @@ namespace Altaxo.Main.Commands
 			}
 		}
 
-
-
 		public override void Run()
 		{
-
 			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
 
 			openFileDialog1.Filter = "Worksheet or graph files (*.axowks;*.axogrp)|*.axowks;*.axogrp|All files (*.*)|*.*";
@@ -169,17 +169,13 @@ namespace Altaxo.Main.Commands
 			{
 				OpenWorksheetOrGraph(openFileDialog1.FileName);
 			}
-
 		}
 	}
-
 
 	public class FileOpen : AbstractMenuCommand
 	{
 		public override void Run()
 		{
-
-
 			if (Current.Project.IsDirty)
 			{
 				System.ComponentModel.CancelEventArgs cancelargs = new System.ComponentModel.CancelEventArgs();
@@ -191,14 +187,11 @@ namespace Altaxo.Main.Commands
 			bool saveDirtyState = Current.Project.IsDirty; // save the dirty state of the project in case the user cancels the open file dialog
 			Current.Project.IsDirty = false; // set document to non-dirty
 
-
 			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
 
 			openFileDialog1.Filter = "Altaxo project files (*.axoprj)|*.axoprj|All files (*.*)|*.*";
 			openFileDialog1.FilterIndex = 1;
 			openFileDialog1.RestoreDirectory = true;
-
-
 
 			if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
 			{
@@ -211,7 +204,6 @@ namespace Altaxo.Main.Commands
 			}
 		}
 	}
-
 
 	public class FileSaveAs : AbstractMenuCommand
 	{
@@ -232,6 +224,18 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
+	/// <summary>
+	/// This command is used if in embedded object mode. It saves the current project to a file,
+	/// but don't set the current file name of the project (in project service). Furthermore, the title in the title bar is not influenced by the saving.
+	/// </summary>
+	public class FileSaveCopyAs : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Current.ProjectService.SaveProjectCoypAs();
+		}
+	}
+
 	public class FileImportAscii : AbstractMenuCommand
 	{
 		public override void Run()
@@ -247,10 +251,9 @@ namespace Altaxo.Main.Commands
 			}
 			else
 			{
-				Altaxo.Data.FileCommands.ShowImportAsciiDialog(null,true,false);
+				Altaxo.Data.FileCommands.ShowImportAsciiDialog(null, true, false);
 			}
 		}
-
 	}
 
 	public class FileImportAsciiWithOptions : AbstractMenuCommand
@@ -271,9 +274,7 @@ namespace Altaxo.Main.Commands
 				Altaxo.Data.FileCommands.ShowImportAsciiDialogAndOptions(null, true, false);
 			}
 		}
-
 	}
-
 
 	public class CloseProject : AbstractMenuCommand
 	{
@@ -308,7 +309,7 @@ namespace Altaxo.Main.Commands
 					items[i].Click += delegate
 					{
 						// Original SharpDevelop: ProjectService.LoadSolution(recentProject);
-						FileUtility.ObservedLoad(new NamedFileOperationDelegate(fileName => Current.ProjectService.OpenProject(fileName,false)), recentProject);
+						FileUtility.ObservedLoad(new NamedFileOperationDelegate(fileName => Current.ProjectService.OpenProject(fileName, false)), recentProject);
 					};
 				}
 				return items;
@@ -322,7 +323,6 @@ namespace Altaxo.Main.Commands
 			}
 
 			/*
-
 
 			if (recentOpen.RecentProject.Count > 0)
 			{
@@ -384,7 +384,6 @@ namespace Altaxo.Main.Commands
 					//Current.ProjectService.
 				}
 			}
-
 		}
 	}
 
@@ -419,10 +418,8 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-
 	public class NewInstanceScript : AbstractMenuCommand
 	{
-
 		public override void Run()
 		{
 			Altaxo.Scripting.IScriptText script = null; // or load it from somewhere
@@ -443,8 +440,6 @@ namespace Altaxo.Main.Commands
 				else
 					script.ScriptText = scripttext;
 			}
-
-
 
 			object[] args = new object[] { script, new Altaxo.Gui.Scripting.ScriptExecutionHandler(this.EhScriptExecution) };
 			if (Current.Gui.ShowDialog(args, "New instance script"))
@@ -468,12 +463,13 @@ namespace Altaxo.Main.Commands
 				} while (null != errors);
 			}
 		}
+
 		public bool EhScriptExecution(Altaxo.Scripting.IScriptText script, IProgressReporter reporter)
 		{
 			return ((Altaxo.Scripting.ProgramInstanceScript)script).Execute(reporter);
 		}
 
-		string SaveScriptText(string filename, string text)
+		private string SaveScriptText(string filename, string text)
 		{
 			try
 			{
@@ -492,7 +488,7 @@ namespace Altaxo.Main.Commands
 			return null;
 		}
 
-		string OpenScriptText(string filename, out string scripttext)
+		private string OpenScriptText(string filename, out string scripttext)
 		{
 			scripttext = null;
 			try
@@ -512,5 +508,4 @@ namespace Altaxo.Main.Commands
 			return null;
 		}
 	}
-
 }

@@ -158,6 +158,12 @@ namespace Altaxo.Main
 		void SaveProjectAs();
 
 		/// <summary>
+		/// This command is used if in embedded object mode. It saves the current project to a file,
+		/// but don't set the current file name of the project (in project service). Furthermore, the title in the title bar is not influenced by the saving.
+		/// </summary>
+		void SaveProjectCoypAs();
+
+		/// <summary>
 		/// Saves the project under the given file name.
 		/// </summary>
 		/// <param name="fileName">Name of the file.</param>

@@ -460,7 +460,7 @@ namespace Altaxo.Graph.Gdi
 
 			System.Drawing.Imaging.Metafile mf;
 
-			if(null != stream)
+			if (null != stream)
 				mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, metaFileBounds, MetafileFrameUnit.Point);
 			else
 				mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, MetafileFrameUnit.Point);
@@ -567,7 +567,6 @@ namespace Altaxo.Graph.Gdi
 
 		#region with filename
 
-
 		public static Metafile RenderAsMetafile(this GraphDocument doc, string filename, GraphExportOptions options)
 		{
 			Metafile mf;
@@ -667,14 +666,24 @@ namespace Altaxo.Graph.Gdi
 	[Flags]
 	public enum GraphCopyPageClipboardFormat
 	{
-		/// <summary>Store both as native image and store in temporary file and set the file name in the clipboard as DropDownList.</summary>
-		AsNativeAndDropDownList = 3,
-
 		/// <summary>Store as native image.</summary>
 		AsNative = 1,
 
 		/// <summary>Store in a temporary file and set the file name in the clipboard as DropDownList.</summary>
-		AsDropDownList = 2
+		AsDropDownList = 2,
+
+		/// <summary>
+		/// As bitmap wrapped in an enhanced metafile (not applicable if native image is a metafile or enhanced metafile).
+		/// </summary>
+		AsNativeWrappedInEnhancedMetafile = 4,
+
+		/// <summary>Copy the graph as Com object that can be embedded in another application</summary>
+		AsEmbeddedObject = 8,
+
+		/// <summary>
+		/// Copy the graph as Com object that can be linked to in another application (is only available if the project has a valid file name).
+		/// </summary>
+		AsLinkedObject = 16,
 	}
 
 	public class GraphExportOptions
@@ -684,12 +693,23 @@ namespace Altaxo.Graph.Gdi
 		private BrushX _backgroundBrush;
 		private double _sourceDpiResolution;
 		private double _destinationDpiResolution;
+		private GraphCopyPageClipboardFormat _clipboardFormat;
 
 		public GraphExportArea ExportArea { get; set; }
 
 		public bool IsIntentedForClipboardOperation { get; set; }
 
-		public GraphCopyPageClipboardFormat ClipboardFormat { get; set; }
+		public GraphCopyPageClipboardFormat ClipboardFormat
+		{
+			get { return _clipboardFormat; }
+			set
+			{
+				_clipboardFormat = value;
+
+				if (0 == (int)_clipboardFormat)
+					_clipboardFormat = GraphCopyPageClipboardFormat.AsNative;
+			}
+		}
 
 		public void CopyFrom(object fr)
 		{
@@ -719,7 +739,7 @@ namespace Altaxo.Graph.Gdi
 			this.DestinationDpiResolution = 300;
 			this.BackgroundBrush = null;
 			this.IsIntentedForClipboardOperation = false;
-			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNativeAndDropDownList;
+			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNative | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
 		}
 
 		public ImageFormat ImageFormat { get { return _imageFormat; } }

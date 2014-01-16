@@ -1,58 +1,59 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Graph.GraphExportOptionsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
  						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-             mc:Ignorable="d" 
-             >
+             mc:Ignorable="d"
+>
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,0,8,0"/>
-				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="Margin" Value="8,0,8,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
 		<Style TargetType="CheckBox">
 			<Style.Setters>
-				<Setter Property="VerticalAlignment" Value="Center"/>
+				<Setter Property="VerticalAlignment" Value="Center" />
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Content="Image format:"/>
-		<ComboBox x:Name="_cbImageFormat" Grid.Column="1" Grid.Row="0" SelectionChanged="EhImageFormatSelected"/>
-		<Label Grid.Column="0" Grid.Row="2" Content="Pixel format:"/>
-		<ComboBox x:Name="_cbPixelFormat" Grid.Column="1" Grid.Row="2" SelectionChanged="EhPixelFormatSelected"/>
-		<Label Grid.Column="0" Grid.Row="4" Content="Area to export:"/>
-		<ComboBox x:Name="_cbExportArea" Grid.Column="1" Grid.Row="4" SelectionChanged="EhExportAreaSelected"/>
-		<Label Grid.Column="0" Grid.Row="6" Content="Source dpi resolution:"/>
-		<ComboBox x:Name="_cbSourceResolution" Grid.Column="1" Grid.Row="6" IsEditable="True"/>
-		<Label Grid.Column="0" Grid.Row="8" Content="Destination dpi resolution:"/>
-		<ComboBox x:Name="_cbDestinationResolution" Grid.Column="1" Grid.Row="8" IsEditable="True"/>
-		<Label Grid.Column="0" Grid.Row="10" Content="Background:"/>
-		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="1" Grid.Row="10"/>
-		<Label x:Name="_lblClipboardFormat" Grid.Column="0" Grid.Row="12" Content="Clipboard format:"/>
-		<ComboBox x:Name="_cbClipboardFormat" Grid.Column="1" Grid.Row="12" SelectionChanged="EhClipboardFormatSelected"/>
+		<Label Grid.Column="0" Grid.Row="0" Content="Image format:" />
+		<ComboBox x:Name="_cbImageFormat" Grid.Column="1" Grid.Row="0" SelectionChanged="EhImageFormatSelected" />
+		<Label Grid.Column="0" Grid.Row="2" Content="Pixel format:" />
+		<ComboBox x:Name="_cbPixelFormat" Grid.Column="1" Grid.Row="2" SelectionChanged="EhPixelFormatSelected" />
+		<Label Grid.Column="0" Grid.Row="4" Content="Area to export:" />
+		<ComboBox x:Name="_cbExportArea" Grid.Column="1" Grid.Row="4" SelectionChanged="EhExportAreaSelected" />
+		<Label Grid.Column="0" Grid.Row="6" Content="Source dpi resolution:" />
+		<ComboBox x:Name="_cbSourceResolution" Grid.Column="1" Grid.Row="6" IsEditable="True" />
+		<Label Grid.Column="0" Grid.Row="8" Content="Destination dpi resolution:" />
+		<ComboBox x:Name="_cbDestinationResolution" Grid.Column="1" Grid.Row="8" IsEditable="True" />
+		<Label Grid.Column="0" Grid.Row="10" Content="Background:" />
+		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="1" Grid.Row="10" />
+		<Label x:Name="_lblClipboardFormat" Grid.Column="0" Grid.Row="12" Content="Clipboard format:" />
+		<Border x:Name="_guiClipboardFormatHost" Grid.Column="1" Grid.Row="12" />
 	</Grid>
 </UserControl>

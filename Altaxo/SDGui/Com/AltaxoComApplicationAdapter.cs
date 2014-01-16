@@ -42,13 +42,7 @@ namespace Altaxo.Com
 			Debug.ReportInfo("IOleObject.SetHostNames szContainerApp={0}, szContainerObj={1}", containerApplicationName, containerFileName);
 #endif
 
-			string title = string.Format("{0} - {1}", containerApplicationName, containerFileName);
-			BeginInvokeGuiThread(new Action(
-				() =>
-				{
-					((System.Windows.Window)Current.Workbench.ViewObject).Title = title;
-				})
-			);
+			Current.Workbench.EhProjectChanged(this, new Main.ProjectEventArgs(null)); // Set new title in title bar
 		}
 
 		/// <summary>
@@ -85,8 +79,11 @@ namespace Altaxo.Com
 #if COMLOGGING
 				Debug.ReportInfo("Make main window visible");
 #endif
-				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = true;
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Visible;
+				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = true;
+#if COMLOGGING
+				Debug.ReportInfo("Make main window visible - done!");
+#endif
 			});
 		}
 	}
