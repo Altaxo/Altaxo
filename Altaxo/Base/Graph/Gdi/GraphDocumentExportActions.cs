@@ -686,7 +686,7 @@ namespace Altaxo.Graph.Gdi
 		AsLinkedObject = 16,
 	}
 
-	public class GraphExportOptions
+	public class GraphExportOptions : Main.ICopyFrom
 	{
 		private ImageFormat _imageFormat;
 		private PixelFormat _pixelFormat;
@@ -711,35 +711,54 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public void CopyFrom(object fr)
+		public bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, fr))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			var from = fr as GraphExportOptions;
-			if (null == from)
-				throw new ArgumentException("Argument either null or has wrong type");
+			var from = obj as GraphExportOptions;
 
-			this._imageFormat = from.ImageFormat;
-			this._pixelFormat = from.PixelFormat;
-			this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
-			this.SourceDpiResolution = from.SourceDpiResolution;
-			this.DestinationDpiResolution = from.DestinationDpiResolution;
-			this.ExportArea = from.ExportArea;
-			this.IsIntentedForClipboardOperation = from.IsIntentedForClipboardOperation;
-			this.ClipboardFormat = from.ClipboardFormat;
+			if (null != from)
+			{
+				this._imageFormat = from.ImageFormat;
+				this._pixelFormat = from.PixelFormat;
+				this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
+				this.SourceDpiResolution = from.SourceDpiResolution;
+				this.DestinationDpiResolution = from.DestinationDpiResolution;
+				this.ExportArea = from.ExportArea;
+				this.IsIntentedForClipboardOperation = from.IsIntentedForClipboardOperation;
+				this.ClipboardFormat = from.ClipboardFormat;
+				return true;
+			}
+
+			return false;
 		}
 
 		public GraphExportOptions()
 		{
-			this._imageFormat = System.Drawing.Imaging.ImageFormat.Emf;
+			this._imageFormat = System.Drawing.Imaging.ImageFormat.Png;
 			this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
 			this.ExportArea = GraphExportArea.GraphSize;
 			this.SourceDpiResolution = 300;
 			this.DestinationDpiResolution = 300;
 			this.BackgroundBrush = null;
 			this.IsIntentedForClipboardOperation = false;
-			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNative | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
+			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNative | GraphCopyPageClipboardFormat.AsDropDownList | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
+		}
+
+		public GraphExportOptions(GraphExportOptions from)
+		{
+			CopyFrom(from);
+		}
+
+		object ICloneable.Clone()
+		{
+			return new GraphExportOptions(this);
+		}
+
+		public GraphExportOptions Clone()
+		{
+			return new GraphExportOptions(this);
 		}
 
 		public ImageFormat ImageFormat { get { return _imageFormat; } }

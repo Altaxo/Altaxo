@@ -345,6 +345,15 @@ namespace Altaxo.Com
 			RegistryKey key3 = null;
 			RegistryKey key4 = null;
 
+			RegistryValueKind applicationFileNameKind = RegistryValueKind.String;
+			string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+			string programFilesPath = System.Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (applicationFileName.ToUpperInvariant().StartsWith(programFilesPath.ToUpperInvariant()))
+			{
+				applicationFileNameKind = RegistryValueKind.ExpandString;
+				applicationFileName = "%ProgramFiles%" + applicationFileName.Substring(programFilesPath.Length);
+			}
+
 			try
 			{
 				{
@@ -356,10 +365,15 @@ namespace Altaxo.Com
 				{
 					// Register the project file Com object
 					key1 = root.CreateSubKey("Altaxo.Project"); // set ProgID
+					key1.SetValue("DefaultIcon", string.Format("{0},0", applicationFileName), applicationFileNameKind);
 					key2 = key1.CreateSubKey("NotInsertable");
 					key2 = key1.CreateSubKey("CLSID");
 					var fileComObject_IID = typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant();
 					key2.SetValue(null, fileComObject_IID);
+					key2 = key1.CreateSubKey("shell");
+					key3 = key2.CreateSubKey("open");
+					key4 = key3.CreateSubKey("command");
+					key4.SetValue(null, string.Format("\"{0}\" \"%1\"", applicationFileName), applicationFileNameKind);
 				}
 
 				{
@@ -367,7 +381,7 @@ namespace Altaxo.Com
 					key1 = root.CreateSubKey("CLSID\\" + typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant());
 					key1.SetValue(null, "Altaxo project");
 					key2 = key1.CreateSubKey("LocalServer32");
-					key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location);
+					key2.SetValue(null, applicationFileName, applicationFileNameKind);
 				}
 
 				{
@@ -385,7 +399,7 @@ namespace Altaxo.Com
 					key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
 
 					key2 = key1.CreateSubKey("LocalServer32");
-					key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location);
+					key2.SetValue(null, applicationFileName, applicationFileNameKind);
 
 					key2 = key1.CreateSubKey("InprocHandler32");
 					key2.SetValue(null, "OLE32.DLL"); // The entry InprocHandler32 is neccessary! Without this entry Word does not start the server. (Brockschmidt Inside Ole 2nd ed. says that it isn't neccessary).
@@ -407,7 +421,7 @@ namespace Altaxo.Com
 					key4.SetValue(null, "2,9,1,1"); // Bitmap on HGlobal in get-direction
 
 					key2 = key1.CreateSubKey("DefaultIcon");
-					key2.SetValue(null, System.Reflection.Assembly.GetEntryAssembly().Location + ",0");
+					key2.SetValue(null, string.Format("{0},0", applicationFileName), applicationFileNameKind);
 
 					key2 = key1.CreateSubKey("verb");
 					key3 = key2.CreateSubKey("0");
