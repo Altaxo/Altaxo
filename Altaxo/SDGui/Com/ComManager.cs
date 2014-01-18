@@ -281,6 +281,14 @@ namespace Altaxo.Com
 		{
 			try
 			{
+				{
+					// Test if we have write access to the registry
+					// note: it was not helpful (Windows 8.1, 2013-01-18) to use "Registry.ClassesRoot.OpenSubKey("CLSID", RegistryKeyPermissionCheck.ReadWriteSubTree);" -> it simply threw no exception if logged on as normal user!!
+					string testkeystring = "6F06713B-FFC4-46B7-BECF-7BC228AC9C0E";
+					Registry.ClassesRoot.CreateSubKey(testkeystring, RegistryKeyPermissionCheck.ReadWriteSubTree).Close();
+					Registry.ClassesRoot.DeleteSubKeyTree(testkeystring, false);
+				}
+
 				Register(Registry.ClassesRoot);
 				return; // if it was successful to register the computer account, we return
 			}

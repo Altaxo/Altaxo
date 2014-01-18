@@ -104,11 +104,11 @@ namespace Altaxo.Graph.Gdi
 			var options = CopyPageOptions;
 			if (options.ImageFormat == ImageFormat.Emf || options.ImageFormat == ImageFormat.Wmf)
 			{
-				return GraphDocumentExportActions.RenderAsMetafile(doc, null, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+				return GraphDocumentExportActions.RenderAsMetafile(doc, null, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 			}
 			else
 			{
-				return GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+				return GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 			}
 		}
 
@@ -156,19 +156,19 @@ namespace Altaxo.Graph.Gdi
 				{
 					using (System.IO.Stream str = new System.IO.FileStream(fileName, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
 					{
-						mf = GraphDocumentExportActions.RenderAsMetafile(doc, str, options.BackgroundBrush, options.PixelFormat, GraphExportArea.PrintableArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+						mf = GraphDocumentExportActions.RenderAsMetafile(doc, str, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 						str.Close();
 					}
 				}
 				else
 				{
-					mf = GraphDocumentExportActions.RenderAsMetafile(doc, null, options.BackgroundBrush, options.PixelFormat, GraphExportArea.PrintableArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+					mf = GraphDocumentExportActions.RenderAsMetafile(doc, null, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 				}
 				image = mf;
 			}
 			else
 			{
-				System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+				System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 
 				if (!string.IsNullOrEmpty(fileName))
 					bitmap.Save(fileName, options.ImageFormat);
@@ -185,10 +185,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
 		/// <param name="areaToExport">The area of the graph that should be copied to the clipboard.</param>
-		public static void CopyToClipboardAsBitmap(this GraphDocument doc, int dpiResolution, Brush backbrush, PixelFormat pixelformat, GraphExportArea areaToExport)
+		public static void CopyToClipboardAsBitmap(this GraphDocument doc, int dpiResolution, Brush backbrush, PixelFormat pixelformat)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
-			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, backbrush, pixelformat, areaToExport, dpiResolution, dpiResolution);
+			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, backbrush, pixelformat, dpiResolution, dpiResolution);
 			dao.SetImage(bitmap);
 			Current.Gui.SetClipboardDataObject(dao);
 		}
@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Gdi
 		public static void CopyToClipboardAsBitmap(this GraphDocument doc, GraphExportOptions options)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
-			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 
 			if (GraphCopyPageClipboardFormat.AsNative == (options.ClipboardFormat & GraphCopyPageClipboardFormat.AsNative))
 				dao.SetImage(bitmap);

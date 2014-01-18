@@ -260,7 +260,7 @@
 			</MenuItem>
 			<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
 				<MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
-					description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
+					description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Main.Commands.CopyDocumentAsComObjectToClipboard" />
 				<MenuItem id="CopyPageAsBitmap" label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap}"  type="Menu">
 					<MenuItem id="SetCopyPageOptions"
 										label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
@@ -561,7 +561,7 @@
 							label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
 							description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
 							class="Altaxo.Main.Commands.ShowOptions" />
-			<MenuItem id="Com" label="${res:XML.MainMenu.ComMenu}" type="Menu">
+			<MenuItem id="Com" label="${res:XML.MainMenu.ToolsMenu.RegistryMenu}" type="Menu">
 				<MenuItem id="RegAppCom"
 							label="${res:XML.MainMenu.ToolsMenu.RegisterApplicationForCom}"
 							description="${res:XML.MainMenu.ToolsMenu.RegisterApplicationForCom.Description}"
@@ -570,10 +570,6 @@
 							label="${res:XML.MainMenu.ToolsMenu.UnregisterApplicationForCom}"
 							description="${res:XML.MainMenu.ToolsMenu.UnregisterApplicationForCom.Description}"
 							class="Altaxo.Main.Commands.UnregisterApplicationForCom" />
-				<MenuItem id="CopyAsComObject"
-						label="${res:XML.MainMenu.ToolsMenu.CopyAsComObject}"
-						description="${res:XML.MainMenu.ToolsMenu.CopyAsComObject.Description}"
-						class="Altaxo.Main.Commands.CopyDocumentAsComObjectToClipboard" />
 			</MenuItem>
 		</MenuItem>
 		<!-- Window menu -->

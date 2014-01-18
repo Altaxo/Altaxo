@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.CopyToClipboardAsBitmap(150, null, PixelFormat.Format32bppArgb, GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(150, null, PixelFormat.Format32bppArgb);
 		}
 	}
 
@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.CopyToClipboardAsBitmap(150, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(150, Brushes.White, PixelFormat.Format24bppRgb);
 		}
 	}
 
@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.CopyToClipboardAsBitmap(300, null, PixelFormat.Format32bppArgb, GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(300, null, PixelFormat.Format32bppArgb);
 		}
 	}
 
@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.CopyToClipboardAsBitmap(300, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(300, Brushes.White, PixelFormat.Format24bppRgb);
 		}
 	}
 

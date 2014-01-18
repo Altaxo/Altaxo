@@ -371,6 +371,13 @@ namespace Altaxo.Gui.SharpDevelop
 				title.Append(ResourceService.GetString("MainWindow.DialogName"));
 				title.Append(" ");
 				title.Append(Current.ComManager.EmbeddedObject.GetType().Name);
+
+				if (Current.ComManager.EmbeddedObject is Altaxo.Graph.Gdi.GraphDocument)
+				{
+					title.Append(" ");
+					title.Append((Current.ComManager.EmbeddedObject as Altaxo.Graph.Gdi.GraphDocument).Name);
+				}
+
 				if (Altaxo.Current.ProjectService.CurrentOpenProject != null && Altaxo.Current.ProjectService.CurrentOpenProject.IsDirty)
 					title.Append("*");
 

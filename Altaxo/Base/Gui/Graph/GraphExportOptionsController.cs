@@ -41,8 +41,6 @@ namespace Altaxo.Gui.Graph
 
 		void SetPixelFormat(SelectableListNodeList list);
 
-		void SetExportArea(SelectableListNodeList list);
-
 		void SetSourceDpi(SelectableListNodeList list);
 
 		void SetDestinationDpi(SelectableListNodeList list);
@@ -68,7 +66,6 @@ namespace Altaxo.Gui.Graph
 
 		private SelectableListNodeList _imageFormat;
 		private SelectableListNodeList _pixelFormat;
-		private SelectableListNodeList _exportArea;
 		private SelectableListNodeList _sourceDpi;
 		private SelectableListNodeList _destinationDpi;
 		private SelectableListNodeList _clipboardFormat;
@@ -166,10 +163,6 @@ namespace Altaxo.Gui.Graph
 					hasMatched |= select;
 				}
 
-				_exportArea = new SelectableListNodeList();
-				foreach (GraphExportArea item in Enum.GetValues(typeof(GraphExportArea)))
-					_exportArea.Add(new SelectableListNode(item.ToString(), item, _doc.ExportArea == item));
-
 				_clipboardFormatController = new Altaxo.Gui.Common.EnumFlagController();
 				_clipboardFormatController.InitializeDocument(_doc.ClipboardFormat);
 				Current.Gui.FindAndAttachControlTo(_clipboardFormatController);
@@ -184,7 +177,6 @@ namespace Altaxo.Gui.Graph
 				_view.SetClipboardFormatView(_clipboardFormatController.ViewObject);
 				_view.SetImageFormat(_imageFormat);
 				_view.SetPixelFormat(_pixelFormat);
-				_view.SetExportArea(_exportArea);
 				_view.SetSourceDpi(_sourceDpi);
 				_view.SetDestinationDpi(_destinationDpi);
 				_view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
@@ -257,8 +249,6 @@ namespace Altaxo.Gui.Graph
 				Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
 				return false;
 			}
-
-			_doc.ExportArea = (GraphExportArea)_exportArea.FirstSelectedNode.Tag;
 
 			if (!_clipboardFormatController.Apply())
 				return false;

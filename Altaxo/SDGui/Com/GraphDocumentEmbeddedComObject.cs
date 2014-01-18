@@ -178,7 +178,7 @@ namespace Altaxo.Com
 #endif
 
 			var docSize = _document.Size;
-			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, GraphExportArea.GraphSize, 300, 300))
+			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 300, 300))
 			{
 				return DataObjectHelper.RenderEnhMetafileIntPtr(docSize.X, docSize.Y,
 				(grfx) =>
