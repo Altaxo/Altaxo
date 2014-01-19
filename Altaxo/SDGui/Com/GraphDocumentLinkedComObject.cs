@@ -1,4 +1,28 @@
-﻿using Altaxo.Graph.Gdi;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +79,14 @@ namespace Altaxo.Com
 
 		public void Dispose()
 		{
+			if (_isDocumentDirty)
+			{
+#if COMLOGGING
+				Debug.ReportInfo("{0}.Dispose Step 0 : Document is dirty -> Advise DataChanged", this.GetType().Name);
+#endif
+				SendAdvise_DataChanged(); // update the image of the graph before we close
+			}
+
 #if COMLOGGING
 			Debug.ReportInfo("{0}.Dispose Step 1 : SaveObject", this.GetType().Name);
 #endif
@@ -206,11 +238,11 @@ namespace Altaxo.Com
 			{
 				List<Rendering> renderings = new List<Rendering>();
 
-				// Nice because it is resolution independent.
+				// Packing a bitmap representation of the graph into a metafile in order to
+				// have the size information (a bitmap does not contain size information)
 				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
 
-				// And allow linking, where we have a moniker.  This is last because
-				// it should not happen by default.
+				// Allow linking, where we have a moniker.
 				if (Moniker != null)
 				{
 					renderings.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, this.RenderLink));
@@ -431,28 +463,6 @@ namespace Altaxo.Com
 #endif
 
 			return ComReturnValue.E_FAIL;
-
-			/*
-			try
-			{
-				if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) == 0)
-					return ComReturnValue.E_FAIL;
-
-				Extent = new tagSIZEL(pSizel.cx, pSizel.cy);
-
-				// Changes to size should be preserved.
-				SendAdvise_SaveObject();
-
-				return ComReturnValue.S_OK;
-			}
-			catch (Exception e)
-			{
-#if COMLOGGING
-				Debug.ReportError("SetExtent occured an exception.", e);
-#endif
-				throw;
-			}
-			*/
 		}
 
 		public int GetExtent(int dwDrawAspect, tagSIZEL pSizel)

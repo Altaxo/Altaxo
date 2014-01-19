@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -31,9 +55,10 @@ namespace Altaxo.Com
 				});
 		}
 
-		/// <summary>Makes invocation of Invoke more concise with parameter-
-		/// less methods.</summary>
-		private void Invoke(string actionName, Action invoker)
+		/// <summary>Invokes on the invokable thread.</summary>
+		/// <param name="actionName">For debugging purposes.</param>
+		/// <param name="action">The action to invoke.</param>
+		private void Invoke(string actionName, Action action)
 		{
 			if (0 == _invokeCount) // no reentrancy
 			{
@@ -42,7 +67,7 @@ namespace Altaxo.Com
 #if COMLOGGING
 				Debug.ReportInfo("OleAdviseThread {0}", actionName);
 #endif
-				_invokeableThread.Invoke(invoker);
+				_invokeableThread.Invoke(action);
 				--_invokeCount;
 			}
 			else // Invoke was called before and is has not finished up to now
@@ -50,7 +75,7 @@ namespace Altaxo.Com
 #if COMLOGGING
 				Debug.ReportWarning("ManagedOleAdviseHolder.Invoke: because a previous action ({0}) is still running, the action ({1}) is invoked asynchronously now.", _previousActionName, actionName);
 #endif
-				_invokeableThread.InvokeAsync(invoker);
+				_invokeableThread.InvokeAsync(action);
 			}
 		}
 

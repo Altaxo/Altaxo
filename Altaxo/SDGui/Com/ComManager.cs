@@ -1,3 +1,27 @@
+#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
 using Altaxo.Graph.Gdi;
 using Microsoft.Win32;
 using System;
@@ -18,8 +42,11 @@ namespace Altaxo.Com
 	{
 		public bool IsActive { get; private set; }
 
-		private int _numberOfObjectsInUse;  // Keeps a count on the total number of objects alive.
-		private int _numberOfServerLocks;// Keeps a lock count on this application.
+		/// <summary>The total number of objects in use.</summary>
+		private int _numberOfObjectsInUse;
+
+		/// <summary>The number of server locks.</summary>
+		private int _numberOfServerLocks;
 
 		private ClassFactory_GraphDocumentEmbeddedComObject _classFactoryOfDocumentComObject;
 
@@ -576,27 +603,6 @@ namespace Altaxo.Com
 			lastUsedDataObject = null;
 		}
 
-		public void StopLocalServer()
-		{
-			if (IsInvokeRequiredForGuiThread())
-			{
-				InvokeGuiThread(ConvertCurrentClipboardToPermanentDataObject);
-			}
-			else // we are running in the Gui thread
-			{
-				ConvertCurrentClipboardToPermanentDataObject();
-			}
-
-			if (IsInvokeRequiredForGuiThread())
-			{
-				InternalStopLocalServer();
-			}
-			else // we are running in the Gui thread
-			{
-				FromGuiThreadExecute(InternalStopLocalServer);
-			}
-		}
-
 		/// <summary>
 		/// Notifies the ComManager that we are about to enter linked object mode.
 		/// </summary>
@@ -629,6 +635,32 @@ namespace Altaxo.Com
 				Debug.ReportInfo("{0}.EnterEmbeddedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
 #endif
 				_classFactoryOfFileComObject = null;
+			}
+		}
+
+		public void StopLocalServer()
+		{
+			// First of all, if a Com data object is still on the clipboard,
+			// convert it to a normal (permanent) data object
+			if (IsInvokeRequiredForGuiThread())
+			{
+				InvokeGuiThread(ConvertCurrentClipboardToPermanentDataObject);
+			}
+			else // we are running in the Gui thread
+			{
+				ConvertCurrentClipboardToPermanentDataObject();
+			}
+
+			// now stop the local server, make sure
+			// that we call this function in a thread that is
+			// not the Gui thread
+			if (IsInvokeRequiredForGuiThread())
+			{
+				InternalStopLocalServer();
+			}
+			else // we are running in the Gui thread
+			{
+				FromGuiThreadExecute(InternalStopLocalServer);
 			}
 		}
 

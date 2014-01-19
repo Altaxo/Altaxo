@@ -1,4 +1,28 @@
-﻿using Altaxo.Graph.Gdi;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +38,13 @@ namespace Altaxo.Com
 	/// Supports the embedding of a Altaxo Graph document as a mini-project.
 	/// </summary>
 	[
-		Guid(GraphDocumentEmbeddedComObject.GUID_STRING),  // We indicate a specific CLSID for "DocumentComObject" for convenience of searching the registry.
-		ProgId(GraphDocumentEmbeddedComObject.USER_TYPE), //  "Altaxo.Graph.0"),  // This ProgId is used by default. Not 100% necessary.
-		ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface with a name like _DocumentComObject.
+		Guid(GraphDocumentEmbeddedComObject.GUID_STRING),  // the CLSID
+		ProgId(GraphDocumentEmbeddedComObject.USER_TYPE),
+		ClassInterface(ClassInterfaceType.None)  // Specify that we will not generate any additional interface
 		]
 	public class GraphDocumentEmbeddedComObject :
-		OleObjectBase, // DocumentComObject is derived from ReferenceCountedObjectBase so that we can track its creation and destruction.
-		System.Runtime.InteropServices.ComTypes.IDataObject,  // DocumentComObject must implement the IDocumentComObject interface.
+		OleObjectBase,
+		System.Runtime.InteropServices.ComTypes.IDataObject,
 		IOleObject,
 		IPersistStorage
 	{
@@ -42,10 +66,6 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0} constructor.", this.GetType().Name);
 #endif
 
-			// Note: we do not create a event link to Document.DocumentRenamed here
-			// because this would keep the DocumentComObject alive as long as the document is alive
-			// instead, we let the FileComObject watch if documents are renamed and then let it call the function EhDocumentRenamed here in this instance
-
 			_dataAdviseHolder = new ManagedDataAdviseHolder();
 			_oleAdviseHolder = new ManagedOleAdviseHolderFM();
 		}
@@ -57,14 +77,14 @@ namespace Altaxo.Com
 #if COMLOGGING
 				Debug.ReportInfo("{0}.Dispose Step 0 : Document is dirty -> Advise DataChanged", this.GetType().Name);
 #endif
-				SendAdvise_DataChanged();
+				SendAdvise_DataChanged(); // update the image of the graph before we close
 			}
 
 #if COMLOGGING
 			Debug.ReportInfo("{0}.Dispose Step 1 : SaveObject", this.GetType().Name);
 #endif
 
-			SendAdvise_SaveObject();
+			SendAdvise_SaveObject(); // make an advise to save the mini-project into the container application
 
 #if COMLOGGING
 			Debug.ReportInfo("{0}.Dispose Step 2 : Calling SendAdvise.HideWindow", this.GetType().Name);
@@ -154,8 +174,9 @@ namespace Altaxo.Com
 			{
 				List<Rendering> renderings = new List<Rendering>();
 
-				// We add them in order of preference.  Embedding is best because user can resize and edit),
-				// then enhanced metafile mainly because it contains size information
+				// Renderings are in the order of preference.
+				// First the Embedding format
+				// then the enhanced metafile format for visual representation
 
 				// Allows us to be embedded with an OLE container.
 				// No callback because this should go via GetDataHere.
@@ -365,29 +386,23 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0}.IOleObject.SetExtent({1}x{2}) -> not supported.", this.GetType().Name, pSizel.cx, pSizel.cy);
 #endif
 
-			return ComReturnValue.E_FAIL;
-
 			/*
-			try
+			if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) != 0)
 			{
-				if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) == 0)
-					return ComReturnValue.E_FAIL;
-
-				Extent = new tagSIZEL(pSizel.cx, pSizel.cy);
-
-				// Changes to size should be preserved.
-				SendAdvise(AdviseKind.SaveObject);
-
-				return ComReturnValue.S_OK;
-			}
-			catch (Exception e)
-			{
+				try
+				{
+					_document.Size = new Graph.PointD2D(pSizel.cx / PointsToHimetric, pSizel.cy / PointsToHimetric);
+					return ComReturnValue.S_OK;
+				}
+				catch (Exception e)
+				{
 #if COMLOGGING
-				Debug.ReportError("SetExtent occured an exception.", e);
+					Debug.ReportError("{0}.SetExtent threw an exception: {1}", this.GetType().Name, e);
 #endif
-				throw;
+				}
 			}
-			*/
+*/
+			return ComReturnValue.E_FAIL;
 		}
 
 		public int GetExtent(int dwDrawAspect, tagSIZEL pSizel)

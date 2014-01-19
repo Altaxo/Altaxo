@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +37,7 @@ namespace Altaxo.UnmanagedApi.Ole32
 	};
 
 	[Flags]
-	internal enum COINIT : uint
+	public enum COINIT : uint
 	{
 		/// Initializes the thread for multi-threaded object concurrency.
 		COINIT_MULTITHREADED = 0x0,
@@ -29,7 +53,7 @@ namespace Altaxo.UnmanagedApi.Ole32
 	}
 
 	[Flags]
-	internal enum CLSCTX : uint
+	public enum CLSCTX : uint
 	{
 		CLSCTX_INPROC_SERVER = 0x1,
 		CLSCTX_INPROC_HANDLER = 0x2,
@@ -55,7 +79,7 @@ namespace Altaxo.UnmanagedApi.Ole32
 	}
 
 	[Flags]
-	internal enum REGCLS : uint
+	public enum REGCLS : uint
 	{
 		REGCLS_SINGLEUSE = 0,
 		REGCLS_MULTIPLEUSE = 1,
@@ -89,7 +113,7 @@ namespace Altaxo.UnmanagedApi.Ole32
 		public const int OLE_E_PROMPTSAVECANCELLED = unchecked((int)0x8004000C);
 	}
 
-	internal enum OLEIVERB
+	public enum OLEIVERB
 	{
 		OLEIVERB_PRIMARY = 0,
 		OLEIVERB_SHOW = -1,
@@ -229,33 +253,4 @@ namespace Altaxo.UnmanagedApi.Ole32
 		public const string CFSTR_OBJECTDESCRIPTOR = "Object Descriptor";
 		public const string CFSTR_LINKSRCDESCRIPTOR = "Link Source Descriptor";
 	}
-
-	/*
-	/// <summary>
-	/// Specifies the desired data or view aspect of the object when drawing or getting data. See the documentation in the Microsoft Libary for more information (<see href="http://msdn.microsoft.com/en-us/library"/>).
-	/// </summary>
-	[Flags]
-	public enum DVASPECT
-	{
-		/// <summary>
-		/// Provides a representation of an object so it can be displayed as an embedded object inside of a container. This value is typically specified for compound document objects. The presentation can be provided for the screen or printer.
-		/// </summary>
-		CONTENT = 1,
-
-		/// <summary>
-		/// Provides a thumbnail representation of an object so it can be displayed in a browsing tool. The thumbnail is approximately a 120 by 120 pixel, 16-color (recommended) device-independent bitmap potentially wrapped in a metafile.
-		/// </summary>
-		THUMBNAIL = 2,
-
-		/// <summary>
-		/// Provides an iconic representation of an object.
-		/// </summary>
-		ICON = 4,
-
-		/// <summary>
-		/// Provides a representation of the object on the screen as though it were printed to a printer using the Print command from the File menu. The described data may represent a sequence of pages.
-		/// </summary>
-		DOCPRINT = 8
-	}
-	*/
 }

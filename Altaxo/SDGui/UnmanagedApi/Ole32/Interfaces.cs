@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
@@ -125,9 +149,6 @@ namespace Altaxo.UnmanagedApi.Ole32
 		int IsRunning([MarshalAs(UnmanagedType.LPWStr)] string pszItem);
 	};
 
-	//***OCB Why is SuppressUnmanagedCodeSecurity here?  Which of our methods
-	// need it?
-	//[System.Security.SuppressUnmanagedCodeSecurity]
 	[ComImport, Guid("00000112-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IOleObject
 	{
@@ -233,48 +254,15 @@ namespace Altaxo.UnmanagedApi.Ole32
 	[ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("0000000B-0000-0000-C000-000000000046")]
 	public interface IStorage
 	{
-		/// <summary>
-		/// ÔÚµ±Ç°´æ´¢ÖÐ½¨Á¢ÐÂÁ÷£¬µÃµ½Á÷¶ÔÏó
-		/// </summary>
-		/// <param name="pwcsName"></param>
-		/// <param name="grfMode"></param>
-		/// <param name="reserved1"></param>
-		/// <param name="reserved2"></param>
-		/// <returns></returns>
 		[return: MarshalAs(UnmanagedType.Interface)]
 		IStream CreateStream([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, [In, MarshalAs(UnmanagedType.U4)] int grfMode, [In, MarshalAs(UnmanagedType.U4)] int reserved1, [In, MarshalAs(UnmanagedType.U4)] int reserved2);
 
-		/// <summary>
-		/// ´ò¿ªÁ÷£¬µÃµ½Á÷¶ÔÏó
-		/// </summary>
-		/// <param name="pwcsName"></param>
-		/// <param name="reserved1"></param>
-		/// <param name="grfMode"></param>
-		/// <param name="reserved2"></param>
-		/// <returns></returns>
 		[return: MarshalAs(UnmanagedType.Interface)]
 		IStream OpenStream([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, IntPtr reserved1, [In, MarshalAs(UnmanagedType.U4)] int grfMode, [In, MarshalAs(UnmanagedType.U4)] int reserved2);
 
-		/// <summary>
-		/// ÔÚµ±Ç°´æ´¢ÖÐ½¨Á¢ÐÂ´æ´¢£¬µÃµ½×Ó´æ´¢¶ÔÏó
-		/// </summary>
-		/// <param name="pwcsName"></param>
-		/// <param name="grfMode"></param>
-		/// <param name="reserved1"></param>
-		/// <param name="reserved2"></param>
-		/// <returns></returns>
 		[return: MarshalAs(UnmanagedType.Interface)]
 		IStorage CreateStorage([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, [In, MarshalAs(UnmanagedType.U4)] int grfMode, [In, MarshalAs(UnmanagedType.U4)] int reserved1, [In, MarshalAs(UnmanagedType.U4)] int reserved2);
 
-		/// <summary>
-		/// ´ò¿ª×Ó´æ´¢£¬µÃµ½×Ó´æ´¢¶ÔÏó
-		/// </summary>
-		/// <param name="pwcsName"></param>
-		/// <param name="pstgPriority"></param>
-		/// <param name="grfMode"></param>
-		/// <param name="snbExclude"></param>
-		/// <param name="reserved"></param>
-		/// <returns></returns>
 		[return: MarshalAs(UnmanagedType.Interface)]
 		IStorage OpenStorage([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, IntPtr pstgPriority, [In, MarshalAs(UnmanagedType.U4)] int grfMode, IntPtr snbExclude, [In, MarshalAs(UnmanagedType.U4)] int reserved);
 
@@ -294,19 +282,10 @@ namespace Altaxo.UnmanagedApi.Ole32
 
 		void SetElementTimes([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, [In] System.Runtime.InteropServices.ComTypes.FILETIME pctime, [In] System.Runtime.InteropServices.ComTypes.FILETIME patime, [In] System.Runtime.InteropServices.ComTypes.FILETIME pmtime);
 
-		/// <summary>
-		/// ÔÚµ±Ç°´æ´¢ÖÐ½¨Á¢Ò»¸öÌØÊâµÄÁ÷¶ÔÏó£¬ÓÃÀ´±£´æCLSID
-		/// </summary>
-		/// <param name="clsid">CLSID</param>
 		void SetClass([In] ref Guid clsid);
 
 		void SetStateBits(int grfStateBits, int grfMask);
 
-		/// <summary>
-		/// È¡µÃµ±Ç°´æ´¢ÖÐµÄÏµÍ³ÐÅÏ¢
-		/// </summary>
-		/// <param name="pStatStg">·µ»ØµÄÏµÍ³ÐÅÏ¢</param>
-		/// <param name="grfStatFlag"></param>
 		void Stat([Out] System.Runtime.InteropServices.ComTypes.STATSTG pStatStg, int grfStatFlag);
 	}
 }
