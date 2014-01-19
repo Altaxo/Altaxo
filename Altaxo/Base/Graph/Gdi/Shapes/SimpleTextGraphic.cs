@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			FontX textFont, Color textColor)
 			: base(new ItemLocationDirectAutoSize())
 		{
-			this.SetPosition(graphicPosition);
+			this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
 			this.Font = textFont;
 			this.Text = text;
 			this.Color = textColor;

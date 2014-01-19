@@ -299,10 +299,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		protected override void SetPosition(PointD2D value)
+		protected override void SetPosition(PointD2D value, Main.EventFiring eventFiring)
 		{
 			var oldPosition = this.GetPosition();
-			base.SetPosition(value);
+			base.SetPosition(value, eventFiring);
 
 			if (_axisStyle.Title != null)
 			{

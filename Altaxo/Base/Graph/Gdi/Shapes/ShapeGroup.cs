@@ -159,8 +159,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
-		/// Gets the bound of the object. The X and Y positions depend on the transformation model chosen for this graphic object: if the transformation takes into account the local anchor point, 
-		/// then the X and Y of the bounds are always 0 (which is the case here). 
+		/// Gets the bound of the object. The X and Y positions depend on the transformation model chosen for this graphic object: if the transformation takes into account the local anchor point,
+		/// then the X and Y of the bounds are always 0 (which is the case here).
 		/// </summary>
 		/// <value>
 		/// The bounds of the graphical object.
@@ -173,7 +173,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
+		#endregion Overrides to set the internal reference point of this object to left-top so that (0,0) in item coordinates is always the left-top corner of this item
 
 		/// <summary>
 		/// Get the object outline for arrangements in object world coordinates.
@@ -243,7 +243,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="obj">Item to add.</param>
 		public void Add(GraphicBase obj)
 		{
-			obj.SetCoordinatesByAppendInverseTransformation(this._transformation, true);
+			obj.SetCoordinatesByAppendInverseTransformation(this._transformation, Main.EventFiring.Suppressed);
 			_groupedObjects.Add(obj);
 			obj.ParentObject = this;
 			AdjustPosition();
@@ -262,14 +262,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				obj.Location.ChangeRelativePositionValuesToAbsolutePositionValues(); // all position values must be absolute
 				obj.Location.ChangeParentAnchorToLeftTopButKeepPosition(); // Parent's anchor left top - this is our reference point
 
-				obj.SetCoordinatesByAppendInverseTransformation(this._transformation, true);
+				obj.SetCoordinatesByAppendInverseTransformation(this._transformation, Main.EventFiring.Suppressed);
 				_groupedObjects.Add(obj);
 				obj.ParentObject = this;
 			}
 			AdjustPosition();
 			OnChanged();
 		}
-
 
 		/// <summary>Gets access to the grouped objects. This function has to be used with care. No size/position update of the ShapeGroup is done if the position/size/rotation/share values of one of the grouped objects is changed.
 		/// One the other hand, you can change other properties, like colors and brushes, of the individual grouped objects.</summary>
@@ -342,7 +341,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			foreach (GraphicBase e in _groupedObjects)
 			{
-				e.SetCoordinatesByAppendTransformation(this._transformation, true);
+				e.SetCoordinatesByAppendTransformation(this._transformation, Main.EventFiring.Suppressed);
 			}
 
 			var result = _groupedObjects.ToArray();

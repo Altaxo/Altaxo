@@ -1017,6 +1017,12 @@
 						 label = "${res:Dialog.Options.AsciiAnalysis}"
 						 class = "Altaxo.Gui.Settings.AsciiAnalysisSettingsController" />
 		</OptionPanel>
+		<OptionPanel id    = "Graphs"
+								 label = "${res:Dialog.Options.GraphSettings}">
+			<OptionPanel id    = "ClipboardExport"
+								 label = "${res:Dialog.Options.Graph.ClipboardExport}"
+								 class = "Altaxo.Gui.Settings.ClipboardGraphExportOptionsController" />
+		</OptionPanel>
 		<OptionPanel id    = "AutoUpdates"
 									 label = "${res:Dialog.Options.AutoUpdates}"
 									 class = "Altaxo.Gui.Settings.AutoUpdateSettingsController" />

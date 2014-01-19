@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -33,13 +34,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 	{
 		protected class RotationGripHandle : IGripManipulationHandle
 		{
-			static GraphicsPath _rotationGripShape;
+			private static GraphicsPath _rotationGripShape;
 
-			IHitTestObject _parent;
-			PointD2D _drawrPosition;
-			PointD2D _fixrPosition;
-			PointD2D _fixaPosition;
-			TransformationMatrix2D _spanningHalfYRhombus;
+			private IHitTestObject _parent;
+			private PointD2D _drawrPosition;
+			private PointD2D _fixrPosition;
+			private PointD2D _fixaPosition;
+			private TransformationMatrix2D _spanningHalfYRhombus;
+			private bool _hasMoved;
 
 			public RotationGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
 			{
@@ -52,7 +54,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
-
 			/// <summary>
 			/// Activates this grip, providing the initial position of the mouse.
 			/// </summary>
@@ -64,13 +65,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_fixaPosition = GraphObject.RelativeLocalToAbsoluteParentCoordinates(_fixrPosition);
 			}
 
-
 			/// <summary>
 			/// Announces the deactivation of this grip.
 			/// </summary>
 			/// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
 			public bool Deactivate()
 			{
+				if (_hasMoved)
+				{
+					GraphObject.OnChanged();
+				}
+
 				return false;
 			}
 
@@ -78,7 +83,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 				var diff = new PointD2D(newPosition.X - _fixaPosition.X, newPosition.Y - _fixaPosition.Y);
-				GraphObject.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff);
+				GraphObject.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, Main.EventFiring.Suppressed);
+				_hasMoved = true;
 			}
 
 			/// <summary>Draws the grip in the graphics context.</summary>
@@ -97,7 +103,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return Calc.RMath.IsInIntervalCC(point.X, 0, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);
 			}
 
-
 			static RotationGripHandle()
 			{
 				const float ra = 2.1f / 2;
@@ -111,7 +116,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_rotationGripShape.AddArc(-ri, -ri, 2 * ri, 2 * ri, -45, 90); // mit Innenradius beginnen
 
-				_rotationGripShape.AddLines(new PointF[] 
+				_rotationGripShape.AddLines(new PointF[]
       {
         new PointF(rii*cos45, rii*sin45),
         new PointF(rii*cos45, rii*sin45 + rotArrowWidth*cos45),
@@ -120,7 +125,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_rotationGripShape.AddArc(-ra, -ra, 2 * ra, 2 * ra, 45, -90); // Außenradius
 
-				_rotationGripShape.AddLines(new PointF[] 
+				_rotationGripShape.AddLines(new PointF[]
       {
         new PointF(raa*cos45, -raa*sin45),
         new PointF(rii*cos45, -rii*sin45 - rotArrowWidth*cos45),
@@ -128,7 +133,6 @@ namespace Altaxo.Graph.Gdi.Shapes
       });
 
 				_rotationGripShape.CloseFigure();
-
 			}
 		}
 	}

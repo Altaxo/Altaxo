@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -43,7 +44,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			protected PointD2D _fixrPosition;
 			protected PointD2D _fixaPosition;
 
-			Action<PointD2D> _moveAction;
+			private Action<PointD2D> _moveAction;
+			private bool _hasMoved;
 
 			public static Pen PathOutlinePen = new Pen(Color.Blue, 0);
 
@@ -58,7 +60,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_gripRadius = gripRadius;
 			}
 
-
 			public PathNodeGripHandle(IHitTestObject parent, PointD2D relPos, PointD2D gripCenter, double gripRadius, Action<PointD2D> moveAction)
 				: this(parent, relPos, gripCenter, gripRadius)
 			{
@@ -66,7 +67,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 			protected GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
-
 
 			#region IGripManipulationHandle Members
 
@@ -78,8 +78,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// thie activation is due to a regular mouse click in this grip.</param>
 			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
 			{
+				_hasMoved = false;
 			}
-
 
 			/// <summary>
 			/// Announces the deactivation of this grip.
@@ -87,6 +87,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
 			public virtual bool Deactivate()
 			{
+				if (_hasMoved)
+					GraphObject.OnChanged();
+
 				return false;
 			}
 
@@ -100,10 +103,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 					var diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
-					GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, new PointD2D(0, 0));
+					GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, new PointD2D(0, 0), Main.EventFiring.Suppressed);
+					_hasMoved = true;
 				}
 			}
-
 
 			/// <summary>Draws the grip in the graphics context.</summary>
 			/// <param name="g">Graphics context.</param>
@@ -123,8 +126,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return (Calc.RMath.Pow2(point.X - _gripCenter.X) + Calc.RMath.Pow2(point.Y - _gripCenter.Y)) < Calc.RMath.Pow2(_gripRadius);
 			}
 
-			#endregion
+			#endregion IGripManipulationHandle Members
 		}
-
 	}
 }

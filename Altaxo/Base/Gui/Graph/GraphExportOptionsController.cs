@@ -58,12 +58,8 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IGraphExportOptionsView))]
 	[UserControllerForObject(typeof(GraphExportOptions))]
-	public class GraphExportOptionsController : IMVCANController
+	public class GraphExportOptionsController : MVCANControllerBase<GraphExportOptions, IGraphExportOptionsView>
 	{
-		private IGraphExportOptionsView _view;
-		private GraphExportOptions _doc;
-		private GraphExportOptions _tempDoc;
-
 		private SelectableListNodeList _imageFormat;
 		private SelectableListNodeList _pixelFormat;
 		private SelectableListNodeList _sourceDpi;
@@ -121,29 +117,9 @@ namespace Altaxo.Gui.Graph
 
 		#region IMVCANController Members
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length >= 1 && args[0] is GraphExportOptions)
-			{
-				_doc = (GraphExportOptions)args[0];
-				_tempDoc = new GraphExportOptions();
-				_tempDoc.CopyFrom(_doc);
-
-				Initialize(true);
-				return true;
-			}
-
-			return false;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
 		#endregion IMVCANController Members
 
-		private void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -152,34 +128,34 @@ namespace Altaxo.Gui.Graph
 
 				_imageFormat = new SelectableListNodeList();
 				foreach (ImageFormat item in ImageFormats)
-					_imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.ImageFormat == item));
+					_imageFormat.Add(new SelectableListNode(item.ToString(), item, _originalDoc.ImageFormat == item));
 
 				_pixelFormat = new SelectableListNodeList();
 				hasMatched = false; // special prog to account for doubling of items in PixelFormats
 				foreach (PixelFormat item in PixelFormats)
 				{
-					select = _doc.PixelFormat == item;
+					select = _originalDoc.PixelFormat == item;
 					_pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
 					hasMatched |= select;
 				}
 
 				_clipboardFormatController = new Altaxo.Gui.Common.EnumFlagController();
-				_clipboardFormatController.InitializeDocument(_doc.ClipboardFormat);
+				_clipboardFormatController.InitializeDocument(_originalDoc.ClipboardFormat);
 				Current.Gui.FindAndAttachControlTo(_clipboardFormatController);
 
-				_sourceDpi = GetResolutions(_doc.SourceDpiResolution);
-				_destinationDpi = GetResolutions(_doc.DestinationDpiResolution);
+				_sourceDpi = GetResolutions(_originalDoc.SourceDpiResolution);
+				_destinationDpi = GetResolutions(_originalDoc.DestinationDpiResolution);
 			}
 
 			if (null != _view)
 			{
-				_view.EnableClipboardFormat = _doc.IsIntentedForClipboardOperation;
+				_view.EnableClipboardFormat = _originalDoc.IsIntentedForClipboardOperation;
 				_view.SetClipboardFormatView(_clipboardFormatController.ViewObject);
 				_view.SetImageFormat(_imageFormat);
 				_view.SetPixelFormat(_pixelFormat);
 				_view.SetSourceDpi(_sourceDpi);
 				_view.SetDestinationDpi(_destinationDpi);
-				_view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
+				_view.BackgroundBrush = null == _originalDoc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _originalDoc.BackgroundBrush;
 			}
 		}
 
@@ -201,33 +177,11 @@ namespace Altaxo.Gui.Graph
 
 		#region IMVCController Members
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IGraphExportOptionsView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
 		#endregion IMVCController Members
 
 		#region IApplyController Members
 
-		public bool Apply()
+		public override bool Apply()
 		{
 			double sr, dr;
 
@@ -244,7 +198,7 @@ namespace Altaxo.Gui.Graph
 			var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
 			var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Tag;
 
-			if (!_doc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
+			if (!_originalDoc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
 			{
 				Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
 				return false;
@@ -261,6 +215,9 @@ namespace Altaxo.Gui.Graph
 				_doc.BackgroundBrush = _view.BackgroundBrush;
 			else
 				_doc.BackgroundBrush = null;
+
+			if (!object.ReferenceEquals(_doc, _originalDoc))
+				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;
 		}

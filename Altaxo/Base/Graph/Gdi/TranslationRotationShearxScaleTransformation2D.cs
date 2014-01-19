@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,15 +35,15 @@ namespace Altaxo.Graph.Gdi
 	[Serializable]
 	public class LocationRotationShearxScaleTransformation2D
 	{
-		double _x;
-		double _y;
-		double _rotationDeg;
-		double _shearX;
-		double _scaleX=1;
-		double _scaleY=1;
-		TransformationMatrix2D _transformation = new TransformationMatrix2D();
-		
-		[field:NonSerialized]
+		private double _x;
+		private double _y;
+		private double _rotationDeg;
+		private double _shearX;
+		private double _scaleX = 1;
+		private double _scaleY = 1;
+		private TransformationMatrix2D _transformation = new TransformationMatrix2D();
+
+		[field: NonSerialized]
 		public event EventHandler Changed;
 
 		/// <summary>
@@ -55,10 +57,10 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				var chg = !(_x==value.X && _y==value.Y);
+				var chg = !(_x == value.X && _y == value.Y);
 				_x = value.X;
 				_y = value.Y;
-				if(chg)
+				if (chg)
 					OnChanged();
 			}
 		}
@@ -74,14 +76,12 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				var chg = !(_x==value);
+				var chg = !(_x == value);
 				_x = value;
-				if(chg)
+				if (chg)
 					OnChanged();
-				
 			}
 		}
-
 
 		/// <summary>
 		/// Y value of the translation (location).
@@ -94,11 +94,10 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				var chg = !(_y==value);
+				var chg = !(_y == value);
 				_y = value;
-				if(chg)
+				if (chg)
 					OnChanged();
-				
 			}
 		}
 
@@ -113,9 +112,9 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				var chg = !(_rotationDeg==value);
+				var chg = !(_rotationDeg == value);
 				_rotationDeg = value;
-				if(chg)
+				if (chg)
 					OnChanged();
 			}
 		}
@@ -150,9 +149,9 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				var chg = !(_shearX==value);
+				var chg = !(_shearX == value);
 				_shearX = value;
-				if(chg)
+				if (chg)
 					OnChanged();
 			}
 		}
@@ -168,10 +167,10 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-			var chg = !(_scaleX==value.X && _scaleY==value.Y);
+				var chg = !(_scaleX == value.X && _scaleY == value.Y);
 				_scaleX = value.X;
 				_scaleY = value.Y;
-				if(chg)
+				if (chg)
 					OnChanged();
 			}
 		}
@@ -187,11 +186,10 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				var chg = !(_scaleX==value);
+				var chg = !(_scaleX == value);
 				_scaleX = value;
-				if(chg)
+				if (chg)
 					OnChanged();
-				
 			}
 		}
 
@@ -206,11 +204,10 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				var chg = !(_scaleY==value);
+				var chg = !(_scaleY == value);
 				_scaleY = value;
-				if(chg)
+				if (chg)
 					OnChanged();
-				
 			}
 		}
 
@@ -248,12 +245,12 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="scaleY">Y scale value.</param>
 		public void SetTranslationRotationShearxScale(double x, double y, double rotation, double shearX, double scaleX, double scaleY)
 		{
-				_x = x;
-				_y = y;
-				_rotationDeg = rotation;
-				_shearX = shearX;
-				_scaleX = scaleX;
-				_scaleY = scaleY;
+			_x = x;
+			_y = y;
+			_rotationDeg = rotation;
+			_shearX = shearX;
+			_scaleX = scaleX;
+			_scaleY = scaleY;
 
 			OnChanged();
 		}
@@ -269,32 +266,31 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="scaleX">X scale value.</param>
 		/// <param name="scaleY">Y scale value.</param>
 		/// <param name="suppressChangeEvent">If true, the <see cref="Changed"/> event will be suppressed, but the transformation matrix will be updated in any case.</param>
-		public void SetTranslationRotationShearxScale(double? x, double? y, double? rotation, double? shearX, double? scaleX, double? scaleY, bool suppressChangeEvent)
+		public void SetTranslationRotationShearxScale(double? x, double? y, double? rotation, double? shearX, double? scaleX, double? scaleY, Main.EventFiring eventFiring)
 		{
-			if(null!=x)
+			if (null != x)
 				_x = (double)x;
-			if(null!=y)
+			if (null != y)
 				_y = (double)y;
-			if(null!=rotation)
+			if (null != rotation)
 				_rotationDeg = (double)rotation;
-			if(null!=shearX)
+			if (null != shearX)
 				_shearX = (double)shearX;
-			if(null!=scaleX)
+			if (null != scaleX)
 				_scaleX = (double)scaleX;
-			if(null!=scaleY)
+			if (null != scaleY)
 				_scaleY = (double)scaleY;
 
-			OnChanged(suppressChangeEvent);
+			OnChanged(eventFiring);
 		}
 
-	
 		/// <summary>
 		/// Sets the value for translation, roation, shear and scale from a transformation matrix.
 		/// </summary>
 		/// <param name="transformation"></param>
 		public void SetFrom(TransformationMatrix2D transformation)
 		{
-			SetTranslationRotationShearxScale(transformation.X,transformation.Y,transformation.Rotation, transformation.Shear, transformation.ScaleX, transformation.ScaleY);
+			SetTranslationRotationShearxScale(transformation.X, transformation.Y, transformation.Rotation, transformation.Shear, transformation.ScaleX, transformation.ScaleY);
 		}
 
 		/// <summary>
@@ -302,18 +298,18 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected void OnChanged()
 		{
-			OnChanged(false);
+			OnChanged(Main.EventFiring.Enabled);
 		}
 
 		/// <summary>
 		/// Updates the transformation matrix and fires the Changed event, if not suppressed intentionally.
 		/// </summary>
 		/// <param name="suppressEventNotification"></param>
-		protected void OnChanged(bool suppressEventNotification)
+		protected void OnChanged(Main.EventFiring eventFiring)
 		{
-			_transformation.SetTranslationRotationShearxScale(_x,_y,_rotationDeg, _shearX, _scaleX, _scaleY);
+			_transformation.SetTranslationRotationShearxScale(_x, _y, _rotationDeg, _shearX, _scaleX, _scaleY);
 
-			if (!suppressEventNotification && null != Changed)
+			if (Main.EventFiring.Enabled == eventFiring && null != Changed)
 				Changed(this, EventArgs.Empty);
 		}
 	}

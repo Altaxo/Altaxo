@@ -45,17 +45,38 @@ namespace Altaxo.Graph.Gdi
 		private static GraphCopyOptions _lastChoosenGraphDocumentPasteOptions;
 		private static GraphCopyOptions _lastChoosenGraphLayerPasteOptions;
 
+		public const string CopyPageSettingsPath = "Altaxo.Options.Clipboard.CopyPageSettings";
+		private static GraphExportOptions _copyPageOptions;
+
+		public static GraphExportOptions CopyPageOptions
+		{
+			get
+			{
+				return _copyPageOptions;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+
+				_copyPageOptions = value;
+
+				Current.PropertyService.Set<GraphExportOptions>(CopyPageSettingsPath, _copyPageOptions);
+			}
+		}
+
 		static GraphDocumentClipboardActions()
 		{
 			DefaultGraphDocumentPasteOptions = GraphCopyOptions.All & ~GraphCopyOptions.CopyLayerPlotItems;
 			DefaultGraphLayerPasteOptions = GraphCopyOptions.CopyLayerAll & ~GraphCopyOptions.CopyLayerPlotItems;
 			_lastChoosenGraphDocumentPasteOptions = DefaultGraphDocumentPasteOptions;
 			_lastChoosenGraphLayerPasteOptions = DefaultGraphLayerPasteOptions;
+
+			_copyPageOptions = Current.PropertyService.Get<GraphExportOptions>(CopyPageSettingsPath, new GraphExportOptions());
+			_copyPageOptions.IsIntentedForClipboardOperation = true;
 		}
 
 		#region Image formats
-
-		public static GraphExportOptions CopyPageOptions = new GraphExportOptions();
 
 		/// <summary>
 		/// Shows the copy page options dialog and stores the result as the static field <see cref="CopyPageOptions"/> here in this class
@@ -64,11 +85,6 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>True when the dialog was successfully closed, false otherwise.</returns>
 		public static bool ShowCopyPageOptionsDialog(this GraphDocument doc)
 		{
-			if (null == CopyPageOptions)
-				CopyPageOptions = new GraphExportOptions();
-
-			CopyPageOptions.IsIntentedForClipboardOperation = true;
-
 			object resultobj = CopyPageOptions;
 			if (Current.Gui.ShowDialog(ref resultobj, "Set copy page options"))
 			{

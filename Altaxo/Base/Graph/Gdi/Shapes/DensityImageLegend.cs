@@ -109,8 +109,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize)
 			: base(new ItemLocationDirect())
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
-			this.SetPosition(initialLocation);
+			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
+			this.SetPosition(initialLocation, Main.EventFiring.Suppressed);
 
 			_plotItemProxy = new Main.RelDocNodeProxy();
 			WirePlotItemProxyEvents();
@@ -297,8 +297,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
-		/// Gets the bound of the object. The X and Y positions depend on the transformation model chosen for this graphic object: if the transformation takes into account the local anchor point, 
-		/// then the X and Y of the bounds are always 0 (which is the case here). 
+		/// Gets the bound of the object. The X and Y positions depend on the transformation model chosen for this graphic object: if the transformation takes into account the local anchor point,
+		/// then the X and Y of the bounds are always 0 (which is the case here).
 		/// </summary>
 		/// <value>
 		/// The bounds of the graphical object.
@@ -307,7 +307,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return new RectangleD(0,0, Size.X, Size.Y);
+				return new RectangleD(0, 0, Size.X, Size.Y);
 			}
 		}
 
@@ -324,8 +324,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override void Paint(System.Drawing.Graphics g, object obj)
 		{
-			
-
 			bool orientationIsVertical = IsOrientationVertical;
 			bool scaleIsReversed = IsScaleReversed;
 

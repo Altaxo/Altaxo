@@ -56,6 +56,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		private GdiToWpfBitmap _wpfGdiBitmap = new GdiToWpfBitmap(100, 100);
 		private int _cachedGraphSizeX, _cachedGraphSizeY;
 
+		/// <summary>Used for debugging the number of updates to the graph.</summary>
+		private int _updateCount;
+
 		public GraphViewWpf()
 		{
 			InitializeComponent();
@@ -153,6 +156,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 				gc.RepaintGraphAreaImmediately(); // triggers the rendering of the graph into a bitmap. At the end of the rendering process
 			}
+
+			++_updateCount;
+			_guiUpdateCount.Content = _updateCount.ToString();
 		}
 
 		/// <summary>

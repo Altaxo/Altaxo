@@ -445,9 +445,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// Sets the position of the object's pivot point.
 		/// </summary>
 		/// <param name="value">The position to set (the object's pivot point) with reference to the parent's reference point).</param>
-		protected virtual void SetPosition(PointD2D value)
+		protected virtual void SetPosition(PointD2D value, Main.EventFiring eventFiring)
 		{
-			_location.AbsolutePivotPosition = value;
+			_location.SetAbsolutePivotPosition(value, eventFiring);
+			if (eventFiring == Main.EventFiring.Suppressed)
+				UpdateTransformationMatrix(); // even if events are suppressed - update at least the transformation matrix
+		}
+
+		/// <summary>
+		/// Sets the position of the object without causing a Changed event.
+		/// </summary>
+		/// <param name="newPosition"></param>
+		public virtual void SilentSetPosition(PointD2D newPosition)
+		{
+			this.SetPosition(newPosition, Main.EventFiring.Suppressed);
 		}
 
 		/// <summary>
@@ -461,7 +472,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
-				SetPosition(value);
+				SetPosition(value, Main.EventFiring.Enabled);
 			}
 		}
 
@@ -515,15 +526,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="width">Unscaled width of the item.</param>
 		/// <param name="height">Unscaled height of the item.</param>
-		/// <param name="suppressChangedEvent">If true, the change event is supressed even when the size has changed.</param>
-		protected virtual void SetSize(double width, double height, bool suppressChangedEvent)
+		/// <param name="eventFiring">Designates whether the change event should be fired.</param>
+		protected virtual void SetSize(double width, double height, Main.EventFiring eventFiring)
 		{
 			var oldWidth = Width;
 			var oldHeight = Height;
 
-			Width = width;
-			Height = height;
-			if (!suppressChangedEvent && (width != oldWidth || height != oldHeight))
+			_location.SetAbsoluteSize(new PointD2D(width, height), eventFiring);
+
+			if (eventFiring == Main.EventFiring.Enabled && (width != oldWidth || height != oldHeight))
 				OnChanged();
 		}
 
@@ -548,7 +559,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
-				SetSize(value.X, value.Y, false);
+				SetSize(value.X, value.Y, Main.EventFiring.Enabled);
 			}
 		}
 
@@ -911,20 +922,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
-		/// Sets the position of the object without causing a Changed event.
-		/// </summary>
-		/// <param name="newPosition"></param>
-		public virtual void SilentSetPosition(PointD2D newPosition)
-		{
-			using (var token = _eventSuppressor.Suspend())
-			{
-				this.SetPosition(newPosition);
-				UpdateTransformationMatrix();
-				token.Disarm();
-			}
-		}
-
-		/// <summary>
 		/// Sets the bounds from.
 		/// </summary>
 		/// <param name="fixrPosition">The relative position of the object's edge or vertex, which is held fixed during the operation.</param>
@@ -932,27 +929,35 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="relDrawGrip">The relative position of the draw grip (0..1, 0..1).</param>
 		/// <param name="diff">The movement vector of the grip handle.</param>
 		/// <param name="initialSize">The initial size of the object.</param>
-		public void SetBoundsFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, PointD2D initialSize)
+		public void SetBoundsFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, PointD2D initialSize, Main.EventFiring eventFiring)
 		{
-			var dx = relDrawGrip.X - fixrPosition.X;
-			var dy = relDrawGrip.Y - fixrPosition.Y;
+			var token = _eventSuppressor.Suspend();
+			try
+			{
+				var dx = relDrawGrip.X - fixrPosition.X;
+				var dy = relDrawGrip.Y - fixrPosition.Y;
 
-			var newWidth = initialSize.X + diff.X / (dx);
-			var newHeight = initialSize.Y + diff.Y / (dy);
+				var newWidth = initialSize.X + diff.X / (dx);
+				var newHeight = initialSize.Y + diff.Y / (dy);
 
-			var size = this.Size;
-			if (Math.Abs(dx) == 1 && (newWidth > 0 || AllowNegativeSize))
-				size.X = newWidth;
-			if (Math.Abs(dy) == 1 && (newHeight > 0 || AllowNegativeSize))
-				size.Y = newHeight;
+				var size = this.Size;
+				if (Math.Abs(dx) == 1 && (newWidth > 0 || AllowNegativeSize))
+					size.X = newWidth;
+				if (Math.Abs(dy) == 1 && (newHeight > 0 || AllowNegativeSize))
+					size.Y = newHeight;
 
-			this.SetSize(size.X, size.Y, true);
+				this.SetSize(size.X, size.Y, Main.EventFiring.Suppressed);
 
-			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
+				var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
 
-			PointD2D currPos = GetPosition();
-			this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y));
-			UpdateTransformationMatrix();
+				PointD2D currPos = GetPosition();
+				this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
+				UpdateTransformationMatrix();
+			}
+			finally
+			{
+				_eventSuppressor.Resume(ref token, eventFiring);
+			}
 		}
 
 		/// <summary>
@@ -962,107 +967,147 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="absPivot">Pivot point in absolute coordinates.</param>
 		/// <param name="relDrawGrip">Grip point in relative coordinates.</param>
 		/// <param name="diff">Difference between absolute grip point and absolute pivot point, in unrotated absolute coordinates.</param>
-		public void SetRotationFrom(PointD2D relPivot, PointD2D absPivot, PointD2D relDrawGrip, PointD2D diff)
+		public void SetRotationFrom(PointD2D relPivot, PointD2D absPivot, PointD2D relDrawGrip, PointD2D diff, Main.EventFiring eventFiring)
 		{
-			double dx = (relDrawGrip.X - relPivot.X) * Width * ScaleX
-								+ (relDrawGrip.Y - relPivot.Y) * Height * ScaleY * Shear;
-			double dy = (relDrawGrip.Y - relPivot.Y) * Height * ScaleY;
-
-			double a1 = Math.Atan2(dy, dx);
-			double a2 = Math.Atan2(diff.Y, diff.X);
-
-			this.Rotation = -(180 * (a2 - a1) / Math.PI);
-			UpdateTransformationMatrix();
-			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(relPivot);
-			var currPos = this.GetPosition();
-			this.SetPosition(new PointD2D(currPos.X + absPivot.X - currFixaPos.X, currPos.Y + absPivot.Y - currFixaPos.Y));
-			UpdateTransformationMatrix();
-		}
-
-		public void SetScalesFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialScaleX, double initialScaleY)
-		{
-			double newScaleX = this.ScaleX;
-			double newScaleY = this.ScaleY;
-
-			double initialWidth = this.Width * initialScaleX;
-			double initialHeight = this.Height * initialScaleY;
-
-			double dx = relDrawGrip.X - fixrPosition.X;
-			double dy = relDrawGrip.Y - fixrPosition.Y;
-
-			if (dy != 0)
-				newScaleY = initialScaleY + diff.Y / (dy * Height);
-			if (dx != 0)
-				newScaleX = initialScaleX + (diff.X - Shear * diff.Y) / (dx * Width);
-
-			this.Scale = new PointD2D(newScaleX, newScaleY);
-			UpdateTransformationMatrix();
-
-			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
-			var currPos = this.GetPosition();
-			this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y));
-			UpdateTransformationMatrix();
-		}
-
-		public void SetShearFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialRotation, double initialShear, double initialScaleX, double initialScaleY)
-		{
-			var newShear = this.Shear;
-			var newRot = this.Rotation;
-			var newScaleX = this.ScaleX;
-			var newScaleY = this.ScaleY;
-
-			double dx = relDrawGrip.X - fixrPosition.X;
-			double dy = relDrawGrip.Y - fixrPosition.Y;
-
-			// complicated case
-			if (Math.Abs(dx) == 1)
+			var token = _eventSuppressor.Suspend();
+			try
 			{
-				double shearAngle = Math.Atan(initialShear);
-				var diffHeight = dx * ToUnrotatedDifference(initialRotation + shearAngle * 180 / Math.PI, diff).Y;
+				double dx = (relDrawGrip.X - relPivot.X) * Width * ScaleX
+									+ (relDrawGrip.Y - relPivot.Y) * Height * ScaleY * Shear;
+				double dy = (relDrawGrip.Y - relPivot.Y) * Height * ScaleY;
 
-				double b = Width * initialScaleX / Math.Sqrt(1 + initialShear * initialShear); // Width of the object perpendicular to the right side
+				double a1 = Math.Atan2(dy, dx);
+				double a2 = Math.Atan2(diff.Y, diff.X);
 
-				newShear = (initialShear + diffHeight / b);
-				newRot = (initialRotation + (shearAngle - Math.Atan(newShear)) * 180 / Math.PI);
-				newScaleX = (initialScaleX / Math.Sqrt((1 + initialShear * initialShear) / (1 + newShear * newShear)));
-				newScaleY = (initialScaleY * Math.Sqrt((1 + initialShear * initialShear) / (1 + newShear * newShear)));
+				this.Rotation = -(180 * (a2 - a1) / Math.PI);
+				UpdateTransformationMatrix();
+				var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(relPivot);
+				var currPos = this.GetPosition();
+				this.SetPosition(new PointD2D(currPos.X + absPivot.X - currFixaPos.X, currPos.Y + absPivot.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
+				UpdateTransformationMatrix();
 			}
-
-			// simple case
-			if (Math.Abs(dy) == 1)
+			finally
 			{
-				var diffWidth = ToUnrotatedDifference(diff).X;
-				newShear = (initialShear + diffWidth / (dy * ScaleY * Height));
+				_eventSuppressor.Resume(ref token, eventFiring);
 			}
-
-			this.Shear = newShear;
-			this.Rotation = newRot;
-			this.Scale = new PointD2D(newScaleX, newScaleY);
-			UpdateTransformationMatrix();
-
-			var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
-			var currPos = this.GetPosition();
-			this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y));
-			UpdateTransformationMatrix();
 		}
 
-		protected internal void SetCoordinatesByAppendTransformation(TransformationMatrix2D transform, bool suppressChangeEvent)
+		public void SetScalesFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
 		{
-			var loctransform = _transformation.Clone(); // because the _transformation member will be overwritten when setting Position, Rotation, Scale and so on, we create a copy of it
-			loctransform.AppendTransform(transform);
-			this.SetPosition(new PointD2D(loctransform.X, loctransform.Y));
-			this.Rotation = -loctransform.Rotation;
-			this.Scale = new PointD2D(loctransform.ScaleX, loctransform.ScaleY);
-			this.Shear = loctransform.Shear;
+			var token = _eventSuppressor.Suspend();
+			try
+			{
+				double newScaleX = this.ScaleX;
+				double newScaleY = this.ScaleY;
+
+				double initialWidth = this.Width * initialScaleX;
+				double initialHeight = this.Height * initialScaleY;
+
+				double dx = relDrawGrip.X - fixrPosition.X;
+				double dy = relDrawGrip.Y - fixrPosition.Y;
+
+				if (dy != 0)
+					newScaleY = initialScaleY + diff.Y / (dy * Height);
+				if (dx != 0)
+					newScaleX = initialScaleX + (diff.X - Shear * diff.Y) / (dx * Width);
+
+				this.Scale = new PointD2D(newScaleX, newScaleY);
+				UpdateTransformationMatrix();
+
+				var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
+				var currPos = this.GetPosition();
+				this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
+				UpdateTransformationMatrix();
+			}
+			finally
+			{
+				_eventSuppressor.Resume(ref token, eventFiring);
+			}
 		}
 
-		protected internal void SetCoordinatesByAppendInverseTransformation(TransformationMatrix2D transform, bool suppressChangeEvent)
+		public void SetShearFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialRotation, double initialShear, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
 		{
-			_transformation.AppendInverseTransform(transform);
-			this.SetPosition(new PointD2D(_transformation.X, _transformation.Y));
-			this.Rotation = -_transformation.Rotation;
-			this.Scale = new PointD2D(_transformation.ScaleX, _transformation.ScaleY);
-			this.Shear = _transformation.Shear;
+			var token = _eventSuppressor.Suspend();
+			try
+			{
+				var newShear = this.Shear;
+				var newRot = this.Rotation;
+				var newScaleX = this.ScaleX;
+				var newScaleY = this.ScaleY;
+
+				double dx = relDrawGrip.X - fixrPosition.X;
+				double dy = relDrawGrip.Y - fixrPosition.Y;
+
+				// complicated case
+				if (Math.Abs(dx) == 1)
+				{
+					double shearAngle = Math.Atan(initialShear);
+					var diffHeight = dx * ToUnrotatedDifference(initialRotation + shearAngle * 180 / Math.PI, diff).Y;
+
+					double b = Width * initialScaleX / Math.Sqrt(1 + initialShear * initialShear); // Width of the object perpendicular to the right side
+
+					newShear = (initialShear + diffHeight / b);
+					newRot = (initialRotation + (shearAngle - Math.Atan(newShear)) * 180 / Math.PI);
+					newScaleX = (initialScaleX / Math.Sqrt((1 + initialShear * initialShear) / (1 + newShear * newShear)));
+					newScaleY = (initialScaleY * Math.Sqrt((1 + initialShear * initialShear) / (1 + newShear * newShear)));
+				}
+
+				// simple case
+				if (Math.Abs(dy) == 1)
+				{
+					var diffWidth = ToUnrotatedDifference(diff).X;
+					newShear = (initialShear + diffWidth / (dy * ScaleY * Height));
+				}
+
+				this.Shear = newShear;
+				this.Rotation = newRot;
+				this.Scale = new PointD2D(newScaleX, newScaleY);
+				UpdateTransformationMatrix();
+
+				var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixrPosition);
+				var currPos = this.GetPosition();
+				this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
+				UpdateTransformationMatrix();
+			}
+			finally
+			{
+				_eventSuppressor.Resume(ref token, eventFiring);
+			}
+		}
+
+		protected internal void SetCoordinatesByAppendTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
+		{
+			var token = _eventSuppressor.Suspend();
+			try
+			{
+				var loctransform = _transformation.Clone(); // because the _transformation member will be overwritten when setting Position, Rotation, Scale and so on, we create a copy of it
+				loctransform.AppendTransform(transform);
+				this.SetPosition(new PointD2D(loctransform.X, loctransform.Y), eventFiring);
+				this.Rotation = -loctransform.Rotation;
+				this.Scale = new PointD2D(loctransform.ScaleX, loctransform.ScaleY);
+				this.Shear = loctransform.Shear;
+			}
+			finally
+			{
+				_eventSuppressor.Resume(ref token, eventFiring);
+			}
+		}
+
+		protected internal void SetCoordinatesByAppendInverseTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
+		{
+			var token = _eventSuppressor.Suspend();
+			try
+			{
+				_transformation.AppendInverseTransform(transform);
+				this.SetPosition(new PointD2D(_transformation.X, _transformation.Y), eventFiring);
+				this.Rotation = -_transformation.Rotation;
+				this.Scale = new PointD2D(_transformation.ScaleX, _transformation.ScaleY);
+				this.Shear = _transformation.Shear;
+			}
+			finally
+			{
+				_eventSuppressor.Resume(ref token, eventFiring);
+			}
 		}
 
 		protected internal void ShiftPosition(PointD2D dp)
@@ -1073,7 +1118,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected internal void ShiftPosition(double dx, double dy)
 		{
 			var currPos = GetPosition();
-			this.SetPosition(new PointD2D(currPos.X + dx, currPos.Y + dy));
+			this.SetPosition(new PointD2D(currPos.X + dx, currPos.Y + dy), Main.EventFiring.Suppressed);
 			UpdateTransformationMatrix();
 		}
 

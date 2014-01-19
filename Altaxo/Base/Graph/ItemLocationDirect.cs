@@ -403,7 +403,7 @@ namespace Altaxo.Graph
 
 			_positionX = x;
 			_positionY = y;
-			
+
 			InternalSetSizeSilent(width, height);
 
 			if (isChanged)
@@ -644,10 +644,18 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				var oldSizeX = _sizeX;
-				var oldSizeY = _sizeY;
-				InternalSetAbsoluteSizeSilent(value);
+				SetAbsoluteSize(value, Main.EventFiring.Enabled);
+			}
+		}
 
+		public virtual void SetAbsoluteSize(PointD2D value, Main.EventFiring eventFiring)
+		{
+			var oldSizeX = _sizeX;
+			var oldSizeY = _sizeY;
+			InternalSetAbsoluteSizeSilent(value);
+
+			if (eventFiring == Main.EventFiring.Enabled)
+			{
 				if (oldSizeX != _sizeX || oldSizeY != _sizeY)
 					OnChanged();
 			}
@@ -802,15 +810,20 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				var oldValueX = _positionX;
-				var oldValueY = _positionY;
-
-				InternalSetAbsolutePivotPositionXSilent(value.X);
-				InternalSetAbsolutePivotPositionYSilent(value.Y);
-
-				if (oldValueX != _positionX || oldValueY != _positionY)
-					OnChanged();
+				SetAbsolutePivotPosition(value, Main.EventFiring.Enabled);
 			}
+		}
+
+		public void SetAbsolutePivotPosition(PointD2D value, Main.EventFiring eventFiring)
+		{
+			var oldValueX = _positionX;
+			var oldValueY = _positionY;
+
+			InternalSetAbsolutePivotPositionXSilent(value.X);
+			InternalSetAbsolutePivotPositionYSilent(value.Y);
+
+			if (eventFiring == Main.EventFiring.Enabled && (oldValueX != _positionX || oldValueY != _positionY))
+				OnChanged();
 		}
 
 		/// <summary>
@@ -853,7 +866,6 @@ namespace Altaxo.Graph
 				OnChanged();
 		}
 
-
 		public void ChangeRelativeSizeValuesToAbsoluteSizeValues()
 		{
 			if (_sizeX.IsRelative)
@@ -888,7 +900,6 @@ namespace Altaxo.Graph
 		{
 			ChangeParentAnchorButKeepPosition(RADouble.NewRel(0), RADouble.NewRel(0));
 		}
-
 
 		#endregion Methods
 	}

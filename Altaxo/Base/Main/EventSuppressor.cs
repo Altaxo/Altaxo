@@ -29,6 +29,18 @@ using System.Text;
 namespace Altaxo.Main
 {
 	/// <summary>
+	/// Designates in classes and function whether events are allowed to be fired.
+	/// </summary>
+	public enum EventFiring
+	{
+		/// <summary>Events are allowed to be fired.</summary>
+		Enabled,
+
+		/// <summary>Event(s) should be suppressed.</summary>
+		Suppressed
+	}
+
+	/// <summary>
 	/// Interface for a token that is used to suppress events. If the token is disposed, the suppress counter of the parent is decremented by one. If the suppress count of the parent
 	/// falls to zero, the events are enabled again.
 	/// </summary>
@@ -133,13 +145,17 @@ namespace Altaxo.Main
 		/// if the suppress level falls to zero.
 		/// </summary>
 		/// <param name="token"></param>
-		public void Resume(ref ISuppressToken token)
+		/// <returns>The event count accumulated during the suspend phase.</returns>
+		public int Resume(ref ISuppressToken token)
 		{
+			int result = 0;
 			if (token != null)
 			{
+				result = _eventCount;
 				token.Dispose(); // the OnResume function is called from the SuppressToken
 				token = null;
 			}
+			return result;
 		}
 
 		/// <summary>
@@ -148,18 +164,22 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="token"></param>
 		/// <param name="suppressResumeEvent">If true, the resume event is suppressed.</param>
-		public void Resume(ref ISuppressToken token, bool suppressResumeEvent)
+		/// <returns>The event count accumulated during the suspend phase.</returns>
+		public int Resume(ref ISuppressToken token, EventFiring firingOfResumeEvent)
 		{
+			int result = 0;
 			if (token != null)
 			{
-				if (suppressResumeEvent)
+				if (firingOfResumeEvent == EventFiring.Suppressed)
 				{
 					token.Disarm();
 				}
 
+				result = _eventCount;
 				token.Dispose(); // the OnResume function is called from the SuppressToken
 				token = null;
 			}
+			return result;
 		}
 
 		/// <summary>

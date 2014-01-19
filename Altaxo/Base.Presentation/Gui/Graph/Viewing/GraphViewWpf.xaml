@@ -32,6 +32,7 @@
 					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste" />
 				</Image.CommandBindings>
 			</Image>
+			<Label x:Name="_guiUpdateCount" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" />
 			<ScrollBar Grid.Row="1" Orientation="Horizontal" Name="_horizontalScrollBar" Scroll="EhHorizontalScrollBar_Scroll" />
 		</Grid>
 		<ScrollBar Grid.Column="2" Orientation="Vertical" Name="_verticalScrollBar" Scroll="EhVerticalScrollBar_Scroll" />

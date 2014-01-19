@@ -45,10 +45,8 @@
 		<ComboBox x:Name="_cbImageFormat" Grid.Column="1" Grid.Row="0" SelectionChanged="EhImageFormatSelected" />
 		<Label Grid.Column="0" Grid.Row="2" Content="Pixel format:" />
 		<ComboBox x:Name="_cbPixelFormat" Grid.Column="1" Grid.Row="2" SelectionChanged="EhPixelFormatSelected" />
-		<Label Grid.Column="0" Grid.Row="4" Content="Area to export:" />
-		<ComboBox x:Name="_cbExportArea" Grid.Column="1" Grid.Row="4" SelectionChanged="EhExportAreaSelected" />
-		<Label Grid.Column="0" Grid.Row="6" Content="Source dpi resolution:" />
-		<ComboBox x:Name="_cbSourceResolution" Grid.Column="1" Grid.Row="6" IsEditable="True" />
+		<Label Grid.Column="0" Grid.Row="4" Content="Source dpi resolution:" />
+		<ComboBox x:Name="_cbSourceResolution" Grid.Column="1" Grid.Row="4" IsEditable="True" />
 		<Label Grid.Column="0" Grid.Row="8" Content="Destination dpi resolution:" />
 		<ComboBox x:Name="_cbDestinationResolution" Grid.Column="1" Grid.Row="8" IsEditable="True" />
 		<Label Grid.Column="0" Grid.Row="10" Content="Background:" />

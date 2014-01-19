@@ -370,7 +370,7 @@ namespace Altaxo.Graph.Gdi
 			}
 			finally
 			{
-				_changedEventSuppressor.Resume(ref suppressToken, true);
+				_changedEventSuppressor.Resume(ref suppressToken, Main.EventFiring.Suppressed);
 			}
 		}
 

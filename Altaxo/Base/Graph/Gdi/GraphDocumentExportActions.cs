@@ -655,8 +655,56 @@ namespace Altaxo.Graph.Gdi
 		private double _sourceDpiResolution;
 		private double _destinationDpiResolution;
 		private GraphCopyPageClipboardFormat _clipboardFormat;
+		private bool _isIntentedForClipboardOperation;
 
-		public bool IsIntentedForClipboardOperation { get; set; }
+		#region Serialization
+
+		/// <summary>
+		/// Initial version (2014-01-18)
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphExportOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphExportOptions s = (GraphExportOptions)obj;
+
+				info.AddValue("ImageFormat", s._imageFormat);
+				info.AddEnum("PixelFormat", s._pixelFormat);
+				info.AddValue("Background", s._backgroundBrush);
+				info.AddValue("SourceResolution", s._sourceDpiResolution);
+				info.AddValue("DestinationResolution", s._destinationDpiResolution);
+				info.AddEnum("ClipboardFormat", s._clipboardFormat);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (GraphExportOptions)o : new GraphExportOptions();
+
+				s._imageFormat = (ImageFormat)info.GetValue("ImageFormat", s);
+				s._pixelFormat = (PixelFormat)info.GetEnum("PixelFormat", typeof(PixelFormat));
+				s.BackgroundBrush = (BrushX)info.GetValue("Background");
+				s._sourceDpiResolution = info.GetDouble("SourceResolution");
+				s._destinationDpiResolution = info.GetDouble("DestinationResolution");
+				s._clipboardFormat = (GraphCopyPageClipboardFormat)info.GetEnum("ClipboardFormat", typeof(GraphCopyPageClipboardFormat));
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		public bool IsIntentedForClipboardOperation
+		{
+			get
+			{
+				return _isIntentedForClipboardOperation;
+			}
+			set
+			{
+				_isIntentedForClipboardOperation = value;
+			}
+		}
 
 		public GraphCopyPageClipboardFormat ClipboardFormat
 		{

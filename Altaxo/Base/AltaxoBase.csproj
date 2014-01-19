@@ -282,6 +282,7 @@
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Settings\AsciiAnalysisSettingsController.cs" />
     <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
+    <Compile Include="Gui\Settings\ClipboardGraphExportOptionsController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
@@ -297,6 +298,7 @@
     <Compile Include="Root\CopyHelper.cs" />
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
+    <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
     <Compile Include="Worksheet\WorksheetViewLayout.cs" />
     <Content Include="AssemblyInfo.cs">

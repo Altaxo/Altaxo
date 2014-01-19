@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -33,17 +34,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 	{
 		protected class RescaleGripHandle : IGripManipulationHandle
 		{
-			static readonly PointF[] _shapePoints;
+			private static readonly PointF[] _shapePoints;
 
-			IHitTestObject _parent;
-			PointD2D _drawrPosition;
-			PointD2D _drawaPosition;
-			PointD2D _fixrPosition;
-			PointD2D _fixaPosition;
-			PointD2D _initialMousePosition;
-			double _initialScaleX, _initialScaleY;
-			TransformationMatrix2D _spanningHalfYRhombus;
-
+			private IHitTestObject _parent;
+			private PointD2D _drawrPosition;
+			private PointD2D _drawaPosition;
+			private PointD2D _fixrPosition;
+			private PointD2D _fixaPosition;
+			private PointD2D _initialMousePosition;
+			private double _initialScaleX, _initialScaleY;
+			private TransformationMatrix2D _spanningHalfYRhombus;
+			private bool _hasMoved;
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
@@ -59,7 +60,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_spanningHalfYRhombus = spanningHalfYRhombus;
 			}
 
-
 			#region IGripManipulationHandle Members
 
 			public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
@@ -72,10 +72,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_initialScaleX = GraphObject.ScaleX;
 				_initialScaleY = GraphObject.ScaleY;
+
+				_hasMoved = false;
 			}
 
 			public bool Deactivate()
 			{
+				if (_hasMoved)
+					GraphObject.OnChanged();
+
 				return false;
 			}
 
@@ -85,8 +90,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var diff = GraphObject.ToUnrotatedDifference(_fixaPosition, newPosition);
 				diff -= _initialMousePosition;
 
-
-				GraphObject.SetScalesFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialScaleX, _initialScaleY);
+				GraphObject.SetScalesFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialScaleX, _initialScaleY, Main.EventFiring.Suppressed);
+				_hasMoved = true;
 			}
 
 			/// <summary>Draws the grip in the graphics context.</summary>
@@ -105,15 +110,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return Calc.RMath.IsInIntervalCC(point.X, 0, 2 * barX + stegX) && Calc.RMath.IsInIntervalCC(point.Y, -bigY, bigY);
 			}
 
-			#endregion
+			#endregion IGripManipulationHandle Members
 
-
-
-			const float bigY = 0.5f; // half heigth of the bar
-			const float smallY = 0.125f; // half height of the steg
-			const float barX = 0.33f; // width of the bar
-			const float stegX = 0.2f; // width of the steg between the bars
-
+			private const float bigY = 0.5f; // half heigth of the bar
+			private const float smallY = 0.125f; // half height of the steg
+			private const float barX = 0.33f; // width of the bar
+			private const float stegX = 0.2f; // width of the steg between the bars
 
 			static RescaleGripHandle()
 			{

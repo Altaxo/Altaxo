@@ -58,11 +58,6 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
 		}
 
-		private void EhExportAreaSelected(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbExportArea);
-		}
-
 		#region IGraphExportView Members
 
 		public void SetImageFormat(Altaxo.Collections.SelectableListNodeList list)
@@ -73,11 +68,6 @@ namespace Altaxo.Gui.Graph
 		public void SetPixelFormat(Altaxo.Collections.SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_cbPixelFormat, list);
-		}
-
-		public void SetExportArea(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbExportArea, list);
 		}
 
 		public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)

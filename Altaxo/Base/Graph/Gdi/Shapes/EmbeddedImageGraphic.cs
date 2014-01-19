@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this()
 		{
-			this.SetPosition(graphicPosition);
+			this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
 			this.Image = startingImage;
 		}
 
@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition, startingImage)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
+			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
 		}
 
 		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, ImageProxy startingImage)
@@ -117,7 +117,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition, Rotation, startingImage)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
+			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
 		}
 
 		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, ImageProxy startingImage)

@@ -48,6 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			private PointD2D _initialMousePosition;
 			private PointD2D _initialSize;
 			private TransformationMatrix2D _spanningHalfYRhombus;
+			private bool _hasMoved;
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
@@ -80,10 +81,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_initialMousePosition = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, initialPosition);
 
 				_initialSize = GraphObject.Size;
+				_hasMoved = false;
 			}
 
 			public bool Deactivate()
 			{
+				if (_hasMoved)
+					GraphObject.OnChanged();
+
 				return false;
 			}
 
@@ -93,7 +98,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var diff = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, newPosition);
 				diff -= _initialMousePosition;
 
-				GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialSize);
+				GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialSize, Main.EventFiring.Suppressed);
+				_hasMoved = true;
 			}
 
 			#region IGripManipulationHandle Members

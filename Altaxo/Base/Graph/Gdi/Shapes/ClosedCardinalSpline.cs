@@ -169,8 +169,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="width">Unscaled width of the item (ignored here).</param>
 		/// <param name="height">Unscaled height of the item (ignored here).</param>
-		/// <param name="suppressChangedEvent">Suppressed the change event (ignored here).</param>
-		protected override void SetSize(double width, double height, bool suppressChangedEvent)
+		/// <param name="eventFiring">Suppressed the change event (ignored here).</param>
+		protected override void SetSize(double width, double height, Main.EventFiring eventFiring)
 		{
 		}
 

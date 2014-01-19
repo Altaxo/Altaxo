@@ -306,7 +306,7 @@ namespace Altaxo.Graph.Gdi
 			}
 			finally
 			{
-				_changeEventSuppressor.Resume(ref updateLock, true); // when we clone from another layer, the new layer has still the parent of the old layer. Thus we don't want that the parent of the old layer receives the changed event, since nothing has changed for it.
+				_changeEventSuppressor.Resume(ref updateLock, Main.EventFiring.Suppressed); // when we clone from another layer, the new layer has still the parent of the old layer. Thus we don't want that the parent of the old layer receives the changed event, since nothing has changed for it.
 			}
 		}
 

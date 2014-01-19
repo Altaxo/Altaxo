@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -33,15 +34,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 	{
 		protected class ShearGripHandle : IGripManipulationHandle
 		{
-			static readonly PointF[] _shapePoints;
+			private static readonly PointF[] _shapePoints;
 
-			IHitTestObject _parent;
-			PointD2D _drawrPosition;
-			PointD2D _fixrPosition;
-			PointD2D _fixaPosition;
-			PointD2D _initialMousePosition;
-			double _initialShear, _initialRotation, _initialScaleX, _initialScaleY;
-			TransformationMatrix2D _spanningHalfYRhombus;
+			private IHitTestObject _parent;
+			private PointD2D _drawrPosition;
+			private PointD2D _fixrPosition;
+			private PointD2D _fixaPosition;
+			private PointD2D _initialMousePosition;
+			private double _initialShear, _initialRotation, _initialScaleX, _initialScaleY;
+			private TransformationMatrix2D _spanningHalfYRhombus;
+			private bool _hasMoved;
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
@@ -53,7 +55,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_fixaPosition = GraphObject.RelativeToAbsolutePosition(_fixrPosition, true);
 				_spanningHalfYRhombus = spanningHalfYRhombus;
 			}
-
 
 			#region IGripManipulationHandle Members
 
@@ -67,10 +68,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_initialRotation = GraphObject.Rotation;
 				_initialScaleX = GraphObject.ScaleX;
 				_initialScaleY = GraphObject.ScaleY;
+
+				_hasMoved = false;
 			}
 
 			public bool Deactivate()
 			{
+				if (_hasMoved)
+					GraphObject.OnChanged();
+
 				return false;
 			}
 
@@ -79,7 +85,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 				PointD2D diff = new PointD2D(newPosition.X - _initialMousePosition.X, newPosition.Y - _initialMousePosition.Y);
 
-				GraphObject.SetShearFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialRotation, _initialShear, _initialScaleX, _initialScaleY);
+				GraphObject.SetShearFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialRotation, _initialShear, _initialScaleX, _initialScaleY, Main.EventFiring.Suppressed);
+				_hasMoved = true;
 			}
 
 			/// <summary>Draws the grip in the graphics context.</summary>
@@ -98,12 +105,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return Calc.RMath.IsInIntervalCC(point.X, 0, 2 * bigX) && Calc.RMath.IsInIntervalCC(point.Y, -bigY, bigY);
 			}
 
-			#endregion
+			#endregion IGripManipulationHandle Members
 
-			const float arrY = 0.5f; // y top of arrow
-			const float bigY = 0.3f; // y 
-			const float smallY = 0.15f; // y at the base
-			const float bigX = 0.33f; // width of one arrow
+			private const float arrY = 0.5f; // y top of arrow
+			private const float bigY = 0.3f; // y
+			private const float smallY = 0.15f; // y at the base
+			private const float bigX = 0.33f; // width of one arrow
 
 			static ShearGripHandle()
 			{
@@ -119,6 +126,5 @@ namespace Altaxo.Graph.Gdi.Shapes
           };
 			}
 		}
-
 	}
 }
