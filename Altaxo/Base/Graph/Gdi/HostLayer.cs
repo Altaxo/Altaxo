@@ -243,21 +243,10 @@ namespace Altaxo.Graph.Gdi
 				this.Location = (IItemLocation)from._location.Clone(); // Location must be last to copy
 			}
 
-			if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
-			{
-				// The layers and graph itens should be cloned -> this is easy -> just clone the _graphObject collection
-				using (this._graphObjects.GetEventDisableToken())
-				{
-					this._graphObjects.Clear();
-					for (int i = 0; i < from._graphObjects.Count; i++)
-					{
-						var fromobj = from._graphObjects[i];
-						if (!(fromobj is ILayerItemPlaceHolder) || ((ILayerItemPlaceHolder)fromobj).IsUsedForLayer(this)) // don't copy placeholders that are not intended for our type of layer
-							this._graphObjects.Add((IGraphicBase)fromobj.Clone());
-					}
-				}
-			}
-			else if (0 != (options & GraphCopyOptions.CopyLayerAll))
+			InternalCopyGraphItems(from, options);
+
+			// copy the properties in the child layer(s) (only the members, not the child layers itself)
+			if (0 != (options & GraphCopyOptions.CopyLayerAll))
 			{
 				// not all properties of the child layers should be cloned -> just copy the layers one by one
 				int len = Math.Min(this._childLayers.Count, from._childLayers.Count);
@@ -270,6 +259,41 @@ namespace Altaxo.Graph.Gdi
 
 			_transformation = new TransformationMatrix2D();
 			CalculateMatrix();
+		}
+
+		protected virtual void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options)
+		{
+			bool bGraphItems = options.HasFlag(GraphCopyOptions.CopyLayerGraphItems);
+			bool bChildLayers = options.HasFlag(GraphCopyOptions.CopyChildLayers);
+
+			var criterium = new Func<IGraphicBase, bool>(x =>
+			{
+				if (x is HostLayer)
+					return bChildLayers;
+
+				return bGraphItems;
+			});
+
+			InternalCopyGraphItems(from, criterium);
+		}
+
+		protected virtual void InternalCopyGraphItems(HostLayer from, Func<IGraphicBase, bool> selectionCriteria)
+		{
+			var pwThis = _graphObjects.CreatePartialView(x => selectionCriteria(x));
+			var pwFrom = from._graphObjects.CreatePartialView(x => selectionCriteria(x));
+			// replace existing items
+			int i, j;
+			for (i = 0, j = 0; i < pwThis.Count && j < pwFrom.Count; j++)
+			{
+				if (pwFrom[j].IsCompatibleWithParent(this))
+					pwThis[i++] = (IGraphicBase)pwFrom[j].Clone();
+			}
+			// remove superfluous items
+			for (int k = pwThis.Count - 1; k >= i; --k)
+				pwThis.RemoveAt(k);
+			// add more layers if neccessary
+			for (; j < pwFrom.Count; j++)
+				pwThis.Add((IGraphicBase)pwFrom[j].Clone());
 		}
 
 		public virtual object Clone()
@@ -956,6 +980,11 @@ namespace Altaxo.Graph.Gdi
 				hl.VisitDocumentReferences(Report);
 		}
 
+		public virtual bool IsCompatibleWithParent(object parent)
+		{
+			return true;
+		}
+
 		#endregion XYPlotLayer properties and methods
 
 		#region Painting and Hit testing
@@ -965,14 +994,17 @@ namespace Altaxo.Graph.Gdi
 		///
 		/// </summary>
 
-		public virtual void PaintPreprocessing()
+		public virtual void PaintPreprocessing(object parentObject)
 		{
+			if (!object.ReferenceEquals(parentObject, _parent))
+				throw new InvalidOperationException("Cached parent object does not matched parent object in argument!");
+
 			var mySize = this.Size;
 			foreach (var graphObj in _graphObjects)
+			{
 				graphObj.SetParentSize(mySize, false);
-
-			foreach (var obj in _childLayers)
-				obj.PaintPreprocessing();
+				graphObj.PaintPreprocessing(this);
+			}
 		}
 
 		/// <summary>

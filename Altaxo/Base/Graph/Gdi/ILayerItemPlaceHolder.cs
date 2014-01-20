@@ -11,12 +11,5 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public interface ILayerItemPlaceHolder
 	{
-		/// <summary>
-		/// Determines whether this place holder item is used by the specified layer type.
-		/// </summary>
-		/// <param name="layer">The layer. The item that implements this function should only use the type of the provided layer, not the specific layer instance.</param>
-		/// <returns><c>true</c> if this placeholder item can be used for the provided (type of) layer; otherwise, <c>false</c>.
-		/// </returns>
-		bool IsUsedForLayer(HostLayer layer);
 	}
 }

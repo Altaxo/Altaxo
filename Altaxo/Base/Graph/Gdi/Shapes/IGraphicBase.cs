@@ -26,7 +26,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		//Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData rectHit);
 		//void OnDeserialization(object obj);
+
+		void PaintPreprocessing(object parent);
+
 		void Paint(System.Drawing.Graphics g, object obj);
+
+		/// <summary>
+		/// Determines whether this graphical object is compatible with the parent specified in the argument.
+		/// </summary>
+		/// <param name="parentObject">The parent object.</param>
+		/// <returns><c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.</returns>
+		bool IsCompatibleWithParent(object parentObject);
 
 		//Altaxo.Graph.PointD2D ParentCoordinatesToLocalDifference(Altaxo.Graph.PointD2D pivot, Altaxo.Graph.PointD2D point);
 		Altaxo.Graph.PointD2D Position { get; set; }

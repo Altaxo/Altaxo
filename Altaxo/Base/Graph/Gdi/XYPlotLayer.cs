@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="options">Copy options.</param>
 		protected override void InternalCopyFrom(HostLayer obj, GraphCopyOptions options)
 		{
-			base.InternalCopyFrom(obj, options.WithClearedFlag(GraphCopyOptions.CopyLayerGraphItems)); // in the base class GraphItems should not be copied, since this is handled in this class
+			base.InternalCopyFrom(obj, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
 
 			var from = obj as XYPlotLayer;
 			if (null == from)
@@ -142,29 +142,7 @@ namespace Altaxo.Graph.Gdi
 				this.AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
 			}
 
-			var copyLegends = 0 != (options & GraphCopyOptions.CopyLayerLegends);
-			var copyGraphItems = 0 != (options & GraphCopyOptions.CopyLayerGraphItems);
-
-			if (0 != (options & GraphCopyOptions.CopyLayerLinks))
-			{
-			}
-
-			this.GraphObjects.Clear();
-			foreach (var go in from.GraphObjects)
-			{
-				bool copy = true;
-
-				if (go is LegendText)
-					copy = copyLegends;
-				else if (go is PlaceHolder)
-					copy = true; //
-				else // dann bleibt nur noch ein normales GraphItem übrig
-					copy = copyGraphItems;
-
-				if (copy)
-					this.GraphObjects.Add(go);
-			}
-
+			// Plot items
 			if (0 != (options & GraphCopyOptions.CopyLayerPlotItems))
 			{
 				this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
@@ -174,6 +152,26 @@ namespace Altaxo.Graph.Gdi
 				// TODO apply the styles from from._plotItems to the PlotItems here
 				this.PlotItems.CopyFrom(from._plotItems, options);
 			}
+		}
+
+		protected override void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options)
+		{
+			bool bGraphItems = options.HasFlag(GraphCopyOptions.CopyLayerGraphItems);
+			bool bChildLayers = options.HasFlag(GraphCopyOptions.CopyChildLayers);
+			bool bLegends = options.HasFlag(GraphCopyOptions.CopyLayerLegends);
+
+			var criterium = new Func<IGraphicBase, bool>(x =>
+			{
+				if (x is HostLayer)
+					return bChildLayers;
+
+				if (x is LegendText)
+					return bLegends;
+
+				return bGraphItems;
+			});
+
+			InternalCopyGraphItems(from, criterium);
 		}
 
 		public override object Clone()
@@ -1071,9 +1069,9 @@ namespace Altaxo.Graph.Gdi
 			_graphObjects.Insert(idx, new PlotItemPlaceHolder());
 		}
 
-		public override void PaintPreprocessing()
+		public override void PaintPreprocessing(object parentObject)
 		{
-			base.PaintPreprocessing();
+			base.PaintPreprocessing(parentObject);
 
 			UpdateScaleLinks();
 
@@ -1697,6 +1695,11 @@ namespace Altaxo.Graph.Gdi
 
 			public object ParentObject { get; set; }
 
+			public virtual bool IsCompatibleWithParent(object parentObject)
+			{
+				return parentObject is XYPlotLayer;
+			}
+
 			public virtual void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent)
 			{
 			}
@@ -1704,6 +1707,12 @@ namespace Altaxo.Graph.Gdi
 			public virtual IHitTestObject HitTest(HitTestPointData hitData)
 			{
 				return null;
+			}
+
+			public virtual void PaintPreprocessing(object parentObject)
+			{
+				if (!object.ReferenceEquals(parentObject, this.ParentObject))
+					throw new InvalidOperationException(string.Format("Cached parentObject and parentObject in document do not match! This={0}, ParentCached={1}, ParentArg={2}", this.GetType(), ParentObject, parentObject));
 			}
 
 			public abstract void Paint(Graphics g, object obj);

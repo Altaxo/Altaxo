@@ -379,11 +379,6 @@ namespace Altaxo.Graph.Gdi
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			if (0 != (options & GraphCopyOptions.CopyGraphSize))
-			{
-				this._rootLayer.Location = (IItemLocation)from._rootLayer.Location.Clone();
-			}
-
 			if (0 != (options & GraphCopyOptions.CloneNotes))
 			{
 				if (null != _notes) _notes.PropertyChanged -= EhNotesChanged;
@@ -626,7 +621,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
 
-				RootLayer.PaintPreprocessing();
+				RootLayer.PaintPreprocessing(this);
 
 				RootLayer.Paint(g, bForPrinting);
 
