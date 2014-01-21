@@ -217,13 +217,15 @@
 				</MenuItem>
 			</Condition>
 
-			<MenuItem id = "RecentProjects" attribute = "RecentProjects" label = "${res:XML.MainMenu.FileMenu.RecentProjects}" type="Menu">
-				<MenuItem id = "RecentProjectsBuilder" type = "Builder" class = "Altaxo.Main.Commands.RecentProjectsMenuBuilder" />
-				<MenuItem id = "RecentProjectsSeparator" type = "Separator" />
-				<MenuItem id = "ClearRecentFiles"
-									label = "${res:XML.MainMenu.FileMenu.ClearRecentProjects}"
-									class = "ICSharpCode.SharpDevelop.Commands.ClearRecentProjects" />
-			</MenuItem>
+			<Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
+				<MenuItem id = "RecentProjects" attribute = "RecentProjects" label = "${res:XML.MainMenu.FileMenu.RecentProjects}" type="Menu">
+					<MenuItem id = "RecentProjectsBuilder" type = "Builder" class = "Altaxo.Main.Commands.RecentProjectsMenuBuilder" />
+					<MenuItem id = "RecentProjectsSeparator" type = "Separator" />
+					<MenuItem id = "ClearRecentFiles"
+										label = "${res:XML.MainMenu.FileMenu.ClearRecentProjects}"
+										class = "ICSharpCode.SharpDevelop.Commands.ClearRecentProjects" />
+				</MenuItem>
+			</Condition>
 			<MenuItem id="ExitSeparator" type = "Separator" />
 			<Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
 				<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"
@@ -656,12 +658,14 @@
 	</Path>
 
 	<Path name = "/Altaxo/Workbench/ToolBar/Standard">
-		<ToolbarItem id="New" icon="Icons.16x16.NewDocumentIcon" tooltip="${res:XML.MainMenu.FileMenu.Close.Description}"
+		<Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
+			<ToolbarItem id="New" icon="Icons.16x16.NewDocumentIcon" tooltip="${res:XML.MainMenu.FileMenu.Close.Description}"
 				class="Altaxo.Main.Commands.CloseProject" />
-		<ToolbarItem id="Open" icon="Icons.16x16.OpenFileIcon" tooltip="${res:XML.MainMenu.FileMenu.Open.Project.Description}"
-			class="Altaxo.Main.Commands.FileOpen" />
-		<ToolbarItem id="Save" icon="Icons.16x16.SaveIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveProject.Description}"
-			class="Altaxo.Main.Commands.FileSave" />
+			<ToolbarItem id="Open" icon="Icons.16x16.OpenFileIcon" tooltip="${res:XML.MainMenu.FileMenu.Open.Project.Description}"
+				class="Altaxo.Main.Commands.FileOpen" />
+			<ToolbarItem id="Save" icon="Icons.16x16.SaveIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveProject.Description}"
+				class="Altaxo.Main.Commands.FileSave" />
+		</Condition>
 		<ToolbarItem id="StandardWorksheet" icon="Icons.16x16.StandardWorksheet" tooltip="${res:XML.MainMenu.FileMenu.New.StandardWorksheet.Description}"
 			class="Altaxo.Main.Commands.CreateNewStandardWorksheet" />
 		<ToolbarItem id="EmptyWorksheet" icon="Icons.16x16.EmptyWorksheet" tooltip="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"

@@ -175,6 +175,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#endregion Constructors
 
+		public override bool IsCompatibleWithParent(object parentObject)
+		{
+			return parentObject is XYPlotLayer;
+		}
+
 		public AxisStyle AxisStyle
 		{
 			get

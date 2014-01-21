@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -46,7 +48,6 @@ namespace Altaxo.Gui.Common
 			InitializeComponent();
 		}
 
-
 		public string VersionString
 		{
 			get
@@ -56,6 +57,11 @@ namespace Altaxo.Gui.Common
 				var ass = System.Reflection.Assembly.GetEntryAssembly();
 
 				result += ass.GetName().Version.ToString();
+
+				if (System.Environment.Is64BitProcess)
+					result += " (in 64 bit mode)";
+				else
+					result += " (in 32 bit mode)";
 
 				return result;
 			}

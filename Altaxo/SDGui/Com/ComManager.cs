@@ -35,6 +35,7 @@ using System.Windows;
 
 namespace Altaxo.Com
 {
+	using UnmanagedApi.Advapi32;
 	using UnmanagedApi.Ole32;
 	using UnmanagedApi.User32;
 
@@ -316,7 +317,8 @@ namespace Altaxo.Com
 					Registry.ClassesRoot.DeleteSubKeyTree(testkeystring, false);
 				}
 
-				Register(Registry.ClassesRoot);
+				Register(Registry.LocalMachine, WOW_Mode.Reg64);
+				Register(Registry.LocalMachine, WOW_Mode.Reg32);
 				return; // if it was successful to register the computer account, we return
 			}
 			catch (Exception)
@@ -326,13 +328,8 @@ namespace Altaxo.Com
 			// if not successful to register into HKLM, we use the user's registry
 			try
 			{
-				using (var sf = Registry.CurrentUser.OpenSubKey("Software", true))
-				{
-					using (var cl = sf.OpenSubKey("Classes", true))
-					{
-						Register(cl);
-					}
-				}
+				Register(Registry.CurrentUser, WOW_Mode.Reg64);
+				Register(Registry.CurrentUser, WOW_Mode.Reg32);
 			}
 			catch (Exception)
 			{
@@ -343,38 +340,55 @@ namespace Altaxo.Com
 		{
 			try
 			{
-				Unregister(Registry.ClassesRoot);
+				Unregister(Registry.LocalMachine, WOW_Mode.Reg32);
+				Unregister(Registry.LocalMachine, WOW_Mode.Reg64);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				Current.Console.WriteLine("Unregistering Altaxo has caused an exception. Details: ");
+				Current.Console.WriteLine(ex.ToString());
 			}
 
 			// unregister also from the user's registry
 			try
 			{
-				using (var sf = Registry.CurrentUser.OpenSubKey("Software", true))
-				{
-					using (var cl = sf.OpenSubKey("Classes", true))
-					{
-						Register(cl);
-					}
-				}
+				Unregister(Registry.Users, WOW_Mode.Reg32);
+				Unregister(Registry.Users, WOW_Mode.Reg64);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				Current.Console.WriteLine("Unregistering Altaxo has caused an exception. Details: ");
+				Current.Console.WriteLine(ex.ToString());
 			}
 		}
 
-		private void Unregister(RegistryKey root)
+		private void Unregister(RegistryKey rootKey, WOW_Mode wowMode)
 		{
-			root.DeleteSubKey(".axoprj");
-			root.DeleteSubKey("Altaxo.Project");
-			root.DeleteSubKey("Altaxo.Graph.0");
-			root.DeleteSubKey("CLSID\\" + Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant());
+			var keySW = rootKey.CreateSubKey("Software", wowMode);
+			var keyCR = keySW.CreateSubKey("Classes", wowMode);
+			var keyCLSID = keyCR.CreateSubKey("CLSID", wowMode);
+
+			keyCR.DeleteSubKeyTree(".axoprj", false);
+
+			keyCR.DeleteSubKeyTree("Altaxo.Project", false);
+			keyCLSID.DeleteSubKeyTree(typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant(), false);
+
+			keyCR.DeleteSubKeyTree(GraphDocumentEmbeddedComObject.USER_TYPE, false);
+			keyCLSID.DeleteSubKeyTree(Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant(), false);
+
+			if (null != keyCLSID)
+				keyCLSID.Close();
+			if (null != keyCR)
+				keyCR.Close();
+			if (null != keySW)
+				keySW.Close();
 		}
 
-		private void Register(RegistryKey root)
+		private void Register(RegistryKey rootKey, WOW_Mode wowMode)
 		{
+			RegistryKey keySW = null;
+			RegistryKey keyCR = null;
+			RegistryKey keyCLSID = null;
 			RegistryKey key1 = null;
 			RegistryKey key2 = null;
 			RegistryKey key3 = null;
@@ -382,6 +396,12 @@ namespace Altaxo.Com
 
 			RegistryValueKind applicationFileNameKind = RegistryValueKind.String;
 			string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+			if (wowMode == WOW_Mode.Reg32)
+			{
+				var p = System.IO.Path.GetFileNameWithoutExtension(applicationFileName);
+				applicationFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "32.exe");
+			}
+
 			string programFilesPath = System.Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 			if (applicationFileName.ToUpperInvariant().StartsWith(programFilesPath.ToUpperInvariant()))
 			{
@@ -391,15 +411,19 @@ namespace Altaxo.Com
 
 			try
 			{
+				keySW = rootKey.CreateSubKey("Software", wowMode);
+				keyCR = keySW.CreateSubKey("Classes", wowMode);
+				keyCLSID = keyCR.CreateSubKey("CLSID", wowMode);
+
 				{
 					// Register the project file extension
-					key1 = root.CreateSubKey(".axoprj");
+					key1 = keyCR.CreateSubKey(".axoprj", wowMode);
 					key1.SetValue(null, "Altaxo.Project");
 				}
 
 				{
 					// Register the project file Com object
-					key1 = root.CreateSubKey("Altaxo.Project"); // set ProgID
+					key1 = keyCR.CreateSubKey("Altaxo.Project", wowMode); // set ProgID
 					key1.SetValue("DefaultIcon", string.Format("{0},0", applicationFileName), applicationFileNameKind);
 					key2 = key1.CreateSubKey("NotInsertable");
 					key2 = key1.CreateSubKey("CLSID");
@@ -413,15 +437,22 @@ namespace Altaxo.Com
 
 				{
 					// publish CLSID of file Com object and associate it with the application
-					key1 = root.CreateSubKey("CLSID\\" + typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant());
+					key1 = keyCLSID.CreateSubKey(typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant(), wowMode);
 					key1.SetValue(null, "Altaxo project");
 					key2 = key1.CreateSubKey("LocalServer32");
 					key2.SetValue(null, applicationFileName, applicationFileNameKind);
 				}
 
 				{
+					key1 = keyCR.CreateSubKey("AppID", wowMode);
+					key2 = key1.CreateSubKey(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), wowMode);
+					key2.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE);
+					key2.SetValue("PreferredServerBitness", 3, RegistryValueKind.DWord);
+				}
+
+				{
 					// register the Graph document embedded object (note that this is an Altaxo mini project)
-					key1 = root.CreateSubKey(GraphDocumentEmbeddedComObject.USER_TYPE);
+					key1 = keyCR.CreateSubKey(GraphDocumentEmbeddedComObject.USER_TYPE, wowMode);
 					key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
 					key2 = key1.CreateSubKey("CLSID");
 					key2.SetValue(null, typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant());
@@ -430,7 +461,7 @@ namespace Altaxo.Com
 
 				{
 					// publish CLSID of file GraphDocumentEmbeddedObject and associate it with the application
-					key1 = root.CreateSubKey("CLSID\\" + typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant());
+					key1 = keyCLSID.CreateSubKey(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), wowMode);
 					key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
 
 					key2 = key1.CreateSubKey("LocalServer32");
@@ -450,7 +481,7 @@ namespace Altaxo.Com
 					key2 = key1.CreateSubKey("DataFormats");
 					key3 = key2.CreateSubKey("GetSet");
 					key4 = key3.CreateSubKey("0");
-					key4.SetValue(null, "3,9,32,1"); // Metafile on MFPICT in get-direction
+					key4.SetValue(null, "14,9,64,1"); // EnhMetafile on ENHMF in get-direction
 
 					key4 = key3.CreateSubKey("1");
 					key4.SetValue(null, "2,9,1,1"); // Bitmap on HGlobal in get-direction
@@ -500,6 +531,12 @@ namespace Altaxo.Com
 					key2.Close();
 				if (key1 != null)
 					key1.Close();
+				if (null != keyCLSID)
+					keyCLSID.Close();
+				if (keyCR != null)
+					keyCR.Close();
+				if (keySW != null)
+					keySW.Close();
 			}
 		}
 
@@ -539,6 +576,10 @@ namespace Altaxo.Com
 				}
 			}
 
+#if COMLOGGING
+			Debug.ReportInfo("{0}.ProcessArguments Embedding={1} IsRunning64bit={2}", this.GetType().Name, ApplicationWasStartedWithEmbeddingArg, System.Environment.Is64BitProcess);
+#endif
+
 			return bRet;
 		}
 
@@ -550,10 +591,12 @@ namespace Altaxo.Com
 			Debug.ReportInfo("Starting local server");
 #endif
 
+			// if we are in 64 bit mode, make sure that the PreferredServerBitness flag is set in the registry
+
 			{
 				// Register the FileComObject
 				_classFactoryOfFileComObject = new ClassFactory_ProjectFileComObject(this);
-				_classFactoryOfFileComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
+				_classFactoryOfFileComObject.ClassContext = (uint)(CLSCTX.CLSCTX_LOCAL_SERVER);
 				_classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(ProjectFileComObject));
 				_classFactoryOfFileComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 				_classFactoryOfFileComObject.RegisterClassObject();
@@ -566,7 +609,7 @@ namespace Altaxo.Com
 			{
 				// Register the SimpleCOMObjectClassFactory.
 				_classFactoryOfDocumentComObject = new ClassFactory_GraphDocumentEmbeddedComObject(this);
-				_classFactoryOfDocumentComObject.ClassContext = (uint)CLSCTX.CLSCTX_LOCAL_SERVER;
+				_classFactoryOfDocumentComObject.ClassContext = (uint)(CLSCTX.CLSCTX_LOCAL_SERVER);
 				_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject));
 				_classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 				_classFactoryOfDocumentComObject.RegisterClassObject();

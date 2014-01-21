@@ -536,8 +536,15 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			var layer = ctrl.ActiveLayer;
-			var scale = new Gdi.Shapes.FloatingScale() { Size = 0.5 * layer.Size };
-			layer.GraphObjects.Add(scale);
+			var scale = new Gdi.Shapes.FloatingScale();
+			if (scale.IsCompatibleWithParent(layer))
+			{
+				layer.GraphObjects.Add(scale);
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("Sorry. The new scale is not compatible with the currently selected layer! Please select an XYPlotLayer as current layer.");
+			}
 		}
 	}
 

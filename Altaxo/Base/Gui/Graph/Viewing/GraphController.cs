@@ -131,8 +131,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (null != _view)
 			{
 				InitLayerStructure();
-				_view.NumberOfLayers = _layerStructure; // tell the view how many layers we have
-				_view.CurrentLayer = this.CurrentLayerNumber.ToArray();
+				_view.SetLayerStructure(_layerStructure, this.CurrentLayerNumber.ToArray()); // tell the view how many layers we have
 
 				// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
 				this.EhView_GraphPanelSizeChanged();
@@ -555,7 +554,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				EnsureValidityOfCurrentLayerNumber();
-				return _currentLayerNumber;
+				return new List<int>(_currentLayerNumber);
 			}
 			set
 			{
@@ -568,7 +567,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 				bool isDifferent = !System.Linq.Enumerable.SequenceEqual(value, _currentLayerNumber);
 
-				_currentLayerNumber = value;
+				_currentLayerNumber = new List<int>(value);
 
 				// if something changed
 				if (isDifferent)
@@ -606,11 +605,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// check the validity of the CurrentLayerNumber and correct it
 		/// </summary>
-		public void EnsureValidityOfCurrentLayerNumber()
+		public HostLayer EnsureValidityOfCurrentLayerNumber()
 		{
-			if (null == _currentLayerNumber)
-				_currentLayerNumber = new List<int>();
 			_doc.RootLayer.EnsureValidityOfNodeIndex(_currentLayerNumber);
+			return _doc.RootLayer.ElementAt(_currentLayerNumber);
 		}
 
 		/// <summary>
@@ -619,9 +617,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void EnsureValidityOfCurrentPlotNumber()
 		{
-			EnsureValidityOfCurrentLayerNumber();
-
-			var layer = ActiveLayer as XYPlotLayer;
+			var layer = EnsureValidityOfCurrentLayerNumber() as XYPlotLayer;
 
 			// if XYPlotLayer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
 			if (null != layer) // if the ActiveLayer exists
@@ -709,13 +705,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			var oldActiveLayer = new List<int>(this._currentLayerNumber);
 
 			// Ensure that the current layer and current plot are valid anymore
-			EnsureValidityOfCurrentLayerNumber();
-
-			if (!oldActiveLayer.SequenceEqual(this._currentLayerNumber))
-			{
-				if (_view != null)
-					_view.CurrentLayer = this._currentLayerNumber.ToArray();
-			}
+			var newActiveLayer = EnsureValidityOfCurrentLayerNumber();
 
 			// even if the active layer number not changed, it can be that the layer itself has changed from
 			// one to another, so make sure that the current plot number is valid also
@@ -725,7 +715,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			InitLayerStructure();
 			if (_view != null)
 			{
-				_view.NumberOfLayers = _layerStructure;
+				_view.SetLayerStructure(_layerStructure, _currentLayerNumber.ToArray());
 			}
 		}
 

@@ -2071,7 +2071,7 @@ namespace Altaxo.Graph.Gdi
 			public override void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent)
 			{
 				var layer = ParentObject as XYPlotLayer;
-				if (null != layer)
+				if (null != layer && null != layer._axisStyles)
 				{
 					if (Index >= 0 && Index < layer._axisStyles.Count)
 					{

@@ -319,23 +319,20 @@ namespace Altaxo.Gui.Graph.Viewing
 			_controller = controller;
 		}
 
-		public NGTreeNode NumberOfLayers
+		public void SetLayerStructure(NGTreeNode value, int[] currentLayerNumber)
 		{
-			set
-			{
-				{
-					_layerToolBar.Children.Clear();
+			_layerToolBar.Children.Clear();
 
-					foreach (var node in value.TakeFromHereToFirstLeaves())
-					{
-						var newbutton = new ToggleButton() { Content = node.Text, Tag = node.Tag };
-						newbutton.Margin = new Thickness(node.Level * 8, 2, 1, 0);
-						newbutton.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-						newbutton.Click += new RoutedEventHandler(EhLayerButton_Click);
-						newbutton.ContextMenuOpening += new ContextMenuEventHandler(EhLayerButton_ContextMenuOpening);
-						_layerToolBar.Children.Add(newbutton);
-					}
-				}
+			foreach (var node in value.TakeFromHereToFirstLeaves())
+			{
+				var newbutton = new ToggleButton() { Content = node.Text, Tag = node.Tag };
+				newbutton.Margin = new Thickness(node.Level * 8, 2, 1, 0);
+				newbutton.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+				newbutton.Click += new RoutedEventHandler(EhLayerButton_Click);
+				newbutton.ContextMenuOpening += new ContextMenuEventHandler(EhLayerButton_ContextMenuOpening);
+				newbutton.IsChecked = System.Linq.Enumerable.SequenceEqual((int[])(node.Tag), currentLayerNumber);
+
+				_layerToolBar.Children.Add(newbutton);
 			}
 		}
 

@@ -79,6 +79,13 @@ namespace Altaxo.Collections
 				_collection = list;
 				_selectionCriterium = selectionCriterium;
 				_itemIndex = new List<int>();
+
+				// initial filling of the list
+				for (int i = 0; i < _collection.Count; ++i)
+				{
+					if (selectionCriterium(_collection[i]))
+						_itemIndex.Add(i);
+				}
 			}
 
 			/// <summary>

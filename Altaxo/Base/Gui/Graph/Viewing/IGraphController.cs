@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+
 namespace Altaxo.Gui.Graph.Viewing
 {
-	public interface IGraphView 
+	public interface IGraphView
 	{
 		/// <summary>
 		/// Sets the controller of the view;
@@ -62,7 +64,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="portSize">Size of the scrollbars view port (length of the thumb).</param>
 		/// <param name="largeIncrement">The large increment value.</param>
 		/// <param name="smallIncrement">The small increment value.</param>
-		void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double portSize,  double largeIncrement, double smallIncrement);
+		void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double portSize, double largeIncrement, double smallIncrement);
 
 		/// <summary>Sets the vertical scrollbar parameter.</summary>
 		/// <param name="isEnabled">If set to <c>true</c>, the scrollbar is enabled.</param>
@@ -72,13 +74,12 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="largeIncrement">The large increment value.</param>
 		/// <param name="smallIncrement">The small increment value.</param>
 		void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double portSize, double largeIncrement, double smallIncrement);
-		
 
 		/// <summary>
 		/// Sets the number of layers that are in the graph. The view has to reflect the change in the number of layers
 		/// by adjusting the number of layer buttons or similar. The current layer number should be preserved.
 		/// </summary>
-		Altaxo.Collections.NGTreeNode NumberOfLayers { set; }
+		void SetLayerStructure(Altaxo.Collections.NGTreeNode structure, int[] currentLayerNumber);
 
 		/// <summary>
 		/// Sets the currently active layer. If the view has some means to show the
@@ -88,7 +89,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
 		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
 		int[] CurrentLayer { set; }
-
 
 		/// <summary>
 		/// Returns the size in points (=1/72 inch) of the area, wherein the graph is painted.
@@ -107,15 +107,13 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		HostLayer ActiveLayer { get; }
 
-
-			/// <summary>
+		/// <summary>
 		/// Handles the selection of the current layer by the <b>user</b>.
 		/// </summary>
 		/// <param name="currLayer">The current layer number as selected by the user.</param>
 		/// <param name="bAlternative">Normally false, can be set to true if the user clicked for instance with the right mouse button on the layer button.</param>
 		void EhView_CurrentLayerChoosen(int[] currLayer, bool bAlternative);
 
-		
 		/// <summary>Handles the event when the size of the graph area is changed.</summary>
 		void EhView_GraphPanelSizeChanged();
 
@@ -124,7 +122,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		void EhView_CurrentGraphToolChanged();
 
 		void EhView_ShowDataContextMenu(int[] layerNumber, object guiParent, Point pt);
-
 	}
 
 	public interface IGraphController : IMVCANController
@@ -147,7 +144,8 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// check the validity of the CurrentLayerNumber and correct it
 		/// </summary>
-		void EnsureValidityOfCurrentLayerNumber();
+		/// <returns>The currently active layer.</returns>
+		HostLayer EnsureValidityOfCurrentLayerNumber();
 
 		/// <summary>
 		/// This ensures that the current plot number is valid. If there is no plot on the currently active layer,

@@ -100,7 +100,7 @@ namespace Altaxo.Com
 				}
 
 				if (
-					_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject) &&
+					_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsLinkedObject) &&
 					!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
 				{
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderMoniker));
