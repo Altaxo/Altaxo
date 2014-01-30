@@ -560,6 +560,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Main\PropertyHierarchyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Main\PropertyBagControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Serialization\Ascii\AsciiCharControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -588,21 +596,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Settings\AsciiAnalysisSettingsControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Settings\DocumentCultureSettingsControl.xaml">
+    <Page Include="Gui\Settings\CultureSettingsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Settings\SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Settings\UICultureSettingsControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Worksheet\PlotCommonColumnsControl.xaml">
       <SubType>Designer</SubType>
@@ -1142,6 +1142,12 @@
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Main\PropertyHierarchyControl.xaml.cs">
+      <DependentUpon>PropertyHierarchyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Main\PropertyBagControl.xaml.cs">
+      <DependentUpon>PropertyBagControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Serialization\Ascii\AsciiCharControl.xaml.cs">
       <DependentUpon>AsciiCharControl.xaml</DependentUpon>
     </Compile>
@@ -1163,17 +1169,11 @@
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Settings\AsciiAnalysisSettingsControl.xaml.cs">
-      <DependentUpon>AsciiAnalysisSettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Settings\DocumentCultureSettingsControl.xaml.cs">
-      <DependentUpon>DocumentCultureSettingsControl.xaml</DependentUpon>
+    <Compile Include="Gui\Settings\CultureSettingsControl.xaml.cs">
+      <DependentUpon>CultureSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Settings\UICultureSettingsControl.xaml.cs">
-      <DependentUpon>UICultureSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\PlotCommonColumnsControl.xaml.cs">
       <DependentUpon>PlotCommonColumnsControl.xaml</DependentUpon>

@@ -227,12 +227,14 @@
     <Compile Include="Graph\NamedColors.cs" />
     <Compile Include="Graph\RectangleExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Graph\GraphicItemsController.cs" />
     <Compile Include="Gui\Graph\GridPartitioningController.cs" />
     <Compile Include="Gui\Graph\ItemLocationByGridController.cs" />
     <Compile Include="Gui\Graph\ItemLocationDirectController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
     <Compile Include="Gui\Graph\TickSpacingController.cs" />
+    <Compile Include="Gui\IOptionPanel.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
@@ -275,17 +277,30 @@
     <Compile Include="Gui\GuiAngleUnits.cs" />
     <Compile Include="Gui\GuiRelationUnits.cs" />
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
+    <Compile Include="Gui\Main\PropertyHierarchyController.cs" />
+    <Compile Include="Gui\Main\PropertyBagController.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiDocumentAnalysisOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiImportOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\SingleCharSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithoutTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithTabSeparationStrategyController.cs" />
-    <Compile Include="Gui\Settings\AsciiAnalysisSettingsController.cs" />
+    <Compile Include="Gui\Settings\AsciiAnalysisSettingsOptionPanel.cs" />
     <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
-    <Compile Include="Gui\Settings\ClipboardGraphExportOptionsController.cs" />
+    <Compile Include="Gui\Settings\ClipboardGraphExportOptionPanel.cs" />
+    <Compile Include="Gui\Settings\CultureSettingsController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
+    <Compile Include="Main\Properties\PropertyBagInformation.cs" />
+    <Compile Include="Main\Properties\PropertyKey.cs" />
+    <Compile Include="Main\Properties\IPropertyBag.cs" />
+    <Compile Include="Main\Properties\IPropertyBagOwner.cs" />
+    <Compile Include="Main\Properties\ProjectFolderPropertyBag.cs" />
+    <Compile Include="Main\Properties\ProjectFolderPropertyBagCollection.cs" />
+    <Compile Include="Main\Properties\PropertyBag.cs" />
+    <Compile Include="Main\Properties\PropertyHierarchy.cs" />
+    <Compile Include="Main\Properties\PropertyLevel.cs" />
+    <Compile Include="Main\Properties\PropertyKeyBase.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />
     <Compile Include="Main\Services\PropertyReflection\DisplayOrderAttribute.cs" />
     <Compile Include="Main\Services\PropertyReflection\ExpandableProperty.cs" />
@@ -296,6 +311,7 @@
     <Compile Include="Main\Services\PropertyReflection\PropertyCollection.cs" />
     <Compile Include="Main\TemporaryDisabler.cs" />
     <Compile Include="Root\CopyHelper.cs" />
+    <Compile Include="Root\PropertyExtensions.cs" />
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
@@ -403,8 +419,8 @@
     <Compile Include="Gui\Graph\Shapes\OpenPathShapeController.cs" />
     <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
     <Compile Include="Gui\Settings\AutoUpdateSettingsController.cs" />
-    <Compile Include="Gui\Settings\DocumentCultureSettingsController.cs" />
-    <Compile Include="Gui\Settings\UICultureSettingsController.cs" />
+    <Compile Include="Gui\Settings\DocumentCultureSettingsOptionPanel.cs" />
+    <Compile Include="Gui\Settings\UICultureSettingsOptionPanel.cs" />
     <Compile Include="Gui\Settings\SettingsController.cs" />
     <Compile Include="Gui\Worksheet\PlotCommonColumnsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
@@ -665,9 +681,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Settings\AutoUpdateSettings.cs" />
-    <Compile Include="Settings\DocumentCultureSettings.cs" />
-    <Compile Include="Settings\CultureSettingsBase.cs" />
-    <Compile Include="Settings\UICultureSettings.cs" />
+    <Compile Include="Settings\CultureSettings.cs" />
     <Compile Include="Worksheet\ColumnHeaderStyle.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,26 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Collections;
-using Altaxo.Main;
 
 namespace Altaxo.Gui.Settings
 {
 	[ExpectedTypeOfView(typeof(ISettingsView))]
 	public class SettingsController : IMVCANController
 	{
-		ISettingsView _view;
-		NGTreeNode _topics;
-		NGTreeNode _currentNode;
+		private ISettingsView _view;
+		private NGTreeNode _topics;
+		private NGTreeNode _currentNode;
 
-		HashSet<NGTreeNode> _dirtyTopics = new HashSet<NGTreeNode>();
+		private HashSet<NGTreeNode> _dirtyTopics = new HashSet<NGTreeNode>();
 
 		public SettingsController()
 		{
@@ -49,7 +50,7 @@ namespace Altaxo.Gui.Settings
 			return true;
 		}
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -66,7 +67,7 @@ namespace Altaxo.Gui.Settings
 			}
 		}
 
-		void AddTopic(IOptionPanelDescriptor desc, NGTreeNodeCollection nodecoll)
+		private void AddTopic(IOptionPanelDescriptor desc, NGTreeNodeCollection nodecoll)
 		{
 			var newNode = new NGTreeNode(desc.Label);
 			newNode.Tag = desc;
@@ -78,7 +79,7 @@ namespace Altaxo.Gui.Settings
 			nodecoll.Add(newNode);
 		}
 
-		void EhTopicSelectionChanged(NGTreeNode obj)
+		private void EhTopicSelectionChanged(NGTreeNode obj)
 		{
 			// if this node has a own control, use it, otherwise use the next child
 			var node = GetFirstNodeWithControl(obj);
@@ -88,8 +89,6 @@ namespace Altaxo.Gui.Settings
 			{
 				var desc = (IOptionPanelDescriptor)node.Tag;
 				var ctrl = desc.OptionPanel;
-				if (ctrl.ViewObject == null)
-					Current.Gui.FindAndAttachControlTo(ctrl);
 				title = desc.Label;
 				view = ctrl.ViewObject;
 				_currentNode = node;
@@ -99,14 +98,13 @@ namespace Altaxo.Gui.Settings
 			_view.InitializeTopicViewDirtyIndicator(_dirtyTopics.Contains(_currentNode) ? 1 : 0);
 		}
 
-
-		void EhCurrentTopicViewMadeDirty()
+		private void EhCurrentTopicViewMadeDirty()
 		{
 			if (!_dirtyTopics.Contains(_currentNode))
 				_dirtyTopics.Add(_currentNode);
 		}
 
-		NGTreeNode GetFirstNodeWithControl(NGTreeNode obj)
+		private NGTreeNode GetFirstNodeWithControl(NGTreeNode obj)
 		{
 			// if this node has a own control, use it, otherwise use the next child
 			var desc = (IOptionPanelDescriptor)obj.Tag;
@@ -124,7 +122,6 @@ namespace Altaxo.Gui.Settings
 			}
 			return null; // nothing found
 		}
-
 
 		public UseDocument UseDocumentCopy
 		{
@@ -155,8 +152,6 @@ namespace Altaxo.Gui.Settings
 				}
 			}
 		}
-
-
 
 		public object ModelObject
 		{

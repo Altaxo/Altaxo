@@ -283,6 +283,14 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+	public class GraphShowProperties : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.Doc.ShowPropertyDialog();
+		}
+	}
+
 	public class GraphMoveToFolder : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)

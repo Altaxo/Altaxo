@@ -48,7 +48,8 @@ namespace Altaxo.Graph.Gdi
 		IChangedEventSource,
 		Main.IChildChangedEventSink,
 		Main.IDocumentNode,
-		Main.INameOwner
+		Main.INameOwner,
+		Main.Properties.IPropertyBagOwner
 	{
 		// following default unit is point (1/72 inch)
 		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
@@ -56,6 +57,8 @@ namespace Altaxo.Graph.Gdi
 
 		protected const double DefaultRootLayerSizeX = 697.68054;
 		protected const double DefaultRootLayerSizeY = 451.44;
+
+		public static readonly Main.Properties.PropertyKey<PointD2D> PropertyKeyDefaultGraphSize = new Main.Properties.PropertyKey<PointD2D>("22F853C9-A011-46FA-8021-8668AB4EE1C6", "Graph\\DefaultGraphSize", Main.Properties.PropertyLevel.All, typeof(GraphDocument));
 
 		private SingleGraphPrintOptions _printOptions;
 
@@ -98,7 +101,7 @@ namespace Altaxo.Graph.Gdi
 		/// <remarks>The properties are saved on disc (with exception of those that starts with "tmp/".
 		/// If the property you want to store is only temporary, the properties name should therefore
 		/// start with "tmp/".</remarks>
-		protected Dictionary<string, object> _graphProperties;
+		protected Main.Properties.PropertyBag _graphProperties;
 
 		/// <summary>Event fired when anything here changed.</summary>
 		[field: NonSerialized]
@@ -233,13 +236,14 @@ namespace Altaxo.Graph.Gdi
 
 				// new in version 1 - Add graph properties
 				int numberproperties = info.OpenArray(); // "GraphProperties"
+				var pb = numberproperties == 0 ? null : s.PropertyBagNotNull;
 				for (int i = 0; i < numberproperties; i++)
 				{
 					info.OpenElement(); // "e"
 					string propkey = info.GetString("Key");
 					object propval = info.GetValue("Value", parent);
 					info.CloseElement(); // "e"
-					s.SetGraphProperty(propkey, propval);
+					pb.SetValue(propkey, propval);
 				}
 				info.CloseArray(numberproperties);
 			}
@@ -274,6 +278,7 @@ namespace Altaxo.Graph.Gdi
 
 		/// <summary>
 		/// 2013-11-27 Reflect the new situation that we have now only a host layer, but not printable bounds and so on.
+		/// 2014-01-26 replace the _graphProperties dictionary by a PropertyBag.
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 4)]
 		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -289,23 +294,7 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("RootLayer", s._rootLayer);
 
-				// Add graph properties
-				int numberproperties = s._graphProperties == null ? 0 : s._graphProperties.Keys.Count;
-				info.CreateArray("GraphProperties", numberproperties);
-				if (s._graphProperties != null)
-				{
-					foreach (string propkey in s._graphProperties.Keys)
-					{
-						if (propkey.StartsWith("tmp/"))
-							continue;
-						info.CreateElement("e");
-						info.AddValue("Key", propkey);
-						object val = s._graphProperties[propkey];
-						info.AddValue("Value", info.IsSerializable(val) ? val : null);
-						info.CommitElement();
-					}
-				}
-				info.CommitArray();
+				info.AddValue("Properties", s._graphProperties);
 			}
 
 			public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -316,17 +305,7 @@ namespace Altaxo.Graph.Gdi
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 				s._notes.Text = info.GetString("Notes");
 				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
-
-				int numberproperties = info.OpenArray("GraphProperties");
-				for (int i = 0; i < numberproperties; i++)
-				{
-					info.OpenElement(); // "e"
-					string propkey = info.GetString("Key");
-					object propval = info.GetValue("Value", parent);
-					info.CloseElement(); // "e"
-					s.SetGraphProperty(propkey, propval);
-				}
-				info.CloseArray(numberproperties);
+				s._graphProperties = (Main.Properties.PropertyBag)info.GetValue("Properties");
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -388,15 +367,14 @@ namespace Altaxo.Graph.Gdi
 
 			if (0 != (options & GraphCopyOptions.CloneProperties))
 			{
-				// Clone also the table properties (deep copy)
-				if (from._graphProperties != null)
+				// Clone also the graph properties
+				if (from._graphProperties != null && from._graphProperties.Count > 0)
 				{
-					foreach (string key in from._graphProperties.Keys)
-					{
-						ICloneable val = from._graphProperties[key] as ICloneable;
-						if (null != val)
-							this.SetGraphProperty(key, val.Clone());
-					}
+					PropertyBagNotNull.CopyFrom(from._graphProperties);
+				}
+				else
+				{
+					this._graphProperties = null;
 				}
 			}
 
@@ -513,6 +491,11 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
+		public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T> resultCreationIfNotFound)
+		{
+			return PropertyExtensions.GetPropertyValue(this, key, resultCreationIfNotFound);
+		}
+
 		/// <summary>
 		/// The table properties, key is a string, val is a object you want to store here.
 		/// </summary>
@@ -521,13 +504,7 @@ namespace Altaxo.Graph.Gdi
 		/// start with "tmp/".</remarks>
 		public void SetGraphProperty(string key, object val)
 		{
-			if (_graphProperties == null)
-				_graphProperties = new Dictionary<string, object>();
-
-			if (_graphProperties.ContainsKey(key))
-				_graphProperties[key] = val;
-			else
-				_graphProperties.Add(key, val);
+			PropertyBagNotNull.SetValue(key, val);
 		}
 
 		/// <summary>
@@ -617,8 +594,12 @@ namespace Altaxo.Graph.Gdi
 			System.Diagnostics.Debug.Assert(null == _paintThread, "We waited, thus _paintThread should be null");
 
 			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
+
 			try
 			{
+				// First set the current thread's document culture
+				_paintThread.CurrentCulture = this.GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null).Culture;
+
 				AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
 
 				RootLayer.PaintPreprocessing(this);
@@ -745,5 +726,24 @@ namespace Altaxo.Graph.Gdi
 		#region IChangedEventSource Members
 
 		#endregion IChangedEventSource Members
+
+		#region IPropertyBagOwner
+
+		public Main.Properties.PropertyBag PropertyBag
+		{
+			get { return _graphProperties; }
+		}
+
+		public Main.Properties.PropertyBag PropertyBagNotNull
+		{
+			get
+			{
+				if (null == _graphProperties)
+					_graphProperties = new Main.Properties.PropertyBag();
+				return _graphProperties;
+			}
+		}
+
+		#endregion IPropertyBagOwner
 	} // end of class GraphDocument
 } // end of namespace

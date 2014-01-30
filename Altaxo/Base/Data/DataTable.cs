@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using Altaxo.Serialization;
 using Altaxo.Collections;
 using Altaxo.Scripting;
+using Altaxo.Serialization;
+using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Data
 {
-
 	public class AltaxoUniqueNameException : System.ApplicationException
 	{
 	}
@@ -37,7 +37,7 @@ namespace Altaxo.Data
 	/// <summary>DataTable is the central class of Altaxo, which holds the data organized in columns.</summary>
 	/// <remarks>In contrast to common database
 	/// programs, the data are not organized in rows, but in (relatively independent) columns. As in database programs,
-	/// each column has a certain type, as <see cref="TextColumn"/> for holding strings, 
+	/// each column has a certain type, as <see cref="TextColumn"/> for holding strings,
 	/// <see cref="DoubleColumn"/> for storing numeric values, and <see cref="DateTimeColumn"/> for holding DateTimes.
 	/// All these column types are derived from the base class <see cref="DataColumn"/>.<para/>
 	/// There is also a similar concept like metadata in database programs: Each column can have some property values associated with. The property values
@@ -54,7 +54,7 @@ namespace Altaxo.Data
 		Main.INamedObjectCollection,
 		Main.INameOwner,
 		Main.IChildChangedEventSink,
-		Main.ISuspendable
+		Main.ISuspendable, Main.Properties.IPropertyBagOwner
 	{
 		// Types
 
@@ -63,12 +63,12 @@ namespace Altaxo.Data
 		/// The parent data set this table is belonging to.
 		/// </summary>
 		protected object _parent = null; // the dataSet that this table is belonging to
+
 		/// <summary>
 		/// The name of this table, has to be unique if there is a parent data set, since the tables in the parent data set
 		/// can only be accessed by name.
 		/// </summary>
 		protected string _tableName = null; // the name of the table
-
 
 		/// <summary>
 		/// Collection of property columns, i.e. "horizontal" columns.
@@ -78,6 +78,7 @@ namespace Altaxo.Data
 		/// This can also be another parameter which corresponds with that column, i.e. frequency. In this case the property column would be of
 		/// type DoubleColumn.</remarks>
 		protected DataColumnCollection _propertyColumns;
+
 		/// <summary>
 		/// Collection of data columns, i.e. the normal, "vertical" columns.
 		/// </summary>
@@ -109,7 +110,8 @@ namespace Altaxo.Data
 		/// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
 		/// If the property you want to store is only temporary, the properties name should therefore
 		/// start with "tmp/".</remarks>
-		protected Dictionary<string, object> _tableProperties;
+		protected Main.Properties.PropertyBag _tableProperties;
+
 		// Helper Data
 
 		/// <summary>
@@ -141,7 +143,6 @@ namespace Altaxo.Data
 		[NonSerialized]
 		protected System.EventArgs _changeData = null;
 
-
 		/// <summary>
 		/// Event to signal changes in the data.
 		/// </summary>
@@ -172,8 +173,8 @@ namespace Altaxo.Data
 		[field: NonSerialized]
 		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
-
 		#region "Serialization"
+
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -193,8 +194,8 @@ namespace Altaxo.Data
 
 				info.AddValue("Name", s._tableName); // name of the Table
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
-
 			}
+
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
@@ -226,8 +227,8 @@ namespace Altaxo.Data
 				info.AddValue("Name", s._tableName); // name of the Table
 				info.AddValue("DataCols", s.DataColumns); // the data columns of that table
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
-
 			}
+
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
@@ -241,7 +242,7 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -249,8 +250,8 @@ namespace Altaxo.Data
 				info.AddValue("Name", s._tableName); // name of the Table
 				info.AddValue("DataCols", s._dataColumns);
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DataTable s = null != o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
@@ -266,7 +267,7 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -278,6 +279,7 @@ namespace Altaxo.Data
 				// new in version 1
 				info.AddValue("TableScript", s._tableScript);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DataTable s = null != o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
@@ -295,10 +297,12 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Try to serialize old version");
+				/*
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
 				info.AddValue("Name", s._tableName); // name of the Table
 				info.AddValue("DataCols", s._dataColumns);
@@ -324,7 +328,7 @@ namespace Altaxo.Data
 					}
 				}
 				info.CommitArray();
-
+				*/
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -360,7 +364,7 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 3)]
-		class XmlSerializationSurrogate3 : XmlSerializationSurrogate2
+		private class XmlSerializationSurrogate3 : XmlSerializationSurrogate2
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -369,8 +373,8 @@ namespace Altaxo.Data
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
-
 			}
+
 			public override void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				base.Deserialize(s, info, parent);
@@ -380,6 +384,46 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// 2014-01-30 Table properties are now in it's own class
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable), 4)]
+		private class XmlSerializationSurrogate4 : XmlSerializationSurrogate2
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+				info.AddValue("Name", s._tableName); // name of the Table
+				info.AddValue("DataCols", s._dataColumns);
+				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
+				info.AddValue("TableScript", s._tableScript);
+				info.AddValue("Properties", s._tableProperties);
+				info.AddValue("Notes", s._notes.Text);
+				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
+				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+			}
+
+			public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				s._tableName = info.GetString("Name");
+				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
+				s._dataColumns.ParentObject = s;
+				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
+				s._propertyColumns.ParentObject = s;
+				s._tableScript = (TableScript)info.GetValue("TableScript", s);
+				s._tableProperties = (Main.Properties.PropertyBag)info.GetValue("Properties");
+				s._notes.Text = info.GetString("Notes");
+				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
+				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				Altaxo.Data.DataTable s = null != o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
+				Deserialize(s, info, parent);
+				return s;
+			}
+		}
 
 		public virtual void OnDeserialization(object obj)
 		{
@@ -400,7 +444,6 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// This class is responsible for the special purpose to serialize a data table for clipboard. Do not use
 		/// it for permanent serialization purposes, since it does not contain version handling.
@@ -408,11 +451,11 @@ namespace Altaxo.Data
 		[Serializable]
 		public class ClipboardMemento : System.Runtime.Serialization.ISerializable
 		{
-			DataTable _table;
-			IAscendingIntegerCollection _selectedDataColumns;
-			IAscendingIntegerCollection _selectedDataRows;
-			IAscendingIntegerCollection _selectedPropertyColumns;
-			IAscendingIntegerCollection _selectedPropertyRows;
+			private DataTable _table;
+			private IAscendingIntegerCollection _selectedDataColumns;
+			private IAscendingIntegerCollection _selectedDataRows;
+			private IAscendingIntegerCollection _selectedPropertyColumns;
+			private IAscendingIntegerCollection _selectedPropertyRows;
 
 			/// <summary>
 			/// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
@@ -449,7 +492,6 @@ namespace Altaxo.Data
 
 			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 			{
-
 				info.AddValue("Name", _table.Name);
 
 				// special case: if no data cell is selected, then serialize the property data as when they where data columns
@@ -476,13 +518,10 @@ namespace Altaxo.Data
 				_table._propertyColumns = propcolMemento.Collection;
 			}
 
-
-			#endregion
-
+			#endregion ISerializable Members
 		}
 
-
-		#endregion
+		#endregion "Serialization"
 
 		/// <summary>
 		/// Constructs an empty data table.
@@ -530,7 +569,6 @@ namespace Altaxo.Data
 		public DataTable(DataTable from)
 			: this((DataColumnCollection)from._dataColumns.Clone(), (DataColumnCollection)from._propertyColumns.Clone())
 		{
-
 			this._parent = null; // do not clone the parent
 			this._tableName = from._tableName;
 			this._tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
@@ -539,14 +577,13 @@ namespace Altaxo.Data
 			this._notes.PropertyChanged += this.EhNotesChanged;
 
 			// Clone also the table properties (deep copy)
-			if (from._tableProperties != null)
+			if (from._tableProperties != null && from._tableProperties.Count > 0)
 			{
-				foreach (string key in from._tableProperties.Keys)
-				{
-					ICloneable val = from._tableProperties[key] as ICloneable;
-					if (null != val)
-						this.SetTableProperty(key, val.Clone());
-				}
+				PropertyBagNotNull.CopyFrom(from._tableProperties);
+			}
+			else
+			{
+				this._tableProperties = null;
 			}
 		}
 
@@ -569,7 +606,7 @@ namespace Altaxo.Data
 			_notes.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNotesChanged);
 		}
 
-		void EhNotesChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void EhNotesChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			OnChanged(EventArgs.Empty);
 		}
@@ -631,13 +668,12 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
 		/// </summary>
 		/// <param name="sender">The sender of the change notification (currently unused).</param>
 		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
-		void AccumulateChildChangeData(object sender, EventArgs e)
+		private void AccumulateChildChangeData(object sender, EventArgs e)
 		{
 			if (sender != null && _changeData == null)
 				this._changeData = new EventArgs();
@@ -675,7 +711,6 @@ namespace Altaxo.Data
 			OnDataChanged(); // Fire the changed event
 		}
 
-
 		/// <summary>
 		/// Fires the change event with the EventArgs provided in the argument.
 		/// </summary>
@@ -697,7 +732,7 @@ namespace Altaxo.Data
 			_changeData = null;
 		}
 
-		#endregion
+		#endregion Suspend and resume
 
 		/// <summary>
 		/// Get / sets the parent object of this table.
@@ -729,9 +764,6 @@ namespace Altaxo.Data
 			if (ParentChanged != null)
 				ParentChanged(this, new Main.ParentChangedEventArgs(oldParent, newParent));
 		}
-
-
-
 
 		/// <summary>
 		/// Get or sets the full name of the table.
@@ -782,7 +814,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Gets the project folder name of this table without the trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/>. 
+		/// Gets the project folder name of this table without the trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/>.
 		/// If the table is located in the root folder, an exception will be thrown, because the root folder name doesn't contain a <see cref="Main.ProjectFolder.DirectorySeparatorChar"/>.
 		/// If the table is located in any other folder, the full folder name, but without the trailing <see cref="Main.ProjectFolder.DirectorySeparatorChar"/> is returned.
 		/// </summary>
@@ -807,8 +839,6 @@ namespace Altaxo.Data
 				return Main.ProjectFolder.GetNamePart(Name);
 			}
 		}
-
-
 
 		/// <summary>
 		/// Fires the name change event.
@@ -863,7 +893,7 @@ namespace Altaxo.Data
 		/// <param name="e">The parent change details.</param>
 		protected void EhChildParentChanged(object sender, Main.ParentChangedEventArgs e)
 		{
-			// this event should not happen, or someone try to 
+			// this event should not happen, or someone try to
 			// change the parents of my collection
 			throw new ApplicationException("Unexpected change of DataColumnsCollection's parent belonging to table " + this.Name);
 		}
@@ -906,13 +936,13 @@ namespace Altaxo.Data
 			get { return _propertyColumns; }
 		}
 
-
 		/// <summary>Return the number of data columns.</summary>
 		/// <value>The number of data columns in the table.</value>
 		public int DataColumnCount
 		{
 			get { return this._dataColumns.ColumnCount; }
 		}
+
 		/// <summary>Returns the number of property rows. This is the same as <see cref="DataColumnCount" /> and is only provided for completness.</summary>
 		/// <value>The number of property rows = number of data columns in the table.</value>
 		public int PropertyRowCount
@@ -934,16 +964,12 @@ namespace Altaxo.Data
 			get { return this._dataColumns.RowCount; }
 		}
 
-
-
-
 		public TableScript TableScript
 		{
 			get { return _tableScript; }
 			set
 			{
 				_tableScript = value;
-
 			}
 		}
 
@@ -1131,8 +1157,6 @@ namespace Altaxo.Data
 			return _propertyColumns.Contains(name);
 		}
 
-
-
 		/// <summary>
 		/// Moves the selected columns along with their corresponding property values to a new position.
 		/// </summary>
@@ -1166,7 +1190,6 @@ namespace Altaxo.Data
 		/// <returns>null if succeeded, error string otherwise</returns>
 		public virtual string Transpose(int numberOfDataColumnsChangeToPropertyColumns, int numberOfPropertyColumnsChangeToDataColumns)
 		{
-
 			numberOfDataColumnsChangeToPropertyColumns = Math.Max(numberOfDataColumnsChangeToPropertyColumns, 0);
 			numberOfDataColumnsChangeToPropertyColumns = Math.Min(numberOfDataColumnsChangeToPropertyColumns, this.DataColumnCount);
 
@@ -1197,7 +1220,6 @@ namespace Altaxo.Data
 			return null; // no error message
 		}
 
-
 		/// <summary>
 		/// Signals that the table has changed, but has not currently signaled that change to it's parent.
 		/// </summary>
@@ -1219,14 +1241,12 @@ namespace Altaxo.Data
 			RemoveColumns(new ContiguousIntegerRange(nFirstColumn, nDelCount));
 		}
 
-
 		/// <summary>
 		/// Remove the selected data columns <b>and the corresponding property rows</b>.
 		/// </summary>
 		/// <param name="selectedColumns">A collection of the indizes to the columns that have to be removed.</param>
 		public virtual void RemoveColumns(IAscendingIntegerCollection selectedColumns)
 		{
-
 			Suspend();
 
 			_dataColumns.RemoveColumns(selectedColumns); // remove the columns from the collection
@@ -1252,8 +1272,7 @@ namespace Altaxo.Data
 				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
 		}
 
-		#endregion
-
+		#endregion IDisposable Members
 
 		/// <summary>
 		/// Gets an arbitrary object that was stored as table property by <see cref="SetTableProperty" />.
@@ -1269,7 +1288,6 @@ namespace Altaxo.Data
 			return result;
 		}
 
-
 		/// <summary>
 		/// The table properties, key is a string, val is a object you want to store here.
 		/// </summary>
@@ -1278,12 +1296,8 @@ namespace Altaxo.Data
 		/// start with "tmp/".</remarks>
 		public void SetTableProperty(string key, object val)
 		{
-			if (_tableProperties == null)
-				_tableProperties = new Dictionary<string, object>();
-
-			_tableProperties[key] = val;
+			PropertyBagNotNull.SetValue(key, val);
 		}
-
 
 		/// <summary>
 		/// Remove a table property, key is a string
@@ -1294,7 +1308,7 @@ namespace Altaxo.Data
 		/// start with "tmp/".</remarks>
 		public bool RemoveTableProperty(string key)
 		{
-			return null == _tableProperties ? false : _tableProperties.Remove(key);
+			return null == _tableProperties ? false : _tableProperties.RemoveValue(key);
 		}
 
 		/// <summary>
@@ -1308,6 +1322,7 @@ namespace Altaxo.Data
 			{
 				case "DataCols":
 					return _dataColumns;
+
 				case "PropCols":
 					return this._propertyColumns;
 			}
@@ -1343,7 +1358,6 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Get the parent data table of a DataColumnCollection.
 		/// </summary>
@@ -1370,7 +1384,6 @@ namespace Altaxo.Data
 				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(column, typeof(DataTable));
 		}
 
-
 		/// <summary>
 		/// Gets the parent data table of a child object.
 		/// </summary>
@@ -1383,9 +1396,23 @@ namespace Altaxo.Data
 				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child, typeof(DataTable));
 		}
 
+		#region IPropertyBagOwner
 
+		public Main.Properties.PropertyBag PropertyBag
+		{
+			get { return _tableProperties; }
+		}
 
+		public Main.Properties.PropertyBag PropertyBagNotNull
+		{
+			get
+			{
+				if (null == _tableProperties)
+					_tableProperties = new Main.Properties.PropertyBag();
+				return _tableProperties;
+			}
+		}
 
+		#endregion IPropertyBagOwner
 	} // end class Altaxo.Data.DataTable
-
 }

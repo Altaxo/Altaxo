@@ -318,6 +318,9 @@ namespace Altaxo.Main
 			foreach (Altaxo.Graph.Gdi.GraphDocument v in _doc.GraphDocumentCollection)
 				ItemAdded(v, v.Name);
 
+			foreach (var item in _doc.ProjectFolderProperties)
+				ItemAdded(item, item.Name);
+
 			_suspendEvents = false;
 			OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
 		}
@@ -331,9 +334,12 @@ namespace Altaxo.Main
 				_doc = e.Project;
 				_doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
 				_doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
+				_doc.ProjectFolderProperties.CollectionChanged += EhItemCollectionChanged;
 				Initialize();
 			}
 		}
+
+	
 
 		private void EhProjectClosed(object sender, ProjectEventArgs e)
 		{
@@ -367,6 +373,8 @@ namespace Altaxo.Main
 					break;
 			}
 		}
+
+	
 
 
 

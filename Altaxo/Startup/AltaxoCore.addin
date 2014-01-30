@@ -955,6 +955,8 @@
 								icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
 			<MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
 								icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
+			<MenuItem id="NewPropBag" label="${res:XML.MainMenu.FileMenu.New.PropertyBag}" description="${res:XML.MainMenu.FileMenu.New.PropertyBag.Description}"
+								icon="Icons.16x16.PropertyBag" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewPropertyBag" />
 		</MenuItem>
 		<MenuItem id="ViewOnSelect" label="${res:XML.ProjectBrowserMenu.ViewOnSelect}" type="Menu">
 			<MenuItem id="ViewOnSelectOff" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOff}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOff.Description}" type="CheckBox"
@@ -1013,23 +1015,23 @@
 								 label = "${res:Dialog.Options.LanguageSettings}">
 			<OptionPanel id    = "UILanguage"
 								 label = "${res:Dialog.Options.UILanguage}"
-								 class = "Altaxo.Gui.Settings.UICultureSettingsController" />
+								 class = "Altaxo.Gui.Settings.UICultureSettingsOptionPanel" />
 			<OptionPanel id    = "DocumentLanguage"
 								 label = "${res:Dialog.Options.DocumentLanguage}"
-								 class = "Altaxo.Gui.Settings.DocumentCultureSettingsController" />
+								 class = "Altaxo.Gui.Settings.DocumentCultureSettingsOptionPanel" />
 			<OptionPanel id    = "AsciiAnalysis"
 						 label = "${res:Dialog.Options.AsciiAnalysis}"
-						 class = "Altaxo.Gui.Settings.AsciiAnalysisSettingsController" />
+						 class = "Altaxo.Gui.Settings.AsciiAnalysisSettingsOptionPanel" />
 		</OptionPanel>
 		<OptionPanel id    = "Graphs"
 								 label = "${res:Dialog.Options.GraphSettings}">
 			<OptionPanel id    = "ClipboardExport"
 								 label = "${res:Dialog.Options.Graph.ClipboardExport}"
-								 class = "Altaxo.Gui.Settings.ClipboardGraphExportOptionsController" />
+								 class = "Altaxo.Gui.Settings.ClipboardGraphExportOptionPanel" />
 		</OptionPanel>
 		<OptionPanel id    = "AutoUpdates"
 									 label = "${res:Dialog.Options.AutoUpdates}"
-									 class = "Altaxo.Gui.Settings.AutoUpdateSettingsController" />
+									 class = "Altaxo.Gui.Settings.AutoUpdateSettingsOptionPanel" />
 	</Path>
 
 	<Path name ="/Altaxo/ApplicationColorSets">
@@ -1121,6 +1123,12 @@
 									icon="Icons.16x16.NewDocumentIcon"
 									description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
 									class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
+
+			<MenuItem id="EditGraphProperties"
+									label="${res:XML.MainMenu.FileMenu.EditGraphProperties}"
+									icon="Icons.16x16.PropertyBag"
+									description="${res:XML.MainMenu.FileMenu.EditGraphProperties.Description}"
+									class="Altaxo.Graph.Commands.GraphShowProperties" />
 		</Condition>
 		<!-- Worksheet menu -->
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
@@ -1151,6 +1159,12 @@
 			<MenuItem id="SaveWorksheetAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}"
 				icon="Icons.16x16.SaveIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
 				class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
+
+			<MenuItem id="EditTableProperties"
+									label="${res:XML.MainMenu.FileMenu.EditTableProperties}"
+									icon="Icons.16x16.PropertyBag"
+									description="${res:XML.MainMenu.FileMenu.EditTableProperties.Description}"
+									class="Altaxo.Worksheet.Commands.TableShowProperties" />
 		</Condition>
 
 		<MenuItem id = "CloseSeparator" type = "Separator" />

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Settings;
 
 namespace Altaxo.Gui.Settings
 {
@@ -34,7 +35,7 @@ namespace Altaxo.Gui.Settings
 	{
 		/// <summary>Gets or sets the state of the Gui element(s) that enables/disables auto updates (<see cref="P:AutoUpdateSettings.EnableAutoUpdates"/>).</summary>
 		bool EnableAutoUpdates { get; set; }
-		
+
 		/// <summary>Gets or sets the state of the Gui element(s) that indicate whether to download the stable or the unstable versions (<see cref="P:AutoUpdateSettings.DownloadUnstableVersion"/>).</summary>
 		bool DownloadUnstableVersion { get; set; }
 
@@ -55,19 +56,16 @@ namespace Altaxo.Gui.Settings
 		int InstallationWindowClosingTime { get; set; }
 	}
 
-
-
-
 	/// <summary>Manages the <see cref="IAutoUpdateSettingsView">Gui interface</see> for the <see cref="AutoUpdateSettings">auto update settings</see>.</summary>
 	[ExpectedTypeOfView(typeof(IAutoUpdateSettingsView))]
 	[UserControllerForObject(typeof(AutoUpdateSettings))]
 	public class AutoUpdateSettingsController : IMVCANController
 	{
-		IAutoUpdateSettingsView _view;
-		AutoUpdateSettings _doc;
-		
+		private IAutoUpdateSettingsView _view;
+		private AutoUpdateSettings _doc;
+
 		/// <summary>If true, indicates that the document was created by this controller and should be saved to Altaxo settings when <see cref="Apply"/> is called.</summary>
-		bool _isHoldingOwnDocument;
+		private bool _isHoldingOwnDocument;
 
 		public AutoUpdateSettingsController()
 		{
@@ -75,7 +73,7 @@ namespace Altaxo.Gui.Settings
 
 		public bool InitializeDocument(params object[] args)
 		{
-			if (null == args || args.Length == 0 || (null!=args[0] && !(args[0] is AutoUpdateSettings)))
+			if (null == args || args.Length == 0 || (null != args[0] && !(args[0] is AutoUpdateSettings)))
 				return false;
 			_doc = args[0] as AutoUpdateSettings;
 
@@ -85,12 +83,11 @@ namespace Altaxo.Gui.Settings
 				_doc = Current.PropertyService.Get(AutoUpdateSettings.SettingsStoragePath, new AutoUpdateSettings());
 			}
 
-
 			Initialize(true);
 			return true;
 		}
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (null != _view)
 			{
@@ -98,17 +95,16 @@ namespace Altaxo.Gui.Settings
 				_view.DownloadUnstableVersion = _doc.DownloadUnstableVersion;
 				_view.DownloadInterval = _doc.DownloadIntervalInDays;
 				_view.ShowDownloadWindow = _doc.ShowDownloadWindow;
-				_view.InstallAt = (_doc.InstallAtStartup ? 1 : 0) + ( _doc.InstallAtShutdown ? 2 : 0);
+				_view.InstallAt = (_doc.InstallAtStartup ? 1 : 0) + (_doc.InstallAtShutdown ? 2 : 0);
 				_view.ConfirmInstallation = _doc.ConfirmInstallation;
 				_view.ShowInstallationWindow = _doc.ShowInstallationWindow;
 				_view.InstallationWindowClosingTime = _doc.InstallationWindowClosingTime;
 			}
 		}
 
-
 		public UseDocument UseDocumentCopy
 		{
-			set {  }
+			set { }
 		}
 
 		public object ViewObject
@@ -119,15 +115,12 @@ namespace Altaxo.Gui.Settings
 			}
 			set
 			{
-
-
 				_view = value as IAutoUpdateSettingsView;
 
 				if (null != _view)
 				{
 					Initialize(false);
 				}
-			
 			}
 		}
 
@@ -143,16 +136,36 @@ namespace Altaxo.Gui.Settings
 			_doc.DownloadIntervalInDays = _view.DownloadInterval;
 			_doc.ShowDownloadWindow = _view.ShowDownloadWindow;
 			_doc.InstallAtStartup = 0 != (_view.InstallAt & 1);
-			_doc.InstallAtShutdown =0 != (_view.InstallAt & 2);
+			_doc.InstallAtShutdown = 0 != (_view.InstallAt & 2);
 
 			_doc.ConfirmInstallation = _view.ConfirmInstallation;
 			_doc.ShowInstallationWindow = _view.ShowInstallationWindow;
 			_doc.InstallationWindowClosingTime = _view.InstallationWindowClosingTime;
 
-			if(_isHoldingOwnDocument)
+			if (_isHoldingOwnDocument)
 				Current.PropertyService.Set(AutoUpdateSettings.SettingsStoragePath, _doc);
 
 			return true;
+		}
+	}
+
+	public class AutoUpdateSettingsOptionPanel : OptionPanelBase<AutoUpdateSettingsController>
+	{
+		public override void Initialize(object optionPanelOwner)
+		{
+			_controller = new AutoUpdateSettingsController();
+
+			var doc = Current.PropertyService.GetValue<AutoUpdateSettings>(AutoUpdateSettings.PropertyKeyAutoUpdate, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+			if (null == doc)
+				doc = new AutoUpdateSettings();
+
+			_controller.InitializeDocument(doc);
+		}
+
+		protected override void ProcessControllerResult()
+		{
+			var doc = (AutoUpdateSettings)_controller.ModelObject;
+			Current.PropertyService.UserSettings.SetValue(AutoUpdateSettings.PropertyKeyAutoUpdate, doc);
 		}
 	}
 }

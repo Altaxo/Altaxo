@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -40,7 +42,7 @@ namespace Altaxo.Graph.Gdi
 
 		private class GraphRenameValidator : Altaxo.Gui.Common.TextValueInputController.NonEmptyStringValidator
 		{
-			GraphDocument _doc;
+			private GraphDocument _doc;
 
 			public GraphRenameValidator(GraphDocument graphdoc)
 				: base("The graph's name must not be empty! Please enter a valid name.")
@@ -65,7 +67,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		/// <summary>
 		/// This command will rescale all axes in all layers
 		/// </summary>
@@ -82,7 +83,6 @@ namespace Altaxo.Graph.Gdi
 					}
 				});
 		}
-
 
 		#region Layer manipulation
 
@@ -112,14 +112,12 @@ namespace Altaxo.Graph.Gdi
 			return true;
 		}
 
-
 		public static void ShowLayerDialog(this GraphDocument doc, IList<int> layerNumber)
 		{
 			HostLayer l;
 			if (IsValidLayerNumber(doc, layerNumber, out l))
 				Altaxo.Gui.Graph.HostLayerController.ShowDialog(l);
 		}
-
 
 		/// <summary>
 		/// Deletes the layer specified by index <paramref name="layerNumber"/>.
@@ -159,7 +157,6 @@ namespace Altaxo.Graph.Gdi
 			parentLayer.Layers.Insert(destposition, layer);
 		}
 
-
 		/// <summary>
 		/// Moves the layer specified by index <paramref name="layerNumber"/> as specified by the user in the opened dialog.
 		/// </summary>
@@ -179,14 +176,10 @@ namespace Altaxo.Graph.Gdi
 
 			newposition = ivictrl.EnteredContents;
 
-
-			MoveLayerToPosition(doc, l.ParentLayer, layerNumber[layerNumber.Count-1], newposition);
+			MoveLayerToPosition(doc, l.ParentLayer, layerNumber[layerNumber.Count - 1], newposition);
 		}
 
-
-
-		#endregion
-
+		#endregion Layer manipulation
 
 		#region Exchange tables for plot items
 
@@ -196,10 +189,18 @@ namespace Altaxo.Graph.Gdi
 		{
 			var exchangeOptions = Altaxo.Gui.Graph.ExchangeTablesOfPlotItemsDocument.CreateFromGraphs(list);
 			Current.Gui.ShowDialog(ref exchangeOptions, "Exchange tables of plot items", false);
-
 		}
 
-		#endregion
+		#endregion Exchange tables for plot items
 
+		#region Show properties dialog
+
+		public static void ShowPropertyDialog(this GraphDocument doc)
+		{
+			var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(doc));
+			Current.Gui.ShowDialog(new object[] { propHierarchy }, "Graph properties", true);
+		}
+
+		#endregion Show properties dialog
 	}
 }

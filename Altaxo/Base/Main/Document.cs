@@ -24,6 +24,7 @@
 
 using Altaxo.Graph.Gdi;
 using Altaxo.Main;
+using Altaxo.Main.Properties;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,11 @@ namespace Altaxo
 
 		/// <summary>Collection of all graphs in this document.</summary>
 		protected Altaxo.Graph.Gdi.GraphDocumentCollection _graphs = null; // all graphs are stored here
+
+		/// <summary>
+		/// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
+		/// </summary>
+		protected Altaxo.Main.Properties.ProjectFolderPropertyBagCollection _projectFolderProperties;
 
 		/// <summary>Collection of all data tables layouts in this document.</summary>
 		protected Altaxo.Worksheet.WorksheetLayoutCollection _tableLayouts = null;
@@ -72,6 +78,7 @@ namespace Altaxo
 		{
 			_dataTables = new Altaxo.Data.DataTableCollection(this);
 			_graphs = new GraphDocumentCollection(this);
+			_projectFolderProperties = new Main.Properties.ProjectFolderPropertyBagCollection(this);
 			_tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
 			_fitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
 			_projectFolders = new ProjectFolders(this);
@@ -199,6 +206,25 @@ namespace Altaxo
 				}
 			}
 
+			// 5th, we save all folder properties
+			foreach (var folderProperty in this._projectFolderProperties)
+			{
+				try
+				{
+					zippedStream.StartFile("FolderProperties/" + folderProperty.Name + ".xml", compressionLevel);
+					//ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+					//zippedStream.PutNextEntry(ZipEntry);
+					//zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream.Stream);
+					info.AddValue("FolderProperty", folderProperty);
+					info.EndWriting();
+				}
+				catch (Exception exc)
+				{
+					errorText.Append(exc.ToString());
+				}
+			}
+
 			// nun noch den DocumentIdentifier abspeichern
 			zippedStream.StartFile("DocumentInformation.xml", compressionLevel);
 			info.BeginWriting(zippedStream.Stream);
@@ -255,6 +281,15 @@ namespace Altaxo
 							this._fitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
 						info.EndReading();
 					}
+					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("FolderProperties/"))
+					{
+						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
+						info.BeginReading(zipinpstream);
+						object readedobject = info.GetValue("FolderProperty", this);
+						if (readedobject is Altaxo.Main.Properties.ProjectFolderPropertyBag)
+							this._projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyBag)readedobject);
+						info.EndReading();
+					}
 					else if (!zipEntry.IsDirectory && zipEntry.Name == "DocumentInformation.xml")
 					{
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
@@ -307,6 +342,14 @@ namespace Altaxo
 		public Altaxo.Scripting.FitFunctionScriptCollection FitFunctionScripts
 		{
 			get { return _fitFunctionScripts; }
+		}
+
+		/// <summary>
+		/// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
+		/// </summary>
+		public Altaxo.Main.Properties.ProjectFolderPropertyBagCollection ProjectFolderProperties
+		{
+			get { return _projectFolderProperties; }
 		}
 
 		/// <summary>

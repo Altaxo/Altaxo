@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,10 +32,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	public abstract class ProjectBrowseControllerCommand : ICSharpCode.Core.AbstractCommand
 	{
 		protected abstract void Run(ProjectBrowseController ctrl);
+
 		public override void Run()
 		{
 			Run((ProjectBrowseController)Owner);
 		}
+
 		protected ProjectBrowseController Ctrl
 		{
 			get
@@ -58,7 +62,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			ctrl.HideSelectedListItems();
 		}
 	}
-
 
 	public class CmdListItemDelete : ProjectBrowseControllerCommand
 	{
@@ -104,7 +107,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	{
 		public event EventHandler IsCheckedChanged;
 
-
 		protected override void Run(ProjectBrowseController ctrl)
 		{
 			ctrl.ViewOnSelectListNodeOn = false;
@@ -125,7 +127,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion ICheckableMenuCommand Members
 
 		#region IMenuCommand Members
 
@@ -142,7 +144,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion IMenuCommand Members
 	}
 
 	public class CmdViewOnSelectListNodeOn : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
@@ -169,7 +171,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion ICheckableMenuCommand Members
 
 		#region IMenuCommand Members
 
@@ -186,9 +188,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion IMenuCommand Members
 	}
-
 
 	public class CmdNewEmptyWorksheet : ProjectBrowseControllerCommand
 	{
@@ -214,6 +215,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+	public class CmdNewPropertyBag : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CreateNewPropertyBag();
+		}
+	}
 
 	public class CmdPlotCommonColumns : ProjectBrowseControllerCommand
 	{
@@ -239,7 +247,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
 			int count = list.Count();
 
-			if (count==0)
+			if (count == 0)
 				return;
 			if (count == 1)
 				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowFileExportSpecificDialog(list.First());
@@ -263,8 +271,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			{
 				Altaxo.Graph.Gdi.GraphDocumentOtherActions.ShowExchangeTablesOfPlotItemsDialog(list);
 			}
-		
 		}
 	}
-		
 }

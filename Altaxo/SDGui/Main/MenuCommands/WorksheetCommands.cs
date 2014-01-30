@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using ICSharpCode.Core;
+#endregion Copyright
+
 using Altaxo;
 using Altaxo.Data;
-using Altaxo.Main;
-using Altaxo.Worksheet;
-using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Gui.Scripting;
+using Altaxo.Gui.Worksheet.Viewing;
+using Altaxo.Main;
 using Altaxo.Scripting;
-
+using Altaxo.Worksheet;
+using ICSharpCode.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using System;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -63,7 +64,7 @@ namespace Altaxo.Worksheet.Commands
 		public abstract void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl);
 	}
 
-	#endregion
+	#endregion Abstract command
 
 	#region File commands
 
@@ -91,8 +92,6 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	
-
 	public class ImportAsciiInSingleWorksheetHorizontally : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -108,7 +107,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Data.FileCommands.ShowImportAsciiDialog(ctrl.DataTable, false, true);
 		}
 	}
-
 
 	public class ImportImage : AbstractWorksheetControllerCommand
 	{
@@ -150,7 +148,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	#endregion
+	#endregion File commands
 
 	#region Edit commands
 
@@ -161,6 +159,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.EditCommands.RemoveSelected(ctrl);
 		}
 	}
+
 	public class RemoveAllButSelected : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -168,6 +167,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.EditCommands.RemoveAllButSelected(ctrl);
 		}
 	}
+
 	public class EditClean : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -175,6 +175,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.EditCommands.CleanSelected(ctrl);
 		}
 	}
+
 	public class EditCopy : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -182,6 +183,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.EditCommands.CopyToClipboard(ctrl);
 		}
 	}
+
 	public class EditPaste : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -200,7 +202,15 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	#endregion
+	public class TableShowProperties : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			ctrl.DataTable.ShowPropertyDialog();
+		}
+	}
+
+	#endregion Edit commands
 
 	#region Plot commands
 
@@ -211,6 +221,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, false);
 		}
 	}
+
 	public class PlotLineArea : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -218,6 +229,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotLineArea(ctrl);
 		}
 	}
+
 	public class PlotLineStack : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -225,6 +237,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotLineStack(ctrl);
 		}
 	}
+
 	public class PlotLineRelativeStack : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -232,6 +245,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotLineRelativeStack(ctrl);
 		}
 	}
+
 	public class PlotLineWaterfall : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -239,6 +253,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotLineWaterfall(ctrl);
 		}
 	}
+
 	public class PlotLinePolar : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -263,8 +278,6 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
-
 	public class PlotBarChartNormal : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -272,6 +285,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartNormal(ctrl);
 		}
 	}
+
 	public class PlotBarChartStack : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -279,6 +293,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartStack(ctrl);
 		}
 	}
+
 	public class PlotBarChartRelativeStack : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -294,6 +309,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartNormal(ctrl);
 		}
 	}
+
 	public class PlotColumnChartStack : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -301,6 +317,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartStack(ctrl);
 		}
 	}
+
 	public class PlotColumnChartRelativeStack : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -308,7 +325,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartRelativeStack(ctrl);
 		}
 	}
-
 
 	public class PlotDensityImage : AbstractWorksheetControllerCommand
 	{
@@ -318,9 +334,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
-
-	#endregion
+	#endregion Plot commands
 
 	#region Worksheet
 
@@ -339,7 +353,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.DataTable });
 		}
 	}
-
 
 	public class WorksheetDuplicate : AbstractWorksheetControllerCommand
 	{
@@ -415,8 +428,8 @@ namespace Altaxo.Worksheet.Commands
 
 	public class OpenExtractTableDataScriptDialog : AbstractWorksheetControllerCommand
 	{
-		const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";
-		Altaxo.Data.DataTable m_Table;
+		private const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";
+		private Altaxo.Data.DataTable m_Table;
 
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
@@ -441,10 +454,9 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
 	public class OpenTableScriptDialog : AbstractWorksheetControllerCommand
 	{
-		Altaxo.Data.DataTable m_Table;
+		private Altaxo.Data.DataTable m_Table;
 
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
@@ -462,20 +474,17 @@ namespace Altaxo.Worksheet.Commands
 			}
 
 			this.m_Table = null;
-
 		}
+
 		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
-			return ((TableScript)script).ExecuteWithSuspendedNotifications(m_Table,reporter);
+			return ((TableScript)script).ExecuteWithSuspendedNotifications(m_Table, reporter);
 		}
 	}
 
-
-
-	#endregion
+	#endregion Worksheet
 
 	#region Column commands
-
 
 	public class SetColumnValues : AbstractWorksheetControllerCommand
 	{
@@ -488,10 +497,9 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
 	public class OpenDataColumnScriptDialog : AbstractWorksheetControllerCommand
 	{
-		Altaxo.Data.DataColumn m_Column;
+		private Altaxo.Data.DataColumn m_Column;
 
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
@@ -512,14 +520,16 @@ namespace Altaxo.Worksheet.Commands
 			}
 			this.m_Column = null;
 		}
+
 		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
-			return ((DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column,reporter);
+			return ((DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column, reporter);
 		}
 	}
+
 	public class OpenPropertyColumnScriptDialog : AbstractWorksheetControllerCommand
 	{
-		Altaxo.Data.DataColumn m_Column;
+		private Altaxo.Data.DataColumn m_Column;
 
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
@@ -543,11 +553,9 @@ namespace Altaxo.Worksheet.Commands
 
 		public bool EhScriptExecution(IScriptText script, IProgressReporter reporter)
 		{
-			return ((PropertyColumnScript)script).ExecuteWithSuspendedNotifications(m_Column,reporter);
+			return ((PropertyColumnScript)script).ExecuteWithSuspendedNotifications(m_Column, reporter);
 		}
 	}
-
-
 
 	public class SetColumnAsX : AbstractWorksheetControllerCommand
 	{
@@ -605,7 +613,6 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
 	public class RenameColumn : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -613,8 +620,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.ColumnCommands.RenameSelectedColumn(ctrl);
 		}
 	}
-
-
 
 	public class SetColumnGroupNumber : AbstractWorksheetControllerCommand
 	{
@@ -624,7 +629,6 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
 	public class SetColumnPosition : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -632,10 +636,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnPosition(ctrl);
 		}
 	}
-
-
-
-
 
 	public class ExtractPropertyValues : AbstractWorksheetControllerCommand
 	{
@@ -660,6 +660,7 @@ namespace Altaxo.Worksheet.Commands
 				Altaxo.Data.Sorting.SortDataColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
 		}
 	}
+
 	public class SortTableDescending : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -668,7 +669,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	#endregion
+	#endregion Column commands
 
 	#region Row commands
 
@@ -705,7 +706,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	#endregion
+	#endregion Row commands
 
 	#region Property column commands
 
@@ -737,7 +738,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	#endregion
+	#endregion Property column commands
 
 	#region Analysis
 
@@ -781,7 +782,6 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
 	public class AnalysisStatisticsOnColumns : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -789,7 +789,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.StatisticCommands.StatisticsOnColumns(ctrl);
 		}
 	}
-
 
 	public class AnalysisStatisticsOnRows : AbstractWorksheetControllerCommand
 	{
@@ -814,6 +813,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnRows(ctrl);
 		}
 	}
+
 	public class AnalysisPCAOnCols : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -821,6 +821,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnColumns(ctrl);
 		}
 	}
+
 	public class AnalysisPLSOnRows : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -828,6 +829,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnRows(ctrl);
 		}
 	}
+
 	public class AnalysisPLSOnCols : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -835,6 +837,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
 		}
 	}
+
 	public class AnalysisPLSPredictOnRows : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -842,6 +845,7 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnRows(ctrl);
 		}
 	}
+
 	public class AnalysisPLSPredictOnCols : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -849,7 +853,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnColumns(ctrl);
 		}
 	}
-
 
 	public class AnalysisExportPLSCalibration : AbstractWorksheetControllerCommand
 	{
@@ -883,6 +886,5 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-
-	#endregion
+	#endregion Analysis
 }

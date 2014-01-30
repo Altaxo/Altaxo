@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Globalization;
 
 namespace Altaxo.Serialization.Ascii
 {
+	using Altaxo.Main.Properties;
+
 	/// <summary>
 	/// Stores information about how to analyze an ASCII data file.
 	/// </summary>
@@ -16,13 +18,14 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		public static string SettingsStoragePath = "Altaxo.Options.Serialization.Ascii.DocumentAnalysisOptions";
 
+		public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions = new PropertyKey<AsciiDocumentAnalysisOptions>("2AD2EBB9-F4C6-4BD2-A71B-23974776F5DF", "Ascii\\DocumentAnalysisOptions", PropertyLevel.All, typeof(Altaxo.Data.DataTable));
+
 		/// <summary>Default number of Ascii lines to analyze.</summary>
 		public const int DefaultNumberOfLinesToAnalyze = 30;
 
-		static AsciiDocumentAnalysisOptions _defaultUserOptions;
+		private static AsciiDocumentAnalysisOptions _defaultUserOptions;
 
-		static AsciiDocumentAnalysisOptions _defaultSystemOptions;
-
+		private static AsciiDocumentAnalysisOptions _defaultSystemOptions;
 
 		/// <summary>Number of lines of the Ascii document to analyze.</summary>
 		private int _numberOfLinesToAnalyze;
@@ -33,11 +36,10 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>DateTime formats to test. Here, the DateTime formats are specified by cultures.</summary>
 		private HashSet<CultureInfo> _dateTimeFormatsToTest;
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiDocumentAnalysisOptions), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -52,17 +54,14 @@ namespace Altaxo.Serialization.Ascii
 					info.AddValue("e", cultureInfo.LCID);
 				info.CommitArray();
 
-
 				info.CreateArray("DateTimeFormatsToTest", s._dateTimeFormatsToTest.Count);
 				foreach (var cultureInfo in s._dateTimeFormatsToTest)
 					info.AddValue("e", cultureInfo.LCID);
 				info.CommitArray();
-
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (AsciiDocumentAnalysisOptions)o : new AsciiDocumentAnalysisOptions();
 
 				//  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
@@ -86,14 +85,11 @@ namespace Altaxo.Serialization.Ascii
 				}
 				info.CloseArray(count);
 
-
-
 				return s;
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		static AsciiDocumentAnalysisOptions()
 		{
@@ -151,7 +147,18 @@ namespace Altaxo.Serialization.Ascii
 		/// <returns>
 		/// A new object that is a copy of this instance.
 		/// </returns>
-		public object Clone()
+		public AsciiDocumentAnalysisOptions Clone()
+		{
+			return new AsciiDocumentAnalysisOptions(this);
+		}
+
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
+		object ICloneable.Clone()
 		{
 			return new AsciiDocumentAnalysisOptions(this);
 		}
@@ -214,7 +221,6 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-
 		/// <summary>
 		/// Tests all member variables and adjusts them to valid values.
 		/// </summary>
@@ -251,8 +257,6 @@ namespace Altaxo.Serialization.Ascii
 			options._dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.InstalledUICulture);
 		}
 
-	
-
 		/// <summary>
 		/// Gets or sets the number of lines used to analyze the structure of an ASCII data file.
 		/// </summary>
@@ -273,7 +277,6 @@ namespace Altaxo.Serialization.Ascii
 			get { return _numberFormatsToTest; }
 		}
 
-
 		/// <summary>
 		/// Gets a set of cultures used to test whether an substring of text represents a number. You may add additional cultures to test, but note that this will increase the analyzing time.
 		/// </summary>
@@ -281,10 +284,5 @@ namespace Altaxo.Serialization.Ascii
 		{
 			get { return _dateTimeFormatsToTest; }
 		}
-
-
-
-
-
 	}
 }

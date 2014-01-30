@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -39,36 +41,21 @@ namespace Altaxo.Gui.Settings
 	/// <summary>
 	/// Interaction logic for CultureSettingsControl.xaml
 	/// </summary>
-	public partial class UICultureSettingsControl : UserControl, IUICultureSettingsView
+	public partial class CultureSettingsControl : UserControl, ICultureSettingsView
 	{
 		public event Action CultureChanged;
 
 		public event Action OverrideSystemCultureChanged;
 
-		public UICultureSettingsControl()
+		public CultureSettingsControl()
 		{
 			InitializeComponent();
-		}
-
-		public bool UseCustomUserSettings
-		{
-			get
-			{
-				return true == _guiOverrideCultureSettings.IsChecked;
-			}
-			set
-			{
-				_guiOverrideCultureSettings.IsChecked = value;
-			}
 		}
 
 		public void InitializeCultureFormatList(Collections.SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_guiCultures, list);
 		}
-
-
-		
 
 		public string NumberDecimalSeparator
 		{
@@ -101,12 +88,6 @@ namespace Altaxo.Gui.Settings
 			{
 				CultureChanged();
 			}
-		}
-
-		private void EhOverrideCultureOverrideChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != OverrideSystemCultureChanged)
-				OverrideSystemCultureChanged();
 		}
 	}
 }

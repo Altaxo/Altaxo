@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -56,11 +58,12 @@ namespace Altaxo.Gui.Common
 		{
 			get
 			{
-				return _guiEnableState.IsChecked == true;
+				return true == _guiEnableState.IsChecked;
 			}
 			set
 			{
 				_guiEnableState.IsChecked = value;
+				_guiContentHost.IsEnabled = value;
 			}
 		}
 
@@ -68,7 +71,12 @@ namespace Altaxo.Gui.Common
 
 		public object ConditionalView
 		{
-			set { _guiContentHost.Content = value; }
+			set { _guiContentHost.Child = value as UIElement; }
+		}
+
+		public string EnablingText
+		{
+			set { _guiEnableState.Content = value; }
 		}
 	}
 }

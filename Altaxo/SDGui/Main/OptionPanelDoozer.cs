@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2012 Dr. Dirk Lellinger
@@ -18,20 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 #region Original Copyright
+
 // Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
-#endregion
 
+#endregion Original Copyright
 
+using Altaxo.Gui;
+using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ICSharpCode.Core;
-
 
 namespace Altaxo.Main
 {
@@ -65,7 +68,7 @@ namespace Altaxo.Main
 		/// <value>
 		/// Returns the dialog panel object
 		/// </value>
-		Altaxo.Gui.IMVCANController OptionPanel
+		IOptionPanel OptionPanel
 		{
 			get;
 		}
@@ -78,7 +81,6 @@ namespace Altaxo.Main
 			get;
 		}
 	}
-
 
 	/// <summary>
 	/// Creates DefaultOptionPanelDescriptor objects that are used in option dialogs.

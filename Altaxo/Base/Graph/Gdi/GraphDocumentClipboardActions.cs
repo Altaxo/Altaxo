@@ -35,6 +35,8 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
+	using Altaxo.Main.Properties;
+
 	/// <summary>
 	/// Extension methods for GraphDocument especially for clipboard actions.
 	/// </summary>
@@ -44,24 +46,26 @@ namespace Altaxo.Graph.Gdi
 		public static readonly GraphCopyOptions DefaultGraphLayerPasteOptions;
 		private static GraphCopyOptions _lastChoosenGraphDocumentPasteOptions;
 		private static GraphCopyOptions _lastChoosenGraphLayerPasteOptions;
-
-		public const string CopyPageSettingsPath = "Altaxo.Options.Clipboard.CopyPageSettings";
-		private static GraphExportOptions _copyPageOptions;
+		public static readonly PropertyKey<GraphExportOptions> PropertyKeyCopyPageSettings = new PropertyKey<GraphExportOptions>("DE1819F6-7E8C-4C43-9984-B5C405236289", "Clipboard\\CopyPageSettings", PropertyLevel.All, typeof(GraphDocument));
 
 		public static GraphExportOptions CopyPageOptions
 		{
 			get
 			{
-				return _copyPageOptions;
+				var doc = Current.PropertyService.GetValue<GraphExportOptions>(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+				if (null == doc)
+				{
+					doc = new GraphExportOptions();
+					CopyPageOptions = doc;
+				}
+				return doc;
 			}
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException();
 
-				_copyPageOptions = value;
-
-				Current.PropertyService.Set<GraphExportOptions>(CopyPageSettingsPath, _copyPageOptions);
+				Current.PropertyService.UserSettings.SetValue<GraphExportOptions>(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, value);
 			}
 		}
 
@@ -71,9 +75,6 @@ namespace Altaxo.Graph.Gdi
 			DefaultGraphLayerPasteOptions = GraphCopyOptions.CopyLayerAll & ~GraphCopyOptions.CopyLayerPlotItems;
 			_lastChoosenGraphDocumentPasteOptions = DefaultGraphDocumentPasteOptions;
 			_lastChoosenGraphLayerPasteOptions = DefaultGraphLayerPasteOptions;
-
-			_copyPageOptions = Current.PropertyService.Get<GraphExportOptions>(CopyPageSettingsPath, new GraphExportOptions());
-			_copyPageOptions.IsIntentedForClipboardOperation = true;
 		}
 
 		#region Image formats
