@@ -472,12 +472,21 @@ namespace Altaxo.Com
 			System.Diagnostics.Debug.Assert(null == _document);
 
 			string documentName = null;
+			Version altaxoVersion;
 #if COMLOGGING
 			Debug.ReportInfo("{0}.IPersistStorage.Load", this.GetType().Name);
 #endif
 
 			try
 			{
+				using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoVersion", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
+				{
+					var bytes = new byte[stream.Length];
+					stream.Read(bytes, 0, bytes.Length);
+					var versionString = System.Text.Encoding.UTF8.GetString(bytes);
+					altaxoVersion = Version.Parse(versionString);
+				}
+
 				using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoGraphName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
 				{
 					var bytes = new byte[stream.Length];
@@ -554,6 +563,18 @@ namespace Altaxo.Com
 				Exception saveEx = null;
 
 				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
+
+				// Store the version of this assembly
+				{
+					var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+					Version version = assembly.GetName().Version;
+					using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoVersion", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+					{
+						string text = version.ToString();
+						byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(text);
+						stream.Write(nameBytes, 0, nameBytes.Length);
+					}
+				}
 
 				// Store the name of the item
 				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoGraphName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))

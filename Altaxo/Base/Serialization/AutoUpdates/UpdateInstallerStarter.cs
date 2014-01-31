@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Threading;
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -34,7 +36,7 @@ namespace Altaxo.Serialization.AutoUpdates
 	/// </summary>
 	public class UpdateInstallerStarter
 	{
-		const string UpdateInstallerFileName = "AltaxoUpdateInstaller.exe";
+		private const string UpdateInstallerFileName = "AltaxoUpdateInstaller.exe";
 
 		/// <summary>Starts the installer program, when all presumtions are fullfilled.</summary>
 		/// <param name="isAltaxoCurrentlyStarting">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
@@ -42,14 +44,13 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <returns>True if the installer program was started. Then Altaxo have to be shut down immediately. Returns <c>false</c> if the installer program was not started.</returns>
 		public static bool Run(bool isAltaxoCurrentlyStarting, string[] commandLineArgs)
 		{
-			var updateSettings = Current.PropertyService.Get(Altaxo.Settings.AutoUpdateSettings.SettingsStoragePath, new Altaxo.Settings.AutoUpdateSettings());
+			var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());
 
 			var installationRequested = (isAltaxoCurrentlyStarting && updateSettings.InstallAtStartup) || (!isAltaxoCurrentlyStarting && updateSettings.InstallAtShutdown);
-			if(!installationRequested)
+			if (!installationRequested)
 				return false;
-			
-			bool loadUnstable = updateSettings.DownloadUnstableVersion;
 
+			bool loadUnstable = updateSettings.DownloadUnstableVersion;
 
 			FileStream versionFileStream = null;
 			FileStream packageStream = null;
@@ -91,7 +92,6 @@ namespace Altaxo.Serialization.AutoUpdates
 				var installerFullDestName = Path.Combine(downloadFolder, UpdateInstallerFileName);
 				File.Copy(installerFullSrcName, installerFullDestName, true);
 
-
 				// both the version file and the package stream are locked now
 				// so we can start the updater program
 
@@ -102,12 +102,12 @@ namespace Altaxo.Serialization.AutoUpdates
 				processInfo.FileName = installerFullDestName;
 				StringBuilder stb = new StringBuilder();
 				stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
-					"\"{0}\"\t\"{1}\"\t{2}\t{3}\t{4}\t\"{5}\"", 
-					eventName, 
-					packageStream.Name, 
+					"\"{0}\"\t\"{1}\"\t{2}\t{3}\t{4}\t\"{5}\"",
+					eventName,
+					packageStream.Name,
 					updateSettings.ShowInstallationWindow ? 1 : 0,
 					updateSettings.InstallationWindowClosingTime,
-					isAltaxoCurrentlyStarting ? 1 : 0, 
+					isAltaxoCurrentlyStarting ? 1 : 0,
 					entryAssembly.Location);
 				if (isAltaxoCurrentlyStarting && commandLineArgs != null && commandLineArgs.Length > 0)
 				{

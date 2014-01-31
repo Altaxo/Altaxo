@@ -37,6 +37,7 @@ namespace Altaxo.Graph.Procedures
 			CollectAllDataColumnReferences();
 			CopyReferencedColumnsToNewProject();
 			CopyGraphToNewDocument(_graph);
+			CopyFolderPropertiesOf(_graph);
 
 			return _document;
 		}
@@ -53,6 +54,18 @@ namespace Altaxo.Graph.Procedures
 			var newGraph = (GraphDocument)oldGraph.Clone();
 			newGraph.Name = oldGraph.Name;
 			_document.GraphDocumentCollection.Add(newGraph);
+		}
+
+		protected void CopyFolderPropertiesOf(GraphDocument oldGraph)
+		{
+			foreach (var doc in PropertyExtensions.GetProjectFolderPropertyDocuments(oldGraph))
+			{
+				if (doc.PropertyBag != null && doc.PropertyBag.Count > 0)
+				{
+					var bagclone = doc.Clone();
+					_document.ProjectFolderProperties.Add(bagclone);
+				}
+			}
 		}
 
 		protected void CollectAllDataColumnReferences()

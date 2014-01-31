@@ -29,8 +29,6 @@ using System.Text;
 
 namespace Altaxo.Main.Properties
 {
-	using InfoAndBagTuple = Tuple<PropertyBagInformation, IPropertyBag>;
-
 	/// <summary>
 	/// Stores a hierarchy of property bags (<see cref="IPropertyBag"/>).
 	/// The topmost bag is usually used to edit items, the items underneath are used to show the effective property values.
@@ -38,23 +36,23 @@ namespace Altaxo.Main.Properties
 	/// </summary>
 	public class PropertyHierarchy
 	{
-		private List<InfoAndBagTuple> _propertyBags;
+		private List<PropertyBagWithInformation> _propertyBags;
 
 		/// <summary>
 		/// Initializes a new empty instance of the <see cref="PropertyHierarchy"/> class.
 		/// </summary>
 		public PropertyHierarchy()
 		{
-			_propertyBags = new List<InfoAndBagTuple>();
+			_propertyBags = new List<PropertyBagWithInformation>();
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PropertyHierarchy"/> class.
 		/// </summary>
 		/// <param name="tuplesBagnameWithBag">Enumeration of tuples of bag information and the bag forming the initial content of this instance.</param>
-		public PropertyHierarchy(IEnumerable<InfoAndBagTuple> tuplesBagnameWithBag)
+		public PropertyHierarchy(IEnumerable<PropertyBagWithInformation> tuplesBagnameWithBag)
 		{
-			_propertyBags = new List<InfoAndBagTuple>(tuplesBagnameWithBag);
+			_propertyBags = new List<PropertyBagWithInformation>(tuplesBagnameWithBag);
 		}
 
 		/// <summary>
@@ -64,7 +62,7 @@ namespace Altaxo.Main.Properties
 		/// <param name="bag">The bag to add.</param>
 		public void AddBag(PropertyBagInformation description, PropertyBag bag)
 		{
-			_propertyBags.Add(new InfoAndBagTuple(description, bag));
+			_propertyBags.Add(new PropertyBagWithInformation(description, bag));
 		}
 
 		/// <summary>
@@ -80,10 +78,10 @@ namespace Altaxo.Main.Properties
 		{
 			foreach (var tuple in _propertyBags)
 			{
-				if (tuple.Item2.TryGetValue<T>(p, out value))
+				if (tuple.Bag.TryGetValue<T>(p, out value))
 				{
-					bag = tuple.Item2;
-					bagInfo = tuple.Item1;
+					bag = tuple.Bag;
+					bagInfo = tuple.BagInformation;
 					return true;
 				}
 			}
@@ -105,14 +103,31 @@ namespace Altaxo.Main.Properties
 		/// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
 		public bool TryGetValue<T>(string propName, out T value, out IPropertyBag bag, out PropertyBagInformation bagInfo)
 		{
+			return TryGetValue<T>(propName, false, out value, out bag, out bagInfo);
+		}
+
+		/// <summary>
+		/// Tries to get a specific property value. The bags are search for the property, starting from the topmost bag and iterating to the bag at the bottom.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value to search for.</typeparam>
+		/// <param name="propName">The property key as string value.</param>
+		/// <param name="useTopmostBagOnly">If <c>true</c>, the search is done only on the topmost bag. All other bags in the hierarchy are ignored.</param>
+		/// <param name="value">On successfull return, this contains the retrieved property value.</param>
+		/// <param name="bag">On successfull return, this contains the property bag from which the property value was retrieved.</param>
+		/// <param name="bagInfo">On successfull return, this contains the information about the property bag from which the property value was retrieved.</param>
+		/// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
+		public bool TryGetValue<T>(string propName, bool useTopmostBagOnly, out T value, out IPropertyBag bag, out PropertyBagInformation bagInfo)
+		{
 			foreach (var tuple in _propertyBags)
 			{
-				if (tuple.Item2.TryGetValue<T>(propName, out value))
+				if (tuple.Bag.TryGetValue<T>(propName, out value))
 				{
-					bag = tuple.Item2;
-					bagInfo = tuple.Item1;
+					bag = tuple.Bag;
+					bagInfo = tuple.BagInformation;
 					return true;
 				}
+				if (useTopmostBagOnly)
+					break;
 			}
 
 			value = default(T);
@@ -130,7 +145,7 @@ namespace Altaxo.Main.Properties
 			HashSet<string> result = new HashSet<string>();
 			foreach (var tuple in _propertyBags)
 			{
-				var bag = tuple.Item2;
+				var bag = tuple.Bag;
 				foreach (var item in bag)
 					result.Add(item.Key);
 			}
@@ -147,9 +162,9 @@ namespace Altaxo.Main.Properties
 			var result = new PropertyHierarchy();
 
 			if (this._propertyBags.Count > 0)
-				result._propertyBags.Add(new InfoAndBagTuple(this._propertyBags[0].Item1, (IPropertyBag)this._propertyBags[0].Item2.Clone()));
+				result._propertyBags.Add(new PropertyBagWithInformation(this._propertyBags[0].BagInformation, (IPropertyBag)this._propertyBags[0].Bag.Clone()));
 			for (int i = 1; i < this._propertyBags.Count; ++i)
-				result._propertyBags.Add(new InfoAndBagTuple(this._propertyBags[i].Item1, this._propertyBags[i].Item2));
+				result._propertyBags.Add(new PropertyBagWithInformation(this._propertyBags[i].BagInformation, this._propertyBags[i].Bag));
 
 			return result;
 		}
@@ -160,6 +175,14 @@ namespace Altaxo.Main.Properties
 		/// <value>
 		/// The topmost property bag.
 		/// </value>
-		public IPropertyBag TopmostBag { get { return _propertyBags[0].Item2; } }
+		public IPropertyBag TopmostBag { get { return _propertyBags[0].Bag; } }
+
+		/// <summary>
+		/// Gets the information about the topmost property bag.
+		/// </summary>
+		/// <value>
+		/// Information about the topmost property bag.
+		/// </value>
+		public PropertyBagInformation TopmostBagInformation { get { return _propertyBags[0].BagInformation; } }
 	}
 }

@@ -34,12 +34,9 @@ namespace Altaxo.Settings
 	/// <summary>
 	/// Maintains the settings for the Altaxo auto update feature.
 	/// </summary>
-	public class AutoUpdateSettings
+	public class AutoUpdateSettings : Main.ICopyFrom
 	{
 		public static readonly PropertyKey<AutoUpdateSettings> PropertyKeyAutoUpdate = new PropertyKey<AutoUpdateSettings>("0E8C6ED2-32AF-4CE7-9FF6-1DE298DB0D2D", "AutoUpdate", PropertyLevel.Application);
-
-		/// <summary>Name, under which this setting is stored in the Altaxo settings.</summary>
-		public const string SettingsStoragePath = "Altaxo.Options.AutoUpdates";
 
 		/// <summary>Gets or sets a value indicating whether to globally enable auto updates or not.</summary>
 		/// <value>If <see langword="true"/>, auto updates are enabled. If <see langword="false"/>, auto updates are disabled.</value>
@@ -141,6 +138,44 @@ namespace Altaxo.Settings
 			ConfirmInstallation = true;
 			ShowInstallationWindow = true;
 			InstallationWindowClosingTime = int.MaxValue;
+		}
+
+		public AutoUpdateSettings(AutoUpdateSettings from)
+		{
+			this.CopyFrom(from);
+		}
+
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as AutoUpdateSettings;
+			if (null != from)
+			{
+				EnableAutoUpdates = from.EnableAutoUpdates;
+				DownloadUnstableVersion = from.DownloadUnstableVersion;
+				DownloadIntervalInDays = from.DownloadIntervalInDays;
+				ShowDownloadWindow = from.ShowDownloadWindow;
+				InstallAtStartup = from.InstallAtStartup;
+				InstallAtShutdown = from.InstallAtShutdown;
+				ConfirmInstallation = from.ConfirmInstallation;
+				ShowInstallationWindow = from.ShowInstallationWindow;
+				InstallationWindowClosingTime = from.InstallationWindowClosingTime;
+
+				return true;
+			}
+			return false;
+		}
+
+		public AutoUpdateSettings Clone()
+		{
+			throw new NotImplementedException();
+		}
+
+		object ICloneable.Clone()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

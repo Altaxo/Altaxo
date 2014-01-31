@@ -48,9 +48,6 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		{
 			_commandLineArgs = commandLineArgs;
 
-			Altaxo.Current.SetPropertyService(new Altaxo.Main.Services.PropertyService());
-			Altaxo.Current.PropertyService.BuiltinSettings.SetValue(Altaxo.Settings.CultureSettings.PropertyKeyUICulture, new Altaxo.Settings.CultureSettings(Altaxo.Settings.CultureSettings.StartupUICultureInfo));
-			Altaxo.Current.PropertyService.BuiltinSettings.SetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, new Altaxo.Settings.CultureSettings(Altaxo.Settings.CultureSettings.StartupDocumentCultureInfo));
 			// set the document culture and the UI culture as early as possible
 			CultureSettings.PropertyKeyUICulture.ApplyProperty(Current.PropertyService.GetValue<CultureSettings>(CultureSettings.PropertyKeyUICulture, Services.RuntimePropertyKind.UserAndApplicationAndBuiltin));
 			CultureSettings.PropertyKeyDocumentCulture.ApplyProperty(Current.PropertyService.GetValue<CultureSettings>(CultureSettings.PropertyKeyDocumentCulture, Services.RuntimePropertyKind.UserAndApplicationAndBuiltin));

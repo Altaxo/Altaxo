@@ -291,11 +291,12 @@
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
+    <Compile Include="Main\Properties\PropertyBagWithInformation.cs" />
     <Compile Include="Main\Properties\PropertyBagInformation.cs" />
     <Compile Include="Main\Properties\PropertyKey.cs" />
     <Compile Include="Main\Properties\IPropertyBag.cs" />
     <Compile Include="Main\Properties\IPropertyBagOwner.cs" />
-    <Compile Include="Main\Properties\ProjectFolderPropertyBag.cs" />
+    <Compile Include="Main\Properties\ProjectFolderPropertyDocument.cs" />
     <Compile Include="Main\Properties\ProjectFolderPropertyBagCollection.cs" />
     <Compile Include="Main\Properties\PropertyBag.cs" />
     <Compile Include="Main\Properties\PropertyHierarchy.cs" />

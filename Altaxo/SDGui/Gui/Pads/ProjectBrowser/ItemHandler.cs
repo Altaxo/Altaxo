@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			return new BrowserListItem(name, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
 		}
 
-		public static BrowserListItem GetBrowserListItem(Altaxo.Main.Properties.ProjectFolderPropertyBag t, bool showFullName)
+		public static BrowserListItem GetBrowserListItem(Altaxo.Main.Properties.ProjectFolderPropertyDocument t, bool showFullName)
 		{
 			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
 			name += "FolderProperties";
@@ -116,13 +116,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Altaxo.Graph.Gdi.GraphDocument gd;
 			Altaxo.Data.DataTable dt;
-			Altaxo.Main.Properties.ProjectFolderPropertyBag propBag;
+			Altaxo.Main.Properties.ProjectFolderPropertyDocument propBag;
 			string folder;
 			if (null != (gd = t as Altaxo.Graph.Gdi.GraphDocument))
 				return GetBrowserListItem(gd, showFullName);
 			else if (null != (dt = t as Altaxo.Data.DataTable))
 				return GetBrowserListItem(dt, showFullName);
-			else if (null != (propBag = t as Altaxo.Main.Properties.ProjectFolderPropertyBag))
+			else if (null != (propBag = t as Altaxo.Main.Properties.ProjectFolderPropertyDocument))
 				return GetBrowserListItem(propBag, showFullName);
 			else if (null != (folder = t as string))
 				return GetBrowserListItem(folder);
@@ -163,6 +163,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			GetItemList();
 			Current.Project.DataTableCollection.CollectionChanged += EhCollectionChanged;
 			Current.Project.GraphDocumentCollection.CollectionChanged += EhCollectionChanged;
+			Current.Project.ProjectFolderProperties.CollectionChanged += EhCollectionChanged;
 			OnListChange();
 		}
 
@@ -173,6 +174,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Current.Project.DataTableCollection.CollectionChanged -= EhCollectionChanged;
 			Current.Project.GraphDocumentCollection.CollectionChanged -= EhCollectionChanged;
+			Current.Project.ProjectFolderProperties.CollectionChanged -= EhCollectionChanged;
 		}
 
 		private void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)

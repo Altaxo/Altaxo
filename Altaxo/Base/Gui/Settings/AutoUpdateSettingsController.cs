@@ -59,35 +59,9 @@ namespace Altaxo.Gui.Settings
 	/// <summary>Manages the <see cref="IAutoUpdateSettingsView">Gui interface</see> for the <see cref="AutoUpdateSettings">auto update settings</see>.</summary>
 	[ExpectedTypeOfView(typeof(IAutoUpdateSettingsView))]
 	[UserControllerForObject(typeof(AutoUpdateSettings))]
-	public class AutoUpdateSettingsController : IMVCANController
+	public class AutoUpdateSettingsController : MVCANControllerBase<AutoUpdateSettings, IAutoUpdateSettingsView>
 	{
-		private IAutoUpdateSettingsView _view;
-		private AutoUpdateSettings _doc;
-
-		/// <summary>If true, indicates that the document was created by this controller and should be saved to Altaxo settings when <see cref="Apply"/> is called.</summary>
-		private bool _isHoldingOwnDocument;
-
-		public AutoUpdateSettingsController()
-		{
-		}
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (null == args || args.Length == 0 || (null != args[0] && !(args[0] is AutoUpdateSettings)))
-				return false;
-			_doc = args[0] as AutoUpdateSettings;
-
-			if (null == _doc)
-			{
-				_isHoldingOwnDocument = true;
-				_doc = Current.PropertyService.Get(AutoUpdateSettings.SettingsStoragePath, new AutoUpdateSettings());
-			}
-
-			Initialize(true);
-			return true;
-		}
-
-		private void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
 			if (null != _view)
 			{
@@ -102,34 +76,7 @@ namespace Altaxo.Gui.Settings
 			}
 		}
 
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IAutoUpdateSettingsView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public bool Apply()
+		public override bool Apply()
 		{
 			_doc.EnableAutoUpdates = _view.EnableAutoUpdates;
 			_doc.DownloadUnstableVersion = _view.DownloadUnstableVersion;
@@ -142,8 +89,8 @@ namespace Altaxo.Gui.Settings
 			_doc.ShowInstallationWindow = _view.ShowInstallationWindow;
 			_doc.InstallationWindowClosingTime = _view.InstallationWindowClosingTime;
 
-			if (_isHoldingOwnDocument)
-				Current.PropertyService.Set(AutoUpdateSettings.SettingsStoragePath, _doc);
+			if (!object.ReferenceEquals(_originalDoc, _doc))
+				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;
 		}

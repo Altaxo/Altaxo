@@ -206,7 +206,6 @@ namespace Altaxo.Graph.Gdi
 		public static void ShowFileExportMetafileDialog(this GraphDocument doc)
 		{
 			var opt = new GraphExportOptions();
-			opt.IsIntentedForClipboardOperation = false;
 			opt.TrySetImageAndPixelFormat(ImageFormat.Emf, PixelFormat.Format32bppArgb);
 			ShowFileExportDialog(doc, opt);
 		}
@@ -214,7 +213,6 @@ namespace Altaxo.Graph.Gdi
 		public static void ShowFileExportTiffDialog(this GraphDocument doc)
 		{
 			var opt = new GraphExportOptions();
-			opt.IsIntentedForClipboardOperation = false;
 			opt.TrySetImageAndPixelFormat(ImageFormat.Tiff, PixelFormat.Format32bppArgb);
 			opt.SourceDpiResolution = 300;
 			opt.DestinationDpiResolution = 300;
@@ -654,8 +652,6 @@ namespace Altaxo.Graph.Gdi
 		private BrushX _backgroundBrush;
 		private double _sourceDpiResolution;
 		private double _destinationDpiResolution;
-		private GraphCopyPageClipboardFormat _clipboardFormat;
-		private bool _isIntentedForClipboardOperation;
 
 		#region Serialization
 
@@ -674,7 +670,6 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("Background", s._backgroundBrush);
 				info.AddValue("SourceResolution", s._sourceDpiResolution);
 				info.AddValue("DestinationResolution", s._destinationDpiResolution);
-				info.AddEnum("ClipboardFormat", s._clipboardFormat);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -686,7 +681,6 @@ namespace Altaxo.Graph.Gdi
 				s.BackgroundBrush = (BrushX)info.GetValue("Background");
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
 				s._destinationDpiResolution = info.GetDouble("DestinationResolution");
-				s._clipboardFormat = (GraphCopyPageClipboardFormat)info.GetEnum("ClipboardFormat", typeof(GraphCopyPageClipboardFormat));
 
 				return s;
 			}
@@ -694,31 +688,7 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion Serialization
 
-		public bool IsIntentedForClipboardOperation
-		{
-			get
-			{
-				return _isIntentedForClipboardOperation;
-			}
-			set
-			{
-				_isIntentedForClipboardOperation = value;
-			}
-		}
-
-		public GraphCopyPageClipboardFormat ClipboardFormat
-		{
-			get { return _clipboardFormat; }
-			set
-			{
-				_clipboardFormat = value;
-
-				if (0 == (int)_clipboardFormat)
-					_clipboardFormat = GraphCopyPageClipboardFormat.AsNative;
-			}
-		}
-
-		public bool CopyFrom(object obj)
+		public virtual bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -732,8 +702,6 @@ namespace Altaxo.Graph.Gdi
 				this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
 				this.SourceDpiResolution = from.SourceDpiResolution;
 				this.DestinationDpiResolution = from.DestinationDpiResolution;
-				this.IsIntentedForClipboardOperation = from.IsIntentedForClipboardOperation;
-				this.ClipboardFormat = from.ClipboardFormat;
 				return true;
 			}
 
@@ -747,8 +715,6 @@ namespace Altaxo.Graph.Gdi
 			this.SourceDpiResolution = 300;
 			this.DestinationDpiResolution = 300;
 			this.BackgroundBrush = null;
-			this.IsIntentedForClipboardOperation = false;
-			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNative | GraphCopyPageClipboardFormat.AsDropDownList | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
 		}
 
 		public GraphExportOptions(GraphExportOptions from)
@@ -761,7 +727,7 @@ namespace Altaxo.Graph.Gdi
 			return new GraphExportOptions(this);
 		}
 
-		public GraphExportOptions Clone()
+		public virtual GraphExportOptions Clone()
 		{
 			return new GraphExportOptions(this);
 		}
@@ -927,6 +893,97 @@ namespace Altaxo.Graph.Gdi
 				PixelFormat.Format64bppArgb == fmt ||
 				PixelFormat.Format64bppPArgb == fmt ||
 				PixelFormat.PAlpha == fmt;
+		}
+	}
+
+	public class GraphClipboardExportOptions : GraphExportOptions, ICloneable
+	{
+		private GraphCopyPageClipboardFormat _clipboardFormat;
+
+		#region Serialization
+
+		/// <summary>
+		/// Initial version (2014-01-31)
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphClipboardExportOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (GraphClipboardExportOptions)obj;
+
+				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+				info.AddEnum("ClipboardFormat", s._clipboardFormat);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (GraphClipboardExportOptions)o : new GraphClipboardExportOptions();
+
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				s._clipboardFormat = (GraphCopyPageClipboardFormat)info.GetEnum("ClipboardFormat", typeof(GraphCopyPageClipboardFormat));
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		public GraphClipboardExportOptions()
+		{
+			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNative | GraphCopyPageClipboardFormat.AsDropDownList | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
+		}
+
+		public GraphClipboardExportOptions(GraphExportOptions from)
+			: base(from)
+		{
+		}
+
+		object ICloneable.Clone()
+		{
+			return new GraphClipboardExportOptions(this);
+		}
+
+		public override GraphExportOptions Clone()
+		{
+			return new GraphClipboardExportOptions(this);
+		}
+
+		public override bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			if (base.CopyFrom(obj))
+			{
+				var from = obj as GraphClipboardExportOptions;
+				if (null != from)
+				{
+					this.ClipboardFormat = from.ClipboardFormat;
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public bool IsIntentedForClipboardOperation
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public GraphCopyPageClipboardFormat ClipboardFormat
+		{
+			get { return _clipboardFormat; }
+			set
+			{
+				_clipboardFormat = value;
+
+				if (0 == (int)_clipboardFormat)
+					_clipboardFormat = GraphCopyPageClipboardFormat.AsNative;
+			}
 		}
 	}
 }

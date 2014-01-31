@@ -65,8 +65,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					Current.ProjectService.DeleteTable((Altaxo.Data.DataTable)item, true);
 				else if (item is Altaxo.Graph.Gdi.GraphDocument)
 					Current.ProjectService.DeleteGraphDocument((Altaxo.Graph.Gdi.GraphDocument)item, true);
-				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyBag)
-					Current.Project.ProjectFolderProperties.Remove(item as Altaxo.Main.Properties.ProjectFolderPropertyBag);
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+					Current.Project.ProjectFolderProperties.Remove(item as Altaxo.Main.Properties.ProjectFolderPropertyDocument);
 			}
 		}
 
@@ -359,16 +359,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// </summary>
 		/// <param name="ctrl">Project browse controller.</param>
 		/// <returns>The property bag.</returns>
-		public static Altaxo.Main.Properties.ProjectFolderPropertyBag CreateNewPropertyBag(this ProjectBrowseController ctrl)
+		public static Altaxo.Main.Properties.ProjectFolderPropertyDocument CreateNewPropertyBag(this ProjectBrowseController ctrl)
 		{
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))
 				folderName = ProjectFolder.RootFolderName;
 
-			Altaxo.Main.Properties.ProjectFolderPropertyBag bag;
+			Altaxo.Main.Properties.ProjectFolderPropertyDocument bag;
 			if (!Current.Project.ProjectFolderProperties.TryGetValue(folderName, out bag))
 			{
-				bag = new Altaxo.Main.Properties.ProjectFolderPropertyBag(folderName);
+				bag = new Altaxo.Main.Properties.ProjectFolderPropertyDocument(folderName);
 				Current.Project.ProjectFolderProperties.Add(bag);
 			}
 			return bag;

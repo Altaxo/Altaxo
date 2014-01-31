@@ -34,12 +34,37 @@ namespace Altaxo.Gui.Main
 
 	public interface IPropertyHierarchyView
 	{
-		SelectableListNodeList PropertyList { set; }
+		SelectableListNodeList PropertyValueList { set; }
+
+		SelectableListNodeList AvailablePropertyKeyList { set; }
 
 		/// <summary>
 		/// Occurs when the selected item should be edited.
 		/// </summary>
 		event Action ItemEditing;
+
+		/// <summary>
+		/// Occurs when the user double-clicks on an available property key in order to create a new property value.
+		/// </summary>
+		event Action PropertyCreation;
+
+		/// <summary>
+		/// Occurs when the user wants to remove the selected property values.
+		/// </summary>
+		event Action ItemRemoving;
+
+		/// <summary>
+		/// Occurs when the user wants to change the view. If the argument is true, all properties (including the inherited properties) should be shown, otherwise only the properties of the topmost bag.
+		/// </summary>
+		event Action<bool> ShowAllPropertiesChanged;
+
+		/// <summary>
+		/// Sets a value indicating to the user whether to show all properties or only those of the topmost property bag.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if to show all properties; otherwise, <c>false</c>.
+		/// </value>
+		bool ShowAllProperties { set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IPropertyHierarchyView))]
@@ -81,7 +106,10 @@ namespace Altaxo.Gui.Main
 
 		private SelectableListNodeList _propertyList;
 
-		private SelectableListNodeList _availableProperties;
+		private SelectableListNodeList _availablePropertyKeys;
+
+		/// <summary>If <c>true</c>, all properties (also the inherited properties) are shown. If <c>false</c>, only the inherited properties are shown.</summary>
+		protected bool _showAllProperties = true;
 
 		public override bool InitializeDocument(params object[] args)
 		{
@@ -101,27 +129,47 @@ namespace Altaxo.Gui.Main
 			if (initData)
 			{
 				Altaxo.Main.Services.ReflectionService.ForceRegisteringOfAllPropertyKeys();
-				InitializePropertyNodeList();
+				InitializeAvailablePropertyList();
+				InitializeExistingPropertyValuesList();
 			}
 			if (null != _view)
 			{
-				_view.PropertyList = _propertyList;
+				_view.AvailablePropertyKeyList = _availablePropertyKeys;
+				_view.PropertyValueList = _propertyList;
+				_view.ShowAllProperties = _showAllProperties;
 			}
 		}
 
 		private void InitializeAvailablePropertyList()
 		{
-			_availableProperties = new SelectableListNodeList();
+			_availablePropertyKeys = new SelectableListNodeList();
 
-			foreach (var prop in Altaxo.Main.Properties.PropertyKeyBase.AllRegisteredPropertyKeys)
+			var sortedKeys = new List<Altaxo.Main.Properties.PropertyKeyBase>(Altaxo.Main.Properties.PropertyKeyBase.AllRegisteredPropertyKeys);
+			sortedKeys.Sort((x, y) => string.Compare(x.PropertyName, y.PropertyName));
+
+			foreach (var prop in sortedKeys)
 			{
-				//var node = new SelectableListNode(prop.PropertyName, )
+				// show only the keys that are applicable to the topmost property bag in the hierarchy
+				if (0 == (prop.ApplicationLevel & _doc.TopmostBagInformation.ApplicationLevel))
+					continue;
+				if ((PropertyLevel.Document == (prop.ApplicationLevel & _doc.TopmostBagInformation.ApplicationLevel)))
+				{
+					if (!Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(_doc.TopmostBagInformation.ApplicationItemType, prop.ApplicationItemType))
+						continue;
+				}
+
+				var node = new MyListNode(prop.PropertyName, prop)
+				{
+					Text1S = prop.PropertyType.Name
+				};
+
+				_availablePropertyKeys.Add(node);
 			}
 		}
 
-		private void InitializePropertyNodeList()
+		private void InitializeExistingPropertyValuesList()
 		{
-			var sortedNames = new List<KeyValuePair<string, string>>(); //
+			var sortedNames = new List<KeyValuePair<string, string>>(); // key is the property key string, value is the property name
 			foreach (var key in _doc.GetAllPropertyNames())
 			{
 				string keyName = PropertyKeyBase.GetPropertyName(key);
@@ -139,9 +187,9 @@ namespace Altaxo.Gui.Main
 				IPropertyBag bag;
 				PropertyBagInformation bagInfo;
 
-				if (_doc.TryGetValue<object>(entry.Key, out value, out bag, out bagInfo))
+				if (_doc.TryGetValue<object>(entry.Key, !_showAllProperties, out value, out bag, out bagInfo))
 				{
-					var node = new MyListNode(entry.Value, new Tuple<string, IPropertyBag>(entry.Key, bag))
+					var node = new MyListNode(entry.Value, new Tuple<string, string, IPropertyBag>(entry.Key, entry.Value, bag))
 					{
 						Text1S = value == null ? "n.a." : value.GetType().Name,
 						Text2S = value == null ? "null" : value.ToString(),
@@ -166,11 +214,15 @@ namespace Altaxo.Gui.Main
 		{
 			base.AttachView();
 			_view.ItemEditing += EhItemEditing;
+			_view.PropertyCreation += EhCreateNewProperty;
+			_view.ItemRemoving += EhItemRemoving;
+			_view.ShowAllPropertiesChanged += EhShowAllProperties;
 		}
 
 		protected override void DetachView()
 		{
 			_view.ItemEditing -= EhItemEditing;
+			_view.PropertyCreation -= EhCreateNewProperty;
 			base.DetachView();
 		}
 
@@ -180,8 +232,9 @@ namespace Altaxo.Gui.Main
 			if (null == node)
 				return;
 
-			var nodeTag = (Tuple<string, IPropertyBag>)node.Tag;
+			var nodeTag = (Tuple<string, string, IPropertyBag>)node.Tag;
 			var propertyKey = nodeTag.Item1;
+			var propertyName = nodeTag.Item2;
 
 			object value;
 			IPropertyBag bag;
@@ -189,18 +242,85 @@ namespace Altaxo.Gui.Main
 
 			_doc.TryGetValue(propertyKey, out value, out bag, out bagInfo);
 
-			var controller = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { value }, typeof(IMVCAController), UseDocument.Copy);
+			ShowPropertyValueDialog(propertyKey, propertyName, value);
+		}
 
-			if (null == controller)
+		private void EhItemRemoving()
+		{
+			var node = _propertyList.FirstSelectedNode;
+			if (null == node)
 				return;
 
-			if (Current.Gui.ShowDialog(controller, "Edit property", false))
+			var nodeTag = (Tuple<string, string, IPropertyBag>)node.Tag;
+			var propertyKey = nodeTag.Item1;
+			_doc.TopmostBag.RemoveValue(propertyKey);
+
+			// update list and view
+			InitializeExistingPropertyValuesList();
+			if (null != _view)
+				_view.PropertyValueList = _propertyList;
+		}
+
+		private void EhCreateNewProperty()
+		{
+			var node = _availablePropertyKeys.FirstSelectedNode;
+			if (null == node)
+				return;
+
+			var propertyKey = (PropertyKeyBase)node.Tag;
+
+			object propertyValue;
+			IPropertyBag bag;
+			PropertyBagInformation bagInfo;
+
+			if (!_doc.TryGetValue(propertyKey.GuidString, out propertyValue, out bag, out bagInfo))
+			{
+				// Try to create a new value
+				try
+				{
+					propertyValue = System.Activator.CreateInstance(propertyKey.PropertyType);
+				}
+				catch (Exception)
+				{
+					Current.Gui.ErrorMessageBox("Sorry! The property value could not be created because the constructor threw an exception.");
+					return;
+				}
+			}
+
+			ShowPropertyValueDialog(propertyKey.GuidString, propertyKey.PropertyName, propertyValue);
+		}
+
+		private void EhShowAllProperties(bool value)
+		{
+			var oldValue = _showAllProperties;
+			_showAllProperties = value;
+
+			if (oldValue != value)
+			{
+				// update list and view
+				InitializeExistingPropertyValuesList();
+				if (null != _view)
+					_view.PropertyValueList = _propertyList;
+			}
+		}
+
+		private void ShowPropertyValueDialog(string propertyKey, string propertyName, object propertyValue)
+		{
+			var controller = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { propertyValue }, typeof(IMVCAController), UseDocument.Copy);
+
+			if (null == controller)
+			{
+				Current.Gui.ErrorMessageBox("Sorry! Didn't find a Gui controller to edit this property value!"); ;
+				return;
+			}
+
+			if (Current.Gui.ShowDialog(controller, "Edit property " + propertyName, false))
 			{
 				var newValue = controller.ModelObject;
 				_doc.TopmostBag.SetValue(propertyKey, newValue);
-				InitializePropertyNodeList();
+				InitializeExistingPropertyValuesList();
 				if (null != _view)
-					_view.PropertyList = _propertyList;
+					_view.PropertyValueList = _propertyList;
 			}
 		}
 	}

@@ -32,7 +32,7 @@ namespace Altaxo.Main.Properties
 	/// <summary>
 	/// A property bag that holds the properties of a project folder.
 	/// </summary>
-	public class ProjectFolderPropertyBag
+	public class ProjectFolderPropertyDocument
 		:
 		IPropertyBagOwner,
 		Altaxo.Main.IDocumentNode,
@@ -67,12 +67,12 @@ namespace Altaxo.Main.Properties
 		/// <summary>
 		/// 2014-01-22 Initial version
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectFolderPropertyBag), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectFolderPropertyDocument), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ProjectFolderPropertyBag)obj;
+				var s = (ProjectFolderPropertyDocument)obj;
 
 				info.AddValue("Name", s._name);
 				info.AddValue("CreationTimeUtc", s._creationTimeUtc);
@@ -80,7 +80,7 @@ namespace Altaxo.Main.Properties
 				info.AddValue("Properties", s._propertyBag);
 			}
 
-			public void Deserialize(ProjectFolderPropertyBag s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			public void Deserialize(ProjectFolderPropertyDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				s._name = info.GetString("Name");
 				s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
@@ -90,7 +90,7 @@ namespace Altaxo.Main.Properties
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (ProjectFolderPropertyBag)o : new ProjectFolderPropertyBag(string.Empty);
+				var s = null != o ? (ProjectFolderPropertyDocument)o : new ProjectFolderPropertyDocument(string.Empty);
 				Deserialize(s, info, parent);
 				return s;
 			}
@@ -99,10 +99,10 @@ namespace Altaxo.Main.Properties
 		#endregion Serialization
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectFolderPropertyBag"/> class.
+		/// Initializes a new instance of the <see cref="ProjectFolderPropertyDocument"/> class.
 		/// </summary>
 		/// <param name="folderName">Name of the folder.</param>
-		public ProjectFolderPropertyBag(string folderName)
+		public ProjectFolderPropertyDocument(string folderName)
 		{
 			this.Name = folderName;
 			_creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
@@ -110,10 +110,10 @@ namespace Altaxo.Main.Properties
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ProjectFolderPropertyBag"/> class.
+		/// Initializes a new instance of the <see cref="ProjectFolderPropertyDocument"/> class.
 		/// </summary>
 		/// <param name="from">Another instance to copy the name of the bag and the properties from.</param>
-		public ProjectFolderPropertyBag(ProjectFolderPropertyBag from)
+		public ProjectFolderPropertyDocument(ProjectFolderPropertyDocument from)
 		{
 			_creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
 			CopyFrom(from);
@@ -129,7 +129,7 @@ namespace Altaxo.Main.Properties
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			var from = (ProjectFolderPropertyBag)obj;
+			var from = (ProjectFolderPropertyDocument)obj;
 			if (null != from)
 			{
 				this._name = from._name;
@@ -148,16 +148,16 @@ namespace Altaxo.Main.Properties
 
 		object ICloneable.Clone()
 		{
-			return new ProjectFolderPropertyBag(this);
+			return new ProjectFolderPropertyDocument(this);
 		}
 
 		/// <summary>
 		/// Clones this instance.
 		/// </summary>
 		/// <returns>Clone of this instance.</returns>
-		public ProjectFolderPropertyBag Clone()
+		public ProjectFolderPropertyDocument Clone()
 		{
-			return new ProjectFolderPropertyBag(this);
+			return new ProjectFolderPropertyDocument(this);
 		}
 
 		/// <summary>

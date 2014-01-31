@@ -37,13 +37,11 @@ namespace Altaxo.Settings
 	/// </summary>
 	public class CultureSettings : Main.ICopyFrom
 	{
-		public static readonly PropertyKey<CultureSettings> PropertyKeyDocumentCulture = new PropertyKey<CultureSettings>("04A3950C-1AA0-4E66-A734-A278C51BD04B", "DocumentCulture", PropertyLevel.All, typeof(object), ApplyDocumentCulture);
-		public static readonly PropertyKey<CultureSettings> PropertyKeyUICulture = new PropertyKey<CultureSettings>("AB6F72E7-2879-47F4-9F79-3D2A0F7C1C55", "UICulture", PropertyLevel.Application, ApplyDocumentCulture);
+		public static readonly PropertyKey<CultureSettings> PropertyKeyDocumentCulture = new PropertyKey<CultureSettings>("04A3950C-1AA0-4E66-A734-A278C51BD04B", "Language\\DocumentCulture", PropertyLevel.All, typeof(object), () => new CultureSettings(CultureSettingsAtStartup.StartupDocumentCultureInfo)) { ApplicationAction = ApplyDocumentCulture };
+
+		public static readonly PropertyKey<CultureSettings> PropertyKeyUICulture = new PropertyKey<CultureSettings>("AB6F72E7-2879-47F4-9F79-3D2A0F7C1C55", "Language\\UICulture", PropertyLevel.Application, () => new CultureSettings(CultureSettingsAtStartup.StartupUICultureInfo)) { ApplicationAction = ApplyDocumentCulture };
 
 		protected static readonly int InvariantCultureID = CultureInfo.InvariantCulture.LCID;
-
-		private static CultureInfo _startupDocumentCultureInfo;
-		private static CultureInfo _startupUICultureInfo;
 
 		/// <summary>Value that uniquely identifies a culture.</summary>
 		protected int _cultureID;
@@ -146,28 +144,6 @@ namespace Altaxo.Settings
 			return new CultureSettings(this);
 		}
 
-		public static CultureInfo StartupDocumentCultureInfo
-		{
-			get { return (CultureInfo)_startupDocumentCultureInfo.Clone(); }
-			set
-			{
-				if (null != _startupDocumentCultureInfo)
-					throw new InvalidOperationException("Value already set, but it can be set only once at startup");
-				_startupDocumentCultureInfo = (CultureInfo)value.Clone();
-			}
-		}
-
-		public static CultureInfo StartupUICultureInfo
-		{
-			get { return _startupUICultureInfo; }
-			set
-			{
-				if (null != _startupUICultureInfo)
-					throw new InvalidOperationException("Value already set, but it can be set only once at startup");
-				_startupUICultureInfo = (CultureInfo)value.Clone();
-			}
-		}
-
 		public int CultureID
 		{
 			get
@@ -235,6 +211,11 @@ namespace Altaxo.Settings
 			_cachedCultureAsReadOnly = CultureInfo.ReadOnly(result);
 		}
 
+		public override string ToString()
+		{
+			return string.Format("{0} | {1} | {2}", _cultureName, _numberDecimalSeparator, _numberGroupSeparator);
+		}
+
 		#region Static methods
 
 		public static void ApplyUICulture(CultureSettings culture)
@@ -251,5 +232,36 @@ namespace Altaxo.Settings
 		}
 
 		#endregion Static methods
+	}
+
+	/// <summary>
+	/// Static helper class to store the culture settings at startup of Altaxo.
+	/// </summary>
+	public static class CultureSettingsAtStartup
+	{
+		private static CultureInfo _startupDocumentCultureInfo;
+		private static CultureInfo _startupUICultureInfo;
+
+		public static CultureInfo StartupDocumentCultureInfo
+		{
+			get { return (CultureInfo)_startupDocumentCultureInfo.Clone(); }
+			set
+			{
+				if (null != _startupDocumentCultureInfo)
+					throw new InvalidOperationException("Value already set, but it can be set only once at startup");
+				_startupDocumentCultureInfo = (CultureInfo)value.Clone();
+			}
+		}
+
+		public static CultureInfo StartupUICultureInfo
+		{
+			get { return _startupUICultureInfo; }
+			set
+			{
+				if (null != _startupUICultureInfo)
+					throw new InvalidOperationException("Value already set, but it can be set only once at startup");
+				_startupUICultureInfo = (CultureInfo)value.Clone();
+			}
+		}
 	}
 }

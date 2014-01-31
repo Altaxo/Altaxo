@@ -196,7 +196,8 @@ namespace Altaxo.Main.Services
 
 		public bool TryGet<T>(string property, out T result)
 		{
-			if (Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper.IsSerializableType(typeof(T)))
+			// we first have to try if it is an Altaxo object
+			try
 			{
 				var wrapp = ICSharpCode.Core.PropertyService.Get<Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper>(property, null);
 				if (wrapp != null && wrapp.WrappedObject != null)
@@ -210,7 +211,11 @@ namespace Altaxo.Main.Services
 					return false;
 				}
 			}
-			else
+			catch (Exception)
+			{
+			}
+
+			// obviously our try for an Altaxo object failed, thus we try it the SharpDevelop way...
 			{
 				T defau = default(T);
 				result = ICSharpCode.Core.PropertyService.Get<T>(property, defau);
@@ -257,8 +262,22 @@ namespace Altaxo.Main.Services
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="p">The p.</param>
+		/// <param name="propKind">Designates where to search for the property value.</param>
 		/// <returns></returns>
 		public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind propKind)
+		{
+			return GetValue<T>(p, propKind, null);
+		}
+
+		/// <summary>
+		/// Gets a value. First UserSettings, then ApplicationSettings, and then BuiltinSettings is searched.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="p">The p.</param>
+		/// <param name="propKind">Designates where to search for the property value.</param>
+		/// <param name="ValueCreationIfNotFound">Function to create a new property value if no property value was found. May be <c>null</c>, in this case the default(T) operator is used to create the default value.</param>
+		/// <returns></returns>
+		public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind propKind, Func<T> ValueCreationIfNotFound)
 		{
 			T result;
 			IPropertyBag[] bags;
@@ -286,7 +305,11 @@ namespace Altaxo.Main.Services
 				if (pb.TryGetValue<T>(p, out result))
 					return result;
 			}
-			return default(T);
+
+			if (null != ValueCreationIfNotFound)
+				return ValueCreationIfNotFound();
+			else
+				return default(T);
 		}
 	}
 }

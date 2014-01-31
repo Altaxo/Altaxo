@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Settings
 			Current.PropertyService.UserSettings.TryGetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, out userDoc);
 			sysDoc = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
 			if (null == sysDoc)
-				sysDoc = AsciiDocumentAnalysisOptions.SystemDefault;
+				throw new ApplicationException("AsciiDocumentAnalysisOptions not properly registered with builtin settings!");
 
 			_controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc.Clone(), () => sysDoc);
 			_controller.EnablingText = "Override system settings";

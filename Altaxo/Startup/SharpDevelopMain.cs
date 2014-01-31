@@ -254,8 +254,10 @@ namespace ICSharpCode.SharpDevelop
 					}
 				};
 #if ModifiedForAltaxo
-				Altaxo.Settings.CultureSettings.StartupUICultureInfo = originalUICulture;
-				Altaxo.Settings.CultureSettings.StartupDocumentCultureInfo = originalCulture;
+				Altaxo.Settings.CultureSettingsAtStartup.StartupUICultureInfo = originalUICulture;
+				Altaxo.Settings.CultureSettingsAtStartup.StartupDocumentCultureInfo = originalCulture;
+				Altaxo.Current.SetPropertyService(new Altaxo.Main.Services.PropertyService());
+
 				Altaxo.Main.Commands.AutostartCommand.EarlyRun(CommandLineArgs);
 				if (Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(true, SharpDevelopMain.CommandLineArgs))
 					return;

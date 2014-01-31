@@ -139,9 +139,12 @@ namespace Altaxo.Gui.Graph
 					hasMatched |= select;
 				}
 
-				_clipboardFormatController = new Altaxo.Gui.Common.EnumFlagController();
-				_clipboardFormatController.InitializeDocument(_originalDoc.ClipboardFormat);
-				Current.Gui.FindAndAttachControlTo(_clipboardFormatController);
+				if (_doc is GraphClipboardExportOptions)
+				{
+					_clipboardFormatController = new Altaxo.Gui.Common.EnumFlagController();
+					_clipboardFormatController.InitializeDocument(((GraphClipboardExportOptions)_doc).ClipboardFormat);
+					Current.Gui.FindAndAttachControlTo(_clipboardFormatController);
+				}
 
 				_sourceDpi = GetResolutions(_originalDoc.SourceDpiResolution);
 				_destinationDpi = GetResolutions(_originalDoc.DestinationDpiResolution);
@@ -149,8 +152,9 @@ namespace Altaxo.Gui.Graph
 
 			if (null != _view)
 			{
-				_view.EnableClipboardFormat = _originalDoc.IsIntentedForClipboardOperation;
-				_view.SetClipboardFormatView(_clipboardFormatController.ViewObject);
+				_view.EnableClipboardFormat = (_doc is GraphClipboardExportOptions);
+				if (null != _clipboardFormatController)
+					_view.SetClipboardFormatView(_clipboardFormatController.ViewObject);
 				_view.SetImageFormat(_imageFormat);
 				_view.SetPixelFormat(_pixelFormat);
 				_view.SetSourceDpi(_sourceDpi);
@@ -198,15 +202,18 @@ namespace Altaxo.Gui.Graph
 			var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
 			var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Tag;
 
-			if (!_originalDoc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
+			if (!_doc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
 			{
 				Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
 				return false;
 			}
 
-			if (!_clipboardFormatController.Apply())
-				return false;
-			_doc.ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormatController.ModelObject;
+			if (null != _clipboardFormatController)
+			{
+				if (!_clipboardFormatController.Apply())
+					return false;
+				((GraphClipboardExportOptions)_doc).ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormatController.ModelObject;
+			}
 
 			_doc.SourceDpiResolution = sr;
 			_doc.DestinationDpiResolution = dr;

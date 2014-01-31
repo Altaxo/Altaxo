@@ -529,9 +529,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					// tag is the name of the table clicked, so look for a view that has the table or create a new one
 					Current.ProjectService.OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)node.Tag);
 				}
-				else if (node.Tag is Altaxo.Main.Properties.ProjectFolderPropertyBag)
+				else if (node.Tag is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
 				{
-					var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(node.Tag as Altaxo.Main.Properties.ProjectFolderPropertyBag));
+					var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(node.Tag as Altaxo.Main.Properties.ProjectFolderPropertyDocument));
 					Current.Gui.ShowDialog(new object[] { propHierarchy }, "Folder properties", true);
 				}
 				else if (node.Tag is ProjectFolder)

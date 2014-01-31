@@ -58,7 +58,7 @@ namespace Altaxo.Graph.Gdi
 		protected const double DefaultRootLayerSizeX = 697.68054;
 		protected const double DefaultRootLayerSizeY = 451.44;
 
-		public static readonly Main.Properties.PropertyKey<PointD2D> PropertyKeyDefaultGraphSize = new Main.Properties.PropertyKey<PointD2D>("22F853C9-A011-46FA-8021-8668AB4EE1C6", "Graph\\DefaultGraphSize", Main.Properties.PropertyLevel.All, typeof(GraphDocument));
+		public static readonly Main.Properties.PropertyKey<PointD2D> PropertyKeyDefaultGraphSize = new Main.Properties.PropertyKey<PointD2D>("22F853C9-A011-46FA-8021-8668AB4EE1C6", "Graph\\DefaultGraphSize", Main.Properties.PropertyLevel.All, typeof(GraphDocument), () => new PointD2D(DefaultRootLayerSizeX, DefaultRootLayerSizeY));
 
 		private SingleGraphPrintOptions _printOptions;
 

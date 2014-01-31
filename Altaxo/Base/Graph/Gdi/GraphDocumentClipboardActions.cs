@@ -46,18 +46,13 @@ namespace Altaxo.Graph.Gdi
 		public static readonly GraphCopyOptions DefaultGraphLayerPasteOptions;
 		private static GraphCopyOptions _lastChoosenGraphDocumentPasteOptions;
 		private static GraphCopyOptions _lastChoosenGraphLayerPasteOptions;
-		public static readonly PropertyKey<GraphExportOptions> PropertyKeyCopyPageSettings = new PropertyKey<GraphExportOptions>("DE1819F6-7E8C-4C43-9984-B5C405236289", "Clipboard\\CopyPageSettings", PropertyLevel.All, typeof(GraphDocument));
+		public static readonly PropertyKey<GraphClipboardExportOptions> PropertyKeyCopyPageSettings = new PropertyKey<GraphClipboardExportOptions>("DE1819F6-7E8C-4C43-9984-B5C405236289", "Graph\\CopyPageOptions", PropertyLevel.All, typeof(GraphDocument), () => new GraphClipboardExportOptions());
 
-		public static GraphExportOptions CopyPageOptions
+		public static GraphClipboardExportOptions CopyPageOptions
 		{
 			get
 			{
-				var doc = Current.PropertyService.GetValue<GraphExportOptions>(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
-				if (null == doc)
-				{
-					doc = new GraphExportOptions();
-					CopyPageOptions = doc;
-				}
+				var doc = Current.PropertyService.GetValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new GraphClipboardExportOptions());
 				return doc;
 			}
 			set
@@ -65,7 +60,7 @@ namespace Altaxo.Graph.Gdi
 				if (null == value)
 					throw new ArgumentNullException();
 
-				Current.PropertyService.UserSettings.SetValue<GraphExportOptions>(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, value);
+				Current.PropertyService.UserSettings.SetValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, value);
 			}
 		}
 
@@ -89,7 +84,7 @@ namespace Altaxo.Graph.Gdi
 			object resultobj = CopyPageOptions;
 			if (Current.Gui.ShowDialog(ref resultobj, "Set copy page options"))
 			{
-				CopyPageOptions = (GraphExportOptions)resultobj;
+				CopyPageOptions = (GraphClipboardExportOptions)resultobj;
 				return true;
 			}
 			return false;
@@ -149,7 +144,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="image">Output: the rendered image of the graph document. Is either a metafile or a bitmap dependend on the export options.</param>
 		/// <param name="fileName">Output: name of the file for the dropdown list, or null if the image should not be copyied as dropdown file.</param>
 		/// <param name="options">The export and render options for the graph document.</param>
-		public static void GetImageForClipboard(this GraphDocument doc, GraphExportOptions options, out Image image, out string fileName)
+		public static void GetImageForClipboard(this GraphDocument doc, GraphClipboardExportOptions options, out Image image, out string fileName)
 		{
 			bool isMetafile = options.ImageFormat == ImageFormat.Emf || options.ImageFormat == ImageFormat.Wmf;
 
@@ -215,7 +210,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="doc">The graph document to copy.</param>
 		/// <param name="options">Graph copy options.</param>
-		public static void CopyToClipboardAsBitmap(this GraphDocument doc, GraphExportOptions options)
+		public static void CopyToClipboardAsBitmap(this GraphDocument doc, GraphClipboardExportOptions options)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
 			System.Drawing.Bitmap bitmap = GraphDocumentExportActions.RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
@@ -254,7 +249,7 @@ namespace Altaxo.Graph.Gdi
 			CopyToClipboardAsMetafile(doc, CopyPageOptions);
 		}
 
-		static public void CopyToClipboardAsMetafile(this GraphDocument doc, GraphExportOptions options)
+		static public void CopyToClipboardAsMetafile(this GraphDocument doc, GraphClipboardExportOptions options)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
 			string filepath = System.IO.Path.GetTempPath();

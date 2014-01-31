@@ -286,8 +286,8 @@ namespace Altaxo
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
 						object readedobject = info.GetValue("FolderProperty", this);
-						if (readedobject is Altaxo.Main.Properties.ProjectFolderPropertyBag)
-							this._projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyBag)readedobject);
+						if (readedobject is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+							this._projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyDocument)readedobject);
 						info.EndReading();
 					}
 					else if (!zipEntry.IsDirectory && zipEntry.Name == "DocumentInformation.xml")

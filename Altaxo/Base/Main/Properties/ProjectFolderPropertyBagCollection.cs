@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace Altaxo.Main.Properties
 {
 	public class ProjectFolderPropertyBagCollection :
-		IEnumerable<ProjectFolderPropertyBag>,
+		IEnumerable<ProjectFolderPropertyDocument>,
 		Altaxo.Main.IDocumentNode,
 		Altaxo.Main.IChangedEventSource,
 		Altaxo.Main.IChildChangedEventSink,
@@ -135,7 +135,7 @@ namespace Altaxo.Main.Properties
 		#endregion ChangedEventArgs
 
 		// Data
-		protected SortedDictionary<string, ProjectFolderPropertyBag> _itemsByName = new SortedDictionary<string, ProjectFolderPropertyBag>();
+		protected SortedDictionary<string, ProjectFolderPropertyDocument> _itemsByName = new SortedDictionary<string, ProjectFolderPropertyDocument>();
 
 		protected bool _isDirty = false;
 
@@ -201,7 +201,7 @@ namespace Altaxo.Main.Properties
 			return arr;
 		}
 
-		public ProjectFolderPropertyBag this[string name]
+		public ProjectFolderPropertyDocument this[string name]
 		{
 			get
 			{
@@ -214,12 +214,12 @@ namespace Altaxo.Main.Properties
 			return _itemsByName.ContainsKey(itemName);
 		}
 
-		public bool TryGetValue(string itemName, out ProjectFolderPropertyBag doc)
+		public bool TryGetValue(string itemName, out ProjectFolderPropertyDocument doc)
 		{
 			return _itemsByName.TryGetValue(itemName, out doc);
 		}
 
-		public void Add(ProjectFolderPropertyBag item)
+		public void Add(ProjectFolderPropertyDocument item)
 		{
 			if (!string.IsNullOrEmpty(item.Name) && _itemsByName.ContainsKey(item.Name) && object.ReferenceEquals(item, _itemsByName[item.Name]))
 				return; // do silently nothing if the graph (the same!) is already registered
@@ -234,11 +234,11 @@ namespace Altaxo.Main.Properties
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, item, item.Name);
 		}
 
-		public void Remove(ProjectFolderPropertyBag item)
+		public void Remove(ProjectFolderPropertyDocument item)
 		{
 			if (item != null && item.Name != null)
 			{
-				var gr = (ProjectFolderPropertyBag)_itemsByName[item.Name];
+				var gr = (ProjectFolderPropertyDocument)_itemsByName[item.Name];
 
 				if (null != Current.ComManager && object.ReferenceEquals(gr, Current.ComManager.EmbeddedObject)) // test if the graph is currently the embedded Com object
 					return; // it is not allowed to remove the current embedded graph object.
@@ -264,14 +264,14 @@ namespace Altaxo.Main.Properties
 					throw new ApplicationException(string.Format("The collection contains already a property bag named {0}, renaming the old property bag {1} fails therefore.", item.Name, oldName));
 			}
 			_itemsByName.Remove(oldName);
-			_itemsByName[item.Name] = (ProjectFolderPropertyBag)item;
+			_itemsByName[item.Name] = (ProjectFolderPropertyDocument)item;
 			this.OnSelfChanged(ChangedEventArgs.IfItemRenamed);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
 		}
 
 		public object GetChildObjectNamed(string name)
 		{
-			ProjectFolderPropertyBag result = null;
+			ProjectFolderPropertyDocument result = null;
 			if (_itemsByName.TryGetValue(name, out result))
 				return result;
 			else return null;
@@ -279,9 +279,9 @@ namespace Altaxo.Main.Properties
 
 		public string GetNameOfChildObject(object o)
 		{
-			if (o is ProjectFolderPropertyBag)
+			if (o is ProjectFolderPropertyDocument)
 			{
-				ProjectFolderPropertyBag gr = (ProjectFolderPropertyBag)o;
+				ProjectFolderPropertyDocument gr = (ProjectFolderPropertyDocument)o;
 				if (_itemsByName.ContainsKey(gr.Name))
 					return gr.Name;
 			}
@@ -380,7 +380,7 @@ namespace Altaxo.Main.Properties
 
 		#region IEnumerable<ProjectFolderPropertyBag> Members
 
-		public IEnumerator<ProjectFolderPropertyBag> GetEnumerator()
+		public IEnumerator<ProjectFolderPropertyDocument> GetEnumerator()
 		{
 			return _itemsByName.Values.GetEnumerator();
 		}

@@ -43,7 +43,7 @@ namespace Altaxo.Com
 		private Altaxo.Graph.PointD2D _graphDocumentSize;
 		private System.Drawing.Image _graphDocumentClipboardImage;
 		private string _graphDocumentDropdownFileName;
-		private GraphExportOptions _graphExportOptions;
+		private GraphClipboardExportOptions _graphExportOptions;
 
 		public GraphDocumentDataObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 			: base(comManager)
@@ -56,7 +56,7 @@ namespace Altaxo.Com
 			_graphDocumentName = graphDocument.Name;
 			_graphDocumentSize = graphDocument.Size;
 
-			_graphExportOptions = new GraphExportOptions();
+			_graphExportOptions = new GraphClipboardExportOptions();
 			_graphExportOptions.CopyFrom(GraphDocumentClipboardActions.CopyPageOptions);
 			GraphDocumentClipboardActions.GetImageForClipboard(graphDocument, _graphExportOptions, out _graphDocumentClipboardImage, out _graphDocumentDropdownFileName);
 			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();

@@ -30,8 +30,6 @@ using System.Text;
 
 namespace Altaxo
 {
-	using BagTuple = Tuple<PropertyBagInformation, IPropertyBag>;
-
 	/// <summary>
 	/// Helper class to get the property bags in the hierarchy as used in the Altaxo project, and to retrieve property values using this hierarchy.
 	/// </summary>
@@ -43,17 +41,17 @@ namespace Altaxo
 		/// </summary>
 		/// <param name="owner">The owner of a property bag with which to start the enumeration.</param>
 		/// <returns>Enumeration of the property bags in the project hierarchy.</returns>
-		public static IEnumerable<BagTuple> GetPropertyBags(this IPropertyBagOwner owner)
+		public static IEnumerable<PropertyBagWithInformation> GetPropertyBags(this IPropertyBagOwner owner)
 		{
-			if (!(owner is ProjectFolderPropertyBag)) // Project folder bags are handled further down
+			if (!(owner is ProjectFolderPropertyDocument)) // Project folder bags are handled further down
 			{
 				var bagInfo = new PropertyBagInformation(owner.GetType().Name, PropertyLevel.Document, owner.GetType());
-				yield return new BagTuple(bagInfo, owner.PropertyBagNotNull);
+				yield return new PropertyBagWithInformation(bagInfo, owner.PropertyBagNotNull);
 			}
 
 			var namedOwner = owner as Main.INameOwner;
 			var proj = Current.Project;
-			ProjectFolderPropertyBag bag;
+			ProjectFolderPropertyDocument bag;
 			if (null != namedOwner)
 			{
 				var folder = Main.ProjectFolder.GetFolderPart(namedOwner.Name);
@@ -62,7 +60,7 @@ namespace Altaxo
 					if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag != null)
 					{
 						var bagInfo = new PropertyBagInformation(string.Format("Folder \"{0}\"", folder), PropertyLevel.ProjectFolder);
-						yield return new BagTuple(bagInfo, bag.PropertyBag);
+						yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
 					}
 					folder = Main.ProjectFolder.GetFoldersParentFolder(folder);
 				}
@@ -71,26 +69,90 @@ namespace Altaxo
 			if (proj.ProjectFolderProperties.TryGetValue(string.Empty, out bag) && bag.PropertyBag != null)
 			{
 				var bagInfo = new PropertyBagInformation("Project (RootFolder)", PropertyLevel.Project);
-				yield return new BagTuple(bagInfo, bag.PropertyBag);
+				yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
 			}
 
 			// and now the user's settings
 			{
 				var bagInfo = new PropertyBagInformation("UserSettings", PropertyLevel.Application);
-				yield return new BagTuple(bagInfo, Current.PropertyService.UserSettings);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.UserSettings);
 			}
 
 			// then the application settings
 			{
 				var bagInfo = new PropertyBagInformation("ApplicationSettings", PropertyLevel.Application);
-				yield return new BagTuple(bagInfo, Current.PropertyService.ApplicationSettings);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.ApplicationSettings);
 			}
 
 			// and finally the built-in settings
 			{
 				var bagInfo = new PropertyBagInformation("BuiltinSettings", PropertyLevel.Application);
-				yield return new BagTuple(bagInfo, Current.PropertyService.BuiltinSettings);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.BuiltinSettings);
 			}
+		}
+
+		public static IEnumerable<ProjectFolderPropertyDocument> GetProjectFolderPropertyDocuments(this Main.INameOwner namedOwner)
+		{
+			var proj = Current.Project;
+
+			ProjectFolderPropertyDocument bag;
+
+			if (null != namedOwner)
+			{
+				var folder = Main.ProjectFolder.GetFolderPart(namedOwner.Name);
+				while (!string.IsNullOrEmpty(folder))
+				{
+					if (proj.ProjectFolderProperties.TryGetValue(folder, out bag))
+					{
+						yield return bag;
+					}
+					folder = Main.ProjectFolder.GetFoldersParentFolder(folder);
+				}
+
+				if (proj.ProjectFolderProperties.TryGetValue(Main.ProjectFolder.RootFolderName, out bag))
+				{
+					yield return bag;
+				}
+			}
+		}
+
+		public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromApplicationSettings()
+		{
+			// then the application settings
+			{
+				var bagInfo = new PropertyBagInformation("ApplicationSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.ApplicationSettings);
+			}
+
+			// and finally the built-in settings
+			{
+				var bagInfo = new PropertyBagInformation("BuiltinSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.BuiltinSettings);
+			}
+		}
+
+		/// <summary>
+		/// Gets the property value either from the application settings or from the builtin settings.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value to be retrieved.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <param name="resultCreationIfNotFound">If the property is not found, a new property value can be created by this procedure. If this value is <c>null</c>, the default
+		/// value for this type of property value is returned.</param>
+		/// <returns>If the property is found anywhere in the hierarchy of property bags, the property value of the topmost bag that contains the property is returned.
+		/// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
+		public static T GetPropertyValueStartingFromApplicationSettings<T>(PropertyKey<T> p, Func<T> resultCreationIfNotFound)
+		{
+			T returnValue; ;
+			foreach (var bagTuple in GetPropertyBagsStartingFromApplicationSettings())
+			{
+				if (bagTuple.Bag.TryGetValue<T>(p, out returnValue))
+					return returnValue;
+			}
+
+			if (null != resultCreationIfNotFound)
+				return resultCreationIfNotFound();
+			else
+				return default(T);
 		}
 
 		/// <summary>
@@ -108,7 +170,7 @@ namespace Altaxo
 			T returnValue; ;
 			foreach (var bagTuple in GetPropertyBags(owner))
 			{
-				if (bagTuple.Item2.TryGetValue<T>(p, out returnValue))
+				if (bagTuple.Bag.TryGetValue<T>(p, out returnValue))
 					return returnValue;
 			}
 

@@ -27,25 +27,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Settings
+namespace Altaxo.Main.Properties
 {
-	using Altaxo.Graph.Gdi;
-	using Altaxo.Gui.Graph;
-	using Altaxo.Main.Properties;
-
-	public class ClipboardGraphExportOptionPanel : OptionPanelBase<GraphExportOptionsController>
+	public struct PropertyBagWithInformation
 	{
-		public override void Initialize(object optionPanelOwner)
-		{
-			_controller = new GraphExportOptionsController();
-			var doc = Current.PropertyService.GetValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new GraphClipboardExportOptions());
-			_controller.InitializeDocument(doc);
-		}
+		public PropertyBagInformation BagInformation;
+		public IPropertyBag Bag;
 
-		protected override void ProcessControllerResult()
+		public PropertyBagWithInformation(PropertyBagInformation bagInformation, IPropertyBag bag)
 		{
-			var doc = (GraphClipboardExportOptions)_controller.ModelObject;
-			Current.PropertyService.UserSettings.SetValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, doc);
+			BagInformation = bagInformation;
+			Bag = bag;
 		}
 	}
 }

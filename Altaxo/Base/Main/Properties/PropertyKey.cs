@@ -57,9 +57,9 @@ namespace Altaxo.Main.Properties
 		/// <param name="guidString">The unique identifier string used as a key string for this property.</param>
 		/// <param name="propertyName">Name of the property. This name can contain backslashes, so that the property keys can be grouped by categories.</param>
 		/// <param name="applicationLevel">The application level of this property.</param>
-		/// <param name="ApplyPropertyValue">Procedure to apply the property value. Can be <c>null</c>.</param>
-		public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Action<T> ApplyPropertyValue)
-			: this(guidString, propertyName, applicationLevel, null, ApplyPropertyValue)
+		/// <param name="CreateBuiltinValue">Procedure to create the value that is stored in the BuiltinSettings when this constructor is called.</param>
+		public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Func<T> CreateBuiltinValue)
+			: this(guidString, propertyName, applicationLevel, null, CreateBuiltinValue)
 		{
 		}
 
@@ -82,11 +82,15 @@ namespace Altaxo.Main.Properties
 		/// <param name="propertyName">Name of the property. This name can contain backslashes, so that the property keys can be grouped by categories.</param>
 		/// <param name="applicationLevel">The application level of this property.</param>
 		/// <param name="applicationItemType">Type of the application item (only useful if the application level contains <see cref="PropertyLevel.Document"/>). Can be <c>null</c> otherwise.</param>
-		/// <param name="ApplyPropertyValue">Procedure to apply the property value. Can be <c>null</c>.</param>
-		public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Type applicationItemType, Action<T> ApplyPropertyValue)
+		/// <param name="CreateBuiltinValue">Procedure to create the value that is stored in the BuiltinSettings when this constructor is called.</param>
+		public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Type applicationItemType, Func<T> CreateBuiltinValue)
 			: base(typeof(T), guidString, propertyName, applicationLevel, applicationItemType)
 		{
-			_applicationOfProperty = ApplyPropertyValue;
+			if (null != CreateBuiltinValue)
+			{
+				T value = CreateBuiltinValue();
+				Current.PropertyService.BuiltinSettings.SetValue(this, value);
+			}
 		}
 
 		/// <summary>
@@ -107,6 +111,24 @@ namespace Altaxo.Main.Properties
 		{
 			T prop = (T)o;
 			ApplyProperty(prop);
+		}
+
+		public Action<T> ApplicationAction
+		{
+			get
+			{
+				return _applicationOfProperty;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+
+				if (null != _applicationOfProperty)
+					throw new InvalidOperationException("Application action was already set. It is not allowed to set it again!");
+
+				_applicationOfProperty = value;
+			}
 		}
 	}
 }

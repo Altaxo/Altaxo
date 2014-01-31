@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Gui.Worksheet.Viewing;
+using Altaxo.Serialization.Ascii;
 using System;
 using System.IO;
-using Altaxo.Serialization.Ascii;
-using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -124,9 +126,7 @@ namespace Altaxo.Data
 						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames, null);
 				}
 			}
-
 		}
-
 
 		/// <summary>
 		/// Asks for file name(s) and imports the file(s) into one or multiple worksheets. After the user chooses one or multiple files, one of the chosen files is used for analysis.
@@ -148,7 +148,8 @@ namespace Altaxo.Data
 			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
 			{
 				AsciiImportOptions importOptions;
-				if (!ShowAsciiImportOptionsDialog(options.FileName, out importOptions))
+				var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
+				if (!ShowAsciiImportOptionsDialog(options.FileName, analysisOptions, out importOptions))
 					return;
 
 				if (toMultipleWorksheets)
@@ -163,7 +164,6 @@ namespace Altaxo.Data
 						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames, importOptions);
 				}
 			}
-
 		}
 
 		/// <summary>
@@ -171,14 +171,15 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="fileName">Name of the file to analyze.</param>
 		/// <param name="importOptions">On return, contains the ASCII import options the user has confirmed.</param>
+		/// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
 		/// <returns><c>True</c> if the user confirms this dialog (clicks OK). False if the user cancels this dialog.</returns>
-		public static bool ShowAsciiImportOptionsDialog(string fileName, out AsciiImportOptions importOptions)
+		public static bool ShowAsciiImportOptionsDialog(string fileName, AsciiDocumentAnalysisOptions analysisOptions, out AsciiImportOptions importOptions)
 		{
 			importOptions = new AsciiImportOptions();
 
 			using (FileStream str = AsciiImporter.GetAsciiInputFileStream(fileName))
 			{
-				importOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), str);
+				importOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), str, analysisOptions);
 				object[] args = new object[] { importOptions, str };
 				var controller = (Altaxo.Gui.IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
 
@@ -190,14 +191,12 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Asks for a file name and exports the table data into that file as Ascii.
 		/// </summary>
 		/// <param name="dataTable">DataTable to export.</param>
 		public static void ShowExportAsciiDialog(this DataTable dataTable)
 		{
-
 			var options = new Altaxo.Gui.SaveFileOptions();
 			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
 			options.AddFilter("*.*", "All files (*.*)");
@@ -233,7 +232,6 @@ namespace Altaxo.Data
 			Altaxo.Serialization.Galactic.Import.ShowDialog(dataTable);
 		}
 
-
 		/// <summary>
 		/// Asks for file names, and imports one or more Jcamp files into a single data table.
 		/// </summary>
@@ -242,7 +240,6 @@ namespace Altaxo.Data
 		{
 			Altaxo.Serialization.Jcamp.Import.ShowDialog(dataTable);
 		}
-
 
 		/// <summary>
 		/// Shows the dialog for Galactic SPC file export, and exports the data of the table using the options provided in that dialog.
@@ -256,9 +253,8 @@ namespace Altaxo.Data
 			Current.Gui.ShowDialog(exportCtrl, "Export Galactic SPC format");
 		}
 
-
-
 		public delegate double ColorAmplitudeFunction(System.Drawing.Color c);
+
 		public static double ColorToBrightness(System.Drawing.Color c)
 		{
 			return c.GetBrightness();
@@ -290,7 +286,7 @@ namespace Altaxo.Data
 					colorfunc = new ColorAmplitudeFunction(ColorToBrightness);
 					// add here other function or the result of a dialog box
 
-					// now add new columns to the worksheet, 
+					// now add new columns to the worksheet,
 					// the name of the columns should preferabbly simply
 					// the index in x direction
 
@@ -310,7 +306,5 @@ namespace Altaxo.Data
 				} // end using myStream
 			}
 		}
-
 	}
-
 }
