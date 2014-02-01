@@ -54,6 +54,15 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
+	public class ShowUserSettings : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());
+			Current.Gui.ShowDialog(new object[] { ph }, "Edit user settings", false);
+		}
+	}
+
 	public class RegisterApplicationForCom : AbstractMenuCommand
 	{
 		public override void Run()

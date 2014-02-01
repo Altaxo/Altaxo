@@ -45,6 +45,10 @@ namespace Altaxo.Gui.Graph
 
 		void ShowScaleElements(bool isVisible, bool isEnabled);
 
+		void ShowPositionElements(bool isVisible, bool isEnabled);
+
+		void ShowAnchorElements(bool isVisible, bool isEnabled);
+
 		void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
 		void InitializeXSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
@@ -102,6 +106,11 @@ namespace Altaxo.Gui.Graph
 		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% Parent X-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Parent Y-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
+		protected bool _showPositionElements_Enabled = true, _showPositionElements_IsVisible = true;
+		protected bool _showSizeElements_Enabled = true, _showSizeElements_IsVisible = true;
+		protected bool _showScaleElements_Enabled = true, _showScaleElements_IsVisible = true;
+		protected bool _showAnchorElements_Enabled = true, _showAnchorElements_IsVisible = true;
+
 		protected override void Initialize(bool initData)
 		{
 			if (initData)
@@ -137,6 +146,11 @@ namespace Altaxo.Gui.Graph
 				_view.ScaleY = _doc.ScaleY;
 				_view.InitializePivot(_doc.LocalAnchorX, _doc.LocalAnchorY, _doc.AbsoluteSize);
 				_view.InitializeReference(_doc.ParentAnchorX, _doc.ParentAnchorY, _doc.ParentSize);
+
+				_view.ShowPositionElements(_showPositionElements_IsVisible, _showPositionElements_Enabled);
+				_view.ShowSizeElements(_showSizeElements_IsVisible, _showSizeElements_Enabled);
+				_view.ShowScaleElements(_showScaleElements_IsVisible, _showSizeElements_Enabled);
+				_view.ShowAnchorElements(_showAnchorElements_IsVisible, _showAnchorElements_Enabled);
 			}
 		}
 
@@ -277,18 +291,34 @@ namespace Altaxo.Gui.Graph
 
 		public void ShowSizeElements(bool isVisible, bool isEnabled)
 		{
+			_showSizeElements_IsVisible = isVisible;
+			_showSizeElements_Enabled = isEnabled;
 			if (null != _view)
 				_view.ShowSizeElements(isVisible, isEnabled);
-			else
-				throw new InvalidOperationException("Setting is possible only if _view is not null");
 		}
 
 		public void ShowScaleElements(bool isVisible, bool isEnabled)
 		{
+			_showScaleElements_IsVisible = isVisible;
+			_showScaleElements_Enabled = isEnabled;
 			if (null != _view)
 				_view.ShowScaleElements(isVisible, isEnabled);
-			else
-				throw new InvalidOperationException("Setting is possible only if _view is not null");
+		}
+
+		public void ShowPositionElements(bool isVisible, bool isEnabled)
+		{
+			_showPositionElements_IsVisible = isVisible;
+			_showPositionElements_Enabled = isEnabled;
+			if (null != _view)
+				_view.ShowPositionElements(isVisible, isEnabled);
+		}
+
+		public void ShowAnchorElements(bool isVisible, bool isEnabled)
+		{
+			_showAnchorElements_IsVisible = isVisible;
+			_showAnchorElements_Enabled = isEnabled;
+			if (null != _view)
+				_view.ShowAnchorElements(isVisible, isEnabled);
 		}
 
 		public RADouble SizeX

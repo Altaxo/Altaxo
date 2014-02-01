@@ -52,7 +52,7 @@ namespace Altaxo
 		/// <summary>
 		/// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
 		/// </summary>
-		protected Altaxo.Main.Properties.ProjectFolderPropertyBagCollection _projectFolderProperties;
+		protected Altaxo.Main.Properties.ProjectFolderPropertyDocumentCollection _projectFolderProperties;
 
 		/// <summary>Collection of all data tables layouts in this document.</summary>
 		protected Altaxo.Worksheet.WorksheetLayoutCollection _tableLayouts = null;
@@ -78,7 +78,7 @@ namespace Altaxo
 		{
 			_dataTables = new Altaxo.Data.DataTableCollection(this);
 			_graphs = new GraphDocumentCollection(this);
-			_projectFolderProperties = new Main.Properties.ProjectFolderPropertyBagCollection(this);
+			_projectFolderProperties = new Main.Properties.ProjectFolderPropertyDocumentCollection(this);
 			_tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
 			_fitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
 			_projectFolders = new ProjectFolders(this);
@@ -347,7 +347,7 @@ namespace Altaxo
 		/// <summary>
 		/// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
 		/// </summary>
-		public Altaxo.Main.Properties.ProjectFolderPropertyBagCollection ProjectFolderProperties
+		public Altaxo.Main.Properties.ProjectFolderPropertyDocumentCollection ProjectFolderProperties
 		{
 			get { return _projectFolderProperties; }
 		}
@@ -451,6 +451,10 @@ namespace Altaxo
 			else if (item is Altaxo.Graph.Gdi.GraphDocument)
 			{
 				_graphs.Add(item as Altaxo.Graph.Gdi.GraphDocument);
+			}
+			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+			{
+				_projectFolderProperties.Add(item as Altaxo.Main.Properties.ProjectFolderPropertyDocument);
 			}
 			else
 			{

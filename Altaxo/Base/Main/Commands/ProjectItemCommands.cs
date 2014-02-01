@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Data;
 
 namespace Altaxo.Main.Commands
 {
@@ -37,7 +38,7 @@ namespace Altaxo.Main.Commands
 		#region Clipboard commands
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <remarks>
 		/// There are two groups of possible options:
@@ -52,11 +53,10 @@ namespace Altaxo.Main.Commands
 		/// <para>
 		/// </para>
 		/// </remarks>
-		class ProjectItemClipboardList
+		private class ProjectItemClipboardList
 		{
 			/// <summary>Folder from which the items are copied.</summary>
 			public string BaseFolder { get; set; }
-
 
 			/// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
 			/// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
@@ -69,9 +69,7 @@ namespace Altaxo.Main.Commands
 			public bool TryToKeepInternalReferences { get; set; }
 
 			/// <summary>List of project items to serialize/deserialize</summary>
-			IList<object> _projectItems;
-
-
+			private IList<object> _projectItems;
 
 			private ProjectItemClipboardList()
 			{
@@ -84,7 +82,7 @@ namespace Altaxo.Main.Commands
 			}
 
 			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectItemClipboardList), 0)]
-			class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 			{
 				public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 				{
@@ -113,7 +111,6 @@ namespace Altaxo.Main.Commands
 					}
 					info.CloseArray(count);
 
-
 					return s;
 				}
 			}
@@ -122,7 +119,6 @@ namespace Altaxo.Main.Commands
 			{
 				get { return _projectItems; }
 			}
-
 		}
 
 		/// <summary>
@@ -139,7 +135,6 @@ namespace Altaxo.Main.Commands
 			Altaxo.Serialization.ClipboardSerialization.PutObjectToClipboard(ClipboardFormat_ListOfProjectItems, new ProjectItemClipboardList(items, baseFolder));
 		}
 
-
 		public static bool CanPasteItemsFromClipboard()
 		{
 			return Altaxo.Serialization.ClipboardSerialization.IsClipboardFormatAvailable(ClipboardFormat_ListOfProjectItems);
@@ -153,7 +148,7 @@ namespace Altaxo.Main.Commands
 			var renameDictionary = new Dictionary<System.Type, Dictionary<string, string>>();
 			renameDictionary.Add(typeof(Altaxo.Data.DataTable), new Dictionary<string, string>());
 			renameDictionary.Add(typeof(Altaxo.Graph.Gdi.GraphDocument), new Dictionary<string, string>());
-
+			renameDictionary.Add(typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument), new Dictionary<string, string>());
 
 			string oldName, newName;
 
@@ -179,19 +174,30 @@ namespace Altaxo.Main.Commands
 					if (list.TryToKeepInternalReferences) newName = graph.Name; // when trying to keep the references, we use the name the graph gets after added to the collection (it can have changed during this operation).
 					renameDictionary[typeof(Altaxo.Graph.Gdi.GraphDocument)].Add(oldName, newName);
 				}
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+				{
+					var propDoc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
+					oldName = propDoc.Name;
+					propDoc.Name = newName = GetRelocatedName(oldName, list.BaseFolder, baseFolder);
+					if (!Current.Project.ProjectFolderProperties.Contains(propDoc.Name))
+					{
+						Current.Project.ProjectFolderProperties.Add(propDoc); // if not existing, then add the new property document
+					}
+					else
+					{
+						Current.Project.ProjectFolderProperties[propDoc.Name].PropertyBagNotNull.MergePropertiesFrom(propDoc.PropertyBag, true); // if existing, then merge the properties into the existing bag
+					}
+					if (list.TryToKeepInternalReferences) newName = propDoc.Name; // when trying to keep the references, we use the name the propDoc gets after added to the collection (it can have changed during this operation).
+					renameDictionary[typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument)].Add(oldName, newName);
+				}
 			}
 
 			if (list.RelocateReferences)
 			{
-
 			}
 		}
 
-
-
-
-
-		static string GetRelocatedName(string name, string oldBaseFolder, string newBaseFolder)
+		private static string GetRelocatedName(string name, string oldBaseFolder, string newBaseFolder)
 		{
 			string result = name;
 
@@ -203,8 +209,7 @@ namespace Altaxo.Main.Commands
 			return result;
 		}
 
-
-		static void RelocateReferences(ProjectItemClipboardList pastedItems, Dictionary<System.Type, Dictionary<string, string>> renameDictionary)
+		private static void RelocateReferences(ProjectItemClipboardList pastedItems, Dictionary<System.Type, Dictionary<string, string>> renameDictionary)
 		{
 			foreach (var graph in pastedItems.ProjectItems.OfType<Altaxo.Graph.Gdi.GraphDocument>())
 			{
@@ -212,8 +217,7 @@ namespace Altaxo.Main.Commands
 			}
 		}
 
-
-		static void CollectDataColumnFromProxyVisit(DocNodeProxy proxy, object owner, string propertyName, Dictionary<System.Type, Dictionary<string, string>> renameDictionary)
+		private static void CollectDataColumnFromProxyVisit(DocNodeProxy proxy, object owner, string propertyName, Dictionary<System.Type, Dictionary<string, string>> renameDictionary)
 		{
 			string newName;
 			if (proxy.IsEmpty)
@@ -230,7 +234,6 @@ namespace Altaxo.Main.Commands
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumnCollection)proxy.DocumentObject);
 				if (table != null && renameDictionary[typeof(Altaxo.Data.DataTable)].TryGetValue(table.Name, out newName))
 					proxy.ReplacePathParts(DocumentPath.GetAbsolutePath(table), DocumentPath.FromDocumentCollectionNodeAndName(Current.Project.DataTableCollection, newName));
-
 			}
 			else if (proxy.DocumentObject is DataTable)
 			{
@@ -249,7 +252,6 @@ namespace Altaxo.Main.Commands
 			}
 		}
 
-		#endregion
-
+		#endregion Clipboard commands
 	}
 }

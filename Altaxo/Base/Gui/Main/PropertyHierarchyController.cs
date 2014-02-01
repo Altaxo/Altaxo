@@ -306,7 +306,15 @@ namespace Altaxo.Gui.Main
 
 		private void ShowPropertyValueDialog(string propertyKey, string propertyName, object propertyValue)
 		{
-			var controller = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { propertyValue }, typeof(IMVCAController), UseDocument.Copy);
+			IMVCAController controller = null;
+			var pk = PropertyKeyBase.GetPropertyKey(propertyKey);
+			if (null != pk && pk.CanCreateEditingController)
+			{
+				controller = pk.CreateEditingController(propertyValue);
+			}
+
+			if (null == controller)
+				controller = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { propertyValue }, typeof(IMVCAController), UseDocument.Copy);
 
 			if (null == controller)
 			{

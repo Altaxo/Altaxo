@@ -91,6 +91,54 @@ namespace Altaxo
 			}
 		}
 
+		/// <summary>
+		/// Gets the property bags 'UserSettings, 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.
+		/// </summary>
+		/// <returns>Property bags 'UserSettings, 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.</returns>
+		public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromUserSettings()
+		{
+			// and now the user's settings
+			{
+				var bagInfo = new PropertyBagInformation("UserSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.UserSettings);
+			}
+			// then the application settings
+			{
+				var bagInfo = new PropertyBagInformation("ApplicationSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.ApplicationSettings);
+			}
+
+			// and finally the built-in settings
+			{
+				var bagInfo = new PropertyBagInformation("BuiltinSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.BuiltinSettings);
+			}
+		}
+
+		/// <summary>
+		/// Gets the property bags 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.
+		/// </summary>
+		/// <returns>Property bags 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.</returns>
+		public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromApplicationSettings()
+		{
+			// then the application settings
+			{
+				var bagInfo = new PropertyBagInformation("ApplicationSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.ApplicationSettings);
+			}
+
+			// and finally the built-in settings
+			{
+				var bagInfo = new PropertyBagInformation("BuiltinSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.BuiltinSettings);
+			}
+		}
+
+		/// <summary>
+		/// Gets the project folder property documents down the project folder hierarchie.
+		/// </summary>
+		/// <param name="namedOwner">The named owner. Can be any project item.</param>
+		/// <returns>All project folder property documents, starting from the deepest folder level, and ending with the property document in the root folder (if there is any).</returns>
 		public static IEnumerable<ProjectFolderPropertyDocument> GetProjectFolderPropertyDocuments(this Main.INameOwner namedOwner)
 		{
 			var proj = Current.Project;
@@ -113,21 +161,6 @@ namespace Altaxo
 				{
 					yield return bag;
 				}
-			}
-		}
-
-		public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromApplicationSettings()
-		{
-			// then the application settings
-			{
-				var bagInfo = new PropertyBagInformation("ApplicationSettings", PropertyLevel.Application);
-				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.ApplicationSettings);
-			}
-
-			// and finally the built-in settings
-			{
-				var bagInfo = new PropertyBagInformation("BuiltinSettings", PropertyLevel.Application);
-				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.BuiltinSettings);
 			}
 		}
 

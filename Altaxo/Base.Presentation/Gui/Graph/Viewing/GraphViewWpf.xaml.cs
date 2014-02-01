@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 
 			++_updateCount;
-			_guiUpdateCount.Content = _updateCount.ToString();
+			//_guiUpdateCount.Content = _updateCount.ToString();
 		}
 
 		/// <summary>

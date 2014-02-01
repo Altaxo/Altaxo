@@ -111,6 +111,27 @@ namespace Altaxo.Main.Properties
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether this key contains a function that returns a Gui controller to edit the property value.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this key has edit property function; otherwise, <c>false</c>.
+		/// </value>
+		public virtual bool CanCreateEditingController
+		{
+			get { return false; }
+		}
+
+		/// <summary>
+		/// Function to get a Gui controller in order to edit a property value.
+		/// </summary>
+		/// <param name="originalValue">The orignal property value.</param>
+		/// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="EditingControllerCreation"/> value was not set.</returns>
+		public virtual Gui.IMVCANController CreateEditingController(object originalValue)
+		{
+			return null;
+		}
+
+		/// <summary>
 		/// Gets the name of the property.
 		/// </summary>
 		/// <param name="propertyKeyString">The property key as string value.</param>

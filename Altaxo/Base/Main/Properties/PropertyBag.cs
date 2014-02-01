@@ -342,5 +342,26 @@ namespace Altaxo.Main.Properties
 
 			_properties.Clear();
 		}
+
+		/// <summary>
+		/// Merges the properties from another bag into this property bag. If the same property exists already in this bag, it will be overriden by the property in the other bag.
+		/// </summary>
+		/// <param name="from">The bag from which to take the property values that should be merged into.</param>
+		/// <param name="overrideExistingProperties">If <c>true</c>, a property that already exist in this bag will be overriden by the property in the other bag. Otherwise, the existing
+		/// property is left untouched.</param>
+		public void MergePropertiesFrom(PropertyBag from, bool overrideExistingProperties)
+		{
+			if (null == from)
+				return;
+
+			foreach (var entry in from)
+			{
+				if (overrideExistingProperties | !_properties.ContainsKey(entry.Key))
+				{
+					var newValue = (entry.Value is ICloneable) ? ((ICloneable)entry.Value).Clone() : entry.Value;
+					this._properties[entry.Key] = newValue;
+				}
+			}
+		}
 	}
 }

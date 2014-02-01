@@ -53,25 +53,25 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeXPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
-			_guiXPosition.UnitEnvironment = env;
-			_guiXPosition.SelectedQuantity = x;
+			_guiPositionX.UnitEnvironment = env;
+			_guiPositionX.SelectedQuantity = x;
 		}
 
 		public void InitializeYPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
-			_guiYPosition.UnitEnvironment = env;
-			_guiYPosition.SelectedQuantity = x;
+			_guiPositionY.UnitEnvironment = env;
+			_guiPositionY.SelectedQuantity = x;
 		}
 
 		public void ShowSizeElements(bool isVisible, bool isEnabled)
 		{
 			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
-			_guiXSize.Visibility = vis;
-			_guiXSize.IsEnabled = isEnabled;
-			_guiYSize.Visibility = vis;
-			_guiYSize.IsEnabled = isEnabled;
-			_guiXSizeLabel.Visibility = vis;
-			_guiYSizeLabel.Visibility = vis;
+			_guiSizeX.Visibility = vis;
+			_guiSizeX.IsEnabled = isEnabled;
+			_guiSizeY.Visibility = vis;
+			_guiSizeY.IsEnabled = isEnabled;
+			_guiSizeLabelX.Visibility = vis;
+			_guiSizeLabelY.Visibility = vis;
 		}
 
 		public void ShowScaleElements(bool isVisible, bool isEnabled)
@@ -86,36 +86,58 @@ namespace Altaxo.Gui.Graph
 			_guiLabelScaleY.Visibility = vis;
 		}
 
+		public void ShowPositionElements(bool isVisible, bool isEnabled)
+		{
+			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+
+			_guiPositionX.Visibility = vis;
+			_guiPositionX.IsEnabled = isEnabled;
+			_guiPositionY.Visibility = vis;
+			_guiPositionY.IsEnabled = isEnabled;
+			_guiLabelPositionX.Visibility = vis;
+			_guiLabelPositionY.Visibility = vis;
+		}
+
+		public void ShowAnchorElements(bool isVisible, bool isEnabled)
+		{
+			var vis = isVisible ? Visibility.Visible : Visibility.Collapsed;
+
+			_guiLocalAnchor.Visibility = vis;
+			_guiLocalAnchor.IsEnabled = isEnabled;
+			_guiParentAnchor.Visibility = vis;
+			_guiParentAnchor.IsEnabled = isEnabled;
+		}
+
 		public void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
-			_guiYSize.UnitEnvironment = env;
-			_guiYSize.SelectedQuantity = x;
+			_guiSizeY.UnitEnvironment = env;
+			_guiSizeY.SelectedQuantity = x;
 		}
 
 		public void InitializeXSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
-			_guiXSize.UnitEnvironment = env;
-			_guiXSize.SelectedQuantity = x;
+			_guiSizeX.UnitEnvironment = env;
+			_guiSizeX.SelectedQuantity = x;
 		}
 
 		public Units.DimensionfulQuantity XPosition
 		{
-			get { return _guiXPosition.SelectedQuantity; }
+			get { return _guiPositionX.SelectedQuantity; }
 		}
 
 		public Units.DimensionfulQuantity YPosition
 		{
-			get { return _guiYPosition.SelectedQuantity; }
+			get { return _guiPositionY.SelectedQuantity; }
 		}
 
 		public new Units.DimensionfulQuantity XSize
 		{
-			get { return _guiXSize.SelectedQuantity; }
+			get { return _guiSizeX.SelectedQuantity; }
 		}
 
 		public new Units.DimensionfulQuantity YSize
 		{
-			get { return _guiYSize.SelectedQuantity; }
+			get { return _guiSizeY.SelectedQuantity; }
 		}
 
 		public double Rotation
@@ -168,14 +190,14 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
 		{
-			_guiAnchoring.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+			_guiLocalAnchor.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
 		}
 
 		public RADouble PivotX
 		{
 			get
 			{
-				return _guiAnchoring.SelectedPivotX;
+				return _guiLocalAnchor.SelectedPivotX;
 			}
 		}
 
@@ -183,20 +205,20 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _guiAnchoring.SelectedPivotY;
+				return _guiLocalAnchor.SelectedPivotY;
 			}
 		}
 
 		public void InitializeReference(RADouble pivotX, RADouble pivotY, PointD2D sizeOfTextGraphic)
 		{
-			_guiParentReferencePoint.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
+			_guiParentAnchor.SetSelectedPivot(pivotX, pivotY, sizeOfTextGraphic);
 		}
 
 		public RADouble ReferenceX
 		{
 			get
 			{
-				return _guiParentReferencePoint.SelectedPivotX;
+				return _guiParentAnchor.SelectedPivotX;
 			}
 		}
 
@@ -204,7 +226,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _guiParentReferencePoint.SelectedPivotY;
+				return _guiParentAnchor.SelectedPivotY;
 			}
 		}
 

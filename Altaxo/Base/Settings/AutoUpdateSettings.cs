@@ -170,12 +170,12 @@ namespace Altaxo.Settings
 
 		public AutoUpdateSettings Clone()
 		{
-			throw new NotImplementedException();
+			return new AutoUpdateSettings(this);
 		}
 
 		object ICloneable.Clone()
 		{
-			throw new NotImplementedException();
+			return new AutoUpdateSettings(this);
 		}
 	}
 }

@@ -393,6 +393,9 @@ namespace Altaxo.Worksheet.Commands
 				graph.Name = preferredGraphName;
 			}
 
+			// apply the default location from the property in the path
+			graph.RootLayer.Location.CopyFrom(table.GetPropertyValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize, null));
+
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
 			layer.CreateDefaultAxes();
 			graph.RootLayer.Layers.Add(layer);

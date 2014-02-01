@@ -563,6 +563,10 @@
 							label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
 							description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
 							class="Altaxo.Main.Commands.ShowOptions" />
+			<MenuItem id="UserSettings"
+							label="${res:XML.MainMenu.ToolsMenu.ShowUserSettings}"
+							description="${res:XML.MainMenu.ToolsMenu.ShowUserSettings.Description}"
+							class="Altaxo.Main.Commands.ShowUserSettings" />
 			<MenuItem id="Com" label="${res:XML.MainMenu.ToolsMenu.RegistryMenu}" type="Menu">
 				<MenuItem id="RegAppCom"
 							label="${res:XML.MainMenu.ToolsMenu.RegisterApplicationForCom}"

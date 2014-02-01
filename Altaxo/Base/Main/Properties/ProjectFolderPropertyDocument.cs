@@ -190,7 +190,7 @@ namespace Altaxo.Main.Properties
 				_name = value;
 
 				if (null != NameChanged)
-					NameChanged(this, _name);
+					NameChanged(this, oldName);
 			}
 		}
 

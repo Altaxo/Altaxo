@@ -54,7 +54,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo; COMLOGGING</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
     <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.XML</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>

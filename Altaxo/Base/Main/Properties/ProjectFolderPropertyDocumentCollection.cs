@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 namespace Altaxo.Main.Properties
 {
-	public class ProjectFolderPropertyBagCollection :
+	public class ProjectFolderPropertyDocumentCollection :
 		IEnumerable<ProjectFolderPropertyDocument>,
 		Altaxo.Main.IDocumentNode,
 		Altaxo.Main.IChangedEventSource,
@@ -164,7 +164,7 @@ namespace Altaxo.Main.Properties
 
 		#endregion IChangedEventSource Members
 
-		public ProjectFolderPropertyBagCollection(AltaxoDocument parent)
+		public ProjectFolderPropertyDocumentCollection(AltaxoDocument parent)
 		{
 			this._parentObject = parent;
 		}
@@ -373,9 +373,9 @@ namespace Altaxo.Main.Properties
 		/// </summary>
 		/// <param name="child">A graph for which the parent collection is searched.</param>
 		/// <returns>The parent ProjectFolderPropertyBagCollection, if it exists, or null otherwise.</returns>
-		public static ProjectFolderPropertyBagCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentNode child)
+		public static ProjectFolderPropertyDocumentCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentNode child)
 		{
-			return (ProjectFolderPropertyBagCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyBagCollection));
+			return (ProjectFolderPropertyDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
 		}
 
 		#region IEnumerable<ProjectFolderPropertyBag> Members
