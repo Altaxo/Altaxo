@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Windows.Forms;
-using System.IO;
-using ICSharpCode.Core;
+#endregion Copyright
+
 using Altaxo;
 using Altaxo.Main;
-using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpZipLib.Zip;
+using System;
+using System.IO;
+using System.Windows.Forms;
 
 namespace Altaxo.Main.Commands
 {
@@ -50,7 +52,6 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-
 			string fileName = FileUtility.ApplicationRootPath +
 				Path.DirectorySeparatorChar + "doc" +
 				Path.DirectorySeparatorChar + "help" +
@@ -77,22 +78,14 @@ namespace Altaxo.Main.Commands
 			Run5();
 		}
 
-
-    public void Run5()
-    {
-      var ctrl = new Altaxo.Gui.Common.Drawing.NamedColorController();
-      ctrl.InitializeDocument(Altaxo.Graph.NamedColors.Bisque);
-      Current.Gui.ShowDialog(ctrl, "ddd");
-    }
-
-		public void Run4()
+		public void Run5()
 		{
-			var ctrl = new Altaxo.Gui.Settings.UICultureSettingsController();
-			ctrl.InitializeDocument(null, this);
-			Current.Gui.ShowDialog(ctrl, "Culture settings");
+			var ctrl = new Altaxo.Gui.Common.Drawing.NamedColorController();
+			ctrl.InitializeDocument(Altaxo.Graph.NamedColors.Bisque);
+			Current.Gui.ShowDialog(ctrl, "ddd");
 		}
 
-		public  void Run3()
+		public void Run3()
 		{
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
@@ -114,6 +107,4 @@ namespace Altaxo.Main.Commands
 			Current.Gui.ShowDialog(ctrl, "Brush pros");
 		}
 	}
-
-
 }

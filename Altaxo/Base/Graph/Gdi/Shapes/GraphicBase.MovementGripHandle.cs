@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -33,15 +34,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 	{
 		protected class MovementGripHandle : IGripManipulationHandle
 		{
-			IHitTestObject _parent;
+			private IHitTestObject _parent;
+
 			/// <summary>Path active for selection of this grip.</summary>
-			GraphicsPath _gripPath;
+			private GraphicsPath _gripPath;
+
 			/// <summary>Path that is shown on the display.</summary>
-			GraphicsPath _displayedPath;
-			bool _hasMoved;
-			bool _wasActivatedUponCreation;
-			PointD2D _initialMousePosition;
-			PointD2D _initialObjectPosition;
+			private GraphicsPath _displayedPath;
+
+			private bool _hasMoved;
+			private bool _wasActivatedUponCreation;
+			private PointD2D _initialMousePosition;
+			private PointD2D _initialObjectPosition;
 
 			public MovementGripHandle(IHitTestObject parent, GraphicsPath gripPath, GraphicsPath objectPath)
 			{
@@ -49,7 +53,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_gripPath = gripPath;
 				_displayedPath = objectPath;
 			}
-
 
 			#region IGripManipulationHandle Members
 
@@ -73,6 +76,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <returns>The grip level, that should be displayed next, or -1 when the level should not change.</returns>
 			public bool Deactivate()
 			{
+				if (_hasMoved)
+					((GraphicBase)_parent.HittedObject).OnChanged();
+
 				var ht = _parent as GraphicBaseHitTestObject;
 				if (null != ht && !_hasMoved && !_wasActivatedUponCreation)
 					return true;
@@ -89,8 +95,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				diff = _parent.Transformation.InverseTransformVector(diff);
 				((GraphicBase)_parent.HittedObject).SilentSetPosition(_initialObjectPosition + diff);
-
-
 			}
 
 			/// <summary>Draws the grip in the graphics context.</summary>
@@ -98,9 +102,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
 			public void Show(Graphics g, double pageScale)
 			{
-				using(var pen = new Pen(Color.Blue,(float)(1/pageScale)))
+				using (var pen = new Pen(Color.Blue, (float)(1 / pageScale)))
 				{
-				g.DrawPath(pen, _displayedPath ?? _gripPath);
+					g.DrawPath(pen, _displayedPath ?? _gripPath);
 				}
 			}
 
@@ -109,8 +113,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return _gripPath.IsVisible((PointF)point);
 			}
 
-			#endregion
+			#endregion IGripManipulationHandle Members
 		}
-
 	}
 }

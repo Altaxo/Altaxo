@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -39,10 +41,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Serialization
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.SimpleTextGraphics", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SimpleTextGraphic), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -52,11 +53,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddValue("Text", s._text);
 				info.AddValue("Font", s._font);
 				info.AddValue("Color", s._color);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				SimpleTextGraphic s = null != o ? (SimpleTextGraphic)o : new SimpleTextGraphic();
 				info.GetBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType, parent);
 
@@ -66,20 +66,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return s;
 			}
 		}
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-		}
-		#endregion
 
-
+		#endregion Serialization
 
 		#region Constructors
 
 		public SimpleTextGraphic()
+			: base(new ItemLocationDirectAutoSize())
 		{
 		}
 
@@ -87,8 +80,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			base(from) // all is done here, since CopyFrom is virtual!
 		{
-
 		}
+
 		public override bool CopyFrom(object obj)
 		{
 			var isCopied = base.CopyFrom(obj);
@@ -107,13 +100,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public SimpleTextGraphic(PointD2D graphicPosition, string text,
 			FontX textFont, Color textColor)
+			: base(new ItemLocationDirectAutoSize())
 		{
-			this.SetPosition(graphicPosition);
+			this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
 			this.Font = textFont;
 			this.Text = text;
 			this.Color = textColor;
 		}
-
 
 		public SimpleTextGraphic(double posX, double posY,
 			string text, FontX textFont, Color textColor)
@@ -137,13 +130,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		#endregion
+		#endregion Constructors
 
 		public override object Clone()
 		{
 			return new SimpleTextGraphic(this);
 		}
-
 
 		public FontX Font
 		{
@@ -168,6 +160,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_text = value;
 			}
 		}
+
 		public System.Drawing.Color Color
 		{
 			get
@@ -189,14 +182,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetRectangularObjectOutline();
 		}
 
-
 		public override void Paint(Graphics g, object obj)
 		{
-
 			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 			TransformGraphics(g);
 
-			// Modification of StringFormat is necessary to avoid 
+			// Modification of StringFormat is necessary to avoid
 			// too big spaces between successive words
 			StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
 			strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
@@ -226,7 +217,4 @@ namespace Altaxo.Graph.Gdi.Shapes
 			g.Restore(gs);
 		}
 	}
-
-
-
 }

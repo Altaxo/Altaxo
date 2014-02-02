@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,28 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Main;
-using Altaxo.Collections;
-
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// Keeps track of all folder names in the project.
-  /// </summary>
+	/// <summary>
+	/// Keeps track of all folder names in the project.
+	/// </summary>
 	public class ProjectFolders
 	{
 		/// <summary>The parent document for which the folder structure is kept.</summary>
-		AltaxoDocument _doc;
+		private AltaxoDocument _doc;
 
 		/// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
-		Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
+		private Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
 
 		/// <summary>
 		/// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
@@ -105,7 +106,7 @@ namespace Altaxo.Main
 				if (v is string)
 				{
 					result.Add((string)v);
-					if(recurseSubdirectories)
+					if (recurseSubdirectories)
 						InternalGetSubfoldersAsStringList((string)v, recurseSubdirectories, result);
 				}
 			}
@@ -137,15 +138,15 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Get the items (but not the subfolders) of the provided folder.
 		/// </summary>
-    /// <param name="folderName">Folder for which to retrieve the items.</param>
+		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-    public List<object> GetItemsInFolder(string folderName)
+		public List<object> GetItemsInFolder(string folderName)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
 
 			var result = new List<object>();
 
-      AddItemsInFolder(folderName, result);
+			AddItemsInFolder(folderName, result);
 
 			return result;
 		}
@@ -153,14 +154,14 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Get the items (but not the subfolders) of the provided folder.
 		/// </summary>
-    /// <param name="folderName">Folder for which to retrieve the items.</param>
+		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-    public List<object> GetItemsInFolderAndSubfolders(string folderName)
+		public List<object> GetItemsInFolderAndSubfolders(string folderName)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
 
 			var result = new List<object>();
-      AddItemsInFolderAndSubfolders(folderName, result);
+			AddItemsInFolderAndSubfolders(folderName, result);
 
 			return result;
 		}
@@ -170,7 +171,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <param name="list">List where to add the items to.</param>
-    public void AddItemsInFolder(string folderName, List<object> list)
+		public void AddItemsInFolder(string folderName, List<object> list)
 		{
 			HashSet<object> items;
 			if (!_directories.TryGetValue(folderName, out items))
@@ -189,9 +190,9 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Add the items  of the provided folder and of the subfolders to the list.
 		/// </summary>
-    /// <param name="folderName">Folder for which to retrieve the items.</param>
+		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <param name="list">List where to add the items to.</param>
-    public void AddItemsInFolderAndSubfolders(string folderName, List<object> list)
+		public void AddItemsInFolderAndSubfolders(string folderName, List<object> list)
 		{
 			HashSet<object> items;
 			if (!_directories.TryGetValue(folderName, out items))
@@ -247,7 +248,6 @@ namespace Altaxo.Main
 			int oldFolderNameLength = oldFolderName == null ? 0 : oldFolderName.Length;
 			var itemsRenamed = new HashSet<object>();
 
-
 			for (int stage = 0; stage <= 1; stage++)
 			{
 				do
@@ -301,9 +301,7 @@ namespace Altaxo.Main
 			} // for stage
 		}
 
-
-
-		#endregion
+		#endregion Access to folders and items
 
 		private void Initialize()
 		{
@@ -318,11 +316,12 @@ namespace Altaxo.Main
 			foreach (Altaxo.Graph.Gdi.GraphDocument v in _doc.GraphDocumentCollection)
 				ItemAdded(v, v.Name);
 
+			foreach (var item in _doc.ProjectFolderProperties)
+				ItemAdded(item, item.Name);
+
 			_suspendEvents = false;
 			OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
 		}
-
-
 
 		private void EhProjectOpened(object sender, ProjectEventArgs e)
 		{
@@ -331,6 +330,7 @@ namespace Altaxo.Main
 				_doc = e.Project;
 				_doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
 				_doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
+				_doc.ProjectFolderProperties.CollectionChanged += EhItemCollectionChanged;
 				Initialize();
 			}
 		}
@@ -356,19 +356,20 @@ namespace Altaxo.Main
 				case NamedObjectCollectionChangeType.MultipleChanges:
 					Initialize();
 					break;
+
 				case NamedObjectCollectionChangeType.ItemAdded:
 					ItemAdded(item, newName);
 					break;
+
 				case NamedObjectCollectionChangeType.ItemRemoved:
 					ItemRemoved(item, oldName);
 					break;
+
 				case NamedObjectCollectionChangeType.ItemRenamed:
 					ItemRenamed(item, oldName, newName);
 					break;
 			}
 		}
-
-
 
 		private void ItemAdded(object item, string itemName)
 		{
@@ -425,7 +426,7 @@ namespace Altaxo.Main
 
 		private void DirectoryRemoved(string dir)
 		{
-			if (dir==null || dir==ProjectFolder.RootFolderName)
+			if (dir == null || dir == ProjectFolder.RootFolderName)
 				return;
 
 			_directories.Remove(dir);
@@ -436,7 +437,6 @@ namespace Altaxo.Main
 
 			if (null != parDir && 0 == s.Count)
 				DirectoryRemoved(parDir);
-
 		}
 
 		protected void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
@@ -455,7 +455,6 @@ namespace Altaxo.Main
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(oldFolderName);
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(newFolderName);
-
 
 			var oldList = GetItemsInFolderAndSubfolders(oldFolderName);
 			var itemHashSet = new HashSet<object>(oldList);
@@ -517,9 +516,7 @@ namespace Altaxo.Main
 			if (!Current.Gui.ShowDialog(tvctrl, "Rename folder", false))
 				return;
 
-			var newFolderName = ProjectFolder.ConvertDisplayFolderNameToFolderName( tvctrl.InputText.Trim() );
-
-		
+			var newFolderName = ProjectFolder.ConvertDisplayFolderNameToFolderName(tvctrl.InputText.Trim());
 
 			if (!CanRenameFolder(folderName, newFolderName))
 			{
@@ -531,7 +528,6 @@ namespace Altaxo.Main
 
 			RenameFolder(folderName, newFolderName);
 		}
-
 
 		/// <summary>
 		/// Move items in a list to a other folder.
@@ -560,6 +556,22 @@ namespace Altaxo.Main
 						newName = Current.Project.GraphDocumentCollection.FindNewName(newName);
 					graph.Name = newName;
 				}
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+				{
+					var pdoc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(pdoc.Name));
+					if (Current.Project.ProjectFolderProperties.Contains(newName))
+					{
+						// Project folders are unique for the specific folder, we can not simply rename it to another name
+						// Thus I decided here to mere the moved property bag with the already existing property bag
+						var existingDoc = Current.Project.ProjectFolderProperties[newName];
+						existingDoc.PropertyBagNotNull.MergePropertiesFrom(pdoc.PropertyBagNotNull, true);
+					}
+					else
+					{
+						pdoc.Name = newName;
+					}
+				}
 				else if (item is ProjectFolder)
 				{
 					var folder = (ProjectFolder)item;
@@ -568,7 +580,6 @@ namespace Altaxo.Main
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Copies the items given in the list (tables, graphs and folders) to another folder, which is given by newFolderName. The copying
@@ -587,7 +598,6 @@ namespace Altaxo.Main
 			}
 		}
 
-
 		/// <summary>
 		/// Copyies one item to another folder by cloning the item.
 		/// </summary>
@@ -605,7 +615,7 @@ namespace Altaxo.Main
 			{
 				var orgName = (item as ProjectFolder).Name;
 				string destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
-				foreach(var subitem in this.GetItemsInFolderAndSubfolders(orgName))
+				foreach (var subitem in this.GetItemsInFolderAndSubfolders(orgName))
 				{
 					var oldItemFolder = ProjectFolder.GetFolderPart(((INameOwner)subitem).Name);
 					var newItemFolder = oldItemFolder.Replace(orgName, destName);
@@ -619,7 +629,7 @@ namespace Altaxo.Main
 				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 				Current.Project.AddItem(clonedItem);
 
-				if (null!=ReportProxies)
+				if (null != ReportProxies)
 				{
 					if (clonedItem is Altaxo.Graph.Gdi.GraphDocument)
 					{
@@ -633,7 +643,6 @@ namespace Altaxo.Main
 			}
 		}
 
-
 		#region Helper Gui Functions
 
 		/// <summary>
@@ -646,18 +655,16 @@ namespace Altaxo.Main
 		{
 			var result = GetSubfoldersAsStringList(parentFolder, recurseSubdirectories);
 
-
 			for (int i = 0; i < result.Count; ++i)
 				result[i] = ProjectFolder.ConvertFolderNameToDisplayFolderName(result[i]);
 
 			return result;
 		}
 
-
 		/// <summary>
-		/// Add a <see cref="NGTreeNode"/>s corresponding to the folder name recursively for all parts of the folder name so that a hierarchy of those nodes is built-up. 
-		/// If the folder name is already represented by a tree node (i.e. is present in the folderDictionary), this node is returned. 
-		/// If not, the node is created and added to the folder dictionary as well as to the nodes collection of the parent tree node. 
+		/// Add a <see cref="NGTreeNode"/>s corresponding to the folder name recursively for all parts of the folder name so that a hierarchy of those nodes is built-up.
+		/// If the folder name is already represented by a tree node (i.e. is present in the folderDictionary), this node is returned.
+		/// If not, the node is created and added to the folder dictionary as well as to the nodes collection of the parent tree node.
 		/// If the parent tree node is not found in the folderDictionary, this function is called recursively to add the parent tree node.
 		/// </summary>
 		/// <param name="folderName">The folder name to add.</param>
@@ -670,7 +677,6 @@ namespace Altaxo.Main
 			{
 				var parentNode = AddFolderNodeRecursively(Main.ProjectFolder.GetFoldersParentFolder(folderName), folderDictionary);
 
-
 				folderNode = new NGTreeNode { Text = Main.ProjectFolder.ConvertFolderNameToDisplayFolderName(Main.ProjectFolder.GetFoldersLastFolderPart(folderName)), Tag = folderName };
 				folderDictionary.Add(folderName, folderNode);
 				parentNode.Nodes.Add(folderNode);
@@ -678,11 +684,10 @@ namespace Altaxo.Main
 			return folderNode;
 		}
 
-
 		/// <summary>
-		/// Add a <see cref="NGTreeNode"/>s corresponding to the folder name recursively for all parts of the folder name so that a hierarchy of those nodes is built-up. 
-		/// If the folder name is already represented by a tree node (i.e. is present in the folderDictionary), this node is returned. 
-		/// If not, the node is created and added to the folder dictionary as well as to the nodes collection of the parent tree node. 
+		/// Add a <see cref="NGTreeNode"/>s corresponding to the folder name recursively for all parts of the folder name so that a hierarchy of those nodes is built-up.
+		/// If the folder name is already represented by a tree node (i.e. is present in the folderDictionary), this node is returned.
+		/// If not, the node is created and added to the folder dictionary as well as to the nodes collection of the parent tree node.
 		/// If the parent tree node is not found in the folderDictionary, this function is called recursively to add the parent tree node.
 		/// </summary>
 		/// <param name="folderName">The folder name to add.</param>
@@ -695,7 +700,6 @@ namespace Altaxo.Main
 			{
 				var parentNode = AddFolderNodeRecursively<T>(Main.ProjectFolder.GetFoldersParentFolder(folderName), folderDictionary);
 
-
 				folderNode = new T { Text = Main.ProjectFolder.ConvertFolderNameToDisplayFolderName(Main.ProjectFolder.GetFoldersLastFolderPart(folderName)), Tag = folderName };
 				folderDictionary.Add(folderName, folderNode);
 				parentNode.Nodes.Add(folderNode);
@@ -703,6 +707,6 @@ namespace Altaxo.Main
 			return folderNode;
 		}
 
-		#endregion
+		#endregion Helper Gui Functions
 	}
 }

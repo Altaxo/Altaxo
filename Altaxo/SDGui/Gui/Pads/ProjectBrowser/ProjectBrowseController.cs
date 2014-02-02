@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,25 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Main;
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	#region Interfaces
 
-
-
-
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <remarks>The image indices for the browser tree nodes and list nodes are set as following:
 	/// 0: Project, 1: closed folder, 2: open folder, 3: worksheet, 4: graph.</remarks>
@@ -45,7 +43,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <summary>Sets the browser root node.</summary>
 		/// <param name="root">The root node of the project browser.</param>
 		void InitializeTree(Altaxo.Collections.NGTreeNode root);
+
 		void SilentSelectTreeNode(Altaxo.Collections.NGTreeNode node);
+
 		object TreeNodeContextMenu { get; }
 
 		void InitializeList(SelectableListNodeList list);
@@ -55,49 +55,56 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		void InitializeCurrentFolder(string currentFolder);
 
 		void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+
 		void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
 		void SynchronizeListSelection();
 	}
-	#endregion
+
+	#endregion Interfaces
 
 	public class ProjectBrowseController : IMVCController
 	{
 		/// <summary>The gui view shown to the user.</summary>
-		IProjectBrowseView _view;
+		private IProjectBrowseView _view;
+
 		/// <summary>The current Altaxo project.</summary>
-		AltaxoDocument _doc;
+		private AltaxoDocument _doc;
 
 		/// <summary>Root node. Holds all other nodes in its nodes collection.</summary>
-		NGBrowserTreeNode _rootNode;
+		private NGBrowserTreeNode _rootNode;
+
 		/// <summary>Root node of the project folders.</summary>
-		NGBrowserTreeNode _projectDirectoryRoot;
+		private NGBrowserTreeNode _projectDirectoryRoot;
+
 		/// <summary>Project node. Equivalent to the whole project</summary>
-		NGBrowserTreeNode _allItemsNode;
+		private NGBrowserTreeNode _allItemsNode;
+
 		/// <summary>When selected, shows all graphs in the project.</summary>
-		NGBrowserTreeNode _allGraphsNode;
+		private NGBrowserTreeNode _allGraphsNode;
+
 		/// <summary>When selected, shows all tables in the project.</summary>
-		NGBrowserTreeNode _allTablesNode;
+		private NGBrowserTreeNode _allTablesNode;
 
 		/// <summary>Dictionary of project folders (keys) and the corresponing non-Gui nodes (values).</summary>
-		Dictionary<string, NGBrowserTreeNode> _directoryNodesByName;
+		private Dictionary<string, NGBrowserTreeNode> _directoryNodesByName;
 
 		/// <summary>Current selected tree node.</summary>
-		NGBrowserTreeNode _currentSelectedTreeNode;
+		private NGBrowserTreeNode _currentSelectedTreeNode;
 
 		/// <summary>Items currently shown in the list view.</summary>
-		SelectableListNodeList _listViewItems = new SelectableListNodeList();
+		private SelectableListNodeList _listViewItems = new SelectableListNodeList();
+
 		/// <summary>Object that is responsible for filling the list with items and for tracking changes affecting the list items.</summary>
-		AbstractItemHandler _listItemHandler;
+		private AbstractItemHandler _listItemHandler;
 
 		/// <summary>Action when selecting a tree node.</summary>
-		ViewOnSelect _viewOnSelectTreeNode = ViewOnSelect.Off;
+		private ViewOnSelect _viewOnSelectTreeNode = ViewOnSelect.Off;
+
 		/// <summary>Action when selection a list node. If true, the item is shown in the document area.</summary>
-		bool _viewOnSelectListNodeOn = false;
+		private bool _viewOnSelectListNodeOn = false;
 
-		NavigationList<NavigationPoint> _navigationPoints = new NavigationList<NavigationPoint>();
-
-
+		private NavigationList<NavigationPoint> _navigationPoints = new NavigationList<NavigationPoint>();
 
 		/// <summary>Creates the project browse controller.</summary>
 		public ProjectBrowseController()
@@ -114,11 +121,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_allTablesNode = new NGBrowserTreeNode("Tables") { Image = ProjectBrowseItemImage.OpenFolder };
 			_allItemsNode.Nodes.Add(_allTablesNode);
 
-
 			_projectDirectoryRoot = new NGBrowserTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = ProjectFolder.RootFolderName };
 			_directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
 			_allItemsNode.Nodes.Add(_projectDirectoryRoot);
-
 
 			Current.ProjectService.ProjectOpened += this.EhProjectOpened;
 			Current.ProjectService.ProjectClosed += this.EhProjectClosed;
@@ -126,7 +131,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			Initialize(true);
 		}
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -158,6 +163,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Current.Gui.Execute(EhProjectOpened_Unsynchronized, sender, e);
 		}
+
 		private void EhProjectOpened_Unsynchronized(object sender, ProjectEventArgs e)
 		{
 			if (object.ReferenceEquals(_doc, e.Project))
@@ -201,13 +207,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// </summary>
 		/// <param name="fullFolderPath"></param>
 		/// <returns></returns>
-		static string GetDisplayNameOfFolder(string fullFolderPath)
+		private static string GetDisplayNameOfFolder(string fullFolderPath)
 		{
 			return ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(fullFolderPath);
 		}
 
-
-		void RecreateDirectoryNodes()
+		private void RecreateDirectoryNodes()
 		{
 			_directoryNodesByName.Clear();
 			_directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
@@ -217,11 +222,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			if (_view != null)
 				((IGuiBrowserTreeNode)_projectDirectoryRoot.GuiTag).OnNodeMultipleChanges();
-
-
 		}
 
-		void CreateDirectoryNode(string dir, NGBrowserTreeNode node)
+		private void CreateDirectoryNode(string dir, NGBrowserTreeNode node)
 		{
 			var subfolders = _doc.Folders.GetSubfoldersAsStringList(dir, false);
 			foreach (var subfolder in subfolders)
@@ -242,6 +245,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Current.Gui.Execute(EhProjectDirectoryItemChanged_Unsynchronized, changeType, item, oldName, newName);
 		}
+
 		private void EhProjectDirectoryItemChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
 			if (changeType == NamedObjectCollectionChangeType.MultipleChanges)
@@ -259,6 +263,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Current.Gui.Execute(EhProjectDirectoryChanged_Unsynchronized, changeType, dir);
 		}
+
 		private void EhProjectDirectoryChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, string dir)
 		{
 			if (ProjectFolder.IsRootFolderName(dir))
@@ -282,9 +287,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 						parNode.Nodes.Add(curNode);
 						if (parNode.GuiTag is IGuiBrowserTreeNode)
 							((IGuiBrowserTreeNode)parNode.GuiTag).OnNodeAdded(curNode);
-
 					}
 					break;
+
 				case NamedObjectCollectionChangeType.ItemRemoved:
 					{
 						var curNode = _directoryNodesByName[dir];
@@ -296,6 +301,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 							((IGuiBrowserTreeNode)parNode.GuiTag).OnNodeRemoved(curNode);
 					}
 					break;
+
 				default:
 					throw new ArgumentOutOfRangeException("Unexpected changeType: " + changeType.ToString());
 			}
@@ -320,16 +326,18 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			{
 				case ViewOnSelect.Off: // do nothing
 					break;
+
 				case ViewOnSelect.ItemsInFolder:
 					ProjectBrowserExtensions.ShowDocumentsExclusively(GetAllListItems());
 					break;
+
 				case ViewOnSelect.ItemsInFolderAndSubfolders:
 					ProjectBrowserExtensions.ShowDocumentsExclusively(ExpandItemListToSubfolderItems(GetAllListItems()));
 					break;
 			}
 		}
 
-		#endregion
+		#endregion Tree related stuff
 
 		#region List related stuff
 
@@ -337,7 +345,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// Internally sets the list item handler and wires the ListChange event.
 		/// </summary>
 		/// <param name="itemHandler"></param>
-		void SetItemListHandler(AbstractItemHandler itemHandler)
+		private void SetItemListHandler(AbstractItemHandler itemHandler)
 		{
 			if (null != _listItemHandler)
 			{
@@ -359,7 +367,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <summary>
 		/// Sets the ItemList handler according to the currently selected tree node.
 		/// </summary>
-		void RefreshItemListHandler()
+		private void RefreshItemListHandler()
 		{
 			if (null != _currentSelectedTreeNode)
 			{
@@ -376,12 +384,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-
 		/// <summary>
 		/// Called if the list item handler announces a change in the item list.
 		/// </summary>
 		/// <param name="list"></param>
-		void EhListItemHandlerListChange(SelectableListNodeList list)
+		private void EhListItemHandlerListChange(SelectableListNodeList list)
 		{
 			Current.Gui.Execute(EhListItemHandlerListChange_Unsynchronized, list);
 		}
@@ -390,7 +397,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// Called if the list item handler announces a change in the item list.
 		/// </summary>
 		/// <param name="list"></param>
-		void EhListItemHandlerListChange_Unsynchronized(SelectableListNodeList list)
+		private void EhListItemHandlerListChange_Unsynchronized(SelectableListNodeList list)
 		{
 			SortItemList(list);
 
@@ -438,11 +445,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			foreach (BrowserListItem item in _listViewItems)
 			{
-					result.Add(item.Tag);
+				result.Add(item.Tag);
 			}
 			return result;
 		}
-
 
 		/// <summary>
 		/// Expands the list of items by recursively replacing project folders by the items in those project folders.
@@ -490,20 +496,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			return count;
 		}
 
-
-
 		/// <summary>
 		/// Called from the view if the selection of items in the list has changed.
 		/// </summary>
 		public void EhListViewAfterSelect()
 		{
-
 			if (_viewOnSelectListNodeOn && 1 == GetNumberOfSelectedListItems())
 			{
 				ProjectBrowserExtensions.ShowSelectedListItem(this);
 			}
 		}
-
 
 		/// <summary>
 		/// Called from the view if a list item was double clicked.
@@ -514,7 +516,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			{
 				if (!node.IsSelected)
 					continue;
-
 
 				// table nodes
 				if (node.Tag is Altaxo.Data.DataTable)
@@ -527,6 +528,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				{
 					// tag is the name of the table clicked, so look for a view that has the table or create a new one
 					Current.ProjectService.OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)node.Tag);
+				}
+				else if (node.Tag is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+				{
+					var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(node.Tag as Altaxo.Main.Properties.ProjectFolderPropertyDocument));
+					Current.Gui.ShowDialog(new object[] { propHierarchy }, "Folder properties", true);
 				}
 				else if (node.Tag is ProjectFolder)
 				{
@@ -548,10 +554,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-	
-
-		#endregion
-
+		#endregion List related stuff
 
 		#region Navigation
 
@@ -573,7 +576,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		bool IsNavigationPointValid(NavigationPoint p)
+		private bool IsNavigationPointValid(NavigationPoint p)
 		{
 			if (p.Kind != NavigationPoint.KindOfNavigationPoint.ProjectFolder)
 				return true;
@@ -581,31 +584,34 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				return Current.Project.Folders.ContainsFolder(p.Folder);
 		}
 
-		void NavigateTo(NavigationPoint p)
+		private void NavigateTo(NavigationPoint p)
 		{
 			switch (p.Kind)
 			{
 				case NavigationPoint.KindOfNavigationPoint.ProjectFolder:
 					SetItemListHandler(new SpecificProjectFolderHandler(p.Folder));
 					break;
+
 				case NavigationPoint.KindOfNavigationPoint.AllTables:
 					SetItemListHandler(new AllWorksheetHandler());
 					break;
+
 				case NavigationPoint.KindOfNavigationPoint.AllGraphs:
 					SetItemListHandler(new AllGraphHandler());
 					break;
+
 				case NavigationPoint.KindOfNavigationPoint.AllProjectItems:
 					SetItemListHandler(new ProjectAllItemHandler());
 					break;
 			}
 		}
 
-		void StoreNavigationPoint()
+		private void StoreNavigationPoint()
 		{
 			_navigationPoints.AddNavigationPoint(GetNavigationPointFromCurrentState());
 		}
 
-		NavigationPoint GetNavigationPointFromCurrentState()
+		private NavigationPoint GetNavigationPointFromCurrentState()
 		{
 			NavigationPoint result;
 			if (_listItemHandler is ProjectAllItemHandler)
@@ -631,8 +637,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			return result;
 		}
 
-
-		string GetLocationStringFromCurrentState()
+		private string GetLocationStringFromCurrentState()
 		{
 			string result;
 			if (_listItemHandler is ProjectAllItemHandler)
@@ -660,18 +665,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			return result;
 		}
 
-		#endregion
+		#endregion Navigation
 
-		int NameComparism(SelectableListNode x, SelectableListNode y)
+		private int NameComparism(SelectableListNode x, SelectableListNode y)
 		{
 			return string.Compare(x.Text, y.Text);
 		}
 
-
-		BrowserListItem.SortKind _primaryListSortKind = BrowserListItem.SortKind.Name;
-		bool _primaryListSortDescending;
-		BrowserListItem.SortKind _secondaryListSortKind;
-		bool _secondaryListSortDescending;
+		private BrowserListItem.SortKind _primaryListSortKind = BrowserListItem.SortKind.Name;
+		private bool _primaryListSortDescending;
+		private BrowserListItem.SortKind _secondaryListSortKind;
+		private bool _secondaryListSortDescending;
 
 		public void EhToggleListSort_Name()
 		{
@@ -708,7 +712,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				_primaryListSortDescending = false;
 			}
 
-
 			// now sort the item list
 			SortItemList(_listViewItems);
 
@@ -736,8 +739,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				bool isNameColSorted;
 				bool isNameColDescending;
 				bool isColSecondary;
-				
-				if(BrowserListItem.SortKind.Name==_primaryListSortKind)
+
+				if (BrowserListItem.SortKind.Name == _primaryListSortKind)
 				{
 					isNameColSorted = true;
 					isNameColDescending = _primaryListSortDescending;
@@ -756,7 +759,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					isColSecondary = false;
 				}
 				_view.SetSortIndicator_NameColumn(isNameColSorted, isNameColDescending, isColSecondary);
-
 
 				if (BrowserListItem.SortKind.CreationDate == _primaryListSortKind)
 				{
@@ -777,11 +779,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					isColSecondary = false;
 				}
 				_view.SetSortIndicator_CreationDateColumn(isNameColSorted, isNameColDescending, isColSecondary);
-
-
 			}
 		}
-
 
 		#region IMVCController Members
 
@@ -809,15 +808,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			get { return _doc; }
 		}
 
-		#endregion
-
-
+		#endregion IMVCController Members
 
 		#region List commands
-
-
-
-
 
 		/// <summary>
 		/// Determines if a project folder is selected in the tree view.
@@ -854,9 +847,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			get { return _viewOnSelectTreeNode; }
 			set { _viewOnSelectTreeNode = value; }
-
 		}
 
-		#endregion
+		#endregion List commands
 	}
 }

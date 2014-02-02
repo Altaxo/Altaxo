@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -36,27 +38,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public class GraphicCollection
 		:
-		IList<GraphicBase>,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentNode
+		PartitionableList<IGraphicBase>
 	{
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
-
-		[NonSerialized]
-		object _parent;
-
-		List<GraphicBase> _items = new List<GraphicBase>();
-
-
-
 		#region "Serialization"
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphicsObjectCollection", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicCollection), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -67,15 +55,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 					info.AddValue("GraphicsObject", s[i]);
 				info.CommitArray();
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
-				GraphicCollection s = null != o ? (GraphicCollection)o : new GraphicCollection();
+				IList<IGraphicBase> s = null != o ? (IList<IGraphicBase>)o : new List<IGraphicBase>();
 
 				int count = info.OpenArray();
 				for (int i = 0; i < count; i++)
 				{
-					GraphicBase go = (GraphicBase)info.GetValue(s);
+					IGraphicBase go = (IGraphicBase)info.GetValue(s);
 					s.Add(go);
 				}
 				info.CloseArray(count);
@@ -84,267 +72,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// restore the event chain
-			for (int i = 0; i < Count; i++)
-				this[i].Changed += new EventHandler(this.EhChildChanged);
-		}
-		#endregion
+		#endregion "Serialization"
 
-
-
-		public GraphicCollection()
+		public GraphicCollection(Action<IGraphicBase> insertAction)
+			: base(insertAction)
 		{
 		}
-
-
-		/// <summary>
-		/// Copy constructor. Clones (!) all the graph items from the other collection
-		/// </summary>
-		/// <param name="from">The collection to clone the items from.</param>
-		public GraphicCollection(GraphicCollection from)
-		{
-			for (int i = 0; i < from.Count; i++)
-				this.Add((GraphicBase)from[i].Clone());
-		}
-
-		public GraphicCollection(GraphicBase[] g)
-			: base()
-		{
-			this.AddRange(g);
-		}
-
-		public void Paint(Graphics g, double Scale, object container)
-		{
-			int len = this._items.Count;
-			for (int i = 0; i < len; i++)
-			{
-				this._items[i].Paint(g, container);
-			}
-		}
-
-		public IHitTestObject HitTest(HitTestPointData layerHitTestData)
-		{
-			 // hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
-				for(int i=this._items.Count-1;i>=0;--i)
-				{
-          var hit = _items[i].HitTest(layerHitTestData);
-          if (null != hit)
-          {
-            if (null == hit.Remove && (hit.HittedObject is GraphicBase))
-              hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
-            return hit;
-          }
-        }
-
-				return null;
-      }
-
-		static bool EhGraphicsObject_Remove(IHitTestObject o)
-		{
-			GraphicBase go = (GraphicBase)o.HittedObject;
-			o.ParentLayer.GraphObjects.Remove(go);
-			return true;
-		}
-	
-		public GraphicBase FindObjectAtPoint(HitTestPointData htd)
-		{
-			if (null != this._items)
-			{
-				int len = this._items.Count;
-				foreach (GraphicBase g in this._items)
-				{
-					if (null != g.HitTest(htd))
-						return g;
-				}
-			}
-			return null;
-
-		}
-
-		/// <summary>
-		/// Scales the position of all items according to xscale and yscale.
-		/// </summary>
-		/// <param name="xscale"></param>
-		/// <param name="yscale"></param>
-		public void ScalePosition(double xscale, double yscale)
-		{
-			foreach (GraphicBase o in this._items)
-			{
-				GraphicBase.ScalePosition(o, xscale, yscale);
-			}
-		}
-
-		public GraphicBase this[int index]
-		{
-			get
-			{
-				return _items[index];
-			}
-			set
-			{
-				value.ParentObject = this;
-				_items[index] = value;
-				OnChanged();
-			}
-		}
-
-		public void Add(GraphicBase go, bool fireChangedEvent)
-		{
-			go.ParentObject = this;
-			_items.Add(go);
-
-			if (fireChangedEvent)
-				OnChanged();
-		}
-
-		public void AddRange(GraphicBase[] gos)
-		{
-			int len = gos.Length;
-			for (int i = 0; i < len; i++)
-				this.Add(gos[i], false);
-
-			OnChanged();
-		}
-
-		public void AddRange(GraphicCollection goc)
-		{
-			int len = goc.Count;
-			for (int i = 0; i < len; i++)
-				this.Add(goc[i], false);
-
-			OnChanged();
-		}
-
-		public bool Contains(GraphicBase go)
-		{
-			return _items.Contains(go);
-		}
-
-		public void CopyTo(GraphicBase[] array, int index)
-		{
-			_items.CopyTo(array, index);
-		}
-
-		public int IndexOf(GraphicBase go)
-		{
-			return _items.IndexOf(go);
-		}
-		public void Insert(int index, GraphicBase go)
-		{
-			go.ParentObject = this;
-			_items.Insert(index, go);
-			OnChanged();
-		}
-
-		/// <summary>
-		/// Moves the selected objects forwards or backwards in the list.
-		/// </summary>
-		/// <param name="selectedObjects">List of objects that should be moved. These objects must be part of this GraphicCollection.</param>
-		/// <param name="steps">Number of steps to move. Positive values move the objects to higher indices, thus to the top of the drawing.</param>
-		public void Move(ISet<GraphicBase> selectedObjects, int steps)
-		{
-			Altaxo.Collections.ListMoveOperations.MoveSelectedItems(this, i => selectedObjects.Contains(this[i]), steps);
-		}
-
-		#region IChangedEventSource Members
-
-
-		public virtual void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (this._parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, new Main.ChangedEventArgs(this, null));
-
-			if (null != Changed)
-				Changed(this, new Main.ChangedEventArgs(this, null));
-		}
-		#endregion
-
-		#region IDocumentNode Members
-
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
-		{
-			get { return "GraphicCollection"; }
-		}
-
-		#endregion
-
-		#region IList<GraphicBase> Members
-
-
-		public void RemoveAt(int index)
-		{
-			_items.RemoveAt(index);
-			OnChanged();
-		}
-
-		#endregion
-
-		#region ICollection<GraphicBase> Members
-
-		public void Add(GraphicBase item)
-		{
-			Add(item, true);
-		}
-
-		public void Clear()
-		{
-			_items.Clear();
-			OnChanged();
-		}
-
-		public int Count
-		{
-			get { return _items.Count; }
-		}
-
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
-
-		public bool Remove(GraphicBase item)
-		{
-			bool result = _items.Remove(item);
-			if (result)
-				OnChanged();
-			return result;
-		}
-
-		#endregion
-
-		#region IEnumerable<GraphicBase> Members
-
-		public IEnumerator<GraphicBase> GetEnumerator()
-		{
-			return _items.GetEnumerator();
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return _items.GetEnumerator();
-		}
-
-		#endregion
 	} // end class GraphicsObjectCollection
 }

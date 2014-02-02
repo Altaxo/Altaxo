@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,58 +19,53 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
-
-
 	[Serializable]
 	public class GridPlane :
 		ICloneable,
 		Main.IChangedEventSource,
 		Main.IDocumentNode
 	{
-
 		/// <summary>
 		/// Identifies the plane by the axis that is perpendicular to the plane.
 		/// </summary>
-		CSPlaneID _planeID;
+		private CSPlaneID _planeID;
 
 		/// <summary>
 		/// Gridstyle of the smaller of the two axis numbers.
 		/// </summary>
-		GridStyle _grid1;
-
+		private GridStyle _grid1;
 
 		/// <summary>
 		/// Gridstyle of the greater axis number.
 		/// </summary>
-		GridStyle _grid2;
-
+		private GridStyle _grid2;
 
 		/// <summary>
 		/// Background of the grid plane.
 		/// </summary>
-		BrushX _background;
+		private BrushX _background;
 
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
 		[NonSerialized]
-		object _parent;
+		private object _parent;
 
 		[NonSerialized]
-		GridIndexer _cachedIndexer;
+		private GridIndexer _cachedIndexer;
 
-
-		void CopyFrom(GridPlane from)
+		private void CopyFrom(GridPlane from)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -81,9 +77,11 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlane), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -93,8 +91,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				info.AddValue("Grid1", s._grid1);
 				info.AddValue("Grid2", s._grid2);
 				info.AddValue("Background", s._background);
-
 			}
+
 			protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				CSPlaneID id = (CSPlaneID)info.GetValue("ID", null);
@@ -108,20 +106,21 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				GridPlane s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
 
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public GridPlane(CSPlaneID id)
 		{
 			_cachedIndexer = new GridIndexer(this);
 			_planeID = id;
 		}
+
 		public GridPlane(GridPlane from)
 		{
 			_cachedIndexer = new GridIndexer(this);
@@ -132,6 +131,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			return new GridPlane(this);
 		}
+
 		object ICloneable.Clone()
 		{
 			return new GridPlane(this);
@@ -196,7 +196,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _cachedIndexer; }
 		}
 
-
 		public BrushX Background
 		{
 			get { return _background; }
@@ -229,7 +228,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		public void Paint(Graphics g, IPlotArea layer)
+		public void PaintBackground(Graphics g, IPlotArea layer)
 		{
 			Region region = layer.CoordinateSystem.GetRegion();
 			if (_background != null)
@@ -238,7 +237,11 @@ namespace Altaxo.Graph.Gdi.Axis
 				_background.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
 				g.FillRegion(_background, region);
 			}
+		}
 
+		public void PaintGrid(Graphics g, IPlotArea layer)
+		{
+			Region region = layer.CoordinateSystem.GetRegion();
 			Region oldClipRegion = g.Clip;
 			g.Clip = region;
 			if (null != _grid1)
@@ -248,17 +251,20 @@ namespace Altaxo.Graph.Gdi.Axis
 			g.Clip = oldClipRegion;
 		}
 
-
+		public void Paint(Graphics g, IPlotArea layer)
+		{
+			PaintBackground(g, layer);
+			PaintGrid(g, layer);
+		}
 
 		private class GridIndexer : Altaxo.Collections.IArray<GridStyle>
 		{
-			GridPlane _parent;
+			private GridPlane _parent;
+
 			public GridIndexer(GridPlane parent)
 			{
 				_parent = parent;
 			}
-
-
 
 			#region IArray<GridStyle> Members
 
@@ -282,9 +288,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				get { return 2; }
 			}
 
-			#endregion
+			#endregion IArray<GridStyle> Members
 		}
-
 
 		#region IChangedEventSource Members
 
@@ -293,13 +298,13 @@ namespace Altaxo.Graph.Gdi.Axis
 			OnChanged();
 		}
 
-		void OnChanged()
+		private void OnChanged()
 		{
 			if (null != Changed)
 				Changed(this, EventArgs.Empty);
 		}
 
-		#endregion
+		#endregion IChangedEventSource Members
 
 		#region IDocumentNode Members
 
@@ -314,6 +319,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return "GridPlane" + this._planeID.ToString(); }
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 	}
 }

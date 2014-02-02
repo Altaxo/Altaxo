@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,212 +19,218 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
+#endregion Copyright
 
-using Altaxo.Main;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Main;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
-  #region Interfaces
-  public interface ITextGraphicView
-  {
-    void BeginUpdate();
-    void EndUpdate();
+	#region Interfaces
 
-    ITextGraphicViewEventSink Controller { set; }
-    IBackgroundStyle SelectedBackground { get; set; }
-    string EditText { get; set; }
-    PointD2D SelectedPosition { get; set; }
-    double SelectedRotation { get; set; }
-		double SelectedShear { get; set; }
-		double SelectedScaleX { get; set; }
-		double SelectedScaleY { get; set; }
-    System.Drawing.FontFamily SelectedFontFamily { get; set; }
-    double SelectedFontSize { get; set; }
+	public interface ITextGraphicView
+	{
+		void BeginUpdate();
+
+		void EndUpdate();
+
+		ITextGraphicViewEventSink Controller { set; }
+
+		IBackgroundStyle SelectedBackground { get; set; }
+
+		object LocationView { set; }
+
+		string EditText { get; set; }
+
+		System.Drawing.FontFamily SelectedFontFamily { get; set; }
+
+		double SelectedFontSize { get; set; }
+
 		double SelectedLineSpacing { get; set; }
-    BrushX SelectedFontBrush { get; set; }
-		XAnchorPositionType XAnchor { get; set; }
-		YAnchorPositionType YAnchor { get; set; }
 
-    void InsertBeforeAndAfterSelectedText(string insbefore, string insafter);
-    void RevertToNormal();
-    void InvalidatePreviewPanel();
+		BrushX SelectedFontBrush { get; set; }
 
-  }
-  public interface ITextGraphicViewEventSink
-  {
-    void EhView_BoldClick();
-    void EhView_ItalicClick();
-    void EhView_UnderlineClick();
-    void EhView_SupIndexClick();
-    void EhView_SubIndexClick();
-    void EhView_GreekClick();
-    void EhView_NormalClick();
-    void EhView_StrikeoutClick();
+		void InsertBeforeAndAfterSelectedText(string insbefore, string insafter);
 
-    void EhView_PreviewPanelPaint(System.Drawing.Graphics g);
-    void EhView_EditTextChanged();
-    void EhView_BackgroundStyleChanged();
-    void EhView_FontFamilyChanged();
-    void EhView_FontSizeChanged();
-    void EhView_TextFillBrushChanged();
+		void RevertToNormal();
+
+		void InvalidatePreviewPanel();
+	}
+
+	public interface ITextGraphicViewEventSink
+	{
+		void EhView_BoldClick();
+
+		void EhView_ItalicClick();
+
+		void EhView_UnderlineClick();
+
+		void EhView_SupIndexClick();
+
+		void EhView_SubIndexClick();
+
+		void EhView_GreekClick();
+
+		void EhView_NormalClick();
+
+		void EhView_StrikeoutClick();
+
+		void EhView_PreviewPanelPaint(System.Drawing.Graphics g);
+
+		void EhView_EditTextChanged();
+
+		void EhView_BackgroundStyleChanged();
+
+		void EhView_FontFamilyChanged();
+
+		void EhView_FontSizeChanged();
+
+		void EhView_TextFillBrushChanged();
+
 		void EhView_LineSpacingChanged();
-  }
+	}
 
-  #endregion
-  [UserControllerForObject(typeof(Altaxo.Graph.Gdi.Shapes.TextGraphic))]
-  [ExpectedTypeOfView(typeof(ITextGraphicView))]
-  class TextGraphicController : ITextGraphicViewEventSink, IMVCANController
-  {
-    UseDocument _useDocumentCopy;
-    TextGraphic _doc, _originalDoc;
-    ITextGraphicView _view;
+	#endregion Interfaces
 
-    XYPlotLayer m_Layer;
+	[UserControllerForObject(typeof(Altaxo.Graph.Gdi.Shapes.TextGraphic))]
+	[ExpectedTypeOfView(typeof(ITextGraphicView))]
+	internal class TextGraphicController : ITextGraphicViewEventSink, IMVCANController
+	{
+		private UseDocument _useDocumentCopy;
+		private TextGraphic _doc, _originalDoc;
+		private ITextGraphicView _view;
 
-    public TextGraphicController()
-    {
-    }
+		private XYPlotLayer m_Layer;
 
-    void Initialize(bool initDocument)
-    {
-      if (initDocument)
-      {
-        m_Layer = DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
-      }
+		private IMVCANController _locationController;
 
-      if (_view != null)
-      {
-        _view.BeginUpdate();
+		public TextGraphicController()
+		{
+		}
 
-        _view.SelectedBackground = _doc.Background;
+		private void Initialize(bool initDocument)
+		{
+			if (initDocument)
+			{
+				m_Layer = DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
 
-        _view.EditText = _doc.Text;
+				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+				Current.Gui.FindAndAttachControlTo(_locationController);
+			}
 
-        _view.SelectedPosition = _doc.Position;
-        _view.SelectedRotation = _doc.Rotation;
-				_view.SelectedShear = _doc.Shear;
-				_view.SelectedScaleX = _doc.ScaleX;
-				_view.SelectedScaleY = _doc.ScaleY;
+			if (_view != null)
+			{
+				_view.BeginUpdate();
 
-        // fill the font name combobox with all fonts
-        _view.SelectedFontFamily = _doc.Font.GdiFontFamily();
+				_view.SelectedBackground = _doc.Background;
 
-        _view.SelectedFontSize = _doc.Font.Size;
+				_view.EditText = _doc.Text;
+
+				// fill the font name combobox with all fonts
+				_view.SelectedFontFamily = _doc.Font.GdiFontFamily();
+
+				_view.SelectedFontSize = _doc.Font.Size;
 				_view.SelectedLineSpacing = _doc.LineSpacing;
 
-				_view.XAnchor = _doc.XAnchor;
-				_view.YAnchor = _doc.YAnchor;
+				// fill the font size combobox with reasonable values
+				//this.m_cbFontSize.Items.AddRange(new string[] { "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" });
+				//this.m_cbFontSize.Text = m_TextObject.Font.Size.ToString();
 
-        // fill the font size combobox with reasonable values
-        //this.m_cbFontSize.Items.AddRange(new string[] { "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" });
-        //this.m_cbFontSize.Text = m_TextObject.Font.Size.ToString();
+				// fill the color dialog box
+				_view.SelectedFontBrush = this._doc.TextFillBrush;
 
+				_view.LocationView = _locationController.ViewObject;
 
-        // fill the color dialog box
-        _view.SelectedFontBrush = this._doc.TextFillBrush;
+				_view.EndUpdate();
+			}
+		}
 
-        _view.EndUpdate();
-      }
-    }
+		#region ITextGraphicViewEventSink Members
 
-    #region ITextGraphicViewEventSink Members
+		public void EhView_BoldClick()
+		{
+			// insert \b( at beginning of selection and ) at the end of the selection
+			_view.InsertBeforeAndAfterSelectedText("\\b(", ")");
+		}
 
-    public void EhView_BoldClick()
-    {
-      // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\b(", ")");
-      
-    }
+		public void EhView_ItalicClick()
+		{
+			// insert \b( at beginning of selection and ) at the end of the selection
+			_view.InsertBeforeAndAfterSelectedText("\\i(", ")");
+		}
 
-    public void EhView_ItalicClick()
-    {
-      // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\i(", ")");
-      
-    }
+		public void EhView_UnderlineClick()
+		{
+			// insert \b( at beginning of selection and ) at the end of the selection
+			_view.InsertBeforeAndAfterSelectedText("\\u(", ")");
+		}
 
-    public void EhView_UnderlineClick()
-    {
-      // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\u(", ")");
-      
-    }
+		public void EhView_SupIndexClick()
+		{
+			// insert \b( at beginning of selection and ) at the end of the selection
+			_view.InsertBeforeAndAfterSelectedText("\\+(", ")");
+		}
 
-    public void EhView_SupIndexClick()
-    {
-      // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\+(", ")");
-      
-    }
+		public void EhView_SubIndexClick()
+		{
+			// insert \b( at beginning of selection and ) at the end of the selection
+			_view.InsertBeforeAndAfterSelectedText("\\-(", ")");
+		}
 
-    public void EhView_SubIndexClick()
-    {
-      // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\-(", ")");
-     
-    }
+		public void EhView_GreekClick()
+		{
+			// insert \b( at beginning of selection and ) at the end of the selection
+			_view.InsertBeforeAndAfterSelectedText("\\g(", ")");
+		}
 
-    public void EhView_GreekClick()
-    {
-      // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\g(", ")");
-      
-    }
+		public void EhView_NormalClick()
+		{
+			_view.RevertToNormal();
+		}
 
-    public void EhView_NormalClick()
-    {
-      _view.RevertToNormal();
-      
-    }
+		public void EhView_StrikeoutClick()
+		{
+			// insert \b( at beginning of selection and ) at the end of the selection
+			_view.InsertBeforeAndAfterSelectedText("\\s(", ")");
+		}
 
-    public void EhView_StrikeoutClick()
-    {
-      // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\s(", ")");
-      
-    }
-
-
-    public void EhView_PreviewPanelPaint(System.Drawing.Graphics g)
-    {
-      g.PageUnit = System.Drawing.GraphicsUnit.Point;
+		public void EhView_PreviewPanelPaint(System.Drawing.Graphics g)
+		{
+			g.PageUnit = System.Drawing.GraphicsUnit.Point;
 
 			g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 			g.FillRectangle(Brushes.Transparent, g.VisibleClipBounds);
 			g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 
-      // set position and rotation to zero
-      //    m_TextObject.Position=new PointF(0,0);
-      //    m_TextObject.Rotation = 0;
-      _doc.Paint(g, m_Layer, true);
+			// set position and rotation to zero
+			//    m_TextObject.Position=new PointF(0,0);
+			//    m_TextObject.Rotation = 0;
+			_doc.Paint(g, m_Layer, true);
 
-      // restore the original position and rotation values
-      //      m_TextObject.Position = new PointF(m_PositionX,m_PositionY);
-      //      m_TextObject.Rotation = _rotation;
-    }
+			// restore the original position and rotation values
+			//      m_TextObject.Position = new PointF(m_PositionX,m_PositionY);
+			//      m_TextObject.Rotation = _rotation;
+		}
 
-    public void EhView_EditTextChanged()
-    {
-      this._doc.Text = _view.EditText;
-      _view.InvalidatePreviewPanel();
-    }
+		public void EhView_EditTextChanged()
+		{
+			this._doc.Text = _view.EditText;
+			_view.InvalidatePreviewPanel();
+		}
 
-    public void EhView_BackgroundStyleChanged()
-    {
-      _doc.Background = _view.SelectedBackground;
-      _view.InvalidatePreviewPanel();
-    }
-
+		public void EhView_BackgroundStyleChanged()
+		{
+			_doc.Background = _view.SelectedBackground;
+			_view.InvalidatePreviewPanel();
+		}
 
 		public void EhView_LineSpacingChanged()
 		{
@@ -231,105 +238,99 @@ namespace Altaxo.Gui.Graph.Shapes
 			_view.InvalidatePreviewPanel();
 		}
 
-    public void EhView_FontFamilyChanged()
-    {
-      FontFamily ff = _view.SelectedFontFamily;
-      // make sure that regular style is available
-      if (ff.IsStyleAvailable(FontStyle.Regular))
-        this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Regular);
-      else if (ff.IsStyleAvailable(FontStyle.Bold))
+		public void EhView_FontFamilyChanged()
+		{
+			FontFamily ff = _view.SelectedFontFamily;
+			// make sure that regular style is available
+			if (ff.IsStyleAvailable(FontStyle.Regular))
+				this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Regular);
+			else if (ff.IsStyleAvailable(FontStyle.Bold))
 				this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Bold);
-      else if (ff.IsStyleAvailable(FontStyle.Italic))
-        this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Italic);
+			else if (ff.IsStyleAvailable(FontStyle.Italic))
+				this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Italic);
 
-      _view.InvalidatePreviewPanel();
-    }
+			_view.InvalidatePreviewPanel();
+		}
 
-    public void EhView_FontSizeChanged()
-    {
-      var newSize = _view.SelectedFontSize;
-      FontX oldFont = this._doc.Font;
-      this._doc.Font = oldFont.GetFontWithNewSize(newSize);
-      _view.InvalidatePreviewPanel();
+		public void EhView_FontSizeChanged()
+		{
+			var newSize = _view.SelectedFontSize;
+			FontX oldFont = this._doc.Font;
+			this._doc.Font = oldFont.GetFontWithNewSize(newSize);
+			_view.InvalidatePreviewPanel();
+		}
 
-    }
-    public void EhView_TextFillBrushChanged()
-    {
-      this._doc.TextFillBrush = _view.SelectedFontBrush;
-      _view.InvalidatePreviewPanel();
-    }
+		public void EhView_TextFillBrushChanged()
+		{
+			this._doc.TextFillBrush = _view.SelectedFontBrush;
+			_view.InvalidatePreviewPanel();
+		}
 
+		#endregion ITextGraphicViewEventSink Members
 
+		#region IMVCANController Members
 
-    #endregion
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args.Length == 0 || !(args[0] is TextGraphic))
+				return false;
+			_originalDoc = (TextGraphic)args[0];
+			_doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (TextGraphic)_originalDoc.Clone();
+			Initialize(true); // initialize always because we have to update the temporary variables
+			return true;
+		}
 
+		public UseDocument UseDocumentCopy
+		{
+			set { _useDocumentCopy = value; }
+		}
 
-    #region IMVCANController Members
+		#endregion IMVCANController Members
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args.Length == 0 || !(args[0] is TextGraphic))
-        return false;
-      _originalDoc = (TextGraphic)args[0];
-      _doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (TextGraphic)_originalDoc.Clone();
-      Initialize(true); // initialize always because we have to update the temporary variables
-      return true;
-    }
+		#region IMVCController Members
 
-    public UseDocument UseDocumentCopy
-    {
-      set { _useDocumentCopy = value; }
-    }
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-    #endregion
+				_view = value as ITextGraphicView;
 
-    #region IMVCController Members
+				Initialize(false);
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view != null)
-          _view.Controller = null;
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-        _view = value as ITextGraphicView;
+		public object ModelObject
+		{
+			get { return _originalDoc; }
+		}
 
-        Initialize(false);
+		#endregion IMVCController Members
 
-        if (_view != null)
-          _view.Controller = this;
-      }
-    }
+		#region IApplyController Members
 
-    public object ModelObject
-    {
-      get { return _originalDoc; }
-    }
+		public bool Apply()
+		{
+			if (!_locationController.Apply())
+				return false;
 
-    #endregion
+			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-    #region IApplyController Members
+			if (!object.ReferenceEquals(_originalDoc, _doc))
+				_originalDoc.CopyFrom(_doc);
 
-    public bool Apply()
-    {
-      _doc.Position = _view.SelectedPosition;
-      _doc.Rotation = _view.SelectedRotation;
-			_doc.Shear = _view.SelectedShear;
-			_doc.Scale = new PointD2D(_view.SelectedScaleX, _view.SelectedScaleY);
+			return true;
+		}
 
-			_doc.XAnchor = _view.XAnchor;
-			_doc.YAnchor = _view.YAnchor;
-
-      if(!object.ReferenceEquals(_originalDoc,_doc))
-        _originalDoc.CopyFrom(_doc);
-
-      return true;
-    }
-
-    #endregion
-  }
+		#endregion IApplyController Members
+	}
 }

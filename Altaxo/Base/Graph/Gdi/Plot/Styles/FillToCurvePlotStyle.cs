@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,28 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
-	using Graph.Plot.Groups;
-	using Plot.Groups;
-	using Plot.Data;
 	using Graph.Plot.Data;
+	using Graph.Plot.Groups;
+	using Plot.Data;
+	using Plot.Groups;
 
 	public class FillToCurvePlotStyle : IG2DPlotStyle
 	{
 		/// <summary>
 		/// Indicates whether the fill color is dependent (can be set by the ColorGroupStyle) or not.
 		/// </summary>
-		bool _independentFillColor = true;
+		private bool _independentFillColor = true;
 
 		/// <summary>
 		/// Brush to fill the area under the line. Can be null.
@@ -49,19 +50,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Indicates whether the frame color is dependent (can be set by the ColorGroupStyle) or not.
 		/// </summary>
-		bool _independentFrameColor = true; // true because the standard value is transparent
+		private bool _independentFrameColor = true; // true because the standard value is transparent
 
 		/// <summary>
 		/// Pen to enclose the path. Can be null.
 		/// </summary>
 		protected PenX _framePen;
 
-		bool _fillToPrevPlotItem = true;
-		bool _fillToNextPlotItem = true;
+		private bool _fillToPrevPlotItem = true;
+		private bool _fillToNextPlotItem = true;
 
 		[NonSerialized]
-
-		Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData> _cachedPaintOneRange;
+		private Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData> _cachedPaintOneRange;
 
 		[NonSerialized]
 		protected Main.IDocumentNode _parentObject;
@@ -70,6 +70,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected Main.EventSuppressor _changeEventSuppressor;
 
 		#region Constructor
+
 		public FillToCurvePlotStyle()
 		{
 			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
@@ -81,29 +82,32 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
-			CopyFrom(from, true);
+			CopyFrom(from, Main.EventFiring.Suppressed);
 		}
 
-		public void CopyFrom(FillToCurvePlotStyle from, bool suppressChangeEvent)
+		public void CopyFrom(FillToCurvePlotStyle from, Main.EventFiring eventFiring)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
 			var locker = _changeEventSuppressor.Suspend();
+			try
+			{
+				this._independentFillColor = from._independentFillColor;
+				this.FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
 
-			this._independentFillColor = from._independentFillColor;
-			this.FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
+				this._independentFrameColor = from._independentFrameColor;
+				this._framePen = null == from._framePen ? null : from._framePen.Clone();
 
-			this._independentFrameColor = from._independentFrameColor;
-			this._framePen = null == from._framePen ? null : from._framePen.Clone();
+				this._fillToPrevPlotItem = from._fillToPrevPlotItem;
+				this._fillToNextPlotItem = from._fillToNextPlotItem;
 
-			this._fillToPrevPlotItem = from._fillToPrevPlotItem;
-			this._fillToNextPlotItem = from._fillToNextPlotItem;
-
-
-			this._parentObject = from._parentObject;
-
-			_changeEventSuppressor.Resume(ref locker, suppressChangeEvent);
+				this._parentObject = from._parentObject;
+			}
+			finally
+			{
+				_changeEventSuppressor.Resume(ref locker, eventFiring);
+			}
 		}
 
 		public bool CopyFrom(object obj)
@@ -113,23 +117,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var from = obj as FillToCurvePlotStyle;
 			if (null != from)
 			{
-				CopyFrom(from, false);
+				CopyFrom(from, Main.EventFiring.Enabled);
 				return true;
 			}
 			return false;
 		}
 
-		#endregion
+		#endregion Constructor
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillToCurvePlotStyle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				SSerialize(obj, info);
 			}
+
 			public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (FillToCurvePlotStyle)obj;
@@ -143,9 +148,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				return SDeserialize(o, info, parent);
 			}
+
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle();
 
 				s._fillBrush = (BrushX)info.GetValue("Brush", s);
@@ -164,12 +169,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <para>Renamed: Pen in FramePen</para>
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillToCurvePlotStyle), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				SSerialize(obj, info);
 			}
+
 			public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (FillToCurvePlotStyle)obj;
@@ -185,9 +191,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				return SDeserialize(o, info, parent);
 			}
+
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle();
 
 				s._independentFillColor = info.GetBoolean("IndependentFillColor");
@@ -201,8 +207,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		#region Properties
 
@@ -307,7 +312,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
 		#region Change event handling
 
@@ -328,7 +333,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion
+		#endregion Change event handling
 
 		#region ICloneable Members
 
@@ -342,14 +347,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return new FillToCurvePlotStyle(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region IChangedEventSource Members
 
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
-		#endregion
+		#endregion IChangedEventSource Members
 
 		#region IChildChangedEventSink Members
 
@@ -359,7 +364,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				Changed(this, e);
 		}
 
-		#endregion
+		#endregion IChildChangedEventSink Members
 
 		#region IDocumentNode Members
 
@@ -381,10 +386,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region IG2DPlotStyle Members
 
@@ -432,7 +436,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
 				_cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData);
 			}
-
 		}
 
 		private void PaintFillToPrevPlotItem(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData)
@@ -463,7 +466,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set { _parentObject = (Main.IDocumentNode)value; }
 		}
 
-		#endregion
+		#endregion IG2DPlotStyle Members
 
 		#region Work
 
@@ -480,7 +483,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			PointF[] linepts = new PointF[range.Length];
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
 			int lastIdx = range.Length - 1;
-
 
 			// Try to find points with a similar x value on otherlinepoints
 			double firstLogicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
@@ -517,13 +519,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Array.Copy(previousData.PlotPointsInAbsoluteLayerCoordinates, minIdxFirst, otherLinePoints, 0, otherLinePoints.Length);
 			Array.Reverse(otherLinePoints);
 
-
 			// now paint this
 
 			GraphicsPath gp = new GraphicsPath();
 			var layerSize = layer.Size;
-
-
 
 			gp.StartFigure();
 			gp.AddLines(linepts);
@@ -541,10 +540,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			gp.Reset();
 		} // end function PaintOneRange
 
+		#endregion StraightConnection
 
-
-		#endregion
-
-		#endregion
+		#endregion Work
 	}
 }

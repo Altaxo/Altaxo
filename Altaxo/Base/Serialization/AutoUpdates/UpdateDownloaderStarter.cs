@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -38,7 +40,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// </summary>
 		public static void Run()
 		{
-			var updateSettings = Current.PropertyService.Get(Altaxo.Settings.AutoUpdateSettings.SettingsStoragePath, new Altaxo.Settings.AutoUpdateSettings());
+			var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());
 
 			if (!updateSettings.EnableAutoUpdates)
 				return;
@@ -50,15 +52,14 @@ namespace Altaxo.Serialization.AutoUpdates
 					return;
 			}
 
-
 			var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			string assemblyLocation = entryAssembly.Location;
 			string binPath = Path.GetDirectoryName(assemblyLocation);
 			string downLoadExe = Path.Combine(binPath, "AltaxoUpdateDownloader.exe");
 
-			var	args = string.Format("{0}\t{1}", PackageInfo.GetStableIdentifier(updateSettings.DownloadUnstableVersion), entryAssembly.GetName().Version);
+			var args = string.Format("{0}\t{1}", PackageInfo.GetStableIdentifier(updateSettings.DownloadUnstableVersion), entryAssembly.GetName().Version);
 
-			var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe,args);
+			var processInfo = new System.Diagnostics.ProcessStartInfo(downLoadExe, args);
 
 			if (updateSettings.ShowDownloadWindow)
 			{

@@ -320,6 +320,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\QuantityWithUnitList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\Resources\styledictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -372,7 +376,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\AxisScaleControl.xaml">
+    <Page Include="Gui\Graph\GraphicItemsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\GridPartitioningControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ItemLocationByGridControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\ItemLocationDirectControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\ScaleWithTicksControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -407,6 +427,14 @@
     <Page Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\HostLayerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\TickSpacingControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -484,7 +512,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LayerControl.xaml">
+    <Page Include="Gui\Graph\XYPlotLayerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -532,6 +560,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Main\PropertyHierarchyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Main\PropertyBagControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Serialization\Ascii\AsciiCharControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -560,21 +596,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Settings\AsciiAnalysisSettingsControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Settings\DocumentCultureSettingsControl.xaml">
+    <Page Include="Gui\Settings\CultureSettingsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Settings\SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Settings\UICultureSettingsControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Worksheet\PlotCommonColumnsControl.xaml">
       <SubType>Designer</SubType>
@@ -775,6 +803,9 @@
     <Compile Include="Gui\Common\ConditionalDocumentControl.xaml.cs">
       <DependentUpon>ConditionalDocumentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\QuantityWithUnitList.xaml.cs">
+      <DependentUpon>QuantityWithUnitList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\SingleChoiceRadioWrapPanel.cs" />
     <Compile Include="Gui\Common\DoubleUpDown.cs" />
     <Compile Include="Gui\Common\DecimalUpDown.cs" />
@@ -969,8 +1000,20 @@
     <Compile Include="Gui\Graph\AxisLinkControl.xaml.cs">
       <DependentUpon>AxisLinkControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\AxisScaleControl.xaml.cs">
-      <DependentUpon>AxisScaleControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\GraphicItemsControl.xaml.cs">
+      <DependentUpon>GraphicItemsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\GridPartitioningControl.xaml.cs">
+      <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ItemLocationByGridControl.xaml.cs">
+      <DependentUpon>ItemLocationByGridControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ItemLocationDirectControl.xaml.cs">
+      <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ScaleWithTicksControl.xaml.cs">
+      <DependentUpon>ScaleWithTicksControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs" />
     <Compile Include="Gui\Graph\BarGraphPlotStyleControl.xaml.cs">
@@ -997,6 +1040,13 @@
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml.cs">
       <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\HostLayerControl.xaml.cs">
+      <DependentUpon>HostLayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\TickSpacingControl.xaml.cs">
+      <DependentUpon>TickSpacingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Viewing\RenderTrigger.cs" />
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml.cs">
       <DependentUpon>XYZMeshedColumnPlotDataControl.xaml</DependentUpon>
     </Compile>
@@ -1055,8 +1105,8 @@
     <Compile Include="Gui\Graph\Shapes\ImageGraphicControl.xaml.cs">
       <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LayerControl.xaml.cs">
-      <DependentUpon>LayerControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\XYPlotLayerControl.xaml.cs">
+      <DependentUpon>XYPlotLayerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
@@ -1092,6 +1142,12 @@
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Main\PropertyHierarchyControl.xaml.cs">
+      <DependentUpon>PropertyHierarchyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Main\PropertyBagControl.xaml.cs">
+      <DependentUpon>PropertyBagControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Serialization\Ascii\AsciiCharControl.xaml.cs">
       <DependentUpon>AsciiCharControl.xaml</DependentUpon>
     </Compile>
@@ -1113,17 +1169,11 @@
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Settings\AsciiAnalysisSettingsControl.xaml.cs">
-      <DependentUpon>AsciiAnalysisSettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Settings\DocumentCultureSettingsControl.xaml.cs">
-      <DependentUpon>DocumentCultureSettingsControl.xaml</DependentUpon>
+    <Compile Include="Gui\Settings\CultureSettingsControl.xaml.cs">
+      <DependentUpon>CultureSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Settings\UICultureSettingsControl.xaml.cs">
-      <DependentUpon>UICultureSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\PlotCommonColumnsControl.xaml.cs">
       <DependentUpon>PlotCommonColumnsControl.xaml</DependentUpon>

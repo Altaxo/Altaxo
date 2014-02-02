@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-
-using Altaxo.Data;
-using Altaxo.Collections;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Serialization;
-using Altaxo.Calc;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
@@ -40,15 +40,17 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 	public interface ISpanTickSpacingView
 	{
 		double RelativePositionOfTick { get; set; }
+
 		bool ShowEndOrgRatio { get; set; }
 
-		double DivideBy { get;  set; }
+		double DivideBy { get; set; }
+
 		bool TransfoOperationIsMultiply { get; set; }
 	}
 
-	#endregion
+	#endregion Interfaces
 
-	[UserControllerForObject(typeof(SpanTickSpacing))]
+	[UserControllerForObject(typeof(SpanTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(ISpanTickSpacingView))]
 	public class SpanTickSpacingController : MVCANControllerBase<SpanTickSpacing, ISpanTickSpacingView>
 	{
@@ -60,7 +62,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.ShowEndOrgRatio = _doc.ShowEndOrgRatioInsteadOfDifference;
 				_view.DivideBy = _doc.TransformationDivider;
 				_view.TransfoOperationIsMultiply = _doc.TransformationOperationIsMultiply;
-
 			}
 		}
 

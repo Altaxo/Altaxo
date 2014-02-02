@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,14 +37,13 @@ namespace Altaxo.Collections
 	public class Boxed<T> : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IEditableObject
 	{
 		/// <summary>Event arg for the property changed event.</summary>
-		static readonly System.ComponentModel.PropertyChangedEventArgs _valueChangedEventArg = new System.ComponentModel.PropertyChangedEventArgs("Value");
+		private static readonly System.ComponentModel.PropertyChangedEventArgs _valueChangedEventArg = new System.ComponentModel.PropertyChangedEventArgs("Value");
 
 		/// <summary>The boxed value.</summary>
 		protected T _value;
 
 		/// <summary>Occurs when the boxed value changed.</summary>
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
 
 		/// <summary>
 		/// Gets or sets the value.
@@ -80,13 +103,11 @@ namespace Altaxo.Collections
 			return new Boxed<T>(val);
 		}
 
-
 		/// <summary>
 		/// Begins an edit on an object.
 		/// </summary>
 		public virtual void BeginEdit()
 		{
-
 		}
 
 		/// <summary>
@@ -94,7 +115,6 @@ namespace Altaxo.Collections
 		/// </summary>
 		public virtual void CancelEdit()
 		{
-
 		}
 
 		/// <summary>
@@ -102,7 +122,6 @@ namespace Altaxo.Collections
 		/// </summary>
 		public virtual void EndEdit()
 		{
-
 		}
 
 		public static IEnumerable<Boxed<T>> ToBoxedItems(IEnumerable<T> items)
@@ -129,7 +148,6 @@ namespace Altaxo.Collections
 				destination.Add(item.Value);
 		}
 
-
 		public static T[] ToUnboxedArray(ICollection<Boxed<T>> boxedItems)
 		{
 			var arr = new T[boxedItems.Count];
@@ -142,5 +160,4 @@ namespace Altaxo.Collections
 			return arr;
 		}
 	}
-
 }

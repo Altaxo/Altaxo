@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2012 Dr. Dirk Lellinger
@@ -18,24 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 #region Original Copyright
+
 // Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
-#endregion
 
+#endregion Original Copyright
+
+using Altaxo.Gui;
+using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
-using ICSharpCode.Core;
 
 namespace Altaxo.Main
 {
 	public class DefaultOptionPanelDescriptor : IOptionPanelDescriptor
 	{
-		string id = String.Empty;
-		List<IOptionPanelDescriptor> optionPanelDescriptors = null;
-		Altaxo.Gui.IMVCANController optionPanel = null;
+		private string id = String.Empty;
+		private List<IOptionPanelDescriptor> optionPanelDescriptors = null;
+		private IOptionPanel optionPanel = null;
 
 		public string ID
 		{
@@ -55,11 +60,11 @@ namespace Altaxo.Main
 			}
 		}
 
-		AddIn addin;
-		object owner;
-		string optionPanelPath;
+		private AddIn addin;
+		private object owner;
+		private string optionPanelPath;
 
-		public Altaxo.Gui.IMVCANController OptionPanel
+		public IOptionPanel OptionPanel
 		{
 			get
 			{
@@ -67,10 +72,10 @@ namespace Altaxo.Main
 				{
 					if (optionPanel == null)
 					{
-						optionPanel = (Altaxo.Gui.IMVCANController)addin.CreateObject(optionPanelPath);
+						optionPanel = (IOptionPanel)addin.CreateObject(optionPanelPath);
 						if (optionPanel != null)
 						{
-							optionPanel.InitializeDocument(null,owner);
+							optionPanel.Initialize(owner);
 						}
 					}
 					optionPanelPath = null;

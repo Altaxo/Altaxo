@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,27 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Collections;
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	public class NGBrowserTreeNode : NGTreeNode
 	{
-		public NGBrowserTreeNode() { }
-		public NGBrowserTreeNode(string txt) : base(txt) { }
+		public NGBrowserTreeNode()
+		{
+		}
+
+		public NGBrowserTreeNode(string txt)
+			: base(txt)
+		{
+		}
 
 		public ProjectBrowseItemImage Image;
 
@@ -46,22 +54,25 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 		public object ContextMenu;
+
 		public void SetContextMenuRecursively(object contextMenu)
 		{
 			ContextMenu = contextMenu;
 			foreach (NGBrowserTreeNode node in Nodes)
 				node.SetContextMenuRecursively(contextMenu);
 		}
-
 	}
 
 	public class BrowserListItem : SelectableListNode
 	{
-		public BrowserListItem(string name, object item, bool sel) : base(name, item, sel) { }
+		public BrowserListItem(string name, object item, bool sel)
+			: base(name, item, sel)
+		{
+		}
+
 		public new ProjectBrowseItemImage Image;
 		private DateTime _creationDate;
 
-		
 		public override int ImageIndex
 		{
 			get
@@ -77,7 +88,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			get { return _creationDate; }
 			set
 			{
-				var oldValue = _creationDate; 
+				var oldValue = _creationDate;
 				_creationDate = value;
 				if (oldValue != _creationDate)
 				{
@@ -98,17 +109,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
+		public enum SortKind { None, Name, CreationDate }
 
-	
-	
-
-		public enum  SortKind { None, Name, CreationDate }
 		public class Comparer : IComparer<SelectableListNode>
 		{
-			Tuple<SortKind, bool>[] _sort;
+			private Tuple<SortKind, bool>[] _sort;
+
 			public Comparer(SortKind sort, bool descending)
 			{
-				_sort = new Tuple<SortKind, bool>[] { new Tuple<SortKind,bool>(sort, descending) };
+				_sort = new Tuple<SortKind, bool>[] { new Tuple<SortKind, bool>(sort, descending) };
 			}
 
 			public Comparer(SortKind sort1, bool descending1, SortKind sort2, bool descending2)
@@ -124,20 +133,21 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 				// before doing the real comparison, we handle a special case that ensures that folders are always first
 				// if one of the both is a ProjectFolder, this folder is always "first", i.e. returns a -1
-				if ((xx.Tag is Altaxo.Main.ProjectFolder) ^  (yy.Tag is Altaxo.Main.ProjectFolder))
+				if ((xx.Tag is Altaxo.Main.ProjectFolder) ^ (yy.Tag is Altaxo.Main.ProjectFolder))
 					return (xx.Tag is Altaxo.Main.ProjectFolder) ? -1 : 1;
 
 				// now the "real" comparison
 
 				foreach (var tuple in _sort) // Tuple.Item1 is SortKind, Tuple.Item2 is descending
 				{
-					switch(tuple.Item1)
+					switch (tuple.Item1)
 					{
 						case SortKind.Name:
-							result = tuple.Item2 ?  string.Compare(y.Text, x.Text) : string.Compare(x.Text, y.Text);
+							result = tuple.Item2 ? string.Compare(y.Text, x.Text) : string.Compare(x.Text, y.Text);
 							break;
+
 						case SortKind.CreationDate:
-							result = tuple.Item2 ?  DateTime.Compare(yy._creationDate, xx._creationDate) : DateTime.Compare(xx._creationDate, yy._creationDate);
+							result = tuple.Item2 ? DateTime.Compare(yy._creationDate, xx._creationDate) : DateTime.Compare(xx._creationDate, yy._creationDate);
 							break;
 					}
 					if (0 != result)
@@ -173,7 +183,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		ClosedFolder = 1,
 		OpenFolder = 2,
 		Worksheet = 3,
-		Graph = 4
+		Graph = 4,
+		PropertyBag = 5
 	}
 
 	public enum ViewOnSelect
@@ -186,9 +197,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	public interface IGuiBrowserTreeNode
 	{
 		void OnNodeAdded(NGBrowserTreeNode node);
+
 		void OnNodeRemoved(NGBrowserTreeNode node);
+
 		void OnNodeMultipleChanges();
 	}
-
-	
 }

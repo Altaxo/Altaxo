@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
-	using Graph.Plot.Groups;
 	using Graph.Plot.Data;
-
-	using Plot.Groups;
+	using Graph.Plot.Groups;
 	using Plot.Data;
+	using Plot.Groups;
 
 	namespace XYPlotScatterStyles
 	{
@@ -54,7 +55,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			BarVert
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.Shape", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Shape), 1)]
 		public class ShapeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -63,9 +63,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				info.SetNodeContent(obj.ToString());
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(Shape), val, true);
 			}
@@ -92,9 +92,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				info.SetNodeContent(obj.ToString());
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(Style), val, true);
 			}
@@ -129,11 +129,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				SetToNextStyle(template, 1);
 			}
+
 			public void SetToNextStyle(ShapeAndStyle template, int steps)
 			{
 				int wraps;
 				SetToNextStyle(template, steps, out  wraps);
 			}
+
 			public void SetToNextStyle(ShapeAndStyle template, int step, out int wraps)
 			{
 				this.Shape = template.Shape;
@@ -148,7 +150,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// first increase the shape value,
 				// if this is not possible set shape to first shape, and increase the
 				// style value
-				// note that the first member of the shape enum is NoSymbol, which should not be 
+				// note that the first member of the shape enum is NoSymbol, which should not be
 				// used here
 
 				int nshapes = System.Enum.GetValues(typeof(XYPlotScatterStyles.Shape)).Length - 1;
@@ -187,21 +189,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				info.SetNodeContent(obj.ToString());
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(DropLine), val, true);
 			}
 		}
-
 	} // end of class XYPlotScatterStyles
-
-
 
 	[SerializationSurrogate(0, typeof(ScatterPlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class ScatterPlotStyle	:	IG2DPlotStyle,
+	public class ScatterPlotStyle : IG2DPlotStyle,
 		System.Runtime.Serialization.IDeserializationCallback
 	{
 		protected XYPlotScatterStyles.Shape _shape;
@@ -219,23 +218,28 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
 		[field: NonSerialized]
 		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+
 		/// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
 		[field: NonSerialized]
 		protected Func<int, Color> _cachedColorForIndexFunction;
+
 		[NonSerialized]
 		protected GraphicsPath _cachedPath;
+
 		[NonSerialized]
 		protected bool _cachedFillPath;
+
 		[NonSerialized]
 		protected BrushX _cachedFillBrush;
+
 		[NonSerialized]
 		protected object _parent;
 
 		[field: NonSerialized]
 		public event System.EventHandler Changed;
 
-
 		#region Serialization
+
 		/// <summary>Used to serialize the A2DPlotScatterStyle Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -255,6 +259,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("SymbolSize", s._symbolSize);
 				info.AddValue("RelativePenWidth", s._relativePenWidth);
 			}
+
 			/// <summary>
 			/// Deserializes the A2DPlotScatterStyle Version 0.
 			/// </summary>
@@ -276,10 +281,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 1)] // by accident this was never different from 0
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -315,8 +319,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Right))
 					s._dropLine.Add(CSPlaneID.Right);
 
-
-
 				return s;
 			}
 
@@ -333,7 +335,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 2)]
-		class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
+		private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -347,7 +349,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				*/
 			}
 
-
 			protected override ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ScatterPlotStyle s = base.SDeserialize(o, info, parent);
@@ -359,7 +360,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterPlotStyle), 3)]
-		class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -375,6 +376,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
 				info.AddValue("SkipFreq", s._skipFreq);
 			}
+
 			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle();
@@ -390,6 +392,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._skipFreq = info.GetInt32("SkipFreq");
 				return s;
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ScatterPlotStyle s = SDeserialize(o, info, parent);
@@ -400,9 +403,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				return s;
 			}
-
 		}
-
 
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
@@ -414,8 +415,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			SetCachedValues();
 			CreateEventChain();
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public bool CopyFrom(object obj)
 		{
@@ -424,13 +425,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var from = obj as ScatterPlotStyle;
 			if (null != from)
 			{
-				CopyFrom(from, false);
+				CopyFrom(from, Main.EventFiring.Enabled);
 				return true;
 			}
 			return false;
 		}
 
-		public void CopyFrom(ScatterPlotStyle from, bool suppressChangeEvent)
+		public void CopyFrom(ScatterPlotStyle from, Main.EventFiring eventFiring)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -446,7 +447,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._independentColor = from._independentColor;
 			this._independentSymbolSize = from._independentSymbolSize;
 
-
 			this._symbolSize = from._symbolSize;
 			this._relativePenWidth = from._relativePenWidth;
 			this._skipFreq = from._skipFreq;
@@ -456,13 +456,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._cachedFillBrush = null == from._cachedFillBrush ? null : (BrushX)from._cachedFillBrush.Clone();
 			this._parent = from._parent;
 
-			if (!suppressChangeEvent)
+			if (Main.EventFiring.Enabled == eventFiring)
 				OnChanged();
 		}
 
 		public ScatterPlotStyle(ScatterPlotStyle from)
 		{
-			CopyFrom(from, true);
+			CopyFrom(from, Main.EventFiring.Suppressed);
 			CreateEventChain();
 		}
 
@@ -481,7 +481,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			SetCachedValues();
 			CreateEventChain();
 		}
-
 
 		public ScatterPlotStyle()
 		{
@@ -526,10 +525,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				}
 			}
 		}
-
-
-
-
 
 		public XYPlotScatterStyles.Style Style
 		{
@@ -592,7 +587,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
 		public NamedColor Color
 		{
 			get { return this._pen.Color; }
@@ -602,7 +596,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._pen.Color = value;
 				SetCachedValues();
 
-				if(value!=oldValue)
+				if (value != oldValue)
 					OnChanged(); // Fire Changed event
 			}
 		}
@@ -621,8 +615,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					OnChanged();
 			}
 		}
-
-
 
 		public double SymbolSize
 		{
@@ -698,9 +690,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_cachedFillBrush = new BrushX(_pen.BrushHolder);
 		}
 
-
-
-
 		public object Clone()
 		{
 			return new ScatterPlotStyle(this);
@@ -712,45 +701,51 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			float size = (float)sized;
 			GraphicsPath gp = new GraphicsPath();
 
-
 			switch (sh)
 			{
 				case XYPlotScatterStyles.Shape.Square:
 					gp.AddRectangle(new RectangleF(-sizeh, -sizeh, size, size));
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.Circle:
 					gp.AddEllipse(-sizeh, -sizeh, size, size);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.UpTriangle:
 					gp.AddLine(0, -sizeh, 0.3301270189f * size, 0.5f * sizeh);
 					gp.AddLine(0.43301270189f * size, 0.5f * sizeh, -0.43301270189f * size, 0.5f * sizeh);
 					gp.CloseFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.DownTriangle:
 					gp.AddLine(-0.43301270189f * sizeh, -0.5f * sizeh, 0.43301270189f * size, -0.5f * sizeh);
 					gp.AddLine(0.43301270189f * size, -0.5f * sizeh, 0, sizeh);
 					gp.CloseFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.Diamond:
 					gp.AddLine(0, -sizeh, sizeh, 0);
 					gp.AddLine(sizeh, 0, 0, sizeh);
 					gp.AddLine(0, sizeh, -sizeh, 0);
 					gp.CloseFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.CrossPlus:
 					gp.AddLine(-sizeh, 0, sizeh, 0);
 					gp.StartFigure();
 					gp.AddLine(0, sizeh, 0, -sizeh);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.CrossTimes:
 					gp.AddLine(-sizeh, -sizeh, sizeh, sizeh);
 					gp.StartFigure();
 					gp.AddLine(-sizeh, sizeh, sizeh, -sizeh);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.Star:
 					gp.AddLine(-sizeh, 0, sizeh, 0);
 					gp.StartFigure();
@@ -761,10 +756,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					gp.AddLine(-sizeh, sizeh, sizeh, -sizeh);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.BarHorz:
 					gp.AddLine(-sizeh, 0, sizeh, 0);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Shape.BarVert:
 					gp.AddLine(0, -sizeh, 0, sizeh);
 					gp.StartFigure();
@@ -777,22 +774,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					gp.AddEllipse(-0.125f * sizeh, -0.125f * sizeh, 0.125f * size, 0.125f * size);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Style.Plus:
 					gp.AddLine(-sizeh, 0, sizeh, 0);
 					gp.StartFigure();
 					gp.AddLine(0, sizeh, 0, -sizeh);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Style.Times:
 					gp.AddLine(-sizeh, -sizeh, sizeh, sizeh);
 					gp.StartFigure();
 					gp.AddLine(-sizeh, sizeh, sizeh, -sizeh);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Style.BarHorz:
 					gp.AddLine(-sizeh, 0, sizeh, 0);
 					gp.StartFigure();
 					break;
+
 				case XYPlotScatterStyles.Style.BarVert:
 					gp.AddLine(0, -sizeh, 0, sizeh);
 					gp.StartFigure();
@@ -800,8 +801,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			return gp;
 		}
-		#region IChangedEventSource Members
 
+		#region IChangedEventSource Members
 
 		protected virtual void OnChanged()
 		{
@@ -812,7 +813,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				Changed(this, new EventArgs());
 		}
 
-		#endregion
+		#endregion IChangedEventSource Members
 
 		#region IChildChangedEventSink Members
 
@@ -822,7 +823,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				Changed(this, e);
 		}
 
-		#endregion
+		#endregion IChildChangedEventSink Members
 
 		#region I2DPlotItem Members
 
@@ -855,9 +856,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
-
-		#endregion
+		#endregion I2DPlotItem Members
 
 		public void Paint(Graphics g)
 		{
@@ -929,10 +928,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					foreach (CSPlaneID id in _dropLine)
 						layer.CoordinateSystem.DrawIsolineFromPointToPlane(g, this._pen, r3d, id);
 				}
-
-
 			} // end paint the drop style
-
 
 			// paint the scatter style
 			if (this.Shape != XYPlotScatterStyles.Shape.NoSymbol)
@@ -1037,7 +1033,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SkipFrequency; });
-
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -1066,10 +1061,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency = c; });
-
 		}
 
-		#endregion
+		#endregion IPlotStyle Members
 
 		#region IDocumentNode Members
 
@@ -1093,7 +1087,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 	}
 }
-

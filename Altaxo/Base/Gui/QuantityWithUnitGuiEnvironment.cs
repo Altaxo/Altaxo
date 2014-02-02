@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Units;
 
 namespace Altaxo.Gui
 {
@@ -36,32 +37,32 @@ namespace Altaxo.Gui
 	/// </summary>
 	public class QuantityWithUnitGuiEnvironment
 	{
-		static Dictionary<string, QuantityWithUnitGuiEnvironment> _registry = new Dictionary<string, QuantityWithUnitGuiEnvironment>();
+		private static Dictionary<string, QuantityWithUnitGuiEnvironment> _registry = new Dictionary<string, QuantityWithUnitGuiEnvironment>();
 
-		static ReadOnlyCollection<IUnit> _emptyUnitList = new ReadOnlyCollection<IUnit>(new List<IUnit>());
+		private static ReadOnlyCollection<IUnit> _emptyUnitList = new ReadOnlyCollection<IUnit>(new List<IUnit>());
 
 		/// <summary>
 		/// Units that will not change (thus, if the list is readonly, we can keep only a reference to the collection).
 		/// This are possible all the fixed units, like pt, mm, cm and so on.
 		/// </summary>
-		IEnumerable<IUnit> _fixedUnits;
+		private IEnumerable<IUnit> _fixedUnits;
 
 		/// <summary>
 		/// Units that can be added, depending on the situation. The most common use are relative units, like percent of graph, percent of layer and so on.
 		/// </summary>
-		ObservableCollection<IUnit> _additionalUnits;
+		private ObservableCollection<IUnit> _additionalUnits;
 
 		/// <summary>
 		/// Internal list where the units are sorted by its string length.
 		/// </summary>
-		List<IUnit> _unitsSortedByLengthDescending;
+		private List<IUnit> _unitsSortedByLengthDescending;
 
-		IPrefixedUnit _defaultUnit;
+		private IPrefixedUnit _defaultUnit;
 
-		IUnit _lastUsedUnit;
-		IUnit _lastUsedSIPrefix;
+		private IUnit _lastUsedUnit;
+		private IUnit _lastUsedSIPrefix;
 
-		int _numberOfDisplayedDigits = 5;
+		private int _numberOfDisplayedDigits = 5;
 
 		/// <summary>
 		/// Triggered when the number of digits that should be displayed (in Gui boxes) changed.
@@ -73,33 +74,28 @@ namespace Altaxo.Gui
 		/// </summary>
 		public event EventHandler DefaultUnitChanged;
 
-
-		
-
 		public QuantityWithUnitGuiEnvironment()
 			: this(null)
 		{
 		}
 
 		public QuantityWithUnitGuiEnvironment(IList<IUnit> fixedUnits)
-			: this(fixedUnits, new IUnit[] {})
+			: this(fixedUnits, new IUnit[] { })
 		{
 		}
 
-
 		public QuantityWithUnitGuiEnvironment(IList<IUnit> fixedUnits, IUnit additionalUnit)
-		: this(fixedUnits, new IUnit[]{additionalUnit})
+			: this(fixedUnits, new IUnit[] { additionalUnit })
 		{
 		}
 
 		public QuantityWithUnitGuiEnvironment(IList<IUnit> fixedUnits, IEnumerable<IUnit> additionalUnits)
 		{
 			_fixedUnits = fixedUnits ?? _emptyUnitList;
-		_additionalUnits = new ObservableCollection<IUnit>(additionalUnits);
-		CreateUnitListSortedByShortcutLengthDescending();
-		_additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
+			_additionalUnits = new ObservableCollection<IUnit>(additionalUnits);
+			CreateUnitListSortedByShortcutLengthDescending();
+			_additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
 		}
-
 
 		public QuantityWithUnitGuiEnvironment(QuantityWithUnitGuiEnvironment from, IEnumerable<IUnit> additionalUnits)
 		{
@@ -109,7 +105,7 @@ namespace Altaxo.Gui
 			_additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
 		}
 
-		void EhAdditionalUnits_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void EhAdditionalUnits_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
 			CreateUnitListSortedByShortcutLengthDescending();
 		}
@@ -201,8 +197,8 @@ namespace Altaxo.Gui
 
 		protected virtual void OnNumberOfDisplayedDigitsChanged()
 		{
-			if(null!=NumberOfDisplayedDigitsChanged)
-				NumberOfDisplayedDigitsChanged(this,EventArgs.Empty);
+			if (null != NumberOfDisplayedDigitsChanged)
+				NumberOfDisplayedDigitsChanged(this, EventArgs.Empty);
 		}
 
 		public static void RegisterEnvironment(string name, QuantityWithUnitGuiEnvironment env)
@@ -218,6 +214,5 @@ namespace Altaxo.Gui
 			else
 				return null;
 		}
-
 	}
 }

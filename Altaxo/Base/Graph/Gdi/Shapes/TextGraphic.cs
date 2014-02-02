@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 using System.Text.RegularExpressions;
-
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+	using Background;
+	using Graph.Plot.Data;
 	using Plot;
 	using Plot.Data;
-	using Graph.Plot.Data;
-	using Background;
-
-
-
 
 	/// <summary>
 	/// TextGraphics provides not only simple text on a graph,
@@ -52,68 +49,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected BrushX _textBrush = new BrushX(NamedColors.Black);
 		protected IBackgroundStyle _background = null;
 		protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
-		protected XAnchorPositionType _xAnchorType = XAnchorPositionType.Left;
-		protected YAnchorPositionType _yAnchorType = YAnchorPositionType.Top;
 
 		#region Cached or temporary variables
 
 		/// <summary>Hashtable where the keys are graphic paths giving the position of a symbol into the list, and the values are the plot items.</summary>
 		protected Dictionary<GraphicsPath, IGPlotItem> _cachedSymbolPositions = new Dictionary<GraphicsPath, IGPlotItem>();
-		StructuralGlyph _rootNode;
+
+		private StructuralGlyph _rootNode;
 		protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
 		protected bool _isMeasureInSync = false; // true when all items are measured
 		protected PointD2D _cachedTextOffset; // offset of text to left upper corner of outer rectangle
 		protected RectangleD _cachedExtendedTextBounds; // the text bounds extended by some margin around it
-		#endregion // Cached or temporary variables
 
+		#endregion Cached or temporary variables
 
 		#region Serialization
 
-		#region ForClipboard
-
-		protected TextGraphic(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			base.SetObjectData(obj, info, context, selector);
-
-			_text = info.GetString("Text");
-			_font = (FontX)info.GetValue("Font", typeof(FontX));
-			_textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
-			_background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
-			_lineSpacingFactor = info.GetSingle("LineSpacing");
-			_xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
-			_yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
-			return this;
-		}
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			base.GetObjectData(info, context);
-
-			info.AddValue("Text", _text);
-			info.AddValue("Font", _font);
-			info.AddValue("Brush", _textBrush);
-			info.AddValue("BackgroundStyle", _background);
-			info.AddValue("LineSpacing", _lineSpacingFactor);
-			info.AddValue("XAnchor", _xAnchorType);
-			info.AddValue("YAnchor", _yAnchorType);
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-		}
-
-		#endregion
-
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -132,13 +85,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddValue("YAnchor",s.m_YAnchorType);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic();
 				info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
 
-				// we have changed the meaning of rotation in the meantime, This is not handled in GetBaseValueEmbedded, 
+				// we have changed the meaning of rotation in the meantime, This is not handled in GetBaseValueEmbedded,
 				// since the former versions did not store the version number of embedded bases
 				//s._rotation = -s._rotation;
 
@@ -148,20 +101,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", typeof(BackgroundStyle));
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				info.GetSingle("ShadowLength");
-				s._xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
-				s._yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
+				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				s._location.LocalAnchorX = RADouble.NewRel(0.5 * (int)xAnchorType);
+				s._location.LocalAnchorY = RADouble.NewRel(0.5 * (int)yAnchorType);
 
 				return s;
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 2)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.TextGraphic", 2)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old type");
+				/*
 				TextGraphic s = (TextGraphic)obj;
 				info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
 
@@ -172,11 +128,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddValue("LineSpacing", s._lineSpacingFactor);
 				info.AddValue("XAnchor", s._xAnchorType);
 				info.AddValue("YAnchor", s._yAnchorType);
-
+				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic();
 				if (info.CurrentElementName == "BaseType") // that was included since 2006-06-20
 				{
@@ -187,45 +143,77 @@ namespace Altaxo.Graph.Gdi.Shapes
 					info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent); // before 2006-06-20, it was version 0 of the GraphicsObject
 				}
 
+				s._text = info.GetString("Text");
+				s._font = (FontX)info.GetValue("Font", typeof(FontX));
+				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
+				s._lineSpacingFactor = info.GetSingle("LineSpacing");
+				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
+				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				s._location.LocalAnchorX = RADouble.NewRel(0.5 * (int)xAnchorType);
+				s._location.LocalAnchorY = RADouble.NewRel(0.5 * (int)yAnchorType);
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2013-10-15 XAnchor and YAnchor now are superfluous and thus are removed
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (TextGraphic)obj;
+				info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
+
+				info.AddValue("Text", s._text);
+				info.AddValue("Font", s._font);
+				info.AddValue("Brush", s._textBrush);
+				info.AddValue("BackgroundStyle", s._background);
+				info.AddValue("LineSpacing", s._lineSpacingFactor);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (TextGraphic)o : new TextGraphic();
+
+				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
 
 				s._text = info.GetString("Text");
 				s._font = (FontX)info.GetValue("Font", typeof(FontX));
 				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
-				s._xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
-				s._yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
-
 				return s;
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
 
 		public TextGraphic()
+			: base(new ItemLocationDirectAutoSize())
 		{
 			_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
 		}
 
 		public TextGraphic(PointD2D graphicPosition, string text,
 			FontX textFont, NamedColor textColor)
+			: base(new ItemLocationDirectAutoSize())
 		{
-			this.SetPosition(graphicPosition);
+			this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
 			this.Font = textFont;
 			this.Text = text;
 			this.Color = textColor;
 		}
-
 
 		public TextGraphic(double posX, double posY,
 			string text, FontX textFont, NamedColor textColor)
 			: this(new PointD2D(posX, posY), text, textFont, textColor)
 		{
 		}
-
 
 		public TextGraphic(PointD2D graphicPosition,
 			string text, FontX textFont,
@@ -248,7 +236,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Copying
 
@@ -265,8 +253,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 					this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
 					this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
 					this._lineSpacingFactor = from._lineSpacingFactor;
-					_xAnchorType = from._xAnchorType;
-					_yAnchorType = from._yAnchorType;
 
 					// don't clone the cached items
 					this._isStructureInSync = false;
@@ -286,7 +272,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return new TextGraphic(this);
 		}
 
-		#endregion
+		#endregion Copying
 
 		#region Background
 
@@ -297,12 +283,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			double widthOfOne_n = Glyph.MeasureString(g, "n", _font).X;
 			double widthOfThree_M = Glyph.MeasureString(g, "MMM", _font).X;
 
-
 			double distanceXL = 0; // left distance bounds-text
 			double distanceXR = 0; // right distance text-bounds
 			double distanceYU = 0;   // upper y distance bounding rectangle-string
 			double distanceYL = 0; // lower y distance
-
 
 			if (this._background != null)
 			{
@@ -329,21 +313,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				distanceYL = (backgroundRect.Bottom - textHeight);
 			}
 
-			double xanchor = 0;
-			double yanchor = 0;
-			if (_xAnchorType == XAnchorPositionType.Center)
-				xanchor = size.X / 2.0;
-			else if (_xAnchorType == XAnchorPositionType.Right)
-				xanchor = size.X;
+			//var xanchor = _location.PivotX.GetValueRelativeTo(size.X);
+			//var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
 
-			if (_yAnchorType == YAnchorPositionType.Center)
-				yanchor = size.Y / 2.0;
-			else if (_yAnchorType == YAnchorPositionType.Bottom)
-				yanchor = size.Y;
+			// this._leftTop = new PointD2D(-xanchor, -yanchor);
+			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size, true);
 
-			this._bounds = new RectangleD(new PointD2D(-xanchor, -yanchor), size);
 			this._cachedTextOffset = new PointD2D(distanceXL, distanceYU);
-
 		}
 
 		public IBackgroundStyle Background
@@ -384,22 +360,26 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				switch (value)
 				{
-
 					case BackgroundStyle.BlackLine:
 						_background = new BlackLine();
 						break;
+
 					case BackgroundStyle.BlackOut:
 						_background = new BlackOut();
 						break;
+
 					case BackgroundStyle.DarkMarbel:
 						_background = new DarkMarbel();
 						break;
+
 					case BackgroundStyle.WhiteOut:
 						_background = new WhiteOut();
 						break;
+
 					case BackgroundStyle.Shadow:
 						_background = new RectangleWithShadow();
 						break;
+
 					case BackgroundStyle.None:
 						_background = null;
 						break;
@@ -409,7 +389,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		protected virtual void PaintBackground(Graphics g)
 		{
-			// Assumptions: 
+			// Assumptions:
 			// 1. the overall size of the structure must be measured before, i.e. bMeasureInSync is true
 			// 2. the graphics object was translated and rotated before, so that the paining starts at (0,0)
 
@@ -420,7 +400,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_background.Draw(g, _cachedExtendedTextBounds);
 		}
 
-		#endregion
+		#endregion Background
 
 		#region Properties
 
@@ -493,18 +473,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public XAnchorPositionType XAnchor
-		{
-			get { return _xAnchorType; }
-			set { _xAnchorType = value; }
-		}
-
-		public YAnchorPositionType YAnchor
-		{
-			get { return _yAnchorType; }
-			set { _yAnchorType = value; }
-		}
-
 		public double LineSpacing
 		{
 			get
@@ -529,11 +497,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
 		#region Interpreting and Painting
 
-		void InterpretText()
+		private void InterpretText()
 		{
 			var parser = new Altaxo_LabelV1();
 			parser.SetSource(_text);
@@ -542,23 +510,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			TreeWalker walker = new TreeWalker(_text);
 			StyleContext style = new StyleContext(_font, _textBrush);
-      style.BaseFontId = _font;
+			style.BaseFontId = _font;
 
 			_rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
 		}
 
-		void MeasureGlyphs(Graphics g, FontCache cache, object linkedObject)
+		private void MeasureGlyphs(Graphics g, FontCache cache, object linkedObject)
 		{
 			MeasureContext mc = new MeasureContext();
 			mc.FontCache = cache;
 			mc.LinkedObject = linkedObject;
-			mc.TabStop = Glyph.MeasureString(g,"MMMM", _font).X;
+			mc.TabStop = Glyph.MeasureString(g, "MMMM", _font).X;
 
 			if (null != _rootNode)
 				_rootNode.Measure(g, mc, 0);
 		}
 
-		void DrawGlyphs(Graphics g, DrawContext dc, double x, double y)
+		private void DrawGlyphs(Graphics g, DrawContext dc, double x, double y)
 		{
 			_rootNode.Draw(g, dc, x, y + _rootNode.ExtendAboveBaseline);
 		}
@@ -571,7 +539,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			return GetRectangularObjectOutline();
 		}
-
 
 		public override void Paint(Graphics g, object obj)
 		{
@@ -594,7 +561,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			using (FontCache fontCache = new FontCache())
 			{
-
 				if (!this._isMeasureInSync)
 				{
 					// this.MeasureStructure(g, obj);
@@ -610,18 +576,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 				g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
+				var bounds = Bounds;
 
 				Matrix transformmatrix = new Matrix();
-				transformmatrix.Translate((float)X, (float)Y);
-				transformmatrix.Rotate((float)(-_rotation));
+				transformmatrix.Translate((float)_location.AbsolutePivotPositionX, (float)_location.AbsolutePivotPositionY);
+				transformmatrix.Rotate((float)(-Rotation));
 				transformmatrix.Shear((float)Shear, 0);
 				transformmatrix.Scale((float)ScaleX, (float)ScaleY);
-				transformmatrix.Translate((float)_bounds.X, (float)_bounds.Y);
+				transformmatrix.Translate((float)bounds.X, (float)bounds.Y);
 
 				if (!bForPreview)
 				{
 					TransformGraphics(g);
-					g.TranslateTransform((float)_bounds.X, (float)_bounds.Y);
+					g.TranslateTransform((float)bounds.X, (float)bounds.Y);
 				}
 
 				// first of all paint the background
@@ -638,13 +605,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
+		#endregion Interpreting and Painting
 
 		#region Hit testing and handling
 
 		public static DoubleClickHandler PlotItemEditorMethod;
 		public static DoubleClickHandler TextGraphicsEditorMethod;
-
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
@@ -666,10 +632,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (null != result)
 				result.DoubleClick = TextGraphicsEditorMethod;
 			return result;
-
 		}
 
-		#endregion
+		#endregion Hit testing and handling
 
 		#region Deprecated classes
 
@@ -690,18 +655,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new NotImplementedException("This class is deprecated and no longer supported to serialize");
-				// info.SetNodeContent(obj.ToString());  
+				// info.SetNodeContent(obj.ToString());
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(BackgroundStyle), val, true);
 			}
 		}
 
-
-		#endregion
+		#endregion Deprecated classes
 
 		#region IRoutedPropertyReceiver Members
 
@@ -716,6 +680,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 						OnChanged();
 					}
 					break;
+
 				case "FontFamily":
 					{
 						var prop = (RoutedSetterProperty<string>)property;
@@ -741,16 +706,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				case "FontSize":
 					((RoutedGetterProperty<double>)property).Merge(this.Font.Size);
 					break;
+
 				case "FontFamily":
 					((RoutedGetterProperty<string>)property).Merge(this.Font.FontFamilyName);
 					break;
 			}
 		}
 
-		#endregion
+		#endregion IRoutedPropertyReceiver Members
 	}
 }
-
-
-
-

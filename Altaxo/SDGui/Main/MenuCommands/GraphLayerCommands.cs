@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Windows.Forms;
+#endregion Copyright
+
 using Altaxo;
-using Altaxo.Main;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
-using Altaxo.Gui.Graph;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Graph;
 using Altaxo.Gui.Scripting;
+using Altaxo.Main;
 using Altaxo.Scripting;
+using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-
-using ICSharpCode.Core;
-using ICSharpCode.Core.WinForms;
+using System.Windows.Forms;
 
 namespace Altaxo.Graph.Commands
 {
@@ -80,7 +81,6 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-
 	/// <summary>
 	/// Pastes a layer as new layer before the active layer.
 	/// </summary>
@@ -102,6 +102,18 @@ namespace Altaxo.Graph.Commands
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.PasteFromClipboardAsNewLayerAfterLayerNumber(ctrl.CurrentLayerNumber);
+		}
+	}
+
+	/// <summary>
+	/// Pastes a layer as new layer after the active layer.
+	/// </summary>
+	public class PasteNewLayerAsChild : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.EnsureValidityOfCurrentLayerNumber();
+			ctrl.Doc.PasteFromClipboardAsNewChildLayerOfLayerNumber(ctrl.CurrentLayerNumber);
 		}
 	}
 
@@ -151,7 +163,7 @@ namespace Altaxo.Graph.Commands
 			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 			if (null == ctrl)
 				return null;
-			var activeLayer = ctrl.Controller.ActiveLayer;
+			var activeLayer = ctrl.Controller.ActiveLayer as XYPlotLayer;
 			if (null == activeLayer)
 				return null;
 
@@ -161,7 +173,7 @@ namespace Altaxo.Graph.Commands
 			for (int i = 0; i < len; i++)
 			{
 				IGPlotItem pa = activeLayer.PlotItems.Flattened[i];
-				var item = new System.Windows.Controls.MenuItem() { Header=pa.ToString() };
+				var item = new System.Windows.Controls.MenuItem() { Header = pa.ToString() };
 				item.Click += EhWpfMenuItem_Clicked;
 				item.IsChecked = (i == actPA);
 				item.Tag = i;
@@ -170,7 +182,8 @@ namespace Altaxo.Graph.Commands
 
 			return items;
 		}
-		void EhWpfMenuItem_Clicked(object sender, System.Windows.RoutedEventArgs e)
+
+		private void EhWpfMenuItem_Clicked(object sender, System.Windows.RoutedEventArgs e)
 		{
 			var dmi = (System.Windows.Controls.MenuItem)sender;
 			int plotItemNumber = (int)dmi.Tag;
@@ -178,7 +191,7 @@ namespace Altaxo.Graph.Commands
 			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 			if (null == ctrl)
 				return;
-			var activeLayer = ctrl.Controller.ActiveLayer;
+			var activeLayer = ctrl.Controller.ActiveLayer as XYPlotLayer;
 			if (null == activeLayer)
 				return;
 
@@ -200,6 +213,4 @@ namespace Altaxo.Graph.Commands
 			}
 		}
 	}
-
-
 }

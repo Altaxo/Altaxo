@@ -195,6 +195,7 @@
     <Compile Include="Graph\ColorManagement\ColorSetExtensions.cs" />
     <Compile Include="Graph\ColorManagement\ColorSetManager.cs" />
     <Compile Include="Graph\ColorManagement\IColorSet.cs" />
+    <Compile Include="Graph\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\FontX.cs" />
     <Compile Include="Graph\FontXStyle.cs" />
     <Compile Include="Graph\Gdi\GdiFontManager.cs" />
@@ -209,12 +210,31 @@
     <Compile Include="Graph\Gdi\HatchBrushes\VerticalHatchBrush.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HatchBrushBase.cs" />
     <Compile Include="Graph\Gdi\HatchBrushes\HorizontalHatchBrush.cs" />
+    <Compile Include="Graph\Gdi\HostLayer.cs" />
+    <Compile Include="Graph\Gdi\ILayerItemPlaceHolder.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\DateTimeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\FreeLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBase.cs" />
+    <Compile Include="Graph\Gdi\Shapes\IGraphicBase.cs" />
+    <Compile Include="Graph\Gdi\XYPlotLayer_Serialization.cs" />
+    <Compile Include="Graph\ItemLocationByGrid.cs" />
+    <Compile Include="Graph\GridPartitioning.cs" />
+    <Compile Include="Graph\IItemLocation.cs" />
+    <Compile Include="Graph\ItemLocationDirect.cs" />
+    <Compile Include="Graph\ItemLocationDirectAutoSize.cs" />
     <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Graph\NamedColor.cs" />
     <Compile Include="Graph\NamedColors.cs" />
+    <Compile Include="Graph\RectangleExtensions.cs" />
+    <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
+    <Compile Include="Gui\Graph\GraphicItemsController.cs" />
+    <Compile Include="Gui\Graph\GridPartitioningController.cs" />
+    <Compile Include="Gui\Graph\ItemLocationByGridController.cs" />
+    <Compile Include="Gui\Graph\ItemLocationDirectController.cs" />
+    <Compile Include="Gui\Graph\HostLayerController.cs" />
+    <Compile Include="Gui\Graph\TickSpacingController.cs" />
+    <Compile Include="Gui\IOptionPanel.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
@@ -257,14 +277,31 @@
     <Compile Include="Gui\GuiAngleUnits.cs" />
     <Compile Include="Gui\GuiRelationUnits.cs" />
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
+    <Compile Include="Gui\Main\PropertyHierarchyController.cs" />
+    <Compile Include="Gui\Main\PropertyBagController.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiDocumentAnalysisOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiImportOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\SingleCharSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithoutTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithTabSeparationStrategyController.cs" />
-    <Compile Include="Gui\Settings\AsciiAnalysisSettingsController.cs" />
+    <Compile Include="Gui\Settings\AsciiAnalysisSettingsOptionPanel.cs" />
+    <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
+    <Compile Include="Gui\Settings\ClipboardGraphExportOptionPanel.cs" />
+    <Compile Include="Gui\Settings\CultureSettingsController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
+    <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
+    <Compile Include="Main\Properties\PropertyBagWithInformation.cs" />
+    <Compile Include="Main\Properties\PropertyBagInformation.cs" />
+    <Compile Include="Main\Properties\PropertyKey.cs" />
+    <Compile Include="Main\Properties\IPropertyBag.cs" />
+    <Compile Include="Main\Properties\IPropertyBagOwner.cs" />
+    <Compile Include="Main\Properties\ProjectFolderPropertyDocument.cs" />
+    <Compile Include="Main\Properties\ProjectFolderPropertyDocumentCollection.cs" />
+    <Compile Include="Main\Properties\PropertyBag.cs" />
+    <Compile Include="Main\Properties\PropertyHierarchy.cs" />
+    <Compile Include="Main\Properties\PropertyLevel.cs" />
+    <Compile Include="Main\Properties\PropertyKeyBase.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />
     <Compile Include="Main\Services\PropertyReflection\DisplayOrderAttribute.cs" />
     <Compile Include="Main\Services\PropertyReflection\ExpandableProperty.cs" />
@@ -275,8 +312,10 @@
     <Compile Include="Main\Services\PropertyReflection\PropertyCollection.cs" />
     <Compile Include="Main\TemporaryDisabler.cs" />
     <Compile Include="Root\CopyHelper.cs" />
+    <Compile Include="Root\PropertyExtensions.cs" />
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
+    <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
     <Compile Include="Worksheet\WorksheetViewLayout.cs" />
     <Content Include="AssemblyInfo.cs">
@@ -326,7 +365,7 @@
     <Compile Include="Calc\Regression\Nonlinear\LevMarAdapter.cs" />
     <Compile Include="Calc\Regression\Nonlinear\NonlinearFitDocument.cs" />
     <Compile Include="Calc\Regression\Nonlinear\ParameterSet.cs" />
-    <Compile Include="Calc\RelativeOrAbsoluteValue.cs">
+    <Compile Include="Root\RADouble.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\ScriptExecutionBase.cs">
@@ -381,8 +420,8 @@
     <Compile Include="Gui\Graph\Shapes\OpenPathShapeController.cs" />
     <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
     <Compile Include="Gui\Settings\AutoUpdateSettingsController.cs" />
-    <Compile Include="Gui\Settings\DocumentCultureSettingsController.cs" />
-    <Compile Include="Gui\Settings\UICultureSettingsController.cs" />
+    <Compile Include="Gui\Settings\DocumentCultureSettingsOptionPanel.cs" />
+    <Compile Include="Gui\Settings\UICultureSettingsOptionPanel.cs" />
     <Compile Include="Gui\Settings\SettingsController.cs" />
     <Compile Include="Gui\Worksheet\PlotCommonColumnsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
@@ -643,9 +682,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Settings\AutoUpdateSettings.cs" />
-    <Compile Include="Settings\DocumentCultureSettings.cs" />
-    <Compile Include="Settings\CultureSettingsBase.cs" />
-    <Compile Include="Settings\UICultureSettings.cs" />
+    <Compile Include="Settings\CultureSettings.cs" />
     <Compile Include="Worksheet\ColumnHeaderStyle.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -873,10 +910,6 @@
     <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphic.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerCollection.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerPositionAndSize.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerPositionType.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerSizeType.cs" />
     <Compile Include="Graph\ImageProxy.cs" />
     <Compile Include="Graph\LayerDataClipping.cs" />
     <Compile Include="Graph\Logical3D.cs" />
@@ -984,7 +1017,7 @@
     <Compile Include="Gui\ExpectedTypeOfView.cs" />
     <Compile Include="Gui\Graph\AxisLineStyleController.cs" />
     <Compile Include="Gui\Graph\AxisLinkController.cs" />
-    <Compile Include="Gui\Graph\AxisScaleController.cs" />
+    <Compile Include="Gui\Graph\ScaleWithTicksController.cs" />
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\ColorProviderBaseController.cs" />
     <Compile Include="Gui\Graph\ColorProviderController.cs" />
@@ -1003,7 +1036,7 @@
     <Compile Include="Gui\Graph\G2DPolarCSController.cs" />
     <Compile Include="Gui\Graph\GraphExportOptionsController.cs" />
     <Compile Include="Gui\Graph\GridPlaneController.cs" />
-    <Compile Include="Gui\Graph\LayerController.cs" />
+    <Compile Include="Gui\Graph\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\LayerPositionController.cs" />
     <Compile Include="Gui\Graph\LineScatterLayerContentsController.cs" />
     <Compile Include="Gui\Graph\LineScatterPlotDataController.cs" />

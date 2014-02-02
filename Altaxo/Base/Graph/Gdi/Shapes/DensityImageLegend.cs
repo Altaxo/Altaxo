@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	using Altaxo.Graph.Scales;
-	using Altaxo.Graph.Scales.Ticks;
-	using Altaxo.Graph.Gdi.Plot;
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi.Axis;
+	using Altaxo.Graph.Gdi.Plot;
+	using Altaxo.Graph.Scales;
+	using Altaxo.Graph.Scales.Ticks;
 
 	[Serializable]
 	public class DensityImageLegend : GraphicBase, Main.IChildChangedEventSink
 	{
-		const int _bitmapPixelsAcross = 2;
-		const int _bitmapPixelsAlong = 1024;
-
-
+		private const int _bitmapPixelsAcross = 2;
+		private const int _bitmapPixelsAlong = 1024;
 
 		/// <summary>
 		/// Axis styles for both sides of the density plot item.
@@ -49,78 +49,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected AxisStyleCollection _axisStyles;
 
 		// Cached members
-		Bitmap _bitmap;
+		private Bitmap _bitmap;
 
 		/// <summary>The proxy for the plot item this legend is intended for.</summary>
-		Altaxo.Main.RelDocNodeProxy _plotItemProxy;
+		private Altaxo.Main.RelDocNodeProxy _plotItemProxy;
 
-		DensityLegendArea _cachedArea;
-
+		private DensityLegendArea _cachedArea;
 
 		#region Serialization
 
-		#region Clipboard serialization
-
-		protected DensityImageLegend(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes EllipseGraphic Version 0.
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			DensityImageLegend s = this;
-			base.GetObjectData(info, context);
-			info.AddValue("IsOrientationVertical", IsOrientationVertical);
-			info.AddValue("IsScaleReversed", IsScaleReversed);
-			info.AddValue("Scale", ScaleWithTicks.Scale);
-			info.AddValue("TickSpacing", ScaleWithTicks.TickSpacing);
-			info.AddValue("AxisStyles", _axisStyles);
-		}
-
-
-		/// <summary>
-		/// Deserializes the EllipseGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty EllipseGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized EllipseGraphic.</returns>
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			DensityImageLegend s = (DensityImageLegend)base.SetObjectData(obj, info, context, selector);
-
-			bool isOrientationVertical = info.GetBoolean("IsOrientationVertical");
-			bool isScaleReversed = info.GetBoolean("IsScaleReversed");
-			var cachedScale = (NumericalScale)info.GetValue("Scale", typeof(NumericalScale));
-			var scaleTickSpacing = (TickSpacing)info.GetValue("TickSpacing", typeof(TickSpacing));
-			_axisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", typeof(AxisStyleCollection));
-			_axisStyles.ParentObject = this;
-			_cachedArea = new DensityLegendArea(Size, isOrientationVertical, isScaleReversed, cachedScale, scaleTickSpacing);
-			_axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
-
-			// now we should use the first plotitem that is a densityPlotItem that we can find
-
-
-			return s;
-		}
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImageLegend), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -137,7 +76,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				DensityImageLegend s = null != o ? (DensityImageLegend)o : new DensityImageLegend();
 				info.GetBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType, parent);
 
@@ -157,6 +95,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		private DensityImageLegend()
+			: base(new ItemLocationDirect())
 		{
 		}
 
@@ -165,19 +104,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_plotItemProxy.DocumentInstanceChanged += EhPlotItemProxyDocumentInstanceChanged;
 		}
 
-		#endregion
-
-
+		#endregion Serialization
 
 		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize)
+			: base(new ItemLocationDirect())
 		{
-			this._position = initialLocation;
-			this.SetSize(graphicSize.X, graphicSize.Y,true);
+			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
+			this.SetPosition(initialLocation, Main.EventFiring.Suppressed);
 
 			_plotItemProxy = new Main.RelDocNodeProxy();
 			WirePlotItemProxyEvents();
 			PlotItem = plotItem;
-
 
 			// _orientationIsVertical = true;
 			// _scaleIsReversed = false;
@@ -208,18 +145,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_axisStyles.Add(sy0);
 			_axisStyles.Add(sy1);
 
-
 			sx0.Title.Rotation = 90;
-			sx0.Title.XAnchor = XAnchorPositionType.Center;
-			sx0.Title.YAnchor = YAnchorPositionType.Bottom;
+			sx0.Title.Location.ParentAnchorX = RADouble.NewRel(0); // Left
+			sx0.Title.Location.ParentAnchorY = RADouble.NewRel(0.5); // Center
+			sx0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+			sx0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
 			sx0.Title.X = -Width / 3;
-			sx0.Title.Y = Height / 2;
+			sx0.Title.Y = 0;
 
-
-
-			sy0.Title.XAnchor = XAnchorPositionType.Center;
-			sy0.Title.YAnchor = YAnchorPositionType.Bottom;
-			sy0.Title.X = Width / 2;
+			sy0.Title.Location.ParentAnchorX = RADouble.NewRel(0.5); // Center
+			sy0.Title.Location.ParentAnchorY = RADouble.NewRel(0); // Top
+			sy0.Title.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+			sy0.Title.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
+			sy0.Title.X = 0;
 			sy0.Title.Y = sy0.Title.Height / 2;
 
 			// set the parent objects
@@ -247,7 +185,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					this._axisStyles.ParentObject = this;
 
 					this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
-					
+
 					if (null == _plotItemProxy)
 					{
 						_plotItemProxy = new Main.RelDocNodeProxy();
@@ -256,7 +194,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					this._plotItemProxy.CopyPathOnlyFrom(from._plotItemProxy, this);
 				}
 			}
-				return isCopied;
+			return isCopied;
 		}
 
 		public override object Clone()
@@ -292,7 +230,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-
 		public AxisStyleCollection AxisStyles
 		{
 			get
@@ -317,7 +254,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		void EhPlotItemStyleChanged(object sender, EventArgs e)
+		private void EhPlotItemStyleChanged(object sender, EventArgs e)
 		{
 			OnChanged();
 		}
@@ -338,6 +275,41 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
+		/// <summary>
+		/// Updates the internal transformation matrix to reflect the settings for position, rotation, scaleX, scaleY and shear. It is designed here by default so that
+		/// the local anchor point of the object is located at the world coordinates (0,0). The transformation matrix update can be overridden in derived classes so
+		/// that for instance the left upper corner of the object is located at (0,0).
+		/// </summary>
+		protected override void UpdateTransformationMatrix()
+		{
+			var locD = _location;
+			_transformation.SetTranslationRotationShearxScale(locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, -locD.Rotation, locD.ShearX, locD.ScaleX, locD.ScaleY);
+			_transformation.TranslatePrepend(locD.AbsoluteVectorPivotToLeftUpper.X, locD.AbsoluteVectorPivotToLeftUpper.Y);
+		}
+
+		/// <summary>
+		/// Transforms the graphics context is such a way, that the object can be drawn in local coordinates.
+		/// </summary>
+		/// <param name="g">Graphics context (should be saved beforehand).</param>
+		protected override void TransformGraphics(Graphics g)
+		{
+			g.MultiplyTransform(_transformation);
+		}
+
+		/// <summary>
+		/// Gets the bound of the object. The X and Y positions depend on the transformation model chosen for this graphic object: if the transformation takes into account the local anchor point,
+		/// then the X and Y of the bounds are always 0 (which is the case here).
+		/// </summary>
+		/// <value>
+		/// The bounds of the graphical object.
+		/// </value>
+		public override RectangleD Bounds
+		{
+			get
+			{
+				return new RectangleD(0, 0, Size.X, Size.Y);
+			}
+		}
 
 		/// <summary>
 		/// Get the object outline for arrangements in object world coordinates.
@@ -345,7 +317,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <returns>Object outline for arrangements in object world coordinates</returns>
 		public override GraphicsPath GetObjectOutlineForArrangements()
 		{
-			return GetRectangularObjectOutline();
+			var result = new GraphicsPath();
+			result.AddRectangle((RectangleF)Bounds);
+			return result;
 		}
 
 		public override void Paint(System.Drawing.Graphics g, object obj)
@@ -365,7 +339,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 			// Update the coordinate system size to meet the size of the graph item
-			_cachedArea.CoordinateSystem.UpdateAreaSize(Size);
+			_cachedArea.Size = Size;
+			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
 
 			Data.AltaxoVariant porg;
 			Data.AltaxoVariant pend;
@@ -407,14 +382,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var legendScale = (NumericalScale)ScaleWithTicks.Scale;
 			var legendTickSpacing = ScaleWithTicks.TickSpacing;
 
-			// We set the boundaries of our legend scale to the org and end of the z-scale of the density image item. 
+			// We set the boundaries of our legend scale to the org and end of the z-scale of the density image item.
 			legendScale.DataBounds.BeginUpdate();
 			legendScale.DataBounds.Reset();
 			legendScale.DataBounds.Add(originalZScale.OrgAsVariant);
 			legendScale.DataBounds.Add(originalZScale.EndAsVariant);
 			legendScale.DataBounds.EndUpdate();
 			legendScale.Rescale(); // and do a rescale to apply the changes to the boundaries
-
 
 			// Fill the bitmap
 
@@ -435,10 +409,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-
 			var graphicsState = g.Save();
 			TransformGraphics(g);
-
 
 			g.DrawImage(_bitmap,
 				new RectangleF(0, 0, (float)Size.X, (float)Size.Y),
@@ -447,10 +419,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_axisStyles.Paint(g, _cachedArea);
 
 			g.Restore(graphicsState);
-
 		}
 
-		bool EhAxisTitleRemove(IHitTestObject o)
+		private bool EhAxisTitleRemove(IHitTestObject o)
 		{
 			foreach (var axstyle in _axisStyles)
 			{
@@ -465,7 +436,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
 		{
-
 			var myHitTestData = htd.NewFromAdditionalTransformation(_transformation);
 
 			IHitTestObject result = null;
@@ -492,7 +462,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return false;
 		}
 
-
 		#region IChildChangedEventSink Members
 
 		public new void EhChildChanged(object child, EventArgs e)
@@ -500,18 +469,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 			OnChanged();
 		}
 
-		#endregion
-
-
+		#endregion IChildChangedEventSink Members
 
 		#region Inner classes
 
 		[Serializable]
-		class DensityLegendArea : IPlotArea
+		private class DensityLegendArea : IPlotArea
 		{
-			PointD2D _size;
-			ScaleCollection _scales;
-			CS.G2DCartesicCoordinateSystem _coordinateSystem;
+			private PointD2D _size;
+			private ScaleCollection _scales;
+			private CS.G2DCartesicCoordinateSystem _coordinateSystem;
 
 			public DensityLegendArea(PointD2D size, bool isXYInterchanged, bool isXReversed, Scale scale, TickSpacing tickSpacing)
 			{
@@ -562,9 +529,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public PointD2D Size
 			{
 				get { return _size; }
-				set { _size = value; }
+				set
+				{
+					var chg = _size != value;
+					_size = value;
+					if (chg)
+					{
+						_coordinateSystem.UpdateAreaSize(_size);
+					}
+				}
 			}
-
 
 			public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)
 			{
@@ -574,7 +548,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				r.RZ = 0;
 				return r;
 			}
-
 
 			public IEnumerable<CSLineID> AxisStyleIDs
 			{
@@ -589,11 +562,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				throw new NotImplementedException();
 			}
 
-			#endregion
+			#endregion IPlotArea Members
 		}
 
-
-		#endregion
-
+		#endregion Inner classes
 	}
 }

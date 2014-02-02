@@ -34,11 +34,7 @@ namespace Altaxo.Gui.Graph.Shapes
 {
 	public interface IShapeGroupView
 	{
-		PointD2D DocPosition { get; set; }
-		PointD2D DocSize { get; set; }
-		double DocRotation { get; set; }
-		double DocShear { get; set; }
-		PointD2D DocScale { get; set; }
+		object LocationView { set; }
 
 		void InitializeItemList(SelectableListNodeList list);
 
@@ -53,6 +49,9 @@ namespace Altaxo.Gui.Graph.Shapes
 	{
 		SelectableListNodeList _itemList;
 
+		private IMVCANController _locationController;
+
+
 		protected override void Initialize(bool initData)
 		{
 			if (initData)
@@ -64,36 +63,29 @@ namespace Altaxo.Gui.Graph.Shapes
 					var node = new SelectableListNode(d.GetType().ToString(), d, false);
 					_itemList.Add(node);
 				}
+
+				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+				Current.Gui.FindAndAttachControlTo(_locationController);
+
 			}
 
 			if (_view != null)
 			{
-				UpdateViewsPosSizeRotShearScale();
 				_view.InitializeItemList(_itemList);
+
+				_view.LocationView = _locationController.ViewObject;
+
 			}
 		}
 
-		void UpdateViewsPosSizeRotShearScale()
-		{
-			_view.DocPosition = _doc.Position;
-			_view.DocSize = _doc.Size;
-			_view.DocRotation = _doc.Rotation;
-			_view.DocShear = _doc.Shear;
-			_view.DocScale = _doc.Scale;
-		}
-
-
-
-
 		public override bool Apply()
 		{
-			_doc.Position = _view.DocPosition;
-			_doc.Size = _view.DocSize;
-			_doc.Rotation = _view.DocRotation;
-			_doc.Shear = _view.DocShear;
-			_doc.Scale = _view.DocScale;
+			if (!_locationController.Apply())
+				return false;
 
-			if (_useDocumentCopy)
+			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+
+			if (!object.ReferenceEquals(_doc, _originalDoc))
 				_originalDoc.CopyFrom(_doc);
 
 			return true;
@@ -113,6 +105,8 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		void EhEditSelectedItem()
 		{
+			_locationController.Apply();
+
 			var node = _itemList.FirstSelectedNode;
 			if (node == null)
 				return;
@@ -120,8 +114,15 @@ namespace Altaxo.Gui.Graph.Shapes
 			if (Current.Gui.ShowDialog(ref item, "Edit shape group item " + node.Text, true))
 			{
 				_doc.AdjustPosition();
-				UpdateViewsPosSizeRotShearScale();
+				UpdateLocationView();
 			}
+		}
+
+		private void UpdateLocationView()
+		{
+			_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+			Current.Gui.FindAndAttachControlTo(_locationController);
+			_view.LocationView = _locationController.ViewObject;
 		}
 	}
 }

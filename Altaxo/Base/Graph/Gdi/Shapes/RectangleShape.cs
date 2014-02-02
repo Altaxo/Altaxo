@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -32,62 +34,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 	{
 		#region Serialization
 
-		#region Clipboard serialization
-
-		protected RectangleShape(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes RectangleGraphic Version 0.
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			RectangleShape s = this;
-			base.GetObjectData(info, context);
-		}
-
-		/// <summary>
-		/// Deserializes the RectangleGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty RectangleGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized RectangleGraphic.</returns>
-		public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			RectangleShape s = (RectangleShape)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
-
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.RectangleGraphic", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleShape), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				RectangleShape s = (RectangleShape)obj;
 				info.AddBaseValueEmbedded(s, typeof(RectangleShape).BaseType);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				RectangleShape s = null != o ? (RectangleShape)o : new RectangleShape();
 				info.GetBaseValueEmbedded(s, typeof(RectangleShape).BaseType, parent);
 
@@ -95,96 +53,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-
-		#endregion
-
+		#endregion Serialization
 
 		#region Constructors
+
 		public RectangleShape()
+			: base(new ItemLocationDirect())
 		{
-		}
-
-		public RectangleShape(PointD2D graphicPosition)
-			:
-			this()
-		{
-			this.SetPosition(graphicPosition);
-		}
-
-		public RectangleShape(double posX, double posY)
-			:
-			this(new PointD2D(posX, posY))
-		{
-		}
-
-
-		public RectangleShape(PointD2D graphicPosition, PointD2D graphicSize)
-			:
-			this(graphicPosition)
-		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
-		}
-
-		public RectangleShape(double posX, double posY, PointD2D graphicSize)
-			:
-			this(new PointD2D(posX, posY), graphicSize)
-		{
-		}
-
-		public RectangleShape(double posX, double posY, double width, double height)
-			:
-			this(new PointD2D(posX, posY), new PointD2D(width, height))
-		{
-		}
-
-		public RectangleShape(PointD2D graphicPosition, double Rotation)
-			:
-			this()
-		{
-
-			this.SetPosition(graphicPosition);
-			this.Rotation = Rotation;
-		}
-
-		public RectangleShape(double posX, double posY, double Rotation)
-			:
-			this(new PointD2D(posX, posY), Rotation)
-		{
-		}
-
-		public RectangleShape(PointD2D graphicPosition, PointD2D graphicSize, double Rotation)
-			:
-			this(graphicPosition, Rotation)
-		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
-		}
-
-		public RectangleShape(double posX, double posY, PointD2D graphicSize, double Rotation)
-			:
-			this(new PointD2D(posX, posY), graphicSize, Rotation)
-		{
-		}
-
-		public RectangleShape(double posX, double posY, double width, double height, double Rotation)
-			:
-			this(new PointD2D(posX, posY), new PointD2D(width, height), Rotation)
-		{
-		}
-
-		static void Exchange(ref double x, ref double y)
-		{
-			double h = x;
-			x = y;
-			y = h;
-		}
-		public static RectangleShape FromLTRB(double left, double top, double right, double bottom)
-		{
-			if (left > right)
-				Exchange(ref left, ref right);
-			if (top > bottom)
-				Exchange(ref top, ref bottom);
-
-			return new RectangleShape(left, top, right - left, bottom - top);
 		}
 
 		public RectangleShape(RectangleShape from)
@@ -193,13 +68,35 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		#endregion
+		private static void Exchange(ref double x, ref double y)
+		{
+			double h = x;
+			x = y;
+			y = h;
+		}
+
+		public static RectangleShape FromLTRB(double left, double top, double right, double bottom)
+		{
+			if (left > right)
+				Exchange(ref left, ref right);
+			if (top > bottom)
+				Exchange(ref top, ref bottom);
+
+			var result = new RectangleShape();
+			result._location.SizeX = RADouble.NewAbs(right - left);
+			result._location.SizeY = RADouble.NewAbs(bottom - top);
+			result._location.PositionX = RADouble.NewAbs(left);
+			result._location.PositionY = RADouble.NewAbs(top);
+
+			return result;
+		}
+
+		#endregion Constructors
 
 		public override object Clone()
 		{
 			return new RectangleShape(this);
 		}
-
 
 		/// <summary>
 		/// Get the object outline for arrangements in object world coordinates.
@@ -210,24 +107,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetRectangularObjectOutline();
 		}
 
-
 		public override void Paint(Graphics g, object obj)
 		{
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);
 
-			var boundsF = (RectangleF)_bounds;
+			var bounds = this.Bounds;
+			var boundsF = (RectangleF)bounds;
 			if (Brush.IsVisible)
 			{
-				Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				Brush.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.FillRectangle(Brush, boundsF);
 			}
 
-			Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
-			g.DrawRectangle(Pen, (float)_bounds.X, (float)_bounds.Y, (float)_bounds.Width, (float)_bounds.Height);
+			Pen.SetEnvironment(boundsF, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
+			g.DrawRectangle(Pen, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
 			g.Restore(gs);
 		}
 	} // End Class
-
 } // end Namespace
-

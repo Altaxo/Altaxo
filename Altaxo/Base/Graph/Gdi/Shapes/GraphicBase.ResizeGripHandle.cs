@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,36 +19,45 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	public abstract partial class GraphicBase
 	{
+		/// <summary>
+		/// Single handle used to resize an object.
+		/// </summary>
 		protected class ResizeGripHandle : IGripManipulationHandle
 		{
-			static readonly PointF[] _outsideArrowPoints;
-			const float _arrowHShaft = 0.15f;
-			const float _arrowHWidth = 0.3f;
+			private static readonly PointF[] _outsideArrowPoints;
+			private const float _arrowHShaft = 0.15f;
+			private const float _arrowHWidth = 0.3f;
 
-			IHitTestObject _parent;
-			PointD2D _drawrPosition;
-			PointD2D _fixrPosition;
-			PointD2D _fixaPosition;
-			PointD2D _initialMousePosition;
-			PointD2D _initialSize;
-			TransformationMatrix2D _spanningHalfYRhombus;
-
+			private IHitTestObject _parent;
+			private PointD2D _drawrPosition;
+			private PointD2D _fixrPosition;
+			private PointD2D _fixaPosition;
+			private PointD2D _initialMousePosition;
+			private PointD2D _initialSize;
+			private TransformationMatrix2D _spanningHalfYRhombus;
+			private bool _hasMoved;
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
+			/// <summary>
+			/// Initializes a new instance of the <see cref="ResizeGripHandle"/> class.
+			/// </summary>
+			/// <param name="parent">The data for the object that is about to be resized.</param>
+			/// <param name="relPos">The relative position of the handle. A value of 0 designates left (x) or top (y). A value of 1 designates right (x) or bottom (y).</param>
+			/// <param name="spanningHalfYRhombus">The spanning half y rhombus.</param>
 			public ResizeGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
 			{
 				_parent = parent;
@@ -70,12 +80,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 				initialPosition = _parent.Transformation.InverseTransformPoint(initialPosition);
 				_initialMousePosition = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, initialPosition);
 
-
 				_initialSize = GraphObject.Size;
+				_hasMoved = false;
 			}
 
 			public bool Deactivate()
 			{
+				if (_hasMoved)
+					GraphObject.OnChanged();
+
 				return false;
 			}
 
@@ -85,11 +98,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var diff = GraphObject.ParentCoordinatesToLocalDifference(_fixaPosition, newPosition);
 				diff -= _initialMousePosition;
 
-				GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialSize);
+				GraphObject.SetBoundsFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff, _initialSize, Main.EventFiring.Suppressed);
+				_hasMoved = true;
 			}
 
 			#region IGripManipulationHandle Members
-
 
 			/// <summary>Draws the grip in the graphics context.</summary>
 			/// <param name="g">Graphics context.</param>
@@ -107,12 +120,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return Calc.RMath.IsInIntervalCC(point.X, -0.1, 1) && Calc.RMath.IsInIntervalCC(point.Y, -_arrowHWidth, _arrowHWidth);
 			}
 
-
-
-			#endregion
-
-
-
+			#endregion IGripManipulationHandle Members
 
 			static ResizeGripHandle()
 			{
@@ -127,10 +135,6 @@ namespace Altaxo.Graph.Gdi.Shapes
         new PointF(0,-_arrowHShaft)
       };
 			}
-
-
 		}
-
-
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,16 +29,16 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
-	using Ticks;
 	using Altaxo.Data;
+	using Ticks;
 
 	/// <summary>
 	/// Compound of a <see cref="Scale"/> and a <see cref="TickSpacing"/>.
 	/// </summary>
-	public class ScaleWithTicks : ICloneable, Main.IChangedEventSource
+	public class ScaleWithTicks : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
 	{
-		Scale _scale;
-		TickSpacing _tickSpacing;
+		private Scale _scale;
+		private TickSpacing _tickSpacing;
 
 		[field: NonSerialized]
 		public event Action<Scale, Scale> ScaleInstanceChanged;
@@ -44,10 +46,13 @@ namespace Altaxo.Graph.Scales
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
+		[NonSerialized]
+		protected object _parentObject;
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleWithTicks), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -63,23 +68,22 @@ namespace Altaxo.Graph.Scales
 				return s;
 			}
 
-
 			protected virtual ScaleWithTicks SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ScaleWithTicks s = null != o ? (ScaleWithTicks)o : new ScaleWithTicks();
 
 				// Note: both functions should not trigger actions on scale or tickspacing,
 				// so we use the settings function without triggering events
-				s.SetNewScale( (Scale)info.GetValue("Scale",s) );
-				s.SetNewTickSpacing( (TickSpacing)info.GetValue("TickSpacing", s) );
+				s.SetNewScale((Scale)info.GetValue("Scale", s));
+				s.SetNewTickSpacing((TickSpacing)info.GetValue("TickSpacing", s));
 
 				s._tickSpacing.FinalProcessScaleBoundaries(s._scale.OrgAsVariant, s._scale.EndAsVariant, s._scale);
 
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		private ScaleWithTicks()
 		{
@@ -91,25 +95,22 @@ namespace Altaxo.Graph.Scales
 			SetNewTickSpacing(CreateDefaultTicks(scale.GetType()));
 		}
 
-
 		public ScaleWithTicks(Scale scale, TickSpacing ticks)
 		{
 			SetNewScale(scale);
 			SetNewTickSpacing(ticks);
 		}
 
-
 		public ScaleWithTicks(ScaleWithTicks from)
 		{
 			SetNewScale(null == from._scale ? null : (Scale)from._scale.Clone());
-			SetNewTickSpacing(null==from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
+			SetNewTickSpacing(null == from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
 		}
 
 		public object Clone()
 		{
 			return new ScaleWithTicks(this);
 		}
-
 
 		public Scale Scale
 		{
@@ -129,7 +130,6 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-
 		private Scale SetNewScale(Scale value)
 		{
 			if (null != _scale)
@@ -143,6 +143,7 @@ namespace Altaxo.Graph.Scales
 			if (null != _scale)
 			{
 				_scale.Changed += EhScaleChanged;
+				_scale.ParentObject = this;
 			}
 
 			return oldValue;
@@ -156,7 +157,7 @@ namespace Altaxo.Graph.Scales
 			}
 			set
 			{
-				if(object.ReferenceEquals(_tickSpacing,value))
+				if (object.ReferenceEquals(_tickSpacing, value))
 					return;
 
 				SetNewTickSpacing(value);
@@ -176,6 +177,7 @@ namespace Altaxo.Graph.Scales
 			if (null != _tickSpacing)
 			{
 				_tickSpacing.Changed += EhTickSpacingChanged;
+				_tickSpacing.ParentObject = this;
 			}
 		}
 
@@ -193,7 +195,6 @@ namespace Altaxo.Graph.Scales
 				SetNewTickSpacing(tickSpacing);
 			}
 
-
 			if (null != oldScale) // then a new scale was used
 			{
 				OnScaleInstanceChanged(oldScale, _scale);
@@ -203,8 +204,6 @@ namespace Altaxo.Graph.Scales
 			{
 				UpdateIfTicksChanged();
 			}
-
-
 		}
 
 		protected virtual void OnScaleInstanceChanged(Scale oldValue, Scale newValue)
@@ -213,19 +212,17 @@ namespace Altaxo.Graph.Scales
 				ScaleInstanceChanged(oldValue, newValue);
 		}
 
-		void EhScaleChanged(object sender, EventArgs e)
+		private void EhScaleChanged(object sender, EventArgs e)
 		{
 			UpdateIfScaleChanged();
 		}
 
-		void EhTickSpacingChanged(object sender, EventArgs e)
+		private void EhTickSpacingChanged(object sender, EventArgs e)
 		{
 			UpdateIfTicksChanged();
 		}
 
-
-
-		void UpdateIfTicksChanged()
+		private void UpdateIfTicksChanged()
 		{
 			if (null != _scale)
 			{
@@ -234,9 +231,9 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		void UpdateIfScaleChanged()
+		private void UpdateIfScaleChanged()
 		{
-			if (null != _tickSpacing && null!=_scale)
+			if (null != _tickSpacing && null != _scale)
 			{
 				AltaxoVariant org = _scale.OrgAsVariant;
 				AltaxoVariant end = _scale.EndAsVariant;
@@ -254,13 +251,11 @@ namespace Altaxo.Graph.Scales
 					}
 
 					_scale.Changed += EhScaleChanged; // switch event from scale on again
-
 				}
 				_tickSpacing.FinalProcessScaleBoundaries(_scale.OrgAsVariant, _scale.EndAsVariant, _scale);
 				OnChanged();
 			}
 		}
-
 
 		protected void OnChanged()
 		{
@@ -268,10 +263,9 @@ namespace Altaxo.Graph.Scales
 				Changed(this, EventArgs.Empty);
 		}
 
-
 		#region Static functions
 
-		static Dictionary<System.Type, SortedDictionary<int, System.Type>> _scaleToTickSpacingTypes = new Dictionary<Type, SortedDictionary<int, Type>>();
+		private static Dictionary<System.Type, SortedDictionary<int, System.Type>> _scaleToTickSpacingTypes = new Dictionary<Type, SortedDictionary<int, Type>>();
 
 		public static void RegisterDefaultTicking(System.Type scaleType, System.Type tickSpacingType, int priority)
 		{
@@ -296,7 +290,7 @@ namespace Altaxo.Graph.Scales
 		static ScaleWithTicks()
 		{
 			RegisterDefaultTicking(typeof(DateTimeScale), typeof(DateTimeTickSpacing), 100);
-			
+
 			RegisterDefaultTicking(typeof(AngularDegreeScale), typeof(AngularDegreeTickSpacing), 100);
 
 			RegisterDefaultTicking(typeof(AngularRadianScale), typeof(AngularRadianTickSpacing), 100);
@@ -306,15 +300,29 @@ namespace Altaxo.Graph.Scales
 			RegisterDefaultTicking(typeof(Log10Scale), typeof(Log10TickSpacing), 100);
 
 			RegisterDefaultTicking(typeof(LinearScale), typeof(LinearTickSpacing), 100);
-
-
 		}
-		#endregion
+
+		#endregion Static functions
 
 		#region IChangedEventSource Members
 
+		#endregion IChangedEventSource Members
 
+		public object ParentObject
+		{
+			get
+			{
+				return _parentObject;
+			}
+			set
+			{
+				_parentObject = value;
+			}
+		}
 
-		#endregion
+		string Main.IDocumentNode.Name
+		{
+			get { throw new NotImplementedException(); }
+		}
 	}
 }

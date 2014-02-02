@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Text;
-using System.Collections.Generic;
+#endregion Copyright
 
 using Altaxo.Data;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Serialization
 {
@@ -35,7 +36,7 @@ namespace Altaxo.Serialization
 	public static class GUIConversion
 	{
 		/// <summary>Settings how the data entered by the user should be interpreted and how the data should be presented in the user interface.</summary>
-		static System.Globalization.CultureInfo _cultureSettings;
+		private static System.Globalization.CultureInfo _cultureSettings;
 
 		static GUIConversion()
 		{
@@ -43,23 +44,21 @@ namespace Altaxo.Serialization
 				Current.PropertyService.PropertyChanged += new Action<string>(EhPropertyService_PropertyChanged);
 		}
 
-		static void EhPropertyService_PropertyChanged(string key)
+		private static void EhPropertyService_PropertyChanged(string key)
 		{
-			if (key == Altaxo.Settings.UICultureSettings.SettingsStoragePath)
+			if (key == Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString)
 			{
-				_cultureSettings = Altaxo.Settings.UICultureSettings.UserDefault.Culture;
+				_cultureSettings = Current.PropertyService.GetValue<Altaxo.Settings.CultureSettings>(Altaxo.Settings.CultureSettings.PropertyKeyUICulture, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture;
 			}
 		}
 
 		public static System.Globalization.CultureInfo CultureSettings
 		{
-
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException("value");
 				_cultureSettings = value;
-
 			}
 		}
 
@@ -75,7 +74,6 @@ namespace Altaxo.Serialization
 			DateTime o;
 			return IsDateTime(s, out o);
 		}
-
 
 		/// <summary>
 		/// Is the provided string a date/time?
@@ -115,13 +113,12 @@ namespace Altaxo.Serialization
 			return TimeSpan.TryParse(s, _cultureSettings.DateTimeFormat, out val);
 		}
 
-
 		public static string ToString(TimeSpan o)
 		{
 			return o.ToString(String.Empty, _cultureSettings);
 		}
 
-		#endregion
+		#endregion DateTime
 
 		#region Double
 
@@ -135,7 +132,6 @@ namespace Altaxo.Serialization
 			double o;
 			return IsDouble(s, out o);
 		}
-
 
 		/// <summary>
 		/// Is the provided string a floating point value?
@@ -170,7 +166,6 @@ namespace Altaxo.Serialization
 				}
 			}
 		}
-
 
 		public static bool IsInt32OrNull(string s, out int? val)
 		{
@@ -265,7 +260,7 @@ namespace Altaxo.Serialization
 			return true;
 		}
 
-		#endregion
+		#endregion Double
 
 		#region Integer
 
@@ -338,7 +333,7 @@ namespace Altaxo.Serialization
 			return true;
 		}
 
-		#endregion
+		#endregion Integer
 
 		#region AltaxoVariant
 
@@ -354,11 +349,9 @@ namespace Altaxo.Serialization
 					stb.Append("; ");
 
 				stb.Append(v.ToString());
-
 			}
 			return stb.ToString();
 		}
-
 
 		public static bool TryParseMultipleAltaxoVariant(string s, out AltaxoVariant[] vals)
 		{
@@ -391,11 +384,13 @@ namespace Altaxo.Serialization
 			vals = result;
 			return true;
 		}
-		#endregion
+
+		#endregion AltaxoVariant
 
 		#region Length-Units (mm, cm, inch and so on)
 
-		static LengthUnit _lastLengthUnitUsed = LengthUnit.Point;
+		private static LengthUnit _lastLengthUnitUsed = LengthUnit.Point;
+
 		public static LengthUnit LastUsedLengthUnit
 		{
 			get
@@ -455,7 +450,6 @@ namespace Altaxo.Serialization
 				}
 			}
 
-
 			double v;
 			if (IsDouble(txt, out v))
 			{
@@ -468,7 +462,6 @@ namespace Altaxo.Serialization
 				return false;
 			}
 		}
-
 
 		/// <summary>
 		/// Get a length value from a text string.
@@ -483,7 +476,7 @@ namespace Altaxo.Serialization
 			return GetLengthMeasureValue(txt, ref _lastLengthUnitUsed, ref value);
 		}
 
-		#endregion
+		#endregion Length-Units (mm, cm, inch and so on)
 
 		#region Percent-Units
 
@@ -496,7 +489,6 @@ namespace Altaxo.Serialization
 		{
 			return GUIConversion.ToString(value * 100, "G5") + " %";
 		}
-
 
 		/// <summary>
 		/// Get a percentage value from a text string.
@@ -515,7 +507,6 @@ namespace Altaxo.Serialization
 				txt = txt.Substring(0, txt.Length - end.Length).TrimEnd();
 			}
 
-
 			double v;
 			if (IsDouble(txt, out v))
 			{
@@ -527,7 +518,8 @@ namespace Altaxo.Serialization
 				return false;
 			}
 		}
-		#endregion
+
+		#endregion Percent-Units
 
 		#region Selection lists
 
@@ -548,7 +540,6 @@ namespace Altaxo.Serialization
 			return list;
 		}
 
-
-		#endregion
+		#endregion Selection lists
 	}
 }

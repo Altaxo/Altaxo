@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
@@ -39,10 +41,29 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 	/// depending on which GraphTool is choosen by the user.</remarks>
 	public abstract class MouseStateHandler
 	{
+		protected struct POINT
+		{
+			public PointD2D RootLayerCoordinates;
+			public PointD2D LayerCoordinates;
+		}
+
 		/// <summary>Stores the mouse position of the last mouse up event.</summary>
 		protected Altaxo.Graph.PointD2D _positionLastMouseUpInMouseCoordinates;
+
 		/// <summary>Stores the mouse position of the last mouse down event.</summary>
 		protected Altaxo.Graph.PointD2D _positionLastMouseDownInMouseCoordinates;
+
+		/// <summary>Active layer at the time of using the tool.</summary>
+		protected HostLayer _cachedActiveLayer;
+
+		/// <summary>Transformation that can be used to transform root layer coordinates into the coordinates of the cached active layer.</summary>
+		protected TransformationMatrix2D _cachedActiveLayerTransformation;
+
+		/// <summary>Transformation that can be used to transform root layer coordinates into the coordinates of the cached active layer (here the Gdi version for efficiency).</summary>
+		protected Matrix _cachedActiveLayerTransformationGdi;
+
+		/// <summary>The current mouse position in root layer coordinates</summary>
+		protected PointD2D _positionCurrentMouseInRootLayerCoordinates;
 
 		public abstract Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType { get; }
 
@@ -54,7 +75,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
 		{
-
 		}
 
 		/// <summary>
@@ -77,7 +97,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		public virtual void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
 		{
 			_positionLastMouseDownInMouseCoordinates = position;
-
 		}
 
 		/// <summary>
@@ -88,7 +107,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
 		{
-
 		}
 
 		/// <summary>
@@ -99,9 +117,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
 		public virtual void OnDoubleClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
 		{
-
 		}
-
 
 		/// <summary>
 		/// Is called when the mouse state handler is deselected.
@@ -118,7 +134,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 		}
 
-
 		/// <summary>
 		/// This function is called if a key is pressed.
 		/// </summary>
@@ -128,8 +143,5 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			return false; // per default the key is not processed
 		}
-
 	}
-
-
 }

@@ -58,13 +58,15 @@ namespace Altaxo.Graph.Procedures
 		/// <returns></returns>
 		static string FillDataListFromGraphDocument(GraphDocument doc, List<List<DoubleColumn>> groupList)
 		{
-			if (doc.Layers.Count == 0)
+			if (doc.RootLayer.Layers.Count == 0)
 				return "Plot contains no layers and therefore no plot items";
 
 
-			for(int i=0;i<doc.Layers.Count;i++)
+			for(int i=0;i<doc.RootLayer.Layers.Count;i++)
 			{
-				FillDataListFromLayer(doc.Layers[i], groupList);
+				var xylayer = doc.RootLayer.Layers[i] as XYPlotLayer;
+				if(null!=xylayer)
+					FillDataListFromLayer(xylayer, groupList);
 			}
 
 			return null;

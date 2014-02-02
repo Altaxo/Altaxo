@@ -1,11 +1,35 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Globalization;
 
 namespace Altaxo.Serialization.Ascii
 {
+	using Altaxo.Main.Properties;
+
 	/// <summary>
 	/// Stores information about how to analyze an ASCII data file.
 	/// </summary>
@@ -16,13 +40,10 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		public static string SettingsStoragePath = "Altaxo.Options.Serialization.Ascii.DocumentAnalysisOptions";
 
+		public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions = new PropertyKey<AsciiDocumentAnalysisOptions>("2AD2EBB9-F4C6-4BD2-A71B-23974776F5DF", "Table\\AsciiAnalysisOptions", PropertyLevel.All, typeof(Altaxo.Data.DataTable), GetDefaultSystemOptions);
+
 		/// <summary>Default number of Ascii lines to analyze.</summary>
 		public const int DefaultNumberOfLinesToAnalyze = 30;
-
-		static AsciiDocumentAnalysisOptions _defaultUserOptions;
-
-		static AsciiDocumentAnalysisOptions _defaultSystemOptions;
-
 
 		/// <summary>Number of lines of the Ascii document to analyze.</summary>
 		private int _numberOfLinesToAnalyze;
@@ -33,11 +54,10 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>DateTime formats to test. Here, the DateTime formats are specified by cultures.</summary>
 		private HashSet<CultureInfo> _dateTimeFormatsToTest;
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiDocumentAnalysisOptions), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -52,17 +72,14 @@ namespace Altaxo.Serialization.Ascii
 					info.AddValue("e", cultureInfo.LCID);
 				info.CommitArray();
 
-
 				info.CreateArray("DateTimeFormatsToTest", s._dateTimeFormatsToTest.Count);
 				foreach (var cultureInfo in s._dateTimeFormatsToTest)
 					info.AddValue("e", cultureInfo.LCID);
 				info.CommitArray();
-
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (AsciiDocumentAnalysisOptions)o : new AsciiDocumentAnalysisOptions();
 
 				//  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
@@ -86,25 +103,34 @@ namespace Altaxo.Serialization.Ascii
 				}
 				info.CloseArray(count);
 
-
-
 				return s;
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
-
-		static AsciiDocumentAnalysisOptions()
+		public override string ToString()
 		{
-			_defaultSystemOptions = new AsciiDocumentAnalysisOptions();
-			InitializeDefaultSystemValues(_defaultSystemOptions);
+			var stb = new StringBuilder();
+			bool delOneAtEnd = false;
+			stb.AppendFormat("#Lines: {0} ", _numberOfLinesToAnalyze);
 
-			_defaultUserOptions = Current.PropertyService.Get<AsciiDocumentAnalysisOptions>(SettingsStoragePath, null);
-			if (_defaultUserOptions != null)
+			if (null != _numberFormatsToTest)
 			{
-				TestAndAdjustMembersToValidValues(_defaultUserOptions);
+				stb.Append("| ");
+				SortedSet<string> cu = new SortedSet<string>(_numberFormatsToTest.Select(x => x.ThreeLetterISOLanguageName));
+				foreach (var s in cu)
+				{
+					stb.Append(s);
+					stb.Append(",");
+					delOneAtEnd = true;
+				}
 			}
+
+			if (delOneAtEnd)
+				stb.Length -= 1;
+
+			return stb.ToString();
 		}
 
 		/// <summary>
@@ -151,69 +177,21 @@ namespace Altaxo.Serialization.Ascii
 		/// <returns>
 		/// A new object that is a copy of this instance.
 		/// </returns>
-		public object Clone()
+		public AsciiDocumentAnalysisOptions Clone()
 		{
 			return new AsciiDocumentAnalysisOptions(this);
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the user has entered special settings or is using the default settings.
+		/// Creates a new object that is a copy of the current instance.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if the user has entered special settings; otherwise, <c>false</c>.
-		/// </value>
-		public static bool UseCustomUserSettings
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
+		object ICloneable.Clone()
 		{
-			get
-			{
-				return null != _defaultUserOptions;
-			}
+			return new AsciiDocumentAnalysisOptions(this);
 		}
-
-		/// <summary>
-		/// Gets or sets the user's default settings for the options. If you set a <c>null</c> value, it is assumed that the default system settings should be used.
-		/// </summary>
-		/// <value>
-		/// The user's default settings for this <see cref="AsciiDocumentAnalysisOptions"/>. You always get a copy of the user default settings, thus you can change it without changing the user default settings.
-		/// </value>
-		public static AsciiDocumentAnalysisOptions UserDefault
-		{
-			get
-			{
-				if (null != _defaultUserOptions)
-					return new AsciiDocumentAnalysisOptions(_defaultUserOptions);
-				else
-					return new AsciiDocumentAnalysisOptions(_defaultSystemOptions);
-			}
-			set
-			{
-				if (null != value)
-				{
-					var userDefault = new AsciiDocumentAnalysisOptions(value);
-					TestAndAdjustMembersToValidValues(userDefault);
-					_defaultUserOptions = userDefault;
-				}
-				else
-				{
-					_defaultUserOptions = null;
-				}
-
-				Current.PropertyService.Set(AsciiDocumentAnalysisOptions.SettingsStoragePath, _defaultUserOptions);
-			}
-		}
-
-		/// <summary>
-		/// Gets the default system settings. This is intended for internal use in the <see cref="Altaxo.Gui.Settings.AsciiAnalysisSettingsController"/> dialog only.
-		/// To get the current default value that should be used for analysis of Ascii documents, use <see cref="UserDefault"/>.
-		/// </summary>
-		public static AsciiDocumentAnalysisOptions SystemDefault
-		{
-			get
-			{
-				return new AsciiDocumentAnalysisOptions(_defaultSystemOptions);
-			}
-		}
-
 
 		/// <summary>
 		/// Tests all member variables and adjusts them to valid values.
@@ -251,7 +229,12 @@ namespace Altaxo.Serialization.Ascii
 			options._dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.InstalledUICulture);
 		}
 
-	
+		protected static AsciiDocumentAnalysisOptions GetDefaultSystemOptions()
+		{
+			var options = new AsciiDocumentAnalysisOptions();
+			InitializeDefaultSystemValues(options);
+			return options;
+		}
 
 		/// <summary>
 		/// Gets or sets the number of lines used to analyze the structure of an ASCII data file.
@@ -273,7 +256,6 @@ namespace Altaxo.Serialization.Ascii
 			get { return _numberFormatsToTest; }
 		}
 
-
 		/// <summary>
 		/// Gets a set of cultures used to test whether an substring of text represents a number. You may add additional cultures to test, but note that this will increase the analyzing time.
 		/// </summary>
@@ -281,10 +263,5 @@ namespace Altaxo.Serialization.Ascii
 		{
 			get { return _dateTimeFormatsToTest; }
 		}
-
-
-
-
-
 	}
 }

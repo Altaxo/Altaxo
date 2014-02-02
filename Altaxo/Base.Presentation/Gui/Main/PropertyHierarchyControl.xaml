@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="Altaxo.Gui.Main.PropertyHierarchyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Label Content="Available properties" Grid.Column="0" Grid.Row="0" />
+		<ListView x:Name="_guiAvailablePropertyKeyList" Grid.Row="1" MouseDoubleClick="EhAvailablePropertyKeyListMouseDoubleClick">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn  Width="200" DisplayMemberBinding="{Binding Path=Text}">
+						<GridViewColumnHeader  Content="Name" Tag="Name" />
+					</GridViewColumn>
+					<GridViewColumn  Width="200" DisplayMemberBinding="{Binding Path=Text1}">
+						<GridViewColumnHeader  Content="Type" Tag="Type" />
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+		<Button Content="Add" Click="EhAddNewProperty" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4,0,4,0" />
+		<StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal">
+			<Label Content="Existing properties:   " />
+			<RadioButton x:Name="_guiShowEditablePropertiesOnly" Content="Show editable only  " VerticalAlignment="Center" Checked="EhShowEditablePropertiesOnly" />
+			<RadioButton x:Name="_guiShowAllProperties" Content="Show all properties  " VerticalAlignment="Center" Checked="EhShowAllProperties" />
+		</StackPanel>
+		<ListView x:Name="_guiPropertyList" Grid.Row="4" MouseDoubleClick="EhListViewMouseDoubleClick">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn x:Name="_listViewCol_Name" Width="200" DisplayMemberBinding="{Binding Path=Text}">
+						<GridViewColumnHeader x:Name="_listViewColHeader_Name" Content="Name" Tag="Name" />
+					</GridViewColumn>
+					<GridViewColumn x:Name="_listViewCol_Value" Width="200" DisplayMemberBinding="{Binding Path=Text2}">
+						<GridViewColumnHeader x:Name="_listViewColHeader_Value" Content="Value" Tag="Value" />
+					</GridViewColumn>
+					<GridViewColumn x:Name="_listViewCol_Origin" Width="200" DisplayMemberBinding="{Binding Path=Text3}">
+						<GridViewColumnHeader x:Name="_listViewColHeader_Origin" Content="Source" Tag="Source" />
+					</GridViewColumn>
+					<GridViewColumn x:Name="_listViewCol_Type" Width="100" DisplayMemberBinding="{Binding Path=Text1}">
+						<GridViewColumnHeader x:Name="_listViewColHeader_Type" Content="Type" Tag="Type" />
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+		<Button Content="Edit" Click="EhEditPropertyValue" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top" Margin="4,0,4,0" />
+		<Button Content="Del" Click="EhRemoveProperty" Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" Margin="4,0,4,0" />
+	</Grid>
+</UserControl>

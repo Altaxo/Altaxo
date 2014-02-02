@@ -55,8 +55,11 @@ namespace Altaxo.Graph.Procedures
 
       ctrl.EnsureValidityOfCurrentLayerNumber();
       ctrl.EnsureValidityOfCurrentPlotNumber();
+			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
+			if (null == xylayer || ctrl.CurrentPlotNumber < 0)
+				return "No active plot available";
 
-      IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
+      IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 
@@ -105,7 +108,11 @@ namespace Altaxo.Graph.Procedures
     {
       string[] result = new string[2]{String.Empty, String.Empty};
 
-      IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
+			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
+			if (null == xylayer || ctrl.CurrentPlotNumber < 0)
+				return result;
+
+      IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 
@@ -249,7 +256,9 @@ namespace Altaxo.Graph.Procedures
       IScalarFunctionDD plotfunction = new PolynomialFunction(fit.Parameter);
       XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
 
-      ctrl.ActiveLayer.PlotItems.Add(fittedCurve);
+			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
+			if (null == xylayer)
+      xylayer.PlotItems.Add(fittedCurve);
 
       return null;
     }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 using System.IO;
-
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -35,9 +36,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected ImageProxy _imageProxy;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.EmbeddedImageGraphic", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EmbeddedImageGraphic), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -45,24 +47,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType);
 				info.AddValue("Image", s._imageProxy);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				EmbeddedImageGraphic s = null != o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
 				info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType, parent);
-				s._imageProxy = (ImageProxy)info.GetValue("Image", s);
+				s.Image = (ImageProxy)info.GetValue("Image", s);
 				return s;
 			}
 		}
 
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-		}
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
 
@@ -72,12 +67,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-
 		public EmbeddedImageGraphic(PointD2D graphicPosition, ImageProxy startingImage)
 			:
 			this()
 		{
-			this.SetPosition(graphicPosition);
+			this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
 			this.Image = startingImage;
 		}
 
@@ -91,7 +85,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition, startingImage)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
+			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
 		}
 
 		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, ImageProxy startingImage)
@@ -99,6 +93,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this(new PointD2D(posX, posY), graphicSize, startingImage)
 		{
 		}
+
 		public EmbeddedImageGraphic(double posX, double posY, double width, double height, ImageProxy startingImage)
 			:
 			this(new PointD2D(posX, posY), new PointD2D(width, height), startingImage)
@@ -122,7 +117,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			this(graphicPosition, Rotation, startingImage)
 		{
-			this.SetSize(graphicSize.X, graphicSize.Y, true);
+			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
 		}
 
 		public EmbeddedImageGraphic(double posX, double posY, PointD2D graphicSize, double Rotation, ImageProxy startingImage)
@@ -151,19 +146,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var from = obj as EmbeddedImageGraphic;
 				if (null != from)
 				{
-					this._imageProxy = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
+					this.Image = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
 				}
 			}
 			return isCopied;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		public override object Clone()
 		{
 			return new EmbeddedImageGraphic(this);
 		}
-
 
 		public ImageProxy Image
 		{
@@ -174,15 +168,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 			set
 			{
 				_imageProxy = value;
+				PointD2D originalItemSize = new PointD2D(10, 10);
+				if (null != _imageProxy)
+				{
+					Image img = _imageProxy == null ? null : _imageProxy.GetImage();
+					if (null != img)
+						originalItemSize = new PointD2D((72.0 * img.Width / img.HorizontalResolution), (72.0 * img.Height / img.VerticalResolution));
+				}
+				((ItemLocationDirectAspectPreserving)_location).OriginalItemSize = originalItemSize;
 			}
 		}
 
-
 		public override PointD2D GetImageSizePt()
 		{
-			return this._imageProxy == null ? new PointD2D(1,1) : _imageProxy.Size;
+			return this._imageProxy == null ? new PointD2D(1, 1) : _imageProxy.Size;
 		}
-
 
 		public override Image GetImage()
 		{
@@ -198,18 +198,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (null != img)
 			{
-				if (this.AutoSize)
-				{
-					this.Width = (img.Width / img.HorizontalResolution) * g.DpiX;
-					this.Height = (img.Height / img.VerticalResolution) * g.DpiY;
-				}
+				var bounds = this.Bounds;
 
-				g.DrawImage(img, 0, 0, (float)Width, (float)Height);
-
+				g.DrawImage(img, (float)bounds.X, (float)bounds.Y, (float)bounds.Width, (float)bounds.Height);
 			}
 
 			g.Restore(gs);
 		}
-
 	} // End Class
 }

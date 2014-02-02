@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-using ICSharpCode.Core;
 
 namespace Altaxo.Main.Commands
 {
@@ -36,12 +37,11 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-
 	public class TestProjectLoading : AbstractMenuCommand
 	{
 		public override void Run()
 		{
-      Altaxo.Main.Commands.TestAllProjectsInFolder.VerifyOpeningOfDocumentsWithoutException();
+			Altaxo.Main.Commands.TestAllProjectsInFolder.VerifyOpeningOfDocumentsWithoutException();
 		}
 	}
 
@@ -54,4 +54,50 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
+	public class ShowUserSettings : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());
+			Current.Gui.ShowDialog(new object[] { ph }, "Edit user settings", false);
+		}
+	}
+
+	public class RegisterApplicationForCom : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Current.ComManager.RegisterApplicationForCom();
+		}
+	}
+
+	public class UnregisterApplicationForCom : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Current.ComManager.UnregisterApplicationForCom();
+		}
+	}
+
+	public class CopyDocumentAsComObjectToClipboard : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			{
+				Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+				if (null != ctrl)
+				{
+					var doc = ((Altaxo.Gui.Graph.Viewing.GraphController)ctrl.MVCController).Doc;
+
+					var comManager = (Com.ComManager)Current.ComManager;
+					//var dataObject = comManager.GetDocumentsComObjectForDocument(doc);
+
+					var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
+
+					if (null != dataObject)
+						System.Windows.Clipboard.SetDataObject(dataObject);
+				}
+			}
+		}
+	}
 }

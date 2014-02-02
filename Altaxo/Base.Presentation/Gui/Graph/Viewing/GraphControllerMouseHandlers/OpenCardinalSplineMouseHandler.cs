@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
@@ -45,23 +46,14 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected GraphControllerWpf _grac;
 
-		protected PointD2D _positionCurrentMouseInGraphCoordinates;
-
 		protected Altaxo.Gui.Graph.Viewing.GraphToolType NextMouseHandlerType = Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer;
 
 		protected double _tension;
 
-		protected struct POINT
-		{
-			public PointD2D GraphCoord;
-			public PointD2D LayerCoord;
-		}
-
 		protected List<POINT> _Points = new List<POINT>();
 		protected int _currentPoint;
 
-
-		#endregion
+		#endregion Member variables
 
 		public OpenCardinalSplineMouseHandler(GraphControllerWpf grac)
 		{
@@ -78,7 +70,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.SingleLineDrawing; }
 		}
 
-
 		/// <summary>
 		/// Handles the drawing of a straight single line.
 		/// </summary>
@@ -89,10 +80,17 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnClick(position, e);
 
+			if (0 == _currentPoint)
+			{
+				_cachedActiveLayer = _grac.ActiveLayer;
+				_cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
+				_cachedActiveLayerTransformationGdi = (Matrix)_cachedActiveLayerTransformation;
+			}
+
 			// get the page coordinates (in Point (1/72") units)
-			var graphCoord = _positionCurrentMouseInGraphCoordinates;
+			var rootLayerCoord = _positionCurrentMouseInRootLayerCoordinates;
 			// with knowledge of the current active layer, calculate the layer coordinates from them
-			var layerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(graphCoord);
+			var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
 			if (e.ChangedButton == MouseButton.Right)
 			{
@@ -100,18 +98,16 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 			else
 			{
-				_Points.Add(new POINT() { LayerCoord = layerCoord, GraphCoord = graphCoord });
+				_Points.Add(new POINT() { LayerCoordinates = layerCoord, RootLayerCoordinates = rootLayerCoord });
 				_currentPoint++;
 			}
-
 		}
-
 
 		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
 		{
 			base.OnMouseMove(position, e);
 
-			_positionCurrentMouseInGraphCoordinates = _grac.ConvertMouseToGraphCoordinates(position);
+			_positionCurrentMouseInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
 
 			ModifyCurrentMousePrintAreaCoordinate();
 
@@ -132,11 +128,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				case Key.Escape:
 					FinishDrawing();
 					return true;
+
 				case Key.OemPlus:
 					_tension *= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
 					_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 					return true;
+
 				case Key.OemMinus:
 					_tension /= 2;
 					Current.DataDisplay.WriteOneLine(string.Format("Tension now set to {0}", _tension));
@@ -157,8 +155,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 				if (bShiftKey && _currentPoint > 0)
 				{
-					double x = _positionCurrentMouseInGraphCoordinates.X - _Points[_currentPoint - 1].GraphCoord.X;
-					double y = _positionCurrentMouseInGraphCoordinates.Y - _Points[_currentPoint - 1].GraphCoord.Y;
+					double x = _positionCurrentMouseInRootLayerCoordinates.X - _Points[_currentPoint - 1].RootLayerCoordinates.X;
+					double y = _positionCurrentMouseInRootLayerCoordinates.Y - _Points[_currentPoint - 1].RootLayerCoordinates.Y;
 
 					double r = Math.Sqrt(x * x + y * y);
 					double d = Math.Atan2(y, x);
@@ -169,12 +167,11 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					x = r * Math.Cos(d);
 					y = r * Math.Sin(d);
 
-					_positionCurrentMouseInGraphCoordinates.X = (x + _Points[_currentPoint - 1].GraphCoord.X);
-					_positionCurrentMouseInGraphCoordinates.Y = (y + _Points[_currentPoint - 1].GraphCoord.Y);
+					_positionCurrentMouseInRootLayerCoordinates.X = (x + _Points[_currentPoint - 1].RootLayerCoordinates.X);
+					_positionCurrentMouseInRootLayerCoordinates.Y = (y + _Points[_currentPoint - 1].RootLayerCoordinates.Y);
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Draws the temporary line(s) from the first point to the mouse.
@@ -184,14 +181,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			base.AfterPaint(g);
 
-
 			PointF[] pts = new PointF[_Points.Count + 1];
 			for (int i = 0; i < _Points.Count; i++)
-				pts[i] = (PointF)_Points[i].GraphCoord;
-			pts[_Points.Count] = (PointF)_positionCurrentMouseInGraphCoordinates;
+				pts[i] = (PointF)_Points[i].RootLayerCoordinates;
+			pts[_Points.Count] = (PointF)_positionCurrentMouseInRootLayerCoordinates;
 
-			if(pts.Length>=2)
-			g.DrawCurve(Pens.Blue, pts, (float)_tension);
+			if (pts.Length >= 2)
+				g.DrawCurve(Pens.Blue, pts, (float)_tension);
 
 			/*
 
@@ -212,14 +208,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (_Points.Count >= 2)
 			{
-				var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoord);
+				var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoordinates);
 				var go = new OpenCardinalSpline(pts, _tension);
 				_grac.ActiveLayer.GraphObjects.Add(go);
 			}
 
 			_grac.InvalidateCachedGraphImageAndRepaintOffline();
-
 		}
-
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2013 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,22 +31,62 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+	public interface IObservableList<T> : IList<T>, INotifyCollectionChanged
+	{
+		/// <summary>
+		/// Moves the item at the old index to the new index.
+		/// </summary>
+		/// <param name="oldIndex">The old index.</param>
+		/// <param name="newIndex">The new index.</param>
+		void Move(int oldIndex, int newIndex);
+	}
+
+	/// <summary>
+	/// Determines the behavior when an item is inserted in the PartitionableList
+	/// </summary>
+	public enum PartitionableListAddBehavior
+	{
+		/// <summary>If there are items in the partial view, the new item is added to the parent list immediately after the last item of the partial view. If the partial view is empty, the new item is added to the parent list as the last item.</summary>
+		KeepTogether_AddLastIfEmpty,
+
+		/// <summary>If there are items in the partial view, the new item is added to the parent list immediately after the last item of the partial view. If the partial view is empty, the new item is inserted in the parent list at index 0.</summary>
+		KeepTogether_AddFirstIfEmpty,
+
+		/// <summary>If there are items in the partial view, the new item is added to the parent list as the last item. If the partial view is empty, the new item is added to the parent list as the last item.</summary>
+		AddLast_AddLastIfEmpty,
+
+		/// <summary>If there are items in the partial view, the new item is added to the parent list as the last item. If the partial view is empty, the new item is inserted in the parent list at index 0.</summary>
+		AddLast_AddFirstIfEmpty
+	}
+
 	public partial class PartitionableList<T> : System.Collections.ObjectModel.ObservableCollection<T>
 	{
-		private class PartialView<M> : IList<M>
+		#region PartialViewBase
+
+		/// <summary>
+		/// We had to split PartialView into a non-generic base class and the generic class itself.
+		/// By that it is possible to safely cast to PartialViewBase whenever it is neccessary, whereas a cast to PartialViewBase&lt;T&gt; may fail because
+		/// it is infact a PartialViewBase&lt;M&gt; type.
+		/// </summary>
+		protected class PartialViewBase
 		{
-			PartitionableList<M> _collection;
-			public Func<M, bool> _selectionCriterium;
-			public List<int> _itemIndex;
+			protected internal PartitionableList<T> _collection;
+			protected internal Func<T, bool> _selectionCriterium;
+			protected internal List<int> _itemIndex;
 
-
-			protected internal PartialView(PartitionableList<M> list, Func<M, bool> selectionCriterium)
+			protected internal PartialViewBase(PartitionableList<T> list, Func<T, bool> selectionCriterium)
 			{
 				_collection = list;
 				_selectionCriterium = selectionCriterium;
 				_itemIndex = new List<int>();
-			}
 
+				// initial filling of the list
+				for (int i = 0; i < _collection.Count; ++i)
+				{
+					if (selectionCriterium(_collection[i]))
+						_itemIndex.Add(i);
+				}
+			}
 
 			/// <summary>
 			/// Finds the item in the list that is equal to <paramref name="value"/>.
@@ -93,6 +135,64 @@ namespace Altaxo.Collections
 				}
 			}
 
+			public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+			public virtual void OnNotifyCollectionChanged()
+			{
+				var eventCall = CollectionChanged;
+				if (null != eventCall)
+					eventCall(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+			}
+		}
+
+		#endregion PartialViewBase
+
+		protected class PartialView<M> : PartialViewBase, IObservableList<M> where M : T
+		{
+			protected Action<M> _actionBeforeInsertion;
+			private PartitionableListAddBehavior _addBehavior = PartitionableListAddBehavior.KeepTogether_AddLastIfEmpty;
+
+			protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium)
+				: base(list, selectionCriterium)
+			{
+			}
+
+			protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium, Action<M> actionBeforeInsertion)
+				: base(list, selectionCriterium)
+			{
+				_actionBeforeInsertion = actionBeforeInsertion;
+			}
+
+			/// <summary>
+			/// Gets or sets a property that determines at which position in the parent's list an item is placed when it is added to the <see cref="PartialView"/>;
+			/// </summary>
+			/// <value>
+			/// The behavior when an item is added to this view.
+			/// </value>
+			public PartitionableListAddBehavior AddBehavior
+			{
+				get
+				{
+					return _addBehavior;
+				}
+				set
+				{
+					_addBehavior = value;
+				}
+			}
+
+			public void Move(int oldIndex, int newIndex)
+			{
+				if (oldIndex < 0 || oldIndex >= _itemIndex.Count)
+					throw new ArgumentOutOfRangeException("newIndex");
+				if (newIndex < 0 || newIndex >= _itemIndex.Count)
+					throw new ArgumentOutOfRangeException("newIndex");
+
+				int o = _itemIndex[oldIndex];
+				int n = _itemIndex[newIndex];
+				_collection.Move(o, n);
+			}
+
 			#region IList implementations
 
 			public int IndexOf(M item)
@@ -129,6 +229,10 @@ namespace Altaxo.Collections
 				{
 					insertPoint = _itemIndex[index];
 				}
+
+				if (null != _actionBeforeInsertion)
+					_actionBeforeInsertion(item);
+
 				_collection.Insert(insertPoint, item);
 			}
 
@@ -142,12 +246,15 @@ namespace Altaxo.Collections
 			{
 				get
 				{
-					return _collection[_itemIndex[index]];
+					return (M)_collection[_itemIndex[index]];
 				}
 				set
 				{
 					if (!_selectionCriterium(value))
 						throw new ArgumentException("item does not fulfill the selection criterion");
+
+					if (null != _actionBeforeInsertion)
+						_actionBeforeInsertion(value);
 
 					_collection[_itemIndex[index]] = value;
 				}
@@ -158,13 +265,22 @@ namespace Altaxo.Collections
 				if (!_selectionCriterium(item))
 					throw new ArgumentException("item to insert does not fulfill the selection criterion");
 
+				if (null != _actionBeforeInsertion)
+					_actionBeforeInsertion(item);
+
 				if (_itemIndex.Count == 0)
 				{
-					_collection.Add(item);
+					if (_addBehavior == PartitionableListAddBehavior.KeepTogether_AddFirstIfEmpty || _addBehavior == PartitionableListAddBehavior.AddLast_AddFirstIfEmpty)
+						_collection.Insert(0, item);
+					else
+						_collection.Add(item);
 				}
 				else
 				{
-					_collection.Insert(_itemIndex[_itemIndex.Count - 1] + 1, item);
+					if (_addBehavior == PartitionableListAddBehavior.KeepTogether_AddLastIfEmpty || _addBehavior == PartitionableListAddBehavior.KeepTogether_AddFirstIfEmpty)
+						_collection.Insert(_itemIndex[_itemIndex.Count - 1] + 1, item);
+					else
+						_collection.Add(item);
 				}
 			}
 
@@ -179,7 +295,6 @@ namespace Altaxo.Collections
 					// don't use locks here, because after every RemoveAt the _itemIndex is updated
 					while (_itemIndex.Count > 0)
 					{
-
 						int j = _itemIndex[_itemIndex.Count - 1];
 						_collection.RemoveAt(j);
 					}
@@ -199,7 +314,7 @@ namespace Altaxo.Collections
 			public void CopyTo(M[] array, int arrayIndex)
 			{
 				for (int i = 0; i < _itemIndex.Count; ++i)
-					array[i + arrayIndex] = _collection[_itemIndex[i]];
+					array[i + arrayIndex] = (M)_collection[_itemIndex[i]];
 			}
 
 			public int Count
@@ -229,7 +344,7 @@ namespace Altaxo.Collections
 			public IEnumerator<M> GetEnumerator()
 			{
 				foreach (int j in _itemIndex)
-					yield return _collection[j];
+					yield return (M)_collection[j];
 			}
 
 			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -238,8 +353,7 @@ namespace Altaxo.Collections
 					yield return _collection[j];
 			}
 
-			#endregion
-
+			#endregion IList implementations
 		}
 	}
 }

@@ -1,31 +1,42 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Settings
 {
+	using Altaxo.Main.Properties;
+
 	/// <summary>
 	/// Maintains the settings for the Altaxo auto update feature.
 	/// </summary>
-	public class AutoUpdateSettings
+	public class AutoUpdateSettings : Main.ICopyFrom
 	{
-		/// <summary>Name, under which this setting is stored in the Altaxo settings.</summary>
-		public const string SettingsStoragePath = "Altaxo.Options.AutoUpdates";
-
-		/// <summary>Initializes a new instance of the <see cref="AutoUpdateSettings"/> class with default values.</summary>
-		public AutoUpdateSettings()
-		{
-			EnableAutoUpdates = true;
-			InstallAtShutdown = true;
-#if DEBUG
-			DownloadUnstableVersion = true;
-#endif
-
-			ConfirmInstallation = true;
-			ShowInstallationWindow = true;
-			InstallationWindowClosingTime = int.MaxValue;
-		}
+		public static readonly PropertyKey<AutoUpdateSettings> PropertyKeyAutoUpdate = new PropertyKey<AutoUpdateSettings>("0E8C6ED2-32AF-4CE7-9FF6-1DE298DB0D2D", "AutoUpdate", PropertyLevel.Application);
 
 		/// <summary>Gets or sets a value indicating whether to globally enable auto updates or not.</summary>
 		/// <value>If <see langword="true"/>, auto updates are enabled. If <see langword="false"/>, auto updates are disabled.</value>
@@ -69,11 +80,10 @@ namespace Altaxo.Settings
 
 		public int InstallationWindowClosingTime { get; set; }
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AutoUpdateSettings), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -89,6 +99,7 @@ namespace Altaxo.Settings
 				info.AddValue("ShowInstallationWindow", s.ShowInstallationWindow);
 				info.AddValue("InstallationWindowClosingTime", s.InstallationWindowClosingTime);
 			}
+
 			protected virtual AutoUpdateSettings SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (o == null ? new AutoUpdateSettings() : (AutoUpdateSettings)o);
@@ -108,15 +119,63 @@ namespace Altaxo.Settings
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
 
+		#endregion Serialization
 
-		#endregion
+		/// <summary>Initializes a new instance of the <see cref="AutoUpdateSettings"/> class with default values.</summary>
+		public AutoUpdateSettings()
+		{
+			EnableAutoUpdates = true;
+			InstallAtShutdown = true;
+#if DEBUG
+			DownloadUnstableVersion = true;
+#endif
 
+			ConfirmInstallation = true;
+			ShowInstallationWindow = true;
+			InstallationWindowClosingTime = int.MaxValue;
+		}
 
+		public AutoUpdateSettings(AutoUpdateSettings from)
+		{
+			this.CopyFrom(from);
+		}
+
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as AutoUpdateSettings;
+			if (null != from)
+			{
+				EnableAutoUpdates = from.EnableAutoUpdates;
+				DownloadUnstableVersion = from.DownloadUnstableVersion;
+				DownloadIntervalInDays = from.DownloadIntervalInDays;
+				ShowDownloadWindow = from.ShowDownloadWindow;
+				InstallAtStartup = from.InstallAtStartup;
+				InstallAtShutdown = from.InstallAtShutdown;
+				ConfirmInstallation = from.ConfirmInstallation;
+				ShowInstallationWindow = from.ShowInstallationWindow;
+				InstallationWindowClosingTime = from.InstallationWindowClosingTime;
+
+				return true;
+			}
+			return false;
+		}
+
+		public AutoUpdateSettings Clone()
+		{
+			return new AutoUpdateSettings(this);
+		}
+
+		object ICloneable.Clone()
+		{
+			return new AutoUpdateSettings(this);
+		}
 	}
 }

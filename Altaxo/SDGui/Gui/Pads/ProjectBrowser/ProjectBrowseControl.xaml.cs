@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using ICSharpCode.Core;
+using ICSharpCode.Core.Presentation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -33,10 +38,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.ComponentModel;
-
-using ICSharpCode.Core;
-using ICSharpCode.Core.Presentation;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -45,11 +46,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	/// </summary>
 	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView, ICSharpCode.SharpDevelop.Gui.IPadContent
 	{
-		ProjectBrowseController _controller;
+		private ProjectBrowseController _controller;
 
-		ContextMenu _treeNodeContextMenu;
-
-
+		private ContextMenu _treeNodeContextMenu;
 
 		public ProjectBrowseControl()
 		{
@@ -63,6 +62,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
 			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.StandardWorksheet"));
 			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PlotLineScatter"));
+			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PropertyBag"));
 
 			ContextMenu mnu1 = MenuService.CreateContextMenu(this._controller, "/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu");
 			_listView.ContextMenu = mnu1;
@@ -73,7 +73,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_treeNodeContextMenu = MenuService.CreateContextMenu(this._controller, "/Altaxo/Pads/ProjectBrowser/TreeNode/ContextMenu");
 
 			_controller.ViewObject = this;
-
 		}
 
 		private void EhTreeNodeAfterSelect(object sender, RoutedEventArgs e)
@@ -91,8 +90,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			//_controller.ViewObject = this;
 		}
 
-
-
 		public object Control
 		{
 			get { return this; }
@@ -109,7 +106,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		public void InitializeTree(Collections.NGTreeNode root)
 		{
-
 			_treeView.Items.Clear();
 			WpfRootNode guiRoot = new WpfRootNode(root, _treeView.Items);
 			// expand and select the first node
@@ -171,13 +167,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		private void EhDeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-
 			e.Handled = true;
 		}
 
 		private void EhDeleteCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			
 			e.Handled = true;
 		}
 
@@ -258,50 +252,50 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				_controller.EhNavigateForward();
 		}
 
-
 		private GridViewColumnHeader _currentPrimarySortedColumnHeader = null;
 		private Altaxo.Gui.Common.SortAdorner _currentPrimarySortAdorner = null;
 
 		private GridViewColumnHeader _currentSecondarySortedColumnHeader = null;
 		private Altaxo.Gui.Common.SortAdorner _currentSecondarySortAdorner = null;
 
-
 		private void SetSortAdorner(Visual visual, ref Adorner adorner, bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
 		{
-			if(null!=adorner)
+			if (null != adorner)
 			{
-			AdornerLayer.GetAdornerLayer(visual).Remove(adorner);
-			adorner = null;
+				AdornerLayer.GetAdornerLayer(visual).Remove(adorner);
+				adorner = null;
 			}
 
 			if (isSorted)
 			{
 				adorner = new Common.SortAdorner((UIElement)visual, isDescendingSort ? ListSortDirection.Descending : ListSortDirection.Ascending, isSecondaryAdorner);
 				var adornerLayer = AdornerLayer.GetAdornerLayer(visual); // adornerLayer is valid only after the visual was visible for the first time
-				if(null!=adornerLayer)
+				if (null != adornerLayer)
 					adornerLayer.Add(adorner);
 			}
 		}
 
-		Adorner _nameColumnSortAdorner;
-		public void SetSortIndicator_NameColumn( bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
+		private Adorner _nameColumnSortAdorner;
+
+		public void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
 		{
-			SetSortAdorner(_listViewColHeader_Name, ref _nameColumnSortAdorner,isSorted,isDescendingSort,isSecondaryAdorner);
+			SetSortAdorner(_listViewColHeader_Name, ref _nameColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
 		}
 
-		Adorner _creationDateColumnSortAdorner;
+		private Adorner _creationDateColumnSortAdorner;
+
 		public void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
 		{
 			SetSortAdorner(_listViewColHeader_CreationDate, ref _creationDateColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
 		}
 
-		void EhListView_ColumnHeaderClicked_Name(object sender, RoutedEventArgs e)
+		private void EhListView_ColumnHeaderClicked_Name(object sender, RoutedEventArgs e)
 		{
 			if (null != _controller)
 				_controller.EhToggleListSort_Name();
 		}
 
-		void EhListView_ColumnHeaderClicked_CreationDate(object sender, RoutedEventArgs e)
+		private void EhListView_ColumnHeaderClicked_CreationDate(object sender, RoutedEventArgs e)
 		{
 			if (null != _controller)
 				_controller.EhToggleListSort_CreationDate();
@@ -327,51 +321,49 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			bool clickedOnSecondarySortColumn = columnHeaderClicked.Equals(_currentSecondarySortedColumnHeader);
 
 			_listView.Items.SortDescriptions.Clear();
-			if(null!=_currentSecondarySortedColumnHeader)
+			if (null != _currentSecondarySortedColumnHeader)
 				AdornerLayer.GetAdornerLayer(_currentSecondarySortedColumnHeader).Remove(_currentSecondarySortAdorner);
-			if(null!=_currentPrimarySortedColumnHeader)
+			if (null != _currentPrimarySortedColumnHeader)
 				AdornerLayer.GetAdornerLayer(_currentPrimarySortedColumnHeader).Remove(_currentPrimarySortAdorner);
 
 			ListSortDirection newDir = ListSortDirection.Ascending;
 
 			if (clickedOnPrimarySortColumn)
 			{
-				if(_currentPrimarySortAdorner.Direction == ListSortDirection.Ascending)
+				if (_currentPrimarySortAdorner.Direction == ListSortDirection.Ascending)
 					newDir = ListSortDirection.Descending;
 
-				_currentPrimarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader,newDir,false);
+				_currentPrimarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader, newDir, false);
 			}
 			else if (clickedOnSecondarySortColumn)
 			{
 				newDir = _currentSecondarySortAdorner.Direction;
-				_currentSecondarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader,_currentPrimarySortAdorner.Direction,true);
+				_currentSecondarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader, _currentPrimarySortAdorner.Direction, true);
 				_currentSecondarySortedColumnHeader = _currentPrimarySortedColumnHeader;
 
-				_currentPrimarySortAdorner = new Common.SortAdorner(columnHeaderClicked,newDir,false);
+				_currentPrimarySortAdorner = new Common.SortAdorner(columnHeaderClicked, newDir, false);
 				_currentPrimarySortedColumnHeader = columnHeaderClicked;
 			}
 			else // clicked in any other column
 			{
-				if(null!=_currentPrimarySortedColumnHeader)
+				if (null != _currentPrimarySortedColumnHeader)
 				{
-				_currentSecondarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader,_currentPrimarySortAdorner.Direction,true);
-				_currentSecondarySortedColumnHeader = _currentPrimarySortedColumnHeader;
+					_currentSecondarySortAdorner = new Common.SortAdorner(_currentPrimarySortedColumnHeader, _currentPrimarySortAdorner.Direction, true);
+					_currentSecondarySortedColumnHeader = _currentPrimarySortedColumnHeader;
 				}
 
-				_currentPrimarySortAdorner = new Common.SortAdorner(columnHeaderClicked,newDir,false);
+				_currentPrimarySortAdorner = new Common.SortAdorner(columnHeaderClicked, newDir, false);
 				_currentPrimarySortedColumnHeader = columnHeaderClicked;
 			}
-
 
 			AdornerLayer.GetAdornerLayer(_currentPrimarySortedColumnHeader).Add(_currentPrimarySortAdorner);
 			_listView.Items.SortDescriptions.Add(new SortDescription(_currentPrimarySortedColumnHeader.Tag as string, _currentPrimarySortAdorner.Direction));
 
-			if(null!=_currentSecondarySortedColumnHeader)
+			if (null != _currentSecondarySortedColumnHeader)
 			{
 				AdornerLayer.GetAdornerLayer(_currentSecondarySortedColumnHeader).Add(_currentSecondarySortAdorner);
-			_listView.Items.SortDescriptions.Add(new SortDescription(_currentSecondarySortAdorner.Tag as string, _currentSecondarySortAdorner.Direction));
+				_listView.Items.SortDescriptions.Add(new SortDescription(_currentSecondarySortAdorner.Tag as string, _currentSecondarySortAdorner.Direction));
 			}
- 
 		}
 
 		private void EhListViewPreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -381,7 +373,5 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (!_listView.IsKeyboardFocusWithin)
 				_listView.Focus();
 		}
-
-	
 	}
 }

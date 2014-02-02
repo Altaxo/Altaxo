@@ -1,241 +1,286 @@
-﻿using System;
+﻿#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Main.Commands
 {
-  public class TestAllProjectsInFolderOptions : Altaxo.Main.ICopyFrom
-  {
-    public string FolderPaths { get; set; }
-    public bool TestSavingAndReopening { get; set; }
+	public class TestAllProjectsInFolderOptions : Altaxo.Main.ICopyFrom
+	{
+		public string FolderPaths { get; set; }
 
-    public bool CopyFrom(object obj)
-    {
-      if (object.ReferenceEquals(this, obj))
-        return true;
-      var from = obj as TestAllProjectsInFolderOptions;
-      if (null != from)
-      {
-        this.FolderPaths = from.FolderPaths;
-        this.TestSavingAndReopening = from.TestSavingAndReopening;
-        return true;
-      }
-      return false;
-    }
+		public bool TestSavingAndReopening { get; set; }
 
-    public object Clone()
-    {
-      var r = new TestAllProjectsInFolderOptions();
-      r.CopyFrom(this);
-      return r;
-    }
-  }
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as TestAllProjectsInFolderOptions;
+			if (null != from)
+			{
+				this.FolderPaths = from.FolderPaths;
+				this.TestSavingAndReopening = from.TestSavingAndReopening;
+				return true;
+			}
+			return false;
+		}
 
+		public object Clone()
+		{
+			var r = new TestAllProjectsInFolderOptions();
+			r.CopyFrom(this);
+			return r;
+		}
+	}
 
-  public class TestAllProjectsInFolder
-  {
-    static List<string> GetAltaxoProjectFileNames(string pathsSeparatedBySemicolon)
-    {
-      var list = new List<string>();
+	public class TestAllProjectsInFolder
+	{
+		private static void GetAltaxoProjectFileNames(System.IO.DirectoryInfo dir, List<string> list)
+		{
+			try
+			{
+				var subdirs = dir.GetDirectories();
 
+				foreach (var subdir in subdirs)
+					GetAltaxoProjectFileNames(subdir, list);
+			}
+			catch (Exception ex)
+			{
+				Current.Console.WriteLine("Warning: unable to enumerate subfolders in folder {0}: {1}", dir.FullName, ex.Message);
+			}
 
-      var paths = pathsSeparatedBySemicolon.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+			try
+			{
+				var files = dir.GetFiles("*.axoprj");
+				foreach (var file in files)
+					list.Add(file.FullName);
+			}
+			catch (Exception ex)
+			{
+				Current.Console.WriteLine("Warning: unable to enumerate Altaxo project files in folder {0}: {1}", dir.FullName, ex.Message);
+			}
+		}
 
-      for (int i = 0; i < paths.Length; ++i)
-      {
-        var path = paths[i].Trim();
-        if (string.IsNullOrEmpty(path))
-          continue;
+		private static List<string> GetAltaxoProjectFileNames(string pathsSeparatedBySemicolon)
+		{
+			var list = new List<string>();
 
-        if (!System.IO.Directory.Exists(path))
-        {
-          Current.Console.WriteLine("Error: directory {0} does not exist", path);
-          continue;
-        }
+			var paths = pathsSeparatedBySemicolon.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-        var searchPattern = "*.axoprj";
-        var files = System.IO.Directory.EnumerateFiles(path, searchPattern, System.IO.SearchOption.AllDirectories);
-        list.AddRange(files);
-      }
+			for (int i = 0; i < paths.Length; ++i)
+			{
+				var path = paths[i].Trim();
+				if (string.IsNullOrEmpty(path))
+					continue;
 
-      if (list.Count == 0)
-      {
-        Current.Console.WriteLine("Error: no files found in {0}", pathsSeparatedBySemicolon);
-      }
-      return list;
-    }
+				if (!System.IO.Directory.Exists(path))
+				{
+					Current.Console.WriteLine("Error: directory {0} does not exist", path);
+					continue;
+				}
 
-    public static void VerifyOpeningOfDocumentsWithoutException()
-    {
-      if (Current.Project.IsDirty)
-      {
-        var e = new System.ComponentModel.CancelEventArgs();
-        Current.ProjectService.AskForSavingOfProject(e);
-        if (e.Cancel)
-          return;
-      }
+				var dir = new System.IO.DirectoryInfo(path);
+				GetAltaxoProjectFileNames(dir, list);
+			}
 
-      var testOptions = new TestAllProjectsInFolderOptions();
-      if (!Current.Gui.ShowDialog(ref testOptions, "Test Altaxo project files on your disk", false))
-        return;
+			if (list.Count == 0)
+			{
+				Current.Console.WriteLine("Warning: no files found in {0}", pathsSeparatedBySemicolon);
+			}
+			return list;
+		}
 
-      var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      Current.Gui.ShowBackgroundCancelDialog(10, monitor, () => InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor));
-    }
+		public static void VerifyOpeningOfDocumentsWithoutException()
+		{
+			if (Current.Project.IsDirty)
+			{
+				var e = new System.ComponentModel.CancelEventArgs();
+				Current.ProjectService.AskForSavingOfProject(e);
+				if (e.Cancel)
+					return;
+			}
 
-    public static void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
-    {
-      Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+			var testOptions = new TestAllProjectsInFolderOptions();
+			if (!Current.Gui.ShowDialog(ref testOptions, "Test Altaxo project files on your disk", false))
+				return;
 
-      monitor.ReportProgress("Searching Altaxo project files ...", 0);
-      var path = testOptions.FolderPaths;
-      Current.Console.WriteLine("Begin of test. Search path(s): {0}", path);
+			var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+			Current.Gui.ShowBackgroundCancelDialog(10, monitor, () => InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor));
+		}
 
-      var filelist = GetAltaxoProjectFileNames(path);
+		public static void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
+		{
+			Current.Gui.Execute(Current.ProjectService.CloseProject, true);
 
-      int numberOfProjectsTested = 0;
-      int numberOfProjectsFailedToLoad = 0;
+			monitor.ReportProgress("Searching Altaxo project files ...", 0);
+			var path = testOptions.FolderPaths;
+			Current.Console.WriteLine("Begin of test. Search path(s): {0}", path);
 
-      double totalFilesToTest = filelist.Count;
+			var filelist = GetAltaxoProjectFileNames(path);
 
-      monitor.ReportProgress(string.Format("Searching done, {0} Altaxo project files found.", totalFilesToTest));
+			int numberOfProjectsTested = 0;
+			int numberOfProjectsFailedToLoad = 0;
 
-      foreach (var filename in filelist)
-      {
-        if (monitor.CancellationPending)
-          break;
+			double totalFilesToTest = filelist.Count;
 
-        if (monitor.CancellationPending)
-          break;
+			monitor.ReportProgress(string.Format("Searching done, {0} Altaxo project files found.", totalFilesToTest));
 
-        try
-        {
-          monitor.ReportProgress(string.Format(
-            "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-            "Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+			foreach (var filename in filelist)
+			{
+				if (monitor.CancellationPending)
+					break;
 
-          ++numberOfProjectsTested;
-          Current.Gui.Execute(Current.ProjectService.OpenProject, filename, true);
+				if (monitor.CancellationPending)
+					break;
 
-          monitor.ReportProgress(string.Format(
-            "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-            "Loaded successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+				try
+				{
+					monitor.ReportProgress(string.Format(
+						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+						"Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-          System.Threading.Thread.Sleep(1000);
-        }
-        catch (Exception ex)
-        {
-          ++numberOfProjectsFailedToLoad;
-          monitor.ReportProgress(string.Format(
-            "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-            "Failed to load: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
-          Current.Console.WriteLine("Error opening file {0}", filename);
-        }
+					++numberOfProjectsTested;
+					Current.Gui.Execute(Current.ProjectService.OpenProject, filename, true);
 
-        if (testOptions.TestSavingAndReopening)
-        {
-          // Test saving of the project (now with the current version of Altaxo)
-          string tempFileName = System.IO.Path.GetTempFileName();
-          try
-          {
-            monitor.ReportProgress(string.Format(
-              "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-              "Currently saving: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+					monitor.ReportProgress(string.Format(
+						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+						"Loaded successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-            Current.Gui.Execute(Current.ProjectService.SaveProject, tempFileName);
+					System.Threading.Thread.Sleep(1000);
+				}
+				catch (Exception ex)
+				{
+					++numberOfProjectsFailedToLoad;
+					monitor.ReportProgress(string.Format(
+						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+						"Failed to load: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+					Current.Console.WriteLine("Error opening file {0}", filename);
+				}
 
-            monitor.ReportProgress(string.Format(
-              "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-              "Saved successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
-          }
-          catch (Exception)
-          {
-            ++numberOfProjectsFailedToLoad;
-            monitor.ReportProgress(string.Format(
-              "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-              "Failed to save: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
-            Current.Console.WriteLine("Error saving file {0}", filename);
-          }
+				if (testOptions.TestSavingAndReopening)
+				{
+					// Test saving of the project (now with the current version of Altaxo)
+					string tempFileName = System.IO.Path.GetTempFileName();
+					try
+					{
+						monitor.ReportProgress(string.Format(
+							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+							"Currently saving: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-          // Close the project now
-          try
-          {
-            Current.Gui.Execute(Current.ProjectService.CloseProject, true);
-            System.Threading.Thread.Sleep(1000);
-          }
-          catch (Exception ex)
-          {
-            Current.Console.WriteLine("Error closing file (after saving) {0}; Message: {1}", filename, ex.Message);
-            Current.Console.WriteLine("Operation will be stopped here because of error on closing");
-            return;
-          }
+						Current.Gui.Execute(Current.ProjectService.SaveProject, tempFileName);
 
+						monitor.ReportProgress(string.Format(
+							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+							"Saved successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+					}
+					catch (Exception)
+					{
+						++numberOfProjectsFailedToLoad;
+						monitor.ReportProgress(string.Format(
+							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+							"Failed to save: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+						Current.Console.WriteLine("Error saving file {0}", filename);
+					}
 
-          // Re-Open the project
-          try
-          {
-            monitor.ReportProgress(string.Format(
-              "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-              "Currently re-opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+					// Close the project now
+					try
+					{
+						Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+						System.Threading.Thread.Sleep(1000);
+					}
+					catch (Exception ex)
+					{
+						Current.Console.WriteLine("Error closing file (after saving) {0}; Message: {1}", filename, ex.Message);
+						Current.Console.WriteLine("Operation will be stopped here because of error on closing");
+						return;
+					}
 
-            Current.Gui.Execute(Current.ProjectService.OpenProject, tempFileName, true);
+					// Re-Open the project
+					try
+					{
+						monitor.ReportProgress(string.Format(
+							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+							"Currently re-opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-            monitor.ReportProgress(string.Format(
-              "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-              "Re-opened successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+						Current.Gui.Execute(Current.ProjectService.OpenProject, tempFileName, true);
 
-            System.Threading.Thread.Sleep(1000);
-          }
-          catch (Exception ex)
-          {
-            ++numberOfProjectsFailedToLoad;
-            monitor.ReportProgress(string.Format(
-              "Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
-              "Failed to re-open: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
-            Current.Console.WriteLine("Error re-opening file {0}", filename);
-          }
+						monitor.ReportProgress(string.Format(
+							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+							"Re-opened successfully: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-          // Close the project now
-          try
-          {
-            Current.Gui.Execute(Current.ProjectService.CloseProject, true);
-            System.Threading.Thread.Sleep(1000);
-          }
-          catch (Exception ex)
-          {
-            Current.Console.WriteLine("Error closing file (after re-opening it) {0}; Message: {1}", filename, ex.Message);
-            Current.Console.WriteLine("Operation will be stopped here because of error on closing");
-            return;
-          }
+						System.Threading.Thread.Sleep(1000);
+					}
+					catch (Exception ex)
+					{
+						++numberOfProjectsFailedToLoad;
+						monitor.ReportProgress(string.Format(
+							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
+							"Failed to re-open: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
+						Current.Console.WriteLine("Error re-opening file {0}", filename);
+					}
 
-          // delete the temporary project
-          try
-          {
-            System.IO.File.Delete(tempFileName);
-          }
-          catch (Exception ex)
-          {
-            Current.Console.WriteLine("Error deleting temporary Altaxo project file {0}, original from file {1}; Message: {2}", tempFileName, filename, ex.Message);
-          }
-        }
-        else
-        {
-          try
-          {
-            Current.Gui.Execute(Current.ProjectService.CloseProject, true);
-            System.Threading.Thread.Sleep(1000);
-          }
-          catch (Exception ex)
-          {
-            Current.Console.WriteLine("Error closing file {0}; Message: {1}", filename, ex.Message);
-            Current.Console.WriteLine("Operation will be stopped here because of error on closing");
-            return;
-          }
-        }
-      }
+					// Close the project now
+					try
+					{
+						Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+						System.Threading.Thread.Sleep(1000);
+					}
+					catch (Exception ex)
+					{
+						Current.Console.WriteLine("Error closing file (after re-opening it) {0}; Message: {1}", filename, ex.Message);
+						Current.Console.WriteLine("Operation will be stopped here because of error on closing");
+						return;
+					}
 
-      Current.Console.WriteLine("End of test. {0} projects tested, {1} projects failed to load", numberOfProjectsTested, numberOfProjectsFailedToLoad);
-    }
-  }
+					// delete the temporary project
+					try
+					{
+						System.IO.File.Delete(tempFileName);
+					}
+					catch (Exception ex)
+					{
+						Current.Console.WriteLine("Error deleting temporary Altaxo project file {0}, original from file {1}; Message: {2}", tempFileName, filename, ex.Message);
+					}
+				}
+				else
+				{
+					try
+					{
+						Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+						System.Threading.Thread.Sleep(1000);
+					}
+					catch (Exception ex)
+					{
+						Current.Console.WriteLine("Error closing file {0}; Message: {1}", filename, ex.Message);
+						Current.Console.WriteLine("Operation will be stopped here because of error on closing");
+						return;
+					}
+				}
+			}
+
+			Current.Console.WriteLine("End of test. {0} projects tested, {1} projects failed to load", numberOfProjectsTested, numberOfProjectsFailedToLoad);
+		}
+	}
 }

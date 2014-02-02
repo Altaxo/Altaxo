@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,24 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+#endregion Copyright
 
 using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main.Commands;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
 	public static class GraphDocumentExportActions
 	{
-		static IList<KeyValuePair<string, string>> GetFileFilterString(ImageFormat fmt)
+		private static IList<KeyValuePair<string, string>> GetFileFilterString(ImageFormat fmt)
 		{
 			List<KeyValuePair<string, string>> filter = new List<KeyValuePair<string, string>>();
 
@@ -63,8 +64,7 @@ namespace Altaxo.Graph.Gdi
 			return filter;
 		}
 
-		static GraphExportOptions _graphExportOptionsToFile = new GraphExportOptions();
-
+		private static GraphExportOptions _graphExportOptionsToFile = new GraphExportOptions();
 
 		/// <summary>Shows the dialog to choose the graph export options, and then the multi file export dialog.</summary>
 		/// <param name="documents">List with graph documents to export.</param>
@@ -87,14 +87,11 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="documents">List with graph documents to export.</param>
 		public static void ShowExportMultipleGraphsDialog(IEnumerable<Graph.Gdi.GraphDocument> documents)
 		{
-
 			MultiRenameData mrData = new MultiRenameData();
 			MultiRenameDocuments.RegisterCommonDocumentShortcuts(mrData);
 			mrData.RegisterStringShortcut("E", (o, i) => _graphExportOptionsToFile.GetDefaultFileNameExtension(), "File extension (depends on the image type that was chosen before");
 
 			mrData.RegisterRenameActionHandler(DoExportGraphs);
-
-
 
 			mrData.AddObjectsToRename(documents);
 
@@ -109,7 +106,7 @@ namespace Altaxo.Graph.Gdi
 			Current.Gui.ShowDialog(mrController, "Export multiple graphs");
 		}
 
-		static List<object> DoExportGraphs(MultiRenameData mrData)
+		private static List<object> DoExportGraphs(MultiRenameData mrData)
 		{
 			var failedItems = new List<object>();
 			var errors = new StringBuilder();
@@ -131,9 +128,6 @@ namespace Altaxo.Graph.Gdi
 				// http://wpfdialogs.codeplex.com/
 			}
 
-
-
-
 			for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
 			{
 				var graph = (GraphDocument)mrData.GetObjectToRename(i);
@@ -145,7 +139,7 @@ namespace Altaxo.Graph.Gdi
 				catch (Exception ex)
 				{
 					failedItems.Add(graph);
-					errors.AppendFormat("Graph {0} -> file name {1}: export failed, {2}\n",graph.Name,fileName,ex.Message);
+					errors.AppendFormat("Graph {0} -> file name {1}: export failed, {2}\n", graph.Name, fileName, ex.Message);
 				}
 			}
 
@@ -157,7 +151,6 @@ namespace Altaxo.Graph.Gdi
 			return failedItems;
 		}
 
-
 		public static void DoExportGraph(Graph.Gdi.GraphDocument doc, string fileName, Graph.Gdi.GraphExportOptions graphExportOptions)
 		{
 			if (!System.IO.Path.IsPathRooted(fileName))
@@ -166,15 +159,15 @@ namespace Altaxo.Graph.Gdi
 			var fileNamePart = System.IO.Path.GetFileName(fileName);
 			var pathPart = System.IO.Path.GetDirectoryName(fileName);
 			if (true && !System.IO.Directory.Exists(pathPart))
-				{
-					System.IO.Directory.CreateDirectory(pathPart);
-				}
+			{
+				System.IO.Directory.CreateDirectory(pathPart);
+			}
 
 			using (Stream myStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				doc.Render(myStream, graphExportOptions);
 				myStream.Close();
-			} 
+			}
 		}
 
 		public static void ShowFileExportSpecificDialog(this GraphDocument doc)
@@ -213,17 +206,14 @@ namespace Altaxo.Graph.Gdi
 		public static void ShowFileExportMetafileDialog(this GraphDocument doc)
 		{
 			var opt = new GraphExportOptions();
-			opt.IsIntentedForClipboardOperation = false;
 			opt.TrySetImageAndPixelFormat(ImageFormat.Emf, PixelFormat.Format32bppArgb);
-			opt.ExportArea = GraphExportArea.Page;
 			ShowFileExportDialog(doc, opt);
 		}
+
 		public static void ShowFileExportTiffDialog(this GraphDocument doc)
 		{
 			var opt = new GraphExportOptions();
-			opt.IsIntentedForClipboardOperation = false;
 			opt.TrySetImageAndPixelFormat(ImageFormat.Tiff, PixelFormat.Format32bppArgb);
-			opt.ExportArea = GraphExportArea.Page;
 			opt.SourceDpiResolution = 300;
 			opt.DestinationDpiResolution = 300;
 			ShowFileExportDialog(doc, opt);
@@ -248,7 +238,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		#endregion
+		#endregion Stream und file
 
 		#region Bitmap
 
@@ -264,38 +254,15 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>
 		/// <param name="destinationDpiResolution">Resolution which is assigned to the bitmap. This determines the physical size of the bitmap.</param>
 		/// <returns>The saved bitmap. You should call Dispose when you no longer need the bitmap.</returns>
-		public static Bitmap RenderAsBitmap(this GraphDocument doc, Brush backbrush, PixelFormat pixelformat, GraphExportArea areaToExport, double sourceDpiResolution, double destinationDpiResolution)
+		public static Bitmap RenderAsBitmap(this GraphDocument doc, Brush backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
 		{
 			double scale = sourceDpiResolution / 72.0;
 			// Code to write the stream goes here.
 			int width, height;
-			switch (areaToExport)
-			{
-				case GraphExportArea.GraphSize:
-					// round the pixels to multiples of 4, many programs rely on this
-					width = (int)(4 * Math.Ceiling(0.25 * doc.Layers.GraphSize.Width * scale));
-					height = (int)(4 * Math.Ceiling(0.25 * doc.Layers.GraphSize.Height * scale));
-					break;
-				case GraphExportArea.Page:
-					// round the pixels to multiples of 4, many programs rely on this
-					width = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Width * scale));
-					height = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Height * scale));
-					break;
-				case GraphExportArea.PrintableArea:
-					// round the pixels to multiples of 4, many programs rely on this
-					width = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Width * scale));
-					height = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Height * scale));
-					break;
-				case GraphExportArea.BoundingBox:
-					// round the pixels to multiples of 4, many programs rely on this
-					width = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Width * scale));
-					height = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Height * scale));
-					break;
-				default:
-					throw new ArgumentException("areaToExport unkown: " + areaToExport.ToString());
-					
-			}
 
+			// round the pixels to multiples of 4, many programs rely on this
+			width = (int)(4 * Math.Ceiling(0.25 * doc.Size.X * scale));
+			height = (int)(4 * Math.Ceiling(0.25 * doc.Size.Y * scale));
 
 			System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(width, height, pixelformat);
 
@@ -310,24 +277,7 @@ namespace Altaxo.Graph.Gdi
 			float zoom;
 			PointF startLocationOnPage;
 
-			switch (areaToExport)
-			{
-				default:
-				case GraphExportArea.GraphSize:
-					break;
-				case GraphExportArea.Page:
-					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
-					grfx.TranslateTransform(-startLocationOnPage.X, -startLocationOnPage.Y);
-					grfx.ScaleTransform(zoom, zoom);
-					break;
-				case GraphExportArea.PrintableArea:
-					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
-					grfx.TranslateTransform(-startLocationOnPage.X + doc.PrintableBounds.X, -startLocationOnPage.Y + doc.PrintableBounds.Y);
-					grfx.ScaleTransform(zoom, zoom);
-					break;
-			}
 			grfx.PageScale = 1; // (float)scale;
-
 
 			doc.DoPaint(grfx, true);
 
@@ -338,8 +288,7 @@ namespace Altaxo.Graph.Gdi
 			return bitmap;
 		}
 
-
-		#endregion
+		#endregion main work
 
 		#region stream
 
@@ -354,9 +303,9 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="usePageBounds"></param>
 		/// <param name="sourceDpiResolution">Resolution at which the graph is rendered to a bitmap.</param>
 		/// <param name="destinationDpiResolution">Resolution of the resulting bitmap. This determines the physical size of the bitmap.</param>
-		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, PixelFormat pixelformat, GraphExportArea usePageBounds, double sourceDpiResolution, double destinationDpiResolution)
+		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
 		{
-			System.Drawing.Bitmap bitmap = RenderAsBitmap(doc, backbrush, pixelformat, usePageBounds, sourceDpiResolution, destinationDpiResolution);
+			System.Drawing.Bitmap bitmap = RenderAsBitmap(doc, backbrush, pixelformat, sourceDpiResolution, destinationDpiResolution);
 
 			bitmap.Save(stream, imageFormat);
 
@@ -371,11 +320,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="imageFormat">The format of the destination image.</param>
 		/// <param name="usePageBounds">If <c>true</c>, the page bounds where used.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, GraphExportArea usePageBounds, double dpiResolution)
+		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
 		{
-			RenderAsBitmap(doc, stream, imageFormat, null, PixelFormat.Format32bppArgb, usePageBounds, dpiResolution, dpiResolution);
+			RenderAsBitmap(doc, stream, imageFormat, null, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
 		}
-
 
 		/// <summary>
 		/// Saves the graph as an bitmap file into the stream using the default pixelformat 32bppArgb.<paramref name="stream"/>.
@@ -386,19 +334,17 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="usePageBounds">If <c>true</c>, the page bounds where used as bounding box.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, GraphExportArea usePageBounds, double dpiResolution)
+		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, double dpiResolution)
 		{
-			RenderAsBitmap(doc, stream, imageFormat, backbrush, PixelFormat.Format32bppArgb, usePageBounds, dpiResolution, dpiResolution);
+			RenderAsBitmap(doc, stream, imageFormat, backbrush, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
 		}
 
 		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
 		{
-			RenderAsBitmap(doc, stream, options.ImageFormat, options.GetBrushOrDefaultBrush(), options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			RenderAsBitmap(doc, stream, options.ImageFormat, options.GetBrushOrDefaultBrush(), options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 		}
 
-
-		#endregion
-
+		#endregion stream
 
 		#region file name
 
@@ -413,11 +359,11 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="usePageBounds">If <c>true</c>, the page bounds were used for rendering.</param>
 		/// <param name="sourceDpiResolution">Resolution in dpi used to render the graph into the bitmap.</param>
 		/// <param name="destinationDpiResolution">Resolution that is set in the parameters of the bitmap. This determines the physical size of the bitmap.</param>
-		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, PixelFormat pixelformat, GraphExportArea usePageBounds, double sourceDpiResolution, double destinationDpiResolution)
+		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
 		{
 			using (System.IO.Stream str = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
 			{
-				RenderAsBitmap(doc, str, imageFormat, backbrush, pixelformat, usePageBounds, sourceDpiResolution, destinationDpiResolution);
+				RenderAsBitmap(doc, str, imageFormat, backbrush, pixelformat, sourceDpiResolution, destinationDpiResolution);
 				str.Close();
 			}
 		}
@@ -431,9 +377,9 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="imageFormat">The format of the destination image.</param>
 		/// <param name="usePageBounds">If <c>true</c>, the page bounds are used for rendering.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, GraphExportArea usePageBounds, double dpiResolution)
+		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
 		{
-			RenderAsBitmap(doc, filename, imageFormat, null, usePageBounds, dpiResolution);
+			RenderAsBitmap(doc, filename, imageFormat, null, dpiResolution);
 		}
 
 		/// <summary>
@@ -446,29 +392,28 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="usePageBounds">If <c>true</c>, page bounds are used.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
-		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, GraphExportArea usePageBounds, double dpiResolution)
+		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, double dpiResolution)
 		{
-			RenderAsBitmap(doc, filename, imageFormat, backbrush, PixelFormat.Format32bppArgb, usePageBounds, dpiResolution, dpiResolution);
+			RenderAsBitmap(doc, filename, imageFormat, backbrush, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
 		}
 
 		public static void RenderAsBitmap(this GraphDocument doc, string filename, GraphExportOptions options)
 		{
-			RenderAsBitmap(doc, filename, options.ImageFormat, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			RenderAsBitmap(doc, filename, options.ImageFormat, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 		}
 
-
-		#endregion
+		#endregion file name
 
 		#region Bitmap
 
 		public static Bitmap RenderAsBitmap(this GraphDocument doc, GraphExportOptions options)
 		{
-			return RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			return RenderAsBitmap(doc, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 		}
-		#endregion
 
+		#endregion Bitmap
 
-		#endregion
+		#endregion Bitmap
 
 		#region Metafile
 
@@ -485,31 +430,22 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="area">Area to render.</param>
 		/// <param name="scale">Factor that is multiplied with the size of the exported area to determine the size of the bounding box of the meta file.</param>
 		/// <returns>The metafile that was created using the stream.</returns>
-		public static Metafile RenderAsMetafile(GraphDocument doc, Graphics grfx, System.IO.Stream stream, Brush backbrush, PixelFormat pixelformat, GraphExportArea area, double scale)
+		public static Metafile RenderAsMetafile(GraphDocument doc, Graphics grfx, System.IO.Stream stream, Brush backbrush, PixelFormat pixelformat, double scale)
 		{
 			grfx.PageUnit = GraphicsUnit.Point;
 			IntPtr ipHdc = grfx.GetHdc();
 
-			RectangleF metaFileBounds;
-			switch (area)
-			{
-				default:
-				case GraphExportArea.GraphSize:
-					metaFileBounds = new RectangleF(0, 0, (float)(doc.Layers.GraphSize.Width * scale), (float)(doc.Layers.GraphSize.Height * scale));
-					break;
-				case GraphExportArea.Page:
-					metaFileBounds = new RectangleF(0, 0, (float)(doc.PageBounds.Width * scale), (float)(doc.PageBounds.Height * scale));
-					break;
+			var metaFileBounds = new RectangleF(0, 0, (float)(doc.Size.X * scale), (float)(doc.Size.Y * scale));
 
-				case GraphExportArea.PrintableArea:
-					metaFileBounds = new RectangleF(0, 0, (float)(doc.PrintableBounds.Width * scale), (float)(doc.PrintableBounds.Height * scale));
-					break;
-			}
+			System.Drawing.Imaging.Metafile mf;
 
-			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, metaFileBounds, MetafileFrameUnit.Point);
+			if (null != stream)
+				mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, metaFileBounds, MetafileFrameUnit.Point);
+			else
+				mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, MetafileFrameUnit.Point);
+
 			using (Graphics grfx2 = Graphics.FromImage(mf))
 			{
-
 				if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
 				{
 					grfx2.PageUnit = GraphicsUnit.Point;
@@ -520,30 +456,12 @@ namespace Altaxo.Graph.Gdi
 					grfx2.PageScale = (float)(scale * Math.Min(72.0f / grfx2.DpiX, 72.0f / grfx2.DpiY)); // this works in Vista with display mode
 				}
 
-				float zoom;
-				PointF startLocationOnPage;
-				switch (area)
-				{
-					case GraphExportArea.Page:
-						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
-						grfx2.TranslateTransform(-startLocationOnPage.X, -startLocationOnPage.Y);
-						grfx2.ScaleTransform(zoom, zoom);
-						break;
-					case GraphExportArea.PrintableArea:
-						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
-						grfx2.TranslateTransform(-startLocationOnPage.X + doc.PrintableBounds.X, -startLocationOnPage.Y + doc.PrintableBounds.Y);
-						grfx2.ScaleTransform(zoom, zoom);
-						break;
-				}
-
 				doc.DoPaint(grfx2, true);
 
 				grfx2.Dispose();
 			}
 
 			grfx.ReleaseHdc(ipHdc);
-
-
 
 			return mf;
 		}
@@ -559,7 +477,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="sourceDpiResolution">Resolution whith witch the plot is sampled.</param>
 		/// <param name="destinationDpiResolution">Resolution of the bitmap in dpi. Determines the apparent size (width, height) of the bitmap.</param>
 		/// <returns>The metafile that was created using the stream.</returns>
-		public static Metafile RenderAsMetafile(this GraphDocument doc, System.IO.Stream stream, Brush backbrush, PixelFormat pixelformat, GraphExportArea area, double sourceDpiResolution, double destinationDpiResolution)
+		public static Metafile RenderAsMetafile(this GraphDocument doc, System.IO.Stream stream, Brush backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
 		{
 			Metafile mf = null;
 
@@ -573,7 +491,7 @@ namespace Altaxo.Graph.Gdi
 				)
 			{
 				Graphics grfx = Current.PrintingService.PrintDocument.PrinterSettings.CreateMeasurementGraphics();
-				mf = RenderAsMetafile(doc, grfx, stream, backbrush, pixelformat, area, sourceDpiResolution / destinationDpiResolution);
+				mf = RenderAsMetafile(doc, grfx, stream, backbrush, pixelformat, sourceDpiResolution / destinationDpiResolution);
 				grfx.Dispose();
 			}
 			else
@@ -583,7 +501,7 @@ namespace Altaxo.Graph.Gdi
 				helperbitmap.SetResolution((float)sourceDpiResolution, (float)sourceDpiResolution);
 				Graphics grfx = Graphics.FromImage(helperbitmap);
 				grfx.PageUnit = GraphicsUnit.Point;
-				mf = RenderAsMetafile(doc, grfx, stream, backbrush, pixelformat, area, sourceDpiResolution / destinationDpiResolution);
+				mf = RenderAsMetafile(doc, grfx, stream, backbrush, pixelformat, sourceDpiResolution / destinationDpiResolution);
 				grfx.Dispose();
 				helperbitmap.Dispose();
 			}
@@ -591,16 +509,13 @@ namespace Altaxo.Graph.Gdi
 			return mf;
 		}
 
-
-
-
-		#endregion
+		#endregion Main work
 
 		#region with stream
 
 		public static Metafile RenderAsMetafile(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
 		{
-			return RenderAsMetafile(doc, stream, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			return RenderAsMetafile(doc, stream, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 		}
 
 		/// <summary>
@@ -613,7 +528,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="destinationDpiResolution">Resolution of the bitmap in dpi. Determines the apparent size (width, height) of the bitmap.</param>
 		public static Metafile RenderAsMetafile(this GraphDocument doc, System.IO.Stream stream, Brush backbrush, double sourceDpiResolution, double destinationDpiResolution)
 		{
-			return RenderAsMetafile(doc, stream, backbrush, PixelFormat.Format32bppArgb, GraphExportArea.PrintableArea, sourceDpiResolution, destinationDpiResolution);
+			return RenderAsMetafile(doc, stream, backbrush, PixelFormat.Format32bppArgb, sourceDpiResolution, destinationDpiResolution);
 		}
 
 		/// <summary>
@@ -624,12 +539,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
 		public static Metafile RenderAsMetafile(this GraphDocument doc, System.IO.Stream stream, double dpiResolution)
 		{
-			return RenderAsMetafile(doc, stream, null, PixelFormat.Format32bppArgb, GraphExportArea.PrintableArea, dpiResolution, dpiResolution);
+			return RenderAsMetafile(doc, stream, null, PixelFormat.Format32bppArgb, dpiResolution, dpiResolution);
 		}
 
-
-
-		#endregion
+		#endregion with stream
 
 		#region with filename
 
@@ -638,7 +551,7 @@ namespace Altaxo.Graph.Gdi
 			Metafile mf;
 			using (System.IO.Stream str = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
 			{
-				mf = RenderAsMetafile(doc, str, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+				mf = RenderAsMetafile(doc, str, options.BackgroundBrush, options.PixelFormat, options.SourceDpiResolution, options.DestinationDpiResolution);
 				str.Close();
 			}
 			return mf;
@@ -657,14 +570,11 @@ namespace Altaxo.Graph.Gdi
 			Metafile mf;
 			using (System.IO.Stream str = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
 			{
-				mf = RenderAsMetafile(doc, str, backbrush, pixelformat, GraphExportArea.PrintableArea, dpiResolution, dpiResolution);
+				mf = RenderAsMetafile(doc, str, backbrush, pixelformat, dpiResolution, dpiResolution);
 				str.Close();
 			}
 			return mf;
 		}
-
-
-
 
 		/// <summary>
 		/// Saves the graph as an bitmap file into the file <paramref name="filename"/> using the default
@@ -691,7 +601,7 @@ namespace Altaxo.Graph.Gdi
 			return RenderAsMetafile(doc, filename, backbrush, PixelFormat.Format32bppArgb, dpiResolution);
 		}
 
-		#endregion
+		#endregion with filename
 
 		#region default rendering
 
@@ -704,37 +614,9 @@ namespace Altaxo.Graph.Gdi
 			return mf;
 		}
 
+		#endregion default rendering
 
-		#endregion
-
-
-
-
-
-
-
-
-
-		#endregion
-
-
-	}
-
-	/// <summary>
-	/// Enumerates the area which is to be exported.
-	/// </summary>
-	public enum GraphExportArea
-	{
-		/// <summary>
-		/// Area is the graph size.
-		/// </summary>
-		GraphSize,
-		/// <summary>Area is the whole page size. Depending on printing options.</summary>
-		Page,
-		/// <summary>The printable area of the page.</summary>
-		PrintableArea,
-		/// <summary>The bounding box of all graph items.</summary>
-		BoundingBox
+		#endregion Metafile
 	}
 
 	/// <summary>
@@ -743,60 +625,117 @@ namespace Altaxo.Graph.Gdi
 	[Flags]
 	public enum GraphCopyPageClipboardFormat
 	{
-		/// <summary>Store both as native image and store in temporary file and set the file name in the clipboard as DropDownList.</summary>
-		AsNativeAndDropDownList = 3,
 		/// <summary>Store as native image.</summary>
 		AsNative = 1,
+
 		/// <summary>Store in a temporary file and set the file name in the clipboard as DropDownList.</summary>
-		AsDropDownList = 2
+		AsDropDownList = 2,
+
+		/// <summary>
+		/// As bitmap wrapped in an enhanced metafile (not applicable if native image is a metafile or enhanced metafile).
+		/// </summary>
+		AsNativeWrappedInEnhancedMetafile = 4,
+
+		/// <summary>Copy the graph as Com object that can be embedded in another application</summary>
+		AsEmbeddedObject = 8,
+
+		/// <summary>
+		/// Copy the graph as Com object that can be linked to in another application (is only available if the project has a valid file name).
+		/// </summary>
+		AsLinkedObject = 16,
 	}
 
-	public class GraphExportOptions
+	public class GraphExportOptions : Main.ICopyFrom
 	{
-		ImageFormat _imageFormat;
-		PixelFormat _pixelFormat;
-		BrushX _backgroundBrush;
-		double _sourceDpiResolution;
-		double _destinationDpiResolution;
-		public GraphExportArea ExportArea { get; set; }
-		public bool IsIntentedForClipboardOperation { get; set; }
-		public GraphCopyPageClipboardFormat ClipboardFormat { get; set; }
+		private ImageFormat _imageFormat;
+		private PixelFormat _pixelFormat;
+		private BrushX _backgroundBrush;
+		private double _sourceDpiResolution;
+		private double _destinationDpiResolution;
 
+		#region Serialization
 
-		public void CopyFrom(object fr)
+		/// <summary>
+		/// Initial version (2014-01-18)
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphExportOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			if (object.ReferenceEquals(this, fr))
-				return;
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphExportOptions s = (GraphExportOptions)obj;
 
-			var from = fr as GraphExportOptions;
-			if (null == from)
-				throw new ArgumentException("Argument either null or has wrong type");
+				info.AddValue("ImageFormat", s._imageFormat);
+				info.AddEnum("PixelFormat", s._pixelFormat);
+				info.AddValue("Background", s._backgroundBrush);
+				info.AddValue("SourceResolution", s._sourceDpiResolution);
+				info.AddValue("DestinationResolution", s._destinationDpiResolution);
+			}
 
-			this._imageFormat = from.ImageFormat;
-			this._pixelFormat = from.PixelFormat;
-			this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
-			this.SourceDpiResolution = from.SourceDpiResolution;
-			this.DestinationDpiResolution = from.DestinationDpiResolution;
-			this.ExportArea = from.ExportArea;
-			this.IsIntentedForClipboardOperation = from.IsIntentedForClipboardOperation;
-			this.ClipboardFormat = from.ClipboardFormat;
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (GraphExportOptions)o : new GraphExportOptions();
+
+				s._imageFormat = (ImageFormat)info.GetValue("ImageFormat", s);
+				s._pixelFormat = (PixelFormat)info.GetEnum("PixelFormat", typeof(PixelFormat));
+				s.BackgroundBrush = (BrushX)info.GetValue("Background");
+				s._sourceDpiResolution = info.GetDouble("SourceResolution");
+				s._destinationDpiResolution = info.GetDouble("DestinationResolution");
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		public virtual bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as GraphExportOptions;
+
+			if (null != from)
+			{
+				this._imageFormat = from.ImageFormat;
+				this._pixelFormat = from.PixelFormat;
+				this._backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
+				this.SourceDpiResolution = from.SourceDpiResolution;
+				this.DestinationDpiResolution = from.DestinationDpiResolution;
+				return true;
+			}
+
+			return false;
 		}
 
 		public GraphExportOptions()
 		{
-			this._imageFormat = System.Drawing.Imaging.ImageFormat.Emf;
+			this._imageFormat = System.Drawing.Imaging.ImageFormat.Png;
 			this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-			this.ExportArea = GraphExportArea.GraphSize;
 			this.SourceDpiResolution = 300;
 			this.DestinationDpiResolution = 300;
 			this.BackgroundBrush = null;
-			this.IsIntentedForClipboardOperation = false;
-			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNativeAndDropDownList;
 		}
 
+		public GraphExportOptions(GraphExportOptions from)
+		{
+			CopyFrom(from);
+		}
+
+		object ICloneable.Clone()
+		{
+			return new GraphExportOptions(this);
+		}
+
+		public virtual GraphExportOptions Clone()
+		{
+			return new GraphExportOptions(this);
+		}
 
 		public ImageFormat ImageFormat { get { return _imageFormat; } }
+
 		public PixelFormat PixelFormat { get { return _pixelFormat; } }
+
 		public BrushX BackgroundBrush
 		{
 			get
@@ -823,6 +762,7 @@ namespace Altaxo.Graph.Gdi
 				_sourceDpiResolution = value;
 			}
 		}
+
 		public double DestinationDpiResolution
 		{
 			get
@@ -837,12 +777,6 @@ namespace Altaxo.Graph.Gdi
 				_destinationDpiResolution = value;
 			}
 		}
-
-
-
-
-
-
 
 		public bool TrySetImageAndPixelFormat(ImageFormat imgfmt, PixelFormat pixfmt)
 		{
@@ -898,8 +832,8 @@ namespace Altaxo.Graph.Gdi
 			else return ".img";
 		}
 
+		private static GraphExportOptions _currentSetting = new GraphExportOptions();
 
-		static GraphExportOptions _currentSetting = new GraphExportOptions();
 		public static GraphExportOptions CurrentSetting
 		{
 			get
@@ -933,7 +867,6 @@ namespace Altaxo.Graph.Gdi
 			{
 				using (var bmp = new Bitmap(8, 8, pixfmt))
 				{
-
 					using (var str = new System.IO.MemoryStream())
 					{
 						bmp.Save(str, imgfmt);
@@ -961,7 +894,96 @@ namespace Altaxo.Graph.Gdi
 				PixelFormat.Format64bppPArgb == fmt ||
 				PixelFormat.PAlpha == fmt;
 		}
+	}
 
+	public class GraphClipboardExportOptions : GraphExportOptions, ICloneable
+	{
+		private GraphCopyPageClipboardFormat _clipboardFormat;
 
+		#region Serialization
+
+		/// <summary>
+		/// Initial version (2014-01-31)
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphClipboardExportOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (GraphClipboardExportOptions)obj;
+
+				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+				info.AddEnum("ClipboardFormat", s._clipboardFormat);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (GraphClipboardExportOptions)o : new GraphClipboardExportOptions();
+
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				s._clipboardFormat = (GraphCopyPageClipboardFormat)info.GetEnum("ClipboardFormat", typeof(GraphCopyPageClipboardFormat));
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		public GraphClipboardExportOptions()
+		{
+			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNative | GraphCopyPageClipboardFormat.AsDropDownList | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
+		}
+
+		public GraphClipboardExportOptions(GraphExportOptions from)
+			: base(from)
+		{
+		}
+
+		object ICloneable.Clone()
+		{
+			return new GraphClipboardExportOptions(this);
+		}
+
+		public override GraphExportOptions Clone()
+		{
+			return new GraphClipboardExportOptions(this);
+		}
+
+		public override bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			if (base.CopyFrom(obj))
+			{
+				var from = obj as GraphClipboardExportOptions;
+				if (null != from)
+				{
+					this.ClipboardFormat = from.ClipboardFormat;
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public bool IsIntentedForClipboardOperation
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public GraphCopyPageClipboardFormat ClipboardFormat
+		{
+			get { return _clipboardFormat; }
+			set
+			{
+				_clipboardFormat = value;
+
+				if (0 == (int)_clipboardFormat)
+					_clipboardFormat = GraphCopyPageClipboardFormat.AsNative;
+			}
+		}
 	}
 }

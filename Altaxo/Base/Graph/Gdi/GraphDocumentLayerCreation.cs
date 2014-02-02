@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,96 +34,98 @@ namespace Altaxo.Graph.Gdi
 	{
 		#region XYPlotLayer Creation
 
+		private static XYPlotLayer CreateNewLayerAtSamePosition(this GraphDocument doc, IEnumerable<int> linklayernumber)
+		{
+			HostLayer oldLayer;
+			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out oldLayer);
+			if (!isValidIndex)
+				throw new ArgumentOutOfRangeException("index was not valid");
+
+			IItemLocation location;
+			if (oldLayer.Location is ItemLocationByGrid)
+			{
+				location = (IItemLocation)oldLayer.Location.Clone();
+			}
+			else
+			{
+				// TODO change absolute positioning into grid positioning
+				location = (IItemLocation)oldLayer.Location.Clone();
+			}
+
+			var newLayer = new XYPlotLayer(oldLayer.ParentLayer, location);
+			doc.RootLayer.InsertLast(linklayernumber, newLayer);
+
+			return newLayer;
+		}
+
 		/// <summary>
 		/// Creates a new layer with bottom x axis and left y axis, which is not linked.
 		/// </summary>
 		public static void CreateNewLayerNormalBottomXLeftY(this GraphDocument doc)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
+			var location = new ItemLocationDirect();
+			location.PositionX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X);
+			location.PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.Y);
+			location.SizeX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.X);
+			location.SizeY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.Y);
+
+			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer, location);
+			doc.RootLayer.Layers.Add(newlayer);
 			newlayer.CreateDefaultAxes();
-			doc.Layers.Add(newlayer);
 		}
 
 		/// <summary>
 		/// Creates a new layer with top x axis, which is linked to the same position with top x axis and right y axis.
 		/// </summary>
-		public static void CreateNewLayerLinkedTopX(this GraphDocument doc, int linklayernumber)
+		public static void CreateNewLayerLinkedTopX(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
-			doc.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-			// link the new layer to the last old layer
-			newlayer.LinkedLayer = (linklayernumber >= 0 && linklayernumber < doc.Layers.Count) ? doc.Layers[linklayernumber] : null;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
 		}
 
 		/// <summary>
 		/// Creates a new layer with right y axis, which is linked to the same position with top x axis and right y axis.
 		/// </summary>
-		public static void CreateNewLayerLinkedRightY(this GraphDocument doc, int linklayernumber)
+		public static void CreateNewLayerLinkedRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
-			doc.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-			// link the new layer to the last old layer
-			newlayer.LinkedLayer = (linklayernumber >= 0 && linklayernumber < doc.Layers.Count) ? doc.Layers[linklayernumber] : null;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-			// set enabling of axis
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
 		}
 
 		/// <summary>
 		/// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis.
 		/// </summary>
-		public static void CreateNewLayerLinkedTopXRightY(this GraphDocument doc, int linklayernumber)
+		public static void CreateNewLayerLinkedTopXRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
-			doc.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-			// link the new layer to the last old layer
-			newlayer.LinkedLayer = (linklayernumber >= 0 && linklayernumber < doc.Layers.Count) ? doc.Layers[linklayernumber] : null;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-			// set enabling of axis
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
 			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
-
 		}
-
 
 		/// <summary>
 		/// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis. The x axis is linked straight to the x axis of the linked layer.
 		/// </summary>
-		public static void CreateNewLayerLinkedTopXRightY_XAxisStraight(this GraphDocument doc, int linklayernumber)
+		public static void CreateNewLayerLinkedTopXRightY_XAxisStraight(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
-			XYPlotLayer newlayer = new XYPlotLayer(doc.DefaultLayerPosition, doc.DefaultLayerSize);
-			doc.Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-			// link the new layer to the last old layer
-			var layerLinkedTo = (linklayernumber >= 0 && linklayernumber < doc.Layers.Count) ? doc.Layers[linklayernumber] : null;
-			newlayer.LinkedLayer = layerLinkedTo;
-			newlayer.SetPosition(0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear, 0, XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1, XYPlotLayerSizeType.RelativeToLinkedLayer, 1, XYPlotLayerSizeType.RelativeToLinkedLayer);
+			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 
-			if (null != layerLinkedTo)
+			HostLayer oldLayer;
+			var isValidIndex = doc.RootLayer.IsValidIndex(linklayernumber, out oldLayer);
+			var linkedLayerAsXYPlotLayer = oldLayer as XYPlotLayer;
+
+			if (null != linkedLayerAsXYPlotLayer)
 			{
 				// create a linked x axis of the same type than in the linked layer
-				var scaleLinkedTo = layerLinkedTo.Scales.X.Scale;
-				var xScale = new Scales.LinkedScale((Scales.Scale)scaleLinkedTo.Clone(), scaleLinkedTo, 0);
-				newlayer.Scales.SetScaleWithTicks(0, xScale, (Scales.Ticks.TickSpacing)layerLinkedTo.Scales.X.TickSpacing.Clone());
+				var scaleLinkedTo = linkedLayerAsXYPlotLayer.Scales.X.Scale;
+				var xScale = new Scales.LinkedScale((Scales.Scale)scaleLinkedTo.Clone(), scaleLinkedTo, 0, linkedLayerAsXYPlotLayer.LayerNumber);
+				newlayer.Scales.SetScaleWithTicks(0, xScale, (Scales.Ticks.TickSpacing)linkedLayerAsXYPlotLayer.Scales.X.TickSpacing.Clone());
 			}
 
 			// set enabling of axis
 			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
 			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
-
-
 		}
 
-
-
-		#endregion
-
+		#endregion XYPlotLayer Creation
 	}
 }

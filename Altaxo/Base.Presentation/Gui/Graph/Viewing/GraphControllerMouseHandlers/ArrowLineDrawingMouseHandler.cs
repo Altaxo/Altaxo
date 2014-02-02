@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
@@ -51,17 +52,15 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			get { return Altaxo.Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing; }
 		}
 
-
 		protected override void FinishDrawing()
 		{
-			LineShape go = new LineShape(_Points[0].LayerCoordinate, _Points[1].LayerCoordinate);
-			go.Pen.EndCap = new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(10,4);
+			LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
+			go.Pen.EndCap = new Altaxo.Graph.Gdi.LineCaps.ArrowF10LineCap(10, 4);
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 			_grac.ActiveLayer.GraphObjects.Add(go);
 			_grac.InvalidateCachedGraphImageAndRepaintOffline();
-
 		}
 	}
 }

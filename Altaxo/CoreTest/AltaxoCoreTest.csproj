@@ -280,6 +280,7 @@
     <Compile Include="Calc\TestPrimeNumbers.cs" />
     <Compile Include="Calc\TestRoundings.cs" />
     <Compile Include="Collections\Operations\MinimumOnSlidingWindowTest.cs" />
+    <Compile Include="Collections\TestPartitionableList.cs" />
     <Compile Include="ResourceKeys.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -299,7 +300,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -84,11 +86,26 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public bool ShowCustomTickSpacing
+		{
+			get
+			{
+				return ((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled == true;
+			}
+			set
+			{
+				((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled = value;
+			}
+		}
+
 		public event Action ShowAxisLineChanged;
+
 		public event Action ShowMajorLabelsChanged;
+
 		public event Action ShowMinorLabelsChanged;
 
-		UIElement _lineStyleControl;
+		public event Action ShowCustomTickSpacingChanged;
+
 		public object LineStyleView
 		{
 			set
@@ -106,6 +123,23 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public object TickSpacingView
+		{
+			set
+			{
+				var oldControl = (UIElement)_guiCustomAxisTicksGroupBox.Content;
+				bool wasEnabled = oldControl.IsEnabled == true;
+
+				var newControl = value as UIElement;
+
+				if (newControl == null)
+					newControl = new Label();
+
+				newControl.IsEnabled = wasEnabled;
+				_guiCustomAxisTicksGroupBox.Content = newControl;
+			}
+		}
+
 		public string AxisTitle
 		{
 			get
@@ -118,9 +152,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-	
-
-		#endregion
+		#endregion ITitleFormatLayerView
 
 		private void EhShowAxisLineChanged(object sender, RoutedEventArgs e)
 		{
@@ -138,6 +170,12 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != ShowMinorLabelsChanged)
 				ShowMinorLabelsChanged();
+		}
+
+		private void EhCustomTickSpacingChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != ShowCustomTickSpacingChanged)
+				ShowCustomTickSpacingChanged();
 		}
 	}
 }

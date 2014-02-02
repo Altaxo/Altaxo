@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
-	using Graph.Plot.Groups;
-	using Plot.Groups;
-	using Plot.Data;
 	using Graph.Plot.Data;
+	using Graph.Plot.Groups;
+	using Plot.Data;
+	using Plot.Groups;
 
 	namespace XYPlotLineStyles
 	{
@@ -52,9 +54,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				info.SetNodeContent(obj.ToString());
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(FillDirection), val, true);
 			}
@@ -74,6 +76,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			StepHorzCenter,
 			StepVertCenter
 		}
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyles.ConnectionStyle", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConnectionStyle), 1)]
 		public class ConnectionStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -82,16 +85,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				info.SetNodeContent(obj.ToString());
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(ConnectionStyle), val, true);
 			}
 		}
-
 	}
-
 
 	/// <summary>
 	/// Summary description for XYPlotLineStyle.
@@ -132,33 +133,37 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			IPlotArea layer,
 			CSPlaneID fillDirection);
 
-
 		protected bool _independentColor;
 		protected PenX _penHolder;
 		protected XYPlotLineStyles.ConnectionStyle _connectionStyle;
 		protected bool _useLineSymbolGap;
 		protected double _symbolGap;
-		protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
+		protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points)
 		protected bool _fillArea;
 		protected BrushX _fillBrush; // brush to fill the area under the line
 		protected CSPlaneID _fillDirection; // the direction to fill
+
 		/// <summary>Designates if the fill color is independent or dependent.</summary>
 		protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
+
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
-
 
 		// cached values
 		[NonSerialized]
 		protected PaintOneRangeTemplate _cachedPaintOneRange; // subroutine to paint a single range
+
 		[NonSerialized]
 		protected FillPathOneRangeTemplate _cachedFillOneRange; // subroutine to get a fill path
+
 		[NonSerialized]
 		protected Main.IDocumentNode _parentObject;
+
 		[field: NonSerialized]
 		public event System.EventHandler Changed;
 
 		#region Serialization
+
 		/// <summary>Used to serialize the XYPlotLineStyle Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -179,6 +184,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("FillBrush", s._fillBrush);
 				info.AddValue("FillDirection", s._fillDirection);
 			}
+
 			/// <summary>
 			/// Deserializes the XYPlotLineStyle Version 0.
 			/// </summary>
@@ -205,7 +211,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 1)] // by accident, it was never different from 0
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -228,7 +234,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public virtual LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
 
 				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
@@ -250,10 +255,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					case XYPlotLineStyles.FillDirection.Bottom:
 						return CSPlaneID.Bottom;
+
 					case XYPlotLineStyles.FillDirection.Top:
 						return CSPlaneID.Top;
+
 					case XYPlotLineStyles.FillDirection.Left:
 						return CSPlaneID.Left;
+
 					case XYPlotLineStyles.FillDirection.Right:
 						return CSPlaneID.Right;
 				}
@@ -262,7 +270,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 2)]
-		class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
+		private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -272,8 +280,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				LinePlotStyle s = (LinePlotStyle)obj;
 				info.AddValue("IndependentColor", s._independentColor);
 				*/
-
 			}
+
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
@@ -285,7 +293,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 3)]
-		class XmlSerializationSurrogate3 : XmlSerializationSurrogate0
+		private class XmlSerializationSurrogate3 : XmlSerializationSurrogate0
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -298,6 +306,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("ConnectCircular", s._connectCircular);
 				*/
 			}
+
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
@@ -321,7 +330,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Change: instead _independentFillColor being a boolean value, it is now a ColorLinkage enumeration value
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 4)]
-		class XmlSerializationSurrogate4 : XmlSerializationSurrogate0
+		private class XmlSerializationSurrogate4 : XmlSerializationSurrogate0
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -331,6 +340,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddEnum("FillColorLinkage", s._fillColorLinkage);
 				info.AddValue("ConnectCircular", s._connectCircular);
 			}
+
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
@@ -357,7 +367,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			CreateEventChain();
 		}
-		#endregion
+
+		#endregion Serialization
 
 		#region Construction and copying
 
@@ -377,7 +388,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CreateEventChain();
 		}
 
-
 		public bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -385,13 +395,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var from = obj as LinePlotStyle;
 			if (null != from)
 			{
-				CopyFrom(from, false);
+				CopyFrom(from, Main.EventFiring.Enabled);
 				return true;
 			}
 			return false;
 		}
 
-		public void CopyFrom(LinePlotStyle from, bool suppressChangeEvent)
+		public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -410,14 +420,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			this._parentObject = from._parentObject;
 
-			if (!suppressChangeEvent)
+			if (Main.EventFiring.Enabled == eventFiring)
 				OnChanged();
 		}
 
 		public LinePlotStyle(LinePlotStyle from)
 		{
-
-			CopyFrom(from, true);
+			CopyFrom(from, Main.EventFiring.Suppressed);
 			CreateEventChain();
 		}
 
@@ -434,7 +443,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null != _fillBrush)
 				_fillBrush.Changed += new EventHandler(this.EhChildChanged);
 		}
-		#endregion
+
+		#endregion Construction and copying
 
 		#region Properties
 
@@ -451,39 +461,48 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						_cachedPaintOneRange = NoConnection_PaintOneRange;
 						_cachedFillOneRange = NoConnection_FillOneRange;
 						break;
+
 					default:
 					case XYPlotLineStyles.ConnectionStyle.Straight:
 						_cachedPaintOneRange = StraightConnection_PaintOneRange;
 						_cachedFillOneRange = StraightConnection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.Segment2:
 						_cachedPaintOneRange = Segment2Connection_PaintOneRange;
 						_cachedFillOneRange = Segment2Connection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.Segment3:
 						_cachedPaintOneRange = Segment3Connection_PaintOneRange;
 						_cachedFillOneRange = Segment3Connection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.Spline:
 						_cachedPaintOneRange = SplineConnection_PaintOneRange;
 						_cachedFillOneRange = SplineConnection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.Bezier:
 						_cachedPaintOneRange = BezierConnection_PaintOneRange;
 						_cachedFillOneRange = BezierConnection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.StepHorz:
 						_cachedPaintOneRange = StepHorzConnection_PaintOneRange;
 						_cachedFillOneRange = StepHorzConnection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.StepVert:
 						_cachedPaintOneRange = StepVertConnection_PaintOneRange;
 						_cachedFillOneRange = StepVertConnection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.StepHorzCenter:
 						_cachedPaintOneRange = StepHorzCenterConnection_PaintOneRange;
 						_cachedFillOneRange = StepHorzCenterConnection_FillOneRange;
 						break;
+
 					case XYPlotLineStyles.ConnectionStyle.StepVertCenter:
 						_cachedPaintOneRange = StepVertCenterConnection_PaintOneRange;
 						_cachedFillOneRange = StepVertCenterConnection_FillOneRange;
@@ -553,9 +572,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
-
-
 		public void SetToNextLineStyle(System.Drawing.Drawing2D.DashStyle template)
 		{
 			SetToNextLineStyle(template, 1);
@@ -571,7 +587,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			int len = System.Enum.GetValues(typeof(DashStyle)).Length;
 			int next = step + (int)template;
 			this.LinePen.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next, len - 1);
-
 
 			OnChanged(); // Fire Changed event
 		}
@@ -639,7 +654,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
 		#region Painting
 
@@ -662,7 +677,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (this.LineSymbolGap == true)
 				{
-					// plot a line with the length of symbolsize from 
+					// plot a line with the length of symbolsize from
 					PaintLine(g, new PointF(-halfwidth, 0), new PointF(-symsize, 0));
 					PaintLine(g, new PointF(symsize, 0), new PointF(halfwidth, 0));
 				}
@@ -675,7 +690,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			return bounds;
 		}
-
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
@@ -738,8 +752,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
-		#endregion
+		#endregion Painting
 
 		#region NoConnection
 
@@ -759,10 +772,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		 CSPlaneID fillDirection
 		 )
 		{
-
 		}
 
-		#endregion
+		#endregion NoConnection
 
 		#region StraightConnection
 
@@ -840,7 +852,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			StraightConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
-
 		private void StraightConnection_FillOneRange(GraphicsPath gp,
 			Processed2DPlotData pdata,
 			PlotRange range,
@@ -858,7 +869,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			gp.CloseFigure();
 		}
 
-		#endregion
+		#endregion StraightConnection
 
 		#region SplineConnection
 
@@ -886,7 +897,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// unfortuately, there is no easy way to support line/symbol gaps
 			// thats why I ignore this value and draw a curve through the points
 			g.DrawCurve(this._penHolder, linepts);
-
 		} // end function PaintOneRange (Spline)
 
 		public void SplineConnection_FillOneRange(GraphicsPath gp,
@@ -903,7 +913,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			SplineConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
-		void SplineConnection_FillOneRange(GraphicsPath gp,
+		private void SplineConnection_FillOneRange(GraphicsPath gp,
 			Processed2DPlotData pdata,
 			PlotRange range,
 			IPlotArea layer,
@@ -920,7 +930,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			gp.CloseFigure();
 		}
-		#endregion
+
+		#endregion SplineConnection
 
 		#region BezierConnection
 
@@ -955,7 +966,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// unfortuately, there is no easy way to support line/symbol gaps
 			// thats why I ignore this value and draw a curve through the points
 			g.DrawBeziers(this._penHolder, linepts);
-
 		} // end function PaintOneRange BezierLineStyle
 
 		public void BezierConnection_FillOneRange(GraphicsPath gp,
@@ -976,7 +986,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			PointF[] linepts = new PointF[range.Length];
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-
 
 			BezierConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
@@ -999,11 +1008,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			gp.CloseFigure();
 		}
 
-		#endregion
+		#endregion BezierConnection
 
 		#region StepHorzConnection
-
-
 
 		public void StepHorzConnection_PaintOneRange(
 			Graphics g,
@@ -1068,7 +1075,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		} // end function PaintOneRange StepHorzLineStyle
 
-		PointF[] StepHorzConnection_GetSubPoints(
+		private PointF[] StepHorzConnection_GetSubPoints(
 	 Processed2DPlotData pdata,
 	 PlotRange range,
 	 IPlotArea layer,
@@ -1105,8 +1112,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			StepHorzConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
-
-		void StepHorzConnection_FillOneRange(GraphicsPath gp,
+		private void StepHorzConnection_FillOneRange(GraphicsPath gp,
 		Processed2DPlotData pdata,
 		PlotRange range,
 		IPlotArea layer,
@@ -1123,7 +1129,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			gp.CloseFigure();
 		}
 
-		#endregion
+		#endregion StepHorzConnection
 
 		#region StepVertConnection
 
@@ -1190,8 +1196,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		} // end function PaintOneRange StepVertLineStyle
 
-
-		PointF[] StepVertConnection_GetSubPoints(
+		private PointF[] StepVertConnection_GetSubPoints(
 	Processed2DPlotData pdata,
 	PlotRange range,
 	IPlotArea layer,
@@ -1229,8 +1234,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			StepVertConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
-
-		void StepVertConnection_FillOneRange(GraphicsPath gp,
+		private void StepVertConnection_FillOneRange(GraphicsPath gp,
 		Processed2DPlotData pdata,
 		PlotRange range,
 		IPlotArea layer,
@@ -1246,10 +1250,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
 
 			gp.CloseFigure();
-
 		}
 
-		#endregion
+		#endregion StepVertConnection
 
 		#region StepVertCenterConnection
 
@@ -1311,8 +1314,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		} // end function PaintOneRange StepVertMiddleLineStyle
 
-
-		PointF[] StepVertCenterConnection_GetSubPoints(
+		private PointF[] StepVertCenterConnection_GetSubPoints(
 Processed2DPlotData pdata,
 PlotRange range,
 IPlotArea layer,
@@ -1352,8 +1354,7 @@ IPlotArea layer,
 			StepVertCenterConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
-
-		void StepVertCenterConnection_FillOneRange(GraphicsPath gp,
+		private void StepVertCenterConnection_FillOneRange(GraphicsPath gp,
 		Processed2DPlotData pdata,
 		PlotRange range,
 		IPlotArea layer,
@@ -1369,10 +1370,9 @@ IPlotArea layer,
 			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
 
 			gp.CloseFigure();
-
 		}
 
-		#endregion
+		#endregion StepVertCenterConnection
 
 		#region StepHorzCenterConnection
 
@@ -1434,7 +1434,7 @@ IPlotArea layer,
 			}
 		} // end function PaintOneRange StepHorzMiddleLineStyle
 
-		PointF[] StepHorzCenterConnection_GetSubPoints(
+		private PointF[] StepHorzCenterConnection_GetSubPoints(
 Processed2DPlotData pdata,
 PlotRange range,
 IPlotArea layer,
@@ -1474,8 +1474,7 @@ IPlotArea layer,
 			StepHorzCenterConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
-
-		void StepHorzCenterConnection_FillOneRange(GraphicsPath gp,
+		private void StepHorzCenterConnection_FillOneRange(GraphicsPath gp,
 		Processed2DPlotData pdata,
 		PlotRange range,
 		IPlotArea layer,
@@ -1493,7 +1492,7 @@ IPlotArea layer,
 			gp.CloseFigure();
 		}
 
-		#endregion
+		#endregion StepHorzCenterConnection
 
 		#region Segment2Connection
 
@@ -1558,8 +1557,7 @@ IPlotArea layer,
 			}
 		} // end function PaintOneRange Segment2LineStyle
 
-
-		PointF[] Segment2Connection_GetSubPoints(
+		private PointF[] Segment2Connection_GetSubPoints(
 Processed2DPlotData pdata,
 PlotRange range,
 IPlotArea layer,
@@ -1589,8 +1587,7 @@ IPlotArea layer,
 			Segment2Connection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts, lastIdx);
 		}
 
-
-		void Segment2Connection_FillOneRange(GraphicsPath gp,
+		private void Segment2Connection_FillOneRange(GraphicsPath gp,
 		Processed2DPlotData pdata,
 		PlotRange range,
 		IPlotArea layer,
@@ -1614,7 +1611,7 @@ IPlotArea layer,
 			gp.CloseFigure();
 		}
 
-		#endregion
+		#endregion Segment2Connection
 
 		#region Segment3Connection
 
@@ -1684,7 +1681,7 @@ IPlotArea layer,
 			}
 		} // end function PaintOneRange Segment3LineStyle
 
-		PointF[] Segment3Connection_GetSubPoints(
+		private PointF[] Segment3Connection_GetSubPoints(
 Processed2DPlotData pdata,
 PlotRange range,
 IPlotArea layer,
@@ -1714,8 +1711,7 @@ out int lastIndex)
 			Segment3Connection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
-
-		void Segment3Connection_FillOneRange(GraphicsPath gp,
+		private void Segment3Connection_FillOneRange(GraphicsPath gp,
 		Processed2DPlotData pdata,
 		PlotRange range,
 		IPlotArea layer,
@@ -1740,12 +1736,9 @@ out int lastIndex)
 			gp.CloseFigure();
 		}
 
-
-		#endregion
+		#endregion Segment3Connection
 
 		#region IChangedEventSource Members
-
-
 
 		protected virtual void OnChanged()
 		{
@@ -1762,11 +1755,11 @@ out int lastIndex)
 				Changed(this, e);
 		}
 
-		#endregion
+		#endregion IChangedEventSource Members
 
 		public bool IsColorProvider
 		{
-				get { return !this._independentColor; }
+			get { return !this._independentColor; }
 		}
 
 		public NamedColor Color
@@ -1781,14 +1774,12 @@ out int lastIndex)
 			}
 		}
 
-
 		public bool IsColorReceiver
 		{
 			get { return !this._independentColor; }
 		}
 
-
-		float SymbolSize
+		private float SymbolSize
 		{
 			set
 			{
@@ -1796,18 +1787,10 @@ out int lastIndex)
 			}
 		}
 
-
-
-
-
-
-
-
 		#region IG2DPlotStyle Members
 
 		public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
 		{
-
 		}
 
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -1820,7 +1803,7 @@ out int lastIndex)
 		{
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
-			else if(this._fillColorLinkage== ColorLinkage.Dependent && this._fillBrush!=null)
+			else if (this._fillColorLinkage == ColorLinkage.Dependent && this._fillBrush != null)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._fillBrush.Color; });
 
 			LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashStyle; });
@@ -1836,9 +1819,9 @@ out int lastIndex)
 				if (null == _fillBrush)
 					_fillBrush = new BrushX(NamedColors.Black);
 
-				if(_fillColorLinkage== ColorLinkage.Dependent)
+				if (_fillColorLinkage == ColorLinkage.Dependent)
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { _fillBrush.Color = c; });
-				else if(ColorLinkage.PreserveAlpha == _fillColorLinkage)
+				else if (ColorLinkage.PreserveAlpha == _fillColorLinkage)
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { _fillBrush.Color = c.NewWithAlphaValue(_fillBrush.Color.Color.A); });
 			}
 
@@ -1850,9 +1833,7 @@ out int lastIndex)
 			}
 		}
 
-
-
-		#endregion
+		#endregion IG2DPlotStyle Members
 
 		#region IDocumentNode Members
 
@@ -1876,7 +1857,7 @@ out int lastIndex)
 		{
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region IRoutedPropertyReceiver Members
 
@@ -1907,6 +1888,6 @@ out int lastIndex)
 			}
 		}
 
-		#endregion
+		#endregion IRoutedPropertyReceiver Members
 	} // end class XYPlotLineStyle
 }

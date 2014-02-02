@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Input;
+#endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 {
@@ -44,10 +47,11 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Supergrip collects multiple active grips so that they can be moved simultaneously.
 		/// </summary>
-		class SuperGrip : IGripManipulationHandle
+		private class SuperGrip : IGripManipulationHandle
 		{
 			/// <summary>List of all collected grips.</summary>
 			private List<IGripManipulationHandle> GripList;
+
 			private List<IHitTestObject> HittedList;
 
 			public SuperGrip()
@@ -137,11 +141,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				return false;
 			}
 
-			#endregion
+			#endregion IGripManipulationHandle Members
 		}
 
-		#endregion
-
+		#endregion Internal classes
 
 		#region Members
 
@@ -152,7 +155,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected GraphControllerWpf _grac;
 
 		/// <summary>Locker to suppress changed events during moving of objects.</summary>
-		IDisposable _graphDocumentChangedSuppressor;
+		protected Altaxo.Main.ISuppressToken _graphDocumentChangedSuppressor;
 
 		/// <summary>Grips that are displayed on the screen.</summary>
 		protected IGripManipulationHandle[] DisplayedGrips;
@@ -168,7 +171,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>List of selected HitTestObjects</summary>
 		protected List<IHitTestObject> _selectedObjects = new List<IHitTestObject>();
 
-		#endregion
+		#endregion Members
 
 		public ObjectPointerMouseHandler(GraphControllerWpf grac)
 		{
@@ -247,7 +250,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				DisplayedGrips[i].Show(g, _grac.ZoomFactor);
 		}
 
-
 		/// <summary>
 		/// Tests if a grip from the <see cref="DisplayedGrips"/>  is hitted.
 		/// </summary>
@@ -266,11 +268,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			return null;
 		}
 
-
-
-
-
-
 		/// <summary>
 		/// Handles the MouseDown event when the object pointer tool is selected
 		/// </summary>
@@ -278,7 +275,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="e">The mouse event args</param>
 		/// <remarks>
 		/// The strategy to handle the mousedown event is as following:
-		/// 
+		///
 		/// Have we clicked on already selected objects?
 		///   if yes (we have clicked on already selected objects) and the shift or control key was pressed -> deselect the object and repaint
 		///   if yes (we have clicked on already selected objects) and none shift nor control key was pressed-> activate the object moving  mode
@@ -301,17 +298,16 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			bool bControlKey = keyboardModifiers.HasFlag(ModifierKeys.Control);
 			bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
 
-			var mouseXY = position;                         // Mouse pixel coordinates
-			var graphXY = _grac.ConvertMouseToGraphCoordinates(mouseXY); // Graph area coordinates
+			var mousePixelCoord = position;                         // Mouse pixel coordinates
+			var rootLayerCoord = _grac.ConvertMouseToRootLayerCoordinates(mousePixelCoord); // Graph area coordinates
 
-
-			ActiveGrip = GripHitTest(graphXY);
+			ActiveGrip = GripHitTest(rootLayerCoord);
 			if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
 			{
 				var superGrip = ActiveGrip as SuperGrip;
 				IHitTestObject hitTestObj;
 				IGripManipulationHandle gripHandle;
-				if (superGrip.GetHittedElement(graphXY, out gripHandle, out hitTestObj))
+				if (superGrip.GetHittedElement(rootLayerCoord, out gripHandle, out hitTestObj))
 				{
 					_selectedObjects.Remove(hitTestObj);
 					superGrip.Remove(gripHandle);
@@ -321,21 +317,20 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 			else if (ActiveGrip != null)
 			{
-				ActiveGrip.Activate(graphXY, false);
+				ActiveGrip.Activate(rootLayerCoord, false);
 				return;
 			}
 
 			// search for a object first
 			IHitTestObject clickedObject;
-			int clickedLayerNumber = 0;
-			_grac.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
+			int[] clickedLayerNumber = null;
+			_grac.FindGraphObjectAtPixelPosition(mousePixelCoord, false, out clickedObject, out clickedLayerNumber);
 
 			if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
 				ClearSelections();
 
 			if (null != clickedObject)
-				AddSelectedObject(graphXY, clickedObject);
-
+				AddSelectedObject(rootLayerCoord, clickedObject);
 		} // end of function
 
 		private void AddSelectedObject(PointD2D graphXY, IHitTestObject clickedObject)
@@ -394,7 +389,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (null != ActiveGrip)
 			{
-				PointD2D graphCoord = _grac.ConvertMouseToGraphCoordinates(position);
+				PointD2D graphCoord = _grac.ConvertMouseToRootLayerCoordinates(position);
 				ActiveGrip.MoveGrip(graphCoord);
 				_wereObjectsMoved = true;
 				_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
@@ -427,7 +422,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					bRepaint = true;
 				}
 
-
 				if (bRefresh)
 					_grac.InvalidateCachedGraphImageAndRepaintOffline(); // redraw the contents
 				else if (bRepaint)
@@ -454,7 +448,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 				// Set the currently active layer to the layer the clicked object is belonging to.
 				if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
-					_grac.EhView_CurrentLayerChoosen(graphObject.ParentLayer.Number, false); // Sets the current active layer
+					_grac.EhView_CurrentLayerChoosen(graphObject.ParentLayer.IndexOf().ToArray(), false); // Sets the current active layer
 
 				if (graphObject.DoubleClick != null)
 				{
@@ -465,9 +459,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					//ClearSelections();
 				}
 			}
-
 		}
-
 
 		/// <summary>
 		/// Handles the mouse click event.
@@ -480,8 +472,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			base.OnClick(position, e);
 
 			System.Console.WriteLine("Click");
-
-
 		}
 
 		public override void AfterPaint(Graphics g)
@@ -504,7 +494,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			if (bRepaint)
 				_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
 		}
-
 
 		/// <summary>
 		/// This function is called if a key is pressed.
@@ -543,11 +532,5 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			return false; // per default the key is not processed
 		}
-
-
 	} // end of class
-
-
-
-
 }

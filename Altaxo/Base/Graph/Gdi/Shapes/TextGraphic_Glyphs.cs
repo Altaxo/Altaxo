@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,37 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 
-using System.Drawing;
-using System.Drawing.Drawing2D;
-
 namespace Altaxo.Graph.Gdi.Shapes
 {
+	using Background;
+	using Graph.Plot.Data;
 	using Plot;
 	using Plot.Data;
-	using Graph.Plot.Data;
-	using Background;
 
 	public partial class TextGraphic : GraphicBase
 	{
 		/// <summary>
 		/// Holds Information about the metrics of a font.
 		/// </summary>
-		class FontInfo 
+		private class FontInfo
 		{
 			public double cyLineSpace { get; private set; } // cached linespace value of the font
+
 			public double cyAscent { get; private set; }    // cached ascent value of the font
+
 			public double cyDescent { get; private set; } /// cached descent value of the font
-      public double Size { get; private set; }                                                    
+
+			public double Size { get; private set; }
 
 			private FontInfo()
 			{
@@ -62,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				// get some properties of the font
 				var gdiFont = font.ToGdi();
-        result.Size = gdiFont.Size;
+				result.Size = gdiFont.Size;
 				result.cyLineSpace = gdiFont.GetHeight(g); // space between two lines
 				int iCellSpace = gdiFont.FontFamily.GetLineSpacing(gdiFont.Style);
 				int iCellAscent = gdiFont.FontFamily.GetCellAscent(gdiFont.Style);
@@ -72,9 +76,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class FontCache : IDisposable
+		private class FontCache : IDisposable
 		{
-			Dictionary<FontX, FontInfo> _fontInfoDictionary = new Dictionary<FontX, FontInfo>();
+			private Dictionary<FontX, FontInfo> _fontInfoDictionary = new Dictionary<FontX, FontInfo>();
 
 			public FontInfo GetFontInfo(Graphics g, FontX id)
 			{
@@ -86,8 +90,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 				return result;
 			}
-
-		
 
 			public void Clear()
 			{
@@ -101,13 +103,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Clear();
 			}
 
-			#endregion
+			#endregion IDisposable Members
 		}
 
-		class StyleContext
+		private class StyleContext
 		{
 			public FontX BaseFontId { get; set; }
+
 			public FontX FontId { get; set; }
+
 			public Brush brush;
 
 			public StyleContext(FontX font, Brush brush)
@@ -121,10 +125,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return (StyleContext)MemberwiseClone();
 			}
 
-      public void SetFont(FontX font)
-      {
-        FontId = font;
-      }
+			public void SetFont(FontX font)
+			{
+				FontId = font;
+			}
 
 			public void ScaleFont(double scale)
 			{
@@ -145,28 +149,32 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var newStyle = FontId.Style | style;
 				FontId = FontId.GetFontWithNewStyle(newStyle);
 			}
-
 		}
 
-		class MeasureContext
+		private class MeasureContext
 		{
 			public object LinkedObject { get; set; }
+
 			public FontCache FontCache { get; set; }
+
 			public double TabStop { get; set; }
 		}
 
-		class DrawContext
+		private class DrawContext
 		{
 			public object LinkedObject { get; set; }
+
 			public FontCache FontCache { get; set; }
+
 			public bool bForPreview { get; set; }
+
 			public Dictionary<GraphicsPath, IGPlotItem> _cachedSymbolPositions = new Dictionary<GraphicsPath, IGPlotItem>();
 			public Matrix transformMatrix;
 		}
 
-		class Glyph
+		private class Glyph
 		{
-			// Modification of StringFormat is necessary to avoid 
+			// Modification of StringFormat is necessary to avoid
 			// too big spaces between successive words
 			protected static StringFormat _stringFormat;
 
@@ -234,23 +242,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var result = g.MeasureString(text, font.ToGdi(), PointF.Empty, _stringFormat);
 				return new PointD2D(result.Width, result.Height);
 			}
-
 		}
 
 		#region Structural glyphs
 
-		class StructuralGlyph : Glyph
+		private class StructuralGlyph : Glyph
 		{
 			public virtual void Add(Glyph g)
 			{
-
 			}
+
 			public virtual void Exchange(StructuralGlyph presentchildnode, StructuralGlyph newchildnode)
 			{
 			}
 		}
 
-		class MultiChildGlyph : StructuralGlyph
+		private class MultiChildGlyph : StructuralGlyph
 		{
 			protected List<Glyph> _childs = new List<Glyph>();
 
@@ -270,10 +277,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				newchildnode.Parent = this;
 				presentchildnode.Parent = null;
 			}
-
 		}
 
-		class VerticalStack : MultiChildGlyph
+		private class VerticalStack : MultiChildGlyph
 		{
 			public double LineSpacingFactor = 1;
 			public bool FixedLineSpacing = false;
@@ -325,7 +331,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
 			{
-
 				var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
 
 				double y = ybase - ExtendAboveBaseline;
@@ -338,7 +343,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class GlyphLine : MultiChildGlyph
+		private class GlyphLine : MultiChildGlyph
 		{
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
@@ -365,7 +370,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class SingleChildGlyph : StructuralGlyph
+		private class SingleChildGlyph : StructuralGlyph
 		{
 			protected Glyph _child;
 
@@ -389,8 +394,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-
-		class Subscript : SingleChildGlyph
+		private class Subscript : SingleChildGlyph
 		{
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
@@ -419,7 +423,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class Superscript : SingleChildGlyph
+		private class Superscript : SingleChildGlyph
 		{
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
@@ -447,7 +451,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class DotOverGlyph : SingleChildGlyph
+		private class DotOverGlyph : SingleChildGlyph
 		{
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
@@ -469,14 +473,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					_child.Draw(g, dc, xbase, ybase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-          var gdiFont = Style.FontId.ToGdi();
-          double psize = g.MeasureString(".", gdiFont, PointF.Empty, this.StringFormat).Width;
+					var gdiFont = Style.FontId.ToGdi();
+					double psize = g.MeasureString(".", gdiFont, PointF.Empty, this.StringFormat).Width;
 					g.DrawString(".", gdiFont, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
 			}
 		}
 
-		class BarOverGlyph : SingleChildGlyph
+		private class BarOverGlyph : SingleChildGlyph
 		{
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
@@ -498,19 +502,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					_child.Draw(g, dc, xbase, ybase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-          g.DrawString("_", Style.FontId.ToGdi(), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+					g.DrawString("_", Style.FontId.ToGdi(), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
 			}
 		}
 
-		class SubSuperScript : StructuralGlyph
+		private class SubSuperScript : StructuralGlyph
 		{
-			Glyph _subscript;
-			Glyph _superscript;
+			private Glyph _subscript;
+			private Glyph _superscript;
 
 			public override void Add(Glyph g)
 			{
-
 				if (_subscript == null)
 				{
 					_subscript = g;
@@ -584,11 +587,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
+		#endregion Structural glyphs
 
 		#region Glyph leaves
 
-		class TextGlyph : Glyph
+		private class TextGlyph : Glyph
 		{
 			protected string _text;
 
@@ -601,7 +604,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
 				var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
-        Width = g.MeasureString(_text, Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
+				Width = g.MeasureString(_text, Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
 				ExtendAboveBaseline = fontInfo.cyAscent;
 				ExtendBelowBaseline = fontInfo.cyDescent;
 			}
@@ -609,7 +612,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-        g.DrawString(_text, Style.FontId.ToGdi(), Style.brush, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
+				g.DrawString(_text, Style.FontId.ToGdi(), Style.brush, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
 			}
 
 			public override string ToString()
@@ -618,7 +621,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class TabGlpyh : Glyph
+		private class TabGlpyh : Glyph
 		{
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
@@ -641,18 +644,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class PlotName : TextGlyph
+		private class PlotName : TextGlyph
 		{
-			int _layerNumber;
-			int _plotNumber;
-			string _plotLabelStyle;
-			bool _plotLabelStyleIsPropColName;
-
+			private int _layerNumber;
+			private int _plotNumber;
+			private string _plotLabelStyle;
+			private bool _plotLabelStyleIsPropColName;
 
 			public PlotName(StyleContext context, int plotNumber)
 				: this(context, plotNumber, -1)
 			{
 			}
+
 			public PlotName(StyleContext context, int plotNumber, int plotLayer)
 				: base(string.Empty, context)
 			{
@@ -677,61 +680,60 @@ namespace Altaxo.Graph.Gdi.Shapes
 				string result = string.Empty;
 
 				// first of all, retrieve the actual name
-				if (obj is XYPlotLayer)
+				var mylayer = obj as HostLayer;
+				if (null == mylayer)
+					return result;
+
+				XYPlotLayer layer = mylayer as XYPlotLayer;
+				if (_layerNumber >= 0 && mylayer.ParentLayerList != null && _layerNumber < mylayer.ParentLayerList.Count)
+					layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
+				if (null == layer)
+					return result;
+				IGPlotItem pa = null;
+				if (_plotNumber < layer.PlotItems.Flattened.Length)
 				{
-					XYPlotLayer layer = (XYPlotLayer)obj;
-					if (_layerNumber >= 0 && _layerNumber < layer.ParentLayerList.Count)
-						layer = layer.ParentLayerList[_layerNumber];
+					pa = layer.PlotItems.Flattened[_plotNumber];
+				}
+				if (pa != null)
+				{
+					result = pa.GetName(0);
 
-					IGPlotItem pa = null;
-					if (_plotNumber < layer.PlotItems.Flattened.Length)
+					if (_plotLabelStyle != null && !_plotLabelStyleIsPropColName && pa is XYColumnPlotItem)
 					{
-						pa = layer.PlotItems.Flattened[_plotNumber];
+						XYColumnPlotItemLabelTextStyle style = XYColumnPlotItemLabelTextStyle.YS;
+						try { style = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle), _plotLabelStyle, true); }
+						catch (Exception) { }
+						result = ((XYColumnPlotItem)pa).GetName(style);
 					}
-					if (pa != null)
+
+					if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYColumnPlotItem)
 					{
-						result = pa.GetName(0);
+						XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
+						Data.DataTable tbl = null;
+						if (pb.YColumn is Data.DataColumn)
+							tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
 
-						if (_plotLabelStyle != null && !_plotLabelStyleIsPropColName && pa is XYColumnPlotItem)
+						if (tbl != null)
 						{
-							XYColumnPlotItemLabelTextStyle style = XYColumnPlotItemLabelTextStyle.YS;
-							try { style = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle), _plotLabelStyle, true); }
-							catch (Exception) { }
-							result = ((XYColumnPlotItem)pa).GetName(style);
-						}
-
-						if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYColumnPlotItem)
-						{
-							XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
-							Data.DataTable tbl = null;
-							if (pb.YColumn is Data.DataColumn)
-								tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
-
-							if (tbl != null)
-							{
-								int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
-								if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
-									result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
-							}
+							int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
+							if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
+								result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
 						}
 					}
 				}
 
 				return result;
 			}
-
-
-
 		}
 
-		class PlotSymbol : Glyph
+		private class PlotSymbol : Glyph
 		{
-			// Modification of StringFormat is necessary to avoid 
+			// Modification of StringFormat is necessary to avoid
 			// too big spaces between successive words
 			protected new static StringFormat _stringFormat;
 
-			int _layerNumber = -1;
-			int _plotNumber;
+			private int _layerNumber = -1;
+			private int _plotNumber;
 
 			static PlotSymbol()
 			{
@@ -746,6 +748,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				: this(style, plotNumber, -1)
 			{
 			}
+
 			public PlotSymbol(StyleContext style, int plotNumber, int layerNumber)
 			{
 				Style = style;
@@ -758,29 +761,36 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Width = 0;
 				Height = 0;
 
-				object obj = mc.LinkedObject;
-				if (obj is XYPlotLayer)
-				{
-					XYPlotLayer layer = (XYPlotLayer)obj;
-					if (_layerNumber >= 0 && _layerNumber < layer.ParentLayerList.Count)
-						layer = layer.ParentLayerList[_layerNumber];
+				var mylayer = mc.LinkedObject as HostLayer;
+				if (null == mylayer)
+					return;
+				XYPlotLayer layer = mylayer as XYPlotLayer;
+				if (_layerNumber >= 0 && null != mylayer.ParentLayerList && _layerNumber < mylayer.ParentLayerList.Count)
+					layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
 
-					if (_plotNumber < layer.PlotItems.Flattened.Length)
-					{
-						var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
-						Width = g.MeasureString("MMM", Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
-						ExtendAboveBaseline = fontInfo.cyAscent;
-						ExtendBelowBaseline = fontInfo.cyDescent;
-					}
+				if (null == layer)
+					return;
+
+				if (_plotNumber < layer.PlotItems.Flattened.Length)
+				{
+					var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
+					Width = g.MeasureString("MMM", Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
+					ExtendAboveBaseline = fontInfo.cyAscent;
+					ExtendBelowBaseline = fontInfo.cyDescent;
 				}
 			}
 
 			public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
 			{
-				XYPlotLayer layer = (XYPlotLayer)dc.LinkedObject;
+				var mylayer = (HostLayer)dc.LinkedObject;
 
-				if (_layerNumber >= 0 && _layerNumber < layer.ParentLayerList.Count)
-					layer = layer.ParentLayerList[_layerNumber];
+				XYPlotLayer layer = mylayer as XYPlotLayer;
+
+				if (_layerNumber >= 0 && mylayer.ParentLayerList != null && _layerNumber < mylayer.ParentLayerList.Count)
+					layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
+
+				if (null == layer)
+					return;
 
 				if (_plotNumber < layer.PlotItems.Flattened.Length)
 				{
@@ -803,12 +813,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		class DocumentIdentifier : TextGlyph
+		private class DocumentIdentifier : TextGlyph
 		{
 			public DocumentIdentifier(StyleContext style)
 				: base(null, style)
 			{
 			}
+
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
 				_text = Current.Project.DocumentIdentifier;
@@ -816,7 +827,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
-
+		#endregion Glyph leaves
 	}
 }

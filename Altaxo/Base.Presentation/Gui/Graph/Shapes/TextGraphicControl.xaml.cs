@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +37,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Graph;
 namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
@@ -42,34 +44,24 @@ namespace Altaxo.Gui.Graph.Shapes
 	/// </summary>
 	public partial class TextGraphicControl : UserControl, ITextGraphicView
 	{
-		BackgroundControlsGlue _backgroundGlue;
-		GdiToWpfBitmap _previewBitmap;
+		private BackgroundControlsGlue _backgroundGlue;
+		private GdiToWpfBitmap _previewBitmap;
 
 		public TextGraphicControl()
 		{
 			InitializeComponent();
 
-			_positionSizeGlue.EdPositionX = m_edPosX;
-			_positionSizeGlue.EdPositionY = m_edPosY;
-			_positionSizeGlue.GuiShear = _edShear;
-			_positionSizeGlue.CbRotation = m_cbRotation;
-			_positionSizeGlue.GuiScaleX = _edScaleX;
-			_positionSizeGlue.GuiScaleY = _edScaleY;
-
-
-
 			_backgroundGlue = new BackgroundControlsGlue();
 			_backgroundGlue.CbStyle = _cbBackgroundStyle;
 			_backgroundGlue.CbBrush = _cbBackgroundBrush;
 			_backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
-      _backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
+			_backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
 
 			_previewBitmap = new GdiToWpfBitmap(16, 16);
 			m_pnPreview.Source = _previewBitmap.WpfBitmap;
-
 		}
 
-		void EhBackgroundStyleChanged(object sender, EventArgs e)
+		private void EhBackgroundStyleChanged(object sender, EventArgs e)
 		{
 			if (null != _controller)
 				_controller.EhView_BackgroundStyleChanged();
@@ -77,7 +69,7 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		private void EhLineSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			if(null != _controller)
+			if (null != _controller)
 				_controller.EhView_LineSpacingChanged();
 		}
 
@@ -166,21 +158,19 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		#region  ITextGraphicView
+		#region ITextGraphicView
 
 		public void BeginUpdate()
 		{
-
 		}
 
 		public void EndUpdate()
 		{
-
 		}
 
-		ITextGraphicViewEventSink _controller;
-		public ITextGraphicViewEventSink Controller { set { _controller = value; } }
+		private ITextGraphicViewEventSink _controller;
 
+		public ITextGraphicViewEventSink Controller { set { _controller = value; } }
 
 		public Altaxo.Graph.Gdi.Background.IBackgroundStyle SelectedBackground
 		{
@@ -209,66 +199,6 @@ namespace Altaxo.Gui.Graph.Shapes
 			set
 			{
 				m_edText.Text = value;
-			}
-		}
-
-		public Altaxo.Graph.PointD2D SelectedPosition
-		{
-			get
-			{
-				return _positionSizeGlue.Position;
-			}
-			set
-			{
-				_positionSizeGlue.Position = value;
-			}
-		}
-
-		public double SelectedRotation
-		{
-			get
-			{
-				return _positionSizeGlue.Rotation;
-			}
-			set
-			{
-				_positionSizeGlue.Rotation = value;
-			}
-		}
-
-		public double SelectedShear
-		{
-			get
-			{
-				return _positionSizeGlue.Shear;
-			}
-			set
-			{
-				_positionSizeGlue.Shear = value;
-			}
-		}
-
-		public double SelectedScaleX
-		{
-			get
-			{
-				return _positionSizeGlue.ScaleX;
-			}
-			set
-			{
-				_positionSizeGlue.ScaleX = value;
-			}
-		}
-
-		public double SelectedScaleY
-		{
-			get
-			{
-				return _positionSizeGlue.ScaleY;
-			}
-			set
-			{
-				_positionSizeGlue.ScaleY = value;
 			}
 		}
 
@@ -305,30 +235,6 @@ namespace Altaxo.Gui.Graph.Shapes
 			set
 			{
 				m_cbFontColor.SelectedBrush = value;
-			}
-		}
-
-		public XAnchorPositionType XAnchor
-		{
-			get
-			{
-				return _guiAnchoring.SelectedXAnchor;
-			}
-			set
-			{
-				_guiAnchoring.SelectedXAnchor = value;
-			}
-		}
-
-		public YAnchorPositionType YAnchor
-		{
-			get
-			{
-				return _guiAnchoring.SelectedYAnchor;
-			}
-			set
-			{
-				_guiAnchoring.SelectedYAnchor = value;
 			}
 		}
 
@@ -382,7 +288,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		#endregion
+		#endregion ITextGraphicView
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
@@ -398,10 +304,12 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-	
-
-
-
-
+		public object LocationView
+		{
+			set
+			{
+				_guiPositionHost.Child = value as UIElement;
+			}
+		}
 	}
 }

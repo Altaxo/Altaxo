@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,66 +19,61 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
-  public interface IOpenPathShapeView
-  {
-    PenX DocPen { get; set; }
-    PointD2D DocPosition { get; set; }
-    PointD2D DocSize { get; set; }
-    double DocRotation { get; set; }
-		double DocShear { get; set; }
-		double DocScaleX { get; set; }
-		double DocScaleY { get; set; }
-  }
+	public interface IOpenPathShapeView
+	{
+		PenX DocPen { get; set; }
 
-  [UserControllerForObject(typeof(OpenPathShapeBase),101)]
-  [ExpectedTypeOfView(typeof(IOpenPathShapeView))]
-  public class OpenPathShapeController : MVCANControllerBase<OpenPathShapeBase,IOpenPathShapeView>
-  {
-    #region IMVCController Members
+		object LocationView { set; }
+	}
 
-   
-		
-    protected override void Initialize(bool bInit)
-    {
-      if (_view != null)
-      {
-        _view.DocPen = _doc.Pen;
-        _view.DocPosition = _doc.Position;
-        _view.DocSize = _doc.Size;
-        _view.DocRotation = _doc.Rotation;
-				_view.DocShear = _doc.Shear;
-				_view.DocScaleX = _doc.ScaleX;
-				_view.DocScaleY = _doc.ScaleY;
-      }
-    }
+	[UserControllerForObject(typeof(OpenPathShapeBase), 101)]
+	[ExpectedTypeOfView(typeof(IOpenPathShapeView))]
+	public class OpenPathShapeController : MVCANControllerBase<OpenPathShapeBase, IOpenPathShapeView>
+	{
+		private IMVCANController _locationController;
 
- 
-    #endregion
+		#region IMVCController Members
 
-    #region IApplyController Members
+		protected override void Initialize(bool initData)
+		{
+			if (initData)
+			{
+				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+				Current.Gui.FindAndAttachControlTo(_locationController);
+			}
+			if (_view != null)
+			{
+				_view.DocPen = _doc.Pen;
+				_view.LocationView = _locationController.ViewObject;
+			}
+		}
 
-    public override bool Apply()
-    {
+		#endregion IMVCController Members
+
+		#region IApplyController Members
+
+		public override bool Apply()
+		{
 			try
 			{
+				if (!_locationController.Apply())
+					return false;
+
+				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+
 				_doc.Pen = _view.DocPen;
-				_doc.Position = _view.DocPosition;
-				_doc.Size = _view.DocSize;
-				_doc.Rotation = _view.DocRotation;
-				_doc.Shear = _view.DocShear;
-				_doc.Scale = new PointD2D(_view.DocScaleX, _view.DocScaleY);
 			}
 			catch (Exception ex)
 			{
@@ -85,12 +81,12 @@ namespace Altaxo.Gui.Graph.Shapes
 				return false;
 			}
 
-			if (_useDocumentCopy)
+			if (!object.ReferenceEquals(_doc, _originalDoc))
 				_originalDoc.CopyFrom(_doc);
 
-      return true;
-    }
+			return true;
+		}
 
-    #endregion
-  }
+		#endregion IApplyController Members
+	}
 }

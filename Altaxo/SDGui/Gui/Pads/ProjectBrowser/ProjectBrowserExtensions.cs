@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,8 +31,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	using Altaxo;
 	using Altaxo.Data;
-	using Altaxo.Main;
 	using Altaxo.Gui.Common;
+	using Altaxo.Main;
 
 	public static class ProjectBrowserExtensions
 	{
@@ -63,9 +65,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					Current.ProjectService.DeleteTable((Altaxo.Data.DataTable)item, true);
 				else if (item is Altaxo.Graph.Gdi.GraphDocument)
 					Current.ProjectService.DeleteGraphDocument((Altaxo.Graph.Gdi.GraphDocument)item, true);
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+					Current.Project.ProjectFolderProperties.Remove(item as Altaxo.Main.Properties.ProjectFolderPropertyDocument);
 			}
 		}
-
 
 		/// <summary>
 		/// Moves the selected list items to a folder that is asked for by a dialog.
@@ -85,14 +88,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			var list = ctrl.GetSelectedListItems();
 
-			string originalFolderName=null;
-			bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected( out originalFolderName);
+			string originalFolderName = null;
+			bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out originalFolderName);
 
 			CopyDocuments(list, areDocumentsFromOneFolder, originalFolderName);
 		}
 
-		const string rootFolderDisplayName = "<<<root folder>>>";
-
+		private const string rootFolderDisplayName = "<<<root folder>>>";
 
 		/// <summary>
 		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
@@ -106,10 +108,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
 				return;
 
-			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : ProjectFolder.ConvertDisplayFolderNameToFolderName( choices.Text );
+			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : ProjectFolder.ConvertDisplayFolderNameToFolderName(choices.Text);
 			Current.Project.Folders.MoveItemsToFolder(list, newFolderName);
 		}
-
 
 		/// <summary>
 		/// Copy the items given in the list (tables and graphs) to a folder, which is selected by the user via a dialog box.
@@ -124,8 +125,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to copy the items into:" };
 			if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
 				return;
-			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : ProjectFolder.ConvertDisplayFolderNameToFolderName( choices.Text );
-
+			string newFolderName = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : ProjectFolder.ConvertDisplayFolderNameToFolderName(choices.Text);
 
 			DocNodePathReplacementOptions relocateOptions = null;
 			if (areDocumentsFromOneFolder)
@@ -137,15 +137,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				if (true == relocateData)
 				{
 					relocateOptions = new DocNodePathReplacementOptions();
-					AltaxoDocument.AddRelocationDataForTables(relocateOptions, originalSourceFolder , newFolderName);
+					AltaxoDocument.AddRelocationDataForTables(relocateOptions, originalSourceFolder, newFolderName);
 				}
 			}
 
-
-			Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null!=relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null);
-
+			Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null);
 		}
-
 
 		public static void RenameSelectedListItem(this ProjectBrowseController ctrl)
 		{
@@ -168,7 +165,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				ctrl.Project.Folders.ShowFolderRenameDialog((ProjectFolder)obj);
 			}
 		}
-
 
 		/// <summary>
 		/// Show the items currently selected in the document area.
@@ -234,7 +230,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-
 		/// <summary>
 		/// Plot common columns in two or more tables.
 		/// </summary>
@@ -253,7 +248,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				return;
 
 			var commonColumnNames = command.GetCommonColumnNamesUnordered();
-		
 
 			if (0 == commonColumnNames.Count)
 			{
@@ -278,37 +272,30 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			string originalFolderName = null;
 			bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out originalFolderName);
 
-
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))
 				folderName = null;
 
-			Altaxo.Main.Commands.ProjectItemCommands.CopyItemsToClipboard(list,folderName);
-			
+			Altaxo.Main.Commands.ProjectItemCommands.CopyItemsToClipboard(list, folderName);
 		}
 
 		public static bool CanPasteItemsFromClipboard(this ProjectBrowseController ctrl)
 		{
-			
-
 			return Altaxo.Main.Commands.ProjectItemCommands.CanPasteItemsFromClipboard();
 		}
 
 		public static void PasteItemsFromClipboard(this ProjectBrowseController ctrl)
 		{
 			string folderName;
-			if(!ctrl.IsProjectFolderSelected(out folderName))
+			if (!ctrl.IsProjectFolderSelected(out folderName))
 				folderName = string.Empty;
 
 			Altaxo.Main.Commands.ProjectItemCommands.PasteItemsFromClipboard(folderName);
 		}
 
+		#endregion Clipboard commands
 
-
-		#endregion
-
-
-		#endregion
+		#endregion List item commands
 
 		#region Tree node commands
 
@@ -325,7 +312,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			ctrl.Project.Folders.ShowFolderRenameDialog(folderName);
 		}
 
-		#endregion
+		#endregion Tree node commands
 
 		#region Common Commands
 
@@ -367,6 +354,26 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			return Current.ProjectService.CreateNewGraphInFolder(folderName);
 		}
 
-		#endregion
+		/// <summary>
+		/// Creates a new empty property bag in the current project folder, and shows it in the document area.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		/// <returns>The property bag.</returns>
+		public static Altaxo.Main.Properties.ProjectFolderPropertyDocument CreateNewPropertyBag(this ProjectBrowseController ctrl)
+		{
+			string folderName;
+			if (!ctrl.IsProjectFolderSelected(out folderName))
+				folderName = ProjectFolder.RootFolderName;
+
+			Altaxo.Main.Properties.ProjectFolderPropertyDocument bag;
+			if (!Current.Project.ProjectFolderProperties.TryGetValue(folderName, out bag))
+			{
+				bag = new Altaxo.Main.Properties.ProjectFolderPropertyDocument(folderName);
+				Current.Project.ProjectFolderProperties.Add(bag);
+			}
+			return bag;
+		}
+
+		#endregion Common Commands
 	}
 }

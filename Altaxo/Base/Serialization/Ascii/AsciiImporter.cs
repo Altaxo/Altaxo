@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
 
 using Altaxo.Data;
+using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -76,18 +77,23 @@ namespace Altaxo.Serialization.Ascii
 						case AsciiColumnType.Double:
 							newcols.Add(new Altaxo.Data.DoubleColumn());
 							break;
+
 						case AsciiColumnType.Int64:
 							newcols.Add(new Altaxo.Data.DoubleColumn());
 							break;
+
 						case AsciiColumnType.DateTime:
 							newcols.Add(new Altaxo.Data.DateTimeColumn());
 							break;
+
 						case AsciiColumnType.Text:
 							newcols.Add(new Altaxo.Data.TextColumn());
 							break;
+
 						case AsciiColumnType.DBNull:
 							newcols.Add(new Altaxo.Data.DBNullColumn());
 							break;
+
 						default:
 							throw new ArgumentOutOfRangeException("Unconsidered AsciiColumnType: " + impopt.RecognizedStructure[i].ToString());
 					}
@@ -106,14 +112,12 @@ namespace Altaxo.Serialization.Ascii
 			System.Globalization.NumberFormatInfo numberFormatInfo = impopt.NumberFormatCulture.NumberFormat;
 			System.Globalization.DateTimeFormatInfo dateTimeFormat = impopt.DateTimeFormatCulture.DateTimeFormat;
 
-
 			var notesHeader = new System.Text.StringBuilder();
 			notesHeader.Append("Imported");
 			if (!string.IsNullOrEmpty(_streamOriginHint))
 				notesHeader.AppendFormat(" from {0}", _streamOriginHint);
 			notesHeader.AppendFormat(" at {0}", DateTime.Now);
 			notesHeader.AppendLine();
-
 
 			// first of all, read the header if existent
 			for (int i = 0; i < impopt.NumberOfMainHeaderLines; i++)
@@ -140,28 +144,31 @@ namespace Altaxo.Serialization.Ascii
 				{
 					case AsciiHeaderLinesDestination.Ignore:
 						break;
+
 					case AsciiHeaderLinesDestination.ImportToNotes:
 						AppendLineToTableNotes(notesHeader, sLine);
 						break;
+
 					case AsciiHeaderLinesDestination.ImportToProperties:
 						FillPropertyColumnWithTokens(newpropcols[i], tokens);
 						break;
+
 					case AsciiHeaderLinesDestination.ImportToPropertiesOrNotes:
 						if (tokens.Count == impopt.RecognizedStructure.Count)
 							FillPropertyColumnWithTokens(newpropcols[i], tokens);
 						else
 							AppendLineToTableNotes(notesHeader, sLine);
 						break;
+
 					case AsciiHeaderLinesDestination.ImportToPropertiesAndNotes:
 						FillPropertyColumnWithTokens(newpropcols[i], tokens);
 						AppendLineToTableNotes(notesHeader, sLine);
 						break;
+
 					default:
 						throw new ArgumentOutOfRangeException("Unknown switch case: " + impopt.HeaderLinesDestination.ToString());
 				}
 			}
-
-
 
 			// now the data lines
 			for (int i = 0; true; i++)
@@ -259,7 +266,6 @@ namespace Altaxo.Serialization.Ascii
 				// set the first column as x-column if the table was empty before, and there are more than one column
 				if (i == 0 && tableWasEmptyBefore && newcols.ColumnCount > 1)
 					table.DataColumns.SetColumnKind(0, Altaxo.Data.ColumnKind.X);
-
 			} // end for loop
 
 			// add the property columns
@@ -268,7 +274,6 @@ namespace Altaxo.Serialization.Ascii
 				if (newpropcols[i].Count > 0)
 					table.PropCols.CopyOrReplaceOrAdd(i, newpropcols[i], newpropcols.GetColumnName(i));
 			}
-
 
 			table.Notes.Write(notesHeader.ToString());
 
@@ -313,7 +318,6 @@ namespace Altaxo.Serialization.Ascii
 			return new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
 		}
 
-
 		/// <summary>
 		/// Imports ascii from a string into a table. Returns null (!) if nothing is imported.
 		/// </summary>
@@ -329,8 +333,9 @@ namespace Altaxo.Serialization.Ascii
 
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
 			var importer = new Altaxo.Serialization.Ascii.AsciiImporter(memstream, "text");
+			var analysisOptions = Current.PropertyService.GetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
 
-			Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), memstream);
+			Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), memstream, analysisOptions);
 
 			if (options != null)
 			{
@@ -342,7 +347,6 @@ namespace Altaxo.Serialization.Ascii
 				return null;
 			}
 		}
-
 
 		/// <summary>
 		/// Imports ascii from a stream into a table. Returns null (!) if nothing is imported.
@@ -367,7 +371,8 @@ namespace Altaxo.Serialization.Ascii
 		{
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
 			var importer = new Altaxo.Serialization.Ascii.AsciiImporter(stream, streamOriginHint);
-			Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(defaultImportOptions, stream);
+			var analysisOptions = Current.PropertyService.GetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+			Altaxo.Serialization.Ascii.AsciiImportOptions options = AsciiDocumentAnalysis.Analyze(defaultImportOptions, stream, analysisOptions);
 			if (options != null)
 			{
 				importer.ImportAscii(options, table);
@@ -408,7 +413,6 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-
 		/// <summary>
 		/// Imports Ascii data from a stream into the data table.
 		/// </summary>
@@ -436,18 +440,18 @@ namespace Altaxo.Serialization.Ascii
 			}
 			else
 			{
-				var recognizedOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), myStream);
+				var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
+				var recognizedOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), myStream, analysisOptions);
 				importer.ImportAscii(recognizedOptions, dataTable);
 			}
 		}
-
 
 		/// <summary>
 		/// Compare the values in a double array with values in a double column and see if they match.
 		/// </summary>
 		/// <param name="values">An array of double values.</param>
 		/// <param name="col">A double column to compare with the double array.</param>
-		/// <returns>True if the length of the array is equal to the length of the <see cref="Altaxo.Data.DoubleColumn" /> and the values in 
+		/// <returns>True if the length of the array is equal to the length of the <see cref="Altaxo.Data.DoubleColumn" /> and the values in
 		/// both array match to each other, otherwise false.</returns>
 		public static bool ValuesMatch(Altaxo.Data.DataColumn values, Altaxo.Data.DataColumn col)
 		{
@@ -460,7 +464,6 @@ namespace Altaxo.Serialization.Ascii
 
 			return true;
 		}
-
 
 		/// <summary>
 		/// Imports a couple of ASCII files into one (!) table. The first column of each file is considered to be the x-column, and if they match another x-column, the newly imported columns will get the same column group.
@@ -498,7 +501,6 @@ namespace Altaxo.Serialization.Ascii
 
 				if (newtable.DataColumns.ColumnCount == 0)
 					continue;
-
 
 				xvalues = newtable.DataColumns[0];
 				bool bMatchsXColumn = false;
@@ -541,7 +543,6 @@ namespace Altaxo.Serialization.Ascii
 						Altaxo.Data.ColumnKind.V,
 						lastColumnGroup);
 
-
 					// now set the file name property cell
 					int destcolnumber = table.DataColumns.GetColumnNumber(ycol);
 					filePathPropCol[destcolnumber] = filename;
@@ -553,9 +554,7 @@ namespace Altaxo.Serialization.Ascii
 						dest.SetValueAt(destcolnumber, newtable.PropCols[s][i]);
 					}
 				}
-
 			} // foreache file
-
 
 			return errorList.Length == 0 ? null : errorList.ToString();
 		}
@@ -563,7 +562,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>
 		/// Imports a couple of ASCII files into one (!) table, vertically. If the names of the subsequently imported table columns match, the data
 		/// will be written in the matching column. Otherwise new columns with the unmatched column names were created.
-		/// Property columns will only be imported from the first table. 
+		/// Property columns will only be imported from the first table.
 		/// </summary>
 		/// <param name="filenames">An array of filenames to import.</param>
 		/// <param name="table">The table the data should be imported to.</param>
@@ -574,8 +573,6 @@ namespace Altaxo.Serialization.Ascii
 			System.Text.StringBuilder errorList = new System.Text.StringBuilder();
 			int lastDestinationRow = table.DataColumns.RowCount;
 			int numberOfImportedTables = 0;
-
-
 
 			// add also a property column named "FilePath" if not existing so far
 			Altaxo.Data.TextColumn filePathCol = (Altaxo.Data.TextColumn)table.Col.EnsureExistence("FilePath", typeof(Altaxo.Data.TextColumn), Altaxo.Data.ColumnKind.Label, 0);
@@ -608,7 +605,6 @@ namespace Altaxo.Serialization.Ascii
 					for (int j = 0; j < srcDataCol.Count; j++)
 						destDataCol[lastDestinationRow + j] = srcDataCol[j];
 
-
 					// now also process the property columns
 					for (int srcPropColIdx = 0; srcPropColIdx < srctable.PropCols.ColumnCount; srcPropColIdx++)
 					{
@@ -629,10 +625,8 @@ namespace Altaxo.Serialization.Ascii
 				numberOfImportedTables++;
 			} // foreache file
 
-
 			return errorList.Length == 0 ? null : errorList.ToString();
 		}
-
 
 		/// <summary>
 		/// Imports multiple Ascii files into the provided table and additionally created tables.
@@ -650,7 +644,7 @@ namespace Altaxo.Serialization.Ascii
 			{
 				using (var myStream = GetAsciiInputFileStream(filenames[0]))
 				{
-					Import(myStream, "file " + filenames[0],  dataTable, importOptions);
+					Import(myStream, "file " + filenames[0], dataTable, importOptions);
 					myStream.Close();
 					startrest = 1;
 				}
@@ -668,8 +662,5 @@ namespace Altaxo.Serialization.Ascii
 				}
 			} // for all files
 		}
-
-
-
-	} // end class 
+	} // end class
 }

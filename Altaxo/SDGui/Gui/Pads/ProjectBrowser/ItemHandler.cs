@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,28 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Collections;
-using Altaxo.Main;
-
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	/// <summary>
-	/// Abstracts the handling of the list items that are currently shown. 
+	/// Abstracts the handling of the list items that are currently shown.
 	/// </summary>
 	public abstract class AbstractItemHandler
 	{
 		protected SelectableListNodeList _list;
+
 		protected event Action<SelectableListNodeList> _listChange;
 
 		/// <summary>
-		/// Signals that the list has changed, so the view can update the list. When the first receiver registers for 
+		/// Signals that the list has changed, so the view can update the list. When the first receiver registers for
 		/// the event, the function <see cref="BeginTracking"/> will be called. If the last receiver unregisters for
 		/// the event, the function <see cref="EndTracking"/> will be called.
 		/// </summary>
@@ -98,21 +100,30 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			return new BrowserListItem(name, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
 		}
 
+		public static BrowserListItem GetBrowserListItem(Altaxo.Main.Properties.ProjectFolderPropertyDocument t, bool showFullName)
+		{
+			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
+			name += "FolderProperties";
+			return new BrowserListItem(name, t, false) { Image = ProjectBrowseItemImage.PropertyBag, CreationDate = t.CreationTimeUtc };
+		}
+
 		public static BrowserListItem GetBrowserListItem(string folder)
 		{
 			return new BrowserListItem(ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(folder), new ProjectFolder(folder), false) { Image = ProjectBrowseItemImage.OpenFolder };
 		}
 
-
 		public static BrowserListItem GetBrowserListItemFromObject(object t, bool showFullName)
 		{
 			Altaxo.Graph.Gdi.GraphDocument gd;
 			Altaxo.Data.DataTable dt;
+			Altaxo.Main.Properties.ProjectFolderPropertyDocument propBag;
 			string folder;
 			if (null != (gd = t as Altaxo.Graph.Gdi.GraphDocument))
 				return GetBrowserListItem(gd, showFullName);
 			else if (null != (dt = t as Altaxo.Data.DataTable))
 				return GetBrowserListItem(dt, showFullName);
+			else if (null != (propBag = t as Altaxo.Main.Properties.ProjectFolderPropertyDocument))
+				return GetBrowserListItem(propBag, showFullName);
 			else if (null != (folder = t as string))
 				return GetBrowserListItem(folder);
 			else if (null == t)
@@ -135,9 +146,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			_list = new SelectableListNodeList();
 			foreach (var t in Current.Project.DataTableCollection)
-				_list.Add(GetBrowserListItem(t,true));
+				_list.Add(GetBrowserListItem(t, true));
 			foreach (Altaxo.Graph.Gdi.GraphDocument t in Current.Project.GraphDocumentCollection)
-				_list.Add(GetBrowserListItem(t,true));
+				_list.Add(GetBrowserListItem(t, true));
+			foreach (var t in Current.Project.ProjectFolderProperties)
+				_list.Add(GetBrowserListItem(t, true));
 
 			return _list;
 		}
@@ -150,6 +163,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			GetItemList();
 			Current.Project.DataTableCollection.CollectionChanged += EhCollectionChanged;
 			Current.Project.GraphDocumentCollection.CollectionChanged += EhCollectionChanged;
+			Current.Project.ProjectFolderProperties.CollectionChanged += EhCollectionChanged;
 			OnListChange();
 		}
 
@@ -160,9 +174,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Current.Project.DataTableCollection.CollectionChanged -= EhCollectionChanged;
 			Current.Project.GraphDocumentCollection.CollectionChanged -= EhCollectionChanged;
+			Current.Project.ProjectFolderProperties.CollectionChanged -= EhCollectionChanged;
 		}
 
-		void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
 			GetItemList();
 			OnListChange();
@@ -182,7 +197,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			_list = new SelectableListNodeList();
 			foreach (var t in Current.Project.DataTableCollection)
-				_list.Add(GetBrowserListItem(t,true));
+				_list.Add(GetBrowserListItem(t, true));
 
 			return _list;
 		}
@@ -205,7 +220,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			Current.Project.DataTableCollection.CollectionChanged -= EhCollectionChanged;
 		}
 
-		void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
 			GetItemList();
 			OnListChange();
@@ -221,7 +236,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			_list = new SelectableListNodeList();
 			foreach (Altaxo.Graph.Gdi.GraphDocument t in Current.Project.GraphDocumentCollection)
-				_list.Add(GetBrowserListItem(t,true));
+				_list.Add(GetBrowserListItem(t, true));
 
 			return _list;
 		}
@@ -244,7 +259,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			Current.Project.GraphDocumentCollection.CollectionChanged -= EhCollectionChanged;
 		}
 
-		void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
 			GetItemList();
 			OnListChange();
@@ -256,8 +271,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	/// </summary>
 	public class SpecificProjectFolderHandler : AbstractItemHandler
 	{
-		string _folderName;
-
+		private string _folderName;
 
 		/// <summary>
 		/// Creates the handler.
@@ -270,7 +284,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		/// <summary>Gets the current project folder (or null if this list has no current project folder).</summary>
 		public string CurrentProjectFolder { get { return _folderName; } }
-
 
 		/// <summary>
 		/// Fills the list with all items (tables, graphs, and subfolders) of the current project folder.
@@ -293,13 +306,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			//itemList.Sort(CompareItemsByName);
 			foreach (var o in itemList)
 			{
-				_list.Add(GetBrowserListItemFromObject(o,false));
+				_list.Add(GetBrowserListItemFromObject(o, false));
 			}
 
 			return _list;
 		}
-
-	
 
 		/// <summary>
 		/// Starts monitoring of item changes in the current project folder.
@@ -319,12 +330,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			Current.Project.Folders.CollectionChanged += EhCollectionChanged;
 		}
 
-		void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
 		{
 			GetItemList();
 			OnListChange();
 		}
-
 	}
-
 }

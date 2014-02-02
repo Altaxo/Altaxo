@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Data;
-using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
@@ -33,15 +35,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	public class RelativeStackTransform : ICoordinateTransformingGroupStyle
 	{
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeStackTransform), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				RelativeStackTransform s = (RelativeStackTransform)obj;
-
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -50,7 +51,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public RelativeStackTransform()
 		{
@@ -82,14 +83,102 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			pb.Add(100);
 		}
 
-
-
-		static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
+		private static bool CanUseStyle(IPlotArea layer, PlotItemCollection coll, out Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList)
 		{
 			return AbsoluteStackTransform.CanUseStyle(layer, coll, out plotDataList);
 		}
 
+		// members that are created at PaintParent and must be released at latest at FinishPainting
+		private Dictionary<G2DPlotItem, Processed2DPlotData> _plotDataDict; // if null, the PaintChild operation is carried out normally, that is without stack transform
 
+		public void PaintBegin(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		{
+			_plotDataDict = null;
+			if (!CanUseStyle(layer, coll, out _plotDataDict))
+			{
+				return;
+			}
+
+			AltaxoVariant[] ysumArray = null;
+			foreach (IGPlotItem pi in coll)
+			{
+				if (pi is G2DPlotItem)
+				{
+					G2DPlotItem gpi = pi as G2DPlotItem;
+					Processed2DPlotData pdata = _plotDataDict[gpi];
+					ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
+				}
+			}
+
+			// now plot the data - the summed up y is in yArray
+			AltaxoVariant[] yArray = null;
+			Processed2DPlotData previousItemData = null;
+			foreach (IGPlotItem pi in coll)
+			{
+				if (pi is G2DPlotItem)
+				{
+					G2DPlotItem gpi = pi as G2DPlotItem;
+					Processed2DPlotData pdata = _plotDataDict[gpi];
+					yArray = AbsoluteStackTransform.AddUp(yArray, pdata);
+					AltaxoVariant[] localArray = new AltaxoVariant[yArray.Length];
+
+					int j = -1;
+					foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+					{
+						j++;
+						AltaxoVariant y = 100 * yArray[j] / ysumArray[j];
+						localArray[j] = y;
+
+						Logical3D rel = new Logical3D(
+						layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
+						layer.YAxis.PhysicalVariantToNormal(y));
+
+						double xabs, yabs;
+						layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+						pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+					}
+					// we have also to exchange the accessor for the physical y value and replace it by our own one
+					pdata.YPhysicalAccessor = new IndexedPhysicalValueAccessor(delegate(int i) { return localArray[i]; });
+					pdata.PreviousItemData = previousItemData;
+					previousItemData = pdata;
+				}
+			}
+		}
+
+		public void PaintEnd()
+		{
+			_plotDataDict = null;
+		}
+
+		public void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
+		{
+			if (null == _plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+			{
+				coll[indexOfChild].Paint(g, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
+				return;
+			}
+
+			Processed2DPlotData prevPlotData = null;
+			Processed2DPlotData nextPlotData = null;
+
+			if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem))
+				prevPlotData = _plotDataDict[coll[indexOfChild + 1] as G2DPlotItem];
+
+			if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem))
+				nextPlotData = _plotDataDict[coll[indexOfChild - 1] as G2DPlotItem];
+
+			if (coll[indexOfChild] is G2DPlotItem)
+			{
+				var gpi = coll[indexOfChild] as G2DPlotItem;
+				gpi.Paint(g, layer, _plotDataDict[gpi], prevPlotData, nextPlotData);
+			}
+			else
+			{
+				coll[indexOfChild].Paint(g, layer, null, null);
+			}
+		}
+
+		/*
 		public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
 		{
 			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
@@ -109,9 +198,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
 				}
 			}
-
-
-
 
 			// now plot the data - the summed up y is in yArray
 			AltaxoVariant[] yArray = null;
@@ -139,7 +225,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 						double xabs, yabs;
 						layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
 						pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-
 					}
 					// we have also to exchange the accessor for the physical y value and replace it by our own one
 					pdata.YPhysicalAccessor = new IndexedPhysicalValueAccessor(delegate(int i) { return localArray[i]; });
@@ -156,7 +241,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					nextPlotData = plotDataDict[coll[i - 1] as G2DPlotItem];
 				else
 					nextPlotData = null;
-
 
 				if (coll[i] is G2DPlotItem)
 				{
@@ -175,10 +259,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				nextPlotData = null;
 			}
 		}
+		*/
 
-
-
-		#endregion
+		#endregion ICoordinateTransformingGroupStyle Members
 
 		#region ICloneable Members
 
@@ -187,13 +270,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return new RelativeStackTransform(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region ICoordinateTransformingGroupStyle Members
 
-
-
-		#endregion
+		#endregion ICoordinateTransformingGroupStyle Members
 	}
-
 }

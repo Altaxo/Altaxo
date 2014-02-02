@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
@@ -33,7 +34,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	/// </summary>
 	public interface ICoordinateTransformingGroupStyle : ICloneable
 	{
-
 		/// <summary>
 		/// Merges the X bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.
 		/// If the group style transforms the x values, of course the transformed values should be merged into.
@@ -52,13 +52,25 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// <param name="coll">The collection of plot items.</param>
 		void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
 
-
 		/// <summary>
-		/// Paints the plot items.
+		/// Prepare the paint of the plot items that belongs to this group style.
 		/// </summary>
 		/// <param name="g">Graphics context used for drawing.</param>
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="coll">Collection of plot items to draw.</param>
-		void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll);
+		void PaintBegin(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll);
+
+		/// <summary>
+		/// Finishes the painting of the plot items that belongs to this style. Paints the end.
+		/// </summary>
+		void PaintEnd();
+
+		/// <summary>
+		/// Paints the child of a plot item collection.
+		/// </summary>
+		/// <param name="g">Graphics context used for drawing.</param>
+		/// <param name="layer">Plot layer.</param>
+		/// <param name="coll">Collection of plot items to draw.</param>
+		void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll, int indexOfChild);
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,44 +19,50 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Serialization.Ascii;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Globalization;
-
-using Altaxo.Collections;
-
-
-using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
 	public interface IAsciiImportOptionsView
 	{
 		event Action DoAnalyze;
+
 		event Action SeparationStrategyChanged;
 
 		int? NumberOfMainHeaderLines { get; set; }
+
 		int? IndexOfCaptionLine { get; set; }
 
 		void SetGuiSeparationStrategy(SelectableListNodeList list);
+
 		bool GuiSeparationStrategyIsKnown { get; set; }
 
 		void SetNumberFormatCulture(SelectableListNodeList list);
+
 		bool NumberFormatCultureIsKnowm { get; set; }
 
 		void SetDateTimeFormatCulture(SelectableListNodeList list);
+
 		bool DateTimeFormatCultureIsKnown { get; set; }
 
 		bool TableStructureIsKnown { get; set; }
+
 		System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>> TableStructure { set; }
 
 		bool RenameColumnsWithHeaderNames { get; set; }
+
 		bool RenameWorksheetWithFileName { get; set; }
+
 		SelectableListNodeList HeaderLinesDestination { set; }
 
 		object AsciiSeparationStrategyDetailView { set; }
@@ -67,30 +74,34 @@ namespace Altaxo.Gui.Serialization.Ascii
 	[UserControllerForObject(typeof(AsciiImportOptions))]
 	public class AsciiImportOptionsController : MVCANControllerBase<AsciiImportOptions, IAsciiImportOptionsView>
 	{
-		System.IO.Stream _asciiStreamData;
+		private System.IO.Stream _asciiStreamData;
 
-		SelectableListNodeList _separationStrategyList;
-		SelectableListNodeList _numberFormatList;
-		SelectableListNodeList _dateTimeFormatList;
-		SelectableListNodeList _headerLinesDestination;
-		System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>> _tableStructure;
+		private SelectableListNodeList _separationStrategyList;
+		private SelectableListNodeList _numberFormatList;
+		private SelectableListNodeList _dateTimeFormatList;
+		private SelectableListNodeList _headerLinesDestination;
+		private System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>> _tableStructure;
 
-		IMVCANController _separationStrategyInstanceController;
-		IMVCANController _asciiDocumentAnalysisOptionsController;
+		private IMVCANController _separationStrategyInstanceController;
+		private IMVCANController _asciiDocumentAnalysisOptionsController;
 
-		Dictionary<Type, IAsciiSeparationStrategy> _separationStrategyInstances = new Dictionary<Type, IAsciiSeparationStrategy>();
+		private Dictionary<Type, IAsciiSeparationStrategy> _separationStrategyInstances = new Dictionary<Type, IAsciiSeparationStrategy>();
 
+		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
 
-		System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
+		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
 
-		System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
-
-		AsciiDocumentAnalysisOptions _analysisOptions = AsciiDocumentAnalysisOptions.UserDefault;
+		private AsciiDocumentAnalysisOptions _analysisOptions;
 
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (args != null && args.Length >= 2 && args[1] is System.IO.Stream)
 				_asciiStreamData = args[1] as System.IO.Stream;
+
+			if (args != null && args.Length >= 3 && args[2] is AsciiDocumentAnalysisOptions)
+				_analysisOptions = (AsciiDocumentAnalysisOptions)args[2];
+			else
+				_analysisOptions = Current.PropertyService.GetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
 
 			return base.InitializeDocument(args);
 		}
@@ -159,15 +170,14 @@ namespace Altaxo.Gui.Serialization.Ascii
 			return string.Compare(x.DisplayName, y.DisplayName);
 		}
 
-
-		void GetAvailableCultures(ref SelectableListNodeList list, CultureInfo currentlySelectedCulture)
+		private void GetAvailableCultures(ref SelectableListNodeList list, CultureInfo currentlySelectedCulture)
 		{
 			list = new SelectableListNodeList();
 			var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
 			Array.Sort(cultures, CompareCultures);
 
 			var invCult = System.Globalization.CultureInfo.InvariantCulture;
-			AddCulture(list, invCult, null!=currentlySelectedCulture && invCult.ThreeLetterISOLanguageName == currentlySelectedCulture.ThreeLetterISOLanguageName);
+			AddCulture(list, invCult, null != currentlySelectedCulture && invCult.ThreeLetterISOLanguageName == currentlySelectedCulture.ThreeLetterISOLanguageName);
 
 			foreach (var cult in cultures)
 				AddCulture(list, cult, null != currentlySelectedCulture && cult.Name == currentlySelectedCulture.Name);
@@ -176,12 +186,12 @@ namespace Altaxo.Gui.Serialization.Ascii
 				list[0].IsSelected = true;
 		}
 
-		void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
+		private void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
 		{
 			cultureList.Add(new SelectableListNode(cult.DisplayName, cult, isSelected));
 		}
 
-		void EhDoAsciiAnalysis()
+		private void EhDoAsciiAnalysis()
 		{
 			ApplyWithoutClosing(); // getting _doc filled with user choices
 
@@ -210,14 +220,14 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 		}
 
-		void EhSeparationStrategyChanged()
+		private void EhSeparationStrategyChanged()
 		{
 			var selNode = _separationStrategyList.FirstSelectedNode;
 			if (null == selNode)
 				return;
 
 			var sepType = (Type)selNode.Tag;
-			if (null != _doc.SeparationStrategy && _doc.SeparationStrategy.GetType() == sepType && null!=_separationStrategyInstanceController)
+			if (null != _doc.SeparationStrategy && _doc.SeparationStrategy.GetType() == sepType && null != _separationStrategyInstanceController)
 				return;
 
 			if (_separationStrategyInstanceController != null)
@@ -229,8 +239,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 				}
 			}
 
-
-		
 			IAsciiSeparationStrategy sep;
 			if (_separationStrategyInstances.ContainsKey(sepType))
 			{
@@ -244,7 +252,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 			_doc.SeparationStrategy = sep;
 
-			_separationStrategyInstanceController = (IMVCANController) Current.Gui.GetController(new object[] { sep }, typeof(IMVCANController));
+			_separationStrategyInstanceController = (IMVCANController)Current.Gui.GetController(new object[] { sep }, typeof(IMVCANController));
 			object view = null;
 			if (null != _separationStrategyInstanceController)
 			{
@@ -253,7 +261,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 			if (null != _view)
 				_view.AsciiSeparationStrategyDetailView = view;
-
 		}
 
 		protected override void AttachView()
@@ -274,7 +281,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 		private bool ApplyWithoutClosing()
 		{
-
 			if (null != _separationStrategyInstanceController)
 				if (_separationStrategyInstanceController.Apply())
 					_doc.SeparationStrategy = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;

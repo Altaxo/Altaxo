@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,33 +19,33 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Data;
-using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
 	using Plot.Data;
 
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	public class AbsoluteStackTransform : ICoordinateTransformingGroupStyle
 	{
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteStackTransform), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				AbsoluteStackTransform s = (AbsoluteStackTransform)obj;
-
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -53,14 +54,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
-
-
-
+		#endregion Serialization
 
 		public AbsoluteStackTransform()
 		{
-
 		}
 
 		public AbsoluteStackTransform(AbsoluteStackTransform from)
@@ -72,7 +69,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
 		{
 			CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
-
 		}
 
 		public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
@@ -125,17 +121,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 							j++;
 							ySumArray[j] += pdata.GetYPhysical(originalIndex);
 							pb.Add(ySumArray[j]);
-
 						}
 					}
 				}
 			}
 		}
 
-
-
 		/// <summary>
-		/// Determines whether the plot items in <paramref name="coll"/> can be plotted as stack. Presumption is that all plot items 
+		/// Determines whether the plot items in <paramref name="coll"/> can be plotted as stack. Presumption is that all plot items
 		/// have the same number of plot points, and that all items have the same order of x values associated with the plot points.
 		/// </summary>
 		/// <param name="layer">Plot layer.</param>
@@ -174,12 +167,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 						if (pdata.RangeList.PlotPointCount != xArray.Length)
 							return false;
 
-
 						int j = -1;
 						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
 						{
 							j++;
-
 
 							if (xArray[j] != pdata.GetXPhysical(originalIndex))
 								return false;
@@ -190,7 +181,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 			return idx >= 1;
 		}
-
 
 		/// <summary>Adds the y-values of a plot item to an array of y-values..</summary>
 		/// <param name="yArray">The y array to be added to. If null, a new array will be allocated (and filled with the y-values of the plot item).</param>
@@ -221,6 +211,91 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return yArray;
 		}
 
+		// members that are created at PaintParent and must be released at latest at FinishPainting
+		private Dictionary<G2DPlotItem, Processed2DPlotData> _plotDataDict; // if null, the PaintChild operation is carried out normally, that is without stack transform
+
+		public void PaintBegin(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		{
+			_plotDataDict = null;
+			if (!CanUseStyle(layer, coll, out _plotDataDict))
+			{
+				return;
+			}
+
+			AltaxoVariant[] yArray = null;
+			// First, add up all items since we start always with the last item
+			int idx = -1;
+			Processed2DPlotData previousItemData = null;
+			foreach (IGPlotItem pi in coll)
+			{
+				if (pi is G2DPlotItem)
+				{
+					idx++;
+
+					G2DPlotItem gpi = pi as G2DPlotItem;
+					Processed2DPlotData pdata = _plotDataDict[gpi];
+					yArray = AddUp(yArray, pdata);
+
+					if (idx > 0) // this is not the first item
+					{
+						int j = -1;
+						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						{
+							j++;
+							Logical3D rel = new Logical3D(
+							layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)),
+							layer.YAxis.PhysicalVariantToNormal(yArray[j]));
+
+							double xabs, yabs;
+							layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
+							pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
+						}
+					}
+
+					// we have also to exchange the accessor for the physical y value and replace it by our own one
+					AltaxoVariant[] localArray = (AltaxoVariant[])yArray.Clone();
+					LocalArrayHolder localArrayHolder = new LocalArrayHolder(localArray, pdata);
+					pdata.YPhysicalAccessor = localArrayHolder.GetPhysical;
+					pdata.PreviousItemData = previousItemData;
+					previousItemData = pdata;
+				}
+			}
+		}
+
+		public void PaintEnd()
+		{
+			_plotDataDict = null;
+		}
+
+		public void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
+		{
+			if (null == _plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+			{
+				coll[indexOfChild].Paint(g, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
+				return;
+			}
+
+			Processed2DPlotData prevPlotData = null;
+			Processed2DPlotData nextPlotData = null;
+
+			if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem))
+				prevPlotData = _plotDataDict[coll[indexOfChild + 1] as G2DPlotItem];
+
+			if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem))
+				nextPlotData = _plotDataDict[coll[indexOfChild - 1] as G2DPlotItem];
+
+			if (coll[indexOfChild] is G2DPlotItem)
+			{
+				var gpi = coll[indexOfChild] as G2DPlotItem;
+				gpi.Paint(g, layer, _plotDataDict[gpi], prevPlotData, nextPlotData);
+			}
+			else
+			{
+				coll[indexOfChild].Paint(g, layer, null, null);
+			}
+		}
+
+		/*
 		/// <summary>Paints the plot items.</summary>
 		/// <param name="g">Graphics context used for drawing.</param>
 		/// <param name="layer">Plot layer.</param>
@@ -240,7 +315,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			Processed2DPlotData previousItemData = null;
 			foreach (IGPlotItem pi in coll)
 			{
-
 				if (pi is G2DPlotItem)
 				{
 					idx++;
@@ -284,7 +358,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				else
 					nextPlotData = null;
 
-
 				if (coll[i] is G2DPlotItem)
 				{
 					var gpi = coll[i] as G2DPlotItem;
@@ -301,9 +374,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				currPlotData = nextPlotData;
 				nextPlotData = null;
 			}
-
 		}
-
+		*/
 
 		/// <summary>
 		/// Private class to hold the transformed physical y values. The problem is that <see cref="GetPhysical"/> is called with the original row index (and not the plot index),
@@ -311,8 +383,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// </summary>
 		private class LocalArrayHolder
 		{
-			AltaxoVariant[] _localArray;
-			Dictionary<int, int> _originalRowIndexToPlotIndex;
+			private AltaxoVariant[] _localArray;
+			private Dictionary<int, int> _originalRowIndexToPlotIndex;
 
 			/// <summary>Initializes a new instance of the <see cref="LocalArrayHolder"/> class.</summary>
 			/// <param name="localArray">The local array of transformed y values. The array length is equal to the number of plot points.</param>
@@ -337,7 +409,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion ICoordinateTransformingGroupStyle Members
 
 		#region ICloneable Members
 
@@ -346,13 +418,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return new AbsoluteStackTransform(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region ICoordinateTransformingGroupStyle Members
 
-
-
-		#endregion
+		#endregion ICoordinateTransformingGroupStyle Members
 	}
-
 }

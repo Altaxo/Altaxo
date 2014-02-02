@@ -555,10 +555,14 @@
     <Compile Include="Calc\VectorCoupling.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Collections\EnumerableExtensions.cs" />
+    <Compile Include="Collections\EnumerationExtensions.cs" />
     <Compile Include="Collections\IAscendingIntegerCollection.cs" />
     <Compile Include="Collections\ContiguousIntegerRange.cs" />
+    <Compile Include="Collections\IndexDirection.cs" />
     <Compile Include="Collections\IROVector.cs" />
     <Compile Include="Collections\ContiguousNonNegativeIntegerRange.cs" />
+    <Compile Include="Collections\ListExtensions.cs" />
     <Compile Include="Collections\Operations\MinimumOnSlidingWindow.cs" />
     <Compile Include="Collections\PartitionableList_PartialView.cs" />
     <Compile Include="Collections\PartitionableList.cs" />
@@ -575,6 +579,7 @@
     <Compile Include="Collections\Text\LongestCommonSubstringL.cs" />
     <Compile Include="Collections\Text\SubstringPosition.cs" />
     <Compile Include="Calc\PrimeNumberMath.cs" />
+    <Compile Include="Collections\TreeNodeExtensions.cs" />
     <Compile Include="StringResources.cs" />
     <Compile Include="Science\Energy.cs" />
     <Compile Include="StringResourceKey.cs" />

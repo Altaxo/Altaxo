@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
+#endregion Copyright
+
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui;
-using Altaxo.Graph;
+using System;
+using System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -33,19 +35,29 @@ namespace Altaxo.Gui.Graph
 	public interface IAxisStyleView
 	{
 		bool ShowAxisLine { get; set; }
+
 		bool ShowMajorLabels { get; set; }
+
 		bool ShowMinorLabels { get; set; }
 
+		bool ShowCustomTickSpacing { get; set; }
+
 		event Action ShowAxisLineChanged;
+
 		event Action ShowMajorLabelsChanged;
+
 		event Action ShowMinorLabelsChanged;
+
+		event Action ShowCustomTickSpacingChanged;
 
 		object LineStyleView { set; }
 
+		object TickSpacingView { set; }
+
 		string AxisTitle { get; set; }
 	}
-	#endregion
 
+	#endregion Interfaces
 
 	/// <summary>
 	/// Summary description for TitleFormatLayerController.
@@ -55,6 +67,8 @@ namespace Altaxo.Gui.Graph
 	public class AxisStyleController : MVCANDControllerBase<AxisStyle, IAxisStyleView>
 	{
 		protected IMVCAController _axisLineStyleController;
+
+		protected TickSpacingController _tickSpacingController;
 
 		protected override void Initialize(bool bInit)
 		{
@@ -70,6 +84,13 @@ namespace Altaxo.Gui.Graph
 				{
 					_axisLineStyleController = null;
 				}
+
+				if (_doc.TickSpacing != null)
+				{
+					_tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
+					_tickSpacingController.InitializeDocument(_doc.TickSpacing);
+					Current.Gui.FindAndAttachControlTo(_tickSpacingController);
+				}
 			}
 
 			if (_view != null)
@@ -79,6 +100,8 @@ namespace Altaxo.Gui.Graph
 				_view.ShowMajorLabels = _originalDoc.ShowMajorLabels;
 				_view.ShowMinorLabels = _originalDoc.ShowMinorLabels;
 				_view.LineStyleView = _axisLineStyleController == null ? null : _axisLineStyleController.ViewObject;
+				_view.ShowCustomTickSpacing = _doc.TickSpacing != null;
+				_view.TickSpacingView = _tickSpacingController != null ? _tickSpacingController.ViewObject : null;
 			}
 		}
 
@@ -95,9 +118,14 @@ namespace Altaxo.Gui.Graph
 					_doc.AxisLineStyle = (AxisLineStyle)_axisLineStyleController.ModelObject;
 			}
 
-
 			_doc.ShowMajorLabels = _view.ShowMajorLabels;
 			_doc.ShowMinorLabels = _view.ShowMinorLabels;
+
+			if (_tickSpacingController != null && !_tickSpacingController.Apply())
+				return false;
+			if (_view.ShowCustomTickSpacing && null != _tickSpacingController)
+				_doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;
+
 
 
 			if (!object.ReferenceEquals(_doc, _originalDoc))
@@ -122,6 +150,7 @@ namespace Altaxo.Gui.Graph
 			_view.ShowAxisLineChanged += EhShowAxisLineChanged;
 			_view.ShowMajorLabelsChanged += EhShowMajorLabelsChanged;
 			_view.ShowMinorLabelsChanged += EhShowMinorLabelsChanged;
+			_view.ShowCustomTickSpacingChanged += EhShowCustomTickSpacingChanged;
 		}
 
 		protected override void DetachView()
@@ -129,6 +158,34 @@ namespace Altaxo.Gui.Graph
 			_view.ShowAxisLineChanged -= EhShowAxisLineChanged;
 			_view.ShowMajorLabelsChanged -= EhShowMajorLabelsChanged;
 			_view.ShowMinorLabelsChanged -= EhShowMinorLabelsChanged;
+			_view.ShowCustomTickSpacingChanged -= EhShowCustomTickSpacingChanged;
+		}
+
+		private void EhShowCustomTickSpacingChanged()
+		{
+			var isShown = _view.ShowCustomTickSpacing;
+
+			if (isShown)
+			{
+				if (_tickSpacingController == null)
+				{
+					if (_doc.TickSpacing == null)
+					{
+						_doc.TickSpacing = new Altaxo.Graph.Scales.Ticks.LinearTickSpacing();
+					}
+					_tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
+					_tickSpacingController.InitializeDocument(_doc.TickSpacing);
+					Current.Gui.FindAndAttachControlTo(_tickSpacingController);
+					if (null != _view)
+						_view.TickSpacingView = _tickSpacingController.ViewObject;
+				}
+			}
+			else
+			{
+				_doc.TickSpacing = null;
+				_view.TickSpacingView = null;
+				_tickSpacingController = null;
+			}
 		}
 
 		private void EhShowAxisLineChanged()

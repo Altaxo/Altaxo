@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,62 +19,49 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
+#endregion Copyright
 
 using Altaxo.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
-
 	/// <summary>
 	/// Supports the analysis of Ascii files.
 	/// </summary>
 	public class AsciiDocumentAnalysis
 	{
 		/// <summary>If the number of main header lines is known before this analysis, this list contains the main header lines.</summary>
-		List<string> _headerLines;
+		private List<string> _headerLines;
 
 		/// <summary>First lines of the document to analyze. Note that this not neccessarily have to be the first lines. The line number of the first line in this collection is designated by <see cref="P:_headerLines.Count"/>.</summary>
-		List<string> _bodyLines;
-
+		private List<string> _bodyLines;
 
 		/// <summary>Global structure of the document.</summary>
-		AsciiGlobalStructureAnalysis _globalStructure;
+		private AsciiGlobalStructureAnalysis _globalStructure;
 
 		/// <summary>List of all useful combinations of SeparationStrategy, NumberFormat and DateTimeFormat that should be tested.</summary>
-		List<AsciiLineAnalysisOption> _lineAnalysisOptionsToTest;
+		private List<AsciiLineAnalysisOption> _lineAnalysisOptionsToTest;
 
-		List<AsciiLineAnalysis> _lineAnalysisOfHeaderLines;
+		private List<AsciiLineAnalysis> _lineAnalysisOfHeaderLines;
 
-		AsciiLineAnalysis[] _lineAnalysisOfBodyLines;
+		private AsciiLineAnalysis[] _lineAnalysisOfBodyLines;
 
-		Dictionary<AsciiLineAnalysisOption, NumberAndStructure> _lineAnalysisOptionsScoring;
+		private Dictionary<AsciiLineAnalysisOption, NumberAndStructure> _lineAnalysisOptionsScoring;
 
-		AsciiLineAnalysisOption _highestScoredLineAnalysisOption;
-		AsciiLineStructure _highestScoredLineStructure;
+		private AsciiLineAnalysisOption _highestScoredLineAnalysisOption;
+		private AsciiLineStructure _highestScoredLineStructure;
 
-		int _numberOfMainHeaderLines;
+		private int _numberOfMainHeaderLines;
 
-		int _indexOfCaptionLine;
+		private int _indexOfCaptionLine;
 
-		private AsciiDocumentAnalysis() { }
-
-
-			/// <summary>
-		/// Analyzes the first <code>nLines</code> of the ascii stream.
-		/// </summary>
-		/// <param name="importOptions">The import options. Some of the field can already be filled with useful values. Since it is not neccessary to determine the value of those known fields, the analysis will be run faster then.</param>
-		/// <param name="stream">The ascii stream to analyze.</param>
-		/// <returns>Import options that can be used in a following step to read in the ascii stream. If the stream contains no data, the returned import options will be not fully specified.
-		/// The same instance is returned as given by the parameter <paramref name="importOptions"/>. If <paramref name="importOptions"/> was <c>null</c>, a new instance is created.</returns>
-		public static AsciiImportOptions Analyze(AsciiImportOptions importOptions, System.IO.Stream stream)
+		private AsciiDocumentAnalysis()
 		{
-			return Analyze(importOptions, stream, AsciiDocumentAnalysisOptions.UserDefault);
 		}
 
 		/// <summary>
@@ -94,6 +82,7 @@ namespace Altaxo.Serialization.Ascii
 			analysis.InternalAnalyze(importOptions, stream, analysisOptions);
 			return importOptions;
 		}
+
 		/// <summary>
 		/// Analyzes the first <code>nLines</code> of the ascii stream.
 		/// </summary>
@@ -108,7 +97,6 @@ namespace Altaxo.Serialization.Ascii
 				throw new ArgumentNullException("analysisOptions");
 			if (null == importOptions)
 				throw new ArgumentNullException("importOptions");
-
 
 			// Read-in the lines into _bodyLines. If the number of header lines is already known, those header lines are read into _headerLines
 			ReadLinesToAnalyze(stream, analysisOptions.NumberOfLinesToAnalyze, importOptions.NumberOfMainHeaderLines);
@@ -128,7 +116,6 @@ namespace Altaxo.Serialization.Ascii
 			// Do the analysis itself in parallel for each of the lines
 			System.Threading.Tasks.Parallel.For(0, _bodyLines.Count, (i) => _lineAnalysisOfBodyLines[i] = new AsciiLineAnalysis(i, _bodyLines[i], _lineAnalysisOptionsToTest));
 
-
 			// for debugging activate the next line and paste the data into notepad:
 			// PutRecognizedStructuresToClipboard(result, separationStrategies);
 
@@ -142,7 +129,6 @@ namespace Altaxo.Serialization.Ascii
 				EvaluateNumberOfMainHeaderLines();
 			else
 				_numberOfMainHeaderLines = importOptions.NumberOfMainHeaderLines.Value;
-
 
 			// get the index of the caption line
 			if (null == importOptions.IndexOfCaptionLine)
@@ -197,7 +183,6 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-
 		private void SetLineAnalysisOptionsToTest(AsciiImportOptions importOptions, AsciiDocumentAnalysisOptions analysisOptions)
 		{
 			var numberFormatsToTest = new List<System.Globalization.CultureInfo>();
@@ -207,12 +192,12 @@ namespace Altaxo.Serialization.Ascii
 			// all number formats to test
 			if (null != importOptions.NumberFormatCulture)
 			{
-				numberFormatsToTest.Add( importOptions.NumberFormatCulture );
+				numberFormatsToTest.Add(importOptions.NumberFormatCulture);
 			}
 			else
 			{
 				numberFormatsToTest.AddRange(analysisOptions.NumberFormatsToTest);
-				if(0==numberFormatsToTest.Count)
+				if (0 == numberFormatsToTest.Count)
 					numberFormatsToTest.Add(System.Globalization.CultureInfo.InvariantCulture);
 			}
 
@@ -224,7 +209,7 @@ namespace Altaxo.Serialization.Ascii
 			else
 			{
 				dateTimeFormatsToTest.AddRange(analysisOptions.DateTimeFormatsToTest);
-				if(0==dateTimeFormatsToTest.Count)
+				if (0 == dateTimeFormatsToTest.Count)
 					dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.InvariantCulture);
 			}
 
@@ -261,7 +246,6 @@ namespace Altaxo.Serialization.Ascii
 					foreach (var d in dateTimeFormatsToTest)
 						optionsToTest.Add(new AsciiLineAnalysisOption(s, n, d));
 
-
 			// remove all those keys where the char of the single char separation strategy is equal to the number format's decimal separator
 			foreach (AsciiLineAnalysisOption k in optionsToTest.ToArray())
 			{
@@ -273,7 +257,6 @@ namespace Altaxo.Serialization.Ascii
 			}
 
 			_lineAnalysisOptionsToTest = new List<AsciiLineAnalysisOption>(optionsToTest);
-
 		}
 
 		/// <summary>
@@ -294,7 +277,6 @@ namespace Altaxo.Serialization.Ascii
 					_lineAnalysisOptionsScoring.Add(analysisOption, new NumberAndStructure() { NumberOfLines = maxNumberOfEqualLines, LineStructure = mostFrequentLineStructure });
 			}
 		}
-
 
 		/// <summary>
 		/// Evaluates the highest scored separation strategy, and stores the winning separation strategy in <see cref="_highestScoredLineAnalysisOption"/> and the corresponding line structure in <see cref="_highestScoredLineStructure"/>.
@@ -321,9 +303,6 @@ namespace Altaxo.Serialization.Ascii
 			_highestScoredLineAnalysisOption = maxScoredEntry.Key;
 			_highestScoredLineStructure = maxScoredEntry.Value.LineStructure;
 		}
-
-
-
 
 		/// <summary>
 		/// Evaluates the number of main header lines. The presumtion is here, that the number of main header lines was not known before.
@@ -352,7 +331,7 @@ namespace Altaxo.Serialization.Ascii
 			if (0 == _numberOfMainHeaderLines)
 				return; // if we have no main header lines, we have no caption
 
-			// here we have two cases: 
+			// here we have two cases:
 			// either the number of header lines was not known before (_headerLines.Count is zero, but _numberOfMainHeaderLines is greater than zero): here we have already analyzed the lines with different separation strategies
 			// or the number of header lines was known before (then the _headerLines list contains the header lines) : here we need to analyze the header lines, but here only with the best separation strategy
 
@@ -423,7 +402,6 @@ namespace Altaxo.Serialization.Ascii
 					numberOfLinesForLineStructureHash.Add(lineStructureHash, 1);
 			}
 
-
 			// determine, which of the line structures is the most frequent one
 			maxNumberOfEqualLines = 0;
 			int hashOfMostFrequentStructure = 0;
@@ -441,7 +419,6 @@ namespace Altaxo.Serialization.Ascii
 					hashOfMostFrequentStructure = lineStructureHash;
 				}
 			} // for each
-
 
 			// search for the maximum priority of those lines with the most frequent structure
 			int maxPriorityOfMostFrequentLines = 0;
@@ -496,6 +473,5 @@ namespace Altaxo.Serialization.Ascii
 			clip.SetData(typeof(string), stb.ToString());
 			Current.Gui.SetClipboardDataObject(clip);
 		}
-
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -34,6 +36,7 @@ namespace Altaxo.Graph.Gdi
 	public enum GraphCopyOptions
 	{
 		None = 0x00,
+
 		/// <summary>The notes will be copied.</summary>
 		CloneNotes = 0x01,
 
@@ -41,16 +44,12 @@ namespace Altaxo.Graph.Gdi
 		CloneProperties = 0x02,
 
 		/// <summary>The page properties (format and printable size) will be copied.</summary>
-		CopyPageSize = 0x04,
+		CopySize = 0x04,
 
 		/// <summary>The graph's design size will be copied.</summary>
-		CopyGraphSize = 0x08,
-
-		/// <summary>If the graph size is changed, the items will also be rescaled.</summary>
-		RescaleOnGraphSizeChange = 0x10,
+		CopyChildLayers = 0x08,
 
 		// now layer properties
-
 		CopyLayerSizePosition = 0x20,
 
 		CopyLayerBackground = 0x40,

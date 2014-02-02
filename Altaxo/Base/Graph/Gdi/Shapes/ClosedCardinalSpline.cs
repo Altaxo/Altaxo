@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,71 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	[Serializable]
 	public class ClosedCardinalSpline : ClosedPathShapeBase
 	{
-		static double _defaultTension = 0.5;
+		private static double _defaultTension = 0.5;
 
-		List<PointD2D> _curvePoints = new List<PointD2D>();
-		double _tension = _defaultTension;
-
+		private List<PointD2D> _curvePoints = new List<PointD2D>();
+		private double _tension = _defaultTension;
 
 		#region Serialization
 
-		#region Clipboard serialization
-
-		protected ClosedCardinalSpline(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Serializes LineGraphic. 
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			ClosedCardinalSpline s = this;
-			base.GetObjectData(info, context);
-		}
-		/// <summary>
-		/// Deserializes the LineGraphic Version 0.
-		/// </summary>
-		/// <param name="obj">The empty SLineGraphic object to deserialize into.</param>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The deserialization surrogate selector.</param>
-		/// <returns>The deserialized LineGraphic.</returns>
-		public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			ClosedCardinalSpline s = (ClosedCardinalSpline)base.SetObjectData(obj, info, context, selector);
-			return s;
-		}
-
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-		#endregion
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClosedCardinalSpline), 0)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -94,9 +53,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 					info.AddValue("e", s._curvePoints[i]);
 				info.CommitArray();
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (ClosedCardinalSpline)o : new ClosedCardinalSpline();
 				info.GetBaseValueEmbedded(s, typeof(ClosedCardinalSpline).BaseType, parent);
 				s._tension = info.GetDouble("Tension");
@@ -109,11 +68,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		#region Constructors
+
 		public ClosedCardinalSpline()
+			: base(new ItemLocationDirectAutoSize())
 		{
 		}
 
@@ -122,8 +82,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-
 		public ClosedCardinalSpline(IEnumerable<PointD2D> points, double tension)
+			: base(new ItemLocationDirectAutoSize())
 		{
 			_curvePoints.AddRange(points);
 			_tension = Math.Abs(tension);
@@ -133,7 +93,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			CalculateAndSetBounds();
 		}
-
 
 		public ClosedCardinalSpline(ClosedCardinalSpline from)
 			: base(from)  // all is done here, since CopyFrom is virtual!
@@ -156,8 +115,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return isCopied;
 		}
 
-		#endregion
-
+		#endregion Constructors
 
 		public static double DefaultTension { get { return _defaultTension; } }
 
@@ -189,7 +147,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_curvePoints.Clear();
 				_curvePoints.AddRange(value);
-				// TODO adjust width and size to reflect the new positions of the curve points
+				CalculateAndSetBounds();
 			}
 		}
 
@@ -211,20 +169,31 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		/// <param name="width">Unscaled width of the item (ignored here).</param>
 		/// <param name="height">Unscaled height of the item (ignored here).</param>
-		/// <param name="suppressChangedEvent">Suppressed the change event (ignored here).</param>
-		protected override void SetSize(double width, double height, bool suppressChangedEvent)
+		/// <param name="eventFiring">Suppressed the change event (ignored here).</param>
+		protected override void SetSize(double width, double height, Main.EventFiring eventFiring)
 		{
 		}
 
-		void CalculateAndSetBounds()
+		public override bool AutoSize
 		{
-			var path = GetPath();
+			get
+			{
+				return true;
+			}
+		}
+
+		private void CalculateAndSetBounds()
+		{
+			var path = InternalGetPath(PointD2D.Empty);
 			var bounds = path.GetBounds();
-			_position += bounds.Location;
 			for (int i = 0; i < _curvePoints.Count; i++)
 				_curvePoints[i] -= bounds.Location;
-			_bounds = new RectangleD(0, 0, bounds.Width, bounds.Height);
-			UpdateTransformationMatrix();
+
+			using (var token = _eventSuppressor.Suspend())
+			{
+				this.ShiftPosition(bounds.Location);
+				((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size);
+			}
 		}
 
 		public void SetPoint(int idx, PointD2D newPos)
@@ -246,19 +215,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetPath();
 		}
 
+		private GraphicsPath InternalGetPath(PointD2D offset)
+		{
+			GraphicsPath gp = new GraphicsPath();
+
+			PointF[] pt = new PointF[_curvePoints.Count];
+			for (int i = 0; i < _curvePoints.Count; i++)
+				pt[i] = new PointF((float)(_curvePoints[i].X + offset.X), (float)(_curvePoints[i].Y + offset.Y));
+			gp.AddClosedCurve(pt, (float)_tension);
+			return gp;
+		}
+
 		/// <summary>
 		/// Gets the path of the object in object world coordinates.
 		/// </summary>
 		/// <returns></returns>
 		protected GraphicsPath GetPath()
 		{
-			GraphicsPath gp = new GraphicsPath();
-
-			PointF[] pt = new PointF[_curvePoints.Count];
-			for (int i = 0; i < _curvePoints.Count; i++)
-				pt[i] = new PointF((float)_curvePoints[i].X, (float)_curvePoints[i].Y);
-			gp.AddClosedCurve(pt, (float)_tension);
-			return gp;
+			return InternalGetPath(_location.AbsoluteVectorPivotToLeftUpper);
 		}
 
 		public override IHitTestObject HitTest(HitTestPointData htd)
@@ -289,7 +263,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		static new bool EhHitDoubleClick(IHitTestObject o)
+		private new static bool EhHitDoubleClick(IHitTestObject o)
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Line properties", true);
@@ -302,23 +276,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);
 
-			var path = GetPath();
+			var bounds = Bounds;
+
+			var path = InternalGetPath(bounds.LeftTop);
 
 			if (Brush.IsVisible)
 			{
-				Brush.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				Brush.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.FillPath(Brush, path);
 			}
 
 			if (Pen.IsVisible)
 			{
-				Pen.SetEnvironment((RectangleF)_bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(_scaleX, _scaleY)));
+				Pen.SetEnvironment((RectangleF)bounds, BrushX.GetEffectiveMaximumResolution(g, Math.Max(ScaleX, ScaleY)));
 				g.DrawPath(Pen, path);
 			}
 			g.Restore(gs);
 		}
-
-
 
 		protected class ClosedCardinalSplineHitTestObject : GraphicBaseHitTestObject
 		{
@@ -333,9 +307,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					ClosedCardinalSpline ls = (ClosedCardinalSpline)_hitobject;
 					PointF[] pts = new PointF[ls._curvePoints.Count];
+					var offset = ls.Location.AbsoluteVectorPivotToLeftUpper;
 					for (int i = 0; i < pts.Length; i++)
 					{
-						pts[i] = (PointF)ls._curvePoints[i];
+						pts[i] = (PointF)(ls._curvePoints[i] + offset);
 						var pt = ls._transformation.TransformPoint(pts[i]);
 						pt = this.Transformation.TransformPoint(pt);
 						pts[i] = pt;
@@ -365,32 +340,43 @@ namespace Altaxo.Graph.Gdi.Shapes
 					return base.GetGrips(pageScale, gripLevel);
 				}
 			}
-
 		}
 
-		class ClosedCardinalSplinePathNodeGripHandle : PathNodeGripHandle
+		private class ClosedCardinalSplinePathNodeGripHandle : PathNodeGripHandle
 		{
-			int _pointNumber;
+			private int _pointNumber;
+			private PointD2D _offset;
 
 			public ClosedCardinalSplinePathNodeGripHandle(IHitTestObject parent, int pointNr, PointD2D gripCenter, double gripRadius)
 				: base(parent, new PointD2D(0, 0), gripCenter, gripRadius)
 			{
 				_pointNumber = pointNr;
+				_offset = ((ClosedCardinalSpline)GraphObject).Location.AbsoluteVectorPivotToLeftUpper;
 			}
-
 
 			public override void MoveGrip(PointD2D newPosition)
 			{
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 				var obj = (ClosedCardinalSpline)GraphObject;
 				newPosition = obj._transformation.InverseTransformPoint(newPosition);
-				obj.SetPoint(_pointNumber, newPosition);
+				obj.SetPoint(_pointNumber, newPosition - _offset);
 			}
 
 			public override bool Deactivate()
 			{
 				var obj = (ClosedCardinalSpline)GraphObject;
-				obj.CalculateAndSetBounds();
+				using (var token = obj._eventSuppressor.Suspend())
+				{
+					int otherPointIndex = _pointNumber == 0 ? 1 : 0;
+					PointD2D oldOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + _offset); // transformiere in ParentCoordinaten
+
+					// Calculate the new Size
+					obj.CalculateAndSetBounds();
+					obj.UpdateTransformationMatrix();
+					PointD2D newOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + obj.Location.AbsoluteVectorPivotToLeftUpper);
+					obj.ShiftPosition(oldOtherPointCoord - newOtherPointCoord);
+				}
+
 				return false;
 			}
 		}

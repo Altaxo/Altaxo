@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,166 +19,230 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.ComponentModel;
-using System.Reflection;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+#endregion Copyright
 
-using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Serialization;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Reflection;
 
 namespace Altaxo.Graph.Scales
 {
-  [Serializable]
-  public class LinkedScale : Scale
-  {
-    /// <summary>
-    /// The (real) scale which is behind this fassade. Can not be another linked scale.
-    /// </summary>
-    private Scale _scaleWrapped; 
+	[Serializable]
+	public class LinkedScale : Scale
+	{
+		/// <summary>
+		/// The (real) scale which is behind this fassade. Can not be another linked scale.
+		/// </summary>
+		private Scale _scaleWrapped;
 
 		private Scale _scaleLinkedTo;
 
-    /// <summary>Index of linked scale in the linked layer.</summary>
-    int _linkedScaleIndex;
+		/// <summary>Index of linked scale in the linked layer.</summary>
+		private int _linkedScaleIndex;
 
-		LinkedScaleParameters _linkParameters;
+		/// <summary>
+		/// Number of the layer where the linked scale can be located. Note that the linked layer must have the same parent layer that the layer this scale belongs to.
+		/// </summary>
+		private int _linkedLayerIndex;
 
-    #region Serialization
+		private LinkedScaleParameters _linkParameters;
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 2)]
-    class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        LinkedScale s = (LinkedScale)obj;
+		#region Serialization
 
-        info.AddValue("ScaleWrapped", s._scaleWrapped);
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 2)]
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LinkedScale s = (LinkedScale)obj;
+
+				info.AddValue("ScaleWrapped", s._scaleWrapped);
 				info.AddValue("LinkParameters", s._linkParameters);
 				info.AddValue("LinkedScaleIndex", s._linkedScaleIndex);
-      }
+			}
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        LinkedScale s = SDeserialize(o, info, parent);
-        return s;
-      }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScale s = SDeserialize(o, info, parent);
+				return s;
+			}
 
+			protected virtual LinkedScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScale s = null != o ? (LinkedScale)o : new LinkedScale();
 
-      protected virtual LinkedScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        LinkedScale s = null != o ? (LinkedScale)o : new LinkedScale();
-
-        s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
+				s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
 				s._linkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
 				s._linkedScaleIndex = info.GetInt32("LinkedScaleIndex");
-       
-        return s;
-      }
-    }
-    #endregion
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2013-09-26 LinkedLayerIndex added, thus scale is now directly linked
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LinkedScale s = (LinkedScale)obj;
+
+				info.AddValue("ScaleWrapped", s._scaleWrapped);
+				info.AddValue("LinkParameters", s._linkParameters);
+				info.AddValue("LinkedScaleIndex", s._linkedScaleIndex);
+				info.AddValue("LinkedLayerIndex", s._linkedLayerIndex);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScale s = SDeserialize(o, info, parent);
+				return s;
+			}
+
+			protected virtual LinkedScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScale s = null != o ? (LinkedScale)o : new LinkedScale();
+
+				s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
+				s._linkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
+				s._linkedScaleIndex = info.GetInt32("LinkedScaleIndex");
+				s._linkedLayerIndex = info.GetInt32("LinkedLayerIndex");
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		private LinkedScale()
 		{
 		}
 
-
-		public LinkedScale(Scale scaleToWrap, Scale scaleLinkedTo, int scaleNumber)
+		public LinkedScale(Scale scaleToWrap, Scale scaleLinkedTo, int scaleNumber, int linkedLayerIndex)
 		{
 			_linkedScaleIndex = scaleNumber;
+			_linkedLayerIndex = linkedLayerIndex;
 			_linkParameters = new LinkedScaleParameters();
 			_linkParameters.Changed += EhLinkParametersChanged;
 
 			WrappedScale = scaleToWrap;
 			ScaleLinkedTo = scaleLinkedTo;
 		}
-    
-    void CopyFrom(LinkedScale from)
-    {
+
+		private void CopyFrom(LinkedScale from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
 			this._linkedScaleIndex = from._linkedScaleIndex;
+			this._linkedLayerIndex = from._linkedLayerIndex;
 			_linkParameters = (LinkedScaleParameters)from._linkParameters.Clone();
 			_linkParameters.Changed += EhLinkParametersChanged;
-			
+
 			this.WrappedScale = from._scaleWrapped == null ? null : (Scale)from._scaleWrapped.Clone();
-			this.ScaleLinkedTo = from._scaleLinkedTo; // not cloning, the cloned scale is linked to the same scale 
+			this.ScaleLinkedTo = from._scaleLinkedTo; // not cloning, the cloned scale is linked to the same scale
 		}
 
-    public override object Clone()
-    {
-      LinkedScale result = new LinkedScale();
-      result.CopyFrom(this);
-      return result;
-    }
+		public override object Clone()
+		{
+			LinkedScale result = new LinkedScale();
+			result.CopyFrom(this);
+			return result;
+		}
 
+		public Scale ScaleLinkedTo
+		{
+			get
+			{
+				return _scaleLinkedTo;
+			}
 
-    public Scale ScaleLinkedTo
-    {
-      get
-      {
-        return _scaleLinkedTo;
-      }
+			set
+			{
+				if (object.ReferenceEquals(_scaleLinkedTo, value))
+					return;
 
-      set
-      {
-        if(object.ReferenceEquals(_scaleLinkedTo,value))
-          return;
+				if (null != _scaleLinkedTo)
+				{
+					_scaleLinkedTo.Changed -= EhLinkedScaleChanged;
+				}
 
-        if (null != _scaleLinkedTo)
-        {
-          _scaleLinkedTo.Changed -= EhLinkedScaleChanged;
-        }
+				_scaleLinkedTo = value;
 
-        _scaleLinkedTo = value;
+				if (null != _scaleLinkedTo)
+				{
+					_scaleLinkedTo.Changed += EhLinkedScaleChanged;
+				}
 
-        if (null != _scaleLinkedTo)
-        {
-          _scaleLinkedTo.Changed += EhLinkedScaleChanged;
-        }
+				OnLinkPropertiesChanged(); // calculated the bounds of the wrapped scale
+			}
+		}
 
-        OnLinkPropertiesChanged(); // calculated the bounds of the wrapped scale 
-      }
-    }
+		public int LinkedScaleIndex
+		{
+			get { return _linkedScaleIndex; }
+			set { _linkedScaleIndex = value; }
+		}
 
-    public int LinkedScaleIndex
-    {
-      get { return _linkedScaleIndex; }
-      set { _linkedScaleIndex = value; }
-    }
+		public int LinkedLayerIndex
+		{
+			get { return _linkedLayerIndex; }
+			set { _linkedLayerIndex = value; }
+		}
 
 		public void EhLinkedLayerScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
 		{
 			if (_linkedScaleIndex == idx)
 				ScaleLinkedTo = newScale;
 		}
-    
 
-    public bool IsStraightLink
-    {
-      get
-      {
+		/// <summary>
+		/// Checks if the scale in the argument is dependend on this Scale. This would mean a circular dependency, which should be avoided.
+		/// </summary>
+		/// <param name="scale">The scale to check.</param>
+		/// <returns>True if the provided scale or one of its linked scales is dependend on this scale.</returns>
+		public bool IsScaleDependentOnMe(Scale scale)
+		{
+			var linkedScale = scale as LinkedScale;
+			while (null != linkedScale)
+			{
+				if (object.ReferenceEquals(this, linkedScale))
+				{
+					// this means a circular dependency, so return true
+					return true;
+				}
+				linkedScale = linkedScale.ScaleLinkedTo as LinkedScale;
+			}
+			return false; // no dependency detected
+		}
+
+		public bool IsStraightLink
+		{
+			get
+			{
 				return _linkParameters.IsStraightLink;
-      }
-    }
+			}
+		}
 
-    /// <summary>
-    /// Set all parameters of the axis link by once.
-    /// </summary>
-    /// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
-    /// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
-    /// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
-    /// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
-    public void SetLinkParameter(double orgA, double orgB, double endA, double endB)
-    {
-				_linkParameters.SetTo(orgA, orgB, endA, endB);
-    }
+		/// <summary>
+		/// Set all parameters of the axis link by once.
+		/// </summary>
+		/// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
+		/// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
+		/// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
+		/// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
+		public void SetLinkParameter(double orgA, double orgB, double endA, double endB)
+		{
+			_linkParameters.SetTo(orgA, orgB, endA, endB);
+		}
 
 		public void SetLinkParameterToStraightLink()
 		{
@@ -197,111 +262,101 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-    public double LinkOrgA
-    {
-      get { return _linkParameters.OrgA; }
-      set
-      {
+		public double LinkOrgA
+		{
+			get { return _linkParameters.OrgA; }
+			set
+			{
 				_linkParameters.OrgA = value;
-      }
-    }
+			}
+		}
 
-
-
-    public double LinkOrgB
-    {
+		public double LinkOrgB
+		{
 			get { return _linkParameters.OrgB; }
-      set
-      {
+			set
+			{
 				_linkParameters.OrgB = value;
-      }
-    }
+			}
+		}
 
-
-
-    public double LinkEndA
-    {
+		public double LinkEndA
+		{
 			get { return _linkParameters.EndA; }
-      set
-      {
+			set
+			{
 				_linkParameters.EndA = value;
-				
-      }
-    }
+			}
+		}
 
-
-
-    public double LinkEndB
-    {
+		public double LinkEndB
+		{
 			get { return _linkParameters.EndB; }
-      set
-      {
+			set
+			{
 				_linkParameters.EndB = value;
 				OnLinkPropertiesChanged();
-      }
-    }
+			}
+		}
 
-    public Scale WrappedScale
-    {
-      get
-      {
-        return _scaleWrapped;
-      }
-      set
-      {
-        if (object.ReferenceEquals(_scaleWrapped, value))
-          return;
+		public Scale WrappedScale
+		{
+			get
+			{
+				return _scaleWrapped;
+			}
+			set
+			{
+				if (object.ReferenceEquals(_scaleWrapped, value))
+					return;
 
-          if (null != _scaleWrapped)
-          {
-            _scaleWrapped.Changed -= new EventHandler(this.EhWrappedScaleChanged);
-          }
-        _scaleWrapped = value;
-          if (null != _scaleWrapped)
-          {
-            _scaleWrapped.Changed += new EventHandler(this.EhWrappedScaleChanged);
-          }
+				if (null != _scaleWrapped)
+				{
+					_scaleWrapped.Changed -= new EventHandler(this.EhWrappedScaleChanged);
+				}
+				_scaleWrapped = value;
+				if (null != _scaleWrapped)
+				{
+					_scaleWrapped.Changed += new EventHandler(this.EhWrappedScaleChanged);
+				}
 
-          OnLinkPropertiesChanged();
-          OnChanged();
-        }
-      }
-   
+				OnLinkPropertiesChanged();
+				OnChanged();
+			}
+		}
 
-    void EhWrappedScaleChanged(object sender, EventArgs e)
-    {
+		private void EhWrappedScaleChanged(object sender, EventArgs e)
+		{
 			OnChanged();
-    }
+		}
 
-    void EhLinkedScaleChanged(object sender, EventArgs e)
-    {
-      OnLinkPropertiesChanged();
-    }
-
-		void EhLinkParametersChanged(object sender, EventArgs e)
+		private void EhLinkedScaleChanged(object sender, EventArgs e)
 		{
 			OnLinkPropertiesChanged();
 		}
-  
 
-    protected virtual void OnLinkPropertiesChanged()
-    {
-      // calculate the new bounds
-      if (null != _scaleLinkedTo)
-      {
-        AltaxoVariant org = _scaleLinkedTo.OrgAsVariant;
-        AltaxoVariant end = _scaleLinkedTo.EndAsVariant;
+		private void EhLinkParametersChanged(object sender, EventArgs e)
+		{
+			OnLinkPropertiesChanged();
+		}
 
-        if (!IsStraightLink)
-        {
-          org = org * LinkOrgB + LinkOrgA;
-          end = end * LinkEndB + LinkEndA;
-        }
+		protected virtual void OnLinkPropertiesChanged()
+		{
+			// calculate the new bounds
+			if (null != _scaleLinkedTo)
+			{
+				AltaxoVariant org = _scaleLinkedTo.OrgAsVariant;
+				AltaxoVariant end = _scaleLinkedTo.EndAsVariant;
 
-        _scaleWrapped.SetScaleOrgEnd(org, end);
-      }
-    }
+				if (!IsStraightLink)
+				{
+					org = org * LinkOrgB + LinkOrgA;
+					end = end * LinkEndB + LinkEndA;
+				}
 
+				_scaleWrapped.SetScaleOrgEnd(org, end);
+			}
+		}
 
 		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
 		{
@@ -320,14 +375,14 @@ namespace Altaxo.Graph.Scales
 
 		public override IPhysicalBoundaries DataBoundsObject
 		{
-			get 
-      {
-        // it is not possible for a this scale to act back to the scale which is linked
-        // but to make the plot items influence the range of the linked scale we can give back
-        // the data bounds object of the linked scale
+			get
+			{
+				// it is not possible for a this scale to act back to the scale which is linked
+				// but to make the plot items influence the range of the linked scale we can give back
+				// the data bounds object of the linked scale
 
-        return _scaleLinkedTo == null ? _scaleWrapped.DataBoundsObject : _scaleLinkedTo.DataBoundsObject;
-      }
+				return _scaleLinkedTo == null ? _scaleWrapped.DataBoundsObject : _scaleLinkedTo.DataBoundsObject;
+			}
 		}
 
 		public override Altaxo.Data.AltaxoVariant OrgAsVariant
@@ -349,7 +404,7 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
 		public override bool IsOrgExtendable
 		{
-			get { return null==_scaleLinkedTo ? false : _scaleLinkedTo.IsOrgExtendable; }
+			get { return null == _scaleLinkedTo ? false : _scaleLinkedTo.IsOrgExtendable; }
 		}
 
 		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
@@ -360,21 +415,21 @@ namespace Altaxo.Graph.Scales
 
 		public override void Rescale()
 		{
-      if (null != _scaleLinkedTo)
-        _scaleLinkedTo.Rescale();
+			if (null != _scaleLinkedTo)
+				_scaleLinkedTo.Rescale();
 		}
 
 		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
-      if (null != _scaleLinkedTo)
-      {
-        if (!IsStraightLink)
-        {
-          org = (org - LinkOrgA) / LinkOrgB;
-          end = (end - LinkEndA) / LinkEndB;
-        }
-        return _scaleLinkedTo.SetScaleOrgEnd(org, end);
-      }
+			if (null != _scaleLinkedTo)
+			{
+				if (!IsStraightLink)
+				{
+					org = (org - LinkOrgA) / LinkOrgB;
+					end = (end - LinkEndA) / LinkEndB;
+				}
+				return _scaleLinkedTo.SetScaleOrgEnd(org, end);
+			}
 			return null;
 		}
 	}

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,8 +37,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Graph;
-
 namespace Altaxo.Gui.Graph.Shapes
 {
 	/// <summary>
@@ -48,81 +49,12 @@ namespace Altaxo.Gui.Graph.Shapes
 			InitializeComponent();
 		}
 
-		public PointD2D DocPosition
-		{
-			get
-			{
-				var x = _edPositionX.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				var y = _edPositionY.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				return new PointD2D(x, y);
-			}
-			set
-			{
-				_edPositionX.SelectedQuantity = new Units.DimensionfulQuantity(value.X, Units.Length.Point.Instance).AsQuantityIn(_edPositionX.UnitEnvironment.DefaultUnit);
-				_edPositionY.SelectedQuantity = new Units.DimensionfulQuantity(value.Y, Units.Length.Point.Instance).AsQuantityIn(_edPositionY.UnitEnvironment.DefaultUnit);
-			}
-		}
-
-		public PointD2D DocSize
-		{
-			get
-			{
-				var x = _edSizeX.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				var y = _edSizeY.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				return new PointD2D(x, y);
-			}
-			set
-			{
-				_edSizeX.SelectedQuantity = new Units.DimensionfulQuantity(value.X, Units.Length.Point.Instance).AsQuantityIn(_edSizeX.UnitEnvironment.DefaultUnit);
-				_edSizeY.SelectedQuantity = new Units.DimensionfulQuantity(value.Y, Units.Length.Point.Instance).AsQuantityIn(_edSizeY.UnitEnvironment.DefaultUnit);
-			}
-		}
-
-
 		public PointD2D SourceSize
 		{
 			set
 			{
 				_guiSrcSizeX.SelectedQuantity = new Units.DimensionfulQuantity(value.X, Units.Length.Point.Instance).AsQuantityIn(_guiSrcSizeX.UnitEnvironment.DefaultUnit);
 				_guiSrcSizeY.SelectedQuantity = new Units.DimensionfulQuantity(value.Y, Units.Length.Point.Instance).AsQuantityIn(_guiSrcSizeY.UnitEnvironment.DefaultUnit);
-			}
-		}
-
-		public PointD2D DocScale
-		{
-			get
-			{
-				var x = _edScaleX.SelectedQuantityInSIUnits;
-				var y = _edScaleY.SelectedQuantityInSIUnits;
-				return new PointD2D(x, y);
-			}
-			set
-			{
-				_edScaleX.SelectedQuantityInSIUnits = value.X;
-				_edScaleY.SelectedQuantityInSIUnits = value.Y;
-			}
-		}
-		public double DocRotation
-		{
-			get
-			{
-				return _edRotation.SelectedQuantityAsValueInDegrees;
-			}
-			set
-			{
-				_edRotation.SelectedQuantityAsValueInDegrees = value;
-			}
-		}
-
-		public double DocShear
-		{
-			get
-			{
-				return _edShear.SelectedQuantityInSIUnits;
-			}
-			set
-			{
-				_edShear.SelectedQuantityInSIUnits = value;
 			}
 		}
 
@@ -163,7 +95,16 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
+		public object LocationView
+		{
+			set
+			{
+				_guiLocationHost.Child = (UIElement)value;
+			}
+		}
+
 		public event Action AspectPreservingChanged;
+
 		private void EhKeepAspectChanged(object sender, RoutedEventArgs e)
 		{
 			if (null != AspectPreservingChanged)
@@ -171,6 +112,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		}
 
 		public event Action ScalingModeChanged;
+
 		private void EhScalingModeChanged(object sender, RoutedEventArgs e)
 		{
 			if (null != ScalingModeChanged)
@@ -178,6 +120,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		}
 
 		public event Action ScaleXChanged;
+
 		private void EhScaleXChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (null != ScaleXChanged)
@@ -185,6 +128,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		}
 
 		public event Action ScaleYChanged;
+
 		private void EhScaleYChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (null != ScaleYChanged)
@@ -192,6 +136,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		}
 
 		public event Action SizeXChanged;
+
 		private void EhSizeXChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (null != SizeXChanged)
@@ -199,6 +144,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		}
 
 		public event Action SizeYChanged;
+
 		private void EhSizeYChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (null != SizeYChanged)

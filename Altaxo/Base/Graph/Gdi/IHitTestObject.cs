@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns></returns>
 		object HittedObject { get; set; }
 
-		XYPlotLayer ParentLayer { get; set; }
+		HostLayer ParentLayer { get; set; }
 
 		/// <summary>
 		/// Shifts the position of the hitted object according to the x and y values.

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
-
-using System.Drawing.Printing;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -62,32 +63,6 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
-
-
-
-
-
-		/// <summary>
-		/// Shows the dialog to set the printable size of the graph.
-		/// </summary>
-		/// <param name="doc">Graph document.</param>
-		/// <returns>True if user closed the dialog with OK, false if user cancelled the dialog.</returns>
-		public static bool ShowPrintableSizeSetupDialog(this GraphDocument doc)
-		{
-			var options = new Altaxo.Gui.Graph.PrintableAreaSetupOptions();
-			options.AreaSize = doc.Layers.GraphSize;
-			object resultobj = options;
-			if (Current.Gui.ShowDialog(ref resultobj, "Setup printable area"))
-			{
-				var result = (Altaxo.Gui.Graph.PrintableAreaSetupOptions)resultobj;
-				doc.Layers.SetGraphSize((SizeF)result.AreaSize, result.Rescale);
-				return true;
-			}
-			return false;
-		}
-
-
-
 		/// <summary>
 		/// Shows the dialog to set the print options for this document.
 		/// </summary>
@@ -105,8 +80,6 @@ namespace Altaxo.Graph.Gdi
 			}
 			return false;
 		}
-
-
 
 		/// <summary>
 		/// Prints the document on the currently active printer (no Gui interaction). An exception will be thrown
@@ -145,10 +118,10 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public class GraphDocumentPrintTask
 	{
-		XYPlotLayerCollection _layers;
-		Altaxo.Graph.SingleGraphPrintOptions _printOptions;
-		int _page;
-		bool _isPrintPreview;
+		private HostLayer _layers;
+		private Altaxo.Graph.SingleGraphPrintOptions _printOptions;
+		private int _page;
+		private bool _isPrintPreview;
 
 		public bool IsPrintPreview
 		{
@@ -156,17 +129,14 @@ namespace Altaxo.Graph.Gdi
 			set { _isPrintPreview = value; }
 		}
 
-
-
-
 		public GraphDocumentPrintTask(GraphDocument doc)
-			: this(doc.Layers, doc.PrintOptions)
+			: this(doc.RootLayer, doc.PrintOptions)
 		{
 		}
 
-		public GraphDocumentPrintTask(XYPlotLayerCollection layers, Altaxo.Graph.SingleGraphPrintOptions options)
+		public GraphDocumentPrintTask(HostLayer rootLayer, Altaxo.Graph.SingleGraphPrintOptions options)
 		{
-			_layers = layers;
+			_layers = rootLayer;
 			_printOptions = options;
 
 			_page = 0;
@@ -185,7 +155,7 @@ namespace Altaxo.Graph.Gdi
 			if (_printOptions.RotatePageAutomatically)
 			{
 				bool needLandscape = false;
-				if (_layers.GraphSize.Width > _layers.GraphSize.Height)
+				if (_layers.Size.X > _layers.Size.Y)
 					needLandscape = true;
 
 				e.PageSettings.Landscape = needLandscape;
@@ -207,7 +177,7 @@ namespace Altaxo.Graph.Gdi
 
 			float zoom;
 			PointF startLocationOnPage;
-			SizeF graphSize = _layers.GraphSize;
+			SizeF graphSize = (SizeF)_layers.Size;
 			_printOptions.GetZoomAndStartLocation(e.PageBounds, e.MarginBounds, graphSize, out zoom, out startLocationOnPage, true);
 			graphSize = graphSize.Scale(zoom);
 
@@ -254,7 +224,6 @@ namespace Altaxo.Graph.Gdi
 			g.Restore(savedGraphics);
 		}
 
-
 		private void DrawCross(Graphics g, PointF center, float armLength)
 		{
 			g.DrawLine(Pens.Black, center.X - armLength, center.Y, center.X + armLength, center.Y);
@@ -267,7 +236,5 @@ namespace Altaxo.Graph.Gdi
 			g.DrawLine(Pens.Black, rect.Left, rect.Top, rect.Right, rect.Bottom);
 			g.DrawLine(Pens.Black, rect.Left, rect.Bottom, rect.Right, rect.Top);
 		}
-
-
 	}
 }

@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.ItemLocationByGridControl"
+						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 mc:Ignorable="d"
+>
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,2" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+		<Style x:Key="CBWithMargin" TargetType="Control">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,0" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Label Grid.Column="0" Grid.Row="0" Content="Grid column:" />
+		<axogc:DoubleUpDown x:Name="_guiXPosition"  Grid.Column="1" Grid.Row="0" />
+
+		<Label Grid.Column="2" Grid.Row="0" Content="Grid row:" />
+		<axogc:DoubleUpDown x:Name="_guiYPosition" Grid.Column="3" Grid.Row="0" />
+
+		<Label Grid.Column="0" Grid.Row="2" Content="Column span:" />
+		<axogc:DoubleUpDown x:Name="_guiXSize"  Grid.Column="1" Grid.Row="2" />
+
+		<Label Grid.Column="2" Grid.Row="2" Content="Row span:" />
+		<axogc:DoubleUpDown x:Name="_guiYSize"  Grid.Column="3" Grid.Row="2" />
+
+		<Label Grid.Column="0" Grid.Row="4" Content="Rotation:" />
+		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="4" />
+
+		<Label Grid.Column="2" Grid.Row="4">Shear:</Label>
+		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="4" x:Name="_guiShear" />
+
+		<Label Grid.Column="0" Grid.Row="6" Content="ScaleX:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="6" />
+
+		<Label Grid.Column="2" Grid.Row="6" Content="ScaleY:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="6" />
+		
+		<CheckBox x:Name="_guiForceFitIntoCell" Grid.ColumnSpan="4" Grid.Row="8" Content="Force content into grid cell (if rotated/sheared)"/>
+	</Grid>
+</UserControl>
