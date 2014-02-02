@@ -109,5 +109,14 @@ namespace Altaxo.Main.Properties
 		/// <param name="value">If successfull, on return this value contains the property value.</param>
 		/// <returns><c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.</returns>
 		bool TryGetValue<T>(string propName, out T value);
+
+		/// <summary>
+		/// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
+		/// the propery is not serialized when saving the project to file.
+		/// </summary>
+		/// <value>
+		/// Temporary property prefix.
+		/// </value>
+		string TemporaryPropertyPrefix { get; }
 	}
 }

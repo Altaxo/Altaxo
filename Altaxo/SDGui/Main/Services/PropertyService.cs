@@ -52,6 +52,21 @@ namespace Altaxo.Main.Services
 				_properties = new Dictionary<string, object>();
 			}
 
+			/// <summary>
+			/// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
+			/// the propery is not serialized when saving the project to file.
+			/// </summary>
+			/// <value>
+			/// Temporary property prefix.
+			/// </value>
+			public string TemporaryPropertyPrefix
+			{
+				get
+				{
+					return PropertyBag.TemporaryPropertyPrefixString;
+				}
+			}
+
 			public void Clear()
 			{
 				_guidToName.Clear();
@@ -130,7 +145,9 @@ namespace Altaxo.Main.Services
 			public void SetValue<T>(string propName, T value)
 			{
 				_properties[propName] = value;
-				_parent.Set<T>(propName, value);
+
+				if (!propName.StartsWith(TemporaryPropertyPrefix))
+					_parent.Set<T>(propName, value);
 			}
 
 			public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
@@ -246,15 +263,18 @@ namespace Altaxo.Main.Services
 
 		public void Set<T>(string property, T value)
 		{
-			if (Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper.IsSerializableType(typeof(T)))
+			if (null != value && Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper.IsSerializableType(value.GetType()))
 			{
-				if (null != value)
-					ICSharpCode.Core.PropertyService.Set(property, new Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper(value));
-				else
-					ICSharpCode.Core.PropertyService.Remove(property);
+				ICSharpCode.Core.PropertyService.Set(property, new Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper(value));
+			}
+			else if (null != value)
+			{
+				ICSharpCode.Core.PropertyService.Set(property, value);
 			}
 			else
-				ICSharpCode.Core.PropertyService.Set(property, value);
+			{
+				ICSharpCode.Core.PropertyService.Remove(property);
+			}
 		}
 
 		/// <summary>

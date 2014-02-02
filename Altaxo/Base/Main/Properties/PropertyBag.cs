@@ -39,6 +39,12 @@ namespace Altaxo.Main.Properties
 		/// </summary>
 		protected Dictionary<string, object> _properties;
 
+		/// <summary>
+		/// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
+		/// the propery is not serialized when storing the project.
+		/// </summary>
+		public const string TemporaryPropertyPrefixString = "tmp/";
+
 		#region Serialization
 
 		/// <summary>
@@ -152,6 +158,21 @@ namespace Altaxo.Main.Properties
 		public PropertyBag Clone()
 		{
 			return new PropertyBag(this);
+		}
+
+		/// <summary>
+		/// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
+		/// the propery is not serialized when saving the project to file.
+		/// </summary>
+		/// <value>
+		/// Temporary property prefix.
+		/// </value>
+		public string TemporaryPropertyPrefix
+		{
+			get
+			{
+				return TemporaryPropertyPrefixString;
+			}
 		}
 
 		/// <summary>
