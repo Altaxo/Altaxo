@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
+using Altaxo;
+using Altaxo.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Altaxo.Serialization;
-using Altaxo;
 
 namespace Altaxo.Data
 {
@@ -47,6 +48,7 @@ namespace Altaxo.Data
 		private int _capacity; // shortcut to m_Array.Length;
 		private int _count;
 		public static readonly double NullValue = Double.NaN;
+		private const int MaxCount = 256 * 1024 * 1024 - 8; // this is the maximum possible number of double elements in 64-bit mode currently (Framework 4.0).
 
 		#region Overridden functions
 
@@ -83,13 +85,10 @@ namespace Altaxo.Data
 			return new AltaxoVariant(this[i]);
 		}
 
-
-
 		public override bool IsElementEmpty(int i)
 		{
 			return i < _count ? Double.IsNaN(_data[i]) : true;
 		}
-
 
 		public override void SetElementEmpty(int i)
 		{
@@ -128,7 +127,7 @@ namespace Altaxo.Data
 			if (newlen > _capacity)
 				Realloc(newlen);
 
-			// copy values from m_Count downto nBeforeColumn 
+			// copy values from m_Count downto nBeforeColumn
 			for (int i = _count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
 				_data[j] = _data[i];
 
@@ -138,7 +137,6 @@ namespace Altaxo.Data
 			this._count = newlen;
 			this.NotifyDataChanged(nInsBeforeColumn, _count, false);
 		}
-
 
 		public override void CopyDataFrom(object o)
 		{
@@ -224,31 +222,25 @@ namespace Altaxo.Data
 				TrimEmptyElementsAtEnd();
 			}
 
-
 			if (oldCount > 0 || _count > 0) // message only if really was a change
 				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
 		}
 
-
 		private void TrimEmptyElementsAtEnd()
 		{
-
 			for (; _count > 0 && IsElementEmpty(_count - 1); _count--) ;
 		}
-
 
 		public override System.Type GetColumnStyleType()
 		{
 			return typeof(Altaxo.Worksheet.DoubleColumnStyle);
 		}
-		#endregion
 
+		#endregion Overridden functions
 
 		public DoubleColumn()
 		{
 		}
-
-
 
 		public DoubleColumn(int initialcapacity)
 		{
@@ -264,10 +256,8 @@ namespace Altaxo.Data
 			this._data = null == from._data ? null : (double[])from._data.Clone();
 		}
 
-
-
-
 		#region "Serialization"
+
 		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -301,6 +291,7 @@ namespace Altaxo.Data
 					info.AddValue("Data", s._data);
 				}
 			}
+
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
@@ -328,7 +319,7 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DoubleColumn), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -341,10 +332,10 @@ namespace Altaxo.Data
 				else
 					info.AddArray("Data", s._data, 0);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DoubleColumn s = null != o ? (Altaxo.Data.DoubleColumn)o : new Altaxo.Data.DoubleColumn();
-
 
 				// deserialize the base class
 				info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn), parent);
@@ -368,17 +359,18 @@ namespace Altaxo.Data
 		{
 			SetObjectData(this, info, context, null);
 		}
+
 		public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 		{
 			return new SerializationSurrogate0().SetObjectData(this, info, context, null);
 		}
+
 		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			new SerializationSurrogate0().GetObjectData(this, info, context);
 		}
 
-		#endregion
-
+		#endregion "Serialization"
 
 		/// <summary>
 		/// Get/sets the data of this DoubleColumn. The data is copied (not directly used) to/from the array.
@@ -406,11 +398,6 @@ namespace Altaxo.Data
 		{
 			return _data[idx];
 		}
-
-
-
-
-
 
 		/// <summary>
 		/// Returns the used length of the array. This is one plus the highest index of the number different from Double.NaN.
@@ -473,7 +460,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column. 
+		/// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column.
 		/// The getter property creates a wrapper for this data column that implements IVector. The length of the wrapped vector is set to the current Count of the DoubleColumn.
 		/// </summary>
 		public override Altaxo.Calc.LinearAlgebra.IROVector AssignVector
@@ -485,7 +472,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Provides a setter property to which a readonly vector can be assigned to. Copies all elements of the readonly vector to this column. 
+		/// Provides a setter property to which a readonly vector can be assigned to. Copies all elements of the readonly vector to this column.
 		/// The getter property creates a wrapper for this data column that implements IROVector. For short time use only, since it reflects changes in the data, but not in the length of the DoubleColumn.
 		/// </summary>
 		public override Altaxo.Calc.LinearAlgebra.IROVector ToROVector(int start, int count)
@@ -497,7 +484,6 @@ namespace Altaxo.Data
 		{
 			return new RWVector(this, start, count);
 		}
-
 
 		/// <summary>
 		/// Gets a copy of the data (of actual row count, starting from position 0).
@@ -554,13 +540,15 @@ namespace Altaxo.Data
 				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
 		}
 
-
-
 		protected void Realloc(int i)
 		{
 			int newcapacity1 = (int)(_capacity * _increaseFactor + _addSpace);
 			int newcapacity2 = i + _addSpace + 1;
 			int newcapacity = newcapacity1 > newcapacity2 ? newcapacity1 : newcapacity2;
+			newcapacity = Math.Min(newcapacity, MaxCount);
+
+			if (i > newcapacity)
+				throw new ArgumentOutOfRangeException(string.Format("Unable to allocate {0} rows!", i));
 
 			double[] newarray = new double[newcapacity];
 			if (_count > 0)
@@ -571,7 +559,6 @@ namespace Altaxo.Data
 			_data = newarray;
 			_capacity = _data.Length;
 		}
-
 
 		public new double this[int i]
 		{
@@ -585,8 +572,8 @@ namespace Altaxo.Data
 			{
 				bool bCountDecreased = false;
 
-				if(i<0)
-					throw new ArgumentOutOfRangeException(string.Format("Index<0 (i={0}) while trying to set element of column {1} ({2})",i,Name,FullName));
+				if (i < 0)
+					throw new ArgumentOutOfRangeException(string.Format("Index<0 (i={0}) while trying to set element of column {1} ({2})", i, Name, FullName));
 
 				if (Double.IsNaN(value))
 				{
@@ -635,18 +622,16 @@ namespace Altaxo.Data
 					}
 				}
 				NotifyDataChanged(i, i + 1, bCountDecreased);
-			} // end set  
+			} // end set
 		} // end indexer
-
-
 
 		#region Vector decorators
 
 		private class ROVector : Altaxo.Calc.LinearAlgebra.IROVector
 		{
-			DoubleColumn _col;
-			int _start;
-			int _count;
+			private DoubleColumn _col;
+			private int _start;
+			private int _count;
 
 			public ROVector(DoubleColumn col, int start, int count)
 			{
@@ -662,7 +647,7 @@ namespace Altaxo.Data
 				get { return _count; }
 			}
 
-			#endregion
+			#endregion IROVector Members
 
 			#region INumericSequence Members
 
@@ -671,14 +656,14 @@ namespace Altaxo.Data
 				get { return _col[_start + i]; }
 			}
 
-			#endregion
+			#endregion INumericSequence Members
 		}
 
 		private class RWVector : Altaxo.Calc.LinearAlgebra.IVector
 		{
-			DoubleColumn _col;
-			int _start;
-			int _count;
+			private DoubleColumn _col;
+			private int _start;
+			private int _count;
 
 			public RWVector(DoubleColumn col, int start, int count)
 			{
@@ -701,7 +686,7 @@ namespace Altaxo.Data
 				}
 			}
 
-			#endregion
+			#endregion IVector Members
 
 			#region IROVector Members
 
@@ -710,10 +695,10 @@ namespace Altaxo.Data
 				get { return _count; }
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
 
-		#endregion
+		#endregion Vector decorators
 
 		#region Operators
 
@@ -722,7 +707,6 @@ namespace Altaxo.Data
 		//                        Operators
 		//
 		// -----------------------------------------------------------------------------
-
 
 		// ----------------------- Addition operator -----------------------------------
 		public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
@@ -752,7 +736,6 @@ namespace Altaxo.Data
 			return c1 + c2;
 		}
 
-
 		public override bool vop_Addition(DataColumn c2, out DataColumn c3)
 		{
 			if (c2 is Altaxo.Data.DoubleColumn)
@@ -763,6 +746,7 @@ namespace Altaxo.Data
 			c3 = null;
 			return false;
 		}
+
 		public override bool vop_Addition_Rev(DataColumn c2, out DataColumn c3)
 		{
 			return vop_Addition(c2, out c3);
@@ -786,7 +770,6 @@ namespace Altaxo.Data
 		}
 
 		// --------------------- Operator Subtract -------------------------------------
-
 
 		public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -823,7 +806,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_Subtraction(DataColumn c2, out DataColumn c3)
 		{
@@ -871,8 +853,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
-
 		public static Altaxo.Data.DoubleColumn Subtraction(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DateTimeColumn c2)
 		{
 			int len = c1.Count < c2.Count ? c1.Count : c2.Count;
@@ -886,7 +866,6 @@ namespace Altaxo.Data
 
 			return c3;
 		}
-
 
 		public static Altaxo.Data.DoubleColumn Subtraction(Altaxo.Data.DateTimeColumn c1, DateTime c2)
 		{
@@ -949,7 +928,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
 		public override bool vop_Multiplication(DataColumn c2, out DataColumn c3)
 		{
 			if (c2 is Altaxo.Data.DoubleColumn)
@@ -960,6 +938,7 @@ namespace Altaxo.Data
 			c3 = null;
 			return false;
 		}
+
 		public override bool vop_Multiplication_Rev(DataColumn c2, out DataColumn c3)
 		{
 			return vop_Multiplication(c2, out c3);
@@ -1066,7 +1045,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
 		// -------------------------- operator % ----------------------------------------------
 		public static Altaxo.Data.DoubleColumn operator %(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -1150,7 +1128,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
 		// ----------------------- AND operator -----------------------------------
 		public static Altaxo.Data.DoubleColumn operator &(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -1185,7 +1162,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_And(DataColumn c2, out DataColumn c3)
 		{
@@ -1268,7 +1244,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
 		public override bool vop_Or(DataColumn c2, out DataColumn c3)
 		{
 			if (c2 is Altaxo.Data.DoubleColumn)
@@ -1315,8 +1290,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
-
 		// ----------------------- XOR operator -----------------------------------
 		public static Altaxo.Data.DoubleColumn operator ^(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -1351,7 +1324,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_Xor(DataColumn c2, out DataColumn c3)
 		{
@@ -1410,8 +1382,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
-
 
 		public override bool vop_ShiftLeft(DataColumn c2, out DataColumn c3)
 		{
@@ -1484,7 +1454,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
 		// ----------------------- ShiftRight operator -----------------------------------
 
 		public static Altaxo.Data.DoubleColumn operator >>(Altaxo.Data.DoubleColumn c1, int c2)
@@ -1496,8 +1465,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
-
 
 		public override bool vop_ShiftRight(DataColumn c2, out DataColumn c3)
 		{
@@ -1575,8 +1542,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
-
 		// ----------------------- Lesser operator -----------------------------------
 		public static Altaxo.Data.DoubleColumn operator <(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -1609,7 +1574,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_Lesser(DataColumn c2, out DataColumn c3)
 		{
@@ -1657,7 +1621,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
 		// ----------------------- Greater operator -----------------------------------
 		public static Altaxo.Data.DoubleColumn operator >(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -1690,7 +1653,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_Greater(DataColumn c2, out DataColumn c3)
 		{
@@ -1738,9 +1700,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
-
-
 		// ----------------------- LesserOrEqual operator -----------------------------------
 		public static Altaxo.Data.DoubleColumn operator <=(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -1773,7 +1732,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_LesserOrEqual(DataColumn c2, out DataColumn c3)
 		{
@@ -1821,7 +1779,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
 		// ----------------------- GreaterOrEqual operator -----------------------------------
 		public static Altaxo.Data.DoubleColumn operator >=(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -1854,7 +1811,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_GreaterOrEqual(DataColumn c2, out DataColumn c3)
 		{
@@ -1902,7 +1858,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
 		// --------------------------------- Unary Plus ----------------------------
 		public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1)
 		{
@@ -1916,14 +1871,11 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
 		public override bool vop_Plus(out DataColumn c3)
 		{
 			c3 = +this;
 			return true;
 		}
-
-
 
 		// --------------------------------- Unary Minus ----------------------------
 		public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1)
@@ -1937,7 +1889,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_Minus(out DataColumn c3)
 		{
@@ -1958,7 +1909,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
 		public override bool vop_Not(out DataColumn c3)
 		{
 			c3 = !this;
@@ -1978,7 +1928,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
 		public override bool vop_Complement(out DataColumn c3)
 		{
 			c3 = ~this;
@@ -1997,7 +1946,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public override bool vop_Increment(out DataColumn c3)
 		{
@@ -2025,7 +1973,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
 		public override bool vop_Decrement(out DataColumn c3)
 		{
 			int len = this._count;
@@ -2038,7 +1985,6 @@ namespace Altaxo.Data
 			c3 = c33;
 			return true;
 		}
-
 
 		// -----------------------------------------------------------------------------
 		//
@@ -2081,7 +2027,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public static Altaxo.Data.DoubleColumn Atan(Altaxo.Data.DoubleColumn c1)
 		{
@@ -2130,7 +2075,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
 
 		public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DoubleColumn c1)
 		{
@@ -2228,8 +2172,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
-
 		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn c1)
 		{
 			int len = c1._count;
@@ -2278,8 +2220,8 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
 		#region Log10
+
 		public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn c1)
 		{
 			int len = c1._count;
@@ -2291,8 +2233,8 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-		#endregion
 
+		#endregion Log10
 
 		public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -2330,8 +2272,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-
-
 		public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
 			int len = c1._count < c2._count ? c1._count : c2._count;
@@ -2367,8 +2307,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
-
 
 		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -2417,8 +2355,6 @@ namespace Altaxo.Data
 			c3._count = len;
 			return c3;
 		}
-
-
 
 		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn c1)
 		{
@@ -2540,11 +2476,6 @@ namespace Altaxo.Data
 			return c3;
 		}
 
-		#endregion
-
-
-	
-
-		
+		#endregion Operators
 	} // end Altaxo.Data.DoubleColumn
 }
