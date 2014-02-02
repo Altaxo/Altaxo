@@ -1695,6 +1695,13 @@ namespace Altaxo.Graph.Gdi
 
 			public object ParentObject { get; set; }
 
+			/// <summary>
+			/// Determines whether this graphical object is compatible with the parent specified in the argument.
+			/// </summary>
+			/// <param name="parentObject">The parent object.</param>
+			/// <returns>
+			///   <c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.
+			/// </returns>
 			public virtual bool IsCompatibleWithParent(object parentObject)
 			{
 				return parentObject is XYPlotLayer;
@@ -1747,18 +1754,6 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			public abstract object Clone();
-
-			/// <summary>
-			/// Determines whether this place holder item is used by the specified layer type.
-			/// </summary>
-			/// <param name="layer">The layer. The item that implements this function should only use the type of the provided layer, not the specific layer instance.</param>
-			/// <returns>
-			///   <c>true</c> if this placeholder item can be used for the provided (type of) layer; otherwise, <c>false</c>.
-			/// </returns>
-			public bool IsUsedForLayer(HostLayer layer)
-			{
-				return layer is XYPlotLayer;
-			}
 		}
 
 		private abstract class AxisStylePlaceHolderBase : PlaceHolder

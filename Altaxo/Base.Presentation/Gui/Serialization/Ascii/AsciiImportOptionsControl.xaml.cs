@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +46,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 	public partial class AsciiImportOptionsControl : UserControl, IAsciiImportOptionsView
 	{
 		public event Action DoAnalyze;
+
 		public event Action SeparationStrategyChanged;
 
 		public AsciiImportOptionsControl()
@@ -34,8 +59,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 			if (null != DoAnalyze)
 				DoAnalyze();
 		}
-
-	
 
 		public int? NumberOfMainHeaderLines
 		{
@@ -80,8 +103,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 			GuiHelper.Initialize(_guiSeparationStrategy, list);
 		}
 
-	
-
 		public bool RenameColumnsWithHeaderNames
 		{
 			get
@@ -119,14 +140,12 @@ namespace Altaxo.Gui.Serialization.Ascii
 			set { _guiSeparationStrategyDetailsHost.Content = value; }
 		}
 
-
 		private void EhSeparationStrategyChanged(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiSeparationStrategy);
 			if (null != SeparationStrategyChanged)
 				SeparationStrategyChanged();
 		}
-
 
 		public bool GuiSeparationStrategyIsKnown
 		{
@@ -184,13 +203,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 		}
 
-
-
-
-
-
-
-
 		public bool TableStructureIsKnown
 		{
 			get
@@ -205,17 +217,12 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 		public System.Collections.ObjectModel.ObservableCollection<Boxed<Altaxo.Serialization.Ascii.AsciiColumnType>> TableStructure
 		{
-			set 
+			set
 			{
 				_guiColumnTypes.ItemsSource = null;
 				_guiColumnTypes.ItemsSource = value;
 			}
 		}
-
-
-
-
-	
 
 		public object AsciiDocumentAnalysisOptionsView
 		{
