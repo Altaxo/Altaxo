@@ -392,6 +392,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\ScaleWithTicksControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1011,6 +1015,9 @@
     </Compile>
     <Compile Include="Gui\Graph\ItemLocationDirectControl.xaml.cs">
       <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml.cs">
+      <DependentUpon>NoTickSpacingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ScaleWithTicksControl.xaml.cs">
       <DependentUpon>ScaleWithTicksControl.xaml</DependentUpon>

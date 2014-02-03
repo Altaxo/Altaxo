@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using Altaxo.Data;
 using Altaxo.Graph;
@@ -60,6 +62,7 @@ namespace Altaxo.Graph.Procedures
 			CopyReferencedColumnsToNewProject();
 			CopyGraphToNewDocument(_graph);
 			CopyFolderPropertiesOf(_graph);
+			CopyDocumentInformation(_graph);
 
 			return _document;
 		}
@@ -87,6 +90,16 @@ namespace Altaxo.Graph.Procedures
 					var bagclone = doc.Clone();
 					_document.ProjectFolderProperties.Add(bagclone);
 				}
+			}
+		}
+
+		private void CopyDocumentInformation(GraphDocument graph)
+		{
+			var sourceDocument = (AltaxoDocument)Main.DocumentPath.GetRootNodeImplementing(graph, typeof(AltaxoDocument));
+
+			if (null != sourceDocument)
+			{
+				_document.DocumentIdentifier = sourceDocument.DocumentIdentifier;
 			}
 		}
 

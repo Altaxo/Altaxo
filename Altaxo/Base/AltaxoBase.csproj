@@ -232,6 +232,9 @@
     <Compile Include="Gui\Graph\ItemLocationByGridController.cs" />
     <Compile Include="Gui\Graph\ItemLocationDirectController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\DateTimeTickSpacingController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\TextTickSpacingController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingController.cs" />
     <Compile Include="Gui\Graph\TickSpacingController.cs" />
     <Compile Include="Gui\IOptionPanel.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />

@@ -404,6 +404,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Properties
 
+		public override string ToString()
+		{
+			return string.Format("TextGraphics Text: <<{0}>>", _text);
+		}
+
 		public override bool AutoSize
 		{
 			get

@@ -317,8 +317,8 @@ namespace Altaxo.Com
 					Registry.ClassesRoot.DeleteSubKeyTree(testkeystring, false);
 				}
 
-				Register(Registry.LocalMachine, WOW_Mode.Reg64);
-				Register(Registry.LocalMachine, WOW_Mode.Reg32);
+				Register(Registry.LocalMachine, WOW_Mode.Reg32); // first register the special 32 bit mode, then
+				Register(Registry.LocalMachine, WOW_Mode.Reg64); // the "any CPU" mode, so that for important keys the 64 bit mode wins
 				return; // if it was successful to register the computer account, we return
 			}
 			catch (Exception)
@@ -328,8 +328,8 @@ namespace Altaxo.Com
 			// if not successful to register into HKLM, we use the user's registry
 			try
 			{
-				Register(Registry.CurrentUser, WOW_Mode.Reg64);
-				Register(Registry.CurrentUser, WOW_Mode.Reg32);
+				Register(Registry.CurrentUser, WOW_Mode.Reg32); // first register the special 32 bit mode, then
+				Register(Registry.CurrentUser, WOW_Mode.Reg64); // the "any CPU" mode, so that for important keys the 64 bit mode wins
 			}
 			catch (Exception)
 			{
