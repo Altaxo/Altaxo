@@ -53,32 +53,66 @@ namespace Altaxo.Graph.Gdi
 	/// Holds the information how to arrange layers in a graph document.
 	/// Is used by the <see cref="Altaxo.Gui.Graph.ArrangeLayersController" /> controller.
 	/// </summary>
-	public class ArrangeLayersDocument
+	public class ArrangeLayersDocument : Main.ICopyFrom
 	{
-		public int NumberOfRows = 2;
-		public int NumberOfColumns = 1;
-		public double RowSpacing = 5;
-		public double ColumnSpacing = 5;
-		public double LeftMargin = 15;
-		public double TopMargin = 10;
-		public double RightMargin = 10;
-		public double BottomMargin = 15;
-		public SuperfluousLayersAction SuperfluousLayersAction = SuperfluousLayersAction.Untouched;
+		public int NumberOfRows;
+		public int NumberOfColumns;
+		public double RowSpacing;
+		public double ColumnSpacing;
+		public double LeftMargin;
+		public double TopMargin;
+		public double RightMargin;
+		public double BottomMargin;
+		public SuperfluousLayersAction SuperfluousLayersAction;
 
-		public void CopyFrom(ArrangeLayersDocument from)
+		public bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			this.NumberOfColumns = from.NumberOfColumns;
-			this.NumberOfRows = from.NumberOfRows;
-			this.RowSpacing = from.RowSpacing;
-			this.ColumnSpacing = from.ColumnSpacing;
-			this.LeftMargin = from.LeftMargin;
-			this.TopMargin = from.TopMargin;
-			this.RightMargin = from.RightMargin;
-			this.BottomMargin = from.BottomMargin;
-			this.SuperfluousLayersAction = from.SuperfluousLayersAction;
+			var from = obj as ArrangeLayersDocument;
+			if (null != from)
+			{
+				this.NumberOfColumns = from.NumberOfColumns;
+				this.NumberOfRows = from.NumberOfRows;
+				this.RowSpacing = from.RowSpacing;
+				this.ColumnSpacing = from.ColumnSpacing;
+				this.LeftMargin = from.LeftMargin;
+				this.TopMargin = from.TopMargin;
+				this.RightMargin = from.RightMargin;
+				this.BottomMargin = from.BottomMargin;
+				this.SuperfluousLayersAction = from.SuperfluousLayersAction;
+				return true;
+			}
+			return false;
+		}
+
+		public ArrangeLayersDocument()
+		{
+			NumberOfRows = 2;
+			NumberOfColumns = 1;
+			RowSpacing = 5 / 100.0;
+			ColumnSpacing = 5 / 100.0;
+			LeftMargin = 15 / 100.0;
+			TopMargin = 10 / 100.0;
+			RightMargin = 10 / 100.0;
+			BottomMargin = 15 / 100.0;
+			SuperfluousLayersAction = SuperfluousLayersAction.Untouched;
+		}
+
+		public ArrangeLayersDocument(ArrangeLayersDocument from)
+		{
+			CopyFrom(from);
+		}
+
+		object ICloneable.Clone()
+		{
+			return new ArrangeLayersDocument(this);
+		}
+
+		public ArrangeLayersDocument Clone()
+		{
+			return new ArrangeLayersDocument(this);
 		}
 	}
 
@@ -115,8 +149,8 @@ namespace Altaxo.Graph.Gdi
 			grid.XPartitioning.Clear();
 			grid.YPartitioning.Clear();
 
-			double columnSize = Math.Max(0, 100 - arrangement.LeftMargin - arrangement.RightMargin - (arrangement.NumberOfColumns - 1) * arrangement.ColumnSpacing);
-			double rowSize = Math.Max(0, 100 - arrangement.TopMargin - arrangement.BottomMargin - (arrangement.NumberOfRows - 1) * arrangement.RowSpacing);
+			double columnSize = Math.Max(0, 1 - arrangement.LeftMargin - arrangement.RightMargin - (arrangement.NumberOfColumns - 1) * arrangement.ColumnSpacing);
+			double rowSize = Math.Max(0, 1 - arrangement.TopMargin - arrangement.BottomMargin - (arrangement.NumberOfRows - 1) * arrangement.RowSpacing);
 
 			if (arrangement.NumberOfColumns > 0)
 			{
@@ -131,7 +165,7 @@ namespace Altaxo.Graph.Gdi
 			}
 			else
 			{
-				grid.XPartitioning.Add(RADouble.NewRel(100));
+				grid.XPartitioning.Add(RADouble.NewRel(1));
 			}
 
 			if (arrangement.NumberOfRows > 0)
@@ -147,7 +181,7 @@ namespace Altaxo.Graph.Gdi
 			}
 			else
 			{
-				grid.YPartitioning.Add(RADouble.NewRel(100));
+				grid.YPartitioning.Add(RADouble.NewRel(1));
 			}
 		}
 

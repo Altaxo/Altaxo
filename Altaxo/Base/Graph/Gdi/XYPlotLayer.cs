@@ -1689,7 +1689,7 @@ namespace Altaxo.Graph.Gdi
 
 		#region IGraphicShape placeholder for items in XYPlotLayer
 
-		private abstract class PlaceHolder : IGraphicBase, ILayerItemPlaceHolder
+		private abstract class PlaceHolder : IGraphicBase
 		{
 			public event EventHandler Changed;
 
@@ -2211,6 +2211,21 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			#endregion Serialization
+
+			public override bool CopyFrom(object obj)
+			{
+				if (!base.CopyFrom(obj))
+					return false;
+
+				var from = obj as PlotItemPlaceHolder;
+				if (null != from)
+				{
+					this.PlotItemParent = from.PlotItemParent;
+					this.PlotItemIndex = from.PlotItemIndex;
+				}
+
+				return true;
+			}
 
 			public override string ToString()
 			{

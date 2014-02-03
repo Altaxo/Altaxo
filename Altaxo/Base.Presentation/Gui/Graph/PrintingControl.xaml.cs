@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
+using System.Management;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,11 +39,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Drawing.Printing;
-using System.Runtime.InteropServices;
-using System.Management;
-
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
 {
@@ -47,33 +48,41 @@ namespace Altaxo.Gui.Graph
 	public partial class PrintingControl : UserControl, IPrintingView
 	{
 		public event Action SelectedPrinterChanged;
+
 		public event Action EditPrinterProperties;
+
 		public event Action<bool> PaperOrientationLandscapeChanged;
+
 		public event Action PaperSizeChanged;
+
 		public event Action PaperSourceChanged;
+
 		public event Action<double> MarginLeftChanged;
+
 		public event Action<double> MarginRightChanged;
+
 		public event Action<double> MarginTopChanged;
+
 		public event Action<double> MarginBottomChanged;
+
 		public event Action<int> NumberOfCopiesChanged;
+
 		public event Action<bool> CollateCopiesChanged;
 
+		private GdiToWpfBitmap _previewBitmap;
+		private System.Drawing.Printing.PreviewPageInfo[] _previewData;
 
-		GdiToWpfBitmap _previewBitmap;
-		System.Drawing.Printing.PreviewPageInfo[] _previewData;
-
-		System.Threading.CancellationToken _printerStatusCancellationToken;
-		System.Threading.CancellationTokenSource _printerStatusCancellationTokenSource;
-		string _printerName;
+		private System.Threading.CancellationToken _printerStatusCancellationToken;
+		private System.Threading.CancellationTokenSource _printerStatusCancellationTokenSource;
+		private string _printerName;
 
 		/// <summary>Number of the page that is currently previewed.</summary>
-		int _previewPageNumber;
+		private int _previewPageNumber;
 
 		public PrintingControl()
 		{
 			InitializeComponent();
 		}
-
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
@@ -87,9 +96,6 @@ namespace Altaxo.Gui.Graph
 		{
 			_printerStatusCancellationTokenSource.Cancel();
 		}
-
-
-
 
 		#region IPrintingView
 
@@ -143,7 +149,6 @@ namespace Altaxo.Gui.Graph
 			UpdatePreviewPageAndText();
 		}
 
-
 		private void UpdatePreviewPageAndText()
 		{
 			if (null == _previewData)
@@ -159,7 +164,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void UpdatePreview()
+		private void UpdatePreview()
 		{
 			if (null == _previewBitmap || null == _previewData || _previewData.Length == 0)
 				return;
@@ -173,9 +178,6 @@ namespace Altaxo.Gui.Graph
 			double dt = Math.Min(4, _previewBitmap.GdiRectangle.Height / 8.0); // top
 			double dw = _previewBitmap.GdiRectangle.Width - 2 * dl; // width
 			double dh = _previewBitmap.GdiRectangle.Height - 2 * dt; // height
-
-
-
 
 			System.Drawing.Rectangle destRect;
 
@@ -202,8 +204,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		void UpdatePrinterStatusGuiElements()
+		private void UpdatePrinterStatusGuiElements()
 		{
 			for (; ; )
 			{
@@ -229,9 +230,6 @@ namespace Altaxo.Gui.Graph
 				ManagementObjectCollection coll = searcher.Get();
 				foreach (ManagementObject printer in coll)
 				{
-					//Console.WriteLine("------ Printer: {0} ---------", printer.Path);
-					//Console.WriteLine("Property Status = {0}", printer.GetPropertyValue("Status"));
-
 					status = (string)printer.GetPropertyValue("Status");
 					comment = (string)printer.GetPropertyValue("Comment");
 					location = (string)printer.GetPropertyValue("Location");
@@ -255,12 +253,11 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		#endregion
+		#endregion IPrintingView
 
 		#region Interop for printer properties
 
-		class UnmanagedPrinterPropertiesDialogHelper
+		private class UnmanagedPrinterPropertiesDialogHelper
 		{
 			// see http://www.pinvoke.net/default.aspx/winspool/documentproperties.html
 
@@ -276,17 +273,18 @@ namespace Altaxo.Gui.Graph
 
 			[DllImport("winspool.Drv", EntryPoint = "DocumentPropertiesW", SetLastError = true,
 				 ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-			static extern int DocumentProperties(IntPtr hwnd, IntPtr hPrinter,
+			private static extern int DocumentProperties(IntPtr hwnd, IntPtr hPrinter,
 							[MarshalAs(UnmanagedType.LPWStr)] string pDeviceName,
 							IntPtr pDevModeOutput, IntPtr pDevModeInput, int fMode);
 
 			[DllImport("kernel32.dll")]
-			static extern IntPtr GlobalLock(IntPtr hMem);
-			[DllImport("kernel32.dll")]
-			static extern bool GlobalUnlock(IntPtr hMem);
-			[DllImport("kernel32.dll")]
-			static extern bool GlobalFree(IntPtr hMem);
+			private static extern IntPtr GlobalLock(IntPtr hMem);
 
+			[DllImport("kernel32.dll")]
+			private static extern bool GlobalUnlock(IntPtr hMem);
+
+			[DllImport("kernel32.dll")]
+			private static extern bool GlobalFree(IntPtr hMem);
 
 			public static void OpenPrinterPropertiesDialog(PrinterSettings printerSettings, IntPtr handle)
 			{
@@ -314,9 +312,7 @@ namespace Altaxo.Gui.Graph
 			UnmanagedPrinterPropertiesDialogHelper.OpenPrinterPropertiesDialog(psSettings, handle);
 		}
 
-
-
-		#endregion
+		#endregion Interop for printer properties
 
 		private void EhShowPrinterProperties(object sender, RoutedEventArgs e)
 		{
@@ -335,11 +331,7 @@ namespace Altaxo.Gui.Graph
 			_printerName = node.Text;
 
 			//UpdatePrinterStatusGuiElements(printerName);
-
-
 		}
-
-
 
 		private void EhPreviewImageSizeChanged(object sender, SizeChangedEventArgs e)
 		{
@@ -358,10 +350,6 @@ namespace Altaxo.Gui.Graph
 			UpdatePreview();
 		}
 
-
-
-
-
 		private void EhPreviewFirstPage(object sender, RoutedEventArgs e)
 		{
 			_previewPageNumber = 0;
@@ -372,7 +360,6 @@ namespace Altaxo.Gui.Graph
 		{
 			_previewPageNumber = Math.Max(0, _previewPageNumber - 1);
 			UpdatePreviewPageAndText();
-
 		}
 
 		private void EhPreviewNextPage(object sender, RoutedEventArgs e)
@@ -429,7 +416,6 @@ namespace Altaxo.Gui.Graph
 			var val = _guiMarginRight.SelectedQuantity.AsQuantityIn(Units.SIPrefix.Centi, Units.Length.Inch.Instance).Value;
 			if (null != MarginRightChanged)
 				MarginRightChanged(val);
-
 		}
 
 		private void EhMarginTopChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -437,7 +423,6 @@ namespace Altaxo.Gui.Graph
 			var val = _guiMarginTop.SelectedQuantity.AsQuantityIn(Units.SIPrefix.Centi, Units.Length.Inch.Instance).Value;
 			if (null != MarginTopChanged)
 				MarginTopChanged(val);
-
 		}
 
 		private void EhMarginBottomChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -445,7 +430,6 @@ namespace Altaxo.Gui.Graph
 			var val = _guiMarginBottom.SelectedQuantity.AsQuantityIn(Units.SIPrefix.Centi, Units.Length.Inch.Instance).Value;
 			if (null != MarginBottomChanged)
 				MarginBottomChanged(val);
-
 		}
 
 		private void EhNoOfCopiesChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
@@ -458,15 +442,6 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != CollateCopiesChanged)
 				CollateCopiesChanged(_guiCollateCopies.IsChecked == true);
-
 		}
-
-
-
-
-
-
-
 	}
 }
-

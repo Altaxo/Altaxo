@@ -511,6 +511,10 @@ namespace Altaxo.Gui.Graph.Viewing
 			_doc.SizeChanged += new WeakEventHandler(this.EhGraph_SizeChanged, x => _doc.SizeChanged -= x);
 			_doc.NameChanged += new WeakActionHandler<INameOwner, string>(this.EhGraphDocumentNameChanged, x => _doc.NameChanged -= x);
 
+			// if the host layer has at least one child, we set the active layer to the first child of the host layer
+			if (_doc.RootLayer.Layers.Count >= 1)
+				_currentLayerNumber = new List<int>() { 0 };
+
 			// Ensure the current layer and plot numbers are valid
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();

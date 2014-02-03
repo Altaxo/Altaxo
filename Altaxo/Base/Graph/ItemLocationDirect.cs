@@ -549,6 +549,29 @@ namespace Altaxo.Graph
 			return new RectangleD(myPosX, myPosY, mySizeX, mySizeY);
 		}
 
+		/// <summary>
+		/// Gets the absolute enclosing rectangle, taking into account ScaleX, ScaleY, Rotation and Shear (SSRS).
+		/// </summary>
+		/// <returns>The enclosing rectangle in absolute values.</returns>
+		public RectangleD GetAbsoluteEnclosingRectangle()
+		{
+			Altaxo.Graph.Gdi.TransformationMatrix2D m = new Gdi.TransformationMatrix2D();
+			m.SetTranslationRotationShearxScale(AbsolutePivotPositionX, AbsolutePivotPositionY, -Rotation, ShearX, ScaleX, ScaleY);
+			m.TranslatePrepend(AbsoluteVectorPivotToLeftUpper.X, AbsoluteVectorPivotToLeftUpper.Y);
+
+			var s = this.AbsoluteSize;
+			var p1 = m.TransformPoint(new PointD2D(0, 0));
+			var p2 = m.TransformPoint(new PointD2D(s.X, 0));
+			var p3 = m.TransformPoint(new PointD2D(0, s.Y));
+			var p4 = m.TransformPoint(new PointD2D(s.X, s.Y));
+
+			var r = new RectangleD(p1, PointD2D.Empty);
+			r.ExpandToInclude(p2);
+			r.ExpandToInclude(p3);
+			r.ExpandToInclude(p4);
+			return r;
+		}
+
 		protected virtual void InternalSetSizeXSilent(RADouble value)
 		{
 			_sizeX = value;

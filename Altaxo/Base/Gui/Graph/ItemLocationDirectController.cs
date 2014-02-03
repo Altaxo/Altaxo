@@ -118,10 +118,12 @@ namespace Altaxo.Gui.Graph
 				_parentSize = _doc.ParentSize;
 				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.X, Units.Length.Point.Instance);
 				_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.Y, Units.Length.Point.Instance);
-				_xSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
-				_ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
-				_xPositionEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
-				_yPositionEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
+
+				_xSizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
+				_ySizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
+
+				_xPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
+				_yPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
 			}
 			if (null != _view)
 			{

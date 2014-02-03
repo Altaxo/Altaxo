@@ -352,8 +352,8 @@ namespace Altaxo.Com
 			// unregister also from the user's registry
 			try
 			{
-				Unregister(Registry.Users, WOW_Mode.Reg32);
-				Unregister(Registry.Users, WOW_Mode.Reg64);
+				Unregister(Registry.CurrentUser, WOW_Mode.Reg32);
+				Unregister(Registry.CurrentUser, WOW_Mode.Reg64);
 			}
 			catch (Exception ex)
 			{
@@ -367,6 +367,7 @@ namespace Altaxo.Com
 			var keySW = rootKey.CreateSubKey("Software", wowMode);
 			var keyCR = keySW.CreateSubKey("Classes", wowMode);
 			var keyCLSID = keyCR.CreateSubKey("CLSID", wowMode);
+			var keyApp = keyCR.CreateSubKey("AppID", wowMode);
 
 			keyCR.DeleteSubKeyTree(".axoprj", false);
 
@@ -374,8 +375,11 @@ namespace Altaxo.Com
 			keyCLSID.DeleteSubKeyTree(typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant(), false);
 
 			keyCR.DeleteSubKeyTree(GraphDocumentEmbeddedComObject.USER_TYPE, false);
-			keyCLSID.DeleteSubKeyTree(Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject)).ToString("B").ToUpperInvariant(), false);
+			keyCLSID.DeleteSubKeyTree(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), false);
+			keyApp.DeleteSubKeyTree(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), false);
 
+			if (null != keyApp)
+				keyApp.Close();
 			if (null != keyCLSID)
 				keyCLSID.Close();
 			if (null != keyCR)

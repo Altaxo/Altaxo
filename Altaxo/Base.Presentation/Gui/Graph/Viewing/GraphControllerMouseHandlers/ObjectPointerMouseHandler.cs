@@ -470,8 +470,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		public override void OnClick(PointD2D position, MouseButtonEventArgs e)
 		{
 			base.OnClick(position, e);
-
-			System.Console.WriteLine("Click");
 		}
 
 		public override void AfterPaint(Graphics g)

@@ -167,6 +167,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				HostLayer s = (o == null ? new HostLayer(info) : (HostLayer)o);
 
+				s.ParentObject = parent;
 				// size, position, rotation and scale
 				s._cachedParentLayerSize = (PointD2D)info.GetValue("CachedParentSize");
 				s._cachedLayerSize = (PointD2D)info.GetValue("CachedSize");
@@ -416,9 +417,6 @@ namespace Altaxo.Graph.Gdi
 
 				if (null == value)
 					throw new ArgumentNullException("value");
-
-				if (null == ParentLayer && value is ItemLocationByGrid)
-					return;
 
 				_location = value;
 				_location.ParentObject = this;
@@ -700,7 +698,11 @@ namespace Altaxo.Graph.Gdi
 		{
 			RectangleD newRect;
 
-			if (_location is ItemLocationDirect)
+			if (null == _location)
+			{
+				return; // location is only null during deserialization
+			}
+			else if (_location is ItemLocationDirect)
 			{
 				var lps = _location as ItemLocationDirect;
 				newRect = lps.GetAbsoluteEnclosingRectangleWithoutSSRS();
@@ -727,7 +729,7 @@ namespace Altaxo.Graph.Gdi
 			}
 			else
 			{
-				throw new NotImplementedException(string.Format("_location is {0}", _location));
+				throw new NotImplementedException(string.Format("Unknown location type: _location is {0}", _location));
 			}
 
 			bool isPositionChanged = newRect.LeftTop != _cachedLayerPosition;
@@ -829,6 +831,62 @@ namespace Altaxo.Graph.Gdi
 				_grid.YPartitioning.Add(RADouble.NewRel(_grid.YPartitioning.Count == 0 ? 1 : 0));
 		}
 
+		/// <summary>
+		/// Determines whether this layer is able to create a grid, so that a child layer with a given location fits into a grid cell.
+		/// </summary>
+		/// <param name="itemLocation">The item location of the child layer.</param>
+		/// <returns><c>True</c> if this layer would be able to create a grid; <c>false otherwise.</c></returns>
+		public bool CanCreateGridForLocation(ItemLocationDirect itemLocation)
+		{
+			if (this.Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid))
+				return false;
+
+			RectangleD enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
+			if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > this.Size.X || enclosingRect.Bottom > this.Size.Y)
+				return false;
+
+			return true;
+		}
+
+		/// <summary>
+		/// Creates the grid, so that a child layer with the location given by the argument <paramref name="itemLocation"/> fits into the grid at the same position as before.
+		/// You should check with <see cref="CanCreateGridForLocation"/> whether it is possible to create a grid for the given item location.
+		/// </summary>
+		/// <param name="itemLocation">The item location of the child layer.</param>
+		/// <returns>The new grid cell location for useage by the child layer. If no grid could be created, the return value may be <c>null</c>.</returns>
+		public ItemLocationByGrid CreateGridForLocation(ItemLocationDirect itemLocation)
+		{
+			bool isAnyChildLayerPosByGrid = this.Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid);
+
+			if (!isAnyChildLayerPosByGrid)
+			{
+				RectangleD enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
+
+				if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > this.Size.X || enclosingRect.Bottom > this.Size.Y)
+					return null;
+
+				_grid = new GridPartitioning();
+				_grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.Left / this.Size.X));
+				_grid.XPartitioning.Add(RADouble.NewRel(enclosingRect.Width / this.Size.X));
+				_grid.XPartitioning.Add(RADouble.NewRel(1 - enclosingRect.Right / this.Size.X));
+
+				_grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Top / this.Size.Y));
+				_grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Height / this.Size.Y));
+				_grid.YPartitioning.Add(RADouble.NewRel(1 - enclosingRect.Bottom / this.Size.Y));
+
+				var result = new ItemLocationByGrid();
+				result.CopyFrom(itemLocation);
+				result.ForceFitIntoCell = true;
+				result.GridColumn = 1;
+				result.GridColumnSpan = 1;
+				result.GridRow = 1;
+				result.GridRowSpan = 1;
+				return result;
+			}
+
+			return null;
+		}
+
 		#endregion Grid creation
 
 		#region XYPlotLayer properties and methods
@@ -879,7 +937,7 @@ namespace Altaxo.Graph.Gdi
 		public HostLayer ParentLayer
 		{
 			get { return _parent as HostLayer; }
-			set { _parent = value; }
+			set { ParentObject = value; }
 		}
 
 		public GraphicCollection GraphObjects
@@ -998,6 +1056,8 @@ namespace Altaxo.Graph.Gdi
 		{
 			if (!object.ReferenceEquals(parentObject, _parent))
 				throw new InvalidOperationException("Cached parent object does not matched parent object in argument!");
+
+			CalculateCachedSizeAndPosition();
 
 			var mySize = this.Size;
 			foreach (var graphObj in _graphObjects)
@@ -1210,6 +1270,10 @@ namespace Altaxo.Graph.Gdi
 			{
 				var oldValue = _parent;
 				this._parent = value;
+				if (!object.ReferenceEquals(oldValue, value))
+				{
+					CalculateCachedSizeAndPosition();
+				}
 			}
 		}
 

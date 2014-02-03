@@ -164,7 +164,7 @@ namespace Altaxo.Collections
 			}
 
 			/// <summary>
-			/// Gets or sets a property that determines at which position in the parent's list an item is placed when it is added to the <see cref="PartialView"/>;
+			/// Gets or sets a property that determines at which position in the parent's list an item is placed when it is added to the <see cref="PartialView{M}"/>;
 			/// </summary>
 			/// <value>
 			/// The behavior when an item is added to this view.

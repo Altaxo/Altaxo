@@ -41,6 +41,8 @@ namespace Altaxo.Gui.Graph
 		object SubPositionView { set; }
 
 		event Action PositioningTypeChanged;
+
+		bool IsPositioningTypeChoiceVisible { set; }
 	}
 
 	#endregion Interfaces
@@ -57,6 +59,8 @@ namespace Altaxo.Gui.Graph
 		private IMVCANController _subController;
 
 		private Dictionary<Type, IItemLocation> _instances;
+
+		protected bool _isRootLayerPosition = false;
 
 		public override bool InitializeDocument(params object[] args)
 		{
@@ -92,6 +96,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_view.UseDirectPositioning = _doc is ItemLocationDirect;
 				_view.SubPositionView = _subController.ViewObject;
+				_view.IsPositioningTypeChoiceVisible = !IsRootLayerPosition;
 			}
 		}
 
@@ -99,7 +104,13 @@ namespace Altaxo.Gui.Graph
 		{
 			if (_doc is ItemLocationDirect)
 			{
-				_subController = new ItemLocationDirectController();
+				ItemLocationDirectController ctrl;
+				_subController = ctrl = new ItemLocationDirectController();
+				if (IsRootLayerPosition)
+				{
+					ctrl.ShowAnchorElements(false, false);
+					ctrl.ShowPositionElements(false, false);
+				}
 				_subController.InitializeDocument(_doc, _layer.ParentLayerSize);
 			}
 			else if (_doc is ItemLocationByGrid)
@@ -165,6 +176,14 @@ namespace Altaxo.Gui.Graph
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;
+		}
+
+		public bool IsRootLayerPosition
+		{
+			get
+			{
+				return (null != _layer) && (_layer.ParentObject is GraphDocument);
+			}
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +30,7 @@ using System.Text;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// Represents a storage for text that can be used like a text console. 
+	/// Represents a storage for text that can be used like a text console.
 	/// </summary>
 	public interface ITextBackedConsole : System.ComponentModel.INotifyPropertyChanged, ICloneable
 	{
@@ -48,7 +50,6 @@ namespace Altaxo.Main
 		/// <param name="value">The value to write. </param>
 		void WriteLine(string value);
 
-
 		/// <summary>Writes the text representation of the specified array of objects, followed by the current line terminator, to the text backed console using the specified format information.</summary>
 		/// <param name="format">A composite format string. </param>
 		/// <param name="args">An array of objects to write using <paramref name="format" />. </param>
@@ -57,22 +58,20 @@ namespace Altaxo.Main
 		/// <summary>Removes all characters from the current text backed console.</summary>
 		void Clear();
 
-
 		/// <summary>Gets or sets the entire text of the text backed console. If setting the text, and if the text is different from the text that is currently stored in the instance, a property changed event (see <see cref="System.ComponentModel.PropertyChangedEventHandler"/>) is fired with 'Text' as parameter.</summary>
 		/// <value>The text of this console.</value>
 		string Text { get; set; }
 	}
-
 
 	/// <summary>
 	/// Implementation of <see cref="ITextBackedConsole"/>, where the text is stored in a <see cref="System.Text.StringBuilder"/> instance.
 	/// </summary>
 	public class TextBackedConsole : ITextBackedConsole
 	{
-		static readonly System.ComponentModel.PropertyChangedEventArgs _textChangedPropertyEventArgs = new System.ComponentModel.PropertyChangedEventArgs("Text");
+		private static readonly System.ComponentModel.PropertyChangedEventArgs _textChangedPropertyEventArgs = new System.ComponentModel.PropertyChangedEventArgs("Text");
 
-		object _synchronizingObject;
-		StringBuilder _stb;
+		private object _synchronizingObject;
+		private StringBuilder _stb;
 
 		/// <summary>
 		/// Occurs when a property value changes. Here, it is fired when the <see cref="Text"/> property changed.
@@ -84,7 +83,6 @@ namespace Altaxo.Main
 		/// </summary>
 		public TextBackedConsole()
 		{
-			Console.Write("aa");
 			_synchronizingObject = new object();
 			_stb = new StringBuilder();
 		}
@@ -119,7 +117,6 @@ namespace Altaxo.Main
 			OnTextChanged();
 		}
 
-
 		/// <summary>
 		/// Writes the text representation of the specified array of objects to the text backed console using the specified format information.
 		/// </summary>
@@ -130,7 +127,6 @@ namespace Altaxo.Main
 			_stb.AppendFormat(format, args);
 			OnTextChanged();
 		}
-
 
 		/// <summary>
 		/// Writes the current line terminator to the text backed console.
@@ -151,7 +147,6 @@ namespace Altaxo.Main
 			OnTextChanged();
 		}
 
-
 		/// <summary>
 		/// Writes the text representation of the specified array of objects, followed by the current line terminator, to the text backed console using the specified format information.
 		/// </summary>
@@ -163,7 +158,6 @@ namespace Altaxo.Main
 			_stb.AppendLine();
 			OnTextChanged();
 		}
-
 
 		/// <summary>
 		/// Removes all characters from the current text backed console.
@@ -197,7 +191,6 @@ namespace Altaxo.Main
 					return;
 				}
 
-
 				var isDifferent = _stb.Length != value.Length || 0 != string.CompareOrdinal(value, _stb.ToString());
 				if (isDifferent)
 				{
@@ -220,11 +213,5 @@ namespace Altaxo.Main
 			if (null != pc)
 				pc(this, _textChangedPropertyEventArgs);
 		}
-
-
-
-
-
-
 	}
 }

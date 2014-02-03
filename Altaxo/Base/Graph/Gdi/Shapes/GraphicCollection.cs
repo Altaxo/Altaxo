@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				int count = info.OpenArray();
 				for (int i = 0; i < count; i++)
 				{
-					IGraphicBase go = (IGraphicBase)info.GetValue(s);
+					IGraphicBase go = (IGraphicBase)info.GetValue(parent);
 					s.Add(go);
 				}
 				info.CloseArray(count);

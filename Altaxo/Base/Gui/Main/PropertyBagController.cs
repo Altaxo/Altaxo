@@ -65,11 +65,11 @@ namespace Altaxo.Gui.Main
 				return _subText[i - 1];
 			}
 
-			public string Text1 { set { _subText[0] = value; } }
+			public string Text1a { set { _subText[0] = value; } }
 
-			public string Text2 { set { _subText[1] = value; } }
+			public string Text2a { set { _subText[1] = value; } }
 
-			public string Text3 { set { _subText[2] = value; } }
+			public string Text3a { set { _subText[2] = value; } }
 		}
 
 		#endregion Inner types
@@ -88,8 +88,8 @@ namespace Altaxo.Gui.Main
 
 					var node = new MyListNode(key, key)
 					{
-						Text1 = value == null ? "n.a." : value.GetType().Name,
-						Text2 = value == null ? "null" : value.ToString()
+						Text1a = value == null ? "n.a." : value.GetType().Name,
+						Text2a = value == null ? "null" : value.ToString()
 					};
 
 					_propertyList.Add(node);

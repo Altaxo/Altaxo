@@ -362,7 +362,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <typeparam name="T">Type of node</typeparam>
 		/// <param name="node">The node to start the enumeration with.</param>
-		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>./returns>
+		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>.</returns>
 		public static IEnumerable<T> TakeFromLeavesToHere<T>(this T node) where T : ITreeNode<T>
 		{
 			return TakeFromLastLeavesToHere(node, true);
@@ -376,7 +376,7 @@ namespace Altaxo.Collections
 		/// <typeparam name="T">Type of node</typeparam>
 		/// <param name="node">The node to start the enumeration with.</param>
 		/// <param name="includeThisNode">If set to <c>true</c> the node <paramref name="node"/> is included in the enumeration, otherwise, it is not part of the enumeration.</param>
-		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>./returns>
+		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>.</returns>
 		public static IEnumerable<T> TakeFromLastLeavesToHere<T>(this T node, bool includeThisNode) where T : ITreeNode<T>
 		{
 			var childNodes = node.ChildNodes;
@@ -400,12 +400,14 @@ namespace Altaxo.Collections
 		/// Attention: Since the order of the nodes must be reversed, this enumeration is only efficient for <see cref="ITreeListNode{T}"/> types.
 		/// </summary>
 		/// <typeparam name="T">Type of node</typeparam>
+		/// <typeparam name="D">Type of some data that is associated with a node (the node's local data).</typeparam>
 		/// <param name="node">The node from which to start visiting the tree.</param>
 		/// <param name="nodesLocalData">Local data belonging to the provided <paramref name="node"/>.</param>
 		/// <param name="includeThisNode">If set to <c>true</c> the node <paramref name="node"/> is included in action execution, otherwise, it is not part of the action execution.</param>
-		/// <param name="transformLocalDataFromParentToChild">When traversing the tree from the root node up to the leaves, the provided local data can be transformed so that the data always reflect the state of the nodes. First argument is the child node,
-		/// second argument is the local data from the parent node. The return value should be the local data for the child node fiven in the first argument.</param>
-		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>./returns>
+		/// <param name="transformLocalDataFromParentToChild">When traversing the tree from the root node up to the leaves, the provided local data can be transformed so that the data always reflect the state of the nodes.
+		/// First argument is the child node, second argument is the local data from the parent node.
+		/// The return value should be the local data for the child node given in the first argument.</param>
+		/// <returns>All tree nodes from the downmost leaf of the tree down to the provided node <paramref name="node"/>.</returns>
 		public static IEnumerable<Tuple<T, D>> TakeFromLastLeavesToHere<T, D>(this T node, D nodesLocalData, bool includeThisNode, Func<T, D, D> transformLocalDataFromParentToChild) where T : ITreeNode<T>
 		{
 			var childNodes = node.ChildNodes;

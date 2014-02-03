@@ -46,10 +46,23 @@ namespace Altaxo.Graph.Gdi
 			{
 				location = (IItemLocation)oldLayer.Location.Clone();
 			}
+			else if (oldLayer.Location is ItemLocationDirect)
+			{
+				// 1. check if it is possible to create a grid in the parent layer of the old layer
+				if (null != oldLayer.ParentLayer && oldLayer.ParentLayer.CanCreateGridForLocation((ItemLocationDirect)oldLayer.Location))
+				{
+					ItemLocationByGrid gridCell = oldLayer.ParentLayer.CreateGridForLocation((ItemLocationDirect)oldLayer.Location);
+					oldLayer.Location = gridCell.Clone();
+					location = gridCell.Clone();
+				}
+				else // if we can not create a grid, then we must set the location to that of the the oldLayer, but of course then the two layer locations are not linked
+				{
+					location = (IItemLocation)oldLayer.Location.Clone();
+				}
+			}
 			else
 			{
-				// TODO change absolute positioning into grid positioning
-				location = (IItemLocation)oldLayer.Location.Clone();
+				throw new NotImplementedException("Location type not implemented");
 			}
 
 			var newLayer = new XYPlotLayer(oldLayer.ParentLayer, location);

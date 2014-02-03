@@ -92,5 +92,15 @@ namespace Altaxo.Gui.Graph
 			if (_useDirectPositioning != oldValue && PositioningTypeChanged != null)
 				PositioningTypeChanged();
 		}
+
+		public bool IsPositioningTypeChoiceVisible
+		{
+			set
+			{
+				var visibility = value ? Visibility.Visible : System.Windows.Visibility.Collapsed;
+				_guiDirectPositioning.Visibility = visibility;
+				_guiGridPositioning.Visibility = visibility;
+			}
+		}
 	}
 }

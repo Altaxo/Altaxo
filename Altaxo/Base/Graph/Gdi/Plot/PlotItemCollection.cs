@@ -628,13 +628,13 @@ namespace Altaxo.Graph.Gdi.Plot
 			_plotGroupStyles.BeginPrepare();
 
 			string thisname = Main.DocumentPath.GetPathString(this, int.MaxValue);
-			System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO", thisname));
+			//System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO", thisname));
 
 			// if TransferFromParentStyles was choosen, transfer some of the plot group settings of the parental plot group styles to the local styles
 			if (transferFromParentStyles)
 			{
 				PlotGroupStyleCollection.TransferFromTo(parentGroupStyles, _plotGroupStyles);
-				System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO (transfer from parent style", thisname));
+				//System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO (transfer from parent style", thisname));
 			}
 
 			// for each PlotItem in this collection, announce the preparation, using the local plot group style collection
@@ -662,13 +662,13 @@ namespace Altaxo.Graph.Gdi.Plot
 			if (transferFromParentStyles)
 			{
 				PlotGroupStyleCollection.TransferFromTo(_plotGroupStyles, parentGroupStyles);
-				System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO (transfer back to parent style", thisname));
+				//System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO (transfer back to parent style", thisname));
 			}
 
 			// after preparation of all plot items is done, announce the end of preparation,
 			// some of the calculations can be done only now.
 			_plotGroupStyles.EndPrepare();
-			System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO", thisname));
+			//System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO", thisname));
 		}
 
 		/// <summary>

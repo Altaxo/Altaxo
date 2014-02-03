@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,19 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace Altaxo.Gui.Common
 {
-
 	/// <summary>
 	/// Limits the size of this border, and thus it's child, if the constraint for the size given as parameter in MeasureOverride is infinity. This is useful for limiting the height
-	/// if ListBoxes etc. if they contain a lot of items. Simply place the ListBox in an instance of this class and set the <see cref="HeightGreedLimit"/> property. 
+	/// if ListBoxes etc. if they contain a lot of items. Simply place the ListBox in an instance of this class and set the <see cref="HeightGreedLimit"/> property.
 	/// See remarks for more information, including the difference in usage between MaxHeight and HeightGreedLimit and MaxWidth and WidthGreedLimit.
 	/// </summary>
 	/// <remarks>
@@ -43,9 +43,9 @@ namespace Altaxo.Gui.Common
 	/// <para>The solution is to limit the constraint values (width and/or height) in MeasureOverride, only (and really only) if MeasureOverride is called with infinite constraint values.
 	/// </para>
 	/// <para><b>Difference between MaxHeight and HeightGreedLimit or MaxWidth and WidthGreedLimit:</b></para>
-	/// 
+	///
 	/// <para>With MinHeight (or MinWidth) you really set the limit for the Height or Width of the item. Even if the user increases the size of the parent window (for instance by mouse dragging), the item size is limited to this values.</para>
-	/// <para>With HeightGreedLimit (or WidthGreedLimit) you limit the size during the creation stage of the user control. Thus, only the initial size will be limited, but the user can still increase the size of the items, for instance 
+	/// <para>With HeightGreedLimit (or WidthGreedLimit) you limit the size during the creation stage of the user control. Thus, only the initial size will be limited, but the user can still increase the size of the items, for instance
 	/// by increasing the size of the parent control.</para>
 	/// </remarks>
 	public class BorderWithSizeGreedLimit : Border
@@ -64,9 +64,6 @@ namespace Altaxo.Gui.Common
 				DependencyProperty.Register("HeightGreedLimit", typeof(double), typeof(BorderWithSizeGreedLimit),
 				new FrameworkPropertyMetadata(double.PositiveInfinity, new PropertyChangedCallback(EhHeightGreedLimitChanged), new CoerceValueCallback(CoerceHeightGreedLimit)));
 
-
-
-
 		/// <summary>
 		/// Gets/sets the limit for the width greed. This limits the initial width of the Border (and thus its child). The user is still able to increase the width of the Border above this value.
 		/// </summary>
@@ -79,11 +76,11 @@ namespace Altaxo.Gui.Common
 		private static void EhWidthGreedLimitChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
 		{
 		}
+
 		private static object CoerceWidthGreedLimit(DependencyObject element, object value)
 		{
 			return Math.Max(0, (double)value);
 		}
-
 
 		/// <summary>
 		/// Gets/sets the limit for the height greed. This limits the initial height of the Border (and thus its child). The user is still able to increase the height of the Border above this value.
@@ -94,16 +91,14 @@ namespace Altaxo.Gui.Common
 			set { SetValue(HeightGreedLimitProperty, value); }
 		}
 
-
 		private static void EhHeightGreedLimitChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
 		{
 		}
+
 		private static object CoerceHeightGreedLimit(DependencyObject element, object value)
 		{
 			return Math.Max(0, (double)value);
 		}
-
-
 
 		/// <summary>
 		/// Measures the child elements of a <see cref="T:System.Windows.Controls.Border"/> before they are arranged during the <see cref="M:System.Windows.Controls.Border.ArrangeOverride(System.Windows.Size)"/> pass.
@@ -115,21 +110,17 @@ namespace Altaxo.Gui.Common
 		/// </returns>
 		protected override Size MeasureOverride(Size constraint)
 		{
-			System.Diagnostics.Debug.Write(string.Format("BorderWithSizeGreedLimit Name={0} Measure Constraint={1}", Name, constraint));
-			if(double.IsInfinity(constraint.Height))
+			//System.Diagnostics.Debug.Write(string.Format("BorderWithSizeGreedLimit Name={0} Measure Constraint={1}", Name, constraint));
+			if (double.IsInfinity(constraint.Height))
 				constraint.Height = HeightGreedLimit;
 
-			if(double.IsInfinity(constraint.Width))
+			if (double.IsInfinity(constraint.Width))
 				constraint.Width = WidthGreedLimit;
 
 			var result = base.MeasureOverride(constraint);
-			System.Diagnostics.Debug.WriteLine(", result={0}", result);
+			//System.Diagnostics.Debug.WriteLine(", result={0}", result);
 
 			return result;
 		}
-
-		
 	}
-
-	
 }

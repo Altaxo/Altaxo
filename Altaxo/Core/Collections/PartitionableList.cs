@@ -35,7 +35,7 @@ namespace Altaxo.Collections
 	/// </summary>
 	/// <typeparam name="T">Type of the items in the list.</typeparam>
 	/// <remarks>
-	/// Say you have two classes, A and B, both having the base class T. Then you can create a PartionableList, holding items of class A as well as items of class B. 
+	/// Say you have two classes, A and B, both having the base class T. Then you can create a PartionableList, holding items of class A as well as items of class B.
 	/// From this list you then can create a partition, i.e. a view, that shows only items of class A, and another partition, that shows only items of class B.
 	/// These partitions support all list operations, including deletion, insertion, movement, and setting of items. These list operations are propagated to
 	/// the main list. Of course, it will cause an exception if you try to insert items of class B into the partition of class A (and vice versa). When you set
@@ -64,7 +64,7 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Holds the last fired CollectionChanged event in case the event state is disabled.
 		/// </summary>
-		NotifyCollectionChangedEventArgs _pendingEvent;
+		private NotifyCollectionChangedEventArgs _pendingEvent;
 
 		#region Constructors
 
@@ -79,7 +79,7 @@ namespace Altaxo.Collections
 			_actionBeforeInsertion = actionBeforeInsertion;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Partial view creation
 
@@ -87,7 +87,7 @@ namespace Altaxo.Collections
 		/// Creates a partial view. A partial view is a view of the list of items of the original collection, that fulfill a certain condition.
 		/// </summary>
 		/// <param name="selectionCriterium">
-		/// The selection condition. 
+		/// The selection condition.
 		/// If this function returns <c>true</c> on an item of the original collection, that item is member of the partial view.
 		/// Note that during the lifetime of the partition, the behaviour of the selection criterion must not change.
 		/// </param>
@@ -104,7 +104,7 @@ namespace Altaxo.Collections
 		/// Creates a partial view. A partial view is a view of the list of items of the original collection, that fulfill a certain condition.
 		/// </summary>
 		/// <param name="selectionCriterium">
-		/// The selection condition. 
+		/// The selection condition.
 		/// If this function returns <c>true</c> on an item of the original collection, that item is member of the partial view.
 		/// Note that during the lifetime of the partition, the behaviour of the selection criterion must not change.
 		/// </param>
@@ -117,7 +117,6 @@ namespace Altaxo.Collections
 			_partialViews.AddLast(new WeakReference(result));
 			return result;
 		}
-
 
 		/// <summary>
 		/// Creates the partial view that consists of all elements in the original collection that are of type M.
@@ -144,7 +143,6 @@ namespace Altaxo.Collections
 			return result;
 		}
 
-
 		/// <summary>
 		/// Creates the partial view that consisist of elements of type M that fullfil a given condition.
 		/// </summary>
@@ -159,10 +157,12 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Creates the partial view that consisist of elements of type M that fullfil a given condition.
+		/// Creates the partial view that consisist of elements of type M that fullfil a condition provided by the argument <paramref name="selectionCriterium"/>.
 		/// </summary>
 		/// <typeparam name="M">Type of the elements of the partial view.</typeparam>
-		/// <param name="selectionCriterium">The selection criterium.</param>
+		/// <param name="selectionCriterium">The selection criterium. If this function applied to an element returns <c>true</c>, this element is included into the partial view.</param>
+		/// <param name="actionBeforeInsertion">Action that is called before elements are included into the partial view. Note that this action is executed only if items are directly added into the partial view,
+		/// but it is not executed if items are indirectly included into the partial view by adding items that fullfil the selection criterium to the parent list.</param>
 		/// <returns></returns>
 		public IObservableList<M> CreatePartialViewOfType<M>(Func<M, bool> selectionCriterium, Action<M> actionBeforeInsertion) where M : T
 		{
@@ -171,15 +171,14 @@ namespace Altaxo.Collections
 			return result;
 		}
 
-		#endregion
-
+		#endregion Partial view creation
 
 		#region Event management
 
 		/// <summary>
 		/// Notifies the partial views that have changed after each operation.
 		/// </summary>
-		/// 
+		///
 		protected void NotifyPartialViewsThatHaveChanged()
 		{
 			foreach (var pv in _partialViewsToNotify)
@@ -187,7 +186,6 @@ namespace Altaxo.Collections
 
 			_partialViewsToNotify.Clear();
 		}
-
 
 		/// <summary>
 		/// Gets a token that will temporarily disable the CollectionChanged events from this collection. The best practice is to use this token inside a using statement, because at the end
@@ -198,7 +196,6 @@ namespace Altaxo.Collections
 		{
 			return _eventState.Disable();
 		}
-
 
 		protected virtual void OnReenableEvents()
 		{
@@ -233,8 +230,7 @@ namespace Altaxo.Collections
 			}
 		}
 
-		#endregion
-
+		#endregion Event management
 
 		#region Some special list operations
 
@@ -247,8 +243,7 @@ namespace Altaxo.Collections
 			}
 		}
 
-		#endregion
-
+		#endregion Some special list operations
 
 		#region List change operation overrides
 
@@ -317,7 +312,6 @@ namespace Altaxo.Collections
 		{
 			if (oldIndex != newIndex)
 			{
-
 				for (var node = _partialViews.First; null != node; node = node.Next)
 				{
 					var pv = node.Value.Target as PartialViewBase;
@@ -354,7 +348,7 @@ namespace Altaxo.Collections
 							}
 							else // item is not included - we only need to adjust the item indices
 							{
-								for (i = oIdx-1; i >= 0 && itemIndex[i] >= newIndex; --i)
+								for (i = oIdx - 1; i >= 0 && itemIndex[i] >= newIndex; --i)
 									++itemIndex[i];
 							}
 						}
@@ -475,7 +469,7 @@ namespace Altaxo.Collections
 			int upperValue = itemIndex[upperIndex];
 			int lowerValue = itemIndex[lowerIndex];
 
-			while (lowerValue < value && value < upperValue && (lowerIndex+1) < upperIndex)
+			while (lowerValue < value && value < upperValue && (lowerIndex + 1) < upperIndex)
 			{
 				int middleIndex = upperIndex - ((upperIndex - lowerIndex) / 2);
 				int middleValue = itemIndex[middleIndex];
@@ -490,11 +484,10 @@ namespace Altaxo.Collections
 					upperValue = middleValue;
 				}
 			}
-			return value<=lowerValue ? lowerIndex : (value > upperValue ? upperIndex + 1 : upperIndex);
+			return value <= lowerValue ? lowerIndex : (value > upperValue ? upperIndex + 1 : upperIndex);
 		}
 
 		#endregion List change operation overrides
-
 
 		#region EventDisabler
 
@@ -506,9 +499,10 @@ namespace Altaxo.Collections
 		protected class TemporaryDisabler
 		{
 			#region Inner class SuppressToken
+
 			private class SuppressToken : IDisposable
 			{
-				TemporaryDisabler _parent;
+				private TemporaryDisabler _parent;
 
 				public SuppressToken(TemporaryDisabler parent)
 				{
@@ -549,16 +543,16 @@ namespace Altaxo.Collections
 					}
 				}
 
-				#endregion
+				#endregion IDisposable Members
 			}
-			#endregion
+
+			#endregion Inner class SuppressToken
 
 			/// <summary>How many times was the <see cref="Disable"/> function called (without disposing the tokens got in these calls)</summary>
 			private int _disablingLevel;
 
 			/// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
-			Action _reenablingEventHandler;
-
+			private Action _reenablingEventHandler;
 
 			/// <summary>
 			/// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
@@ -596,9 +590,8 @@ namespace Altaxo.Collections
 			/// </summary>
 			public bool IsDisabled { get { return _disablingLevel != 0; } }
 
-
 			/// <summary>
-			/// Just fires the reenabling action that was given in the constructor, 
+			/// Just fires the reenabling action that was given in the constructor,
 			/// without changing the disabling level.
 			/// </summary>
 			public void ReenableShortly()
@@ -616,6 +609,7 @@ namespace Altaxo.Collections
 					_reenablingEventHandler();
 			}
 		}
-		#endregion
+
+		#endregion EventDisabler
 	}
 }
