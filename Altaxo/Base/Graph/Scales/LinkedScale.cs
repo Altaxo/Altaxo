@@ -39,12 +39,17 @@ namespace Altaxo.Graph.Scales
 	{
 		/// <summary>
 		/// The (real) scale which is behind this fassade. Can not be another linked scale.
+		/// It is recommended that the type of this scale matches the type of the scale linked to.
+		/// In some rather rare cases the type of this scale may be different than the type of the scale linked to.
 		/// </summary>
 		private Scale _scaleWrapped;
 
+		/// <summary>
+		/// The _scale linked to. This scale normally is located in a sibling layer.
+		/// </summary>
 		private Scale _scaleLinkedTo;
 
-		/// <summary>Index of linked scale in the linked layer.</summary>
+		/// <summary>Index of linked scale in the layer where the linked scale is located.</summary>
 		private int _linkedScaleIndex;
 
 		/// <summary>

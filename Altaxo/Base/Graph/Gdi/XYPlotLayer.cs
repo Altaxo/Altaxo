@@ -763,13 +763,13 @@ namespace Altaxo.Graph.Gdi
 			LinkedScale ls = (LinkedScale)swt.Scale;
 			Scale scaleLinkedTo = ls.ScaleLinkedTo;
 
-			var layerLinkedTo = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(ls);
+			var layerLinkedTo = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(scaleLinkedTo);
 			int layerLinkedToIndex, scaleLinkedToIndex;
 
 			if (layerLinkedTo != null &&
 					object.ReferenceEquals(this.ParentLayer, layerLinkedTo.ParentLayer) &&
 					!object.ReferenceEquals(this, layerLinkedTo) &&
-					(scaleLinkedToIndex = layerLinkedTo.Scales.IndexOfFirst(x => object.ReferenceEquals(x.Scale, ls))) >= 0
+					(scaleLinkedToIndex = layerLinkedTo.Scales.IndexOfFirst(x => object.ReferenceEquals(x.Scale, scaleLinkedTo))) >= 0
 				)
 			{
 				// then we have the first case: the linked layer still exist

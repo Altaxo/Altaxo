@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,37 +87,11 @@ namespace Altaxo.Graph.Gdi
 
 		#region Layer manipulation
 
-		public static bool IsValidLayerNumber(HostLayer doc, int layerNumber)
-		{
-			return layerNumber >= 0 && layerNumber < doc.Layers.Count;
-		}
-
-		public static bool IsValidLayerNumber(this GraphDocument doc, IList<int> layerNumber, out HostLayer layer)
-		{
-			layer = null;
-			if (layerNumber.Count == 0)
-				return false;
-			if (layerNumber[0] != 0)
-				return false;
-
-			HostLayer parent = doc.RootLayer;
-			for (int i = 1; i < layerNumber.Count; ++i)
-			{
-				var n = layerNumber[i];
-				if (n < 0 || n >= parent.Layers.Count)
-					return false;
-				parent = parent.Layers[n];
-			}
-
-			layer = parent;
-			return true;
-		}
-
 		public static void ShowLayerDialog(this GraphDocument doc, IList<int> layerNumber)
 		{
-			HostLayer l;
-			if (IsValidLayerNumber(doc, layerNumber, out l))
-				Altaxo.Gui.Graph.HostLayerController.ShowDialog(l);
+			HostLayer layer;
+			if (doc.RootLayer.IsValidIndex(layerNumber, out layer))
+				Altaxo.Gui.Graph.HostLayerController.ShowDialog(layer);
 		}
 
 		/// <summary>
@@ -127,14 +102,14 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="withGui">If true, a message box will ask the user for approval.</param>
 		public static void DeleteLayer(this GraphDocument doc, IList<int> layerNumber, bool withGui)
 		{
-			HostLayer l;
-			if (!IsValidLayerNumber(doc, layerNumber, out l))
+			HostLayer layer;
+			if (!doc.RootLayer.IsValidIndex(layerNumber, out layer))
 				return;
 
 			if (withGui && false == Current.Gui.YesNoMessageBox("This will delete the active layer. Are you sure?", "Attention", false))
 				return;
 
-			l.ParentLayerList.Remove(l);
+			layer.ParentLayerList.Remove(layer);
 		}
 
 		/// <summary>
@@ -145,8 +120,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="destposition">New index of the layer.</param>
 		public static void MoveLayerToPosition(this GraphDocument doc, HostLayer parentLayer, int sourcePosition, int destposition)
 		{
-			if (!IsValidLayerNumber(parentLayer, sourcePosition))
-				return;
+			if (sourcePosition < 0 && sourcePosition >= parentLayer.Layers.Count)
+				throw new ApplicationException("sourcePosition is < 0 or sourcePosition >= Layers.Count");
+			if (destposition < 0)
+				throw new ApplicationException("destPosition is < 0");
 
 			var layer = parentLayer.Layers[sourcePosition];
 
@@ -164,8 +141,8 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="layerNumber">Number of the layer to move.</param>
 		public static void ShowMoveLayerToPositionDialog(this GraphDocument doc, IList<int> layerNumber)
 		{
-			HostLayer l;
-			if (IsValidLayerNumber(doc, layerNumber, out l))
+			HostLayer layer;
+			if (!doc.RootLayer.IsValidIndex(layerNumber, out layer))
 				return;
 
 			var ivictrl = new Altaxo.Gui.Common.IntegerValueInputController(0, "Please enter the new position (>=0):");
@@ -176,7 +153,7 @@ namespace Altaxo.Graph.Gdi
 
 			newposition = ivictrl.EnteredContents;
 
-			MoveLayerToPosition(doc, l.ParentLayer, layerNumber[layerNumber.Count - 1], newposition);
+			MoveLayerToPosition(doc, layer.ParentLayer, layerNumber[layerNumber.Count - 1], newposition);
 		}
 
 		#endregion Layer manipulation
