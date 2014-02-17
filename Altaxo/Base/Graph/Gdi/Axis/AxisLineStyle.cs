@@ -54,10 +54,10 @@ namespace Altaxo.Graph.Gdi.Axis
 		protected PenX _minorTickPen;
 
 		/// <summary>Length of the major ticks in points (1/72 inch).</summary>
-		protected float _majorTickLength;
+		protected double _majorTickLength;
 
 		/// <summary>Length of the minor ticks in points (1/72 inch).</summary>
-		protected float _minorTickLength;
+		protected double _minorTickLength;
 
 		/// <summary>True if major ticks should be painted outside of the layer.</summary>
 		protected bool _showFirstUpMajorTicks;
@@ -125,8 +125,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._majorTickPen = (PenX)info.GetValue("MajorPen", typeof(PenX));
 				s._minorTickPen = (PenX)info.GetValue("MinorPen", typeof(PenX));
 
-				s._majorTickLength = (float)info.GetSingle("MajorLength");
-				s._minorTickLength = (float)info.GetSingle("MinorLength");
+				s._majorTickLength = info.GetDouble("MajorLength");
+				s._minorTickLength = info.GetDouble("MinorLength");
 				s._showFirstUpMajorTicks = (bool)info.GetBoolean("MajorRight");
 				s._showFirstDownMajorTicks = (bool)info.GetBoolean("MajorLeft");
 				s._showFirstUpMinorTicks = (bool)info.GetBoolean("MinorRight");
@@ -168,8 +168,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
 				s._minorTickPen = (PenX)info.GetValue("MinorPen", s);
 
-				s._majorTickLength = (float)info.GetSingle("MajorLength");
-				s._minorTickLength = (float)info.GetSingle("MinorLength");
+				s._majorTickLength = info.GetDouble("MajorLength");
+				s._minorTickLength = info.GetDouble("MinorLength");
 				bool bOuterMajorTicks = (bool)info.GetBoolean("MajorOuter");
 				bool bInnerMajorTicks = (bool)info.GetBoolean("MajorInner");
 				bool bOuterMinorTicks = (bool)info.GetBoolean("MinorOuter");
@@ -224,8 +224,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
 				s._minorTickPen = (PenX)info.GetValue("MinorPen", s);
 
-				s._majorTickLength = (float)info.GetSingle("MajorLength");
-				s._minorTickLength = (float)info.GetSingle("MinorLength");
+				s._majorTickLength = info.GetDouble("MajorLength");
+				s._minorTickLength = info.GetDouble("MinorLength");
 				s._axisPosition = (RADouble)info.GetValue("AxisPosition", s);
 				s._showFirstUpMajorTicks = (bool)info.GetBoolean("Major1Up");
 				s._showFirstDownMajorTicks = (bool)info.GetBoolean("Major1Dw");
@@ -281,17 +281,44 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// </summary>
 		public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
 		{
-			_axisPen = new PenX(NamedColors.Black, 1);
-			_majorTickPen = new PenX(NamedColors.Black, 1);
-			_minorTickPen = new PenX(NamedColors.Black, 1);
-			_majorTickLength = 8;
-			_minorTickLength = 4;
+			double penWidth, zeroCharacterWidth;
+			GetDefaultPenWidth(context, out penWidth, out zeroCharacterWidth);
+
+			_axisPen = new PenX(NamedColors.Black, penWidth);
+			_majorTickPen = new PenX(NamedColors.Black, penWidth);
+			_minorTickPen = new PenX(NamedColors.Black, penWidth);
+			_majorTickLength = zeroCharacterWidth;
+			_minorTickLength = zeroCharacterWidth / 2;
 			_showFirstUpMajorTicks = true; // true if right major ticks should be visible
 			_showFirstDownMajorTicks = true; // true if left major ticks should be visible
 			_showFirstUpMinorTicks = true; // true if right minor ticks should be visible
 			_showFirstDownMinorTicks = true; // true if left minor ticks should be visible
 
 			WireEventChain(true);
+		}
+
+		private static void GetDefaultPenWidth(Main.Properties.IReadOnlyPropertyBag context, out double penWidth, out double zeroCharacterWidth)
+		{
+			var font = context.GetValue<FontX>(GraphDocument.PropertyKeyDefaultFont);
+			using (var path = new GraphicsPath())
+			{
+				var fontFamily = font.GdiFontFamily();
+				path.AddString("-", fontFamily, (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+				var rect = path.GetBounds();
+				if (rect.Height != 0)
+					penWidth = Calc.Rounding.RoundToNumberOfSignificantDigits(rect.Height, 2, MidpointRounding.ToEven);
+				else
+					penWidth = 1;
+
+				path.Reset();
+				path.AddString("0", fontFamily, (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+
+				rect = path.GetBounds();
+				if (rect.Width != 0)
+					zeroCharacterWidth = 2 * Calc.Rounding.RoundToNumberOfSignificantDigits(rect.Width / 2, 2, MidpointRounding.ToEven);
+				else
+					zeroCharacterWidth = 8;
+			}
 		}
 
 		/// <summary>
@@ -374,9 +401,9 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// of the axis thickness)
 		/// </summary>
 		/// <param name="side">The side of the axis at which the outer distance is returned.</param>
-		public float GetOuterDistance(CSAxisSide side)
+		public double GetOuterDistance(CSAxisSide side)
 		{
-			float retVal = _axisPen.Width / 2; // half of the axis thickness
+			double retVal = _axisPen.Width / 2; // half of the axis thickness
 			if (CSAxisSide.FirstUp == side)
 			{
 				retVal = System.Math.Max(retVal, _showFirstUpMajorTicks ? _majorTickLength : 0);
@@ -465,7 +492,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		/// <summary>Get/sets the major tick length.</summary>
 		/// <value>The major tick length in point units (1/72 inch).</value>
-		public float MajorTickLength
+		public double MajorTickLength
 		{
 			get { return this._majorTickLength; }
 			set
@@ -480,7 +507,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		/// <summary>Get/sets the minor tick length.</summary>
 		/// <value>The minor tick length in point units (1/72 inch).</value>
-		public float MinorTickLength
+		public double MinorTickLength
 		{
 			get { return this._minorTickLength; }
 			set
@@ -559,7 +586,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <value>Returns the thickness of the axis pen. On setting this value, it sets
 		/// the thickness of the axis pen, the tickness of the major ticks pen, and the
 		/// thickness of the minor ticks pen together.</value>
-		public float Thickness
+		public double Thickness
 		{
 			get { return this._axisPen.Width; }
 			set
@@ -636,7 +663,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
 		/// <param name="inflateby">Value in points, that the calculated path is inflated.</param>
 		/// <returns>The graphics path of the selection rectangle.</returns>
-		protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, float inflateby)
+		protected GraphicsPath GetPath(IPlotArea layer, bool withTicks, double inflateby)
 		{
 			Logical3D r0 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisOrg);
 			Logical3D r1 = _cachedAxisStyleInfo.Identifier.GetLogicalPoint(_cachedAxisStyleInfo.LogicalValueAxisEnd);
@@ -651,7 +678,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					inflateby = Math.Max(inflateby, this._minorTickLength);
 			}
 
-			Pen widenPen = new Pen(System.Drawing.Color.Black, 2 * inflateby);
+			Pen widenPen = new Pen(System.Drawing.Color.Black, (float)(2 * inflateby));
 
 			gp.Widen(widenPen);
 
@@ -777,9 +804,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				case "StrokeWidth":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this._axisPen.Width = (float)prop.Value;
-						this._majorTickPen.Width = (float)prop.Value;
-						this._minorTickPen.Width = (float)prop.Value;
+						this._axisPen.Width = prop.Value;
+						this._majorTickPen.Width = prop.Value;
+						this._minorTickPen.Width = prop.Value;
 						OnChanged();
 					}
 					break;

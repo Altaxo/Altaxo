@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -30,7 +32,7 @@ namespace Altaxo.Calc
 	public class Rounding
 	{
 		/// <summary>
-		/// This returns the next number k with k greater or equal i, and k mod n == 0. 
+		/// This returns the next number k with k greater or equal i, and k mod n == 0.
 		/// </summary>
 		/// <param name="i">The number to round up.</param>
 		/// <param name="n">The rounding step.</param>
@@ -43,8 +45,9 @@ namespace Altaxo.Calc
 			var r = i % n;
 			return r <= 0 ? i - r : i + (n - r);
 		}
+
 		/// <summary>
-		/// This returns the next number k with k lesser or equal i, and k mod n == 0. 
+		/// This returns the next number k with k lesser or equal i, and k mod n == 0.
 		/// </summary>
 		/// <param name="i">The number to round down.</param>
 		/// <param name="n">The rounding step.</param>
@@ -57,8 +60,9 @@ namespace Altaxo.Calc
 			var r = i % n;
 			return r >= 0 ? i - r : i - (n + r);
 		}
+
 		/// <summary>
-		/// This returns the next number k with k greater or equal i, and k mod n == 0. 
+		/// This returns the next number k with k greater or equal i, and k mod n == 0.
 		/// </summary>
 		/// <param name="i">The number to round up.</param>
 		/// <param name="n">The rounding step.</param>
@@ -71,8 +75,9 @@ namespace Altaxo.Calc
 			var r = i % n;
 			return r <= 0 ? i - r : i + (n - r);
 		}
+
 		/// <summary>
-		/// This returns the next number k with k lesser or equal i, and k mod n == 0. 
+		/// This returns the next number k with k lesser or equal i, and k mod n == 0.
 		/// </summary>
 		/// <param name="i">The number to round down.</param>
 		/// <param name="n">The rounding step.</param>
@@ -86,5 +91,36 @@ namespace Altaxo.Calc
 			return r >= 0 ? i - r : i - (n + r);
 		}
 
+		/// <summary>
+		/// Rounds a double to a provided number of significant digits.
+		/// </summary>
+		/// <param name="x">The value to round.</param>
+		/// <param name="significantDigits">The number of significant digits.</param>
+		/// <returns>The number, rounded to the provided number of significant digits.</returns>
+		public static double RoundToNumberOfSignificantDigits(double x, int significantDigits, MidpointRounding rounding)
+		{
+			if (significantDigits < 0)
+				throw new ArgumentOutOfRangeException("significantDigits<0");
+
+			if (0 == x)
+				return 0;
+
+			int lg = (int)Math.Floor(Math.Log10(Math.Abs(x))) + 1;
+
+			if (lg < 0)
+			{
+				double fac = RMath.Pow(10, -lg);
+				double xpot = x * fac;
+				xpot = Math.Round(xpot, significantDigits, rounding);
+				return xpot / fac;
+			}
+			else
+			{
+				double fac = RMath.Pow(10, lg);
+				double xpot = x / fac;
+				xpot = Math.Round(xpot, significantDigits, rounding);
+				return xpot * fac;
+			}
+		}
 	}
 }

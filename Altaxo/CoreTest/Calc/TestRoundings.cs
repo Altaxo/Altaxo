@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
+
 using Altaxo.Calc;
 using NUnit.Framework;
-
+using System;
+using System.Collections.Generic;
 
 namespace AltaxoTest.Calc
 {
-
 	[TestFixture]
 	public class TestRoundings
 	{
@@ -36,7 +36,6 @@ namespace AltaxoTest.Calc
 		public void TestRoundUpDownMod1()
 		{
 			var rnd = new Random();
-
 
 			for (int i = 0; i < 1000; ++i)
 			{
@@ -49,14 +48,13 @@ namespace AltaxoTest.Calc
 			}
 		}
 
-
 		[Test]
 		public void TestRoundUpIntMod5()
 		{
 			for (int i = -500; i < 500; ++i)
 			{
 				var r = Rounding.RoundUp(i, 5);
-				Assert.GreaterOrEqual(r, i,"n="+i.ToString());
+				Assert.GreaterOrEqual(r, i, "n=" + i.ToString());
 				Assert.LessOrEqual(r - i, 4, "n=" + i.ToString());
 			}
 		}
@@ -68,7 +66,7 @@ namespace AltaxoTest.Calc
 			{
 				var r = Rounding.RoundDown(i, 5);
 				Assert.LessOrEqual(r, i, "n=" + i.ToString());
-				Assert.LessOrEqual(i-r, 4, "n=" + i.ToString());
+				Assert.LessOrEqual(i - r, 4, "n=" + i.ToString());
 			}
 		}
 
@@ -82,6 +80,7 @@ namespace AltaxoTest.Calc
 				Assert.LessOrEqual(r - i, 4, "n=" + i.ToString());
 			}
 		}
+
 		[Test]
 		public void TestRoundDownLongMod5()
 		{
@@ -89,10 +88,23 @@ namespace AltaxoTest.Calc
 			{
 				var r = Rounding.RoundDown(i, 5);
 				Assert.LessOrEqual(r, i, "n=" + i.ToString());
-				Assert.LessOrEqual(i-r, 4, "n=" + i.ToString());
+				Assert.LessOrEqual(i - r, 4, "n=" + i.ToString());
 			}
 		}
 
-	
+		[Test]
+		public void TestRoundToSignificantDigits()
+		{
+			Assert.AreEqual(0.01, Rounding.RoundToNumberOfSignificantDigits(0.01, 2, MidpointRounding.ToEven), 1E-6);
+			Assert.AreEqual(0.1, Rounding.RoundToNumberOfSignificantDigits(0.1, 2, MidpointRounding.ToEven), 1E-6);
+			Assert.AreEqual(1, Rounding.RoundToNumberOfSignificantDigits(1, 2, MidpointRounding.ToEven), 1E-6);
+			Assert.AreEqual(0, Rounding.RoundToNumberOfSignificantDigits(0, 2, MidpointRounding.ToEven), 1E-6);
+			Assert.AreEqual(10, Rounding.RoundToNumberOfSignificantDigits(10, 2, MidpointRounding.ToEven), 1E-6);
+			Assert.AreEqual(100, Rounding.RoundToNumberOfSignificantDigits(100, 2, MidpointRounding.ToEven), 1E-6);
+
+			Assert.AreEqual(0.012, Rounding.RoundToNumberOfSignificantDigits(0.012345678, 2, MidpointRounding.ToEven), 1E-6);
+			Assert.AreEqual(1.2, Rounding.RoundToNumberOfSignificantDigits(1.2345678, 2, MidpointRounding.ToEven), 1E-6);
+			Assert.AreEqual(120, Rounding.RoundToNumberOfSignificantDigits(123.45678, 2, MidpointRounding.ToEven), 1E-6);
+		}
 	}
 }

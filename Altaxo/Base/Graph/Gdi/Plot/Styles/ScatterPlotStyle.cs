@@ -891,7 +891,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					}
 				}
 
-				using (var pen = new Pen(color, _pen.Width))
+				using (var pen = new Pen(color, (float)_pen.Width))
 				{
 					g.DrawPath(pen, path);
 				}

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,49 +19,49 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.LineCaps;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Serialization;
 
-using Altaxo.Graph.Gdi.LineCaps;
-
 namespace Altaxo.Graph.Gdi
 {
 	#region PenX
+
 	/// <summary>
 	/// PenHolder is a serializable surrogate for a Pen object.
 	/// you can implicitly or explicitly convert it to a pen, but you must
 	/// not dispose the pen object you got from this, since the ownership has still the Penholder object
 	/// if you convert a Penholder to a Pen, either implicitly or explicitly,
 	/// the Cached property of the PenHolder is set to true to indicate that
-	/// the PenHolder is holding a Pen object 
+	/// the PenHolder is holding a Pen object
 	/// </summary>
 	[Serializable]
 	public class PenX : ICloneable, IDisposable, ISerializable, IDeserializationCallback, Main.IChangedEventSource
 	{
-		protected PenX.Configured m_ConfiguredProperties; // ORed collection of the configured properties (i.e. non-standard properties) 
-		protected PenType m_PenType; // the type of the pen
-		protected PenAlignment m_Alignment; // Alignment of the Pen
-		protected BrushX m_Brush; // the brush of this pen
-		protected NamedColor m_Color; // Color of this Pen object
-		protected float[] m_CompoundArray;
-		protected DashCap m_DashCap;
-		protected float m_DashOffset;
-		protected float[] m_DashPattern;
-		protected DashStyle m_DashStyle;
-		protected LineCapExtension m_EndCap;
-		protected LineJoin m_LineJoin;
-		protected float m_MiterLimit;
-		protected LineCapExtension m_StartCap;
-		protected Matrix m_Transform;
-		protected float m_Width; // Width of this Pen object
+		protected PenX.Configured _configuredProperties; // ORed collection of the configured properties (i.e. non-standard properties)
+		protected PenType _penType; // the type of the pen
+		protected PenAlignment _alignment; // Alignment of the Pen
+		protected BrushX _brush; // the brush of this pen
+		protected NamedColor _color; // Color of this Pen object
+		protected float[] _compoundArray;
+		protected DashCap _dashCap;
+		protected float _dashOffset;
+		protected float[] _dashPattern;
+		protected DashStyle _dashStyle;
+		protected LineCapExtension _endCap;
+		protected LineJoin _lineJoin;
+		protected float _miterLimit;
+		protected LineCapExtension _startCap;
+		protected Matrix _transformation;
+		protected double _width; // Width of this Pen object
+
 		[NonSerialized()]
-		Pen m_Pen; // the cached pen object
-
-
+		private Pen _cachedPen; // the cached pen object
 
 		#region "ConfiguredProperties"
 
@@ -90,6 +91,7 @@ namespace Altaxo.Graph.Gdi
 			Width = 0x40000,
 			All = -1
 		}
+
 		/*
 				public const int Configured.NotNull         = 0x00001;
 				public const int Configured.InCachedMode    = 0x00002;
@@ -139,10 +141,11 @@ namespace Altaxo.Graph.Gdi
 
 			return c;
 		}
+
 		protected static Configured _GetConfiguredPropertiesVariable(PenX pen)
 		{
 			Configured c = Configured.IsNull;
-			if (null == pen || pen.m_ConfiguredProperties == 0)
+			if (null == pen || pen._configuredProperties == 0)
 				return c; // Pen is null, so nothing is configured
 
 			c |= Configured.IsNotNull; // Pen is at least not null
@@ -165,9 +168,7 @@ namespace Altaxo.Graph.Gdi
 			return c;
 		}
 
-
-
-		#endregion
+		#endregion "ConfiguredProperties"
 
 		#region Serialization
 
@@ -205,8 +206,8 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("DashPattern", s.DashPattern);
 			if (0 != (cp & PenX.Configured.EndCap))
 			{
-				info.AddValue("EndCap", s.m_EndCap.Name);
-				info.AddValue("EndCapSize", s.m_EndCap.MinimumAbsoluteSizePt);
+				info.AddValue("EndCap", s._endCap.Name);
+				info.AddValue("EndCapSize", s._endCap.MinimumAbsoluteSizePt);
 			}
 			if (0 != (cp & PenX.Configured.LineJoin))
 				info.AddValue("LineJoin", s.LineJoin);
@@ -214,106 +215,106 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("MiterLimit", s.MiterLimit);
 			if (0 != (cp & PenX.Configured.StartCap))
 			{
-				info.AddValue("StartCap", s.m_StartCap.Name);
-				info.AddValue("StartCapSize", s.m_StartCap.MinimumAbsoluteSizePt);
+				info.AddValue("StartCap", s._startCap.Name);
+				info.AddValue("StartCapSize", s._startCap.MinimumAbsoluteSizePt);
 			}
 			if (0 != (cp & PenX.Configured.Transform))
 				info.AddValue("Transform", s.Transform.Elements);
 			if (0 != (cp & PenX.Configured.Width))
 				info.AddValue("Width", s.Width);
 		}
+
 		public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
 		{
 			PenX s = (PenX)obj;
-			s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
-			Configured cp = s.m_ConfiguredProperties;
-
+			s._configuredProperties = (Configured)info.GetInt32("Configured");
+			Configured cp = s._configuredProperties;
 
 			if (0 != (cp & PenX.Configured.PenType))
-				s.m_PenType = (PenType)info.GetValue("Type", typeof(PenType));
+				s._penType = (PenType)info.GetValue("Type", typeof(PenType));
 			else
-				s.m_PenType = PenType.SolidColor;
+				s._penType = PenType.SolidColor;
 
 			if (0 != (cp & PenX.Configured.Alignment))
-				s.m_Alignment = (PenAlignment)info.GetValue("Alignment", typeof(PenAlignment));
+				s._alignment = (PenAlignment)info.GetValue("Alignment", typeof(PenAlignment));
 			else
-				s.m_Alignment = PenAlignment.Center;
+				s._alignment = PenAlignment.Center;
 
 			if (0 != (cp & PenX.Configured.Brush))
-				s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+				s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 			else
-				s.m_Brush = new BrushX(NamedColors.Black);
+				s._brush = new BrushX(NamedColors.Black);
 
 			if (0 != (cp & PenX.Configured.Color))
-				s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
+				s._color = (NamedColor)info.GetValue("Color", typeof(Color));
 			else
-				s.m_Color = NamedColors.Black;
+				s._color = NamedColors.Black;
 
 			if (0 != (cp & PenX.Configured.CompoundArray))
-				s.m_CompoundArray = (float[])info.GetValue("CompoundArray", typeof(float[]));
+				s._compoundArray = (float[])info.GetValue("CompoundArray", typeof(float[]));
 			else
-				s.m_CompoundArray = new float[0];
+				s._compoundArray = new float[0];
 
 			if (0 != (cp & PenX.Configured.DashStyle))
-				s.m_DashStyle = (DashStyle)info.GetValue("DashStyle", typeof(DashStyle));
+				s._dashStyle = (DashStyle)info.GetValue("DashStyle", typeof(DashStyle));
 			else
-				s.m_DashStyle = DashStyle.Solid;
+				s._dashStyle = DashStyle.Solid;
 
 			if (0 != (cp & PenX.Configured.DashCap))
-				s.m_DashCap = (DashCap)info.GetValue("DashCap", typeof(DashCap));
+				s._dashCap = (DashCap)info.GetValue("DashCap", typeof(DashCap));
 			else
-				s.m_DashCap = DashCap.Flat;
+				s._dashCap = DashCap.Flat;
 
 			if (0 != (cp & PenX.Configured.DashOffset))
-				s.m_DashOffset = (float)info.GetSingle("DashOffset");
+				s._dashOffset = (float)info.GetSingle("DashOffset");
 			else
-				s.m_DashOffset = 0;
+				s._dashOffset = 0;
 
 			if (0 != (cp & PenX.Configured.DashPattern))
-				s.m_DashPattern = (float[])info.GetValue("DashPattern", typeof(float[]));
+				s._dashPattern = (float[])info.GetValue("DashPattern", typeof(float[]));
 			else
-				s.m_DashPattern = null;
+				s._dashPattern = null;
 
 			if (0 != (cp & PenX.Configured.EndCap))
 			{
 				string name = info.GetString("EndCap");
 				float size = info.GetSingle("EndCapSize");
-				s.m_EndCap = LineCapExtension.FromNameAndAbsSize(name, size);
+				s._endCap = LineCapExtension.FromNameAndAbsSize(name, size);
 			}
 			else
-				s.m_EndCap = LineCapExtension.Flat;
+				s._endCap = LineCapExtension.Flat;
 
 			if (0 != (cp & PenX.Configured.LineJoin))
-				s.m_LineJoin = (LineJoin)info.GetValue("LineJoin", typeof(LineJoin));
+				s._lineJoin = (LineJoin)info.GetValue("LineJoin", typeof(LineJoin));
 			else
-				s.m_LineJoin = LineJoin.Miter;
+				s._lineJoin = LineJoin.Miter;
 
 			if (0 != (cp & PenX.Configured.MiterLimit))
-				s.m_MiterLimit = info.GetSingle("MiterLimit");
+				s._miterLimit = info.GetSingle("MiterLimit");
 			else
-				s.m_MiterLimit = 10;
+				s._miterLimit = 10;
 
 			if (0 != (cp & PenX.Configured.StartCap))
 			{
 				string name = info.GetString("StartCap");
 				float size = info.GetSingle("StartCapSize");
-				s.m_StartCap = LineCapExtension.FromNameAndAbsSize(name, size);
+				s._startCap = LineCapExtension.FromNameAndAbsSize(name, size);
 			}
 			else
-				s.m_StartCap = LineCapExtension.Flat;
+				s._startCap = LineCapExtension.Flat;
 
 			if (0 != (cp & PenX.Configured.Transform))
 			{
 				float[] el = (float[])info.GetValue("Transform", typeof(float[]));
-				s.m_Transform = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
+				s._transformation = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
 			}
 			else
-				s.m_Transform = new Matrix();
+				s._transformation = new Matrix();
 
 			if (0 != (cp & PenX.Configured.Width))
-				s.m_Width = info.GetSingle("Width");
+				s._width = info.GetSingle("Width");
 			else
-				s.m_Width = 1;
+				s._width = 1;
 
 			return s;
 		} // end of SetObjectData
@@ -321,14 +322,14 @@ namespace Altaxo.Graph.Gdi
 		public virtual void OnDeserialization(object obj)
 		{
 			// wire the BrushHolder
-			if (null != this.m_Brush)
-				m_Brush.Changed += new EventHandler(this.OnBrushChangedEventHandler);
+			if (null != this._brush)
+				_brush.Changed += new EventHandler(this.OnBrushChangedEventHandler);
 		}
 
-		#endregion
+		#endregion Clipboard serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PenHolder", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -371,109 +372,106 @@ namespace Altaxo.Graph.Gdi
 					info.AddValue("Width", s.Width);
 				 */
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				PenX s = null != o ? (PenX)o : new PenX();
 
-				s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
-				Configured cp = s.m_ConfiguredProperties;
-
-
+				s._configuredProperties = (Configured)info.GetInt32("Configured");
+				Configured cp = s._configuredProperties;
 
 				if (0 != (cp & PenX.Configured.PenType))
-					s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
+					s._penType = (PenType)info.GetEnum("Type", typeof(PenType));
 				else
-					s.m_PenType = PenType.SolidColor;
+					s._penType = PenType.SolidColor;
 
 				if (0 != (cp & PenX.Configured.Alignment))
-					s.m_Alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
+					s._alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
 				else
-					s.m_Alignment = PenAlignment.Center;
+					s._alignment = PenAlignment.Center;
 
 				if (0 != (cp & PenX.Configured.Brush))
-					s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
-					s.m_Brush = new BrushX(NamedColors.Black);
+					s._brush = new BrushX(NamedColors.Black);
 
 				if (0 != (cp & PenX.Configured.Color))
-					s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
+					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
 				else
-					s.m_Color = NamedColors.Black;
+					s._color = NamedColors.Black;
 
 				if (0 != (cp & PenX.Configured.CompoundArray))
-					info.GetArray(out s.m_CompoundArray);
+					info.GetArray(out s._compoundArray);
 				else
-					s.m_CompoundArray = new float[0];
+					s._compoundArray = new float[0];
 
 				if (0 != (cp & PenX.Configured.DashStyle))
-					s.m_DashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+					s._dashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
 				else
-					s.m_DashStyle = DashStyle.Solid;
+					s._dashStyle = DashStyle.Solid;
 
 				if (0 != (cp & PenX.Configured.DashCap))
-					s.m_DashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
+					s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
 				else
-					s.m_DashCap = DashCap.Flat;
+					s._dashCap = DashCap.Flat;
 
 				if (0 != (cp & PenX.Configured.DashOffset))
-					s.m_DashOffset = (float)info.GetSingle("DashOffset");
+					s._dashOffset = (float)info.GetSingle("DashOffset");
 				else
-					s.m_DashOffset = 0;
+					s._dashOffset = 0;
 
 				if (0 != (cp & PenX.Configured.DashPattern))
-					info.GetArray(out s.m_DashPattern);
+					info.GetArray(out s._dashPattern);
 				else
-					s.m_DashPattern = null;
+					s._dashPattern = null;
 
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
 					LineCap cap = (LineCap)info.GetEnum("EndCap", typeof(LineCap));
-					s.m_EndCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
+					s._endCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
 				}
 				else
-					s.m_EndCap = LineCapExtension.Flat;
+					s._endCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.LineJoin))
-					s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
+					s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
 				else
-					s.m_LineJoin = LineJoin.Miter;
+					s._lineJoin = LineJoin.Miter;
 
 				if (0 != (cp & PenX.Configured.MiterLimit))
-					s.m_MiterLimit = info.GetSingle("MiterLimit");
+					s._miterLimit = info.GetSingle("MiterLimit");
 				else
-					s.m_MiterLimit = 10;
+					s._miterLimit = 10;
 
 				if (0 != (cp & PenX.Configured.StartCap))
 				{
 					LineCap cap = (LineCap)info.GetEnum("StartCap", typeof(LineCap));
-					s.m_StartCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
+					s._startCap = LineCapExtension.FromName(Enum.GetName(typeof(LineCap), cap));
 				}
 				else
-					s.m_StartCap = LineCapExtension.Flat;
+					s._startCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.Transform))
 				{
 					float[] el;
 					info.GetArray(out el);
-					s.m_Transform = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
+					s._transformation = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
 				}
 				else
-					s.m_Transform = new Matrix();
+					s._transformation = new Matrix();
 
 				if (0 != (cp & PenX.Configured.Width))
-					s.m_Width = info.GetSingle("Width");
+					s._width = info.GetDouble("Width");
 				else
-					s.m_Width = 1;
+					s._width = 1;
 
 				return s;
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PenHolder", 1)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.PenX", 2)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -522,102 +520,100 @@ namespace Altaxo.Graph.Gdi
 					info.AddValue("Width", s.Width);
 			*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				PenX s = null != o ? (PenX)o : new PenX();
 
-				s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
-				Configured cp = s.m_ConfiguredProperties;
-
-
+				s._configuredProperties = (Configured)info.GetInt32("Configured");
+				Configured cp = s._configuredProperties;
 
 				if (0 != (cp & PenX.Configured.PenType))
-					s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
+					s._penType = (PenType)info.GetEnum("Type", typeof(PenType));
 				else
-					s.m_PenType = PenType.SolidColor;
+					s._penType = PenType.SolidColor;
 
 				if (0 != (cp & PenX.Configured.Alignment))
-					s.m_Alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
+					s._alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
 				else
-					s.m_Alignment = PenAlignment.Center;
+					s._alignment = PenAlignment.Center;
 
 				if (0 != (cp & PenX.Configured.Brush))
-					s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
-					s.m_Brush = new BrushX(NamedColors.Black);
+					s._brush = new BrushX(NamedColors.Black);
 
 				if (0 != (cp & PenX.Configured.Color))
-					s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
+					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
 				else
-					s.m_Color = NamedColors.Black;
+					s._color = NamedColors.Black;
 
 				if (0 != (cp & PenX.Configured.CompoundArray))
-					info.GetArray(out s.m_CompoundArray);
+					info.GetArray(out s._compoundArray);
 				else
-					s.m_CompoundArray = new float[0];
+					s._compoundArray = new float[0];
 
 				if (0 != (cp & PenX.Configured.DashStyle))
-					s.m_DashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+					s._dashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
 				else
-					s.m_DashStyle = DashStyle.Solid;
+					s._dashStyle = DashStyle.Solid;
 
 				if (0 != (cp & PenX.Configured.DashCap))
-					s.m_DashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
+					s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
 				else
-					s.m_DashCap = DashCap.Flat;
+					s._dashCap = DashCap.Flat;
 
 				if (0 != (cp & PenX.Configured.DashOffset))
-					s.m_DashOffset = (float)info.GetSingle("DashOffset");
+					s._dashOffset = (float)info.GetSingle("DashOffset");
 				else
-					s.m_DashOffset = 0;
+					s._dashOffset = 0;
 
 				if (0 != (cp & PenX.Configured.DashPattern))
-					info.GetArray(out s.m_DashPattern);
+					info.GetArray(out s._dashPattern);
 				else
-					s.m_DashPattern = null;
+					s._dashPattern = null;
 
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
 					string name = info.GetString("EndCap");
 					var size = info.GetDouble("EndCapSize");
-					s.m_EndCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
+					s._endCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
 				}
 				else
-					s.m_EndCap = LineCapExtension.Flat;
+					s._endCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.LineJoin))
-					s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
+					s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
 				else
-					s.m_LineJoin = LineJoin.Miter;
+					s._lineJoin = LineJoin.Miter;
 
 				if (0 != (cp & PenX.Configured.MiterLimit))
-					s.m_MiterLimit = info.GetSingle("MiterLimit");
+					s._miterLimit = info.GetSingle("MiterLimit");
 				else
-					s.m_MiterLimit = 10;
+					s._miterLimit = 10;
 
 				if (0 != (cp & PenX.Configured.StartCap))
 				{
 					string name = info.GetString("StartCap");
 					var size = info.GetDouble("StartCapSize");
-					s.m_StartCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
+					s._startCap = LineCapExtension.FromNameAndAbsAndRelSize(name, size, 2);
 				}
 				else
-					s.m_StartCap = LineCapExtension.Flat;
+					s._startCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.Transform))
 				{
 					float[] el;
 					info.GetArray(out el);
-					s.m_Transform = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
+					s._transformation = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
 				}
 				else
-					s.m_Transform = new Matrix();
+					s._transformation = new Matrix();
 
 				if (0 != (cp & PenX.Configured.Width))
-					s.m_Width = info.GetSingle("Width");
+					s._width = info.GetDouble("Width");
 				else
-					s.m_Width = 1;
+					s._width = 1;
 
 				return s;
 			}
@@ -627,7 +623,7 @@ namespace Altaxo.Graph.Gdi
 		/// 2012-03-07: New in version 3: StartCap and EndCap now have a RelativeSize property. The 'StartCapSize' and 'EndCapSize' property was renamed to 'StartCapAbsSize' and 'EndCapAbsSize'.
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 3)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -657,8 +653,8 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
 					info.AddValue("EndCap", s.EndCap.Name);
-					info.AddValue("EndCapAbsSize", s.m_EndCap.MinimumAbsoluteSizePt);
-					info.AddValue("EndCapRelSize", s.m_EndCap.MinimumRelativeSize);
+					info.AddValue("EndCapAbsSize", s._endCap.MinimumAbsoluteSizePt);
+					info.AddValue("EndCapRelSize", s._endCap.MinimumRelativeSize);
 				}
 				if (0 != (cp & PenX.Configured.LineJoin))
 					info.AddEnum("LineJoin", s.LineJoin);
@@ -667,119 +663,116 @@ namespace Altaxo.Graph.Gdi
 				if (0 != (cp & PenX.Configured.StartCap))
 				{
 					info.AddValue("StartCap", s.StartCap.Name);
-					info.AddValue("StartCapAbsSize", s.m_StartCap.MinimumAbsoluteSizePt);
-					info.AddValue("StartCapRelSize", s.m_StartCap.MinimumRelativeSize);
+					info.AddValue("StartCapAbsSize", s._startCap.MinimumAbsoluteSizePt);
+					info.AddValue("StartCapRelSize", s._startCap.MinimumRelativeSize);
 				}
 				if (0 != (cp & PenX.Configured.Transform))
 					info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
 				if (0 != (cp & PenX.Configured.Width))
 					info.AddValue("Width", s.Width);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				PenX s = null != o ? (PenX)o : new PenX();
 
-				s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
-				Configured cp = s.m_ConfiguredProperties;
-
-
+				s._configuredProperties = (Configured)info.GetInt32("Configured");
+				Configured cp = s._configuredProperties;
 
 				if (0 != (cp & PenX.Configured.PenType))
-					s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
+					s._penType = (PenType)info.GetEnum("Type", typeof(PenType));
 				else
-					s.m_PenType = PenType.SolidColor;
+					s._penType = PenType.SolidColor;
 
 				if (0 != (cp & PenX.Configured.Alignment))
-					s.m_Alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
+					s._alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
 				else
-					s.m_Alignment = PenAlignment.Center;
+					s._alignment = PenAlignment.Center;
 
 				if (0 != (cp & PenX.Configured.Brush))
-					s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
-					s.m_Brush = new BrushX(NamedColors.Black);
+					s._brush = new BrushX(NamedColors.Black);
 
 				if (0 != (cp & PenX.Configured.Color))
-					s.m_Color = (NamedColor)info.GetValue("Color", typeof(Color));
+					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
 				else
-					s.m_Color = NamedColors.Black;
+					s._color = NamedColors.Black;
 
 				if (0 != (cp & PenX.Configured.CompoundArray))
-					info.GetArray(out s.m_CompoundArray);
+					info.GetArray(out s._compoundArray);
 				else
-					s.m_CompoundArray = new float[0];
+					s._compoundArray = new float[0];
 
 				if (0 != (cp & PenX.Configured.DashStyle))
-					s.m_DashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+					s._dashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
 				else
-					s.m_DashStyle = DashStyle.Solid;
+					s._dashStyle = DashStyle.Solid;
 
 				if (0 != (cp & PenX.Configured.DashCap))
-					s.m_DashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
+					s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
 				else
-					s.m_DashCap = DashCap.Flat;
+					s._dashCap = DashCap.Flat;
 
 				if (0 != (cp & PenX.Configured.DashOffset))
-					s.m_DashOffset = (float)info.GetSingle("DashOffset");
+					s._dashOffset = (float)info.GetSingle("DashOffset");
 				else
-					s.m_DashOffset = 0;
+					s._dashOffset = 0;
 
 				if (0 != (cp & PenX.Configured.DashPattern))
-					info.GetArray(out s.m_DashPattern);
+					info.GetArray(out s._dashPattern);
 				else
-					s.m_DashPattern = null;
+					s._dashPattern = null;
 
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
 					string name = info.GetString("EndCap");
 					var absSize = info.GetDouble("EndCapAbsSize");
 					var relSize = info.GetDouble("EndCapRelSize");
-					s.m_EndCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+					s._endCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
 				}
 				else
-					s.m_EndCap = LineCapExtension.Flat;
+					s._endCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.LineJoin))
-					s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
+					s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
 				else
-					s.m_LineJoin = LineJoin.Miter;
+					s._lineJoin = LineJoin.Miter;
 
 				if (0 != (cp & PenX.Configured.MiterLimit))
-					s.m_MiterLimit = info.GetSingle("MiterLimit");
+					s._miterLimit = info.GetSingle("MiterLimit");
 				else
-					s.m_MiterLimit = 10;
+					s._miterLimit = 10;
 
 				if (0 != (cp & PenX.Configured.StartCap))
 				{
 					string name = info.GetString("StartCap");
 					var absSize = info.GetDouble("StartCapAbsSize");
 					var relSize = info.GetDouble("StartCapRelSize");
-					s.m_StartCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+					s._startCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
 				}
 				else
-					s.m_StartCap = LineCapExtension.Flat;
+					s._startCap = LineCapExtension.Flat;
 
 				if (0 != (cp & PenX.Configured.Transform))
 				{
 					float[] el;
 					info.GetArray(out el);
-					s.m_Transform = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
+					s._transformation = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
 				}
 				else
-					s.m_Transform = new Matrix();
+					s._transformation = new Matrix();
 
 				if (0 != (cp & PenX.Configured.Width))
-					s.m_Width = info.GetSingle("Width");
+					s._width = info.GetDouble("Width");
 				else
-					s.m_Width = 1;
+					s._width = 1;
 
 				return s;
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public PenX()
 		{
@@ -790,29 +783,27 @@ namespace Altaxo.Graph.Gdi
 		{
 		}
 
-		public PenX(NamedColor c, float width)
+		public PenX(NamedColor c, double width)
 			: this(c, width, false)
 		{
 		}
 
-		public PenX(NamedColor c, float width, bool bCachedMode)
+		public PenX(NamedColor c, double width, bool bCachedMode)
 		{
+			this._penType = PenType.SolidColor;
+			this._color = c;
+			this._width = width;
 
-			this.m_PenType = PenType.SolidColor;
-			this.m_Color = c;
-			this.m_Width = width;
-
-			this.m_StartCap = LineCapExtension.Flat;
-			this.m_EndCap = LineCapExtension.Flat;
+			this._startCap = LineCapExtension.Flat;
+			this._endCap = LineCapExtension.Flat;
 
 			_SetProp(PenX.Configured.IsNotNull, true);
 			_SetProp(Configured.Color, NamedColors.Black != c);
 			_SetProp(Configured.Width, 1 != width);
 
 			if (bCachedMode)
-				_SetPenVariable(new Pen(ToGdi(c), width));
+				_SetPenVariable(new Pen(ToGdi(c), (float)width));
 		}
-
 
 		/// <summary>
 		/// Copy constructor of PenHolder
@@ -834,40 +825,40 @@ namespace Altaxo.Graph.Gdi
 
 			_SetPenVariable(null);
 
-			this.m_ConfiguredProperties = pen.m_ConfiguredProperties;
-			this.m_PenType = pen.PenType;
-			this.m_Alignment = pen.Alignment;
+			this._configuredProperties = pen._configuredProperties;
+			this._penType = pen.PenType;
+			this._alignment = pen.Alignment;
 
-			if (0 != (this.m_ConfiguredProperties & Configured.Brush))
-				this.m_Brush = new BrushX(pen.m_Brush);
+			if (0 != (this._configuredProperties & Configured.Brush))
+				this._brush = new BrushX(pen._brush);
 
-			this.m_Color = pen.Color;
+			this._color = pen.Color;
 
-			if (null != pen.m_CompoundArray)
-				this.m_CompoundArray = (float[])pen.CompoundArray.Clone();
+			if (null != pen._compoundArray)
+				this._compoundArray = (float[])pen.CompoundArray.Clone();
 			else
-				this.m_CompoundArray = null;
+				this._compoundArray = null;
 
-			this.m_DashCap = pen.DashCap;
-			this.m_DashOffset = pen.DashOffset;
+			this._dashCap = pen.DashCap;
+			this._dashOffset = pen.DashOffset;
 
-			if (null != pen.m_DashPattern)
-				this.m_DashPattern = (float[])pen.DashPattern.Clone();
+			if (null != pen._dashPattern)
+				this._dashPattern = (float[])pen.DashPattern.Clone();
 			else
-				this.m_DashPattern = null;
+				this._dashPattern = null;
 
-			this.m_DashStyle = pen.DashStyle;
-			this.m_EndCap = pen.EndCap;
-			this.m_LineJoin = pen.LineJoin;
-			this.m_MiterLimit = pen.MiterLimit;
-			this.m_StartCap = pen.StartCap;
+			this._dashStyle = pen.DashStyle;
+			this._endCap = pen.EndCap;
+			this._lineJoin = pen.LineJoin;
+			this._miterLimit = pen.MiterLimit;
+			this._startCap = pen.StartCap;
 
-			if (null != pen.m_Transform)
-				this.m_Transform = pen.Transform.Clone();
+			if (null != pen._transformation)
+				this._transformation = pen.Transform.Clone();
 			else
-				this.m_Transform = null;
+				this._transformation = null;
 
-			this.m_Width = pen.Width;
+			this._width = pen.Width;
 
 			// note: there is an problem with Pen.Clone() : if the Color of the pen
 			// was set to a known color, the color of the cloned pen is the same, but no longer a known color
@@ -901,17 +892,15 @@ namespace Altaxo.Graph.Gdi
 			return ph.Pen;
 		}
 
-
 		public Pen Pen
 		{
 			get
 			{
-				if (m_Pen == null)
-					m_Pen = _GetPenFromProperties();
+				if (_cachedPen == null)
+					_cachedPen = _GetPenFromProperties();
 
-				return m_Pen;
+				return _cachedPen;
 			}
-
 		}
 
 		public bool Cached
@@ -919,16 +908,16 @@ namespace Altaxo.Graph.Gdi
 			get { return false; }
 			set
 			{
-
 			}
 		}
 
 		protected void _SetPenVariable(Pen pen)
 		{
-			if (null != m_Pen)
-				m_Pen.Dispose();
-			m_Pen = pen;
+			if (null != _cachedPen)
+				_cachedPen.Dispose();
+			_cachedPen = pen;
 		}
+
 		/*
 		protected void _SetPropertiesFromPen(Pen pen)
 		{
@@ -959,7 +948,7 @@ namespace Altaxo.Graph.Gdi
 
 		protected Pen _GetPenFromProperties()
 		{
-			Configured cp = this.m_ConfiguredProperties;
+			Configured cp = this._configuredProperties;
 
 			if (0 == (cp & PenX.Configured.IsNotNull))
 				return null;
@@ -968,43 +957,41 @@ namespace Altaxo.Graph.Gdi
 
 			// now set the optional Pen properties
 			if (0 != (cp & PenX.Configured.Width))
-				pen.Width = this.m_Width;
+				pen.Width = (float)(this._width);
 
 			if (0 != (cp & PenX.Configured.Alignment))
-				pen.Alignment = m_Alignment;
+				pen.Alignment = _alignment;
 
 			if (0 != (cp & PenX.Configured.Color))
-				pen.Color = ToGdi(this.m_Color);
+				pen.Color = ToGdi(this._color);
 			if (0 != (cp & PenX.Configured.Brush))
-				pen.Brush = this.m_Brush;
+				pen.Brush = this._brush;
 
 			if (0 != (cp & PenX.Configured.CompoundArray))
-				pen.CompoundArray = this.m_CompoundArray;
+				pen.CompoundArray = this._compoundArray;
 			if (0 != (cp & PenX.Configured.DashStyle))
-				pen.DashStyle = this.m_DashStyle;
+				pen.DashStyle = this._dashStyle;
 			if (0 != (cp & PenX.Configured.DashCap))
-				pen.DashCap = this.m_DashCap;
+				pen.DashCap = this._dashCap;
 			if (0 != (cp & PenX.Configured.DashOffset))
-				pen.DashOffset = this.m_DashOffset;
+				pen.DashOffset = this._dashOffset;
 			if (0 != (cp & PenX.Configured.DashPattern))
-				pen.DashPattern = this.m_DashPattern;
+				pen.DashPattern = this._dashPattern;
 			if (0 != (cp & PenX.Configured.EndCap))
-				this.m_EndCap.SetEndCap(pen);
+				this._endCap.SetEndCap(pen);
 			if (0 != (cp & PenX.Configured.LineJoin))
-				pen.LineJoin = this.m_LineJoin;
+				pen.LineJoin = this._lineJoin;
 			if (0 != (cp & PenX.Configured.MiterLimit))
-				pen.MiterLimit = this.m_MiterLimit;
+				pen.MiterLimit = this._miterLimit;
 			if (0 != (cp & PenX.Configured.StartCap))
-				this.m_StartCap.SetStartCap(pen);
+				this._startCap.SetStartCap(pen);
 			if (0 != (cp & PenX.Configured.Transform))
-				pen.Transform = this.m_Transform;
-
-
+				pen.Transform = this._transformation;
 
 			return pen;
 		}
 
-		static Configured SetProp(Configured allprop, Configured prop, bool bSet)
+		private static Configured SetProp(Configured allprop, Configured prop, bool bSet)
 		{
 			allprop &= (Configured.All ^ prop);
 			if (bSet)
@@ -1012,7 +999,8 @@ namespace Altaxo.Graph.Gdi
 
 			return allprop;
 		}
-		static bool AreEqual(float[] x1, float[] x2)
+
+		private static bool AreEqual(float[] x1, float[] x2)
 		{
 			if (x1 == null && x2 == null)
 				return true;
@@ -1027,7 +1015,6 @@ namespace Altaxo.Graph.Gdi
 			return true;
 		}
 
-
 		/// <summary>
 		/// Returns all differences between two pens as a flagged enum.
 		/// </summary>
@@ -1036,8 +1023,8 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>A enum where all those bits are set where the two pens are different.</returns>
 		public static Configured GetDifferences(PenX p1, PenX p2)
 		{
-			Configured cp1 = p1.m_ConfiguredProperties;
-			Configured cp2 = p2.m_ConfiguredProperties;
+			Configured cp1 = p1._configuredProperties;
+			Configured cp2 = p2._configuredProperties;
 
 			Configured cp = cp1 & cp2;
 
@@ -1047,46 +1034,46 @@ namespace Altaxo.Graph.Gdi
 				cp = SetProp(cp, Configured.IsNotNull, false);
 
 			if (0 != (cp & PenX.Configured.Width))
-				cp = SetProp(cp, PenX.Configured.Width, p1.m_Width != p2.m_Width);
+				cp = SetProp(cp, PenX.Configured.Width, p1._width != p2._width);
 
 			if (0 != (cp & PenX.Configured.Alignment))
-				cp = SetProp(cp, PenX.Configured.Alignment, p1.m_Alignment != p2.m_Alignment);
+				cp = SetProp(cp, PenX.Configured.Alignment, p1._alignment != p2._alignment);
 
 			if (0 != (cp & PenX.Configured.Color))
-				cp = SetProp(cp, PenX.Configured.Color, p1.m_Color != p2.m_Color);
+				cp = SetProp(cp, PenX.Configured.Color, p1._color != p2._color);
 
 			if (0 != (cp & PenX.Configured.Brush))
-				cp = SetProp(cp, PenX.Configured.Brush, !BrushX.AreEqual(p1.m_Brush, p2.m_Brush));
+				cp = SetProp(cp, PenX.Configured.Brush, !BrushX.AreEqual(p1._brush, p2._brush));
 
 			if (0 != (cp & PenX.Configured.CompoundArray))
-				cp = SetProp(cp, PenX.Configured.CompoundArray, !AreEqual(p1.m_CompoundArray, p2.m_CompoundArray));
+				cp = SetProp(cp, PenX.Configured.CompoundArray, !AreEqual(p1._compoundArray, p2._compoundArray));
 
 			if (0 != (cp & PenX.Configured.DashStyle))
-				cp = SetProp(cp, PenX.Configured.DashStyle, p1.m_DashStyle != p2.m_DashStyle);
+				cp = SetProp(cp, PenX.Configured.DashStyle, p1._dashStyle != p2._dashStyle);
 
 			if (0 != (cp & PenX.Configured.DashCap))
-				cp = SetProp(cp, PenX.Configured.DashCap, p1.m_DashCap != p2.m_DashCap);
+				cp = SetProp(cp, PenX.Configured.DashCap, p1._dashCap != p2._dashCap);
 
 			if (0 != (cp & PenX.Configured.DashOffset))
-				cp = SetProp(cp, PenX.Configured.DashOffset, p1.m_DashOffset != p2.m_DashOffset);
+				cp = SetProp(cp, PenX.Configured.DashOffset, p1._dashOffset != p2._dashOffset);
 
 			if (0 != (cp & PenX.Configured.DashPattern))
-				cp = SetProp(cp, PenX.Configured.DashPattern, !AreEqual(p1.m_DashPattern, p2.m_DashPattern));
+				cp = SetProp(cp, PenX.Configured.DashPattern, !AreEqual(p1._dashPattern, p2._dashPattern));
 
 			if (0 != (cp & PenX.Configured.EndCap))
-				cp = SetProp(cp, PenX.Configured.EndCap, p1.m_EndCap != p2.m_EndCap);
+				cp = SetProp(cp, PenX.Configured.EndCap, p1._endCap != p2._endCap);
 
 			if (0 != (cp & PenX.Configured.LineJoin))
-				cp = SetProp(cp, PenX.Configured.LineJoin, p1.m_LineJoin != p2.m_LineJoin);
+				cp = SetProp(cp, PenX.Configured.LineJoin, p1._lineJoin != p2._lineJoin);
 
 			if (0 != (cp & PenX.Configured.MiterLimit))
-				cp = SetProp(cp, PenX.Configured.MiterLimit, p1.m_MiterLimit != p2.m_MiterLimit);
+				cp = SetProp(cp, PenX.Configured.MiterLimit, p1._miterLimit != p2._miterLimit);
 
 			if (0 != (cp & PenX.Configured.StartCap))
-				cp = SetProp(cp, PenX.Configured.StartCap, p1.m_StartCap != p2.m_StartCap);
+				cp = SetProp(cp, PenX.Configured.StartCap, p1._startCap != p2._startCap);
 
 			if (0 != (cp & PenX.Configured.Transform))
-				cp = SetProp(cp, PenX.Configured.Transform, p1.m_Transform != p2.m_Transform);
+				cp = SetProp(cp, PenX.Configured.Transform, p1._transformation != p2._transformation);
 
 			return cp | (cp1 ^ cp2);
 		}
@@ -1100,7 +1087,7 @@ namespace Altaxo.Graph.Gdi
 			if (object.ReferenceEquals(p1, p2))
 				return true;
 
-			if (p1.m_ConfiguredProperties != p2.m_ConfiguredProperties)
+			if (p1._configuredProperties != p2._configuredProperties)
 				return false;
 
 			Configured diff = GetDifferences(p1, p2);
@@ -1116,8 +1103,8 @@ namespace Altaxo.Graph.Gdi
 			if (object.ReferenceEquals(p1, p2))
 				return true;
 
-			Configured c1 = p1.m_ConfiguredProperties;
-			Configured c2 = p2.m_ConfiguredProperties;
+			Configured c1 = p1._configuredProperties;
+			Configured c2 = p2._configuredProperties;
 			c1 = SetProp(c1, Configured.Width, false);
 			c2 = SetProp(c2, Configured.Width, false);
 
@@ -1129,28 +1116,26 @@ namespace Altaxo.Graph.Gdi
 			return diff == 0;
 		}
 
-
 		private void _SetBrushVariable(BrushX bh)
 		{
-			if (null != m_Brush)
-				m_Brush.Dispose();
+			if (null != _brush)
+				_brush.Dispose();
 
-			m_Brush = bh;
+			_brush = bh;
 		}
-
 
 		public PenType PenType
 		{
-			get { return m_PenType; }
+			get { return _penType; }
 		}
 
 		public PenAlignment Alignment
 		{
-			get { return m_Alignment; }
+			get { return _alignment; }
 			set
 			{
-				bool bChanged = (m_Alignment != value);
-				m_Alignment = value;
+				bool bChanged = (_alignment != value);
+				_alignment = value;
 				if (bChanged)
 				{
 					_SetProp(Configured.Alignment, PenAlignment.Center != value);
@@ -1169,7 +1154,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return (m_Brush != null && m_Brush.IsVisible) || m_Color.Color.A != 0;
+				return (_brush != null && _brush.IsVisible) || _color.Color.A != 0;
 			}
 		}
 
@@ -1180,42 +1165,41 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return (m_Brush != null && m_Brush.IsInvisible) || m_Color.Color.A==0;
+				return (_brush != null && _brush.IsInvisible) || _color.Color.A == 0;
 			}
 		}
-
 
 		public BrushX BrushHolder
 		{
 			get
 			{
-				if (m_Brush == null)
-					return new BrushX(this.m_Color);
+				if (_brush == null)
+					return new BrushX(this._color);
 				else
-					return m_Brush;
+					return _brush;
 			}
 			set
 			{
 				if (null == value)
 				{
 					_SetProp(Configured.PenType, false);
-					_SetProp(Configured.Color, NamedColors.Black != m_Color);
-					m_PenType = PenType.SolidColor;
+					_SetProp(Configured.Color, NamedColors.Black != _color);
+					_penType = PenType.SolidColor;
 					_SetBrushVariable(null);
 				}
 				else if (value.BrushType == BrushType.SolidBrush)
 				{
-					m_PenType = PenType.SolidColor;
-					m_Color = value.Color;
+					_penType = PenType.SolidColor;
+					_color = value.Color;
 					_SetBrushVariable(null);
 
-					_SetProp(Configured.PenType, PenType.SolidColor != m_PenType);
-					_SetProp(Configured.Color, NamedColors.Black != m_Color);
+					_SetProp(Configured.PenType, PenType.SolidColor != _penType);
+					_SetProp(Configured.Color, NamedColors.Black != _color);
 					_SetProp(Configured.Brush, false);
 				} // if value is SolidBrush
 				else if (value.BrushType == BrushType.HatchBrush)
 				{
-					m_PenType = PenType.HatchFill;
+					_penType = PenType.HatchFill;
 					_SetBrushVariable(new BrushX(value));
 
 					_SetProp(Configured.PenType, true);
@@ -1224,7 +1208,7 @@ namespace Altaxo.Graph.Gdi
 				}
 				else if (value.BrushType == BrushType.TextureBrush)
 				{
-					m_PenType = PenType.TextureFill;
+					_penType = PenType.TextureFill;
 					_SetBrushVariable(new BrushX(value));
 
 					_SetProp(Configured.PenType, true);
@@ -1233,7 +1217,7 @@ namespace Altaxo.Graph.Gdi
 				}
 				else if (value.BrushType == BrushType.LinearGradientBrush)
 				{
-					m_PenType = PenType.LinearGradient;
+					_penType = PenType.LinearGradient;
 					_SetBrushVariable(new BrushX(value));
 
 					_SetProp(Configured.PenType, true);
@@ -1242,7 +1226,7 @@ namespace Altaxo.Graph.Gdi
 				}
 				else if (value.BrushType == BrushType.PathGradientBrush)
 				{
-					m_PenType = PenType.PathGradient;
+					_penType = PenType.PathGradient;
 					_SetBrushVariable(new BrushX(value));
 
 					_SetProp(Configured.PenType, true);
@@ -1256,42 +1240,44 @@ namespace Altaxo.Graph.Gdi
 
 		public NamedColor Color
 		{
-			get { return m_Color; }
+			get { return _color; }
 			set
 			{
-				bool bChanged = (m_Color != value);
-				m_Color = value;
+				bool bChanged = (_color != value);
+				_color = value;
 				if (bChanged)
 				{
-					if (null != m_Brush)
-						m_Brush.Color = value;
-          else
-  					_SetProp(Configured.Color, NamedColors.Black != value);
-	
-          _SetPenVariable(null);
+					if (null != _brush)
+						_brush.Color = value;
+					else
+						_SetProp(Configured.Color, NamedColors.Black != value);
+
+					_SetPenVariable(null);
 
 					OnChanged(); // Fire the Changed event
 				}
 			}
 		}
+
 		public float[] CompoundArray
 		{
-			get { return m_CompoundArray; }
+			get { return _compoundArray; }
 			set
 			{
 				_SetProp(Configured.CompoundArray, null != value && value.Length > 0);
-				m_CompoundArray = (float[])value.Clone();
+				_compoundArray = (float[])value.Clone();
 				_SetPenVariable(null);
 				OnChanged(); // Fire the Changed event
 			}
 		}
+
 		public DashCap DashCap
 		{
-			get { return m_DashCap; }
+			get { return _dashCap; }
 			set
 			{
-				bool bChanged = (m_DashCap != value);
-				m_DashCap = value;
+				bool bChanged = (_dashCap != value);
+				_dashCap = value;
 				if (bChanged)
 				{
 					_SetProp(Configured.DashCap, DashCap.Flat != value);
@@ -1300,13 +1286,14 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 		}
+
 		public float DashOffset
 		{
-			get { return m_DashOffset; }
+			get { return _dashOffset; }
 			set
 			{
-				bool bChanged = (m_DashOffset != value);
-				m_DashOffset = value;
+				bool bChanged = (_dashOffset != value);
+				_dashOffset = value;
 				if (bChanged)
 				{
 					_SetProp(Configured.DashOffset, 0 != value);
@@ -1315,30 +1302,32 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 		}
+
 		public float[] DashPattern
 		{
-			get { return m_DashPattern; }
+			get { return _dashPattern; }
 			set
 			{
 				_SetProp(Configured.DashPattern, null != value && value.Length > 0);
 
-				if (!(m_DashStyle == DashStyle.Custom && null == value))
-					m_DashPattern = value;
+				if (!(_dashStyle == DashStyle.Custom && null == value))
+					_dashPattern = value;
 				_SetPenVariable(null);
 				OnChanged(); // Fire the Changed event
 			}
 		}
+
 		public DashStyle DashStyle
 		{
-			get { return m_DashStyle; }
+			get { return _dashStyle; }
 			set
 			{
-				bool bChanged = (m_DashStyle != value);
-				m_DashStyle = value;
+				bool bChanged = (_dashStyle != value);
+				_dashStyle = value;
 				if (bChanged)
 				{
-					if (m_DashStyle == DashStyle.Custom && null == m_DashPattern)
-						m_DashPattern = new float[] { 4, 4 }; // Ensure that at least a DashPattern is present if DashStyle is Custom
+					if (_dashStyle == DashStyle.Custom && null == _dashPattern)
+						_dashPattern = new float[] { 4, 4 }; // Ensure that at least a DashPattern is present if DashStyle is Custom
 
 					_SetProp(Configured.DashStyle, DashStyle.Solid != value);
 					_SetPenVariable(null);
@@ -1347,8 +1336,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
-		static bool IsEqual(float[] a, float[] b)
+		private static bool IsEqual(float[] a, float[] b)
 		{
 			if (a == null || b == null)
 				return false;
@@ -1365,23 +1353,23 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				if (m_DashStyle != DashStyle.Custom)
-					return new DashStyleEx(m_DashStyle);
+				if (_dashStyle != DashStyle.Custom)
+					return new DashStyleEx(_dashStyle);
 				else
-					return new DashStyleEx(m_DashPattern);
+					return new DashStyleEx(_dashPattern);
 			}
 			set
 			{
-				bool bChanged = (m_DashStyle != value.KnownStyle);
+				bool bChanged = (_dashStyle != value.KnownStyle);
 				if (value.KnownStyle == DashStyle.Custom)
 				{
-					bChanged |= !IsEqual(value.CustomStyle, this.m_DashPattern);
+					bChanged |= !IsEqual(value.CustomStyle, this._dashPattern);
 				}
 
 				if (bChanged)
 				{
-					m_DashStyle = value.KnownStyle;
-					m_DashPattern = null == value.CustomStyle ? null : (float[])value.CustomStyle.Clone();
+					_dashStyle = value.KnownStyle;
+					_dashPattern = null == value.CustomStyle ? null : (float[])value.CustomStyle.Clone();
 
 					_SetProp(Configured.DashStyle, DashStyle.Solid != value.KnownStyle);
 					_SetProp(Configured.DashPattern, null != value.CustomStyle && value.CustomStyle.Length > 0);
@@ -1395,30 +1383,31 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return this.m_EndCap;
+				return this._endCap;
 			}
 			set
 			{
 				if (null == value)
 					value = LineCapExtension.Flat;
-				bool bChanged = (m_EndCap != value);
-				m_EndCap = value;
+				bool bChanged = (_endCap != value);
+				_endCap = value;
 
 				if (bChanged)
 				{
-					_SetProp(Configured.EndCap, !m_EndCap.IsDefaultStyle);
+					_SetProp(Configured.EndCap, !_endCap.IsDefaultStyle);
 					_SetPenVariable(null);
 					OnChanged(); // Fire the Changed event
 				}
 			}
 		}
+
 		public LineJoin LineJoin
 		{
-			get { return m_LineJoin; }
+			get { return _lineJoin; }
 			set
 			{
-				bool bChanged = (m_LineJoin != value);
-				m_LineJoin = value;
+				bool bChanged = (_lineJoin != value);
+				_lineJoin = value;
 				if (bChanged)
 				{
 					_SetProp(Configured.LineJoin, LineJoin.Miter != value);
@@ -1427,13 +1416,14 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 		}
+
 		public float MiterLimit
 		{
-			get { return m_MiterLimit; }
+			get { return _miterLimit; }
 			set
 			{
-				bool bChanged = (m_MiterLimit != value);
-				m_MiterLimit = value;
+				bool bChanged = (_miterLimit != value);
+				_miterLimit = value;
 				if (bChanged)
 				{
 					_SetProp(Configured.MiterLimit, 10 != value);
@@ -1442,48 +1432,49 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 		}
+
 		public LineCapExtension StartCap
 		{
 			get
 			{
-
-				return this.m_StartCap;
+				return this._startCap;
 			}
 			set
 			{
 				if (null == value)
 					value = LineCapExtension.Flat;
 
-				bool bChanged = (m_StartCap != value);
-				m_StartCap = value;
+				bool bChanged = (_startCap != value);
+				_startCap = value;
 				if (bChanged)
 				{
-					_SetProp(Configured.StartCap, !m_StartCap.IsDefaultStyle);
+					_SetProp(Configured.StartCap, !_startCap.IsDefaultStyle);
 					_SetPenVariable(null);
 
 					OnChanged(); // Fire the Changed event
 				}
 			}
 		}
+
 		public Matrix Transform
 		{
-			get { return m_Transform; }
+			get { return _transformation; }
 			set
 			{
 				_SetProp(Configured.Transform, null != value && !value.IsIdentity);
-				m_Transform = value.Clone();
+				_transformation = value.Clone();
 				_SetPenVariable(null);
 				OnChanged(); // Fire the Changed event
 			}
 		}
 
-		public float Width
+		public double Width
 		{
-			get { return m_Width; }
+			get { return _width; }
 			set
 			{
-				bool bChanged = (m_Width != value);
-				m_Width = value;
+				bool bChanged = (_width != value);
+				_width = value;
 				if (bChanged)
 				{
 					_SetProp(Configured.Width, 1 != value);
@@ -1493,11 +1484,10 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		void _SetProp(Configured prop, bool bSet)
+		private void _SetProp(Configured prop, bool bSet)
 		{
-			this.m_ConfiguredProperties &= (Configured.All ^ prop);
-			if (bSet) this.m_ConfiguredProperties |= prop;
-
+			this._configuredProperties &= (Configured.All ^ prop);
+			if (bSet) this._configuredProperties |= prop;
 		}
 
 		public PenX Clone()
@@ -1512,17 +1502,16 @@ namespace Altaxo.Graph.Gdi
 
 		public void Dispose()
 		{
-			m_ConfiguredProperties = 0;
-			if (null != m_Pen) { m_Pen.Dispose(); m_Pen = null; }
-			if (null != m_Transform) { m_Transform.Dispose(); m_Transform = null; }
-			if (null != m_CompoundArray) { m_CompoundArray = null; }
-			if (null != this.m_DashPattern) { m_DashPattern = null; }
+			_configuredProperties = 0;
+			if (null != _cachedPen) { _cachedPen.Dispose(); _cachedPen = null; }
+			if (null != _transformation) { _transformation.Dispose(); _transformation = null; }
+			if (null != _compoundArray) { _compoundArray = null; }
+			if (null != this._dashPattern) { _dashPattern = null; }
 		}
+
 		#region IChangedEventSource Members
 
 		public event System.EventHandler Changed;
-
-
 
 		protected virtual void OnChanged()
 		{
@@ -1535,8 +1524,7 @@ namespace Altaxo.Graph.Gdi
 			OnChanged();
 		}
 
-		#endregion
-
+		#endregion IChangedEventSource Members
 
 		/// <summary>
 		/// Sets the environment for the creation of the pen's brush.
@@ -1547,13 +1535,13 @@ namespace Altaxo.Graph.Gdi
 		public bool SetEnvironment(RectangleD boundingRectangle, double maxEffectiveResolution)
 		{
 			bool changed = false;
-			if (m_Brush != null)
+			if (_brush != null)
 			{
-				changed |= m_Brush.SetEnvironment(boundingRectangle, maxEffectiveResolution);
+				changed |= _brush.SetEnvironment(boundingRectangle, maxEffectiveResolution);
 			}
 
-			if (changed && null != m_Pen)
-				m_Pen.Brush = m_Brush.Brush;
+			if (changed && null != _cachedPen)
+				_cachedPen.Brush = _brush.Brush;
 
 			return changed;
 		}
@@ -1567,30 +1555,27 @@ namespace Altaxo.Graph.Gdi
 		public bool SetEnvironment(RectangleF boundingRectangle, double maxEffectiveResolution)
 		{
 			bool changed = false;
-			if (m_Brush != null)
+			if (_brush != null)
 			{
-				changed |= m_Brush.SetEnvironment(boundingRectangle, maxEffectiveResolution);
+				changed |= _brush.SetEnvironment(boundingRectangle, maxEffectiveResolution);
 			}
 
-			if (changed && null != m_Pen)
-				m_Pen.Brush = m_Brush.Brush;
+			if (changed && null != _cachedPen)
+				_cachedPen.Brush = _brush.Brush;
 
 			return changed;
 		}
-
-
 	} // end of class PenHolder
 
-
-	#endregion
+	#endregion PenX
 
 	#region DashStyleEx
 
 	[Serializable]
 	public class DashStyleEx : ICloneable
 	{
-		DashStyle _knownStyle;
-		float[] _customStyle;
+		private DashStyle _knownStyle;
+		private float[] _customStyle;
 
 		public DashStyleEx(DashStyle style)
 		{
@@ -1633,6 +1618,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			return new DashStyleEx(this);
 		}
+
 		object ICloneable.Clone()
 		{
 			return new DashStyleEx(this);
@@ -1670,7 +1656,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		public void SetPenDash(Pen pen)
 		{
 			pen.DashStyle = _knownStyle;
@@ -1678,7 +1663,7 @@ namespace Altaxo.Graph.Gdi
 				pen.DashPattern = (float[])this._customStyle.Clone();
 		}
 
-		static bool IsEqual(float[] a, float[] b)
+		private static bool IsEqual(float[] a, float[] b)
 		{
 			if (a == null || b == null)
 				return false;
@@ -1739,7 +1724,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		public static DashStyleEx Solid
 		{
 			get { return new DashStyleEx(DashStyle.Solid); }
@@ -1769,15 +1753,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			get { return new DashStyleEx(new float[] { 5.0f, 3.0f }); }
 		}
-
-
-
 	}
-	#endregion
 
-
-
-
-
-
+	#endregion DashStyleEx
 }
