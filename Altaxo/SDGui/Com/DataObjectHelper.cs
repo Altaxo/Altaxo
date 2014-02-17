@@ -383,7 +383,7 @@ namespace Altaxo.Com
 				dropFiles.pFiles = Marshal.SizeOf(dropFiles);
 				dropFiles.fWide = 1; // for unicode-encoding
 				Marshal.StructureToPtr(dropFiles, ipGlobal, true);
-				IntPtr ipNew = new IntPtr(ipGlobal.ToInt32() + Marshal.SizeOf(dropFiles));
+				IntPtr ipNew = new IntPtr(ipGlobal.ToInt64() + Marshal.SizeOf(dropFiles));
 				Marshal.Copy(byteData, 0, ipNew, byteData.Length);
 			}
 			return ipGlobal;
