@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			// with knowledge of the current active layer, calculate the layer coordinates from them
 			var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
 
-			TextGraphic tgo = new TextGraphic();
+			TextGraphic tgo = new TextGraphic(_grac.Doc.GetPropertyContext());
 			tgo.SetParentSize(_grac.ActiveLayer.Size, false);
 			tgo.Position = layerCoord;
 			tgo.ParentObject = _grac.ActiveLayer;

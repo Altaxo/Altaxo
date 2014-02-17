@@ -109,6 +109,15 @@ namespace Altaxo.Main.Services
 					return default(T);
 			}
 
+			public T GetValue<T>(PropertyKey<T> p, T defaultValue)
+			{
+				T result;
+				if (TryGetValue<T>(p, out result))
+					return result;
+				else
+					return defaultValue;
+			}
+
 			public T GetValue<T>(string propName)
 			{
 				T result;

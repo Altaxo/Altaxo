@@ -307,14 +307,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		protected GraphicBase(ItemLocationDirect location)
 		{
+			if (null == location)
+				throw new ArgumentNullException("location");
+
 			_eventSuppressor = new Main.EventSuppressor(EhFireChangeEvent);
 			_location = location;
 			_location.ParentObject = this;
 		}
 
 		protected GraphicBase(GraphicBase from)
-			: this(from._location.Clone())
 		{
+			if (null == from)
+				throw new ArgumentNullException("from");
+
+			_eventSuppressor = new Main.EventSuppressor(EhFireChangeEvent);
+			_location = from._location.Clone();
+			_location.ParentObject = this;
+
 			CopyFrom(from);
 		}
 

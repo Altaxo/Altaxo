@@ -76,6 +76,22 @@ namespace Altaxo.Graph.Gdi
 					}
 				};
 
+		public static readonly Main.Properties.PropertyKey<FontX> PropertyKeyDefaultFont =
+				new Main.Properties.PropertyKey<FontX>(
+				"2CFD57CF-25D5-456E-9E45-D7D8823F4A54",
+				"Graph\\DefaultFont",
+				Main.Properties.PropertyLevel.All,
+				typeof(GraphDocument),
+				() => GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular))
+				{
+					EditingControllerCreation = (doc) =>
+					{
+						var ctrl = new Gui.Common.Drawing.FontXController { UseDocumentCopy = Gui.UseDocument.Copy };
+						ctrl.InitializeDocument(doc);
+						return ctrl;
+					}
+				};
+
 		private SingleGraphPrintOptions _printOptions;
 
 		public SingleGraphPrintOptions PrintOptions

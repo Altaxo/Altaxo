@@ -30,10 +30,41 @@ using System.Text;
 namespace Altaxo.Main.Properties
 {
 	/// <summary>
+	/// A collection of properties that can be read from the bag.
+	/// </summary>
+	public interface IReadOnlyPropertyBag
+	{
+		/// <summary>
+		/// Gets the value of a property. This method will throw an exception if the property is not found in the bag.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <returns>The property.</returns>
+		T GetValue<T>(PropertyKey<T> p);
+
+		/// <summary>
+		/// Gets the value of a property.  If the property is not found in the bag, the provided default value is returned.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <returns>The property.</returns>
+		T GetValue<T>(PropertyKey<T> p, T defaultValue);
+
+		/// <summary>
+		/// Tries to get the value of a property.
+		/// </summary>
+		/// <typeparam name="T">Type of the property.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <param name="value">If successfull, on return this value contains the property value.</param>
+		/// <returns><c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.</returns>
+		bool TryGetValue<T>(PropertyKey<T> p, out T value);
+	}
+
+	/// <summary>
 	/// Bag with properties. The recommended method is to access the properties by a property key (<see cref="PropertyKeyBase"/>). For compatibility, properties can also
 	/// be stored and retrieved with strings.
 	/// </summary>
-	public interface IPropertyBag : IEnumerable<KeyValuePair<string, object>>, IDisposable, Main.ICopyFrom
+	public interface IPropertyBag : IEnumerable<KeyValuePair<string, object>>, IReadOnlyPropertyBag, IDisposable, Main.ICopyFrom
 	{
 		/// <summary>Removes all properties in this instance.</summary>
 		void Clear();
@@ -45,14 +76,6 @@ namespace Altaxo.Main.Properties
 		/// Number of properties in this instance.
 		/// </value>
 		int Count { get; }
-
-		/// <summary>
-		/// Gets the value of a property.
-		/// </summary>
-		/// <typeparam name="T">Type of the property value.</typeparam>
-		/// <param name="p">The property key.</param>
-		/// <returns>The property.</returns>
-		T GetValue<T>(PropertyKey<T> p);
 
 		/// <summary>
 		/// Gets the value of a property.
@@ -91,15 +114,6 @@ namespace Altaxo.Main.Properties
 		/// <param name="propName">The property name.</param>
 		/// <param name="value">The value of the property.</param>
 		void SetValue<T>(string propName, T value);
-
-		/// <summary>
-		/// Tries to get the value of a property.
-		/// </summary>
-		/// <typeparam name="T">Type of the property.</typeparam>
-		/// <param name="p">The property key.</param>
-		/// <param name="value">If successfull, on return this value contains the property value.</param>
-		/// <returns><c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.</returns>
-		bool TryGetValue<T>(PropertyKey<T> p, out T value);
 
 		/// <summary>
 		/// Tries to get the value of a property.

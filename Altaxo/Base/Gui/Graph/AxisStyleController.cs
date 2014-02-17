@@ -70,12 +70,14 @@ namespace Altaxo.Gui.Graph
 
 		protected TickSpacingController _tickSpacingController;
 
+		private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
+
 		protected override void Initialize(bool bInit)
 		{
-			System.Collections.ArrayList arr = new System.Collections.ArrayList();
-
 			if (bInit)
 			{
+				_context = _originalDoc.GetPropertyContext();
+
 				if (_doc.AxisLineStyle != null)
 				{
 					_axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _originalDoc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
@@ -96,9 +98,9 @@ namespace Altaxo.Gui.Graph
 			if (_view != null)
 			{
 				_view.AxisTitle = _originalDoc.TitleText;
-				_view.ShowAxisLine = _originalDoc.ShowAxisLine;
-				_view.ShowMajorLabels = _originalDoc.ShowMajorLabels;
-				_view.ShowMinorLabels = _originalDoc.ShowMinorLabels;
+				_view.ShowAxisLine = _originalDoc.IsAxisLineEnabled;
+				_view.ShowMajorLabels = _originalDoc.AreMajorLabelsEnabled;
+				_view.ShowMinorLabels = _originalDoc.AreMinorLabelsEnabled;
 				_view.LineStyleView = _axisLineStyleController == null ? null : _axisLineStyleController.ViewObject;
 				_view.ShowCustomTickSpacing = _doc.TickSpacing != null;
 				_view.TickSpacingView = _tickSpacingController != null ? _tickSpacingController.ViewObject : null;
@@ -118,15 +120,20 @@ namespace Altaxo.Gui.Graph
 					_doc.AxisLineStyle = (AxisLineStyle)_axisLineStyleController.ModelObject;
 			}
 
-			_doc.ShowMajorLabels = _view.ShowMajorLabels;
-			_doc.ShowMinorLabels = _view.ShowMinorLabels;
+			if (_view.ShowMajorLabels)
+				_doc.ShowMajorLabels(_context);
+			else
+				_doc.HideMajorLabels();
+
+			if (_view.ShowMinorLabels)
+				_doc.ShowMinorLabels(_context);
+			else
+				_doc.HideMinorLabels();
 
 			if (_tickSpacingController != null && !_tickSpacingController.Apply())
 				return false;
 			if (_view.ShowCustomTickSpacing && null != _tickSpacingController)
 				_doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;
-
-
 
 			if (!object.ReferenceEquals(_doc, _originalDoc))
 				_originalDoc.CopyFrom(_doc);
@@ -140,8 +147,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != _view)
 			{
-				_view.ShowMajorLabels = _doc.ShowMajorLabels;
-				_view.ShowMinorLabels = _doc.ShowMinorLabels;
+				_view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
+				_view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
 			}
 		}
 
@@ -190,37 +197,44 @@ namespace Altaxo.Gui.Graph
 
 		private void EhShowAxisLineChanged()
 		{
-			var oldValue = _doc.ShowAxisLine;
+			var oldValue = _doc.IsAxisLineEnabled;
 			if (_view.ShowAxisLine && null == _originalDoc.AxisLineStyle)
 			{
-				_doc.ShowAxisLine = true;
+				_doc.ShowAxisLine(_context);
 				this._axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
 				_view.LineStyleView = _axisLineStyleController.ViewObject;
 			}
-			if (oldValue != _doc.ShowAxisLine)
+			if (oldValue != _doc.IsAxisLineEnabled)
 				OnMadeDirty();
 		}
 
 		private void EhShowMajorLabelsChanged()
 		{
-			var oldValue = _doc.ShowMajorLabels;
+			var oldValue = _doc.AreMajorLabelsEnabled;
 			var newValue = _view.ShowMajorLabels;
 
 			if (oldValue != newValue)
 			{
-				_doc.ShowMajorLabels = _view.ShowMajorLabels;
+				if (newValue)
+					_doc.ShowMajorLabels(_context);
+				else
+					_doc.HideMajorLabels();
 				OnMadeDirty();
 			}
 		}
 
 		private void EhShowMinorLabelsChanged()
 		{
-			var oldValue = _doc.ShowMinorLabels;
+			var oldValue = _doc.AreMinorLabelsEnabled;
 			var newValue = _view.ShowMinorLabels;
 
 			if (oldValue != newValue)
 			{
-				_doc.ShowMinorLabels = _view.ShowMinorLabels;
+				if (newValue)
+					_doc.ShowMinorLabels(_context);
+				else
+					_doc.HideMinorLabels();
+
 				OnMadeDirty();
 			}
 		}

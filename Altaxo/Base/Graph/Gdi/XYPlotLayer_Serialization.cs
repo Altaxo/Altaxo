@@ -270,9 +270,12 @@ namespace Altaxo.Graph.Gdi
 
 				s._plotItems = (PlotItemCollection)info.GetValue("Plots", typeof(PlotItemCollection));
 
-				var legend1 = new LegendText();
-				legend1.CopyFrom(legend);
-				s._graphObjects.Add(legend1);
+				if (null != legend)
+				{
+					var legend1 = new LegendText(legend);
+					s._graphObjects.Add(legend1);
+				}
+
 				return s;
 			}
 		}
@@ -410,9 +413,11 @@ namespace Altaxo.Graph.Gdi
 				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer);
 
 				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphicGlyphs", s));
-				var legend1 = new LegendText(); legend1.CopyFrom(legend);
-				s.GraphObjects.Add(legend1);
-
+				if (null != legend)
+				{
+					var legend1 = new LegendText(legend);
+					s.GraphObjects.Add(legend1);
+				}
 				s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
 				return s;
@@ -509,8 +514,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					if (item is TextGraphic)
 					{
-						var l = new LegendText();
-						l.CopyFrom(item as TextGraphic);
+						var l = new LegendText((TextGraphic)item);
 						s.GraphObjects.Add(l);
 					}
 				}
@@ -625,7 +629,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					if (item is TextGraphic)
 					{
-						var l = new LegendText(); l.CopyFrom(item as TextGraphic);
+						var l = new LegendText((TextGraphic)item);
 						s.GraphObjects.Add(l);
 					}
 				}

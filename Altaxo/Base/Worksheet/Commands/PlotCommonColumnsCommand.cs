@@ -126,9 +126,10 @@ namespace Altaxo.Worksheet.Commands
 
 			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;
 
+			var context = graphctrl.Doc.GetPropertyHierarchy();
 			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.RootLayer);
 			graphctrl.Doc.RootLayer.Layers.Add(layer);
-			layer.CreateDefaultAxes();
+			layer.CreateDefaultAxes(context);
 
 			var processedColumns = new HashSet<Altaxo.Data.DataColumn>();
 			foreach (string colname in _yCommonColumnNamesForPlotting)

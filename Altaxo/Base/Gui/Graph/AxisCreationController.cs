@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.CS;
 using Altaxo.Graph.Gdi.Axis;
+using Altaxo.Graph.Gdi.CS;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
@@ -41,14 +42,12 @@ namespace Altaxo.Gui.Graph
 		// Input arguments
 		public List<CSAxisInformation> AxisStyles { get; set; }
 
-
-		/// <summary>Before showing the axis creation dialog, this property should be set to 
+		/// <summary>Before showing the axis creation dialog, this property should be set to
 		/// the currently choosen axis style.
 		/// At the end of the axis creation dialog, this contains the identifier of the axis
 		/// that should be used as an template to copy the axis from.</summary>
 		/// <value>The template style.</value>
 		public CSLineID TemplateStyle { get; set; }
-
 
 		/// <summary>Gets or sets the current style.  After successfully showing the dialog, this property contains the identifier of the axis that should be created.</summary>
 		/// <value>The current style.</value>
@@ -96,7 +95,8 @@ namespace Altaxo.Gui.Graph
 
 		public static void AddAxis(AxisStyleCollection collection, AxisCreationArguments creationArgs)
 		{
-			AxisStyle axstyle = new AxisStyle(creationArgs.CurrentStyle);
+			var context = collection.GetPropertyContext();
+			AxisStyle axstyle = new AxisStyle(creationArgs.CurrentStyle, false, false, false, null, context);
 			if (creationArgs.TemplateStyle != null && collection.Contains(creationArgs.TemplateStyle))
 			{
 				axstyle.CopyWithoutIdFrom(collection[creationArgs.TemplateStyle]);
@@ -110,9 +110,13 @@ namespace Altaxo.Gui.Graph
 	public interface IAxisCreationView
 	{
 		bool UsePhysicalValue { get; set; }
+
 		double AxisPositionLogicalValue { get; set; }
+
 		Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue { get; set; }
+
 		bool MoveAxis { get; set; }
+
 		void InitializeAxisTemplates(SelectableListNodeList list);
 
 		event Action SelectedAxisTemplateChanged;
@@ -122,7 +126,7 @@ namespace Altaxo.Gui.Graph
 	[UserControllerForObject(typeof(AxisCreationArguments))]
 	public class AxisCreationController : MVCANControllerBase<AxisCreationArguments, IAxisCreationView>
 	{
-		SelectableListNodeList _axisTemplates;
+		private SelectableListNodeList _axisTemplates;
 
 		protected override void Initialize(bool initData)
 		{
@@ -166,7 +170,6 @@ namespace Altaxo.Gui.Graph
 				_doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionLogicalValue);
 			}
 
-
 			return true;
 		}
 
@@ -175,20 +178,18 @@ namespace Altaxo.Gui.Graph
 			_view.SelectedAxisTemplateChanged += EhSelectedAxisTemplateChanged;
 		}
 
-
 		protected override void DetachView()
 		{
 			_view.SelectedAxisTemplateChanged -= EhSelectedAxisTemplateChanged;
 		}
 
-		void EhSelectedAxisTemplateChanged()
+		private void EhSelectedAxisTemplateChanged()
 		{
 			_doc.TemplateStyle = (_axisTemplates.FirstSelectedNode.Tag as CSAxisInformation).Identifier;
 			SetViewAccordingToAxisIdentifier();
 		}
 
-
-		void SetViewAccordingToAxisIdentifier()
+		private void SetViewAccordingToAxisIdentifier()
 		{
 			_view.UsePhysicalValue = _doc.TemplateStyle.UsePhysicalValueOtherFirst;
 			if (_doc.TemplateStyle.UsePhysicalValueOtherFirst)
@@ -200,8 +201,5 @@ namespace Altaxo.Gui.Graph
 				_view.AxisPositionLogicalValue = _doc.TemplateStyle.LogicalValueOtherFirst;
 			}
 		}
-
-
-
 	}
 }

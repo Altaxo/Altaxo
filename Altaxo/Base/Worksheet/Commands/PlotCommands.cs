@@ -393,11 +393,13 @@ namespace Altaxo.Worksheet.Commands
 				graph.Name = preferredGraphName;
 			}
 
+			var context = PropertyExtensions.GetPropertyHierarchy(table);
+
 			// apply the default location from the property in the path
-			graph.RootLayer.Location.CopyFrom(table.GetPropertyValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize, null));
+			graph.RootLayer.Location.CopyFrom(context.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));
 
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
-			layer.CreateDefaultAxes();
+			layer.CreateDefaultAxes(context);
 			graph.RootLayer.Layers.Add(layer);
 			Current.Project.GraphDocumentCollection.Add(graph);
 
@@ -524,9 +526,10 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLinePolar(IWorksheetController dg)
 		{
+			var context = dg.DataTable.GetPropertyHierarchy();
 			Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
-			layer.CreateDefaultAxes();
+			layer.CreateDefaultAxes(context);
 			graph.RootLayer.Layers.Add(layer);
 			Current.Project.GraphDocumentCollection.Add(graph);
 			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line, GroupStyle_Color_Line);
@@ -601,6 +604,7 @@ namespace Altaxo.Worksheet.Commands
 		public static void PlotDensityImage(IWorksheetController dg, bool bLine, bool bScatter)
 		{
 			Altaxo.Data.DataTable table = dg.DataTable;
+			var context = table.GetPropertyHierarchy();
 			DensityImagePlotStyle plotStyle = new DensityImagePlotStyle();
 
 			// if nothing is selected, assume that the whole table should be plotted
@@ -637,7 +641,7 @@ namespace Altaxo.Worksheet.Commands
 
 			var gc = Current.ProjectService.CreateNewGraphInFolder(Main.ProjectFolder.GetFolderPart(table.Name));
 			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(gc.Doc.RootLayer);
-			layer.CreateDefaultAxes();
+			layer.CreateDefaultAxes(context);
 			gc.Doc.RootLayer.Layers.Add(layer);
 
 			IGPlotItem pi = new DensityImagePlotItem(assoc, plotStyle);

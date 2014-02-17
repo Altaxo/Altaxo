@@ -76,6 +76,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerNormalBottomXLeftY(this GraphDocument doc)
 		{
+			var context = doc.GetPropertyHierarchy();
 			var location = new ItemLocationDirect();
 			location.PositionX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X);
 			location.PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.Y);
@@ -84,7 +85,7 @@ namespace Altaxo.Graph.Gdi
 
 			XYPlotLayer newlayer = new XYPlotLayer(doc.RootLayer, location);
 			doc.RootLayer.Layers.Add(newlayer);
-			newlayer.CreateDefaultAxes();
+			newlayer.CreateDefaultAxes(context);
 		}
 
 		/// <summary>
@@ -92,8 +93,9 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopX(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
+			var context = doc.GetPropertyHierarchy();
 			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
-			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
+			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1), context);
 		}
 
 		/// <summary>
@@ -101,8 +103,9 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
+			var context = doc.GetPropertyHierarchy();
 			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
-			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
+			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1), context);
 		}
 
 		/// <summary>
@@ -110,9 +113,10 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopXRightY(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
+			var context = doc.GetPropertyHierarchy();
 			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
-			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
-			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
+			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1), context);
+			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1), context);
 		}
 
 		/// <summary>
@@ -120,6 +124,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public static void CreateNewLayerLinkedTopXRightY_XAxisStraight(this GraphDocument doc, IEnumerable<int> linklayernumber)
 		{
+			var context = doc.GetPropertyHierarchy();
 			var newlayer = CreateNewLayerAtSamePosition(doc, linklayernumber);
 
 			HostLayer oldLayer;
@@ -135,8 +140,8 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			// set enabling of axis
-			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
-			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
+			newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1), context);
+			newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1), context);
 		}
 
 		#endregion XYPlotLayer Creation

@@ -192,6 +192,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="arrangement">The layer arrangement options (contain the information how to arrange the layers).</param>
 		public static void ArrangeLayers(this HostLayer activeLayer, ArrangeLayersDocument arrangement)
 		{
+			var context = activeLayer.GetPropertyContext();
 			var parentLayer = activeLayer.ParentLayer ?? activeLayer;
 
 			int numPresentLayers = parentLayer.Layers.Count;
@@ -214,7 +215,7 @@ namespace Altaxo.Graph.Gdi
 					if (nLayer >= numPresentLayers)
 					{
 						var newLayer = new XYPlotLayer(parentLayer);
-						newLayer.CreateDefaultAxes();
+						newLayer.CreateDefaultAxes(context);
 						parentLayer.Layers.Add(newLayer);
 					}
 

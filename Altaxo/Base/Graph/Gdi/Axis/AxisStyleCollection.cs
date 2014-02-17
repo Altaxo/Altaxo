@@ -25,6 +25,7 @@
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Main.Properties;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
@@ -176,7 +177,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			AxisStyle prop = this[id];
 			if (prop == null)
 			{
-				prop = new AxisStyle(id);
+				prop = new AxisStyle(id, false, false, false, null, null);
 				prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
 				Add(prop);
 			}
@@ -188,17 +189,13 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// </summary>
 		/// <param name="id">The axis style identifier.</param>
 		/// <returns>The newly created axis style, if it was not in the collection before. Returns the unchanged axis style, if it was present already in the collection.</returns>
-		public AxisStyle CreateDefault(CSLineID id)
+		public AxisStyle CreateDefault(CSLineID id, IReadOnlyPropertyBag context)
 		{
 			AxisStyle prop = this[id];
 			if (prop == null)
 			{
-				prop = new AxisStyle(id);
+				prop = new AxisStyle(id, true, true, false, null, context);
 				prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
-
-				prop.ShowAxisLine = true;
-				prop.ShowMajorLabels = true;
-
 				Add(prop);
 			}
 			return prop;

@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic();
+				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic(info);
 				info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
 
 				// we have changed the meaning of rotation in the meantime, This is not handled in GetBaseValueEmbedded,
@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic();
+				TextGraphic s = null != o ? (TextGraphic)o : new TextGraphic(info);
 				if (info.CurrentElementName == "BaseType") // that was included since 2006-06-20
 				{
 					info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
@@ -176,7 +176,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (TextGraphic)o : new TextGraphic();
+				var s = null != o ? (TextGraphic)o : new TextGraphic(info);
 
 				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
 
@@ -193,10 +193,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public TextGraphic()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TextGraphic"/> class for deserialization purposes.
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected TextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 			: base(new ItemLocationDirectAutoSize())
 		{
-			_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
+		}
+
+		public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirectAutoSize())
+		{
+			if (null == context || !context.TryGetValue(GraphDocument.PropertyKeyDefaultFont, out _font))
+				_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
 		}
 
 		public TextGraphic(PointD2D graphicPosition, string text,

@@ -135,6 +135,49 @@ namespace Altaxo
 		}
 
 		/// <summary>
+		/// Gets the property bags in the hierarchal order. The first bag in the enumeration is the bag that owns the <paramref name="owner"/>. Then the bags of the folders
+		/// in which the owner is located, its parent folders, and then UserSettings, ApplicationSettings, and BuiltinSettings follow.
+		/// </summary>
+		/// <param name="owner">The owner of a property bag with which to start the enumeration.</param>
+		/// <returns>Property bags in the project hierarchy wrapped in a  <see cref="PropertyHierarchy"/>.</returns>
+		public static PropertyHierarchy GetPropertyHierarchy(this IPropertyBagOwner owner)
+		{
+			return new PropertyHierarchy(GetPropertyBags(owner));
+		}
+
+		/// <summary>
+		/// Gets the property context of the document node. If the provided node is not implementing <see cref="IPropertyBagOwner"/>, the parent nodes of this node are searched,
+		/// until a node which implements  <see cref="IPropertyBagOwner"/> is found.
+		/// </summary>
+		/// <param name="node">The node for which the property context is retrieved.</param>
+		/// <returns>A <see cref="PropertyHierarchy"/> instance representing the property context of the provided document node.</returns>
+		public static PropertyHierarchy GetPropertyContext(this Altaxo.Main.IDocumentNode node)
+		{
+			var owner = node as IPropertyBagOwner;
+			if (null == owner)
+				owner = Altaxo.Main.DocumentPath.GetRootNodeImplementing<IPropertyBagOwner>(node);
+			return null != owner ? new PropertyHierarchy(GetPropertyBags(owner)) : null;
+		}
+
+		/// <summary>
+		/// Gets the property bags 'ApplicationSettings' 'BuiltinSettings' and 'UserSettings' stored in a <see cref="PropertyHierarchy"/>.
+		/// </summary>
+		/// <returns>Property bags 'ApplicationSettings' 'BuiltinSettings'  and 'UserSettings'  wrapped in a <see cref="PropertyHierarchy"/>.</returns>
+		public static PropertyHierarchy GetPropertyHierarchyStartingFromUserSettings()
+		{
+			return new PropertyHierarchy(GetPropertyBagsStartingFromUserSettings());
+		}
+
+		/// <summary>
+		/// Gets the property bags 'ApplicationSettings' and 'BuiltinSettings' stored in a <see cref="PropertyHierarchy"/>.
+		/// </summary>
+		/// <returns>Property bags 'ApplicationSettings' and 'BuiltinSettings' wrapped in a <see cref="PropertyHierarchy"/>.</returns>
+		public static PropertyHierarchy GetPropertyHierarchyStartingFromApplicationSettings()
+		{
+			return new PropertyHierarchy(GetPropertyBagsStartingFromApplicationSettings());
+		}
+
+		/// <summary>
 		/// Gets the project folder property documents down the project folder hierarchie.
 		/// </summary>
 		/// <param name="namedOwner">The named owner. Can be any project item.</param>

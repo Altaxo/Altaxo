@@ -183,14 +183,18 @@ namespace Altaxo.Gui.Common.Drawing
 						glyphIndices[i] = glyphIndex;
 						advanceWidths[i] = glyphWidht * fontSize;
 					}
-					glyphRun.GlyphIndices = glyphIndices;
-					glyphRun.AdvanceWidths = advanceWidths;
-					glyphRun.BaselineOrigin = new Point(0, glyphTypeFace.Baseline * fontSize);
-					((System.ComponentModel.ISupportInitialize)glyphRun).EndInit();
+
+					if (glyphIndices.Length > 0)
+					{
+						glyphRun.GlyphIndices = glyphIndices;
+						glyphRun.AdvanceWidths = advanceWidths;
+						glyphRun.BaselineOrigin = new Point(0, glyphTypeFace.Baseline * fontSize);
+						((System.ComponentModel.ISupportInitialize)glyphRun).EndInit();
 
 
-					var glyphRunDrawing = new GlyphRunDrawing(Brushes.Black, glyphRun);
-					drawingGroup.Children.Add(glyphRunDrawing);
+						var glyphRunDrawing = new GlyphRunDrawing(Brushes.Black, glyphRun);
+						drawingGroup.Children.Add(glyphRunDrawing);
+					}
 				}
 
 				drawingGroup.ClipGeometry = outerGeometry;

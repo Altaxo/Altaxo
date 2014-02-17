@@ -34,7 +34,7 @@ namespace Altaxo.Main.Properties
 	/// The topmost bag is usually used to edit items, the items underneath are used to show the effective property values.
 	/// When you add bags, please note that bags are added to the bottom of the hierarchy. Thus you have to add the topmost bag as the first item.
 	/// </summary>
-	public class PropertyHierarchy
+	public class PropertyHierarchy : IReadOnlyPropertyBag
 	{
 		private List<PropertyBagWithInformation> _propertyBags;
 
@@ -104,6 +104,64 @@ namespace Altaxo.Main.Properties
 		public bool TryGetValue<T>(string propName, out T value, out IPropertyBag bag, out PropertyBagInformation bagInfo)
 		{
 			return TryGetValue<T>(propName, false, out value, out bag, out bagInfo);
+		}
+
+		/// <summary>
+		/// Tries to get a specific property value. The bags are search for the property, starting from the topmost bag and iterating to the bag at the bottom.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value to search for.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <param name="value">On successfull return, this contains the retrieved property value.</param>
+		/// <returns><c>True</c> if the property value could be successfully retrieved; <c>false</c> otherwise.</returns>
+		public bool TryGetValue<T>(PropertyKey<T> p, out T value)
+		{
+			IPropertyBag bag;
+			PropertyBagInformation bagInfo;
+			return TryGetValue<T>(p, out value, out bag, out bagInfo);
+		}
+
+		/// <summary>
+		/// Gets a property value.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <returns>The property value if found in this hierarchy. If the property value is not found, an <see cref="System.Collections.Generic.KeyNotFoundException"/> is thrown.</returns>
+		/// <exception cref="System.Collections.Generic.KeyNotFoundException">Thrown if the property key was not found in this hierarchy.</exception>
+		public T GetValue<T>(PropertyKey<T> p)
+		{
+			IPropertyBag bag;
+			PropertyBagInformation info;
+			T result;
+			if (TryGetValue(p, out result, out bag, out info))
+			{
+				return result;
+			}
+			else
+			{
+				throw new KeyNotFoundException(string.Format("Unable to find property {0} in this property hierarchy", p.PropertyName));
+			}
+		}
+
+		/// <summary>
+		/// Gets a property value.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <param name="defaultValue">The default value. This value is returned if the property hierarchy does not contain the property value.</param>
+		/// <returns>The property value if found in this hierarchy, or the provided default value.</returns>
+		public T GetValue<T>(PropertyKey<T> p, T defaultValue)
+		{
+			IPropertyBag bag;
+			PropertyBagInformation info;
+			T result;
+			if (TryGetValue(p, out result, out bag, out info))
+			{
+				return result;
+			}
+			else
+			{
+				return defaultValue;
+			}
 		}
 
 		/// <summary>

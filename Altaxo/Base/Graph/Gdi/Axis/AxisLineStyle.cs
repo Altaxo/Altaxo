@@ -45,31 +45,31 @@ namespace Altaxo.Graph.Gdi.Axis
 		ICloneable
 	{
 		/// <summary>Pen used for painting of the axis.</summary>
-		protected PenX _axisPen = new PenX(NamedColors.Black, 1);
+		protected PenX _axisPen;
 
 		/// <summary>Pen used for painting of the major ticks.</summary>
-		protected PenX _majorTickPen = new PenX(NamedColors.Black, 1);
+		protected PenX _majorTickPen;
 
 		/// <summary>Pen used for painting of the minor ticks.</summary>
-		protected PenX _minorTickPen = new PenX(NamedColors.Black, 1);
+		protected PenX _minorTickPen;
 
 		/// <summary>Length of the major ticks in points (1/72 inch).</summary>
-		protected float _majorTickLength = 8;
+		protected float _majorTickLength;
 
 		/// <summary>Length of the minor ticks in points (1/72 inch).</summary>
-		protected float _minorTickLength = 4;
+		protected float _minorTickLength;
 
 		/// <summary>True if major ticks should be painted outside of the layer.</summary>
-		protected bool _showFirstUpMajorTicks = true; // true if right major ticks should be visible
+		protected bool _showFirstUpMajorTicks;
 
 		/// <summary>True if major ticks should be painted inside of the layer.</summary>
-		protected bool _showFirstDownMajorTicks = true; // true if left major ticks should be visible
+		protected bool _showFirstDownMajorTicks;
 
 		/// <summary>True if minor ticks should be painted outside of the layer.</summary>
-		protected bool _showFirstUpMinorTicks = true; // true if right minor ticks should be visible
+		protected bool _showFirstUpMinorTicks;
 
 		/// <summary>True if major ticks should be painted inside of the layer.</summary>
-		protected bool _showFirstDownMinorTicks = true; // true if left minor ticks should be visible
+		protected bool _showFirstDownMinorTicks;
 
 		/// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
 		protected RADouble _axisPosition; // if relative, then relative to layer size, if absolute then in points
@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle();
+				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
 
 				Edge edge = (Edge)info.GetValue("Edge", s);
 				s._axisPen = (PenX)info.GetValue("AxisPen", s);
@@ -218,7 +218,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle();
+				AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle(info);
 
 				s._axisPen = (PenX)info.GetValue("AxisPen", s);
 				s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
@@ -269,11 +269,28 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization purposes only.
+		/// </summary>
+		/// <param name="info">The deserialization information.</param>
+		protected AxisLineStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
+		/// <summary>
 		/// Creates a default axis style.
 		/// </summary>
-
-		public AxisLineStyle()
+		public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
 		{
+			_axisPen = new PenX(NamedColors.Black, 1);
+			_majorTickPen = new PenX(NamedColors.Black, 1);
+			_minorTickPen = new PenX(NamedColors.Black, 1);
+			_majorTickLength = 8;
+			_minorTickLength = 4;
+			_showFirstUpMajorTicks = true; // true if right major ticks should be visible
+			_showFirstDownMajorTicks = true; // true if left major ticks should be visible
+			_showFirstUpMinorTicks = true; // true if right minor ticks should be visible
+			_showFirstDownMinorTicks = true; // true if left minor ticks should be visible
+
 			WireEventChain(true);
 		}
 

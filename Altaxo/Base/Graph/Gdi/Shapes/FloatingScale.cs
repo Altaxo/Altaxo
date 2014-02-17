@@ -130,12 +130,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public FloatingScale()
+		public FloatingScale(Main.Properties.IReadOnlyPropertyBag context)
 			: base(new ItemLocationDirectAutoSize())
 		{
 			_scaleSpanValue = 0.25;
 			_tickSpacing = new SpanTickSpacing();
-			_axisStyle = new AxisStyle(new CSLineID(0, 0)) { ShowAxisLine = true, ShowMinorLabels = true };
+			_axisStyle = new AxisStyle(new CSLineID(0, 0), true, false, true, null, context);
 		}
 
 		public FloatingScale(FloatingScale from)
@@ -429,7 +429,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var csLineId = new CSLineID(_scaleNumber, rBegin);
 			if (_axisStyle.StyleID != csLineId)
 			{
-				var axStyle = new AxisStyle(new CSLineID(_scaleNumber, rBegin));
+				var context = this.GetPropertyContext();
+				var axStyle = new AxisStyle(new CSLineID(_scaleNumber, rBegin), false, false, false, null, context);
 				axStyle.CopyWithoutIdFrom(_axisStyle);
 				_axisStyle = axStyle;
 			}
@@ -462,7 +463,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			// calculate size information
 			RectangleD bounds1 = _cachedPath.GetBounds();
 
-			if (_axisStyle.ShowMinorLabels)
+			if (_axisStyle.AreMinorLabelsEnabled)
 			{
 				var path = _axisStyle.MinorLabelStyle.GetSelectionPath();
 				if (path.PointCount > 0)
@@ -472,7 +473,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					bounds1.ExpandToInclude(bounds2);
 				}
 			}
-			if (_axisStyle.ShowMajorLabels)
+			if (_axisStyle.AreMajorLabelsEnabled)
 			{
 				var path = _axisStyle.MajorLabelStyle.GetSelectionPath();
 				if (path.PointCount > 0)

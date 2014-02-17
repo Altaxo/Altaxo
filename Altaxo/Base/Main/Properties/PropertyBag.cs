@@ -209,8 +209,18 @@ namespace Altaxo.Main.Properties
 		/// </returns>
 		public T GetValue<T>(PropertyKey<T> p)
 		{
-			var result = _properties[p.GuidString];
-			return (T)result;
+			if (_properties.ContainsKey(p.GuidString))
+				return (T)_properties[p.GuidString];
+			else
+				throw new KeyNotFoundException(string.Format("The property key {0} was not found in this collection", p.PropertyName));
+		}
+
+		public T GetValue<T>(PropertyKey<T> p, T defaultValue)
+		{
+			if (_properties.ContainsKey(p.GuidString))
+				return (T)_properties[p.GuidString];
+			else
+				return defaultValue;
 		}
 
 		/// <summary>

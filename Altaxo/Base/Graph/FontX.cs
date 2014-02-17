@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,15 +29,13 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-
 	/// <summary>
-	/// Encapsulates a font in an immutable instance. 
+	/// Encapsulates a font in an immutable instance. Please use the <see cref="FontManager"/> to create an instance of this class.
 	/// </summary>
 	public sealed class FontX
 	{
-		const string stylePrefix = ", style=";
-		const string worldPostfix = "world";
-
+		private const string stylePrefix = ", style=";
+		private const string worldPostfix = "world";
 
 		/// <summary>Occurs when a <see cref="FontX"/> instance is created.  Argument is the invariant description string of the created <see cref="FontX"/> instance.</summary>
 		public static event Action<string> FontConstructed;
@@ -44,34 +44,31 @@ namespace Altaxo.Graph
 		public static event Action<string> FontDestructed;
 
 		/// <summary>String describing the original font. It can be different from the constructed font (if the original font is not found on this machine).</summary>
-		string _invariantDescriptionString;
+		private string _invariantDescriptionString;
 
 		/// <summary>Font family name.</summary>
 		/// <remarks>This member is used only to cut down the time to access the font size. The font family name is already coded in the InvariantDescriptionString and can be retrieved from there.</remarks>
-		string _fontFamilyName;
+		private string _fontFamilyName;
 
 		/// <summary>Size of the font. The size is measured in the Altaxo coordinate system, which is point (1/72 inch).</summary>
 		/// <remarks>This member is used only to cut down the time to access the font size. The size is already coded in the InvariantDescriptionString and can be retrieved from there.</remarks>
-		double _size;
+		private double _size;
 
 		/// <summary>Style of the font.</summary>
 		/// <remarks>This member is used only to cut down the time to access the font size. The style is already coded in the InvariantDescriptionString and can be retrieved from there.</remarks>
-		FontXStyle _style;
-
+		private FontXStyle _style;
 
 		#region Serialization
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.Font), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			static System.Drawing.FontConverter _fontConverter = new System.Drawing.FontConverter();
+			private static System.Drawing.FontConverter _fontConverter = new System.Drawing.FontConverter();
 
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new InvalidOperationException("Serialization of old versions is not allowed");
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -96,14 +93,13 @@ namespace Altaxo.Graph
 		/// <para>Beginning with this version, it is guaranteed that the font unit is always 'world', which means that the size is specified in Altaxo's default unit (points = 1/72 inch).</para>
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FontX), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (FontX)obj;
 				info.SetNodeContent(s._invariantDescriptionString);
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -113,15 +109,12 @@ namespace Altaxo.Graph
 			}
 		}
 
-		#endregion
-
-
+		#endregion Serialization
 
 		private FontX(string fontFamilyName, double size, FontXStyle style)
 		{
 			if (string.IsNullOrEmpty(fontFamilyName))
 				throw new ArgumentNullException("fontFamilyName");
-
 
 			_fontFamilyName = fontFamilyName;
 			_size = size;
@@ -236,8 +229,6 @@ namespace Altaxo.Graph
 		/// <param name="style">On return, contains the font style.</param>
 		public static void GetFamilyNameSizeStyleFromInvariantDescriptionString(string fontID, out string familyName, out double size, out FontXStyle style)
 		{
-
-
 			if (null == fontID)
 				throw new ArgumentNullException("fontID");
 
@@ -272,7 +263,6 @@ namespace Altaxo.Graph
 					style |= FontXStyle.Strikeout;
 			}
 		}
-
 
 		/// <summary>
 		/// Gets an description string that fully describes this instance. This string can be used e.g. for font dictionaries.

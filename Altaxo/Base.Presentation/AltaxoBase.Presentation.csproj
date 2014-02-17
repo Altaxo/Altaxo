@@ -204,6 +204,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Drawing\FontXControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\Drawing\MiterLimitComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -806,6 +810,9 @@
     <Compile Include="Gui\Common\ColorConverter.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControl.xaml.cs">
       <DependentUpon>ConditionalDocumentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontXControl.xaml.cs">
+      <DependentUpon>FontXControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\QuantityWithUnitList.xaml.cs">
       <DependentUpon>QuantityWithUnitList.xaml</DependentUpon>

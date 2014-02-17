@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,28 +19,32 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common;
+using System;
 
 namespace Altaxo.Gui.Graph
 {
 	/// <summary>
 	/// Glues a controller for the axis title/line style, and two conditional controllers for the major and minor label styles together. This class should be used if the existence of the axis style is ensured,
-	/// i.e. the axis style can neither be removed or created. 
+	/// i.e. the axis style can neither be removed or created.
 	/// If, in contrast, one should be able to remove or create an axis style, you should rather use an instance of the <see cref="AxisStyleControllerConditionalGlue"/> class.
 	/// </summary>
 	public class AxisStyleControllerGlue
 	{
-		AxisStyle _doc;
+		private AxisStyle _doc;
+
 		public AxisStyleController AxisStyleController { get; private set; }
+
 		public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController { get; private set; }
+
 		public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController { get; private set; }
+
+		private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
 		public AxisStyleControllerGlue(AxisStyle axisStyle)
 		{
@@ -84,6 +89,7 @@ namespace Altaxo.Gui.Graph
 				MajorLabelCondController.ViewObject = value;
 			}
 		}
+
 		public IConditionalDocumentView MinorLabelCondView
 		{
 			get
@@ -103,41 +109,42 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhAxisStyleControllerDirty(IMVCANController ctrl)
+		private void EhAxisStyleControllerDirty(IMVCANController ctrl)
 		{
-			MajorLabelCondController.AnnounceEnabledChanged(_doc.ShowMajorLabels);
-			MinorLabelCondController.AnnounceEnabledChanged(_doc.ShowMinorLabels);
+			MajorLabelCondController.AnnounceEnabledChanged(_doc.AreMajorLabelsEnabled);
+			MinorLabelCondController.AnnounceEnabledChanged(_doc.AreMinorLabelsEnabled);
 		}
 
-		AxisLabelStyle CreateMajorLabel()
+		private AxisLabelStyle CreateMajorLabel()
 		{
-			_doc.ShowMajorLabels = true;
+			_doc.ShowMajorLabels(_context);
 			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
 			return _doc.MajorLabelStyle;
 		}
 
-		void RemoveMajorLabel()
+		private void RemoveMajorLabel()
 		{
-			_doc.ShowMajorLabels = false;
+			_doc.HideMajorLabels();
 			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
 		}
 
-
-		AxisLabelStyle CreateMinorLabel()
+		private AxisLabelStyle CreateMinorLabel()
 		{
-			_doc.ShowMinorLabels = true;
+			_doc.ShowMinorLabels(_context);
 			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
 			return _doc.MinorLabelStyle;
 		}
 
-		void RemoveMinorLabel()
+		private void RemoveMinorLabel()
 		{
-			_doc.ShowMinorLabels = false;
+			_doc.HideMinorLabels();
 			AxisStyleController.AnnounceExternalChangeOfMajorOrMinorLabelState();
 		}
 
-		void InternalInitialize()
+		private void InternalInitialize()
 		{
+			_context = _doc.GetPropertyContext();
+
 			AxisStyleController = new AxisStyleController() { UseDocumentCopy = UseDocument.Directly };
 			AxisStyleController.MadeDirty += this.EhAxisStyleControllerDirty;
 
@@ -145,11 +152,10 @@ namespace Altaxo.Gui.Graph
 			MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
 
 			AxisStyleController.InitializeDocument(_doc);
-			if (_doc.ShowMajorLabels)
+			if (_doc.AreMajorLabelsEnabled)
 				MajorLabelCondController.InitializeDocument(_doc.MajorLabelStyle);
-			if (_doc.ShowMinorLabels)
+			if (_doc.AreMinorLabelsEnabled)
 				MinorLabelCondController.InitializeDocument(_doc.MinorLabelStyle);
 		}
 	}
-
 }

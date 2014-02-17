@@ -274,9 +274,30 @@ namespace Altaxo.Graph.Gdi.Axis
 			this.Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
 		}
 
-		public AxisStyle(CSLineID id)
+		public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			_styleID = id;
+
+			if (isAxisLineEnabled)
+			{
+				ShowAxisLine(context);
+			}
+
+			if (areMajorTicksEnabled)
+			{
+				ShowMajorLabels(context);
+			}
+
+			if (areMinorTicksEnabled)
+			{
+				ShowMinorLabels(context);
+			}
+
+			if (null != axisTitleOrNull)
+			{
+				ShowTitle(context);
+				_axisTitle.Text = axisTitleOrNull;
+			}
 		}
 
 		/// <summary>
@@ -312,7 +333,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			get
 			{
-				bool r = ShowAxisLine | ShowTitle | ShowMajorLabels | ShowMinorLabels;
+				bool r = IsAxisLineEnabled | IsTitleEnabled | AreMajorLabelsEnabled | AreMinorLabelsEnabled;
 				return !r;
 			}
 		}
@@ -417,7 +438,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public void PaintLine(Graphics g, IPlotArea layer)
 		{
-			if (ShowAxisLine)
+			if (IsAxisLineEnabled)
 			{
 				_axisLineStyle.Paint(g, layer, _cachedAxisInfo, _customTickSpacing);
 			}
@@ -425,7 +446,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public void PaintMajorLabels(Graphics g, IPlotArea layer)
 		{
-			if (ShowMajorLabels)
+			if (AreMajorLabelsEnabled)
 			{
 				var labelSide = _majorLabelStyle.PredictLabelSide(_cachedAxisInfo);
 				var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
@@ -436,7 +457,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public void PaintMinorLabels(Graphics g, IPlotArea layer)
 		{
-			if (ShowMinorLabels)
+			if (AreMinorLabelsEnabled)
 			{
 				var labelSide = _minorLabelStyle.PredictLabelSide(_cachedAxisInfo);
 				var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
@@ -447,7 +468,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public void PaintTitle(Graphics g, IPlotArea layer)
 		{
-			if (ShowTitle)
+			if (IsTitleEnabled)
 			{
 				_axisTitle.Paint(g, layer);
 			}
@@ -462,55 +483,92 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>
 		/// Determines whether or not the axis line and ticks should be drawn.
 		/// </summary>
-		public bool ShowAxisLine
+		public bool IsAxisLineEnabled
 		{
 			get
 			{
 				return _axisLineStyle != null;
 			}
-			set
-			{
-				if (value == false)
-					AxisLineStyle = null;
-				else if (_axisLineStyle == null)
-					AxisLineStyle = new AxisLineStyle();
-			}
+		}
+
+		public void ShowAxisLine(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (_axisLineStyle == null)
+				AxisLineStyle = new AxisLineStyle(context);
+		}
+
+		public void HideAxisLine()
+		{
+			AxisLineStyle = null;
 		}
 
 		/// <summary>
 		/// Determines whether or not the major labels should be shown.
 		/// </summary>
-		public bool ShowMajorLabels
+		public bool AreMajorLabelsEnabled
 		{
 			get
 			{
 				return _majorLabelStyle != null;
 			}
-			set
-			{
-				if (value == false)
-					MajorLabelStyle = null;
-				else if (_majorLabelStyle == null)
-					MajorLabelStyle = new AxisLabelStyle() { CachedAxisInformation = _cachedAxisInfo };
-			}
+		}
+
+		public void ShowMajorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (_majorLabelStyle == null)
+				MajorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
+		}
+
+		public void HideMajorLabels()
+		{
+			MajorLabelStyle = null;
 		}
 
 		/// <summary>
 		/// Determines whether or not the minor labels should be shown.
 		/// </summary>
-		public bool ShowMinorLabels
+		public bool AreMinorLabelsEnabled
 		{
 			get
 			{
 				return _minorLabelStyle != null;
 			}
-			set
+		}
+
+		public void ShowMinorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (_minorLabelStyle == null)
+				MinorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
+		}
+
+		public void HideMinorLabels()
+		{
+			MinorLabelStyle = null;
+		}
+
+		/// <summary>
+		/// Determines whether or not the title is shown.
+		/// </summary>
+		public bool IsTitleEnabled
+		{
+			get
 			{
-				if (value == false)
-					MinorLabelStyle = null;
-				else if (_minorLabelStyle == null)
-					MinorLabelStyle = new AxisLabelStyle() { CachedAxisInformation = _cachedAxisInfo };
+				return this._axisTitle != null;
 			}
+		}
+
+		public void ShowTitle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (_axisTitle == null)
+			{
+				Title = new TextGraphic(context);
+				Title.Text = "axis title";
+			}
+		}
+
+		public void HideTitle()
+		{
+			Title = null;
 		}
 
 		/// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
@@ -588,27 +646,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		/// <summary>
-		/// Determines whether or not the title is shown.
-		/// </summary>
-		public bool ShowTitle
-		{
-			get
-			{
-				return this._axisTitle != null;
-			}
-			set
-			{
-				if (value == false)
-					Title = null;
-				else if (_axisTitle == null)
-				{
-					Title = new TextGraphic();
-					Title.Text = "axis title";
-				}
-			}
-		}
-
 		public TextGraphic Title
 		{
 			get { return _axisTitle; }
@@ -643,7 +680,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					{
 						if (_axisTitle == null)
 						{
-							this.Title = new TextGraphic();
+							this.Title = new TextGraphic(this.GetPropertyContext());
 						}
 
 						_axisTitle.Text = value;
@@ -688,7 +725,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public object Clone()
 		{
-			AxisStyle res = new AxisStyle(_styleID);
+			AxisStyle res = new AxisStyle();
 			res.CopyFrom(this);
 			return res;
 		}

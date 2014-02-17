@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
@@ -34,16 +30,26 @@ using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
-	class AxisStyleControllerConditionalGlue
+	internal class AxisStyleControllerConditionalGlue
 	{
-		AxisStyleCollection _doc;
+		private AxisStyleCollection _doc;
+
 		public CSAxisInformation AxisInformation { get; private set; }
+
 		public ConditionalDocumentController<AxisStyle> AxisStyleCondController { get; private set; }
+
 		public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController { get; private set; }
+
 		public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController { get; private set; }
+
+		private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
 		public AxisStyleControllerConditionalGlue(CSAxisInformation axisInfo, AxisStyleCollection axisStyleCollection)
 		{
@@ -89,6 +95,7 @@ namespace Altaxo.Gui.Graph
 				MajorLabelCondController.ViewObject = value;
 			}
 		}
+
 		public IConditionalDocumentView MinorLabelCondView
 		{
 			get
@@ -108,18 +115,19 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void OnAxisStyleCreation(AxisStyle result)
+		private void OnAxisStyleCreation(AxisStyle result)
 		{
-			MajorLabelCondController.AnnounceEnabledChanged(result.ShowMajorLabels);
-			MinorLabelCondController.AnnounceEnabledChanged(result.ShowMinorLabels);
+			MajorLabelCondController.AnnounceEnabledChanged(result.AreMajorLabelsEnabled);
+			MinorLabelCondController.AnnounceEnabledChanged(result.AreMinorLabelsEnabled);
 		}
 
-		void OnAxisStyleRemoval()
+		private void OnAxisStyleRemoval()
 		{
 			MajorLabelCondController.AnnounceEnabledChanged(false);
 			MinorLabelCondController.AnnounceEnabledChanged(false);
 		}
-		AxisStyle CreateAxisStyle()
+
+		private AxisStyle CreateAxisStyle()
 		{
 			bool wasPresentBefore = _doc.Contains(AxisInformation.Identifier);
 			var result = _doc.AxisStyleEnsured(AxisInformation.Identifier);
@@ -129,7 +137,8 @@ namespace Altaxo.Gui.Graph
 			}
 			return result;
 		}
-		void RemoveAxisStyle()
+
+		private void RemoveAxisStyle()
 		{
 			bool wasPresentBefore = _doc.Contains(AxisInformation.Identifier);
 			_doc.Remove(AxisInformation.Identifier);
@@ -140,60 +149,61 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		IMVCANController CreateAxisStyleController(AxisStyle doc, UseDocument useDocumentCopy)
+		private IMVCANController CreateAxisStyleController(AxisStyle doc, UseDocument useDocumentCopy)
 		{
 			var result = (AxisStyleController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(AxisStyleController), useDocumentCopy);
 			result.MadeDirty += EhAxisStyleControllerDirty;
 			return result;
 		}
 
-		void EhAxisStyleControllerDirty(IMVCANController ctrl)
+		private void EhAxisStyleControllerDirty(IMVCANController ctrl)
 		{
-			MajorLabelCondController.AnnounceEnabledChanged(_doc[AxisInformation.Identifier].ShowMajorLabels);
-			MinorLabelCondController.AnnounceEnabledChanged(_doc[AxisInformation.Identifier].ShowMinorLabels);
+			MajorLabelCondController.AnnounceEnabledChanged(_doc[AxisInformation.Identifier].AreMajorLabelsEnabled);
+			MinorLabelCondController.AnnounceEnabledChanged(_doc[AxisInformation.Identifier].AreMinorLabelsEnabled);
 		}
 
-		AxisLabelStyle CreateMajorLabel()
+		private AxisLabelStyle CreateMajorLabel()
 		{
 			bool wasPresentBefore = _doc.Contains(AxisInformation.Identifier);
 			AxisStyleCondController.AnnounceEnabledChanged(true);
 			var axStyle = _doc[AxisInformation.Identifier];
-			axStyle.ShowMajorLabels = true;
+			axStyle.ShowMajorLabels(_context);
 			((AxisStyleController)AxisStyleCondController.UnderlyingController).AnnounceExternalChangeOfMajorOrMinorLabelState();
 			return axStyle.MajorLabelStyle;
 		}
 
-		void RemoveMajorLabel()
+		private void RemoveMajorLabel()
 		{
 			if (_doc.Contains(AxisInformation.Identifier))
 			{
-				_doc[AxisInformation.Identifier].ShowMajorLabels = false;
+				_doc[AxisInformation.Identifier].HideMajorLabels();
 				((AxisStyleController)AxisStyleCondController.UnderlyingController).AnnounceExternalChangeOfMajorOrMinorLabelState();
 			}
 		}
 
-
-		AxisLabelStyle CreateMinorLabel()
+		private AxisLabelStyle CreateMinorLabel()
 		{
 			bool wasPresentBefore = _doc.Contains(AxisInformation.Identifier);
 			AxisStyleCondController.AnnounceEnabledChanged(true);
 			var axStyle = _doc[AxisInformation.Identifier];
-			axStyle.ShowMinorLabels = true;
+			axStyle.ShowMinorLabels(_context);
 			((AxisStyleController)AxisStyleCondController.UnderlyingController).AnnounceExternalChangeOfMajorOrMinorLabelState();
 			return axStyle.MinorLabelStyle;
 		}
 
-		void RemoveMinorLabel()
+		private void RemoveMinorLabel()
 		{
 			if (_doc.Contains(AxisInformation.Identifier))
 			{
-				_doc[AxisInformation.Identifier].ShowMinorLabels = false;
+				_doc[AxisInformation.Identifier].HideMinorLabels();
 				((AxisStyleController)AxisStyleCondController.UnderlyingController).AnnounceExternalChangeOfMajorOrMinorLabelState();
 			}
 		}
 
-		void InternalInitialize()
+		private void InternalInitialize()
 		{
+			_context = _doc.GetPropertyContext();
+
 			AxisStyleCondController = new ConditionalDocumentController<AxisStyle>(CreateAxisStyle, RemoveAxisStyle, CreateAxisStyleController) { UseDocumentCopy = UseDocument.Directly };
 			MajorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
 			MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
@@ -202,12 +212,11 @@ namespace Altaxo.Gui.Graph
 			{
 				var axStyle = _doc[AxisInformation.Identifier];
 				AxisStyleCondController.InitializeDocument(axStyle);
-				if (axStyle.ShowMajorLabels)
+				if (axStyle.AreMajorLabelsEnabled)
 					MajorLabelCondController.InitializeDocument(axStyle.MajorLabelStyle);
-				if (axStyle.ShowMinorLabels)
+				if (axStyle.AreMinorLabelsEnabled)
 					MinorLabelCondController.InitializeDocument(axStyle.MinorLabelStyle);
 			}
 		}
 	}
-
 }

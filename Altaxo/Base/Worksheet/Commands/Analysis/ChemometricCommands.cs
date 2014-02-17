@@ -1012,8 +1012,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		{
 			var graphctrl = Current.ProjectService.CreateNewGraph(preferredName);
 			var graph = graphctrl.Doc;
+			var context = graph.GetPropertyHierarchy();
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
-			layer.CreateDefaultAxes();
+			layer.CreateDefaultAxes(context);
 			graph.RootLayer.Layers.Add(layer);
 			return graphctrl;
 		}

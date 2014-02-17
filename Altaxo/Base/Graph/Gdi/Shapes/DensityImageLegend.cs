@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#endregion Serialization
 
-		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize)
+		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize, Main.Properties.IReadOnlyPropertyBag context)
 			: base(new ItemLocationDirect())
 		{
 			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
@@ -126,20 +126,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_axisStyles = new AxisStyleCollection();
 			_axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
 
-			var sx0 = new AxisStyle(CSLineID.X0) { ShowAxisLine = true, ShowMajorLabels = true, TitleText = "Z values" };
+			var sx0 = new AxisStyle(CSLineID.X0, true, true, false, "Z values", context);
 			sx0.AxisLineStyle.FirstDownMajorTicks = true;
 			sx0.AxisLineStyle.FirstUpMajorTicks = false;
 			sx0.AxisLineStyle.FirstDownMinorTicks = true;
 			sx0.AxisLineStyle.FirstUpMinorTicks = false;
 
-			var sx1 = new AxisStyle(CSLineID.X1) { ShowAxisLine = true };
+			var sx1 = new AxisStyle(CSLineID.X1, true, false, false, null, context);
 			sx1.AxisLineStyle.FirstDownMajorTicks = false;
 			sx1.AxisLineStyle.FirstUpMajorTicks = false;
 			sx1.AxisLineStyle.FirstDownMinorTicks = false;
 			sx1.AxisLineStyle.FirstUpMinorTicks = false;
 
-			var sy0 = new AxisStyle(CSLineID.Y0) { ShowAxisLine = true, TitleText = "Color map" };
-			var sy1 = new AxisStyle(CSLineID.Y1) { ShowAxisLine = true };
+			var sy0 = new AxisStyle(CSLineID.Y0, true, false, false, "Color map", context);
+			var sy1 = new AxisStyle(CSLineID.Y1, true, false, false, null, context);
 			_axisStyles.Add(sx0);
 			_axisStyles.Add(sx1);
 			_axisStyles.Add(sy0);
