@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-	using Scales;
-	using Plot.Data;
 	using Graph.Plot.Data;
+	using Plot.Data;
+	using Scales;
 
 	/// <summary>
 	/// Used for constructor of <see cref="XYLineScatterPlotStyle" /> to choose between Line, Scatter and both.
@@ -42,15 +43,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Neither line nor scatter used.
 		/// </summary>
 		Empty = 0,
+
 		/// <summary>Line only. No symbol plotted, no line-symbol-gap.</summary>
 		Line = 1,
+
 		/// <summary>Scatter only. No line is plotted, no line-symbol gap.</summary>
 		Scatter = 2,
+
 		/// <summary>Both line and symbol are plotted, line symbol gap is on by default.</summary>
 		LineAndScatter = 3
 	}
 
 #if true // must be kept for old deserialization
+
 	/// <summary>
 	/// Deprecated; only used for deserialization of old versions.
 	/// </summary>
@@ -58,7 +63,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		System.Runtime.Serialization.IDeserializationCallback
 	{
-
 		protected LinePlotStyle m_LineStyle;
 		protected ScatterPlotStyle m_ScatterStyle;
 		protected bool m_LineSymbolGap;
@@ -66,25 +70,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>The label style (is null if there is no label).</summary>
 		protected LabelPlotStyle m_LabelStyle;
 
-
-
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYLineScatterPlotStyle", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new NotImplementedException("Serialization of old versions not supported");
 				/*
 				XYLineScatterPlotStyle s = (XYLineScatterPlotStyle)obj;
-				info.AddValue("XYPlotLineStyle",s.m_LineStyle);  
+				info.AddValue("XYPlotLineStyle",s.m_LineStyle);
 				info.AddValue("XYPlotScatterStyle",s.m_ScatterStyle);
 				info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
 				 */
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
 				// do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
 				s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", typeof(LinePlotStyle));
@@ -96,24 +99,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYLineScatterPlotStyle", 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new NotImplementedException("Serialization of old versions not supported");
 				/*
 				XYLineScatterPlotStyle s = (XYLineScatterPlotStyle)obj;
-				info.AddValue("XYPlotLineStyle",s.m_LineStyle);  
+				info.AddValue("XYPlotLineStyle",s.m_LineStyle);
 				info.AddValue("XYPlotScatterStyle",s.m_ScatterStyle);
 				info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
 				info.AddValue("LabelStyle",s.m_LabelStyle);      // new in this version
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
 				// do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
 				s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", typeof(LinePlotStyle));
@@ -127,14 +129,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYLineScatterPlotStyle", 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new NotImplementedException("Serialization of old versions not supported");
 				/*
 				XYLineScatterPlotStyle s = (XYLineScatterPlotStyle)obj;
-				info.AddValue("XYPlotLineStyle",s.m_LineStyle);  
+				info.AddValue("XYPlotLineStyle",s.m_LineStyle);
 				info.AddValue("XYPlotScatterStyle",s.m_ScatterStyle);
 				info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
 
@@ -143,11 +145,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if(null!=s.m_LabelStyle)  info.AddValue("LabelStyle",s.m_LabelStyle); // new in this version
 				info.CommitArray();
 				*/
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
 				// do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
 				s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", typeof(LinePlotStyle));
@@ -173,8 +174,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public virtual void OnDeserialization(object obj)
 		{
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public XYLineScatterPlotStyle()
 			: this(LineScatterPlotStyleKind.LineAndScatter)
@@ -184,18 +185,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public XYLineScatterPlotStyle(LineScatterPlotStyleKind kind)
 		{
 			if (0 != (kind & LineScatterPlotStyleKind.Line))
-				this.m_LineStyle = new LinePlotStyle();
+				this.m_LineStyle = new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 			if (0 != (kind & LineScatterPlotStyleKind.Scatter))
-				this.m_ScatterStyle = new ScatterPlotStyle();
+				this.m_ScatterStyle = new ScatterPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 			this.m_LineSymbolGap = kind == LineScatterPlotStyleKind.LineAndScatter;
 		}
 
 		public XYLineScatterPlotStyle(XYColumnPlotData pa)
 		{
-			this.m_LineStyle = new LinePlotStyle();
-			this.m_ScatterStyle = new ScatterPlotStyle();
+			this.m_LineStyle = new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+			this.m_ScatterStyle = new ScatterPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 			// this.m_PlotAssociation = pa;
 			this.m_LineSymbolGap = true;
 		}
@@ -223,25 +224,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public LinePlotStyle XYPlotLineStyle
 		{
 			get { return m_LineStyle; }
-
 		}
 
 		public XYPlotScatterStyles.ShapeAndStyle XYPlotScatterStyle
 		{
 			get { return new XYPlotScatterStyles.ShapeAndStyle(m_ScatterStyle.Shape, m_ScatterStyle.Style); }
-
 		}
 
 		public ScatterPlotStyle ScatterStyle
 		{
 			get { return m_ScatterStyle; }
-
 		}
 
 		public LabelPlotStyle XYPlotLabelStyle
 		{
 			get { return m_LabelStyle; }
-
 		}
 
 		public float SymbolSize
@@ -252,13 +249,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
 		public bool LineSymbolGap
 		{
 			get { return m_LineSymbolGap; }
-
 		}
-
 	} // end of class XYLineScatterPlotStyle
 
 #endif

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,25 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Text;
 using System.Collections;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	public class G2DPlotStyleCollectionTemplates
 	{
-
 		#region Inner Classes
 
-		public delegate G2DPlotStyleCollection CreateCollectionProcedure();
+		public delegate G2DPlotStyleCollection CreateCollectionProcedure(Altaxo.Main.Properties.IReadOnlyPropertyBag context);
 
-		class TypeArray
+		private class TypeArray
 		{
-			System.Type[] _types;
+			private System.Type[] _types;
+
 			public TypeArray(System.Type[] types)
 			{
 				_types = types;
@@ -48,6 +50,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					result ^= _types[i].GetHashCode();
 				return result;
 			}
+
 			public override bool Equals(object obj)
 			{
 				if (!(obj is TypeArray))
@@ -61,11 +64,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				return true;
 			}
 		}
-		#endregion
 
-		static Hashtable _NamesByTypeArray;
-		static Hashtable _CreationProcByName;
-		static ArrayList _NamesInOrder;
+		#endregion Inner Classes
+
+		private static Hashtable _NamesByTypeArray;
+		private static Hashtable _CreationProcByName;
+		private static ArrayList _NamesInOrder;
+
 		static G2DPlotStyleCollectionTemplates()
 		{
 			_NamesByTypeArray = new Hashtable();
@@ -84,7 +89,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return (string)_NamesByTypeArray[GetTypeArray(coll)];
 		}
 
-		static TypeArray GetTypeArray(G2DPlotStyleCollection coll)
+		private static TypeArray GetTypeArray(G2DPlotStyleCollection coll)
 		{
 			System.Type[] types = new Type[coll.Count];
 			for (int i = 0; i < types.Length; i++)
@@ -123,18 +128,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return result < 0 ? 0 : result + 1;
 		}
 
-		public static G2DPlotStyleCollection GetTemplate(string name)
+		public static G2DPlotStyleCollection GetTemplate(string name, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			CreateCollectionProcedure proc = (CreateCollectionProcedure)_CreationProcByName[name];
 			if (null != proc)
-				return proc();
+				return proc(context);
 			else
 				return null;
 		}
 
-		public static G2DPlotStyleCollection GetTemplate(int idx)
+		public static G2DPlotStyleCollection GetTemplate(int idx, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			return GetTemplate((string)_NamesInOrder[idx]);
+			return GetTemplate((string)_NamesInOrder[idx], context);
 		}
 
 		public static void Add(string name, CreateCollectionProcedure procedure)
@@ -142,7 +147,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (_CreationProcByName.ContainsKey(name))
 				throw new Exception(string.Format("Template {0} is already present in the template collection", name));
 
-			G2DPlotStyleCollection coll = procedure();
+			G2DPlotStyleCollection coll = procedure(null);
 			if (coll == null || coll.Count == 0)
 				throw new Exception(string.Format("Procedure for template {0} creates no or an empty collection.", name));
 
@@ -151,40 +156,41 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_NamesByTypeArray.Add(GetTypeArray(coll), name);
 		}
 
-
-		static G2DPlotStyleCollection CreateLineStyle()
+		private static G2DPlotStyleCollection CreateLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-			coll.Add(new LinePlotStyle());
-			return coll;
-		}
-		static G2DPlotStyleCollection CreateScatterStyle()
-		{
-			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-			coll.Add(new ScatterPlotStyle());
-			return coll;
-		}
-		static G2DPlotStyleCollection CreateScatterAndLineStyle()
-		{
-			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-			coll.Add(new ScatterPlotStyle());
-			coll.Add(new LinePlotStyle());
+			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+			coll.Add(new LinePlotStyle(context));
 			return coll;
 		}
 
-		static G2DPlotStyleCollection CreateLabelAndScatterAndLineStyle()
+		private static G2DPlotStyleCollection CreateScatterStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-			coll.Add(new LabelPlotStyle());
-			coll.Add(new ScatterPlotStyle());
-			coll.Add(new LinePlotStyle());
+			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+			coll.Add(new ScatterPlotStyle(context));
 			return coll;
 		}
 
-		static G2DPlotStyleCollection CreateLabelStyle()
+		private static G2DPlotStyleCollection CreateScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-			coll.Add(new LabelPlotStyle());
+			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+			coll.Add(new ScatterPlotStyle(context));
+			coll.Add(new LinePlotStyle(context));
+			return coll;
+		}
+
+		private static G2DPlotStyleCollection CreateLabelAndScatterAndLineStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+			coll.Add(new LabelPlotStyle(context));
+			coll.Add(new ScatterPlotStyle(context));
+			coll.Add(new LinePlotStyle(context));
+			return coll;
+		}
+
+		private static G2DPlotStyleCollection CreateLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, context);
+			coll.Add(new LabelPlotStyle(context));
 			return coll;
 		}
 	}

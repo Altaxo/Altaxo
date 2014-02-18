@@ -615,7 +615,7 @@ namespace Altaxo.Graph.Commands
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			var xylayer = ctrl.Doc.RootLayer.ElementAt(ctrl.CurrentLayerNumber) as XYPlotLayer;
 			if (null != xylayer)
-				xylayer.PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[] { 0, 0, 1 })), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line)));
+				xylayer.PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[] { 0, 0, 1 })), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext())));
 		}
 	}
 
@@ -699,10 +699,10 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			HostLayer l;
-			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
+			HostLayer activeLayer;
+			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out activeLayer);
 
-			if (!(l is XYPlotLayer))
+			if (!(activeLayer is XYPlotLayer))
 				return;
 
 			FunctionEvaluationScript script = null; //
@@ -716,8 +716,8 @@ namespace Altaxo.Graph.Commands
 				ctrl.EnsureValidityOfCurrentLayerNumber();
 
 				script = (FunctionEvaluationScript)args[0];
-				XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
-				((XYPlotLayer)l).PlotItems.Add(functItem);
+				XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, activeLayer.GetPropertyContext()));
+				((XYPlotLayer)activeLayer).PlotItems.Add(functItem);
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,37 +19,33 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
-using Altaxo.Serialization;
-using Altaxo.Data;
-
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
-	using Graph.Plot.Groups;
 	using Graph.Plot.Data;
+	using Graph.Plot.Groups;
 	using Graph.Scales;
-
-	using Plot.Groups;
 	using Plot.Data;
-
+	using Plot.Groups;
 
 	/// <summary>
-	/// This style provides a variable symbol size dependent on the data of a user choosen column. The data of that column at the index of the data point determine the symbol size. 
+	/// This style provides a variable symbol size dependent on the data of a user choosen column. The data of that column at the index of the data point determine the symbol size.
 	/// This plot style is non-visual, i.e. it has no visual equivalent,
 	/// since it is only intended to provide the symbol size to other plot styles.
 	/// </summary>
 	public class ColumnDrivenSymbolSizePlotStyle : IG2DPlotStyle
-		
 	{
-
 		#region Members
 
 		/// <summary>
@@ -66,54 +63,58 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Converts the numerical values of the data colum into logical values.
 		/// </summary>
-		NumericalScale _scale;
+		private NumericalScale _scale;
 
 		/// <summary>
 		/// Scatter size at logical value of 0;
 		/// </summary>
-		double _symbolSizeAt0;
+		private double _symbolSizeAt0;
+
 		/// <summary>
 		/// Scatter size at logical value of 1;
 		/// </summary>
-		double _symbolSizeAt1;
+		private double _symbolSizeAt1;
+
 		/// <summary>
 		/// Scatter size if thelogical value is above 1.
 		/// </summary>
-		double _symbolSizeAbove;
+		private double _symbolSizeAbove;
+
 		/// <summary>
 		/// Scatter size of the logical value is below 0.
 		/// </summary>
-		double _symbolSizeBelow;
+		private double _symbolSizeBelow;
 
 		/// <summary>
 		/// Scatter size if no value can be calculated.
 		/// </summary>
-		double _symbolSizeInvalid;
+		private double _symbolSizeInvalid;
 
 		/// <summary>
 		/// Number of steps of the scatter size between min and max. If this value is 0, then the scatter size is provided continuously.
 		/// </summary>
-		int _numberOfSteps;
+		private int _numberOfSteps;
 
-		object _parent;
+		private object _parent;
 
 		public event EventHandler Changed;
 
-
-		#endregion
-
+		#endregion Members
 
 		/// <summary>
 		/// Creates a new instance with default values.
 		/// </summary>
-		public ColumnDrivenSymbolSizePlotStyle()
+		public ColumnDrivenSymbolSizePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			InternalSetScale(new LinearScale());
 			InternalSetDataColumnProxy(new NumericColumnProxy(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
-			_symbolSizeAt0 = 4;
-			_symbolSizeAt1 = 16;
-			_symbolSizeAbove = 20;
-			_symbolSizeBelow = 2;
+
+			var symbolSizeBase = GraphDocument.GetDefaultSymbolSize(context);
+
+			_symbolSizeAt0 = symbolSizeBase / 2;
+			_symbolSizeAt1 = symbolSizeBase * 2;
+			_symbolSizeAbove = symbolSizeBase * 2.5;
+			_symbolSizeBelow = symbolSizeBase / 4;
 			_symbolSizeInvalid = 0;
 			_numberOfSteps = 0;
 		}
@@ -159,7 +160,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#region DataColumnProxy handling
-
 
 		/// <summary>
 		/// Sets the data column proxy and creates the necessary event links.
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		/// <param name="sender">Originator.</param>
 		/// <param name="e">Event args.</param>
-		void EhDataColumnProxyChanged(object sender, EventArgs e)
+		private void EhDataColumnProxyChanged(object sender, EventArgs e)
 		{
 			InternalSetCachedDataColumn(null == _dataColumn ? null : _dataColumn.Document);
 		}
@@ -218,7 +218,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void EhDataColumnDataChanged(object sender, EventArgs e)
+		private void EhDataColumnDataChanged(object sender, EventArgs e)
 		{
 			_doesScaleNeedsDataUpdate = true;
 		}
@@ -226,9 +226,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Updates the scale if the data of the data column have changed.
 		/// </summary>
-		void InternalUpdateScaleWithNewData()
+		private void InternalUpdateScaleWithNewData()
 		{
-			// in order to set the bounds of the scale, the data column must 
+			// in order to set the bounds of the scale, the data column must
 			// - be set (not null)
 			// - have a defined count.
 
@@ -266,7 +266,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion
+		#endregion DataColumnProxy handling
 
 		#region Scale handling
 
@@ -287,7 +287,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_doesScaleNeedsDataUpdate = true;
 		}
 
-		#endregion
+		#endregion Scale handling
 
 		#region Properties
 
@@ -400,14 +400,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
 		/// <summary>
 		/// Gets the symbol size for the index idx.
 		/// </summary>
 		/// <param name="idx"></param>
 		/// <returns></returns>
-		double GetSymbolSize(int idx)
+		private double GetSymbolSize(int idx)
 		{
 			double val = double.NaN;
 			if (null != _cachedDataColumn)
@@ -418,8 +418,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				val = _cachedDataColumn[idx];
 			}
 			val = _scale.PhysicalToNormal(val);
-
-
 
 			if (val >= 0 && val <= 1)
 			{
@@ -484,7 +482,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return "ColumnDrivenSymbolSize"; }
 		}
 
-
 		protected virtual void OnChanged()
 		{
 			if (_parent is Main.IChildChangedEventSink)
@@ -506,7 +503,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			Report(_dataColumn, this,"DataColumn");
+			Report(_dataColumn, this, "DataColumn");
 		}
 	}
 }

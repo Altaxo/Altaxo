@@ -48,12 +48,12 @@ namespace Altaxo.Worksheet.Commands
 			foreach (int i in selectedColumns)
 				selColumns.Add(table[i]);
 
-			return CreatePlotItems(selColumns, templatePlotStyle);
+			return CreatePlotItems(selColumns, templatePlotStyle, table.GetPropertyContext());
 		}
 
-		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle)
+		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			return CreatePlotItems(selectedColumns, templatePlotStyle, new HashSet<DataColumn>());
+			return CreatePlotItems(selectedColumns, templatePlotStyle, new HashSet<DataColumn>(), context);
 		}
 
 		/// <summary>
@@ -65,9 +65,9 @@ namespace Altaxo.Worksheet.Commands
 		/// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
 		/// labels, yerr, and so on.</param>
 		/// <returns>List of plot items created.</returns>
-		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns)
+		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			return CreatePlotItems(selectedColumns, string.Empty, templatePlotStyle, processedColumns);
+			return CreatePlotItems(selectedColumns, string.Empty, templatePlotStyle, processedColumns, context);
 		}
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace Altaxo.Worksheet.Commands
 		/// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
 		/// labels, yerr, and so on.</param>
 		/// <returns>List of plot items created.</returns>
-		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string xColumnName, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns)
+		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string xColumnName, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			var result = new List<IGPlotItem>();
 			foreach (DataColumn ycol in selectedColumns)
@@ -118,12 +118,12 @@ namespace Altaxo.Worksheet.Commands
 					switch (table.GetColumnKind(idx))
 					{
 						case ColumnKind.Label:
-							LabelPlotStyle labelStyle = new LabelPlotStyle(col);
+							LabelPlotStyle labelStyle = new LabelPlotStyle(col, context);
 							ps.Insert(0, labelStyle);
 							break;
 
 						case ColumnKind.Err:
-							ErrorBarPlotStyle errStyle = new ErrorBarPlotStyle();
+							ErrorBarPlotStyle errStyle = new ErrorBarPlotStyle(context);
 							errStyle.PositiveErrorColumn = col as INumericColumn;
 							errStyle.NegativeErrorColumn = col as INumericColumn;
 							ps.Add(errStyle);
@@ -137,7 +137,7 @@ namespace Altaxo.Worksheet.Commands
 							}
 							else
 							{
-								unpairedPositiveError = new ErrorBarPlotStyle();
+								unpairedPositiveError = new ErrorBarPlotStyle(context);
 								unpairedPositiveError.PositiveErrorColumn = col as INumericColumn;
 								ps.Add(unpairedPositiveError);
 							}
@@ -151,7 +151,7 @@ namespace Altaxo.Worksheet.Commands
 							}
 							else
 							{
-								unpairedNegativeError = new ErrorBarPlotStyle();
+								unpairedNegativeError = new ErrorBarPlotStyle(context);
 								unpairedNegativeError.NegativeErrorColumn = col as INumericColumn;
 								ps.Add(unpairedNegativeError);
 							}
@@ -173,59 +173,44 @@ namespace Altaxo.Worksheet.Commands
 
 		#region Predefined plot style collections
 
-		public static G2DPlotStyleCollection PlotStyle_Line
+		public static G2DPlotStyleCollection PlotStyle_Line(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			get
-			{
-				G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-				result.Add(new LinePlotStyle());
-				return result;
-			}
+			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			result.Add(new LinePlotStyle(context));
+			return result;
 		}
 
-		public static G2DPlotStyleCollection PlotStyle_Symbol
+		public static G2DPlotStyleCollection PlotStyle_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			get
-			{
-				G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-				result.Add(new ScatterPlotStyle());
-				return result;
-			}
+			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			result.Add(new ScatterPlotStyle(context));
+			return result;
 		}
 
-		public static G2DPlotStyleCollection PlotStyle_Line_Symbol
+		public static G2DPlotStyleCollection PlotStyle_Line_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			get
-			{
-				G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-				result.Add(new ScatterPlotStyle());
-				result.Add(new LinePlotStyle());
-				return result;
-			}
+			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			result.Add(new ScatterPlotStyle(context));
+			result.Add(new LinePlotStyle(context));
+			return result;
 		}
 
-		public static G2DPlotStyleCollection PlotStyle_LineArea
+		public static G2DPlotStyleCollection PlotStyle_LineArea(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			get
-			{
-				G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-				LinePlotStyle ps1 = new LinePlotStyle();
-				ps1.FillArea = true;
-				ps1.FillDirection = Graph.CSPlaneID.Bottom;
-				result.Add(ps1);
-				return result;
-			}
+			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			LinePlotStyle ps1 = new LinePlotStyle(context);
+			ps1.FillArea = true;
+			ps1.FillDirection = Graph.CSPlaneID.Bottom;
+			result.Add(ps1);
+			return result;
 		}
 
-		public static G2DPlotStyleCollection PlotStyle_Bar
+		public static G2DPlotStyleCollection PlotStyle_Bar(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			get
-			{
-				G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-				BarGraphPlotStyle ps1 = new BarGraphPlotStyle();
-				result.Add(ps1);
-				return result;
-			}
+			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			BarGraphPlotStyle ps1 = new BarGraphPlotStyle();
+			result.Add(ps1);
+			return result;
 		}
 
 		#endregion Predefined plot style collections
@@ -476,12 +461,14 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
 		public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string preferredGraphName)
 		{
+			var context = table.GetPropertyContext();
+
 			if (bLine && bScatter)
-				Plot(table, selectedColumns, PlotStyle_Line_Symbol, GroupStyle_Color_Line_Symbol, preferredGraphName);
+				Plot(table, selectedColumns, PlotStyle_Line_Symbol(context), GroupStyle_Color_Line_Symbol, preferredGraphName);
 			else if (bLine)
-				Plot(table, selectedColumns, PlotStyle_Line, GroupStyle_Color_Line, preferredGraphName);
+				Plot(table, selectedColumns, PlotStyle_Line(context), GroupStyle_Color_Line, preferredGraphName);
 			else
-				Plot(table, selectedColumns, PlotStyle_Symbol, GroupStyle_Color_Symbol, preferredGraphName);
+				Plot(table, selectedColumns, PlotStyle_Symbol(context), GroupStyle_Color_Symbol, preferredGraphName);
 		}
 
 		/// <summary>
@@ -490,7 +477,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineArea(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_LineArea, GroupStyle_Color_Line);
+			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_LineArea(dg.DataTable.GetPropertyContext()), GroupStyle_Color_Line);
 		}
 
 		/// <summary>
@@ -499,7 +486,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Stack_Color_Line);
+			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_Stack_Color_Line);
 		}
 
 		/// <summary>
@@ -508,7 +495,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineRelativeStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_RelativeStack_Color_Line);
+			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_RelativeStack_Color_Line);
 		}
 
 		/// <summary>
@@ -517,7 +504,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineWaterfall(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Waterfall_Color_Line);
+			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_Waterfall_Color_Line);
 		}
 
 		/// <summary>
@@ -532,7 +519,7 @@ namespace Altaxo.Worksheet.Commands
 			layer.CreateDefaultAxes(context);
 			graph.RootLayer.Layers.Add(layer);
 			Current.Project.GraphDocumentCollection.Add(graph);
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line, GroupStyle_Color_Line);
+			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_Color_Line);
 		}
 
 		/// <summary>
@@ -541,7 +528,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotBarChartNormal(IWorksheetController dg)
 		{
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
+			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Bar);
 			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
 			((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
 		}
@@ -552,7 +539,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotBarChartStack(IWorksheetController dg)
 		{
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
+			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Stack_Bar);
 			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
 			((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
 		}
@@ -563,7 +550,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotBarChartRelativeStack(IWorksheetController dg)
 		{
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
+			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_RelativeStack_Bar);
 			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
 			((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
 		}
@@ -574,7 +561,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotColumnChartNormal(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
+			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Bar);
 		}
 
 		/// <summary>
@@ -583,7 +570,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotColumnChartStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
+			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Stack_Bar);
 		}
 
 		/// <summary>
@@ -592,7 +579,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotColumnChartRelativeStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
+			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_RelativeStack_Bar);
 		}
 
 		/// <summary>

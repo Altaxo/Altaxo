@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,263 +19,249 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
+
 using Altaxo.Calc;
-using Altaxo.Calc.Regression;
 using Altaxo.Calc.Probability;
+using Altaxo.Calc.Regression;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
-
+using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph.Procedures
 {
-  /// <summary>
-  /// This class handels the procedure of polynomial fitting to the active curve.
-  /// </summary>
-  public class PolynomialFitting
-  {
-    /// <summary>
-    /// Retrieves the data points of the current active plot.
-    /// </summary>
-    /// <param name="ctrl">The graph controller which controls the graph from which the points are to retrieve.</param>
-    /// <param name="xarr">The array of the data point's x values.</param>
-    /// <param name="yarr">The array of the data point's y values.</param>
-    /// <returns>Null if all is ok, or error message if not.</returns>
+	/// <summary>
+	/// This class handels the procedure of polynomial fitting to the active curve.
+	/// </summary>
+	public class PolynomialFitting
+	{
+		/// <summary>
+		/// Retrieves the data points of the current active plot.
+		/// </summary>
+		/// <param name="ctrl">The graph controller which controls the graph from which the points are to retrieve.</param>
+		/// <param name="xarr">The array of the data point's x values.</param>
+		/// <param name="yarr">The array of the data point's y values.</param>
+		/// <returns>Null if all is ok, or error message if not.</returns>
 		public static string GetActivePlotPoints(Altaxo.Gui.Graph.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
-    {
+		{
 			List<double> xlist = new List<double>();
 			List<double> ylist = new List<double>();
 
 			xarr = yarr = null;
 
-      ctrl.EnsureValidityOfCurrentLayerNumber();
-      ctrl.EnsureValidityOfCurrentPlotNumber();
+			ctrl.EnsureValidityOfCurrentLayerNumber();
+			ctrl.EnsureValidityOfCurrentPlotNumber();
 			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
 			if (null == xylayer || ctrl.CurrentPlotNumber < 0)
 				return "No active plot available";
 
-      IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
+			IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
-      XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
+			XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 
+			if (xyPlotItem == null)
+				return "No active plot!";
 
+			XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
+			if (data == null)
+				return "Active plot item has no data";
 
-      if(xyPlotItem==null)
-        return "No active plot!";
-      
-      XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
-      if(data==null) 
-        return "Active plot item has no data";
+			if (!(data.XColumn is Altaxo.Data.INumericColumn) || !(data.YColumn is Altaxo.Data.INumericColumn))
+				return "X-Y values of plot data are not both numeric";
 
-      if(!(data.XColumn is Altaxo.Data.INumericColumn) || !(data.YColumn is Altaxo.Data.INumericColumn))
-        return "X-Y values of plot data are not both numeric";
+			Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)data.XColumn;
+			Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)data.YColumn;
 
-      Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)data.XColumn;
-      Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)data.YColumn;
+			int end = data.PlotRangeEnd;
 
-      int end = data.PlotRangeEnd;
+			for (int i = data.PlotRangeStart; i < end; i++)
+			{
+				double x = xcol[i];
+				double y = ycol[i];
 
-     
-      for(int i=data.PlotRangeStart;i<end;i++)
-      {
-        double x = xcol[i];
-        double y = ycol[i];
-
-        if(double.IsNaN(x) || double.IsNaN(y))
-          continue;
+				if (double.IsNaN(x) || double.IsNaN(y))
+					continue;
 
 				xlist.Add(x);
 				ylist.Add(y);
-      }
+			}
 
 			xarr = xlist.ToArray();
 			yarr = ylist.ToArray();
-      return null;
-    }
+			return null;
+		}
 
-    /// <summary>
-    /// Get the names of the x and y column of the active plot.
-    /// </summary>
-    /// <param name="ctrl">The current active graph controller.</param>
-    /// <returns>An array of two strings. The first string is the name of the x-column, the second
-    /// the name of the y-column.</returns>
+		/// <summary>
+		/// Get the names of the x and y column of the active plot.
+		/// </summary>
+		/// <param name="ctrl">The current active graph controller.</param>
+		/// <returns>An array of two strings. The first string is the name of the x-column, the second
+		/// the name of the y-column.</returns>
 		public static string[] GetActivePlotName(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
-    {
-      string[] result = new string[2]{String.Empty, String.Empty};
+		{
+			string[] result = new string[2] { String.Empty, String.Empty };
 
 			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
 			if (null == xylayer || ctrl.CurrentPlotNumber < 0)
 				return result;
 
-      IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
+			IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
-      XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
+			XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 
-      if(xyPlotItem==null)
-        return result;
-      
-      XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
-      if(data==null) 
-        return result;
+			if (xyPlotItem == null)
+				return result;
 
-      result[0] = data.XColumn.FullName;
-      result[1] = data.YColumn.FullName;
+			XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
+			if (data == null)
+				return result;
 
-      return result;
-    }
+			result[0] = data.XColumn.FullName;
+			result[1] = data.YColumn.FullName;
 
+			return result;
+		}
 
-    /// <summary>
-    /// Fits data provided as xcolumn and ycolumn with a polynomial base.
-    /// </summary>
-    /// <param name="order">The order of the fit (1:linear, 2:quadratic, etc.)</param>
-    /// <param name="xcolumn">The column of x-values.</param>
-    /// <param name="ycolumn">The column of y-values.</param>
-    /// <returns>The fit.</returns>
-    public static LinearFitBySvd Fit(int order, Altaxo.Data.DataColumn xcolumn, Altaxo.Data.DataColumn ycolumn)
-    {
-      if(!(xcolumn is Altaxo.Data.INumericColumn))
-        throw new ArgumentException("The x-column must be numeric","xcolumn");
-      if(!(ycolumn is Altaxo.Data.INumericColumn))
-        throw new ArgumentException("The y-column must be numeric","ycolumn");
+		/// <summary>
+		/// Fits data provided as xcolumn and ycolumn with a polynomial base.
+		/// </summary>
+		/// <param name="order">The order of the fit (1:linear, 2:quadratic, etc.)</param>
+		/// <param name="xcolumn">The column of x-values.</param>
+		/// <param name="ycolumn">The column of y-values.</param>
+		/// <returns>The fit.</returns>
+		public static LinearFitBySvd Fit(int order, Altaxo.Data.DataColumn xcolumn, Altaxo.Data.DataColumn ycolumn)
+		{
+			if (!(xcolumn is Altaxo.Data.INumericColumn))
+				throw new ArgumentException("The x-column must be numeric", "xcolumn");
+			if (!(ycolumn is Altaxo.Data.INumericColumn))
+				throw new ArgumentException("The y-column must be numeric", "ycolumn");
 
-      int firstIndex = 0;
-      int count  = Math.Min(xcolumn.Count,ycolumn.Count);
+			int firstIndex = 0;
+			int count = Math.Min(xcolumn.Count, ycolumn.Count);
 
-      double[] xarr = new double[count];
-      double[] yarr = new double[count];
-      double[] earr = new double[count];
+			double[] xarr = new double[count];
+			double[] yarr = new double[count];
+			double[] earr = new double[count];
 
-      Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)xcolumn;
-      Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)ycolumn;
+			Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)xcolumn;
+			Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)ycolumn;
 
-      int numberOfDataPoints=0;
-      int endIndex = firstIndex+count;
-      for(int i=firstIndex;i<endIndex;i++)
-      {
-        double x = xcol[i];
-        double y = ycol[i];
-        if(double.IsNaN(x) || double.IsNaN(y))
-          continue;
+			int numberOfDataPoints = 0;
+			int endIndex = firstIndex + count;
+			for (int i = firstIndex; i < endIndex; i++)
+			{
+				double x = xcol[i];
+				double y = ycol[i];
+				if (double.IsNaN(x) || double.IsNaN(y))
+					continue;
 
-        xarr[numberOfDataPoints] = x;
-        yarr[numberOfDataPoints] = y;
-        earr[numberOfDataPoints] = 1;
-        numberOfDataPoints++;
-      }
+				xarr[numberOfDataPoints] = x;
+				yarr[numberOfDataPoints] = y;
+				earr[numberOfDataPoints] = 1;
+				numberOfDataPoints++;
+			}
 
-      LinearFitBySvd fit = 
-        new LinearFitBySvd(
-        xarr,yarr,earr,numberOfDataPoints, order+1, new FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+			LinearFitBySvd fit =
+				new LinearFitBySvd(
+				xarr, yarr, earr, numberOfDataPoints, order + 1, new FunctionBaseEvaluator(EvaluatePolynomialBase), 1E-5);
 
-      return fit;
-
-    }
+			return fit;
+		}
 
 		public static string Fit(Altaxo.Gui.Graph.Viewing.IGraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
-    {
-      string error;
+		{
+			string error;
 
 			double[] xarr, yarr;
-      error = GetActivePlotPoints(ctrl, out xarr, out yarr );
+			error = GetActivePlotPoints(ctrl, out xarr, out yarr);
 			int numberOfDataPoints = xarr.Length;
 
-      if(null!=error)
-        return error;
+			if (null != error)
+				return error;
 
-      string[] plotNames = GetActivePlotName(ctrl);
+			string[] plotNames = GetActivePlotName(ctrl);
 
+			int numberOfParameter = order + 1;
+			double[] parameter = new double[numberOfParameter];
+			LinearFitBySvd fit =
+				new LinearFitBySvd(
+				xarr, yarr, null, numberOfDataPoints, order + 1, new FunctionBaseEvaluator(EvaluatePolynomialBase), 1E-5);
 
-     
+			// Output of results
 
-      int numberOfParameter = order+1;
-      double[] parameter= new double[numberOfParameter];
-      LinearFitBySvd fit = 
-        new LinearFitBySvd(
-        xarr,yarr,null,numberOfDataPoints, order+1, new FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+			Current.Console.WriteLine("");
+			Current.Console.WriteLine("---- " + DateTime.Now.ToString() + " -----------------------");
+			Current.Console.WriteLine("Polynomial regression of order {0} of {1} over {2}", order, plotNames[1], plotNames[0]);
 
-      // Output of results
+			Current.Console.WriteLine(
+				"Name           Value               Error               F-Value             Prob>F");
 
-      Current.Console.WriteLine("");
-      Current.Console.WriteLine("---- " + DateTime.Now.ToString() + " -----------------------");
-      Current.Console.WriteLine("Polynomial regression of order {0} of {1} over {2}",order,plotNames[1],plotNames[0]);
+			for (int i = 0; i < fit.Parameter.Length; i++)
+				Current.Console.WriteLine("A{0,-3} {1,20} {2,20} {3,20} {4,20}",
+					i,
+					fit.Parameter[i],
+					fit.StandardErrorOfParameter(i),
+					fit.TofParameter(i),
+					1 - FDistribution.CDF(fit.TofParameter(i), numberOfParameter, numberOfDataPoints - 1)
+					);
 
-      Current.Console.WriteLine(
-        "Name           Value               Error               F-Value             Prob>F");
+			Current.Console.WriteLine("R²: {0}, Adjusted R²: {1}",
+				fit.RSquared,
+				fit.AdjustedRSquared);
 
-      for(int i=0;i<fit.Parameter.Length;i++)
-        Current.Console.WriteLine("A{0,-3} {1,20} {2,20} {3,20} {4,20}",
-          i,
-          fit.Parameter[i],
-          fit.StandardErrorOfParameter(i),
-          fit.TofParameter(i),
-          1-FDistribution.CDF(fit.TofParameter(i),numberOfParameter,numberOfDataPoints-1)
-          );
+			Current.Console.WriteLine("------------------------------------------------------------");
+			Current.Console.WriteLine("Source of  Degrees of");
+			Current.Console.WriteLine("variation  freedom          Sum of Squares          Mean Square          F0                   P value");
 
-      Current.Console.WriteLine("R²: {0}, Adjusted R²: {1}",
-        fit.RSquared,
-        fit.AdjustedRSquared);
+			double regressionmeansquare = fit.RegressionCorrectedSumOfSquares / numberOfParameter;
+			double residualmeansquare = fit.ResidualSumOfSquares / (numberOfDataPoints - numberOfParameter - 1);
 
-      Current.Console.WriteLine("------------------------------------------------------------");
-      Current.Console.WriteLine("Source of  Degrees of");
-      Current.Console.WriteLine("variation  freedom          Sum of Squares          Mean Square          F0                   P value");
+			Current.Console.WriteLine("Regression {0,10} {1,20} {2,20} {3,20} {4,20}",
+				numberOfParameter,
+				fit.RegressionCorrectedSumOfSquares,
+				fit.RegressionCorrectedSumOfSquares / numberOfParameter,
+				regressionmeansquare / residualmeansquare,
+				1 - FDistribution.CDF(regressionmeansquare / residualmeansquare, numberOfParameter, numberOfDataPoints - 1)
+				);
 
-      double regressionmeansquare = fit.RegressionCorrectedSumOfSquares/numberOfParameter;
-      double residualmeansquare = fit.ResidualSumOfSquares/(numberOfDataPoints-numberOfParameter-1);
-     
-      Current.Console.WriteLine("Regression {0,10} {1,20} {2,20} {3,20} {4,20}",
-        numberOfParameter,
-        fit.RegressionCorrectedSumOfSquares,
-        fit.RegressionCorrectedSumOfSquares/numberOfParameter,
-        regressionmeansquare/residualmeansquare,
-        1-FDistribution.CDF(regressionmeansquare/residualmeansquare,numberOfParameter,numberOfDataPoints-1)
-        );
+			Current.Console.WriteLine("Residual   {0,10} {1,20} {2,20}",
+				numberOfDataPoints - 1 - numberOfParameter,
+				fit.ResidualSumOfSquares,
+				residualmeansquare
+				);
 
-      Current.Console.WriteLine("Residual   {0,10} {1,20} {2,20}",
-        numberOfDataPoints-1-numberOfParameter,
-        fit.ResidualSumOfSquares,
-        residualmeansquare
-        );
+			Current.Console.WriteLine("Total      {0,10} {1,20}",
+				numberOfDataPoints - 1,
+				fit.TotalCorrectedSumOfSquares
 
+				);
 
-      Current.Console.WriteLine("Total      {0,10} {1,20}",
-        numberOfDataPoints-1,
-        fit.TotalCorrectedSumOfSquares
-       
-        );
+			Current.Console.WriteLine("------------------------------------------------------------");
 
-      Current.Console.WriteLine("------------------------------------------------------------");
-
-
-      // add the fit curve to the graph
-      IScalarFunctionDD plotfunction = new PolynomialFunction(fit.Parameter);
-      XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
+			// add the fit curve to the graph
+			IScalarFunctionDD plotfunction = new PolynomialFunction(fit.Parameter);
+			XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, ctrl.Doc.GetPropertyContext()));
 
 			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
 			if (null == xylayer)
-      xylayer.PlotItems.Add(fittedCurve);
+				xylayer.PlotItems.Add(fittedCurve);
 
-      return null;
-    }
+			return null;
+		}
 
-
-
-
-    public static void EvaluatePolynomialBase(double x, double[] pbase)
-    {
-      double xbi=1;
-      for(int i=0;i<pbase.Length;i++)
-      {
-        pbase[i] = xbi;
-        xbi*=x;
-      }
-    }
-
-  }
+		public static void EvaluatePolynomialBase(double x, double[] pbase)
+		{
+			double xbi = 1;
+			for (int i = 0; i < pbase.Length; i++)
+			{
+				pbase[i] = xbi;
+				xbi *= x;
+			}
+		}
+	}
 }

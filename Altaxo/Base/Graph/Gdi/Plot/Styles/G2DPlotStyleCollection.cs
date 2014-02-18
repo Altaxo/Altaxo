@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,37 +19,37 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections;
-using System.Text;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Collections.Generic;
-
-
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
-	using Plot.Groups;
 	using Data;
 	using Graph.Plot.Groups;
+	using Plot.Groups;
 
 	public class G2DPlotStyleCollection
 		:
 		IEnumerable<IG2DPlotStyle>,
 		IG2DPlotStyle,
-		IRoutedPropertyReceiver
+		IRoutedPropertyReceiver,
+		Main.IDocumentNode
 	{
 		/// <summary>
 		/// Holds the plot styles
 		/// </summary>
-		List<IG2DPlotStyle> _innerList;
+		private List<IG2DPlotStyle> _innerList;
 
-		int _eventSuspendCount;
-		bool _changeEventPending;
+		private int _eventSuspendCount;
+		private bool _changeEventPending;
 
 		/// <summary>
 		/// The parent object.
@@ -57,10 +58,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region Serialization
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotStyleCollection", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPlotStyleCollection), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -73,11 +73,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					info.AddValue("e", s._innerList[i]);
 				info.CommitArray();
 				*/
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				int count = info.OpenArray();
 				IG2DPlotStyle[] array = new IG2DPlotStyle[count];
 				for (int i = 0; i < count; i++)
@@ -102,7 +101,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// 2006-12-06 We changed the order in which the substyles are plotted.
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPlotStyleCollection), 2)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -112,11 +111,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				for (int i = 0; i < s._innerList.Count; i++)
 					info.AddValue("e", s._innerList[i]);
 				info.CommitArray();
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				int count = info.OpenArray();
 				IG2DPlotStyle[] array = new IG2DPlotStyle[count];
 				for (int i = 0; i < count; i++)
@@ -137,8 +135,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
@@ -148,7 +145,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_innerList = new List<IG2DPlotStyle>();
 		}
 
-
 		public G2DPlotStyleCollection(IG2DPlotStyle[] styles)
 		{
 			_innerList = new List<IG2DPlotStyle>();
@@ -157,28 +153,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					this.Add(styles[i], false);
 		}
 
-		public G2DPlotStyleCollection(LineScatterPlotStyleKind kind)
+		public G2DPlotStyleCollection(LineScatterPlotStyleKind kind, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			_innerList = new List<IG2DPlotStyle>();
 
 			switch (kind)
 			{
 				case LineScatterPlotStyleKind.Line:
-					Add(new LinePlotStyle());
+					Add(new LinePlotStyle(context));
 					break;
 
 				case LineScatterPlotStyleKind.Scatter:
-					Add(new ScatterPlotStyle());
+					Add(new ScatterPlotStyle(context));
 					break;
 
 				case LineScatterPlotStyleKind.LineAndScatter:
-					Add(new ScatterPlotStyle());
-					Add(new LinePlotStyle());
+					Add(new ScatterPlotStyle(context));
+					Add(new LinePlotStyle(context));
 					break;
-
 			}
 		}
-
 
 		public G2DPlotStyleCollection(G2DPlotStyleCollection from)
 		{
@@ -277,7 +271,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._innerList.Add(toadd);
 				toadd.ParentObject = this;
 
-
 				if (withReorganizationAndEvents)
 				{
 					OnChanged();
@@ -309,10 +302,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					toadd[i].ParentObject = this;
 				}
 
-
-
 				OnChanged();
-
 			}
 		}
 
@@ -323,11 +313,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._innerList.Insert(whichposition, toinsert);
 				toinsert.ParentObject = this;
 
-
-
-
 				OnChanged();
-
 			}
 		}
 
@@ -355,26 +341,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_innerList[pos1] = _innerList[pos2];
 			_innerList[pos2] = item1;
 
-
 			OnChanged();
-
 		}
-
-
 
 		public void BeginUpdate()
 		{
 			Suspend();
 		}
-		void Suspend()
+
+		private void Suspend()
 		{
 			++_eventSuspendCount;
 		}
+
 		public void EndUpdate()
 		{
 			Resume();
 		}
-		void Resume()
+
+		private void Resume()
 		{
 			--_eventSuspendCount;
 			if (0 == _eventSuspendCount)
@@ -388,11 +373,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			return new G2DPlotStyleCollection(this);
 		}
+
 		public G2DPlotStyleCollection Clone()
 		{
 			return new G2DPlotStyleCollection(this);
 		}
-
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
@@ -401,7 +386,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this[i].Paint(g, layer, pdata, prevItemData, nextItemData);
 			}
 		}
-
 
 		public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
 		{
@@ -456,8 +440,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this[i].CollectLocalGroupStyles(externGroup, localGroup);
 			newSubStyle.CollectLocalGroupStyles(externGroup, localGroup);
 
-
-
 			// prepare
 			for (int i = 0; i < Count; i++)
 				this[i].PrepareGroupStyles(externGroup, localGroup, layer, pdata);
@@ -468,8 +450,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this[i].ApplyGroupStyles(externGroup, localGroup);
 			newSubStyle.ApplyGroupStyles(externGroup, localGroup);
 		}
-
-
 
 		#region IChangedEventSource Members
 
@@ -491,7 +471,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				Changed(this, EventArgs.Empty);
 		}
 
-		#endregion
+		#endregion IChangedEventSource Members
 
 		#region IChildChangedEventSink Members
 
@@ -500,9 +480,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			OnChanged();
 		}
 
-		#endregion
-
-
+		#endregion IChildChangedEventSink Members
 
 		#region IEnumerable<IPlotStyle> Members
 
@@ -511,7 +489,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return _innerList.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<IPlotStyle> Members
 
 		#region IEnumerable Members
 
@@ -520,7 +498,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return _innerList.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 
 		#region IPlotStyle Members
 
@@ -529,7 +507,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			foreach (IG2DPlotStyle ps in this)
 				ps.CollectExternalGroupStyles(externalGroups);
 		}
-
 
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
@@ -549,16 +526,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				ps.ApplyGroupStyles(externalGroups, localGroups);
 		}
 
-		#endregion
+		#endregion IPlotStyle Members
 
 		#region IDocumentNode Members
-
 
 		public string Name
 		{
 			get { return "PlotStyleCollection"; }
 		}
-
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
@@ -571,7 +546,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s.VisitDocumentReferences(options);
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 
 		#region IRoutedPropertyReceiver Members
 
@@ -583,6 +558,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					(o as IRoutedPropertyReceiver).SetRoutedProperty(property);
 			}
 		}
+
 		public void GetRoutedProperty(IRoutedGetterProperty property)
 		{
 			foreach (object o in _innerList)
@@ -591,6 +567,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					(o as IRoutedPropertyReceiver).GetRoutedProperty(property);
 			}
 		}
-		#endregion
+
+		#endregion IRoutedPropertyReceiver Members
+
+		object IDocumentNode.ParentObject
+		{
+			get { return _parent; }
+		}
+
+		string IDocumentNode.Name
+		{
+			get { return this.GetType().Name; }
+		}
 	}
 }

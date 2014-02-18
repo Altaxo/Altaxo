@@ -156,7 +156,8 @@ namespace Altaxo
 			var owner = node as IPropertyBagOwner;
 			if (null == owner)
 				owner = Altaxo.Main.DocumentPath.GetRootNodeImplementing<IPropertyBagOwner>(node);
-			return null != owner ? new PropertyHierarchy(GetPropertyBags(owner)) : null;
+
+			return new PropertyHierarchy(GetPropertyBags(owner));
 		}
 
 		/// <summary>

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,51 +19,68 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
+using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
-using Altaxo.Scripting;
-using Altaxo.Gui.Scripting;
-using Altaxo.Calc.Regression.Nonlinear;
-
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Scripting;
+using Altaxo.Scripting;
+using System;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
 	#region interfaces
+
 	public interface INonlinearFitView
 	{
 		INonlinearFitViewEventSink Controller { get; set; }
+
 		void SetParameterControl(object control);
+
 		void SetSelectFunctionControl(object control);
+
 		void SetFitEnsembleControl(object control);
+
 		void SetChiSquare(double chiSquare);
+
 		void SwitchToFitEnsemblePage();
+
 		object GetGenerationIntervalControl();
 	}
 
 	public interface INonlinearFitViewEventSink
 	{
 		void EhView_DoFit();
+
 		void EhView_DoSimplex();
+
 		void EhView_EvaluateChiSqr();
+
 		void EhView_SelectFitFunction();
+
 		void EhView_NewFitFunction();
+
 		void EhView_CopyParameterV();
+
 		void EhView_CopyParameterVAsCDef();
+
 		void EhView_CopyParameterNV();
+
 		void EhView_CopyParameterNVV();
+
 		void EhView_PasteParameterV();
+
 		void EhView_DoSimulation(bool useInterval, bool generateUnusedVarsAlso);
 	}
 
-	#endregion
+	#endregion interfaces
+
 	/// <summary>
 	/// Summary description for NonlinearFitController.
 	/// </summary>
@@ -70,16 +88,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	[ExpectedTypeOfView(typeof(INonlinearFitView))]
 	public class NonlinearFitController : INonlinearFitViewEventSink, IMVCAController
 	{
-		NonlinearFitDocument _doc;
-		INonlinearFitView _view;
+		private NonlinearFitDocument _doc;
+		private INonlinearFitView _view;
 
-		IMVCANController _parameterController;
-		FitFunctionSelectionController _funcselController;
-		IFitEnsembleController _fitEnsembleController;
-		Common.EquallySpacedInterval _generationInterval;
-		Common.EquallySpacedIntervalController _generationIntervalController;
+		private IMVCANController _parameterController;
+		private FitFunctionSelectionController _funcselController;
+		private IFitEnsembleController _fitEnsembleController;
+		private Common.EquallySpacedInterval _generationInterval;
+		private Common.EquallySpacedIntervalController _generationIntervalController;
 
-		double _chiSquare;
+		private double _chiSquare;
 
 		public NonlinearFitController(NonlinearFitDocument doc)
 		{
@@ -112,7 +130,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			_parameterController.InitializeDocument(_doc.CurrentParameters);
 		}
 
-		#region  INonlinearFitViewEventSink
+		#region INonlinearFitViewEventSink
 
 		public void EhView_DoSimplex()
 		{
@@ -138,7 +156,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
 			}
 		}
-
 
 		public void EhView_DoFit()
 		{
@@ -194,10 +211,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
+		private enum SelectionChoice { SelectAsOnly, SelectAsAdditional };
 
-		enum SelectionChoice { SelectAsOnly, SelectAsAdditional };
-		SelectionChoice _lastSelectionChoice = SelectionChoice.SelectAsOnly;
-		void Select(IFitFunction func)
+		private SelectionChoice _lastSelectionChoice = SelectionChoice.SelectAsOnly;
+
+		private void Select(IFitFunction func)
 		{
 			bool changed = false;
 			if (_doc.FitEnsemble.Count == 0) // Fitting is fresh, we can add the function silently
@@ -216,7 +234,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 			else // Count>0, and there is already a fit function, we
 			{ // have to ask the user whether he wants to discard the old functions or keep them
-
 				System.Enum selchoice = _lastSelectionChoice;
 				if (Current.Gui.ShowDialog(ref selchoice, "As only or as additional?"))
 				{
@@ -247,21 +264,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				// _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
 
 				this._fitEnsembleController.Refresh();
-
 			}
 		}
 
-
 		public void EhView_SelectFitFunction()
 		{
-
-
 			if (_funcselController.Apply())
 			{
 				Select((IFitFunction)_funcselController.ModelObject);
 				_view.SwitchToFitEnsemblePage();
 			}
-
 		}
 
 		public void EhView_NewFitFunction()
@@ -280,11 +292,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				Select(script);
 				_funcselController.Refresh();
 				_view.SwitchToFitEnsemblePage();
-
 			}
 		}
 
-		System.Collections.ArrayList _functionPlotItems = new System.Collections.ArrayList();
+		private System.Collections.ArrayList _functionPlotItems = new System.Collections.ArrayList();
+
 		public void OnAfterFittingStep()
 		{
 			_parameterController.InitializeDocument(_doc.CurrentParameters);
@@ -317,13 +329,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 							{
 								FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction, k, _doc.GetParametersForFitElement(i));
 								XYFunctionPlotData plotdata = new XYFunctionPlotData(wrapper);
-								XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
+								XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext()));
 								xylayer.PlotItems.Add(plotItem);
 								_functionPlotItems.Add(plotItem);
 							}
 						}
 					}
-
 
 					// if there are more elements in _functionPlotItems, remove them from the graph
 					for (int i = _functionPlotItems.Count - 1; i >= funcNumber; --i)
@@ -332,7 +343,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 						{
 							xylayer.PlotItems.Remove((IGPlotItem)_functionPlotItems[i]);
 							_functionPlotItems.RemoveAt(i);
-
 						}
 					}
 				}
@@ -357,8 +367,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			{
 				numberOfData = fitAdapter.NumberOfData;
 			}
-
-
 
 			// calculate the resulting values
 			double[] resultingValues = new double[numberOfData];
@@ -420,7 +428,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-
 		public void OnSimulationWithInterval(bool calculateUnusedDependentVariablesAlso, Common.EquallySpacedInterval interval)
 		{
 			// we investigate for every fit element the corresponding table, and add columns to that table
@@ -434,7 +441,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				Altaxo.Data.DataTable parentTable = fitEle.GetParentDataTable();
 				if (parentTable == null)
 					continue;
-
 
 				double[] X = new double[fitEle.NumberOfIndependentVariables];
 				double[] Y = new double[fitEle.NumberOfDependentVariables];
@@ -464,7 +470,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				int newGroup = parentTable.DataColumns.GetUnusedColumnGroupNumber();
 
-
 				for (int k = 0; k < fitEle.NumberOfIndependentVariables; k++)
 					parentTable.DataColumns.Add(xCols[k], fitEle.FitFunction.DependentVariableName(k) + ".Sim", ColumnKind.X, newGroup);
 
@@ -483,7 +488,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				}
 			}
 		}
-
 
 		public void EhView_PasteParameterV()
 		{
@@ -582,6 +586,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
 			}
 		}
+
 		public void EhView_CopyParameterNVV()
 		{
 			if (true == this._parameterController.Apply())
@@ -615,7 +620,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		#endregion
+		#endregion INonlinearFitViewEventSink
 
 		#region IMVCController Members
 
@@ -623,7 +628,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			get
 			{
-
 				return _view;
 			}
 			set
@@ -651,7 +655,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		#endregion
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -660,8 +664,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			return true;
 		}
 
-		#endregion
-
-
+		#endregion IApplyController Members
 	}
 }

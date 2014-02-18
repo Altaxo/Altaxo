@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
+#endregion Copyright
 
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-	using Altaxo.Main;
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi.Plot.Data;
 	using Altaxo.Graph.Gdi.Plot.Groups;
+	using Altaxo.Main;
 
 	public class ErrorBarPlotStyle : IG2DPlotStyle
 	{
@@ -47,36 +48,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected bool _independentColor;
 
 		/// <summary>Pen used to draw the error bar.</summary>
-		PenX _strokePen;
+		private PenX _strokePen;
 
 		/// <summary>
 		/// True when to plot horizontal error bars.
 		/// </summary>
-		bool _isHorizontalStyle;
+		private bool _isHorizontalStyle;
 
 		/// <summary>
 		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
 		/// </summary>
-		bool _independentSymbolSize;
+		private bool _independentSymbolSize;
 
 		/// <summary>Controls the length of the end bar.</summary>
-		double _symbolSize;
+		private double _symbolSize;
 
 		/// <summary>
 		/// True when the line is not drawn in the circel of diameter SymbolSize around the symbol center.
 		/// </summary>
-		bool _symbolGap;
+		private bool _symbolGap;
 
 		/// <summary>
 		/// If true, the bars are capped by an end bar.
 		/// </summary>
-		bool _showEndBars = true;
-
+		private bool _showEndBars = true;
 
 		/// <summary>
 		/// When true, bar graph position group styles are not applied, i.e. the item remains where it is.
 		/// </summary>
-		bool _doNotShiftHorizontalPosition;
+		private bool _doNotShiftHorizontalPosition;
 
 		/// <summary>
 		/// Skip frequency.
@@ -87,26 +87,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// When we deal with bar charts, this is the logical shift between real point
 		/// and the independent value where the bar is really drawn to.
 		/// </summary>
-		double _cachedLogicalShiftOfIndependent;
+		private double _cachedLogicalShiftOfIndependent;
 
 		[NonSerialized]
-		object _parent;
+		private object _parent;
 
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
-    /// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
-    [field: NonSerialized]
-    protected Func<int, double> _cachedSymbolSizeForIndexFunction;
-    /// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
-    [field: NonSerialized]
-    protected Func<int, Color> _cachedColorForIndexFunction;
+		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
+		[field: NonSerialized]
+		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
 
-
+		/// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
+		[field: NonSerialized]
+		protected Func<int, Color> _cachedColorForIndexFunction;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarPlotStyle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle();
+				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._positiveErrorColumn = (Altaxo.Data.NumericColumnProxy)info.GetValue("PositiveError");
 				s._negativeErrorColumn = (Altaxo.Data.NumericColumnProxy)info.GetValue("NegativeError");
@@ -148,24 +148,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				return s;
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ErrorBarPlotStyle s = SDeserialize(o, info, parent);
 
 				return s;
 			}
-
 		}
 
+		#endregion Serialization
 
-
-		#endregion
-
-
-		public ErrorBarPlotStyle()
+		public ErrorBarPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			this._strokePen = new PenX(NamedColors.Black);
+			var penWidth = GraphDocument.GetDefaultPenWidth(context);
+			this._strokePen = new PenX(NamedColors.Black, penWidth);
 		}
+
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from)
 		{
 			CopyFrom(from);
@@ -323,8 +322,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
-		#endregion
+		#endregion Properties
 
 		#region IG2DPlotStyle Members
 
@@ -340,7 +338,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				Graph.Plot.Groups.ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 
 			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group only)
-
 		}
 
 		public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
@@ -351,23 +348,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SkipFrequency; });
 
-
 			// note: symbol size and barposition are only applied, but not prepared
 			// this item can not be used as provider of a symbol size
 		}
 
 		public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups)
 		{
-      _cachedColorForIndexFunction = null;
-      _cachedSymbolSizeForIndexFunction = null;
-      // color
-      if (!_independentColor)
-      {
-        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._strokePen.Color = c; });
+			_cachedColorForIndexFunction = null;
+			_cachedSymbolSizeForIndexFunction = null;
+			// color
+			if (!_independentColor)
+			{
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._strokePen.Color = c; });
 
-        // but if there is a color evaluation function, then use that function with higher priority
-        VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
-      }
+				// but if there is a color evaluation function, then use that function with higher priority
+				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency = c; });
@@ -380,8 +376,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					this._symbolSize = 0;
 				}
 
-        // but if there is an symbol size evaluation function, then use this with higher priority.
-        VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+				// but if there is an symbol size evaluation function, then use this with higher priority.
+				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
 			}
 
 			// bar position
@@ -396,11 +392,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				_cachedLogicalShiftOfIndependent = 0;
 			}
-
-
 		}
-
-
 
 		public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
@@ -412,7 +404,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected void PaintYErrorBars(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
 		{
-
 			// Plot error bars for the dependent variable (y)
 			PlotRangeList rangeList = pdata.RangeList;
 			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -426,8 +417,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			Region oldClippingRegion = g.Clip;
 			Region newClip = (Region)oldClippingRegion.Clone();
-      var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
-
+			var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
 
 			foreach (PlotRange r in rangeList)
 			{
@@ -437,11 +427,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				for (int j = lower; j < upper; j++)
 				{
-          double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-          if (null != _cachedColorForIndexFunction)
-            strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
-          
-          AltaxoVariant y = pdata.GetYPhysical(j + offset);
+					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+					if (null != _cachedColorForIndexFunction)
+						strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
+
+					AltaxoVariant y = pdata.GetYPhysical(j + offset);
 					Logical3D lm = layer.GetLogical3D(pdata, j + offset);
 					lm.RX += _cachedLogicalShiftOfIndependent;
 					if (lm.IsNaN)
@@ -490,7 +480,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						layer.CoordinateSystem.DrawIsoline(g, strokePen, lm, lh);
 					}
 
-
 					// now the end bars
 					if (_showEndBars)
 					{
@@ -502,7 +491,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
-							// Draw a line from x,y to 
+							// Draw a line from x,y to
 							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
 
@@ -514,10 +503,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
-							// Draw a line from x,y to 
+							// Draw a line from x,y to
 							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
-
 					}
 				}
 			}
@@ -525,10 +513,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			g.Clip = oldClippingRegion;
 		}
 
-
 		protected void PaintXErrorBars(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
 		{
-
 			// Plot error bars for the independent variable (x)
 			PlotRangeList rangeList = pdata.RangeList;
 			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -543,7 +529,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Region oldClippingRegion = g.Clip;
 			Region newClip = (Region)oldClippingRegion.Clone();
 
-      var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
+			var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
 
 			foreach (PlotRange r in rangeList)
 			{
@@ -553,11 +539,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				for (int j = lower; j < upper; j++)
 				{
-          double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-          if (null != _cachedColorForIndexFunction)
-            strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
-          
-          AltaxoVariant x = pdata.GetXPhysical(j + offset);
+					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+					if (null != _cachedColorForIndexFunction)
+						strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
+
+					AltaxoVariant x = pdata.GetXPhysical(j + offset);
 					Logical3D lm = layer.GetLogical3D(pdata, j + offset);
 					lm.RX += _cachedLogicalShiftOfIndependent;
 					if (lm.IsNaN)
@@ -606,7 +592,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						layer.CoordinateSystem.DrawIsoline(g, strokePen, lm, lh);
 					}
 
-
 					// now the end bars
 					if (_showEndBars)
 					{
@@ -618,7 +603,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
-							// Draw a line from x,y to 
+							// Draw a line from x,y to
 							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
 
@@ -630,18 +615,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 							outDir.Y *= (float)(symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
-							// Draw a line from x,y to 
+							// Draw a line from x,y to
 							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
 						}
-
 					}
 				}
 			}
 
 			g.Clip = oldClippingRegion;
 		}
-
-
 
 		public System.Drawing.RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
 		{
@@ -655,7 +637,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set { _parent = value; }
 		}
 
-		#endregion
+		#endregion IG2DPlotStyle Members
 
 		#region IChangedEventSource Members
 
@@ -673,7 +655,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			OnChanged();
 		}
 
-		#endregion
+		#endregion IChangedEventSource Members
 
 		#region IDocumentNode Members
 
@@ -699,6 +681,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Report(_negativeErrorColumn, this, "NegativeErrorColumn");
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 	}
 }

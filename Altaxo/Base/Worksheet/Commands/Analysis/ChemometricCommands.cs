@@ -578,11 +578,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		/// <param name="labelcol">The label column.</param>
 		public static void PlotOnlyLabel(XYPlotLayer layer, Altaxo.Data.DataColumn xcol, Altaxo.Data.DataColumn ycol, Altaxo.Data.DataColumn labelcol)
 		{
+			var context = layer.GetPropertyContext();
+
 			XYColumnPlotData pa = new XYColumnPlotData(xcol, ycol);
 
-			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-			LabelPlotStyle labelStyle = new LabelPlotStyle(labelcol);
-			labelStyle.FontSize = 10;
+			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, layer.GetPropertyContext());
+			LabelPlotStyle labelStyle = new LabelPlotStyle(labelcol, context);
 			labelStyle.BackgroundStyle = new FilledRectangle(NamedColors.LightCyan);
 			ps.Add(labelStyle);
 
@@ -961,7 +962,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
 
 			XYColumnPlotData pa = new XYColumnPlotData(xcol, ycol);
-			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
 			layer.PlotItems.Add(new XYColumnPlotItem(pa, ps));
 
 			layer.DefaultXAxisTitleString = "Number of factors";
@@ -990,7 +991,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
 
 			XYColumnPlotData pa = new XYColumnPlotData(xcol, ycol);
-			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
 			layer.PlotItems.Add(new XYColumnPlotItem(pa, ps));
 
 			layer.DefaultXAxisTitleString = "Number of factors";

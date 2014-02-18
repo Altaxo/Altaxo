@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle();
+				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
 				s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
@@ -379,7 +379,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle();
+				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", s);
 				s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", s);
@@ -482,15 +482,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CreateEventChain();
 		}
 
-		public ScatterPlotStyle()
+		public ScatterPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
+			double penWidth = GraphDocument.GetDefaultPenWidth(context);
+			double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
+
 			this._shape = XYPlotScatterStyles.Shape.Square;
 			this._style = XYPlotScatterStyles.Style.Solid;
 			this._dropLine = new CSPlaneIDList();
-			this._pen = new PenX(NamedColors.Black);
+			this._pen = new PenX(NamedColors.Black, penWidth);
 			this._independentColor = false;
 
-			this._symbolSize = 8;
+			this._symbolSize = symbolSize;
 
 			this._relativePenWidth = 0.1f;
 			this._skipFreq = 1;

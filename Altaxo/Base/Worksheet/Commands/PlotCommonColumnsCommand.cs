@@ -124,9 +124,9 @@ namespace Altaxo.Worksheet.Commands
 			else
 				graphctrl = Current.ProjectService.CreateNewGraph();
 
-			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line;
+			var context = graphctrl.Doc.GetPropertyContext();
+			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line(context);
 
-			var context = graphctrl.Doc.GetPropertyHierarchy();
 			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.RootLayer);
 			graphctrl.Doc.RootLayer.Layers.Add(layer);
 			layer.CreateDefaultAxes(context);
@@ -139,7 +139,7 @@ namespace Altaxo.Worksheet.Commands
 				foreach (var table in _tables)
 					columnList.Add(table[colname]);
 
-				var plotItemList = Altaxo.Worksheet.Commands.PlotCommands.CreatePlotItems(columnList, XCommonColumnNameForPlot, templateStyle, processedColumns);
+				var plotItemList = Altaxo.Worksheet.Commands.PlotCommands.CreatePlotItems(columnList, XCommonColumnNameForPlot, templateStyle, processedColumns, context);
 
 				var plotGroup = new Altaxo.Graph.Gdi.Plot.PlotItemCollection();
 				plotGroup.GroupStyles.Add(Altaxo.Graph.Plot.Groups.ColorGroupStyle.NewExternalGroupStyle());

@@ -234,7 +234,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public virtual LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
+				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
 				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
+				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				base.SDeserialize(o, info, parent);
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -309,7 +309,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
+				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
 				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
@@ -343,7 +343,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
+				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
 				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
@@ -372,9 +372,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region Construction and copying
 
-		public LinePlotStyle()
+		public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			_penHolder = new PenX(NamedColors.Black) { LineJoin = LineJoin.Bevel };
+			var penWidth = GraphDocument.GetDefaultPenWidth(context);
+			_penHolder = new PenX(NamedColors.Black, penWidth) { LineJoin = LineJoin.Bevel };
 			_useLineSymbolGap = true;
 			_ignoreMissingPoints = false;
 			_fillArea = false;
