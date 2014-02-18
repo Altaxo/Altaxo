@@ -209,7 +209,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			if (_Points.Count >= 2)
 			{
 				var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoordinates);
-				var go = new OpenCardinalSpline(pts, _tension);
+				var go = new OpenCardinalSpline(pts, _tension, _grac.Doc.GetPropertyContext());
 				_grac.ActiveLayer.GraphObjects.Add(go);
 			}
 

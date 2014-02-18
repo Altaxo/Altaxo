@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				EllipseShape s = null != o ? (EllipseShape)o : new EllipseShape();
+				EllipseShape s = null != o ? (EllipseShape)o : new EllipseShape(info);
 				info.GetBaseValueEmbedded(s, typeof(EllipseShape).BaseType, parent);
 
 				return s;
@@ -57,8 +57,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public EllipseShape()
-			: base(new ItemLocationDirect())
+		protected EllipseShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirect(), info)
+		{
+		}
+
+		public EllipseShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirect(), context)
 		{
 		}
 

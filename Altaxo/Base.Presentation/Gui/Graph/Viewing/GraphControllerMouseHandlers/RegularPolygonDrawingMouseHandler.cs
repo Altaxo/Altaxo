@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected override void FinishDrawing()
 		{
 			var rect = GetNormalRectangle(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
-			var go = new RegularPolygon();
+			var go = new RegularPolygon(_grac.Doc.GetPropertyContext());
 			go.SetParentSize(_grac.ActiveLayer.Size, false);
 			go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
 

@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				RectangleShape s = null != o ? (RectangleShape)o : new RectangleShape();
+				RectangleShape s = null != o ? (RectangleShape)o : new RectangleShape(info);
 				info.GetBaseValueEmbedded(s, typeof(RectangleShape).BaseType, parent);
 
 				return s;
@@ -57,8 +57,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public RectangleShape()
-			: base(new ItemLocationDirect())
+		protected RectangleShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirect(), info)
+		{
+		}
+
+		public RectangleShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirect(), context)
 		{
 		}
 
@@ -75,14 +80,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			y = h;
 		}
 
-		public static RectangleShape FromLTRB(double left, double top, double right, double bottom)
+		public static RectangleShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (left > right)
 				Exchange(ref left, ref right);
 			if (top > bottom)
 				Exchange(ref top, ref bottom);
 
-			var result = new RectangleShape();
+			var result = new RectangleShape(context);
 			result._location.SizeX = RADouble.NewAbs(right - left);
 			result._location.SizeY = RADouble.NewAbs(bottom - top);
 			result._location.PositionX = RADouble.NewAbs(left);

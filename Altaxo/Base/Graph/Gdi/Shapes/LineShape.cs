@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private class DeprecatedLineShape : ClosedPathShapeBase
 		{
 			public DeprecatedLineShape()
-				: base(new ItemLocationDirect())
+				: base(new ItemLocationDirect(), (Altaxo.Main.Properties.IReadOnlyPropertyBag)null)
 			{
 			}
 
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					info.GetValue("FillBrush", s);
 				}
 
-				var l = new LineShape();
+				var l = new LineShape(info);
 				l.CopyFrom(s);
 				l.Pen = s.Pen; // we don't need to clone, since it is abandoned anyway
 
@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (LineShape)o : new LineShape();
+				var s = null != o ? (LineShape)o : new LineShape(info);
 				info.GetBaseValueEmbedded(s, typeof(LineShape).BaseType, parent);
 
 				return s;
@@ -117,8 +117,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public LineShape()
-			: base(new ItemLocationDirect())
+		protected LineShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirect(), info)
+		{
+		}
+
+		public LineShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirect(), context)
 		{
 		}
 
@@ -127,40 +132,40 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public LineShape(PointD2D startPosition)
-			: base(new ItemLocationDirect())
+		public LineShape(PointD2D startPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirect(), context)
 		{
 			this.Position = startPosition;
 		}
 
-		public LineShape(double posX, double posY)
-			: this(new PointD2D(posX, posY))
+		public LineShape(double posX, double posY, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: this(new PointD2D(posX, posY), context)
 		{
 		}
 
-		public LineShape(PointD2D startPosition, PointD2D endPosition)
+		public LineShape(PointD2D startPosition, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 			:
-			this(startPosition)
+			this(startPosition, context)
 		{
 			this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
 			this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
 		}
 
-		public LineShape(double startX, double startY, PointD2D endPosition)
+		public LineShape(double startX, double startY, PointD2D endPosition, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 			:
-			this(new PointD2D(startX, startY), endPosition)
+			this(new PointD2D(startX, startY), endPosition, context)
 		{
 		}
 
-		public LineShape(double startX, double startY, double endX, double endY)
+		public LineShape(double startX, double startY, double endX, double endY, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 			:
-			this(new PointD2D(startX, startY), new PointD2D(endX, endY))
+			this(new PointD2D(startX, startY), new PointD2D(endX, endY), context)
 		{
 		}
 
 		public LineShape(PointD2D startPosition, PointD2D endPosition, double lineWidth, NamedColor lineColor)
 			:
-			this(startPosition)
+			this(startPosition, null)
 		{
 			this._location.SizeX = RADouble.NewAbs(endPosition.X - startPosition.X);
 			this._location.SizeY = RADouble.NewAbs(endPosition.Y - startPosition.Y);
@@ -170,7 +175,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public LineShape(double startX, double startY, double endX, double endY, double lineWidth, NamedColor lineColor)
 			:
-			this(new PointD2D(startX, startY), new PointD2D(endX, endY))
+			this(new PointD2D(startX, startY), new PointD2D(endX, endY), null)
 		{
 			this.Pen.Width = (float)lineWidth;
 			this.Pen.Color = lineColor;

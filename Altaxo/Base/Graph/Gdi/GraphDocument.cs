@@ -646,6 +646,58 @@ namespace Altaxo.Graph.Gdi
 			}
 		} // end of function DoPaint
 
+		/// <summary>
+		/// Gets the default width of the pen for all graphics in this graph, using the provided property context.
+		/// </summary>
+		/// <param name="context">The property context.</param>
+		/// <returns>Default pen with in points (1/72 inch).</returns>
+		public static double GetDefaultPenWidth(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			double result = 1;
+
+			if (null != context)
+			{
+				var font = context.GetValue(PropertyKeyDefaultFont);
+				using (var path = new GraphicsPath())
+				{
+					path.AddString("-", font.GdiFontFamily(), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+					var bounds = path.GetBounds();
+
+					if (bounds.Height > 0)
+					{
+						result = Calc.Rounding.RoundToNumberOfSignificantDigits(bounds.Height, 2, MidpointRounding.ToEven);
+					}
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Gets the default major tick length for all graphics in this graph, using the provided property context.
+		/// </summary>
+		/// <param name="context">The property context.</param>
+		/// <returns>Default major tick length in points (1/72 inch).</returns>
+		public static double GetDefaultMajorTickLength(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			double result = 8;
+
+			if (null != context)
+			{
+				var font = context.GetValue(PropertyKeyDefaultFont);
+				using (var path = new GraphicsPath())
+				{
+					path.AddString("0", font.GdiFontFamily(), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+					var bounds = path.GetBounds();
+
+					if (bounds.Width > 0)
+					{
+						result = 2 * Calc.Rounding.RoundToNumberOfSignificantDigits(bounds.Width / 2, 2, MidpointRounding.ToEven);
+					}
+				}
+			}
+			return result;
+		}
+
 		#region Change event handling
 
 		public IDisposable BeginUpdate()

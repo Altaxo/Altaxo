@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (OpenCardinalSpline)o : new OpenCardinalSpline();
+				var s = null != o ? (OpenCardinalSpline)o : new OpenCardinalSpline(info);
 				info.GetBaseValueEmbedded(s, typeof(OpenCardinalSpline).BaseType, parent);
 				s._tension = info.GetDouble("Tension");
 				s._curvePoints.Clear();
@@ -72,18 +72,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public OpenCardinalSpline()
-			: base(new ItemLocationDirectAutoSize())
+		protected OpenCardinalSpline(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirectAutoSize(), info)
 		{
 		}
 
-		public OpenCardinalSpline(IEnumerable<PointD2D> points)
-			: this(points, DefaultTension)
+		public OpenCardinalSpline(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirectAutoSize(), context)
 		{
 		}
 
-		public OpenCardinalSpline(IEnumerable<PointD2D> points, double tension)
-			: base(new ItemLocationDirectAutoSize())
+		public OpenCardinalSpline(IEnumerable<PointD2D> points, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: this(points, DefaultTension, context)
+		{
+		}
+
+		public OpenCardinalSpline(IEnumerable<PointD2D> points, double tension, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirectAutoSize(), context)
 		{
 			_curvePoints.AddRange(points);
 			_tension = Math.Abs(tension);

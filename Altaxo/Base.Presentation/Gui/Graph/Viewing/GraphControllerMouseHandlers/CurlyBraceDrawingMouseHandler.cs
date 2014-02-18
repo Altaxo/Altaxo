@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (rect.Width != 0 && rect.Height != 0)
 			{
-				CurlyBraceShape go = new CurlyBraceShape();
+				CurlyBraceShape go = new CurlyBraceShape(_grac.Doc.GetPropertyContext());
 				go.SetParentSize(_grac.ActiveLayer.Size, false);
 				go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
 				_grac.ActiveLayer.GraphObjects.Add(go);

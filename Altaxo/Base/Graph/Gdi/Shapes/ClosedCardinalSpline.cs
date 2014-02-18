@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (ClosedCardinalSpline)o : new ClosedCardinalSpline();
+				var s = null != o ? (ClosedCardinalSpline)o : new ClosedCardinalSpline(info);
 				info.GetBaseValueEmbedded(s, typeof(ClosedCardinalSpline).BaseType, parent);
 				s._tension = info.GetDouble("Tension");
 				s._curvePoints.Clear();
@@ -72,18 +72,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public ClosedCardinalSpline()
-			: base(new ItemLocationDirectAutoSize())
+		protected ClosedCardinalSpline(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirectAutoSize(), info)
 		{
 		}
 
-		public ClosedCardinalSpline(IEnumerable<PointD2D> points)
-			: this(points, DefaultTension)
+		public ClosedCardinalSpline(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirectAutoSize(), context)
 		{
 		}
 
-		public ClosedCardinalSpline(IEnumerable<PointD2D> points, double tension)
-			: base(new ItemLocationDirectAutoSize())
+		public ClosedCardinalSpline(IEnumerable<PointD2D> points, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: this(points, DefaultTension, context)
+		{
+		}
+
+		public ClosedCardinalSpline(IEnumerable<PointD2D> points, double tension, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirectAutoSize(), context)
 		{
 			_curvePoints.AddRange(points);
 			_tension = Math.Abs(tension);

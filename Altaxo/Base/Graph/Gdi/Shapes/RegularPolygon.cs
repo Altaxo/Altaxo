@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				RegularPolygon s = null != o ? (RegularPolygon)o : new RegularPolygon();
+				RegularPolygon s = null != o ? (RegularPolygon)o : new RegularPolygon(info);
 				info.GetBaseValueEmbedded(s, typeof(RegularPolygon).BaseType, parent);
 
 				s._vertices = info.GetInt32("NumberOfVertices");
@@ -66,8 +66,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public RegularPolygon()
-			: base(new ItemLocationDirect())
+		protected RegularPolygon(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirect(), info)
+		{
+		}
+
+		public RegularPolygon(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirect(), context)
 		{
 		}
 
@@ -84,14 +89,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			y = h;
 		}
 
-		public static RegularPolygon FromLTRB(double left, double top, double right, double bottom)
+		public static RegularPolygon FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (left > right)
 				Exchange(ref left, ref right);
 			if (top > bottom)
 				Exchange(ref top, ref bottom);
 
-			var result = new RegularPolygon();
+			var result = new RegularPolygon(context);
 			result._location.SizeX = RADouble.NewAbs(right - left);
 			result._location.SizeY = RADouble.NewAbs(bottom - top);
 			result._location.PositionX = RADouble.NewAbs(left);

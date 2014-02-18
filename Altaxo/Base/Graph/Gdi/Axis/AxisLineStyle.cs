@@ -281,44 +281,20 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// </summary>
 		public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
 		{
-			double penWidth, zeroCharacterWidth;
-			GetDefaultPenWidth(context, out penWidth, out zeroCharacterWidth);
+			double penWidth = GraphDocument.GetDefaultPenWidth(context);
+			double majorTickLength = GraphDocument.GetDefaultMajorTickLength(context);
 
 			_axisPen = new PenX(NamedColors.Black, penWidth);
 			_majorTickPen = new PenX(NamedColors.Black, penWidth);
 			_minorTickPen = new PenX(NamedColors.Black, penWidth);
-			_majorTickLength = zeroCharacterWidth;
-			_minorTickLength = zeroCharacterWidth / 2;
+			_majorTickLength = majorTickLength;
+			_minorTickLength = majorTickLength / 2;
 			_showFirstUpMajorTicks = true; // true if right major ticks should be visible
 			_showFirstDownMajorTicks = true; // true if left major ticks should be visible
 			_showFirstUpMinorTicks = true; // true if right minor ticks should be visible
 			_showFirstDownMinorTicks = true; // true if left minor ticks should be visible
 
 			WireEventChain(true);
-		}
-
-		private static void GetDefaultPenWidth(Main.Properties.IReadOnlyPropertyBag context, out double penWidth, out double zeroCharacterWidth)
-		{
-			var font = context.GetValue<FontX>(GraphDocument.PropertyKeyDefaultFont);
-			using (var path = new GraphicsPath())
-			{
-				var fontFamily = font.GdiFontFamily();
-				path.AddString("-", fontFamily, (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
-				var rect = path.GetBounds();
-				if (rect.Height != 0)
-					penWidth = Calc.Rounding.RoundToNumberOfSignificantDigits(rect.Height, 2, MidpointRounding.ToEven);
-				else
-					penWidth = 1;
-
-				path.Reset();
-				path.AddString("0", fontFamily, (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
-
-				rect = path.GetBounds();
-				if (rect.Width != 0)
-					zeroCharacterWidth = 2 * Calc.Rounding.RoundToNumberOfSignificantDigits(rect.Width / 2, 2, MidpointRounding.ToEven);
-				else
-					zeroCharacterWidth = 8;
-			}
 		}
 
 		/// <summary>

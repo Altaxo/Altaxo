@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
 		{
 			public DeprecatedCurlyBraceShape()
-				: base(new ItemLocationDirect()) { }
+				: base(new ItemLocationDirect(), (Altaxo.Main.Properties.IReadOnlyPropertyBag)null) { }
 
 			/// <summary>
 			/// Get the object outline for arrangements in object world coordinates.
@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var s = null != o ? (DeprecatedCurlyBraceShape)o : new DeprecatedCurlyBraceShape();
 				info.GetBaseValueEmbedded(s, typeof(DeprecatedCurlyBraceShape).BaseType, parent);
 
-				var l = new CurlyBraceShape();
+				var l = new CurlyBraceShape(info);
 				l.CopyFrom(s);
 				l.Pen = s.Pen; // we don't need to clone, since it is abandoned anyway
 
@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (CurlyBraceShape)o : new CurlyBraceShape();
+				var s = null != o ? (CurlyBraceShape)o : new CurlyBraceShape(info);
 				info.GetBaseValueEmbedded(s, typeof(CurlyBraceShape).BaseType, parent);
 
 				return s;
@@ -106,8 +106,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region Constructors
 
-		public CurlyBraceShape()
-			: base(new ItemLocationDirect())
+		protected CurlyBraceShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(new ItemLocationDirect(), info)
+		{
+		}
+
+		public CurlyBraceShape(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(new ItemLocationDirect(), context)
 		{
 		}
 
@@ -117,14 +122,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom)
+		public static CurlyBraceShape FromLTRB(double left, double top, double right, double bottom, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (left > right)
 				Exchange(ref left, ref right);
 			if (top > bottom)
 				Exchange(ref top, ref bottom);
 
-			var result = new CurlyBraceShape();
+			var result = new CurlyBraceShape(context);
 			result._location.SizeX = RADouble.NewAbs(right - left);
 			result._location.SizeY = RADouble.NewAbs(bottom - top);
 			result._location.PositionX = RADouble.NewAbs(left);

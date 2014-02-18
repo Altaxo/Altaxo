@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 		protected virtual void FinishDrawing()
 		{
-			LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates);
+			LineShape go = new LineShape(_Points[0].LayerCoordinates, _Points[1].LayerCoordinates, _grac.Doc.GetPropertyContext());
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);

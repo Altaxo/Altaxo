@@ -66,11 +66,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#endregion Serialization
 
-		public ClosedPathShapeBase(ItemLocationDirect location)
+		protected ClosedPathShapeBase(ItemLocationDirect location, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 			: base(location)
 		{
+		}
+
+		public ClosedPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: base(location)
+		{
+			var penWidth = GraphDocument.GetDefaultPenWidth(context);
 			Brush = new BrushX(NamedColors.Transparent);
-			Pen = new PenX(NamedColors.Black);
+			Pen = new PenX(NamedColors.Black, penWidth);
 		}
 
 		public ClosedPathShapeBase(ClosedPathShapeBase from)
